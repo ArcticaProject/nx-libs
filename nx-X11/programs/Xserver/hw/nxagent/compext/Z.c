@@ -67,7 +67,7 @@ char *ZCompressData(const char *plainData, unsigned int plainSize, int threshold
 
   *compressedSize = plainSize + (plainSize / 1000) + 12 + 1;
 
-  compressedData = Xmalloc(*compressedSize);
+  compressedData = malloc(*compressedSize);
 
   if (compressedData == NULL)
   {
@@ -129,7 +129,7 @@ char *ZCompressData(const char *plainData, unsigned int plainSize, int threshold
                   plainSize, zError(result));
       #endif
 
-      Xfree(compressedData);
+      free(compressedData);
 
       *compressedSize = 0;
 
@@ -245,7 +245,7 @@ int ZInitEncoder()
   {
     int result;
 
-    zStream = Xmalloc(sizeof(z_stream));
+    zStream = malloc(sizeof(z_stream));
 
     if (zStream == NULL)
     {
@@ -300,7 +300,7 @@ int ZResetEncoder()
       #endif
     }
 
-    Xfree(zStream);
+    free(zStream);
   }
 
   zInitialized = 0;

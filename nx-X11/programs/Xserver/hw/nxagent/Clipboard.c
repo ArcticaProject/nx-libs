@@ -754,7 +754,7 @@ void nxagentCollectPropertyEvent(int resource)
 
         if (pszReturnData != NULL)
         {
-          free(pszReturnData);
+          XFree(pszReturnData);
         }
 
         return;
@@ -796,7 +796,7 @@ void nxagentCollectPropertyEvent(int resource)
 
         if (pszReturnData != NULL)
         {
-          free(pszReturnData);
+          XFree(pszReturnData);
         }
 
         return;
@@ -974,7 +974,7 @@ void nxagentNotifySelection(XEvent *X)
           }
 
           /*
-           * free(pszReturnData);
+           * XFree(pszReturnData);
            * pszReturnData=NULL;
            */
 

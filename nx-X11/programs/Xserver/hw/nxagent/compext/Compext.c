@@ -339,7 +339,7 @@ int _NXInternalResetResources(Display *dpy)
       {
         DeqAsyncHandler(dpy, _NXCollectedImages[i] -> handler);
 
-        Xfree(_NXCollectedImages[i] -> handler);
+        free(_NXCollectedImages[i] -> handler);
       }
 
       if (_NXCollectedImages[i] -> image != NULL)
@@ -347,7 +347,7 @@ int _NXInternalResetResources(Display *dpy)
         XDestroyImage(_NXCollectedImages[i] -> image);
       }
 
-      Xfree(_NXCollectedImages[i]);
+      free(_NXCollectedImages[i]);
 
       _NXCollectedImages[i] = NULL;
     }
@@ -363,15 +363,15 @@ int _NXInternalResetResources(Display *dpy)
       {
         DeqAsyncHandler(dpy, _NXCollectedProperties[i] -> handler);
 
-        Xfree(_NXCollectedProperties[i] -> handler);
+        free(_NXCollectedProperties[i] -> handler);
       }
 
       if (_NXCollectedProperties[i] -> data != NULL)
       {
-        Xfree(_NXCollectedProperties[i] -> data);
+        free(_NXCollectedProperties[i] -> data);
       }
 
-      Xfree(_NXCollectedProperties[i]);
+      free(_NXCollectedProperties[i]);
 
       _NXCollectedProperties[i] = NULL;
     }
@@ -387,10 +387,10 @@ int _NXInternalResetResources(Display *dpy)
       {
         DeqAsyncHandler(dpy, _NXCollectedGrabPointers[i] -> handler);
 
-        Xfree(_NXCollectedGrabPointers[i] -> handler);
+        free(_NXCollectedGrabPointers[i] -> handler);
       }
 
-      Xfree(_NXCollectedGrabPointers[i]);
+      free(_NXCollectedGrabPointers[i]);
 
       _NXCollectedGrabPointers[i] = NULL;
     }
@@ -406,10 +406,10 @@ int _NXInternalResetResources(Display *dpy)
       {
         DeqAsyncHandler(dpy, _NXCollectedInputFocuses[i] -> handler);
 
-        Xfree(_NXCollectedInputFocuses[i] -> handler);
+        free(_NXCollectedInputFocuses[i] -> handler);
       }
 
-      Xfree(_NXCollectedInputFocuses[i]);
+      free(_NXCollectedInputFocuses[i]);
 
       _NXCollectedInputFocuses[i] = NULL;
     }
@@ -484,7 +484,7 @@ int NXSetDisplayBuffer(Display *dpy, int size)
 
   if (dpy -> buffer != NULL)
   {
-    Xfree(dpy -> buffer);
+    free(dpy -> buffer);
   }
 
   dpy -> buffer = buffer;
@@ -2156,7 +2156,7 @@ NXPackedImage *NXPackImage(Display *dpy, XImage *src_image, unsigned int method)
    * source and apply the color mask.
    */
 
-  if ((dst_image = (XImage *) Xmalloc(sizeof(XImage))) == NULL)
+  if ((dst_image = (XImage *) malloc(sizeof(XImage))) == NULL)
   {
     #ifdef PANIC
     fprintf(stderr, "******NXPackImage: PANIC! Cannot allocate [%d] bytes for the image.\n",
@@ -2175,7 +2175,7 @@ NXPackedImage *NXPackImage(Display *dpy, XImage *src_image, unsigned int method)
 
   dst_data_size = src_image -> bytes_per_line * src_image -> height;
 
-  dst_image -> data = Xmalloc(dst_data_size);
+  dst_image -> data = malloc(dst_data_size);
 
   if (dst_image -> data == NULL)
   {
@@ -2184,7 +2184,7 @@ NXPackedImage *NXPackImage(Display *dpy, XImage *src_image, unsigned int method)
                 dst_data_size);
     #endif
 
-    Xfree(dst_image);
+    free(dst_image);
 
     return NULL;
   }
@@ -2218,9 +2218,9 @@ NXPackedImage *NXPackImage(Display *dpy, XImage *src_image, unsigned int method)
       fprintf(stderr, "******NXPackImage: PANIC! Failed to clean the image.\n");
       #endif
 
-      Xfree(dst_image -> data);
+      free(dst_image -> data);
 
-      Xfree(dst_image);
+      free(dst_image);
 
       return NULL;
     }
@@ -2231,9 +2231,9 @@ NXPackedImage *NXPackImage(Display *dpy, XImage *src_image, unsigned int method)
     fprintf(stderr, "******NXPackImage: PANIC! Failed to apply the color mask.\n");
     #endif
 
-    Xfree(dst_image -> data);
+    free(dst_image -> data);
 
-    Xfree(dst_image);
+    free(dst_image);
 
     return NULL;
   }
@@ -2267,9 +2267,9 @@ NXPackedImage *NXPackImage(Display *dpy, XImage *src_image, unsigned int method)
                 dst_bits_per_pixel, dst_packed_bits_per_pixel);
     #endif
 
-    Xfree(dst_image -> data);
+    free(dst_image -> data);
 
-    Xfree(dst_image);
+    free(dst_image);
 
     return NULL;
   }
@@ -2342,7 +2342,7 @@ XImage *NXInPlacePackImage(Display *dpy, XImage *src_image, unsigned int method)
    * source and apply the color mask.
    */
 
-  if ((dst_image = (XImage *) Xmalloc(sizeof(XImage))) == NULL)
+  if ((dst_image = (XImage *) malloc(sizeof(XImage))) == NULL)
   {
     #ifdef PANIC
     fprintf(stderr, "******NXInPlacePackImage: PANIC! Cannot allocate [%d] bytes for the image.\n",
@@ -2391,7 +2391,7 @@ XImage *NXInPlacePackImage(Display *dpy, XImage *src_image, unsigned int method)
       fprintf(stderr, "******NXInPlacePackImage: PANIC! Failed to clean the image.\n");
       #endif
 
-      Xfree(dst_image);
+      free(dst_image);
 
       return NULL;
     }
@@ -2402,7 +2402,7 @@ XImage *NXInPlacePackImage(Display *dpy, XImage *src_image, unsigned int method)
     fprintf(stderr, "******NXInPlacePackImage: PANIC! Failed to apply the color mask.\n");
     #endif
 
-    Xfree(dst_image);
+    free(dst_image);
 
     return NULL;
   }
@@ -2645,7 +2645,7 @@ NXPackedImage *NXEncodeRgb(XImage *src_image, unsigned int method, unsigned int 
    * of the source.
    */
 
-  if ((dst_image = (NXPackedImage *) Xmalloc(sizeof(NXPackedImage))) == NULL)
+  if ((dst_image = (NXPackedImage *) malloc(sizeof(NXPackedImage))) == NULL)
   {
     #ifdef PANIC
     fprintf(stderr, "******NXEncodeRgb: PANIC! Cannot allocate [%d] bytes for the image.\n",
@@ -2665,7 +2665,7 @@ NXPackedImage *NXEncodeRgb(XImage *src_image, unsigned int method, unsigned int 
     fprintf(stderr, "******NXEncodeRgb: PANIC! Rgb compression failed.\n");
     #endif
 
-    Xfree(dst_image);
+    free(dst_image);
 
     return NULL;
   }
@@ -2690,7 +2690,7 @@ NXPackedImage *NXEncodeRle(XImage *src_image, unsigned int method, unsigned int 
    * of the source.
    */
 
-  if ((dst_image = (NXPackedImage *) Xmalloc(sizeof(NXPackedImage))) == NULL)
+  if ((dst_image = (NXPackedImage *) malloc(sizeof(NXPackedImage))) == NULL)
   {
     #ifdef PANIC
     fprintf(stderr, "******NXEncodeRle: PANIC! Cannot allocate [%d] bytes for the image.\n",
@@ -2710,7 +2710,7 @@ NXPackedImage *NXEncodeRle(XImage *src_image, unsigned int method, unsigned int 
     fprintf(stderr, "******NXEncodeRle: PANIC! Rle compression failed.\n");
     #endif
 
-    Xfree(dst_image);
+    free(dst_image);
 
     return NULL;
   }
@@ -2735,7 +2735,7 @@ NXPackedImage *NXEncodeBitmap(XImage *src_image, unsigned int method, unsigned i
    * of the source.
    */
 
-  if ((dst_image = (NXPackedImage *) Xmalloc(sizeof(NXPackedImage))) == NULL)
+  if ((dst_image = (NXPackedImage *) malloc(sizeof(NXPackedImage))) == NULL)
   {
     #ifdef PANIC
     fprintf(stderr, "******NXEncodeBitmap: PANIC! Cannot allocate [%d] bytes for the image.\n",
@@ -2755,7 +2755,7 @@ NXPackedImage *NXEncodeBitmap(XImage *src_image, unsigned int method, unsigned i
     fprintf(stderr, "******NXEncodeBitmap: PANIC! Bitmap compression failed.\n");
     #endif
 
-    Xfree(dst_image);
+    free(dst_image);
 
     return NULL;
   }
@@ -2795,7 +2795,7 @@ NXPackedImage *NXEncodeJpeg(XImage *src_image, unsigned int method, unsigned int
    * of the source.
    */
 
-  if ((dst_image = (NXPackedImage *) Xmalloc(sizeof(NXPackedImage))) == NULL)
+  if ((dst_image = (NXPackedImage *) malloc(sizeof(NXPackedImage))) == NULL)
   {
     #ifdef PANIC
     fprintf(stderr, "******NXEncodeJpeg: PANIC! Cannot allocate [%d] bytes for the Jpeg image.\n",
@@ -2815,7 +2815,7 @@ NXPackedImage *NXEncodeJpeg(XImage *src_image, unsigned int method, unsigned int
     fprintf(stderr, "******NXEncodeJpeg: PANIC! Jpeg compression failed.\n");
     #endif
 
-    Xfree(dst_image);
+    free(dst_image);
 
     return NULL;
   }
@@ -2850,7 +2850,7 @@ NXPackedImage *NXEncodePng(XImage *src_image, unsigned int method, unsigned int 
     return NULL;
   }
 
-  if ((dst_image = (NXPackedImage *) Xmalloc(sizeof(NXPackedImage))) == NULL)
+  if ((dst_image = (NXPackedImage *) malloc(sizeof(NXPackedImage))) == NULL)
   {
     #ifdef PANIC
     fprintf(stderr, "******NXEncodePng: PANIC! Cannot allocate [%d] bytes for the Png image.\n",
@@ -2870,7 +2870,7 @@ NXPackedImage *NXEncodePng(XImage *src_image, unsigned int method, unsigned int 
     fprintf(stderr, "******NXEncodePng: PANIC! Png compression failed.\n");
     #endif
 
-    Xfree(dst_image);
+    free(dst_image);
 
     return NULL;
   }
@@ -3147,14 +3147,14 @@ void NXInitCache(Display *dpy, int entries)
 
   if (NXImageCache != NULL)
   {
-    Xfree(NXImageCache);
+    free(NXImageCache);
 
     NXImageCache = NULL;
   }
 
   if (entries > 0)
   {
-    NXImageCache = Xmalloc(entries * sizeof(_NXImageCacheEntry));
+    NXImageCache = malloc(entries * sizeof(_NXImageCacheEntry));
 
     if (NXImageCache != NULL)
     {
@@ -3220,7 +3220,7 @@ XImage *NXCacheFindImage(NXPackedImage *src_image, unsigned int *method, unsigne
 
   *md5 = NULL;
 
-  if ((new_md5 = Xmalloc(MD5_LENGTH)) == NULL)
+  if ((new_md5 = malloc(MD5_LENGTH)) == NULL)
   {
     #ifdef PANIC
     fprintf(stderr, "******NXCacheFindImage: Can't allocate memory for the checksum.\n");
@@ -3261,7 +3261,7 @@ XImage *NXCacheFindImage(NXPackedImage *src_image, unsigned int *method, unsigne
                     i, NXImageCacheHits, NXImageCacheOps);
         #endif
 
-        Xfree(new_md5);
+        free(new_md5);
 
         /*
          * Move the images down one slot, from
@@ -3338,9 +3338,9 @@ int NXCacheAddImage(NXPackedImage *image, unsigned int method, unsigned char *md
 
     i--;
 
-    Xfree(NXImageCache[NXImageCacheSize - 1].image -> data);
-    Xfree(NXImageCache[NXImageCacheSize - 1].image);
-    Xfree(NXImageCache[NXImageCacheSize - 1].md5);
+    free(NXImageCache[NXImageCacheSize - 1].image -> data);
+    free(NXImageCache[NXImageCacheSize - 1].image);
+    free(NXImageCache[NXImageCacheSize - 1].md5);
   }
 
   if (i > 0)
@@ -3396,23 +3396,23 @@ void NXFreeCache(Display *dpy)
     {
       if (NXImageCache[i].image -> data != NULL)
       {
-        Xfree(NXImageCache[i].image -> data);
+        free(NXImageCache[i].image -> data);
       }
 
-      Xfree(NXImageCache[i].image);
+      free(NXImageCache[i].image);
 
       NXImageCache[i].image = NULL;
     }
 
     if (NXImageCache[i].md5 != NULL)
     {
-      Xfree(NXImageCache[i].md5);
+      free(NXImageCache[i].md5);
 
       NXImageCache[i].md5 = NULL;
     }
   }
 
-  Xfree(NXImageCache);
+  free(NXImageCache);
 
   NXImageCache = NULL;
 
@@ -3484,7 +3484,7 @@ static Bool _NXCollectImageHandler(Display *dpy, xReply *rep, char *buf,
 
   DeqAsyncHandler(dpy, state -> handler);
 
-  Xfree(state -> handler);
+  free(state -> handler);
 
   state -> handler = NULL;
 
@@ -3499,7 +3499,7 @@ static Bool _NXCollectImageHandler(Display *dpy, xReply *rep, char *buf,
 
     _NXCollectedImages[state -> resource] = NULL;
 
-    Xfree(state);
+    free(state);
 
     return False;
   }
@@ -3511,7 +3511,7 @@ static Bool _NXCollectImageHandler(Display *dpy, xReply *rep, char *buf,
 
   async_size = SIZEOF(xGetImageReply);
 
-  async_head = Xmalloc(async_size);
+  async_head = malloc(async_size);
 
   if (async_head == NULL)
   {
@@ -3524,7 +3524,7 @@ static Bool _NXCollectImageHandler(Display *dpy, xReply *rep, char *buf,
 
     _NXCollectedImages[state -> resource] = NULL;
 
-    Xfree(state);
+    free(state);
 
     return False;
   }
@@ -3547,9 +3547,9 @@ static Bool _NXCollectImageHandler(Display *dpy, xReply *rep, char *buf,
 
     _NXCollectedImages[state -> resource] = NULL;
 
-    Xfree(state);
+    free(state);
 
-    Xfree(async_head);
+    free(async_head);
 
     return False;
   }
@@ -3563,7 +3563,7 @@ static Bool _NXCollectImageHandler(Display *dpy, xReply *rep, char *buf,
 
   if (async_size > 0)
   {
-    async_data = Xmalloc(async_size);
+    async_data = malloc(async_size);
 
     if (async_data == NULL)
     {
@@ -3576,9 +3576,9 @@ static Bool _NXCollectImageHandler(Display *dpy, xReply *rep, char *buf,
 
       _NXCollectedImages[state -> resource] = NULL;
 
-      Xfree(state);
+      free(state);
 
-      Xfree(async_head);
+      free(async_head);
 
       return False;
     }
@@ -3622,10 +3622,10 @@ static Bool _NXCollectImageHandler(Display *dpy, xReply *rep, char *buf,
 
       _NXCollectedImages[state -> resource] = NULL;
 
-      Xfree(state);
+      free(state);
 
-      Xfree(async_head);
-      Xfree(async_data);
+      free(async_head);
+      free(async_data);
 
       return True;
     }
@@ -3645,7 +3645,7 @@ static Bool _NXCollectImageHandler(Display *dpy, xReply *rep, char *buf,
 
   _NXNotifyImage(dpy, state -> resource, True);
 
-  Xfree(async_head);
+  free(async_head);
 
   return True;
 }
@@ -3697,7 +3697,7 @@ int NXCollectImage(Display *dpy, unsigned int resource, Drawable drawable,
     {
       DeqAsyncHandler(dpy, state -> handler);
 
-      Xfree(state -> handler);
+      free(state -> handler);
     }
 
     if (state -> image != NULL)
@@ -3705,7 +3705,7 @@ int NXCollectImage(Display *dpy, unsigned int resource, Drawable drawable,
       XDestroyImage(state -> image);
     }
 
-    Xfree(state);
+    free(state);
 
     _NXCollectedImages[resource] = NULL;
   }
@@ -3733,8 +3733,8 @@ int NXCollectImage(Display *dpy, unsigned int resource, Drawable drawable,
               req -> width, req -> height, (int) req -> planeMask);
   #endif
 
-  state   = Xmalloc(sizeof(_NXCollectImageState));
-  handler = Xmalloc(sizeof(_XAsyncHandler));
+  state   = malloc(sizeof(_NXCollectImageState));
+  handler = malloc(sizeof(_XAsyncHandler));
 
   if (state == NULL || handler == NULL)
   {
@@ -3747,12 +3747,12 @@ int NXCollectImage(Display *dpy, unsigned int resource, Drawable drawable,
 
     if (state != NULL)
     {
-      Xfree(state);
+      free(state);
     }
 
     if (handler != NULL)
     {
-      Xfree(handler);
+      free(handler);
     }
 
     UnlockDisplay(dpy);
@@ -3804,7 +3804,7 @@ int NXGetCollectedImage(Display *dpy, unsigned int resource, XImage **image)
 
   *image = state -> image;
 
-  Xfree(state);
+  free(state);
 
   #ifdef TEST
   fprintf(stderr, "******NXGetCollectedImage: Returning GetImage data for resource [%u].\n",
@@ -3877,7 +3877,7 @@ static Bool _NXCollectPropertyHandler(Display *dpy, xReply *rep, char *buf,
 
   DeqAsyncHandler(dpy, state -> handler);
 
-  Xfree(state -> handler);
+  free(state -> handler);
 
   state -> handler = NULL;
 
@@ -3892,7 +3892,7 @@ static Bool _NXCollectPropertyHandler(Display *dpy, xReply *rep, char *buf,
 
     _NXCollectedProperties[state -> resource] = NULL;
 
-    Xfree(state);
+    free(state);
 
     return False;
   }
@@ -3904,7 +3904,7 @@ static Bool _NXCollectPropertyHandler(Display *dpy, xReply *rep, char *buf,
 
   async_size = SIZEOF(xGetPropertyReply);
 
-  async_head = Xmalloc(async_size);
+  async_head = malloc(async_size);
 
   if (async_head == NULL)
   {
@@ -3917,7 +3917,7 @@ static Bool _NXCollectPropertyHandler(Display *dpy, xReply *rep, char *buf,
 
     _NXCollectedProperties[state -> resource] = NULL;
 
-    Xfree(state);
+    free(state);
 
     return False;
   }
@@ -3940,9 +3940,9 @@ static Bool _NXCollectPropertyHandler(Display *dpy, xReply *rep, char *buf,
 
     _NXCollectedProperties[state -> resource] = NULL;
 
-    Xfree(state);
+    free(state);
 
-    Xfree(async_head);
+    free(async_head);
 
     return False;
   }
@@ -3964,7 +3964,7 @@ static Bool _NXCollectPropertyHandler(Display *dpy, xReply *rep, char *buf,
 
   if (async_size > 0)
   {
-    async_data = Xmalloc(async_size);
+    async_data = malloc(async_size);
 
     if (async_data == NULL)
     {
@@ -3977,9 +3977,9 @@ static Bool _NXCollectPropertyHandler(Display *dpy, xReply *rep, char *buf,
 
       _NXCollectedProperties[state -> resource] = NULL;
 
-      Xfree(state);
+      free(state);
 
-      Xfree(async_head);
+      free(async_head);
 
       return False;
     }
@@ -4013,7 +4013,7 @@ static Bool _NXCollectPropertyHandler(Display *dpy, xReply *rep, char *buf,
 
   _NXNotifyProperty(dpy, state -> resource, True);
 
-  Xfree(async_head);
+  free(async_head);
 
   return True;
 }
@@ -4064,15 +4064,15 @@ int NXCollectProperty(Display *dpy, unsigned int resource, Window window, Atom p
     {
       DeqAsyncHandler(dpy, state -> handler);
 
-      Xfree(state -> handler);
+      free(state -> handler);
     }
 
     if (state -> data != NULL)
     {
-      Xfree(state -> data);
+      free(state -> data);
     }
 
-    Xfree(state);
+    free(state);
 
     _NXCollectedProperties[resource] = NULL;
   }
@@ -4099,8 +4099,8 @@ int NXCollectProperty(Display *dpy, unsigned int resource, Window window, Atom p
               (int) req -> longOffset, (int) req -> longLength);
   #endif
 
-  state   = Xmalloc(sizeof(_NXCollectPropertyState));
-  handler = Xmalloc(sizeof(_XAsyncHandler));
+  state   = malloc(sizeof(_NXCollectPropertyState));
+  handler = malloc(sizeof(_XAsyncHandler));
 
   if (state == NULL || handler == NULL)
   {
@@ -4111,12 +4111,12 @@ int NXCollectProperty(Display *dpy, unsigned int resource, Window window, Atom p
 
     if (state != NULL)
     {
-      Xfree(state);
+      free(state);
     }
 
     if (handler != NULL)
     {
-      Xfree(handler);
+      free(handler);
     }
 
     UnGetReq(GetProperty);
@@ -4177,7 +4177,7 @@ int NXGetCollectedProperty(Display *dpy, unsigned int resource, Atom *actual_typ
 
   *data = (unsigned char *) _NXCollectedProperties[resource] -> data;
 
-  Xfree(state);
+  free(state);
 
   _NXCollectedProperties[resource] = NULL;
 
@@ -4239,7 +4239,7 @@ static Bool _NXCollectGrabPointerHandler(Display *dpy, xReply *rep, char *buf,
 
   DeqAsyncHandler(dpy, state -> handler);
 
-  Xfree(state -> handler);
+  free(state -> handler);
 
   state -> handler = NULL;
 
@@ -4254,7 +4254,7 @@ static Bool _NXCollectGrabPointerHandler(Display *dpy, xReply *rep, char *buf,
 
     _NXCollectedGrabPointers[state -> resource] = NULL;
 
-    Xfree(state);
+    free(state);
 
     return False;
   }
@@ -4266,7 +4266,7 @@ static Bool _NXCollectGrabPointerHandler(Display *dpy, xReply *rep, char *buf,
 
   async_size = SIZEOF(xGrabPointerReply);
 
-  async_head = Xmalloc(async_size);
+  async_head = malloc(async_size);
 
   if (async_head == NULL)
   {
@@ -4279,7 +4279,7 @@ static Bool _NXCollectGrabPointerHandler(Display *dpy, xReply *rep, char *buf,
 
     _NXCollectedGrabPointers[state -> resource] = NULL;
 
-    Xfree(state);
+    free(state);
 
     return False;
   }
@@ -4302,9 +4302,9 @@ static Bool _NXCollectGrabPointerHandler(Display *dpy, xReply *rep, char *buf,
 
     _NXCollectedGrabPointers[state -> resource] = NULL;
 
-    Xfree(state);
+    free(state);
 
-    Xfree(async_head);
+    free(async_head);
 
     return False;
   }
@@ -4318,7 +4318,7 @@ static Bool _NXCollectGrabPointerHandler(Display *dpy, xReply *rep, char *buf,
 
   _NXNotifyGrabPointer(dpy, state -> resource, True);
 
-  Xfree(async_head);
+  free(async_head);
 
   return True;
 }
@@ -4370,10 +4370,10 @@ int NXCollectGrabPointer(Display *dpy, unsigned int resource, Window grab_window
     {
       DeqAsyncHandler(dpy, state -> handler);
 
-      Xfree(state -> handler);
+      free(state -> handler);
     }
 
-    Xfree(state);
+    free(state);
 
     _NXCollectedGrabPointers[resource] = NULL;
   }
@@ -4396,8 +4396,8 @@ int NXCollectGrabPointer(Display *dpy, unsigned int resource, Window grab_window
               "for resource [%d].\n", X_GrabPointer, dpy -> request, resource);
   #endif
 
-  state   = Xmalloc(sizeof(_NXCollectGrabPointerState));
-  handler = Xmalloc(sizeof(_XAsyncHandler));
+  state   = malloc(sizeof(_NXCollectGrabPointerState));
+  handler = malloc(sizeof(_XAsyncHandler));
 
   if (state == NULL || handler == NULL)
   {
@@ -4408,12 +4408,12 @@ int NXCollectGrabPointer(Display *dpy, unsigned int resource, Window grab_window
 
     if (state != NULL)
     {
-      Xfree(state);
+      free(state);
     }
 
     if (handler != NULL)
     {
-      Xfree(handler);
+      free(handler);
     }
 
     UnGetReq(GrabPointer);
@@ -4461,7 +4461,7 @@ int NXGetCollectedGrabPointer(Display *dpy, unsigned int resource, int *status)
 
   *status = state -> status;
 
-  Xfree(state);
+  free(state);
 
   _NXCollectedGrabPointers[resource] = NULL;
 
@@ -4523,7 +4523,7 @@ static Bool _NXCollectInputFocusHandler(Display *dpy, xReply *rep, char *buf,
 
   DeqAsyncHandler(dpy, state -> handler);
 
-  Xfree(state -> handler);
+  free(state -> handler);
 
   state -> handler = NULL;
 
@@ -4538,7 +4538,7 @@ static Bool _NXCollectInputFocusHandler(Display *dpy, xReply *rep, char *buf,
 
     _NXCollectedInputFocuses[state -> resource] = NULL;
 
-    Xfree(state);
+    free(state);
 
     return False;
   }
@@ -4550,7 +4550,7 @@ static Bool _NXCollectInputFocusHandler(Display *dpy, xReply *rep, char *buf,
 
   async_size = SIZEOF(xGetInputFocusReply);
 
-  async_head = Xmalloc(async_size);
+  async_head = malloc(async_size);
 
   if (async_head == NULL)
   {
@@ -4563,7 +4563,7 @@ static Bool _NXCollectInputFocusHandler(Display *dpy, xReply *rep, char *buf,
 
     _NXCollectedInputFocuses[state -> resource] = NULL;
 
-    Xfree(state);
+    free(state);
 
     return False;
   }
@@ -4586,9 +4586,9 @@ static Bool _NXCollectInputFocusHandler(Display *dpy, xReply *rep, char *buf,
 
     _NXCollectedInputFocuses[state -> resource] = NULL;
 
-    Xfree(state);
+    free(state);
 
-    Xfree(async_head);
+    free(async_head);
 
     return False;
   }
@@ -4604,7 +4604,7 @@ static Bool _NXCollectInputFocusHandler(Display *dpy, xReply *rep, char *buf,
 
   _NXNotifyInputFocus(dpy, state -> resource, True);
 
-  Xfree(async_head);
+  free(async_head);
 
   return True;
 }
@@ -4654,10 +4654,10 @@ int NXCollectInputFocus(Display *dpy, unsigned int resource)
     {
       DeqAsyncHandler(dpy, state -> handler);
 
-      Xfree(state -> handler);
+      free(state -> handler);
     }
 
-    Xfree(state);
+    free(state);
 
     _NXCollectedInputFocuses[resource] = NULL;
   }
@@ -4671,8 +4671,8 @@ int NXCollectInputFocus(Display *dpy, unsigned int resource)
               X_GetInputFocus, dpy -> request, resource);
   #endif
 
-  state   = Xmalloc(sizeof(_NXCollectInputFocusState));
-  handler = Xmalloc(sizeof(_XAsyncHandler));
+  state   = malloc(sizeof(_NXCollectInputFocusState));
+  handler = malloc(sizeof(_XAsyncHandler));
 
   if (state == NULL || handler == NULL)
   {
@@ -4683,12 +4683,12 @@ int NXCollectInputFocus(Display *dpy, unsigned int resource)
 
     if (state != NULL)
     {
-      Xfree(state);
+      free(state);
     }
 
     if (handler != NULL)
     {
-      Xfree(handler);
+      free(handler);
     }
 
     UnGetEmptyReq();
@@ -4739,7 +4739,7 @@ int NXGetCollectedInputFocus(Display *dpy, unsigned int resource,
   *focus_return     = state -> focus;
   *revert_to_return = state -> revert_to;
 
-  Xfree(state);
+  free(state);
 
   _NXCollectedInputFocuses[resource] = NULL;
 
