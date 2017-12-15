@@ -1,11 +1,24 @@
-2017-12-15 11:20:52 +0100 Mike Gabriel (5f673977a)
+2017-12-15 12:40:31 +0100 Mike Gabriel (c3e284b96)
 
-	* release 3.5.99.11 (HEAD -> 3.6.x)
+	* release 3.5.99.12 (HEAD -> 3.6.x)
+
+2017-12-15 12:05:16 +0100 Mike Gabriel (4fb495432)
+
+	* Xserver/hw/nxagent/Image.c: Fix regression FTBFS after d4465b71 got
+          merged in. (origin/HEAD, origin/3.6.x)
+
+2017-12-15 12:02:36 +0100 Mike Gabriel (cfbb03820)
+
+	* debian/changelog: post-release version bump to 3.5.99.11
+          (origin/release-builds/3.6.x, release-builds/3.6.x)
+
+2017-12-15 11:20:52 +0100 Mike Gabriel (b213c8eba)
+
+	* release 3.5.99.11 (tag: 3.5.99.11)
 
 2017-12-15 11:15:22 +0100 Mike Gabriel (4cca1b4bd)
 
 	* Merge branch 'sunweaver-pr/more-X-memory-macro-fixes' into 3.6.x
-          (origin/HEAD, origin/3.6.x)
 
 2017-12-14 11:27:35 +0100 Mike Gabriel (5597f2ea5)
 
@@ -720,8 +733,7 @@
 
 2017-09-15 14:57:56 +0200 Mike Gabriel (6557c0043)
 
-	* release 3.5.99.10 (tag: 3.5.99.10, origin/release-builds/3.6.x,
-          release-builds/3.6.x)
+	* release 3.5.99.10 (tag: 3.5.99.10)
 
 2017-09-14 07:45:45 +0200 Mihai Moldovan (4405c6a6b)
 
