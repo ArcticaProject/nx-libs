@@ -1,2 +1,3 @@
 usr/share/nx/SecurityPolicy
-usr/lib/nx/X11/
+usr/share/nx/X11/XErrorDB
+usr/share/nx/X11/Xcms.txt

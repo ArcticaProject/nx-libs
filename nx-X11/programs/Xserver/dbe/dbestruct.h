@@ -1,4 +1,3 @@
-/* $Xorg: dbestruct.h,v 1.3 2000/08/17 19:48:16 cpqbld Exp $ */
 /******************************************************************************
  * 
  * Copyright (c) 1994, 1995  Hewlett-Packard Company
@@ -30,7 +29,6 @@
  *     Header file for DIX-related DBE
  *
  *****************************************************************************/
-/* $XFree86$ */
 
 #ifndef DBE_STRUCT_H
 #define DBE_STRUCT_H
@@ -39,7 +37,7 @@
 /* INCLUDES */
 
 #define NEED_DBE_PROTOCOL
-#include <X11/extensions/Xdbeproto.h>
+#include <nx-X11/extensions/Xdbeproto.h>
 #include "windowstr.h"
 
 

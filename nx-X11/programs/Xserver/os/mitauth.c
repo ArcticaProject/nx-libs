@@ -1,4 +1,3 @@
-/* $Xorg: mitauth.c,v 1.4 2001/02/09 02:05:23 xorgcvs Exp $ */
 /*
 
 Copyright 1988, 1998  The Open Group
@@ -26,7 +25,6 @@ other dealings in this Software without prior written authorization
 from The Open Group.
 
 */
-/* $XFree86: xc/programs/Xserver/os/mitauth.c,v 1.4 2001/01/17 22:37:11 dawes Exp $ */
 
 /*
  * MIT-MAGIC-COOKIE-1 authorization scheme
@@ -37,7 +35,7 @@ from The Open Group.
 #include <dix-config.h>
 #endif
 
-#include <X11/X.h>
+#include <nx-X11/X.h>
 #include "os.h"
 #include "osdep.h"
 #include "dixstruct.h"
@@ -57,12 +55,12 @@ MitAddCookie (
 {
     struct auth	*new;
 
-    new = (struct auth *) xalloc (sizeof (struct auth));
+    new = (struct auth *) malloc (sizeof (struct auth));
     if (!new)
 	return 0;
-    new->data = (char *) xalloc ((unsigned) data_length);
+    new->data = (char *) malloc ((unsigned) data_length);
     if (!new->data) {
-	xfree(new);
+	free(new);
 	return 0;
     }
     new->next = mit_auth;
@@ -84,7 +82,7 @@ MitCheckCookie (
 
     for (auth = mit_auth; auth; auth=auth->next) {
         if (data_length == auth->len &&
-	   memcmp (data, auth->data, (int) data_length) == 0)
+	   timingsafe_memcmp (data, auth->data, (int) data_length) == 0)
 	    return auth->id;
     }
     *reason = "Invalid MIT-MAGIC-COOKIE-1 key";
@@ -98,8 +96,8 @@ MitResetCookie (void)
 
     for (auth = mit_auth; auth; auth=next) {
 	next = auth->next;
-	xfree (auth->data);
-	xfree (auth);
+	free (auth->data);
+	free (auth);
     }
     mit_auth = 0;
     return 0;
@@ -154,8 +152,8 @@ MitRemoveCookie (
 		prev->next = auth->next;
 	    else
 		mit_auth = auth->next;
-	    xfree (auth->data);
-	    xfree (auth);
+	    free (auth->data);
+	    free (auth);
 	    return 1;
 	}
     }

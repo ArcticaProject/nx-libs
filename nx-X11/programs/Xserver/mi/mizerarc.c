@@ -1,4 +1,3 @@
-/* $XFree86: xc/programs/Xserver/mi/mizerarc.c,v 1.6 2001/12/14 20:00:28 dawes Exp $ */
 /************************************************************
 
 Copyright 1989, 1998  The Open Group
@@ -27,7 +26,6 @@ Author:  Bob Scheifler, MIT X Consortium
 
 ********************************************************/
 
-/* $Xorg: mizerarc.c,v 1.4 2001/02/09 02:05:22 xorgcvs Exp $ */
 
 /* Derived from:
  * "Algorithm for drawing ellipses or hyperbolae with a digital plotter"
@@ -40,8 +38,8 @@ Author:  Bob Scheifler, MIT X Consortium
 #endif
 
 #include <math.h>
-#include <X11/X.h>
-#include <X11/Xprotostr.h>
+#include <nx-X11/X.h>
+#include <nx-X11/Xprotostr.h>
 #include "regionstr.h"
 #include "gcstruct.h"
 #include "pixmapstr.h"
@@ -720,7 +718,7 @@ miZeroPolyArc(pDraw, pGC, narcs, parcs)
     register int n, maxw = 0;
     register xArc *arc;
     register int i;
-    DDXPointPtr points, pts, oddPts;
+    DDXPointPtr points, pts, oddPts = NULL;
     register DDXPointPtr pt;
     int numPts;
     Bool dospans;
@@ -748,7 +746,7 @@ miZeroPolyArc(pDraw, pGC, narcs, parcs)
     dospans = (pGC->fillStyle != FillSolid);
     if (dospans)
     {
-	widths = (int *)ALLOCATE_LOCAL(sizeof(int) * numPts);
+	widths = (int *)malloc(sizeof(int) * numPts);
 	if (!widths)
 	    return;
 	maxw = 0;
@@ -765,12 +763,12 @@ miZeroPolyArc(pDraw, pGC, narcs, parcs)
 		   (unsigned char *) pGC->dash, (int)pGC->numInDashList,
 		   &dinfo.dashOffsetInit);
     }
-    points = (DDXPointPtr)ALLOCATE_LOCAL(sizeof(DDXPointRec) * numPts);
+    points = (DDXPointPtr)malloc(sizeof(DDXPointRec) * numPts);
     if (!points)
     {
 	if (dospans)
 	{
-	    DEALLOCATE_LOCAL(widths);
+	    free(widths);
 	}
 	return;
     }
@@ -847,9 +845,9 @@ miZeroPolyArc(pDraw, pGC, narcs, parcs)
 	    }
 	}
     }
-    DEALLOCATE_LOCAL(points);
+    free(points);
     if (dospans)
     {
-	DEALLOCATE_LOCAL(widths);
+	free(widths);
     }
 }

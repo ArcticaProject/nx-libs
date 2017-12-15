@@ -29,14 +29,13 @@
 #ifndef _XFIXESINT_H_
 #define _XFIXESINT_H_
 
-#define NEED_EVENTS
-#include <X11/X.h>
-#include <X11/Xproto.h>
+#include <nx-X11/X.h>
+#include <nx-X11/Xproto.h>
 #include "misc.h"
 #include "os.h"
 #include "dixstruct.h"
 #include "extnsionst.h"
-#include <X11/extensions/xfixesproto.h>
+#include <nx-X11/extensions/xfixesproto.h>
 #include "windowstr.h"
 #include "selection.h"
 #include "xfixes.h"

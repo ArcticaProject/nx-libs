@@ -1,0 +1,136 @@
+--- ./nx-X11/programs/Xserver/os/log.c.X.original	2015-02-13 14:03:44.788440645 +0100
++++ ./nx-X11/programs/Xserver/os/log.c	2015-02-13 14:03:44.788440645 +0100
+@@ -78,6 +78,23 @@
+ 
+ /* $XFree86: xc/programs/Xserver/os/log.c,v 1.6 2003/11/07 13:45:27 tsi Exp $ */
+ 
++/**************************************************************************/
++/*                                                                        */
++/* Copyright (c) 2001, 2011 NoMachine, http://www.nomachine.com/.         */
++/*                                                                        */
++/* NX-X11, NX protocol compression and NX extensions to this software     */
++/* are copyright of NoMachine. Redistribution and use of the present      */
++/* software is allowed according to terms specified in the file LICENSE   */
++/* which comes in the source distribution.                                */
++/*                                                                        */
++/* Check http://www.nomachine.com/licensing.html for applicability.       */
++/*                                                                        */
++/* NX and NoMachine are trademarks of Medialogic S.p.A.                   */
++/*                                                                        */
++/* All rights reserved.                                                   */
++/*                                                                        */
++/**************************************************************************/
++
+ #ifdef HAVE_DIX_CONFIG_H
+ #include <dix-config.h>
+ #endif
+@@ -98,9 +115,17 @@
+ #define getpid(x) _getpid(x)
+ #endif
+ 
++#ifdef NX_TRANS_SOCKET
++
++#include "NX.h"
++
++#endif
+ 
+ #ifdef DDXOSVERRORF
+ void (*OsVendorVErrorFProc)(const char *, va_list args) = NULL;
++#ifdef NX_TRANS_EXIT
++int OsVendorVErrorFFatal = 0;
++#endif
+ #endif
+ 
+ static FILE *logFile = NULL;
+@@ -265,6 +290,32 @@
+      */
+     if (verb < 0 || logFileVerbosity >= verb || logVerbosity >= verb) {
+ 	vsnprintf(tmpBuffer, sizeof(tmpBuffer), f, args);
++#ifdef NX_TRANS_EXIT
++        /*
++         * Beautify the message. Make the
++         * first letter uppercase.
++         */
++
++        *tmpBuffer = toupper(*tmpBuffer);
++
++        /*
++         * Remove the trailing newline.
++         */
++
++        if (strlen(tmpBuffer) > 0 &&
++                *(tmpBuffer + strlen(tmpBuffer) - 1) == '\n') {
++            *(tmpBuffer + strlen(tmpBuffer) - 1) = '\0';
++        }
++
++        /*
++         * Remove the trailing full-stop.
++         */
++
++        if (strlen(tmpBuffer) > 0 &&
++                *(tmpBuffer + strlen(tmpBuffer) - 1) == '.') {
++            *(tmpBuffer + strlen(tmpBuffer) - 1) = '\0';
++        }
++#endif /* #ifdef NX_TRANS_EXIT */
+ 	len = strlen(tmpBuffer);
+     }
+     if ((verb < 0 || logVerbosity >= verb) && len > 0)
+@@ -404,12 +455,22 @@
+ void
+ AbortServer(void)
+ {
++#if defined(NX_TRANS_SOCKET) && defined(NX_TRANS_TEST)
++    fprintf(stderr, "AbortServer: Going to abort the current server.\n");
++#endif
+     OsCleanup(TRUE);
+     AbortDDX();
+     fflush(stderr);
+     if (CoreDump)
+ 	abort();
++#ifdef NX_TRANS_EXIT
++#ifdef NX_TRANS_TEST
++    fprintf(stderr, "AbortServer: Going to clean up NX resources and exit.\n");
++#endif
++    NXTransExit(1);
++#else /* #ifdef NX_TRANS_EXIT */
+     exit (1);
++#endif
+ }
+ 
+ #ifndef AUDIT_PREFIX
+@@ -533,6 +594,27 @@
+     va_list args;
+     static Bool beenhere = FALSE;
+ 
++#ifdef NX_TRANS_EXIT
++    if (beenhere) {
++        fprintf(stderr, "Error: Aborting session with fatal error function reentered.\n");
++    }
++    else {
++        /*
++         * Tell to the log function that this
++         * is a fatal error.
++         */
++
++        OsVendorVErrorFFatal = 1;
++
++        fprintf(stderr, "Error: Aborting session with '");
++
++        va_start(args, f);
++        VErrorF(f, args);
++        va_end(args);
++
++        fprintf(stderr, "'.\n");
++    }
++#else /* #ifdef NX_TRANS_EXIT */
+     if (beenhere)
+ 	ErrorF("\nFatalError re-entered, aborting\n");
+     else
+@@ -542,6 +624,7 @@
+     VErrorF(f, args);
+     va_end(args);
+     ErrorF("\n");
++#endif /* #ifdef NX_TRANS_EXIT */
+ #ifdef DDXOSFATALERROR
+     if (!beenhere)
+ 	OsVendorFatalError();

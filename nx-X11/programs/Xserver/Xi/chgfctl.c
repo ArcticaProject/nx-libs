@@ -1,4 +1,3 @@
-/* $Xorg: chgfctl.c,v 1.4 2001/02/09 02:04:33 xorgcvs Exp $ */
 
 /************************************************************
 
@@ -45,7 +44,6 @@ ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS
 SOFTWARE.
 
 ********************************************************/
-/* $XFree86: xc/programs/Xserver/Xi/chgfctl.c,v 3.3 2001/01/17 22:13:23 dawes Exp $ */
 
 /********************************************************************
  *
@@ -53,17 +51,15 @@ SOFTWARE.
  *
  */
 
-#define	 NEED_EVENTS			/* for inputstr.h    */
-#define	 NEED_REPLIES
 #ifdef HAVE_DIX_CONFIG_H
 #include <dix-config.h>
 #endif
 
-#include <X11/X.h>				/* for inputstr.h    */
-#include <X11/Xproto.h>			/* Request macro     */
+#include <nx-X11/X.h>				/* for inputstr.h    */
+#include <nx-X11/Xproto.h>			/* Request macro     */
 #include "inputstr.h"			/* DeviceIntPtr	     */
-#include <X11/extensions/XI.h>
-#include <X11/extensions/XIproto.h>			/* control constants */
+#include <nx-X11/extensions/XI.h>
+#include <nx-X11/extensions/XIproto.h>			/* control constants */
 
 #include "extnsionst.h"
 #include "extinit.h"			/* LookupDeviceIntRec */
@@ -84,12 +80,10 @@ int
 SProcXChangeFeedbackControl(client)
     register ClientPtr client;
     {
-    register char n;
-
     REQUEST(xChangeFeedbackControlReq);
-    swaps(&stuff->length, n);
+    swaps(&stuff->length);
     REQUEST_AT_LEAST_SIZE(xChangeFeedbackControlReq);
-    swapl(&stuff->mask, n);
+    swapl(&stuff->mask);
     return(ProcXChangeFeedbackControl(client));
     }
 
@@ -156,11 +150,12 @@ ProcXChangeFeedbackControl(client)
 	    break;
 	case StringFeedbackClass:
 	    {
-	    register char n;
 	    xStringFeedbackCtl *f = ((xStringFeedbackCtl *) &stuff[1]);
 	    if (client->swapped)
 		{
-		swaps(&f->num_keysyms,n);
+		if (len < (sizeof(xStringFeedbackCtl) + 3) >> 2)
+		    return BadLength;
+		swaps(&f->num_keysyms);
 		}
 	    if (len != ((sizeof(xStringFeedbackCtl)>>2) + f->num_keysyms))
 		{
@@ -240,18 +235,17 @@ ChangeKbdFeedback (client, dev, mask, k, f)
     KbdFeedbackPtr	k;
     xKbdFeedbackCtl 	*f;
     {
-    register char n;
     KeybdCtrl kctrl;
     int t;
     int key = DO_ALL;
 
     if (client->swapped)
 	{
-	swaps(&f->length,n);
-	swaps(&f->pitch,n);
-	swaps(&f->duration,n);
-	swapl(&f->led_mask,n);
-	swapl(&f->led_values,n);
+	swaps(&f->length);
+	swaps(&f->pitch);
+	swaps(&f->duration);
+	swapl(&f->led_mask);
+	swapl(&f->led_values);
 	}
 
     kctrl = k->ctrl;
@@ -364,9 +358,9 @@ ChangeKbdFeedback (client, dev, mask, k, f)
 		kctrl.autoRepeat = defaultKeyboardControl.autoRepeat;
 	    else
 		kctrl.autoRepeats[inx] &= ~kmask;
-		kctrl.autoRepeats[inx] =
-			(kctrl.autoRepeats[inx] & ~kmask) |
-			(defaultKeyboardControl.autoRepeats[inx] & kmask);
+	    kctrl.autoRepeats[inx] =
+		(kctrl.autoRepeats[inx] & ~kmask) |
+		(defaultKeyboardControl.autoRepeats[inx] & kmask);
 	    }
 	else
 	    {
@@ -396,15 +390,14 @@ ChangePtrFeedback (client, dev, mask, p, f)
     PtrFeedbackPtr 	p;
     xPtrFeedbackCtl 	*f;
     {
-    register char n;
     PtrCtrl pctrl;		/* might get BadValue part way through */
 
     if (client->swapped)
 	{
-	swaps(&f->length,n);
-	swaps(&f->num,n);
-	swaps(&f->denom,n);
-	swaps(&f->thresh,n);
+	swaps(&f->length);
+	swaps(&f->num);
+	swaps(&f->denom);
+	swaps(&f->thresh);
 	}
 
     pctrl = p->ctrl;
@@ -478,12 +471,10 @@ ChangeIntegerFeedback (client, dev, mask, i, f)
     IntegerFeedbackPtr 		i;
     xIntegerFeedbackCtl 	*f;
     {
-    register char n;
-
     if (client->swapped)
 	{
-	swaps(&f->length,n);
-	swapl(&f->int_to_display,n);
+	swaps(&f->length);
+	swapl(&f->int_to_display);
 	}
 
     i->ctrl.integer_displayed = f->int_to_display;
@@ -505,14 +496,13 @@ ChangeStringFeedback (client, dev, mask, s, f)
     StringFeedbackPtr 	s;
     xStringFeedbackCtl 	*f;
     {
-    register char n;
     int		i, j;
     KeySym	*syms, *sup_syms;
 
     syms = (KeySym *) (f+1);
     if (client->swapped)
 	{
-	swaps(&f->length,n);	/* swapped num_keysyms in calling proc */
+	swaps(&f->length);	/* swapped num_keysyms in calling proc */
 	SwapLongs((CARD32 *) syms, f->num_keysyms);
 	}
 
@@ -557,15 +547,14 @@ ChangeBellFeedback (client, dev, mask, b, f)
     BellFeedbackPtr 	b;
     xBellFeedbackCtl 	*f;
     {
-    register char n;
     int t;
     BellCtrl bctrl;		/* might get BadValue part way through */
 
     if (client->swapped)
 	{
-	swaps(&f->length,n);
-	swaps(&f->pitch,n);
-	swaps(&f->duration,n);
+	swaps(&f->length);
+	swaps(&f->pitch);
+	swaps(&f->duration);
 	}
 
     bctrl = b->ctrl;
@@ -632,14 +621,13 @@ ChangeLedFeedback (client, dev, mask, l, f)
     LedFeedbackPtr 	l;
     xLedFeedbackCtl 	*f;
     {
-    register char n;
     LedCtrl lctrl;		/* might get BadValue part way through */
 
     if (client->swapped)
 	{
-	swaps(&f->length,n);
-	swapl(&f->led_values,n);
-	swapl(&f->led_mask,n);
+	swaps(&f->length);
+	swapl(&f->led_values);
+	swapl(&f->led_mask);
 	}
 
     f->led_mask &= l->ctrl.led_mask;	/* set only supported leds */

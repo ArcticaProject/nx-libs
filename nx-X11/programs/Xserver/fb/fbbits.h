@@ -1,6 +1,4 @@
 /*
- * $XFree86$
- *
  * Copyright © 1998 Keith Packard
  *
  * Permission to use, copy, modify, distribute, and sell this software and its
@@ -668,7 +666,7 @@ POLYLINE (DrawablePtr	pDrawable,
     int		    xoff = pDrawable->x;
     int		    yoff = pDrawable->y;
     unsigned int    bias = miGetZeroLineBias(pDrawable->pScreen);
-    BoxPtr	    pBox = REGION_EXTENTS (pDrawable->pScreen, fbGetCompositeClip (pGC));
+    BoxPtr	    pBox = RegionExtents(fbGetCompositeClip (pGC));
     
     FbBits	    *dst;
     int		    dstStride;
@@ -800,7 +798,7 @@ POLYSEGMENT (DrawablePtr    pDrawable,
     int		    xoff = pDrawable->x;
     int		    yoff = pDrawable->y;
     unsigned int    bias = miGetZeroLineBias(pDrawable->pScreen);
-    BoxPtr	    pBox = REGION_EXTENTS (pDrawable->pScreen, fbGetCompositeClip (pGC));
+    BoxPtr	    pBox = RegionExtents(fbGetCompositeClip (pGC));
     
     FbBits	    *dst;
     int		    dstStride;
@@ -828,8 +826,6 @@ POLYSEGMENT (DrawablePtr    pDrawable,
     bitsBase = ((UNIT *) dst) + (yoff + dstYoff) * bitsStride + (xoff + dstXoff) * MUL;
     ul = coordToInt(pBox->x1 - xoff,     pBox->y1 - yoff);
     lr = coordToInt(pBox->x2 - xoff - 1, pBox->y2 - yoff - 1);
-
-    bits += bitsStride * yoff + xoff * MUL;
 
     capNotLast = pGC->capStyle == CapNotLast;
     

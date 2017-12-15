@@ -26,15 +26,11 @@ used in advertising or otherwise to promote the sale, use or other dealings
 in this Software without prior written authorization from The Open Group.
  *
  */
-/* $XFree86: xc/include/Xfuncs.h,v 3.10 2002/05/31 18:45:38 dawes Exp $ */
 
 #ifndef _XFUNCS_H_
 #define _XFUNCS_H_
 
-#include <X11/Xosdefs.h>
-
-/* the old Xfuncs.h, for pre-R6 */
-#if !(defined(XFree86LOADER) && defined(IN_MODULE))
+#include <nx-X11/Xosdefs.h>
 
 #ifdef X_USEBFUNCS
 void bcopy();
@@ -88,7 +84,5 @@ void bcopy();
 #if defined(X_NOT_STDC_ENV) || (defined(sun) && !defined(SVR4))
 #define atexit(f) on_exit(f, 0)
 #endif
-
-#endif /* !(defined(XFree86LOADER) && defined(IN_MODULE)) */
 
 #endif /* _XFUNCS_H_ */

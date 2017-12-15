@@ -1,4 +1,3 @@
-/* $Xorg: allowev.c,v 1.4 2001/02/09 02:04:33 xorgcvs Exp $ */
 
 /************************************************************
 
@@ -45,7 +44,6 @@ ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS
 SOFTWARE.
 
 ********************************************************/
-/* $XFree86: xc/programs/Xserver/Xi/allowev.c,v 3.3 2001/01/17 22:13:23 dawes Exp $ */
 
 /***********************************************************************
  *
@@ -53,17 +51,15 @@ SOFTWARE.
  *
  */
 
-#define	 NEED_EVENTS
-#define	 NEED_REPLIES
 #ifdef HAVE_DIX_CONFIG_H
 #include <dix-config.h>
 #endif
 
-#include <X11/X.h>				/* for inputstr.h    */
-#include <X11/Xproto.h>			/* Request macro     */
+#include <nx-X11/X.h>				/* for inputstr.h    */
+#include <nx-X11/Xproto.h>			/* Request macro     */
 #include "inputstr.h"			/* DeviceIntPtr	     */
-#include <X11/extensions/XI.h>
-#include <X11/extensions/XIproto.h>
+#include <nx-X11/extensions/XI.h>
+#include <nx-X11/extensions/XIproto.h>
 
 #include "extnsionst.h"
 #include "extinit.h"			/* LookupDeviceIntRec */
@@ -82,12 +78,10 @@ int
 SProcXAllowDeviceEvents(client)
     register ClientPtr client;
     {
-    register char n;
-
     REQUEST(xAllowDeviceEventsReq);
-    swaps(&stuff->length, n);
+    swaps(&stuff->length);
     REQUEST_SIZE_MATCH(xAllowDeviceEventsReq);
-    swapl(&stuff->time, n);
+    swapl(&stuff->time);
     return(ProcXAllowDeviceEvents(client));
     }
 

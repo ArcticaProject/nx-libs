@@ -1,5 +1,4 @@
 /* $TOG: panoramiX.h /main/4 1998/03/17 06:51:02 kaleb $ */
-/* $XdotOrg: xc/programs/Xserver/Xext/panoramiX.h,v 1.5 2005/07/03 07:01:04 daniels Exp $ */
 /*****************************************************************
 
 Copyright (c) 1991, 1997 Digital Equipment Corporation, Maynard, Massachusetts.
@@ -28,7 +27,6 @@ Equipment Corporation.
 
 ******************************************************************/
 
-/* $XFree86: xc/programs/Xserver/Xext/panoramiX.h,v 1.5 2001/01/03 02:54:17 keithp Exp $ */
 
 /* THIS IS NOT AN X PROJECT TEAM SPECIFICATION */
 
@@ -43,8 +41,8 @@ Equipment Corporation.
 #ifndef _PANORAMIX_H_
 #define _PANORAMIX_H_
 
-#include <X11/extensions/panoramiXext.h>
-#include "gcstruct.h"
+#include <nx-X11/extensions/panoramiXext.h>
+/*#include "gcstruct.h"*/
 
 
 typedef struct _PanoramiXData {
@@ -89,11 +87,11 @@ typedef struct {
 #define FORCE_ROOT(a) { \
     int _j; \
     for (_j = PanoramiXNumScreens - 1; _j; _j--) \
-        if ((a).root == WindowTable[_j]->drawable.id)   \
+        if ((a).root == screenInfo.screens[_j]->root->drawable.id)   \
             break;                                      \
     (a).rootX += panoramiXdataPtr[_j].x;             \
     (a).rootY += panoramiXdataPtr[_j].y;             \
-    (a).root = WindowTable[0]->drawable.id;          \
+    (a).root = screenInfo.screens[0]->root->drawable.id;          \
 }
 
 #define FORCE_WIN(a) {                                  \

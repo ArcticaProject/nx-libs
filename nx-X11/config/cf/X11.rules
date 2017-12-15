@@ -1,8 +1,3 @@
-XCOMM $Xorg: X11.rules,v 1.4 2000/08/17 19:41:46 cpqbld Exp $
-
-
-XCOMM $XFree86: xc/config/cf/X11.rules,v 1.6 2001/01/17 16:22:31 dawes Exp $
-
 /* Note whether we are the top level project. */
 #ifndef SeenTopLevelProject
 # define SeenTopLevelProject	YES
@@ -36,15 +31,15 @@ XCOMM $XFree86: xc/config/cf/X11.rules,v 1.6 2001/01/17 16:22:31 dawes Exp $
 #endif
 
 #if defined(X11ProjectRoot)
-# define XBinDir	$(XPROJECTROOT)/bin
+# define XBinDir	$(XPROJECTROOT)/lib/nx/bin
 #elif defined(ProjectRoot) 
-# define XBinDir	$(PROJECTROOT)/bin
+# define XBinDir	$(PROJECTROOT)/lib/nx/bin
 #else
 # define XBinDir	$(BINDIR)
 #endif
 
 #ifdef X11ProjectRoot
-# define XUsrLibDirPath	$(USRLIBDIR):$(XPROJECTROOT)/lib
+# define XUsrLibDirPath	$(USRLIBDIR):$(XPROJECTROOT)
 #else
 # define XUsrLibDirPath	$(USRLIBDIR)
 #endif
@@ -60,7 +55,7 @@ XCOMM $XFree86: xc/config/cf/X11.rules,v 1.6 2001/01/17 16:22:31 dawes Exp $
 #if ImportX11
 # define XLdPreLibs	-L$(LIBSRC)
 #elif defined(UseInstalledX11) && defined(X11ProjectRoot)
-# define XLdPreLibs	-L$(XPROJECTROOT)/lib
+# define XLdPreLibs	-L$(XPROJECTROOT)
 #else
 # define XLdPreLibs	/**/
 #endif
@@ -70,7 +65,7 @@ XCOMM $XFree86: xc/config/cf/X11.rules,v 1.6 2001/01/17 16:22:31 dawes Exp $
 #define LdPreLibs	LdPreLib XLdPreLibs
 
 #ifdef X11ProjectRoot
-# define XLdPostLibs	-L$(XPROJECTROOT)/lib
+# define XLdPostLibs	-L$(XPROJECTROOT)
 #else
 # define XLdPostLibs	/**/
 #endif
@@ -86,7 +81,7 @@ XCOMM $XFree86: xc/config/cf/X11.rules,v 1.6 2001/01/17 16:22:31 dawes Exp $
 #  define TopXInclude	-I$(TOP)/exports/include
 #else
 #  ifdef X11ProjectRoot
-#   define TopXInclude	-I$(XPROJECTROOT)/include
+#   define TopXInclude	-I$(XPROJECTROOT)/../../include/nx
 #  else
 #   define TopXInclude	/**/
 #  endif
@@ -98,7 +93,7 @@ XCOMM $XFree86: xc/config/cf/X11.rules,v 1.6 2001/01/17 16:22:31 dawes Exp $
 #define TopIncludes	TopInclude $(TOP_X_INCLUDES)
 
 #if UseInstalledX11 && defined(X11ProjectRoot)
-# define X11BuildLibPath	$(XPROJECTROOT)/lib
+# define X11BuildLibPath	$(XPROJECTROOT)
 #elif UseInstalledX11
 # define X11BuildLibPath	$(USRLIBDIR)
 #elif ImportX11

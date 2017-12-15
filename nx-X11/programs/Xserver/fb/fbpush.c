@@ -21,7 +21,6 @@
  * TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
-/* $XFree86: xc/programs/Xserver/fb/fbpush.c,v 1.3 2000/02/14 19:20:30 dawes Exp $ */
 
 #ifdef HAVE_DIX_CONFIG_H
 #include <dix-config.h>
@@ -192,8 +191,8 @@ fbPushImage (DrawablePtr    pDrawable,
     BoxPtr	pbox;
     int		x1, y1, x2, y2;
     
-    for (nbox = REGION_NUM_RECTS (pClip),
-	 pbox = REGION_RECTS(pClip);
+    for (nbox = RegionNumRects (pClip),
+	 pbox = RegionRects(pClip);
 	 nbox--;
 	 pbox++)
     {
@@ -237,7 +236,7 @@ fbPushPixels (GCPtr	    pGC,
     FbStip	*stip;
     FbStride	stipStride;
     int		stipBpp;
-    int		stipXoff, stipYoff; /* Assumed to be zero */
+    _X_UNUSED int		stipXoff, stipYoff; /* Assumed to be zero */
 
     fbGetStipDrawable (&pBitmap->drawable, stip, stipStride, stipBpp, stipXoff, stipYoff);
 

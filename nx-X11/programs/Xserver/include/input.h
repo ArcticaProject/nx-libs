@@ -1,4 +1,3 @@
-/* $Xorg: input.h,v 1.4 2001/02/09 02:05:15 xorgcvs Exp $ */
 /************************************************************
 
 Copyright 1987, 1998  The Open Group
@@ -45,15 +44,14 @@ ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS
 SOFTWARE.
 
 ********************************************************/
-/* $XFree86: xc/programs/Xserver/include/input.h,v 3.8 2003/04/27 21:31:04 herrb Exp $ */
 
 #ifndef INPUT_H
 #define INPUT_H
 
 #include "misc.h"
 #include "screenint.h"
-#include <X11/Xmd.h>
-#include <X11/Xproto.h>
+#include <nx-X11/Xmd.h>
+#include <nx-X11/Xproto.h>
 #include "window.h"     /* for WindowPtr */
 
 #define DEVICE_INIT	0
@@ -104,7 +102,7 @@ typedef void (*DeviceUnwrapProc)(
     );
 
 typedef struct _DeviceRec {
-    pointer	devicePrivate;
+    void *	devicePrivate;
     ProcessInputProc processInputProc;	/* current */
     ProcessInputProc realInputProc;	/* deliver */
     ProcessInputProc enqueueInputProc;	/* enqueue */
@@ -255,7 +253,7 @@ extern Bool InitFocusClassDeviceStruct(
 typedef void (*BellProcPtr)(
     int /*percent*/,
     DeviceIntPtr /*device*/,
-    pointer /*ctrl*/,
+    void * /*ctrl*/,
     int);
 
 typedef void (*KbdCtrlProcPtr)(

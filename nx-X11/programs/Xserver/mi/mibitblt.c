@@ -1,4 +1,3 @@
-/* $XFree86: xc/programs/Xserver/mi/mibitblt.c,v 3.10 2001/08/06 20:51:17 dawes Exp $ */
 /***********************************************************
 
 Copyright 1987, 1998  The Open Group
@@ -45,15 +44,14 @@ ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS
 SOFTWARE.
 
 ******************************************************************/
-/* $Xorg: mibitblt.c,v 1.5 2001/02/09 02:05:20 xorgcvs Exp $ */
 /* Author: Todd Newman  (aided and abetted by Mr. Drewry) */
 
 #ifdef HAVE_DIX_CONFIG_H
 #include <dix-config.h>
 #endif
 
-#include <X11/X.h>
-#include <X11/Xprotostr.h>
+#include <nx-X11/X.h>
+#include <nx-X11/Xprotostr.h>
 
 #include "misc.h"
 #include "gcstruct.h"
@@ -62,7 +60,7 @@ SOFTWARE.
 #include "scrnintstr.h"
 #include "mi.h"
 #include "regionstr.h"
-#include <X11/Xmd.h>
+#include <nx-X11/Xmd.h>
 #include "servermd.h"
 
 #ifndef HAS_FFS
@@ -117,7 +115,7 @@ miCopyArea(pSrcDrawable, pDstDrawable,
 	box.x2 = pSrcDrawable->x + (int) pSrcDrawable->width;
 	box.y2 = pSrcDrawable->y + (int) pSrcDrawable->height;
 
-	prgnSrcClip = REGION_CREATE(pGC->pScreen, &box, 1);
+	prgnSrcClip = RegionCreate(&box, 1);
 	realSrcClip = 1;
     }
     else
@@ -145,21 +143,21 @@ miCopyArea(pSrcDrawable, pDstDrawable,
     }
 
     pptFirst = ppt = (DDXPointPtr)
-        ALLOCATE_LOCAL(heightSrc * sizeof(DDXPointRec));
+        malloc(heightSrc * sizeof(DDXPointRec));
     pwidthFirst = pwidth = (unsigned int *)
-        ALLOCATE_LOCAL(heightSrc * sizeof(unsigned int));
-    numRects = REGION_NUM_RECTS(prgnSrcClip);
-    boxes = REGION_RECTS(prgnSrcClip);
+        malloc(heightSrc * sizeof(unsigned int));
+    numRects = RegionNumRects(prgnSrcClip);
+    boxes = RegionRects(prgnSrcClip);
     ordering = (unsigned int *)
-        ALLOCATE_LOCAL(numRects * sizeof(unsigned int));
+        malloc(numRects * sizeof(unsigned int));
     if(!pptFirst || !pwidthFirst || !ordering)
     {
        if (ordering)
-	   DEALLOCATE_LOCAL(ordering);
+	   free(ordering);
        if (pwidthFirst)
-           DEALLOCATE_LOCAL(pwidthFirst);
+           free(pwidthFirst);
        if (pptFirst)
-           DEALLOCATE_LOCAL(pptFirst);
+           free(pptFirst);
        return (RegionPtr)NULL;
     }
 
@@ -239,7 +237,7 @@ miCopyArea(pSrcDrawable, pDstDrawable,
 	    ppt++->y = y++;
 	    *pwidth++ = width;
 	}
-	pbits = (unsigned int *)xalloc(height * PixmapBytePad(width,
+	pbits = (unsigned int *)malloc(height * PixmapBytePad(width,
 					     pSrcDrawable->depth));
 	if (pbits)
 	{
@@ -258,17 +256,17 @@ miCopyArea(pSrcDrawable, pDstDrawable,
 
 	    (*pGC->ops->SetSpans)(pDstDrawable, pGC, (char *)pbits, pptFirst,
 				  (int *)pwidthFirst, height, TRUE);
-	    xfree(pbits);
+	    free(pbits);
 	}
     }
     prgnExposed = miHandleExposures(pSrcDrawable, pDstDrawable, pGC, xIn, yIn,
 		      widthSrc, heightSrc, xOut, yOut, (unsigned long)0);
     if(realSrcClip)
-	REGION_DESTROY(pGC->pScreen, prgnSrcClip);
+	RegionDestroy(prgnSrcClip);
 		
-    DEALLOCATE_LOCAL(ordering);
-    DEALLOCATE_LOCAL(pwidthFirst);
-    DEALLOCATE_LOCAL(pptFirst);
+    free(ordering);
+    free(pwidthFirst);
+    free(pptFirst);
     return prgnExposed;
 }
 
@@ -318,7 +316,7 @@ miGetPlane(
     sy += pDraw->y;
     widthInBytes = BitmapBytePad(w);
     if(!result)
-        result = (MiBits *)xalloc(h * widthInBytes);
+        result = (MiBits *)malloc(h * widthInBytes);
     if (!result)
 	return (MiBits *)NULL;
     bitsPerPixel = pDraw->bitsPerPixel;
@@ -422,7 +420,8 @@ miOpqStipDrawable(pDraw, pGC, prgnSrc, pbits, srcx, w, h, dstx, dsty)
     RegionPtr	prgnSrcClip;
 
     pPixmap = (*pDraw->pScreen->CreatePixmap)
-			   (pDraw->pScreen, w + srcx, h, 1);
+			   (pDraw->pScreen, w + srcx, h, 1,
+			   CREATE_PIXMAP_USAGE_SCRATCH);
     if (!pPixmap)
 	return;
 
@@ -438,12 +437,12 @@ miOpqStipDrawable(pDraw, pGC, prgnSrc, pbits, srcx, w, h, dstx, dsty)
     dixChangeGC(NullClient, pGCT, GCBackground, NULL, gcv);
     ValidateGC((DrawablePtr)pPixmap, pGCT);
     miClearDrawable((DrawablePtr)pPixmap, pGCT);
-    ppt = pptFirst = (DDXPointPtr)ALLOCATE_LOCAL(h * sizeof(DDXPointRec));
-    pwidth = pwidthFirst = (int *)ALLOCATE_LOCAL(h * sizeof(int));
+    ppt = pptFirst = (DDXPointPtr)malloc(h * sizeof(DDXPointRec));
+    pwidth = pwidthFirst = (int *)malloc(h * sizeof(int));
     if(!pptFirst || !pwidthFirst)
     {
-	if (pwidthFirst) DEALLOCATE_LOCAL(pwidthFirst);
-	if (pptFirst) DEALLOCATE_LOCAL(pptFirst);
+	if (pwidthFirst) free(pwidthFirst);
+	if (pptFirst) free(pptFirst);
 	FreeScratchGC(pGCT);
 	return;
     }
@@ -452,9 +451,9 @@ miOpqStipDrawable(pDraw, pGC, prgnSrc, pbits, srcx, w, h, dstx, dsty)
        to destroy what it's sent.  note that this means we don't
        have to free prgnSrcClip ourselves.
     */
-    prgnSrcClip = REGION_CREATE(pGCT->pScreen, NULL, 0);
-    REGION_COPY(pGCT->pScreen, prgnSrcClip, prgnSrc);
-    REGION_TRANSLATE(pGCT->pScreen, prgnSrcClip, srcx, 0);
+    prgnSrcClip = RegionCreate(NULL, 0);
+    RegionCopy(prgnSrcClip, prgnSrc);
+    RegionTranslate(prgnSrcClip, srcx, 0);
     (*pGCT->funcs->ChangeClip)(pGCT, CT_REGION, prgnSrcClip, 0);
     ValidateGC((DrawablePtr)pPixmap, pGCT);
 
@@ -469,8 +468,8 @@ miOpqStipDrawable(pDraw, pGC, prgnSrc, pbits, srcx, w, h, dstx, dsty)
 
     (*pGCT->ops->SetSpans)((DrawablePtr)pPixmap, pGCT, (char *)pbits,
 			   pptFirst, pwidthFirst, h, TRUE);
-    DEALLOCATE_LOCAL(pwidthFirst);
-    DEALLOCATE_LOCAL(pptFirst);
+    free(pwidthFirst);
+    free(pptFirst);
 
 
     /* Save current values from the client GC */
@@ -587,7 +586,7 @@ miCopyPlane(pSrcDrawable, pDstDrawable,
 	box.x2 = box.x1;
     if (box.y1 > box.y2)
 	box.y2 = box.y1;
-    prgnSrc = REGION_CREATE(pGC->pScreen, &box, 1);
+    prgnSrc = RegionCreate(&box, 1);
 
     if (pSrcDrawable->type != DRAWABLE_PIXMAP) {
 	/* clip to visible drawable */
@@ -595,15 +594,15 @@ miCopyPlane(pSrcDrawable, pDstDrawable,
 	if (pGC->subWindowMode == IncludeInferiors)
 	{
 	    RegionPtr	clipList = NotClippedByChildren ((WindowPtr) pSrcDrawable);
-	    REGION_INTERSECT(pGC->pScreen, prgnSrc, prgnSrc, clipList);
-	    REGION_DESTROY(pGC->pScreen, clipList);
+	    RegionIntersect(prgnSrc, prgnSrc, clipList);
+	    RegionDestroy(clipList);
 	} else
-	    REGION_INTERSECT(pGC->pScreen, prgnSrc, prgnSrc,
+	    RegionIntersect(prgnSrc, prgnSrc,
 				       &((WindowPtr)pSrcDrawable)->clipList);
     }
 
-    box = *REGION_EXTENTS(pGC->pScreen, prgnSrc);
-    REGION_TRANSLATE(pGC->pScreen, prgnSrc, -box.x1, -box.y1);
+    box = *RegionExtents(prgnSrc);
+    RegionTranslate(prgnSrc, -box.x1, -box.y1);
 
     if ((box.x2 > box.x1) && (box.y2 > box.y1))
     {
@@ -622,12 +621,12 @@ miCopyPlane(pSrcDrawable, pDstDrawable,
 	    miOpqStipDrawable(pDstDrawable, pGC, prgnSrc, ptile, 0,
 			      box.x2 - box.x1, box.y2 - box.y1,
 			      dstx + box.x1 - srcx, dsty + box.y1 - srcy);
-	    xfree(ptile);
+	    free(ptile);
 	}
     }
     prgnExposed = miHandleExposures(pSrcDrawable, pDstDrawable, pGC, srcx, srcy,
 		      width, height, dstx, dsty, bitPlane);
-    REGION_DESTROY(pGC->pScreen, prgnSrc);
+    RegionDestroy(prgnSrc);
     return prgnExposed;
 }
 
@@ -673,7 +672,8 @@ miGetImage(pDraw, sx, sy, w, h, format, planeMask, pDst)
 	    if (!pGC)
 		return;
             pPixmap = (*pDraw->pScreen->CreatePixmap)
-			       (pDraw->pScreen, w, 1, depth);
+			       (pDraw->pScreen, w, 1, depth,
+			       CREATE_PIXMAP_USAGE_SCRATCH);
 	    if (!pPixmap)
 	    {
 		FreeScratchGC(pGC);
@@ -776,11 +776,11 @@ miPutImage(pDraw, pGC, depth, x, y, w, h, leftPad, format, pImage)
 	box.y1 = 0;
 	box.x2 = w;
 	box.y2 = h;
-	prgnSrc = REGION_CREATE(pGC->pScreen, &box, 1);
+	prgnSrc = RegionCreate(&box, 1);
 
         miOpqStipDrawable(pDraw, pGC, prgnSrc, (MiBits *) pImage,
 			  leftPad, w, h, x, y);
-	REGION_DESTROY(pGC->pScreen, prgnSrc);
+	RegionDestroy(prgnSrc);
 	break;
 
       case XYPixmap:
@@ -812,14 +812,14 @@ miPutImage(pDraw, pGC, depth, x, y, w, h, leftPad, format, pImage)
 	break;
 
       case ZPixmap:
-    	ppt = pptFirst = (DDXPointPtr)ALLOCATE_LOCAL(h * sizeof(DDXPointRec));
-    	pwidth = pwidthFirst = (int *)ALLOCATE_LOCAL(h * sizeof(int));
+	ppt = pptFirst = (DDXPointPtr)malloc(h * sizeof(DDXPointRec));
+	pwidth = pwidthFirst = (int *)malloc(h * sizeof(int));
 	if(!pptFirst || !pwidthFirst)
         {
 	   if (pwidthFirst)
-               DEALLOCATE_LOCAL(pwidthFirst);
+               free(pwidthFirst);
            if (pptFirst)
-               DEALLOCATE_LOCAL(pptFirst);
+               free(pptFirst);
            return;
         }
 	if (pGC->miTranslate)
@@ -838,8 +838,8 @@ miPutImage(pDraw, pGC, depth, x, y, w, h, leftPad, format, pImage)
 
 	(*pGC->ops->SetSpans)(pDraw, pGC, (char *)pImage, pptFirst,
 			      pwidthFirst, h, TRUE);
-	DEALLOCATE_LOCAL(pwidthFirst);
-	DEALLOCATE_LOCAL(pptFirst);
+	free(pwidthFirst);
+	free(pptFirst);
 	break;
     }
 }

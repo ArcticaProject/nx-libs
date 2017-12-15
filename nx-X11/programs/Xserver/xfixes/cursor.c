@@ -76,7 +76,7 @@ typedef struct _CursorScreen {
 
 #define GetCursorScreen(s)	((CursorScreenPtr) ((s)->devPrivates[CursorScreenPrivateIndex].ptr))
 #define GetCursorScreenIfSet(s) ((CursorScreenPrivateIndex != -1) ? GetCursorScreen(s) : NULL)
-#define SetCursorScreen(s,p)	((s)->devPrivates[CursorScreenPrivateIndex].ptr = (pointer) (p))
+#define SetCursorScreen(s,p)	((s)->devPrivates[CursorScreenPrivateIndex].ptr = (void *) (p))
 #define Wrap(as,s,elt,func)	(((as)->elt = (s)->elt), (s)->elt = func)
 #define Unwrap(as,s,elt)	((s)->elt = (as)->elt)
 
@@ -96,13 +96,11 @@ CursorDisplayCursor (ScreenPtr pScreen,
 	CursorCurrent = pCursor;
 	for (e = cursorEvents; e; e = e->next)
 	{
-	    if ((e->eventMask & XFixesDisplayCursorNotifyMask) &&
-		!e->pClient->clientGone)
+	    if ((e->eventMask & XFixesDisplayCursorNotifyMask))
 	    {
 		xXFixesCursorNotifyEvent	ev;
 		ev.type = XFixesEventBase + XFixesCursorNotify;
 		ev.subtype = XFixesDisplayCursorNotify;
-		ev.sequenceNumber = e->pClient->sequence;
 		ev.window = e->pWindow->drawable.id;
 		ev.cursorSerial = pCursor->serialNumber;
 		ev.timestamp = currentTime.milliseconds;
@@ -116,17 +114,17 @@ CursorDisplayCursor (ScreenPtr pScreen,
 }
 
 static Bool
-CursorCloseScreen (int index, ScreenPtr pScreen)
+CursorCloseScreen (ScreenPtr pScreen)
 {
     CursorScreenPtr	cs = GetCursorScreen (pScreen);
     Bool		ret;
 
     Unwrap (cs, pScreen, CloseScreen);
     Unwrap (cs, pScreen, DisplayCursor);
-    ret = (*pScreen->CloseScreen) (index, pScreen);
-    xfree (cs);
-    if (index == 0)
-	CursorScreenPrivateIndex = -1;
+    ret = (*pScreen->CloseScreen) (pScreen);
+    free (cs);
+    if (screenInfo.numScreens <= 1)
+       CursorScreenPrivateIndex = -1;
     return ret;
 }
 
@@ -157,7 +155,7 @@ XFixesSelectCursorInput (ClientPtr	pClient,
     }
     if (!e)
     {
-	e = (CursorEventPtr) xalloc (sizeof (CursorEventRec));
+	e = (CursorEventPtr) malloc (sizeof (CursorEventRec));
 	if (!e)
 	    return BadAlloc;
 
@@ -172,13 +170,13 @@ XFixesSelectCursorInput (ClientPtr	pClient,
 	 */
 	if (!LookupIDByType(pWindow->drawable.id, CursorWindowType))
 	    if (!AddResource (pWindow->drawable.id, CursorWindowType,
-			      (pointer) pWindow))
+			      (void *) pWindow))
 	    {
-		xfree (e);
+		free (e);
 		return BadAlloc;
 	    }
 
-	if (!AddResource (e->clientResource, CursorClientType, (pointer) e))
+	if (!AddResource (e->clientResource, CursorClientType, (void *) e))
 	    return BadAlloc;
 
 	*prev = e;
@@ -195,7 +193,7 @@ ProcXFixesSelectCursorInput (ClientPtr client)
 
     REQUEST_SIZE_MATCH (xXFixesSelectCursorInputReq);
     pWin = (WindowPtr)SecurityLookupWindow(stuff->window, client,
-					   SecurityReadAccess);
+					   DixReadAccess);
     if (!pWin)
         return(BadWindow);
     if (stuff->eventMask & ~CursorAllEvents)
@@ -225,12 +223,11 @@ GetBit (unsigned char *line, int x)
 int
 SProcXFixesSelectCursorInput (ClientPtr client)
 {
-    register int n;
     REQUEST(xXFixesSelectCursorInputReq);
 
-    swaps(&stuff->length, n);
-    swapl(&stuff->window, n);
-    swapl(&stuff->eventMask, n);
+    swaps(&stuff->length);
+    swapl(&stuff->window);
+    swapl(&stuff->eventMask);
     return (*ProcXFixesVector[stuff->xfixesReqType]) (client);
 }
     
@@ -312,7 +309,7 @@ ProcXFixesGetCursorImage (ClientPtr client)
     width = pCursor->bits->width;
     height = pCursor->bits->height;
     npixels = width * height;
-    rep = xalloc (sizeof (xXFixesGetCursorImageReply) +
+    rep = malloc (sizeof (xXFixesGetCursorImageReply) +
 		  npixels * sizeof (CARD32));
     if (!rep)
 	return BadAlloc;
@@ -329,33 +326,30 @@ ProcXFixesGetCursorImage (ClientPtr client)
     rep->cursorSerial = pCursor->serialNumber;
 
     image = (CARD32 *) (rep + 1);
-    CopyCursorToImage (pCursor, image);
-    if (client->swapped)
-    {
-	int n;
-	swaps (&rep->sequenceNumber, n);
-	swapl (&rep->length, n);
-	swaps (&rep->x, n);
-	swaps (&rep->y, n);
-	swaps (&rep->width, n);
-	swaps (&rep->height, n);
-	swaps (&rep->xhot, n);
-	swaps (&rep->yhot, n);
-	swapl (&rep->cursorSerial, n);
-	SwapLongs (image, npixels);
+    CopyCursorToImage(pCursor, image);
+    if (client->swapped) {
+	swaps(&rep->sequenceNumber);
+	swapl(&rep->length);
+	swaps(&rep->x);
+	swaps(&rep->y);
+	swaps(&rep->width);
+	swaps(&rep->height);
+	swaps(&rep->xhot);
+	swaps(&rep->yhot);
+	swapl(&rep->cursorSerial);
+	SwapLongs(image, npixels);
     }
-    (void) WriteToClient(client, sizeof (xXFixesGetCursorImageReply) +
+    WriteToClient(client, sizeof (xXFixesGetCursorImageReply) +
 			 (npixels << 2), (char *) rep);
-    xfree (rep);
+    free (rep);
     return client->noClientException;
 }
 
 int
 SProcXFixesGetCursorImage (ClientPtr client)
 {
-    int n;
     REQUEST(xXFixesGetCursorImageReq);
-    swaps (&stuff->length, n);
+    swaps(&stuff->length);
     return (*ProcXFixesVector[stuff->xfixesReqType]) (client);
 }
 
@@ -368,7 +362,7 @@ ProcXFixesSetCursorName (ClientPtr client)
     Atom atom;
 
     REQUEST_AT_LEAST_SIZE(xXFixesSetCursorNameReq);
-    VERIFY_CURSOR(pCursor, stuff->cursor, client, SecurityWriteAccess);
+    VERIFY_CURSOR(pCursor, stuff->cursor, client, DixWriteAccess);
     tchar = (char *) &stuff[1];
     atom = MakeAtom (tchar, stuff->nbytes, TRUE);
     if (atom == BAD_RESOURCE)
@@ -381,13 +375,12 @@ ProcXFixesSetCursorName (ClientPtr client)
 int
 SProcXFixesSetCursorName (ClientPtr client)
 {
-    int n;
     REQUEST(xXFixesSetCursorNameReq);
 
-    swaps (&stuff->length, n);
+    swaps(&stuff->length);
     REQUEST_AT_LEAST_SIZE(xXFixesSetCursorNameReq);
-    swapl (&stuff->cursor, n);
-    swaps (&stuff->nbytes, n);
+    swapl(&stuff->cursor);
+    swaps(&stuff->nbytes);
     return (*ProcXFixesVector[stuff->xfixesReqType]) (client);
 }
 
@@ -397,11 +390,11 @@ ProcXFixesGetCursorName (ClientPtr client)
     CursorPtr			pCursor;
     xXFixesGetCursorNameReply	reply;
     REQUEST(xXFixesGetCursorNameReq);
-    char *str;
+    const char *str;
     int len;
 
     REQUEST_SIZE_MATCH(xXFixesGetCursorNameReq);
-    VERIFY_CURSOR(pCursor, stuff->cursor, client, SecurityReadAccess);
+    VERIFY_CURSOR(pCursor, stuff->cursor, client, DixReadAccess);
     if (pCursor->name)
 	str = NameForAtom (pCursor->name);
     else
@@ -413,16 +406,14 @@ ProcXFixesGetCursorName (ClientPtr client)
     reply.sequenceNumber = client->sequence;
     reply.atom = pCursor->name;
     reply.nbytes = len;
-    if (client->swapped)
-    {
-	int n;
-	swaps (&reply.sequenceNumber, n);
-	swapl (&reply.length, n);
-	swapl (&reply.atom, n);
-	swaps (&reply.nbytes, n);
+    if (client->swapped) {
+	swaps(&reply.sequenceNumber);
+	swapl(&reply.length);
+	swapl(&reply.atom);
+	swaps(&reply.nbytes);
     }
     WriteReplyToClient(client, sizeof(xXFixesGetCursorNameReply), &reply);
-    (void)WriteToClient(client, len, str);
+    WriteToClient(client, len, str);
     
     return(client->noClientException);
 }
@@ -430,12 +421,11 @@ ProcXFixesGetCursorName (ClientPtr client)
 int
 SProcXFixesGetCursorName (ClientPtr client)
 {
-    int n;
     REQUEST(xXFixesSetCursorNameReq);
 
-    swaps (&stuff->length, n);
+    swaps(&stuff->length);
     REQUEST_SIZE_MATCH(xXFixesGetCursorNameReq);
-    swapl (&stuff->cursor, n);
+    swapl(&stuff->cursor);
     return (*ProcXFixesVector[stuff->xfixesReqType]) (client);
 }
 
@@ -447,7 +437,7 @@ ProcXFixesGetCursorImageAndName (ClientPtr client)
     CursorPtr			pCursor;
     CARD32			*image;
     int				npixels;
-    char			*name;
+    const char			*name;
     int				nbytes, nbytesRound;
     int				width, height;
     int				x, y;
@@ -463,7 +453,7 @@ ProcXFixesGetCursorImageAndName (ClientPtr client)
     name = pCursor->name ? NameForAtom (pCursor->name) : "";
     nbytes = strlen (name);
     nbytesRound = (nbytes + 3) & ~3;
-    rep = xalloc (sizeof (xXFixesGetCursorImageAndNameReply) +
+    rep = malloc (sizeof (xXFixesGetCursorImageAndNameReply) +
 		  npixels * sizeof (CARD32) + nbytesRound);
     if (!rep)
 	return BadAlloc;
@@ -482,36 +472,33 @@ ProcXFixesGetCursorImageAndName (ClientPtr client)
     rep->nbytes = nbytes;
 
     image = (CARD32 *) (rep + 1);
-    CopyCursorToImage (pCursor, image);
-    memcpy ((image + npixels), name, nbytes);
-    if (client->swapped)
-    {
-	int n;
-	swaps (&rep->sequenceNumber, n);
-	swapl (&rep->length, n);
-	swaps (&rep->x, n);
-	swaps (&rep->y, n);
-	swaps (&rep->width, n);
-	swaps (&rep->height, n);
-	swaps (&rep->xhot, n);
-	swaps (&rep->yhot, n);
-	swapl (&rep->cursorSerial, n);
-	swapl (&rep->cursorName, n);
-	swaps (&rep->nbytes, n);
-	SwapLongs (image, npixels);
+    CopyCursorToImage(pCursor, image);
+    memcpy((image + npixels), name, nbytes);
+    if (client->swapped) {
+	swaps(&rep->sequenceNumber);
+	swapl(&rep->length);
+	swaps(&rep->x);
+	swaps(&rep->y);
+	swaps(&rep->width);
+	swaps(&rep->height);
+	swaps(&rep->xhot);
+	swaps(&rep->yhot);
+	swapl(&rep->cursorSerial);
+	swapl(&rep->cursorName);
+	swaps(&rep->nbytes);
+	SwapLongs(image, npixels);
     }
-    (void) WriteToClient(client, sizeof (xXFixesGetCursorImageAndNameReply) +
+    WriteToClient(client, sizeof (xXFixesGetCursorImageAndNameReply) +
 			 (npixels << 2) + nbytesRound, (char *) rep);
-    xfree (rep);
+    free (rep);
     return client->noClientException;
 }
 
 int
 SProcXFixesGetCursorImageAndName (ClientPtr client)
 {
-    int n;
     REQUEST(xXFixesGetCursorImageAndNameReq);
-    swaps (&stuff->length, n);
+    swaps(&stuff->length);
     return (*ProcXFixesVector[stuff->xfixesReqType]) (client);
 }
 
@@ -520,13 +507,13 @@ SProcXFixesGetCursorImageAndName (ClientPtr client)
  * whether it should be replaced with a reference to pCursor.
  */
 
-typedef Bool (*TestCursorFunc) (CursorPtr pOld, pointer closure);
+typedef Bool (*TestCursorFunc) (CursorPtr pOld, void * closure);
 
 typedef struct {
     RESTYPE type;
     TestCursorFunc testCursor;
     CursorPtr pNew;
-    pointer closure;
+    void * closure;
 } ReplaceCursorLookupRec, *ReplaceCursorLookupPtr;
 
 static const RESTYPE    CursorRestypes[] = {
@@ -536,7 +523,7 @@ static const RESTYPE    CursorRestypes[] = {
 #define NUM_CURSOR_RESTYPES (sizeof (CursorRestypes) / sizeof (CursorRestypes[0]))
 
 static Bool
-ReplaceCursorLookup (pointer value, XID id, pointer closure)
+ReplaceCursorLookup (void * value, XID id, void * closure)
 {
     ReplaceCursorLookupPtr  rcl = (ReplaceCursorLookupPtr) closure;
     WindowPtr		    pWin;
@@ -583,7 +570,7 @@ ReplaceCursorLookup (pointer value, XID id, pointer closure)
 static void
 ReplaceCursor (CursorPtr pCursor,
 	       TestCursorFunc testCursor,
-	       pointer closure)
+	       void * closure)
 {
     int	clientIndex;
     int resIndex;
@@ -612,15 +599,15 @@ ReplaceCursor (CursorPtr pCursor,
 	    LookupClientResourceComplex (clients[clientIndex], 
 					 rcl.type, 
 					 ReplaceCursorLookup,
-					 (pointer) &rcl);
+					 (void *) &rcl);
 	}
     }
     /* this "knows" that WindowHasNewCursor doesn't depend on it's argument */
-    WindowHasNewCursor (WindowTable[0]);
+    WindowHasNewCursor (screenInfo.screens[0]->root);
 }
 
 static Bool 
-TestForCursor (CursorPtr pCursor, pointer closure)
+TestForCursor (CursorPtr pCursor, void * closure)
 {
     return (pCursor == (CursorPtr) closure);
 }
@@ -632,30 +619,30 @@ ProcXFixesChangeCursor (ClientPtr client)
     REQUEST(xXFixesChangeCursorReq);
 
     REQUEST_SIZE_MATCH(xXFixesChangeCursorReq);
-    VERIFY_CURSOR (pSource, stuff->source, client, SecurityReadAccess);
-    VERIFY_CURSOR (pDestination, stuff->destination, client, SecurityWriteAccess);
+    VERIFY_CURSOR (pSource, stuff->source, client, DixReadAccess);
+    VERIFY_CURSOR (pDestination, stuff->destination, client, DixWriteAccess);
 
-    ReplaceCursor (pSource, TestForCursor, (pointer) pDestination);
+    ReplaceCursor (pSource, TestForCursor, (void *) pDestination);
     return (client->noClientException);
 }
 
 int
 SProcXFixesChangeCursor (ClientPtr client)
 {
-    int n;
     REQUEST(xXFixesChangeCursorReq);
 
-    swaps (&stuff->length, n);
+    swaps(&stuff->length);
     REQUEST_SIZE_MATCH(xXFixesChangeCursorReq);
-    swapl (&stuff->source, n);
-    swapl (&stuff->destination, n);
+    swapl(&stuff->source);
+    swapl(&stuff->destination);
     return (*ProcXFixesVector[stuff->xfixesReqType]) (client);
 }
 
 static Bool
-TestForCursorName (CursorPtr pCursor, pointer closure)
+TestForCursorName (CursorPtr pCursor, void * closure)
 {
-    return (pCursor->name == (Atom) closure);
+    Atom *pName = closure;
+    return (pCursor->name == *pName);
 }
 
 int
@@ -667,29 +654,28 @@ ProcXFixesChangeCursorByName (ClientPtr client)
     REQUEST(xXFixesChangeCursorByNameReq);
 
     REQUEST_FIXED_SIZE(xXFixesChangeCursorByNameReq, stuff->nbytes);
-    VERIFY_CURSOR(pSource, stuff->source, client, SecurityReadAccess);
+    VERIFY_CURSOR(pSource, stuff->source, client, DixReadAccess);
     tchar = (char *) &stuff[1];
     name = MakeAtom (tchar, stuff->nbytes, FALSE);
     if (name)
-	ReplaceCursor (pSource, TestForCursorName, (pointer) name);
+	ReplaceCursor (pSource, TestForCursorName, &name);
     return (client->noClientException);
 }
 
 int
 SProcXFixesChangeCursorByName (ClientPtr client)
 {
-    int n;
     REQUEST(xXFixesChangeCursorByNameReq);
 
-    swaps (&stuff->length, n);
-    REQUEST_AT_LEAST_SIZE (xXFixesChangeCursorByNameReq);
-    swapl (&stuff->source, n);
-    swaps (&stuff->nbytes, n);
+    swaps(&stuff->length);
+    REQUEST_AT_LEAST_SIZE(xXFixesChangeCursorByNameReq);
+    swapl(&stuff->source);
+    swaps(&stuff->nbytes);
     return (*ProcXFixesVector[stuff->xfixesReqType]) (client);
 }
 
 static int
-CursorFreeClient (pointer data, XID id)
+CursorFreeClient (void * data, XID id)
 {
     CursorEventPtr	old = (CursorEventPtr) data;
     CursorEventPtr	*prev, e;
@@ -699,7 +685,7 @@ CursorFreeClient (pointer data, XID id)
 	if (e == old)
 	{
 	    *prev = e->next;
-	    xfree (e);
+	    free (e);
 	    break;
 	}
     }
@@ -707,7 +693,7 @@ CursorFreeClient (pointer data, XID id)
 }
 
 static int
-CursorFreeWindow (pointer data, XID id)
+CursorFreeWindow (void * data, XID id)
 {
     WindowPtr		pWindow = (WindowPtr) data;
     CursorEventPtr	e, next;
@@ -740,7 +726,7 @@ XFixesCursorInit (void)
 	ScreenPtr	pScreen = screenInfo.screens[i];
 	CursorScreenPtr	cs;
 
-	cs = (CursorScreenPtr) xalloc (sizeof (CursorScreenRec));
+	cs = (CursorScreenPtr) malloc (sizeof (CursorScreenRec));
 	if (!cs)
 	    return FALSE;
 	Wrap (cs, pScreen, CloseScreen, CursorCloseScreen);

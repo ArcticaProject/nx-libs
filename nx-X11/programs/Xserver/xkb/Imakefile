@@ -1,16 +1,5 @@
-XCOMM $Xorg: Imakefile,v 1.3 2000/08/17 19:53:45 cpqbld Exp $
-
-
-
-
-XCOMM $XFree86: xc/programs/Xserver/xkb/Imakefile,v 3.21 2002/12/09 23:00:42 dawes Exp $
-
 #define SGIHyperOpt
 #include <Server.tmpl>
-
-#ifdef SGIArchitecture
-EXTRA_ALLOC_DEFINES = -DFORCE_ALLOCA
-#endif
 
 #if BuildXInputExt
 XKBXI_SRCS = xkbPrOtherEv.c
@@ -26,10 +15,10 @@ XKB_DISABLE = -DXKB_DFLT_DISABLED=0
 XKB_DDXDEFS = XkbServerDefines
 
 #if defined(NXAgentServer) && NXAgentServer
-NX_DEFINES = -DNXAGENT_SERVER
+ NX_DEFINES = -DNXAGENT_SERVER
 #endif
 
-#if (defined(XF86Server) && XF86Server) || (defined(XorgServer) && XorgServer)
+#if (defined(XorgServer) && XorgServer)
 XF86INCLUDES = -I$(XF86COMSRC) -I$(XF86OSSRC)
    XF86_OBJS = xf86KillSrv.o xf86VT.o xf86Private.o
 #endif
@@ -51,10 +40,11 @@ XF86INCLUDES = -I$(XF86COMSRC) -I$(XF86OSSRC)
 	    XKBMisc.o XKBMAlloc.o XKBAlloc.o XKBGAlloc.o \
 	    $(XKBXI_OBJS) $(DDX_OBJS)
    INCLUDES = -I../include -I$(XINCLUDESRC) -I$(EXTINCSRC) -I$(SERVERSRC)/Xext \
-	      -I$(SERVERSRC)/mi $(XF86INCLUDES)
+	      -I$(SERVERSRC)/mi $(XF86INCLUDES) \
+	      `pkg-config --cflags-only-I pixman-1`
    LINTLIBS = ../dix/llib-ldix.ln ../os/llib-los.ln
 
-DEFINES = -DXKB_IN_SERVER $(EXTRA_ALLOC_DEFINES) $(XKB_DDXDEFS) $(NX_DEFINES)
+DEFINES = $(XKB_DDXDEFS) $(NX_DEFINES)
 XKB_DEFINES = -DXKB_BASE_DIRECTORY=\"$(LIBDIR)/xkb\" $(XKB_DISABLE)
 
 NormalLibraryObjectRule()
@@ -62,7 +52,7 @@ NormalLibraryTarget(xkb,$(OBJS))
 LintLibraryTarget(xkb,$(SRCS))
 NormalLintTarget($(SRCS))
 
-#if (defined(XF86Server) && XF86Server) || (defined(XorgServer) && XorgServer)
+#if (defined(XorgServer) && XorgServer)
 ObjectFromSpecialSource(xf86KillSrv,ddxKillSrv,-DXF86DDXACTIONS)
 ObjectFromSpecialSource(xf86VT,ddxVT,-DXF86DDXACTIONS)
 ObjectFromSpecialSource(xf86Private,ddxPrivate,-DXF86DDXACTIONS)
@@ -70,21 +60,6 @@ AllTarget($(XF86_OBJS))
 #endif
 
 SpecialCObjectRule(xkbInit,$(ICONFIGFILES),$(XKB_DEFINES))
-
-LinkSourceFile(maprules.c,$(XKBFILELIBSRC))
-LinkSourceFile(xkmread.c,$(XKBFILELIBSRC))
-LinkSourceFile(xkbtext.c,$(XKBFILELIBSRC))
-XCOMM avoid clash between XKBMisc.c and xkbmisc.c on NT
-LinkFile(xkbfmisc.c,$(XKBFILELIBSRC)/xkbmisc.c)
-LinkSourceFile(xkberrs.c,$(XKBFILELIBSRC))
-LinkSourceFile(xkbconfig.c,$(XKBFILELIBSRC))
-LinkSourceFile(xkbout.c,$(XKBFILELIBSRC))
-LinkSourceFile(XKBMisc.c,$(XLIBSRC))
-LinkSourceFile(XKBMAlloc.c,$(XLIBSRC))
-LinkSourceFile(XKBAlloc.c,$(XLIBSRC))
-LinkSourceFile(XKBGAlloc.c,$(XLIBSRC))
-
-LinkSourceFile(modinit.h,../Xext/extmod)
 
 #if BuildLibraries
 #if UseConfDirForXkb

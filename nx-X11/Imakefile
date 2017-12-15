@@ -1,9 +1,22 @@
-XCOMM $Xorg: Imakefile,v 1.5 2000/08/17 19:41:44 cpqbld Exp $
-
-
-
-
-XCOMM $XFree86: xc/Imakefile,v 3.29tsi Exp $
+/**************************************************************************/
+/*                                                                        */
+/* Copyright (c) 2001, 2011 NoMachine (http://www.nomachine.com)          */
+/* Copyright (c) 2008-2014 Oleksandr Shneyder <o.shneyder@phoca-gmbh.de>  */
+/* Copyright (c) 2011-2016 Mike Gabriel <mike.gabriel@das-netzwerkteam.de>*/
+/* Copyright (c) 2014-2016 Mihai Moldovan <ionic@ionic.de>                */
+/* Copyright (c) 2014-2016 Ulrich Sibiller <uli42@gmx.de>                 */
+/* Copyright (c) 2015-2016 Qindel Group (http://www.qindel.com)           */
+/*                                                                        */
+/* nx-X11, NX protocol compression and NX extensions to this software     */
+/* are copyright of the aforementioned persons and companies.             */
+/*                                                                        */
+/* Redistribution and use of the present software is allowed according    */
+/* to terms specified in the file LICENSE which comes in the source       */
+/* distribution.                                                          */
+/*                                                                        */
+/* All rights reserved.                                                   */
+/*                                                                        */
+/**************************************************************************/
 
 #define IHaveSubdirs
 #define PassCDebugFlags CDEBUGFLAGS="$(CDEBUGFLAGS)"
@@ -14,21 +27,7 @@ RELEASE = XOrgReleaseString
 #define OSName Unknown Operating System!
 #endif
 
-#if !BuildServersOnly
-#if BuildFonts
-        FONTSDIR = fonts
-#endif
-#ifndef Win32Architecture
-#if BuildDocs
-        DOCSDIR = doc
-#endif
-        NLSSUBDIR = nls
-#endif
-#endif
-
-        SUBDIRS = include config lib $(NLSSUBDIR) \
-                  programs $(FONTSDIR) $(DOCSDIR)
-  LNINSTALLDIRS = lib
+        SUBDIRS = include config programs
 
 #if HasParallelMake
 #ifdef ParallelDefines
@@ -37,10 +36,6 @@ RELEASE = XOrgReleaseString
 #endif
 
 MakeSubdirs($(SUBDIRS))
-
-MakeLintSubdirs($(LNINSTALLDIRS),install.ln,install.ln)
-
-MakeLintSubdirs($(LNINSTALLDIRS),external.ln,lintlib)
 
 DependSubdirs($(SUBDIRS))
 
@@ -62,27 +57,6 @@ VerifyOS::
 VerifyOS::
 	@echo GCC version: GccMajorVersion"."GccMinorVersion
 	@echo ""
-#endif
-
-#ifndef OS2Architecture
-version.def::
-	$(RM) $(IRULESRC)/date.def
-	@if [ -f ../../$(XF86SRC)/xf86Date.h ]; then \
- 	  $(LN) ../../$(XF86SRC)/xf86Date.h $(IRULESRC)/date.def; \
-	else \
-  	  echo "" > $(IRULESRC)/date.def; \
-	fi;
-	$(RM) $(IRULESRC)/version.def
-	@if [ -f ../../$(XF86SRC)/xf86Version.h ]; then \
- 	   echo foo; \
-           $(LN) ../../$(XF86SRC)/xf86Version.h $(IRULESRC)/version.def; \
-        else \
-           echo "" > $(IRULESRC)/version.def; \
-        fi;
-#else /*OS2Architecture*/
-version.def::
-	$(RM) $(IRULESRC)/date.def
-	$(CP) $(XF86SRC)/xf86Date.h $(IRULESRC)/date.def
 #endif
 
 includes::
@@ -108,11 +82,6 @@ Everything::
 	@echo ""
 	@date
 	@echo ""
-	cd $(IMAKESRC) && if [ -f Makefile ]; then \
-	    $(MAKE) $(MFLAGS) BOOTSTRAPCFLAGS="$(BOOTSTRAPCFLAGS)"; \
-	else \
-	    $(MAKE) $(MFLAGS) -f Makefile.ini BOOTSTRAPCFLAGS="$(BOOTSTRAPCFLAGS)"; \
-	fi
 	-$(RM) xmakefile.bak; $(MV) xmakefile xmakefile.bak
 	$(MAKE) $(MFLAGS) xmakefile
 	$(MAKE) $(MFLAGS) $(MAKE_OPTS) Makefiles
@@ -152,9 +121,6 @@ Everything::
 	@echo Rebuilding $(RELEASE) of the X Window System.
 	@echo :
 	@echo :
-	cd $(IMAKESRC)
-	$(MAKE) $(MFLAGS) -f Makefile.ini imake.exe
-	cd ..\..
 	RMoveToBakFile(xmakefile)
 	$(MAKE) $(MFLAGS) xmakefile
 	$(MAKE) $(MFLAGS) $(MAKE_OPTS) Makefiles
@@ -189,7 +155,3 @@ xmakefile-exists::
 #ifndef MakeHtmlManIndex
 #define MakeHtmlManIndex YES	/* install.man generates HTML man page index */
 #endif
-
-#undef BootstrapCleanSubdirs
-#define BootstrapCleanSubdirs BOOTSTRAPSUBDIRS="$(BOOTSTRAPSUBDIRS)"
-BOOTSTRAPSUBDIRS = imake makedepend

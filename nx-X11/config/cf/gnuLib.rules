@@ -1,7 +1,6 @@
 /*
  * GNU/Hurd shared library rules
  *
- * $XFree86: xc/config/cf/gnuLib.rules,v 1.9 2003/10/11 09:40:13 herrb Exp $
  */
 
 /*
@@ -19,11 +18,7 @@
 
 XCOMM XXX To rpath or not to rpath...
 #ifndef UseRpath
-#define UseRpath NO
-#endif
-
-#ifndef SharedOldX
-#define SharedOldX NO
+#define UseRpath YES
 #endif
 
 #undef SpecialMalloc

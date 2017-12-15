@@ -1,6 +1,4 @@
 /*
- * $XFree86: xc/programs/Xserver/render/miindex.c,v 1.7 2002/11/05 06:05:04 keithp Exp $
- *
  * Copyright © 2001 Keith Packard, member of The XFree86 Project, Inc.
  *
  * Permission to use, copy, modify, distribute, and sell this software and its
@@ -259,15 +257,15 @@ miInitIndexed (ScreenPtr	pScreen,
 	    pixels[p] = p;
     }
     
-    pIndexed = xalloc (sizeof (miIndexedRec));
+    pIndexed = malloc (sizeof (miIndexedRec));
     if (!pIndexed)
 	return FALSE;
     
     pFormat->index.nvalues = num;
-    pFormat->index.pValues = xalloc (num * sizeof (xIndexValue));
+    pFormat->index.pValues = malloc (num * sizeof (xIndexValue));
     if (!pFormat->index.pValues)
     {
-	xfree (pIndexed);
+	free (pIndexed);
 	return FALSE;
     }
     
@@ -323,12 +321,12 @@ miCloseIndexed (ScreenPtr	pScreen,
 {
     if (pFormat->index.devPrivate)
     {
-	xfree (pFormat->index.devPrivate);
+	free (pFormat->index.devPrivate);
 	pFormat->index.devPrivate = 0;
     }
     if (pFormat->index.pValues)
     {
-	xfree (pFormat->index.pValues);
+	free (pFormat->index.pValues);
 	pFormat->index.pValues = 0;
     }
 }

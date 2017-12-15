@@ -1,17 +1,25 @@
 /**************************************************************************/
 /*                                                                        */
-/* Copyright (c) 2001, 2011 NoMachine, http://www.nomachine.com/.         */
+/* Copyright (c) 2001, 2011 NoMachine (http://www.nomachine.com)          */
+/* Copyright (c) 2008-2014 Oleksandr Shneyder <o.shneyder@phoca-gmbh.de>  */
+/* Copyright (c) 2011-2016 Mike Gabriel <mike.gabriel@das-netzwerkteam.de>*/
+/* Copyright (c) 2014-2016 Mihai Moldovan <ionic@ionic.de>                */
+/* Copyright (c) 2014-2016 Ulrich Sibiller <uli42@gmx.de>                 */
+/* Copyright (c) 2015-2016 Qindel Group (http://www.qindel.com)           */
 /*                                                                        */
 /* NXAGENT, NX protocol compression and NX extensions to this software    */
-/* are copyright of NoMachine. Redistribution and use of the present      */
-/* software is allowed according to terms specified in the file LICENSE   */
-/* which comes in the source distribution.                                */
+/* are copyright of the aforementioned persons and companies.             */
 /*                                                                        */
-/* Check http://www.nomachine.com/licensing.html for applicability.       */
-/*                                                                        */
-/* NX and NoMachine are trademarks of Medialogic S.p.A.                   */
+/* Redistribution and use of the present software is allowed according    */
+/* to terms specified in the file LICENSE which comes in the source       */
+/* distribution.                                                          */
 /*                                                                        */
 /* All rights reserved.                                                   */
+/*                                                                        */
+/* NOTE: This software has received contributions from various other      */
+/* contributors, only the core maintainers and supporters are listed as   */
+/* copyright holders. Please contact us, if you feel you should be listed */
+/* as copyright holder, as well.                                          */
 /*                                                                        */
 /**************************************************************************/
 
@@ -33,7 +41,6 @@ typedef enum
   DIALOG_FAILED_RECONNECTION,
   DIALOG_ENABLE_DEFER_MODE,
   DIALOG_DISABLE_DEFER_MODE,
-  DIALOG_DISABLE_XKB,
   DIALOG_LAST_TAG
 
 } DialogType;
@@ -47,7 +54,6 @@ extern int nxagentEnableRandRModeDialogPid;
 extern int nxagentDisableRandRModeDialogPid;
 extern int nxagentEnableDeferModePid;
 extern int nxagentDisableDeferModePid;
-extern int nxagentDisableXkbPid;
 
 extern char nxagentFailedReconnectionMessage[];
 
@@ -66,8 +72,7 @@ extern void nxagentTerminateDialogs(void);
              nxagentEnableRandRModeDialogPid == 0 && \
                  nxagentDisableRandRModeDialogPid == 0 && \
                      nxagentEnableDeferModePid == 0 && \
-                         nxagentDisableDeferModePid == 0 && \
-                             nxagentDisableXkbPid == 0)
+                         nxagentDisableDeferModePid == 0)
 
 #define DECODE_DIALOG_TYPE(type) \
             ((type) == DIALOG_KILL_SESSION ? "DIALOG_KILL_SESSION" : \
@@ -80,7 +85,6 @@ extern void nxagentTerminateDialogs(void);
              (type) == DIALOG_FAILED_RECONNECTION ? "DIALOG_FAILED_RECONNECTION" : \
              (type) == DIALOG_ENABLE_DEFER_MODE ? "DIALOG_ENABLE_DEFER_MODE" : \
              (type) == DIALOG_DISABLE_DEFER_MODE ? "DIALOG_DISABLE_DEFER_MODE" : \
-             (type) == DIALOG_DISABLE_XKB ? "DIALOG_DISABLE_XKB" : \
              "UNKNOWN_DIALOG")
 
 /*
@@ -207,17 +211,6 @@ Ctrl+Alt+E to enable it again.\
 #define DIALOG_DISABLE_DEFER_MODE_TYPE "ok"
 
 #define DIALOG_DISABLE_DEFER_MODE_LOCAL 0
-
-
-#define DIALOG_DISABLE_XKB_MESSAGE \
-\
-"\
-Changing layout is not allowed with your current display.\
-"
-
-#define DIALOG_DISABLE_XKB_TYPE "ok"
-
-#define DIALOG_DISABLE_XKB_LOCAL 0
 
 #endif /* __Dialog_H__ */
 

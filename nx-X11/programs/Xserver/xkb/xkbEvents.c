@@ -1,4 +1,3 @@
-/* $Xorg: xkbEvents.c,v 1.3 2000/08/17 19:53:47 cpqbld Exp $ */
 /************************************************************
 Copyright (c) 1993 by Silicon Graphics Computer Systems, Inc.
 
@@ -24,21 +23,19 @@ OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION  WITH
 THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 ********************************************************/
-/* $XFree86: xc/programs/Xserver/xkb/xkbEvents.c,v 3.11 2003/07/16 01:39:10 dawes Exp $ */
 
 #ifdef HAVE_DIX_CONFIG_H
 #include <dix-config.h>
 #endif
 
 #include <stdio.h>
-#define NEED_EVENTS 1
-#include <X11/X.h>
-#include <X11/Xproto.h>
-#include <X11/keysym.h>
-#include <X11/extensions/XI.h>
+#include <nx-X11/X.h>
+#include <nx-X11/Xproto.h>
+#include <nx-X11/keysym.h>
+#include <nx-X11/extensions/XI.h>
 #include "inputstr.h"
 #include "windowstr.h"
-#include <X11/extensions/XKBsrv.h>
+#include <xkbsrv.h>
 #include "xkb.h"
 
 /***====================================================================***/
@@ -67,12 +64,11 @@ CARD16		changed;
 		pNKN->time = time;
 		pNKN->changed = changed;
 		if ( clients[i]->swapped ) {
-		    register int n;
-		    swaps(&pNKN->sequenceNumber,n);
-		    swapl(&pNKN->time,n);
-		    swaps(&pNKN->changed,n);
+		    swaps(&pNKN->sequenceNumber);
+		    swapl(&pNKN->time);
+		    swaps(&pNKN->changed);
 		}
-		WriteToClient(clients[i],sizeof(xEvent),(char *)pNKN);
+		WriteToClient(clients[i],sizeof(xEvent), pNKN);
 		if (changed&XkbNKN_KeycodesMask) {
 		    clients[i]->minKC= pNKN->minKeyCode;
 		    clients[i]->maxKC= pNKN->maxKeyCode;
@@ -87,12 +83,11 @@ CARD16		changed;
 	    event.u.mappingNotify.count= clients[i]->maxKC-clients[i]->minKC+1;
 	    event.u.u.sequenceNumber= clients[i]->sequence;
 	    if (clients[i]->swapped) {
-		int n;
-		swaps(&event.u.u.sequenceNumber,n);
+		swaps(&event.u.u.sequenceNumber);
 	    }
-	    WriteToClient(clients[i],SIZEOF(xEvent), (char *)&event);
+	    WriteToClient(clients[i],SIZEOF(xEvent), &event);
 	    event.u.mappingNotify.request= MappingModifier;
-	    WriteToClient(clients[i],SIZEOF(xEvent), (char *)&event);
+	    WriteToClient(clients[i],SIZEOF(xEvent), &event);
 	}
     }
     return;
@@ -146,13 +141,12 @@ register CARD16	changed,bState;
 	    pSN->changed = changed;
 	    pSN->ptrBtnState = bState;
 	    if ( interest->client->swapped ) {
-		register int n;
-		swaps(&pSN->sequenceNumber,n);
-		swapl(&pSN->time,n);
-		swaps(&pSN->changed,n);
-		swaps(&pSN->ptrBtnState,n);
+		swaps(&pSN->sequenceNumber);
+		swapl(&pSN->time);
+		swaps(&pSN->changed);
+		swaps(&pSN->ptrBtnState);
 	    }
-	    WriteToClient(interest->client, sizeof(xEvent), (char *)pSN);
+	    WriteToClient(interest->client, sizeof(xEvent), pSN);
 	}
 	interest= interest->next;
     }
@@ -192,12 +186,11 @@ CARD16		changed;
 	    pMN->sequenceNumber = clients[i]->sequence;
 	    pMN->changed = changed;
 	    if ( clients[i]->swapped ) {
-		register int n;
-		swaps(&pMN->sequenceNumber,n);
-		swapl(&pMN->time,n);
-		swaps(&pMN->changed,n);
+		swaps(&pMN->sequenceNumber);
+		swapl(&pMN->time);
+		swaps(&pMN->changed);
 	    }
-	    WriteToClient(clients[i],sizeof(xEvent),(char *)pMN);
+	    WriteToClient(clients[i],sizeof(xEvent), pMN);
 	}
     }
     return;
@@ -315,14 +308,13 @@ Time 		 	time = 0;
 	    pCN->sequenceNumber = interest->client->sequence;
 	    pCN->time = time;
 	    if ( interest->client->swapped ) {
-		register int n;
-		swaps(&pCN->sequenceNumber,n);
-		swapl(&pCN->changedControls,n);
-		swapl(&pCN->enabledControls,n);
-		swapl(&pCN->enabledControlChanges,n);
-		swapl(&pCN->time,n);
+		swaps(&pCN->sequenceNumber);
+		swapl(&pCN->changedControls);
+		swapl(&pCN->enabledControls);
+		swapl(&pCN->enabledControlChanges);
+		swapl(&pCN->time);
 	    }
-	    WriteToClient(interest->client, sizeof(xEvent), (char *)pCN);
+	    WriteToClient(interest->client, sizeof(xEvent), pCN);
 	}
 	interest= interest->next;
     }
@@ -364,13 +356,12 @@ CARD32		state,changed;
 	    pEv->changed = changed;
 	    pEv->state = state;
 	    if ( interest->client->swapped ) {
-		register int n;
-		swaps(&pEv->sequenceNumber,n);
-		swapl(&pEv->time,n);
-		swapl(&pEv->changed,n);
-		swapl(&pEv->state,n);
+		swaps(&pEv->sequenceNumber);
+		swapl(&pEv->time);
+		swapl(&pEv->changed);
+		swapl(&pEv->state);
 	    }
-	    WriteToClient(interest->client, sizeof(xEvent), (char *)pEv);
+	    WriteToClient(interest->client, sizeof(xEvent), pEv);
 	}
 	interest= interest->next;
     }
@@ -383,7 +374,7 @@ XkbHandleBell(	BOOL		 force,
 		BOOL		 eventOnly,
 		DeviceIntPtr	 kbd,
 		CARD8		 percent,
-		pointer		 pCtrl,
+		void *		 pCtrl,
 		CARD8		 class,
 		Atom		 name,
 		WindowPtr	 pWin,
@@ -402,7 +393,7 @@ XID		winID = 0;
 
     if ((force||(xkbi->desc->ctrls->enabled_ctrls&XkbAudibleBellMask))&&
 							(!eventOnly)) {
-	(*kbd->kbdfeed->BellProc)(percent,kbd,(pointer)pCtrl,class);
+	(*kbd->kbdfeed->BellProc)(percent,kbd,(void *)pCtrl,class);
     }
     interest = kbd->xkb_interest;
     if ((!interest)||(force))
@@ -447,15 +438,14 @@ XID		winID = 0;
 	    bn.name = name;
 	    bn.window=  winID;
 	    if ( interest->client->swapped ) {
-		register int n;
-		swaps(&bn.sequenceNumber,n);
-		swapl(&bn.time,n);
-		swaps(&bn.pitch,n);
-		swaps(&bn.duration,n);
-		swapl(&bn.name,n);
-		swapl(&bn.window,n);
+		swaps(&bn.sequenceNumber);
+		swapl(&bn.time);
+		swaps(&bn.pitch);
+		swaps(&bn.duration);
+		swapl(&bn.name);
+		swapl(&bn.window);
 	    }
-	    WriteToClient(interest->client, sizeof(xEvent), (char *)&bn);
+	    WriteToClient(interest->client, sizeof(xEvent), &bn);
 	}
 	interest= interest->next;
     }
@@ -494,13 +484,12 @@ CARD16		sk_delay,db_delay;
 	    pEv->slowKeysDelay = sk_delay;
 	    pEv->debounceDelay = db_delay;
 	    if ( interest->client->swapped ) {
-		register int n;
-		swaps(&pEv->sequenceNumber,n);
-		swapl(&pEv->time,n);
-		swaps(&pEv->slowKeysDelay,n);
-		swaps(&pEv->debounceDelay,n);
+		swaps(&pEv->sequenceNumber);
+		swapl(&pEv->time);
+		swaps(&pEv->slowKeysDelay);
+		swaps(&pEv->debounceDelay);
 	    }
-	    WriteToClient(interest->client, sizeof(xEvent), (char *)pEv);
+	    WriteToClient(interest->client, sizeof(xEvent), pEv);
 	}
 	interest= interest->next;
     }
@@ -542,14 +531,13 @@ CARD32		changedIndicators;
 	    pEv->changedIndicators = changedIndicators;
 	    pEv->changedVirtualMods= changedVirtualMods;
 	    if ( interest->client->swapped ) {
-		register int n;
-		swaps(&pEv->sequenceNumber,n);
-		swapl(&pEv->time,n);
-		swaps(&pEv->changed,n);
-		swapl(&pEv->changedIndicators,n);
-		swaps(&pEv->changedVirtualMods,n);
+		swaps(&pEv->sequenceNumber);
+		swapl(&pEv->time);
+		swaps(&pEv->changed);
+		swapl(&pEv->changedIndicators);
+		swaps(&pEv->changedVirtualMods);
 	    }
-	    WriteToClient(interest->client, sizeof(xEvent), (char *)pEv);
+	    WriteToClient(interest->client, sizeof(xEvent), pEv);
 	}
 	interest= interest->next;
     }
@@ -590,14 +578,13 @@ CARD16		firstSI = 0, nSI = 0, nTotalSI = 0;
 	    pEv->nSI = nSI;
 	    pEv->nTotalSI = nTotalSI;
 	    if ( interest->client->swapped ) {
-		register int n;
-		swaps(&pEv->sequenceNumber,n);
-		swapl(&pEv->time,n);
-		swaps(&pEv->firstSI,n);
-		swaps(&pEv->nSI,n);
-		swaps(&pEv->nTotalSI,n);
+		swaps(&pEv->sequenceNumber);
+		swapl(&pEv->time);
+		swaps(&pEv->firstSI);
+		swaps(&pEv->nSI);
+		swaps(&pEv->nTotalSI);
 	    }
-	    WriteToClient(interest->client, sizeof(xEvent), (char *)pEv);
+	    WriteToClient(interest->client, sizeof(xEvent), pEv);
 	}
 	interest= interest->next;
     }
@@ -636,11 +623,10 @@ Time 		 time = 0;
 	    pEv->sequenceNumber = interest->client->sequence;
 	    pEv->time = time;
 	    if ( interest->client->swapped ) {
-		register int n;
-		swaps(&pEv->sequenceNumber,n);
-		swapl(&pEv->time,n);
+		swaps(&pEv->sequenceNumber);
+		swapl(&pEv->time);
 	    }
-	    WriteToClient(interest->client, sizeof(xEvent), (char *)pEv);
+	    WriteToClient(interest->client, sizeof(xEvent), pEv);
 	}
 	interest= interest->next;
     }
@@ -696,15 +682,14 @@ CARD16		 reason, supported = 0;
 		    continue;
 	    }
 	    if ( interest->client->swapped ) {
-		register int n;
-		swaps(&pEv->sequenceNumber,n);
-		swapl(&pEv->time,n);
-		swapl(&pEv->ledsDefined,n);
-		swapl(&pEv->ledState,n);
-		swaps(&pEv->reason,n);
-		swaps(&pEv->supported,n);
+		swaps(&pEv->sequenceNumber);
+		swapl(&pEv->time);
+		swapl(&pEv->ledsDefined);
+		swapl(&pEv->ledState);
+		swaps(&pEv->reason);
+		swaps(&pEv->supported);
 	    }
-	    WriteToClient(interest->client, sizeof(xEvent), (char *)pEv);
+	    WriteToClient(interest->client, sizeof(xEvent), pEv);
 	}
 	interest= interest->next;
     }
@@ -730,6 +715,7 @@ XkbSrvLedInfoPtr	sli;
     }
     if (pChanges->map.changed) {
 	xkbMapNotify mn;
+	memset(&mn, 0, sizeof(xkbMapNotify));
 	mn.changed= pChanges->map.changed;
 	mn.firstType= pChanges->map.first_type;
 	mn.nTypes= pChanges->map.num_types;
@@ -751,6 +737,7 @@ XkbSrvLedInfoPtr	sli;
     if ((pChanges->ctrls.changed_ctrls)||
 	(pChanges->ctrls.enabled_ctrls_changes)) {
 	xkbControlsNotify cn;
+	memset(&cn, 0, sizeof(xkbControlsNotify));
 	cn.changedControls= pChanges->ctrls.changed_ctrls;
 	cn.enabledControlChanges= pChanges->ctrls.enabled_ctrls_changes;
 	cn.keycode= cause->kc;
@@ -763,6 +750,7 @@ XkbSrvLedInfoPtr	sli;
 	xkbIndicatorNotify in;
 	if (sli==NULL)
 	    sli= XkbFindSrvLedInfo(kbd,XkbDfltXIClass,XkbDfltXIId,0);
+	memset(&in, 0, sizeof(xkbIndicatorNotify));
 	in.state= sli->effectiveState;
 	in.changed= pChanges->indicators.map_changes;
 	XkbSendIndicatorNotify(kbd,XkbIndicatorMapNotify,&in);
@@ -771,12 +759,14 @@ XkbSrvLedInfoPtr	sli;
 	xkbIndicatorNotify in;
 	if (sli==NULL)
 	    sli= XkbFindSrvLedInfo(kbd,XkbDfltXIClass,XkbDfltXIId,0);
+	memset(&in, 0, sizeof(xkbIndicatorNotify));
 	in.state= sli->effectiveState;
 	in.changed= pChanges->indicators.state_changes;
 	XkbSendIndicatorNotify(kbd,XkbIndicatorStateNotify,&in);
     }
     if (pChanges->names.changed) {
 	xkbNamesNotify nn;
+	memset(&nn, 0, sizeof(xkbNamesNotify));
 	nn.changed= pChanges->names.changed;
 	nn.firstType= pChanges->names.first_type;
 	nn.nTypes= pChanges->names.num_types;
@@ -789,6 +779,7 @@ XkbSrvLedInfoPtr	sli;
     }
     if ((pChanges->compat.changed_groups)||(pChanges->compat.num_si>0)) {
 	xkbCompatMapNotify cmn;
+	memset(&cmn, 0, sizeof(xkbCompatMapNotify));
 	cmn.changedGroups= pChanges->compat.changed_groups;
 	cmn.firstSI= pChanges->compat.first_si;
 	cmn.nSI= pChanges->compat.num_si;
@@ -816,7 +807,7 @@ XkbSrvInfoPtr	xkbi;
 	    ErrorF("   Event state= 0x%04x\n",xE[0].u.keyButtonPointer.state);
 	    ErrorF("   XkbLastRepeatEvent!=xE (0x%x!=0x%x) %s\n",
 			XkbLastRepeatEvent,xE,
-			((XkbLastRepeatEvent!=(pointer)xE)?"True":"False"));
+			((XkbLastRepeatEvent!=(void *)xE)?"True":"False"));
 	    ErrorF("   (xkbClientEventsFlags&XWDA)==0 (0x%x) %s\n",
 		pClient->xkbClientFlags,
 		(_XkbWantsDetectableAutoRepeat(pClient)?"True":"False"));
@@ -824,7 +815,7 @@ XkbSrvInfoPtr	xkbi;
 			(!_XkbIsReleaseEvent(xE[0].u.u.type))?"True":"False");
 	}
 #endif /* DEBUG */
-	if (	(XkbLastRepeatEvent==(pointer)xE) &&
+	if (	(XkbLastRepeatEvent==(void *)xE) &&
 	     	(_XkbWantsDetectableAutoRepeat(pClient)) &&
 	     	(_XkbIsReleaseEvent(xE[0].u.u.type)) ) {
 	    return False;

@@ -1,4 +1,3 @@
-/* $Xorg: mi.h,v 1.4 2001/02/09 02:05:20 xorgcvs Exp $ */
 /***********************************************************
 
 Copyright 1987, 1998  The Open Group
@@ -45,11 +44,10 @@ ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS
 SOFTWARE.
 
 ******************************************************************/
-/* $XFree86: xc/programs/Xserver/mi/mi.h,v 3.9 2001/08/06 20:51:16 dawes Exp $ */
 
 #ifndef MI_H
 #define MI_H
-#include <X11/X.h>
+#include <nx-X11/X.h>
 #include "region.h"
 #include "validate.h"
 #include "window.h"
@@ -263,7 +261,7 @@ extern void miPolyGlyphBlt(
     int /*y*/,
     unsigned int /*nglyph*/,
     CharInfoPtr * /*ppci*/,
-    pointer /*pglyphBase*/
+    void * /*pglyphBase*/
 );
 
 extern void miImageGlyphBlt(
@@ -273,7 +271,7 @@ extern void miImageGlyphBlt(
     int /*y*/,
     unsigned int /*nglyph*/,
     CharInfoPtr * /*ppci*/,
-    pointer /*pglyphBase*/
+    void * /*pglyphBase*/
 );
 
 /* mipoly.c */
@@ -403,16 +401,14 @@ extern void miPushPixels(
     int /*yOrg*/
 );
 
-/* miregion.c */
-
 /* see also region.h */
 
-extern Bool miRectAlloc(
+extern Bool RegionRectAlloc(
     RegionPtr /*pRgn*/,
     int /*n*/
 );
 
-extern void miSetExtents(
+extern void RegionSetExtents(
     RegionPtr /*pReg*/
 );
 
@@ -421,13 +417,12 @@ extern int miFindMaxBand(
 );
 
 #ifdef DEBUG
-extern Bool miValidRegion(
+extern Bool RegionIsValid(
     RegionPtr /*prgn*/
 );
 #endif
 
-extern Bool miRegionDataCopy(RegionPtr dst, RegionPtr src);
-extern Bool miRegionBroken(RegionPtr pReg);
+extern Bool RegionBroken(RegionPtr pReg);
 
 /* miscrinit.c */
 
@@ -438,11 +433,10 @@ extern Bool miModifyPixmapHeader(
     int /*depth*/,
     int /*bitsPerPixel*/,
     int /*devKind*/,
-    pointer /*pPixData*/
+    void * /*pPixData*/
 );
 
 extern Bool miCloseScreen(
-    int /*index*/,
     ScreenPtr /*pScreen*/
 );
 
@@ -453,12 +447,12 @@ extern Bool miCreateScreenResources(
 extern Bool miScreenDevPrivateInit(
     ScreenPtr /*pScreen*/,
     int /*width*/,
-    pointer /*pbits*/
+    void * /*pbits*/
 );
 
 extern Bool miScreenInit(
     ScreenPtr /*pScreen*/,
-    pointer /*pbits*/,
+    void * /*pbits*/,
     int /*xsize*/,
     int /*ysize*/,
     int /*dpix*/,

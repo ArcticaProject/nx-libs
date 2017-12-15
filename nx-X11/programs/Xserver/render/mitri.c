@@ -1,6 +1,4 @@
 /*
- * $XFree86: xc/programs/Xserver/render/mitri.c,v 1.5 2002/05/31 16:48:52 keithp Exp $
- *
  * Copyright © 2002 Keith Packard, member of The XFree86 Project, Inc.
  *
  * Permission to use, copy, modify, distribute, and sell this software and its
@@ -145,7 +143,7 @@ miTriStrip (CARD8	    op,
     if (npoint < 3)
 	return;
     ntri = npoint - 2;
-    tris = ALLOCATE_LOCAL (ntri * sizeof (xTriangle));
+    tris = malloc (ntri * sizeof (xTriangle));
     if (!tris)
 	return;
     for (tri = tris; npoint >= 3; npoint--, points++, tri++)
@@ -155,7 +153,7 @@ miTriStrip (CARD8	    op,
 	tri->p3 = points[2];
     }
     (*ps->Triangles) (op, pSrc, pDst, maskFormat, xSrc, ySrc, ntri, tris);
-    DEALLOCATE_LOCAL (tris);
+    free (tris);
 }
 
 void
@@ -177,7 +175,7 @@ miTriFan (CARD8		op,
     if (npoint < 3)
 	return;
     ntri = npoint - 2;
-    tris = ALLOCATE_LOCAL (ntri * sizeof (xTriangle));
+    tris = malloc (ntri * sizeof (xTriangle));
     if (!tris)
 	return;
     first = points++;
@@ -188,5 +186,5 @@ miTriFan (CARD8		op,
 	tri->p3 = points[1];
     }
     (*ps->Triangles) (op, pSrc, pDst, maskFormat, xSrc, ySrc, ntri, tris);
-    DEALLOCATE_LOCAL (tris);
+    free (tris);
 }

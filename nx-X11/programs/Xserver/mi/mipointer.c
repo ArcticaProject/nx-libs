@@ -2,7 +2,6 @@
  * mipointer.c
  */
 
-/* $Xorg: mipointer.c,v 1.4 2001/02/09 02:05:21 xorgcvs Exp $ */
 
 /*
 
@@ -28,16 +27,14 @@ Except as contained in this notice, the name of The Open Group shall not be
 used in advertising or otherwise to promote the sale, use or other dealings
 in this Software without prior written authorization from The Open Group.
 */
-/* $XFree86: xc/programs/Xserver/mi/mipointer.c,v 3.9 2001/09/04 14:03:28 dawes Exp $ */
 
 #ifdef HAVE_DIX_CONFIG_H
 #include <dix-config.h>
 #endif
 
-# define NEED_EVENTS
-# include   <X11/X.h>
-# include   <X11/Xmd.h>
-# include   <X11/Xproto.h>
+# include   <nx-X11/X.h>
+# include   <nx-X11/Xmd.h>
+# include   <nx-X11/Xproto.h>
 # include   "misc.h"
 # include   "windowstr.h"
 # include   "pixmapstr.h"
@@ -46,6 +43,7 @@ in this Software without prior written authorization from The Open Group.
 # include   "mipointrst.h"
 # include   "cursorstr.h"
 # include   "dixstruct.h"
+# include   <nx-X11/extensions/XI.h>
 
 int  miPointerScreenIndex;
 static unsigned long miPointerGeneration = 0;
@@ -68,7 +66,7 @@ static void miPointerCursorLimits(ScreenPtr pScreen, CursorPtr pCursor,
 				  BoxPtr pHotBox, BoxPtr pTopLeftBox);
 static Bool miPointerSetCursorPosition(ScreenPtr pScreen, int x, int y,
 				       Bool generateEvent);
-static Bool miPointerCloseScreen(int index, ScreenPtr pScreen);
+static Bool miPointerCloseScreen(ScreenPtr pScreen);
 static void miPointerMove(ScreenPtr pScreen, int x, int y, unsigned long time);
 
 Bool
@@ -87,7 +85,7 @@ miPointerInitialize (pScreen, spriteFuncs, screenFuncs, waitForUpdate)
 	    return FALSE;
 	miPointerGeneration = serverGeneration;
     }
-    pScreenPriv = (miPointerScreenPtr) xalloc (sizeof (miPointerScreenRec));
+    pScreenPriv = (miPointerScreenPtr) malloc (sizeof (miPointerScreenRec));
     if (!pScreenPriv)
 	return FALSE;
     pScreenPriv->spriteFuncs = spriteFuncs;
@@ -103,7 +101,7 @@ miPointerInitialize (pScreen, spriteFuncs, screenFuncs, waitForUpdate)
     pScreenPriv->showTransparent = FALSE;
     pScreenPriv->CloseScreen = pScreen->CloseScreen;
     pScreen->CloseScreen = miPointerCloseScreen;
-    pScreen->devPrivates[miPointerScreenIndex].ptr = (pointer) pScreenPriv;
+    pScreen->devPrivates[miPointerScreenIndex].ptr = (void *) pScreenPriv;
     /*
      * set up screen cursor method table
      */
@@ -134,8 +132,7 @@ miPointerInitialize (pScreen, spriteFuncs, screenFuncs, waitForUpdate)
 }
 
 static Bool
-miPointerCloseScreen (index, pScreen)
-    int		index;
+miPointerCloseScreen (pScreen)
     ScreenPtr	pScreen;
 {
     SetupScreen(pScreen);
@@ -145,8 +142,8 @@ miPointerCloseScreen (index, pScreen)
     if (pScreen == miPointer.pSpriteScreen)
 	miPointer.pSpriteScreen = 0;
     pScreen->CloseScreen = pScreenPriv->CloseScreen;
-    xfree ((pointer) pScreenPriv);
-    return (*pScreen->CloseScreen) (index, pScreen);
+    free ((void *) pScreenPriv);
+    return (*pScreen->CloseScreen) (pScreen);
 }
 
 /*
@@ -224,6 +221,10 @@ miPointerSetCursorPosition(pScreen, x, y, generateEvent)
     SetupScreen (pScreen);
 
     GenerateEvent = generateEvent;
+
+    if (pScreen->ConstrainCursorHarder)
+        pScreen->ConstrainCursorHarder(pScreen, Absolute, &x, &y);
+
     /* device dependent - must pend signal and call miPointerWarpCursor */
     (*pScreenPriv->screenFuncs->WarpCursor) (pScreen, x, y);
     if (!generateEvent)
@@ -373,7 +374,7 @@ miPointerUpdate ()
 }
 
 /*
- * miPointerDeltaCursor.  The pointer has moved dx,dy from it's previous
+ * miPointerDeltaCursor.  The void * has moved dx,dy from it's previous
  * position.
  */
 
@@ -406,7 +407,7 @@ miPointerCurrentScreen ()
 }
 
 /*
- * miPointerAbsoluteCursor.  The pointer has moved to x,y
+ * miPointerAbsoluteCursor.  The void * has moved to x,y
  */
 
 void
@@ -465,7 +466,7 @@ miPointerPosition (x, y)
 }
 
 /*
- * miPointerMove.  The pointer has moved to x,y on current screen
+ * miPointerMove.  The void * has moved to x,y on current screen
  */
 
 static void

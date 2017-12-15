@@ -1,4 +1,3 @@
-/* $XFree86: xc/include/Xmd.h,v 3.18tsi Exp $ */
 /***********************************************************
 
 Copyright 1987, 1998  The Open Group
@@ -47,7 +46,6 @@ SOFTWARE.
 ******************************************************************/
 #ifndef XMD_H
 #define XMD_H 1
-/* $Xorg: Xmd.h,v 1.4 2001/02/09 02:03:22 xorgcvs Exp $ */
 /*
  *  Xmd.h: MACHINE DEPENDENT DECLARATIONS.
  */
@@ -55,9 +53,6 @@ SOFTWARE.
 /*
  * Special per-machine configuration flags.
  */
-#ifdef CRAY
-#define WORD64				/* 64-bit architecture */
-#endif
 #if defined (_LP64) || \
     defined(__alpha) || defined(__alpha__) || \
     defined(__ia64__) || defined(ia64) || \
@@ -65,19 +60,9 @@ SOFTWARE.
     defined(__s390x__) || \
     (defined(__hppa__) && defined(__LP64__)) || \
     defined(__amd64__) || defined(amd64) || \
-    defined(__powerpc64__) || \
-    (defined(sgi) && (_MIPS_SZLONG == 64))
+    defined(__powerpc64__)
 #define LONG64				/* 32/64-bit architecture */
 #endif
-
-/*
- * Stuff to handle large architecture machines; the constants were generated
- * on a 32-bit machine and must coorespond to the protocol.
- */
-#ifdef WORD64
-#define MUSTCOPY
-#endif /* WORD64 */
-
 
 /*
  * Definition of macro used to set constants for size of network structures;
@@ -105,24 +90,6 @@ SOFTWARE.
  * need them.  Note that bitfields are not guarranteed to be signed
  * (or even unsigned) according to ANSI C.
  */
-#ifdef WORD64
-typedef long INT64;
-typedef unsigned long CARD64;
-#define B32 :32
-#define B16 :16
-#ifdef UNSIGNEDBITFIELDS
-typedef unsigned int INT32;
-typedef unsigned int INT16;
-#else
-#ifdef __STDC__
-typedef signed int INT32;
-typedef signed int INT16;
-#else
-typedef int INT32;
-typedef int INT16;
-#endif
-#endif
-#else
 #define B32
 #define B16
 #ifdef LONG64
@@ -132,9 +99,8 @@ typedef int INT32;
 typedef long INT32;
 #endif
 typedef short INT16;
-#endif
 
-#if defined(__STDC__) || defined(sgi) || defined(AIXV3)
+#if defined(__STDC__)
 typedef signed char    INT8;
 #else
 typedef char           INT8;
@@ -163,17 +129,6 @@ typedef CARD8		BOOL;
 /*
  * definitions for sign-extending bitfields on 64-bit architectures
  */
-#if defined(WORD64) && defined(UNSIGNEDBITFIELDS)
-#define cvtINT8toInt(val)   (((val) & 0x00000080) ? ((val) | 0xffffffffffffff00) : (val))
-#define cvtINT16toInt(val)  (((val) & 0x00008000) ? ((val) | 0xffffffffffff0000) : (val))
-#define cvtINT32toInt(val)  (((val) & 0x80000000) ? ((val) | 0xffffffff00000000) : (val))
-#define cvtINT8toShort(val)  cvtINT8toInt(val)
-#define cvtINT16toShort(val) cvtINT16toInt(val)
-#define cvtINT32toShort(val) cvtINT32toInt(val)
-#define cvtINT8toLong(val)  cvtINT8toInt(val)
-#define cvtINT16toLong(val) cvtINT16toInt(val)
-#define cvtINT32toLong(val) cvtINT32toInt(val)
-#else
 #define cvtINT8toInt(val) (val)
 #define cvtINT16toInt(val) (val)
 #define cvtINT32toInt(val) (val)
@@ -183,21 +138,12 @@ typedef CARD8		BOOL;
 #define cvtINT8toLong(val) (val)
 #define cvtINT16toLong(val) (val)
 #define cvtINT32toLong(val) (val)
-#endif /* WORD64 and UNSIGNEDBITFIELDS */
 
 
 
-#ifdef MUSTCOPY
 /*
- * This macro must not cast or else pointers will get aligned and be wrong
- */
-#define NEXTPTR(p,t)  (((char *) p) + SIZEOF(t))
-#else /* else not MUSTCOPY, this is used for 32-bit machines */
-/*
- * this version should leave result of type (t *), but that should only be
- * used when not in MUSTCOPY
+ * this version should leave result of type (t *)
  */
 #define NEXTPTR(p,t) (((t *)(p)) + 1)
-#endif /* MUSTCOPY - used machines whose C structs don't line up with proto */
 
 #endif /* XMD_H */

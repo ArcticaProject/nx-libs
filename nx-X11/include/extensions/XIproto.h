@@ -1,4 +1,3 @@
-/* $Xorg: XIproto.h,v 1.5 2001/02/09 02:03:24 xorgcvs Exp $ */
 
 /************************************************************
 
@@ -45,13 +44,12 @@ ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS
 SOFTWARE.
 
 ********************************************************/
-/* $XFree86: xc/include/extensions/XIproto.h,v 1.4 2001/01/17 17:53:17 dawes Exp $ */
 
 #ifndef _XIPROTO_H
 #define _XIPROTO_H
 
-#include <X11/Xproto.h>
-#include <X11/X.h>
+#include <nx-X11/Xproto.h>
+#include <nx-X11/X.h>
 
 /* make sure types have right sizes for protocol structures. */
 #define Window CARD32

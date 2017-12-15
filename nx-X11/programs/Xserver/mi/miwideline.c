@@ -1,4 +1,3 @@
-/* $Xorg: miwideline.c,v 1.4 2001/02/09 02:05:22 xorgcvs Exp $ */
 /*
 
 Copyright 1988, 1998  The Open Group
@@ -26,7 +25,6 @@ other dealings in this Software without prior written authorization
 from The Open Group.
 
 */
-/* $XFree86: xc/programs/Xserver/mi/miwideline.c,v 1.12 2001/12/14 20:00:28 dawes Exp $ */
 
 /* Author:  Keith Packard, MIT X Consortium */
 
@@ -47,7 +45,7 @@ from The Open Group.
 #include <math.h>
 #undef _XOPEN_SOURCE
 #endif
-#include <X11/X.h>
+#include <nx-X11/X.h>
 #include "windowstr.h"
 #include "gcstruct.h"
 #include "regionstr.h"
@@ -107,13 +105,13 @@ miFillPolyHelper (pDrawable, pGC, pixel, spanData, y, overall_height,
     
     if (!spanData)
     {
-    	pptInit = (DDXPointPtr) ALLOCATE_LOCAL (overall_height * sizeof(*ppt));
+    	pptInit = (DDXPointPtr) malloc (overall_height * sizeof(*ppt));
     	if (!pptInit)
 	    return;
-    	pwidthInit = (int *) ALLOCATE_LOCAL (overall_height * sizeof(*pwidth));
+    	pwidthInit = (int *) malloc (overall_height * sizeof(*pwidth));
     	if (!pwidthInit)
     	{
-	    DEALLOCATE_LOCAL (pptInit);
+	    free (pptInit);
 	    return;
     	}
 	ppt = pptInit;
@@ -127,13 +125,13 @@ miFillPolyHelper (pDrawable, pGC, pixel, spanData, y, overall_height,
     }
     else
     {
-	spanRec.points = (DDXPointPtr) xalloc (overall_height * sizeof (*ppt));
+	spanRec.points = (DDXPointPtr) malloc (overall_height * sizeof (*ppt));
 	if (!spanRec.points)
 	    return;
-	spanRec.widths = (int *) xalloc (overall_height * sizeof (int));
+	spanRec.widths = (int *) malloc (overall_height * sizeof (int));
 	if (!spanRec.widths)
 	{
-	    xfree (spanRec.points);
+	    free (spanRec.points);
 	    return;
 	}
 	ppt = spanRec.points;
@@ -178,8 +176,8 @@ miFillPolyHelper (pDrawable, pGC, pixel, spanData, y, overall_height,
     if (!spanData)
     {
     	(*pGC->ops->FillSpans) (pDrawable, pGC, ppt - pptInit, pptInit, pwidthInit, TRUE);
-    	DEALLOCATE_LOCAL (pwidthInit);
-    	DEALLOCATE_LOCAL (pptInit);
+    	free (pwidthInit);
+    	free (pptInit);
     	if (pixel != oldPixel)
     	{
 	    DoChangeGC (pGC, GCForeground, &oldPixel, FALSE);
@@ -231,13 +229,13 @@ miFillRectPolyHelper (
     }
     else
     {
-	spanRec.points = (DDXPointPtr) xalloc (h * sizeof (*ppt));
+	spanRec.points = (DDXPointPtr) malloc (h * sizeof (*ppt));
 	if (!spanRec.points)
 	    return;
-	spanRec.widths = (int *) xalloc (h * sizeof (int));
+	spanRec.widths = (int *) malloc (h * sizeof (int));
 	if (!spanRec.widths)
 	{
-	    xfree (spanRec.points);
+	    free (spanRec.points);
 	    return;
 	}
 	ppt = spanRec.points;
@@ -1058,13 +1056,13 @@ miLineArc (
     }
     if (!spanData)
     {
-    	points = (DDXPointPtr)ALLOCATE_LOCAL(sizeof(DDXPointRec) * pGC->lineWidth);
+    	points = (DDXPointPtr)malloc(sizeof(DDXPointRec) * pGC->lineWidth);
     	if (!points)
 	    return;
-    	widths = (int *)ALLOCATE_LOCAL(sizeof(int) * pGC->lineWidth);
+    	widths = (int *)malloc(sizeof(int) * pGC->lineWidth);
     	if (!widths)
     	{
-	    DEALLOCATE_LOCAL(points);
+	    free(points);
 	    return;
     	}
     	oldPixel = pGC->fgPixel;
@@ -1076,13 +1074,13 @@ miLineArc (
     }
     else
     {
-	points = (DDXPointPtr) xalloc (pGC->lineWidth * sizeof (DDXPointRec));
+	points = (DDXPointPtr) malloc (pGC->lineWidth * sizeof (DDXPointRec));
 	if (!points)
 	    return;
-	widths = (int *) xalloc (pGC->lineWidth * sizeof (int));
+	widths = (int *) malloc (pGC->lineWidth * sizeof (int));
 	if (!widths)
 	{
-	    xfree (points);
+	    free (points);
 	    return;
 	}
 	spanRec.points = points;
@@ -1098,8 +1096,8 @@ miLineArc (
     if (!spanData)
     {
     	(*pGC->ops->FillSpans)(pDraw, pGC, n, points, widths, TRUE);
-    	DEALLOCATE_LOCAL(widths);
-    	DEALLOCATE_LOCAL(points);
+    	free(widths);
+    	free(points);
     	if (pixel != oldPixel)
     	{
 	    DoChangeGC(pGC, GCForeground, &oldPixel, FALSE);

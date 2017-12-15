@@ -1,4 +1,3 @@
-/* $Xorg: getprop.c,v 1.4 2001/02/09 02:04:34 xorgcvs Exp $ */
 
 /************************************************************
 
@@ -45,7 +44,6 @@ ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS
 SOFTWARE.
 
 ********************************************************/
-/* $XFree86: xc/programs/Xserver/Xi/getprop.c,v 3.5 2001/08/23 14:56:19 alanh Exp $ */
 
 /***********************************************************************
  *
@@ -53,18 +51,16 @@ SOFTWARE.
  *
  */
 
-#define	 NEED_EVENTS
-#define	 NEED_REPLIES
 #ifdef HAVE_DIX_CONFIG_H
 #include <dix-config.h>
 #endif
 
-#include <X11/X.h>				/* for inputstr.h    */
-#include <X11/Xproto.h>			/* Request macro     */
+#include <nx-X11/X.h>				/* for inputstr.h    */
+#include <nx-X11/Xproto.h>			/* Request macro     */
 #include "inputstr.h"			/* DeviceIntPtr	     */
 #include "windowstr.h"			/* window structs    */
-#include <X11/extensions/XI.h>
-#include <X11/extensions/XIproto.h>
+#include <nx-X11/extensions/XI.h>
+#include <nx-X11/extensions/XIproto.h>
 #include "extnsionst.h"
 #include "extinit.h"			/* LookupDeviceIntRec */
 #include "exglobals.h"
@@ -85,12 +81,10 @@ int
 SProcXGetDeviceDontPropagateList(client)
     register ClientPtr client;
     {
-    register char n;
-
     REQUEST(xGetDeviceDontPropagateListReq);
-    swaps(&stuff->length, n);
+    swaps(&stuff->length);
     REQUEST_SIZE_MATCH(xGetDeviceDontPropagateListReq);
-    swapl(&stuff->window, n);
+    swapl(&stuff->window);
     return(ProcXGetDeviceDontPropagateList(client));
     }
 
@@ -137,7 +131,7 @@ ProcXGetDeviceDontPropagateList (client)
 	if (count)
 	    {
 	    rep.count = count;
-	    buf = (XEventClass *) xalloc (rep.count * sizeof(XEventClass));
+	    buf = (XEventClass *) malloc (rep.count * sizeof(XEventClass));
 	    rep.length = (rep.count * sizeof (XEventClass) + 3) >> 2;
 
 	    tbuf = buf;
@@ -154,7 +148,7 @@ ProcXGetDeviceDontPropagateList (client)
 	{
 	client->pSwapReplyFunc = (ReplySwapPtr)Swap32Write;
 	WriteSwappedDataToClient( client, count * sizeof(XEventClass), buf);
-	xfree (buf);
+	free (buf);
 	}
     return Success;
     }
@@ -206,10 +200,8 @@ SRepXGetDeviceDontPropagateList (client, size, rep)
     int		size;
     xGetDeviceDontPropagateListReply	*rep;
     {
-    register char n;
-
-    swaps(&rep->sequenceNumber, n);
-    swapl(&rep->length, n);
-    swaps(&rep->count, n);
-    WriteToClient(client, size, (char *)rep);
+    swaps(&rep->sequenceNumber);
+    swapl(&rep->length);
+    swaps(&rep->count);
+    WriteToClient(client, size, rep);
     }

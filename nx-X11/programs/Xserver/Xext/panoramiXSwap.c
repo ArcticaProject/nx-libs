@@ -1,4 +1,3 @@
-/* $Xorg: panoramiXSwap.c,v 1.4 2000/08/17 19:47:57 cpqbld Exp $ */
 /*****************************************************************
 Copyright (c) 1991, 1997 Digital Equipment Corporation, Maynard, Massachusetts.
 Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -23,7 +22,6 @@ shall not be used in advertising or otherwise to promote the sale, use or other
 dealings in this Software without prior written authorization from Digital
 Equipment Corporation.
 ******************************************************************/
-/* $XFree86: xc/programs/Xserver/Xext/panoramiXSwap.c,v 3.9 2003/07/16 01:38:29 dawes Exp $ */
 
 #ifdef HAVE_DIX_CONFIG_H
 #include <dix-config.h>
@@ -45,10 +43,10 @@ Equipment Corporation.
 #include "pixmapstr.h"
 #if 0
 #include <sys/workstation.h>
-#include <X11/Xserver/ws.h> 
+#include <nx-X11/Xserver/ws.h> 
 #endif
 #include "panoramiX.h"
-#include <X11/extensions/panoramiXproto.h>
+#include <nx-X11/extensions/panoramiXproto.h>
 #include "panoramiXsrv.h"
 #include "globals.h"
 #include "panoramiXh.h"
@@ -57,9 +55,8 @@ static int
 SProcPanoramiXQueryVersion (ClientPtr client)
 {
 	REQUEST(xPanoramiXQueryVersionReq);
-	register int n;
 
-	swaps(&stuff->length,n);
+	swaps(&stuff->length);
 	REQUEST_SIZE_MATCH (xPanoramiXQueryVersionReq);
 	return ProcPanoramiXQueryVersion(client);
 }
@@ -68,9 +65,8 @@ static int
 SProcPanoramiXGetState(ClientPtr client)
 {
 	REQUEST(xPanoramiXGetStateReq);
-	register int n;
 
- 	swaps (&stuff->length, n);	
+	swaps (&stuff->length);
 	REQUEST_SIZE_MATCH(xPanoramiXGetStateReq);
 	return ProcPanoramiXGetState(client);
 }
@@ -79,9 +75,8 @@ static int
 SProcPanoramiXGetScreenCount(ClientPtr client)
 {
 	REQUEST(xPanoramiXGetScreenCountReq);
-	register int n;
 
-	swaps (&stuff->length, n);
+	swaps (&stuff->length);
 	REQUEST_SIZE_MATCH(xPanoramiXGetScreenCountReq);
 	return ProcPanoramiXGetScreenCount(client);
 }
@@ -90,9 +85,8 @@ static int
 SProcPanoramiXGetScreenSize(ClientPtr client)
 {
 	REQUEST(xPanoramiXGetScreenSizeReq);
-	register int n;
 
-	swaps (&stuff->length, n);
+	swaps (&stuff->length);
 	REQUEST_SIZE_MATCH(xPanoramiXGetScreenSizeReq);
 	return ProcPanoramiXGetScreenSize(client);
 }
@@ -102,9 +96,8 @@ static int
 SProcXineramaIsActive(ClientPtr client)
 {
 	REQUEST(xXineramaIsActiveReq);
-	register int n;
 
-	swaps (&stuff->length, n);
+	swaps (&stuff->length);
 	REQUEST_SIZE_MATCH(xXineramaIsActiveReq);
 	return ProcXineramaIsActive(client);
 }
@@ -114,9 +107,8 @@ static int
 SProcXineramaQueryScreens(ClientPtr client)
 {
 	REQUEST(xXineramaQueryScreensReq);
-	register int n;
 
-	swaps (&stuff->length, n);
+	swaps (&stuff->length);
 	REQUEST_SIZE_MATCH(xXineramaQueryScreensReq);
 	return ProcXineramaQueryScreens(client);
 }

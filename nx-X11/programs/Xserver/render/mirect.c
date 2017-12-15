@@ -1,6 +1,4 @@
 /*
- * $XFree86: xc/programs/Xserver/render/mirect.c,v 1.3 2000/12/08 07:52:05 keithp Exp $
- *
  * Copyright © 2000 Keith Packard, member of The XFree86 Project, Inc.
  *
  * Permission to use, copy, modify, distribute, and sell this software and its
@@ -65,8 +63,8 @@ miColorRects (PicturePtr    pDst,
 	tmpval[4] = pDst->clipOrigin.y - yoff;
 	mask |= GCClipXOrigin|GCClipYOrigin;
 	
-	pClip = REGION_CREATE (pScreen, NULL, 1);
-	REGION_COPY (pScreen, pClip,
+	pClip = RegionCreate(NULL, 1);
+	RegionCopy(pClip,
 		     (RegionPtr) pClipPict->clientClip);
 	(*pGC->funcs->ChangeClip) (pGC, CT_REGION, pClip, 0);
     }
@@ -137,7 +135,8 @@ miCompositeRects (CARD8		op,
 	    goto bail1;
 	
 	pPixmap = (*pScreen->CreatePixmap) (pScreen, 1, 1,
-					    rgbaFormat->depth);
+					    rgbaFormat->depth,
+					    CREATE_PIXMAP_USAGE_SCRATCH);
 	if (!pPixmap)
 	    goto bail2;
 	
@@ -174,7 +173,7 @@ miCompositeRects (CARD8		op,
 	    rects++;
 	}
 
-	FreePicture ((pointer) pSrc, 0);
+	FreePicture ((void *) pSrc, 0);
 bail4:
 	FreeScratchGC (pGC);
 bail3:

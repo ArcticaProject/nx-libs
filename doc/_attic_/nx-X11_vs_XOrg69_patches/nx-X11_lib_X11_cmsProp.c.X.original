@@ -1,0 +1,14 @@
+--- ./nx-X11/lib/X11/cmsProp.c.X.original	2015-02-13 14:03:44.624443872 +0100
++++ ./nx-X11/lib/X11/cmsProp.c	2015-02-10 19:13:12.948717938 +0100
+@@ -121,7 +121,11 @@
+     char *prop_ret;
+     int format_ret;
+     long len = 6516;
++    #ifdef NXAGENT_SERVER
++    unsigned long nitems_ret, after_ret = 0;
++    #else
+     unsigned long nitems_ret, after_ret;
++    #endif
+     Atom atom_ret;
+     
+     while (XGetWindowProperty (pDpy, w, property, 0, len, False, 

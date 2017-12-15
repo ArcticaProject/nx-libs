@@ -2,93 +2,108 @@
 
 NULL =
 
-export CPPFLAGS:=$(shell dpkg-buildflags --get CPPFLAGS)
-export CFLAGS:=$(shell dpkg-buildflags --get CFLAGS)
-export CXXFLAGS:=$(shell dpkg-buildflags --get CXXFLAGS)
-export LDFLAGS:=$(shell dpkg-buildflags --get LDFLAGS)
+export DEB_BUILD_MAINT_OPTIONS = hardening=+all
+DPKG_EXPORT_BUILDFLAGS = 1
+include /usr/share/dpkg/buildflags.mk
 
 export LIBDIR = "/usr/lib/$(shell dpkg-architecture -qDEB_BUILD_MULTIARCH)"
+export LIBEXECDIR = "$(LIBDIR)/nx/bin"
 export INCLUDEDIR = "/usr/include/$(shell dpkg-architecture -qDEB_BUILD_MULTIARCH)"
 
 %:
-	CONFIGURE="./configure --with-symbols --prefix=/usr --libdir=$(LIBDIR) --includedir=$(INCLUDEDIR)" dh $@ --with quilt
-
-# before build, we will remove unused code / bundled libraries (keep this in sync with roll-tarball.sh)
-UNUSED_FOLDERS           = "debian/CODE-REDUCTION_CLEANUP-UNUSED"
-CLEANUP_FOLDERS          = "debian/CODE-REDUCTION_CLEANUP-BRUTAL"
-UNNEEDED_BACKUPS         = "debian/CODE-REDUCTION_CLEANUP-BACKUPFILES"
-PRESERVE_SYMLINKED_FILES = "debian/CODE-REDUCTION_PRESERVE-SYMLINKED"
-PRESERVE_NEEDED_FILES    = "debian/CODE-REDUCTION_PRESERVE-NEEDED"
-PRESERVE_INCLUDED_FILES  = "debian/CODE-REDUCTION_PRESERVE-INCLUDED"
+	CONFIGURE="./configure --disable-silent-rules \
+	                       --prefix=/usr \
+	                       --libdir=$(LIBDIR) \
+	                       --includedir=$(INCLUDEDIR) \
+	                       --libexecdir=$(LIBEXECDIR)" dh $@ --with quilt
 
 override_dh_auto_clean:
 	rm -Rf nx-X11/.build-exports
 	dh_auto_clean
 
 override_dh_clean:
-	rm -f nx*/configure
-	rm -f nx*/changelog
-	rm -f doc/changelog
-	rm -f nx-X11/programs/Xserver/hw/nxagent/changelog
-	rm -f nx-X11/programs/nxauth/changelog
-	if [ ! -f replace.sh ] && [ ! -h replace.sh ]; then ln -s debian/Makefile.replace.sh replace.sh; fi
-	. ./replace.sh; set -x; ls debian/*.install.in | while read file; do rm -f $$(string_rep $$file .install.in .install); done
-	rm -fR replace.sh Makefile bin etc/rgb VERSION.x2goagent etc/keystrokes.cfg etc/nxagent.keyboard etc/x2goagent.keyboard etc/x2goagent.options
-	rm -f debian/nxagent.postinst
-	rm -fR .preserve/
-	if [ -f nxcomp/.VERSION.NoMachine ]; then mv nxcomp/.VERSION.NoMachine nxcomp/VERSION; fi
+	-rm nx-X11/lib/Makefile
+	-rm nx-X11/lib/src/Makefile
+	-rm nx-X11/lib/src/xkb/Makefile
+	-rm nx-X11/lib/src/util/Makefile
+	-rm nx-X11/lib/src/xcms/Makefile
+	-rm nx-X11/lib/src/xlibi18n/Makefile
+	-rm nx-X11/lib/modules/Makefile
+	-rm nx-X11/lib/modules/om/Makefile
+	-rm nx-X11/lib/modules/om/generic/Makefile
+	-rm nx-X11/lib/modules/im/Makefile
+	-rm nx-X11/lib/modules/im/ximcp/Makefile
+	-rm nx-X11/lib/modules/lc/Makefile
+	-rm nx-X11/lib/modules/lc/gen/Makefile
+	-rm nx-X11/lib/modules/lc/def/Makefile
+	-rm nx-X11/lib/modules/lc/Utf8/Makefile
+	-rm nx-X11/lib/include/Makefile
+	-rm nx-X11/config/Makefile
+	-rm nx-X11/config/cf/Makefile
+	-rm nx-X11/programs/Makefile
+	-rm nx-X11/programs/Xserver/Makefile
+	-rm nx-X11/programs/Xserver/os/Makefile
+	-rm nx-X11/programs/Xserver/damageext/Makefile
+	-rm nx-X11/programs/Xserver/miext/cw/Makefile
+	-rm nx-X11/programs/Xserver/miext/damage/Makefile
+	-rm nx-X11/programs/Xserver/xfixes/Makefile
+	-rm nx-X11/programs/Xserver/composite/Makefile
+	-rm nx-X11/programs/Xserver/Xi/Makefile
+	-rm nx-X11/programs/Xserver/render/Makefile
+	-rm nx-X11/programs/Xserver/randr/Makefile
+	-rm nx-X11/programs/Xserver/record/Makefile
+	-rm nx-X11/programs/Xserver/dix/Makefile
+	-rm nx-X11/programs/Xserver/xkb/Makefile
+	-rm nx-X11/programs/Xserver/hw/nxagent/Makefile
+	-rm nx-X11/programs/Xserver/hw/nxagent/compext/Makefile
+	-rm nx-X11/programs/Xserver/mi/Makefile
+	-rm nx-X11/programs/Xserver/fb/Makefile
+	-rm nx-X11/programs/Xserver/Xext/Makefile
+	-rm nx-X11/programs/Xserver/include/Makefile
+	-rm nx-X11/programs/Xserver/dbe/Makefile
+	-rm nx-X11/programs/Xserver/GL/Makefile
+	-rm nx-X11/programs/Xserver/GL/mesa/Makefile
+	-rm nx-X11/programs/Xserver/GL/mesa/main/Makefile
+	-rm nx-X11/programs/Xserver/GL/mesa/X/Makefile
+	-rm nx-X11/programs/Xserver/GL/mesa/array_cache/Makefile
+	-rm nx-X11/programs/Xserver/GL/mesa/GLcore/Makefile
+	-rm nx-X11/programs/Xserver/GL/mesa/math/Makefile
+	-rm nx-X11/programs/Xserver/GL/mesa/swrast/Makefile
+	-rm nx-X11/programs/Xserver/GL/mesa/shader/Makefile
+	-rm nx-X11/programs/Xserver/GL/mesa/shader/slang/Makefile
+	-rm nx-X11/programs/Xserver/GL/mesa/shader/slang/library/Makefile
+	-rm nx-X11/programs/Xserver/GL/mesa/shader/grammar/Makefile
+	-rm nx-X11/programs/Xserver/GL/mesa/tnl/Makefile
+	-rm nx-X11/programs/Xserver/GL/mesa/swrast_setup/Makefile
+	-rm nx-X11/programs/Xserver/GL/glx/Makefile
+	-rm nx-X11/include/Makefile
+	-rm nx-X11/include/GL/Makefile
+	-rm nx-X11/include/extensions/Makefile
+
+	-rm nx-X11/config/cf/date.def
+	-rm nx-X11/config/cf/nxversion.def
+	-rm nx-X11/xmakefile
+
 	dh_clean
-
-override_dh_installchangelog:
-
-	### the doc/changelog file is the actual NX (redistributed) ChangeLog
-	dh_installchangelog doc/changelog
 
 override_dh_install:
 
-	# handle builds for Debian squeeze (non multi-arch)
-	. ./replace.sh; set -x; if [ -z "$(DEB_BUILD_MULTIARCH)" ]; then \
-	    find debian/*.install.in | while read file; do \
-	        cat $$file | sed -e 's#/\*/#/#g' > $$(string_rep $$file .install.in .install); \
-	    done; \
-	else \
-	    find debian/*.install.in | while read file; do \
-	        cat $$file > $$(string_rep $$file .install.in .install); \
-	    done; \
-	fi
-
-	# remove static libs
-	rm debian/tmp/usr/lib/$(DEB_BUILD_MULTIARCH)/libXcomp.a
-	rm debian/tmp/usr/lib/$(DEB_BUILD_MULTIARCH)/libXcompshad.a
+	# strip static libs and remove .la files
+	rm debian/tmp/usr/lib/$(DEB_BUILD_MULTIARCH)/libXcomp.la
+	strip --strip-debug --remove-section=.comment --remove-section=.note debian/tmp/usr/lib/$(DEB_BUILD_MULTIARCH)/libXcomp.a
+	rm debian/tmp/usr/lib/$(DEB_BUILD_MULTIARCH)/libXcompshad.la
+	strip --strip-debug --remove-section=.comment --remove-section=.note debian/tmp/usr/lib/$(DEB_BUILD_MULTIARCH)/libXcompshad.a
+	rm debian/tmp/usr/lib/$(DEB_BUILD_MULTIARCH)/libNX_X11.la
+	strip --strip-debug --remove-section=.comment --remove-section=.note debian/tmp/usr/lib/$(DEB_BUILD_MULTIARCH)/libNX_X11.a
 
 	# remove extras, GL, and other unneeded headers
-	rm -R debian/tmp/usr/include/$(DEB_BUILD_MULTIARCH)/nx/GL/
-	rm -R debian/tmp/usr/include/$(DEB_BUILD_MULTIARCH)/nx/X11/bitmaps/
-	rm -R debian/tmp/usr/include/$(DEB_BUILD_MULTIARCH)/nx/X11/extensions/XInput.h
-	rm -R debian/tmp/usr/include/$(DEB_BUILD_MULTIARCH)/nx/X11/extensions/XK*.h
-	rm -R debian/tmp/usr/include/$(DEB_BUILD_MULTIARCH)/nx/X11/extensions/*Xv*.h
-	rm -R debian/tmp/usr/include/$(DEB_BUILD_MULTIARCH)/nx/X11/extensions/xtrap*.h
-	rm -R debian/tmp/usr/include/$(DEB_BUILD_MULTIARCH)/nx/X11/extensions/Print*.h
-	rm -R debian/tmp/usr/include/$(DEB_BUILD_MULTIARCH)/nx/X11/extensions/XRes*.h
-	rm -R debian/tmp/usr/include/$(DEB_BUILD_MULTIARCH)/nx/X11/extensions/record*.h
-	rm -R debian/tmp/usr/include/$(DEB_BUILD_MULTIARCH)/nx/X11/extensions/xf86vmode.h
-	rm -R debian/tmp/usr/include/$(DEB_BUILD_MULTIARCH)/nx/X11/extensions/xf86vmstr.h
-	rm -R debian/tmp/usr/include/$(DEB_BUILD_MULTIARCH)/nx/X11/extensions/xf86misc.h
-	rm -R debian/tmp/usr/include/$(DEB_BUILD_MULTIARCH)/nx/X11/extensions/xf86dga1.h
-	rm -R debian/tmp/usr/include/$(DEB_BUILD_MULTIARCH)/nx/X11/extensions/xf86dgastr.h
-	rm -R debian/tmp/usr/include/$(DEB_BUILD_MULTIARCH)/nx/X11/extensions/xf86dga.h
-	rm -R debian/tmp/usr/include/$(DEB_BUILD_MULTIARCH)/nx/X11/extensions/xf86dga1str.h
-	rm -R debian/tmp/usr/include/$(DEB_BUILD_MULTIARCH)/nx/X11/extensions/xf86mscstr.h
-	rm -R debian/tmp/usr/include/$(DEB_BUILD_MULTIARCH)/nx/X11/extensions/dmxext.h
-	rm -R debian/tmp/usr/include/$(DEB_BUILD_MULTIARCH)/nx/X11/extensions/dmxproto.h
-	rm -R debian/tmp/usr/include/$(DEB_BUILD_MULTIARCH)/nx/X11/extensions/bigreqstr.h
-	rm -R debian/tmp/usr/include/$(DEB_BUILD_MULTIARCH)/nx/X11/extensions/xcmiscstr.h
-	rm -R debian/tmp/usr/include/$(DEB_BUILD_MULTIARCH)/nx/X11/extensions/XIproto.h
-	rm -R debian/tmp/usr/include/$(DEB_BUILD_MULTIARCH)/nx/X11/extensions/xf86bigfstr.h
-	rm -R debian/tmp/usr/include/$(DEB_BUILD_MULTIARCH)/nx/X11/extensions/xf86bigfont.h
-	rm -R debian/tmp/usr/include/$(DEB_BUILD_MULTIARCH)/nx/X11/extensions/XI.h
-	rm -R debian/tmp/usr/include/$(DEB_BUILD_MULTIARCH)/nx/X11/fonts/
-	rm -R debian/tmp/usr/include/$(DEB_BUILD_MULTIARCH)/nx/X11/Xtrans/
+	rm -R debian/tmp/usr/include/$(DEB_BUILD_MULTIARCH)/GL/
+	rm -R debian/tmp/usr/include/$(DEB_BUILD_MULTIARCH)/nx-X11/extensions/XK*.h
+	rm -R debian/tmp/usr/include/$(DEB_BUILD_MULTIARCH)/nx-X11/extensions/*Xv*.h
+	rm -R debian/tmp/usr/include/$(DEB_BUILD_MULTIARCH)/nx-X11/extensions/XRes*.h
+	rm -R debian/tmp/usr/include/$(DEB_BUILD_MULTIARCH)/nx-X11/extensions/XIproto.h
+	rm -R debian/tmp/usr/include/$(DEB_BUILD_MULTIARCH)/nx-X11/extensions/XI.h
+	rm -R debian/tmp/usr/include/$(DEB_BUILD_MULTIARCH)/nx-X11/Xtrans/
 
 	dh_install --fail-missing
 
@@ -97,69 +112,17 @@ override_dh_auto_install:
 
 override_dh_auto_build:
 
-	# create copies of upstream changelogs so that names apply to Debian policy...
-	cp -a nx-X11/CHANGELOG nx-X11/changelog
-	cp -a nxcomp/CHANGELOG nxcomp/changelog
-	if [ -f nxcomp/VERSION ]; then cp nxcomp/VERSION nxcomp/.VERSION.NoMachine; fi
-	cp -a nxcompext/CHANGELOG nxcompext/changelog
-	cp -a nxcompshad/CHANGELOG nxcompshad/changelog
-	cp -a nx-X11/programs/Xserver/hw/nxagent/CHANGELOG nx-X11/programs/Xserver/hw/nxagent/changelog
-	cp -a nx-X11/programs/nxauth/CHANGELOG nx-X11/programs/nxauth/changelog
-	cp -a nxproxy/CHANGELOG nxproxy/changelog
-	ln -s debian/Makefile.nx-libs Makefile
-	ln -s debian/Makefile.replace.sh replace.sh
-	ln -s debian/wrappers bin
-	mkdir -p etc/
-	ln -s ../debian/keystrokes.cfg etc/keystrokes.cfg
-	ln -s ../debian/rgb etc/rgb
-	ln -s ../debian/nxagent.keyboard etc/nxagent.keyboard
-	ln -s ../debian/x2goagent.keyboard etc/x2goagent.keyboard
-	ln -s ../debian/x2goagent.options etc/x2goagent.options
-	mkdir -p doc/
-	ln -s ../debian/changelog doc/changelog
-	ln -sf debian/VERSION VERSION.x2goagent
-	ln -sf ../debian/VERSION nxcomp/VERSION
-
-	# let's prep the nxagent.postinst script with the value of the build systems's DEB_BUILD_MULTIARCH variable
-	sed debian/nxagent.postinst.in -e 's/#DEB_BUILD_MULTIARCH#/$(DEB_BUILD_MULTIARCH)/' > debian/nxagent.postinst
-
-	# make a copy of code to be preserved for build
-	mkdir -p .preserve
-	for path in `cat $(PRESERVE_SYMLINKED_FILES)` `cat $(PRESERVE_NEEDED_FILES)` `cat $(PRESERVE_INCLUDED_FILES)`; do \
-	    if echo $$path | grep -E "^#.*"; then continue; fi; \
-	    test -d $$path && mkdir -p .preserve/$$path || mkdir -p .preserve/$$(dirname $$path); \
-	    cp -av $$path .preserve/$$path; \
-	done
-
-	# remove unused code / bundled libraries (see at the top of the debian/rules file)
-        # for the exact list of files and folders
-	rm -Rf `cat $(UNUSED_FOLDERS)`
-	rm -Rf `cat $(CLEANUP_FOLDERS)`
-	rm -Rf `cat $(UNNEEDED_BACKUPS)`
-
-	# copy to-be-preserved files back into code tree
-	cp -av .preserve/* .
-	rm -Rf .preserve/
-
-	PREFIX=/usr dh_auto_build --parallel -- CDEBUGFLAGS="$(CPPFLAGS) $(CFLAGS)" LOCAL_LDFLAGS="$(LDFLAGS)" SHLIBGLOBALSFLAGS="$(LDFLAGS)" SHLIBDIR="$(LIBDIR)"
+	PREFIX=/usr dh_auto_build --parallel -- CDEBUGFLAGS="$(CPPFLAGS) $(CFLAGS)" LOCAL_LDFLAGS="$(LDFLAGS)" SHLIBGLOBALSFLAGS='$(filter-out -pie,$(LDFLAGS))'
 
 override_dh_strip:
 	dh_strip -plibnx-x11-6 --dbg-package=libnx-x11-6-dbg
-	dh_strip -plibnx-xau6 --dbg-package=libnx-xau6-dbg
-	dh_strip -plibnx-xcomposite1 --dbg-package=libnx-xcomposite1-dbg
-	dh_strip -plibnx-xdamage1 --dbg-package=libnx-xdamage1-dbg
-	dh_strip -plibnx-xdmcp6 --dbg-package=libnx-xdmcp6-dbg
-	dh_strip -plibnx-xext6 --dbg-package=libnx-xext6-dbg
-	dh_strip -plibnx-xfixes3 --dbg-package=libnx-xfixes3-dbg
-	dh_strip -plibnx-xinerama1 --dbg-package=libnx-xinerama1-dbg
-	dh_strip -plibnx-xpm4 --dbg-package=libnx-xpm4-dbg
-	dh_strip -plibnx-xrandr2 --dbg-package=libnx-xrandr2-dbg
-	dh_strip -plibnx-xrender1 --dbg-package=libnx-xrender1-dbg
-	dh_strip -plibnx-xtst6 --dbg-package=libnx-xtst6-dbg
 	dh_strip -plibxcomp3 --dbg-package=libxcomp3-dbg
 	dh_strip -plibxcompshad3 --dbg-package=libxcompshad3-dbg
-	dh_strip -plibxcompext3 --dbg-package=libxcompext3-dbg
 	dh_strip -pnxagent --dbg-package=nxagent-dbg
 	dh_strip -pnxproxy --dbg-package=nxproxy-dbg
-	dh_strip -pnxauth --dbg-package=nxauth-dbg
 
+override_dh_makeshlibs:
+	dh_makeshlibs -n
+
+get-orig-source:
+	uscan --noconf --force-download --rename --download-current-version --destdir=..

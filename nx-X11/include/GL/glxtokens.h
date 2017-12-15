@@ -1,7 +1,6 @@
 #ifndef __GLX_glxtokens_h__
 #define __GLX_glxtokens_h__
 
-/* $XFree86: xc/include/GL/glxtokens.h,v 1.5 2001/03/21 15:51:38 dawes Exp $ */
 /*
 ** License Applicability. Except to the extent portions of this file are
 ** made subject to an alternative license as permitted in the SGI Free

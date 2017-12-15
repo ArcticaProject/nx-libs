@@ -1,4 +1,3 @@
-/* $XFree86: xc/programs/Xserver/mi/mipolyrect.c,v 1.3 2001/12/14 20:00:25 dawes Exp $ */
 /***********************************************************
 
 Copyright 1987, 1998  The Open Group
@@ -45,13 +44,12 @@ ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS
 SOFTWARE.
 
 ******************************************************************/
-/* $Xorg: mipolyrect.c,v 1.4 2001/02/09 02:05:21 xorgcvs Exp $ */
 #ifdef HAVE_DIX_CONFIG_H
 #include <dix-config.h>
 #endif
 
-#include <X11/X.h>
-#include <X11/Xprotostr.h>
+#include <nx-X11/X.h>
+#include <nx-X11/Xprotostr.h>
 #include "regionstr.h"
 #include "gcstruct.h"
 #include "pixmap.h"
@@ -96,7 +94,7 @@ miPolyRectangle(pDraw, pGC, nrects, pRects)
 	offset2 = pGC->lineWidth;
 	offset1 = offset2 >> 1;
 	offset3 = offset2 - offset1;
-	tmp = (xRectangle *) ALLOCATE_LOCAL(ntmp * sizeof (xRectangle));
+	tmp = (xRectangle *) malloc(ntmp * sizeof (xRectangle));
 	if (!tmp)
 	    return;
 	t = tmp;
@@ -164,7 +162,7 @@ miPolyRectangle(pDraw, pGC, nrects, pRects)
 	    }
 	}
 	(*pGC->ops->PolyFillRect) (pDraw, pGC, t - tmp, tmp);
-	DEALLOCATE_LOCAL ((pointer) tmp);
+	free ((void *) tmp);
     }
     else
     {

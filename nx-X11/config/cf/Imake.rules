@@ -1,12 +1,6 @@
 XCOMM ---------------------------------------------------------------------
 XCOMM Imake rules for building libraries, programs, scripts, and data files
-XCOMM rules:  $Xorg: Imake.rules,v 1.3 2000/08/17 19:41:46 cpqbld Exp $
-XCOMM rules:  $XdotOrg: xc/config/cf/Imake.rules,v 1.11 2005/11/08 06:33:24 jkj Exp $
-XCOMM
-XCOMM
-XCOMM
-XCOMM
-XCOMM rules:  $XFree86: xc/config/cf/Imake.rules,v 3.128 2003/11/15 03:25:17 dawes Exp $
+XCOMM ---------------------------------------------------------------------
 
 /*
  *		   MACHINE-INDEPENDENT RULES; DO NOT MODIFY
@@ -569,7 +563,7 @@ install::								@@\
 includes:: srclist							@@\
 	MakeDir($(BUILDINCDIR))						@@\
 	@(set -x; cd $(BUILDINCDIR) && for i in srclist; do \		@@\
-		RemoveFile($$i); \					@@\
+		RemoveFile(`basename $$i`); \				@@\
 		$(LN) $(BUILDINCTOP)/$(CURRENT_DIR)/$$i .; \		@@\
 	done)
 #endif /* BuildIncludesTop */
@@ -579,7 +573,7 @@ includes:: srclist							@@\
 includes:: srclist							@@\
 	MakeDir($(BUILDINCDIR)/dstsubdir)				@@\
 	@(set -x; cd $(BUILDINCDIR)/dstsubdir && for i in srclist; do \	@@\
-		RemoveFile($$i); \					@@\
+		RemoveFile(`basename $$i`); \				@@\
 		$(LN) $(BUILDINCTOP)/dstupdir/$(CURRENT_DIR)/$$i .; \	@@\
 	done)
 #endif /* BuildIncludes */
@@ -1930,9 +1924,7 @@ DependDependencyStatement()						@@\
 NoCmpScript(ProgramTargetName($(DEPEND)))				@@\
 									@@\
 ProgramTargetName($(DEPEND)):						@@\
-	@echo "checking $@ over in $(DEPENDSRC) first..."; \		@@\
-	cd $(DEPENDSRC) && $(MAKE) makedependonly; \			@@\
-	echo "okay, continuing in $(CURRENT_DIR)"
+	echo "using system-wide depend, continuing in $(CURRENT_DIR)"
 
 #endif /* UseInstalled */
 #endif /* DependDependency */
@@ -2025,11 +2017,7 @@ target:: ProgramTargetName($(IMAKE))					@@\
 NoCmpScript(ProgramTargetName($(IMAKE)) $(IMAKE).Osuf)			@@\
 									@@\
 ProgramTargetName($(IMAKE)) $(IMAKE).Osuf:				@@\
-	-@(cd $(IMAKESRC) && if [ -f Makefile ]; then \			@@\
-	echo "checking $@ in $(IMAKESRC) first..."; $(MAKE) imakeonly; else \	@@\
-	echo "bootstrapping $@ from Makefile.ini in $(IMAKESRC) first..."; \	@@\
-	$(MAKE) -f Makefile.ini BOOTSTRAPCFLAGS="$(BOOTSTRAPCFLAGS)"; fi; \	@@\
-	echo "okay, continuing in $(CURRENT_DIR)")
+	echo "using system-wide imake, continuing in $(CURRENT_DIR)"
 #endif /* UseInstalled */
 #endif /* ImakeDependency */
 
@@ -2119,32 +2107,11 @@ Concat(varname,LIB) = LoaderLibPrefix Concat(-l,libname)		@@\
 LintLibReferences(varname,libname,libsource)
 #endif
 
- /*
- * ProjectUnsharedFontLibReferences - unshared font libraries
- */
-#ifndef ProjectUnsharedFontLibReferences
-#define ProjectUnsharedFontLibReferences()					@@\
-DEPFONTLIB = _UseCat($(USRLIBDIR)/,XBuildLibDir/,LibraryTargetName(Xfont))	@@\
-FONTLIB = -L$(FREETYPELIBDIR) -L$(FONTLIBSRC) LoaderLibPrefix -lXfont		@@\
-LintLibReferences(XFONT,Xfont,$(FONTLIBSRC))
-#endif
-
 /*
  * SharedLibDependencies - shared library dependencies
  */
 #ifndef SharedLibDependencies
 #define SharedLibDependencies(libname,libsource,revname) /**/
-#endif
-
-/*
- * SharedFontLibReferences - shared font libraries
- */
-#ifndef SharedFontLibReferences
-#define SharedFontLibReferences()					@@\
-SOFONTREV = SharedFontRev						@@\
-DEPFONTLIB = SharedLibDependencies(Xfont,$(FONTLIBSRC),SOFONTREV)	@@\
-FONTLIB = -L$(FREETYPELIBDIR) -L$(FONTLIBSRC) LoaderLibPrefix -lXfont	@@\
-LintLibReferences(XFONT,Xfont,$(FONTLIBSRC))
 #endif
 
 /*
@@ -3247,12 +3214,8 @@ target::								@@\
 		fi; \							@@\
 	done
 
-#ifdef UseInstalled
-#define ImakeSubCmdHelper $(IMAKE_CMD)
-#else
-#define ImakeSubCmdHelper $(IMAKEPREFIX)$(IMAKE) -I$(IMAKEPREFIX)$(IRULESRC) \
+#define ImakeSubCmdHelper $(IMAKE_CMD) -I$(IMAKEPREFIX)$(IRULESRC) \
 			  $(IMAKE_DEFINES) $(IMAKE_WARNINGS)
-#endif
 
 #endif /* MakeMakeSubdirs */
 
@@ -3456,41 +3419,24 @@ MutexDirective:	targets
  * ObjectModuleTarget - build a module as a single object file
  */
 #ifndef ObjectModuleTarget
-#if MakeDllModules && DoLoadableServer
-#define ObjectModuleTarget(module,objects)				@@\
-DynamicModuleTarget(Concat(module,_drv.so), objects)
-#else
 #define ObjectModuleTarget(module,objects)				@@\
 NormalRelocatableTarget(Concat(module,_drv), objects)
-#endif
 #endif
 
 /*
  * LibraryModuleTarget
  */
 #ifndef LibraryModuleTarget
-#if MakeDllModules && DoLoadableServer
-#define LibraryModuleTarget(module,objects)				@@\
-NormalLibraryTarget(module, objects)					@@\
-DynamicModuleTarget(Concat3(lib,module,.so), objects)
-#else
 #define LibraryModuleTarget(module, objects)				@@\
 NormalLibraryTarget(module, objects)
-#endif
 #endif
 
 /*
  * DepLibraryModuleTarget
  */
 #ifndef DepLibraryModuleTarget
-#if MakeDllModules && DoLoadableServer
-#define DepLibraryModuleTarget(module,deplist,objects)			@@\
-NormalDepLibraryTarget(module, deplist, objects)			@@\
-DepDynamicModuleTarget(Concat3(lib,module,.so), deplist, objects)
-#else
 #define DepLibraryModuleTarget(module,deplist,objects)			@@\
 NormalDepLibraryTarget(module, deplist, objects)
-#endif
 #endif
 
 /*
@@ -3569,31 +3515,11 @@ InstallObjectModule(module,dest,multimedia)
 #endif
 
 #ifndef InstallObjectModule
-#if !DoLoadableServer
 #define InstallObjectModule(module,dest,subdir)	/**/
-#else
-#if MakeDllModules
-#define InstallObjectModule(module,dest,subdir)				@@\
-InstallDynamicModule(Concat(module,_drv.so),dest,subdir)
-#else
-#define InstallObjectModule(module,dest,subdir)				@@\
-InstallDynamicModule(Concat(module,_drv.o),dest,subdir)
-#endif
-#endif
 #endif
 
 #ifndef InstallLibraryModule
-#if !DoLoadableServer
 #define InstallLibraryModule(module,dest,subdir)	/**/
-#else
-#if MakeDllModules
-#define InstallLibraryModule(module,dest,subdir)			@@\
-InstallDynamicModule(Concat3(lib,module,.so),dest,subdir)
-#else
-#define InstallLibraryModule(module,dest,subdir)			@@\
-InstallDynamicModule(ModuleLibraryTargetName(module),dest,subdir)
-#endif
-#endif
 #endif
 
 #ifndef InstallModuleManPage

@@ -1,4 +1,3 @@
-/* $XFree86: xc/programs/Xserver/mi/mipolypnt.c,v 1.2 2001/05/29 22:24:07 dawes Exp $ */
 /***********************************************************
 
 Copyright 1987, 1998  The Open Group
@@ -45,13 +44,12 @@ ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS
 SOFTWARE.
 
 ******************************************************************/
-/* $Xorg: mipolypnt.c,v 1.4 2001/02/09 02:05:21 xorgcvs Exp $ */
 #ifdef HAVE_DIX_CONFIG_H
 #include <dix-config.h>
 #endif
 
-#include <X11/X.h>
-#include <X11/Xprotostr.h>
+#include <nx-X11/X.h>
+#include <nx-X11/Xprotostr.h>
 #include "pixmapstr.h"
 #include "gcstruct.h"
 #include "windowstr.h"
@@ -108,7 +106,7 @@ miPolyPoint(pDrawable, pGC, mode, npt, pptInit)
 	DoChangeGC(pGC, GCFillStyle, &fsNew, 0);
 	ValidateGC(pDrawable, pGC);
     }
-    if(!(pwidthInit = (int *)ALLOCATE_LOCAL(npt * sizeof(int))))
+    if(!(pwidthInit = (int *)malloc(npt * sizeof(int))))
 	return;
     pwidth = pwidthInit;
     for(i = 0; i < npt; i++)
@@ -120,6 +118,6 @@ miPolyPoint(pDrawable, pGC, mode, npt, pptInit)
 	DoChangeGC(pGC, GCFillStyle, &fsOld, 0);
 	ValidateGC(pDrawable, pGC);
     }
-    DEALLOCATE_LOCAL(pwidthInit);
+    free(pwidthInit);
 }
 

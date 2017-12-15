@@ -1,4 +1,3 @@
-/* $XFree86: xc/programs/Xserver/dix/atom.c,v 3.3 2001/12/14 19:59:29 dawes Exp $ */
 /***********************************************************
 
 Copyright 1987, 1998  The Open Group
@@ -46,14 +45,13 @@ SOFTWARE.
 
 ******************************************************************/
 
-/* $Xorg: atom.c,v 1.4 2001/02/09 02:04:39 xorgcvs Exp $ */
 
 #ifdef HAVE_DIX_CONFIG_H
 #include <dix-config.h>
 #endif
 
-#include <X11/X.h>
-#include <X11/Xatom.h>
+#include <nx-X11/X.h>
+#include <nx-X11/Xatom.h>
 #include "misc.h"
 #include "resource.h"
 #include "dix.h"
@@ -64,7 +62,7 @@ typedef struct _Node {
     struct _Node   *left,   *right;
     Atom a;
     unsigned int fingerPrint;
-    char   *string;
+    const char   *string;
 } NodeRec, *NodePtr;
 
 static Atom lastAtom = None;
@@ -75,7 +73,7 @@ static NodePtr *nodeTable;
 void FreeAtom(NodePtr patom);
 
 Atom 
-MakeAtom(char *string, unsigned len, Bool makeit)
+MakeAtom(const char *string, unsigned len, Bool makeit)
 {
     register    NodePtr * np;
     unsigned i;
@@ -109,7 +107,7 @@ MakeAtom(char *string, unsigned len, Bool makeit)
     {
 	register NodePtr nd;
 
-	nd = (NodePtr) xalloc(sizeof(NodeRec));
+	nd = (NodePtr) malloc(sizeof(NodeRec));
 	if (!nd)
 	    return BAD_RESOURCE;
 	if (lastAtom < XA_LAST_PREDEFINED)
@@ -118,23 +116,22 @@ MakeAtom(char *string, unsigned len, Bool makeit)
 	}
 	else
 	{
-	    nd->string = (char *) xalloc(len + 1);
+	    nd->string = strndup(string, len);
 	    if (!nd->string) {
-		xfree(nd);
+		free(nd);
 		return BAD_RESOURCE;
 	    }
-	    strncpy(nd->string, string, (int)len);
-	    nd->string[len] = 0;
 	}
 	if ((lastAtom + 1) >= tableLength) {
 	    NodePtr *table;
 
-	    table = (NodePtr *) xrealloc(nodeTable,
+	    table = (NodePtr *) realloc(nodeTable,
 					 tableLength * (2 * sizeof(NodePtr)));
 	    if (!table) {
 		if (nd->string != string)
-		    xfree(nd->string);
-		xfree(nd);
+		     /* nd->string has been strdup'ed */
+		    free((char *)nd->string);
+		free(nd);
 		return BAD_RESOURCE;
 	    }
 	    tableLength <<= 1;
@@ -157,7 +154,7 @@ ValidAtom(Atom atom)
     return (atom != None) && (atom <= lastAtom);
 }
 
-char *
+const char *
 NameForAtom(Atom atom)
 {
     NodePtr node;
@@ -180,8 +177,8 @@ FreeAtom(NodePtr patom)
     if(patom->right)
 	FreeAtom(patom->right);
     if (patom->a > XA_LAST_PREDEFINED)
-	xfree(patom->string);
-    xfree(patom);
+	free((char *)patom->string);
+    free(patom);
 }
 
 void
@@ -191,7 +188,7 @@ FreeAllAtoms()
 	return;
     FreeAtom(atomRoot);
     atomRoot = (NodePtr)NULL;
-    xfree(nodeTable);
+    free(nodeTable);
     nodeTable = (NodePtr *)NULL;
     lastAtom = None;
 }
@@ -201,7 +198,7 @@ InitAtoms()
 {
     FreeAllAtoms();
     tableLength = InitialTableSize;
-    nodeTable = (NodePtr *)xalloc(InitialTableSize*sizeof(NodePtr));
+    nodeTable = (NodePtr *)malloc(InitialTableSize*sizeof(NodePtr));
     if (!nodeTable)
 	AtomError();
     nodeTable[None] = (NodePtr)NULL;

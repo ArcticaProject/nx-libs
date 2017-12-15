@@ -1,4 +1,3 @@
-/* $XFree86: xc/programs/Xserver/dix/devices.c,v 3.20 2001/12/14 19:59:30 dawes Exp $ */
 /************************************************************
 
 Copyright 1987, 1998  The Open Group
@@ -47,35 +46,27 @@ SOFTWARE.
 ********************************************************/
 
 
-/* $Xorg: devices.c,v 1.4 2001/02/09 02:04:39 xorgcvs Exp $ */
-/* $XdotOrg: xc/programs/Xserver/dix/devices.c,v 1.8 2005/07/03 08:53:38 daniels Exp $ */
 
 #ifdef HAVE_DIX_CONFIG_H
 #include <dix-config.h>
 #endif
 
-#include <X11/X.h>
+#include <nx-X11/X.h>
 #include "misc.h"
 #include "resource.h"
-#define NEED_EVENTS
-#define NEED_REPLIES
-#include <X11/Xproto.h>
+#include <nx-X11/Xproto.h>
 #include "windowstr.h"
 #include "inputstr.h"
 #include "scrnintstr.h"
 #include "cursorstr.h"
 #include "dixstruct.h"
 #include "site.h"
-#define	XKB_IN_SERVER
 #ifdef XKB
-#include <X11/extensions/XKBsrv.h>
+#include "xkbsrv.h"
 #endif
 #ifdef XCSECURITY
 #define _SECURITY_SERVER
-#include <X11/extensions/security.h>
-#endif
-#ifdef LBX
-#include "lbxserve.h"
+#include <nx-X11/extensions/security.h>
 #endif
 
 #include "dispatch.h"
@@ -89,7 +80,7 @@ _AddInputDevice(DeviceProc deviceProc, Bool autoStart)
 
     if (inputInfo.numDevices >= MAX_DEVICES)
 	return (DeviceIntPtr)NULL;
-    dev = (DeviceIntPtr) xalloc(sizeof(DeviceIntRec));
+    dev = (DeviceIntPtr) calloc(1, sizeof(DeviceIntRec));
     if (!dev)
 	return (DeviceIntPtr)NULL;
     dev->name = (char *)NULL;
@@ -126,7 +117,8 @@ _AddInputDevice(DeviceProc deviceProc, Bool autoStart)
     dev->xkb_interest= NULL;
 #endif
     dev->nPrivates = 0;
-    dev->devPrivates = dev->unwrapProc = NULL;
+    dev->devPrivates = NULL;
+    dev->unwrapProc = NULL;
     inputInfo.off_devices = dev;
     return dev;
 }
@@ -211,29 +203,30 @@ CloseDevice(register DeviceIntPtr dev)
 
     if (dev->inited)
 	(void)(*dev->deviceProc)(dev, DEVICE_CLOSE);
-    xfree(dev->name);
+    free(dev->name);
     if (dev->key)
     {
 #ifdef XKB
 	if (dev->key->xkbInfo)
 	    XkbFreeInfo(dev->key->xkbInfo);
 #endif
-	xfree(dev->key->curKeySyms.map);
-	xfree(dev->key->modifierKeyMap);
-	xfree(dev->key);
+	dev->key->xkbInfo = NULL;
+	free(dev->key->curKeySyms.map);
+	free(dev->key->modifierKeyMap);
+	free(dev->key);
     }
-    xfree(dev->valuator);
+    free(dev->valuator);
 #ifdef XKB
     if ((dev->button)&&(dev->button->xkb_acts))
-	xfree(dev->button->xkb_acts);
+	free(dev->button->xkb_acts);
 #endif
-    xfree(dev->button);
+    free(dev->button);
     if (dev->focus)
     {
-	xfree(dev->focus->trace);
-	xfree(dev->focus);
+	free(dev->focus->trace);
+	free(dev->focus);
     }
-    xfree(dev->proximity);
+    free(dev->proximity);
     for (k=dev->kbdfeed; k; k=knext)
     {
 	knext = k->next;
@@ -241,29 +234,29 @@ CloseDevice(register DeviceIntPtr dev)
 	if (k->xkb_sli)
 	    XkbFreeSrvLedInfo(k->xkb_sli);
 #endif
-	xfree(k);
+	free(k);
     }
     for (p=dev->ptrfeed; p; p=pnext)
     {
 	pnext = p->next;
-	xfree(p);
+	free(p);
     }
     for (i=dev->intfeed; i; i=inext)
     {
 	inext = i->next;
-	xfree(i);
+	free(i);
     }
     for (s=dev->stringfeed; s; s=snext)
     {
 	snext = s->next;
-	xfree(s->ctrl.symbols_supported);
-	xfree(s->ctrl.symbols_displayed);
-	xfree(s);
+	free(s->ctrl.symbols_supported);
+	free(s->ctrl.symbols_displayed);
+	free(s);
     }
     for (b=dev->bell; b; b=bnext)
     {
 	bnext = b->next;
-	xfree(b);
+	free(b);
     }
     for (l=dev->leds; l; l=lnext)
     {
@@ -272,15 +265,15 @@ CloseDevice(register DeviceIntPtr dev)
 	if (l->xkb_sli)
 	    XkbFreeSrvLedInfo(l->xkb_sli);
 #endif
-	xfree(l);
+	free(l);
     }
 #ifdef XKB
     while (dev->xkb_interest) {
 	XkbRemoveResourceClient((DevicePtr)dev,dev->xkb_interest->resource);
     }
 #endif
-    xfree(dev->sync.event);
-    xfree(dev);
+    free(dev->sync.event);
+    free(dev);
 }
 
 void
@@ -372,7 +365,7 @@ _RegisterPointerDevice(DeviceIntPtr device)
     if (!device->name)
     {
 	char *p = "pointer";
-	device->name = (char *)xalloc(strlen(p) + 1);
+	device->name = (char *)malloc(strlen(p) + 1);
 	strcpy(device->name, p);
     }
 }
@@ -395,7 +388,7 @@ _RegisterKeyboardDevice(DeviceIntPtr device)
     if (!device->name)
     {
 	char *k = "keyboard";
-	device->name = (char *)xalloc(strlen(k) + 1);
+	device->name = (char *)malloc(strlen(k) + 1);
 	strcpy(device->name, k);
     }
 }
@@ -464,7 +457,7 @@ SetKeySymsMap(register KeySymsPtr dst, register KeySymsPtr src)
         KeySym *map;
 	int bytes = sizeof(KeySym) * src->mapWidth *
 		    (dst->maxKeyCode - dst->minKeyCode + 1);
-        map = (KeySym *)xalloc(bytes);
+        map = (KeySym *)malloc(bytes);
 	if (!map)
 	    return FALSE;
 	bzero((char *)map, bytes);
@@ -474,7 +467,7 @@ SetKeySymsMap(register KeySymsPtr dst, register KeySymsPtr src)
 		memmove((char *)&map[i*src->mapWidth],
 			(char *)&dst->map[i*dst->mapWidth],
 		      dst->mapWidth * sizeof(KeySym));
-	    xfree(dst->map);
+	    free(dst->map);
 	}
 	dst->mapWidth = src->mapWidth;
 	dst->map = map;
@@ -507,10 +500,9 @@ InitModMap(register KeyClassPtr keyc)
 	    }
 	}
     }
-    keyc->modifierKeyMap = (KeyCode *)xalloc(8*keyc->maxKeysPerModifier);
+    keyc->modifierKeyMap = (KeyCode *)calloc(8, keyc->maxKeysPerModifier);
     if (!keyc->modifierKeyMap && keyc->maxKeysPerModifier)
 	return (FALSE);
-    bzero((char *)keyc->modifierKeyMap, 8*(int)keyc->maxKeysPerModifier);
     for (i = 0; i < 8; i++)
 	keysPerModifier[i] = 0;
     for (i = 8; i < MAP_LENGTH; i++)
@@ -534,7 +526,7 @@ InitKeyClassDeviceStruct(DeviceIntPtr dev, KeySymsPtr pKeySyms, CARD8 pModifiers
     int i;
     register KeyClassPtr keyc;
 
-    keyc = (KeyClassPtr)xalloc(sizeof(KeyClassRec));
+    keyc = (KeyClassPtr)calloc(1, sizeof(KeyClassRec));
     if (!keyc)
 	return FALSE;
     keyc->curKeySyms.map = (KeySym *)NULL;
@@ -553,9 +545,9 @@ InitKeyClassDeviceStruct(DeviceIntPtr dev, KeySymsPtr pKeySyms, CARD8 pModifiers
 	keyc->modifierKeyCount[i] = 0;
     if (!SetKeySymsMap(&keyc->curKeySyms, pKeySyms) || !InitModMap(keyc))
     {
-	xfree(keyc->curKeySyms.map);
-	xfree(keyc->modifierKeyMap);
-	xfree(keyc);
+	free(keyc->curKeySyms.map);
+	free(keyc->modifierKeyMap);
+	free(keyc);
 	return FALSE;
     }
     dev->key = keyc;
@@ -573,7 +565,7 @@ InitButtonClassDeviceStruct(register DeviceIntPtr dev, int numButtons,
     register ButtonClassPtr butc;
     int i;
 
-    butc = (ButtonClassPtr)xalloc(sizeof(ButtonClassRec));
+    butc = (ButtonClassPtr)calloc(1, sizeof(ButtonClassRec));
     if (!butc)
 	return FALSE;
     butc->numButtons = numButtons;
@@ -598,7 +590,7 @@ InitValuatorClassDeviceStruct(DeviceIntPtr dev, int numAxes,
     int i;
     register ValuatorClassPtr valc;
 
-    valc = (ValuatorClassPtr)xalloc(sizeof(ValuatorClassRec) +
+    valc = (ValuatorClassPtr)calloc(1, sizeof(ValuatorClassRec) +
 				    numAxes * sizeof(AxisInfo) +
 				    numAxes * sizeof(unsigned int));
     if (!valc)
@@ -621,7 +613,7 @@ InitFocusClassDeviceStruct(DeviceIntPtr dev)
 {
     register FocusClassPtr focc;
 
-    focc = (FocusClassPtr)xalloc(sizeof(FocusClassRec));
+    focc = (FocusClassPtr)calloc(1, sizeof(FocusClassRec));
     if (!focc)
 	return FALSE;
     focc->win = PointerRootWin;
@@ -640,7 +632,7 @@ InitKbdFeedbackClassDeviceStruct(DeviceIntPtr dev, BellProcPtr bellProc,
 {
     register KbdFeedbackPtr feedc;
 
-    feedc = (KbdFeedbackPtr)xalloc(sizeof(KbdFeedbackClassRec));
+    feedc = (KbdFeedbackPtr)calloc(1, sizeof(KbdFeedbackClassRec));
     if (!feedc)
 	return FALSE;
     feedc->BellProc = bellProc;
@@ -667,17 +659,11 @@ InitPtrFeedbackClassDeviceStruct(DeviceIntPtr dev, PtrCtrlProcPtr controlProc)
 {
     register PtrFeedbackPtr feedc;
 
-    feedc = (PtrFeedbackPtr)xalloc(sizeof(PtrFeedbackClassRec));
+    feedc = (PtrFeedbackPtr)calloc(1, sizeof(PtrFeedbackClassRec));
     if (!feedc)
 	return FALSE;
     feedc->CtrlProc = controlProc;
-#ifdef sgi
-    feedc->ctrl.num = 1;
-    feedc->ctrl.den = 1;
-    feedc->ctrl.threshold = 1;
-#else
     feedc->ctrl = defaultPointerControl;
-#endif
     feedc->ctrl.id = 0;
     if ( (feedc->next = dev->ptrfeed) )
         feedc->ctrl.id = dev->ptrfeed->ctrl.id + 1;
@@ -711,7 +697,7 @@ InitStringFeedbackClassDeviceStruct (
     int i;
     register StringFeedbackPtr feedc;
 
-    feedc = (StringFeedbackPtr)xalloc(sizeof(StringFeedbackClassRec));
+    feedc = (StringFeedbackPtr)calloc(1, sizeof(StringFeedbackClassRec));
     if (!feedc)
 	return FALSE;
     feedc->CtrlProc = controlProc;
@@ -719,22 +705,22 @@ InitStringFeedbackClassDeviceStruct (
     feedc->ctrl.num_symbols_displayed = 0;
     feedc->ctrl.max_symbols = max_symbols;
     feedc->ctrl.symbols_supported = (KeySym *) 
-	xalloc (sizeof (KeySym) * num_symbols_supported);
+	calloc (num_symbols_supported, sizeof (KeySym));
     feedc->ctrl.symbols_displayed = (KeySym *) 
-	xalloc (sizeof (KeySym) * max_symbols);
+	calloc (max_symbols, sizeof (KeySym));
     if (!feedc->ctrl.symbols_supported || !feedc->ctrl.symbols_displayed)
     {
 	if (feedc->ctrl.symbols_supported)
-	    xfree(feedc->ctrl.symbols_supported);
+	    free(feedc->ctrl.symbols_supported);
 	if (feedc->ctrl.symbols_displayed)
-	    xfree(feedc->ctrl.symbols_displayed);
-	xfree(feedc);
+	    free(feedc->ctrl.symbols_displayed);
+	free(feedc);
 	return FALSE;
     }
     for (i=0; i<num_symbols_supported; i++)
 	*(feedc->ctrl.symbols_supported+i) = *symbols++;
     for (i=0; i<max_symbols; i++)
-	*(feedc->ctrl.symbols_displayed+i) = (KeySym) NULL;
+	*(feedc->ctrl.symbols_displayed+i) = (KeySym) 0;
     feedc->ctrl.id = 0;
     if ( (feedc->next = dev->stringfeed) )
 	feedc->ctrl.id = dev->stringfeed->ctrl.id + 1;
@@ -749,7 +735,7 @@ InitBellFeedbackClassDeviceStruct (DeviceIntPtr dev, BellProcPtr bellProc,
 {
     register BellFeedbackPtr feedc;
 
-    feedc = (BellFeedbackPtr)xalloc(sizeof(BellFeedbackClassRec));
+    feedc = (BellFeedbackPtr)calloc(1, sizeof(BellFeedbackClassRec));
     if (!feedc)
 	return FALSE;
     feedc->CtrlProc = controlProc;
@@ -768,7 +754,7 @@ InitLedFeedbackClassDeviceStruct (DeviceIntPtr dev, LedCtrlProcPtr controlProc)
 {
     register LedFeedbackPtr feedc;
 
-    feedc = (LedFeedbackPtr)xalloc(sizeof(LedFeedbackClassRec));
+    feedc = (LedFeedbackPtr)calloc(1, sizeof(LedFeedbackClassRec));
     if (!feedc)
 	return FALSE;
     feedc->CtrlProc = controlProc;
@@ -789,7 +775,7 @@ InitIntegerFeedbackClassDeviceStruct (DeviceIntPtr dev, IntegerCtrlProcPtr contr
 {
     register IntegerFeedbackPtr feedc;
 
-    feedc = (IntegerFeedbackPtr)xalloc(sizeof(IntegerFeedbackClassRec));
+    feedc = (IntegerFeedbackPtr)calloc(1, sizeof(IntegerFeedbackClassRec));
     if (!feedc)
 	return FALSE;
     feedc->CtrlProc = controlProc;
@@ -961,9 +947,6 @@ ProcSetModifierMapping(ClientPtr client)
 	return BadAccess;
 #endif 
 
-#ifdef LBX
-    LbxFlushModifierMapTag();
-#endif
     rep.type = X_Reply;
     rep.length = 0;
     rep.sequenceNumber = client->sequence;
@@ -1003,11 +986,11 @@ ProcSetModifierMapping(ClientPtr client)
 	 *	Now build the keyboard's modifier bitmap from the
 	 *	list of keycodes.
 	 */
-	map = (KeyCode *)xalloc(inputMapLen);
+	map = (KeyCode *)malloc(inputMapLen);
 	if (!map && inputMapLen)
 	    return BadAlloc;
 	if (keyc->modifierKeyMap)
-	    xfree(keyc->modifierKeyMap);
+	    free(keyc->modifierKeyMap);
 	keyc->modifierKeyMap = map;
 	memmove((char *)map, (char *)inputMap, inputMapLen);
 
@@ -1037,6 +1020,7 @@ ProcGetModifierMapping(ClientPtr client)
     register KeyClassPtr keyc = inputInfo.keyboard->key;
 
     REQUEST_SIZE_MATCH(xReq);
+    memset(&rep, 0, sizeof(xGetModifierMappingReply));
     rep.type = X_Reply;
     rep.numKeyPerModifier = keyc->maxKeysPerModifier;
     rep.sequenceNumber = client->sequence;
@@ -1046,7 +1030,7 @@ ProcGetModifierMapping(ClientPtr client)
     WriteReplyToClient(client, sizeof(xGetModifierMappingReply), &rep);
 
     /* Use the (modified by DDX) map that SetModifierMapping passed in */
-    (void)WriteToClient(client, (int)(keyc->maxKeysPerModifier << 3),
+    WriteToClient(client, (int)(keyc->maxKeysPerModifier << 3),
 			(char *)keyc->modifierKeyMap);
     return client->noClientException;
 }
@@ -1087,9 +1071,6 @@ ProcChangeKeyboardMapping(ClientPtr client)
     keysyms.map = (KeySym *)&stuff[1];
     if (!SetKeySymsMap(curKeySyms, &keysyms))
 	return BadAlloc;
-#ifdef LBX
-    LbxFlushKeyboardMapTag();
-#endif
     SendMappingNotify(MappingKeyboard, stuff->firstKeyCode, stuff->keyCodes,
 									client);
     return client->noClientException;
@@ -1157,6 +1138,7 @@ ProcGetKeyboardMapping(ClientPtr client)
         return BadValue;
     }
 
+    memset(&rep, 0, sizeof(xGetKeyboardMappingReply));
     rep.type = X_Reply;
     rep.sequenceNumber = client->sequence;
     rep.keySymsPerKeyCode = curKeySyms->mapWidth;
@@ -1185,7 +1167,7 @@ ProcGetPointerMapping(ClientPtr client)
     rep.nElts = butc->numButtons;
     rep.length = ((unsigned)rep.nElts + (4-1))/4;
     WriteReplyToClient(client, sizeof(xGetPointerMappingReply), &rep);
-    (void)WriteToClient(client, (int)rep.nElts, (char *)&butc->map[1]);
+    WriteToClient(client, (int)rep.nElts, &butc->map[1]);
     return Success;    
 }
 
@@ -1447,7 +1429,7 @@ ProcBell(ClientPtr client)
 	else
 #endif
     (*keybd->kbdfeed->BellProc)(newpercent, keybd,
-				(pointer) &keybd->kbdfeed->ctrl, 0);
+				(void *) &keybd->kbdfeed->ctrl, 0);
     return Success;
 } 
 
@@ -1567,7 +1549,7 @@ ProcGetMotionEvents(ClientPtr client)
     {
 	if (CompareTimeStamps(stop, currentTime) == LATER)
 	    stop = currentTime;
-	coords = (xTimecoord *)ALLOCATE_LOCAL(mouse->valuator->numMotionEvents
+	coords = (xTimecoord *)malloc(mouse->valuator->numMotionEvents
 					      * sizeof(xTimecoord));
 	if (!coords)
 	    return BadAlloc;
@@ -1601,7 +1583,7 @@ ProcGetMotionEvents(ClientPtr client)
 				 (char *)coords);
     }
     if (coords)
-	DEALLOCATE_LOCAL(coords);
+	free(coords);
     return Success;
 }
 

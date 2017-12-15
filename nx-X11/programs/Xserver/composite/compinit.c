@@ -27,37 +27,58 @@
 #endif
 
 #include "compint.h"
+#include "compositeext.h"
 
-int	CompScreenPrivateIndex;
-int	CompWindowPrivateIndex;
-int	CompSubwindowsPrivateIndex;
-int	CompGeneration;
+#ifndef NXAGENT_SERVER
+DevPrivateKeyRec CompScreenPrivateKeyRec;
+DevPrivateKeyRec CompWindowPrivateKeyRec;
+DevPrivateKeyRec CompSubwindowsPrivateKeyRec;
+#else /* !defined(NXAGENT_SERVER) */
+int CompScreenPrivIndex = -1;
+int CompWindowPrivIndex = -1;
+int CompSubwindowsPrivIndex = -1;
+#endif
 
 static Bool
-compCloseScreen (int index, ScreenPtr pScreen)
+compCloseScreen (ScreenPtr pScreen)
 {
     CompScreenPtr   cs = GetCompScreen (pScreen);
     Bool	    ret;
 
+    free(cs->alternateVisuals);
+
     pScreen->CloseScreen = cs->CloseScreen;
-    pScreen->BlockHandler = cs->BlockHandler;
     pScreen->InstallColormap = cs->InstallColormap;
+    pScreen->ChangeWindowAttributes = cs->ChangeWindowAttributes;
     pScreen->ReparentWindow = cs->ReparentWindow;
+
+    /*
+     * Unsupported by our old Xserver infrastructure, replaced with direct calls to
+     * compReallocPixmap().
+     */
+    /*
+    pScreen->ConfigNotify = cs->ConfigNotify;
+    */
+
     pScreen->MoveWindow = cs->MoveWindow;
     pScreen->ResizeWindow = cs->ResizeWindow;
     pScreen->ChangeBorderWidth = cs->ChangeBorderWidth;
     
     pScreen->ClipNotify = cs->ClipNotify;
-    pScreen->PaintWindowBackground = cs->PaintWindowBackground;
     pScreen->UnrealizeWindow = cs->UnrealizeWindow;
     pScreen->RealizeWindow = cs->RealizeWindow;
     pScreen->DestroyWindow = cs->DestroyWindow;
     pScreen->CreateWindow = cs->CreateWindow;
     pScreen->CopyWindow = cs->CopyWindow;
     pScreen->PositionWindow = cs->PositionWindow;
-    xfree (cs);
-    pScreen->devPrivates[CompScreenPrivateIndex].ptr = 0;
-    ret = (*pScreen->CloseScreen) (index, pScreen);
+
+    pScreen->GetImage = cs->GetImage;
+    pScreen->GetSpans = cs->GetSpans;
+    pScreen->SourceValidate = cs->SourceValidate;
+
+    free (cs);
+    FAKE_DIX_SET_SCREEN_PRIVATE(pScreen, NULL);
+    ret = (*pScreen->CloseScreen) (pScreen);
     return ret;
 }
 
@@ -69,7 +90,7 @@ compInstallColormap (ColormapPtr pColormap)
     CompScreenPtr   cs = GetCompScreen (pScreen);
     int		    a;
 
-    for (a = 0; a < NUM_COMP_ALTERNATE_VISUALS; a++)
+    for (a = 0; a < cs->numAlternateVisuals; a++)
 	if (pVisual->vid == cs->alternateVisuals[a])
 	    return;
     pScreen->InstallColormap = cs->InstallColormap;
@@ -78,33 +99,91 @@ compInstallColormap (ColormapPtr pColormap)
     pScreen->InstallColormap = compInstallColormap;
 }
 
+/* Unsupported by current architecture, drop for now. */
+#if 0
 static void
-compScreenUpdate (ScreenPtr pScreen)
+compCheckBackingStore(WindowPtr pWin)
 {
-    CompScreenPtr   cs = GetCompScreen (pScreen);
-
-    compCheckTree (pScreen);
-    if (cs->damaged)
-    {
-	compWindowUpdate (WindowTable[pScreen->myNum]);
-	cs->damaged = FALSE;
+    if (pWin->backingStore != NotUseful && !pWin->backStorage) {
+        compRedirectWindow(serverClient, pWin, CompositeRedirectAutomatic);
+        pWin->backStorage = TRUE;
+    }
+    else if (pWin->backingStore == NotUseful && pWin->backStorage) {
+        compUnredirectWindow(serverClient, pWin,
+                             CompositeRedirectAutomatic);
+        pWin->backStorage = FALSE;
     }
 }
 
-static void
-compBlockHandler (int	    i,
-		  pointer   blockData,
-		  pointer   pTimeout,
-		  pointer   pReadmask)
+/* Fake backing store via automatic redirection */
+static Bool
+compChangeWindowAttributes(WindowPtr pWin, unsigned long mask)
 {
-    ScreenPtr	    pScreen = screenInfo.screens[i];
-    CompScreenPtr   cs = GetCompScreen (pScreen);
+    ScreenPtr pScreen = pWin->drawable.pScreen;
+    CompScreenPtr cs = GetCompScreen(pScreen);
+    Bool ret;
 
-    pScreen->BlockHandler = cs->BlockHandler;
-    compScreenUpdate (pScreen);
-    (*pScreen->BlockHandler) (i, blockData, pTimeout, pReadmask);
-    cs->BlockHandler = pScreen->BlockHandler;
-    pScreen->BlockHandler = compBlockHandler;
+    pScreen->ChangeWindowAttributes = cs->ChangeWindowAttributes;
+    ret = pScreen->ChangeWindowAttributes(pWin, mask);
+
+    if (ret && (mask & CWBackingStore) &&
+        pScreen->backingStoreSupport != NotUseful)
+        compCheckBackingStore(pWin);
+
+    pScreen->ChangeWindowAttributes = compChangeWindowAttributes;
+
+    return ret;
+}
+#endif /* 0 */
+
+static void
+compGetImage(DrawablePtr pDrawable,
+             int sx, int sy,
+             int w, int h,
+             unsigned int format, unsigned long planemask, char *pdstLine)
+{
+    ScreenPtr pScreen = pDrawable->pScreen;
+    CompScreenPtr cs = GetCompScreen(pScreen);
+
+    pScreen->GetImage = cs->GetImage;
+    if (pDrawable->type == DRAWABLE_WINDOW)
+        compPaintChildrenToWindow(pScreen, (WindowPtr) pDrawable);
+    (*pScreen->GetImage) (pDrawable, sx, sy, w, h, format, planemask, pdstLine);
+    cs->GetImage = pScreen->GetImage;
+    pScreen->GetImage = compGetImage;
+}
+
+static void
+compGetSpans(DrawablePtr pDrawable, int wMax, DDXPointPtr ppt, int *pwidth,
+             int nspans, char *pdstStart)
+{
+    ScreenPtr pScreen = pDrawable->pScreen;
+    CompScreenPtr cs = GetCompScreen(pScreen);
+
+    pScreen->GetSpans = cs->GetSpans;
+    if (pDrawable->type == DRAWABLE_WINDOW)
+        compPaintChildrenToWindow(pScreen, (WindowPtr) pDrawable);
+    (*pScreen->GetSpans) (pDrawable, wMax, ppt, pwidth, nspans, pdstStart);
+    cs->GetSpans = pScreen->GetSpans;
+    pScreen->GetSpans = compGetSpans;
+}
+
+static void
+compSourceValidate(DrawablePtr pDrawable,
+                   int x, int y,
+                   int width, int height /* , unsigned int subWindowMode */ /* unsupported */)
+{
+    ScreenPtr pScreen = pDrawable->pScreen;
+    CompScreenPtr cs = GetCompScreen(pScreen);
+
+    pScreen->SourceValidate = cs->SourceValidate;
+    if (pDrawable->type == DRAWABLE_WINDOW /* && subWindowMode == IncludeInferiors */ /* unsupported */)
+        compPaintChildrenToWindow(pScreen, (WindowPtr) pDrawable);
+    if (pScreen->SourceValidate)
+        (*pScreen->SourceValidate) (pDrawable, x, y, width, height /*,
+                                    subWindowMode */ /* unsupported */);
+    cs->SourceValidate = pScreen->SourceValidate;
+    pScreen->SourceValidate = compSourceValidate;
 }
 
 /*
@@ -139,167 +218,152 @@ compFindVisuallessDepth (ScreenPtr pScreen, int d)
     return 0;
 }
 
+/*
+ * Add a list of visual IDs to the list of visuals to implicitly redirect.
+ */
+static Bool
+compRegisterAlternateVisuals(CompScreenPtr cs, VisualID * vids, int nVisuals)
+{
+    VisualID *p;
+
+    p = reallocarray(cs->alternateVisuals,
+                     cs->numAlternateVisuals + nVisuals, sizeof(VisualID));
+    if (p == NULL)
+        return FALSE;
+
+    memcpy(&p[cs->numAlternateVisuals], vids, sizeof(VisualID) * nVisuals);
+
+    cs->alternateVisuals = p;
+    cs->numAlternateVisuals += nVisuals;
+
+    return TRUE;
+}
+
+Bool
+CompositeRegisterAlternateVisuals(ScreenPtr pScreen, VisualID * vids,
+                                  int nVisuals)
+{
+    CompScreenPtr cs = GetCompScreen(pScreen);
+
+    return compRegisterAlternateVisuals(cs, vids, nVisuals);
+}
+
+Bool
+CompositeRegisterImplicitRedirectionException(ScreenPtr pScreen,
+                                              VisualID parentVisual,
+                                              VisualID winVisual)
+{
+    CompScreenPtr cs = GetCompScreen(pScreen);
+    CompImplicitRedirectException *p;
+
+    p = reallocarray(cs->implicitRedirectExceptions,
+                     cs->numImplicitRedirectExceptions + 1, sizeof(p[0]));
+    if (p == NULL)
+        return FALSE;
+
+    p[cs->numImplicitRedirectExceptions].parentVisual = parentVisual;
+    p[cs->numImplicitRedirectExceptions].winVisual = winVisual;
+
+    cs->implicitRedirectExceptions = p;
+    cs->numImplicitRedirectExceptions++;
+
+    return TRUE;
+}
+
 typedef struct _alternateVisual {
     int		depth;
     CARD32	format;
 } CompAlternateVisual;
 
-static CompAlternateVisual  altVisuals[NUM_COMP_ALTERNATE_VISUALS] = {
+static CompAlternateVisual  altVisuals[] = {
 #if COMP_INCLUDE_RGB24_VISUAL
     {	24,	PICT_r8g8b8 },
 #endif
     {	32,	PICT_a8r8g8b8 },
 };
 
+static const int NUM_COMP_ALTERNATE_VISUALS = sizeof(altVisuals) /
+    sizeof(CompAlternateVisual);
+
 static Bool
-compAddAlternateVisuals (ScreenPtr pScreen, CompScreenPtr cs)
+compAddAlternateVisual (ScreenPtr pScreen, CompScreenPtr cs,
+                        CompAlternateVisual * alt)
 {
-    VisualPtr	    visuals;
-    DepthPtr	    depths[NUM_COMP_ALTERNATE_VISUALS];
-    PictFormatPtr   pPictFormats[NUM_COMP_ALTERNATE_VISUALS];
-    int		    i;
-    int		    numVisuals;
-    VisualID	    *vids[NUM_COMP_ALTERNATE_VISUALS];
-    XID		    *installedCmaps;
-    ColormapPtr	    installedCmap;
-    int		    numInstalledCmaps;
-    int		    numAlternate = 0;
-    int		    alt;
-    
-    memset (cs->alternateVisuals, '\0', sizeof (cs->alternateVisuals));
+    VisualPtr	    visual;
+    DepthPtr	depth;
+    PictFormatPtr   pPictFormat;
+    unsigned long alphaMask;
 
-    for (alt = 0; alt < NUM_COMP_ALTERNATE_VISUALS; alt++)
-    {
-	DepthPtr	depth;
-	PictFormatPtr   pPictFormat;
-	
-	depth = compFindVisuallessDepth (pScreen, altVisuals[alt].depth);
-	if (!depth)
-	    continue;
-	/*
-	 * Find the right picture format
-	 */
-	pPictFormat = PictureMatchFormat (pScreen, altVisuals[alt].depth,
-					  altVisuals[alt].format);
-	if (!pPictFormat)
-	    continue;
-
-	/*
-	 * Allocate vid list for this depth
-	 */
-	vids[numAlternate] = xalloc (sizeof (VisualID));
-	if (!vids[numAlternate])
-	    continue;
-	depths[numAlternate] = depth;
-	pPictFormats[numAlternate] = pPictFormat;
-	numAlternate++;
-    }
+    /*
+     * The ARGB32 visual is always available.  Other alternate depth visuals
+     * are only provided if their depth is less than the root window depth.
+     * There's no deep reason for this.
+     */
+    if (alt->depth >= pScreen->rootDepth && alt->depth != 32)
+        return FALSE;
     
-    if (!numAlternate)
+    depth = compFindVisuallessDepth(pScreen, alt->depth);
+    if (!depth)
+        /* alt->depth doesn't exist or already has alternate visuals. */
 	return TRUE;
 
-    /*
-     * Find the installed colormaps
-     */
-    installedCmaps = xalloc (pScreen->maxInstalledCmaps * sizeof (XID));
-    if (!installedCmaps)
-    {
-	for (alt = 0; alt < numAlternate; alt++)
-	    xfree (vids[alt]);
+    pPictFormat = PictureMatchFormat(pScreen, alt->depth, alt->format);
+    if (!pPictFormat)
 	return FALSE;
-    }
-    numInstalledCmaps = (*pScreen->ListInstalledColormaps) (pScreen, 
-							    installedCmaps);
     
-    /*
-     * realloc the visual array to fit the new one in place
-     */
-    numVisuals = pScreen->numVisuals;
-    visuals = xrealloc (pScreen->visuals,
-			(numVisuals + numAlternate) * sizeof (VisualRec));
-    if (!visuals)
-    {
-	for (alt = 0; alt < numAlternate; alt++)
-	    xfree (vids[alt]);
-	xfree (installedCmaps);
+    if (ResizeVisualArray(pScreen, 1, depth) == FALSE) {
 	return FALSE;
     }
     
-    /*
-     * Fix up any existing installed colormaps -- we'll assume that
-     * the only ones created so far have been installed.  If this
-     * isn't true, we'll have to walk the resource database looking
-     * for all colormaps.
-     */
-    for (i = 0; i < numInstalledCmaps; i++)
-    {
-	int j;
-	
-	installedCmap = LookupIDByType (installedCmaps[i], RT_COLORMAP);
-	if (!installedCmap)
-	    continue;
-	j = installedCmap->pVisual - pScreen->visuals;
-	installedCmap->pVisual = &visuals[j];
-    }
+    visual = pScreen->visuals + (pScreen->numVisuals - 1);      /* the new one */
 
-    xfree (installedCmaps);
-
-    pScreen->visuals = visuals;
-    pScreen->numVisuals = numVisuals + numAlternate;
-
-    for (alt = 0; alt < numAlternate; alt++)
-    {
-	DepthPtr	depth = depths[alt];
-	PictFormatPtr	pPictFormat = pPictFormats[alt];
-	VisualPtr	visual = &visuals[numVisuals + alt];
-	unsigned long	alphaMask;
-
-	/*
-	 * Initialize the visual
-	 */
-	visual->class = TrueColor;
+    /* Initialize the visual */
 	visual->bitsPerRGBValue = 8;
+    if (PICT_FORMAT_TYPE(alt->format) == PICT_TYPE_COLOR) {
+        visual->class = PseudoColor;
+        visual->nplanes = PICT_FORMAT_BPP(alt->format);
+        visual->ColormapEntries = 1 << visual->nplanes;
+    }
+    else {
+        DirectFormatRec *direct = &pPictFormat->direct;
 
-	visual->vid = FakeClientID (0);
-	visual->redMask   = (((unsigned long) pPictFormat->direct.redMask) << 
-			     pPictFormat->direct.red);
-	visual->greenMask = (((unsigned long) pPictFormat->direct.greenMask) << 
-			     pPictFormat->direct.green);
-	visual->blueMask  = (((unsigned long) pPictFormat->direct.blueMask) << 
-			     pPictFormat->direct.blue);
-	alphaMask =  (((unsigned long) pPictFormat->direct.alphaMask) << 
-		      pPictFormat->direct.alpha);
-	visual->offsetRed   = pPictFormat->direct.red;
-	visual->offsetGreen = pPictFormat->direct.green;
-	visual->offsetBlue  = pPictFormat->direct.blue;
+        visual->class = TrueColor;
+        visual->redMask = ((unsigned long) direct->redMask) << direct->red;
+        visual->greenMask =
+            ((unsigned long) direct->greenMask) << direct->green;
+        visual->blueMask = ((unsigned long) direct->blueMask) << direct->blue;
+        alphaMask = ((unsigned long) direct->alphaMask) << direct->alpha;
+        visual->offsetRed = direct->red;
+        visual->offsetGreen = direct->green;
+        visual->offsetBlue = direct->blue;
 	/*
 	 * Include A bits in this (unlike GLX which includes only RGB)
 	 * This lets DIX compute suitable masks for colormap allocations
 	 */
-	visual->nplanes = Ones (visual->redMask |
+        visual->nplanes = Ones(visual->redMask |
 				visual->greenMask |
-				visual->blueMask |
-				alphaMask);
-	/*
-	 * find widest component
-	 */
-	visual->ColormapEntries = (1 << max (Ones (visual->redMask),
-					     max (Ones (visual->greenMask),
-						  Ones (visual->blueMask))));
-
-	/*
-	 * remember the visual ID to detect auto-update windows
-	 */
-	cs->alternateVisuals[alt] = visual->vid;
-	
-	/*
-	 * Fix up the depth
-	 */
-	vids[alt][0] = visual->vid;
-	depth->numVids = 1;
-	depth->vids = vids[alt];
+                               visual->blueMask | alphaMask);
+        /* find widest component */
+        visual->ColormapEntries = (1 << max(Ones(visual->redMask),
+                                            max(Ones(visual->greenMask),
+                                                Ones(visual->blueMask))));
     }
+
+    /* remember the visual ID to detect auto-update windows */
+    compRegisterAlternateVisuals(cs, &visual->vid, 1);
+	
     return TRUE;
+}
+
+static Bool
+compAddAlternateVisuals(ScreenPtr pScreen, CompScreenPtr cs)
+{
+    int alt, ret = 0;
+
+    for (alt = 0; alt < NUM_COMP_ALTERNATE_VISUALS; alt++)
+        ret |= compAddAlternateVisual(pScreen, cs, altVisuals + alt);
+
+    return ! !ret;
 }
 
 Bool
@@ -307,38 +371,53 @@ compScreenInit (ScreenPtr pScreen)
 {
     CompScreenPtr   cs;
 
-    if (CompGeneration != serverGeneration)
-    {
-	CompScreenPrivateIndex = AllocateScreenPrivateIndex ();
-	if (CompScreenPrivateIndex == -1)
+#ifndef NXAGENT_SERVER
+    if (!dixRegisterPrivateKey(&CompScreenPrivateKeyRec, PRIVATE_SCREEN, 0))
 	    return FALSE;
-	CompWindowPrivateIndex = AllocateWindowPrivateIndex ();
-	if (CompWindowPrivateIndex == -1)
-	    return FALSE;
-	CompSubwindowsPrivateIndex = AllocateWindowPrivateIndex ();
-	if (CompSubwindowsPrivateIndex == -1)
-	    return FALSE;
-	CompGeneration = serverGeneration;
-    }
-    if (!AllocateWindowPrivate (pScreen, CompWindowPrivateIndex, 0))
+    if (!dixRegisterPrivateKey(&CompWindowPrivateKeyRec, PRIVATE_WINDOW, 0))
+	return FALSE;
+    if (!dixRegisterPrivateKey(&CompSubwindowsPrivateKeyRec, PRIVATE_WINDOW, 0))
+	return FALSE;
+#else /* !defined(NXAGENT_SERVER) */
+    if ((CompScreenPrivIndex = AllocateScreenPrivateIndex()) < 0)
+        return FALSE;
+    if ((CompWindowPrivIndex = AllocateWindowPrivateIndex()) < 0)
+        return FALSE;
+    if ((CompSubwindowsPrivIndex = AllocateWindowPrivateIndex()) < 0)
+        return FALSE;
+
+    if (!AllocateWindowPrivate (pScreen, CompWindowPrivIndex, 0))
 	return FALSE;
 
-    if (!AllocateWindowPrivate (pScreen, CompSubwindowsPrivateIndex, 0))
+    if (!AllocateWindowPrivate (pScreen, CompSubwindowsPrivIndex, 0))
 	return FALSE;
+#endif
 
     if (GetCompScreen (pScreen))
 	return TRUE;
-    cs = (CompScreenPtr) xalloc (sizeof (CompScreenRec));
+    cs = (CompScreenPtr) malloc (sizeof (CompScreenRec));
     if (!cs)
 	return FALSE;
 
     cs->damaged = FALSE;
 
+    cs->overlayWid = FakeClientID(0);
+    cs->pOverlayWin = NULL;
+    cs->pOverlayClients = NULL;
+
+    cs->numAlternateVisuals = 0;
+    cs->alternateVisuals = NULL;
+    cs->numImplicitRedirectExceptions = 0;
+    cs->implicitRedirectExceptions = NULL;
+
     if (!compAddAlternateVisuals (pScreen, cs))
     {
-	xfree (cs);
+	free (cs);
 	return FALSE;
     }
+
+    if (!disableBackingStore)
+        pScreen->backingStoreSupport = WhenMapped;
 
     cs->PositionWindow = pScreen->PositionWindow;
     pScreen->PositionWindow = compPositionWindow;
@@ -358,11 +437,17 @@ compScreenInit (ScreenPtr pScreen)
     cs->UnrealizeWindow = pScreen->UnrealizeWindow;
     pScreen->UnrealizeWindow = compUnrealizeWindow;
 
-    cs->PaintWindowBackground = pScreen->PaintWindowBackground;
-    pScreen->PaintWindowBackground = compPaintWindowBackground;
-
     cs->ClipNotify = pScreen->ClipNotify;
     pScreen->ClipNotify = compClipNotify;
+
+    /*
+     * Unsupported by our old Xserver infrastructure, replaced with direct calls to
+     * compReallocPixmap().
+     */
+    /*
+    cs->ConfigNotify = pScreen->ConfigNotify;
+    pScreen->ConfigNotify = compConfigNotify;
+    */
 
     cs->MoveWindow = pScreen->MoveWindow;
     pScreen->MoveWindow = compMoveWindow;
@@ -379,12 +464,29 @@ compScreenInit (ScreenPtr pScreen)
     cs->InstallColormap = pScreen->InstallColormap;
     pScreen->InstallColormap = compInstallColormap;
 
-    cs->BlockHandler = pScreen->BlockHandler;
-    pScreen->BlockHandler = compBlockHandler;
+    /* Unsupported by our current architecture, drop for now. */
+    /*
+    cs->ChangeWindowAttributes = pScreen->ChangeWindowAttributes;
+    pScreen->ChangeWindowAttributes = compChangeWindowAttributes;
+    */
+
+    cs->BlockHandler = NULL;
 
     cs->CloseScreen = pScreen->CloseScreen;
     pScreen->CloseScreen = compCloseScreen;
 
-    pScreen->devPrivates[CompScreenPrivateIndex].ptr = (pointer) cs;
+    cs->GetImage = pScreen->GetImage;
+    pScreen->GetImage = compGetImage;
+
+    cs->GetSpans = pScreen->GetSpans;
+    pScreen->GetSpans = compGetSpans;
+
+    cs->SourceValidate = pScreen->SourceValidate;
+    pScreen->SourceValidate = compSourceValidate;
+
+    FAKE_DIX_SET_SCREEN_PRIVATE(pScreen, cs);
+
+    RegisterRealChildHeadProc(CompositeRealChildHead);
+
     return TRUE;
 }

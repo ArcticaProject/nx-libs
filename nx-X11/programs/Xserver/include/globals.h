@@ -1,5 +1,3 @@
-/* $XdotOrg: xc/programs/Xserver/include/globals.h,v 1.9 2005/08/24 11:18:31 daniels Exp $ */
-/* $XFree86: xc/programs/Xserver/include/globals.h,v 1.3 1999/09/25 14:38:21 dawes Exp $ */
 
 #ifndef _XSERV_GLOBAL_H_
 #define _XSERV_GLOBAL_H_
@@ -14,14 +12,13 @@ extern CARD32 ScreenSaverTime;
 extern CARD32 ScreenSaverInterval;
 
 extern char *defaultFontPath;
-extern char *rgbPath;
 extern int monitorResolution;
 extern Bool loadableFonts;
 extern int defaultColorVisualClass;
 
 extern Bool Must_have_memory;
-extern WindowPtr *WindowTable;
 extern int GrabInProgress;
+extern char *ConnectionInfo;
 extern Bool noTestExtensions;
 
 extern DDXPointRec dixScreenOrigins[MAXSCREENS];
@@ -46,6 +43,7 @@ extern Bool PanoramiXMapped;
 extern Bool PanoramiXVisibilityNotifySent;
 extern Bool PanoramiXWindowExposureSent;
 extern Bool PanoramiXOneExposeRequest;
+extern Bool PanoramiXExtensionDisabledHack;
 #endif
 
 #ifdef BIGREQS
@@ -72,20 +70,8 @@ extern Bool noDPSExtension;
 extern Bool noDPMSExtension;
 #endif
 
-#ifdef EVI
-extern Bool noEVIExtension;
-#endif
-
-#ifdef FONTCACHE
-extern Bool noFontCacheExtension;
-#endif
-
 #ifdef GLXEXT
 extern Bool noGlxExtension;
-#endif
-
-#ifdef LBX
-extern Bool noLbxExtension;
 #endif
 
 #ifdef SCREENSAVER
@@ -96,16 +82,9 @@ extern Bool noScreenSaverExtension;
 extern Bool noMITShmExtension;
 #endif
 
-#ifdef MITMISC
-extern Bool noMITMiscExtension;
-#endif
-
-#ifdef MULTIBUFFER
-extern Bool noMultibufferExtension;
-#endif
-
 #ifdef RANDR
 extern Bool noRRExtension;
+extern Bool noRRXineramaExtension;
 #endif
 
 #ifdef RENDER
@@ -124,44 +103,20 @@ extern Bool noSecurityExtension;
 extern Bool noSyncExtension;
 #endif
 
-#ifdef TOGCUP
-extern Bool noXcupExtension;
-#endif
-
 #ifdef RES
 extern Bool noResExtension;
-#endif
-
-#ifdef XAPPGROUP
-extern Bool noXagExtension;
 #endif
 
 #ifdef XCMISC
 extern Bool noXCMiscExtension;
 #endif
 
-#ifdef XEVIE
-extern Bool noXevieExtension;
-#endif
-
 #ifdef XF86BIGFONT
 extern Bool noXFree86BigfontExtension;
 #endif
 
-#ifdef XFreeXDGA
-extern Bool noXFree86DGAExtension;
-#endif
-
 #ifdef XF86DRI
 extern Bool noXFree86DRIExtension;
-#endif
-
-#ifdef XF86MISC
-extern Bool noXFree86MiscExtension;
-#endif
-
-#ifdef XF86VIDMODE
-extern Bool noXFree86VidModeExtension;
 #endif
 
 #ifdef XFIXES

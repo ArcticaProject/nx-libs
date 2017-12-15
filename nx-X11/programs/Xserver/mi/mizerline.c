@@ -1,4 +1,3 @@
-/* $XFree86: xc/programs/Xserver/mi/mizerline.c,v 3.6 2001/08/06 20:51:20 dawes Exp $ */
 /***********************************************************
 
 Copyright 1987, 1998  The Open Group
@@ -45,12 +44,11 @@ ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS
 SOFTWARE.
 
 ******************************************************************/
-/* $Xorg: mizerline.c,v 1.4 2001/02/09 02:05:22 xorgcvs Exp $ */
 #ifdef HAVE_DIX_CONFIG_H
 #include <dix-config.h>
 #endif
 
-#include <X11/X.h>
+#include <nx-X11/X.h>
 
 #include "misc.h"
 #include "scrnintstr.h"
@@ -157,8 +155,8 @@ miZeroLine(pDraw, pGC, mode, npt, pptInit)
     width = xright - xleft + 1;
     height = ybottom - ytop + 1;
     list_len = (height >= width) ? height : width;
-    pspanInit = (DDXPointPtr)ALLOCATE_LOCAL(list_len * sizeof(DDXPointRec));
-    pwidthInit = (int *)ALLOCATE_LOCAL(list_len * sizeof(int));
+    pspanInit = (DDXPointPtr)malloc(list_len * sizeof(DDXPointRec));
+    pwidthInit = (int *)malloc(list_len * sizeof(int));
     if (!pspanInit || !pwidthInit)
 	return;
 
@@ -361,8 +359,8 @@ miZeroLine(pDraw, pGC, mode, npt, pptInit)
 	(*pGC->ops->FillSpans)(pDraw, pGC, Nspans, pspanInit,
 			       pwidthInit, FALSE);
 
-    DEALLOCATE_LOCAL(pwidthInit);
-    DEALLOCATE_LOCAL(pspanInit);
+    free(pwidthInit);
+    free(pspanInit);
 }
 
 void

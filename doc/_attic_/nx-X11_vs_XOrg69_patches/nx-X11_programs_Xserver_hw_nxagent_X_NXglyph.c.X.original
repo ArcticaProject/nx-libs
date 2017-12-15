@@ -1,0 +1,160 @@
+--- ./nx-X11/programs/Xserver/hw/nxagent/X/NXglyph.c.X.original	2015-02-13 14:03:44.744441510 +0100
++++ ./nx-X11/programs/Xserver/hw/nxagent/X/NXglyph.c	2015-02-10 19:13:13.824685138 +0100
+@@ -1,3 +1,20 @@
++/**************************************************************************/
++/*                                                                        */
++/* Copyright (c) 2001, 2011 NoMachine, http://www.nomachine.com/.         */
++/*                                                                        */
++/* NXAGENT, NX protocol compression and NX extensions to this software    */
++/* are copyright of NoMachine. Redistribution and use of the present      */
++/* software is allowed according to terms specified in the file LICENSE   */
++/* which comes in the source distribution.                                */
++/*                                                                        */
++/* Check http://www.nomachine.com/licensing.html for applicability.       */
++/*                                                                        */
++/* NX and NoMachine are trademarks of Medialogic S.p.A.                   */
++/*                                                                        */
++/* All rights reserved.                                                   */
++/*                                                                        */
++/**************************************************************************/
++
+ /*
+  * $XFree86: xc/programs/Xserver/render/glyph.c,v 1.5 2001/01/30 07:01:22 keithp Exp $
+  *
+@@ -40,9 +57,25 @@
+ #include "dixstruct.h"
+ #include "gcstruct.h"
+ #include "servermd.h"
++
++#ifdef NXAGENT_SERVER
++
++#include "NXpicturestr.h"
++#include "NXglyphstr.h"
++#include "Render.h"
++
++#define PANIC
++#define WARNING
++#undef  DEBUG
++#undef  TEST
++
++#else
++
+ #include "picturestr.h"
+ #include "glyphstr.h"
+ 
++#endif
++
+ #if HAVE_STDINT_H
+ #include <stdint.h>
+ #elif !defined(UINT32_MAX)
+@@ -293,7 +326,7 @@
+ 	gr->signature = hash;
+ 	globalGlyphs[glyphSet->fdepth].tableEntries++;
+     }
+-    
++ 
+     /* Insert/replace glyphset value */
+     gr = FindGlyphRef (&glyphSet->hash, id, FALSE, 0);
+     ++glyph->refcnt;
+@@ -303,6 +336,13 @@
+ 	glyphSet->hash.tableEntries++;
+     gr->glyph = glyph;
+     gr->signature = id;
++
++    #ifdef NXAGENT_SERVER
++
++    gr -> corruptedGlyph = 1;
++
++    #endif
++
+     CheckDuplicates (&globalGlyphs[glyphSet->fdepth], "AddGlyph bottom");
+ }
+ 
+@@ -324,6 +364,36 @@
+     return FALSE;
+ }
+ 
++#ifdef NXAGENT_SERVER
++
++GlyphPtr FindGlyph (GlyphSetPtr glyphSet, Glyph id)
++{
++  GlyphRefPtr gr;
++  GlyphPtr    glyph;
++
++  gr = FindGlyphRef (&glyphSet->hash, id, FALSE, 0);
++  glyph = gr -> glyph;
++
++  if (glyph == DeletedGlyph)
++  {
++    glyph = 0;
++  }
++  else if (gr -> corruptedGlyph == 1)
++  {
++     #ifdef DEBUG
++     fprintf(stderr, "FindGlyphRef: Going to synchronize the glyph [%p] for glyphset [%p].\n",
++                 (void *) glyph, (void *) glyphSet);
++     #endif
++
++    nxagentAddGlyphs(glyphSet, &id, &(glyph -> info), 1,
++                         (CARD8*)(glyph + 1), glyph -> size - sizeof(xGlyphInfo));
++  }
++
++  return glyph;
++}
++
++#else
++
+ GlyphPtr
+ FindGlyph (GlyphSetPtr glyphSet, Glyph id)
+ {
+@@ -335,6 +405,8 @@
+     return glyph;
+ }
+ 
++#endif
++
+ GlyphPtr
+ AllocateGlyph (xGlyphInfo *gi, int fdepth)
+ {
+@@ -379,6 +451,12 @@
+     int		    oldSize;
+     CARD32	    s;
+ 
++    #ifdef NXAGENT_SERVER
++
++    CARD32          c;
++
++    #endif
++
+     tableEntries = hash->tableEntries + change;
+     hashSet = FindGlyphHashSet (tableEntries);
+     if (hashSet == hash->hashSet)
+@@ -396,9 +474,23 @@
+ 	    if (glyph && glyph != DeletedGlyph)
+ 	    {
+ 		s = hash->table[i].signature;
++
++                #ifdef NXAGENT_SERVER
++
++                c = hash->table[i].corruptedGlyph;
++
++                #endif
++
+ 		gr = FindGlyphRef (&newHash, s, global, glyph);
+ 		gr->signature = s;
+ 		gr->glyph = glyph;
++
++                #ifdef NXAGENT_SERVER
++
++                gr -> corruptedGlyph = c;
++
++                #endif
++
+ 		++newHash.tableEntries;
+ 	    }
+ 	}
+@@ -486,3 +578,4 @@
+     }
+     return Success;
+ }
++

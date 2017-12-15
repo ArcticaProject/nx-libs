@@ -1,4 +1,3 @@
-/* $Xorg: opaque.h,v 1.4 2001/02/09 02:05:15 xorgcvs Exp $ */
 /*
 
 Copyright 1987, 1998  The Open Group
@@ -26,12 +25,11 @@ other dealings in this Software without prior written authorization
 from The Open Group.
 
 */
-/* $XFree86: xc/programs/Xserver/include/opaque.h,v 1.13 2003/07/24 13:50:25 eich Exp $ */
 
 #ifndef OPAQUE_H
 #define OPAQUE_H
 
-#include <X11/Xmd.h>
+#include <nx-X11/Xmd.h>
 
 #include "globals.h"
 
@@ -54,6 +52,8 @@ extern int defaultScreenSaverAllowExposures;
 extern int argcGlobal;
 extern char **argvGlobal;
 extern char *display;
+extern int displayfd;
+extern Bool explicit_display;
 
 extern int defaultBackingStore;
 extern Bool disableBackingStore;
@@ -78,6 +78,6 @@ extern long maxBigRequestSize;
 extern Bool blackRoot;
 
 extern Bool CoreDump;
-
+extern Bool NoListenAll;
 
 #endif /* OPAQUE_H */

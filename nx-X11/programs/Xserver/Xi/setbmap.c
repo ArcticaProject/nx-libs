@@ -1,4 +1,3 @@
-/* $Xorg: setbmap.c,v 1.4 2001/02/09 02:04:34 xorgcvs Exp $ */
 
 /************************************************************
 
@@ -45,7 +44,6 @@ ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS
 SOFTWARE.
 
 ********************************************************/
-/* $XFree86: xc/programs/Xserver/Xi/setbmap.c,v 3.2 2001/01/17 22:13:26 dawes Exp $ */
 
 /***********************************************************************
  *
@@ -53,8 +51,6 @@ SOFTWARE.
  *
  */
 
-#define	 NEED_EVENTS
-#define	 NEED_REPLIES
 #define IsOn(ptr, bit) \
 	(((BYTE *) (ptr))[(bit)>>3] & (1 << ((bit) & 7)))
 
@@ -62,11 +58,11 @@ SOFTWARE.
 #include <dix-config.h>
 #endif
 
-#include <X11/X.h>				/* for inputstr.h    */
-#include <X11/Xproto.h>			/* Request macro     */
+#include <nx-X11/X.h>				/* for inputstr.h    */
+#include <nx-X11/Xproto.h>			/* Request macro     */
 #include "inputstr.h"			/* DeviceIntPtr	     */
-#include <X11/extensions/XI.h>
-#include <X11/extensions/XIproto.h>
+#include <nx-X11/extensions/XI.h>
+#include <nx-X11/extensions/XIproto.h>
 #include "exevents.h"
 #include "extnsionst.h"
 #include "extinit.h"			/* LookupDeviceIntRec */
@@ -84,10 +80,8 @@ int
 SProcXSetDeviceButtonMapping(client)
     register ClientPtr client;
     {
-    register char n;
-
     REQUEST(xSetDeviceButtonMappingReq);
-    swaps(&stuff->length, n);
+    swaps(&stuff->length);
     return(ProcXSetDeviceButtonMapping(client));
     }
 
@@ -162,9 +156,7 @@ SRepXSetDeviceButtonMapping (client, size, rep)
     int		size;
     xSetDeviceButtonMappingReply	*rep;
     {
-    register char n;
-
-    swaps(&rep->sequenceNumber, n);
-    swapl(&rep->length, n);
-    WriteToClient(client, size, (char *)rep);
+    swaps(&rep->sequenceNumber);
+    swapl(&rep->length);
+    WriteToClient(client, size, rep);
     }

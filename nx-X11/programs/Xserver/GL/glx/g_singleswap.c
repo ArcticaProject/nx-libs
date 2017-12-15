@@ -1,4 +1,3 @@
-/* $XFree86: xc/programs/Xserver/GL/glx/g_singleswap.c,v 1.4tsi Exp $ */
 /*
 ** License Applicability. Except to the extent portions of this file are
 ** made subject to an alternative license as permitted in the SGI Free
@@ -28,7 +27,6 @@
 ** version 1.2.1 Specification.
 */
 
-#define NEED_REPLIES
 #ifdef HAVE_DIX_CONFIG_H
 #include <dix-config.h>
 #endif

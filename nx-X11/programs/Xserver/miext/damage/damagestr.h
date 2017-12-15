@@ -93,7 +93,7 @@ extern int damageWinPrivateIndex;
     ((DamagePtr) (pPix)->devPrivates[damagePixPrivateIndex].ptr)
 
 #define damgeSetPixPriv(pPix,v) \
-    ((pPix)->devPrivates[damagePixPrivateIndex].ptr = (pointer ) (v))
+    ((pPix)->devPrivates[damagePixPrivateIndex].ptr = (void * ) (v))
 
 #define damagePixPriv(pPix) \
     DamagePtr	    pDamage = damageGetPixPriv(pPix)

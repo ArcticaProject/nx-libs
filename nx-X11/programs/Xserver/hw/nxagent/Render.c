@@ -1,22 +1,30 @@
 /**************************************************************************/
 /*                                                                        */
-/* Copyright (c) 2001, 2011 NoMachine, http://www.nomachine.com/.         */
+/* Copyright (c) 2001, 2011 NoMachine (http://www.nomachine.com)          */
+/* Copyright (c) 2008-2014 Oleksandr Shneyder <o.shneyder@phoca-gmbh.de>  */
+/* Copyright (c) 2011-2016 Mike Gabriel <mike.gabriel@das-netzwerkteam.de>*/
+/* Copyright (c) 2014-2016 Mihai Moldovan <ionic@ionic.de>                */
+/* Copyright (c) 2014-2016 Ulrich Sibiller <uli42@gmx.de>                 */
+/* Copyright (c) 2015-2016 Qindel Group (http://www.qindel.com)           */
 /*                                                                        */
 /* NXAGENT, NX protocol compression and NX extensions to this software    */
-/* are copyright of NoMachine. Redistribution and use of the present      */
-/* software is allowed according to terms specified in the file LICENSE   */
-/* which comes in the source distribution.                                */
+/* are copyright of the aforementioned persons and companies.             */
 /*                                                                        */
-/* Check http://www.nomachine.com/licensing.html for applicability.       */
-/*                                                                        */
-/* NX and NoMachine are trademarks of Medialogic S.p.A.                   */
+/* Redistribution and use of the present software is allowed according    */
+/* to terms specified in the file LICENSE which comes in the source       */
+/* distribution.                                                          */
 /*                                                                        */
 /* All rights reserved.                                                   */
 /*                                                                        */
+/* NOTE: This software has received contributions from various other      */
+/* contributors, only the core maintainers and supporters are listed as   */
+/* copyright holders. Please contact us, if you feel you should be listed */
+/* as copyright holder, as well.                                          */
+/*                                                                        */
 /**************************************************************************/
 
-#include "NXpicturestr.h"
-#include "NXglyphstr.h"
+#include "picturestr.h"
+#include "glyphstr.h"
 
 #include "Render.h"
 
@@ -31,6 +39,7 @@
 #include "mipict.h"
 #include "fbpict.h"
 #include "dixstruct.h"
+#include "protocol-versions.h"
 
 #include "Agent.h"
 #include "Drawable.h"
@@ -39,12 +48,12 @@
 
 #define Atom   XlibAtom
 #define Pixmap XlibPixmap
-#include "../../../../lib/Xrender/Xrenderint.h"
+#include "X11/include/Xrenderint_nxagent.h"
 #undef  Atom
 #undef  Pixmap
 
 #include "region.h"
-#include "extutil.h"
+#include <X11/extensions/extutil.h>
 
 #include "Display.h"
 #include "Pixmaps.h"
@@ -54,7 +63,7 @@
 #include "Pixels.h"
 #include "Handlers.h"
 
-#include "NXproto.h"
+#include <nx/NXproto.h>
 
 #define MAX_FORMATS 255
 
@@ -84,12 +93,6 @@ FIXME: Most operations don't seem to produce any visible result
 #undef  SKIP_REALLY_ALL_LOUSY_RENDER_OPERATIONS
 
 /*
- * Do we split the big trapezoid requests?
- */
-
-#define TRAPEZOIDS_PER_REQUEST  256
-
-/*
  * Margin added around the glyphs extent (in pixels).
  */
 
@@ -100,10 +103,6 @@ int nxagentRenderVersionMajor;
 int nxagentRenderVersionMinor;
 
 int nxagentPicturePrivateIndex = 0;
-
-#ifndef NXAGENT_UPGRADE
-static int picturePrivateCount = 0;
-#endif
 
 static int nxagentNumFormats = 0;
 
@@ -127,10 +126,10 @@ static void nxagentPrintFormat(XRenderPictFormat *pFormat);
 extern const CARD8 glyphDepths[];
 
 /*
- * From NXdispatch.c.
+ * From BitmapUtils.c.
  */
 
-extern void BitOrderInvert(unsigned char *data, int nbytes);
+extern void nxagentBitOrderInvert(unsigned char *data, int nbytes);
 
 /*
  * Other functions defined here.
@@ -192,16 +191,261 @@ void nxagentFreeGlyphs(GlyphSetPtr glyphSet, CARD32 *gids, int nglyph);
 
 void nxagentFreeGlyphSet(GlyphSetPtr glyphSet);
 
-void nxagentSetPictureTransform(PicturePtr pPicture, pointer transform);
+void nxagentSetPictureTransform(PicturePtr pPicture, void * transform);
 
 void nxagentSetPictureFilter(PicturePtr pPicture, char *filter, int name_size,
-                                 pointer params, int nparams);
+                                 void * params, int nparams);
 
 Bool nxagentReconnectAllGlyphSet(void *p);
 
 Bool nxagentReconnectAllPicture(void *);
 
 Bool nxagentDisconnectAllPicture(void);
+
+#ifdef NXAGENT_RENDER_CLEANUP
+
+#include <stdio.h>
+
+#define ROUNDUP(nbits, pad) ((((nbits) + ((pad)-1)) / (pad)) * ((pad)>>3))
+
+void
+nxagentCleanGlyphs(xGlyphInfo  *gi,
+                   int         nglyphs,
+                   CARD8       *images,
+                   int         depth,
+                   Display     *dpy)
+{
+  int widthInBits;
+  int bytesPerLine;
+  int bytesToClean;
+  int bitsToClean;
+  int widthInBytes;
+  int height = gi -> height;
+  register int i;
+  int j;
+
+  #ifdef DEBUG
+  fprintf(stderr, "nxagentCleanGlyphs: Found a Glyph with Depth %d, width %d, pad %d.\n",
+          depth, gi -> width, BitmapPad(dpy));
+  #endif
+
+  while (nglyphs > 0)
+  {
+    if (depth == 24)
+    {
+      widthInBits = gi -> width * 32;
+
+      bytesPerLine = ROUNDUP(widthInBits, BitmapPad(dpy));
+
+      bytesToClean = bytesPerLine * height;
+
+      #ifdef DUBUG
+      fprintf(stderr, "nxagentCleanGlyphs: Found glyph with depth 24, bytes to clean is %d"
+              "width in bits is %d bytes per line [%d] height [%d].\n", bytesToClean,
+                      widthInBits, bytesPerLine, height);
+      #endif
+
+      if (ImageByteOrder(dpy) == LSBFirst)
+      {
+        for (i = 3; i < bytesToClean; i += 4)
+        {
+          images[i] = 0x00;
+        }
+      }
+      else
+      {
+        for (i = 0; i < bytesToClean; i += 4)
+        {
+          images[i] = 0x00;
+        }
+      }
+
+      #ifdef DUMP
+      fprintf(stderr, "nxagentCleanGlyphs: depth %d, bytesToClean %d, scanline: ", depth, bytesToClean);
+      for (i = 0; i < bytesPerLine; i++)
+      {
+        fprintf(stderr, "[%d]", images[i]);
+      }
+      fprintf(stderr,"\n");
+      #endif
+
+      images += bytesToClean;
+
+      gi++;
+
+      nglyphs--;
+    }
+    else if (depth == 1)
+    {
+      widthInBits = gi -> width;
+
+      bytesPerLine = ROUNDUP(widthInBits, BitmapPad(dpy));
+
+      bitsToClean = (bytesPerLine << 3) - (gi -> width);
+
+      #ifdef DEBUG
+      fprintf(stderr, "nxagentCleanGlyphs: Found glyph with depth 1, width [%d], height [%d], bitsToClean [%d],"
+              " bytesPerLine [%d].\n", gi -> width, height, bitsToClean, bytesPerLine);
+      #endif
+
+      bytesToClean = bitsToClean >> 3;
+
+      bitsToClean &= 7;
+
+      #ifdef DEBUG
+      fprintf(stderr, "nxagentCleanGlyphs: bitsToClean &=7 is %d, bytesToCLean is %d."
+              " byte_order is %d, bitmap_bit_order is %d.\n", bitsToClean, bytesToClean,
+              ImageByteOrder(dpy), BitmapBitOrder(dpy));
+      #endif
+
+      for (i = 1; i <= height; i++)
+      {
+        if (ImageByteOrder(dpy) == BitmapBitOrder(dpy))
+        {
+          for (j = 1; j <= bytesToClean; j++)
+          {
+            images[i * bytesPerLine - j] = 0x00;
+
+            #ifdef DEBUG
+            fprintf(stderr, "nxagentCleanGlyphs: byte_order == bitmap_bit_order, cleaning %d, i=%d, j=%d.\n"
+                    , (i * bytesPerLine - j), i, j);
+            #endif
+
+          }
+        }
+        else
+        {
+          for (j = bytesToClean; j >= 1; j--)
+          {
+            images[i * bytesPerLine - j] = 0x00;
+
+            #ifdef DEBUG
+            fprintf(stderr, "nxagentCleanGlyphs: byte_order %d, bitmap_bit_order %d, cleaning %d, i=%d, j=%d.\n"
+                    , ImageByteOrder(dpy), BitmapBitOrder(dpy), (i * bytesPerLine - j), i, j);
+            #endif
+
+          }
+        }
+
+        if (BitmapBitOrder(dpy) == MSBFirst)
+        {
+          images[i * bytesPerLine - j] &= 0xff << bitsToClean;
+
+          #ifdef DEBUG
+          fprintf(stderr, "nxagentCleanGlyphs: byte_order MSBFirst, cleaning %d, i=%d, j=%d.\n"
+                  , (i * bytesPerLine - j), i, j);
+          #endif
+        }
+        else
+        {
+          images[i * bytesPerLine - j] &= 0xff >> bitsToClean;
+
+          #ifdef DEBUG
+          fprintf(stderr, "nxagentCleanGlyphs: byte_order LSBFirst, cleaning %d, i=%d, j=%d.\n"
+                  , (i * bytesPerLine - j), i, j);
+          #endif
+        }
+      }
+
+      #ifdef DUMP
+      fprintf(stderr, "nxagentCleanGlyphs: depth %d, bytesToClean %d, scanline: ", depth, bytesToClean);
+      for (i = 0; i < bytesPerLine; i++)
+      {
+        fprintf(stderr, "[%d]", images[i]);
+      }
+      fprintf(stderr,"\n");
+      #endif
+
+      images += bytesPerLine * height;
+
+      gi++;
+
+      nglyphs--;
+    }
+    else if ((depth == 8) || (depth == 16) )
+    {
+      widthInBits = gi -> width * depth;
+
+      bytesPerLine = ROUNDUP(widthInBits, BitmapPad(dpy));
+
+      widthInBytes = (widthInBits >> 3);
+
+      bytesToClean = bytesPerLine - widthInBytes;
+
+      #ifdef DEBUG
+      fprintf(stderr, "nxagentCleanGlyphs: nglyphs is %d, width of glyph in bits is %d, in bytes is %d.\n",
+              nglyphs, widthInBits, widthInBytes);
+
+      fprintf(stderr, "nxagentCleanGlyphs: bytesPerLine is %d bytes, there are %d scanlines.\n", bytesPerLine, height);
+
+      fprintf(stderr, "nxagentCleanGlyphs: Bytes to clean for each scanline are %d.\n", bytesToClean);
+      #endif
+
+      if (bytesToClean > 0)
+      {
+        while (height > 0)
+        {
+          i = bytesToClean;
+
+          while (i > 0)
+          {
+            *(images + (bytesPerLine - i)) = 0;
+
+            #ifdef DEBUG
+            fprintf(stderr, "nxagentCleanGlyphs: cleaned a byte.\n");
+            #endif
+
+            i--;
+          }
+
+          #ifdef DUMP
+          fprintf(stderr, "nxagentCleanGlyphs: depth %d, bytesToClean %d, scanline: ", depth, bytesToClean);
+          for (i = 0; i < bytesPerLine; i++)
+          {
+            fprintf(stderr, "[%d]", images[i]);
+          }
+          fprintf(stderr,"\n");
+          #endif
+
+          images += bytesPerLine;
+
+          height--;
+        }
+      }
+
+      gi++;
+
+      nglyphs--;
+
+      #ifdef DEBUG
+      fprintf(stderr, "nxagentCleanGlyphs: Breaking Out.\n");
+      #endif
+    }
+    else if (depth == 32)
+    {
+      #ifdef DEBUG
+      fprintf(stderr, "nxagentCleanGlyphs: Found glyph with depth 32.\n");
+      #endif
+
+      gi++;
+
+      nglyphs--;
+    }
+    else
+    {
+      #ifdef WARNING
+      fprintf(stderr, "nxagentCleanGlyphs: Unrecognized glyph, depth is not 8/16/24/32, it appears to be %d.\n",
+              depth);
+      #endif
+
+      gi++;
+
+      nglyphs--;
+    }
+  }
+}
+
+#endif /* #ifdef NXAGENT_RENDER_CLEANUP */
 
 void nxagentRenderExtensionInit()
 {
@@ -221,26 +465,26 @@ void nxagentRenderExtensionInit()
      + two versions.
      */
 
-    if (major_version > RENDER_MAJOR || 
-            (major_version == RENDER_MAJOR &&
-                 minor_version > RENDER_MINOR))
+    if (major_version > SERVER_RENDER_MAJOR_VERSION ||
+            (major_version == SERVER_RENDER_MAJOR_VERSION &&
+                 minor_version > SERVER_RENDER_MINOR_VERSION))
     {
       #ifdef TEST
       fprintf(stderr, "nxagentRenderExtensionInit: Using render version [%d.%d] with "
-                  "remote version [%d.%d].\n", RENDER_MAJOR, RENDER_MINOR,
+                  "remote version [%d.%d].\n", SERVER_RENDER_MAJOR_VERSION, SERVER_RENDER_MINOR_VERSION,
                       major_version, minor_version);
       #endif
 
-      nxagentRenderVersionMajor = RENDER_MAJOR;
-      nxagentRenderVersionMinor = RENDER_MINOR;
+      nxagentRenderVersionMajor = SERVER_RENDER_MAJOR_VERSION;
+      nxagentRenderVersionMinor = SERVER_RENDER_MINOR_VERSION;
     }
-    else if (major_version < RENDER_MAJOR ||
-                 (major_version == RENDER_MAJOR &&
-                      minor_version < RENDER_MINOR))
+    else if (major_version < SERVER_RENDER_MAJOR_VERSION ||
+                 (major_version == SERVER_RENDER_MAJOR_VERSION &&
+                      minor_version < SERVER_RENDER_MINOR_VERSION))
     {
       #ifdef TEST
       fprintf(stderr, "Info: Local render version %d.%d is higher "
-                  "than remote version %d.%d.\n", RENDER_MAJOR, RENDER_MINOR,
+                  "than remote version %d.%d.\n", SERVER_RENDER_MAJOR_VERSION, SERVER_RENDER_MINOR_VERSION,
                       major_version, minor_version);
 
       fprintf(stderr, "Info: Lowering the render version reported to clients.\n");
@@ -253,7 +497,7 @@ void nxagentRenderExtensionInit()
     {
       #ifdef TEST
       fprintf(stderr, "nxagentRenderExtensionInit: Local render version %d.%d "
-                  "matches remote version %d.%d.\n", RENDER_MAJOR, RENDER_MINOR,
+                  "matches remote version %d.%d.\n", SERVER_RENDER_MAJOR_VERSION, SERVER_RENDER_MINOR_VERSION,
                       major_version, minor_version);
       #endif
 
@@ -273,11 +517,11 @@ void nxagentRenderExtensionInit()
 
 int nxagentCursorSaveRenderInfo(ScreenPtr pScreen, CursorPtr pCursor)
 {
-  pCursor -> devPriv[pScreen -> myNum] = xalloc(sizeof(nxagentPrivCursor));
+  pCursor -> devPriv[pScreen -> myNum] = malloc(sizeof(nxagentPrivCursor));
 
   if (nxagentCursorPriv(pCursor, pScreen) == NULL)
   {
-    FatalError("xalloc failed");
+    FatalError("malloc failed");
   }
 
   nxagentCursorUsesRender(pCursor, pScreen) = 1;
@@ -946,7 +1190,7 @@ void nxagentChangePicture(PicturePtr pPicture, Mask mask)
 
   #ifdef TEST
 
-  if (pPicture -> pDrawable -> type == DRAWABLE_PIXMAP)
+  if (pPicture && pPicture->pDrawable && pPicture -> pDrawable -> type == DRAWABLE_PIXMAP)
   {
     fprintf(stderr, "nxagentChangePicture: %sPixmap [%p] Picture [%p][%p].\n",
                 nxagentIsShmPixmap((PixmapPtr)pPicture -> pDrawable) ? "Shared " : "",
@@ -1008,7 +1252,7 @@ void nxagentComposite(CARD8 op, PicturePtr pSrc, PicturePtr pMask, PicturePtr pD
 
   #ifdef DEBUG
 
-  if (pSrc -> pDrawable != NULL)
+  if (pSrc && pSrc -> pDrawable != NULL)
   {
     fprintf(stderr, "nxagentComposite: Source Picture [%lu][%p] with drawable [%s%s][%p].\n",
                 nxagentPicturePriv(pSrc) -> picture, (void *) pSrc,
@@ -1018,14 +1262,16 @@ void nxagentComposite(CARD8 op, PicturePtr pSrc, PicturePtr pMask, PicturePtr pD
                              (void *) pSrc -> pDrawable);
   }
 
-  fprintf(stderr, "nxagentComposite: Destination Picture [%lu][%p] with drawable [%s%s][%p].\n",
-              nxagentPicturePriv(pDst) -> picture, (void *) pDst,
-              (pDst -> pDrawable -> type == DRAWABLE_PIXMAP &&
-                  nxagentIsShmPixmap((PixmapPtr) pDst -> pDrawable)) ? "Shared " : "",
-                       pDst -> pDrawable -> type == DRAWABLE_PIXMAP ? "Pixmap" : "Window",
-                           (void *) pDst -> pDrawable);
+  if (pDst && pDst->pDrawable) {
+    fprintf(stderr, "nxagentComposite: Destination Picture [%lu][%p] with drawable [%s%s][%p].\n",
+                nxagentPicturePriv(pDst) -> picture, (void *) pDst,
+                (pDst -> pDrawable -> type == DRAWABLE_PIXMAP &&
+                    nxagentIsShmPixmap((PixmapPtr) pDst -> pDrawable)) ? "Shared " : "",
+                         pDst -> pDrawable -> type == DRAWABLE_PIXMAP ? "Pixmap" : "Window",
+                             (void *) pDst -> pDrawable);
+  }
 
-  if (pMask)
+  if (pMask && pMask->pDrawable)
   {
     fprintf(stderr, "nxagentComposite: Mask Picture [%lu][%p] with drawable [%s%s][%p].\n",
                 nxagentPicturePriv(pMask) -> picture, (void *) pMask,
@@ -1042,12 +1288,13 @@ void nxagentComposite(CARD8 op, PicturePtr pSrc, PicturePtr pMask, PicturePtr pD
     pDstRegion = nxagentCreateRegion(pDst -> pDrawable, NULL, xDst, yDst, width, height);
 
     #ifdef TEST
-    fprintf(stderr, "nxagentComposite: WARNING! Prevented operation on region [%d,%d,%d,%d] "
-                "for drawable at [%p] with type [%s].\n", pDstRegion -> extents.x1,
-                    pDstRegion -> extents.y1, pDstRegion -> extents.x2, pDstRegion -> extents.y2,
-                        (void *) pDst -> pDrawable,
-                            pDst -> pDrawable -> type == DRAWABLE_PIXMAP ? "pixmap" : "window");
-
+    if ((pDstRegion) && (pDst && pDst->pDrawable)) {
+      fprintf(stderr, "nxagentComposite: WARNING! Prevented operation on region [%d,%d,%d,%d] "
+                  "for drawable at [%p] with type [%s].\n", pDstRegion -> extents.x1,
+                      pDstRegion -> extents.y1, pDstRegion -> extents.x2, pDstRegion -> extents.y2,
+                          (void *) pDst -> pDrawable,
+                              pDst -> pDrawable -> type == DRAWABLE_PIXMAP ? "pixmap" : "window");
+    }
     #endif
 
     nxagentMarkCorruptedRegion(pDst -> pDrawable, pDstRegion);
@@ -1176,10 +1423,12 @@ void nxagentGlyphs(CARD8 op, PicturePtr pSrc, PicturePtr pDst,
   }
 
   #ifdef TEST
-  fprintf(stderr, "nxagentGlyphs: Called with source [%s][%p] destination [%s][%p] and size id [%d].\n",
-              (pSrc -> pDrawable -> type == DRAWABLE_PIXMAP ? "pixmap" : "window"), (void *) pSrc, 
-                  (pDst -> pDrawable -> type == DRAWABLE_PIXMAP ? "pixmap" : "window"), (void *) pDst, 
-                      sizeID);
+  if ((pSrc && pSrc->pDrawable) && (pDst && pDst->pDrawable)) {
+      fprintf(stderr, "nxagentGlyphs: Called with source [%s][%p] destination [%s][%p] and size id [%d].\n",
+                  (pSrc -> pDrawable -> type == DRAWABLE_PIXMAP ? "pixmap" : "window"), (void *) pSrc, 
+                      (pDst -> pDrawable -> type == DRAWABLE_PIXMAP ? "pixmap" : "window"), (void *) pDst, 
+                          sizeID);
+  }
   #endif
 
   pForm = NULL;
@@ -1239,7 +1488,7 @@ void nxagentGlyphs(CARD8 op, PicturePtr pSrc, PicturePtr pDst,
     pRegion = nxagentCreateRegion(pDst -> pDrawable, NULL, glyphBox.x1, glyphBox.y1,
                                       glyphBox.x2 - glyphBox.x1, glyphBox.y2 - glyphBox.y1);
     
-    if (REGION_NIL(pRegion) == 1)
+    if (RegionNil(pRegion) == 1)
     {
       #ifdef TEST
       fprintf(stderr, "nxagentGlyphs: WARNING! Glyphs prevented on hidden window at [%p].\n",
@@ -1264,9 +1513,11 @@ void nxagentGlyphs(CARD8 op, PicturePtr pSrc, PicturePtr pDst,
           nxagentDrawableStatus(pSrc -> pDrawable) == NotSynchronized)
   {
     #ifdef TEST
-    fprintf(stderr, "nxagentGlyphs: Synchronizing source [%s] at [%p].\n",
-                pSrc -> pDrawable -> type == DRAWABLE_PIXMAP ? "pixmap" : "window",
-                    (void *) pSrc -> pDrawable);
+    if (pSrc && pSrc->pDrawable) {
+      fprintf(stderr, "nxagentGlyphs: Synchronizing source [%s] at [%p].\n",
+                  pSrc -> pDrawable -> type == DRAWABLE_PIXMAP ? "pixmap" : "window",
+                      (void *) pSrc -> pDrawable);
+    }
     #endif
 
     /*
@@ -1280,12 +1531,14 @@ void nxagentGlyphs(CARD8 op, PicturePtr pSrc, PicturePtr pDst,
     if (pSrc -> repeat == 1 || nxagentGlyphsExtents == NullBox)
     {
       #ifdef DEBUG
-      fprintf(stderr, "nxagentGlyphs: Synchronizing source [%s] at [%p] "
-                  "with geometry [%d,%d,%d,%d].\n", 
-                      (pSrc -> pDrawable -> type == DRAWABLE_PIXMAP ? "pixmap" : "window"),
-                          (void *) pSrc -> pDrawable, pSrc -> pDrawable -> x, pSrc -> pDrawable -> y,
-                              pSrc -> pDrawable -> x + pSrc -> pDrawable -> width,
-                                  pSrc -> pDrawable -> y + pSrc -> pDrawable -> height);
+      if (pSrc && pSrc->pDrawable) {
+        fprintf(stderr, "nxagentGlyphs: Synchronizing source [%s] at [%p] "
+                    "with geometry [%d,%d,%d,%d].\n", 
+                        (pSrc -> pDrawable -> type == DRAWABLE_PIXMAP ? "pixmap" : "window"),
+                            (void *) pSrc -> pDrawable, pSrc -> pDrawable -> x, pSrc -> pDrawable -> y,
+                                pSrc -> pDrawable -> x + pSrc -> pDrawable -> width,
+                                    pSrc -> pDrawable -> y + pSrc -> pDrawable -> height);
+      }
       #endif
 
       nxagentSynchronizeBox(pSrc -> pDrawable, NullBox, NEVER_BREAK);
@@ -1293,12 +1546,14 @@ void nxagentGlyphs(CARD8 op, PicturePtr pSrc, PicturePtr pDst,
     else
     {
       #ifdef DEBUG
-      fprintf(stderr, "nxagentGlyphs: Synchronizing region [%d,%d,%d,%d] of source [%s] at [%p] "
-                  "with geometry [%d,%d,%d,%d].\n", glyphBox.x1, glyphBox.y1, glyphBox.x2, glyphBox.y2,
-                          (pSrc -> pDrawable -> type == DRAWABLE_PIXMAP ? "pixmap" : "window"),
-                              (void *) pSrc -> pDrawable, pSrc -> pDrawable -> x, pSrc -> pDrawable -> y,
-                                  pSrc -> pDrawable -> x + pSrc -> pDrawable -> width,
-                                      pSrc -> pDrawable -> y + pSrc -> pDrawable -> height);
+      if (pSrc && pSrc->pDrawable) {
+        fprintf(stderr, "nxagentGlyphs: Synchronizing region [%d,%d,%d,%d] of source [%s] at [%p] "
+                    "with geometry [%d,%d,%d,%d].\n", glyphBox.x1, glyphBox.y1, glyphBox.x2, glyphBox.y2,
+                            (pSrc -> pDrawable -> type == DRAWABLE_PIXMAP ? "pixmap" : "window"),
+                                (void *) pSrc -> pDrawable, pSrc -> pDrawable -> x, pSrc -> pDrawable -> y,
+                                    pSrc -> pDrawable -> x + pSrc -> pDrawable -> width,
+                                        pSrc -> pDrawable -> y + pSrc -> pDrawable -> height);
+      }
       #endif
 
       nxagentSynchronizeBox(pSrc -> pDrawable, &glyphBox, NEVER_BREAK);
@@ -1314,20 +1569,24 @@ void nxagentGlyphs(CARD8 op, PicturePtr pSrc, PicturePtr pDst,
           nxagentDrawableStatus(pDst -> pDrawable) == NotSynchronized)
   {
     #ifdef TEST
-    fprintf(stderr, "nxagentGlyphs: Synchronizing destination [%s] at [%p].\n",
-                pDst -> pDrawable -> type == DRAWABLE_PIXMAP ? "pixmap" : "window",
-                    (void *) pDst -> pDrawable);
+    if (pDst && pDst->pDrawable) {
+      fprintf(stderr, "nxagentGlyphs: Synchronizing destination [%s] at [%p].\n",
+                  pDst -> pDrawable -> type == DRAWABLE_PIXMAP ? "pixmap" : "window",
+                      (void *) pDst -> pDrawable);
+    }
     #endif
 
     if (nxagentGlyphsExtents == NullBox)
     {
       #ifdef DEBUG
-      fprintf(stderr, "nxagentGlyphs: Synchronizing destination [%s] at [%p] "
-                  "with geometry [%d,%d,%d,%d].\n", 
-                      (pDst -> pDrawable -> type == DRAWABLE_PIXMAP ? "pixmap" : "window"),
-                          (void *) pDst -> pDrawable, pDst -> pDrawable -> x, pDst -> pDrawable -> y,
-                              pDst -> pDrawable -> x + pDst -> pDrawable -> width,
-                                  pDst -> pDrawable -> y + pDst -> pDrawable -> height);
+      if (pDst && pDst->pDrawable) {
+        fprintf(stderr, "nxagentGlyphs: Synchronizing destination [%s] at [%p] "
+                    "with geometry [%d,%d,%d,%d].\n", 
+                        (pDst -> pDrawable -> type == DRAWABLE_PIXMAP ? "pixmap" : "window"),
+                            (void *) pDst -> pDrawable, pDst -> pDrawable -> x, pDst -> pDrawable -> y,
+                                pDst -> pDrawable -> x + pDst -> pDrawable -> width,
+                                    pDst -> pDrawable -> y + pDst -> pDrawable -> height);
+      }
       #endif
 
       nxagentSynchronizeBox(pDst -> pDrawable, NullBox, NEVER_BREAK);
@@ -1335,12 +1594,14 @@ void nxagentGlyphs(CARD8 op, PicturePtr pSrc, PicturePtr pDst,
     else
     {
       #ifdef DEBUG
-      fprintf(stderr, "nxagentGlyphs: Synchronizing region [%d,%d,%d,%d] of destination [%s] at [%p] "
-                  "with geometry [%d,%d,%d,%d].\n", glyphBox.x1, glyphBox.y1, glyphBox.x2, glyphBox.y2,
-                          (pDst -> pDrawable -> type == DRAWABLE_PIXMAP ? "pixmap" : "window"),
-                              (void *) pDst -> pDrawable, pDst -> pDrawable -> x, pDst -> pDrawable -> y,
-                                  pDst -> pDrawable -> x + pDst -> pDrawable -> width,
-                                      pDst -> pDrawable -> y + pDst -> pDrawable -> height);
+      if (pDst && pDst->pDrawable) {
+        fprintf(stderr, "nxagentGlyphs: Synchronizing region [%d,%d,%d,%d] of destination [%s] at [%p] "
+                    "with geometry [%d,%d,%d,%d].\n", glyphBox.x1, glyphBox.y1, glyphBox.x2, glyphBox.y2,
+                            (pDst -> pDrawable -> type == DRAWABLE_PIXMAP ? "pixmap" : "window"),
+                                (void *) pDst -> pDrawable, pDst -> pDrawable -> x, pDst -> pDrawable -> y,
+                                    pDst -> pDrawable -> x + pDst -> pDrawable -> width,
+                                        pDst -> pDrawable -> y + pDst -> pDrawable -> height);
+      }
       #endif
 
       nxagentSynchronizeBox(pDst -> pDrawable, &glyphBox, NEVER_BREAK);
@@ -1355,9 +1616,11 @@ void nxagentGlyphs(CARD8 op, PicturePtr pSrc, PicturePtr pDst,
   nxagentSetDrawableContainGlyphs(pDst -> pDrawable, 1);
 
   #ifdef TEST
-  fprintf(stderr, "nxagentGlyphs: Glyph flag set on drawable [%s][%p].\n",
-              pDst -> pDrawable -> type == DRAWABLE_PIXMAP ? "pixmap" : "window",
-                  (void *) pDst -> pDrawable);
+  if (pDst && pDst->pDrawable) {
+    fprintf(stderr, "nxagentGlyphs: Glyph flag set on drawable [%s][%p].\n",
+                pDst -> pDrawable -> type == DRAWABLE_PIXMAP ? "pixmap" : "window",
+                    (void *) pDst -> pDrawable);
+  }
   #endif
 
   #ifdef SPLIT_GLYPH_LISTS
@@ -1569,9 +1832,11 @@ void nxagentCompositeRects(CARD8 op, PicturePtr pDst, xRenderColor *color,
   }
 
   #ifdef TEST
-  fprintf(stderr, "nxagentCompositeRects: Called for picture at [%p] with [%s] at [%p].\n",
-              (void *) pDst, (pDst -> pDrawable -> type == DRAWABLE_PIXMAP ? "pixmap" : "window"),
-                  (void *) pDst -> pDrawable);
+  if (pDst && pDst->pDrawable) {
+    fprintf(stderr, "nxagentCompositeRects: Called for picture at [%p] with [%s] at [%p].\n",
+                (void *) pDst, (pDst -> pDrawable -> type == DRAWABLE_PIXMAP ? "pixmap" : "window"),
+                    (void *) pDst -> pDrawable);
+  }
   #endif
 
   /*
@@ -1585,24 +1850,24 @@ void nxagentCompositeRects(CARD8 op, PicturePtr pDst, xRenderColor *color,
           (op == PictOpSrc ||
                (op == PictOpOver && color -> alpha == 0xffff)))
   {
-    rectRegion = RECTS_TO_REGION(pDst -> pDrawable -> pScreen, nRect, rects, CT_REGION);
+    rectRegion = RegionFromRects(nRect, rects, CT_REGION);
 
     if (pDst -> clientClipType != CT_NONE)
     {
       RegionRec tmpRegion;
 
-      REGION_INIT(pDst -> pDrawable -> pScreen, &tmpRegion, NullBox, 1);
+      RegionInit(&tmpRegion, NullBox, 1);
 
-      REGION_COPY(pDst -> pDrawable -> pScreen, &tmpRegion, (RegionPtr) pDst -> clientClip);
+      RegionCopy(&tmpRegion, (RegionPtr) pDst -> clientClip);
 
       if (pDst -> clipOrigin.x != 0 || pDst -> clipOrigin.y != 0)
       {
-        REGION_TRANSLATE(pDst -> pDrawable -> pScreen, &tmpRegion, pDst -> clipOrigin.x, pDst -> clipOrigin.y);
+        RegionTranslate(&tmpRegion, pDst -> clipOrigin.x, pDst -> clipOrigin.y);
       }
 
-      REGION_INTERSECT(pDst -> pDrawable -> pScreen, rectRegion, rectRegion, &tmpRegion);
+      RegionIntersect(rectRegion, rectRegion, &tmpRegion);
 
-      REGION_UNINIT(pDst -> pDrawable -> pScreen, &tmpRegion);      
+      RegionUninit(&tmpRegion);
     }
 
     #ifdef TEST
@@ -1612,7 +1877,7 @@ void nxagentCompositeRects(CARD8 op, PicturePtr pDst, xRenderColor *color,
 
     nxagentUnmarkCorruptedRegion(pDst -> pDrawable, rectRegion);
 
-    REGION_DESTROY(pDrawable -> pScreen, rectRegion);
+    RegionDestroy(rectRegion);
   }
 
   XRenderFillRectangles(nxagentDisplay,
@@ -1678,10 +1943,11 @@ FIXME: Is this useful or just a waste of bandwidth?
 
   #ifdef TEST
 
-  fprintf(stderr, "nxagentTrapezoids: Source is a [%s] of geometry [%d,%d].\n",
-              (pSrc -> pDrawable -> type == DRAWABLE_PIXMAP ? "pixmap" : "window"),
-                  pSrc -> pDrawable -> width, pSrc -> pDrawable -> height);
-
+  if (pSrc->pDrawable) {
+    fprintf(stderr, "nxagentTrapezoids: Source is a [%s] of geometry [%d,%d].\n",
+                (pSrc -> pDrawable -> type == DRAWABLE_PIXMAP ? "pixmap" : "window"),
+                    pSrc -> pDrawable -> width, pSrc -> pDrawable -> height);
+  }
   if (pSrc ->pDrawable != pDst -> pDrawable)
   {
     fprintf(stderr, "nxagentTrapezoids: Destination is a [%s] of geometry [%d,%d].\n",
@@ -1698,15 +1964,17 @@ FIXME: Is this useful or just a waste of bandwidth?
    */
 
   if (nxagentDrawableStatus(pDst -> pDrawable) == NotSynchronized &&
-          RECT_IN_REGION(pDst -> pDrawable -> pScreen, nxagentCorruptedRegion(pDst -> pDrawable),
+          RegionContainsRect(nxagentCorruptedRegion(pDst -> pDrawable),
                              nxagentTrapezoidExtents) == rgnIN)
   {
     #ifdef TEST
-    fprintf(stderr, "nxagentTrapezoids: WARNING! Prevented operation on region [%d,%d,%d,%d] already dirty "
-                "for drawable [%s][%p].\n", nxagentTrapezoidExtents -> x1, nxagentTrapezoidExtents -> y1,
-                    nxagentTrapezoidExtents -> x2, nxagentTrapezoidExtents -> y2,
-                        pDst -> pDrawable -> type == DRAWABLE_PIXMAP ? "pixmap" : "window",
-                            (void *) pDst -> pDrawable);
+    if (pDst && pDst->pDrawable) {
+      fprintf(stderr, "nxagentTrapezoids: WARNING! Prevented operation on region [%d,%d,%d,%d] already dirty "
+                  "for drawable [%s][%p].\n", nxagentTrapezoidExtents -> x1, nxagentTrapezoidExtents -> y1,
+                      nxagentTrapezoidExtents -> x2, nxagentTrapezoidExtents -> y2,
+                          pDst -> pDrawable -> type == DRAWABLE_PIXMAP ? "pixmap" : "window",
+                              (void *) pDst -> pDrawable);
+    }
     #endif
 
     if (pDst -> pDrawable -> type == DRAWABLE_PIXMAP)
@@ -1732,11 +2000,13 @@ FIXME: Is this useful or just a waste of bandwidth?
                                      nxagentTrapezoidExtents -> y2 - nxagentTrapezoidExtents -> y1);
 
     #ifdef TEST
-    fprintf(stderr, "nxagentTrapezoids: WARNING! Prevented operation on region [%d,%d,%d,%d] "
-                "for drawable [%s][%p].\n", pDstRegion -> extents.x1, pDstRegion -> extents.y1,
-                    pDstRegion -> extents.x2, pDstRegion -> extents.y2,
-                        pDst -> pDrawable -> type == DRAWABLE_PIXMAP ? "pixmap" : "window",
-                            (void *) pDst -> pDrawable);
+    if (pDst && pDst->pDrawable) {
+      fprintf(stderr, "nxagentTrapezoids: WARNING! Prevented operation on region [%d,%d,%d,%d] "
+                  "for drawable [%s][%p].\n", pDstRegion -> extents.x1, pDstRegion -> extents.y1,
+                      pDstRegion -> extents.x2, pDstRegion -> extents.y2,
+                          pDst -> pDrawable -> type == DRAWABLE_PIXMAP ? "pixmap" : "window",
+                              (void *) pDst -> pDrawable);
+    }
     #endif
 
     nxagentMarkCorruptedRegion(pDst -> pDrawable, pDstRegion);
@@ -1772,8 +2042,6 @@ FIXME: Is this useful or just a waste of bandwidth?
     nxagentSynchronizeBox(pDst -> pDrawable, nxagentTrapezoidExtents, NEVER_BREAK);
   }
 
-  while (remaining > 0)
-  {
     XRenderCompositeTrapezoids(nxagentDisplay,
                                op,
                                nxagentPicturePriv(pSrc) -> picture,
@@ -1781,13 +2049,8 @@ FIXME: Is this useful or just a waste of bandwidth?
                                pForm,
                                xSrc,
                                ySrc,
-                               (XTrapezoid *) current,
-                               (remaining > TRAPEZOIDS_PER_REQUEST ?
-                                   TRAPEZOIDS_PER_REQUEST : remaining));
+                               (XTrapezoid *) current,remaining);
 
-    remaining -= TRAPEZOIDS_PER_REQUEST;
-    current   += TRAPEZOIDS_PER_REQUEST;
-  }
 
   #endif
 
@@ -2040,62 +2303,6 @@ void nxagentTriFan(CARD8 op, PicturePtr pSrc, PicturePtr pDst,
   #endif
 }
 
-#ifndef NXAGENT_UPGRADE
-
-/*
-FIXME: In the 3.0.0 port these functions have been moved
-       to Picture.c. We can remove them when the port is
-       is complete.
-*/
-int AllocatePicturePrivateIndex()
-{
-  return picturePrivateCount++;
-}
-
-Bool AllocatePicturePrivate(register ScreenPtr pScreen, int index2, unsigned amount)
-{
-  unsigned oldamount;
-
-  PictureScreenPtr ps = GetPictureScreen(pScreen);
-
-  /*
-   * Round up the size for proper alignment.
-   */
-
-  amount = ((amount + (sizeof(long) - 1)) / sizeof(long)) * sizeof(long);
-
-  if (index2 >= ps -> PicturePrivateLen)
-  {
-    unsigned *nsizes = (unsigned *) xrealloc(ps -> PicturePrivateSizes,
-                           (index2 + 1) * sizeof(unsigned));
-    if (nsizes == 0)
-    {
-      return 0;
-    }
-
-    while (ps -> PicturePrivateLen <= index2)
-    {
-      nsizes[ps -> PicturePrivateLen++] = 0;
-
-      ps -> totalPictureSize += sizeof(DevUnion);
-    }
-
-    ps -> PicturePrivateSizes = nsizes;
-  }
-
-  oldamount = ps -> PicturePrivateSizes[index2];
-
-  if (amount > oldamount)
-  {
-    ps -> PicturePrivateSizes[index2] = amount;
-
-    ps -> totalPictureSize += (amount - oldamount);
-  }
-
-  return 1;
-}
-#endif
-
 void nxagentQueryFormats()
 {
   XRenderInfo *xri;
@@ -2282,7 +2489,7 @@ void nxagentAddGlyphs(GlyphSetPtr glyphSet, Glyph *gids, xGlyphInfo *gi,
 
   if (sizeImages > 0)
   {
-    normalizedImages = xalloc(sizeImages);
+    normalizedImages = malloc(sizeImages);
 
     if (normalizedImages != NULL)
     {
@@ -2291,7 +2498,7 @@ void nxagentAddGlyphs(GlyphSetPtr glyphSet, Glyph *gids, xGlyphInfo *gi,
       if (glyphDepths[glyphSet -> fdepth] == 1 &&
               nxagentServerOrder() != BitmapBitOrder(nxagentDisplay))
       {
-        BitOrderInvert ((unsigned char *) normalizedImages, sizeImages);
+        nxagentBitOrderInvert ((unsigned char *) normalizedImages, sizeImages);
       }
     }
     else
@@ -2307,7 +2514,9 @@ void nxagentAddGlyphs(GlyphSetPtr glyphSet, Glyph *gids, xGlyphInfo *gi,
     normalizedImages = images;
   }
 
-  XRenderCleanGlyphs(gi, nglyphs, normalizedImages, glyphDepths[glyphSet -> fdepth], nxagentDisplay);
+  #ifdef NXAGENT_RENDER_CLEANUP
+  nxagentCleanGlyphs(gi, nglyphs, normalizedImages, glyphDepths[glyphSet -> fdepth], nxagentDisplay);
+  #endif /* NXAGENT_RENDER_CLEANUP */
 
   XRenderAddGlyphs(nxagentDisplay,
                    glyphSet -> remoteID,
@@ -2319,7 +2528,7 @@ void nxagentAddGlyphs(GlyphSetPtr glyphSet, Glyph *gids, xGlyphInfo *gi,
 
   if (normalizedImages != images)
   {
-    xfree(normalizedImages);
+    free(normalizedImages);
   }
 
   #ifdef DEBUG
@@ -2371,7 +2580,7 @@ void nxagentFreeGlyphs(GlyphSetPtr glyphSet, CARD32 *gids, int nglyph)
   }
 }
 
-void nxagentSetPictureTransform(PicturePtr pPicture, pointer transform)
+void nxagentSetPictureTransform(PicturePtr pPicture, void * transform)
 {
   #ifdef TEST
   fprintf(stderr, "nxagentSetPictureTransform: Going to set transform [%p] to picture at [%p].\n",
@@ -2392,7 +2601,7 @@ FIXME: Is this useful or just a waste of bandwidth?
 }
 
 void nxagentSetPictureFilter(PicturePtr pPicture, char *filter, int name_size,
-                                 pointer params, int nparams)
+                                 void * params, int nparams)
 {
   char *szFilter = Xmalloc(name_size + 1);
 
@@ -2427,7 +2636,7 @@ FIXME: Is this useful or just a waste of bandwidth?
                           nparams);
   #endif
 
-  Xfree(szFilter);
+  free(szFilter);
 }
 
 
@@ -2595,7 +2804,7 @@ Bool nxagentReconnectAllGlyphSet(void *p)
   return success;
 }
 
-void nxagentReconnectPicture(pointer p0, XID x1, void *p2)
+void nxagentReconnectPicture(void * p0, XID x1, void *p2)
 {
   PicturePtr pPicture = (PicturePtr) p0;
   Bool *pBool = (Bool *) p2;
@@ -2689,11 +2898,17 @@ void nxagentReconnectPicture(pointer p0, XID x1, void *p2)
     #endif
   }
 
-  if (!pForm)
+  if (!pForm && pPicture->pSourcePict)
   {
-    *pBool = False;
-
-    return;
+        /*possible we need to add support for other picture types, for example gradients...*/
+        switch(pPicture->pSourcePict->type)
+        {
+        case SourcePictTypeSolidFill:
+            nxagentPicturePriv(pPicture) -> picture = XRenderCreateSolidFill(nxagentDisplay,
+                    (const XRenderColor*) &pPicture->pSourcePict->solidFill.fullColor);
+            break;
+        }
+        return;
   }
 
   #ifdef TEST
@@ -2765,7 +2980,7 @@ Bool nxagentReconnectAllPicture(void *p)
   return True;
 }
 
-void nxagentDisconnectPicture(pointer p0, XID x1, void* p2)
+void nxagentDisconnectPicture(void * p0, XID x1, void* p2)
 {
   PicturePtr pPicture = (PicturePtr) p0;
   Bool *pBool = (Bool *) p2;

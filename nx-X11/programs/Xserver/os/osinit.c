@@ -1,4 +1,3 @@
-/* $XFree86: xc/programs/Xserver/os/osinit.c,v 3.29 2003/09/09 03:20:41 dawes Exp $ */
 /***********************************************************
 
 Copyright 1987, 1998  The Open Group
@@ -45,21 +44,18 @@ ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS
 SOFTWARE.
 
 ******************************************************************/
-/* $Xorg: osinit.c,v 1.4 2001/02/09 02:05:23 xorgcvs Exp $ */
 
 #ifdef HAVE_DIX_CONFIG_H
 #include <dix-config.h>
 #endif
 
 #include <stdio.h>
-#include <X11/X.h>
+#include <nx-X11/X.h>
 #include "os.h"
 #include "osdep.h"
-#include <X11/Xos.h>
+#include <nx-X11/Xos.h>
 
-#ifdef SMART_SCHEDULE
 #include "dixstruct.h"
-#endif
 
 #ifndef PATH_MAX
 #ifdef MAXPATHLEN
@@ -69,11 +65,11 @@ SOFTWARE.
 #endif
 #endif
 
-#if defined(Lynx) || defined(__SCO__)
+#if defined(__SCO__)
 #include <sys/wait.h>
 #endif
 
-#if !defined(SYSV) && !defined(WIN32) && !defined(Lynx) && !defined(QNX4)
+#if !defined(SYSV) && !defined(WIN32)
 #include <sys/resource.h>
 #endif
 
@@ -92,12 +88,6 @@ int limitStackSpace = -1;
 int limitNoFile = -1;
 #endif
 
-Bool OsDelayInitColors = FALSE;
-
-#ifdef XFree86LOADER
-extern void xf86WrapperInit(void);
-#endif
-
 void
 OsInit(void)
 {
@@ -111,13 +101,15 @@ OsInit(void)
 #endif
 
     if (!been_here) {
-#ifdef XFree86LOADER
-	xf86WrapperInit();
-#endif
+
+	InitNotifyFds();
+
 #if !defined(__SCO__) && !defined(__CYGWIN__) && !defined(__UNIXWARE__)
 	fclose(stdin);
 	fclose(stdout);
 #endif
+
+
 	/* 
 	 * If a write of zero bytes to stderr returns non-zero, i.e. -1, 
 	 * then writing to stderr failed, and we'll write somewhere else 
@@ -142,7 +134,7 @@ OsInit(void)
 		dup2 (fileno (err), 2);
 		fclose (err);
 	    }
-#if defined(SYSV) || defined(SVR4) || defined(__UNIXOS2__) || defined(WIN32) || defined(__CYGWIN__)
+#if defined(SYSV) || defined(SVR4) || defined(WIN32) || defined(__CYGWIN__)
 	    {
 	    static char buf[BUFSIZ];
 	    setvbuf (stderr, buf, _IOLBF, BUFSIZ);
@@ -225,13 +217,9 @@ OsInit(void)
      * log file name if logging to a file is desired.
      */
     LogInit(NULL, NULL);
-#ifdef SMART_SCHEDULE
-    if (!SmartScheduleDisable)
-	if (!SmartScheduleInit ())
-	    SmartScheduleDisable = TRUE;
-#endif
+    SmartScheduleInit();
+
     OsInitAllocator();
-    if (!OsDelayInitColors) OsInitColors();
 }
 
 void

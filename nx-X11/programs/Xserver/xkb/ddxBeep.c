@@ -1,4 +1,3 @@
-/* $Xorg: ddxBeep.c,v 1.3 2000/08/17 19:53:45 cpqbld Exp $ */
 /************************************************************
 Copyright (c) 1993 by Silicon Graphics Computer Systems, Inc.
 
@@ -24,28 +23,20 @@ OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION  WITH
 THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 ********************************************************/
-/* $XFree86: xc/programs/Xserver/xkb/ddxBeep.c,v 3.9 2002/12/05 21:59:00 paulo Exp $ */
 
 #ifdef HAVE_DIX_CONFIG_H
 #include <dix-config.h>
 #endif
 
 #include <stdio.h>
-#define	NEED_EVENTS 1
-#include <X11/X.h>
-#include <X11/Xproto.h>
-#include <X11/keysym.h>
+#include <nx-X11/X.h>
+#include <nx-X11/Xproto.h>
+#include <nx-X11/keysym.h>
 #include "inputstr.h"
 #include "scrnintstr.h"
 #include "windowstr.h"
-#include <X11/extensions/XKBsrv.h>
-#include <X11/extensions/XI.h>
-
-#if (defined(__osf__) && defined(__alpha))
-#include <sys/sysinfo.h>
-#include <alpha/hal_sysinfo.h>
-#include <alpha/prom.h>
-#endif
+#include <xkbsrv.h>
+#include <nx-X11/extensions/XI.h>
 
 /*#define FALLING_TONE	1*/
 /*#define RISING_TONE	1*/
@@ -118,37 +109,14 @@ _XkbDDXBeepInitAtoms(void)
     stickyLock=		MAKE_ATOM(STICKY_LOCK);
     stickyUnlock= 	MAKE_ATOM(STICKY_UNLOCK);
     bounceReject= 	MAKE_ATOM(BOUNCE_REJECT);
-#if (defined(__osf__) && defined(__alpha))
-    /* [[[ WDW - Some bells do not allow for pitch changes.
-     * Maybe this could become part of the keymap? ]]]
-     */
-    {
-	char keyboard[8];
-
-	/* Find the class of keyboard being used.
-	 */
-	keyboard[0] = '\0';
-	if (-1 == getsysinfo(GSI_KEYBOARD, 
-			     keyboard, sizeof(keyboard), 
-			     0, NULL))
-	    keyboard[0] = '\0';
-
-	if ((strcmp(keyboard,"LK201") == 0) ||
-	    (strcmp(keyboard,"LK401") == 0) ||
-	    (strcmp(keyboard,"LK421") == 0) ||
-	    (strcmp(keyboard,"LK443") == 0))
-	    doesPitch = 0;
-    }
-#else
 #if defined(sun)
     doesPitch = 0;
-#endif
 #endif
     return;
 }
 
 static CARD32
-_XkbDDXBeepExpire(OsTimerPtr timer,CARD32 now,pointer arg)
+_XkbDDXBeepExpire(OsTimerPtr timer,CARD32 now,void * arg)
 {
 DeviceIntPtr	dev= (DeviceIntPtr)arg;
 KbdFeedbackPtr	feed;
@@ -322,11 +290,11 @@ Atom		name;
 	ctrl->bell_duration= duration;
 	ctrl->bell_pitch= pitch;
 	if (xkbInfo->beepCount==0) {
-	     XkbHandleBell(0,0,dev,ctrl->bell,(pointer)ctrl,KbdFeedbackClass,name,None,
+	     XkbHandleBell(0,0,dev,ctrl->bell,(void *)ctrl,KbdFeedbackClass,name,None,
 									NULL);
 	}
 	else if (xkbInfo->desc->ctrls->enabled_ctrls&XkbAudibleBellMask) {
-	    (*dev->kbdfeed->BellProc)(ctrl->bell,dev,(pointer)ctrl,KbdFeedbackClass);
+	    (*dev->kbdfeed->BellProc)(ctrl->bell,dev,(void *)ctrl,KbdFeedbackClass);
 	}
 	ctrl->bell_duration= oldDuration;
 	ctrl->bell_pitch= oldPitch;
@@ -360,11 +328,11 @@ CARD32		 next;
 
     xkbInfo->beepType= what;
     xkbInfo->beepCount= 0;
-    next= _XkbDDXBeepExpire(NULL,0,(pointer)dev);
+    next= _XkbDDXBeepExpire(NULL,0,(void *)dev);
     if (next>0) {
 	xkbInfo->beepTimer= TimerSet(xkbInfo->beepTimer,
 					0, next,
-					_XkbDDXBeepExpire, (pointer)dev);
+					_XkbDDXBeepExpire, (void *)dev);
     }
     return 1;
 }

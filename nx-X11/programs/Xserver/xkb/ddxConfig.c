@@ -1,4 +1,3 @@
-/* $Xorg: ddxConfig.c,v 1.3 2000/08/17 19:53:45 cpqbld Exp $ */
 /************************************************************
 Copyright (c) 1995 by Silicon Graphics Computer Systems, Inc.
 
@@ -24,24 +23,21 @@ OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION  WITH
 THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 ********************************************************/
-/* $XFree86: xc/programs/Xserver/xkb/ddxConfig.c,v 3.8 2002/12/20 20:18:35 paulo Exp $ */
 
 #ifdef HAVE_DIX_CONFIG_H
 #include <dix-config.h>
 #endif
 
 #include <stdio.h>
-#define	NEED_EVENTS 1
-#include <X11/X.h>
-#include <X11/Xproto.h>
-#include <X11/keysym.h>
+#include <nx-X11/X.h>
+#include <nx-X11/Xproto.h>
+#include <nx-X11/keysym.h>
 #include "inputstr.h"
 #include "scrnintstr.h"
 #include "windowstr.h"
 #include "os.h"
-#define	XKBSRV_NEED_FILE_FUNCS
-#include <X11/extensions/XKBsrv.h>
-#include <X11/extensions/XKBconfig.h>
+#include <xkbsrv.h>
+#include <nx-X11/extensions/XKBconfig.h>
 
 Bool
 XkbDDXApplyConfig(XPointer cfg_in,XkbSrvInfoPtr info)
@@ -132,9 +128,6 @@ XkbConfigRtrnPtr	rtrn;
         sprintf(buf,"X%s-config%s%s",display,(dName[0]?".":""),dName);
     }
 #endif
-#ifdef __UNIXOS2__
-    strcpy(buf,(char*)__XOS2RedirRoot(buf));
-#endif
 #ifdef DEBUG
     ErrorF("Looking for keyboard configuration in %s...",buf);
 #endif
@@ -194,7 +187,7 @@ XkbConfigRtrnPtr	rtrn;
 	}
 	if (rtrn->symbols!=NULL) {
 	    if (rtrn->phys_symbols==NULL)
-		rtrn->phys_symbols= _XkbDupString(names->symbols);
+		rtrn->phys_symbols= Xstrdup(names->symbols);
 	    if (names->symbols) _XkbFree(names->symbols);
 	    names->symbols= rtrn->symbols;
 	    rtrn->symbols= NULL;

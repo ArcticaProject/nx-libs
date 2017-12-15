@@ -1,4 +1,3 @@
-/* $Xorg: dixfont.h,v 1.3 2000/08/17 19:53:29 cpqbld Exp $ */
 /***********************************************************
 Copyright 1987 by Digital Equipment Corporation, Maynard, Massachusetts.
 
@@ -21,7 +20,6 @@ ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS
 SOFTWARE.
 
 ******************************************************************/
-/* $XFree86: xc/programs/Xserver/include/dixfont.h,v 3.7 2001/02/02 21:39:02 herrb Exp $ */
 
 #ifndef DIXFONT_H
 #define DIXFONT_H 1
@@ -31,11 +29,21 @@ SOFTWARE.
 #include "closure.h"
 #include <X11/fonts/fontstruct.h>
 
+#ifdef HAS_XFONT2
+# include <X11/fonts/libxfont2.h>
+#else
+# include <X11/fonts/fontutil.h>
+#endif /* HAS XFONT2 */
+
 #define NullDIXFontProp ((DIXFontPropPtr)0)
 
 typedef struct _DIXFontProp *DIXFontPropPtr;
 
+#ifdef HAS_XFONT2
+xfont2_fpe_funcs_rec const **fpe_functions;
+#else
 extern FPEFunctions *fpe_functions;
+#endif /* HAS_XFONT2 */
 
 extern int FontToXError(int /*err*/);
 
@@ -45,9 +53,9 @@ extern void QueueFontWakeup(FontPathElementPtr /*fpe*/);
 
 extern void RemoveFontWakeup(FontPathElementPtr /*fpe*/);
 
-extern void FontWakeup(pointer /*data*/,
+extern void FontWakeup(void * /*data*/,
 		       int /*count*/,
-		       pointer /*LastSelectMask*/);
+		       void * /*LastSelectMask*/);
 
 extern int OpenFont(ClientPtr /*client*/,
 		    XID /*fid*/,
@@ -55,7 +63,7 @@ extern int OpenFont(ClientPtr /*client*/,
 		    unsigned /*lenfname*/,
 		    char * /*pfontname*/);
 
-extern int CloseFont(pointer /*pfont*/,
+extern int CloseFont(void * /*pfont*/,
 		     XID /*fid*/);
 
 typedef struct _xQueryFontReply *xQueryFontReplyPtr;
@@ -102,8 +110,7 @@ extern int ImageText(ClientPtr /*client*/,
 
 extern int SetFontPath(ClientPtr /*client*/,
 		       int /*npaths*/,
-		       unsigned char * /*paths*/,
-		       int * /*error*/);
+		       unsigned char * /*paths*/);
 
 extern int SetDefaultFontPath(char * /*path*/);
 
@@ -127,14 +134,25 @@ extern void InitFonts(void);
 
 extern void FreeFonts(void);
 
+#ifdef HAS_XFONT2
+extern void GetGlyphs(FontPtr /*font */ ,
+		      unsigned long /*count */ ,
+		      unsigned char * /*chars */ ,
+		      FontEncoding /*fontEncoding */ ,
+		      unsigned long * /*glyphcount */ ,
+		      CharInfoPtr * /*glyphs */ );
+#else
 extern FontPtr find_old_font(XID /*id*/);
 
-extern void GetGlyphs(FontPtr     /*font*/,
-		      unsigned long /*count*/,
-		      unsigned char * /*chars*/,
-		      FontEncoding /*fontEncoding*/,
-		      unsigned long * /*glyphcount*/,
-		      CharInfoPtr * /*glyphs*/);
+#define GetGlyphs dixGetGlyphs
+extern void dixGetGlyphs(FontPtr     /*font*/,
+			 unsigned long /*count*/,
+			 unsigned char * /*chars*/,
+			 FontEncoding /*fontEncoding*/,
+			 unsigned long * /*glyphcount*/,
+			 CharInfoPtr * /*glyphs*/);
+
+extern void register_fpe_functions(void);
 
 extern void QueryGlyphExtents(FontPtr     /*pFont*/,
 			      CharInfoPtr * /*charinfo*/,
@@ -145,6 +163,7 @@ extern Bool QueryTextExtents(FontPtr     /*pFont*/,
 			     unsigned long /*count*/,
 			     unsigned char * /*chars*/,
 			     ExtentInfoPtr /*info*/);
+#endif /* HAS_XFONT2 */
 
 extern Bool ParseGlyphCachingMode(char * /*str*/);
 

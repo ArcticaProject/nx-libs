@@ -1,17 +1,25 @@
 /**************************************************************************/
 /*                                                                        */
-/* Copyright (c) 2001, 2011 NoMachine, http://www.nomachine.com/.         */
+/* Copyright (c) 2001, 2011 NoMachine (http://www.nomachine.com)          */
+/* Copyright (c) 2008-2014 Oleksandr Shneyder <o.shneyder@phoca-gmbh.de>  */
+/* Copyright (c) 2011-2016 Mike Gabriel <mike.gabriel@das-netzwerkteam.de>*/
+/* Copyright (c) 2014-2016 Mihai Moldovan <ionic@ionic.de>                */
+/* Copyright (c) 2014-2016 Ulrich Sibiller <uli42@gmx.de>                 */
+/* Copyright (c) 2015-2016 Qindel Group (http://www.qindel.com)           */
 /*                                                                        */
 /* NXAGENT, NX protocol compression and NX extensions to this software    */
-/* are copyright of NoMachine. Redistribution and use of the present      */
-/* software is allowed according to terms specified in the file LICENSE   */
-/* which comes in the source distribution.                                */
+/* are copyright of the aforementioned persons and companies.             */
 /*                                                                        */
-/* Check http://www.nomachine.com/licensing.html for applicability.       */
-/*                                                                        */
-/* NX and NoMachine are trademarks of Medialogic S.p.A.                   */
+/* Redistribution and use of the present software is allowed according    */
+/* to terms specified in the file LICENSE which comes in the source       */
+/* distribution.                                                          */
 /*                                                                        */
 /* All rights reserved.                                                   */
+/*                                                                        */
+/* NOTE: This software has received contributions from various other      */
+/* contributors, only the core maintainers and supporters are listed as   */
+/* copyright holders. Please contact us, if you feel you should be listed */
+/* as copyright holder, as well.                                          */
 /*                                                                        */
 /**************************************************************************/
 
@@ -37,8 +45,8 @@
 #include "Pixels.h"
 #include "Utils.h"
 
-#include "NXlib.h"
-#include "NXpack.h"
+#include "compext/Compext.h"
+#include <nx/NXpack.h>
 
 /*
  * Set here the required log level.
@@ -69,15 +77,6 @@
 #define IMAGE_UNIQUE_RATIO   10
 
 /*
- * Introduce a small delay after each image
- * operation if the session is down. Value
- * is in microseconds and is multiplied by
- * the image data size in kilobytes.
- */
-
-#define IMAGE_DELAY_IF_DOWN  250
-
-/*
  * Preferred pack and split parameters we
  * got from the NX transport.
  */
@@ -99,9 +98,9 @@ int nxagentAlphaCompat  = 0;
  * displays having different byte order.
  */
 
-extern void BitOrderInvert(unsigned char *, int);
-extern void TwoByteSwap(unsigned char *, register int);
-extern void FourByteSwap(register unsigned char *, register int);
+extern void nxagentBitOrderInvert(unsigned char *, int);
+extern void nxagentTwoByteSwap(unsigned char *, register int);
+extern void nxagentFourByteSwap(register unsigned char *, register int);
 
 /*
  * Store the last visual used to unpack
@@ -207,7 +206,7 @@ int nxagentImageReformat(char *base, int nbytes, int bpp, int order)
                     "bits per pixel [%d] byte order [%d].\n", nbytes, bpp, order);
         #endif
 
-        BitOrderInvert((unsigned char *) base, nbytes);
+        nxagentBitOrderInvert((unsigned char *) base, nbytes);
       }
 
       #if IMAGE_BYTE_ORDER != BITMAP_BIT_ORDER && BITMAP_SCANLINE_UNIT != 8
@@ -232,7 +231,7 @@ int nxagentImageReformat(char *base, int nbytes, int bpp, int order)
                     "bits per pixel [%d] byte order [%d].\n", nbytes, bpp, order);
         #endif
 
-        TwoByteSwap((unsigned char *) base, nbytes);
+        nxagentTwoByteSwap((unsigned char *) base, nbytes);
       }
 
       break;
@@ -246,7 +245,7 @@ int nxagentImageReformat(char *base, int nbytes, int bpp, int order)
                     "bits per pixel [%d] byte order [%d].\n", nbytes, bpp, order);
         #endif
 
-        FourByteSwap((unsigned char *) base, nbytes);
+        nxagentFourByteSwap((unsigned char *) base, nbytes);
       }
 
       break;
@@ -312,7 +311,7 @@ char *nxagentImageCopy(XImage *source, XImage *destination)
               source -> bytes_per_line * source -> height);
   #endif
 
-  destination -> data = Xmalloc(source -> bytes_per_line * source -> height);
+  destination -> data = malloc(source -> bytes_per_line * source -> height);
 
   if (destination -> data == NULL)
   {
@@ -345,7 +344,7 @@ char *nxagentImageAlpha(XImage *image)
 
   size = (image -> bytes_per_line * image -> height) >> 2;
 
-  pData = Xmalloc(size);
+  pData = malloc(size);
 
   if (pData == NULL)
   {
@@ -456,15 +455,15 @@ FIXME: Here the split trap is always set and so the caching of
 
     if (nxagentUnpackAlpha[resource] != NULL)
     {
-      Xfree(nxagentUnpackAlpha[resource] -> data);
+      free(nxagentUnpackAlpha[resource] -> data);
     }
-    else if ((nxagentUnpackAlpha[resource] = Xmalloc(sizeof(UnpackAlphaRec))) == NULL)
+    else if ((nxagentUnpackAlpha[resource] = malloc(sizeof(UnpackAlphaRec))) == NULL)
     {
       #ifdef PANIC
       fprintf(stderr, "nxagentSetUnpackAlpha: PANIC! Can't allocate data for the alpha structure.\n");
       #endif
 
-      Xfree(data);
+      free(data);
 
       return;
     }
@@ -484,7 +483,7 @@ FIXME: Here the split trap is always set and so the caching of
                 resource, size);
     #endif
 
-    Xfree(data);
+    free(data);
   }
 }
 
@@ -521,11 +520,12 @@ void nxagentPutImage(DrawablePtr pDrawable, GCPtr pGC, int depth,
   length = nxagentImageLength(dstWidth, dstHeight, format, leftPad, depth);
 
   if (nxagentShadowCounter == 0 &&
-          NXDisplayError(nxagentDisplay) == 1)
+          NXDisplayError(nxagentDisplay) == 1 &&
+              nxagentOption(SleepTime) > 0)
   {
     int us;
 
-    us = IMAGE_DELAY_IF_DOWN * (length / 1024);
+    us = nxagentOption(SleepTime) * 4 * (length / 1024);
 
     us = (us < 10000 ? 10000 : (us > 1000000 ? 1000000 : us));
 
@@ -566,7 +566,7 @@ void nxagentPutImage(DrawablePtr pDrawable, GCPtr pGC, int depth,
 
   pRegion = nxagentCreateRegion(pDrawable, pGC, dstX, dstY, dstWidth, dstHeight);
 
-  if (REGION_NIL(pRegion) == 1)
+  if (RegionNil(pRegion) == 1)
   {
     #ifdef TEST
     fprintf(stderr, "nxagentPutImage: WARNING! Prevented operation on fully clipped "
@@ -644,6 +644,10 @@ FIXME: Should use these.
             pDrawable -> depth != 1 &&
                 nxagentOption(DeferLevel) >= 1)
     {
+    /* -- changed by dimbor (small "bed-sheets" never need be prevented - always put) --*/
+     if (dstHeight > 16)
+     {
+    /* -------------------------------------------------------------------------------- */
       #ifdef TEST
       fprintf(stderr, "nxagentPutImage: WARNING! Prevented operation on region [%d,%d,%d,%d] "
                   "for drawable at [%p] with drawable pixmap.\n", pRegion -> extents.x1,
@@ -654,6 +658,9 @@ FIXME: Should use these.
       nxagentMarkCorruptedRegion(pDrawable, pRegion);
 
       goto nxagentPutImageEnd;
+    /* --- changed by dimbor ---*/
+     }
+    /* ------------------------- */
     }
 
     if (pDrawable -> type == DRAWABLE_WINDOW &&
@@ -1029,7 +1036,7 @@ void nxagentRealizeImage(DrawablePtr pDrawable, GCPtr pGC, int depth,
       clipRegion = nxagentCreateRegion(pDrawable, pGC, x, y, w, h);
     }
 
-    if (clipRegion == NullRegion || REGION_NIL(clipRegion) == 0)
+    if (clipRegion == NullRegion || RegionNil(clipRegion) == 0)
     {
       nxagentPutSubImage(pDrawable, pGC, depth, x, y, w, h,
                              leftPad, format, data, pVisual);
@@ -1145,7 +1152,7 @@ FIXME: Should use an unpack resource here.
 
   #ifdef TEST
   fprintf(stderr, "nxagentPutSubImage: Display image order is [%d] bitmap order is [%d].\n",
-              ImageByteOrder(nxagentDisplay), BitmapBitOrder(nxagentDisplay));
+              ImageByteOrder(nxagentDisplay), nxagentBitmapBitOrder(nxagentDisplay));
   #endif
 
   /*
@@ -1560,23 +1567,20 @@ nxagentPutSubImageEnd:
               nxagentImageStatistics.totalEncoded, nxagentImageStatistics.totalAdded);
   #endif
 
-  if (packedChecksum != NULL)
-  {
-    Xfree(packedChecksum);
-  }
+  free(packedChecksum);
 
   if (packedImage != NULL)
   {
     if (packedImage -> data != NULL &&
             packedImage -> data != plainImage -> data)
     {
-      Xfree(packedImage -> data);
+      free(packedImage -> data);
     }
 
-    Xfree(packedImage);
+    free(packedImage);
   }
 
-  Xfree(plainImage);
+  free(plainImage);
 }
 
 void nxagentGetImage(DrawablePtr pDrawable, int x, int y, int w, int h,
@@ -1630,9 +1634,9 @@ void nxagentResetAlphaCache()
   {
     if (nxagentUnpackAlpha[i])
     {
-      Xfree(nxagentUnpackAlpha[i] -> data);
+      free(nxagentUnpackAlpha[i] -> data);
 
-      Xfree(nxagentUnpackAlpha[i]);
+      free(nxagentUnpackAlpha[i]);
 
       nxagentUnpackAlpha[i] = NULL;
     }
@@ -1708,11 +1712,11 @@ int nxagentScaleImage(int x, int y, unsigned xRatio, unsigned yRatio,
   newImage -> byte_order = IMAGE_BYTE_ORDER;
   newImage -> bitmap_bit_order = BITMAP_BIT_ORDER;
 
-  newImage -> data = Xmalloc(newImage -> bytes_per_line * newHeight);
+  newImage -> data = malloc(newImage -> bytes_per_line * newHeight);
 
   if (newImage -> data == NULL)
   {
-    Xfree(newImage);
+    free(newImage);
     
     #ifdef PANIC
     fprintf(stderr, "nxagentScaleImage: PANIC! Failed to create the target image data.\n");
@@ -1780,12 +1784,8 @@ int nxagentScaleImage(int x, int y, unsigned xRatio, unsigned yRatio,
     }
   }
 
-  if (image -> obdata != NULL)
-  {
-    Xfree((char *) image -> obdata);
-  }
-
-  Xfree((char *) image);
+  free((char *) image -> obdata);
+  free((char *) image);
 
   *pImage = newImage;
 
@@ -1809,7 +1809,7 @@ char *nxagentAllocateImageData(int width, int height, int depth, int *length, in
 
   data = NULL;
 
-  if ((data = xalloc(*length)) == NULL)
+  if ((data = malloc(*length)) == NULL)
   {
     #ifdef WARNING
     fprintf(stderr, "nxagentAllocateImageData: WARNING! Failed to allocate [%d] bytes of memory.\n", *length);

@@ -1,5 +1,3 @@
-/* $Xorg: keysymdef.h,v 1.4 2001/02/09 02:03:23 $ */
-
 /***********************************************************
 Copyright 1987, 1994, 1998  The Open Group
 
@@ -47,7 +45,6 @@ ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS
 SOFTWARE.
 
 ******************************************************************/
-/* $XFree86: $ */
 
 /*
  * The "X11 Window System Protocol" standard defines in Appendix A the
@@ -56,7 +53,7 @@ SOFTWARE.
  * engraving) of a keyboard layout. This file assigns mnemonic macro
  * names for these keysyms.
  *
- * This file is also compiled (by xc/lib/X11/util/makekeys.c) into
+ * This file is also compiled (by src/util/makekeys.c in libX11) into
  * hash tables that can be accessed with X11 library functions such as
  * XStringToKeysym() and XKeysymToString().
  *
@@ -93,9 +90,26 @@ SOFTWARE.
  *    /^\#define XK_([a-zA-Z_0-9]+)\s+0x([0-9a-f]+)\s*\/\*\(U+([0-9A-F]{4,6}) (.*)\)\*\/\s*$/
  *    /^\#define XK_([a-zA-Z_0-9]+)\s+0x([0-9a-f]+)\s*(\/\*\s*(.*)\s*\*\/)?\s*$/
  *
+ * Before adding new keysyms, please do consider the following: In
+ * addition to the keysym names defined in this file, the
+ * XStringToKeysym() and XKeysymToString() functions will also handle
+ * any keysym string of the form "U0020" to "U007E" and "U00A0" to
+ * "U10FFFF" for all possible Unicode characters. In other words,
+ * every possible Unicode character has already a keysym string
+ * defined algorithmically, even if it is not listed here. Therefore,
+ * defining an additional keysym macro is only necessary where a
+ * non-hexadecimal mnemonic name is needed, or where the new keysym
+ * does not represent any existing Unicode character.
+ *
  * When adding new keysyms to this file, do not forget to also update the
- * mappings in xc/lib/X11/KeyBind.c and the protocol specification in
- * xc/doc/specs/XProtocol/X11.keysyms.
+ * following as needed:
+ *
+ *   - the mappings in src/KeyBind.c in the repo
+ *     git://anongit.freedesktop.org/xorg/lib/libX11.git
+ *
+ *   - the protocol specification in specs/keysyms.xml
+ *     in the repo git://anongit.freedesktop.org/xorg/proto/x11proto.git
+ *
  */
 
 #define XK_VoidSymbol                  0xffffff  /* Void symbol */
@@ -229,8 +243,8 @@ SOFTWARE.
 
 
 /*
- * Auxilliary functions; note the duplicate definitions for left and right
- * function keys;  Sun keyboards and a few other manufactures have such
+ * Auxiliary functions; note the duplicate definitions for left and right
+ * function keys;  Sun keyboards and a few other manufacturers have such
  * function key groups on the left and/or right sides of the keyboard.
  * We've not found a keyboard with more than 35 function keys total.
  */
@@ -327,6 +341,9 @@ SOFTWARE.
 #define XK_ISO_Level3_Shift              0xfe03
 #define XK_ISO_Level3_Latch              0xfe04
 #define XK_ISO_Level3_Lock               0xfe05
+#define XK_ISO_Level5_Shift              0xfe11
+#define XK_ISO_Level5_Latch              0xfe12
+#define XK_ISO_Level5_Lock               0xfe13
 #define XK_ISO_Group_Shift               0xff7e  /* Alias for mode_switch */
 #define XK_ISO_Group_Latch               0xfe06
 #define XK_ISO_Group_Lock                0xfe07
@@ -365,6 +382,7 @@ SOFTWARE.
 #define XK_dead_acute                    0xfe51
 #define XK_dead_circumflex               0xfe52
 #define XK_dead_tilde                    0xfe53
+#define XK_dead_perispomeni              0xfe53  /* alias for dead_tilde */
 #define XK_dead_macron                   0xfe54
 #define XK_dead_breve                    0xfe55
 #define XK_dead_abovedot                 0xfe56
@@ -380,6 +398,43 @@ SOFTWARE.
 #define XK_dead_belowdot                 0xfe60
 #define XK_dead_hook                     0xfe61
 #define XK_dead_horn                     0xfe62
+#define XK_dead_stroke                   0xfe63
+#define XK_dead_abovecomma               0xfe64
+#define XK_dead_psili                    0xfe64  /* alias for dead_abovecomma */
+#define XK_dead_abovereversedcomma       0xfe65
+#define XK_dead_dasia                    0xfe65  /* alias for dead_abovereversedcomma */
+#define XK_dead_doublegrave              0xfe66
+#define XK_dead_belowring                0xfe67
+#define XK_dead_belowmacron              0xfe68
+#define XK_dead_belowcircumflex          0xfe69
+#define XK_dead_belowtilde               0xfe6a
+#define XK_dead_belowbreve               0xfe6b
+#define XK_dead_belowdiaeresis           0xfe6c
+#define XK_dead_invertedbreve            0xfe6d
+#define XK_dead_belowcomma               0xfe6e
+#define XK_dead_currency                 0xfe6f
+
+/* extra dead elements for German T3 layout */
+#define XK_dead_lowline                  0xfe90
+#define XK_dead_aboveverticalline        0xfe91
+#define XK_dead_belowverticalline        0xfe92
+#define XK_dead_longsolidusoverlay       0xfe93
+
+/* dead vowels for universal syllable entry */
+#define XK_dead_a                        0xfe80
+#define XK_dead_A                        0xfe81
+#define XK_dead_e                        0xfe82
+#define XK_dead_E                        0xfe83
+#define XK_dead_i                        0xfe84
+#define XK_dead_I                        0xfe85
+#define XK_dead_o                        0xfe86
+#define XK_dead_O                        0xfe87
+#define XK_dead_u                        0xfe88
+#define XK_dead_U                        0xfe89
+#define XK_dead_small_schwa              0xfe8a
+#define XK_dead_capital_schwa            0xfe8b
+
+#define XK_dead_greek                    0xfe8c
 
 #define XK_First_Virtual_Screen          0xfed0
 #define XK_Prev_Virtual_Screen           0xfed1
@@ -430,6 +485,15 @@ SOFTWARE.
 #define XK_Pointer_Accelerate            0xfefa
 #define XK_Pointer_DfltBtnNext           0xfefb
 #define XK_Pointer_DfltBtnPrev           0xfefc
+
+/* Single-Stroke Multiple-Character N-Graph Keysyms For The X Input Method */
+
+#define XK_ch                            0xfea0
+#define XK_Ch                            0xfea1
+#define XK_CH                            0xfea2
+#define XK_c_h                           0xfea3
+#define XK_C_h                           0xfea4
+#define XK_C_H                           0xfea5
 
 #endif /* XK_XKB_KEYS */
 
@@ -735,9 +799,9 @@ SOFTWARE.
 #define XK_nacute                        0x01f1  /* U+0144 LATIN SMALL LETTER N WITH ACUTE */
 #define XK_ncaron                        0x01f2  /* U+0148 LATIN SMALL LETTER N WITH CARON */
 #define XK_odoubleacute                  0x01f5  /* U+0151 LATIN SMALL LETTER O WITH DOUBLE ACUTE */
-#define XK_udoubleacute                  0x01fb  /* U+0171 LATIN SMALL LETTER U WITH DOUBLE ACUTE */
 #define XK_rcaron                        0x01f8  /* U+0159 LATIN SMALL LETTER R WITH CARON */
 #define XK_uring                         0x01f9  /* U+016F LATIN SMALL LETTER U WITH RING ABOVE */
+#define XK_udoubleacute                  0x01fb  /* U+0171 LATIN SMALL LETTER U WITH DOUBLE ACUTE */
 #define XK_tcedilla                      0x01fe  /* U+0163 LATIN SMALL LETTER T WITH CEDILLA */
 #define XK_abovedot                      0x01ff  /* U+02D9 DOT ABOVE */
 #endif /* XK_LATIN2 */
@@ -821,32 +885,32 @@ SOFTWARE.
  * Latin 8
  */
 #ifdef XK_LATIN8
+#define XK_Wcircumflex                0x1000174  /* U+0174 LATIN CAPITAL LETTER W WITH CIRCUMFLEX */
+#define XK_wcircumflex                0x1000175  /* U+0175 LATIN SMALL LETTER W WITH CIRCUMFLEX */
+#define XK_Ycircumflex                0x1000176  /* U+0176 LATIN CAPITAL LETTER Y WITH CIRCUMFLEX */
+#define XK_ycircumflex                0x1000177  /* U+0177 LATIN SMALL LETTER Y WITH CIRCUMFLEX */
 #define XK_Babovedot                  0x1001e02  /* U+1E02 LATIN CAPITAL LETTER B WITH DOT ABOVE */
 #define XK_babovedot                  0x1001e03  /* U+1E03 LATIN SMALL LETTER B WITH DOT ABOVE */
 #define XK_Dabovedot                  0x1001e0a  /* U+1E0A LATIN CAPITAL LETTER D WITH DOT ABOVE */
-#define XK_Wgrave                     0x1001e80  /* U+1E80 LATIN CAPITAL LETTER W WITH GRAVE */
-#define XK_Wacute                     0x1001e82  /* U+1E82 LATIN CAPITAL LETTER W WITH ACUTE */
 #define XK_dabovedot                  0x1001e0b  /* U+1E0B LATIN SMALL LETTER D WITH DOT ABOVE */
-#define XK_Ygrave                     0x1001ef2  /* U+1EF2 LATIN CAPITAL LETTER Y WITH GRAVE */
 #define XK_Fabovedot                  0x1001e1e  /* U+1E1E LATIN CAPITAL LETTER F WITH DOT ABOVE */
 #define XK_fabovedot                  0x1001e1f  /* U+1E1F LATIN SMALL LETTER F WITH DOT ABOVE */
 #define XK_Mabovedot                  0x1001e40  /* U+1E40 LATIN CAPITAL LETTER M WITH DOT ABOVE */
 #define XK_mabovedot                  0x1001e41  /* U+1E41 LATIN SMALL LETTER M WITH DOT ABOVE */
 #define XK_Pabovedot                  0x1001e56  /* U+1E56 LATIN CAPITAL LETTER P WITH DOT ABOVE */
-#define XK_wgrave                     0x1001e81  /* U+1E81 LATIN SMALL LETTER W WITH GRAVE */
 #define XK_pabovedot                  0x1001e57  /* U+1E57 LATIN SMALL LETTER P WITH DOT ABOVE */
-#define XK_wacute                     0x1001e83  /* U+1E83 LATIN SMALL LETTER W WITH ACUTE */
 #define XK_Sabovedot                  0x1001e60  /* U+1E60 LATIN CAPITAL LETTER S WITH DOT ABOVE */
-#define XK_ygrave                     0x1001ef3  /* U+1EF3 LATIN SMALL LETTER Y WITH GRAVE */
+#define XK_sabovedot                  0x1001e61  /* U+1E61 LATIN SMALL LETTER S WITH DOT ABOVE */
+#define XK_Tabovedot                  0x1001e6a  /* U+1E6A LATIN CAPITAL LETTER T WITH DOT ABOVE */
+#define XK_tabovedot                  0x1001e6b  /* U+1E6B LATIN SMALL LETTER T WITH DOT ABOVE */
+#define XK_Wgrave                     0x1001e80  /* U+1E80 LATIN CAPITAL LETTER W WITH GRAVE */
+#define XK_wgrave                     0x1001e81  /* U+1E81 LATIN SMALL LETTER W WITH GRAVE */
+#define XK_Wacute                     0x1001e82  /* U+1E82 LATIN CAPITAL LETTER W WITH ACUTE */
+#define XK_wacute                     0x1001e83  /* U+1E83 LATIN SMALL LETTER W WITH ACUTE */
 #define XK_Wdiaeresis                 0x1001e84  /* U+1E84 LATIN CAPITAL LETTER W WITH DIAERESIS */
 #define XK_wdiaeresis                 0x1001e85  /* U+1E85 LATIN SMALL LETTER W WITH DIAERESIS */
-#define XK_sabovedot                  0x1001e61  /* U+1E61 LATIN SMALL LETTER S WITH DOT ABOVE */
-#define XK_Wcircumflex                0x1000174  /* U+0174 LATIN CAPITAL LETTER W WITH CIRCUMFLEX */
-#define XK_Tabovedot                  0x1001e6a  /* U+1E6A LATIN CAPITAL LETTER T WITH DOT ABOVE */
-#define XK_Ycircumflex                0x1000176  /* U+0176 LATIN CAPITAL LETTER Y WITH CIRCUMFLEX */
-#define XK_wcircumflex                0x1000175  /* U+0175 LATIN SMALL LETTER W WITH CIRCUMFLEX */
-#define XK_tabovedot                  0x1001e6b  /* U+1E6B LATIN SMALL LETTER T WITH DOT ABOVE */
-#define XK_ycircumflex                0x1000177  /* U+0177 LATIN SMALL LETTER Y WITH CIRCUMFLEX */
+#define XK_Ygrave                     0x1001ef2  /* U+1EF2 LATIN CAPITAL LETTER Y WITH GRAVE */
+#define XK_ygrave                     0x1001ef3  /* U+1EF3 LATIN SMALL LETTER Y WITH GRAVE */
 #endif /* XK_LATIN8 */
 
 /*
@@ -1411,6 +1475,7 @@ SOFTWARE.
 #define XK_leftdoublequotemark           0x0ad2  /* U+201C LEFT DOUBLE QUOTATION MARK */
 #define XK_rightdoublequotemark          0x0ad3  /* U+201D RIGHT DOUBLE QUOTATION MARK */
 #define XK_prescription                  0x0ad4  /* U+211E PRESCRIPTION TAKE */
+#define XK_permille                      0x0ad5  /* U+2030 PER MILLE SIGN */
 #define XK_minutes                       0x0ad6  /* U+2032 PRIME */
 #define XK_seconds                       0x0ad7  /* U+2033 DOUBLE PRIME */
 #define XK_latincross                    0x0ad9  /* U+271D LATIN CROSS */
@@ -1464,20 +1529,20 @@ SOFTWARE.
 #define XK_downcaret                     0x0ba8  /*(U+2228 LOGICAL OR)*/
 #define XK_upcaret                       0x0ba9  /*(U+2227 LOGICAL AND)*/
 #define XK_overbar                       0x0bc0  /*(U+00AF MACRON)*/
-#define XK_downtack                      0x0bc2  /* U+22A5 UP TACK */
+#define XK_downtack                      0x0bc2  /* U+22A4 DOWN TACK */
 #define XK_upshoe                        0x0bc3  /*(U+2229 INTERSECTION)*/
 #define XK_downstile                     0x0bc4  /* U+230A LEFT FLOOR */
 #define XK_underbar                      0x0bc6  /*(U+005F LOW LINE)*/
 #define XK_jot                           0x0bca  /* U+2218 RING OPERATOR */
 #define XK_quad                          0x0bcc  /* U+2395 APL FUNCTIONAL SYMBOL QUAD */
-#define XK_uptack                        0x0bce  /* U+22A4 DOWN TACK */
+#define XK_uptack                        0x0bce  /* U+22A5 UP TACK */
 #define XK_circle                        0x0bcf  /* U+25CB WHITE CIRCLE */
 #define XK_upstile                       0x0bd3  /* U+2308 LEFT CEILING */
 #define XK_downshoe                      0x0bd6  /*(U+222A UNION)*/
 #define XK_rightshoe                     0x0bd8  /*(U+2283 SUPERSET OF)*/
 #define XK_leftshoe                      0x0bda  /*(U+2282 SUBSET OF)*/
-#define XK_lefttack                      0x0bdc  /* U+22A2 RIGHT TACK */
-#define XK_righttack                     0x0bfc  /* U+22A3 LEFT TACK */
+#define XK_lefttack                      0x0bdc  /* U+22A3 LEFT TACK */
+#define XK_righttack                     0x0bfc  /* U+22A2 RIGHT TACK */
 #endif /* XK_APL */
 
 /*
@@ -1914,6 +1979,8 @@ SOFTWARE.
 #define XK_obarred                    0x1000275  /* U+0275 LATIN SMALL LETTER BARRED O */
 #define XK_SCHWA                      0x100018f  /* U+018F LATIN CAPITAL LETTER SCHWA */
 #define XK_schwa                      0x1000259  /* U+0259 LATIN SMALL LETTER SCHWA */
+#define XK_EZH                        0x10001b7  /* U+01B7 LATIN CAPITAL LETTER EZH */
+#define XK_ezh                        0x1000292  /* U+0292 LATIN SMALL LETTER EZH */
 /* those are not really Caucasus */
 /* For Inupiak */
 #define XK_Lbelowdot                  0x1001e36  /* U+1E36 LATIN CAPITAL LETTER L WITH DOT BELOW */
@@ -2071,3 +2138,360 @@ SOFTWARE.
 #define XK_notidentical               0x1002262  /* U+2262 NOT IDENTICAL TO */
 #define XK_stricteq                   0x1002263  /* U+2263 STRICTLY EQUIVALENT TO */          
 #endif /* XK_MATHEMATICAL */
+
+#ifdef XK_BRAILLE
+#define XK_braille_dot_1                 0xfff1
+#define XK_braille_dot_2                 0xfff2
+#define XK_braille_dot_3                 0xfff3
+#define XK_braille_dot_4                 0xfff4
+#define XK_braille_dot_5                 0xfff5
+#define XK_braille_dot_6                 0xfff6
+#define XK_braille_dot_7                 0xfff7
+#define XK_braille_dot_8                 0xfff8
+#define XK_braille_dot_9                 0xfff9
+#define XK_braille_dot_10                0xfffa
+#define XK_braille_blank              0x1002800  /* U+2800 BRAILLE PATTERN BLANK */
+#define XK_braille_dots_1             0x1002801  /* U+2801 BRAILLE PATTERN DOTS-1 */
+#define XK_braille_dots_2             0x1002802  /* U+2802 BRAILLE PATTERN DOTS-2 */
+#define XK_braille_dots_12            0x1002803  /* U+2803 BRAILLE PATTERN DOTS-12 */
+#define XK_braille_dots_3             0x1002804  /* U+2804 BRAILLE PATTERN DOTS-3 */
+#define XK_braille_dots_13            0x1002805  /* U+2805 BRAILLE PATTERN DOTS-13 */
+#define XK_braille_dots_23            0x1002806  /* U+2806 BRAILLE PATTERN DOTS-23 */
+#define XK_braille_dots_123           0x1002807  /* U+2807 BRAILLE PATTERN DOTS-123 */
+#define XK_braille_dots_4             0x1002808  /* U+2808 BRAILLE PATTERN DOTS-4 */
+#define XK_braille_dots_14            0x1002809  /* U+2809 BRAILLE PATTERN DOTS-14 */
+#define XK_braille_dots_24            0x100280a  /* U+280a BRAILLE PATTERN DOTS-24 */
+#define XK_braille_dots_124           0x100280b  /* U+280b BRAILLE PATTERN DOTS-124 */
+#define XK_braille_dots_34            0x100280c  /* U+280c BRAILLE PATTERN DOTS-34 */
+#define XK_braille_dots_134           0x100280d  /* U+280d BRAILLE PATTERN DOTS-134 */
+#define XK_braille_dots_234           0x100280e  /* U+280e BRAILLE PATTERN DOTS-234 */
+#define XK_braille_dots_1234          0x100280f  /* U+280f BRAILLE PATTERN DOTS-1234 */
+#define XK_braille_dots_5             0x1002810  /* U+2810 BRAILLE PATTERN DOTS-5 */
+#define XK_braille_dots_15            0x1002811  /* U+2811 BRAILLE PATTERN DOTS-15 */
+#define XK_braille_dots_25            0x1002812  /* U+2812 BRAILLE PATTERN DOTS-25 */
+#define XK_braille_dots_125           0x1002813  /* U+2813 BRAILLE PATTERN DOTS-125 */
+#define XK_braille_dots_35            0x1002814  /* U+2814 BRAILLE PATTERN DOTS-35 */
+#define XK_braille_dots_135           0x1002815  /* U+2815 BRAILLE PATTERN DOTS-135 */
+#define XK_braille_dots_235           0x1002816  /* U+2816 BRAILLE PATTERN DOTS-235 */
+#define XK_braille_dots_1235          0x1002817  /* U+2817 BRAILLE PATTERN DOTS-1235 */
+#define XK_braille_dots_45            0x1002818  /* U+2818 BRAILLE PATTERN DOTS-45 */
+#define XK_braille_dots_145           0x1002819  /* U+2819 BRAILLE PATTERN DOTS-145 */
+#define XK_braille_dots_245           0x100281a  /* U+281a BRAILLE PATTERN DOTS-245 */
+#define XK_braille_dots_1245          0x100281b  /* U+281b BRAILLE PATTERN DOTS-1245 */
+#define XK_braille_dots_345           0x100281c  /* U+281c BRAILLE PATTERN DOTS-345 */
+#define XK_braille_dots_1345          0x100281d  /* U+281d BRAILLE PATTERN DOTS-1345 */
+#define XK_braille_dots_2345          0x100281e  /* U+281e BRAILLE PATTERN DOTS-2345 */
+#define XK_braille_dots_12345         0x100281f  /* U+281f BRAILLE PATTERN DOTS-12345 */
+#define XK_braille_dots_6             0x1002820  /* U+2820 BRAILLE PATTERN DOTS-6 */
+#define XK_braille_dots_16            0x1002821  /* U+2821 BRAILLE PATTERN DOTS-16 */
+#define XK_braille_dots_26            0x1002822  /* U+2822 BRAILLE PATTERN DOTS-26 */
+#define XK_braille_dots_126           0x1002823  /* U+2823 BRAILLE PATTERN DOTS-126 */
+#define XK_braille_dots_36            0x1002824  /* U+2824 BRAILLE PATTERN DOTS-36 */
+#define XK_braille_dots_136           0x1002825  /* U+2825 BRAILLE PATTERN DOTS-136 */
+#define XK_braille_dots_236           0x1002826  /* U+2826 BRAILLE PATTERN DOTS-236 */
+#define XK_braille_dots_1236          0x1002827  /* U+2827 BRAILLE PATTERN DOTS-1236 */
+#define XK_braille_dots_46            0x1002828  /* U+2828 BRAILLE PATTERN DOTS-46 */
+#define XK_braille_dots_146           0x1002829  /* U+2829 BRAILLE PATTERN DOTS-146 */
+#define XK_braille_dots_246           0x100282a  /* U+282a BRAILLE PATTERN DOTS-246 */
+#define XK_braille_dots_1246          0x100282b  /* U+282b BRAILLE PATTERN DOTS-1246 */
+#define XK_braille_dots_346           0x100282c  /* U+282c BRAILLE PATTERN DOTS-346 */
+#define XK_braille_dots_1346          0x100282d  /* U+282d BRAILLE PATTERN DOTS-1346 */
+#define XK_braille_dots_2346          0x100282e  /* U+282e BRAILLE PATTERN DOTS-2346 */
+#define XK_braille_dots_12346         0x100282f  /* U+282f BRAILLE PATTERN DOTS-12346 */
+#define XK_braille_dots_56            0x1002830  /* U+2830 BRAILLE PATTERN DOTS-56 */
+#define XK_braille_dots_156           0x1002831  /* U+2831 BRAILLE PATTERN DOTS-156 */
+#define XK_braille_dots_256           0x1002832  /* U+2832 BRAILLE PATTERN DOTS-256 */
+#define XK_braille_dots_1256          0x1002833  /* U+2833 BRAILLE PATTERN DOTS-1256 */
+#define XK_braille_dots_356           0x1002834  /* U+2834 BRAILLE PATTERN DOTS-356 */
+#define XK_braille_dots_1356          0x1002835  /* U+2835 BRAILLE PATTERN DOTS-1356 */
+#define XK_braille_dots_2356          0x1002836  /* U+2836 BRAILLE PATTERN DOTS-2356 */
+#define XK_braille_dots_12356         0x1002837  /* U+2837 BRAILLE PATTERN DOTS-12356 */
+#define XK_braille_dots_456           0x1002838  /* U+2838 BRAILLE PATTERN DOTS-456 */
+#define XK_braille_dots_1456          0x1002839  /* U+2839 BRAILLE PATTERN DOTS-1456 */
+#define XK_braille_dots_2456          0x100283a  /* U+283a BRAILLE PATTERN DOTS-2456 */
+#define XK_braille_dots_12456         0x100283b  /* U+283b BRAILLE PATTERN DOTS-12456 */
+#define XK_braille_dots_3456          0x100283c  /* U+283c BRAILLE PATTERN DOTS-3456 */
+#define XK_braille_dots_13456         0x100283d  /* U+283d BRAILLE PATTERN DOTS-13456 */
+#define XK_braille_dots_23456         0x100283e  /* U+283e BRAILLE PATTERN DOTS-23456 */
+#define XK_braille_dots_123456        0x100283f  /* U+283f BRAILLE PATTERN DOTS-123456 */
+#define XK_braille_dots_7             0x1002840  /* U+2840 BRAILLE PATTERN DOTS-7 */
+#define XK_braille_dots_17            0x1002841  /* U+2841 BRAILLE PATTERN DOTS-17 */
+#define XK_braille_dots_27            0x1002842  /* U+2842 BRAILLE PATTERN DOTS-27 */
+#define XK_braille_dots_127           0x1002843  /* U+2843 BRAILLE PATTERN DOTS-127 */
+#define XK_braille_dots_37            0x1002844  /* U+2844 BRAILLE PATTERN DOTS-37 */
+#define XK_braille_dots_137           0x1002845  /* U+2845 BRAILLE PATTERN DOTS-137 */
+#define XK_braille_dots_237           0x1002846  /* U+2846 BRAILLE PATTERN DOTS-237 */
+#define XK_braille_dots_1237          0x1002847  /* U+2847 BRAILLE PATTERN DOTS-1237 */
+#define XK_braille_dots_47            0x1002848  /* U+2848 BRAILLE PATTERN DOTS-47 */
+#define XK_braille_dots_147           0x1002849  /* U+2849 BRAILLE PATTERN DOTS-147 */
+#define XK_braille_dots_247           0x100284a  /* U+284a BRAILLE PATTERN DOTS-247 */
+#define XK_braille_dots_1247          0x100284b  /* U+284b BRAILLE PATTERN DOTS-1247 */
+#define XK_braille_dots_347           0x100284c  /* U+284c BRAILLE PATTERN DOTS-347 */
+#define XK_braille_dots_1347          0x100284d  /* U+284d BRAILLE PATTERN DOTS-1347 */
+#define XK_braille_dots_2347          0x100284e  /* U+284e BRAILLE PATTERN DOTS-2347 */
+#define XK_braille_dots_12347         0x100284f  /* U+284f BRAILLE PATTERN DOTS-12347 */
+#define XK_braille_dots_57            0x1002850  /* U+2850 BRAILLE PATTERN DOTS-57 */
+#define XK_braille_dots_157           0x1002851  /* U+2851 BRAILLE PATTERN DOTS-157 */
+#define XK_braille_dots_257           0x1002852  /* U+2852 BRAILLE PATTERN DOTS-257 */
+#define XK_braille_dots_1257          0x1002853  /* U+2853 BRAILLE PATTERN DOTS-1257 */
+#define XK_braille_dots_357           0x1002854  /* U+2854 BRAILLE PATTERN DOTS-357 */
+#define XK_braille_dots_1357          0x1002855  /* U+2855 BRAILLE PATTERN DOTS-1357 */
+#define XK_braille_dots_2357          0x1002856  /* U+2856 BRAILLE PATTERN DOTS-2357 */
+#define XK_braille_dots_12357         0x1002857  /* U+2857 BRAILLE PATTERN DOTS-12357 */
+#define XK_braille_dots_457           0x1002858  /* U+2858 BRAILLE PATTERN DOTS-457 */
+#define XK_braille_dots_1457          0x1002859  /* U+2859 BRAILLE PATTERN DOTS-1457 */
+#define XK_braille_dots_2457          0x100285a  /* U+285a BRAILLE PATTERN DOTS-2457 */
+#define XK_braille_dots_12457         0x100285b  /* U+285b BRAILLE PATTERN DOTS-12457 */
+#define XK_braille_dots_3457          0x100285c  /* U+285c BRAILLE PATTERN DOTS-3457 */
+#define XK_braille_dots_13457         0x100285d  /* U+285d BRAILLE PATTERN DOTS-13457 */
+#define XK_braille_dots_23457         0x100285e  /* U+285e BRAILLE PATTERN DOTS-23457 */
+#define XK_braille_dots_123457        0x100285f  /* U+285f BRAILLE PATTERN DOTS-123457 */
+#define XK_braille_dots_67            0x1002860  /* U+2860 BRAILLE PATTERN DOTS-67 */
+#define XK_braille_dots_167           0x1002861  /* U+2861 BRAILLE PATTERN DOTS-167 */
+#define XK_braille_dots_267           0x1002862  /* U+2862 BRAILLE PATTERN DOTS-267 */
+#define XK_braille_dots_1267          0x1002863  /* U+2863 BRAILLE PATTERN DOTS-1267 */
+#define XK_braille_dots_367           0x1002864  /* U+2864 BRAILLE PATTERN DOTS-367 */
+#define XK_braille_dots_1367          0x1002865  /* U+2865 BRAILLE PATTERN DOTS-1367 */
+#define XK_braille_dots_2367          0x1002866  /* U+2866 BRAILLE PATTERN DOTS-2367 */
+#define XK_braille_dots_12367         0x1002867  /* U+2867 BRAILLE PATTERN DOTS-12367 */
+#define XK_braille_dots_467           0x1002868  /* U+2868 BRAILLE PATTERN DOTS-467 */
+#define XK_braille_dots_1467          0x1002869  /* U+2869 BRAILLE PATTERN DOTS-1467 */
+#define XK_braille_dots_2467          0x100286a  /* U+286a BRAILLE PATTERN DOTS-2467 */
+#define XK_braille_dots_12467         0x100286b  /* U+286b BRAILLE PATTERN DOTS-12467 */
+#define XK_braille_dots_3467          0x100286c  /* U+286c BRAILLE PATTERN DOTS-3467 */
+#define XK_braille_dots_13467         0x100286d  /* U+286d BRAILLE PATTERN DOTS-13467 */
+#define XK_braille_dots_23467         0x100286e  /* U+286e BRAILLE PATTERN DOTS-23467 */
+#define XK_braille_dots_123467        0x100286f  /* U+286f BRAILLE PATTERN DOTS-123467 */
+#define XK_braille_dots_567           0x1002870  /* U+2870 BRAILLE PATTERN DOTS-567 */
+#define XK_braille_dots_1567          0x1002871  /* U+2871 BRAILLE PATTERN DOTS-1567 */
+#define XK_braille_dots_2567          0x1002872  /* U+2872 BRAILLE PATTERN DOTS-2567 */
+#define XK_braille_dots_12567         0x1002873  /* U+2873 BRAILLE PATTERN DOTS-12567 */
+#define XK_braille_dots_3567          0x1002874  /* U+2874 BRAILLE PATTERN DOTS-3567 */
+#define XK_braille_dots_13567         0x1002875  /* U+2875 BRAILLE PATTERN DOTS-13567 */
+#define XK_braille_dots_23567         0x1002876  /* U+2876 BRAILLE PATTERN DOTS-23567 */
+#define XK_braille_dots_123567        0x1002877  /* U+2877 BRAILLE PATTERN DOTS-123567 */
+#define XK_braille_dots_4567          0x1002878  /* U+2878 BRAILLE PATTERN DOTS-4567 */
+#define XK_braille_dots_14567         0x1002879  /* U+2879 BRAILLE PATTERN DOTS-14567 */
+#define XK_braille_dots_24567         0x100287a  /* U+287a BRAILLE PATTERN DOTS-24567 */
+#define XK_braille_dots_124567        0x100287b  /* U+287b BRAILLE PATTERN DOTS-124567 */
+#define XK_braille_dots_34567         0x100287c  /* U+287c BRAILLE PATTERN DOTS-34567 */
+#define XK_braille_dots_134567        0x100287d  /* U+287d BRAILLE PATTERN DOTS-134567 */
+#define XK_braille_dots_234567        0x100287e  /* U+287e BRAILLE PATTERN DOTS-234567 */
+#define XK_braille_dots_1234567       0x100287f  /* U+287f BRAILLE PATTERN DOTS-1234567 */
+#define XK_braille_dots_8             0x1002880  /* U+2880 BRAILLE PATTERN DOTS-8 */
+#define XK_braille_dots_18            0x1002881  /* U+2881 BRAILLE PATTERN DOTS-18 */
+#define XK_braille_dots_28            0x1002882  /* U+2882 BRAILLE PATTERN DOTS-28 */
+#define XK_braille_dots_128           0x1002883  /* U+2883 BRAILLE PATTERN DOTS-128 */
+#define XK_braille_dots_38            0x1002884  /* U+2884 BRAILLE PATTERN DOTS-38 */
+#define XK_braille_dots_138           0x1002885  /* U+2885 BRAILLE PATTERN DOTS-138 */
+#define XK_braille_dots_238           0x1002886  /* U+2886 BRAILLE PATTERN DOTS-238 */
+#define XK_braille_dots_1238          0x1002887  /* U+2887 BRAILLE PATTERN DOTS-1238 */
+#define XK_braille_dots_48            0x1002888  /* U+2888 BRAILLE PATTERN DOTS-48 */
+#define XK_braille_dots_148           0x1002889  /* U+2889 BRAILLE PATTERN DOTS-148 */
+#define XK_braille_dots_248           0x100288a  /* U+288a BRAILLE PATTERN DOTS-248 */
+#define XK_braille_dots_1248          0x100288b  /* U+288b BRAILLE PATTERN DOTS-1248 */
+#define XK_braille_dots_348           0x100288c  /* U+288c BRAILLE PATTERN DOTS-348 */
+#define XK_braille_dots_1348          0x100288d  /* U+288d BRAILLE PATTERN DOTS-1348 */
+#define XK_braille_dots_2348          0x100288e  /* U+288e BRAILLE PATTERN DOTS-2348 */
+#define XK_braille_dots_12348         0x100288f  /* U+288f BRAILLE PATTERN DOTS-12348 */
+#define XK_braille_dots_58            0x1002890  /* U+2890 BRAILLE PATTERN DOTS-58 */
+#define XK_braille_dots_158           0x1002891  /* U+2891 BRAILLE PATTERN DOTS-158 */
+#define XK_braille_dots_258           0x1002892  /* U+2892 BRAILLE PATTERN DOTS-258 */
+#define XK_braille_dots_1258          0x1002893  /* U+2893 BRAILLE PATTERN DOTS-1258 */
+#define XK_braille_dots_358           0x1002894  /* U+2894 BRAILLE PATTERN DOTS-358 */
+#define XK_braille_dots_1358          0x1002895  /* U+2895 BRAILLE PATTERN DOTS-1358 */
+#define XK_braille_dots_2358          0x1002896  /* U+2896 BRAILLE PATTERN DOTS-2358 */
+#define XK_braille_dots_12358         0x1002897  /* U+2897 BRAILLE PATTERN DOTS-12358 */
+#define XK_braille_dots_458           0x1002898  /* U+2898 BRAILLE PATTERN DOTS-458 */
+#define XK_braille_dots_1458          0x1002899  /* U+2899 BRAILLE PATTERN DOTS-1458 */
+#define XK_braille_dots_2458          0x100289a  /* U+289a BRAILLE PATTERN DOTS-2458 */
+#define XK_braille_dots_12458         0x100289b  /* U+289b BRAILLE PATTERN DOTS-12458 */
+#define XK_braille_dots_3458          0x100289c  /* U+289c BRAILLE PATTERN DOTS-3458 */
+#define XK_braille_dots_13458         0x100289d  /* U+289d BRAILLE PATTERN DOTS-13458 */
+#define XK_braille_dots_23458         0x100289e  /* U+289e BRAILLE PATTERN DOTS-23458 */
+#define XK_braille_dots_123458        0x100289f  /* U+289f BRAILLE PATTERN DOTS-123458 */
+#define XK_braille_dots_68            0x10028a0  /* U+28a0 BRAILLE PATTERN DOTS-68 */
+#define XK_braille_dots_168           0x10028a1  /* U+28a1 BRAILLE PATTERN DOTS-168 */
+#define XK_braille_dots_268           0x10028a2  /* U+28a2 BRAILLE PATTERN DOTS-268 */
+#define XK_braille_dots_1268          0x10028a3  /* U+28a3 BRAILLE PATTERN DOTS-1268 */
+#define XK_braille_dots_368           0x10028a4  /* U+28a4 BRAILLE PATTERN DOTS-368 */
+#define XK_braille_dots_1368          0x10028a5  /* U+28a5 BRAILLE PATTERN DOTS-1368 */
+#define XK_braille_dots_2368          0x10028a6  /* U+28a6 BRAILLE PATTERN DOTS-2368 */
+#define XK_braille_dots_12368         0x10028a7  /* U+28a7 BRAILLE PATTERN DOTS-12368 */
+#define XK_braille_dots_468           0x10028a8  /* U+28a8 BRAILLE PATTERN DOTS-468 */
+#define XK_braille_dots_1468          0x10028a9  /* U+28a9 BRAILLE PATTERN DOTS-1468 */
+#define XK_braille_dots_2468          0x10028aa  /* U+28aa BRAILLE PATTERN DOTS-2468 */
+#define XK_braille_dots_12468         0x10028ab  /* U+28ab BRAILLE PATTERN DOTS-12468 */
+#define XK_braille_dots_3468          0x10028ac  /* U+28ac BRAILLE PATTERN DOTS-3468 */
+#define XK_braille_dots_13468         0x10028ad  /* U+28ad BRAILLE PATTERN DOTS-13468 */
+#define XK_braille_dots_23468         0x10028ae  /* U+28ae BRAILLE PATTERN DOTS-23468 */
+#define XK_braille_dots_123468        0x10028af  /* U+28af BRAILLE PATTERN DOTS-123468 */
+#define XK_braille_dots_568           0x10028b0  /* U+28b0 BRAILLE PATTERN DOTS-568 */
+#define XK_braille_dots_1568          0x10028b1  /* U+28b1 BRAILLE PATTERN DOTS-1568 */
+#define XK_braille_dots_2568          0x10028b2  /* U+28b2 BRAILLE PATTERN DOTS-2568 */
+#define XK_braille_dots_12568         0x10028b3  /* U+28b3 BRAILLE PATTERN DOTS-12568 */
+#define XK_braille_dots_3568          0x10028b4  /* U+28b4 BRAILLE PATTERN DOTS-3568 */
+#define XK_braille_dots_13568         0x10028b5  /* U+28b5 BRAILLE PATTERN DOTS-13568 */
+#define XK_braille_dots_23568         0x10028b6  /* U+28b6 BRAILLE PATTERN DOTS-23568 */
+#define XK_braille_dots_123568        0x10028b7  /* U+28b7 BRAILLE PATTERN DOTS-123568 */
+#define XK_braille_dots_4568          0x10028b8  /* U+28b8 BRAILLE PATTERN DOTS-4568 */
+#define XK_braille_dots_14568         0x10028b9  /* U+28b9 BRAILLE PATTERN DOTS-14568 */
+#define XK_braille_dots_24568         0x10028ba  /* U+28ba BRAILLE PATTERN DOTS-24568 */
+#define XK_braille_dots_124568        0x10028bb  /* U+28bb BRAILLE PATTERN DOTS-124568 */
+#define XK_braille_dots_34568         0x10028bc  /* U+28bc BRAILLE PATTERN DOTS-34568 */
+#define XK_braille_dots_134568        0x10028bd  /* U+28bd BRAILLE PATTERN DOTS-134568 */
+#define XK_braille_dots_234568        0x10028be  /* U+28be BRAILLE PATTERN DOTS-234568 */
+#define XK_braille_dots_1234568       0x10028bf  /* U+28bf BRAILLE PATTERN DOTS-1234568 */
+#define XK_braille_dots_78            0x10028c0  /* U+28c0 BRAILLE PATTERN DOTS-78 */
+#define XK_braille_dots_178           0x10028c1  /* U+28c1 BRAILLE PATTERN DOTS-178 */
+#define XK_braille_dots_278           0x10028c2  /* U+28c2 BRAILLE PATTERN DOTS-278 */
+#define XK_braille_dots_1278          0x10028c3  /* U+28c3 BRAILLE PATTERN DOTS-1278 */
+#define XK_braille_dots_378           0x10028c4  /* U+28c4 BRAILLE PATTERN DOTS-378 */
+#define XK_braille_dots_1378          0x10028c5  /* U+28c5 BRAILLE PATTERN DOTS-1378 */
+#define XK_braille_dots_2378          0x10028c6  /* U+28c6 BRAILLE PATTERN DOTS-2378 */
+#define XK_braille_dots_12378         0x10028c7  /* U+28c7 BRAILLE PATTERN DOTS-12378 */
+#define XK_braille_dots_478           0x10028c8  /* U+28c8 BRAILLE PATTERN DOTS-478 */
+#define XK_braille_dots_1478          0x10028c9  /* U+28c9 BRAILLE PATTERN DOTS-1478 */
+#define XK_braille_dots_2478          0x10028ca  /* U+28ca BRAILLE PATTERN DOTS-2478 */
+#define XK_braille_dots_12478         0x10028cb  /* U+28cb BRAILLE PATTERN DOTS-12478 */
+#define XK_braille_dots_3478          0x10028cc  /* U+28cc BRAILLE PATTERN DOTS-3478 */
+#define XK_braille_dots_13478         0x10028cd  /* U+28cd BRAILLE PATTERN DOTS-13478 */
+#define XK_braille_dots_23478         0x10028ce  /* U+28ce BRAILLE PATTERN DOTS-23478 */
+#define XK_braille_dots_123478        0x10028cf  /* U+28cf BRAILLE PATTERN DOTS-123478 */
+#define XK_braille_dots_578           0x10028d0  /* U+28d0 BRAILLE PATTERN DOTS-578 */
+#define XK_braille_dots_1578          0x10028d1  /* U+28d1 BRAILLE PATTERN DOTS-1578 */
+#define XK_braille_dots_2578          0x10028d2  /* U+28d2 BRAILLE PATTERN DOTS-2578 */
+#define XK_braille_dots_12578         0x10028d3  /* U+28d3 BRAILLE PATTERN DOTS-12578 */
+#define XK_braille_dots_3578          0x10028d4  /* U+28d4 BRAILLE PATTERN DOTS-3578 */
+#define XK_braille_dots_13578         0x10028d5  /* U+28d5 BRAILLE PATTERN DOTS-13578 */
+#define XK_braille_dots_23578         0x10028d6  /* U+28d6 BRAILLE PATTERN DOTS-23578 */
+#define XK_braille_dots_123578        0x10028d7  /* U+28d7 BRAILLE PATTERN DOTS-123578 */
+#define XK_braille_dots_4578          0x10028d8  /* U+28d8 BRAILLE PATTERN DOTS-4578 */
+#define XK_braille_dots_14578         0x10028d9  /* U+28d9 BRAILLE PATTERN DOTS-14578 */
+#define XK_braille_dots_24578         0x10028da  /* U+28da BRAILLE PATTERN DOTS-24578 */
+#define XK_braille_dots_124578        0x10028db  /* U+28db BRAILLE PATTERN DOTS-124578 */
+#define XK_braille_dots_34578         0x10028dc  /* U+28dc BRAILLE PATTERN DOTS-34578 */
+#define XK_braille_dots_134578        0x10028dd  /* U+28dd BRAILLE PATTERN DOTS-134578 */
+#define XK_braille_dots_234578        0x10028de  /* U+28de BRAILLE PATTERN DOTS-234578 */
+#define XK_braille_dots_1234578       0x10028df  /* U+28df BRAILLE PATTERN DOTS-1234578 */
+#define XK_braille_dots_678           0x10028e0  /* U+28e0 BRAILLE PATTERN DOTS-678 */
+#define XK_braille_dots_1678          0x10028e1  /* U+28e1 BRAILLE PATTERN DOTS-1678 */
+#define XK_braille_dots_2678          0x10028e2  /* U+28e2 BRAILLE PATTERN DOTS-2678 */
+#define XK_braille_dots_12678         0x10028e3  /* U+28e3 BRAILLE PATTERN DOTS-12678 */
+#define XK_braille_dots_3678          0x10028e4  /* U+28e4 BRAILLE PATTERN DOTS-3678 */
+#define XK_braille_dots_13678         0x10028e5  /* U+28e5 BRAILLE PATTERN DOTS-13678 */
+#define XK_braille_dots_23678         0x10028e6  /* U+28e6 BRAILLE PATTERN DOTS-23678 */
+#define XK_braille_dots_123678        0x10028e7  /* U+28e7 BRAILLE PATTERN DOTS-123678 */
+#define XK_braille_dots_4678          0x10028e8  /* U+28e8 BRAILLE PATTERN DOTS-4678 */
+#define XK_braille_dots_14678         0x10028e9  /* U+28e9 BRAILLE PATTERN DOTS-14678 */
+#define XK_braille_dots_24678         0x10028ea  /* U+28ea BRAILLE PATTERN DOTS-24678 */
+#define XK_braille_dots_124678        0x10028eb  /* U+28eb BRAILLE PATTERN DOTS-124678 */
+#define XK_braille_dots_34678         0x10028ec  /* U+28ec BRAILLE PATTERN DOTS-34678 */
+#define XK_braille_dots_134678        0x10028ed  /* U+28ed BRAILLE PATTERN DOTS-134678 */
+#define XK_braille_dots_234678        0x10028ee  /* U+28ee BRAILLE PATTERN DOTS-234678 */
+#define XK_braille_dots_1234678       0x10028ef  /* U+28ef BRAILLE PATTERN DOTS-1234678 */
+#define XK_braille_dots_5678          0x10028f0  /* U+28f0 BRAILLE PATTERN DOTS-5678 */
+#define XK_braille_dots_15678         0x10028f1  /* U+28f1 BRAILLE PATTERN DOTS-15678 */
+#define XK_braille_dots_25678         0x10028f2  /* U+28f2 BRAILLE PATTERN DOTS-25678 */
+#define XK_braille_dots_125678        0x10028f3  /* U+28f3 BRAILLE PATTERN DOTS-125678 */
+#define XK_braille_dots_35678         0x10028f4  /* U+28f4 BRAILLE PATTERN DOTS-35678 */
+#define XK_braille_dots_135678        0x10028f5  /* U+28f5 BRAILLE PATTERN DOTS-135678 */
+#define XK_braille_dots_235678        0x10028f6  /* U+28f6 BRAILLE PATTERN DOTS-235678 */
+#define XK_braille_dots_1235678       0x10028f7  /* U+28f7 BRAILLE PATTERN DOTS-1235678 */
+#define XK_braille_dots_45678         0x10028f8  /* U+28f8 BRAILLE PATTERN DOTS-45678 */
+#define XK_braille_dots_145678        0x10028f9  /* U+28f9 BRAILLE PATTERN DOTS-145678 */
+#define XK_braille_dots_245678        0x10028fa  /* U+28fa BRAILLE PATTERN DOTS-245678 */
+#define XK_braille_dots_1245678       0x10028fb  /* U+28fb BRAILLE PATTERN DOTS-1245678 */
+#define XK_braille_dots_345678        0x10028fc  /* U+28fc BRAILLE PATTERN DOTS-345678 */
+#define XK_braille_dots_1345678       0x10028fd  /* U+28fd BRAILLE PATTERN DOTS-1345678 */
+#define XK_braille_dots_2345678       0x10028fe  /* U+28fe BRAILLE PATTERN DOTS-2345678 */
+#define XK_braille_dots_12345678      0x10028ff  /* U+28ff BRAILLE PATTERN DOTS-12345678 */
+#endif /* XK_BRAILLE */
+
+/*
+ * Sinhala (http://unicode.org/charts/PDF/U0D80.pdf)
+ * http://www.nongnu.org/sinhala/doc/transliteration/sinhala-transliteration_6.html
+ */
+
+#ifdef XK_SINHALA
+#define XK_Sinh_ng            0x1000d82  /* U+0D82 SINHALA ANUSVARAYA */
+#define XK_Sinh_h2            0x1000d83  /* U+0D83 SINHALA VISARGAYA */
+#define XK_Sinh_a             0x1000d85  /* U+0D85 SINHALA AYANNA */
+#define XK_Sinh_aa            0x1000d86  /* U+0D86 SINHALA AAYANNA */
+#define XK_Sinh_ae            0x1000d87  /* U+0D87 SINHALA AEYANNA */
+#define XK_Sinh_aee           0x1000d88  /* U+0D88 SINHALA AEEYANNA */
+#define XK_Sinh_i             0x1000d89  /* U+0D89 SINHALA IYANNA */
+#define XK_Sinh_ii            0x1000d8a  /* U+0D8A SINHALA IIYANNA */
+#define XK_Sinh_u             0x1000d8b  /* U+0D8B SINHALA UYANNA */
+#define XK_Sinh_uu            0x1000d8c  /* U+0D8C SINHALA UUYANNA */
+#define XK_Sinh_ri            0x1000d8d  /* U+0D8D SINHALA IRUYANNA */
+#define XK_Sinh_rii           0x1000d8e  /* U+0D8E SINHALA IRUUYANNA */
+#define XK_Sinh_lu            0x1000d8f  /* U+0D8F SINHALA ILUYANNA */
+#define XK_Sinh_luu           0x1000d90  /* U+0D90 SINHALA ILUUYANNA */
+#define XK_Sinh_e             0x1000d91  /* U+0D91 SINHALA EYANNA */
+#define XK_Sinh_ee            0x1000d92  /* U+0D92 SINHALA EEYANNA */
+#define XK_Sinh_ai            0x1000d93  /* U+0D93 SINHALA AIYANNA */
+#define XK_Sinh_o             0x1000d94  /* U+0D94 SINHALA OYANNA */
+#define XK_Sinh_oo            0x1000d95  /* U+0D95 SINHALA OOYANNA */
+#define XK_Sinh_au            0x1000d96  /* U+0D96 SINHALA AUYANNA */
+#define XK_Sinh_ka            0x1000d9a  /* U+0D9A SINHALA KAYANNA */
+#define XK_Sinh_kha           0x1000d9b  /* U+0D9B SINHALA MAHA. KAYANNA */
+#define XK_Sinh_ga            0x1000d9c  /* U+0D9C SINHALA GAYANNA */
+#define XK_Sinh_gha           0x1000d9d  /* U+0D9D SINHALA MAHA. GAYANNA */
+#define XK_Sinh_ng2           0x1000d9e  /* U+0D9E SINHALA KANTAJA NAASIKYAYA */
+#define XK_Sinh_nga           0x1000d9f  /* U+0D9F SINHALA SANYAKA GAYANNA */
+#define XK_Sinh_ca            0x1000da0  /* U+0DA0 SINHALA CAYANNA */
+#define XK_Sinh_cha           0x1000da1  /* U+0DA1 SINHALA MAHA. CAYANNA */
+#define XK_Sinh_ja            0x1000da2  /* U+0DA2 SINHALA JAYANNA */
+#define XK_Sinh_jha           0x1000da3  /* U+0DA3 SINHALA MAHA. JAYANNA */
+#define XK_Sinh_nya           0x1000da4  /* U+0DA4 SINHALA TAALUJA NAASIKYAYA */
+#define XK_Sinh_jnya          0x1000da5  /* U+0DA5 SINHALA TAALUJA SANYOOGA NAASIKYAYA */
+#define XK_Sinh_nja           0x1000da6  /* U+0DA6 SINHALA SANYAKA JAYANNA */
+#define XK_Sinh_tta           0x1000da7  /* U+0DA7 SINHALA TTAYANNA */
+#define XK_Sinh_ttha          0x1000da8  /* U+0DA8 SINHALA MAHA. TTAYANNA */
+#define XK_Sinh_dda           0x1000da9  /* U+0DA9 SINHALA DDAYANNA */
+#define XK_Sinh_ddha          0x1000daa  /* U+0DAA SINHALA MAHA. DDAYANNA */
+#define XK_Sinh_nna           0x1000dab  /* U+0DAB SINHALA MUURDHAJA NAYANNA */
+#define XK_Sinh_ndda          0x1000dac  /* U+0DAC SINHALA SANYAKA DDAYANNA */
+#define XK_Sinh_tha           0x1000dad  /* U+0DAD SINHALA TAYANNA */
+#define XK_Sinh_thha          0x1000dae  /* U+0DAE SINHALA MAHA. TAYANNA */
+#define XK_Sinh_dha           0x1000daf  /* U+0DAF SINHALA DAYANNA */
+#define XK_Sinh_dhha          0x1000db0  /* U+0DB0 SINHALA MAHA. DAYANNA */
+#define XK_Sinh_na            0x1000db1  /* U+0DB1 SINHALA DANTAJA NAYANNA */
+#define XK_Sinh_ndha          0x1000db3  /* U+0DB3 SINHALA SANYAKA DAYANNA */
+#define XK_Sinh_pa            0x1000db4  /* U+0DB4 SINHALA PAYANNA */
+#define XK_Sinh_pha           0x1000db5  /* U+0DB5 SINHALA MAHA. PAYANNA */
+#define XK_Sinh_ba            0x1000db6  /* U+0DB6 SINHALA BAYANNA */
+#define XK_Sinh_bha           0x1000db7  /* U+0DB7 SINHALA MAHA. BAYANNA */
+#define XK_Sinh_ma            0x1000db8  /* U+0DB8 SINHALA MAYANNA */
+#define XK_Sinh_mba           0x1000db9  /* U+0DB9 SINHALA AMBA BAYANNA */
+#define XK_Sinh_ya            0x1000dba  /* U+0DBA SINHALA YAYANNA */
+#define XK_Sinh_ra            0x1000dbb  /* U+0DBB SINHALA RAYANNA */
+#define XK_Sinh_la            0x1000dbd  /* U+0DBD SINHALA DANTAJA LAYANNA */
+#define XK_Sinh_va            0x1000dc0  /* U+0DC0 SINHALA VAYANNA */
+#define XK_Sinh_sha           0x1000dc1  /* U+0DC1 SINHALA TAALUJA SAYANNA */
+#define XK_Sinh_ssha          0x1000dc2  /* U+0DC2 SINHALA MUURDHAJA SAYANNA */
+#define XK_Sinh_sa            0x1000dc3  /* U+0DC3 SINHALA DANTAJA SAYANNA */
+#define XK_Sinh_ha            0x1000dc4  /* U+0DC4 SINHALA HAYANNA */
+#define XK_Sinh_lla           0x1000dc5  /* U+0DC5 SINHALA MUURDHAJA LAYANNA */
+#define XK_Sinh_fa            0x1000dc6  /* U+0DC6 SINHALA FAYANNA */
+#define XK_Sinh_al            0x1000dca  /* U+0DCA SINHALA AL-LAKUNA */
+#define XK_Sinh_aa2           0x1000dcf  /* U+0DCF SINHALA AELA-PILLA */
+#define XK_Sinh_ae2           0x1000dd0  /* U+0DD0 SINHALA AEDA-PILLA */
+#define XK_Sinh_aee2          0x1000dd1  /* U+0DD1 SINHALA DIGA AEDA-PILLA */
+#define XK_Sinh_i2            0x1000dd2  /* U+0DD2 SINHALA IS-PILLA */
+#define XK_Sinh_ii2           0x1000dd3  /* U+0DD3 SINHALA DIGA IS-PILLA */
+#define XK_Sinh_u2            0x1000dd4  /* U+0DD4 SINHALA PAA-PILLA */
+#define XK_Sinh_uu2           0x1000dd6  /* U+0DD6 SINHALA DIGA PAA-PILLA */
+#define XK_Sinh_ru2           0x1000dd8  /* U+0DD8 SINHALA GAETTA-PILLA */
+#define XK_Sinh_e2            0x1000dd9  /* U+0DD9 SINHALA KOMBUVA */
+#define XK_Sinh_ee2           0x1000dda  /* U+0DDA SINHALA DIGA KOMBUVA */
+#define XK_Sinh_ai2           0x1000ddb  /* U+0DDB SINHALA KOMBU DEKA */
+#define XK_Sinh_o2            0x1000ddc  /* U+0DDC SINHALA KOMBUVA HAA AELA-PILLA*/
+#define XK_Sinh_oo2           0x1000ddd  /* U+0DDD SINHALA KOMBUVA HAA DIGA AELA-PILLA*/
+#define XK_Sinh_au2           0x1000dde  /* U+0DDE SINHALA KOMBUVA HAA GAYANUKITTA */
+#define XK_Sinh_lu2           0x1000ddf  /* U+0DDF SINHALA GAYANUKITTA */
+#define XK_Sinh_ruu2          0x1000df2  /* U+0DF2 SINHALA DIGA GAETTA-PILLA */
+#define XK_Sinh_luu2          0x1000df3  /* U+0DF3 SINHALA DIGA GAYANUKITTA */
+#define XK_Sinh_kunddaliya    0x1000df4  /* U+0DF4 SINHALA KUNDDALIYA */
+#endif /* XK_SINHALA */

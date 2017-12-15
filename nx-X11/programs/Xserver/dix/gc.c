@@ -1,4 +1,3 @@
-/* $XFree86: xc/programs/Xserver/dix/gc.c,v 3.9 2001/12/14 19:59:32 dawes Exp $ */
 /***********************************************************
 
 Copyright 1987, 1998  The Open Group
@@ -46,15 +45,14 @@ SOFTWARE.
 
 ******************************************************************/
 
-/* $Xorg: gc.c,v 1.4 2001/02/09 02:04:40 xorgcvs Exp $ */
 
 #ifdef HAVE_DIX_CONFIG_H
 #include <dix-config.h>
 #endif
 
-#include <X11/X.h>
-#include <X11/Xmd.h>
-#include <X11/Xproto.h>
+#include <nx-X11/X.h>
+#include <nx-X11/Xmd.h>
+#include <nx-X11/Xproto.h>
 #include "misc.h"
 #include "resource.h"
 #include "gcstruct.h"
@@ -273,7 +271,7 @@ dixChangeGC(ClientPtr client, register GC *pGC, register BITS32 mask, CARD32 *pC
 		{
 		    NEXTVAL(XID, newpix);
 		    pPixmap = (PixmapPtr)SecurityLookupIDByType(client,
-					newpix, RT_PIXMAP, SecurityReadAccess);
+					newpix, RT_PIXMAP, DixReadAccess);
 		}
 		if (pPixmap)
 		{
@@ -309,7 +307,7 @@ dixChangeGC(ClientPtr client, register GC *pGC, register BITS32 mask, CARD32 *pC
 		{
 		    NEXTVAL(XID, newstipple)
 		    pPixmap = (PixmapPtr)SecurityLookupIDByType(client,
-				newstipple, RT_PIXMAP, SecurityReadAccess);
+				newstipple, RT_PIXMAP, DixReadAccess);
 		}
 		if (pPixmap)
 		{
@@ -351,7 +349,7 @@ dixChangeGC(ClientPtr client, register GC *pGC, register BITS32 mask, CARD32 *pC
 		{
 		    NEXTVAL(XID, newfont)
 		    pFont = (FontPtr)SecurityLookupIDByType(client, newfont,
-						RT_FONT, SecurityReadAccess);
+						RT_FONT, DixReadAccess);
 		}
 		if (pFont)
 		{
@@ -418,7 +416,7 @@ dixChangeGC(ClientPtr client, register GC *pGC, register BITS32 mask, CARD32 *pC
 		    }
 		    else
 		        pPixmap = (PixmapPtr)SecurityLookupIDByType(client,
-					pid, RT_PIXMAP, SecurityReadAccess);
+					pid, RT_PIXMAP, DixReadAccess);
 		}
 
 		if (pPixmap)
@@ -442,7 +440,7 @@ dixChangeGC(ClientPtr client, register GC *pGC, register BITS32 mask, CARD32 *pC
 		if(error == Success)
 		{
 		    (*pGC->funcs->ChangeClip)(pGC, clipType,
-					      (pointer)pPixmap, 0);
+					      (void *)pPixmap, 0);
 		}
 		break;
 	    }
@@ -457,7 +455,7 @@ dixChangeGC(ClientPtr client, register GC *pGC, register BITS32 mask, CARD32 *pC
 		{
 		    if (pGC->dash != DefaultDash)
 		    {
-			xfree(pGC->dash);
+			free(pGC->dash);
 			pGC->numInDashList = 2;
 			pGC->dash = DefaultDash;
 		    }
@@ -466,11 +464,11 @@ dixChangeGC(ClientPtr client, register GC *pGC, register BITS32 mask, CARD32 *pC
  		{
 		    unsigned char *dash;
 
-		    dash = (unsigned char *)xalloc(2 * sizeof(unsigned char));
+		    dash = (unsigned char *)malloc(2 * sizeof(unsigned char));
 		    if (dash)
 		    {
 			if (pGC->dash != DefaultDash)
-			    xfree(pGC->dash);
+			    free(pGC->dash);
 			pGC->numInDashList = 2;
 			pGC->dash = dash;
 			dash[0] = newdash;
@@ -534,7 +532,7 @@ ChangeGC(register GC *pGC, register BITS32 mask, XID *pval)
    pval contains an appropriate value for each mask.
    fPointer is true if the values for tiles, stipples, fonts or clipmasks
    are pointers instead of IDs.  Note: if you are passing pointers you
-   MUST declare the array of values as type pointer!  Other data types
+   MUST declare the array of values as type void*!  Other data types
    may not be large enough to hold pointers on some machines.  Yes,
    this means you have to cast to (XID *) when you pass the array to
    DoChangeGC.  Similarly, if you are not passing pointers (fPointer = 0) you
@@ -580,7 +578,7 @@ AllocateGC(ScreenPtr pScreen)
     register unsigned size;
     register int i;
 
-    pGC = (GCPtr)xalloc(pScreen->totalGCSize);
+    pGC = (GCPtr)malloc(pScreen->totalGCSize);
     if (pGC)
     {
 	ppriv = (DevUnion *)(pGC + 1);
@@ -591,11 +589,11 @@ AllocateGC(ScreenPtr pScreen)
 	{
 	    if ( (size = *sizes) )
 	    {
-		ppriv->ptr = (pointer)ptr;
+		ppriv->ptr = (void *)ptr;
 		ptr += size;
 	    }
 	    else
-		ppriv->ptr = (pointer)NULL;
+		ppriv->ptr = (void *)NULL;
 	}
     }
     return pGC;
@@ -651,7 +649,7 @@ CreateGC(DrawablePtr pDrawable, BITS32 mask, XID *pval, int *pStatus)
     pGC->clipOrg.x = 0;
     pGC->clipOrg.y = 0;
     pGC->clientClipType = CT_NONE;
-    pGC->clientClip = (pointer)NULL;
+    pGC->clientClip = (void *)NULL;
     pGC->numInDashList = 2;
     pGC->dash = DefaultDash;
     pGC->dashOffset = 0;
@@ -696,7 +694,7 @@ CreateDefaultTile (GCPtr pGC)
     (*pGC->pScreen->QueryBestSize)(TileShape, &w, &h, pGC->pScreen);
     pTile = (PixmapPtr)
 	    (*pGC->pScreen->CreatePixmap)(pGC->pScreen,
-					  w, h, pGC->depth);
+					  w, h, pGC->depth, 0);
     pgcScratch = GetScratchGC(pGC->depth, pGC->pScreen);
     if (!pTile || !pgcScratch)
     {
@@ -838,7 +836,7 @@ CopyGC(register GC *pgcSrc, register GC *pgcDst, register BITS32 mask)
 		{
 		    if (pgcDst->dash != DefaultDash)
 		    {
-			xfree(pgcDst->dash);
+			free(pgcDst->dash);
 			pgcDst->numInDashList = pgcSrc->numInDashList;
 			pgcDst->dash = pgcSrc->dash;
 		    }
@@ -848,12 +846,12 @@ CopyGC(register GC *pgcSrc, register GC *pgcDst, register BITS32 mask)
 		    unsigned char *dash;
 		    unsigned int i;
 
-		    dash = (unsigned char *)xalloc(pgcSrc->numInDashList *
+		    dash = (unsigned char *)malloc(pgcSrc->numInDashList *
 						   sizeof(unsigned char));
 		    if (dash)
 		    {
 			if (pgcDst->dash != DefaultDash)
-			    xfree(pgcDst->dash);
+			    free(pgcDst->dash);
 			pgcDst->numInDashList = pgcSrc->numInDashList;
 			pgcDst->dash = dash;
 			for (i=0; i<pgcSrc->numInDashList; i++)
@@ -890,7 +888,7 @@ CopyGC(register GC *pgcSrc, register GC *pgcDst, register BITS32 mask)
  *  \param value  must conform to DeleteType
  */
 int
-FreeGC(pointer value, XID gid)
+FreeGC(void * value, XID gid)
 {
     GCPtr pGC = (GCPtr)value;
 
@@ -904,8 +902,8 @@ FreeGC(pointer value, XID gid)
 
     (*pGC->funcs->DestroyGC) (pGC);
     if (pGC->dash != DefaultDash)
-	xfree(pGC->dash);
-    xfree(pGC);
+	free(pGC->dash);
+    free(pGC);
     return(Success);
 }
 
@@ -1049,7 +1047,7 @@ CreateDefaultStipple(int screenNum)
     h = 16;
     (* pScreen->QueryBestSize)(StippleShape, &w, &h, pScreen);
     if (!(pScreen->PixmapPerDepth[0] =
-			(*pScreen->CreatePixmap)(pScreen, w, h, 1)))
+			(*pScreen->CreatePixmap)(pScreen, w, h, 1, 0)))
 	return FALSE;
     /* fill stipple with 1 */
     tmpval[0] = GXcopy; tmpval[1] = 1; tmpval[2] = FillSolid;
@@ -1098,9 +1096,9 @@ SetDashes(register GCPtr pGC, unsigned offset, unsigned ndash, unsigned char *pd
     }
 
     if (ndash & 1)
-	p = (unsigned char *)xalloc(2 * ndash * sizeof(unsigned char));
+	p = (unsigned char *)malloc(2 * ndash * sizeof(unsigned char));
     else
-	p = (unsigned char *)xalloc(ndash * sizeof(unsigned char));
+	p = (unsigned char *)malloc(ndash * sizeof(unsigned char));
     if (!p)
 	return BadAlloc;
 
@@ -1113,7 +1111,7 @@ SetDashes(register GCPtr pGC, unsigned offset, unsigned ndash, unsigned char *pd
     }
 
     if (pGC->dash != DefaultDash)
-	xfree(pGC->dash);
+	free(pGC->dash);
     pGC->numInDashList = ndash;
     pGC->dash = p;
     if (ndash & 1)
@@ -1195,7 +1193,7 @@ SetClipRects(GCPtr pGC, int xOrigin, int yOrigin, int nrects,
     if (newct < 0)
 	return(BadMatch);
     size = nrects * sizeof(xRectangle);
-    prectsNew = (xRectangle *) xalloc(size);
+    prectsNew = (xRectangle *) malloc(size);
     if (!prectsNew && size)
 	return BadAlloc;
 
@@ -1208,7 +1206,7 @@ SetClipRects(GCPtr pGC, int xOrigin, int yOrigin, int nrects,
 
     if (size)
 	memmove((char *)prectsNew, (char *)prects, size);
-    (*pGC->funcs->ChangeClip)(pGC, newct, (pointer)prectsNew, nrects);
+    (*pGC->funcs->ChangeClip)(pGC, newct, (void *)prectsNew, nrects);
     if (pGC->funcs->ChangeGC)
 	(*pGC->funcs->ChangeGC) (pGC, GCClipXOrigin|GCClipYOrigin|GCClipMask);
     return Success;

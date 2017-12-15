@@ -1,15 +1,3 @@
-XCOMM $XdotOrg: xc/programs/Xserver/GL/mesa/main/Imakefile,v 1.2 2004/08/19 07:34:43 kem Exp $
-XCOMM $XFree86: xc/programs/Xserver/GL/mesa/src/math/Imakefile,v 1.8 2002/11/22 22:56:01 tsi Exp $
-
-#if DoLoadableServer
-#if !BuildModuleInSubdir
-#define IHaveModules
-#elif !defined(IHaveModules)
-#define IHaveSubdirs
-SUBDIRS = module
-#endif
-#endif
-
 /* Large PIC tables needed for Solaris/SPARC builds */
 #if defined(SunArchitecture) && defined(SparcArchitecture) && defined(LargePositionIndependentCFlags)
    PICFLAGS = LargePositionIndependentCFlags
@@ -20,11 +8,7 @@ SUBDIRS = module
 #define NeedAllMesaSrc
 #define NeedToLinkMesaSrc
 #define MesaBuildDir /**/
-#if !defined(IHaveModules) || !BuildModuleInSubdir
-#include "../../../../../lib/GL/mesa/main/Imakefile.inc"
-#else
-#include "../../../../../../lib/GL/mesa/main/Imakefile.inc"
-#endif
+#include "Imakefile.inc"
 
          SRCS = $(COREMESABASESRCS)
          OBJS = $(COREMESABASEOBJS)
@@ -41,15 +25,10 @@ SUBDIRS = module
 
       DEFINES = $(GLX_DEFINES) -DNXAGENT_SERVER /*-DUSE_X86_ASM*/ /*-DUSE_SPARC_ASM*/
 
-#ifdef IHaveModules
-ModuleObjectRule()
-#else
 NormalLibraryObjectRule()
-#endif
 
 SubdirLibraryRule($(OBJS))
 
-LintLibraryTarget(dri,$(SRCS))
 NormalLintTarget($(SRCS))
 
 DependTarget()

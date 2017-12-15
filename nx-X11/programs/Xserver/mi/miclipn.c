@@ -1,4 +1,3 @@
-/* $Xorg: miclipn.c,v 1.4 2001/02/09 02:05:20 xorgcvs Exp $ */
 /*
 
 Copyright 1990, 1998  The Open Group
@@ -26,13 +25,12 @@ other dealings in this Software without prior written authorization
 from The Open Group.
 
 */
-/* $XFree86: xc/programs/Xserver/mi/miclipn.c,v 1.3 2001/08/06 21:46:04 dawes Exp $ */
 
 #ifdef HAVE_DIX_CONFIG_H
 #include <dix-config.h>
 #endif
 
-#include <X11/X.h>
+#include <nx-X11/X.h>
 #include "windowstr.h"
 #include "scrnintstr.h"
 #include "mi.h"

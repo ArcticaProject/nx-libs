@@ -1,6 +1,4 @@
 /*
- * $XFree86: xc/programs/Xserver/fb/fboverlay.c,v 1.7 2003/11/10 18:21:47 tsi Exp $
- *
  * Copyright © 2000 SuSE, Inc.
  *
  * Permission to use, copy, modify, distribute, and sell this software and its
@@ -23,14 +21,18 @@
  * Author:  Keith Packard, SuSE, Inc.
  */
 
-/* $XdotOrg: xc/programs/Xserver/fb/fboverlay.c,v 1.7 2005/07/03 07:01:23 daniels Exp $ */
-
 #ifdef HAVE_DIX_CONFIG_H
 #include <dix-config.h>
 #endif
 
+#include <stdlib.h>
+
 #include "fb.h"
 #include "fboverlay.h"
+
+#ifdef MITSHM
+#include "shmint.h"
+#endif
 
 int	fbOverlayGeneration;
 int	fbOverlayScreenPrivateIndex = -1;
@@ -64,7 +66,7 @@ fbOverlayCreateWindow(WindowPtr pWin)
 	pPixmap = pScrPriv->layer[i].u.run.pixmap;
 	if (pWin->drawable.depth == pPixmap->drawable.depth)
 	{
-	    pWin->devPrivates[fbWinPrivateIndex].ptr = (pointer) pPixmap;
+	    pWin->devPrivates[fbWinPrivateIndex].ptr = (void *) pPixmap;
 	    /*
 	     * Make sure layer keys are written correctly by
 	     * having non-root layers set to full while the
@@ -74,7 +76,7 @@ fbOverlayCreateWindow(WindowPtr pWin)
 	     */
 	    if (!pWin->parent)
 	    {
-		REGION_EMPTY (pWin->drawable.pScreen,
+		RegionEmpty(
 			      &pScrPriv->layer[i].u.run.region);
 	    }
 	    return TRUE;
@@ -84,7 +86,7 @@ fbOverlayCreateWindow(WindowPtr pWin)
 }
 
 Bool
-fbOverlayCloseScreen (int iScreen, ScreenPtr pScreen)
+fbOverlayCloseScreen (ScreenPtr pScreen)
 {
     FbOverlayScrPrivPtr	pScrPriv = fbOverlayGetScrPriv(pScreen);
     int			i;
@@ -92,7 +94,7 @@ fbOverlayCloseScreen (int iScreen, ScreenPtr pScreen)
     for (i = 0; i < pScrPriv->nlayers; i++)
     {
 	(*pScreen->DestroyPixmap)(pScrPriv->layer[i].u.run.pixmap);
-	REGION_UNINIT (pScreen, &pScrPriv->layer[i].u.run.region);
+	RegionUninit(&pScrPriv->layer[i].u.run.region);
     }
     return TRUE;
 }
@@ -108,7 +110,7 @@ fbOverlayWindowLayer(WindowPtr pWin)
 
     for (i = 0; i < pScrPriv->nlayers; i++)
 	if (pWin->devPrivates[fbWinPrivateIndex].ptr ==
-	    (pointer) pScrPriv->layer[i].u.run.pixmap)
+	    (void *) pScrPriv->layer[i].u.run.pixmap)
 	    return i;
     return 0;
 }
@@ -119,7 +121,7 @@ fbOverlayCreateScreenResources(ScreenPtr pScreen)
     int			i;
     FbOverlayScrPrivPtr	pScrPriv = fbOverlayGetScrPriv(pScreen);
     PixmapPtr		pPixmap;
-    pointer		pbits;
+    void *		pbits;
     int			width;
     int			depth;
     BoxRec		box;
@@ -136,7 +138,7 @@ fbOverlayCreateScreenResources(ScreenPtr pScreen)
 	pbits = pScrPriv->layer[i].u.init.pbits;
 	width = pScrPriv->layer[i].u.init.width;
 	depth = pScrPriv->layer[i].u.init.depth;
-	pPixmap = (*pScreen->CreatePixmap)(pScreen, 0, 0, depth);
+	pPixmap = (*pScreen->CreatePixmap)(pScreen, 0, 0, depth, 0);
 	if (!pPixmap)
 	    return FALSE;
 	if (!(*pScreen->ModifyPixmapHeader)(pPixmap, pScreen->width,
@@ -146,7 +148,7 @@ fbOverlayCreateScreenResources(ScreenPtr pScreen)
 					    pbits))
 	    return FALSE;
 	pScrPriv->layer[i].u.run.pixmap = pPixmap;
-	REGION_INIT(pScreen, &pScrPriv->layer[i].u.run.region, &box, 0);
+	RegionInit(&pScrPriv->layer[i].u.run.region, &box, 0);
     }
     pScreen->devPrivate = pScrPriv->layer[0].u.run.pixmap;
     return TRUE;
@@ -174,24 +176,24 @@ fbOverlayUpdateLayerRegion (ScreenPtr	pScreen,
     int			i;
     RegionRec		rgnNew;
     
-    if (!prgn || !REGION_NOTEMPTY(pScreen, prgn))
+    if (!prgn || !RegionNotEmpty(prgn))
 	return;
     for (i = 0; i < pScrPriv->nlayers; i++)
     {
 	if (i == layer)
 	{
 	    /* add new piece to this fb */
-	    REGION_UNION (pScreen,
+	    RegionUnion(
 			  &pScrPriv->layer[i].u.run.region,
 			  &pScrPriv->layer[i].u.run.region,
 			  prgn);
 	}
-	else if (REGION_NOTEMPTY (pScreen, 
+	else if (RegionNotEmpty(
 				  &pScrPriv->layer[i].u.run.region))
 	{
 	    /* paint new piece with chroma key */
-	    REGION_NULL (pScreen, &rgnNew);
-	    REGION_INTERSECT (pScreen,
+	    RegionNull(&rgnNew);
+	    RegionIntersect(
 			      &rgnNew, 
 			      prgn, 
 			      &pScrPriv->layer[i].u.run.region);
@@ -199,9 +201,9 @@ fbOverlayUpdateLayerRegion (ScreenPtr	pScreen,
 				   &rgnNew,
 				   pScrPriv->layer[i].key,
 				   i);
-	    REGION_UNINIT(pScreen, &rgnNew);
+	    RegionUninit(&rgnNew);
 	    /* remove piece from other fbs */
-	    REGION_SUBTRACT (pScreen,
+	    RegionSubtract(
 			     &pScrPriv->layer[i].u.run.region,
 			     &pScrPriv->layer[i].u.run.region,
 			     prgn);
@@ -231,21 +233,21 @@ fbOverlayCopyWindow(WindowPtr	pWin,
     /*
      * Clip to existing bits
      */
-    REGION_TRANSLATE(pScreen, prgnSrc, -dx, -dy);
-    REGION_NULL (pScreen, &rgnDst);
-    REGION_INTERSECT(pScreen, &rgnDst, &pWin->borderClip, prgnSrc);
-    REGION_TRANSLATE(pScreen, &rgnDst, dx, dy);
+    RegionTranslate(prgnSrc, -dx, -dy);
+    RegionNull(&rgnDst);
+    RegionIntersect(&rgnDst, &pWin->borderClip, prgnSrc);
+    RegionTranslate(&rgnDst, dx, dy);
     /*
      * Compute the portion of each fb affected by this copy
      */
     for (i = 0; i < pScrPriv->nlayers; i++)
     {
-	REGION_NULL (pScreen, &layerRgn[i]);
-	REGION_INTERSECT(pScreen, &layerRgn[i], &rgnDst,
+	RegionNull(&layerRgn[i]);
+	RegionIntersect(&layerRgn[i], &rgnDst,
 			 &pScrPriv->layer[i].u.run.region);
-	if (REGION_NOTEMPTY (pScreen, &layerRgn[i]))
+	if (RegionNotEmpty(&layerRgn[i]))
 	{
-	    REGION_TRANSLATE(pScreen, &layerRgn[i], -dx, -dy);
+	    RegionTranslate(&layerRgn[i], -dx, -dy);
 	    pPixmap = pScrPriv->layer[i].u.run.pixmap;
 	    fbCopyRegion (&pPixmap->drawable, &pPixmap->drawable,
 			  0,
@@ -258,12 +260,12 @@ fbOverlayCopyWindow(WindowPtr	pWin,
      */
     for (i = 0; i < pScrPriv->nlayers; i++)
     {
-	if (REGION_NOTEMPTY (pScreen, &layerRgn[i]))
+	if (RegionNotEmpty(&layerRgn[i]))
 	    fbOverlayUpdateLayerRegion (pScreen, i, &layerRgn[i]);
 
-	REGION_UNINIT(pScreen, &layerRgn[i]);
+	RegionUninit(&layerRgn[i]);
     }
-    REGION_UNINIT(pScreen, &rgnDst);
+    RegionUninit(&rgnDst);
 }   
 
 void
@@ -289,8 +291,8 @@ fbOverlayPaintWindow(WindowPtr pWin, RegionPtr pRegion, int what)
 
 Bool
 fbOverlaySetupScreen(ScreenPtr	pScreen,
-		     pointer	pbits1,
-		     pointer	pbits2,
+		     void *	pbits1,
+		     void *	pbits2,
 		     int	xsize,
 		     int	ysize,
 		     int	dpix,
@@ -336,8 +338,8 @@ fb24_32OverlayCreateScreenResources(ScreenPtr pScreen)
 
 Bool
 fbOverlayFinishScreenInit(ScreenPtr	pScreen,
-			  pointer	pbits1,
-			  pointer	pbits2,
+			  void *	pbits1,
+			  void *	pbits2,
 			  int		xsize,
 			  int		ysize,
 			  int		dpix,
@@ -363,7 +365,7 @@ fbOverlayFinishScreenInit(ScreenPtr	pScreen,
 	fbOverlayGeneration = serverGeneration;
     }
 
-    pScrPriv = xalloc (sizeof (FbOverlayScrPrivRec));
+    pScrPriv = malloc (sizeof (FbOverlayScrPrivRec));
     if (!pScrPriv)
 	return FALSE;
  
@@ -436,7 +438,7 @@ fbOverlayFinishScreenInit(ScreenPtr	pScreen,
     pScrPriv->layer[1].u.init.width = width2;
     pScrPriv->layer[1].u.init.depth = depth2;
     
-    pScreen->devPrivates[fbOverlayScreenPrivateIndex].ptr = (pointer) pScrPriv;
+    pScreen->devPrivates[fbOverlayScreenPrivateIndex].ptr = (void *) pScrPriv;
     
     /* overwrite miCloseScreen with our own */
     pScreen->CloseScreen = fbOverlayCloseScreen;

@@ -1,0 +1,311 @@
+#!/usr/bin/perl -w
+#/**************************************************************************/
+#/*                                                                        */
+#/* Copyright (c) 2015-2016 Qindel Group (http://www.qindel.com)           */
+#/*                                                                        */
+#/* NXSCRIPTS, NX protocol compression and NX extensions to this software  */
+#/* are copyright of the aforementioned persons and companies.             */
+#/*                                                                        */
+#/* Redistribution and use of the present software is allowed according    */
+#/* to terms specified in the file LICENSE.nxcomp which comes in the       */
+#/* source distribution.                                                   */
+#/*                                                                        */
+#/* All rights reserved.                                                   */
+#/*                                                                        */
+#/* NOTE: This software has received contributions from various other      */
+#/* contributors, only the core maintainers and supporters are listed as   */
+#/* copyright holders. Please contact us, if you feel you should be listed */
+#/* as copyright holder, as well.                                          */
+#/*                                                                        */
+#/**************************************************************************/
+
+# This is a test script for the slave channel feature. While there are no
+# particular requirements for the slave channel command, what makes the most
+# sense is to use the feature to run some sort of multiplexer.
+#
+# This script contains functionality intended to test the channel's bandwidth,
+# latency and integrity.
+#
+# Usage:
+# Set NX_SLAVE_CMD to this script and enable the slave channel
+#
+# Run:
+# nxproxy [...] slave=12000
+# nxagent -display nx/nx,options=nxagent.conf # slave=22000 in nxagent.conf
+# 
+# Where 12000 and 22000 are example TCP ports the program will listen on.
+# 
+# For ease of debugging and running both sides on a single machine, the script
+# reacts to its own name and changes the prompt to "Proxy" if $0 contains
+# "proxy", or "Agent" if it contains "agent". This has no other effect.
+#
+# 
+
+use strict;
+use POSIX ":sys_wait_h";
+
+my $me = "?";
+my $EXIT;
+
+$| = 1;
+
+if ( $0 =~ /proxy/i ) {
+	$me = "Proxy";
+} elsif ( $0 =~ /agent/i ) {
+	$me = "Agent";
+} else {
+	$me = $0;
+}
+
+
+print "$me slave. ";
+if ( scalar @ARGV ) {
+	print "Called with arguments: " . join(' ', @ARGV) . "\n\n";
+} else {
+	print "Called without arguments.\n\n";
+}
+
+
+my %commands;
+register('quit'     , \&cmd_quit   , "Exit.");
+register('fork'     , \&cmd_fork   , "Test forking a child process.");
+register('exec'     , \&cmd_exec   , "Test calling another process via exec.");
+register('system'   , \&cmd_system , "Test calling another process via system.");
+register('echo'     , \&cmd_echo   , "Echo text after the command. Tests channel latency.");
+register('blkecho'  , \&cmd_blkecho, "Echo data by 1k blocks. Tests channel integrity.");
+register('reexec'   , \&cmd_reexec , "Reexecute slave handler.");
+register('chargen'  , \&cmd_chargen, "Output characters forever. Tests channel throughput.");
+register('randgen'  , \&cmd_randgen, "Output random characters forever. Tests channel throughput.");
+register('discard'  , \&cmd_discard, "Accept characters forever. Tests channel throughput.");
+register('fastgen'  , \&cmd_fastgen, "Output a single character forever. Tests channel throughput.");
+register('env'      , \&cmd_env    , "Dump the environment.");
+register('help'     , \&cmd_help   , "Shows this help.");
+register('pwd'      , \&cmd_pwd    , "Print working directory.");
+cmd_help();
+
+
+
+#print "$me> ";
+my $line;
+while(!$EXIT) {
+
+	print "$me> ";
+
+	# Buffered IO screws things up
+	my $c="";
+	$line = "";
+	while($c ne "\n") {
+		my $ret = sysread(STDIN, $c, 1);
+		if (!defined $ret) {
+			die "Read failed: $!";
+		}
+	
+		if (!$ret) {
+			last;
+		}
+
+		$line .= $c;
+	}
+
+	chomp $line;
+	$line =~ s/\r+$//;
+	$line =~ s/\n+$//;
+
+	next unless ( $line );
+
+	my ($cmd, @args) = split(/\s+/, $line);
+	if ( exists $commands{$cmd} ) {
+		$commands{$cmd}->{handler}->( @args );
+	} else {
+		print "Unknown command: '$cmd'\n";
+	}
+
+}
+
+print "$me slave terminated.\n";
+
+sub register {
+	my ($name, $handler, $desc) = @_;
+	$commands{$name} = { handler => $handler, desc => $desc };
+}
+
+
+sub cmd_quit {
+	$EXIT = 1;
+}
+
+sub cmd_echo {
+	my (@args) = @_;
+	print "You said: '" . join(' ', @args) . "'\n\n";
+}
+
+sub cmd_blkecho {
+	my $size = shift // 1024;
+	unless ($size =~ /^\d+/ ) {
+		print "The argument must be a number\n\n";
+		return;
+	}
+
+	my $buf;
+	while(1) {
+		my ($tmp, $ret);
+		$buf = "";
+
+		while(length($buf) < $size) {
+			$ret = sysread(STDIN, $tmp, $size - length($buf));
+			if ( !defined $ret ) {
+				die "Error reading from socket: $!";
+			}
+			
+			last if ( $ret == 0 );
+			$buf .= $tmp;
+		}
+
+		my $written =0;
+		while($written < $size) {
+			my $ret = syswrite(STDOUT, $buf, $size, $written);
+			if (!defined $ret) {
+				die "Error writing to socket: $!";
+			}
+
+			last if ( $ret == 0);
+			$written += $ret;
+		}
+	}
+}
+
+sub cmd_reexec {
+	print "Will now re-execute: $0 " . join(' ', @ARGV) . "\n";
+	exec($0, @ARGV);
+}
+
+sub cmd_exec {
+	print "Will now exec: uname -a\n";
+	exec("uname", "-a");
+}
+
+sub cmd_system {
+	print "Will now call: uptime\n";
+	system("uptime");
+	print "\n";
+}
+
+# Forks off a short lived process
+
+sub cmd_fork {
+	my $pid = fork();
+	if ( $pid == 0 ) {
+		print "I am the child, with pid $$. Waiting 10 seconds.\n";
+		sleep(10);
+		print "Child exiting with code 123\n";
+		exit(123);
+	} else {
+		print "I am the parent, my child is $pid\n";
+		my $dead = waitpid($pid, 0);
+		print "Reaped child $pid, return $dead\n";
+	}
+
+	print "\n";
+}
+
+sub cmd_help {
+	print "Commands:\n";
+	for my $cmd ( sort keys %commands ) {
+		print "\t$cmd" . ( " " x (10 - length($cmd))) . ": " . $commands{$cmd}->{desc} . "\n";
+	}
+	print "\n";
+}
+
+# Output a single character really fast.
+# Used to test bandwidth and integrity
+sub cmd_fastgen {
+	my $char = chr(shift // ord("x"));
+	my $buf = ($char x 72) . "\n";
+	while( syswrite(STDOUT, $buf) ) {
+		1;
+	}
+}
+
+# Output RFC 864 chargen. 
+# Used to test bandwidth
+sub cmd_chargen {
+	my $text = "";
+
+	for(my $i=33;$i<33+95;$i++) {
+		$text .= chr($i);
+	}
+
+
+	my $pos = 0;
+	my $strlen = 72;
+	while( 1 ) {
+		my $out = substr($text, $pos, $strlen);
+
+		if ( $pos + $strlen > length($text) ) {
+		     $out .= substr($text, 0, $pos + $strlen - length($text) + 1);
+		}
+
+		$out .= "\n";
+
+		syswrite(STDOUT, $out) or return;
+
+		if ( ++$pos >= length($text) ) {
+		     $pos=0;
+		}
+	}
+
+}
+
+# Output random data
+# Used to test channel integrity and bandwidth with incompressible content.
+# Typically slower than chargen/fastgen.
+
+sub cmd_randgen {
+	if ( open(my $fh, '<', '/dev/urandom') ) {
+		my $buf;
+		while(1) {
+			sysread($fh, $buf, 1024);
+			syswrite(STDOUT, $buf) or return;
+		}
+	} else {
+		print "Failed to open /dev/urandom: $!. May not be available on this architecture.\n\n";
+	}
+}
+
+# Accept arbitrary data
+# Used to test bandwidth
+
+sub cmd_discard {
+	my $buf = "";
+
+	while( sysread(STDIN, $buf, 1024) ) {
+		1;
+	}
+
+}
+
+# Dump the environment
+
+sub cmd_env {
+	my $longest = 0;
+
+	foreach my $var (keys %ENV) {
+		if ( $longest < length($var) ) {
+			$longest = length($var);
+		}
+	}
+
+	foreach my $var (sort keys %ENV) {
+		print "$var" . (" " x ($longest - length($var))) . ": $ENV{$var}\n";
+	}
+
+	print "\n";
+}
+
+# Show the current directory
+
+sub cmd_pwd {
+	require Cwd;
+	import Cwd;
+	print "Current directory: " . getcwd() . "\n\n";
+}

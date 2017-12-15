@@ -1,4 +1,3 @@
-/* $XFree86: xc/programs/Xserver/include/dixgrabs.h,v 3.0 1996/04/15 11:34:27 dawes Exp $ */
 /************************************************************
 
 Copyright 1996 by Thomas E. Dickey <dickey@clark.net>
@@ -43,7 +42,7 @@ extern GrabPtr CreateGrab(
 	CursorPtr /* cursor */);
 
 extern int DeletePassiveGrab(
-	pointer /* value */,
+	void * /* value */,
 	XID /* id */);
 
 extern Bool GrabMatchesSecond(

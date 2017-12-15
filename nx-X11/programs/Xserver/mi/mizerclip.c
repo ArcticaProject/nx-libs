@@ -1,4 +1,3 @@
-/* $XFree86: xc/programs/Xserver/mi/mizerclip.c,v 1.2 2001/08/06 20:51:20 dawes Exp $ */
 /***********************************************************
 
 Copyright 1987, 1998  The Open Group
@@ -49,7 +48,7 @@ SOFTWARE.
 #include <dix-config.h>
 #endif
 
-#include <X11/X.h>
+#include <nx-X11/X.h>
 
 #include "misc.h"
 #include "scrnintstr.h"

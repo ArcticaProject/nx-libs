@@ -1,4 +1,3 @@
-/* $Xorg: gcstruct.h,v 1.4 2001/02/09 02:05:15 xorgcvs Exp $ */
 /***********************************************************
 
 Copyright 1987, 1998  The Open Group
@@ -47,7 +46,6 @@ SOFTWARE.
 ******************************************************************/
 
 
-/* $XFree86: xc/programs/Xserver/include/gcstruct.h,v 1.7 2003/04/27 21:31:04 herrb Exp $ */
 
 #ifndef GCSTRUCT_H
 #define GCSTRUCT_H
@@ -58,7 +56,7 @@ SOFTWARE.
 #include "region.h"
 #include "pixmap.h"
 #include "screenint.h"
-#include <X11/Xprotostr.h>
+#include <nx-X11/Xprotostr.h>
 
 /*
  * functions which modify the state of the GC
@@ -85,7 +83,7 @@ typedef struct _GCFuncs {
     void	(* ChangeClip)(
 		GCPtr /*pGC*/,
 		int /*type*/,
-		pointer /*pvalue*/,
+		void * /*pvalue*/,
 		int /*nrects*/);
 
     void	(* DestroyClip)(
@@ -244,7 +242,7 @@ typedef struct _GCOps {
 		int /*y*/,
 		unsigned int /*nglyph*/,
 		CharInfoPtr * /*ppci*/,
-		pointer /*pglyphBase*/);
+		void * /*pglyphBase*/);
 
     void	(* PolyGlyphBlt)(
 		DrawablePtr /*pDrawable*/,
@@ -253,7 +251,7 @@ typedef struct _GCOps {
 		int /*y*/,
 		unsigned int /*nglyph*/,
 		CharInfoPtr * /*ppci*/,
-		pointer /*pglyphBase*/);
+		void * /*pglyphBase*/);
 
     void	(* PushPixels)(
 		GCPtr /*pGC*/,
@@ -309,7 +307,7 @@ typedef struct _GC {
     struct _Font	*font;
     DDXPointRec		clipOrg;
     DDXPointRec		lastWinOrg;	/* position of window last validated */
-    pointer		clientClip;
+    void *		clientClip;
     unsigned long	stateChanges;	/* masked with GC_<kind> */
     unsigned long       serialNumber;
     GCFuncs		*funcs;

@@ -1,5 +1,3 @@
-/* $Xorg: xkbActions.c,v 1.3 2000/08/17 19:53:47 cpqbld Exp $ */
-/* $XdotOrg: xc/programs/Xserver/xkb/xkbActions.c,v 1.7 2005/07/03 08:53:54 daniels Exp $ */
 /************************************************************
 Copyright (c) 1993 by Silicon Graphics Computer Systems, Inc.
 
@@ -25,7 +23,6 @@ OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION  WITH
 THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 ********************************************************/
-/* $XFree86: xc/programs/Xserver/xkb/xkbActions.c,v 3.13 2003/07/16 01:39:08 dawes Exp $ */
 
 #ifdef HAVE_DIX_CONFIG_H
 #include <dix-config.h>
@@ -33,13 +30,12 @@ THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 #include <stdio.h>
 #include <math.h>
-#define NEED_EVENTS 1
-#include <X11/X.h>
-#include <X11/Xproto.h>
-#include <X11/keysym.h>
+#include <nx-X11/X.h>
+#include <nx-X11/Xproto.h>
+#include <nx-X11/keysym.h>
 #include "misc.h"
 #include "inputstr.h"
-#include <X11/extensions/XKBsrv.h>
+#include <xkbsrv.h>
 #include "xkb.h"
 #include <ctype.h>
 
@@ -48,7 +44,7 @@ int xkbDevicePrivateIndex = -1;
 
 void
 xkbUnwrapProc(DeviceIntPtr device, DeviceHandleProc proc,
-                   pointer data)
+                   void * data)
 {
     xkbDeviceInfoPtr xkbPrivPtr = XKBDEVICEINFO(device);
     ProcessInputProc tmp = device->public.processInputProc;
@@ -75,7 +71,7 @@ XkbSetExtension(DeviceIntPtr device, ProcessInputProc proc)
     if (!AllocateDevicePrivate(device, xkbDevicePrivateIndex))
 	return;
 
-    xkbPrivPtr = (xkbDeviceInfoPtr) xalloc(sizeof(xkbDeviceInfoRec));
+    xkbPrivPtr = (xkbDeviceInfoPtr) malloc(sizeof(xkbDeviceInfoRec));
     if (!xkbPrivPtr)
 	return;
     xkbPrivPtr->unwrapProc = NULL;
@@ -533,7 +529,7 @@ _XkbFilterISOLock(	XkbSrvInfoPtr	xkbi,
 
 
 static CARD32
-_XkbPtrAccelExpire(OsTimerPtr timer,CARD32 now,pointer arg)
+_XkbPtrAccelExpire(OsTimerPtr timer,CARD32 now,void * arg)
 {
 XkbSrvInfoPtr	xkbi= (XkbSrvInfoPtr)arg;
 XkbControlsPtr	ctrls= xkbi->desc->ctrls;
@@ -602,7 +598,7 @@ Bool	accel;
 	xkbi->mouseKeysDY= XkbPtrActionY(&pAction->ptr);
 	xkbi->mouseKeyTimer= TimerSet(xkbi->mouseKeyTimer, 0,
 				xkbi->desc->ctrls->mk_delay,
-				_XkbPtrAccelExpire,(pointer)xkbi);
+				_XkbPtrAccelExpire,(void *)xkbi);
     }
     else if (filter->keycode==keycode) {
 	filter->active = 0;

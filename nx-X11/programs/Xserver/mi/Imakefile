@@ -1,26 +1,29 @@
 /**************************************************************************/
 /*                                                                        */
-/* Copyright (c) 2001, 2011 NoMachine, http://www.nomachine.com/.         */
+/* Copyright (c) 2001, 2011 NoMachine (http://www.nomachine.com)          */
+/* Copyright (c) 2008-2014 Oleksandr Shneyder <o.shneyder@phoca-gmbh.de>  */
+/* Copyright (c) 2011-2016 Mike Gabriel <mike.gabriel@das-netzwerkteam.de>*/
+/* Copyright (c) 2014-2016 Mihai Moldovan <ionic@ionic.de>                */
+/* Copyright (c) 2014-2016 Ulrich Sibiller <uli42@gmx.de>                 */
+/* Copyright (c) 2015-2016 Qindel Group (http://www.qindel.com)           */
 /*                                                                        */
-/* NX-X11, NX protocol compression and NX extensions to this software     */
-/* are copyright of NoMachine. Redistribution and use of the present      */
-/* software is allowed according to terms specified in the file LICENSE   */
-/* which comes in the source distribution.                                */
+/* nx-X11, NX protocol compression and NX extensions to this software     */
+/* are copyright of the aforementioned persons and companies.             */
 /*                                                                        */
-/* Check http://www.nomachine.com/licensing.html for applicability.       */
-/*                                                                        */
-/* NX and NoMachine are trademarks of Medialogic S.p.A.                   */
+/* Redistribution and use of the present software is allowed according    */
+/* to terms specified in the file LICENSE which comes in the source       */
+/* distribution.                                                          */
 /*                                                                        */
 /* All rights reserved.                                                   */
 /*                                                                        */
+/* NOTE: This software has received contributions from various other      */
+/* contributors, only the core maintainers and supporters are listed as   */
+/* copyright holders. Please contact us, if you feel you should be listed */
+/* as copyright holder, as well.                                          */
+/*                                                                        */
 /**************************************************************************/
 
-XCOMM $Xorg: Imakefile,v 1.3 2000/08/17 19:53:36 cpqbld Exp $
-
-
-
-
-XCOMM $XFree86: xc/programs/Xserver/mi/Imakefile,v 3.34 2002/05/22 21:38:31 herrb Exp $
+NULL =
 
 #include <Server.tmpl>
 
@@ -33,36 +36,97 @@ CBRT_OBJ = cbrt.o
 FFS_DEFINES = -DHAS_FFS
 #endif
 
-#if DoLoadableServer
-EXTRAMIINITEXTOBJ = miinitext.o
-#else
 MIINITEXTSRC = miinitext.c
 MIINITEXTOBJ = miinitext.o
+
+#if (!(defined(NXAgentServer) && NXAgentServer))
+NXAGENT_SKIP_SRCS =                     \
+                    miexpose.c          \
+                    $(NULL)
+NXAGENT_SKIP_OBJS =                     \
+                    miexpose.o          \
+                    $(NULL)
 #endif
 
-SRCS =  $(CBRT_SRC) mivaltree.c mipolyseg.c mipolyrect.c \
-	mipoly.c mipolycon.c mipolygen.c mipolyutil.c \
-	mifillrct.c miwideline.c mispans.c \
-	miarc.c mizerarc.c mifillarc.c \
-	miwindow.c micursor.c miregion.c \
-	mipolytext.c mibitblt.c mipolypnt.c mipushpxl.c \
-	miexpose.c miglblt.c mizerline.c mizerclip.c mifpolycon.c \
-	midash.c mibstore.c mibank.c $(MIINITEXTSRC) mieq.c \
-	mipointer.c misprite.c midispcur.c miscrinit.c miclipn.c migc.c \
-	micmap.c mioverlay.c
+SRCS =  $(CBRT_SRC)             \
+        mivaltree.c             \
+        mipolyseg.c             \
+        mipolyrect.c            \
+        mipoly.c                \
+        mipolycon.c             \
+        mipolygen.c             \
+        mipolyutil.c            \
+        mifillrct.c             \
+        miwideline.c            \
+        mispans.c               \
+        miarc.c                 \
+        mizerarc.c              \
+        mifillarc.c             \
+        miwindow.c              \
+        micursor.c              \
+        mipolytext.c            \
+        mibitblt.c              \
+        mipolypnt.c             \
+        mipushpxl.c             \
+        miglblt.c               \
+        mizerline.c             \
+        mizerclip.c             \
+        mifpolycon.c            \
+        midash.c                \
+        mibstore.c              \
+        $(MIINITEXTSRC)         \
+        mieq.c                  \
+        mipointer.c             \
+        misprite.c              \
+        midispcur.c             \
+        miscrinit.c             \
+        miclipn.c               \
+        migc.c                  \
+        micmap.c                \
+        mioverlay.c             \
+        $(NXAGENT_SKIP_SRCS)    \
+        $(NULL)
 
-OBJS =	$(CBRT_OBJ) mivaltree.o mipolyseg.o mipolyrect.o \
-	mipoly.o mipolycon.o mipolygen.o mipolyutil.o \
-	mifillrct.o miwideline.o mispans.o \
-	miarc.o mizerarc.o mifillarc.o \
-	miwindow.o micursor.o miregion.o \
-	mipolytext.o mibitblt.o mipolypnt.o mipushpxl.o \
-	miexpose.o miglblt.o mizerline.o mizerclip.o mifpolycon.o \
-	midash.o mibstore.o mibank.o $(MIINITEXTOBJ) mieq.o \
-	mipointer.o misprite.o midispcur.o miscrinit.o miclipn.o migc.o \
-	micmap.o mioverlay.o
+OBJS =  $(CBRT_OBJ)             \
+        mivaltree.o             \
+        mipolyseg.o             \
+        mipolyrect.o            \
+        mipoly.o                \
+        mipolycon.o             \
+        mipolygen.o             \
+        mipolyutil.o            \
+        mifillrct.o             \
+        miwideline.o            \
+        mispans.o               \
+        miarc.o                 \
+        mizerarc.o              \
+        mifillarc.o             \
+        miwindow.o              \
+        micursor.o              \
+        mipolytext.o            \
+        mibitblt.o              \
+        mipolypnt.o             \
+        mipushpxl.o             \
+        miglblt.o               \
+        mizerline.o             \
+        mizerclip.o             \
+        mifpolycon.o            \
+        midash.o                \
+        mibstore.o              \
+        $(MIINITEXTOBJ)         \
+        mieq.o                  \
+        mipointer.o             \
+        misprite.o              \
+        midispcur.o             \
+        miscrinit.o             \
+        miclipn.o               \
+        migc.o                  \
+        micmap.o                \
+        mioverlay.o             \
+        $(NXAGENT_SKIP_OBJS)    \
+        $(NULL)
 
-#if (defined (XFree86Version) || defined(XorgVersion))
+#if defined(XorgVersion)
 /* 
  * Make sure XINPUT, XF86VidTune, etc aren't defined for the miinitext.o 
  * used by Xnest, Xvfb 
@@ -75,23 +139,33 @@ OBJS =	$(CBRT_OBJ) mivaltree.o mipolyseg.o mipolyrect.o \
  * in order to build the XInputExtension, since we
  * don't use the XF86 module loader.
  */
-
-EXT_DEFINES = ExtensionDefines -UXF86VIDMODE -UXFreeXDGA -UXF86MISC \
-	-UXFree86LOADER
-
+EXT_DEFINES = ExtensionDefines \
+              $(NULL)
 #else
-
-EXT_DEFINES = ExtensionDefines -UXINPUT -UXF86VIDMODE -UXFreeXDGA -UXF86MISC \
-	-UXFree86LOADER
-
+EXT_DEFINES = ExtensionDefines \
+              -UXINPUT \
+              $(NULL)
 #endif
 
 #endif
 
-INCLUDES = -I. -I../include -I../../../include/fonts -I../render \
-	    -I../xfixes -I../damageext -I../miext/damage \
-           -I$(XINCLUDESRC) -I$(FONTINCSRC) -I$(EXTINCSRC) -I$(SERVERSRC)/Xext
-LINTLIBS = ../dix/llib-ldix.ln ../os/llib-los.ln
+INCLUDES = -I.                  \
+           -I../include         \
+           -I../render          \
+           -I../xfixes          \
+           -I../damageext       \
+           -I../miext/damage    \
+           -I$(XINCLUDESRC)     \
+           -I$(EXTINCSRC)       \
+           -I$(SERVERSRC)/Xext  \
+           `pkg-config --cflags-only-I pixman-1` \
+           $(NULL)
+
+LINTLIBS =                      \
+           ../dix/llib-ldix.ln  \
+           ../os/llib-los.ln    \
+           $(NULL)
+
 DEFINES  = $(FFS_DEFINES)
 
 NormalLibraryObjectRule()
@@ -105,6 +179,7 @@ NormalLibraryTarget(cbrt,cbrt.o)
 
 SpecialCObjectRule(miinitext,$(ICONFIGFILES),$(EXT_DEFINES))
 SpecialCObjectRule(miscrinit,$(ICONFIGFILES),$(EXT_DEFINES))
+
 #ifdef ItsyCompilerBug
 SpecialCObjectRule(mipolycon,$(_NOOP_),-O0)
 #endif
@@ -117,7 +192,6 @@ AllTarget($(EXTRAMIINITEXTOBJ))
 DependTarget()
 
 InstallDriverSDKNonExecFile(mi.h,$(DRIVERSDKINCLUDEDIR))
-InstallDriverSDKNonExecFile(mibank.h,$(DRIVERSDKINCLUDEDIR))
 InstallDriverSDKNonExecFile(mibstore.h,$(DRIVERSDKINCLUDEDIR))
 InstallDriverSDKNonExecFile(micmap.h,$(DRIVERSDKINCLUDEDIR))
 InstallDriverSDKNonExecFile(migc.h,$(DRIVERSDKINCLUDEDIR))

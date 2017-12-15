@@ -1,4 +1,3 @@
-/* $Xorg: chgdctl.c,v 1.4 2001/02/09 02:04:33 xorgcvs Exp $ */
 
 /************************************************************
 
@@ -45,7 +44,6 @@ ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS
 SOFTWARE.
 
 ********************************************************/
-/* $XFree86: xc/programs/Xserver/Xi/chgdctl.c,v 3.3 2001/01/17 22:13:23 dawes Exp $ */
 
 /********************************************************************
  *
@@ -53,17 +51,15 @@ SOFTWARE.
  *
  */
 
-#define	 NEED_EVENTS			/* for inputstr.h    */
-#define	 NEED_REPLIES
 #ifdef HAVE_DIX_CONFIG_H
 #include <dix-config.h>
 #endif
 
-#include <X11/X.h>				/* for inputstr.h    */
-#include <X11/Xproto.h>			/* Request macro     */
+#include <nx-X11/X.h>				/* for inputstr.h    */
+#include <nx-X11/Xproto.h>			/* Request macro     */
 #include "inputstr.h"			/* DeviceIntPtr	     */
-#include <X11/extensions/XI.h>
-#include <X11/extensions/XIproto.h>			/* control constants */
+#include <nx-X11/extensions/XI.h>
+#include <nx-X11/extensions/XIproto.h>			/* control constants */
 #include "XIstubs.h"
 
 #include "extnsionst.h"
@@ -83,12 +79,10 @@ int
 SProcXChangeDeviceControl(client)
     register ClientPtr client;
     {
-    register char n;
-
     REQUEST(xChangeDeviceControlReq);
-    swaps(&stuff->length, n);
-    REQUEST_AT_LEAST_SIZE(xChangeDeviceControlReq);
-    swaps(&stuff->control, n);
+    swaps(&stuff->length);
+    REQUEST_AT_LEAST_EXTRA_SIZE(xChangeDeviceControlReq, sizeof(xDeviceCtl));
+    swaps(&stuff->control);
     return(ProcXChangeDeviceControl(client));
     }
 
@@ -111,7 +105,7 @@ ProcXChangeDeviceControl(client)
     CARD32 *resolution;
 
     REQUEST(xChangeDeviceControlReq);
-    REQUEST_AT_LEAST_SIZE(xChangeDeviceControlReq);
+    REQUEST_AT_LEAST_EXTRA_SIZE(xChangeDeviceControlReq, sizeof(xDeviceCtl));
 
     len = stuff->length - (sizeof(xChangeDeviceControlReq) >>2);
     dev = LookupDeviceIntRec (stuff->deviceid);
@@ -210,10 +204,8 @@ SRepXChangeDeviceControl (client, size, rep)
     int		size;
     xChangeDeviceControlReply	*rep;
     {
-    register char n;
-
-    swaps(&rep->sequenceNumber, n);
-    swapl(&rep->length, n);
-    WriteToClient(client, size, (char *)rep);
+    swaps(&rep->sequenceNumber);
+    swapl(&rep->length);
+    WriteToClient(client, size, rep);
     }
 

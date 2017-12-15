@@ -1,0 +1,13 @@
+--- ./nx-X11/lib/X11/MaskEvent.c.X.original	2015-02-13 14:03:44.620443950 +0100
++++ ./nx-X11/lib/X11/MaskEvent.c	2015-02-10 19:13:12.944718089 +0100
+@@ -75,5 +75,10 @@
+ 	    if (prev && prev->qserial_num != qe_serial)
+ 		/* another thread has snatched this event */
+ 		prev = NULL;
++#ifdef NX_TRANS_SOCKET
++            if (_XGetIOError(dpy)) {
++                return 0;
++            }
++#endif
+ 	}
+ }

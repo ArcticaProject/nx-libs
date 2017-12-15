@@ -1,5 +1,3 @@
-/* $XdotOrg: xc/programs/Xserver/Xext/xtest1di.c,v 1.6 2005/07/03 08:53:36 daniels Exp $ */
-/* $Xorg: xtest1di.c,v 1.4 2001/02/09 02:04:33 xorgcvs Exp $ */
 /*
  *	File:  xtest1di.c
  *
@@ -53,22 +51,18 @@ Telephone and Telegraph Company or of the Regents of the
 University of California.
 
 */
-/* $XFree86: xc/programs/Xserver/Xext/xtest1di.c,v 3.5 2003/09/13 21:33:03 dawes Exp $ */
 
 /*****************************************************************************
  * include files
  ****************************************************************************/
-
-#define	 NEED_EVENTS
-#define	 NEED_REPLIES
 
 #ifdef HAVE_DIX_CONFIG_H
 #include <dix-config.h>
 #endif
 
 #include <stdio.h>
-#include <X11/X.h>
-#include <X11/Xproto.h>
+#include <nx-X11/X.h>
+#include <nx-X11/Xproto.h>
 #include "misc.h"
 #include "os.h"
 #include "gcstruct.h"   
@@ -76,8 +70,7 @@ University of California.
 #include "dixstruct.h"
 #include "opaque.h"
 #define  XTestSERVER_SIDE
-#include <X11/extensions/xtestext1.h>
-#include "modinit.h"
+#include <nx-X11/extensions/xtestext1.h>
 
 #include "xtest1dd.h"
 
@@ -152,7 +145,7 @@ static void	SEventXTestDispatch(
 	);
 
 static int	XTestCurrentClientGone(
-	pointer			/* value */,
+	void *			/* value */,
 	XID			/* id */
 	);
 
@@ -167,7 +160,7 @@ static int	XTestCurrentClientGone(
  *	(other than the core errors).
  */
 void
-XTestExtension1Init(INITARGS)
+XTestExtension1Init(void)
 {
 	/*
 	 * holds the pointer to the extension entry structure
@@ -319,10 +312,6 @@ SProcTestFakeInput(client)
 	register ClientPtr	client;
 {
 	/*
-	 * used in the swaps and swapl macros for temporary storage space
-	 */
-	register char	n;
-	/*
 	 * index counter
 	 */
 	int		i;
@@ -339,8 +328,8 @@ SProcTestFakeInput(client)
 	/*
 	 * byte-swap the fields in the request
 	 */
-	swaps(&stuff->length, n);
-	swapl(&stuff->ack, n);
+	swaps(&stuff->length);
+	swapl(&stuff->ack);
 	/*
 	 * have to parse and then byte-swap the input action list here
 	 */
@@ -363,7 +352,7 @@ SProcTestFakeInput(client)
 			/*
 			 * byte-swap the delay_time field
 			 */
-			swaps(&(((XTestKeyInfo *) input_action_ptr)->delay_time), n);
+			swaps(&(((XTestKeyInfo *) input_action_ptr)->delay_time));
 			/*
 			 * advance to the next input action
 			 */
@@ -373,7 +362,7 @@ SProcTestFakeInput(client)
 			/*
 			 * byte-swap the delay_time field
 			 */
-			swaps(&(((XTestMotionInfo *) input_action_ptr)->delay_time), n);
+			swaps(&(((XTestMotionInfo *) input_action_ptr)->delay_time));
 			/*
 			 * advance to the next input action
 			 */
@@ -383,15 +372,15 @@ SProcTestFakeInput(client)
 			/*
 			 * byte-swap the jumpx field
 			 */
-			swaps(&(((XTestJumpInfo *) input_action_ptr)->jumpx), n);
+			swaps(&(((XTestJumpInfo *) input_action_ptr)->jumpx));
 			/*
 			 * byte-swap the jumpy field
 			 */
-			swaps(&(((XTestJumpInfo *) input_action_ptr)->jumpy), n);
+			swaps(&(((XTestJumpInfo *) input_action_ptr)->jumpy));
 			/*
 			 * byte-swap the delay_time field
 			 */
-			swaps(&(((XTestJumpInfo *) input_action_ptr)->delay_time), n);
+			swaps(&(((XTestJumpInfo *) input_action_ptr)->delay_time));
 			/*
 			 * advance to the next input action
 			 */
@@ -409,7 +398,7 @@ SProcTestFakeInput(client)
 				/*
 				 * byte-swap the delay_time field
 				 */
-				swapl(&(((XTestDelayInfo *) input_action_ptr)->delay_time), n);
+				swapl(&(((XTestDelayInfo *) input_action_ptr)->delay_time));
 				/*
 				 * advance to the next input action
 				 */
@@ -440,17 +429,12 @@ static int
 SProcTestGetInput(client)
 	register ClientPtr	client;
 {
-	/*
-	 * used in the swaps and swapl macros for temporary storage space
-	 */
-	register char	n;
-
 	REQUEST(xTestGetInputReq);
 	/*
 	 * byte-swap the fields in the request
 	 */
-	swaps(&stuff->length, n);
-	swapl(&stuff->mode, n);
+	swaps(&stuff->length);
+	swapl(&stuff->mode);
 	return(ProcTestGetInput(client));
 }
 
@@ -464,16 +448,11 @@ static int
 SProcTestStopInput(client)
 	register ClientPtr	client;
 {
-	/*
-	 * used in the swaps and swapl macros for temporary storage space
-	 */
-	register char	n;
-
 	REQUEST(xTestStopInputReq);
 	/*
 	 * byte-swap the length field in the request
 	 */
-	swaps(&stuff->length, n);
+	swaps(&stuff->length);
 	return(ProcTestStopInput(client));
 }
 
@@ -487,16 +466,11 @@ static int
 SProcTestReset(client)
 	register ClientPtr	client;
 {
-	/*
-	 * used in the swaps and swapl macros for temporary storage space
-	 */
-	register char	n;
-
 	REQUEST(xTestResetReq);
 	/*
 	 * byte-swap the length field in the request
 	 */
-	swaps(&stuff->length, n);
+	swaps(&stuff->length);
 	return(ProcTestReset(client));
 }
 
@@ -510,16 +484,11 @@ static int
 SProcTestQueryInputSize(client)
 	register ClientPtr	client;
 {
-	/*
-	 * used in the swaps and swapl macros for temporary storage space
-	 */
-	register char	n;
-
 	REQUEST(xTestQueryInputSizeReq);
 	/*
 	 * byte-swap the length field in the request
 	 */
-	swaps(&stuff->length, n);
+	swaps(&stuff->length);
 	return(ProcTestQueryInputSize(client));
 }
 
@@ -752,7 +721,7 @@ XTestResetProc(unused)
 /*ARGSUSED*/
 static int
 XTestCurrentClientGone(value, id)
-	pointer	value;
+	void *	value;
 	XID	id;
 {
 	/*
@@ -781,10 +750,6 @@ SReplyXTestDispatch(client_ptr, size, reply_ptr)
 	char		*reply_ptr;
 {
 	/*
-	 * used in the swaps and swapl macros for temporary storage space
-	 */
-	register char	n;
-	/*
 	 * pointer to xTestQueryInputSizeReply
 	 */
 	xTestQueryInputSizeReply	*rep_ptr;
@@ -793,9 +758,9 @@ SReplyXTestDispatch(client_ptr, size, reply_ptr)
 	 * there is only one reply in this extension, so byte-swap it
 	 */
 	rep_ptr = (xTestQueryInputSizeReply *) reply_ptr;
-	swaps(&(rep_ptr->sequenceNumber), n);
-	swapl(&(rep_ptr->length), n);
-	swapl(&(rep_ptr->size_return), n);
+	swaps(&(rep_ptr->sequenceNumber));
+	swapl(&(rep_ptr->length));
+	swapl(&(rep_ptr->size_return));
 	/*
 	 * now write the swapped reply to the client
 	 */
@@ -813,10 +778,6 @@ SEventXTestDispatch(from, to)
 	xEvent	*from;
 	xEvent	*to;
 {
-	/*
-	 * used in the swaps and swapl macros for temporary storage space
-	 */
-	register char	n;
 	/*
 	 * index counter
 	 */
@@ -845,7 +806,7 @@ SEventXTestDispatch(from, to)
 	/*
 	 * byte-swap the sequence number in the "to" event
 	 */
-	swaps(&(((xTestInputActionEvent *) to)->sequenceNumber), n);
+	swaps(&(((xTestInputActionEvent *) to)->sequenceNumber));
 	/*
 	 * If the event is an xTestInputActionEvent, then it needs more
 	 * processing.  Otherwise, it is an xTestFakeAckEvent, which
@@ -886,7 +847,7 @@ SEventXTestDispatch(from, to)
 				/*
 				 * byte-swap the delay_time field
 				 */
-				swaps(&(((XTestKeyInfo *) input_action_ptr)->delay_time), n);
+				swaps(&(((XTestKeyInfo *) input_action_ptr)->delay_time));
 				/*
 				 * advance to the next input action
 				 */
@@ -896,7 +857,7 @@ SEventXTestDispatch(from, to)
 				/*
 				 * byte-swap the delay_time field
 				 */
-				swaps(&(((XTestMotionInfo *) input_action_ptr)->delay_time), n);
+				swaps(&(((XTestMotionInfo *) input_action_ptr)->delay_time));
 				/*
 				 * advance to the next input action
 				 */
@@ -906,15 +867,15 @@ SEventXTestDispatch(from, to)
 				/*
 				 * byte-swap the jumpx field
 				 */
-				swaps(&(((XTestJumpInfo *) input_action_ptr)->jumpx), n);
+				swaps(&(((XTestJumpInfo *) input_action_ptr)->jumpx));
 				/*
 				 * byte-swap the jumpy field
 				 */
-				swaps(&(((XTestJumpInfo *) input_action_ptr)->jumpy), n);
+				swaps(&(((XTestJumpInfo *) input_action_ptr)->jumpy));
 				/*
 				 * byte-swap the delay_time field
 				 */
-				swaps(&(((XTestJumpInfo *) input_action_ptr)->delay_time), n);
+				swaps(&(((XTestJumpInfo *) input_action_ptr)->delay_time));
 				/*
 				 * advance to the next input action
 				 */
@@ -932,7 +893,7 @@ SEventXTestDispatch(from, to)
 					/*
 					 * byte-swap the delay_time field
 					 */
-					swapl(&(((XTestDelayInfo *) input_action_ptr)->delay_time), n);
+					swapl(&(((XTestDelayInfo *) input_action_ptr)->delay_time));
 					/*
 					 * advance to the next input action
 					 */

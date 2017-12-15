@@ -1,0 +1,10 @@
+--- ./nx-X11/extras/Mesa/src/mesa/drivers/dri/common/glcontextmodes.c.X.original	2015-02-13 14:03:44.416447966 +0100
++++ ./nx-X11/extras/Mesa/src/mesa/drivers/dri/common/glcontextmodes.c	2015-02-10 19:13:14.992641502 +0100
+@@ -44,6 +44,7 @@
+ # include "GL/glxint.h"
+ 
+ # ifdef XFree86Server
++void *memset( void * ptr, int val, size_t size);
+ #  include "GL/glx_ansic.h"
+ extern void * __glXMalloc( size_t size );
+ extern void __glXFree( void * ptr );

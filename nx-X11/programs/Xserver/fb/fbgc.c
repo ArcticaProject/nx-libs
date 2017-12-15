@@ -21,17 +21,14 @@
  * TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
-/* $XdotOrg: xc/programs/Xserver/fb/fbgc.c,v 1.5 2005/07/03 07:01:23 daniels Exp $ */
-/* $XFree86: xc/programs/Xserver/fb/fbgc.c,v 1.14 2003/12/18 15:22:32 alanh Exp $ */
 
 #ifdef HAVE_DIX_CONFIG_H
 #include <dix-config.h>
 #endif
 
+#include <stdlib.h>
+
 #include "fb.h"
-#ifdef IN_MODULE
-#include "xf86_ansic.h"
-#endif
 
 const GCFuncs fbGCFuncs = {
     fbValidateGC,
@@ -170,7 +167,7 @@ fbCanEvenStipple (PixmapPtr pStipple, int bpp)
     FbBits  *bits;
     int	    stride;
     int	    stip_bpp;
-    int	    stipXoff, stipYoff;
+    _X_UNUSED int	    stipXoff, stipYoff;
     int	    h;
 
     /* can't even stipple 24bpp drawables */
@@ -211,7 +208,7 @@ fbValidateGC(GCPtr pGC, unsigned long changes, DrawablePtr pDrawable)
 	)
     {
 	miComputeCompositeClip (pGC, pDrawable);
-	pPriv->oneRect = REGION_NUM_RECTS(fbGetCompositeClip(pGC)) == 1;
+	pPriv->oneRect = RegionNumRects(fbGetCompositeClip(pGC)) == 1;
     }
     
 #ifdef FB_24_32BIT    

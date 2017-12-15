@@ -1,0 +1,24 @@
+--- ./nx-X11/config/cf/svr4.cf.X.original	2015-02-13 14:03:44.400448260 +0100
++++ ./nx-X11/config/cf/svr4.cf	2015-02-13 14:03:44.400448260 +0100
+@@ -51,7 +51,12 @@
+ #ifndef HasLdRunPath
+ #define HasLdRunPath		YES
+ #endif
++/*
++ * Currently the NX transport only works with select().
++ *
+ #define HasPoll			YES
++ */
++#define HasPoll			NO
+ #ifndef SVR4Architecture
+ #define SVR4Architecture
+ #endif
+@@ -278,7 +283,7 @@
+ # define XFree86ServerDefines	/* */
+ #endif
+ #ifndef XFree86ServerOSDefines
+-# define XFree86ServerOSDefines -DDDXOSINIT
++# define XFree86ServerOSDefines -DDDXOSINIT -DDDXOSFATALERROR -DDDXOSVERRORF
+ #endif
+ 
+ #if HasGcc2ForCplusplus

@@ -1,17 +1,25 @@
 /**************************************************************************/
 /*                                                                        */
-/* Copyright (c) 2001, 2011 NoMachine, http://www.nomachine.com/.         */
+/* Copyright (c) 2001, 2011 NoMachine (http://www.nomachine.com)          */
+/* Copyright (c) 2008-2014 Oleksandr Shneyder <o.shneyder@phoca-gmbh.de>  */
+/* Copyright (c) 2011-2016 Mike Gabriel <mike.gabriel@das-netzwerkteam.de>*/
+/* Copyright (c) 2014-2016 Mihai Moldovan <ionic@ionic.de>                */
+/* Copyright (c) 2014-2016 Ulrich Sibiller <uli42@gmx.de>                 */
+/* Copyright (c) 2015-2016 Qindel Group (http://www.qindel.com)           */
 /*                                                                        */
 /* NXAGENT, NX protocol compression and NX extensions to this software    */
-/* are copyright of NoMachine. Redistribution and use of the present      */
-/* software is allowed according to terms specified in the file LICENSE   */
-/* which comes in the source distribution.                                */
+/* are copyright of the aforementioned persons and companies.             */
 /*                                                                        */
-/* Check http://www.nomachine.com/licensing.html for applicability.       */
-/*                                                                        */
-/* NX and NoMachine are trademarks of Medialogic S.p.A.                   */
+/* Redistribution and use of the present software is allowed according    */
+/* to terms specified in the file LICENSE which comes in the source       */
+/* distribution.                                                          */
 /*                                                                        */
 /* All rights reserved.                                                   */
+/*                                                                        */
+/* NOTE: This software has received contributions from various other      */
+/* contributors, only the core maintainers and supporters are listed as   */
+/* copyright holders. Please contact us, if you feel you should be listed */
+/* as copyright holder, as well.                                          */
 /*                                                                        */
 /**************************************************************************/
 
@@ -77,7 +85,7 @@ Bool nxagentCreateColormap(ColormapPtr pCmap)
   pVisual = pCmap->pVisual;
   ncolors = pVisual->ColormapEntries;
 
-  pCmap->devPriv = (pointer)xalloc(sizeof(nxagentPrivColormap));
+  pCmap->devPriv = (void *)malloc(sizeof(nxagentPrivColormap));
 
   if (((visual = nxagentVisual(pVisual))) == NULL)
   {
@@ -103,7 +111,7 @@ Bool nxagentCreateColormap(ColormapPtr pCmap)
 
   switch (class) {
   case StaticGray: /* read only */
-    colors = (XColor *)xalloc(ncolors * sizeof(XColor));
+    colors = (XColor *)malloc(ncolors * sizeof(XColor));
     for (i = 0; i < ncolors; i++)
       colors[i].pixel = i;
     XQueryColors(nxagentDisplay, nxagentColormap(pCmap), colors, ncolors);
@@ -112,11 +120,11 @@ Bool nxagentCreateColormap(ColormapPtr pCmap)
       pCmap->red[i].co.local.green = colors[i].red;
       pCmap->red[i].co.local.blue = colors[i].red;
     }
-    xfree(colors);
+    free(colors);
     break;
 
   case StaticColor: /* read only */
-    colors = (XColor *)xalloc(ncolors * sizeof(XColor));
+    colors = (XColor *)malloc(ncolors * sizeof(XColor));
     for (i = 0; i < ncolors; i++)
       colors[i].pixel = i;
     XQueryColors(nxagentDisplay, nxagentColormap(pCmap), colors, ncolors);
@@ -125,11 +133,11 @@ Bool nxagentCreateColormap(ColormapPtr pCmap)
       pCmap->red[i].co.local.green = colors[i].green;
       pCmap->red[i].co.local.blue = colors[i].blue;
     }
-    xfree(colors);
+    free(colors);
     break;
 
   case TrueColor: /* read only */
-    colors = (XColor *)xalloc(ncolors * sizeof(XColor));
+    colors = (XColor *)malloc(ncolors * sizeof(XColor));
     red = green = blue = 0L;
     redInc = lowbit(pVisual->redMask);
     greenInc = lowbit(pVisual->greenMask);
@@ -149,7 +157,7 @@ Bool nxagentCreateColormap(ColormapPtr pCmap)
       pCmap->green[i].co.local.green = colors[i].green;
       pCmap->blue[i].co.local.blue = colors[i].blue;
     }
-    xfree(colors);
+    free(colors);
     break;
 
   case GrayScale: /* read and write */
@@ -168,13 +176,13 @@ Bool nxagentCreateColormap(ColormapPtr pCmap)
 void nxagentDestroyColormap(ColormapPtr pCmap)
 {
   XFreeColormap(nxagentDisplay, nxagentColormap(pCmap));
-  xfree(pCmap->devPriv);
+  free(pCmap->devPriv);
 }
 
 #define SEARCH_PREDICATE \
   (nxagentWindow(pWin) != None && wColormap(pWin) == icws->cmapIDs[i])
 
-static int nxagentCountInstalledColormapWindows(WindowPtr pWin, pointer ptr)
+static int nxagentCountInstalledColormapWindows(WindowPtr pWin, void * ptr)
 {
   nxagentInstalledColormapWindows *icws = (nxagentInstalledColormapWindows *) ptr;
 
@@ -189,7 +197,7 @@ static int nxagentCountInstalledColormapWindows(WindowPtr pWin, pointer ptr)
   return WT_WALKCHILDREN;
 }
 
-static int nxagentGetInstalledColormapWindows(WindowPtr pWin, pointer ptr)
+static int nxagentGetInstalledColormapWindows(WindowPtr pWin, void * ptr)
 {
   nxagentInstalledColormapWindows *icws = (nxagentInstalledColormapWindows *)ptr;
   int i;
@@ -229,15 +237,15 @@ void nxagentSetInstalledColormapWindows(ScreenPtr pScreen)
   nxagentInstalledColormapWindows icws;
   int numWindows;
 
-  icws.cmapIDs = (Colormap *)xalloc(pScreen->maxInstalledCmaps *
+  icws.cmapIDs = (Colormap *)malloc(pScreen->maxInstalledCmaps *
 				    sizeof(Colormap));
   icws.numCmapIDs = nxagentListInstalledColormaps(pScreen, icws.cmapIDs);
   icws.numWindows = 0;
-  WalkTree(pScreen, nxagentCountInstalledColormapWindows, (pointer)&icws);
+  WalkTree(pScreen, nxagentCountInstalledColormapWindows, (void *)&icws);
   if (icws.numWindows) {
-    icws.windows = (Window *)xalloc((icws.numWindows + 1) * sizeof(Window));
+    icws.windows = (Window *)malloc((icws.numWindows + 1) * sizeof(Window));
     icws.index = 0;
-    WalkTree(pScreen, nxagentGetInstalledColormapWindows, (pointer)&icws);
+    WalkTree(pScreen, nxagentGetInstalledColormapWindows, (void *)&icws);
     icws.windows[icws.numWindows] = nxagentDefaultWindows[pScreen->myNum];
     numWindows = icws.numWindows + 1;
   }
@@ -246,22 +254,21 @@ void nxagentSetInstalledColormapWindows(ScreenPtr pScreen)
     numWindows = 0;
   }
 
-  xfree(icws.cmapIDs);
+  free(icws.cmapIDs);
 
   if (!nxagentSameInstalledColormapWindows(icws.windows, icws.numWindows)) {
-    if (nxagentOldInstalledColormapWindows)
-      xfree(nxagentOldInstalledColormapWindows);
+    free(nxagentOldInstalledColormapWindows);
 
 #ifdef _XSERVER64
     {
       int i;
-      Window64 *windows = (Window64 *)xalloc(numWindows * sizeof(Window64));
+      Window64 *windows = (Window64 *)malloc(numWindows * sizeof(Window64));
 
       for(i = 0; i < numWindows; ++i)
 	  windows[i] = icws.windows[i];
       XSetWMColormapWindows(nxagentDisplay, nxagentDefaultWindows[pScreen->myNum],
 			    windows, numWindows);
-      xfree(windows);
+      free(windows);
     }
 #else
     XSetWMColormapWindows(nxagentDisplay, nxagentDefaultWindows[pScreen->myNum],
@@ -303,20 +310,19 @@ void nxagentSetInstalledColormapWindows(ScreenPtr pScreen)
         {
           fprintf(stderr, "nxagentSetInstalledColormapWindows: WARNING! "
                       "Window at [%p] has no colormap with class [%d].\n",
-                          pWin, pWin -> drawable.class);
+		  (void *)pWin, pWin -> drawable.class);
         }
         #endif
       }
 #endif /* DUMB_WINDOW_MANAGERS */
   }
   else
-    if (icws.windows) xfree(icws.windows);
+    free(icws.windows);
 }
 
 void nxagentSetScreenSaverColormapWindow(ScreenPtr pScreen)
 {
-  if (nxagentOldInstalledColormapWindows)
-    xfree(nxagentOldInstalledColormapWindows);
+  free(nxagentOldInstalledColormapWindows);
 
 #ifdef _XSERVER64
   {
@@ -388,10 +394,10 @@ void nxagentInstallColormap(ColormapPtr pCmap)
 
       /* Uninstall pInstalledMap. Notify all interested parties. */
       if(pOldCmap != (ColormapPtr)None)
-	WalkTree(pCmap->pScreen, TellLostMap, (pointer)&pOldCmap->mid);
+	WalkTree(pCmap->pScreen, TellLostMap, (void *)&pOldCmap->mid);
 
       InstalledMaps[index] = pCmap;
-      WalkTree(pCmap->pScreen, TellGainedMap, (pointer)&pCmap->mid);
+      WalkTree(pCmap->pScreen, TellGainedMap, (void *)&pCmap->mid);
 
       nxagentSetInstalledColormapWindows(pCmap->pScreen);
       nxagentDirectInstallColormaps(pCmap->pScreen);
@@ -437,7 +443,7 @@ void nxagentStoreColors(ColormapPtr pCmap, int nColors, xColorItem *pColors)
 #ifdef _XSERVER64
   {
     int i;
-    XColor *pColors64 = (XColor *)xalloc(nColors * sizeof(XColor) );
+    XColor *pColors64 = (XColor *)malloc(nColors * sizeof(XColor) );
 
     for(i = 0; i < nColors; ++i)
     {
@@ -448,7 +454,7 @@ void nxagentStoreColors(ColormapPtr pCmap, int nColors, xColorItem *pColors)
       pColors64[i].flags = pColors[i].flags;
     }
     XStoreColors(nxagentDisplay, nxagentColormap(pCmap), pColors64, nColors);
-    xfree(pColors64);
+    free(pColors64);
   }
 #else
     XStoreColors(nxagentDisplay, nxagentColormap(pCmap),
@@ -542,7 +548,7 @@ Bool nxagentCreateDefaultColormap(ScreenPtr pScreen)
   return True;
 }
 
-static void nxagentReconnectColormap(pointer p0, XID x1, pointer p2)
+static void nxagentReconnectColormap(void * p0, XID x1, void * p2)
 {
   ColormapPtr pCmap = (ColormapPtr)p0;
   Bool* pBool = (Bool*)p2;
@@ -572,10 +578,8 @@ static void nxagentReconnectColormap(pointer p0, XID x1, pointer p2)
 
 Bool nxagentReconnectAllColormap(void *p0)
 {
-  int flexibility;
   int cid;
   Bool success = True;
-  flexibility = *(int*)p0;
 
   #if defined(NXAGENT_RECONNECT_DEBUG) || defined(NXAGENT_RECONNECT_COLORMAP_DEBUG)
   fprintf(stderr, "nxagentReconnectAllColormap\n");

@@ -1,8 +1,0 @@
-XCOMM $Xorg: Imakefile,v 1.1 2002/11/23 05:42:52 gisburn Exp $
-#define IHaveSubdirs
-#define PassCDebugFlags CDEBUGFLAGS="$(CDEBUGFLAGS)"
-
-SUBDIRS = print
-
-MakeSubdirs($(SUBDIRS))
-DependSubdirs($(SUBDIRS))

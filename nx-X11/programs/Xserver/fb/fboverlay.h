@@ -1,6 +1,4 @@
 /*
- * $XFree86: xc/programs/Xserver/fb/fboverlay.h,v 1.4tsi Exp $
- *
  * Copyright © 2000 SuSE, Inc.
  *
  * Permission to use, copy, modify, distribute, and sell this software and its
@@ -39,7 +37,7 @@ typedef	void	(*fbOverlayPaintKeyProc) (DrawablePtr, RegionPtr, CARD32, int);
 typedef struct _fbOverlayLayer {
     union {
 	struct {
-	    pointer	pbits;
+	    void *	pbits;
 	    int		width;
 	    int		depth;
 	} init;
@@ -65,7 +63,7 @@ Bool
 fbOverlayCreateWindow(WindowPtr pWin);
 
 Bool
-fbOverlayCloseScreen (int iScreen, ScreenPtr pScreen);
+fbOverlayCloseScreen (ScreenPtr pScreen);
 
 int
 fbOverlayWindowLayer(WindowPtr pWin);
@@ -100,8 +98,8 @@ fbOverlayPaintWindow(WindowPtr pWin, RegionPtr pRegion, int what);
 
 Bool
 fbOverlaySetupScreen(ScreenPtr	pScreen,
-		     pointer	pbits1,
-		     pointer	pbits2,
+		     void *	pbits1,
+		     void *	pbits2,
 		     int	xsize,
 		     int	ysize,
 		     int	dpix,
@@ -113,8 +111,8 @@ fbOverlaySetupScreen(ScreenPtr	pScreen,
 
 Bool
 fbOverlayFinishScreenInit(ScreenPtr	pScreen,
-			  pointer	pbits1,
-			  pointer	pbits2,
+			  void *	pbits1,
+			  void *	pbits2,
 			  int		xsize,
 			  int		ysize,
 			  int		dpix,

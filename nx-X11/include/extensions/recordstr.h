@@ -29,7 +29,7 @@ static char sccsid[ ] = "@(#) recordstr.h 1.5 6/5/95 12:37:44";
 #ifndef _RECORDSTR_H_
 #define _RECORDSTR_H_
 
-#include <X11/extensions/record.h>
+#include <nx-X11/extensions/record.h>
 
 #define RECORD_NAME			"RECORD"
 #define RECORD_MAJOR_VERSION		1

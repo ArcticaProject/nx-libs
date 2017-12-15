@@ -1,17 +1,25 @@
 /**************************************************************************/
 /*                                                                        */
-/* Copyright (c) 2001, 2011 NoMachine, http://www.nomachine.com/.         */
+/* Copyright (c) 2001, 2011 NoMachine (http://www.nomachine.com)          */
+/* Copyright (c) 2008-2014 Oleksandr Shneyder <o.shneyder@phoca-gmbh.de>  */
+/* Copyright (c) 2011-2016 Mike Gabriel <mike.gabriel@das-netzwerkteam.de>*/
+/* Copyright (c) 2014-2016 Mihai Moldovan <ionic@ionic.de>                */
+/* Copyright (c) 2014-2016 Ulrich Sibiller <uli42@gmx.de>                 */
+/* Copyright (c) 2015-2016 Qindel Group (http://www.qindel.com)           */
 /*                                                                        */
 /* NXAGENT, NX protocol compression and NX extensions to this software    */
-/* are copyright of NoMachine. Redistribution and use of the present      */
-/* software is allowed according to terms specified in the file LICENSE   */
-/* which comes in the source distribution.                                */
+/* are copyright of the aforementioned persons and companies.             */
 /*                                                                        */
-/* Check http://www.nomachine.com/licensing.html for applicability.       */
-/*                                                                        */
-/* NX and NoMachine are trademarks of Medialogic S.p.A.                   */
+/* Redistribution and use of the present software is allowed according    */
+/* to terms specified in the file LICENSE which comes in the source       */
+/* distribution.                                                          */
 /*                                                                        */
 /* All rights reserved.                                                   */
+/*                                                                        */
+/* NOTE: This software has received contributions from various other      */
+/* contributors, only the core maintainers and supporters are listed as   */
+/* copyright holders. Please contact us, if you feel you should be listed */
+/* as copyright holder, as well.                                          */
 /*                                                                        */
 /**************************************************************************/
 
@@ -26,7 +34,7 @@
 #include "scrnintstr.h"
 #include "resource.h"
 
-#include "NXpack.h"
+#include <nx/NXpack.h>
 
 #include "Atoms.h"
 #include "Args.h"
@@ -44,6 +52,11 @@
 #define WARNING
 #undef  TEST
 #undef  DEBUG
+
+#ifdef DEBUG
+/* for validateString() */
+#include "Utils.h"
+#endif
 
 /*
  * These values should be moved in
@@ -328,7 +341,7 @@ int nxagentQueryAtoms(ScreenPtr pScreen)
 typedef struct {
     Atom local;
     Atom remote;
-    char *string;
+    const char *string;
     int  length;
 } AtomMap;
 
@@ -337,7 +350,7 @@ static unsigned int privAtomMapSize = 0;
 static unsigned int privLastAtom = 0;
 
 static void nxagentExpandCache(void);
-static void nxagentWriteAtom(Atom, Atom, char*, Bool);
+static void nxagentWriteAtom(Atom, Atom, const char*, Bool);
 static AtomMap* nxagentFindAtomByRemoteValue(Atom);
 static AtomMap* nxagentFindAtomByLocalValue(Atom);
 static AtomMap* nxagentFindAtomByName(char*, unsigned);
@@ -360,9 +373,9 @@ static void nxagentExpandCache(void)
  * then cache the atom-couple.
  */
 
-static void nxagentWriteAtom(Atom local, Atom remote, char *string, Bool duplicate)
+static void nxagentWriteAtom(Atom local, Atom remote, const char *string, Bool duplicate)
 {
-  char *s;
+  const char *s;
 
   /*
    * We could remove this string duplication if
@@ -452,7 +465,7 @@ static int nxagentInitAtomMap(char **atomNameList, int count, Atom *atomsRet)
   
   for (i = 0; i < privLastAtom; i++)
   {
-    name_list[count + i] = privAtomMap[i].string;
+    name_list[count + i] = (char *)privAtomMap[i].string;
     atom_list[count + i] = None;
   }
 
@@ -662,7 +675,7 @@ Atom nxagentMakeAtom(char *string, unsigned int length, Bool Makeit)
 Atom nxagentLocalToRemoteAtom(Atom local)
 {
   AtomMap *current;
-  char    *string;
+  const char    *string;
   Atom    remote;
 
   if (!ValidAtom(local))

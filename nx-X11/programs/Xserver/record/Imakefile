@@ -1,33 +1,26 @@
-XCOMM $Xorg: Imakefile,v 1.3 2000/08/17 19:53:45 cpqbld Exp $
+       NULL =
 
-
-
-
-XCOMM $XFree86: xc/programs/Xserver/record/Imakefile,v 1.12 2001/11/02 23:29:34 dawes Exp $
-
-#if DoLoadableServer
-#define IHaveSubdirs
-#endif
 
 #include <Server.tmpl>
 
-#if DoLoadableServer
-    SUBDIRS = module
-#endif
        SRCS = record.c set.c
        OBJS = record.o set.o
-   INCLUDES = -I../include -I$(XINCLUDESRC) -I$(EXTINCSRC) -I$(SERVERSRC)/Xext
+   INCLUDES = -I../include -I$(XINCLUDESRC) -I$(EXTINCSRC) -I$(SERVERSRC)/Xext `pkg-config --cflags-only-I pixman-1`
    LINTLIBS = ../dix/llib-ldix.ln
-    DEFINES = -DNDEBUG
+
+#if defined(NXAgentServer) && NXAgentServer
+ NX_DEFINES = -DNXAGENT_SERVER
+#endif
+
+    DEFINES =			\
+              -DNDEBUG		\
+              $(NX_DEFINES)	\
+              $(NULL)
 
 NormalLibraryObjectRule()
 NormalLibraryTarget(record,$(OBJS))
 LintLibraryTarget(record,$(SRCS))
 NormalLintTarget($(SRCS))
 
-#if DoLoadableServer
-MakeSubdirs($(SUBDIRS))
-DependSubdirs($(SUBDIRS))
-#endif
 
 DependTarget()

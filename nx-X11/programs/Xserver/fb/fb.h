@@ -1,6 +1,4 @@
 /*
- * $XFree86: xc/programs/Xserver/fb/fb.h,v 1.36tsi Exp $
- *
  * Copyright © 1998 Keith Packard
  *
  * Permission to use, copy, modify, distribute, and sell this software and its
@@ -22,12 +20,11 @@
  * PERFORMANCE OF THIS SOFTWARE.
  */
 
-/* $XdotOrg: xc/programs/Xserver/fb/fb.h,v 1.13 2005/10/02 08:28:26 anholt Exp $ */
 
 #ifndef _FB_H_
 #define _FB_H_
 
-#include <X11/X.h>
+#include <nx-X11/X.h>
 #include "scrnintstr.h"
 #include "pixmap.h"
 #include "pixmapstr.h"
@@ -67,9 +64,6 @@
 #if GLYPHPADBYTES != 4
 #error "GLYPHPADBYTES must be 4"
 #endif
-#if GETLEFTBITS_ALIGNMENT != 1
-#error "GETLEFTBITS_ALIGNMENT must be 1"
-#endif
 /* whether to bother to include 24bpp support */
 #ifndef FBNO24BIT
 #define FB_24BIT
@@ -108,8 +102,7 @@ typedef unsigned __int64    FbBits;
       defined(__sparc64__) || defined(_LP64) || \
       defined(__s390x__) || \
       defined(amd64) || defined (__amd64__) || \
-      defined (__powerpc64__) || \
-      (defined(sgi) && (_MIPS_SZLONG == 64))
+      defined (__powerpc64__)
 typedef unsigned long	    FbBits;
 #  else
 typedef unsigned long long  FbBits;
@@ -582,8 +575,7 @@ extern const GCFuncs	fbGCFuncs;
 #endif
 
 #ifdef FB_OLD_SCREEN
-# define FB_OLD_MISCREENINIT	/* miScreenInit requires 14 args, not 13 */
-extern WindowPtr    *WindowTable;
+# define FB_OLD_MISCREENINIT   /* miScreenInit requires 14 args, not 13 */
 #endif
 
 #ifdef FB_24_32BIT
@@ -703,8 +695,8 @@ typedef struct {
  */
 
 #define fbWindowEnabled(pWin) \
-    REGION_NOTEMPTY((pWin)->drawable.pScreen, \
-		    &WindowTable[(pWin)->drawable.pScreen->myNum]->borderClip)
+    RegionNotEmpty(\
+		    &(pWin)->drawable.pScreen->root->borderClip)
 
 #define fbDrawableEnabled(pDrawable) \
     ((pDrawable)->type == DRAWABLE_PIXMAP ? \
@@ -795,7 +787,7 @@ fb24_32ModifyPixmapHeader (PixmapPtr   pPixmap,
 			   int         depth,
 			   int         bitsPerPixel,
 			   int         devKind,
-			   pointer     pPixData);
+			   void        *pPixData);
 
 /*
  * fballpriv.c
@@ -1486,7 +1478,7 @@ fbPolyGlyphBlt (DrawablePtr	pDrawable,
 		int		y,
 		unsigned int	nglyph,
 		CharInfoPtr	*ppci,
-		pointer		pglyphBase);
+		void		*pglyphBase);
 
 void
 fbImageGlyphBlt (DrawablePtr	pDrawable,
@@ -1495,7 +1487,7 @@ fbImageGlyphBlt (DrawablePtr	pDrawable,
 		 int		y,
 		 unsigned int	nglyph,
 		 CharInfoPtr	*ppci,
-		 pointer	pglyphBase);
+		 void	        *pglyphBase);
 
 /*
  * fbimage.c
@@ -1602,10 +1594,11 @@ fbPictureInit (ScreenPtr pScreen,
  */
 
 PixmapPtr
-fbCreatePixmapBpp (ScreenPtr pScreen, int width, int height, int depth, int bpp);
+fbCreatePixmapBpp (ScreenPtr pScreen, int width, int height, int depth, int bpp,
+                   unsigned usage_hint);
 
 PixmapPtr
-fbCreatePixmap (ScreenPtr pScreen, int width, int height, int depth);
+fbCreatePixmap (ScreenPtr pScreen, int width, int height, int depth, unsigned usage_hint);
 
 Bool
 fbDestroyPixmap (PixmapPtr pPixmap);
@@ -1709,7 +1702,7 @@ fbPushPixels (GCPtr	    pGC,
  */
 
 Bool
-fbCloseScreen (int indx, ScreenPtr pScreen);
+fbCloseScreen (ScreenPtr pScreen);
 
 Bool
 fbRealizeFont(ScreenPtr pScreen, FontPtr pFont);
@@ -1732,7 +1725,7 @@ _fbSetWindowPixmap (WindowPtr pWindow, PixmapPtr pPixmap);
 
 Bool
 fbSetupScreen(ScreenPtr	pScreen, 
-	      pointer	pbits,		/* pointer to screen bitmap */
+	      void	*pbits,		/* pointer to screen bitmap */
 	      int	xsize, 		/* in pixels */
 	      int	ysize,
 	      int	dpix,		/* dots per inch */
@@ -1742,7 +1735,7 @@ fbSetupScreen(ScreenPtr	pScreen,
 
 Bool
 fbFinishScreenInit(ScreenPtr	pScreen,
-		   pointer	pbits,
+		   void		*pbits,
 		   int		xsize,
 		   int		ysize,
 		   int		dpix,
@@ -1752,7 +1745,7 @@ fbFinishScreenInit(ScreenPtr	pScreen,
 
 Bool
 fbScreenInit(ScreenPtr	pScreen,
-	     pointer	pbits,
+	     void	*pbits,
 	     int	xsize,
 	     int	ysize,
 	     int	dpix,

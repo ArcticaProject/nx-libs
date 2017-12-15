@@ -1,17 +1,25 @@
 /**************************************************************************/
 /*                                                                        */
-/* Copyright (c) 2001, 2011 NoMachine, http://www.nomachine.com/.         */
+/* Copyright (c) 2001, 2011 NoMachine (http://www.nomachine.com)          */
+/* Copyright (c) 2008-2014 Oleksandr Shneyder <o.shneyder@phoca-gmbh.de>  */
+/* Copyright (c) 2011-2016 Mike Gabriel <mike.gabriel@das-netzwerkteam.de>*/
+/* Copyright (c) 2014-2016 Mihai Moldovan <ionic@ionic.de>                */
+/* Copyright (c) 2014-2016 Ulrich Sibiller <uli42@gmx.de>                 */
+/* Copyright (c) 2015-2016 Qindel Group (http://www.qindel.com)           */
 /*                                                                        */
 /* NXAGENT, NX protocol compression and NX extensions to this software    */
-/* are copyright of NoMachine. Redistribution and use of the present      */
-/* software is allowed according to terms specified in the file LICENSE   */
-/* which comes in the source distribution.                                */
+/* are copyright of the aforementioned persons and companies.             */
 /*                                                                        */
-/* Check http://www.nomachine.com/licensing.html for applicability.       */
-/*                                                                        */
-/* NX and NoMachine are trademarks of Medialogic S.p.A.                   */
+/* Redistribution and use of the present software is allowed according    */
+/* to terms specified in the file LICENSE which comes in the source       */
+/* distribution.                                                          */
 /*                                                                        */
 /* All rights reserved.                                                   */
+/*                                                                        */
+/* NOTE: This software has received contributions from various other      */
+/* contributors, only the core maintainers and supporters are listed as   */
+/* copyright holders. Please contact us, if you feel you should be listed */
+/* as copyright holder, as well.                                          */
 /*                                                                        */
 /**************************************************************************/
 
@@ -34,6 +42,39 @@ static int nxagentRandRScreenSetSize(ScreenPtr pScreen, CARD16 width,
                                              CARD32 mmHeight);
 
 static int nxagentRandRInitSizes(ScreenPtr pScreen);
+
+#if RANDR_14_INTERFACE
+static Bool
+nxagentRandRReplaceScanoutPixmap(DrawablePtr pDrawable,
+				 PixmapPtr pPixmap,
+				 Bool enable);
+#endif
+
+#if RANDR_13_INTERFACE
+static Bool
+nxagentRandROutputGetProperty(ScreenPtr pScreen,
+                              RROutputPtr output,
+                              Atom property);
+static Bool
+nxagentRandRGetPanning(ScreenPtr pScrn,
+                       RRCrtcPtr crtc,
+                       BoxPtr totalArea,
+                       BoxPtr trackingArea,
+                       INT16 *border);
+static Bool
+nxagentRandRSetPanning(ScreenPtr pScrn,
+                       RRCrtcPtr crtc,
+                       BoxPtr totalArea,
+                       BoxPtr trackingArea,
+                       INT16 *border);
+#endif
+
+#if RANDR_12_INTERFACE
+static Bool nxagentRandRCrtcSet (ScreenPtr pScreen, RRCrtcPtr crtc,
+				 RRModePtr mode, int x, int y,
+				 Rotation rotation, int numOutputs,
+				 RROutputPtr *outputs);
+#endif
 
 #ifdef __DARWIN__
 
@@ -83,6 +124,8 @@ void nxagentInitRandRExtension(ScreenPtr pScreen)
     fprintf(stderr, "Warning: Failed to initialize the RandR extension.\n");
   }
 
+
+  /* FIXME: do we need this at all with the new rand/xinerama stuff? */
   nxagentRandRInitSizes(pScreen);
 
   /*
@@ -93,16 +136,125 @@ void nxagentInitRandRExtension(ScreenPtr pScreen)
 
   pRandRScrPriv = rrGetScrPriv(pScreen);
 
-  pRandRScrPriv -> rrGetInfo   = nxagentRandRGetInfo;
+  pRandRScrPriv -> rrGetInfo = nxagentRandRGetInfo;
+
+  #if RANDR_15_INTERFACE
+  /* nothing to be assigned here, so far */
+  #endif
+
+  #if RANDR_14_INTERFACE
+  /* no pixmap sharing in nx-X11 */
+  pScreen->ReplaceScanoutPixmap = nxagentRandRReplaceScanoutPixmap;
+  pRandRScrPriv -> rrCrtcSetScanoutPixmap = NULL;
+
+  /* only fake provider support in nx-X11, so far */
+  pRandRScrPriv -> provider = RRProviderCreate(pScreen, "default", 7);
+  pRandRScrPriv -> rrProviderSetOutputSource = NULL;
+  pRandRScrPriv -> rrProviderSetOffloadSink = NULL;
+  pRandRScrPriv -> rrProviderGetProperty = NULL;
+  pRandRScrPriv -> rrProviderSetProperty = NULL;
+  #endif
+
+  #if RANDR_13_INTERFACE
+  pRandRScrPriv -> rrOutputGetProperty = nxagentRandROutputGetProperty;
+  pRandRScrPriv -> rrGetPanning = nxagentRandRGetPanning;
+  pRandRScrPriv -> rrSetPanning = nxagentRandRSetPanning;
+  #endif
 
   #if RANDR_12_INTERFACE
   pRandRScrPriv -> rrScreenSetSize = nxagentRandRScreenSetSize;
+  pRandRScrPriv -> rrCrtcSet = nxagentRandRCrtcSet;
   #endif
 
   #if RANDR_10_INTERFACE
   pRandRScrPriv -> rrSetConfig = nxagentRandRSetConfig;
   #endif
 }
+
+#if RANDR_14_INTERFACE
+static Bool
+nxagentRandRReplaceScanoutPixmap(DrawablePtr pDrawable,
+				 PixmapPtr pPixmap,
+				 Bool enable)
+{
+  /* FALSE means: not supported */
+#ifdef DEBUG
+  fprintf(stderr, "nxagentRandRReplaceScanoutPixmap: NX's RANDR does not support scan-out pixmaps.\n");
+#endif
+  return FALSE;
+}
+#endif
+
+#if RANDR_13_INTERFACE
+static Bool
+nxagentRandROutputGetProperty(ScreenPtr pScreen,
+			      RROutputPtr output,
+			      Atom property)
+{
+  /* FALSE means: no property required to be modified on the fly here */
+  return FALSE;
+}
+
+static Bool
+nxagentRandRGetPanning(ScreenPtr pScrn,
+                       RRCrtcPtr crtc,
+                       BoxPtr totalArea,
+                       BoxPtr trackingArea,
+                       INT16 *border)
+{
+  /* FALSE means: no, panning is not supported at the moment...
+   *              Panning requires several modes to be available for
+   *              the NX<n> output(s).
+   *
+   * FIXME: Add more modes per output than the current window size.
+   *        At least when in fullscreen mode.
+   */
+#ifdef DEBUG
+  fprintf(stderr, "nxagentRandRGetPanning: RANDR Panning is currently not supported.\n");
+#endif
+  return FALSE;
+}
+
+static Bool
+nxagentRandRSetPanning(ScreenPtr pScrn,
+                       RRCrtcPtr crtc,
+                       BoxPtr totalArea,
+                       BoxPtr trackingArea,
+                       INT16 *border)
+{
+  /* FALSE means: no, panning is not supported at the moment...
+   *              Panning requires several modes to be available for
+   *              the NX<n> output(s).
+   *
+   * FIXME: Add more modes per output than the current window size.
+   *        At least when in fullscreen mode.
+   */
+#ifdef DEBUG
+  fprintf(stderr, "nxagentRandRSetPanning: RANDR Panning is currently not supported.\n");
+#endif
+  return FALSE;
+}
+#endif
+
+#if RANDR_12_INTERFACE
+/*
+ * Request that the Crtc be reconfigured
+ */
+
+static Bool
+nxagentRandRCrtcSet (ScreenPtr   pScreen,
+		     RRCrtcPtr   crtc,
+		     RRModePtr   mode,
+		     int         x,
+		     int         y,
+		     Rotation    rotation,
+		     int         numOutputs,
+		     RROutputPtr *outputs)
+{
+  return RRCrtcNotify(crtc, mode, x, y, rotation, NULL, numOutputs, outputs);
+}
+#endif
+
 
 int nxagentRandRGetInfo(ScreenPtr pScreen, Rotation *pRotations)
 {
@@ -118,7 +270,6 @@ int nxagentRandRGetInfo(ScreenPtr pScreen, Rotation *pRotations)
 static int nxagentRandRInitSizes(ScreenPtr pScreen)
 {
   RRScreenSizePtr pSize;
-  rrScrPrivPtr pRandRScrPriv = rrGetScrPriv(pScreen);
 
   int width;
   int height;
@@ -222,7 +373,6 @@ int nxagentRandRSetConfig(ScreenPtr pScreen, Rotation rotation,
                               int rate, RRScreenSizePtr pSize)
 {
   int r;
-  rrScrPrivPtr pRandRScrPriv;
 
   UpdateCurrentTime();
 
@@ -281,7 +431,6 @@ int nxagentRandRScreenSetSize(ScreenPtr pScreen, CARD16 width, CARD16 height,
                                    CARD32 mmWidth, CARD32 mmHeight)
 {
   int result;
-  rrScrPrivPtr pRandRScrPriv;
 
   UpdateCurrentTime();
 

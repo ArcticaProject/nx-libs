@@ -1,5 +1,28 @@
-/* $XdotOrg: xc/programs/Xserver/os/utils.c,v 1.21 2005/11/08 06:33:30 jkj Exp $ */
-/* $Xorg: utils.c,v 1.5 2001/02/09 02:05:24 xorgcvs Exp $ */
+/**************************************************************************/
+/*                                                                        */
+/* Copyright (c) 2001, 2011 NoMachine (http://www.nomachine.com)          */
+/* Copyright (c) 2008-2014 Oleksandr Shneyder <o.shneyder@phoca-gmbh.de>  */
+/* Copyright (c) 2011-2016 Mike Gabriel <mike.gabriel@das-netzwerkteam.de>*/
+/* Copyright (c) 2014-2016 Mihai Moldovan <ionic@ionic.de>                */
+/* Copyright (c) 2014-2016 Ulrich Sibiller <uli42@gmx.de>                 */
+/* Copyright (c) 2015-2016 Qindel Group (http://www.qindel.com)           */
+/*                                                                        */
+/* nx-X11, NX protocol compression and NX extensions to this software     */
+/* are copyright of the aforementioned persons and companies.             */
+/*                                                                        */
+/* Redistribution and use of the present software is allowed according    */
+/* to terms specified in the file LICENSE which comes in the source       */
+/* distribution.                                                          */
+/*                                                                        */
+/* All rights reserved.                                                   */
+/*                                                                        */
+/* NOTE: This software has received contributions from various other      */
+/* contributors, only the core maintainers and supporters are listed as   */
+/* copyright holders. Please contact us, if you feel you should be listed */
+/* as copyright holder, as well.                                          */
+/*                                                                        */
+/**************************************************************************/
+
 /*
 
 Copyright 1987, 1998  The Open Group
@@ -50,24 +73,6 @@ OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE
 OR PERFORMANCE OF THIS SOFTWARE.
 
 */
-/* $XFree86: xc/programs/Xserver/os/utils.c,v 3.96 2004/01/07 04:16:37 dawes Exp $ */
-
-/**************************************************************************/
-/*                                                                        */
-/* Copyright (c) 2001, 2011 NoMachine, http://www.nomachine.com/.         */
-/*                                                                        */
-/* NX-X11, NX protocol compression and NX extensions to this software     */
-/* are copyright of NoMachine. Redistribution and use of the present      */
-/* software is allowed according to terms specified in the file LICENSE   */
-/* which comes in the source distribution.                                */
-/*                                                                        */
-/* Check http://www.nomachine.com/licensing.html for applicability.       */
-/*                                                                        */
-/* NX and NoMachine are trademarks of Medialogic S.p.A.                   */
-/*                                                                        */
-/* All rights reserved.                                                   */
-/*                                                                        */
-/**************************************************************************/
 
 #ifdef HAVE_DIX_CONFIG_H
 #include <dix-config.h>
@@ -79,15 +84,23 @@ OR PERFORMANCE OF THIS SOFTWARE.
 #endif
 
 #if defined(WIN32) && !defined(__CYGWIN__)
-#include <X11/Xwinsock.h>
+#include <nx-X11/Xwinsock.h>
 #endif
-#include <X11/Xos.h>
+#include <nx-X11/Xos.h>
 #include <stdio.h>
 #include "misc.h"
-#include <X11/X.h>
-#include <X11/Xtrans/Xtrans.h>
+#include <nx-X11/X.h>
+#define XSERV_t
+#define TRANS_SERVER
+#define TRANS_REOPEN
+#include <nx-X11/Xtrans/Xtrans.h>
 #include "input.h"
 #include "dixfont.h"
+#ifdef HAS_XFONT2
+# include <X11/fonts/libxfont2.h>
+#else
+# include <X11/fonts/fontutil.h>
+#endif /* HAS_XFONT2 */
 #include "osdep.h"
 #ifdef X_POSIX_C_SOURCE
 #define _POSIX_C_SOURCE X_POSIX_C_SOURCE
@@ -105,22 +118,20 @@ OR PERFORMANCE OF THIS SOFTWARE.
 #ifndef WIN32
 #include <sys/wait.h>
 #endif
-#if !defined(SYSV) && !defined(WIN32) && !defined(Lynx) && !defined(QNX4)
+#if !defined(SYSV) && !defined(WIN32)
 #include <sys/resource.h>
 #endif
 #include <time.h>
 #include <sys/stat.h>
 #include <ctype.h>    /* for isspace */
 #include <stdarg.h>
-
-#if defined(DGUX)
-#include <sys/resource.h>
-#include <netdb.h>
-#endif
+#include <sys/types.h>
+#include <grp.h>
+#include <pwd.h>
 
 #include <stdlib.h>	/* for malloc() */
 
-#if defined(TCPCONN) || defined(STREAMSCONN)
+#if defined(TCPCONN)
 # ifndef WIN32
 #  include <netdb.h>
 # endif
@@ -128,24 +139,18 @@ OR PERFORMANCE OF THIS SOFTWARE.
 
 #include "opaque.h"
 
-#ifdef SMART_SCHEDULE
 #include "dixstruct.h"
-#endif
 
 #ifdef XKB
-#include <X11/extensions/XKBsrv.h>
+#include "xkbsrv.h"
 #endif
 #ifdef XCSECURITY
 #define _SECURITY_SERVER
-#include <X11/extensions/security.h>
+#include <nx-X11/extensions/security.h>
 #endif
 
 #ifdef RENDER
 #include "picture.h"
-#endif
-
-#ifdef XPRINT
-#include "DiPrint.h"
 #endif
 
 Bool noTestExtensions;
@@ -169,17 +174,8 @@ Bool noDPSExtension = FALSE;
 #ifdef DPMSExtension
 Bool noDPMSExtension = FALSE;
 #endif
-#ifdef EVI
-Bool noEVIExtension = FALSE;
-#endif
-#ifdef FONTCACHE
-Bool noFontCacheExtension = FALSE;
-#endif
 #ifdef GLXEXT
 Bool noGlxExtension = FALSE;
-#endif
-#ifdef LBX
-Bool noLbxExtension = FALSE;
 #endif
 #ifdef SCREENSAVER
 Bool noScreenSaverExtension = FALSE;
@@ -187,14 +183,9 @@ Bool noScreenSaverExtension = FALSE;
 #ifdef MITSHM
 Bool noMITShmExtension = FALSE;
 #endif
-#ifdef MITMISC
-Bool noMITMiscExtension = FALSE;
-#endif
-#ifdef MULTIBUFFER
-Bool noMultibufferExtension = FALSE;
-#endif
 #ifdef RANDR
 Bool noRRExtension = FALSE;
+Bool noRRXineramaExtension = FALSE;
 #endif
 #ifdef RENDER
 Bool noRenderExtension = FALSE;
@@ -208,37 +199,17 @@ Bool noSecurityExtension = FALSE;
 #ifdef XSYNC
 Bool noSyncExtension = FALSE;
 #endif
-#ifdef TOGCUP
-Bool noXcupExtension = FALSE;
-#endif
 #ifdef RES
 Bool noResExtension = FALSE;
-#endif
-#ifdef XAPPGROUP
-Bool noXagExtension = FALSE;
 #endif
 #ifdef XCMISC
 Bool noXCMiscExtension = FALSE;
 #endif
-#ifdef XEVIE
-/* Xevie is disabled by default for now until the
- * interface is stable */
-Bool noXevieExtension = TRUE;
-#endif
 #ifdef XF86BIGFONT
 Bool noXFree86BigfontExtension = FALSE;
 #endif
-#ifdef XFreeXDGA
-Bool noXFree86DGAExtension = FALSE;
-#endif
 #ifdef XF86DRI
 Bool noXFree86DRIExtension = FALSE;
-#endif
-#ifdef XF86MISC
-Bool noXFree86MiscExtension = FALSE;
-#endif
-#ifdef XF86VIDMODE
-Bool noXFree86VidModeExtension = FALSE;
 #endif
 #ifdef XFIXES
 Bool noXFixesExtension = FALSE;
@@ -259,14 +230,14 @@ Bool noXvExtension = FALSE;
 #endif
 
 #define X_INCLUDE_NETDB_H
-#include <X11/Xos_r.h>
+#include <nx-X11/Xos_r.h>
 
 #include <errno.h>
 
 #ifdef NX_TRANS_SOCKET
 
-#include "NX.h"
-#include "NXvars.h"
+#include <nx/NX.h>
+#include <nx/NXvars.h>
 
 #endif
 
@@ -291,17 +262,6 @@ int auditTrailLevel = 1;
 
 Bool Must_have_memory = FALSE;
 
-#ifdef AIXV3
-int SyncOn  = 0;
-extern int SelectWaitTime;
-#endif
-
-#ifdef DEBUG
-#ifndef SPECIAL_MALLOC
-#define MEMBUG
-#endif
-#endif
-
 #if defined(SVR4) || defined(__linux__) || defined(CSRG_BASED)
 #define HAS_SAVED_IDS_AND_SETEUID
 #endif
@@ -311,10 +271,6 @@ extern int SelectWaitTime;
 long Memory_fail = 0;
 #include <stdlib.h>  /* for random() */
 #endif
-
-#ifdef sgi
-int userdefinedfontpath = 0;
-#endif /* sgi */
 
 char *dev_tty_from_init = NULL;		/* since we need to parse it anyway */
 
@@ -339,7 +295,8 @@ OsSignal(sig, handler)
 	sigaddset(&act.sa_mask, sig);
     act.sa_flags = 0;
     act.sa_handler = handler;
-    sigaction(sig, &act, &oact);
+    if (sigaction(sig, &act, &oact))
+	perror("sigaction");
     return oact.sa_handler;
 #endif
 }
@@ -351,28 +308,13 @@ OsSignal(sig, handler)
  * server at a time.  This keeps the servers from stomping on each other
  * if the user forgets to give them different display numbers.
  */
-#ifndef __UNIXOS2__
 #define LOCK_DIR "/tmp"
-#endif
 #define LOCK_TMP_PREFIX "/.tX"
 #define LOCK_PREFIX "/.X"
 #define LOCK_SUFFIX "-lock"
 
-#if defined(DGUX)
-#include <limits.h>
-#include <sys/param.h>
-#endif
-
-#ifdef __UNIXOS2__
-#define link rename
-#endif
-
 #ifndef PATH_MAX
-#ifndef Lynx
 #include <sys/param.h>
-#else
-#include <param.h>
-#endif
 #ifndef PATH_MAX
 #ifdef MAXPATHLEN
 #define PATH_MAX MAXPATHLEN
@@ -401,18 +343,11 @@ LockServer(void)
   int len;
   char port[20];
 
-  if (nolock) return;
+  if (nolock || NoListenAll) return;
   /*
    * Path names
    */
-#ifndef __UNIXOS2__
   tmppath = LOCK_DIR;
-#else
-  /* OS/2 uses TMP directory, must also prepare for 8.3 names */
-  tmppath = getenv("TMP");
-  if (!tmppath)
-    FatalError("No TMP dir found\n");
-#endif
 
   sprintf(port, "%d", atoi(display));
   len = strlen(LOCK_PREFIX) > strlen(LOCK_TMP_PREFIX) ? strlen(LOCK_PREFIX) :
@@ -452,13 +387,13 @@ LockServer(void)
   if (lfd < 0)
     FatalError("Could not create lock file in %s\n", tmp);
   (void) sprintf(pid_str, "%10ld\n", (long)getpid());
-  (void) write(lfd, pid_str, 11);
-#ifndef __UNIXOS2__
+  if (write(lfd, pid_str, 11) != 11)
+    FatalError("Could not write pid to lock file in %s\n", tmp);
+
 #ifndef USE_CHMOD
   (void) fchmod(lfd, 0444);
 #else
   (void) chmod(tmp, 0444);
-#endif
 #endif
   (void) close(lfd);
 
@@ -480,7 +415,7 @@ LockServer(void)
       /*
        * Read the pid from the existing file
        */
-      lfd = open(LockFile, O_RDONLY);
+      lfd = open(LockFile, O_RDONLY|O_NOFOLLOW);
       if (lfd < 0) {
         unlink(tmp);
         FatalError("Can't read lock file %s\n", LockFile);
@@ -534,13 +469,10 @@ LockServer(void)
 void
 UnlockServer(void)
 {
-  if (nolock) return;
+  if (nolock || NoListenAll) return;
 
   if (!StillLocking){
 
-#ifdef __UNIXOS2__
-  (void) chmod(LockFile,S_IREAD|S_IWRITE);
-#endif /* __UNIXOS2__ */
   (void) unlink(LockFile);
   }
 }
@@ -599,7 +531,7 @@ GetTimeInMillis(void)
 #endif
 
 void
-AdjustWaitForDelay (pointer waitTime, unsigned long newdelay)
+AdjustWaitForDelay (void * waitTime, unsigned long newdelay)
 {
     static struct timeval   delay_val;
     struct timeval	    **wt = (struct timeval **) waitTime;
@@ -624,7 +556,6 @@ AdjustWaitForDelay (pointer waitTime, unsigned long newdelay)
 
 void UseMsg(void)
 {
-#if !defined(AIXrt) && !defined(AIX386)
     ErrorF("use: X [:<display>] [option]\n");
     ErrorF("-a #                   mouse acceleration (pixels)\n");
     ErrorF("-ac                    disable access control restrictions\n");
@@ -640,7 +571,9 @@ void UseMsg(void)
     ErrorF("-c                     turns off key-click\n");
     ErrorF("c #                    key-click volume (0-100)\n");
     ErrorF("-cc int                default color visual class\n");
-    ErrorF("-co file               color database file\n");
+#ifdef NXAGENT_SERVER
+    ErrorF("-co file               deprecated, has no effect\n");
+#endif
 #ifdef COMMANDLINE_CHALLENGED_OPERATING_SYSTEMS
     ErrorF("-config file           read options from file\n");
 #endif
@@ -688,9 +621,6 @@ void UseMsg(void)
 #ifdef XCSECURITY
     ErrorF("-sp file               security policy file\n");
 #endif
-#ifdef XPRINT
-    PrinterUseMsg();
-#endif
     ErrorF("-su                    disable any save under support\n");
     ErrorF("-t #                   mouse threshold (pixels)\n");
     ErrorF("-terminate             terminate at server reset\n");
@@ -700,22 +630,23 @@ void UseMsg(void)
     ErrorF("v                      video blanking for screen-saver\n");
     ErrorF("-v                     screen-saver without video blanking\n");
     ErrorF("-wm                    WhenMapped default backing-store\n");
-    ErrorF("-x string              loads named extension at init time \n");
     ErrorF("-maxbigreqsize         set maximal bigrequest size \n");
 #ifdef PANORAMIX
-    ErrorF("+xinerama              Enable XINERAMA extension\n");
-    ErrorF("-xinerama              Disable XINERAMA extension\n");
+    ErrorF("+xinerama              Enable XINERAMA (PanoramiX) extension\n");
+    ErrorF("-xinerama              Disable XINERAMA (PanoramiX) extension (default)\n");
+    ErrorF("-disablexineramaextension Disable XINERAMA extension\n");
 #endif
-#ifdef SMART_SCHEDULE
+#ifdef RANDR
+    ErrorF("+rrxinerama            Enable XINERAMA (via RandR) extension (default)\n");
+    ErrorF("-rrxinerama            Disable XINERAMA (via RandR) extension\n");
+#endif
     ErrorF("-dumbSched             Disable smart scheduling, enable old behavior\n");
     ErrorF("-schedInterval int     Set scheduler interval in msec\n");
-#endif
     ErrorF("+extension name        Enable extension\n");
     ErrorF("-extension name        Disable extension\n");
 #ifdef XDMCP
     XdmcpUseMsg();
 #endif
-#endif /* !AIXrt && ! AIX386 */
 #ifdef XKB
     XkbUseMsg();
 #endif
@@ -780,6 +711,7 @@ ProcessCommandLine(int argc, char *argv[])
 	{
 	    /* initialize display */
 	    display = argv[i];
+	    explicit_display = TRUE;
 	    display++;
             if( ! VerifyDisplayName( display ) ) {
                 ErrorF("Bad display name: %s\n", display);
@@ -847,13 +779,14 @@ ProcessCommandLine(int argc, char *argv[])
 	    else
 		UseMsg();
 	}
+#ifdef NXAGENT_SERVER
 	else if ( strcmp( argv[i], "-co") == 0)
 	{
-	    if(++i < argc)
-	        rgbPath = argv[i];
-	    else
-		UseMsg();
+	    fprintf(stderr, "Warning: Ignoring deprecated command line option '%s'.\n", argv[i]);
+	    if(++i >= argc)
+	        UseMsg();
 	}
+#endif
 	else if ( strcmp( argv[i], "-core") == 0)
 	    CoreDump = TRUE;
 	else if ( strcmp( argv[i], "-dpi") == 0)
@@ -863,6 +796,15 @@ ProcessCommandLine(int argc, char *argv[])
 	    else
 		UseMsg();
 	}
+	else if (strcmp(argv[i], "-displayfd") == 0) {
+	    if (++i < argc) {
+		displayfd = atoi(argv[i]);
+		nolock = TRUE;
+	    }
+	    else
+		UseMsg();
+	}
+
 #ifdef DPMSExtension
 	else if ( strcmp( argv[i], "dpms") == 0)
 	    DPMSEnabledSwitch = TRUE;
@@ -871,7 +813,11 @@ ProcessCommandLine(int argc, char *argv[])
 #endif
 	else if ( strcmp( argv[i], "-deferglyphs") == 0)
 	{
+#ifdef HAS_XFONT2
+	    if(++i >= argc || !!xfont2_parse_glyph_caching_mode(argv[i]))
+#else
 	    if(++i >= argc || !ParseGlyphCachingMode(argv[i]))
+#endif /* HAS_XFONT2 */
 		UseMsg();
 	}
 	else if ( strcmp( argv[i], "-f") == 0)
@@ -899,9 +845,6 @@ ProcessCommandLine(int argc, char *argv[])
 	{
 	    if(++i < argc)
 	    {
-#ifdef sgi
-		userdefinedfontpath = 1;
-#endif /* sgi */
 	        defaultFontPath = argv[i];
 	    }
 	    else
@@ -957,7 +900,7 @@ ProcessCommandLine(int argc, char *argv[])
 #ifdef SERVER_LOCK
 	else if ( strcmp ( argv[i], "-nolock") == 0)
 	{
-#if !defined(WIN32) && !defined(__UNIXOS2__) && !defined(__CYGWIN__)
+#if !defined(WIN32) && !defined(__CYGWIN__)
 	  if (getuid() != 0)
 	    ErrorF("Warning: the -nolock option can only be used by root\n");
 	  else
@@ -978,6 +921,11 @@ ProcessCommandLine(int argc, char *argv[])
 	else if ( strcmp( argv[i], "-nolisten") == 0)
 	{
             if(++i < argc) {
+#ifdef NXAGENT_SERVER
+		if (strcmp( argv[i], "ANY" ) == 0)
+		    NoListenAll = TRUE;
+		else
+#endif /* NXAGENT_SERVER */
 		if (_XSERVTransNoListen(argv[i])) 
 		    FatalError ("Failed to disable listen for %s transport",
 				argv[i]);
@@ -1075,14 +1023,14 @@ ProcessCommandLine(int argc, char *argv[])
 	    PanoramiXExtensionDisabledHack = TRUE;
 	}
 #endif
-	else if ( strcmp( argv[i], "-x") == 0)
-	{
-	    if(++i >= argc)
-		UseMsg();
-	    /* For U**x, which doesn't support dynamic loading, there's nothing
-	     * to do when we see a -x.  Either the extension is linked in or
-	     * it isn't */
+#ifdef RANDR
+	else if ( strcmp( argv[i], "+rrxinerama") == 0){
+	    noRRXineramaExtension = FALSE;
 	}
+	else if ( strcmp( argv[i], "-rrxinerama") == 0){
+	    noRRXineramaExtension = TRUE;
+	}
+#endif
 	else if ( strcmp( argv[i], "-I") == 0)
 	{
 	    /* ignore all remaining arguments */
@@ -1099,36 +1047,18 @@ ProcessCommandLine(int argc, char *argv[])
 	    i = skip - 1;
 	}
 #endif
-#ifdef XPRINT
-	else if ((skip = PrinterOptions(argc, argv, i)) != i)
-	{
-	    i = skip - 1;
-	}
-#endif
 #ifdef XCSECURITY
 	else if ((skip = XSecurityOptions(argc, argv, i)) != i)
 	{
 	    i = skip - 1;
 	}
 #endif
-#ifdef AIXV3
-        else if ( strcmp( argv[i], "-timeout") == 0)
-        {
-            if(++i < argc)
-                SelectWaitTime = atoi(argv[i]);
-            else
-                UseMsg();
-        }
-        else if ( strcmp( argv[i], "-sync") == 0)
-        {
-            SyncOn++;
-        }
-#endif
-#ifdef SMART_SCHEDULE
+#if HAVE_SETITIMER
 	else if ( strcmp( argv[i], "-dumbSched") == 0)
 	{
-	    SmartScheduleDisable = TRUE;
+	    SmartScheduleSignalEnable = FALSE;
 	}
+#endif
 	else if ( strcmp( argv[i], "-schedInterval") == 0)
 	{
 	    if (++i < argc)
@@ -1148,7 +1078,6 @@ ProcessCommandLine(int argc, char *argv[])
 	    else
 		UseMsg();
 	}
-#endif
 #ifdef RENDER
 	else if ( strcmp( argv[i], "-render" ) == 0)
 	{
@@ -1217,7 +1146,7 @@ InsertFileIntoCommandLine(
 
     fstat(fileno(f), &st);
 
-    buf = (char *) xalloc((unsigned) st.st_size + 1);
+    buf = (char *) malloc((unsigned) st.st_size + 1);
     if (!buf)
 	FatalError("Out of Memory\n");
 
@@ -1257,12 +1186,12 @@ InsertFileIntoCommandLine(
 	}
     }
 
-    buf = (char *) xrealloc(buf, q - buf);
+    buf = (char *) realloc(buf, q - buf);
     if (!buf)
 	FatalError("Out of memory reallocing option buf\n");
 
     *resargc = prefix_argc + insert_argc + suffix_argc;
-    *resargv = (char **) xalloc((*resargc + 1) * sizeof(char *));
+    *resargv = (char **) malloc((*resargc + 1) * sizeof(char *));
     if (!*resargv)
 	FatalError("Out of Memory\n");
 
@@ -1287,7 +1216,7 @@ ExpandCommandLine(int *pargc, char ***pargv)
 {
     int i;
 
-#if !defined(WIN32) && !defined(__UNIXOS2__) && !defined(__CYGWIN__)
+#if !defined(WIN32) && !defined(__CYGWIN__)
     if (getuid() != geteuid())
 	return;
 #endif
@@ -1309,10 +1238,10 @@ ExpandCommandLine(int *pargc, char ***pargv)
 /* Implement a simple-minded font authorization scheme.  The authorization
    name is "hp-hostname-1", the contents are simply the host name. */
 int
-set_font_authorizations(char **authorizations, int *authlen, pointer client)
+set_font_authorizations(char **authorizations, int *authlen, void * client)
 {
 #define AUTHORIZATION_NAME "hp-hostname-1"
-#if defined(TCPCONN) || defined(STREAMSCONN)
+#if defined(TCPCONN)
     static char *result = NULL;
     static char *p = NULL;
 
@@ -1347,7 +1276,7 @@ set_font_authorizations(char **authorizations, int *authlen, pointer client)
 #endif
 
 	len = strlen(hnameptr) + 1;
-	result = xalloc(len + sizeof(AUTHORIZATION_NAME) + 4);
+	result = malloc(len + sizeof(AUTHORIZATION_NAME) + 4);
 
 	p = result;
         *p++ = sizeof(AUTHORIZATION_NAME) >> 8;
@@ -1373,80 +1302,20 @@ set_font_authorizations(char **authorizations, int *authlen, pointer client)
 #endif /* TCPCONN */
 }
 
-/* XALLOC -- X's internal memory allocator.  Why does it return unsigned
- * long * instead of the more common char *?  Well, if you read K&R you'll
- * see they say that alloc must return a pointer "suitable for conversion"
- * to whatever type you really want.  In a full-blown generic allocator
- * there's no way to solve the alignment problems without potentially
- * wasting lots of space.  But we have a more limited problem. We know
- * we're only ever returning pointers to structures which will have to
- * be long word aligned.  So we are making a stronger guarantee.  It might
- * have made sense to make Xalloc return char * to conform with people's
- * expectations of malloc, but this makes lint happier.
- */
-
-#ifndef INTERNAL_MALLOC
-
-void * 
-Xalloc(unsigned long amount)
-{
-    register pointer  ptr;
-	
-    if ((long)amount <= 0) {
-	return (unsigned long *)NULL;
-    }
-    /* aligned extra on long word boundary */
-    amount = (amount + (sizeof(long) - 1)) & ~(sizeof(long) - 1);
-#ifdef MEMBUG
-    if (!Must_have_memory && Memory_fail &&
-	((random() % MEM_FAIL_SCALE) < Memory_fail))
-	return (unsigned long *)NULL;
-#endif
-    if ((ptr = (pointer)malloc(amount))) {
-	return (unsigned long *)ptr;
-    }
-    if (Must_have_memory)
-	FatalError("Out of memory");
-    return (unsigned long *)NULL;
-}
-
 /*****************
  * XNFalloc 
- * "no failure" realloc, alternate interface to Xalloc w/o Must_have_memory
+ * "no failure" alloc
  *****************/
 
 void *
 XNFalloc(unsigned long amount)
 {
-    register pointer ptr;
-
-    if ((long)amount <= 0)
-    {
-        return (unsigned long *)NULL;
-    }
-    /* aligned extra on long word boundary */
-    amount = (amount + (sizeof(long) - 1)) & ~(sizeof(long) - 1);
-    ptr = (pointer)malloc(amount);
+    void *ptr = malloc(amount);
     if (!ptr)
     {
         FatalError("Out of memory");
     }
-    return ((unsigned long *)ptr);
-}
-
-/*****************
- * Xcalloc
- *****************/
-
-void *
-Xcalloc(unsigned long amount)
-{
-    unsigned long   *ret;
-
-    ret = Xalloc (amount);
-    if (ret)
-	bzero ((char *) ret, (int) amount);
-    return ret;
+    return ptr;
 }
 
 /*****************
@@ -1456,72 +1325,24 @@ Xcalloc(unsigned long amount)
 void *
 XNFcalloc(unsigned long amount)
 {
-    unsigned long   *ret;
-
-    ret = Xalloc (amount);
-    if (ret)
-	bzero ((char *) ret, (int) amount);
-    else if ((long)amount > 0)
-        FatalError("Out of memory");
+    void *ret = calloc(1, amount);
+    if (!ret)
+	FatalError("XNFcalloc: Out of memory");
     return ret;
 }
 
 /*****************
- * Xrealloc
- *****************/
-
-void *
-Xrealloc(pointer ptr, unsigned long amount)
-{
-#ifdef MEMBUG
-    if (!Must_have_memory && Memory_fail &&
-	((random() % MEM_FAIL_SCALE) < Memory_fail))
-	return (unsigned long *)NULL;
-#endif
-    if ((long)amount <= 0)
-    {
-	if (ptr && !amount)
-	    free(ptr);
-	return (unsigned long *)NULL;
-    }
-    amount = (amount + (sizeof(long) - 1)) & ~(sizeof(long) - 1);
-    if (ptr)
-        ptr = (pointer)realloc((char *)ptr, amount);
-    else
-	ptr = (pointer)malloc(amount);
-    if (ptr)
-        return (unsigned long *)ptr;
-    if (Must_have_memory)
-	FatalError("Out of memory");
-    return (unsigned long *)NULL;
-}
-                    
-/*****************
  * XNFrealloc 
- * "no failure" realloc, alternate interface to Xrealloc w/o Must_have_memory
+ * "no failure" realloc
  *****************/
 
 void *
-XNFrealloc(pointer ptr, unsigned long amount)
+XNFrealloc(void * ptr, unsigned long amount)
 {
-    if (( ptr = (pointer)Xrealloc( ptr, amount ) ) == NULL)
-    {
-	if ((long)amount > 0)
-            FatalError( "Out of memory" );
-    }
-    return ((unsigned long *)ptr);
-}
-
-/*****************
- *  Xfree
- *    calls free 
- *****************/    
-
-void
-Xfree(pointer ptr)
-{
-    if (ptr)
-	free((char *)ptr); 
+    void *ret = realloc(ptr, amount);
+    if (!ret)
+       FatalError("XNFrealloc: Out of memory");
+    return ret;
 }
 
 void
@@ -1537,62 +1358,38 @@ OsInitAllocator (void)
 	been_here = 1;
 #endif
 }
-#endif /* !INTERNAL_MALLOC */
-
 
 char *
 Xstrdup(const char *s)
 {
-    char *sd;
-
     if (s == NULL)
 	return NULL;
-
-    sd = (char *)Xalloc(strlen(s) + 1);
-    if (sd != NULL)
-	strcpy(sd, s);
-    return sd;
+    return strdup(s);
 }
 
 
 char *
 XNFstrdup(const char *s)
 {
-    char *sd;
+    char *ret;
 
     if (s == NULL)
 	return NULL;
 
-    sd = (char *)XNFalloc(strlen(s) + 1);
-    strcpy(sd, s);
-    return sd;
+    ret = strdup(s);
+    if (!ret)
+       FatalError("XNFstrdup: Out of memory");
+    return ret;
 }
 
-#ifdef SMART_SCHEDULE
-
-unsigned long	SmartScheduleIdleCount;
-Bool		SmartScheduleIdle;
-Bool		SmartScheduleTimerStopped;
-
-#ifdef SIGVTALRM
-#define SMART_SCHEDULE_POSSIBLE
-#endif
-
-#ifdef SMART_SCHEDULE_POSSIBLE
-#define SMART_SCHEDULE_SIGNAL		SIGALRM
-#define SMART_SCHEDULE_TIMER		ITIMER_REAL
-#endif
-
-#ifdef NX_TRANS_SOCKET
 void
 SmartScheduleStopTimer (void)
-#else
-static void
-SmartScheduleStopTimer (void)
-#endif
 {
-#ifdef SMART_SCHEDULE_POSSIBLE
+#if HAVE_SETITIMER
     struct itimerval	timer;
+
+    if (!SmartScheduleSignalEnable)
+	return;
 
     #ifdef NX_TRANS_TEST
     fprintf(stderr, "SmartScheduleStopTimer: Stopping timer.\n");
@@ -1603,99 +1400,103 @@ SmartScheduleStopTimer (void)
     timer.it_value.tv_sec = 0;
     timer.it_value.tv_usec = 0;
     (void) setitimer (ITIMER_REAL, &timer, 0);
-    SmartScheduleTimerStopped = TRUE;
 #endif
 }
 
-Bool
+void
 SmartScheduleStartTimer (void)
 {
-#ifdef SMART_SCHEDULE_POSSIBLE
+#if HAVE_SETITIMER
     struct itimerval	timer;
 
-    #ifdef NX_TRANS_SOCKET
-
-    if (SmartScheduleDisable)
-    {
-      return FALSE;
-    }
-
-    #endif
+    if (!SmartScheduleSignalEnable)
+      return;
 
     #ifdef NX_TRANS_TEST
     fprintf(stderr, "SmartScheduleStartTimer: Starting timer with [%ld] ms.\n",
                 SmartScheduleInterval);
     #endif
 
-    SmartScheduleTimerStopped = FALSE;
     timer.it_interval.tv_sec = 0;
     timer.it_interval.tv_usec = SmartScheduleInterval * 1000;
     timer.it_value.tv_sec = 0;
     timer.it_value.tv_usec = SmartScheduleInterval * 1000;
-    return setitimer (ITIMER_REAL, &timer, 0) >= 0;
+    setitimer (ITIMER_REAL, &timer, 0);
 #endif
-    return FALSE;
 }
 
-#ifdef SMART_SCHEDULE_POSSIBLE
+#if HAVE_SETITIMER
 static void
 SmartScheduleTimer (int sig)
 {
-    int olderrno = errno;
-
     SmartScheduleTime += SmartScheduleInterval;
 
     #ifdef NX_TRANS_TEST
     fprintf(stderr, "SmartScheduleTimer: Got timer with time [%ld] ms.\n",
                 SmartScheduleTime);
     #endif
+}
 
-    if (SmartScheduleIdle)
-    {
-	SmartScheduleStopTimer ();
-    }
-    errno = olderrno;
+int
+SmartScheduleEnable (void)
+{
+    int ret = 0;
+    struct sigaction	act;
+
+    if (!SmartScheduleSignalEnable)
+	return 0;
+
+    #ifdef NX_TRANS_TEST
+    fprintf(stderr, "SmartScheduleEnable: Enabling the smart scheduler.\n");
+    #endif
+
+    memset((char *) &act, 0, sizeof(struct sigaction));
+
+    /* Set up the timer signal function */
+    act.sa_flags = SA_RESTART;
+    act.sa_handler = SmartScheduleTimer;
+    sigemptyset (&act.sa_mask);
+    sigaddset (&act.sa_mask, SIGALRM);
+    ret = sigaction(SIGALRM, &act, 0);
+    return ret;
+}
+
+static int
+SmartSchedulePause(void)
+{
+    int ret = 0;
+    struct sigaction act;
+
+    if (!SmartScheduleSignalEnable)
+	return 0;
+
+    #ifdef NX_TRANS_TEST
+    fprintf(stderr, "SmartSchedulePause: Pausing the smart scheduler.\n");
+    #endif
+
+    memset((char *) &act, 0, sizeof(struct sigaction));
+
+    act.sa_handler = SIG_IGN;
+    sigemptyset(&act.sa_mask);
+    ret = sigaction(SIGALRM, &act, 0);
+    return ret;
 }
 #endif
 
-Bool
-SmartScheduleInit (void)
+void
+SmartScheduleInit(void)
 {
-#ifdef SMART_SCHEDULE_POSSIBLE
-    struct sigaction	act;
-
-    if (SmartScheduleDisable)
-	return TRUE;
-    
+#if HAVE_SETITIMER
     #ifdef NX_TRANS_TEST
     fprintf(stderr, "SmartScheduleInit: Initializing the smart scheduler.\n");
     #endif
 
-    bzero ((char *) &act, sizeof(struct sigaction));
-
-    /* Set up the timer signal function */
-    act.sa_handler = SmartScheduleTimer;
-    sigemptyset (&act.sa_mask);
-    sigaddset (&act.sa_mask, SMART_SCHEDULE_SIGNAL);
-    if (sigaction (SMART_SCHEDULE_SIGNAL, &act, 0) < 0)
-    {
-	perror ("sigaction for smart scheduler");
-	return FALSE;
+    if (SmartScheduleEnable() < 0) {
+	perror("sigaction for smart scheduler");
+	SmartScheduleSignalEnable = FALSE;
     }
-    /* Set up the virtual timer */
-    if (!SmartScheduleStartTimer ())
-    {
-	perror ("scheduling timer");
-	return FALSE;
-    }
-    /* stop the timer and wait for WaitForSomething to start it */
-    SmartScheduleStopTimer ();
-    return TRUE;
-#else
-    return FALSE;
 #endif
 }
-#endif
 
 #ifdef SIG_BLOCK
 static sigset_t	PreviousSignalMask;
@@ -1751,7 +1552,7 @@ OsReleaseSignals (void)
 #endif
 }
 
-#if !defined(WIN32) && !defined(__UNIXOS2__)
+#if !defined(WIN32)
 /*
  * "safer" versions of system(3), popen(3) and pclose(3) which give up
  * all privs before running a command.
@@ -1770,12 +1571,17 @@ System(char *command)
     void (*csig)(int);
 #endif
     int status;
+    struct passwd *pwent;
 
     if (!command)
 	return(1);
 
 #ifdef SIGCHLD
-    csig = signal(SIGCHLD, SIG_DFL);
+    csig = OsSignal(SIGCHLD, SIG_DFL);
+    if (csig == SIG_ERR) {
+	perror("signal");
+	return -1;
+    }
 #endif
 
 #ifdef DEBUG
@@ -1791,6 +1597,9 @@ System(char *command)
     case -1:	/* error */
 	p = -1;
     case 0:	/* child */
+	pwent = getpwuid(getuid());
+	if (initgroups(pwent->pw_name,getgid()) == -1)
+	    _exit(127);
 	if (setgid(getgid()) == -1)
 	    _exit(127);
 	if (setuid(getuid()) == -1)
@@ -1810,7 +1619,10 @@ System(char *command)
 #endif
 
 #ifdef SIGCHLD
-    signal(SIGCHLD, csig);
+    if (OsSignal(SIGCHLD, csig) == SIG_ERR) {
+	perror("signal");
+	return -1;
+    }
 #endif
 
     return p == -1 ? -1 : status;
@@ -1822,7 +1634,7 @@ static struct pid {
     int pid;
 } *pidlist;
 
-pointer
+void *
 Popen(char *command, char *type)
 {
     struct pid *cur;
@@ -1835,13 +1647,24 @@ Popen(char *command, char *type)
     if ((*type != 'r' && *type != 'w') || type[1])
 	return NULL;
 
-    if ((cur = (struct pid *)xalloc(sizeof(struct pid))) == NULL)
+    if ((cur = (struct pid *)malloc(sizeof(struct pid))) == NULL)
 	return NULL;
 
     if (pipe(pdes) < 0) {
-	xfree(cur);
+	free(cur);
 	return NULL;
     }
+
+    /* Ignore the smart scheduler while this is going on */
+#if HAVE_SETITIMER
+    if (SmartSchedulePause() < 0) {
+	close(pdes[0]);
+	close(pdes[1]);
+	free(cur);
+	perror("signal");
+	return NULL;
+    }
+#endif
 
 #ifdef NX_TRANS_EXIT
     if (OsVendorStartRedirectErrorFProc != NULL) {
@@ -1853,7 +1676,11 @@ Popen(char *command, char *type)
     case -1: 	/* error */
 	close(pdes[0]);
 	close(pdes[1]);
-	xfree(cur);
+	free(cur);
+#if HAVE_SETITIMER
+	if (SmartScheduleEnable() < 0)
+	    perror("signal");
+#endif
 #ifdef NX_TRANS_EXIT
 	if (OsVendorEndRedirectErrorFProc != NULL) {
 	    OsVendorEndRedirectErrorFProc();
@@ -1928,6 +1755,13 @@ Popen(char *command, char *type)
 	OsReleaseSignals ();
         #endif
 
+#if HAVE_SETITIMER
+	if (SmartScheduleEnable() < 0) {
+	    perror("signal");
+	    return NULL;
+	}
+#endif
+
 	execl("/bin/sh", "sh", "-c", command, (char *)NULL);
 	_exit(127);
     }
@@ -1959,7 +1793,7 @@ Popen(char *command, char *type)
 }
 
 /* fopen that drops privileges */
-pointer
+void *
 Fopen(char *file, char *type)
 {
     FILE *iop;
@@ -1973,11 +1807,11 @@ Fopen(char *file, char *type)
     if ((*type != 'r' && *type != 'w') || type[1])
 	return NULL;
 
-    if ((cur = (struct pid *)xalloc(sizeof(struct pid))) == NULL)
+    if ((cur = (struct pid *)malloc(sizeof(struct pid))) == NULL)
 	return NULL;
 
     if (pipe(pdes) < 0) {
-	xfree(cur);
+	free(cur);
 	return NULL;
     }
 
@@ -1985,7 +1819,7 @@ Fopen(char *file, char *type)
     case -1: 	/* error */
 	close(pdes[0]);
 	close(pdes[1]);
-	xfree(cur);
+	free(cur);
 	return NULL;
     case 0:	/* child */
 	if (setgid(getgid()) == -1)
@@ -2053,7 +1887,7 @@ Fopen(char *file, char *type)
 }
 
 int
-Pclose(pointer iop)
+Pclose(void * iop)
 {
     struct pid *cur, *last;
     int pstat;
@@ -2079,7 +1913,7 @@ Pclose(pointer iop)
 	pidlist = cur->next;
     else
 	last->next = cur->next;
-    xfree(cur);
+    free(cur);
 
     /* allow EINTR again */
     OsReleaseSignals ();
@@ -2093,7 +1927,7 @@ Pclose(pointer iop)
 }
 
 int 
-Fclose(pointer iop)
+Fclose(void * iop)
 {
 #ifdef HAS_SAVED_IDS_AND_SETEUID
     return fclose(iop);
@@ -2102,7 +1936,7 @@ Fclose(pointer iop)
 #endif
 }
 
-#endif /* !WIN32 && !__UNIXOS2__ */
+#endif /* !WIN32 */
 
 
 /*
@@ -2197,9 +2031,6 @@ CheckUserParameters(int argc, char **argv, char **envp)
     enum BadCode bad = NotBad;
     int i = 0, j;
     char *a, *e = NULL;
-#if defined(__QNX__) && !defined(__QNXNTO__)
-    char cmd_name[64];
-#endif
 
 #if CHECK_EUID
     if (geteuid() == 0 && getuid() != geteuid())

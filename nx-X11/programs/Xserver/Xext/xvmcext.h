@@ -1,8 +1,7 @@
-/* $XFree86: xc/programs/Xserver/Xext/xvmcext.h,v 1.1 2001/04/07 11:04:21 alanh Exp $ */
 
 #ifndef _XVMC_H
 #define _XVMC_H
-#include <X11/extensions/Xv.h>
+#include <nx-X11/extensions/Xv.h>
 #include "xvdix.h"
 
 typedef struct {
@@ -32,15 +31,15 @@ typedef struct {
   unsigned short height;
   CARD32 flags;
   int refcnt;
-  pointer port_priv;
-  pointer driver_priv;
+  void * port_priv;
+  void * driver_priv;
 } XvMCContextRec, *XvMCContextPtr;
 
 typedef struct {
   XID surface_id;
   int surface_type_id;
   XvMCContextPtr context;
-  pointer driver_priv;
+  void * driver_priv;
 } XvMCSurfaceRec, *XvMCSurfacePtr;
 
 
@@ -53,7 +52,7 @@ typedef struct {
   int entry_bytes;
   char component_order[4];
   XvMCContextPtr context;
-  pointer driver_priv;
+  void * driver_priv;
 } XvMCSubpictureRec, *XvMCSubpicturePtr;
 
 typedef int (*XvMCCreateContextProcPtr) (

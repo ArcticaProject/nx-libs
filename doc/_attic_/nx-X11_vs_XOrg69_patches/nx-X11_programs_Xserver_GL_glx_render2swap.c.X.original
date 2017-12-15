@@ -1,0 +1,11 @@
+--- ./nx-X11/programs/Xserver/GL/glx/render2swap.c.X.original	2015-02-13 14:03:44.680442769 +0100
++++ ./nx-X11/programs/Xserver/GL/glx/render2swap.c	2015-02-10 19:13:14.376664506 +0100
+@@ -43,7 +43,7 @@
+ #include "unpack.h"
+ #include "g_disptab.h"
+ #include "g_disptab_EXT.h"
+-
++#include "indirect_size.h"
+ 
+ void __glXDispSwap_Map1f(GLbyte *pc)
+ {

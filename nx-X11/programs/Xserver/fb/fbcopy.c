@@ -21,17 +21,14 @@
  * TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
-/* $XFree86: xc/programs/Xserver/fb/fbcopy.c,v 1.13 2003/11/10 18:21:47 tsi Exp $ */
 
 #ifdef HAVE_DIX_CONFIG_H
 #include <dix-config.h>
 #endif
 
+#include <stdlib.h>
+
 #include "fb.h"
-#ifdef IN_MODULE
-#include "xf86_ansic.h"
-#endif
-#include "fbmmx.h"
 
 void
 fbCopyNtoN (DrawablePtr	pSrcDrawable,
@@ -62,27 +59,6 @@ fbCopyNtoN (DrawablePtr	pSrcDrawable,
 
     while (nbox--)
     {
-#ifdef USE_MMX
-	if (pm == FB_ALLONES && alu == GXcopy && !reverse &&
-	    !upsidedown && fbHaveMMX())
-	{
-	    if (!fbCopyAreammx (pSrcDrawable,
-				pDstDrawable,
-				
-				(pbox->x1 + dx),
-				(pbox->y1 + dy),
-				
-				(pbox->x1),
-				(pbox->y1),
-				
-				(pbox->x2 - pbox->x1),
-				(pbox->y2 - pbox->y1)))
-		goto fallback;
-	    else
-		goto next;
-	}
-    fallback:
-#endif
 	fbBlt (src + (pbox->y1 + dy + srcYoff) * srcStride,
 	       srcStride,
 	       (pbox->x1 + dx + srcXoff) * srcBpp,
@@ -100,9 +76,6 @@ fbCopyNtoN (DrawablePtr	pSrcDrawable,
 	       
 	       reverse,
 	       upsidedown);
-#ifdef USE_MMX
-    next:
-#endif
 	pbox++;
     }    
 }
@@ -244,7 +217,7 @@ fbCopyNto1 (DrawablePtr	pSrcDrawable,
 	    height = pbox->y2 - pbox->y1;
 	    
 	    tmpStride = ((width + FB_STIP_MASK) >> FB_STIP_SHIFT);
-	    tmp = xalloc (tmpStride * height * sizeof (FbStip));
+	    tmp = malloc (tmpStride * height * sizeof (FbStip));
 	    if (!tmp)
 		return;
 	    
@@ -282,7 +255,7 @@ fbCopyNto1 (DrawablePtr	pSrcDrawable,
     
 		      pPriv->and, pPriv->xor,
 		      pPriv->bgand, pPriv->bgxor);
-	    xfree (tmp);
+	    free (tmp);
 	}
 	pbox++;
     }
@@ -306,8 +279,8 @@ fbCopyRegion (DrawablePtr   pSrcDrawable,
     int		nbox;
     BoxPtr	pboxNew1, pboxNew2, pboxBase, pboxNext, pboxTmp;
     
-    pbox = REGION_RECTS(pDstRegion);
-    nbox = REGION_NUM_RECTS(pDstRegion);
+    pbox = RegionRects(pDstRegion);
+    nbox = RegionNumRects(pDstRegion);
     
     /* XXX we have to err on the side of safety when both are windows,
      * because we don't know if IncludeInferiors is being used.
@@ -325,7 +298,7 @@ fbCopyRegion (DrawablePtr   pSrcDrawable,
 	if (nbox > 1)
 	{
 	    /* keep ordering in each band, reverse order of bands */
-	    pboxNew1 = (BoxPtr)ALLOCATE_LOCAL(sizeof(BoxRec) * nbox);
+	    pboxNew1 = (BoxPtr)malloc(sizeof(BoxRec) * nbox);
 	    if(!pboxNew1)
 		return;
 	    pboxBase = pboxNext = pbox+nbox-1;
@@ -362,11 +335,11 @@ fbCopyRegion (DrawablePtr   pSrcDrawable,
 	if (nbox > 1)
 	{
 	    /* reverse order of rects in each band */
-	    pboxNew2 = (BoxPtr)ALLOCATE_LOCAL(sizeof(BoxRec) * nbox);
+	    pboxNew2 = (BoxPtr)malloc(sizeof(BoxRec) * nbox);
 	    if(!pboxNew2)
 	    {
 		if (pboxNew1)
-		    DEALLOCATE_LOCAL(pboxNew1);
+		    free(pboxNew1);
 		return;
 	    }
 	    pboxBase = pboxNext = pbox;
@@ -401,9 +374,9 @@ fbCopyRegion (DrawablePtr   pSrcDrawable,
 		 reverse, upsidedown, bitPlane, closure);
     
     if (pboxNew1)
-	DEALLOCATE_LOCAL (pboxNew1);
+	free (pboxNew1);
     if (pboxNew2)
-	DEALLOCATE_LOCAL (pboxNew2);
+	free (pboxNew2);
 }
 
 RegionPtr
@@ -466,7 +439,7 @@ fbDoCopy (DrawablePtr	pSrcDrawable,
 	     * VT is inactive, make sure the region isn't empty
 	     */
 	    if (!((WindowPtr) pSrcDrawable)->parent &&
-		REGION_NOTEMPTY (pSrcDrawable->pScreen,
+		RegionNotEmpty(
 				 &((WindowPtr) pSrcDrawable)->borderClip))
 	    {
 		/*
@@ -548,9 +521,9 @@ fbDoCopy (DrawablePtr	pSrcDrawable,
 	   blown region and call intersect */
 
 	cclip = fbGetCompositeClip(pGC);
-        if (REGION_NUM_RECTS(cclip) == 1)
+        if (RegionNumRects(cclip) == 1)
         {
-	    BoxPtr pBox = REGION_RECTS(cclip);
+	    BoxPtr pBox = RegionRects(cclip);
 
 	    if (box_x1 < pBox->x1) box_x1 = pBox->x1;
 	    if (box_x2 > pBox->x2) box_x2 = pBox->x2;
@@ -563,7 +536,7 @@ fbDoCopy (DrawablePtr	pSrcDrawable,
     /* Check to see if the region is empty */
     if (box_x1 >= box_x2 || box_y1 >= box_y2)
     {
-	REGION_NULL(pGC->pScreen, &rgnDst);
+	RegionNull(&rgnDst);
     }
     else
     {
@@ -572,25 +545,25 @@ fbDoCopy (DrawablePtr	pSrcDrawable,
 	box.y1 = box_y1;
 	box.x2 = box_x2;
 	box.y2 = box_y2;
-	REGION_INIT(pGC->pScreen, &rgnDst, &box, 1);
+	RegionInit(&rgnDst, &box, 1);
     }
     
     /* Clip against complex source if needed */
     if (!fastSrc)
     {
-	REGION_INTERSECT(pGC->pScreen, &rgnDst, &rgnDst, prgnSrcClip);
-	REGION_TRANSLATE(pGC->pScreen, &rgnDst, -dx, -dy);
+	RegionIntersect(&rgnDst, &rgnDst, prgnSrcClip);
+	RegionTranslate(&rgnDst, -dx, -dy);
     }
 
     /* Clip against complex dest if needed */
     if (!fastDst)
     {
-	REGION_INTERSECT(pGC->pScreen, &rgnDst, &rgnDst,
+	RegionIntersect(&rgnDst, &rgnDst,
 			 fbGetCompositeClip(pGC));
     }
 
     /* Do bit blitting */
-    numRects = REGION_NUM_RECTS(&rgnDst);
+    numRects = RegionNumRects(&rgnDst);
     if (numRects && widthSrc && heightSrc)
 	fbCopyRegion (pSrcDrawable, pDstDrawable, pGC,
 		      &rgnDst, dx, dy, copyProc, bitPlane, closure);
@@ -604,9 +577,9 @@ fbDoCopy (DrawablePtr	pSrcDrawable,
 					xOut - pDstDrawable->x,
 					yOut - pDstDrawable->y,
 					(unsigned long) bitPlane);
-    REGION_UNINIT(pGC->pScreen, &rgnDst);
+    RegionUninit(&rgnDst);
     if (freeSrcClip)
-	REGION_DESTROY(pGC->pScreen, prgnSrcClip);
+	RegionDestroy(prgnSrcClip);
     fbValidateDrawable (pDstDrawable);
     return prgnExposed;
 }

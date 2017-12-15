@@ -1,0 +1,59 @@
+--- ./nx-X11/lib/X11/ChkIfEv.c.X.original	2015-02-13 14:03:44.620443950 +0100
++++ ./nx-X11/lib/X11/ChkIfEv.c	2015-02-10 19:13:13.120711494 +0100
+@@ -83,3 +83,56 @@
+ 	UnlockDisplay(dpy);
+ 	return False;
+ }
++
++#ifdef NX_TRANS_SOCKET
++
++/*
++ * This is just like XCheckIfEvent() but doesn't
++ * flush the output buffer if it can't read new
++ * events.
++ */
++
++Bool XCheckIfEventNoFlush (dpy, event, predicate, arg)
++        register Display *dpy;
++	Bool (*predicate)(
++			  Display*			/* display */,
++			  XEvent*			/* event */,
++			  char*				/* arg */
++			  );		/* function to call */
++	register XEvent *event;		/* XEvent to be filled in. */
++	char *arg;
++{
++	register _XQEvent *prev, *qelt;
++	unsigned long qe_serial = 0;
++	int n;			/* time through count */
++
++        LockDisplay(dpy);
++	prev = NULL;
++	for (n = 2; --n >= 0;) {
++	    for (qelt = prev ? prev->next : dpy->head;
++		 qelt;
++		 prev = qelt, qelt = qelt->next) {
++		if(qelt->qserial_num > qe_serial
++		   && (*predicate)(dpy, &qelt->event, arg)) {
++		    *event = qelt->event;
++		    _XDeq(dpy, prev, qelt);
++		    UnlockDisplay(dpy);
++		    return True;
++		}
++	    }
++	    if (prev)
++		qe_serial = prev->qserial_num;
++	    switch (n) {
++	      case 1:
++		_XEventsQueued(dpy, QueuedAfterReading);
++		break;
++	    }
++	    if (prev && prev->qserial_num != qe_serial)
++		/* another thread has snatched this event */
++		prev = NULL;
++	}
++	UnlockDisplay(dpy);
++	return False;
++}
++
++#endif

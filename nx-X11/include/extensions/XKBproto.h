@@ -1,4 +1,3 @@
-/* $Xorg: XKBproto.h,v 1.3 2000/08/18 04:05:45 coskrey Exp $ */
 /************************************************************
 Copyright (c) 1993 by Silicon Graphics Computer Systems, Inc.
 
@@ -28,8 +27,8 @@ THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #ifndef _XKBPROTO_H_
 #define	_XKBPROTO_H_
 
-#include <X11/Xmd.h>
-#include <X11/extensions/XKB.h>
+#include <nx-X11/Xmd.h>
+#include <nx-X11/extensions/XKB.h>
 
 #define Window CARD32
 #define Atom CARD32

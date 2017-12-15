@@ -1,4 +1,3 @@
-/* $Xorg: scrnintstr.h,v 1.4 2001/02/09 02:05:15 xorgcvs Exp $ */
 /***********************************************************
 
 Copyright 1987, 1998  The Open Group
@@ -45,7 +44,6 @@ ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS
 SOFTWARE.
 
 ******************************************************************/
-/* $XFree86: xc/programs/Xserver/include/scrnintstr.h,v 1.12 2003/04/27 21:31:05 herrb Exp $ */
 
 #ifndef SCREENINTSTRUCT_H
 #define SCREENINTSTRUCT_H
@@ -56,7 +54,7 @@ SOFTWARE.
 #include "colormap.h"
 #include "cursor.h"
 #include "validate.h"
-#include <X11/Xproto.h>
+#include <nx-X11/Xproto.h>
 #include "dix.h"
 
 typedef struct _PixmapFormat {
@@ -85,13 +83,12 @@ typedef struct _Depth {
 
 
 /*
- *  There is a typedef for each screen function pointer so that code that
- *  needs to declare a screen function pointer (e.g. in a screen private
+ *  There is a typedef for each screen function void * so that code that
+ *  needs to declare a screen function void * (e.g. in a screen private
  *  or as a local variable) can easily do so and retain full type checking.
  */
 
 typedef    Bool (* CloseScreenProcPtr)(
-	int /*index*/,
 	ScreenPtr /*pScreen*/);
 
 typedef    void (* QueryBestSizeProcPtr)(
@@ -199,11 +196,19 @@ typedef    void (* ClipNotifyProcPtr)(
 	int /*dx*/,
 	int /*dy*/);
 
+/* pixmap will exist only for the duration of the current rendering operation */
+#define CREATE_PIXMAP_USAGE_SCRATCH                     1
+/* pixmap will be the backing pixmap for a redirected window */
+#define CREATE_PIXMAP_USAGE_BACKING_PIXMAP              2
+/* pixmap will contain a glyph */
+#define CREATE_PIXMAP_USAGE_GLYPH_PICTURE               3
+
 typedef    PixmapPtr (* CreatePixmapProcPtr)(
 	ScreenPtr /*pScreen*/,
 	int /*width*/,
 	int /*height*/,
-	int /*depth*/);
+	int /*depth*/,
+	unsigned /*usage_hint*/);
 
 typedef    Bool (* DestroyPixmapProcPtr)(
 	PixmapPtr /*pPixmap*/);
@@ -431,15 +436,15 @@ typedef    void (* SendGraphicsExposeProcPtr)(
 
 typedef    void (* ScreenBlockHandlerProcPtr)(
 	int /*screenNum*/,
-	pointer /*blockData*/,
-	pointer /*pTimeout*/,
-	pointer /*pReadmask*/);
+	void * /*blockData*/,
+	void * /*pTimeout*/,
+	void * /*pReadmask*/);
 
 typedef    void (* ScreenWakeupHandlerProcPtr)(
 	 int /*screenNum*/,
-	 pointer /*wakeupData*/,
+	 void * /*wakeupData*/,
 	 unsigned long /*result*/,
-	 pointer /*pReadMask*/);
+	 void * /*pReadMask*/);
 
 typedef    Bool (* CreateScreenResourcesProcPtr)(
 	ScreenPtr /*pScreen*/);
@@ -451,7 +456,7 @@ typedef    Bool (* ModifyPixmapHeaderProcPtr)(
 	int /*depth*/,
 	int /*bitsPerPixel*/,
 	int /*devKind*/,
-	pointer /*pPixData*/);
+	void * /*pPixData*/);
 
 typedef    PixmapPtr (* GetWindowPixmapProcPtr)(
 	WindowPtr /*pWin*/);
@@ -523,6 +528,17 @@ typedef    void (* MarkUnrealizedWindowProcPtr)(
 	WindowPtr /*pWin*/,
 	Bool /*fromConfigure*/);
 
+typedef    void (*ConstrainCursorHarderProcPtr)(
+	ScreenPtr, /*pScreen*/
+	int, /*mode*/
+	int *, /*x*/
+	int *  /*y*/);
+
+typedef     Bool (*ReplaceScanoutPixmapProcPtr)(
+	DrawablePtr, /*pDrawable*/
+	PixmapPtr, /*pPixmap*/
+	Bool /*enable*/);
+
 typedef struct _Screen {
     int			myNum;	/* index of this instance in Screens[] */
     ATOM		id;
@@ -546,9 +562,10 @@ typedef struct _Screen {
 			   a standard one.
 			*/
     PixmapPtr		PixmapPerDepth[1];
-    pointer		devPrivate;
+    void *		devPrivate;
     short       	numVisuals;
     VisualPtr		visuals;
+    WindowPtr		root;
     int			WindowPrivateLen;
     unsigned		*WindowPrivateSizes;
     unsigned		totalWindowSize;
@@ -611,6 +628,7 @@ typedef struct _Screen {
     /* Cursor Procedures */
 
     ConstrainCursorProcPtr	ConstrainCursor;
+    ConstrainCursorHarderProcPtr	ConstrainCursorHarder;
     CursorLimitsProcPtr		CursorLimits;
     DisplayCursorProcPtr	DisplayCursor;
     RealizeCursorProcPtr	RealizeCursor;
@@ -668,8 +686,8 @@ typedef struct _Screen {
     ScreenBlockHandlerProcPtr	BlockHandler;
     ScreenWakeupHandlerProcPtr	WakeupHandler;
 
-    pointer blockData;
-    pointer wakeupData;
+    void * blockData;
+    void * wakeupData;
 
     /* anybody can get a piece of this array */
     DevUnion	*devPrivates;
@@ -707,7 +725,12 @@ typedef struct _Screen {
     ChangeBorderWidthProcPtr	ChangeBorderWidth;
     MarkUnrealizedWindowProcPtr	MarkUnrealizedWindow;
 
+    ReplaceScanoutPixmapProcPtr ReplaceScanoutPixmap;
 } ScreenRec;
+
+static inline RegionPtr BitmapToRegion(ScreenPtr _pScreen, PixmapPtr pPix) {
+    return (*(_pScreen)->BitmapToRegion)(pPix); /* no mi version?! */
+}
 
 typedef struct _ScreenInfo {
     int		imageByteOrder;

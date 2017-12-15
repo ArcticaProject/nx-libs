@@ -21,7 +21,6 @@ ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS
 SOFTWARE.
 
 ******************************************************************/
-/* $XFree86: xc/include/extensions/Xv.h,v 1.3 1999/05/23 06:33:22 dawes Exp $ */
 
 #ifndef XV_H
 #define XV_H
@@ -44,7 +43,7 @@ SOFTWARE.
 **
 */
 
-#include <X11/X.h>
+#include <nx-X11/X.h>
 
 #define XvName "XVideo"
 #define XvVersion 2

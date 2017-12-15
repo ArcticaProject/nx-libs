@@ -1,4 +1,3 @@
-/* $XFree86: xc/programs/Xserver/GL/glx/glxpix.c,v 1.3 2000/09/26 15:57:02 tsi Exp $ */
 /*
 ** License Applicability. Except to the extent portions of this file are
 ** made subject to an alternative license as permitted in the SGI Free
@@ -96,7 +95,7 @@ Free(__GLdrawableBuffer *buf, __GLdrawablePrivate *glPriv)
 	FreeScratchGC(bufferInfo->pGC);
     }
 
-    __glXFree(bufferInfo);
+    free(bufferInfo);
     buf->other = NULL;
 }
 
@@ -124,7 +123,7 @@ __glXInitPix(__GLdrawableBuffer *buf, __GLdrawablePrivate *glPriv,
     buf->free = Free;
 
     /* allocate local information */
-    bufferInfo = (__GLPixBufferInfo *) __glXMalloc(sizeof(__GLPixBufferInfo));
+    bufferInfo = (__GLPixBufferInfo *) malloc(sizeof(__GLPixBufferInfo));
     buf->other = (void *) bufferInfo;
 
     bufferInfo->pGC = CreateScratchGC(pGlxPixmap->pDraw->pScreen,

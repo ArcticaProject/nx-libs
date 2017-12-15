@@ -1,4 +1,3 @@
-/* $XFree86: xc/programs/Xserver/mi/mipolycon.c,v 1.3 2001/08/06 21:46:04 dawes Exp $ */
 /***********************************************************
 
 Copyright 1987, 1998  The Open Group
@@ -45,7 +44,6 @@ ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS
 SOFTWARE.
 
 ******************************************************************/
-/* $Xorg: mipolycon.c,v 1.4 2001/02/09 02:05:21 xorgcvs Exp $ */
 
 #ifdef HAVE_DIX_CONFIG_H
 #include <dix-config.h>
@@ -106,12 +104,12 @@ miFillConvexPoly(dst, pgc, count, ptsIn)
     dy = ymax - ymin + 1;
     if ((count < 3) || (dy < 0))
 	return(TRUE);
-    ptsOut = FirstPoint = (DDXPointPtr )ALLOCATE_LOCAL(sizeof(DDXPointRec)*dy);
-    width = FirstWidth = (int *)ALLOCATE_LOCAL(sizeof(int) * dy);
+    ptsOut = FirstPoint = (DDXPointPtr )malloc(sizeof(DDXPointRec)*dy);
+    width = FirstWidth = (int *)malloc(sizeof(int) * dy);
     if(!FirstPoint || !FirstWidth)
     {
-	if (FirstWidth) DEALLOCATE_LOCAL(FirstWidth);
-	if (FirstPoint) DEALLOCATE_LOCAL(FirstPoint);
+	if (FirstWidth) free(FirstWidth);
+	if (FirstPoint) free(FirstPoint);
 	return(FALSE);
     }
 
@@ -176,8 +174,8 @@ miFillConvexPoly(dst, pgc, count, ptsIn)
 	/* in case we're called with non-convex polygon */
 	if(i < 0)
         {
-	    DEALLOCATE_LOCAL(FirstWidth);
-	    DEALLOCATE_LOCAL(FirstPoint);
+	    free(FirstWidth);
+	    free(FirstPoint);
 	    return(TRUE);
 	}
         while (i-- > 0) 
@@ -211,8 +209,8 @@ miFillConvexPoly(dst, pgc, count, ptsIn)
     (*pgc->ops->FillSpans)(dst, pgc, 
 		      ptsOut-FirstPoint,FirstPoint,FirstWidth,
 		      1);
-    DEALLOCATE_LOCAL(FirstWidth);
-    DEALLOCATE_LOCAL(FirstPoint);
+    free(FirstWidth);
+    free(FirstPoint);
     return(TRUE);
 }
 

@@ -1,0 +1,122 @@
+--- ./nx-X11/config/cf/sunLib.tmpl.X.original	2015-02-13 14:03:44.400448260 +0100
++++ ./nx-X11/config/cf/sunLib.tmpl	2015-02-13 14:03:44.400448260 +0100
+@@ -45,119 +45,6 @@
+ 
+ #else				/* else it's Solaris */
+ 
+-/* Solaris uses single digit library versions, and versions of libraries
+- * defined in SVID specs should match the versions specified there.
+- */
+-
+-#ifndef SharedX11Rev
+-# define SharedX11Rev 4
+-#endif
+-#ifndef SharedOldXRev
+-# define SharedOldXRev 6
+-#endif
+-#ifndef SharedXextRev
+-# define SharedXextRev 0
+-#endif
+-#ifndef SharedXauRev
+-# define SharedXauRev 6
+-#endif
+-#ifndef SharedXdmcpRev
+-# define SharedXdmcpRev 6
+-#endif
+-#ifndef SharedXmuRev
+-# define SharedXmuRev 4
+-#endif
+-#ifndef SharedXmuuRev
+-# define SharedXmuuRev 1
+-#endif
+-#ifndef SharedXpRev
+-# define SharedXpRev 1
+-#endif
+-#ifndef SharedXpmRev
+-# define SharedXpmRev 4
+-#endif
+-#ifndef SharedXtRev
+-# define SharedXtRev 4
+-#endif
+-#ifndef SharedXaw6Rev
+-# define SharedXaw6Rev 5
+-#endif
+-#ifndef SharedXiRev
+-# define SharedXiRev 5
+-#endif
+-#ifndef SharedXtstRev
+-# define SharedXtstRev 1
+-#endif
+-#ifndef SharedFSRev
+-# define SharedFSRev 5
+-#endif
+-#ifndef SharedICERev
+-# define SharedICERev 6
+-#endif
+-#ifndef SharedSMRev
+-# define SharedSMRev 6
+-#endif
+-#ifndef SharedXcursor
+-# define SharedXcursorRev 1
+-#endif
+-#ifndef SharedXdamageRev
+-# define SharedXdamageRev 1
+-#endif
+-#ifndef SharedXevieRev
+-# define SharedXevieRev 1
+-#endif
+-#ifndef SharedXfixesRev
+-# define SharedXfixesRev 1
+-#endif
+-#ifndef SharedXftRev
+-# define SharedXftRev 2
+-#endif
+-#ifndef SharedXineramaRev
+-# define SharedXineramaRev 1
+-#endif
+-#ifndef SharedXrenderRev
+-# define SharedXrenderRev 1
+-#endif
+-#ifndef SharedXResRev
+-# define SharedXResRev 1
+-#endif
+-#ifndef SharedXvRev
+-# define SharedXvRev 1
+-#endif
+-#ifndef SharedXvMCRev
+-# define SharedXvMCRev 1
+-#endif
+-#ifndef SharedXrandrRev
+-# define SharedXrandrRev 2
+-#endif
+-#ifndef SharedXssRev
+-# define SharedXssRev 1
+-#endif
+-#ifndef SharedFontconfigRev
+-# define SharedFontconfigRev 1
+-#endif
+-#ifndef SharedGlxRev
+-# define SharedGlxRev 1
+-#endif
+-#ifndef SharedGluRev
+-# define SharedGluRev 1
+-#endif
+-#ifndef SharedGLwRev
+-# define SharedGLwRev 1
+-#endif
+-#ifndef SharedOSMesaRev
+-# define SharedOSMesaRev 4
+-#endif
+-#ifndef SharedxkbfileRev
+-# define SharedxkbfileRev 5
+-#endif
+-#ifndef SharedXxf86miscRev
+-# define SharedXxf86miscRev 1
+-#endif
+-#ifndef SharedXxf86vmRev
+-# define SharedXxf86vmRev 1
+-#endif
+-
+ # if ThreadedX
+ #  if OSMinorVersion > 3
+ #   define SharedThreadReqs /**/

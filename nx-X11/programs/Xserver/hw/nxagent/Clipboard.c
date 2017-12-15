@@ -1,27 +1,34 @@
 /**************************************************************************/
 /*                                                                        */
-/* Copyright (c) 2001, 2011 NoMachine, http://www.nomachine.com/.         */
+/* Copyright (c) 2001, 2011 NoMachine (http://www.nomachine.com)          */
+/* Copyright (c) 2008-2014 Oleksandr Shneyder <o.shneyder@phoca-gmbh.de>  */
+/* Copyright (c) 2011-2016 Mike Gabriel <mike.gabriel@das-netzwerkteam.de>*/
+/* Copyright (c) 2014-2016 Mihai Moldovan <ionic@ionic.de>                */
+/* Copyright (c) 2014-2016 Ulrich Sibiller <uli42@gmx.de>                 */
+/* Copyright (c) 2015-2016 Qindel Group (http://www.qindel.com)           */
 /*                                                                        */
 /* NXAGENT, NX protocol compression and NX extensions to this software    */
-/* are copyright of NoMachine. Redistribution and use of the present      */
-/* software is allowed according to terms specified in the file LICENSE   */
-/* which comes in the source distribution.                                */
+/* are copyright of the aforementioned persons and companies.             */
 /*                                                                        */
-/* Check http://www.nomachine.com/licensing.html for applicability.       */
-/*                                                                        */
-/* NX and NoMachine are trademarks of Medialogic S.p.A.                   */
+/* Redistribution and use of the present software is allowed according    */
+/* to terms specified in the file LICENSE which comes in the source       */
+/* distribution.                                                          */
 /*                                                                        */
 /* All rights reserved.                                                   */
 /*                                                                        */
+/* NOTE: This software has received contributions from various other      */
+/* contributors, only the core maintainers and supporters are listed as   */
+/* copyright holders. Please contact us, if you feel you should be listed */
+/* as copyright holder, as well.                                          */
+/*                                                                        */
 /**************************************************************************/
-
-#define NEED_EVENTS
 
 #include "X.h"
 #include "Xproto.h"
 #include "Xatom.h"
 #include "selection.h"
 #include "windowstr.h"
+#include "scrnintstr.h"
 
 #include "Windows.h"
 #include "Atoms.h"
@@ -33,13 +40,13 @@
 
 #include "gcstruct.h"
 #include "xfixeswire.h"
-#include <X11/extensions/Xfixes.h>
+#include "X11/include/Xfixes_nxagent.h"
 
 /*
  * Use asyncronous get property replies.
  */
 
-#include "NXlib.h"
+#include "compext/Compext.h"
 
 /*
  * Set here the required log level.
@@ -166,6 +173,8 @@ Bool nxagentValidServerTargets(Atom target)
 
   if (target == XA_STRING) return True;
   if (target == serverTEXT) return True;
+  /* by dimbor */
+  if (target == serverUTF8_STRING) return True;
 
   return False;
 }
@@ -215,8 +224,6 @@ void nxagentClearClipboard(ClientPtr pClient, WindowPtr pWindow)
 
 void nxagentClearSelection(XEvent *X)
 {
-  xEvent x;
-
   int i = 0;
 
   #ifdef DEBUG
@@ -243,6 +250,8 @@ void nxagentClearSelection(XEvent *X)
   {
     if (lastSelectionOwner[i].client != NULL)
     {
+      xEvent x;
+      memset(&x, 0, sizeof(xEvent));
       x.u.u.type = SelectionClear;
       x.u.selectionClear.time = GetTimeInMillis();
       x.u.selectionClear.window = lastSelectionOwner[i].window;
@@ -253,7 +262,7 @@ void nxagentClearSelection(XEvent *X)
                              NullGrab);
     }
 
-    CurrentSelections[i].window = WindowTable[0]->drawable.id;
+    CurrentSelections[i].window = screenInfo.screens[0]->root->drawable.id;
     CurrentSelections[i].client = NullClient;
 
     lastSelectionOwner[i].client = NULL;
@@ -267,7 +276,9 @@ void nxagentClearSelection(XEvent *X)
 
 void nxagentRequestSelection(XEvent *X)
 {
+  #ifdef DEBUG
   int result;
+  #endif
   int i = 0;
   XSelectionEvent eventSelection;
 
@@ -304,12 +315,13 @@ FIXME: Do we need this?
       XFree(strTarget);
     }
 */
+    memset(&eventSelection, 0, sizeof(XSelectionEvent));
     eventSelection.property = None;
 
     if (X->xselectionrequest.target == serverTARGETS)
     {
       Atom xa_STRING = XA_STRING;
-      result = XChangeProperty (nxagentDisplay,
+      XChangeProperty (nxagentDisplay,
                                 X->xselectionrequest.requestor,
                                 X->xselectionrequest.property,
                                 XInternAtom(nxagentDisplay, "ATOM", 0),
@@ -327,7 +339,7 @@ FIXME: Do we need this?
 
       if (i < NumCurrentSelections)
       {
-        result = XChangeProperty(nxagentDisplay,
+        XChangeProperty(nxagentDisplay,
                                  X->xselectionrequest.requestor,
                                  X->xselectionrequest.property,
                                  X->xselectionrequest.target,
@@ -347,7 +359,10 @@ FIXME: Do we need this?
     eventSelection.target = X->xselectionrequest.target;
     eventSelection.time = X->xselectionrequest.time;
 
-    result = XSendEvent(nxagentDisplay,
+    #ifdef DEBUG
+    result =
+    #endif
+    XSendEvent(nxagentDisplay,
                         eventSelection.requestor,
                         False,
                         0L,
@@ -402,8 +417,14 @@ FIXME: Do we need this?
         lastServerProperty = X->xselectionrequest.property;
         lastServerRequestor = X->xselectionrequest.requestor;
         lastServerTarget = X->xselectionrequest.target;
+
+        /* by dimbor */
+        if (lastServerTarget != XA_STRING)
+            lastServerTarget = serverUTF8_STRING;
+
         lastServerTime = X->xselectionrequest.time;
 
+        memset(&x, 0, sizeof(xEvent));
         x.u.u.type = SelectionRequest;
         x.u.selectionRequest.time = GetTimeInMillis();
         x.u.selectionRequest.owner = lastSelectionOwner[i].window;
@@ -412,7 +433,7 @@ FIXME: Do we need this?
          * Fictitious window.
          */
 
-        x.u.selectionRequest.requestor = WindowTable[0]->drawable.id;
+        x.u.selectionRequest.requestor = screenInfo.screens[0]->root->drawable.id;
 
         /*
          * Don't send the same window, some programs are
@@ -424,11 +445,12 @@ FIXME: Do we need this?
 
         x.u.selectionRequest.selection = CurrentSelections[i].selection;
 
-        /*
-         * x.u.selectionRequest.target = X->xselectionrequest.target;
-         */
+        /* by dimbor (idea from zahvatov) */
+        if (X->xselectionrequest.target != XA_STRING)
+          x.u.selectionRequest.target = clientUTF8_STRING;
+        else
+          x.u.selectionRequest.target = XA_STRING;
 
-        x.u.selectionRequest.target = XA_STRING;
         x.u.selectionRequest.property = clientCutProperty;
 
         (void) TryClientEvents(lastSelectionOwner[i].client, &x, 1,
@@ -455,7 +477,10 @@ FIXME: Do we need this?
         eventSelection.property = None;
         eventSelection.time = X->xselectionrequest.time;
 
-        result = XSendEvent(nxagentDisplay,
+        #ifdef DEBUG
+        result =
+        #endif
+        XSendEvent(nxagentDisplay,
                             eventSelection.requestor,
                             False,
                             0L,
@@ -478,6 +503,7 @@ void nxagentSendSelectionNotify(Atom property)
                lastClientClientPtr -> index);
   #endif
 
+  memset(&x, 0, sizeof(xEvent));
   x.u.u.type = SelectionNotify;
 
   x.u.selectionNotify.time = lastClientTime;
@@ -527,7 +553,7 @@ void nxagentTransferSelection(int resource)
       if (nxagentLastClipboardClient == -1)
       {
         #ifdef WARNING
-        fprintf(stderr, "nxagentTransferSelection: WARNING! Asyncronous GetProperty queue full.\n");
+        fprintf(stderr, "nxagentTransferSelection: WARNING! Asynchronous GetProperty queue full.\n");
         #endif
 
         result = -1;
@@ -583,7 +609,7 @@ void nxagentTransferSelection(int resource)
       if (nxagentLastClipboardClient == -1)
       {
         #ifdef WARNING
-        fprintf(stderr, "nxagentTransferSelection: WARNING! Asyncronous GetProperty queue full.\n");
+        fprintf(stderr, "nxagentTransferSelection: WARNING! Asynchronous GetProperty queue full.\n");
         #endif
 
         result = -1;
@@ -728,7 +754,7 @@ void nxagentCollectPropertyEvent(int resource)
 
         if (pszReturnData != NULL)
         {
-          Xfree(pszReturnData);
+          XFree(pszReturnData);
         }
 
         return;
@@ -770,7 +796,7 @@ void nxagentCollectPropertyEvent(int resource)
 
         if (pszReturnData != NULL)
         {
-          Xfree(pszReturnData);
+          XFree(pszReturnData);
         }
 
         return;
@@ -948,15 +974,13 @@ void nxagentNotifySelection(XEvent *X)
           }
 
           /*
-           * if (pszReturnData)
-           * {
-           *   free(pszReturnData);
-           *   pszReturnData=NULL;
-           * }
+           * XFree(pszReturnData);
+           * pszReturnData=NULL;
            */
 
         }
 
+        memset(&eventSelection, 0, sizeof(XSelectionEvent));
         eventSelection.type = SelectionNotify;
         eventSelection.send_event = True;
         eventSelection.display = nxagentDisplay;
@@ -1127,6 +1151,7 @@ FIXME: Why this pointer can be not a valid
     return;
   }
 
+  memset(&x, 0, sizeof(xEvent));
   x.u.u.type = SelectionNotify;
   x.u.selectionNotify.time = time;
   x.u.selectionNotify.requestor = requestor;
@@ -1141,7 +1166,7 @@ FIXME: Why this pointer can be not a valid
 int nxagentConvertSelection(ClientPtr client, WindowPtr pWin, Atom selection,
                                 Window requestor, Atom property, Atom target, Time time)
 {
-  char *strTarget;
+  const char *strTarget;
   int i;
 
   if (agentClipboardStatus != 1 ||
@@ -1218,10 +1243,11 @@ int nxagentConvertSelection(ClientPtr client, WindowPtr pWin, Atom selection,
     Atom xa_STRING[4];
     xEvent x;
 
+    /* --- Order changed by dimbor (prevent sending COMPOUND_TEXT to client --- */
     xa_STRING[0] = XA_STRING;
-    xa_STRING[1] = clientTEXT;
-    xa_STRING[2] = clientCOMPOUND_TEXT;
-    xa_STRING[3] = clientUTF8_STRING;
+    xa_STRING[1] = clientUTF8_STRING;
+    xa_STRING[2] = clientTEXT;
+    xa_STRING[3] = clientCOMPOUND_TEXT;
 
     ChangeWindowProperty(pWin,
                          property,
@@ -1231,6 +1257,7 @@ int nxagentConvertSelection(ClientPtr client, WindowPtr pWin, Atom selection,
                          4,
                          &xa_STRING, 1);
 
+    memset(&x, 0, sizeof(xEvent));
     x.u.u.type = SelectionNotify;
     x.u.selectionNotify.time = time;
     x.u.selectionNotify.requestor = requestor;
@@ -1263,6 +1290,7 @@ int nxagentConvertSelection(ClientPtr client, WindowPtr pWin, Atom selection,
                            (unsigned char *) &lastSelectionOwner[i].lastTimeChanged,
                            1);
 
+      memset(&x, 0, sizeof(xEvent));
       x.u.u.type = SelectionNotify;
       x.u.selectionNotify.time = time;
       x.u.selectionNotify.requestor = requestor;
@@ -1351,6 +1379,7 @@ int nxagentConvertSelection(ClientPtr client, WindowPtr pWin, Atom selection,
                "to the requestor with property None.\n");
     #endif
 
+    memset(&x, 0, sizeof(xEvent));
     x.u.u.type = SelectionNotify;
     x.u.selectionNotify.time = time;
     x.u.selectionNotify.requestor = requestor;
@@ -1383,6 +1412,7 @@ int nxagentSendNotify(xEvent *event)
      * Setup selection notify event to real server.
      */
 
+    memset(&x, 0, sizeof(XSelectionEvent));
     x.type = SelectionNotify;
     x.send_event = True;
     x.display = nxagentDisplay;
@@ -1467,13 +1497,10 @@ int nxagentInitClipboard(WindowPtr pWin)
   fprintf(stderr, "nxagentInitClipboard: Got called.\n");
   #endif
 
-  if (lastSelectionOwner != NULL)
-  {
-    xfree(lastSelectionOwner);
-    lastSelectionOwner = NULL;
-  }
+  free(lastSelectionOwner);
+  lastSelectionOwner = NULL;
 
-  lastSelectionOwner = (SelectionOwner *) xalloc(2 * sizeof(SelectionOwner));
+  lastSelectionOwner = (SelectionOwner *) malloc(2 * sizeof(SelectionOwner));
 
   if (lastSelectionOwner == NULL)
   {
@@ -1485,13 +1512,13 @@ int nxagentInitClipboard(WindowPtr pWin)
 
   lastSelectionOwner[nxagentPrimarySelection].selection = XA_PRIMARY;
   lastSelectionOwner[nxagentPrimarySelection].client = NullClient;
-  lastSelectionOwner[nxagentPrimarySelection].window = WindowTable[0]->drawable.id;
+  lastSelectionOwner[nxagentPrimarySelection].window = screenInfo.screens[0]->root->drawable.id;
   lastSelectionOwner[nxagentPrimarySelection].windowPtr = NULL;
   lastSelectionOwner[nxagentPrimarySelection].lastTimeChanged = GetTimeInMillis();
 
   lastSelectionOwner[nxagentClipboardSelection].selection = nxagentClipboardAtom;
   lastSelectionOwner[nxagentClipboardSelection].client = NullClient;
-  lastSelectionOwner[nxagentClipboardSelection].window = WindowTable[0]->drawable.id;
+  lastSelectionOwner[nxagentClipboardSelection].window = screenInfo.screens[0]->root->drawable.id;
   lastSelectionOwner[nxagentClipboardSelection].windowPtr = NULL;
   lastSelectionOwner[nxagentClipboardSelection].lastTimeChanged = GetTimeInMillis();
 
@@ -1547,13 +1574,25 @@ int nxagentInitClipboard(WindowPtr pWin)
     fprintf(stderr, "nxagentInitClipboard: Registering for XFixesSelectionNotify events.\n");
     #endif
 
-    XFixesSelectSelectionInput(nxagentDisplay, iWindow, nxagentClipboardAtom,
-                               XFixesSetSelectionOwnerNotifyMask |
-                               XFixesSelectionWindowDestroyNotifyMask |
-                               XFixesSelectionClientCloseNotifyMask);
+    for (i = 0; i < nxagentMaxSelections; i++)
+    {
+      XFixesSelectSelectionInput(nxagentDisplay, iWindow,
+                                 lastSelectionOwner[i].selection,
+                                 XFixesSetSelectionOwnerNotifyMask |
+                                 XFixesSelectionWindowDestroyNotifyMask |
+                                 XFixesSelectionClientCloseNotifyMask);
+    }
 
     nxagentXFixesInfo.Initialized = 1;
   }
+
+  /*
+     The first paste from CLIPBOARD did not work directly after
+     session start. Removing this code makes it work. It is unsure why
+     it was introduced in the first place so it is possible that we
+     see other effects by leaving out this code.
+
+     Fixes X2Go bug #952, see https://bugs.x2go.org/952 for details .
 
   if (nxagentSessionId[0])
   {
@@ -1567,6 +1606,7 @@ int nxagentInitClipboard(WindowPtr pWin)
     pWin -> eventMask |= PropertyChangeMask;
     nxagentChangeWindowAttributes(pWin, CWEventMask);
   }
+  */
 
   if (nxagentReconnectTrap)
   {

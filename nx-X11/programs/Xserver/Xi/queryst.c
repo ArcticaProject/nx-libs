@@ -1,4 +1,3 @@
-/* $Xorg: queryst.c,v 1.4 2001/02/09 02:04:34 xorgcvs Exp $ */
 /*
 
 Copyright 1998, 1998  The Open Group
@@ -26,7 +25,6 @@ other dealings in this Software without prior written authorization
 from The Open Group.
 
 */
-/* $XFree86: xc/programs/Xserver/Xi/queryst.c,v 3.4 2001/01/17 22:13:26 dawes Exp $ */
 
 /***********************************************************************
  *
@@ -34,18 +32,16 @@ from The Open Group.
  *
  */
 
-#define	 NEED_EVENTS
-#define	 NEED_REPLIES
 #ifdef HAVE_DIX_CONFIG_H
 #include <dix-config.h>
 #endif
 
-#include <X11/X.h>				/* for inputstr.h    */
-#include <X11/Xproto.h>			/* Request macro     */
+#include <nx-X11/X.h>				/* for inputstr.h    */
+#include <nx-X11/Xproto.h>			/* Request macro     */
 #include "inputstr.h"			/* DeviceIntPtr	     */
 #include "windowstr.h"			/* window structure  */
-#include <X11/extensions/XI.h>
-#include <X11/extensions/XIproto.h>
+#include <nx-X11/extensions/XI.h>
+#include <nx-X11/extensions/XIproto.h>
 #include "extnsionst.h"
 #include "extinit.h"			/* LookupDeviceIntRec */
 #include "exevents.h"
@@ -63,10 +59,8 @@ int
 SProcXQueryDeviceState(client)
     register ClientPtr client;
     {
-    register char n;
-
     REQUEST(xQueryDeviceStateReq);
-    swaps(&stuff->length, n);
+    swaps(&stuff->length);
     return(ProcXQueryDeviceState(client));
     }
 
@@ -80,7 +74,6 @@ int
 ProcXQueryDeviceState(client)
     register ClientPtr client;
     {
-    register char 		n;
     int 			i;
     int 			num_classes = 0;
     int 			total_length = 0;
@@ -135,7 +128,7 @@ ProcXQueryDeviceState(client)
 			(v->numAxes * sizeof(int)));
 	num_classes++;
 	}
-    buf = (char *) xalloc (total_length);
+    buf = (char *) malloc (total_length);
     if (!buf)
 	{
 	SendErrorToClient(client, IReqCode, X_QueryDeviceState, 0, 
@@ -179,7 +172,7 @@ ProcXQueryDeviceState(client)
 	    *((int *) buf) = *values++;
 	    if (client->swapped)
 		{
-		swapl ((int *) buf, n);/* macro - braces needed */
+		swapl ((int *) buf);/* macro - braces needed */
 		}
 	    buf += sizeof(int);
 	    }
@@ -190,7 +183,7 @@ ProcXQueryDeviceState(client)
     WriteReplyToClient (client, sizeof(xQueryDeviceStateReply), &rep);
     if (total_length > 0)
 	WriteToClient (client, total_length, savbuf);
-    xfree (savbuf);
+    free (savbuf);
     return Success;
     }
 
@@ -207,9 +200,7 @@ SRepXQueryDeviceState (client, size, rep)
     int		size;
     xQueryDeviceStateReply	*rep;
     {
-    register char n;
-
-    swaps(&rep->sequenceNumber, n);
-    swapl(&rep->length, n);
-    WriteToClient(client, size, (char *)rep);
+    swaps(&rep->sequenceNumber);
+    swapl(&rep->length);
+    WriteToClient(client, size, rep);
     }

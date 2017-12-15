@@ -1,27 +1,28 @@
-#ifdef NXAGENT_UPGRADE
-
-#include "X/NXproperty.c"
-
-#else
-
 /**************************************************************************/
 /*                                                                        */
-/* Copyright (c) 2001, 2011 NoMachine, http://www.nomachine.com/.         */
+/* Copyright (c) 2001, 2011 NoMachine (http://www.nomachine.com)          */
+/* Copyright (c) 2008-2014 Oleksandr Shneyder <o.shneyder@phoca-gmbh.de>  */
+/* Copyright (c) 2011-2016 Mike Gabriel <mike.gabriel@das-netzwerkteam.de>*/
+/* Copyright (c) 2014-2016 Mihai Moldovan <ionic@ionic.de>                */
+/* Copyright (c) 2014-2016 Ulrich Sibiller <uli42@gmx.de>                 */
+/* Copyright (c) 2015-2016 Qindel Group (http://www.qindel.com)           */
 /*                                                                        */
 /* NXAGENT, NX protocol compression and NX extensions to this software    */
-/* are copyright of NoMachine. Redistribution and use of the present      */
-/* software is allowed according to terms specified in the file LICENSE   */
-/* which comes in the source distribution.                                */
+/* are copyright of the aforementioned persons and companies.             */
 /*                                                                        */
-/* Check http://www.nomachine.com/licensing.html for applicability.       */
-/*                                                                        */
-/* NX and NoMachine are trademarks of Medialogic S.p.A.                   */
+/* Redistribution and use of the present software is allowed according    */
+/* to terms specified in the file LICENSE which comes in the source       */
+/* distribution.                                                          */
 /*                                                                        */
 /* All rights reserved.                                                   */
 /*                                                                        */
+/* NOTE: This software has received contributions from various other      */
+/* contributors, only the core maintainers and supporters are listed as   */
+/* copyright holders. Please contact us, if you feel you should be listed */
+/* as copyright holder, as well.                                          */
+/*                                                                        */
 /**************************************************************************/
 
-/* $XFree86: xc/programs/Xserver/dix/property.c,v 3.12 2002/02/19 11:09:22 alanh Exp $ */
 /***********************************************************
 
 Copyright 1987, 1998  The Open Group
@@ -68,168 +69,27 @@ ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS
 SOFTWARE.
 
 ******************************************************************/
-/* $Xorg: property.c,v 1.4 2001/02/09 02:04:40 xorgcvs Exp $ */
 
-#include "X.h"
-#define NEED_REPLIES
-#define NEED_EVENTS
-#include "Xproto.h"
-#include "windowstr.h"
-#include "propertyst.h"
-#include "dixstruct.h"
-#include "../../dix/dispatch.h"
-#include "swaprep.h"
-#ifdef XCSECURITY
-#define _SECURITY_SERVER
-#include "security.h"
-#endif
-#ifdef LBX
-#include "lbxserve.h"
-#include "lbxtags.h"
-#endif
+#include "../../dix/property.c"
 
 #include "Options.h"
 #include "Rootless.h"
 #include "Client.h"
+#include "Windows.h"
 
-#if defined(LBX) || defined(LBX_COMPAT)
-int fWriteToClient(client, len, buf)
-    ClientPtr   client;
-    int         len;
-    char        *buf;
+extern Atom clientCutProperty;
+
+#ifdef NXAGENT_SERVER
+typedef struct
 {
-    return WriteToClient(client, len, buf);
+  CARD32 state;
+  Window icon;
 }
+nxagentWMStateRec;
 #endif
-
-/*****************************************************************
- * Property Stuff
- *
- *    ChangeProperty, DeleteProperty, GetProperties,
- *    ListProperties
- *
- *   Properties below to windows.  A allocate slots each time
- *   a property is added.  No fancy searching done.
- *
- *****************************************************************/
-
-#ifdef notdef
-static void
-PrintPropertys(pWin)
-    WindowPtr pWin;
-{
-    PropertyPtr pProp;
-    register int j;
-
-    pProp = pWin->userProps;
-    while (pProp)
-    {
-        ErrorF(  "%x %x\n", pProp->propertyName, pProp->type);
-        ErrorF("property format: %d\n", pProp->format);
-        ErrorF("property data: \n");
-        for (j=0; j<(pProp->format/8)*pProp->size; j++)
-           ErrorF("%c\n", pProp->data[j]);
-        pProp = pProp->next;
-    }
-}
-#endif
-
-int
-ProcRotateProperties(client)
-    ClientPtr client;
-{
-    int     i, j, delta;
-    REQUEST(xRotatePropertiesReq);
-    WindowPtr pWin;
-    register    Atom * atoms;
-    PropertyPtr * props;               /* array of pointer */
-    PropertyPtr pProp;
-    xEvent event;
-
-    REQUEST_FIXED_SIZE(xRotatePropertiesReq, stuff->nAtoms << 2);
-    UpdateCurrentTime();
-    pWin = (WindowPtr) SecurityLookupWindow(stuff->window, client,
-					    SecurityWriteAccess);
-    if (!pWin)
-        return(BadWindow);
-    if (!stuff->nAtoms)
-	return(Success);
-    atoms = (Atom *) & stuff[1];
-    props = (PropertyPtr *)ALLOCATE_LOCAL(stuff->nAtoms * sizeof(PropertyPtr));
-    if (!props)
-	return(BadAlloc);
-    for (i = 0; i < stuff->nAtoms; i++)
-    {
-#ifdef XCSECURITY
-	char action = SecurityCheckPropertyAccess(client, pWin, atoms[i],
-				SecurityReadAccess|SecurityWriteAccess);
-#endif
-        if (!ValidAtom(atoms[i])
-#ifdef XCSECURITY
-	    || (SecurityErrorOperation == action)
-#endif
-	   )
-        {
-            DEALLOCATE_LOCAL(props);
-	    client->errorValue = atoms[i];
-            return BadAtom;
-        }
-#ifdef XCSECURITY
-	if (SecurityIgnoreOperation == action)
-        {
-            DEALLOCATE_LOCAL(props);
-	    return Success;
-	}
-#endif
-        for (j = i + 1; j < stuff->nAtoms; j++)
-            if (atoms[j] == atoms[i])
-            {
-                DEALLOCATE_LOCAL(props);
-                return BadMatch;
-            }
-        pProp = wUserProps (pWin);
-        while (pProp)
-        {
-            if (pProp->propertyName == atoms[i])
-                goto found;
-	    pProp = pProp->next;
-        }
-        DEALLOCATE_LOCAL(props);
-        return BadMatch;
-found: 
-        props[i] = pProp;
-    }
-    delta = stuff->nPositions;
-
-    /* If the rotation is a complete 360 degrees, then moving the properties
-	around and generating PropertyNotify events should be skipped. */
-
-    if ( (stuff->nAtoms != 0) && (abs(delta) % stuff->nAtoms) != 0 ) 
-    {
-	while (delta < 0)                  /* faster if abs value is small */
-            delta += stuff->nAtoms;
-    	for (i = 0; i < stuff->nAtoms; i++)
- 	{
-	    /* Generate a PropertyNotify event for each property whose value
-		is changed in the order in which they appear in the request. */
- 
- 	    event.u.u.type = PropertyNotify;
-            event.u.property.window = pWin->drawable.id;
-    	    event.u.property.state = PropertyNewValue;
-	    event.u.property.atom = props[i]->propertyName;	
-	    event.u.property.time = currentTime.milliseconds;
-	    DeliverEvents(pWin, &event, 1, (WindowPtr)NULL);
-	
-            props[i]->propertyName = atoms[(i + delta) % stuff->nAtoms];
-	}
-    }
-    DEALLOCATE_LOCAL(props);
-    return Success;
-}
 
 int 
-ProcChangeProperty(client)
-    ClientPtr client;
+ProcChangeProperty(ClientPtr client)
 {	      
     WindowPtr pWin;
     char format, mode;
@@ -271,7 +131,7 @@ ProcChangeProperty(client)
     if (pWin == NULL)
 #endif
     pWin = (WindowPtr)SecurityLookupWindow(stuff->window, client,
-					   SecurityWriteAccess);
+					   DixWriteAccess);
     if (!pWin)
 	return(BadWindow);
     if (!ValidAtom(stuff->property))
@@ -287,7 +147,7 @@ ProcChangeProperty(client)
 
 #ifdef XCSECURITY
     switch (SecurityCheckPropertyAccess(client, pWin, stuff->property,
-					SecurityWriteAccess))
+					DixWriteAccess))
     {
 	case SecurityErrorOperation:
 	    client->errorValue = stuff->property;
@@ -309,13 +169,17 @@ ProcChangeProperty(client)
     }
 #endif
 
-#ifdef LBX
-    err = LbxChangeWindowProperty(client, pWin, stuff->property, stuff->type,
-	 (int)format, (int)mode, len, TRUE, (pointer)&stuff[1], TRUE, NULL);
-#else
-    err = ChangeWindowProperty(pWin, stuff->property, stuff->type, (int)format,
-			       (int)mode, len, (pointer)&stuff[1], TRUE);
+#ifdef NXAGENT_SERVER
+    /* prevent clients from changing the NX_AGENT_VERSION property */
+    {
+      Atom prop = MakeAtom("NX_AGENT_VERSION", strlen("NX_AGENT_VERSION"), True);
+      if (stuff->property == prop)
+        return client->noClientException;
+    }
 #endif
+
+    err = ChangeWindowProperty(pWin, stuff->property, stuff->type, (int)format,
+			       (int)mode, len, (void *)&stuff[1], TRUE);
     if (err != Success)
 	return err;
     else
@@ -323,39 +187,49 @@ ProcChangeProperty(client)
       if (nxagentOption(Rootless) == 1)
       {
         nxagentExportProperty(pWin, stuff->property, stuff->type, (int) format,
-                                  (int) mode, len, (pointer) &stuff[1]);
+                                  (int) mode, len, (void *) &stuff[1]);
       }
 
       nxagentGuessClientHint(client, stuff->property, (char *) &stuff[1]);
 
       nxagentGuessShadowHint(client, stuff->property);
 
+      #ifdef NX_DEBUG_INPUT
+      nxagentGuessDumpInputInfo(client, stuff->property, (char *) &stuff[1]);
+      #endif
+
       return client->noClientException;
     }
 }
 
 int
-ChangeWindowProperty(pWin, property, type, format, mode, len, value, sendevent)
-    WindowPtr	pWin;
-    Atom	property, type;
-    int		format, mode;
-    unsigned long len;
-    pointer	value;
-    Bool	sendevent;
+ChangeWindowProperty(WindowPtr pWin, Atom property, Atom type, int format, 
+                     int mode, unsigned long len, void * value, 
+                     Bool sendevent)
 {
-#ifdef LBX
-    return LbxChangeWindowProperty(NULL, pWin, property, type,
-				   format, mode, len, TRUE, value,
-				   sendevent, NULL);
-#else
     PropertyPtr pProp;
     xEvent event;
     int sizeInBytes;
     int totalSize;
-    pointer data;
+    void * data;
+    int copySize;
+
+    memset(&event, 0, sizeof(xEvent));
 
     sizeInBytes = format>>3;
     totalSize = len * sizeInBytes;
+
+    copySize = nxagentOption(CopyBufferSize);
+
+    if (copySize != COPY_UNLIMITED && property == clientCutProperty)
+    {
+      if (totalSize > copySize)
+      {
+        totalSize = copySize;
+        totalSize = totalSize - (totalSize % sizeInBytes);
+        len = totalSize / sizeInBytes;
+      }
+    }
 
     /* first see if property already exists */
 
@@ -370,13 +244,13 @@ ChangeWindowProperty(pWin, property, type, format, mode, len, value, sendevent)
     {
 	if (!pWin->optional && !MakeWindowOptional (pWin))
 	    return(BadAlloc);
-        pProp = (PropertyPtr)xalloc(sizeof(PropertyRec));
+        pProp = (PropertyPtr)malloc(sizeof(PropertyRec));
 	if (!pProp)
 	    return(BadAlloc);
-        data = (pointer)xalloc(totalSize);
+        data = (void *)malloc(totalSize);
 	if (!data && len)
 	{
-	    xfree(pProp);
+	    free(pProp);
 	    return(BadAlloc);
 	}
         pProp->propertyName = property;
@@ -404,7 +278,7 @@ ChangeWindowProperty(pWin, property, type, format, mode, len, value, sendevent)
         {
 	    if (totalSize != pProp->size * (pProp->format >> 3))
 	    {
-	    	data = (pointer)xrealloc(pProp->data, totalSize);
+	    	data = (void *)realloc(pProp->data, totalSize);
 	    	if (!data && len)
 		    return(BadAlloc);
             	pProp->data = data;
@@ -421,7 +295,7 @@ ChangeWindowProperty(pWin, property, type, format, mode, len, value, sendevent)
 	}
         else if (mode == PropModeAppend)
         {
-	    data = (pointer)xrealloc(pProp->data,
+	    data = (void *)realloc(pProp->data,
 				     sizeInBytes * (len + pProp->size));
 	    if (!data)
 		return(BadAlloc);
@@ -433,13 +307,13 @@ ChangeWindowProperty(pWin, property, type, format, mode, len, value, sendevent)
 	}
         else if (mode == PropModePrepend)
         {
-            data = (pointer)xalloc(sizeInBytes * (len + pProp->size));
+            data = (void *)malloc(sizeInBytes * (len + pProp->size));
 	    if (!data)
 		return(BadAlloc);
 	    memmove(&((char *)data)[totalSize], (char *)pProp->data, 
 		  (int)(pProp->size * sizeInBytes));
             memmove((char *)data, (char *)value, totalSize);
-	    xfree(pProp->data);
+	    free(pProp->data);
             pProp->data = data;
             pProp->size += len;
 	}
@@ -454,95 +328,6 @@ ChangeWindowProperty(pWin, property, type, format, mode, len, value, sendevent)
 	DeliverEvents(pWin, &event, 1, (WindowPtr)NULL);
     }
     return(Success);
-#endif
-}
-
-int
-DeleteProperty(pWin, propName)
-    WindowPtr pWin;
-    Atom propName;
-{
-    PropertyPtr pProp, prevProp;
-    xEvent event;
-
-    if (!(pProp = wUserProps (pWin)))
-	return(Success);
-    prevProp = (PropertyPtr)NULL;
-    while (pProp)
-    {
-	if (pProp->propertyName == propName)
-	    break;
-        prevProp = pProp;
-	pProp = pProp->next;
-    }
-    if (pProp) 
-    {		    
-        if (prevProp == (PropertyPtr)NULL)      /* takes care of head */
-        {
-            if (!(pWin->optional->userProps = pProp->next))
-		CheckWindowOptionalNeed (pWin);
-        }
-	else
-        {
-            prevProp->next = pProp->next;
-        }
-#ifdef LBX
-	if (pProp->tag_id)
-	    TagDeleteTag(pProp->tag_id);
-#endif
-	event.u.u.type = PropertyNotify;
-	event.u.property.window = pWin->drawable.id;
-	event.u.property.state = PropertyDelete;
-        event.u.property.atom = pProp->propertyName;
-	event.u.property.time = currentTime.milliseconds;
-	DeliverEvents(pWin, &event, 1, (WindowPtr)NULL);
-	xfree(pProp->data);
-        xfree(pProp);
-    }
-    return(Success);
-}
-
-void
-DeleteAllWindowProperties(pWin)
-    WindowPtr pWin;
-{
-    PropertyPtr pProp, pNextProp;
-    xEvent event;
-
-    pProp = wUserProps (pWin);
-    while (pProp)
-    {
-#ifdef LBX
-	if (pProp->tag_id)
-	    TagDeleteTag(pProp->tag_id);
-#endif
-	event.u.u.type = PropertyNotify;
-	event.u.property.window = pWin->drawable.id;
-	event.u.property.state = PropertyDelete;
-	event.u.property.atom = pProp->propertyName;
-	event.u.property.time = currentTime.milliseconds;
-	DeliverEvents(pWin, &event, 1, (WindowPtr)NULL);
-	pNextProp = pProp->next;
-        xfree(pProp->data);
-        xfree(pProp);
-	pProp = pNextProp;
-    }
-}
-
-static int
-NullPropertyReply(client, propertyType, format, reply)
-    ClientPtr client;
-    ATOM propertyType;
-    int format;
-    xGetPropertyReply *reply;
-{
-    reply->nItems = 0;
-    reply->length = 0;
-    reply->bytesAfter = 0;
-    reply->propertyType = propertyType;
-    reply->format = format;
-    WriteReplyToClient(client, sizeof(xGenericReply), reply);
-    return(client->noClientException);
 }
 
 /*****************
@@ -556,8 +341,7 @@ NullPropertyReply(client, propertyType, format, reply)
  *****************/
 
 int
-ProcGetProperty(client)
-    ClientPtr client;
+ProcGetProperty(ClientPtr client)
 {
     PropertyPtr pProp, prevProp;
     unsigned long n, len, ind;
@@ -566,10 +350,11 @@ ProcGetProperty(client)
     REQUEST(xGetPropertyReq);
 
     REQUEST_SIZE_MATCH(xGetPropertyReq);
+
     if (stuff->delete)
 	UpdateCurrentTime();
     pWin = (WindowPtr)SecurityLookupWindow(stuff->window, client,
-					   SecurityReadAccess);
+					   DixReadAccess);
     if (!pWin)
 	return BadWindow;
 
@@ -599,17 +384,75 @@ ProcGetProperty(client)
 	pProp = pProp->next;
     }
 
+    memset(&reply, 0, sizeof(xGetPropertyReply));
     reply.type = X_Reply;
     reply.sequenceNumber = client->sequence;
+
+    #ifdef NXAGENT_SERVER
+
+    /*
+     * Creating a reply for WM_STATE property if it doesn't exist.
+     * This is intended to allow drag & drop work in JAva 1.6 when
+     * the agent is connected to NXWin in multiwindow mode.
+     */
+
+    if (nxagentOption(Rootless) &&
+            nxagentWindowTopLevel(pWin) &&
+                (!pProp) &&
+                    strcmp(NameForAtom(stuff->property), "WM_STATE") == 0)
+    {
+      nxagentWMStateRec wmState;
+      nxagentWMStateRec *wmsP = &wmState;
+
+      memset(&wmState, 0, sizeof(nxagentWMStateRec));
+      wmState.state = 1;
+      wmState.icon = None;
+
+      if (ChangeWindowProperty(pWin, stuff->property, stuff->property, 32, 0, 2, &wmState, 1) == Success)
+      {
+        nxagentExportProperty(pWin, stuff->property, stuff->property, 32, 0, 2, &wmState);
+      }
+
+      n = 8;
+      ind = stuff->longOffset << 2;        
+
+      if (n < ind)
+      {
+        client->errorValue = stuff->longOffset;
+        return BadValue;
+      }
+
+      len = min(n - ind, 4 * stuff->longLength);
+
+      reply.bytesAfter = n - (ind + len);
+      reply.length = (len + 3) >> 2;
+
+      reply.format = 32;
+      reply.nItems = len / 4;
+      reply.propertyType = stuff->property;
+
+      WriteReplyToClient(client, sizeof(xGenericReply), &reply);
+
+      if (len)
+      {
+        client->pSwapReplyFunc = (ReplySwapPtr)CopySwap32Write;
+
+        WriteSwappedDataToClient(client, len, (char *)wmsP + ind);
+      }
+
+      return(client->noClientException);
+    }
+    #endif
+
     if (!pProp) 
 	return NullPropertyReply(client, None, 0, &reply);
 
 #ifdef XCSECURITY
     {
-	Mask access_mode = SecurityReadAccess;
+	Mask access_mode = DixReadAccess;
 
 	if (stuff->delete)
-	    access_mode |= SecurityDestroyAccess;
+	    access_mode |= DixDestroyAccess;
 	switch(SecurityCheckPropertyAccess(client, pWin, stuff->property,
 					   access_mode))
 	{
@@ -637,13 +480,6 @@ ProcGetProperty(client)
 	WriteReplyToClient(client, sizeof(xGenericReply), &reply);
 	return(Success);
     }
-#ifdef LBX
-    /* make sure we have the current value */                       
-    if (pProp->tag_id && pProp->owner_pid) {
-	LbxStallPropRequest(client, pProp);
-	return client->noClientException;
-    }                                              
-#endif
 
 /*
  *  Return type, format, value to client
@@ -672,6 +508,7 @@ ProcGetProperty(client)
     { /* send the event */
 	xEvent event;
 
+	memset(&event, 0, sizeof(xEvent));
 	event.u.u.type = PropertyNotify;
 	event.u.property.window = pWin->drawable.id;
 	event.u.property.state = PropertyDelete;
@@ -694,10 +531,6 @@ ProcGetProperty(client)
 
     if (stuff->delete && (reply.bytesAfter == 0))
     { /* delete the Property */
-#ifdef LBX
-	if (pProp->tag_id)
-	    TagDeleteTag(pProp->tag_id);
-#endif
 	if (prevProp == (PropertyPtr)NULL) /* takes care of head */
 	{
 	    if (!(pWin->optional->userProps = pProp->next))
@@ -705,8 +538,8 @@ ProcGetProperty(client)
 	}
 	else
 	    prevProp->next = pProp->next;
-	xfree(pProp->data);
-	xfree(pProp);
+	free(pProp->data);
+	free(pProp);
     }
     return(client->noClientException);
 }
@@ -798,6 +631,7 @@ GetWindowProperty(pWin, property, longOffset, longLength, delete,
     { /* send the event */
 	xEvent event;
 
+	memset(&event, 0, sizeof(xEvent));
 	event.u.u.type = PropertyNotify;
 	event.u.property.window = pWin->drawable.id;
 	event.u.property.state = PropertyDelete;
@@ -813,10 +647,6 @@ GetWindowProperty(pWin, property, longOffset, longLength, delete,
 
     if (delete && (*bytesAfter == 0))
     { /* delete the Property */
-#ifdef LBX
-	if (pProp->tag_id)
-	    TagDeleteTag(pProp->tag_id);
-#endif
 	if (prevProp == (PropertyPtr)NULL) /* takes care of head */
 	{
 	    if (!(pWin->optional->userProps = pProp->next))
@@ -824,98 +654,9 @@ GetWindowProperty(pWin, property, longOffset, longLength, delete,
 	}
 	else
 	    prevProp->next = pProp->next;
-	xfree(pProp->data);
-	xfree(pProp);
+	free(pProp->data);
+	free(pProp);
     }
     return(Success);
 }
 #endif
-
-int
-ProcListProperties(client)
-    ClientPtr client;
-{
-    Atom *pAtoms = NULL, *temppAtoms;
-    xListPropertiesReply xlpr;
-    int	numProps = 0;
-    WindowPtr pWin;
-    PropertyPtr pProp;
-    REQUEST(xResourceReq);
-
-    REQUEST_SIZE_MATCH(xResourceReq);
-    pWin = (WindowPtr)SecurityLookupWindow(stuff->id, client,
-					   SecurityReadAccess);
-    if (!pWin)
-        return(BadWindow);
-
-    pProp = wUserProps (pWin);
-    while (pProp)
-    {        
-        pProp = pProp->next;
-	numProps++;
-    }
-    if (numProps)
-        if(!(pAtoms = (Atom *)ALLOCATE_LOCAL(numProps * sizeof(Atom))))
-            return(BadAlloc);
-
-    xlpr.type = X_Reply;
-    xlpr.nProperties = numProps;
-    xlpr.length = (numProps * sizeof(Atom)) >> 2;
-    xlpr.sequenceNumber = client->sequence;
-    pProp = wUserProps (pWin);
-    temppAtoms = pAtoms;
-    while (pProp)
-    {
-	*temppAtoms++ = pProp->propertyName;
-	pProp = pProp->next;
-    }
-    WriteReplyToClient(client, sizeof(xGenericReply), &xlpr);
-    if (numProps)
-    {
-        client->pSwapReplyFunc = (ReplySwapPtr)Swap32Write;
-        WriteSwappedDataToClient(client, numProps * sizeof(Atom), pAtoms);
-        DEALLOCATE_LOCAL(pAtoms);
-    }
-    return(client->noClientException);
-}
-
-int 
-ProcDeleteProperty(client)
-    register ClientPtr client;
-{
-    WindowPtr pWin;
-    REQUEST(xDeletePropertyReq);
-    int result;
-              
-    REQUEST_SIZE_MATCH(xDeletePropertyReq);
-    UpdateCurrentTime();
-    pWin = (WindowPtr)SecurityLookupWindow(stuff->window, client,
-					   SecurityWriteAccess);
-    if (!pWin)
-        return(BadWindow);
-    if (!ValidAtom(stuff->property))
-    {
-	client->errorValue = stuff->property;
-	return (BadAtom);
-    }
-
-#ifdef XCSECURITY
-    switch(SecurityCheckPropertyAccess(client, pWin, stuff->property,
-				       SecurityDestroyAccess))
-    {
-	case SecurityErrorOperation:
-	    client->errorValue = stuff->property;
-	    return BadAtom;;
-	case SecurityIgnoreOperation:
-	    return Success;
-    }
-#endif
-
-    result = DeleteProperty(pWin, stuff->property);
-    if (client->noClientException != Success)
-	return(client->noClientException);
-    else
-	return(result);
-}
-
-#endif /* #ifdef NXAGENT_UPGRADE */

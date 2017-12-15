@@ -21,7 +21,6 @@
  * TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
-/* $XFree86: xc/programs/Xserver/fb/fbbstore.c,v 1.1 1999/11/19 13:53:42 hohndel Exp $ */
 
 #ifdef HAVE_DIX_CONFIG_H
 #include <dix-config.h>
@@ -39,8 +38,8 @@ fbSaveAreas(PixmapPtr	pPixmap,
     fbCopyWindowProc (&pWin->drawable,
 		      &pPixmap->drawable,
 		      0,
-		      REGION_RECTS(prgnSave),
-		      REGION_NUM_RECTS(prgnSave),
+		      RegionRects(prgnSave),
+		      RegionNumRects(prgnSave),
 		      xorg, yorg,
 		      FALSE,
 		      FALSE,
@@ -57,8 +56,8 @@ fbRestoreAreas(PixmapPtr    pPixmap,
     fbCopyWindowProc (&pPixmap->drawable,
 		      &pWin->drawable,
 		      0,
-		      REGION_RECTS(prgnRestore),
-		      REGION_NUM_RECTS(prgnRestore),
+		      RegionRects(prgnRestore),
+		      RegionNumRects(prgnRestore),
 		      -xorg, -yorg,
 		      FALSE,
 		      FALSE,

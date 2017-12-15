@@ -1,4 +1,3 @@
-/* $Xorg: xtest1dd.c,v 1.4 2001/02/09 02:04:33 xorgcvs Exp $ */
 /*
  *	File: xtest1dd.c
  *
@@ -52,28 +51,24 @@ Telephone and Telegraph Company or of the Regents of the
 University of California.
 
 */
-/* $XFree86: xc/programs/Xserver/Xext/xtest1dd.c,v 3.6 2003/10/28 23:08:44 tsi Exp $ */
 
 /***************************************************************
  * include files
  ***************************************************************/
-
-#define	NEED_EVENTS
-#define	NEED_REPLIES
 
 #ifdef HAVE_DIX_CONFIG_H
 #include <dix-config.h>
 #endif
 
 #include <stdio.h>
-#include <X11/Xos.h>
-#include <X11/X.h>
-#include <X11/Xmd.h>
-#include <X11/Xproto.h>
+#include <nx-X11/Xos.h>
+#include <nx-X11/X.h>
+#include <nx-X11/Xmd.h>
+#include <nx-X11/Xproto.h>
 #include "misc.h"
 #include "dixstruct.h"
 #define  XTestSERVER_SIDE
-#include <X11/extensions/xtestext1.h>	
+#include <nx-X11/extensions/xtestext1.h>	
 
 #include "xtest1dd.h"
 
@@ -1613,5 +1608,5 @@ ClientPtr	client;
 	rep.size_return = ACTION_ARRAY_SIZE;
 	WriteReplyToClient(client,
 			   sizeof(xTestQueryInputSizeReply),
-			   (pointer) &rep);		
+			   (void *) &rep);
 }		

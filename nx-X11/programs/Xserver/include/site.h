@@ -1,4 +1,3 @@
-/* $Xorg: site.h,v 1.6 2001/02/09 02:05:16 xorgcvs Exp $ */
 /************************************************************
 
 Copyright 1987, 1998  The Open Group
@@ -45,7 +44,6 @@ ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS
 SOFTWARE.
 
 ********************************************************/
-/* $XFree86: xc/programs/Xserver/include/site.h,v 1.8 2001/12/19 21:37:35 dawes Exp $ */
 
 #ifndef SITE_H
 #define SITE_H
@@ -67,18 +65,14 @@ SOFTWARE.
 #endif
 
 /*
- * The following constants are provided solely as a last line of defense.  The
- * normal build ALWAYS overrides them using a special rule given in
- * server/dix/Imakefile.  If you want to change either of these constants, 
- * you should set the DefaultFontPath or DefaultRGBDatabase configuration 
- * parameters.
+ * The following constant is provided solely as a last line of defense.  The
+ * normal build ALWAYS overrides it using a special rule given in
+ * server/dix/Imakefile.  If you want to change this constant, you should set
+ * the DefaultFontPath configuration parameter.
  * DO NOT CHANGE THESE VALUES OR THE DIX IMAKEFILE!
  */
 #ifndef COMPILEDDEFAULTFONTPATH
 #define COMPILEDDEFAULTFONTPATH	"/usr/lib/X11/fonts/misc/"
-#endif
-#ifndef RGB_DB
-#define RGB_DB			"/usr/lib/X11/rgb"
 #endif
 
 /*

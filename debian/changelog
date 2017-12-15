@@ -1,3 +1,94 @@
+nx-libs (2:3.5.99.12-0) unstable; urgency=medium
+
+  * Upstream-provided Debian package for nx-libs.
+    See upstream ChangeLog for recent changes.
+
+ -- Mike Gabriel <mike.gabriel@das-netzwerkteam.de>  Fri, 15 Dec 2017 12:23:12 +0100
+
+nx-libs (2:3.5.99.11-0) unstable; urgency=medium
+
+  * Upstream-provided Debian package for nx-libs.
+    See upstream ChangeLog for recent changes.
+
+ -- Mike Gabriel <mike.gabriel@das-netzwerkteam.de>  Fri, 15 Dec 2017 12:01:56 +0100
+
+nx-libs (2:3.5.99.10-0.1) unstable; urgency=medium
+
+  * Upstream-provided Debian package for nx-libs.
+    See upstream ChangeLog for recent changes.
+
+ -- Mike Gabriel <mike.gabriel@das-netzwerkteam.de>  Fri, 15 Sep 2017 14:57:20 +0200
+
+nx-libs (2:3.5.99.9-0.1) unstable; urgency=medium
+
+  * Upstream-provided Debian package for nx-libs.
+    See upstream ChangeLog for recent changes.
+
+ -- Mike Gabriel <mike.gabriel@das-netzwerkteam.de>  Wed, 30 Aug 2017 19:32:14 +0200
+
+nx-libs (2:3.5.99.8-0.1) unstable; urgency=medium
+
+  * Upstream-provided Debian package for nx-libs.
+    See upstream ChangeLog for recent changes.
+
+ -- Mike Gabriel <mike.gabriel@das-netzwerkteam.de>  Fri, 30 Jun 2017 21:21:09 +0200
+
+nx-libs (2:3.5.99.7-0.1) unstable; urgency=medium
+
+  * Upstream-provided Debian package for nx-libs.
+    See upstream ChangeLog for recent changes.
+
+ -- Mike Gabriel <mike.gabriel@das-netzwerkteam.de>  Fri, 05 May 2017 00:15:57 +0200
+
+nx-libs (2:3.5.99.6-0.1) unstable; urgency=medium
+
+  * Upstream-provided Debian package for nx-libs.
+    See upstream ChangeLog for recent changes.
+
+ -- Mike Gabriel <mike.gabriel@das-netzwerkteam.de>  Fri, 21 Apr 2017 16:24:19 +0200
+
+nx-libs (2:3.5.99.5-0.1) unstable; urgency=medium
+
+  * Upstream-provided Debian package for nx-libs.
+    See upstream ChangeLog for recent changes.
+
+ -- Mike Gabriel <mike.gabriel@das-netzwerkteam.de>  Tue, 11 Apr 2017 17:00:28 +0200
+
+nx-libs (2:3.5.99.4-0.1) unstable; urgency=medium
+
+  * Upstream-provided Debian package for nx-libs.
+    See upstream ChangeLog for recent changes.
+
+ -- Mike Gabriel <mike.gabriel@das-netzwerkteam.de>  Fri, 24 Feb 2017 22:19:27 +0000
+
+nx-libs (2:3.5.99.3-0.1) unstable; urgency=medium
+
+  * Upstream-provided Debian package for nx-libs.
+    See upstream ChangeLog for recent changes.
+
+ -- Mike Gabriel <mike.gabriel@das-netzwerkteam.de>  Mon, 19 Dec 2016 15:02:16 +0100
+
+nx-libs (2:3.5.99.2-0.1) unstable; urgency=medium
+
+  * Upstream-provided Debian package for nx-libs.
+    See upstream ChangeLog for recent changes.
+
+ -- Mike Gabriel <mike.gabriel@das-netzwerkteam.de>  Thu, 13 Oct 2016 14:09:42 +0200
+
+nx-libs (2:3.5.99.1-0.1) unstable; urgency=medium
+
+  * Upstream-provided Debian package for nx-libs.
+    See upstream ChangeLog for recent changes.
+
+ -- Mike Gabriel <mike.gabriel@das-netzwerkteam.de>  Tue, 13 Sep 2016 15:44:10 +0200
+
+nx-libs (2:3.5.99.0-0.1) unstable; urgency=medium
+
+  * Upstream-provided Debian package for nx-libs.
+    See upstream ChangeLog for recent changes.
+
+ -- Mike Gabriel <mike.gabriel@das-netzwerkteam.de>  Wed, 06 Jul 2016 10:37:23 +0200
+
 nx-libs (2:3.5.0.34-0x2go1) UNRELEASED; urgency=medium
 
   [ Mihai Moldovan ]
@@ -11,7 +102,6 @@ nx-libs (2:3.5.0.34-0x2go1) UNRELEASED; urgency=medium
  -- X2Go Release Manager <git-admin@x2go.org>  Wed, 08 Nov 2017 11:18:57 +0100
 
 nx-libs (2:3.5.0.33-0x2go1) unstable; urgency=low
-
   [ Mihai Moldovan ]
   * debian/control:
     - Add xkb-data to nxagent's Recommends.

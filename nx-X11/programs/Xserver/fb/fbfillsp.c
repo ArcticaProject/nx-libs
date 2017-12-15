@@ -21,7 +21,6 @@
  * TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
-/* $XFree86: xc/programs/Xserver/fb/fbfillsp.c,v 1.1 1999/11/19 13:53:43 hohndel Exp $ */
 
 #ifdef HAVE_DIX_CONFIG_H
 #include <dix-config.h>
@@ -44,7 +43,7 @@ fbFillSpans (DrawablePtr    pDrawable,
     int		    fullX1, fullX2, fullY1;
     int		    partX1, partX2;
     
-    pextent = REGION_EXTENTS(pGC->pScreen, pClip);
+    pextent = RegionExtents(pClip);
     extentX1 = pextent->x1;
     extentY1 = pextent->y1;
     extentX2 = pextent->x2;
@@ -69,7 +68,7 @@ fbFillSpans (DrawablePtr    pDrawable,
 	if (fullX1 >= fullX2)
 	    continue;
 	
-	nbox = REGION_NUM_RECTS (pClip);
+	nbox = RegionNumRects (pClip);
 	if (nbox == 1)
 	{
 	    fbFill (pDrawable,
@@ -78,7 +77,7 @@ fbFillSpans (DrawablePtr    pDrawable,
 	}
 	else
 	{
-	    pbox = REGION_RECTS(pClip);
+	    pbox = RegionRects(pClip);
 	    while(nbox--)
 	    {
 		if (pbox->y1 <= fullY1 && fullY1 < pbox->y2)

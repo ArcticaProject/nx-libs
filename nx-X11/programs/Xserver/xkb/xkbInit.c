@@ -1,5 +1,3 @@
-/* $Xorg: xkbInit.c,v 1.3 2000/08/17 19:53:47 cpqbld Exp $ */
-/* $XdotOrg: xc/programs/Xserver/xkb/xkbInit.c,v 1.9 2005/10/19 22:45:54 ajax Exp $ */
 /************************************************************
 Copyright (c) 1993 by Silicon Graphics Computer Systems, Inc.
 
@@ -25,7 +23,6 @@ OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION  WITH
 THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 ********************************************************/
-/* $XFree86: xc/programs/Xserver/xkb/xkbInit.c,v 3.32tsi Exp $ */
 
 #ifdef HAVE_DIX_CONFIG_H
 #include <dix-config.h>
@@ -40,32 +37,24 @@ THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #include <ctype.h>
 #include <unistd.h>
 #include <math.h>
-#define NEED_EVENTS 1
-#include <X11/X.h>
-#include <X11/Xproto.h>
-#include <X11/keysym.h>
-#include <X11/Xatom.h>
+#include <nx-X11/X.h>
+#include <nx-X11/Xproto.h>
+#include <nx-X11/keysym.h>
+#include <nx-X11/Xatom.h>
 #include "misc.h"
 #include "inputstr.h"
 #include "opaque.h"
 #include "property.h"
-#define	XKBSRV_NEED_FILE_FUNCS
-#include <X11/extensions/XKBsrv.h>
-#include <X11/extensions/XKBgeom.h>
-#include <X11/extensions/XKMformat.h>
-#include <X11/extensions/XKBfile.h>
+#include "scrnintstr.h"
+#include <xkbsrv.h>
+#include "xkbgeom.h"
+#include <nx-X11/extensions/XKMformat.h>
+#include "xkbfile.h"
 #include "xkb.h"
 
 #define	CREATE_ATOM(s)	MakeAtom(s,sizeof(s)-1,1)
 
-#ifdef sgi
-#define LED_CAPS	5
-#define	LED_NUM		6
-#define	LED_SCROLL	7
-#define	PHYS_LEDS	0x7f
-#define	LED_COMPOSE	8
-#else
-#if defined(ultrix) || defined(__osf__) || defined(__alpha) || defined(__alpha__)
+#if defined(ultrix) || defined(__alpha) || defined(__alpha__)
 #define	LED_COMPOSE	2
 #define LED_CAPS	3
 #define	LED_SCROLL	4
@@ -83,7 +72,6 @@ THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #define	LED_NUM		2
 #define	LED_SCROLL	3
 #define	PHYS_LEDS	0x07
-#endif
 #endif
 #endif
 
@@ -104,7 +92,7 @@ typedef struct	_SrvXkmInfo {
 #define	XKB_BIN_DIRECTORY	XKB_BASE_DIRECTORY
 #endif
 #ifndef XKB_DFLT_RULES_FILE
-#define	XKB_DFLT_RULES_FILE	"rules"
+#define	XKB_DFLT_RULES_FILE	"base"
 #endif
 #ifndef XKB_DFLT_KB_LAYOUT
 #define	XKB_DFLT_KB_LAYOUT	"us"
@@ -168,7 +156,7 @@ XkbGetRulesDflts(XkbRF_VarDefsPtr defs)
 }
 
 Bool
-XkbWriteRulesProp(ClientPtr client, pointer closure)
+XkbWriteRulesProp(ClientPtr client, void * closure)
 {
 int 			len,out;
 Atom			name;
@@ -191,7 +179,7 @@ char *			pval;
 	ErrorF("Atom error: %s not created\n",_XKB_RF_NAMES_PROP_ATOM);
 	return True;
     }
-    pval= (char*) ALLOCATE_LOCAL(len);
+    pval= (char*) malloc(len);
     if (!pval) {
 	ErrorF("Allocation error: %s proprerty not created\n",
 						_XKB_RF_NAMES_PROP_ATOM);
@@ -230,9 +218,9 @@ char *			pval;
 	ErrorF("Internal Error! bad size (%d!=%d) for _XKB_RULES_NAMES\n",
 								out,len);
     }
-    ChangeWindowProperty(WindowTable[0],name,XA_STRING,8,PropModeReplace,
+    ChangeWindowProperty(screenInfo.screens[0]->root,name,XA_STRING,8,PropModeReplace,
 							len,pval,True);
-    DEALLOCATE_LOCAL(pval);
+    free(pval);
     return True;
 }
 
@@ -241,48 +229,68 @@ XkbSetRulesUsed(XkbRF_VarDefsPtr defs)
 {
     if (XkbModelUsed)
 	_XkbFree(XkbModelUsed);
-    XkbModelUsed= (defs->model?_XkbDupString(defs->model):NULL);
+    XkbModelUsed= (defs->model?Xstrdup(defs->model):NULL);
     if (XkbLayoutUsed)
 	_XkbFree(XkbLayoutUsed);
-    XkbLayoutUsed= (defs->layout?_XkbDupString(defs->layout):NULL);
+    XkbLayoutUsed= (defs->layout?Xstrdup(defs->layout):NULL);
     if (XkbVariantUsed)
 	_XkbFree(XkbVariantUsed);
-    XkbVariantUsed= (defs->variant?_XkbDupString(defs->variant):NULL);
+    XkbVariantUsed= (defs->variant?Xstrdup(defs->variant):NULL);
     if (XkbOptionsUsed)
 	_XkbFree(XkbOptionsUsed);
-    XkbOptionsUsed= (defs->options?_XkbDupString(defs->options):NULL);
+    XkbOptionsUsed= (defs->options?Xstrdup(defs->options):NULL);
     if (XkbWantRulesProp)
 	QueueWorkProc(XkbWriteRulesProp,NULL,NULL);
     return;
 }
 
+/**
+ * Set the default RMLVO for the next device to be initialised.
+ * If a parameter is NULL, the previous setting will be used. Use empty
+ * strings if you want to delete a previous setting.
+ *
+ * If @rulesFile is NULL and no previous @rulesFile has been set, the
+ * built-in default is chosen as default.
+ */
+
 void
 XkbSetRulesDflts(char *rulesFile,char *model,char *layout,
 					char *variant,char *options)
 {
-    if (XkbRulesFile)
-	_XkbFree(XkbRulesFile);
-    XkbRulesFile= _XkbDupString(rulesFile);
-    rulesDefined= True;
+    if (!rulesFile && !XkbRulesFile)
+    {
+       LogMessage(X_WARNING, "[xkb] No rule given, and no previous rule "
+                             "defined. Defaulting to '%s'.\n",
+                              XKB_DFLT_RULES_FILE);
+       rulesFile = XKB_DFLT_RULES_FILE;
+    }
+
+    if (rulesFile) {
+       if (XkbRulesFile)
+           _XkbFree(XkbRulesFile);
+       XkbRulesFile= Xstrdup(rulesFile);
+       rulesDefined= True;
+    }
+
     if (model) {
 	if (XkbModelDflt)
 	    _XkbFree(XkbModelDflt);
-	XkbModelDflt= _XkbDupString(model);
+	XkbModelDflt= Xstrdup(model);
     }
     if (layout) {
 	if (XkbLayoutDflt)
 	    _XkbFree(XkbLayoutDflt);
-	XkbLayoutDflt= _XkbDupString(layout);
+	XkbLayoutDflt= Xstrdup(layout);
     }
     if (variant) {
 	if (XkbVariantDflt)
 	    _XkbFree(XkbVariantDflt);
-	XkbVariantDflt= _XkbDupString(variant);
+	XkbVariantDflt= Xstrdup(variant);
     }
     if (options) {
 	if (XkbOptionsDflt)
 	    _XkbFree(XkbOptionsDflt);
-	XkbOptionsDflt= _XkbDupString(options);
+	XkbOptionsDflt= Xstrdup(options);
     }
     return;
 }
@@ -296,7 +304,7 @@ XkbSetRulesDflts(char *rulesFile,char *model,char *layout,
 #include "xkbDflts.h"
 
 /* A dummy to keep the compiler quiet */
-pointer xkbBogus = &indicators;
+void * xkbBogus = &indicators;
 
 static Bool
 XkbInitKeyTypes(XkbDescPtr xkb,SrvXkmInfo *file)
@@ -619,7 +627,7 @@ XkbInitKeyboardDeviceStruct(
     void                        (*bellProc)(
         int /*percent*/,
         DeviceIntPtr /*device*/,
-        pointer /*ctrl*/,
+        void * /*ctrl*/,
         int),
     void                        (*ctrlProc)(
         DeviceIntPtr /*device*/,
@@ -649,12 +657,12 @@ XkbRF_VarDefsRec	defs;
      * generation. Eventually they will be freed at the end of this
      * function.
      */
-    if (names->keymap) names->keymap = _XkbDupString(names->keymap);
-    if (names->keycodes) names->keycodes = _XkbDupString(names->keycodes);
-    if (names->types) names->types = _XkbDupString(names->types);
-    if (names->compat) names->compat = _XkbDupString(names->compat);
-    if (names->geometry) names->geometry = _XkbDupString(names->geometry);
-    if (names->symbols) names->symbols = _XkbDupString(names->symbols);
+    if (names->keymap) names->keymap = Xstrdup(names->keymap);
+    if (names->keycodes) names->keycodes = Xstrdup(names->keycodes);
+    if (names->types) names->types = Xstrdup(names->types);
+    if (names->compat) names->compat = Xstrdup(names->compat);
+    if (names->geometry) names->geometry = Xstrdup(names->geometry);
+    if (names->symbols) names->symbols = Xstrdup(names->symbols);
 
     if (defs.model && defs.layout && rules) {
 	XkbComponentNamesRec	rNames;
@@ -918,7 +926,7 @@ XkbProcessArguments(int argc,char *argv[],int i)
     }
     else if (strncmp(argv[i], "-xkbdir", 7) == 0) {
 	if(++i < argc) {
-#if !defined(WIN32) && !defined(__UNIXOS2__) && !defined(__CYGWIN__)
+#if !defined(WIN32) && !defined(__CYGWIN__)
 	    if (getuid() != geteuid()) {
 		LogMessage(X_WARNING, "-xkbdir is not available for setuid X servers\n");
 		return -1;

@@ -28,7 +28,6 @@ in this Software without prior written authorization from The Open Group.
  * The X Window System is a Trademark of The Open Group.
  *
  */
-/* $XFree86: xc/include/Xos.h,v 3.41tsi Exp $ */
 
 /* This is a collection of things to try and minimize system dependencies
  * in a "signficant" number of source files.
@@ -37,7 +36,7 @@ in this Software without prior written authorization from The Open Group.
 #ifndef _XOS_H_
 #define _XOS_H_
 
-#include <X11/Xosdefs.h>
+#include <nx-X11/Xosdefs.h>
 
 /*
  * Get major data types (esp. caddr_t)
@@ -45,9 +44,6 @@ in this Software without prior written authorization from The Open Group.
 
 #ifdef USG
 #ifndef __TYPES__
-#ifdef CRAY
-#define word word_t
-#endif /* CRAY */
 #include <sys/types.h>			/* forgot to protect it... */
 #define __TYPES__
 #endif /* __TYPES__ */
@@ -61,10 +57,8 @@ in this Software without prior written authorization from The Open Group.
 #endif
 #endif /* USG */
 
-#ifndef sgi
 #if defined(__SCO__) || defined(__UNIXWARE__)
 #include <stdint.h>
-#endif
 #endif
 
 #ifdef _SEQUENT_
@@ -149,11 +143,11 @@ extern int sys_nerr;
  */
 #if defined(X_NOT_POSIX)
 #include <fcntl.h>
-#if defined(USL) || defined(CRAY) || defined(MOTOROLA) || (defined(i386) && (defined(SYSV) || defined(SVR4))) || defined(__sxg__)
+#if defined(USL) || defined(MOTOROLA) || (defined(i386) && (defined(SYSV) || defined(SVR4))) || defined(__sxg__)
 #include <unistd.h>
 #endif
 #ifdef WIN32
-#include <X11/Xw32defs.h>
+#include <nx-X11/Xw32defs.h>
 #else
 #include <sys/file.h>
 #endif
@@ -179,10 +173,7 @@ extern int sys_nerr;
 #include <sys/time.h>
 #endif
 #include <time.h>
-#ifdef CRAY
-#undef word
-#endif /* CRAY */
-#if defined(USG) && !defined(CRAY) && !defined(MOTOROLA) && !defined(uniosu) && !defined(__sxg__) && !defined(clipper) && !defined(__clipper__)
+#if defined(USG) && !defined(MOTOROLA) && !defined(uniosu) && !defined(__sxg__) && !defined(clipper) && !defined(__clipper__)
 struct timeval {
     long tv_sec;
     long tv_usec;
@@ -226,14 +217,7 @@ struct timeval {
     (t)->tv_sec = _gtodtmp.time; \
     (t)->tv_usec = _gtodtmp.millitm * 1000; \
 }
-#elif defined(_SEQUENT_) || defined(Lynx)
-#include <time.h>
-#elif defined (__QNX__)
-typedef unsigned long fd_mask;
-/* Make sure we get 256 bit select masks */
-#define FD_SETSIZE 256
-#include <sys/select.h>
-#include <sys/time.h>
+#elif defined(_SEQUENT_)
 #include <time.h>
 #else
 #include <sys/time.h>
@@ -253,12 +237,6 @@ typedef unsigned long fd_mask;
 #endif
 #endif /* XPG4 else */
 
-#ifdef __UNIXOS2__
-typedef unsigned long fd_mask;
-#include <limits.h>
-#define MAX_PATH _POSIX_PATH_MAX
-#endif
-
 #ifdef __GNU__
 #define PATH_MAX 4096
 #define MAXPATHLEN 4096
@@ -276,9 +254,8 @@ typedef unsigned long fd_mask;
 #define NGROUPS 16
 #endif
 
-#if defined(ISC) || defined(__UNIXOS2__) || \
-    (defined(__linux__) && !defined(__GLIBC__)) || \
-    (defined(__QNX__) && !defined(UNIXCONN))
+#if defined(ISC) || \
+    (defined(__linux__) && !defined(__GLIBC__))
 /*
  *	Some OS's may not have this
  */
@@ -291,6 +268,6 @@ struct sockaddr_un {
 };
 #endif
 
-#include <X11/Xarch.h>
+#include <nx-X11/Xarch.h>
 
 #endif /* _XOS_H_ */

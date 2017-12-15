@@ -1,4 +1,3 @@
-/* $XFree86$ */
 /*
 ** License Applicability. Except to the extent portions of this file are
 ** made subject to an alternative license as permitted in the SGI Free
@@ -34,7 +33,6 @@
 **
 */
 
-#define NEED_REPLIES
 #ifdef HAVE_DIX_CONFIG_H
 #include <dix-config.h>
 #endif
@@ -78,7 +76,7 @@ static int __glXMakeBitmapFromGlyph(FontPtr font, CharInfoPtr pci)
 	p = buf;
 	allocbuf = 0;
     } else {
-	p = (unsigned char *) __glXMalloc(allocBytes);
+	p = (unsigned char *) malloc(allocBytes);
 	if (!p)
 	    return BadAlloc;
 	allocbuf = p;
@@ -100,7 +98,7 @@ static int __glXMakeBitmapFromGlyph(FontPtr font, CharInfoPtr pci)
 	     pci->metrics.characterWidth, 0, allocbuf ? allocbuf : buf);
 
     if (allocbuf) {
-	__glXFree(allocbuf);
+	free(allocbuf);
     }
     return Success;
 #undef __GL_CHAR_BUF_SIZE

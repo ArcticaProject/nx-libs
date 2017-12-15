@@ -1,0 +1,443 @@
+--- ./nx-X11/programs/Xserver/xkb/ddxLoad.c.X.original	2015-02-13 14:03:44.792440567 +0100
++++ ./nx-X11/programs/Xserver/xkb/ddxLoad.c	2015-02-13 14:03:44.792440567 +0100
+@@ -34,6 +34,7 @@
+ #include <xkb-config.h>
+ #endif
+ 
++#include <errno.h>
+ #include <stdio.h>
+ #include <ctype.h>
+ #define	NEED_EVENTS 1
+@@ -175,6 +176,310 @@
+ # endif
+ #endif
+ 
++#ifdef NXAGENT_SERVER
++
++#define NX_XKB_BASE_DIRECTORY            "/usr/lib/X11/xkb"
++#define NX_XKB_ALTERNATE_BASE_DIRECTORY  "/usr/share/X11/xkb"
++#define NX_KEYMAP_DIR_FILE               "keymap.dir"
++#define NX_ALT_XKBCOMP_PATH              "/usr/bin"
++
++static char _NXXkbBasePath[PATH_MAX];
++static char _NXXkbCompPath[PATH_MAX];
++
++static int NXVerifyXkbBaseDirectory(const char *dirPath)
++{
++  int size;
++  char *keymapDirFilePath;
++  struct stat keymapDirFileStat;
++
++  /*
++   * If keymap.dir file
++   * is not present into
++   * Xkb Base Directory,
++   * we suppose that the
++   * path is not valid.
++   */
++
++  size = strlen(dirPath) + strlen("/") +
++             strlen(NX_KEYMAP_DIR_FILE) + 1;
++
++  if ((keymapDirFilePath = malloc((size + 1) * sizeof(char))) == NULL)
++  {
++    FatalError("NXVerifyXkbBaseDirectory: malloc failed.\n");
++  }
++
++  strcpy(keymapDirFilePath, dirPath);
++  strcat(keymapDirFilePath, "/");
++  strcat(keymapDirFilePath, NX_KEYMAP_DIR_FILE);
++
++  #ifdef TEST
++  fprintf(stderr, "NXVerifyXkbBaseDirectory: Looking for [%s] file.\n",
++              keymapDirFilePath);
++  #endif
++
++  if (stat(keymapDirFilePath, &keymapDirFileStat) != 0)
++  {
++
++    #ifdef TEST
++    fprintf(stderr, "NXVerifyXkbBaseDirectory: Can't find the keymap.dir file [%s].\n",
++                keymapDirFilePath);
++    #endif
++
++    free(keymapDirFilePath);
++
++    return 0;
++  }
++
++  #ifdef TEST
++  fprintf(stderr, "NXVerifyXkbBaseDirectory: Xkb Base Directory [%s] is valid.\n",
++              dirPath);
++  #endif
++
++  free(keymapDirFilePath);
++
++  return 1;
++}
++
++/*
++ * This function returns the directory
++ * containing the configuration files.
++ * This directory is referred by Xkb-
++ * BaseDirectory variable (generally
++ * it contains the hardcoded path at
++ * compile time). If the directory
++ * does not exist, the function will
++ * try a set of well known directories.
++ */
++
++char *_NXGetXkbBasePath(const char *path)
++{
++  /*
++   * Check the xkb base directory only once.
++   */
++
++  if (*_NXXkbBasePath != '\0')
++  {
++    return _NXXkbBasePath;
++  }
++ 
++  if (NXVerifyXkbBaseDirectory(XkbBaseDirectory) == 1)
++  {
++    if (strlen(XkbBaseDirectory) + 1 > PATH_MAX)
++    {
++      #ifdef TEST
++      fprintf(stderr, "_NXGetXkbBasePath: WARNING! Maximum length of xkb base path exceeded.\n");
++      #endif
++ 
++      goto _NXGetXkbBasePathError;
++    }
++
++    strcpy(_NXXkbBasePath, XkbBaseDirectory);
++
++    #ifdef TEST
++    fprintf(stderr, "_NXGetXkbBasePath: Using NX xkb base directory path [%s].\n",
++                _NXXkbBasePath);
++    #endif
++
++    return _NXXkbBasePath;
++  }
++ 
++  if (NXVerifyXkbBaseDirectory(NX_XKB_BASE_DIRECTORY) == 1)
++  {
++    if (strlen(NX_XKB_BASE_DIRECTORY) + 1 > PATH_MAX)
++    {
++      #ifdef TEST
++      fprintf(stderr, "_NXGetXkbBasePath: WARNING! Maximum length of xkb base path exceeded.\n");
++      #endif
++
++      goto _NXGetXkbBasePathError;
++    }
++
++    strcpy(_NXXkbBasePath, NX_XKB_BASE_DIRECTORY);
++
++    #ifdef TEST
++    fprintf(stderr, "_NXGetXkbBasePath: Using NX xkb base directory path [%s].\n",
++                _NXXkbBasePath);
++    #endif
++
++    return _NXXkbBasePath;
++  }
++
++  if (NXVerifyXkbBaseDirectory(NX_XKB_ALTERNATE_BASE_DIRECTORY) == 1)
++  {
++    if (strlen(NX_XKB_ALTERNATE_BASE_DIRECTORY) + 1 > PATH_MAX)
++    {
++      #ifdef TEST
++      fprintf(stderr, "_NXGetXkbBasePath: WARNING! Maximum length of xkb base path exceeded.\n");
++      #endif
++
++      goto _NXGetXkbBasePathError;
++    }
++
++    strcpy(_NXXkbBasePath, NX_XKB_ALTERNATE_BASE_DIRECTORY);
++
++    #ifdef TEST
++    fprintf(stderr, "_NXGetXkbBasePath: Using NX xkb base directory path [%s].\n",
++                _NXXkbBasePath);
++    #endif
++
++    return _NXXkbBasePath;
++  }
++
++_NXGetXkbBasePathError:
++
++  if (strlen(path) + 1 > PATH_MAX)
++  {
++    #ifdef TEST
++    fprintf(stderr, "_NXGetXkbBasePath: WARNING! Maximum length of xkb base path exceeded.\n");
++    #endif
++  }
++
++  strcpy(_NXXkbBasePath, path);
++
++  #ifdef TEST
++  fprintf(stderr, "_NXGetXkbBasePath: Using default xkb base path [%s].\n",
++              _NXXkbBasePath);
++  #endif
++
++  return _NXXkbBasePath;
++}
++
++static int NXVerifyXkbCompPath(char *path)
++{
++  char *xkbCompPath;
++  int xkbCompPathSize;
++  struct stat xkbCompPathStat;
++
++  if (path == NULL)
++  {
++    return 0;
++  }
++
++  xkbCompPathSize = strlen(path) + strlen("/") +
++                        strlen("xkbcomp") + 1;
++
++  if ((xkbCompPath = malloc((xkbCompPathSize + 1) * sizeof(char))) == NULL)
++  {
++    FatalError("NXVerifyXkbCompPath: WARNING! malloc failed.\n");
++
++    return 0;
++  }
++
++  strcpy(xkbCompPath, path);
++  strcat(xkbCompPath, "/");
++  strcat(xkbCompPath, "xkbcomp");
++
++  if (stat(xkbCompPath, &xkbCompPathStat) != 0)
++  {
++    #ifdef NX_TRANS_TEST
++    fprintf(stderr, "NXVerifyXkbCompPath: WARNING! Failed to stat xkbcomp path [%s].\n",
++                xkbCompPath);
++    #endif
++
++    free(xkbCompPath);
++
++    return 0;
++  }
++
++  free(xkbCompPath);
++
++  return 1;
++}
++
++/*
++ * This function returns the directory
++ * containing the xkbcomp executable.
++ * The function will first try to locate
++ * the executable in the hardcoded path
++ * (the same path as the "base" xkb one)
++ * and, if the xkbcomp file couldn't be
++ * found, the function will not include
++ * an explicit path and will rely on the
++ * PATH environment to list the directory.
++ */
++
++char *_NXGetXkbCompPath(const char *path)
++{
++
++  char * xkbCompPath;
++
++  /*
++   * Check the xkbcomp executable
++   * directory only once.
++   */
++
++  if (*_NXXkbCompPath != '\0')
++  {
++    return _NXXkbCompPath;
++  }
++
++  xkbCompPath = _NXGetXkbBasePath(path);
++
++  if (NXVerifyXkbCompPath(xkbCompPath) == 1)
++  {
++    if (strlen(xkbCompPath) + 1 > PATH_MAX)
++    {
++      #ifdef TEST
++      fprintf(stderr, "_NXGetXkbCompPath: WARNING! Maximum length of xkbcomp path exceeded.\n");
++      #endif
++
++      goto _NXGetXkbCompPathError;
++    }
++
++    strcpy(_NXXkbCompPath, xkbCompPath);
++
++    #ifdef TEST
++    fprintf(stderr, "_NXGetXkbCompPath: Using xkbcomp path [%s].\n",
++                _NXXkbCompPath);
++    #endif
++
++    return _NXXkbCompPath;
++  }
++
++  xkbCompPath = NX_ALT_XKBCOMP_PATH;
++
++  if (NXVerifyXkbCompPath(xkbCompPath) == 1)
++  {
++    if (strlen(xkbCompPath) + 1 > PATH_MAX)
++    {
++      #ifdef TEST
++      fprintf(stderr, "_NXGetXkbCompPath: WARNING! Maximum length of xkbcomp path exceeded.\n");
++      #endif
++
++      goto _NXGetXkbCompPathError;
++    }
++
++    strcpy(_NXXkbCompPath, xkbCompPath);
++
++    #ifdef TEST
++    fprintf(stderr, "_NXGetXkbCompPath: Using NX xkbcomp path [%s].\n",
++                _NXXkbCompPath);
++    #endif
++
++    return _NXXkbCompPath;
++  }
++
++_NXGetXkbCompPathError:
++
++  if (strlen(path) + 1 > PATH_MAX)
++  {
++    #ifdef TEST
++    fprintf(stderr, "_NXGetXkbCompPath: WARNING! Maximum length of xkbcomp path exceeded.\n");
++    #endif
++  }
++
++  strcpy(_NXXkbCompPath, path);
++
++  #ifdef TEST
++  fprintf(stderr, "_NXGetXkbCompPath: Using default xkbcomp path [%s].\n",
++              _NXXkbCompPath);
++  #endif
++
++  return _NXXkbCompPath;
++}
++
++#endif
++
+ static void
+ OutputDirectory(
+     char* outdir,
+@@ -240,14 +545,36 @@
+     XkbEnsureSafeMapName(outFile);
+     OutputDirectory(xkm_output_dir, sizeof(xkm_output_dir));
+ 
++#ifdef NXAGENT_SERVER
++
++    if (_NXGetXkbCompPath(XkbBaseDirectory) != NULL)
++    {
++
++#else
++
+     if (XkbBaseDirectory!=NULL) {
++
++#endif
++
+ #ifndef __UNIXOS2__
++
++#ifdef NXAGENT_SERVER
++        char *xkbbasedir = _NXGetXkbBasePath(XkbBaseDirectory);
++        char *xkbbindir = _NXGetXkbCompPath(XkbBinDirectory);
++#else
+         char *xkbbasedir = XkbBaseDirectory;
+         char *xkbbindir = XkbBinDirectory;
++#endif
++
+ #else
+         /* relocate the basedir and replace the slashes with backslashes */
++#ifdef NXAGENT_SERVER
++        char *xkbbasedir = (char*)__XOS2RedirRoot(_NXGetXkbBasePath(XkbBaseDirectory));
++        char *xkbbindir = (char*)__XOS2RedirRoot(_NXGetXkbCompPath(XkbBinDirectory));
++#else
+         char *xkbbasedir = (char*)__XOS2RedirRoot(XkbBaseDirectory);
+         char *xkbbindir = (char*)__XOS2RedirRoot(XkbBinDirectory);
++#endif
+         int i;
+ 
+ 	for (i=0; i<strlen(xkbbasedir); i++) 
+@@ -332,7 +659,13 @@
+     strcat(tmpname, "\\xkb_XXXXXX");
+     (void) mktemp(tmpname);
+ #endif
++
++#ifdef NXAGENT_SERVER
++    if (_NXGetXkbCompPath(XkbBaseDirectory)!=NULL) {
++#else
+     if (XkbBaseDirectory!=NULL) {
++#endif
++
+ #ifndef WIN32
+         char *xkmfile = "-";
+ #else
+@@ -341,12 +674,22 @@
+         char *xkmfile = tmpname;
+ #endif
+ #ifndef __UNIXOS2__
++#ifdef NXAGENT_SERVER
++        char *xkbbasedir = _NXGetXkbBasePath(XkbBaseDirectory);
++        char *xkbbindir = _NXGetXkbCompPath(XkbBinDirectory);
++#else
+         char *xkbbasedir = XkbBaseDirectory;
+         char *xkbbindir = XkbBinDirectory;
++#endif
+ #else
+         int i;
++#ifdef NXAGENT_SERVER
++        char *xkbbasedir = (char*)__XOS2RedirRoot(_NXGetXkbBasePath(XkbBaseDirectory));
++        char *xkbbindir = (char*)__XOS2RedirRoot(_NXGetXkbCompPath(XkbBinDirectory));
++#else
+         char *xkbbasedir = (char*)__XOS2RedirRoot(XkbBaseDirectory);
+         char *xkbbindir = (char*)__XOS2RedirRoot(XkbBinDirectory);
++#endif
+ 	for (i=0; i<strlen(xkbbasedir); i++) 
+             if (xkbbasedir[i]=='/') xkbbasedir[i]='\\';
+ 	for (i=0; i<strlen(xkbbindir); i++) 
+@@ -375,6 +718,15 @@
+ 		xkm_output_dir,keymap);
+     }
+     
++    #ifdef TEST
++    if (buf != NULL)
++        fprintf(stderr, "XkbDDXCompileKeymapByNames: "
++                    "Executing command [%s].\n", buf);
++    else
++        fprintf(stderr, "XkbDDXCompileKeymapByNames: "
++                    "Callin Popen() with null command.\n");
++    #endif
++
+ #ifndef WIN32
+     out= Popen(buf,"w");
+ #else
+@@ -390,7 +742,15 @@
+ #endif
+ 	XkbWriteXKBKeymapForNames(out,names,NULL,xkb,want,need);
+ #ifndef WIN32
++#ifdef __sun
++        if (Pclose(out) != 0)
++        {
++            ErrorF("Warning: Spurious failure reported in Pclose() runnning 'xkbcomp'.\n");
++        }
++        if (1)
++#else
+ 	if (Pclose(out)==0)
++#endif
+ #else
+ 	if (fclose(out)==0 && System(buf) >= 0)
+ #endif
+@@ -415,9 +775,15 @@
+             {
+ 		int i;
+ 		char name[PATH_MAX];
++#ifdef NXAGENT_SERVER
++                if (_NXGetXkbCompPath(XkbBaseDirectory)!=NULL)
++		    sprintf(name,"%s/%s%s.xkm", _NXGetXkbCompPath(XkbBaseDirectory)
++			,xkm_output_dir, keymap);
++#else
+                 if (XkbBaseDirectory!=NULL)
+ 		    sprintf(name,"%s/%s%s.xkm", XkbBaseDirectory
+ 			,xkm_output_dir, keymap);
++#endif
+ 		else
+                     sprintf(name,"%s%s.xkm", xkm_output_dir, keymap);
+ 		for (i = 0; i < 10; i++) {

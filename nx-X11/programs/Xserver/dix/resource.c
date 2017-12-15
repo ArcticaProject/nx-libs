@@ -73,8 +73,6 @@ Equipment Corporation.
 
 ******************************************************************/
 
-/* $Xorg: resource.c,v 1.5 2001/02/09 02:04:40 xorgcvs Exp $ */
-/* $XdotOrg: xc/programs/Xserver/dix/resource.c,v 1.8 2005/07/03 08:53:38 daniels Exp $ */
 /* $TOG: resource.c /main/41 1998/02/09 14:20:31 kaleb $ */
 
 /*	Routines to manage various kinds of resources:
@@ -99,14 +97,12 @@ Equipment Corporation.
  *      1, and an otherwise arbitrary ID in the low 22 bits, we can create a
  *      resource "owned" by the client.
  */
-/* $XFree86: xc/programs/Xserver/dix/resource.c,v 3.13 2003/09/24 02:43:13 dawes Exp $ */
 
-#define NEED_EVENTS
 #ifdef HAVE_DIX_CONFIG_H
 #include <dix-config.h>
 #endif
 
-#include <X11/X.h>
+#include <nx-X11/X.h>
 #include "misc.h"
 #include "os.h"
 #include "resource.h"
@@ -139,7 +135,7 @@ typedef struct _Resource {
     struct _Resource	*next;
     XID			id;
     RESTYPE		type;
-    pointer		value;
+    void *		value;
 } ResourceRec, *ResourcePtr;
 #define NullResource ((ResourcePtr)NULL)
 
@@ -178,7 +174,7 @@ CreateNewResourceType(DeleteType deleteFunc)
 
     if (next & lastResourceClass)
 	return 0;
-    funcs = (DeleteType *)xrealloc(DeleteFuncs,
+    funcs = (DeleteType *)realloc(DeleteFuncs,
 				   (next + 1) * sizeof(DeleteType));
     if (!funcs)
 	return 0;
@@ -186,7 +182,7 @@ CreateNewResourceType(DeleteType deleteFunc)
 #ifdef XResExtension
     {
        Atom *newnames;
-       newnames = xrealloc(ResourceNames, (next + 1) * sizeof(Atom));
+       newnames = realloc(ResourceNames, (next + 1) * sizeof(Atom));
        if(!newnames)
            return 0;
        ResourceNames = newnames;
@@ -231,8 +227,8 @@ InitClientResources(ClientPtr client)
 	lastResourceClass = RC_LASTPREDEF;
 	TypeMask = RC_LASTPREDEF - 1;
 	if (DeleteFuncs)
-	    xfree(DeleteFuncs);
-	DeleteFuncs = (DeleteType *)xalloc((lastResourceType + 1) *
+	    free(DeleteFuncs);
+	DeleteFuncs = (DeleteType *)malloc((lastResourceType + 1) *
 					   sizeof(DeleteType));
 	if (!DeleteFuncs)
 	    return FALSE;
@@ -249,14 +245,14 @@ InitClientResources(ClientPtr client)
 
 #ifdef XResExtension
         if(ResourceNames)
-            xfree(ResourceNames);
-        ResourceNames = xalloc((lastResourceType + 1) * sizeof(Atom));
+            free(ResourceNames);
+        ResourceNames = malloc((lastResourceType + 1) * sizeof(Atom));
         if(!ResourceNames)
            return FALSE;
 #endif
     }
     clientTable[i = client->index].resources =
-	(ResourcePtr *)xalloc(INITBUCKETS*sizeof(ResourcePtr));
+	(ResourcePtr *)malloc(INITBUCKETS*sizeof(ResourcePtr));
     if (!clientTable[i].resources)
 	return FALSE;
     clientTable[i].buckets = INITBUCKETS;
@@ -422,8 +418,9 @@ FakeClientID(register int client)
     return id;
 }
 
+#ifndef NXAGENT_SERVER
 Bool
-AddResource(XID id, RESTYPE type, pointer value)
+AddResource(XID id, RESTYPE type, void * value)
 {
     int client;
     register ClientResourceRec *rrec;
@@ -441,7 +438,7 @@ AddResource(XID id, RESTYPE type, pointer value)
 	(rrec->hashsize < MAXHASHSIZE))
 	RebuildTable(client);
     head = &rrec->resources[Hash(client, id)];
-    res = (ResourcePtr)xalloc(sizeof(ResourceRec));
+    res = (ResourcePtr)malloc(sizeof(ResourceRec));
     if (!res)
     {
 	(*DeleteFuncs[type & TypeMask])(value, id);
@@ -457,6 +454,7 @@ AddResource(XID id, RESTYPE type, pointer value)
 	rrec->expectID = id + 1;
     return TRUE;
 }
+#endif /* NXAGENT_SERVER */
 
 static void
 RebuildTable(int client)
@@ -472,13 +470,13 @@ RebuildTable(int client)
      */
 
     j = 2 * clientTable[client].buckets;
-    tails = (ResourcePtr **)ALLOCATE_LOCAL(j * sizeof(ResourcePtr *));
+    tails = (ResourcePtr **)malloc(j * sizeof(ResourcePtr *));
     if (!tails)
 	return;
-    resources = (ResourcePtr *)xalloc(j * sizeof(ResourcePtr));
+    resources = (ResourcePtr *)malloc(j * sizeof(ResourcePtr));
     if (!resources)
     {
-	DEALLOCATE_LOCAL(tails);
+	free(tails);
 	return;
     }
     for (rptr = resources, tptr = tails; --j >= 0; rptr++, tptr++)
@@ -501,12 +499,13 @@ RebuildTable(int client)
 	    *tptr = &res->next;
 	}
     }
-    DEALLOCATE_LOCAL(tails);
+    free(tails);
     clientTable[client].buckets *= 2;
-    xfree(clientTable[client].resources);
+    free(clientTable[client].resources);
     clientTable[client].resources = resources;
 }
 
+#ifndef NXAGENT_SERVER
 void
 FreeResource(XID id, RESTYPE skipDeleteFuncType)
 {
@@ -530,11 +529,9 @@ FreeResource(XID id, RESTYPE skipDeleteFuncType)
 		RESTYPE rtype = res->type;
 		*prev = res->next;
 		elements = --*eltptr;
-		if (rtype & RC_CACHED)
-		    FlushClientCaches(res->id);
 		if (rtype != skipDeleteFuncType)
 		    (*DeleteFuncs[rtype & TypeMask])(res->value, res->id);
-		xfree(res);
+		free(res);
 		if (*eltptr != elements)
 		    prev = head; /* prev may no longer be valid */
 		gotOne = TRUE;
@@ -542,11 +539,6 @@ FreeResource(XID id, RESTYPE skipDeleteFuncType)
 	    else
 		prev = &res->next;
         }
-	if(clients[cid] && (id == clients[cid]->lastDrawableID))
-	{
-	    clients[cid]->lastDrawable = (DrawablePtr)WindowTable[0];
-	    clients[cid]->lastDrawableID = WindowTable[0]->drawable.id;
-	}
     }
     if (!gotOne)
 	ErrorF("Freeing resource id=%lX which isn't there.\n",
@@ -570,23 +562,17 @@ FreeResourceByType(XID id, RESTYPE type, Bool skipFree)
 	    if (res->id == id && res->type == type)
 	    {
 		*prev = res->next;
-		if (type & RC_CACHED)
-		    FlushClientCaches(res->id);
 		if (!skipFree)
 		    (*DeleteFuncs[type & TypeMask])(res->value, res->id);
-		xfree(res);
+		free(res);
 		break;
 	    }
 	    else
 		prev = &res->next;
         }
-	if(clients[cid] && (id == clients[cid]->lastDrawableID))
-	{
-	    clients[cid]->lastDrawable = (DrawablePtr)WindowTable[0];
-	    clients[cid]->lastDrawableID = WindowTable[0]->drawable.id;
-	}
     }
 }
+#endif /* NXAGENT_SERVER */
 
 /*
  * Change the value associated with a resource id.  Caller
@@ -595,7 +581,7 @@ FreeResourceByType(XID id, RESTYPE type, Bool skipFree)
  */
 
 Bool
-ChangeResourceValue (XID id, RESTYPE rtype, pointer value)
+ChangeResourceValue (XID id, RESTYPE rtype, void * value)
 {
     int    cid;
     register    ResourcePtr res;
@@ -607,8 +593,6 @@ ChangeResourceValue (XID id, RESTYPE rtype, pointer value)
 	for (; res; res = res->next)
 	    if ((res->id == id) && (res->type == rtype))
 	    {
-		if (rtype & RC_CACHED)
-		    FlushClientCaches(res->id);
 		res->value = value;
 		return TRUE;
 	    }
@@ -622,12 +606,13 @@ ChangeResourceValue (XID id, RESTYPE rtype, pointer value)
  * add and delete an equal number of resources!
  */
 
+#ifndef NXAGENT_SERVER
 void
 FindClientResourcesByType(
     ClientPtr client,
     RESTYPE type,
     FindResType func,
-    pointer cdata
+    void * cdata
 ){
     register ResourcePtr *resources;
     register ResourcePtr this, next;
@@ -658,7 +643,7 @@ void
 FindAllClientResources(
     ClientPtr client,
     FindAllRes func,
-    pointer cdata
+    void * cdata
 ){
     register ResourcePtr *resources;
     register ResourcePtr this, next;
@@ -684,12 +669,12 @@ FindAllClientResources(
 }
 
 
-pointer
+void *
 LookupClientResourceComplex(
     ClientPtr client,
     RESTYPE type,
     FindComplexResType func,
-    pointer cdata
+    void * cdata
 ){
     ResourcePtr *resources;
     ResourcePtr this;
@@ -709,6 +694,7 @@ LookupClientResourceComplex(
     }
     return NULL;
 }
+#endif /* NXAGENT_SERVER */
 
 
 void
@@ -732,10 +718,8 @@ FreeClientNeverRetainResources(ClientPtr client)
 	    if (rtype & RC_NEVERRETAIN)
 	    {
 		*prev = this->next;
-		if (rtype & RC_CACHED)
-		    FlushClientCaches(this->id);
 		(*DeleteFuncs[rtype & TypeMask])(this->value, this->id);
-		xfree(this);	    
+		free(this);	    
 	    }
 	    else
 		prev = &this->next;
@@ -778,13 +762,11 @@ FreeClientResources(ClientPtr client)
 	{
 	    RESTYPE rtype = this->type;
 	    *head = this->next;
-	    if (rtype & RC_CACHED)
-		FlushClientCaches(this->id);
 	    (*DeleteFuncs[rtype & TypeMask])(this->value, this->id);
-	    xfree(this);	    
+	    free(this);	    
 	}
     }
-    xfree(clientTable[client->index].resources);
+    free(clientTable[client->index].resources);
     clientTable[client->index].resources = NULL;
     clientTable[client->index].buckets = 0;
 }
@@ -831,12 +813,12 @@ LegalNewID(XID id, register ClientPtr client)
  * else NULL is returned.
  */
 
-pointer
+void *
 SecurityLookupIDByType(ClientPtr client, XID id, RESTYPE rtype, Mask mode)
 {
     int    cid;
     register    ResourcePtr res;
-    pointer retval = NULL;
+    void * retval = NULL;
 
     assert(client == NullClient ||
      (client->index <= currentMaxClients && clients[client->index] == client));
@@ -860,12 +842,12 @@ SecurityLookupIDByType(ClientPtr client, XID id, RESTYPE rtype, Mask mode)
 }
 
 
-pointer
+void *
 SecurityLookupIDByClass(ClientPtr client, XID id, RESTYPE classes, Mask mode)
 {
     int    cid;
     register ResourcePtr res = NULL;
-    pointer retval = NULL;
+    void * retval = NULL;
 
     assert(client == NullClient ||
      (client->index <= currentMaxClients && clients[client->index] == client));
@@ -892,18 +874,18 @@ SecurityLookupIDByClass(ClientPtr client, XID id, RESTYPE classes, Mask mode)
  * macros because of compatibility with loadable servers.
  */
 
-pointer
+void *
 LookupIDByType(XID id, RESTYPE rtype)
 {
     return SecurityLookupIDByType(NullClient, id, rtype,
-				  SecurityUnknownAccess);
+				  DixUnknownAccess);
 }
 
-pointer
+void *
 LookupIDByClass(XID id, RESTYPE classes)
 {
     return SecurityLookupIDByClass(NullClient, id, classes,
-				   SecurityUnknownAccess);
+				   DixUnknownAccess);
 }
 
 #else /* not XCSECURITY */
@@ -911,7 +893,7 @@ LookupIDByClass(XID id, RESTYPE classes)
 /*
  *  LookupIDByType returns the object with the given id and type, else NULL.
  */ 
-pointer
+void *
 LookupIDByType(XID id, RESTYPE rtype)
 {
     int    cid;
@@ -926,14 +908,14 @@ LookupIDByType(XID id, RESTYPE rtype)
 	    if ((res->id == id) && (res->type == rtype))
 		return res->value;
     }
-    return (pointer)NULL;
+    return (void *)NULL;
 }
 
 /*
  *  LookupIDByClass returns the object with the given id and any one of the
  *  given classes, else NULL.
  */ 
-pointer
+void *
 LookupIDByClass(XID id, RESTYPE classes)
 {
     int    cid;
@@ -948,7 +930,7 @@ LookupIDByClass(XID id, RESTYPE classes)
 	    if ((res->id == id) && (res->type & classes))
 		return res->value;
     }
-    return (pointer)NULL;
+    return (void *)NULL;
 }
 
 #endif /* XCSECURITY */

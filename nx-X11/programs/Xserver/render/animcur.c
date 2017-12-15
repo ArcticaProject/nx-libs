@@ -1,6 +1,4 @@
 /*
- * $XFree86: xc/programs/Xserver/render/animcur.c,v 1.5tsi Exp $
- *
  * Copyright © 2002 Keith Packard, member of The XFree86 Project, Inc.
  *
  * Permission to use, copy, modify, distribute, and sell this software and its
@@ -36,8 +34,8 @@
 #include <dix-config.h>
 #endif
 
-#include <X11/X.h>
-#include <X11/Xmd.h>
+#include <nx-X11/X.h>
+#include <nx-X11/Xmd.h>
 #include "servermd.h"
 #include "scrnintstr.h"
 #include "dixstruct.h"
@@ -95,7 +93,7 @@ int	AnimCurGeneration;
 #define GetAnimCur(c)	    ((AnimCurPtr) ((c) + 1))
 #define GetAnimCurScreen(s) ((AnimCurScreenPtr) ((s)->devPrivates[AnimCurScreenPrivateIndex].ptr))
 #define GetAnimCurScreenIfSet(s) ((AnimCurScreenPrivateIndex != -1) ? GetAnimCurScreen(s) : NULL)
-#define SetAnimCurScreen(s,p) ((s)->devPrivates[AnimCurScreenPrivateIndex].ptr = (pointer) (p))
+#define SetAnimCurScreen(s,p) ((s)->devPrivates[AnimCurScreenPrivateIndex].ptr = (void *) (p))
 
 #define Wrap(as,s,elt,func) (((as)->elt = (s)->elt), (s)->elt = func)
 #define Unwrap(as,s,elt)    ((s)->elt = (as)->elt)
@@ -111,7 +109,7 @@ AnimCurSetCursorPosition (ScreenPtr pScreen,
 			  Bool generateEvent);
 
 static Bool
-AnimCurCloseScreen (int index, ScreenPtr pScreen)
+AnimCurCloseScreen (ScreenPtr pScreen)
 {
     AnimCurScreenPtr    as = GetAnimCurScreen(pScreen);
     Bool                ret;
@@ -127,10 +125,10 @@ AnimCurCloseScreen (int index, ScreenPtr pScreen)
     Unwrap(as, pScreen, UnrealizeCursor);
     Unwrap(as, pScreen, RecolorCursor);
     SetAnimCurScreen(pScreen,0);
-    ret = (*pScreen->CloseScreen) (index, pScreen);
-    xfree (as);
-    if (index == 0)
-	AnimCurScreenPrivateIndex = -1;
+    ret = (*pScreen->CloseScreen) (pScreen);
+    free (as);
+    if (screenInfo.numScreens <= 1)
+      AnimCurScreenPrivateIndex = -1;
     return ret;
 }
 
@@ -164,9 +162,9 @@ AnimCurCursorLimits (ScreenPtr pScreen,
 
 static void
 AnimCurScreenBlockHandler (int screenNum,
-			   pointer blockData,
-			   pointer pTimeout,
-			   pointer pReadmask)
+			   void * blockData,
+			   void * pTimeout,
+			   void * pReadmask)
 {
     ScreenPtr		pScreen = screenInfo.screens[screenNum];
     AnimCurScreenPtr    as = GetAnimCurScreen(pScreen);
@@ -334,7 +332,7 @@ AnimCurInit (ScreenPtr pScreen)
 	animCurState.elt = 0;
 	animCurState.time = 0;
     }
-    as = (AnimCurScreenPtr) xalloc (sizeof (AnimCurScreenRec));
+    as = (AnimCurScreenPtr) malloc (sizeof (AnimCurScreenRec));
     if (!as)
 	return FALSE;
     Wrap(as, pScreen, CloseScreen, AnimCurCloseScreen);
@@ -366,7 +364,7 @@ AnimCursorCreate (CursorPtr *cursors, CARD32 *deltas, int ncursor, CursorPtr *pp
 	if (IsAnimCur (cursors[i]))
 	    return BadMatch;
 	
-    pCursor = (CursorPtr) xalloc (sizeof (CursorRec) +
+    pCursor = (CursorPtr) malloc (sizeof (CursorRec) +
 				  sizeof (AnimCurRec) +
 				  ncursor * sizeof (AnimCurElt));
     if (!pCursor)

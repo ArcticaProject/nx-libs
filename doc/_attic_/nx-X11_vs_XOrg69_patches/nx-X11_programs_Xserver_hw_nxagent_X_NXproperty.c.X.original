@@ -1,0 +1,358 @@
+--- ./nx-X11/programs/Xserver/hw/nxagent/X/NXproperty.c.X.original	2015-02-13 14:03:44.744441510 +0100
++++ ./nx-X11/programs/Xserver/hw/nxagent/X/NXproperty.c	2015-02-10 19:13:13.772687085 +0100
+@@ -1,3 +1,20 @@
++/**************************************************************************/
++/*                                                                        */
++/* Copyright (c) 2001, 2011 NoMachine, http://www.nomachine.com/.         */
++/*                                                                        */
++/* NXAGENT, NX protocol compression and NX extensions to this software    */
++/* are copyright of NoMachine. Redistribution and use of the present      */
++/* software is allowed according to terms specified in the file LICENSE   */
++/* which comes in the source distribution.                                */
++/*                                                                        */
++/* Check http://www.nomachine.com/licensing.html for applicability.       */
++/*                                                                        */
++/* NX and NoMachine are trademarks of Medialogic S.p.A.                   */
++/*                                                                        */
++/* All rights reserved.                                                   */
++/*                                                                        */
++/**************************************************************************/
++
+ /* $XFree86: xc/programs/Xserver/dix/property.c,v 3.12 2002/02/19 11:09:22 alanh Exp $ */
+ /***********************************************************
+ 
+@@ -58,7 +75,7 @@
+ #include "windowstr.h"
+ #include "propertyst.h"
+ #include "dixstruct.h"
+-#include "dispatch.h"
++#include "../../dix/dispatch.h"
+ #include "swaprep.h"
+ #ifdef XCSECURITY
+ #define _SECURITY_SERVER
+@@ -69,6 +86,11 @@
+ #include "lbxtags.h"
+ #endif
+ 
++#include "Options.h"
++#include "Rootless.h"
++#include "Client.h"
++#include "Windows.h"
++
+ #if defined(LBX) || defined(LBX_COMPAT)
+ #if 0 /* no header in X11 environment, not used in X11 environment */
+ int fWriteToClient(ClientPtr client, int len, char *buf)
+@@ -78,6 +100,17 @@
+ #endif
+ #endif
+ 
++extern Atom clientCutProperty;
++
++#ifdef NXAGENT_SERVER
++typedef struct
++{
++  CARD32 state;
++  Window icon;
++}
++nxagentWMStateRec;
++#endif
++
+ /*****************************************************************
+  * Property Stuff
+  *
+@@ -234,6 +267,15 @@
+     totalSize = len * sizeInBytes;
+     REQUEST_FIXED_SIZE(xChangePropertyReq, totalSize);
+ 
++#ifdef NXAGENT_CLIPBOARD
++    {
++       extern WindowPtr nxagentGetClipboardWindow(Atom, WindowPtr);
++
++       pWin = nxagentGetClipboardWindow(stuff->property, NULL);
++    }
++
++    if (pWin == NULL)
++#endif
+     pWin = (WindowPtr)SecurityLookupWindow(stuff->window, client,
+ 					   SecurityWriteAccess);
+     if (!pWin)
+@@ -261,6 +303,18 @@
+     }
+ #endif
+ 
++#ifdef NXAGENT_ARTSD
++    {
++    /* Do not process MCOPGLOBALS property changes,
++      they are already set reflecting the server side settings.
++      Just return success.
++    */
++      extern Atom mcop_local_atom;
++      if (stuff->property == mcop_local_atom)
++        return client->noClientException;
++    }
++#endif
++
+ #ifdef LBX
+     err = LbxChangeWindowProperty(client, pWin, stuff->property, stuff->type,
+ 	 (int)format, (int)mode, len, TRUE, (pointer)&stuff[1], TRUE, NULL);
+@@ -271,7 +325,23 @@
+     if (err != Success)
+ 	return err;
+     else
+-	return client->noClientException;
++    {
++      if (nxagentOption(Rootless) == 1)
++      {
++        nxagentExportProperty(pWin, stuff->property, stuff->type, (int) format,
++                                  (int) mode, len, (pointer) &stuff[1]);
++      }
++
++      nxagentGuessClientHint(client, stuff->property, (char *) &stuff[1]);
++
++      nxagentGuessShadowHint(client, stuff->property);
++
++      #ifdef NX_DEBUG_INPUT
++      nxagentGuessDumpInputInfo(client, stuff->property, (char *) &stuff[1]);
++      #endif
++
++      return client->noClientException;
++    }
+ }
+ 
+ int
+@@ -289,10 +359,23 @@
+     int sizeInBytes;
+     int totalSize;
+     pointer data;
++    int copySize;
+ 
+     sizeInBytes = format>>3;
+     totalSize = len * sizeInBytes;
+ 
++    copySize = nxagentOption(CopyBufferSize);
++
++    if (copySize != COPY_UNLIMITED && property == clientCutProperty)
++    {
++      if (totalSize > copySize)
++      {
++        totalSize = copySize;
++        totalSize = totalSize - (totalSize % sizeInBytes);
++        len = totalSize / sizeInBytes;
++      }
++    }
++
+     /* first see if property already exists */
+ 
+     pProp = wUserProps (pWin);
+@@ -491,6 +574,11 @@
+ int
+ ProcGetProperty(ClientPtr client)
+ {
++    #ifdef NXAGENT_SERVER
++    nxagentWMStateRec wmState;
++    nxagentWMStateRec *wmsP = &wmState;
++    #endif
++
+     PropertyPtr pProp, prevProp;
+     unsigned long n, len, ind;
+     WindowPtr pWin;
+@@ -498,6 +586,7 @@
+     REQUEST(xGetPropertyReq);
+ 
+     REQUEST_SIZE_MATCH(xGetPropertyReq);
++
+     if (stuff->delete)
+ 	UpdateCurrentTime();
+     pWin = (WindowPtr)SecurityLookupWindow(stuff->window, client,
+@@ -533,6 +622,59 @@
+ 
+     reply.type = X_Reply;
+     reply.sequenceNumber = client->sequence;
++
++    #ifdef NXAGENT_SERVER
++
++    /*
++     * Creating a reply for WM_STATE property if it doesn't exist.
++     * This is intended to allow drag & drop work in JAva 1.6 when
++     * the agent is connected to NXWin in multiwindow mode.
++     */
++
++    if (nxagentOption(Rootless) &&
++            nxagentWindowTopLevel(pWin) &&
++                (!pProp) &&
++                    strcmp(NameForAtom(stuff->property), "WM_STATE") == 0)
++    {
++      wmState.state = 1;
++      wmState.icon = None;
++
++      if (ChangeWindowProperty(pWin, stuff->property, stuff->property, 32, 0, 2, &wmState, 1) == Success)
++      {
++        nxagentExportProperty(pWin, stuff->property, stuff->property, 32, 0, 2, &wmState);
++      }
++
++      n = 8;
++      ind = stuff->longOffset << 2;        
++
++      if (n < ind)
++      {
++        client->errorValue = stuff->longOffset;
++        return BadValue;
++      }
++
++      len = min(n - ind, 4 * stuff->longLength);
++
++      reply.bytesAfter = n - (ind + len);
++      reply.length = (len + 3) >> 2;
++
++      reply.format = 32;
++      reply.nItems = len / 4;
++      reply.propertyType = stuff->property;
++
++      WriteReplyToClient(client, sizeof(xGenericReply), &reply);
++
++      if (len)
++      {
++        client->pSwapReplyFunc = (ReplySwapPtr)CopySwap32Write;
++
++        WriteSwappedDataToClient(client, len, (char *)wmsP + ind);
++      }
++
++      return(client->noClientException);
++    }
++    #endif
++
+     if (!pProp) 
+ 	return NullPropertyReply(client, None, 0, &reply);
+ 
+@@ -643,6 +785,126 @@
+     return(client->noClientException);
+ }
+ 
++#ifdef NXAGENT_CLIPBOARD
++/* GetWindowProperty clipboard use only */
++int
++GetWindowProperty(pWin, property, longOffset, longLength, delete,
++            type, actualType, format, nItems, bytesAfter, propData )
++    WindowPtr	        pWin;
++    Atom		property;
++    long			longOffset;
++    long			longLength;
++    Bool			delete;
++    Atom		type;
++    Atom		*actualType;
++    int			*format;
++    unsigned long	*nItems;
++    unsigned long	*bytesAfter;
++    unsigned char	**propData;
++{
++    PropertyPtr pProp, prevProp;
++    unsigned long n, len, ind;
++
++    if (!pWin)
++	return BadWindow;
++
++
++    if (!ValidAtom(property))
++    {
++	return(BadAtom);
++    }
++    if ((type != AnyPropertyType) && !ValidAtom(type))
++    {
++	return(BadAtom);
++    }
++
++    pProp = wUserProps (pWin);
++    prevProp = (PropertyPtr)NULL;
++
++    while (pProp)
++    {
++	if (pProp->propertyName == property)
++	    break;
++	prevProp = pProp;
++	pProp = pProp->next;
++    }
++
++
++    if (!pProp)
++	return (BadAtom);
++
++    /* If the request type and actual type don't match. Return the
++    property information, but not the data. */
++
++    if (((type != pProp->type) &&
++	 (type != AnyPropertyType))
++       )
++    {
++	*bytesAfter = pProp->size;
++	*format = pProp->format;
++	*nItems = 0;
++	*actualType = pProp->type;
++	return(Success);
++    }
++
++/*
++ *  Return type, format, value to client
++ */
++    n = (pProp->format/8) * pProp->size; /* size (bytes) of prop */
++    ind = longOffset << 2;
++
++   /* If longOffset is invalid such that it causes "len" to
++	    be negative, it's a value error. */
++
++    if (n < ind)
++    {
++	return BadValue;
++    }
++
++    len = min(n - ind, 4 * longLength);
++
++    *bytesAfter = n - (ind + len);
++    *format = pProp->format;
++    *nItems = len / (pProp->format / 8 );
++    *actualType = pProp->type;
++
++    if (delete && (*bytesAfter == 0))
++    { /* send the event */
++	xEvent event;
++
++	event.u.u.type = PropertyNotify;
++	event.u.property.window = pWin->drawable.id;
++	event.u.property.state = PropertyDelete;
++	event.u.property.atom = pProp->propertyName;
++	event.u.property.time = currentTime.milliseconds;
++	DeliverEvents(pWin, &event, 1, (WindowPtr)NULL);
++    }
++
++    if (len)
++    {
++	 *propData = (unsigned char *)(pProp->data) + ind;
++    }
++
++    if (delete && (*bytesAfter == 0))
++    { /* delete the Property */
++#ifdef LBX
++	if (pProp->tag_id)
++	    TagDeleteTag(pProp->tag_id);
++#endif
++	if (prevProp == (PropertyPtr)NULL) /* takes care of head */
++	{
++	    if (!(pWin->optional->userProps = pProp->next))
++		CheckWindowOptionalNeed (pWin);
++	}
++	else
++	    prevProp->next = pProp->next;
++	xfree(pProp->data);
++	xfree(pProp);
++    }
++    return(Success);
++}
++#endif
++
+ int
+ ProcListProperties(ClientPtr client)
+ {
+@@ -727,3 +989,4 @@
+     else
+ 	return(result);
+ }
++

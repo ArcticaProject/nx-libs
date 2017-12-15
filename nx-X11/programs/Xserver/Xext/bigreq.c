@@ -1,4 +1,3 @@
-/* $Xorg: bigreq.c,v 1.4 2001/02/09 02:04:32 xorgcvs Exp $ */
 /*
 
 Copyright 1992, 1998  The Open Group
@@ -26,22 +25,19 @@ other dealings in this Software without prior written authorization
 from The Open Group.
 
 */
-/* $XFree86: xc/programs/Xserver/Xext/bigreq.c,v 3.8 2003/10/28 23:08:43 tsi Exp $ */
 
-#define NEED_EVENTS
 #ifdef HAVE_DIX_CONFIG_H
 #include <dix-config.h>
 #endif
 
-#include <X11/X.h>
-#include <X11/Xproto.h>
+#include <nx-X11/X.h>
+#include <nx-X11/Xproto.h>
 #include "misc.h"
 #include "os.h"
 #include "dixstruct.h"
 #include "extnsionst.h"
-#include <X11/extensions/bigreqstr.h>
+#include <nx-X11/extensions/bigreqstr.h>
 #include "opaque.h"
-#include "modinit.h"
 
 #if 0
 static unsigned char XBigReqCode;
@@ -54,7 +50,7 @@ static void BigReqResetProc(
 static DISPATCH_PROC(ProcBigReqDispatch);
 
 void
-BigReqExtensionInit(INITARGS)
+BigReqExtensionInit(void)
 {
 #if 0
     ExtensionEntry *extEntry;
@@ -85,23 +81,23 @@ ProcBigReqDispatch (client)
 {
     REQUEST(xBigReqEnableReq);
     xBigReqEnableReply rep;
-    register int n;
 
     if (client->swapped) {
-	swaps(&stuff->length, n);
+	swaps(&stuff->length);
     }
     if (stuff->brReqType != X_BigReqEnable)
 	return BadRequest;
     REQUEST_SIZE_MATCH(xBigReqEnableReq);
     client->big_requests = TRUE;
+    memset(&rep, 0, sizeof(xBigReqEnableReply));
     rep.type = X_Reply;
     rep.length = 0;
     rep.sequenceNumber = client->sequence;
     rep.max_request_size = maxBigRequestSize;
     if (client->swapped) {
-    	swaps(&rep.sequenceNumber, n);
-	swapl(&rep.max_request_size, n);
+	swaps(&rep.sequenceNumber);
+	swapl(&rep.max_request_size);
     }
-    WriteToClient(client, sizeof(xBigReqEnableReply), (char *)&rep);
+    WriteToClient(client, sizeof(xBigReqEnableReply), &rep);
     return(client->noClientException);
 }

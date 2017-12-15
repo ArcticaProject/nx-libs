@@ -1,17 +1,25 @@
 /**************************************************************************/
 /*                                                                        */
-/* Copyright (c) 2001, 2011 NoMachine, http://www.nomachine.com/.         */
+/* Copyright (c) 2001, 2011 NoMachine (http://www.nomachine.com)          */
+/* Copyright (c) 2008-2014 Oleksandr Shneyder <o.shneyder@phoca-gmbh.de>  */
+/* Copyright (c) 2011-2016 Mike Gabriel <mike.gabriel@das-netzwerkteam.de>*/
+/* Copyright (c) 2014-2016 Mihai Moldovan <ionic@ionic.de>                */
+/* Copyright (c) 2014-2016 Ulrich Sibiller <uli42@gmx.de>                 */
+/* Copyright (c) 2015-2016 Qindel Group (http://www.qindel.com)           */
 /*                                                                        */
 /* NXAGENT, NX protocol compression and NX extensions to this software    */
-/* are copyright of NoMachine. Redistribution and use of the present      */
-/* software is allowed according to terms specified in the file LICENSE   */
-/* which comes in the source distribution.                                */
+/* are copyright of the aforementioned persons and companies.             */
 /*                                                                        */
-/* Check http://www.nomachine.com/licensing.html for applicability.       */
-/*                                                                        */
-/* NX and NoMachine are trademarks of Medialogic S.p.A.                   */
+/* Redistribution and use of the present software is allowed according    */
+/* to terms specified in the file LICENSE which comes in the source       */
+/* distribution.                                                          */
 /*                                                                        */
 /* All rights reserved.                                                   */
+/*                                                                        */
+/* NOTE: This software has received contributions from various other      */
+/* contributors, only the core maintainers and supporters are listed as   */
+/* copyright holders. Please contact us, if you feel you should be listed */
+/* as copyright holder, as well.                                          */
 /*                                                                        */
 /**************************************************************************/
 
@@ -36,7 +44,7 @@ is" without express or implied warranty.
 #include "pixmapstr.h"
 #include "scrnintstr.h"
 #include "dixstruct.h"
-#include "fontstruct.h"
+#include <X11/fonts/fontstruct.h>
 #include "mistruct.h"
 #include "region.h"
 
@@ -75,7 +83,7 @@ void nxagentDisconnectGraphicContexts(void);
 GCPtr nxagentCreateGraphicContext(int depth);
 
 static void nxagentReconnectGC(void*, XID, void*);
-static void nxagentReconnectClip(GCPtr, int, pointer, int);
+static void nxagentReconnectClip(GCPtr, int, void *, int);
 static int  nxagentCompareRegions(RegionPtr, RegionPtr);
 
 struct nxagentGCRec
@@ -198,7 +206,7 @@ Bool nxagentCreateGC(GCPtr pGC)
 
   nxagentGCPriv(pGC) -> pPixmap = NULL;
 
-  AddResource(nxagentGCPriv(pGC) -> mid, RT_NX_GC, (pointer) pGC);
+  AddResource(nxagentGCPriv(pGC) -> mid, RT_NX_GC, (void *) pGC);
 
   return True;
 }
@@ -602,7 +610,7 @@ void nxagentDestroyGC(GCPtr pGC)
   miDestroyGC(pGC);
 }
 
-void nxagentChangeClip(GCPtr pGC, int type, pointer pValue, int nRects)
+void nxagentChangeClip(GCPtr pGC, int type, void * pValue, int nRects)
 {
   int i, size;
   BoxPtr pBox;
@@ -633,11 +641,11 @@ void nxagentChangeClip(GCPtr pGC, int type, pointer pValue, int nRects)
     case CT_YXSORTED:
     case CT_YXBANDED:
     {
-      RegionPtr pReg = RECTS_TO_REGION(pGC->pScreen, nRects, (xRectangle *)pValue, type);
+      RegionPtr pReg = RegionFromRects(nRects, (xRectangle *)pValue, type);
 
       clipsMatch = nxagentCompareRegions(pGC -> clientClip, pReg);
 
-      REGION_DESTROY(pGC->pScreen, pReg);
+      RegionDestroy(pReg);
 
       break;
     }
@@ -671,10 +679,10 @@ void nxagentChangeClip(GCPtr pGC, int type, pointer pValue, int nRects)
     {
       if (clipsMatch == 0 && nxagentGCTrap == 0)
       {
-        nRects = REGION_NUM_RECTS((RegionPtr)pValue);
+        nRects = RegionNumRects((RegionPtr)pValue);
         size = nRects * sizeof(*pRects);
-        pRects = (XRectangle *) xalloc(size);
-        pBox = REGION_RECTS((RegionPtr)pValue);
+        pRects = (XRectangle *) malloc(size);
+        pBox = RegionRects((RegionPtr)pValue);
 
         for (i = nRects; i-- > 0;)
         {
@@ -686,7 +694,7 @@ void nxagentChangeClip(GCPtr pGC, int type, pointer pValue, int nRects)
 
         XSetClipRectangles(nxagentDisplay, nxagentGC(pGC), pGC -> clipOrg.x, pGC -> clipOrg.y,
                                pRects, nRects, Unsorted);
-        xfree((char *) pRects);
+        free((char *) pRects);
       }
 
       break;
@@ -699,7 +707,7 @@ void nxagentChangeClip(GCPtr pGC, int type, pointer pValue, int nRects)
                          nxagentPixmap((PixmapPtr)pValue));
       }
 
-      pGC->clientClip = (pointer) (*pGC->pScreen->BitmapToRegion)((PixmapPtr) pValue);
+      pGC->clientClip = (void *) (*pGC->pScreen->BitmapToRegion)((PixmapPtr) pValue);
 
       nxagentGCPriv(pGC)->pPixmap = (PixmapPtr)pValue;
 
@@ -768,9 +776,9 @@ void nxagentChangeClip(GCPtr pGC, int type, pointer pValue, int nRects)
        * CT_REGION client clips.
        */
 
-      pGC->clientClip = (pointer) RECTS_TO_REGION(pGC->pScreen, nRects,
+      pGC->clientClip = (void *) RegionFromRects(nRects,
                                                   (xRectangle *)pValue, type);
-      xfree(pValue);
+      free(pValue);
 
       pValue = pGC->clientClip;
 
@@ -820,7 +828,7 @@ void nxagentDestroyClipHelper(GCPtr pGC)
     case CT_NONE:
       break;
     case CT_REGION:
-      REGION_DESTROY(pGC->pScreen, pGC->clientClip);
+      RegionDestroy(pGC->clientClip);
       break;
     case CT_PIXMAP:
       nxagentDestroyPixmap((PixmapPtr)pGC->clientClip);
@@ -848,8 +856,8 @@ void nxagentCopyClip(GCPtr pGCDst, GCPtr pGCSrc)
     case CT_REGION:
       if (nxagentGCPriv(pGCSrc)->pPixmap == NULL)
       {
-        pRgn = REGION_CREATE(pGCDst->pScreen, NULL, 1);
-        REGION_COPY(pGCDst->pScreen, pRgn, pGCSrc->clientClip);
+        pRgn = RegionCreate(NULL, 1);
+        RegionCopy(pRgn, pGCSrc->clientClip);
         nxagentChangeClip(pGCDst, CT_REGION, pRgn, 0);
       }
       else
@@ -904,7 +912,7 @@ static void nxagentFreeGCRec(struct nxagentGCRec *t)
               (void *) t, (void *) t -> gc);
   #endif
 
-  xfree(t -> gc);
+  free(t -> gc);
 
   free(t);
 }
@@ -916,10 +924,7 @@ static void nxagentRestoreGCRec(struct nxagentGCRec *t)
               (void*)t, (void*)t -> gc);
   #endif
 
-  if (nxagentGC(t -> pGC))
-  {
-    xfree(nxagentGC(t -> pGC));
-  }
+  free(nxagentGC(t -> pGC));
 
   nxagentGC(t -> pGC) = t -> gc;
 
@@ -987,7 +992,7 @@ static void nxagentRestoreGCList()
   }
 }
 
-int nxagentDestroyNewGCResourceType(pointer p, XID id)
+int nxagentDestroyNewGCResourceType(void * p, XID id)
 {
   /*
    * Address of the destructor is set in Init.c.
@@ -1003,7 +1008,7 @@ int nxagentDestroyNewGCResourceType(pointer p, XID id)
   return 1;
 }
 
-static void nxagentReconnectGC(void *param0, XID param1, pointer param2)
+static void nxagentReconnectGC(void *param0, XID param1, void * param2)
 {
   XGCValues values;
   unsigned long valuemask;
@@ -1151,11 +1156,8 @@ static void nxagentReconnectGC(void *param0, XID param1, pointer param2)
 
 Bool nxagentReconnectAllGCs(void *p0)
 {
-  int flexibility;
   int cid;
   Bool GCSuccess = True;
-
-  flexibility = *(int*)p0;
 
   #ifdef DEBUG
   fprintf(stderr, "nxagentReconnectAllGCs\n");
@@ -1188,7 +1190,7 @@ Bool nxagentReconnectAllGCs(void *p0)
   return GCSuccess;
 }
 
-void nxagentDisconnectGC(pointer p0, XID x1, pointer p2)
+void nxagentDisconnectGC(void * p0, XID x1, void * p2)
 {
   GCPtr pGC = (GCPtr) p0;
   Bool* pBool = (Bool*) p2;
@@ -1255,7 +1257,7 @@ Bool nxagentDisconnectAllGCs()
   return success;
 }
 
-static void nxagentReconnectClip(GCPtr pGC, int type, pointer pValue, int nRects)
+static void nxagentReconnectClip(GCPtr pGC, int type, void * pValue, int nRects)
 {
   int i, size;
   BoxPtr pBox;
@@ -1281,10 +1283,10 @@ static void nxagentReconnectClip(GCPtr pGC, int type, pointer pValue, int nRects
     case CT_REGION:
       if (nxagentGCPriv(pGC)->pPixmap == NULL)
       {
-        nRects = REGION_NUM_RECTS((RegionPtr)pValue);
+        nRects = RegionNumRects((RegionPtr)pValue);
         size = nRects * sizeof(*pRects);
-        pRects = (XRectangle *) xalloc(size);
-        pBox = REGION_RECTS((RegionPtr)pValue);
+        pRects = (XRectangle *) malloc(size);
+        pBox = RegionRects((RegionPtr)pValue);
         for (i = nRects; i-- > 0;) {
           pRects[i].x = pBox[i].x1;
           pRects[i].y = pBox[i].y1;
@@ -1301,7 +1303,7 @@ static void nxagentReconnectClip(GCPtr pGC, int type, pointer pValue, int nRects
 
         XSetClipRectangles(nxagentDisplay, nxagentGC(pGC), pGC -> clipOrg.x, pGC -> clipOrg.y,
                            pRects, nRects, Unsorted);
-        xfree((char *) pRects);
+        free((char *) pRects);
       }
       else
       {
@@ -1320,7 +1322,7 @@ static void nxagentReconnectClip(GCPtr pGC, int type, pointer pValue, int nRects
 
       XSetClipOrigin(nxagentDisplay, nxagentGC(pGC), pGC -> clipOrg.x, pGC -> clipOrg.y);
 
-      pGC->clientClip = (pointer) (*pGC->pScreen->BitmapToRegion)((PixmapPtr) pValue);
+      pGC->clientClip = (void *) (*pGC->pScreen->BitmapToRegion)((PixmapPtr) pValue);
 
       nxagentGCPriv(pGC)->pPixmap = (PixmapPtr)pValue;
 
@@ -1370,9 +1372,9 @@ static void nxagentReconnectClip(GCPtr pGC, int type, pointer pValue, int nRects
        * CT_PIXMAP and CT_REGION client clips.
        */
 
-      pGC->clientClip = (pointer) RECTS_TO_REGION(pGC->pScreen, nRects,
+      pGC->clientClip = (void *) RegionFromRects(nRects,
                                                   (xRectangle *)pValue, type);
-      xfree(pValue);
+      free(pValue);
       pValue = pGC->clientClip;
       type = CT_REGION;
 
@@ -1403,26 +1405,26 @@ static int nxagentCompareRegions(RegionPtr r1, RegionPtr r2)
     return 0;
   }
 
-  if (REGION_NUM_RECTS(r1) !=  REGION_NUM_RECTS(r2))
+  if (RegionNumRects(r1) !=  RegionNumRects(r2))
   {
     return 0;
   }
-  else if (REGION_NUM_RECTS(r1) == 0)
+  else if (RegionNumRects(r1) == 0)
   {
     return 1;
   }
-  else if ((*REGION_EXTENTS(pScreen, r1)).x1 !=  (*REGION_EXTENTS(pScreen, r2)).x1) return 0;
-  else if ((*REGION_EXTENTS(pScreen, r1)).x2 !=  (*REGION_EXTENTS(pScreen, r2)).x2) return 0;
-  else if ((*REGION_EXTENTS(pScreen, r1)).y1 !=  (*REGION_EXTENTS(pScreen, r2)).y1) return 0;
-  else if ((*REGION_EXTENTS(pScreen, r1)).y2 !=  (*REGION_EXTENTS(pScreen, r2)).y2) return 0;
+  else if ((*RegionExtents(r1)).x1 !=  (*RegionExtents(r2)).x1) return 0;
+  else if ((*RegionExtents(r1)).x2 !=  (*RegionExtents(r2)).x2) return 0;
+  else if ((*RegionExtents(r1)).y1 !=  (*RegionExtents(r2)).y1) return 0;
+  else if ((*RegionExtents(r1)).y2 !=  (*RegionExtents(r2)).y2) return 0;
   else
   {
-    for (i = 0; i < REGION_NUM_RECTS(r1); i++)
+    for (i = 0; i < RegionNumRects(r1); i++)
     {
-      if (REGION_RECTS(r1)[i].x1 !=  REGION_RECTS(r2)[i].x1) return 0;
-      else if (REGION_RECTS(r1)[i].x2 !=  REGION_RECTS(r2)[i].x2) return 0;
-      else if (REGION_RECTS(r1)[i].y1 !=  REGION_RECTS(r2)[i].y1) return 0;
-      else if (REGION_RECTS(r1)[i].y2 !=  REGION_RECTS(r2)[i].y2) return 0;
+      if (RegionRects(r1)[i].x1 !=  RegionRects(r2)[i].x1) return 0;
+      else if (RegionRects(r1)[i].x2 !=  RegionRects(r2)[i].x2) return 0;
+      else if (RegionRects(r1)[i].y1 !=  RegionRects(r2)[i].y1) return 0;
+      else if (RegionRects(r1)[i].y2 !=  RegionRects(r2)[i].y2) return 0;
     }
   }
 
@@ -1616,7 +1618,7 @@ GCPtr nxagentCreateGraphicContext(int depth)
    * to spread the list and add a new GC.
    */
 
-  nxagentGCs = xrealloc(nxagentGraphicContexts, (nxagentGraphicContextsSize + 1) * sizeof(nxagentGraphicContextsRec));
+  nxagentGCs = realloc(nxagentGraphicContexts, (nxagentGraphicContextsSize + 1) * sizeof(nxagentGraphicContextsRec));
    
   if (nxagentGCs == NULL)
   {

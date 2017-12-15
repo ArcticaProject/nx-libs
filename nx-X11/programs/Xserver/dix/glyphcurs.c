@@ -45,7 +45,6 @@ SOFTWARE.
 
 ************************************************************************/
 
-/* $Xorg: glyphcurs.c,v 1.4 2001/02/09 02:04:40 xorgcvs Exp $ */
 
 #ifdef HAVE_DIX_CONFIG_H
 #include <dix-config.h>
@@ -74,6 +73,7 @@ the first one we find.
 cursor metrics.
 */
 
+#ifndef NXAGENT_SERVER
 int
 ServerBitsFromGlyph(FontPtr pfont, unsigned ch, register CursorMetricPtr cm, unsigned char **ppbits)
 {
@@ -92,14 +92,15 @@ ServerBitsFromGlyph(FontPtr pfont, unsigned ch, register CursorMetricPtr cm, uns
 
     pScreen = screenInfo.screens[0];
     nby = BitmapBytePad(cm->width) * (long)cm->height;
-    pbits = (char *)xalloc(nby);
+    pbits = (char *)malloc(nby);
     if (!pbits)
 	return BadAlloc;
     /* zeroing the (pad) bits seems to help some ddx cursor handling */
     bzero(pbits, nby);
 
     ppix = (PixmapPtr)(*pScreen->CreatePixmap)(pScreen, cm->width,
-					       cm->height, 1);
+					       cm->height, 1,
+					       CREATE_PIXMAP_USAGE_SCRATCH);
     pGC = GetScratchGC(1, pScreen);
     if (!ppix || !pGC)
     {
@@ -107,7 +108,7 @@ ServerBitsFromGlyph(FontPtr pfont, unsigned ch, register CursorMetricPtr cm, uns
 	    (*pScreen->DestroyPixmap)(ppix);
 	if (pGC)
 	    FreeScratchGC(pGC);
-	xfree(pbits);
+	free(pbits);
 	return BadAlloc;
     }
 
@@ -119,7 +120,7 @@ ServerBitsFromGlyph(FontPtr pfont, unsigned ch, register CursorMetricPtr cm, uns
     /* fill the pixmap with 0 */
     gcval[0].val = GXcopy;
     gcval[1].val = 0;
-    gcval[2].ptr = (pointer)pfont;
+    gcval[2].ptr = (void *)pfont;
     dixChangeGC(NullClient, pGC, GCFunction | GCForeground | GCFont,
 		NULL, gcval);
     ValidateGC((DrawablePtr)ppix, pGC);
@@ -138,7 +139,7 @@ ServerBitsFromGlyph(FontPtr pfont, unsigned ch, register CursorMetricPtr cm, uns
     (*pScreen->DestroyPixmap)(ppix);
     return Success;
 }
-
+#endif /* NXAGENT_SERVER */
 
 Bool
 CursorMetricsFromGlyph(register FontPtr pfont, unsigned ch, register CursorMetricPtr cm)

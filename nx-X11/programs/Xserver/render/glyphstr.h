@@ -1,6 +1,4 @@
 /*
- * $XFree86: xc/programs/Xserver/render/glyphstr.h,v 1.3 2000/11/20 07:13:13 keithp Exp $
- *
  * Copyright © 2000 SuSE, Inc.
  *
  * Permission to use, copy, modify, distribute, and sell this software and its
@@ -26,7 +24,7 @@
 #ifndef _GLYPHSTR_H_
 #define _GLYPHSTR_H_
 
-#include <X11/extensions/renderproto.h>
+#include <nx-X11/extensions/renderproto.h>
 #include "picture.h"
 #include "screenint.h"
 
@@ -44,10 +42,14 @@ typedef struct _Glyph {
     /* bits follow */
 } GlyphRec, *GlyphPtr;
 
+#ifdef NXAGENT_SERVER
+#include "../hw/nxagent/NXglyphstr_GlyphRef.h"
+#else
 typedef struct _GlyphRef {
     CARD32	signature;
     GlyphPtr	glyph;
 } GlyphRefRec, *GlyphRefPtr;
+#endif /* NXAGENT_SERVER */
 
 #define DeletedGlyph	((GlyphPtr) 1)
 
@@ -63,18 +65,22 @@ typedef struct _GlyphHash {
     CARD32	    tableEntries;
 } GlyphHashRec, *GlyphHashPtr;
 
+#ifdef NXAGENT_SERVER
+#include "../hw/nxagent/NXglyphstr_GlyphSet.h"
+#else
 typedef struct _GlyphSet {
     CARD32	    refcnt;
     PictFormatPtr   format;
     int		    fdepth;
     GlyphHashRec    hash;
     int             maxPrivate;
-    pointer         *devPrivates;
+    void            **devPrivates;
 } GlyphSetRec, *GlyphSetPtr;
+#endif /* NXAGENT_SERVER */
 
 #define GlyphSetGetPrivate(pGlyphSet,n)					\
 	((n) > (pGlyphSet)->maxPrivate ?				\
-	 (pointer) 0 :							\
+	 (void *) 0 :							\
 	 (pGlyphSet)->devPrivates[n])
 
 #define GlyphSetSetPrivate(pGlyphSet,n,ptr)				\
@@ -101,7 +107,7 @@ void
 ResetGlyphSetPrivateIndex (void);
 
 Bool
-_GlyphSetSetNewPrivate (GlyphSetPtr glyphSet, int n, pointer ptr);
+_GlyphSetSetNewPrivate (GlyphSetPtr glyphSet, int n, void * ptr);
 
 Bool
 GlyphInit (ScreenPtr pScreen);
@@ -140,7 +146,7 @@ GlyphSetPtr
 AllocateGlyphSet (int fdepth, PictFormatPtr format);
 
 int
-FreeGlyphSet (pointer   value,
+FreeGlyphSet (void      *value,
 	      XID       gid);
 
 

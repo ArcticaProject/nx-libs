@@ -1,4 +1,3 @@
-/* $XFree86: xc/programs/Xserver/os/osdep.h,v 3.17 2002/05/31 18:46:06 dawes Exp $ */
 /***********************************************************
 
 Copyright 1987, 1998  The Open Group
@@ -45,7 +44,6 @@ ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS
 SOFTWARE.
 
 ******************************************************************/
-/* $Xorg: osdep.h,v 1.5 2001/02/09 02:05:23 xorgcvs Exp $ */
 
 #ifdef HAVE_DIX_CONFIG_H
 #include <dix-config.h>
@@ -54,7 +52,6 @@ SOFTWARE.
 #ifndef _OSDEP_H_
 #define _OSDEP_H_ 1
 
-#define BOTIMEOUT 200 /* in milliseconds */
 #define BUFSIZE 4096
 #define BUFWATERMARK 8192
 #ifndef MAXBUFSIZE
@@ -63,7 +60,6 @@ SOFTWARE.
 
 #include <X11/Xdmcp.h>
 
-#ifndef sgi	    /* SGI defines OPEN_MAX in a useless way */
 #ifndef X_NOT_POSIX
 #ifdef _POSIX_SOURCE
 #include <limits.h>
@@ -79,11 +75,7 @@ SOFTWARE.
 #undef _POSIX_
 #endif
 #endif /* X_NOT_POSIX */
-#endif
 
-#ifdef __QNX__
-#define NOFILES_MAX 256
-#endif
 #ifndef OPEN_MAX
 #ifdef SVR4
 #define OPEN_MAX 256
@@ -93,7 +85,7 @@ SOFTWARE.
 #if defined(NOFILE) && !defined(NOFILES_MAX)
 #define OPEN_MAX NOFILE
 #else
-#if !defined(__UNIXOS2__) && !defined(WIN32)
+#if !defined(WIN32)
 #define OPEN_MAX NOFILES_MAX
 #else
 #define OPEN_MAX 256
@@ -103,7 +95,7 @@ SOFTWARE.
 #endif
 #endif
 
-#include <X11/Xpoll.h>
+#include <nx-X11/Xpoll.h>
 
 /*
  * MAXSOCKS is used only for initialising MaxClients when no other method
@@ -119,7 +111,7 @@ SOFTWARE.
 /* MAXSELECT is the number of fds that select() can handle */
 #define MAXSELECT (sizeof(fd_set) * NBBY)
 
-#if !defined(hpux) && !defined(SVR4) && !defined(SYSV)
+#if !defined(SVR4) && !defined(SYSV)
 #define HAS_GETDTABLESIZE
 #endif
 
@@ -136,6 +128,7 @@ typedef struct _connectionInput {
     int  bufcnt;                /* count of bytes in buffer */
     int lenLastReq;
     int size;
+    unsigned int ignoreBytes;   /* bytes to ignore before the next request */
 } ConnectionInput, *ConnectionInputPtr;
 
 typedef struct _connectionOutput {
@@ -143,24 +136,7 @@ typedef struct _connectionOutput {
     int size;
     unsigned char *buf;
     int count;
-#ifdef LBX
-    Bool nocompress;
-#endif
 } ConnectionOutput, *ConnectionOutputPtr;
-
-#ifdef K5AUTH
-typedef struct _k5_state {
-    int		stageno;	/* current stage of auth protocol */
-    pointer	srvcreds;	/* server credentials */
-    pointer	srvname;	/* server principal name */
-    pointer	ktname;		/* key table: principal-key pairs */
-    pointer	skey;		/* session key */
-}           k5_state;
-#endif
-
-#ifdef LBX
-typedef struct _LbxProxy *OsProxyPtr;
-#endif
 
 struct _osComm;
 
@@ -197,42 +173,24 @@ typedef struct _osComm {
     ConnectionInputPtr input;
     ConnectionOutputPtr output;
     XID	auth_id;		/* authorization id */
-#ifdef K5AUTH
-    k5_state	authstate;	/* state of setup auth conversation */
-#endif
     CARD32 conn_time;		/* timestamp if not established, else 0  */
     struct _XtransConnInfo *trans_conn; /* transport connection object */
-#ifdef LBX
-    OsProxyPtr proxy;
-    ConnectionInputPtr largereq;
-    OsCloseFunc Close;
-    OsFlushFunc Flush;
-#endif
 } OsCommRec, *OsCommPtr;
 
-#ifdef LBX
-#define FlushClient(who, oc, extraBuf, extraCount) \
-    (*(oc)->Flush)(who, oc, extraBuf, extraCount)
-extern int StandardFlushClient(
-    ClientPtr /*who*/,
-    OsCommPtr /*oc*/,
-    char* /*extraBuf*/,
-    int /*extraCount*/
-);
-extern int LbxFlushClient(ClientPtr /*who*/, OsCommPtr /*oc*/, 
-    char * /*extraBuf*/, int /*extraCount*/);
-#else
 extern int FlushClient(
     ClientPtr /*who*/,
     OsCommPtr /*oc*/,
-    char* /*extraBuf*/,
+    const void * /*__extraBuf*/,
     int /*extraCount*/
 );
-#endif
 
 extern void FreeOsBuffers(
     OsCommPtr /*oc*/
 );
+
+extern void InitNotifyFds(void);
+
+extern void HandleNotifyFds(void);
 
 #include "dix.h"
 
@@ -243,8 +201,11 @@ extern ConnectionOutputPtr AllocateOutputBuffer(void);
 extern fd_set AllSockets;
 extern fd_set AllClients;
 extern fd_set LastSelectMask;
+extern fd_set LastSelectWriteMask;
 extern fd_set WellKnownConnections;
 extern fd_set EnabledDevices;
+extern fd_set NotifyReadFds;
+extern fd_set NotifyWriteFds;
 extern fd_set ClientsWithInput;
 extern fd_set ClientsWriteBlocked;
 extern fd_set OutputPending;
@@ -259,7 +220,8 @@ extern void ClearConnectionTranslation();
 #endif
  
 extern Bool NewOutputPending;
-extern Bool AnyClientsWriteBlocked;
+extern Bool AnyWritesPending;
+extern Bool NumNotifyWriteFd;
 extern Bool CriticalOutputPending;
 
 extern int timesThisConnection;
@@ -275,6 +237,9 @@ typedef long int fd_mask;
 #endif
 #define ffs mffs
 extern int mffs(fd_mask);
+
+/* in access.c */
+extern Bool ComputeLocalClient(ClientPtr client);
 
 /* in auth.c */
 extern void GenerateRandomData (int len, char *buf);
@@ -307,16 +272,6 @@ extern int  SecureRPCAdd      (AuthAddCArgs);
 extern int  SecureRPCFromID   (AuthFromIDArgs);
 extern int  SecureRPCRemove   (AuthRemCArgs);
 extern int  SecureRPCReset    (AuthRstCArgs);
-#endif
-
-/* in k5auth.c */
-#ifdef K5AUTH
-extern XID  K5Check           (AuthCheckArgs);
-extern XID  K5ToID            (AuthToIDArgs);
-extern int  K5Add             (AuthAddCArgs);
-extern int  K5FromID          (AuthFromIDArgs);
-extern int  K5Remove          (AuthRemCArgs);
-extern int  K5Reset           (AuthRstCArgs);
 #endif
 
 /* in secauth.c */

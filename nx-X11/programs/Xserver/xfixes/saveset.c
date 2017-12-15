@@ -38,7 +38,7 @@ ProcXFixesChangeSaveSet(ClientPtr client)
 		  
     REQUEST_SIZE_MATCH(xXFixesChangeSaveSetReq);
     pWin = (WindowPtr)SecurityLookupWindow(stuff->window, client,
-					   SecurityReadAccess);
+					   DixReadAccess);
     if (!pWin)
         return(BadWindow);
     if (client->clientAsMask == (CLIENT_BITS(pWin->drawable.id)))
@@ -70,10 +70,9 @@ ProcXFixesChangeSaveSet(ClientPtr client)
 int
 SProcXFixesChangeSaveSet(ClientPtr client)
 {
-    register int n;
     REQUEST(xXFixesChangeSaveSetReq);
 
-    swaps(&stuff->length, n);
-    swapl(&stuff->window, n);
+    swaps(&stuff->length);
+    swapl(&stuff->window);
     return ProcXFixesChangeSaveSet(client);
 }

@@ -1,5 +1,3 @@
-/* $Xorg: XKBsrv.h,v 1.3 2000/08/18 04:05:45 coskrey Exp $ */
-/* $XdotOrg: xc/include/extensions/XKBsrv.h,v 1.5 2005/09/01 19:56:14 krh Exp $ */
 /************************************************************
 Copyright (c) 1993 by Silicon Graphics Computer Systems, Inc.
 
@@ -25,7 +23,6 @@ OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION  WITH
 THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 ********************************************************/
-/* $XFree86: xc/include/extensions/XKBsrv.h,v 3.22 2002/11/20 04:49:01 dawes Exp $ */
 
 #ifndef _XKBSRV_H_
 #define	_XKBSRV_H_
@@ -69,8 +66,8 @@ THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #define XkbUpdateKeyTypeVirtualMods	SrvXkbUpdateKeyTypeVirtualMods
 #endif
 
-#include <X11/extensions/XKBstr.h>
-#include <X11/extensions/XKBproto.h>
+#include <nx-X11/extensions/XKBstr.h>
+#include <nx-X11/extensions/XKBproto.h>
 #include "inputstr.h"
 
 #ifdef NXAGENT_SERVER
@@ -294,20 +291,36 @@ extern char *	XkbModelUsed,*XkbLayoutUsed,*XkbVariantUsed,*XkbOptionsUsed;
 extern Bool	noXkbExtension;
 extern Bool	XkbWantRulesProp;
 
-extern pointer	XkbLastRepeatEvent;
+extern void *	XkbLastRepeatEvent;
 
 extern CARD32	xkbDebugFlags;
 extern CARD32	xkbDebugCtrls;
 
-#define	_XkbAlloc(s)		xalloc((s))
+#ifndef XKB_IN_SERVER
+
+#define	_XkbAlloc(s)		Xalloc((s))
 #define	_XkbCalloc(n,s)		Xcalloc((n)*(s))
 #define	_XkbRealloc(o,s)	Xrealloc((o),(s))
-#define	_XkbTypedAlloc(t)	((t *)xalloc(sizeof(t)))
+#define	_XkbTypedAlloc(t)	((t *)Xalloc(sizeof(t)))
 #define	_XkbTypedCalloc(n,t)	((t *)Xcalloc((n)*sizeof(t)))
 #define	_XkbTypedRealloc(o,n,t) \
 	((o)?(t *)Xrealloc((o),(n)*sizeof(t)):_XkbTypedCalloc(n,t))
 #define	_XkbClearElems(a,f,l,t)	bzero(&(a)[f],((l)-(f)+1)*sizeof(t))
 #define	_XkbFree(p)		Xfree(p)
+
+#else
+
+#define	_XkbAlloc(s)		malloc((s))
+#define	_XkbCalloc(n,s)		calloc((n), (s))
+#define	_XkbRealloc(o,s)	realloc((o),(s))
+#define	_XkbTypedAlloc(t)	((t *)malloc(sizeof(t)))
+#define	_XkbTypedCalloc(n,t)	((t *)calloc((n), sizeof(t)))
+#define	_XkbTypedRealloc(o,n,t) \
+	((o)?(t *)realloc((o),(n)*sizeof(t)):_XkbTypedCalloc(n,t))
+#define	_XkbClearElems(a,f,l,t)	bzero(&(a)[f],((l)-(f)+1)*sizeof(t))
+#define	_XkbFree(p)		free(p)
+
+#endif /* !XKB_IN_SERVER */
 
 #define	_XkbLibError(c,l,d) \
 	{ _XkbErrCode= (c); _XkbErrLocation= (l); _XkbErrData= (d); }
@@ -336,7 +349,7 @@ extern	int	DeviceButtonPress,DeviceButtonRelease;
 #define	IsKeypadKey(s)		XkbKSIsKeypad(s)
 
 #define	Status		int
-#define	XPointer	pointer
+#define	XPointer	void *
 #define	Display		struct _XDisplay
 
 #ifndef True
@@ -715,7 +728,7 @@ extern	void XkbHandleBell(
        BOOL		/* eventOnly */,
        DeviceIntPtr	/* kbd */,
        CARD8		/* percent */,
-       pointer 		/* ctrl */,
+       void * 		/* ctrl */,
        CARD8		/* class */,
        Atom		/* name */,
        WindowPtr	/* pWin */,
@@ -1100,9 +1113,9 @@ extern void XkbSendNewKeyboardNotify(
 
 #ifdef XKBSRV_NEED_FILE_FUNCS
 
-#include <X11/extensions/XKMformat.h>
-#include <X11/extensions/XKBfile.h>
-#include <X11/extensions/XKBrules.h>
+#include <nx-X11/extensions/XKMformat.h>
+#include <nx-X11/extensions/XKBfile.h>
+#include <nx-X11/extensions/XKBrules.h>
 
 #define	_XkbListKeymaps		0
 #define	_XkbListKeycodes	1

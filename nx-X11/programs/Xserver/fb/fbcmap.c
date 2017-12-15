@@ -1,5 +1,4 @@
 /* $XConsortium: fbcmap.c,v 4.19 94/04/17 20:28:46 dpw Exp $ */
-/* $XFree86: xc/programs/Xserver/fb/fbcmap.c,v 1.5 2000/09/20 00:09:13 keithp Exp $ */
 /************************************************************
 Copyright 1987 by Sun Microsystems, Inc. Mountain View, CA.
 
@@ -34,8 +33,8 @@ THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #include <dix-config.h>
 #endif
 
-#include <X11/X.h>
-#include <X11/Xproto.h>
+#include <nx-X11/X.h>
+#include <nx-X11/Xproto.h>
 #include "scrnintstr.h"
 #include "colormapst.h"
 #include "resource.h"
@@ -390,7 +389,7 @@ fbSetVisualTypesAndMasks (int depth, int visuals, int bitsPerRGB,
 {
     fbVisualsPtr   new, *prev, v;
 
-    new = (fbVisualsPtr) xalloc (sizeof *new);
+    new = (fbVisualsPtr) malloc (sizeof *new);
     if (!new)
 	return FALSE;
     if (!redMask || !greenMask || !blueMask)
@@ -487,12 +486,12 @@ fbInitVisuals (VisualPtr    *visualp,
 	ndepth++;
 	nvisual += visuals->count;
     }
-    depth = (DepthPtr) xalloc (ndepth * sizeof (DepthRec));
-    visual = (VisualPtr) xalloc (nvisual * sizeof (VisualRec));
+    depth = (DepthPtr) malloc (ndepth * sizeof (DepthRec));
+    visual = (VisualPtr) malloc (nvisual * sizeof (VisualRec));
     if (!depth || !visual)
     {
-	xfree (depth);
-	xfree (visual);
+	free (depth);
+	free (visual);
 	return FALSE;
     }
     *depthp = depth;
@@ -508,7 +507,7 @@ fbInitVisuals (VisualPtr    *visualp,
 	vid = NULL;
 	if (nvtype)
 	{
-	    vid = (VisualID *) xalloc (nvtype * sizeof (VisualID));
+	    vid = (VisualID *) malloc (nvtype * sizeof (VisualID));
 	    if (!vid)
 		return FALSE;
 	}
@@ -549,7 +548,7 @@ fbInitVisuals (VisualPtr    *visualp,
 	    vid++;
 	    visual++;
 	}
-	xfree (visuals);
+	free (visuals);
     }
     fbVisuals = NULL;
     visual = *visualp;

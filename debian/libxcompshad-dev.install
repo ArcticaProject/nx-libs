@@ -1,0 +1,4 @@
+usr/include/*/nx/Shadow.h
+usr/lib/*/libXcompshad.a
+usr/lib/*/libXcompshad.so
+usr/lib/*/pkgconfig/nxcompshad.pc

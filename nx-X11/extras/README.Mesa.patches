@@ -1,0 +1,31 @@
+Patch naming scheme for Mesa.patches:
+-------------------------------------
+
+For patch file names, use characters from this ASCII subset:
+[a-zA-Z0-9_-.].
+
+This precaution is esp. important, if you build nx-libs without having
+the quilt utility available in the build environment. This is mostly true
+for non-Debian-based systems.
+
+Patch numbering scheme:
+-----------------------
+
+The patch naming scheme is about ordering patches by names and
+categories. All patches shall be prefixed with a number:
+
+0xxx: Mesa upstream backports
+1xxx: Patches that might be interesting for Mesa upstream
+2xxx: Distro specific patches (not applicable here, probably)
+3xxx: Security / CVE fixes for Mesa (probably obtained from upstream)
+4xxx: Patches that are needed to make Mesa work/build with/against nx-libs
+5xxx: Patches that silence compiler warnings
+
+The "series" file within the Mesa.patches directory defines the order of
+patch application.
+
+The patch names in the "series" file do not necessarily need to be in
+alpha-numerical order. Patch application order is about code and
+functionality, That is, patches in one category are allowed to depend
+upon patches in another category, even if the subsequent digits are not
+strictly ascending.

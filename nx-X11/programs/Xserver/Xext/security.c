@@ -1,5 +1,28 @@
-/* $XdotOrg: xc/programs/Xserver/Xext/security.c,v 1.5 2005/07/03 07:01:04 daniels Exp $ */
-/* $Xorg: security.c,v 1.4 2001/02/09 02:04:32 xorgcvs Exp $ */
+/**************************************************************************/
+/*                                                                        */
+/* Copyright (c) 2001, 2011 NoMachine (http://www.nomachine.com)          */
+/* Copyright (c) 2008-2014 Oleksandr Shneyder <o.shneyder@phoca-gmbh.de>  */
+/* Copyright (c) 2011-2016 Mike Gabriel <mike.gabriel@das-netzwerkteam.de>*/
+/* Copyright (c) 2014-2016 Mihai Moldovan <ionic@ionic.de>                */
+/* Copyright (c) 2014-2016 Ulrich Sibiller <uli42@gmx.de>                 */
+/* Copyright (c) 2015-2016 Qindel Group (http://www.qindel.com)           */
+/*                                                                        */
+/* nx-X11, NX protocol compression and NX extensions to this software     */
+/* are copyright of the aforementioned persons and companies.             */
+/*                                                                        */
+/* Redistribution and use of the present software is allowed according    */
+/* to terms specified in the file LICENSE which comes in the source       */
+/* distribution.                                                          */
+/*                                                                        */
+/* All rights reserved.                                                   */
+/*                                                                        */
+/* NOTE: This software has received contributions from various other      */
+/* contributors, only the core maintainers and supporters are listed as   */
+/* copyright holders. Please contact us, if you feel you should be listed */
+/* as copyright holder, as well.                                          */
+/*                                                                        */
+/**************************************************************************/
+
 /*
 
 Copyright 1996, 1998  The Open Group
@@ -25,24 +48,6 @@ used in advertising or otherwise to promote the sale, use or other dealings
 in this Software without prior written authorization from The Open Group.
 
 */
-/* $XFree86: xc/programs/Xserver/Xext/security.c,v 1.16tsi Exp $ */
-
-/**************************************************************************/
-/*                                                                        */
-/* Copyright (c) 2001, 2011 NoMachine, http://www.nomachine.com/.         */
-/*                                                                        */
-/* NX-X11, NX protocol compression and NX extensions to this software     */
-/* are copyright of NoMachine. Redistribution and use of the present      */
-/* software is allowed according to terms specified in the file LICENSE   */
-/* which comes in the source distribution.                                */
-/*                                                                        */
-/* Check http://www.nomachine.com/licensing.html for applicability.       */
-/*                                                                        */
-/* NX and NoMachine are trademarks of Medialogic S.p.A.                   */
-/*                                                                        */
-/* All rights reserved.                                                   */
-/*                                                                        */
-/**************************************************************************/
 
 #ifdef HAVE_DIX_CONFIG_H
 #include <dix-config.h>
@@ -56,20 +61,13 @@ in this Software without prior written authorization from The Open Group.
 #include "gcstruct.h"
 #include "colormapst.h"
 #include "propertyst.h"
+#include "protocol-versions.h"
 #define _SECURITY_SERVER
-#include <X11/extensions/securstr.h>
+#include <nx-X11/extensions/securstr.h>
 #include <assert.h>
 #include <stdarg.h>
-#ifdef LBX
-#define _XLBX_SERVER_
-#include <X11/extensions/XLbx.h>
-extern unsigned char LbxReqCode;
-#endif
-#ifdef XAPPGROUP
-#include <X11/extensions/Xagsrv.h>
-#endif
 #include <stdio.h>  /* for file reading operations */
-#include <X11/Xatom.h>  /* for XA_STRING */
+#include <nx-X11/Xatom.h>  /* for XA_STRING */
 
 #ifdef NXAGENT_SERVER
 
@@ -86,12 +84,12 @@ extern unsigned char LbxReqCode;
 
 #ifdef NXAGENT_SERVER
 
-#define NX_ALTERNATIVEPOLICYFILE "/usr/lib/xserver/SecurityPolicy"
+#define NX_ALTERNATIVEPOLICYFILE "/usr/local/share/nx/SecurityPolicy"
 
 #endif
 
 #if defined(WIN32) || defined(__CYGWIN__)
-#include <X11/Xos.h>
+#include <nx-X11/Xos.h>
 #undef index
 #endif
 
@@ -113,8 +111,6 @@ extern unsigned char LbxReqCode;
 static char _NXPolicyFilePath[1024];
 
 #endif
-
-#include "modinit.h"
 
 static int SecurityErrorBase;  /* first Security error number */
 static int SecurityEventBase;  /* first Security event number */
@@ -150,7 +146,7 @@ int (*SwappedUntrustedProcVector[256])(
  * try a set of well known paths.
  */
 
-const char *_NXGetPolicyFilePath(const char *path)
+char *_NXGetPolicyFilePath(const char *path)
 {
 
   struct stat SecurityPolicyStat;
@@ -288,7 +284,7 @@ SecurityAudit(char *format, ...)
 
 static int
 SecurityDeleteAuthorization(
-    pointer value,
+    void * value,
     XID id)
 {
     SecurityAuthorizationPtr pAuth = (SecurityAuthorizationPtr)value;
@@ -316,16 +312,10 @@ SecurityDeleteAuthorization(
     while ((pEventClient = pAuth->eventClients))
     {
 	/* send revocation event event */
-	ClientPtr client = rClient(pEventClient);
-
-	if (!client->clientGone)
-	{
-	    xSecurityAuthorizationRevokedEvent are;
-	    are.type = SecurityEventBase + XSecurityAuthorizationRevoked;
-	    are.sequenceNumber = client->sequence;
-	    are.authId = pAuth->id;
-	    WriteEventsToClient(client, 1, (xEvent *)&are);
-	}
+	xSecurityAuthorizationRevokedEvent are;
+	are.type = SecurityEventBase + XSecurityAuthorizationRevoked;
+	are.authId = pAuth->id;
+	WriteEventsToClient(rClient(pEventClient), 1, (xEvent *)&are);
 	FreeResource(pEventClient->resource, RT_NONE);
     }
 
@@ -338,7 +328,7 @@ SecurityDeleteAuthorization(
     }
 
     SecurityAudit("revoked authorization ID %d\n", pAuth->id);
-    xfree(pAuth);
+    free(pAuth);
     return Success;
 
 } /* SecurityDeleteAuthorization */
@@ -347,7 +337,7 @@ SecurityDeleteAuthorization(
 /* resource delete function for RTEventClient */
 static int
 SecurityDeleteAuthorizationEventClient(
-    pointer value,
+    void * value,
     XID id)
 {
     OtherClientsPtr pEventClient, prev = NULL;
@@ -363,7 +353,7 @@ SecurityDeleteAuthorizationEventClient(
 		prev->next = pEventClient->next;
 	    else
 		pAuth->eventClients = pEventClient->next;
-	    xfree(pEventClient);
+	    free(pEventClient);
 	    return(Success);
 	}
 	prev = pEventClient;
@@ -432,7 +422,7 @@ static CARD32
 SecurityAuthorizationExpired(
     OsTimerPtr timer,
     CARD32 time,
-    pointer pval)
+    void * pval)
 {
     SecurityAuthorizationPtr pAuth = (SecurityAuthorizationPtr)pval;
 
@@ -494,17 +484,16 @@ ProcSecurityQueryVersion(
     rep.type        	= X_Reply;
     rep.sequenceNumber 	= client->sequence;
     rep.length         	= 0;
-    rep.majorVersion  	= SECURITY_MAJOR_VERSION;
-    rep.minorVersion  	= SECURITY_MINOR_VERSION;
+    rep.majorVersion  	= SERVER_SECURITY_MAJOR_VERSION;
+    rep.minorVersion  	= SERVER_SECURITY_MINOR_VERSION;
     if(client->swapped)
     {
-	register char n;
-    	swaps(&rep.sequenceNumber, n);
-	swaps(&rep.majorVersion, n);
-	swaps(&rep.minorVersion, n);
+	swaps(&rep.sequenceNumber);
+	swaps(&rep.majorVersion);
+	swaps(&rep.minorVersion);
     }
-    (void)WriteToClient(client, SIZEOF(xSecurityQueryVersionReply),
-			(char *)&rep);
+    WriteToClient(client, SIZEOF(xSecurityQueryVersionReply),
+			&rep);
     return (client->noClientException);
 } /* ProcSecurityQueryVersion */
 
@@ -531,16 +520,16 @@ SecurityEventSelectForAuthorization(
 	}
     }
     
-    pEventClient = (OtherClients *) xalloc(sizeof(OtherClients));
+    pEventClient = (OtherClients *) malloc(sizeof(OtherClients));
     if (!pEventClient)
 	return BadAlloc;
     pEventClient->mask = mask;
     pEventClient->resource = FakeClientID(client->index);
     pEventClient->next = pAuth->eventClients;
     if (!AddResource(pEventClient->resource, RTEventClient,
-		     (pointer)pAuth))
+		     (void *)pAuth))
     {
-	xfree(pEventClient);
+	free(pEventClient);
 	return BadAlloc;
     }
     pAuth->eventClients = pEventClient;
@@ -624,7 +613,7 @@ ProcSecurityGenerateAuthorization(
 	    SecurityValidateGroupInfoRec vgi;
 	    vgi.group = group;
 	    vgi.valid = FALSE;
-	    CallCallbacks(&SecurityValidateGroupCallback, (pointer)&vgi);
+	    CallCallbacks(&SecurityValidateGroupCallback, (void *)&vgi);
 
 	    /* if nobody said they recognized it, it's an error */
 
@@ -669,7 +658,7 @@ ProcSecurityGenerateAuthorization(
 
     /* associate additional information with this auth ID */
 
-    pAuth = (SecurityAuthorizationPtr)xalloc(sizeof(SecurityAuthorizationRec));
+    pAuth = (SecurityAuthorizationPtr)malloc(sizeof(SecurityAuthorizationRec));
     if (!pAuth)
     {
 	err = BadAlloc;
@@ -716,15 +705,14 @@ ProcSecurityGenerateAuthorization(
 
     if (client->swapped)
     {
-	register char n;
-    	swapl(&rep.length, n);
-    	swaps(&rep.sequenceNumber, n);
-    	swapl(&rep.authId, n);
-    	swaps(&rep.dataLength, n);
+	swapl(&rep.length);
+	swaps(&rep.sequenceNumber);
+	swapl(&rep.authId);
+	swaps(&rep.dataLength);
     }
 
     WriteToClient(client, SIZEOF(xSecurityGenerateAuthorizationReply),
-		  (char *)&rep);
+		  &rep);
     WriteToClient(client, authdata_len, pAuthdata);
 
     SecurityAudit("client %d generated authorization %d trust %d timeout %d group %d events %d\n",
@@ -741,7 +729,7 @@ bailout:
     if (removeAuth)
 	RemoveAuthorization(stuff->nbytesAuthProto, protoname,
 			    authdata_len, pAuthdata);
-    if (pAuth) xfree(pAuth);
+    if (pAuth) free(pAuth);
     return err;
 
 } /* ProcSecurityGenerateAuthorization */
@@ -762,7 +750,7 @@ ProcSecurityRevokeAuthorization(
     REQUEST_SIZE_MATCH(xSecurityRevokeAuthorizationReq);
 
     pAuth = (SecurityAuthorizationPtr)SecurityLookupIDByType(client,
-	stuff->authId, SecurityAuthorizationResType, SecurityDestroyAccess);
+	stuff->authId, SecurityAuthorizationResType, DixDestroyAccess);
     if (!pAuth)
 	return SecurityErrorBase + XSecurityBadAuthorization;
 
@@ -795,12 +783,11 @@ SProcSecurityQueryVersion(
     ClientPtr client)
 {
     REQUEST(xSecurityQueryVersionReq);
-    register char 	n;
 
-    swaps(&stuff->length, n);
+    swaps(&stuff->length);
     REQUEST_SIZE_MATCH(xSecurityQueryVersionReq);
-    swaps(&stuff->majorVersion, n);
-    swaps(&stuff->minorVersion,n);
+    swaps(&stuff->majorVersion);
+    swaps(&stuff->minorVersion);
     return ProcSecurityQueryVersion(client);
 } /* SProcSecurityQueryVersion */
 
@@ -810,16 +797,15 @@ SProcSecurityGenerateAuthorization(
     ClientPtr client)
 {
     REQUEST(xSecurityGenerateAuthorizationReq);
-    register char 	n;
     CARD32 *values;
     unsigned long nvalues;
     int values_offset;
 
-    swaps(&stuff->length, n);
+    swaps(&stuff->length);
     REQUEST_AT_LEAST_SIZE(xSecurityGenerateAuthorizationReq);
-    swaps(&stuff->nbytesAuthProto, n);
-    swaps(&stuff->nbytesAuthData, n);
-    swapl(&stuff->valueMask, n);
+    swaps(&stuff->nbytesAuthProto);
+    swaps(&stuff->nbytesAuthData);
+    swapl(&stuff->valueMask);
     values_offset = ((stuff->nbytesAuthProto + (unsigned)3) >> 2) +
 		    ((stuff->nbytesAuthData + (unsigned)3) >> 2);
     if (values_offset > 
@@ -837,11 +823,10 @@ SProcSecurityRevokeAuthorization(
     ClientPtr client)
 {
     REQUEST(xSecurityRevokeAuthorizationReq);
-    register char 	n;
 
-    swaps(&stuff->length, n);
+    swaps(&stuff->length);
     REQUEST_SIZE_MATCH(xSecurityRevokeAuthorizationReq);
-    swapl(&stuff->authId, n);
+    swapl(&stuff->authId);
     return ProcSecurityRevokeAuthorization(client);
 } /* SProcSecurityRevokeAuthorization */
 
@@ -1065,7 +1050,7 @@ SecurityCheckDeviceAccess(client, dev, fromRequest)
  *	resource access.
  */
 
-static pointer
+static void *
 SecurityAuditResourceIDAccess(
     ClientPtr client,
     XID id)
@@ -1081,7 +1066,7 @@ SecurityAuditResourceIDAccess(
 	    xChangePropertyReq *req =
 		(xChangePropertyReq *)client->requestBuffer;
 	    int propertyatom = req->property;
-	    char *propertyname = NameForAtom(propertyatom);
+	    const char *propertyname = NameForAtom(propertyatom);
 
 	    SecurityAudit("client %d attempted request %d with window 0x%x property %s of client %d\n",
 		   client->index, reqtype, id, propertyname, cid);
@@ -1119,18 +1104,18 @@ SecurityAuditResourceIDAccess(
  *	Disallowed resource accesses are audited.
  */
 
-static pointer
+static void *
 SecurityCheckResourceIDAccess(
     ClientPtr client,
     XID id,
     RESTYPE rtype,
     Mask access_mode,
-    pointer rval)
+    void * rval)
 {
     int cid = CLIENT_ID(id);
     int reqtype = ((xReq *)client->requestBuffer)->reqType;
 
-    if (SecurityUnknownAccess == access_mode)
+    if (DixUnknownAccess == access_mode)
 	return rval;  /* for compatibility, we have to allow access */
 
     switch (reqtype)
@@ -1165,10 +1150,6 @@ SecurityCheckResourceIDAccess(
       * use app groups.  dpw
       */
 	if (client->trustLevel == clients[cid]->trustLevel
-#ifdef XAPPGROUP
-	    || (RT_COLORMAP == rtype && 
-		XagDefaultColormap (client) == (Colormap) id)
-#endif
 	)
 	    return rval;
 	else
@@ -1231,18 +1212,6 @@ SecurityCheckResourceIDAccess(
 
 		default:
 		{
-#ifdef LBX
-		    /* XXX really need per extension dispatching */
-		    if (reqtype == LbxReqCode) {
-			switch (((xReq *)client->requestBuffer)->data) {
-			case X_LbxGetProperty:
-			case X_LbxChangeProperty:
-			    return rval;
-			default:
-			    break;
-			}
-		    }
-#endif
 		    /* others not allowed */
 		    return SecurityAuditResourceIDAccess(client, id);
 		}
@@ -1288,8 +1257,8 @@ SecurityCheckResourceIDAccess(
 static void
 SecurityClientStateCallback(
     CallbackListPtr *pcbl,
-    pointer nulldata,
-    pointer calldata)
+    void * nulldata,
+    void * calldata)
 {
     NewClientInfoRec *pci = (NewClientInfoRec *)calldata;
     ClientPtr client = pci->client;
@@ -1343,22 +1312,6 @@ SecurityClientStateCallback(
     }
 } /* SecurityClientStateCallback */
 
-#ifdef LBX
-Bool
-SecuritySameLevel(client, authId)
-    ClientPtr client;
-    XID authId;
-{
-    SecurityAuthorizationPtr pAuth;
-
-    pAuth = (SecurityAuthorizationPtr)LookupIDByType(authId,
-						SecurityAuthorizationResType);
-    if (pAuth)
-	return client->trustLevel == pAuth->trustLevel;
-    return client->trustLevel == XSecurityClientTrusted;
-}
-#endif
-
 /* SecurityCensorImage
  *
  * Called after pScreen->GetImage to prevent pieces or trusted windows from
@@ -1390,7 +1343,6 @@ SecurityCensorImage(client, pVisibleRegion, widthBytesLine, pDraw, x, y, w, h,
     unsigned int format;
     char * pBuf;
 {
-    ScreenPtr pScreen = pDraw->pScreen;
     RegionRec imageRegion;  /* region representing x,y,w,h */
     RegionRec censorRegion; /* region to obliterate */
     BoxRec imageBox;
@@ -1400,12 +1352,12 @@ SecurityCensorImage(client, pVisibleRegion, widthBytesLine, pDraw, x, y, w, h,
     imageBox.y1 = y;
     imageBox.x2 = x + w;
     imageBox.y2 = y + h;
-    REGION_INIT(pScreen, &imageRegion, &imageBox, 1);
-    REGION_NULL(pScreen, &censorRegion);
+    RegionInit(&imageRegion, &imageBox, 1);
+    RegionNull(&censorRegion);
 
     /* censorRegion = imageRegion - visibleRegion */
-    REGION_SUBTRACT(pScreen, &censorRegion, &imageRegion, pVisibleRegion);
-    nRects = REGION_NUM_RECTS(&censorRegion);
+    RegionSubtract(&censorRegion, &imageRegion, pVisibleRegion);
+    nRects = RegionNumRects(&censorRegion);
     if (nRects > 0)
     { /* we have something to censor */
 	GCPtr pScratchGC = NULL;
@@ -1419,13 +1371,13 @@ SecurityCensorImage(client, pVisibleRegion, widthBytesLine, pDraw, x, y, w, h,
 
 	/* convert region to list-of-rectangles for PolyFillRect */
 
-	pRects = (xRectangle *)ALLOCATE_LOCAL(nRects * sizeof(xRectangle *));
+	pRects = (xRectangle *)malloc(nRects * sizeof(xRectangle *));
 	if (!pRects)
 	{
 	    failed = TRUE;
 	    goto failSafe;
 	}
-	for (pBox = REGION_RECTS(&censorRegion), i = 0;
+	for (pBox = RegionRects(&censorRegion), i = 0;
 	     i < nRects;
 	     i++, pBox++)
 	{
@@ -1445,7 +1397,7 @@ SecurityCensorImage(client, pVisibleRegion, widthBytesLine, pDraw, x, y, w, h,
 
 	pPix = GetScratchPixmapHeader(pDraw->pScreen, w, h,
 		    depth, bitsPerPixel,
-		    widthBytesLine, (pointer)pBuf);
+		    widthBytesLine, (void *)pBuf);
 	if (!pPix)
 	{
 	    failed = TRUE;
@@ -1471,12 +1423,12 @@ SecurityCensorImage(client, pVisibleRegion, widthBytesLine, pDraw, x, y, w, h,
 	     */
 	    bzero(pBuf, (int)(widthBytesLine * h));
 	}
-	if (pRects)     DEALLOCATE_LOCAL(pRects);
+	if (pRects)     free(pRects);
 	if (pScratchGC) FreeScratchGC(pScratchGC);
 	if (pPix)       FreeScratchPixmapHeader(pPix);
     }
-    REGION_UNINIT(pScreen, &imageRegion);
-    REGION_UNINIT(pScreen, &censorRegion);
+    RegionUninit(&imageRegion);
+    RegionUninit(&censorRegion);
 } /* SecurityCensorImage */
 
 /**********************************************************************/
@@ -1525,15 +1477,11 @@ SecurityFreePropertyAccessList(void)
     {
 	PropertyAccessPtr freeit = PropertyAccessList;
 	PropertyAccessList = PropertyAccessList->next;
-	xfree(freeit);
+	free(freeit);
     }
 } /* SecurityFreePropertyAccessList */
 
-#ifndef __UNIXOS2__
 #define SecurityIsWhitespace(c) ( (c == ' ') || (c == '\t') || (c == '\n') )
-#else
-#define SecurityIsWhitespace(c) ( (c == ' ') || (c == '\t') || (c == '\n') || (c == '\r') )
-#endif
 
 static char *
 SecuritySkipWhitespace(
@@ -1682,14 +1630,14 @@ SecurityParsePropertyAccessRule(
      */
     if (mustHaveValue)
 	size += strlen(mustHaveValue) + 1;
-    pacl = (PropertyAccessPtr)Xalloc(size);
+    pacl = (PropertyAccessPtr)malloc(size);
     if (!pacl)
 	return FALSE;
 
     pacl->name = MakeAtom(propname, strlen(propname), TRUE);
     if (pacl->name == BAD_RESOURCE)
     {
-	Xfree(pacl);
+	free(pacl);
 	return FALSE;
     }
     if (mustHaveProperty)
@@ -1698,7 +1646,7 @@ SecurityParsePropertyAccessRule(
 					  strlen(mustHaveProperty), TRUE);
 	if (pacl->mustHaveProperty == BAD_RESOURCE)
 	{
-	    Xfree(pacl);
+	    free(pacl);
 	    return FALSE;
 	}
     }
@@ -1755,15 +1703,15 @@ SecurityParseSitePolicy(
     if (!policyStr)
 	return FALSE;
 
-    copyPolicyStr = (char *)Xalloc(strlen(policyStr) + 1);
+    copyPolicyStr = (char *)malloc(strlen(policyStr) + 1);
     if (!copyPolicyStr)
 	return TRUE;
     strcpy(copyPolicyStr, policyStr);
-    newStrings = (char **)Xrealloc(SecurityPolicyStrings,
+    newStrings = (char **)realloc(SecurityPolicyStrings,
 			  sizeof (char *) * (nSecurityPolicyStrings + 1));
     if (!newStrings)
     {
-	Xfree(copyPolicyStr);
+	free(copyPolicyStr);
 	return TRUE;
     }
 
@@ -1791,9 +1739,9 @@ SecurityFreeSitePolicyStrings(void)
 	assert(nSecurityPolicyStrings);
 	while (nSecurityPolicyStrings--)
 	{
-	    Xfree(SecurityPolicyStrings[nSecurityPolicyStrings]);
+	    free(SecurityPolicyStrings[nSecurityPolicyStrings]);
 	}
-	Xfree(SecurityPolicyStrings);
+	free(SecurityPolicyStrings);
 	SecurityPolicyStrings = NULL;
 	nSecurityPolicyStrings = 0;
     }
@@ -1822,8 +1770,6 @@ SecurityLoadPropertyAccessList(void)
 
 #endif
 
-#ifndef __UNIXOS2__
-
 #ifdef NXAGENT_SERVER
 
     f = Fopen(_NXGetPolicyFilePath(SecurityPolicyFile), "r");
@@ -1834,20 +1780,6 @@ SecurityLoadPropertyAccessList(void)
 
 #endif
 
-#else
-
-#ifdef NXAGENT_SERVER
-
-    f = Fopen((char*)__XOS2RedirRoot( _NXGetPolicyFilePath(SecurityPolicyFile)), "r");
-
-#else
-
-    f = Fopen((char*)__XOS2RedirRoot(SecurityPolicyFile), "r");
-
-#endif
-
-#endif
- 
     if (!f)
     {
 #ifdef NXAGENT_SERVER
@@ -2119,11 +2051,11 @@ SecurityCheckPropertyAccess(client, pWin, propertyName, access_mode)
 	     * executed a continue, which will skip the follwing code.
 	     */
 	    action = SecurityAllowOperation;
-	    if (access_mode & SecurityReadAccess)
+	    if (access_mode & DixReadAccess)
 		action = max(action, pacl->readAction);
-	    if (access_mode & SecurityWriteAccess)
+	    if (access_mode & DixWriteAccess)
 		action = max(action, pacl->writeAction);
-	    if (access_mode & SecurityDestroyAccess)
+	    if (access_mode & DixDestroyAccess)
 		action = max(action, pacl->destroyAction);
 	    break;
 	} /* end for each pacl */
@@ -2191,7 +2123,7 @@ XSecurityOptions(argc, argv, i)
  */
 
 void
-SecurityExtensionInit(INITARGS)
+SecurityExtensionInit(void)
 {
     ExtensionEntry	*extEntry;
     int i;

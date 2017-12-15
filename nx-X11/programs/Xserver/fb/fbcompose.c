@@ -1,7 +1,4 @@
 /*
- * $XdotOrg: xc/programs/Xserver/fb/fbcompose.c,v 1.26 2005/12/09 18:35:20 ajax Exp $
- * $XFree86: xc/programs/Xserver/fb/fbcompose.c,v 1.17tsi Exp $
- *
  * Copyright © 2000 Keith Packard, member of The XFree86 Project, Inc.
  *             2005 Lars Knoll & Zack Rusin, Trolltech
  *
@@ -33,10 +30,14 @@
 
 #ifdef RENDER
 
+#include <stdlib.h>
+#include <string.h>
+#include <math.h>
+#include <assert.h>
+
 #include "picturestr.h"
 #include "mipict.h"
 #include "fbpict.h"
-#include <math.h>
 
 #define mod(a,b)	((b) == 1 ? 0 : (a) >= 0 ? (a) % (b) : (b) - (-a) % (b))
 
@@ -2896,7 +2897,7 @@ static void fbFetchTransformed(PicturePtr pict, int x, int y, int width, CARD32 
     if (pict->filter == PictFilterNearest)
     {
         if (pict->repeatType == RepeatNormal) {
-            if (REGION_NUM_RECTS(pict->pCompositeClip) == 1) {
+            if (RegionNumRects(pict->pCompositeClip) == 1) {
                 box = pict->pCompositeClip->extents;
                 for (i = 0; i < width; ++i) {
                     if (!v.vector[2]) {
@@ -2927,7 +2928,7 @@ static void fbFetchTransformed(PicturePtr pict, int x, int y, int width, CARD32 
                             y = MOD(v.vector[1]>>16, pict->pDrawable->height);
                             x = MOD(v.vector[0]>>16, pict->pDrawable->width);
                         }
-                        if (POINT_IN_REGION (0, pict->pCompositeClip, x, y, &box))
+                        if (RegionContainsPoint(pict->pCompositeClip, x, y, &box))
                             buffer[i] = fetch(bits + (y + pict->pDrawable->y)*stride, x + pict->pDrawable->x, indexed);
                         else
                             buffer[i] = 0;
@@ -2938,7 +2939,7 @@ static void fbFetchTransformed(PicturePtr pict, int x, int y, int width, CARD32 
                 }
             }
         } else {
-            if (REGION_NUM_RECTS(pict->pCompositeClip) == 1) {
+            if (RegionNumRects(pict->pCompositeClip) == 1) {
                 box = pict->pCompositeClip->extents;
                 for (i = 0; i < width; ++i) {
                     if (!v.vector[2]) {
@@ -2970,7 +2971,7 @@ static void fbFetchTransformed(PicturePtr pict, int x, int y, int width, CARD32 
                             y = v.vector[1]>>16;
                             x = v.vector[0]>>16;
                         }
-                        if (POINT_IN_REGION (0, pict->pCompositeClip, x, y, &box))
+                        if (RegionContainsPoint(pict->pCompositeClip, x, y, &box))
                             buffer[i] = fetch(bits + (y + pict->pDrawable->y)*stride, x + pict->pDrawable->x, indexed);
                         else
                             buffer[i] = 0;
@@ -2983,7 +2984,7 @@ static void fbFetchTransformed(PicturePtr pict, int x, int y, int width, CARD32 
         }
     } else if (pict->filter == PictFilterBilinear) {
         if (pict->repeatType == RepeatNormal) {
-            if (REGION_NUM_RECTS(pict->pCompositeClip) == 1) {
+            if (RegionNumRects(pict->pCompositeClip) == 1) {
                 box = pict->pCompositeClip->extents;
                 for (i = 0; i < width; ++i) {
                     if (!v.vector[2]) {
@@ -3082,14 +3083,14 @@ static void fbFetchTransformed(PicturePtr pict, int x, int y, int width, CARD32 
 
                         b = bits + (y1 + pict->pDrawable->y)*stride;
 
-                        tl = POINT_IN_REGION(0, pict->pCompositeClip, x1, y1, &box)
+                        tl = RegionContainsPoint(pict->pCompositeClip, x1, y1, &box)
                              ? fetch(b, x1 + pict->pDrawable->x, indexed) : 0;
-                        tr = POINT_IN_REGION(0, pict->pCompositeClip, x2, y1, &box)
+                        tr = RegionContainsPoint(pict->pCompositeClip, x2, y1, &box)
                              ? fetch(b, x2 + pict->pDrawable->x, indexed) : 0;
                         b = bits + (y2 + pict->pDrawable->y)*stride;
-                        bl = POINT_IN_REGION(0, pict->pCompositeClip, x1, y2, &box)
+                        bl = RegionContainsPoint(pict->pCompositeClip, x1, y2, &box)
                              ? fetch(b, x1 + pict->pDrawable->x, indexed) : 0;
-                        br = POINT_IN_REGION(0, pict->pCompositeClip, x2, y2, &box)
+                        br = RegionContainsPoint(pict->pCompositeClip, x2, y2, &box)
                              ? fetch(b, x2 + pict->pDrawable->x, indexed) : 0;
 
                         ft = FbGet8(tl,0) * idistx + FbGet8(tr,0) * distx;
@@ -3112,7 +3113,7 @@ static void fbFetchTransformed(PicturePtr pict, int x, int y, int width, CARD32 
                 }
             }
         } else {
-            if (REGION_NUM_RECTS(pict->pCompositeClip) == 1) {
+            if (RegionNumRects(pict->pCompositeClip) == 1) {
                 box = pict->pCompositeClip->extents;
                 for (i = 0; i < width; ++i) {
                     if (!v.vector[2]) {
@@ -3209,14 +3210,14 @@ static void fbFetchTransformed(PicturePtr pict, int x, int y, int width, CARD32 
                         b = bits + (y1 + pict->pDrawable->y)*stride;
                         x_off = x1 + pict->pDrawable->x;
 
-                        tl = POINT_IN_REGION(0, pict->pCompositeClip, x1, y1, &box)
+                        tl = RegionContainsPoint(pict->pCompositeClip, x1, y1, &box)
                              ? fetch(b, x_off, indexed) : 0;
-                        tr = POINT_IN_REGION(0, pict->pCompositeClip, x2, y1, &box)
+                        tr = RegionContainsPoint(pict->pCompositeClip, x2, y1, &box)
                              ? fetch(b, x_off + 1, indexed) : 0;
                         b += stride;
-                        bl = POINT_IN_REGION(0, pict->pCompositeClip, x1, y2, &box)
+                        bl = RegionContainsPoint(pict->pCompositeClip, x1, y2, &box)
                              ? fetch(b, x_off, indexed) : 0;
-                        br = POINT_IN_REGION(0, pict->pCompositeClip, x2, y2, &box)
+                        br = RegionContainsPoint(pict->pCompositeClip, x2, y2, &box)
                              ? fetch(b, x_off + 1, indexed) : 0;
 
                         ft = FbGet8(tl,0) * idistx + FbGet8(tr,0) * distx;
@@ -3274,7 +3275,7 @@ static void fbFetchTransformed(PicturePtr pict, int x, int y, int width, CARD32 
                     for (x = x1; x < x2; x++) {
                         if (*p) {
                             int tx = (pict->repeatType == RepeatNormal) ? MOD (x, pict->pDrawable->width) : x;
-                            if (POINT_IN_REGION (0, pict->pCompositeClip, tx, ty, &box)) {
+                            if (RegionContainsPoint(pict->pCompositeClip, tx, ty, &box)) {
                                 FbBits *b = bits + (ty + pict->pDrawable->y)*stride;
                                 CARD32 c = fetch(b, tx + pict->pDrawable->x, indexed);
 
@@ -3563,8 +3564,8 @@ fbCompositeGeneral (CARD8	op,
     if (width > SCANLINE_BUFFER_LENGTH)
         scanline_buffer = (CARD32 *) malloc(width * 3 * sizeof(CARD32));
 
-    n = REGION_NUM_RECTS (&region);
-    pbox = REGION_RECTS (&region);
+    n = RegionNumRects (&region);
+    pbox = RegionRects (&region);
     while (n--)
     {
 	h = pbox->y2 - pbox->y1;
@@ -3618,7 +3619,7 @@ fbCompositeGeneral (CARD8	op,
     }
 	pbox++;
     }
-    REGION_UNINIT (pDst->pDrawable->pScreen, &region);
+    RegionUninit(&region);
 
     if (scanline_buffer != _scanline_buffer)
         free(scanline_buffer);

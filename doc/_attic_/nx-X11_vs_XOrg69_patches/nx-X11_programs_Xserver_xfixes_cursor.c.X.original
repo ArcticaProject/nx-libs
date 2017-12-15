@@ -1,0 +1,12 @@
+--- ./nx-X11/programs/Xserver/xfixes/cursor.c.X.original	2015-02-13 14:03:44.792440567 +0100
++++ ./nx-X11/programs/Xserver/xfixes/cursor.c	2015-02-10 19:13:13.508696968 +0100
+@@ -96,7 +96,8 @@
+ 	CursorCurrent = pCursor;
+ 	for (e = cursorEvents; e; e = e->next)
+ 	{
+-	    if (e->eventMask & XFixesDisplayCursorNotifyMask)
++	    if ((e->eventMask & XFixesDisplayCursorNotifyMask) &&
++		!e->pClient->clientGone)
+ 	    {
+ 		xXFixesCursorNotifyEvent	ev;
+ 		ev.type = XFixesEventBase + XFixesCursorNotify;

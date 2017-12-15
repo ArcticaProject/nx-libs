@@ -1,4 +1,3 @@
-/* $XFree86: xc/include/Xdefs.h,v 1.2 1999/08/22 06:21:20 dawes Exp $ */
 
 /***********************************************************
 
@@ -31,7 +30,7 @@ authorization from The XFree86 Project Inc..
 #define _XDEFS_H
 
 #ifdef _XSERVER64
-#include <X11/Xmd.h>
+#include <nx-X11/Xmd.h>
 #endif 
 
 #ifndef _XTYPEDEF_ATOM
@@ -103,8 +102,8 @@ typedef FSID AccContext;
 typedef struct timeval **OSTimePtr;
 
 
-typedef void (* BlockHandlerProcPtr)(pointer /* blockData */,
+typedef void (* BlockHandlerProcPtr)(void * /* blockData */,
 				     OSTimePtr /* pTimeout */,
-				     pointer /* pReadmask */);
+				     void * /* pReadmask */);
 
 #endif

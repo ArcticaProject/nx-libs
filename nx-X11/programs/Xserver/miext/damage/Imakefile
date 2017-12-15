@@ -5,13 +5,15 @@
 DEFINES = -DROOTLESS_WORKAROUND
 #endif
 
+#if (!(defined(NXAgentServer) && NXAgentServer))
 SRCS = damage.c
 
 OBJS = damage.o
 
    INCLUDES = -I. -I../shadow -I../../mi -I../../fb -I../../include -I$(XINCLUDESRC) \
-	      -I$(FONTINCSRC) -I$(XF86SRC)/common $(EXTRAINCLUDES) \
-	      -I../../render -I../cw -I$(EXTINCSRC)
+	      -I$(XF86SRC)/common $(EXTRAINCLUDES) \
+	      -I../../render -I../cw -I$(EXTINCSRC) \
+	      `pkg-config --cflags-only-I pixman-1`
    LINTLIBS = ../../dix/llib-ldix.ln ../../os/llib-los.ln \
 	     ../../mi/llib-lmi.ln
 
@@ -20,6 +22,7 @@ NormalLibraryTarget(damage,$(OBJS))
 LintLibraryTarget(damage,$(SRCS))
 
 NormalLintTarget($(SRCS))
+#endif
 
 DependTarget()
 

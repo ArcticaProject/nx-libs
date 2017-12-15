@@ -21,7 +21,6 @@
  * TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
-/* $XFree86: xc/programs/Xserver/fb/fbsetsp.c,v 1.4 2000/05/06 21:09:34 keithp Exp $ */
 
 #ifdef HAVE_DIX_CONFIG_H
 #include <dix-config.h>
@@ -63,8 +62,8 @@ fbSetSpans (DrawablePtr	    pDrawable,
 	xoff = (int) (((long) src) & (FB_MASK >> 3));
 	s = (FbBits *) (src - xoff);
 	xoff <<= 3;
-	n = REGION_NUM_RECTS(pClip);
-	pbox = REGION_RECTS (pClip);
+	n = RegionNumRects(pClip);
+	pbox = RegionRects (pClip);
 	while (n--)
 	{
 	    if (pbox->y1 > ppt->y)

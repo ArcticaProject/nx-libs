@@ -1,4 +1,3 @@
-/* $XFree86: xc/programs/Xserver/mi/miglblt.c,v 1.5 2001/05/29 22:24:07 dawes Exp $ */
 /***********************************************************
 
 Copyright 1987, 1998  The Open Group
@@ -46,17 +45,21 @@ SOFTWARE.
 
 ******************************************************************/
 
-/* $Xorg: miglblt.c,v 1.4 2001/02/09 02:05:21 xorgcvs Exp $ */
 
 #ifdef HAVE_DIX_CONFIG_H
 #include <dix-config.h>
 #endif
 
-#include	<X11/X.h>
-#include	<X11/Xmd.h>
-#include	<X11/Xproto.h>
+#include	<nx-X11/X.h>
+#include	<nx-X11/Xmd.h>
+#include	<nx-X11/Xproto.h>
 #include	"misc.h"
 #include	<X11/fonts/fontstruct.h>
+#ifdef HAS_XFONT2
+# include	<X11/fonts/libxfont2.h>
+#else
+# include	<X11/fonts/fontutil.h>
+#endif /* HAS_XFONT2 */
 #include	"dixfontstr.h"
 #include	"gcstruct.h"
 #include	"windowstr.h"
@@ -90,7 +93,7 @@ miPolyGlyphBlt(pDrawable, pGC, x, y, nglyph, ppci, pglyphBase)
     int 	 x, y;
     unsigned int nglyph;
     CharInfoPtr *ppci;		/* array of character info */
-    pointer      pglyphBase;	/* start of array of glyphs */
+    void        *pglyphBase;	/* start of array of glyphs */
 {
     int width, height;
     PixmapPtr pPixmap;
@@ -122,7 +125,8 @@ miPolyGlyphBlt(pDrawable, pGC, x, y, nglyph, ppci, pglyphBase)
 	     FONTMAXBOUNDS(pfont,descent);
 
     pPixmap = (*pDrawable->pScreen->CreatePixmap)(pDrawable->pScreen,
-						  width, height, 1);
+						  width, height, 1,
+						  CREATE_PIXMAP_USAGE_SCRATCH);
     if (!pPixmap)
 	return;
 
@@ -140,7 +144,7 @@ miPolyGlyphBlt(pDrawable, pGC, x, y, nglyph, ppci, pglyphBase)
     DoChangeGC(pGCtmp, GCFunction|GCForeground|GCBackground, gcvals, 0);
 
     nbyLine = BitmapBytePad(width);
-    pbits = (unsigned char *)ALLOCATE_LOCAL(height*nbyLine);
+    pbits = (unsigned char *)malloc(height*nbyLine);
     if (!pbits)
     {
 	(*pDrawable->pScreen->DestroyPixmap)(pPixmap);
@@ -191,7 +195,7 @@ miPolyGlyphBlt(pDrawable, pGC, x, y, nglyph, ppci, pglyphBase)
 	x += pci->metrics.characterWidth;
     }
     (*pDrawable->pScreen->DestroyPixmap)(pPixmap);
-    DEALLOCATE_LOCAL(pbits);
+    free(pbits);
     FreeScratchGC(pGCtmp);
 }
 
@@ -203,15 +207,20 @@ miImageGlyphBlt(pDrawable, pGC, x, y, nglyph, ppci, pglyphBase)
     int 	 x, y;
     unsigned int nglyph;
     CharInfoPtr *ppci;		/* array of character info */
-    pointer      pglyphBase;	/* start of array of glyphs */
+    void        *pglyphBase;	/* start of array of glyphs */
 {
-    ExtentInfoRec info;		/* used by QueryGlyphExtents() */
+    ExtentInfoRec info;		/* used by xfont2_query_glyph_extents (libXfont2)
+                                   resp. QueryGlyphExtents() (libXfont1) */
     XID gcvals[3];
     int oldAlu, oldFS;
     unsigned long	oldFG;
     xRectangle backrect;
 
+#ifdef HAS_XFONT2
+    xfont2_query_glyph_extents(pGC->font, ppci, (unsigned long) nglyph, &info);
+#else
     QueryGlyphExtents(pGC->font, ppci, (unsigned long)nglyph, &info);
+#endif /* HAS_XFONT2 */
 
     if (info.overallWidth >= 0)
     {

@@ -1,7 +1,4 @@
 /*
- * $XdotOrg: xc/programs/Xserver/fb/fbglyph.c,v 1.5 2005/07/03 07:01:23 daniels Exp $
- * $XFree86: xc/programs/Xserver/fb/fbglyph.c,v 1.12tsi Exp $
- *
  * Copyright © 1998 Keith Packard
  *
  * Permission to use, copy, modify, distribute, and sell this software and its
@@ -41,7 +38,7 @@ fbGlyphIn (RegionPtr	pRegion,
 	   int		height)
 {
     BoxRec  box;
-    BoxPtr  pExtents = REGION_EXTENTS (dummyScreen, pRegion);
+    BoxPtr  pExtents = RegionExtents(pRegion);
 
     /*
      * Check extents by hand to avoid 16 bit overflows
@@ -58,7 +55,7 @@ fbGlyphIn (RegionPtr	pRegion,
     box.x2 = x + width;
     box.y1 = y;
     box.y2 = y + height;
-    return RECT_IN_REGION (dummyScreen, pRegion, &box) == rgnIN;
+    return RegionContainsRect(pRegion, &box) == rgnIN;
 }
 
 #ifdef FB_24BIT
@@ -262,7 +259,7 @@ fbPolyGlyphBlt (DrawablePtr	pDrawable,
 		int		y,
 		unsigned int	nglyph,
 		CharInfoPtr	*ppci,
-		pointer		pglyphBase)
+		void *		pglyphBase)
 {
     FbGCPrivPtr	    pPriv = fbGetGCPrivate (pGC);
     CharInfoPtr	    pci;
@@ -350,7 +347,7 @@ fbImageGlyphBlt (DrawablePtr	pDrawable,
 		 int		y,
 		 unsigned int	nglyph,
 		 CharInfoPtr	*ppciInit,
-		 pointer	pglyphBase)
+		 void *	pglyphBase)
 {
     FbGCPrivPtr	    pPriv = fbGetGCPrivate(pGC);
     CharInfoPtr	    *ppci;

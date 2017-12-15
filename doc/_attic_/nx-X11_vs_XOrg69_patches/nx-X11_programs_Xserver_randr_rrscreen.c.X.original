@@ -1,0 +1,107 @@
+--- ./nx-X11/programs/Xserver/randr/rrscreen.c.X.original	2015-02-13 14:03:44.792440567 +0100
++++ ./nx-X11/programs/Xserver/randr/rrscreen.c	2015-02-10 19:13:13.632692326 +0100
+@@ -20,6 +20,23 @@
+  * OF THIS SOFTWARE.
+  */
+ 
++/**************************************************************************/
++/*                                                                        */
++/* Copyright (c) 2001, 2011 NoMachine, http://www.nomachine.com/.         */
++/*                                                                        */
++/* NX-X11, NX protocol compression and NX extensions to this software     */
++/* are copyright of NoMachine. Redistribution and use of the present      */
++/* software is allowed according to terms specified in the file LICENSE   */
++/* which comes in the source distribution.                                */
++/*                                                                        */
++/* Check http://www.nomachine.com/licensing.html for applicability.       */
++/*                                                                        */
++/* NX and NoMachine are trademarks of Medialogic S.p.A.                   */
++/*                                                                        */
++/* All rights reserved.                                                   */
++/*                                                                        */
++/**************************************************************************/
++
+ #include "randrstr.h"
+ 
+ extern char	*ConnectionInfo;
+@@ -212,7 +229,12 @@
+     int				rc;
+     
+     REQUEST_SIZE_MATCH(xRRGetScreenInfoReq);
++    #ifndef NXAGENT_SERVER
+     rc = dixLookupWindow(&pWin, stuff->window, client, DixReadAccess);
++    #else
++    pWin = SecurityLookupWindow(stuff->window, client, SecurityReadAccess);
++    rc = pWin ? Success : BadWindow;
++    #endif
+     if (rc != Success)
+ 	return rc;
+ 
+@@ -263,7 +285,12 @@
+     int			i, rc;
+     
+     REQUEST_SIZE_MATCH(xRRSetScreenSizeReq);
++    #ifndef NXAGENT_SERVER
+     rc = dixLookupWindow(&pWin, stuff->window, client, DixReadAccess);
++    #else
++    pWin = SecurityLookupWindow(stuff->window, client, SecurityReadAccess);
++    rc = pWin ? Success : BadWindow;
++    #endif
+     if (rc != Success)
+ 	return rc;
+ 
+@@ -333,7 +360,12 @@
+     CARD8			*names;
+     
+     REQUEST_SIZE_MATCH(xRRGetScreenResourcesReq);
++    #ifndef NXAGENT_SERVER
+     rc = dixLookupWindow(&pWin, stuff->window, client, DixReadAccess);
++    #else
++    pWin = SecurityLookupWindow(stuff->window, client, SecurityReadAccess);
++    rc = pWin ? Success : BadWindow;
++    #endif
+     if (rc != Success)
+ 	return rc;
+     
+@@ -582,7 +614,12 @@
+     RROutputPtr		    output;
+ 
+     REQUEST_SIZE_MATCH(xRRGetScreenInfoReq);
++    #ifndef NXAGENT_SERVER
+     rc = dixLookupWindow(&pWin, stuff->window, client, DixReadAccess);
++    #else
++    pWin = SecurityLookupWindow(stuff->window, client, SecurityReadAccess);
++    rc = pWin ? Success : BadWindow;
++    #endif
+     if (rc != Success)
+ 	return rc;
+ 
+@@ -756,7 +793,12 @@
+ 	has_rate = FALSE;
+     }
+     
++    #ifndef NXAGENT_SERVER
+     rc = dixLookupDrawable(&pDraw, stuff->drawable, client, 0, DixWriteAccess);
++    #else
++    pDraw = SecurityLookupDrawable(stuff->drawable, client, SecurityWriteAccess);
++    rc = pDraw ? Success : BadDrawable;
++    #endif
+     if (rc != Success)
+ 	return rc;
+ 
+@@ -921,8 +963,15 @@
+ 
+     if (!RRCrtcSet (crtc, mode, 0, 0, stuff->rotation, 1, &output))
+ 	rep.status = RRSetConfigFailed;
++    #ifndef NXAGENT_SERVER /* Bug 21987 */
+     else
+ 	rep.status = RRSetConfigSuccess;
++    #else
++    else {
++	rep.status = RRSetConfigSuccess;
++	pScrPriv->lastSetTime = time;
++    }
++    #endif
+ 
+     /*
+      * XXX Configure other crtcs to mirror as much as possible

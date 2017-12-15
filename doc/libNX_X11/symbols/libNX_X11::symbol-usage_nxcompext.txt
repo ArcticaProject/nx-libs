@@ -1,0 +1,2613 @@
+
+#### KeySymToUcs4 ####
+
+#### XActivateScreenSaver ####
+
+#### XAddConnectionWatch ####
+
+#### XAddExtension ####
+
+#### XAddHost ####
+
+#### XAddHosts ####
+
+#### XAddPixel ####
+
+#### XAddToExtensionList ####
+
+#### XAddToSaveSet ####
+
+#### XAllPlanes ####
+
+#### XAllocClassHint ####
+
+#### XAllocColor ####
+Compext.c:2574:int NXAllocColors(Display *dpy, Colormap colormap, unsigned int entries,
+Compext.h:668:extern int NXAllocColors(
+
+#### XAllocColorCells ####
+
+#### XAllocColorPlanes ####
+
+#### XAllocIconSize ####
+
+#### XAllocNamedColor ####
+
+#### XAllocSizeHints ####
+
+#### XAllocStandardColormap ####
+
+#### XAllocWMHints ####
+
+#### XAllowEvents ####
+
+#### XAutoRepeatOff ####
+
+#### XAutoRepeatOn ####
+
+#### XBaseFontNameListOfFontSet ####
+
+#### XBell ####
+
+#### XBitmapBitOrder ####
+
+#### XBitmapPad ####
+
+#### XBitmapUnit ####
+
+#### XBlackPixel ####
+
+#### XBlackPixelOfScreen ####
+
+#### XCellsOfScreen ####
+
+#### XChangeActivePointerGrab ####
+
+#### XChangeGC ####
+
+#### XChangeKeyboardControl ####
+
+#### XChangeKeyboardMapping ####
+
+#### XChangePointerControl ####
+
+#### XChangeProperty ####
+
+#### XChangeSaveSet ####
+
+#### XChangeWindowAttributes ####
+
+#### XCheckIfEvent ####
+
+#### XCheckIfEventNoFlush ####
+
+#### XCheckMaskEvent ####
+
+#### XCheckTypedEvent ####
+
+#### XCheckTypedWindowEvent ####
+
+#### XCheckWindowEvent ####
+
+#### XCirculateSubwindows ####
+
+#### XCirculateSubwindowsDown ####
+
+#### XCirculateSubwindowsUp ####
+
+#### XClearArea ####
+
+#### XClearWindow ####
+
+#### XClipBox ####
+
+#### XCloseDisplay ####
+
+#### XCloseIM ####
+
+#### XCloseOM ####
+
+#### XConfigureWindow ####
+
+#### XConnectionNumber ####
+
+#### XContextDependentDrawing ####
+
+#### XContextualDrawing ####
+
+#### XConvertCase ####
+
+#### XConvertSelection ####
+
+#### XCopyArea ####
+
+#### XCopyColormapAndFree ####
+
+#### XCopyGC ####
+
+#### XCopyPlane ####
+
+#### XCreateBitmapFromData ####
+
+#### XCreateColormap ####
+
+#### XCreateFontCursor ####
+
+#### XCreateFontSet ####
+
+#### XCreateGC ####
+
+#### XCreateGlyphCursor ####
+
+#### XCreateIC ####
+
+#### XCreateImage ####
+Compext.c:2044: * Wrapper of XCreateImage(). Note that we use offset
+Compext.c:2058:  image = XCreateImage(dpy, visual, depth, format, 0, data,
+Compext.c:3603:      state -> image = XCreateImage(dpy, _XVIDtoVisual(dpy, async_rep -> visual),
+Compext.c:3609:      state -> image = XCreateImage(dpy, _XVIDtoVisual(dpy, async_rep -> visual),
+
+#### XCreateOC ####
+
+#### XCreatePixmap ####
+
+#### XCreatePixmapCursor ####
+
+#### XCreatePixmapFromBitmapData ####
+
+#### XCreateRegion ####
+
+#### XCreateSimpleWindow ####
+
+#### XCreateWindow ####
+
+#### XDefaultColormap ####
+
+#### XDefaultColormapOfScreen ####
+
+#### XDefaultDepth ####
+
+#### XDefaultDepthOfScreen ####
+
+#### XDefaultGC ####
+
+#### XDefaultGCOfScreen ####
+
+#### XDefaultRootWindow ####
+
+#### XDefaultScreen ####
+
+#### XDefaultScreenOfDisplay ####
+
+#### XDefaultString ####
+
+#### XDefaultVisual ####
+
+#### XDefaultVisualOfScreen ####
+
+#### XDefineCursor ####
+
+#### XDeleteContext ####
+
+#### XDeleteModifiermapEntry ####
+
+#### XDeleteProperty ####
+
+#### XDestroyIC ####
+
+#### XDestroyImage ####
+Compext.c:347:        XDestroyImage(_NXCollectedImages[i] -> image);
+Compext.c:2070: * Wrapper of XDestroyImage().
+Compext.c:2075:  return XDestroyImage((XImage *) image);
+Compext.c:3705:      XDestroyImage(state -> image);
+
+#### XDestroyOC ####
+
+#### XDestroyRegion ####
+
+#### XDestroySubwindows ####
+
+#### XDestroyWindow ####
+
+#### XDirectionalDependentDrawing ####
+
+#### XDisableAccessControl ####
+
+#### XDisplayCells ####
+
+#### XDisplayHeight ####
+
+#### XDisplayHeightMM ####
+
+#### XDisplayKeycodes ####
+
+#### XDisplayMotionBufferSize ####
+
+#### XDisplayName ####
+
+#### XDisplayOfIM ####
+
+#### XDisplayOfOM ####
+
+#### XDisplayOfScreen ####
+
+#### XDisplayPlanes ####
+
+#### XDisplayString ####
+
+#### XDisplayWidth ####
+
+#### XDisplayWidthMM ####
+
+#### XDoesBackingStore ####
+
+#### XDoesSaveUnders ####
+
+#### XDrawArc ####
+
+#### XDrawArcs ####
+
+#### XDrawImageString16 ####
+
+#### XDrawImageString ####
+
+#### XDrawLine ####
+
+#### XDrawLines ####
+
+#### XDrawPoint ####
+
+#### XDrawPoints ####
+
+#### XDrawRectangle ####
+
+#### XDrawRectangles ####
+
+#### XDrawSegments ####
+
+#### XDrawString16 ####
+
+#### XDrawString ####
+
+#### XDrawText16 ####
+
+#### XDrawText ####
+
+#### XEHeadOfExtensionList ####
+
+#### XESetBeforeFlush ####
+
+#### XESetCloseDisplay ####
+
+#### XESetCopyEventCookie ####
+
+#### XESetCopyGC ####
+
+#### XESetCreateFont ####
+
+#### XESetCreateGC ####
+
+#### XESetError ####
+
+#### XESetErrorString ####
+
+#### XESetEventToWire ####
+
+#### XESetFlushGC ####
+
+#### XESetFreeFont ####
+
+#### XESetFreeGC ####
+
+#### XESetPrintErrorValues ####
+
+#### XESetWireToError ####
+
+#### XESetWireToEvent ####
+
+#### XESetWireToEventCookie ####
+
+#### XEmptyRegion ####
+
+#### XEnableAccessControl ####
+
+#### XEqualRegion ####
+
+#### XEventMaskOfScreen ####
+
+#### XEventsQueued ####
+
+#### XExtendedMaxRequestSize ####
+
+#### XExtentsOfFontSet ####
+
+#### XFetchBuffer ####
+
+#### XFetchBytes ####
+
+#### XFetchName ####
+
+#### XFillArc ####
+
+#### XFillArcs ####
+
+#### XFillPolygon ####
+
+#### XFillRectangle ####
+
+#### XFillRectangles ####
+
+#### XFilterEvent ####
+
+#### XFindContext ####
+
+#### XFindOnExtensionList ####
+
+#### XFlush ####
+Compext.c:457:  XFlush(dpy);
+Compext.c:663:int NXFlushDisplay(Display *dpy, int what)
+Compext.c:669:    fprintf(stderr, "******NXFlushDisplay: Writing with [%d] bytes in the buffer.\n",
+Compext.c:673:    XFlush(dpy);
+Compext.c:676:  if (what == NXFlushBuffer)
+Compext.c:682:  fprintf(stderr, "******NXFlushDisplay: Flushing with [%d] bytes in the NX transport.\n",
+Compext.h:90: * be either NXFlushDeferred or NXFlushImmediate.
+Compext.h:204:extern int NXFlushDisplay(
+
+#### XFlushGC ####
+
+#### XFontsOfFontSet ####
+
+#### XForceScreenSaver ####
+
+#### XFree ####
+Compext.c:1462:int NXFreeSplit(Display *dpy, unsigned int resource)
+Compext.c:1464:  register xNXFreeSplitReq *req;
+Compext.c:1470:    GetReq(NXFreeSplit, req);
+Compext.c:1473:    fprintf(stderr, "******NXFreeSplit: Sending message opcode [%d] with resource [%u].\n",
+Compext.c:1474:                X_NXFreeSplit, resource);
+Compext.c:1484:    fprintf(stderr, "******NXFreeSplit: Making the resource [%u] newly available.\n",
+Compext.c:1493:    fprintf(stderr, "******NXFreeSplit: Nothing to do for resource [%u].\n",
+Compext.c:2004:int NXFreeUnpack(Display *dpy, unsigned int resource)
+Compext.c:2006:  register xNXFreeUnpackReq *req;
+Compext.c:2012:    GetReq(NXFreeUnpack, req);
+Compext.c:2015:    fprintf(stderr, "******NXFreeUnpack: Sending message opcode [%d] with resource [%u].\n",
+Compext.c:2016:                X_NXFreeUnpack, resource);
+Compext.c:2026:    fprintf(stderr, "******NXFreeUnpack: Making the resource [%u] newly available.\n",
+Compext.c:2035:    fprintf(stderr, "******NXFreeUnpack: Nothing to do for resource [%u].\n",
+Compext.c:3375:void NXFreeCache(Display *dpy)
+Compext.c:3382:    fprintf(stderr, "******NXFreeCache: Nothing to do with a null image cache.\n");
+Compext.c:3389:  fprintf(stderr, "******NXFreeCache: Freeing the cache with [%d] entries.\n",
+Compext.h:505:extern int NXFreeSplit(
+Compext.h:586:extern int NXFreeUnpack(
+Compext.h:775:extern void NXFreeCache(
+
+#### XFreeColormap ####
+
+#### XFreeColors ####
+
+#### XFreeCursor ####
+
+#### XFreeEventData ####
+
+#### XFreeExtensionList ####
+
+#### XFreeFont ####
+
+#### XFreeFontInfo ####
+
+#### XFreeFontNames ####
+
+#### XFreeFontPath ####
+
+#### XFreeFontSet ####
+
+#### XFreeGC ####
+
+#### XFreeModifiermap ####
+
+#### XFreePixmap ####
+
+#### XFreeStringList ####
+
+#### XGContextFromGC ####
+
+#### XGeometry ####
+
+#### XGetAtomName ####
+
+#### XGetAtomNames ####
+
+#### XGetClassHint ####
+
+#### XGetCommand ####
+
+#### XGetDefault ####
+
+#### XGetErrorDatabaseText ####
+
+#### XGetErrorText ####
+
+#### XGetEventData ####
+
+#### XGetFontPath ####
+
+#### XGetFontProperty ####
+
+#### XGetGCValues ####
+
+#### XGetGeometry ####
+
+#### XGetICValues ####
+
+#### XGetIMValues ####
+
+#### XGetIconName ####
+
+#### XGetIconSizes ####
+
+#### XGetImage ####
+
+#### XGetInputFocus ####
+
+#### XGetKeyboardControl ####
+
+#### XGetKeyboardMapping ####
+
+#### XGetModifierMapping ####
+
+#### XGetMotionEvents ####
+
+#### XGetNormalHints ####
+
+#### XGetOCValues ####
+
+#### XGetOMValues ####
+
+#### XGetPixel ####
+Compext.c:2905:      pixel  = XGetPixel(src_image, x, y);
+
+#### XGetPointerControl ####
+
+#### XGetPointerMapping ####
+
+#### XGetRGBColormaps ####
+
+#### XGetScreenSaver ####
+
+#### XGetSelectionOwner ####
+
+#### XGetSizeHints ####
+
+#### XGetStandardColormap ####
+
+#### XGetSubImage ####
+
+#### XGetTextProperty ####
+
+#### XGetTransientForHint ####
+
+#### XGetVisualInfo ####
+
+#### XGetWMClientMachine ####
+
+#### XGetWMColormapWindows ####
+
+#### XGetWMHints ####
+
+#### XGetWMIconName ####
+
+#### XGetWMName ####
+
+#### XGetWMNormalHints ####
+
+#### XGetWMProtocols ####
+
+#### XGetWMSizeHints ####
+
+#### XGetWindowAttributes ####
+
+#### XGetWindowProperty ####
+
+#### XGetZoomHints ####
+
+#### XGrabButton ####
+
+#### XGrabKey ####
+
+#### XGrabKeyboard ####
+
+#### XGrabPointer ####
+
+#### XGrabServer ####
+
+#### XHeightMMOfScreen ####
+
+#### XHeightOfScreen ####
+
+#### XIMOfIC ####
+
+#### XIconifyWindow ####
+
+#### XIfEvent ####
+
+#### XImageByteOrder ####
+
+#### XInitExtension ####
+
+#### XInitImage ####
+
+#### XInitThreads ####
+
+#### XInsertModifiermapEntry ####
+
+#### XInstallColormap ####
+
+#### XInternAtom ####
+
+#### XInternAtoms ####
+
+#### XInternalConnectionNumbers ####
+
+#### XIntersectRegion ####
+
+#### XKeycodeToKeysym ####
+
+#### XKeysymToKeycode ####
+
+#### XKeysymToString ####
+
+#### XKillClient ####
+
+#### XLastKnownRequestProcessed ####
+
+#### XListDepths ####
+
+#### XListExtensions ####
+
+#### XListFonts ####
+
+#### XListFontsWithInfo ####
+
+#### XListHosts ####
+
+#### XListInstalledColormaps ####
+
+#### XListPixmapFormats ####
+
+#### XListProperties ####
+
+#### XLoadFont ####
+
+#### XLoadQueryFont ####
+
+#### XLocaleOfFontSet ####
+
+#### XLocaleOfIM ####
+
+#### XLocaleOfOM ####
+
+#### XLockDisplay ####
+
+#### XLookupColor ####
+
+#### XLookupKeysym ####
+
+#### XLookupString ####
+
+#### XLowerWindow ####
+
+#### XMapRaised ####
+
+#### XMapSubwindows ####
+
+#### XMapWindow ####
+
+#### XMaskEvent ####
+
+#### XMatchVisualInfo ####
+
+#### XMaxCmapsOfScreen ####
+
+#### XMaxRequestSize ####
+
+#### XMinCmapsOfScreen ####
+
+#### XMoveResizeWindow ####
+
+#### XMoveWindow ####
+
+#### XNewModifiermap ####
+
+#### XNextEvent ####
+
+#### XNextRequest ####
+
+#### XNoOp ####
+
+#### XOMOfOC ####
+
+#### XOffsetRegion ####
+
+#### XOpenDisplay ####
+
+#### XOpenIM ####
+
+#### XOpenOM ####
+
+#### XParseColor ####
+
+#### XParseGeometry ####
+
+#### XPeekEvent ####
+
+#### XPeekIfEvent ####
+
+#### XPending ####
+
+#### XPlanesOfScreen ####
+
+#### XPointInRegion ####
+
+#### XPolygonRegion ####
+
+#### XProcessInternalConnection ####
+
+#### XProtocolRevision ####
+
+#### XProtocolVersion ####
+
+#### XPutBackEvent ####
+Compext.c:3445:  XPutBackEvent(dpy, &async_event);
+Compext.c:3838:  XPutBackEvent(dpy, &async_event);
+Compext.c:4208:  XPutBackEvent(dpy, &async_event);
+Compext.c:4492:  XPutBackEvent(dpy, &async_event);
+
+#### XPutImage ####
+
+#### XPutPixel ####
+
+#### XQLength ####
+
+#### XQueryBestCursor ####
+
+#### XQueryBestSize ####
+
+#### XQueryBestStipple ####
+
+#### XQueryBestTile ####
+
+#### XQueryColor ####
+
+#### XQueryColors ####
+
+#### XQueryExtension ####
+
+#### XQueryFont ####
+
+#### XQueryKeymap ####
+
+#### XQueryPointer ####
+
+#### XQueryTextExtents16 ####
+
+#### XQueryTextExtents ####
+
+#### XQueryTree ####
+
+#### XRaiseWindow ####
+
+#### XReadBitmapFile ####
+
+#### XReadBitmapFileData ####
+
+#### XRebindKeysym ####
+
+#### XRecolorCursor ####
+
+#### XReconfigureWMWindow ####
+
+#### XRectInRegion ####
+
+#### XRefreshKeyboardMapping ####
+
+#### XRegisterIMInstantiateCallback ####
+
+#### XRemoveConnectionWatch ####
+
+#### XRemoveFromSaveSet ####
+
+#### XRemoveHost ####
+
+#### XRemoveHosts ####
+
+#### XReparentWindow ####
+
+#### XResetScreenSaver ####
+
+#### XResizeWindow ####
+
+#### XResourceManagerString ####
+
+#### XRestackWindows ####
+
+#### XRootWindow ####
+
+#### XRootWindowOfScreen ####
+
+#### XRotateBuffers ####
+
+#### XRotateWindowProperties ####
+
+#### XSaveContext ####
+
+#### XScreenCount ####
+
+#### XScreenNumberOfScreen ####
+
+#### XScreenOfDisplay ####
+
+#### XScreenResourceString ####
+
+#### XSelectInput ####
+
+#### XSendEvent ####
+
+#### XServerVendor ####
+
+#### XSetAccessControl ####
+
+#### XSetAfterFunction ####
+
+#### XSetArcMode ####
+
+#### XSetAuthorization ####
+
+#### XSetBackground ####
+
+#### XSetClassHint ####
+
+#### XSetClipMask ####
+
+#### XSetClipOrigin ####
+
+#### XSetClipRectangles ####
+
+#### XSetCloseDownMode ####
+
+#### XSetCommand ####
+
+#### XSetDashes ####
+
+#### XSetErrorHandler ####
+
+#### XSetFillRule ####
+
+#### XSetFillStyle ####
+
+#### XSetFont ####
+
+#### XSetFontPath ####
+
+#### XSetForeground ####
+
+#### XSetFunction ####
+
+#### XSetGraphicsExposures ####
+
+#### XSetICFocus ####
+
+#### XSetICValues ####
+
+#### XSetIMValues ####
+
+#### XSetIOErrorHandler ####
+
+#### XSetIconName ####
+
+#### XSetIconSizes ####
+
+#### XSetInputFocus ####
+
+#### XSetLineAttributes ####
+
+#### XSetLocaleModifiers ####
+
+#### XSetModifierMapping ####
+
+#### XSetNormalHints ####
+
+#### XSetOCValues ####
+
+#### XSetOMValues ####
+
+#### XSetPlaneMask ####
+
+#### XSetPointerMapping ####
+
+#### XSetRGBColormaps ####
+
+#### XSetRegion ####
+
+#### XSetScreenSaver ####
+
+#### XSetSelectionOwner ####
+
+#### XSetSizeHints ####
+
+#### XSetStandardColormap ####
+
+#### XSetStandardProperties ####
+
+#### XSetState ####
+
+#### XSetStipple ####
+
+#### XSetSubwindowMode ####
+
+#### XSetTSOrigin ####
+
+#### XSetTextProperty ####
+
+#### XSetTile ####
+
+#### XSetTransientForHint ####
+
+#### XSetWMClientMachine ####
+
+#### XSetWMColormapWindows ####
+
+#### XSetWMHints ####
+
+#### XSetWMIconName ####
+
+#### XSetWMName ####
+
+#### XSetWMNormalHints ####
+
+#### XSetWMProperties ####
+
+#### XSetWMProtocols ####
+
+#### XSetWMSizeHints ####
+
+#### XSetWindowBackground ####
+
+#### XSetWindowBackgroundPixmap ####
+
+#### XSetWindowBorder ####
+
+#### XSetWindowBorderPixmap ####
+
+#### XSetWindowBorderWidth ####
+
+#### XSetWindowColormap ####
+
+#### XSetZoomHints ####
+
+#### XShrinkRegion ####
+
+#### XStoreBuffer ####
+
+#### XStoreBytes ####
+
+#### XStoreColor ####
+
+#### XStoreColors ####
+
+#### XStoreName ####
+
+#### XStoreNamedColor ####
+
+#### XStringListToTextProperty ####
+
+#### XStringToKeysym ####
+
+#### XSubImage ####
+
+#### XSubtractRegion ####
+
+#### XSupportsLocale ####
+
+#### XSync ####
+
+#### XSynchronize ####
+
+#### XTextExtents16 ####
+
+#### XTextExtents ####
+
+#### XTextPropertyToStringList ####
+
+#### XTextWidth16 ####
+
+#### XTextWidth ####
+
+#### XTranslateCoordinates ####
+
+#### XUndefineCursor ####
+
+#### XUngrabButton ####
+
+#### XUngrabKey ####
+
+#### XUngrabKeyboard ####
+
+#### XUngrabPointer ####
+
+#### XUngrabServer ####
+
+#### XUninstallColormap ####
+
+#### XUnionRectWithRegion ####
+
+#### XUnionRegion ####
+
+#### XUnloadFont ####
+
+#### XUnlockDisplay ####
+
+#### XUnmapSubwindows ####
+
+#### XUnmapWindow ####
+
+#### XUnregisterIMInstantiateCallback ####
+
+#### XUnsetICFocus ####
+
+#### XVaCreateNestedList ####
+
+#### XVendorRelease ####
+
+#### XVisualIDFromVisual ####
+
+#### XWMGeometry ####
+
+#### XWarpPointer ####
+
+#### XWhitePixel ####
+
+#### XWhitePixelOfScreen ####
+
+#### XWidthMMOfScreen ####
+
+#### XWidthOfScreen ####
+
+#### XWindowEvent ####
+
+#### XWithdrawWindow ####
+
+#### XWriteBitmapFile ####
+
+#### XXorRegion ####
+
+#### XauDisposeAuth ####
+
+#### XauFileName ####
+
+#### XauGetBestAuthByAddr ####
+
+#### XauReadAuth ####
+
+#### XcmsAddColorSpace ####
+
+#### XcmsAddFunctionSet ####
+
+#### XcmsAllocColor ####
+
+#### XcmsAllocNamedColor ####
+
+#### XcmsCCCOfColormap ####
+
+#### XcmsCIELabClipL ####
+
+#### XcmsCIELabClipLab ####
+
+#### XcmsCIELabClipab ####
+
+#### XcmsCIELabColorSpace ####
+
+#### XcmsCIELabQueryMaxC ####
+
+#### XcmsCIELabQueryMaxL ####
+
+#### XcmsCIELabQueryMaxLC ####
+
+#### XcmsCIELabQueryMinL ####
+
+#### XcmsCIELabToCIEXYZ ####
+
+#### XcmsCIELabWhiteShiftColors ####
+
+#### XcmsCIELuvClipL ####
+
+#### XcmsCIELuvClipLuv ####
+
+#### XcmsCIELuvClipuv ####
+
+#### XcmsCIELuvColorSpace ####
+
+#### XcmsCIELuvQueryMaxC ####
+
+#### XcmsCIELuvQueryMaxL ####
+
+#### XcmsCIELuvQueryMaxLC ####
+
+#### XcmsCIELuvQueryMinL ####
+
+#### XcmsCIELuvToCIEuvY ####
+
+#### XcmsCIELuvWhiteShiftColors ####
+
+#### XcmsCIEXYZColorSpace ####
+
+#### XcmsCIEXYZToCIELab ####
+
+#### XcmsCIEXYZToCIEuvY ####
+
+#### XcmsCIEXYZToCIExyY ####
+
+#### XcmsCIEXYZToRGBi ####
+
+#### XcmsCIEuvYColorSpace ####
+
+#### XcmsCIEuvYToCIELuv ####
+
+#### XcmsCIEuvYToCIEXYZ ####
+
+#### XcmsCIEuvYToTekHVC ####
+
+#### XcmsCIExyYColorSpace ####
+
+#### XcmsCIExyYToCIEXYZ ####
+
+#### XcmsClientWhitePointOfCCC ####
+
+#### XcmsConvertColors ####
+
+#### XcmsCreateCCC ####
+
+#### XcmsDefaultCCC ####
+
+#### XcmsDisplayOfCCC ####
+
+#### XcmsFormatOfPrefix ####
+
+#### XcmsFreeCCC ####
+
+#### XcmsLinearRGBFunctionSet ####
+
+#### XcmsLookupColor ####
+
+#### XcmsPrefixOfFormat ####
+
+#### XcmsQueryBlack ####
+
+#### XcmsQueryBlue ####
+
+#### XcmsQueryColor ####
+
+#### XcmsQueryColors ####
+
+#### XcmsQueryGreen ####
+
+#### XcmsQueryRed ####
+
+#### XcmsQueryWhite ####
+
+#### XcmsRGBColorSpace ####
+
+#### XcmsRGBToRGBi ####
+
+#### XcmsRGBiColorSpace ####
+
+#### XcmsRGBiToCIEXYZ ####
+
+#### XcmsRGBiToRGB ####
+
+#### XcmsScreenNumberOfCCC ####
+
+#### XcmsScreenWhitePointOfCCC ####
+
+#### XcmsSetCCCOfColormap ####
+
+#### XcmsSetCompressionProc ####
+
+#### XcmsSetWhiteAdjustProc ####
+
+#### XcmsSetWhitePoint ####
+
+#### XcmsStoreColor ####
+
+#### XcmsStoreColors ####
+
+#### XcmsTekHVCClipC ####
+
+#### XcmsTekHVCClipV ####
+
+#### XcmsTekHVCClipVC ####
+
+#### XcmsTekHVCColorSpace ####
+
+#### XcmsTekHVCQueryMaxC ####
+
+#### XcmsTekHVCQueryMaxV ####
+
+#### XcmsTekHVCQueryMaxVC ####
+
+#### XcmsTekHVCQueryMaxVSamples ####
+
+#### XcmsTekHVCQueryMinV ####
+
+#### XcmsTekHVCToCIEuvY ####
+
+#### XcmsTekHVCWhiteShiftColors ####
+
+#### XcmsUNDEFINEDColorSpace ####
+
+#### XcmsVisualOfCCC ####
+
+#### XkbAddDeviceLedInfo ####
+
+#### XkbAddGeomColor ####
+
+#### XkbAddGeomDoodad ####
+
+#### XkbAddGeomKey ####
+
+#### XkbAddGeomKeyAlias ####
+
+#### XkbAddGeomOutline ####
+
+#### XkbAddGeomOverlay ####
+
+#### XkbAddGeomOverlayKey ####
+
+#### XkbAddGeomOverlayRow ####
+
+#### XkbAddGeomProperty ####
+
+#### XkbAddGeomRow ####
+
+#### XkbAddGeomSection ####
+
+#### XkbAddGeomShape ####
+
+#### XkbAddKeyType ####
+
+#### XkbAllocClientMap ####
+
+#### XkbAllocCompatMap ####
+
+#### XkbAllocControls ####
+
+#### XkbAllocDeviceInfo ####
+
+#### XkbAllocGeomColors ####
+
+#### XkbAllocGeomDoodads ####
+
+#### XkbAllocGeomKeyAliases ####
+
+#### XkbAllocGeomKeys ####
+
+#### XkbAllocGeomOutlines ####
+
+#### XkbAllocGeomOverlayKeys ####
+
+#### XkbAllocGeomOverlayRows ####
+
+#### XkbAllocGeomOverlays ####
+
+#### XkbAllocGeomPoints ####
+
+#### XkbAllocGeomProps ####
+
+#### XkbAllocGeomRows ####
+
+#### XkbAllocGeomSectionDoodads ####
+
+#### XkbAllocGeomSections ####
+
+#### XkbAllocGeomShapes ####
+
+#### XkbAllocGeometry ####
+
+#### XkbAllocIndicatorMaps ####
+
+#### XkbAllocKeyboard ####
+
+#### XkbAllocNames ####
+
+#### XkbAllocServerMap ####
+
+#### XkbApplyCompatMapToKey ####
+
+#### XkbApplyVirtualModChanges ####
+
+#### XkbBell ####
+
+#### XkbBellEvent ####
+
+#### XkbChangeDeviceInfo ####
+
+#### XkbChangeEnabledControls ####
+
+#### XkbChangeKeycodeRange ####
+
+#### XkbChangeMap ####
+
+#### XkbChangeNames ####
+
+#### XkbChangeTypesOfKey ####
+
+#### XkbComputeEffectiveMap ####
+
+#### XkbComputeRowBounds ####
+
+#### XkbComputeSectionBounds ####
+
+#### XkbComputeShapeBounds ####
+
+#### XkbComputeShapeTop ####
+
+#### XkbCopyKeyType ####
+
+#### XkbCopyKeyTypes ####
+
+#### XkbDeviceBell ####
+
+#### XkbDeviceBellEvent ####
+
+#### XkbFindOverlayForKey ####
+
+#### XkbForceBell ####
+
+#### XkbForceDeviceBell ####
+
+#### XkbFreeClientMap ####
+
+#### XkbFreeCompatMap ####
+
+#### XkbFreeComponentList ####
+
+#### XkbFreeControls ####
+
+#### XkbFreeDeviceInfo ####
+
+#### XkbFreeGeomColors ####
+
+#### XkbFreeGeomDoodads ####
+
+#### XkbFreeGeomKeyAliases ####
+
+#### XkbFreeGeomKeys ####
+
+#### XkbFreeGeomOutlines ####
+
+#### XkbFreeGeomOverlayKeys ####
+
+#### XkbFreeGeomOverlayRows ####
+
+#### XkbFreeGeomOverlays ####
+
+#### XkbFreeGeomPoints ####
+
+#### XkbFreeGeomProperties ####
+
+#### XkbFreeGeomRows ####
+
+#### XkbFreeGeomSections ####
+
+#### XkbFreeGeomShapes ####
+
+#### XkbFreeGeometry ####
+
+#### XkbFreeIndicatorMaps ####
+
+#### XkbFreeKeyboard ####
+
+#### XkbFreeNames ####
+
+#### XkbFreeServerMap ####
+
+#### XkbGetAutoRepeatRate ####
+
+#### XkbGetAutoResetControls ####
+
+#### XkbGetCompatMap ####
+
+#### XkbGetControls ####
+
+#### XkbGetDetectableAutoRepeat ####
+
+#### XkbGetDeviceButtonActions ####
+
+#### XkbGetDeviceInfo ####
+
+#### XkbGetDeviceInfoChanges ####
+
+#### XkbGetDeviceLedInfo ####
+
+#### XkbGetGeometry ####
+
+#### XkbGetIndicatorMap ####
+
+#### XkbGetIndicatorState ####
+
+#### XkbGetKeyActions ####
+
+#### XkbGetKeyBehaviors ####
+
+#### XkbGetKeyExplicitComponents ####
+
+#### XkbGetKeyModifierMap ####
+
+#### XkbGetKeySyms ####
+
+#### XkbGetKeyTypes ####
+
+#### XkbGetKeyVirtualModMap ####
+
+#### XkbGetKeyboard ####
+
+#### XkbGetKeyboardByName ####
+
+#### XkbGetMap ####
+
+#### XkbGetMapChanges ####
+
+#### XkbGetNamedDeviceIndicator ####
+
+#### XkbGetNamedGeometry ####
+
+#### XkbGetNamedIndicator ####
+
+#### XkbGetNames ####
+
+#### XkbGetPerClientControls ####
+
+#### XkbGetState ####
+
+#### XkbGetUpdatedMap ####
+
+#### XkbGetVirtualMods ####
+
+#### XkbGetXlibControls ####
+
+#### XkbIgnoreExtension ####
+
+#### XkbInitCanonicalKeyTypes ####
+
+#### XkbKeyTypesForCoreSymbols ####
+
+#### XkbKeycodeToKeysym ####
+
+#### XkbKeysymToModifiers ####
+
+#### XkbLatchGroup ####
+
+#### XkbLatchModifiers ####
+
+#### XkbLibraryVersion ####
+
+#### XkbListComponents ####
+
+#### XkbLockGroup ####
+
+#### XkbLockModifiers ####
+
+#### XkbLookupKeyBinding ####
+
+#### XkbLookupKeySym ####
+
+#### XkbNoteControlsChanges ####
+
+#### XkbNoteDeviceChanges ####
+
+#### XkbNoteMapChanges ####
+
+#### XkbNoteNameChanges ####
+
+#### XkbOpenDisplay ####
+
+#### XkbQueryExtension ####
+
+#### XkbRefreshKeyboardMapping ####
+
+#### XkbResizeDeviceButtonActions ####
+
+#### XkbResizeKeyActions ####
+
+#### XkbResizeKeySyms ####
+
+#### XkbResizeKeyType ####
+
+#### XkbSelectEventDetails ####
+
+#### XkbSelectEvents ####
+
+#### XkbSetAtomFuncs ####
+
+#### XkbSetAutoRepeatRate ####
+
+#### XkbSetAutoResetControls ####
+
+#### XkbSetCompatMap ####
+
+#### XkbSetControls ####
+
+#### XkbSetDebuggingFlags ####
+
+#### XkbSetDetectableAutoRepeat ####
+
+#### XkbSetDeviceButtonActions ####
+
+#### XkbSetDeviceInfo ####
+
+#### XkbSetDeviceLedInfo ####
+
+#### XkbSetGeometry ####
+
+#### XkbSetIgnoreLockMods ####
+
+#### XkbSetIndicatorMap ####
+
+#### XkbSetMap ####
+
+#### XkbSetNamedDeviceIndicator ####
+
+#### XkbSetNamedIndicator ####
+
+#### XkbSetNames ####
+
+#### XkbSetPerClientControls ####
+
+#### XkbSetServerInternalMods ####
+
+#### XkbSetXlibControls ####
+
+#### XkbToControl ####
+
+#### XkbTranslateKey ####
+
+#### XkbTranslateKeyCode ####
+
+#### XkbTranslateKeySym ####
+
+#### XkbUpdateActionVirtualMods ####
+
+#### XkbUpdateKeyTypeVirtualMods ####
+
+#### XkbUpdateMapFromCore ####
+
+#### XkbUseExtension ####
+
+#### XkbVirtualModsToReal ####
+
+#### XkbXlibControlsImplemented ####
+
+#### XmbDrawImageString ####
+
+#### XmbDrawString ####
+
+#### XmbDrawText ####
+
+#### XmbLookupString ####
+
+#### XmbResetIC ####
+
+#### XmbSetWMProperties ####
+
+#### XmbTextEscapement ####
+
+#### XmbTextExtents ####
+
+#### XmbTextListToTextProperty ####
+
+#### XmbTextPerCharExtents ####
+
+#### XmbTextPropertyToTextList ####
+
+#### Xpermalloc ####
+
+#### XrmCombineDatabase ####
+
+#### XrmCombineFileDatabase ####
+
+#### XrmDestroyDatabase ####
+
+#### XrmEnumerateDatabase ####
+
+#### XrmGetDatabase ####
+
+#### XrmGetFileDatabase ####
+
+#### XrmGetResource ####
+
+#### XrmGetStringDatabase ####
+
+#### XrmInitialize ####
+
+#### XrmLocaleOfDatabase ####
+
+#### XrmMergeDatabases ####
+
+#### XrmParseCommand ####
+
+#### XrmPermStringToQuark ####
+
+#### XrmPutFileDatabase ####
+
+#### XrmPutLineResource ####
+
+#### XrmPutResource ####
+
+#### XrmPutStringResource ####
+
+#### XrmQGetResource ####
+
+#### XrmQGetSearchList ####
+
+#### XrmQGetSearchResource ####
+
+#### XrmQPutResource ####
+
+#### XrmQPutStringResource ####
+
+#### XrmQuarkToString ####
+
+#### XrmSetDatabase ####
+
+#### XrmStringToBindingQuarkList ####
+
+#### XrmStringToQuark ####
+
+#### XrmStringToQuarkList ####
+
+#### XrmUniqueQuark ####
+
+#### Xutf8DrawImageString ####
+
+#### Xutf8DrawString ####
+
+#### Xutf8DrawText ####
+
+#### Xutf8LookupString ####
+
+#### Xutf8ResetIC ####
+
+#### Xutf8SetWMProperties ####
+
+#### Xutf8TextEscapement ####
+
+#### Xutf8TextExtents ####
+
+#### Xutf8TextListToTextProperty ####
+
+#### Xutf8TextPerCharExtents ####
+
+#### Xutf8TextPropertyToTextList ####
+
+#### XwcDrawImageString ####
+
+#### XwcDrawString ####
+
+#### XwcDrawText ####
+
+#### XwcFreeStringList ####
+
+#### XwcLookupString ####
+
+#### XwcResetIC ####
+
+#### XwcTextEscapement ####
+
+#### XwcTextExtents ####
+
+#### XwcTextListToTextProperty ####
+
+#### XwcTextPerCharExtents ####
+
+#### XwcTextPropertyToTextList ####
+
+#### _Utf8GetConvByName ####
+
+#### _X11TransBytesReadable ####
+
+#### _X11TransClose ####
+
+#### _X11TransCloseForCloning ####
+
+#### _X11TransConnect ####
+
+#### _X11TransConnectDisplay ####
+
+#### _X11TransConvertAddress ####
+
+#### _X11TransDisconnect ####
+
+#### _X11TransFreeConnInfo ####
+
+#### _X11TransGetConnectionNumber ####
+
+#### _X11TransGetHostname ####
+
+#### _X11TransGetMyAddr ####
+
+#### _X11TransGetPeerAddr ####
+
+#### _X11TransIsLocal ####
+
+#### _X11TransOpenCOTSClient ####
+
+#### _X11TransRead ####
+
+#### _X11TransReadv ####
+
+#### _X11TransSetOption ####
+
+#### _X11TransSocketINET6Funcs ####
+
+#### _X11TransSocketINETFuncs ####
+
+#### _X11TransSocketLocalFuncs ####
+
+#### _X11TransSocketProxyConnInfo ####
+
+#### _X11TransSocketTCPFuncs ####
+
+#### _X11TransSocketUNIXFuncs ####
+
+#### _X11TransWrite ####
+
+#### _X11TransWritev ####
+
+#### _XAllocID ####
+
+#### _XAllocIDs ####
+
+#### _XAllocScratch ####
+Compext.c:1852:      if ((dst_data = _XAllocScratch(dpy, dst_data_length)) == NULL)
+Compext.c:1947:      if ((dst_data = _XAllocScratch(dpy, dst_data_length)) == NULL)
+
+#### _XAllocTemp ####
+
+#### _XAsyncErrorHandler ####
+
+#### _XCloseLC ####
+
+#### _XColor_to_XcmsRGB ####
+
+#### _XConnectDisplay ####
+
+#### _XCopyEventCookie ####
+
+#### _XCopyToArg ####
+
+#### _XCreateMutex_fn ####
+
+#### (arch=amd64 ia64 alpha ppc64 arm64)_XData32 ####
+
+#### _XDefaultError ####
+
+#### _XDefaultIOError ####
+
+#### _XDefaultWireError ####
+
+#### _XDeq ####
+
+#### _XDeqAsyncHandler ####
+
+#### _XDisconnectDisplay ####
+
+#### _XEatData ####
+Compext.c:968:    _XEatData(dpy, (unsigned long) n);
+Compext.c:1222:    _XEatData(dpy, (unsigned long) n);
+
+#### _XEatDataWords ####
+
+#### _XEnq ####
+
+#### _XError ####
+Compext.c:1036:  int (*handler)(Display *, XErrorEvent *) = _XErrorFunction;
+Compext.c:1053:  _XErrorFunction = _NXInternalReplyErrorFunction;
+Compext.c:1115:        _XErrorFunction = handler;
+Compext.c:1144:  _XErrorFunction = handler;
+
+#### _XErrorFunction ####
+Compext.c:1036:  int (*handler)(Display *, XErrorEvent *) = _XErrorFunction;
+Compext.c:1053:  _XErrorFunction = _NXInternalReplyErrorFunction;
+Compext.c:1115:        _XErrorFunction = handler;
+Compext.c:1144:  _XErrorFunction = handler;
+
+#### _XEventToWire ####
+
+#### _XEventsQueued ####
+
+#### _XF86BigfontFreeFontMetrics ####
+
+#### _XF86LoadQueryLocaleFont ####
+
+#### _XFetchEventCookie ####
+
+#### _XFlush ####
+
+#### _XFlushGCCache ####
+
+#### _XFreeAtomTable ####
+
+#### _XFreeDisplayLock_fn ####
+
+#### _XFreeDisplayStructure ####
+
+#### _XFreeEventCookies ####
+
+#### _XFreeExtData ####
+
+#### _XFreeMutex_fn ####
+
+#### _XFreeTemp ####
+
+#### _XGetAsyncData ####
+Compext.c:3591:    _XGetAsyncData(dpy, async_data, buf, len, SIZEOF(xGetImageReply), async_size, async_size);
+Compext.c:3992:    _XGetAsyncData(dpy, async_data, buf, len, SIZEOF(xGetPropertyReply), async_size, async_size);
+
+#### _XGetAsyncReply ####
+Compext.c:3537:  async_rep = (xGetImageReply *) _XGetAsyncReply(dpy, async_head, rep, buf, len, 0, False);
+Compext.c:3930:  async_rep = (xGetPropertyReply *) _XGetAsyncReply(dpy, async_head, rep, buf, len, 0, False);
+Compext.c:4292:  async_rep = (xGrabPointerReply *) _XGetAsyncReply(dpy, async_head, rep, buf, len, 0, False);
+Compext.c:4576:  async_rep = (xGetInputFocusReply *) _XGetAsyncReply(dpy, async_head, rep, buf, len, 0, False);
+
+#### _XGetBitsPerPixel ####
+Compext.c:231:extern int _XGetBitsPerPixel(Display *dpy, int depth);
+Compext.c:1624:  req -> depth1Bpp  = _XGetBitsPerPixel(dpy, 1);
+Compext.c:1625:  req -> depth4Bpp  = _XGetBitsPerPixel(dpy, 4);
+Compext.c:1626:  req -> depth8Bpp  = _XGetBitsPerPixel(dpy, 8);
+Compext.c:1627:  req -> depth16Bpp = _XGetBitsPerPixel(dpy, 16);
+Compext.c:1628:  req -> depth24Bpp = _XGetBitsPerPixel(dpy, 24);
+Compext.c:1629:  req -> depth32Bpp = _XGetBitsPerPixel(dpy, 32);
+
+#### _XGetHostname ####
+
+#### _XGetLCValues ####
+
+#### _XGetRequest ####
+
+#### _XGetScanlinePad ####
+Compext.c:232:extern int _XGetScanlinePad(Display *dpy, int depth);
+Compext.c:3611:                                            state -> height, _XGetScanlinePad(dpy, async_rep -> depth), 0);
+
+#### _XGetWindowAttributes ####
+
+#### _XHeadOfDisplayList ####
+
+#### _XIMCompileResourceList ####
+
+#### _XIOError ####
+Compext.c:560:      _XIOError(dpy);
+
+#### _XIOErrorFunction ####
+
+#### _XInitDisplayLock_fn ####
+
+#### _XInitIM ####
+
+#### _XInitImageFuncPtrs ####
+
+#### _XInitKeysymDB ####
+
+#### _XInitOM ####
+
+#### _XIsEventCookie ####
+
+#### _XKeyInitialize ####
+
+#### _XKeycodeToKeysym ####
+
+#### _XKeysymToKeycode ####
+
+#### _XKeysymToModifiers ####
+
+#### _XLockMutex_fn ####
+
+#### _XLookupKeysym ####
+
+#### _XLookupString ####
+
+#### _XNoticeCreateBitmap ####
+
+#### _XNoticePutBitmap ####
+
+#### _XOpenLC ####
+
+#### _XParseBaseFontNameList ####
+
+#### _XPollfdCacheAdd ####
+
+#### _XPollfdCacheDel ####
+
+#### _XPollfdCacheInit ####
+
+#### _XProcessInternalConnection ####
+
+#### _XProcessWindowAttributes ####
+
+#### _XPutBackEvent ####
+
+#### (arch=amd64 ia64 alpha ppc64 arm64)_XRead32 ####
+
+#### _XRead ####
+Compext.c:983:  _XReadPad(dpy, (char *) supported_methods, n);
+Compext.c:1235:  _XReadPad(dpy, (char *) path_data, n);
+
+#### _XReadEvents ####
+
+#### _XReadPad ####
+Compext.c:983:  _XReadPad(dpy, (char *) supported_methods, n);
+Compext.c:1235:  _XReadPad(dpy, (char *) path_data, n);
+
+#### _XRefreshKeyboardMapping ####
+
+#### _XRegisterFilterByMask ####
+
+#### _XRegisterFilterByType ####
+
+#### _XRegisterInternalConnection ####
+
+#### _XReply ####
+Compext.c:835:  if (_XReply(dpy, (xReply *) &rep, 0, xTrue) == xFalse)
+Compext.c:948:  if (_XReply(dpy, (xReply *) &rep, 0, xFalse) == xFalse || rep.length == 0)
+Compext.c:1109:      if (_XReply(dpy, (xReply *) &rep, 0, xTrue) == xFalse)
+Compext.c:1202:  if (_XReply(dpy, (xReply *) &rep, 0, xFalse) == xFalse || rep.length == 0)
+Compext.c:2600:    result = _XReply(dpy, (xReply *) &rep, 0, xTrue);
+
+#### _XReverse_Bytes ####
+
+#### _XScreenOfWindow ####
+
+#### _XSelect ####
+
+#### _XSend ####
+Compext.c:204: * _XSend or Data.
+Compext.c:1715:       * The _XSend() will pad the request for us.
+Compext.c:1718:      _XSend(dpy, data, data_length);
+Compext.c:1778:       * The _XSend() will pad the request for us.
+Compext.c:1781:      _XSend(dpy, data, data_length);
+Compext.c:1886:      _XSend(dpy, dst_data, dst_data_length);
+Compext.c:1986:      _XSend(dpy, dst_data, dst_data_length);
+Compext.c:2560:       * The _XSend() will pad the request for us.
+Compext.c:2563:      _XSend(dpy, image -> data, src_data_length);
+
+#### _XSendClientPrefix ####
+
+#### _XSetClipRectangles ####
+
+#### _XSetImage ####
+
+#### _XSetLastRequestRead ####
+
+#### _XStoreEventCookie ####
+
+#### _XTextHeight16 ####
+
+#### _XTextHeight ####
+
+#### _XTranslateKey ####
+
+#### _XTranslateKeySym ####
+
+#### _XTryShapeBitmapCursor ####
+
+#### _XUnknownCopyEventCookie ####
+
+#### _XUnknownNativeEvent ####
+
+#### _XUnknownWireEvent ####
+
+#### _XUnknownWireEventCookie ####
+
+#### _XUnlockMutex_fn ####
+
+#### _XUnregisterFilter ####
+
+#### _XUnregisterInternalConnection ####
+
+#### _XUnresolveColor ####
+
+#### _XUpdateAtomCache ####
+
+#### _XUpdateGCCache ####
+
+#### _XVIDtoVisual ####
+Compext.c:3603:      state -> image = XCreateImage(dpy, _XVIDtoVisual(dpy, async_rep -> visual),
+Compext.c:3609:      state -> image = XCreateImage(dpy, _XVIDtoVisual(dpy, async_rep -> visual),
+
+#### _XWireToEvent ####
+
+#### _XcmsAddCmapRec ####
+
+#### _XcmsArcTangent ####
+
+#### _XcmsCIELabQueryMaxLCRGB ####
+
+#### _XcmsCIELab_prefix ####
+
+#### _XcmsCIELuvQueryMaxLCRGB ####
+
+#### _XcmsCIELuv_prefix ####
+
+#### _XcmsCIEXYZ_ValidSpec ####
+
+#### _XcmsCIEXYZ_prefix ####
+
+#### _XcmsCIEuvY_ValidSpec ####
+
+#### _XcmsCIEuvY_prefix ####
+
+#### _XcmsCIExyY_prefix ####
+
+#### _XcmsConvertColorsWithWhitePt ####
+
+#### _XcmsCopyCmapRecAndFree ####
+
+#### _XcmsCopyISOLatin1Lowered ####
+
+#### _XcmsCopyPointerArray ####
+
+#### _XcmsCosine ####
+
+#### _XcmsCubeRoot ####
+
+#### _XcmsDDColorSpaces ####
+
+#### _XcmsDDColorSpacesInit ####
+
+#### _XcmsDDConvertColors ####
+
+#### _XcmsDIColorSpaces ####
+
+#### _XcmsDIColorSpacesInit ####
+
+#### _XcmsDIConvertColors ####
+
+#### _XcmsDeleteCmapRec ####
+
+#### _XcmsEqualWhitePts ####
+
+#### _XcmsFreeIntensityMaps ####
+
+#### _XcmsFreePointerArray ####
+
+#### _XcmsGetElement ####
+
+#### _XcmsGetIntensityMap ####
+
+#### _XcmsGetProperty ####
+
+#### _XcmsInitDefaultCCCs ####
+
+#### _XcmsInitScrnInfo ####
+
+#### _XcmsLRGB_InitScrnDefault ####
+
+#### _XcmsPushPointerArray ####
+
+#### _XcmsRGB_prefix ####
+
+#### _XcmsRGB_to_XColor ####
+
+#### _XcmsRGBi_prefix ####
+
+#### _XcmsRegColorSpaces ####
+
+#### _XcmsRegFormatOfPrefix ####
+
+#### _XcmsResolveColor ####
+
+#### _XcmsResolveColorString ####
+
+#### _XcmsSCCFuncSets ####
+
+#### _XcmsSCCFuncSetsInit ####
+
+#### _XcmsSetGetColor ####
+
+#### _XcmsSetGetColors ####
+
+#### _XcmsSine ####
+
+#### _XcmsSquareRoot ####
+
+#### _XcmsTekHVCQueryMaxVCRGB ####
+
+#### _XcmsTekHVC_CheckModify ####
+
+#### _XcmsTekHVC_prefix ####
+
+#### _XcmsUnresolveColor ####
+
+#### _Xdebug ####
+
+#### _Xevent_to_mask ####
+
+#### _Xglobal_lock ####
+
+#### _Xi18n_lock ####
+
+#### _XimCbDispatch ####
+
+#### _XimCheckCreateICValues ####
+
+#### _XimCheckDataSize ####
+
+#### _XimCheckICMode ####
+
+#### _XimCheckIMMode ####
+
+#### _XimCheckIfLocalProcessing ####
+
+#### _XimCheckIfThaiProcessing ####
+
+#### _XimCheckLocalInputStyle ####
+
+#### _XimCommitCallback ####
+
+#### _XimConnect ####
+
+#### _XimDecodeICATTRIBUTE ####
+
+#### _XimDecodeIMATTRIBUTE ####
+
+#### _XimDecodeLocalICAttr ####
+
+#### _XimDecodeLocalIMAttr ####
+
+#### _XimDestroyIMStructureList ####
+
+#### _XimDispatchInit ####
+
+#### _XimEncodeICATTRIBUTE ####
+
+#### _XimEncodeIMATTRIBUTE ####
+
+#### _XimEncodeLocalICAttr ####
+
+#### _XimEncodeLocalIMAttr ####
+
+#### _XimError ####
+
+#### _XimErrorCallback ####
+
+#### _XimExtension ####
+
+#### _XimFilterWaitEvent ####
+
+#### _XimFlush ####
+
+#### _XimForwardEvent ####
+
+#### _XimForwardEventCallback ####
+
+#### _XimFreeCommitInfo ####
+
+#### _XimFreeProtoIntrCallback ####
+
+#### _XimFreeTransIntrCallback ####
+
+#### _XimGetAttributeID ####
+
+#### _XimGetCharCode ####
+
+#### _XimGetCurrentICValues ####
+
+#### _XimGetCurrentIMValues ####
+
+#### _XimGetICValueData ####
+
+#### _XimGetIMValueData ####
+
+#### _XimGetLocaleCode ####
+
+#### _XimGetMyEndian ####
+
+#### _XimGetResourceListRec ####
+
+#### _XimGetResourceListRecByQuark ####
+
+#### _XimGetWindowEventmask ####
+
+#### _XimICOfXICID ####
+
+#### _XimImSportRec ####
+
+#### _XimInitialResourceInfo ####
+
+#### _XimLcctstombs ####
+
+#### _XimLcctstoutf8 ####
+
+#### _XimLcctstowcs ####
+
+#### _XimLocalCreateIC ####
+
+#### _XimLocalFilter ####
+
+#### _XimLocalGetICValues ####
+
+#### _XimLocalGetIMValues ####
+
+#### _XimLocalIMFree ####
+
+#### _XimLocalMbLookupString ####
+
+#### _XimLocalOpenIM ####
+
+#### _XimLocalSetICValues ####
+
+#### _XimLocalSetIMValues ####
+
+#### _XimLocalUtf8LookupString ####
+
+#### _XimLocalWcLookupString ####
+
+#### _XimLookupMBText ####
+
+#### _XimLookupUTF8Text ####
+
+#### _XimLookupWCText ####
+
+#### _XimMakeICAttrIDList ####
+
+#### _XimMakeIMAttrIDList ####
+
+#### _XimOpenIM ####
+
+#### _XimParseStringFile ####
+
+#### _XimProcError ####
+
+#### _XimProcSyncReply ####
+
+#### _XimProtoCreateIC ####
+
+#### _XimProtoEventToWire ####
+
+#### _XimProtoIMFree ####
+
+#### _XimProtoMbLookupString ####
+
+#### _XimProtoOpenIM ####
+
+#### _XimProtoUtf8LookupString ####
+
+#### _XimProtoWcLookupString ####
+
+#### _XimProtoWireToEvent ####
+
+#### _XimRead ####
+
+#### _XimRegProtoIntrCallback ####
+
+#### _XimRegisterDispatcher ####
+
+#### _XimRegisterFilter ####
+
+#### _XimRegisterIMInstantiateCallback ####
+
+#### _XimRegisterServerFilter ####
+
+#### _XimRegisterTriggerKeysCallback ####
+
+#### _XimReregisterFilter ####
+
+#### _XimResetIMInstantiateCallback ####
+
+#### _XimRespSyncReply ####
+
+#### _XimServerDestroy ####
+
+#### _XimSetCurrentICValues ####
+
+#### _XimSetCurrentIMValues ####
+
+#### _XimSetEventMaskCallback ####
+
+#### _XimSetHeader ####
+
+#### _XimSetICDefaults ####
+
+#### _XimSetICMode ####
+
+#### _XimSetICResourceList ####
+
+#### _XimSetICValueData ####
+
+#### _XimSetIMMode ####
+
+#### _XimSetIMResourceList ####
+
+#### _XimSetIMValueData ####
+
+#### _XimSetInnerICResourceList ####
+
+#### _XimSetInnerIMResourceList ####
+
+#### _XimSetLocalIMDefaults ####
+
+#### _XimShutdown ####
+
+#### _XimSync ####
+
+#### _XimSyncCallback ####
+
+#### _XimThaiCloseIM ####
+
+#### _XimThaiCreateIC ####
+
+#### _XimThaiFilter ####
+
+#### _XimThaiIMFree ####
+
+#### _XimThaiOpenIM ####
+
+#### _XimTransCallDispatcher ####
+
+#### _XimTransConf ####
+
+#### _XimTransFilterWaitEvent ####
+
+#### _XimTransFlush ####
+
+#### _XimTransInternalConnection ####
+
+#### _XimTransRead ####
+
+#### _XimTransRegisterDispatcher ####
+
+#### _XimTransWrite ####
+
+#### _XimTransportRec ####
+
+#### _XimTriggerNotify ####
+
+#### _XimUnRegisterIMInstantiateCallback ####
+
+#### _XimUnregisterFilter ####
+
+#### _XimUnregisterServerFilter ####
+
+#### _XimWrite ####
+
+#### _XimXConf ####
+
+#### _XimXTransBytesReadable ####
+
+#### _XimXTransClose ####
+
+#### _XimXTransCloseForCloning ####
+
+#### _XimXTransConnect ####
+
+#### _XimXTransDisconnect ####
+
+#### _XimXTransFreeConnInfo ####
+
+#### _XimXTransGetConnectionNumber ####
+
+#### _XimXTransGetHostname ####
+
+#### _XimXTransGetPeerAddr ####
+
+#### _XimXTransIsLocal ####
+
+#### _XimXTransOpenCOTSClient ####
+
+#### _XimXTransRead ####
+
+#### _XimXTransReadv ####
+
+#### _XimXTransSetOption ####
+
+#### _XimXTransSocketINET6Funcs ####
+
+#### _XimXTransSocketINETFuncs ####
+
+#### _XimXTransSocketLocalFuncs ####
+
+#### _XimXTransSocketTCPFuncs ####
+
+#### _XimXTransSocketUNIXFuncs ####
+
+#### _XimXTransWrite ####
+
+#### _XimXTransWritev ####
+
+#### _Ximctstombs ####
+
+#### _Ximctstoutf8 ####
+
+#### _Ximctstowcs ####
+
+#### _XkbCopyFromReadBuffer ####
+
+#### _XkbFreeReadBuffer ####
+
+#### _XkbGetAtomNameFunc ####
+
+#### _XkbGetCharset ####
+
+#### _XkbGetConverters ####
+
+#### _XkbGetReadBufferCountedString ####
+
+#### _XkbGetReadBufferPtr ####
+
+#### _XkbInitReadBuffer ####
+
+#### _XkbInternAtomFunc ####
+
+#### _XkbNoteCoreMapChanges ####
+
+#### _XkbPeekAtReadBuffer ####
+
+#### (arch=amd64 ia64 alpha ppc64 arm64)_XkbReadBufferCopy32 ####
+
+#### _XkbReadBufferCopyKeySyms ####
+
+#### (arch=amd64 ia64 alpha ppc64 arm64)_XkbReadCopyData32 ####
+
+#### _XkbReadCopyKeySyms ####
+
+#### _XkbReadGetCompatMapReply ####
+
+#### _XkbReadGetGeometryReply ####
+
+#### _XkbReadGetIndicatorMapReply ####
+
+#### _XkbReadGetMapReply ####
+
+#### _XkbReadGetNamesReply ####
+
+#### _XkbReloadDpy ####
+
+#### _XkbSkipReadBufferData ####
+
+#### (arch=amd64 ia64 alpha ppc64 arm64)_XkbWriteCopyData32 ####
+
+#### _XkbWriteCopyKeySyms ####
+
+#### _XkeyTable ####
+
+#### _XlcAddCT ####
+
+#### _XlcAddCharSet ####
+
+#### _XlcAddGB18030LocaleConverters ####
+
+#### _XlcAddLoader ####
+
+#### _XlcAddUtf8Converters ####
+
+#### _XlcAddUtf8LocaleConverters ####
+
+#### _XlcCloseConverter ####
+
+#### _XlcCompareISOLatin1 ####
+
+#### _XlcCompileResourceList ####
+
+#### _XlcConvert ####
+
+#### _XlcCopyFromArg ####
+
+#### _XlcCopyToArg ####
+
+#### _XlcCountVaList ####
+
+#### _XlcCreateDefaultCharSet ####
+
+#### _XlcCreateLC ####
+
+#### _XlcCreateLocaleDataBase ####
+
+#### _XlcCurrentLC ####
+
+#### _XlcDbg_printValue ####
+
+#### _XlcDeInitLoader ####
+
+#### _XlcDefaultLoader ####
+
+#### _XlcDefaultMapModifiers ####
+
+#### _XlcDestroyLC ####
+
+#### _XlcDestroyLocaleDataBase ####
+
+#### _XlcFileName ####
+
+#### _XlcGenericLoader ####
+
+#### _XlcGenericMethods ####
+
+#### _XlcGetCSValues ####
+
+#### _XlcGetCharSet ####
+
+#### _XlcGetCharSetWithSide ####
+
+#### _XlcGetLocaleDataBase ####
+
+#### _XlcGetResource ####
+
+#### _XlcGetValues ####
+
+#### _XlcInitCTInfo ####
+
+#### _XlcInitLoader ####
+
+#### _XlcLocaleDirName ####
+
+#### _XlcLocaleLibDirName ####
+
+#### _XlcMapOSLocaleName ####
+
+#### _XlcNCompareISOLatin1 ####
+
+#### _XlcOpenConverter ####
+
+#### _XlcParseCharSet ####
+
+#### _XlcParse_scopemaps ####
+
+#### _XlcPublicMethods ####
+
+#### _XlcRemoveLoader ####
+
+#### _XlcResetConverter ####
+
+#### _XlcResolveI18NPath ####
+
+#### _XlcResolveLocaleName ####
+
+#### _XlcSetConverter ####
+
+#### _XlcSetValues ####
+
+#### _XlcUtf8Loader ####
+
+#### _XlcVaToArgList ####
+
+#### _XlcValidModSyntax ####
+
+#### _Xlcmbstoutf8 ####
+
+#### _Xlcmbstowcs ####
+
+#### _Xlcmbtowc ####
+
+#### _Xlcwcstombs ####
+
+#### _Xlcwctomb ####
+
+#### _XmbDefaultDrawImageString ####
+
+#### _XmbDefaultDrawString ####
+
+#### _XmbDefaultTextEscapement ####
+
+#### _XmbDefaultTextExtents ####
+
+#### _XmbDefaultTextPerCharExtents ####
+
+#### _XmbGenericDrawImageString ####
+
+#### _XmbGenericDrawString ####
+
+#### _XmbGenericTextEscapement ####
+
+#### _XmbGenericTextExtents ####
+
+#### _XmbGenericTextPerCharExtents ####
+
+#### _XmbTextListToTextProperty ####
+
+#### _XmbTextPropertyToTextList ####
+
+#### _Xmblen ####
+
+#### _Xmbstoutf8 ####
+
+#### _Xmbstowcs ####
+
+#### _Xmbtowc ####
+
+#### _XomConvert ####
+
+#### _XomGenericDrawString ####
+
+#### _XomGenericOpenOM ####
+
+#### _XomGenericTextExtents ####
+
+#### _XomGetFontDataFromFontSet ####
+
+#### _XomInitConverter ####
+
+#### _XrmDefaultInitParseInfo ####
+
+#### _XrmInitParseInfo ####
+
+#### _XrmInternalStringToQuark ####
+
+#### _Xthread_self_fn ####
+
+#### _Xutf8DefaultDrawImageString ####
+
+#### _Xutf8DefaultDrawString ####
+
+#### _Xutf8DefaultTextEscapement ####
+
+#### _Xutf8DefaultTextExtents ####
+
+#### _Xutf8DefaultTextPerCharExtents ####
+
+#### _Xutf8GenericDrawImageString ####
+
+#### _Xutf8GenericDrawString ####
+
+#### _Xutf8GenericTextEscapement ####
+
+#### _Xutf8GenericTextExtents ####
+
+#### _Xutf8GenericTextPerCharExtents ####
+
+#### _Xutf8TextListToTextProperty ####
+
+#### _Xutf8TextPropertyToTextList ####
+
+#### _XwcDefaultDrawImageString ####
+
+#### _XwcDefaultDrawString ####
+
+#### _XwcDefaultTextEscapement ####
+
+#### _XwcDefaultTextExtents ####
+
+#### _XwcDefaultTextPerCharExtents ####
+
+#### _XwcFreeStringList ####
+
+#### _XwcGenericDrawImageString ####
+
+#### _XwcGenericDrawString ####
+
+#### _XwcGenericTextEscapement ####
+
+#### _XwcGenericTextExtents ####
+
+#### _XwcGenericTextPerCharExtents ####
+
+#### _XwcTextListToTextProperty ####
+
+#### _XwcTextPropertyToTextList ####
+
+#### _Xwcscmp ####
+
+#### _Xwcscpy ####
+
+#### _Xwcslen ####
+
+#### _Xwcsncmp ####
+
+#### _Xwcsncpy ####
+
+#### _Xwcstombs ####
+
+#### _Xwctomb ####
+
+#### _qfree ####
+
+#### read_EncodingInfo ####
+
+#### xlocaledir ####

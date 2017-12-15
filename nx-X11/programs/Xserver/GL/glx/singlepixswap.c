@@ -1,4 +1,3 @@
-/* $XFree86: xc/programs/Xserver/GL/glx/singlepixswap.c,v 1.5 2001/03/21 16:29:37 dawes Exp $ */
 /*
 ** License Applicability. Except to the extent portions of this file are
 ** made subject to an alternative license as permitted in the SGI Free
@@ -34,7 +33,6 @@
 **
 */
 
-#define NEED_REPLIES
 #ifdef HAVE_DIX_CONFIG_H
 #include <dix-config.h>
 #endif
@@ -58,6 +56,8 @@ int __glXDispSwap_ReadPixels(__GLXclientState *cl, GLbyte *pc)
     int error;
     char *answer, answerBuffer[200];
 
+    REQUEST_FIXED_SIZE(xGLXSingleReq, 28);
+
     __GLX_SWAP_INT(&((xGLXSingleReq *)pc)->contextTag);
     cx = __glXForceCurrent(cl, __GLX_GET_SINGLE_CONTEXT_TAG(pc), &error);
     if (!cx) {
@@ -79,7 +79,7 @@ int __glXDispSwap_ReadPixels(__GLXclientState *cl, GLbyte *pc)
     swapBytes = *(GLboolean *)(pc + 24);
     lsbFirst = *(GLboolean *)(pc + 25);
     compsize = __glReadPixels_size(format,type,width,height);
-    if (compsize < 0) compsize = 0;
+    if (compsize < 0) return BadLength;
 
     glPixelStorei(GL_PACK_SWAP_BYTES, !swapBytes);
     glPixelStorei(GL_PACK_LSB_FIRST, lsbFirst);
@@ -120,6 +120,7 @@ int __glXDispSwap_GetTexImage(__GLXclientState *cl, GLbyte *pc)
     char *answer, answerBuffer[200];
     GLint width=0, height=0, depth=1;
 
+    REQUEST_FIXED_SIZE(xGLXSingleReq, 24);
     __GLX_SWAP_INT(&((xGLXSingleReq *)pc)->contextTag);
     cx = __glXForceCurrent(cl, __GLX_GET_SINGLE_CONTEXT_TAG(pc), &error);
     if (!cx) {
@@ -148,7 +149,7 @@ int __glXDispSwap_GetTexImage(__GLXclientState *cl, GLbyte *pc)
      * are illegal, but then width, height, and depth would still be zero anyway.
      */
     compsize = __glGetTexImage_size(target,level,format,type,width,height,depth);
-    if (compsize < 0) compsize = 0;
+    if (compsize < 0) return BadLength;
 
     glPixelStorei(GL_PACK_SWAP_BYTES, !swapBytes);
     __GLX_GET_ANSWER_BUFFER(answer,cl,compsize,1);
@@ -190,6 +191,7 @@ int __glXDispSwap_GetPolygonStipple(__GLXclientState *cl, GLbyte *pc)
     char *answer;
     __GLX_DECLARE_SWAP_VARIABLES;
 
+    REQUEST_FIXED_SIZE(xGLXSingleReq, 4);
     __GLX_SWAP_INT(&((xGLXSingleReq *)pc)->contextTag);
     cx = __glXForceCurrent(cl, __GLX_GET_SINGLE_CONTEXT_TAG(pc), &error);
     if (!cx) {
@@ -230,6 +232,7 @@ int __glXDispSwap_GetSeparableFilter(__GLXclientState *cl, GLbyte *pc)
     char *answer, answerBuffer[200];
     GLint width=0, height=0;
 
+    REQUEST_FIXED_SIZE(xGLXSingleReq, 16);
     cx = __glXForceCurrent(cl, __GLX_GET_SINGLE_CONTEXT_TAG(pc), &error);
     if (!cx) {
 	return error;
@@ -257,13 +260,11 @@ int __glXDispSwap_GetSeparableFilter(__GLXclientState *cl, GLbyte *pc)
     compsize = __glGetTexImage_size(target,1,format,type,width,1,1);
     compsize2 = __glGetTexImage_size(target,1,format,type,height,1,1);
 
-    if (compsize < 0) compsize = 0;
-    if (compsize2 < 0) compsize2 = 0;
-    compsize = __GLX_PAD(compsize);
-    compsize2 = __GLX_PAD(compsize2);
+    if ((compsize = safe_pad(compsize)) < 0) return BadLength;
+    if ((compsize2 = safe_pad(compsize2)) < 0) return BadLength;
 
     glPixelStorei(GL_PACK_SWAP_BYTES, !swapBytes);
-    __GLX_GET_ANSWER_BUFFER(answer,cl,compsize + compsize2,1);
+    __GLX_GET_ANSWER_BUFFER(answer,cl,safe_add(compsize, compsize2),1);
     __glXClearErrorOccured();
     glGetSeparableFilter(
 		  *(GLenum   *)(pc + 0),
@@ -302,6 +303,7 @@ int __glXDispSwap_GetConvolutionFilter(__GLXclientState *cl, GLbyte *pc)
     char *answer, answerBuffer[200];
     GLint width=0, height=0;
 
+    REQUEST_FIXED_SIZE(xGLXSingleReq, 16);
     cx = __glXForceCurrent(cl, __GLX_GET_SINGLE_CONTEXT_TAG(pc), &error);
     if (!cx) {
 	return error;
@@ -328,7 +330,7 @@ int __glXDispSwap_GetConvolutionFilter(__GLXclientState *cl, GLbyte *pc)
      * are illegal, but then width and height would still be zero anyway.
      */
     compsize = __glGetTexImage_size(target,1,format,type,width,height,1);
-    if (compsize < 0) compsize = 0;
+    if (compsize < 0) return BadLength;
 
     glPixelStorei(GL_PACK_SWAP_BYTES, !swapBytes);
     __GLX_GET_ANSWER_BUFFER(answer,cl,compsize,1);
@@ -368,6 +370,7 @@ int __glXDispSwap_GetHistogram(__GLXclientState *cl, GLbyte *pc)
     char *answer, answerBuffer[200];
     GLint width=0;
 
+    REQUEST_FIXED_SIZE(xGLXSingleReq, 16);
     cx = __glXForceCurrent(cl, __GLX_GET_SINGLE_CONTEXT_TAG(pc), &error);
     if (!cx) {
 	return error;
@@ -390,7 +393,7 @@ int __glXDispSwap_GetHistogram(__GLXclientState *cl, GLbyte *pc)
      * are illegal, but then width would still be zero anyway.
      */
     compsize = __glGetTexImage_size(target,1,format,type,width,1,1);
-    if (compsize < 0) compsize = 0;
+    if (compsize < 0) return BadLength;
 
     glPixelStorei(GL_PACK_SWAP_BYTES, !swapBytes);
     __GLX_GET_ANSWER_BUFFER(answer,cl,compsize,1);
@@ -422,6 +425,7 @@ int __glXDispSwap_GetMinmax(__GLXclientState *cl, GLbyte *pc)
     __GLX_DECLARE_SWAP_VARIABLES;
     char *answer, answerBuffer[200];
 
+    REQUEST_FIXED_SIZE(xGLXSingleReq, 16);
     cx = __glXForceCurrent(cl, __GLX_GET_SINGLE_CONTEXT_TAG(pc), &error);
     if (!cx) {
 	return error;
@@ -439,7 +443,7 @@ int __glXDispSwap_GetMinmax(__GLXclientState *cl, GLbyte *pc)
     reset = *(GLboolean *)(pc + 13);
 
     compsize = __glGetTexImage_size(target,1,format,type,2,1,1);
-    if (compsize < 0) compsize = 0;
+    if (compsize < 0) return BadLength;
 
     glPixelStorei(GL_PACK_SWAP_BYTES, !swapBytes);
     __GLX_GET_ANSWER_BUFFER(answer,cl,compsize,1);
@@ -470,6 +474,7 @@ int __glXDispSwap_GetColorTable(__GLXclientState *cl, GLbyte *pc)
     char *answer, answerBuffer[200];
     GLint width=0;
 
+    REQUEST_FIXED_SIZE(xGLXSingleReq, 16);
     cx = __glXForceCurrent(cl, __GLX_GET_SINGLE_CONTEXT_TAG(pc), &error);
     if (!cx) {
 	return error;
@@ -491,7 +496,7 @@ int __glXDispSwap_GetColorTable(__GLXclientState *cl, GLbyte *pc)
      * are illegal, but then width would still be zero anyway.
      */
     compsize = __glGetTexImage_size(target,1,format,type,width,1,1);
-    if (compsize < 0) compsize = 0;
+    if (compsize < 0) return BadLength;
 
     glPixelStorei(GL_PACK_SWAP_BYTES, !swapBytes);
     __GLX_GET_ANSWER_BUFFER(answer,cl,compsize,1);

@@ -1,17 +1,25 @@
 /**************************************************************************/
 /*                                                                        */
-/* Copyright (c) 2001, 2011 NoMachine, http://www.nomachine.com/.         */
+/* Copyright (c) 2001, 2011 NoMachine (http://www.nomachine.com)          */
+/* Copyright (c) 2008-2014 Oleksandr Shneyder <o.shneyder@phoca-gmbh.de>  */
+/* Copyright (c) 2011-2016 Mike Gabriel <mike.gabriel@das-netzwerkteam.de>*/
+/* Copyright (c) 2014-2016 Mihai Moldovan <ionic@ionic.de>                */
+/* Copyright (c) 2014-2016 Ulrich Sibiller <uli42@gmx.de>                 */
+/* Copyright (c) 2015-2016 Qindel Group (http://www.qindel.com)           */
 /*                                                                        */
 /* NXAGENT, NX protocol compression and NX extensions to this software    */
-/* are copyright of NoMachine. Redistribution and use of the present      */
-/* software is allowed according to terms specified in the file LICENSE   */
-/* which comes in the source distribution.                                */
+/* are copyright of the aforementioned persons and companies.             */
 /*                                                                        */
-/* Check http://www.nomachine.com/licensing.html for applicability.       */
-/*                                                                        */
-/* NX and NoMachine are trademarks of Medialogic S.p.A.                   */
+/* Redistribution and use of the present software is allowed according    */
+/* to terms specified in the file LICENSE which comes in the source       */
+/* distribution.                                                          */
 /*                                                                        */
 /* All rights reserved.                                                   */
+/*                                                                        */
+/* NOTE: This software has received contributions from various other      */
+/* contributors, only the core maintainers and supporters are listed as   */
+/* copyright holders. Please contact us, if you feel you should be listed */
+/* as copyright holder, as well.                                          */
 /*                                                                        */
 /**************************************************************************/
 
@@ -31,8 +39,9 @@ is" without express or implied warranty.
 
 #include "scrnintstr.h"
 #include "dixstruct.h"
-#include "../../../../include/fonts/font.h"
-#include "fontstruct.h"
+#include <X11/fonts/font.h>
+#include <X11/fonts/fontstruct.h>
+#include "dixfontstr.h"
 #include "misc.h"
 #include "miscstruct.h"
 #include "opaque.h"
@@ -49,9 +58,10 @@ is" without express or implied warranty.
 #include "Reconnect.h"
 
 #include "Args.h"
+#include "Utils.h"
 
-#include "NXlib.h"
-#include "NXalert.h"
+#include "compext/Compext.h"
+#include <nx/NXalert.h>
 
 #include <string.h>
 #include <stdlib.h>
@@ -61,38 +71,30 @@ is" without express or implied warranty.
 #undef  TEST
 #undef  DEBUG
 
-#define NXAGENT_DEFAULT_FONT_DIR      "/usr/X11R6/lib/X11/fonts"
+#define NXAGENT_DEFAULT_FONT_DIR      "/usr/share/nx/fonts"
 #define NXAGENT_ALTERNATE_FONT_DIR    "/usr/share/X11/fonts"
 #define NXAGENT_ALTERNATE_FONT_DIR_2  "/usr/share/fonts/X11"
-#define NXAGENT_ALTERNATE_FONT_DIR_3  "/usr/share/fonts"
-#define NXAGENT_ALTERNATE_FONT_DIR_4  "/usr/NX/share/fonts"
+#define NXAGENT_ALTERNATE_FONT_DIR_3  "/usr/X11R6/lib/X11/fonts"
 
 #define NXAGENT_DEFAULT_FONT_PATH  \
-"/usr/X11R6/lib/X11/fonts/misc/,/usr/X11R6/lib/X11/fonts/Speedo/,\
-/usr/X11R6/lib/X11/fonts/Type1/,/usr/X11R6/lib/X11/fonts/75dpi/,\
-/usr/X11R6/lib/X11/fonts/100dpi/,/usr/X11R6/lib/X11/fonts/TTF/,\
-/usr/NX/share/fonts/base"
+"/usr/share/nx/fonts/misc/,/usr/share/nx/fonts/Speedo/,\
+/usr/share/nx/fonts/Type1/,/usr/share/nx/fonts/75dpi/,\
+/usr/share/nx/fonts/100dpi/,/usr/share/nx/fonts/TTF/"
 
 #define NXAGENT_ALTERNATE_FONT_PATH  \
 "/usr/share/X11/fonts/misc/,/usr/share/X11/fonts/Speedo/,\
 /usr/share/X11/fonts/Type1/,/usr/share/X11/fonts/75dpi/,\
-/usr/share/X11/fonts/100dpi/,/usr/share/X11/fonts/TTF/,\
-/usr/NX/share/fonts/base"
+/usr/share/X11/fonts/100dpi/,/usr/share/X11/fonts/TTF/"
 
 #define NXAGENT_ALTERNATE_FONT_PATH_2  \
 "/usr/share/fonts/X11/misc/,/usr/share/fonts/X11/Speedo/,\
 /usr/share/fonts/X11/Type1/,/usr/share/fonts/X11/75dpi/,\
-/usr/share/fonts/X11/100dpi/,/usr/share/fonts/X11/TTF/,\
-/usr/NX/share/fonts/base"
+/usr/share/fonts/X11/100dpi/,/usr/share/fonts/X11/TTF/"
 
 #define NXAGENT_ALTERNATE_FONT_PATH_3  \
-"/usr/share/fonts/misc/,/usr/share/fonts/Speedo/,\
-/usr/share/fonts/Type1/,/usr/share/fonts/75dpi/,\
-/usr/share/fonts/100dpi/,/usr/share/fonts/TTF/,\
-/usr/NX/share/fonts/base"
-
-#define NXAGENT_ALTERNATE_FONT_PATH_4  \
-"/usr/NX/share/fonts/base"
+"/usr/X11R6/lib/X11/fonts/misc/,/usr/X11R6/lib/X11/fonts/Speedo/,\
+/usr/X11R6/lib/X11/fonts/Type1/,/usr/X11R6/lib/X11/fonts/75dpi/,\
+/usr/X11R6/lib/X11/fonts/100dpi/,/usr/X11R6/lib/X11/fonts/TTF/"
 
 #undef NXAGENT_FONTCACHE_DEBUG
 #undef NXAGENT_RECONNECT_FONT_DEBUG
@@ -103,7 +105,7 @@ is" without express or implied warranty.
 static int reconnectFlexibility;
 
 static void nxagentCleanCacheAfterReconnect(void);
-static void nxagentFontReconnect(FontPtr, XID, pointer);
+static void nxagentFontReconnect(FontPtr, XID, void *);
 static XFontStruct *nxagentLoadBestQueryFont(Display* dpy, char *fontName, FontPtr pFont);
 static XFontStruct *nxagentLoadQueryFont(register Display *dpy , char *fontName , FontPtr pFont);
 int nxagentFreeFont(XFontStruct *fs);
@@ -196,11 +198,11 @@ void nxagentFreeFontCache(void)
       nxagentFreeFont(CACHE_FSTRUCT(i));
     }
 
-    xfree(CACHE_NAME(i));
-    xfree(CACHE_ENTRY(i));
+    free(CACHE_NAME(i));
+    free(CACHE_ENTRY(i));
   }
 
-  xfree(CACHE_ENTRY_PTR);
+  free(CACHE_ENTRY_PTR);
   CACHE_ENTRY_PTR = NULL;
   CACHE_INDEX = 0;
   CACHE_SIZE = 0;
@@ -306,7 +308,7 @@ void nxagentListRemoteAddName(const char *name, int status)
 
   if (nxagentRemoteFontList.length == nxagentRemoteFontList.listSize)
   {
-     nxagentRemoteFontList.list = xrealloc(nxagentRemoteFontList.list, sizeof(nxagentFontRecPtr)
+     nxagentRemoteFontList.list = realloc(nxagentRemoteFontList.list, sizeof(nxagentFontRecPtr)
                                                * (nxagentRemoteFontList.listSize + 1000));
 
      if (nxagentRemoteFontList.list == NULL)
@@ -330,9 +332,9 @@ void nxagentListRemoteAddName(const char *name, int status)
                     (nxagentRemoteFontList.length - pos) * sizeof(nxagentFontRecPtr));
   }
 
-  if ((nxagentRemoteFontList.list[pos] = xalloc(sizeof(nxagentFontRec))))
+  if ((nxagentRemoteFontList.list[pos] = malloc(sizeof(nxagentFontRec))))
   {
-    nxagentRemoteFontList.list[pos]->name = xalloc(strlen(name) +1);
+    nxagentRemoteFontList.list[pos]->name = malloc(strlen(name) +1);
     if (nxagentRemoteFontList.list[pos]->name == NULL)
     {
        fprintf(stderr, "Font: remote list name memory allocation failed!.\n");
@@ -364,10 +366,10 @@ static void nxagentFreeRemoteFontList(nxagentFontList *listRec)
   {
     if (listRec -> list[l])
     {
-      xfree(listRec -> list[l] -> name);
+      free(listRec -> list[l] -> name);
       listRec -> list[l] -> name = NULL;
 
-      xfree(listRec -> list[l]);
+      free(listRec -> list[l]);
       listRec -> list[l] = NULL;
     }
   }
@@ -486,15 +488,19 @@ Bool nxagentFontLookUp(const char *name)
 
 Bool nxagentRealizeFont(ScreenPtr pScreen, FontPtr pFont)
 {
-  pointer priv;
+  void * priv;
   Atom name_atom, value_atom;
   int nprops;
   FontPropPtr props;
   int i;
-  char *name;
+  const char *name;
   char *origName = (char*) pScreen;
 
+#ifdef HAS_XFONT2
+  xfont2_font_set_private(pFont, nxagentFontPrivateIndex, NULL);
+#else
   FontSetPrivate(pFont, nxagentFontPrivateIndex, NULL);
+#endif /* HAS_XFONT2 */
 
   if (requestingClient && XpClientIsPrintClient(requestingClient, NULL))
     return True;
@@ -513,7 +519,7 @@ Bool nxagentRealizeFont(ScreenPtr pScreen, FontPtr pFont)
 
   if (!value_atom) return False;
 
-  name = (char *)NameForAtom(value_atom);
+  name = NameForAtom(value_atom);
 
   #ifdef NXAGENT_FONTCACHE_DEBUG
   fprintf(stderr, "Font: nxagentRealizeFont, realizing font: %s\n", validateString(name));
@@ -538,8 +544,12 @@ Bool nxagentRealizeFont(ScreenPtr pScreen, FontPtr pFont)
      name = origName;
   }
 
-  priv = (pointer)xalloc(sizeof(nxagentPrivFont));
+  priv = (void *)malloc(sizeof(nxagentPrivFont));
+#ifdef HAS_XFONT2
+  xfont2_font_set_private(pFont, nxagentFontPrivateIndex, priv);
+#else
   FontSetPrivate(pFont, nxagentFontPrivateIndex, priv);
+#endif /* HAS_XFONT2 */
 
   nxagentFontPriv(pFont) -> mirrorID = 0;
 
@@ -569,7 +579,7 @@ Bool nxagentRealizeFont(ScreenPtr pScreen, FontPtr pFont)
 
       if (CACHE_INDEX == CACHE_SIZE)
       {
-        CACHE_ENTRY_PTR = xrealloc(CACHE_ENTRY_PTR, sizeof(nxCacheFontEntryRecPtr) * (CACHE_SIZE + 100));
+        CACHE_ENTRY_PTR = realloc(CACHE_ENTRY_PTR, sizeof(nxCacheFontEntryRecPtr) * (CACHE_SIZE + 100));
 
         if (CACHE_ENTRY_PTR == NULL)
         {
@@ -579,14 +589,14 @@ Bool nxagentRealizeFont(ScreenPtr pScreen, FontPtr pFont)
         CACHE_SIZE += 100;
      }
 
-     CACHE_ENTRY(CACHE_INDEX) = xalloc(sizeof(nxCacheFontEntryRec));
+     CACHE_ENTRY(CACHE_INDEX) = malloc(sizeof(nxCacheFontEntryRec));
 
      if (CACHE_ENTRY(CACHE_INDEX) == NULL)
      {
         return False;
      }
 
-     CACHE_NAME(CACHE_INDEX) = xalloc(strlen(name) + 1);
+     CACHE_NAME(CACHE_INDEX) = malloc(strlen(name) + 1);
 
      if (CACHE_NAME(CACHE_INDEX) == NULL)
      {
@@ -602,7 +612,7 @@ Bool nxagentRealizeFont(ScreenPtr pScreen, FontPtr pFont)
        nxagentListRemoteFonts("*", nxagentMaxFontNames);
      }
 
-     nxagentFontPriv(pFont)->font_struct = nxagentLoadQueryFont(nxagentDisplay, name, pFont);
+     nxagentFontPriv(pFont)->font_struct = nxagentLoadQueryFont(nxagentDisplay, (char *)name, pFont);
      strcpy(nxagentFontPriv(pFont)->fontName, name);
      if (nxagentFontPriv(pFont)->font_struct != NULL)
      {
@@ -686,14 +696,18 @@ Bool nxagentUnrealizeFont(ScreenPtr pScreen, FontPtr pFont)
     if (nxagentFontPriv(pFont) -> mirrorID)
       FreeResource(nxagentFontPriv(pFont) -> mirrorID, RT_NONE);
 
-    xfree(nxagentFontPriv(pFont));
+    free(nxagentFontPriv(pFont));
+#ifdef HAS_XFONT2
+    xfont2_font_set_private(pFont, nxagentFontPrivateIndex, NULL);
+#else
     FontSetPrivate(pFont, nxagentFontPrivateIndex, NULL);
+#endif /* HAS_XFONT2 */
   }
 
   return True;
 }
 
-int nxagentDestroyNewFontResourceType(pointer p, XID id)
+int nxagentDestroyNewFontResourceType(void * p, XID id)
 {
   #ifdef TEST
   fprintf(stderr, "nxagentDestroyNewFontResourceType: Destroying mirror id [%ld] for font at [%p].\n",
@@ -753,7 +767,7 @@ static XFontStruct *nxagentLoadBestQueryFont(Display* dpy, char *fontName, FontP
   fprintf(stderr, "nxagentLoadBestQueryFont: Searching font '%s' .\n", fontName);
   #endif
 
-  substFontBuf = (char *) xalloc(sizeof(char) * 512);
+  substFontBuf = (char *) malloc(sizeof(char) * 512);
 
 
   numFontFields = nxagentSplitString(fontName, fontNameFields, FIELDS + 1, "-");
@@ -827,10 +841,7 @@ static XFontStruct *nxagentLoadBestQueryFont(Display* dpy, char *fontName, FontP
 
       for (j = 0; j < numSearchFields; j++)
       {
-        if (searchFields[j] != NULL)
-        {
-          free(searchFields[j]);
-        }
+        free(searchFields[j]);
       }
     }
   }
@@ -849,16 +860,13 @@ static XFontStruct *nxagentLoadBestQueryFont(Display* dpy, char *fontName, FontP
 
   for (j = 0; j < numFontFields; j++)
   {
-    if (fontNameFields[j] != NULL)
-    {
-      free(fontNameFields[j]);
-    }
+    free(fontNameFields[j]);
   }
 
   return fontStruct;
 }
 
-static void nxagentFontDisconnect(FontPtr pFont, XID param1, pointer param2)
+static void nxagentFontDisconnect(FontPtr pFont, XID param1, void * param2)
 {
   nxagentPrivFont *privFont;
   Bool *pBool = (Bool*)param2;
@@ -959,7 +967,7 @@ static void nxagentCollectFailedFont(FontPtr fpt, XID id)
   nxagentFailedToReconnectFonts.index++;
 }
 
-static void nxagentFontReconnect(FontPtr pFont, XID param1, pointer param2)
+static void nxagentFontReconnect(FontPtr pFont, XID param1, void * param2)
 {
   int i;
   nxagentPrivFont *privFont;
@@ -1164,7 +1172,7 @@ Bool nxagentReconnectAllFonts(void *p0)
   return fontSuccess;
 }
 
-static void nxagentFailedFontReconnect(FontPtr pFont, XID param1, pointer param2)
+static void nxagentFailedFontReconnect(FontPtr pFont, XID param1, void * param2)
 {
   int i;
   nxagentPrivFont *privFont;
@@ -1246,17 +1254,11 @@ static void nxagentFailedFontReconnect(FontPtr pFont, XID param1, pointer param2
 
 static void nxagentFreeFailedToReconnectFonts()
 {
-  if (nxagentFailedToReconnectFonts.font != NULL)
-  {
-    free(nxagentFailedToReconnectFonts.font);
-    nxagentFailedToReconnectFonts.font = NULL;
-  }
+  free(nxagentFailedToReconnectFonts.font);
+  nxagentFailedToReconnectFonts.font = NULL;
 
-  if (nxagentFailedToReconnectFonts.id != NULL)
-  {
-    free(nxagentFailedToReconnectFonts.id);
-    nxagentFailedToReconnectFonts.id = NULL;
-  }
+  free(nxagentFailedToReconnectFonts.id);
+  nxagentFailedToReconnectFonts.id = NULL;
 
   nxagentFailedToReconnectFonts.size = 0;
   nxagentFailedToReconnectFonts.index = 0;
@@ -1471,7 +1473,7 @@ void nxagentVerifyDefaultFontPath(void)
           S_ISDIR(dirStat.st_mode) != 0)
   {
     /*
-     * Let's use the old "/usr/X11R6/lib/X11/fonts" style.
+     * Let's use the old "/usr/share/nx/fonts" style.
      */
 
     #ifdef TEST
@@ -1546,7 +1548,7 @@ void nxagentVerifyDefaultFontPath(void)
           S_ISDIR(dirStat.st_mode) != 0)
   {
     /*
-     * Let's use the "/usr/share/fonts" path.
+     * Let's use the "/usr/X11R6/lib/X11/fonts" path.
      */
 
     #ifdef TEST
@@ -1566,32 +1568,6 @@ void nxagentVerifyDefaultFontPath(void)
 
     strcat(fontPath, NXAGENT_ALTERNATE_FONT_PATH_3);
   }
-
-  if (stat(NXAGENT_ALTERNATE_FONT_DIR_4, &dirStat) == 0 &&
-          S_ISDIR(dirStat.st_mode) != 0)
-  {
-    /*
-     * Let's use the "/usr/NX/share/fonts" path.
-     */
-
-    #ifdef TEST
-    fprintf(stderr, "nxagentVerifyDefaultFontPath: Assuming fonts in directory [%s].\n",
-                validateString(NXAGENT_ALTERNATE_FONT_DIR_4));
-    #endif
-
-    if (*fontPath != '\0')
-    {
-      fontPath = realloc(fontPath, strlen(fontPath) + strlen(NXAGENT_ALTERNATE_FONT_PATH_4) + 2);
-      strcat(fontPath, ",");
-    }
-    else
-    {
-      fontPath = realloc(fontPath, strlen(fontPath) + strlen(NXAGENT_ALTERNATE_FONT_PATH_4) + 1);
-    }
-
-    strcat(fontPath, NXAGENT_ALTERNATE_FONT_PATH_4);
-  }
-
   if (*fontPath == '\0') 
   {
     #ifdef WARNING
@@ -1640,7 +1616,7 @@ XFontStruct* nxagentLoadQueryFont(register Display *dpy, char *name, FontPtr pFo
     fprintf(stderr, "nxagentLoadQueryFont: WARNING! Font not found '%s'.\n", name);
     #endif
 
-    Xfree(fs);
+    free(fs);
 
     return (XFontStruct *) NULL;
   }
@@ -1666,7 +1642,7 @@ XFontStruct* nxagentLoadQueryFont(register Display *dpy, char *name, FontPtr pFo
     register long nbytes;
 
     nbytes = pFont -> info.nprops * sizeof(XFontProp);
-    fs -> properties = (XFontProp *) Xalloc((unsigned) nbytes);
+    fs -> properties = (XFontProp *) malloc((unsigned) nbytes);
 
     if (fs -> properties == NULL)
     {
@@ -1674,7 +1650,7 @@ XFontStruct* nxagentLoadQueryFont(register Display *dpy, char *name, FontPtr pFo
       fprintf(stderr, "nxagentLoadQueryFont: WARNING! Failed allocation of XFontProp.");
       #endif
 
-      Xfree((char *) fs);
+      free((char *) fs);
       return (XFontStruct *) NULL;
     }
 
@@ -1714,14 +1690,11 @@ int nxagentFreeFont(XFontStruct *fs)
     #ifdef USE_XF86BIGFONT
     _XF86BigfontFreeFontMetrics(fs);
     #else
-    Xfree ((char *) fs->per_char);
+    free ((char *) fs->per_char);
     #endif
   }
 
-  if (fs -> properties)
-  {
-    Xfree (fs->properties);
-  }
+  free (fs->properties);
 
   XFree(fs);
 

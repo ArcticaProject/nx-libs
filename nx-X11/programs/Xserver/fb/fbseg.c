@@ -21,11 +21,12 @@
  * TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
-/* $XFree86: xc/programs/Xserver/fb/fbseg.c,v 1.7 2001/01/17 07:40:02 keithp Exp $ */
 
 #ifdef HAVE_DIX_CONFIG_H
 #include <dix-config.h>
 #endif
+
+#include <stdlib.h>
 
 #include "fb.h"
 #include "miline.h"
@@ -615,8 +616,8 @@ fbSegment (DrawablePtr	pDrawable,
     unsigned int oc1;	/* outcode of point 1 */
     unsigned int oc2;	/* outcode of point 2 */
 
-    nBox = REGION_NUM_RECTS (pClip);
-    pBox = REGION_RECTS (pClip);
+    nBox = RegionNumRects (pClip);
+    pBox = RegionRects (pClip);
     
     bres = fbSelectBres (pDrawable, pGC);
     

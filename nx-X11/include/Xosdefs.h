@@ -26,7 +26,6 @@ Except as contained in this notice, the name of The Open Group shall not be
 used in advertising or otherwise to promote the sale, use or other dealings
 in this Software without prior written authorization from The Open Group.
  */
-/* $XFree86: xc/include/Xosdefs.h,v 3.20 2002/05/31 18:45:39 dawes Exp $ */
 
 #ifndef _XOSDEFS_H_
 #define _XOSDEFS_H_
@@ -126,11 +125,6 @@ in this Software without prior written authorization from The Open Group.
 #if defined(nec_ews_svr2) || defined(SX) || defined(PC_UX)
 #define X_NOT_POSIX
 #define X_NOT_STDC_ENV
-#endif
-
-#ifdef __UNIXOS2__
-#define USGISH
-#define NULL_NOT_ZERO
 #endif
 
 #ifdef __DARWIN__

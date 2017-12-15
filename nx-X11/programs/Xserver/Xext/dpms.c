@@ -1,4 +1,3 @@
-/* $Xorg: dpms.c,v 1.3 2000/08/17 19:47:56 cpqbld Exp $ */
 /*****************************************************************
 
 Copyright (c) 1996 Digital Equipment Corporation, Maynard, Massachusetts.
@@ -33,24 +32,22 @@ Equipment Corporation.
  * @(#)RCSfile: dpms.c,v Revision: 1.1.4.5  (DEC) Date: 1996/03/04 15:27:00
  */
 
-/* $XFree86: xc/programs/Xserver/Xext/dpms.c,v 3.10tsi Exp $ */
 
 #ifdef HAVE_DIX_CONFIG_H
 #include <dix-config.h>
 #endif
 
-#include <X11/X.h>
-#include <X11/Xproto.h>
+#include <nx-X11/X.h>
+#include <nx-X11/Xproto.h>
 #include "misc.h"
 #include "os.h"
 #include "dixstruct.h"
 #include "extnsionst.h"
 #include "opaque.h"
 #define DPMS_SERVER
-#include <X11/extensions/dpms.h>
-#include <X11/extensions/dpmsstr.h>
+#include <nx-X11/extensions/dpms.h>
+#include <nx-X11/extensions/dpmsstr.h>
 #include "dpmsproc.h"
-#include "modinit.h"
 
 #if 0
 static unsigned char DPMSCode;
@@ -76,7 +73,7 @@ static DISPATCH_PROC(SProcDPMSCapable);
 static void DPMSResetProc(ExtensionEntry* extEntry);
 
 void
-DPMSExtensionInit(INITARGS)
+DPMSExtensionInit(void)
 {
 #if 0
     ExtensionEntry *extEntry;
@@ -105,7 +102,6 @@ ProcDPMSGetVersion(client)
 {
     /* REQUEST(xDPMSGetVersionReq); */
     xDPMSGetVersionReply rep;
-    register int n;
 
     REQUEST_SIZE_MATCH(xDPMSGetVersionReq);
 
@@ -115,11 +111,11 @@ ProcDPMSGetVersion(client)
     rep.majorVersion = DPMSMajorVersion;
     rep.minorVersion = DPMSMinorVersion;
     if (client->swapped) {
-    	swaps(&rep.sequenceNumber, n);
-	swaps(&rep.majorVersion, n);
-	swaps(&rep.minorVersion, n);
+	swaps(&rep.sequenceNumber);
+	swaps(&rep.majorVersion);
+	swaps(&rep.minorVersion);
     }
-    WriteToClient(client, sizeof(xDPMSGetVersionReply), (char *)&rep);
+    WriteToClient(client, sizeof(xDPMSGetVersionReply), &rep);
     return(client->noClientException);
 }
 
@@ -128,7 +124,6 @@ ProcDPMSCapable(register ClientPtr client)
 {
     /* REQUEST(xDPMSCapableReq); */
     xDPMSCapableReply rep;
-    register int n;
 
     REQUEST_SIZE_MATCH(xDPMSCapableReq);
 
@@ -138,9 +133,9 @@ ProcDPMSCapable(register ClientPtr client)
     rep.capable = DPMSCapableFlag;
 
     if (client->swapped) {
-	swaps(&rep.sequenceNumber, n);
+	swaps(&rep.sequenceNumber);
     }
-    WriteToClient(client, sizeof(xDPMSCapableReply), (char *)&rep);
+    WriteToClient(client, sizeof(xDPMSCapableReply), &rep);
     return(client->noClientException);
 }
 
@@ -150,7 +145,6 @@ ProcDPMSGetTimeouts(client)
 {
     /* REQUEST(xDPMSGetTimeoutsReq); */
     xDPMSGetTimeoutsReply rep;
-    register int n;
 
     REQUEST_SIZE_MATCH(xDPMSGetTimeoutsReq);
 
@@ -162,12 +156,12 @@ ProcDPMSGetTimeouts(client)
     rep.off = DPMSOffTime / MILLI_PER_SECOND;
 
     if (client->swapped) {
-    	swaps(&rep.sequenceNumber, n);
-	swaps(&rep.standby, n);
-	swaps(&rep.suspend, n);
-	swaps(&rep.off, n);
+	swaps(&rep.sequenceNumber);
+	swaps(&rep.standby);
+	swaps(&rep.suspend);
+	swaps(&rep.off);
     }
-    WriteToClient(client, sizeof(xDPMSGetTimeoutsReply), (char *)&rep);
+    WriteToClient(client, sizeof(xDPMSGetTimeoutsReply), &rep);
     return(client->noClientException);
 }
 
@@ -265,7 +259,6 @@ ProcDPMSInfo(register ClientPtr client)
 {
     /* REQUEST(xDPMSInfoReq); */
     xDPMSInfoReply rep;
-    register int n;
 
     REQUEST_SIZE_MATCH(xDPMSInfoReq);
 
@@ -276,10 +269,10 @@ ProcDPMSInfo(register ClientPtr client)
     rep.state = DPMSEnabled;
 
     if (client->swapped) {
-    	swaps(&rep.sequenceNumber, n);
-	swaps(&rep.power_level, n);
+	swaps(&rep.sequenceNumber);
+	swaps(&rep.power_level);
     }
-    WriteToClient(client, sizeof(xDPMSInfoReply), (char *)&rep);
+    WriteToClient(client, sizeof(xDPMSInfoReply), &rep);
     return(client->noClientException);
 }
 
@@ -316,13 +309,12 @@ static int
 SProcDPMSGetVersion(client)
     register ClientPtr	client;
 {
-    register int n;
     REQUEST(xDPMSGetVersionReq);
 
-    swaps(&stuff->length, n);
+    swaps(&stuff->length);
     REQUEST_SIZE_MATCH(xDPMSGetVersionReq);
-    swaps(&stuff->majorVersion, n);
-    swaps(&stuff->minorVersion, n);
+    swaps(&stuff->majorVersion);
+    swaps(&stuff->minorVersion);
     return ProcDPMSGetVersion(client);
 }
 
@@ -330,9 +322,8 @@ static int
 SProcDPMSCapable(register ClientPtr client)
 {
     REQUEST(xDPMSCapableReq);
-    register int n;
 
-    swaps(&stuff->length, n);
+    swaps(&stuff->length);
     REQUEST_SIZE_MATCH(xDPMSCapableReq);
 
     return ProcDPMSCapable(client);
@@ -343,9 +334,8 @@ SProcDPMSGetTimeouts(client)
     register ClientPtr client;
 {
     REQUEST(xDPMSGetTimeoutsReq);
-    register int n;
 
-    swaps(&stuff->length, n);
+    swaps(&stuff->length);
     REQUEST_SIZE_MATCH(xDPMSGetTimeoutsReq);
 
     return ProcDPMSGetTimeouts(client);
@@ -356,14 +346,13 @@ SProcDPMSSetTimeouts(client)
     register ClientPtr client;
 {
     REQUEST(xDPMSSetTimeoutsReq);
-    register int n;
 
-    swaps(&stuff->length, n);
+    swaps(&stuff->length);
     REQUEST_SIZE_MATCH(xDPMSSetTimeoutsReq);
 
-    swaps(&stuff->standby, n);
-    swaps(&stuff->suspend, n);
-    swaps(&stuff->off, n);
+    swaps(&stuff->standby);
+    swaps(&stuff->suspend);
+    swaps(&stuff->off);
     return ProcDPMSSetTimeouts(client);
 }
 
@@ -372,9 +361,8 @@ SProcDPMSEnable(client)
     register ClientPtr client;
 {
     REQUEST(xDPMSEnableReq);
-    register int n;
 
-    swaps(&stuff->length, n);
+    swaps(&stuff->length);
     REQUEST_SIZE_MATCH(xDPMSEnableReq);
 
     return ProcDPMSEnable(client);
@@ -385,9 +373,8 @@ SProcDPMSDisable(client)
     register ClientPtr client;
 {
     REQUEST(xDPMSDisableReq);
-    register int n;
 
-    swaps(&stuff->length, n);
+    swaps(&stuff->length);
     REQUEST_SIZE_MATCH(xDPMSDisableReq);
 
     return ProcDPMSDisable(client);
@@ -398,12 +385,11 @@ SProcDPMSForceLevel(client)
     register ClientPtr client;
 {
     REQUEST(xDPMSForceLevelReq);
-    register int n;
 
-    swaps(&stuff->length, n);
+    swaps(&stuff->length);
     REQUEST_SIZE_MATCH(xDPMSForceLevelReq);
 
-    swaps(&stuff->level, n);
+    swaps(&stuff->level);
 
     return ProcDPMSForceLevel(client);
 }
@@ -413,9 +399,8 @@ SProcDPMSInfo(client)
     register ClientPtr client;
 {
     REQUEST(xDPMSInfoReq);
-    register int n;
 
-    swaps(&stuff->length, n);
+    swaps(&stuff->length);
     REQUEST_SIZE_MATCH(xDPMSInfoReq);
 
     return ProcDPMSInfo(client);

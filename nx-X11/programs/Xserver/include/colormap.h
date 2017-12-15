@@ -1,4 +1,3 @@
-/* $XFree86: xc/programs/Xserver/include/colormap.h,v 1.5 2001/12/14 19:59:53 dawes Exp $ */
 /*
 
 Copyright 1987, 1998  The Open Group
@@ -45,12 +44,11 @@ ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS
 SOFTWARE.
 
 */
-/* $Xorg: colormap.h,v 1.4 2001/02/09 02:05:14 xorgcvs Exp $ */
 
 #ifndef CMAP_H
 #define CMAP_H 1
 
-#include <X11/Xproto.h>
+#include <nx-X11/Xproto.h>
 #include "screenint.h"
 #include "window.h"
 
@@ -87,16 +85,16 @@ extern int CreateColormap(
     int /*client*/);
 
 extern int FreeColormap(
-    pointer /*pmap*/,
+    void * /*pmap*/,
     XID /*mid*/);
 
 extern int TellLostMap(
     WindowPtr /*pwin*/,
-    pointer /* Colormap *pmid */);
+    void * /* Colormap *pmid */);
 
 extern int TellGainedMap(
     WindowPtr /*pwin*/,
-    pointer /* Colormap *pmid */);
+    void * /* Colormap *pmid */);
 
 extern int CopyColormapAndFree(
     Colormap /*mid*/,
@@ -140,7 +138,7 @@ extern int QueryColors(
     xrgb* /*prgbList*/);
 
 extern int FreeClientPixels(
-    pointer /*pcr*/,
+    void * /*pcr*/,
     XID /*fakeid*/);
 
 extern int AllocColorCells(
@@ -180,5 +178,9 @@ extern int StoreColors(
 extern int IsMapInstalled(
     Colormap /*map*/,
     WindowPtr /*pWin*/);
+
+extern Bool ResizeVisualArray(ScreenPtr /* pScreen */ ,
+                              int /* new_vis_count */ ,
+                              DepthPtr /* depth */ );
 
 #endif /* CMAP_H */

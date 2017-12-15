@@ -1,0 +1,50 @@
+--- ./nx-X11/config/cf/sun.cf.X.original	2015-02-13 14:03:44.400448260 +0100
++++ ./nx-X11/config/cf/sun.cf	2015-02-13 14:03:44.400448260 +0100
+@@ -299,7 +299,12 @@
+ 
+ #if OSMajorVersion == 4 
+ # if OSMinorVersion == 1
++/*
++ * Currently the NX transport only works with select().
++ *
+ #  define HasPoll		YES
++ */
++#  define HasPoll		NO
+ # endif
+ # if OSMinorVersion > 1 || (OSMinorVersion == 1 && OSTeenyVersion > 1)
+ /* You ALSO need this if you have Sun ld patch 100170-06 or later to 4.1.1 */
+@@ -359,10 +364,12 @@
+ # endif
+ #endif
+ 
+-#define ServerOSDefines		XFree86ServerOSDefines IncludeCG2HeaderDefine
++#define ServerOSDefines		XFree86ServerOSDefines IncludeCG2HeaderDefine \
++				-DPIXPRIV
+ #define ServerExtraDefines	AllocateLocalDefines XFree86ServerDefines \
+ 				CompilerServerExtraDefines \
+-				OSServerExtraDefines ArchServerExtraDefines
++				OSServerExtraDefines ArchServerExtraDefines \
++				-DPIXPRIV
+ 
+ #ifndef HasPerl
+ /* Solaris 8 comes with perl.  Earlier versions don't. */
+@@ -384,7 +391,8 @@
+ #endif
+ 
+ #if OSMajorVersion > 4
+-# define ConnectionFlags		-DTCPCONN -DUNIXCONN -DLOCALCONN
++/* #define ConnectionFlags             -DTCPCONN -DUNIXCONN -DLOCALCONN */
++#define ConnectionFlags                -DUNIXCONN -DTCPCONN
+ # if HasSunC
+ #  ifdef DefaultSunProCCompilerDir
+ #   ifndef  CcCmd
+@@ -452,7 +460,8 @@
+ #  endif
+ #  define ToolkitStringsABIOptions	-intelabi SolarisABIFlag
+ # else
+-#  define StandardDefines	  -Dsun -Dsparc -DSVR4 -D__EXTENSIONS__ LargefileDefines
++#  define StandardDefines	  -Dsun -Dsparc -DSVR4 -D__EXTENSIONS__ LargefileDefines \
++				  -DPIXPRIV
+ #  define ToolkitStringsABIOptions	-sparcabi SolarisABIFlag
+ # endif
+ # define ExtraLibraries    -lsocket -lnsl

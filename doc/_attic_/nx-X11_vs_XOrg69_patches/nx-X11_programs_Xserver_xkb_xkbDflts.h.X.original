@@ -1,0 +1,24 @@
+--- ./nx-X11/programs/Xserver/xkb/xkbDflts.h.X.original	2015-02-13 14:03:44.792440567 +0100
++++ ./nx-X11/programs/Xserver/xkb/xkbDflts.h	2015-02-10 19:13:13.736688433 +0100
+@@ -417,10 +417,21 @@
+          XkbSI_AnyOfOrNone, 0xff,
+          255,
+        {   XkbSA_LockControls, { 0x00, 0x00, 0x00, 0x00, 0x40, 0x00, 0x00 } } },
++
++#ifndef NX_TRANS_SOCKET
++
++    /*
++     * Make sure that the server can't be killed
++     * by pressing this key-sequence.
++     */
++
+     {    XK_Terminate_Server, 0x0000,
+          XkbSI_AnyOfOrNone, 0xff,
+          255,
+        {      XkbSA_Terminate, { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 } } },
++
++#endif
++
+     {    XK_ISO_Group_Latch, 0x0000,
+          XkbSI_LevelOneOnly|XkbSI_AnyOfOrNone, 0xff,
+          3,

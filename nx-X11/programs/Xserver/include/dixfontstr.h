@@ -1,4 +1,3 @@
-/* $Xorg: dixfontstr.h,v 1.3 2000/08/17 19:53:29 cpqbld Exp $ */
 /***********************************************************
 Copyright 1987 by Digital Equipment Corporation, Maynard, Massachusetts.
 
@@ -28,9 +27,11 @@ SOFTWARE.
 #include "servermd.h"
 #include "dixfont.h"
 #include <X11/fonts/fontstruct.h>
+#ifdef HAS_XFONT2
+# include <X11/fonts/libxfont2.h>
+#endif /* HAS_XFONT2 */
 #include "closure.h"
-#define NEED_REPLIES
-#include <X11/Xproto.h> /* for xQueryFontReply */
+#include <nx-X11/Xproto.h> /* for xQueryFontReply */
 
 #define FONTCHARSET(font)	  (font)
 #define FONTMAXBOUNDS(font,field) (font)->info.maxbounds.field

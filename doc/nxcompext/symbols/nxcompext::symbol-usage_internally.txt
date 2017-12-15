@@ -1,0 +1,1089 @@
+
+#### AlphaCompressData ####
+Alpha.c:46:char *AlphaCompressData(const char *data, unsigned int size, unsigned int *compressed_size)
+Compext.c:2634:  return AlphaCompressData(src_data, src_size, dst_size);
+Alpha.h:33:extern char *AlphaCompressData(
+
+#### BitmapCompressData ####
+Bitmap.c:38:char *BitmapCompressData(XImage *image, unsigned int *size)
+Bitmap.c:43:    fprintf(stderr, "******BitmapCompressData: Nothing to do with image of [%d] bpp and size [%d].\n",
+Bitmap.c:66:      fprintf(stderr, "******BitmapCompressData: PANIC! Image as [%d] bytes per line with expected [%d].\n",
+Bitmap.c:81:      fprintf(stderr, "******BitmapCompressData: PANIC! Failed to allocate [%d] bytes for the destination.\n",
+Compext.c:2750:  dst_image -> data = BitmapCompressData(src_image, &dst_size);
+Bitmap.h:33:extern char *BitmapCompressData(
+
+#### CleanXYImage ####
+Clean.c:40:int CleanXYImage(XImage *image)
+Compext.c:2094:      return CleanXYImage(image);
+Compext.c:2103:    return CleanXYImage(image);
+Clean.h:35:int CleanXYImage(XImage *image);
+
+#### CleanZImage ####
+Clean.c:85:int CleanZImage(XImage *image)
+Clean.c:92:  fprintf(stderr, "*****CleanZImage: Going to clean image of [%d] bits per pixel.\n",
+Clean.c:113:      fprintf(stderr, "*****CleanZImage: Cleaning [%d] bytes with bits per pixel [%d] "
+Clean.c:159:      fprintf(stderr, "*****CleanZImage: PANIC! Cannot clean image with [%d] bits per pixel.\n",
+Compext.c:2098:      return CleanZImage(image);
+Clean.h:36:int CleanZImage(XImage *image);
+
+#### ColormapCompressData ####
+Colormap.c:46:char *ColormapCompressData(const char *data, unsigned int size, unsigned int *compressed_size)
+Compext.c:2629:  return ColormapCompressData(src_data, src_size, dst_size);
+Colormap.h:33:extern char *ColormapCompressData(
+
+#### CopyAndCleanImage ####
+Clean.c:189:int CopyAndCleanImage(XImage *src_image, XImage *dst_image)
+Compext.c:2215:    if (CopyAndCleanImage(src_image, dst_image) <= 0)
+Clean.h:38:int CopyAndCleanImage(XImage *src_image, XImage *dst_image);
+
+#### FindLSB ####
+Jpeg.c:137:  redShift   = FindLSB(image -> red_mask)   - 1;
+Jpeg.c:138:  greenShift = FindLSB(image -> green_mask) - 1;
+Jpeg.c:139:  blueShift  = FindLSB(image -> blue_mask)  - 1;
+Mask.c:785:int FindLSB(int word)
+Png.c:289:  redShift   = FindLSB(image -> red_mask)   - 1;
+Png.c:290:  greenShift = FindLSB(image -> green_mask) - 1;
+Png.c:291:  blueShift  = FindLSB(image -> blue_mask)  - 1;
+Mask.h:42:int FindLSB(int word);
+
+#### JpegCompressData ####
+Compext.c:2810:  dst_image -> data = JpegCompressData(src_image, quality, &size);
+Jpeg.c:109:char *JpegCompressData(XImage *image, int level, int *compressed_size)
+Jpeg.c:130:  fprintf(stderr, "******JpegCompressData: Image byte order [%d] bitmap bit order [%d].\n",
+Jpeg.c:133:  fprintf(stderr, "******JpegCompressData: Bits per pixel [%d] bytes per line [%d].\n",
+Jpeg.c:142:  fprintf(stderr, "******JpegCompressData: Red mask [0x%lx] green mask [0x%lx] blue mask [0x%lx].\n",
+Jpeg.c:145:  fprintf(stderr, "******JpegCompressData: Red shift [%d] green shift [%d] blue shift [%d].\n",
+Jpeg.c:154:  fprintf(stderr, "******JpegCompressData: Red max [0x%x] green max [0x%x] blue max [0x%x].\n",
+Jpeg.c:164:  fprintf(stderr, "******JpegCompressData: Width [%d] height [%d] level [%d].\n",
+Jpeg.c:172:    fprintf(stderr, "******JpegCompressData: PANIC! Invalid bits per pixel [%d].\n",
+Jpeg.c:185:  fprintf(stderr, "******JpegCompressData: Allocating [%d] bytes for the scanline.\n",
+Jpeg.c:194:    fprintf(stderr, "******JpegCompressData: PANIC! Cannot allocate [%d] bytes.\n",
+Jpeg.c:223:  fprintf(stderr, "******JpegCompressData: Allocating [%d] bytes for the destination data.\n",
+Jpeg.c:232:    fprintf(stderr, "******JpegCompressData: PANIC! Error allocating [%d] bytes for the Jpeg data.\n",
+Jpeg.h:33:extern char *JpegCompressData(
+
+#### MaskImage ####
+Compext.c:247:#define CanMaskImage(image, mask) \
+Compext.c:254:#define ShouldMaskImage(image, mask) (mask -> color_mask != 0xff)
+Compext.c:2141:  else if (CanMaskImage(src_image, mask) == 0)
+Compext.c:2208:          ShouldMaskImage(src_image, mask) == 0)
+Compext.c:2228:  else if (MaskImage(mask, src_image, dst_image) <= 0)
+Compext.c:2328:  else if (CanMaskImage(src_image, mask) == 0)
+Compext.c:2381:          ShouldMaskImage(src_image, mask) == 0)
+Compext.c:2934:void NXMaskImage(XImage *image, unsigned int method)
+Compext.c:2952:      fprintf(stderr, "******NXMaskImage: Method is MASK_8_COLORS\n");
+Compext.c:2963:      fprintf(stderr, "******NXMaskImage: Method is MASK_64K_COLORS\n");
+Compext.c:2974:      fprintf(stderr, "******NXMaskImage: Method is MASK_256_COLORS\n");
+Compext.c:2985:      fprintf(stderr, "******NXMaskImage: Method is MASK_512K_COLORS\n");
+Compext.c:2996:      fprintf(stderr, "******NXMaskImage: Method is MASK_4K_COLORS\n");
+Compext.c:3007:      fprintf(stderr, "******NXMaskImage: Method is MASK_32K_COLORS\n");
+Compext.c:3018:      fprintf(stderr, "******NXMaskImage: Method is MASK_64K_COLORS\n");
+Compext.c:3029:      fprintf(stderr, "******NXMaskImage: Method is MASK_256K_COLORS\n");
+Compext.c:3040:      fprintf(stderr, "******NXMaskImage: Method is MASK_2M_COLORS\n");
+Compext.c:3051:      fprintf(stderr, "******NXMaskImage: Method is MASK_16M_COLORS\n");
+Compext.c:3059:      fprintf(stderr, "******NXMaskImage: PANIC! Cannot find mask method for pack method [%d]\n",
+Compext.c:3068:  fprintf(stderr, "******NXMaskImage: packMethod[%d] => maskMethod[%d]\n",
+Compext.c:3083:    fprintf(stderr, "******NXMaskImage: PANIC! No mask to apply for pack method [%d].\n",
+Compext.c:3089:  else if (CanMaskImage(image, mask) == 0)
+Compext.c:3092:    fprintf(stderr, "******NXMaskImage: PANIC! Invalid source with format [%d] depth [%d] bits per pixel [%d].\n",
+Compext.c:3095:    fprintf(stderr, "******NXMaskImage: PANIC! Visual colormask is red 0x%lx green 0x%lx blue 0x%lx.\n",
+Compext.c:3103:   * Calling ShouldMaskImage you get 0 in the case
+Compext.c:3108:  if (ShouldMaskImage(image, mask) == 0)
+Compext.c:3111:    fprintf(stderr, "******NXMaskImage: the image will not be masked\n");
+Compext.c:3119:      fprintf(stderr, "******NXMaskImage: PANIC! Failed to apply the color mask in place.\n");
+Mask.c:67:int MaskImage(const ColorMask *mask, XImage *src_image, XImage *dst_image)
+Mask.c:82:  fprintf(stderr, "******MaskImage: Going to mask image with [%d] bits per pixel.\n",
+Mask.c:101:      fprintf(stderr, "******MaskImage: 24/32 bits original R [%d] G [%d] B [%d] A [%d].\n",
+Mask.c:108:      fprintf(stderr, "******MaskImage: 24/32 bits masked R [%d] G [%d] B [%d] A [%d].\n",
+Mask.c:113:      fprintf(stderr, "******MaskImage: 24/32 bits pixel 0x%lx", pixel);
+Mask.c:151:      fprintf(stderr, "******MaskImage: 16 bits original R [%d] G [%d] B [%d].\n",
+Mask.c:158:      fprintf(stderr, "******MaskImage: 16 bits masked R [%d] G [%d] B [%d].\n",
+Mask.c:167:      fprintf(stderr, "******MaskImage: 16 bits pixel 0x%x", dst_pixels_addr[0]);
+Mask.c:175:      fprintf(stderr, "******MaskImage: 16 bits original R [%d] G [%d] B [%d].\n",
+Mask.c:182:      fprintf(stderr, "******MaskImage: 16 bits masked R [%d] G [%d] B [%d].\n",
+Mask.c:191:      fprintf(stderr, "******MaskImage: 16 bits pixel 0x%x", dst_pixels_addr[0]);
+Mask.c:215:    fprintf(stderr, "******MaskImage: PANIC! Cannot apply mask with [%d] bits per pixel.\n",
+Mask.c:371:    fprintf(stderr, "******MaskImage: PANIC! Cannot apply mask with [%d] bits per pixel.\n",
+Compext.h:759:extern void NXMaskImage(
+Mask.h:35:extern int MaskImage(const ColorMask *mask, XImage *src_image, XImage *dst_image);
+
+#### MaskInPlaceImage ####
+Compext.c:2399:  else if (MaskInPlaceImage(mask, dst_image) <= 0)
+Compext.c:3116:    if (MaskInPlaceImage(mask, image) <= 0)
+Mask.c:225:int MaskInPlaceImage(const ColorMask *mask, XImage *image)
+Mask.c:240:  fprintf(stderr, "******MaskInPlaceImage: Going to mask image with [%d] bits per pixel.\n",
+Mask.c:259:      fprintf(stderr, "******MaskInPlaceImage: 24/32 bits original R [%d] G [%d] B [%d] A [%d].\n",
+Mask.c:266:      fprintf(stderr, "******MaskInPlaceImage: 24/32 bits masked R [%d] G [%d] B [%d] A [%d].\n",
+Mask.c:271:      fprintf(stderr, "******MaskInPlaceImage: 24/32 bits pixel 0x%lx", pixel);
+Mask.c:307:      fprintf(stderr, "******MaskInPlaceImage: 16 bits original R [%d] G [%d] B [%d].\n",
+Mask.c:314:      fprintf(stderr, "******MaskInPlaceImage: 16 bits masked R [%d] G [%d] B [%d].\n",
+Mask.c:323:      fprintf(stderr, "******MaskInPlaceImage: 16 bits pixel 0x%x", pixels_addr[0]);
+Mask.c:331:      fprintf(stderr, "******MaskInPlaceImage: 16 bits original R [%d] G [%d] B [%d].\n",
+Mask.c:338:      fprintf(stderr, "******MaskInPlaceImage: 16 bits masked R [%d] G [%d] B [%d].\n",
+Mask.c:347:      fprintf(stderr, "******MaskInPlaceImage: 16 bits pixel 0x%x", pixels_addr[1]);
+Mask.h:37:extern int MaskInPlaceImage(const ColorMask *mask, XImage *image);
+
+#### NXAbortSplit ####
+Compext.c:1418:int NXAbortSplit(Display *dpy, unsigned int resource)
+Compext.c:1420:  register xNXAbortSplitReq *req;
+Compext.c:1424:  GetReq(NXAbortSplit, req);
+Compext.c:1427:  fprintf(stderr, "******NXAbortSplit: Sending message opcode [%d] with resource [%u].\n",
+Compext.c:1428:              X_NXAbortSplit, resource);
+Compext.h:491:extern int NXAbortSplit(
+
+#### NXAllocColors ####
+Compext.c:2574:int NXAllocColors(Display *dpy, Colormap colormap, unsigned int entries,
+Compext.h:668:extern int NXAllocColors(
+
+#### NXAllocSplit ####
+Compext.c:1276:unsigned int NXAllocSplit(Display *dpy, unsigned int resource)
+Compext.c:1287:        fprintf(stderr, "******NXAllocSplit: Reserved resource [%u].\n",
+Compext.c:1296:    fprintf(stderr, "******NXAllocSplit: WARNING! Resource limit exausted.\n");
+Compext.c:1307:      fprintf(stderr, "******NXAllocSplit: Reserved requested resource [%u].\n",
+Compext.c:1312:      fprintf(stderr, "******NXAllocSplit: Requested resource [%u] already reserved.\n",
+Compext.c:1322:  fprintf(stderr, "******NXAllocSplit: PANIC! Can't reserve requested resource [%u].\n",
+Compext.h:459:extern unsigned int NXAllocSplit(
+
+#### NXAllocUnpack ####
+Compext.c:1561:unsigned int NXAllocUnpack(Display *dpy, unsigned int resource)
+Compext.c:1572:        fprintf(stderr, "******NXAllocUnpack: Reserved resource [%u].\n",
+Compext.c:1581:    fprintf(stderr, "******NXAllocUnpack: WARNING! Resource limit exausted.\n");
+Compext.c:1592:      fprintf(stderr, "******NXAllocUnpack: Reserved requested resource [%u].\n",
+Compext.c:1597:      fprintf(stderr, "******NXAllocUnpack: Requested resource [%u] already reserved.\n",
+Compext.c:1607:  fprintf(stderr, "******NXAllocUnpack: PANIC! Can't reserve requested resource [%u].\n",
+Compext.h:531:extern unsigned int NXAllocUnpack(
+
+#### NXCacheAddImage ####
+Compext.c:3318:int NXCacheAddImage(NXPackedImage *image, unsigned int method, unsigned char *md5)
+Compext.c:3325:    fprintf(stderr, "******NXCacheAddImage: PANIC! Invalid image passed to function.\n");
+Compext.c:3336:    fprintf(stderr, "******NXCacheAddImage: Freeing up the oldest entry.\n");
+Compext.c:3354:  fprintf(stderr, "******NXCacheAddImage: Going to add new image with data size [%d].\n",
+Compext.c:3364:  _NXCacheDump("******NXCacheAddImage");
+Compext.h:789:extern int NXCacheAddImage(
+
+#### NXCacheFindImage ####
+Compext.c:3205:XImage *NXCacheFindImage(NXPackedImage *src_image, unsigned int *method, unsigned char **md5)
+Compext.c:3226:    fprintf(stderr, "******NXCacheFindImage: Can't allocate memory for the checksum.\n");
+Compext.c:3260:        fprintf(stderr, "******NXCacheFindImage: Found at position [%d] with hits [%d] and [%d] packs.\n",
+Compext.c:3275:          fprintf(stderr, "******NXCacheFindImage: Moving the image at the head of the list.\n");
+Compext.c:3286:          _NXCacheDump("******NXCacheFindImage");
+Compext.h:781:extern XImage *NXCacheFindImage(
+
+#### NXCleanImage ####
+Compext.c:2082:int NXCleanImage(XImage *image)
+Compext.c:2085:  fprintf(stderr, "******NXCleanImage: Cleaning image with format [%d] depth [%d] "
+Compext.c:2388:    if (NXCleanImage(dst_image) <= 0)
+Compext.h:753:extern int NXCleanImage(
+
+#### NXCollectGrabPointer ####
+Compext.c:152:} _NXCollectGrabPointerState;
+Compext.c:154:static _NXCollectGrabPointerState *_NXCollectedGrabPointers[NXNumberOfResources];
+Compext.c:4204:  async_event.xclient.data.l[0] = NXCollectGrabPointerNotify;
+Compext.c:4211:static Bool _NXCollectGrabPointerHandler(Display *dpy, xReply *rep, char *buf,
+Compext.c:4214:  register _NXCollectGrabPointerState *state;
+Compext.c:4222:  state = (_NXCollectGrabPointerState *) data;
+Compext.c:4228:    fprintf(stderr, "******_NXCollectGrabPointerHandler: Unmatched sequence [%d] for opcode [%d] "
+Compext.c:4237:  fprintf(stderr, "******_NXCollectGrabPointerHandler: Going to handle asynchronous GrabPointer reply.\n");
+Compext.c:4249:    fprintf(stderr, "******_NXCollectGrabPointerHandler: Error received from X server for resource [%d].\n",
+Compext.c:4263:  fprintf(stderr, "******_NXCollectGrabPointerHandler: Matched request with sequence [%ld].\n",
+Compext.c:4274:    fprintf(stderr, "******_NXCollectGrabPointerHandler: PANIC! Failed to allocate memory with resource [%d].\n",
+Compext.c:4288:  fprintf(stderr, "******_NXCollectGrabPointerHandler: Going to get reply with size [%d].\n",
+Compext.c:4297:    fprintf(stderr, "******_NXCollectGrabPointerHandler: PANIC! Failed to get reply with resource [%d].\n",
+Compext.c:4313:  fprintf(stderr, "******_NXCollectGrabPointerHandler: Got reply with status [%d] size [%d].\n",
+Compext.c:4341:int NXCollectGrabPointer(Display *dpy, unsigned int resource, Window grab_window, Bool owner_events,
+Compext.c:4347:  _NXCollectGrabPointerState *state;
+Compext.c:4353:    fprintf(stderr, "******NXCollectGrabPointer: PANIC! Provided resource [%u] is out of range.\n",
+Compext.c:4365:    fprintf(stderr, "******NXCollectGrabPointer: PANIC! Having to remove previous state for resource [%u].\n",
+Compext.c:4395:  fprintf(stderr, "******NXCollectGrabPointer: Sending message opcode [%d] sequence [%ld] "
+Compext.c:4399:  state   = Xmalloc(sizeof(_NXCollectGrabPointerState));
+Compext.c:4405:    fprintf(stderr, "******NXCollectGrabPointer: Failed to allocate memory with resource [%d].\n",
+Compext.c:4433:  handler -> handler = _NXCollectGrabPointerHandler;
+Compext.c:4448:  register _NXCollectGrabPointerState *state;
+Compext.h:863:extern int NXCollectGrabPointer(
+
+#### NXCollectImage ####
+Compext.c:116:} _NXCollectImageState;
+Compext.c:118:static _NXCollectImageState *_NXCollectedImages[NXNumberOfResources];
+Compext.c:3441:  async_event.xclient.data.l[0] = NXCollectImageNotify;
+Compext.c:3448:static Bool _NXCollectImageHandler(Display *dpy, xReply *rep, char *buf,
+Compext.c:3451:  register _NXCollectImageState *state;
+Compext.c:3460:  state = (_NXCollectImageState *) data;
+Compext.c:3466:    fprintf(stderr, "******_NXCollectImageHandler: Unmatched sequence [%d] for opcode [%d] "
+Compext.c:3475:  fprintf(stderr, "******_NXCollectImageHandler: Going to handle asynchronous GetImage reply.\n");
+Compext.c:3494:    fprintf(stderr, "******_NXCollectImageHandler: Error received from X server for resource [%d].\n",
+Compext.c:3508:  fprintf(stderr, "******_NXCollectImageHandler: Matched request with sequence [%ld].\n",
+Compext.c:3519:    fprintf(stderr, "******_NXCollectImageHandler: PANIC! Failed to allocate memory with resource [%d].\n",
+Compext.c:3533:  fprintf(stderr, "******_NXCollectImageHandler: Going to get reply with size [%d].\n",
+Compext.c:3542:    fprintf(stderr, "******_NXCollectImageHandler: PANIC! Failed to get reply with resource [%d].\n",
+Compext.c:3558:  fprintf(stderr, "******_NXCollectImageHandler: Got reply with depth [%d] visual [%d] size [%d].\n",
+Compext.c:3571:      fprintf(stderr, "******_NXCollectImageHandler: PANIC! Failed to allocate memory with resource [%d].\n",
+Compext.c:3587:    fprintf(stderr, "******_NXCollectImageHandler: Going to get data with size [%d].\n",
+Compext.c:3617:      fprintf(stderr, "******_NXCollectImageHandler: PANIC! Failed to create image for resource [%d].\n",
+Compext.c:3634:    fprintf(stderr, "******_NXCollectImageHandler: Successfully stored image data for resource [%d].\n",
+Compext.c:3641:    fprintf(stderr, "******_NXCollectImageHandler: WARNING! Null image data stored for resource [%d].\n",
+Compext.c:3668:int NXCollectImage(Display *dpy, unsigned int resource, Drawable drawable,
+Compext.c:3674:  _NXCollectImageState *state;
+Compext.c:3680:    fprintf(stderr, "******NXCollectImage: PANIC! Provided resource [%u] is out of range.\n",
+Compext.c:3692:    fprintf(stderr, "******NXCollectImage: PANIC! Having to remove previous state for resource [%u].\n",
+Compext.c:3726:  fprintf(stderr, "******NXCollectImage: Sending message opcode [%d] sequence [%ld] for resource [%d].\n",
+Compext.c:3729:  fprintf(stderr, "******NXCollectImage: Format [%d] drawable [%d] src_x [%d] src_y [%d].\n",
+Compext.c:3732:  fprintf(stderr, "******NXCollectImage: Width [%d] height [%d] plane_mask [%x].\n",
+Compext.c:3736:  state   = Xmalloc(sizeof(_NXCollectImageState));
+Compext.c:3742:    fprintf(stderr, "******NXCollectImage: PANIC! Failed to allocate memory with resource [%d].\n",
+Compext.c:3774:  handler -> handler = _NXCollectImageHandler;
+Compext.c:3789:  register _NXCollectImageState *state;
+Compext.h:804:extern int NXCollectImage(
+
+#### NXCollectInputFocus ####
+Compext.c:168:} _NXCollectInputFocusState;
+Compext.c:170:static _NXCollectInputFocusState *_NXCollectedInputFocuses[NXNumberOfResources];
+Compext.c:4488:  async_event.xclient.data.l[0] = NXCollectInputFocusNotify;
+Compext.c:4495:static Bool _NXCollectInputFocusHandler(Display *dpy, xReply *rep, char *buf,
+Compext.c:4498:  register _NXCollectInputFocusState *state;
+Compext.c:4506:  state = (_NXCollectInputFocusState *) data;
+Compext.c:4512:    fprintf(stderr, "******_NXCollectInputFocusHandler: Unmatched sequence [%d] for opcode [%d] "
+Compext.c:4521:  fprintf(stderr, "******_NXCollectInputFocusHandler: Going to handle asynchronous GetInputFocus reply.\n");
+Compext.c:4533:    fprintf(stderr, "******_NXCollectInputFocusHandler: Error received from X server for resource [%d].\n",
+Compext.c:4547:  fprintf(stderr, "******_NXCollectInputFocusHandler: Matched request with sequence [%ld].\n",
+Compext.c:4558:    fprintf(stderr, "******_NXCollectInputFocusHandler: PANIC! Failed to allocate memory with resource [%d].\n",
+Compext.c:4572:  fprintf(stderr, "******_NXCollectInputFocusHandler: Going to get reply with size [%d].\n",
+Compext.c:4581:    fprintf(stderr, "******_NXCollectInputFocusHandler: PANIC! Failed to get reply with resource [%d].\n",
+Compext.c:4597:  fprintf(stderr, "******_NXCollectInputFocusHandler: Got reply with focus [%d] revert to [%d] "
+Compext.c:4627:int NXCollectInputFocus(Display *dpy, unsigned int resource)
+Compext.c:4631:  _NXCollectInputFocusState *state;
+Compext.c:4637:    fprintf(stderr, "******NXCollectInputFocus: PANIC! Provided resource [%u] is out of range.\n",
+Compext.c:4649:    fprintf(stderr, "******NXCollectInputFocus: PANIC! Having to remove previous state for resource [%u].\n",
+Compext.c:4670:  fprintf(stderr, "******NXCollectInputFocus: Sending message opcode [%d] sequence [%ld] for resource [%d].\n",
+Compext.c:4674:  state   = Xmalloc(sizeof(_NXCollectInputFocusState));
+Compext.c:4680:    fprintf(stderr, "******NXCollectInputFocus: Failed to allocate memory with resource [%d].\n",
+Compext.c:4709:  handler -> handler = _NXCollectInputFocusHandler;
+Compext.c:4725:  register _NXCollectInputFocusState *state;
+Compext.h:892:extern int NXCollectInputFocus(
+
+#### NXCollectProperty ####
+Compext.c:137:} _NXCollectPropertyState;
+Compext.c:139:static _NXCollectPropertyState *_NXCollectedProperties[NXNumberOfResources];
+Compext.c:3834:  async_event.xclient.data.l[0] = NXCollectPropertyNotify;
+Compext.c:3841:static Bool _NXCollectPropertyHandler(Display *dpy, xReply *rep, char *buf,
+Compext.c:3844:  register _NXCollectPropertyState *state;
+Compext.c:3853:  state = (_NXCollectPropertyState *) data;
+Compext.c:3859:    fprintf(stderr, "******_NXCollectPropertyHandler: Unmatched sequence [%d] for opcode [%d] "
+Compext.c:3868:  fprintf(stderr, "******_NXCollectPropertyHandler: Going to handle asynchronous GetProperty reply.\n");
+Compext.c:3887:    fprintf(stderr, "******_NXCollectPropertyHandler: Error received from X server for resource [%d].\n",
+Compext.c:3901:  fprintf(stderr, "******_NXCollectPropertyHandler: Matched request with sequence [%ld].\n",
+Compext.c:3912:    fprintf(stderr, "******_NXCollectPropertyHandler: PANIC! Failed to allocate memory with resource [%d].\n",
+Compext.c:3926:  fprintf(stderr, "******_NXCollectPropertyHandler: Going to get reply with size [%d].\n",
+Compext.c:3935:    fprintf(stderr, "******_NXCollectPropertyHandler: PANIC! Failed to get reply with resource [%d].\n",
+Compext.c:3951:  fprintf(stderr, "******_NXCollectPropertyHandler: Got reply with format [%d] type [%d] size [%d].\n",
+Compext.c:3954:  fprintf(stderr, "******_NXCollectPropertyHandler: Bytes after [%d] number of items [%d].\n",
+Compext.c:3972:      fprintf(stderr, "******_NXCollectPropertyHandler: PANIC! Failed to allocate memory with resource [%d].\n",
+Compext.c:3988:    fprintf(stderr, "******_NXCollectPropertyHandler: Going to get data with size [%d].\n",
+Compext.c:4002:    fprintf(stderr, "******_NXCollectPropertyHandler: Successfully stored property data for resource [%d].\n",
+Compext.c:4009:    fprintf(stderr, "******_NXCollectPropertyHandler: WARNING! Null property data stored for resource [%d].\n",
+Compext.c:4036:int NXCollectProperty(Display *dpy, unsigned int resource, Window window, Atom property,
+Compext.c:4041:  _NXCollectPropertyState *state;
+Compext.c:4047:    fprintf(stderr, "******NXCollectProperty: PANIC! Provided resource [%u] is out of range.\n",
+Compext.c:4059:    fprintf(stderr, "******NXCollectProperty: PANIC! Having to remove previous state for resource [%u].\n",
+Compext.c:4092:  fprintf(stderr, "******NXCollectProperty: Sending message opcode [%d] sequence [%ld] for resource [%d].\n",
+Compext.c:4095:  fprintf(stderr, "******NXCollectProperty: Delete [%u] window [%d] property [%d] type [%d].\n",
+Compext.c:4098:  fprintf(stderr, "******NXCollectProperty: Long offset [%d] long length [%d].\n",
+Compext.c:4102:  state   = Xmalloc(sizeof(_NXCollectPropertyState));
+Compext.c:4108:    fprintf(stderr, "******NXCollectProperty: Failed to allocate memory with resource [%d].\n",
+Compext.c:4142:  handler -> handler = _NXCollectPropertyHandler;
+Compext.c:4159:  register _NXCollectPropertyState *state;
+Compext.h:832:extern int NXCollectProperty(
+
+#### NXCommitSplit ####
+Compext.c:1391:int NXCommitSplit(Display *dpy, unsigned int resource, unsigned int propagate,
+Compext.c:1394:  register xNXCommitSplitReq *req;
+Compext.c:1398:  GetReq(NXCommitSplit, req);
+Compext.c:1406:  fprintf(stderr, "******NXCommitSplit: Sending opcode [%d] with resource [%d] propagate [%d] "
+Compext.c:1407:              "request [%d] position [%d].\n", X_NXCommitSplit, resource,
+Compext.h:426: * NXCommitSplitNotify  One of the requests that made up the
+Compext.h:481:extern int NXCommitSplit(
+
+#### NXCreatePackedImage ####
+Compext.c:2050:NXPackedImage *NXCreatePackedImage(Display *dpy, Visual *visual, unsigned int method,
+Compext.h:601:NXPackedImage *NXCreatePackedImage(
+
+#### NXCreatePalette16 ####
+Png.c:176:int NXCreatePalette16(XImage *src_image, NXColorTable *color_table, CARD8 *image_index, int nb_max)
+Png.c:385:    nb_colors = NXCreatePalette16(image, color_table, image_index, NB_COLOR_MAX);
+Png.h:53:int NXCreatePalette16(
+
+#### NXCreatePalette32 ####
+Png.c:112:int NXCreatePalette32(XImage *src_image, NXColorTable *color_table, CARD8 *image_index, int nb_max)
+Png.c:389:    nb_colors = NXCreatePalette32(image, color_table, image_index, NB_COLOR_MAX);
+Png.h:62:int NXCreatePalette32(
+
+#### NXDestroyPackedImage ####
+Compext.c:2073:int NXDestroyPackedImage(NXPackedImage *image)
+Compext.h:617:extern int NXDestroyPackedImage(
+
+#### NXDisplayCongestion ####
+Compext.c:645:int NXDisplayCongestion(Display *dpy)
+Compext.c:651:  fprintf(stderr, "******NXDisplayCongestion: Returning [%d] as congestion level for fd [%d].\n",
+Compext.h:192:extern int NXDisplayCongestion(
+
+#### NXDisplayError ####
+Compext.c:580:int NXDisplayError(Display *dpy)
+Compext.c:585:                (_NXDisplayErrorFunction != NULL &&
+Compext.c:586:                    (*_NXDisplayErrorFunction)(dpy, _XGetIOError(dpy))));
+Compext.c:689:NXDisplayErrorPredicate NXSetDisplayErrorPredicate(NXDisplayErrorPredicate predicate)
+Compext.c:691:  NXDisplayErrorPredicate previous = _NXDisplayErrorFunction;
+Compext.c:693:  _NXDisplayErrorFunction = predicate;
+Compext.h:156:extern int NXDisplayError(
+Compext.h:216:extern NXDisplayErrorPredicate NXSetDisplayErrorPredicate(
+Compext.h:218:    NXDisplayErrorPredicate /* predicate */
+
+#### NXDisplayFlushable ####
+Compext.c:622:int NXDisplayFlushable(Display *dpy)
+Compext.c:631:  fprintf(stderr, "******NXDisplayFlushable: Returning [%d+%d=%d] bytes flushable "
+Compext.c:683:              NXDisplayFlushable(dpy));
+Compext.h:178:extern int NXDisplayFlushable(
+
+#### NXDisplayReadable ####
+Compext.c:597:int NXDisplayReadable(Display *dpy)
+Compext.c:607:    fprintf(stderr, "******NXDisplayReadable: Returning [%d] bytes readable from fd [%d].\n",
+Compext.c:615:  fprintf(stderr, "******NXDisplayReadable: WARNING! Error detected on display fd [%d].\n",
+Compext.h:167:extern int NXDisplayReadable(
+
+#### NXEncodeAlpha ####
+Compext.c:2632:char *NXEncodeAlpha(const char *src_data, unsigned int src_size, unsigned int *dst_size)
+Compext.h:690:extern char *NXEncodeAlpha(
+
+#### NXEncodeBitmap ####
+Compext.c:2727:NXPackedImage *NXEncodeBitmap(XImage *src_image, unsigned int method, unsigned int quality)
+Compext.c:2741:    fprintf(stderr, "******NXEncodeBitmap: PANIC! Cannot allocate [%d] bytes for the image.\n",
+Compext.c:2755:    fprintf(stderr, "******NXEncodeBitmap: PANIC! Bitmap compression failed.\n");
+Compext.h:745:extern NXPackedImage *NXEncodeBitmap(
+
+#### NXEncodeColormap ####
+Compext.c:2627:char *NXEncodeColormap(const char *src_data, unsigned int src_size, unsigned int *dst_size)
+Compext.h:682:extern char *NXEncodeColormap(
+
+#### NXEncodeColors ####
+Compext.c:2887:int NXEncodeColors(XImage *src_image, NXColorTable *color_table, int nb_max)
+Compext.h:729:extern int NXEncodeColors(
+
+#### NXEncodeJpeg ####
+Compext.c:2772:NXPackedImage *NXEncodeJpeg(XImage *src_image, unsigned int method, unsigned int quality)
+Compext.c:2786:    fprintf(stderr, "******NXEncodeJpeg: PANIC! Invalid bpp for Jpeg compression [%d]\n.",
+Compext.c:2801:    fprintf(stderr, "******NXEncodeJpeg: PANIC! Cannot allocate [%d] bytes for the Jpeg image.\n",
+Compext.c:2815:    fprintf(stderr, "******NXEncodeJpeg: PANIC! Jpeg compression failed.\n");
+Compext.h:714:extern NXPackedImage *NXEncodeJpeg(
+
+#### NXEncodePng ####
+Compext.c:2832:NXPackedImage *NXEncodePng(XImage *src_image, unsigned int method, unsigned int quality)
+Compext.c:2846:    fprintf(stderr, "******NXEncodePng: PANIC! Invalid bpp for Png compression [%d].\n",
+Compext.c:2856:    fprintf(stderr, "******NXEncodePng: PANIC! Cannot allocate [%d] bytes for the Png image.\n",
+Compext.c:2870:    fprintf(stderr, "******NXEncodePng: PANIC! Png compression failed.\n");
+Compext.h:737:extern NXPackedImage *NXEncodePng(
+
+#### NXEncodeRgb ####
+Compext.c:2637:NXPackedImage *NXEncodeRgb(XImage *src_image, unsigned int method, unsigned int quality)
+Compext.c:2651:    fprintf(stderr, "******NXEncodeRgb: PANIC! Cannot allocate [%d] bytes for the image.\n",
+Compext.c:2665:    fprintf(stderr, "******NXEncodeRgb: PANIC! Rgb compression failed.\n");
+Compext.h:698:extern NXPackedImage *NXEncodeRgb(
+
+#### NXEncodeRle ####
+Compext.c:2682:NXPackedImage *NXEncodeRle(XImage *src_image, unsigned int method, unsigned int quality)
+Compext.c:2696:    fprintf(stderr, "******NXEncodeRle: PANIC! Cannot allocate [%d] bytes for the image.\n",
+Compext.c:2710:    fprintf(stderr, "******NXEncodeRle: PANIC! Rle compression failed.\n");
+Compext.h:706:extern NXPackedImage *NXEncodeRle(
+
+#### NXEndSplit ####
+Compext.c:1361:int NXEndSplit(Display *dpy, unsigned int resource)
+Compext.c:1363:  register xNXEndSplitReq *req;
+Compext.c:1367:  GetReq(NXEndSplit, req);
+Compext.c:1372:  fprintf(stderr, "******NXEndSplit: Sending opcode [%d] with resource [%d].\n",
+Compext.h:431: * NXEndSplitNotify     The split was duly completed. The agent
+Compext.h:474:extern int NXEndSplit(
+
+#### NXFinishSplit ####
+Compext.c:1440:int NXFinishSplit(Display *dpy, unsigned int resource)
+Compext.c:1442:  register xNXFinishSplitReq *req;
+Compext.c:1446:  GetReq(NXFinishSplit, req);
+Compext.c:1449:  fprintf(stderr, "******NXFinishSplit: Sending message opcode [%d] with resource [%u].\n",
+Compext.c:1450:              X_NXFinishSplit, resource);
+Compext.h:498:extern int NXFinishSplit(
+
+#### NXFlushDisplay ####
+Compext.c:663:int NXFlushDisplay(Display *dpy, int what)
+Compext.c:669:    fprintf(stderr, "******NXFlushDisplay: Writing with [%d] bytes in the buffer.\n",
+Compext.c:682:  fprintf(stderr, "******NXFlushDisplay: Flushing with [%d] bytes in the NX transport.\n",
+Compext.h:204:extern int NXFlushDisplay(
+
+#### NXForceDisplayError ####
+Compext.c:550:Bool NXForceDisplayError(Display *dpy)
+Compext.h:143:extern Bool NXForceDisplayError(
+
+#### NXFreeCache ####
+Compext.c:3375:void NXFreeCache(Display *dpy)
+Compext.c:3382:    fprintf(stderr, "******NXFreeCache: Nothing to do with a null image cache.\n");
+Compext.c:3389:  fprintf(stderr, "******NXFreeCache: Freeing the cache with [%d] entries.\n",
+Compext.h:775:extern void NXFreeCache(
+
+#### NXFreeSplit ####
+Compext.c:1462:int NXFreeSplit(Display *dpy, unsigned int resource)
+Compext.c:1464:  register xNXFreeSplitReq *req;
+Compext.c:1470:    GetReq(NXFreeSplit, req);
+Compext.c:1473:    fprintf(stderr, "******NXFreeSplit: Sending message opcode [%d] with resource [%u].\n",
+Compext.c:1474:                X_NXFreeSplit, resource);
+Compext.c:1484:    fprintf(stderr, "******NXFreeSplit: Making the resource [%u] newly available.\n",
+Compext.c:1493:    fprintf(stderr, "******NXFreeSplit: Nothing to do for resource [%u].\n",
+Compext.h:505:extern int NXFreeSplit(
+
+#### NXFreeUnpack ####
+Compext.c:2004:int NXFreeUnpack(Display *dpy, unsigned int resource)
+Compext.c:2006:  register xNXFreeUnpackReq *req;
+Compext.c:2012:    GetReq(NXFreeUnpack, req);
+Compext.c:2015:    fprintf(stderr, "******NXFreeUnpack: Sending message opcode [%d] with resource [%u].\n",
+Compext.c:2016:                X_NXFreeUnpack, resource);
+Compext.c:2026:    fprintf(stderr, "******NXFreeUnpack: Making the resource [%u] newly available.\n",
+Compext.c:2035:    fprintf(stderr, "******NXFreeUnpack: Nothing to do for resource [%u].\n",
+Compext.h:586:extern int NXFreeUnpack(
+
+#### NXGetCollectGrabPointerResource ####
+Compext.c:4326:int NXGetCollectGrabPointerResource(Display *dpy)
+Compext.h:857:extern int NXGetCollectGrabPointerResource(
+
+#### NXGetCollectImageResource ####
+Compext.c:3653:int NXGetCollectImageResource(Display *dpy)
+Compext.h:798:extern int NXGetCollectImageResource(
+
+#### NXGetCollectInputFocusResource ####
+Compext.c:4612:int NXGetCollectInputFocusResource(Display *dpy)
+Compext.h:886:extern int NXGetCollectInputFocusResource(
+
+#### NXGetCollectPropertyResource ####
+Compext.c:4021:int NXGetCollectPropertyResource(Display *dpy)
+Compext.h:826:extern int NXGetCollectPropertyResource(
+
+#### NXGetCollectedGrabPointer ####
+Compext.c:4446:int NXGetCollectedGrabPointer(Display *dpy, unsigned int resource, int *status)
+Compext.c:4455:    fprintf(stderr, "******NXGetCollectedGrabPointer: PANIC! No data collected for resource [%u].\n",
+Compext.c:4469:  fprintf(stderr, "******NXGetCollectedGrabPointer: Returning GrabPointer data for resource [%u].\n",
+Compext.h:878:extern int NXGetCollectedGrabPointer(
+
+#### NXGetCollectedImage ####
+Compext.c:3787:int NXGetCollectedImage(Display *dpy, unsigned int resource, XImage **image)
+Compext.c:3796:    fprintf(stderr, "******NXGetCollectedImage: PANIC! No image collected for resource [%u].\n",
+Compext.c:3810:  fprintf(stderr, "******NXGetCollectedImage: Returning GetImage data for resource [%u].\n",
+Compext.h:818:extern int NXGetCollectedImage(
+
+#### NXGetCollectedInputFocus ####
+Compext.c:4722:int NXGetCollectedInputFocus(Display *dpy, unsigned int resource,
+Compext.c:4732:    fprintf(stderr, "******NXGetCollectedInputFocus: PANIC! No data collected for resource [%u].\n",
+Compext.c:4747:  fprintf(stderr, "******NXGetCollectedInputFocus: Returning GetInputFocus data for resource [%u].\n",
+Compext.h:899:extern int NXGetCollectedInputFocus(
+
+#### NXGetCollectedProperty ####
+Compext.c:4155:int NXGetCollectedProperty(Display *dpy, unsigned int resource, Atom *actual_type_return,
+Compext.c:4166:    fprintf(stderr, "******NXGetCollectedProperty: PANIC! No data collected for resource [%u].\n",
+Compext.c:4185:  fprintf(stderr, "******NXGetCollectedProperty: Returning GetProperty data for resource [%u].\n",
+Compext.h:845:extern int NXGetCollectedProperty(
+
+#### NXGetControlParameters ####
+Compext.c:813:Status NXGetControlParameters(Display *dpy, unsigned int *link_type, unsigned int *local_major,
+Compext.c:822:  xNXGetControlParametersReply rep;
+Compext.c:828:  GetEmptyReq(NXGetControlParameters, req);
+Compext.c:831:  fprintf(stderr, "******NXGetControlParameters: Sending message opcode [%d].\n",
+Compext.c:832:              X_NXGetControlParameters);
+Compext.c:838:    fprintf(stderr, "******NXGetControlParameters: Error receiving reply.\n");
+Compext.c:849:  fprintf(stderr, "******NXGetControlParameters: Got reply with link type [%u].\n", rep.linkType);
+Compext.c:851:  fprintf(stderr, "******NXGetControlParameters: Local protocol major [%u] minor [%u] patch [%u].\n",
+Compext.c:854:  fprintf(stderr, "******NXGetControlParameters: Remote protocol major [%u] minor [%u] patch [%u].\n",
+Compext.c:857:  fprintf(stderr, "******NXGetControlParameters: Split timeout [%d] motion timeout [%d].\n",
+Compext.c:860:  fprintf(stderr, "******NXGetControlParameters: Split mode [%d] split size [%d].\n",
+Compext.c:863:  fprintf(stderr, "******NXGetControlParameters: Preferred pack method [%d] pack quality [%d].\n",
+Compext.c:866:  fprintf(stderr, "******NXGetControlParameters: Data level [%d] stream level [%d] delta level [%d].\n",
+Compext.h:298:extern Status NXGetControlParameters(
+Compext.h:446: * current threshold can be found in the NXGetControlParameters()
+
+#### NXGetFontParameters ####
+Compext.c:1170:Status NXGetFontParameters(Display *dpy, unsigned int path_length, char path_data[])
+Compext.c:1172:  register xNXGetFontParametersReq *req;
+Compext.c:1174:  xNXGetFontParametersReply rep;
+Compext.c:1185:    fprintf(stderr, "******NXGetFontParameters: No room to store the reply.\n");
+Compext.c:1195:  GetReq(NXGetFontParameters, req);
+Compext.c:1198:  fprintf(stderr, "******NXGetFontParameters: Sending message opcode [%d].\n",
+Compext.c:1199:              X_NXGetFontParameters);
+Compext.c:1205:    fprintf(stderr, "******NXGetFontParameters: Error receiving reply.\n");
+Compext.c:1218:    fprintf(stderr, "******NXGetFontParameters: Got [%d] bytes of reply data with only room for [%d].\n",
+Compext.c:1232:  fprintf(stderr, "******NXGetFontParameters: Reading [%d] bytes of reply data.\n", n);
+Compext.c:1245:    fprintf(stderr, "******NXGetFontParameters: Inconsistent length in the returned string.\n");
+Compext.c:1257:  fprintf(stderr, "******NXGetFontParameters: Got font path of [%d] bytes and value [",
+Compext.h:369:extern Status NXGetFontParameters(
+
+#### NXGetShmemParameters ####
+Compext.c:1021:Status NXGetShmemParameters(Display *dpy, unsigned int *enable_client,
+Compext.c:1026:  register xNXGetShmemParametersReq *req;
+Compext.c:1030:  xNXGetShmemParametersReply rep;
+Compext.c:1057:    GetReq(NXGetShmemParameters, req);
+Compext.c:1068:    fprintf(stderr, "******NXGetShmemParameters: Sending message opcode [%d] at stage [%d].\n",
+Compext.c:1069:                X_NXGetShmemParameters, stage);
+Compext.c:1076:      fprintf(stderr, "******NXGetShmemParameters: Enable client is [%u] enable server is [%u].\n",
+Compext.c:1079:      fprintf(stderr, "******NXGetShmemParameters: Client segment is [%u] server segment is [%u].\n",
+Compext.c:1112:        fprintf(stderr, "******NXGetShmemParameters: Error receiving reply.\n");
+Compext.c:1137:  fprintf(stderr, "******NXGetShmemParameters: Got final reply with enabled client [%u] and server [%u].\n",
+Compext.c:1140:  fprintf(stderr, "******NXGetShmemParameters: Client segment size [%u] server segment size [%u].\n",
+Compext.h:347:extern Status NXGetShmemParameters(
+
+#### NXGetUnpackParameters ####
+Compext.c:915:Status NXGetUnpackParameters(Display *dpy, unsigned int *entries, unsigned char supported_methods[])
+Compext.c:917:  register xNXGetUnpackParametersReq *req;
+Compext.c:919:  xNXGetUnpackParametersReply rep;
+Compext.c:930:    fprintf(stderr, "******NXGetUnpackParameters: Requested only [%d] entries while they should be [%d].\n",
+Compext.c:939:  GetReq(NXGetUnpackParameters, req);
+Compext.c:944:  fprintf(stderr, "******NXGetUnpackParameters: Sending message opcode [%d] with [%d] requested entries.\n",
+Compext.c:945:              X_NXGetUnpackParameters, *entries);
+Compext.c:951:    fprintf(stderr, "******NXGetUnpackParameters: Error receiving reply.\n");
+Compext.c:964:    fprintf(stderr, "******NXGetUnpackParameters: Got [%d] bytes of reply data while they should be [%d].\n",
+Compext.c:980:  fprintf(stderr, "******NXGetUnpackParameters: Reading [%d] bytes of reply data.\n", n);
+Compext.c:987:  fprintf(stderr, "******NXGetUnpackParameters: Got reply with methods: ");
+Compext.h:327:extern Status NXGetUnpackParameters(
+
+#### NXHandleDisplayError ####
+Compext.c:531:int NXHandleDisplayError(int value)
+Compext.c:533:  int previous = _NXHandleDisplayError;
+Compext.c:535:  _NXHandleDisplayError = value;
+Compext.c:538:  fprintf(stderr, "******NXHandleDisplayError: Set the flag to [%d] with previous value [%d].\n",
+Compext.h:132:extern int NXHandleDisplayError(
+
+#### NXImageCache ####
+Compext.c:184:} _NXImageCacheEntry;
+Compext.c:186:int NXImageCacheSize = 0;
+Compext.c:187:int NXImageCacheHits = 0;
+Compext.c:188:int NXImageCacheOps  = 0;
+Compext.c:190:_NXImageCacheEntry *NXImageCache = NULL;
+Compext.c:3131:  if (NXImageCache != NULL && NXImageCacheSize == entries)
+Compext.c:3135:                NXImageCache,  NXImageCacheSize);
+Compext.c:3146:  NXImageCacheSize = 0;
+Compext.c:3148:  if (NXImageCache != NULL)
+Compext.c:3150:    Xfree(NXImageCache);
+Compext.c:3152:    NXImageCache = NULL;
+Compext.c:3157:    NXImageCache = Xmalloc(entries * sizeof(_NXImageCacheEntry));
+Compext.c:3159:    if (NXImageCache != NULL)
+Compext.c:3161:      memset(NXImageCache, 0, entries * sizeof(_NXImageCacheEntry));
+Compext.c:3163:      NXImageCacheSize = entries;
+Compext.c:3185:  for (i = 0; i < NXImageCacheSize; i++)
+Compext.c:3187:    if (NXImageCache[i].image == NULL)
+Compext.c:3194:      sprintf(s + (j * 2), "%02X", ((unsigned char *) NXImageCache[i].md5)[j]);
+Compext.c:3211:  if (NXImageCache == NULL)
+Compext.c:3243:  for (i = 0; i < NXImageCacheSize; i++)
+Compext.c:3245:    if (NXImageCache[i].image != NULL)
+Compext.c:3247:      if (memcmp(NXImageCache[i].md5, new_md5, MD5_LENGTH) == 0)
+Compext.c:3249:        _NXImageCacheEntry found;
+Compext.c:3251:        found.image  = NXImageCache[i].image;
+Compext.c:3252:        found.method = NXImageCache[i].method;
+Compext.c:3253:        found.md5    = NXImageCache[i].md5;
+Compext.c:3257:        NXImageCacheHits++;
+Compext.c:3261:                    i, NXImageCacheHits, NXImageCacheOps);
+Compext.c:3278:          memmove(&NXImageCache[1], &NXImageCache[0], (i * sizeof(_NXImageCacheEntry)));
+Compext.c:3280:          NXImageCache[0].image  = found.image;
+Compext.c:3281:          NXImageCache[0].method = found.method;
+Compext.c:3282:          NXImageCache[0].md5    = found.md5;
+Compext.c:3331:  i = (NXImageCacheOps < NXImageCacheSize) ? NXImageCacheOps : NXImageCacheSize;
+Compext.c:3333:  if (NXImageCacheOps >= NXImageCacheSize)
+Compext.c:3341:    Xfree(NXImageCache[NXImageCacheSize - 1].image -> data);
+Compext.c:3342:    Xfree(NXImageCache[NXImageCacheSize - 1].image);
+Compext.c:3343:    Xfree(NXImageCache[NXImageCacheSize - 1].md5);
+Compext.c:3348:    memmove(&NXImageCache[1], &NXImageCache[0], i * sizeof(_NXImageCacheEntry));
+Compext.c:3351:  NXImageCacheOps++;
+Compext.c:3358:  NXImageCache[0].image  = image;
+Compext.c:3359:  NXImageCache[0].method = method;
+Compext.c:3360:  NXImageCache[0].md5    = md5;
+Compext.c:3379:  if (NXImageCache == NULL)
+Compext.c:3390:              NXImageCacheSize);
+Compext.c:3393:  for (i = 0; i < NXImageCacheSize; i++)
+Compext.c:3395:    if (NXImageCache[i].image != NULL)
+Compext.c:3397:      if (NXImageCache[i].image -> data != NULL)
+Compext.c:3399:        Xfree(NXImageCache[i].image -> data);
+Compext.c:3402:      Xfree(NXImageCache[i].image);
+Compext.c:3404:      NXImageCache[i].image = NULL;
+Compext.c:3407:    if (NXImageCache[i].md5 != NULL)
+Compext.c:3409:      Xfree(NXImageCache[i].md5);
+Compext.c:3411:      NXImageCache[i].md5 = NULL;
+Compext.c:3415:  Xfree(NXImageCache);
+Compext.c:3417:  NXImageCache = NULL;
+Compext.c:3419:  NXImageCacheSize = 0;
+Compext.c:3420:  NXImageCacheHits = 0;
+Compext.c:3421:  NXImageCacheOps  = 0;
+Compext.h:766:extern int NXImageCacheSize;
+
+#### NXImageCacheHits ####
+Compext.c:187:int NXImageCacheHits = 0;
+Compext.c:3257:        NXImageCacheHits++;
+Compext.c:3261:                    i, NXImageCacheHits, NXImageCacheOps);
+Compext.c:3420:  NXImageCacheHits = 0;
+
+#### NXImageCacheOps ####
+Compext.c:188:int NXImageCacheOps  = 0;
+Compext.c:3261:                    i, NXImageCacheHits, NXImageCacheOps);
+Compext.c:3331:  i = (NXImageCacheOps < NXImageCacheSize) ? NXImageCacheOps : NXImageCacheSize;
+Compext.c:3333:  if (NXImageCacheOps >= NXImageCacheSize)
+Compext.c:3351:  NXImageCacheOps++;
+Compext.c:3421:  NXImageCacheOps  = 0;
+
+#### NXImageCacheSize ####
+Compext.c:186:int NXImageCacheSize = 0;
+Compext.c:3131:  if (NXImageCache != NULL && NXImageCacheSize == entries)
+Compext.c:3135:                NXImageCache,  NXImageCacheSize);
+Compext.c:3146:  NXImageCacheSize = 0;
+Compext.c:3163:      NXImageCacheSize = entries;
+Compext.c:3185:  for (i = 0; i < NXImageCacheSize; i++)
+Compext.c:3243:  for (i = 0; i < NXImageCacheSize; i++)
+Compext.c:3331:  i = (NXImageCacheOps < NXImageCacheSize) ? NXImageCacheOps : NXImageCacheSize;
+Compext.c:3333:  if (NXImageCacheOps >= NXImageCacheSize)
+Compext.c:3341:    Xfree(NXImageCache[NXImageCacheSize - 1].image -> data);
+Compext.c:3342:    Xfree(NXImageCache[NXImageCacheSize - 1].image);
+Compext.c:3343:    Xfree(NXImageCache[NXImageCacheSize - 1].md5);
+Compext.c:3390:              NXImageCacheSize);
+Compext.c:3393:  for (i = 0; i < NXImageCacheSize; i++)
+Compext.c:3419:  NXImageCacheSize = 0;
+Compext.h:766:extern int NXImageCacheSize;
+
+#### NXInPlacePackImage ####
+Compext.c:2288: * NXInPlacePackImage creates a NXPackedImage
+Compext.c:2294:XImage *NXInPlacePackImage(Display *dpy, XImage *src_image, unsigned int method)
+Compext.c:2307:  fprintf(stderr, "******NXInPlacePackImage: Going to pack a new image with method [%d].\n",
+Compext.c:2322:    fprintf(stderr, "******NXInPlacePackImage: WARNING! No mask to apply for pack method [%d].\n",
+Compext.c:2331:    fprintf(stderr, "******NXInPlacePackImage: PANIC! Invalid source with format [%d] depth [%d] bits per pixel [%d].\n",
+Compext.c:2334:    fprintf(stderr, "******NXInPlacePackImage: PANIC! Visual colormask is red 0x%lx green 0x%lx blue 0x%lx.\n",
+Compext.c:2348:    fprintf(stderr, "******NXInPlacePackImage: PANIC! Cannot allocate [%d] bytes for the image.\n",
+Compext.c:2358:  fprintf(stderr, "******NXInPlacePackImage: Source width [%d], bytes per line [%d] with depth [%d].\n",
+Compext.c:2376:  fprintf(stderr, "******NXInPlacePackImage: Destination depth [%d], bits per pixel [%d], packed bits per pixel [%d].\n",
+Compext.c:2384:    fprintf(stderr, "******NXInPlacePackImage: Just clean image packed_bits_per_pixel[%d], bits_per_pixel[%d].\n",
+Compext.c:2391:      fprintf(stderr, "******NXInPlacePackImage: PANIC! Failed to clean the image.\n");
+Compext.c:2402:    fprintf(stderr, "******NXInPlacePackImage: PANIC! Failed to apply the color mask.\n");
+Compext.c:2419:  fprintf(stderr, "******NXInPlacePackImage: Plain bits per pixel [%d], data size [%d].\n",
+Compext.c:2427:  fprintf(stderr, "******NXInPlacePackImage: Packed bits per pixel [%d], data size [%d].\n",
+Compext.h:631:NXPackedImage *NXInPlacePackImage(
+
+#### NXInitCache ####
+Compext.c:3129:void NXInitCache(Display *dpy, int entries)
+Compext.c:3134:    fprintf(stderr, "******NXInitCache: Nothing to do with image cache at [%p] and [%d] entries.\n",
+Compext.c:3142:  fprintf(stderr, "******NXInitCache: Initializing the cache with [%d] entries.\n",
+Compext.c:3166:      fprintf(stderr, "******NXInitCache: Image cache initialized with [%d] entries.\n", entries);
+Compext.h:768:extern void NXInitCache(
+
+#### NXInitDisplay ####
+Compext.c:265:int NXInitDisplay(Display *dpy)
+Compext.c:268:  fprintf(stderr, "******NXInitDisplay: Called for display at [%p].\n", (void *) dpy);
+Compext.c:283:  fprintf(stderr, "******NXInitDisplay: WARNING! Internal structures already initialized.\n");
+Compext.h:71:extern int NXInitDisplay(
+
+#### NXMaskImage ####
+Compext.c:2934:void NXMaskImage(XImage *image, unsigned int method)
+Compext.c:2952:      fprintf(stderr, "******NXMaskImage: Method is MASK_8_COLORS\n");
+Compext.c:2963:      fprintf(stderr, "******NXMaskImage: Method is MASK_64K_COLORS\n");
+Compext.c:2974:      fprintf(stderr, "******NXMaskImage: Method is MASK_256_COLORS\n");
+Compext.c:2985:      fprintf(stderr, "******NXMaskImage: Method is MASK_512K_COLORS\n");
+Compext.c:2996:      fprintf(stderr, "******NXMaskImage: Method is MASK_4K_COLORS\n");
+Compext.c:3007:      fprintf(stderr, "******NXMaskImage: Method is MASK_32K_COLORS\n");
+Compext.c:3018:      fprintf(stderr, "******NXMaskImage: Method is MASK_64K_COLORS\n");
+Compext.c:3029:      fprintf(stderr, "******NXMaskImage: Method is MASK_256K_COLORS\n");
+Compext.c:3040:      fprintf(stderr, "******NXMaskImage: Method is MASK_2M_COLORS\n");
+Compext.c:3051:      fprintf(stderr, "******NXMaskImage: Method is MASK_16M_COLORS\n");
+Compext.c:3059:      fprintf(stderr, "******NXMaskImage: PANIC! Cannot find mask method for pack method [%d]\n",
+Compext.c:3068:  fprintf(stderr, "******NXMaskImage: packMethod[%d] => maskMethod[%d]\n",
+Compext.c:3083:    fprintf(stderr, "******NXMaskImage: PANIC! No mask to apply for pack method [%d].\n",
+Compext.c:3092:    fprintf(stderr, "******NXMaskImage: PANIC! Invalid source with format [%d] depth [%d] bits per pixel [%d].\n",
+Compext.c:3095:    fprintf(stderr, "******NXMaskImage: PANIC! Visual colormask is red 0x%lx green 0x%lx blue 0x%lx.\n",
+Compext.c:3111:    fprintf(stderr, "******NXMaskImage: the image will not be masked\n");
+Compext.c:3119:      fprintf(stderr, "******NXMaskImage: PANIC! Failed to apply the color mask in place.\n");
+Compext.h:759:extern void NXMaskImage(
+
+#### NXPackImage ####
+Compext.c:2107:NXPackedImage *NXPackImage(Display *dpy, XImage *src_image, unsigned int method)
+Compext.c:2120:  fprintf(stderr, "******NXPackImage: Going to pack a new image with method [%d].\n",
+Compext.c:2135:    fprintf(stderr, "******NXPackImage: WARNING! No mask to apply for pack method [%d].\n",
+Compext.c:2144:    fprintf(stderr, "******NXPackImage: PANIC! Invalid source with format [%d] depth [%d] bits per pixel [%d].\n",
+Compext.c:2147:    fprintf(stderr, "******NXPackImage: PANIC! Visual colormask is red 0x%lx green 0x%lx blue 0x%lx.\n",
+Compext.c:2162:    fprintf(stderr, "******NXPackImage: PANIC! Cannot allocate [%d] bytes for the image.\n",
+Compext.c:2172:  fprintf(stderr, "******NXPackImage: Source width [%d], bytes per line [%d] with depth [%d].\n",
+Compext.c:2183:    fprintf(stderr, "******NXPackImage: PANIC! Cannot allocate [%d] bytes for masked image data.\n",
+Compext.c:2203:  fprintf(stderr, "******NXPackImage: Destination depth [%d], bits per pixel [%d], packed bits per pixel [%d].\n",
+Compext.c:2218:      fprintf(stderr, "******NXPackImage: PANIC! Failed to clean the image.\n");
+Compext.c:2231:    fprintf(stderr, "******NXPackImage: PANIC! Failed to apply the color mask.\n");
+Compext.c:2250:  fprintf(stderr, "******NXPackImage: Plain bits per pixel [%d], data size [%d].\n",
+Compext.c:2258:  fprintf(stderr, "******NXPackImage: Packed bits per pixel [%d], data size [%d].\n",
+Compext.c:2266:    fprintf(stderr, "******NXPackImage: PANIC! Failed to pack image from [%d] to [%d] bits per pixel.\n",
+Compext.h:623:NXPackedImage *NXPackImage(
+
+#### NXPutPackedImage ####
+Compext.c:2441:int NXPutPackedImage(Display *dpy, unsigned int resource, Drawable drawable,
+Compext.c:2446:  register xNXPutPackedImageReq *req;
+Compext.c:2455:  GetReq(NXPutPackedImage, req);
+Compext.c:2462:  fprintf(stderr, "******NXPutPackedImage: Image resource [%d] drawable [%d] gc [%d].\n",
+Compext.c:2503:  fprintf(stderr, "******NXPutPackedImage: Source image depth [%d] destination depth [%d] "
+Compext.c:2537:  fprintf(stderr, "******NXPutPackedImage: Source data length [%d] request data length [%d].\n",
+Compext.h:645:extern int NXPutPackedImage(
+
+#### NXResetDisplay ####
+Compext.c:289:int NXResetDisplay(Display *dpy)
+Compext.c:292:  fprintf(stderr, "******NXResetDisplay: Called for display at [%p].\n", (void *) dpy);
+Compext.c:307:  fprintf(stderr, "******NXResetDisplay: WARNING! Internal structures already reset.\n");
+Compext.h:82:extern int NXResetDisplay(
+
+#### NXSetCacheParameters ####
+Compext.c:1534:int NXSetCacheParameters(Display *dpy, int enable_cache, int enable_split,
+Compext.c:1537:  register xNXSetCacheParametersReq *req;
+Compext.c:1541:  GetReq(NXSetCacheParameters, req);
+Compext.c:1549:  fprintf(stderr, "******NXSetCacheParameters: Sending message opcode [%d] with "
+Compext.c:1550:              "flags [%d][%d][%d][%d].\n", X_NXSetCacheParameters, req -> enableCache,
+Compext.h:521:extern int NXSetCacheParameters(
+
+#### NXSetDisplayBlockHandler ####
+Compext.c:703:NXDisplayBlockHandler NXSetDisplayBlockHandler(NXDisplayBlockHandler handler)
+Compext.c:710:  fprintf(stderr, "******NXSetDisplayBlockHandler: Set the handler to [%p] with previous value [%p].\n",
+Compext.h:227:extern NXDisplayBlockHandler NXSetDisplayBlockHandler(
+
+#### NXSetDisplayBuffer ####
+Compext.c:447:int NXSetDisplayBuffer(Display *dpy, int size)
+Compext.c:462:    fprintf(stderr, "******NXSetDisplayBuffer: Nothing to do with buffer size matching.\n");
+Compext.c:470:    fprintf(stderr, "******NXSetDisplayBuffer: PANIC! The display buffer is not empty.\n");
+Compext.c:478:    fprintf(stderr, "******NXSetDisplayBuffer: PANIC! Can't allocate [%d] bytes for the buffer.\n",
+Compext.c:495:  fprintf(stderr, "******NXSetDisplayBuffer: Set the display output buffer size to [%d].\n",
+Compext.h:104:extern int NXSetDisplayBuffer(
+
+#### NXSetDisplayErrorPredicate ####
+Compext.c:689:NXDisplayErrorPredicate NXSetDisplayErrorPredicate(NXDisplayErrorPredicate predicate)
+Compext.c:696:  fprintf(stderr, "******NXSetDisplayErrorPredicate: Set the predicate to [%p] with previous value [%p].\n",
+Compext.h:216:extern NXDisplayErrorPredicate NXSetDisplayErrorPredicate(
+
+#### NXSetDisplayFlushHandler ####
+Compext.c:731:NXDisplayFlushHandler NXSetDisplayFlushHandler(NXDisplayFlushHandler handler, Display *display)
+Compext.c:741:  fprintf(stderr, "******NXSetDisplayFlushHandler: Set the handler to [%p] with display [%p] "
+Compext.h:258:extern NXDisplayFlushHandler NXSetDisplayFlushHandler(
+
+#### NXSetDisplayPolicy ####
+Compext.c:435:int NXSetDisplayPolicy(Display *dpy, int policy)
+Compext.h:93:extern int NXSetDisplayPolicy(
+
+#### NXSetDisplayStatisticsHandler ####
+Compext.c:748:NXDisplayStatisticsHandler NXSetDisplayStatisticsHandler(NXDisplayStatisticsHandler handler, char **buffer)
+Compext.c:762:  fprintf(stderr, "******NXSetDisplayStatisticsHandler: Set the handler to [%p] with buffer pointer [%p] "
+Compext.h:270:extern NXDisplayStatisticsHandler NXSetDisplayStatisticsHandler(
+
+#### NXSetDisplayWriteHandler ####
+Compext.c:717:NXDisplayWriteHandler NXSetDisplayWriteHandler(NXDisplayWriteHandler handler)
+Compext.c:724:  fprintf(stderr, "******NXSetDisplayWriteHandler: Set the handler to [%p] with previous value [%p].\n",
+Compext.h:239:extern NXDisplayWriteHandler NXSetDisplayWriteHandler(
+
+#### NXSetExposeParameters ####
+Compext.c:1506:int NXSetExposeParameters(Display *dpy, int expose, int graphics_expose, int no_expose)
+Compext.c:1508:  register xNXSetExposeParametersReq *req;
+Compext.c:1512:  GetReq(NXSetExposeParameters, req);
+Compext.c:1519:  fprintf(stderr, "******NXSetExposeParameters: Sending message opcode [%d] with flags [%d][%d][%d].\n",
+Compext.c:1520:              X_NXSetExposeParameters, req -> expose, req -> graphicsExpose, req -> noExpose);
+Compext.h:512:extern int NXSetExposeParameters(
+
+#### NXSetLostSequenceHandler ####
+Compext.c:769:NXLostSequenceHandler NXSetLostSequenceHandler(NXLostSequenceHandler handler)
+Compext.c:776:  fprintf(stderr, "******NXSetLostSequenceHandler: Set the handler to [%p] with previous value [%p].\n",
+Compext.h:283:extern NXLostSequenceHandler NXSetLostSequenceHandler(
+
+#### NXSetUnpackAlpha ####
+Compext.c:1735:int NXSetUnpackAlpha(Display *dpy, unsigned int resource, unsigned int method,
+Compext.c:1738:  register xNXSetUnpackAlphaReq *req;
+Compext.c:1744:  GetReq(NXSetUnpackAlpha, req);
+Compext.c:1757:  fprintf(stderr, "******NXSetUnpackAlpha: Resource [%u] data size [%u] destination data size [%u].\n",
+Compext.c:1897:#define sz_xNXSetUnpackAlphaCompatReq  8
+Compext.c:1899:typedef struct _NXSetUnpackAlphaCompatReq {
+Compext.c:1904:} xNXSetUnpackAlphaCompatReq;
+Compext.c:1906:#define X_NXSetUnpackAlphaCompat  X_NXSetUnpackAlpha
+Compext.c:1908:int NXSetUnpackAlphaCompat(Display *dpy, unsigned int resource,
+Compext.c:1911:  register xNXSetUnpackAlphaCompatReq *req;
+Compext.c:1925:  GetReq(NXSetUnpackAlphaCompat, req);
+Compext.c:1935:  fprintf(stderr, "******NXSetUnpackAlphaCompat: Resource [%u] number of entries [%u] "
+Compext.c:1950:        fprintf(stderr, "******NXSetUnpackAlphaCompat: PANIC! Cannot allocate memory.\n");
+Compext.c:1953:        UnGetReq(NXSetUnpackAlphaCompat);
+Compext.c:1970:    fprintf(stderr, "******NXSetUnpackAlphaCompat: Dumping alpha channel data:\n");
+Compext.c:1974:      fprintf(stderr, "******NXSetUnpackAlphaCompat: [%d] -> [0x%02x].\n",
+Compext.h:557:extern int NXSetUnpackAlpha(
+Compext.h:577:extern int NXSetUnpackAlphaCompat(
+
+#### NXSetUnpackAlphaCompat ####
+Compext.c:1897:#define sz_xNXSetUnpackAlphaCompatReq  8
+Compext.c:1899:typedef struct _NXSetUnpackAlphaCompatReq {
+Compext.c:1904:} xNXSetUnpackAlphaCompatReq;
+Compext.c:1906:#define X_NXSetUnpackAlphaCompat  X_NXSetUnpackAlpha
+Compext.c:1908:int NXSetUnpackAlphaCompat(Display *dpy, unsigned int resource,
+Compext.c:1911:  register xNXSetUnpackAlphaCompatReq *req;
+Compext.c:1925:  GetReq(NXSetUnpackAlphaCompat, req);
+Compext.c:1935:  fprintf(stderr, "******NXSetUnpackAlphaCompat: Resource [%u] number of entries [%u] "
+Compext.c:1950:        fprintf(stderr, "******NXSetUnpackAlphaCompat: PANIC! Cannot allocate memory.\n");
+Compext.c:1953:        UnGetReq(NXSetUnpackAlphaCompat);
+Compext.c:1970:    fprintf(stderr, "******NXSetUnpackAlphaCompat: Dumping alpha channel data:\n");
+Compext.c:1974:      fprintf(stderr, "******NXSetUnpackAlphaCompat: [%d] -> [0x%02x].\n",
+Compext.h:577:extern int NXSetUnpackAlphaCompat(
+
+#### NXSetUnpackColormap ####
+Compext.c:1672:int NXSetUnpackColormap(Display *dpy, unsigned int resource, unsigned int method,
+Compext.c:1675:  register xNXSetUnpackColormapReq *req;
+Compext.c:1681:  GetReq(NXSetUnpackColormap, req);
+Compext.c:1694:  fprintf(stderr, "******NXSetUnpackColormap: Resource [%u] data size [%u] destination "
+Compext.c:1802:#define sz_xNXSetUnpackColormapCompatReq        8
+Compext.c:1804:typedef struct _NXSetUnpackColormapCompatReq {
+Compext.c:1809:} xNXSetUnpackColormapCompatReq;
+Compext.c:1811:#define X_NXSetUnpackColormapCompat  X_NXSetUnpackColormap
+Compext.c:1813:int NXSetUnpackColormapCompat(Display *dpy, unsigned int resource,
+Compext.c:1816:  register xNXSetUnpackColormapCompatReq *req;
+Compext.c:1830:  GetReq(NXSetUnpackColormapCompat, req);
+Compext.c:1840:  fprintf(stderr, "******NXSetUnpackColormapCompat: Resource [%u] number of entries [%u] "
+Compext.c:1855:        fprintf(stderr, "******NXSetUnpackColormapCompat: PANIC! Cannot allocate memory.\n");
+Compext.c:1858:        UnGetReq(NXSetUnpackColormapCompat);
+Compext.c:1870:    fprintf(stderr, "******NXSetUnpackColormapCompat: Dumping colormap entries:\n");
+Compext.c:1874:      fprintf(stderr, "******NXSetUnpackColormapCompat: [%d] -> [0x%x].\n",
+Compext.h:546:extern int NXSetUnpackColormap(
+Compext.h:568:extern int NXSetUnpackColormapCompat(
+
+#### NXSetUnpackColormapCompat ####
+Compext.c:1802:#define sz_xNXSetUnpackColormapCompatReq        8
+Compext.c:1804:typedef struct _NXSetUnpackColormapCompatReq {
+Compext.c:1809:} xNXSetUnpackColormapCompatReq;
+Compext.c:1811:#define X_NXSetUnpackColormapCompat  X_NXSetUnpackColormap
+Compext.c:1813:int NXSetUnpackColormapCompat(Display *dpy, unsigned int resource,
+Compext.c:1816:  register xNXSetUnpackColormapCompatReq *req;
+Compext.c:1830:  GetReq(NXSetUnpackColormapCompat, req);
+Compext.c:1840:  fprintf(stderr, "******NXSetUnpackColormapCompat: Resource [%u] number of entries [%u] "
+Compext.c:1855:        fprintf(stderr, "******NXSetUnpackColormapCompat: PANIC! Cannot allocate memory.\n");
+Compext.c:1858:        UnGetReq(NXSetUnpackColormapCompat);
+Compext.c:1870:    fprintf(stderr, "******NXSetUnpackColormapCompat: Dumping colormap entries:\n");
+Compext.c:1874:      fprintf(stderr, "******NXSetUnpackColormapCompat: [%d] -> [0x%x].\n",
+Compext.h:568:extern int NXSetUnpackColormapCompat(
+
+#### NXSetUnpackGeometry ####
+Compext.c:1614:int NXSetUnpackGeometry(Display *dpy, unsigned int resource, Visual *visual)
+Compext.c:1616:  register xNXSetUnpackGeometryReq *req;
+Compext.c:1620:  GetReq(NXSetUnpackGeometry, req);
+Compext.c:1640:    fprintf(stderr, "******NXSetUnpackGeometry: PANIC! Can't set the geometry without a visual.\n");
+Compext.c:1643:    UnGetReq(NXSetUnpackGeometry);
+Compext.c:1651:  fprintf(stderr, "******NXSetUnpackGeometry: Resource [%u] Depth/Bpp [1/%d][4/%d][8/%d]"
+Compext.c:1655:  fprintf(stderr, "******NXSetUnpackGeometry: red [0x%x] green [0x%x] blue [0x%x].\n",
+Compext.h:538:extern int NXSetUnpackGeometry(
+
+#### NXStartSplit ####
+Compext.c:1333:int NXStartSplit(Display *dpy, unsigned int resource, unsigned int mode)
+Compext.c:1335:  register xNXStartSplitReq *req;
+Compext.c:1339:  GetReq(NXStartSplit, req);
+Compext.c:1345:  fprintf(stderr, "******NXStartSplit: Sending opcode [%d] with resource [%d] mode [%d].\n",
+Compext.c:1346:              X_NXStartSplit, resource, mode);
+Compext.c:1373:              X_NXStartSplit, resource);
+Compext.h:421: * NXStartSplitNotify   One or more messages were split, so,
+Compext.h:466:extern int NXStartSplit(
+
+#### NXUnsetLibraryPath ####
+Compext.c:509:int NXUnsetLibraryPath(int value)
+Compext.c:511:  int previous = _NXUnsetLibraryPath;
+Compext.c:513:  _NXUnsetLibraryPath = value;
+Compext.c:516:  fprintf(stderr, "******NXUnsetLibraryPath: Set the flag to [%d] with previous value [%d].\n",
+Compext.h:119:extern int NXUnsetLibraryPath(
+
+#### PackImage ####
+Compext.c:2107:NXPackedImage *NXPackImage(Display *dpy, XImage *src_image, unsigned int method)
+Compext.c:2120:  fprintf(stderr, "******NXPackImage: Going to pack a new image with method [%d].\n",
+Compext.c:2135:    fprintf(stderr, "******NXPackImage: WARNING! No mask to apply for pack method [%d].\n",
+Compext.c:2144:    fprintf(stderr, "******NXPackImage: PANIC! Invalid source with format [%d] depth [%d] bits per pixel [%d].\n",
+Compext.c:2147:    fprintf(stderr, "******NXPackImage: PANIC! Visual colormask is red 0x%lx green 0x%lx blue 0x%lx.\n",
+Compext.c:2162:    fprintf(stderr, "******NXPackImage: PANIC! Cannot allocate [%d] bytes for the image.\n",
+Compext.c:2172:  fprintf(stderr, "******NXPackImage: Source width [%d], bytes per line [%d] with depth [%d].\n",
+Compext.c:2183:    fprintf(stderr, "******NXPackImage: PANIC! Cannot allocate [%d] bytes for masked image data.\n",
+Compext.c:2203:  fprintf(stderr, "******NXPackImage: Destination depth [%d], bits per pixel [%d], packed bits per pixel [%d].\n",
+Compext.c:2218:      fprintf(stderr, "******NXPackImage: PANIC! Failed to clean the image.\n");
+Compext.c:2231:    fprintf(stderr, "******NXPackImage: PANIC! Failed to apply the color mask.\n");
+Compext.c:2245:   * tination. This means that PackImage() must
+Compext.c:2250:  fprintf(stderr, "******NXPackImage: Plain bits per pixel [%d], data size [%d].\n",
+Compext.c:2258:  fprintf(stderr, "******NXPackImage: Packed bits per pixel [%d], data size [%d].\n",
+Compext.c:2262:  if (PackImage(method, dst_data_size, dst_image,
+Compext.c:2266:    fprintf(stderr, "******NXPackImage: PANIC! Failed to pack image from [%d] to [%d] bits per pixel.\n",
+Compext.c:2288: * NXInPlacePackImage creates a NXPackedImage
+Compext.c:2294:XImage *NXInPlacePackImage(Display *dpy, XImage *src_image, unsigned int method)
+Compext.c:2307:  fprintf(stderr, "******NXInPlacePackImage: Going to pack a new image with method [%d].\n",
+Compext.c:2322:    fprintf(stderr, "******NXInPlacePackImage: WARNING! No mask to apply for pack method [%d].\n",
+Compext.c:2331:    fprintf(stderr, "******NXInPlacePackImage: PANIC! Invalid source with format [%d] depth [%d] bits per pixel [%d].\n",
+Compext.c:2334:    fprintf(stderr, "******NXInPlacePackImage: PANIC! Visual colormask is red 0x%lx green 0x%lx blue 0x%lx.\n",
+Compext.c:2348:    fprintf(stderr, "******NXInPlacePackImage: PANIC! Cannot allocate [%d] bytes for the image.\n",
+Compext.c:2358:  fprintf(stderr, "******NXInPlacePackImage: Source width [%d], bytes per line [%d] with depth [%d].\n",
+Compext.c:2376:  fprintf(stderr, "******NXInPlacePackImage: Destination depth [%d], bits per pixel [%d], packed bits per pixel [%d].\n",
+Compext.c:2384:    fprintf(stderr, "******NXInPlacePackImage: Just clean image packed_bits_per_pixel[%d], bits_per_pixel[%d].\n",
+Compext.c:2391:      fprintf(stderr, "******NXInPlacePackImage: PANIC! Failed to clean the image.\n");
+Compext.c:2402:    fprintf(stderr, "******NXInPlacePackImage: PANIC! Failed to apply the color mask.\n");
+Compext.c:2414:   * tination. This means that PackImage() must
+Compext.c:2419:  fprintf(stderr, "******NXInPlacePackImage: Plain bits per pixel [%d], data size [%d].\n",
+Compext.c:2427:  fprintf(stderr, "******NXInPlacePackImage: Packed bits per pixel [%d], data size [%d].\n",
+Mask.c:393:    fprintf(stderr, "******PackImage: Pixel [%d] value [0x%x] red [0x%x] green [0x%x] blue [0x%x].\n",
+Mask.c:414:    fprintf(stderr, "******PackImage: Pixel [%d] destination [0x%x].\n",
+Mask.c:444:    fprintf(stderr, "******PackImage: Pixel [%d] value [0x%x%x%x] red [0x%x] green [0x%x] blue [0x%x].\n",
+Mask.c:477:      fprintf(stderr, "******PackImage: Pixel [%d] destination [0x%x].\n",
+Mask.c:512:      fprintf(stderr, "******PackImage: Pixel [%d] value [0x%x%x%x] red [0x%x] green [0x%x] blue [0x%x].\n",
+Mask.c:543:      fprintf(stderr, "******PackImage: Pixel [%d] destination [0x%x].\n",
+Mask.c:570:    fprintf(stderr, "******PackImage: Pixel [%d] value [0x%x] red [0x%x] green [0x%x] blue [0x%x].\n",
+Mask.c:591:    fprintf(stderr, "******PackImage: Pixel [%d] destination [0x%x].\n",
+Mask.c:614:    fprintf(stderr, "******PackImage: Pixel [%d] value [0x%x] red [0x%x] green [0x%x] blue [0x%x].\n",
+Mask.c:635:    fprintf(stderr, "******PackImage: Pixel [%d] destination [0x%x].\n",
+Mask.c:658:    fprintf(stderr, "******PackImage: Pixel [%d] value [0x%x] red [0x%x] green [0x%x] blue [0x%x].\n",
+Mask.c:679:    fprintf(stderr, "******PackImage: Pixel [%d] destination [0x%x], [0x%x], [0x%x].\n",
+Mask.c:690:int PackImage(unsigned int method, unsigned int src_data_size, XImage *src_image,
+Mask.c:700:  fprintf(stderr, "******PackImage: Source bits per pixel [%d], destination bits per pixel [%d].\n",
+Mask.c:703:  fprintf(stderr, "******PackImage: Source data size [%d], destination data size [%d].\n",
+Mask.c:710:    fprintf(stderr, "******PackImage: PANIC! Cannot pack image from [%d] to [%d] bytes per pixel.\n",
+Compext.h:623:NXPackedImage *NXPackImage(
+Compext.h:631:NXPackedImage *NXInPlacePackImage(
+Mask.h:39:extern int PackImage(unsigned int method, unsigned int src_data_size, XImage *src_image,
+
+#### PngCompareColorTable ####
+Png.c:105:int PngCompareColorTable(NXColorTable *c1, NXColorTable *c2)
+Png.h:39:extern int PngCompareColorTable(
+
+#### PngCompressData ####
+Compext.c:2865:  dst_image -> data = PngCompressData(dst_image, &size);
+Png.c:244:char *PngCompressData(XImage *image, int *compressed_size)
+Png.c:282:    fprintf(stderr, "******PngCompressData: PANIC! Can't compress images with [%d] bits per pixel.\n",
+Png.c:302:  fprintf(stderr, "******PngCompressData: Compressing image with width [%d] height [%d].\n",
+Png.c:315:    fprintf(stderr, "******PngCompressData: PANIC! Failed creating the png_create_write_struct.\n");
+Png.c:326:    fprintf(stderr, "******PngCompressData: PANIC! Failed creating the png_create_info_struct.\n");
+Png.c:337:    fprintf(stderr, "******PngCompressData: PANIC! Error during compression initialization.\n");
+Png.c:350:  fprintf(stderr, "******PngCompressData: Allocating [%d] bytes for the destination data.\n",
+Png.c:359:    fprintf(stderr, "******PngCompressData: PANIC! Error allocating [%d] bytes for the Png data.\n",
+Png.c:371:    fprintf(stderr, "******PngCompressData: PANIC! Error writing the header.\n");
+Png.c:437:      fprintf(stderr, "******PngCompressData: pixel[%d] r[%d] g[%d] b[%d].\n",
+Png.c:467:    fprintf(stderr, "******PngCompressData: PANIC! Error while writing the image rows.\n");
+Png.c:484:      fprintf(stderr, "******PngCompressData: PANIC! Cannot allocate [%d] bytes.\n",
+Png.c:514:    fprintf(stderr, "******PngCompressData: PANIC! Cannot allocate [%d] bytes.\n",
+Png.c:548:    fprintf(stderr, "******PngCompressData: PANIC! error during end of write.\n");
+Png.h:46:extern char *PngCompressData(
+
+#### RgbCompressData ####
+Compext.c:2660:  dst_image -> data = RgbCompressData(src_image, &dst_size);
+Rgb.c:46:char *RgbCompressData(XImage *image, unsigned int *size)
+Rgb.h:33:extern char *RgbCompressData(
+
+#### RleCompressData ####
+Compext.c:2705:  dst_image -> data = RleCompressData(src_image, &dst_size);
+Rle.c:46:char *RleCompressData(XImage *image, unsigned int *size)
+Rle.h:33:extern char *RleCompressData(
+
+#### ZCompressData ####
+Alpha.c:48:  return ZCompressData(data, size, alphaCompressionThreshold, alphaCompressionLevel,
+Colormap.c:48:  return ZCompressData(data, size, colormapCompressionThreshold, colormapCompressionLevel,
+Rgb.c:48:  return ZCompressData(image -> data, image -> bytes_per_line * image -> height,
+Rle.c:48:  return ZCompressData(image -> data, image -> bytes_per_line * image -> height,
+Z.c:57:char *ZCompressData(const char *plainData, unsigned int plainSize, int threshold,
+Z.c:75:    fprintf(stderr, "******ZCompressData: PANIC! Failed to allocate [%d] bytes for the destination.\n",
+Z.c:87:    fprintf(stderr, "******ZCompressData: Not compressing [%d] bytes with level [%d] and "
+Z.c:128:      fprintf(stderr, "******ZCompressData: PANIC! Failed to compress [%d] bytes with error [%s].\n",
+Z.c:140:    fprintf(stderr, "******ZCompressData: Source data of [%d] bytes compressed to [%d].\n",
+Z.h:45:extern char *ZCompressData(
+
+#### ZInitEncoder ####
+Compext.c:423:  ZInitEncoder();
+Z.c:242:int ZInitEncoder()
+Z.c:253:      fprintf(stderr, "******ZInitEncoder: PANIC! Failed to allocate memory for the stream.\n");
+Z.c:264:    fprintf(stderr, "******ZInitEncoder: Initializing compressor with level [%d] and startegy [%d].\n",
+Z.c:274:      fprintf(stderr, "******ZInitEncoder: Failed to initialize the compressor with error [%s].\n",
+Z.h:33:int ZInitEncoder(
+
+#### ZResetEncoder ####
+Compext.c:430:  ZResetEncoder();
+Z.c:287:int ZResetEncoder()
+Z.c:298:      fprintf(stderr, "******ZResetEncoder: WARNING! Failed to deinitialize the compressor with error [%s].\n",
+Z.h:39:int ZResetEncoder(
+
+#### _NXInternalInitEncoders ####
+Compext.c:262:extern int _NXInternalInitEncoders(Display *dpy);
+Compext.c:275:    _NXInternalInitEncoders(dpy);
+Compext.c:421:int _NXInternalInitEncoders(Display *dpy)
+
+#### _NXInternalInitResources ####
+Compext.c:260:extern int _NXInternalInitResources(Display *dpy);
+Compext.c:273:    _NXInternalInitResources(dpy);
+Compext.c:313:int _NXInternalInitResources(Display *dpy)
+
+#### _NXInternalResetEncoders ####
+Compext.c:263:extern int _NXInternalResetEncoders(Display *dpy);
+Compext.c:299:    _NXInternalResetEncoders(dpy);
+Compext.c:428:int _NXInternalResetEncoders(Display *dpy)
+
+#### _NXInternalResetResources ####
+Compext.c:261:extern int _NXInternalResetResources(Display *dpy);
+Compext.c:297:    _NXInternalResetResources(dpy);
+Compext.c:315:  return _NXInternalResetResources(dpy);
+Compext.c:318:int _NXInternalResetResources(Display *dpy)
+Compext.c:323:  fprintf(stderr, "******_NXInternalResetResources: Clearing all the internal structures.\n");
+Compext.c:334:      fprintf(stderr, "******_NXInternalResetResources: WARNING! Clearing collect image data "
+Compext.c:358:      fprintf(stderr, "******_NXInternalResetResources: WARNING! Clearing collect property data "
+Compext.c:382:      fprintf(stderr, "******_NXInternalResetResources: WARNING! Clearing grab pointer data "
+Compext.c:401:      fprintf(stderr, "******_NXInternalResetResources: WARNING! Clearing collect input focus data "
+
+#### color_type ####
+Png.c:76:png_byte    color_type;
+Png.c:394:    color_type = PNG_COLOR_TYPE_PALETTE;
+Png.c:398:    color_type = PNG_COLOR_TYPE_RGB;
+Png.c:402:                   8, color_type, PNG_INTERLACE_NONE,
+Png.c:405:  if (color_type == PNG_COLOR_TYPE_PALETTE)
+Png.c:477:  if (color_type == PNG_COLOR_TYPE_PALETTE)
+Png.c:525:    if (color_type == PNG_COLOR_TYPE_RGB)
+Png.c:560:  if (color_type == PNG_COLOR_TYPE_PALETTE)
+
+#### info_ptr ####
+Png.c:78:png_infop   info_ptr;
+Png.c:321:  info_ptr = png_create_info_struct(png_ptr);
+Png.c:323:  if (info_ptr == NULL)
+Png.c:340:    png_destroy_write_struct(&png_ptr, &info_ptr);
+Png.c:374:    png_destroy_write_struct(&png_ptr, &info_ptr);
+Png.c:401:  png_set_IHDR(png_ptr, info_ptr, w, h,
+Png.c:442:    png_set_PLTE(png_ptr, info_ptr, palette, num);
+Png.c:453:  png_write_info(png_ptr, info_ptr);
+Png.c:470:    png_destroy_write_struct(&png_ptr, &info_ptr);
+Png.c:551:    png_destroy_write_struct(&png_ptr, &info_ptr);
+Png.c:565:  png_destroy_write_struct(&png_ptr, &info_ptr);
+
+#### palette ####
+Png.c:79:png_colorp  palette;
+Png.c:87: * space to include the palette and the
+Png.c:407:    palette = png_malloc(png_ptr, sizeof(*palette) * 256);
+Png.c:412:     * memset(palette, 0, sizeof(*palette) * 256);
+Png.c:419:        palette[num].red = (color_table[num].pixel >> redShift) & redMax;
+Png.c:420:        palette[num].green = (color_table[num].pixel >> greenShift) & greenMax;
+Png.c:421:        palette[num].blue = color_table[num].pixel >> blueShift & blueMax;
+Png.c:431:        palette[num].red = (CARD8)((inRed * 255 + redMax / 2) / redMax);
+Png.c:432:        palette[num].green = (CARD8)((inGreen * 255 + greenMax / 2) / greenMax);
+Png.c:433:        palette[num].blue = (CARD8)((inBlue * 255 + blueMax / 2) / blueMax);
+Png.c:438:                  (int) color_table[num].pixel,palette[num].red,palette[num].green,palette[num].blue);
+Png.c:442:    png_set_PLTE(png_ptr, info_ptr, palette, num);
+Png.c:445:    fprintf(stderr, "******PngCompressedData: Setting palette.\n");
+Png.c:450:   * End of palette.
+Png.c:562:    png_free(png_ptr, palette);
+
+#### png_ptr ####
+Png.c:57:static void PngWriteData(png_structp png_ptr, png_bytep data, png_size_t length);
+Png.c:58:static void PngFlushData(png_structp png_ptr);
+Png.c:77:png_structp png_ptr;
+Png.c:310:  png_ptr = png_create_write_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
+Png.c:312:  if (png_ptr == NULL)
+Png.c:321:  info_ptr = png_create_info_struct(png_ptr);
+Png.c:329:    png_destroy_write_struct(&png_ptr, NULL);
+Png.c:334:  if (setjmp(png_jmpbuf(png_ptr)))
+Png.c:340:    png_destroy_write_struct(&png_ptr, &info_ptr);
+Png.c:366:  png_set_write_fn(png_ptr, (void *) pngCompBuf, PngWriteData, PngFlushData);
+Png.c:368:  if (setjmp(png_jmpbuf(png_ptr)))
+Png.c:374:    png_destroy_write_struct(&png_ptr, &info_ptr);
+Png.c:381:  png_set_compression_level(png_ptr, PNG_Z_LEVEL);
+Png.c:401:  png_set_IHDR(png_ptr, info_ptr, w, h,
+Png.c:407:    palette = png_malloc(png_ptr, sizeof(*palette) * 256);
+Png.c:442:    png_set_PLTE(png_ptr, info_ptr, palette, num);
+Png.c:453:  png_write_info(png_ptr, info_ptr);
+Png.c:464:  if (setjmp(png_jmpbuf(png_ptr)))
+Png.c:470:    png_destroy_write_struct(&png_ptr, &info_ptr);
+Png.c:534:    png_write_row(png_ptr, srcBuf);
+Png.c:545:  if (setjmp(png_jmpbuf(png_ptr)))
+Png.c:551:    png_destroy_write_struct(&png_ptr, &info_ptr);
+Png.c:558:  png_write_end(png_ptr, NULL);
+Png.c:562:    png_free(png_ptr, palette);
+Png.c:565:  png_destroy_write_struct(&png_ptr, &info_ptr);
+Png.c:610:static void PngWriteData(png_structp png_ptr, png_bytep data, png_size_t length)
+Png.c:612:  memcpy(((char *) png_get_io_ptr(png_ptr) + pngDataLen), data, length);
+Png.c:617:static void PngFlushData(png_structp png_ptr)

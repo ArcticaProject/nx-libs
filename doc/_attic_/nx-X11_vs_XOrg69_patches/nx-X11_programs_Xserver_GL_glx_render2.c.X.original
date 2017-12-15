@@ -1,0 +1,11 @@
+--- ./nx-X11/programs/Xserver/GL/glx/render2.c.X.original	2015-02-13 14:03:44.680442769 +0100
++++ ./nx-X11/programs/Xserver/GL/glx/render2.c	2015-02-10 19:13:14.416663013 +0100
+@@ -43,7 +43,7 @@
+ #include "unpack.h"
+ #include "g_disptab.h"
+ #include "g_disptab_EXT.h"
+-
++#include "indirect_size.h"
+ 
+ void __glXDisp_Map1f(GLbyte *pc)
+ {

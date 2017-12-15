@@ -1,17 +1,25 @@
 /**************************************************************************/
 /*                                                                        */
-/* Copyright (c) 2001, 2011 NoMachine, http://www.nomachine.com/.         */
+/* Copyright (c) 2001, 2011 NoMachine (http://www.nomachine.com)          */
+/* Copyright (c) 2008-2014 Oleksandr Shneyder <o.shneyder@phoca-gmbh.de>  */
+/* Copyright (c) 2011-2016 Mike Gabriel <mike.gabriel@das-netzwerkteam.de>*/
+/* Copyright (c) 2014-2016 Mihai Moldovan <ionic@ionic.de>                */
+/* Copyright (c) 2014-2016 Ulrich Sibiller <uli42@gmx.de>                 */
+/* Copyright (c) 2015-2016 Qindel Group (http://www.qindel.com)           */
 /*                                                                        */
 /* NXAGENT, NX protocol compression and NX extensions to this software    */
-/* are copyright of NoMachine. Redistribution and use of the present      */
-/* software is allowed according to terms specified in the file LICENSE   */
-/* which comes in the source distribution.                                */
+/* are copyright of the aforementioned persons and companies.             */
 /*                                                                        */
-/* Check http://www.nomachine.com/licensing.html for applicability.       */
-/*                                                                        */
-/* NX and NoMachine are trademarks of Medialogic S.p.A.                   */
+/* Redistribution and use of the present software is allowed according    */
+/* to terms specified in the file LICENSE which comes in the source       */
+/* distribution.                                                          */
 /*                                                                        */
 /* All rights reserved.                                                   */
+/*                                                                        */
+/* NOTE: This software has received contributions from various other      */
+/* contributors, only the core maintainers and supporters are listed as   */
+/* copyright holders. Please contact us, if you feel you should be listed */
+/* as copyright holder, as well.                                          */
 /*                                                                        */
 /**************************************************************************/
 
@@ -42,7 +50,8 @@ is" without express or implied warranty.
 #include "windowstr.h"
 #include "servermd.h"
 #include "mi.h"
-#include "fontstruct.h"
+#include <X11/fonts/fontstruct.h>
+#include "dixfontstr.h"
 
 #include "Agent.h"
 #include "Display.h"
@@ -50,6 +59,7 @@ is" without express or implied warranty.
 #include "Pointer.h"
 #include "Keyboard.h"
 #include "Handlers.h"
+#include "Events.h"
 #include "Init.h"
 #include "Args.h"
 #include "Client.h"
@@ -60,10 +70,11 @@ is" without express or implied warranty.
 #include "Font.h"
 #include "Millis.h"
 #include "Error.h"
+#include "Keystroke.h"
 
-#include "NX.h"
-#include "NXlib.h"
-
+#include <nx/NX.h>
+#include "compext/Compext.h"
+#include "Reconnect.h"
 /*
  * Set here the required log level.
  */
@@ -74,7 +85,8 @@ is" without express or implied warranty.
 #undef  DEBUG
 #undef  DUMP
 
-#define NXAGENT_VERSION  "3.5.0"
+#define NXAGENT_VERSION NX_VERSION_CURRENT
+#define NXAGENT_VERSION_STRING NX_VERSION_CURRENT_STRING
 
 /*
  * ProcVector array defined in tables.c.
@@ -131,10 +143,8 @@ void OsVendorEndRedirectErrorFFunction();
  */
 
 
-static void nxagentGrabServerCallback(CallbackListPtr *callbacks, pointer data,
-                                   pointer args);
-
-#ifdef NXAGENT_UPGRADE
+static void nxagentGrabServerCallback(CallbackListPtr *callbacks, void *data,
+                                   void *args);
 
 void ddxInitGlobals(void)
 {
@@ -147,8 +157,6 @@ void ddxInitGlobals(void)
   OsVendorStartRedirectErrorFProc = OsVendorStartRedirectErrorFFunction;
   OsVendorEndRedirectErrorFProc   = OsVendorEndRedirectErrorFFunction;
 }
-
-#endif
 
 /*
  * Set if the remote display supports
@@ -177,6 +185,29 @@ int nxagentSaveUnder;
 
 int nxagentDoFullGeneration = 1;
 
+ /*
+ * 1 if agent running as X2goAgent
+ * 0 if NX Agent
+ */
+int nxagentX2go;
+
+/*
+ * Checking if agent is x2go agent
+ */
+
+void checkX2goAgent()
+{
+  extern const char *__progname;
+  if( strcasecmp(__progname,"x2goagent") == 0)
+  {
+    fprintf(stderr, "\nrunning as X2Go Agent\n");
+    nxagentX2go=1;
+  }
+  else
+    nxagentX2go=0;
+}
+
+
 /*
  * Called at X server's initialization.
  */
@@ -193,18 +224,29 @@ void InitOutput(ScreenInfo *screenInfo, int argc, char *argv[])
   #endif
 
   /*
+   * Check if we running as X2Go Agent
+   */
+  checkX2goAgent();
+
+  /*
    * Print our pid and version information.
    */
 
   if (serverGeneration <= 1)
   {
-    fprintf(stderr, "\nNXAGENT - Version " NXAGENT_VERSION "\n\n");
-    fprintf(stderr, "Copyright (C) 2001, 2011 NoMachine.\n");
-    fprintf(stderr, "See http://www.nomachine.com/ for more information.\n\n");
+    fprintf(stderr, "\nNXAGENT - Version " NXAGENT_VERSION_STRING "\n\n");
+    fprintf(stderr, "Copyright (c) 2001, 2011 NoMachine (http://www.nomachine.com)\n");
+    fprintf(stderr, "Copyright (c) 2008-2014 Oleksandr Shneyder <o.shneyder@phoca-gmbh.de>\n");
+    fprintf(stderr, "Copyright (c) 2011-2016 Mike Gabriel <mike.gabriel@das-netzwerkteam.de>\n");
+    fprintf(stderr, "Copyright (c) 2014-2016 Ulrich Sibiller <uli42@gmx.de>\n");
+    fprintf(stderr, "Copyright (c) 2014-2016 Mihai Moldovan <ionic@ionic.de>\n");
+    fprintf(stderr, "Copyright (c) 2015-2016 Qindel Group (http://www.qindel.com)\n");
+    fprintf(stderr, "See https://github.com/ArcticaProject/nx-libs for more information.\n\n");
 
     fprintf(stderr, "Info: Agent running with pid '%d'.\n", getpid());
 
     fprintf(stderr, "Session: Starting session at '%s'.\n", GetTimeAsString());
+    saveAgentState("STARTING");
   }
 
   /*
@@ -326,7 +368,11 @@ FIXME: These variables, if not removed at all because have probably
   nxagentWindowPrivateIndex = AllocateWindowPrivateIndex();
   nxagentGCPrivateIndex = AllocateGCPrivateIndex();
   RT_NX_GC = CreateNewResourceType(nxagentDestroyNewGCResourceType);
+#ifdef HAS_XFONT2
+  nxagentFontPrivateIndex = xfont2_allocate_font_private_index();
+#else
   nxagentFontPrivateIndex = AllocateFontPrivateIndex();
+#endif /* HAS_XFONT2 */
   RT_NX_FONT = CreateNewResourceType(nxagentDestroyNewFontResourceType); 
   nxagentClientPrivateIndex = AllocateClientPrivateIndex();
   nxagentPixmapPrivateIndex = AllocatePixmapPrivateIndex();
@@ -366,13 +412,21 @@ FIXME: These variables, if not removed at all because have probably
    */
 
   blackRoot = TRUE;
+
+  nxagentInitKeystrokes(False);
+}
+
+void
+nxagentNotifyConnection(int fd, int ready, void *data)
+{
+    nxagentDispatchEvents(NULL);
 }
 
 void InitInput(argc, argv)
      int argc;
      char *argv[];
 {
-  pointer ptr, kbd;
+  void *ptr, *kbd;
 
   ptr = AddInputDevice(nxagentPointerProc, True);
   kbd = AddInputDevice(nxagentKeyboardProc, True);
@@ -446,13 +500,9 @@ void ddxGiveUp()
   AbortDDX();
 }
 
-#ifdef NXAGENT_UPGRADE
-
 void ddxBeforeReset(void)
 {
 }
-
-#endif
 
 void OsVendorInit()
 {
@@ -481,7 +531,7 @@ void OsVendorVErrorFFunction(const char *f, va_list args)
 
     nxagentStartRedirectToClientsLog();
 
-    fprintf(stderr, buffer);
+    fprintf(stderr, "%s", buffer);
 
     nxagentEndRedirectToClientsLog();
   }
@@ -501,15 +551,10 @@ void OsVendorEndRedirectErrorFFunction()
   nxagentEndRedirectToClientsLog();
 }
 
-/* this is just to get the server to link on AIX */
-#ifdef AIXV3
-int SelectWaitTime = 10000; /* usec */
-#endif
-
 ServerGrabInfoRec nxagentGrabServerInfo;
 
-static void nxagentGrabServerCallback(CallbackListPtr *callbacks, pointer data,
-                                   pointer args)
+static void nxagentGrabServerCallback(CallbackListPtr *callbacks, void *data,
+                                   void *args)
 {
     ServerGrabInfoRec *grab = (ServerGrabInfoRec*)args;
 

@@ -1,17 +1,25 @@
 /**************************************************************************/
 /*                                                                        */
-/* Copyright (c) 2001, 2011 NoMachine, http://www.nomachine.com/.         */
+/* Copyright (c) 2001, 2011 NoMachine (http://www.nomachine.com)          */
+/* Copyright (c) 2008-2014 Oleksandr Shneyder <o.shneyder@phoca-gmbh.de>  */
+/* Copyright (c) 2011-2016 Mike Gabriel <mike.gabriel@das-netzwerkteam.de>*/
+/* Copyright (c) 2014-2016 Mihai Moldovan <ionic@ionic.de>                */
+/* Copyright (c) 2014-2016 Ulrich Sibiller <uli42@gmx.de>                 */
+/* Copyright (c) 2015-2016 Qindel Group (http://www.qindel.com)           */
 /*                                                                        */
 /* NXAGENT, NX protocol compression and NX extensions to this software    */
-/* are copyright of NoMachine. Redistribution and use of the present      */
-/* software is allowed according to terms specified in the file LICENSE   */
-/* which comes in the source distribution.                                */
+/* are copyright of the aforementioned persons and companies.             */
 /*                                                                        */
-/* Check http://www.nomachine.com/licensing.html for applicability.       */
-/*                                                                        */
-/* NX and NoMachine are trademarks of Medialogic S.p.A.                   */
+/* Redistribution and use of the present software is allowed according    */
+/* to terms specified in the file LICENSE which comes in the source       */
+/* distribution.                                                          */
 /*                                                                        */
 /* All rights reserved.                                                   */
+/*                                                                        */
+/* NOTE: This software has received contributions from various other      */
+/* contributors, only the core maintainers and supporters are listed as   */
+/* copyright holders. Please contact us, if you feel you should be listed */
+/* as copyright holder, as well.                                          */
 /*                                                                        */
 /**************************************************************************/
 
@@ -50,7 +58,7 @@ is" without express or implied warranty.
 #include "Args.h"
 #include "Screen.h"
 
-#include "NXlib.h"
+#include "compext/Compext.h"
 
 /*
  * Set here the required log level.
@@ -306,12 +314,12 @@ FIXME: The popup could be synchronized with one
                     pSrcRegion -> extents.x2, pSrcRegion -> extents.y2);
     #endif
 
-    REGION_INIT(pSrcDrawable -> pScreen, &corruptedRegion, NullBox, 1);
+    RegionInit(&corruptedRegion, NullBox, 1);
 
-    REGION_INTERSECT(pSrcDrawable -> pScreen, &corruptedRegion,
+    RegionIntersect(&corruptedRegion,
                          pSrcRegion, nxagentCorruptedRegion(pSrcDrawable));
 
-    if (REGION_NIL(&corruptedRegion) == 0)
+    if (RegionNil(&corruptedRegion) == 0)
     {
       #ifdef TEST
       fprintf(stderr, "nxagentDeferCopyArea: Forcing the synchronization of source drawable at [%p].\n",
@@ -321,7 +329,7 @@ FIXME: The popup could be synchronized with one
       nxagentSynchronizeRegion(pSrcDrawable, &corruptedRegion, EVENT_BREAK, NULL);
     }
 
-    REGION_UNINIT(pSrcDrawable -> pScreen, &corruptedRegion);
+    RegionUninit(&corruptedRegion);
 
     nxagentFreeRegion(pSrcDrawable, pSrcRegion);
 
@@ -339,7 +347,7 @@ FIXME: The popup could be synchronized with one
    */
 
   if ((pDstDrawable -> type == DRAWABLE_PIXMAP &&
-          nxagentOption(DeferLevel) > 0) || nxagentOption(DeferLevel) >= 2)
+          nxagentOption(DeferLevel) > 0) || nxagentOption(DeferLevel) >= 3)
   {
     pClipRegion = nxagentCreateRegion(pSrcDrawable, NULL, srcx, srcy,
                                           width, height);
@@ -361,7 +369,7 @@ FIXME: The popup could be synchronized with one
                     pClipRegion -> extents.x2, pClipRegion -> extents.y2);
     #endif
 
-    REGION_SUBTRACT(pSrcDrawable -> pScreen, pClipRegion, pClipRegion, nxagentCorruptedRegion(pSrcDrawable));
+    RegionSubtract(pClipRegion, pClipRegion, nxagentCorruptedRegion(pSrcDrawable));
 
     #ifdef DEBUG
     fprintf(stderr, "nxagentDeferCopyArea: Usable copy area source region is [%d,%d,%d,%d].\n",
@@ -381,11 +389,11 @@ FIXME: The popup could be synchronized with one
 
       #endif
 
-      REGION_TRANSLATE(pSrcDrawable -> pScreen, pClipRegion, dstx - srcx, dsty - srcy);
+      RegionTranslate(pClipRegion, dstx - srcx, dsty - srcy);
     }
     else
     {
-      REGION_INIT(pDstDrawable -> pScreen, &tmpRegion, NullBox, 1);
+      RegionInit(&tmpRegion, NullBox, 1);
 
       #ifdef DEBUG
       fprintf(stderr, "nxagentDeferCopyArea: Going to modify the original GC [%p] with clip mask "
@@ -396,18 +404,18 @@ FIXME: The popup could be synchronized with one
                       pGC -> clipOrg.x, pGC -> clipOrg.y);
       #endif
 
-      REGION_COPY(pDstDrawable -> pScreen, &tmpRegion, (RegionPtr) pGC -> clientClip);
+      RegionCopy(&tmpRegion, (RegionPtr) pGC -> clientClip);
 
       if (pGC -> clipOrg.x != 0 || pGC -> clipOrg.y != 0)
       {
-        REGION_TRANSLATE(pDstDrawable -> pScreen, &tmpRegion, pGC -> clipOrg.x, pGC -> clipOrg.y);
+        RegionTranslate(&tmpRegion, pGC -> clipOrg.x, pGC -> clipOrg.y);
       }
 
-      REGION_TRANSLATE(pSrcDrawable -> pScreen, pClipRegion, dstx - srcx, dsty - srcy);
+      RegionTranslate(pClipRegion, dstx - srcx, dsty - srcy);
 
-      REGION_INTERSECT(pSrcDrawable -> pScreen, pClipRegion, &tmpRegion, pClipRegion);
+      RegionIntersect(pClipRegion, &tmpRegion, pClipRegion);
 
-      REGION_UNINIT(pSrcDrawable -> pScreen, &tmpRegion);
+      RegionUninit(&tmpRegion);
     }
 
     /*
@@ -416,18 +424,18 @@ FIXME: The popup could be synchronized with one
      * destination that we are not going to copy.
      */
 
-    REGION_SUBTRACT(pSrcDrawable -> pScreen, pCorruptedRegion, pCorruptedRegion, pClipRegion);
+    RegionSubtract(pCorruptedRegion, pCorruptedRegion, pClipRegion);
 
     #ifdef DEBUG
     fprintf(stderr, "nxagentDeferCopyArea: Recomputed clip region is [%d,%d,%d,%d][%ld].\n",
                 pClipRegion -> extents.x1, pClipRegion -> extents.y1,
                     pClipRegion -> extents.x2, pClipRegion -> extents.y2,
-                        REGION_NUM_RECTS(pClipRegion));
+                        RegionNumRects(pClipRegion));
 
     fprintf(stderr, "nxagentDeferCopyArea: Inherited corrupted region is [%d,%d,%d,%d][%ld].\n",
                 pCorruptedRegion -> extents.x1, pCorruptedRegion -> extents.y1,
                     pCorruptedRegion -> extents.x2, pCorruptedRegion -> extents.y2,
-                        REGION_NUM_RECTS(pCorruptedRegion));
+                        RegionNumRects(pCorruptedRegion));
     #endif
 
     /*
@@ -435,17 +443,17 @@ FIXME: The popup could be synchronized with one
      * synchronized and the corrupted region.
      */
 
-    if (REGION_NIL(pClipRegion) == 0)
+    if (RegionNil(pClipRegion) == 0)
     {
       nxagentUnmarkCorruptedRegion(pDstDrawable, pClipRegion);
     }
 
-    if (REGION_NIL(pCorruptedRegion) == 0)
+    if (RegionNil(pCorruptedRegion) == 0)
     {
       nxagentMarkCorruptedRegion(pDstDrawable, pCorruptedRegion);
     }
 
-    if (REGION_NIL(pClipRegion) == 0)
+    if (RegionNil(pClipRegion) == 0)
     {
       GCPtr  targetGC;
 
@@ -468,7 +476,7 @@ FIXME: The popup could be synchronized with one
                  GCClipXOrigin | GCClipYOrigin | GCClipMask | GCForeground |
                      GCBackground | GCGraphicsExposures);
 
-      if (REGION_NUM_RECTS(pClipRegion) == 1)
+      if (RegionNumRects(pClipRegion) == 1)
       {
         /*
          * If the region to copy is formed by one
@@ -563,12 +571,12 @@ FIXME: The popup could be synchronized with one
                     pSrcRegion -> extents.x2, pSrcRegion -> extents.y2);
     #endif
 
-    REGION_INIT(pSrcDrawable -> pScreen, &corruptedRegion, NullBox, 1);
+    RegionInit(&corruptedRegion, NullBox, 1);
 
-    REGION_INTERSECT(pSrcDrawable -> pScreen, &corruptedRegion,
+    RegionIntersect(&corruptedRegion,
                          pSrcRegion, nxagentCorruptedRegion(pSrcDrawable));
 
-    if (REGION_NIL(&corruptedRegion) == 0)
+    if (RegionNil(&corruptedRegion) == 0)
     {
       #ifdef TEST
       fprintf(stderr, "nxagentDeferCopyArea: Forcing the synchronization of source drawable at [%p].\n",
@@ -578,7 +586,7 @@ FIXME: The popup could be synchronized with one
       nxagentSynchronizeRegion(pSrcDrawable, &corruptedRegion /*pSrcRegion*/, NEVER_BREAK, NULL);
     }
 
-    REGION_UNINIT(pSrcDrawable -> pScreen, &corruptedRegion);
+    RegionUninit(&corruptedRegion);
 
     nxagentFreeRegion(pSrcDrawable, pSrcRegion);
   }
@@ -593,8 +601,6 @@ RegionPtr nxagentCopyArea(DrawablePtr pSrcDrawable, DrawablePtr pDstDrawable,
   int leftPad = 0;
   unsigned int format;
   unsigned long planeMask = 0xffffffff;
-
-  int oldDstxyValue;
 
   RegionPtr pDstRegion;
 
@@ -650,8 +656,6 @@ RegionPtr nxagentCopyArea(DrawablePtr pSrcDrawable, DrawablePtr pDstDrawable,
       return NullRegion;
     }
   }
-
-    oldDstxyValue = dsty;
 
   if (dsty + pDstDrawable->y + height > 32767)
   {
@@ -758,7 +762,7 @@ RegionPtr nxagentCopyArea(DrawablePtr pSrcDrawable, DrawablePtr pDstDrawable,
 
     length = nxagentImageLength(width, height, format, leftPad, depth);
 
-    if ((data = xalloc(length)) == NULL)
+    if ((data = malloc(length)) == NULL)
     {
       #ifdef WARNING
       fprintf(stderr, "nxagentCopyArea: WARNING! Failed to allocate memory for the operation.\n");
@@ -783,7 +787,7 @@ RegionPtr nxagentCopyArea(DrawablePtr pSrcDrawable, DrawablePtr pDstDrawable,
                    srcx, srcy, width, height);
     #endif
 
-    xfree(data);
+    free(data);
 
     /*
      * If the source is a shared memory pixmap, the
@@ -978,7 +982,7 @@ RegionPtr nxagentCopyPlane(DrawablePtr pSrcDrawable, DrawablePtr pDstDrawable,
 
     length = nxagentImageLength(width, height, format, leftPad, depth);
 
-    if ((data = xalloc(length)) == NULL)
+    if ((data = malloc(length)) == NULL)
     {
       #ifdef DEBUG
       fprintf(stderr, "nxagentCopyPlane: WARNING! Failed to allocate memory for the operation.\n");
@@ -1003,7 +1007,7 @@ RegionPtr nxagentCopyPlane(DrawablePtr pSrcDrawable, DrawablePtr pDstDrawable,
                    srcx, srcy, width, height);
     #endif
 
-    xfree(data);
+    free(data);
 
     /*
      * If the source is a shared memory pixmap, the
@@ -1032,12 +1036,12 @@ RegionPtr nxagentCopyPlane(DrawablePtr pSrcDrawable, DrawablePtr pDstDrawable,
     {
       pSrcRegion = nxagentCreateRegion(pSrcDrawable, NULL, srcx, srcy, width, height);
 
-      REGION_INIT(pSrcDrawable -> pScreen, &corruptedRegion, NullBox, 1);
+      RegionInit(&corruptedRegion, NullBox, 1);
 
-      REGION_INTERSECT(pSrcDrawable -> pScreen, &corruptedRegion,
+      RegionIntersect(&corruptedRegion,
                            pSrcRegion, nxagentCorruptedRegion(pSrcDrawable));
 
-      if (REGION_NIL(&corruptedRegion) == 0)
+      if (RegionNil(&corruptedRegion) == 0)
       {
         #ifdef TEST
         fprintf(stderr, "nxagentCopyPlane: Forcing the synchronization of source drawable at [%p].\n",
@@ -1053,7 +1057,7 @@ RegionPtr nxagentCopyPlane(DrawablePtr pSrcDrawable, DrawablePtr pDstDrawable,
         nxagentFreeRegion(pDstDrawable, pDstRegion);
       }
 
-      REGION_UNINIT(pSrcDrawable -> pScreen, &corruptedRegion);
+      RegionUninit(&corruptedRegion);
 
       nxagentFreeRegion(pSrcDrawable, pSrcRegion);
     }
@@ -1471,7 +1475,7 @@ void nxagentFillPolygon(DrawablePtr pDrawable, GCPtr pGC, int shape,
 
     mode = CoordModePrevious;
 
-    newPoints = xalloc(nPoints * sizeof(xPoint));
+    newPoints = malloc(nPoints * sizeof(xPoint));
 
     /*
      * The first point is always relative
@@ -1541,10 +1545,7 @@ void nxagentFillPolygon(DrawablePtr pDrawable, GCPtr pGC, int shape,
     RESET_GC_TRAP();
   }
 
-  if (newPoints != NULL)
-  {
-    xfree(newPoints);
-  }
+  free(newPoints);
 }
 
 void nxagentPolyFillRect(DrawablePtr pDrawable, GCPtr pGC,
@@ -1615,24 +1616,24 @@ void nxagentPolyFillRect(DrawablePtr pDrawable, GCPtr pGC,
 
   if (inheritCorruptedRegion == 1 || nxagentDrawableStatus(pDrawable) == NotSynchronized)
   {
-    rectRegion = RECTS_TO_REGION(pDrawable -> pScreen, nRectangles, pRectangles, CT_REGION);
+    rectRegion = RegionFromRects(nRectangles, pRectangles, CT_REGION);
 
     if (pGC -> clientClip != NULL)
     {
       RegionRec tmpRegion;
 
-      REGION_INIT(pDrawable -> pScreen, &tmpRegion, NullBox, 1);
+      RegionInit(&tmpRegion, NullBox, 1);
 
-      REGION_COPY(pDrawable -> pScreen, &tmpRegion, ((RegionPtr) pGC -> clientClip));
+      RegionCopy(&tmpRegion, ((RegionPtr) pGC -> clientClip));
 
       if (pGC -> clipOrg.x != 0 || pGC -> clipOrg.y != 0)
       {
-        REGION_TRANSLATE(pDrawable -> pScreen, &tmpRegion, pGC -> clipOrg.x, pGC -> clipOrg.y);
+        RegionTranslate(&tmpRegion, pGC -> clipOrg.x, pGC -> clipOrg.y);
       }
 
-      REGION_INTERSECT(pDrawable -> pScreen, rectRegion, rectRegion, &tmpRegion);
+      RegionIntersect(rectRegion, rectRegion, &tmpRegion);
 
-      REGION_UNINIT(pDrawable -> pScreen, &tmpRegion);
+      RegionUninit(&tmpRegion);
     }
 
     if (inheritCorruptedRegion == 1)
@@ -1672,7 +1673,7 @@ void nxagentPolyFillRect(DrawablePtr pDrawable, GCPtr pGC,
       }
     }
 
-    REGION_DESTROY(pDrawable -> pScreen, rectRegion);
+    RegionDestroy(rectRegion);
   }
 
   if ((pDrawable)->type == DRAWABLE_PIXMAP)
@@ -2042,7 +2043,7 @@ void nxagentImageText16(DrawablePtr pDrawable, GCPtr pGC, int x,
 
 void nxagentImageGlyphBlt(DrawablePtr pDrawable, GCPtr pGC, int x, int y,
                               unsigned int nGlyphs, CharInfoPtr *pCharInfo,
-                                  pointer pGlyphBase)
+                                  void * pGlyphBase)
 {
   if ((pDrawable)->type == DRAWABLE_PIXMAP)
   {
@@ -2061,7 +2062,7 @@ void nxagentImageGlyphBlt(DrawablePtr pDrawable, GCPtr pGC, int x, int y,
 
 void nxagentPolyGlyphBlt(DrawablePtr pDrawable, GCPtr pGC, int x, int y,
                              unsigned int nGlyphs, CharInfoPtr *pCharInfo,
-                                 pointer pGlyphBase)
+                                 void * pGlyphBase)
 {
   if ((pDrawable)->type == DRAWABLE_PIXMAP)
   {

@@ -25,7 +25,6 @@
  * IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING
  * OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
-/* $XFree86: xc/include/Xarch.h,v 1.10tsi Exp $ */
 
 
 /*
@@ -41,7 +40,7 @@
 #else
 
 #ifdef SVR4
-#if defined(NCR) || defined(Mips) || defined(__sgi)
+#if defined(NCR) || defined(Mips)
 #include <sys/endian.h>
 #else
 #if !defined(sun)
@@ -74,39 +73,13 @@
 #if !defined(BYTE_ORDER) && defined(__BYTE_ORDER)
 #define BYTE_ORDER __BYTE_ORDER
 #endif
-#elif defined(Lynx)
-#if 0
-/* LynxOS 2.4.0 has wrong defines in bsd/ip.h */
-#include <bsd/in.h>
-#include <bsd/in_systm.h>
-#include <bsd/ip.h>
-#endif
 #endif
 
 #ifndef BYTE_ORDER
 #define LITTLE_ENDIAN 1234
 #define BIG_ENDIAN    4321
 
-#if defined(__QNX__) && !defined(__QNXNTO__)
-#define BYTE_ORDER LITTLE_ENDIAN
-#endif
-
-#if defined(__QNXNTO__)
-#if defined(i386) || defined(__i386__) || defined(__x86__)
-#define BYTE_ORDER LITTLE_ENDIAN
-#else
-#define BYTE_ORDER BIG_ENDIAN
-#endif
-#endif
-
-#ifdef Lynx
-#if defined(i386) || defined(__i386__) || defined(__x86__)
-#define BYTE_ORDER LITTLE_ENDIAN
-#else
-#define BYTE_ORDER BIG_ENDIAN
-#endif
-#endif
-#if (defined(sun) && defined(SVR4)) && !defined(Lynx)
+#if (defined(sun) && defined(SVR4))
 #include <sys/isa_defs.h>
 #ifdef _LITTLE_ENDIAN
 #define BYTE_ORDER LITTLE_ENDIAN

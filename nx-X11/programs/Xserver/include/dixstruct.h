@@ -1,4 +1,3 @@
-/* $XFree86: xc/programs/Xserver/include/dixstruct.h,v 3.19tsi Exp $ */
 /***********************************************************
 Copyright 1987 by Digital Equipment Corporation, Maynard, Massachusetts.
 
@@ -21,17 +20,17 @@ ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS
 SOFTWARE.
 
 ******************************************************************/
-/* $Xorg: dixstruct.h,v 1.3 2000/08/17 19:53:29 cpqbld Exp $ */
 
 #ifndef DIXSTRUCT_H
 #define DIXSTRUCT_H
 
+#include "client.h"
 #include "dix.h"
 #include "resource.h"
 #include "cursor.h"
 #include "gc.h"
 #include "pixmap.h"
-#include <X11/Xmd.h>
+#include <nx-X11/Xmd.h>
 
 /*
  * 	direct-mapped hash table, used by resource manager to store
@@ -93,9 +92,10 @@ typedef struct _Window *SaveSetElt;
 typedef struct _Client {
     int         index;
     Mask        clientAsMask;
-    pointer     requestBuffer;
-    pointer     osPrivate;	/* for OS layer, including scheduler */
+    void        *requestBuffer;
+    void        *osPrivate;	/* for OS layer, including scheduler */
     Bool        swapped;
+    Bool        local;
     ReplySwapPtr pSwapReplyFunc;
     XID         errorValue;
     int         sequence;
@@ -103,13 +103,9 @@ typedef struct _Client {
     int         clientGone;
     int         noClientException;	/* this client died or needs to be
 					 * killed */
-    DrawablePtr lastDrawable;
-    Drawable    lastDrawableID;
-    GCPtr       lastGC;
-    GContext    lastGCID;
     SaveSetElt	*saveSet;
     int         numSaved;
-    pointer     screenPrivate[MAXSCREENS];
+    void        *screenPrivate[MAXSCREENS];
     int         (**requestVector) (
 		ClientPtr /* pClient */);
     CARD32	req_len;		/* length of current request */
@@ -129,35 +125,28 @@ typedef struct _Client {
     unsigned char requestLog[MAX_REQUEST_LOG];
     int         requestLogIndex;
 #endif
-#ifdef LBX
-    int		(*readRequest)(ClientPtr /*client*/);
-#endif
     unsigned long replyBytesRemaining;
 #ifdef XCSECURITY
     XID		authId;
     unsigned int trustLevel;
-    pointer (* CheckAccess)(
+    void * (* CheckAccess)(
 	    ClientPtr /*pClient*/,
 	    XID /*id*/,
 	    RESTYPE /*classes*/,
 	    Mask /*access_mode*/,
-	    pointer /*resourceval*/);
-#endif
-#ifdef XAPPGROUP
-    struct _AppGroupRec*	appgroup;
+	    void * /*resourceval*/);
 #endif
     struct _FontResolution * (*fontResFunc) (    /* no need for font.h */
 		ClientPtr	/* pClient */,
 		int *		/* num */);
-#ifdef SMART_SCHEDULE
     int	    smart_priority;
     long    smart_start_tick;
     long    smart_stop_tick;
     long    smart_check_tick;
-#endif
+
+    ClientIdPtr  clientIds;
 }           ClientRec;
 
-#ifdef SMART_SCHEDULE
 /*
  * Scheduling interface
  */
@@ -165,20 +154,19 @@ extern long SmartScheduleTime;
 extern long SmartScheduleInterval;
 extern long SmartScheduleSlice;
 extern long SmartScheduleMaxSlice;
-extern unsigned long SmartScheduleIdleCount;
-extern Bool SmartScheduleDisable;
-extern Bool SmartScheduleIdle;
-extern Bool SmartScheduleTimerStopped;
-extern Bool SmartScheduleStartTimer(void);
-#ifdef NXAGENT_SERVER
-extern Bool SmartScheduleStopTimer(void);
+#ifdef HAVE_SETITIMER
+#if HAVE_SETITIMER
+extern Bool SmartScheduleSignalEnable;
+#else
+#define SmartScheduleSignalEnable FALSE
 #endif
+#endif
+extern void SmartScheduleStartTimer(void);
+extern void SmartScheduleStopTimer(void);
 #define SMART_MAX_PRIORITY  (20)
 #define SMART_MIN_PRIORITY  (-20)
 
-extern Bool SmartScheduleInit(void);
-
-#endif
+extern void SmartScheduleInit(void);
 
 /* This prototype is used pervasively in Xext, dix */
 #define DISPATCH_PROC(func) int func(ClientPtr /* client */)
@@ -187,10 +175,10 @@ typedef struct _WorkQueue {
     struct _WorkQueue *next;
     Bool        (*function) (
 		ClientPtr	/* pClient */,
-		pointer		/* closure */
+		void *		/* closure */
 );
     ClientPtr   client;
-    pointer     closure;
+    void        *closure;
 }           WorkQueueRec;
 
 extern TimeStamp currentTime;
@@ -204,7 +192,7 @@ extern TimeStamp ClientTimeToServerTime(CARD32 /*c*/);
 
 typedef struct _CallbackRec {
   CallbackProcPtr proc;
-  pointer data;
+  void * data;
   Bool deleted;
   struct _CallbackRec *next;
 } CallbackRec, *CallbackPtr;
@@ -224,10 +212,6 @@ extern int (* InitialVector[3]) (ClientPtr /*client*/);
 extern int (* ProcVector[256]) (ClientPtr /*client*/);
 
 extern int (* SwappedProcVector[256]) (ClientPtr /*client*/);
-
-#ifdef K5AUTH
-extern int (*k5_Vector[256])(ClientPtr /*client*/);
-#endif
 
 extern ReplySwapPtr ReplySwapVector[256];
 

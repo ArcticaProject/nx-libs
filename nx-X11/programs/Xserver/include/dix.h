@@ -1,4 +1,3 @@
-/* $XFree86: xc/programs/Xserver/include/dix.h,v 3.26 2003/01/12 02:44:27 dawes Exp $ */
 /***********************************************************
 
 Copyright 1987, 1998  The Open Group
@@ -45,10 +44,11 @@ ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS
 SOFTWARE.
 
 ******************************************************************/
-/* $Xorg: dix.h,v 1.4 2001/02/09 02:05:15 xorgcvs Exp $ */
 
 #ifndef DIX_H
 #define DIX_H
+
+#include <stdint.h>
 
 #include "gc.h"
 #include "window.h"
@@ -71,9 +71,14 @@ SOFTWARE.
     if ((sizeof(req) >> 2) > client->req_len )\
          return(BadLength)
 
+#define REQUEST_AT_LEAST_EXTRA_SIZE(req, extra)  \
+    if (((sizeof(req) + ((uint64_t) extra)) >> 2) > client->req_len ) \
+         return(BadLength)
+
 #define REQUEST_FIXED_SIZE(req, n)\
     if (((sizeof(req) >> 2) > client->req_len) || \
-        (((sizeof(req) + (n) + 3) >> 2) != client->req_len)) \
+        ((n >> 2) >= client->req_len) || \
+        ((((uint64_t) sizeof(req) + (n) + 3) >> 2) != (uint64_t) client->req_len))  \
          return(BadLength)
 
 #define LEGAL_NEW_RESOURCE(id,client)\
@@ -86,15 +91,11 @@ SOFTWARE.
 /* XXX if you are using this macro, you are probably not generating Match
  * errors where appropriate */
 #define LOOKUP_DRAWABLE(did, client)\
-    ((client->lastDrawableID == did) ? \
-     client->lastDrawable : (DrawablePtr)LookupDrawable(did, client))
+    ((DrawablePtr)LookupDrawable(did, client))
 
 #ifdef XCSECURITY
 
 #define SECURITY_VERIFY_DRAWABLE(pDraw, did, client, mode)\
-    if (client->lastDrawableID == did && !client->trustLevel)\
-	pDraw = client->lastDrawable;\
-    else \
     {\
 	pDraw = (DrawablePtr) SecurityLookupIDByClass(client, did, \
 						      RC_DRAWABLE, mode);\
@@ -108,9 +109,6 @@ SOFTWARE.
     }
 
 #define SECURITY_VERIFY_GEOMETRABLE(pDraw, did, client, mode)\
-    if (client->lastDrawableID == did && !client->trustLevel)\
-	pDraw = client->lastDrawable;\
-    else \
     {\
 	pDraw = (DrawablePtr) SecurityLookupIDByClass(client, did, \
 						      RC_DRAWABLE, mode);\
@@ -122,10 +120,7 @@ SOFTWARE.
     }
 
 #define SECURITY_VERIFY_GC(pGC, rid, client, mode)\
-    if (client->lastGCID == rid && !client->trustLevel)\
-        pGC = client->lastGC;\
-    else\
-	pGC = (GC *) SecurityLookupIDByType(client, rid, RT_GC, mode);\
+    pGC = (GC *) SecurityLookupIDByType(client, rid, RT_GC, mode);\
     if (!pGC)\
     {\
 	client->errorValue = rid;\
@@ -133,20 +128,17 @@ SOFTWARE.
     }
 
 #define VERIFY_DRAWABLE(pDraw, did, client)\
-	SECURITY_VERIFY_DRAWABLE(pDraw, did, client, SecurityUnknownAccess)
+	SECURITY_VERIFY_DRAWABLE(pDraw, did, client, DixUnknownAccess)
 
 #define VERIFY_GEOMETRABLE(pDraw, did, client)\
-	SECURITY_VERIFY_GEOMETRABLE(pDraw, did, client, SecurityUnknownAccess)
+	SECURITY_VERIFY_GEOMETRABLE(pDraw, did, client, DixUnknownAccess)
 
 #define VERIFY_GC(pGC, rid, client)\
-	SECURITY_VERIFY_GC(pGC, rid, client, SecurityUnknownAccess)
+	SECURITY_VERIFY_GC(pGC, rid, client, DixUnknownAccess)
 
 #else /* not XCSECURITY */
 
 #define VERIFY_DRAWABLE(pDraw, did, client)\
-    if (client->lastDrawableID == did)\
-	pDraw = client->lastDrawable;\
-    else \
     {\
 	pDraw = (DrawablePtr) LookupIDByClass(did, RC_DRAWABLE);\
 	if (!pDraw) \
@@ -159,9 +151,6 @@ SOFTWARE.
     }
 
 #define VERIFY_GEOMETRABLE(pDraw, did, client)\
-    if (client->lastDrawableID == did)\
-	pDraw = client->lastDrawable;\
-    else \
     {\
 	pDraw = (DrawablePtr) LookupIDByClass(did, RC_DRAWABLE);\
 	if (!pDraw) \
@@ -172,10 +161,7 @@ SOFTWARE.
     }
 
 #define VERIFY_GC(pGC, rid, client)\
-    if (client->lastGCID == rid)\
-        pGC = client->lastGC;\
-    else\
-	pGC = (GC *)LookupIDByType(rid, RT_GC);\
+    pGC = (GC *)LookupIDByType(rid, RT_GC);\
     if (!pGC)\
     {\
 	client->errorValue = rid;\
@@ -247,23 +233,12 @@ SOFTWARE.
 #endif /* NEED_DBE_BUF_BITS */
 
 #define VALIDATE_DRAWABLE_AND_GC(drawID, pDraw, pGC, client)\
-    if ((stuff->gc == INVALID) || (client->lastGCID != stuff->gc) ||\
-	(client->lastDrawableID != drawID))\
     {\
-	SECURITY_VERIFY_GEOMETRABLE(pDraw, drawID, client, SecurityWriteAccess);\
-	SECURITY_VERIFY_GC(pGC, stuff->gc, client, SecurityReadAccess);\
+	SECURITY_VERIFY_GEOMETRABLE(pDraw, drawID, client, DixWriteAccess);\
+	SECURITY_VERIFY_GC(pGC, stuff->gc, client, DixReadAccess);\
 	if ((pGC->depth != pDraw->depth) ||\
 	    (pGC->pScreen != pDraw->pScreen))\
 	    return (BadMatch);\
-	client->lastDrawable = pDraw;\
-	client->lastDrawableID = drawID;\
-	client->lastGC = pGC;\
-	client->lastGCID = stuff->gc;\
-    }\
-    else\
-    {\
-        pGC = client->lastGC;\
-        pDraw = client->lastDrawable;\
     }\
     SET_DBE_DSTBUF(pDraw, drawID);\
     if (pGC->serialNumber != pDraw->serialNumber)\
@@ -274,12 +249,12 @@ SOFTWARE.
    if ((pClient)->swapped) \
       (*ReplySwapVector[((xReq *)(pClient)->requestBuffer)->reqType]) \
            (pClient, (int)(size), pReply); \
-      else (void) WriteToClient(pClient, (int)(size), (char *)(pReply)); }
+      else WriteToClient(pClient, (int)(size), (pReply)); }
 
 #define WriteSwappedDataToClient(pClient, size, pbuf) \
    if ((pClient)->swapped) \
       (*(pClient)->pSwapReplyFunc)(pClient, (int)(size), pbuf); \
-   else (void) WriteToClient (pClient, (int)(size), (char *)(pbuf));
+   else WriteToClient (pClient, (int)(size), (pbuf));
 
 typedef struct _TimeStamp *TimeStampPtr;
 
@@ -320,10 +295,8 @@ extern void UpdateCurrentTimeIf(void);
 
 extern void InitSelections(void);
 
-extern void FlushClientCaches(XID /*id*/);
-
 extern int dixDestroyPixmap(
-    pointer /*value*/,
+    void * /*value*/,
     XID /*pid*/);
 
 extern void CloseDownRetainedResources(void);
@@ -331,10 +304,10 @@ extern void CloseDownRetainedResources(void);
 extern void InitClient(
     ClientPtr /*client*/,
     int /*i*/,
-    pointer /*ospriv*/);
+    void * /*ospriv*/);
 
 extern ClientPtr NextAvailableClient(
-    pointer /*ospriv*/);
+    void * /*ospriv*/);
 
 extern void SendErrorToClient(
     ClientPtr /*client*/,
@@ -368,10 +341,6 @@ extern int DoGetImage(
     Mask /*planemask*/,
     xGetImageReply ** /*im_return*/);
 
-#ifdef LBX
-extern void IncrementClientCount(void);
-#endif /* LBX */
-
 #if defined(DDXBEFORERESET)
 extern void ddxBeforeReset (void);
 #endif
@@ -379,8 +348,8 @@ extern void ddxBeforeReset (void);
 /* dixutils.c */
 
 extern void CopyISOLatin1Lowered(
-    unsigned char * /*dest*/,
-    unsigned char * /*source*/,
+    char * /*dest*/,
+    const char * /*source*/,
     int /*length*/);
 
 extern int CompareISOLatin1Lowered(
@@ -396,7 +365,7 @@ extern WindowPtr SecurityLookupWindow(
     ClientPtr /*client*/,
     Mask /*access_mode*/);
 
-extern pointer SecurityLookupDrawable(
+extern void * SecurityLookupDrawable(
     XID /*rid*/,
     ClientPtr /*client*/,
     Mask /*access_mode*/);
@@ -405,7 +374,7 @@ extern WindowPtr LookupWindow(
     XID /*rid*/,
     ClientPtr /*client*/);
 
-extern pointer LookupDrawable(
+extern void * LookupDrawable(
     XID /*rid*/,
     ClientPtr /*client*/);
 
@@ -415,7 +384,7 @@ extern WindowPtr LookupWindow(
     XID /*rid*/,
     ClientPtr /*client*/);
 
-extern pointer LookupDrawable(
+extern void * LookupDrawable(
     XID /*rid*/,
     ClientPtr /*client*/);
 
@@ -444,27 +413,27 @@ extern void DeleteWindowFromAnySaveSet(
     WindowPtr /*pWin*/);
 
 extern void BlockHandler(
-    pointer /*pTimeout*/,
-    pointer /*pReadmask*/);
+    void * /*pTimeout*/,
+    void * /*pReadmask*/);
 
 extern void WakeupHandler(
     int /*result*/,
-    pointer /*pReadmask*/);
+    void * /*pReadmask*/);
 
 typedef void (* WakeupHandlerProcPtr)(
-    pointer /* blockData */,
+    void * /* blockData */,
     int /* result */,
-    pointer /* pReadmask */);
+    void * /* pReadmask */);
 
 extern Bool RegisterBlockAndWakeupHandlers(
     BlockHandlerProcPtr /*blockHandler*/,
     WakeupHandlerProcPtr /*wakeupHandler*/,
-    pointer /*blockData*/);
+    void * /*blockData*/);
 
 extern void RemoveBlockAndWakeupHandlers(
     BlockHandlerProcPtr /*blockHandler*/,
     WakeupHandlerProcPtr /*wakeupHandler*/,
-    pointer /*blockData*/);
+    void * /*blockData*/);
 
 extern void InitBlockAndWakeupHandlers(void);
 
@@ -475,19 +444,19 @@ extern void ProcessWorkQueueZombies(void);
 extern Bool QueueWorkProc(
     Bool (* /*function*/)(
         ClientPtr /*clientUnused*/,
-        pointer /*closure*/),
+        void * /*closure*/),
     ClientPtr /*client*/,
-    pointer /*closure*/
+    void * /*closure*/
 );
 
 typedef Bool (* ClientSleepProcPtr)(
     ClientPtr /*client*/,
-    pointer /*closure*/);
+    void * /*closure*/);
 
 extern Bool ClientSleep(
     ClientPtr /*client*/,
     ClientSleepProcPtr /* function */,
-    pointer /*closure*/);
+    void * /*closure*/);
 
 #ifndef ___CLIENTSIGNAL_DEFINED___
 #define ___CLIENTSIGNAL_DEFINED___
@@ -504,14 +473,14 @@ extern Bool ClientIsAsleep(
 /* atom.c */
 
 extern Atom MakeAtom(
-    char * /*string*/,
+    const char * /*string*/,
     unsigned /*len*/,
     Bool /*makeit*/);
 
 extern Bool ValidAtom(
     Atom /*atom*/);
 
-extern char *NameForAtom(
+extern const char *NameForAtom(
     Atom /*atom*/);
 
 extern void AtomError(void);
@@ -627,7 +596,7 @@ extern void RecalculateDeliverableEvents(
     WindowPtr /* pWin */);
 
 extern int OtherClientGone(
-    pointer /* value */,
+    void * /* value */,
     XID /* id */);
 
 extern void DoFocusEvents(
@@ -716,16 +685,16 @@ typedef struct _CallbackList *CallbackListPtr; /* also in misc.h */
 #endif
 
 typedef void (*CallbackProcPtr) (
-    CallbackListPtr *, pointer, pointer);
+    CallbackListPtr *, void *, void *);
 
 typedef Bool (*AddCallbackProcPtr) (
-    CallbackListPtr *, CallbackProcPtr, pointer);
+    CallbackListPtr *, CallbackProcPtr, void *);
 
 typedef Bool (*DeleteCallbackProcPtr) (
-    CallbackListPtr *, CallbackProcPtr, pointer);
+    CallbackListPtr *, CallbackProcPtr, void *);
 
 typedef void (*CallCallbacksProcPtr) (
-    CallbackListPtr *, pointer);
+    CallbackListPtr *, void *);
 
 typedef void (*DeleteCallbackListProcPtr) (
     CallbackListPtr *);
@@ -744,16 +713,16 @@ extern Bool CreateCallbackList(
 extern Bool AddCallback(
     CallbackListPtr * /*pcbl*/,
     CallbackProcPtr /*callback*/,
-    pointer /*data*/);
+    void * /*data*/);
 
 extern Bool DeleteCallback(
     CallbackListPtr * /*pcbl*/,
     CallbackProcPtr /*callback*/,
-    pointer /*data*/);
+    void * /*data*/);
 
 extern void CallCallbacks(
     CallbackListPtr * /*pcbl*/,
-    pointer /*call_data*/);
+    void * /*call_data*/);
 
 extern void DeleteCallbackList(
     CallbackListPtr * /*pcbl*/);

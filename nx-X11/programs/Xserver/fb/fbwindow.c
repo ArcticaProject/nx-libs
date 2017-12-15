@@ -1,4 +1,3 @@
-/* $XdotOrg: xc/programs/Xserver/fb/fbwindow.c,v 1.9 2005/10/02 08:28:26 anholt Exp $ */
 /*
  * Id: fbwindow.c,v 1.1 1999/11/02 03:54:45 keithp Exp $
  *
@@ -22,23 +21,21 @@
  * TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
-/* $XFree86: xc/programs/Xserver/fb/fbwindow.c,v 1.10tsi Exp $ */
 
 #ifdef HAVE_DIX_CONFIG_H
 #include <dix-config.h>
 #endif
 
+#include <stdlib.h>
+
 #include "fb.h"
-#ifdef IN_MODULE
-#include "xf86_ansic.h"
-#endif
 
 Bool
 fbCreateWindow(WindowPtr pWin)
 {
 #ifndef FB_NO_WINDOW_PIXMAPS
     pWin->devPrivates[fbWinPrivateIndex].ptr = 
-	(pointer) fbGetScreenPixmap(pWin->drawable.pScreen);
+	(void *) fbGetScreenPixmap(pWin->drawable.pScreen);
 #endif
 #ifdef FB_SCREEN_PRIVATE
     if (pWin->drawable.bitsPerPixel == 32)
@@ -132,15 +129,15 @@ fbCopyWindow(WindowPtr	    pWin,
 
     dx = ptOldOrg.x - pWin->drawable.x;
     dy = ptOldOrg.y - pWin->drawable.y;
-    REGION_TRANSLATE(pWin->drawable.pScreen, prgnSrc, -dx, -dy);
+    RegionTranslate(prgnSrc, -dx, -dy);
 
-    REGION_NULL (pWin->drawable.pScreen, &rgnDst);
+    RegionNull(&rgnDst);
     
-    REGION_INTERSECT(pWin->drawable.pScreen, &rgnDst, &pWin->borderClip, prgnSrc);
+    RegionIntersect(&rgnDst, &pWin->borderClip, prgnSrc);
 
 #ifdef COMPOSITE
     if (pPixmap->screen_x || pPixmap->screen_y)
-	REGION_TRANSLATE (pWin->drawable.pScreen, &rgnDst, 
+	RegionTranslate(&rgnDst,
 			  -pPixmap->screen_x, -pPixmap->screen_y);
 #endif
 
@@ -148,7 +145,7 @@ fbCopyWindow(WindowPtr	    pWin,
 		  0,
 		  &rgnDst, dx, dy, fbCopyWindowProc, 0, 0);
     
-    REGION_UNINIT(pWin->drawable.pScreen, &rgnDst);
+    RegionUninit(&rgnDst);
     fbValidateDrawable (&pWin->drawable);
 }
 
@@ -215,8 +212,8 @@ fbFillRegionSolid (DrawablePtr	pDrawable,
     FbStride	dstStride;
     int		dstBpp;
     int		dstXoff, dstYoff;
-    int		n = REGION_NUM_RECTS(pRegion);
-    BoxPtr	pbox = REGION_RECTS(pRegion);
+    int		n = RegionNumRects(pRegion);
+    BoxPtr	pbox = RegionRects(pRegion);
 
     fbGetDrawable (pDrawable, dst, dstStride, dstBpp, dstXoff, dstYoff);
     
@@ -251,10 +248,10 @@ fbFillRegionTiled (DrawablePtr	pDrawable,
     FbBits	*tile;
     FbStride	tileStride;
     int		tileBpp;
-    int		tileXoff, tileYoff; /* XXX assumed to be zero */
+    _X_UNUSED int		tileXoff, tileYoff; /* XXX assumed to be zero */
     int		tileWidth, tileHeight;
-    int		n = REGION_NUM_RECTS(pRegion);
-    BoxPtr	pbox = REGION_RECTS(pRegion);
+    int		n = RegionNumRects(pRegion);
+    BoxPtr	pbox = RegionRects(pRegion);
     int		xRot = pDrawable->x;
     int		yRot = pDrawable->y;
     
@@ -262,7 +259,7 @@ fbFillRegionTiled (DrawablePtr	pDrawable,
     if(!noPanoramiXExtension) 
     {
 	int index = pDrawable->pScreen->myNum;
-	if(&WindowTable[index]->drawable == pDrawable) 
+	if(&screenInfo.screens[index]->root->drawable == pDrawable)
 	{
 	    xRot -= panoramiXdataPtr[index].x;
 	    yRot -= panoramiXdataPtr[index].y;

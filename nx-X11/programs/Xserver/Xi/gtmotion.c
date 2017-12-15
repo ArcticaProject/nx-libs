@@ -1,4 +1,3 @@
-/* $Xorg: gtmotion.c,v 1.4 2001/02/09 02:04:34 xorgcvs Exp $ */
 
 /************************************************************
 
@@ -45,7 +44,6 @@ ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS
 SOFTWARE.
 
 ********************************************************/
-/* $XFree86: xc/programs/Xserver/Xi/gtmotion.c,v 3.6 2001/10/28 03:32:53 tsi Exp $ */
 
 /***********************************************************************
  *
@@ -53,17 +51,15 @@ SOFTWARE.
  *
  */
 
-#define	 NEED_EVENTS
-#define	 NEED_REPLIES
 #ifdef HAVE_DIX_CONFIG_H
 #include <dix-config.h>
 #endif
 
-#include <X11/X.h>				/* for inputstr.h    */
-#include <X11/Xproto.h>			/* Request macro     */
+#include <nx-X11/X.h>				/* for inputstr.h    */
+#include <nx-X11/Xproto.h>			/* Request macro     */
 #include "inputstr.h"			/* DeviceIntPtr	     */
-#include <X11/extensions/XI.h>
-#include <X11/extensions/XIproto.h>
+#include <nx-X11/extensions/XI.h>
+#include <nx-X11/extensions/XIproto.h>
 #include "extnsionst.h"
 #include "extinit.h"			/* LookupDeviceIntRec */
 #include "exevents.h"
@@ -81,13 +77,11 @@ int
 SProcXGetDeviceMotionEvents(client)
 register ClientPtr client;
     {
-    register char n;
-
     REQUEST(xGetDeviceMotionEventsReq);
-    swaps(&stuff->length, n);
+    swaps(&stuff->length);
     REQUEST_SIZE_MATCH(xGetDeviceMotionEventsReq);
-    swapl(&stuff->start, n);
-    swapl(&stuff->stop, n);
+    swapl(&stuff->start);
+    swapl(&stuff->stop);
     return(ProcXGetDeviceMotionEvents(client));
     }
 
@@ -153,7 +147,7 @@ ProcXGetDeviceMotionEvents(client)
     {
 	size = sizeof(Time) + (axes * sizeof (INT32));
 	tsize = num_events * size;
-	coords = (INT32 *) ALLOCATE_LOCAL(tsize);
+	coords = (INT32 *) malloc(tsize);
 	if (!coords)
 	    {
 	    SendErrorToClient(client, IReqCode, X_GetDeviceMotionEvents, 0, 
@@ -175,19 +169,17 @@ ProcXGetDeviceMotionEvents(client)
         {
 	if (client->swapped)
 	    {
-    	    register 	char n;
-
 	    bufptr = coords;
 	    for (i=0; i<nEvents * (axes+1); i++)
 		{
-    		swapl(bufptr, n);
+		swapl(bufptr);
 		bufptr++;
 		}
 	    }
-	WriteToClient(client, length * 4, (char *)coords);
+	WriteToClient(client, length * 4, coords);
         }
     if (coords)
-	DEALLOCATE_LOCAL(coords);
+	free(coords);
     return Success;
 }
 
@@ -204,10 +196,8 @@ SRepXGetDeviceMotionEvents (client, size, rep)
     int		size;
     xGetDeviceMotionEventsReply	*rep;
     {
-    register char n;
-
-    swaps(&rep->sequenceNumber, n);
-    swapl(&rep->length, n);
-    swapl(&rep->nEvents, n);
-    WriteToClient(client, size, (char *)rep);
+    swaps(&rep->sequenceNumber);
+    swapl(&rep->length);
+    swapl(&rep->nEvents);
+    WriteToClient(client, size, rep);
     }

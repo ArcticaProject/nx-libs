@@ -1,4 +1,3 @@
-/* $XFree86: xc/programs/Xserver/include/gc.h,v 1.5 2001/12/14 19:59:54 dawes Exp $ */
 /***********************************************************
 
 Copyright 1987, 1998  The Open Group
@@ -45,14 +44,27 @@ ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS
 SOFTWARE.
 
 ******************************************************************/
-/* $Xorg: gc.h,v 1.4 2001/02/09 02:05:15 xorgcvs Exp $ */
 
 #ifndef GC_H
 #define GC_H 
 
-#include <X11/X.h>	/* for GContext, Mask */
-#include <X11/Xdefs.h>	/* for Bool */
-#include <X11/Xproto.h>
+#include <nx-X11/X.h>	/* for GContext, Mask */
+
+#ifndef _XTYPEDEF_POINTER
+/* Don't let Xdefs.h define 'pointer' */
+#define _XTYPEDEF_POINTER       1
+#endif /* _XTYPEDEF_POINTER */
+
+/* FIXME: for building this code against Xlib versions older than apprx. 04/2014
+ * we still have to define the pointer type via Xdefs.h.
+ *
+ * The nx-libs code itself does not require the pointer definition.
+ */
+#undef _XTYPEDEF_POINTER
+
+#include <nx-X11/Xdefs.h>	/* for Bool */
+
+#include <nx-X11/Xproto.h>
 #include "screenint.h"	/* for ScreenPtr */
 #include "pixmap.h"	/* for DrawablePtr */
 
@@ -103,7 +115,7 @@ extern int DoChangeGC(
 
 typedef union {
     CARD32 val;
-    pointer ptr;
+    void * ptr;
 } ChangeGCVal, *ChangeGCValPtr;
 
 extern int dixChangeGC(
@@ -125,7 +137,7 @@ extern int CopyGC(
     BITS32 /*mask*/);
 
 extern int FreeGC(
-    pointer /*pGC*/,
+    void * /*pGC*/,
     XID /*gid*/);
 
 extern void SetGCMask(

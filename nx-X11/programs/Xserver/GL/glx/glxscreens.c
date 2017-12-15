@@ -1,4 +1,3 @@
-/* $XFree86: xc/programs/Xserver/GL/glx/glxscreens.c,v 1.14 2004/02/09 23:46:31 alanh Exp $ */
 /*
 ** License Applicability. Except to the extent portions of this file are
 ** made subject to an alternative license as permitted in the SGI Free
@@ -38,12 +37,8 @@
 #include <dix-config.h>
 #endif
 
-#ifdef IN_MODULE
-#include <xf86_ansic.h>
-#else
 #include <string.h>
 #include <signal.h>
-#endif
 
 #include <windowstr.h>
 
@@ -293,7 +288,7 @@ static void wrapPositionWindow(int screen)
 void __glXHyperpipeInit(int screen, __GLXHyperpipeExtensionFuncs *funcs)
 {
     if (__glXNumHyperpipeFuncs < screen + 1) {
-        __glXHyperpipeFuncs = __glXRealloc(__glXHyperpipeFuncs,
+        __glXHyperpipeFuncs = realloc(__glXHyperpipeFuncs,
                                            (screen+1) * sizeof(__GLXHyperpipeExtensionFuncs));
         __glXNumHyperpipeFuncs = screen + 1;
     }
@@ -311,7 +306,7 @@ void __glXHyperpipeInit(int screen, __GLXHyperpipeExtensionFuncs *funcs)
 void __glXSwapBarrierInit(int screen, __GLXSwapBarrierExtensionFuncs *funcs)
 {
     if (__glXNumSwapBarrierFuncs < screen + 1) {
-        __glXSwapBarrierFuncs = __glXRealloc(__glXSwapBarrierFuncs,
+        __glXSwapBarrierFuncs = realloc(__glXSwapBarrierFuncs,
                                            (screen+1) * sizeof(__GLXSwapBarrierExtensionFuncs));
         __glXNumSwapBarrierFuncs = screen + 1;
     }
@@ -332,7 +327,7 @@ void __glXScreenInit(GLint numscreens)
     ** This alloc has to work or else the server might as well core dump.
     */
     __glXActiveScreens =
-      (__GLXscreenInfo *) __glXMalloc(sizeof(__GLXscreenInfo) * numscreens);
+      (__GLXscreenInfo *) malloc(sizeof(__GLXscreenInfo) * numscreens);
     
     for (i=0; i < numscreens; i++) {
 	/*
@@ -343,10 +338,10 @@ void __glXScreenInit(GLint numscreens)
 		__glXActiveScreens[i] = *__glXScreens[j];
 
 		__glXActiveScreens[i].numUsableVisuals = __glXActiveScreens[i].numVisuals;
-		__glXActiveScreens[i].GLextensions = __glXStrdup(GLServerExtensions);
-		__glXActiveScreens[i].GLXvendor = __glXStrdup(GLXServerVendorName);
-		__glXActiveScreens[i].GLXversion = __glXStrdup(GLXServerVersion);
-		__glXActiveScreens[i].GLXextensions = __glXStrdup(GLXServerExtensions);
+		__glXActiveScreens[i].GLextensions = strdup(GLServerExtensions);
+		__glXActiveScreens[i].GLXvendor = strdup(GLXServerVendorName);
+		__glXActiveScreens[i].GLXversion = strdup(GLXServerVersion);
+		__glXActiveScreens[i].GLXextensions = strdup(GLXServerExtensions);
 
 		__glXDrawableRes = CreateNewResourceType((DeleteType)DrawableGone);
 		wrapPositionWindow(i);
@@ -361,14 +356,14 @@ void __glXScreenReset(void)
   int i;
 
   for (i = 0; i < __glXNumActiveScreens; i++) {
-      __glXFree(__glXActiveScreens[i].GLXvendor);
-      __glXFree(__glXActiveScreens[i].GLXversion);
-      __glXFree(__glXActiveScreens[i].GLXextensions);
-      __glXFree(__glXActiveScreens[i].GLextensions);
+      free(__glXActiveScreens[i].GLXvendor);
+      free(__glXActiveScreens[i].GLXversion);
+      free(__glXActiveScreens[i].GLXextensions);
+      free(__glXActiveScreens[i].GLextensions);
   }
-  xfree(__glXActiveScreens);
-  xfree(__glXHyperpipeFuncs);
-  xfree(__glXSwapBarrierFuncs);
+  free(__glXActiveScreens);
+  free(__glXHyperpipeFuncs);
+  free(__glXSwapBarrierFuncs);
   __glXNumHyperpipeFuncs = 0;
   __glXNumSwapBarrierFuncs = 0;
   __glXHyperpipeFuncs = NULL;

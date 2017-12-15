@@ -1,0 +1,892 @@
+--- ./nx-X11/programs/Xserver/hw/nxagent/X/NXdixfonts.c.X.original	2015-02-13 14:03:44.744441510 +0100
++++ ./nx-X11/programs/Xserver/hw/nxagent/X/NXdixfonts.c	2015-02-13 14:03:44.744441510 +0100
+@@ -1,3 +1,20 @@
++/**************************************************************************/
++/*                                                                        */
++/* Copyright (c) 2001, 2011 NoMachine, http://www.nomachine.com/.         */
++/*                                                                        */
++/* NXAGENT, NX protocol compression and NX extensions to this software    */
++/* are copyright of NoMachine. Redistribution and use of the present      */
++/* software is allowed according to terms specified in the file LICENSE   */
++/* which comes in the source distribution.                                */
++/*                                                                        */
++/* Check http://www.nomachine.com/licensing.html for applicability.       */
++/*                                                                        */
++/* NX and NoMachine are trademarks of Medialogic S.p.A.                   */
++/*                                                                        */
++/* All rights reserved.                                                   */
++/*                                                                        */
++/**************************************************************************/
++
+ /* $XdotOrg: xc/programs/Xserver/dix/dixfonts.c,v 1.8 2005/07/03 08:53:38 daniels Exp $ */
+ /* $XFree86: xc/programs/Xserver/dix/dixfonts.c,v 3.28 2003/11/08 02:02:03 dawes Exp $ */
+ /************************************************************************
+@@ -68,12 +85,84 @@
+ #include "dixfontstr.h"
+ #include "closestr.h"
+ 
++/*
++#define NXAGENT_DEBUG
++*/
++
+ #ifdef DEBUG
+ #include	<stdio.h>
+ #endif
+ 
++#include "Agent.h"
++#include "Font.h"
++
++#ifndef NX_TRANS_SOCKET
++
++#define NX_TRANS_SOCKET
++
++#endif
++
++#ifdef NX_TRANS_SOCKET
++
++char _NXFontPath[1024];
++
++/*
++ * Override the default font path and make
++ * it configurable at run time, based on
++ * the NX_FONT environment.
++ */
++
++static const char *_NXGetFontPath(const char *path)
++{
++  const char *fontEnv;
++
++    /*
++     * Check the environment only once.
++     */
++
++    if (*_NXFontPath != '\0')
++    {
++        return _NXFontPath;
++    }
++
++    fontEnv = getenv("NX_FONT");
++
++    if (fontEnv != NULL && *fontEnv != '\0')
++    {
++        if (strlen(fontEnv) + 1 > 1024)
++        {
++#ifdef NX_TRANS_TEST
++            fprintf(stderr, "_NXGetFontPath: WARNING! Maximum length of font path exceeded.\n");
++#endif
++            goto _NXGetFontPathError;
++        }
++
++        strcpy(_NXFontPath, fontEnv);
++
++#ifdef NX_TRANS_TEST
++        fprintf(stderr, "_NXGetFontPath: Using NX font path [%s].\n", _NXFontPath);
++#endif
++
++        return _NXFontPath;
++    }
++
++_NXGetFontPathError:
++
++    strncpy(_NXFontPath, path, 1023);
++    _NXFontPath[1023] = '\0';
++
++#ifdef NX_TRANS_TEST
++    fprintf(stderr, "_NXGetFontPath: Using default font path [%s].\n", _NXFontPath);
++#endif
++
++    return _NXFontPath;
++}
++
++#endif
++
+ #ifdef PANORAMIX
+-#include "panoramiX.h"
++#include "../../Xext/panoramiX.h"
++#include "../../Xext/panoramiXsrv.h"
+ #endif
+ 
+ #ifdef LBX
+@@ -245,6 +334,9 @@
+                *newname;
+     int         newlen;
+     int		aliascount = 20;
++    char nxagentOrigFontName[256];
++    int nxagentOrigFontNameLen;
++
+     /*
+      * Decide at runtime what FontFormat to use.
+      */
+@@ -276,6 +368,13 @@
+ 
+ 	BitmapFormatScanlineUnit8;
+ 
++
++    nxagentOrigFontNameLen = (c -> origFontNameLen < 256) ? c -> origFontNameLen : 255;
++
++    memcpy(nxagentOrigFontName, c -> origFontName, nxagentOrigFontNameLen);
++
++    nxagentOrigFontName[nxagentOrigFontNameLen] = 0;
++
+     if (client->clientGone)
+     {
+ 	if (c->current_fpe < c->num_fpes)
+@@ -324,6 +423,9 @@
+ 	    if (!c->slept) {
+ 		c->slept = TRUE;
+ 		ClientSleep(client, (ClientSleepProcPtr)doOpenFont, (pointer) c);
++#ifdef NXAGENT_DEBUG
++                fprintf(stderr, " NXdixfonts: doOpenFont: client [%lx] sleeping.\n", client);
++#endif
+ 	    }
+ 	    return TRUE;
+ 	}
+@@ -352,10 +454,15 @@
+ 	    pScr = screenInfo.screens[i];
+ 	    if (pScr->RealizeFont)
+ 	    {
+-		if (!(*pScr->RealizeFont) (pScr, pfont))
++
++                /* NXAGENT uses useless screen pointer to pass the original font name
++                *  to realizeFont, could be a source of problems in the future.
++                */
++
++		if (!(*pScr->RealizeFont) ((ScreenPtr)nxagentOrigFontName, pfont))
+ 		{
+ 		    CloseFont (pfont, (Font) 0);
+-		    err = AllocError;
++		    err=BadFontName;
+ 		    goto bail;
+ 		}
+ 	    }
+@@ -365,8 +472,19 @@
+ 	err = AllocError;
+ 	goto bail;
+     }
++    if( nxagentFontPriv(pfont) -> mirrorID == 0 )
++    {
++      extern RESTYPE RT_NX_FONT;
++
++      nxagentFontPriv(pfont) -> mirrorID = FakeClientID(0);
++      if (!AddResource(nxagentFontPriv(pfont) -> mirrorID, RT_NX_FONT, (pointer) pfont)) {
++        FreeResource(c->fontid, RT_NONE);
++        err = AllocError;
++        goto bail;
++      }
++    }
+     if (patternCache && pfont != c->non_cachable_font)
+-	CacheFontPattern(patternCache, c->origFontName, c->origFontNameLen,
++	CacheFontPattern(patternCache, nxagentOrigFontName, nxagentOrigFontNameLen,
+ 			 pfont);
+ bail:
+     if (err != Successful && c->client != serverClient) {
+@@ -374,7 +492,12 @@
+ 			  c->fontid, FontToXError(err));
+     }
+     if (c->slept)
++    {
+ 	ClientWakeup(c->client);
++#ifdef NXAGENT_DEBUG
++        fprintf(stderr, " NXdixfonts: doOpenFont: client [%lx] wakeup.\n", client);
++#endif
++    }
+     for (i = 0; i < c->num_fpes; i++) {
+ 	FreeFPE(c->fpe_list[i]);
+     }
+@@ -502,7 +625,10 @@
+ 	LbxFreeFontTag(pfont);
+ #endif
+ #ifdef XF86BIGFONT
+-	XF86BigfontFreeFontShm(pfont);
++        {
++           extern void XF86BigfontFreeFontShm(FontPtr);
++           XF86BigfontFreeFontShm(pfont);
++        }
+ #endif
+ 	fpe = pfont->fpe;
+ 	(*fpe_functions[fpe->type].close_font) (fpe, pfont);
+@@ -631,6 +757,9 @@
+ 		    ClientSleep(client,
+ 			(ClientSleepProcPtr)doListFontsAndAliases,
+ 			(pointer) c);
++#ifdef NXAGENT_DEBUG
++                    fprintf(stderr, " NXdixfonts: doListFont (1): client [%lx] sleeping.\n", client);
++#endif
+ 		}
+ 		return TRUE;
+ 	    }
+@@ -677,6 +806,12 @@
+ 				    (ClientSleepProcPtr)doListFontsAndAliases,
+ 				    (pointer) c);
+ 			c->slept = TRUE;
++#ifdef NXAGENT_DEBUG
++                        fprintf(stderr, " NXdixfonts: doListFont (2): client [%lx] sleeping.\n", client);
++#endif
++#ifdef NXAGENT_DEBUG
++                        fprintf(stderr, " NXdixfonts: doListFont (3): client [%lx] sleeping.\n", client);
++#endif
+ 		    }
+ 		    return TRUE;
+ 		}
+@@ -813,6 +948,24 @@
+ 	    reply.nFonts--;
+ 	else
+ 	{
++	    {
++	      /* dirty hack: don't list to client fonts not existing on the remote side */
++	      char tmp[256];
++
++	      memcpy(tmp, names->names[i], names->length[i]);
++	      tmp[ names->length[i] ] = 0;
++
++	      if (nxagentFontLookUp(tmp) == 0)
++		{
++#ifdef NXAGENT_FONTMATCH_DEBUG
++		  fprintf(stderr, "doListFontsAndAliases:\n");
++		  fprintf(stderr, "      removing font: %s \n", tmp);
++#endif
++		  reply.nFonts--;
++		  stringLens -= names->length[i];
++		  continue;
++		}
++	    }
+ 	    *bufptr++ = names->length[i];
+ 	    memmove( bufptr, names->names[i], names->length[i]);
+ 	    bufptr += names->length[i];
+@@ -827,7 +980,12 @@
+ 
+ bail:
+     if (c->slept)
++    {
+ 	ClientWakeup(client);
++#ifdef NXAGENT_DEBUG
++        fprintf(stderr, " NXdixfonts: doListFont: client [%lx] wakeup.\n", client);
++#endif
++    }
+     for (i = 0; i < c->num_fpes; i++)
+ 	FreeFPE(c->fpe_list[i]);
+     xfree(c->fpe_list);
+@@ -862,7 +1020,7 @@
+ 	xfree(c);
+ 	return BadAlloc;
+     }
+-    c->names = MakeFontNamesRecord(max_names < 100 ? max_names : 100);
++    c->names = MakeFontNamesRecord(max_names < nxagentMaxFontNames ? max_names : nxagentMaxFontNames);
+     if (!c->names)
+     {
+ 	xfree(c->fpe_list);
+@@ -933,6 +1091,9 @@
+  		{
+ 		    ClientSleep(client, (ClientSleepProcPtr)doListFontsWithInfo, c);
+ 		    c->slept = TRUE;
++#ifdef NXAGENT_DEBUG
++                    fprintf(stderr, " NXdixfonts: doListFontWinfo (1): client [%lx] sleeping.\n", client);
++#endif
+ 		}
+ 		return TRUE;
+ 	    }
+@@ -954,6 +1115,9 @@
+ 		    	     (ClientSleepProcPtr)doListFontsWithInfo,
+ 			     c);
+ 		    c->slept = TRUE;
++#ifdef NXAGENT_DEBUG
++                    fprintf(stderr, " NXdixfonts: doListFontWinfo (2): client [%lx] sleeping.\n", client);
++#endif
+ 		}
+ 		return TRUE;
+ 	    }
+@@ -1035,6 +1199,23 @@
+ 	}
+  	else if (err == Successful)
+  	{
++
++	    if (c->haveSaved)
++ 	    {
++		numFonts = c->savedNumFonts;
++		name = c->savedName;
++		namelen = strlen(name);
++	    }
++
++	   if (nxagentFontLookUp(name) == 0)
++	   {
++#ifdef NXAGENT_FONTMATCH_DEBUG
++	      fprintf(stderr, "doListFontsAndAliases (with info):\n");
++	      fprintf(stderr, "      removing font: %s \n", name);
++#endif
++	       continue;
++           }
++
+ 	    length = sizeof(*reply) + pFontInfo->nprops * sizeof(xFontProp);
+ 	    reply = c->reply;
+ 	    if (c->length < length)
+@@ -1048,12 +1229,6 @@
+ 		c->reply = reply;
+ 		c->length = length;
+ 	    }
+-	    if (c->haveSaved)
+- 	    {
+-		numFonts = c->savedNumFonts;
+-		name = c->savedName;
+-		namelen = strlen(name);
+-	    }
+ 	    reply->type = X_Reply;
+ 	    reply->length = (sizeof *reply - sizeof(xGenericReply) +
+ 			     pFontInfo->nprops * sizeof(xFontProp) +
+@@ -1100,7 +1275,12 @@
+     WriteSwappedDataToClient(client, length, &finalReply);
+ bail:
+     if (c->slept)
++    {
+ 	ClientWakeup(client);
++#ifdef NXAGENT_DEBUG
++        fprintf(stderr, " NXdixfonts: doListFontWinfo: client [%lx] wakeup.\n", client);
++#endif
++    }
+     for (i = 0; i < c->num_fpes; i++)
+ 	FreeFPE(c->fpe_list[i]);
+     xfree(c->reply);
+@@ -1347,6 +1527,11 @@
+ 			err = BadAlloc;
+ 			goto bail;
+ 		    }
++
++                    pGC->tileIsPixel = TRUE;
++                    pGC->tile.pixel = 0;
++                    pGC->stipple = NullPixmap;
++
+ 		    if ((err = CopyGC(c->pGC, pGC, GCFunction |
+ 				      GCPlaneMask | GCForeground |
+ 				      GCBackground | GCFillStyle |
+@@ -1371,6 +1556,9 @@
+ 		    ClientSleep(client,
+ 		    	     (ClientSleepProcPtr)doPolyText,
+ 			     (pointer) c);
++#ifdef NXAGENT_DEBUG
++                    fprintf(stderr, " NXdixfonts: doPolyText (1): client [%lx] sleeping.\n", client);
++#endif
+ 
+ 		    /* Set up to perform steps 3 and 4 */
+ 		    client_state = START_SLEEP;
+@@ -1419,6 +1607,9 @@
+     if (c->slept)
+     {
+ 	ClientWakeup(c->client);
++#ifdef NXAGENT_DEBUG
++        fprintf(stderr, " NXdixfonts: doPolytext: client [%lx] wakeup.\n", client);
++#endif
+ 	ChangeGC(c->pGC, clearGCmask, clearGC);
+ 
+ 	/* Unreference the font from the scratch GC */
+@@ -1535,6 +1726,11 @@
+ 		err = BadAlloc;
+ 		goto bail;
+ 	    }
++
++            pGC->tileIsPixel = TRUE;
++            pGC->tile.pixel = 0;
++            pGC->stipple = NullPixmap;
++
+ 	    if ((err = CopyGC(c->pGC, pGC, GCFunction | GCPlaneMask |
+ 			      GCForeground | GCBackground | GCFillStyle |
+ 			      GCTile | GCStipple | GCTileStipXOrigin |
+@@ -1553,6 +1749,10 @@
+ 
+ 	    c->slept = TRUE;
+             ClientSleep(client, (ClientSleepProcPtr)doImageText, (pointer) c);
++#ifdef NXAGENT_DEBUG
++            fprintf(stderr, " NXdixfonts: doImageText (1): client [%lx] sleeping.\n", client);
++#endif
++
+         }
+         return TRUE;
+     }
+@@ -1575,6 +1775,9 @@
+     if (c->slept)
+     {
+ 	ClientWakeup(c->client);
++#ifdef NXAGENT_DEBUG
++        fprintf(stderr, " NXdixfonts: doImageText: client [%lx] wakeup.\n", client);
++#endif
+ 	ChangeGC(c->pGC, clearGCmask, clearGC);
+ 
+ 	/* Unreference the font from the scratch GC */
+@@ -1751,11 +1954,13 @@
+ 		    err = (*fpe_functions[fpe->type].init_fpe) (fpe);
+ 		if (err != Successful)
+ 		{
++                    #ifndef NXAGENT_SERVER
+ 		    if (persist)
+ 		    {
+ 			ErrorF("Could not init font path element %s, removing from list!\n",
+ 			       fpe->name);
+ 		    }
++                    #endif
+ 		    xfree (fpe->name);
+ 		    xfree (fpe);
+ 		}
+@@ -1817,11 +2022,19 @@
+                 bad;
+ 
+     /* get enough for string, plus values -- use up commas */
++#ifdef NX_TRANS_SOCKET
++    len = strlen(_NXGetFontPath(path)) + 1;
++#else
+     len = strlen(path) + 1;
++#endif
+     nump = cp = newpath = (unsigned char *) ALLOCATE_LOCAL(len);
+     if (!newpath)
+ 	return BadAlloc;
++#ifdef NX_TRANS_SOCKET
++    pp = (unsigned char *) _NXGetFontPath(path);
++#else
+     pp = (unsigned char *) path;
++#endif
+     cp++;
+     while (*pp) {
+ 	if (*pp == ',') {
+@@ -2148,3 +2361,445 @@
+ }
+ 
+ #endif
++
++
++typedef struct
++{
++   LFclosurePtr c;
++   OFclosurePtr oc;
++} nxFs,*nxFsPtr;
++
++static Bool
++#if NeedFunctionPrototypes
++nxdoListFontsAndAliases(ClientPtr client, nxFsPtr fss)
++#else
++nxdoListFontsAndAliases(client, fss)
++    ClientPtr   client;
++    nxFsPtr fss;
++#endif
++{
++    LFclosurePtr c=fss->c;
++    OFclosurePtr oc=fss->oc;
++    FontPathElementPtr fpe;
++    int         err = Successful;
++    char       *name, *resolved=NULL;
++    int         namelen, resolvedlen;
++    int         i;
++    int		aliascount = 0;
++    char        tmp[256];
++    tmp[0]=0;
++    if (client->clientGone)
++    {
++	if (c->current.current_fpe < c->num_fpes)
++	{
++	    fpe = c->fpe_list[c->current.current_fpe];
++	    (*fpe_functions[fpe->type].client_died) ((pointer) client, fpe);
++	}
++	err = Successful;
++	goto bail;
++    }
++
++    if (!c->current.patlen)
++	goto finish;
++
++    while (c->current.current_fpe < c->num_fpes) {
++	fpe = c->fpe_list[c->current.current_fpe];
++	err = Successful;
++
++	if (!fpe_functions[fpe->type].start_list_fonts_and_aliases)
++	{
++	    /* This FPE doesn't support/require list_fonts_and_aliases */
++
++	    err = (*fpe_functions[fpe->type].list_fonts)
++		((pointer) c->client, fpe, c->current.pattern,
++		 c->current.patlen, c->current.max_names - c->names->nnames,
++		 c->names);
++
++	    if (err == Suspended) {
++		if (!c->slept) {
++		    c->slept = TRUE;
++		    ClientSleep(client,
++			(ClientSleepProcPtr)nxdoListFontsAndAliases,
++			(pointer) fss);
++#ifdef NXAGENT_DEBUG
++                    fprintf(stderr, " NXdixfonts: nxdoListFont (1): client [%lx] sleeping.\n", client);
++#endif
++		}
++		return TRUE;
++	    }
++
++	    err = BadFontName;
++	}
++	else
++	{
++	    /* Start of list_fonts_and_aliases functionality.  Modeled
++	       after list_fonts_with_info in that it resolves aliases,
++	       except that the information collected from FPEs is just
++	       names, not font info.  Each list_next_font_or_alias()
++	       returns either a name into name/namelen or an alias into
++	       name/namelen and its target name into resolved/resolvedlen.
++	       The code at this level then resolves the alias by polling
++	       the FPEs.  */
++
++	    if (!c->current.list_started) {
++		err = (*fpe_functions[fpe->type].start_list_fonts_and_aliases)
++		    ((pointer) c->client, fpe, c->current.pattern,
++		     c->current.patlen, c->current.max_names - c->names->nnames,
++		     &c->current.private);
++		if (err == Suspended) {
++		    if (!c->slept) {
++			ClientSleep(client,
++				    (ClientSleepProcPtr)nxdoListFontsAndAliases,
++				    (pointer) fss);
++			c->slept = TRUE;
++#ifdef NXAGENT_DEBUG
++                        fprintf(stderr, " NXdixfonts: nxdoListFont (2): client [%lx] sleeping.\n", client);
++#endif
++		    }
++		    return TRUE;
++		}
++		if (err == Successful)
++		    c->current.list_started = TRUE;
++	    }
++	    if (err == Successful) {
++		char    *tmpname;
++		name = 0;
++		err = (*fpe_functions[fpe->type].list_next_font_or_alias)
++		    ((pointer) c->client, fpe, &name, &namelen, &tmpname,
++		     &resolvedlen, c->current.private);
++		if (err == Suspended) {
++		    if (!c->slept) {
++			ClientSleep(client,
++				    (ClientSleepProcPtr)nxdoListFontsAndAliases,
++				    (pointer) fss);
++			c->slept = TRUE;
++#ifdef NXAGENT_DEBUG
++                        fprintf(stderr, " NXdixfonts: nxdoListFont (3): client [%lx] sleeping.\n", client);
++#endif
++		    }
++		    return TRUE;
++		}
++		if (err == FontNameAlias) {
++		    if (resolved) xfree(resolved);
++		    resolved = (char *) xalloc(resolvedlen + 1);
++		    if (resolved)
++                    {
++                        memmove(resolved, tmpname, resolvedlen);
++                        resolved[resolvedlen] = '\0';
++                    }
++		}
++	    }
++
++	    if (err == Successful)
++	    {
++		if (c->haveSaved)
++		{
++		    if (c->savedName)
++		    {
++		       memcpy(tmp,c->savedName,c->savedNameLen>255?255:c->savedNameLen);
++		       tmp[c->savedNameLen>255?256:c->savedNameLen]=0;
++		       if (nxagentFontLookUp(tmp))
++		          break;
++			else tmp[0]=0;
++		    }
++		}
++		else
++		{
++		   memcpy(tmp,name,namelen>255?255:namelen);
++		   tmp[namelen>255?256:namelen]=0;
++		   if (nxagentFontLookUp(tmp))
++		      break;
++		   else tmp[0]=0;
++		}
++	    }
++
++	    /*
++	     * When we get an alias back, save our state and reset back to
++	     * the start of the FPE looking for the specified name.  As
++	     * soon as a real font is found for the alias, pop back to the
++	     * old state
++	     */
++	    else if (err == FontNameAlias) {
++		char	tmp_pattern[XLFDMAXFONTNAMELEN];
++		/*
++		 * when an alias recurses, we need to give
++		 * the last FPE a chance to clean up; so we call
++		 * it again, and assume that the error returned
++		 * is BadFontName, indicating the alias resolution
++		 * is complete.
++		 */
++		memmove(tmp_pattern, resolved, resolvedlen);
++		if (c->haveSaved)
++		{
++		    char    *tmpname;
++		    int     tmpnamelen;
++
++		    tmpname = 0;
++		    (void) (*fpe_functions[fpe->type].list_next_font_or_alias)
++			((pointer) c->client, fpe, &tmpname, &tmpnamelen,
++			 &tmpname, &tmpnamelen, c->current.private);
++		    if (--aliascount <= 0)
++		    {
++			err = BadFontName;
++			goto ContBadFontName;
++		    }
++		}
++		else
++		{
++		    c->saved = c->current;
++		    c->haveSaved = TRUE;
++		    if (c->savedName)
++			xfree(c->savedName);
++		    c->savedName = (char *)xalloc(namelen + 1);
++		    if (c->savedName)
++                    {
++                        memmove(c->savedName, name, namelen);
++                        c->savedName[namelen] = '\0';
++                    }
++		    c->savedNameLen = namelen;
++		    aliascount = 20;
++		}
++		memmove(c->current.pattern, tmp_pattern, resolvedlen);
++		c->current.patlen = resolvedlen;
++		c->current.max_names = c->names->nnames + 1;
++		c->current.current_fpe = -1;
++		c->current.private = 0;
++		err = BadFontName;
++	    }
++	}
++	/*
++	 * At the end of this FPE, step to the next.  If we've finished
++	 * processing an alias, pop state back. If we've collected enough
++	 * font names, quit.
++	 */
++	if (err == BadFontName) {
++	  ContBadFontName: ;
++	    c->current.list_started = FALSE;
++	    c->current.current_fpe++;
++	    err = Successful;
++	    if (c->haveSaved)
++	    {
++		if (c->names->nnames == c->current.max_names ||
++			c->current.current_fpe == c->num_fpes) {
++		    c->haveSaved = FALSE;
++		    c->current = c->saved;
++		    /* Give the saved namelist a chance to clean itself up */
++		    continue;
++		}
++	    }
++	    if (c->names->nnames == c->current.max_names)
++		break;
++	}
++    }
++
++    /*
++     * send the reply
++     */
++bail:
++finish:
++    if (strlen(tmp))
++    {
++#ifdef NXAGENT_FONTMATCH_DEBUG
++      fprintf(stderr, "nxListFont changed (0) font to %s\n",tmp);
++#endif
++      memcpy(oc->fontname, tmp, strlen(tmp));
++      oc->fnamelen = strlen(tmp);
++
++      oc->origFontName = oc->fontname;
++      oc->origFontNameLen = oc->fnamelen;
++
++    }
++    else
++    {
++        for (i = 0; i < c->names->nnames; i++)
++	{
++	  if (c->names->length[i] > 255)
++	     continue;
++	  else
++	  {
++	      memcpy(tmp, c->names->names[i], c->names->length[i]);
++	      tmp[ c->names->length[i] ] = 0;
++	      if (nxagentFontLookUp(tmp) == 0)
++		continue;
++	      memcpy(oc->fontname, tmp, strlen(tmp));
++	      oc->fnamelen = strlen(tmp);
++
++              oc->origFontName = oc->fontname;
++              oc->origFontNameLen = oc->fnamelen;
++
++#ifdef NXAGENT_FONTMATCH_DEBUG
++	      fprintf(stderr, "nxListFont changed (1) font to %s\n",tmp);
++#endif
++	      break;
++	  }
++	}
++    }
++
++    if (c->slept)
++    {
++       ClientWakeup(client);
++#ifdef NXAGENT_DEBUG
++       fprintf(stderr, " NXdixfonts: nxdoListFont: client [%lx] wakeup.\n", client);
++#endif
++    }
++    for (i = 0; i < c->num_fpes; i++)
++	FreeFPE(c->fpe_list[i]);
++    xfree(c->fpe_list);
++    if (c->savedName) xfree(c->savedName);
++    FreeFontNames(c->names);
++    xfree(c);
++    xfree(fss);
++    if (resolved) xfree(resolved);
++
++    return doOpenFont(client, oc);
++}
++
++int
++nxOpenFont(client, fid, flags, lenfname, pfontname)
++    ClientPtr   client;
++    XID         fid;
++    Mask        flags;
++    unsigned    lenfname;
++    char       *pfontname;
++{
++    nxFsPtr      fss;
++    LFclosurePtr c;
++    OFclosurePtr oc;
++    int         i;
++    FontPtr     cached = (FontPtr)0;
++
++#ifdef FONTDEBUG
++    char *f;
++    f = (char *)xalloc(lenfname + 1);
++    memmove(f, pfontname, lenfname);
++    f[lenfname] = '\0';
++    ErrorF("OpenFont: fontname is \"%s\"\n", f);
++    xfree(f);
++#endif
++    if (!lenfname || lenfname > XLFDMAXFONTNAMELEN)
++	return BadName;
++    if (patternCache)
++    {
++
++    /*
++    ** Check name cache.  If we find a cached version of this font that
++    ** is cachable, immediately satisfy the request with it.  If we find
++    ** a cached version of this font that is non-cachable, we do not
++    ** satisfy the request with it.  Instead, we pass the FontPtr to the
++    ** FPE's open_font code (the fontfile FPE in turn passes the
++    ** information to the rasterizer; the fserve FPE ignores it).
++    **
++    ** Presumably, the font is marked non-cachable because the FPE has
++    ** put some licensing restrictions on it.  If the FPE, using
++    ** whatever logic it relies on, determines that it is willing to
++    ** share this existing font with the client, then it has the option
++    ** to return the FontPtr we passed it as the newly-opened font.
++    ** This allows the FPE to exercise its licensing logic without
++    ** having to create another instance of a font that already exists.
++    */
++
++	cached = FindCachedFontPattern(patternCache, pfontname, lenfname);
++	if (cached && cached->info.cachable)
++	{
++	    if (!AddResource(fid, RT_FONT, (pointer) cached))
++		return BadAlloc;
++	    cached->refcnt++;
++	    return Success;
++	}
++    }
++    if (!(fss = (nxFsPtr) xalloc(sizeof(nxFs))))
++        return BadAlloc;
++
++    if (!(c = (LFclosurePtr) xalloc(sizeof *c)))
++    {
++	xfree(fss);
++	return BadAlloc;
++    }
++        c->fpe_list = (FontPathElementPtr *)
++	xalloc(sizeof(FontPathElementPtr) * num_fpes);
++    if (!c->fpe_list) {
++	xfree(c);
++	xfree(fss);
++	return BadAlloc;
++    }
++    c->names = MakeFontNamesRecord(100);
++    if (!c->names)
++    {
++	xfree(c->fpe_list);
++	xfree(c);
++	xfree(fss);
++	return BadAlloc;
++    }
++    memmove( c->current.pattern, pfontname, lenfname);
++    for (i = 0; i < num_fpes; i++) {
++	c->fpe_list[i] = font_path_elements[i];
++	UseFPE(c->fpe_list[i]);
++    }
++    c->client = client;
++    c->num_fpes = num_fpes;
++    c->current.patlen = lenfname;
++    c->current.current_fpe = 0;
++    c->current.max_names = nxagentMaxFontNames;
++    c->current.list_started = FALSE;
++    c->current.private = 0;
++    c->haveSaved = FALSE;
++    c->slept = FALSE;
++    c->savedName = 0;
++
++    oc = (OFclosurePtr) xalloc(sizeof(OFclosureRec));
++    if (!oc)
++    {
++      for (i = 0; i < c->num_fpes; i++)
++        FreeFPE(c->fpe_list[i]);
++      xfree(c->fpe_list);
++      xfree(c);
++      xfree(fss);
++      return BadAlloc;
++    }
++    oc->fontname = (char *) xalloc(256);/* I don't want to deal with future reallocs errors */
++    oc->origFontName = pfontname;
++    oc->origFontNameLen = lenfname;
++    if (!oc->fontname) {
++      for (i = 0; i < c->num_fpes; i++)
++        FreeFPE(c->fpe_list[i]);
++      xfree(c->fpe_list);
++      xfree(c);
++      xfree(oc);
++      xfree(fss);
++      return BadAlloc;
++    }
++    /*
++     * copy the current FPE list, so that if it gets changed by another client
++     * while we're blocking, the request still appears atomic
++     */
++    oc->fpe_list = (FontPathElementPtr *)
++	xalloc(sizeof(FontPathElementPtr) * num_fpes);
++    if (!oc->fpe_list) {
++	xfree(oc->fontname);
++	xfree(oc);
++      for (i = 0; i < c->num_fpes; i++)
++         FreeFPE(c->fpe_list[i]);
++       xfree(c->fpe_list);
++       xfree(c);
++       xfree(fss);
++       return BadAlloc;
++    }
++    memmove(oc->fontname, pfontname, lenfname);
++    for (i = 0; i < num_fpes; i++) {
++	oc->fpe_list[i] = font_path_elements[i];
++	UseFPE(oc->fpe_list[i]);
++    }
++    oc->client = client;
++    oc->fontid = fid;
++    oc->current_fpe = 0;
++    oc->num_fpes = num_fpes;
++    oc->fnamelen = lenfname;
++    oc->slept = FALSE;
++    oc->flags = flags;
++    oc->non_cachable_font = cached;
++    fss->c=c;
++    fss->oc=oc;
++    nxdoListFontsAndAliases(client, fss);
++    return Success;
++}
++

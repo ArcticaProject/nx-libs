@@ -1,23 +1,25 @@
-#ifdef NXAGENT_UPGRADE
-
-#include "X/NXglyphcurs.c"
-
-#else
-
 /**************************************************************************/
 /*                                                                        */
-/* Copyright (c) 2001, 2011 NoMachine, http://www.nomachine.com/.         */
+/* Copyright (c) 2001, 2011 NoMachine (http://www.nomachine.com)          */
+/* Copyright (c) 2008-2014 Oleksandr Shneyder <o.shneyder@phoca-gmbh.de>  */
+/* Copyright (c) 2011-2016 Mike Gabriel <mike.gabriel@das-netzwerkteam.de>*/
+/* Copyright (c) 2014-2016 Mihai Moldovan <ionic@ionic.de>                */
+/* Copyright (c) 2014-2016 Ulrich Sibiller <uli42@gmx.de>                 */
+/* Copyright (c) 2015-2016 Qindel Group (http://www.qindel.com)           */
 /*                                                                        */
 /* NXAGENT, NX protocol compression and NX extensions to this software    */
-/* are copyright of NoMachine. Redistribution and use of the present      */
-/* software is allowed according to terms specified in the file LICENSE   */
-/* which comes in the source distribution.                                */
+/* are copyright of the aforementioned persons and companies.             */
 /*                                                                        */
-/* Check http://www.nomachine.com/licensing.html for applicability.       */
-/*                                                                        */
-/* NX and NoMachine are trademarks of Medialogic S.p.A.                   */
+/* Redistribution and use of the present software is allowed according    */
+/* to terms specified in the file LICENSE which comes in the source       */
+/* distribution.                                                          */
 /*                                                                        */
 /* All rights reserved.                                                   */
+/*                                                                        */
+/* NOTE: This software has received contributions from various other      */
+/* contributors, only the core maintainers and supporters are listed as   */
+/* copyright holders. Please contact us, if you feel you should be listed */
+/* as copyright holder, as well.                                          */
 /*                                                                        */
 /**************************************************************************/
 
@@ -68,18 +70,8 @@ SOFTWARE.
 
 ************************************************************************/
 
-/* $Xorg: glyphcurs.c,v 1.4 2001/02/09 02:04:40 xorgcvs Exp $ */
 
-#include "misc.h"
-#include "fontstruct.h"
-#include "dixfontstr.h"
-#include "scrnintstr.h"
-#include "gcstruct.h"
-#include "resource.h"
-#include "dix.h"
-#include "cursorstr.h"
-#include "opaque.h"
-#include "servermd.h"
+#include "../../dix/glyphcurs.c"
 
 #include "../../fb/fb.h"
 #include "Pixmaps.h"
@@ -100,11 +92,7 @@ cursor metrics.
 */
 
 int
-ServerBitsFromGlyph(pfont, ch, cm, ppbits)
-    FontPtr	pfont;
-    unsigned int ch;
-    register CursorMetricPtr cm;
-    unsigned char **ppbits;
+ServerBitsFromGlyph(FontPtr pfont, unsigned ch, register CursorMetricPtr cm, unsigned char **ppbits)
 {
     register ScreenPtr pScreen;
     register GCPtr pGC;
@@ -112,7 +100,6 @@ ServerBitsFromGlyph(pfont, ch, cm, ppbits)
     PixmapPtr ppix;
     long nby;
     char *pbits;
-    ChangeGCVal gcval[3];
     unsigned char char2b[2];
 
     /* turn glyph index into a protocol-format char2b */
@@ -121,13 +108,14 @@ ServerBitsFromGlyph(pfont, ch, cm, ppbits)
 
     pScreen = screenInfo.screens[0];
     nby = BitmapBytePad(cm->width) * (long)cm->height;
-    pbits = (char *)xalloc(nby);
+    pbits = (char *)malloc(nby);
     if (!pbits)
 	return BadAlloc;
     /* zeroing the (pad) bits seems to help some ddx cursor handling */
     bzero(pbits, nby);
 
-    ppix = fbCreatePixmap(pScreen, cm->width, cm->height, 1);
+    ppix = fbCreatePixmap(pScreen, cm->width, cm->height, 1,
+                          CREATE_PIXMAP_USAGE_SCRATCH);
     pGC = GetScratchGC(1, pScreen);
     if (!ppix || !pGC)
     {
@@ -135,7 +123,7 @@ ServerBitsFromGlyph(pfont, ch, cm, ppbits)
 	    fbDestroyPixmap(ppix);
 	if (pGC)
 	    FreeScratchGC(pGC);
-	xfree(pbits);
+	free(pbits);
 	return BadAlloc;
     }
 
@@ -171,7 +159,6 @@ ServerBitsFromGlyph(pfont, ch, cm, ppbits)
     fbPolyFillRect((DrawablePtr)ppix, pGC, 1, &rect);
 
     /* draw the glyph */
-    gcval[0].val = 1;
     pGC->fgPixel = 1;
 
     pGC->stateChanges |= GCForeground;
@@ -191,62 +178,3 @@ ServerBitsFromGlyph(pfont, ch, cm, ppbits)
 
     return Success;
 }
-
-
-Bool
-CursorMetricsFromGlyph( pfont, ch, cm)
-    register FontPtr 	pfont;
-    unsigned		ch;
-    register CursorMetricPtr cm;
-{
-    CharInfoPtr 	pci;
-    unsigned long	nglyphs;
-    CARD8		chs[2];
-    FontEncoding	encoding;
-
-    chs[0] = ch >> 8;
-    chs[1] = ch;
-    encoding = (FONTLASTROW(pfont) == 0) ? Linear16Bit : TwoD16Bit;
-    if (encoding == Linear16Bit)
-    {
-	if (ch < pfont->info.firstCol || pfont->info.lastCol < ch)
-	    return FALSE;
-    }
-    else
-    {
-	if (chs[0] < pfont->info.firstRow || pfont->info.lastRow < chs[0])
-	    return FALSE;
-	if (chs[1] < pfont->info.firstCol || pfont->info.lastCol < chs[1])
-	    return FALSE;
-    }
-    (*pfont->get_glyphs) (pfont, 1, chs, encoding, &nglyphs, &pci);
-    if (nglyphs == 0)
-	return FALSE;
-    cm->width = pci->metrics.rightSideBearing - pci->metrics.leftSideBearing;
-    cm->height = pci->metrics.descent + pci->metrics.ascent;
-    if (pci->metrics.leftSideBearing > 0)
-    {
-	cm->width += pci->metrics.leftSideBearing;
-	cm->xhot = 0;
-    }
-    else
-    {
-	cm->xhot = -pci->metrics.leftSideBearing;
-	if (pci->metrics.rightSideBearing < 0)
-	    cm->width -= pci->metrics.rightSideBearing;
-    }
-    if (pci->metrics.ascent < 0)
-    {
-	cm->height -= pci->metrics.ascent;
-	cm->yhot = 0;
-    }
-    else
-    {
-	cm->yhot = pci->metrics.ascent;
-	if (pci->metrics.descent < 0)
-	    cm->height -= pci->metrics.descent;
-    }
-    return TRUE;
-}
-
-#endif /* #ifdef NXAGENT_UPGRADE */

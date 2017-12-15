@@ -1,4 +1,3 @@
-/* $XFree86: xc/programs/Xserver/GL/glx/single2swap.c,v 1.7 2002/01/14 22:47:08 tsi Exp $ */
 /*
 ** License Applicability. Except to the extent portions of this file are
 ** made subject to an alternative license as permitted in the SGI Free
@@ -34,7 +33,6 @@
 **
 */
 
-#define NEED_REPLIES
 #ifdef HAVE_DIX_CONFIG_H
 #include <dix-config.h>
 #endif
@@ -44,16 +42,17 @@
 #include "glxext.h"
 #include "unpack.h"
 #include "g_disptab.h"
-#include "GL/glx_ansic.h"
 
 int __glXDispSwap_FeedbackBuffer(__GLXclientState *cl, GLbyte *pc)
 {
+    ClientPtr client = cl->client;
     GLsizei size;
     GLenum type;
     __GLX_DECLARE_SWAP_VARIABLES;
     __GLXcontext *cx;
     int error;
 
+    REQUEST_FIXED_SIZE(xGLXSingleReq, 8);
     __GLX_SWAP_INT(&((xGLXSingleReq *)pc)->contextTag);
     cx = __glXForceCurrent(cl, __GLX_GET_SINGLE_CONTEXT_TAG(pc), &error);
     if (!cx) {
@@ -66,7 +65,7 @@ int __glXDispSwap_FeedbackBuffer(__GLXclientState *cl, GLbyte *pc)
     size = *(GLsizei *)(pc+0);
     type = *(GLenum *)(pc+4);
     if (cx->feedbackBufSize < size) {
-	cx->feedbackBuf = (GLfloat *) __glXRealloc(cx->feedbackBuf,
+	cx->feedbackBuf = (GLfloat *) realloc(cx->feedbackBuf,
 						   (size_t) size 
 						   * __GLX_SIZE_FLOAT32);
 	if (!cx->feedbackBuf) {
@@ -82,11 +81,13 @@ int __glXDispSwap_FeedbackBuffer(__GLXclientState *cl, GLbyte *pc)
 
 int __glXDispSwap_SelectBuffer(__GLXclientState *cl, GLbyte *pc)
 {
+    ClientPtr client = cl->client;
     __GLXcontext *cx;
     GLsizei size;
     __GLX_DECLARE_SWAP_VARIABLES;
     int error;
 
+    REQUEST_FIXED_SIZE(xGLXSingleReq, 4);
     __GLX_SWAP_INT(&((xGLXSingleReq *)pc)->contextTag);
     cx = __glXForceCurrent(cl, __GLX_GET_SINGLE_CONTEXT_TAG(pc), &error);
     if (!cx) {
@@ -97,7 +98,7 @@ int __glXDispSwap_SelectBuffer(__GLXclientState *cl, GLbyte *pc)
     __GLX_SWAP_INT(pc+0);
     size = *(GLsizei *)(pc+0);
     if (cx->selectBufSize < size) {
-	cx->selectBuf = (GLuint *) __glXRealloc(cx->selectBuf,
+	cx->selectBuf = (GLuint *) realloc(cx->selectBuf,
 						(size_t) size 
 						* __GLX_SIZE_CARD32);
 	if (!cx->selectBuf) {
@@ -113,7 +114,7 @@ int __glXDispSwap_SelectBuffer(__GLXclientState *cl, GLbyte *pc)
 
 int __glXDispSwap_RenderMode(__GLXclientState *cl, GLbyte *pc)
 {
-    ClientPtr client;
+    ClientPtr client = cl->client;
     __GLXcontext *cx;
     xGLXRenderModeReply reply;
     GLint nitems=0, retBytes=0, retval, newModeCheck;
@@ -122,6 +123,8 @@ int __glXDispSwap_RenderMode(__GLXclientState *cl, GLbyte *pc)
     __GLX_DECLARE_SWAP_VARIABLES;
     __GLX_DECLARE_SWAP_ARRAY_VARIABLES;
     int error;
+
+    REQUEST_FIXED_SIZE(xGLXSingleReq, 4);
 
     __GLX_SWAP_INT(&((xGLXSingleReq *)pc)->contextTag);
     cx = __glXForceCurrent(cl, __GLX_GET_SINGLE_CONTEXT_TAG(pc), &error);
@@ -201,7 +204,6 @@ int __glXDispSwap_RenderMode(__GLXclientState *cl, GLbyte *pc)
     ** selection array, as per the API for glRenderMode itself.
     */
   noChangeAllowed:;
-    client = cl->client;
     reply.length = nitems;
     reply.type = X_Reply;
     reply.sequenceNumber = client->sequence;
@@ -213,19 +215,21 @@ int __glXDispSwap_RenderMode(__GLXclientState *cl, GLbyte *pc)
     __GLX_SWAP_INT(&reply.retval);
     __GLX_SWAP_INT(&reply.size);
     __GLX_SWAP_INT(&reply.newMode);
-    WriteToClient(client, sz_xGLXRenderModeReply, (char *)&reply);
+    WriteToClient(client, sz_xGLXRenderModeReply, &reply);
     if (retBytes) {
-	WriteToClient(client, retBytes, (char *)retBuffer);
+	WriteToClient(client, retBytes, retBuffer);
     }
     return Success;
 }
 
 int __glXDispSwap_Flush(__GLXclientState *cl, GLbyte *pc)
 {
+    ClientPtr client = cl->client;
 	__GLXcontext *cx;
 	int error;
 	__GLX_DECLARE_SWAP_VARIABLES;
 
+	REQUEST_SIZE_MATCH(xGLXSingleReq);
 	__GLX_SWAP_INT(&((xGLXSingleReq *)pc)->contextTag);
 	cx = __glXForceCurrent(cl, __GLX_GET_SINGLE_CONTEXT_TAG(pc), &error);
 	if (!cx) {
@@ -239,11 +243,12 @@ int __glXDispSwap_Flush(__GLXclientState *cl, GLbyte *pc)
 
 int __glXDispSwap_Finish(__GLXclientState *cl, GLbyte *pc)
 {
+    ClientPtr client = cl->client;
     __GLXcontext *cx;
-    ClientPtr client;
     int error;
     __GLX_DECLARE_SWAP_VARIABLES;
 
+    REQUEST_SIZE_MATCH(xGLXSingleReq);
     __GLX_SWAP_INT(&((xGLXSingleReq *)pc)->contextTag);
     cx = __glXForceCurrent(cl, __GLX_GET_SINGLE_CONTEXT_TAG(pc), &error);
     if (!cx) {
@@ -255,7 +260,6 @@ int __glXDispSwap_Finish(__GLXclientState *cl, GLbyte *pc)
     __GLX_NOTE_FLUSHED_CMDS(cx);
 
     /* Send empty reply packet to indicate finish is finished */
-    client = cl->client;
     __GLX_BEGIN_REPLY(0);
     __GLX_PUT_RETVAL(0);
     __GLX_SWAP_REPLY_HEADER();

@@ -4,7 +4,6 @@
  * machine independent software sprite routines
  */
 
-/* $Xorg: misprite.c,v 1.4 2001/02/09 02:05:22 xorgcvs Exp $ */
 
 /*
 
@@ -30,14 +29,13 @@ Except as contained in this notice, the name of The Open Group shall not be
 used in advertising or otherwise to promote the sale, use or other dealings
 in this Software without prior written authorization from The Open Group.
 */
-/* $XFree86: xc/programs/Xserver/mi/misprite.c,v 3.10tsi Exp $ */
 
 #ifdef HAVE_DIX_CONFIG_H
 #include <dix-config.h>
 #endif
 
-# include   <X11/X.h>
-# include   <X11/Xproto.h>
+# include   <nx-X11/X.h>
+# include   <nx-X11/Xproto.h>
 # include   "misc.h"
 # include   "pixmapstr.h"
 # include   "input.h"
@@ -72,7 +70,7 @@ in this Software without prior written authorization from The Open Group.
 static int  miSpriteScreenIndex;
 static unsigned long miSpriteGeneration = 0;
 
-static Bool	    miSpriteCloseScreen(int i, ScreenPtr pScreen);
+static Bool	    miSpriteCloseScreen(ScreenPtr pScreen);
 static void	    miSpriteGetImage(DrawablePtr pDrawable, int sx, int sy,
 				     int w, int h, unsigned int format,
 				     unsigned long planemask, char *pdstLine);
@@ -84,9 +82,9 @@ static void	    miSpriteSourceValidate(DrawablePtr pDrawable, int x, int y,
 static void	    miSpriteCopyWindow (WindowPtr pWindow,
 					DDXPointRec ptOldOrg,
 					RegionPtr prgnSrc);
-static void	    miSpriteBlockHandler(int i, pointer blockData,
-					 pointer pTimeout,
-					 pointer pReadMask);
+static void	    miSpriteBlockHandler(int i, void * blockData,
+					 void * pTimeout,
+					 void * pReadMask);
 static void	    miSpriteInstallColormap(ColormapPtr pMap);
 static void	    miSpriteStoreColors(ColormapPtr pMap, int ndef,
 					xColorItem *pdef);
@@ -104,7 +102,7 @@ static void	    miSpriteComputeSaved(ScreenPtr pScreen);
     ((pScreen)->field = wrapper)
 
 /*
- * pointer-sprite method table
+ * void *-sprite method table
  */
 
 static Bool miSpriteRealizeCursor(ScreenPtr pScreen, CursorPtr pCursor);
@@ -136,7 +134,7 @@ miSpriteReportDamage (DamagePtr pDamage, RegionPtr pRegion, void *closure)
     pScreenPriv = (miSpriteScreenPtr) pScreen->devPrivates[miSpriteScreenIndex].ptr;
     
     if (pScreenPriv->isUp &&
-	RECT_IN_REGION (pScreen, pRegion, &pScreenPriv->saved) != rgnOUT)
+	RegionContainsRect(pRegion, &pScreenPriv->saved) != rgnOUT)
     {
 	SPRITE_DEBUG(("Damage remove\n"));
 	miSpriteRemoveCursor (pScreen);
@@ -169,7 +167,7 @@ miSpriteInitialize (pScreen, cursorFuncs, screenFuncs)
 	miSpriteGeneration = serverGeneration;
     }
     
-    pScreenPriv = (miSpriteScreenPtr) xalloc (sizeof (miSpriteScreenRec));
+    pScreenPriv = (miSpriteScreenPtr) malloc (sizeof (miSpriteScreenRec));
     if (!pScreenPriv)
 	return FALSE;
     
@@ -182,7 +180,7 @@ miSpriteInitialize (pScreen, cursorFuncs, screenFuncs)
 
     if (!miPointerInitialize (pScreen, &miSpritePointerFuncs, screenFuncs,TRUE))
     {
-	xfree ((pointer) pScreenPriv);
+	free ((void *) pScreenPriv);
 	return FALSE;
     }
     for (pVisual = pScreen->visuals;
@@ -221,7 +219,7 @@ miSpriteInitialize (pScreen, cursorFuncs, screenFuncs)
     pScreenPriv->colors[MASK_COLOR].red = 0;
     pScreenPriv->colors[MASK_COLOR].green = 0;
     pScreenPriv->colors[MASK_COLOR].blue = 0;
-    pScreen->devPrivates[miSpriteScreenIndex].ptr = (pointer) pScreenPriv;
+    pScreen->devPrivates[miSpriteScreenIndex].ptr = (void *) pScreenPriv;
     
     pScreen->CloseScreen = miSpriteCloseScreen;
     pScreen->GetImage = miSpriteGetImage;
@@ -250,8 +248,7 @@ miSpriteInitialize (pScreen, cursorFuncs, screenFuncs)
  */
 
 static Bool
-miSpriteCloseScreen (i, pScreen)
-    int i;
+miSpriteCloseScreen (pScreen)
     ScreenPtr	pScreen;
 {
     miSpriteScreenPtr   pScreenPriv;
@@ -270,9 +267,9 @@ miSpriteCloseScreen (i, pScreen)
     miSpriteIsUpFALSE (pScreen, pScreenPriv);
     DamageDestroy (pScreenPriv->pDamage);
     
-    xfree ((pointer) pScreenPriv);
+    free ((void *) pScreenPriv);
 
-    return (*pScreen->CloseScreen) (i, pScreen);
+    return (*pScreen->CloseScreen) (pScreen);
 }
 
 static void
@@ -389,7 +386,7 @@ miSpriteCopyWindow (WindowPtr pWindow, DDXPointRec ptOldOrg, RegionPtr prgnSrc)
      * Damage will take care of destination check
      */
     if (pScreenPriv->isUp &&
-	RECT_IN_REGION (pScreen, prgnSrc, &pScreenPriv->saved) != rgnOUT)
+	RegionContainsRect(prgnSrc, &pScreenPriv->saved) != rgnOUT)
     {
 	SPRITE_DEBUG (("CopyWindow remove\n"));
 	miSpriteRemoveCursor (pScreen);
@@ -402,9 +399,9 @@ miSpriteCopyWindow (WindowPtr pWindow, DDXPointRec ptOldOrg, RegionPtr prgnSrc)
 static void
 miSpriteBlockHandler (i, blockData, pTimeout, pReadmask)
     int	i;
-    pointer	blockData;
-    pointer	pTimeout;
-    pointer	pReadmask;
+    void *	blockData;
+    void *	pTimeout;
+    void *	pReadmask;
 {
     ScreenPtr		pScreen = screenInfo.screens[i];
     miSpriteScreenPtr	pPriv;
@@ -589,7 +586,7 @@ miSpriteSaveDoomedAreas (pWin, pObscured, dx, dy)
 	    cursorBox.x2 += dx;
 	    cursorBox.y2 += dy;
 	}
-	if (RECT_IN_REGION( pScreen, pObscured, &cursorBox) != rgnOUT)
+	if (RegionContainsRect(pObscured, &cursorBox) != rgnOUT)
 	    miSpriteRemoveCursor (pScreen);
     }
 

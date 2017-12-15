@@ -1,32 +1,85 @@
 /**************************************************************************/
 /*                                                                        */
-/* Copyright (c) 2001, 2011 NoMachine, http://www.nomachine.com/.         */
+/* Copyright (c) 2001, 2011 NoMachine (http://www.nomachine.com)          */
+/* Copyright (c) 2008-2014 Oleksandr Shneyder <o.shneyder@phoca-gmbh.de>  */
+/* Copyright (c) 2011-2016 Mike Gabriel <mike.gabriel@das-netzwerkteam.de>*/
+/* Copyright (c) 2014-2016 Mihai Moldovan <ionic@ionic.de>                */
+/* Copyright (c) 2014-2016 Ulrich Sibiller <uli42@gmx.de>                 */
+/* Copyright (c) 2015-2016 Qindel Group (http://www.qindel.com)           */
 /*                                                                        */
-/* NX-X11, NX protocol compression and NX extensions to this software     */
-/* are copyright of NoMachine. Redistribution and use of the present      */
-/* software is allowed according to terms specified in the file LICENSE   */
-/* which comes in the source distribution.                                */
+/* nx-X11, NX protocol compression and NX extensions to this software     */
+/* are copyright of the aforementioned persons and companies.             */
 /*                                                                        */
-/* Check http://www.nomachine.com/licensing.html for applicability.       */
-/*                                                                        */
-/* NX and NoMachine are trademarks of Medialogic S.p.A.                   */
+/* Redistribution and use of the present software is allowed according    */
+/* to terms specified in the file LICENSE which comes in the source       */
+/* distribution.                                                          */
 /*                                                                        */
 /* All rights reserved.                                                   */
 /*                                                                        */
+/* NOTE: This software has received contributions from various other      */
+/* contributors, only the core maintainers and supporters are listed as   */
+/* copyright holders. Please contact us, if you feel you should be listed */
+/* as copyright holder, as well.                                          */
+/*                                                                        */
 /**************************************************************************/
-XCOMM $XFree86: xc/programs/Xserver/randr/Imakefile,v 1.1 2001/05/23 03:29:44 keithp Exp $
+
 #include <Server.tmpl>
 
-       SRCS =	mirandr.c randr.c rrcrtc.c rrdispatch.c rrinfo.c rrmode.c rroutput.c rrpointer.c rrproperty.c rrscreen.c rrsdispatch.c rrxinerama.c
+       NULL =
 
-       OBJS =	mirandr.o randr.o rrcrtc.o rrdispatch.o rrinfo.o rrmode.o rroutput.o rrpointer.o rrproperty.o rrscreen.o rrsdispatch.o rrxinerama.o
+       SRCS =	randr.c			\
+		rrcrtc.c		\
+		rrdispatch.c		\
+		rrinfo.c		\
+		rrmode.c		\
+		rrmonitor.c		\
+		rroutput.c		\
+		rrpointer.c		\
+		rrproperty.c		\
+		rrprovider.c		\
+		rrproviderproperty.c	\
+		rrscreen.c		\
+		rrsdispatch.c		\
+		rrtransform.c		\
+		rrxinerama.c		\
+		$(NULL)
 
-   INCLUDES = -I../include -I../mi -I../../../include/fonts \
+       OBJS =	randr.o			\
+		rrcrtc.o		\
+		rrdispatch.o		\
+		rrinfo.o		\
+		rrmode.o		\
+		rrmonitor.o		\
+		rroutput.o		\
+		rrpointer.o		\
+		rrproperty.o		\
+		rrprovider.o		\
+		rrproviderproperty.o	\
+		rrscreen.o		\
+		rrsdispatch.o		\
+		rrtransform.o		\
+		rrxinerama.o		\
+		$(NULL)
+
+   INCLUDES = -I../include -I../mi \
 		-I../fb -I../hw/kdrive -I$(EXTINCSRC) -I$(XINCLUDESRC) \
-		-I$(FONTINCSRC) -I../render
+		-I../render \
+		`pkg-config --cflags-only-I pixman-1`
+
+#if defined(BuildXinerama)
+    PNRX_DEFINES = -DXINERAMA -DPANORAMIX
+#endif
+
+#if defined(NXAgentServer) && NXAgentServer
+    NX_DEFINES = -DNXAGENT_SERVER
+#endif
+
    LINTLIBS = ../dix/llib-ldix.ln ../os/llib-los.ln
 
-    DEFINES = -DNXAGENT_SERVER
+    DEFINES = 				\
+		$(PNRX_DEFINES)		\
+		$(NX_DEFINES)		\
+		$(NULL)
 
 NormalLibraryTarget(randr,$(OBJS))
 NormalLibraryObjectRule()

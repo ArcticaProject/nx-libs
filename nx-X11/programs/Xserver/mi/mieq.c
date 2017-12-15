@@ -25,7 +25,6 @@ in this Software without prior written authorization from The Open Group.
  *
  * Author:  Keith Packard, MIT X Consortium
  */
-/* $XFree86: xc/programs/Xserver/mi/mieq.c,v 1.2 2001/05/25 18:41:01 dawes Exp $ */
 
 /*
  * mieq.c
@@ -34,16 +33,21 @@ in this Software without prior written authorization from The Open Group.
  *
  */
 
-# define NEED_EVENTS
-# include   <X11/X.h>
-# include   <X11/Xmd.h>
-# include   <X11/Xproto.h>
+# include   <nx-X11/X.h>
+# include   <nx-X11/Xmd.h>
+# include   <nx-X11/Xproto.h>
 # include   "misc.h"
 # include   "windowstr.h"
 # include   "pixmapstr.h"
 # include   "inputstr.h"
 # include   "mi.h"
 # include   "scrnintstr.h"
+
+#ifdef DPMSExtension
+# include "dpmsproc.h"
+# define DPMS_SERVER
+# include <nx-X11/extensions/dpms.h>
+#endif
 
 #define QUEUE_SIZE  256
 
@@ -152,6 +156,14 @@ void mieqProcessInputEvents ()
     {
 	if (screenIsSaved == SCREEN_SAVER_ON)
 	    SaveScreens (SCREEN_SAVER_OFF, ScreenSaverReset);
+
+#ifdef DPMSExtension
+	else if (DPMSPowerLevel != DPMSModeOn)
+	     SetScreenSaverTimer();
+
+	if (DPMSPowerLevel != DPMSModeOn)
+	     DPMSSet(DPMSModeOn);
+#endif
 
 	e = &miEventQueue.events[miEventQueue.head];
 	/*

@@ -1,30 +1,30 @@
-#ifdef NXAGENT_UPGRADE
-
-#include "X/NXglyph.c"
-
-#else
-
 /**************************************************************************/
 /*                                                                        */
-/* Copyright (c) 2001, 2011 NoMachine, http://www.nomachine.com/.         */
+/* Copyright (c) 2001, 2011 NoMachine (http://www.nomachine.com)          */
+/* Copyright (c) 2008-2014 Oleksandr Shneyder <o.shneyder@phoca-gmbh.de>  */
+/* Copyright (c) 2011-2016 Mike Gabriel <mike.gabriel@das-netzwerkteam.de>*/
+/* Copyright (c) 2014-2016 Mihai Moldovan <ionic@ionic.de>                */
+/* Copyright (c) 2014-2016 Ulrich Sibiller <uli42@gmx.de>                 */
+/* Copyright (c) 2015-2016 Qindel Group (http://www.qindel.com)           */
 /*                                                                        */
 /* NXAGENT, NX protocol compression and NX extensions to this software    */
-/* are copyright of NoMachine. Redistribution and use of the present      */
-/* software is allowed according to terms specified in the file LICENSE   */
-/* which comes in the source distribution.                                */
+/* are copyright of the aforementioned persons and companies.             */
 /*                                                                        */
-/* Check http://www.nomachine.com/licensing.html for applicability.       */
-/*                                                                        */
-/* NX and NoMachine are trademarks of Medialogic S.p.A.                   */
+/* Redistribution and use of the present software is allowed according    */
+/* to terms specified in the file LICENSE which comes in the source       */
+/* distribution.                                                          */
 /*                                                                        */
 /* All rights reserved.                                                   */
+/*                                                                        */
+/* NOTE: This software has received contributions from various other      */
+/* contributors, only the core maintainers and supporters are listed as   */
+/* copyright holders. Please contact us, if you feel you should be listed */
+/* as copyright holder, as well.                                          */
 /*                                                                        */
 /**************************************************************************/
 
 /*
- * $XFree86: xc/programs/Xserver/render/glyph.c,v 1.6 2001/10/28 03:34:19 tsi Exp $
- *
- * Copyright © 2000 SuSE, Inc.
+ * Copyright Â© 2000 SuSE, Inc.
  *
  * Permission to use, copy, modify, distribute, and sell this software and its
  * documentation for any purpose is hereby granted without fee, provided that
@@ -46,24 +46,10 @@
  * Author:  Keith Packard, SuSE, Inc.
  */
 
-#include "misc.h"
-#include "scrnintstr.h"
-#include "os.h"
-#include "regionstr.h"
-#include "validate.h"
-#include "windowstr.h"
-#include "input.h"
-#include "resource.h"
-#include "colormapst.h"
-#include "cursorstr.h"
-#include "dixstruct.h"
-#include "gcstruct.h"
-#include "servermd.h"
+#include "../../render/glyph.c"
 
 #ifdef NXAGENT_SERVER
 
-#include "NXpicturestr.h"
-#include "NXglyphstr.h"
 #include "Render.h"
 
 #define PANIC
@@ -72,185 +58,6 @@
 #undef  TEST
 
 #endif
-
-/*
- * From Knuth -- a good choice for hash/rehash values is p, p-2 where
- * p and p-2 are both prime.  These tables are sized to have an extra 10%
- * free to avoid exponential performance degradation as the hash table fills
- */
-static GlyphHashSetRec glyphHashSets[] = {
-    { 32,		43,		41        },
-    { 64,		73,		71        },
-    { 128,		151,		149       },
-    { 256,		283,		281       },
-    { 512,		571,		569       },
-    { 1024,		1153,		1151      },
-    { 2048,		2269,		2267      },
-    { 4096,		4519,		4517      },
-    { 8192,		9013,		9011      },
-    { 16384,		18043,		18041     },
-    { 32768,		36109,		36107     },
-    { 65536,		72091,		72089     },
-    { 131072,		144409,		144407    },
-    { 262144,		288361,		288359    },
-    { 524288,		576883,		576881    },
-    { 1048576,		1153459,	1153457   },
-    { 2097152,		2307163,	2307161   },
-    { 4194304,		4613893,	4613891   },
-    { 8388608,		9227641,	9227639   },
-    { 16777216,		18455029,	18455027  },
-    { 33554432,		36911011,	36911009  },
-    { 67108864,		73819861,	73819859  },
-    { 134217728,	147639589,	147639587 },
-    { 268435456,	295279081,	295279079 },
-    { 536870912,	590559793,	590559791 }
-};
-
-#define NGLYPHHASHSETS	(sizeof(glyphHashSets)/sizeof(glyphHashSets[0]))
-
-const CARD8	glyphDepths[GlyphFormatNum] = { 1, 4, 8, 16, 32 };
-
-GlyphHashRec	globalGlyphs[GlyphFormatNum];
-
-GlyphHashSetPtr
-FindGlyphHashSet (CARD32 filled)
-{
-    int	i;
-
-    for (i = 0; i < NGLYPHHASHSETS; i++)
-	if (glyphHashSets[i].entries >= filled)
-	    return &glyphHashSets[i];
-    return 0;
-}
-
-Bool
-GlyphInit (ScreenPtr pScreen)
-{
-    return TRUE;
-}
-
-GlyphRefPtr
-FindGlyphRef (GlyphHashPtr hash, CARD32 signature, Bool match, GlyphPtr compare)
-{
-    CARD32	elt, step, s;
-    GlyphPtr	glyph;
-    GlyphRefPtr	table, gr, del;
-    CARD32	tableSize = hash->hashSet->size;
-
-    table = hash->table;
-    elt = signature % tableSize;
-    step = 0;
-    del = 0;
-    for (;;)
-    {
-	gr = &table[elt];
-	s = gr->signature;
-	glyph = gr->glyph;
-	if (!glyph)
-	{
-	    if (del)
-		gr = del;
-	    break;
-	}
-	if (glyph == DeletedGlyph)
-	{
-	    if (!del)
-		del = gr;
-	    else if (gr == del)
-		break;
-	}
-	else if (s == signature &&
-		 (!match || 
-		  memcmp (&compare->info, &glyph->info, compare->size) == 0))
-	{
-	    break;
-	}
-	if (!step)
-	{
-	    step = signature % hash->hashSet->rehash;
-	    if (!step)
-		step = 1;
-	}
-	elt += step;
-	if (elt >= tableSize)
-	    elt -= tableSize;
-    }
-    return gr;
-}
-
-CARD32
-HashGlyph (GlyphPtr glyph)
-{
-    CARD32  *bits = (CARD32 *) &(glyph->info);
-    CARD32  hash;
-    int	    n = glyph->size / sizeof (CARD32);
-
-    hash = 0;
-    while (n--)
-	hash ^= *bits++;
-    return hash;
-}
-
-#ifdef CHECK_DUPLICATES
-void
-DuplicateRef (GlyphPtr glyph, char *where)
-{
-    ErrorF ("Duplicate Glyph 0x%x from %s\n", glyph, where);
-}
-
-void
-CheckDuplicates (GlyphHashPtr hash, char *where)
-{
-    GlyphPtr	g;
-    int		i, j;
-
-    for (i = 0; i < hash->hashSet->size; i++)
-    {
-	g = hash->table[i].glyph;
-	if (!g || g == DeletedGlyph)
-	    continue;
-	for (j = i + 1; j < hash->hashSet->size; j++)
-	    if (hash->table[j].glyph == g)
-		DuplicateRef (g, where);
-    }
-}
-#else
-#define CheckDuplicates(a,b)
-#define DuplicateRef(a,b)
-#endif
-
-void
-FreeGlyph (GlyphPtr glyph, int format)
-{
-    CheckDuplicates (&globalGlyphs[format], "FreeGlyph");
-    if (--glyph->refcnt == 0)
-    {
-	GlyphRefPtr gr;
-	int	    i;
-	int	    first;
-
-	first = -1;
-	for (i = 0; i < globalGlyphs[format].hashSet->size; i++)
-	    if (globalGlyphs[format].table[i].glyph == glyph)
-	    {
-		if (first != -1)
-		    DuplicateRef (glyph, "FreeGlyph check");
-		first = i;
-	    }
-
-	gr = FindGlyphRef (&globalGlyphs[format],
-			   HashGlyph (glyph), TRUE, glyph);
-	if (gr - globalGlyphs[format].table != first)
-	    DuplicateRef (glyph, "Found wrong one");
-	if (gr->glyph && gr->glyph != DeletedGlyph)
-	{
-	    gr->glyph = DeletedGlyph;
-	    gr->signature = 0;
-	    globalGlyphs[format].tableEntries--;
-	}
-	xfree (glyph);
-    }
-}
 
 void
 AddGlyph (GlyphSetPtr glyphSet, GlyphPtr glyph, Glyph id)
@@ -264,7 +71,7 @@ AddGlyph (GlyphSetPtr glyphSet, GlyphPtr glyph, Glyph id)
     gr = FindGlyphRef (&globalGlyphs[glyphSet->fdepth], hash, TRUE, glyph);
     if (gr->glyph && gr->glyph != DeletedGlyph)
     {
-	xfree (glyph);
+	free (glyph);
 	glyph = gr->glyph;
     }
     else
@@ -293,26 +100,6 @@ AddGlyph (GlyphSetPtr glyphSet, GlyphPtr glyph, Glyph id)
     CheckDuplicates (&globalGlyphs[glyphSet->fdepth], "AddGlyph bottom");
 }
 
-Bool
-DeleteGlyph (GlyphSetPtr glyphSet, Glyph id)
-{
-    GlyphRefPtr     gr;
-    GlyphPtr	    glyph;
-
-    gr = FindGlyphRef (&glyphSet->hash, id, FALSE, 0);
-    glyph = gr->glyph;
-    if (glyph && glyph != DeletedGlyph)
-    {
-	gr->glyph = DeletedGlyph;
-	glyphSet->hash.tableEntries--;
-	FreeGlyph (glyph, glyphSet->fdepth);
-	return TRUE;
-    }
-    return FALSE;
-}
-
-#ifdef NXAGENT_SERVER
-
 GlyphPtr FindGlyph (GlyphSetPtr glyphSet, Glyph id)
 {
   GlyphRefPtr gr;
@@ -337,49 +124,6 @@ GlyphPtr FindGlyph (GlyphSetPtr glyphSet, Glyph id)
   }
 
   return glyph;
-}
-
-#else
-
-GlyphPtr
-FindGlyph (GlyphSetPtr glyphSet, Glyph id)
-{
-    GlyphPtr        glyph;
-
-    glyph = FindGlyphRef (&glyphSet->hash, id, FALSE, 0)->glyph;
-    if (glyph == DeletedGlyph)
-	glyph = 0;
-    return glyph;
-}
-
-#endif
-
-GlyphPtr
-AllocateGlyph (xGlyphInfo *gi, int fdepth)
-{
-    int		size;
-    GlyphPtr	glyph;
-
-    size = gi->height * PixmapBytePad (gi->width, glyphDepths[fdepth]);
-    glyph = (GlyphPtr) xalloc (size + sizeof (GlyphRec));
-    if (!glyph)
-	return 0;
-    glyph->refcnt = 0;
-    glyph->size = size + sizeof (xGlyphInfo);
-    glyph->info = *gi;
-    return glyph;
-}
-    
-Bool
-AllocateGlyphHash (GlyphHashPtr hash, GlyphHashSetPtr hashSet)
-{
-    hash->table = (GlyphRefPtr) xalloc (hashSet->size * sizeof (GlyphRefRec));
-    if (!hash->table)
-	return FALSE;
-    memset (hash->table, 0, hashSet->size * sizeof (GlyphRefRec));
-    hash->hashSet = hashSet;
-    hash->tableEntries = 0;
-    return TRUE;
 }
 
 Bool
@@ -437,7 +181,7 @@ ResizeGlyphHash (GlyphHashPtr hash, CARD32 change, Bool global)
 		++newHash.tableEntries;
 	    }
 	}
-	xfree (hash->table);
+	free (hash->table);
     }
     *hash = newHash;
     if (global)
@@ -445,67 +189,193 @@ ResizeGlyphHash (GlyphHashPtr hash, CARD32 change, Bool global)
     return TRUE;
 }
 
-Bool
-ResizeGlyphSet (GlyphSetPtr glyphSet, CARD32 change)
+void
+miGlyphs (CARD8		op,
+	  PicturePtr	pSrc,
+	  PicturePtr	pDst,
+	  PictFormatPtr	maskFormat,
+	  INT16		xSrc,
+	  INT16		ySrc,
+	  int		nlist,
+	  GlyphListPtr	list,
+	  GlyphPtr	*glyphs)
 {
-    return (ResizeGlyphHash (&glyphSet->hash, change, FALSE) &&
-	    ResizeGlyphHash (&globalGlyphs[glyphSet->fdepth], change, TRUE));
-}
-			    
-GlyphSetPtr
-AllocateGlyphSet (int fdepth, PictFormatPtr format)
-{
-    GlyphSetPtr	glyphSet;
-    
-    if (!globalGlyphs[fdepth].hashSet)
-    {
-	if (!AllocateGlyphHash (&globalGlyphs[fdepth], &glyphHashSets[0]))
-	    return FALSE;
-    }
-    glyphSet = xalloc (sizeof (GlyphSetRec));
-    if (!glyphSet)
-	return FALSE;
-    if (!AllocateGlyphHash (&glyphSet->hash, &glyphHashSets[0]))
-    {
-	xfree (glyphSet);
-	return FALSE;
-    }
-    glyphSet->refcnt = 1;
-    glyphSet->fdepth = fdepth;
-    glyphSet->format = format;
-    return glyphSet;	
-}
+    PixmapPtr	pPixmap = 0;
+    PicturePtr	pPicture;
+    PixmapPtr   pMaskPixmap = 0;
+    PicturePtr  pMask;
+    ScreenPtr   pScreen = pDst->pDrawable->pScreen;
+    int		width = 0, height = 0;
+    int		x, y;
+    int		xDst = list->xOff, yDst = list->yOff;
+    int		n;
+    GlyphPtr	glyph;
+    int		error;
+    BoxRec	extents;
+    CARD32	component_alpha;
 
-int
-FreeGlyphSet (pointer	value,
-	      XID       gid)
-{
-    GlyphSetPtr	glyphSet = (GlyphSetPtr) value;
-    
-    if (--glyphSet->refcnt == 0)
-    {
-	CARD32	    i, tableSize = glyphSet->hash.hashSet->size;
-	GlyphRefPtr table = glyphSet->hash.table;
-	GlyphPtr    glyph;
-    
-	for (i = 0; i < tableSize; i++)
-	{
-	    glyph = table[i].glyph;
-	    if (glyph && glyph != DeletedGlyph)
-		FreeGlyph (glyph, glyphSet->fdepth);
-	}
-	if (!globalGlyphs[glyphSet->fdepth].tableEntries)
-	{
-	    xfree (globalGlyphs[glyphSet->fdepth].table);
-	    globalGlyphs[glyphSet->fdepth].table = 0;
-	    globalGlyphs[glyphSet->fdepth].hashSet = 0;
-	}
-	else
-	    ResizeGlyphHash (&globalGlyphs[glyphSet->fdepth], 0, TRUE);
-	xfree (table);
-	xfree (glyphSet);
-    }
-    return Success;
-}
+    /*
+     * Get rid of the warning.
+     */
 
-#endif /* #ifdef NXAGENT_UPGRADE */
+    extents.x1 = 0;
+    extents.y1 = 0;
+
+    if (maskFormat)
+    {
+	GCPtr	    pGC;
+	xRectangle  rect;
+
+        if (nxagentGlyphsExtents != NullBox)
+        {
+          memcpy(&extents, nxagentGlyphsExtents, sizeof(BoxRec));
+        }
+        else
+        {
+          nxagentGlyphsExtents = (BoxPtr) malloc(sizeof(BoxRec));
+
+          GlyphExtents (nlist, list, glyphs, &extents);
+
+          memcpy(nxagentGlyphsExtents, &extents, sizeof(BoxRec));
+        }
+
+	if (extents.x2 <= extents.x1 || extents.y2 <= extents.y1)
+	    return;
+	width = extents.x2 - extents.x1;
+	height = extents.y2 - extents.y1;
+	pMaskPixmap = (*pScreen->CreatePixmap) (pScreen, width, height,
+	                                        maskFormat->depth,
+	                                        CREATE_PIXMAP_USAGE_SCRATCH);
+
+	if (!pMaskPixmap)
+	    return;
+
+	component_alpha = NeedsComponent(maskFormat->format);
+	pMask = CreatePicture (0, &pMaskPixmap->drawable,
+			       maskFormat, CPComponentAlpha, &component_alpha,
+			       serverClient, &error);
+
+	if (!pMask)
+	{
+	    (*pScreen->DestroyPixmap) (pMaskPixmap);
+	    return;
+	}
+	pGC = GetScratchGC (pMaskPixmap->drawable.depth, pScreen);
+	ValidateGC (&pMaskPixmap->drawable, pGC);
+	rect.x = 0;
+	rect.y = 0;
+	rect.width = width;
+	rect.height = height;
+	(*pGC->ops->PolyFillRect) (&pMaskPixmap->drawable, pGC, 1, &rect);
+	FreeScratchGC (pGC);
+	x = -extents.x1;
+	y = -extents.y1;
+    }
+    else
+    {
+	pMask = pDst;
+	x = 0;
+	y = 0;
+    }
+    pPicture = 0;
+    while (nlist--)
+    {
+	x += list->xOff;
+	y += list->yOff;
+	n = list->len;
+
+	while (n--)
+	{
+	    glyph = *glyphs++;
+	    if (!pPicture)
+	    {
+		pPixmap = GetScratchPixmapHeader (pScreen, glyph->info.width, glyph->info.height, 
+						  list->format->depth,
+						  list->format->depth, 
+						  0, (void *) (glyph + 1));
+		if (!pPixmap)
+		    return;
+		component_alpha = NeedsComponent(list->format->format);
+		pPicture = CreatePicture (0, &pPixmap->drawable, list->format,
+					  CPComponentAlpha, &component_alpha, 
+					  serverClient, &error);
+		if (!pPicture)
+		{
+		    FreeScratchPixmapHeader (pPixmap);
+		    return;
+		}
+	    }
+	    (*pScreen->ModifyPixmapHeader) (pPixmap, 
+					    glyph->info.width, glyph->info.height,
+					    0, 0, -1, (void *) (glyph + 1));
+
+            /*
+             * The following line fixes a problem with glyphs that appeared
+             * as clipped. It was a side effect due the validate function
+             * "ValidatePicture" that makes a check on the Drawable serial
+             * number instead of the picture serial number, failing thus
+             * the clip mask update.
+             */
+
+            pPicture->pDrawable->serialNumber = NEXT_SERIAL_NUMBER;
+
+	    pPixmap->drawable.serialNumber = NEXT_SERIAL_NUMBER;
+	    if (maskFormat)
+	    {
+		CompositePicture (PictOpAdd,
+				  pPicture,
+				  None,
+				  pMask,
+				  0, 0,
+				  0, 0,
+				  x - glyph->info.x,
+				  y - glyph->info.y,
+				  glyph->info.width,
+				  glyph->info.height);
+	    }
+	    else
+	    {
+		CompositePicture (op,
+				  pSrc,
+				  pPicture,
+				  pDst,
+				  xSrc + (x - glyph->info.x) - xDst,
+				  ySrc + (y - glyph->info.y) - yDst,
+				  0, 0,
+				  x - glyph->info.x,
+				  y - glyph->info.y,
+				  glyph->info.width,
+				  glyph->info.height);
+	    }
+	    x += glyph->info.xOff;
+	    y += glyph->info.yOff;
+	}
+
+	list++;
+	if (pPicture)
+	{
+	    FreeScratchPixmapHeader (pPixmap);
+	    FreePicture ((void *) pPicture, 0);
+	    pPicture = 0;
+	    pPixmap = 0;
+	}
+    }
+    if (maskFormat)
+    {
+	x = extents.x1;
+	y = extents.y1;
+	CompositePicture (op,
+			  pSrc,
+			  pMask,
+			  pDst,
+			  xSrc + x - xDst,
+			  ySrc + y - yDst,
+			  0, 0,
+			  x, y,
+			  width, height);
+
+	FreePicture ((void *) pMask, (XID) 0);
+	(*pScreen->DestroyPixmap) (pMaskPixmap);
+    }
+
+}

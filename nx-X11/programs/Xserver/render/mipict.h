@@ -1,6 +1,4 @@
 /*
- * $XFree86: xc/programs/Xserver/render/mipict.h,v 1.12 2002/11/05 05:34:40 keithp Exp $
- *
  * Copyright © 2000 SuSE, Inc.
  *
  * Permission to use, copy, modify, distribute, and sell this software and its
@@ -60,7 +58,7 @@ miDestroyPictureClip (PicturePtr pPicture);
 int
 miChangePictureClip (PicturePtr    pPicture,
 		     int	   type,
-		     pointer	   value,
+		     void *	   value,
 		     int	   n);
 
 void
@@ -71,6 +69,15 @@ void
 miValidatePicture (PicturePtr pPicture,
 		   Mask       mask);
 
+int
+miChangePictureTransform (PicturePtr	pPicture,
+			  PictTransform *transform);
+
+int
+miChangePictureFilter (PicturePtr pPicture,
+		       int	  filter,
+		       xFixed     *params,
+		       int	  nparams);
 
 Bool
 miClipPicture (RegionPtr    pRegion,
@@ -96,12 +103,6 @@ miComputeCompositeRegion (RegionPtr	pRegion,
 
 Bool
 miPictureInit (ScreenPtr pScreen, PictFormatPtr formats, int nformats);
-
-void
-miGlyphExtents (int		nlist,
-		GlyphListPtr	list,
-		GlyphPtr	*glyphs,
-		BoxPtr		extents);
 
 void
 miGlyphs (CARD8		op,

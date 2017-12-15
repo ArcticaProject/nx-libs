@@ -1,4 +1,3 @@
-/* $Xorg: grabs.c,v 1.4 2001/02/09 02:04:40 xorgcvs Exp $ */
 /*
 
 Copyright 1987, 1998  The Open Group
@@ -46,16 +45,14 @@ ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS
 SOFTWARE.
 
 */
-/* $XFree86: xc/programs/Xserver/dix/grabs.c,v 3.4 2002/02/19 11:09:22 alanh Exp $ */
 
 #ifdef HAVE_DIX_CONFIG_H
 #include <dix-config.h>
 #endif
 
-#include <X11/X.h>
+#include <nx-X11/X.h>
 #include "misc.h"
-#define NEED_EVENTS
-#include <X11/Xproto.h>
+#include <nx-X11/Xproto.h>
 #include "windowstr.h"
 #include "inputstr.h"
 #include "cursorstr.h"
@@ -84,7 +81,7 @@ CreateGrab(
 {
     GrabPtr grab;
 
-    grab = (GrabPtr)xalloc(sizeof(GrabRec));
+    grab = (GrabPtr)malloc(sizeof(GrabRec));
     if (!grab)
 	return (GrabPtr)NULL;
     grab->resource = FakeClientID(client);
@@ -116,19 +113,19 @@ static void
 FreeGrab(GrabPtr pGrab)
 {
     if (pGrab->modifiersDetail.pMask != NULL)
-	xfree(pGrab->modifiersDetail.pMask);
+	free(pGrab->modifiersDetail.pMask);
 
     if (pGrab->detail.pMask != NULL)
-	xfree(pGrab->detail.pMask);
+	free(pGrab->detail.pMask);
 
     if (pGrab->cursor)
 	FreeCursor(pGrab->cursor, (Cursor)0);
 
-    xfree(pGrab);
+    free(pGrab);
 }
 
 int
-DeletePassiveGrab(pointer value, XID id)
+DeletePassiveGrab(void * value, XID id)
 {
     register GrabPtr g, prev;
     GrabPtr pGrab = (GrabPtr)value;
@@ -158,7 +155,7 @@ DeleteDetailFromMask(Mask *pDetailMask, unsigned short detail)
     register Mask *mask;
     register int i;
 
-    mask = (Mask *)xalloc(sizeof(Mask) * MasksPerDetailMask);
+    mask = (Mask *)malloc(sizeof(Mask) * MasksPerDetailMask);
     if (mask)
     {
 	if (pDetailMask)
@@ -295,7 +292,7 @@ AddPassiveGrabToList(GrabPtr pGrab)
     }
     pGrab->next = pGrab->window->optional->passiveGrabs;
     pGrab->window->optional->passiveGrabs = pGrab;
-    if (AddResource(pGrab->resource, RT_PASSIVEGRAB, (pointer)pGrab))
+    if (AddResource(pGrab->resource, RT_PASSIVEGRAB, (void *)pGrab))
 	return Success;
     return BadAlloc;
 }
@@ -324,16 +321,16 @@ DeletePassiveGrabFromList(GrabPtr pMinuendGrab)
 	i++;
     if (!i)
 	return TRUE;
-    deletes = (GrabPtr *)ALLOCATE_LOCAL(i * sizeof(GrabPtr));
-    adds = (GrabPtr *)ALLOCATE_LOCAL(i * sizeof(GrabPtr));
-    updates = (Mask ***)ALLOCATE_LOCAL(i * sizeof(Mask **));
-    details = (Mask **)ALLOCATE_LOCAL(i * sizeof(Mask *));
+    deletes = (GrabPtr *)malloc(i * sizeof(GrabPtr));
+    adds = (GrabPtr *)malloc(i * sizeof(GrabPtr));
+    updates = (Mask ***)malloc(i * sizeof(Mask **));
+    details = (Mask **)malloc(i * sizeof(Mask *));
     if (!deletes || !adds || !updates || !details)
     {
-	if (details) DEALLOCATE_LOCAL(details);
-	if (updates) DEALLOCATE_LOCAL(updates);
-	if (adds) DEALLOCATE_LOCAL(adds);
-	if (deletes) DEALLOCATE_LOCAL(deletes);
+	if (details) free(details);
+	if (updates) free(updates);
+	if (adds) free(adds);
+	if (deletes) free(deletes);
 	return FALSE;
     }
     ndels = nadds = nups = 0;
@@ -389,7 +386,7 @@ DeletePassiveGrabFromList(GrabPtr pMinuendGrab)
 		ok = FALSE;
 	    }
 	    else if (!AddResource(pNewGrab->resource, RT_PASSIVEGRAB,
-				  (pointer)pNewGrab))
+				  (void *)pNewGrab))
 		ok = FALSE;
 	    else
 		adds[nadds++] = pNewGrab;
@@ -410,7 +407,7 @@ DeletePassiveGrabFromList(GrabPtr pMinuendGrab)
 	for (i = 0; i < nadds; i++)
 	    FreeResource(adds[i]->resource, RT_NONE);
 	for (i = 0; i < nups; i++)
-	    xfree(details[i]);
+	    free(details[i]);
     }
     else
     {
@@ -424,14 +421,14 @@ DeletePassiveGrabFromList(GrabPtr pMinuendGrab)
 	}
 	for (i = 0; i < nups; i++)
 	{
-	    xfree(*updates[i]);
+	    free(*updates[i]);
 	    *updates[i] = details[i];
 	}
     }
-    DEALLOCATE_LOCAL(details);
-    DEALLOCATE_LOCAL(updates);
-    DEALLOCATE_LOCAL(adds);
-    DEALLOCATE_LOCAL(deletes);
+    free(details);
+    free(updates);
+    free(adds);
+    free(deletes);
     return ok;
 
 #undef UPDATE

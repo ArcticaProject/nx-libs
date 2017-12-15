@@ -1,0 +1,86 @@
+--- ./nx-X11/programs/Xserver/dix/dixfonts.c.X.original	2015-02-13 14:03:44.704442298 +0100
++++ ./nx-X11/programs/Xserver/dix/dixfonts.c	2015-02-13 14:03:44.704442298 +0100
+@@ -72,6 +72,63 @@
+ #include	<stdio.h>
+ #endif
+ 
++#ifdef NX_TRANS_SOCKET
++
++char _NXFontPath[1024];
++
++/*
++ * Override the default font path and make
++ * it configurable at run time, based on
++ * the NX_FONT environment.
++ */
++
++static const char *_NXGetFontPath(const char *path)
++{
++  const char *fontEnv;
++
++    /*
++     * Check the environment only once.
++     */
++
++    if (*_NXFontPath != '\0')
++    {
++        return _NXFontPath;
++    }
++
++    fontEnv = getenv("NX_FONT");
++
++    if (fontEnv != NULL && *fontEnv != '\0')
++    {
++        if (strlen(fontEnv) + 1 > 1024)
++        {
++#ifdef NX_TRANS_TEST
++            fprintf(stderr, "_NXGetFontPath: WARNING! Maximum length of font path exceeded.\n");
++#endif
++            goto _NXGetFontPathError;
++        }
++
++        strcpy(_NXFontPath, fontEnv);
++
++#ifdef NX_TRANS_TEST
++        fprintf(stderr, "_NXGetFontPath: Using NX font path [%s].\n", _NXFontPath);
++#endif
++
++        return _NXFontPath;
++    }
++
++_NXGetFontPathError:
++
++    strcpy(_NXFontPath, path);
++
++#ifdef NX_TRANS_TEST
++    fprintf(stderr, "_NXGetFontPath: Using default font path [%s].\n", _NXFontPath);
++#endif
++
++    return _NXFontPath;
++}
++
++#endif
++
+ #ifdef PANORAMIX
+ #include "panoramiX.h"
+ #endif
+@@ -1817,11 +1874,19 @@
+                 bad;
+ 
+     /* get enough for string, plus values -- use up commas */
++#ifdef NX_TRANS_SOCKET
++    len = strlen(_NXGetFontPath(path)) + 1;
++#else
+     len = strlen(path) + 1;
++#endif
+     nump = cp = newpath = (unsigned char *) ALLOCATE_LOCAL(len);
+     if (!newpath)
+ 	return BadAlloc;
++#ifdef NX_TRANS_SOCKET
++    pp = (unsigned char *) _NXGetFontPath(path);
++#else
+     pp = (unsigned char *) path;
++#endif
+     cp++;
+     while (*pp) {
+ 	if (*pp == ',') {

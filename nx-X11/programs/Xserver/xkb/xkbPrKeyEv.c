@@ -1,4 +1,3 @@
-/* $Xorg: xkbPrKeyEv.c,v 1.3 2000/08/17 19:53:48 cpqbld Exp $ */
 /************************************************************
 Copyright (c) 1993 by Silicon Graphics Computer Systems, Inc.
 
@@ -24,7 +23,6 @@ OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION  WITH
 THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 ********************************************************/
-/* $XFree86: xc/programs/Xserver/xkb/xkbPrKeyEv.c,v 3.8 2001/01/17 22:37:15 dawes Exp $ */
 
 #ifdef HAVE_DIX_CONFIG_H
 #include <dix-config.h>
@@ -32,13 +30,12 @@ THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 #include <stdio.h>
 #include <math.h>
-#define NEED_EVENTS 1
-#include <X11/X.h>
-#include <X11/Xproto.h>
-#include <X11/keysym.h>
+#include <nx-X11/X.h>
+#include <nx-X11/Xproto.h>
+#include <nx-X11/keysym.h>
 #include "misc.h"
 #include "inputstr.h"
-#include <X11/extensions/XKBsrv.h>
+#include <xkbsrv.h>
 #include <ctype.h>
 
 
@@ -76,7 +73,7 @@ unsigned        ndx;
 	    case XkbKB_Default:
 		if (( xE->u.u.type == KeyPress ) && 
 		    (keyc->down[key>>3] & (1<<(key&7)))) {
-		    XkbLastRepeatEvent=	(pointer)xE;
+		    XkbLastRepeatEvent=	(void *)xE;
 		    xE->u.u.type = KeyRelease;
 		    XkbHandleActions(keybd,keybd,xE,count);
 		    xE->u.u.type = KeyPress;
@@ -86,7 +83,7 @@ unsigned        ndx;
 		}
 		else if ((xE->u.u.type==KeyRelease) &&
 			(!(keyc->down[key>>3]&(1<<(key&7))))) {
-		    XkbLastRepeatEvent=	(pointer)&xE;
+		    XkbLastRepeatEvent=	(void *)&xE;
 		    xE->u.u.type = KeyPress;
 		    XkbHandleActions(keybd,keybd,xE,count);
 		    xE->u.u.type = KeyRelease;

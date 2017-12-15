@@ -25,6 +25,8 @@
 #include <dix-config.h>
 #endif
 
+#include <string.h>
+
 #include "gcstruct.h"
 #include "windowstr.h"
 #include "cw.h"
@@ -53,7 +55,7 @@ static unsigned long cwGeneration = 0;
 extern GCOps cwGCOps;
 
 static Bool
-cwCloseScreen (int i, ScreenPtr pScreen);
+cwCloseScreen (ScreenPtr pScreen);
 
 static void
 cwValidateGC(GCPtr pGC, unsigned long stateChanges, DrawablePtr pDrawable);
@@ -64,7 +66,7 @@ cwCopyGC(GCPtr pGCSrc, unsigned long mask, GCPtr pGCDst);
 static void
 cwDestroyGC(GCPtr pGC);
 static void
-cwChangeClip(GCPtr pGC, int type, pointer pvalue, int nrects);
+cwChangeClip(GCPtr pGC, int type, void * pvalue, int nrects);
 static void
 cwCopyClip(GCPtr pgcDst, GCPtr pgcSrc);
 static void
@@ -190,8 +192,8 @@ cwValidateGC(GCPtr pGC, unsigned long stateChanges, DrawablePtr pDrawable)
 	XID vals[2];
 	RegionPtr   pCompositeClip;
 
-	pCompositeClip = REGION_CREATE (pScreen, NULL, 0);
-	REGION_COPY (pScreen, pCompositeClip, pGC->pCompositeClip);
+	pCompositeClip = RegionCreate(NULL, 0);
+	RegionCopy(pCompositeClip, pGC->pCompositeClip);
 
 	/* Either the drawable has changed, or the clip list in the drawable has
 	 * changed.  Copy the new clip list over and set the new translated
@@ -199,7 +201,7 @@ cwValidateGC(GCPtr pGC, unsigned long stateChanges, DrawablePtr pDrawable)
 	 */
 	
 	(*pBackingGC->funcs->ChangeClip) (pBackingGC, CT_REGION,
-					  (pointer) pCompositeClip, 0);
+					  (void *) pCompositeClip, 0);
 	
 	vals[0] = x_off - pDrawable->x;
 	vals[1] = y_off - pDrawable->y;
@@ -273,7 +275,7 @@ cwDestroyGC(GCPtr pGC)
 }
 
 static void
-cwChangeClip(GCPtr pGC, int type, pointer pvalue, int nrects)
+cwChangeClip(GCPtr pGC, int type, void * pvalue, int nrects)
 {
     cwGCPtr	pPriv = (cwGCPtr)(pGC)->devPrivates[cwGCIndex].ptr;
 
@@ -397,8 +399,8 @@ cwFillRegionSolid(DrawablePtr pDrawable, RegionPtr pRegion, unsigned long pixel)
 		NULL, v);
     ValidateGC(pDrawable, pGC);
 
-    pBox = REGION_RECTS(pRegion);
-    nbox = REGION_NUM_RECTS(pRegion);
+    pBox = RegionRects(pRegion);
+    nbox = RegionNumRects(pRegion);
 
     for (i = 0; i < nbox; i++, pBox++) {
 	xRectangle rect;
@@ -425,7 +427,7 @@ cwFillRegionTiled(DrawablePtr pDrawable, RegionPtr pRegion, PixmapPtr pTile,
     pGC = GetScratchGC(pDrawable->depth, pScreen);
     v[0].val = GXcopy;
     v[1].val = FillTiled;
-    v[2].ptr = (pointer) pTile;
+    v[2].ptr = (void *) pTile;
     v[3].val = x_off;
     v[4].val = y_off;
     dixChangeGC(NullClient, pGC, (GCFunction | GCFillStyle | GCTile |
@@ -433,8 +435,8 @@ cwFillRegionTiled(DrawablePtr pDrawable, RegionPtr pRegion, PixmapPtr pTile,
 
     ValidateGC(pDrawable, pGC);
 
-    pBox = REGION_RECTS(pRegion);
-    nbox = REGION_NUM_RECTS(pRegion);
+    pBox = RegionRects(pRegion);
+    nbox = RegionNumRects(pRegion);
 
     for (i = 0; i < nbox; i++, pBox++) {
 	xRectangle rect;
@@ -461,7 +463,7 @@ cwPaintWindowBackground(WindowPtr pWin, RegionPtr pRegion, int what)
 	DrawablePtr pBackingDrawable;
 	int x_off, y_off, x_screen, y_screen;
 
-	while (pWin && pWin->backgroundState == ParentRelative)
+	while (pWin->backgroundState == ParentRelative)
 	    pWin = pWin->parent;
 
 	pBackingDrawable = cwGetBackingDrawable((DrawablePtr)pWin, &x_off,
@@ -473,7 +475,7 @@ cwPaintWindowBackground(WindowPtr pWin, RegionPtr pRegion, int what)
 	if (pWin && (pWin->backgroundState == BackgroundPixel ||
 		pWin->backgroundState == BackgroundPixmap))
 	{
-	    REGION_TRANSLATE(pScreen, pRegion, x_screen, y_screen);
+	    RegionTranslate(pRegion, x_screen, y_screen);
 
 	    if (pWin->backgroundState == BackgroundPixel) {
 		cwFillRegionSolid(pBackingDrawable, pRegion,
@@ -483,7 +485,7 @@ cwPaintWindowBackground(WindowPtr pWin, RegionPtr pRegion, int what)
 				  pWin->background.pixmap, x_off, y_off);
 	    }
 
-	    REGION_TRANSLATE(pScreen, pRegion, -x_screen, -y_screen);
+	    RegionTranslate(pRegion, -x_screen, -y_screen);
 	}
     }
 
@@ -509,7 +511,7 @@ cwPaintWindowBorder(WindowPtr pWin, RegionPtr pRegion, int what)
 	x_screen = x_off - pWin->drawable.x;
 	y_screen = y_off - pWin->drawable.y;
 
-	REGION_TRANSLATE(pScreen, pRegion, x_screen, y_screen);
+	RegionTranslate(pRegion, x_screen, y_screen);
 
 	if (pWin->borderIsPixel) {
 	    cwFillRegionSolid(pBackingDrawable, pRegion, pWin->border.pixel);
@@ -518,7 +520,7 @@ cwPaintWindowBorder(WindowPtr pWin, RegionPtr pRegion, int what)
 			      x_off, y_off);
 	}
 
-	REGION_TRANSLATE(pScreen, pRegion, -x_screen, -y_screen);
+	RegionTranslate(pRegion, -x_screen, -y_screen);
     }
 
     SCREEN_EPILOGUE(pScreen, PaintWindowBorder, cwPaintWindowBorder);
@@ -545,7 +547,7 @@ cwCopyWindow(WindowPtr pWin, DDXPointRec ptOldOrg, RegionPtr prgnSrc)
 	dx = ptOldOrg.x - pWin->drawable.x;
 	dy = ptOldOrg.y - pWin->drawable.y;
 
-	pExtents = REGION_EXTENTS(pScreen, prgnSrc);
+	pExtents = RegionExtents(prgnSrc);
 
 	pBackingPixmap = (PixmapPtr) cwGetBackingDrawable((DrawablePtr)pWin,
 							  &x_off, &y_off);
@@ -558,15 +560,15 @@ cwCopyWindow(WindowPtr pWin, DDXPointRec ptOldOrg, RegionPtr prgnSrc)
 	dst_y = src_y - dy;
 			       
 	/* Translate region (as required by API) */
-	REGION_TRANSLATE(pScreen, prgnSrc, -dx, -dy);
+	RegionTranslate(prgnSrc, -dx, -dy);
 	
 	pGC = GetScratchGC(pBackingPixmap->drawable.depth, pScreen);
 	/*
 	 * Copy region to GC as clip, aligning as dest clip
 	 */
-	pClip = REGION_CREATE (pScreen, NULL, 0);
-	REGION_INTERSECT(pScreen, pClip, &pWin->borderClip, prgnSrc);
-	REGION_TRANSLATE(pScreen, pClip, 
+	pClip = RegionCreate(NULL, 0);
+	RegionIntersect(pClip, &pWin->borderClip, prgnSrc);
+	RegionTranslate(pClip,
 			 -pBackingPixmap->screen_x,
 			 -pBackingPixmap->screen_y);
 	
@@ -641,11 +643,11 @@ miInitializeCompositeWrapper(ScreenPtr pScreen)
     if (!AllocatePicturePrivate(pScreen, cwPictureIndex, 0))
 	return;
 #endif
-    pScreenPriv = (cwScreenPtr)xalloc(sizeof(cwScreenRec));
+    pScreenPriv = (cwScreenPtr)malloc(sizeof(cwScreenRec));
     if (!pScreenPriv)
 	return;
 
-    pScreen->devPrivates[cwScreenIndex].ptr = (pointer)pScreenPriv;
+    pScreen->devPrivates[cwScreenIndex].ptr = (void *)pScreenPriv;
     
     SCREEN_EPILOGUE(pScreen, CloseScreen, cwCloseScreen);
     SCREEN_EPILOGUE(pScreen, GetImage, cwGetImage);
@@ -671,7 +673,7 @@ miDisableCompositeWrapper(ScreenPtr pScreen)
 }
 
 static Bool
-cwCloseScreen (int i, ScreenPtr pScreen)
+cwCloseScreen (ScreenPtr pScreen)
 {
     cwScreenPtr   pScreenPriv;
 #ifdef RENDER
@@ -693,7 +695,7 @@ cwCloseScreen (int i, ScreenPtr pScreen)
 	cwFiniRender(pScreen);
 #endif
 
-    xfree((pointer)pScreenPriv);
+    free((void *)pScreenPriv);
 
-    return (*pScreen->CloseScreen)(i, pScreen);
+    return (*pScreen->CloseScreen)(pScreen);
 }

@@ -25,7 +25,6 @@ in this Software without prior written authorization from The Open Group.
  *
  * Author:  Keith Packard, MIT X Consortium
  */
-/* $XFree86: xc/programs/Xserver/Xext/sleepuntil.c,v 3.6 2003/07/16 01:38:30 dawes Exp $ */
 
 /* dixsleep.c - implement millisecond timeouts for X clients */
 
@@ -34,8 +33,8 @@ in this Software without prior written authorization from The Open Group.
 #endif
 
 #include "sleepuntil.h"
-#include <X11/X.h>
-#include <X11/Xmd.h>
+#include <nx-X11/X.h>
+#include <nx-X11/Xmd.h>
 #include "misc.h"
 #include "windowstr.h"
 #include "dixstruct.h"
@@ -49,10 +48,10 @@ typedef struct _Sertafied {
     XID			id;
     void		(*notifyFunc)(
 			ClientPtr /* client */,
-			pointer /* closure */
+			void * /* closure */
 			);
 
-    pointer		closure;
+    void		*closure;
 } SertafiedRec, *SertafiedPtr;
 
 static SertafiedPtr pPending;
@@ -62,21 +61,21 @@ static int	    SertafiedGeneration;
 
 static void	    ClientAwaken(
     ClientPtr /* client */,
-    pointer /* closure */
+    void * /* closure */
 );
 static int	    SertafiedDelete(
-    pointer /* value */,
+    void * /* value */,
     XID /* id */
 );
 static void	    SertafiedBlockHandler(
-    pointer /* data */,
+    void * /* data */,
     OSTimePtr /* wt */,
-    pointer /* LastSelectMask */
+    void * /* LastSelectMask */
 );
 static void	    SertafiedWakeupHandler(
-    pointer /* data */,
+    void * /* data */,
     int /* i */,
-    pointer /* LastSelectMask */
+    void * /* LastSelectMask */
 );
 
 int
@@ -85,8 +84,8 @@ ClientSleepUntil (client, revive, notifyFunc, closure)
     TimeStamp	*revive;
     void	(*notifyFunc)(
         ClientPtr /* client */,
-        pointer   /* closure */);
-    pointer	closure;
+        void *   /* closure */);
+    void	*closure;
 {
     SertafiedPtr	pRequest, pReq, pPrev;
 
@@ -98,7 +97,7 @@ ClientSleepUntil (client, revive, notifyFunc, closure)
 	SertafiedGeneration = serverGeneration;
 	BlockHandlerRegistered = FALSE;
     }
-    pRequest = (SertafiedPtr) xalloc (sizeof (SertafiedRec));
+    pRequest = (SertafiedPtr) malloc (sizeof (SertafiedRec));
     if (!pRequest)
 	return FALSE;
     pRequest->pClient = client;
@@ -109,15 +108,15 @@ ClientSleepUntil (client, revive, notifyFunc, closure)
     {
 	if (!RegisterBlockAndWakeupHandlers (SertafiedBlockHandler,
 					     SertafiedWakeupHandler,
-					     (pointer) 0))
+					     (void *) 0))
 	{
-	    xfree (pRequest);
+	    free (pRequest);
 	    return FALSE;
 	}
 	BlockHandlerRegistered = TRUE;
     }
     pRequest->notifyFunc = 0;
-    if (!AddResource (pRequest->id, SertafiedResType, (pointer) pRequest))
+    if (!AddResource (pRequest->id, SertafiedResType, (void *) pRequest))
 	return FALSE;
     if (!notifyFunc)
 	notifyFunc = ClientAwaken;
@@ -142,7 +141,7 @@ ClientSleepUntil (client, revive, notifyFunc, closure)
 static void
 ClientAwaken (client, closure)
     ClientPtr	client;
-    pointer	closure;
+    void	*closure;
 {
     if (!client->clientGone)
 	AttendClient (client);
@@ -151,7 +150,7 @@ ClientAwaken (client, closure)
 
 static int
 SertafiedDelete (value, id)
-    pointer value;
+    void * value;
     XID id;
 {
     SertafiedPtr	pRequest = (SertafiedPtr)value;
@@ -169,15 +168,15 @@ SertafiedDelete (value, id)
 	}
     if (pRequest->notifyFunc)
 	(*pRequest->notifyFunc) (pRequest->pClient, pRequest->closure);
-    xfree (pRequest);
+    free (pRequest);
     return TRUE;
 }
 
 static void
 SertafiedBlockHandler (data, wt, LastSelectMask)
-    pointer	    data;		/* unused */
+    void	    *data;		/* unused */
     OSTimePtr	    wt;			/* wait time */
-    pointer	    LastSelectMask;
+    void	    *LastSelectMask;
 {
     SertafiedPtr	    pReq, pNext;
     unsigned long	    delay;
@@ -211,9 +210,9 @@ SertafiedBlockHandler (data, wt, LastSelectMask)
 
 static void
 SertafiedWakeupHandler (data, i, LastSelectMask)
-    pointer	    data;
+    void *	    data;
     int		    i;
-    pointer	    LastSelectMask;
+    void *	    LastSelectMask;
 {
     SertafiedPtr	pReq, pNext;
     TimeStamp		now;
@@ -233,7 +232,7 @@ SertafiedWakeupHandler (data, i, LastSelectMask)
     {
 	RemoveBlockAndWakeupHandlers (SertafiedBlockHandler,
 				      SertafiedWakeupHandler,
-				      (pointer) 0);
+				      (void *) 0);
 	BlockHandlerRegistered = FALSE;
     }
 }

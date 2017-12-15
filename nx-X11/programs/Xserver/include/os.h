@@ -1,4 +1,3 @@
-/* $XFree86: xc/programs/Xserver/include/os.h,v 3.54 2003/10/30 21:21:06 herrb Exp $ */
 /***********************************************************
 
 Copyright 1987, 1998  The Open Group
@@ -46,20 +45,12 @@ SOFTWARE.
 
 ******************************************************************/
 
-/* $Xorg: os.h,v 1.4 2001/02/09 02:05:15 xorgcvs Exp $ */
 
 #ifndef OS_H
 #define OS_H
 
 #include "misc.h"
-#define ALLOCATE_LOCAL_FALLBACK(_size) Xalloc((unsigned long)(_size))
-#define DEALLOCATE_LOCAL_FALLBACK(_ptr) Xfree((pointer)(_ptr))
-#include <X11/Xalloca.h>
-#ifndef IN_MODULE
 #include <stdarg.h>
-#else
-#include "xf86_ansic.h"
-#endif
 
 #define NullFID ((FID) 0)
 
@@ -75,29 +66,25 @@ SOFTWARE.
 #define MAX_BIG_REQUEST_SIZE 4194303
 #endif
 
-typedef pointer	FID;
+typedef void *	FID;
 typedef struct _FontPathRec *FontPathPtr;
 typedef struct _NewClientRec *NewClientPtr;
 
-#ifndef xalloc
+#ifndef xnfalloc
 #define xnfalloc(size) XNFalloc((unsigned long)(size))
 #define xnfcalloc(_num, _size) XNFcalloc((unsigned long)(_num)*(unsigned long)(_size))
-#define xnfrealloc(ptr, size) XNFrealloc((pointer)(ptr), (unsigned long)(size))
+#define xnfrealloc(ptr, size) XNFrealloc((void *)(ptr), (unsigned long)(size))
 
-#define xalloc(size) Xalloc((unsigned long)(size))
-#define xcalloc(_num, _size) Xcalloc((unsigned long)(_num)*(unsigned long)(_size))
-#define xrealloc(ptr, size) Xrealloc((pointer)(ptr), (unsigned long)(size))
-#define xfree(ptr) Xfree((pointer)(ptr))
 #define xstrdup(s) Xstrdup(s)
 #define xnfstrdup(s) XNFstrdup(s)
+
+#define xallocarray(num, size) reallocarray(NULL, (num), (size))
 #endif
 
-#ifndef IN_MODULE
 #ifdef __SCO__
 #include <stdio.h>
 #endif
 #include <string.h>
-#endif
 
 /* have to put $(SIGNAL_DEFINES) in DEFINES in Imakefile to get this right */
 #ifdef SIGNALRETURNSINT
@@ -106,21 +93,13 @@ typedef struct _NewClientRec *NewClientPtr;
 #define SIGVAL void
 #endif
 
-extern Bool OsDelayInitColors;
 extern void (*OsVendorVErrorFProc)(const char *, va_list args);
 
 extern int WaitForSomething(
     int* /*pClientsReady*/
 );
 
-#ifdef LBX
-#define ReadRequestFromClient(client)   ((client)->readRequest(client))
-extern int StandardReadRequestFromClient(ClientPtr /*client*/);
-
-extern int ClientConnectionNumber(ClientPtr /*client*/);
-#else
 extern int ReadRequestFromClient(ClientPtr /*client*/);
-#endif /* LBX */
 
 extern Bool InsertFakeRequest(
     ClientPtr /*client*/, 
@@ -135,11 +114,13 @@ extern void FlushIfCriticalOutputPending(void);
 
 extern void SetCriticalOutputPending(void);
 
-extern int WriteToClient(ClientPtr /*who*/, int /*count*/, char* /*buf*/);
+extern int WriteToClient(ClientPtr /*who*/, int /*count*/, const void* /*__buf*/);
 
 extern void ResetOsBuffers(void);
 
 extern void InitConnectionLimits(void);
+
+extern void NotifyParentProcess(void);
 
 extern void CreateWellKnownSockets(void);
 
@@ -156,17 +137,22 @@ extern char *ClientAuthorized(
     unsigned int /*string_n*/,
     char* /*auth_string*/);
 
-extern Bool EstablishNewConnections(
-    ClientPtr /*clientUnused*/,
-    pointer /*closure*/);
-
 extern void CheckConnections(void);
 
 extern void CloseDownConnection(ClientPtr /*client*/);
 
-extern void AddEnabledDevice(int /*fd*/);
+typedef void (*NotifyFdProcPtr)(int fd, int ready, void *data);
 
-extern void RemoveEnabledDevice(int /*fd*/);
+#define X_NOTIFY_NONE   0
+#define X_NOTIFY_READ   1
+#define X_NOTIFY_WRITE  2
+
+extern Bool SetNotifyFd(int fd, NotifyFdProcPtr notify_fd, int mask, void *data);
+
+static inline void RemoveNotifyFd(int fd)
+{
+    (void) SetNotifyFd(fd, NULL, X_NOTIFY_NONE, NULL);
+}
 
 extern void OnlyListenToOneClient(ClientPtr /*client*/);
 
@@ -180,16 +166,12 @@ extern void MakeClientGrabImpervious(ClientPtr /*client*/);
 
 extern void MakeClientGrabPervious(ClientPtr /*client*/);
 
-#ifdef LBX
-extern void CloseDownFileDescriptor(ClientPtr /* client */);
-#endif
-
 extern void AvailableClientInput(ClientPtr /* client */);
 
 extern CARD32 GetTimeInMillis(void);
 
 extern void AdjustWaitForDelay(
-    pointer /*waitTime*/,
+    void * /*waitTime*/,
     unsigned long /*newdelay*/);
 
 typedef	struct _OsTimerRec *OsTimerPtr;
@@ -197,7 +179,7 @@ typedef	struct _OsTimerRec *OsTimerPtr;
 typedef CARD32 (*OsTimerCallback)(
     OsTimerPtr /* timer */,
     CARD32 /* time */,
-    pointer /* arg */);
+    void * /* arg */);
 
 extern void TimerInit(void);
 
@@ -211,7 +193,7 @@ extern OsTimerPtr TimerSet(
     int /* flags */,
     CARD32 /* millis */,
     OsTimerCallback /* func */,
-    pointer /* arg */);
+    void * /* arg */);
 
 extern void TimerCheck(void);
 extern void TimerCancel(OsTimerPtr /* pTimer */);
@@ -238,28 +220,25 @@ extern void ProcessCommandLine(int /*argc*/, char* /*argv*/[]);
 extern int set_font_authorizations(
     char ** /* authorizations */, 
     int * /*authlen */, 
-    pointer /* client */);
+    void * /* client */);
 
-#ifndef _HAVE_XALLOC_DECLS
-#define _HAVE_XALLOC_DECLS
-extern pointer Xalloc(unsigned long /*amount*/);
-extern pointer Xcalloc(unsigned long /*amount*/);
-extern pointer Xrealloc(pointer /*ptr*/, unsigned long /*amount*/);
-extern void Xfree(pointer /*ptr*/);
-#endif
-
-extern pointer XNFalloc(unsigned long /*amount*/);
-extern pointer XNFcalloc(unsigned long /*amount*/);
-extern pointer XNFrealloc(pointer /*ptr*/, unsigned long /*amount*/);
+extern void * XNFalloc(unsigned long /*amount*/);
+extern void * XNFcalloc(unsigned long /*amount*/);
+extern void * XNFrealloc(void * /*ptr*/, unsigned long /*amount*/);
 
 extern void OsInitAllocator(void);
 
 extern char *Xstrdup(const char *s);
 extern char *XNFstrdup(const char *s);
-extern char *Xprintf(const char *fmt, ...);
-extern char *Xvprintf(const char *fmt, va_list va);
-extern char *XNFprintf(const char *fmt, ...);
-extern char *XNFvprintf(const char *fmt, va_list va);
+
+/* Include new X*asprintf API */
+#include "Xprintf.h"
+
+/* Older api deprecated in favor of the asprintf versions */
+extern _X_EXPORT char *Xprintf(const char *fmt, ...) _X_ATTRIBUTE_PRINTF(1,2) _X_DEPRECATED;
+extern _X_EXPORT char *Xvprintf(const char *fmt, va_list va)_X_ATTRIBUTE_PRINTF(1,0) _X_DEPRECATED;
+extern _X_EXPORT char *XNFprintf(const char *fmt, ...) _X_ATTRIBUTE_PRINTF(1,2) _X_DEPRECATED;
+extern _X_EXPORT char *XNFvprintf(const char *fmt, va_list va)_X_ATTRIBUTE_PRINTF(1,0) _X_DEPRECATED;
 
 typedef SIGVAL (*OsSigHandlerPtr)(int /* sig */);
 
@@ -294,12 +273,12 @@ void OsBlockSignals (void);
 
 void OsReleaseSignals (void);
 
-#if !defined(WIN32) && !defined(__UNIXOS2__)
+#if !defined(WIN32)
 extern int System(char *);
-extern pointer Popen(char *, char *);
-extern int Pclose(pointer);
-extern pointer Fopen(char *, char *);
-extern int Fclose(pointer);
+extern void * Popen(char *, char *);
+extern int Pclose(void *);
+extern void * Fopen(char *, char *);
+extern int Fclose(void *);
 #else
 #define System(a) system(a)
 #define Popen(a,b) popen(a,b)
@@ -315,24 +294,24 @@ extern int AddHost(
     ClientPtr	/*client*/,
     int         /*family*/,
     unsigned    /*length*/,
-    pointer     /*pAddr*/);
+    void *     /*pAddr*/);
 
 extern Bool ForEachHostInFamily (
     int	    /*family*/,
     Bool    (* /*func*/ )(
             unsigned char * /* addr */,
             short           /* len */,
-            pointer         /* closure */),
-    pointer /*closure*/);
+            void *         /* closure */),
+    void * /*closure*/);
 
 extern int RemoveHost(
     ClientPtr	/*client*/,
     int         /*family*/,
     unsigned    /*length*/,
-    pointer     /*pAddr*/);
+    void *     /*pAddr*/);
 
 extern int GetHosts(
-    pointer * /*data*/,
+    void ** /*data*/,
     int	    * /*pnHosts*/,
     int	    * /*pLen*/,
     BOOL    * /*pEnabled*/);
@@ -341,9 +320,25 @@ typedef struct sockaddr * sockaddrPtr;
 
 extern int InvalidHost(sockaddrPtr /*saddr*/, int /*len*/, ClientPtr client);
 
-extern int LocalClient(ClientPtr /* client */);
-
 extern int LocalClientCred(ClientPtr, int *, int *);
+
+#define LCC_UID_SET    (1 << 0)
+#define LCC_GID_SET    (1 << 1)
+#define LCC_PID_SET    (1 << 2)
+#define LCC_ZID_SET    (1 << 3)
+
+typedef struct {
+    int fieldsSet;     /* Bit mask of fields set */
+    int        euid;           /* Effective uid */
+    int egid;          /* Primary effective group id */
+    int nSuppGids;     /* Number of supplementary group ids */
+    int *pSuppGids;    /* Array of supplementary group ids */
+    int pid;           /* Process id */
+    int zoneid;                /* Only set on Solaris 10 & later */
+} LocalClientCredRec;
+
+extern int GetLocalClientCreds(ClientPtr, LocalClientCredRec **);
+extern void FreeLocalClientCreds(LocalClientCredRec *);
 
 extern int ChangeAccessControl(ClientPtr /*client*/, int /*fEnabled*/);
 
@@ -362,7 +357,7 @@ extern void AccessUsingXdmcp(void);
 
 extern void DefineSelf(int /*fd*/);
 
-extern void AugmentSelf(pointer /*from*/, int /*len*/);
+extern void AugmentSelf(void * /*from*/, int /*len*/);
 
 extern void InitAuthorization(char * /*filename*/);
 
@@ -467,7 +462,7 @@ typedef struct {
 extern CallbackListPtr ReplyCallback;
 typedef struct {
     ClientPtr client;
-    pointer replyData;
+    const void * replyData;
     unsigned long dataLenBytes;
     unsigned long bytesRemaining;
     Bool startOfReply;
@@ -479,6 +474,24 @@ extern CallbackListPtr FlushCallback;
 extern void AbortDDX(void);
 extern void ddxGiveUp(void);
 extern int TimeSinceLastInputEvent(void);
+
+#ifndef HAVE_REALLOCARRAY
+#define reallocarray xreallocarray
+extern _X_EXPORT void *
+reallocarray(void *optr, size_t nmemb, size_t size);
+#endif
+
+#ifndef HAVE_STRLCPY
+extern _X_EXPORT size_t
+strlcpy(char *dst, const char *src, size_t siz);
+extern _X_EXPORT size_t
+strlcat(char *dst, const char *src, size_t siz);
+#endif
+
+#ifndef HAVE_TIMINGSAFE_MEMCMP
+extern _X_EXPORT int
+timingsafe_memcmp(const void *b1, const void *b2, size_t len);
+#endif
 
 /* Logging. */
 typedef enum _LogParameter {
@@ -512,6 +525,7 @@ typedef enum {
 #endif
 
 extern const char *LogInit(const char *fname, const char *backup);
+extern void LogSetDisplay(void);
 extern void LogClose(void);
 extern Bool LogSetParameter(LogParameter param, int value);
 extern void LogVWrite(int verb, const char *f, va_list args);
@@ -537,7 +551,7 @@ extern void ErrorF(const char *f, ...) _printf_attribute(1,2);
 extern void Error(char *str);
 extern void LogPrintMarkers(void);
 
-#if defined(NEED_SNPRINTF) && !defined(IN_MODULE)
+#if defined(NEED_SNPRINTF)
 extern int snprintf(char *str, size_t size, const char *format, ...)
 	_printf_attribute(3,4);
 extern int vsnprintf(char *str, size_t size, const char *format, va_list ap);

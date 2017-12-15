@@ -1,0 +1,103 @@
+--- ./nx-X11/extras/Mesa/src/mesa/main/context.c.X.original	2015-02-13 14:03:44.464447019 +0100
++++ ./nx-X11/extras/Mesa/src/mesa/main/context.c	2015-02-10 19:13:14.800648672 +0100
+@@ -131,6 +131,10 @@
+ #endif
+ #include "shaderobjects.h"
+ 
++#ifdef NXAGENT_SERVER
++#include "WSDrawBuffer.h"
++#endif
++
+ #ifdef USE_SPARC_ASM
+ #include "sparc/sparc.h"
+ #endif
+@@ -143,6 +147,47 @@
+ int MESA_DEBUG_FLAGS = 0;
+ #endif
+ 
++#ifdef NXAGENT_SERVER
++extern WSDrawBufferPtr pWSDrawBuffer;
++
++int IsWSDrawBuffer(GLframebuffer *mesa_buffer)
++{
++  WSDrawBufferPtr p = pWSDrawBuffer;
++
++  while (p != NULL) {
++    if (p -> DrawBuffer == mesa_buffer) {
++      return 1;
++    }
++    p = p -> next;
++  }
++  return 0;
++}
++
++void FreeWSDrawBuffer(GLframebuffer *mesa_buffer)
++{
++  WSDrawBufferPtr p = pWSDrawBuffer;
++  WSDrawBufferPtr pOld = NULL;
++
++  if (p == NULL)
++    return;
++
++  if (p -> DrawBuffer == mesa_buffer) {
++    pWSDrawBuffer = p -> next;
++    free(p);
++    return;
++  }
++
++  while (p -> next != NULL) {
++    if (p -> next -> DrawBuffer == mesa_buffer) {
++      pOld = p -> next;
++      p -> next = p -> next -> next;
++      free(pOld);
++      return;
++    }
++    p = p -> next;
++  }
++}
++#endif
+ 
+ /* ubyte -> float conversion */
+ GLfloat _mesa_ubyte_to_float_color_tab[256];
+@@ -1520,6 +1565,10 @@
+ _mesa_make_current( GLcontext *newCtx, GLframebuffer *drawBuffer,
+                     GLframebuffer *readBuffer )
+ {
++   #ifdef NXAGENT_SERVER
++   int flag;
++   #endif
++
+    if (MESA_VERBOSE & VERBOSE_API)
+       _mesa_debug(newCtx, "_mesa_make_current()\n");
+ 
+@@ -1558,11 +1607,30 @@
+          ASSERT(readBuffer->Name == 0);
+          newCtx->WinSysDrawBuffer = drawBuffer;
+          newCtx->WinSysReadBuffer = readBuffer;
++
++#ifdef NXAGENT_SERVER
++         flag = 0;
++         if (newCtx->DrawBuffer) {
++           if (!IsWSDrawBuffer(newCtx->DrawBuffer)) {
++             if (newCtx->DrawBuffer->Name == 0) {
++               flag = 1;
++             }
++             FreeWSDrawBuffer(newCtx->DrawBuffer);
++           }
++           else flag = 1;
++         }
++
++         if (!newCtx->DrawBuffer || flag) {
++           newCtx->DrawBuffer = drawBuffer;
++           newCtx->ReadBuffer = readBuffer;
++         }
++#else
+          /* don't replace user-buffer bindings with window system buffer */
+          if (!newCtx->DrawBuffer || newCtx->DrawBuffer->Name == 0) {
+             newCtx->DrawBuffer = drawBuffer;
+             newCtx->ReadBuffer = readBuffer;
+          }
++#endif
+ 
+ 	 newCtx->NewState |= _NEW_BUFFERS;
+ 

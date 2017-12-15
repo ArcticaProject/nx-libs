@@ -1,0 +1,214 @@
+--- ./nx-X11/programs/Xserver/os/oscolor.c.X.original	2015-02-13 14:03:44.788440645 +0100
++++ ./nx-X11/programs/Xserver/os/oscolor.c	2015-02-13 14:03:44.788440645 +0100
+@@ -47,6 +47,17 @@
+ ******************************************************************/
+ /* $Xorg: oscolor.c,v 1.4 2001/02/09 02:05:23 xorgcvs Exp $ */
+ 
++#ifdef NX_TRANS_SOCKET
++
++#include <sys/types.h>
++#include <sys/stat.h>
++#include <unistd.h>
++
++static char* nxAltRgbPaths[] = {"/usr/NX/share/rgb", "/usr/share/X11/rgb", "/etc/X11/rgb"};
++static char _NXRgbPath[1024];
++
++#endif
++
+ #ifdef HAVE_DIX_CONFIG_H
+ #include <dix-config.h>
+ #endif
+@@ -174,6 +185,154 @@
+ 
+ static dbEntryPtr hashTab[HASHSIZE];
+ 
++#ifdef NX_TRANS_SOCKET
++
++static int NXVerifyRgbPath(char *path)
++{
++  int size;
++  char *rgbPath;
++  struct stat rgbFileStat;
++
++  /*
++   * Check if rgb file is present.
++   */
++
++  size = strlen(path) + strlen(".txt") + 1;
++
++  rgbPath = (char *) ALLOCATE_LOCAL(size + 1);
++
++  strcpy(rgbPath, path);
++
++  #ifdef NX_TRANS_TEST
++  fprintf(stderr, "NXVerifyRgbPath: Looking for [%s] file.\n",
++              rgbPath);
++  #endif
++
++  if (stat(rgbPath, &rgbFileStat) != 0)
++  {
++
++    #ifdef NX_TRANS_TEST
++    fprintf(stderr, "NXVerifyRgbPath: Can't find the rgb file [%s].\n",
++                rgbPath);
++    #endif
++
++    strcat(rgbPath, ".txt");
++
++    #ifdef NX_TRANS_TEST
++    fprintf(stderr, "NXVerifyRgbPath: Looking for [%s] file.\n",
++                rgbPath);
++    #endif
++
++    if (stat(rgbPath, &rgbFileStat) != 0)
++    {
++
++      #ifdef NX_TRANS_TEST
++      fprintf(stderr, "NXVerifyRgbPath: Can't find the rgb file [%s].\n",
++                  rgbPath);
++      #endif
++
++      DEALLOCATE_LOCAL(rgbPath);
++
++      return 0;
++    }
++  }
++
++  #ifdef NX_TRANS_TEST
++  fprintf(stderr, "NXVerifyRgbPath: rgb path [%s] is valid.\n",
++              path);
++  #endif
++
++  DEALLOCATE_LOCAL(rgbPath);
++
++  return 1;
++}
++
++static const char *_NXGetRgbPath(const char *path)
++{
++  const char *systemEnv;
++  char rgbPath[1024];
++  int numAltRgbPaths;
++  int i;
++
++  /*
++   * Check the environment only once.
++   */
++
++  if (*_NXRgbPath != '\0')
++  {
++    return _NXRgbPath;
++  }
++
++  systemEnv = getenv("NX_SYSTEM");
++
++  if (systemEnv != NULL && *systemEnv != '\0')
++  {
++    if (strlen(systemEnv) + strlen("/share/rgb") + 1 > 1024)
++    {
++
++      #ifdef NX_TRANS_TEST
++      fprintf(stderr, "_NXGetRgbPath: WARNING! Maximum length of rgb file path exceeded.\n");
++      #endif
++
++      goto _NXGetRgbPathError;
++    }
++
++    strcpy(rgbPath, systemEnv);
++    strcat(rgbPath, "/share/rgb");
++
++    if (NXVerifyRgbPath(rgbPath) == 1)
++    {
++      strcpy(_NXRgbPath, systemEnv);
++      strcat(_NXRgbPath, "/share/rgb");
++
++      #ifdef NX_TRANS_TEST
++      fprintf(stderr, "_NXGetRgbPath: Using rgb file path [%s].\n",
++                  _NXRgbPath);
++      #endif
++
++      return _NXRgbPath;
++    }
++  }
++
++  numAltRgbPaths = sizeof(nxAltRgbPaths) / sizeof(*nxAltRgbPaths);
++
++  for (i = 0; i < numAltRgbPaths; i++)
++  {
++    if (NXVerifyRgbPath(nxAltRgbPaths[i]) == 1)
++    {
++      if (strlen(nxAltRgbPaths[i]) + 1 > 1024)
++      {
++        #ifdef NX_TRANS_TEST
++        fprintf(stderr, "_NXGetRgbPath: WARNING! Maximum length of rgb file path exceeded.\n");
++        #endif
++
++        goto _NXGetRgbPathError;
++      }
++
++      strcpy(_NXRgbPath, nxAltRgbPaths[i]);
++
++      #ifdef NX_TRANS_TEST
++      fprintf(stderr, "_NXGetRgbPath: Using rgb file path [%s].\n",
++                  _NXRgbPath);
++      #endif
++
++      return _NXRgbPath;
++    }
++  }
++
++_NXGetRgbPathError:
++
++  strcpy(_NXRgbPath, path);
++
++  #ifdef NX_TRANS_TEST
++  fprintf(stderr, "_NXGetRgbPath: Using default rgb file path [%s].\n",
++              _NXRgbPath);
++  #endif
++
++  return _NXRgbPath;
++}
++
++#endif
+ 
+ static dbEntryPtr
+ lookup(char *name, int len, Bool create)
+@@ -229,9 +388,26 @@
+   if (!was_here)
+     {
+ #ifndef __UNIXOS2__
++#ifdef NX_TRANS_SOCKET
++      /*
++       * Add the trailing '.txt' if a
++       * 'rgb' file is not found.
++       */
++
++      struct stat statbuf;
++
++      path = (char*)ALLOCATE_LOCAL(strlen(_NXGetRgbPath(rgbPath)) + 5);
++      strcpy(path, _NXGetRgbPath(rgbPath));
++
++      if (stat(path, &statbuf) != 0)
++      {
++          strcat(path, ".txt");
++      }
++#else
+       path = (char*)ALLOCATE_LOCAL(strlen(rgbPath) +5);
+       strcpy(path, rgbPath);
+       strcat(path, ".txt");
++#endif
+ #else
+       char *tmp = (char*)__XOS2RedirRoot(rgbPath);
+       path = (char*)ALLOCATE_LOCAL(strlen(tmp) +5);
+@@ -240,7 +416,11 @@
+ #endif
+       if (!(rgb = fopen(path, "r")))
+         {
++#ifdef NX_TRANS_SOCKET
++           ErrorF( "Couldn't open RGB_DB '%s'\n", _NXGetRgbPath(rgbPath));
++#else
+ 	   ErrorF( "Couldn't open RGB_DB '%s'\n", rgbPath );
++#endif
+ 	   DEALLOCATE_LOCAL(path);
+ 	   return FALSE;
+ 	}

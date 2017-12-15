@@ -1,0 +1,271 @@
+--- ./nx-X11/programs/Xserver/os/WaitFor.c.X.original	2015-02-13 14:03:44.788440645 +0100
++++ ./nx-X11/programs/Xserver/os/WaitFor.c	2015-02-10 19:13:13.464698616 +0100
+@@ -48,6 +48,23 @@
+ 
+ /* $Xorg: WaitFor.c,v 1.4 2001/02/09 02:05:22 xorgcvs Exp $ */
+ 
++/**************************************************************************/
++/*                                                                        */
++/* Copyright (c) 2001, 2011 NoMachine, http://www.nomachine.com/.         */
++/*                                                                        */
++/* NX-X11, NX protocol compression and NX extensions to this software     */
++/* are copyright of NoMachine. Redistribution and use of the present      */
++/* software is allowed according to terms specified in the file LICENSE   */
++/* which comes in the source distribution.                                */
++/*                                                                        */
++/* Check http://www.nomachine.com/licensing.html for applicability.       */
++/*                                                                        */
++/* NX and NoMachine are trademarks of Medialogic S.p.A.                   */
++/*                                                                        */
++/* All rights reserved.                                                   */
++/*                                                                        */
++/**************************************************************************/
++
+ /*****************************************************************
+  * OS Dependent input routines:
+  *
+@@ -80,6 +97,12 @@
+ #include "dpmsproc.h"
+ #endif
+ 
++#if defined(NX_TRANS_SOCKET) && defined(NX_TRANS_WAKEUP)
++
++static unsigned long startTimeInMillis;
++
++#endif
++
+ #ifdef WIN32
+ /* Error codes from windows sockets differ from fileio error codes  */
+ #undef EINTR
+@@ -169,8 +192,18 @@
+     Bool    someReady = FALSE;
+ #endif
+ 
++#if defined(NX_TRANS_SOCKET) && defined(NX_TRANS_DEBUG)
++    fprintf(stderr, "WaitForSomething: Got called.\n");
++#endif
++
+     FD_ZERO(&clientsReadable);
+ 
++#if defined(NX_TRANS_SOCKET) && defined(NX_TRANS_WAKEUP)
++
++    startTimeInMillis = GetTimeInMillis();
++
++#endif
++
+     /* We need a while loop here to handle 
+        crashed connections and the screen saver timeout */
+     while (1)
+@@ -231,18 +264,127 @@
+ 	    XTestComputeWaitTime (&waittime);
+ 	}
+ #endif /* XTESTEXT1 */
++
++#if defined(NX_TRANS_SOCKET) && defined(NX_TRANS_WAKEUP)
++
++        /*
++         * If caller has marked the first element of pClientsReady[],
++         * bail out of select after a short timeout. We need this to
++         * let the NX agent remove the splash screen when the timeout
++         * is expired. A better option would be to use the existing
++         * screen-saver timeout but it can be modified by clients, so
++         * we would need a special handling. This hack is trivial and
++         * keeps WaitForSomething() backward compatible with the exis-
++         * ting servers.
++         */
++
++        if (pClientsReady[0] == -1)
++        {
++            unsigned long timeoutInMillis;
++
++#if defined(NX_TRANS_SOCKET) && defined(NX_TRANS_WAKEUP) && defined(NX_TRANS_DEBUG)
++            fprintf(stderr, "WaitForSomething: pClientsReady[0] is [%d], pClientsReady[1] is [%d].\n",
++                        pClientsReady[0], pClientsReady[1]);
++#endif
++
++            timeoutInMillis = GetTimeInMillis();
++
++            if (timeoutInMillis - startTimeInMillis >= NX_TRANS_WAKEUP)
++            {
++#if defined(NX_TRANS_SOCKET) && defined(NX_TRANS_WAKEUP) && defined(NX_TRANS_DEBUG)
++                fprintf(stderr, "WaitForSomething: Returning 0 because of wakeup timeout.\n");
++#endif
++                return 0;
++            }
++
++            timeoutInMillis = NX_TRANS_WAKEUP - (timeoutInMillis - startTimeInMillis);
++
++#if defined(NX_TRANS_SOCKET) && defined(NX_TRANS_WAKEUP) && defined(NX_TRANS_DEBUG)
++            fprintf(stderr, "WaitForSomething: Milliseconds to next wakeup are %ld.\n",
++                        timeoutInMillis);
++#endif
++            if (wt == NULL || (wt -> tv_sec * MILLI_PER_SECOND +
++                    wt -> tv_usec / MILLI_PER_SECOND) > timeoutInMillis)
++            {
++                if ((waittime.tv_sec * MILLI_PER_SECOND +
++                        waittime.tv_usec / MILLI_PER_SECOND) > timeoutInMillis)
++                {
++                    waittime.tv_sec = timeoutInMillis / MILLI_PER_SECOND;
++                    waittime.tv_usec = (timeoutInMillis * MILLI_PER_SECOND) %
++                                            (MILLI_PER_SECOND * 1000);
++                    wt = &waittime;
++                }
++
++#if defined(NX_TRANS_SOCKET) && defined(NX_TRANS_WAKEUP) && defined(NX_TRANS_DEBUG)
++                fprintf(stderr, "WaitForSomething: Next wakeup timeout set to %ld milliseconds.\n",
++                            (waittime.tv_sec * MILLI_PER_SECOND) +
++                                (waittime.tv_usec / MILLI_PER_SECOND));
++#endif
++            }
++#if defined(NX_TRANS_SOCKET) && defined(NX_TRANS_WAKEUP) && defined(NX_TRANS_DEBUG)
++            else
++            {
++                fprintf(stderr, "WaitForSomething: Using existing timeout of %ld milliseconds.\n",
++                            (waittime.tv_sec * MILLI_PER_SECOND) +
++                                (waittime.tv_usec / MILLI_PER_SECOND));
++            }
++#endif
++        }
++#endif
++
+ 	/* keep this check close to select() call to minimize race */
++#if defined(NX_TRANS_SOCKET) && defined(NX_TRANS_DEBUG)
+ 	if (dispatchException)
++	{
+ 	    i = -1;
++
++            fprintf(stderr, "WaitForSomething: Value of dispatchException is true. Set i = -1.\n");
++	}
++#else
++        if (dispatchException)
++            i = -1;
++#endif
+ 	else if (AnyClientsWriteBlocked)
+ 	{
++#if defined(NX_TRANS_SOCKET) && defined(NX_TRANS_DEBUG)
++            if (wt == NULL)
++            {
++                fprintf(stderr, "WaitForSomething: Executing select with LastSelectMask and "
++                            "clientsWritable and null timeout.\n");
++            }
++            else
++            {
++                fprintf(stderr, "WaitForSomething: Executing select with LastSelectMask, "
++                            "clientsWritable, %ld secs and %ld usecs.\n",
++                                wt -> tv_sec, wt -> tv_usec);
++            }
++#endif
+ 	    XFD_COPYSET(&ClientsWriteBlocked, &clientsWritable);
+ 	    i = Select (MaxClients, &LastSelectMask, &clientsWritable, NULL, wt);
+ 	}
+ 	else 
+ 	{
++#if defined(NX_TRANS_SOCKET) && defined(NX_TRANS_DEBUG)
++            if (wt == NULL)
++            {
++                fprintf(stderr, "WaitForSomething: Executing select with LastSelectMask and null timeout.\n");
++            }
++            else
++            {
++                fprintf(stderr, "WaitForSomething: Executing select with LastSelectMask, %ld secs and %ld usecs.\n",
++                            wt -> tv_sec, wt -> tv_usec);
++            }
++#endif
+ 	    i = Select (MaxClients, &LastSelectMask, NULL, NULL, wt);
+ 	}
++#if defined(NX_TRANS_SOCKET) && defined(NX_TRANS_DEBUG)
++        fprintf(stderr, "WaitForSomething: Bailed out with i = [%d] and errno = [%d].\n", i, errno);
++
++        if (i < 0)
++        {
++            fprintf(stderr, "WaitForSomething: Error is [%s].\n", strerror(errno));
++        }
++#endif
+ 	selecterr = GetErrno();
+ 	WakeupHandler(i, (pointer)&LastSelectMask);
+ #ifdef XTESTEXT1
+@@ -261,15 +403,31 @@
+ #endif
+ 	if (i <= 0) /* An error or timeout occurred */
+ 	{
+-	    if (dispatchException)
+-		return 0;
++#if defined(NX_TRANS_SOCKET) && defined(NX_TRANS_DEBUG)
++            if (dispatchException)
++            {
++                fprintf(stderr, "WaitForSomething: Returning 0 because of (dispatchException).\n");
++                return 0;
++            }
++#else
++            if (dispatchException)
++                return 0;
++#endif
+ 	    if (i < 0) 
+ 	    {
+ 		if (selecterr == EBADF)    /* Some client disconnected */
+ 		{
+ 		    CheckConnections ();
+-		    if (! XFD_ANYSET (&AllClients))
+-			return 0;
++#if defined(NX_TRANS_SOCKET) && defined(NX_TRANS_DEBUG)
++                    if (! XFD_ANYSET (&AllClients))
++                    {
++                        fprintf(stderr, "WaitForSomething: Returning 0 because of (! XFD_ANYSET (&AllClients)).\n");
++                        return 0;
++                    }
++#else
++                    if (! XFD_ANYSET (&AllClients))
++                        return 0;
++#endif
+ 		}
+ 		else if (selecterr == EINVAL)
+ 		{
+@@ -293,8 +451,18 @@
+ 		break;
+ 	    }
+ #endif
++#if defined(NX_TRANS_SOCKET)
++            if (*checkForInput[0] != *checkForInput[1])
++            {
++#if defined(NX_TRANS_SOCKET) && defined(NX_TRANS_DEBUG)
++                fprintf(stderr, "WaitForSomething: Returning 0 because of (*checkForInput[0] != *checkForInput[1]).\n");
++#endif
++		return 0;
++            }
++#else
+ 	    if (*checkForInput[0] != *checkForInput[1])
+ 		return 0;
++#endif
+ 
+ 	    if (timers)
+ 	    {
+@@ -358,9 +526,19 @@
+ 	    /* Windows keyboard and mouse events are added to the input queue
+ 	       in Block- and WakupHandlers. There is no device to check if  
+ 	       data is ready. So check here if new input is available */
++#if defined(NX_TRANS_SOCKET)
++            if (*checkForInput[0] != *checkForInput[1])
++            {
++#if defined(NX_TRANS_SOCKET) && defined(NX_TRANS_DEBUG)
++                fprintf(stderr, "WaitForSomething: Returning 0 because of (*checkForInput[0] != *checkForInput[1]).\n");
++#endif
++		return 0;
++            }
++#else
+ 	    if (*checkForInput[0] != *checkForInput[1])
+ 		return 0;
+ #endif
++#endif
+ 	}
+     }
+ 
+@@ -429,6 +607,9 @@
+ #endif
+ 	}
+     }
++#if defined(NX_TRANS_SOCKET) && defined(NX_TRANS_DEBUG)
++    fprintf(stderr, "WaitForSomething: Returning nready.\n");
++#endif
+     return nready;
+ }
+ 

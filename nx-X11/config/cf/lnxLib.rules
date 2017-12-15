@@ -1,6 +1,3 @@
-XCOMM $Xorg: lnxLib.rules,v 1.3 2000/08/17 19:41:47 cpqbld Exp $
-XCOMM $XFree86: xc/config/cf/lnxLib.rules,v 3.52 2003/10/31 20:49:03 herrb Exp $
-
 /*
  * Linux shared library rules (DLL & ELF versions)
  */
@@ -12,25 +9,10 @@ XCOMM $XFree86: xc/config/cf/lnxLib.rules,v 3.52 2003/10/31 20:49:03 herrb Exp $
 #endif
 
 #ifndef UseRpath
-#define UseRpath NO
-#endif
-
-#ifndef SharedOldX
-# define SharedOldX NO
+#define UseRpath YES
 #endif
 
 #if UseElfFormat
-
-# if (LinuxCLibMajorVersion >= 5 && LinuxCLibMinorVersion >= 4) || LinuxCLibMajorVersion >= 6
-#  ifndef SpecialMalloc
-#   define SpecialMalloc NO
-#  endif
-#if 0
-#  ifndef UseInternalMalloc
-#   define UseInternalMalloc NO
-#  endif
-#endif
-# endif
 
 # if LinuxCLibMajorVersion <= 5
 /*
@@ -389,7 +371,7 @@ JUMP_LDLIBS_libc = `$(CC) --print-libgcc-file-name` -lc
 XCOMM libX11.so (X11, SM, ICE)
 JUMP_ROOT_X11 = $(XLIBSRC)
 JUMP_IS_HOST_X11 = YES
-JUMP_STUBLIBS_X11 = libX11.sa libSM.sa libICE.sa
+JUMP_STUBLIBS_X11 = libNX_X11.sa libNX_SM.sa libNX_ICE.sa
 JUMP_SIBDIRS_X11 = $(JUMP_ROOT_SM) $(JUMP_ROOT_ICE)
 JUMP_DIR_X11 = $(JUMP_ROOT_X11)/shared
 JUMP_DEFS_X11 = $(XDMAUTHDEFS) $(XKB_DEFINES)
@@ -400,50 +382,10 @@ JUMP_EXPORT_X11 = $(JUMP_DIR_X11)/jump.vars
 JUMP_ADDRESS_X11 = 0x60200000
 JUMP_JUMPTABLESIZE_X11 = 0x4000
 JUMP_GOTSIZE_X11 = 4096
-JUMP_STUBNAMES_X11 = libX11 libSM libICE
+JUMP_STUBNAMES_X11 = libNX_X11 libNX_SM libNX_ICE
 JUMP_STUBS_IMPORT_X11 = $(LIBC_SA)
-JUMP_SIBARS_X11 = jump/libSM.a~ jump/libICE.a~
+JUMP_SIBARS_X11 = jump/libNX_SM.a~ jump/libNX_ICE.a~
 JUMP_LDLIBS_X11 = $(JUMP_SIBARS_X11) $(JUMP_LDLIBS_libc)
-
-XCOMM libSM (part of libX11.so)
-JUMP_ROOT_SM = $(SMSRC)
-JUMP_IS_HOST_SM = NO
-JUMP_HOST_SM = $(JUMP_ROOT_X11)
-JUMP_DIR_SM = $(JUMP_DIR_X11)
-
-XCOMM libICE (part of libX11.so)
-JUMP_ROOT_ICE = $(ICESRC)
-JUMP_IS_HOST_ICE = NO
-JUMP_HOST_ICE = $(JUMP_ROOT_X11)
-JUMP_DIR_ICE = $(JUMP_DIR_X11)
-
-XCOMM libXt.so (Xt, Xmu, Xext, Xi, Xtst, Xp)
-JUMP_ROOT_Xt = $(TOOLKITSRC)
-JUMP_IS_HOST_Xt = YES
-JUMP_STUBLIBS_Xt = libXt.sa libXmu.sa libXext.sa libXi.sa libXtst.sa libXp.sa
-JUMP_SUBDIRS_Xt = $(JUMP_ROOT_X11)
-JUMP_SIBDIRS_Xt = $(JUMP_ROOT_Xmu) $(JUMP_ROOT_Xext) \
-	$(JUMP_ROOT_Xi) $(JUMP_ROOT_Xtst) $(JUMP_ROOT_Xp)
-JUMP_DIR_Xt = $(JUMP_ROOT_Xt)/shared
-JUMP_VARS_Xt = $(JUMP_ROOT_Xt)/jump_vars
-JUMP_FUNCS_Xt = $(JUMP_ROOT_Xt)/jump_funcs
-JUMP_IGNORE_Xt = $(JUMP_ROOT_Xt)/jump_ignore
-JUMP_EXPORT_Xt = $(JUMP_DIR_Xt)/jump.vars
-JUMP_IMPORT_Xt = $(JUMP_EXPORT_X11)
-JUMP_ADDRESS_Xt = 0x602a0000
-JUMP_JUMPTABLESIZE_Xt = 0x4000
-JUMP_GOTSIZE_Xt = 4096
-JUMP_STUBNAMES_Xt = libXt libXmu libXext libXi libXtst libXp
-JUMP_STUBS_IMPORT_Xt = $(JUMP_STUBS_IMPORT_X11)
-JUMP_SIBARS_Xt = jump/libXmu.a~ jump/libXext.a~ jump/libXi.a~ jump/libXtst.a~ jump/libXp.a~
-JUMP_LDLIBS_Xt = $(JUMP_SIBARS_Xt) $(JUMP_ROOT_ICE)/libICE.sa \
-	$(JUMP_ROOT_SM)/libSM.sa $(JUMP_ROOT_X11)/libX11.sa $(JUMP_LDLIBS_libc)
-
-XCOMM libXmu (part of libXt.so)
-JUMP_ROOT_Xmu = $(XMUSRC)
-JUMP_IS_HOST_Xmu = NO
-JUMP_HOST_Xmu = $(JUMP_ROOT_Xt)
-JUMP_DIR_Xmu = $(JUMP_DIR_Xt)
 
 XCOMM libXext (part of libXt.so)
 JUMP_ROOT_Xext = $(XEXTLIBSRC)
@@ -451,43 +393,11 @@ JUMP_IS_HOST_Xext = NO
 JUMP_HOST_Xext = $(JUMP_ROOT_Xt)
 JUMP_DIR_Xext = $(JUMP_DIR_Xt)
 
-XCOMM libXi (part of libXt.so)
-JUMP_ROOT_Xi = $(XILIBSRC)
-JUMP_IS_HOST_Xi = NO
-JUMP_HOST_Xi = $(JUMP_ROOT_Xt)
-JUMP_DIR_Xi = $(JUMP_DIR_Xt)
-
 XCOMM libXtst (part of libXt.so)
 JUMP_ROOT_Xtst = $(XTESTLIBSRC)
 JUMP_IS_HOST_Xtst = NO
 JUMP_HOST_Xtst = $(JUMP_ROOT_Xt)
 JUMP_DIR_Xtst = $(JUMP_DIR_Xt)
-
-XCOMM libXp (part of libXt.so)
-JUMP_ROOT_Xp = $(XPLIBSRC)
-JUMP_IS_HOST_Xp = NO
-JUMP_HOST_Xp = $(JUMP_ROOT_Xt)
-JUMP_DIR_Xp = $(JUMP_DIR_Xt)
-
-XCOMM libXaw.so (Xaw)
-JUMP_ROOT_Xaw = $(AWIDGETSRC)
-JUMP_IS_HOST_Xaw = YES
-JUMP_STUBLIBS_Xaw = libXaw.sa
-JUMP_SUBDIRS_Xaw = $(JUMP_ROOT_Xt)
-JUMP_DIR_Xaw = $(JUMP_ROOT_Xaw)/shared
-JUMP_VARS_Xaw = $(JUMP_ROOT_Xaw)/jump_vars
-JUMP_FUNCS_Xaw = $(JUMP_ROOT_Xaw)/jump_funcs
-JUMP_IGNORE_Xaw = $(JUMP_ROOT_Xaw)/jump_ignore
-JUMP_EXPORT_Xaw = $(JUMP_DIR_Xaw)/jump.vars
-JUMP_IMPORT_Xaw = $(JUMP_EXPORT_Xt) $(JUMP_EXPORT_X11)
-JUMP_ADDRESS_Xaw = 0x60300000
-JUMP_JUMPTABLESIZE_Xaw = 0x4000
-JUMP_GOTSIZE_Xaw = 4096
-JUMP_STUBNAMES_Xaw = libXaw
-JUMP_STUBS_IMPORT_Xaw = $(JUMP_STUBS_IMPORT_X11)
-JUMP_LDLIBS_Xaw = $(JUMP_ROOT_Xt)/libXt.sa $(JUMP_ROOT_Xt)/libXmu.sa \
-	$(JUMP_ROOT_Xt)/libXext.sa $(JUMP_ROOT_X11)/libX11.sa \
-	$(JUMP_LDLIBS_libc)
 
 # endif /* !UseInstalled */
 

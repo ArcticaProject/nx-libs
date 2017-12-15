@@ -1,17 +1,25 @@
 /**************************************************************************/
 /*                                                                        */
-/* Copyright (c) 2001, 2011 NoMachine, http://www.nomachine.com/.         */
+/* Copyright (c) 2001, 2011 NoMachine (http://www.nomachine.com)          */
+/* Copyright (c) 2008-2014 Oleksandr Shneyder <o.shneyder@phoca-gmbh.de>  */
+/* Copyright (c) 2011-2016 Mike Gabriel <mike.gabriel@das-netzwerkteam.de>*/
+/* Copyright (c) 2014-2016 Mihai Moldovan <ionic@ionic.de>                */
+/* Copyright (c) 2014-2016 Ulrich Sibiller <uli42@gmx.de>                 */
+/* Copyright (c) 2015-2016 Qindel Group (http://www.qindel.com)           */
 /*                                                                        */
 /* NXAGENT, NX protocol compression and NX extensions to this software    */
-/* are copyright of NoMachine. Redistribution and use of the present      */
-/* software is allowed according to terms specified in the file LICENSE   */
-/* which comes in the source distribution.                                */
+/* are copyright of the aforementioned persons and companies.             */
 /*                                                                        */
-/* Check http://www.nomachine.com/licensing.html for applicability.       */
-/*                                                                        */
-/* NX and NoMachine are trademarks of Medialogic S.p.A.                   */
+/* Redistribution and use of the present software is allowed according    */
+/* to terms specified in the file LICENSE which comes in the source       */
+/* distribution.                                                          */
 /*                                                                        */
 /* All rights reserved.                                                   */
+/*                                                                        */
+/* NOTE: This software has received contributions from various other      */
+/* contributors, only the core maintainers and supporters are listed as   */
+/* copyright holders. Please contact us, if you feel you should be listed */
+/* as copyright holder, as well.                                          */
 /*                                                                        */
 /**************************************************************************/
 
@@ -20,6 +28,7 @@
 #include "../../include/window.h"
 #include "windowstr.h"
 #include "colormapst.h"
+#include "scrnintstr.h"
 #include "propertyst.h"
 
 #include "Agent.h"
@@ -29,8 +38,9 @@
 #include "Pixmaps.h"
 #include "Atoms.h"
 #include "Trap.h"
+#include "Utils.h"
 
-#include "NXlib.h"
+#include "compext/Compext.h"
 
 /*
  * Set here the required log level.
@@ -239,10 +249,9 @@ Bool nxagentRootlessTreesMatch()
 {
   Window root_return;
   Window parent_return;
-  Window *children_return;
+  Window *children_return = NULL;
   unsigned int nChildrenReturn;
-  WindowPtr pW;
-  WindowPtr pTestWin = WindowTable[0] -> firstChild;
+  WindowPtr pTestWin = screenInfo.screens[0]->root -> firstChild;
   Bool treesMatch = True;
   Status result;
 
@@ -260,14 +269,14 @@ Bool nxagentRootlessTreesMatch()
 
   while (nChildrenReturn > 0)
   {
-    pW = nxagentWindowPtr(children_return[--nChildrenReturn]);
+    WindowPtr pW = nxagentWindowPtr(children_return[--nChildrenReturn]);
 
     if (!pW)
     {
       pW = nxagentRootlessTopLevelWindow(children_return[nChildrenReturn]);
     }
 
-    if (pW && pW != WindowTable[0])
+    if (pW && pW != screenInfo.screens[0]->root)
     {
       if (treesMatch && pTestWin && pTestWin == pW)
       {
@@ -304,7 +313,14 @@ void nxagentRootlessRestack(unsigned long children[], unsigned int nchildren)
   XID values[2];
   Mask mask;
 
-  toplevel = xalloc(sizeof(WindowPtr) * nchildren);
+  toplevel = malloc(sizeof(WindowPtr) * nchildren);
+
+  if (!toplevel)
+  {
+    /* FIXME: Is this too much and we and simply return here? */
+    FatalError("nxagentRootlessRestack: malloc() failed.");
+  }
+
   ntoplevel = 0;
 
   for(i = 0; i < nchildren; i++)
@@ -316,7 +332,7 @@ void nxagentRootlessRestack(unsigned long children[], unsigned int nchildren)
       pWin = nxagentRootlessTopLevelWindow(children[i]);
     }
 
-    if (pWin && pWin != WindowTable[0])
+    if (pWin && pWin != screenInfo.screens[0]->root)
     {
       toplevel[ntoplevel++] = pWin;
     }
@@ -324,6 +340,7 @@ void nxagentRootlessRestack(unsigned long children[], unsigned int nchildren)
 
   if (!ntoplevel)
   {
+    free(toplevel);
     return;
   }
 
@@ -333,19 +350,19 @@ void nxagentRootlessRestack(unsigned long children[], unsigned int nchildren)
 
   for (i = 0; i < ntoplevel; i++)
   {
-    fprintf(stderr, "[%p]\n", toplevel[i]);
+    fprintf(stderr, "nxagentRootlessRestack: [%p]\n", toplevel[i]);
   }
 
   fprintf(stderr, "nxagentRootlessRestack: Internal top level windows before restack:");
 
-  for (pWin = WindowTable[0] -> firstChild; pWin != NULL; pWin = pWin -> nextSib)
+  for (pWin = screenInfo.screens[0]->root -> firstChild; pWin != NULL; pWin = pWin -> nextSib)
   {
-    fprintf(stderr, "[%p]\n", pWin);
+    fprintf(stderr, "nxagentRootlessRestack: [%p]\n", pWin);
   }
 
   #endif
 
-  pWin = WindowTable[0] -> firstChild;
+  pWin = screenInfo.screens[0]->root -> firstChild;
 
   values[1] = (XID) Above;
 
@@ -376,19 +393,19 @@ void nxagentRootlessRestack(unsigned long children[], unsigned int nchildren)
 
   for (i = 0; i < ntoplevel; i++)
   {
-    fprintf(stderr, "[%p]\n", toplevel[i]);
+    fprintf(stderr, "nxagentRootlessRestack: [%p]\n", toplevel[i]);
   }
 
   fprintf(stderr, "nxagentRootlessRestack: Internal top level windows after restack:");
 
-  for (pWin = WindowTable[0] -> firstChild; pWin != NULL; pWin = pWin -> nextSib)
+  for (pWin = screenInfo.screens[0]->root -> firstChild; pWin != NULL; pWin = pWin -> nextSib)
   {
-    fprintf(stderr, "[%p]\n", pWin);
+    fprintf(stderr, "nxagentRootlessRestack: [%p]\n", pWin);
   }
 
   #endif
 
-  xfree(toplevel);
+  free(toplevel);
 
   return;
 }
@@ -444,9 +461,9 @@ int nxagentExportProperty(pWin, property, type, format, mode, nUnits, value)
     Atom        property, type;
     int         format, mode;
     unsigned long nUnits;
-    pointer     value;
+    void        *value;
 {
-  char *propertyS, *typeS;
+  const char *propertyS, *typeS;
   Atom propertyX, typeX;
   char *output = NULL;
   nxagentWMHints wmHints;
@@ -486,6 +503,7 @@ int nxagentExportProperty(pWin, property, type, format, mode, nUnits, value)
   #ifdef _XSERVER64
   else if (strcmp(typeS, "CARDINAL") == 0 || strcmp(typeS, "WM_SIZE_HINTS") == 0)
   {
+    /* FIXME: is it okay here to ignore malloc fails? */
     unsigned long *buffer = malloc(nUnits * sizeof(*buffer));
     int *input = value;
     int i;
@@ -531,7 +549,7 @@ int nxagentExportProperty(pWin, property, type, format, mode, nUnits, value)
     if ((wmHints.flags & IconPixmapHint) && (wmHints.icon_pixmap != None))
     {
       PixmapPtr icon = (PixmapPtr)SecurityLookupIDByType(pClient, wmHints.icon_pixmap,
-                                                             RT_PIXMAP, SecurityDestroyAccess);
+                                                             RT_PIXMAP, DixDestroyAccess);
 
       if (icon)
       {
@@ -558,7 +576,7 @@ int nxagentExportProperty(pWin, property, type, format, mode, nUnits, value)
     if ((wmHints.flags & IconWindowHint) && (wmHints.icon_window != None))
     {
       WindowPtr icon = (WindowPtr)SecurityLookupWindow(wmHints.icon_window, pClient,
-                                                  SecurityDestroyAccess);
+                                                  DixDestroyAccess);
 
       if (icon)
       {
@@ -580,7 +598,7 @@ int nxagentExportProperty(pWin, property, type, format, mode, nUnits, value)
     if ((wmHints.flags & IconMaskHint) && (wmHints.icon_mask != None))
     {
       PixmapPtr icon = (PixmapPtr)SecurityLookupIDByType(pClient, wmHints.icon_mask,
-                                                             RT_PIXMAP, SecurityDestroyAccess);
+                                                             RT_PIXMAP, DixDestroyAccess);
 
       if (icon)
       {
@@ -602,7 +620,7 @@ int nxagentExportProperty(pWin, property, type, format, mode, nUnits, value)
     if ((wmHints.flags & WindowGroupHint) && (wmHints.window_group != None))
     {
       WindowPtr window = (WindowPtr)SecurityLookupWindow(wmHints.window_group, pClient,
-                                                  SecurityDestroyAccess);
+                                                  DixDestroyAccess);
 
       if (window)
       {
@@ -625,9 +643,17 @@ int nxagentExportProperty(pWin, property, type, format, mode, nUnits, value)
   {
     XlibAtom *atoms = malloc(nUnits * sizeof(*atoms));
     Atom *input = value;
-    char *atomName = NULL;
+    const char *atomName = NULL;
     int i;
     int j = 0;
+
+    if (!atoms)
+    {
+      #ifdef WARNING
+      fprintf(stderr, "nxagentExportProperty: WARNING! malloc() failed for '%s'- bailing out.\n", typeS);
+      #endif
+      return False;
+    }
 
     freeMem = True;
     export = True;
@@ -679,6 +705,14 @@ int nxagentExportProperty(pWin, property, type, format, mode, nUnits, value)
     WindowPtr pWindow;
     int i;
 
+    if (!wind)
+    {
+      #ifdef WARNING
+      fprintf(stderr, "nxagentExportProperty: WARNING! malloc() failed for '%s' - bailing out.\n", typeS);
+      #endif
+      return False;
+    }
+
     freeMem = True;
     export = True;
     output = (char*) wind;
@@ -686,7 +720,7 @@ int nxagentExportProperty(pWin, property, type, format, mode, nUnits, value)
     for (i = 0; i < nUnits; i++)
     {
       pWindow = (WindowPtr)SecurityLookupWindow(input[i], pClient,
-                                                    SecurityDestroyAccess);
+                                                    DixDestroyAccess);
       if ((input[i] != None) && pWindow)
       {
         wind[i] = nxagentWindow(pWindow);
@@ -772,7 +806,7 @@ int nxagentExportProperty(pWin, property, type, format, mode, nUnits, value)
       {
         #ifdef WARNING
         fprintf(stderr, "nxagentExportProperty: WARNING! "
-                    "Property [%lu] too long.\n", propertyX);
+                    "Property [%lu] too long.\n", (long unsigned int)propertyX);
         #endif
 
         goto nxagentExportPropertyError;
@@ -796,7 +830,7 @@ int nxagentExportProperty(pWin, property, type, format, mode, nUnits, value)
 
   if (freeMem)
   {
-    xfree(output);
+    free(output);
   }
 
   return export;
@@ -825,7 +859,7 @@ void nxagentImportProperty(Window window,
   WMState wmState;
 
   char *output = NULL;
-  char *typeS;
+  const char *typeS;
 
   pWin = nxagentWindowPtr(window);
 
@@ -955,7 +989,7 @@ void nxagentImportProperty(Window window,
       }
     }
 
-    if ((wmHints.flags & IconWindowHint) && (wmHints.icon_window =! None))
+    if ((wmHints.flags & IconWindowHint) && (wmHints.icon_window != None))
     {
       WindowPtr icon = nxagentWindowPtr(wmHints.icon_window);
 
@@ -976,7 +1010,7 @@ void nxagentImportProperty(Window window,
       }
     }
 
-    if ((wmHints.flags & IconMaskHint) && (wmHints.icon_mask =! None))
+    if ((wmHints.flags & IconMaskHint) && (wmHints.icon_mask != None))
     {
       PixmapPtr icon = nxagentPixmapPtr(wmHints.icon_mask);
 
@@ -1026,7 +1060,7 @@ void nxagentImportProperty(Window window,
     if (atoms == NULL)
     {
       #ifdef WARNING
-      fprintf(stderr, "nxagentImportProperty: WARNING! Malloc failed bailing out.\n");
+      fprintf(stderr, "nxagentImportProperty: WARNING! malloc() failed for '%s' - bailing out.\n", typeS);
       #endif
 
       return;
@@ -1056,6 +1090,14 @@ void nxagentImportProperty(Window window,
     WindowPtr pWindow;
     int i;
 
+    if (!wind)
+    {
+      #ifdef WARNING
+      fprintf(stderr, "nxagentImportProperty: WARNING! malloc() failed for '%s' - bailing out.\n", typeS);
+      #endif
+
+      return;
+    }
     freeMem = True;
     import = True;
     output = (char*) wind;
@@ -1103,7 +1145,7 @@ void nxagentImportProperty(Window window,
 
   if (freeMem)
   {
-    xfree(output);
+    free(output);
   }
 
   return;
@@ -1155,7 +1197,7 @@ void nxagentRemovePropertyFromList()
       nxagentPropertyList.last = NULL;
     }
 
-    xfree(tmp);
+    free(tmp);
   }
 }
 
@@ -1174,7 +1216,7 @@ void nxagentAddPropertyToList(Atom property, WindowPtr pWin)
 
   if ((tmp = malloc(sizeof(struct nxagentPropertyRec))) == NULL)
   {
-    FatalError("nxagentAddPropertyToList: malloc failed.");
+    FatalError("nxagentAddPropertyToList: malloc() failed.");
   }
 
   #ifdef TEST

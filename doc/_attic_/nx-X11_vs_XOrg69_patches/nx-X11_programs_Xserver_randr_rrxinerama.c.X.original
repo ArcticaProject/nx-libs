@@ -1,0 +1,72 @@
+--- ./nx-X11/programs/Xserver/randr/rrxinerama.c.X.original	2015-02-13 14:03:44.792440567 +0100
++++ ./nx-X11/programs/Xserver/randr/rrxinerama.c	2015-02-10 19:13:13.620692775 +0100
+@@ -68,9 +68,30 @@
+  *           David Thomas <davtom@dream.org.uk>.
+  */
+ 
++/**************************************************************************/
++/*                                                                        */
++/* Copyright (c) 2001, 2011 NoMachine, http://www.nomachine.com/.         */
++/*                                                                        */
++/* NX-X11, NX protocol compression and NX extensions to this software     */
++/* are copyright of NoMachine. Redistribution and use of the present      */
++/* software is allowed according to terms specified in the file LICENSE   */
++/* which comes in the source distribution.                                */
++/*                                                                        */
++/* Check http://www.nomachine.com/licensing.html for applicability.       */
++/*                                                                        */
++/* NX and NoMachine are trademarks of Medialogic S.p.A.                   */
++/*                                                                        */
++/* All rights reserved.                                                   */
++/*                                                                        */
++/**************************************************************************/
++
+ #include "randrstr.h"
+ #include "swaprep.h"
++#ifndef NXAGENT_SERVER
+ #include <X11/extensions/panoramiXproto.h>
++#else
++#include "panoramiXproto.h"
++#endif
+ 
+ #define RR_XINERAMA_MAJOR_VERSION   1
+ #define RR_XINERAMA_MINOR_VERSION   1
+@@ -122,7 +143,12 @@
+     Bool			active = FALSE;
+ 
+     REQUEST_SIZE_MATCH(xPanoramiXGetStateReq);
++    #ifndef NXAGENT_SERVER
+     rc = dixLookupWindow(&pWin, stuff->window, client, DixGetAttrAccess);
++    #else
++    pWin = SecurityLookupWindow(stuff->window, client, SecurityReadAccess);
++    rc = pWin ? Success : BadWindow;
++    #endif
+     if(rc != Success)
+ 	return rc;
+ 
+@@ -185,7 +211,12 @@
+     register int			n, rc;
+ 
+     REQUEST_SIZE_MATCH(xPanoramiXGetScreenCountReq);
++    #ifndef NXAGENT_SERVER
+     rc = dixLookupWindow(&pWin, stuff->window, client, DixGetAttrAccess);
++    #else
++    pWin = SecurityLookupWindow(stuff->window, client, SecurityReadAccess);
++    rc = pWin ? Success : BadWindow;
++    #endif
+     if (rc != Success)
+ 	return rc;
+     
+@@ -213,7 +244,12 @@
+     register int			n, rc;
+ 
+     REQUEST_SIZE_MATCH(xPanoramiXGetScreenSizeReq);
++    #ifndef NXAGENT_SERVER
+     rc = dixLookupWindow(&pWin, stuff->window, client, DixGetAttrAccess);
++    #else
++    pWin = SecurityLookupWindow(stuff->window, client, SecurityReadAccess);
++    rc = pWin ? Success : BadWindow;
++    #endif
+     if (rc != Success)
+ 	return rc;
+ 

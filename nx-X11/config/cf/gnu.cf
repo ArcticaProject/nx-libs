@@ -1,6 +1,3 @@
-XCOMM platform:  $XFree86: xc/config/cf/gnu.cf,v 1.12 2003/11/24 02:02:26 dawes Exp $
-XCOMM $XdotOrg: xc/config/cf/gnu.cf,v 1.3 2005/02/09 04:09:54 gisburn Exp $
-
 #ifndef OSName
 #define OSName			DefaultOSName
 #endif
@@ -21,7 +18,7 @@ XCOMM operating system:  OSName (OSMajorVersion./**/OSMinorVersion./**/OSTeenyVe
 
 #define GNUSourceDefines      -D_POSIX_C_SOURCE=199309L \
                               -D_POSIX_SOURCE -D_XOPEN_SOURCE \
-                              -D_BSD_SOURCE -D_SVID_SOURCE
+                              -D_DEFAULT_SOURCE
 
 XCOMM XXXMB: What about _GNU_SOURCE, see Linux/UseInstalled?
 
@@ -176,7 +173,7 @@ XCOMM i386Architecture
 
 #define ArchitectureDefines	-DGNU_ARCHITECTURE
 
-#define XserverNeedsSetUID	YES
+#define XserverNeedsSetUID	NO
 
 #include <gnuLib.rules>
 
@@ -184,4 +181,3 @@ XCOMM XXX Might need this if they are not careful with slashes.
 XCOMM #define DirFailPrefix -
 
 #include <xorg.cf>
-

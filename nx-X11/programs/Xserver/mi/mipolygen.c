@@ -1,4 +1,3 @@
-/* $XFree86: xc/programs/Xserver/mi/mipolygen.c,v 1.2 2001/05/29 22:24:07 dawes Exp $ */
 /***********************************************************
 
 Copyright 1987, 1998  The Open Group
@@ -45,12 +44,11 @@ ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS
 SOFTWARE.
 
 ******************************************************************/
-/* $Xorg: mipolygen.c,v 1.4 2001/02/09 02:05:21 xorgcvs Exp $ */
 #ifdef HAVE_DIX_CONFIG_H
 #include <dix-config.h>
 #endif
 
-#include <X11/X.h>
+#include <nx-X11/X.h>
 #include "gcstruct.h"
 #include "miscanfill.h"
 #include "mipoly.h"
@@ -94,13 +92,13 @@ miFillGeneralPoly(dst, pgc, count, ptsIn)
 	return(TRUE);
 
     if(!(pETEs = (EdgeTableEntry *)
-        ALLOCATE_LOCAL(sizeof(EdgeTableEntry) * count)))
+        malloc(sizeof(EdgeTableEntry) * count)))
 	return(FALSE);
     ptsOut = FirstPoint;
     width = FirstWidth;
     if (!miCreateETandAET(count, ptsIn, &ET, &AET, pETEs, &SLLBlock))
     {
-	DEALLOCATE_LOCAL(pETEs);
+	free(pETEs);
 	return(FALSE);
     }
     pSLL = ET.scanlines.next;
@@ -226,7 +224,7 @@ miFillGeneralPoly(dst, pgc, count, ptsIn)
      *     Get any spans that we missed by buffering
      */
     (*pgc->ops->FillSpans)(dst, pgc, nPts, FirstPoint, FirstWidth, 1);
-    DEALLOCATE_LOCAL(pETEs);
+    free(pETEs);
     miFreeStorage(SLLBlock.next);
     return(TRUE);
 }

@@ -1,4 +1,3 @@
-/* $Xorg: extinit.c,v 1.4 2001/02/09 02:04:34 xorgcvs Exp $ */
 
 /************************************************************
 
@@ -45,7 +44,6 @@ ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS
 SOFTWARE.
 
 ********************************************************/
-/* $XFree86: xc/programs/Xserver/Xi/extinit.c,v 3.6 2001/12/14 19:58:55 dawes Exp $ */
 
 /********************************************************************
  *
@@ -55,25 +53,24 @@ SOFTWARE.
 
 #define	 NUMTYPES 15
 
-#define	 NEED_EVENTS
-#define	 NEED_REPLIES
 #ifdef HAVE_DIX_CONFIG_H
 #include <dix-config.h>
 #endif
 
-#include <X11/X.h>
-#include <X11/Xproto.h>
+#include <nx-X11/X.h>
+#include <nx-X11/Xproto.h>
 #include "inputstr.h"
 #include "gcstruct.h"   		/* pointer for extnsionst.h*/
 #include "extnsionst.h"			/* extension entry   */
-#include <X11/extensions/XI.h>
-#include <X11/extensions/XIproto.h>
+#include <nx-X11/extensions/XI.h>
+#include <nx-X11/extensions/XIproto.h>
 
 #include "dixevents.h"
 #include "exevents.h"
 #include "extinit.h"
 #include "exglobals.h"
 #include "swaprep.h"
+#include "protocol-versions.h"
 
 /* modules local to Xi */
 #include "allowev.h"
@@ -204,8 +201,9 @@ Mask	PropagateMask[MAX_DEVICES];
 
 static	XExtensionVersion	thisversion = 
 					{XI_Present, 
-					 XI_Add_XChangeDeviceControl_Major, 
-					 XI_Add_XChangeDeviceControl_Minor};
+					 SERVER_XI_MAJOR_VERSION,
+					 SERVER_XI_MINOR_VERSION,
+					};
 
 /**********************************************************************
  *
@@ -584,17 +582,16 @@ SEventDeviceValuator (from, to)
     deviceValuator	*from;
     deviceValuator	*to;
     {
-    register char	n;
     register int	i;
     INT32 *ip B32;
 
     *to = *from;
-    swaps(&to->sequenceNumber,n);
-    swaps(&to->device_state,n);
+    swaps(&to->sequenceNumber);
+    swaps(&to->device_state);
     ip = &to->valuator0;
     for (i=0; i<6; i++)
 	{
-        swapl((ip+i),n);	/* macro - braces are required	    */
+        swapl((ip+i));	/* macro - braces are required	    */
 	}
     }
 
@@ -603,12 +600,10 @@ SEventFocus (from, to)
     deviceFocus	*from;
     deviceFocus	*to;
 {
-    register char	n;
-
     *to = *from;
-    swaps(&to->sequenceNumber,n);
-    swapl(&to->time, n);
-    swapl(&to->window, n);
+    swaps(&to->sequenceNumber);
+    swapl(&to->time);
+    swapl(&to->window);
     }
 
 void
@@ -617,16 +612,15 @@ SDeviceStateNotifyEvent (from, to)
     deviceStateNotify	*to;
 {
     register int	i;
-    register char	n;
     INT32 *ip B32;
 
     *to = *from;
-    swaps(&to->sequenceNumber,n);
-    swapl(&to->time, n);
+    swaps(&to->sequenceNumber);
+    swapl(&to->time);
     ip = &to->valuator0;
     for (i=0; i<3; i++)
 	{
-        swapl((ip+i),n);	/* macro - braces are required	    */
+        swapl((ip+i));	/* macro - braces are required	    */
 	}
     }
 
@@ -635,10 +629,8 @@ SDeviceKeyStateNotifyEvent (from, to)
     deviceKeyStateNotify	*from;
     deviceKeyStateNotify	*to;
 {
-    register char	n;
-
     *to = *from;
-    swaps(&to->sequenceNumber,n);
+    swaps(&to->sequenceNumber);
     }
 
 void
@@ -646,10 +638,8 @@ SDeviceButtonStateNotifyEvent (from, to)
     deviceButtonStateNotify	*from;
     deviceButtonStateNotify	*to;
 {
-    register char	n;
-
     *to = *from;
-    swaps(&to->sequenceNumber,n);
+    swaps(&to->sequenceNumber);
     }
 
 void
@@ -657,11 +647,9 @@ SChangeDeviceNotifyEvent (from, to)
     changeDeviceNotify	*from;
     changeDeviceNotify	*to;
 {
-    register char	n;
-
     *to = *from;
-    swaps(&to->sequenceNumber,n);
-    swapl(&to->time, n);
+    swaps(&to->sequenceNumber);
+    swapl(&to->time);
     }
 
 void
@@ -669,11 +657,9 @@ SDeviceMappingNotifyEvent (from, to)
     deviceMappingNotify	*from;
     deviceMappingNotify	*to;
 {
-    register char	n;
-
     *to = *from;
-    swaps(&to->sequenceNumber,n);
-    swapl(&to->time, n);
+    swaps(&to->sequenceNumber);
+    swapl(&to->time);
     }
 
 /************************************************************************
@@ -870,7 +856,7 @@ AssignTypeAndName (dev, type, name)
     char *name;
 {
     dev->type = type;
-    dev->name = (char *) xalloc(strlen(name)+1);
+    dev->name = (char *) malloc(strlen(name)+1);
     strcpy (dev->name, name);
     }
 

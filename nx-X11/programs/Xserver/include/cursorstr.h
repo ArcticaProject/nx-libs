@@ -1,4 +1,3 @@
-/* $Xorg: cursorstr.h,v 1.4 2001/02/09 02:05:15 xorgcvs Exp $ */
 /***********************************************************
 
 Copyright 1987, 1998  The Open Group
@@ -45,7 +44,6 @@ ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS
 SOFTWARE.
 
 ******************************************************************/
-/* $XFree86: xc/programs/Xserver/include/cursorstr.h,v 1.8 2002/11/30 06:21:51 keithp Exp $ */
 
 #ifndef CURSORSTRUCT_H
 #define CURSORSTRUCT_H 
@@ -65,7 +63,7 @@ typedef struct _CursorBits {
     Bool emptyMask;				/* all zeros mask */
     unsigned short width, height, xhot, yhot;	/* metrics */
     int refcnt;					/* can be shared */
-    pointer devPriv[MAXSCREENS];		/* set by pScr->RealizeCursor*/
+    void * devPriv[MAXSCREENS];		/* set by pScr->RealizeCursor*/
 #ifdef ARGB_CURSOR
     CARD32 *argb;				/* full-color alpha blended */
 #endif
@@ -76,7 +74,7 @@ typedef struct _Cursor {
     unsigned short foreRed, foreGreen, foreBlue; /* device-independent color */
     unsigned short backRed, backGreen, backBlue; /* device-independent color */
     int refcnt;
-    pointer devPriv[MAXSCREENS];		/* set by pScr->RealizeCursor*/
+    void * devPriv[MAXSCREENS];		/* set by pScr->RealizeCursor*/
 #ifdef XFIXES
     CARD32 serialNumber;
     Atom name;
@@ -92,7 +90,4 @@ typedef struct {
     ScreenPtr  pScreen;
 } HotSpot;
 
-#ifdef XEVIE
-extern HotSpot xeviehot;
-#endif
 #endif /* CURSORSTRUCT_H */

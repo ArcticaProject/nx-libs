@@ -1,4 +1,3 @@
-/* $Xorg: rpcauth.c,v 1.4 2001/02/09 02:05:23 xorgcvs Exp $ */
 /*
 
 Copyright 1991, 1998  The Open Group
@@ -26,7 +25,6 @@ other dealings in this Software without prior written authorization
 from The Open Group.
 
 */
-/* $XFree86: xc/programs/Xserver/os/rpcauth.c,v 3.7 2001/12/14 20:00:35 dawes Exp $ */
 
 /*
  * SUN-DES-1 authentication mechanism
@@ -40,8 +38,8 @@ from The Open Group.
 
 #ifdef SECURE_RPC
 
-#include <X11/X.h>
-#include "Xauth.h"
+#include <nx-X11/X.h>
+#include <nx-X11/Xauth.h>
 #include "misc.h"
 #include "os.h"
 #include "dixstruct.h"
@@ -52,11 +50,6 @@ from The Open Group.
 /* <rpc/auth.h> only includes this if _KERNEL is #defined... */
 extern bool_t xdr_opaque_auth(XDR *, struct opaque_auth *);
 #endif
-
-#if defined(DGUX)
-#include <time.h>
-#include <rpc/auth_des.h>
-#endif /* DGUX */
 
 #ifdef ultrix
 #include <time.h>
@@ -77,7 +70,11 @@ authdes_ezdecode(char *inmsg, int len)
     XDR             xdr;
     SVCXPRT         xprt;
 
-    temp_inmsg = (char *) xalloc(len);
+    temp_inmsg = (char *) malloc(len);
+    if (temp_inmsg == NULL) {
+        why = AUTH_FAILED; /* generic error, since there is no AUTH_BADALLOC */
+        return NULL;
+    }
     memmove(temp_inmsg, inmsg, len);
 
     memset((char *)&msg, 0, sizeof(msg));
@@ -90,7 +87,7 @@ authdes_ezdecode(char *inmsg, int len)
     why = AUTH_FAILED; 
     xdrmem_create(&xdr, temp_inmsg, len, XDR_DECODE);
 
-    if ((r.rq_clntcred = (caddr_t) xalloc(MAX_AUTH_BYTES)) == NULL)
+    if ((r.rq_clntcred = (caddr_t) malloc(MAX_AUTH_BYTES)) == NULL)
         goto bad1;
     r.rq_xprt = &xprt;
 
@@ -117,7 +114,7 @@ authdes_ezdecode(char *inmsg, int len)
     return (((struct authdes_cred *) r.rq_clntcred)->adc_fullname.name); 
 
 bad2:
-    xfree(r.rq_clntcred);
+    free(r.rq_clntcred);
 bad1:
     return ((char *)0); /* ((struct authdes_cred *) NULL); */
 }
@@ -128,7 +125,7 @@ static Bool
 CheckNetName (
     unsigned char    *addr,
     short	    len,
-    pointer	    closure
+    void *	    closure
 )
 {
     return (len == strlen ((char *) closure) &&
@@ -172,7 +169,7 @@ int
 SecureRPCAdd (unsigned short data_length, char *data, XID id)
 {
     if (data_length)
-	AddHost ((pointer) 0, FamilyNetname, data_length, data);
+	AddHost ((void *) 0, FamilyNetname, data_length, data);
     rpc_id = id;
     return 1;
 }

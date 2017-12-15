@@ -1,17 +1,25 @@
 /**************************************************************************/
 /*                                                                        */
-/* Copyright (c) 2001, 2011 NoMachine, http://www.nomachine.com/.         */
+/* Copyright (c) 2001, 2011 NoMachine (http://www.nomachine.com)          */
+/* Copyright (c) 2008-2014 Oleksandr Shneyder <o.shneyder@phoca-gmbh.de>  */
+/* Copyright (c) 2011-2016 Mike Gabriel <mike.gabriel@das-netzwerkteam.de>*/
+/* Copyright (c) 2014-2016 Mihai Moldovan <ionic@ionic.de>                */
+/* Copyright (c) 2014-2016 Ulrich Sibiller <uli42@gmx.de>                 */
+/* Copyright (c) 2015-2016 Qindel Group (http://www.qindel.com)           */
 /*                                                                        */
 /* NXAGENT, NX protocol compression and NX extensions to this software    */
-/* are copyright of NoMachine. Redistribution and use of the present      */
-/* software is allowed according to terms specified in the file LICENSE   */
-/* which comes in the source distribution.                                */
+/* are copyright of the aforementioned persons and companies.             */
 /*                                                                        */
-/* Check http://www.nomachine.com/licensing.html for applicability.       */
-/*                                                                        */
-/* NX and NoMachine are trademarks of Medialogic S.p.A.                   */
+/* Redistribution and use of the present software is allowed according    */
+/* to terms specified in the file LICENSE which comes in the source       */
+/* distribution.                                                          */
 /*                                                                        */
 /* All rights reserved.                                                   */
+/*                                                                        */
+/* NOTE: This software has received contributions from various other      */
+/* contributors, only the core maintainers and supporters are listed as   */
+/* copyright holders. Please contact us, if you feel you should be listed */
+/* as copyright holder, as well.                                          */
 /*                                                                        */
 /**************************************************************************/
 
@@ -42,8 +50,8 @@
 #include "Holder.h"
 #include "Args.h"
 
-#include "NXlib.h"
-#include "NXpack.h"
+#include "compext/Compext.h"
+#include <nx/NXpack.h>
 
 RESTYPE  RT_NX_PIXMAP;
 
@@ -88,8 +96,8 @@ struct nxagentPixmapPair
   PixmapPtr pMap;
 };
 
-PixmapPtr nxagentCreatePixmap(ScreenPtr pScreen, int width,
-                                  int height, int depth)
+PixmapPtr nxagentCreatePixmap(ScreenPtr pScreen, int width, int height,
+                              int depth, unsigned usage_hint)
 {
   nxagentPrivPixmapPtr pPixmapPriv, pVirtualPriv;
 
@@ -98,7 +106,8 @@ PixmapPtr nxagentCreatePixmap(ScreenPtr pScreen, int width,
 
   #ifdef DEBUG
   fprintf(stderr, "nxagentCreatePixmap: Creating pixmap with width [%d] "
-              "height [%d] depth [%d].\n", width, height, depth);
+              "height [%d] depth [%d] and allocation hint [%d].\n",
+              width, height, depth, usage_hint);
   #endif
 
   /*
@@ -112,7 +121,8 @@ PixmapPtr nxagentCreatePixmap(ScreenPtr pScreen, int width,
   {
     #ifdef WARNING
     fprintf(stderr, "nxagentCreatePixmap: WARNING! Failed to create pixmap with "
-                "width [%d] height [%d] depth [%d].\n", width, height, depth);
+                "width [%d] height [%d] depth [%d] and allocation hint [%d].\n",
+                width, height, depth, usage_hint);
     #endif
 
     return NullPixmap;
@@ -136,6 +146,7 @@ PixmapPtr nxagentCreatePixmap(ScreenPtr pScreen, int width,
   pPixmap -> devKind = 0;
   pPixmap -> refcnt = 1;
   pPixmap -> devPrivate.ptr = NULL;
+  pPixmap -> usage_hint = usage_hint;
 
   /*
    * Initialize the privates of the real picture.
@@ -160,11 +171,11 @@ PixmapPtr nxagentCreatePixmap(ScreenPtr pScreen, int width,
     box.x2 = width;
     box.y2 = height;
 
-    pPixmapPriv -> corruptedRegion = REGION_CREATE(pPixmap -> drawable.pScreen, &box, 1);
+    pPixmapPriv -> corruptedRegion = RegionCreate(&box, 1);
   }
   else
   {
-    pPixmapPriv -> corruptedRegion = REGION_CREATE(pPixmap -> drawable.pScreen, (BoxRec *) NULL, 1);
+    pPixmapPriv -> corruptedRegion = RegionCreate((BoxRec *) NULL, 1);
   }
 
   pPixmapPriv -> corruptedBackground = 0;
@@ -234,13 +245,14 @@ PixmapPtr nxagentCreatePixmap(ScreenPtr pScreen, int width,
    * Create the pixmap in the virtual framebuffer.
    */
 
-  pVirtual = fbCreatePixmap(pScreen, width, height, depth);
+  pVirtual = fbCreatePixmap(pScreen, width, height, depth, usage_hint);
 
   if (pVirtual == NULL)
   {
     #ifdef PANIC
     fprintf(stderr, "nxagentCreatePixmap: PANIC! Failed to create virtual pixmap with "
-                "width [%d] height [%d] depth [%d].\n", width, height, depth);
+                "width [%d] height [%d] depth [%d] and allocation hint [%d].\n",
+                width, height, depth, usage_hint);
     #endif
 
     nxagentDestroyPixmap(pPixmap);
@@ -249,8 +261,9 @@ PixmapPtr nxagentCreatePixmap(ScreenPtr pScreen, int width,
   }
 
   #ifdef TEST
-  fprintf(stderr,"nxagentCreatePixmap: Allocated memory for the Virtual %sPixmap %p of real Pixmap %p (%dx%d)\n",
-              nxagentShmPixmapTrap ? "Shm " : "", (void *) pVirtual, (void *) pPixmap, width, height);
+  fprintf(stderr,"nxagentCreatePixmap: Allocated memory for the Virtual %sPixmap %p of real Pixmap %p (%dx%d),",
+              "allocation hint [%d].\n",
+              nxagentShmPixmapTrap ? "Shm " : "", (void *) pVirtual, (void *) pPixmap, width, height, usage_hint);
   #endif
 
   pPixmapPriv -> pVirtualPixmap = pVirtual;
@@ -269,7 +282,7 @@ PixmapPtr nxagentCreatePixmap(ScreenPtr pScreen, int width,
   pVirtualPriv -> isVirtual = True;
   pVirtualPriv -> isShared = nxagentShmPixmapTrap;
 
-  pVirtualPriv -> corruptedRegion = REGION_CREATE(pVirtual -> drawable.pScreen, (BoxRec *) NULL, 1);
+  pVirtualPriv -> corruptedRegion = RegionCreate((BoxRec *) NULL, 1);
 
   pVirtualPriv -> corruptedBackground = 0;
 
@@ -322,10 +335,11 @@ PixmapPtr nxagentCreatePixmap(ScreenPtr pScreen, int width,
                 "bits per pixel.\n", (void *) pVirtual);
 
     fprintf(stderr, "nxagentCreatePixmap: WARNING! Real pixmap created with width [%d] "
-                "height [%d] depth [%d] bits per pixel [%d].\n", pPixmap -> drawable.width,
+                "height [%d] depth [%d] bits per pixel [%d] and allocation hint [%d].\n",
+                pPixmap -> drawable.width,
                     pPixmap -> drawable.height = height, pPixmap -> drawable.depth,
-                        pPixmap -> drawable.bitsPerPixel);
-
+                        pPixmap -> drawable.bitsPerPixel,
+                           usage_hint);
     #endif
 
     if (!nxagentRenderTrap)
@@ -344,8 +358,8 @@ PixmapPtr nxagentCreatePixmap(ScreenPtr pScreen, int width,
 
   #ifdef TEST
   fprintf(stderr, "nxagentCreatePixmap: Created pixmap at [%p] virtual at [%p] with width [%d] "
-              "height [%d] depth [%d].\n", (void *) pPixmap, (void *) pVirtual,
-                  width, height, depth);
+              "height [%d] depth [%d] and allocation hint [%d].\n",
+              (void *) pPixmap, (void *) pVirtual, width, height, depth, usage_hint);
   #endif
 
   return pPixmap;
@@ -444,7 +458,7 @@ Bool nxagentDestroyPixmap(PixmapPtr pPixmap)
 
   if (pPixmapPriv -> corruptedRegion != NullRegion)
   {
-    REGION_DESTROY(pPixmap -> drawable.pScreen, pPixmapPriv -> corruptedRegion);
+    RegionDestroy(pPixmapPriv -> corruptedRegion);
 
     pPixmapPriv -> corruptedRegion = NullRegion;
   }
@@ -487,7 +501,7 @@ Bool nxagentDestroyPixmap(PixmapPtr pPixmap)
     FreeResource(pPixmapPriv -> mid, RT_NONE);
   }
 
-  xfree(pPixmap);
+  free(pPixmap);
 
   return True;
 }
@@ -512,7 +526,7 @@ Bool nxagentDestroyVirtualPixmap(PixmapPtr pPixmap)
 
     if (pVirtualPriv -> corruptedRegion != NullRegion)
     {
-      REGION_DESTROY(pVirtual -> drawable.pScreen, pVirtualPriv -> corruptedRegion);
+      RegionDestroy(pVirtualPriv -> corruptedRegion);
 
       pVirtualPriv -> corruptedRegion = NullRegion;
     }
@@ -534,7 +548,7 @@ RegionPtr nxagentPixmapToRegion(PixmapPtr pPixmap)
 }
 
 Bool nxagentModifyPixmapHeader(PixmapPtr pPixmap, int width, int height, int depth,
-                                   int bitsPerPixel, int devKind, pointer pPixData)
+                                   int bitsPerPixel, int devKind, void * pPixData)
 {
   PixmapPtr pVirtualPixmap;
 
@@ -732,7 +746,7 @@ PixmapPtr nxagentPixmapPtr(Pixmap pixmap)
  * Reconnection stuff.
  */
 
-int nxagentDestroyNewPixmapResourceType(pointer p, XID id)
+int nxagentDestroyNewPixmapResourceType(void * p, XID id)
 {
   /*
    * Address of the destructor is set in Init.c.
@@ -752,11 +766,11 @@ void nxagentDisconnectPixmap(void *p0, XID x1, void *p2)
 {
   PixmapPtr pPixmap = (PixmapPtr) p0;
 
+  #ifdef TEST
   Bool *pBool;
 
   pBool = (Bool*) p2;
 
-  #ifdef TEST
   fprintf(stderr, "nxagentDisconnectPixmap: Called with bool [%d] and pixmap at [%p].\n",
               *pBool, (void *) pPixmap);
 
@@ -1158,10 +1172,7 @@ Bool nxagentCheckPixmapIntegrity(PixmapPtr pPixmap)
       XDestroyImage(image);
     }
 
-    if (data != NULL)
-    {
-      free(data);
-    }
+    free(data);
   }
   else
   {
@@ -1251,7 +1262,7 @@ void nxagentSynchronizeShmPixmap(DrawablePtr pDrawable, int xPict, int yPict,
 
     nxagentFBTrap = 1;
 
-    if ((data = xalloc(length)) != NULL)
+    if ((data = malloc(length)) != NULL)
     {
       fbGetImage(nxagentVirtualDrawable(pDrawable), xPict, yPict,
                      width, height, format, 0xffffffff, data);
@@ -1259,7 +1270,7 @@ void nxagentSynchronizeShmPixmap(DrawablePtr pDrawable, int xPict, int yPict,
       nxagentPutImage(pDrawable, pGC, depth, xPict, yPict,
                           width, height, 0, format, data);
 
-      xfree(data);
+      free(data);
     }
     #ifdef WARNING
     else
@@ -1373,7 +1384,7 @@ FIXME: If the pixmap has a different depth from the window, the
 
   length = nxagentImageLength(width, height, format, 0, depth);
 
-  if ((data = xalloc(length)) == NULL)
+  if ((data = malloc(length)) == NULL)
   {
     #ifdef WARNING
     fprintf(stderr, "nxagentPixmapOnShadowDisplay: WARNING! Failed to allocate memory for the operation.\n");
@@ -1407,10 +1418,7 @@ FIXME: If the pixmap has a different depth from the window, the
     fprintf(stderr, "nxagentPixmapOnShadowDisplay: XCreateImage failed.\n");
     #endif
 
-    if (data != NULL)
-    {
-      xfree(data);
-    }
+    free(data);
 
     return False;
   }
@@ -1449,7 +1457,7 @@ Bool nxagentFbOnShadowDisplay()
   XGCValues value;
   XImage *image;
   Visual *pVisual;
-  WindowPtr pWin = WindowTable[0];
+  WindowPtr pWin = screenInfo.screens[0]->root;
   unsigned int format;
   int depth, width, height, length;
   char *data = NULL;
@@ -1535,7 +1543,7 @@ Bool nxagentFbOnShadowDisplay()
 
   length = nxagentImageLength(width, height, format, 0, depth);
 
-  if ((data = xalloc(length)) == NULL)
+  if ((data = malloc(length)) == NULL)
   {
     #ifdef WARNING
     fprintf(stderr, "nxagentFbOnShadowDisplay: WARNING! Failed to allocate memory for the operation.\n");
@@ -1569,10 +1577,7 @@ Bool nxagentFbOnShadowDisplay()
     fprintf(stderr, "nxagentFbOnShadowDisplay: XCreateImage failed.\n");
     #endif
 
-    if (data)
-    {
-      xfree(data);
-    }
+    free(data);
 
     return False;
   }

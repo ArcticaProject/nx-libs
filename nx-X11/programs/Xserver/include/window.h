@@ -1,4 +1,3 @@
-/* $Xorg: window.h,v 1.4 2001/02/09 02:05:16 xorgcvs Exp $ */
 /***********************************************************
 
 Copyright 1987, 1998  The Open Group
@@ -45,7 +44,6 @@ ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS
 SOFTWARE.
 
 ******************************************************************/
-/* $XFree86$ */
 
 #ifndef WINDOW_H
 #define WINDOW_H
@@ -53,7 +51,7 @@ SOFTWARE.
 #include "misc.h"
 #include "region.h"
 #include "screenint.h"
-#include <X11/Xproto.h>
+#include <nx-X11/Xproto.h>
 
 #define TOTALLY_OBSCURED 0
 #define UNOBSCURED 1
@@ -73,17 +71,17 @@ typedef struct _Window *WindowPtr;
 
 typedef int (*VisitWindowProcPtr)(
     WindowPtr /*pWin*/,
-    pointer /*data*/);
+    void * /*data*/);
 
 extern int TraverseTree(
     WindowPtr /*pWin*/,
     VisitWindowProcPtr /*func*/,
-    pointer /*data*/);
+    void * /*data*/);
 
 extern int WalkTree(
     ScreenPtr /*pScreen*/,
     VisitWindowProcPtr /*func*/,
-    pointer /*data*/);
+    void * /*data*/);
 
 extern WindowPtr AllocateWindow(
     ScreenPtr /*pScreen*/);
@@ -101,6 +99,10 @@ extern void ClippedRegionFromBox(
     int /*y*/,
     int /*w*/,
     int /*h*/);
+
+typedef WindowPtr (* RealChildHeadProc) (WindowPtr pWin);
+
+void RegisterRealChildHeadProc (RealChildHeadProc proc);
 
 extern WindowPtr RealChildHead(
     WindowPtr /*pWin*/);
@@ -122,7 +124,7 @@ extern WindowPtr CreateWindow(
     int* /*error*/);
 
 extern int DeleteWindow(
-    pointer /*pWin*/,
+    void * /*pWin*/,
     XID /*wid*/);
 
 extern void DestroySubwindows(

@@ -25,6 +25,8 @@
 #include <dix-config.h>
 #endif
 
+#include <string.h>
+
 #include "gcstruct.h"
 #include "windowstr.h"
 #include "cw.h"
@@ -74,7 +76,7 @@ cwCreatePicturePrivate (PicturePtr pPicture)
     int		    error;
     cwPicturePtr    pPicturePrivate;
 
-    pPicturePrivate = xalloc (sizeof (cwPictureRec));
+    pPicturePrivate = malloc (sizeof (cwPictureRec));
     if (!pPicturePrivate)
 	return NULL;
     
@@ -84,7 +86,7 @@ cwCreatePicturePrivate (PicturePtr pPicture)
 						      &error);
     if (!pPicturePrivate->pBackingPicture)
     {
-	xfree (pPicturePrivate);
+	free (pPicturePrivate);
 	return NULL;
     }
 
@@ -108,7 +110,7 @@ cwDestroyPicturePrivate (PicturePtr pPicture)
     {
 	if (pPicturePrivate->pBackingPicture)
 	    FreePicture (pPicturePrivate->pBackingPicture, 0);
-	xfree (pPicturePrivate);
+	free (pPicturePrivate);
 	setCwPicture(pPicture, NULL);
     }
 }
@@ -279,34 +281,6 @@ cwComposite (CARD8	op,
 }
 
 static void
-cwGlyphs (CARD8      op,
-	  PicturePtr pSrcPicture,
-	  PicturePtr pDstPicture,
-	  PictFormatPtr  maskFormat,
-	  INT16      xSrc,
-	  INT16      ySrc,
-	  int	nlists,
-	  GlyphListPtr   lists,
-	  GlyphPtr	*glyphs)
-{
-    ScreenPtr	pScreen = pDstPicture->pDrawable->pScreen;
-    cwPsDecl(pScreen);
-    cwSrcPictureDecl;
-    cwDstPictureDecl;
-    
-    cwPsUnwrap(Glyphs);
-    if (nlists)
-    {
-	lists->xOff += dst_picture_x_off;
-	lists->yOff += dst_picture_y_off;
-    }
-    (*ps->Glyphs) (op, pBackingSrcPicture, pBackingDstPicture, maskFormat,
-		   xSrc + src_picture_x_off, ySrc + src_picture_y_off,
-		   nlists, lists, glyphs);
-    cwPsWrap(Glyphs, cwGlyphs);
-}
-
-static void
 cwCompositeRects (CARD8		op,
 		  PicturePtr	pDstPicture,
 		  xRenderColor  *color,
@@ -469,7 +443,6 @@ cwInitializeRender (ScreenPtr pScreen)
     cwPsWrap(ChangePicture, cwChangePicture);
     cwPsWrap(ValidatePicture, cwValidatePicture);
     cwPsWrap(Composite, cwComposite);
-    cwPsWrap(Glyphs, cwGlyphs);
     cwPsWrap(CompositeRects, cwCompositeRects);
     cwPsWrap(Trapezoids, cwTrapezoids);
     cwPsWrap(Triangles, cwTriangles);
@@ -490,7 +463,6 @@ cwFiniRender (ScreenPtr pScreen)
     cwPsUnwrap(ChangePicture);
     cwPsUnwrap(ValidatePicture);
     cwPsUnwrap(Composite);
-    cwPsUnwrap(Glyphs);
     cwPsUnwrap(CompositeRects);
     cwPsUnwrap(Trapezoids);
     cwPsUnwrap(Triangles);

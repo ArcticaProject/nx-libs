@@ -1,4 +1,3 @@
-/* $Xorg: Xprotostr.h,v 1.4 2001/02/09 02:03:23 xorgcvs Exp $ */
 #ifndef XPROTOSTRUCTS_H
 #define XPROTOSTRUCTS_H
 
@@ -48,7 +47,7 @@ ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS
 SOFTWARE.
 
 ******************************************************************/
-#include <X11/Xmd.h>
+#include <nx-X11/Xmd.h>
 
 /* Used by PolySegment */
 

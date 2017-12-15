@@ -1,4 +1,3 @@
-/* $Xorg: mistruct.h,v 1.4 2001/02/09 02:05:22 xorgcvs Exp $ */
 /***********************************************************
 
 Copyright 1987, 1998  The Open Group
@@ -45,7 +44,6 @@ ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS
 SOFTWARE.
 
 ******************************************************************/
-/* $XFree86$ */
 
 #ifndef MISTRUCT_H
 #define MISTRUCT_H

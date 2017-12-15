@@ -1,6 +1,4 @@
 /*
- * $XFree86: xc/programs/Xserver/render/mitrap.c,v 1.8 2002/09/03 19:28:28 keithp Exp $
- *
  * Copyright © 2002 Keith Packard, member of The XFree86 Project, Inc.
  *
  * Permission to use, copy, modify, distribute, and sell this software and its
@@ -62,7 +60,7 @@ miCreateAlphaPicture (ScreenPtr	    pScreen,
     }
 
     pPixmap = (*pScreen->CreatePixmap) (pScreen, width, height, 
-					pPictFormat->depth);
+					pPictFormat->depth, 0);
     if (!pPixmap)
 	return 0;
     pGC = GetScratchGC (pPixmap->drawable.depth, pScreen);
@@ -128,6 +126,7 @@ miTrapezoidBounds (int ntrap, xTrapezoid *traps, BoxPtr box)
     }
 }
 
+#ifndef NXAGENT_SERVER
 void
 miTrapezoids (CARD8	    op,
 	      PicturePtr    pSrc,
@@ -188,3 +187,4 @@ miTrapezoids (CARD8	    op,
 	    miTrapezoids (op, pSrc, pDst, maskFormat, xSrc, ySrc, 1, traps);
     }
 }
+#endif

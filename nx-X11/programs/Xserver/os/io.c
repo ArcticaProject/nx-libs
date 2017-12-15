@@ -45,7 +45,6 @@ SOFTWARE.
 
 
 ******************************************************************/
-/* $Xorg: io.c,v 1.6 2001/02/09 02:05:23 xorgcvs Exp $ */
 /*****************************************************************
  * i/o functions
  *
@@ -53,7 +52,6 @@ SOFTWARE.
  *   InsertFakeRequest, ResetCurrentRequest
  *
  *****************************************************************/
-/* $XFree86: xc/programs/Xserver/os/io.c,v 3.34 2002/05/31 18:46:05 dawes Exp $ */
 
 #ifdef HAVE_DIX_CONFIG_H
 #include <dix-config.h>
@@ -63,33 +61,26 @@ SOFTWARE.
 #define DEBUG_COMMUNICATION
 #endif
 #ifdef WIN32
-#include <X11/Xwinsock.h>
+#include <nx-X11/Xwinsock.h>
 #endif
 #include <stdio.h>
-#include <X11/Xtrans/Xtrans.h>
-#include <X11/Xmd.h>
+#define XSERV_t
+#define TRANS_SERVER
+#define TRANS_REOPEN
+#include <nx-X11/Xtrans/Xtrans.h>
+#include <nx-X11/Xmd.h>
 #include <errno.h>
-#if !defined(__UNIXOS2__) && !defined(WIN32)
-#ifndef Lynx
+#if !defined(WIN32)
 #include <sys/uio.h>
-#else
-#include <uio.h>
 #endif
-#endif
-#include <X11/X.h>
-#define NEED_REPLIES
-#include <X11/Xproto.h>
+#include <nx-X11/X.h>
+#include <nx-X11/Xproto.h>
 #include "os.h"
 #include "osdep.h"
-#include <X11/Xpoll.h>
+#include <nx-X11/Xpoll.h>
 #include "opaque.h"
 #include "dixstruct.h"
 #include "misc.h"
-#ifdef LBX
-#include "colormapst.h"
-#include "propertyst.h"
-#include "lbxserve.h"
-#endif
 
 CallbackListPtr       ReplyCallback;
 CallbackListPtr       FlushCallback;
@@ -97,7 +88,6 @@ CallbackListPtr       FlushCallback;
 /* check for both EAGAIN and EWOULDBLOCK, because some supposedly POSIX
  * systems are broken and return EWOULDBLOCK when they should return EAGAIN
  */
-#ifndef __UNIXOS2__
 #ifndef WIN32
 #if defined(EAGAIN) && defined(EWOULDBLOCK)
 #define ETEST(err) (err == EAGAIN || err == EWOULDBLOCK)
@@ -111,9 +101,6 @@ CallbackListPtr       FlushCallback;
 #else /* WIN32 The socket errorcodes differ from the normal errors*/
 #define ETEST(err) (err == EAGAIN || err == WSAEWOULDBLOCK)
 #endif
-#else /* __UNIXOS2__  Writing to full pipes may return ENOSPC */
-#define ETEST(err) (err == EAGAIN || err == EWOULDBLOCK || err == ENOSPC)
-#endif
 
 Bool CriticalOutputPending;
 int timesThisConnection = 0;
@@ -125,7 +112,7 @@ OsCommPtr AvailableInput = (OsCommPtr)NULL;
 			      lswaps((req)->length) : (req)->length)
 
 #ifdef BIGREQS
-#include <X11/extensions/bigreqstr.h>
+#include <nx-X11/extensions/bigreqstr.h>
 
 #define get_big_req_len(req,cli) ((cli)->swapped ? \
 				  lswapl(((xBigReq *)(req))->length) : \
@@ -200,25 +187,8 @@ OsCommPtr AvailableInput = (OsCommPtr)NULL;
 #define YieldControlDeath()			\
         { timesThisConnection = 0; }
 
-#ifdef hpux_not_tog
-#define LBX_NEED_OLD_SYMBOL_FOR_LOADABLES
-#endif
-
-#ifdef LBX
-#ifdef LBX_NEED_OLD_SYMBOL_FOR_LOADABLES
-#undef ReadRequestFromClient
 int
 ReadRequestFromClient(ClientPtr client)
-{
-    return (*client->readRequest)(client);
-}
-#endif
-int
-StandardReadRequestFromClient(ClientPtr client)
-#else
-int
-ReadRequestFromClient(ClientPtr client)
-#endif
 {
     OsCommPtr oc = (OsCommPtr)client->osPrivate;
     ConnectionInputPtr oci = oc->input;
@@ -244,8 +214,8 @@ ReadRequestFromClient(ClientPtr client)
 	    register ConnectionInputPtr aci = AvailableInput->input;
 	    if (aci->size > BUFWATERMARK)
 	    {
-		xfree(aci->buffer);
-		xfree(aci);
+		free(aci->buffer);
+		free(aci);
 	    }
 	    else
 	    {
@@ -282,7 +252,14 @@ ReadRequestFromClient(ClientPtr client)
     move_header = FALSE;
 #endif
     gotnow = oci->bufcnt + oci->buffer - oci->bufptr;
-    if (gotnow < sizeof(xReq))
+
+    if (oci->ignoreBytes > 0) {
+	if (oci->ignoreBytes > oci->size)
+	    needed = oci->size;
+	else
+	    needed = oci->ignoreBytes;
+    }
+    else if (gotnow < sizeof(xReq))
     {
 	/* We don't have an entire xReq yet.  Can't tell how big
 	 * the request will be until we get the whole xReq.
@@ -327,8 +304,13 @@ ReadRequestFromClient(ClientPtr client)
 	if (needed > MAXBUFSIZE)
 	{
 	    /* request is too big for us to handle */
-	    YieldControlDeath();
-	    return -1;
+	    /*
+	     * Mark the rest of it as needing to be ignored, and then return
+	     * the full size.  Dispatch() will turn it into a BadLength error.
+	     */
+	    oci->ignoreBytes = needed - gotnow;
+	    oci->lenLastReq = gotnow;
+	    return needed;
 	}
 	if ((gotnow == 0) ||
 	    ((oci->bufptr - oci->buffer + needed) > oci->size))
@@ -343,7 +325,7 @@ ReadRequestFromClient(ClientPtr client)
 		/* make buffer bigger to accomodate request */
 		char *ibuf;
 
-		ibuf = (char *)xrealloc(oci->buffer, needed);
+		ibuf = (char *)realloc(oci->buffer, needed);
 		if (!ibuf)
 		{
 		    YieldControlDeath();
@@ -368,13 +350,6 @@ ReadRequestFromClient(ClientPtr client)
 	    YieldControlDeath();
 	    return -1;
 	}
-#ifdef LBX
-	if (oc->proxy && oc->proxy->compHandle)
-	    result = (*oc->proxy->streamOpts.streamCompRead)(fd,
-			     (unsigned char *)oci->buffer + oci->bufcnt,
-			     oci->size - oci->bufcnt);
-	else
-#endif
 	    result = _XSERVTransRead(oc->trans_conn, oci->buffer + oci->bufcnt,
 				     oci->size - oci->bufcnt); 
 	if (result <= 0)
@@ -382,17 +357,7 @@ ReadRequestFromClient(ClientPtr client)
 	    if ((result < 0) && ETEST(errno))
 	    {
 #if defined(SVR4) && defined(i386) && !defined(sun)
-#if defined(LBX) && 0
-		/*
-		 * For LBX connections, we can get a valid EWOULDBLOCK
-		 * There is probably a better way of distinguishing LBX
-		 * connections, but this works. (DHD)
-		 */
-		extern int LbxRead();
-		if (oc->Read == LbxRead)
-#else
 		if (0)
-#endif
 #endif
 		{
 		    YieldControlNoInput();
@@ -410,7 +375,7 @@ ReadRequestFromClient(ClientPtr client)
 	{
 	    char *ibuf;
 
-	    ibuf = (char *)xrealloc(oci->buffer, BUFSIZE);
+	    ibuf = (char *)realloc(oci->buffer, BUFSIZE);
 	    if (ibuf)
 	    {
 		oci->size = BUFSIZE;
@@ -452,6 +417,29 @@ ReadRequestFromClient(ClientPtr client)
 #endif
 	    needed = sizeof(xReq);
     }
+
+    /* If there are bytes to ignore, ignore them now. */
+
+    if (oci->ignoreBytes > 0) {
+	assert(needed == oci->ignoreBytes || needed == oci->size);
+	oci->ignoreBytes -= gotnow;
+	needed = gotnow = 0;
+	/*
+	 * The _XSERVTransRead call above may return more or fewer bytes than we
+	 * want to ignore.  Ignore the smaller of the two sizes.
+	 */
+	if (gotnow < needed) {
+	    oci->ignoreBytes -= gotnow;
+	    oci->bufptr += gotnow;
+	    gotnow = 0;
+	} else {
+	    oci->ignoreBytes -= needed;
+	    oci->bufptr += needed;
+	    gotnow -= needed;
+	}
+	needed = 0;
+    }
+
     oci->lenLastReq = needed;
 
     /*
@@ -477,30 +465,15 @@ ReadRequestFromClient(ClientPtr client)
 	    FD_SET(fd, &ClientsWithInput);
 	else
 	{
-#ifdef SMART_SCHEDULE
-	    if (!SmartScheduleDisable)
-		FD_CLR(fd, &ClientsWithInput);
-	    else
-#endif
-		YieldControlNoInput();
+	    FD_CLR(fd, &ClientsWithInput);
 	}
     }
     else
     {
 	if (!gotnow)
 	    AvailableInput = oc;
-#ifdef SMART_SCHEDULE
-	if (!SmartScheduleDisable)
-	    FD_CLR(fd, &ClientsWithInput);
-	else
-#endif
-	    YieldControlNoInput();
+	FD_CLR(fd, &ClientsWithInput);
     }
-#ifdef SMART_SCHEDULE
-    if (SmartScheduleDisable)
-#endif
-    if (++timesThisConnection >= MAX_TIMES_PER)
-	YieldControl();
 #ifdef BIGREQS
     if (move_header)
     {
@@ -511,7 +484,7 @@ ReadRequestFromClient(ClientPtr client)
 	client->req_len -= (sizeof(xBigReq) - sizeof(xReq)) >> 2;
     }
 #endif
-    client->requestBuffer = (pointer)oci->bufptr;
+    client->requestBuffer = (void *)oci->bufptr;
 #ifdef DEBUG_COMMUNICATION
     {
 	xReq *req = client->requestBuffer;
@@ -543,8 +516,8 @@ InsertFakeRequest(ClientPtr client, char *data, int count)
 	    ConnectionInputPtr aci = AvailableInput->input;
 	    if (aci->size > BUFWATERMARK)
 	    {
-		xfree(aci->buffer);
-		xfree(aci);
+		free(aci->buffer);
+		free(aci);
 	    }
 	    else
 	    {
@@ -570,7 +543,7 @@ InsertFakeRequest(ClientPtr client, char *data, int count)
     {
 	char *ibuf;
 
-	ibuf = (char *)xrealloc(oci->buffer, gotnow + count);
+	ibuf = (char *)realloc(oci->buffer, gotnow + count);
 	if (!ibuf)
 	    return(FALSE);
 	oci->size = gotnow + count;
@@ -610,18 +583,6 @@ ResetCurrentRequest(ClientPtr client)
     int fd = oc->fd;
     register xReq *request;
     int gotnow, needed;
-#ifdef LBX
-    LbxClientPtr lbxClient = LbxClient(client);
-
-    if (lbxClient) {
-	LbxSetForBlock(lbxClient);
-	if (!oci) {
-	    AppendFakeRequest(client,
-			      client->requestBuffer, client->req_len << 2);
-	    return;
-	}
-    }
-#endif
     if (AvailableInput == oc)
 	AvailableInput = (OsCommPtr)NULL;
     oci->lenLastReq = 0;
@@ -642,8 +603,7 @@ ResetCurrentRequest(ClientPtr client)
 	    ((xBigReq *)oci->bufptr)->length = client->req_len;
 	    if (client->swapped)
 	    {
-		char n;
-		swapl(&((xBigReq *)oci->bufptr)->length, n);
+		swapl(&((xBigReq *)oci->bufptr)->length);
 	    }
 	}
 #endif
@@ -821,9 +781,6 @@ FlushAllOutput(void)
     fd_set newOutputPending;
 #endif
 
-    if (FlushCallback)
-	CallCallbacks(&FlushCallback, NULL);
-
     if (!newoutput)
 	return;
 
@@ -851,9 +808,6 @@ FlushAllOutput(void)
 		continue;
 	    oc = (OsCommPtr)client->osPrivate;
 	    if (
-#ifdef LBX
-		!oc->proxy &&
-#endif
 		FD_ISSET(oc->fd, &ClientsWithInput))
 	    {
 		FD_SET(oc->fd, &OutputPending); /* set the bit again */
@@ -875,9 +829,6 @@ FlushAllOutput(void)
 		continue;
 	    oc = (OsCommPtr)client->osPrivate;
 	    if (
-#ifdef LBX
-		!oc->proxy &&
-#endif
 		FD_ISSET(oc->fd, &ClientsWithInput))
 	    {
 		FD_SET(oc->fd, &newOutputPending); /* set the bit again */
@@ -915,16 +866,19 @@ SetCriticalOutputPending(void)
  *****************/
 
 int
-WriteToClient (ClientPtr who, int count, char *buf)
+WriteToClient (ClientPtr who, int count, const void *__buf)
 {
-    OsCommPtr oc = (OsCommPtr)who->osPrivate;
-    ConnectionOutputPtr oco = oc->output;
+    OsCommPtr oc;
+    ConnectionOutputPtr oco;
     int padBytes;
+    const char *buf = __buf;
 #ifdef DEBUG_COMMUNICATION
     Bool multicount = FALSE;
 #endif
-    if (!count)
+    if (!count || !who || who == serverClient || who->clientGone)
 	return(0);
+    oc = who->osPrivate;
+    oco = oc->output;
 #ifdef DEBUG_COMMUNICATION
     {
 	char info[128];
@@ -998,22 +952,21 @@ WriteToClient (ClientPtr who, int count, char *buf)
 	    who->replyBytesRemaining -= count + padBytes;
 	    replyinfo.startOfReply = FALSE;
 	    replyinfo.bytesRemaining = who->replyBytesRemaining;
-	    CallCallbacks((&ReplyCallback), (pointer)&replyinfo);
+	    CallCallbacks((&ReplyCallback), (void *)&replyinfo);
 	}
 	else if (who->clientState == ClientStateRunning
 		 && buf[0] == X_Reply)
         { /* start of new reply */
 	    CARD32 replylen;
 	    unsigned long bytesleft;
-	    char n;
 
 	    replylen = ((xGenericReply *)buf)->length;
 	    if (who->swapped)
-		swapl(&replylen, n);
+		swapl(&replylen);
 	    bytesleft = (replylen * 4) + SIZEOF(xReply) - count - padBytes;
 	    replyinfo.startOfReply = TRUE;
 	    replyinfo.bytesRemaining = who->replyBytesRemaining = bytesleft;
-	    CallCallbacks((&ReplyCallback), (pointer)&replyinfo);
+	    CallCallbacks((&ReplyCallback), (void *)&replyinfo);
 	} 	                      
     }
 #ifdef DEBUG_COMMUNICATION
@@ -1028,7 +981,7 @@ WriteToClient (ClientPtr who, int count, char *buf)
 	}
     }
 #endif
-    if (oco->count + count + padBytes > oco->size)
+    if (oco->count == 0 || oco->count + count + padBytes > oco->size)
     {
 	FD_CLR(oc->fd, &OutputPending);
 	if(!XFD_ANYSET(&OutputPending)) {
@@ -1041,7 +994,11 @@ WriteToClient (ClientPtr who, int count, char *buf)
     NewOutputPending = TRUE;
     FD_SET(oc->fd, &OutputPending);
     memmove((char *)oco->buf + oco->count, buf, count);
-    oco->count += count + padBytes;
+    oco->count += count;
+    if (padBytes) {
+	memset(oco->buf + oco->count, '\0', padBytes);
+	oco->count += padBytes;
+    }
     return(count);
 }
 
@@ -1055,28 +1012,15 @@ WriteToClient (ClientPtr who, int count, char *buf)
  *
  **********************/
 
-#ifdef LBX
-#ifdef LBX_NEED_OLD_SYMBOL_FOR_LOADABLES
-#undef FlushClient
 int
-FlushClient(ClientPtr who, OsCommPtr oc, char *extraBuf, int extraCount)
-{
-    return (*oc->Flush)(who, oc, extraBuf, extraCount);
-}
-#endif
-int
-StandardFlushClient(ClientPtr who, OsCommPtr oc, 
-    char *extraBuf, int extraCount)
-#else
-int
-FlushClient(ClientPtr who, OsCommPtr oc, char *extraBuf, int extraCount)
-#endif
+FlushClient(ClientPtr who, OsCommPtr oc, const void *__extraBuf, int extraCount)
 {
     ConnectionOutputPtr oco = oc->output;
     int connection = oc->fd;
     XtransConnInfo trans_conn = oc->trans_conn;
     struct iovec iov[3];
     static char padBuffer[3];
+    const char *extraBuf = __extraBuf;
     long written;
     long padsize;
     long notWritten;
@@ -1087,6 +1031,13 @@ FlushClient(ClientPtr who, OsCommPtr oc, char *extraBuf, int extraCount)
     written = 0;
     padsize = padlength[extraCount & 3];
     notWritten = oco->count + extraCount + padsize;
+
+    if (!notWritten)
+	return 0;
+
+    if (FlushCallback)
+	CallCallbacks(&FlushCallback, who);
+
     todo = notWritten;
     while (notWritten) {
 	long before = written;	/* amount of whole thing written */
@@ -1122,7 +1073,7 @@ FlushClient(ClientPtr who, OsCommPtr oc, char *extraBuf, int extraCount)
 	}
 
 	InsertIOV ((char *)oco->buf, oco->count)
-	InsertIOV (extraBuf, extraCount)
+	InsertIOV ((char *)extraBuf, extraCount)
 	InsertIOV (padBuffer, padsize)
 
 	errno = 0;
@@ -1145,7 +1096,7 @@ FlushClient(ClientPtr who, OsCommPtr oc, char *extraBuf, int extraCount)
 	       and not ready to accept more.  Make a note of it and buffer
 	       the rest. */
 	    FD_SET(connection, &ClientsWriteBlocked);
-	    AnyClientsWriteBlocked = TRUE;
+	    AnyWritesPending = TRUE;
 
 	    if (written < oco->count)
 	    {
@@ -1166,10 +1117,11 @@ FlushClient(ClientPtr who, OsCommPtr oc, char *extraBuf, int extraCount)
 
 	    if (notWritten > oco->size)
 	    {
-		unsigned char *obuf;
+		unsigned char *obuf = NULL;
 
-		obuf = (unsigned char *)xrealloc(oco->buf,
-						 notWritten + BUFSIZE);
+		if (notWritten + BUFSIZE <= INT_MAX) {
+		    obuf = realloc(oco->buf, notWritten + BUFSIZE);
+		}
 		if (!obuf)
 		{
 		    _XSERVTransDisconnect(oc->trans_conn);
@@ -1217,16 +1169,17 @@ FlushClient(ClientPtr who, OsCommPtr oc, char *extraBuf, int extraCount)
     /* everything was flushed out */
     oco->count = 0;
     /* check to see if this client was write blocked */
-    if (AnyClientsWriteBlocked)
+    if (AnyWritesPending)
     {
 	FD_CLR(oc->fd, &ClientsWriteBlocked);
- 	if (! XFD_ANYSET(&ClientsWriteBlocked))
-	    AnyClientsWriteBlocked = FALSE;
+	if (!XFD_ANYSET(&ClientsWriteBlocked) && NumNotifyWriteFd == 0)
+	    AnyWritesPending = FALSE;
+
     }
     if (oco->size > BUFWATERMARK)
     {
-	xfree(oco->buf);
-	xfree(oco);
+	free(oco->buf);
+	free(oco);
     }
     else
     {
@@ -1242,19 +1195,20 @@ AllocateInputBuffer(void)
 {
     ConnectionInputPtr oci;
 
-    oci = (ConnectionInputPtr)xalloc(sizeof(ConnectionInput));
+    oci = (ConnectionInputPtr)malloc(sizeof(ConnectionInput));
     if (!oci)
 	return (ConnectionInputPtr)NULL;
-    oci->buffer = (char *)xalloc(BUFSIZE);
+    oci->buffer = (char *)malloc(BUFSIZE);
     if (!oci->buffer)
     {
-	xfree(oci);
+	free(oci);
 	return (ConnectionInputPtr)NULL;
     }
     oci->size = BUFSIZE;
     oci->bufptr = oci->buffer;
     oci->bufcnt = 0;
     oci->lenLastReq = 0;
+    oci->ignoreBytes = 0;
     return oci;
 }
 
@@ -1263,20 +1217,17 @@ AllocateOutputBuffer(void)
 {
     ConnectionOutputPtr oco;
 
-    oco = (ConnectionOutputPtr)xalloc(sizeof(ConnectionOutput));
+    oco = (ConnectionOutputPtr)malloc(sizeof(ConnectionOutput));
     if (!oco)
 	return (ConnectionOutputPtr)NULL;
-    oco->buf = (unsigned char *) xalloc(BUFSIZE);
+    oco->buf = (unsigned char *) malloc(BUFSIZE);
     if (!oco->buf)
     {
-	xfree(oco);
+	free(oco);
 	return (ConnectionOutputPtr)NULL;
     }
     oco->size = BUFSIZE;
     oco->count = 0;
-#ifdef LBX
-    oco->nocompress = FALSE;
-#endif
     return oco;
 }
 
@@ -1292,8 +1243,8 @@ FreeOsBuffers(OsCommPtr oc)
     {
 	if (FreeInputs)
 	{
-	    xfree(oci->buffer);
-	    xfree(oci);
+	    free(oci->buffer);
+	    free(oci);
 	}
 	else
 	{
@@ -1302,14 +1253,15 @@ FreeOsBuffers(OsCommPtr oc)
 	    oci->bufptr = oci->buffer;
 	    oci->bufcnt = 0;
 	    oci->lenLastReq = 0;
+	    oci->ignoreBytes = 0;
 	}
     }
     if ((oco = oc->output))
     {
 	if (FreeOutputs)
 	{
-	    xfree(oco->buf);
-	    xfree(oco);
+	    free(oco->buf);
+	    free(oco);
 	}
 	else
 	{
@@ -1318,12 +1270,6 @@ FreeOsBuffers(OsCommPtr oc)
 	    oco->count = 0;
 	}
     }
-#ifdef LBX
-    if ((oci = oc->largereq)) {
-	xfree(oci->buffer);
-	xfree(oci);
-    }
-#endif
 }
 
 void
@@ -1335,13 +1281,13 @@ ResetOsBuffers(void)
     while ((oci = FreeInputs))
     {
 	FreeInputs = oci->next;
-	xfree(oci->buffer);
-	xfree(oci);
+	free(oci->buffer);
+	free(oci);
     }
     while ((oco = FreeOutputs))
     {
 	FreeOutputs = oco->next;
-	xfree(oco->buf);
-	xfree(oco);
+	free(oco->buf);
+	free(oco);
     }
 }

@@ -1,4 +1,3 @@
-/* $XFree86$ */
 /***********************************************************
 
 Copyright 1987, 1998  The Open Group
@@ -45,7 +44,6 @@ ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS
 SOFTWARE.
 
 ******************************************************************/
-/* $Xorg: mipoly.c,v 1.4 2001/02/09 02:05:21 xorgcvs Exp $ */
 /*
  *  mipoly.c
  *
@@ -60,7 +58,7 @@ SOFTWARE.
 #include <dix-config.h>
 #endif
 
-#include <X11/X.h>
+#include <nx-X11/X.h>
 #include "windowstr.h"
 #include "gcstruct.h"
 #include "pixmapstr.h"

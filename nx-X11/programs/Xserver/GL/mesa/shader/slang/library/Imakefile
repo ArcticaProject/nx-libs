@@ -1,22 +1,10 @@
-#if DoLoadableServer
-#if !BuildModuleInSubdir
-#define IHaveModules
-#elif !defined(IHaveModules)
-#define IHaveSubdirs
-SUBDIRS = module
-#endif
-#endif
 
 #include <Server.tmpl>
 
 #define NeedAllMesaSrc
 #define NeedToLinkMesaSrc
 #define MesaLibraryBuildDir /**/
-#if !defined(IHaveModules) || !BuildModuleInSubdir
-#include "../../../../../../../lib/GL/mesa/shader/slang/library/Imakefile.inc"
-#else
-#include "../../../../../../../../lib/GL/mesa/shader/slang/library/Imakefile.inc"
-#endif
+#include "Imakefile.inc"
 
      INCLUDES = -I$(MESASRCDIR)/src/mesa \
 		-I$(MESASRCDIR)/src/mesa/shader \
@@ -31,11 +19,7 @@ SUBDIRS = module
 
       DEFINES = $(GLX_DEFINES) /*-DUSE_X86_ASM*/ /*-DUSE_SPARC_ASM*/
 
-#ifdef IHaveModules
-ModuleObjectRule()
-#else
 NormalLibraryObjectRule()
-#endif
 
 DependTarget()
 

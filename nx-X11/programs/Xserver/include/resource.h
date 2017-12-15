@@ -1,4 +1,3 @@
-/* $Xorg: resource.h,v 1.5 2001/02/09 02:05:15 xorgcvs Exp $ */
 /***********************************************************
 
 Copyright 1987, 1989, 1998  The Open Group
@@ -45,7 +44,6 @@ ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS
 SOFTWARE.
 
 ******************************************************************/
-/* $XFree86: xc/programs/Xserver/include/resource.h,v 1.11 2002/03/06 21:14:04 mvojkovi Exp $ */
 
 #ifndef RESOURCE_H
 #define RESOURCE_H 1
@@ -73,9 +71,9 @@ typedef unsigned long RESTYPE;
 
 /* types for Resource routines */
 
-#define RT_WINDOW	((RESTYPE)1|RC_CACHED|RC_DRAWABLE)
-#define RT_PIXMAP	((RESTYPE)2|RC_CACHED|RC_DRAWABLE)
-#define RT_GC		((RESTYPE)3|RC_CACHED)
+#define RT_WINDOW	((RESTYPE)1|RC_DRAWABLE)
+#define RT_PIXMAP	((RESTYPE)2|RC_DRAWABLE)
+#define RT_GC		((RESTYPE)3)
 #undef RT_FONT
 #undef RT_CURSOR
 #define RT_FONT		((RESTYPE)4)
@@ -123,24 +121,24 @@ typedef unsigned long RESTYPE;
 #define BAD_RESOURCE 0xe0000000
 
 typedef int (*DeleteType)(
-    pointer /*value*/,
+    void * /*value*/,
     XID /*id*/);
 
 typedef void (*FindResType)(
-    pointer /*value*/,
+    void * /*value*/,
     XID /*id*/,
-    pointer /*cdata*/);
+    void * /*cdata*/);
 
 typedef void (*FindAllRes)(
-    pointer /*value*/,
+    void * /*value*/,
     XID /*id*/,
     RESTYPE /*type*/,
-    pointer /*cdata*/);
+    void * /*cdata*/);
 
 typedef Bool (*FindComplexResType)(
-    pointer /*value*/,
+    void * /*value*/,
     XID /*id*/,
-    pointer /*cdata*/);
+    void * /*cdata*/);
 
 extern RESTYPE CreateNewResourceType(
     DeleteType /*deleteFunc*/);
@@ -161,7 +159,7 @@ extern XID FakeClientID(
 extern Bool AddResource(
     XID /*id*/,
     RESTYPE /*type*/,
-    pointer /*value*/);
+    void * /*value*/);
 
 extern void FreeResource(
     XID /*id*/,
@@ -175,18 +173,18 @@ extern void FreeResourceByType(
 extern Bool ChangeResourceValue(
     XID /*id*/,
     RESTYPE /*rtype*/,
-    pointer /*value*/);
+    void * /*value*/);
 
 extern void FindClientResourcesByType(
     ClientPtr /*client*/,
     RESTYPE /*type*/,
     FindResType /*func*/,
-    pointer /*cdata*/);
+    void * /*cdata*/);
 
 extern void FindAllClientResources(
     ClientPtr /*client*/,
     FindAllRes /*func*/,
-    pointer /*cdata*/);
+    void * /*cdata*/);
 
 extern void FreeClientNeverRetainResources(
     ClientPtr /*client*/);
@@ -200,19 +198,19 @@ extern Bool LegalNewID(
     XID /*id*/,
     ClientPtr /*client*/);
 
-extern pointer LookupIDByType(
+extern void * LookupIDByType(
     XID /*id*/,
     RESTYPE /*rtype*/);
 
-extern pointer LookupIDByClass(
+extern void * LookupIDByClass(
     XID /*id*/,
     RESTYPE /*classes*/);
 
-extern pointer LookupClientResourceComplex(
+extern void * LookupClientResourceComplex(
     ClientPtr client,
     RESTYPE type,
     FindComplexResType func,
-    pointer cdata);
+    void * cdata);
 
 /* These are the access modes that can be passed in the last parameter
  * to SecurityLookupIDByType/Class.  The Security extension doesn't
@@ -222,20 +220,20 @@ extern pointer LookupClientResourceComplex(
  * simultaneously.
  */
 
-#define SecurityUnknownAccess	0	/* don't know intentions */
-#define SecurityReadAccess	(1<<0)	/* inspecting the object */
-#define SecurityWriteAccess	(1<<1)	/* changing the object */
-#define SecurityDestroyAccess	(1<<2)	/* destroying the object */
+#define DixUnknownAccess	0	/* don't know intentions */
+#define DixReadAccess	(1<<0)	/* inspecting the object */
+#define DixWriteAccess	(1<<1)	/* changing the object */
+#define DixDestroyAccess	(1<<2)	/* destroying the object */
 
 #ifdef XCSECURITY
 
-extern pointer SecurityLookupIDByType(
+extern void * SecurityLookupIDByType(
     ClientPtr /*client*/,
     XID /*id*/,
     RESTYPE /*rtype*/,
     Mask /*access_mode*/);
 
-extern pointer SecurityLookupIDByClass(
+extern void * SecurityLookupIDByClass(
     ClientPtr /*client*/,
     XID /*id*/,
     RESTYPE /*classes*/,

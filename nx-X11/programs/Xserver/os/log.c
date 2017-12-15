@@ -1,3 +1,28 @@
+/**************************************************************************/
+/*                                                                        */
+/* Copyright (c) 2001, 2011 NoMachine (http://www.nomachine.com)          */
+/* Copyright (c) 2008-2014 Oleksandr Shneyder <o.shneyder@phoca-gmbh.de>  */
+/* Copyright (c) 2011-2016 Mike Gabriel <mike.gabriel@das-netzwerkteam.de>*/
+/* Copyright (c) 2014-2016 Mihai Moldovan <ionic@ionic.de>                */
+/* Copyright (c) 2014-2016 Ulrich Sibiller <uli42@gmx.de>                 */
+/* Copyright (c) 2015-2016 Qindel Group (http://www.qindel.com)           */
+/*                                                                        */
+/* nx-X11, NX protocol compression and NX extensions to this software     */
+/* are copyright of the aforementioned persons and companies.             */
+/*                                                                        */
+/* Redistribution and use of the present software is allowed according    */
+/* to terms specified in the file LICENSE which comes in the source       */
+/* distribution.                                                          */
+/*                                                                        */
+/* All rights reserved.                                                   */
+/*                                                                        */
+/* NOTE: This software has received contributions from various other      */
+/* contributors, only the core maintainers and supporters are listed as   */
+/* copyright holders. Please contact us, if you feel you should be listed */
+/* as copyright holder, as well.                                          */
+/*                                                                        */
+/**************************************************************************/
+
 /*
 
 Copyright 1987, 1998  The Open Group
@@ -76,30 +101,11 @@ OR PERFORMANCE OF THIS SOFTWARE.
  * authorization from the copyright holder(s) and author(s).
  */
 
-/* $XFree86: xc/programs/Xserver/os/log.c,v 1.6 2003/11/07 13:45:27 tsi Exp $ */
-
-/**************************************************************************/
-/*                                                                        */
-/* Copyright (c) 2001, 2011 NoMachine, http://www.nomachine.com/.         */
-/*                                                                        */
-/* NX-X11, NX protocol compression and NX extensions to this software     */
-/* are copyright of NoMachine. Redistribution and use of the present      */
-/* software is allowed according to terms specified in the file LICENSE   */
-/* which comes in the source distribution.                                */
-/*                                                                        */
-/* Check http://www.nomachine.com/licensing.html for applicability.       */
-/*                                                                        */
-/* NX and NoMachine are trademarks of Medialogic S.p.A.                   */
-/*                                                                        */
-/* All rights reserved.                                                   */
-/*                                                                        */
-/**************************************************************************/
-
 #ifdef HAVE_DIX_CONFIG_H
 #include <dix-config.h>
 #endif
 
-#include <X11/Xos.h>
+#include <nx-X11/Xos.h>
 #include <stdio.h>
 #include <time.h>
 #include <sys/stat.h>
@@ -107,6 +113,7 @@ OR PERFORMANCE OF THIS SOFTWARE.
 #include <stdlib.h>	/* for malloc() */
 #include <errno.h>
 
+#include "input.h"
 #include "site.h"
 #include "opaque.h"
 
@@ -117,7 +124,7 @@ OR PERFORMANCE OF THIS SOFTWARE.
 
 #ifdef NX_TRANS_SOCKET
 
-#include "NX.h"
+#include <nx/NX.h>
 
 #endif
 
@@ -172,13 +179,64 @@ static Bool needBuffer = TRUE;
 #endif
 
 /*
+ * LogFilePrep is called to setup files for logging, including getting
+ * an old file out of the way, but it doesn't actually open the file,
+ * since it may be used for renaming a file we're already logging to.
+ */
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wformat-nonliteral"
+
+static char *
+LogFilePrep(const char *fname, const char *backup, const char *idstring)
+{
+    char *logFileName = NULL;
+
+    if (asprintf(&logFileName, fname, idstring) == -1)
+	FatalError("Cannot allocate space for the log file name\n");
+
+    if (backup && *backup) {
+	struct stat buf;
+
+    if (!stat(logFileName, &buf) && S_ISREG(buf.st_mode)) {
+	    char *suffix;
+	    char *oldLog;
+
+	    if ((asprintf(&suffix, backup, idstring) == -1) ||
+		(asprintf(&oldLog, "%s%s", logFileName, suffix) == -1)) {
+		FatalError("Cannot allocate space for the log file name\n");
+	    }
+	    free(suffix);
+
+	    if (rename(logFileName, oldLog) == -1) {
+		FatalError("Cannot move old log file \"%s\" to \"%s\"\n",
+			   logFileName, oldLog);
+	    }
+	    free(oldLog);
+	}
+    }
+    else {
+	if (remove(logFileName) != 0) {
+	    FatalError("Cannot remove old log file \"%s\": %s\n",
+		       logFileName, strerror(errno));
+	}
+    }
+
+    return logFileName;
+}
+#pragma GCC diagnostic pop
+
+/*
  * LogInit is called to start logging to a file.  It is also called (with
  * NULL arguments) when logging to a file is not wanted.  It must always be
  * called, otherwise log messages will continue to accumulate in a buffer.
  *
  * %s, if present in the fname or backup strings, is expanded to the display
- * string.
+ * string (or to a string containing the pid if the display is not yet set).
  */
+
+static char *saved_log_fname;
+static char *saved_log_backup;
+static char *saved_log_tempname;
 
 const char *
 LogInit(const char *fname, const char *backup)
@@ -186,37 +244,22 @@ LogInit(const char *fname, const char *backup)
     char *logFileName = NULL;
 
     if (fname && *fname) {
-	/* xalloc() can't be used yet. */
-	logFileName = malloc(strlen(fname) + strlen(display) + 1);
-	if (!logFileName)
-	    FatalError("Cannot allocate space for the log file name\n");
-	sprintf(logFileName, fname, display);
+	if (displayfd != -1) {
+	    /* Display isn't set yet, so we can't use it in filenames yet. */
+	    char pidstring[32];
+	    snprintf(pidstring, sizeof(pidstring), "pid-%ld",
+		     (unsigned long) getpid());
+	    logFileName = LogFilePrep(fname, backup, pidstring);
+	    saved_log_tempname = logFileName;
 
-	if (backup && *backup) {
-	    struct stat buf;
-
-	    if (!stat(logFileName, &buf) && S_ISREG(buf.st_mode)) {
-		char *suffix;
-		char *oldLog;
-
-		oldLog = malloc(strlen(logFileName) + strlen(backup) +
-				strlen(display) + 1);
-		suffix = malloc(strlen(backup) + strlen(display) + 1);
-		if (!oldLog || !suffix)
-		    FatalError("Cannot allocate space for the log file name\n");
-		sprintf(suffix, backup, display);
-		sprintf(oldLog, "%s%s", logFileName, suffix);
-		free(suffix);
-#ifdef __UNIXOS2__
-		remove(oldLog);
-#endif
-		if (rename(logFileName, oldLog) == -1) {
-		    FatalError("Cannot move old log file (\"%s\" to \"%s\"\n",
-			       logFileName, oldLog);
-		}
-		free(oldLog);
-	    }
-	}
+	    /* Save the patterns for use when the display is named. */
+	    saved_log_fname = strdup(fname);
+	    if (backup == NULL)
+		saved_log_backup = NULL;
+	    else
+		saved_log_backup = strdup(backup);
+	} else
+	    logFileName = LogFilePrep(fname, backup, display);
 	if ((logFile = fopen(logFileName, "w")) == NULL)
 	    FatalError("Cannot open log file \"%s\"\n", logFileName);
 	setvbuf(logFile, NULL, _IONBF, 0);
@@ -236,13 +279,43 @@ LogInit(const char *fname, const char *backup)
      * needed.
      */
     if (saveBuffer && bufferSize > 0) {
-	free(saveBuffer);	/* Must be free(), not xfree() */
+	free(saveBuffer);	/* Must be free(), not free() */
 	saveBuffer = NULL;
 	bufferSize = 0;
     }
     needBuffer = FALSE;
 
     return logFileName;
+}
+
+void
+LogSetDisplay(void)
+{
+    if (saved_log_fname) {
+	char *logFileName;
+
+	logFileName = LogFilePrep(saved_log_fname, saved_log_backup, display);
+
+	if (rename(saved_log_tempname, logFileName) == 0) {
+	    LogMessageVerb(X_PROBED, 0,
+			   "Log file renamed from \"%s\" to \"%s\"\n",
+			   saved_log_tempname, logFileName);
+
+	    if (strlen(saved_log_tempname) >= strlen(logFileName))
+		strncpy(saved_log_tempname, logFileName,
+			strlen(saved_log_tempname));
+	}
+	else {
+	    ErrorF("Failed to rename log file \"%s\" to \"%s\": %s\n",
+		   saved_log_tempname, logFileName, strerror(errno));
+	}
+
+	/* free newly allocated string - can't free old one since existing
+	   pointers to it may exist in DDX callers. */
+	free(logFileName);
+	free(saved_log_fname);
+	free(saved_log_backup);
+    }
 }
 
 void
@@ -333,7 +406,7 @@ LogVWrite(int verb, const char *f, va_list args)
 	} else if (needBuffer) {
 	    /*
 	     * Note, this code is used before OsInit() has been called, so
-	     * xalloc() and friends can't be used.
+	     * malloc() and friends can't be used.
 	     */
 	    if (len > bufferUnused) {
 		bufferSize += 1024;
@@ -531,7 +604,7 @@ AuditF(const char * f, ...)
 }
 
 static CARD32
-AuditFlush(OsTimerPtr timer, CARD32 now, pointer arg)
+AuditFlush(OsTimerPtr timer, CARD32 now, void * arg)
 {
     char *prefix;
 
@@ -561,15 +634,6 @@ VAuditF(const char *f, va_list args)
     prefix = AuditPrefix();
     len = vsnprintf(buf, sizeof(buf), f, args);
 
-#if 1
-    /* XXX Compressing duplicated messages is temporarily disabled to
-     * work around bugzilla 964:
-     *     https://freedesktop.org/bugzilla/show_bug.cgi?id=964
-     */
-    ErrorF("%s%s", prefix != NULL ? prefix : "", buf);
-    oldlen = -1;
-    nrepeat = 0;
-#else
     if (len == oldlen && strcmp(buf, oldbuf) == 0) {
 	/* Message already seen */
 	nrepeat++;
@@ -583,7 +647,6 @@ VAuditF(const char *f, va_list args)
 	nrepeat = 0;
 	auditTimer = TimerSet(auditTimer, 0, AUDIT_TIMEOUT, AuditFlush, NULL);
     }
-#endif
     if (prefix != NULL)
 	free(prefix);
 }
@@ -692,9 +755,9 @@ Error(char *str)
 	    return;
 	sprintf(err, "%s: ", str);
 	strcat(err, strerror(saveErrno));
-	LogWrite(-1, err);
+	LogWrite(-1, "%s", err);
     } else
-	LogWrite(-1, strerror(saveErrno));
+	LogWrite(-1, "%s", strerror(saveErrno));
 }
 
 void

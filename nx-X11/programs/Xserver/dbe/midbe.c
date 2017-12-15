@@ -1,4 +1,3 @@
-/* $Xorg: midbe.c,v 1.3 2000/08/17 19:48:16 cpqbld Exp $ */
 /******************************************************************************
  * 
  * Copyright (c) 1994, 1995  Hewlett-Packard Company
@@ -30,19 +29,16 @@
  *     Machine-independent DBE code
  *
  *****************************************************************************/
-/* $XFree86: xc/programs/Xserver/dbe/midbe.c,v 3.4 2001/03/06 17:31:34 dawes Exp $ */
 
 
 /* INCLUDES */
 
-#define NEED_REPLIES
-#define NEED_EVENTS
 #ifdef HAVE_DIX_CONFIG_H
 #include <dix-config.h>
 #endif
 
-#include <X11/X.h>
-#include <X11/Xproto.h>
+#include <nx-X11/X.h>
+#include <nx-X11/Xproto.h>
 #include "misc.h"
 #include "os.h"
 #include "windowstr.h"
@@ -58,11 +54,7 @@
 #include "gcstruct.h"
 #include "inputstr.h"
 
-#ifndef IN_MODULE
 #include <stdio.h>
-#else
-#include "xf86_ansic.h"
-#endif
 
 /* DEFINES */
 
@@ -115,7 +107,7 @@ miDbeGetVisualInfo(pScreen, pScrVisInfo)
     }
 
     /* Allocate an array of XdbeVisualInfo items. */
-    if (!(visInfo = (XdbeVisualInfo *)xalloc(count * sizeof(XdbeVisualInfo))))
+    if (!(visInfo = (XdbeVisualInfo *)malloc(count * sizeof(XdbeVisualInfo))))
     {
         return(FALSE); /* memory alloc failure */
     }
@@ -196,7 +188,7 @@ miDbeAllocBackBufferName(pWin, bufId, swapAction)
         if (!(pDbeWindowPrivPriv->pFrontBuffer =
             (*pScreen->CreatePixmap)(pScreen, pDbeWindowPriv->width,
                                      pDbeWindowPriv->height,
-                                     pWin->drawable.depth)))
+                                     pWin->drawable.depth, 0)))
         {
             return(BadAlloc);
         }
@@ -205,7 +197,7 @@ miDbeAllocBackBufferName(pWin, bufId, swapAction)
         if (!(pDbeWindowPrivPriv->pBackBuffer =
             (*pScreen->CreatePixmap)(pScreen, pDbeWindowPriv->width,
                                      pDbeWindowPriv->height,
-                                     pWin->drawable.depth)))
+                                     pWin->drawable.depth, 0)))
         {
             (*pScreen->DestroyPixmap)(pDbeWindowPrivPriv->pFrontBuffer); 
             return(BadAlloc);
@@ -214,7 +206,7 @@ miDbeAllocBackBufferName(pWin, bufId, swapAction)
 
         /* Make the back pixmap a DBE drawable resource. */
         if (!AddResource(bufId, dbeDrawableResType,
-            (pointer)pDbeWindowPrivPriv->pBackBuffer))
+            (void *)pDbeWindowPrivPriv->pBackBuffer))
         {
             /* free the buffer and the drawable resource */
             FreeResource(bufId, RT_NONE);
@@ -224,7 +216,7 @@ miDbeAllocBackBufferName(pWin, bufId, swapAction)
 
         /* Attach the priv priv to the priv. */
 	pDbeWindowPriv->devPrivates[miDbeWindowPrivPrivIndex].ptr =
-            (pointer)pDbeWindowPrivPriv;
+            (void *)pDbeWindowPrivPriv;
 
 
         /* Clear the back buffer. */
@@ -252,7 +244,7 @@ miDbeAllocBackBufferName(pWin, bufId, swapAction)
         /* Associate the new ID with an existing pixmap. */
         pDbeWindowPrivPriv = MI_DBE_WINDOW_PRIV_PRIV(pDbeWindowPriv);
         if (!AddResource(bufId, dbeDrawableResType,
-                         (pointer)pDbeWindowPrivPriv->pBackBuffer))
+                         (void *)pDbeWindowPrivPriv->pBackBuffer))
         {
             return(BadAlloc);
         }
@@ -286,7 +278,7 @@ miDbeAliasBuffers(pDbeWindowPriv)
     for (i = 0; i < pDbeWindowPriv->nBufferIDs; i++)
     {
         ChangeResourceValue(pDbeWindowPriv->IDs[i], dbeDrawableResType,
-                            (pointer)pDbeWindowPrivPriv->pBackBuffer);
+                            (void *)pDbeWindowPrivPriv->pBackBuffer);
     }
 
 } /* miDbeAliasBuffers() */
@@ -676,10 +668,10 @@ miDbePositionWindow(pWin, x, y)
 
     /* Create DBE buffer pixmaps equal to size of resized window. */
     pFrontBuffer = (*pScreen->CreatePixmap)(pScreen, width, height,
-					    pWin->drawable.depth);
+					    pWin->drawable.depth, 0);
 
     pBackBuffer = (*pScreen->CreatePixmap)(pScreen, width, height,
-					   pWin->drawable.depth);
+					   pWin->drawable.depth, 0);
 
     if (!pFrontBuffer || !pBackBuffer)
     {

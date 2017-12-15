@@ -1,4 +1,3 @@
-/* $Xorg: ddxLoad.c,v 1.3 2000/08/17 19:53:46 cpqbld Exp $ */
 /************************************************************
 Copyright (c) 1993 by Silicon Graphics Computer Systems, Inc.
 
@@ -24,7 +23,6 @@ OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION  WITH
 THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 ********************************************************/
-/* $XFree86: xc/programs/Xserver/xkb/ddxLoad.c,v 3.35 2003/10/02 13:30:12 eich Exp $ */
 
 #ifdef HAVE_DIX_CONFIG_H
 #include <dix-config.h>
@@ -37,21 +35,25 @@ THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #include <errno.h>
 #include <stdio.h>
 #include <ctype.h>
-#define	NEED_EVENTS 1
-#include <X11/X.h>
-#include <X11/Xos.h>
-#include <X11/Xproto.h>
-#include <X11/keysym.h>
-#include <X11/extensions/XKM.h>
+
+/* stat() */
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <unistd.h>
+
+#include <nx-X11/X.h>
+#include <nx-X11/Xos.h>
+#include <nx-X11/Xproto.h>
+#include <nx-X11/keysym.h>
+#include <nx-X11/extensions/XKM.h>
 #include "inputstr.h"
 #include "scrnintstr.h"
 #include "windowstr.h"
-#define	XKBSRV_NEED_FILE_FUNCS
-#include <X11/extensions/XKBsrv.h>
-#include <X11/extensions/XI.h>
+#include <xkbsrv.h>
+#include <nx-X11/extensions/XI.h>
 #include "xkb.h"
 
-#if defined(CSRG_BASED) || defined(linux) || defined(__sgi) || defined(AIXV3) || defined(__osf__) || defined(__GNU__)
+#if defined(CSRG_BASED) || defined(linux) || defined(__GNU__)
 #include <paths.h>
 #endif
 
@@ -80,7 +82,7 @@ THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #define	POST_ERROR_MSG1 "\"Errors from xkbcomp are not fatal to the X server\""
 #define	POST_ERROR_MSG2 "\"End of messages from xkbcomp\""
 
-#if defined(__UNIXOS2__) || defined(WIN32)
+#if defined(WIN32)
 #define PATHSEPARATOR "\\"
 #else
 #define PATHSEPARATOR "/"
@@ -88,7 +90,7 @@ THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 #ifdef WIN32
 
-#include <X11/Xwindows.h>
+#include <nx-X11/Xwindows.h>
 const char* 
 Win32TempDir()
 {
@@ -145,7 +147,7 @@ Win32System(const char *cmdline)
 	    LocalFree(buffer);
 	}
 
-	xfree(cmd);
+	free(cmd);
 	return -1;
     }
     /* Wait until child process exits. */
@@ -156,7 +158,7 @@ Win32System(const char *cmdline)
     /* Close process and thread handles. */
     CloseHandle( pi.hProcess );
     CloseHandle( pi.hThread );
-    xfree(cmd);
+    free(cmd);
 
     return dwExitCode;
 }
@@ -170,7 +172,7 @@ Win32System(const char *cmdline)
 # define TRANS_SERVER
 # define PRMSG(lvl,x,a,b,c) \
 	if (lvl <= 1) { LogMessage(X_ERROR,x,a,b,c); } else ((void)0)
-# include <X11/Xtrans/Xtransutil.c>
+# include <nx-X11/Xtrans/Xtransutil.c>
 # ifndef XKM_OUTPUT_DIR_MODE
 #  define XKM_OUTPUT_DIR_MODE 0755
 # endif
@@ -180,7 +182,7 @@ Win32System(const char *cmdline)
 
 #define NX_XKB_BASE_DIRECTORY            "/usr/lib/X11/xkb"
 #define NX_XKB_ALTERNATE_BASE_DIRECTORY  "/usr/share/X11/xkb"
-#define NX_KEYMAP_DIR_FILE               "keymap.dir"
+#define NX_XKB_RULES_BASE_FILE           "rules/base"
 #define NX_ALT_XKBCOMP_PATH              "/usr/bin"
 
 static char _NXXkbBasePath[PATH_MAX];
@@ -189,43 +191,43 @@ static char _NXXkbCompPath[PATH_MAX];
 static int NXVerifyXkbBaseDirectory(const char *dirPath)
 {
   int size;
-  char *keymapDirFilePath;
-  struct stat keymapDirFileStat;
+  char *rulesBaseFilePath;
+  struct stat rulesBaseFileStat;
 
   /*
-   * If keymap.dir file
-   * is not present into
-   * Xkb Base Directory,
+   * If rules/base file
+   * is not present inside
+   * the Xkb Base Directory,
    * we suppose that the
    * path is not valid.
    */
 
   size = strlen(dirPath) + strlen("/") +
-             strlen(NX_KEYMAP_DIR_FILE) + 1;
+             strlen(NX_XKB_RULES_BASE_FILE) + 1;
 
-  if ((keymapDirFilePath = malloc((size + 1) * sizeof(char))) == NULL)
+  if ((rulesBaseFilePath = malloc((size + 1) * sizeof(char))) == NULL)
   {
     FatalError("NXVerifyXkbBaseDirectory: malloc failed.\n");
   }
 
-  strcpy(keymapDirFilePath, dirPath);
-  strcat(keymapDirFilePath, "/");
-  strcat(keymapDirFilePath, NX_KEYMAP_DIR_FILE);
+  strcpy(rulesBaseFilePath, dirPath);
+  strcat(rulesBaseFilePath, "/");
+  strcat(rulesBaseFilePath, NX_XKB_RULES_BASE_FILE);
 
   #ifdef TEST
   fprintf(stderr, "NXVerifyXkbBaseDirectory: Looking for [%s] file.\n",
-              keymapDirFilePath);
+              rulesBaseFilePath);
   #endif
 
-  if (stat(keymapDirFilePath, &keymapDirFileStat) != 0)
+  if (stat(rulesBaseFilePath, &rulesBaseFileStat) != 0)
   {
 
     #ifdef TEST
-    fprintf(stderr, "NXVerifyXkbBaseDirectory: Can't find the keymap.dir file [%s].\n",
-                keymapDirFilePath);
+    fprintf(stderr, "NXVerifyXkbBaseDirectory: Xkb Base Directory [%s] is not valid (can't find file [%s]).\n",
+	        dirPath, rulesBaseFilePath);
     #endif
 
-    free(keymapDirFilePath);
+    free(rulesBaseFilePath);
 
     return 0;
   }
@@ -235,7 +237,7 @@ static int NXVerifyXkbBaseDirectory(const char *dirPath)
               dirPath);
   #endif
 
-  free(keymapDirFilePath);
+  free(rulesBaseFilePath);
 
   return 1;
 }
@@ -540,8 +542,8 @@ char 	*cmd = NULL,file[PATH_MAX],xkm_output_dir[PATH_MAX],*map,*outFile;
 	}
     }
     if ((outFile= strrchr(file,'/'))!=NULL)
-	 outFile= _XkbDupString(&outFile[1]);
-    else outFile= _XkbDupString(file);
+	 outFile= Xstrdup(&outFile[1]);
+    else outFile= Xstrdup(file);
     XkbEnsureSafeMapName(outFile);
     OutputDirectory(xkm_output_dir, sizeof(xkm_output_dir));
 
@@ -556,31 +558,12 @@ char 	*cmd = NULL,file[PATH_MAX],xkm_output_dir[PATH_MAX],*map,*outFile;
 
 #endif
 
-#ifndef __UNIXOS2__
-
 #ifdef NXAGENT_SERVER
         char *xkbbasedir = _NXGetXkbBasePath(XkbBaseDirectory);
         char *xkbbindir = _NXGetXkbCompPath(XkbBinDirectory);
 #else
         char *xkbbasedir = XkbBaseDirectory;
         char *xkbbindir = XkbBinDirectory;
-#endif
-
-#else
-        /* relocate the basedir and replace the slashes with backslashes */
-#ifdef NXAGENT_SERVER
-        char *xkbbasedir = (char*)__XOS2RedirRoot(_NXGetXkbBasePath(XkbBaseDirectory));
-        char *xkbbindir = (char*)__XOS2RedirRoot(_NXGetXkbCompPath(XkbBinDirectory));
-#else
-        char *xkbbasedir = (char*)__XOS2RedirRoot(XkbBaseDirectory);
-        char *xkbbindir = (char*)__XOS2RedirRoot(XkbBinDirectory);
-#endif
-        int i;
-
-	for (i=0; i<strlen(xkbbasedir); i++) 
-            if (xkbbasedir[i]=='/') xkbbasedir[i]='\\';
-	for (i=0; i<strlen(xkbbindir); i++) 
-            if (xkbbindir[i]=='/') xkbbindir[i]='\\';
 #endif
 
 	cmd = Xprintf("\"%s" PATHSEPARATOR "xkbcomp\" -w %d \"-R%s\" -xkm %s%s -em1 %s -emp %s -eml %s keymap/%s \"%s%s.xkm\"",
@@ -614,7 +597,7 @@ char 	*cmd = NULL,file[PATH_MAX],xkm_output_dir[PATH_MAX],*map,*outFile;
 	if (outFile!=NULL)
 	    _XkbFree(outFile);
         if (cmd!=NULL)
-            xfree(cmd);
+            free(cmd);
 	return True;
     } 
 #ifdef DEBUG
@@ -623,7 +606,7 @@ char 	*cmd = NULL,file[PATH_MAX],xkm_output_dir[PATH_MAX],*map,*outFile;
     if (outFile!=NULL)
 	_XkbFree(outFile);
     if (cmd!=NULL)
-        xfree(cmd);
+        free(cmd);
     return False;
 }
 
@@ -673,27 +656,12 @@ char tmpname[PATH_MAX];
            for xkbcomp. xkbcomp does not read from stdin. */
         char *xkmfile = tmpname;
 #endif
-#ifndef __UNIXOS2__
 #ifdef NXAGENT_SERVER
         char *xkbbasedir = _NXGetXkbBasePath(XkbBaseDirectory);
         char *xkbbindir = _NXGetXkbCompPath(XkbBinDirectory);
 #else
         char *xkbbasedir = XkbBaseDirectory;
         char *xkbbindir = XkbBinDirectory;
-#endif
-#else
-        int i;
-#ifdef NXAGENT_SERVER
-        char *xkbbasedir = (char*)__XOS2RedirRoot(_NXGetXkbBasePath(XkbBaseDirectory));
-        char *xkbbindir = (char*)__XOS2RedirRoot(_NXGetXkbCompPath(XkbBinDirectory));
-#else
-        char *xkbbasedir = (char*)__XOS2RedirRoot(XkbBaseDirectory);
-        char *xkbbindir = (char*)__XOS2RedirRoot(XkbBinDirectory);
-#endif
-	for (i=0; i<strlen(xkbbasedir); i++) 
-            if (xkbbasedir[i]=='/') xkbbasedir[i]='\\';
-	for (i=0; i<strlen(xkbbindir); i++) 
-            if (xkbbindir[i]=='/') xkbbindir[i]='\\';
 #endif
         
 	buf = Xprintf(
@@ -765,38 +733,8 @@ char tmpname[PATH_MAX];
 		strncpy(nameRtrn,keymap,nameRtrnLen);
 		nameRtrn[nameRtrnLen-1]= '\0';
 	    }
-#if defined(Lynx) && defined(__i386__) && defined(NEED_POPEN_WORKAROUND)
-	/* somehow popen/pclose is broken on LynxOS AT 2.3.0/2.4.0!
-	 * the problem usually shows up with XF86Setup
-	 * this hack waits at max 5 seconds after pclose() returns
-	 * for the output of the xkbcomp output file.
-	 * I didn't manage to get a patch in time for the 3.2 release
-	 */
-            {
-		int i;
-		char name[PATH_MAX];
-#ifdef NXAGENT_SERVER
-                if (_NXGetXkbCompPath(XkbBaseDirectory)!=NULL)
-		    sprintf(name,"%s/%s%s.xkm", _NXGetXkbCompPath(XkbBaseDirectory)
-			,xkm_output_dir, keymap);
-#else
-                if (XkbBaseDirectory!=NULL)
-		    sprintf(name,"%s/%s%s.xkm", XkbBaseDirectory
-			,xkm_output_dir, keymap);
-#endif
-		else
-                    sprintf(name,"%s%s.xkm", xkm_output_dir, keymap);
-		for (i = 0; i < 10; i++) {
-	            if (access(name, 0) == 0) break;
-		    usleep(500000);
-		}
-#ifdef DEBUG
-		if (i) ErrorF(">>>> Waited %d times for %s\n", i, name);
-#endif
-	    }
-#endif
             if (buf != NULL)
-                xfree (buf);
+                free (buf);
 	    return True;
 	}
 #ifdef DEBUG
@@ -820,7 +758,7 @@ char tmpname[PATH_MAX];
     if (nameRtrn)
 	nameRtrn[0]= '\0';
     if (buf != NULL)
-        xfree (buf);
+        free (buf);
     return False;
 }
 

@@ -1,14 +1,25 @@
 #include <Server.tmpl>
 
-       SRCS =	compalloc.c compext.c compinit.c compwindow.c
+       NULL =
 
-       OBJS =	compalloc.o compext.o compinit.o compwindow.o
+       SRCS =	compalloc.c compext.c compinit.c compoverlay.c compwindow.c
+
+       OBJS =	compalloc.o compext.o compinit.o compoverlay.o compwindow.o
 
    INCLUDES =   -I../include -I../mi -I../Xext -I../render -I../xfixes \
 		-I../damageext -I../miext/damage -I$(EXTINCSRC) \
-		-I$(XINCLUDESRC) -I$(FONTINCSRC)
+		-I$(XINCLUDESRC) \
+		`pkg-config --cflags-only-I pixman-1`
 
    LINTLIBS = ../dix/llib-ldix.ln ../os/llib-los.ln
+
+#if defined(NXAgentServer) && NXAgentServer
+ NX_DEFINES = -DNXAGENT_SERVER
+#endif
+
+    DEFINES = 			\
+              $(NX_DEFINES)	\
+              $(NULL)
 
 NormalLibraryTarget(composite,$(OBJS))
 NormalLibraryObjectRule()

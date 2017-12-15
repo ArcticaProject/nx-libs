@@ -27,6 +27,7 @@
 #endif
 
 #include "damageextint.h"
+#include "protocol-versions.h"
 
 unsigned char	DamageReqCode;
 int		DamageEventBase;
@@ -68,8 +69,7 @@ DamageExtNotify (DamageExtPtr pDamageExt, BoxPtr pBoxes, int nBoxes)
 	    ev.area.y = pBoxes[i].y1;
 	    ev.area.width = pBoxes[i].x2 - pBoxes[i].x1;
 	    ev.area.height = pBoxes[i].y2 - pBoxes[i].y1;
-	    if (!pClient->clientGone)
-		WriteEventsToClient (pClient, 1, (xEvent *) &ev);
+	    WriteEventsToClient (pClient, 1, (xEvent *) &ev);
 	}
     }
     else
@@ -78,16 +78,13 @@ DamageExtNotify (DamageExtPtr pDamageExt, BoxPtr pBoxes, int nBoxes)
 	ev.area.y = 0;
 	ev.area.width = pDrawable->width;
 	ev.area.height = pDrawable->height;
-	if (!pClient->clientGone)
-	    WriteEventsToClient (pClient, 1, (xEvent *) &ev);
+	WriteEventsToClient (pClient, 1, (xEvent *) &ev);
     }
     /* Composite extension marks clients with manual Subwindows as critical */
     if (pDamageClient->critical > 0)
     {
 	SetCriticalOutputPending ();
-#ifdef SMART_SCHEDULE
 	pClient->smart_priority = SMART_MAX_PRIORITY;
-#endif
     }
 }
 
@@ -99,10 +96,10 @@ DamageExtReport (DamagePtr pDamage, RegionPtr pRegion, void *closure)
     switch (pDamageExt->level) {
     case DamageReportRawRegion:
     case DamageReportDeltaRegion:
-	DamageExtNotify (pDamageExt, REGION_RECTS(pRegion), REGION_NUM_RECTS(pRegion));
+	DamageExtNotify (pDamageExt, RegionRects(pRegion), RegionNumRects(pRegion));
 	break;
     case DamageReportBoundingBox:
-	DamageExtNotify (pDamageExt, REGION_EXTENTS(prScreen, pRegion), 1);
+	DamageExtNotify (pDamageExt, RegionExtents(pRegion), 1);
 	break;
     case DamageReportNonEmpty:
 	DamageExtNotify (pDamageExt, NullBox, 0);
@@ -136,33 +133,34 @@ ProcDamageQueryVersion(ClientPtr client)
 {
     DamageClientPtr pDamageClient = GetDamageClient (client);
     xDamageQueryVersionReply rep;
-    register int n;
     REQUEST(xDamageQueryVersionReq);
 
     REQUEST_SIZE_MATCH(xDamageQueryVersionReq);
+
+    memset(&rep, 0, sizeof(xDamageQueryVersionReply));
     rep.type = X_Reply;
     rep.length = 0;
     rep.sequenceNumber = client->sequence;
-    if (stuff->majorVersion < DAMAGE_MAJOR) {
+    if (stuff->majorVersion < SERVER_DAMAGE_MAJOR_VERSION) {
 	rep.majorVersion = stuff->majorVersion;
 	rep.minorVersion = stuff->minorVersion;
     } else {
-	rep.majorVersion = DAMAGE_MAJOR;
-	if (stuff->majorVersion == DAMAGE_MAJOR && 
-	    stuff->minorVersion < DAMAGE_MINOR)
+	rep.majorVersion = SERVER_DAMAGE_MAJOR_VERSION;
+	if (stuff->majorVersion == SERVER_DAMAGE_MAJOR_VERSION &&
+	    stuff->minorVersion < SERVER_DAMAGE_MINOR_VERSION)
 	    rep.minorVersion = stuff->minorVersion;
 	else
-	    rep.minorVersion = DAMAGE_MINOR;
+	    rep.minorVersion = SERVER_DAMAGE_MINOR_VERSION;
     }
     pDamageClient->major_version = rep.majorVersion;
     pDamageClient->minor_version = rep.minorVersion;
     if (client->swapped) {
-    	swaps(&rep.sequenceNumber, n);
-    	swapl(&rep.length, n);
-	swapl(&rep.majorVersion, n);
-	swapl(&rep.minorVersion, n);
+	swaps(&rep.sequenceNumber);
+	swapl(&rep.length);
+	swapl(&rep.majorVersion);
+	swapl(&rep.minorVersion);
     }
-    WriteToClient(client, sizeof(xDamageQueryVersionReply), (char *)&rep);
+    WriteToClient(client, sizeof(xDamageQueryVersionReply), &rep);
     return(client->noClientException);
 }
 
@@ -179,7 +177,7 @@ ProcDamageCreate (ClientPtr client)
     REQUEST_SIZE_MATCH(xDamageCreateReq);
     LEGAL_NEW_RESOURCE(stuff->damage, client);
     SECURITY_VERIFY_DRAWABLE (pDrawable, stuff->drawable, client,
-			      SecurityReadAccess);
+			      DixReadAccess);
     switch (stuff->level) {
     case XDamageReportRawRectangles:
 	level = DamageReportRawRegion;
@@ -198,7 +196,7 @@ ProcDamageCreate (ClientPtr client)
 	return BadValue;
     }
     
-    pDamageExt = xalloc (sizeof (DamageExtRec));
+    pDamageExt = malloc (sizeof (DamageExtRec));
     if (!pDamageExt)
 	return BadAlloc;
     pDamageExt->id = stuff->damage;
@@ -213,10 +211,10 @@ ProcDamageCreate (ClientPtr client)
 					pDamageExt);
     if (!pDamageExt->pDamage)
     {
-	xfree (pDamageExt);
+	free (pDamageExt);
 	return BadAlloc;
     }
-    if (!AddResource (stuff->damage, DamageExtType, (pointer) pDamageExt))
+    if (!AddResource (stuff->damage, DamageExtType, (void *) pDamageExt))
 	return BadAlloc;
 
     DamageRegister (pDamageExt->pDrawable, pDamageExt->pDamage);
@@ -237,7 +235,7 @@ ProcDamageDestroy (ClientPtr client)
     DamageExtPtr    pDamageExt;
 
     REQUEST_SIZE_MATCH(xDamageDestroyReq);
-    VERIFY_DAMAGEEXT(pDamageExt, stuff->damage, client, SecurityWriteAccess);
+    VERIFY_DAMAGEEXT(pDamageExt, stuff->damage, client, DixWriteAccess);
     FreeResource (stuff->damage, RT_NONE);
     return (client->noClientException);
 }
@@ -251,9 +249,9 @@ ProcDamageSubtract (ClientPtr client)
     RegionPtr	    pParts;
 
     REQUEST_SIZE_MATCH(xDamageSubtractReq);
-    VERIFY_DAMAGEEXT(pDamageExt, stuff->damage, client, SecurityWriteAccess);
-    VERIFY_REGION_OR_NONE(pRepair, stuff->repair, client, SecurityWriteAccess);
-    VERIFY_REGION_OR_NONE(pParts, stuff->parts, client, SecurityWriteAccess);
+    VERIFY_DAMAGEEXT(pDamageExt, stuff->damage, client, DixWriteAccess);
+    VERIFY_REGION_OR_NONE(pRepair, stuff->repair, client, DixWriteAccess);
+    VERIFY_REGION_OR_NONE(pParts, stuff->parts, client, DixWriteAccess);
 
     if (pDamageExt->level != DamageReportRawRegion)
     {
@@ -261,14 +259,14 @@ ProcDamageSubtract (ClientPtr client)
 	if (pRepair)
 	{
 	    if (pParts)
-		REGION_INTERSECT (prScreen, pParts, DamageRegion (pDamage), pRepair);
+		RegionIntersect(pParts, DamageRegion (pDamage), pRepair);
 	    if (DamageSubtract (pDamage, pRepair))
 		DamageExtReport (pDamage, DamageRegion (pDamage), (void *) pDamageExt);
 	}
 	else
 	{
 	    if (pParts)
-		REGION_COPY (prScreen, pParts, DamageRegion (pDamage));
+		RegionCopy(pParts, DamageRegion (pDamage));
 	    DamageEmpty (pDamage);
 	}
     }
@@ -298,7 +296,7 @@ ProcDamageDispatch (ClientPtr client)
     REQUEST(xDamageReq);
     DamageClientPtr pDamageClient = GetDamageClient (client);
 
-    if (pDamageClient->major_version > NUM_VERSION_REQUESTS)
+    if (pDamageClient->major_version >= NUM_VERSION_REQUESTS)
 	return BadRequest;
     if (stuff->damageReqType > version_requests[pDamageClient->major_version])
 	return BadRequest;
@@ -308,52 +306,48 @@ ProcDamageDispatch (ClientPtr client)
 static int
 SProcDamageQueryVersion(ClientPtr client)
 {
-    register int n;
     REQUEST(xDamageQueryVersionReq);
 
-    swaps(&stuff->length, n);
+    swaps(&stuff->length);
     REQUEST_SIZE_MATCH(xDamageQueryVersionReq);
-    swapl(&stuff->majorVersion, n);
-    swapl(&stuff->minorVersion, n);
+    swapl(&stuff->majorVersion);
+    swapl(&stuff->minorVersion);
     return (*ProcDamageVector[stuff->damageReqType]) (client);
 }
 
 static int
 SProcDamageCreate (ClientPtr client)
 {
-    register int n;
     REQUEST(xDamageCreateReq);
     
-    swaps (&stuff->length, n);
+    swaps (&stuff->length);
     REQUEST_SIZE_MATCH(xDamageCreateReq);
-    swapl (&stuff->damage, n);
-    swapl (&stuff->drawable, n);
+    swapl (&stuff->damage);
+    swapl (&stuff->drawable);
     return (*ProcDamageVector[stuff->damageReqType]) (client);
 }
 
 static int
 SProcDamageDestroy (ClientPtr client)
 {
-    register int n;
     REQUEST(xDamageDestroyReq);
     
-    swaps (&stuff->length, n);
+    swaps (&stuff->length);
     REQUEST_SIZE_MATCH(xDamageDestroyReq);
-    swapl (&stuff->damage, n);
+    swapl (&stuff->damage);
     return (*ProcDamageVector[stuff->damageReqType]) (client);
 }
 
 static int
 SProcDamageSubtract (ClientPtr client)
 {
-    register int n;
     REQUEST(xDamageSubtractReq);
     
-    swaps (&stuff->length, n);
+    swaps (&stuff->length);
     REQUEST_SIZE_MATCH(xDamageSubtractReq);
-    swapl (&stuff->damage, n);
-    swapl (&stuff->repair, n);
-    swapl (&stuff->parts, n);
+    swapl (&stuff->damage);
+    swapl (&stuff->repair);
+    swapl (&stuff->parts);
     return (*ProcDamageVector[stuff->damageReqType]) (client);
 }
 
@@ -376,8 +370,8 @@ SProcDamageDispatch (ClientPtr client)
 
 static void
 DamageClientCallback (CallbackListPtr	*list,
-		      pointer		closure,
-		      pointer		data)
+		      void *		closure,
+		      void *		data)
 {
     NewClientInfoRec	*clientinfo = (NewClientInfoRec *) data;
     ClientPtr		pClient = clientinfo->client;
@@ -396,7 +390,7 @@ DamageResetProc (ExtensionEntry *extEntry)
 }
 
 static int
-FreeDamageExt (pointer value, XID did)
+FreeDamageExt (void * value, XID did)
 {
     DamageExtPtr    pDamageExt = (DamageExtPtr) value;
 
@@ -411,12 +405,12 @@ FreeDamageExt (pointer value, XID did)
 	DamageUnregister (pDamageExt->pDrawable, pDamageExt->pDamage);
 	DamageDestroy (pDamageExt->pDamage);
     }
-    xfree (pDamageExt);
+    free (pDamageExt);
     return Success;
 }
 
 static int
-FreeDamageExtWin (pointer value, XID wid)
+FreeDamageExtWin (void * value, XID wid)
 {
     DamageExtPtr    pDamageExt = (DamageExtPtr) value;
 

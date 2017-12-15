@@ -1,0 +1,250 @@
+--- ./nx-X11/programs/Xserver/os/utils.c.X.original	2015-02-13 14:03:44.792440567 +0100
++++ ./nx-X11/programs/Xserver/os/utils.c	2015-02-13 14:03:44.788440645 +0100
+@@ -52,6 +52,23 @@
+ */
+ /* $XFree86: xc/programs/Xserver/os/utils.c,v 3.96 2004/01/07 04:16:37 dawes Exp $ */
+ 
++/**************************************************************************/
++/*                                                                        */
++/* Copyright (c) 2001, 2011 NoMachine, http://www.nomachine.com/.         */
++/*                                                                        */
++/* NX-X11, NX protocol compression and NX extensions to this software     */
++/* are copyright of NoMachine. Redistribution and use of the present      */
++/* software is allowed according to terms specified in the file LICENSE   */
++/* which comes in the source distribution.                                */
++/*                                                                        */
++/* Check http://www.nomachine.com/licensing.html for applicability.       */
++/*                                                                        */
++/* NX and NoMachine are trademarks of Medialogic S.p.A.                   */
++/*                                                                        */
++/* All rights reserved.                                                   */
++/*                                                                        */
++/**************************************************************************/
++
+ #ifdef HAVE_DIX_CONFIG_H
+ #include <dix-config.h>
+ #endif
+@@ -246,6 +263,20 @@
+ 
+ #include <errno.h>
+ 
++#ifdef NX_TRANS_SOCKET
++
++#include "NX.h"
++#include "NXvars.h"
++
++#endif
++
++#ifdef NX_TRANS_EXIT
++
++void (*OsVendorStartRedirectErrorFProc)() = NULL;
++void (*OsVendorEndRedirectErrorFProc)() = NULL;
++
++#endif
++
+ Bool CoreDump;
+ 
+ #ifdef PANORAMIX
+@@ -543,6 +574,10 @@
+ {
+     int olderrno = errno;
+ 
++#if defined(NX_TRANS_SOCKET) && defined(NX_TRANS_TEST)
++    fprintf(stderr, "GiveUp: Called with signal [%d].\n", sig);
++#endif
++
+     dispatchException |= DE_TERMINATE;
+     isItTimeToYield = TRUE;
+ #if defined(SYSV) && defined(X_NOT_POSIX)
+@@ -1548,12 +1583,21 @@
+ #define SMART_SCHEDULE_TIMER		ITIMER_REAL
+ #endif
+ 
++#ifdef NX_TRANS_SOCKET
++void
++SmartScheduleStopTimer (void)
++#else
+ static void
+ SmartScheduleStopTimer (void)
++#endif
+ {
+ #ifdef SMART_SCHEDULE_POSSIBLE
+     struct itimerval	timer;
+-    
++
++    #ifdef NX_TRANS_TEST
++    fprintf(stderr, "SmartScheduleStopTimer: Stopping timer.\n");
++    #endif
++
+     timer.it_interval.tv_sec = 0;
+     timer.it_interval.tv_usec = 0;
+     timer.it_value.tv_sec = 0;
+@@ -1568,7 +1612,21 @@
+ {
+ #ifdef SMART_SCHEDULE_POSSIBLE
+     struct itimerval	timer;
+-    
++
++    #ifdef NX_TRANS_SOCKET
++
++    if (SmartScheduleDisable)
++    {
++      return FALSE;
++    }
++
++    #endif
++
++    #ifdef NX_TRANS_TEST
++    fprintf(stderr, "SmartScheduleStartTimer: Starting timer with [%ld] ms.\n",
++                SmartScheduleInterval);
++    #endif
++
+     SmartScheduleTimerStopped = FALSE;
+     timer.it_interval.tv_sec = 0;
+     timer.it_interval.tv_usec = SmartScheduleInterval * 1000;
+@@ -1586,6 +1644,12 @@
+     int olderrno = errno;
+ 
+     SmartScheduleTime += SmartScheduleInterval;
++
++    #ifdef NX_TRANS_TEST
++    fprintf(stderr, "SmartScheduleTimer: Got timer with time [%ld] ms.\n",
++                SmartScheduleTime);
++    #endif
++
+     if (SmartScheduleIdle)
+     {
+ 	SmartScheduleStopTimer ();
+@@ -1603,6 +1667,10 @@
+     if (SmartScheduleDisable)
+ 	return TRUE;
+     
++    #ifdef NX_TRANS_TEST
++    fprintf(stderr, "SmartScheduleInit: Initializing the smart scheduler.\n");
++    #endif
++
+     bzero ((char *) &act, sizeof(struct sigaction));
+ 
+     /* Set up the timer signal function */
+@@ -1714,6 +1782,11 @@
+     ErrorF("System: `%s'\n", command);
+ #endif
+ 
++#ifdef NX_TRANS_EXIT
++    if (OsVendorStartRedirectErrorFProc != NULL) {
++        OsVendorStartRedirectErrorFProc();
++    }
++#endif
+     switch (pid = fork()) {
+     case -1:	/* error */
+ 	p = -1;
+@@ -1730,6 +1803,11 @@
+ 	} while (p == -1 && errno == EINTR);
+ 	
+     }
++#ifdef NX_TRANS_EXIT
++    if (OsVendorEndRedirectErrorFProc != NULL) {
++        OsVendorEndRedirectErrorFProc();
++    }
++#endif
+ 
+ #ifdef SIGCHLD
+     signal(SIGCHLD, csig);
+@@ -1765,11 +1843,23 @@
+ 	return NULL;
+     }
+ 
++#ifdef NX_TRANS_EXIT
++    if (OsVendorStartRedirectErrorFProc != NULL) {
++        OsVendorStartRedirectErrorFProc();
++    }
++    OsBlockSignals ();
++#endif
+     switch (pid = fork()) {
+     case -1: 	/* error */
+ 	close(pdes[0]);
+ 	close(pdes[1]);
+ 	xfree(cur);
++#ifdef NX_TRANS_EXIT
++	if (OsVendorEndRedirectErrorFProc != NULL) {
++	    OsVendorEndRedirectErrorFProc();
++	}
++	OsReleaseSignals ();
++#endif
+ 	return NULL;
+     case 0:	/* child */
+ 	if (setgid(getgid()) == -1)
+@@ -1791,12 +1881,61 @@
+ 	    }
+ 	    close(pdes[1]);
+ 	}
++
++        #ifdef NX_TRANS_SOCKET
++
++        /*
++         * Check if the child process should not
++         * use the parent's libraries.
++         */
++
++        if (_NXUnsetLibraryPath)
++        {
++          #ifndef __sun
++
++          unsetenv ("LD_LIBRARY_PATH");
++
++          #else
++
++          extern char **environ;
++
++          char **ep = environ;
++
++          ep = environ;
++
++          while (*ep)
++          {
++            if (!strncmp("LD_LIBRARY_PATH=", *ep, strlen("LD_LIBRARY_PATH=")))
++            {
++              break;
++            }
++
++            *ep++;
++          }
++
++          while (*ep)
++          {
++            *ep = *(ep + 1);
++            ep++;
++          }
++
++          #endif
++        }
++
++        #endif
++
++        #ifdef NX_TRANS_EXIT
++	OsReleaseSignals ();
++        #endif
++
+ 	execl("/bin/sh", "sh", "-c", command, (char *)NULL);
+ 	_exit(127);
+     }
+ 
++#ifndef NX_TRANS_EXIT
+     /* Avoid EINTR during stdio calls */
+     OsBlockSignals ();
++#endif
+     
+     /* parent */
+     if (*type == 'r') {
+@@ -1945,6 +2084,11 @@
+     /* allow EINTR again */
+     OsReleaseSignals ();
+     
++#ifdef NX_TRANS_EXIT
++    if (OsVendorEndRedirectErrorFProc != NULL) {
++        OsVendorEndRedirectErrorFProc();
++    }
++#endif
+     return pid == -1 ? -1 : pstat;
+ }
+ 

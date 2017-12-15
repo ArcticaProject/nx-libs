@@ -21,18 +21,14 @@
  * TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
-/* $XFree86: xc/programs/Xserver/fb/fbimage.c,v 1.7 2001/05/29 04:54:09 keithp Exp $ */
 
 #ifdef HAVE_DIX_CONFIG_H
 #include <dix-config.h>
 #endif
 
-#include "fb.h"
-#ifdef XFree86LOADER
-#include "xf86.h"
-#include "xf86_ansic.h"
-#endif
+#include <string.h>
 
+#include "fb.h"
 
 void
 fbPutImage (DrawablePtr	pDrawable,
@@ -140,8 +136,8 @@ fbPutZImage (DrawablePtr	pDrawable,
 
     fbGetStipDrawable (pDrawable, dst, dstStride, dstBpp, dstXoff, dstYoff);
 
-    for (nbox = REGION_NUM_RECTS (pClip),
-	 pbox = REGION_RECTS(pClip);
+    for (nbox = RegionNumRects (pClip),
+	 pbox = RegionRects(pClip);
 	 nbox--;
 	 pbox++)
     {
@@ -228,8 +224,8 @@ fbPutXYImage (DrawablePtr	pDrawable,
 	}
     }
 
-    for (nbox = REGION_NUM_RECTS (pClip),
-	 pbox = REGION_RECTS(pClip);
+    for (nbox = RegionNumRects (pClip),
+	 pbox = RegionRects(pClip);
 	 nbox--;
 	 pbox++)
     {

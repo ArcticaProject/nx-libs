@@ -44,7 +44,6 @@ ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS
 SOFTWARE.
 
 */
-/* $Xorg: colormapst.h,v 1.4 2001/02/09 02:05:14 xorgcvs Exp $ */
 
 #ifndef CMAPSTRUCT_H
 #define CMAPSTRUCT_H 1
@@ -113,7 +112,7 @@ typedef struct _ColormapRec
     Entry	*red;
     Entry 	*green;
     Entry	*blue;
-    pointer	devPriv;
+    void *	devPriv;
     DevUnion	*devPrivates;	/* dynamic devPrivates added after devPriv
 				   already existed - must keep devPriv */
 } ColormapRec;

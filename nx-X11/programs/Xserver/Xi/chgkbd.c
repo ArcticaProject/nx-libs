@@ -1,4 +1,3 @@
-/* $Xorg: chgkbd.c,v 1.4 2001/02/09 02:04:33 xorgcvs Exp $ */
 
 /************************************************************
 
@@ -45,7 +44,6 @@ ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS
 SOFTWARE.
 
 ********************************************************/
-/* $XFree86: xc/programs/Xserver/Xi/chgkbd.c,v 3.5 2001/08/23 14:56:19 alanh Exp $ */
 
 /***********************************************************************
  *
@@ -53,17 +51,15 @@ SOFTWARE.
  *
  */
 
-#define	 NEED_EVENTS
-#define	 NEED_REPLIES
 #ifdef HAVE_DIX_CONFIG_H
 #include <dix-config.h>
 #endif
 
-#include <X11/X.h>				/* for inputstr.h    */
-#include <X11/Xproto.h>			/* Request macro     */
+#include <nx-X11/X.h>				/* for inputstr.h    */
+#include <nx-X11/Xproto.h>			/* Request macro     */
 #include "inputstr.h"			/* DeviceIntPtr	     */
-#include <X11/extensions/XI.h>
-#include <X11/extensions/XIproto.h>
+#include <nx-X11/extensions/XI.h>
+#include <nx-X11/extensions/XIproto.h>
 #include "XIstubs.h"
 #include "globals.h"
 #include "extnsionst.h"
@@ -85,10 +81,8 @@ int
 SProcXChangeKeyboardDevice(client)
     register ClientPtr client;
     {
-    register char n;
-
     REQUEST(xChangeKeyboardDeviceReq);
-    swaps(&stuff->length, n);
+    swaps(&stuff->length);
     REQUEST_SIZE_MATCH(xChangeKeyboardDeviceReq);
     return(ProcXChangeKeyboardDevice(client));
     }
@@ -168,7 +162,7 @@ ProcXChangeKeyboardDevice (client)
 	if (df->traceSize != xf->traceSize)
 	    {
 	    Must_have_memory = TRUE; /* XXX */
-	    df->trace = (WindowPtr *) xrealloc(df->trace, 
+	    df->trace = (WindowPtr *) realloc(df->trace, 
 		xf->traceSize * sizeof(WindowPtr));
 	    Must_have_memory = FALSE; /* XXX */
 	    }
@@ -208,9 +202,7 @@ SRepXChangeKeyboardDevice (client, size, rep)
     int		size;
     xChangeKeyboardDeviceReply	*rep;
     {
-    register char n;
-
-    swaps(&rep->sequenceNumber, n);
-    swapl(&rep->length, n);
-    WriteToClient(client, size, (char *)rep);
+    swaps(&rep->sequenceNumber);
+    swapl(&rep->length);
+    WriteToClient(client, size, rep);
     }

@@ -1,5 +1,3 @@
-/* $XdotOrg: xc/programs/Xserver/os/xdmcp.c,v 1.10 2005/07/03 08:53:52 daniels Exp $ */
-/* $Xorg: xdmcp.c,v 1.4 2001/01/31 13:37:19 pookie Exp $ */
 /*
  * Copyright 1989 Network Computing Devices, Inc., Mountain View, California.
  *
@@ -14,50 +12,39 @@
  * without express or implied warranty.
  *
  */
-/* $XFree86: xc/programs/Xserver/os/xdmcp.c,v 3.31 2003/12/30 21:24:32 herrb Exp $ */
 
 #ifdef HAVE_DIX_CONFIG_H
 #include <dix-config.h>
 #endif
 
 #ifdef WIN32
-#include <X11/Xwinsock.h>
+#include <nx-X11/Xwinsock.h>
+#define XSERV_t
+#define TRANS_SERVER
+#define TRANS_REOPEN
+#include <nx-X11/Xtrans/Xtrans.h>
 #endif
 
-#include <X11/Xos.h>
+#include <nx-X11/Xos.h>
 
 #if !defined(WIN32)
-#ifndef Lynx
 #include <sys/param.h>
 #include <sys/socket.h>
-#else
-#include <socket.h>
-#endif
 #include <netinet/in.h>
 #include <netdb.h>
 #endif
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <X11/X.h>
-#include <X11/Xmd.h>
+#include <nx-X11/X.h>
+#include <nx-X11/Xmd.h>
 #include "misc.h"
-#include <X11/Xpoll.h>
+#include <nx-X11/Xpoll.h>
 #include "osdep.h"
 #include "input.h"
 #include "dixstruct.h"
 #include "opaque.h"
 
-#if defined(DGUX)
-#include <net/net_ioctl.h>
-#include <sys/ioctl.h>
-#endif
-
-#ifdef STREAMSCONN
-#include <tiuser.h>
-#include <netconfig.h>
-#include <netdir.h>
-#endif
 
 #ifndef NX_TRANS_SOCKET
 
@@ -76,7 +63,7 @@
 #include <X11/Xdmcp.h>
 
 #define X_INCLUDE_NETDB_H
-#include <X11/Xos_r.h>
+#include <nx-X11/Xos_r.h>
 
 #ifdef NX_TRANS_SOCKET
 
@@ -101,8 +88,6 @@ static int		    req_socklen;
 static CARD32		    SessionID;
 static CARD32		    timeOutTime;
 static int		    timeOutRtx;
-static CARD32		    defaultKeepaliveDormancy = XDM_DEF_DORMANCY;
-static CARD32		    keepaliveDormancy = XDM_DEF_DORMANCY;
 static CARD16		    DisplayNumber;
 static xdmcp_states	    XDM_INIT_STATE = XDM_OFF;
 #ifdef HASXDMAUTH
@@ -220,17 +205,15 @@ extern void XdmcpDeadSession(char * /*reason*/);
 
 static void timeout(void);
 
-static void restart(void);
-
 static void XdmcpBlockHandler(
-    pointer /*data*/,
+    void * /*data*/,
     struct timeval ** /*wt*/,
-    pointer /*LastSelectMask*/);
+    void * /*LastSelectMask*/);
 
 static void XdmcpWakeupHandler(
-    pointer /*data*/,
+    void * /*data*/,
     int /*i*/,
-    pointer /*LastSelectMask*/);
+    void * /*LastSelectMask*/);
 
 void XdmcpRegisterManufacturerDisplayID(
     char    * /*name*/,
@@ -407,7 +390,7 @@ XdmcpRegisterAuthentication (
 				     AuthenticationNames.length + 1) &&
 	  XdmcpReallocARRAYofARRAY8 (&AuthenticationDatas,
 				     AuthenticationDatas.length + 1) &&
-	  (newFuncs = (AuthenticationFuncsPtr) xalloc (
+	  (newFuncs = (AuthenticationFuncsPtr) malloc (
 			(AuthenticationNames.length + 1) * sizeof (AuthenticationFuncsRec)))))
     {
 	XdmcpDisposeARRAY8 (&AuthenticationName);
@@ -419,7 +402,7 @@ XdmcpRegisterAuthentication (
     newFuncs[AuthenticationNames.length-1].Validator = Validator;
     newFuncs[AuthenticationNames.length-1].Generator = Generator;
     newFuncs[AuthenticationNames.length-1].AddAuth = AddAuth;
-    xfree (AuthenticationFuncsList);
+    free (AuthenticationFuncsList);
     AuthenticationFuncsList = newFuncs;
     AuthenticationNames.data[AuthenticationNames.length-1] = AuthenticationName;
     AuthenticationDatas.data[AuthenticationDatas.length-1] = AuthenticationData;
@@ -507,18 +490,18 @@ XdmcpRegisterConnection (
 	    return;
 	}
     }
-    newAddress = (CARD8 *) xalloc (addrlen * sizeof (CARD8));
+    newAddress = (CARD8 *) malloc (addrlen * sizeof (CARD8));
     if (!newAddress)
 	return;
     if (!XdmcpReallocARRAY16 (&ConnectionTypes, ConnectionTypes.length + 1))
     {
-	xfree (newAddress);
+	free (newAddress);
 	return;
     }
     if (!XdmcpReallocARRAYofARRAY8 (&ConnectionAddresses,
 				    ConnectionAddresses.length +  1))
     {
-	xfree (newAddress);
+	free (newAddress);
 	return;
     }
     ConnectionTypes.data[ConnectionTypes.length - 1] = (CARD16) type;
@@ -548,12 +531,12 @@ XdmcpRegisterAuthorization (char *name, int namelen)
     ARRAY8  authName;
     int	    i;
 
-    authName.data = (CARD8 *) xalloc (namelen * sizeof (CARD8));
+    authName.data = (CARD8 *) malloc (namelen * sizeof (CARD8));
     if (!authName.data)
 	return;
     if (!XdmcpReallocARRAYofARRAY8 (&AuthorizationNames, AuthorizationNames.length +1))
     {
-	xfree (authName.data);
+	free (authName.data);
 	return;
     }
     for (i = 0; i < namelen; i++)
@@ -623,7 +606,7 @@ XdmcpInit(void)
 	XdmcpRegisterDisplayClass (defaultDisplayClass, strlen (defaultDisplayClass));
 	AccessUsingXdmcp();
 	RegisterBlockAndWakeupHandlers (XdmcpBlockHandler, XdmcpWakeupHandler,
-				        (pointer) 0);
+				        (void *) 0);
     	timeOutRtx = 0;
     	DisplayNumber = (CARD16) atoi(display);
     	get_xdmcp_sock();
@@ -638,7 +621,7 @@ XdmcpReset (void)
     if (state != XDM_OFF)
     {
 	RegisterBlockAndWakeupHandlers (XdmcpBlockHandler, XdmcpWakeupHandler,
-				        (pointer) 0);
+				        (void *) 0);
     	timeOutRtx = 0;
     	send_packet();
     }
@@ -656,6 +639,7 @@ XdmcpOpenDisplay(int sock)
     if (state != XDM_AWAIT_MANAGE_RESPONSE)
 	return;
     state = XDM_RUN_SESSION;
+    timeOutTime = GetTimeInMillis() + XDM_DEF_DORMANCY * 1000;
     sessionSocket = sock;
 }
 
@@ -683,9 +667,9 @@ XdmcpCloseDisplay(int sock)
 /*ARGSUSED*/
 static void
 XdmcpBlockHandler(
-    pointer	    data,   /* unused */
+    void *	    data,   /* unused */
     struct timeval  **wt,
-    pointer	    pReadmask)
+    void *	    pReadmask)
 {
     fd_set *LastSelectMask = (fd_set*)pReadmask;
     CARD32 millisToGo;
@@ -714,12 +698,11 @@ XdmcpBlockHandler(
 /*ARGSUSED*/
 static void
 XdmcpWakeupHandler(
-    pointer data,   /* unused */
+    void * data,   /* unused */
     int	    i,
-    pointer pReadmask)
+    void * pReadmask)
 {
     fd_set* LastSelectMask = (fd_set*)pReadmask;
-    fd_set   devicesReadable;
 
 #ifdef NX_TRANS_SOCKET
 
@@ -744,16 +727,6 @@ XdmcpWakeupHandler(
 	    FD_CLR(xdmcpSocket6, LastSelectMask);
 	} 
 #endif
-	XFD_ANDSET(&devicesReadable, LastSelectMask, &EnabledDevices);
-	if (XFD_ANYSET(&devicesReadable))
-	{
-	    if (state == XDM_AWAIT_USER_INPUT)
-		restart();
-	    else if (state == XDM_RUN_SESSION)
-		keepaliveDormancy = defaultKeepaliveDormancy;
-	}
-	if (XFD_ANYSET(&AllClients) && state == XDM_RUN_SESSION)
-	    timeOutTime = GetTimeInMillis() +  keepaliveDormancy * 1000;
     }
     else if (timeOutTime && (int) (GetTimeInMillis() - timeOutTime) >= 0)
     {
@@ -984,14 +957,6 @@ timeout(void)
     send_packet();
 }
 
-static void
-restart(void)
-{
-    state = XDM_INIT_STATE;
-    timeOutRtx = 0;
-    send_packet();
-}
-
 int
 XdmcpCheckAuthentication (
     ARRAY8Ptr	Name,
@@ -1028,43 +993,6 @@ XdmcpAddAuthorization (
 static void
 get_xdmcp_sock(void)
 {
-#ifdef STREAMSCONN
-    struct netconfig *nconf;
-
-    if ((xdmcpSocket = t_open("/dev/udp", O_RDWR, 0)) < 0) {
-	XdmcpWarning("t_open() of /dev/udp failed");
-	return;
-    }
-
-    if( t_bind(xdmcpSocket,NULL,NULL) < 0 ) {
-	XdmcpWarning("UDP socket creation failed");
-	t_error("t_bind(xdmcpSocket) failed" );
-	t_close(xdmcpSocket);
-	return;
-    }
-
-    /*
-     * This part of the code looks contrived. It will actually fit in nicely
-     * when the CLTS part of Xtrans is implemented.
-     */
- 
-    if( (nconf=getnetconfigent("udp")) == NULL ) {
-	XdmcpWarning("UDP socket creation failed: getnetconfigent()");
-	t_unbind(xdmcpSocket);
-	t_close(xdmcpSocket);
-	return;
-    }
- 
-    if( netdir_options(nconf, ND_SET_BROADCAST, xdmcpSocket, NULL) ) {
-	XdmcpWarning("UDP set broadcast option failed: netdir_options()");
-	freenetconfigent(nconf);
-	t_unbind(xdmcpSocket);
-	t_close(xdmcpSocket);
-	return;
-    }
- 
-    freenetconfigent(nconf);
-#else
     int soopts = 1;
 
 #if defined(IPv6) && defined(AF_INET6)
@@ -1084,7 +1012,6 @@ get_xdmcp_sock(void)
 	    FatalError("Xserver: failed to bind to -from address: %s\n", xdm_from);
 	}
     }
-#endif /* STREAMSCONN */
 }
 
 static void
@@ -1479,16 +1406,8 @@ recv_alive_msg (unsigned length)
     {
     	if (SessionRunning && AliveSessionID == SessionID)
     	{
-	    /* backoff dormancy period */
 	    state = XDM_RUN_SESSION;
-	    if ((GetTimeInMillis() - lastDeviceEventTime.milliseconds) >
-		keepaliveDormancy * 1000)
-	    {
-		keepaliveDormancy <<= 1;
-		if (keepaliveDormancy > XDM_MAX_DORMANCY)
-		    keepaliveDormancy = XDM_MAX_DORMANCY;
-	    }
-	    timeOutTime = GetTimeInMillis() + keepaliveDormancy * 1000;
+	    timeOutTime = GetTimeInMillis() + XDM_DEF_DORMANCY * 1000;
     	}
 	else
     	{
@@ -1571,7 +1490,7 @@ get_addr_by_name(
 #ifdef XTHREADS_NEEDS_BYNAMEPARAMS
     _Xgethostbynameparams hparams;
 #endif
-#if defined(WIN32) && (defined(TCPCONN) || defined(DNETCONN))
+#if defined(WIN32) && defined(TCPCONN)
     _XSERVTransWSAStartup(); 
 #endif
     if (!(hep = _XGethostbyname(namestr, hparams)))

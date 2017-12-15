@@ -25,11 +25,12 @@
 #ifndef _COMPOSITEPROTO_H_
 #define _COMPOSITEPROTO_H_
 
-#include <X11/Xmd.h>
-#include <X11/extensions/composite.h>
+#include <nx-X11/Xmd.h>
+#include <nx-X11/extensions/composite.h>
 
 #define Window CARD32
 #define Region CARD32
+#define Pixmap CARD32
 
 /* 
  * requests and replies
@@ -129,7 +130,43 @@ typedef struct {
 
 #define sz_xCompositeNameWindowPixmapReq	    12
 
+/* Version 0.3 additions */
+
+typedef struct {
+    CARD8   reqType;
+    CARD8   compositeReqType;
+    CARD16  length B16;
+    Window  window B32;
+} xCompositeGetOverlayWindowReq;
+
+#define sz_xCompositeGetOverlayWindowReq sizeof(xCompositeGetOverlayWindowReq)
+
+typedef struct {
+    BYTE    type;   /* X_Reply */
+    BYTE    pad1;
+    CARD16  sequenceNumber B16;
+    CARD32  length B32;
+    Window  overlayWin B32;
+    CARD32  pad2 B32;
+    CARD32  pad3 B32;
+    CARD32  pad4 B32;
+    CARD32  pad5 B32;
+    CARD32  pad6 B32;
+} xCompositeGetOverlayWindowReply;
+
+#define sz_xCompositeGetOverlayWindowReply sizeof(xCompositeGetOverlayWindowReply)
+
+typedef struct {
+    CARD8   reqType;
+    CARD8   compositeReqType;
+    CARD16  length B16;
+    Window  window B32;
+} xCompositeReleaseOverlayWindowReq;
+
+#define sz_xCompositeReleaseOverlayWindowReq sizeof(xCompositeReleaseOverlayWindowReq)
+
 #undef Window
 #undef Region
+#undef Pixmap
 
 #endif /* _COMPOSITEPROTO_H_ */

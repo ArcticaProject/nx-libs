@@ -1,4 +1,3 @@
-/* $Xorg: pixmap.c,v 1.4 2001/02/09 02:04:40 xorgcvs Exp $ */
 /*
 
 Copyright 1993, 1998  The Open Group
@@ -26,13 +25,12 @@ other dealings in this Software without prior written authorization
 from The Open Group.
 
 */
-/* $XFree86: xc/programs/Xserver/dix/pixmap.c,v 3.4 2001/01/17 22:36:44 dawes Exp $ */
 
 #ifdef HAVE_DIX_CONFIG_H
 #include <dix-config.h>
 #endif
 
-#include <X11/X.h>
+#include <nx-X11/X.h>
 #include "scrnintstr.h"
 #include "misc.h"
 #include "os.h"
@@ -53,7 +51,7 @@ from The Open Group.
 /* callable by ddx */
 PixmapPtr
 GetScratchPixmapHeader(ScreenPtr pScreen, int width, int height, int depth, 
-                       int bitsPerPixel, int devKind, pointer pPixData)
+                       int bitsPerPixel, int devKind, void * pPixData)
 {
     PixmapPtr pPixmap = pScreen->pScratchPixmap;
 
@@ -61,7 +59,7 @@ GetScratchPixmapHeader(ScreenPtr pScreen, int width, int height, int depth,
 	pScreen->pScratchPixmap = NULL;
     else
 	/* width and height of 0 means don't allocate any pixmap data */
-	pPixmap = (*pScreen->CreatePixmap)(pScreen, 0, 0, depth);
+	pPixmap = (*pScreen->CreatePixmap)(pScreen, 0, 0, depth, 0);
 
     if (pPixmap) {
 	if ((*pScreen->ModifyPixmapHeader)(pPixmap, width, height, depth,
@@ -128,7 +126,7 @@ AllocatePixmap(ScreenPtr pScreen, int pixDataSize)
      * the pixmap buffer. This may be a RENDER bug.
      */
 
-    pPixmap = (PixmapPtr)xalloc(pScreen->totalPixmapSize + pixDataSize + 4);
+    pPixmap = (PixmapPtr)malloc(pScreen->totalPixmapSize + pixDataSize + 4);
     if (!pPixmap)
 	return NullPixmap;
     ppriv = (DevUnion *)(pPixmap + 1);
@@ -139,14 +137,14 @@ AllocatePixmap(ScreenPtr pScreen, int pixDataSize)
     {
         if ((size = *sizes) != 0)
         {
-	    ppriv->ptr = (pointer)ptr;
+	    ppriv->ptr = (void *)ptr;
 	    ptr += size;
         }
         else
-	    ppriv->ptr = (pointer)NULL;
+	    ppriv->ptr = (void *)NULL;
     }
 #else
-    pPixmap = (PixmapPtr)xalloc(sizeof(PixmapRec) + pixDataSize);
+    pPixmap = (PixmapPtr)malloc(sizeof(PixmapRec) + pixDataSize);
 #endif
     return pPixmap;
 }

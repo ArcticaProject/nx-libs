@@ -1,4 +1,3 @@
-/* $Xorg: midbe.h,v 1.3 2000/08/17 19:48:16 cpqbld Exp $ */
 /******************************************************************************
  * 
  * Copyright (c) 1994, 1995  Hewlett-Packard Company
@@ -30,8 +29,6 @@
  *     Header file for users of machine-independent DBE code
  *
  *****************************************************************************/
-/* $XFree86$ */
-
 
 #ifdef HAVE_DIX_CONFIG_H
 #include <dix-config.h>

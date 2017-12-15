@@ -50,13 +50,13 @@
 #include "damage.h"
 #include "damageextint.h"
 #include "xfixes.h"
-#include <X11/extensions/compositeproto.h>
+#include <nx-X11/extensions/compositeproto.h>
+#include "compositeext.h"
 #include <assert.h>
 
 /*
  *  enable this for debugging
- 
-    #define COMPOSITE_DEBUG
+#define COMPOSITE_DEBUG
  */
 
 typedef struct _CompClientWindow {
@@ -89,11 +89,19 @@ typedef struct _CompSubwindows {
 #define COMP_INCLUDE_RGB24_VISUAL 0
 #endif
 
-#if COMP_INCLUDE_RGB24_VISUAL
-#define NUM_COMP_ALTERNATE_VISUALS  2
-#else
-#define NUM_COMP_ALTERNATE_VISUALS  1
-#endif
+typedef struct _CompOverlayClientRec *CompOverlayClientPtr;
+
+typedef struct _CompOverlayClientRec {
+    CompOverlayClientPtr pNext;
+    ClientPtr pClient;
+    ScreenPtr pScreen;
+    XID resource;
+} CompOverlayClientRec;
+
+typedef struct _CompImplicitRedirectException {
+    XID parentVisual;
+    XID winVisual;
+} CompImplicitRedirectException;
 
 typedef struct _CompScreen {
     PositionWindowProcPtr	PositionWindow;
@@ -102,13 +110,21 @@ typedef struct _CompScreen {
     DestroyWindowProcPtr	DestroyWindow;
     RealizeWindowProcPtr	RealizeWindow;
     UnrealizeWindowProcPtr	UnrealizeWindow;
-    PaintWindowProcPtr		PaintWindowBackground;
     ClipNotifyProcPtr		ClipNotify;
     /*
      * Called from ConfigureWindow, these
      * three track changes to the offscreen storage
      * geometry
      */
+
+    /*
+     * Unsupported by our old Xserver infrastructure, replaced with direct calls to
+     * compReallocPixmap().
+     */
+    /*
+    ConfigNotifyProcPtr ConfigNotify;
+    */
+
     MoveWindowProcPtr		MoveWindow;
     ResizeWindowProcPtr		ResizeWindow;
     ChangeBorderWidthProcPtr	ChangeBorderWidth;
@@ -122,29 +138,78 @@ typedef struct _CompScreen {
      */
     InstallColormapProcPtr	InstallColormap;
 
+    /*
+     * Fake backing store via automatic redirection
+     */
+    ChangeWindowAttributesProcPtr ChangeWindowAttributes;
+
     ScreenBlockHandlerProcPtr	BlockHandler;
     CloseScreenProcPtr		CloseScreen;
-    Bool			damaged;
-    XID				alternateVisuals[NUM_COMP_ALTERNATE_VISUALS];
+    Bool		        damaged;
+    int numAlternateVisuals;
+    VisualID *alternateVisuals;
+    int numImplicitRedirectExceptions;
+    CompImplicitRedirectException *implicitRedirectExceptions;
+
+    WindowPtr pOverlayWin;
+    Window overlayWid;
+    CompOverlayClientPtr pOverlayClients;
+
+    GetImageProcPtr GetImage;
+    GetSpansProcPtr GetSpans;
+    SourceValidateProcPtr SourceValidate;
 } CompScreenRec, *CompScreenPtr;
 
-extern int  CompScreenPrivateIndex;
-extern int  CompWindowPrivateIndex;
-extern int  CompSubwindowsPrivateIndex;
+#ifndef NXAGENT_SERVER
+extern DevPrivateKeyRec CompScreenPrivateKeyRec;
 
-#define GetCompScreen(s) ((CompScreenPtr) ((s)->devPrivates[CompScreenPrivateIndex].ptr))
-#define GetCompWindow(w) ((CompWindowPtr) ((w)->devPrivates[CompWindowPrivateIndex].ptr))
-#define GetCompSubwindows(w) ((CompSubwindowsPtr) ((w)->devPrivates[CompSubwindowsPrivateIndex].ptr))
+#define CompScreenPrivateKey (&CompScreenPrivateKeyRec)
 
-extern RESTYPE		CompositeClientWindowType;
+extern DevPrivateKeyRec CompWindowPrivateKeyRec;
+
+#define CompWindowPrivateKey (&CompWindowPrivateKeyRec)
+
+extern DevPrivateKeyRec CompSubwindowsPrivateKeyRec;
+
+#define CompSubwindowsPrivateKey (&CompSubwindowsPrivateKeyRec)
+
+#define GetCompScreen(s) ((CompScreenPtr) \
+    dixLookupPrivate(&(s)->devPrivates, CompScreenPrivateKey))
+#define GetCompWindow(w) ((CompWindowPtr) \
+    dixLookupPrivate(&(w)->devPrivates, CompWindowPrivateKey))
+#define GetCompSubwindows(w) ((CompSubwindowsPtr) \
+    dixLookupPrivate(&(w)->devPrivates, CompSubwindowsPrivateKey))
+#else /* !defined(NXAGENT_SERVER) */
+extern int CompScreenPrivIndex;
+extern int CompWindowPrivIndex;
+extern int CompSubwindowsPrivIndex;
+
+#define GetCompScreen(s) ((CompScreenPtr) (s)->devPrivates[CompScreenPrivIndex].ptr)
+#define GetCompWindow(w) ((CompWindowPtr) (w)->devPrivates[CompWindowPrivIndex].ptr)
+#define GetCompSubwindows(w) ((CompSubwindowsPtr) (w)->devPrivates[CompSubwindowsPrivIndex].ptr)
+#endif /* !defined(NXAGENT_SERVER) */
+
 extern RESTYPE		CompositeClientSubwindowsType;
+extern RESTYPE CompositeClientOverlayType;
+
+/* Shim for less ifdefs within the actual code. */
+#ifndef NXAGENT_SERVER
+#define FAKE_DIX_SET_PRIVATE_IMPL(obj, privateKey, ptr_val) do { dixSetPrivate(&(obj)->devPrivates, privateKey, ptr_val); } while (0)
+
+#define FAKE_DIX_SET_SCREEN_PRIVATE(pScreen, ptr_val) FAKE_DIX_SET_PRIVATE_IMPL(pScreen, CompScreenPrivateKey, ptr_val)
+#define FAKE_DIX_SET_WINDOW_PRIVATE(pWin, ptr_val) FAKE_DIX_SET_PRIVATE_IMPL(pWin, CompWindowPrivateKey, ptr_val)
+#define FAKE_DIX_SET_SUBWINDOWS_PRIVATE(pWin, ptr_val) FAKE_DIX_SET_PRIVATE_IMPL(pWin, CompSubwindowsPrivateKey, ptr_val)
+#else /* !defined(NXAGENT_SERVER) */
+#define FAKE_DIX_SET_PRIVATE_IMPL(obj, privIndex, ptr_val) do { (obj)->devPrivates[privIndex].ptr = (void *) (ptr_val); } while (0)
+
+#define FAKE_DIX_SET_SCREEN_PRIVATE(pScreen, ptr_val) FAKE_DIX_SET_PRIVATE_IMPL(pScreen, CompScreenPrivIndex, ptr_val)
+#define FAKE_DIX_SET_WINDOW_PRIVATE(pWin, ptr_val) FAKE_DIX_SET_PRIVATE_IMPL(pWin, CompWindowPrivIndex, ptr_val)
+#define FAKE_DIX_SET_SUBWINDOWS_PRIVATE(pWin, ptr_val) FAKE_DIX_SET_PRIVATE_IMPL(pWin, CompSubwindowsPrivIndex, ptr_val)
+#endif /* !defined(NXAGENT_SERVER) */
 
 /*
  * compalloc.c
  */
-
-void
-compReportDamage (DamagePtr pDamage, RegionPtr pRegion, void *closure);
 
 Bool
 compRedirectWindow (ClientPtr pClient, WindowPtr pWin, int update);
@@ -174,25 +239,40 @@ Bool
 compAllocPixmap (WindowPtr pWin);
 
 void
-compFreePixmap (WindowPtr pWin);
+ compSetParentPixmap(WindowPtr pWin);
+
+void
+ compRestoreWindow(WindowPtr pWin, PixmapPtr pPixmap);
 
 Bool
 compReallocPixmap (WindowPtr pWin, int x, int y,
 		   unsigned int w, unsigned int h, int bw);
 
 /*
- * compext.c
- */
-
-void
-CompositeExtensionInit (void);
-
-/*
  * compinit.c
  */
 
 Bool
-compScreenInit (ScreenPtr pScreen);
+ compScreenInit(ScreenPtr pScreen);
+
+/*
+ * compoverlay.c
+ */
+
+void
+ compFreeOverlayClient(CompOverlayClientPtr pOcToDel);
+
+CompOverlayClientPtr
+compFindOverlayClient(ScreenPtr pScreen, ClientPtr pClient);
+
+CompOverlayClientPtr
+compCreateOverlayClient(ScreenPtr pScreen, ClientPtr pClient);
+
+Bool
+ compCreateOverlayWindow(ScreenPtr pScreen);
+
+void
+ compDestroyOverlayWindow(ScreenPtr pScreen);
 
 /*
  * compwindow.c
@@ -204,6 +284,9 @@ compCheckTree (ScreenPtr pScreen);
 #else
 #define compCheckTree(s)
 #endif
+
+PictFormatPtr
+compWindowFormat (WindowPtr pWin);
 
 void
 compSetPixmap (WindowPtr pWin, PixmapPtr pPixmap);
@@ -220,8 +303,6 @@ compRealizeWindow (WindowPtr pWin);
 Bool
 compUnrealizeWindow (WindowPtr pWin);
 
-void
-compPaintWindowBackground (WindowPtr pWin, RegionPtr pRegion, int what);
 
 void
 compClipNotify (WindowPtr pWin, int dx, int dy);
@@ -255,6 +336,25 @@ void
 compCopyWindow (WindowPtr pWin, DDXPointRec ptOldOrg, RegionPtr prgnSrc);
 
 void
-compWindowUpdate (WindowPtr pWin);
+ compPaintChildrenToWindow(ScreenPtr pScreen, WindowPtr pWin);
+
+WindowPtr
+ CompositeRealChildHead(WindowPtr pWin);
+
+int
+ DeleteWindowNoInputDevices(void *value, XID wid);
+
+/*
+ * Unsupported by our old Xserver infrastructure, replaced with direct calls to
+ * compReallocPixmap().
+ */
+/*
+int
+compConfigNotify(WindowPtr pWin, int x, int y, int w, int h,
+                 int bw, WindowPtr pSib);
+*/
+
+void PanoramiXCompositeInit(void);
+void PanoramiXCompositeReset(void);
 
 #endif /* _COMPINT_H_ */

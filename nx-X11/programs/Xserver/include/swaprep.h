@@ -1,4 +1,3 @@
-/* $XFree86: xc/programs/Xserver/include/swaprep.h,v 3.0 1996/04/15 11:34:34 dawes Exp $ */
 /************************************************************
 
 Copyright 1996 by Thomas E. Dickey <dickey@clark.net>
@@ -119,17 +118,6 @@ extern void SQueryKeymapReply(
     ClientPtr /* pClient */,
     int /* size */,
     xQueryKeymapReply * /* pRep */);
-
-#ifdef LBX
-extern void SwapCharInfo(
-    xCharInfo * /* pInfo */);
-#endif
-
-#ifdef LBX
-extern void SwapFont(
-    xQueryFontReply * /* pr */,
-    Bool /* hasGlyphs */);
-#endif
 
 extern void SQueryFontReply(
     ClientPtr /* pClient */,

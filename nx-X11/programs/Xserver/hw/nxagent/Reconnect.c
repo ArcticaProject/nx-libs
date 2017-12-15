@@ -1,17 +1,25 @@
 /**************************************************************************/
 /*                                                                        */
-/* Copyright (c) 2001, 2011 NoMachine, http://www.nomachine.com/.         */
+/* Copyright (c) 2001, 2011 NoMachine (http://www.nomachine.com)          */
+/* Copyright (c) 2008-2014 Oleksandr Shneyder <o.shneyder@phoca-gmbh.de>  */
+/* Copyright (c) 2011-2016 Mike Gabriel <mike.gabriel@das-netzwerkteam.de>*/
+/* Copyright (c) 2014-2016 Mihai Moldovan <ionic@ionic.de>                */
+/* Copyright (c) 2014-2016 Ulrich Sibiller <uli42@gmx.de>                 */
+/* Copyright (c) 2015-2016 Qindel Group (http://www.qindel.com)           */
 /*                                                                        */
 /* NXAGENT, NX protocol compression and NX extensions to this software    */
-/* are copyright of NoMachine. Redistribution and use of the present      */
-/* software is allowed according to terms specified in the file LICENSE   */
-/* which comes in the source distribution.                                */
+/* are copyright of the aforementioned persons and companies.             */
 /*                                                                        */
-/* Check http://www.nomachine.com/licensing.html for applicability.       */
-/*                                                                        */
-/* NX and NoMachine are trademarks of Medialogic S.p.A.                   */
+/* Redistribution and use of the present software is allowed according    */
+/* to terms specified in the file LICENSE which comes in the source       */
+/* distribution.                                                          */
 /*                                                                        */
 /* All rights reserved.                                                   */
+/*                                                                        */
+/* NOTE: This software has received contributions from various other      */
+/* contributors, only the core maintainers and supporters are listed as   */
+/* copyright holders. Please contact us, if you feel you should be listed */
+/* as copyright holder, as well.                                          */
 /*                                                                        */
 /**************************************************************************/
 
@@ -44,14 +52,15 @@
 #include "Millis.h"
 #include "Splash.h"
 #include "Error.h"
+#include "Keystroke.h"
 
 #ifdef XKB
 #include "XKBsrv.h"
 #endif
 
-#include "NX.h"
-#include "NXlib.h"
-#include "NXalert.h"
+#include <nx/NX.h>
+#include "compext/Compext.h"
+#include <nx/NXalert.h>
 
 /*
  * Set here the required log level.
@@ -94,6 +103,8 @@ extern Bool nxagentRenderEnable;
 
 extern char *nxagentKeyboard;
 
+extern char *nxagentOptionsFilenameOrString;
+
 enum SESSION_STATE nxagentSessionState = SESSION_STARTING;
 
 struct nxagentExceptionStruct nxagentException = {0, 0};
@@ -117,6 +128,33 @@ enum RECONNECTION_STEP
 void *reconnectLossyLevel[STEP_NONE];
 
 static enum RECONNECTION_STEP failedStep;
+
+#include <limits.h>
+
+/*
+ * Path of state File
+ */
+char stateFile[PATH_MAX];
+
+
+void setStatePath(char* path)
+{
+    strncpy(stateFile, path, PATH_MAX-1);
+}
+
+void saveAgentState(char* state)
+{
+    FILE* fptr;
+    if(strlen(stateFile))
+    {
+        fptr=fopen(stateFile, "w");
+        if(!fptr)
+            return;
+        fprintf(fptr,"%s", state);
+        fclose(fptr);
+    }
+}
+
 
 int nxagentHandleConnectionStates(void)
 {
@@ -211,6 +249,7 @@ TODO: This should be reset only when
           fprintf(stderr, "Session: Display failure detected at '%s'.\n", GetTimeAsString());
 
           fprintf(stderr, "Session: Suspending session at '%s'.\n", GetTimeAsString());
+          saveAgentState("SUSPENDING");
         }
 
         nxagentDisconnectSession();
@@ -265,6 +304,7 @@ TODO: This should be reset only when
         fprintf(stderr, "Session: Session suspended at '%s'.\n", GetTimeAsString());
         #endif
       }
+      saveAgentState("SUSPENDED");
 
       nxagentResetDisplayHandlers();
 
@@ -300,17 +340,17 @@ void nxagentInitReconnector(void)
 {
   nxagentReconnectTrap = 0;
 
-  reconnectLossyLevel[DISPLAY_STEP]    = xalloc(sizeof(int));
-  reconnectLossyLevel[SCREEN_STEP]     = xalloc(sizeof(int));
-  reconnectLossyLevel[FONT_STEP]       = xalloc(sizeof(int));
-  reconnectLossyLevel[PIXMAP_STEP]     = xalloc(sizeof(int));
-  reconnectLossyLevel[GC_STEP]         = xalloc(sizeof(int));
-  reconnectLossyLevel[CURSOR_STEP]     = xalloc(sizeof(int));
-  reconnectLossyLevel[COLORMAP_STEP]   = xalloc(sizeof(int));
-  reconnectLossyLevel[WINDOW_STEP]     = xalloc(sizeof(int));
-  reconnectLossyLevel[GLYPHSET_STEP]   = xalloc(sizeof(int));
-  reconnectLossyLevel[PICTFORMAT_STEP] = xalloc(sizeof(int));
-  reconnectLossyLevel[PICTURE_STEP]    = xalloc(sizeof(int));
+  reconnectLossyLevel[DISPLAY_STEP]    = malloc(sizeof(int));
+  reconnectLossyLevel[SCREEN_STEP]     = malloc(sizeof(int));
+  reconnectLossyLevel[FONT_STEP]       = malloc(sizeof(int));
+  reconnectLossyLevel[PIXMAP_STEP]     = malloc(sizeof(int));
+  reconnectLossyLevel[GC_STEP]         = malloc(sizeof(int));
+  reconnectLossyLevel[CURSOR_STEP]     = malloc(sizeof(int));
+  reconnectLossyLevel[COLORMAP_STEP]   = malloc(sizeof(int));
+  reconnectLossyLevel[WINDOW_STEP]     = malloc(sizeof(int));
+  reconnectLossyLevel[GLYPHSET_STEP]   = malloc(sizeof(int));
+  reconnectLossyLevel[PICTFORMAT_STEP] = malloc(sizeof(int));
+  reconnectLossyLevel[PICTURE_STEP]    = malloc(sizeof(int));
 }
 
 void nxagentDisconnectSession(void)
@@ -401,22 +441,14 @@ Bool nxagentReconnectSession(void)
 
   if (nxagentKeyboard != NULL)
   {
-    int size;
-
-    size = strlen(nxagentKeyboard);
-
-    if ((nxagentOldKeyboard = xalloc(size + 1)) != NULL)
+    nxagentOldKeyboard = strndup(nxagentKeyboard, strlen(nxagentKeyboard));
+    if (nxagentOldKeyboard == NULL)
     {
-      strncpy(nxagentOldKeyboard, nxagentKeyboard, size);
-
-      nxagentOldKeyboard[size] = '\0';
+      /* 0 means reconnection failed */
+      return 0;
     }
-  }
 
-  if (nxagentKeyboard)
-  {
-    xfree(nxagentKeyboard);
-
+    free(nxagentKeyboard);
     nxagentKeyboard = NULL;
   }
 
@@ -424,7 +456,7 @@ Bool nxagentReconnectSession(void)
 
   nxagentResetOptions();
 
-  nxagentProcessOptionsFile();
+  nxagentProcessOptions(nxagentOptionsFilenameOrString);
 
   if (nxagentReconnectDisplay(reconnectLossyLevel[DISPLAY_STEP]) == 0)
   {
@@ -578,12 +610,8 @@ Bool nxagentReconnectSession(void)
 
   nxagentXkbState.Initialized = 0;
 
-  if (nxagentOldKeyboard != NULL)
-  {
-    xfree(nxagentOldKeyboard);
-
-    nxagentOldKeyboard = NULL;
-  }
+  free(nxagentOldKeyboard);
+  nxagentOldKeyboard = NULL;
 
   nxagentInitPointerMap();
 
@@ -595,7 +623,7 @@ Bool nxagentReconnectSession(void)
 
   nxagentRedirectDefaultWindows();
 
-  if (nxagentResizeDesktopAtStartup || nxagentOption(Rootless) == True)
+  if (nxagentResizeDesktopAtStartup || nxagentOption(Rootless) == True || nxagentOption(Xinerama) == True)
   {
     nxagentChangeScreenConfig(0, nxagentOption(RootWidth),
                                   nxagentOption(RootHeight), 0, 0);
@@ -617,11 +645,16 @@ Bool nxagentReconnectSession(void)
     goto nxagentReconnectError;
   }
 
+  /* Re-read keystrokes definitions in case the keystrokes file has
+     changed while being supended */
+  nxagentInitKeystrokes(True);
+
   #ifdef NX_DEBUG_INPUT
   fprintf(stderr, "Session: Session resumed at '%s' timestamp [%lu].\n", GetTimeAsString(), GetTimeInMillis());
   #else
   fprintf(stderr, "Session: Session resumed at '%s'.\n", GetTimeAsString());
   #endif
+  saveAgentState("RUNNING");
 
   nxagentRemoveSplashWindow(NULL);
 
@@ -702,12 +735,8 @@ nxagentReconnectError:
     nxagentDisconnectDisplay();
   }
 
-  if (nxagentOldKeyboard != NULL)
-  {
-    xfree(nxagentOldKeyboard);
-
-    nxagentOldKeyboard = NULL;
-  }
+  free(nxagentOldKeyboard);
+  nxagentOldKeyboard = NULL;
 
   return 0;
 }
@@ -785,12 +814,14 @@ void nxagentHandleConnectionChanges()
   if (nxagentSessionState == SESSION_GOING_DOWN)
   {
     fprintf(stderr, "Session: Suspending session at '%s'.\n", GetTimeAsString());
+    saveAgentState("SUSPENDING");
 
     nxagentDisconnectSession();
   }
   else if (nxagentSessionState == SESSION_GOING_UP)
   {
     fprintf(stderr, "Session: Resuming session at '%s'.\n", GetTimeAsString());
+    saveAgentState("RESUMING");
 
     if (nxagentReconnectSession())
     {
@@ -803,6 +834,7 @@ void nxagentHandleConnectionChanges()
       fprintf(stderr, "Session: Display failure detected at '%s'.\n", GetTimeAsString());
 
       fprintf(stderr, "Session: Suspending session at '%s'.\n", GetTimeAsString());
+      saveAgentState("SUSPENDING");
 
       nxagentDisconnectSession();
     }

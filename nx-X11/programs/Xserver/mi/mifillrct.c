@@ -1,4 +1,3 @@
-/* $XFree86: xc/programs/Xserver/mi/mifillrct.c,v 1.2 2001/05/29 22:24:06 dawes Exp $ */
 /***********************************************************
 
 Copyright 1987, 1998  The Open Group
@@ -45,14 +44,13 @@ ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS
 SOFTWARE.
 
 ******************************************************************/
-/* $Xorg: mifillrct.c,v 1.4 2001/02/09 02:05:20 xorgcvs Exp $ */
 
 #ifdef HAVE_DIX_CONFIG_H
 #include <dix-config.h>
 #endif
 
-#include <X11/X.h>
-#include <X11/Xprotostr.h>
+#include <nx-X11/X.h>
+#include <nx-X11/Xprotostr.h>
 #include "gcstruct.h"
 #include "windowstr.h"
 #include "pixmap.h"
@@ -108,12 +106,12 @@ miPolyFillRect(pDrawable, pGC, nrectFill, prectInit)
 	    maxheight = max(maxheight, prect->height);
     }
 
-    pptFirst = (DDXPointPtr) ALLOCATE_LOCAL(maxheight * sizeof(DDXPointRec));
-    pwFirst = (int *) ALLOCATE_LOCAL(maxheight * sizeof(int));
+    pptFirst = (DDXPointPtr) malloc(maxheight * sizeof(DDXPointRec));
+    pwFirst = (int *) malloc(maxheight * sizeof(int));
     if(!pptFirst || !pwFirst)
     {
-	if (pwFirst) DEALLOCATE_LOCAL(pwFirst);
-	if (pptFirst) DEALLOCATE_LOCAL(pptFirst);
+	if (pwFirst) free(pwFirst);
+	if (pptFirst) free(pptFirst);
 	return;
     }
 
@@ -139,6 +137,6 @@ miPolyFillRect(pDrawable, pGC, nrectFill, prectInit)
 			   1);
 	prect++;
     }
-    DEALLOCATE_LOCAL(pwFirst);
-    DEALLOCATE_LOCAL(pptFirst);
+    free(pwFirst);
+    free(pptFirst);
 }

@@ -1,0 +1,41 @@
+--- ./nx-X11/lib/X11/XlibAsync.c.X.original	2015-02-13 14:03:44.624443872 +0100
++++ ./nx-X11/lib/X11/XlibAsync.c	2015-02-10 19:13:13.064713591 +0100
+@@ -27,6 +27,23 @@
+ 
+ */
+ 
++/**************************************************************************/
++/*                                                                        */
++/* Copyright (c) 2001, 2011 NoMachine, http://www.nomachine.com/.         */
++/*                                                                        */
++/* NX-X11, NX protocol compression and NX extensions to this software     */
++/* are copyright of NoMachine. Redistribution and use of the present      */
++/* software is allowed according to terms specified in the file LICENSE   */
++/* which comes in the source distribution.                                */
++/*                                                                        */
++/* Check http://www.nomachine.com/licensing.html for applicability.       */
++/*                                                                        */
++/* NX and NoMachine are trademarks of Medialogic S.p.A.                   */
++/*                                                                        */
++/* All rights reserved.                                                   */
++/*                                                                        */
++/**************************************************************************/
++
+ #define NEED_REPLIES
+ #ifdef HAVE_CONFIG_H
+ #include <config.h>
+@@ -122,6 +139,14 @@
+      */
+     if ((rep->generic.length << 2) > len)
+ 	_XEatData (dpy, (rep->generic.length << 2) - len);
++#ifdef NX_TRANS_SOCKET
++
++    /*
++     * The original code has provision
++     * for returning already.
++     */
++
++#endif
+     _XIOError (dpy);
+     return (char *)rep;
+ }

@@ -1,0 +1,12 @@
+--- ./nx-X11/programs/Xserver/fb/fbtrap.c.X.original	2015-02-13 14:03:44.704442298 +0100
++++ ./nx-X11/programs/Xserver/fb/fbtrap.c	2015-02-10 19:13:14.156672722 +0100
+@@ -115,6 +115,9 @@
+     RenderEdge	l, r;
+     xFixed	t, b;
+     
++    if (!xTrapezoidValid (trap))
++	return;
++
+     fbGetDrawable (pPicture->pDrawable, buf, stride, bpp, pxoff, pyoff);
+ 
+     width = pPicture->pDrawable->width;

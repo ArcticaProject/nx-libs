@@ -1,4 +1,3 @@
-/* $Xorg: grabdev.c,v 1.4 2001/02/09 02:04:34 xorgcvs Exp $ */
 
 /************************************************************
 
@@ -45,7 +44,6 @@ ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS
 SOFTWARE.
 
 ********************************************************/
-/* $XFree86: xc/programs/Xserver/Xi/grabdev.c,v 3.2 2001/01/17 22:13:25 dawes Exp $ */
 
 /***********************************************************************
  *
@@ -54,18 +52,16 @@ SOFTWARE.
  */
 
 
-#define	 NEED_EVENTS
-#define	 NEED_REPLIES
 #ifdef HAVE_DIX_CONFIG_H
 #include <dix-config.h>
 #endif
 
-#include <X11/X.h>				/* for inputstr.h    */
-#include <X11/Xproto.h>			/* Request macro     */
+#include <nx-X11/X.h>				/* for inputstr.h    */
+#include <nx-X11/Xproto.h>			/* Request macro     */
 #include "inputstr.h"			/* DeviceIntPtr	     */
 #include "windowstr.h"			/* window structure  */
-#include <X11/extensions/XI.h>
-#include <X11/extensions/XIproto.h>
+#include <nx-X11/extensions/XI.h>
+#include <nx-X11/extensions/XIproto.h>
 #include "extnsionst.h"
 #include "extinit.h"			/* LookupDeviceIntRec */
 #include "exglobals.h"
@@ -86,14 +82,12 @@ int
 SProcXGrabDevice(client)
     register ClientPtr client;
     {
-    register char n;
-
     REQUEST(xGrabDeviceReq);
-    swaps(&stuff->length, n);
+    swaps(&stuff->length);
     REQUEST_AT_LEAST_SIZE(xGrabDeviceReq);
-    swapl(&stuff->grabWindow, n);
-    swapl(&stuff->time, n);
-    swaps(&stuff->event_count, n);
+    swapl(&stuff->grabWindow);
+    swapl(&stuff->time);
+    swaps(&stuff->event_count);
 
     if (stuff->length != (sizeof(xGrabDeviceReq) >> 2) + stuff->event_count)
        return BadLength;
@@ -221,9 +215,7 @@ SRepXGrabDevice (client, size, rep)
     int		size;
     xGrabDeviceReply	*rep;
     {
-    register char n;
-
-    swaps(&rep->sequenceNumber, n);
-    swapl(&rep->length, n);
-    WriteToClient(client, size, (char *)rep);
+    swaps(&rep->sequenceNumber);
+    swapl(&rep->length);
+    WriteToClient(client, size, rep);
     }

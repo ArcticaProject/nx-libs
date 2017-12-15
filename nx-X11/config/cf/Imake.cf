@@ -1,5 +1,3 @@
-XCOMM $XdotOrg: xc/config/cf/Imake.cf,v 1.12 2005/11/08 06:33:24 jkj Exp $
-XCOMM $Xorg: Imake.cf,v 1.4 2000/08/17 19:41:45 cpqbld Exp $
 /*
  * To add support for another platform:
  * 
@@ -18,7 +16,6 @@ XCOMM $Xorg: Imake.cf,v 1.4 2000/08/17 19:41:45 cpqbld Exp $
  *
  *     4.  Create a .cf file with the name given by MacroFile.
  */
-XCOMM $XFree86: xc/config/cf/Imake.cf,v 3.88 2003/12/16 21:30:21 herrb Exp $
 
 #if defined(__APPLE__)
 # undef __APPLE__
@@ -377,13 +374,6 @@ XCOMM $XFree86: xc/config/cf/Imake.cf,v 3.88 2003/12/16 21:30:21 herrb Exp $
 # define SunArchitecture
 #endif /* sun */
 
-#ifdef hpux
-# define MacroIncludeFile <hp.cf>
-# define MacroFile hp.cf
-# undef hpux
-# define HPArchitecture
-#endif /* hpux */
-
 #ifdef __SCO__
 # define MacroIncludeFile <sco5.cf>
 # define MacroFile sco5.cf
@@ -520,35 +510,6 @@ XCOMM $XFree86: xc/config/cf/Imake.cf,v 3.88 2003/12/16 21:30:21 herrb Exp $
 # define MacIIArchitecture
 #endif /* macII */
 
-#ifdef _CRAY
-# define MacroIncludeFile <cray.cf>
-# define MacroFile cray.cf
-# undef cray
-# undef CRAY
-# undef CRAY1
-# undef CRAY2
-# undef YMP
-# define CrayArchitecture
-#endif /* _CRAY */
-
-#ifdef sgi
-# define MacroIncludeFile <sgi.cf>
-# define MacroFile sgi.cf
-# undef sgi
-# define SGIArchitecture
-# undef mips
-# undef __mips
-# define MipsArchitecture
-# ifdef _SVR4
-#  undef _SVR4
-#  define SVR4Architecture
-# endif
-# ifdef _SYSTYPE_SVR4
-#  undef _SYSTYPE_SVR4
-#  define SVR4Architecture
-# endif
-#endif /* sgi */
-
 #ifdef stellar
 # define MacroIncludeFile <stellar.cf>
 # define MacroFile stellar.cf
@@ -556,7 +517,7 @@ XCOMM $XFree86: xc/config/cf/Imake.cf,v 3.88 2003/12/16 21:30:21 herrb Exp $
 # define StellarArchitecture
 #endif /* stellar */
 
-#if defined(ibm) || defined(_IBMR2) || defined(ibm032) || defined(aix)
+#if defined(ibm) || defined(_IBMR2) || defined(ibm032)
 # define MacroIncludeFile <ibm.cf>
 # define MacroFile ibm.cf
 # ifdef ibm
@@ -570,10 +531,6 @@ XCOMM $XFree86: xc/config/cf/Imake.cf,v 3.88 2003/12/16 21:30:21 herrb Exp $
 # ifdef ibm032
 #  undef ibm032
 #  define RtArchitecture
-# endif
-# ifdef aix
-#  undef aix
-#  define AIXArchitecture
 # endif
 # ifdef _IBMR2
 #  undef _IBMR2
@@ -623,7 +580,7 @@ XCOMM $XFree86: xc/config/cf/Imake.cf,v 3.88 2003/12/16 21:30:21 herrb Exp $
 # endif
 #endif /* MOTOROLA */
 
-#if defined(SVR4) && !defined(DGUX)
+#if defined(SVR4)
 # ifdef i386
 #  define i386Architecture
 #  undef i386
@@ -716,15 +673,6 @@ XCOMM $XFree86: xc/config/cf/Imake.cf,v 3.88 2003/12/16 21:30:21 herrb Exp $
 # endif /* ! SVR4 */
 #endif /* SYSV386 */
 
-#ifdef DGUX
-# define i386Architecture
-# define SVR4Architecture
-# define MacroIncludeFile <DGUX.cf>
-# define MacroFile DGUX.cf
-# undef DGUX
-# define DguxArchitecture
-#endif /* DGUX */
-
 #ifdef __convex__
 # define MacroIncludeFile <convex.cf>
 # define MacroFile convex.cf
@@ -733,22 +681,6 @@ XCOMM $XFree86: xc/config/cf/Imake.cf,v 3.88 2003/12/16 21:30:21 herrb Exp $
 # endif
 # define ConvexArchitecture
 #endif /* _convex_ */
-
-#ifdef __osf__
-# define MacroIncludeFile <osf1.cf>
-# define MacroFile osf1.cf
-# define OSF1Architecture
-# undef __osf__
-# ifdef __mips__
-#  undef __mips__
-#  define MipsArchitecture
-#  define MipselArchitecture
-# endif
-# ifdef __alpha
-#  undef __alpha
-#  define AlphaArchitecture
-# endif
-#endif /* __osf__ */
 
 #ifdef Oki
 # define MacroIncludeFile <Oki.cf>
@@ -908,6 +840,9 @@ XCOMM Keep cpp from replacing path elements containing i486/i586/i686
 #  endif
 #  undef __ARMEB__
 # endif
+# ifdef __aarch64__
+#  define Arm64Architecture
+# endif
 # ifdef mc68000
 #  define Mc68020Architecture
 #  undef mc68000
@@ -954,6 +889,9 @@ XCOMM Keep cpp from replacing path elements containing i486/i586/i686
 #  undef __mips__
 #  if defined(MIPSEL) || defined(_MIPSEL)
 #   define MipselArchitecture
+#   if (_MIPS_SIM == _ABI64)
+#    define Mips64elArchitecture
+#   endif
 #  endif
 #  undef MIPSEL
 #  undef _MIPSEL
@@ -1016,34 +954,6 @@ XCOMM Keep cpp from replacing path elements containing i486/i586/i686
 #  endif
 # endif
 #endif /* linux || __GLIBC__ */
-
-#if (defined(__Lynx__) || defined(Lynx)) && (defined(i386) || defined(__i386__) || defined(__x86__) || defined(__powerpc__) || defined(__sparc__) || defined(sparc))
-# define MacroIncludeFile <lynx.cf>
-# define MacroFile lynx.cf
-# define LynxOSArchitecture
-# undef __Lynx__
-# undef Lynx
-# undef lynx
-# if defined(i386) || defined(__i386__) || defined(__x86__)
-#  define i386Architecture
-#  undef i386
-#  undef __i386__
-#  undef __x86__
-# endif
-# ifdef __powerpc__
-#  define PpcArchitecture
-#  undef __powerpc__
-# endif
-# if defined(sparc) || defined(__sparc__)
-#  define SparcArchitecture
-#  undef sparc
-#  undef __sparc__
-# endif
-/* for compatibility with 3.3.x */
-# ifdef PpcArchitecture
-#  define PowerPCArchitecture
-# endif
-#endif /* LynxOS AT/PPC/microSPARC */
 
 #ifdef __uxp__
 # define MacroIncludeFile <fujitsu.cf>
@@ -1127,44 +1037,6 @@ XCOMM Keep cpp from replacing path elements containing i486/i586/i686
 #undef unix
 #endif
 #endif
-
-#ifdef emxos2
-#define MacroIncludeFile <os2.cf>
-#define MacroFile os2.cf
-#define OS2Architecture
-#define i386Architecture
-#endif /* emxos2 */
-
-#if defined(__QNX__) && !defined(__QNXNTO__)
-#define MacroIncludeFile <QNX4.cf>
-#define MacroFile QNX4.cf
-#define QNX4Architecture
-#define i386Architecture
-#endif /* QNX4 */
-
-#ifdef __QNXNTO__
-#define MacroIncludeFile <nto.cf>
-#define MacroFile nto.cf
-#define NTOArchitecture
-# ifdef PPC
-#  define PPCArchitecture
-#  undef PPC
-# endif
-# ifdef MIPS
-#  define mipsArchitecture
-#  undef MIPS
-# endif
-# ifdef i386
-#  define i386Architecture
-#  undef i386
-# endif /* i386 */
-# ifdef __i386__
-#  ifndef i386Architecture
-#   define i386Architecture
-#  endif
-#  undef __i386__
-# endif /* __i386__ */
-#endif /* QNX/Neutrino */
 
 #ifdef SparcArchitecture
 # if defined(__sparc_v9) || defined(__arch64__)

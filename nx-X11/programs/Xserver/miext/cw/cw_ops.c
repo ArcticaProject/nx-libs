@@ -25,6 +25,8 @@
 #include <dix-config.h>
 #endif
 
+#include <stdlib.h>
+
 #include "gcstruct.h"
 #include "cw.h"
 
@@ -96,10 +98,10 @@ static void cwImageText16(DrawablePtr pDst, GCPtr pGC, int x, int y,
 			  int count, unsigned short *chars);
 static void cwImageGlyphBlt(DrawablePtr pDst, GCPtr pGC, int x, int y,
 			    unsigned int nglyph, CharInfoPtr *ppci,
-			    pointer pglyphBase);
+			    void * pglyphBase);
 static void cwPolyGlyphBlt(DrawablePtr pDst, GCPtr pGC, int x, int y,
 			   unsigned int nglyph, CharInfoPtr *ppci,
-			   pointer pglyphBase);
+			   void * pglyphBase);
 static void cwPushPixels(GCPtr pGC, PixmapPtr pBitMap, DrawablePtr pDst,
 			 int w, int h, int x, int y);
 
@@ -195,7 +197,7 @@ cwCopyArea(DrawablePtr pSrc, DrawablePtr pDst, GCPtr pGC, int srcx, int srcy,
 					   dstx, dsty);
 
     if (exposed != NULL)
-	REGION_TRANSLATE(pDst->pScreen, exposed, odstx - dstx, odsty - dsty);
+	RegionTranslate(exposed, odstx - dstx, odsty - dsty);
 
     EPILOGUE(pGC);
 
@@ -223,7 +225,7 @@ cwCopyPlane(DrawablePtr pSrc, DrawablePtr pDst, GCPtr pGC, int srcx, int srcy,
 					    dstx, dsty, plane);
 
     if (exposed != NULL)
-	REGION_TRANSLATE(pDst->pScreen, exposed, odstx - dstx, odsty - dsty);
+	RegionTranslate(exposed, odstx - dstx, odsty - dsty);
 
     EPILOGUE(pGC);
 
@@ -422,7 +424,7 @@ cwImageText16(DrawablePtr pDst, GCPtr pGC, int x, int y, int count,
 
 static void
 cwImageGlyphBlt(DrawablePtr pDst, GCPtr pGC, int x, int y, unsigned int nglyph,
-		CharInfoPtr *ppci, pointer pglyphBase)
+		CharInfoPtr *ppci, void * pglyphBase)
 {
     SETUP_BACKING_DST(pDst, pGC);
 
@@ -438,7 +440,7 @@ cwImageGlyphBlt(DrawablePtr pDst, GCPtr pGC, int x, int y, unsigned int nglyph,
 
 static void
 cwPolyGlyphBlt(DrawablePtr pDst, GCPtr pGC, int x, int y, unsigned int nglyph,
-	       CharInfoPtr *ppci, pointer pglyphBase)
+	       CharInfoPtr *ppci, void * pglyphBase)
 {
     SETUP_BACKING_DST(pDst, pGC);
 

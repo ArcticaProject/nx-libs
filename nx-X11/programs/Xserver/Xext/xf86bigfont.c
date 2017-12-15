@@ -1,4 +1,3 @@
-/* $XFree86: xc/programs/Xserver/Xext/xf86bigfont.c,v 1.17 2003/10/28 23:08:43 tsi Exp $ */
 /*
  * BIGFONT extension for sharing font metrics between clients (if possible)
  * and for transmitting font metrics to clients in a compressed form.
@@ -64,17 +63,21 @@
 #include <errno.h>
 #endif
 
-#include <X11/X.h>
-#include <X11/Xproto.h>
+#include <nx-X11/X.h>
+#include <nx-X11/Xproto.h>
 #include "misc.h"
-#include "os.h"
 #include "dixstruct.h"
 #include "gcstruct.h"
 #include "dixfontstr.h"
 #include "extnsionst.h"
+#include "protocol-versions.h"
 
 #define _XF86BIGFONT_SERVER_
-#include <X11/extensions/xf86bigfstr.h>
+#include <nx-X11/extensions/xf86bigfproto.h>
+
+#ifdef HAS_XFONT2
+# include <X11/fonts/libxfont2.h>
+#endif /* HAS_XFONT2 */
 
 static void XF86BigfontResetProc(
     ExtensionEntry *	/* extEntry */
@@ -107,8 +110,6 @@ static Bool badSysCall = FALSE;
 
 #if defined(__FreeBSD__) || defined(__NetBSD__) || defined(__OpenBSD__) || defined(__CYGWIN__)
 
-#include <sys/signal.h>
-
 static void
 SigSysHandler(
      int signo)
@@ -123,7 +124,7 @@ CheckForShmSyscall(void)
     int shmid = -1;
 
     /* If no SHM support in the kernel, the bad syscall will generate SIGSYS */
-    oldHandler = signal(SIGSYS, SigSysHandler);
+    oldHandler = OsSignal(SIGSYS, SigSysHandler);
 
     badSysCall = FALSE;
     shmid = shmget(IPC_PRIVATE, 4096, IPC_CREAT);
@@ -137,7 +138,7 @@ CheckForShmSyscall(void)
         /* Allocation failed */
         badSysCall = TRUE;
     }
-    signal(SIGSYS, oldHandler);
+    OsSignal(SIGSYS, oldHandler);
     return (!badSysCall);
 }
 
@@ -189,7 +190,11 @@ XFree86BigfontExtensionInit()
 	           + (unsigned int) (65536.0/(RAND_MAX+1.0) * rand());
 	/* fprintf(stderr, "signature = 0x%08X\n", signature); */
 
+#ifdef HAS_XFONT2
+	FontShmdescIndex = xfont2_allocate_font_private_index();
+#else
 	FontShmdescIndex = AllocateFontPrivateIndex();
+#endif /* HAS_XFONT2 */
 
 #if !defined(CSRG_BASED) && !defined(__CYGWIN__)
 	pagesize = SHMLBA;
@@ -247,7 +252,7 @@ shmalloc(
     if (size < 3500)
 	return (ShmDescPtr) NULL;
 
-    pDesc = (ShmDescRec *) xalloc(sizeof(ShmDescRec));
+    pDesc = (ShmDescRec *) malloc(sizeof(ShmDescRec));
     if (!pDesc)
 	return (ShmDescPtr) NULL;
 
@@ -256,7 +261,7 @@ shmalloc(
     if (shmid == -1) {
 	ErrorF(XF86BIGFONTNAME " extension: shmget() failed, size = %u, errno = %d\n",
 	       size, errno);
-	xfree(pDesc);
+	free(pDesc);
 	return (ShmDescPtr) NULL;
     }
 
@@ -264,7 +269,7 @@ shmalloc(
 	ErrorF(XF86BIGFONTNAME " extension: shmat() failed, size = %u, errno = %d\n",
 	       size, errno);
 	shmctl(shmid, IPC_RMID, (void *) 0);
-	xfree(pDesc);
+	free(pDesc);
 	return (ShmDescPtr) NULL;
     }
 
@@ -293,7 +298,7 @@ shmdealloc(
 
     if (pDesc->next) pDesc->next->prev = pDesc->prev;
     *pDesc->prev = pDesc->next;
-    xfree(pDesc);
+    free(pDesc);
 }
 
 #endif
@@ -354,11 +359,12 @@ ProcXF86BigfontQueryVersion(
     xXF86BigfontQueryVersionReply reply;
 
     REQUEST_SIZE_MATCH(xXF86BigfontQueryVersionReq);
+    memset(&reply, 0, sizeof(xXF86BigfontQueryVersionReply));
     reply.type = X_Reply;
     reply.length = 0;
     reply.sequenceNumber = client->sequence;
-    reply.majorVersion = XF86BIGFONT_MAJOR_VERSION;
-    reply.minorVersion = XF86BIGFONT_MINOR_VERSION;
+    reply.majorVersion = SERVER_XF86BIGFONT_MAJOR_VERSION;
+    reply.minorVersion = SERVER_XF86BIGFONT_MINOR_VERSION;
     reply.uid = geteuid();
     reply.gid = getegid();
 #ifdef HAS_SHM
@@ -368,23 +374,22 @@ ProcXF86BigfontQueryVersion(
 #endif
     reply.capabilities =
 #ifdef HAS_SHM
-	(LocalClient(client) && !client->swapped ? XF86Bigfont_CAP_LocalShm : 0)
+	(client->local && !client->swapped ? XF86Bigfont_CAP_LocalShm : 0)
 #else
 	0
 #endif
 	; /* may add more bits here in future versions */
     if (client->swapped) {
-	char tmp;
-	swaps(&reply.sequenceNumber, tmp);
-	swapl(&reply.length, tmp);
-	swaps(&reply.majorVersion, tmp);
-	swaps(&reply.minorVersion, tmp);
-	swapl(&reply.uid, tmp);
-	swapl(&reply.gid, tmp);
-	swapl(&reply.signature, tmp);
+	swaps(&reply.sequenceNumber);
+	swapl(&reply.length);
+	swaps(&reply.majorVersion);
+	swaps(&reply.minorVersion);
+	swapl(&reply.uid);
+	swapl(&reply.gid);
+	swapl(&reply.signature);
     }
     WriteToClient(client,
-		  sizeof(xXF86BigfontQueryVersionReply), (char *)&reply);
+		  sizeof(xXF86BigfontQueryVersionReply), &reply);
     return client->noClientException;
 }
 
@@ -392,14 +397,12 @@ static void
 swapCharInfo(
     xCharInfo *pCI)
 {
-    char tmp;
-
-    swaps(&pCI->leftSideBearing, tmp);
-    swaps(&pCI->rightSideBearing, tmp);
-    swaps(&pCI->characterWidth, tmp);
-    swaps(&pCI->ascent, tmp);
-    swaps(&pCI->descent, tmp);
-    swaps(&pCI->attributes, tmp);
+    swaps(&pCI->leftSideBearing);
+    swaps(&pCI->rightSideBearing);
+    swaps(&pCI->characterWidth);
+    swaps(&pCI->ascent);
+    swaps(&pCI->descent);
+    swaps(&pCI->attributes);
 }
 
 /* static CARD32 hashCI (xCharInfo *p); */
@@ -421,7 +424,7 @@ ProcXF86BigfontQueryFont(
     int nCharInfos;
     int shmid;
 #ifdef HAS_SHM
-    ShmDescPtr pDesc;
+    ShmDescPtr pDesc = NULL;
 #else
 #define pDesc 0
 #endif
@@ -435,7 +438,7 @@ ProcXF86BigfontQueryFont(
 #else
     switch (client->req_len) {
 	case 2: /* client with version 1.0 libX11 */
-	    stuff_flags = (LocalClient(client) && !client->swapped ? XF86Bigfont_FLAGS_Shm : 0);
+	    stuff_flags = (client->local && !client->swapped ? XF86Bigfont_FLAGS_Shm : 0);
 	    break;
 	case 3: /* client with version 1.1 libX11 */
 	    stuff_flags = stuff->flags;
@@ -446,11 +449,11 @@ ProcXF86BigfontQueryFont(
 #endif
     client->errorValue = stuff->id;		/* EITHER font or gc */
     pFont = (FontPtr)SecurityLookupIDByType(client, stuff->id, RT_FONT,
-					    SecurityReadAccess);
+					    DixReadAccess);
     if (!pFont) {
 	/* can't use VERIFY_GC because it might return BadGC */
 	GC *pGC = (GC *) SecurityLookupIDByType(client, stuff->id, RT_GC,
-						SecurityReadAccess);
+						DixReadAccess);
         if (!pGC) {
 	    client->errorValue = stuff->id;
             return BadFont;    /* procotol spec says only error is BadFont */
@@ -493,7 +496,7 @@ ProcXF86BigfontQueryFont(
 	    } else {
 #endif
 		pCI = (xCharInfo *)
-		      ALLOCATE_LOCAL(nCharInfos * sizeof(xCharInfo));
+		      malloc(nCharInfos * sizeof(xCharInfo));
 		if (!pCI)
 		    return BadAlloc;
 #ifdef HAS_SHM
@@ -531,7 +534,11 @@ ProcXF86BigfontQueryFont(
 #ifdef HAS_SHM
 	    if (pDesc && !badSysCall) {
 		*(CARD32 *)(pCI + nCharInfos) = signature;
+#ifdef HAS_XFONT2
+		if (!xfont2_font_set_private(pFont, FontShmdescIndex, pDesc)) {
+#else
 		if (!FontSetPrivate(pFont, FontShmdescIndex, pDesc)) {
+#endif /* HAS_XFONT2 */
 		    shmdealloc(pDesc);
 		    return BadAlloc;
 		}
@@ -556,9 +563,9 @@ ProcXF86BigfontQueryFont(
 		hashModulus = nCharInfos+1;
 
 	    tmp = (CARD16*)
-		  ALLOCATE_LOCAL((4*nCharInfos+1) * sizeof(CARD16));
+		  malloc((4*nCharInfos+1) * sizeof(CARD16));
 	    if (!tmp) {
-		if (!pDesc) DEALLOCATE_LOCAL(pCI);
+		if (!pDesc) free(pCI);
 		return BadAlloc;
 	    }
 	    pIndex2UniqIndex = tmp;
@@ -641,12 +648,12 @@ ProcXF86BigfontQueryFont(
 	        + (nCharInfos+1)/2 * 2 * sizeof(CARD16)
 	      : 0);
 	xXF86BigfontQueryFontReply* reply =
-	   (xXF86BigfontQueryFontReply *) ALLOCATE_LOCAL(rlength);
+	   (xXF86BigfontQueryFontReply *) calloc(1, rlength);
 	char* p;
 	if (!reply) {
 	    if (nCharInfos > 0) {
-		if (shmid == -1) DEALLOCATE_LOCAL(pIndex2UniqIndex);
-		if (!pDesc) DEALLOCATE_LOCAL(pCI);
+		if (shmid == -1) free(pIndex2UniqIndex);
+		if (!pDesc) free(pCI);
 	    }
 	    return BadAlloc;
 	}
@@ -670,21 +677,20 @@ ProcXF86BigfontQueryFont(
 	reply->shmid = shmid;
 	reply->shmsegoffset = 0;
 	if (client->swapped) {
-	    char tmp;
-	    swaps(&reply->sequenceNumber, tmp);
-	    swapl(&reply->length, tmp);
+	    swaps(&reply->sequenceNumber);
+	    swapl(&reply->length);
 	    swapCharInfo(&reply->minBounds);
 	    swapCharInfo(&reply->maxBounds);
-	    swaps(&reply->minCharOrByte2, tmp);
-	    swaps(&reply->maxCharOrByte2, tmp);
-	    swaps(&reply->defaultChar, tmp);
-	    swaps(&reply->nFontProps, tmp);
-	    swaps(&reply->fontAscent, tmp);
-	    swaps(&reply->fontDescent, tmp);
-	    swapl(&reply->nCharInfos, tmp);
-	    swapl(&reply->nUniqCharInfos, tmp);
-	    swapl(&reply->shmid, tmp);
-	    swapl(&reply->shmsegoffset, tmp);
+	    swaps(&reply->minCharOrByte2);
+	    swaps(&reply->maxCharOrByte2);
+	    swaps(&reply->defaultChar);
+	    swaps(&reply->nFontProps);
+	    swaps(&reply->fontAscent);
+	    swaps(&reply->fontDescent);
+	    swapl(&reply->nCharInfos);
+	    swapl(&reply->nUniqCharInfos);
+	    swapl(&reply->shmid);
+	    swapl(&reply->shmsegoffset);
 	}
 	p = (char*) &reply[1];
 	{
@@ -697,9 +703,8 @@ ProcXF86BigfontQueryFont(
 		prFP->name = pFP->name;
 		prFP->value = pFP->value;
 		if (client->swapped) {
-		    char tmp;
-		    swapl(&prFP->name, tmp);
-		    swapl(&prFP->value, tmp);
+		    swapl(&prFP->name);
+		    swapl(&prFP->value);
 		}
 	    }
 	    p = (char*) prFP;
@@ -718,16 +723,15 @@ ProcXF86BigfontQueryFont(
 	    for (j = 0; j < nCharInfos; j++, ps++) {
 		*ps = pIndex2UniqIndex[j];
 		if (client->swapped) {
-		    char tmp;
-		    swaps(ps, tmp);
+		    swaps(ps);
 		}
 	    }
 	}
-	WriteToClient(client, rlength, (char *)reply);
-	DEALLOCATE_LOCAL(reply);
+	WriteToClient(client, rlength, reply);
+	free(reply);
 	if (nCharInfos > 0) {
-	    if (shmid == -1) DEALLOCATE_LOCAL(pIndex2UniqIndex);
-	    if (!pDesc) DEALLOCATE_LOCAL(pCI);
+	    if (shmid == -1) free(pIndex2UniqIndex);
+	    if (!pDesc) free(pCI);
 	}
 	return (client->noClientException);
     }
@@ -754,9 +758,8 @@ SProcXF86BigfontQueryVersion(
     ClientPtr client)
 {
     REQUEST(xXF86BigfontQueryVersionReq);
-    char tmp;
 
-    swaps(&stuff->length, tmp);
+    swaps(&stuff->length);
     return ProcXF86BigfontQueryVersion(client);
 }
 
@@ -765,11 +768,10 @@ SProcXF86BigfontQueryFont(
     ClientPtr client)
 {
     REQUEST(xXF86BigfontQueryFontReq);
-    char tmp;
 
-    swaps(&stuff->length, tmp);
+    swaps(&stuff->length);
     REQUEST_SIZE_MATCH(xXF86BigfontQueryFontReq);
-    swapl(&stuff->id, tmp);
+    swapl(&stuff->id);
     return ProcXF86BigfontQueryFont(client);
 }
 

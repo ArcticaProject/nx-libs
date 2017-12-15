@@ -1,17 +1,25 @@
 /**************************************************************************/
 /*                                                                        */
-/* Copyright (c) 2001, 2011 NoMachine, http://www.nomachine.com/.         */
+/* Copyright (c) 2001, 2011 NoMachine (http://www.nomachine.com)          */
+/* Copyright (c) 2008-2014 Oleksandr Shneyder <o.shneyder@phoca-gmbh.de>  */
+/* Copyright (c) 2011-2016 Mike Gabriel <mike.gabriel@das-netzwerkteam.de>*/
+/* Copyright (c) 2014-2016 Mihai Moldovan <ionic@ionic.de>                */
+/* Copyright (c) 2014-2016 Ulrich Sibiller <uli42@gmx.de>                 */
+/* Copyright (c) 2015-2016 Qindel Group (http://www.qindel.com)           */
 /*                                                                        */
 /* NXAGENT, NX protocol compression and NX extensions to this software    */
-/* are copyright of NoMachine. Redistribution and use of the present      */
-/* software is allowed according to terms specified in the file LICENSE   */
-/* which comes in the source distribution.                                */
+/* are copyright of the aforementioned persons and companies.             */
 /*                                                                        */
-/* Check http://www.nomachine.com/licensing.html for applicability.       */
-/*                                                                        */
-/* NX and NoMachine are trademarks of Medialogic S.p.A.                   */
+/* Redistribution and use of the present software is allowed according    */
+/* to terms specified in the file LICENSE which comes in the source       */
+/* distribution.                                                          */
 /*                                                                        */
 /* All rights reserved.                                                   */
+/*                                                                        */
+/* NOTE: This software has received contributions from various other      */
+/* contributors, only the core maintainers and supporters are listed as   */
+/* copyright holders. Please contact us, if you feel you should be listed */
+/* as copyright holder, as well.                                          */
 /*                                                                        */
 /**************************************************************************/
 
@@ -32,8 +40,11 @@
 #include "Screen.h"
 #include "Millis.h"
 
-#include "NXlib.h"
-#include "Shadow.h"
+#define Window XlibWindow
+#include "compext/Compext.h"
+#undef Window
+
+#include <nx/Shadow.h>
 
 /*
  * Set here the required log level.
@@ -58,14 +69,6 @@
  */
 
 #define FLUSH_AFTER_MULTIPLE_READS
-
-/*
- * Introduce a small delay after each
- * loop if the session is down. The
- * value is in milliseconds.
- */
-
-#define LOOP_DELAY_IF_DOWN       50
 
 /*
  * The soft limit should roughly match
@@ -161,7 +164,7 @@ struct _DispatchRec nxagentDispatch = { UNDEFINED, 0, 0, 0 };
 
 extern int nxagentSkipImage;
 
-void nxagentBlockHandler(pointer data, struct timeval **timeout, pointer mask)
+void nxagentBlockHandler(void * data, struct timeval **timeout, void * mask)
 {
   /*
    * Zero timeout.
@@ -219,7 +222,7 @@ void nxagentBlockHandler(pointer data, struct timeval **timeout, pointer mask)
 
   if (nxagentOption(Rootless) &&
           nxagentLastWindowDestroyed && nxagentRootlessDialogPid == 0 &&
-              now > nxagentLastWindowDestroyedTime + 30 * 1000)
+              now > nxagentLastWindowDestroyedTime + 30 * 1000 && !nxagentOption(NoRootlessExit))
   {
     #ifdef WARNING
     fprintf(stderr, "nxagentBlockHandler: No application running. Closing the session.\n");
@@ -243,12 +246,21 @@ void nxagentBlockHandler(pointer data, struct timeval **timeout, pointer mask)
    * not connected to a valid display.
    */
 
-  if (NXDisplayError(nxagentDisplay) == 1 && nxagentShadowCounter == 0)
+  if (NXDisplayError(nxagentDisplay) == 1 && nxagentShadowCounter == 0 && nxagentOption(SleepTime) > 0)
   {
-    usleep(LOOP_DELAY_IF_DOWN * 1000);
+#ifdef TEST
+    fprintf(stderr, "nxagentBlockHandler: sleeping for %d milliseconds for slowdown.\n",
+                    nxagentOption(SleepTime));
+#endif
+    usleep(nxagentOption(SleepTime) * 1000);
 
     now = GetTimeInMillis();
   }
+#ifdef TEST
+  else if (0 == nxagentOption(SleepTime)) {
+    fprintf(stderr, "nxagentBlockHandler: not sleeping for slowdown.\n");
+  }
+#endif
 
   /*
    * Update the shadow display. This is
@@ -552,15 +564,11 @@ void nxagentBlockHandler(pointer data, struct timeval **timeout, pointer mask)
    * the client is scheduled in.
    */
 
-  #ifdef SMART_SCHEDULE
-
   #ifdef DEBUG
   fprintf(stderr, "nxagentBlockHandler: Stopping the smart schedule timer.\n");
   #endif
 
   nxagentStopTimer();
-
-  #endif
 
   nxagentPrintGeometry();
 
@@ -569,7 +577,7 @@ void nxagentBlockHandler(pointer data, struct timeval **timeout, pointer mask)
   #endif
 }
 
-void nxagentWakeupHandler(pointer data, int count, pointer mask)
+void nxagentWakeupHandler(void * data, int count, void * mask)
 {
   #ifdef BLOCKS
   fprintf(stderr, "[Begin wakeup]\n");
@@ -589,12 +597,8 @@ void nxagentWakeupHandler(pointer data, int count, pointer mask)
     nxagentHandleConnectionStates();
   }
 
-  #ifdef SMART_SCHEDULE
-
-  if (SmartScheduleDisable == 1)
+  if (!SmartScheduleSignalEnable)
   {
-
-  #endif
 
     #ifdef DEBUG
     fprintf(stderr, "nxagentWakeupHandler: Resetting the dispatch state after wakeup.\n");
@@ -605,11 +609,7 @@ void nxagentWakeupHandler(pointer data, int count, pointer mask)
     nxagentDispatch.in  = nxagentBytesIn;
     nxagentDispatch.out = nxagentBytesOut;
 
-  #ifdef SMART_SCHEDULE
-
   }
-
-  #endif
 
   /*
    * Can become true during the dispatch loop.
@@ -723,13 +723,12 @@ void nxagentWakeupHandler(pointer data, int count, pointer mask)
   #endif
 }
 
-void nxagentShadowBlockHandler(pointer data, struct timeval **timeout, pointer mask)
+void nxagentShadowBlockHandler(void * data, struct timeval **timeout, void * mask)
 {
   static struct timeval zero;
 
   int changed;
   int suspended = 0;
-  int result;
   int width_, height_;
 
   #ifdef BLOCKS
@@ -741,10 +740,19 @@ void nxagentShadowBlockHandler(pointer data, struct timeval **timeout, pointer m
     nxagentHandleConnectionChanges();
   }
 
-  if (nxagentSessionState == SESSION_DOWN)
+  if (nxagentSessionState == SESSION_DOWN && nxagentOption(SleepTime) > 0)
   {
-    usleep(50 * 1000);
+#ifdef TEST
+    fprintf(stderr, "nxagentBlockHandler: sleeping for %d milliseconds for slowdown.\n",
+                    nxagentOption(SleepTime));
+#endif
+    usleep(nxagentOption(SleepTime) * 1000);
   }
+#ifdef TEST
+  else if (0 == nxagentOption(SleepTime)) {
+    fprintf(stderr, "nxagentBlockHandler: not sleeping for slowdown.\n");
+  }
+#endif
 
   #ifndef __CYGWIN32__
 
@@ -796,7 +804,7 @@ void nxagentShadowBlockHandler(pointer data, struct timeval **timeout, pointer m
   nxagentShadowPoll(nxagentShadowPixmapPtr, nxagentShadowGCPtr, nxagentShadowDepth, nxagentShadowWidth,
                         nxagentShadowHeight, nxagentShadowBuffer, &changed, &suspended);
 
-  result = nxagentShadowSendUpdates(&suspended);
+  nxagentShadowSendUpdates(&suspended);
 
   if (nxagentBlocking == 0)
   {
@@ -824,7 +832,18 @@ FIXME: Must queue multiple writes and handle
 
   #ifdef __CYGWIN32__
 
-  usleep(50 * 1000);
+  if (nxagentOption(SleepTime) > 0) {
+#ifdef TEST
+    fprintf(stderr, "nxagentShadowBlockHandler: sleeping for %d milliseconds for slowdown.\n",
+                    nxagentOption(SleepTime));
+#endif
+    usleep(nxagentOption(SleepTime) * 1000);
+  }
+#ifdef TEST
+  else if (0 == nxagentOption(SleepTime)) {
+    fprintf(stderr, "nxagentShadowBlockHandler: not sleeping for slowdown.\n");
+  }
+#endif
 
   (*timeout) -> tv_sec  = 0;
   (*timeout) -> tv_usec = 50 * 1000;
@@ -851,7 +870,7 @@ FIXME: Must queue multiple writes and handle
   #endif
 }
 
-void nxagentShadowWakeupHandler(pointer data, int count, pointer mask)
+void nxagentShadowWakeupHandler(void * data, int count, void * mask)
 {
   #ifdef BLOCKS
   fprintf(stderr, "[Begin wakeup]\n");
@@ -866,12 +885,8 @@ void nxagentShadowWakeupHandler(pointer data, int count, pointer mask)
     nxagentHandleConnectionStates();
   }
 
-  #ifdef SMART_SCHEDULE
-
-  if (SmartScheduleDisable == 1)
+  if (!SmartScheduleSignalEnable)
   {
-
-  #endif
 
     #ifdef DEBUG
     fprintf(stderr, "nxagentShadowWakeupHandler: Resetting the dispatch state after wakeup.\n");
@@ -882,11 +897,7 @@ void nxagentShadowWakeupHandler(pointer data, int count, pointer mask)
     nxagentDispatch.in  = nxagentBytesIn;
     nxagentDispatch.out = nxagentBytesOut;
 
-  #ifdef SMART_SCHEDULE
-
   }
-
-  #endif
 
   /*
    * Can become true during the dispatch loop.
@@ -957,7 +968,24 @@ void nxagentShadowWakeupHandler(pointer data, int count, pointer mask)
 
 void nxagentHandleCollectInputFocusEvent(int resource)
 {
-  Window window;
+  /*
+   * While we don't even need window or revert_to later on, a discrepancy in
+   * data type sizes between the X server (Window being a 32bit ID) and
+   * the Xlib (Window being a 64bit ID) will lead to stack corruption here.
+   * Calling functions from CompExt from nxagent sounds like a very bad idea
+   * to begin with, but let's assume that's necessary for now and work around
+   * the corruption issue.
+   *
+   * Even though the CompExt header shows that the function expects a Window-sized
+   * parameter, it's not the Window type as defined and used within the X.Org
+   * Server, but an Xlib type. Hence, we'll be using the "XlibWindow" type here
+   * and to avoid compiler warnings, "rewrite" the CompExt.h header file via
+   * overriding the original "Window" type with the XlibWindow type, including
+   * the header file and undefining the macro again, essentially unshadowing
+   * the original type.
+   */
+  XlibWindow window;
+
   int revert_to;
 
   if (NXGetCollectedInputFocus(nxagentDisplay, resource, &window, &revert_to) == 0)
@@ -1047,12 +1075,8 @@ void nxagentDispatchHandler(ClientPtr client, int in, int out)
       #endif
     }
 
-    #ifdef SMART_SCHEDULE
-
-    if (SmartScheduleDisable == 1)
+    if (!SmartScheduleSignalEnable)
     {
-
-    #endif
 
       /*
        * Pay attention to the next client if this
@@ -1083,11 +1107,7 @@ void nxagentDispatchHandler(ClientPtr client, int in, int out)
       }
       #endif
 
-    #ifdef SMART_SCHEDULE
-
     }
-
-    #endif
 
     return;
   }
@@ -1130,12 +1150,8 @@ void nxagentDispatchHandler(ClientPtr client, int in, int out)
      * the inner dispatch loop forever.
      */
 
-    #ifdef SMART_SCHEDULE
-
-    if (SmartScheduleDisable == 1)
+    if (!SmartScheduleSignalEnable)
     {
-
-    #endif
 
       if  (client -> index != nxagentDispatch.client)
       {
@@ -1182,11 +1198,7 @@ void nxagentDispatchHandler(ClientPtr client, int in, int out)
         #endif
       }
 
-    #ifdef SMART_SCHEDULE
-
     }
-
-    #endif
 
   }
 

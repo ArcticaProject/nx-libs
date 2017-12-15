@@ -1,17 +1,25 @@
 /**************************************************************************/
 /*                                                                        */
-/* Copyright (c) 2001, 2011 NoMachine, http://www.nomachine.com/.         */
+/* Copyright (c) 2001, 2011 NoMachine (http://www.nomachine.com)          */
+/* Copyright (c) 2008-2014 Oleksandr Shneyder <o.shneyder@phoca-gmbh.de>  */
+/* Copyright (c) 2011-2016 Mike Gabriel <mike.gabriel@das-netzwerkteam.de>*/
+/* Copyright (c) 2014-2016 Mihai Moldovan <ionic@ionic.de>                */
+/* Copyright (c) 2014-2016 Ulrich Sibiller <uli42@gmx.de>                 */
+/* Copyright (c) 2015-2016 Qindel Group (http://www.qindel.com)           */
 /*                                                                        */
 /* NXAGENT, NX protocol compression and NX extensions to this software    */
-/* are copyright of NoMachine. Redistribution and use of the present      */
-/* software is allowed according to terms specified in the file LICENSE   */
-/* which comes in the source distribution.                                */
+/* are copyright of the aforementioned persons and companies.             */
 /*                                                                        */
-/* Check http://www.nomachine.com/licensing.html for applicability.       */
-/*                                                                        */
-/* NX and NoMachine are trademarks of Medialogic S.p.A.                   */
+/* Redistribution and use of the present software is allowed according    */
+/* to terms specified in the file LICENSE which comes in the source       */
+/* distribution.                                                          */
 /*                                                                        */
 /* All rights reserved.                                                   */
+/*                                                                        */
+/* NOTE: This software has received contributions from various other      */
+/* contributors, only the core maintainers and supporters are listed as   */
+/* copyright holders. Please contact us, if you feel you should be listed */
+/* as copyright holder, as well.                                          */
 /*                                                                        */
 /**************************************************************************/
 
@@ -107,7 +115,7 @@ enum SynchronizationPredicate
             nxagentWindowCorruptedRegion((WindowPtr) pDrawable))
 
 #define nxagentDrawableStatus(pDrawable) \
-    (REGION_NIL(nxagentCorruptedRegion(pDrawable)) ? \
+    (RegionNil(nxagentCorruptedRegion(pDrawable)) ? \
         Synchronized : NotSynchronized)
 
 #define nxagentDrawableContainGlyphs(pDrawable) \
@@ -155,7 +163,7 @@ extern RegionPtr nxagentCreateRegion(DrawablePtr pDrawable, GCPtr pGC, int x, in
                                   int width, int height);
 
 #define nxagentFreeRegion(pDrawable, pRegion) \
-    REGION_DESTROY((pDrawable) -> pScreen, pRegion);
+    RegionDestroy(pRegion);
 
 extern void nxagentMarkCorruptedRegion(DrawablePtr pDrawable, RegionPtr pRegion);
 extern void nxagentUnmarkCorruptedRegion(DrawablePtr pDrawable, RegionPtr pRegion);
@@ -182,9 +190,9 @@ extern void nxagentFillRemoteRegion(DrawablePtr pDrawable, RegionPtr pRegion);
 
 extern void nxagentAllocateCorruptedResource(DrawablePtr pDrawable, RESTYPE type);
 extern void nxagentDestroyCorruptedResource(DrawablePtr pDrawable, RESTYPE type);
-extern int nxagentDestroyCorruptedBackgroundResource(pointer p, XID id);
-extern int nxagentDestroyCorruptedWindowResource(pointer p, XID id);
-extern int nxagentDestroyCorruptedPixmapResource(pointer p, XID id);
+extern int nxagentDestroyCorruptedBackgroundResource(void * p, XID id);
+extern int nxagentDestroyCorruptedWindowResource(void * p, XID id);
+extern int nxagentDestroyCorruptedPixmapResource(void * p, XID id);
 
 extern void nxagentCreateDrawableBitmap(DrawablePtr pDrawable);
 extern void nxagentDestroyDrawableBitmap(DrawablePtr pDrawable);
@@ -204,8 +212,8 @@ do \
     break; \
   } \
 \
-  numRects = REGION_NUM_RECTS(pRegion); \
-  pBox = REGION_RECTS(pRegion); \
+  numRects = RegionNumRects(pRegion); \
+  pBox = RegionRects(pRegion); \
 \
   fprintf(stderr, "printRegionBoxes:: Region " strRegion " at [%p] has [%d] boxes:\n", \
               (void *) (pRegion), numRects); \

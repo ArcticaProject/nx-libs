@@ -1,63 +1,3797 @@
-This package was created by Mike Gabriel <mike.gabriel@das-netzwerkteam.de> on Thu Oct  10 22:53:56 CEST 2011
+Format: http://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
+Upstream-Name: NXv3 (aka nx-libs)
+Upstream-Contact: Mike Gabriel <mike.gabriel@das-netzwerkteam.de>
+Source: https://github.com/ArcticaProject/nx-libs/
 
-The software components were originally downloaded from http://www.nomachine.com/sources.php
+Files: nx-X11/programs/Xserver/GL/mesa/main/WSDrawBuffer.h
+ nx-X11/programs/Xserver/hw/nxagent/screensaver
+ nx-X11/programs/Xserver/hw/nxagent/Atoms.c
+ nx-X11/programs/Xserver/hw/nxagent/Atoms.h
+ nx-X11/programs/Xserver/hw/nxagent/Binder.c
+ nx-X11/programs/Xserver/hw/nxagent/Binder.h
+ nx-X11/programs/Xserver/hw/nxagent/Client.c
+ nx-X11/programs/Xserver/hw/nxagent/Client.h
+ nx-X11/programs/Xserver/hw/nxagent/Clipboard.c
+ nx-X11/programs/Xserver/hw/nxagent/Clipboard.h
+ nx-X11/programs/Xserver/hw/nxagent/Composite.c
+ nx-X11/programs/Xserver/hw/nxagent/Composite.h
+ nx-X11/programs/Xserver/hw/nxagent/Dialog.c
+ nx-X11/programs/Xserver/hw/nxagent/Dialog.h
+ nx-X11/programs/Xserver/hw/nxagent/Drawable.c
+ nx-X11/programs/Xserver/hw/nxagent/Drawable.h
+ nx-X11/programs/Xserver/hw/nxagent/Error.c
+ nx-X11/programs/Xserver/hw/nxagent/Error.h
+ nx-X11/programs/Xserver/hw/nxagent/Events.c
+ nx-X11/programs/Xserver/hw/nxagent/Events.h
+ nx-X11/programs/Xserver/hw/nxagent/Extensions.c
+ nx-X11/programs/Xserver/hw/nxagent/Extensions.h
+ nx-X11/programs/Xserver/hw/nxagent/Handlers.c
+ nx-X11/programs/Xserver/hw/nxagent/Handlers.h
+ nx-X11/programs/Xserver/hw/nxagent/Holder.c
+ nx-X11/programs/Xserver/hw/nxagent/Holder.h
+ nx-X11/programs/Xserver/hw/nxagent/Icons.h
+ nx-X11/programs/Xserver/hw/nxagent/Image.c
+ nx-X11/programs/Xserver/hw/nxagent/Image.h
+ nx-X11/programs/Xserver/hw/nxagent/Keystroke.c
+ nx-X11/programs/Xserver/hw/nxagent/Keystroke.h
+ nx-X11/programs/Xserver/hw/nxagent/Literals.h
+ nx-X11/programs/Xserver/hw/nxagent/Millis.c
+ nx-X11/programs/Xserver/hw/nxagent/Millis.h
+ nx-X11/programs/Xserver/hw/nxagent/Options.c
+ nx-X11/programs/Xserver/hw/nxagent/Options.h
+ nx-X11/programs/Xserver/hw/nxagent/Pixels.c
+ nx-X11/programs/Xserver/hw/nxagent/Pixels.h
+ nx-X11/programs/Xserver/hw/nxagent/Pixmap.c
+ nx-X11/programs/Xserver/hw/nxagent/Pixmaps.h
+ nx-X11/programs/Xserver/hw/nxagent/Reconnect.c
+ nx-X11/programs/Xserver/hw/nxagent/Reconnect.h
+ nx-X11/programs/Xserver/hw/nxagent/Render.c
+ nx-X11/programs/Xserver/hw/nxagent/Render.h
+ nx-X11/programs/Xserver/hw/nxagent/Rootless.c
+ nx-X11/programs/Xserver/hw/nxagent/Rootless.h
+ nx-X11/programs/Xserver/hw/nxagent/Splash.c
+ nx-X11/programs/Xserver/hw/nxagent/Splash.h
+ nx-X11/programs/Xserver/hw/nxagent/Split.c
+ nx-X11/programs/Xserver/hw/nxagent/Split.h
+ nx-X11/programs/Xserver/hw/nxagent/Trap.c
+ nx-X11/programs/Xserver/hw/nxagent/Trap.h
+ nx-X11/programs/Xserver/hw/nxagent/Utils.h
+ nx-X11/programs/Xserver/hw/nxagent/Window.c
+ nx-X11/programs/Xserver/hw/nxagent/Windows.h
+ nx-X11/programs/Xserver/hw/nxagent/compext/Alpha.c
+ nx-X11/programs/Xserver/hw/nxagent/compext/Alpha.h
+ nx-X11/programs/Xserver/hw/nxagent/compext/Bitmap.c
+ nx-X11/programs/Xserver/hw/nxagent/compext/Bitmap.h
+ nx-X11/programs/Xserver/hw/nxagent/compext/Clean.c
+ nx-X11/programs/Xserver/hw/nxagent/compext/Clean.h
+ nx-X11/programs/Xserver/hw/nxagent/compext/Colormap.c
+ nx-X11/programs/Xserver/hw/nxagent/compext/Colormap.h
+ nx-X11/programs/Xserver/hw/nxagent/compext/Compext.c
+ nx-X11/programs/Xserver/hw/nxagent/compext/Compext.h
+ nx-X11/programs/Xserver/hw/nxagent/compext/Jpeg.c
+ nx-X11/programs/Xserver/hw/nxagent/compext/Jpeg.h
+ nx-X11/programs/Xserver/hw/nxagent/compext/Mask.c
+ nx-X11/programs/Xserver/hw/nxagent/compext/Mask.h
+ nx-X11/programs/Xserver/hw/nxagent/compext/Png.c
+ nx-X11/programs/Xserver/hw/nxagent/compext/Png.h
+ nx-X11/programs/Xserver/hw/nxagent/compext/Rgb.c
+ nx-X11/programs/Xserver/hw/nxagent/compext/Rgb.h
+ nx-X11/programs/Xserver/hw/nxagent/compext/Rle.c
+ nx-X11/programs/Xserver/hw/nxagent/compext/Rle.h
+ nx-X11/programs/Xserver/hw/nxagent/compext/Z.c
+ nx-X11/programs/Xserver/hw/nxagent/compext/Z.h
+ nxcompshad/include/Shadow.h
+ nxcompshad/src/Core.cpp
+ nxcompshad/src/Core.h
+ nxcompshad/src/Input.cpp
+ nxcompshad/src/Input.h
+ nxcompshad/src/Logger.cpp
+ nxcompshad/src/Logger.h
+ nxcompshad/src/Manager.cpp
+ nxcompshad/src/Manager.h
+ nxcompshad/src/Misc.h
+ nxcompshad/src/Poller.h
+ nxcompshad/src/Regions.h
+ nxcompshad/src/Shadow.cpp
+ nxcompshad/src/Updater.cpp
+ nxcompshad/src/Updater.h
+ nxcompshad/src/X11.cpp
+ nxcompshad/src/X11.h
+Copyright: 2001, 2011, NoMachine (http://www.nomachine.com)
+  2008-2014, Oleksandr Shneyder <o.shneyder@phoca-gmbh.de>
+  2011-2016, Mike Gabriel <mike.gabriel@das-netzwerkteam.de>*/
+  2014-2016, Mihai Moldovan <ionic@ionic.de>
+  2014-2016, Ulrich Sibiller <uli42@gmx.de>
+  2015-2016, Qindel Group (http://www.qindel.com)
+License: GPL-2
 
-The software has been improved via various patches by the X2Go project.
-The patches reside in the subfolder debian/patches/ of this source package.
+Files: nx-X11/programs/Xserver/include/client.h
+Copyright: 2010, Nokia Corporation and/or its subsidiary(-ies)
+License: MIT~X11
 
-Copyright (c) 2011-2014 X2Go Project, http://www.x2go.org.
-Copyright (c) 2001-2011 NoMachine, http://www.nomachine.com/.
+Files: nx-X11/programs/Xserver/os/client.c
+Copyright: 2010, Nokia Corporation and/or its subsidiary(-ies)
+   1993, 2010, Oracle and/or its affiliates
+License: MIT~X11
 
-   This program is free software; you can redistribute it and/or modify it
-   under the terms of the GNU General Public License as published by the Free
-   Software Foundation; either version 2 of the License, or (at your option)
-   any later version.
+Files: nx-X11/programs/Xserver/include/list.h
+Copyright:  2010, Intel Corporation
+  2010, Francisco Jerez <currojerez@riseup.net>
+License: MIT~X11
 
-   This program is distributed in the hope that it will be useful, but WITHOUT
-   ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-   FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
-   more details.
+Files: nx-X11/programs/Xserver/os/reallocarray.c
+Copyright: 2008, Otto Moerbeek <otto@drijf.net>
+License: MIT~ISC
 
-   You should have received a copy of the GNU General Public License along with
-   this program; if not, write to the Free Software Foundation, Inc., 51
-   Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+Files: nx-X11/programs/Xserver/os/timingsafe_memcmp.c
+Copyright: 2014, Google Inc.
+License: MIT~ISC
 
-Parts of this software are derived from DXPC project. These copyright
-notices apply to original DXPC code:
+Files:
+ nxcomp/include/NX.h
+ nxcomp/include/NXalert.h
+ nxcomp/include/NXpack.h
+ nxcomp/include/NXproto.h
+ nxcomp/include/NXvars.h
+ nxcomp/src/ActionCache.cpp
+ nxcomp/src/ActionCache.h
+ nxcomp/src/Agent.cpp
+ nxcomp/src/Agent.h
+ nxcomp/src/Alpha.cpp
+ nxcomp/src/Alpha.h
+ nxcomp/src/Auth.cpp
+ nxcomp/src/Auth.h
+ nxcomp/src/Bitmap.cpp
+ nxcomp/src/Bitmap.h
+ nxcomp/src/BlockCache.cpp
+ nxcomp/src/BlockCache.h
+ nxcomp/src/BlockCacheSet.cpp
+ nxcomp/src/BlockCacheSet.h
+ nxcomp/src/ChangeGC.cpp
+ nxcomp/src/ChangeGC.h
+ nxcomp/src/ChangeProperty.cpp
+ nxcomp/src/ChangeProperty.h
+ nxcomp/src/Channel.cpp
+ nxcomp/src/Channel.h
+ nxcomp/src/ChannelCache.cpp
+ nxcomp/src/ChannelCache.h
+ nxcomp/src/ChannelEndPoint.cpp
+ nxcomp/src/ChannelEndPoint.h
+ nxcomp/src/ChannelStore.h
+ nxcomp/src/CharCache.cpp
+ nxcomp/src/CharCache.h
+ nxcomp/src/Children.cpp
+ nxcomp/src/ClearArea.cpp
+ nxcomp/src/ClearArea.h
+ nxcomp/src/ClientCache.cpp
+ nxcomp/src/ClientCache.h
+ nxcomp/src/ClientChannel.cpp
+ nxcomp/src/ClientChannel.h
+ nxcomp/src/ClientProxy.cpp
+ nxcomp/src/ClientProxy.h
+ nxcomp/src/ClientReadBuffer.cpp
+ nxcomp/src/ClientReadBuffer.h
+ nxcomp/src/ClientStore.cpp
+ nxcomp/src/ClientStore.h
+ nxcomp/src/Colormap.cpp
+ nxcomp/src/Colormap.h
+ nxcomp/src/ConfigureWindow.cpp
+ nxcomp/src/ConfigureWindow.h
+ nxcomp/src/Control.cpp
+ nxcomp/src/Control.h
+ nxcomp/src/CopyArea.cpp
+ nxcomp/src/CopyArea.h
+ nxcomp/src/CreateGC.cpp
+ nxcomp/src/CreateGC.h
+ nxcomp/src/CreatePixmap.cpp
+ nxcomp/src/CreatePixmap.h
+ nxcomp/src/DecodeBuffer.cpp
+ nxcomp/src/DecodeBuffer.h
+ nxcomp/src/EncodeBuffer.cpp
+ nxcomp/src/EncodeBuffer.h
+ nxcomp/src/FillPoly.cpp
+ nxcomp/src/FillPoly.h
+ nxcomp/src/Fork.cpp
+ nxcomp/src/Fork.h
+ nxcomp/src/FreeCache.h
+ nxcomp/src/GenericChannel.cpp
+ nxcomp/src/GenericChannel.h
+ nxcomp/src/GenericReadBuffer.cpp
+ nxcomp/src/GenericReadBuffer.h
+ nxcomp/src/GenericReply.cpp
+ nxcomp/src/GenericReply.h
+ nxcomp/src/GenericRequest.cpp
+ nxcomp/src/GenericRequest.h
+ nxcomp/src/GetImage.cpp
+ nxcomp/src/GetImage.h
+ nxcomp/src/GetImageReply.cpp
+ nxcomp/src/GetImageReply.h
+ nxcomp/src/GetProperty.cpp
+ nxcomp/src/GetProperty.h
+ nxcomp/src/GetPropertyReply.cpp
+ nxcomp/src/GetPropertyReply.h
+ nxcomp/src/ImageText16.cpp
+ nxcomp/src/ImageText16.h
+ nxcomp/src/ImageText8.cpp
+ nxcomp/src/ImageText8.h
+ nxcomp/src/IntCache.cpp
+ nxcomp/src/IntCache.h
+ nxcomp/src/InternAtom.cpp
+ nxcomp/src/InternAtom.h
+ nxcomp/src/Jpeg.cpp
+ nxcomp/src/Jpeg.h
+ nxcomp/src/Keeper.cpp
+ nxcomp/src/Keeper.h
+ nxcomp/src/List.cpp
+ nxcomp/src/List.h
+ nxcomp/src/ListFontsReply.cpp
+ nxcomp/src/ListFontsReply.h
+ nxcomp/src/Loop.cpp
+ nxcomp/src/Message.cpp
+ nxcomp/src/Message.h
+ nxcomp/src/Misc.cpp
+ nxcomp/src/Misc.h
+ nxcomp/src/NXmitshm.h
+ nxcomp/src/NXrender.h
+ nxcomp/src/OpcodeCache.h
+ nxcomp/src/OpcodeStore.cpp
+ nxcomp/src/OpcodeStore.h
+ nxcomp/src/Pack.c
+ nxcomp/src/Pgn.cpp
+ nxcomp/src/Pgn.h
+ nxcomp/src/Pipe.cpp
+ nxcomp/src/Pipe.h
+ nxcomp/src/PolyArc.cpp
+ nxcomp/src/PolyArc.h
+ nxcomp/src/PolyFillArc.cpp
+ nxcomp/src/PolyFillArc.h
+ nxcomp/src/PolyFillRectangle.cpp
+ nxcomp/src/PolyFillRectangle.h
+ nxcomp/src/PolyLine.cpp
+ nxcomp/src/PolyLine.h
+ nxcomp/src/PolyPoint.cpp
+ nxcomp/src/PolyPoint.h
+ nxcomp/src/PolySegment.cpp
+ nxcomp/src/PolySegment.h
+ nxcomp/src/PolyText16.cpp
+ nxcomp/src/PolyText16.h
+ nxcomp/src/PolyText8.cpp
+ nxcomp/src/PolyText8.h
+ nxcomp/src/Proxy.cpp
+ nxcomp/src/Proxy.h
+ nxcomp/src/ProxyReadBuffer.cpp
+ nxcomp/src/ProxyReadBuffer.h
+ nxcomp/src/PutImage.cpp
+ nxcomp/src/PutImage.h
+ nxcomp/src/PutPackedImage.cpp
+ nxcomp/src/PutPackedImage.h
+ nxcomp/src/QueryFontReply.cpp
+ nxcomp/src/QueryFontReply.h
+ nxcomp/src/ReadBuffer.cpp
+ nxcomp/src/ReadBuffer.h
+ nxcomp/src/RenderAddGlyphs.cpp
+ nxcomp/src/RenderAddGlyphs.h
+ nxcomp/src/RenderChangePicture.cpp
+ nxcomp/src/RenderChangePicture.h
+ nxcomp/src/RenderComposite.cpp
+ nxcomp/src/RenderComposite.h
+ nxcomp/src/RenderCompositeGlyphs.cpp
+ nxcomp/src/RenderCompositeGlyphs.h
+ nxcomp/src/RenderCreateGlyphSet.cpp
+ nxcomp/src/RenderCreateGlyphSet.h
+ nxcomp/src/RenderCreatePicture.cpp
+ nxcomp/src/RenderCreatePicture.h
+ nxcomp/src/RenderExtension.cpp
+ nxcomp/src/RenderExtension.h
+ nxcomp/src/RenderFillRectangles.cpp
+ nxcomp/src/RenderFillRectangles.h
+ nxcomp/src/RenderFreeGlyphSet.cpp
+ nxcomp/src/RenderFreeGlyphSet.h
+ nxcomp/src/RenderFreePicture.cpp
+ nxcomp/src/RenderFreePicture.h
+ nxcomp/src/RenderGenericRequest.cpp
+ nxcomp/src/RenderGenericRequest.h
+ nxcomp/src/RenderMinorExtensionHeaders.h
+ nxcomp/src/RenderMinorExtensionMethods.h
+ nxcomp/src/RenderMinorExtensionTags.h
+ nxcomp/src/RenderPictureClip.cpp
+ nxcomp/src/RenderPictureClip.h
+ nxcomp/src/RenderPictureFilter.cpp
+ nxcomp/src/RenderPictureFilter.h
+ nxcomp/src/RenderPictureTransform.cpp
+ nxcomp/src/RenderPictureTransform.h
+ nxcomp/src/RenderTrapezoids.cpp
+ nxcomp/src/RenderTrapezoids.h
+ nxcomp/src/RenderTriangles.cpp
+ nxcomp/src/RenderTriangles.h
+ nxcomp/src/Rgb.cpp
+ nxcomp/src/Rgb.h
+ nxcomp/src/Rle.cpp
+ nxcomp/src/Rle.h
+ nxcomp/src/SendEvent.cpp
+ nxcomp/src/SendEvent.h
+ nxcomp/src/SequenceQueue.cpp
+ nxcomp/src/SequenceQueue.h
+ nxcomp/src/ServerCache.cpp
+ nxcomp/src/ServerCache.h
+ nxcomp/src/ServerChannel.cpp
+ nxcomp/src/ServerChannel.h
+ nxcomp/src/ServerProxy.cpp
+ nxcomp/src/ServerProxy.h
+ nxcomp/src/ServerReadBuffer.cpp
+ nxcomp/src/ServerReadBuffer.h
+ nxcomp/src/ServerStore.cpp
+ nxcomp/src/ServerStore.h
+ nxcomp/src/SetClipRectangles.cpp
+ nxcomp/src/SetClipRectangles.h
+ nxcomp/src/SetUnpackAlpha.cpp
+ nxcomp/src/SetUnpackAlpha.h
+ nxcomp/src/SetUnpackColormap.cpp
+ nxcomp/src/SetUnpackColormap.h
+ nxcomp/src/SetUnpackGeometry.cpp
+ nxcomp/src/SetUnpackGeometry.h
+ nxcomp/src/ShapeExtension.cpp
+ nxcomp/src/ShapeExtension.h
+ nxcomp/src/Socket.cpp
+ nxcomp/src/Socket.h
+ nxcomp/src/Split.cpp
+ nxcomp/src/Split.h
+ nxcomp/src/StaticCompressor.cpp
+ nxcomp/src/StaticCompressor.h
+ nxcomp/src/Statistics.cpp
+ nxcomp/src/Statistics.h
+ nxcomp/src/Timestamp.cpp
+ nxcomp/src/Timestamp.h
+ nxcomp/src/TranslateCoords.cpp
+ nxcomp/src/TranslateCoords.h
+ nxcomp/src/Transport.cpp
+ nxcomp/src/Transport.h
+ nxcomp/src/Types.h
+ nxcomp/src/Unpack.cpp
+ nxcomp/src/Unpack.h
+ nxcomp/src/Vars.c
+ nxcomp/src/WriteBuffer.cpp
+ nxcomp/src/WriteBuffer.h
+ nxcomp/src/XidCache.cpp
+ nxcomp/src/XidCache.h
+ nxcomp/src/Z.cpp
+ nxcomp/src/Z.h
+Copyright: 2001, 2011, NoMachine (http://www.nomachine.com)
+  2008-2014, Oleksandr Shneyder <o.shneyder@phoca-gmbh.de>
+  2011-2016, Mike Gabriel <mike.gabriel@das-netzwerkteam.de>*/
+  2014-2016, Mihai Moldovan <ionic@ionic.de>
+  2014-2016, Ulrich Sibiller <uli42@gmx.de>
+  2015-2016, Qindel Group (http://www.qindel.com)
+License: GPL-2
+Comment:
+ Parts of this software are derived from DXPC project. The DXPC version
+ that NXCOMP got forked from (most likely some DXPC version between
+ release 3.7.0 and release 3.8.0) "can be considered" (see
+ LICENSE.nxcomp) as BSD-2-clause, as quoted below:
+ .
+ Copyright (c) 1995,1996 Brian Pane
+ Copyright (c) 1996,1997 Zachary Vonler and Brian Pane
+ Copyright (c) 1999-2002 Kevin Vigor and Brian Pane
+ All rights reserved.
+ .
+ Redistribution and use in source and binary forms, with or without
+ modification, are permitted provided that the following conditions are met:
+ .
+ * Redistributions of source code must retain the above copyright
+   notice, this list of conditions and the following disclaimer.
+ .
+ * Redistributions in binary form must reproduce the above copyright
+   notice, this list of conditions and the following disclaimer in the
+   documentation and/or other materials provided with the distribution.
+ .
+ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND
+ CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,
+ INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+ MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ DISCLAIMED. IN NO EVENT SHALL THE REGENTS OR CONTRIBUTORS
+ BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+ LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+ HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
+ OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
+ DAMAGE.
 
-   Redistribution and use in source and binary forms are permitted provided
-   that the above copyright notice and this paragraph are duplicated in all
-   such forms.
+Files: nx-X11/extras/Mesa/include/GL/gl.h
+ nx-X11/extras/Mesa/include/GL/osmesa.h
+ nx-X11/extras/Mesa/include/GL/xmesa.h
+ nx-X11/extras/Mesa/src/mesa/array_cache/ac_context.c
+ nx-X11/extras/Mesa/src/mesa/array_cache/ac_context.h
+ nx-X11/extras/Mesa/src/mesa/array_cache/ac_import.c
+ nx-X11/extras/Mesa/src/mesa/array_cache/acache.h
+ nx-X11/extras/Mesa/src/mesa/drivers/common/driverfuncs.c
+ nx-X11/extras/Mesa/src/mesa/drivers/common/driverfuncs.h
+ nx-X11/extras/Mesa/src/mesa/drivers/x11/glxheader.h
+ nx-X11/extras/Mesa/src/mesa/drivers/x11/xm_api.c
+ nx-X11/extras/Mesa/src/mesa/drivers/x11/xm_buffer.c
+ nx-X11/extras/Mesa/src/mesa/drivers/x11/xm_dd.c
+ nx-X11/extras/Mesa/src/mesa/drivers/x11/xm_line.c
+ nx-X11/extras/Mesa/src/mesa/drivers/x11/xm_span.c
+ nx-X11/extras/Mesa/src/mesa/drivers/x11/xm_tri.c
+ nx-X11/extras/Mesa/src/mesa/drivers/x11/xmesaP.h
+ nx-X11/extras/Mesa/src/mesa/glapi/glapi.c
+ nx-X11/extras/Mesa/src/mesa/glapi/glapi.h
+ nx-X11/extras/Mesa/src/mesa/glapi/glthread.c
+ nx-X11/extras/Mesa/src/mesa/glapi/glthread.h
+ nx-X11/extras/Mesa/src/mesa/main/accum.c
+ nx-X11/extras/Mesa/src/mesa/main/accum.h
+ nx-X11/extras/Mesa/src/mesa/main/api_arrayelt.c
+ nx-X11/extras/Mesa/src/mesa/main/api_arrayelt.h
+ nx-X11/extras/Mesa/src/mesa/main/api_eval.h
+ nx-X11/extras/Mesa/src/mesa/main/api_loopback.c
+ nx-X11/extras/Mesa/src/mesa/main/api_loopback.h
+ nx-X11/extras/Mesa/src/mesa/main/api_noop.c
+ nx-X11/extras/Mesa/src/mesa/main/api_noop.h
+ nx-X11/extras/Mesa/src/mesa/main/api_validate.c
+ nx-X11/extras/Mesa/src/mesa/main/api_validate.h
+ nx-X11/extras/Mesa/src/mesa/main/attrib.c
+ nx-X11/extras/Mesa/src/mesa/main/attrib.h
+ nx-X11/extras/Mesa/src/mesa/main/blend.c
+ nx-X11/extras/Mesa/src/mesa/main/blend.h
+ nx-X11/extras/Mesa/src/mesa/main/bufferobj.c
+ nx-X11/extras/Mesa/src/mesa/main/bufferobj.h
+ nx-X11/extras/Mesa/src/mesa/main/buffers.c
+ nx-X11/extras/Mesa/src/mesa/main/buffers.h
+ nx-X11/extras/Mesa/src/mesa/main/clip.c
+ nx-X11/extras/Mesa/src/mesa/main/clip.h
+ nx-X11/extras/Mesa/src/mesa/main/colormac.h
+ nx-X11/extras/Mesa/src/mesa/main/colortab.c
+ nx-X11/extras/Mesa/src/mesa/main/colortab.h
+ nx-X11/extras/Mesa/src/mesa/main/config.h
+ nx-X11/extras/Mesa/src/mesa/main/context.c
+ nx-X11/extras/Mesa/src/mesa/main/context.h
+ nx-X11/extras/Mesa/src/mesa/main/convolve.c
+ nx-X11/extras/Mesa/src/mesa/main/convolve.h
+ nx-X11/extras/Mesa/src/mesa/main/dd.h
+ nx-X11/extras/Mesa/src/mesa/main/debug.c
+ nx-X11/extras/Mesa/src/mesa/main/debug.h
+ nx-X11/extras/Mesa/src/mesa/main/depth.c
+ nx-X11/extras/Mesa/src/mesa/main/depth.h
+ nx-X11/extras/Mesa/src/mesa/main/dispatch.c
+ nx-X11/extras/Mesa/src/mesa/main/dlist.c
+ nx-X11/extras/Mesa/src/mesa/main/dlist.h
+ nx-X11/extras/Mesa/src/mesa/main/drawpix.c
+ nx-X11/extras/Mesa/src/mesa/main/drawpix.h
+ nx-X11/extras/Mesa/src/mesa/main/enable.c
+ nx-X11/extras/Mesa/src/mesa/main/enable.h
+ nx-X11/extras/Mesa/src/mesa/main/enums.c
+ nx-X11/extras/Mesa/src/mesa/main/enums.h
+ nx-X11/extras/Mesa/src/mesa/main/eval.c
+ nx-X11/extras/Mesa/src/mesa/main/eval.h
+ nx-X11/extras/Mesa/src/mesa/main/execmem.c
+ nx-X11/extras/Mesa/src/mesa/main/extensions.c
+ nx-X11/extras/Mesa/src/mesa/main/extensions.h
+ nx-X11/extras/Mesa/src/mesa/main/fbobject.c
+ nx-X11/extras/Mesa/src/mesa/main/fbobject.h
+ nx-X11/extras/Mesa/src/mesa/main/feedback.c
+ nx-X11/extras/Mesa/src/mesa/main/feedback.h
+ nx-X11/extras/Mesa/src/mesa/main/fog.c
+ nx-X11/extras/Mesa/src/mesa/main/fog.h
+ nx-X11/extras/Mesa/src/mesa/main/framebuffer.c
+ nx-X11/extras/Mesa/src/mesa/main/framebuffer.h
+ nx-X11/extras/Mesa/src/mesa/main/get.h
+ nx-X11/extras/Mesa/src/mesa/main/getstring.c
+ nx-X11/extras/Mesa/src/mesa/main/glheader.h
+ nx-X11/extras/Mesa/src/mesa/main/hash.c
+ nx-X11/extras/Mesa/src/mesa/main/hash.h
+ nx-X11/extras/Mesa/src/mesa/main/hint.c
+ nx-X11/extras/Mesa/src/mesa/main/hint.h
+ nx-X11/extras/Mesa/src/mesa/main/histogram.c
+ nx-X11/extras/Mesa/src/mesa/main/histogram.h
+ nx-X11/extras/Mesa/src/mesa/main/image.c
+ nx-X11/extras/Mesa/src/mesa/main/image.h
+ nx-X11/extras/Mesa/src/mesa/main/imports.c
+ nx-X11/extras/Mesa/src/mesa/main/imports.h
+ nx-X11/extras/Mesa/src/mesa/main/light.c
+ nx-X11/extras/Mesa/src/mesa/main/light.h
+ nx-X11/extras/Mesa/src/mesa/main/lines.c
+ nx-X11/extras/Mesa/src/mesa/main/lines.h
+ nx-X11/extras/Mesa/src/mesa/main/macros.h
+ nx-X11/extras/Mesa/src/mesa/main/matrix.c
+ nx-X11/extras/Mesa/src/mesa/main/matrix.h
+ nx-X11/extras/Mesa/src/mesa/main/mtypes.h
+ nx-X11/extras/Mesa/src/mesa/main/occlude.c
+ nx-X11/extras/Mesa/src/mesa/main/occlude.h
+ nx-X11/extras/Mesa/src/mesa/main/pixel.c
+ nx-X11/extras/Mesa/src/mesa/main/pixel.h
+ nx-X11/extras/Mesa/src/mesa/main/points.c
+ nx-X11/extras/Mesa/src/mesa/main/points.h
+ nx-X11/extras/Mesa/src/mesa/main/polygon.c
+ nx-X11/extras/Mesa/src/mesa/main/polygon.h
+ nx-X11/extras/Mesa/src/mesa/main/rastpos.c
+ nx-X11/extras/Mesa/src/mesa/main/rastpos.h
+ nx-X11/extras/Mesa/src/mesa/main/renderbuffer.c
+ nx-X11/extras/Mesa/src/mesa/main/renderbuffer.h
+ nx-X11/extras/Mesa/src/mesa/main/state.c
+ nx-X11/extras/Mesa/src/mesa/main/state.h
+ nx-X11/extras/Mesa/src/mesa/main/stencil.c
+ nx-X11/extras/Mesa/src/mesa/main/stencil.h
+ nx-X11/extras/Mesa/src/mesa/main/texcompress.c
+ nx-X11/extras/Mesa/src/mesa/main/texcompress.h
+ nx-X11/extras/Mesa/src/mesa/main/texcompress_fxt1.c
+ nx-X11/extras/Mesa/src/mesa/main/texcompress_s3tc.c
+ nx-X11/extras/Mesa/src/mesa/main/texenvprogram.h
+ nx-X11/extras/Mesa/src/mesa/main/texformat.c
+ nx-X11/extras/Mesa/src/mesa/main/texformat.h
+ nx-X11/extras/Mesa/src/mesa/main/texformat_tmp.h
+ nx-X11/extras/Mesa/src/mesa/main/teximage.c
+ nx-X11/extras/Mesa/src/mesa/main/teximage.h
+ nx-X11/extras/Mesa/src/mesa/main/texobj.c
+ nx-X11/extras/Mesa/src/mesa/main/texobj.h
+ nx-X11/extras/Mesa/src/mesa/main/texstate.c
+ nx-X11/extras/Mesa/src/mesa/main/texstate.h
+ nx-X11/extras/Mesa/src/mesa/main/texstore.c
+ nx-X11/extras/Mesa/src/mesa/main/texstore.h
+ nx-X11/extras/Mesa/src/mesa/main/varray.c
+ nx-X11/extras/Mesa/src/mesa/main/varray.h
+ nx-X11/extras/Mesa/src/mesa/main/version.h
+ nx-X11/extras/Mesa/src/mesa/main/vtxfmt.c
+ nx-X11/extras/Mesa/src/mesa/main/vtxfmt.h
+ nx-X11/extras/Mesa/src/mesa/main/vtxfmt_tmp.h
+ nx-X11/extras/Mesa/src/mesa/math/m_clip_tmp.h
+ nx-X11/extras/Mesa/src/mesa/math/m_copy_tmp.h
+ nx-X11/extras/Mesa/src/mesa/math/m_debug.h
+ nx-X11/extras/Mesa/src/mesa/math/m_debug_clip.c
+ nx-X11/extras/Mesa/src/mesa/math/m_debug_norm.c
+ nx-X11/extras/Mesa/src/mesa/math/m_debug_util.h
+ nx-X11/extras/Mesa/src/mesa/math/m_debug_xform.c
+ nx-X11/extras/Mesa/src/mesa/math/m_dotprod_tmp.h
+ nx-X11/extras/Mesa/src/mesa/math/m_eval.c
+ nx-X11/extras/Mesa/src/mesa/math/m_eval.h
+ nx-X11/extras/Mesa/src/mesa/math/m_matrix.c
+ nx-X11/extras/Mesa/src/mesa/math/m_matrix.h
+ nx-X11/extras/Mesa/src/mesa/math/m_norm_tmp.h
+ nx-X11/extras/Mesa/src/mesa/math/m_trans_tmp.h
+ nx-X11/extras/Mesa/src/mesa/math/m_translate.c
+ nx-X11/extras/Mesa/src/mesa/math/m_translate.h
+ nx-X11/extras/Mesa/src/mesa/math/m_vector.c
+ nx-X11/extras/Mesa/src/mesa/math/m_vector.h
+ nx-X11/extras/Mesa/src/mesa/math/m_xform.c
+ nx-X11/extras/Mesa/src/mesa/math/m_xform.h
+ nx-X11/extras/Mesa/src/mesa/math/m_xform_tmp.h
+ nx-X11/extras/Mesa/src/mesa/math/mathmod.h
+ nx-X11/extras/Mesa/src/mesa/shader/arbfragparse.c
+ nx-X11/extras/Mesa/src/mesa/shader/arbfragparse.h
+ nx-X11/extras/Mesa/src/mesa/shader/arbprogparse.c
+ nx-X11/extras/Mesa/src/mesa/shader/arbprogparse.h
+ nx-X11/extras/Mesa/src/mesa/shader/arbprogram.c
+ nx-X11/extras/Mesa/src/mesa/shader/arbprogram.h
+ nx-X11/extras/Mesa/src/mesa/shader/arbvertparse.c
+ nx-X11/extras/Mesa/src/mesa/shader/arbvertparse.h
+ nx-X11/extras/Mesa/src/mesa/shader/grammar/grammar.c
+ nx-X11/extras/Mesa/src/mesa/shader/grammar/grammar.h
+ nx-X11/extras/Mesa/src/mesa/shader/grammar/grammar_mesa.c
+ nx-X11/extras/Mesa/src/mesa/shader/grammar/grammar_mesa.h
+ nx-X11/extras/Mesa/src/mesa/shader/nvfragparse.c
+ nx-X11/extras/Mesa/src/mesa/shader/nvfragparse.h
+ nx-X11/extras/Mesa/src/mesa/shader/nvfragprog.h
+ nx-X11/extras/Mesa/src/mesa/shader/nvprogram.c
+ nx-X11/extras/Mesa/src/mesa/shader/nvprogram.h
+ nx-X11/extras/Mesa/src/mesa/shader/nvvertexec.c
+ nx-X11/extras/Mesa/src/mesa/shader/nvvertexec.h
+ nx-X11/extras/Mesa/src/mesa/shader/nvvertparse.c
+ nx-X11/extras/Mesa/src/mesa/shader/nvvertparse.h
+ nx-X11/extras/Mesa/src/mesa/shader/nvvertprog.h
+ nx-X11/extras/Mesa/src/mesa/shader/program.c
+ nx-X11/extras/Mesa/src/mesa/shader/program.h
+ nx-X11/extras/Mesa/src/mesa/shader/shaderobjects.c
+ nx-X11/extras/Mesa/src/mesa/shader/shaderobjects.h
+ nx-X11/extras/Mesa/src/mesa/shader/shaderobjects_3dlabs.c
+ nx-X11/extras/Mesa/src/mesa/shader/shaderobjects_3dlabs.h
+ nx-X11/extras/Mesa/src/mesa/shader/slang/slang_assemble.c
+ nx-X11/extras/Mesa/src/mesa/shader/slang/slang_assemble.h
+ nx-X11/extras/Mesa/src/mesa/shader/slang/slang_assemble_assignment.c
+ nx-X11/extras/Mesa/src/mesa/shader/slang/slang_assemble_assignment.h
+ nx-X11/extras/Mesa/src/mesa/shader/slang/slang_assemble_conditional.c
+ nx-X11/extras/Mesa/src/mesa/shader/slang/slang_assemble_conditional.h
+ nx-X11/extras/Mesa/src/mesa/shader/slang/slang_assemble_constructor.c
+ nx-X11/extras/Mesa/src/mesa/shader/slang/slang_assemble_constructor.h
+ nx-X11/extras/Mesa/src/mesa/shader/slang/slang_assemble_typeinfo.c
+ nx-X11/extras/Mesa/src/mesa/shader/slang/slang_assemble_typeinfo.h
+ nx-X11/extras/Mesa/src/mesa/shader/slang/slang_compile.c
+ nx-X11/extras/Mesa/src/mesa/shader/slang/slang_compile.h
+ nx-X11/extras/Mesa/src/mesa/shader/slang/slang_execute.c
+ nx-X11/extras/Mesa/src/mesa/shader/slang/slang_execute.h
+ nx-X11/extras/Mesa/src/mesa/shader/slang/slang_preprocess.c
+ nx-X11/extras/Mesa/src/mesa/shader/slang/slang_preprocess.h
+ nx-X11/extras/Mesa/src/mesa/shader/slang/slang_storage.c
+ nx-X11/extras/Mesa/src/mesa/shader/slang/slang_storage.h
+ nx-X11/extras/Mesa/src/mesa/shader/slang/slang_utility.c
+ nx-X11/extras/Mesa/src/mesa/shader/slang/slang_utility.h
+ nx-X11/extras/Mesa/src/mesa/shader/slang/traverse_wrap.h
+ nx-X11/extras/Mesa/src/mesa/swrast/s_aaline.c
+ nx-X11/extras/Mesa/src/mesa/swrast/s_aaline.h
+ nx-X11/extras/Mesa/src/mesa/swrast/s_aalinetemp.h
+ nx-X11/extras/Mesa/src/mesa/swrast/s_aatriangle.c
+ nx-X11/extras/Mesa/src/mesa/swrast/s_aatriangle.h
+ nx-X11/extras/Mesa/src/mesa/swrast/s_aatritemp.h
+ nx-X11/extras/Mesa/src/mesa/swrast/s_accum.c
+ nx-X11/extras/Mesa/src/mesa/swrast/s_accum.h
+ nx-X11/extras/Mesa/src/mesa/swrast/s_alpha.c
+ nx-X11/extras/Mesa/src/mesa/swrast/s_alpha.h
+ nx-X11/extras/Mesa/src/mesa/swrast/s_bitmap.c
+ nx-X11/extras/Mesa/src/mesa/swrast/s_blend.c
+ nx-X11/extras/Mesa/src/mesa/swrast/s_blend.h
+ nx-X11/extras/Mesa/src/mesa/swrast/s_buffers.c
+ nx-X11/extras/Mesa/src/mesa/swrast/s_context.c
+ nx-X11/extras/Mesa/src/mesa/swrast/s_context.h
+ nx-X11/extras/Mesa/src/mesa/swrast/s_copypix.c
+ nx-X11/extras/Mesa/src/mesa/swrast/s_depth.c
+ nx-X11/extras/Mesa/src/mesa/swrast/s_depth.h
+ nx-X11/extras/Mesa/src/mesa/swrast/s_drawpix.c
+ nx-X11/extras/Mesa/src/mesa/swrast/s_drawpix.h
+ nx-X11/extras/Mesa/src/mesa/swrast/s_feedback.c
+ nx-X11/extras/Mesa/src/mesa/swrast/s_feedback.h
+ nx-X11/extras/Mesa/src/mesa/swrast/s_fog.c
+ nx-X11/extras/Mesa/src/mesa/swrast/s_fog.h
+ nx-X11/extras/Mesa/src/mesa/swrast/s_imaging.c
+ nx-X11/extras/Mesa/src/mesa/swrast/s_lines.c
+ nx-X11/extras/Mesa/src/mesa/swrast/s_lines.h
+ nx-X11/extras/Mesa/src/mesa/swrast/s_linetemp.h
+ nx-X11/extras/Mesa/src/mesa/swrast/s_logic.c
+ nx-X11/extras/Mesa/src/mesa/swrast/s_logic.h
+ nx-X11/extras/Mesa/src/mesa/swrast/s_masking.c
+ nx-X11/extras/Mesa/src/mesa/swrast/s_masking.h
+ nx-X11/extras/Mesa/src/mesa/swrast/s_nvfragprog.c
+ nx-X11/extras/Mesa/src/mesa/swrast/s_nvfragprog.h
+ nx-X11/extras/Mesa/src/mesa/swrast/s_pixeltex.c
+ nx-X11/extras/Mesa/src/mesa/swrast/s_pixeltex.h
+ nx-X11/extras/Mesa/src/mesa/swrast/s_points.c
+ nx-X11/extras/Mesa/src/mesa/swrast/s_points.h
+ nx-X11/extras/Mesa/src/mesa/swrast/s_pointtemp.h
+ nx-X11/extras/Mesa/src/mesa/swrast/s_readpix.c
+ nx-X11/extras/Mesa/src/mesa/swrast/s_span.c
+ nx-X11/extras/Mesa/src/mesa/swrast/s_span.h
+ nx-X11/extras/Mesa/src/mesa/swrast/s_spantemp.h
+ nx-X11/extras/Mesa/src/mesa/swrast/s_stencil.c
+ nx-X11/extras/Mesa/src/mesa/swrast/s_stencil.h
+ nx-X11/extras/Mesa/src/mesa/swrast/s_texstore.c
+ nx-X11/extras/Mesa/src/mesa/swrast/s_texture.c
+ nx-X11/extras/Mesa/src/mesa/swrast/s_texture.h
+ nx-X11/extras/Mesa/src/mesa/swrast/s_triangle.c
+ nx-X11/extras/Mesa/src/mesa/swrast/s_triangle.h
+ nx-X11/extras/Mesa/src/mesa/swrast/s_trispan.h
+ nx-X11/extras/Mesa/src/mesa/swrast/s_tritemp.h
+ nx-X11/extras/Mesa/src/mesa/swrast/s_zoom.c
+ nx-X11/extras/Mesa/src/mesa/swrast/s_zoom.h
+ nx-X11/extras/Mesa/src/mesa/swrast/swrast.h
+ nx-X11/extras/Mesa/src/mesa/swrast_setup/ss_context.c
+ nx-X11/extras/Mesa/src/mesa/swrast_setup/ss_context.h
+ nx-X11/extras/Mesa/src/mesa/swrast_setup/ss_triangle.c
+ nx-X11/extras/Mesa/src/mesa/swrast_setup/ss_triangle.h
+ nx-X11/extras/Mesa/src/mesa/swrast_setup/ss_tritmp.h
+ nx-X11/extras/Mesa/src/mesa/swrast_setup/swrast_setup.h
+ nx-X11/extras/Mesa/src/mesa/tnl/t_array_api.c
+ nx-X11/extras/Mesa/src/mesa/tnl/t_array_api.h
+ nx-X11/extras/Mesa/src/mesa/tnl/t_array_import.c
+ nx-X11/extras/Mesa/src/mesa/tnl/t_array_import.h
+ nx-X11/extras/Mesa/src/mesa/tnl/t_context.c
+ nx-X11/extras/Mesa/src/mesa/tnl/t_context.h
+ nx-X11/extras/Mesa/src/mesa/tnl/t_pipeline.c
+ nx-X11/extras/Mesa/src/mesa/tnl/t_pipeline.h
+ nx-X11/extras/Mesa/src/mesa/tnl/t_save_loopback.c
+ nx-X11/extras/Mesa/src/mesa/tnl/t_save_playback.c
+ nx-X11/extras/Mesa/src/mesa/tnl/t_vb_arbprogram.c
+ nx-X11/extras/Mesa/src/mesa/tnl/t_vb_arbprogram.h
+ nx-X11/extras/Mesa/src/mesa/tnl/t_vb_arbprogram_sse.c
+ nx-X11/extras/Mesa/src/mesa/tnl/t_vb_cliptmp.h
+ nx-X11/extras/Mesa/src/mesa/tnl/t_vb_cull.c
+ nx-X11/extras/Mesa/src/mesa/tnl/t_vb_fog.c
+ nx-X11/extras/Mesa/src/mesa/tnl/t_vb_light.c
+ nx-X11/extras/Mesa/src/mesa/tnl/t_vb_lighttmp.h
+ nx-X11/extras/Mesa/src/mesa/tnl/t_vb_normals.c
+ nx-X11/extras/Mesa/src/mesa/tnl/t_vb_points.c
+ nx-X11/extras/Mesa/src/mesa/tnl/t_vb_program.c
+ nx-X11/extras/Mesa/src/mesa/tnl/t_vb_render.c
+ nx-X11/extras/Mesa/src/mesa/tnl/t_vb_rendertmp.h
+ nx-X11/extras/Mesa/src/mesa/tnl/t_vb_texgen.c
+ nx-X11/extras/Mesa/src/mesa/tnl/t_vb_texmat.c
+ nx-X11/extras/Mesa/src/mesa/tnl/t_vb_vertex.c
+ nx-X11/extras/Mesa/src/mesa/tnl/t_vtx_eval.c
+ nx-X11/extras/Mesa/src/mesa/tnl/t_vtx_exec.c
+ nx-X11/extras/Mesa/src/mesa/tnl/tnl.h
+Copyright: 1999-2001, Brian Paul
+  1999-2002, Brian Paul
+  1999-2003, Brian Paul
+  1999-2004, Brian Paul
+  1999-2005, Brian Paul
+  2004-2005, Brian Paul
+  2005, Brian Paul
+License: Expat
 
-   THIS SOFTWARE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR IMPLIED
-   WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED WARRANTIES OF
-   MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+Files: nx-X11/include/XWDFile.h
+ nx-X11/include/Xalloca.h
+ nx-X11/include/Xauth.h
+ nx-X11/include/Xfuncproto.h
+ nx-X11/include/Xfuncs.h
+ nx-X11/include/Xos.h
+ nx-X11/include/Xos_r.h
+ nx-X11/include/Xosdefs.h
+ nx-X11/include/Xthreads.h
+ nx-X11/include/Xwindows.h
+ nx-X11/include/Xwinsock.h
+ nx-X11/include/extensions/bigreqstr.h
+ nx-X11/include/extensions/security.h
+ nx-X11/include/extensions/securstr.h
+ nx-X11/include/extensions/xcmiscstr.h
+ nx-X11/include/extensions/xtestconst.h
+ nx-X11/include/extensions/xteststr.h
+ nx-X11/lib/src/AllCells.c
+ nx-X11/lib/src/AllPlanes.c
+ nx-X11/lib/src/AllowEv.c
+ nx-X11/lib/src/AuDispose.c
+ nx-X11/lib/src/AuFileName.c
+ nx-X11/lib/src/AuGetBest.c
+ nx-X11/lib/src/AuRead.c
+ nx-X11/lib/src/AutoRep.c
+ nx-X11/lib/src/Backgnd.c
+ nx-X11/lib/src/BdrWidth.c
+ nx-X11/lib/src/Bell.c
+ nx-X11/lib/src/Border.c
+ nx-X11/lib/src/ChAccCon.c
+ nx-X11/lib/src/ChActPGb.c
+ nx-X11/lib/src/ChClMode.c
+ nx-X11/lib/src/ChCmap.c
+ nx-X11/lib/src/ChGC.c
+ nx-X11/lib/src/ChKeyCon.c
+ nx-X11/lib/src/ChPntCon.c
+ nx-X11/lib/src/ChProp.c
+ nx-X11/lib/src/ChSaveSet.c
+ nx-X11/lib/src/ChWAttrs.c
+ nx-X11/lib/src/ChWindow.c
+ nx-X11/lib/src/ChkIfEv.c
+ nx-X11/lib/src/ChkMaskEv.c
+ nx-X11/lib/src/ChkTypEv.c
+ nx-X11/lib/src/ChkTypWEv.c
+ nx-X11/lib/src/ChkWinEv.c
+ nx-X11/lib/src/CirWin.c
+ nx-X11/lib/src/CirWinDn.c
+ nx-X11/lib/src/CirWinUp.c
+ nx-X11/lib/src/ClDisplay.c
+ nx-X11/lib/src/Clear.c
+ nx-X11/lib/src/ClearArea.c
+ nx-X11/lib/src/ConfWind.c
+ nx-X11/lib/src/ConvSel.c
+ nx-X11/lib/src/CopyArea.c
+ nx-X11/lib/src/CopyCmap.c
+ nx-X11/lib/src/CopyGC.c
+ nx-X11/lib/src/CopyPlane.c
+ nx-X11/lib/src/CrBFData.c
+ nx-X11/lib/src/CrCmap.c
+ nx-X11/lib/src/CrCursor.c
+ nx-X11/lib/src/CrGC.c
+ nx-X11/lib/src/CrGlCur.c
+ nx-X11/lib/src/CrPFBData.c
+ nx-X11/lib/src/CrPixmap.c
+ nx-X11/lib/src/CrWindow.c
+ nx-X11/lib/src/Cursor.c
+ nx-X11/lib/src/DefCursor.c
+ nx-X11/lib/src/DelProp.c
+ nx-X11/lib/src/Depths.c
+ nx-X11/lib/src/DestSubs.c
+ nx-X11/lib/src/DestWind.c
+ nx-X11/lib/src/DisName.c
+ nx-X11/lib/src/DrArc.c
+ nx-X11/lib/src/DrArcs.c
+ nx-X11/lib/src/DrLine.c
+ nx-X11/lib/src/DrLines.c
+ nx-X11/lib/src/DrPoint.c
+ nx-X11/lib/src/DrPoints.c
+ nx-X11/lib/src/DrRect.c
+ nx-X11/lib/src/DrRects.c
+ nx-X11/lib/src/DrSegs.c
+ nx-X11/lib/src/ErrHndlr.c
+ nx-X11/lib/src/EvToWire.c
+ nx-X11/lib/src/FSSaver.c
+ nx-X11/lib/src/FetchName.c
+ nx-X11/lib/src/FillArc.c
+ nx-X11/lib/src/FillArcs.c
+ nx-X11/lib/src/FillPoly.c
+ nx-X11/lib/src/FillRct.c
+ nx-X11/lib/src/FillRcts.c
+ nx-X11/lib/src/Flush.c
+ nx-X11/lib/src/FontInfo.c
+ nx-X11/lib/src/FontNames.c
+ nx-X11/lib/src/FreeCmap.c
+ nx-X11/lib/src/FreeCols.c
+ nx-X11/lib/src/FreeCurs.c
+ nx-X11/lib/src/FreeEData.c
+ nx-X11/lib/src/FreeGC.c
+ nx-X11/lib/src/FreePix.c
+ nx-X11/lib/src/GCMisc.c
+ nx-X11/lib/src/Geom.c
+ nx-X11/lib/src/GetAtomNm.c
+ nx-X11/lib/src/GetColor.c
+ nx-X11/lib/src/GetFPath.c
+ nx-X11/lib/src/GetFProp.c
+ nx-X11/lib/src/GetGCVals.c
+ nx-X11/lib/src/GetGeom.c
+ nx-X11/lib/src/GetHColor.c
+ nx-X11/lib/src/GetIFocus.c
+ nx-X11/lib/src/GetImage.c
+ nx-X11/lib/src/GetKCnt.c
+ nx-X11/lib/src/GetMoEv.c
+ nx-X11/lib/src/GetPCnt.c
+ nx-X11/lib/src/GetPntMap.c
+ nx-X11/lib/src/GetProp.c
+ nx-X11/lib/src/GetRGBCMap.c
+ nx-X11/lib/src/GetSOwner.c
+ nx-X11/lib/src/GetSSaver.c
+ nx-X11/lib/src/GetWAttrs.c
+ nx-X11/lib/src/GrButton.c
+ nx-X11/lib/src/GrKey.c
+ nx-X11/lib/src/GrKeybd.c
+ nx-X11/lib/src/GrPointer.c
+ nx-X11/lib/src/GrServer.c
+ nx-X11/lib/src/IfEvent.c
+ nx-X11/lib/src/ImText.c
+ nx-X11/lib/src/ImText16.c
+ nx-X11/lib/src/ImUtil.c
+ nx-X11/lib/src/InitExt.c
+ nx-X11/lib/src/InsCmap.c
+ nx-X11/lib/src/IntAtom.c
+ nx-X11/lib/src/KeyBind.c
+ nx-X11/lib/src/KeysymStr.c
+ nx-X11/lib/src/KillCl.c
+ nx-X11/lib/src/LiICmaps.c
+ nx-X11/lib/src/LiProps.c
+ nx-X11/lib/src/ListExt.c
+ nx-X11/lib/src/LoadFont.c
+ nx-X11/lib/src/LockDis.c
+ nx-X11/lib/src/LookupCol.c
+ nx-X11/lib/src/LowerWin.c
+ nx-X11/lib/src/Macros.c
+ nx-X11/lib/src/MapRaised.c
+ nx-X11/lib/src/MapSubs.c
+ nx-X11/lib/src/MapWindow.c
+ nx-X11/lib/src/MaskEvent.c
+ nx-X11/lib/src/Misc.c
+ nx-X11/lib/src/ModMap.c
+ nx-X11/lib/src/MoveWin.c
+ nx-X11/lib/src/NextEvent.c
+ nx-X11/lib/src/ParseCol.c
+ nx-X11/lib/src/ParseGeom.c
+ nx-X11/lib/src/PeekEvent.c
+ nx-X11/lib/src/PeekIfEv.c
+ nx-X11/lib/src/Pending.c
+ nx-X11/lib/src/PixFormats.c
+ nx-X11/lib/src/PmapBgnd.c
+ nx-X11/lib/src/PmapBord.c
+ nx-X11/lib/src/PolyTxt.c
+ nx-X11/lib/src/PolyTxt16.c
+ nx-X11/lib/src/PropAlloc.c
+ nx-X11/lib/src/PutBEvent.c
+ nx-X11/lib/src/PutImage.c
+ nx-X11/lib/src/QuBest.c
+ nx-X11/lib/src/QuColor.c
+ nx-X11/lib/src/QuColors.c
+ nx-X11/lib/src/QuCurShp.c
+ nx-X11/lib/src/QuExt.c
+ nx-X11/lib/src/QuKeybd.c
+ nx-X11/lib/src/QuPntr.c
+ nx-X11/lib/src/QuStipShp.c
+ nx-X11/lib/src/QuTextE16.c
+ nx-X11/lib/src/QuTextExt.c
+ nx-X11/lib/src/QuTileShp.c
+ nx-X11/lib/src/QuTree.c
+ nx-X11/lib/src/RaiseWin.c
+ nx-X11/lib/src/RdBitF.c
+ nx-X11/lib/src/RecolorC.c
+ nx-X11/lib/src/ReconfWM.c
+ nx-X11/lib/src/ReconfWin.c
+ nx-X11/lib/src/RepWindow.c
+ nx-X11/lib/src/RestackWs.c
+ nx-X11/lib/src/RotProp.c
+ nx-X11/lib/src/ScrResStr.c
+ nx-X11/lib/src/SelInput.c
+ nx-X11/lib/src/SendEvent.c
+ nx-X11/lib/src/SetBack.c
+ nx-X11/lib/src/SetCRects.c
+ nx-X11/lib/src/SetClMask.c
+ nx-X11/lib/src/SetClOrig.c
+ nx-X11/lib/src/SetDashes.c
+ nx-X11/lib/src/SetFPath.c
+ nx-X11/lib/src/SetFont.c
+ nx-X11/lib/src/SetFore.c
+ nx-X11/lib/src/SetFunc.c
+ nx-X11/lib/src/SetIFocus.c
+ nx-X11/lib/src/SetLStyle.c
+ nx-X11/lib/src/SetPMask.c
+ nx-X11/lib/src/SetPntMap.c
+ nx-X11/lib/src/SetRGBCMap.c
+ nx-X11/lib/src/SetSOwner.c
+ nx-X11/lib/src/SetSSaver.c
+ nx-X11/lib/src/SetState.c
+ nx-X11/lib/src/SetStip.c
+ nx-X11/lib/src/SetTSOrig.c
+ nx-X11/lib/src/SetTile.c
+ nx-X11/lib/src/StBytes.c
+ nx-X11/lib/src/StColor.c
+ nx-X11/lib/src/StColors.c
+ nx-X11/lib/src/StNColor.c
+ nx-X11/lib/src/StName.c
+ nx-X11/lib/src/StrKeysym.c
+ nx-X11/lib/src/StrToText.c
+ nx-X11/lib/src/Sync.c
+ nx-X11/lib/src/Synchro.c
+ nx-X11/lib/src/Text.c
+ nx-X11/lib/src/Text16.c
+ nx-X11/lib/src/TextToStr.c
+ nx-X11/lib/src/TrCoords.c
+ nx-X11/lib/src/UndefCurs.c
+ nx-X11/lib/src/UngrabBut.c
+ nx-X11/lib/src/UngrabKbd.c
+ nx-X11/lib/src/UngrabKey.c
+ nx-X11/lib/src/UngrabPtr.c
+ nx-X11/lib/src/UngrabSvr.c
+ nx-X11/lib/src/UninsCmap.c
+ nx-X11/lib/src/UnldFont.c
+ nx-X11/lib/src/UnmapSubs.c
+ nx-X11/lib/src/UnmapWin.c
+ nx-X11/lib/src/VisUtil.c
+ nx-X11/lib/src/WMGeom.c
+ nx-X11/lib/src/WarpPtr.c
+ nx-X11/lib/src/WinEvent.c
+ nx-X11/lib/src/Window.c
+ nx-X11/lib/src/WrBitF.c
+ nx-X11/lib/src/xkb/XKBBind.c
+ nx-X11/lib/src/xkb/XKBCvt.c
+ nx-X11/lib/include/X11/Xlib.h
+ nx-X11/lib/include/X11/Xlocale.h
+ nx-X11/lib/src/xcms/cmsMath.c
+ nx-X11/lib/include/X11/cursorfont.h
+ nx-X11/lib/src/evtomask.c
+ nx-X11/lib/src/globals.c
+ nx-X11/lib/src/locking.c
+ nx-X11/lib/src/locking.h
+ nx-X11/lib/src/xlibi18n/mbWMProps.c
+ nx-X11/lib/src/util/makekeys.c
+ nx-X11/programs/Xserver/Xext/bigreq.c
+ nx-X11/programs/Xserver/Xext/shape.c
+ nx-X11/programs/Xserver/Xext/shm.c
+ nx-X11/programs/Xserver/Xext/sleepuntil.c
+ nx-X11/programs/Xserver/Xext/xcmisc.c
+ nx-X11/programs/Xserver/Xext/xtest.c
+ nx-X11/programs/Xserver/Xi/queryst.c
+ nx-X11/programs/Xserver/dix/ffs.c
+ nx-X11/programs/Xserver/dix/pixmap.c
+ nx-X11/programs/Xserver/dix/privates.c
+ nx-X11/programs/Xserver/dix/xpstubs.c
+ nx-X11/programs/Xserver/hw/nxagent/BitmapUtils.c
+ nx-X11/programs/Xserver/hw/nxagent/X11/include/Xinerama_nxagent.h
+ nx-X11/programs/Xserver/include/closestr.h
+ nx-X11/programs/Xserver/include/opaque.h
+ nx-X11/programs/Xserver/include/validate.h
+ nx-X11/programs/Xserver/mi/cbrt.c
+ nx-X11/programs/Xserver/mi/mibstorest.h
+ nx-X11/programs/Xserver/mi/miclipn.c
+ nx-X11/programs/Xserver/mi/midispcur.c
+ nx-X11/programs/Xserver/mi/mieq.c
+ nx-X11/programs/Xserver/mi/mifillarc.c
+ nx-X11/programs/Xserver/mi/mifillarc.h
+ nx-X11/programs/Xserver/mi/migc.c
+ nx-X11/programs/Xserver/mi/migc.h
+ nx-X11/programs/Xserver/mi/miline.h
+ nx-X11/programs/Xserver/mi/mipointer.c
+ nx-X11/programs/Xserver/mi/mipointer.h
+ nx-X11/programs/Xserver/mi/mipointrst.h
+ nx-X11/programs/Xserver/mi/mipoly.h
+ nx-X11/programs/Xserver/mi/miscanfill.h
+ nx-X11/programs/Xserver/mi/miscrinit.c
+ nx-X11/programs/Xserver/mi/misprite.c
+ nx-X11/programs/Xserver/mi/misprite.h
+ nx-X11/programs/Xserver/mi/mispritest.h
+ nx-X11/programs/Xserver/mi/mivalidate.h
+ nx-X11/programs/Xserver/mi/miwideline.c
+ nx-X11/programs/Xserver/mi/miwideline.h
+ nx-X11/programs/Xserver/mi/mizerarc.c
+ nx-X11/programs/Xserver/mi/mizerarc.h
+ nx-X11/programs/Xserver/os/mitauth.c
+ nx-X11/programs/Xserver/os/rpcauth.c
+ nx-X11/programs/Xserver/os/secauth.c
+ nx-X11/programs/Xserver/os/xdmauth.c
+ nx-X11/programs/Xserver/record/record.c
+ nx-X11/programs/Xserver/record/set.c
+ nx-X11/programs/Xserver/record/set.h
+ nxcompshad/src/X11/include/XTest_nxcompshad.h
+Copyright: 1985, 1987, 1990, 1998, The Open Group
+  1985, 1987, 1994, 1998, The Open Group
+  1985, 1987, 1998, The Open Group
+  1985, 1990, 1998, The Open Group
+  1985, 1998, The Open Group
+  1985-1986, 1998, The Open Group
+  1985-1987, 1991, 1998, The Open Group
+  1985-1987, 1998, The Open Group
+  1985-1987,1998, The Open Group
+  1986, 1990, 1998, The Open Group
+  1986, 1998, The Open Group
+  1986,1998, The Open Group
+  1986-1987, 1998, The Open Group
+  1987, 1998, The Open Group
+  1988, 1998, The Open Group
+  1988-1989, 1998, The Open Group
+  1989, 1991, 1998, The Open Group
+  1989, 1998, The Open Group
+  1990, 1998, The Open Group
+  1990, 1994, 1998, The Open Group
+  1991, 1998, The Open Group
+  1992, 1998, The Open Group
+  1993, 1998, The Open Group
+  1993-1994, 1998, The Open Group
+  1994, 1998, The Open Group
+  1995, 1998, The Open Group
+  1996, 1998, The Open Group
+  1998, 1998, The Open Group
+  2003, The Open Group
+License: MIT~OpenGroup
 
-   Copyright (c) 1995,1996 Brian Pane
-   Copyright (c) 1996,1997 Zachary Vonler and Brian Pane
-   Copyright (c) 1999 Kevin Vigor and Brian Pane
-   Copyright (c) 2000,2001 Gian Filippo Pinzari and Brian Pane
+Files: make-changelog.sh
+ regenerate-symbol-docs.sh
+ bin/nxagent.in
+ bin/nxproxy.in
+Copyright: 2012, Mike Gabriel <mike.gabriel@das-netzwerkteam.de>
+  2016, Mike Gabriel <mike.gabriel@das-netzwerkteam.de>
+License: GPL-2+
 
-The files MD5.[ch] are copyright (C) 1999, 2000, 2002 Aladdin Enterprises.
+Files: nx-X11/programs/Xserver/GL/include/GL/xf86glx.h
+ nx-X11/programs/Xserver/GL/include/GL/glx_ansic.h
+ nx-X11/lib/nx-x11.pc.in
+Copyright:
+ 2017, Mike Gabriel <mike.gabriel@das-netzwerkteam.de>
+ 2017, Qindel Group (http://www.qindel.com)
+License: GPL-2+
+Comment:
+ Files lack copyright information, assuming copyright from
+ upstream Git history and license from main COPYING file.
 
-  This software is provided 'as-is', without any express or implied
-  warranty.  In no event will the authors be held liable for any damages
-  arising from the use of this software.
+Files: replace.sh
+Copyright: 2013, Jan Engelhardt <jengelh@inai.de>
+License: GPL-2+
 
-  Permission is granted to anyone to use this software for any purpose,
-  including commercial applications, and to alter it and redistribute it
-  freely, subject to the following restrictions:
+Files: nx-X11/extras/Mesa/src/mesa/main/get.c
+ nx-X11/extras/Mesa/src/mesa/main/texrender.c
+ nx-X11/extras/Mesa/src/mesa/main/texrender.h
+ nx-X11/extras/Mesa/src/mesa/shader/arbprogram_syn.h
+ nx-X11/extras/Mesa/src/mesa/shader/grammar/grammar_syn.h
+ nx-X11/extras/Mesa/src/mesa/shader/slang/library/slang_common_builtin_gc.h
+ nx-X11/extras/Mesa/src/mesa/shader/slang/library/slang_common_builtin_gc_bin.h
+ nx-X11/extras/Mesa/src/mesa/shader/slang/library/slang_core_gc.h
+ nx-X11/extras/Mesa/src/mesa/shader/slang/library/slang_core_gc_bin.h
+ nx-X11/extras/Mesa/src/mesa/shader/slang/library/slang_fragment_builtin_gc.h
+ nx-X11/extras/Mesa/src/mesa/shader/slang/library/slang_fragment_builtin_gc_bin.h
+ nx-X11/extras/Mesa/src/mesa/shader/slang/library/slang_shader_syn.h
+ nx-X11/extras/Mesa/src/mesa/shader/slang/library/slang_version_syn.h
+ nx-X11/extras/Mesa/src/mesa/shader/slang/library/slang_vertex_builtin_gc.h
+ nx-X11/extras/Mesa/src/mesa/shader/slang/library/slang_vertex_builtin_gc_bin.h
+ nx-X11/extras/Mesa/src/mesa/tnl/t_vtx_x86_gcc.S
+ nx-X11/extras/Mesa/src/mesa/main/KNOWN_BUGS
+Copyright: *No copyright*
+License: Expat
+Comment:
+ Missing license headers. Assuming same license as used for other Mesa
+ files.
 
-  1. The origin of this software must not be misrepresented; you must not
-     claim that you wrote the original software. If you use this software
-     in a product, an acknowledgment in the product documentation would be
-     appreciated but is not required.
-  2. Altered source versions must be plainly marked as such, and must not be
-     misrepresented as being the original software.
-  3. This notice may not be removed or altered from any source distribution.
+Files: nx-X11/include/XF86keysym.h
+ nx-X11/include/Xatom.h
+ nx-X11/include/Xw32defs.h
+ nx-X11/include/extensions/XvMC.h
+ nx-X11/include/extensions/XvMCproto.h
+Copyright: *No copyright*
+License: MIT~OpenGroup
+Comment:
+ Missing license headers. Assuming same license found in other nx-X11
+ proto header code files.
 
+Files: doc/libNX_X11/lcUniConv/8bit_tab_to_h.c
+ doc/libNX_X11/lcUniConv/cjk_tab_to_h.c
+ doc/libNX_X11/lcUniConv/README
+ nx-X11/lib/src/Cmap.h
+ nx-X11/lib/src/Cr.h
+ nx-X11/lib/src/xcms/Cv.h
+ nx-X11/lib/include/X11/ImUtil.h
+ nx-X11/lib/src/Key.h
+ nx-X11/lib/src/XErrorDB
+ nx-X11/lib/src/xcms/Xcms.txt
+ nx-X11/lib/src/Xintatom.h
+ nx-X11/lib/src/Xintconn.h
+ nx-X11/lib/include/X11/XlibConf.h.in
+ nx-X11/lib/src/Xresinternal.h
+ nx-X11/lib/src/xlibi18n/imKStoUCS.c
+ nx-X11/lib/src/xlibi18n/lcUniConv/armscii_8.h
+ nx-X11/lib/src/xlibi18n/lcUniConv/big5.h
+ nx-X11/lib/src/xlibi18n/lcUniConv/big5_emacs.h
+ nx-X11/lib/src/xlibi18n/lcUniConv/big5hkscs.h
+ nx-X11/lib/src/xlibi18n/lcUniConv/cp1133.h
+ nx-X11/lib/src/xlibi18n/lcUniConv/cp1251.h
+ nx-X11/lib/src/xlibi18n/lcUniConv/cp1255.h
+ nx-X11/lib/src/xlibi18n/lcUniConv/cp1256.h
+ nx-X11/lib/src/xlibi18n/lcUniConv/gb2312.h
+ nx-X11/lib/src/xlibi18n/lcUniConv/gbk.h
+ nx-X11/lib/src/xlibi18n/lcUniConv/georgian_academy.h
+ nx-X11/lib/src/xlibi18n/lcUniConv/georgian_ps.h
+ nx-X11/lib/src/xlibi18n/lcUniConv/iso8859_1.h
+ nx-X11/lib/src/xlibi18n/lcUniConv/iso8859_10.h
+ nx-X11/lib/src/xlibi18n/lcUniConv/iso8859_11.h
+ nx-X11/lib/src/xlibi18n/lcUniConv/iso8859_13.h
+ nx-X11/lib/src/xlibi18n/lcUniConv/iso8859_14.h
+ nx-X11/lib/src/xlibi18n/lcUniConv/iso8859_15.h
+ nx-X11/lib/src/xlibi18n/lcUniConv/iso8859_16.h
+ nx-X11/lib/src/xlibi18n/lcUniConv/iso8859_2.h
+ nx-X11/lib/src/xlibi18n/lcUniConv/iso8859_3.h
+ nx-X11/lib/src/xlibi18n/lcUniConv/iso8859_4.h
+ nx-X11/lib/src/xlibi18n/lcUniConv/iso8859_5.h
+ nx-X11/lib/src/xlibi18n/lcUniConv/iso8859_6.h
+ nx-X11/lib/src/xlibi18n/lcUniConv/iso8859_7.h
+ nx-X11/lib/src/xlibi18n/lcUniConv/iso8859_8.h
+ nx-X11/lib/src/xlibi18n/lcUniConv/iso8859_9.h
+ nx-X11/lib/src/xlibi18n/lcUniConv/iso8859_9e.h
+ nx-X11/lib/src/xlibi18n/lcUniConv/jisx0201.h
+ nx-X11/lib/src/xlibi18n/lcUniConv/jisx0208.h
+ nx-X11/lib/src/xlibi18n/lcUniConv/jisx0212.h
+ nx-X11/lib/src/xlibi18n/lcUniConv/koi8_c.h
+ nx-X11/lib/src/xlibi18n/lcUniConv/koi8_r.h
+ nx-X11/lib/src/xlibi18n/lcUniConv/koi8_u.h
+ nx-X11/lib/src/xlibi18n/lcUniConv/ksc5601.h
+ nx-X11/lib/src/xlibi18n/lcUniConv/mulelao.h
+ nx-X11/lib/src/xlibi18n/lcUniConv/tatar_cyr.h
+ nx-X11/lib/src/xlibi18n/lcUniConv/tcvn.h
+ nx-X11/lib/src/xlibi18n/lcUniConv/tis620.h
+ nx-X11/lib/src/xlibi18n/lcUniConv/ucs2be.h
+ nx-X11/lib/src/xlibi18n/lcUniConv/utf8.h
+ nx-X11/lib/src/xlibi18n/lcUniConv/viscii.h
+ nx-X11/lib/src/util/mkks.sh
+Copyright: *No copyright*
+License: MIT~OpenGroup
+Comment:
+ Missing license headers. Assuming same license found in other libNX_X11
+ code files.
 
-The packaging for Debian is copyright 2011 Mike Gabriel and is released
-under the GPL version 2. On Debian systems, the complete text of the GNU
-General Public License can be found in `/usr/share/common-licenses/GPL-2'.
+Files: nx-X11/Imakefile
+ nx-X11/config/Imakefile
+ nx-X11/config/cf/Imake.cf
+ nx-X11/config/cf/Imake.rules
+ nx-X11/config/cf/Imake.tmpl
+ nx-X11/config/cf/Imakefile
+ nx-X11/config/cf/Library.tmpl
+ nx-X11/config/cf/README
+ nx-X11/config/cf/Server.tmpl
+ nx-X11/config/cf/ServerLib.tmpl
+ nx-X11/config/cf/Threads.tmpl
+ nx-X11/config/cf/X11.rules
+ nx-X11/config/cf/X11.tmpl
+ nx-X11/config/cf/cross.def
+ nx-X11/config/cf/cross.rules
+ nx-X11/config/cf/gnu.cf
+ nx-X11/config/cf/gnuLib.rules
+ nx-X11/config/cf/gnuLib.tmpl
+ nx-X11/config/cf/host.def
+ nx-X11/config/cf/linux.cf
+ nx-X11/config/cf/lnxLib.rules
+ nx-X11/config/cf/lnxLib.tmpl
+ nx-X11/config/cf/noop.rules
+ nx-X11/config/cf/nxversion.def.in
+ nx-X11/config/cf/site.def
+ nx-X11/config/cf/xf86.rules
+ nx-X11/config/cf/xorg.cf
+ nx-X11/config/cf/xorg.tmpl
+ nx-X11/config/cf/xorgsite.def
+ nx-X11/config/cf/xorgversion.def
+ nx-X11/include/GL/Imakefile
+ nx-X11/include/Imakefile
+ nx-X11/include/extensions/Imakefile
+ nx-X11/programs/Imakefile
+ nx-X11/programs/Xserver/Xi/Imakefile
+ nx-X11/programs/Xserver/composite/Imakefile
+ nx-X11/programs/Xserver/damageext/Imakefile
+ nx-X11/programs/Xserver/dbe/Imakefile
+ nx-X11/programs/Xserver/dix/Imakefile
+ nx-X11/programs/Xserver/dix/buildatoms
+ nx-X11/programs/Xserver/fb/Imakefile
+ nx-X11/programs/Xserver/GL/Imakefile
+ nx-X11/programs/Xserver/hw/nxagent/Imakefile
+ nx-X11/programs/Xserver/hw/nxagent/compext/Imakefile
+ nx-X11/programs/Xserver/GL/glx/Imakefile
+ nx-X11/programs/Xserver/GL/mesa/GLcore/Imakefile
+ nx-X11/programs/Xserver/GL/mesa/Imakefile.inc
+ nx-X11/programs/Xserver/GL/mesa/X/Imakefile.inc
+ nx-X11/programs/Xserver/GL/mesa/array_cache/Imakefile.inc
+ nx-X11/programs/Xserver/GL/mesa/main/Imakefile.inc
+ nx-X11/programs/Xserver/GL/mesa/math/Imakefile.inc
+ nx-X11/programs/Xserver/GL/mesa/shader/Imakefile.inc
+ nx-X11/programs/Xserver/GL/mesa/shader/grammar/Imakefile.inc
+ nx-X11/programs/Xserver/GL/mesa/shader/slang/Imakefile.inc
+ nx-X11/programs/Xserver/GL/mesa/shader/slang/library/Imakefile.inc
+ nx-X11/programs/Xserver/GL/mesa/swrast/Imakefile.inc
+ nx-X11/programs/Xserver/GL/mesa/swrast_setup/Imakefile.inc
+ nx-X11/programs/Xserver/GL/mesa/tnl/Imakefile.inc
+ nx-X11/programs/Xserver/GL/mesa/Imakefile
+ nx-X11/programs/Xserver/GL/mesa/X/Imakefile
+ nx-X11/programs/Xserver/GL/mesa/array_cache/Imakefile
+ nx-X11/programs/Xserver/GL/mesa/main/Imakefile
+ nx-X11/programs/Xserver/GL/mesa/math/Imakefile
+ nx-X11/programs/Xserver/GL/mesa/shader/Imakefile
+ nx-X11/programs/Xserver/GL/mesa/shader/grammar/Imakefile
+ nx-X11/programs/Xserver/GL/mesa/shader/slang/Imakefile
+ nx-X11/programs/Xserver/GL/mesa/shader/slang/library/Imakefile
+ nx-X11/programs/Xserver/GL/mesa/swrast/Imakefile
+ nx-X11/programs/Xserver/GL/mesa/swrast_setup/Imakefile
+ nx-X11/programs/Xserver/GL/mesa/tnl/Imakefile
+ nx-X11/programs/Xserver/Imakefile
+ nx-X11/programs/Xserver/Xext/Imakefile
+ nx-X11/programs/Xserver/include/Imakefile
+ nx-X11/programs/Xserver/mi/Imakefile
+ nx-X11/programs/Xserver/miext/cw/Imakefile
+ nx-X11/programs/Xserver/miext/damage/Imakefile
+ nx-X11/programs/Xserver/os/Imakefile
+ nx-X11/programs/Xserver/randr/Imakefile
+ nx-X11/programs/Xserver/record/Imakefile
+ nx-X11/programs/Xserver/render/Imakefile
+ nx-X11/programs/Xserver/xfixes/Imakefile
+ nx-X11/programs/Xserver/xkb/Imakefile
+Copyright: *No copyright*
+License: MIT~OpenGroup
+Comment:
+ Missing license headers. Assuming same license as used for imake (see
+ xutils-dev bin:package).
 
+Files: nx-X11/programs/Xserver/Xext/dpmsproc.h
+ nx-X11/programs/Xserver/Xext/panoramiXh.h
+ nx-X11/programs/Xserver/Xext/panoramiXsrv.h
+ nx-X11/programs/Xserver/Xext/xvdisp.h
+ nx-X11/programs/Xserver/Xext/xvmc.c
+ nx-X11/programs/Xserver/Xext/xvmcext.h
+ nx-X11/programs/Xserver/dix/initatoms.c
+ nx-X11/programs/Xserver/include/globals.h
+ nx-X11/programs/Xserver/mi/micmap.h
+ nx-X11/programs/Xserver/mi/mioverlay.c
+ nx-X11/programs/Xserver/mi/mioverlay.h
+ nx-X11/programs/Xserver/os/xstrans.c
+ nx-X11/programs/Xserver/xkb/ddxPrivate.c
+ nx-X11/programs/Xserver/xkb/xkb.h
+ nx-X11/programs/Xserver/xkb/xkbDflts.h
+ nx-X11/x-indent-all.sh
+ nx-X11/x-indent.sh
+Copyright: *No copyright*
+License: MIT~OpenGroup
+Comment:
+ Missing license headers. Assuming same license as found in the majority
+ of other Xserver code files.
+
+Files: nx-X11/include/DECkeysym.h
+ nx-X11/include/HPkeysym.h
+ nx-X11/include/X.h
+ nx-X11/include/Xmd.h
+ nx-X11/include/Xproto.h
+ nx-X11/include/Xprotostr.h
+ nx-X11/include/extensions/sync.h
+ nx-X11/include/extensions/syncstr.h
+ nx-X11/include/keysym.h
+ nx-X11/include/keysymdef.h
+ nx-X11/lib/src/ErrDes.c
+ nx-X11/lib/src/GetDflt.c
+ nx-X11/lib/src/GetHints.c
+ nx-X11/lib/src/GetStCmap.c
+ nx-X11/lib/src/GetWMCMapW.c
+ nx-X11/lib/src/GetWMProto.c
+ nx-X11/lib/src/ParseCmd.c
+ nx-X11/lib/src/PolyReg.c
+ nx-X11/lib/src/Region.c
+ nx-X11/lib/src/SetHints.c
+ nx-X11/lib/src/SetStCmap.c
+ nx-X11/lib/src/SetWMCMapW.c
+ nx-X11/lib/src/SetWMProto.c
+ nx-X11/lib/src/Xatomtype.h
+ nx-X11/lib/src/xlibi18n/XimThai.h
+ nx-X11/lib/include/X11/Xregion.h
+ nx-X11/lib/include/X11/Xresource.h
+ nx-X11/lib/include/X11/Xutil.h
+ nx-X11/lib/modules/im/ximcp/imThaiFlt.c
+ nx-X11/lib/src/pathmax.h
+ nx-X11/lib/src/poly.h
+ nx-X11/programs/Xserver/Xext/sync.c
+ nx-X11/programs/Xserver/dix/atom.c
+ nx-X11/programs/Xserver/dix/colormap.c
+ nx-X11/programs/Xserver/dix/cursor.c
+ nx-X11/programs/Xserver/dix/devices.c
+ nx-X11/programs/Xserver/dix/extension.c
+ nx-X11/programs/Xserver/dix/gc.c
+ nx-X11/programs/Xserver/dix/globals.c
+ nx-X11/programs/Xserver/dix/glyphcurs.c
+ nx-X11/programs/Xserver/dix/grabs.c
+ nx-X11/programs/Xserver/dix/property.c
+ nx-X11/programs/Xserver/dix/swaprep.c
+ nx-X11/programs/Xserver/dix/swapreq.c
+ nx-X11/programs/Xserver/dix/tables.c
+ nx-X11/programs/Xserver/include/closure.h
+ nx-X11/programs/Xserver/include/colormap.h
+ nx-X11/programs/Xserver/include/colormapst.h
+ nx-X11/programs/Xserver/include/cursor.h
+ nx-X11/programs/Xserver/include/cursorstr.h
+ nx-X11/programs/Xserver/include/dix.h
+ nx-X11/programs/Xserver/include/extension.h
+ nx-X11/programs/Xserver/include/extnsionst.h
+ nx-X11/programs/Xserver/include/gc.h
+ nx-X11/programs/Xserver/include/gcstruct.h
+ nx-X11/programs/Xserver/include/input.h
+ nx-X11/programs/Xserver/include/inputstr.h
+ nx-X11/programs/Xserver/include/miscstruct.h
+ nx-X11/programs/Xserver/include/os.h
+ nx-X11/programs/Xserver/include/pixmap.h
+ nx-X11/programs/Xserver/include/pixmapstr.h
+ nx-X11/programs/Xserver/include/property.h
+ nx-X11/programs/Xserver/include/propertyst.h
+ nx-X11/programs/Xserver/include/region.h
+ nx-X11/programs/Xserver/include/regionstr.h
+ nx-X11/programs/Xserver/include/resource.h
+ nx-X11/programs/Xserver/include/rgb.h
+ nx-X11/programs/Xserver/include/screenint.h
+ nx-X11/programs/Xserver/include/scrnintstr.h
+ nx-X11/programs/Xserver/include/selection.h
+ nx-X11/programs/Xserver/include/servermd.h
+ nx-X11/programs/Xserver/include/site.h
+ nx-X11/programs/Xserver/include/window.h
+ nx-X11/programs/Xserver/include/windowstr.h
+ nx-X11/programs/Xserver/mi/mi.h
+ nx-X11/programs/Xserver/mi/miarc.c
+ nx-X11/programs/Xserver/mi/mibitblt.c
+ nx-X11/programs/Xserver/mi/micursor.c
+ nx-X11/programs/Xserver/mi/midash.c
+ nx-X11/programs/Xserver/mi/mifillrct.c
+ nx-X11/programs/Xserver/mi/mifpoly.h
+ nx-X11/programs/Xserver/mi/mifpolycon.c
+ nx-X11/programs/Xserver/mi/miglblt.c
+ nx-X11/programs/Xserver/mi/miinitext.c
+ nx-X11/programs/Xserver/mi/mipoly.c
+ nx-X11/programs/Xserver/mi/mipolycon.c
+ nx-X11/programs/Xserver/mi/mipolygen.c
+ nx-X11/programs/Xserver/mi/mipolypnt.c
+ nx-X11/programs/Xserver/mi/mipolyrect.c
+ nx-X11/programs/Xserver/mi/mipolyseg.c
+ nx-X11/programs/Xserver/mi/mipolytext.c
+ nx-X11/programs/Xserver/mi/mipolyutil.c
+ nx-X11/programs/Xserver/mi/mipushpxl.c
+ nx-X11/programs/Xserver/mi/mispans.c
+ nx-X11/programs/Xserver/mi/mispans.h
+ nx-X11/programs/Xserver/mi/mistruct.h
+ nx-X11/programs/Xserver/mi/miwindow.c
+ nx-X11/programs/Xserver/mi/mizerclip.c
+ nx-X11/programs/Xserver/mi/mizerline.c
+ nx-X11/programs/Xserver/os/connection.c
+ nx-X11/programs/Xserver/os/io.c
+ nx-X11/programs/Xserver/os/oscolor.c
+ nx-X11/programs/Xserver/os/osdep.h
+ nx-X11/programs/Xserver/os/osinit.c
+Copyright: 1987, 1989, Digital Equipment Corporation, Maynard, Massachusetts
+  1987, 1989, 1998, The Open Group
+  1987, 1994, 1998, The Open Group
+  1987, 1998, The Open Group
+  1987, Digital Equipment Corporation, Maynard, Massachusetts
+  1987-1988, 1998, The Open Group
+  1987-1988, Digital Equipment Corporation, Maynard, Massachusetts
+  1988, 1998, The Open Group
+  1988, Digital Equipment Corporation, Maynard, Massachusetts
+  1989, 1998, The Open Group
+  1989, Digital Equipment Corporation, Maynard, Massachusetts
+  1991, 1993, Digital Equipment Corporation, Maynard, Massachusetts
+  1991, 1993, 1998, The Open Group
+  1991, 1993-1994, 1998, The Open Group
+  1991,1993, Digital Equipment Corporation, Maynard, Massachusetts
+  1993, 1998, The Open Group
+  1993, Digital Equipment Corporation, Maynard, Massachusetts
+License: MIT~OpenGroup
+Comment:
+ Contributions by Digital Equipment Corporation, Maynard, Massachusetts
+ have been licensed under MIT~OldStyle.
+
+Files: nx-X11/include/extensions/composite.h
+ nx-X11/include/extensions/compositeproto.h
+ nx-X11/include/extensions/damageproto.h
+ nx-X11/include/extensions/damagewire.h
+ nx-X11/lib/src/x11_trans.c
+ nx-X11/lib/src/xlibi18n/xim_trans.c
+ nx-X11/programs/Xserver/composite/compalloc.c
+ nx-X11/programs/Xserver/composite/compext.c
+ nx-X11/programs/Xserver/composite/compinit.c
+ nx-X11/programs/Xserver/composite/compint.h
+ nx-X11/programs/Xserver/composite/compwindow.c
+ nx-X11/programs/Xserver/damageext/damageext.c
+ nx-X11/programs/Xserver/damageext/damageext.h
+ nx-X11/programs/Xserver/damageext/damageextint.h
+ nx-X11/programs/Xserver/fb/fb.h
+ nx-X11/programs/Xserver/fb/fballpriv.c
+ nx-X11/programs/Xserver/fb/fbarc.c
+ nx-X11/programs/Xserver/fb/fbbits.c
+ nx-X11/programs/Xserver/fb/fbbits.h
+ nx-X11/programs/Xserver/fb/fbblt.c
+ nx-X11/programs/Xserver/fb/fbbltone.c
+ nx-X11/programs/Xserver/fb/fbbstore.c
+ nx-X11/programs/Xserver/fb/fbcopy.c
+ nx-X11/programs/Xserver/fb/fbedge.c
+ nx-X11/programs/Xserver/fb/fbedgeimp.h
+ nx-X11/programs/Xserver/fb/fbfill.c
+ nx-X11/programs/Xserver/fb/fbfillrect.c
+ nx-X11/programs/Xserver/fb/fbfillsp.c
+ nx-X11/programs/Xserver/fb/fbgc.c
+ nx-X11/programs/Xserver/fb/fbgetsp.c
+ nx-X11/programs/Xserver/fb/fbglyph.c
+ nx-X11/programs/Xserver/fb/fbimage.c
+ nx-X11/programs/Xserver/fb/fbline.c
+ nx-X11/programs/Xserver/fb/fbpixmap.c
+ nx-X11/programs/Xserver/fb/fbpoint.c
+ nx-X11/programs/Xserver/fb/fbpush.c
+ nx-X11/programs/Xserver/fb/fbrop.h
+ nx-X11/programs/Xserver/fb/fbscreen.c
+ nx-X11/programs/Xserver/fb/fbseg.c
+ nx-X11/programs/Xserver/fb/fbsetsp.c
+ nx-X11/programs/Xserver/fb/fbsolid.c
+ nx-X11/programs/Xserver/fb/fbstipple.c
+ nx-X11/programs/Xserver/fb/fbtile.c
+ nx-X11/programs/Xserver/fb/fbtrap.c
+ nx-X11/programs/Xserver/fb/fbutil.c
+ nx-X11/programs/Xserver/fb/fbwindow.c
+ nx-X11/programs/Xserver/miext/damage/damage.c
+ nx-X11/programs/Xserver/miext/damage/damage.h
+ nx-X11/programs/Xserver/miext/damage/damagestr.h
+ nx-X11/programs/Xserver/randr/rrdispatch.c
+ nx-X11/programs/Xserver/randr/rrinfo.c
+ nx-X11/programs/Xserver/randr/rrmonitor.c
+ nx-X11/programs/Xserver/randr/rrpointer.c
+ nx-X11/programs/Xserver/randr/rrproperty.c
+ nx-X11/programs/Xserver/randr/rrproviderproperty.c
+ nx-X11/programs/Xserver/randr/rrsdispatch.c
+ nx-X11/programs/Xserver/randr/rrtransform.c
+ nx-X11/programs/Xserver/randr/rrtransform.h
+ nx-X11/programs/Xserver/render/filter.c
+ nx-X11/programs/Xserver/render/matrix.c
+ nx-X11/programs/Xserver/render/mipict.c
+ nx-X11/programs/Xserver/render/renderedge.c
+ nx-X11/programs/Xserver/render/renderedge.h
+ nx-X11/programs/Xserver/xfixes/cursor.c
+ nx-X11/programs/Xserver/xfixes/region.c
+ nx-X11/programs/Xserver/xfixes/saveset.c
+ nx-X11/programs/Xserver/xfixes/select.c
+ nx-X11/programs/Xserver/xfixes/xfixes.c
+ nx-X11/programs/Xserver/xfixes/xfixes.h
+ nx-X11/programs/Xserver/xfixes/xfixesint.h
+ nx-X11/programs/Xserver/Xext/shmint.h
+ nxcompshad/src/X11/include/Xdamage_nxcompshad.h
+Copyright: 1998, Keith Packard
+  1999, Keith Packard
+  2002, Keith Packard
+  2003, Keith Packard
+  2004, Keith Packard
+  2006, Keith Packard
+  2007, Keith Packard
+  2014, Keith Packard
+License: MIT~X11
+
+Files: nx-X11/include/extensions/XKB.h
+ nx-X11/include/extensions/XKBconfig.h
+ nx-X11/include/extensions/XKBfile.h
+ nx-X11/include/extensions/XKBgeom.h
+ nx-X11/include/extensions/XKBproto.h
+ nx-X11/include/extensions/XKBrules.h
+ nx-X11/include/extensions/XKBsrv.h
+ nx-X11/include/extensions/XKBstr.h
+ nx-X11/include/extensions/XKM.h
+ nx-X11/include/extensions/XKMformat.h
+ nx-X11/lib/src/xkb/XKB.c
+ nx-X11/lib/src/xkb/XKBAlloc.c
+ nx-X11/lib/src/xkb/XKBBell.c
+ nx-X11/lib/src/xkb/XKBCompat.c
+ nx-X11/lib/src/xkb/XKBCtrls.c
+ nx-X11/lib/src/xkb/XKBExtDev.c
+ nx-X11/lib/src/xkb/XKBGAlloc.c
+ nx-X11/lib/src/xkb/XKBGeom.c
+ nx-X11/lib/src/xkb/XKBGetByName.c
+ nx-X11/lib/src/xkb/XKBGetMap.c
+ nx-X11/lib/src/xkb/XKBList.c
+ nx-X11/lib/src/xkb/XKBMAlloc.c
+ nx-X11/lib/src/xkb/XKBMisc.c
+ nx-X11/lib/src/xkb/XKBNames.c
+ nx-X11/lib/src/xkb/XKBRdBuf.c
+ nx-X11/lib/src/xkb/XKBSetGeom.c
+ nx-X11/lib/src/xkb/XKBSetMap.c
+ nx-X11/lib/src/xkb/XKBUse.c
+ nx-X11/lib/src/xkb/XKBleds.c
+ nx-X11/lib/include/X11/XKBlib.h
+ nx-X11/lib/src/xkb/XKBlibint.h
+ nx-X11/programs/Xserver/include/xkbfile.h
+ nx-X11/programs/Xserver/include/xkbrules.h
+ nx-X11/programs/Xserver/include/xkbsrv.h
+ nx-X11/programs/Xserver/include/xkbstr.h
+ nx-X11/programs/Xserver/xkb/XKBAlloc.c
+ nx-X11/programs/Xserver/xkb/XKBGAlloc.c
+ nx-X11/programs/Xserver/xkb/XKBMAlloc.c
+ nx-X11/programs/Xserver/xkb/XKBMisc.c
+ nx-X11/programs/Xserver/xkb/ddxBeep.c
+ nx-X11/programs/Xserver/xkb/ddxConfig.c
+ nx-X11/programs/Xserver/xkb/ddxCtrls.c
+ nx-X11/programs/Xserver/xkb/ddxDevBtn.c
+ nx-X11/programs/Xserver/xkb/ddxFakeBtn.c
+ nx-X11/programs/Xserver/xkb/ddxFakeMtn.c
+ nx-X11/programs/Xserver/xkb/ddxInit.c
+ nx-X11/programs/Xserver/xkb/ddxKeyClick.c
+ nx-X11/programs/Xserver/xkb/ddxKillSrv.c
+ nx-X11/programs/Xserver/xkb/ddxLEDs.c
+ nx-X11/programs/Xserver/xkb/ddxList.c
+ nx-X11/programs/Xserver/xkb/ddxLoad.c
+ nx-X11/programs/Xserver/xkb/ddxVT.c
+ nx-X11/programs/Xserver/xkb/maprules.c
+ nx-X11/programs/Xserver/xkb/xkb.c
+ nx-X11/programs/Xserver/xkb/xkbAccessX.c
+ nx-X11/programs/Xserver/xkb/xkbActions.c
+ nx-X11/programs/Xserver/xkb/xkbEvents.c
+ nx-X11/programs/Xserver/xkb/xkbInit.c
+ nx-X11/programs/Xserver/xkb/xkbLEDs.c
+ nx-X11/programs/Xserver/xkb/xkbPrKeyEv.c
+ nx-X11/programs/Xserver/xkb/xkbPrOtherEv.c
+ nx-X11/programs/Xserver/xkb/xkbSwap.c
+ nx-X11/programs/Xserver/xkb/xkbUtils.c
+ nx-X11/programs/Xserver/xkb/xkbconfig.c
+ nx-X11/programs/Xserver/xkb/xkberrs.c
+ nx-X11/programs/Xserver/xkb/xkbfmisc.c
+ nx-X11/programs/Xserver/xkb/xkbgeom.h
+ nx-X11/programs/Xserver/xkb/xkbout.c
+ nx-X11/programs/Xserver/xkb/xkbtext.c
+ nx-X11/programs/Xserver/xkb/xkmread.c
+Copyright: 1993, Silicon Graphics Computer Systems, Inc
+  1994, Silicon Graphics Computer Systems, Inc
+  1995, Silicon Graphics Computer Systems, Inc
+  1996, Silicon Graphics Computer Systems, Inc
+License: MIT~X11
+
+Files: nx-X11/lib/src/xcms/AddDIC.c
+ nx-X11/lib/src/xcms/AddSF.c
+ nx-X11/lib/src/xcms/CvColW.c
+ nx-X11/lib/src/xcms/CvCols.c
+ nx-X11/lib/src/xcms/IdOfPr.c
+ nx-X11/lib/src/xcms/LRGB.c
+ nx-X11/lib/src/xcms/Lab.c
+ nx-X11/lib/src/xcms/LabGcC.c
+ nx-X11/lib/src/xcms/LabGcL.c
+ nx-X11/lib/src/xcms/LabGcLC.c
+ nx-X11/lib/src/xcms/LabMnL.c
+ nx-X11/lib/src/xcms/LabMxC.c
+ nx-X11/lib/src/xcms/LabMxL.c
+ nx-X11/lib/src/xcms/LabMxLC.c
+ nx-X11/lib/src/xcms/LabWpAj.c
+ nx-X11/lib/src/xcms/Luv.c
+ nx-X11/lib/src/xcms/LuvGcC.c
+ nx-X11/lib/src/xcms/LuvGcL.c
+ nx-X11/lib/src/xcms/LuvGcLC.c
+ nx-X11/lib/src/xcms/LuvMnL.c
+ nx-X11/lib/src/xcms/LuvMxC.c
+ nx-X11/lib/src/xcms/LuvMxL.c
+ nx-X11/lib/src/xcms/LuvMxLC.c
+ nx-X11/lib/src/xcms/LuvWpAj.c
+ nx-X11/lib/src/xcms/OfCCC.c
+ nx-X11/lib/src/xcms/PrOfId.c
+ nx-X11/lib/src/xcms/QBlack.c
+ nx-X11/lib/src/xcms/QBlue.c
+ nx-X11/lib/src/xcms/QGreen.c
+ nx-X11/lib/src/xcms/QRed.c
+ nx-X11/lib/src/xcms/QWhite.c
+ nx-X11/lib/src/xcms/QuCol.c
+ nx-X11/lib/src/xcms/QuCols.c
+ nx-X11/lib/src/xcms/SetCCC.c
+ nx-X11/lib/src/xcms/SetGetCols.c
+ nx-X11/lib/src/xcms/StCol.c
+ nx-X11/lib/src/xcms/StCols.c
+ nx-X11/lib/src/xcms/UNDEFINED.c
+ nx-X11/lib/src/xcms/XRGB.c
+ nx-X11/lib/src/xcms/XYZ.c
+ nx-X11/lib/include/X11/Xcms.h
+ nx-X11/lib/src/xcms/Xcmsint.h
+ nx-X11/lib/src/xcms/cmsAllCol.c
+ nx-X11/lib/src/xcms/cmsAllNCol.c
+ nx-X11/lib/src/xcms/cmsCmap.c
+ nx-X11/lib/src/xcms/cmsColNm.c
+ nx-X11/lib/src/xcms/cmsGlobls.c
+ nx-X11/lib/src/xcms/cmsInt.c
+ nx-X11/lib/src/xcms/cmsLkCol.c
+ nx-X11/lib/src/xcms/cmsProp.c
+ nx-X11/lib/src/xcms/cmsTrig.c
+ nx-X11/lib/src/xcms/uvY.c
+ nx-X11/lib/src/xcms/xyY.c
+Copyright: 1990, 1991, Tektronix, Inc
+License: MIT~Tektronix
+
+Files: nx-X11/lib/src/xcms/HVC.c
+ nx-X11/lib/src/xcms/HVCGcC.c
+ nx-X11/lib/src/xcms/HVCGcV.c
+ nx-X11/lib/src/xcms/HVCGcVC.c
+ nx-X11/lib/src/xcms/HVCMnV.c
+ nx-X11/lib/src/xcms/HVCMxC.c
+ nx-X11/lib/src/xcms/HVCMxV.c
+ nx-X11/lib/src/xcms/HVCMxVC.c
+ nx-X11/lib/src/xcms/HVCMxVs.c
+ nx-X11/lib/src/xcms/HVCWpAj.c
+Copyright: 1990, 1991, Tektronix, Inc
+License: MIT~Tektronix~3-clause
+
+Files: nx-X11/extras/Mesa/include/GL/glext.h
+ nx-X11/extras/Mesa/include/GL/glxext.h
+ nx-X11/extras/Mesa/include/GL/internal/glcore.h
+ nx-X11/extras/Mesa/src/glx/x11/compsize.c
+ nx-X11/include/GL/glx.h
+ nx-X11/include/GL/glxmd.h
+ nx-X11/include/GL/glxproto.h
+ nx-X11/include/GL/glxtokens.h
+ nx-X11/programs/Xserver/GL/glx/g_disptab.c
+ nx-X11/programs/Xserver/GL/glx/g_disptab.h
+ nx-X11/programs/Xserver/GL/glx/g_disptab_EXT.c
+ nx-X11/programs/Xserver/GL/glx/g_disptab_EXT.h
+ nx-X11/programs/Xserver/GL/glx/g_render.c
+ nx-X11/programs/Xserver/GL/glx/g_renderswap.c
+ nx-X11/programs/Xserver/GL/glx/g_single.c
+ nx-X11/programs/Xserver/GL/glx/g_singleswap.c
+ nx-X11/programs/Xserver/GL/glx/global.c
+ nx-X11/programs/Xserver/GL/glx/glxbuf.c
+ nx-X11/programs/Xserver/GL/glx/glxbuf.h
+ nx-X11/programs/Xserver/GL/glx/glxcmds.c
+ nx-X11/programs/Xserver/GL/glx/glxcmdsswap.c
+ nx-X11/programs/Xserver/GL/glx/glxcontext.h
+ nx-X11/programs/Xserver/GL/glx/glxdrawable.h
+ nx-X11/programs/Xserver/GL/glx/glxerror.h
+ nx-X11/programs/Xserver/GL/glx/glxext.h
+ nx-X11/programs/Xserver/GL/glx/glxfb.c
+ nx-X11/programs/Xserver/GL/glx/glxfb.h
+ nx-X11/programs/Xserver/GL/glx/glximports.c
+ nx-X11/programs/Xserver/GL/glx/glximports.h
+ nx-X11/programs/Xserver/GL/glx/glxmem.c
+ nx-X11/programs/Xserver/GL/glx/glxmem.h
+ nx-X11/programs/Xserver/GL/glx/glxpix.c
+ nx-X11/programs/Xserver/GL/glx/glxpix.h
+ nx-X11/programs/Xserver/GL/glx/glxscreens.c
+ nx-X11/programs/Xserver/GL/glx/glxscreens.h
+ nx-X11/programs/Xserver/GL/glx/glxserver.h
+ nx-X11/programs/Xserver/GL/glx/glxutil.c
+ nx-X11/programs/Xserver/GL/glx/glxutil.h
+ nx-X11/programs/Xserver/GL/glx/impsize.h
+ nx-X11/programs/Xserver/GL/glx/render2.c
+ nx-X11/programs/Xserver/GL/glx/render2swap.c
+ nx-X11/programs/Xserver/GL/glx/renderpix.c
+ nx-X11/programs/Xserver/GL/glx/renderpixswap.c
+ nx-X11/programs/Xserver/GL/glx/rensize.c
+ nx-X11/programs/Xserver/GL/glx/rensizetab.c
+ nx-X11/programs/Xserver/GL/glx/single2.c
+ nx-X11/programs/Xserver/GL/glx/single2swap.c
+ nx-X11/programs/Xserver/GL/glx/singlepix.c
+ nx-X11/programs/Xserver/GL/glx/singlepixswap.c
+ nx-X11/programs/Xserver/GL/glx/singlesize.c
+ nx-X11/programs/Xserver/GL/glx/singlesize.h
+ nx-X11/programs/Xserver/GL/glx/unpack.h
+ nx-X11/programs/Xserver/GL/glx/xfont.c
+Copyright: 1991-2000, Silicon Graphics, Inc
+  1991-2004, Silicon Graphics, Inc
+License: SGI-1.1
+
+Files: nx-X11/programs/Xserver/Xext/xtest1dd.h
+ nx-X11/programs/Xserver/Xi/allowev.h
+ nx-X11/programs/Xserver/Xi/chgdctl.h
+ nx-X11/programs/Xserver/Xi/chgfctl.h
+ nx-X11/programs/Xserver/Xi/chgkbd.h
+ nx-X11/programs/Xserver/Xi/chgkmap.h
+ nx-X11/programs/Xserver/Xi/chgprop.h
+ nx-X11/programs/Xserver/Xi/chgptr.h
+ nx-X11/programs/Xserver/Xi/closedev.h
+ nx-X11/programs/Xserver/Xi/devbell.h
+ nx-X11/programs/Xserver/Xi/exglobals.h
+ nx-X11/programs/Xserver/Xi/getbmap.h
+ nx-X11/programs/Xserver/Xi/getdctl.h
+ nx-X11/programs/Xserver/Xi/getfctl.h
+ nx-X11/programs/Xserver/Xi/getfocus.h
+ nx-X11/programs/Xserver/Xi/getkmap.h
+ nx-X11/programs/Xserver/Xi/getmmap.h
+ nx-X11/programs/Xserver/Xi/getprop.h
+ nx-X11/programs/Xserver/Xi/getselev.h
+ nx-X11/programs/Xserver/Xi/getvers.h
+ nx-X11/programs/Xserver/Xi/grabdev.h
+ nx-X11/programs/Xserver/Xi/grabdevb.h
+ nx-X11/programs/Xserver/Xi/grabdevk.h
+ nx-X11/programs/Xserver/Xi/gtmotion.h
+ nx-X11/programs/Xserver/Xi/listdev.h
+ nx-X11/programs/Xserver/Xi/opendev.h
+ nx-X11/programs/Xserver/Xi/queryst.h
+ nx-X11/programs/Xserver/Xi/selectev.h
+ nx-X11/programs/Xserver/Xi/sendexev.h
+ nx-X11/programs/Xserver/Xi/setbmap.h
+ nx-X11/programs/Xserver/Xi/setdval.h
+ nx-X11/programs/Xserver/Xi/setfocus.h
+ nx-X11/programs/Xserver/Xi/setmmap.h
+ nx-X11/programs/Xserver/Xi/setmode.h
+ nx-X11/programs/Xserver/Xi/ungrdev.h
+ nx-X11/programs/Xserver/Xi/ungrdevb.h
+ nx-X11/programs/Xserver/Xi/ungrdevk.h
+ nx-X11/programs/Xserver/dix/dispatch.h
+ nx-X11/programs/Xserver/include/XIstubs.h
+ nx-X11/programs/Xserver/include/dixevents.h
+ nx-X11/programs/Xserver/include/dixgrabs.h
+ nx-X11/programs/Xserver/include/exevents.h
+ nx-X11/programs/Xserver/include/extinit.h
+ nx-X11/programs/Xserver/include/swaprep.h
+ nx-X11/programs/Xserver/include/swapreq.h
+Copyright: 1996, Thomas E. Dickey <dickey@clark.net>
+License: MIT~X11
+
+Files: nx-X11/include/extensions/XI.h
+ nx-X11/include/extensions/XIproto.h
+ nx-X11/programs/Xserver/Xi/allowev.c
+ nx-X11/programs/Xserver/Xi/chgdctl.c
+ nx-X11/programs/Xserver/Xi/chgfctl.c
+ nx-X11/programs/Xserver/Xi/chgkbd.c
+ nx-X11/programs/Xserver/Xi/chgkmap.c
+ nx-X11/programs/Xserver/Xi/chgprop.c
+ nx-X11/programs/Xserver/Xi/chgptr.c
+ nx-X11/programs/Xserver/Xi/closedev.c
+ nx-X11/programs/Xserver/Xi/devbell.c
+ nx-X11/programs/Xserver/Xi/exevents.c
+ nx-X11/programs/Xserver/Xi/extinit.c
+ nx-X11/programs/Xserver/Xi/getbmap.c
+ nx-X11/programs/Xserver/Xi/getdctl.c
+ nx-X11/programs/Xserver/Xi/getfctl.c
+ nx-X11/programs/Xserver/Xi/getfocus.c
+ nx-X11/programs/Xserver/Xi/getkmap.c
+ nx-X11/programs/Xserver/Xi/getmmap.c
+ nx-X11/programs/Xserver/Xi/getprop.c
+ nx-X11/programs/Xserver/Xi/getselev.c
+ nx-X11/programs/Xserver/Xi/getvers.c
+ nx-X11/programs/Xserver/Xi/grabdev.c
+ nx-X11/programs/Xserver/Xi/grabdevb.c
+ nx-X11/programs/Xserver/Xi/grabdevk.c
+ nx-X11/programs/Xserver/Xi/gtmotion.c
+ nx-X11/programs/Xserver/Xi/listdev.c
+ nx-X11/programs/Xserver/Xi/opendev.c
+ nx-X11/programs/Xserver/Xi/selectev.c
+ nx-X11/programs/Xserver/Xi/sendexev.c
+ nx-X11/programs/Xserver/Xi/setbmap.c
+ nx-X11/programs/Xserver/Xi/setdval.c
+ nx-X11/programs/Xserver/Xi/setfocus.c
+ nx-X11/programs/Xserver/Xi/setmmap.c
+ nx-X11/programs/Xserver/Xi/setmode.c
+ nx-X11/programs/Xserver/Xi/stubs.c
+ nx-X11/programs/Xserver/Xi/ungrdev.c
+ nx-X11/programs/Xserver/Xi/ungrdevb.c
+ nx-X11/programs/Xserver/Xi/ungrdevk.c
+Copyright: 1989, 1998, The Open Group
+  1989, Hewlett-Packard Company, Palo Alto, California
+License: MIT~OpenGroup
+Comment:
+ The Hewlett-Packard Company, Palo Alto, California licensed
+ their work on these files under MIT~OldStyle.
+
+Files: nx-X11/programs/Xserver/hw/nxagent/Args.c
+ nx-X11/programs/Xserver/hw/nxagent/Args.h
+ nx-X11/programs/Xserver/hw/nxagent/Colormap.c
+ nx-X11/programs/Xserver/hw/nxagent/Colormap.h
+ nx-X11/programs/Xserver/hw/nxagent/Cursor.c
+ nx-X11/programs/Xserver/hw/nxagent/Cursor.h
+ nx-X11/programs/Xserver/hw/nxagent/Display.c
+ nx-X11/programs/Xserver/hw/nxagent/Display.h
+ nx-X11/programs/Xserver/hw/nxagent/Font.c
+ nx-X11/programs/Xserver/hw/nxagent/Font.h
+ nx-X11/programs/Xserver/hw/nxagent/GC.c
+ nx-X11/programs/Xserver/hw/nxagent/GCOps.c
+ nx-X11/programs/Xserver/hw/nxagent/GCOps.h
+ nx-X11/programs/Xserver/hw/nxagent/GCs.h
+ nx-X11/programs/Xserver/hw/nxagent/Init.c
+ nx-X11/programs/Xserver/hw/nxagent/Init.h
+ nx-X11/programs/Xserver/hw/nxagent/Keyboard.c
+ nx-X11/programs/Xserver/hw/nxagent/Keyboard.h
+ nx-X11/programs/Xserver/hw/nxagent/Pointer.c
+ nx-X11/programs/Xserver/hw/nxagent/Pointer.h
+ nx-X11/programs/Xserver/hw/nxagent/Screen.c
+ nx-X11/programs/Xserver/hw/nxagent/Screen.h
+ nx-X11/programs/Xserver/hw/nxagent/TestExt.c
+ nx-X11/programs/Xserver/hw/nxagent/Visual.c
+ nx-X11/programs/Xserver/hw/nxagent/Visual.h
+Copyright: 1993, Davor Matic
+  2001, 2011, NoMachine (http://www.nomachine.com)
+  2008-2014, Oleksandr Shneyder <o.shneyder@phoca-gmbh.de>
+  2011-2016, Mike Gabriel <mike.gabriel@das-netzwerkteam.de>*/
+  2014-2016, Mihai Moldovan <ionic@ionic.de>
+  2014-2016, Ulrich Sibiller <uli42@gmx.de>
+  2015-2016, Qindel Group (http://www.qindel.com)
+License: GPL-2
+Comment:
+ The code in these files was derived from Xnest. As the code changes
+ done by NoMachine are immense, GPL-2 is listed as these files' primary
+ license.
+ .
+ Xnest was originally published under the following license:
+ .
+ Copyright 1993 by Davor Matic
+ .
+ Permission to use, copy, modify, distribute, and sell this software
+ and its documentation for any purpose is hereby granted without fee,
+ provided that the above copyright notice appear in all copies and that
+ both that copyright notice and this permission notice appear in
+ supporting documentation.  Davor Matic makes no representations about
+ the suitability of this software for any purpose.  It is provided "as
+ is" without express or implied warranty.
+
+Files: nx-X11/include/extensions/render.h
+ nx-X11/include/extensions/renderproto.h
+ nx-X11/programs/Xserver/fb/fb24_32.c
+ nx-X11/programs/Xserver/fb/fboverlay.c
+ nx-X11/programs/Xserver/fb/fboverlay.h
+ nx-X11/programs/Xserver/fb/fbpict.c
+ nx-X11/programs/Xserver/hw/nxagent/X11/include/Xrender_nxagent.h
+ nx-X11/programs/Xserver/hw/nxagent/X11/include/Xrenderint_nxagent.h
+ nx-X11/programs/Xserver/render/glyph.c
+ nx-X11/programs/Xserver/render/glyphstr.h
+ nx-X11/programs/Xserver/render/mipict.h
+ nx-X11/programs/Xserver/render/picture.c
+ nx-X11/programs/Xserver/render/picture.h
+ nx-X11/programs/Xserver/render/picturestr.h
+ nx-X11/programs/Xserver/render/render.c
+Copyright: 2000, SuSE, Inc
+License: MIT~X11
+
+Files: nx-X11/lib/src/OCWrap.c
+ nx-X11/lib/src/OMWrap.c
+ nx-X11/lib/src/xlibi18n/XlcPubI.h
+ nx-X11/lib/src/xlibi18n/lcCharSet.c
+ nx-X11/lib/src/xlibi18n/lcConv.c
+ nx-X11/lib/modules/lc/def/lcDefConv.c
+ nx-X11/lib/src/xlibi18n/lcPrTxt.c
+ nx-X11/lib/src/xlibi18n/lcPubWrap.c
+ nx-X11/lib/src/xlibi18n/lcPublic.c
+ nx-X11/lib/src/xlibi18n/lcRM.c
+ nx-X11/lib/src/xlibi18n/lcStd.c
+ nx-X11/lib/src/xlibi18n/lcTxtPr.c
+ nx-X11/lib/src/xlibi18n/lcUtil.c
+ nx-X11/lib/modules/om/generic/omImText.c
+ nx-X11/lib/modules/om/generic/omTextExt.c
+ nx-X11/lib/modules/om/generic/omTextPer.c
+Copyright: 1992-1993, TOSHIBA Corp
+License: MIT~X11
+
+Files: nx-X11/include/extensions/dpms.h
+ nx-X11/include/extensions/dpmsstr.h
+ nx-X11/include/extensions/panoramiXext.h
+ nx-X11/include/extensions/panoramiXproto.h
+ nx-X11/programs/Xserver/Xext/dpms.c
+ nx-X11/programs/Xserver/Xext/dpmsstubs.c
+ nx-X11/programs/Xserver/Xext/panoramiX.c
+ nx-X11/programs/Xserver/Xext/panoramiX.h
+ nx-X11/programs/Xserver/Xext/panoramiXSwap.c
+ nx-X11/programs/Xserver/Xext/panoramiXprocs.c
+ nx-X11/programs/Xserver/dix/dixfonts.c
+ nx-X11/programs/Xserver/randr/panoramiXproto.h
+Copyright: 1987, Digital Equipment Corporation, Maynard, Massachusetts
+  1991, 1997, Digital Equipment Corporation, Maynard, Massachusetts
+  1996, Digital Equipment Corporation, Maynard, Massachusetts
+License: Expat~NoAdvert
+
+Files: nx-X11/lib/src/xlibi18n/XimImSw.h
+ nx-X11/lib/src/xlibi18n/XimProto.h
+ nx-X11/lib/modules/im/ximcp/imDefFlt.c
+ nx-X11/lib/modules/im/ximcp/imDefLkup.c
+ nx-X11/lib/modules/im/ximcp/imDispch.c
+ nx-X11/lib/modules/im/ximcp/imExten.c
+ nx-X11/lib/modules/im/ximcp/imInt.c
+ nx-X11/lib/modules/im/ximcp/imLcGIc.c
+ nx-X11/lib/modules/im/ximcp/imLcIc.c
+ nx-X11/lib/modules/im/ximcp/imLcSIc.c
+ nx-X11/lib/modules/im/ximcp/imRmAttr.c
+Copyright: 1990-1994, FUJITSU LIMITED
+  1992-1993, FUJITSU LIMITED
+  1992-1994, FUJITSU LIMITED
+  1993-1994, FUJITSU LIMITED
+License: MIT~X11
+
+Files: nx-X11/lib/src/xlibi18n/XlcGeneric.h
+ nx-X11/lib/src/xlibi18n/XlcPublic.h
+ nx-X11/lib/src/XomGeneric.h
+ nx-X11/lib/src/xlibi18n/lcCT.c
+ nx-X11/lib/modules/lc/gen/lcGenConv.c
+ nx-X11/lib/src/xlibi18n/lcGeneric.c
+ nx-X11/lib/modules/om/generic/omDefault.c
+ nx-X11/lib/modules/om/generic/omGeneric.c
+ nx-X11/lib/modules/om/generic/omText.c
+ nx-X11/lib/modules/om/generic/omTextEsc.c
+ nx-X11/lib/modules/om/generic/omXChar.c
+Copyright: 1992-1993, TOSHIBA Corp
+  1995, FUJITSU LIMITED
+License: MIT~X11
+
+Files: nx-X11/include/extensions/Xv.h
+ nx-X11/include/extensions/Xvproto.h
+ nx-X11/lib/modules/im/ximcp/imEvToWire.c
+ nx-X11/programs/Xserver/Xext/xvdisp.c
+ nx-X11/programs/Xserver/Xext/xvdix.h
+ nx-X11/programs/Xserver/Xext/xvmain.c
+ nx-X11/programs/Xserver/include/dixfont.h
+ nx-X11/programs/Xserver/include/dixfontstr.h
+ nx-X11/programs/Xserver/include/dixstruct.h
+Copyright: 1987, Digital Equipment Corporation, Maynard, Massachusetts
+  1991, Digital Equipment Corporation, Maynard, Massachusetts
+  1993, Digital Equipment Corporation, Maynard, Massachusetts
+License: MIT~OldStyle
+
+Files: nx-X11/programs/Xserver/hw/nxagent/NXdispatch.c
+ nx-X11/programs/Xserver/hw/nxagent/NXevents.c
+ nx-X11/programs/Xserver/hw/nxagent/NXextension.c
+ nx-X11/programs/Xserver/hw/nxagent/NXglyphcurs.c
+ nx-X11/programs/Xserver/hw/nxagent/NXmiexpose.c
+ nx-X11/programs/Xserver/hw/nxagent/NXproperty.c
+ nx-X11/programs/Xserver/hw/nxagent/NXresource.c
+ nx-X11/programs/Xserver/hw/nxagent/NXwindow.c
+ nx-X11/programs/Xserver/os/WaitFor.c
+Copyright: 1987, 1989, Digital Equipment Corporation, Maynard, Massachusetts
+  1987, 1989, 1998, The Open Group
+  1987, 1998, The Open Group
+  1987, Digital Equipment Corporation, Maynard, Massachusetts
+  2001, 2011, NoMachine (http://www.nomachine.com)
+  2008-2014, Oleksandr Shneyder <o.shneyder@phoca-gmbh.de>
+  2011-2016, Mike Gabriel <mike.gabriel@das-netzwerkteam.de>*/
+  2014-2016, Mihai Moldovan <ionic@ionic.de>
+  2014-2016, Ulrich Sibiller <uli42@gmx.de>
+  2015-2016, Qindel Group (http://www.qindel.com)
+License: MIT~OpenGroup
+Comment:
+ Only a few lines in these files have been added by NoMachine
+ when first implementing the nxagent DDX. Those lines (ifdef'ed
+ with NXAGENT_SERVER) must be considered as strictly GPL-2
+ licensed additions.
+
+Files: nx-X11/include/extensions/xfixesproto.h
+ nx-X11/include/extensions/xfixeswire.h
+ nx-X11/programs/Xserver/fb/fbcompose.c
+ nx-X11/programs/Xserver/fb/fbpict.h
+ nx-X11/programs/Xserver/render/animcur.c
+ nx-X11/programs/Xserver/render/miindex.c
+ nx-X11/programs/Xserver/render/mirect.c
+ nx-X11/programs/Xserver/render/mitrap.c
+ nx-X11/programs/Xserver/render/mitri.c
+Copyright: 2000, Keith Packard, member of The XFree86 Project, Inc
+  2001, Keith Packard, member of The XFree86 Project, Inc
+  2002, Keith Packard, member of The XFree86 Project, Inc
+License: MIT~X11
+
+Files: nx-X11/include/Sunkeysym.h
+ nx-X11/lib/src/Host.c
+ nx-X11/lib/src/LiHosts.c
+ nx-X11/lib/src/xlibi18n/lcInit.c
+Copyright: 1985-1987, 1991, 1998, The Open Group
+  1986, 1998, The Open Group
+  1991, 1998, The Open Group
+  1991, Oracle and/or its affiliates.
+  2000, Oracle and/or its affiliates.
+  2004, Oracle and/or its affiliates.
+License: MIT~OpenGroup
+Comment:
+ Contributions by Oracle and/or its affiliates (from 1991, 2000, 2004)
+ have to be considered as licensed under Expat.
+
+Files: nx-X11/lib/src/ConnDis.c
+ nx-X11/lib/src/OpenDis.c
+ nx-X11/lib/src/XlibAsync.c
+ nx-X11/lib/src/XlibInt.c
+ nx-X11/lib/include/X11/Xlibint.h
+ nx-X11/programs/Xserver/Xext/security.c
+ nx-X11/programs/Xserver/Xext/SecurityPolicy
+ nx-X11/programs/Xserver/hw/nxagent/NXshm.c
+ nx-X11/programs/Xserver/os/auth.c
+Copyright: 1984-1985, 1987, 1989, 1998, The Open Group
+  1985-1986, 1998, The Open Group
+  1985-1987, 1998, The Open Group
+  1988, 1998, The Open Group
+  1989, 1998, The Open Group
+  1992, 1998, The Open Group
+  1996, 1998, The Open Group
+  2001, 2011, NoMachine (http://www.nomachine.com)
+  2008-2014, Oleksandr Shneyder <o.shneyder@phoca-gmbh.de>
+  2011-2016, Mike Gabriel <mike.gabriel@das-netzwerkteam.de>*/
+  2014-2016, Mihai Moldovan <ionic@ionic.de>
+  2014-2016, Ulrich Sibiller <uli42@gmx.de>
+  2015-2016, Qindel Group (http://www.qindel.com)
+License: MIT~OpenGroup
+Comment:
+ Modifications by NoMachine have to be considered as strictly GPL-2
+ licensed.
+ .
+ Missing copyright information in SecurityPolicy. Assuming same
+ situation as for Xext/security.c.
+
+Files: nx-X11/lib/src/xlibi18n/XimTrInt.h
+ nx-X11/lib/src/xlibi18n/XimTrX.h
+ nx-X11/lib/src/xlibi18n/XimTrans.h
+ nx-X11/lib/modules/im/ximcp/imDefIc.c
+ nx-X11/lib/modules/im/ximcp/imTrX.c
+ nx-X11/lib/modules/im/ximcp/imTrans.c
+ nx-X11/lib/modules/im/ximcp/imTransR.c
+Copyright: 1991-1992, Oracle and/or its affiliates.
+  1992, Oracle and/or its affiliates.
+  1992-1994, FUJITSU LIMITED
+  1993-1994, FUJITSU LIMITED
+License: Expat
+Comment:
+ The original work on these files by Oracle and/or its
+ affiliates have been licensed under Expat. Later
+ contributions by FUJITSU LIMITED have been licensed
+ under MIT~X11.
+
+Files: nx-X11/programs/Xserver/hw/nxagent/NXglyph.c
+ nx-X11/programs/Xserver/hw/nxagent/NXglyphstr_GlyphRef.h
+ nx-X11/programs/Xserver/hw/nxagent/NXglyphstr_GlyphSet.h
+ nx-X11/programs/Xserver/hw/nxagent/NXpicture.c
+ nx-X11/programs/Xserver/hw/nxagent/NXpicturestr_PictSolidFill.h
+ nx-X11/programs/Xserver/hw/nxagent/NXrender.c
+Copyright: 2000, SuSE, Inc
+  2001, 2011, NoMachine (http://www.nomachine.com)
+  2008-2014, Oleksandr Shneyder <o.shneyder@phoca-gmbh.de>
+  2011-2016, Mike Gabriel <mike.gabriel@das-netzwerkteam.de>*/
+  2014-2016, Mihai Moldovan <ionic@ionic.de>
+  2014-2016, Ulrich Sibiller <uli42@gmx.de>
+  2015-2016, Qindel Group (http://www.qindel.com)
+License: MIT~X11
+Comment:
+ Adaptations required for the nxagent DDX done by NoMachine
+ need to be considered as strictly GPL-2 licensed additions.
+
+Files: nx-X11/programs/Xserver/dix/dispatch.c
+ nx-X11/programs/Xserver/dix/events.c
+ nx-X11/programs/Xserver/dix/main.c
+ nx-X11/programs/Xserver/dix/resource.c
+ nx-X11/programs/Xserver/dix/window.c
+ nx-X11/programs/Xserver/mi/miexpose.c
+Copyright: 1987, 1989, Digital Equipment Corporation, Maynard, Massachusetts
+  1987, 1989, 1998, The Open Group
+  1987, 1998, The Open Group
+  1987, Digital Equipment Corporation, Maynard, Massachusetts
+  1991, 1997, Digital Equipment Corporation, Maynard, Massachusetts
+License: MIT~OpenGroup
+Comment:
+ Contributions by Digital Equipment Corporation, Maynard, Massachusetts
+ have been licensed under MIT~OldStyle.
+
+Files: nx-X11/include/extensions/Xdbeproto.h
+ nx-X11/programs/Xserver/dbe/dbe.c
+ nx-X11/programs/Xserver/dbe/dbestruct.h
+ nx-X11/programs/Xserver/dbe/midbe.c
+ nx-X11/programs/Xserver/dbe/midbe.h
+ nx-X11/programs/Xserver/dbe/midbestr.h
+Copyright: 1994-1995, Hewlett-Packard Company
+License: Expat~NoAdvert
+
+Files: nx-X11/extras/Mesa/include/GL/xmesa_xf86.h
+ nx-X11/programs/Xserver/GL/mesa/X/xf86glx.c
+ nx-X11/programs/Xserver/GL/mesa/X/xf86glx_util.c
+ nx-X11/programs/Xserver/GL/mesa/X/xf86glx_util.h
+ nx-X11/programs/Xserver/GL/mesa/X/xf86glxint.h
+Copyright: 1998-1999, Precision Insight, Inc., Cedar Park, Texas
+License: Expat
+
+Files: nx-X11/extras/Mesa/src/mesa/tnl/t_save_api.c
+ nx-X11/extras/Mesa/src/mesa/tnl/t_save_api.h
+ nx-X11/extras/Mesa/src/mesa/tnl/t_vtx_api.c
+ nx-X11/extras/Mesa/src/mesa/tnl/t_vtx_api.h
+ nx-X11/extras/Mesa/src/mesa/tnl/t_vtx_generic.c
+ nx-X11/extras/Mesa/src/mesa/tnl/t_vtx_x86.c
+Copyright: 2002, Tungsten Graphics Inc., Cedar Park, Texas
+  2004, Tungsten Graphics Inc., Cedar Park, Texas
+License: Expat
+
+Files: nx-X11/lib/include/xtrans/Xtrans.c
+ nx-X11/lib/include/xtrans/Xtrans.h
+ nx-X11/lib/include/xtrans/Xtransint.h
+ nx-X11/lib/include/xtrans/Xtranslcl.c
+ nx-X11/lib/include/xtrans/Xtransutil.c
+ nx-X11/lib/include/xtrans/transport.c
+Copyright: 1993-1994, 1998, The Open Group
+  1993-1994, NCR Corporation - Dayton, Ohio, USA
+License: MIT~OpenGroup
+Comment:
+ The NCR Corporation licensed their work on these files under
+ the following license:
+ .
+ Copyright 1993, 1994 NCR Corporation - Dayton, Ohio, USA
+ .
+ Permission to use, copy, modify, and distribute this software and its
+ documentation for any purpose and without fee is hereby granted, provided
+ that the above copyright notice appear in all copies and that both that
+ copyright notice and this permission notice appear in supporting
+ documentation, and that the name NCR not be used in advertising
+ or publicity pertaining to distribution of the software without specific,
+ written prior permission.  NCR makes no representations about the
+ suitability of this software for any purpose.  It is provided "as is"
+ without express or implied warranty.
+ .
+ NCR DISCLAIMS ALL WARRANTIES WITH REGARD TO THIS SOFTWARE,
+ INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS, IN
+ NO EVENT SHALL NCR BE LIABLE FOR ANY SPECIAL, INDIRECT OR
+ CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS
+ OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT,
+ NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN
+ CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+
+Files: nx-X11/lib/src/xlibi18n/XimintL.h
+ nx-X11/lib/modules/im/ximcp/imImSw.c
+ nx-X11/lib/modules/im/ximcp/imLcIm.c
+ nx-X11/lib/modules/im/ximcp/imThaiIc.c
+ nx-X11/lib/modules/im/ximcp/imThaiIm.c
+Copyright: 1991-1994, FUJITSU LIMITED
+  1992-1993, FUJITSU LIMITED
+  1992-1994, FUJITSU LIMITED
+  1993, Digital Equipment Corporation
+License: MIT~X11
+
+Files: nx-X11/extras/Mesa/src/mesa/tnl/t_vertex.c
+ nx-X11/extras/Mesa/src/mesa/tnl/t_vertex.h
+ nx-X11/extras/Mesa/src/mesa/tnl/t_vertex_generic.c
+ nx-X11/extras/Mesa/src/mesa/tnl/t_vertex_sse.c
+Copyright: 2003, Tungsten Graphics, inc
+License: Expat
+
+Files: nx-X11/include/extensions/saver.h
+ nx-X11/include/extensions/saverproto.h
+ nx-X11/include/extensions/scrnsaver.h
+ nx-X11/programs/Xserver/Xext/saver.c
+Copyright: 1992, X Consortium
+License: Expat~NoAdvert
+
+Files: nx-X11/programs/Xserver/miext/cw/cw.c
+ nx-X11/programs/Xserver/miext/cw/cw.h
+ nx-X11/programs/Xserver/miext/cw/cw_ops.c
+ nx-X11/programs/Xserver/miext/cw/cw_render.c
+Copyright: 2004, Eric Anholt
+License: MIT~X11
+
+Files: nx-X11/extras/Mesa/src/mesa/glapi/glapitable.h
+ nx-X11/extras/Mesa/src/mesa/glapi/glapitemp.h
+ nx-X11/extras/Mesa/src/mesa/glapi/glprocs.h
+Copyright: 1999-2001, Brian Paul
+  1999-2003, Brian Paul
+  IBM Corporation 2004
+License: Expat
+
+Files: nx-X11/extras/Mesa/src/mesa/shader/atifragshader.c
+ nx-X11/extras/Mesa/src/mesa/swrast/s_atifragshader.c
+ nx-X11/extras/Mesa/src/mesa/swrast/s_atifragshader.h
+Copyright: 1999-2003, David Airlie
+  2004, David Airlie
+License: Expat
+
+Files: nx-X11/lib/src/FreeEventData.c
+ nx-X11/lib/src/GetEventData.c
+ nx-X11/programs/Xserver/include/protocol-versions.h
+Copyright: 2009, Red Hat, Inc
+License: Expat
+
+Files: nx-X11/include/extensions/xf86bigfont.h
+ nx-X11/include/extensions/xf86bigfproto.h
+ nx-X11/programs/Xserver/Xext/xf86bigfont.c
+Copyright: 1999-2000, Bruno Haible
+  1999-2000, The XFree86 Project, Inc
+License: MIT~X11
+Comment:
+ Assuming license as found in other files contributed
+ by Bruno Haible. Possibly needs clarification at X.org
+ upstream.
+
+Files: nx-X11/lib/src/Context.c
+ nx-X11/lib/src/Quarks.c
+ nx-X11/lib/src/Xrm.c
+Copyright: 1987-1988, 1990, Digital Equipment Corporation, Maynard
+  1987-1988, 1990, 1994, 1998, The Open Group
+  1987-1988, 1990, 1998, The Open Group
+License: MIT~OldStyle
+Comment:
+ Contributions on these files by the OpenGroup have to be considered
+ as licensed under MIT~OpenGroup.
+
+Files: nx-X11/lib/src/TextExt.c
+ nx-X11/lib/src/TextExt16.c
+Copyright: 1989, 1998, The Open Group
+  1995, FUJITSU LIMITED
+  1996, 1998, The Open Group
+License: MIT~OpenGroup
+
+Files: nx-X11/include/extensions/xtestext1.h
+ nx-X11/programs/Xserver/Xext/xtest1dd.c
+ nx-X11/programs/Xserver/Xext/xtest1di.c
+Copyright: 1986-1988, 1998, The Open Group
+  1986-1988, Hewlett-Packard Corporation
+License: MIT~OpenGroup
+Comment:
+ Contributions by Hewlett-Packard Corporation have been licensed
+ under the following license:
+ .
+ Permission to use, copy, modify, and distribute this
+ software and its documentation for any purpose and without
+ fee is hereby granted, provided that the above copyright
+ notice appear in all copies and that both that copyright
+ notice and this permission notice appear in supporting
+ documentation, and that the name of Hewlett-Packard not be used in
+ advertising or publicity pertaining to distribution of the
+ software without specific, written prior permission.
+ .
+ Hewlett-Packard makes no representations about the
+ suitability of this software for any purpose.  It is provided
+ "as is" without express or implied warranty.
+ .
+ As additional note, we find:
+ .
+ This software is not subject to any license of the American
+ Telephone and Telegraph Company or of the Regents of the
+ University of California.
+
+Files: nx-X11/programs/Xserver/hw/nxagent/NXdamage.c
+ nx-X11/programs/Xserver/randr/rrmode.c
+ nx-X11/programs/Xserver/randr/rrscreen.c
+Copyright: 2001, 2011, NoMachine (http://www.nomachine.com)
+  2003, Keith Packard
+  2006, Keith Packard
+  2008-2014, Oleksandr Shneyder <o.shneyder@phoca-gmbh.de>
+  2011-2016, Mike Gabriel <mike.gabriel@das-netzwerkteam.de>*/
+  2014-2016, Mihai Moldovan <ionic@ionic.de>
+  2014-2016, Ulrich Sibiller <uli42@gmx.de>
+  2015-2016, Qindel Group (http://www.qindel.com)
+License: MIT~X11
+Comment:
+ Modifications by NoMachine have to be considered as strictly
+ GPL-2 licensed.
+
+Files: nx-X11/programs/Xserver/include/bstore.h
+ nx-X11/programs/Xserver/include/bstorestr.h
+ nx-X11/programs/Xserver/mi/mibstore.h
+Copyright: 1987, the Regents of the University of California
+License: MIT~VeryOldStyle~UniOfCalifornia
+
+Files: nx-X11/programs/Xserver/dix/region.c
+ nx-X11/programs/Xserver/mi/mivaltree.c
+Copyright: 1987-1989, 1998, The Open Group
+  1987-1989, Digital Equipment Corporation, Maynard, Massachusetts
+  1991, 1997, Digital Equipment Corporation, Maynard, Massachusetts
+License: MIT~OpenGroup
+Comment:
+ Contributions by Digital Equipment Corporation, Maynard, Massachusetts
+ have been licensed under MIT~OldStyle.
+
+Files: nx-X11/lib/src/xlibi18n/XimintP.h
+ nx-X11/lib/modules/im/ximcp/imDefIm.c
+Copyright: 1990-1992, Oracle and/or its affiliates.
+  1991-1992, Oracle and/or its affiliates.
+  1992-1994, FUJITSU LIMITED
+  1993-1994, Sony Corporation
+License: Expat
+Comment:
+ Original work from Oracle and/or its affiliates have been licensed
+ as Expat. Later contributions by FUJITSU LIMITED and Sony Corporation
+ have been licensed under MIT~X11.
+
+Files: nx-X11/extras/Mesa/src/glx/x11/indirect_size.c
+ nx-X11/extras/Mesa/src/glx/x11/indirect_size.h
+ nx-X11/extras/Mesa/src/mesa/drivers/dri/common/glcontextmodes.c
+ nx-X11/extras/Mesa/src/mesa/drivers/dri/common/glcontextmodes.h
+Copyright: 2003, IBM Corporation
+  IBM Corporation 2004
+License: Expat
+
+Files: nx-X11/programs/Xserver/composite/compoverlay.c
+ nx-X11/programs/Xserver/hw/nxagent/X11/include/Xcomposite_nxagent.h
+Copyright: 2003, Keith Packard
+  2006, Oracle and/or its affiliates.
+License: MIT~X11
+Comment:
+ Original work by Keith Packard has been licensed under MIT~X11. Later
+ contributions by Oracle and/or its affiliates have been licensed
+ under Expat.
+
+Files: nx-X11/programs/Xserver/Xext/sleepuntil.h
+ nx-X11/programs/Xserver/mi/micoord.h
+Copyright: 2000, The XFree86 Project, Inc.
+  2001, The XFree86 Project, Inc.
+License: Expat~NoAdvert
+
+Files: nx-X11/extras/Mesa/src/mesa/tnl/t_vp_build.c
+ nx-X11/extras/Mesa/src/mesa/tnl/t_vp_build.h
+Copyright: 2005, Tungsten Graphics
+License: Expat
+
+Files: nx-X11/programs/Xserver/os/strlcat.c
+ nx-X11/programs/Xserver/os/strlcpy.c
+Copyright: 1998, Todd C. Miller <Todd.Miller@courtesan.com>
+License: MIT~ISC
+
+Files: nx-X11/lib/src/xlibi18n/lcUTF8.c
+ nx-X11/lib/modules/lc/Utf8/lcUTF8Load.c
+Copyright: 1993, SunSoft, Inc
+  1999-2000, Bruno Haible
+License: MIT~X11
+
+Files: nx-X11/include/extensions/randrproto.h
+ nx-X11/programs/Xserver/randr/randrstr.h
+Copyright: 2000, Compaq Computer Corporation
+  2002, Hewlett-Packard Company
+  2006, Intel Corporation
+  2008, Red Hat, Inc
+License: MIT~X11
+
+Files: nx-X11/programs/Xserver/hw/nxagent/X11/include/Xrandr_nxagent.h
+ nxcompshad/src/X11/include/Xrandr_nxcompshad.h
+Copyright: 2000, Compaq Computer Corporation, Inc
+  2002, Hewlett-Packard Company, Inc
+  2006, Intel Corporation
+  2008, Red Hat, Inc
+License: MIT~X11
+
+Files: nx-X11/programs/Xserver/os/log.c
+ nx-X11/programs/Xserver/os/utils.c
+Copyright: 1987, 1998, The Open Group
+  1987, Digital Equipment Corporation, Maynard, Massachusetts
+  1994, Quarterdeck Office Systems
+  2001, 2011, NoMachine (http://www.nomachine.com)
+  2008-2014, Oleksandr Shneyder <o.shneyder@phoca-gmbh.de>
+  2011-2016, Mike Gabriel <mike.gabriel@das-netzwerkteam.de>*/
+  2014-2016, Mihai Moldovan <ionic@ionic.de>
+  2014-2016, Ulrich Sibiller <uli42@gmx.de>
+  2015-2016, Qindel Group (http://www.qindel.com)
+License: MIT~OpenGroup
+Comment:
+ Modifications by NoMachine have to be considered as strictly
+ GPL-2 licensed.
+
+Files: nx-X11/lib/src/GetNrmHint.c
+ nx-X11/lib/src/SetNrmHint.c
+Copyright: 1987, Digital Equipment Corporation, Maynard, Massachusetts
+  1987-1988, 1998, The Open Group
+  1988, Wyse Technology, Inc., San Jose, Ca
+License: MIT~OpenGroup
+Comment:
+ Contributions by Digital Equipment Corporation, Maynard, Massachusetts
+ and Wyse have been licensed under MIT~OldStyle.
+
+Files: nx-X11/lib/modules/im/ximcp/imLcFlt.c
+ nx-X11/lib/modules/im/ximcp/imLcLkup.c
+Copyright: 1992, 1994, FUJITSU LIMITED
+  1992, Fuji Xerox Co., Ltd
+License: MIT~X11
+
+Files: nx-X11/lib/src/xlibi18n/Ximint.h
+ nx-X11/lib/modules/im/ximcp/imRm.c
+Copyright: 1990-1994, FUJITSU LIMITED
+  1992-1994, FUJITSU LIMITED
+  1993-1994, Sony Corporation
+  1994, Sony Corporation
+License: MIT~X11
+
+Files: nx-X11/lib/src/xlibi18n/lcFile.c
+Copyright: 1993, IBM Corporation
+License: MIT~OldStyle
+
+Files: nx-X11/include/extensions/record.h
+ nx-X11/include/extensions/recordstr.h
+Copyright: 1995, Network Computing Devices
+License: MIT~OldStyle
+
+Files: nx-X11/lib/src/FilterEv.c
+ nx-X11/lib/src/RegstFlt.c
+Copyright: 1990-1991, 1998, The Open Group
+  1990-1991, OMRON Corporation
+  1991, 1998, The Open Group
+License: MIT~X11
+Comment:
+ Contributions by The Open Group have been licensed
+ under MIT~OpenGroup.
+
+Files: nx-X11/include/GL/glxint.h
+ nx-X11/programs/Xserver/GL/glx/glxext.c
+Copyright: 1991-1999 Silicon Graphics, Inc.
+License: GLX-1.0
+
+Files: nx-X11/programs/Xserver/fb/fbcmap.c
+ nx-X11/programs/Xserver/mi/micmap.c
+Copyright: 1987, Sun Microsystems, Inc. Mountain View, CA.
+License: MIT~OldStyle
+Comment:
+ Copyright attributions of Sun Microsystems, Inc. now belong
+ to Oracle.
+
+Files: nx-X11/lib/src/GetTxtProp.c
+ nx-X11/lib/src/Iconify.c
+ nx-X11/lib/src/SetTxtProp.c
+ nx-X11/lib/src/Withdraw.c
+Copyright: 1988, 1998, The Open Group
+  1988, Wyse Technology, Inc., San Jose, Ca
+License: MIT~OldStyle
+Comment:
+ Contributions by The Open Group have been licensed
+ under MIT~OpenGroup.
+
+Files: nx-X11/lib/src/xlibi18n/mbWrap.c
+ nx-X11/lib/src/xlibi18n/wcWrap.c
+Copyright: 1991, 1998, The Open Group
+  1991, the Open Software Foundation
+License: MIT~OldStyle
+Comment:
+ Contributions by The Open Group have been licensed
+ under MIT~OpenGroup.
+
+Files: nx-X11/lib/src/FSWrap.c
+ nx-X11/lib/src/xlibi18n/lcWrap.c
+Copyright: 1991, 1998, The Open Group
+  1991, the Open Software Foundation
+  1993, the TOSHIBA Corp
+License: MIT~OpenGroup
+Comment:
+ Contributions by OSF and TOSHIBA have been licensed under
+ MIT~X11.
+
+Files: nx-X11/include/extensions/XResproto.h
+ nx-X11/programs/Xserver/Xext/xres.c
+Copyright: 2002, XFree86 Inc
+License: XFree86
+
+Files: nxcomp/src/MD5.c
+ nxcomp/include/MD5.h
+Copyright: 1999, 2002, Aladdin Enterprises.
+  1999-2000, 2002, Aladdin Enterprises.
+License: Zlib
+
+Files: nx-X11/lib/src/utlist.h
+Copyright: 2007-2009, Troy D. Hanson
+License: BSD-1-clause
+
+Files: nx-X11/programs/Xserver/os/xprintf.c
+Copyright: 2004, Alexander Gottwald
+License: Expat
+
+Files: nx-X11/extras/Mesa/src/mesa/glapi/glapioffsets.h
+Copyright: 1999-2001, Brian Paul
+  IBM Corporation 2004,
+License: Expat
+
+Files: nx-X11/extras/Mesa/src/mesa/main/simple_list.h
+Copyright: 1997, Keith Whitwell
+  1999-2001, Brian Paul
+License: Expat
+
+Files: nx-X11/lib/src/UIThrStubs.c
+Copyright: 1995, David E. Wexelblat.
+License: Expat~NoAdvert
+
+Files: nx-X11/programs/Xserver/hw/nxagent/NXdixfonts.c
+Copyright: 1987, Digital Equipment Corporation, Maynard, Massachusetts
+  1991, 1997, Digital Equipment Corporation, Maynard, Massachusetts
+  2001, 2011, NoMachine (http://www.nomachine.com)
+  2008-2014, Oleksandr Shneyder <o.shneyder@phoca-gmbh.de>
+  2011-2016, Mike Gabriel <mike.gabriel@das-netzwerkteam.de>*/
+  2014-2016, Mihai Moldovan <ionic@ionic.de>
+  2014-2016, Ulrich Sibiller <uli42@gmx.de>
+  2015-2016, Qindel Group (http://www.qindel.com)
+License: Expat~NoAdvert
+Comment:
+ The original code has been licensed under MIT~OldStyle.
+ .
+ Later contributions got licensed under Expat~NoAdvert.
+ .
+ Some few modifications introduced by NoMachine have to be considered as
+ strictly GPL-2 licensed.
+
+Files: nx-X11/programs/Xserver/os/access.c
+Copyright: 1987, 1998, The Open Group
+  1987, Digital Equipment Corporation, Maynard, Massachusetts
+  2004, Sun Microsystems, Inc
+License: Expat~NoAdvert
+Comment:
+ Contributions by Digital Equipment Corporation, Maynard, Massachusetts
+ have been licensed under MIT~OldStyle.
+
+Files: nx-X11/programs/Xserver/hw/nxagent/X11/include/xpm_nxagent.h
+Copyright: 1989-1995, GROUPE BULL
+License: Expat~NoAdvert
+
+Files: nx-X11/extras/Mesa/src/mesa/glapi/dispatch.h
+Copyright: 2005, IBM Corporation
+License: Expat
+
+Files: nx-X11/programs/Xserver/hw/nxagent/X11/include/Xfixes_nxagent.h
+Copyright: 2002, Keith Packard, member of The XFree86 Project, Inc
+  2006, Oracle and/or its affiliates.
+  2011, Red Hat, Inc
+License: MIT~X11
+Comment:
+ Original work by Keith Packard has been licensed under MIT~X11.
+ .
+ Later contributions by Oracle and/or its affiliates and Red Hat, Inc.
+ have been licensed under Expat.
+
+Files: nx-X11/extras/Mesa/src/mesa/main/mm.h
+Copyright: 1999, Keith Whitwell
+License: Expat
+
+Files: nx-X11/lib/include/xtrans/Xtranssock.c
+Copyright: 1993-1994, 1998, The Open Group
+  2001, 2011, NoMachine (http://www.nomachine.com)
+  2002, Oracle and/or its affiliates.
+  2008-2014, Oleksandr Shneyder <o.shneyder@phoca-gmbh.de>
+  2011-2016, Mike Gabriel <mike.gabriel@das-netzwerkteam.de>*/
+  2014-2016, Mihai Moldovan <ionic@ionic.de>
+  2014-2016, Ulrich Sibiller <uli42@gmx.de>
+  2015-2016, Qindel Group (http://www.qindel.com)
+License: MIT~OpenGroup
+Comment:
+ Original code from The Open Group has been licensed under
+ MIT~OpenGroup.
+ .
+ Contributions by NCR Corporation has been licensed under
+ MIT~OldStyle.
+ .
+ Contributions by Oracle and/or its affiliates have been
+ licensed under Expat.
+ .
+ Modifications from NoMachine for making xtrans work
+ over the NX protocol, have to be considered as strictly
+ GPL-2 licensed.
+
+Files: nx-X11/programs/Xserver/hw/nxagent/Agent.h
+Copyright: 1995, X Consortium
+  2001, 2011, NoMachine (http://www.nomachine.com)
+  2008-2014, Oleksandr Shneyder <o.shneyder@phoca-gmbh.de>
+  2011-2016, Mike Gabriel <mike.gabriel@das-netzwerkteam.de>*/
+  2014-2016, Mihai Moldovan <ionic@ionic.de>
+  2014-2016, Ulrich Sibiller <uli42@gmx.de>
+  2015-2016, Qindel Group (http://www.qindel.com)
+License: Expat~NoAdvert
+Comment:
+ Modifications by NoMachine have to be considered as
+ strictly GPL-2 license.
+
+Files: nx-X11/programs/Xserver/composite/compositeext.h
+Copyright: 2009, NVIDIA Corporation
+License: Expat
+
+Files: nx-X11/extras/Mesa/src/mesa/main/texenvprogram.c
+Copyright: 2003, Tungsten Graphics, Inc., Cedar Park, Texas
+License: Expat
+
+Files: nx-X11/extras/Mesa/src/mesa/main/mm.c
+Copyright: 1999, Wittawat Yamwong
+License: Expat
+
+Files: nxcomp/src/Version.c
+Copyright: 2015, Qindel Formacion y Servicios SL.
+License: GPL-2
+
+Files: version.sh
+Copyright: 2015, Mihai Moldovan <ionic@ionic.de>
+  2015, Mike Gabriel <mike.gabriel@das-netzwerkteam.de>
+License: GPL-2+
+
+Files: roll-tarballs.sh
+Copyright: 2011-2016, Mike Gabriel <mike.gabriel@das-netzwerkteam.de>
+  2012, Reinhard Tartler <siretart@tauware.de>
+License: GPL-3+
+
+Files: nx-X11/programs/Xserver/dix/dixutils.c
+Copyright: 1987, 1998, The Open Group
+  1987, Digital Equipment Corporation, Maynard, Massachusetts
+  1988,1991, Adobe Systems Incorporated.
+License: MIT~OpenGroup
+Comment:
+ Contributions by Digital Equipment Corporation, Maynard, Massachusetts
+ have been licensed under MIT~OldStyle.
+ .
+ Contributions by Adobe Systems Inc. have been licensed under MIT~Adobe.
+
+Files: nx-X11/lib/src/xlibi18n/utf8WMProps.c
+Copyright: 1991, 1998, The Open Group
+  2000, Bruno Haible
+License: MIT~OpenGroup
+Comment:
+ Contributions by Bruno Haible have been licensed under MIT~X11.
+
+Files: nx-X11/lib/src/xlibi18n/utf8Wrap.c
+Copyright: 1991, 1998, The Open Group
+  1991, the Open Software Foundation
+  2000, Bruno Haible
+License: MIT~OpenGroup
+Comment:
+ Contributions by Bruno Haible have been licensed under MIT~X11.
+ .
+ Contributions by OSF have been licensed under MIT~OldStyle.
+
+Files: nx-X11/include/extensions/randr.h
+Copyright: 2000, Compaq Computer Corporation
+  2002, Hewlett Packard Company
+  2006, Intel Corporation
+  2008, Red Hat, Inc
+License: MIT~X11
+
+Files: nx-X11/programs/Xserver/randr/randr.c
+Copyright: 2000, Compaq Computer Corporation
+  2001, 2011, NoMachine (http://www.nomachine.com)
+  2002, Hewlett-Packard Company
+  2006, Intel Corporation
+  2008-2014, Oleksandr Shneyder <o.shneyder@phoca-gmbh.de>
+  2011-2016, Mike Gabriel <mike.gabriel@das-netzwerkteam.de>*/
+  2014-2016, Mihai Moldovan <ionic@ionic.de>
+  2014-2016, Ulrich Sibiller <uli42@gmx.de>
+  2015-2016, Qindel Group (http://www.qindel.com)
+License: MIT~X11
+Comment:
+ Modifications by NoMachine have to be considered as strictly
+ GPL-2 licensed.
+
+Files: nx-X11/programs/Xserver/include/misc.h
+Copyright: 1987, 1998, The Open Group
+  1987, Digital Equipment Corporation, Maynard, Massachusetts
+  1992-1993, Data General Corporation;
+  1992-1993, OMRON Corporation
+License: MIT~OpenGroup
+Comment:
+ Contributions by The Open Group have been licensed under MIT~OpenGroup.
+ .
+ Contributions by Digital  Equipment Corporation, Maynard, Massachusetts have
+ been licensed under MIT~OldStyle.
+ .
+ Contributions by  Data General Corporation and OMRON Corporation have been
+ licnsed under MIT~X11.
+
+Files: nx-X11/extras/Mesa/src/mesa/shader/atifragshader.h
+Copyright: 2004, David Airlie
+License: Expat
+Comment:
+ Missing license in header, assuming same license as found
+ in other Mesa files with same copyright holder.
+
+Files: nx-X11/lib/modules/im/ximcp/imCallbk.c
+Copyright: 1993, Digital Equipment Corporation, Maynard, Massachusetts
+  1994, FUJITSU LIMITED
+  1994, Sony Corporation
+License: MIT~OldStyle
+
+Files: nx-X11/programs/Xserver/hw/nxagent/NXxvdisp.c
+Copyright: 1991, Digital Equipment Corporation, Maynard, Massachusetts
+  2001, 2011, NoMachine (http://www.nomachine.com)
+  2008-2014, Oleksandr Shneyder <o.shneyder@phoca-gmbh.de>
+  2011-2016, Mike Gabriel <mike.gabriel@das-netzwerkteam.de>*/
+  2014-2016, Mihai Moldovan <ionic@ionic.de>
+  2014-2016, Ulrich Sibiller <uli42@gmx.de>
+  2015-2016, Qindel Group (http://www.qindel.com)
+License: MIT~OldStyle
+Comment:
+ Modifications by NoMachine have to be considered as strictly GPL-2
+ licensed.
+
+Files: nx-X11/lib/src/WMProps.c
+Copyright: 1987, Digital Equipment Corporation, Maynard, Massachusetts
+  1987-1988, 1993, 1998, The Open Group
+  1988, Wyse Technology, Inc., San Jose, Ca.
+License: MIT~OpenGroup
+Comment:
+ Contributions by Digital Equipment Corporation, Maynard, Massachusetts
+ and Wyse have been licensed under MIT~OldStyle.
+
+Files: nx-X11/lib/src/imConv.c
+Copyright: 1991-1992, Fuji Xerox Co.,Ltd
+  1993-1994, FUJITSU LIMITED
+License: MIT~X11
+
+Files: nx-X11/lib/src/xlibi18n/lcDB.c
+Copyright: 1995, FUJITSU LIMITED
+  1993, IBM Corporation
+License: MIT~OldStyle
+
+Files: nx-X11/lib/modules/im/ximcp/imLcPrs.c
+Copyright: 1992, Fuji Xerox Co., Ltd
+  1992, Oki Technosystems Laboratory, Inc
+License: MIT~X11
+
+Files: nx-X11/lib/src/Xprivate.h
+Copyright: 2008, Jamey Sharp, Josh Triplett
+License: MIT~X11
+Comment:
+ Assuming MIT~X11 from "MIT, see COPYING file" in file header.
+
+Files: nx-X11/programs/Xserver/randr/rrcrtc.c
+Copyright: 2001, 2011, NoMachine (http://www.nomachine.com)
+  2006, Keith Packard
+  2008-2014, Oleksandr Shneyder <o.shneyder@phoca-gmbh.de>
+  2010, Red Hat, Inc
+  2011-2016, Mike Gabriel <mike.gabriel@das-netzwerkteam.de>*/
+  2014-2016, Mihai Moldovan <ionic@ionic.de>
+  2014-2016, Ulrich Sibiller <uli42@gmx.de>
+  2015-2016, Qindel Group (http://www.qindel.com)
+License: MIT~X11
+Comment:
+ Modifications by NoMachine have to be considered as strictly GPL-2
+ licensed.
+
+Files: nx-X11/programs/Xserver/randr/rrxinerama.c
+Copyright: 2001, 2011, NoMachine (http://www.nomachine.com)
+  2001-2005, Thomas Winischhofer, Vienna, Austria
+  2006, Keith Packard
+  2008-2014, Oleksandr Shneyder <o.shneyder@phoca-gmbh.de>
+  2011-2016, Mike Gabriel <mike.gabriel@das-netzwerkteam.de>*/
+  2014-2016, Mihai Moldovan <ionic@ionic.de>
+  2014-2016, Ulrich Sibiller <uli42@gmx.de>
+  2015-2016, Qindel Group (http://www.qindel.com)
+License: MIT~X11
+Comment:
+ Modifications by NoMachine have to be considered as strictly GPL-2
+ licensed.
+
+Files: nx-X11/programs/Xserver/randr/rroutput.c
+Copyright: 2006, Keith Packard
+  2008, Red Hat, Inc
+License: MIT~X11
+Comment:
+ Modifications by NoMachine have to be considered as strictly GPL-2
+ licensed.
+
+Files: nx-X11/programs/Xserver/hw/nxagent/NXmitrap.c
+Copyright: 2001, 2011, NoMachine (http://www.nomachine.com)
+  2002, Keith Packard, member of The XFree86 Project, Inc
+  2008-2014, Oleksandr Shneyder <o.shneyder@phoca-gmbh.de>
+  2011-2016, Mike Gabriel <mike.gabriel@das-netzwerkteam.de>*/
+  2014-2016, Mihai Moldovan <ionic@ionic.de>
+  2014-2016, Ulrich Sibiller <uli42@gmx.de>
+  2015-2016, Qindel Group (http://www.qindel.com)
+License: MIT~X11
+Comment:
+ Modifications by NoMachine have to be considered as strictly GPL-2
+ licensed.
+
+Files: nx-X11/include/Xarch.h
+Copyright: 1997, Metro Link Incorporated
+License: MIT~X11
+
+Files: nx-X11/programs/Xserver/hw/nxagent/NXglxext.c
+Copyright: 1991-1999 Silicon Graphics, Inc.
+  2001, 2011, NoMachine (http://www.nomachine.com)
+  2008-2014, Oleksandr Shneyder <o.shneyder@phoca-gmbh.de>
+  2011-2016, Mike Gabriel <mike.gabriel@das-netzwerkteam.de>*/
+  2014-2016, Mihai Moldovan <ionic@ionic.de>
+  2014-2016, Ulrich Sibiller <uli42@gmx.de>
+  2015-2016, Qindel Group (http://www.qindel.com)
+License: GLX-1.0
+Comment:
+ Modifications by NoMachine have to be considered as strictly GPL-2
+ licensed.
+
+Files: nx-X11/programs/Xserver/os/xdmcp.c
+Copyright: 1989, Network Computing Devices, Inc., Mountain View, California
+License: MIT~VeryOldStyle~NCD
+
+Files: nxproxy/src/Main.c
+Copyright: 2001, 2011, NoMachine, http://www.nomachine.com/.
+License: GPL-2
+
+Files: nx-X11/lib/src/xlibi18n/Xlcint.h
+Copyright: 1990-1991, OMRON Corporation, NTT Software Corporation
+  1991, 1998, The Open Group
+  1991, the Open Software Foundation
+  1993, the TOSHIBA Corp
+  1993-1994, Sony Corporation
+  1993-1994, the FUJITSU LIMITED
+License: MIT~X11
+Comment:
+ Contributions by The Open Group have been licensed under MIT~OpenGroup.
+ .
+ Contributions by the other copyright holders have been licensed under
+ MIT~X11.
+
+Files: nx-X11/lib/src/SetLocale.c
+Copyright: 1987,1998, The Open Group
+  1990-1991, OMRON Corporation, NTT Software Corporation
+License: MIT~X11
+Comment:
+ Contributions by The Open Group have been licensed under MIT~OpenGroup.
+ .
+ Contributions by the other copyright holders have been licensed under
+ MIT~X11.
+
+Files: nx-X11/lib/src/xlibi18n/ICWrap.c
+Copyright: 1990-1991, OMRON Corporation, NTT Software Corporation
+  1991, 1998, The Open Group
+  1991, the Open Software Foundation
+  1993, the FUJITSU LIMITED
+License: MIT~X11
+Comment:
+ Contributions by The Open Group have been licensed under MIT~OpenGroup.
+ .
+ Contributions by the other copyright holders have been licensed under
+ MIT~X11.
+
+Files: nx-X11/programs/Xserver/randr/rrprovider.c
+Copyright: 2012, Red Hat Inc
+License: MIT~X11
+
+Files: nx-X11/lib/modules/im/ximcp/imInsClbk.c
+Copyright: 1993-1994, Sony Corporation
+License: MIT~OldStyle
+
+Files: nx-X11/lib/src/xcms/CCC.c
+Copyright: 1990, 1991, Tektronix, Inc
+  1994, 1998, The Open Group
+License: MIT~Tektronix
+Comment:
+ Contributions by The Open Group have been licensed under MIT~OpenGroup.
+ .
+ Contributions by Tektronix, Inc. have been licensed under MIT~Tektronix.
+
+Files: nx-X11/lib/src/Font.c
+Copyright: 1986, 1998, The Open Group
+  2000, The XFree86 Project, Inc
+License: MIT~OpenGroup
+
+Files: nx-X11/lib/src/xlibi18n/IMWrap.c
+Copyright: 1991, 1998, The Open Group
+  1991, the Open Software Foundation
+  1993-1994, the Sony Corporation
+License: MIT~X11
+Comment:
+ Contributions by The Open Group have been licensed under MIT~OpenGroup.
+ .
+ Contributions by the other copyright holders have been licensed under
+ MIT~X11.
+
+Files: nx-X11/programs/Xserver/mi/mibstore.c
+Copyright: 1987, 1998, The Open Group
+  1987, the Regents of the University of California
+License: MIT~OpenGroup
+Comment:
+ Contributions by The Open Group have been licensed under MIT~OpenGroup.
+ .
+ Contributions by the Regents of the University of California have been
+ licensed under MIT~VeryOldStyle~UniOfCalifornia.
+
+Files: nx-X11/include/Xdefs.h
+Copyright: 1999, The XFree86 Project Inc
+License: XFree86
+
+Files: fix-patch-whitespace
+ nx-X11/programs/Xserver/fix-miregion
+ nx-X11/programs/Xserver/fix-miregion-private
+ nx-X11/programs/Xserver/fix-region
+Copyright: 2010, Keith Packard <keithp@keithp.com>
+License: MIT~X11
+Comment:
+ Copyright holder taken from author field in Git commit (at X.org's
+ xserver.git).
+ .
+ Missing license header (also at X.org). Assuming MIT~X11.
+
+Files: testscripts/run-nxproxy2nxagent-on-localhost
+ testscripts/run-nxproxy2nxagent-over-network
+ testscripts/run-nxproxy2nxagent-over-sockets
+ testscripts/run-nxproxy2nxproxy
+ testscripts/run-nxproxy2nxproxy-over-sockets
+ testscripts/slave-agent
+ testscripts/slave-client
+Copyright:  2001, 2011, NoMachine (http://www.nomachine.com/)
+  2015-2016, Mike Gabriel <mike.gabriel@das-netzwerkteam.de>
+License: GPL-2
+
+Files: testscripts/slave-agent
+ testscripts/slave-client
+Copyright: 2015-2016, Qindel Group (http://www.qindel.com)
+License: GPL-2
+
+Files: mesa-quilt
+Copyright: Mike Gabriel <mike.gabriel@das-netzwerkteam.de>
+License: GPL-3+
+
+Files: m4/nx-macros.m4
+ nx-X11/lib/m4/nx-macros.m4
+ nxcomp/m4/nx-macros.m4
+ nxcompshad/m4/nx-macros.m4
+ nxproxy/m4/nx-macros.m4
+Copyright: 2005, 2006, Oracle and/or its affiliates
+  2017, Mike Gabriel <mike.gabriel@das-netzwerkteam.de>
+License: Expat
+
+Files: m4/nx-xtrans.m4
+ nx-X11/lib/m4/nx-xtrans.m4
+Copyright: 2005, 2006, Oracle and/or its affiliates
+License: Expat
+
+Files: ChangeLog
+ Makefile
+ doc/README.NX-development
+ VERSION
+ nxcomp/VERSION
+ nxcompshad/VERSION
+ nxproxy/VERSION
+ doc/libNX_X11/symbols/libNX_X11::symbol-usage_internally.txt
+ doc/libNX_X11/symbols/libNX_X11::symbol-usage_nxagent.txt
+ doc/libNX_X11/symbols/libNX_X11::symbol-usage_nxcompext.txt
+ doc/libNX_X11/symbols/libNX_X11::symbols.txt
+ doc/nxagent/README.keystrokes
+ doc/nxagent/README.keystrokes.debug
+ doc/nxcomp/DXPC_re-licensed_debug_784565.mbox
+ doc/nxcomp/README.on-retroactive-DXPC-license
+ doc/nxcomp/nxcomp-3.6-drops-compat-code-3.4.x-testing.pdf
+ doc/nxcompext/symbols/nxcompext::symbol-usage_internally.txt
+ doc/nxcompext/symbols/nxcompext::symbol-usage_nxagent.txt
+ doc/nxcompext/symbols/nxcompext::symbols.txt
+ doc/nxproxy/README-VALGRIND
+ etc/keystrokes.cfg
+ etc/nxagent.keyboard
+ nx-X11/programs/Xserver/hw/nxagent/man/nxagent.1
+ nx-X11/programs/Xserver/hw/nxagent/nxagent.xpm
+ nx-X11/programs/Xserver/hw/nxagent/nxmissing.xpm
+ nx-X11/programs/Xserver/hw/nxagent/x2go.xpm
+ nx-X11/Makefile
+ nxcomp/Makefile.am
+ nxcomp/src/Makefile.am
+ nxcomp/configure.ac
+ nxcomp/nxcomp.pc.in
+ nxcompshad/Makefile.am
+ nxcompshad/configure.ac
+ nxcompshad/nxcompshad.pc.in
+ nxcompshad/src/Makefile.am
+ nxproxy/man/nxproxy.1
+ nxproxy/Makefile.am
+ nxproxy/configure.ac
+ nxproxy/man/Makefile.am
+ nxproxy/src/Makefile.am
+Copyright: 2001, 2011, NoMachine (http://www.nomachine.com)
+  2008-2014, Oleksandr Shneyder <o.shneyder@phoca-gmbh.de>
+  2011-2016, Mike Gabriel <mike.gabriel@das-netzwerkteam.de>*/
+  2014-2016, Mihai Moldovan <ionic@ionic.de>
+  2014-2016, Ulrich Sibiller <uli42@gmx.de>
+  2015-2016, Qindel Group (http://www.qindel.com)
+License: GPL-2
+Comment:
+ No explicit license information in individual files. Assuming
+ copyright holders as found in LICENSE file.
+
+Files: nx-X11/include/Xpoll.h.in
+Copyright: 1994, 1998, The Open Group
+  2005, Daniel Stone
+  2001, 2011, NoMachine (http://www.nomachine.com)
+  2008-2014, Oleksandr Shneyder <o.shneyder@phoca-gmbh.de>
+  2011-2016, Mike Gabriel <mike.gabriel@das-netzwerkteam.de>*/
+  2014-2016, Mihai Moldovan <ionic@ionic.de>
+  2014-2016, Ulrich Sibiller <uli42@gmx.de>
+  2015-2016, Qindel Group (http://www.qindel.com)
+License: MIT~OpenGroup
+Comment:
+ Contributions by NoMachine have to be considered as strictly GPL-2
+ licensed.
+ .
+ Contributions by Daniel Stone have been licensed under MIT~X11.
+
+Files: nx-X11/extras/Mesa.patches/*
+Copyright: 2017, Mike Gabriel <mike.gabriel@das-netzwerkteam.de>*/
+  2017, Mihai Moldovan <ionic@ionic.de>
+  2017, Ulrich Sibiller <uli42@gmx.de>
+  2017, Qindel Group (http://www.qindel.com)
+License: Expat
+
+Files: nx-X11/lib/configure.ac
+ nx-X11/lib/Makefile.am
+ nx-X11/lib/src/xkb/Makefile.am
+ nx-X11/lib/src/util/Makefile.am
+ nx-X11/lib/src/Makefile.am
+ nx-X11/lib/src/xcms/Makefile.am
+ nx-X11/lib/src/xlibi18n/Makefile.am
+ nx-X11/lib/modules/om/generic/Makefile.am
+ nx-X11/lib/modules/om/Makefile.am
+ nx-X11/lib/modules/Makefile.am
+ nx-X11/lib/modules/im/ximcp/Makefile.am
+ nx-X11/lib/modules/im/Makefile.am
+ nx-X11/lib/modules/lc/Makefile.am
+ nx-X11/lib/modules/lc/gen/Makefile.am
+ nx-X11/lib/modules/lc/def/Makefile.am
+ nx-X11/lib/modules/lc/Utf8/Makefile.am
+ nx-X11/lib/include/Makefile.am
+Copyright: 2017, Mike Gabriel <mike.gabriel@das-netzwerkteam.de>*/
+  2017, Mihai Moldovan <ionic@ionic.de>
+  2017, Ulrich Sibiller <uli42@gmx.de>
+  2017, Qindel Group (http://www.qindel.com)
+License: MIT~X11
+Comment:
+ Passages in the above files have been derived
+ from X.org's libX11, but got heavily changed.
+
+Files: nx-X11/lib/m4/ax_define_dir.m4
+Copyright: 2008, Stepan Kasal <kasal@ucw.cz>
+  2008, Andreas Schwab <schwab@suse.de>
+  2008, Guido U. Draheim <guidod@gmx.de>
+  2008, Alexandre Oliva
+License: permissive
+
+Files: debian/*
+Copyright: 2011-2016, Mike Gabriel <mike.gabriel@das-netzwerkteam.de>
+  2011-2013, Reinhard Tartler <siretart@tauware.de>
+  2015-2016, Mihai Moldovan <ionic@ionic.de>
+License: GPL-2 or GPL-2+ or GPL-3+ or Expat or Expat~NoAdvert or MIT~OpenGroup or MIT~X11 or MIT~Tektronix or MIT~Tektronix~3-clause or MIT~OldStyle or MIT~Adobe or MIT~VeryOldStyle~UniOfCalifornia or MIT~VeryOldStyle~NCD or MIT~ISC or SGI-1.1 or GLX-1.0 or Zlib or XFree86 or BSD-1-clause
+
+License: GPL-2
+ This program is free software; you can redistribute it and/or modify it
+ under the terms of the GNU General Public License as published by the Free
+ Software Foundation; version 2 of the License.
+ .
+ This program is distributed in the hope that it will be useful, but WITHOUT
+ ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
+ more details.
+ .
+ You should have received a copy of the GNU General Public License along with
+ this program; if not, write to the Free Software Foundation, Inc., 51
+ Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ .
+ On Debian systems, the complete text of the GNU General Public License
+ version 2 can be found in `/usr/share/common-licenses/GPL-2'.
+
+License: GPL-2+
+ This program is free software; you can redistribute it and/or modify it
+ under the terms of the GNU General Public License as published by the Free
+ Software Foundation; either version 2 of the License, or (at your option)
+ any later version.
+ .
+ This program is distributed in the hope that it will be useful, but WITHOUT
+ ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
+ more details.
+ .
+ You should have received a copy of the GNU General Public License along with
+ this program; if not, write to the Free Software Foundation, Inc., 51
+ Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ .
+ On Debian systems, the complete text of the GNU General Public License
+ version 2 can be found in `/usr/share/common-licenses/GPL-2'.
+
+License: GPL-3+
+ This program is free software; you can redistribute it and/or modify it
+ under the terms of the GNU General Public License as published by the Free
+ Software Foundation; either version 3 of the License, or (at your option)
+ any later version.
+ .
+ This program is distributed in the hope that it will be useful, but WITHOUT
+  ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
+ more details.
+ .
+ You should have received a copy of the GNU General Public License along with
+ this program; if not, write to the Free Software Foundation, Inc., 51
+ Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ .
+ On Debian systems, the complete text of the GNU General Public License
+ version 3 can be found in `/usr/share/common-licenses/GPL-3'.
+
+License: Expat
+ Permission is hereby granted, free of charge, to any person obtaining a
+ copy of this software and associated documentation files (the "Software"),
+ to deal in the Software without restriction, including without limitation
+ the rights to use, copy, modify, merge, publish, distribute, sublicense,
+ and/or sell copies of the Software, and to permit persons to whom the
+ Software is furnished to do so, subject to the following conditions:
+ .
+ The above copyright notice and this permission notice shall be included
+ in all copies or substantial portions of the Software.
+ .
+ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+ OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL
+ BRIAN PAUL BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN
+ AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+License: Expat~NoAdvert
+ Permission is hereby granted, free of charge, to any person obtaining a
+ copy of this software and associated documentation files (the "Software"),
+ to deal in the Software without restriction, including without limitation
+ the rights to use, copy, modify, merge, publish, distribute, sublicense,
+ and/or sell copies of the Software, and to permit persons to whom the
+ Software is furnished to do so, subject to the following conditions:
+ .
+ The above copyright notice and this permission notice shall be included
+ in all copies or substantial portions of the Software.
+ .
+ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+ OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL
+ BRIAN PAUL BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN
+ AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ .
+ Except as contained in this notice, the name(s) of the above copyright
+ holders shall not be used in advertising or otherwise to promote the sale,
+ use or other dealings in this Software without prior written authorization.
+
+License: MIT~OpenGroup
+ Permission to use, copy, modify, distribute, and sell this software and its
+ documentation for any purpose is hereby granted without fee, provided that
+ the above copyright notice appear in all copies and that both that
+ copyright notice and this permission notice appear in supporting
+ documentation.
+ .
+ The above copyright notice and this permission notice shall be included in
+ all copies or substantial portions of the Software.
+ .
+ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL THE
+ OPEN GROUP BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN
+ AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ .
+ Except as contained in this notice, the name of The Open Group shall not be
+ used in advertising or otherwise to promote the sale, use or other dealings
+ in this Software without prior written authorization from The Open Group.
+
+License: MIT~X11
+ Permission to use, copy, modify, distribute, and sell this software and its
+ documentation for any purpose is hereby granted without fee, provided that
+ the above copyright notice appear in all copies and that both that copyright
+ notice and this permission notice appear in supporting documentation, and
+ that the name of the copyright holders not be used in advertising or
+ publicity pertaining to distribution of the software without specific,
+ written prior permission.  The copyright holders make no representations
+ about the suitability of this software for any purpose.  It is provided "as
+ is" without express or implied warranty.
+ .
+ THE COPYRIGHT HOLDERS DISCLAIM ALL WARRANTIES WITH REGARD TO THIS SOFTWARE,
+ INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS, IN NO
+ EVENT SHALL THE COPYRIGHT HOLDERS BE LIABLE FOR ANY SPECIAL, INDIRECT OR
+ CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE,
+ DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER
+ TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE
+ OF THIS SOFTWARE.
+
+License: MIT~Tektronix
+ Permission is hereby granted to use, copy, modify, sell, and otherwise
+ distribute this software and its documentation for any purpose and
+ without fee, provided that this copyright, permission, and disclaimer
+ notice is reproduced in all copies of this software and in supporting
+ documentation.  TekColor is a trademark of Tektronix, Inc.
+ .
+ Tektronix makes no representation about the suitability of this software
+ for any purpose.  It is provided "as is" and with all faults.
+ .
+ TEKTRONIX DISCLAIMS ALL WARRANTIES APPLICABLE TO THIS SOFTWARE,
+ INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
+ PARTICULAR PURPOSE.  IN NO EVENT SHALL TEKTRONIX BE LIABLE FOR ANY
+ SPECIAL, INDIRECT OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER
+ RESULTING FROM LOSS OF USE, DATA, OR PROFITS, WHETHER IN AN ACTION OF
+ CONTRACT, NEGLIGENCE, OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN
+ CONNECTION WITH THE USE OR THE PERFORMANCE OF THIS SOFTWARE.
+
+License: MIT~Tektronix~3-clause
+ Permission is hereby granted to use, copy, modify, sell, and otherwise
+ distribute this software and its documentation for any purpose and
+ without fee, provided that this copyright, permission, and disclaimer
+ notice is reproduced in all copies of this software and in supporting
+ documentation.  TekColor is a trademark of Tektronix, Inc.
+ .
+ Tektronix makes no representation about the suitability of this software
+ for any purpose.  It is provided "as is" and with all faults.
+ .
+ TEKTRONIX DISCLAIMS ALL WARRANTIES APPLICABLE TO THIS SOFTWARE,
+ INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
+ PARTICULAR PURPOqSE.  IN NO EVENT SHALL TEKTRONIX BE LIABLE FOR ANY
+ SPECIAL, INDIRECT OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER
+ RESULTING FROM LOSS OF USE, DATA, OR PROFITS, WHETHER IN AN ACTION OF
+ CONTRACT, NEGLIGENCE, OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN
+ CONNECTION WITH THE USE OR THE PERFORMANCE OF THIS SOFTWARE.
+
+License: MIT~OldStyle
+ Permission to use, copy, modify, and distribute this software and its
+ documentation for any purpose and without fee is hereby granted,
+ provided that the above copyright notice appear in all copies and that
+ both that copyright notice and this permission notice appear in
+ supporting documentation, and that the name of the copyright holder(s)
+ not be used in advertising or publicity pertaining to distribution of
+ the software without specific, written prior permission.
+ .
+ THE COPYRIGHT HOLDER(S) DISCLAIM(S) ALL WARRANTIES WITH REGARD TO THIS
+ SOFTWARE, INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND
+ FITNESS, IN NO EVENT SHALL THE COPYRIGHT HOLDERS BE LIABLE FOR ANY
+ SPECIAL, INDIRECT OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER
+ RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF
+ CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN
+ CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+
+License: MIT~Adobe
+ Permission to use, copy, modify, distribute, and sublicense this software and its
+ documentation for any purpose and without fee is hereby granted, provided that
+ the above copyright notices appear in all copies and that both those copyright
+ notices and this permission notice appear in supporting documentation and that
+ the name of Adobe Systems Incorporated not be used in advertising or publicity
+ pertaining to distribution of the software without specific, written prior
+ permission.  No trademark license to use the Adobe trademarks is hereby
+ granted.  If the Adobe trademark "Display PostScript"(tm) is used to describe
+ this software, its functionality or for any other purpose, such use shall be
+ limited to a statement that this software works in conjunction with the Display
+ PostScript system.  Proper trademark attribution to reflect Adobe's ownership
+ of the trademark shall be given whenever any such reference to the Display
+ PostScript system is made.
+ .
+ ADOBE MAKES NO REPRESENTATIONS ABOUT THE SUITABILITY OF THE SOFTWARE FOR ANY
+ PURPOSE.  IT IS PROVIDED "AS IS" WITHOUT EXPRESS OR IMPLIED WARRANTY.  ADOBE
+ DISCLAIMS ALL WARRANTIES WITH REGARD TO THIS SOFTWARE, INCLUDING ALL IMPLIED
+ WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NON-
+ INFRINGEMENT OF THIRD PARTY RIGHTS.  IN NO EVENT SHALL ADOBE BE LIABLE TO YOU
+ OR ANY OTHER PARTY FOR ANY SPECIAL, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY
+ DAMAGES WHATSOEVER WHETHER IN AN ACTION OF CONTRACT,NEGLIGENCE, STRICT
+ LIABILITY OR ANY OTHER ACTION ARISING OUT OF OR IN CONNECTION WITH THE USE OR
+ PERFORMANCE OF THIS SOFTWARE.  ADOBE WILL NOT PROVIDE ANY TRAINING OR OTHER
+ SUPPORT FOR THE SOFTWARE.
+ .
+ Adobe, PostScript, and Display PostScript are trademarks of Adobe Systems
+ Incorporated which may be registered in certain jurisdictions.
+
+License: MIT~VeryOldStyle~UniOfCalifornia
+ Permission to use, copy, modify, and distribute this software and its
+ documentation for any purpose and without fee is hereby granted, provided
+ that the above copyright notice appear in all copies.  The University of
+ California makes no representations about the suitability of this software
+ for any purpose.  It is provided "as is" without express or implied
+ warranty.
+ .
+ [The University of California makes no representations about the suitability
+ of this software for any purpose.  It is provided "as is" without express or
+ implied warranty.]
+
+License: MIT~VeryOldStyle~NCD
+ Permission to use, copy, modify, and distribute this software and its
+ documentation for any purpose and without fee is hereby granted, provided
+ that the above copyright notice appear in all copies and that both that
+ copyright notice and this permission notice appear in supporting
+ documentation, and that the name of N.C.D. not be used in advertising or
+ publicity pertaining to distribution of the software without specific,
+ written prior permission.  N.C.D. makes no representations about the
+ suitability of this software for any purpose.  It is provided "as is"
+ without express or implied warranty.
+
+License: MIT~ISC
+ Permission to use, copy, modify, and distribute this software for any
+ purpose with or without fee is hereby granted, provided that the above
+ copyright notice and this permission notice appear in all copies.
+ .
+ THE SOFTWARE IS PROVIDED "AS IS" AND TODD C. MILLER DISCLAIMS ALL
+ WARRANTIES WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES
+ OF MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL TODD C. MILLER BE LIABLE
+ FOR ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+ WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION
+ OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN
+ CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+
+License: SGI-1.1
+ SGI FREE SOFTWARE LICENSE B (Version 1.1 [02/22/2000])
+ .
+ 1. Definitions.
+ .
+ 1.1. "Additional Notice Provisions" means such additional provisions as
+ appear in the Notice in Original Code under the heading "Additional
+ Notice Provisions."
+ .
+ 1.2. "Covered Code" means the Original Code or Modifications, or any
+ combination thereof.
+ .
+ 1.3. "Hardware" means any physical device that accepts input, processes
+ input, stores the results of processing, and/or provides output.
+ .
+ 1.4. "Larger Work" means a work that combines Covered Code or portions
+ thereof with code not governed by the terms of this License.
+ .
+ 1.5. "Licensable" means having the right to grant, to the maximum extent
+ possible, whether at the time of the initial grant or subsequently
+ acquired, any and all of the rights conveyed herein.
+ .
+ 1.6. "License" means this document.
+ .
+ 1.7. "Licensed Patents" means patent claims Licensable by SGI that are
+ infringed by the use or sale of Original Code or any Modifications
+ provided by SGI, or any combination thereof.
+ .
+ 1.8. "Modifications" means any addition to or deletion from the substance or
+ structure of the Original Code or any previous Modifications. When
+ Covered Code is released as a series of files, a Modification is:
+ .
+     A. Any addition to the contents of a file containing Original Code and/or
+        addition to or deletion from the contents of a file containing previous
+        Modifications.
+ .
+     B. Any new file that contains any part of the Original Code or previous
+        Modifications.
+ .
+ 1.9. "Notice" means any notice in Original Code or Covered Code, as required
+ by and in compliance with this License.
+ .
+ 1.10. "Original Code" means source code of computer software code that is
+ described in the source code Notice required by Exhibit A as Original
+ Code, and updates and error corrections specifically thereto.
+ .
+ 1.11. "Recipient" means an individual or a legal entity exercising rights
+ under, and complying with all of the terms of, this License or a future
+ version of this License issued under Section 8. For legal entities,
+ "Recipient" includes any entity that controls, is controlled by, or is
+ under common control with Recipient. For purposes of this definition,
+ "control" of an entity means (a) the power, direct or indirect, to
+ direct or manage such entity, or (b) ownership of fifty percent (50%) or
+ more of the outstanding shares or beneficial ownership of such entity.
+ .
+ 1.12. "Recipient Patents" means patent claims Licensable by a Recipient that
+ are infringed by the use or sale of Original Code or any Modifications
+ provided by SGI, or any combination thereof.
+ .
+ 1.13. "SGI" means Silicon Graphics, Inc.
+ .
+ 1.14. "SGI Patents" means patent claims Licensable by SGI other than the
+ Licensed Patents.
+ .
+ 2. License Grant and Restrictions.
+ .
+ 2.1. SGI License Grant. Subject to the terms of this License and any
+ third party intellectual property claims, for the duration of
+ intellectual property protections inherent in the Original Code, SGI
+ hereby grants Recipient a worldwide, royalty-free, non-exclusive
+ license, to do the following: (i) under copyrights Licensable by SGI, to
+ reproduce, distribute, create derivative works from, and, to the extent
+ applicable, display and perform the Original Code and/or any
+ Modifications provided by SGI alone and/or as part of a Larger Work; and
+ (ii) under any Licensable Patents, to make, have made, use, sell, offer
+ for sale, import and/or otherwise transfer the Original Code and/or any
+ Modifications provided by SGI. Recipient accepts the terms and
+ conditions of this License by undertaking any of the aforementioned
+ actions. The patent license shall apply to the Covered Code if, at the
+ time any related Modification is added, such addition of the
+ Modification causes such combination to be covered by the Licensed
+ Patents. The patent license in Section 2.1(ii) shall not apply to any
+ other combinations that include the Modification. No patent license is
+ provided under SGI Patents for infringements of SGI Patents by
+ Modifications not provided by SGI or combinations of Original Code and
+ Modifications not provided by SGI.
+ .
+ 2.2. Recipient License Grant. Subject to the terms of this License and
+ any third party intellectual property claims, Recipient hereby grants
+ SGI and any other Recipients a worldwide, royalty-free, non-exclusive
+ license, under any Recipient Patents, to make, have made, use, sell,
+ offer for sale, import and/or otherwise transfer the Original Code
+ and/or any Modifications provided by SGI.
+ .
+ 2.3. No License For Hardware Implementations. The licenses granted in
+ Section 2.1 and 2.2 are not applicable to implementation in Hardware of
+ the algorithms embodied in the Original Code or any Modifications
+ provided by SGI .
+ .
+ 3. Redistributions.
+ .
+ 3.1. Retention of Notice/Copy of License. The Notice set forth in
+ Exhibit A, below, must be conspicuously retained or included in any and
+ all redistributions of Covered Code. For distributions of the Covered
+ Code in source code form, the Notice must appear in every file that can
+ include a text comments field; in executable form, the Notice and a copy
+ of this License must appear in related documentation or collateral where
+ the Recipient’s rights relating to Covered Code are described. Any
+ Additional Notice Provisions which actually appears in the Original Code
+ must also be retained or included in any and all redistributions of
+ Covered Code.
+ .
+ 3.2. Alternative License. Provided that Recipient is in compliance with
+ the terms of this License, Recipient may, so long as without derogation
+ of any of SGI’s rights in and to the Original Code, distribute the
+ source code and/or executable version(s) of Covered Code under (1) this
+ License; (2) a license identical to this License but for only such
+ changes as are necessary in order to clarify Recipient’s role as
+ licensor of Modifications; and/or (3) a license of Recipient’s choosing,
+ containing terms different from this License, provided that the license
+ terms include this Section 3 and Sections 4, 6, 7, 10, 12, and 13, which
+ terms may not be modified or superseded by any other terms of such
+ license. If Recipient elects to use any license other than this License,
+ Recipient must make it absolutely clear that any of its terms which
+ differ from this License are offered by Recipient alone, and not by SGI.
+ It is emphasized that this License is a limited license, and, regardless
+ of the license form employed by Recipient in accordance with this
+ Section 3.2, Recipient may relicense only such rights, in Original Code
+ and Modifications by SGI, as it has actually been granted by SGI in this
+ License.
+ .
+ 3.3. Indemnity. Recipient hereby agrees to indemnify SGI for any
+ liability incurred by SGI as a result of any such alternative license
+ terms Recipient offers.
+ .
+ 4. Termination. This License and the rights granted hereunder will
+ terminate automatically if Recipient breaches any term herein and fails
+ to cure such breach within 30 days thereof. Any sublicense to the
+ Covered Code that is properly granted shall survive any termination of
+ this License, absent termination by the terms of such sublicense.
+ Provisions that, by their nature, must remain in effect beyond the
+ termination of this License, shall survive.
+ .
+ 5. No Trademark Or Other Rights. This License does not grant any
+ rights to: (i) any software apart from the Covered Code, nor shall any
+ other rights or licenses not expressly granted hereunder arise by
+ implication, estoppel or otherwise with respect to the Covered Code;
+ (ii) any trade name, trademark or service mark whatsoever, including
+ without limitation any related right for purposes of endorsement or
+ promotion of products derived from the Covered Code, without prior
+ written permission of SGI; or (iii) any title to or ownership of the
+ Original Code, which shall at all times remains with SGI. All rights in
+ the Original Code not expressly granted under this License are reserved.
+ .
+ 6. Compliance with Laws; Non-Infringement. There are various worldwide
+ laws, regulations, and executive orders applicable to dispositions of
+ Covered Code, including without limitation export, re-export, and import
+ control laws, regulations, and executive orders, of the U.S. government
+ and other countries, and Recipient is reminded it is obliged to obey
+ such laws, regulations, and executive orders. Recipient may not
+ distribute Covered Code that (i) in any way infringes (directly or
+ contributorily) any intellectual property rights of any kind of any
+ other person or entity or (ii) breaches any representation or warranty,
+ express, implied or statutory, to which, under any applicable law, it
+ might be deemed to have been subject.
+ .
+ 7. Claims of Infringement. If Recipient learns of any third party claim
+ that any disposition of Covered Code and/or functionality wholly or
+ partially infringes the third party's intellectual property rights,
+ Recipient will promptly notify SGI of such claim.
+ .
+ 8. Versions of the License. SGI may publish revised and/or new versions of
+ the License from time to time, each with a distinguishing version
+ number. Once Covered Code has been published under a particular version
+ of the License, Recipient may, for the duration of the license, continue
+ to use it under the terms of that version, or choose to use such Covered
+ Code under the terms of any subsequent version published by SGI. Subject
+ to the provisions of Sections 3 and 4 of this License, only SGI may
+ modify the terms applicable to Covered Code created under this License.
+ .
+ 9. DISCLAIMER OF WARRANTY. COVERED CODE IS PROVIDED "AS IS." ALL EXPRESS
+ AND IMPLIED WARRANTIES AND CONDITIONS ARE DISCLAIMED, INCLUDING, WITHOUT
+ LIMITATION, ANY IMPLIED WARRANTIES AND CONDITIONS OF MERCHANTABILITY,
+ SATISFACTORY QUALITY, FITNESS FOR A PARTICULAR PURPOSE, AND
+ NON-INFRINGEMENT. SGI ASSUMES NO RISK AS TO THE QUALITY AND PERFORMANCE
+ OF THE SOFTWARE. SHOULD THE SOFTWARE PROVE DEFECTIVE IN ANY RESPECT, SGI
+ ASSUMES NO COST OR LIABILITY FOR SERVICING, REPAIR OR CORRECTION. THIS
+ DISCLAIMER OF WARRANTY IS AN ESSENTIAL PART OF THIS LICENSE. NO USE OF
+ ANY COVERED CODE IS AUTHORIZED HEREUNDER EXCEPT SUBJECT TO THIS
+ DISCLAIMER.
+ .
+ 10. LIMITATION OF LIABILITY. UNDER NO CIRCUMSTANCES NOR LEGAL THEORY,
+ WHETHER TORT (INCLUDING, WITHOUT LIMITATION, NEGLIGENCE OR STRICT
+ LIABILITY), CONTRACT, OR OTHERWISE, SHALL SGI OR ANY SGI LICENSOR BE
+ LIABLE FOR ANY DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL
+ DAMAGES OF ANY CHARACTER INCLUDING, WITHOUT LIMITATION, DAMAGES FOR LOSS
+ OF GOODWILL, WORK STOPPAGE, LOSS OF DATA, COMPUTER FAILURE OR
+ MALFUNCTION, OR ANY AND ALL OTHER COMMERCIAL DAMAGES OR LOSSES, EVEN IF
+ SUCH PARTY SHALL HAVE BEEN INFORMED OF THE POSSIBILITY OF SUCH DAMAGES.
+ THIS LIMITATION OF LIABILITY SHALL NOT APPLY TO LIABILITY FOR DEATH OR
+ PERSONAL INJURY RESULTING FROM SGI's NEGLIGENCE TO THE EXTENT APPLICABLE
+ LAW PROHIBITS SUCH LIMITATION. SOME JURISDICTIONS DO NOT ALLOW THE
+ EXCLUSION OR LIMITATION OF INCIDENTAL OR CONSEQUENTIAL DAMAGES, SO THAT
+ EXCLUSION AND LIMITATION MAY NOT APPLY TO RECIPIENT.
+ .
+ 11. Indemnity. Recipient shall be solely responsible for damages
+ arising, directly or indirectly, out of its utilization of rights under
+ this License. Recipient will defend, indemnify and hold harmless Silicon
+ Graphics, Inc. from and against any loss, liability, damages, costs or
+ expenses (including the payment of reasonable attorneys fees) arising
+ out of Recipient's use, modification, reproduction and distribution of
+ the Covered Code or out of any representation or warranty made by
+ Recipient.
+ .
+ 12. U.S. Government End Users. The Covered Code is a "commercial item"
+ consisting of "commercial computer software" as such terms are defined
+ in title 48 of the Code of Federal Regulations and all U.S. Government
+ End Users acquire only the rights set forth in this License and are
+ subject to the terms of this License.
+ .
+ 13. Miscellaneous. This License represents the complete agreement
+ concerning the its subject matter. If any provision of this License is
+ held to be unenforceable, such provision shall be reformed so as to
+ achieve as nearly as possible the same legal and economic effect as the
+ original provision and the remainder of this License will remain in
+ effect. This License shall be governed by and construed in accordance
+ with the laws of the United States and the State of California as
+ applied to agreements entered into and to be performed entirely within
+ California between California residents. Any litigation relating to this
+ License shall be subject to the exclusive jurisdiction of the Federal
+ Courts of the Northern District of California (or, absent subject matter
+ jurisdiction in such courts, the courts of the State of California),
+ with venue lying exclusively in Santa Clara County, California, with the
+ losing party responsible for costs, including without limitation, court
+ costs and reasonable attorneys fees and expenses. The application of the
+ United Nations Convention on Contracts for the International Sale of
+ Goods is expressly excluded. Any law or regulation that provides that
+ the language of a contract shall be construed against the drafter shall
+ not apply to this License.
+ .
+ Exhibit A
+ .
+ License Applicability. Except to the extent portions of this file are
+ made subject to an alternative license as permitted in the SGI Free
+ Software License B, Version 1.1 (the "License"), the contents of this
+ file are subject only to the provisions of the License. You may not use
+ this file except in compliance with the License. You may obtain a copy
+ of the License at Silicon Graphics, Inc., attn: Legal Services, 1600
+ Amphitheatre Parkway, Mountain View, CA 94043-1351, or at:
+ .
+ http://oss.sgi.com/projects/FreeB
+ .
+ Note that, as provided in the License, the Software is distributed on an
+ "AS IS" basis, with ALL EXPRESS AND IMPLIED WARRANTIES AND CONDITIONS
+ DISCLAIMED, INCLUDING, WITHOUT LIMITATION, ANY IMPLIED WARRANTIES AND
+ CONDITIONS OF MERCHANTABILITY, SATISFACTORY QUALITY, FITNESS FOR A
+ PARTICULAR PURPOSE, AND NON-INFRINGEMENT.
+ .
+ Original Code. The Original Code is: [name of software, version number,
+ and release date], developed by Silicon Graphics, Inc. The Original Code
+ is Copyright (c) [dates of first publication, as appearing in the Notice
+ in the Original Code] Silicon Graphics, Inc. Copyright in any portions
+ created by third parties is as indicated elsewhere herein. All Rights
+ Reserved.
+ .
+ Additional Notice Provisions: [such additional provisions, if any, as
+ appear in the Notice in the Original Code under the heading "Additional
+ Notice Provisions"]
+
+License: GLX-1.0
+ GLX PUBLIC LICENSE (Version 1.0 (2/11/99)) ("License")
+ .
+ Subject to any third party claims, Silicon Graphics, Inc. ("SGI") hereby
+ grants permission to Recipient (defined below), under Recipient's
+ copyrights in the Original Software (defined below), to use, copy,
+ modify, merge, publish, distribute, sublicense and/or sell copies of
+ Subject Software (defined below), and to permit persons to whom the
+ Subject Software is furnished in accordance with this License to do the
+ same, subject to all of the following terms and conditions, which
+ Recipient accepts by engaging in any such use, copying, modifying,
+ merging, publishing, distributing, sublicensing or selling:
+ .
+ 1. Definitions.
+ .
+     (a) "Original Software" means source code of computer software code
+     which is described in Exhibit A as Original Software.
+ .
+     (b) "Modifications" means any addition to or deletion from the
+     substance or structure of either the Original Software or any
+     previous Modifications. When Subject Software is released as a
+     series of files, a Modification means (i) any addition to or
+     deletion from the contents of a file containing Original Software or
+     previous Modifications and (ii) any new file that contains any part
+     of the Original Code or previous Modifications.
+ .
+     (c) "Subject Software" means the Original Software or Modifications
+     or the combination of the Original Software and Modifications, or
+     portions of any of the foregoing.
+ .
+     (d) "Recipient" means an individual or a legal entity exercising
+     rights under, and complying with all of the terms of, this License.
+     For legal entities, "Recipient" includes any entity which controls,
+     is controlled by, or is under common control with Recipient. For
+     purposes of this definition, "control" of an entity means (a) the
+     power, direct or indirect, to direct or manage such entity, or (b)
+     ownership of fifty percent (50%) or more of the outstanding shares
+     or beneficial ownership of such entity.
+ .
+ 2. Redistribution of Source Code Subject to These Terms. Redistributions
+ of Subject Software in source code form must retain the notice set forth
+ in Exhibit A, below, in every file. A copy of this License must be
+ included in any documentation for such Subject Software where the
+ recipients' rights relating to Subject Software are described. Recipient
+ may distribute the source code version of Subject Software under a
+ license of Recipient's choice, which may contain terms different from
+ this License, provided that (i) Recipient is in compliance with the
+ terms of this License, and (ii) the license terms include this Section 2
+ and Sections 3, 4, 7, 8, 10, 12 and 13 of this License, which terms may
+ not be modified or superseded by any other terms of such license. If
+ Recipient distributes the source code version under a different license
+ Recipient must make it absolutely clear that any terms which differ from
+ this License are offered by Recipient alone, not by SGI. Recipient
+ hereby agrees to indemnify SGI for any liability incurred by SGI as a
+ result of any such terms Recipient offers.
+ .
+ 3. Redistribution in Executable Form. The notice set forth in Exhibit A
+ must be conspicuously included in any notice in an executable version of
+ Subject Software, related documentation or collateral in which Recipient
+ describes the user's rights relating to the Subject Software. Recipient
+ may distribute the executable version of Subject Software under a
+ license of Recipient's choice, which may contain terms different from
+ this License, provided that (i) Recipient is in compliance with the
+ terms of this License, and (ii) the license terms include this Section 3
+ and Sections 4, 7, 8, 10, 12 and 13 of this License, which terms may not
+ be modified or superseded by any other terms of such license. If
+ Recipient distributes the executable version under a different license
+ Recipient must make it absolutely clear that any terms which differ from
+ this License are offered by Recipient alone, not by SGI. Recipient
+ hereby agrees to indemnify SGI for any liability incurred by SGI as a
+ result of any such terms Recipient offers.
+ .
+ 4. Termination. This License and the rights granted hereunder will
+ terminate automatically if Recipient fails to comply with terms herein
+ and fails to cure such breach within 30 days of the breach. Any
+ sublicense to the Subject Software which is properly granted shall
+ survive any termination of this License absent termination by the terms
+ of such sublicense. Provisions which, by their nature, must remain in
+ effect beyond the termination of this License shall survive.
+ .
+ 5. No Trademark Rights. This License does not grant any rights to use
+ any trade name, trademark or service mark whatsoever. No trade name,
+ trademark or service mark of SGI may be used to endorse or promote
+ products derived from the Subject Software without prior written
+ permission of SGI.
+ .
+ 6. No Other Rights. This License does not grant any rights with respect
+ to the OpenGL API or to any software or hardware implementation thereof
+ or to any other software whatsoever, nor shall any other rights or
+ licenses not expressly granted hereunder arise by implication, estoppel
+ or otherwise with respect to the Subject Software. Title to and
+ ownership of the Original Software at all times remains with SGI. All
+ rights in the Original Software not expressly granted under this License
+ are reserved.
+ .
+ 7. Compliance with Laws; Non-Infringement. Recipient shall comply with
+ all applicable laws and regulations in connection with use and
+ distribution of the Subject Software, including but not limited to, all
+ export and import control laws and regulations of the U.S. government
+ and other countries. Recipient may not distribute Subject Software that
+ (i) in any way infringes (directly or contributorily) the rights
+ (including patent, copyright, trade secret, trademark or other
+ intellectual property rights of any kind) of any other person or entity
+ or (ii) breaches any representation or warranty, express, implied or
+ statutory, which under any applicable law it might be deemed to have
+ been distributed.
+ .
+ 8. Claims of Infringement. If Recipient at any time has knowledge of any
+ one or more third party claims that reproduction, modification, use,
+ distribution, import or sale of Subject Software (including particular
+ functionality or code incorporated in Subject Software) infringes the
+ third party's intellectual property rights, Recipient must place in a
+ well-identified web page bearing the title "LEGAL" a description of each
+ such claim and a description of the party making each such claim in
+ sufficient detail that a user of the Subject Software will know whom to
+ contact regarding the claim. Also, upon gaining such knowledge of any
+ such claim, Recipient must conspicuously include the URL for such web
+ page in the Exhibit A notice required under Sections 2 and 3, above, and
+ in the text of any related documentation, license agreement or
+ collateral in which Recipient describes end user's rights relating to
+ the Subject Software. If Recipient obtains such knowledge after it makes
+ Subject Software available to any other person or entity, Recipient
+ shall take other steps (such as notifying appropriate mailing lists or
+ newsgroups) reasonably calculated to inform those who received the
+ Subject Software that new knowledge has been obtained.
+ .
+ 9. DISCLAIMER OF WARRANTY. SUBJECT SOFTWARE IS PROVIDED ON AN "AS IS"
+ BASIS, WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESSED OR IMPLIED,
+ INCLUDING, WITHOUT LIMITATION, WARRANTIES THAT THE SUBJECT SOFTWARE IS
+ FREE OF DEFECTS, MERCHANTABLE, FIT FOR A PARTICULAR PURPOSE OR NON-
+ INFRINGING. SGI ASSUMES NO RISK AS TO THE QUALITY AND PERFORMANCE OF THE
+ SOFTWARE. SHOULD ANY SOFTWARE PROVE DEFECTIVE IN ANY RESPECT, SGI
+ ASSUMES NO COST OR LIABILITY FOR ANY SERVICING, REPAIR OR CORRECTION.
+ THIS DISCLAIMER OF WARRANTY CONSTITUTES AN ESSENTIAL PART OF THIS
+ LICENSE. NO USE OF ANY SUBJECT SOFTWARE IS AUTHORIZED HEREUNDER EXCEPT
+ UNDER THIS DISCLAIMER.
+ .
+ 10. LIMITATION OF LIABILITY. UNDER NO CIRCUMSTANCES AND UNDER NO LEGAL
+ THEORY, WHETHER TORT (INCLUDING, WITHOUT LIMITATION, NEGLIGENCE OR
+ STRICT LIABILITY), CONTRACT, OR OTHERWISE, SHALL SGI OR ANY SGI LICENSOR
+ BE LIABLE FOR ANY DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR
+ CONSEQUENTIAL DAMAGES OF ANY CHARACTER INCLUDING, WITHOUT LIMITATION,
+ DAMAGES FOR LOSS OF GOODWILL, WORK STOPPAGE, LOSS OF DATA, COMPUTER
+ FAILURE OR MALFUNCTION, OR ANY AND ALL OTHER COMMERCIAL DAMAGES OR
+ LOSSES, EVEN IF SUCH PARTY SHALL HAVE BEEN INFORMED OF THE POSSIBILITY
+ OF SUCH DAMAGES. THIS LIMITATION OF LIABILITY SHALL NOT APPLY TO
+ LIABILITY FOR DEATH OR PERSONAL INJURY RESULTING FROM SGI's NEGLIGENCE
+ TO THE EXTENT APPLICABLE LAW PROHIBITS SUCH LIMITATION. SOME
+ JURISDICTIONS DO NOT ALLOW THE EXCLUSION OR LIMITATION OF INCIDENTAL OR
+ CONSEQUENTIAL DAMAGES, SO THAT EXCLUSION AND LIMITATION MAY NOT APPLY TO
+ RECIPIENT.
+ .
+ 11. Indemnity. Recipient shall be solely responsible for damages
+ arising, directly or indirectly, out of its utilization of rights under
+ this License. Recipient will defend, indemnify and hold harmless Silicon
+ Graphics, Inc. from and against any loss, liability, damages, costs or
+ expenses (including the payment of reasonable attorneys fees) arising
+ out of Recipient's use, modification, reproduction and distribution of
+ the Subject Software or out of any representation or warranty made by
+ Recipient.
+ .
+ 12. U.S. Government End Users. The Subject Software is a "commercial
+ item" consisting of "commercial computer software" as such terms are
+ defined in title 48 of the Code of Federal Regulations and all U.S.
+ Government End Users acquire only the rights set forth in this License
+ and are subject to the terms of this License.
+ .
+ 13. Miscellaneous. This License represents the complete agreement
+ concerning subject matter hereof. If any provision of this License is
+ held to be unenforceable, such provision shall be reformed so as to
+ achieve as nearly as possible the same economic effect as the original
+ provision and the remainder of this License will remain in effect. This
+ License shall be governed by and construed in accordance with the laws
+ of the United States and the State of California as applied to
+ agreements entered into and to be performed entirely within California
+ between California residents. Any litigation relating to this License
+ shall be subject to the exclusive jurisdiction of the Federal Courts of
+ the Northern District of California (or, absent subject matter
+ jurisdiction in such courts, the courts of the State of California),
+ with venue lying exclusively in Santa Clara County, California, with the
+ losing party responsible for costs, including without limitation, court
+ costs and reasonable attorneys fees and expenses. The application of the
+ United Nations Convention on Contracts for the International Sale of
+ Goods is expressly excluded. Any law or regulation which provides that
+ the language of a contract shall be construed against the drafter shall
+ not apply to this License.
+ .
+ Exhibit A
+ .
+ The contents of this file are subject to Sections 2, 3, 4, 7, 8, 10, 12
+ and 13 of the GLX Public License Version 1.0 (the "License"). You may
+ not use this file except in compliance with those sections of the
+ License. You may obtain a copy of the License at Silicon Graphics, Inc.,
+ attn: Legal Services, 2011 N. Shoreline Blvd., Mountain View, CA 94043
+ or at http://www.sgi.com/software/opensource/glx/license.html.
+ .
+ Software distributed under the License is distributed on an "AS IS"
+ basis. ALL WARRANTIES ARE DISCLAIMED, INCLUDING, WITHOUT LIMITATION, ANY
+ IMPLIED WARRANTIES OF MERCHANTABILITY, OF FITNESS FOR A PARTICULAR
+ PURPOSE OR OF NON- INFRINGEMENT. See the License for the specific
+ language governing rights and limitations under the License.
+ .
+ The Original Software is GLX version 1.2 source code, released February,
+ 1999. The developer of the Original Software is Silicon Graphics, Inc.
+ Those portions of the Subject Software created by Silicon Graphics, Inc.
+ are Copyright (c) 1991-1999 Silicon Graphics, Inc. All Rights Reserved.
+
+License: XFree86
+ The above copyright notice and this permission notice shall be included in
+ all copies or substantial portions of the Software.
+ .
+ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL THE
+ OPEN GROUP BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN
+ AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ .
+ Except as contained in this notice, the name of The XFree86 Project
+ Inc. shall not be used in advertising or otherwise to promote the
+ sale, use or other dealings in this Software without prior written
+ authorization from The XFree86 Project Inc..
+
+License: Zlib
+ This software is provided 'as-is', without any express or implied
+ warranty. In no event will the authors be held liable for any damages
+ arising from the use of this software.
+ .
+ Permission is granted to anyone to use this software for any purpose,
+ including commercial applications, and to alter it and redistribute it
+ freely, subject to the following restrictions:
+ .
+ 1. The origin of this software must not be misrepresented; you must not
+    claim that you wrote the original software. If you use this software
+    in a product, an acknowledgment in the product documentation would be
+    appreciated but is not required.
+ 2. Altered source versions must be plainly marked as such, and must not be
+    misrepresented as being the original software.
+ 3. This notice may not be removed or altered from any source distribution.
+
+License: BSD-1-clause
+ Redistribution and use in source and binary forms, with or without
+ modification, are permitted provided that the following conditions are met:
+ .
+    * Redistributions of source code must retain the above copyright
+      notice, this list of conditions and the following disclaimer.
+ .
+ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS
+ IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
+ TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
+ PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER
+ OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+ LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+ NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+License: permissive
+ Copying and distribution of this file, with or without modification, are
+ permitted in any medium without royalty provided the copyright notice
+ and this notice are preserved. This file is offered as-is, without any
+ warranty.

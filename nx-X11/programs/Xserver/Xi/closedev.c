@@ -1,4 +1,3 @@
-/* $Xorg: closedev.c,v 1.4 2001/02/09 02:04:33 xorgcvs Exp $ */
 
 /************************************************************
 
@@ -45,7 +44,6 @@ ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS
 SOFTWARE.
 
 ********************************************************/
-/* $XFree86: xc/programs/Xserver/Xi/closedev.c,v 3.3 2001/08/23 14:56:19 alanh Exp $ */
 
 /***********************************************************************
  *
@@ -53,19 +51,17 @@ SOFTWARE.
  *
  */
 
-#define	 NEED_EVENTS
-#define	 NEED_REPLIES
 #ifdef HAVE_DIX_CONFIG_H
 #include <dix-config.h>
 #endif
 
-#include <X11/X.h>				/* for inputstr.h    */
-#include <X11/Xproto.h>			/* Request macro     */
+#include <nx-X11/X.h>				/* for inputstr.h    */
+#include <nx-X11/Xproto.h>			/* Request macro     */
 #include "inputstr.h"			/* DeviceIntPtr	     */
 #include "windowstr.h"			/* window structure  */
 #include "scrnintstr.h"			/* screen structure  */
-#include <X11/extensions/XI.h>
-#include <X11/extensions/XIproto.h>
+#include <nx-X11/extensions/XI.h>
+#include <nx-X11/extensions/XIproto.h>
 #include "XIstubs.h"
 #include "extnsionst.h"
 #include "extinit.h"			/* LookupDeviceIntRec */
@@ -83,10 +79,8 @@ int
 SProcXCloseDevice(client)
     register ClientPtr client;
     {
-    register char n;
-
     REQUEST(xCloseDeviceReq);
-    swaps(&stuff->length, n);
+    swaps(&stuff->length);
     REQUEST_SIZE_MATCH(xCloseDeviceReq);
     return(ProcXCloseDevice(client));
     }
@@ -124,7 +118,7 @@ ProcXCloseDevice(client)
 
     for (i=0; i<screenInfo.numScreens; i++)
 	{
-	pWin = WindowTable[i];
+	pWin = screenInfo.screens[i]->root;
         DeleteDeviceEvents (d, pWin, client);
 	p1 = pWin->firstChild;
 	DeleteEventsFromChildren (d, p1, client);

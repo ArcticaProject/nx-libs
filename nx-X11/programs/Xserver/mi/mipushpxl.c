@@ -1,4 +1,3 @@
-/* $XFree86: xc/programs/Xserver/mi/mipushpxl.c,v 3.12 2001/12/14 20:00:26 dawes Exp $ */
 /***********************************************************
 
 Copyright 1987, 1998  The Open Group
@@ -45,20 +44,34 @@ ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS
 SOFTWARE.
 
 ******************************************************************/
-/* $Xorg: mipushpxl.c,v 1.4 2001/02/09 02:05:21 xorgcvs Exp $ */
 #ifdef HAVE_DIX_CONFIG_H
 #include <dix-config.h>
 #endif
 
-#include <X11/X.h>
+#include <nx-X11/X.h>
 #include "gcstruct.h"
 #include "scrnintstr.h"
 #include "pixmapstr.h"
 #include "regionstr.h"
-#include "../mfb/maskbits.h"
 #include "mi.h"
+#include "servermd.h"
 
 #define NPT 128
+
+/* These were stolen from mfb.  They don't really belong here. */
+#define LONG2CHARSSAMEORDER(x) ((MiBits)(x))
+#define LONG2CHARSDIFFORDER( x ) ( ( ( ( x ) & (MiBits)0x000000FF ) << 0x18 ) \
+                        | ( ( ( x ) & (MiBits)0x0000FF00 ) << 0x08 ) \
+                        | ( ( ( x ) & (MiBits)0x00FF0000 ) >> 0x08 ) \
+                        | ( ( ( x ) & (MiBits)0xFF000000 ) >> 0x18 ) )
+
+
+#define PGSZB  4
+#define PPW    (PGSZB<<3) /* assuming 8 bits per byte */
+#define PGSZ   PPW
+#define PLST   (PPW-1)
+#define PIM    PLST
+#define PWSH   5
 
 /* miPushPixels -- squeegees the fill style of pGC through pBitMap
  * into pDrawable.  pBitMap is a stencil (dx by dy of it is used, it may
@@ -96,7 +109,7 @@ miPushPixels(pGC, pBitMap, pDrawable, dx, dy, xOrg, yOrg)
     DDXPointRec	pt[NPT], ptThisLine;
     int		width[NPT];
 #ifdef XFree86Server
-    PixelType	startmask;
+    MiBits	startmask;
     if (screenInfo.bitmapBitOrder == IMAGE_BYTE_ORDER)
       if (screenInfo.bitmapBitOrder == LSBFirst)
         startmask = (MiBits)(-1) ^
@@ -113,7 +126,7 @@ miPushPixels(pGC, pBitMap, pDrawable, dx, dy, xOrg, yOrg)
             LONG2CHARSDIFFORDER((MiBits)(-1) >> 1);
 #endif
 
-    pwLineStart = (MiBits *)xalloc(BitmapBytePad(dx));
+    pwLineStart = (MiBits *)malloc(BitmapBytePad(dx));
     if (!pwLineStart)
 	return;
     ipt = 0;
@@ -252,7 +265,7 @@ miPushPixels(pGC, pBitMap, pDrawable, dx, dy, xOrg, yOrg)
 	    }
 	}
     }
-    xfree(pwLineStart);
+    free(pwLineStart);
     /* Flush any remaining spans */
     if (ipt)
     {

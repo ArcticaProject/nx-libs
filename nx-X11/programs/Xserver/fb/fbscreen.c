@@ -21,7 +21,6 @@
  * TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
-/* $XFree86: xc/programs/Xserver/fb/fbscreen.c,v 1.13 2001/05/29 04:54:09 keithp Exp $ */
 
 #ifdef HAVE_DIX_CONFIG_H
 #include <dix-config.h>
@@ -30,18 +29,18 @@
 #include "fb.h"
 
 Bool
-fbCloseScreen (int index, ScreenPtr pScreen)
+fbCloseScreen (ScreenPtr pScreen)
 {
     int	    d;
     DepthPtr	depths = pScreen->allowedDepths;
 
     for (d = 0; d < pScreen->numDepths; d++)
-	xfree (depths[d].vids);
-    xfree (depths);
-    xfree (pScreen->visuals);
-    xfree (pScreen->devPrivate);
+	free (depths[d].vids);
+    free (depths);
+    free (pScreen->visuals);
+    free (pScreen->devPrivate);
 #ifdef FB_SCREEN_PRIVATE
-    xfree (pScreen->devPrivates[fbScreenPrivateIndex].ptr);
+    free (pScreen->devPrivates[fbScreenPrivateIndex].ptr);
 #endif
     return TRUE;
 }
@@ -97,14 +96,14 @@ _fbSetWindowPixmap (WindowPtr pWindow, PixmapPtr pPixmap)
 #ifdef FB_NO_WINDOW_PIXMAPS
     FatalError ("Attempted to set window pixmap without fb support\n");
 #else
-    pWindow->devPrivates[fbWinPrivateIndex].ptr = (pointer) pPixmap;
+    pWindow->devPrivates[fbWinPrivateIndex].ptr = (void *) pPixmap;
 #endif
 }
 #endif
 
 Bool
 fbSetupScreen(ScreenPtr	pScreen, 
-	      pointer	pbits,		/* pointer to screen bitmap */
+	      void *	pbits,		/* pointer to screen bitmap */
 	      int	xsize, 		/* in pixels */
 	      int	ysize,
 	      int	dpix,		/* dots per inch */
@@ -160,7 +159,7 @@ fbSetupScreen(ScreenPtr	pScreen,
 
 Bool
 fbFinishScreenInit(ScreenPtr	pScreen,
-		   pointer	pbits,
+		   void *	pbits,
 		   int		xsize,
 		   int		ysize,
 		   int		dpix,
@@ -261,7 +260,7 @@ fbFinishScreenInit(ScreenPtr	pScreen,
 /* dts * (inch/dot) * (25.4 mm / inch) = mm */
 Bool
 fbScreenInit(ScreenPtr	pScreen,
-	     pointer	pbits,
+	     void *	pbits,
 	     int	xsize,
 	     int	ysize,
 	     int	dpix,

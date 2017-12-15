@@ -25,7 +25,6 @@ used in advertising or otherwise to promote the sale, use or other dealings
 in this Software without prior written authorization from The Open Group.
  * *
  */
-/* $XFree86: Xthreads.h,v 3.10 2001/12/14 19:53:26 dawes Exp $ */
 
 #ifndef _XTHREADS_H_
 #define _XTHREADS_H_
@@ -33,12 +32,6 @@ in this Software without prior written authorization from The Open Group.
 /* Redefine these to XtMalloc/XtFree or whatever you want before including
  * this header file.
  */
-#ifndef xmalloc
-#define xmalloc malloc
-#endif
-#ifndef xfree
-#define xfree free
-#endif
 
 #ifdef CTHREADS
 #include <cthreads.h>
@@ -63,7 +56,7 @@ typedef struct mutex xmutex_rec;
 #define xcondition_broadcast(cv) condition_broadcast(cv)
 #define xcondition_set_name(cv,str) condition_set_name(cv,str)
 #else /* !CTHREADS */
-#if defined(SVR4) && !defined(__sgi) && !defined(_SEQUENT_)
+#if defined(SVR4) && !defined(_SEQUENT_)
 #include <thread.h>
 #include <synch.h>
 typedef thread_t xthread_t;
@@ -98,7 +91,7 @@ extern xthread_t (*_x11_thr_self)();
 #define xcondition_broadcast(cv) cond_broadcast(cv)
 #else /* !SVR4 */
 #ifdef WIN32
-#include <X11/Xwindows.h>
+#include <nx-X11/Xwindows.h>
 typedef DWORD xthread_t;
 typedef DWORD xthread_key_t;
 struct _xthread_waiter {
@@ -282,16 +275,16 @@ static xthread_t _X_no_thread_id;
 typedef xcondition_rec *xcondition_t;
 typedef xmutex_rec *xmutex_t;
 #ifndef xcondition_malloc
-#define xcondition_malloc() (xcondition_t)xmalloc(sizeof(xcondition_rec))
+#define xcondition_malloc() (xcondition_t)malloc(sizeof(xcondition_rec))
 #endif
 #ifndef xcondition_free
-#define xcondition_free(c) xfree((char *)c)
+#define xcondition_free(c) free((char *)c)
 #endif
 #ifndef xmutex_malloc
-#define xmutex_malloc() (xmutex_t)xmalloc(sizeof(xmutex_rec))
+#define xmutex_malloc() (xmutex_t)malloc(sizeof(xmutex_rec))
 #endif
 #ifndef xmutex_free
-#define xmutex_free(m) xfree((char *)m)
+#define xmutex_free(m) free((char *)m)
 #endif
 #ifndef xthread_have_id
 #define xthread_have_id(id) id

@@ -1,4 +1,3 @@
-/* $XFree86: xc/programs/Xserver/Xi/getselev.c,v 3.5 2001/10/28 03:32:53 tsi Exp $ */
 /************************************************************
 
 Copyright 1989, 1998  The Open Group
@@ -45,7 +44,6 @@ SOFTWARE.
 
 ********************************************************/
 
-/* $Xorg: getselev.c,v 1.4 2001/02/09 02:04:34 xorgcvs Exp $ */
 
 /***********************************************************************
  *
@@ -53,16 +51,14 @@ SOFTWARE.
  *
  */
 
-#define	 NEED_EVENTS
-#define	 NEED_REPLIES
 #ifdef HAVE_DIX_CONFIG_H
 #include <dix-config.h>
 #endif
 
-#include <X11/X.h>				/* for inputstr.h    */
-#include <X11/Xproto.h>			/* Request macro     */
-#include <X11/extensions/XI.h>
-#include <X11/extensions/XIproto.h>
+#include <nx-X11/X.h>				/* for inputstr.h    */
+#include <nx-X11/Xproto.h>			/* Request macro     */
+#include <nx-X11/extensions/XI.h>
+#include <nx-X11/extensions/XIproto.h>
 #include "inputstr.h"			/* DeviceIntPtr	     */
 #include "windowstr.h"			/* window struct     */
 #include "extnsionst.h"
@@ -83,12 +79,10 @@ int
 SProcXGetSelectedExtensionEvents(client)
     register ClientPtr client;
     {
-    register char n;
-
     REQUEST(xGetSelectedExtensionEventsReq);
-    swaps(&stuff->length, n);
+    swaps(&stuff->length);
     REQUEST_SIZE_MATCH(xGetSelectedExtensionEventsReq);
-    swapl(&stuff->window, n);
+    swapl(&stuff->window);
     return(ProcXGetSelectedExtensionEvents(client));
     }
 
@@ -149,7 +143,7 @@ ProcXGetSelectedExtensionEvents(client)
 	total_length = (rep.all_clients_count + rep.this_client_count) * 
 	    sizeof (XEventClass);
 	rep.length = (total_length + 3) >> 2;
-	buf = (XEventClass *) xalloc (total_length);
+	buf = (XEventClass *) malloc (total_length);
 
 	tclient = buf;
 	aclient = buf + rep.this_client_count;
@@ -168,7 +162,7 @@ ProcXGetSelectedExtensionEvents(client)
 	{
 	client->pSwapReplyFunc = (ReplySwapPtr) Swap32Write;
 	WriteSwappedDataToClient( client, total_length, buf);
-	xfree (buf);
+	free (buf);
 	}
     return Success;
     }
@@ -186,11 +180,9 @@ SRepXGetSelectedExtensionEvents (client, size, rep)
     int		size;
     xGetSelectedExtensionEventsReply	*rep;
     {
-    register char n;
-
-    swaps(&rep->sequenceNumber, n);
-    swapl(&rep->length, n);
-    swaps(&rep->this_client_count, n);
-    swaps(&rep->all_clients_count, n);
-    WriteToClient(client, size, (char *)rep);
+    swaps(&rep->sequenceNumber);
+    swapl(&rep->length);
+    swaps(&rep->this_client_count);
+    swaps(&rep->all_clients_count);
+    WriteToClient(client, size, rep);
     }

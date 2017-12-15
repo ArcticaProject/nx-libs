@@ -62,18 +62,18 @@ PictureGetFilterId (char *filter, int len, Bool makeit)
 	    return i;
     if (!makeit)
 	return -1;
-    name = xalloc (len + 1);
+    name = malloc (len + 1);
     if (!name)
 	return -1;
     memcpy (name, filter, len);
     name[len] = '\0';
     if (filterNames)
-	names = xrealloc (filterNames, (nfilterNames + 1) * sizeof (char *));
+	names = realloc (filterNames, (nfilterNames + 1) * sizeof (char *));
     else
-	names = xalloc (sizeof (char *));
+	names = malloc (sizeof (char *));
     if (!names)
     {
-	xfree (name);
+	free (name);
 	return -1;
     }
     filterNames = names;
@@ -119,8 +119,8 @@ PictureFreeFilterIds (void)
     int	    i;
 
     for (i = 0; i < nfilterNames; i++)
-	xfree (filterNames[i]);
-    xfree (filterNames);
+	free (filterNames[i]);
+    free (filterNames);
     nfilterNames = 0;
     filterNames = 0;
 }
@@ -144,9 +144,9 @@ PictureAddFilter (ScreenPtr			    pScreen,
 	if (ps->filters[i].id == id)
 	    return -1;
     if (ps->filters)
-	filters = xrealloc (ps->filters, (ps->nfilters + 1) * sizeof (PictFilterRec));
+	filters = realloc (ps->filters, (ps->nfilters + 1) * sizeof (PictFilterRec));
     else
-	filters = xalloc (sizeof (PictFilterRec));
+	filters = malloc (sizeof (PictFilterRec));
     if (!filters)
 	return -1;
     ps->filters = filters;
@@ -175,11 +175,11 @@ PictureSetFilterAlias (ScreenPtr pScreen, char *filter, char *alias)
 	PictFilterAliasPtr  aliases;
 
 	if (ps->filterAliases)
-	    aliases = xrealloc (ps->filterAliases,
+	    aliases = realloc (ps->filterAliases,
 				(ps->nfilterAliases + 1) *
 				sizeof (PictFilterAliasRec));
 	else
-	    aliases = xalloc (sizeof (PictFilterAliasRec));
+	    aliases = malloc (sizeof (PictFilterAliasRec));
 	if (!aliases)
 	    return FALSE;
 	ps->filterAliases = aliases;
@@ -215,21 +215,30 @@ PictureFindFilter (ScreenPtr pScreen, char *name, int len)
 }
 
 static Bool
-convolutionFilterValidateParams (PicturePtr pPicture,
+convolutionFilterValidateParams (ScreenPtr pScreen,
                                  int	   filter,
                                  xFixed	   *params,
-                                 int	   nparams)
+                                 int	   nparams,
+                                 int*      width,
+                                 int*      height)
 {
+    int w, h;
+
     if (nparams < 3)
         return FALSE;
 
     if (xFixedFrac (params[0]) || xFixedFrac (params[1]))
         return FALSE;
 
+    w = xFixedToInt (params[0]);
+    h = xFixedToInt (params[1]);
+
     nparams -= 2;
-    if ((xFixedToInt (params[0]) * xFixedToInt (params[1])) > nparams)
+    if (w * h > nparams)
         return FALSE;
 
+    *width = w;
+    *height = h;
     return TRUE;
 }
 
@@ -263,41 +272,93 @@ PictureResetFilters (ScreenPtr pScreen)
 {
     PictureScreenPtr    ps = GetPictureScreen(pScreen);
 
-    xfree (ps->filters);
-    xfree (ps->filterAliases);
+    free (ps->filters);
+    free (ps->filterAliases);
     PictureFreeFilterIds ();
 }
 
 int
 SetPictureFilter (PicturePtr pPicture, char *name, int len, xFixed *params, int nparams)
 {
-    ScreenPtr		pScreen = pPicture->pDrawable->pScreen;
-    PictFilterPtr	pFilter = PictureFindFilter (pScreen, name, len);
-    xFixed		*new_params;
-    int			i;
+    PictFilterPtr pFilter;
+    ScreenPtr     pScreen;
+
+    if (pPicture->pDrawable) {
+        pScreen = pPicture->pDrawable->pScreen;
+    }
+    else {
+        pScreen = screenInfo.screens[0];
+    }
+
+    pFilter = PictureFindFilter (pScreen, name, len);
 
     if (!pFilter)
-	return BadName;
-    if (pFilter->ValidateParams)
-    {
-	if (!(*pFilter->ValidateParams) (pPicture, pFilter->id, params, nparams))
-	    return BadMatch;
-    }
-    else if (nparams)
-	return BadMatch;
+        return BadName;
 
-    if (nparams != pPicture->filter_nparams)
-    {
-	new_params = xalloc (nparams * sizeof (xFixed));
-	if (!new_params)
-	    return BadAlloc;
-	xfree (pPicture->filter_params);
-	pPicture->filter_params = new_params;
-	pPicture->filter_nparams = nparams;
+    if (pPicture->pDrawable == NULL) {
+        int s;
+
+        /* For source pictures, the picture isn't tied to a screen.  So, ensure
+         * that all screens can handle a filter we set for the picture.
+         */
+        for (s = 1; s < screenInfo.numScreens; s++) {
+            PictFilterPtr pScreenFilter;
+
+            pScreenFilter = PictureFindFilter(screenInfo.screens[s], name, len);
+            if (!pScreenFilter || pScreenFilter->id != pFilter->id)
+                return BadMatch;
+        }
+    }
+
+    return SetPicturePictFilter (pPicture, pFilter, params, nparams);
+}
+
+int
+SetPicturePictFilter (PicturePtr pPicture, PictFilterPtr pFilter,
+                     xFixed *params, int nparams)
+{
+    ScreenPtr  pScreen;
+    int                i;
+
+    if (pPicture->pDrawable)
+       pScreen = pPicture->pDrawable->pScreen;
+    else
+       pScreen = screenInfo.screens[0];
+
+    if (pFilter->ValidateParams) {
+        int width, height;
+
+        if (!(*pFilter->ValidateParams) (pScreen, pFilter->id, params, nparams, &width, &height))
+          return BadMatch;
+    }
+    else if (nparams) {
+        return BadMatch;
+    }
+
+    if (nparams != pPicture->filter_nparams) {
+        xFixed *new_params = malloc (nparams * sizeof (xFixed));
+
+        if (!new_params && nparams)
+            return BadAlloc;
+        free (pPicture->filter_params);
+        pPicture->filter_params = new_params;
+        pPicture->filter_nparams = nparams;
     }
     for (i = 0; i < nparams; i++)
-	pPicture->filter_params[i] = params[i];
+        pPicture->filter_params[i] = params[i];
     pPicture->filter = pFilter->id;
+
+    if (pPicture->pDrawable)
+    {
+        PictureScreenPtr    ps = GetPictureScreen(pScreen);
+        int                 result;
+
+        result = (*ps->ChangePictureFilter) (pPicture, pPicture->filter,
+                                             params, nparams);
+
+        return result;
+    }
     pPicture->serialNumber |= GC_CHANGE_SERIAL_BIT;
+
     return Success;
 }

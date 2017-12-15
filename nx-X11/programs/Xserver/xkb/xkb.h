@@ -1,7 +1,3 @@
-/* $XFree86$ */
-
-/* #include "XKBfile.h" */
-
 extern int ProcXkbUseExtension(ClientPtr client);
 extern int ProcXkbSelectEvents(ClientPtr client);
 extern int ProcXkbBell(ClientPtr client);
@@ -32,6 +28,8 @@ extern int ProcXkbSetDebuggingFlags(ClientPtr client);
 extern int XkbSetRepeatRate(DeviceIntPtr dev, int timeout, int interval, int major, int minor);
 extern int XkbGetRepeatRate(DeviceIntPtr dev, int *timeout, int *interval);
 
+extern void XkbExtensionInit(void);
+
 extern Status XkbComputeGetIndicatorMapReplySize(
     XkbIndicatorPtr             indicators,
     xkbGetIndicatorMapReply     *rep);
@@ -51,7 +49,7 @@ extern Bool XkbApplyLEDChangeToKeyboard(
     Bool                    on,
     XkbChangesPtr           change);
 
-extern Bool XkbWriteRulesProp(ClientPtr client, pointer closure);
+extern Bool XkbWriteRulesProp(ClientPtr client, void * closure);
 
 extern XkbAction XkbGetButtonAction(DeviceIntPtr kbd, DeviceIntPtr dev, int button);
 

@@ -1,5 +1,3 @@
-/* $XdotOrg: xc/programs/Xserver/dix/globals.c,v 1.7 2005/07/03 08:53:38 daniels Exp $ */
-/* $XFree86: xc/programs/Xserver/dix/globals.c,v 1.12tsi Exp $ */
 /************************************************************
 
 Copyright 1987, 1998  The Open Group
@@ -47,14 +45,13 @@ SOFTWARE.
 
 ********************************************************/
 
-/* $Xorg: globals.c,v 1.4 2001/02/09 02:04:40 xorgcvs Exp $ */
 
 #ifdef HAVE_DIX_CONFIG_H
 #include <dix-config.h>
 #endif
 
-#include <X11/X.h>
-#include <X11/Xmd.h>
+#include <nx-X11/X.h>
+#include <nx-X11/Xmd.h>
 #include "misc.h"
 #include "windowstr.h"
 #include "scrnintstr.h"
@@ -85,8 +82,6 @@ ClientPtr *clients;
 ClientPtr  serverClient;
 int  currentMaxClients;   /* current size of clients array */
 long maxBigRequestSize = MAX_BIG_REQUEST_SIZE;
-
-WindowPtr *WindowTable;
 
 unsigned long globalSerialNumber = 0;
 unsigned long serverGeneration = 0;
@@ -135,7 +130,6 @@ int  logoScreenSaver = DEFAULT_LOGO_SCREEN_SAVER;
 char *defaultFontPath = COMPILEDDEFAULTFONTPATH;
 char *defaultTextFont = COMPILEDDEFAULTFONT;
 char *defaultCursorFont = COMPILEDCURSORFONT;
-char *rgbPath = RGB_DB;
 char *defaultDisplayClass = COMPILEDDISPLAYCLASS;
 FontPtr defaultFont;   /* not declared in dix.h to avoid including font.h in
 			every compilation of dix code */
@@ -155,9 +149,13 @@ int defaultColorVisualClass = -1;
 int monitorResolution = 0;
 
 char *display;
+int displayfd = -1;
+Bool explicit_display = FALSE;
 
 CARD32 TimeOutValue = DEFAULT_TIMEOUT * MILLI_PER_SECOND;
 int	argcGlobal;
 char	**argvGlobal;
 
 DDXPointRec dixScreenOrigins[MAXSCREENS];
+
+char *ConnectionInfo;

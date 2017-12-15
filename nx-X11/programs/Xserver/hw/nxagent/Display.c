@@ -1,17 +1,25 @@
 /**************************************************************************/
 /*                                                                        */
-/* Copyright (c) 2001, 2011 NoMachine, http://www.nomachine.com/.         */
+/* Copyright (c) 2001, 2011 NoMachine (http://www.nomachine.com)          */
+/* Copyright (c) 2008-2014 Oleksandr Shneyder <o.shneyder@phoca-gmbh.de>  */
+/* Copyright (c) 2011-2016 Mike Gabriel <mike.gabriel@das-netzwerkteam.de>*/
+/* Copyright (c) 2014-2016 Mihai Moldovan <ionic@ionic.de>                */
+/* Copyright (c) 2014-2016 Ulrich Sibiller <uli42@gmx.de>                 */
+/* Copyright (c) 2015-2016 Qindel Group (http://www.qindel.com)           */
 /*                                                                        */
 /* NXAGENT, NX protocol compression and NX extensions to this software    */
-/* are copyright of NoMachine. Redistribution and use of the present      */
-/* software is allowed according to terms specified in the file LICENSE   */
-/* which comes in the source distribution.                                */
+/* are copyright of the aforementioned persons and companies.             */
 /*                                                                        */
-/* Check http://www.nomachine.com/licensing.html for applicability.       */
-/*                                                                        */
-/* NX and NoMachine are trademarks of Medialogic S.p.A.                   */
+/* Redistribution and use of the present software is allowed according    */
+/* to terms specified in the file LICENSE which comes in the source       */
+/* distribution.                                                          */
 /*                                                                        */
 /* All rights reserved.                                                   */
+/*                                                                        */
+/* NOTE: This software has received contributions from various other      */
+/* contributors, only the core maintainers and supporters are listed as   */
+/* copyright holders. Please contact us, if you feel you should be listed */
+/* as copyright holder, as well.                                          */
 /*                                                                        */
 /**************************************************************************/
 
@@ -37,9 +45,10 @@ is" without express or implied warranty.
 #include <unistd.h>
 #include <time.h>
 #include <errno.h>
+#include <stdbool.h>
 
-#include <X11/X.h>
-#include <X11/Xproto.h>
+#include <nx-X11/X.h>
+#include <nx-X11/Xproto.h>
 #include "screenint.h"
 #include "input.h"
 #include "misc.h"
@@ -52,7 +61,7 @@ is" without express or implied warranty.
 #include "unistd.h"
 #endif
 
-#include "NXalert.h"
+#include <nx/NXalert.h>
 
 #include "Agent.h"
 #include "Display.h"
@@ -62,7 +71,11 @@ is" without express or implied warranty.
 #include "Init.h"
 #include "Args.h"
 #include "Image.h"
+
+#define Pixmap XlibPixmap
 #include "Icons.h"
+#undef Pixmap
+
 #include "Render.h"
 #include "Font.h"
 #include "Reconnect.h"
@@ -73,10 +86,11 @@ is" without express or implied warranty.
 #include "Screen.h"
 #include "Handlers.h"
 
-#include "NX.h"
-#include "NXlib.h"
+#include <nx/NX.h>
+#include "compext/Compext.h"
 
 #include NXAGENT_ICON_NAME
+#include X2GOAGENT_ICON_NAME
 
 /*
  * Set here the required log level.
@@ -155,7 +169,6 @@ Pixmap nxagentIconPixmap;
 Pixmap nxagentIconShape;
 Bool useXpmIcon = False;
 
-unsigned int nxagentLogoColor(unsigned int value);
 Bool nxagentMakeIcon(Display *display, Pixmap *nxIcon, Pixmap *nxMask);
 
 
@@ -165,17 +178,10 @@ static void nxagentInitDepths(void);
 static void nxagentInitPixmapFormats(void);
 
 static int nxagentCheckForDefaultDepthCompatibility(void);
-static int nxagentCheckForDepthsCompatibility(int flexibility);
+static int nxagentCheckForDepthsCompatibility(void);
 static int nxagentCheckForPixmapFormatsCompatibility(void);
 static int nxagentInitAndCheckVisuals(int flexibility);
 static int nxagentCheckForColormapsCompatibility(int flexibility);
-
-/*
- * FIXME: These must definitely become local.
- */
-
-XVisualInfo pV;
-unsigned int r, b, g, or, ob, og, off;
 
 /*
  * Save Internal implementation Also called in Reconnect.c.
@@ -192,6 +198,7 @@ unsigned long startTime;
  */
 
 extern void RejectWellKnownSockets(void);
+extern Bool nxagentReportWindowIds;
 
 int nxagentServerOrder()
 {
@@ -201,23 +208,6 @@ int nxagentServerOrder()
       return LSBFirst;
 
   return MSBFirst;
-}
-
-unsigned int nxagentLogoColor(unsigned int value)
-{
-  /*
-   * Takes a color value in RGB24 (0xff0000, 0x00ff00,
-   * 0x0000ff) and converts it into an equivalent for
-   * the current visual.
-   */
-
-  int cr=0, cg=0, cb=0;
-
-  cr = (value >> or) &r;
-  cg = (value >> (og - 8)) &g;
-  cb = (value >> (ob - 16)) &b;
-
-  return (cr | cg | cb);
 }
 
 /*
@@ -393,7 +383,7 @@ static void nxagentSigchldHandler(int signal)
    * Leave the other children unaffected.
    */
 
-  if (pid == 0 && nxagentRootlessDialogPid)
+  if (nxagentRootlessDialogPid)
   {
     pid = waitpid(nxagentRootlessDialogPid, &status, options);
 
@@ -583,16 +573,12 @@ Display *nxagentInternalOpenDisplay(char *display)
 
   int result;
 
-  #ifdef SMART_SCHEDULE
-
   /*
    * Stop the smart schedule timer since
    * it uses SIGALRM as we do.
    */
 
   nxagentStopTimer();
-
-  #endif
 
   /*
    * Install the handler rejecting a possible
@@ -664,15 +650,11 @@ static void nxagentDisplayBlockHandler(Display *display, int reason)
      * for the remote display.
      */
 
-    #ifdef SMART_SCHEDULE
-
     #ifdef DEBUG
     fprintf(stderr, "nxagentDisplayBlockHandler: BLOCK! Stopping the smart schedule timer.\n");
     #endif
 
     nxagentStopTimer();
-
-    #endif
 
     if (reason == NXBlockRead)
     {
@@ -688,12 +670,8 @@ static void nxagentDisplayBlockHandler(Display *display, int reason)
 
       nxagentBlocking = 1;
 
-      #ifdef SMART_SCHEDULE
-
-      if (SmartScheduleDisable == 1)
+      if (!SmartScheduleSignalEnable)
       {
-
-      #endif
 
         /*
          * Let the dispatch attend the next
@@ -709,11 +687,7 @@ static void nxagentDisplayBlockHandler(Display *display, int reason)
         nxagentDispatch.in  = nxagentBytesIn;
         nxagentDispatch.out = nxagentBytesOut;
 
-      #ifdef SMART_SCHEDULE
-
       }
-
-      #endif
 
       /*
        * Give a chance to the next client.
@@ -1008,11 +982,7 @@ void nxagentInstallSignalHandlers()
    * Reset the SIGALRM to the default.
    */
 
-  #ifdef SMART_SCHEDULE
-
   nxagentStopTimer();
-
-  #endif
 
   newAction.sa_handler = SIG_DFL;
 
@@ -1026,16 +996,12 @@ void nxagentInstallSignalHandlers()
     FatalError("Can't set the handler for alarm signal.");
   }
 
-  #ifdef SMART_SCHEDULE
-
   /*
    * Let the smart schedule set the SIGALRM
    * handler again.
    */
 
   nxagentInitTimer();
-
-  #endif
 
   /*
    * Install our own handler for the SIGHUP.
@@ -1119,6 +1085,8 @@ void nxagentResetSignalHandlers()
 
   int result;
 
+  memset(&newAction, 0, sizeof(newAction));
+
   /*
    * Reset the signal handlers
    * to a well known state.
@@ -1132,11 +1100,7 @@ void nxagentResetSignalHandlers()
    * Reset the SIGALRM to the default.
    */
 
-  #ifdef SMART_SCHEDULE
-
   nxagentStopTimer();
-
-  #endif
 
   newAction.sa_handler = SIG_DFL;
 
@@ -1150,8 +1114,6 @@ void nxagentResetSignalHandlers()
     FatalError("Can't set the handler for alarm signal.");
   }
 
-  #ifdef SMART_SCHEDULE
-
   /*
    * Let the smart schedule set the SIGALRM
    * handler again.
@@ -1159,7 +1121,6 @@ void nxagentResetSignalHandlers()
 
   nxagentInitTimer();
 
-  #endif
 }
 
 void nxagentOpenDisplay(int argc, char *argv[])
@@ -1216,6 +1177,9 @@ FIXME: The agent should never exit the program with a FatalError()
     FatalError("Unable to open display '%s'.\n", nxagentDisplayName);
   }
 
+  if (nxagentSynchronize)
+    XSynchronize(nxagentDisplay, True);
+
   nxagentXConnectionNumber = XConnectionNumber(nxagentDisplay);
 
   #ifdef TEST
@@ -1264,7 +1228,7 @@ Reply   Total	Cached	Bits In			Bits Out		Bits/Reply	  Ratio
   nxagentInitVisuals();
 
   nxagentNumDefaultColormaps = nxagentNumVisuals;
-  nxagentDefaultColormaps = (Colormap *)xalloc(nxagentNumDefaultColormaps *
+  nxagentDefaultColormaps = (Colormap *)malloc(nxagentNumDefaultColormaps *
                                              sizeof(Colormap));
 
   for (i = 0; i < nxagentNumDefaultColormaps; i++)
@@ -1330,6 +1294,7 @@ FIXME: Use of nxagentParentWindow is strongly deprecated.
   nxagentInitDepths();
 
   nxagentInitPixmapFormats();
+  (void) nxagentCheckForPixmapFormatsCompatibility();
 
   /*
    * Create a pixmap for each depth matching the
@@ -1370,8 +1335,12 @@ FIXME: Use of nxagentParentWindow is strongly deprecated.
                                        CopyFromParent,
                                        0L, NULL);
 
+  if (nxagentReportWindowIds) {
+    fprintf(stderr, "NXAGENT_WINDOW_ID: CONFINEMENT_WINDOW,WID:[0x%x]\n",
+              nxagentConfineWindow);
+  }
   #ifdef TEST
-  fprintf(stderr, "nxagentOpenDisplay: Created agent's confine window with id [%ld].\n",
+  fprintf(stderr, "nxagentOpenDisplay: Created agent's confine window with id [0x%x].\n",
               nxagentConfineWindow);
   #endif
 
@@ -1423,28 +1392,10 @@ FIXME: Use of nxagentParentWindow is strongly deprecated.
                                DefaultScreen(nxagentDisplay)
                               );
 
-  pV = nxagentVisuals[nxagentDefaultVisualIndex];
-
-  r = pV.red_mask;
-  g = pV.green_mask;
-  b = pV.blue_mask;
-
-  if (!pV.red_mask || !pV.green_mask || !pV.blue_mask)
-  {
-    nxagentLogoBlack = 0x000000;
-    nxagentLogoRed   = 0xff0000;
-    nxagentLogoWhite = 0xffffff;
-  }
-  else
-  {
-    for (or=0, off=0x800000; (r&(off>>or)) == 0; or++);
-    for (og=0, off=0x800000; (g&(off>>og)) == 0; og++);
-    for (ob=0, off=0x800000; (b&(off>>ob)) == 0; ob++);
-
-    nxagentLogoRed   = nxagentLogoColor(0xff0000);
-    nxagentLogoBlack = nxagentLogoColor(0x000000);
-    nxagentLogoWhite = 0xffffff;
-  }
+  nxagentLogoBlack = 0x000000;
+  nxagentLogoRed   = 0xff0000;
+  nxagentLogoWhite = 0xffffff;
+  nxagentLogoGray  = 0x222222;
 
   #ifdef WATCH
 
@@ -1655,7 +1606,7 @@ void nxagentInitPixmapFormats()
 XXX: Some X server doesn't list 1 among available depths...
 */
 
-  nxagentPixmapFormats = xalloc((nxagentNumDepths + 1) * sizeof(XPixmapFormatValues));
+  nxagentPixmapFormats = malloc((nxagentNumDepths + 1) * sizeof(XPixmapFormatValues));
 
   for (i = 1; i <= MAXDEPTH; i++)
   {
@@ -1722,8 +1673,6 @@ XXX: Some X server doesn't list 1 among available depths...
     }
   }
   #endif
-
-  nxagentCheckForPixmapFormatsCompatibility();
 }
 
 void nxagentSetDefaultDrawables()
@@ -1818,13 +1767,13 @@ void nxagentCloseDisplay()
    * traffic
    */
 
-  xfree(nxagentDefaultColormaps);
+  free(nxagentDefaultColormaps);
   nxagentDefaultColormaps = NULL;
 
   XFree(nxagentVisuals);
   nxagentVisuals = NULL;
 
-  xfree(nxagentDepths);
+  free(nxagentDepths);
   nxagentDepths = NULL;
 
   XFree(nxagentPixmapFormats);
@@ -1941,12 +1890,29 @@ Bool nxagentMakeIcon(Display *display, Pixmap *nxIcon, Pixmap *nxMask)
   Bool success = False;
   XlibPixmap IconPixmap;
   XlibPixmap IconShape;
+  char* agent_icon_name;
+  char** agentIconData;
 
-  snprintf(default_path, PATH_MAX-1, "/usr/NX/share/images/%s", NXAGENT_ICON_NAME);
+  /*
+   * selecting x2go icon when running as X2Go agent
+   */
+  if(nxagentX2go)
+  {
+    agent_icon_name=X2GOAGENT_ICON_NAME;
+    agentIconData=x2goagentIconData;
+  }
+  else
+  {
+    agent_icon_name=NXAGENT_ICON_NAME;
+    agentIconData=nxagentIconData;
+  }
+
+
+  snprintf(default_path, PATH_MAX-1, "/usr/NX/share/images/%s", agent_icon_name);
 
   if ((icon_fp = fopen(default_path, "r")) == NULL)
   {
-    icon_fp = nxagentLookForIconFile(NXAGENT_ICON_NAME, "r", icon_path);
+    icon_fp = nxagentLookForIconFile(agent_icon_name, "r", icon_path);
 
     if (icon_fp != NULL)
     {
@@ -1985,7 +1951,7 @@ Bool nxagentMakeIcon(Display *display, Pixmap *nxIcon, Pixmap *nxMask)
   {
      status = XpmCreatePixmapFromData(display,
                                         DefaultRootWindow(display),
-                                        nxagentIconData,
+                                        agentIconData,
                                         &IconPixmap,
                                         &IconShape,
                                         NULL);
@@ -2047,10 +2013,10 @@ void nxagentBackupDisplayInfo(void)
   nxagentNumVisualsRecBackup = nxagentNumVisuals;
   if (nxagentVisualHasBeenIgnored)
   {
-    xfree(nxagentVisualHasBeenIgnored);
+    free(nxagentVisualHasBeenIgnored);
     nxagentVisualHasBeenIgnored = NULL;
   }
-  nxagentVisualHasBeenIgnored = xalloc(nxagentNumVisuals * sizeof(Bool));
+  nxagentVisualHasBeenIgnored = malloc(nxagentNumVisuals * sizeof(Bool));
   nxagentDefaultDepthRecBackup = DefaultDepth(nxagentDisplay, DefaultScreen(nxagentDisplay));
   nxagentDisplayWidthRecBackup = DisplayWidth(nxagentDisplay, DefaultScreen(nxagentDisplay));
   nxagentDisplayHeightRecBackup = DisplayHeight(nxagentDisplay, DefaultScreen(nxagentDisplay));
@@ -2061,17 +2027,17 @@ void nxagentBackupDisplayInfo(void)
 
 void nxagentCleanupBackupDisplayInfo(void)
 {
-  xfree(nxagentDepthsRecBackup);
+  free(nxagentDepthsRecBackup);
   nxagentNumDepthsRecBackup = 0;
 
   nxagentNumDefaultColormapsRecBackup = 0;
 
-  xfree(nxagentVisualsRecBackup);
+  free(nxagentVisualsRecBackup);
   nxagentNumVisualsRecBackup = 0;
 
   if (nxagentVisualHasBeenIgnored)
   {
-    xfree(nxagentVisualHasBeenIgnored);
+    free(nxagentVisualHasBeenIgnored);
     nxagentVisualHasBeenIgnored = NULL;
   }
 
@@ -2094,7 +2060,7 @@ void nxagentCleanupBackupDisplayInfo(void)
     }
     else
     {
-      xfree(nxagentBitmapGCBackup);
+      free(nxagentBitmapGCBackup);
     }
 
     nxagentBitmapGCBackup = NULL;
@@ -2154,9 +2120,38 @@ void nxagentDisconnectDisplay(void)
 
 static int nxagentCheckForDefaultDepthCompatibility()
 {
+  /*
+   * Depending on the (reconnect) tolerance checks value, this
+   * function checks stricter or looser:
+   *   - Strict means that the old and new default depth values
+   *     must match exactly.
+   *   - Safe or Risky means that the default depth values might differ,
+   *     but the new default depth value must be at least as
+   *     high as the former default depth value. This is
+   *     recommended, because it allows clients with a
+   *     higher default depth value to still connect, but
+   *     not lose functionality.
+   *   - Bypass means that all of these checks are essentially
+   *     deactivated. This is probably a very bad idea.
+   */
+
   int dDepth;
 
   dDepth = DefaultDepth(nxagentDisplay, DefaultScreen(nxagentDisplay));
+
+  const unsigned int tolerance = nxagentOption(ReconnectTolerance);
+
+  if (ToleranceChecksBypass <= tolerance)
+  {
+    #ifdef WARNING
+    fprintf(stderr, "nxagentCheckForDefaultDepthCompatibility: WARNING! Not proceeding with any checks, "
+                    "because tolerance [%u] higher than or equal [%u]. New default depth value "
+                    "is [%d], former default depth value is [%d].\n", tolerance,
+            ToleranceChecksBypass, dDepth, nxagentDefaultDepthRecBackup);
+    #endif
+
+    return 1;
+  }
 
   if (nxagentDefaultDepthRecBackup == dDepth)
   {
@@ -2167,142 +2162,324 @@ static int nxagentCheckForDefaultDepthCompatibility()
 
     return 1;
   }
+  else if ((ToleranceChecksSafe <= tolerance) && (nxagentDefaultDepthRecBackup < dDepth))
+  {
+    #ifdef WARNING
+    fprintf(stderr, "nxagentCheckForDefaultDepthCompatibility: WARNING! New default depth [%d] "
+                    "higher than the old default depth [%d] at tolerance [%u].\n", dDepth,
+            nxagentDefaultDepthRecBackup, tolerance);
+    #endif
+
+    return 1;
+  }
   else
   {
     #ifdef WARNING
     fprintf(stderr, "nxagentCheckForDefaultDepthCompatibility: WARNING! New default depth [%d] "
-                "doesn't match with old default depth [%d].\n", dDepth, nxagentDefaultDepthRecBackup);
+                "doesn't match with old default depth [%d] at tolerance [%u].\n", dDepth,
+            nxagentDefaultDepthRecBackup, tolerance);
     #endif
 
     return 0;
   }
 }
 
-static int nxagentCheckForDepthsCompatibility(int flexibility)
+static int nxagentCheckForDepthsCompatibility()
 {
-  int i, j;
-  int matched;
-  int compatible;
+  /*
+   * Depending on the (reconnect) tolerance checks value, this
+   * function checks stricter or looser:
+   *   - Strict means that the number of old and new depths must
+   *     match exactly and every old depth value must be
+   *     available in the new depth array.
+   *   - Safe means that the number of depths might diverge,
+   *     but all former depth must also be included in the
+   *     new depth array. This is recommended, because
+   *     it allows clients with more depths to still
+   *     connect, but not lose functionality.
+   *   - Risky means that the new depths array is allowed to be
+   *     smaller than the old depths array, but at least
+   *     one depth value must be included in both.
+   *     This is potentially unsafe.
+   *   - Bypass or higher means that all of these checks are
+   *     essentially deactivated. This is a very bad idea.
+   */
 
-  if (nxagentNumDepths != nxagentNumDepthsRecBackup)
+  const unsigned int tolerance = nxagentOption(ReconnectTolerance);
+
+  if (ToleranceChecksBypass <= tolerance)
   {
     #ifdef WARNING
-    fprintf(stderr, "nxagentCheckForDepthsCompatibility: WARNING! Number of new available depths [%d] "
-                "doesn't match with old depths [%d].\n", nxagentNumDepths,
-                    nxagentNumDepthsRecBackup);
+    fprintf(stderr, "nxagentCheckForDepthsCompatibility: WARNING! Not proceeding with any checks, "
+                    "because tolerance [%u] higher than or equal [%u]. Number of newly available depths "
+                    "is [%d], number of old depths is [%d].\n", tolerance, ToleranceChecksBypass,
+            nxagentNumDepths, nxagentNumDepthsRecBackup);
+    #endif
+
+    return 1;
+  }
+
+  if ((ToleranceChecksStrict == tolerance) && (nxagentNumDepths != nxagentNumDepthsRecBackup))
+  {
+    #ifdef WARNING
+    fprintf(stderr, "nxagentCheckForDepthsCompatibility: WARNING! No tolerance allowed and "
+                    "number of new available depths [%d] doesn't match with number of old "
+                    "depths [%d].\n", nxagentNumDepths,
+            nxagentNumDepthsRecBackup);
     #endif
 
     return 0;
   }
 
-  compatible = 1;
-
-  for (i = 0; i < nxagentNumDepths; i++)
+  if ((ToleranceChecksSafe == tolerance) && (nxagentNumDepths < nxagentNumDepthsRecBackup))
   {
-    matched = 0;
+    #ifdef WARNING
+    fprintf(stderr, "nxagentCheckForDepthsCompatibility: WARNING! Tolerance [%u] not "
+                    "high enough and number of new available depths [%d] "
+                    "lower than number of old depths [%d].\n", tolerance,
+            nxagentNumDepths, nxagentNumDepthsRecBackup);
+    #endif
 
-    for (j = 0; j < nxagentNumDepthsRecBackup; j++)
+    return 0;
+  }
+
+  /*
+   * By now the tolerance is either:
+   *   - Strict and both depth numbers match
+   *   - Safe and:
+   *     o the number of old and new depths matches exactly, or
+   *     o the number of old depths is lower than the number
+   *       of new depths
+   *   - Risky
+   */
+
+  bool compatible = true;
+  bool one_match = false;
+  bool matched = false;
+  int total_matches = 0;
+
+  /*
+   * FIXME: within this loop, we try to match all "new" depths
+   *        against the "old" depths. Depending upon the flexibility
+   *        value, either all "new" depths must have a corresponding
+   *        counterpart in the "old" array, or at least one value
+   *        must be included in both.
+   *        Is this safe enough though?
+   *        Shouldn't we better try to match entries in the "old"
+   *        depths array against the "new" depths array, such that
+   *        we know that all "old" values are covered by "new"
+   *        values? Or is it more important that "new" values are
+   *        covered by "old" ones, with potentially more "old"
+   *        values lingering around that cannot be displayed by the
+   *        connected client?
+   *
+   * This section probably needs a revisit at some point in time.
+   */
+  for (int i = 0; i < nxagentNumDepths; ++i)
+  {
+    matched = false;
+
+    for (int j = 0; j < nxagentNumDepthsRecBackup; ++j)
     {
       if (nxagentDepths[i] == nxagentDepthsRecBackup[j])
       {
-        matched = 1;
+        matched = true;
+        one_match = true;
+        ++total_matches;
 
         break;
       }
     }
 
-    if (matched == 0)
+    if ((ToleranceChecksRisky > tolerance) && (!matched))
     {
       #ifdef WARNING
-      fprintf(stderr, "nxagentCheckForDepthsCompatibility: WARNING! Failed to match available depth [%d].\n",
-                  nxagentDepths[i]);
+      fprintf(stderr, "nxagentCheckForDepthsCompatibility: WARNING! Tolerance [%u] too low and "
+                      "failed to match available depth [%d].\n", tolerance, nxagentDepths[i]);
       #endif
 
-      compatible = 0;
+      compatible = false;
 
       break;
     }
   }
 
+  /*
+   * At Risky tolerance, only one match is necessary to be "compatible".
+   */
+  if (ToleranceChecksRisky == tolerance)
+  {
+    compatible = one_match;
+  }
 
-  if (compatible == 1)
+  int ret = (!(!compatible));
+
+  if (compatible)
   {
     #ifdef TEST
     fprintf(stderr, "nxagentCheckForDepthsCompatibility: Internal depths match with "
-                "remote depths.\n");
+                "remote depths at tolerance [%u].\n", tolerance);
     #endif
+
+    if (total_matches != nxagentNumDepths)
+    {
+      #ifdef WARNING
+      fprintf(stderr, "nxagentCheckForDepthsCompatibility: only some [%d] of the new depths [%d] "
+                  "match with old depths [%d] at tolerance [%u].\n", total_matches, nxagentNumDepths,
+              nxagentNumDepthsRecBackup, tolerance);
+      #endif
+    }
   }
   else
   {
     #ifdef WARNING
-    fprintf(stderr, "nxagentCheckForDepthsCompatibility: WARNING! New available depths don't match with "
-                "old depths.\n");
+    fprintf(stderr, "nxagentCheckForDepthsCompatibility: WARNING! New available depths [%d] don't match "
+                    "with old depths [%d] at tolerance [%u]. Only [%d] depth values matched.\n",
+            nxagentNumDepths, nxagentNumDepthsRecBackup, tolerance, total_matches);
     #endif
   }
 
-  return compatible;
+  return (ret);
 }
 
 static int nxagentCheckForPixmapFormatsCompatibility()
 {
-  int i, j;
-  int matched;
-  int compatible;
+  /*
+   * Depending on the (reconnect) tolerance checks value, this
+   * function checks stricter or looser:
+   *   - Strict means that the number of internal and external
+   *     pixmap formats must match exactly and every
+   *     internal pixmap format must be available in the
+   *     external pixmap format array.
+   *   - Safe means that the number of pixmap formats might
+   *     diverge, but all internal pixmap formats must
+   *     also be included in the external pixmap formats
+   *     array. This is recommended, because it allows
+   *     clients with more pixmap formats to still connect,
+   *     but not lose functionality.
+   *   - Risky means that the internal pixmap formats array is
+   *     allowed to be smaller than the external pixmap
+   *     formats array, but at least one pixmap format must
+   *     be included in both. This is potentially unsafe.
+   *   - Bypass or higher means that all of these checks are
+   *     essentially deactivated. This is a very bad idea.
+   */
 
-  compatible = 1;
+  const unsigned int tolerance = nxagentOption(ReconnectTolerance);
 
-  if (nxagentNumPixmapFormats != nxagentRemoteNumPixmapFormats)
+  if (ToleranceChecksBypass <= tolerance)
   {
-    #ifdef DEBUG
-    fprintf(stderr, "nxagentCheckForPixmapFormatsCompatibility: WARNING! Number of internal pixmap formats [%d] "
-                "doesn't match with remote formats [%d].\n", nxagentNumPixmapFormats,
-                    nxagentRemoteNumPixmapFormats);
+    #ifdef WARNING
+    fprintf(stderr, "nxagentCheckForPixmapFormatsCompatibility: WARNING! Not proceeding with any checks, "
+                    "because tolerance [%u] higher than or equal [%u]. Number of internally available "
+                    "pixmap formats is [%d], number of externally available pixmap formats is [%d].\n",
+            tolerance, ToleranceChecksBypass, nxagentNumPixmapFormats, nxagentRemoteNumPixmapFormats);
     #endif
+
+    return 1;
   }
 
-  for (i = 0; i < nxagentNumPixmapFormats; i++)
+  if ((ToleranceChecksStrict == tolerance) && (nxagentNumPixmapFormats != nxagentRemoteNumPixmapFormats))
   {
-    matched = 0;
+    #ifdef DEBUG
+    fprintf(stderr, "nxagentCheckForPixmapFormatsCompatibility: WARNING! No tolerance allowed and number "
+                    "of internal pixmap formats [%d] doesn't match with number of remote formats [%d].\n",
+            nxagentNumPixmapFormats, nxagentRemoteNumPixmapFormats);
+    #endif
 
-    for (j = 0; j < nxagentRemoteNumPixmapFormats; j++)
+    return 0;
+  }
+
+  if ((ToleranceChecksSafe == tolerance) && (nxagentNumPixmapFormats > nxagentRemoteNumPixmapFormats))
+  {
+    #ifdef DEBUG
+    fprintf(stderr, "nxagentCheckForPixmapFormatsCompatibility: WARNING! Tolerance [%u] too low "
+                    "and number of internal pixmap formats [%d] higher than number of external formats [%d].\n",
+            tolerance, nxagentNumPixmapFormats, nxagentRemoteNumPixmapFormats);
+    #endif
+
+    return 0;
+  }
+
+  /*
+   * By now the tolerance is either:
+   *   - Strict
+   *   - Safe and:
+   *     o the number of internal and external pixmap formats
+   *       matches exactly, or
+   *     o the number of external pixmap formats is higher than
+   *       the number of internal pixmap formats,
+   *   - Risky
+   */
+
+  bool compatible = true;
+  bool matched = false;
+  int total_matches = 0;
+
+  for (int i = 0; i < nxagentNumPixmapFormats; ++i)
+  {
+    matched = false;
+
+    for (int j = 0; j < nxagentRemoteNumPixmapFormats; ++j)
     {
       if (nxagentPixmapFormats[i].depth == nxagentRemotePixmapFormats[j].depth &&
           nxagentPixmapFormats[i].bits_per_pixel == nxagentRemotePixmapFormats[j].bits_per_pixel &&
           nxagentPixmapFormats[i].scanline_pad == nxagentRemotePixmapFormats[j].scanline_pad)
       {
-        matched = 1;
+        matched = true;
+        ++total_matches;
 
         break;
       }
     }
 
-    if (matched == 0)
+    if ((ToleranceChecksRisky > tolerance) && (!matched))
     {
       #ifdef WARNING
-      fprintf(stderr, "nxagentCheckForPixmapFormatsCompatibility: WARNING! Failed to match internal "
-                  "pixmap format depth [%d] bpp [%d] pad [%d].\n", nxagentPixmapFormats[i].depth,
-                      nxagentPixmapFormats[i].bits_per_pixel, nxagentPixmapFormats[i].scanline_pad);
+      fprintf(stderr, "nxagentCheckForPixmapFormatsCompatibility: WARNING! Tolerance [%u] too low "
+                      "and failed to match internal pixmap format (depth [%d] bpp [%d] pad [%d]).\n",
+              tolerance, nxagentPixmapFormats[i].depth, nxagentPixmapFormats[i].bits_per_pixel,
+              nxagentPixmapFormats[i].scanline_pad);
       #endif
 
-      compatible = 0;
+      compatible = false;
     }
   }
 
-  #ifdef TEST
+  int ret = !(!(compatible));
 
-  if (compatible == 1)
+  if (compatible)
   {
+    #ifdef TEST
     fprintf(stderr, "nxagentCheckForPixmapFormatsCompatibility: Internal pixmap formats match with "
-                "remote pixmap formats.\n");
+                    "remote pixmap formats at tolerance [%u].\n", tolerance);
+    #endif
+
+    if (total_matches != nxagentNumPixmapFormats)
+    {
+      #ifdef WARNING
+      fprintf(stderr, "nxagentCheckForPixmapFormatsCompatibility: Only some [%d] of the internal "
+                      "pixmap formats [%d] match with external pixmap formats [%d] at tolerance [%u].\n",
+              total_matches, nxagentNumPixmapFormats, nxagentRemoteNumPixmapFormats, tolerance);
+      #endif
+    }
+  }
+  else
+  {
+    #ifdef WARNING
+    fprintf(stderr, "nxagentCheckForPixmapFormatsCompatibility: WARNING! Internally available "
+                    "pixmap formats [%d] don't match with external pixmap formats [%d] "
+                    "at tolerance [%u]. Only [%d] depth values matched.\n",
+            nxagentNumPixmapFormats, nxagentRemoteNumPixmapFormats, tolerance, total_matches);
+    #endif
   }
 
-  #endif
-
-  return compatible;
+  return (ret);
 }
 
 static int nxagentInitAndCheckVisuals(int flexibility)
 {
+  /* FIXME: does this also need work? */
   XVisualInfo viTemplate;
   XVisualInfo *viList;
   XVisualInfo *newVisuals;
@@ -2412,6 +2589,7 @@ FIXME: Should the visual be ignored in this case?
 
 static int nxagentCheckForColormapsCompatibility(int flexibility)
 {
+  /* FIXME: does this also need work? */
   if (nxagentNumDefaultColormaps == nxagentNumDefaultColormapsRecBackup)
   {
     #ifdef TEST
@@ -2437,7 +2615,6 @@ Bool nxagentReconnectDisplay(void *p0)
 {
   int i;
   int flexibility = *(int*)p0;
-  int packMethod, packQuality;
 
   #if defined(NXAGENT_RECONNECT_DEBUG) || defined(NXAGENT_RECONNECT_DISPLAY_DEBUG)
   fprintf(stderr, "nxagentReconnectDisplay\n");
@@ -2454,9 +2631,6 @@ Bool nxagentReconnectDisplay(void *p0)
   /*
    * Reset the values to their defaults.
    */
-
-  packMethod  = nxagentPackMethod;
-  packQuality = nxagentPackQuality;
 
   nxagentPackMethod     = -1;
   nxagentPackQuality    = -1;
@@ -2540,7 +2714,7 @@ Bool nxagentReconnectDisplay(void *p0)
 
   nxagentNumDefaultColormaps = nxagentNumVisuals;
 
-  nxagentDefaultColormaps = (Colormap *) xrealloc(nxagentDefaultColormaps,
+  nxagentDefaultColormaps = (Colormap *) realloc(nxagentDefaultColormaps,
                                 nxagentNumDefaultColormaps * sizeof(Colormap));
 
   if (nxagentDefaultColormaps == NULL)
@@ -2575,7 +2749,7 @@ Bool nxagentReconnectDisplay(void *p0)
 
   reconnectDisplayState = GOT_DEPTH_LIST;
 
-  if (nxagentCheckForDepthsCompatibility(flexibility) == 0)
+  if (nxagentCheckForDepthsCompatibility() == 0)
   {
     nxagentSetReconnectError(FAILED_RESUME_DEPTHS_ALERT,
                                  "Couldn't restore all the required depths.");
@@ -2608,6 +2782,14 @@ Bool nxagentReconnectDisplay(void *p0)
    */
 
   nxagentInitPixmapFormats();
+
+  if (nxagentCheckForPixmapFormatsCompatibility() == 0)
+  {
+    nxagentSetReconnectError(FAILED_RESUME_PIXMAPS_ALERT,
+                                 "Couldn't restore all the required pixmap formats.");
+
+    return False;
+  }
 
   reconnectDisplayState = GOT_PIXMAP_FORMAT_LIST;
 
@@ -2665,35 +2847,21 @@ Bool nxagentReconnectDisplay(void *p0)
                                      CopyFromParent,
                                      0L, NULL);
 
+  if (nxagentReportWindowIds) {
+    fprintf(stderr, "NXAGENT_WINDOW_ID: CONFINEMENT_WINDOW,WID:[0x%x]\n",
+              nxagentConfineWindow);
+  }
   #ifdef TEST
-  fprintf(stderr, "nxagentReconnectDisplay: Created agent's confine window with id [%ld].\n",
+  fprintf(stderr, "nxagentReconnectDisplay: Created agent's confine window with id [0x%x].\n",
               nxagentConfineWindow);
   #endif
 
   nxagentLogoDepth = DefaultDepth(nxagentDisplay, DefaultScreen(nxagentDisplay));
 
-  pV = nxagentVisuals[nxagentDefaultVisualIndex];
-
-  r = pV.red_mask;
-  g = pV.green_mask;
-  b = pV.blue_mask;
-
-  if (!pV.red_mask || !pV.green_mask || !pV.blue_mask)
-  {
-    nxagentLogoBlack = 0x000000;
-    nxagentLogoRed   = 0xff0000;
-    nxagentLogoWhite = 0xffffff;
-  }
-  else
-  {
-    for (or=0, off=0x800000; (r&(off>>or)) == 0; or++);
-    for (og=0, off=0x800000; (g&(off>>og)) == 0; og++);
-    for (ob=0, off=0x800000; (b&(off>>ob)) == 0; ob++);
-
-    nxagentLogoRed   = nxagentLogoColor(0xff0000);
-    nxagentLogoBlack = nxagentLogoColor(0x000000);
-    nxagentLogoWhite = 0xffffff;
-  }
+  nxagentLogoBlack = 0x000000;
+  nxagentLogoRed   = 0xff0000;
+  nxagentLogoWhite = 0xffffff;
+  nxagentLogoGray  = 0x222222;
 
   useXpmIcon = nxagentMakeIcon(nxagentDisplay, &nxagentIconPixmap, &nxagentIconShape);
 
@@ -2718,7 +2886,7 @@ void nxagentAddXConnection()
               "to the device set.\n", nxagentXConnectionNumber);
   #endif
 
-  AddEnabledDevice(nxagentXConnectionNumber);
+  SetNotifyFd(XConnectionNumber(nxagentDisplay), nxagentNotifyConnection, X_NOTIFY_READ, NULL);
 }
 
 void nxagentRemoveXConnection()
@@ -2728,7 +2896,7 @@ void nxagentRemoveXConnection()
               "from the device set.\n", nxagentXConnectionNumber);
   #endif
 
-  RemoveEnabledDevice(nxagentXConnectionNumber);
+  RemoveNotifyFd(nxagentXConnectionNumber);
 }
 
 /*
@@ -2744,15 +2912,11 @@ void nxagentWaitDisplay()
    * Disable the smart scheduler's interrupts.
    */
 
-  #ifdef SMART_SCHEDULE
-
   #ifdef DEBUG
   fprintf(stderr, "nxagentWaitDisplay: Stopping the smart schedule timer.\n");
   #endif
 
   nxagentStopTimer();
-
-  #endif
 
   if (nxagentDisplay != NULL)
   {

@@ -1,4 +1,3 @@
-/* $Xorg: pixmapstr.h,v 1.4 2001/02/09 02:05:15 xorgcvs Exp $ */
 /***********************************************************
 
 Copyright 1987, 1998  The Open Group
@@ -45,7 +44,6 @@ ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS
 SOFTWARE.
 
 ******************************************************************/
-/* $XFree86$ */
 
 #ifndef PIXMAPSTRUCT_H
 #define PIXMAPSTRUCT_H
@@ -83,6 +81,7 @@ typedef struct _Pixmap {
     short		screen_x;
     short		screen_y;
 #endif
+    unsigned		usage_hint;   /* see CREATE_PIXMAP_USAGE_* */
 } PixmapRec;
 
 #endif /* PIXMAPSTRUCT_H */

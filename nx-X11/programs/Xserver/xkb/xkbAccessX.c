@@ -1,4 +1,3 @@
-/* $Xorg: xkbAccessX.c,v 1.4 2001/02/05 18:50:20 coskrey Exp $ */
 /************************************************************
 Copyright (c) 1993 by Silicon Graphics Computer Systems, Inc.
 
@@ -24,7 +23,6 @@ OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION  WITH
 THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 ********************************************************/
-/* $XFree86: xc/programs/Xserver/xkb/xkbAccessX.c,v 1.9 2001/08/23 14:33:25 alanh Exp $ */
 
 #ifdef HAVE_DIX_CONFIG_H
 #include <dix-config.h>
@@ -32,22 +30,18 @@ THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 #include <stdio.h>
 #include <math.h>
-#ifdef __QNX__
-#include <limits.h>
-#endif
-#define NEED_EVENTS 1
-#include <X11/X.h>
-#include <X11/Xproto.h>
-#include <X11/keysym.h>
+#include <nx-X11/X.h>
+#include <nx-X11/Xproto.h>
+#include <nx-X11/keysym.h>
 #include "inputstr.h"
-#include <X11/extensions/XKBsrv.h>
-#if !defined(WIN32) && !defined(Lynx)
+#include <xkbsrv.h>
+#if !defined(WIN32)
 #include <sys/time.h>
 #endif
 
 int	XkbDfltRepeatDelay=	660;
 int	XkbDfltRepeatInterval=	40;
-pointer	XkbLastRepeatEvent=	NULL;
+void *	XkbLastRepeatEvent=	NULL;
 
 #define	DFLT_TIMEOUT_CTRLS (XkbAX_KRGMask|XkbStickyKeysMask|XkbMouseKeysMask)
 #define	DFLT_TIMEOUT_OPTS  (XkbAX_IndicatorFBMask)
@@ -141,7 +135,7 @@ xEvent		xE;
     if (_XkbIsPressEvent(type))
 	XkbDDXKeyClick(keybd,keyCode,TRUE);
     else if (isRepeat)
-	XkbLastRepeatEvent=	(pointer)&xE;
+	XkbLastRepeatEvent=	(void *)&xE;
     XkbProcessKeyboardEvent(&xE,keybd,1L);
     XkbLastRepeatEvent= NULL;
     return;
@@ -286,7 +280,7 @@ XkbSrvLedInfoPtr	sli;
 } /* AccessXStickyKeysTurnOff */
 
 static CARD32
-AccessXKRGExpire(OsTimerPtr timer,CARD32 now,pointer arg)
+AccessXKRGExpire(OsTimerPtr timer,CARD32 now,void * arg)
 {
 XkbSrvInfoPtr		xkbi= ((DeviceIntPtr)arg)->key->xkbInfo;
 xkbControlsNotify	cn;
@@ -308,7 +302,7 @@ xkbControlsNotify	cn;
 }
 
 static CARD32
-AccessXRepeatKeyExpire(OsTimerPtr timer,CARD32 now,pointer arg)
+AccessXRepeatKeyExpire(OsTimerPtr timer,CARD32 now,void * arg)
 {
 XkbSrvInfoPtr	xkbi= ((DeviceIntPtr)arg)->key->xkbInfo;
 KeyCode		key;
@@ -330,7 +324,7 @@ AccessXCancelRepeatKey(XkbSrvInfoPtr xkbi,KeyCode key)
 }
 
 static CARD32
-AccessXSlowKeyExpire(OsTimerPtr timer,CARD32 now,pointer arg)
+AccessXSlowKeyExpire(OsTimerPtr timer,CARD32 now,void * arg)
 {
 DeviceIntPtr	keybd;
 XkbSrvInfoPtr	xkbi;
@@ -363,14 +357,12 @@ XkbControlsPtr	ctrls;
 	if (keybd->kbdfeed->ctrl.autoRepeat && 
 	    ((xkbi->slowKey != xkbi->mouseKey) || (!xkbi->mouseKeysAccel)) &&
 	     (ctrls->enabled_ctrls&XkbRepeatKeysMask)) {
-#ifndef AIXV3
 	    if (BitIsOn(keybd->kbdfeed->ctrl.autoRepeats,xkbi->slowKey))
-#endif
 	    {
 		xkbi->repeatKey = xkbi->slowKey;
 		xkbi->repeatKeyTimer= TimerSet(xkbi->repeatKeyTimer,
 					0, ctrls->repeat_delay,
-					AccessXRepeatKeyExpire, (pointer)keybd);
+					AccessXRepeatKeyExpire, (void *)keybd);
 	    }
 	}
     }
@@ -378,7 +370,7 @@ XkbControlsPtr	ctrls;
 }
 
 static CARD32
-AccessXBounceKeyExpire(OsTimerPtr timer,CARD32 now,pointer arg)
+AccessXBounceKeyExpire(OsTimerPtr timer,CARD32 now,void * arg)
 {
 XkbSrvInfoPtr	xkbi= ((DeviceIntPtr)arg)->key->xkbInfo;
 
@@ -387,7 +379,7 @@ XkbSrvInfoPtr	xkbi= ((DeviceIntPtr)arg)->key->xkbInfo;
 }
 
 static CARD32
-AccessXTimeoutExpire(OsTimerPtr timer,CARD32 now,pointer arg)
+AccessXTimeoutExpire(OsTimerPtr timer,CARD32 now,void * arg)
 {
 DeviceIntPtr		dev = (DeviceIntPtr)arg;
 XkbSrvInfoPtr		xkbi= dev->key->xkbInfo;
@@ -466,12 +458,12 @@ KeySym *	sym = XkbKeySymsPtr(xkbi->desc,key);
 	    if (XkbAX_NeedFeedback(ctrls,XkbAX_SlowWarnFBMask)) {
 		xkbi->krgTimerActive = _KRG_WARN_TIMER;
 		xkbi->krgTimer= TimerSet(xkbi->krgTimer, 0, 4000,
-					AccessXKRGExpire, (pointer)keybd);
+					AccessXKRGExpire, (void *)keybd);
 	    }
 	    else {
 		xkbi->krgTimerActive = _KRG_TIMER;
 		xkbi->krgTimer= TimerSet(xkbi->krgTimer, 0, 8000,
-					AccessXKRGExpire, (pointer)keybd);
+					AccessXKRGExpire, (void *)keybd);
 	    }
 	    if (!(ctrls->enabled_ctrls & XkbSlowKeysMask)) {
 		CARD32 now= GetTimeInMillis();
@@ -510,7 +502,7 @@ KeySym *	sym = XkbKeySymsPtr(xkbi->desc,key);
 	xkbi->slowKey= key;
 	xkbi->slowKeysTimer = TimerSet(xkbi->slowKeysTimer,
 				 0, ctrls->slow_keys_delay,
-				 AccessXSlowKeyExpire, (pointer)keybd);
+				 AccessXSlowKeyExpire, (void *)keybd);
 	ignoreKeyEvent = TRUE;
     }
 
@@ -532,9 +524,7 @@ KeySym *	sym = XkbKeySymsPtr(xkbi->desc,key);
 	if ((keybd->kbdfeed->ctrl.autoRepeat) &&
 		((ctrls->enabled_ctrls&(XkbSlowKeysMask|XkbRepeatKeysMask))==
 							XkbRepeatKeysMask)) {
-#ifndef AIXV3
 	    if (BitIsOn(keybd->kbdfeed->ctrl.autoRepeats,key))
-#endif
 	    {
 #ifdef DEBUG
 		if (xkbDebugFlags&0x10)
@@ -543,7 +533,7 @@ KeySym *	sym = XkbKeySymsPtr(xkbi->desc,key);
 		xkbi->repeatKey = key;
 		xkbi->repeatKeyTimer= TimerSet(xkbi->repeatKeyTimer,
 					0, ctrls->repeat_delay,
-					AccessXRepeatKeyExpire, (pointer)keybd);
+					AccessXRepeatKeyExpire, (void *)keybd);
 	    }
 	}
     }
@@ -604,7 +594,7 @@ Bool		ignoreKeyEvent = FALSE;
 	xkbi->inactiveKey= key;
 	xkbi->bounceKeysTimer= TimerSet(xkbi->bounceKeysTimer, 0,
 					ctrls->debounce_delay,
-					AccessXBounceKeyExpire, (pointer)keybd);
+					AccessXBounceKeyExpire, (void *)keybd);
     }
 
     /* Don't transmit the KeyRelease if SlowKeys is turned on and
@@ -645,7 +635,7 @@ Bool		ignoreKeyEvent = FALSE;
 	xkbi->lastPtrEventTime= 0;
 	xkbi->krgTimer= TimerSet(xkbi->krgTimer, 0, 
 					ctrls->ax_timeout*1000,
-					AccessXTimeoutExpire, (pointer)keybd);
+					AccessXTimeoutExpire, (void *)keybd);
 	xkbi->krgTimerActive= _ALL_TIMEOUT_TIMER;
     }
     else if (xkbi->krgTimerActive!=_OFF_TIMER) {

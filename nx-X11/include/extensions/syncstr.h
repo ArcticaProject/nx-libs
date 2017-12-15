@@ -1,4 +1,3 @@
-/* $Xorg: syncstr.h,v 1.4 2001/02/09 02:03:24 xorgcvs Exp $ */
 /*
 
 Copyright 1991, 1993, 1994, 1998  The Open Group
@@ -48,7 +47,6 @@ OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
 PERFORMANCE OF THIS SOFTWARE.
 
 ******************************************************************/
-/* $XFree86: xc/include/extensions/syncstr.h,v 1.3 2003/07/16 01:38:24 dawes Exp $ */
 
 #ifndef _SYNCSTR_H_
 #define _SYNCSTR_H_
@@ -396,11 +394,11 @@ typedef struct _SysCounterInfo {
     CARD64	bracket_less;
     SyncCounterType counterType;  /* how can this counter change */
     void        (*QueryValue)(
-			      pointer /*pCounter*/,
+			      void * /*pCounter*/,
 			      CARD64 * /*freshvalue*/
 );
     void	(*BracketValues)(
-				 pointer /*pCounter*/,
+				 void * /*pCounter*/,
 				 CARD64 * /*lessthan*/,
 				 CARD64 * /*greaterthan*/
 );
@@ -465,16 +463,16 @@ typedef union {
 } SyncAwaitUnion;
 
 
-extern pointer SyncCreateSystemCounter(
+extern void * SyncCreateSystemCounter(
     char *	/* name */,
     CARD64  	/* inital_value */,
     CARD64  	/* resolution */,
     SyncCounterType /* change characterization */,
     void        (* /*QueryValue*/ ) (
-        pointer /* pCounter */,
+        void * /* pCounter */,
         CARD64 * /* pValue_return */), /* XXX prototype */
     void        (* /*BracketValues*/) (
-        pointer /* pCounter */, 
+        void * /* pCounter */,
         CARD64 * /* pbracket_less */,
         CARD64 * /* pbracket_greater */)
 );
@@ -485,7 +483,7 @@ extern void SyncChangeCounter(
 );
 
 extern void SyncDestroySystemCounter(
-    pointer pCounter
+    void * pCounter
 );
 extern void InitServertime(void);
 

@@ -1,4 +1,3 @@
-/* $Xorg: miscrinit.c,v 1.4 2001/02/09 02:05:21 xorgcvs Exp $ */
 /*
 
 Copyright 1990, 1998  The Open Group
@@ -26,13 +25,12 @@ other dealings in this Software without prior written authorization
 from The Open Group.
 
 */
-/* $XFree86: xc/programs/Xserver/mi/miscrinit.c,v 3.15tsi Exp $ */
 
 #ifdef HAVE_DIX_CONFIG_H
 #include <dix-config.h>
 #endif
 
-#include <X11/X.h>
+#include <nx-X11/X.h>
 #include "servermd.h"
 #include "misc.h"
 #include "mi.h"
@@ -41,8 +39,7 @@ from The Open Group.
 #include "dix.h"
 #include "miline.h"
 #ifdef MITSHM
-#define _XSHM_SERVER_
-#include <X11/extensions/XShm.h>
+#include "shmint.h"
 #endif
 
 /* We use this structure to propogate some information from miScreenInit to
@@ -56,7 +53,7 @@ from The Open Group.
 
 typedef struct
 {
-    pointer pbits; /* pointer to framebuffer */
+    void * pbits; /* pointer to framebuffer */
     int width;    /* delta to add to a framebuffer addr to move one row down */
 } miScreenInitParmsRec, *miScreenInitParmsPtr;
 
@@ -71,7 +68,7 @@ miModifyPixmapHeader(pPixmap, width, height, depth, bitsPerPixel, devKind,
     int		depth;
     int		bitsPerPixel;
     int		devKind;
-    pointer     pPixData;
+    void        *pPixData;
 {
     if (!pPixmap)
 	return FALSE;
@@ -131,8 +128,7 @@ miModifyPixmapHeader(pPixmap, width, height, depth, bitsPerPixel, devKind,
 
 /*ARGSUSED*/
 Bool
-miCloseScreen (iScreen, pScreen)
-    int		iScreen;
+miCloseScreen (pScreen)
     ScreenPtr	pScreen;
 {
     return ((*pScreen->DestroyPixmap)((PixmapPtr)pScreen->devPrivate));
@@ -150,7 +146,7 @@ miCreateScreenResources(pScreen)
     ScreenPtr pScreen;
 {
     miScreenInitParmsPtr pScrInitParms;
-    pointer value;
+    void * value;
 
     pScrInitParms = (miScreenInitParmsPtr)pScreen->devPrivate;
 
@@ -164,7 +160,7 @@ miCreateScreenResources(pScreen)
 	/* create a pixmap with no data, then redirect it to point to
 	 * the screen
 	 */
-	pPixmap = (*pScreen->CreatePixmap)(pScreen, 0, 0, pScreen->rootDepth);
+	pPixmap = (*pScreen->CreatePixmap)(pScreen, 0, 0, pScreen->rootDepth, 0);
 	if (!pPixmap)
 	    return FALSE;
 
@@ -174,13 +170,13 @@ miCreateScreenResources(pScreen)
 		    PixmapBytePad(pScrInitParms->width, pScreen->rootDepth),
 		    pScrInitParms->pbits))
 	    return FALSE;
-	value = (pointer)pPixmap;
+	value = (void *)pPixmap;
     }
     else
     {
 	value = pScrInitParms->pbits;
     }
-    xfree(pScreen->devPrivate); /* freeing miScreenInitParmsRec */
+    free(pScreen->devPrivate); /* freeing miScreenInitParmsRec */
     pScreen->devPrivate = value; /* pPixmap or pbits */
     return TRUE;
 }
@@ -189,7 +185,7 @@ Bool
 miScreenDevPrivateInit(pScreen, width, pbits)
     register ScreenPtr pScreen;
     int width;
-    pointer pbits;
+    void * pbits;
 {
     miScreenInitParmsPtr pScrInitParms;
 
@@ -197,12 +193,12 @@ miScreenDevPrivateInit(pScreen, width, pbits)
      * to the screen, until CreateScreenResources can put them in the
      * screen pixmap.
      */
-    pScrInitParms = (miScreenInitParmsPtr)xalloc(sizeof(miScreenInitParmsRec));
+    pScrInitParms = (miScreenInitParmsPtr)malloc(sizeof(miScreenInitParmsRec));
     if (!pScrInitParms)
 	return FALSE;
     pScrInitParms->pbits = pbits;
     pScrInitParms->width = width;
-    pScreen->devPrivate = (pointer)pScrInitParms;
+    pScreen->devPrivate = (void *)pScrInitParms;
     return TRUE;
 }
 
@@ -210,7 +206,7 @@ Bool
 miScreenInit(pScreen, pbits, xsize, ysize, dpix, dpiy, width,
 	     rootDepth, numDepths, depths, rootVisual, numVisuals, visuals)
     register ScreenPtr pScreen;
-    pointer pbits;		/* pointer to screen bits */
+    void * pbits;		/* pointer to screen bits */
     int xsize, ysize;		/* in pixels */
     int dpix, dpiy;		/* dots per inch */
     int width;			/* pixel width of frame buffer */
@@ -267,37 +263,37 @@ miScreenInit(pScreen, pbits, xsize, ysize, dpix, dpiy, width,
     /* CreateColormap, DestroyColormap, InstallColormap, UninstallColormap */
     /* ListInstalledColormaps, StoreColors, ResolveColor */
 #ifdef NEED_SCREEN_REGIONS
-    pScreen->RegionCreate = miRegionCreate;
-    pScreen->RegionInit = miRegionInit;
-    pScreen->RegionCopy = miRegionCopy;
-    pScreen->RegionDestroy = miRegionDestroy;
-    pScreen->RegionUninit = miRegionUninit;
-    pScreen->Intersect = miIntersect;
-    pScreen->Union = miUnion;
-    pScreen->Subtract = miSubtract;
-    pScreen->Inverse = miInverse;
-    pScreen->RegionReset = miRegionReset;
-    pScreen->TranslateRegion = miTranslateRegion;
-    pScreen->RectIn = miRectIn;
-    pScreen->PointInRegion = miPointInRegion;
-    pScreen->RegionNotEmpty = miRegionNotEmpty;
-    pScreen->RegionEqual = miRegionEqual;
-    pScreen->RegionBroken = miRegionBroken;
-    pScreen->RegionBreak = miRegionBreak;
-    pScreen->RegionEmpty = miRegionEmpty;
-    pScreen->RegionExtents = miRegionExtents;
-    pScreen->RegionAppend = miRegionAppend;
-    pScreen->RegionValidate = miRegionValidate;
+    pScreen->RegionCreate = RegionCreate;
+    pScreen->RegionInit = RegionInit;
+    pScreen->RegionCopy = RegionCopy;
+    pScreen->RegionDestroy = RegionDestroy;
+    pScreen->RegionUninit = RegionUninit;
+    pScreen->Intersect = RegionIntersect;
+    pScreen->Union = RegionUnion;
+    pScreen->Subtract = RegionSubtract;
+    pScreen->Inverse = RegionInverse;
+    pScreen->RegionReset = RegionReset;
+    pScreen->TranslateRegion = RegionTranslate;
+    pScreen->RectIn = RegionContainsRect;
+    pScreen->PointInRegion = RegionContainsPoint;
+    pScreen->RegionNotEmpty = RegionNotEmpty;
+    pScreen->RegionEqual = RegionEqual;
+    pScreen->RegionBroken = RegionBroken;
+    pScreen->RegionBreak = RegionBreak;
+    pScreen->RegionEmpty = RegionEmpty;
+    pScreen->RegionExtents = RegionExtents;
+    pScreen->RegionAppend = RegionAppend;
+    pScreen->RegionValidate = RegionValidate;
 #endif /* NEED_SCREEN_REGIONS */
     /* BitmapToRegion */
 #ifdef NEED_SCREEN_REGIONS
-    pScreen->RectsToRegion = miRectsToRegion;
+    pScreen->RectsToRegion = RegionFromRects;
 #endif /* NEED_SCREEN_REGIONS */
     pScreen->SendGraphicsExpose = miSendGraphicsExpose;
     pScreen->BlockHandler = (ScreenBlockHandlerProcPtr)NoopDDA;
     pScreen->WakeupHandler = (ScreenWakeupHandlerProcPtr)NoopDDA;
-    pScreen->blockData = (pointer)0;
-    pScreen->wakeupData = (pointer)0;
+    pScreen->blockData = (void *)0;
+    pScreen->wakeupData = (void *)0;
     pScreen->MarkWindow = miMarkWindow;
     pScreen->MarkOverlappedWindows = miMarkOverlappedWindows;
     pScreen->ChangeSaveUnder = miChangeSaveUnder;
@@ -368,5 +364,5 @@ miSetScreenPixmap(pPix)
     PixmapPtr pPix;
 {
     if (pPix)
-	pPix->drawable.pScreen->devPrivate = (pointer)pPix;
+	pPix->drawable.pScreen->devPrivate = (void *)pPix;
 }

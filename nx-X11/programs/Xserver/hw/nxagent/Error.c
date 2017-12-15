@@ -1,17 +1,25 @@
 /**************************************************************************/
 /*                                                                        */
-/* Copyright (c) 2001, 2011 NoMachine, http://www.nomachine.com/.         */
+/* Copyright (c) 2001, 2011 NoMachine (http://www.nomachine.com)          */
+/* Copyright (c) 2008-2014 Oleksandr Shneyder <o.shneyder@phoca-gmbh.de>  */
+/* Copyright (c) 2011-2016 Mike Gabriel <mike.gabriel@das-netzwerkteam.de>*/
+/* Copyright (c) 2014-2016 Mihai Moldovan <ionic@ionic.de>                */
+/* Copyright (c) 2014-2016 Ulrich Sibiller <uli42@gmx.de>                 */
+/* Copyright (c) 2015-2016 Qindel Group (http://www.qindel.com)           */
 /*                                                                        */
 /* NXAGENT, NX protocol compression and NX extensions to this software    */
-/* are copyright of NoMachine. Redistribution and use of the present      */
-/* software is allowed according to terms specified in the file LICENSE   */
-/* which comes in the source distribution.                                */
+/* are copyright of the aforementioned persons and companies.             */
 /*                                                                        */
-/* Check http://www.nomachine.com/licensing.html for applicability.       */
-/*                                                                        */
-/* NX and NoMachine are trademarks of Medialogic S.p.A.                   */
+/* Redistribution and use of the present software is allowed according    */
+/* to terms specified in the file LICENSE which comes in the source       */
+/* distribution.                                                          */
 /*                                                                        */
 /* All rights reserved.                                                   */
+/*                                                                        */
+/* NOTE: This software has received contributions from various other      */
+/* contributors, only the core maintainers and supporters are listed as   */
+/* copyright holders. Please contact us, if you feel you should be listed */
+/* as copyright holder, as well.                                          */
 /*                                                                        */
 /**************************************************************************/
 
@@ -90,7 +98,7 @@ static char nxagentRootDir[DEFAULT_STRING_LENGTH] = { 0 };
 
 static char nxagentSessionDir[DEFAULT_STRING_LENGTH] = { 0 };
 
-char *nxagentGetClientsPath(void);
+void nxagentGetClientsPath(void);
 
 static int nxagentPrintError(Display *dpy, XErrorEvent *event, FILE *fp);
 
@@ -232,23 +240,16 @@ static int nxagentPrintError(dpy, event, fp)
 
 int nxagentExitHandler(const char *message)
 {
-  FatalError(message);
+  FatalError("%s", message);
 
   return 0;
 }
 
 void nxagentOpenClientsLogFile()
 {
-  char * clientsLogName;
-
   if (*nxagentClientsLogName == '\0')
   {
-    clientsLogName = nxagentGetClientsPath();
-
-    if (clientsLogName != NULL)
-    {
-      free(clientsLogName);
-    }
+    nxagentGetClientsPath();
   }
 
   if (nxagentClientsLogName != NULL && *nxagentClientsLogName !='\0')
@@ -497,7 +498,7 @@ char *nxagentGetRootPath(void)
   return rootPath;
 }
 
-char *nxagentGetSessionPath()
+char *nxagentGetSessionPath(void)
 {
 
   char *rootPath;
@@ -585,30 +586,27 @@ char *nxagentGetSessionPath()
   return sessionPath;
 }
 
-char *nxagentGetClientsPath()
+void nxagentGetClientsPath()
 {
-  char *sessionPath;
-  char *clientsPath;
 
   if (*nxagentClientsLogName == '\0')
   {
-    sessionPath = nxagentGetSessionPath();
+    char *sessionPath = nxagentGetSessionPath();
 
     if (sessionPath == NULL)
     {
-      return NULL;
+      return;
     }
 
     if (strlen(sessionPath) + strlen("/clients") > DEFAULT_STRING_LENGTH - 1)
     {
       #ifdef PANIC
-      fprintf(stderr, "nxagentGetClientsPath: PANIC! Invalid value for the NX clients Log File Path '%s'.\n",
-                  nxagentClientsLogName);
+      fprintf(stderr, "nxagentGetClientsPath: PANIC! Invalid value for the NX clients Log File Path ''.\n");
       #endif
 
       free(sessionPath);
 
-      return NULL;
+      return;
     }
 
     strcpy(nxagentClientsLogName, sessionPath);
@@ -618,19 +616,6 @@ char *nxagentGetClientsPath()
     free(sessionPath);
   }
 
-  clientsPath = malloc(strlen(nxagentClientsLogName) + 1);
-
-  if (clientsPath == NULL)
-  {
-    #ifdef PANIC
-    fprintf(stderr, "nxagentGetClientsPath: PANIC! Can't allocate memory for the clients Log File Path path.\n");
-    #endif
-
-    return NULL;
-  }
-
-  strcpy(clientsPath, nxagentClientsLogName);
-
-  return clientsPath; 
+  return;
 }
 

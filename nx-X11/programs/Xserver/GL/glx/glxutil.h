@@ -1,4 +1,3 @@
-/* $XFree86: xc/programs/Xserver/GL/glx/glxutil.h,v 1.3 2001/03/21 16:29:37 dawes Exp $ */
 #ifdef HAVE_DIX_CONFIG_H
 #include <dix-config.h>
 #endif
@@ -42,12 +41,6 @@
 */
 
 extern void __glXNop(void);
-
-/* memory management */
-extern void *__glXMalloc(size_t size);
-extern void *__glXCalloc(size_t numElements, size_t elementSize);
-extern void *__glXRealloc(void *addr, size_t newSize);
-extern void __glXFree(void *ptr);
 
 /* relate contexts with drawables */
 extern void __glXAssociateContext(__GLXcontext *glxc);

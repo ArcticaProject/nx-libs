@@ -1,4 +1,28 @@
-/* $XFree86: xc/programs/Xserver/os/WaitFor.c,v 3.42 2003/10/16 01:33:35 dawes Exp $ */
+/**************************************************************************/
+/*                                                                        */
+/* Copyright (c) 2001, 2011 NoMachine (http://www.nomachine.com)          */
+/* Copyright (c) 2008-2014 Oleksandr Shneyder <o.shneyder@phoca-gmbh.de>  */
+/* Copyright (c) 2011-2016 Mike Gabriel <mike.gabriel@das-netzwerkteam.de>*/
+/* Copyright (c) 2014-2016 Mihai Moldovan <ionic@ionic.de>                */
+/* Copyright (c) 2014-2016 Ulrich Sibiller <uli42@gmx.de>                 */
+/* Copyright (c) 2015-2016 Qindel Group (http://www.qindel.com)           */
+/*                                                                        */
+/* nx-X11, NX protocol compression and NX extensions to this software     */
+/* are copyright of the aforementioned persons and companies.             */
+/*                                                                        */
+/* Redistribution and use of the present software is allowed according    */
+/* to terms specified in the file LICENSE which comes in the source       */
+/* distribution.                                                          */
+/*                                                                        */
+/* All rights reserved.                                                   */
+/*                                                                        */
+/* NOTE: This software has received contributions from various other      */
+/* contributors, only the core maintainers and supporters are listed as   */
+/* copyright holders. Please contact us, if you feel you should be listed */
+/* as copyright holder, as well.                                          */
+/*                                                                        */
+/**************************************************************************/
+
 /***********************************************************
 
 Copyright 1987, 1998  The Open Group
@@ -46,25 +70,6 @@ SOFTWARE.
 
 ******************************************************************/
 
-/* $Xorg: WaitFor.c,v 1.4 2001/02/09 02:05:22 xorgcvs Exp $ */
-
-/**************************************************************************/
-/*                                                                        */
-/* Copyright (c) 2001, 2011 NoMachine, http://www.nomachine.com/.         */
-/*                                                                        */
-/* NX-X11, NX protocol compression and NX extensions to this software     */
-/* are copyright of NoMachine. Redistribution and use of the present      */
-/* software is allowed according to terms specified in the file LICENSE   */
-/* which comes in the source distribution.                                */
-/*                                                                        */
-/* Check http://www.nomachine.com/licensing.html for applicability.       */
-/*                                                                        */
-/* NX and NoMachine are trademarks of Medialogic S.p.A.                   */
-/*                                                                        */
-/* All rights reserved.                                                   */
-/*                                                                        */
-/**************************************************************************/
-
 /*****************************************************************
  * OS Dependent input routines:
  *
@@ -78,19 +83,16 @@ SOFTWARE.
 #endif
 
 #ifdef WIN32
-#include <X11/Xwinsock.h>
+#include <nx-X11/Xwinsock.h>
 #endif
-#include <X11/Xos.h>			/* for strings, fcntl, time */
+#include <nx-X11/Xos.h>			/* for strings, fcntl, time */
 #include <errno.h>
 #include <stdio.h>
-#include <X11/X.h>
+#include <nx-X11/X.h>
 #include "misc.h"
 
-#ifdef __UNIXOS2__
-#define select(n,r,w,x,t) os2PseudoSelect(n,r,w,x,t)
-#endif
 #include "osdep.h"
-#include <X11/Xpoll.h>
+#include <nx-X11/Xpoll.h>
 #include "dixstruct.h"
 #include "opaque.h"
 #ifdef DPMSExtension
@@ -138,7 +140,7 @@ mffs(fd_mask mask)
 
 #ifdef DPMSExtension
 #define DPMS_SERVER
-#include <X11/extensions/dpms.h>
+#include <nx-X11/extensions/dpms.h>
 #endif
 
 #ifdef XTESTEXT1
@@ -152,7 +154,7 @@ struct _OsTimerRec {
     OsTimerPtr		next;
     CARD32		expires;
     OsTimerCallback	callback;
-    pointer		arg;
+    void *		arg;
 };
 
 static void DoTimer(OsTimerPtr timer, CARD32 now, OsTimerPtr *prev);
@@ -186,11 +188,9 @@ WaitForSomething(int *pClientsReady)
     int curclient;
     int selecterr;
     int nready;
-    fd_set devicesReadable;
     CARD32 now = 0;
-#ifdef SMART_SCHEDULE
     Bool    someReady = FALSE;
-#endif
+    Bool    someNotifyWriteReady = FALSE;
 
 #if defined(NX_TRANS_SOCKET) && defined(NX_TRANS_DEBUG)
     fprintf(stderr, "WaitForSomething: Got called.\n");
@@ -213,22 +213,11 @@ WaitForSomething(int *pClientsReady)
 	    ProcessWorkQueue();
 	if (XFD_ANYSET (&ClientsWithInput))
 	{
-#ifdef SMART_SCHEDULE
-	    if (!SmartScheduleDisable)
-	    {
-		someReady = TRUE;
-		waittime.tv_sec = 0;
-		waittime.tv_usec = 0;
-		wt = &waittime;
-	    }
-	    else
-#endif
-	    {
-		XFD_COPYSET (&ClientsWithInput, &clientsReadable);
-		break;
-	    }
+	    someReady = TRUE;
+	    waittime.tv_sec = 0;
+	    waittime.tv_usec = 0;
+	    wt = &waittime;
 	}
-#ifdef SMART_SCHEDULE
 	if (someReady)
 	{
 	    XFD_COPYSET(&AllSockets, &LastSelectMask);
@@ -236,7 +225,6 @@ WaitForSomething(int *pClientsReady)
 	}
 	else
 	{
-#endif
         wt = NULL;
 	if (timers)
         {
@@ -250,11 +238,10 @@ WaitForSomething(int *pClientsReady)
 	    wt = &waittime;
 	}
 	XFD_COPYSET(&AllSockets, &LastSelectMask);
-#ifdef SMART_SCHEDULE
 	}
-	SmartScheduleIdle = TRUE;
-#endif
-	BlockHandler((pointer)&wt, (pointer)&LastSelectMask);
+	SmartScheduleStopTimer ();
+
+	BlockHandler((void *)&wt, (void *)&LastSelectMask);
 	if (NewOutputPending)
 	    FlushAllOutput();
 #ifdef XTESTEXT1
@@ -344,7 +331,7 @@ WaitForSomething(int *pClientsReady)
         if (dispatchException)
             i = -1;
 #endif
-	else if (AnyClientsWriteBlocked)
+	else if (AnyWritesPending)
 	{
 #if defined(NX_TRANS_SOCKET) && defined(NX_TRANS_DEBUG)
             if (wt == NULL)
@@ -359,8 +346,9 @@ WaitForSomething(int *pClientsReady)
                                 wt -> tv_sec, wt -> tv_usec);
             }
 #endif
-	    XFD_COPYSET(&ClientsWriteBlocked, &clientsWritable);
-	    i = Select (MaxClients, &LastSelectMask, &clientsWritable, NULL, wt);
+	     XFD_COPYSET(&ClientsWriteBlocked, &LastSelectWriteMask);
+	     XFD_ORSET(&LastSelectWriteMask, &NotifyWriteFds, &LastSelectWriteMask);
+	     i = Select(MaxClients, &LastSelectMask, &LastSelectWriteMask, NULL, wt);
 	}
 	else 
 	{
@@ -386,21 +374,14 @@ WaitForSomething(int *pClientsReady)
         }
 #endif
 	selecterr = GetErrno();
-	WakeupHandler(i, (pointer)&LastSelectMask);
+	WakeupHandler(i, (void *)&LastSelectMask);
 #ifdef XTESTEXT1
 	if (playback_on) {
 	    i = XTestProcessInputAction (i, &waittime);
 	}
 #endif /* XTESTEXT1 */
-#ifdef SMART_SCHEDULE
-	if (i >= 0)
-	{
-	    SmartScheduleIdle = FALSE;
-	    SmartScheduleIdleCount = 0;
-	    if (SmartScheduleTimerStopped)
-		(void) SmartScheduleStartTimer ();
-	}
-#endif
+	SmartScheduleStartTimer ();
+
 	if (i <= 0) /* An error or timeout occurred */
 	{
 #if defined(NX_TRANS_SOCKET) && defined(NX_TRANS_DEBUG)
@@ -440,7 +421,6 @@ WaitForSomething(int *pClientsReady)
 			selecterr);
 		}
 	    }
-#ifdef SMART_SCHEDULE
 	    else if (someReady)
 	    {
 		/*
@@ -450,7 +430,6 @@ WaitForSomething(int *pClientsReady)
 		XFD_COPYSET(&ClientsWithInput, &clientsReadable);
 		break;
 	    }
-#endif
 #if defined(NX_TRANS_SOCKET)
             if (*checkForInput[0] != *checkForInput[1])
             {
@@ -497,30 +476,31 @@ WaitForSomething(int *pClientsReady)
                         return 0;
 	        }
 	    }
-#ifdef SMART_SCHEDULE
 	    if (someReady)
 		XFD_ORSET(&LastSelectMask, &ClientsWithInput, &LastSelectMask);
-#endif	    
-	    if (AnyClientsWriteBlocked && XFD_ANYSET (&clientsWritable))
-	    {
-		NewOutputPending = TRUE;
-		XFD_ORSET(&OutputPending, &clientsWritable, &OutputPending);
-		XFD_UNSET(&ClientsWriteBlocked, &clientsWritable);
-		if (! XFD_ANYSET(&ClientsWriteBlocked))
-		    AnyClientsWriteBlocked = FALSE;
+	    if (AnyWritesPending) {
+		XFD_ANDSET(&clientsWritable, &LastSelectWriteMask, &ClientsWriteBlocked);
+		    if (XFD_ANYSET(&clientsWritable)) {
+		    NewOutputPending = TRUE;
+		    XFD_ORSET(&OutputPending, &clientsWritable, &OutputPending);
+		    XFD_UNSET(&ClientsWriteBlocked, &clientsWritable);
+		    if (!XFD_ANYSET(&ClientsWriteBlocked) && NumNotifyWriteFd == 0)
+			AnyWritesPending = FALSE;
+		}
+		if (NumNotifyWriteFd != 0) {
+		    XFD_ANDSET(&tmp_set, &LastSelectWriteMask, &NotifyWriteFds);
+		    if (XFD_ANYSET(&tmp_set))
+			someNotifyWriteReady = TRUE;
+		}
 	    }
 
-	    XFD_ANDSET(&devicesReadable, &LastSelectMask, &EnabledDevices);
 	    XFD_ANDSET(&clientsReadable, &LastSelectMask, &AllClients); 
-	    XFD_ANDSET(&tmp_set, &LastSelectMask, &WellKnownConnections);
-	    if (XFD_ANYSET(&tmp_set))
-		QueueWorkProc(EstablishNewConnections, NULL,
-			      (pointer)&LastSelectMask);
-#ifdef DPMSExtension
-	    if (XFD_ANYSET (&devicesReadable) && (DPMSPowerLevel != DPMSModeOn))
-		DPMSSet(DPMSModeOn);
-#endif
-	    if (XFD_ANYSET (&devicesReadable) || XFD_ANYSET (&clientsReadable))
+
+	    XFD_ANDSET(&tmp_set, &LastSelectMask, &NotifyReadFds);
+	    if (XFD_ANYSET(&tmp_set) || someNotifyWriteReady)
+	         HandleNotifyFds();
+
+	    if (XFD_ANYSET (&clientsReadable))
 		break;
 #ifdef WIN32
 	    /* Windows keyboard and mouse events are added to the input queue
@@ -548,17 +528,14 @@ WaitForSomething(int *pClientsReady)
 #ifndef WIN32
 	for (i=0; i<howmany(XFD_SETSIZE, NFDBITS); i++)
 	{
-	    int highest_priority = 0;
-
 	    while (clientsReadable.fds_bits[i])
 	    {
-	        int client_priority, client_index;
+		int client_index;
 
 		curclient = ffs (clientsReadable.fds_bits[i]) - 1;
 		client_index = /* raphael: modified */
 			ConnectionTranslation[curclient + (i * (sizeof(fd_mask) * 8))];
 #else
-	int highest_priority = 0;
 	fd_set savedClientsReadable;
 	XFD_COPYSET(&clientsReadable, &savedClientsReadable);
 	for (i = 0; i < XFD_SETCOUNT(&savedClientsReadable); i++)
@@ -568,40 +545,10 @@ WaitForSomething(int *pClientsReady)
 	    curclient = XFD_FD(&savedClientsReadable, i);
 	    client_index = GetConnectionTranslation(curclient);
 #endif
-#ifdef XSYNC
-		/*  We implement "strict" priorities.
-		 *  Only the highest priority client is returned to
-		 *  dix.  If multiple clients at the same priority are
-		 *  ready, they are all returned.  This means that an
-		 *  aggressive client could take over the server.
-		 *  This was not considered a big problem because
-		 *  aggressive clients can hose the server in so many 
-		 *  other ways :)
-		 */
-		client_priority = clients[client_index]->priority;
-		if (nready == 0 || client_priority > highest_priority)
-		{
-		    /*  Either we found the first client, or we found
-		     *  a client whose priority is greater than all others
-		     *  that have been found so far.  Either way, we want 
-		     *  to initialize the list of clients to contain just
-		     *  this client.
-		     */
-		    pClientsReady[0] = client_index;
-		    highest_priority = client_priority;
-		    nready = 1;
-		}
-		/*  the following if makes sure that multiple same-priority 
-		 *  clients get batched together
-		 */
-		else if (client_priority == highest_priority)
-#endif
-		{
-		    pClientsReady[nready++] = client_index;
-		}
+	    pClientsReady[nready++] = client_index;
 #ifndef WIN32
-		clientsReadable.fds_bits[i] &= ~(((fd_mask)1L) << curclient);
-	    }
+	    clientsReadable.fds_bits[i] &= ~(((fd_mask)1L) << curclient);
+	}
 #else
 	    FD_CLR(curclient, &clientsReadable);
 #endif
@@ -643,14 +590,14 @@ DoTimer(OsTimerPtr timer, CARD32 now, OsTimerPtr *prev)
 
 OsTimerPtr
 TimerSet(OsTimerPtr timer, int flags, CARD32 millis, 
-    OsTimerCallback func, pointer arg)
+    OsTimerCallback func, void * arg)
 {
     register OsTimerPtr *prev;
     CARD32 now = GetTimeInMillis();
 
     if (!timer)
     {
-	timer = (OsTimerPtr)xalloc(sizeof(struct _OsTimerRec));
+	timer = (OsTimerPtr)malloc(sizeof(struct _OsTimerRec));
 	if (!timer)
 	    return NULL;
     }
@@ -730,7 +677,7 @@ TimerFree(OsTimerPtr timer)
     if (!timer)
 	return;
     TimerCancel(timer);
-    xfree(timer);
+    free(timer);
 }
 
 void
@@ -750,12 +697,12 @@ TimerInit(void)
     while ((timer = timers))
     {
 	timers = timer->next;
-	xfree(timer);
+	free(timer);
     }
 }
 
 static CARD32
-ScreenSaverTimeoutExpire(OsTimerPtr timer,CARD32 now,pointer arg)
+ScreenSaverTimeoutExpire(OsTimerPtr timer,CARD32 now,void * arg)
 {
     INT32 timeout = now - lastDeviceEventTime.milliseconds;
 
@@ -805,7 +752,7 @@ static OsTimerPtr DPMSSuspendTimer = NULL;
 static OsTimerPtr DPMSOffTimer = NULL;
 
 static CARD32
-DPMSStandbyTimerExpire(OsTimerPtr timer,CARD32 now,pointer arg)
+DPMSStandbyTimerExpire(OsTimerPtr timer,CARD32 now,void * arg)
 {
     INT32 timeout = now - lastDeviceEventTime.milliseconds;
 
@@ -820,7 +767,7 @@ DPMSStandbyTimerExpire(OsTimerPtr timer,CARD32 now,pointer arg)
 }
 
 static CARD32
-DPMSSuspendTimerExpire(OsTimerPtr timer,CARD32 now,pointer arg)
+DPMSSuspendTimerExpire(OsTimerPtr timer,CARD32 now,void * arg)
 {
     INT32 timeout = now - lastDeviceEventTime.milliseconds;
 
@@ -835,7 +782,7 @@ DPMSSuspendTimerExpire(OsTimerPtr timer,CARD32 now,pointer arg)
 }
 
 static CARD32
-DPMSOffTimerExpire(OsTimerPtr timer,CARD32 now,pointer arg)
+DPMSOffTimerExpire(OsTimerPtr timer,CARD32 now,void * arg)
 {
     INT32 timeout = now - lastDeviceEventTime.milliseconds;
 

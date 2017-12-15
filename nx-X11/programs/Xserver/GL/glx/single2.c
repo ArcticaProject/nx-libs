@@ -1,4 +1,3 @@
-/* $XFree86: xc/programs/Xserver/GL/glx/single2.c,v 1.8 2004/02/10 22:54:15 alanh Exp $ */
 /*
 ** License Applicability. Except to the extent portions of this file are
 ** made subject to an alternative license as permitted in the SGI Free
@@ -34,24 +33,29 @@
 **
 */
 
-#define NEED_REPLIES
 #ifdef HAVE_DIX_CONFIG_H
 #include <dix-config.h>
 #endif
+
+#include <string.h>
+#include <stdio.h>
+#include <stdlib.h>
 
 #include "glxserver.h"
 #include "glxutil.h"
 #include "glxext.h"
 #include "unpack.h"
 #include "g_disptab.h"
-#include "GL/glx_ansic.h"
 
 int __glXDisp_FeedbackBuffer(__GLXclientState *cl, GLbyte *pc)
 {
+    ClientPtr client = cl->client;
     GLsizei size;
     GLenum type;
     __GLXcontext *cx;
     int error;
+
+    REQUEST_FIXED_SIZE(xGLXSingleReq, 8);
 
     cx = __glXForceCurrent(cl, __GLX_GET_SINGLE_CONTEXT_TAG(pc), &error);
     if (!cx) {
@@ -62,7 +66,7 @@ int __glXDisp_FeedbackBuffer(__GLXclientState *cl, GLbyte *pc)
     size = *(GLsizei *)(pc+0);
     type = *(GLenum *)(pc+4);
     if (cx->feedbackBufSize < size) {
-	cx->feedbackBuf = (GLfloat *) __glXRealloc(cx->feedbackBuf,
+	cx->feedbackBuf = (GLfloat *) realloc(cx->feedbackBuf,
 						   (size_t)size 
 						   * __GLX_SIZE_FLOAT32);
 	if (!cx->feedbackBuf) {
@@ -78,10 +82,12 @@ int __glXDisp_FeedbackBuffer(__GLXclientState *cl, GLbyte *pc)
 
 int __glXDisp_SelectBuffer(__GLXclientState *cl, GLbyte *pc)
 {
+    ClientPtr client = cl->client;
     __GLXcontext *cx;
     GLsizei size;
     int error;
 
+    REQUEST_FIXED_SIZE(xGLXSingleReq, 4);
     cx = __glXForceCurrent(cl, __GLX_GET_SINGLE_CONTEXT_TAG(pc), &error);
     if (!cx) {
 	return error;
@@ -90,7 +96,7 @@ int __glXDisp_SelectBuffer(__GLXclientState *cl, GLbyte *pc)
     pc += __GLX_SINGLE_HDR_SIZE;
     size = *(GLsizei *)(pc+0);
     if (cx->selectBufSize < size) {
-	cx->selectBuf = (GLuint *) __glXRealloc(cx->selectBuf,
+	cx->selectBuf = (GLuint *) realloc(cx->selectBuf,
 						(size_t) size 
 						* __GLX_SIZE_CARD32);
 	if (!cx->selectBuf) {
@@ -106,13 +112,15 @@ int __glXDisp_SelectBuffer(__GLXclientState *cl, GLbyte *pc)
 
 int __glXDisp_RenderMode(__GLXclientState *cl, GLbyte *pc)
 {
-    ClientPtr client;
+    ClientPtr client = cl->client;
     xGLXRenderModeReply reply;
     __GLXcontext *cx;
     GLint nitems=0, retBytes=0, retval, newModeCheck;
     GLubyte *retBuffer = NULL;
     GLenum newMode;
     int error;
+
+    REQUEST_FIXED_SIZE(xGLXSingleReq, 4);
 
     cx = __glXForceCurrent(cl, __GLX_GET_SINGLE_CONTEXT_TAG(pc), &error);
     if (!cx) {
@@ -188,25 +196,26 @@ int __glXDisp_RenderMode(__GLXclientState *cl, GLbyte *pc)
     ** selection array, as per the API for glRenderMode itself.
     */
   noChangeAllowed:;
-    client = cl->client;
     reply.length = nitems;
     reply.type = X_Reply;
     reply.sequenceNumber = client->sequence;
     reply.retval = retval;
     reply.size = nitems;
     reply.newMode = newMode;
-    WriteToClient(client, sz_xGLXRenderModeReply, (char *)&reply);
+    WriteToClient(client, sz_xGLXRenderModeReply, &reply);
     if (retBytes) {
-	WriteToClient(client, retBytes, (char *)retBuffer);
+	WriteToClient(client, retBytes, retBuffer);
     }
     return Success;
 }
 
 int __glXDisp_Flush(__GLXclientState *cl, GLbyte *pc)
 {
+        ClientPtr client = cl->client;
 	__GLXcontext *cx;
 	int error;
 
+	REQUEST_SIZE_MATCH(xGLXSingleReq);
 	cx = __glXForceCurrent(cl, __GLX_GET_SINGLE_CONTEXT_TAG(pc), &error);
 	if (!cx) {
 		return error;
@@ -219,10 +228,11 @@ int __glXDisp_Flush(__GLXclientState *cl, GLbyte *pc)
 
 int __glXDisp_Finish(__GLXclientState *cl, GLbyte *pc)
 {
+    ClientPtr client = cl->client;
     __GLXcontext *cx;
-    ClientPtr client;
     int error;
 
+    REQUEST_SIZE_MATCH(xGLXSingleReq);
     cx = __glXForceCurrent(cl, __GLX_GET_SINGLE_CONTEXT_TAG(pc), &error);
     if (!cx) {
 	return error;
@@ -233,7 +243,6 @@ int __glXDisp_Finish(__GLXclientState *cl, GLbyte *pc)
     __GLX_NOTE_FLUSHED_CMDS(cx);
 
     /* Send empty reply packet to indicate finish is finished */
-    client = cl->client;
     __GLX_BEGIN_REPLY(0);
     __GLX_SEND_HEADER();
     return Success;
@@ -258,24 +267,30 @@ char *__glXcombine_strings(const char *cext_string, const char *sext_string)
    ** pull tokens out of shortest string
    ** include space in combo_string for final separator and null terminator
    */
-   if ( (clen = __glXStrlen(cext_string)) > (slen = __glXStrlen(sext_string)) ) {
-	combo_string = (char *) __glXMalloc(slen + 2);
-	s1 = (char *) __glXMalloc(slen + 2); __glXStrcpy(s1, sext_string);
+   clen = strlen(cext_string);
+   slen = strlen(sext_string);
+   if (clen > slen) {
+	combo_string = (char *) malloc(slen + 2);
+	s1 = (char *) malloc(slen + 2);
+	strcpy(s1, sext_string);
 	s2 = cext_string;
    } else {
-	combo_string = (char *) __glXMalloc(clen + 2);
-	s1 = (char *) __glXMalloc(clen + 2); __glXStrcpy(s1, cext_string);
+	combo_string = (char *) malloc(clen + 2);
+	s1 = (char *) malloc(clen + 2);
+	strcpy(s1, cext_string);
 	s2 = sext_string;
    }
    if (!combo_string || !s1) {
-	if (combo_string) __glXFree(combo_string);
-	if (s1) __glXFree(s1);
+	if (combo_string)
+	    free(combo_string);
+	if (s1)
+	    free(s1);
 	return NULL;
    }
    combo_string[0] = '\0';
 
    /* Get first extension token */
-   token = __glXStrtok( s1, SEPARATOR);
+   token = strtok( s1, SEPARATOR);
    while ( token != NULL ) {
 
 	/*
@@ -283,26 +298,26 @@ char *__glXcombine_strings(const char *cext_string, const char *sext_string)
 	** beware of extension names which are prefixes of other extension names
 	*/
 	const char *p = s2;
-	end = p + __glXStrlen(p);
+	end = p + strlen(p);
 	while (p < end) {
-	    size_t n = __glXStrcspn(p, SEPARATOR);
-	    if ((__glXStrlen(token) == n) && (__glXStrncmp(token, p, n) == 0)) {
-		combo_string = __glXStrcat( combo_string, token);
-		combo_string = __glXStrcat( combo_string, SEPARATOR);
+	    size_t n = strcspn(p, SEPARATOR);
+	    if ((strlen(token) == n) && (strncmp(token, p, n) == 0)) {
+		combo_string = strcat(combo_string, token);
+		combo_string = strcat(combo_string, SEPARATOR);
 	    }
 	    p += (n + 1);
 	}
 
 	/* Get next extension token */
-	token = __glXStrtok( NULL, SEPARATOR);
+	token = strtok( NULL, SEPARATOR);
    }
-   __glXFree(s1);
+   free(s1);
    return combo_string;
 }
 
 int DoGetString(__GLXclientState *cl, GLbyte *pc, GLboolean need_swap)
 {
-    ClientPtr client;
+    ClientPtr client = cl->client;
     __GLXcontext *cx;
     GLenum name;
     const char *string;
@@ -310,6 +325,8 @@ int DoGetString(__GLXclientState *cl, GLbyte *pc, GLboolean need_swap)
     int error;
     char *buf = NULL, *buf1 = NULL;
     GLint length = 0;
+
+    REQUEST_FIXED_SIZE(xGLXSingleReq, 4);
 
     /* If the client has the opposite byte order, swap the contextTag and
      * the name.
@@ -327,7 +344,6 @@ int DoGetString(__GLXclientState *cl, GLbyte *pc, GLboolean need_swap)
     pc += __GLX_SINGLE_HDR_SIZE;
     name = *(GLenum *)(pc + 0);
     string = (const char *)glGetString(name);
-    client = cl->client;
 
     /*
     ** Restrict extensions to those that are supported by both the
@@ -340,26 +356,24 @@ int DoGetString(__GLXclientState *cl, GLbyte *pc, GLboolean need_swap)
 	buf = __glXcombine_strings(buf1,
 				      cx->pGlxScreen->GLextensions);
 	if (buf1 != NULL) {
-	    __glXFree(buf1);
+	    free(buf1);
 	}
 	string = buf;
     }
     else if ( name == GL_VERSION ) {
 	if ( atof( string ) > atof( GLServerVersion ) ) {
-	    buf = __glXMalloc( __glXStrlen( string ) 
-			       + __glXStrlen( GLServerVersion )
-			       + 4 );
+	    buf = malloc( strlen( string ) + strlen( GLServerVersion ) + 4 );
 	    if ( buf == NULL ) {
 		string = GLServerVersion;
 	    }
 	    else {
-		__glXSprintf( buf, "%s (%s)", GLServerVersion, string );
+		sprintf( buf, "%s (%s)", GLServerVersion, string );
 		string = buf;
 	    }
 	}
     }
     if (string) {
-	length = __glXStrlen((const char *) string) + 1;
+	length = strlen((const char *) string) + 1;
     }
 
     __GLX_BEGIN_REPLY(length);
@@ -371,9 +385,9 @@ int DoGetString(__GLXclientState *cl, GLbyte *pc, GLboolean need_swap)
     }
 
     __GLX_SEND_HEADER();
-    WriteToClient(client, length, (char *) string); 
+    WriteToClient(client, length, string);
     if (buf != NULL) {
-	__glXFree(buf);
+	free(buf);
     }
     return Success;
 }

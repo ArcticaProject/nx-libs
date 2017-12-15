@@ -1,6 +1,4 @@
 /*
- * $XFree86: xc/programs/Xserver/fb/fb24_32.c,v 1.4 2000/08/09 17:50:51 keithp Exp $
- *
  * Copyright © 2000 SuSE, Inc.
  *
  * Permission to use, copy, modify, distribute, and sell this software and its
@@ -27,11 +25,7 @@
 #include <dix-config.h>
 #endif
 
-#ifdef XFree86LOADER
-#include "xf86.h"
-#include "xf86_ansic.h"
-#endif
-
+#include <string.h>
 #include "fb.h"
 
 /* X apps don't like 24bpp images, this code exposes 32bpp images */
@@ -338,8 +332,8 @@ fb24_32SetSpans (DrawablePtr	    pDrawable,
     {
 	d = dst + (ppt->y + dstYoff) * dstStride;
 	s = (CARD8 *) src;
-	n = REGION_NUM_RECTS(pClip);
-	pbox = REGION_RECTS (pClip);
+	n = RegionNumRects(pClip);
+	pbox = RegionRects (pClip);
 	while (n--)
 	{
 	    if (pbox->y1 > ppt->y)
@@ -400,8 +394,8 @@ fb24_32PutZImage (DrawablePtr	pDrawable,
     dstStride *= sizeof(FbBits);
     dst = (CARD8 *) dstBits;
 
-    for (nbox = REGION_NUM_RECTS (pClip),
-	 pbox = REGION_RECTS(pClip);
+    for (nbox = RegionNumRects (pClip),
+	 pbox = RegionRects(pClip);
 	 nbox--;
 	 pbox++)
     {
@@ -534,14 +528,14 @@ fb24_32ReformatTile(PixmapPtr pOldTile, int bitsPerPixel)
     FbStride	oldStride, newStride;
     int		oldBpp, newBpp;
     fb24_32BltFunc  blt;
-    int		oldXoff, oldYoff;
-    int		newXoff, newYoff;
+    _X_UNUSED int		oldXoff, oldYoff;
+    _X_UNUSED int		newXoff, newYoff;
 
     pNewTile = fbCreatePixmapBpp (pScreen,
 				  pOldTile->drawable.width,
 				  pOldTile->drawable.height,
 				  pOldTile->drawable.depth,
-				  bitsPerPixel);
+				  bitsPerPixel, 0);
     if (!pNewTile)
 	return 0;
     fbGetDrawable (&pOldTile->drawable, 
@@ -571,7 +565,7 @@ fb24_32ReformatTile(PixmapPtr pOldTile, int bitsPerPixel)
 }
 
 typedef struct {
-    pointer pbits; 
+    void * pbits; 
     int width;   
 } miScreenInitParmsRec, *miScreenInitParmsPtr;
 
@@ -603,7 +597,7 @@ fb24_32ModifyPixmapHeader (PixmapPtr   pPixmap,
 			   int         depth,
 			   int         bitsPerPixel,
 			   int         devKind,
-			   pointer     pPixData)
+			   void        *pPixData)
 {
     int	    bpp, w;
 

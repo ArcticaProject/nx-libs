@@ -1,0 +1,13 @@
+prefix=@prefix@
+exec_prefix=@exec_prefix@
+libdir=@libdir@
+includedir=@includedir@
+
+Name: nxcompshad
+Description: Shadow Session Support for NX Compression Library
+Version: @COMPSHAD_VERSION@
+Requires: nxcomp
+Requires.private: x11
+Cflags: -I${includedir}
+Libs: -L${libdir} -lXcompshad
+

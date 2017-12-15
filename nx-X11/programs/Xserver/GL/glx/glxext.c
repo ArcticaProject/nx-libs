@@ -1,4 +1,4 @@
-/* $XFree86: xc/programs/Xserver/GL/glx/glxext.c,v 1.9 2003/09/28 20:15:43 alanh Exp $
+/*
 ** The contents of this file are subject to the GLX Public License Version 1.0
 ** (the "License"). You may not use this file except in compliance with the
 ** License. You may obtain a copy of the License at Silicon Graphics, Inc.,
@@ -18,7 +18,6 @@
 **
 */
 
-#define NEED_REPLIES
 #ifdef HAVE_DIX_CONFIG_H
 #include <dix-config.h>
 #endif
@@ -43,7 +42,6 @@ static __GLXextensionInfo *__glXExt /* = &__glDDXExtensionInfo */;
 /*
 ** Forward declarations.
 */
-static int __glXSwapDispatch(ClientPtr);
 static int __glXDispatch(ClientPtr);
 
 /*
@@ -63,17 +61,18 @@ static void ResetClientState(int clientIndex)
 {
     __GLXclientState *cl = __glXClients[clientIndex];
 
-    if (cl->returnBuf) __glXFree(cl->returnBuf);
-    if (cl->largeCmdBuf) __glXFree(cl->largeCmdBuf);
-    if (cl->currentContexts) __glXFree(cl->currentContexts);
-    __glXMemset(cl, 0, sizeof(__GLXclientState));
+    if (cl->returnBuf) free(cl->returnBuf);
+    if (cl->largeCmdBuf) free(cl->largeCmdBuf);
+    if (cl->currentContexts) free(cl->currentContexts);
+    memset(cl, 0, sizeof(__GLXclientState));
     /*
     ** By default, assume that the client supports
     ** GLX major version 1 minor version 0 protocol.
     */
     cl->GLClientmajorVersion = 1;
     cl->GLClientminorVersion = 0;
-    if (cl->GLClientextensions) __glXFree(cl->GLClientextensions);
+    if (cl->GLClientextensions)
+	free(cl->GLClientextensions);
 
 }
 
@@ -152,7 +151,7 @@ static int PixmapGone(__GLXpixmap *pGlxPixmap, XID id)
 	** only if it's zero.
 	*/
 	(*pGlxPixmap->pScreen->DestroyPixmap)(pPixmap);
-	__glXFree(pGlxPixmap);
+	free(pGlxPixmap);
     }
 
     return True;
@@ -170,9 +169,9 @@ GLboolean __glXFreeContext(__GLXcontext *cx)
 	    return GL_FALSE;
 	}
     }
-    if (cx->feedbackBuf) __glXFree(cx->feedbackBuf);
-    if (cx->selectBuf) __glXFree(cx->selectBuf);
-    __glXFree(cx);
+    if (cx->feedbackBuf) free(cx->feedbackBuf);
+    if (cx->selectBuf) free(cx->selectBuf);
+    free(cx);
     if (cx == __glXLastContext) {
 	__glXFlushContextCache();
     }
@@ -246,7 +245,7 @@ void GlxExtensionInit(void)
     */
     extEntry = AddExtension(GLX_EXTENSION_NAME, __GLX_NUMBER_EVENTS,
 			    __GLX_NUMBER_ERRORS, __glXDispatch,
-			    __glXSwapDispatch, ResetExtension,
+			    __glXDispatch, ResetExtension,
 			    StandardMinorOpcode);
     if (!extEntry) {
 	FatalError("__glXExtensionInit: AddExtensions failed\n");
@@ -390,6 +389,8 @@ __GLXcontext *__glXForceCurrent(__GLXclientState *cl, GLXContextTag tag,
 
 /************************************************************************/
 
+#ifndef NXAGENT_SERVER
+
 /*
 ** Top level dispatcher; all commands are executed from here down.
 */
@@ -403,12 +404,12 @@ static int __glXDispatch(ClientPtr client)
     opcode = stuff->glxCode;
     cl = __glXClients[client->index];
     if (!cl) {
-	cl = (__GLXclientState *) __glXMalloc(sizeof(__GLXclientState));
+	cl = (__GLXclientState *) malloc(sizeof(__GLXclientState));
 	 __glXClients[client->index] = cl;
 	if (!cl) {
 	    return BadAlloc;
 	}
-	__glXMemset(cl, 0, sizeof(__GLXclientState));
+	memset(cl, 0, sizeof(__GLXclientState));
     }
     
     if (!cl->inUse) {
@@ -417,7 +418,7 @@ static int __glXDispatch(ClientPtr client)
 	** with the client so we will be notified when the client dies.
 	*/
 	XID xid = FakeClientID(client->index);
-	if (!AddResource( xid, __glXClientRes, (pointer)(long)client->index)) {
+	if (!AddResource( xid, __glXClientRes, (void *)(long)client->index)) {
 	    return BadAlloc;
 	}
 	ResetClientState(client->index);
@@ -443,55 +444,15 @@ static int __glXDispatch(ClientPtr client)
     /*
     ** Use the opcode to index into the procedure table.
     */
-    proc = __glXSingleTable[opcode];
+    if (client->swapped)
+	proc = __glXSwapSingleTable[opcode];
+    else
+	proc = __glXSingleTable[opcode];
     return (*proc)(cl, (GLbyte *) stuff);
 }
 
-static int __glXSwapDispatch(ClientPtr client)
-{
-    REQUEST(xGLXSingleReq);
-    CARD8 opcode;
-    int (*proc)(__GLXclientState *cl, GLbyte *pc);
-    __GLXclientState *cl;
+#endif /* NXAGENT_SERVER */
 
-    opcode = stuff->glxCode;
-    cl = __glXClients[client->index];
-    if (!cl) {
-	cl = (__GLXclientState *) __glXMalloc(sizeof(__GLXclientState));
-	 __glXClients[client->index] = cl;
-	if (!cl) {
-	    return BadAlloc;
-	}
-	__glXMemset(cl, 0, sizeof(__GLXclientState));
-    }
-    
-    if (!cl->inUse) {
-	/*
-	** This is first request from this client.  Associate a resource
-	** with the client so we will be notified when the client dies.
-	*/
-	XID xid = FakeClientID(client->index);
-	if (!AddResource( xid, __glXClientRes, (pointer)(long)client->index)) {
-	    return BadAlloc;
-	}
-	ResetClientState(client->index);
-	cl->inUse = GL_TRUE;
-	cl->client = client;
-    }
-
-    /*
-    ** Check for valid opcode.
-    */
-    if (opcode >= __GLX_SINGLE_TABLE_SIZE) {
-	return BadRequest;
-    }
-
-    /*
-    ** Use the opcode to index into the procedure table.
-    */
-    proc = __glXSwapSingleTable[opcode];
-    return (*proc)(cl, (GLbyte *) stuff);
-}
 
 int __glXNoSuchSingleOpcode(__GLXclientState *cl, GLbyte *pc)
 {

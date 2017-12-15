@@ -1,4 +1,3 @@
-/* $Xorg: security.h,v 1.4 2001/02/09 02:03:24 xorgcvs Exp $ */
 /*
 Copyright 1996, 1998  The Open Group
 
@@ -24,13 +23,12 @@ not be used in advertising or otherwise to promote the sale, use or
 other dealings in this Software without prior written authorization
 from The Open Group.
 */
-/* $XFree86: xc/include/extensions/security.h,v 1.3 2001/12/14 19:53:29 dawes Exp $ */
 
 #ifndef _SECURITY_H
 #define _SECURITY_H
 
 #define _XAUTH_STRUCT_ONLY
-#include <X11/Xauth.h>
+#include <nx-X11/Xauth.h>
 
 /* constants that server, library, and application all need */
 
@@ -156,10 +154,6 @@ extern Bool SecurityCheckDeviceAccess(ClientPtr client, DeviceIntPtr dev,
 			       Bool fromRequest);
 
 extern void SecurityAudit(char *format, ...);
-
-#ifdef LBX
-extern Bool SecuritySameLevel(ClientPtr client, XID authId);
-#endif
 
 extern int XSecurityOptions(int argc, char **argv, int i);
 

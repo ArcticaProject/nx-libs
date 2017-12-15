@@ -1,4 +1,3 @@
-/* $Xorg: secauth.c,v 1.4 2001/02/09 02:05:23 xorgcvs Exp $ */
 /*
 Copyright 1996, 1998  The Open Group
 
@@ -24,13 +23,12 @@ not be used in advertising or otherwise to promote the sale, use or
 other dealings in this Software without prior written authorization
 from The Open Group.
 */
-/* $XFree86: xc/programs/Xserver/os/secauth.c,v 1.10 2001/08/01 00:44:59 tsi Exp $ */
 
 #ifdef HAVE_DIX_CONFIG_H
 #include <dix-config.h>
 #endif
 
-#include <X11/X.h>
+#include <nx-X11/X.h>
 #include "os.h"
 #include "osdep.h"
 #include "dixstruct.h"
@@ -38,7 +36,7 @@ from The Open Group.
 
 #ifdef XCSECURITY
 #define _SECURITY_SERVER
-#include <X11/extensions/security.h>
+#include <nx-X11/extensions/security.h>
 #endif
 
 static char InvalidPolicyReason[] = "invalid policy specification";
@@ -181,7 +179,7 @@ AuthSecurityCheck (
     if (client->swapped)
 	WriteSConnSetupPrefix(client, &csp);
     else
-	(void)WriteToClient(client, sz_xConnSetupPrefix, (char *) &csp);
+	WriteToClient(client, sz_xConnSetupPrefix, &csp);
 
     /*
      * Next time the client sends the real auth data, we want
