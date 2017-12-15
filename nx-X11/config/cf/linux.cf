@@ -698,7 +698,6 @@ XCOMM binutils:	(LinuxBinUtilsMajorVersion)
 #endif /* HPArchitecture */
 
 #ifdef Arm32Architecture
-# define DefaultCCOptions
 # ifndef OptimizedCDebugFlags
 #  define OptimizedCDebugFlags	-O3
 # endif
@@ -708,7 +707,6 @@ XCOMM binutils:	(LinuxBinUtilsMajorVersion)
 #endif /* Arm32Achitecture */
 
 #ifdef Arm64Architecture
-# define DefaultCCOptions
 # ifndef OptimizedCDebugFlags
 #  define OptimizedCDebugFlags	-O3
 # endif
@@ -767,7 +765,7 @@ XCOMM binutils:	(LinuxBinUtilsMajorVersion)
 #endif
 
 #ifdef Ppc64Architecture
-# define DefaultCCOptions	-mminimal-toc
+# define DefaultCCOptions	DefaultCCOptions -mminimal-toc
 # ifndef OptimizedCDebugFlags
 #  define OptimizedCDebugFlags	DefaultGcc2Ppc64Opt
 # endif
@@ -777,7 +775,6 @@ XCOMM binutils:	(LinuxBinUtilsMajorVersion)
 #endif /* Ppc64Architecture */
 
 #ifdef PpcArchitecture
-# define DefaultCCOptions	
 # ifndef OptimizedCDebugFlags
 #  define OptimizedCDebugFlags	DefaultGcc2PpcOpt
 # endif
