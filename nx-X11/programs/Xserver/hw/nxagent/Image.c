@@ -311,7 +311,7 @@ char *nxagentImageCopy(XImage *source, XImage *destination)
               source -> bytes_per_line * source -> height);
   #endif
 
-  destination -> data = Xmalloc(source -> bytes_per_line * source -> height);
+  destination -> data = malloc(source -> bytes_per_line * source -> height);
 
   if (destination -> data == NULL)
   {
@@ -344,7 +344,7 @@ char *nxagentImageAlpha(XImage *image)
 
   size = (image -> bytes_per_line * image -> height) >> 2;
 
-  pData = Xmalloc(size);
+  pData = malloc(size);
 
   if (pData == NULL)
   {
@@ -457,7 +457,7 @@ FIXME: Here the split trap is always set and so the caching of
     {
       free(nxagentUnpackAlpha[resource] -> data);
     }
-    else if ((nxagentUnpackAlpha[resource] = Xmalloc(sizeof(UnpackAlphaRec))) == NULL)
+    else if ((nxagentUnpackAlpha[resource] = malloc(sizeof(UnpackAlphaRec))) == NULL)
     {
       #ifdef PANIC
       fprintf(stderr, "nxagentSetUnpackAlpha: PANIC! Can't allocate data for the alpha structure.\n");
@@ -1712,7 +1712,7 @@ int nxagentScaleImage(int x, int y, unsigned xRatio, unsigned yRatio,
   newImage -> byte_order = IMAGE_BYTE_ORDER;
   newImage -> bitmap_bit_order = BITMAP_BIT_ORDER;
 
-  newImage -> data = Xmalloc(newImage -> bytes_per_line * newHeight);
+  newImage -> data = malloc(newImage -> bytes_per_line * newHeight);
 
   if (newImage -> data == NULL)
   {
