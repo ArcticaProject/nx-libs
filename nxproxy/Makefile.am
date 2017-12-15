@@ -1,5 +1,7 @@
 SUBDIRS = src man
 
+ACLOCAL_AMFLAGS = -I m4
+
 MAINTAINERCLEANFILES =			\
     $(srcdir)/autom4te.cache/*		\
     $(srcdir)/build-aux/*		\

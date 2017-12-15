@@ -4,6 +4,8 @@ SUBDIRS = modules src
 
 pkgconfig_DATA = nx-x11.pc
 
+ACLOCAL_AMFLAGS = -I m4
+
 MAINTAINERCLEANFILES =				\
     $(srcdir)/autom4te.cache/*			\
     $(srcdir)/build-aux/*			\
