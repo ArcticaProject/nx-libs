@@ -314,6 +314,10 @@ Obsoletes:      nxauth < 3.5.99.1
 Requires:       xorg-x11-font-utils
 %endif
 
+# Should be a weak dependency, because this package
+# works without the dependency.
+Requires:       xkeyboard-config
+
 # For /usr/bin/xkbcomp
 %if 0%{?fedora} || 0%{?rhel}
 Requires:       xorg-x11-xkb-utils
