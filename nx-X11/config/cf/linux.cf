@@ -765,7 +765,7 @@ XCOMM binutils:	(LinuxBinUtilsMajorVersion)
 #endif
 
 #ifdef Ppc64Architecture
-# define DefaultCCOptions	DefaultCCOptions -mminimal-toc
+# define DefaultCCOptions	-std=c99 GccWarningOptions -mminimal-toc
 # ifndef OptimizedCDebugFlags
 #  define OptimizedCDebugFlags	DefaultGcc2Ppc64Opt
 # endif
