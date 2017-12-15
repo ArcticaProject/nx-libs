@@ -463,6 +463,7 @@ rm %{buildroot}%{_libdir}/*.la
 %doc COPYING
 %dir %{_libdir}/nx
 %dir %{_datadir}/nx
+%dir %{_datadir}/nx/X11
 %{_datadir}/nx/SecurityPolicy
 %{_datadir}/nx/X11/XErrorDB
 %{_datadir}/nx/X11/Xcms.txt
