@@ -40,6 +40,8 @@ void* log_task (void* /* unused */) {
   for (std::size_t i = 0; i < 10; ++i) {
     nxinfo << "Log message " << i << std::endl;
   }
+
+  return (NULL);
 }
 
 void sig_handler (int signo) {
