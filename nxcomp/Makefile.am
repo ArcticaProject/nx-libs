@@ -2,6 +2,8 @@ SUBDIRS = src test
 
 pkgconfig_DATA = nxcomp.pc
 
+ACLOCAL_AMFLAGS = -I m4
+
 MAINTAINERCLEANFILES =			\
     $(srcdir)/autom4te.cache/*		\
     $(srcdir)/build-aux/*		\
