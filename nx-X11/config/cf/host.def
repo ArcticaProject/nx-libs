@@ -403,6 +403,13 @@
  */
 
 /*
+ * If building with SHM support enabled and using a legacy Xext protocol
+ * version (lower than 7.1.0), uncomment this.
+ *
+#define HasLegacyXextProto	YES
+ */
+
+/*
  * If you are running NetBSD 0.9C or later, and have the aperture driver
  * installed, uncomment this.
  *

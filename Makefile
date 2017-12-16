@@ -29,6 +29,9 @@ CONFIGURE       ?= ./configure --prefix="$(PREFIX)"
 FONT_DEFINES	?= $(shell pkg-config --modversion xfont2 1>/dev/null 2>/dev/null && echo "-DHAS_XFONT2") $(shell pkg-config --exists 'xfont < 1.4.2' 1>/dev/null 2>/dev/null && echo "-DLEGACY_XFONT1")
 XFONTLIB	?= $(shell pkg-config --modversion xfont2 1>/dev/null 2>/dev/null && echo "-lXfont2" || echo "-lXfont")
 
+# Support older libXext versions.
+XEXT_EXTRA_DEFINES	?= $(shell pkg-config --exists 'xextproto < 7.1.0' 1>/dev/null 2>/dev/null && echo "-DLEGACY_XEXT_PROTO")
+
 NX_VERSION_MAJOR=$(shell ./version.sh 1)
 NX_VERSION_MINOR=$(shell ./version.sh 2)
 NX_VERSION_MICRO=$(shell ./version.sh 3)
@@ -96,7 +99,7 @@ version:
 
 build-env: version
 	# prepare Makefiles and the nx-X11 symlinking magic
-	${MAKE} -C nx-X11 BuildIncludes FONT_DEFINES="$(FONT_DEFINES)"
+	${MAKE} -C nx-X11 BuildIncludes FONT_DEFINES="$(FONT_DEFINES)" XEXT_EXTRA_DEFINES="$(XEXT_EXTRA_DEFINES)"
 
 	# set up environment for libNX_X11 build (X11 header files)
 	mkdir -p nx-X11/exports/include/nx-X11/
@@ -121,7 +124,7 @@ clean-env: version
 	[ -d exports/include/nx-X11/Xtrans ] && $(RM_DIR) exports/include/nx-X11/Xtrans/ || :
 	[ -d exports/include/nx-X11/ ]       && $(RM_DIR) exports/include/nx-X11/        || :
 
-	${MAKE} -C nx-X11 CleanEnv FONT_DEFINES="$(FONT_DEFINES)"
+	${MAKE} -C nx-X11 CleanEnv FONT_DEFINES="$(FONT_DEFINES)" XEXT_EXTRA_DEFINES="$(XEXT_EXTRA_DEFINES)"
 
 build-lite:
 	cd nxcomp && autoreconf -vfsi && (${CONFIGURE}) && ${MAKE}
@@ -145,8 +148,8 @@ build-full: build-env
 
 	# build nxagent fourth
 	./mesa-quilt push -a
-	${MAKE} -C nx-X11 BuildDependsOnly FONT_DEFINES="$(FONT_DEFINES)"
-	${MAKE} -C nx-X11 World USRLIBDIR="$(USRLIBDIR)" SHLIBDIR="$(SHLIBDIR)" FONT_DEFINES="$(FONT_DEFINES)" XFONTLIB="$(XFONTLIB)"
+	${MAKE} -C nx-X11 BuildDependsOnly FONT_DEFINES="$(FONT_DEFINES)" XEXT_EXTRA_DEFINES="$(XEXT_EXTRA_DEFINES)"
+	${MAKE} -C nx-X11 World USRLIBDIR="$(USRLIBDIR)" SHLIBDIR="$(SHLIBDIR)" FONT_DEFINES="$(FONT_DEFINES)" XFONTLIB="$(XFONTLIB)" XEXT_EXTRA_DEFINES="$(XEXT_EXTRA_DEFINES)"
 
 	# build nxproxy fifth
 	cd nxproxy && autoreconf -vfsi && (${CONFIGURE}) && ${MAKE}

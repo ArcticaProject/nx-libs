@@ -546,6 +546,9 @@ X_BYTE_ORDER = ByteOrder
 #define HasShm			NO
 #endif
 #endif
+#ifndef HasLegacyXextProto
+#define HasLegacyXextProto	NO
+#endif
 #ifndef HasCbrt
 #define HasCbrt			YES
 #endif
@@ -1882,6 +1885,12 @@ FONT_DEFINES =
     XFONTLIB = -lXfont
 #endif
 
+#if HasLegacyXextProto
+XEXT_EXTRA_DEFINES = -DLEGACY_XEXT_PROTO
+#else
+XEXT_EXTRA_DEFINES =
+#endif
+
 /*
  * Here we set up flags needed to produce position-independent code
  * when doing C and C++ compilation.  The default if you specify C
@@ -1980,7 +1989,7 @@ FONT_DEFINES =
  * LOCAL_LDFLAGS contains client-specific ld flags flags set in Imakefile
  */
       ALLINCLUDES = $(INCLUDES) $(EXTRA_INCLUDES) $(TOP_INCLUDES) $(INSTALLED_INCLUDES) $(STD_INCLUDES)
-       ALLDEFINES = $(ALLINCLUDES) $(STD_DEFINES) $(SETITIMER_DEFINES) $(FONT_DEFINES) $(PROTO_DEFINES) $(THREADS_DEFINES) $(MODULE_DEFINES) $(DEFINES) $(EXTRA_DEFINES)
+       ALLDEFINES = $(ALLINCLUDES) $(STD_DEFINES) $(SETITIMER_DEFINES) $(FONT_DEFINES) $(PROTO_DEFINES) $(XEXT_EXTRA_DEFINES) $(THREADS_DEFINES) $(MODULE_DEFINES) $(DEFINES) $(EXTRA_DEFINES)
            CFLAGS = $(CDEBUGFLAGS) $(CCOPTIONS) $(THREADS_CFLAGS) $(MODULE_CFLAGS) $(ALLDEFINES)
         LINTFLAGS = $(LINTOPTS) -DLINT $(ALLDEFINES) $(DEPEND_DEFINES)
          LDPRELIB = LdPreLib $(INSTALLED_LIBS)
