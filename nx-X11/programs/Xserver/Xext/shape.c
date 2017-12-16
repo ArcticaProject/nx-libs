@@ -42,6 +42,13 @@ in this Software without prior written authorization from The Open Group.
 #include "resource.h"
 #include "opaque.h"
 #ifdef LEGACY_XEXT_PROTO
+/*
+ * The legacy shape proto implementation used to distinguish between
+ * the server and client side via the _SHAPE_SERVER_ macro.
+ * If not set, shape.h pulls in Xlib, which will lead to compile
+ * errors in a server environment.
+ */
+#define _SHAPE_SERVER_
 #include <X11/extensions/shapestr.h>
 #else
 #include <X11/extensions/shapeproto.h>
