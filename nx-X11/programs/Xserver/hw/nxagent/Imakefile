@@ -175,7 +175,7 @@ INCLUDES = \
 	$(VFBINCLUDES) \
 	`pkg-config --cflags-only-I libxml-2.0` \
 	`pkg-config --cflags-only-I pixman-1` \
-	$$(pkg-config --exists 'zlib' >/dev/null 2>&1 && pkg-config --libs 'zlib' || echo "-lz") \
+	$$(pkg-config --exists 'zlib' >/dev/null 2>&1 && pkg-config --cflags-only-I 'zlib') \
 	`pkg-config --cflags-only-I libpng` \
 	$(NULL)
 #else
@@ -199,7 +199,7 @@ INCLUDES = \
 	$(VFBINCLUDES) \
 	`pkg-config --cflags-only-I libxml-2.0` \
 	`pkg-config --cflags-only-I pixman-1` \
-	$$(pkg-config --exists 'zlib' >/dev/null 2>&1 && pkg-config --libs 'zlib' || echo "-lz") \
+	$$(pkg-config --exists 'zlib' >/dev/null 2>&1 && pkg-config --cflags-only-I 'zlib') \
 	`pkg-config --cflags-only-I libpng` \
 	$(NULL)
 #endif
