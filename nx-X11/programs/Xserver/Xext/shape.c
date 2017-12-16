@@ -42,7 +42,7 @@ in this Software without prior written authorization from The Open Group.
 #include "resource.h"
 #include "opaque.h"
 #ifdef LEGACY_XEXT_PROTO
-#include <X11/extensions/shape.h>
+#include <X11/extensions/shapestr.h>
 #else
 #include <X11/extensions/shapeproto.h>
 #endif
