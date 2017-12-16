@@ -83,13 +83,9 @@ BuildRequires:  xorg-x11-libX11-devel
 BuildRequires:  xorg-x11-libXext-devel
 BuildRequires:  xorg-x11-libXpm-devel
 BuildRequires:  xorg-x11-devel
+BuildRequires:  xorg-x11-proto-devel
 BuildRequires:  xorg-x11-libXdmcp-devel
-BuildRequires:  xorg-x11-libXdamage-devel
-BuildRequires:  xorg-x11-libXcomposite-devel
-BuildRequires:  xorg-x11-libXrandr-devel
 BuildRequires:  xorg-x11-libXfixes-devel
-BuildRequires:  xorg-x11-libXtst-devel
-BuildRequires:  xorg-x11-libXinerama-devel
 %endif
 BuildRequires:  xorg-x11-util-devel
 %endif
