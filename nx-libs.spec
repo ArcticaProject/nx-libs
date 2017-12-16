@@ -90,7 +90,6 @@ BuildRequires:  xorg-x11-devel
 BuildRequires:  xorg-x11-proto-devel
 BuildRequires:  xorg-x11-libXdmcp-devel
 BuildRequires:  xorg-x11-libXfixes-devel
-BuildRequires:  xorg-x11-libXext-devel
 %endif
 %endif
 
