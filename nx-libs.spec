@@ -29,7 +29,11 @@ BuildRequires:  gcc-c++
 BuildRequires:  libjpeg-devel
 BuildRequires:  libtool
 BuildRequires:  pkgconfig
+%if 0%{?suse_version} && 0%{?suse_version} < 1210
+BuildRequires:  xorg-x11-util-devel
+%else
 BuildRequires:  imake
+%endif
 
 # ideally we build with quilt (for mesa-quilt patch appliance script),
 # it seems Fedora has it...
@@ -87,7 +91,6 @@ BuildRequires:  xorg-x11-proto-devel
 BuildRequires:  xorg-x11-libXdmcp-devel
 BuildRequires:  xorg-x11-libXfixes-devel
 %endif
-BuildRequires:  xorg-x11-util-devel
 %endif
 
 %if 0%{?fedora} || 0%{?rhel}
