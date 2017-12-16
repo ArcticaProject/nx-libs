@@ -23,7 +23,7 @@ SHLIBDIR        ?= $(LIBDIR)
 NXLIBDIR        ?= $(SHLIBDIR)/nx
 USRLIBDIR       ?= $(NXLIBDIR)/X11
 INCLUDEDIR      ?= $(PREFIX)/include
-CONFIGURE       ?= ./configure --prefix=$(PREFIX)
+CONFIGURE       ?= ./configure --prefix="$(PREFIX)"
 
 # use Xfont2 if available in the build env
 FONT_DEFINES	?= $(shell pkg-config --modversion xfont2 1>/dev/null 2>/dev/null && echo "-DHAS_XFONT2") $(shell pkg-config --exists 'xfont < 1.4.2' 1>/dev/null 2>/dev/null && echo "-DLEGACY_XFONT1")
@@ -96,7 +96,7 @@ version:
 
 build-env: version
 	# prepare Makefiles and the nx-X11 symlinking magic
-	${MAKE} -C nx-X11 BuildIncludes FONT_DEFINES=$(FONT_DEFINES)
+	${MAKE} -C nx-X11 BuildIncludes FONT_DEFINES="$(FONT_DEFINES)"
 
 	# set up environment for libNX_X11 build (X11 header files)
 	mkdir -p nx-X11/exports/include/nx-X11/
@@ -121,7 +121,7 @@ clean-env: version
 	[ -d exports/include/nx-X11/Xtrans ] && $(RM_DIR) exports/include/nx-X11/Xtrans/ || :
 	[ -d exports/include/nx-X11/ ]       && $(RM_DIR) exports/include/nx-X11/        || :
 
-	${MAKE} -C nx-X11 CleanEnv FONT_DEFINES=$(FONT_DEFINES)
+	${MAKE} -C nx-X11 CleanEnv FONT_DEFINES="$(FONT_DEFINES)"
 
 build-lite:
 	cd nxcomp && autoreconf -vfsi && (${CONFIGURE}) && ${MAKE}
@@ -145,8 +145,8 @@ build-full: build-env
 
 	# build nxagent fourth
 	./mesa-quilt push -a
-	${MAKE} -C nx-X11 BuildDependsOnly FONT_DEFINES=$(FONT_DEFINES)
-	${MAKE} -C nx-X11 World USRLIBDIR=$(USRLIBDIR) SHLIBDIR=$(SHLIBDIR) FONT_DEFINES=$(FONT_DEFINES) XFONTLIB=$(XFONTLIB)
+	${MAKE} -C nx-X11 BuildDependsOnly FONT_DEFINES="$(FONT_DEFINES)"
+	${MAKE} -C nx-X11 World USRLIBDIR="$(USRLIBDIR)" SHLIBDIR="$(SHLIBDIR)" FONT_DEFINES="$(FONT_DEFINES)" XFONTLIB="$(XFONTLIB)"
 
 	# build nxproxy fifth
 	cd nxproxy && autoreconf -vfsi && (${CONFIGURE}) && ${MAKE}
