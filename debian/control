@@ -29,7 +29,10 @@ Build-Depends:
  quilt (>= 0.46-7~),
  x11proto-core-dev,
  xutils-dev,
- zlib1g-dev
+ zlib1g-dev,
+ sed,
+ coreutils,
+ lsb-release
 Standards-Version: 4.1.0
 Homepage: https://github.com/ArcticaProject/nx-libs/
 Vcs-Git: https://github.com/ArcticaProject/nx-libs/
