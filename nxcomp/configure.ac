@@ -14,7 +14,7 @@ AC_CONFIG_SRCDIR([Makefile.am])
 AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_MACRO_DIR([m4])
 
-AM_INIT_AUTOMAKE([foreign no-dist-gzip dist-xz])
+AM_INIT_AUTOMAKE([foreign no-dist-gzip dist-bzip2])
 
 # Initialize libtool
 AC_PROG_LIBTOOL
