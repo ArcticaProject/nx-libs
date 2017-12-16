@@ -41,7 +41,11 @@ in this Software without prior written authorization from The Open Group.
 #include "dixstruct.h"
 #include "resource.h"
 #include "opaque.h"
+#ifdef LEGACY_XEXT_PROTO
+#include <X11/extensions/shape.h>
+#else
 #include <X11/extensions/shapeproto.h>
+#endif
 #include "protocol-versions.h"
 #include "regionstr.h"
 #include "gcstruct.h"
