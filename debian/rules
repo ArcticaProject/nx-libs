@@ -111,7 +111,7 @@ override_dh_auto_install:
 	PREFIX=/usr dh_auto_install -Smakefile
 
 override_dh_auto_build:
-
+	debian/compat.sh
 	PREFIX=/usr dh_auto_build --parallel -- CDEBUGFLAGS="$(CPPFLAGS) $(CFLAGS)" LOCAL_LDFLAGS="$(LDFLAGS)" SHLIBGLOBALSFLAGS='$(filter-out -pie,$(LDFLAGS))'
 
 override_dh_strip:
