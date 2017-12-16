@@ -397,10 +397,4 @@ typedef struct _CharInfo *CharInfoPtr; /* also in fonts/include/font.h */
 #define _XTYPEDEF_CHARINFOPTR
 #endif
 
-#ifdef LEGACY_XEXT_PROTO
-#ifndef SHMNAME
-#define SHMNAME "MIT-SHM"
-#endif
-#endif
-
 #endif /* MISC_H */

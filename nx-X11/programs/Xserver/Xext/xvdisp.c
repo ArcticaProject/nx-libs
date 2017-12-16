@@ -69,7 +69,7 @@ SOFTWARE.
 #ifdef MITSHM
 #define _XSHM_SERVER_
 #ifdef LEGACY_XEXT_PROTO
-#include <X11/extensions/XShm.h>
+#include <X11/extensions/shmstr.h>
 #else
 #include <X11/extensions/shmproto.h>
 #endif
