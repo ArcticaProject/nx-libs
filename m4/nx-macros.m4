@@ -424,3 +424,21 @@ else
 the JPEG shared library and header files are installed.])
 fi
 ]) # LIBJPEG_FALLBACK_CHECK
+
+AC_DEFUN([ZLIB_FALLBACK_CHECK],[
+AC_MSG_CHECKING([for zlib shared libary file and headers])
+AC_CHECK_LIB([z], [inflateEnd],
+    [have_zlib_lib=yes], [have_zlib_lib=no])
+AC_CHECK_HEADERS([zlib.h],
+    [have_zlib_headers=yes], [have_zlib_headers=no])
+
+if test x"$have_zlib_lib" = "xyes" && test x"$have_zlib_headers" = "xyes"; then
+    AC_MSG_RESULT([yes])
+    Z_CFLAGS=""
+    Z_LIBS="-lz"
+else
+    AC_MSG_RESULT([no])
+    AC_MSG_FAILURE([Could not find zlib on your system, make sure
+the zlib shared library and header files are installed.])
+fi
+]) # ZLIB_FALLBACK_CHECK
