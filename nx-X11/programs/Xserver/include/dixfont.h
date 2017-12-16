@@ -152,7 +152,11 @@ extern void dixGetGlyphs(FontPtr     /*font*/,
 			 unsigned long * /*glyphcount*/,
 			 CharInfoPtr * /*glyphs*/);
 
+#ifdef LEGACY_XFONT1
+extern void BuiltinRegisterFpeFunctions(void);
+#else
 extern void register_fpe_functions(void);
+#endif
 
 extern void QueryGlyphExtents(FontPtr     /*pFont*/,
 			      CharInfoPtr * /*charinfo*/,

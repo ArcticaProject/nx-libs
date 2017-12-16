@@ -2139,7 +2139,13 @@ InitFonts ()
 
     ResetFontPrivateIndex();
 
+#ifdef LEGACY_XFONT1
+    BuiltinRegisterFpeFunctions();
+    FontFileRegisterFpeFunctions();
+    fs_register_fpe_functions();
+#else
     register_fpe_functions();
+#endif
 }
 #endif /* HAS_XFONT2 */
 

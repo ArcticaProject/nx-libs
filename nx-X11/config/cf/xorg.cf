@@ -428,6 +428,10 @@ IPLAN2P8_DEFS = -DUSE_IPLAN2P8
 # define HasXfont2	NO
 #endif
 
+#ifndef HasLegacyXfont1
+# define HasLegacyXfont1	NO
+#endif
+
 #ifndef BuildScreenSaverExt
 # define BuildScreenSaverExt	YES
 #endif

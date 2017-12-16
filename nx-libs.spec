@@ -82,7 +82,7 @@ BuildRequires:  pixman-devel >= 0.13.2
 BuildRequires:  xorg-x11-libX11-devel
 BuildRequires:  xorg-x11-libXext-devel
 BuildRequires:  xorg-x11-libXpm-devel
-BuildRequires:  xorg-x11-libXfont-devel >= 1.4.2
+BuildRequires:  xorg-x11-devel
 BuildRequires:  xorg-x11-libXdmcp-devel
 BuildRequires:  xorg-x11-libXdamage-devel
 BuildRequires:  xorg-x11-libXcomposite-devel

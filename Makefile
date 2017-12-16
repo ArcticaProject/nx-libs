@@ -26,7 +26,7 @@ INCLUDEDIR      ?= $(PREFIX)/include
 CONFIGURE       ?= ./configure --prefix=$(PREFIX)
 
 # use Xfont2 if available in the build env
-FONT_DEFINES	?= $(shell pkg-config --modversion xfont2 1>/dev/null 2>/dev/null && echo "-DHAS_XFONT2")
+FONT_DEFINES	?= $(shell pkg-config --modversion xfont2 1>/dev/null 2>/dev/null && echo "-DHAS_XFONT2") $(shell pkg-config --exists 'xfont < 1.4.2' 1>/dev/null 2>/dev/null && echo "-DLEGACY_XFONT1")
 XFONTLIB	?= $(shell pkg-config --modversion xfont2 1>/dev/null 2>/dev/null && echo "-lXfont2" || echo "-lXfont")
 
 NX_VERSION_MAJOR=$(shell ./version.sh 1)

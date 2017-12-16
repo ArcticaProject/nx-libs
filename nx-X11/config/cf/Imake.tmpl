@@ -555,6 +555,9 @@ X_BYTE_ORDER = ByteOrder
 #ifndef HasXfont2
 #define HasXfont2		NO
 #endif
+#ifndef HasLegacyXfont1
+#define HasLegacyXfont1		NO
+#endif
 #ifndef GzipLibrary	/* if OS config didn't define it, assume it's -lz */
 #define GzipLibrary -lz
 #endif
@@ -1871,7 +1874,11 @@ SETITIMER_DEFINES = HasSetitimerDefines
 FONT_DEFINES = -DHAS_XFONT2
     XFONTLIB = -lXfont2
 #else
+#if HasLegacyXfont1
+FONT_DEFINES = -DLEGACY_XFONT1
+#else
 FONT_DEFINES =
+#endif
     XFONTLIB = -lXfont
 #endif
 
