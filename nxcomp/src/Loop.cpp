@@ -5529,11 +5529,11 @@ void RestoreSignal(int signal)
   if (lastMasks.enabled[signal] == 0)
   {
     nxwarn << "Loop: WARNING! Signal '" << DumpSignal(signal)
-           << " not installed in process with pid '"
+           << "' not installed in process with pid '"
            << getpid() << "'.\n" << std::flush;
 
     cerr << "Warning" << ": Signal '" << DumpSignal(signal)
-         << " not installed in process with pid '"
+         << "' not installed in process with pid '"
          << getpid() << "'.\n";
 
     return;
