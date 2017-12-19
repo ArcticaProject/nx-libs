@@ -17,8 +17,6 @@
 # Free Software Foundation, Inc.,
 # 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA.
 
-set -x
-
 d=. ; while [ ! -d "$d/nx-X11/extras" ] && [ "$(readlink -e "$d")" != "/" ]; do d="$d/.."; done
 
 # only continue, if in nx-libs tree
