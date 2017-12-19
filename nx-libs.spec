@@ -402,7 +402,8 @@ sed -i -e 's/Wpedantic/pedantic/g' nx-X11/config/cf/{{host,xorgsite}.def,xorg.cf
 %build
 cat >"my_configure" <<'EOF'
 %configure \
-  --disable-silent-rules
+  --disable-silent-rules \
+  "${@}"
 EOF
 chmod a+x my_configure;
 # The RPM macro for the linker flags does not exist on EPEL
