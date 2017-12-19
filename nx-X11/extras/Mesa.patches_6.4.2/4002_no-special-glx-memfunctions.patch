@@ -1,13 +1,14 @@
 Description: Turn glx_ansic.h into a no-op include. (by using memset, malloc, free directly)
 Author: Mike Gabriel <mike.gabriel@das-netzwerkteam.de>
 
-Index: Mesa/src/mesa/drivers/dri/common/glcontextmodes.c
-===================================================================
---- Mesa.orig/src/mesa/drivers/dri/common/glcontextmodes.c
-+++ Mesa/src/mesa/drivers/dri/common/glcontextmodes.c
-@@ -48,15 +48,14 @@
+--- a/src/mesa/drivers/dri/common/glcontextmodes.c
++++ b/src/mesa/drivers/dri/common/glcontextmodes.c
+@@ -44,16 +44,17 @@
+ # include "GL/glxint.h"
  
  # ifdef XFree86Server
++#  include <stdlib.h>
++#  include <string.h>
  #  include "GL/glx_ansic.h"
 -extern void * __glXMalloc( size_t size );
 -extern void __glXFree( void * ptr );
