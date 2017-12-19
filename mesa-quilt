@@ -17,6 +17,8 @@
 # Free Software Foundation, Inc.,
 # 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA.
 
+set -x
+
 d=. ; while [ ! -d "$d/nx-X11/extras" ] && [ "$(readlink -e "$d")" != "/" ]; do d="$d/.."; done
 
 # only continue, if in nx-libs tree
@@ -36,7 +38,14 @@ if [ -d "$d/nx-X11/extras" ]; then
 
 		cd "$d/nx-X11/extras/Mesa/"
 
-		quilt "$@"
+		# "--quiltrc -" disables reading global or user-local configuration files.
+		# These can override the environment settings if the quiltrc is not
+		# carefully crafted.
+		# For instance, it should set variables only if they aren't already
+		# provided through the environment, but since the quiltrc file is
+		# actually sourced as a shell script, there's no way to assume that
+		# a user's quiltrc is "sane".
+		quilt --quiltrc - "$@"
 
 		cd - 1> /dev/null
 
