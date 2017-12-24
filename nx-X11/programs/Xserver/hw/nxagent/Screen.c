@@ -110,8 +110,8 @@ is" without express or implied warranty.
  * Set here the required log level.
  */
 
-#undef  PANIC
-#undef  WARNING
+#define PANIC
+#define WARNING
 #undef  TEST
 #undef  DEBUG
 #undef  WATCH
