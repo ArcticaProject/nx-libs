@@ -106,16 +106,53 @@ std::string NXLog::stamp_to_string(const NXLogStamp& stamp) const
 
 NXLog& operator<< (NXLog& out, const NXLogStamp& value)
 {
-    out.current_level( value.level() );
-    out.current_file( value.file() );
+    /*
+     * If appending, the file and function names must be empty and
+     * the line set to zero.
+     */
+    const bool looks_like_append = ((value.file().empty()) || (value.function().empty()) || (0 == value.line()));
+    const bool append = ((looks_like_append) && ((value.file().empty()) && (value.function().empty()) && (0 == value.line())));
 
-    // Writing an NXLogStamp to the stream indicates the start of a new entry.
-    // If there's any content in the buffer and we actually intend to keep that line,
-    // create a new entry in the output queue.
-    if ( out.synchronized() && out.will_log() )
-        out.new_stack_entry();
+    if ((looks_like_append) && (!append))
+    {
+        std::cerr << "WARNING: At least one element in logstamp invalid, but this is not supposed to be an append operation. "
+                  << "Internal state error!\n" << "Log line will be discarded!" << std::endl;
+    }
+    else if (append)
+    {
+        /* Appending means that the log object's internal level and the message level must match. */
+        if (out.current_level() == value.level())
+        {
+            /* And the buffer must of course be non-empty. */
+            if (out.has_buffer())
+            {
+                out << " (cont.) ";
+            }
+            else
+            {
+                std::cerr << "WARNING: Append operation requested, but no queued data available. "
+                          << "Internal state error!\n" << "Log line will be discarded!" << std::endl;
+            }
+        }
+        else
+        {
+            std::cerr << "WARNING: Append operation requested, but internal log level not matching line level. "
+                      << "Internal state error!\n" << "Log line will be discarded!" << std::endl;
+        }
+    }
+    else
+    {
+        out.current_level( value.level() );
+        out.current_file( value.file() );
 
-    out << out.stamp_to_string(value);
+        // Writing an NXLogStamp to the stream indicates the start of a new entry.
+        // If there's any content in the buffer and we actually intend to keep that line,
+        // create a new entry in the output queue.
+        if ( out.synchronized() && out.will_log() )
+            out.new_stack_entry();
+
+        out << out.stamp_to_string(value);
+    }
 
     return out;
 }

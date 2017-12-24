@@ -105,7 +105,7 @@ class NXLogStamp
     }
 
 
-    NXLogStamp(const char *file, const char *function, size_t line, NXLogLevel level) : file_(file), function_(function), line_(line), level_(level)
+    NXLogStamp(NXLogLevel level, const char *file = "", const char *function = "", size_t line = 0) : file_(file), function_(function), line_(line), level_(level)
     {
         gettimeofday(&timestamp_, NULL);
     }
@@ -432,6 +432,11 @@ class NXLog
      */
     bool will_log() const;
 
+    bool has_buffer() const
+    {
+        return (!(get_data()->buffer.empty ()));
+    }
+
 
     /**
      * This catches std::flush
@@ -442,10 +447,19 @@ class NXLog
         {
             if ( synchronized() )
             {
-                per_thread_data *pdt = get_data();
-                assert (!pdt->buffer.empty ());
-                (*pdt->buffer.top()) << F;
-                flush();
+                /* Verbosely discard data if we don't have a buffer. */
+                if (!(has_buffer()))
+                {
+                    std::cerr << "WARNING: no buffer available! "
+                              << "Internal state error!\n" << "Log hunk will be discarded!" << std::endl;
+                }
+                else
+                {
+                    per_thread_data *pdt = get_data();
+                    assert (!pdt->buffer.empty ());
+                    (*pdt->buffer.top()) << F;
+                    flush();
+                }
             }
             else
             {
@@ -466,7 +480,8 @@ class NXLog
 extern NXLog nx_log;
 
 
-#define nxstamp(l) NXLogStamp(__FILE__, __func__, __LINE__, l)
+#define nxstamp(l)        NXLogStamp(l, __FILE__, __func__, __LINE__)
+#define nxstamp_append(l) NXLogStamp(l)
 
 
 #define nxdbg    nx_log << nxstamp(NXDEBUG)
@@ -475,6 +490,12 @@ extern NXLog nx_log;
 #define nxerr    nx_log << nxstamp(NXERROR)
 #define nxfatal  nx_log << nxstamp(NXFATAL)
 
+/* Append data to already existing (i.e., same-level) line. */
+#define nxdbg_append    nx_log << nxstamp_append(NXDEBUG)
+#define nxinfo_append   nx_log << nxstamp_append(NXINFO)
+#define nxwarn_append   nx_log << nxstamp_append(NXWARNING)
+#define nxerr_append    nx_log << nxstamp_append(NXERROR)
+#define nxfatal_append  nx_log << nxstamp_append(NXFATAL)
 
 NXLog& operator<< (NXLog& out, const NXLogStamp& value);
 
@@ -520,16 +541,24 @@ NXLog& operator<<(NXLog& out, const T& value)
     {
         if ( out.synchronized() )
         {
-            // In synchronized mode, we buffer data until a newline, std::flush, or the buffer
-            // gets full. Then we dump the whole thing at once to the output stream, synchronizing
-            // with a mutex.
-            NXLog::per_thread_data *pdt = out.get_data();
-            assert (!pdt->buffer.empty ());
-            (*pdt->buffer.top()) << value;
+            /* Verbosely discard data if we don't have a buffer. */
+            if (!(out.has_buffer()))
+            {
+                std::cerr << "WARNING: no buffer available! "
+                          << "Internal state error!\n" << "Log hunk will be discarded!" << std::endl;
+            }
+            else
+            {
+                // In synchronized mode, we buffer data until a newline, std::flush, or the buffer
+                // gets full. Then we dump the whole thing at once to the output stream, synchronizing
+                // with a mutex.
+                NXLog::per_thread_data *pdt = out.get_data();
+                assert (!pdt->buffer.empty ());
+                (*pdt->buffer.top()) << value;
 
-            if ( ss_length(pdt->buffer.top()) >= out.thread_buffer_size_ || has_newline(value) )
-                out.flush();
-
+                if ( ss_length(pdt->buffer.top()) >= out.thread_buffer_size_ || has_newline(value) )
+                    out.flush();
+            }
         }
         else
         {
