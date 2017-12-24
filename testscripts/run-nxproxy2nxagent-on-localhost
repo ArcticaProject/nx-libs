@@ -70,7 +70,7 @@ export PATH
 # Create the fake cookie for this display.
 #
 
-echo -ne "Creating the X authorization cookie.\n"
+echo "Creating the X authorization cookie."
 
 xauth add ${HOSTNAME}/unix:${NX_PORT} MIT-MAGIC-COOKIE-1 ${NX_COOKIE}
 xauth add ${HOSTNAME}:${NX_PORT} MIT-MAGIC-COOKIE-1 ${NX_COOKIE}
@@ -98,7 +98,7 @@ echo "${NX_HOST}:${NX_PORT}" >${NX_ROOT}/C-${NX_PORT}/options
 
 NX_AGENT=:${NX_PORT}
 
-echo -ne "Running the X client side NX agent.\n"
+echo "Running the X client side NX agent."
 
 SAVED_DISPLAY=$DISPLAY
 
@@ -132,7 +132,7 @@ NX_HOST=nx/nx,keybd=1,samba=0,cups=0,connect=localhost,cookie=$NX_COOKIE,errors=
 
 echo "${NX_HOST}:${NX_PORT}" >${NX_ROOT}/S-${NX_PORT}/options
 
-echo -ne "Running the X server side NX proxy.\n"
+echo "Running the X server side NX proxy."
 
 #valgrind -v --num-callers=8 --error-limit=no --trace-children=no \
 #valgrind --num-callers=8 --tool=memcheck --leak-check=yes --show-reachable=yes --track-fds=yes \
@@ -140,5 +140,4 @@ echo -ne "Running the X server side NX proxy.\n"
 ${NXPROXYBIN} -S nx/nx,options=${NX_ROOT}/S-${NX_PORT}/options:${NX_PORT} \
 2>>${HOME}/.nx/S-${NX_PORT}/session &
 
-echo -ne "Session running on display :$NX_PORT.\n"
-
+echo "Session running on display :$NX_PORT."

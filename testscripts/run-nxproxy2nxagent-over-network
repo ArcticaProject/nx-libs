@@ -80,7 +80,7 @@ export PATH
 # Create the fake cookie for this display.
 #
 
-echo -ne "Creating the X authorization cookie.\n"
+echo "Creating the X authorization cookie."
 
 xauth add ${NXPROXY_HOST}/unix:${NX_PORT} MIT-MAGIC-COOKIE-1 ${NX_COOKIE}
 xauth add ${NXPROXY_HOST}:${NX_PORT} MIT-MAGIC-COOKIE-1 ${NX_COOKIE}
@@ -108,7 +108,7 @@ echo "${NX_HOST}:${NX_PORT}" >${NX_ROOT}/C-${NX_PORT}/options
 
 NX_AGENT=:${NX_PORT}
 
-echo -ne "Running the X client side NX agent.\n"
+echo "Running the X client side NX agent."
 
 SAVED_DISPLAY=$DISPLAY
 
