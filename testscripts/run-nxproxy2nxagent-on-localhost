@@ -27,34 +27,34 @@
 #set -x
 #
 
-ulimit -c unlimited
+ulimit -c "unlimited"
 
-NXPROXYBIN=nxproxy
-NXAGENTBIN=nxagent
+NXPROXYBIN="nxproxy"
+NXAGENTBIN="nxagent"
 
 
 
-NX_PORT=9
+NX_PORT="9"
 
-NX_SYSTEM=${HOME}/.nx
+NX_SYSTEM="${HOME}/.nx"
 
-NX_ROOT=${HOME}/.nx
+NX_ROOT="${HOME}/.nx"
 
 #
 # This should be randomly generated.
 #
-#NX_COOKIE=`xauth list |grep "${HOSTNAME}/unix:\<${NX_PORT}\>" | grep MIT | cut -f 5 -d ' '`
-NX_COOKIE=123efa980d2cba234ef6f73deac810ff
+#NX_COOKIE="$(xauth list |grep "${HOSTNAME}/unix:\<${NX_PORT}\>" | grep 'MIT' | cut -f '5' -d ' ')"
+NX_COOKIE="123efa980d2cba234ef6f73deac810ff"
 
 #
 # Create the directories for the NX session.
 #
 
-rm -rf ${NX_ROOT}/C-${NX_PORT} || exit
-mkdir -p ${NX_ROOT}/C-${NX_PORT} || exit
+rm -rf "${NX_ROOT}/C-${NX_PORT}" || exit
+mkdir -p "${NX_ROOT}/C-${NX_PORT}" || exit
 
-rm -rf ${HOME}/.nx/S-${NX_PORT} || exit
-mkdir -p ${HOME}/.nx/S-${NX_PORT} || exit
+rm -rf "${NX_ROOT}/S-${NX_PORT}" || exit
+mkdir -p "${NX_ROOT}/S-${NX_PORT}" || exit
 
 #
 # Set the path to libraries and NX executables.
@@ -72,8 +72,8 @@ export PATH
 
 echo "Creating the X authorization cookie."
 
-xauth add ${HOSTNAME}/unix:${NX_PORT} MIT-MAGIC-COOKIE-1 ${NX_COOKIE}
-xauth add ${HOSTNAME}:${NX_PORT} MIT-MAGIC-COOKIE-1 ${NX_COOKIE}
+xauth add "${HOSTNAME}/unix:${NX_PORT}" "MIT-MAGIC-COOKIE-1" "${NX_COOKIE}"
+xauth add "${HOSTNAME}:${NX_PORT}" "MIT-MAGIC-COOKIE-1" "${NX_COOKIE}"
 
 #
 # Options are written in a file 'options' in the session
@@ -86,37 +86,37 @@ xauth add ${HOSTNAME}:${NX_PORT} MIT-MAGIC-COOKIE-1 ${NX_COOKIE}
 # media=1:1098
 #
 
-NX_HOST=nx/nx,cache=8192k,link=modem,menu=1,keybd=1,samba=0,cups=0,limit=0,\
-accept=127.0.0.1,cookie=$NX_COOKIE,errors=${NX_ROOT}/C-${NX_PORT}/session
+NX_HOST="nx/nx,cache=8192k,link=modem,menu=1,keybd=1,samba=0,cups=0,limit=0,\
+accept=127.0.0.1,cookie=$NX_COOKIE,errors=${NX_ROOT}/C-${NX_PORT}/session"
 
-echo "${NX_HOST}:${NX_PORT}" >${NX_ROOT}/C-${NX_PORT}/options
+echo "${NX_HOST}:${NX_PORT}" >"${NX_ROOT}/C-${NX_PORT}/options"
 
 #
 # Run the agent. if you don't have a font server running,
 # remove the argument "-fp unix/:7100"
 #
 
-NX_AGENT=:${NX_PORT}
+NX_AGENT=":${NX_PORT}"
 
 echo "Running the X client side NX agent."
 
-SAVED_DISPLAY=$DISPLAY
+SAVED_DISPLAY="${DISPLAY}"
 
-DISPLAY=nx/nx,options=${NX_ROOT}/C-${NX_PORT}/options:${NX_PORT} 
+DISPLAY="nx/nx,options=${NX_ROOT}/C-${NX_PORT}/options:${NX_PORT}"
 export DISPLAY
 
 #valgrind -v --num-callers=8 --error-limit=no --trace-children=no \
 #valgrind --num-callers=8 --tool=memcheck --leak-check=yes --show-reachable=yes --track-fds=yes \
-#ldd ${NXAGENTBIN}
-${NXAGENTBIN} -name 'NX' -geometry 800x600+100+100 "$@" \
-${NX_AGENT} 2>>${NX_ROOT}/C-${NX_PORT}/session &
+#ldd "${NXAGENTBIN}"
+"${NXAGENTBIN}" -name 'NX' -geometry "800x600+100+100" "${@}" \
+"${NX_AGENT}" 2>>"${NX_ROOT}/C-${NX_PORT}/session" &
 
 #
 # The X server side proxy will forward the connection
 # to the original DISPLAY.
 #
 
-DISPLAY=$SAVED_DISPLAY
+DISPLAY="${SAVED_DISPLAY}"
 export DISPLAY
 
 #
@@ -127,17 +127,17 @@ export DISPLAY
 # connect=giulietta.nomachine.com:1098
 #
 
-#NX_HOST=nx/nx,keybd=1,samba=1,cups=1,connect=localhost,cookie=$NX_COOKIE,errors=${NX_ROOT}/S-${NX_PORT}/session
-NX_HOST=nx/nx,keybd=1,samba=0,cups=0,connect=localhost,cookie=$NX_COOKIE,errors=${NX_ROOT}/S-${NX_PORT}/session
+#NX_HOST="nx/nx,keybd=1,samba=1,cups=1,connect=localhost,cookie=${NX_COOKIE},errors=${NX_ROOT}/S-${NX_PORT}/session"
+NX_HOST="nx/nx,keybd=1,samba=0,cups=0,connect=localhost,cookie=${NX_COOKIE},errors=${NX_ROOT}/S-${NX_PORT}/session"
 
-echo "${NX_HOST}:${NX_PORT}" >${NX_ROOT}/S-${NX_PORT}/options
+echo "${NX_HOST}:${NX_PORT}" >"${NX_ROOT}/S-${NX_PORT}/options"
 
 echo "Running the X server side NX proxy."
 
 #valgrind -v --num-callers=8 --error-limit=no --trace-children=no \
 #valgrind --num-callers=8 --tool=memcheck --leak-check=yes --show-reachable=yes --track-fds=yes \
-#ldd ${NXPROXYBIN}
-${NXPROXYBIN} -S nx/nx,options=${NX_ROOT}/S-${NX_PORT}/options:${NX_PORT} \
-2>>${HOME}/.nx/S-${NX_PORT}/session &
+#ldd "${NXPROXYBIN}"
+"${NXPROXYBIN}" -S "nx/nx,options=${NX_ROOT}/S-${NX_PORT}/options:${NX_PORT}" \
+2>>"${NX_ROOT}/S-${NX_PORT}/session" &
 
 echo "Session running on display :$NX_PORT."

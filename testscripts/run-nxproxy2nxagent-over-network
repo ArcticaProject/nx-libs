@@ -27,10 +27,10 @@
 #set -x
 #
 
-ulimit -c unlimited
+ulimit -c "unlimited"
 
-NXPROXYBIN=nxproxy
-NXAGENTBIN=nxagent
+NXPROXYBIN="nxproxy"
+NXAGENTBIN="nxagent"
 
 ###
 ### Adapt to your needs: NXAGENT_HOST, NXPROXY_HOST
@@ -41,30 +41,30 @@ NXAGENTBIN=nxagent
 ###
 ### (Instructions for copy+pasting are given when this script has been launched).
 ###
-NXAGENT_HOST=127.0.0.1 # (e.g. 192.168.1.1, this scripts is launched on the NXAGENT_HOST machine)
-NXPROXY_HOST=127.0.0.1 # (e.g. 192.168.1.2, you want to connect nxproxy -> nxagent from the NXPROXY_HOST machine)
+NXAGENT_HOST="127.0.0.1" # (e.g., 192.168.1.1, this scripts is launched on the NXAGENT_HOST machine)
+NXPROXY_HOST="127.0.0.1" # (e.g., 192.168.1.2, you want to connect nxproxy -> nxagent from the NXPROXY_HOST machine)
 
-NX_PORT=9
+NX_PORT="9"
 
-NX_SYSTEM=${HOME}/.nx
+NX_SYSTEM="${HOME}/.nx"
 
-NX_ROOT=${HOME}/.nx
+NX_ROOT="${HOME}/.nx"
 
 #
 # This should be randomly generated.
 #
-#NX_COOKIE=`xauth list |grep "${HOSTNAME}/unix:\<${NX_PORT}\>" | grep MIT | cut -f 5 -d ' '`
-NX_COOKIE=123efa980d2cba234ef6f73deac810ff
+#NX_COOKIE="$(xauth list |grep "${HOSTNAME}/unix:\<${NX_PORT}\>" | grep 'MIT' | cut -f '5' -d ' ')"
+NX_COOKIE="123efa980d2cba234ef6f73deac810ff"
 
 #
 # Create the directories for the NX session.
 #
 
-rm -rf ${NX_ROOT}/C-${NX_PORT} || exit
-mkdir -p ${NX_ROOT}/C-${NX_PORT} || exit
+rm -rf "${NX_ROOT}/C-${NX_PORT}" || exit
+mkdir -p "${NX_ROOT}/C-${NX_PORT}" || exit
 
-rm -rf ${HOME}/.nx/S-${NX_PORT} || exit
-mkdir -p ${HOME}/.nx/S-${NX_PORT} || exit
+rm -rf "${NX_ROOT}/S-${NX_PORT}" || exit
+mkdir -p "${NX_ROOT}/S-${NX_PORT}" || exit
 
 #
 # Set the path to libraries and NX executables.
@@ -82,8 +82,8 @@ export PATH
 
 echo "Creating the X authorization cookie."
 
-xauth add ${NXPROXY_HOST}/unix:${NX_PORT} MIT-MAGIC-COOKIE-1 ${NX_COOKIE}
-xauth add ${NXPROXY_HOST}:${NX_PORT} MIT-MAGIC-COOKIE-1 ${NX_COOKIE}
+xauth add "${NXPROXY_HOST}/unix:${NX_PORT}" "MIT-MAGIC-COOKIE-1" "${NX_COOKIE}"
+xauth add "${NXPROXY_HOST}:${NX_PORT}" "MIT-MAGIC-COOKIE-1" "${NX_COOKIE}"
 
 #
 # Options are written in a file 'options' in the session
@@ -91,63 +91,60 @@ xauth add ${NXPROXY_HOST}:${NX_PORT} MIT-MAGIC-COOKIE-1 ${NX_COOKIE}
 # we pass in the DISPLAY the name of the options file.
 #
 # cache=8M,images=32M,link=modem,type=unix-kde,cleanup=0,
-# accept=62.98.198.1,cookie=$NX_COOKIE,
+# accept=62.98.198.1,cookie=${NX_COOKIE},
 # id=giulietta.nomachine.com-1098-6A4649FD0FCA57FAC275AF3F1C45B10F,
 # media=1:1098
 #
 
-NX_HOST=nx/nx,cache=8192k,link=modem,menu=1,keybd=1,samba=0,cups=0,limit=0,\
-accept=$NXPROXY_HOST,cookie=$NX_COOKIE,errors=${NX_ROOT}/C-${NX_PORT}/session
+NX_HOST="nx/nx,cache=8192k,link=modem,menu=1,keybd=1,samba=0,cups=0,limit=0,\
+accept=${NXPROXY_HOST},cookie=${NX_COOKIE},errors=${NX_ROOT}/C-${NX_PORT}/session"
 
-echo "${NX_HOST}:${NX_PORT}" >${NX_ROOT}/C-${NX_PORT}/options
+echo "${NX_HOST}:${NX_PORT}" >"${NX_ROOT}/C-${NX_PORT}/options"
 
 #
 # Run the agent. if you don't have a font server running,
 # remove the argument "-fp unix/:7100"
 #
 
-NX_AGENT=:${NX_PORT}
+NX_AGENT=":${NX_PORT}"
 
 echo "Running the X client side NX agent."
 
-SAVED_DISPLAY=$DISPLAY
+SAVED_DISPLAY="${DISPLAY}"
 
-DISPLAY=nx/nx,options=${NX_ROOT}/C-${NX_PORT}/options:${NX_PORT} 
+DISPLAY="nx/nx,options=${NX_ROOT}/C-${NX_PORT}/options:${NX_PORT}"
 export DISPLAY
 
 #valgrind -v --num-callers=8 --error-limit=no --trace-children=no \
 #valgrind --num-callers=8 --tool=memcheck --leak-check=yes --show-reachable=yes --track-fds=yes \
-#ldd ${NXAGENTBIN}
-${NXAGENTBIN} -name 'NX' -geometry 800x600+100+100 "$@" \
-${NX_AGENT} 2>>${NX_ROOT}/C-${NX_PORT}/session &
+#ldd "${NXAGENTBIN}"
+"${NXAGENTBIN}" -name 'NX' -geometry "800x600+100+100" "${@}" \
+"${NX_AGENT}" 2>>"${NX_ROOT}/C-${NX_PORT}/session" &
 
 #
 # The X server side proxy will forward the connection
 # to the original DISPLAY.
 #
 
-DISPLAY=$SAVED_DISPLAY
+DISPLAY="${SAVED_DISPLAY}"
 export DISPLAY
 
 #
 # These are the nxproxy options used to run a typical session.
 #
-# cookie=$NX_COOKIE,root=/home/pinzari/.nx,media=32824,
+# cookie=${NX_COOKIE},root=/home/pinzari/.nx,media=32824,
 # session=kde_on_giulietta,id=giulietta.nomachine.com-1098-6A4649FD0FCA57FAC275AF3F1C45B10F,
 # connect=giulietta.nomachine.com:1098
 #
 
-echo
-echo Now... COPY+PASTE the below lines to your local system
-echo 
-echo "--------------8<---------"
+printf '\n%s\n\n' 'Now... COPY+PASTE the below lines to your local system'
+echo '--------------8<---------'
 
-#NX_HOST=nx/nx,keybd=1,samba=1,cups=1,connect=$NXAGENT_HOST,cookie=$NX_COOKIE,errors=${NX_ROOT}/S-${NX_PORT}/session
-NX_HOST=nx/nx,keybd=1,samba=0,cups=0,connect=tcp:$NXAGENT_HOST:4009,cookie=$NX_COOKIE,errors=${NX_ROOT}/S-${NX_PORT}/session
-echo "NX_HOST=$NX_HOST"
+#NX_HOST="nx/nx,keybd=1,samba=1,cups=1,connect=${NXAGENT_HOST},cookie=${NX_COOKIE},errors=${NX_ROOT}/S-${NX_PORT}/session"
+NX_HOST="nx/nx,keybd=1,samba=0,cups=0,connect=tcp:${NXAGENT_HOST}:4009,cookie=${NX_COOKIE},errors=${NX_ROOT}/S-${NX_PORT}/session"
+echo "NX_HOST=${NX_HOST}"
 
-echo "echo \"${NX_HOST}:${NX_PORT}\" >${NX_ROOT}/S-${NX_PORT}/options"
+echo "echo \"${NX_HOST}:${NX_PORT}\" >\"${NX_ROOT}/S-${NX_PORT}/options\""
 
-echo "${NXPROXYBIN} -S nx/nx,options=${NX_ROOT}/S-${NX_PORT}/options:${NX_PORT} 2>>${HOME}/.nx/S-${NX_PORT}/session"
-echo "-------------->8---------"
-echo
+echo "\"${NXPROXYBIN}\" -S \"nx/nx,options=${NX_ROOT}/S-${NX_PORT}/options:${NX_PORT}\" 2>>\"${NX_ROOT}/S-${NX_PORT}/session\""
+printf '%s\n\n' '-------------->8---------'

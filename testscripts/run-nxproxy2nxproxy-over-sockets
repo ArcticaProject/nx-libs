@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -ex
+set -e
 
 #/**************************************************************************/
 #/*                                                                        */
@@ -26,16 +26,16 @@ set -ex
 #
 # Uncomment this to enable echo.
 #
-# set -x
+set -x
 #
 
-ulimit -c unlimited
+ulimit -c "unlimited"
 
-NX_PORT=6
+NX_PORT="6"
 
-NX_SYSTEM=${HOME}/.nx
+NX_SYSTEM="${HOME}/.nx"
 
-NX_ROOT=${HOME}/.nx
+NX_ROOT="${HOME}/.nx"
 
 mkdir -p "${NX_ROOT}"
 
@@ -43,20 +43,18 @@ mkdir -p "${NX_ROOT}"
 # This should be randomly generated.
 #
 
-NX_COOKIE=`xauth -n list |grep "${HOSTNAME}/unix:${NX_PORT}" | grep MIT | cut -f 5 -d ' ' | head -n1`
-if [ -z "$NX_COOKIE" ]; then
-	NX_COOKIE=`mcookie`
-fi
+NX_COOKIE="$(xauth -n list |grep "${HOSTNAME}/unix:${NX_PORT}" | grep 'MIT' | cut -f '5' -d ' ' | head -n1)"
+[[ -z "$NX_COOKIE" ]] && NX_COOKIE="$(mcookie)"
 
 #
 # Create the directories for the NX session.
 #
 
-rm -rf ${NX_ROOT}/C-${NX_PORT} || exit
-mkdir -p ${NX_ROOT}/C-${NX_PORT} || exit
+rm -rf "${NX_ROOT}/C-${NX_PORT}" || exit
+mkdir -p "${NX_ROOT}/C-${NX_PORT}" || exit
 
-rm -rf ${HOME}/.nx/S-${NX_PORT} || exit
-mkdir -p ${HOME}/.nx/S-${NX_PORT} || exit
+rm -rf "${NX_ROOT}/S-${NX_PORT}" || exit
+mkdir -p "${NX_ROOT}/S-${NX_PORT}" || exit
 
 #
 # Set the path to libraries and NX executables.
@@ -74,13 +72,11 @@ export PATH
 
 echo "Creating the X authorization cookie."
 
-xauth add ${HOSTNAME}/unix:${NX_PORT} MIT-MAGIC-COOKIE-1 ${NX_COOKIE}
-xauth add ${HOSTNAME}:${NX_PORT} MIT-MAGIC-COOKIE-1 ${NX_COOKIE}
+xauth add "${HOSTNAME}/unix:${NX_PORT}" "MIT-MAGIC-COOKIE-1" "${NX_COOKIE}"
+xauth add "${HOSTNAME}:${NX_PORT}" "MIT-MAGIC-COOKIE-1" "${NX_COOKIE}"
 
 function urlencode() {
-
   echo "$(perl -MURI::Escape -e 'print uri_escape($ARGV[0]);' "$1")"
-
 }
 
 #
@@ -89,27 +85,27 @@ function urlencode() {
 # we pass in the DISPLAY the name of the options file.
 #
 # cache=8M,images=32M,link=modem,type=unix-kde,cleanup=0,
-# accept=62.98.198.1,cookie=$NX_COOKIE,
+# accept=62.98.198.1,cookie=${NX_COOKIE},
 # id=giulietta.nomachine.com-1098-6A4649FD0FCA57FAC275AF3F1C45B10F,
 # media=1:1098
 #
 
-#NX_HOST=nx/nx,link=lan,pack=no-pack,keybd=1,samba=1,cups=1,limit=0,\
-#accept=127.0.0.1,cookie=$NX_COOKIE,errors=${NX_ROOT}/C-${NX_PORT}/session
+#NX_HOST="nx/nx,link=lan,pack=no-pack,keybd=1,samba=1,cups=1,limit=0,\
+#accept=127.0.0.1,cookie=${NX_COOKIE},errors=${NX_ROOT}/C-${NX_PORT}/session"
 
-#NX_HOST=nx/nx,link=lan,pack=16m-jpeg-9,keybd=1,samba=1,cups=1,limit=0,\
-#accept=127.0.0.1,cookie=$NX_COOKIE,errors=${NX_ROOT}/C-${NX_PORT}/session
+#NX_HOST="nx/nx,link=lan,pack=16m-jpeg-9,keybd=1,samba=1,cups=1,limit=0,\
+#accept=127.0.0.1,cookie=${NX_COOKIE},errors=${NX_ROOT}/C-${NX_PORT}/session"
 
-#NX_HOST=nx/nx,cache=8192k,link=modem,keybd=1,samba=1,cups=1,limit=0,\
-#connect=127.0.0.1,cookie=$NX_COOKIE,errors=${NX_ROOT}/C-${NX_PORT}/session
+#NX_HOST="nx/nx,cache=8192k,link=modem,keybd=1,samba=1,cups=1,limit=0,\
+#connect=127.0.0.1,cookie=${NX_COOKIE},errors=${NX_ROOT}/C-${NX_PORT}/session"
 
-#NX_HOST=nx/nx,link=lan,pack=16m-jpeg-9,keybd=1,samba=1,cups=1,limit=0,\
-#accept=127.0.0.1,cookie=$NX_COOKIE,errors=${NX_ROOT}/C-${NX_PORT}/session
+#NX_HOST="nx/nx,link=lan,pack=16m-jpeg-9,keybd=1,samba=1,cups=1,limit=0,\
+#accept=127.0.0.1,cookie=${NX_COOKIE},errors=${NX_ROOT}/C-${NX_PORT}/session"
 
-NX_HOST=nx/nx,link=lan,pack=16m-jpeg-9,keybd=1,samba=1,cups=1,limit=0,\
-listen=$(urlencode "unix:${NX_SYSTEM}/C-${NX_PORT}/proxy.socket"),cookie=$NX_COOKIE,errors=${NX_ROOT}/C-${NX_PORT}/session
+NX_HOST="nx/nx,link=lan,pack=16m-jpeg-9,keybd=1,samba=1,cups=1,limit=0,\
+listen=$(urlencode "unix:${NX_SYSTEM}/C-${NX_PORT}/proxy.socket"),cookie=${NX_COOKIE},errors=${NX_ROOT}/C-${NX_PORT}/session"
 
-echo "${NX_HOST}:${NX_PORT}" >${NX_ROOT}/C-${NX_PORT}/options
+echo "${NX_HOST}:${NX_PORT}" >"${NX_ROOT}/C-${NX_PORT}/options"
 
 #
 # Run the local proxy impersonating the X display.
@@ -119,8 +115,8 @@ echo "Running the X client side NX proxy."
 
 #valgrind -v --num-callers=8 --error-limit=no --trace-children=no \
 #valgrind --tool=memcheck --track-fds=yes \
-nxproxy -C nx/nx,options=${NX_ROOT}/C-${NX_PORT}/options:${NX_PORT} \
-2>>${HOME}/.nx/C-${NX_PORT}/session &
+nxproxy -C "nx/nx,options=${NX_ROOT}/C-${NX_PORT}/options:${NX_PORT}" \
+2>>"${NX_ROOT}/C-${NX_PORT}/session" &
 
 #
 # The X server side proxy will forward the connection
@@ -130,14 +126,14 @@ nxproxy -C nx/nx,options=${NX_ROOT}/C-${NX_PORT}/options:${NX_PORT} \
 #
 # These are the nxproxy options used to run a typical session.
 #
-# cookie=$NX_COOKIE,root=/home/pinzari/.nx,media=32824,
+# cookie=${NX_COOKIE},root=/home/pinzari/.nx,media=32824,
 # session=kde_on_giulietta,id=giulietta.nomachine.com-1098-6A4649FD0FCA57FAC275AF3F1C45B10F,
 # connect=giulietta.nomachine.com:1098
 #
 
-NX_HOST=nx/nx,keybd=1,samba=1,cups=1,connect=$(urlencode "unix:${NX_SYSTEM}/C-${NX_PORT}/proxy.socket"),cookie=$NX_COOKIE,errors=${NX_ROOT}/S-${NX_PORT}/session
+NX_HOST="nx/nx,keybd=1,samba=1,cups=1,connect=$(urlencode "unix:${NX_SYSTEM}/C-${NX_PORT}/proxy.socket"),cookie=${NX_COOKIE},errors=${NX_ROOT}/S-${NX_PORT}/session"
 
-echo "${NX_HOST}:${NX_PORT}" >${NX_ROOT}/S-${NX_PORT}/options
+echo "${NX_HOST}:${NX_PORT}" >"${NX_ROOT}/S-${NX_PORT}/options"
 
 echo "Running the X server side NX proxy."
 
@@ -146,8 +142,7 @@ echo "Running the X server side NX proxy."
 #valgrind -v --leak-check=yes --leak-resolution=high --show-reachable=yes \
 #            --show-reachable=yes --suppressions=nxproxy/nxproxy.supp \
 #            --weird-hacks=lax-ioctls --num-callers=8 --logfile-fd=2 \
-nxproxy -S nx/nx,options=${NX_ROOT}/S-${NX_PORT}/options:${NX_PORT} \
-2>>${HOME}/.nx/S-${NX_PORT}/session &
+nxproxy -S "nx/nx,options=${NX_ROOT}/S-${NX_PORT}/options:${NX_PORT}" \
+2>>"${NX_ROOT}/S-${NX_PORT}/session" &
 
-echo "Session running on display :$NX_PORT."
-
+echo "Session running on display :${NX_PORT}."
