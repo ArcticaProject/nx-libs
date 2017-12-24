@@ -40,7 +40,7 @@ NX_SYSTEM=${HOME}/.nx
 NX_ROOT=${HOME}/.nx
 
 #
-# This should be randlomly generated.
+# This should be randomly generated.
 #
 #NX_COOKIE=`xauth list |grep "${HOSTNAME}/unix:\<${NX_PORT}\>" | grep MIT | cut -f 5 -d ' '`
 NX_COOKIE=123efa980d2cba234ef6f73deac810ff
