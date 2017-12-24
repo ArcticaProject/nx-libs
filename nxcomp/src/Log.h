@@ -105,12 +105,8 @@ class NXLogStamp
     }
 
 
-    NXLogStamp(const char *file, const char *function, int line, NXLogLevel level)
+    NXLogStamp(const char *file, const char *function, int line, NXLogLevel level) : file_(file), function_(function), line_(line), level_(level)
     {
-        file_      = std::string(file);
-        function_  = std::string(function);
-        line_      = line;
-        level_     = level;
         gettimeofday(&timestamp_, NULL);
     }
 
@@ -273,18 +269,9 @@ class NXLog
 
 
     public:
-    NXLog()
+    NXLog() : level_(NXWARNING), stream_(&std::cerr), synchronized_(true), thread_buffer_size_(1024),
+              log_level_(false), log_time_(false), log_unix_time_(false), log_location_(false), log_thread_id_(false)
     {
-        stream_             = &std::cerr;
-        level_              = NXWARNING;
-        synchronized_       = true;
-        thread_buffer_size_ = 1024;
-        log_level_          = false;
-        log_time_           = false;
-        log_unix_time_      = false;
-        log_location_       = false;
-        log_thread_id_      = false;
-
         if ( pthread_key_create(&tls_key_, free_thread_data) != 0 )
         {
             std::cerr << "pthread_key_create failed" << std::endl;
