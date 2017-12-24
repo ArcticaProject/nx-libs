@@ -3183,6 +3183,8 @@ int SetupProxyConnection()
     nxinfo << "Loop: connectSocket is "<< ( connectSocket.enabled() ? "enabled" : "disabled") << ". "
            << "The socket URI is '"<< ( socketUri != NULL ? socketUri : "<unset>") << "'.\n" << std::flush;
 
+    SAFE_FREE(socketUri);
+
     listenSocket.getSpec(&socketUri);
     nxinfo << "Loop: listenSocket is "<< ( listenSocket.enabled() ? "enabled" : "disabled") << ". "
            << "The socket URI is '"<< ( socketUri != NULL ? socketUri : "<unset>") << "'.\n" << std::flush;
