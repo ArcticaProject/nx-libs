@@ -4206,6 +4206,13 @@ int nxagentAdjustRandRXinerama(ScreenPtr pScreen)
     pScrPriv->configChanged = TRUE;
   }
 
+  /*
+   * Adjust screen size according the newly set modes.
+   * Not calling this function leads to the initial screen size left in place,
+   * which is not what we want in case the window is resizable.
+   */
+  RRScreenSizeNotify(pScreen);
+
   /* FIXME: adjust maximum screen size according to remote randr/xinerama setup */
 
   #ifdef DEBUG
