@@ -103,11 +103,11 @@ ChannelEndPoint::setSpec(const char *hostName, long port) {
   if (hostName && strlen(hostName) && port >= 1)
   {
     length = snprintf(NULL, 0, "tcp:%s:%ld", hostName, port);
-    spec_ = (char *)calloc(length + 1, sizeof(char));
+    spec_ = static_cast<char *>(calloc(length + 1, sizeof(char)));
     snprintf(spec_, length+1, "tcp:%s:%ld", hostName, port);
     isTCP_ = true;
   }
-  else setSpec((char*)NULL);
+  else setSpec(static_cast<char*>(NULL));
 }
 
 bool
@@ -133,7 +133,7 @@ ChannelEndPoint::getSpec(char **socketUri) const {
 
   if (length > 0)
   {
-    newSocketUri = (char *)calloc(length + 1, sizeof(char));
+    newSocketUri = static_cast<char *>(calloc(length + 1, sizeof(char)));
     if (isUnixSocket())
       snprintf(newSocketUri, length+1, "unix:%s", unixPath);
     else
