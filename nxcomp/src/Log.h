@@ -105,7 +105,7 @@ class NXLogStamp
     }
 
 
-    NXLogStamp(const char *file, const char *function, int line, NXLogLevel level) : file_(file), function_(function), line_(line), level_(level)
+    NXLogStamp(const char *file, const char *function, size_t line, NXLogLevel level) : file_(file), function_(function), line_(line), level_(level)
     {
         gettimeofday(&timestamp_, NULL);
     }
