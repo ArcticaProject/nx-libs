@@ -6262,7 +6262,7 @@ int WaitForRemote(ChannelEndPoint &socketAddress)
 
         continue;
       }
- 
+
       nxfatal << "Loop: PANIC! Call to select failed. Error is "
               << EGET() << " '" << ESTR() << "'.\n"
               << std::flush;
@@ -6340,7 +6340,7 @@ int WaitForRemote(ChannelEndPoint &socketAddress)
 
           cerr << "Warning" << ": Refusing connection from '"
                << connectedHost << "'.\n";
-	}
+        }
 
         //
         // Not the best way to elude a DOS attack...
@@ -10860,7 +10860,7 @@ int SetLogs()
             S_IWGRP | S_IROTH | S_IWOTH);
 
   #endif
-                
+
   if (OpenLogFile(errorsFileName, logofs) < 0)
   {
     HandleCleanup();
