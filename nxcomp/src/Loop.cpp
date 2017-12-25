@@ -14046,7 +14046,7 @@ static void handleCheckSelectInLoop(int &setFDs, fd_set &readSet,
     }
     else
     {
-      nxinfo_append << "[none].\n" << std::flush;
+      nxinfo_append << " [none].\n" << std::flush;
     }
 
     i = 0;
@@ -14069,7 +14069,7 @@ static void handleCheckSelectInLoop(int &setFDs, fd_set &readSet,
     }
     else
     {
-      nxinfo_append << "[none].\n" << std::flush;
+      nxinfo_append << " [none].\n" << std::flush;
     }
   }
 
@@ -14127,7 +14127,7 @@ static void handleCheckResultInLoop(int &resultFDs, int &errorFDs, int &setFDs, 
     }
     else
     {
-      nxinfo_append << "[none].\n" << std::flush;
+      nxinfo_append << " [none].\n" << std::flush;
     }
 
     i = 0;
@@ -14150,7 +14150,7 @@ static void handleCheckResultInLoop(int &resultFDs, int &errorFDs, int &setFDs, 
     }
     else
     {
-      nxinfo_append << "[none].\n" << std::flush;
+      nxinfo_append << " [none].\n" << std::flush;
     }
   }
 }
