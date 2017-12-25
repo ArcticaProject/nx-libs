@@ -13449,12 +13449,12 @@ int ParseArg(const char *type, const char *name, const char *value)
     case 'm':
     case 'g':
     {
-      nxinfo << (char) toupper(*id);
+      nxinfo_append << (char) toupper(*id);
       break;
     }
   }
 
-  nxinfo << ".\n" << std::flush;
+  nxinfo_append << ".\n" << std::flush;
 
 
   double result = atof(string) * base;
@@ -14028,13 +14028,13 @@ static void handleCheckSelectInLoop(int &setFDs, fd_set &readSet,
   {
     i = 0;
 
-    nxinfo << "Loop: Selected for read are ";
+    nxinfo << "Loop: Selected for read are";
 
     for (int j = 0; j < setFDs; j++)
     {
       if (FD_ISSET(j, &readSet))
       {
-        nxinfo << "[" << j << "]" << std::flush;
+        nxinfo_append << " [" << j << "]";
 
         i++;
       }
@@ -14042,22 +14042,22 @@ static void handleCheckSelectInLoop(int &setFDs, fd_set &readSet,
 
     if (i > 0)
     {
-      nxinfo << ".\n" << std::flush;
+      nxinfo_append << ".\n" << std::flush;
     }
     else
     {
-      nxinfo << "[none].\n" << std::flush;
+      nxinfo_append << "[none].\n" << std::flush;
     }
 
     i = 0;
 
-    nxinfo << "Loop: Selected for write are ";
+    nxinfo << "Loop: Selected for write are";
 
     for (int j = 0; j < setFDs; j++)
     {
       if (FD_ISSET(j, &writeSet))
       {
-        nxinfo << "[" << j << "]" << std::flush;
+        nxinfo_append << " [" << j << "]";
 
         i++;
       }
@@ -14065,11 +14065,11 @@ static void handleCheckSelectInLoop(int &setFDs, fd_set &readSet,
 
     if (i > 0)
     {
-      nxinfo << ".\n" << std::flush;
+      nxinfo_append << ".\n" << std::flush;
     }
     else
     {
-      nxinfo << "[none].\n" << std::flush;
+      nxinfo_append << "[none].\n" << std::flush;
     }
   }
 
@@ -14109,13 +14109,13 @@ static void handleCheckResultInLoop(int &resultFDs, int &errorFDs, int &setFDs, 
   {
     i = 0;
 
-    nxinfo << "Loop: Selected for read are ";
+    nxinfo << "Loop: Selected for read are";
 
     for (int j = 0; j < setFDs; j++)
     {
       if (FD_ISSET(j, &readSet))
       {
-        nxinfo << "[" << j << "]" << std::flush;
+        nxinfo_append << " [" << j << "]";
 
         i++;
       }
@@ -14123,22 +14123,22 @@ static void handleCheckResultInLoop(int &resultFDs, int &errorFDs, int &setFDs, 
 
     if (i > 0)
     {
-      nxinfo << ".\n" << std::flush;
+      nxinfo_append << ".\n" << std::flush;
     }
     else
     {
-      nxinfo << "[none].\n" << std::flush;
+      nxinfo_append << "[none].\n" << std::flush;
     }
 
     i = 0;
 
-    nxinfo << "Loop: Selected for write are ";
+    nxinfo << "Loop: Selected for write are";
 
     for (int j = 0; j < setFDs; j++)
     {
       if (FD_ISSET(j, &writeSet))
       {
-        nxinfo << "[" << j << "]" << std::flush;
+        nxinfo_append << " [" << j << "]";
 
         i++;
       }
@@ -14146,11 +14146,11 @@ static void handleCheckResultInLoop(int &resultFDs, int &errorFDs, int &setFDs, 
 
     if (i > 0)
     {
-      nxinfo << ".\n" << std::flush;
+      nxinfo_append << ".\n" << std::flush;
     }
     else
     {
-      nxinfo << "[none].\n" << std::flush;
+      nxinfo_append << "[none].\n" << std::flush;
     }
   }
 }
