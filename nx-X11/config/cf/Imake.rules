@@ -1103,11 +1103,11 @@ CplusplusProgramTargetHelper(program,SRCS10,OBJS10,DEPLIBS10,locallib,syslib)
 AllTarget(ProgramTargetName(server))					@@\
 ProgramTargetName(server): subdirs objects libs				@@\
 	MoveToBakFile($@)						@@\
-	LinkRule($@,$(LDOPTIONS),objects,libs $(LDLIBS) syslibs) @@\
+	LinkRule($@,$(SERVERLDOPTIONS),objects,libs $(LDLIBS) syslibs)	@@\
 									@@\
 Concat(load,server):							@@\
 	MoveToBakFile(ProgramTargetName(server))			@@\
-	LinkRule(ProgramTargetName(server),$(LDOPTIONS),objects,libs $(LDLIBS) syslibs) @@\
+	LinkRule(ProgramTargetName(server),$(SERVERLDOPTIONS),objects,libs $(LDLIBS) syslibs) @@\
 									@@\
 loadX:: Concat(load,server)						@@\
 									@@\

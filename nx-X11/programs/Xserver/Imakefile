@@ -319,6 +319,7 @@ NXAGENTNXLIBS = -L/usr/sfw/lib \
                 -L../../../nxcompshad/src/.libs \
                 -L../../lib/src/.libs \
                 -lrt \
+                -lX11 \
                 -lXcomp \
                 -lXcompshad \
                 -lXrender \
@@ -334,6 +335,7 @@ NXAGENTNXLIBS = -L/usr/sfw/lib \
 NXAGENTNXLIBS = -L../../../nxcomp/src/.libs \
                 -L../../../nxcompshad/src/.libs \
                 -L../../lib/src/.libs \
+                -lX11 \
                 -lXcomp \
                 -lXcompshad \
                 -lXrender \
@@ -349,6 +351,7 @@ NXAGENTNXLIBS = -L../../../nxcomp/src/.libs \
                 -L../../../nxcompshad/src/.libs \
                 -L../../lib/src/.libs \
                 -lkvm \
+                -lX11 \
                 -lXcomp \
                 -lXcompshad \
                 -lXrender \
@@ -364,6 +367,7 @@ NXAGENTNXLIBS = -L../../../nxcomp/src/.libs \
 NXAGENTNXLIBS = -L../../../nxcomp/src/.libs \
                 -L../../../nxcompshad/src/.libs \
                 -L../../lib/src/.libs \
+                -lX11 \
                 -lXcomp \
                 -lXcompshad \
                 -lXrender \

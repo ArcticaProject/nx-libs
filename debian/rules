@@ -124,5 +124,13 @@ override_dh_strip:
 override_dh_makeshlibs:
 	dh_makeshlibs -n
 
+# Needed for the libX11 RUNPATH/RPATH link-time hack.
+# dh_shlibdeps will follow dependencies within binaries and choke
+# on the libX11 dependency, since the SONAME (libX11.*) used while linking
+# does not match the later detected SONAME (libNX_X11.*) obtained through
+# the libX11 -> libNX_X11 compat symlink.
+override_dh_shlibdeps:
+	dh_shlibdeps --dpkg-shlibdeps-params=--ignore-missing-info
+
 get-orig-source:
 	uscan --noconf --force-download --rename --download-current-version --destdir=..
