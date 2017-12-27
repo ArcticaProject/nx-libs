@@ -509,7 +509,14 @@ bool has_newline(T value)
 template <char*>
 static bool has_newline(char *value)
 {
-    return strstr(value, "\n") != NULL;
+    if (value)
+    {
+        return strstr(value, "\n") != NULL;
+    }
+    else
+    {
+        return false;
+    }
 }
 
 template <char>
