@@ -3944,12 +3944,13 @@ void SetupDisplaySocket(int &addr_family, sockaddr *&addr,
     addr_length = len +3;
 
     int ret = connect(testSocketFD, (struct sockaddr *) xServerAddrABSTRACT, addr_length);
+    close(testSocketFD);
+
     if (ret == 0) {
 
         cerr << "Info" << ": Using abstract X11 socket in kernel namespace "
              << "for accessing DISPLAY=:" << xPort << ".\n";
 
-        close(testSocketFD);
         addr = (sockaddr *) xServerAddrABSTRACT;
         delete [] display;
         return;
