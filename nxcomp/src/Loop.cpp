@@ -3936,7 +3936,7 @@ void SetupDisplaySocket(int &addr_family, sockaddr *&addr,
     unixSocketName[0] = '\0';
 
     sockaddr_un *xServerAddrABSTRACT = new sockaddr_un;
-    memset(xServerAddrABSTRACT, 0, addr_length);
+    memset(xServerAddrABSTRACT, 0, sizeof(struct sockaddr_un));
     xServerAddrABSTRACT -> sun_family = AF_UNIX;
     memcpy(xServerAddrABSTRACT -> sun_path, unixSocketName, len+1);
     addr_length = len +3;
