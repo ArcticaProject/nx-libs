@@ -55,6 +55,8 @@
 
 #include "Misc.h"
 
+#include <cstddef>
+
 #ifdef __sun
 #include <strings.h>
 #endif
@@ -3590,19 +3592,14 @@ int SetupAuthInstance()
 
         launchdAddrUnix.sun_family = AF_UNIX;
 
-        #ifdef __linux__
-        const int launchdAddrNameLength = 108;
-        #else
-        /* POSIX/SUS does not specify a length.
-         * BSD derivatives generally support 104 bytes, other systems may be more constrained.
-         * If you happen to run into such systems, extend this section with the appropriate limit.
-         */
-        const int launchdAddrNameLength = 104;
-        #endif
+        // determine the maximum number of characters that fit into struct
+        // sockaddr_un's sun_path member
+        std::size_t launchdAddrNameLength =
+          sizeof(struct sockaddr_un) - offsetof(struct sockaddr_un, sun_path);
 
         int success = -1;
 
-        strncpy(launchdAddrUnix.sun_path, displayHost, launchdAddrNameLength);
+        snprintf(launchdAddrUnix.sun_path, launchdAddrNameLength, "%s", displayHost);
 
         *(launchdAddrUnix.sun_path + launchdAddrNameLength - 1) = '\0';
 
@@ -3909,6 +3906,11 @@ void SetupDisplaySocket(int &addr_family, sockaddr *&addr,
     // UNIX domain port.
     //
 
+    // determine the maximum number of characters that fit into struct
+    // sockaddr_un's sun_path member
+    std::size_t maxlen_un =
+      sizeof(struct sockaddr_un) - offsetof(struct sockaddr_un, sun_path);
+
     nxinfo << "Loop: Using real X server on UNIX domain socket.\n"
            << std::flush;
 
@@ -3943,10 +3945,28 @@ void SetupDisplaySocket(int &addr_family, sockaddr *&addr,
     sockaddr_un *xServerAddrABSTRACT = new sockaddr_un;
     memset(xServerAddrABSTRACT, 0, sizeof(struct sockaddr_un));
     xServerAddrABSTRACT -> sun_family = AF_UNIX;
-    // FIXME: ensure sun_path can hold len+1 bytes!
-    memcpy(xServerAddrABSTRACT -> sun_path, unixSocketName, len+1);
-    // FIXME: comment why + 3?
-    addr_length = len + 3;
+
+    if (maxlen_un < (unsigned int)len + 1)
+    {
+      nxfatal << "Loop: PANIC! Abstract socket name '" << unixSocketName + 1
+              << "' is too long!" << std::flush;
+
+      delete [] display;
+      delete xServerAddrABSTRACT;
+
+      HandleCleanup();
+    }
+
+    // copy including the leading '\0'
+    memcpy(xServerAddrABSTRACT -> sun_path, unixSocketName, len + 1);
+
+    // man 7 unix:
+    // "an abstract socket address is distinguished (from a
+    // pathname socket) by the fact that sun_path[0] is a null byte
+    // ('\0').  The socket's address in this namespace is given by the
+    // additional bytes in sun_path that are covered by the specified
+    // length of the address structure."
+    addr_length = offsetof(struct sockaddr_un, sun_path) + len + 1;
 
     int ret = connect(testSocketFD,
                       (struct sockaddr *) xServerAddrABSTRACT,
@@ -4032,8 +4052,17 @@ void SetupDisplaySocket(int &addr_family, sockaddr *&addr,
     nxinfo << "Loop: Assuming X socket name '" << unixSocketName
            << "'.\n" << std::flush;
 
-    sockaddr_un *xServerAddrUNIX = new sockaddr_un;
+    if (maxlen_un < strlen(unixSocketName) + 1)
+    {
+      nxfatal << "Loop: PANIC! Socket name '" << unixSocketName
+              << "' is too long!" << std::flush;
 
+      delete [] display;
+
+      HandleCleanup();
+    }
+
+    sockaddr_un *xServerAddrUNIX = new sockaddr_un;
     xServerAddrUNIX -> sun_family = AF_UNIX;
     strcpy(xServerAddrUNIX -> sun_path, unixSocketName);
 
@@ -6539,12 +6568,18 @@ int PrepareProxyConnectionUnix(char** path, int* timeout, int* proxyFileDescript
 
   /* FIXME: Add socket file existence and permission checks */
 
+
   *proxyFileDescriptor = -1;
   *reason = -1;
 
+  // determine the maximum number of characters that fit into struct
+  // sockaddr_un's sun_path member
+  const std::size_t sockpathlen =
+    sizeof(struct sockaddr_un) - offsetof(struct sockaddr_un, sun_path);
+
   sockaddr_un addr;
   addr.sun_family = AF_UNIX;
-  strncpy(addr.sun_path, *path, 108 - 1);
+  snprintf(addr.sun_path, sockpathlen, "%s", *path);
 
   *proxyFileDescriptor = socket(AF_UNIX, SOCK_STREAM, PF_UNSPEC);
   *reason = EGET();
