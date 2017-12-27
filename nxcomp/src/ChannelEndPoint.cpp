@@ -207,7 +207,10 @@ ChannelEndPoint::getPort(long *port) const {
 bool
 ChannelEndPoint::getUnixPath(char **unixPath) const {
 
-  if (unixPath) *unixPath = NULL;
+  if (unixPath)
+    *unixPath = NULL;
+  else
+    return false;
 
   long p;
   char *path = NULL;
@@ -227,8 +230,7 @@ ChannelEndPoint::getUnixPath(char **unixPath) const {
       return false;
   }
 
-  if (unixPath)
-    *unixPath = strdup(path);
+  *unixPath = strdup(path);
 
   return true;
 }

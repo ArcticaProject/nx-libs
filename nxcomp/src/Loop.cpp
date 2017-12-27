@@ -6661,6 +6661,7 @@ int ConnectToRemote(ChannelEndPoint &socketAddress)
           << "'.\n" << std::flush;
 
     SAFE_FREE(hostName);
+    SAFE_FREE(unixPath);
 
     if (socketAddress.getUnixPath(&unixPath))
       result = PrepareProxyConnectionUnix(&unixPath, &connectTimeout, &pFD, &reason);
