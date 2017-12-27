@@ -180,8 +180,6 @@ ChannelEndPoint::setDefaultUnixPath(char *path) {
 
   if (path && strlen(path))
     defaultUnixPath_ = strdup(path);
-  else
-    defaultUnixPath_ = NULL;
 
   isUnix_ = getUnixPath();
 }
