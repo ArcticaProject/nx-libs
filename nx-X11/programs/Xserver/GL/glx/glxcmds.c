@@ -510,7 +510,7 @@ int DoMakeCurrent( __GLXclientState *cl,
     ClientPtr client = cl->client;
     DrawablePtr pDraw;
     DrawablePtr pRead;
-    xGLXMakeCurrentReply reply;
+    xGLXMakeCurrentReply reply = {0};
     __GLXpixmap *drawPixmap = NULL;
     __GLXpixmap *readPixmap = NULL;
     __GLXcontext *glxc, *prevglxc;
@@ -745,7 +745,7 @@ int __glXIsDirect(__GLXclientState *cl, GLbyte *pc)
 {
     ClientPtr client = cl->client;
     xGLXIsDirectReq *req = (xGLXIsDirectReq *) pc;
-    xGLXIsDirectReply reply;
+    xGLXIsDirectReply reply = {0};
     __GLXcontext *glxc;
 
     /*
@@ -775,7 +775,7 @@ int __glXQueryVersion(__GLXclientState *cl, GLbyte *pc)
 {
     ClientPtr client = cl->client;
     xGLXQueryVersionReq *req = (xGLXQueryVersionReq *) pc;
-    xGLXQueryVersionReply reply;
+    xGLXQueryVersionReply reply = {0};
     GLuint major, minor;
 
     major = req->majorVersion;
@@ -921,10 +921,10 @@ int DoGetVisualConfigs(__GLXclientState *cl, unsigned screen,
 		       GLboolean do_swap)
 {
     ClientPtr client = cl->client;
-    xGLXGetVisualConfigsReply reply;
+    xGLXGetVisualConfigsReply reply = {0};
     __GLXscreenInfo *pGlxScreen;
     __GLcontextModes *modes;
-    CARD32 buf[__GLX_TOTAL_CONFIG];
+    CARD32 buf[__GLX_TOTAL_CONFIG] = {0};
     int p;
     __GLX_DECLARE_SWAP_VARIABLES;
     __GLX_DECLARE_SWAP_ARRAY_VARIABLES;
@@ -1029,7 +1029,7 @@ int __glXGetVisualConfigs(__GLXclientState *cl, GLbyte *pc)
 int DoGetFBConfigs(__GLXclientState *cl, unsigned screen, GLboolean do_swap)
 {
     ClientPtr client = cl->client;
-    xGLXGetFBConfigsReply reply;
+    xGLXGetFBConfigsReply reply = {0};
     __GLXscreenInfo *pGlxScreen;
     CARD32 buf[__GLX_FBCONFIG_ATTRIBS_LENGTH];
     int p;
@@ -1365,7 +1365,7 @@ int __glXQueryContextInfoEXT(__GLXclientState *cl, GLbyte *pc)
     ClientPtr client = cl->client;
     __GLXcontext *ctx;
     xGLXQueryContextInfoEXTReq *req;
-    xGLXQueryContextInfoEXTReply reply;
+    xGLXQueryContextInfoEXTReply reply = {0};
     int nProps;
     int *sendBuf, *pSendBuf;
     int nReplyBytes;
@@ -1780,7 +1780,7 @@ static int __glXQueryMaxSwapBarriersSGIX(__GLXclientState *cl, GLbyte *pc)
     ClientPtr client = cl->client;
     xGLXQueryMaxSwapBarriersSGIXReq *req =
                                     (xGLXQueryMaxSwapBarriersSGIXReq *) pc;
-    xGLXQueryMaxSwapBarriersSGIXReply reply;
+    xGLXQueryMaxSwapBarriersSGIXReply reply = {0};
     int screen = req->screen;
 
     if (__glXSwapBarrierFuncs &&
@@ -1810,7 +1810,7 @@ static int __glxQueryHyperpipeNetworkSGIX(__GLXclientState *cl, GLbyte *pc)
 {
     ClientPtr client = cl->client;
     xGLXQueryHyperpipeNetworkSGIXReq * req = (xGLXQueryHyperpipeNetworkSGIXReq *) pc;
-    xGLXQueryHyperpipeNetworkSGIXReply reply;
+    xGLXQueryHyperpipeNetworkSGIXReply reply = {0};
     int screen = req->screen;
     void *rdata = NULL;
 
@@ -1851,7 +1851,7 @@ static int __glxDestroyHyperpipeConfigSGIX (__GLXclientState *cl, GLbyte *pc)
     ClientPtr client = cl->client;
     xGLXDestroyHyperpipeConfigSGIXReq * req =
         (xGLXDestroyHyperpipeConfigSGIXReq *) pc;
-    xGLXDestroyHyperpipeConfigSGIXReply reply;
+    xGLXDestroyHyperpipeConfigSGIXReply reply = {0};
     int screen = req->screen;
     int  success = GLX_BAD_HYPERPIPE_SGIX;
     int hpId ;
@@ -1886,7 +1886,7 @@ static int __glxQueryHyperpipeConfigSGIX(__GLXclientState *cl, GLbyte *pc)
     ClientPtr client = cl->client;
     xGLXQueryHyperpipeConfigSGIXReq * req =
         (xGLXQueryHyperpipeConfigSGIXReq *) pc;
-    xGLXQueryHyperpipeConfigSGIXReply reply;
+    xGLXQueryHyperpipeConfigSGIXReply reply = {0};
     int screen = req->screen;
     void *rdata = NULL;
     int length;
@@ -1930,7 +1930,7 @@ static int __glxHyperpipeConfigSGIX(__GLXclientState *cl, GLbyte *pc)
     ClientPtr client = cl->client;
     xGLXHyperpipeConfigSGIXReq * req =
         (xGLXHyperpipeConfigSGIXReq *) pc;
-    xGLXHyperpipeConfigSGIXReply reply;
+    xGLXHyperpipeConfigSGIXReply reply = {0};
     int screen = req->screen;
     void *rdata;
 
@@ -2059,7 +2059,7 @@ int __glXQueryExtensionsString(__GLXclientState *cl, GLbyte *pc)
 {
     ClientPtr client = cl->client;
     xGLXQueryExtensionsStringReq *req = (xGLXQueryExtensionsStringReq *) pc;
-    xGLXQueryExtensionsStringReply reply;
+    xGLXQueryExtensionsStringReply reply = {0};
     GLuint screen;
     size_t n, length;
     const char *ptr;
@@ -2104,7 +2104,7 @@ int __glXQueryServerString(__GLXclientState *cl, GLbyte *pc)
 {
     ClientPtr client = cl->client;
     xGLXQueryServerStringReq *req = (xGLXQueryServerStringReq *) pc;
-    xGLXQueryServerStringReply reply;
+    xGLXQueryServerStringReply reply = {0};
     int name;
     GLuint screen;
     size_t n, length;

@@ -310,7 +310,6 @@ DeleteWindow(void * value, XID wid)
  {
     register WindowPtr pParent;
     register WindowPtr pWin = (WindowPtr)value;
-    xEvent event;
 
     UnmapWindow(pWin, FALSE);
 
@@ -319,7 +318,7 @@ DeleteWindow(void * value, XID wid)
     pParent = pWin->parent;
     if (wid && pParent && SubStrSend(pWin, pParent))
     {
-	memset(&event, 0, sizeof(xEvent));
+	xEvent event = {0};
 	event.u.u.type = DestroyNotify;
 	event.u.destroyNotify.window = pWin->drawable.id;
 	DeliverEvents(pWin, &event, 1, NullWindow);		
@@ -371,8 +370,7 @@ ResizeChildrenWinSize(register WindowPtr pWin, int dx, int dy, int dw, int dh)
 			pSib->winGravity, &cwsx, &cwsy);
 	    if (cwsx != pSib->origin.x || cwsy != pSib->origin.y)
 	    {
-		xEvent event;
-
+		xEvent event = {0};
 		event.u.u.type = GravityNotify;
 		event.u.gravity.window = pSib->drawable.id;
 		event.u.gravity.x = cwsx - wBorderWidth (pSib);
@@ -450,7 +448,7 @@ ConfigureWindow(register WindowPtr pWin, register Mask mask, XID *vlist, ClientP
 		   h = pWin->drawable.height,
 		   bw = pWin->borderWidth;
     int action, smode = Above;
-    xEvent event;
+    xEvent event = {0};
 
     if ((pWin->drawable.class == InputOnly) && (mask & IllegalInputOnlyConfigureMask))
 	return(BadMatch);
@@ -607,8 +605,7 @@ ConfigureWindow(register WindowPtr pWin, register Mask mask, XID *vlist, ClientP
 			|| (h != pWin->drawable.height);
 	if (size_change && ((pWin->eventMask|wOtherEventMasks(pWin)) & ResizeRedirectMask))
 	{
-	    xEvent eventT;
-	    memset(&eventT, 0, sizeof(xEvent));
+	    xEvent eventT = {0};
 	    eventT.u.u.type = ResizeRequest;
 	    eventT.u.resizeRequest.window = pWin->drawable.id;
 	    eventT.u.resizeRequest.width = w;
@@ -723,7 +720,7 @@ ReparentWindow(register WindowPtr pWin, register WindowPtr pParent,
 {
     WindowPtr pPrev, pPriorParent;
     Bool WasMapped = (Bool)(pWin->mapped);
-    xEvent event;
+    xEvent event = {0};
     int bw = wBorderWidth (pWin);
     register ScreenPtr pScreen;
 
@@ -736,7 +733,6 @@ ReparentWindow(register WindowPtr pWin, register WindowPtr pParent,
     if (WasMapped)
        UnmapWindow(pWin, FALSE);
 
-    memset(&event, 0, sizeof(xEvent));
     event.u.u.type = ReparentNotify;
     event.u.reparent.window = pWin->drawable.id;
     event.u.reparent.parent = pParent->drawable.id;
@@ -949,7 +945,6 @@ int
 UnmapWindow(register WindowPtr pWin, Bool fromConfigure)
 {
     register WindowPtr pParent;
-    xEvent event;
     Bool wasRealized = (Bool)pWin->realized;
     Bool wasViewable = (Bool)pWin->viewable;
     ScreenPtr pScreen = pWin->drawable.pScreen;
@@ -967,7 +962,7 @@ UnmapWindow(register WindowPtr pWin, Bool fromConfigure)
 	return(Success);
     if (SubStrSend(pWin, pParent))
     {
-	memset(&event, 0, sizeof(xEvent));
+	xEvent event = {0};
 	event.u.u.type = UnmapNotify;
 	event.u.unmapNotify.window = pWin->drawable.id;
 	event.u.unmapNotify.fromConfigure = fromConfigure;

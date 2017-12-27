@@ -101,7 +101,7 @@ ProcDPMSGetVersion(client)
     register ClientPtr client;
 {
     /* REQUEST(xDPMSGetVersionReq); */
-    xDPMSGetVersionReply rep;
+    xDPMSGetVersionReply rep = {0};
 
     REQUEST_SIZE_MATCH(xDPMSGetVersionReq);
 
@@ -123,7 +123,7 @@ static int
 ProcDPMSCapable(register ClientPtr client)
 {
     /* REQUEST(xDPMSCapableReq); */
-    xDPMSCapableReply rep;
+    xDPMSCapableReply rep = {0};
 
     REQUEST_SIZE_MATCH(xDPMSCapableReq);
 
@@ -144,7 +144,7 @@ ProcDPMSGetTimeouts(client)
     register ClientPtr client;
 {
     /* REQUEST(xDPMSGetTimeoutsReq); */
-    xDPMSGetTimeoutsReply rep;
+    xDPMSGetTimeoutsReply rep = {0};
 
     REQUEST_SIZE_MATCH(xDPMSGetTimeoutsReq);
 
@@ -258,7 +258,7 @@ static int
 ProcDPMSInfo(register ClientPtr client)
 {
     /* REQUEST(xDPMSInfoReq); */
-    xDPMSInfoReply rep;
+    xDPMSInfoReply rep = {0};
 
     REQUEST_SIZE_MATCH(xDPMSInfoReq);
 

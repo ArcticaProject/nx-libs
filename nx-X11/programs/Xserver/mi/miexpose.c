@@ -395,7 +395,7 @@ miSendGraphicsExpose (client, pRgn, drawable, major, minor)
 
 	numRects = RegionNumRects(pRgn);
 	pBox = RegionRects(pRgn);
-	if(!(pEvent = (xEvent *)malloc(numRects * sizeof(xEvent))))
+	if(!(pEvent = (xEvent *)calloc(numRects, sizeof(xEvent))))
 		return;
 	pe = pEvent;
 
@@ -417,8 +417,7 @@ miSendGraphicsExpose (client, pRgn, drawable, major, minor)
     }
     else
     {
-        xEvent event;
-	memset(&event, 0, sizeof(xEvent));
+	xEvent event = {0};
 	event.u.u.type = NoExpose;
 	event.u.noExposure.drawable = drawable;
 	event.u.noExposure.majorEvent = major;
@@ -442,9 +441,8 @@ miSendExposures(pWin, pRgn, dx, dy)
 
     pBox = RegionRects(pRgn);
     numRects = RegionNumRects(pRgn);
-    if(!(pEvent = (xEvent *) malloc(numRects * sizeof(xEvent))))
+    if(!(pEvent = (xEvent *) calloc(numRects, sizeof(xEvent))))
 	return;
-    memset(pEvent, 0, numRects * sizeof(xEvent));
 
     for (i=numRects, pe = pEvent; --i >= 0; pe++, pBox++)
     {
@@ -658,7 +656,7 @@ int what;
     BITS32 gcmask, index, mask;
     RegionRec prgnWin;
     DDXPointRec oldCorner;
-    BoxRec box;
+    BoxRec box = {0};
     WindowPtr	pBgWin;
     GCPtr pGC;
     register int i;
@@ -705,8 +703,7 @@ int what;
 	}
     }
 
-    prect = (xRectangle *)malloc(RegionNumRects(prgn) *
-					 sizeof(xRectangle));
+    prect = (xRectangle *)calloc(RegionNumRects(prgn), sizeof(xRectangle));
     if (!prect)
 	return;
 
@@ -892,8 +889,7 @@ miClearDrawable(pDraw, pGC)
 {
     XID fg = pGC->fgPixel;
     XID bg = pGC->bgPixel;
-    xRectangle rect;
-
+    xRectangle rect = {0};
     rect.x = 0;
     rect.y = 0;
     rect.width = pDraw->width;

@@ -600,7 +600,7 @@ ProcXkbLatchLockState(ClientPtr client)
 int
 ProcXkbGetControls(ClientPtr client)
 {
-    xkbGetControlsReply rep;
+    xkbGetControlsReply rep = {0};
     XkbControlsPtr	xkb;
     DeviceIntPtr 	dev;
 

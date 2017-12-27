@@ -126,7 +126,7 @@ AllocatePixmap(ScreenPtr pScreen, int pixDataSize)
      * the pixmap buffer. This may be a RENDER bug.
      */
 
-    pPixmap = (PixmapPtr)malloc(pScreen->totalPixmapSize + pixDataSize + 4);
+    pPixmap = (PixmapPtr)calloc(1, pScreen->totalPixmapSize + pixDataSize + 4);
     if (!pPixmap)
 	return NullPixmap;
     ppriv = (DevUnion *)(pPixmap + 1);
@@ -144,7 +144,7 @@ AllocatePixmap(ScreenPtr pScreen, int pixDataSize)
 	    ppriv->ptr = (void *)NULL;
     }
 #else
-    pPixmap = (PixmapPtr)malloc(sizeof(PixmapRec) + pixDataSize);
+    pPixmap = (PixmapPtr)calloc(1, sizeof(PixmapRec) + pixDataSize);
 #endif
     return pPixmap;
 }

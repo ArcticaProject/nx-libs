@@ -111,7 +111,7 @@ static int
 ProcXTestGetVersion(client)
     register ClientPtr client;
 {
-    xXTestGetVersionReply rep;
+    xXTestGetVersionReply rep = {0};
 
     REQUEST_SIZE_MATCH(xXTestGetVersionReq);
     rep.type = X_Reply;
@@ -132,7 +132,7 @@ ProcXTestCompareCursor(client)
     register ClientPtr client;
 {
     REQUEST(xXTestCompareCursorReq);
-    xXTestCompareCursorReply rep;
+    xXTestCompareCursorReply rep = {0};
     WindowPtr pWin;
     CursorPtr pCursor;
 

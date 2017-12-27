@@ -1158,7 +1158,8 @@ ProcGetKeyboardMapping(ClientPtr client)
 int
 ProcGetPointerMapping(ClientPtr client)
 {
-    xGetPointerMappingReply rep;
+    xGetPointerMappingReply rep = {0};
+
     ButtonClassPtr butc = inputInfo.pointer->button;
 
     REQUEST_SIZE_MATCH(xReq);
@@ -1168,7 +1169,7 @@ ProcGetPointerMapping(ClientPtr client)
     rep.length = ((unsigned)rep.nElts + (4-1))/4;
     WriteReplyToClient(client, sizeof(xGetPointerMappingReply), &rep);
     WriteToClient(client, (int)rep.nElts, &butc->map[1]);
-    return Success;    
+    return Success;
 }
 
 void
