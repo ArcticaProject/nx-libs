@@ -3962,13 +3962,14 @@ void SetupDisplaySocket(int &addr_family, sockaddr *&addr,
         delete [] display;
         return;
 
-    } else {
+    }
 
-        cerr << "Info" << ": Falling back to file system X11 socket "
-             << "for accessing DISPLAY=:" << xPort << ".\n";
+    cerr << "Info" << ": Falling back to file system X11 socket "
+         << "for accessing DISPLAY=:" << xPort << ".\n";
 
-        delete xServerAddrABSTRACT;
-    #endif
+    delete xServerAddrABSTRACT;
+
+#endif
 
     struct stat statInfo;
 
@@ -4039,10 +4040,6 @@ void SetupDisplaySocket(int &addr_family, sockaddr *&addr,
     addr = (sockaddr *) xServerAddrUNIX;
     addr_length = sizeof(sockaddr_un);
 
-    #ifdef __linux__
-
-    }
-    #endif
   }
   else
   {
