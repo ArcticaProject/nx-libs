@@ -3861,7 +3861,8 @@ void SetupDisplaySocket(int &addr_family, sockaddr *&addr,
 
   #ifdef __APPLE__
 
-  if ((strncasecmp(display, "/tmp/launch", 11) == 0) || (strncasecmp(display, "/private/tmp/com.apple.launchd", 30) == 0))
+  if ((strncasecmp(display, "/tmp/launch", 11) == 0) ||
+      (strncasecmp(display, "/private/tmp/com.apple.launchd", 30) == 0))
   {
     nxinfo << "Loop: Using launchd service on socket '"
            << display << "'.\n" << std::flush;
@@ -3934,19 +3935,24 @@ void SetupDisplaySocket(int &addr_family, sockaddr *&addr,
     // fall back to Unix domain socket file.
 
     #ifdef __linux__
-    int testSocketFD;
-    testSocketFD = socket(addr_family, SOCK_STREAM, PF_UNSPEC);
+    int testSocketFD = socket(addr_family, SOCK_STREAM, PF_UNSPEC);
 
+    // this name cannot be changed as it is defined this way by the
+    // local X server
     int len = sprintf(unixSocketName + 1, "/tmp/.X11-unix/X%d", xPort);
     unixSocketName[0] = '\0';
 
     sockaddr_un *xServerAddrABSTRACT = new sockaddr_un;
     memset(xServerAddrABSTRACT, 0, sizeof(struct sockaddr_un));
     xServerAddrABSTRACT -> sun_family = AF_UNIX;
+    // FIXME: ensure sun_path can hold len+1 bytes!
     memcpy(xServerAddrABSTRACT -> sun_path, unixSocketName, len+1);
-    addr_length = len +3;
+    // FIXME: comment why + 3?
+    addr_length = len + 3;
 
-    int ret = connect(testSocketFD, (struct sockaddr *) xServerAddrABSTRACT, addr_length);
+    int ret = connect(testSocketFD,
+                      (struct sockaddr *) xServerAddrABSTRACT,
+                      addr_length);
     close(testSocketFD);
 
     if (ret == 0) {
