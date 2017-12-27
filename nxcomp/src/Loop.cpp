@@ -3912,10 +3912,7 @@ void SetupDisplaySocket(int &addr_family, sockaddr *&addr,
     nxinfo << "Loop: Using real X server on UNIX domain socket.\n"
            << std::flush;
 
-    sockaddr_un *xServerAddrUNIX = new sockaddr_un;
-
     addr_family = AF_UNIX;
-    xServerAddrUNIX -> sun_family = AF_UNIX;
 
     //
     // The scope of this function is to fill either the sockaddr_un
@@ -3962,7 +3959,6 @@ void SetupDisplaySocket(int &addr_family, sockaddr *&addr,
              << "for accessing DISPLAY=:" << xPort << ".\n";
 
         addr = (sockaddr *) xServerAddrABSTRACT;
-        delete xServerAddrUNIX;
         delete [] display;
         return;
 
@@ -4035,6 +4031,9 @@ void SetupDisplaySocket(int &addr_family, sockaddr *&addr,
     nxinfo << "Loop: Assuming X socket name '" << unixSocketName
            << "'.\n" << std::flush;
 
+    sockaddr_un *xServerAddrUNIX = new sockaddr_un;
+
+    xServerAddrUNIX -> sun_family = AF_UNIX;
     strcpy(xServerAddrUNIX -> sun_path, unixSocketName);
 
     addr = (sockaddr *) xServerAddrUNIX;
