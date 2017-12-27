@@ -123,15 +123,19 @@ NXLog& operator<< (NXLog& out, const NXLogStamp& value)
         /* Appending means that the log object's internal level and the message level must match. */
         if (out.current_level() == value.level())
         {
-            /* And the buffer must of course be non-empty. */
-            if (out.has_buffer())
+            /* Discard, if the message is not supposed to be written out anyway. */
+            if (out.will_log ())
             {
-                out << " (cont.) ";
-            }
-            else
-            {
-                std::cerr << "WARNING: Append operation requested, but no queued data available. "
-                          << "Internal state error!\n" << "Log line will be discarded!" << std::endl;
+                /* And the buffer must of course be non-empty. */
+                if (out.has_buffer())
+                {
+                    out << " (cont.) ";
+                }
+                else
+                {
+                    std::cerr << "WARNING: Append operation requested, but no queued data available. "
+                              << "Internal state error!\n" << "Log line will be discarded!" << std::endl;
+                }
             }
         }
         else
