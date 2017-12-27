@@ -3877,6 +3877,8 @@ void SetupDisplaySocket(int &addr_family, sockaddr *&addr,
 
     cerr << "Error" << ": Invalid display '" << display << "'.\n";
 
+    delete [] display;
+
     HandleCleanup();
   }
 
@@ -3949,6 +3951,7 @@ void SetupDisplaySocket(int &addr_family, sockaddr *&addr,
 
         close(testSocketFD);
         addr = (sockaddr *) xServerAddrABSTRACT;
+        delete [] display;
         return;
 
     } else {
@@ -4000,6 +4003,7 @@ void SetupDisplaySocket(int &addr_family, sockaddr *&addr,
       cerr << "Error" << ": Error " << EGET() << " '" << ESTR()
            << "' checking '" << unixSocketDir << "'.\n";
 
+      delete [] display;
       HandleCleanup();
     }
 
@@ -4048,6 +4052,7 @@ void SetupDisplaySocket(int &addr_family, sockaddr *&addr,
       cerr << "Error" << ": Unknown display host '" << display
            << "'.\n";
 
+      delete [] display;
       HandleCleanup();
     }
 
