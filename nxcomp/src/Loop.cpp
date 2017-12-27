@@ -6482,6 +6482,7 @@ int PrepareProxyConnectionTCP(char** hostName, long int* portNum, int* timeout, 
         cerr << "Error" << ": Unknown remote host '"
          << *hostName << "'.\n";
 
+    SAFE_FREE(*hostName);
     HandleCleanup();
   }
 
