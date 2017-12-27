@@ -6222,6 +6222,8 @@ int WaitForRemote(ChannelEndPoint &socketAddress)
 
   pFD = ListenConnection(socketAddress, "NX");
 
+  SAFE_FREE(socketUri);
+
   socketAddress.getSpec(&socketUri);
   nxinfo << "Loop: Waiting for connection from "
          << hostLabel  << " on socket '" << socketUri

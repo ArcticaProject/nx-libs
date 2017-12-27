@@ -113,13 +113,19 @@ ChannelEndPoint::setSpec(const char *hostName, long port) {
 bool
 ChannelEndPoint::getSpec(char **socketUri) const {
 
-  if (socketUri) *socketUri = NULL;
+  if (socketUri)
+  {
+    *socketUri = NULL;
+  }
+  else
+  {
+    return false;
+  }
 
   char *unixPath = NULL;
   char *hostName = NULL;
   long port = -1;
 
-  char *newSocketUri = NULL;
   int length = -1;
 
   if (getUnixPath(&unixPath))
@@ -133,17 +139,21 @@ ChannelEndPoint::getSpec(char **socketUri) const {
 
   if (length > 0)
   {
-    newSocketUri = static_cast<char *>(calloc(length + 1, sizeof(char)));
-    if (isUnixSocket())
-      snprintf(newSocketUri, length+1, "unix:%s", unixPath);
-    else
-      snprintf(newSocketUri, length+1, "tcp:%s:%ld", hostName, port);
+    char *newSocketUri = static_cast<char *>(calloc(length + 1, sizeof(char)));
 
-    if (socketUri)
+    if (newSocketUri)
+    {
+      if (isUnixSocket())
+        snprintf(newSocketUri, length+1, "unix:%s", unixPath);
+      else
+        snprintf(newSocketUri, length+1, "tcp:%s:%ld", hostName, port);
+
       *socketUri = strdup(newSocketUri);
+
+      SAFE_FREE(newSocketUri);
+    }
   }
 
-  SAFE_FREE(newSocketUri);
   SAFE_FREE(unixPath);
   SAFE_FREE(hostName);
 
