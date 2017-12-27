@@ -501,7 +501,7 @@ NXLog& operator<< (NXLog& out, const NXLogStamp& value);
 
 
 template <typename T>
-bool has_newline(T value)
+bool has_newline(T &value)
 {
     return false;
 }
