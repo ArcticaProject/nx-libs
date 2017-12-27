@@ -3141,6 +3141,9 @@ int InitBeforeNegotiation()
     // Get ready to open the local display.
     //
 
+    delete xServerAddr;
+    xServerAddr = NULL;
+
     SetupDisplaySocket(xServerAddrFamily, xServerAddr, xServerAddrLength);
   }
 
@@ -3780,13 +3783,13 @@ void SetupUnixSocket()
 // The following is a dumb copy-paste. The
 // nxcompsh library should offer a better
 // implementation.
+// addr is assumed to have been freed outside
 //
 
 void SetupDisplaySocket(int &addr_family, sockaddr *&addr,
                            unsigned int &addr_length)
 {
   addr_family = AF_INET;
-  addr = NULL;
   addr_length = 0;
 
   char *display;
