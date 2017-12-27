@@ -273,8 +273,10 @@ ChannelEndPoint::getTCPHostAndPort(char **host, long *port) const {
   char *h = NULL;
   ssize_t h_len;
 
-  if (host) *host = NULL;
-  if (port) *port = 0;
+  if (host)
+    *host = NULL;
+  if (port)
+    *port = 0;
 
   if (getPort(&p)) {
     h_len = 0;

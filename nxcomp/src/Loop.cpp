@@ -6660,6 +6660,8 @@ int ConnectToRemote(ChannelEndPoint &socketAddress)
           << " in process with pid '" << getpid()
           << "'.\n" << std::flush;
 
+    SAFE_FREE(hostName);
+
     if (socketAddress.getUnixPath(&unixPath))
       result = PrepareProxyConnectionUnix(&unixPath, &connectTimeout, &pFD, &reason);
     else if (socketAddress.getTCPHostAndPort(&hostName, &portNum))

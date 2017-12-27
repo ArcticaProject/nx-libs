@@ -6123,7 +6123,7 @@ int Proxy::handleNewSlaveConnection(int clientFd)
 int Proxy::handleNewGenericConnectionFromProxy(int channelId, T_channel_type type,
                                                ChannelEndPoint &endPoint, const char *label)
 {
-  char *unixPath, *host;
+  char *unixPath, *host = NULL;
   long port;
 
   if (endPoint.getUnixPath(&unixPath)) {
