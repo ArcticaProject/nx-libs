@@ -70,6 +70,13 @@ EncodeBuffer::EncodeBuffer()
   initialSize_   = ENCODE_BUFFER_DEFAULT_SIZE;
   thresholdSize_ = ENCODE_BUFFER_DEFAULT_SIZE << 1;
   maximumSize_   = ENCODE_BUFFER_DEFAULT_SIZE << 4;
+
+  #ifdef VALGRIND
+
+  memset(buffer_, '\0', size_);
+
+  #endif
+
 }
 
 EncodeBuffer::~EncodeBuffer()
