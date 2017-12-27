@@ -3939,7 +3939,8 @@ void SetupDisplaySocket(int &addr_family, sockaddr *&addr,
 
     // this name cannot be changed as it is defined this way by the
     // local X server
-    int len = sprintf(unixSocketName + 1, "/tmp/.X11-unix/X%d", xPort);
+    int len = snprintf(unixSocketName + 1, DEFAULT_STRING_LENGTH - 1,
+                       "/tmp/.X11-unix/X%d", xPort);
     unixSocketName[0] = '\0';
 
     sockaddr_un *xServerAddrABSTRACT = new sockaddr_un;
@@ -3977,7 +3978,7 @@ void SetupDisplaySocket(int &addr_family, sockaddr *&addr,
 
     char unixSocketDir[DEFAULT_STRING_LENGTH];
 
-    snprintf(unixSocketDir, DEFAULT_STRING_LENGTH - 1, "/tmp/.X11-unix");
+    snprintf(unixSocketDir, DEFAULT_STRING_LENGTH, "/tmp/.X11-unix");
 
     #ifdef __APPLE__
 
@@ -3990,7 +3991,7 @@ void SetupDisplaySocket(int &addr_family, sockaddr *&addr,
         *slash = '\0';
       }
 
-      snprintf(unixSocketDir, DEFAULT_STRING_LENGTH - 1, "%s", display);
+      snprintf(unixSocketDir, DEFAULT_STRING_LENGTH, "%s", display);
     }
 
     #endif
@@ -4019,7 +4020,8 @@ void SetupDisplaySocket(int &addr_family, sockaddr *&addr,
       HandleCleanup();
     }
 
-    sprintf(unixSocketName, "%s/X%d", unixSocketDir, xPort);
+    snprintf(unixSocketName, DEFAULT_STRING_LENGTH, "%s/X%d",
+             unixSocketDir, xPort);
 
     #ifdef __APPLE__
 
