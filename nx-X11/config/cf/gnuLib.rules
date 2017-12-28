@@ -40,7 +40,7 @@ XCOMM XXX To rpath or not to rpath...
 #endif
 #ifndef RpathLoadFlags
 #if UseRpath
-#define RpathLoadFlags -Wl,-rpath=$(USRLIBDIRPATH)
+#define RpathLoadFlags -Wl,--enable-new-dtags -Wl,-rpath=$(USRLIBDIRPATH)
 #else
 #define RpathLoadFlags /**/
 #endif
@@ -60,9 +60,9 @@ XCOMM XXX To rpath or not to rpath...
 #ifndef ExtraLoadFlags
 #ifdef UseInstalled
 XCOMM XXX Maybe superfluous.
-#define ExtraLoadFlags RpathLoadFlags -Wl,-rpath-link=$(USRLIBDIRPATH)
+#define ExtraLoadFlags RpathLoadFlags -Wl,--enable-new-dtags -Wl,-rpath-link=$(USRLIBDIRPATH)
 #else
-#define ExtraLoadFlags RpathLoadFlags -Wl,-rpath-link=$(BUILDLIBDIR)
+#define ExtraLoadFlags RpathLoadFlags -Wl,--enable-new-dtags -Wl,-rpath-link=$(BUILDLIBDIR)
 #endif
 #endif
 
