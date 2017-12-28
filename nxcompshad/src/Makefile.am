@@ -39,6 +39,7 @@ AM_CPPFLAGS =						\
 
 libXcompshad_la_LDFLAGS =				\
     -version-number @LT_COMPSHAD_VERSION@ -no-undefined	\
+    -Wl,--enable-new-dtags				\
     -R '$(libdir)/nx/X11'				\
     $(NULL)
 
