@@ -4044,7 +4044,7 @@ void SetupDisplaySocket(int &addr_family, sockaddr *&addr,
 
     if (useLaunchdSocket == 1)
     {
-      strncpy(unixSocketName, displayHost, DEFAULT_STRING_LENGTH - 1);
+      snprintf(unixSocketName, DEFAULT_STRING_LENGTH, "%s", displayHost);
     }
 
     #endif
@@ -7923,11 +7923,11 @@ int ParseEnvironmentOptions(const char *env, int force)
 
     if (strcasecmp(name, "options") == 0)
     {
-      strncpy(fileOptions, value, DEFAULT_STRING_LENGTH - 1);
+      snprintf(fileOptions, DEFAULT_STRING_LENGTH, "%s", value);
     }
     else if (strcasecmp(name, "display") == 0)
     {
-      strncpy(displayHost, value, DEFAULT_STRING_LENGTH - 1);
+      snprintf(displayHost, DEFAULT_STRING_LENGTH, "%s", value);
     }
     else if (strcasecmp(name, "link") == 0)
     {
@@ -7983,7 +7983,7 @@ int ParseEnvironmentOptions(const char *env, int force)
         }
         else
         {
-          strncpy(sessionType, value, DEFAULT_STRING_LENGTH - 1);
+          snprintf(sessionType, DEFAULT_STRING_LENGTH, "%s", value);
         }
       }
     }
@@ -8036,7 +8036,7 @@ int ParseEnvironmentOptions(const char *env, int force)
         return -1;
       }
 
-      strncpy(acceptHost, value, DEFAULT_STRING_LENGTH - 1);
+      snprintf(acceptHost, DEFAULT_STRING_LENGTH, "%s", value);
     }
     else if (strcasecmp(name, "connect") == 0)
     {
@@ -8074,7 +8074,7 @@ int ParseEnvironmentOptions(const char *env, int force)
     }
     else if (strcasecmp(name, "session") == 0)
     {
-      strncpy(sessionFileName, value, DEFAULT_STRING_LENGTH - 1);
+      snprintf(sessionFileName, DEFAULT_STRING_LENGTH, "%s", value);
     }
     else if (strcasecmp(name, "errors") == 0)
     {
@@ -8085,27 +8085,27 @@ int ParseEnvironmentOptions(const char *env, int force)
       // the same name.
       //
 
-      strncpy(errorsFileName, value, DEFAULT_STRING_LENGTH - 1);
+      snprintf(errorsFileName, DEFAULT_STRING_LENGTH, "%s", value);
     }
     else if (strcasecmp(name, "root") == 0)
     {
-      strncpy(rootDir, value, DEFAULT_STRING_LENGTH - 1);
+      snprintf(rootDir, DEFAULT_STRING_LENGTH, "%s", value);
     }
     else if (strcasecmp(name, "id") == 0)
     {
-      strncpy(sessionId, value, DEFAULT_STRING_LENGTH - 1);
+      snprintf(sessionId, DEFAULT_STRING_LENGTH, "%s", value);
     }
     else if (strcasecmp(name, "stats") == 0)
     {
       control -> EnableStatistics = 1;
 
-      strncpy(statsFileName, value, DEFAULT_STRING_LENGTH - 1);
+      snprintf(statsFileName, DEFAULT_STRING_LENGTH, "%s", value);
     }
     else if (strcasecmp(name, "cookie") == 0)
     {
       LowercaseArg("local", name, value);
 
-      strncpy(authCookie, value, DEFAULT_STRING_LENGTH - 1);
+      snprintf(authCookie, DEFAULT_STRING_LENGTH, "%s", value);
     }
     else if (strcasecmp(name, "nodelay") == 0)
     {
@@ -8334,7 +8334,7 @@ int ParseEnvironmentOptions(const char *env, int force)
     }
     else if (strcasecmp(name, "font") == 0)
     {
-      strncpy(fontPort, value, DEFAULT_STRING_LENGTH - 1);
+      snprintf(fontPort, DEFAULT_STRING_LENGTH, "%s", value);
     }
     else if (strcasecmp(name, "slave") == 0)
     {
@@ -8439,7 +8439,7 @@ int ParseEnvironmentOptions(const char *env, int force)
     }
     else if (strcasecmp(name, "product") == 0)
     {
-      strncpy(productName, value, DEFAULT_STRING_LENGTH - 1);
+      snprintf(productName, DEFAULT_STRING_LENGTH, "%s", value);
     }
     else if (strcasecmp(name, "rootless") == 0 ||
                  strcasecmp(name, "geometry") == 0 ||
@@ -8529,7 +8529,7 @@ int ParseEnvironmentOptions(const char *env, int force)
 
     if (*optionsFileName == '\0')
     {
-      strncpy(optionsFileName, value, DEFAULT_STRING_LENGTH - 1);
+      snprintf(optionsFileName, DEFAULT_STRING_LENGTH, "%s", value);
 
       nxinfo << "Loop: Assuming name of options file '"
              << optionsFileName << "'.\n"
@@ -9249,7 +9249,7 @@ int ParseRemoteOptions(char *opts)
         }
         else
         {
-          strncpy(sessionType, value, DEFAULT_STRING_LENGTH - 1);
+          snprintf(sessionType, DEFAULT_STRING_LENGTH, "%s", value);
         }
       }
 
@@ -12719,6 +12719,7 @@ int ParseHostOption(const char *opt, char *host, long &port)
 
   char newHost[DEFAULT_STRING_LENGTH] = { 0 };
 
+  // opt cannot be longer than DEFAULT_STRING_LENGTH, this is checked above
   strncpy(newHost, opt, strlen(opt) - strlen(separator));
 
   *(newHost + strlen(opt) - strlen(separator)) = '\0';
@@ -13491,10 +13492,8 @@ int ParseArg(const char *type, const char *name, const char *value)
 
   char *string = new char[strlen(value)];
 
-  strncpy(string, value, strlen(value) - 1);
-
-  *(string + (strlen(value) - 1)) = '\0';
-
+  // copy value but cut off the last character
+  snprintf(string, strlen(value), "%s", value);
 
   nxinfo << "Loop: Parsing integer option '" << name
          << "' from string '" << string << "' with base set to ";
@@ -13512,17 +13511,14 @@ int ParseArg(const char *type, const char *name, const char *value)
 
   nxinfo_append << ".\n" << std::flush;
 
-
   double result = atof(string) * base;
+
+  delete [] string;
 
   if (result < 0 || result > (((unsigned) -1) >> 1))
   {
-    delete [] string;
-
     return -1;
   }
-
-  delete [] string;
 
   nxinfo << "Loop: Integer option parsed to '"
          << (int) result << "'.\n" << std::flush;

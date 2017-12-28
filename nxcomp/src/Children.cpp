@@ -275,12 +275,14 @@ int NXTransDialog(const char *caption, const char *message,
 
       #ifdef __APPLE__
 
+      // FIXME: missing length limitation!
       strcat(newPath, "/Applications/NX Client for OSX.app/Contents/MacOS:");
 
       #endif
 
       #ifdef __CYGWIN32__
 
+      // FIXME: missing length limitation!
       strcat(newPath, ".:");
 
       #endif
@@ -289,9 +291,8 @@ int NXTransDialog(const char *caption, const char *message,
 
       char *oldPath = getenv("PATH");
 
-      strncpy(newPath + newLength, oldPath, DEFAULT_STRING_LIMIT - newLength - 1);
-
-      newPath[DEFAULT_STRING_LIMIT - 1] = '\0';
+      // FIXME: check if strncat would be better here
+      snprintf(newPath + newLength, DEFAULT_STRING_LIMIT - newLength, "%s", oldPath);
 
       #ifdef WARNING
       *logofs << "NXTransDialog: WARNING! Trying with path '"
@@ -427,17 +428,13 @@ int NXTransClient(const char* display)
 
   #ifdef __sun
 
-  snprintf(newDisplay, DISPLAY_LENGTH_LIMIT - 1, "DISPLAY=%s", display);
-
-  newDisplay[DISPLAY_LENGTH_LIMIT - 1] = '\0';
+  snprintf(newDisplay, DISPLAY_LENGTH_LIMIT, "DISPLAY=%s", display);
 
   putenv(newDisplay);
 
   #else
 
-  strncpy(newDisplay, display, DISPLAY_LENGTH_LIMIT - 1);
-
-  newDisplay[DISPLAY_LENGTH_LIMIT - 1] = '\0';
+  snprintf(newDisplay, DISPLAY_LENGTH_LIMIT, "%s", display);
 
   setenv("DISPLAY", newDisplay, 1);
 
@@ -467,6 +464,7 @@ int NXTransClient(const char* display)
     if (i == 0)
     {
 
+      // FIXME: code dpulication: this whole block is duplicated in NXTransDialog
       strcpy(command, "nxclient");
 
       char newPath[DEFAULT_STRING_LIMIT];
@@ -489,7 +487,8 @@ int NXTransClient(const char* display)
 
       char *oldPath = getenv("PATH");
 
-      strncpy(newPath + newLength, oldPath, DEFAULT_STRING_LIMIT - newLength - 1);
+      // FIXME: check if strncat would be better here
+      snprintf(newPath + newLength, DEFAULT_STRING_LIMIT - newLength, "%s", oldPath);
 
       newPath[DEFAULT_STRING_LIMIT - 1] = '\0';
 
