@@ -337,7 +337,10 @@ int CorePoller::isChanged(int (*checkIfInputCallback)(void *), void *arg, int *s
       }
     }
 
-    XRectangle rect = {0, curLine, width_, 1};
+    XRectangle rect = {0,
+                       static_cast<short>(curLine),
+                       static_cast<unsigned short>(width_),
+                       1};
 
     char *buffer;
 
@@ -443,9 +446,13 @@ int CorePoller::isChanged(int (*checkIfInputCallback)(void *), void *arg, int *s
         break;
       }
 
-      if ((curWorkLine - last > minSliceHeight_) || (last - start > maxSliceHeight_))
+      if ((curWorkLine - last > minSliceHeight_) ||
+          (last - start > maxSliceHeight_))
       {
-        XRectangle rect = {left, start, right - left + 1, last - start + 1};
+        XRectangle rect = {static_cast<short>(left),
+                           static_cast<short>(start),
+                           static_cast<unsigned short>(right - left + 1),
+                           static_cast<unsigned short>(last - start + 1)};
 
         XUnionRectWithRegion(&rect, lastUpdatedRegion_, lastUpdatedRegion_);
 
@@ -477,7 +484,10 @@ int CorePoller::isChanged(int (*checkIfInputCallback)(void *), void *arg, int *s
 
     if (last >= start)
     {
-      XRectangle rect = {left, start, right - left + 1, last - start + 1};
+      XRectangle rect = {static_cast<short>(left),
+                         static_cast<short>(start),
+                         static_cast<unsigned short>(right - left + 1),
+                         static_cast<unsigned short>(last - start + 1)};
 
       XUnionRectWithRegion(&rect, lastUpdatedRegion_, lastUpdatedRegion_);
     }

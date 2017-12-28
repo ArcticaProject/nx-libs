@@ -29,6 +29,9 @@
 #include <cerrno>
 #include <cstdarg>
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wformat-nonliteral"
+
 //
 // Error handling macros.
 //
@@ -163,5 +166,7 @@ static inline void logDump(const char *name, const char *data, int size)
 
   #endif
 }
+
+#pragma GCC diagnostic pop
 
 #endif /* Logger_H */
