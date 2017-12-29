@@ -58,6 +58,7 @@ XCOMM ---------------------------------------------------------------------
  * ComplexProgramTarget_3	(program,locallib,syslib)
  * ServerTargetWithFlags	(server,subdirs,objects,libs,syslibs,flags)
  * ServerTarget			(server,subdirs,objects,libs,syslibs)
+ * LibX11Links			()
  * MoveToBakFile		(file)
  * RMoveToBakFile		(file)
  * RanLibrary			(args)
@@ -1149,6 +1150,28 @@ clean::									@@\
 #define	ServerTarget(server,subdirs,objects,libs,syslibs)		@@\
 ServerTargetWithFlags(server,subdirs,objects,libs,syslibs,$(_NOOP_))
 #endif /* ServerTarget */
+
+
+/*
+ * Creates libX11 compat symlinks to enable execution of rpath-dependent
+ * programs.
+ */
+#ifndef LibX11Links
+#define LibX11Links()						@@\
+AllTarget(libX11links)						@@\
+libX11links:							@@\
+	$(LN) libNX_X11.so $(BUILDLIBDIR)/libX11.so		@@\
+	$(LN) libNX_X11.so.6 $(BUILDLIBDIR)/libX11.so.6		@@\
+	$(LN) libNX_X11.so.6.3.0 $(BUILDLIBDIR)/libX11.so.6.3.0	@@\
+	touch libX11links					@@\
+								@@\
+clean::								@@\
+	RemoveFile($(BUILDLIBDIR)/libX11.so)			@@\
+	RemoveFile($(BUILDLIBDIR)/libX11.so.6)			@@\
+	RemoveFile($(BUILDLIBDIR)/libX11.so.6.3.0)		@@\
+	RemoveFile(libX11links)
+#endif /* LibX11Links */
+
 
 #if DoRanlibCmd
 #define RanLibrary(args) $(RANLIB) args

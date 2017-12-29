@@ -391,6 +391,8 @@ NX_XSHADOWLIBNAME   = libXcompshad.so
 ServerTarget(nxagent,$(NXAGENTDIRS),$(NXAGENTOBJS), \
         $(LIBCWRAPPER) $(NXCOMPEXT) $(NXAGENTLIBS) $(LOADABLEEXTS),$(NXAGENTNXLIBS) $(NXAGENTSYSLIBS) $(NXCOMPEXTSYSLIBS))
 
+LibX11Links()
+
 /*
  *  Hard coded target to build a static nxagent server.
  */
