@@ -108,7 +108,15 @@ void EncodeBuffer::fullReset()
     size_ = initialSize_;
 
     buffer_ = new unsigned char[size_ + ENCODE_BUFFER_PREFIX_SIZE +
-                                    ENCODE_BUFFER_POSTFIX_SIZE] + ENCODE_BUFFER_PREFIX_SIZE;
+                                    ENCODE_BUFFER_POSTFIX_SIZE];
+
+    #ifdef VALGRIND
+
+    memset(buffer_, '\0', size_ + ENCODE_BUFFER_PREFIX_SIZE + ENCODE_BUFFER_POSTFIX_SIZE);
+
+    #endif
+
+    buffer_ += ENCODE_BUFFER_PREFIX_SIZE;
   }
 
   end_ = buffer_ + size_;
