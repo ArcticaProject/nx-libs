@@ -176,7 +176,7 @@ install-full:
 	$(MAKE) -C nxcompshad install
 
 	$(INSTALL_DIR) $(DESTDIR)$(BINDIR)/bin
-	$(INSTALL_PROGRAM) nx-X11/programs/Xserver/nxagent $(DESTDIR)$(BINDIR)
+	$(INSTALL_PROGRAM) nx-X11/programs/Xserver/nxagent-relink $(DESTDIR)$(BINDIR)/nxagent
 
 	$(INSTALL_DIR) $(DESTDIR)$(PREFIX)/share/pixmaps
 	$(INSTALL_FILE) nx-X11/programs/Xserver/hw/nxagent/nxagent.xpm $(DESTDIR)$(PREFIX)/share/pixmaps
