@@ -201,7 +201,7 @@ install-full:
 	cp -aL nx-X11/exports/include/* nx-X11/.build-exports/include
 
 	# copy libs (for libnx-x11), we want the targets of the links
-	. replace.sh; set -x; find nx-X11/exports/lib/ | grep -F ".so" | while read libpath; do \
+	. replace.sh; set -x; find nx-X11/exports/lib/ -name "libNX*.so" | while read libpath; do \
 	    libfile=$$(basename $$libpath); \
 	    libdir=$$(dirname $$libpath); \
 	    link=$$(readlink $$libpath); \
