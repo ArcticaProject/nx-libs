@@ -400,7 +400,7 @@ nxagent_static: nxagent
 	else exit 0; fi
 	$(CCLINK) -o nxagent_static -static $(LDOPTIONS) $(NXAGENTOBJS) \
 	$(LIBCWRAPPER) $(NXCOMPEXT) $(NXAGENTLIBS) $(LOADABLEEXTS) $(LDLIBS) \
-	$(NXCOMPEXTSYSLIBS) $(NXAGENTSYSLIBS) $(EXTRA_LOAD_FLAGS)
+	$(NXCOMPEXTSYSLIBS) $(NXAGENTSYSLIBS) $(EXTRA_INSTALL_LOAD_FLAGS)
 
 /*
  *  Hard coded target to build a static nxagent server except for libX11 and libXext.
@@ -411,7 +411,7 @@ nxagent_static_nolibs:  nxagent
 	else exit 0; fi
 	$(CCLINK) -o nxagent_static_nolibs -Wl,-Bstatic $(LDOPTIONS) $(NXAGENTOBJS) \
 	$(NXAGENTLIBS) $(LOADABLEEXTS) $(LIBCWRAPPER) $(LDLIBS) \
-	$(LDPRELIBS) $(SYSLIBS) -Wl,-Bdynamic -lNX_X11 -lXext $(EXTRA_LOAD_FLAGS)
+	$(LDPRELIBS) $(SYSLIBS) -Wl,-Bdynamic -lNX_X11 -lXext $(EXTRA_INSTALL_LOAD_FLAGS)
 #endif /* NXAgentServer */
 
 #if defined(NXWinServer) && NXWinServer

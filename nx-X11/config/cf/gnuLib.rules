@@ -40,9 +40,16 @@ XCOMM XXX To rpath or not to rpath...
 #endif
 #ifndef RpathLoadFlags
 #if UseRpath
-#define RpathLoadFlags -Wl,--enable-new-dtags -Wl,-rpath=$(USRLIBDIRPATH)
+#define RpathLoadFlags -Wl,--enable-new-dtags -Wl,-rpath=\$$ORIGIN/$(BUILDLIBDIR)
 #else
 #define RpathLoadFlags /**/
+#endif
+#endif
+#ifndef RpathInstallLoadFlags
+#if UseRpath
+#define RpathInstallLoadFlags -Wl,--enable-new-dtags -Wl,-rpath=$(USRLIBDIRPATH)
+#else
+#define RpathInstallLoadFlags /**/
 #endif
 #endif
 #ifndef LibraryRpathLoadFlags
@@ -62,7 +69,15 @@ XCOMM XXX To rpath or not to rpath...
 XCOMM XXX Maybe superfluous.
 #define ExtraLoadFlags RpathLoadFlags -Wl,--enable-new-dtags -Wl,-rpath-link=$(USRLIBDIRPATH)
 #else
-#define ExtraLoadFlags RpathLoadFlags -Wl,--enable-new-dtags -Wl,-rpath-link=$(BUILDLIBDIR)
+#define ExtraLoadFlags RpathLoadFlags -Wl,--enable-new-dtags -Wl,-rpath-link=\$$ORIGIN/$(BUILDLIBDIR)
+#endif
+#endif
+#ifndef ExtraInstallLoadFlags
+#ifdef UseInstalled
+XCOMM XXX Maybe superfluous.
+#define ExtraInstallLoadFlags RpathInstallLoadFlags -Wl,--enable-new-dtags -Wl,-rpath-link=$(USRLIBDIRPATH)
+#else
+#define ExtraInstallLoadFlags RpathInstallLoadFlags -Wl,--enable-new-dtags -Wl,-rpath-link=\$$ORIGIN/$(BUILDLIBDIR)
 #endif
 #endif
 
