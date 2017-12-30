@@ -44,34 +44,55 @@
 
 T_timestamp timestamp;
 
-//
-// The following functions all use the ctime
-// static buffer from the C library.
-//
-
-char *strTimestamp(const T_timestamp &ts)
+std::string strTimestamp(const T_timestamp &ts)
 {
-  char *ctime_now = ctime((time_t *) &ts.tv_sec);
+  std::string ret;
 
-  ctime_now[24] = '\0';
+  char ctime_now[26] = { };
+  bool err = true;
 
-  return ctime_now;
+#if HAVE_CTIME_S
+  errno_t retval = ::ctime_s(ctime_now, sizeof(ctime_now), static_cast<const time_t*>(&ts.tv_sec));
+
+  if (retval != 0)
+#else
+  char *retval = ::ctime_r(static_cast<const time_t*>(&ts.tv_sec), ctime_now);
+
+  if (!(retval))
+#endif
+  {
+    std::cerr << "WARNING: converting time to string failed." << std::endl;
+  }
+  else
+  {
+    /* Replace newline at position 25 with a NULL byte. */
+    ctime_now[24] = '\0';
+
+    ret = ctime_now;
+  }
+
+  return ret;
 }
 
 //
-// This is especially dirty. 
+// This is especially dirty.
 //
 
-char *strMsTimestamp(const T_timestamp &ts)
+std::string strMsTimestamp(const T_timestamp &ts)
 {
-  char *ctime_now = ctime((time_t *) &ts.tv_sec);
+  std::string ret;
 
-  char ctime_new[25];
+  std::string ctime_now = strTimestamp(ts);
 
-  sprintf(ctime_new, "%.8s:%3.3f", ctime_now + 11,
-              (float) ts.tv_usec / 1000);
+  if (!(ctime_now.empty()))
+  {
+    char ctime_new[26] = { };
 
-  strncpy(ctime_now, ctime_new, 24);
+    snprintf(ctime_new, sizeof(ctime_new), "%.8s:%3.3f",
+             ctime_now.c_str() + 11, static_cast<float>(ts.tv_usec) / 1000);
 
-  return ctime_now;
+    ret = ctime_new;
+  }
+
+  return ret;
 }
