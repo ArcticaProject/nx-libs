@@ -30,6 +30,7 @@
 #include <cstdio>
 #include <unistd.h>
 #include <cstdlib>
+#include <cstddef>
 #include <string.h>
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -6122,7 +6123,7 @@ int Proxy::handleNewSlaveConnection(int clientFd)
 int Proxy::handleNewGenericConnectionFromProxy(int channelId, T_channel_type type,
                                                ChannelEndPoint &endPoint, const char *label)
 {
-  char *unixPath, *host;
+  char *unixPath = NULL, *host = NULL;
   long port;
 
   if (endPoint.getUnixPath(&unixPath)) {
@@ -6294,19 +6295,12 @@ int Proxy::handleNewGenericConnectionFromProxyUnix(int channelId, T_channel_type
 
   serverAddrUnix.sun_family = AF_UNIX;
 
-  #ifdef __linux__
-  const int serverAddrNameLength = 108;
-  #else
-  /* POSIX/SUS does not specify a length.
-   * BSD derivatives generally support 104 bytes, other systems may be more constrained.
-   * If you happen to run into such systems, extend this section with the appropriate limit.
-   */
-  const int serverAddrNameLength = 104;
-  #endif
+  // determine the maximum number of characters that fit into struct
+  // sockaddr_un's sun_path member
+  std::size_t serverAddrNameLength =
+    sizeof(struct sockaddr_un) - offsetof(struct sockaddr_un, sun_path);
 
-  strncpy(serverAddrUnix.sun_path, path, serverAddrNameLength);
-
-  *(serverAddrUnix.sun_path + serverAddrNameLength - 1) = '\0';
+  snprintf(serverAddrUnix.sun_path, serverAddrNameLength, "%s", path);
 
   #ifdef TEST
   *logofs << "Proxy: Connecting to " << label << " server "

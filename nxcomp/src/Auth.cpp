@@ -212,15 +212,13 @@ int Auth::getCookie()
 
   if (environment != NULL && *environment != '\0')
   {
-    strncpy(file_, environment, DEFAULT_STRING_LIMIT - 1);
+    snprintf(file_, DEFAULT_STRING_LIMIT, "%s", environment);
   }
   else
   {
-    snprintf(file_, DEFAULT_STRING_LIMIT - 1, "%s/.Xauthority",
+    snprintf(file_, DEFAULT_STRING_LIMIT, "%s/.Xauthority",
                  control -> HomePath);
   }
-
-  *(file_ + DEFAULT_STRING_LIMIT - 1) = '\0';
 
   #ifdef TEST
   *logofs << "Auth: Using X authorization file '" << file_
@@ -242,17 +240,13 @@ int Auth::getCookie()
 
   #if defined(__CYGWIN32__)
 
-  snprintf(command, DEFAULT_STRING_LIMIT - 1,
+  snprintf(command, DEFAULT_STRING_LIMIT,
                "%s/bin/nxauth", control -> SystemPath);
-
-  *(command + DEFAULT_STRING_LIMIT - 1) = '\0';
 
   #elif defined(__APPLE__)
 
-  snprintf(command, DEFAULT_STRING_LIMIT - 1,
+  snprintf(command, DEFAULT_STRING_LIMIT,
                "%s/nxauth", control -> SystemPath);
-
-  *(command + DEFAULT_STRING_LIMIT - 1) = '\0';
 
   #else
 

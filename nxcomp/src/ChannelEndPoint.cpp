@@ -113,13 +113,19 @@ ChannelEndPoint::setSpec(const char *hostName, long port) {
 bool
 ChannelEndPoint::getSpec(char **socketUri) const {
 
-  if (socketUri) *socketUri = NULL;
+  if (socketUri)
+  {
+    *socketUri = NULL;
+  }
+  else
+  {
+    return false;
+  }
 
   char *unixPath = NULL;
   char *hostName = NULL;
   long port = -1;
 
-  char *newSocketUri = NULL;
   int length = -1;
 
   if (getUnixPath(&unixPath))
@@ -133,17 +139,21 @@ ChannelEndPoint::getSpec(char **socketUri) const {
 
   if (length > 0)
   {
-    newSocketUri = static_cast<char *>(calloc(length + 1, sizeof(char)));
-    if (isUnixSocket())
-      snprintf(newSocketUri, length+1, "unix:%s", unixPath);
-    else
-      snprintf(newSocketUri, length+1, "tcp:%s:%ld", hostName, port);
+    char *newSocketUri = static_cast<char *>(calloc(length + 1, sizeof(char)));
 
-    if (socketUri)
+    if (newSocketUri)
+    {
+      if (isUnixSocket())
+        snprintf(newSocketUri, length+1, "unix:%s", unixPath);
+      else
+        snprintf(newSocketUri, length+1, "tcp:%s:%ld", hostName, port);
+
       *socketUri = strdup(newSocketUri);
+
+      SAFE_FREE(newSocketUri);
+    }
   }
 
-  SAFE_FREE(newSocketUri);
   SAFE_FREE(unixPath);
   SAFE_FREE(hostName);
 
@@ -170,8 +180,6 @@ ChannelEndPoint::setDefaultUnixPath(char *path) {
 
   if (path && strlen(path))
     defaultUnixPath_ = strdup(path);
-  else
-    defaultUnixPath_ = NULL;
 
   isUnix_ = getUnixPath();
 }
@@ -199,7 +207,10 @@ ChannelEndPoint::getPort(long *port) const {
 bool
 ChannelEndPoint::getUnixPath(char **unixPath) const {
 
-  if (unixPath) *unixPath = NULL;
+  if (unixPath)
+    *unixPath = NULL;
+  else
+    return false;
 
   long p;
   char *path = NULL;
@@ -219,8 +230,7 @@ ChannelEndPoint::getUnixPath(char **unixPath) const {
       return false;
   }
 
-  if (unixPath)
-    *unixPath = strdup(path);
+  *unixPath = strdup(path);
 
   return true;
 }
@@ -263,8 +273,10 @@ ChannelEndPoint::getTCPHostAndPort(char **host, long *port) const {
   char *h = NULL;
   ssize_t h_len;
 
-  if (host) *host = NULL;
-  if (port) *port = 0;
+  if (host)
+    *host = NULL;
+  if (port)
+    *port = 0;
 
   if (getPort(&p)) {
     h_len = 0;

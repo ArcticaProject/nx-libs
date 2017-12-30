@@ -55,6 +55,8 @@
 
 #include "Misc.h"
 
+#include <cstddef>
+
 #ifdef __sun
 #include <strings.h>
 #endif
@@ -3141,6 +3143,9 @@ int InitBeforeNegotiation()
     // Get ready to open the local display.
     //
 
+    delete xServerAddr;
+    xServerAddr = NULL;
+
     SetupDisplaySocket(xServerAddrFamily, xServerAddr, xServerAddrLength);
   }
 
@@ -3587,19 +3592,14 @@ int SetupAuthInstance()
 
         launchdAddrUnix.sun_family = AF_UNIX;
 
-        #ifdef __linux__
-        const int launchdAddrNameLength = 108;
-        #else
-        /* POSIX/SUS does not specify a length.
-         * BSD derivatives generally support 104 bytes, other systems may be more constrained.
-         * If you happen to run into such systems, extend this section with the appropriate limit.
-         */
-        const int launchdAddrNameLength = 104;
-        #endif
+        // determine the maximum number of characters that fit into struct
+        // sockaddr_un's sun_path member
+        std::size_t launchdAddrNameLength =
+          sizeof(struct sockaddr_un) - offsetof(struct sockaddr_un, sun_path);
 
         int success = -1;
 
-        strncpy(launchdAddrUnix.sun_path, displayHost, launchdAddrNameLength);
+        snprintf(launchdAddrUnix.sun_path, launchdAddrNameLength, "%s", displayHost);
 
         *(launchdAddrUnix.sun_path + launchdAddrNameLength - 1) = '\0';
 
@@ -3780,13 +3780,13 @@ void SetupUnixSocket()
 // The following is a dumb copy-paste. The
 // nxcompsh library should offer a better
 // implementation.
+// addr is assumed to have been freed outside
 //
 
 void SetupDisplaySocket(int &addr_family, sockaddr *&addr,
                            unsigned int &addr_length)
 {
   addr_family = AF_INET;
-  addr = NULL;
   addr_length = 0;
 
   char *display;
@@ -3858,7 +3858,8 @@ void SetupDisplaySocket(int &addr_family, sockaddr *&addr,
 
   #ifdef __APPLE__
 
-  if ((strncasecmp(display, "/tmp/launch", 11) == 0) || (strncasecmp(display, "/private/tmp/com.apple.launchd", 30) == 0))
+  if ((strncasecmp(display, "/tmp/launch", 11) == 0) ||
+      (strncasecmp(display, "/private/tmp/com.apple.launchd", 30) == 0))
   {
     nxinfo << "Loop: Using launchd service on socket '"
            << display << "'.\n" << std::flush;
@@ -3876,6 +3877,8 @@ void SetupDisplaySocket(int &addr_family, sockaddr *&addr,
             << std::flush;
 
     cerr << "Error" << ": Invalid display '" << display << "'.\n";
+
+    delete [] display;
 
     HandleCleanup();
   }
@@ -3903,13 +3906,15 @@ void SetupDisplaySocket(int &addr_family, sockaddr *&addr,
     // UNIX domain port.
     //
 
+    // determine the maximum number of characters that fit into struct
+    // sockaddr_un's sun_path member
+    std::size_t maxlen_un =
+      sizeof(struct sockaddr_un) - offsetof(struct sockaddr_un, sun_path);
+
     nxinfo << "Loop: Using real X server on UNIX domain socket.\n"
            << std::flush;
 
-    sockaddr_un *xServerAddrUNIX = new sockaddr_un;
-
     addr_family = AF_UNIX;
-    xServerAddrUNIX -> sun_family = AF_UNIX;
 
     //
     // The scope of this function is to fill either the sockaddr_un
@@ -3929,40 +3934,68 @@ void SetupDisplaySocket(int &addr_family, sockaddr *&addr,
     // fall back to Unix domain socket file.
 
     #ifdef __linux__
-    int testSocketFD;
-    testSocketFD = socket(addr_family, SOCK_STREAM, PF_UNSPEC);
+    int testSocketFD = socket(addr_family, SOCK_STREAM, PF_UNSPEC);
 
-    int len = sprintf(unixSocketName + 1, "/tmp/.X11-unix/X%d", xPort);
+    // this name cannot be changed as it is defined this way by the
+    // local X server
+    int len = snprintf(unixSocketName + 1, DEFAULT_STRING_LENGTH - 1,
+                       "/tmp/.X11-unix/X%d", xPort);
     unixSocketName[0] = '\0';
 
     sockaddr_un *xServerAddrABSTRACT = new sockaddr_un;
-    memset(xServerAddrABSTRACT, 0, addr_length);
+    memset(xServerAddrABSTRACT, 0, sizeof(struct sockaddr_un));
     xServerAddrABSTRACT -> sun_family = AF_UNIX;
-    memcpy(xServerAddrABSTRACT -> sun_path, unixSocketName, len+1);
-    addr_length = len +3;
 
-    int ret = connect(testSocketFD, (struct sockaddr *) xServerAddrABSTRACT, addr_length);
+    if (maxlen_un < (unsigned int)len + 1)
+    {
+      nxfatal << "Loop: PANIC! Abstract socket name '" << unixSocketName + 1
+              << "' is too long!" << std::flush;
+
+      delete [] display;
+      delete xServerAddrABSTRACT;
+
+      HandleCleanup();
+    }
+
+    // copy including the leading '\0'
+    memcpy(xServerAddrABSTRACT -> sun_path, unixSocketName, len + 1);
+
+    // man 7 unix:
+    // "an abstract socket address is distinguished (from a
+    // pathname socket) by the fact that sun_path[0] is a null byte
+    // ('\0').  The socket's address in this namespace is given by the
+    // additional bytes in sun_path that are covered by the specified
+    // length of the address structure."
+    addr_length = offsetof(struct sockaddr_un, sun_path) + len + 1;
+
+    int ret = connect(testSocketFD,
+                      (struct sockaddr *) xServerAddrABSTRACT,
+                      addr_length);
+    close(testSocketFD);
+
     if (ret == 0) {
 
         cerr << "Info" << ": Using abstract X11 socket in kernel namespace "
              << "for accessing DISPLAY=:" << xPort << ".\n";
 
-        close(testSocketFD);
         addr = (sockaddr *) xServerAddrABSTRACT;
+        delete [] display;
         return;
 
-    } else {
+    }
 
-        cerr << "Info" << ": Falling back to file system X11 socket "
-             << "for accessing DISPLAY=:" << xPort << ".\n";
+    cerr << "Info" << ": Falling back to file system X11 socket "
+         << "for accessing DISPLAY=:" << xPort << ".\n";
 
-    #endif
+    delete xServerAddrABSTRACT;
+
+#endif
 
     struct stat statInfo;
 
     char unixSocketDir[DEFAULT_STRING_LENGTH];
 
-    snprintf(unixSocketDir, DEFAULT_STRING_LENGTH - 1, "/tmp/.X11-unix");
+    snprintf(unixSocketDir, DEFAULT_STRING_LENGTH, "/tmp/.X11-unix");
 
     #ifdef __APPLE__
 
@@ -3975,7 +4008,7 @@ void SetupDisplaySocket(int &addr_family, sockaddr *&addr,
         *slash = '\0';
       }
 
-      snprintf(unixSocketDir, DEFAULT_STRING_LENGTH - 1, "%s", display);
+      snprintf(unixSocketDir, DEFAULT_STRING_LENGTH, "%s", display);
     }
 
     #endif
@@ -4000,16 +4033,18 @@ void SetupDisplaySocket(int &addr_family, sockaddr *&addr,
       cerr << "Error" << ": Error " << EGET() << " '" << ESTR()
            << "' checking '" << unixSocketDir << "'.\n";
 
+      delete [] display;
       HandleCleanup();
     }
 
-    sprintf(unixSocketName, "%s/X%d", unixSocketDir, xPort);
+    snprintf(unixSocketName, DEFAULT_STRING_LENGTH, "%s/X%d",
+             unixSocketDir, xPort);
 
     #ifdef __APPLE__
 
     if (useLaunchdSocket == 1)
     {
-      strncpy(unixSocketName, displayHost, DEFAULT_STRING_LENGTH - 1);
+      snprintf(unixSocketName, DEFAULT_STRING_LENGTH, "%s", displayHost);
     }
 
     #endif
@@ -4017,15 +4052,23 @@ void SetupDisplaySocket(int &addr_family, sockaddr *&addr,
     nxinfo << "Loop: Assuming X socket name '" << unixSocketName
            << "'.\n" << std::flush;
 
+    if (maxlen_un < strlen(unixSocketName) + 1)
+    {
+      nxfatal << "Loop: PANIC! Socket name '" << unixSocketName
+              << "' is too long!" << std::flush;
+
+      delete [] display;
+
+      HandleCleanup();
+    }
+
+    sockaddr_un *xServerAddrUNIX = new sockaddr_un;
+    xServerAddrUNIX -> sun_family = AF_UNIX;
     strcpy(xServerAddrUNIX -> sun_path, unixSocketName);
 
     addr = (sockaddr *) xServerAddrUNIX;
     addr_length = sizeof(sockaddr_un);
 
-    #ifdef __linux__
-
-    }
-    #endif
   }
   else
   {
@@ -4048,6 +4091,7 @@ void SetupDisplaySocket(int &addr_family, sockaddr *&addr,
       cerr << "Error" << ": Unknown display host '" << display
            << "'.\n";
 
+      delete [] display;
       HandleCleanup();
     }
 
@@ -6214,6 +6258,8 @@ int WaitForRemote(ChannelEndPoint &socketAddress)
 
   pFD = ListenConnection(socketAddress, "NX");
 
+  SAFE_FREE(socketUri);
+
   socketAddress.getSpec(&socketUri);
   nxinfo << "Loop: Waiting for connection from "
          << hostLabel  << " on socket '" << socketUri
@@ -6436,6 +6482,7 @@ int PrepareProxyConnectionTCP(char** hostName, long int* portNum, int* timeout, 
         cerr << "Error" << ": Unknown remote host '"
          << *hostName << "'.\n";
 
+    SAFE_FREE(*hostName);
     HandleCleanup();
   }
 
@@ -6522,12 +6569,18 @@ int PrepareProxyConnectionUnix(char** path, int* timeout, int* proxyFileDescript
 
   /* FIXME: Add socket file existence and permission checks */
 
+
   *proxyFileDescriptor = -1;
   *reason = -1;
 
+  // determine the maximum number of characters that fit into struct
+  // sockaddr_un's sun_path member
+  const std::size_t sockpathlen =
+    sizeof(struct sockaddr_un) - offsetof(struct sockaddr_un, sun_path);
+
   sockaddr_un addr;
   addr.sun_family = AF_UNIX;
-  strncpy(addr.sun_path, *path, 108 - 1);
+  snprintf(addr.sun_path, sockpathlen, "%s", *path);
 
   *proxyFileDescriptor = socket(AF_UNIX, SOCK_STREAM, PF_UNSPEC);
   *reason = EGET();
@@ -6607,6 +6660,9 @@ int ConnectToRemote(ChannelEndPoint &socketAddress)
           << " s " << "with retry set to " << retryConnect
           << " in process with pid '" << getpid()
           << "'.\n" << std::flush;
+
+    SAFE_FREE(hostName);
+    SAFE_FREE(unixPath);
 
     if (socketAddress.getUnixPath(&unixPath))
       result = PrepareProxyConnectionUnix(&unixPath, &connectTimeout, &pFD, &reason);
@@ -7867,11 +7923,11 @@ int ParseEnvironmentOptions(const char *env, int force)
 
     if (strcasecmp(name, "options") == 0)
     {
-      strncpy(fileOptions, value, DEFAULT_STRING_LENGTH - 1);
+      snprintf(fileOptions, DEFAULT_STRING_LENGTH, "%s", value);
     }
     else if (strcasecmp(name, "display") == 0)
     {
-      strncpy(displayHost, value, DEFAULT_STRING_LENGTH - 1);
+      snprintf(displayHost, DEFAULT_STRING_LENGTH, "%s", value);
     }
     else if (strcasecmp(name, "link") == 0)
     {
@@ -7927,7 +7983,7 @@ int ParseEnvironmentOptions(const char *env, int force)
         }
         else
         {
-          strncpy(sessionType, value, DEFAULT_STRING_LENGTH - 1);
+          snprintf(sessionType, DEFAULT_STRING_LENGTH, "%s", value);
         }
       }
     }
@@ -7980,7 +8036,7 @@ int ParseEnvironmentOptions(const char *env, int force)
         return -1;
       }
 
-      strncpy(acceptHost, value, DEFAULT_STRING_LENGTH - 1);
+      snprintf(acceptHost, DEFAULT_STRING_LENGTH, "%s", value);
     }
     else if (strcasecmp(name, "connect") == 0)
     {
@@ -8018,7 +8074,7 @@ int ParseEnvironmentOptions(const char *env, int force)
     }
     else if (strcasecmp(name, "session") == 0)
     {
-      strncpy(sessionFileName, value, DEFAULT_STRING_LENGTH - 1);
+      snprintf(sessionFileName, DEFAULT_STRING_LENGTH, "%s", value);
     }
     else if (strcasecmp(name, "errors") == 0)
     {
@@ -8029,27 +8085,27 @@ int ParseEnvironmentOptions(const char *env, int force)
       // the same name.
       //
 
-      strncpy(errorsFileName, value, DEFAULT_STRING_LENGTH - 1);
+      snprintf(errorsFileName, DEFAULT_STRING_LENGTH, "%s", value);
     }
     else if (strcasecmp(name, "root") == 0)
     {
-      strncpy(rootDir, value, DEFAULT_STRING_LENGTH - 1);
+      snprintf(rootDir, DEFAULT_STRING_LENGTH, "%s", value);
     }
     else if (strcasecmp(name, "id") == 0)
     {
-      strncpy(sessionId, value, DEFAULT_STRING_LENGTH - 1);
+      snprintf(sessionId, DEFAULT_STRING_LENGTH, "%s", value);
     }
     else if (strcasecmp(name, "stats") == 0)
     {
       control -> EnableStatistics = 1;
 
-      strncpy(statsFileName, value, DEFAULT_STRING_LENGTH - 1);
+      snprintf(statsFileName, DEFAULT_STRING_LENGTH, "%s", value);
     }
     else if (strcasecmp(name, "cookie") == 0)
     {
       LowercaseArg("local", name, value);
 
-      strncpy(authCookie, value, DEFAULT_STRING_LENGTH - 1);
+      snprintf(authCookie, DEFAULT_STRING_LENGTH, "%s", value);
     }
     else if (strcasecmp(name, "nodelay") == 0)
     {
@@ -8278,7 +8334,7 @@ int ParseEnvironmentOptions(const char *env, int force)
     }
     else if (strcasecmp(name, "font") == 0)
     {
-      strncpy(fontPort, value, DEFAULT_STRING_LENGTH - 1);
+      snprintf(fontPort, DEFAULT_STRING_LENGTH, "%s", value);
     }
     else if (strcasecmp(name, "slave") == 0)
     {
@@ -8383,7 +8439,7 @@ int ParseEnvironmentOptions(const char *env, int force)
     }
     else if (strcasecmp(name, "product") == 0)
     {
-      strncpy(productName, value, DEFAULT_STRING_LENGTH - 1);
+      snprintf(productName, DEFAULT_STRING_LENGTH, "%s", value);
     }
     else if (strcasecmp(name, "rootless") == 0 ||
                  strcasecmp(name, "geometry") == 0 ||
@@ -8473,7 +8529,7 @@ int ParseEnvironmentOptions(const char *env, int force)
 
     if (*optionsFileName == '\0')
     {
-      strncpy(optionsFileName, value, DEFAULT_STRING_LENGTH - 1);
+      snprintf(optionsFileName, DEFAULT_STRING_LENGTH, "%s", value);
 
       nxinfo << "Loop: Assuming name of options file '"
              << optionsFileName << "'.\n"
@@ -9193,7 +9249,7 @@ int ParseRemoteOptions(char *opts)
         }
         else
         {
-          strncpy(sessionType, value, DEFAULT_STRING_LENGTH - 1);
+          snprintf(sessionType, DEFAULT_STRING_LENGTH, "%s", value);
         }
       }
 
@@ -12663,6 +12719,7 @@ int ParseHostOption(const char *opt, char *host, long &port)
 
   char newHost[DEFAULT_STRING_LENGTH] = { 0 };
 
+  // opt cannot be longer than DEFAULT_STRING_LENGTH, this is checked above
   strncpy(newHost, opt, strlen(opt) - strlen(separator));
 
   *(newHost + strlen(opt) - strlen(separator)) = '\0';
@@ -13435,10 +13492,8 @@ int ParseArg(const char *type, const char *name, const char *value)
 
   char *string = new char[strlen(value)];
 
-  strncpy(string, value, strlen(value) - 1);
-
-  *(string + (strlen(value) - 1)) = '\0';
-
+  // copy value but cut off the last character
+  snprintf(string, strlen(value), "%s", value);
 
   nxinfo << "Loop: Parsing integer option '" << name
          << "' from string '" << string << "' with base set to ";
@@ -13456,17 +13511,14 @@ int ParseArg(const char *type, const char *name, const char *value)
 
   nxinfo_append << ".\n" << std::flush;
 
-
   double result = atof(string) * base;
+
+  delete [] string;
 
   if (result < 0 || result > (((unsigned) -1) >> 1))
   {
-    delete [] string;
-
     return -1;
   }
-
-  delete [] string;
 
   nxinfo << "Loop: Integer option parsed to '"
          << (int) result << "'.\n" << std::flush;
