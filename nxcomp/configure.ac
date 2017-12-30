@@ -94,6 +94,23 @@ std::tm tm = *std::localtime(&t);
                              [Use std::put_time to format times, must be made available by the compiler if turned on.])],
                   [AC_MSG_RESULT([no])])
 
+# Check if ::ctime_s is available.
+AC_MSG_CHECKING([if ::ctime_s is available])
+AC_COMPILE_IFELSE([AC_LANG_PROGRAM(
+[[
+#define __STDC_WANT_LIB_EXT1__ 1
+#include <ctime>
+]],
+[[
+time_t res = time(NULL);
+char str[26] = { };
+::ctime_s(str, sizeof(str), &res);
+]])],
+                  [AC_MSG_RESULT([yes])
+                   AC_DEFINE(HAVE_CTIME_S, [1],
+                             [Use ::ctime_s to format times, must be made available by the compiler if turned on.])],
+                  [AC_MSG_RESULT([no])])
+
 AC_ARG_ENABLE([debug],
               [AS_HELP_STRING([--enable-debug],
                               [enable to get info session log output (disabled by default)])],
