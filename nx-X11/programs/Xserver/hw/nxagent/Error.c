@@ -118,6 +118,8 @@ int nxagentErrorHandler(Display *dpy, XErrorEvent *event)
 
 /* copied from XlibInt.c */
 /* extension stuff roughly commented out */
+/* FIXME: why? What's wrong with printing extension stuff?
+   We could drop this in favour of _XprintDefaultError then! */
 static int nxagentPrintError(dpy, event, fp)
     Display *dpy;
     XErrorEvent *event;
@@ -138,7 +140,7 @@ static int nxagentPrintError(dpy, event, fp)
 	mesg, BUFSIZ);
     (void) fprintf(fp, mesg, event->request_code);
     if (event->request_code < 128) {
-	sprintf(number, "%d", event->request_code);
+	snprintf(number, sizeof(number), "%d", event->request_code);
 	XGetErrorDatabaseText(dpy, "XRequest", number, "", buffer, BUFSIZ);
     } else {
       /*	for (ext = dpy->ext_procs;
@@ -146,7 +148,7 @@ static int nxagentPrintError(dpy, event, fp)
 	     ext = ext->next)
 	  ;
 	if (ext)
-	    strcpy(buffer, ext->name);
+	    strncpy(buffer, ext->name, BUFSIZ);
 	else
       */
 	    buffer[0] = '\0';
@@ -159,7 +161,7 @@ static int nxagentPrintError(dpy, event, fp)
 	(void) fprintf(fp, mesg, event->minor_code);
 	/*
 	if (ext) {
-	    sprintf(mesg, "%s.%d", ext->name, event->minor_code);
+	    snprintf(mesg, sizeof(mesg), "%s.%d", ext->name, event->minor_code);
 	    XGetErrorDatabaseText(dpy, "XRequest", mesg, "", buffer, BUFSIZ);
 	    (void) fprintf(fp, " (%s)", buffer);
 	}
@@ -184,7 +186,7 @@ static int nxagentPrintError(dpy, event, fp)
 		bext = ext;
 	}
 	if (bext)
-	    sprintf(buffer, "%s.%d", bext->name,
+	    snprintf(buffer, sizeof(buffer), "%s.%d", bext->name,
 		    event->error_code - bext->codes.first_error);
 	else
 	*/
@@ -229,10 +231,10 @@ static int nxagentPrintError(dpy, event, fp)
 			  mesg, BUFSIZ);
     fputs("  ", fp);
     (void) fprintf(fp, mesg, event->serial);
-    XGetErrorDatabaseText(dpy, mtype, "CurrentSerial", "Current Serial #%d",
+    /*    XGetErrorDatabaseText(dpy, mtype, "CurrentSerial", "Current Serial #%d",
 			  mesg, BUFSIZ);
     fputs("\n  ", fp);
-    /*    (void) fprintf(fp, mesg, dpy->request); */
+    (void) fprintf(fp, mesg, dpy->request); */
     fputs("\n", fp);
     if (event->error_code == BadImplementation) return 0;
     return 1;
