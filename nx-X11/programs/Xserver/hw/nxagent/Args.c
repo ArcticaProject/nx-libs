@@ -2098,30 +2098,23 @@ void ddxUseMsg()
 
 static int nxagentGetDialogName()
 {
-  snprintf(nxagentDialogName, NXAGENTDIALOGNAMELENGTH, "NX");
-
   if (*nxagentSessionId != '\0')
   {
     int length = strlen(nxagentSessionId);
-
-    strcpy(nxagentDialogName, "NX - ");
 
     /* if the session id contains an MD5 hash in a well-known format cut it off */
     if (length > (MD5_LENGTH * 2 + 1) &&
            *(nxagentSessionId + (length - (MD5_LENGTH * 2 + 1))) == '-')
     {
-      strncat(nxagentDialogName, nxagentSessionId,
-              MIN(NXAGENTDIALOGNAMELENGTH - strlen(nxagentDialogName), length - (MD5_LENGTH * 2 + 1)) - 1);
-    }
-    else
-    {
-      strncat(nxagentDialogName, nxagentSessionId, NXAGENTDIALOGNAMELENGTH - strlen(nxagentDialogName) - 1);
+      length -= (MD5_LENGTH * 2 + 1);
     }
 
-    nxagentDialogName[NXAGENTDIALOGNAMELENGTH - 1] = '\0';
+    snprintf(nxagentDialogName, NXAGENTDIALOGNAMELENGTH, "NX - %.*s", length, nxagentSessionId);
 
     return 1;
   }
+
+  snprintf(nxagentDialogName, NXAGENTDIALOGNAMELENGTH, "NX");
 
   return 0;
 }
