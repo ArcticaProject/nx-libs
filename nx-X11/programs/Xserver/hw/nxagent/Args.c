@@ -1254,7 +1254,7 @@ static void nxagentParseOptions(char *name, char *value)
   }
   else if (strcmp(name, "clients") == 0)
   {
-    strcpy(nxagentClientsLogName, value);
+    snprintf(nxagentClientsLogName, NXAGENTCLIENTSLOGNAMELENGTH, "%s", value);
 
     return;
   }

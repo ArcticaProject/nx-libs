@@ -30,7 +30,8 @@
  * Clients log file name.
  */
 
-extern char nxagentClientsLogName[];
+#define NXAGENTCLIENTSLOGNAMELENGTH 256
+extern char nxagentClientsLogName[NXAGENTCLIENTSLOGNAMELENGTH];
 
 extern char nxagentVerbose;
 

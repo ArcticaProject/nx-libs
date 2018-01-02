@@ -78,7 +78,7 @@ static int nxagentClientsLog = -1;
  * Clients log file name.
  */
 
-char nxagentClientsLogName[DEFAULT_STRING_LENGTH] = { 0 };
+char nxagentClientsLogName[NXAGENTCLIENTSLOGNAMELENGTH] = { 0 };
 
 /*
  * User's home.
@@ -591,7 +591,7 @@ void nxagentGetClientsPath()
       return;
     }
 
-    if (strlen(sessionPath) + strlen("/clients") > DEFAULT_STRING_LENGTH - 1)
+    if (strlen(sessionPath) + strlen("/clients") > NXAGENTCLIENTSLOGNAMELENGTH - 1)
     {
       #ifdef PANIC
       fprintf(stderr, "nxagentGetClientsPath: PANIC! Invalid value for the NX clients Log File Path ''.\n");
@@ -602,7 +602,7 @@ void nxagentGetClientsPath()
       return;
     }
 
-    snprintf(nxagentClientsLogName, DEFAULT_STRING_LENGTH, "%s/clients", sessionPath);
+    snprintf(nxagentClientsLogName, NXAGENTCLIENTSLOGNAMELENGTH, "%s/clients", sessionPath);
 
     free(sessionPath);
   }
