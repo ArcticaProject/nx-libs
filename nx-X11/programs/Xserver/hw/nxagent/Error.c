@@ -359,14 +359,14 @@ char *nxagentGetHomePath(void)
       #endif
     }
 
-    strncpy(nxagentHomeDir, homeEnv, DEFAULT_STRING_LENGTH - 1);
+    snprintf(nxagentHomeDir, DEFAULT_STRING_LENGTH, "%s", homeEnv);
 
     #ifdef TEST
     fprintf(stderr, "nxagentGetHomePath: Assuming NX user's home directory '%s'.\n", nxagentHomeDir);
     #endif
   }
 
-  homePath = (char*) malloc(strlen(nxagentHomeDir) + 1);
+  homePath = strdup(nxagentHomeDir);
 
   if (homePath == NULL)
   {
@@ -376,8 +376,6 @@ char *nxagentGetHomePath(void)
 
     return NULL;
   }
-
-  strcpy(homePath, nxagentHomeDir);
 
   return homePath;
 }
@@ -434,8 +432,7 @@ char *nxagentGetRootPath(void)
       fprintf(stderr, "nxagentGetRootPath: Assuming NX root directory in '%s'.\n", homeEnv);
       #endif
 
-      strcpy(nxagentRootDir, homeEnv);
-      strcat(nxagentRootDir, "/.nx");
+      snprintf(nxagentRootDir, DEFAULT_STRING_LENGTH, "%s/.nx", homeEnv);
 
       free(homeEnv);
 
@@ -468,17 +465,17 @@ char *nxagentGetRootPath(void)
         return NULL;
       }
 
-      strcpy(nxagentRootDir, rootEnv);
+      snprintf(nxagentRootDir, DEFAULT_STRING_LENGTH, "%s", rootEnv);
     }
 
     #ifdef TEST
     fprintf(stderr, "nxagentGetRootPath: Assuming NX root directory '%s'.\n",
                 nxagentRootDir);
     #endif
-        
+
   }
 
-  rootPath = malloc(strlen(nxagentRootDir) + 1);
+  rootPath = strdup(nxagentRootDir);
 
   if (rootPath == NULL)
   {
@@ -488,8 +485,6 @@ char *nxagentGetRootPath(void)
 
     return NULL;
   }
-
-  strcpy(rootPath, nxagentRootDir);
 
   return rootPath;
 }
@@ -527,9 +522,7 @@ char *nxagentGetSessionPath(void)
       return NULL;
     }
 
-    strcpy(nxagentSessionDir, rootPath);
-
-    free(rootPath);
+    snprintf(nxagentSessionDir, DEFAULT_STRING_LENGTH, "%s", rootPath);
 
     if (strlen(nxagentSessionDir) + strlen("/C-") + strlen(nxagentSessionId) > DEFAULT_STRING_LENGTH - 1)
     {
@@ -538,12 +531,14 @@ char *nxagentGetSessionPath(void)
                   nxagentSessionDir);
       #endif
 
+      free(rootPath);
+
       return NULL;
     }
 
-    strcat(nxagentSessionDir, "/C-");
+    snprintf(nxagentSessionDir, DEFAULT_STRING_LENGTH, "%s/C-%s", rootPath, nxagentSessionId);
 
-    strcat(nxagentSessionDir, nxagentSessionId);
+    free(rootPath);
 
     if ((stat(nxagentSessionDir, &dirStat) == -1) && (errno == ENOENT))
     {
@@ -605,9 +600,7 @@ void nxagentGetClientsPath()
       return;
     }
 
-    strcpy(nxagentClientsLogName, sessionPath);
-
-    strcat(nxagentClientsLogName, "/clients");
+    snprintf(nxagentClientsLogName, DEFAULT_STRING_LENGTH, "%s/clients", sessionPath);
 
     free(sessionPath);
   }

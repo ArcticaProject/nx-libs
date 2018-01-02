@@ -1873,8 +1873,7 @@ static FILE *nxagentLookForIconFile(char *iconName, const char *permission,
     /* append slash and icon name */
     if (strlen(singlePath) + strlen(iconName) + 1 < sizeof(singlePath))
     {
-      strncat(singlePath, slash, 1);
-      strcat(singlePath, iconName);
+      snprintf(singlePath + strlen(singlePath), sizeof(singlePath), "%s%s", slash, iconName);
 
       if ((fptr = fopen(singlePath, permission)) != NULL)
       {
