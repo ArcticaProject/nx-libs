@@ -102,7 +102,7 @@ void nxagentGetClientsPath(void);
 
 static int nxagentPrintError(Display *dpy, XErrorEvent *event, FILE *fp);
 
-/* declare an error handler that does not exit when an error 
+/* declare an error handler that does not exit when an error
  * event is catched.
  */
 
@@ -171,7 +171,7 @@ static int nxagentPrintError(dpy, event, fp)
 	buffer[0] = '\0';
 	/*
 	for (ext = dpy->ext_procs; ext; ext = ext->next) {
-	    if (ext->error_string) 
+	    if (ext->error_string)
 		(*ext->error_string)(dpy, event->error_code, &ext->codes,
 				     buffer, BUFSIZ);
 	    if (buffer[0]) {
@@ -182,7 +182,7 @@ static int nxagentPrintError(dpy, event, fp)
 		ext->codes.first_error < (int)event->error_code &&
 		(!bext || ext->codes.first_error > bext->codes.first_error))
 		bext = ext;
-	}    
+	}
 	if (bext)
 	    sprintf(buffer, "%s.%d", bext->name,
 		    event->error_code - bext->codes.first_error);
@@ -225,7 +225,7 @@ static int nxagentPrintError(dpy, event, fp)
 	(void) fprintf(fp, mesg, event->resourceid);
 	fputs("\n", fp);
     }
-    XGetErrorDatabaseText(dpy, mtype, "ErrorSerial", "Error Serial #%d", 
+    XGetErrorDatabaseText(dpy, mtype, "ErrorSerial", "Error Serial #%d",
 			  mesg, BUFSIZ);
     fputs("  ", fp);
     (void) fprintf(fp, mesg, event->serial);
@@ -252,7 +252,7 @@ void nxagentOpenClientsLogFile()
     nxagentGetClientsPath();
   }
 
-  if (nxagentClientsLogName != NULL && *nxagentClientsLogName !='\0')
+  if (nxagentClientsLogName != NULL && *nxagentClientsLogName != '\0')
   {
     nxagentClientsLog = open(nxagentClientsLogName, O_RDWR | O_CREAT | O_APPEND, 0600);
 
