@@ -283,12 +283,12 @@ void nxagentStartRedirectToClientsLog(void)
   {
     if (nxagentStderrBackup == -1)
     {
-      nxagentStderrBackup = dup(2);
+      nxagentStderrBackup = dup(STDERR_FILENO);
     }
 
     if (nxagentStderrBackup != -1)
     {
-      nxagentStderrDup = dup2(nxagentClientsLog, 2);
+      nxagentStderrDup = dup2(nxagentClientsLog, STDERR_FILENO);
 
       if (nxagentStderrDup == -1)
       {
@@ -308,7 +308,7 @@ void nxagentEndRedirectToClientsLog(void)
 {
   if (nxagentStderrBackup != -1)
   {
-    nxagentStderrDup = dup2(nxagentStderrBackup, 2);
+    nxagentStderrDup = dup2(nxagentStderrBackup, STDERR_FILENO);
 
     if (nxagentStderrDup == -1)
     {
