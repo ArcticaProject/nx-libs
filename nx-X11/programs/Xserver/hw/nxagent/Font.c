@@ -109,7 +109,7 @@ static void nxagentFontReconnect(FontPtr, XID, void *);
 static XFontStruct *nxagentLoadBestQueryFont(Display* dpy, char *fontName, FontPtr pFont);
 static XFontStruct *nxagentLoadQueryFont(register Display *dpy , char *fontName , FontPtr pFont);
 int nxagentFreeFont(XFontStruct *fs);
-static Bool nxagentGetFontServerPath(char * fontServerPath);
+static Bool nxagentGetFontServerPath(char * fontServerPath, int size);
 
 static char * nxagentMakeScalableFontName(const char *fontName, int scalableResolution);
 
@@ -1283,7 +1283,7 @@ Bool nxagentReconnectFailedFonts(void *p0)
   fprintf(stderr, "nxagentReconnectFailedFonts: \n");
   #endif
 
-  if (nxagentGetFontServerPath(fontServerPath) == False)
+  if (nxagentGetFontServerPath(fontServerPath, sizeof(fontServerPath)) == False)
   {
     #ifdef WARNING
     fprintf(stderr, "nxagentReconnectFailedFonts: WARNING! "
@@ -1404,19 +1404,18 @@ Bool nxagentDisconnectAllFonts()
   return True;
 }
 
-static Bool nxagentGetFontServerPath(char * fontServerPath)
+static Bool nxagentGetFontServerPath(char * fontServerPath, int size)
 {
-  /* ensure path is no longer than fontServerPath */
   char path[256] = {0};
 
   if (NXGetFontParameters(nxagentDisplay, sizeof(path), path) == True)
   {
+    /* the length is stored in the first byte and is therefore limited to 255 */
     unsigned int len = *path;
 
     if (len)
     {
-      strncpy(fontServerPath, path + 1, len);
-      fontServerPath[len] = '\0';
+      snprintf(fontServerPath, MIN(size, len + 1), "%s", path + 1);
 
       #ifdef TEST
       fprintf(stderr, "nxagentGetFontServerPath: Got path [%s].\n",
