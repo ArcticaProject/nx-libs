@@ -215,14 +215,10 @@ int ddxProcessArgument(int argc, char *argv[], int i)
     {
       if ((!strcmp(argv[j], "-display")) && (j + 1 < argc))
       {
-        envOptions = malloc(strlen(argv[j + 1]) + 1);
+        envOptions = strdup(argv[j + 1]);
 
-        if (envOptions != NULL)
-        {
-          envOptions = strcpy(envOptions, argv[j + 1]);
-        }
         #ifdef WARNING
-        else
+        if (envOptions == NULL)
         {
           fprintf(stderr, "ddxProcessArgument: WARNING! failed string allocation.\n");
         }
@@ -234,14 +230,10 @@ int ddxProcessArgument(int argc, char *argv[], int i)
 
     if ((envOptions == NULL) && (envDisplay != NULL))
     {
-      envOptions = malloc(strlen(envDisplay) + 1);
+      envOptions = strdup(envDisplay);
 
-      if (envOptions != NULL)
-      {
-        envOptions = strcpy(envOptions, envDisplay);
-      }
       #ifdef WARNING
-      else
+      if (envOptions == NULL)
       {
         fprintf(stderr, "ddxProcessArgument: WARNING! failed string allocation.\n");
       }
@@ -696,34 +688,14 @@ int ddxProcessArgument(int argc, char *argv[], int i)
   {
     if (++i < argc)
     {
-      int size;
-
       free(nxagentKeyboard);
       nxagentKeyboard = NULL;
 
-      if ((size = strlen(argv[i])) < 256)
+      nxagentKeyboard = strdup(argv[i]);
+      if (nxagentKeyboard == NULL)
       {
-        if ((nxagentKeyboard = malloc(size + 1)) == NULL)
-        {
-          FatalError("malloc failed");
-        }
-
-        strncpy(nxagentKeyboard, argv[i], size);
-
-        nxagentKeyboard[size] = '\0';
+        FatalError("malloc failed");
       }
-      #ifdef WARNING
-      else
-      {
-        /*
-         * it is useless to remember a kbtype
-         * option that has just been truncated.
-         */
-
-        fprintf(stderr, "ddxProcessArgument: WARNING! Option [%s] too long. "
-                    "It will be ignored.\n", argv[i]);
-      }
-      #endif
 
       return 2;
     }
