@@ -414,10 +414,6 @@ char *nxagentGetRootPath(void)
 
       if (homeEnv == NULL)
       {
-
-        #ifdef PANIC
-        #endif
-
         return NULL;
       }
 
