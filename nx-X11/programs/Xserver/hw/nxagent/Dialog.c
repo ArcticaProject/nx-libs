@@ -66,9 +66,9 @@ int nxagentDisableDeferModePid = 0;
 
 static int nxagentFailedReconnectionDialogPid = 0;
 
-char nxagentPulldownWindow[16];
+char nxagentPulldownWindow[NXAGENTPULLDOWNWINDOWLENGTH];
 
-char nxagentFailedReconnectionMessage[256];
+char nxagentFailedReconnectionMessage[NXAGENTFAILEDRECONNECTIONMESSAGELENGTH];
 
 void nxagentResetDialog(int pid)
 {
@@ -317,7 +317,7 @@ void nxagentLaunchDialog(DialogType dialogType)
 
 void nxagentPulldownDialog(Window wid)
 {
-  snprintf(nxagentPulldownWindow, sizeof(nxagentPulldownWindow), "%ld", (long int) wid);
+  snprintf(nxagentPulldownWindow, NXAGENTPULLDOWNWINDOWLENGTH, "%ld", (long int) wid);
 
   #ifdef TEST
   fprintf(stderr, "nxagentPulldownDialog: Going to launch pulldown "
@@ -368,7 +368,7 @@ void nxagentFailedReconnectionDialog(int alert, char *error)
     int status;
     int options = 0;
 
-    snprintf(nxagentFailedReconnectionMessage, sizeof(nxagentFailedReconnectionMessage), "Reconnection failed: %s", error);
+    snprintf(nxagentFailedReconnectionMessage, NXAGENTFAILEDRECONNECTIONMESSAGELENGTH, "Reconnection failed: %s", error);
 
     nxagentLaunchDialog(DIALOG_FAILED_RECONNECTION);
 

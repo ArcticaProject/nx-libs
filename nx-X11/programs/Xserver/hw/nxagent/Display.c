@@ -1150,7 +1150,7 @@ void nxagentOpenDisplay(int argc, char *argv[])
 
   if (*nxagentDisplayName == '\0')
   {
-    snprintf(nxagentDisplayName, sizeof(nxagentDisplayName), "%s", XDisplayName(NULL));
+    snprintf(nxagentDisplayName, NXAGENTDISPLAYNAMELENGTH, "%s", XDisplayName(NULL));
   }
 
   nxagentCloseDisplay();
