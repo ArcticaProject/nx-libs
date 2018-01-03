@@ -324,13 +324,11 @@ void nxagentInitKeystrokes(Bool force)
   char *homedir = getenv("HOME");
   if (homedir)
   {
-    if (!(homepath = calloc(1, strlen(homedir) + strlen(homefile) + 1)))
+    if (-1 == asprintf(&homepath, "%s%s", homedir, homefile))
     {
       fprintf(stderr, "malloc failed");
       exit(EXIT_FAILURE);
     }
-    strcpy(homepath, homedir);
-    strcpy(homepath + strlen(homedir), homefile);
   }
 
   /* if any of the files can be read we have our candidate */
