@@ -534,7 +534,6 @@ static void nxagentCheckXkbBaseDirectory(void)
 static char *nxagentXkbGetRules()
 {
   int ret;
-  int size, sizeDflt, sizeAlt;
   char *path;
   struct stat buf;
 
@@ -543,19 +542,11 @@ static char *nxagentXkbGetRules()
               XkbBaseDirectory);
   #endif
 
-  sizeDflt = strlen(XKB_DFLT_RULES_FILE);
-  sizeAlt = strlen(XKB_ALTS_RULES_FILE);
-  size = strlen(XkbBaseDirectory) + strlen("/rules/");
-  size += (sizeDflt > sizeAlt) ? sizeDflt : sizeAlt;
-
-  if ((path = malloc((size + 1) * sizeof(char))) == NULL)
+  if (-1 == asprintf(&path, "%s/rules/%s", XkbBaseDirectory, XKB_DFLT_RULES_FILE))
   {
     FatalError("nxagentXkbGetRules: malloc failed.");
   }
 
-  strcpy(path, XkbBaseDirectory);
-  strcat(path, "/rules/");
-  strcat(path, XKB_DFLT_RULES_FILE);
   #ifdef TEST
   fprintf(stderr, "nxagentXkbGetRules: checking rules file [%s]\n", path);
   #endif
@@ -572,11 +563,16 @@ static char *nxagentXkbGetRules()
 
   #ifdef TEST
   fprintf(stderr, "nxagentXkbGetRules: WARNING! Failed to stat file [%s]: %s.\n", path, strerror(ret));
-  #endif 
+  #endif
 
-  strcpy(path, XkbBaseDirectory);
-  strcat(path, "/rules/");
-  strcat(path, XKB_ALTS_RULES_FILE);
+  free(path);
+  path = NULL;
+
+  if (-1 == asprintf(&path, "%s/rules/%s", XkbBaseDirectory, XKB_ALTS_RULES_FILE))
+  {
+    FatalError("nxagentXkbGetRules: malloc failed.");
+  }
+
   #ifdef TEST
   fprintf(stderr, "nxagentXkbGetRules: checking rules file [%s]\n", path);
   #endif
