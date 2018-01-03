@@ -334,10 +334,12 @@ void nxagentListRemoteAddName(const char *name, int status)
 
   if ((nxagentRemoteFontList.list[pos] = malloc(sizeof(nxagentFontRec))))
   {
-    nxagentRemoteFontList.list[pos]->name = malloc(strlen(name) +1);
+    nxagentRemoteFontList.list[pos]->name = strdup(name);
     if (nxagentRemoteFontList.list[pos]->name == NULL)
     {
        fprintf(stderr, "Font: remote list name memory allocation failed!.\n");
+       free(nxagentRemoteFontList.list[pos]);
+       nxagentRemoteFontList.list[pos] = NULL;
        return;
     }
   }
@@ -346,7 +348,6 @@ void nxagentListRemoteAddName(const char *name, int status)
      fprintf(stderr, "Font: remote list record memory allocation failed!.\n");
      return;
   }
-  strcpy(nxagentRemoteFontList.list[pos]->name,name);
   nxagentRemoteFontList.list[pos]->status = status;
   nxagentRemoteFontList.length++;
 
