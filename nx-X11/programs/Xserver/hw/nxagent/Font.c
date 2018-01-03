@@ -733,7 +733,7 @@ static XFontStruct *nxagentLoadBestQueryFont(Display* dpy, char *fontName, FontP
 {
   XFontStruct *fontStruct;
 
-  char *substFontBuf;
+  char substFontBuf[512];;
 
   /*  X Logical Font Description Conventions
    *  require 14 fields in the font names.
@@ -767,12 +767,9 @@ static XFontStruct *nxagentLoadBestQueryFont(Display* dpy, char *fontName, FontP
   fprintf(stderr, "nxagentLoadBestQueryFont: Searching font '%s' .\n", fontName);
   #endif
 
-  substFontBuf = (char *) malloc(sizeof(char) * 512);
-
-
   numFontFields = nxagentSplitString(fontName, fontNameFields, FIELDS + 1, "-");
 
-  memcpy(substFontBuf, "fixed\0", strlen("fixed") + 1);
+  snprintf(substFontBuf, sizeof(substFontBuf), "%s", "fixed");
 
   if (numFontFields <= FIELDS)
   {
@@ -831,8 +828,7 @@ static XFontStruct *nxagentLoadBestQueryFont(Display* dpy, char *fontName, FontP
         /* Found more accurate font  */
 
         weight = tempWeight;
-        memcpy(substFontBuf, nxagentRemoteFontList.list[i]->name, strlen(nxagentRemoteFontList.list[i]->name));
-        substFontBuf[strlen(nxagentRemoteFontList.list[i]->name)] = '\0';
+        snprintf(substFontBuf, sizeof(substFontBuf), "%s", nxagentRemoteFontList.list[i]->name);
 
         #ifdef NXAGENT_RECONNECT_FONT_DEBUG
         fprintf(stderr, "nxagentLoadBestQueryFont: Weight '%d' of more accurate font '%s' .\n", weight, substFontBuf);
@@ -855,8 +851,6 @@ static XFontStruct *nxagentLoadBestQueryFont(Display* dpy, char *fontName, FontP
   #endif
 
   fontStruct = nxagentLoadQueryFont(dpy, substFontBuf, pFont);
-
-  free (substFontBuf);
 
   for (j = 0; j < numFontFields; j++)
   {
