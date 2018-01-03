@@ -1834,9 +1834,9 @@ static FILE *nxagentLookForIconFile(char *iconName, const char *permission,
     return NULL;
   }
 
-  for (int breakLoop = False; breakLoop == False && fptr == NULL; )
+  for (char *end = path; end != NULL && fptr == NULL; )
   {
-    char *end = strchr(path, separator);
+    end = strchr(path, separator);
 
     /* separator found */
     if (end != NULL)
@@ -1860,8 +1860,6 @@ static FILE *nxagentLookForIconFile(char *iconName, const char *permission,
       }
 
       snprintf(singlePath, sizeof(singlePath), "%s", path);
-
-      breakLoop = True;
     }
 
     /* cut off trailing slashes, if any */
