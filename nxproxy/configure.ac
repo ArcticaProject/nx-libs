@@ -34,12 +34,6 @@ dnl We will work around this bug by using AX_PTHREAD and linking with pthread su
 dnl libXcomp for now.
 AX_PTHREAD([], AC_MSG_ERROR([no POSIX threads support detected]))
 
-AC_ARG_ENABLE([cxx11],
-              [AS_HELP_STRING([--enable-cxx11],
-                              [enable optional features requiring C++11 support (disabled by default)])],
-              [AS_IF([test x$enableval = xyes],
-                     [AX_CXX_COMPILE_STDCXX_11([], [mandatory])])])
-
 AC_CONFIG_FILES([
 Makefile
 man/Makefile
