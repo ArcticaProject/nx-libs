@@ -524,6 +524,7 @@ char *nxagentGetSessionPath(void)
       return NULL;
     }
 
+    /* FIXME: necessary? */
     snprintf(nxagentSessionDir, DEFAULT_STRING_LENGTH, "%s", rootPath);
 
     if (strlen(nxagentSessionDir) + strlen("/C-") + strlen(nxagentSessionId) > DEFAULT_STRING_LENGTH - 1)
@@ -562,9 +563,9 @@ char *nxagentGetSessionPath(void)
 
   }
 
-  sessionPath = malloc(strlen(nxagentSessionDir) + 1);
+  sessionPath = strdup(nxagentSessionDir);
 
-  if (sessionPath  == NULL)
+  if (sessionPath == NULL)
   {
     #ifdef PANIC
     fprintf(stderr, "nxagentGetSessionPath:: PANIC! Can't allocate memory for the session path.\n");
@@ -572,9 +573,6 @@ char *nxagentGetSessionPath(void)
 
     return NULL;
   }
-
-
-  strcpy(sessionPath, nxagentSessionDir);
 
   return sessionPath;
 }
