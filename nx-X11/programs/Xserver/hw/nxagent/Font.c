@@ -916,6 +916,11 @@ static void nxagentCollectFailedFont(FontPtr fpt, XID id)
 
     if (nxagentFailedToReconnectFonts.font == NULL || nxagentFailedToReconnectFonts.id == NULL)
     {
+      free(nxagentFailedToReconnectFonts.font);
+      nxagentFailedToReconnectFonts.font = NULL;
+      free(nxagentFailedToReconnectFonts.id);
+      nxagentFailedToReconnectFonts.id = NULL;
+
       FatalError("Font: font not reconnected memory allocation failed!.\n");
     }
 
