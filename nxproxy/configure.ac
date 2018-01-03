@@ -16,6 +16,9 @@ AC_CONFIG_MACRO_DIR([m4])
 
 AM_INIT_AUTOMAKE([foreign no-dist-gzip dist-bzip2])
 
+# Initialize libtool
+AC_PROG_LIBTOOL
+
 PROXY_VERSION=nxproxy_version
 AC_SUBST([PROXY_VERSION])
 
