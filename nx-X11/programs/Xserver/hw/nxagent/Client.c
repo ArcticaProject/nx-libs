@@ -517,12 +517,12 @@ void nxagentCheckRestartedClients(struct timeval **timeout)
       if (FD_ISSET(fd, &ClientsWithInput))
       {
         #ifdef WARNING
-        fprintf(stderr, "nxagentBlockHandler: WARNING! Client [%d] with fd [%d] has input.\n",
+        fprintf(stderr, "nxagentCheckRestartedClients: WARNING! Client [%d] with fd [%d] has input.\n",
                     clients[i] -> index, fd);
         #endif
 
         #ifdef DEBUG
-        fprintf(stderr, "nxagentBlockHandler: Setting a null timeout with former timeout [%ld] Ms.\n",
+        fprintf(stderr, "nxagentCheckRestartedClients: Setting a null timeout with former timeout [%ld] Ms.\n",
                     (*timeout) -> tv_sec * 1000 + (*timeout) -> tv_usec / 1000);
         #endif
 
