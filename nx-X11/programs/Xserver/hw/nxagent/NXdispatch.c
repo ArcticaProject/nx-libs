@@ -378,14 +378,14 @@ Reply   Total	Cached	Bits In			Bits Out		Bits/Reply	  Ratio
          * that the agent is ready.
          */
 
-         if (!nxagentWMPassed && (nxagentWMtimeout < currentDispatch))
-         {
-           nxagentRemoveSplashWindow(NULL);
-         }
+        if (!nxagentWMPassed && (nxagentWMtimeout < currentDispatch))
+        {
+          nxagentRemoveSplashWindow(NULL);
+        }
 
-         nxagentClients = nClients;
+        nxagentClients = nClients;
 
-         #endif
+        #endif
 
 	if (nready)
 	{
