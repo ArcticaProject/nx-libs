@@ -540,6 +540,7 @@ Reply   Total	Cached	Bits In			Bits Out		Bits/Reply	  Ratio
 #if defined(DDXBEFORERESET)
     ddxBeforeReset ();
 #endif
+    /* FIXME: maybe move the code upto the KillAllClients() call to ddxBeforeReset? */
     if ((dispatchException & DE_RESET) && 
             (serverGeneration > nxagentMaxAllowedResets))
     {
