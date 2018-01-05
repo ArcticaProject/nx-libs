@@ -3948,7 +3948,7 @@ void nxagentUngrabPointerAndKeyboard(XEvent *X)
   XUngrabKeyboard(nxagentDisplay, now);
 
   #ifdef TEST
-  fprintf(stderr, "nxagentGrabPointerAndKeyboard: Going to ungrab the pointer in context [B6].\n");
+  fprintf(stderr, "nxagentUngrabPointerAndKeyboard: Going to ungrab the pointer in context [B6].\n");
   #endif
 
   XUngrabPointer(nxagentDisplay, now);
