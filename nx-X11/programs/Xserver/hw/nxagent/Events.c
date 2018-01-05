@@ -3958,10 +3958,11 @@ void nxagentDeactivatePointerGrab()
 {
   GrabPtr grab = inputInfo.pointer -> grab;
 
-  XButtonEvent X;
-
   if (grab)
   {
+    XButtonEvent X;
+    memset(&X, 0, sizeof(XButtonEvent));
+
     X.type = ButtonRelease;
     X.serial = 0;
     X.send_event = FALSE;
