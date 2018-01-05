@@ -37,6 +37,7 @@ Imake.tmpl provides defaults for the following variables:
 	ExtraFilesToClean	extra files to remove on make clean
 	ExtraLibraries		system-specific libraries need to link
 	ExtraLoadFlags		system-specific loader flags
+	ExtraInstallLoadFlags	system-specific loader flags for later installation
 	FileManSuffix		man suffix for file format pages
 	FilesToClean		files to delete in make clean
 	FortranCmd		command to run Fortran compiler

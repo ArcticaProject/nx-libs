@@ -21,6 +21,7 @@ XCOMM ---------------------------------------------------------------------
  * _MUseCat			(a,b,c)
  * ProgramTargetName		(target)
  * HostProgramTargetName	(target)
+ * ProgramRelinkName		(target)
  * RunProgram			(progvar,options)
  * RunProgramWithSetup		(setup,progvar,options)
  * RemoveFile			(file)
@@ -44,6 +45,7 @@ XCOMM ---------------------------------------------------------------------
  * BuildIncludes		(srclist,dstsubdir,dstupdir)
  * LinkRule			(program,options,objects,libraries)
  * HostLinkRule			(program,options,objects,libraries)
+ * LinkInstallRule		(program,options,objects,libraries)
  * NoCmpScript			(target)
  * NoConfigRec			(target)
  * NormalProgramTarget		(program,objects,deplibs,locallibs,syslibs)
@@ -56,6 +58,7 @@ XCOMM ---------------------------------------------------------------------
  * ComplexProgramTarget_3	(program,locallib,syslib)
  * ServerTargetWithFlags	(server,subdirs,objects,libs,syslibs,flags)
  * ServerTarget			(server,subdirs,objects,libs,syslibs)
+ * LibX11Links			()
  * MoveToBakFile		(file)
  * RMoveToBakFile		(file)
  * RanLibrary			(args)
@@ -76,6 +79,7 @@ XCOMM ---------------------------------------------------------------------
  * InstallNonExecFileNoClobber	(file,dest)
  * InstallNonExec		(file,dest)
  * InstallProgramWithFlags	(program,dest,flags)
+ * RelinkProgram		(program,objects,libs,syslibs)
  * InstallProgram		(program,dest)
  * InstallScript		(program,dest)
  * InstallNamedProg		(srcname,dstname,dest)
@@ -314,6 +318,10 @@ XCOMM special target for clearmake					@@\
 
 #ifndef HostProgramTargetName
 #define HostProgramTargetName(target)target
+#endif
+
+#ifndef ProgramRelinkName
+#define ProgramRelinkName(target)Concat(target,-relink)
 #endif
 
 #ifndef RunProgram
@@ -608,6 +616,14 @@ interfaces::								@@\
 #define LinkRule(program,options,objects,libraries) \
 $(CCLINK) -o program options objects libraries $(EXTRA_LOAD_FLAGS)
 #endif /* LinkRule */
+
+/*
+ * LinkRule - link a program, suitable for later installation
+ */
+#ifndef LinkInstallRule
+#define LinkInstallRule(program,options,objects,libraries) \
+$(CCLINK) -o program options objects libraries $(EXTRA_INSTALL_LOAD_FLAGS)
+#endif /* LinkInstallRule */
 
 /*
  * HostLinkRule - link a utility to be used on the build host
@@ -1101,13 +1117,14 @@ CplusplusProgramTargetHelper(program,SRCS10,OBJS10,DEPLIBS10,locallib,syslib)
 #ifndef ServerTargetWithFlags
 #define	ServerTargetWithFlags(server,subdirs,objects,libs,syslibs,flags) @@\
 AllTarget(ProgramTargetName(server))					@@\
+AllTarget(ProgramRelinkName(server))					@@\
 ProgramTargetName(server): subdirs objects libs				@@\
 	MoveToBakFile($@)						@@\
-	LinkRule($@,$(LDOPTIONS),objects,libs $(LDLIBS) syslibs) @@\
+	LinkRule($@,$(SERVERLDOPTIONS),objects,libs $(LDLIBS) syslibs)	@@\
 									@@\
 Concat(load,server):							@@\
 	MoveToBakFile(ProgramTargetName(server))			@@\
-	LinkRule(ProgramTargetName(server),$(LDOPTIONS),objects,libs $(LDLIBS) syslibs) @@\
+	LinkRule(ProgramTargetName(server),$(SERVERLDOPTIONS),objects,libs $(LDLIBS) syslibs) @@\
 									@@\
 loadX:: Concat(load,server)						@@\
 									@@\
@@ -1118,10 +1135,12 @@ PurifyLinkTarget(Concat(load,server),server,objects libs $(LDLIBS) syslibs) @@\
 ProofProgramTarget(server,subdirs objects libs,objects libs $(LDLIBS) syslibs) @@\
 ProofLinkTarget(Concat(load,server),server,objects libs $(LDLIBS) syslibs) @@\
 									@@\
+RelinkProgram(ProgramTargetName(server),objects,libs,syslibs)		@@\
 InstallProgramWithFlags(server,$(BINDIR),flags)				@@\
 									@@\
 clean::									@@\
-	RemoveFile(ProgramTargetName(server))
+	RemoveFile(ProgramTargetName(server))				@@\
+	RemoveFile(ProgramRelinkName(server))
 #endif /* ServerTargetWithFlags */
 
 /*
@@ -1131,6 +1150,28 @@ clean::									@@\
 #define	ServerTarget(server,subdirs,objects,libs,syslibs)		@@\
 ServerTargetWithFlags(server,subdirs,objects,libs,syslibs,$(_NOOP_))
 #endif /* ServerTarget */
+
+
+/*
+ * Creates libX11 compat symlinks to enable execution of rpath-dependent
+ * programs.
+ */
+#ifndef LibX11Links
+#define LibX11Links()						@@\
+AllTarget(libX11links)						@@\
+libX11links:							@@\
+	$(LN) libNX_X11.so $(BUILDLIBDIR)/libX11.so		@@\
+	$(LN) libNX_X11.so.6 $(BUILDLIBDIR)/libX11.so.6		@@\
+	$(LN) libNX_X11.so.6.3.0 $(BUILDLIBDIR)/libX11.so.6.3.0	@@\
+	touch libX11links					@@\
+								@@\
+clean::								@@\
+	RemoveFile($(BUILDLIBDIR)/libX11.so)			@@\
+	RemoveFile($(BUILDLIBDIR)/libX11.so.6)			@@\
+	RemoveFile($(BUILDLIBDIR)/libX11.so.6.3.0)		@@\
+	RemoveFile(libX11links)
+#endif /* LibX11Links */
+
 
 #if DoRanlibCmd
 #define RanLibrary(args) $(RANLIB) args
@@ -1586,17 +1627,28 @@ install:: file								@@\
 
 
 /*
+ * RelinkProgram - relinks an executable program in preparation of installation
+ */
+#ifndef RelinkProgram
+#define RelinkProgram(program,objects,libs,syslibs)				@@\
+ProgramRelinkName(program): program						@@\
+	MoveToBakFile($@)							@@\
+	LinkInstallRule($@,$(SERVERLDOPTIONS),objects,libs $(LDLIBS) syslibs)
+#endif /* RelinkProgram */
+
+
+/*
  * InstallProgramWithFlags - generate rules to install an executable program
  * using given install flags.
  */
 #ifndef InstallProgramWithFlags
 #if StripInstalledPrograms && CrossCompiling
-#define InstallProgramWithFlags(program,dest,flags)			@@\
-InstallTarget(install,ProgramTargetName(program),$(INSTPGMFLAGS) flags,dest) @@\
+#define InstallProgramWithFlags(program,dest,flags)				@@\
+InstallTarget(install,ProgramRelinkName(program),$(INSTPGMFLAGS) flags,dest)	@@\
 	CrossStripCmd $(DESTDIR)dest/ProgramTargetName(program)
 #else
 #define InstallProgramWithFlags(program,dest,flags)			@@\
-InstallTarget(install,ProgramTargetName(program),$(INSTPGMFLAGS) flags,dest)
+InstallTarget(install,ProgramRelinkName(program),$(INSTPGMFLAGS) flags,dest)
 #endif /* StripInstalledPrograms && CrossCompiling */
 #endif /* InstallProgramWithFlags */
 

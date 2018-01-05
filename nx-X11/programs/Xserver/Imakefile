@@ -319,6 +319,7 @@ NXAGENTNXLIBS = -L/usr/sfw/lib \
                 -L../../../nxcompshad/src/.libs \
                 -L../../lib/src/.libs \
                 -lrt \
+                -lX11 \
                 -lXcomp \
                 -lXcompshad \
                 -lXrender \
@@ -334,6 +335,7 @@ NXAGENTNXLIBS = -L/usr/sfw/lib \
 NXAGENTNXLIBS = -L../../../nxcomp/src/.libs \
                 -L../../../nxcompshad/src/.libs \
                 -L../../lib/src/.libs \
+                -lX11 \
                 -lXcomp \
                 -lXcompshad \
                 -lXrender \
@@ -349,6 +351,7 @@ NXAGENTNXLIBS = -L../../../nxcomp/src/.libs \
                 -L../../../nxcompshad/src/.libs \
                 -L../../lib/src/.libs \
                 -lkvm \
+                -lX11 \
                 -lXcomp \
                 -lXcompshad \
                 -lXrender \
@@ -364,6 +367,7 @@ NXAGENTNXLIBS = -L../../../nxcomp/src/.libs \
 NXAGENTNXLIBS = -L../../../nxcomp/src/.libs \
                 -L../../../nxcompshad/src/.libs \
                 -L../../lib/src/.libs \
+                -lX11 \
                 -lXcomp \
                 -lXcompshad \
                 -lXrender \
@@ -387,6 +391,8 @@ NX_XSHADOWLIBNAME   = libXcompshad.so
 ServerTarget(nxagent,$(NXAGENTDIRS),$(NXAGENTOBJS), \
         $(LIBCWRAPPER) $(NXCOMPEXT) $(NXAGENTLIBS) $(LOADABLEEXTS),$(NXAGENTNXLIBS) $(NXAGENTSYSLIBS) $(NXCOMPEXTSYSLIBS))
 
+LibX11Links()
+
 /*
  *  Hard coded target to build a static nxagent server.
  */
@@ -396,7 +402,7 @@ nxagent_static: nxagent
 	else exit 0; fi
 	$(CCLINK) -o nxagent_static -static $(LDOPTIONS) $(NXAGENTOBJS) \
 	$(LIBCWRAPPER) $(NXCOMPEXT) $(NXAGENTLIBS) $(LOADABLEEXTS) $(LDLIBS) \
-	$(NXCOMPEXTSYSLIBS) $(NXAGENTSYSLIBS) $(EXTRA_LOAD_FLAGS)
+	$(NXCOMPEXTSYSLIBS) $(NXAGENTSYSLIBS) $(EXTRA_INSTALL_LOAD_FLAGS)
 
 /*
  *  Hard coded target to build a static nxagent server except for libX11 and libXext.
@@ -407,7 +413,7 @@ nxagent_static_nolibs:  nxagent
 	else exit 0; fi
 	$(CCLINK) -o nxagent_static_nolibs -Wl,-Bstatic $(LDOPTIONS) $(NXAGENTOBJS) \
 	$(NXAGENTLIBS) $(LOADABLEEXTS) $(LIBCWRAPPER) $(LDLIBS) \
-	$(LDPRELIBS) $(SYSLIBS) -Wl,-Bdynamic -lNX_X11 -lXext $(EXTRA_LOAD_FLAGS)
+	$(LDPRELIBS) $(SYSLIBS) -Wl,-Bdynamic -lNX_X11 -lXext $(EXTRA_INSTALL_LOAD_FLAGS)
 #endif /* NXAgentServer */
 
 #if defined(NXWinServer) && NXWinServer

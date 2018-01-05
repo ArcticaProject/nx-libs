@@ -51,9 +51,16 @@
 # endif
 #ifndef RpathLoadFlags
 #if UseRpath
-#define RpathLoadFlags -Wl,-rpath,$(USRLIBDIRPATH)
+#define RpathLoadFlags -Wl,--enable-new-dtags -Wl,-rpath,\$$ORIGIN/$(BUILDLIBDIR)
 #else
 #define RpathLoadFlags /**/
+#endif
+#endif
+#ifndef RpathInstallLoadFlags
+#if UseRpath
+#define RpathInstallLoadFlags -Wl,--enable-new-dtags -Wl,-rpath,$(USRLIBDIRPATH)
+#else
+#define RpathInstallLoadFlags /**/
 #endif
 #endif
 #ifndef LibraryRpathLoadFlags
@@ -72,13 +79,26 @@
 #  if LinuxBinUtilsMajorVersion >= 26
 #   ifdef UseInstalled
 #    if LinuxBinUtilsMajorVersion < 27
-#     define ExtraLoadFlags RpathLoadFlags -Wl,-rpath-link,$(USRLIBDIRPATH)
+#     define ExtraLoadFlags RpathLoadFlags -Wl,--enable-new-dtags -Wl,-rpath-link,$(USRLIBDIRPATH)
 #    endif
 #   else
-#    define ExtraLoadFlags RpathLoadFlags -Wl,-rpath-link,$(BUILDLIBDIR)
+#    define ExtraLoadFlags RpathLoadFlags -Wl,--enable-new-dtags -Wl,-rpath-link,\$$ORIGIN/$(BUILDLIBDIR)
 #   endif
 #  else
 #   define ExtraLoadFlags RpathLoadFlags
+#  endif
+# endif
+# ifndef ExtraInstallLoadFlags
+#  if LinuxBinUtilsMajorVersion >= 26
+#   ifdef UseInstalled
+#    if LinuxBinUtilsMajorVersion < 27
+#     define ExtraInstallLoadFlags RpathInstallLoadFlags -Wl,--enable-new-dtags -Wl,-rpath-link,$(USRLIBDIRPATH)
+#    endif
+#   else
+#    define ExtraInstallLoadFlags RpathInstallLoadFlags -Wl,--enable-new-dtags -Wl,-rpath-link,\$$ORIGIN/$(BUILDLIBDIR)
+#   endif
+#  else
+#   define ExtraInstallLoadFlags RpathInstallLoadFlags
 #  endif
 # endif
 # ifndef HardCodeLibdirFlag

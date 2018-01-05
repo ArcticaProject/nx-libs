@@ -27,6 +27,8 @@
 #define RanlibCmd /opt/Embedix/tools/bin/arm-linux-ranlib
 #undef ExtraLoadFlags
 #define ExtraLoadFlags
+#undef ExtraInstallLoadFlags
+#define ExtraInstallLoadFlags
 #define FbNoPixelAddrCode
 #undef TermcapLibrary
 #define TermcapLibrary -ltermcap

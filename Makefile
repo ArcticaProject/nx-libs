@@ -176,7 +176,7 @@ install-full:
 	$(MAKE) -C nxcompshad install
 
 	$(INSTALL_DIR) $(DESTDIR)$(BINDIR)/bin
-	$(INSTALL_PROGRAM) nx-X11/programs/Xserver/nxagent $(DESTDIR)$(BINDIR)
+	$(INSTALL_PROGRAM) nx-X11/programs/Xserver/nxagent-relink $(DESTDIR)$(BINDIR)/nxagent
 
 	$(INSTALL_DIR) $(DESTDIR)$(PREFIX)/share/pixmaps
 	$(INSTALL_FILE) nx-X11/programs/Xserver/hw/nxagent/nxagent.xpm $(DESTDIR)$(PREFIX)/share/pixmaps
@@ -201,7 +201,7 @@ install-full:
 	cp -aL nx-X11/exports/include/* nx-X11/.build-exports/include
 
 	# copy libs (for libnx-x11), we want the targets of the links
-	. replace.sh; set -x; find nx-X11/exports/lib/ | grep -F ".so" | while read libpath; do \
+	. replace.sh; set -x; find nx-X11/exports/lib/ -name "libNX*.so" | while read libpath; do \
 	    libfile=$$(basename $$libpath); \
 	    libdir=$$(dirname $$libpath); \
 	    link=$$(readlink $$libpath); \

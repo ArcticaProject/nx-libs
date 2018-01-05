@@ -13,6 +13,7 @@ libXcompshad_la_SOURCES =				\
     $(NULL)
 
 libXcompshad_la_LIBADD =				\
+    -lX11						\
     @Xext_LIBS@						\
     @Xdamage_LIBS@					\
     @Xrandr_LIBS@					\
@@ -36,7 +37,11 @@ AM_CPPFLAGS =						\
     -I$(top_srcdir)/../nx-X11/exports/include		\
     $(NULL)
 
-libXcompshad_la_LDFLAGS = -version-number @LT_COMPSHAD_VERSION@ -no-undefined
+libXcompshad_la_LDFLAGS =				\
+    -version-number @LT_COMPSHAD_VERSION@ -no-undefined	\
+    -Wl,--enable-new-dtags				\
+    -R '$(libdir)/nx/X11'				\
+    $(NULL)
 
 libXcompshadincludedir = $(includedir)/nx
 libXcompshadinclude_HEADERS =				\
