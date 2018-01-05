@@ -492,14 +492,14 @@ void nxagentReleaseSplit(DrawablePtr pDrawable)
                   "commits are invalid.\n", pResource -> split);
       #endif
 
-      FatalError("nxagentCheckSplit: PANIC! Found a region for resource [%d] but the "
+      FatalError("nxagentReleaseSplit: PANIC! Found a region for resource [%d] but the "
                      "commits are invalid.\n", pResource -> split);
     }
 
     #endif
 
     #ifdef TEST
-    fprintf(stderr, "nxagentValidateSplit: Aborting the data transfer for resource [%d].\n",
+    fprintf(stderr, "nxagentReleaseSplit: Aborting the data transfer for resource [%d].\n",
                 pResource -> split);
     #endif
 
