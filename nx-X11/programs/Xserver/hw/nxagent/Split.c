@@ -734,7 +734,7 @@ void nxagentWaitDrawable(DrawablePtr pDrawable)
   if (pResource == NULL)
   {
     #ifdef TEST
-    fprintf(stderr, "++++++nxagentWaitDrawable: WARNING! The drawable at [%p] is already awake.\n",
+    fprintf(stderr, "nxagentWaitDrawable: WARNING! The drawable at [%p] is already awake.\n",
 	    (void *) pDrawable);
     #endif
 
@@ -742,7 +742,7 @@ void nxagentWaitDrawable(DrawablePtr pDrawable)
   }
 
   #ifdef TEST
-  fprintf(stderr, "++++++nxagentWaitDrawable: Waiting drawable at [%p] with resource [%d].\n",
+  fprintf(stderr, "nxagentWaitDrawable: Waiting drawable at [%p] with resource [%d].\n",
               (void *) pDrawable, pResource -> split);
   #endif
 
@@ -786,12 +786,12 @@ void nxagentWaitDrawable(DrawablePtr pDrawable)
 
       if (NXDisplayError(nxagentDisplay) == 1)
       {
-        fprintf(stderr, "++++++nxagentWaitDrawable: WARNING! Display error detected while "
+        fprintf(stderr, "nxagentWaitDrawable: WARNING! Display error detected while "
                     "waiting for the drawable.\n");
       }
       else
       {
-        fprintf(stderr, "++++++nxagentWaitDrawable: Drawable at [%p] can now be restarted.\n",
+        fprintf(stderr, "nxagentWaitDrawable: Drawable at [%p] can now be restarted.\n",
 		(void *) pDrawable);
       }
 
@@ -801,7 +801,7 @@ void nxagentWaitDrawable(DrawablePtr pDrawable)
     }
 
     #ifdef TEST
-    fprintf(stderr, "++++++nxagentWaitDrawable: Yielding control to the NX transport.\n");
+    fprintf(stderr, "nxagentWaitDrawable: Yielding control to the NX transport.\n");
     #endif
 
     nxagentWaitEvents(nxagentDisplay, NULL);
