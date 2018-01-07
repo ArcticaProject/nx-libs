@@ -1783,35 +1783,30 @@ N/A
       if(nxagentX2go)
       {
         #ifdef TEST
-        fprintf(stderr, "nxagentOpenScreen: Setting WM_CLASS and WM_NAME for window withid [%ld].\n",
+        fprintf(stderr, "nxagentOpenScreen: Setting WM_CLASS and WM_NAME for window with id [%ld].\n",
                 (long int)nxagentDefaultWindows[pScreen->myNum]);
         #endif
         XClassHint hint;
-        hint.res_name=malloc(strlen("X2GoAgent")+1);
-        hint.res_class=malloc(strlen("X2GoAgent")+1);
-        strcpy(hint.res_name,"X2GoAgent");
-        strcpy(hint.res_class,"X2GoAgent");
-        XSetClassHint(nxagentDisplay,nxagentDefaultWindows[pScreen->myNum],&hint);
+        hint.res_name = strdup("X2GoAgent");
+        hint.res_class = strdup("X2GoAgent");
+        XSetClassHint(nxagentDisplay, nxagentDefaultWindows[pScreen->myNum], &hint);
         free(hint.res_name);
         free(hint.res_class);
       }
       else
       {
         #ifdef TEST
-        fprintf(stderr, "nxagentOpenScreen: Setting WM_CLASS and WM_NAME for window withid [%ld].\n",
+        fprintf(stderr, "nxagentOpenScreen: Setting WM_CLASS and WM_NAME for window with id [%ld].\n",
                 (long int)nxagentDefaultWindows[pScreen->myNum]);
         #endif
 
         XClassHint hint;
-        hint.res_name=malloc(strlen("NXAgent")+1);
-        hint.res_class=malloc(strlen("NXAgent")+1);
-        strcpy(hint.res_name,"NXAgent");
-        strcpy(hint.res_class,"NXAgent");
-        XSetClassHint(nxagentDisplay,nxagentDefaultWindows[pScreen->myNum],&hint);
+        hint.res_name = strdup("NXAgent");
+        hint.res_class = strdup("NXAgent");
+        XSetClassHint(nxagentDisplay, nxagentDefaultWindows[pScreen->myNum], &hint);
         free(hint.res_name);
         free(hint.res_class);
       }
-
 
       if (nxagentOption(Fullscreen))
       {
@@ -2549,9 +2544,7 @@ int nxagentShadowInit(ScreenPtr pScreen, WindowPtr pWin)
     }
     else
     {
-      layout = malloc(strlen(&nxagentKeyboard[i + 1]) + 1);
-
-      strcpy(layout, &nxagentKeyboard[i + 1]);
+      layout = strdup(&nxagentKeyboard[i + 1]);
     }
   }
 
@@ -3480,6 +3473,7 @@ FIXME: The port information is not used at the moment and produces a
                in++;
                local_buf[in]=pszReturnData[i-1];
 
+               /* "localhost:" */
                strcat(local_buf,"6c6f63616c686f73743a");
                in+=20;
 

@@ -96,7 +96,8 @@ static Bool doListFontsAndAliases(ClientPtr client, LFclosurePtr c);
 
 #ifdef NX_TRANS_SOCKET
 
-char _NXFontPath[1024];
+#define NXFONTPATHLENGTH 1024
+char _NXFontPath[NXFONTPATHLENGTH];
 
 /*
  * Override the default font path and make
@@ -112,7 +113,7 @@ static const char *_NXGetFontPath(const char *path)
      * Check the environment only once.
      */
 
-    if (*_NXFontPath != '\0')
+    if (_NXFontPath[0] != '\0')
     {
         return _NXFontPath;
     }
@@ -121,7 +122,7 @@ static const char *_NXGetFontPath(const char *path)
 
     if (fontEnv != NULL && *fontEnv != '\0')
     {
-        if (strlen(fontEnv) + 1 > 1024)
+        if (strlen(fontEnv) + 1 > NXFONTPATHLENGTH)
         {
 #ifdef NX_TRANS_TEST
             fprintf(stderr, "_NXGetFontPath: WARNING! Maximum length of font path exceeded.\n");
@@ -129,7 +130,7 @@ static const char *_NXGetFontPath(const char *path)
             goto _NXGetFontPathError;
         }
 
-        strcpy(_NXFontPath, fontEnv);
+        snprintf(_NXFontPath, NXFONTPATHLENGTH, "%s", fontEnv);
 
 #ifdef NX_TRANS_TEST
         fprintf(stderr, "_NXGetFontPath: Using NX font path [%s].\n", _NXFontPath);
@@ -140,8 +141,7 @@ static const char *_NXGetFontPath(const char *path)
 
 _NXGetFontPathError:
 
-    strncpy(_NXFontPath, path, 1023);
-    _NXFontPath[1023] = '\0';
+    snprintf(_NXFontPath, NXFONTPATHLENGTH, "%s", path);
 
 #ifdef NX_TRANS_TEST
     fprintf(stderr, "_NXGetFontPath: Using default font path [%s].\n", _NXFontPath);
@@ -199,7 +199,7 @@ doOpenFont(ClientPtr client, OFclosurePtr c)
 	BitmapFormatScanlineUnit8;
 
 
-    nxagentOrigFontNameLen = (c -> origFontNameLen < 256) ? c -> origFontNameLen : 255;
+    nxagentOrigFontNameLen = (c -> origFontNameLen < sizeof(nxagentOrigFontName) ? c -> origFontNameLen : sizeof(nxagentOrigFontName) - 1);
 
     memcpy(nxagentOrigFontName, c -> origFontName, nxagentOrigFontNameLen);
 

@@ -1150,9 +1150,7 @@ void nxagentOpenDisplay(int argc, char *argv[])
 
   if (*nxagentDisplayName == '\0')
   {
-    strncpy(nxagentDisplayName, XDisplayName(NULL), 1023);
-
-    nxagentDisplayName[1023] = '\0';
+    snprintf(nxagentDisplayName, NXAGENTDISPLAYNAMELENGTH, "%s", XDisplayName(NULL));
   }
 
   nxagentCloseDisplay();
@@ -1817,12 +1815,10 @@ FIXME: Is this needed?
 }
 
 static FILE *nxagentLookForIconFile(char *iconName, const char *permission,
-                                        char *return_path)
+                                        char *return_path, int return_path_size)
 {
   char *path;
-  char *end;
   char singlePath[PATH_MAX];
-  int breakLoop;
   FILE *fptr = NULL;
 
   #ifdef WIN32
@@ -1838,43 +1834,53 @@ static FILE *nxagentLookForIconFile(char *iconName, const char *permission,
     return NULL;
   }
 
-  for(breakLoop = 0; breakLoop == 0 && fptr == NULL; )
+  for (char *end = path; end != NULL && fptr == NULL; )
   {
     end = strchr(path, separator);
 
+    /* separator found */
     if (end != NULL)
     {
-      strncpy(singlePath, path, (unsigned long)(end - path));
+      if ((end - path) > sizeof(singlePath) - 1)
+      {
+        fprintf(stderr, "Warning: PATH component too long - ignoring it.\n");
+        path = end + 1;
+        continue;
+      }
 
-      singlePath[(unsigned long)(end - path)] = 0;
-
+      snprintf(singlePath, (unsigned long)(end - path + 1), "%s", path);
       path = end + 1;
     }
     else
     {
-      strcpy(singlePath, path);
+      if (strlen(path) > sizeof(singlePath) - 1)
+      {
+        fprintf(stderr, "Warning: PATH component too long - ignoring it.\n");
+        return NULL;
+      }
 
-      breakLoop = 1;
+      snprintf(singlePath, sizeof(singlePath), "%s", path);
     }
 
-    if (singlePath[strlen(singlePath)- 1] == slash[0])
+    /* cut off trailing slashes, if any */
+    while (singlePath[strlen(singlePath) - 1] == slash[0])
     {
-      singlePath[strlen(singlePath)- 1] = 0;
+      singlePath[strlen(singlePath) - 1] = '\0';
     }
 
-    if (strlen(singlePath) + strlen(iconName) + 1 < PATH_MAX)
+    /* append slash and icon name */
+    if (strlen(singlePath) + strlen(iconName) + 1 < sizeof(singlePath))
     {
-      strncat(singlePath, slash, 1);
-      strcat(singlePath, iconName);
+      snprintf(singlePath + strlen(singlePath), sizeof(singlePath), "%s%s", slash, iconName);
 
       if ((fptr = fopen(singlePath, permission)) != NULL)
       {
-        strcpy(return_path, singlePath);
+        snprintf(return_path, return_path_size, "%s", singlePath);
       }
     }
     else
     {
-      fprintf(stderr, "Error: Path too long.\n");
+      fprintf(stderr, "Warning: Icon path too long.\n");
     }
   }
 
@@ -1898,21 +1904,21 @@ Bool nxagentMakeIcon(Display *display, Pixmap *nxIcon, Pixmap *nxMask)
    */
   if(nxagentX2go)
   {
-    agent_icon_name=X2GOAGENT_ICON_NAME;
-    agentIconData=x2goagentIconData;
+    agent_icon_name = X2GOAGENT_ICON_NAME;
+    agentIconData = x2goagentIconData;
   }
   else
   {
-    agent_icon_name=NXAGENT_ICON_NAME;
-    agentIconData=nxagentIconData;
+    agent_icon_name = NXAGENT_ICON_NAME;
+    agentIconData = nxagentIconData;
   }
 
-
-  snprintf(default_path, PATH_MAX-1, "/usr/NX/share/images/%s", agent_icon_name);
+  /* FIXME: use a compile time define here, /usr/NX is a nomachine path */
+  snprintf(default_path, sizeof(default_path), "/usr/NX/share/images/%s", agent_icon_name);
 
   if ((icon_fp = fopen(default_path, "r")) == NULL)
   {
-    icon_fp = nxagentLookForIconFile(agent_icon_name, "r", icon_path);
+    icon_fp = nxagentLookForIconFile(agent_icon_name, "r", icon_path, sizeof(icon_path));
 
     if (icon_fp != NULL)
     {
@@ -1924,7 +1930,7 @@ Bool nxagentMakeIcon(Display *display, Pixmap *nxIcon, Pixmap *nxMask)
   {
     fclose (icon_fp);
     success = True;
-    strcpy(icon_path, default_path);
+    snprintf(icon_path, sizeof(icon_path), "%s", default_path);
   }
 
   if (success)

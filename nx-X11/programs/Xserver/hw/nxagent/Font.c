@@ -109,7 +109,7 @@ static void nxagentFontReconnect(FontPtr, XID, void *);
 static XFontStruct *nxagentLoadBestQueryFont(Display* dpy, char *fontName, FontPtr pFont);
 static XFontStruct *nxagentLoadQueryFont(register Display *dpy , char *fontName , FontPtr pFont);
 int nxagentFreeFont(XFontStruct *fs);
-static Bool nxagentGetFontServerPath(char * fontServerPath);
+static Bool nxagentGetFontServerPath(char * fontServerPath, int size);
 
 static char * nxagentMakeScalableFontName(const char *fontName, int scalableResolution);
 
@@ -334,10 +334,12 @@ void nxagentListRemoteAddName(const char *name, int status)
 
   if ((nxagentRemoteFontList.list[pos] = malloc(sizeof(nxagentFontRec))))
   {
-    nxagentRemoteFontList.list[pos]->name = malloc(strlen(name) +1);
+    nxagentRemoteFontList.list[pos]->name = strdup(name);
     if (nxagentRemoteFontList.list[pos]->name == NULL)
     {
        fprintf(stderr, "Font: remote list name memory allocation failed!.\n");
+       free(nxagentRemoteFontList.list[pos]);
+       nxagentRemoteFontList.list[pos] = NULL;
        return;
     }
   }
@@ -346,7 +348,6 @@ void nxagentListRemoteAddName(const char *name, int status)
      fprintf(stderr, "Font: remote list record memory allocation failed!.\n");
      return;
   }
-  strcpy(nxagentRemoteFontList.list[pos]->name,name);
   nxagentRemoteFontList.list[pos]->status = status;
   nxagentRemoteFontList.length++;
 
@@ -733,7 +734,7 @@ static XFontStruct *nxagentLoadBestQueryFont(Display* dpy, char *fontName, FontP
 {
   XFontStruct *fontStruct;
 
-  char *substFontBuf;
+  char substFontBuf[512];;
 
   /*  X Logical Font Description Conventions
    *  require 14 fields in the font names.
@@ -767,12 +768,9 @@ static XFontStruct *nxagentLoadBestQueryFont(Display* dpy, char *fontName, FontP
   fprintf(stderr, "nxagentLoadBestQueryFont: Searching font '%s' .\n", fontName);
   #endif
 
-  substFontBuf = (char *) malloc(sizeof(char) * 512);
-
-
   numFontFields = nxagentSplitString(fontName, fontNameFields, FIELDS + 1, "-");
 
-  memcpy(substFontBuf, "fixed\0", strlen("fixed") + 1);
+  snprintf(substFontBuf, sizeof(substFontBuf), "%s", "fixed");
 
   if (numFontFields <= FIELDS)
   {
@@ -831,8 +829,7 @@ static XFontStruct *nxagentLoadBestQueryFont(Display* dpy, char *fontName, FontP
         /* Found more accurate font  */
 
         weight = tempWeight;
-        memcpy(substFontBuf, nxagentRemoteFontList.list[i]->name, strlen(nxagentRemoteFontList.list[i]->name));
-        substFontBuf[strlen(nxagentRemoteFontList.list[i]->name)] = '\0';
+        snprintf(substFontBuf, sizeof(substFontBuf), "%s", nxagentRemoteFontList.list[i]->name);
 
         #ifdef NXAGENT_RECONNECT_FONT_DEBUG
         fprintf(stderr, "nxagentLoadBestQueryFont: Weight '%d' of more accurate font '%s' .\n", weight, substFontBuf);
@@ -855,8 +852,6 @@ static XFontStruct *nxagentLoadBestQueryFont(Display* dpy, char *fontName, FontP
   #endif
 
   fontStruct = nxagentLoadQueryFont(dpy, substFontBuf, pFont);
-
-  free (substFontBuf);
 
   for (j = 0; j < numFontFields; j++)
   {
@@ -922,6 +917,11 @@ static void nxagentCollectFailedFont(FontPtr fpt, XID id)
 
     if (nxagentFailedToReconnectFonts.font == NULL || nxagentFailedToReconnectFonts.id == NULL)
     {
+      free(nxagentFailedToReconnectFonts.font);
+      nxagentFailedToReconnectFonts.font = NULL;
+      free(nxagentFailedToReconnectFonts.id);
+      nxagentFailedToReconnectFonts.id = NULL;
+
       FatalError("Font: font not reconnected memory allocation failed!.\n");
     }
 
@@ -1283,7 +1283,7 @@ Bool nxagentReconnectFailedFonts(void *p0)
   fprintf(stderr, "nxagentReconnectFailedFonts: \n");
   #endif
 
-  if (nxagentGetFontServerPath(fontServerPath) == False)
+  if (nxagentGetFontServerPath(fontServerPath, sizeof(fontServerPath)) == False)
   {
     #ifdef WARNING
     fprintf(stderr, "nxagentReconnectFailedFonts: WARNING! "
@@ -1404,17 +1404,18 @@ Bool nxagentDisconnectAllFonts()
   return True;
 }
 
-static Bool nxagentGetFontServerPath(char * fontServerPath)
+static Bool nxagentGetFontServerPath(char * fontServerPath, int size)
 {
-  char path[256];
+  char path[256] = {0};
 
-  if (NXGetFontParameters(nxagentDisplay, 256, path) == True)
+  if (NXGetFontParameters(nxagentDisplay, sizeof(path), path) == True)
   {
-    if (*path != '\0')
-    {
-      strncpy(fontServerPath, path + 1, *path);
+    /* the length is stored in the first byte and is therefore limited to 255 */
+    unsigned int len = *path;
 
-      *(fontServerPath + *path) = '\0';
+    if (len)
+    {
+      snprintf(fontServerPath, MIN(size, len + 1), "%s", path + 1);
 
       #ifdef TEST
       fprintf(stderr, "nxagentGetFontServerPath: Got path [%s].\n",
@@ -1451,9 +1452,11 @@ void nxagentVerifyDefaultFontPath(void)
   fprintf(stderr, "nxagentVerifyDefaultFontPath: Going to search for one or more valid font paths.\n");
   #endif
 
-  fontPath = malloc(strlen(defaultFontPath) + 1);
+  /*
+   * Set the default font path as the first choice.
+   */
 
-  if (fontPath == NULL)
+  if ((fontPath = strdup(defaultFontPath)) == NULL)
   {
     #ifdef WARNING
     fprintf(stderr, "nxagentVerifyDefaultFontPath: WARNING! Unable to allocate memory for a new font path. "
@@ -1462,12 +1465,6 @@ void nxagentVerifyDefaultFontPath(void)
 
     return;
   }
-
-  /*
-   * Set the default font path as the first choice.
-   */
-
-  strcpy(fontPath, defaultFontPath);
 
   if (stat(NXAGENT_DEFAULT_FONT_DIR, &dirStat) == 0 &&
           S_ISDIR(dirStat.st_mode) != 0)
@@ -1740,9 +1737,7 @@ int nxagentSplitString(char *string, char *fields[], int nfields, char *sep)
 
     if (i < nfields)
     {
-      fields[i] = (char *) malloc(fieldlen + 1);
-      strncpy(fields[i], current, fieldlen);
-      *(fields[i] + fieldlen) = 0;
+      fields[i] = strndup(current, fieldlen);
     }
     else
     {
@@ -1766,14 +1761,9 @@ char *nxagentMakeScalableFontName(const char *fontName, int scalableResolution)
 {
   char *scalableFontName;
   const char *s;
-  int len;
   int field;
 
-  len = strlen(fontName) + 1;
-
-  scalableFontName = malloc(len);
-
-  if (scalableFontName == NULL)
+  if ((scalableFontName = malloc(strlen(fontName) + 1)) == NULL)
   {
     #ifdef PANIC
     fprintf(stderr, "nxagentMakeScalableFontName: PANIC! malloc() failed.\n");
@@ -1782,7 +1772,7 @@ char *nxagentMakeScalableFontName(const char *fontName, int scalableResolution)
     return NULL;
   }
 
-  scalableFontName[0] = 0;
+  scalableFontName[0] = '\0';
 
   if (*fontName != '-')
   {

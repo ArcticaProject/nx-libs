@@ -2198,6 +2198,7 @@ FIXME: Don't enqueue the KeyRelease event if the key was
       char *kbdargs[6];
 
       strcpy(kbddisplay,":");
+      /* FIXME: why limit to 4? */
       strncat(kbddisplay, display, 4);
 
       kbdargs[0] = "nxkbd";

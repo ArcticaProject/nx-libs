@@ -126,15 +126,15 @@ extern char dispatchExceptionAtReset;
 
 extern const char *__progname;
 
-char nxagentDisplayName[1024];
+char nxagentDisplayName[NXAGENTDISPLAYNAMELENGTH];
 Bool nxagentSynchronize = False;
 Bool nxagentRealWindowProp = False;
 
-char nxagentShadowDisplayName[1024] = {0};
+char nxagentShadowDisplayName[NXAGENTSHADOWDISPLAYNAMELENGTH] = {0};
 
-char nxagentWindowName[256];
-char nxagentDialogName[256];
-char nxagentSessionId[256] = {0};
+char nxagentWindowName[NXAGENTWINDOWNAMELENGTH];
+char nxagentDialogName[NXAGENTDIALOGNAMELENGTH];
+char nxagentSessionId[NXAGENTSESSIONIDLENGTH] = {0};
 char *nxagentOptionsFilenameOrString;
 
 Bool nxagentFullGeneration = False;
@@ -215,14 +215,10 @@ int ddxProcessArgument(int argc, char *argv[], int i)
     {
       if ((!strcmp(argv[j], "-display")) && (j + 1 < argc))
       {
-        envOptions = malloc(strlen(argv[j + 1]) + 1);
+        envOptions = strdup(argv[j + 1]);
 
-        if (envOptions != NULL)
-        {
-          envOptions = strcpy(envOptions, argv[j + 1]);
-        }
         #ifdef WARNING
-        else
+        if (envOptions == NULL)
         {
           fprintf(stderr, "ddxProcessArgument: WARNING! failed string allocation.\n");
         }
@@ -234,14 +230,10 @@ int ddxProcessArgument(int argc, char *argv[], int i)
 
     if ((envOptions == NULL) && (envDisplay != NULL))
     {
-      envOptions = malloc(strlen(envDisplay) + 1);
+      envOptions = strdup(envDisplay);
 
-      if (envOptions != NULL)
-      {
-        envOptions = strcpy(envOptions, envDisplay);
-      }
       #ifdef WARNING
-      else
+      if (envOptions == NULL)
       {
         fprintf(stderr, "ddxProcessArgument: WARNING! failed string allocation.\n");
       }
@@ -326,10 +318,7 @@ int ddxProcessArgument(int argc, char *argv[], int i)
   {
     if (++i < argc)
     {
-      strncpy(nxagentDisplayName, argv[i], 1023);
-
-      nxagentDisplayName[1023] = '\0';
-
+      snprintf(nxagentDisplayName, NXAGENTDISPLAYNAMELENGTH, "%s", argv[i]);
       return 2;
     }
 
@@ -340,10 +329,7 @@ int ddxProcessArgument(int argc, char *argv[], int i)
   {
     if (++i < argc)
     {
-      strncpy(nxagentSessionId, argv[i], 255);
-
-      *(nxagentSessionId + 255) = '\0';
-
+      snprintf(nxagentSessionId, NXAGENTSESSIONIDLENGTH, "%s", argv[i]);
       return 2;
     }
 
@@ -360,35 +346,13 @@ int ddxProcessArgument(int argc, char *argv[], int i)
   {
     if (++i < argc)
     {
-      int size;
-
       free(nxagentOptionsFilenameOrString);
       nxagentOptionsFilenameOrString = NULL;
 
-      if ((size = strlen(argv[i])) < 1024)
+      if (-1 == asprintf(&nxagentOptionsFilenameOrString, "%s", argv[i]))
       {
-        if ((nxagentOptionsFilenameOrString = malloc(size + 1)) == NULL)
-        {
-          FatalError("malloc failed");
-        }
-
-        strncpy(nxagentOptionsFilenameOrString, argv[i], size);
-
-        nxagentOptionsFilenameOrString[size] = '\0';
+        FatalError("malloc failed");
       }
-      else
-      {
-        /*
-         * It is useless to store the file name
-         * that has just been truncated.
-         */
-
-        #ifdef WARNING
-        fprintf(stderr, "ddxProcessArgument: WARNING! Option file name "
-                    "too long. It will be ignored.\n");
-        #endif
-      }
-
       return 2;
     }
 
@@ -670,10 +634,7 @@ int ddxProcessArgument(int argc, char *argv[], int i)
   {
     if (++i < argc)
     {
-      strncpy(nxagentWindowName, argv[i], 255);
-
-      *(nxagentWindowName + 255) = '\0';
-
+      snprintf(nxagentWindowName, NXAGENTWINDOWNAMELENGTH, "%s", argv[i]);
       return 2;
     }
 
@@ -727,34 +688,14 @@ int ddxProcessArgument(int argc, char *argv[], int i)
   {
     if (++i < argc)
     {
-      int size;
-
       free(nxagentKeyboard);
       nxagentKeyboard = NULL;
 
-      if ((size = strlen(argv[i])) < 256)
+      nxagentKeyboard = strdup(argv[i]);
+      if (nxagentKeyboard == NULL)
       {
-        if ((nxagentKeyboard = malloc(size + 1)) == NULL)
-        {
-          FatalError("malloc failed");
-        }
-
-        strncpy(nxagentKeyboard, argv[i], size);
-
-        nxagentKeyboard[size] = '\0';
+        FatalError("malloc failed");
       }
-      #ifdef WARNING
-      else
-      {
-        /*
-         * it is useless to remember a kbtype
-         * option that has just been truncated.
-         */
-
-        fprintf(stderr, "ddxProcessArgument: WARNING! Option [%s] too long. "
-                    "It will be ignored.\n", argv[i]);
-      }
-      #endif
 
       return 2;
     }
@@ -903,14 +844,12 @@ int ddxProcessArgument(int argc, char *argv[], int i)
   {
     if (++i < argc)
     {
-      strncpy(nxagentShadowDisplayName, argv[i], 1023);
+      snprintf(nxagentShadowDisplayName, NXAGENTSHADOWDISPLAYNAMELENGTH, "%s", argv[i]);
 
       if (strcmp(nxagentShadowDisplayName, "") == 0)
       {
         FatalError("Invalid shadow display option");
       }
-
-      *(nxagentShadowDisplayName + 1023) = '\0';
 
       return 2;
     }
@@ -1315,7 +1254,7 @@ static void nxagentParseOptions(char *name, char *value)
   }
   else if (strcmp(name, "clients") == 0)
   {
-    strcpy(nxagentClientsLogName, value);
+    snprintf(nxagentClientsLogName, NXAGENTCLIENTSLOGNAMELENGTH, "%s", value);
 
     return;
   }
@@ -1780,9 +1719,7 @@ N/A
 
     if (*nxagentWindowName == '\0')
     {
-      strncpy(nxagentWindowName, "NX", 255);
-
-      *(nxagentWindowName + 255) = '\0';
+      snprintf(nxagentWindowName, NXAGENTWINDOWNAMELENGTH, "NX");
     }
 
     /*
@@ -2161,30 +2098,23 @@ void ddxUseMsg()
 
 static int nxagentGetDialogName()
 {
-  strcpy(nxagentDialogName, "NX");
-
-  *(nxagentDialogName + 255) = '\0';
-
   if (*nxagentSessionId != '\0')
   {
     int length = strlen(nxagentSessionId);
 
-    strcpy(nxagentDialogName, "NX - ");
-
+    /* if the session id contains an MD5 hash in a well-known format cut it off */
     if (length > (MD5_LENGTH * 2 + 1) &&
            *(nxagentSessionId + (length - (MD5_LENGTH * 2 + 1))) == '-')
     {
-      strncat(nxagentDialogName, nxagentSessionId, length - (MD5_LENGTH * 2 + 1));
-    }
-    else
-    {
-      strncat(nxagentDialogName, nxagentSessionId, 250);
+      length -= (MD5_LENGTH * 2 + 1);
     }
 
-    *(nxagentSessionId + 255) = '\0';
+    snprintf(nxagentDialogName, NXAGENTDIALOGNAMELENGTH, "NX - %.*s", length, nxagentSessionId);
 
     return 1;
   }
+
+  snprintf(nxagentDialogName, NXAGENTDIALOGNAMELENGTH, "NX");
 
   return 0;
 }

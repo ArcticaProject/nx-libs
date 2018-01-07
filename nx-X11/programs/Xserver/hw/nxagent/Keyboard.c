@@ -534,7 +534,6 @@ static void nxagentCheckXkbBaseDirectory(void)
 static char *nxagentXkbGetRules()
 {
   int ret;
-  int size, sizeDflt, sizeAlt;
   char *path;
   struct stat buf;
 
@@ -543,19 +542,11 @@ static char *nxagentXkbGetRules()
               XkbBaseDirectory);
   #endif
 
-  sizeDflt = strlen(XKB_DFLT_RULES_FILE);
-  sizeAlt = strlen(XKB_ALTS_RULES_FILE);
-  size = strlen(XkbBaseDirectory) + strlen("/rules/");
-  size += (sizeDflt > sizeAlt) ? sizeDflt : sizeAlt;
-
-  if ((path = malloc((size + 1) * sizeof(char))) == NULL)
+  if (-1 == asprintf(&path, "%s/rules/%s", XkbBaseDirectory, XKB_DFLT_RULES_FILE))
   {
     FatalError("nxagentXkbGetRules: malloc failed.");
   }
 
-  strcpy(path, XkbBaseDirectory);
-  strcat(path, "/rules/");
-  strcat(path, XKB_DFLT_RULES_FILE);
   #ifdef TEST
   fprintf(stderr, "nxagentXkbGetRules: checking rules file [%s]\n", path);
   #endif
@@ -572,11 +563,16 @@ static char *nxagentXkbGetRules()
 
   #ifdef TEST
   fprintf(stderr, "nxagentXkbGetRules: WARNING! Failed to stat file [%s]: %s.\n", path, strerror(ret));
-  #endif 
+  #endif
 
-  strcpy(path, XkbBaseDirectory);
-  strcat(path, "/rules/");
-  strcat(path, XKB_ALTS_RULES_FILE);
+  free(path);
+  path = NULL;
+
+  if (-1 == asprintf(&path, "%s/rules/%s", XkbBaseDirectory, XKB_ALTS_RULES_FILE))
+  {
+    FatalError("nxagentXkbGetRules: malloc failed.");
+  }
+
   #ifdef TEST
   fprintf(stderr, "nxagentXkbGetRules: checking rules file [%s]\n", path);
   #endif
@@ -1899,16 +1895,16 @@ void nxagentKeycodeConversionSetup(void)
     char *sessionpath = nxagentGetSessionPath();
     if (sessionpath)
     {
-      int keyboard_file_path_size = strlen(sessionpath) + strlen("/keyboard");
-      char *keyboard_file_path = malloc((keyboard_file_path_size + 1) * sizeof(char));
+      char *keyboard_file_path = NULL;
       FILE *keyboard_file;
-      if (!keyboard_file_path)
+      if ((asprintf(&keyboard_file_path, "%s/keyboard", sessionpath) == -1))
       {
-        FatalError("nxagentKeycodeConversionSetup: malloc failed.");
+        free(sessionpath);
+        FatalError("malloc for keyboard file path failed.");
       }
-      strcpy(keyboard_file_path, sessionpath);
-      strcat(keyboard_file_path, "/keyboard");
-      if ((keyboard_file = fopen(keyboard_file_path, "w"))) {
+      free(sessionpath);
+      if ((keyboard_file = fopen(keyboard_file_path, "w")))
+      {
         if (drules)
           fprintf(keyboard_file, "rules=\"%s\"\n", drules[0] == '\0' ? "," : drules);
         if (dmodel)
@@ -1920,7 +1916,7 @@ void nxagentKeycodeConversionSetup(void)
         if (doptions)
           fprintf(keyboard_file, "options=\"%s\"\n", doptions[0] == '\0' ? "," : doptions);
         fclose(keyboard_file);
-        fprintf(stderr, "Info: keyboard file created\n");
+        fprintf(stderr, "Info: keyboard file created: '%s'\n", keyboard_file_path);
       }
       else
       {

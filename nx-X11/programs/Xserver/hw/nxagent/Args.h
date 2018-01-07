@@ -52,11 +52,17 @@ struct UserGeometry{
 
 extern Bool nxagentUseNXTrans;
 
-extern char nxagentSessionId[];
-extern char nxagentDisplayName[];
-extern char nxagentShadowDisplayName[];
-extern char nxagentWindowName[];
-extern char nxagentDialogName[];
+#define NXAGENTSESSIONIDLENGTH 256
+#define NXAGENTDISPLAYNAMELENGTH 1024
+#define NXAGENTSHADOWDISPLAYNAMELENGTH 1024
+#define NXAGENTWINDOWNAMELENGTH 256
+#define NXAGENTDIALOGNAMELENGTH 256
+
+extern char nxagentSessionId[NXAGENTSESSIONIDLENGTH];
+extern char nxagentDisplayName[NXAGENTDISPLAYNAMELENGTH];
+extern char nxagentShadowDisplayName[NXAGENTSHADOWDISPLAYNAMELENGTH];
+extern char nxagentWindowName[NXAGENTWINDOWNAMELENGTH];
+extern char nxagentDialogName[NXAGENTDIALOGNAMELENGTH];
 
 extern Bool nxagentSynchronize;
 extern Bool nxagentRealWindowProp;

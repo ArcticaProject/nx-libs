@@ -139,7 +139,7 @@ char stateFile[PATH_MAX];
 
 void setStatePath(char* path)
 {
-    strncpy(stateFile, path, PATH_MAX-1);
+    snprintf(stateFile, PATH_MAX, "%s", path);
 }
 
 void saveAgentState(char* state)

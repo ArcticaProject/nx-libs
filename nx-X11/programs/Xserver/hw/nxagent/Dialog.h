@@ -55,9 +55,11 @@ extern int nxagentDisableRandRModeDialogPid;
 extern int nxagentEnableDeferModePid;
 extern int nxagentDisableDeferModePid;
 
-extern char nxagentFailedReconnectionMessage[];
+#define NXAGENTFAILEDRECONNECTIONMESSAGELENGTH 256
+extern char nxagentFailedReconnectionMessage[NXAGENTFAILEDRECONNECTIONMESSAGELENGTH];
 
-extern char nxagentPulldownWindow[];
+#define NXAGENTPULLDOWNWINDOWLENGTH 16
+extern char nxagentPulldownWindow[NXAGENTPULLDOWNWINDOWLENGTH];
 
 extern void nxagentLaunchDialog(DialogType type);
 extern void nxagentResetDialog(int pid);

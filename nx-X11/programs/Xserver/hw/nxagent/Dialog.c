@@ -66,9 +66,9 @@ int nxagentDisableDeferModePid = 0;
 
 static int nxagentFailedReconnectionDialogPid = 0;
 
-char nxagentPulldownWindow[16];
+char nxagentPulldownWindow[NXAGENTPULLDOWNWINDOWLENGTH];
 
-char nxagentFailedReconnectionMessage[256];
+char nxagentFailedReconnectionMessage[NXAGENTFAILEDRECONNECTIONMESSAGELENGTH];
 
 void nxagentResetDialog(int pid)
 {
@@ -279,15 +279,12 @@ void nxagentLaunchDialog(DialogType dialogType)
 
   if (dialogType == DIALOG_FAILED_RECONNECTION)
   {
-    strncpy(dialogDisplay, nxagentDisplayName, 255);
+    snprintf(dialogDisplay, sizeof(dialogDisplay), "%s", nxagentDisplayName);
   }
   else
   {
-    strcpy(dialogDisplay, ":");
-    strncat(dialogDisplay, display, 254);
+    snprintf(dialogDisplay, sizeof(dialogDisplay), ":%s", display);
   }
-
-  *(dialogDisplay + 255) = '\0';
 
   /*
    * We don't want to receive SIGCHLD
@@ -308,7 +305,7 @@ void nxagentLaunchDialog(DialogType dialogType)
               DECODE_DIALOG_TYPE(dialogType), *pid, dialogDisplay);
   #endif
 
-  *dialogDisplay = '\0';
+  dialogDisplay[0] = '\0';
 
   /*
    * Restore the previous set of
@@ -320,8 +317,7 @@ void nxagentLaunchDialog(DialogType dialogType)
 
 void nxagentPulldownDialog(Window wid)
 {
-  snprintf(nxagentPulldownWindow, 15, "%ld", (long int) wid);
-  nxagentPulldownWindow[15] = 0;
+  snprintf(nxagentPulldownWindow, NXAGENTPULLDOWNWINDOWLENGTH, "%ld", (long int) wid);
 
   #ifdef TEST
   fprintf(stderr, "nxagentPulldownDialog: Going to launch pulldown "
@@ -330,7 +326,7 @@ void nxagentPulldownDialog(Window wid)
 
   nxagentLaunchDialog(DIALOG_PULLDOWN);
 
-  nxagentPulldownWindow[0] = 0;
+  nxagentPulldownWindow[0] = '\0';
 }
 
 void nxagentFailedReconnectionDialog(int alert, char *error)
@@ -372,9 +368,7 @@ void nxagentFailedReconnectionDialog(int alert, char *error)
     int status;
     int options = 0;
 
-    snprintf(nxagentFailedReconnectionMessage, 255, "Reconnection failed: %s", error);
-
-    *(nxagentFailedReconnectionMessage + 255) = '\0';
+    snprintf(nxagentFailedReconnectionMessage, NXAGENTFAILEDRECONNECTIONMESSAGELENGTH, "Reconnection failed: %s", error);
 
     nxagentLaunchDialog(DIALOG_FAILED_RECONNECTION);
 
