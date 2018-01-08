@@ -28,8 +28,8 @@ Equipment Corporation.
 #endif
 
 #include <stdio.h>
-#include <X11/X.h>
-#include <X11/Xproto.h>
+#include <nx-X11/X.h>
+#include <nx-X11/Xproto.h>
 #include "misc.h"
 #include "cursor.h"
 #include "cursorstr.h"
