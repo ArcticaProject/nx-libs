@@ -26,11 +26,17 @@
 #ifndef Timestamp_H
 #define Timestamp_H
 
+#if HAVE_CTIME_S
+#define __STDC_WANT_LIB_EXT1__ 1
+#include <time.h>
+#endif /* HAVE_CTIME_S */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <iostream>
+#include <string>
 
-#include <time.h>
 #include <sys/time.h>
 
 #include "Misc.h"
@@ -260,15 +266,15 @@ inline int checkDiffTimestamp(const T_timestamp &ts1, const T_timestamp &ts2,
 // Return a string representing the timestamp.
 //
 
-char *strTimestamp(const T_timestamp &ts);
-char *strMsTimestamp(const T_timestamp &ts);
+std::string strTimestamp(const T_timestamp &ts);
+std::string strMsTimestamp(const T_timestamp &ts);
 
-inline char *strTimestamp()
+inline std::string strTimestamp()
 {
   return strTimestamp(getTimestamp());
 }
 
-inline char *strMsTimestamp()
+inline std::string strMsTimestamp()
 {
   return strMsTimestamp(getTimestamp());
 }
