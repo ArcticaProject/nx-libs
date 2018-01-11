@@ -51,7 +51,7 @@
 # endif
 #ifndef RpathLoadFlags
 #if UseRpath
-#define RpathLoadFlags -Wl,--enable-new-dtags -Wl,-rpath,\$$ORIGIN/$(BUILDLIBDIR)
+#define RpathLoadFlags -Wl,--enable-new-dtags -Wl,-rpath,\$$ORIGIN/$(BUILDLIBDIR):\$$ORIGIN/../../../nxcomp/src/.libs:\$$ORIGIN/../../../nxcompshad/src/.libs
 #else
 #define RpathLoadFlags /**/
 #endif
@@ -82,7 +82,7 @@
 #     define ExtraLoadFlags RpathLoadFlags -Wl,--enable-new-dtags -Wl,-rpath-link,$(USRLIBDIRPATH)
 #    endif
 #   else
-#    define ExtraLoadFlags RpathLoadFlags -Wl,--enable-new-dtags -Wl,-rpath-link,\$$ORIGIN/$(BUILDLIBDIR)
+#    define ExtraLoadFlags RpathLoadFlags -Wl,--enable-new-dtags -Wl,-rpath-link,\$$ORIGIN/$(BUILDLIBDIR):\$$ORIGIN/../../../nxcomp/src/.libs:\$$ORIGIN/../../../nxcompshad/src/.libs
 #   endif
 #  else
 #   define ExtraLoadFlags RpathLoadFlags
@@ -95,7 +95,7 @@
 #     define ExtraInstallLoadFlags RpathInstallLoadFlags -Wl,--enable-new-dtags -Wl,-rpath-link,$(USRLIBDIRPATH)
 #    endif
 #   else
-#    define ExtraInstallLoadFlags RpathInstallLoadFlags -Wl,--enable-new-dtags -Wl,-rpath-link,\$$ORIGIN/$(BUILDLIBDIR)
+#    define ExtraInstallLoadFlags RpathInstallLoadFlags -Wl,--enable-new-dtags -Wl,-rpath-link,\$$ORIGIN/$(BUILDLIBDIR):\$$ORIGIN/../../../nxcomp/src/.libs:\$$ORIGIN/../../../nxcompshad/src/.libs
 #   endif
 #  else
 #   define ExtraInstallLoadFlags RpathInstallLoadFlags
