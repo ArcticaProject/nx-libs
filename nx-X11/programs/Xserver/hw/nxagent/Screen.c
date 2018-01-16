@@ -3797,7 +3797,7 @@ int nxagentChangeScreenConfig(int screen, int width, int height, int mmWidth, in
 
   if (r != 0)
   {
-    if (nxagentOption(Xinerama))
+    if (nxagentOption(Xinerama) && (noRRXineramaExtension == FALSE))
     {
       nxagentAdjustRandRXinerama(pScreen);
     }
