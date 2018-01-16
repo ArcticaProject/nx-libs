@@ -1,16 +1,575 @@
-2017-12-15 12:40:31 +0100 Mike Gabriel (c3e284b96)
+2018-01-16 15:19:42 +0100 Mike Gabriel (cd50ef26e)
 
-	* release 3.5.99.12 (HEAD -> 3.6.x)
+	* release 3.5.99.13 (HEAD -> 3.6.x)
+
+2018-01-16 15:08:07 +0100 Mike Gabriel (9772277c6)
+
+	* Merge branch
+          'sunweaver-pr/keep-disabled-rrxinerama-disabled-on-reconnects'
+          into 3.6.x (origin/HEAD, origin/3.6.x)
+
+2018-01-16 14:52:43 +0100 Mike Gabriel (05dd84256)
+
+	* hw/nxagent/Screen.c: Additionally check for noRRXineramaExtension
+          set to FALSE before using the nxagentAdjustRandRXinerama()
+          function and providing a Xinerama-like user experience.
+          (sunweaver-pr/keep-disabled-rrxinerama-disabled-on-reconnects)
+
+2018-01-11 10:01:18 +0100 Mihai Moldovan (7c43682e8)
+
+	* nx-X11/config/cf/{gnu,lnx}Lib.rules: add RPATH entries for
+          temporary nxcomp and nxcompshad libraries.
+
+2018-01-09 01:08:17 +0100 Mihai Moldovan (1086c4aa5)
+
+	* Merge branch 'Ionic-bugfix/ctime' into 3.6.x
+
+2017-12-30 09:30:03 +0100 Mihai Moldovan (2eb2f2e6c)
+
+	* nxcomp/src/Timestamp.{cpp,h}: use ::ctime_s or ::ctime_r instead of
+          plain ctime, on-stack buffers and return std::string
+          objects.
+
+2017-12-30 09:25:26 +0100 Mihai Moldovan (df8908b9d)
+
+	* nxcomp/configure.ac: add check for ::ctime_s.
+
+2018-01-08 23:43:28 +0100 Mihai Moldovan (70e1e6a01)
+
+	* Merge branch 'uli42-pr/fix_xext_includes' into 3.6.x
+
+2018-01-08 23:08:51 +0100 Ulrich Sibiller (f66820b57)
+
+	* panoramiX: fix includes
+
+2018-01-08 22:58:26 +0100 Mihai Moldovan (47ef330c5)
+
+	* Merge branch 'uli42-pr/reenable_xc-misc' into 3.6.x
+
+2018-01-08 22:25:35 +0100 Ulrich Sibiller (43456713b)
+
+	* Re-enable XC-MISC extension
+
+2018-01-07 01:29:13 +0100 Mihai Moldovan (5f9f744cd)
+
+	* Merge branch 'uli42-pr/fix_strings' into 3.6.x
+
+2018-01-03 22:28:43 +0100 Ulrich Sibiller (23c36c2d2)
+
+	* Display.c: drop helper variable in loop
+
+2018-01-03 02:34:10 +0100 Ulrich Sibiller (b89b80949)
+
+	* Error.c: replace malloc+strcpy by strdup
+
+2018-01-03 02:29:55 +0100 Ulrich Sibiller (27a31d0ce)
+
+	* Events.c: add FIXME
+
+2018-01-03 02:22:11 +0100 Ulrich Sibiller (11b2b067e)
+
+	* Keyboard.c: rework string allocation/building
+
+2018-01-03 01:55:32 +0100 Ulrich Sibiller (a0e985fb6)
+
+	* Keystroke.c: replace calloc + 2 * strcpy by asprintf
+
+2018-01-03 01:31:52 +0100 Ulrich Sibiller (185470072)
+
+	* Font.c: replace malloc + strcpy by strdup + fix memleak
+
+2018-01-03 01:17:59 +0100 Ulrich Sibiller (054ae8447)
+
+	* Font.c: free possibly allocated mem
+
+2018-01-03 01:11:34 +0100 Ulrich Sibiller (56fa23485)
+
+	* Font.c: replace memcpy by sprintf preventing possible buffer
+          overflows
+
+2018-01-03 00:59:59 +0100 Ulrich Sibiller (cac1af52d)
+
+	* Args.c: simplify nxagentGetDialogName()
+
+2018-01-03 00:59:20 +0100 Ulrich Sibiller (74c21e9e2)
+
+	* Args.c, Error.[ch]: introduce own length macro for
+          nxagentClientsLogName
+
+2018-01-03 00:32:14 +0100 Ulrich Sibiller (dc61b6cca)
+
+	* Args.c: use strdup instead of malloc
+
+2018-01-03 00:18:39 +0100 Ulrich Sibiller (96e430069)
+
+	* Error.c: update nxagentPrintError
+
+2018-01-03 00:06:39 +0100 Ulrich Sibiller (525e15168)
+
+	* Error.c: replace strcpy/strcat by snprintf
+
+2018-01-03 00:05:49 +0100 Ulrich Sibiller (7d87e5a0c)
+
+	* Error.c: use standard file descriptor macros
+
+2018-01-03 00:05:09 +0100 Ulrich Sibiller (654422a04)
+
+	* Error.c: remove trailing whitespace
+
+2018-01-02 23:53:14 +0100 Ulrich Sibiller (6c080c839)
+
+	* Error.c: remove empty ifdef
+
+2018-01-02 21:02:41 +0100 Ulrich Sibiller (a8a693817)
+
+	* Font.c: pass down size
+
+2018-01-02 19:24:49 +0100 Ulrich Sibiller (19a3918a7)
+
+	* Display.c: pass down buffer size to nxagentLookForIconFile
+
+2018-01-02 19:23:20 +0100 Ulrich Sibiller (ea1e0bea3)
+
+	* Replace hardcoded string lengths by macros
+
+2017-12-08 00:30:32 +0100 Ulrich Sibiller (9a6b90c31)
+
+	* Font.c: make nxagentGetFontServerPath more readable
+
+2017-12-08 00:19:50 +0100 Ulrich Sibiller (677da7fd3)
+
+	* Screen.c: string handling improvements
+
+2017-12-08 00:17:24 +0100 Ulrich Sibiller (9d5c83e2f)
+
+	* Font.c: shorten string handling
+
+2017-11-24 00:54:14 +0100 Ulrich Sibiller (2836c72f7)
+
+	* Keyboard.c: replace malloc + strcpy by asprintf
+
+2017-11-24 00:49:17 +0100 Ulrich Sibiller (08912ef30)
+
+	* Keyboard.c: improve user messages for keyboard file handling
+
+2017-11-24 00:48:42 +0100 Ulrich Sibiller (0e2c4df8e)
+
+	* Keyboard.c: fix memory leak
+
+2017-11-23 23:18:44 +0100 Ulrich Sibiller (3de6bc749)
+
+	* Dialog.c: fix possible buffer overflows
+
+2017-11-24 00:25:25 +0100 Ulrich Sibiller (4a345786c)
+
+	* Dialog.c,Display.c,NXdixfonts.c: replace strncpy() by snprintf
+          where appropriate
+
+2017-11-23 21:25:26 +0100 Ulrich Sibiller (5987a7b1a)
+
+	* Dialog.c,Display.c,Font.c,NXdixfonts.c: don't use hardcoded string
+          buffer lengths
+
+2018-01-05 23:21:52 +0100 Mihai Moldovan (3c8189971)
+
+	* Merge branch 'Ionic-bugfix/rpath' into 3.6.x
+
+2018-01-03 03:22:31 +0100 Mihai Moldovan (1c1431c0f)
+
+	* nxproxy/src/Makefile.am: build library using RUNPATH instead of
+          RPATH.
+
+2018-01-03 03:18:12 +0100 Mihai Moldovan (d1897719a)
+
+	* nxproxy/configure.ac: enable libtool support.
+
+2018-01-03 03:17:10 +0100 Mihai Moldovan (4d481bf99)
+
+	* nxproxy/configure.ac: drop --enable-cxx11.
+
+2017-12-30 00:40:06 +0100 Mihai Moldovan (b91b13b37)
+
+	* Makefile: only try to copy/dereference libNX* files when installing
+          data.
+
+2017-12-30 00:17:57 +0100 Mihai Moldovan (ecaa13ce6)
+
+	* nx-X11: reintroduce creation of libX11 compat symlinks.
+
+2017-12-29 22:35:58 +0100 Mihai Moldovan (3d17c665b)
+
+	* Makefile: install relinked program binary instead of the
+          "temporary" one.
+
+2017-12-29 21:44:56 +0100 Mihai Moldovan (ffc09a73d)
+
+	* nx-X11: build programs with a temporary RPATH/RUNPATH value and a
+          relinked version with the system location.
+
+2017-12-28 23:16:32 +0100 Mihai Moldovan (44f8c424e)
+
+	* nxcompshad/src/Makefile.am: enable new ELF dtags to force RUNPATH
+          creation for libXcompshad.
+
+2017-12-28 23:12:50 +0100 Mihai Moldovan (4b153f5b0)
+
+	* nx-X11/config/cf/{gnu,lnx}Lib.rules: enable new ELF dtags to force
+          RUNPATH creation for nxagent.
+
+2017-12-26 04:10:27 +0100 Mihai Moldovan (b13bf675a)
+
+	* nxcompshad/src/Makefile.am: implement libX11 RPATH/RUNPATH
+          override.
+
+2017-12-26 04:06:40 +0100 Mihai Moldovan (26ab7b8a7)
+
+	* nxagent: implement RPATH/RUNPATH override for libX11.
+
+2017-12-30 03:31:20 +0100 Mihai Moldovan (e13e31f75)
+
+	* Merge branch 'uli42-pr/fix_abstract' into 3.6.x
+
+2017-12-29 14:25:53 +0100 Ulrich Sibiller (367bec595)
+
+	* EncodeBuffer.cpp: add another VALGRIND guard
+
+2017-12-28 11:19:44 +0100 Ulrich Sibiller (6e98e35cf)
+
+	* nxcomp: drop strncpy in favour of snprintf
+
+2017-12-27 21:13:39 +0100 Ulrich Sibiller (9e8bd2e1b)
+
+	* Loop.cpp: fix memleak happening with unknown tcp host
+
+2017-12-27 19:16:15 +0100 Ulrich Sibiller (ce293647d)
+
+	* ChannelEndPoint.cpp: fix possible memleak in getUnixPath()
+
+2017-12-27 19:15:23 +0100 Ulrich Sibiller (17d045826)
+
+	* ChannelEndPoint.cpp: remove unneccessary code
+
+2017-12-27 17:06:43 +0100 Ulrich Sibiller (eae64c4a4)
+
+	* ChannelEndPoint.cpp: fix another memleak
+
+2017-12-27 15:23:33 +0100 Ulrich Sibiller (96879dc69)
+
+	* EncodeBuffer.cpp: add VALGRIND guard
+
+2017-12-27 14:53:58 +0100 Ulrich Sibiller (6198e0376)
+
+	* nxcomp: implement correct length handling for unix socket structs
+
+2017-12-27 14:43:50 +0100 Ulrich Sibiller (2367fc714)
+
+	* Loop.cpp: drop ugly ifdef indentation
+
+2017-12-27 14:43:22 +0100 Ulrich Sibiller (6d8fe661e)
+
+	* Loop.cpp: create xServerAddrUNIX only if required
+
+2017-12-27 13:16:35 +0100 Ulrich Sibiller (14a558918)
+
+	* Loop.cpp: improve/fix usage of s(n)printf
+
+2017-12-27 13:09:25 +0100 Ulrich Sibiller (3066195d7)
+
+	* Loop.cpp: some reformatting/simplification/FIXMEs
+
+2017-12-27 12:54:30 +0100 Ulrich Sibiller (c31c54c1b)
+
+	* Loop.cpp: delete passed object prior to overwriting it
+
+2017-12-27 12:18:28 +0100 Ulrich Sibiller (c48748ba0)
+
+	* ChannelEndPoint.cpp: re-scope/improve getSpec
+
+2017-12-27 12:15:47 +0100 Ulrich Sibiller (f1905c864)
+
+	* Loop.cpp: delete structs when no longer required
+
+2017-12-27 12:14:38 +0100 Ulrich Sibiller (b593edeb2)
+
+	* Loop.cpp: always close testSocketFD
+
+2017-12-27 12:13:43 +0100 Ulrich Sibiller (4107159e2)
+
+	* Loop.cpp: free display before leaving SetupDisplaySocket()
+
+2017-12-27 12:12:20 +0100 Ulrich Sibiller (604e09686)
+
+	* Loop.cpp: Fix memset (size was 0)
+
+2017-12-28 19:32:22 +0100 Mihai Moldovan (2d44051aa)
+
+	* Merge branch 'uli42-pr/silence_nxcompshad_warnings' into 3.6.x
+
+2017-12-27 23:54:34 +0100 Ulrich Sibiller (2cade632b)
+
+	* nxcompshad: silence GCC warnings
+
+2017-12-28 00:18:58 +0100 Mihai Moldovan (061c35772)
+
+	* Merge branch 'uli42-pr/reduce_uninitialised' into 3.6.x
+
+2017-12-10 23:57:35 +0100 Ulrich Sibiller (6acbfab33)
+
+	* reduce usage of uninitialised bytes
+
+2017-12-27 22:09:29 +0100 Mihai Moldovan (bc5f9a236)
+
+	* nxcomp/src/Log.h: take a reference-type in generic has_newline()
+          function.
+
+2017-12-27 20:12:26 +0100 Mihai Moldovan (8036f6914)
+
+	* nxcomp/src/Log.cpp: don't confuse users with useless warning
+          messages in case that a log line append operation was
+          requested, but the message level has lower precedence than
+          the current log filter.
+
+2017-12-27 19:49:25 +0100 Mihai Moldovan (56dbc2156)
+
+	* nxcomp/src/Log.h: make sure we don't pass NULL pointers to
+          strstr().
+
+2017-12-25 17:39:40 +0100 Mihai Moldovan (57845ced5)
+
+	* nxcomp/src/Loop.cpp: whitespace in log messages only.
+
+2017-12-25 02:19:17 +0100 Mihai Moldovan (970704ca4)
+
+	* nxcomp/src/Loop.cpp: use new log continuation mechanism.
+
+2017-12-25 02:18:46 +0100 Mihai Moldovan (fe447bb6d)
+
+	* nxcomp/src/Loop.cpp: whitespace only.
+
+2017-12-24 22:16:38 +0100 Mihai Moldovan (dccf5901e)
+
+	* nxcomp/src/Log.{cpp,h}: provide infrastructure for appending to
+          already existing log lines.
+
+2017-12-24 20:17:18 +0100 Mihai Moldovan (b30cfaa24)
+
+	* nxcomp/src/Log.h: NXLogStamp constructor should actually take a
+          size_t-typed line parameter.
+
+2017-12-24 20:07:44 +0100 Mihai Moldovan (5ff87ca9e)
+
+	* nxcomp/src/Log.h: use initializer lists instead of initializing
+          member variables in-block.
+
+2017-12-24 18:37:03 +0100 Mihai Moldovan (fcb41e324)
+
+	* nx-X11/programs/Xserver/hw/nxagent/Screen.c: re-enable normal
+          error/warning output.
+
+2017-12-24 17:59:35 +0100 Mihai Moldovan (9dba2435c)
+
+	* nxcomp/src/ChannelEndPoint.cpp: don't use C-style casting in C++
+          code...
+
+2017-12-24 17:59:17 +0100 Mihai Moldovan (ae73fedf8)
+
+	* nxcomp/src/Loop.cpp: fix small memory leak.
+
+2017-12-24 16:30:19 +0100 Mihai Moldovan (1e448d2f5)
+
+	* testscripts/run-nxproxy2nx*: use more quotes, common variables and
+          braces.
+
+2017-12-24 15:51:11 +0100 Mihai Moldovan (a0003405b)
+
+	* testscripts/run-nxproxy2nx*: drop echo -ne "...\n".
+
+2017-12-24 15:45:01 +0100 Mihai Moldovan (6c7869ab9)
+
+	* testscripts/*: fix "randlomly" typos.
+
+2017-12-24 04:57:12 +0100 Mihai Moldovan (34bef6330)
+
+	* nx-X11/programs/Xserver/hw/nxagent/Screen.c: update screen size
+          after modifying CRTC modes.
+
+2017-12-19 16:06:06 +0100 Mihai Moldovan (75767979e)
+
+	* nx-libs.spec: make sure pass additional configure flags through,
+          not discard them.
+
+2017-12-19 11:39:33 +0100 Mihai Moldovan (ef28eb472)
+
+	*
+          nx-X11/extras/Mesa.patches_6.4.2/4002_no-special-glx-memfunctions.patch:
+          include stdlib.h and string.h for memset, malloc and free
+          prototypes.
+
+2017-12-19 11:34:53 +0100 Mihai Moldovan (218a340d8)
+
+	* mesa-quilt: drop debugging option erroneously committed.
+
+2017-12-19 11:32:54 +0100 Mihai Moldovan (2c4afb84e)
+
+	* mesa-quilt: ignore user configuration file when applying MESA
+          patches.
+
+2017-12-19 08:49:20 +0100 Mihai Moldovan (10871bba0)
+
+	* nx-libs.spec: show compile calls during RPM-based builds.
+
+2017-12-19 08:12:24 +0100 Mihai Moldovan (6616983f2)
+
+	* nx-libs.spec: re-add %{optflags} to CDEBUGFLAGS.
+
+2017-12-18 12:23:45 +0100 Mihai Moldovan (08ad4d04d)
+
+	* nxcomp/src/Loop.cpp: log message fixups only.
+
+2017-12-16 14:50:12 +0100 Mihai Moldovan (e7b744525)
+
+	* Drop SHMNAME workaround again, it *is* defined in shmstr.h, which
+          is actually header I was searching for.
+
+2017-12-16 14:45:46 +0100 Mihai Moldovan (1e2fc1548)
+
+	* nx-X11/programs/Xserver/Xext/shape.c: avoid pulling in Xlib in
+          legacy mode via the _SHAPE_SERVER_ macro.
+
+2017-12-16 13:06:36 +0100 Mihai Moldovan (3abdb9960)
+
+	* nx-X11/programs/Xserver/Xext/shape.c: pull in shapestr.h for legacy
+          Xext proto versions, since shape.h would pull in Xlib.
+
+2017-12-16 09:40:44 +0100 Mihai Moldovan (caa048a18)
+
+	* Handle SHAPE proto splitup gracefully for legacy Xext proto
+          versions.
+
+2017-12-16 08:38:29 +0100 Mihai Moldovan (404e6634a)
+
+	* zlib compatibility: whenever we want -I flags only, assume that the
+          headers are directly available.
+
+2017-12-16 07:57:47 +0100 Mihai Moldovan (e37532ca8)
+
+	* nx-X11/programs/Xserver/include/misc.h: add compat define for
+          SHMNAME.
+
+2017-12-16 07:47:17 +0100 Mihai Moldovan (779a116ff)
+
+	* Support building with legacy zlib versions that do not ship a
+          pkg-config file.
+
+2017-12-16 07:18:11 +0100 Mihai Moldovan (e92c2a878)
+
+	* Support building with legacy (pre-7.1.0) Xext proto versions.
+
+2017-12-16 06:41:15 +0100 Mihai Moldovan (0d6207bd3)
+
+	* Revert "nx-libs.spec: add xorg-x11-libXext-devel build dependency
+          for older *SUSE versions."
+
+2017-12-16 06:36:52 +0100 Mihai Moldovan (cc47066b3)
+
+	* nx-libs.spec: add xorg-x11-libXext-devel build dependency for older
+          *SUSE versions.
+
+2017-12-16 05:53:26 +0100 Mihai Moldovan (ddd6f72ff)
+
+	* nx{comp{,shad},proxy}: use dist-bzip2 instead of dist-xz.
+
+2017-12-16 05:35:51 +0100 Mihai Moldovan (4c4f2b185)
+
+	* debian/control: add dependencies needed for debian/compat.sh.
+
+2017-12-16 05:11:42 +0100 Mihai Moldovan (c173e6b99)
+
+	* Makefile: correctly quote variables when passing them down to other
+          programs.
+
+2017-12-16 04:17:24 +0100 Mihai Moldovan (3206eacf6)
+
+	* nx-libs.spec: pixman is called libpixman-1-0 on older *SUSE
+          versions.
+
+2017-12-16 04:16:45 +0100 Mihai Moldovan (3411a8bc7)
+
+	* nx-libs.spec: imake is part of xorg-x11-util-devel on older *SUSE
+          versions and the splitted imake package on later versions.
+
+2017-12-16 04:16:06 +0100 Mihai Moldovan (c7c4987b8)
+
+	* nx-libs.spec: older *SUSE versions do not split up (all) libraries
+          in a useful manner.
+
+2017-12-16 03:55:58 +0100 Mihai Moldovan (fe011b55d)
+
+	* Support building with legacy (pre-1.4.2) libXfont(1) versions.
+
+2017-12-16 02:22:18 +0100 Mihai Moldovan (fb2e9a8b5)
+
+	* debian/rules: execute new debian/compat.sh file before the actual
+          build.
+
+2017-12-16 02:21:36 +0100 Mihai Moldovan (baf61fbb2)
+
+	* debian/: add compat.sh file containing compatibility logic for
+          older Debian and Ubuntu versions.
+
+2017-12-16 00:49:00 +0100 Mihai Moldovan (0bbef4f40)
+
+	* nx-libs.spec: also own %{_datadir}/nx/X11, since %dir explicitly
+          does not recurse down.
+
+2017-12-15 17:43:48 +0100 Mihai Moldovan (1d431b53c)
+
+	* nxcompshad/Makefile.am: also correctly call aclocal here.
+
+2017-12-15 17:18:41 +0100 Mihai Moldovan (0e0eb5a43)
+
+	* {nx-X11/lib,nxproxy}/Makefile.am: also use correct aclocal flags in
+          the other locations.
+
+2017-12-15 17:10:04 +0100 Mihai Moldovan (df6afb60d)
+
+	* nxcomp/test/logging_test.cpp: return a value in non-void function.
+
+2017-12-15 17:00:11 +0100 Mihai Moldovan (a10b9c649)
+
+	* nx-X11/config/cf/linux.cf: recursive macros aren't a thing.
+
+2017-12-15 15:52:17 +0100 Mihai Moldovan (3d59e2c30)
+
+	* nxcomp/Makefile.am: call aclocal with the correct include dir
+          argument.
+
+2017-12-15 15:20:16 +0100 Mihai Moldovan (a22213e47)
+
+	* nx-libs.spec: only remove files in the BuildRoot.
+
+2017-12-15 14:12:25 +0100 Mihai Moldovan (dfa24dd8f)
+
+	* nx-X11/config/cf/linux.cf: don't override default CC options for
+          {ARM,PPC}{32,64}.
+
+2017-12-15 12:55:17 +0100 Mihai Moldovan (1dad092ca)
+
+	* Merge branch '3.6.x'
+
+2017-12-15 12:40:31 +0100 Mike Gabriel (2b9025f79)
+
+	* release 3.5.99.12 (tag: 3.5.99.12, origin/release-builds/3.6.x,
+          release-builds/3.6.x)
 
 2017-12-15 12:05:16 +0100 Mike Gabriel (4fb495432)
 
 	* Xserver/hw/nxagent/Image.c: Fix regression FTBFS after d4465b71 got
-          merged in. (origin/HEAD, origin/3.6.x)
+          merged in.
 
 2017-12-15 12:02:36 +0100 Mike Gabriel (cfbb03820)
 
 	* debian/changelog: post-release version bump to 3.5.99.11
-          (origin/release-builds/3.6.x, release-builds/3.6.x)
 
 2017-12-15 11:20:52 +0100 Mike Gabriel (b213c8eba)
 
@@ -202,6 +761,10 @@
 
 	* nx-X11/programs/Xserver/os/xprintf.c: completely drop NX-related
           changes.
+
+2017-12-13 03:31:06 +0100 Mihai Moldovan (6d70b9e3c)
+
+	* debian/x2goagent.options: reenable XFIXES extension.
 
 2017-12-11 13:38:59 +0100 Mihai Moldovan (3731a996d)
 
@@ -515,6 +1078,31 @@
 	* nxagent manpage: some minor formatting improvements and typo fixes
           (gh-uli42/pr/fix_manpage, uli42-pr/fix_manpage)
 
+2017-11-10 23:14:13 +0100 Mihai Moldovan (71511a765)
+
+	* nx-libs.spec: fix SHLIBSGLOBALSFLAGS => SHLIBGLOBALSFLAGS typo
+          spotted by Orion Poplawski.
+
+2017-11-08 11:20:52 +0100 X2Go Release Manager (81d935604)
+
+	* Continue development
+
+2017-11-08 08:56:29 +0100 X2Go Release Manager (415446307)
+
+	* Mid-release fixup: split up
+          debian/patches/1500_all_propagate-optflags-to-subcompone.full+lite.patch.
+
+2017-11-08 08:47:03 +0100 X2Go Release Manager (09bb93e00)
+
+	* Mid-release fixup: rename
+          debian/patches/1400_nx-X11_Render.c-Improve-situation-fo.full+lite.patch
+          to
+          debian/patches/1400_nx-X11_Render.c-Improve-situation-fo.full.patch.
+
+2017-11-08 08:09:01 +0100 X2Go Release Manager (7dacd7993)
+
+	* release 3.5.0.33
+
 2017-11-04 09:26:18 +0100 Mike Gabriel (e788a70ce)
 
 	* Merge branch 'Ionic-bugfix/hardcode-some-socket-paths' into 3.6.x
@@ -524,6 +1112,15 @@
 	* nxcomp/src/Loop.cpp: hardcode X11 and (legacy/xfs) font UNIX paths.
           (gh-Ionic/bugfix/hardcode-some-socket-paths,
           Ionic-bugfix/hardcode-some-socket-paths)
+
+2017-11-04 08:00:32 +0100 Mihai Moldovan (2c75b00f3)
+
+	* nxcomp: Hardcode X11 and (legacy/xfs) font UNIX paths.
+
+2017-11-04 07:45:09 +0100 Mihai Moldovan (e095b8f6b)
+
+	* nxcomp: Handle launchd sockets in DISPLAY variable correctly when
+          fetching X cookie.
 
 2017-11-03 16:23:41 +0100 Mike Gabriel (e3f498e62)
 
@@ -535,6 +1132,17 @@
           correctly when fetching X cookie.
           (gh-Ionic/bugfix/fix-X-cookie-on-osx,
           Ionic-bugfix/fix-X-cookie-on-osx)
+
+2017-11-02 07:18:27 +0100 Mihai Moldovan (288cc6fec)
+
+	* nx-libs.spec: let x2goagent conflict with pre-4.0.1.21 x2goserver
+          versions.
+
+2017-11-02 07:16:36 +0100 Mihai Moldovan (b5230d371)
+
+	* debian/control: change Breaks statement to pre-4.0.1.21 x2goserver
+          and add a Replaces: x2goserver << 4.0.1.21 section to
+          x2goagent package.
 
 2017-10-27 14:14:24 +0200 Mihai Moldovan (1c6c9c04b)
 
@@ -650,14 +1258,40 @@
 	* nx-libs.spec: handle potentially undefined variables more
           gracefully.
 
+2017-10-16 10:26:16 +0200 Mihai Moldovan (d017d211d)
+
+	* nx-libs.spec: pass CDEBUGSFLAGS and friends directly to the make
+          command in %build.
+
 2017-10-16 10:12:36 +0200 Mihai Moldovan (71bda0ed5)
 
 	* nx-libs.spec: drop ugly optsflag sed hack, hopefully obsoleted by
           passing CDEBUGFLAGS through.
 
+2017-10-16 10:08:10 +0200 Mihai Moldovan (07d308359)
+
+	* nx-libs.spec: drop ugly sed hack to push optflags to build system.
+
+2017-10-16 10:06:52 +0200 Mihai Moldovan (f54e56d81)
+
+	* debian/changelog: fixup changelog.
+
+2017-10-16 10:04:54 +0200 Mihai Moldovan (13aed2463)
+
+	* OPTFLAGS: Properly propagate build option flags to
+          nxcomp{,ext,shad} and the nx-X11 build scripts.
+
+2017-10-16 07:24:38 +0200 Mihai Moldovan (9d750c686)
+
+	* nx-libs.spec: add -mno-vxs to general C(XX)FLAGS on ppc64le.
+
 2017-10-16 07:24:38 +0200 Mihai Moldovan (bd2a66fec)
 
 	* nx-libs.spec: add -mno-vxs to general C(XX)FLAGS on ppc64le.
+
+2017-10-16 07:18:32 +0200 Mihai Moldovan (df3944d46)
+
+	* debian/patches: fixup series file to include previous patch.
 
 2017-10-10 15:17:40 +0200 Mike Gabriel (13041f5c0)
 
@@ -667,6 +1301,12 @@
 
 	* Fix bug #525: PANIC! No port specified for multimedia connections
           (theqvd-media_argument_bugfix)
+
+2017-10-10 10:53:31 +0200 Simon Matter (e73464e4f)
+
+	* nxcomp: Reduce control->TokenSize slightly again in order to fix
+          fragmentation of packages when on VPN (or otherwise
+          encapsulated) connections.
 
 2017-10-10 10:27:18 +0200 Mike Gabriel (17ae45e0f)
 
@@ -924,6 +1564,19 @@
           to testing for presence of libjpeg shared lib and header
           files. (gh-sunweaver/pr/find-libjpeg-without-pkgconfig,
           pr/find-libjpeg-without-pkgconfig)
+
+2017-08-03 10:39:50 +0200 Mihai Moldovan (1077270f8)
+
+	* nx-X11: Render.c: Improve situation for multiple trapezoid
+          requests.
+
+2017-08-03 09:58:34 +0200 Oleksandr Shneyder (ab2885575)
+
+	* nxcomp: Set TokenSize to 1536 for link type ADSL and WAN.
+
+2017-08-03 09:41:21 +0200 Mihai Moldovan (6ae091cc2)
+
+	* debian/patches: refresh all patches.
 
 2017-08-02 18:19:19 -0400 Mike Gabriel (430ae6eb6)
 
@@ -1539,6 +2192,15 @@
 
 	* Clearing comments from $XFree86$ (et al.) header lines.
 
+2017-04-19 01:20:30 +0200 Mihai Moldovan (a4fb30f8d)
+
+	* debian/changelog: add missing bug closure.
+
+2017-04-18 17:21:53 +0000 Mihai Moldovan (0c9852a76)
+
+	* {debian/control,nx-libs.spec}: add proper dependencies upon xkbcomp
+          for RPM and DEB packages.
+
 2017-04-18 22:45:11 +0200 Mike Gabriel (85b58daa8)
 
 	* Merge branch 'Ionic-add-xkbcomp-dep' into 3.6.x
@@ -1557,6 +2219,11 @@
 2017-04-18 19:05:20 +0000 Mihai Moldovan (7c0a35916)
 
 	* nx-libs.spec: whitespace only.
+
+2017-04-13 16:00:16 +0200 Mike Gabriel (1537eb05d)
+
+	* debian/Makefile.nx-libs: make sure that 'make all' only calls 'make
+          build' and _not_ the global '%:' ruleset afterwards.
 
 2017-04-14 15:14:00 +0200 Mike Gabriel (cc17d89e2)
 
@@ -2309,10 +2976,23 @@
 
 	* Args.c: Fix missing parentheses
 
+2017-03-09 10:32:45 +0100 Mihai Moldovan (fb55fc3ef)
+
+	* nx-X11: use the "old", non-NX header location.
+
 2017-03-09 09:22:03 +0100 Mihai Moldovan (dc8477f76)
 
 	* nxcomp/ChannelEndPoint.cpp: we're not really testing for a
           character, but a pointer.
+
+2017-03-09 08:29:23 +0100 Mihai Moldovan (4537ad4c2)
+
+	* Refresh:   - 0016_nx-X11_install-location.debian.patch   -
+          9900-dxpc-license-history.full+lite.patch
+
+2017-03-09 08:24:28 +0100 Ulrich Sibiller (c2b050e30)
+
+	* nx-X11: Backport CVE-2017-2624 (timingsafe_memcmp)
 
 2017-03-07 23:53:21 +0100 Mihai Moldovan (d8a4f3be7)
 
@@ -5239,6 +5919,15 @@
 
 	* Fix wrong include
 
+2016-07-10 09:55:55 +0200 Mihai Moldovan (debe460b2)
+
+	* debian/control: add Breaks statement on pre-4.1.0.0 x2goserver to
+          x2goagent package.
+
+2016-07-10 09:32:29 +0200 Mihai Moldovan (9744c1002)
+
+	* debian/changelog: whitespace only.
+
 2016-07-06 10:38:25 +0200 Mike Gabriel (470611e02)
 
 	* release 3.5.99.0 (tag: 3.5.99.0, gh-Ionic/3.6.x)
@@ -5907,6 +6596,45 @@
 	* Merge branch 'sunweaver-pr/drop-embedded-imake-and-makedepend' into
           3.6.x
 
+2016-06-30 11:30:00 +0200 Mihai Moldovan (81f2c9c7d)
+
+	* nx-libs.spec: let x2goagent package satisfy x2goagent-virtual.
+
+2016-06-30 11:09:04 +0200 Mihai Moldovan (b6bcc2410)
+
+	* nx-libs.spec: add new x2goagent.options file to installed file list
+          of x2goagent package.
+
+2016-06-30 11:08:14 +0200 Mihai Moldovan (b8d8fdaad)
+
+	* nx-libs.spec: copy new debian/x2goagent.options file into build
+          environment, analogous to what debian/roll-tarballs.sh
+          does.
+
+2016-06-30 10:28:52 +0200 Mihai Moldovan (f3c5f881b)
+
+	* debian/x2goagent.install: add new x2goagent.options file.
+
+2016-06-30 10:27:31 +0200 Mihai Moldovan (112f0f816)
+
+	* debian/rules: symlink and remove new debian/x2goagent.options file
+          into/from build environment.
+
+2016-06-30 10:23:47 +0200 Mihai Moldovan (9b0868985)
+
+	* debian/Makefile.nx-libs: install/destroot new x2goagent.options
+          file.
+
+2016-06-30 10:18:51 +0200 Mihai Moldovan (7c531a5be)
+
+	* debian/roll-tarballs.sh: copy new debian/x2goagent.options file
+          into real tarball environment.
+
+2016-06-30 10:00:08 +0200 Mihai Moldovan (ae590fe4f)
+
+	* debian/: add x2goagent.options file for compatibility with
+          x2goserver nightly.
+
 2016-06-22 13:22:06 +0200 Mike Gabriel (298744e94)
 
 	* nx-X11/Makefile: Drop build support for World.Win32 and World.OS2.
@@ -5969,9 +6697,17 @@
 	* Fix linking order hack in nxagent.
           (gh-sunweaver/pr/linking-order-fix)
 
+2016-06-28 04:13:10 +0200 Mihai Moldovan (7bdc7ef23)
+
+	* debian/changelog: add entry for last change.
+
 2016-06-15 16:42:58 +0200 Mike Gabriel (b83a14843)
 
 	* test scripts: Add run-nxagent test script.
+
+2016-06-27 01:46:51 +0200 Mihai Moldovan (ba5a1074f)
+
+	* debian/control: add myself as uploader.
 
 2016-06-25 01:35:40 +0200 Mihai Moldovan (975511c87)
 
@@ -6857,6 +7593,12 @@
 	* rename original NX patches, so that we can see the patched file's
           name in the patch file name.
 
+2016-02-20 21:35:27 +0100 Mike Gabriel (45a7989c5)
+
+	* debian/changelog: Add closures for #757, #758, #760. The issue
+          occurred earlier (#410) and was resolved by properly
+          setting up Xinerama symlinks
+
 2016-01-19 05:59:51 +0100 Mike Gabriel (2eb85d140)
 
 	* README.md: Update open / completed tasks regarding 3.6.x and 3.7.x
@@ -7114,6 +7856,13 @@
 
 	* debian/changelog: Drop unnecessary "~build1" from version string
 
+2015-09-28 08:15:52 +0200 Mike Gabriel (d35a3622d)
+
+	* Xinerama symlinking: Attach Xinerama symlinking to nxagent
+          bin:package (and not libnx-xinerama1). (origin/3.5.0.x,
+          gh-sunweaver/3.5.0.x, gh-mikedep333/3.5.0.x,
+          gh-Ionic/3.5.0.x)
+
 2015-09-28 07:59:12 +0200 Mike Gabriel (ca990cf0a)
 
 	* Merge pull request #64 from uli42/pr/add_pkgconfig
@@ -7310,10 +8059,19 @@
 	* use xfree instead of free for xalloced data
           (gh-uli42/pr/backported_fixes)
 
+2015-09-23 12:16:22 +0200 Mike Gabriel (3027f5019)
+
+	* Enforce symlink creation for Xinerama et al. library symlinks.
+
 2015-09-23 12:15:06 +0200 Mike Gabriel (da6b89f7e)
 
 	* debian/libnx-xinerama1.postinst.in: Enforce symlink creation for
           Xinerama support.
+
+2015-09-22 15:09:27 +0200 Mike Gabriel (449eae1be)
+
+	* Revert "debian/libnx-xinerama1.*: fix faulty logic when creating
+          symlinks."
 
 2015-09-22 15:02:22 +0200 Mike Gabriel (4db753eb7)
 
@@ -7337,6 +8095,14 @@
 	* nx-libs.spec: add xkeyboard-config to nxagent's Requires.
 
 2015-07-17 17:57:24 +0200 Mihai Moldovan (813d0cf13)
+
+	* debian/control: add xkb-data to nxagent's Recommends.
+
+2015-07-17 18:13:00 +0200 Mihai Moldovan (021050ff7)
+
+	* nx-libs.spec: add xkeyboard-config to nxagent's Requires.
+
+2015-07-17 17:57:24 +0200 Mihai Moldovan (d417db53d)
 
 	* debian/control: add xkb-data to nxagent's Recommends.
 
@@ -7391,6 +8157,65 @@
 
 	* debian/changelog: sync with master/3.5.0.x branch.
 
+2015-07-04 06:31:07 +0200 X2Go Release Manager (8a81ba8b5)
+
+	* Continue development
+
+2015-07-04 04:45:49 +0200 X2Go Release Manager (023bc5a62)
+
+	* release 3.5.0.32
+
+2015-07-04 02:17:16 +0200 Peter Åstrand (97494f162)
+
+	* nx-X11: Backport: xserver: Avoid sending uninitialized padding data
+          over the network
+
+2015-07-04 01:49:55 +0200 Keith Packard (ab38d9b59)
+
+	* nx-X11: Backport: Make RANDR 'set' timestamps follow client
+          specified time. Bug 21987.
+
+2015-07-04 01:22:02 +0200 Keith Packard (558e45c15)
+
+	* nx-X11: Backport: randr: Clean up compiler warnings about unused
+          and shadowing variables
+
+2015-07-04 00:53:37 +0200 Aaron Plattner (ab58e5781)
+
+	* nx-X11: Backport: randr: Fix REQUEST vs. REQUEST_SIZE_MATCH
+          mismatch
+
+2015-07-04 00:39:35 +0200 Alan Coopersmith (f3079befb)
+
+	* nx-X11: Backport: ProcRRGetScreenInfo: swap configTimestamp as well
+
+2015-07-04 00:11:59 +0200 Alan Coopersmith (e2f5d079d)
+
+	* nx-X11: Backport: RRModeCreate: plug memory leak of newModes if
+          AddResource fails
+
+2015-07-03 23:53:25 +0200 Julien Cristau (09cb7b2d2)
+
+	* nx-X11: Backport: randr: fix server crash in RRGetScreenInfo
+
+2015-07-03 23:40:57 +0200 Tiago Vignatti (44b913275)
+
+	* nx-X11: Backport: randr: check for virtual size limits before set
+          crtc
+
+2015-07-03 23:02:14 +0200 Keith Packard (9b26cc163)
+
+	* nx-X11: Backport: Free randr crtc and output pointer arrays
+
+2015-07-03 22:46:27 +0200 Keith Packard (389e41028)
+
+	* nx-X11: Backport: Drop a reference to user mode after create
+
+2015-07-03 22:21:44 +0200 Jaroslav Šmíd (257825c88)
+
+	* nx-X11: Backport: Bug 51375: Xorg doesn't set status for
+          RRGetOutputInfo
+
 2015-07-03 17:07:30 +0200 Mihai Moldovan (ca19c342c)
 
 	* Merge branch 'uli42-pr/backported_fixes' into arctica-3.6.x
@@ -7408,6 +8233,10 @@
 
 	* debian/changelog: sync with master/3.5.0.x branch.
 
+2015-06-29 03:35:08 +0200 Mike DePaulo (46de1b072)
+
+	* {nx-X11,nxproxy}: correct manpages: --help -> -help
+
 2015-06-28 01:50:00 -0400 Mike DePaulo (779d54645)
 
 	* Correct nxproxy manpage also: --help -> -help
@@ -7424,6 +8253,11 @@
 
 	* doc/examples/run-nxproxy2nxproxy-test: Create NX_COOKIE dynamically
           using the mcookie tool.
+
+2015-06-23 20:06:48 +0200 Emanuele Giaquinta (64b2001db)
+
+	* nx-X11: Fix alpha premultiplication in XRenderParseColor. Fixes:
+          #893.
 
 2015-06-23 16:39:33 +0200 Mihai Moldovan (32bbe01dd)
 
@@ -7521,6 +8355,11 @@
 
 	* remove libxkbui, looks like it is not used anywhere
 
+2015-06-19 23:58:49 +0200 Mike Gabriel (085dccc99)
+
+	* debian/control: Add Breaks:/Replaces: for qvd-libxcomp3 and
+          qvd-nxproxy.
+
 2015-06-19 23:58:49 +0200 Mike Gabriel (4674a4ae4)
 
 	* debian/control: Add Breaks:/Replaces: for qvd-libxcomp3 and
@@ -7529,6 +8368,10 @@
 2015-06-16 23:58:50 +0200 Mihai Moldovan (51b60ea7a)
 
 	* Merge branch 'sunweaver-pr/libglx-cleanup' into arctica-3.6.x
+
+2015-06-16 23:02:05 +0200 Vadim Troshchinskiy (371348148)
+
+	* nxcomp: fix "negotiation in stage 10" error.
 
 2015-05-27 08:10:38 +0200 Mike Gabriel (5cd80d272)
 
@@ -7604,6 +8447,27 @@
 
 	* debian/changelog: sync with master/3.5.0.x branch.
 
+2015-06-02 18:38:59 +0200 Mihai Moldovan (16df117e5)
+
+	* Security fixes: X.Org CVE-2014-8099:
+
+2015-06-02 18:27:15 +0200 Mihai Moldovan (e5ff9ace4)
+
+	* Security fixes: X.Org CVE-2015-3418:
+
+2015-06-02 18:11:24 +0200 Mihai Moldovan (125254d35)
+
+	* Security fixes: X.Org CVE-2014-8092:
+
+2015-06-02 17:59:28 +0200 Mihai Moldovan (4fb35326a)
+
+	* Security fixes: X.Org CVE-2013-4396:
+
+2015-06-02 17:35:44 +0200 Mike Gabriel (86937b86c)
+
+	* nxcomp/README.on-retroactive-DXPC-license: Some layout and
+          interpunctuation fixes.
+
 2015-05-26 12:30:48 +0200 Mike Gabriel (6a74e671a)
 
 	* library clean-up: Don't compile (i.e., remove) libNX_Xres.a
@@ -7650,10 +8514,70 @@
 	* nxcomp/README.on-retroactive-DXPC-license: Some layout and
           interpunctuation fixes.
 
+2015-05-28 22:42:45 +0200 Mihai Moldovan (f9303c1c7)
+
+	* nxcomp/Misc.cpp: fix build failure introduced in
+          a27a8aae3ca7a3f70e05152ac3d347942e11159d.
+
 2015-05-28 22:36:59 +0200 Mihai Moldovan (5bc91ad49)
 
 	* nxcomp/Misc.cpp: fix build failure introduced in
           1f44331574bdbe4069d13e4c26df18094b49e658.
+
+2015-05-28 22:09:07 +0200 Mihai Moldovan (eda8da43d)
+
+	* debian/changelog: typo fix.
+
+2015-05-28 13:30:34 +0200 Mike Gabriel (2e5b45ada)
+
+	* Support tarring up the HEAD of the current branch.
+
+2015-05-28 13:28:33 +0200 Mike Gabriel (23fc7ee7e)
+
+	* Allow patch files names having a dash next to the four digits
+          (i.e., 1234-<patchname>.<suffix>).
+
+2015-05-28 13:03:52 +0200 Mike Gabriel (a27a8aae3)
+
+	* Add 9900-dxpc-license-history.full+lite.patch. Document license
+          history of DXPC (where nxcomp got forked from).
+
+2015-05-28 12:59:12 +0200 Mike Gabriel (6814755d8)
+
+	* debian/COPYING.full+lite: Replace content with GPL-2 license text,
+          because that is the overall (i.e., strictest) license we
+          have to deal with in nx-libs.
+
+2015-05-28 12:55:34 +0200 Mike Gabriel (b3ece6448)
+
+	* debian/roll-tarball.sh: Make sure *.keyboard, debian/**,
+          nx-libs.spec, .pc/** don't end up in tarball (special
+          focuse on the nx-libs-lite tarball).
+
+2015-05-26 19:07:36 +0200 Mihai Moldovan (dc770326a)
+
+	* debian/changelog: add entry for last change.
+
+2015-05-26 18:56:12 +0200 Mihai Moldovan (0575a5b3d)
+
+	* nxcomp: fix DEBUG, TEST, DUMP, FLUSH, TOKEN, PING, MIXED et al
+          builds.
+
+2015-05-26 18:39:21 +0200 Mihai Moldovan (7f626521f)
+
+	* debian/changelog: add entry for last change.
+
+2015-05-26 18:36:28 +0200 Mihai Moldovan (a9a7426df)
+
+	* Security fixes: X.Org CVE-2014-8100:
+
+2015-05-26 18:05:21 +0200 Mihai Moldovan (cce8c0d22)
+
+	* debian/changelog: add entry for last change.
+
+2015-05-26 18:00:00 +0200 Mihai Moldovan (c19b58d09)
+
+	* Security fixes: X.Org CVE-2014-8100:
 
 2015-05-26 16:51:38 +0200 Mihai Moldovan (beb08f96c)
 
@@ -7766,6 +8690,10 @@
 
 	* debian/libnx-xinerama1.*: fix faulty logic when creating symlinks.
 
+2015-05-05 01:23:50 +0200 Mihai Moldovan (5a9f8294c)
+
+	* debian/libnx-xinerama1.*: fix faulty logic when creating symlinks.
+
 2015-05-05 01:23:04 +0200 Mihai Moldovan (b573cbba9)
 
 	* debian/changelog: merge with master branch.
@@ -7777,6 +8705,15 @@
 2015-05-05 01:22:18 +0200 Mihai Moldovan (06f36d0f0)
 
 	* debian/libnx-xinerama1.*: fix faulty logic when creating symlinks.
+
+2015-05-02 00:08:41 +0200 Mihai Moldovan (5f2a5ac84)
+
+	* debian/control: workaround missing dependencies of nxagent on
+          Ubuntu for now.
+
+2015-05-01 23:38:44 +0200 Mike Gabriel (6b9df6cae)
+
+	* Security fixes: X.Org CVE-2015-3418:
 
 2015-05-01 16:16:30 -0400 Mike DePaulo (c9d81fc38)
 
@@ -7797,6 +8734,11 @@
 
 	* debian/changelog: sync with 3.5.0.x branch.
 
+2015-04-30 15:14:24 +0200 Mihai Moldovan (a17bd57ef)
+
+	* nx-libs.spec: actually create libXinerama.so.1 symlink during build
+          phase.
+
 2015-04-30 15:14:24 +0200 Mihai Moldovan (e6e323a22)
 
 	* nx-libs.spec: actually create libXinerama.so.1 symlink during build
@@ -7807,10 +8749,25 @@
 	* debian/changelog: correctly sync with 3.5.0.x branch. Add latest
           entries.
 
+2015-04-30 14:38:37 +0200 Mihai Moldovan (8726e7d0b)
+
+	* debian/changelog: add changelog entry for the last two changes.
+
+2015-04-30 14:34:11 +0200 Mihai Moldovan (0af0060d5)
+
+	* debian/libnx-xinerama1.*: move Xinerama dir back to nx-x11-common.
+          Only delete known files. Fixes RPM build failures.
+
 2015-04-30 14:25:25 +0200 Mihai Moldovan (a9bc7bdb6)
 
 	* debian/libnx-xinerama1.*: move Xinerama dir back to nx-x11-common.
           Only delete known files. Fixes RPM build failures.
+
+2015-04-29 13:47:40 +0200 Mihai Moldovan (79d49066c)
+
+	* libnx-xinerama1: also create libXinerama symlink in
+          libnx-xinerama1.postinst.postinst (and remove in
+          libnx-xinerama1.postinst.prerm.)
 
 2015-04-29 08:04:44 +0200 Mike Gabriel (7a6b40a11)
 
@@ -7845,9 +8802,29 @@
 
 	* debian/changelog: merge with 3.5.0.x branch.
 
+2015-04-27 02:48:10 +0200 Mihai Moldovan (266d5affb)
+
+	* README.keystrokes: remove accidentally copied Dokuwiki syntax.
+
 2015-04-27 02:45:10 +0200 Mihai Moldovan (f717a7e81)
 
 	* README.keystrokes: remove accidentally copied Dokuwiki syntax.
+
+2015-04-27 02:43:05 +0200 Mihai Moldovan (352631a4b)
+
+	* etc/keystrokes.cfg: fix whitespace errors.
+
+2015-04-27 02:40:16 +0200 Mihai Moldovan (82d73c3e1)
+
+	* debian/changelog: unify entry for README.keystrokes.
+
+2015-04-27 02:33:47 +0200 Mihai Moldovan (45d9d2405)
+
+	* README.keystrokes: add documentation for branding behavior.
+
+2015-04-27 02:19:22 +0200 Mihai Moldovan (034bd9407)
+
+	* README.keystrokes: copy actions documentation from the wiki.
 
 2015-04-27 02:02:15 +0200 Mihai Moldovan (380a4df0f)
 
@@ -7860,6 +8837,44 @@
 2015-04-27 01:59:53 +0200 Mihai Moldovan (1c0f42d30)
 
 	* README.keystrokes: copy actions documentation from the wiki.
+
+2015-04-27 01:33:56 +0200 Mihai Moldovan (14e51de12)
+
+	* debian/changelog: document the last commits.
+
+2015-04-27 01:28:50 +0200 Mihai Moldovan (4c90de7aa)
+
+	* debian/roll-tarballs.sh: next batch of quotes.
+
+2015-04-27 01:22:41 +0200 Mihai Moldovan (56b383b8c)
+
+	* debian/roll-tarballs.sh: whitespace changes for consistency.
+
+2015-04-26 23:49:06 +0200 Mihai Moldovan (06bdc2723)
+
+	* debian/roll-tarballs.sh: don't escape last newline of a multiline
+          command.
+
+2015-04-26 23:48:02 +0200 Mihai Moldovan (cc2fdd962)
+
+	* debian/roll-tarballs.sh: use more curly braces.
+
+2015-04-26 23:47:33 +0200 Mihai Moldovan (e822d5cd9)
+
+	* debian/roll-tarballs.sh: convert tabs to spaces.
+
+2015-04-26 23:45:42 +0200 Mihai Moldovan (027577686)
+
+	* debian/roll-tarballs.sh: use more quotes.
+
+2015-04-27 01:14:23 +0200 Mike Gabriel (9525d0739)
+
+	* nxcompshad: Prevent underlinking by linking to libNX_Xext.
+
+2015-04-27 00:33:52 +0200 Mike Gabriel (ef24d6490)
+
+	* nx-X11: Prevent underlinking by linking to
+          libNX_X{11,damage,fixes).
 
 2015-04-26 23:49:06 +0200 Mihai Moldovan (347e97335)
 
@@ -7877,6 +8892,19 @@
 2015-04-26 23:45:42 +0200 Mihai Moldovan (e68c36625)
 
 	* debian/roll-tarballs.sh: use more quotes.
+
+2015-04-26 23:32:32 +0200 Mihai Moldovan (96efadac5)
+
+	* CVE patches were previously not included in release tarballs.
+
+2015-04-26 21:51:23 +0200 Mike Gabriel (79a4ed92d)
+
+	* Security fixes: X.Org CVE-2013-7439:
+
+2015-04-26 20:13:12 +0200 Bernard Cafarelli (ca3617573)
+
+	* nx-X11: link to libdl to fix undefined references to 'dlopen' and
+          'dlsym'. Fixes: #853.
 
 2015-04-26 16:35:14 +0200 Mike Gabriel (f2fd79416)
 
@@ -8052,11 +9080,25 @@
 
 	* debian/changelog: sync with 3.5.0.x branch.
 
+2015-03-29 07:49:03 +0200 Mihai Moldovan (952e320cd)
+
+	* nx-X11: add more NULL guards to TEST and DEBUG sections of
+          Render.c.
+
 2015-03-29 04:53:52 +0200 Mihai Moldovan (f1ab3f27b)
 
 	* nx-X11: fix typo in previous commit.
 
+2015-03-29 04:52:40 +0200 Mihai Moldovan (da6bb07a0)
+
+	* nx-X11: fix typo in previous patch.
+
 2015-03-29 04:26:10 +0200 Mihai Moldovan (0d56c45a7)
+
+	* nx-X11: handle source pictures (those without a Drawable surface)
+          gracefully.
+
+2015-03-29 04:21:59 +0200 Mihai Moldovan (52224aa87)
 
 	* nx-X11: handle source pictures (those without a Drawable surface)
           gracefully.
@@ -8065,11 +9107,39 @@
 
 	* debian/changelog: sync with 3.5.0.x branch.
 
+2015-03-26 00:23:09 +0100 Mihai Moldovan (a88fc7163)
+
+	* Only use the first three numbers in the full version for
+          current_version on OS X. ld(1) on 10.6 fails otherwise.
+
 2015-03-26 00:32:27 +0100 Mihai Moldovan (d86ce9c7a)
 
 	* nxcomp{,ext,shad}: only use the first three numbers in the full
           version for current_version on OS X. ld(1) on 10.6 fails
           otherwise.
+
+2015-03-17 19:20:25 +0100 X2Go Release Manager (1e0adb715)
+
+	* Continue development
+
+2015-03-17 19:09:05 +0100 X2Go Release Manager (71589a050)
+
+	* Mid-release fixup: Rename *nxcomp{ext,shad}*.full+lite* to
+          *nxcomp{ext,shad}*.full*. (tag: redist-server/3.5.0.31,
+          tag: redist-client/3.5.0.31)
+
+2015-03-17 18:48:16 +0100 X2Go Release Manager (8963b8e70)
+
+	* release 3.5.0.31
+
+2015-03-17 18:28:15 +0100 Mihai Moldovan (b30a05e3a)
+
+	* nx-libs.spec: add overlooked Obsolete: statement to libNX_Xfixes3.
+
+2015-03-17 18:26:26 +0100 Mihai Moldovan (605c27e5c)
+
+	* nx-libs.spec: Versioned libXcomp* should obsolete unversioned
+          libXcomp*, not libNX_Xcomp*.
 
 2015-03-17 18:28:15 +0100 Mihai Moldovan (fcb2cb5e0)
 
@@ -8081,6 +9151,11 @@
           libXcomp*, not libNX_Xcomp*.
 
 2015-03-16 03:29:16 +0100 Mihai Moldovan (d8de5928e)
+
+	* nx{comp{,ext,shad},proxy}: try really hard to find makedepend. Do
+          not fail if it is not available.
+
+2015-03-16 03:04:21 +0100 Mihai Moldovan (06b51cc33)
 
 	* nx{comp{,ext,shad},proxy}: try really hard to find makedepend. Do
           not fail if it is not available.
@@ -8100,13 +9175,55 @@
 	* nx{comp{,ext,shad},proxy}: use path discovery for finding
           makedepend. Remove old cruft.
 
+2015-03-15 07:33:51 +0100 Clemens Lang (91f1fed27)
+
+	* nxcomp{,ext,shad}: use the correct library naming scheme on OS X.
+          It differs from other UNIX-based systems.
+
+2015-03-15 07:21:00 +0100 Clemens Lang (d055e523d)
+
+	* nxcomp{,shad}: fix dynamic library linking on OS X. Use -dynamiclib
+          instead of -bundle.
+
+2015-03-15 07:18:14 +0100 Clemens Lang (8b45079eb)
+
+	* nx{comp{,ext,shad},proxy}: use path discovery for finding
+          makedepend. Remove old cruft. Adds:
+
 2015-03-15 01:13:56 +0100 Mihai Moldovan (c460e090b)
 
 	* debian/changelog: fix wrong signature.
 
+2015-03-15 01:12:13 +0100 Mihai Moldovan (d8b5ca2bf)
+
+	* debian/changelog: merge with 3.6.x development branch.
+
 2015-03-15 01:10:31 +0100 Mihai Moldovan (98e56c125)
 
 	* debian/changelog: merge with 3.5.0.x release branch.
+
+2015-03-15 00:49:40 +0100 X2Go Release Manager (a90faa174)
+
+	* Continue development
+
+2015-03-14 14:38:18 +0100 Mike Gabriel (9c9b892fd)
+
+	* release 3.5.0.30 (tag: redist-server/3.5.0.30, tag:
+          redist-client/3.5.0.30)
+
+2015-03-13 16:14:30 +0100 X2Go Release Manager (69b82c8f7)
+
+	* Continue development
+
+2015-03-13 16:13:36 +0100 X2Go Release Manager (12a395aac)
+
+	* debian/roll-tarballs.sh: fix tarball creation in lite mode: do not
+          try to fixup NX-X11 directory (it won't be there.)
+
+2015-03-13 15:55:08 +0100 X2Go Release Manager (8367380eb)
+
+	* release 3.5.0.29 (tag: redist-server/3.5.0.29, tag:
+          redist-client/3.5.0.29)
 
 2015-03-13 15:14:07 +0100 Mike Gabriel (7d2254185)
 
@@ -8151,6 +9268,11 @@
 
 	* Update changelog for the CVE-2015-0255 commit and its 3 prereq
           commits
+
+2015-02-18 07:43:20 -0500 Mike DePaulo (2b2a02f93)
+
+	* X.org CVE-2015-0255 patch and its 3 prereq patches (origin/master,
+          gh-mikedep333/master, gh-Ionic/master)
 
 2015-02-18 08:01:54 +0100 Mike Gabriel (ec018a79c)
 
@@ -8209,6 +9331,24 @@
 
 	* Revert "Do proper input validation to fix for CVE-2011-2895."
 
+2015-02-16 09:57:17 +0100 Mike Gabriel (ac2937e71)
+
+	* Update
+          1042-Do-proper-input-validation-to-fix-for-CVE-2011-2895.patch.
+          Fix broken comment paragraph, whitespace fix.
+          (gh-sunweaver/master)
+
+2015-02-16 09:40:16 +0100 Mihai Moldovan (650181c23)
+
+	* CVE security review: Add
+          1041-nx-X11-lib-font-fc-fserve.c-initialize-remaining-buf.patch
+          &
+          1042-Do-proper-input-validation-to-fix-for-CVE-2011-2895.patch.
+
+2015-02-16 09:35:47 +0100 Mihai Moldovan (ae898ff13)
+
+	* CVE security review [1/2].
+
 2015-02-16 06:24:38 +0100 Mike Gabriel (26cfe931f)
 
 	* fix 3.5.0.29 changelog entry
@@ -8241,9 +9381,24 @@
 	* Fix FTBFS due to the nxproxy executable already existing under
           /usr/lib/nx/bin/nx
 
+2015-02-16 06:19:54 +0100 Mike Gabriel (f74f59d2f)
+
+	* debian/changelog: fix too-long lines
+
 2011-08-21 18:51:53 +0200 Joerg Sonnenberger (6acafc933)
 
 	* Do proper input validation to fix for CVE-2011-2895.
+
+2015-02-16 05:51:02 +0100 Mike Gabriel (ffb64d2b0)
+
+	* Makefile.nx-libs: Fix uninstall-lite rule. The nxproxy and nxcomp
+          uninstallation has to be in uninstall-lite, not in
+          uninstall-full.
+
+2015-02-16 05:45:17 +0100 Mike Gabriel (d2ff2138b)
+
+	* Make install-lite rule in Makefile.nx-libs more predictable and not
+          rely on nxproxy/Makefile.in.
 
 2015-02-16 06:03:48 +0100 Mihai Moldovan (b04f11915)
 
@@ -8281,6 +9436,33 @@
 	* Revert "CVE-2014-0210: unvalidated length fields in
           fs_read_query_info() from xorg/lib/libXfont commit
           491291cabf78efdeec8f18b09e14726a9030cc8f"
+
+2015-02-14 21:55:30 +0100 Mike Gabriel (0a423ce8f)
+
+	* Install "%{_libdir}/nx/bin" into nxproxy package.
+
+2015-02-14 21:53:00 +0100 Mike Gabriel (db328b616)
+
+	* nx-libs.spec: Typo fix in comment.
+
+2015-02-14 17:07:21 -0500 Mike DePaulo (7b0c8a2ac)
+
+	* Fix FTBFS due to the nxproxy executable already existing under
+          /usr/lib/nx/bin/nx
+
+2015-02-14 16:40:07 +0100 Mike Gabriel (458788113)
+
+	* 40 patches, fixing several X.Org CVEs in NX.
+
+2015-02-14 16:25:46 +0100 Mike Gabriel (f46d11790)
+
+	* remove item from changelog that got reverted
+
+2015-02-14 16:23:43 +0100 Mike Gabriel (09d2732b4)
+
+	* Patch system: Prepend a "0" to every patch file name in
+          debian/patches/. Adapt only this changelog stanza to this
+          modification.
 
 2014-11-10 12:13:48 -0500 Adam Jackson (1ea1cd8c4)
 
@@ -8540,6 +9722,14 @@
 
 	* Revert "Fix build when LDFLAGS (etc) contains spaces."
 
+2015-02-14 14:23:10 +0100 Mike Gabriel (8c98a401b)
+
+	* Use proper quoting on build flag vars (they may contain spaces).
+
+2015-02-14 14:21:52 +0100 Mike Gabriel (863119ed6)
+
+	* Revert "Fix build when LDFLAGS (etc) contains spaces."
+
 2015-02-13 14:14:26 +0100 Mike Gabriel (1e5ee575d)
 
 	* nx-X11 vs. X.Org 6.9 patches for further studying / documentation
@@ -8623,6 +9813,10 @@
 
 	* Fix patch rollout in tarball
 
+2015-02-11 19:02:57 -0500 Mike DePaulo (bccb2750b)
+
+	* Fix build when LDFLAGS (etc) contains spaces.
+
 2015-02-12 10:07:40 +0100 Mike Gabriel (fa8fb7288)
 
 	* changelog: add 3.5.0.x entry for commit 4436e97
@@ -8633,6 +9827,15 @@
           the wrapper script.
 
 2015-02-12 09:59:12 +0100 Mike Gabriel (a7cc4edef)
+
+	* Remove upstream nx-libs ChangeLog during override_dh_clean.
+
+2015-02-12 09:59:57 +0100 Mike Gabriel (4157e8258)
+
+	* Makefile.nx-libs: Run make install for nxproxy first, then create
+          the wrapper script.
+
+2015-02-12 09:59:12 +0100 Mike Gabriel (75c478521)
 
 	* Remove upstream nx-libs ChangeLog during override_dh_clean.
 
@@ -8835,6 +10038,10 @@
           debian/rules. This should be  merged into the NX build
           logic finally.
 
+2015-02-09 08:37:40 -0500 Mike DePaulo (a097b2c05)
+
+	* Fix RPM spec syntax error
+
 2015-02-09 08:37:40 -0500 Mike DePaulo (519bcac93)
 
 	* Fix RPM spec syntax error
@@ -8900,6 +10107,10 @@
 
 	* fix long-line in changelog
 
+2015-02-09 10:46:10 +0100 Mike Gabriel (b62d8c5b0)
+
+	* fix long-line in changelog
+
 2015-02-09 10:37:17 +0100 Mike Gabriel (eb55dc8fd)
 
 	* Drop not-used-anymore NX source tree clean-up code. Source tree has
@@ -8912,7 +10123,56 @@
           Initialize server_support array with correct size. Fix
           Mesa upstream bugzilla bug #7353. (Fixes: #776)."
 
+2015-02-09 10:30:42 +0100 Mike Gabriel (02316322c)
+
+	* Revert "Add patch
+          700_nx-X11_mesa-initialize-server-support-correctly.full.patch.
+          Initialize server_support array with correct size. Fix
+          Mesa upstream bugzilla bug #7353. (Fixes: #776)."
+
+2015-02-03 05:11:09 +0100 Mike Gabriel (48e2c84f3)
+
+	* update changelog
+
+2015-02-02 15:31:35 +0100 Mike Gabriel (9c52824a8)
+
+	* Update 991_fix-hr-typos.full.patch. Don't patch files that get
+          removed by the NX code reduction effort.
+
+2015-02-02 15:29:45 +0100 Mike Gabriel (2f1a0ad60)
+
+	* Drop 604_nx-X11_recent-freetype-API.full.patch. Not used in current
+          build process.
+
+2015-02-02 15:26:51 +0100 Mike Gabriel (98c5283b2)
+
+	* Update 600_nx-X11+nxcompext+nxcompshad_unique-libnames.full.patch.
+          Don't patch files matter to the NX code reduction efforts.
+
+2015-02-02 15:25:43 +0100 Mike Gabriel (c70f52450)
+
+	* Update 031_nx-X11_parallel-make.full.patch. Don't patch .original
+          files in NX code tree.
+
+2015-02-02 15:24:31 +0100 Mike Gabriel (e743a6f7b)
+
+	* Drop patches: 017_nx-X11_update-autotools-helper-files.full.patch,
+          018_nx-X11_update-libtool-ltmain-script.full.patch,
+          019_nx-X11_expat-build-against-system-libxmltok.full.patch.
+          They patch files that are not used at build time.
+
+2015-02-03 05:04:38 +0100 Mike Gabriel (21398f377)
+
+	* Merge pull request #1 from uli42/x2go
+
 2015-02-03 04:59:13 +0100 Mike Gabriel (4db6f0fdb)
+
+	* Add patch
+          700_nx-X11_mesa-initialize-server-support-correctly.full.patch.
+          Initialize server_support array with correct size. Fix
+          Mesa upstream bugzilla bug #7353. (Fixes: #776).
+
+2015-02-03 04:59:13 +0100 Mike Gabriel (b992fdaa0)
 
 	* Add patch
           700_nx-X11_mesa-initialize-server-support-correctly.full.patch.
@@ -8951,6 +10211,10 @@
 	* empty CODE-REDUCTION_* files (maybe usable later for futher code
           reduction efforts
 
+2015-02-02 15:17:59 +0100 Mike Gabriel (541c80d32)
+
+	* fix for last commit
+
 2015-02-02 15:04:01 +0100 Mike Gabriel (e399356ed)
 
 	* drop .original files from the current code base
@@ -8962,6 +10226,10 @@
 2015-02-02 14:47:22 +0100 Mike Gabriel (0d5a83e98)
 
 	* On SLE 11.x: libX* packages are prefixed with "xorg-x11-".
+
+2015-02-01 22:27:06 +0100 Ulrich Sibiller (f8fa7cb19)
+
+	* Fix patch rollout in tarball (gh-uli42/x2go)
 
 2015-01-29 13:04:46 +0100 Mike Gabriel (dc7495063)
 
