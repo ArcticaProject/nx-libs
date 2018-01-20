@@ -4504,7 +4504,7 @@ void StartKeeper()
           IsRestarting(lastKeeper) == 1)
   {
     nxfatal << "Loop: PANIC! The house-keeping process is "
-            << "alreay running with pid '" << lastKeeper
+            << "already running with pid '" << lastKeeper
             << "'.\n" << std::flush;
 
     HandleCleanup();
