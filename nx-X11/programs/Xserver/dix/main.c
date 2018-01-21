@@ -167,7 +167,7 @@ ReplyNotSwappd(
 int
 main(int argc, char *argv[], char *envp[])
 {
-    int		i, error;
+    int		i;
     char	*xauthfile;
     HWEventQueueType	alwaysCheckForInput[2];
 
@@ -335,9 +335,6 @@ main(int argc, char *argv[], char *envp[])
 	    InitRootWindow(screenInfo.screens[i]->root);
 	DefineInitialRootWindow(screenInfo.screens[0]->root);
 	SaveScreens(SCREEN_SAVER_FORCER, ScreenSaverReset);
-#ifdef DPMSExtension
-	SetDPMSTimers();
-#endif
 
 #ifdef PANORAMIX
 	if (!noPanoramiXExtension) {
@@ -387,9 +384,6 @@ main(int argc, char *argv[], char *envp[])
 	}
 	FreeFonts();
 
-#ifdef DPMSExtension
-	FreeDPMSTimers();
-#endif
 	FreeAuditTimer();
 
 	ReleaseClientIds(serverClient);

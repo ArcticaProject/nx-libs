@@ -1,5 +1,23 @@
 /*
- * $Id: xfixes.c,v 1.7 2005/07/03 07:37:35 daniels Exp $
+ * Copyright © 2006 Sun Microsystems
+ *
+ * Permission to use, copy, modify, distribute, and sell this software and its
+ * documentation for any purpose is hereby granted without fee, provided that
+ * the above copyright notice appear in all copies and that both that
+ * copyright notice and this permission notice appear in supporting
+ * documentation, and that the name of Sun Microsystems not be used in
+ * advertising or publicity pertaining to distribution of the software without
+ * specific, written prior permission.  Sun Microsystems makes no
+ * representations about the suitability of this software for any purpose.  It
+ * is provided "as is" without express or implied warranty.
+ *
+ * SUN MICROSYSTEMS DISCLAIMS ALL WARRANTIES WITH REGARD TO THIS SOFTWARE,
+ * INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS, IN NO
+ * EVENT SHALL SUN MICROSYSTEMS BE LIABLE FOR ANY SPECIAL, INDIRECT OR
+ * CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE,
+ * DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER
+ * TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
+ * PERFORMANCE OF THIS SOFTWARE.
  *
  * Copyright © 2002 Keith Packard
  *
@@ -29,10 +47,10 @@
 #include "xfixesint.h"
 #include "protocol-versions.h"
 
-unsigned char	XFixesReqCode;
+static unsigned char	XFixesReqCode;
 int		XFixesEventBase;
 int		XFixesErrorBase;
-int		XFixesClientPrivateIndex;
+static int	XFixesClientPrivateIndex;
 
 static int
 ProcXFixesQueryVersion(ClientPtr client)
@@ -75,6 +93,7 @@ static const int version_requests[] = {
     X_XFixesGetCursorImage,	/* Version 1 */
     X_XFixesChangeCursorByName,	/* Version 2 */
     X_XFixesExpandRegion,	/* Version 3 */
+    X_XFixesShowCursor,	        /* Version 4 */
 };
 
 #define NUM_VERSION_REQUESTS	(sizeof (version_requests) / sizeof (version_requests[0]))
@@ -112,6 +131,9 @@ int	(*ProcXFixesVector[XFixesNumberRequests])(ClientPtr) = {
     ProcXFixesChangeCursorByName,
 /*************** Version 3 ******************/
     ProcXFixesExpandRegion,
+/*************** Version 4 ****************/
+    ProcXFixesHideCursor,
+    ProcXFixesShowCursor,
 };
 
 static int
@@ -138,7 +160,7 @@ SProcXFixesQueryVersion(ClientPtr client)
     return (*ProcXFixesVector[stuff->xfixesReqType]) (client);
 }
 
-int	(*SProcXFixesVector[XFixesNumberRequests])(ClientPtr) = {
+static int (*SProcXFixesVector[XFixesNumberRequests])(ClientPtr) = {
 /*************** Version 1 ******************/
     SProcXFixesQueryVersion,
     SProcXFixesChangeSaveSet,
@@ -171,6 +193,9 @@ int	(*SProcXFixesVector[XFixesNumberRequests])(ClientPtr) = {
     SProcXFixesChangeCursorByName,
 /*************** Version 3 ******************/
     SProcXFixesExpandRegion,
+/*************** Version 4 ****************/
+    SProcXFixesHideCursor,
+    SProcXFixesShowCursor,
 };
 
 static int

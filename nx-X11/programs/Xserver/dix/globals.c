@@ -89,7 +89,7 @@ unsigned long serverGeneration = 0;
 /* these next four are initialized in main.c */
 CARD32 ScreenSaverTime;
 CARD32 ScreenSaverInterval;
-int  ScreenSaverBlanking;
+int ScreenSaverBlanking;
 int  ScreenSaverAllowExposures;
 
 #ifdef DPMSExtension
@@ -127,6 +127,10 @@ int  defaultScreenSaverAllowExposures = DEFAULT_SCREEN_SAVER_EXPOSURES;
 int  logoScreenSaver = DEFAULT_LOGO_SCREEN_SAVER;
 #endif
 
+#ifdef SCREENSAVER
+Bool screenSaverSuspended = FALSE;
+#endif
+
 char *defaultFontPath = COMPILEDDEFAULTFONTPATH;
 char *defaultTextFont = COMPILEDDEFAULTFONT;
 char *defaultCursorFont = COMPILEDCURSORFONT;
@@ -141,9 +145,11 @@ ClientPtr requestingClient;	/* XXX this should be obsolete now, remove? */
 TimeStamp currentTime;
 TimeStamp lastDeviceEventTime;
 
-Bool permitOldBugs = FALSE; /* turn off some error checking, to permit certain
-			     * old broken clients (like R2/R3 xterms) to work
-			     */
+/*
+ * turn off some error checking, to permit old broken clients (like R2/R3
+ * xterms) to work
+ */
+Bool permitOldBugs = FALSE;
 
 int defaultColorVisualClass = -1;
 int monitorResolution = 0;

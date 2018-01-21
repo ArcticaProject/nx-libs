@@ -55,14 +55,14 @@ SOFTWARE.
 #include <dix-config.h>
 #endif
 
-#include <nx-X11/X.h>				/* for inputstr.h    */
-#include <nx-X11/Xproto.h>			/* Request macro     */
-#include "windowstr.h"			/* focus struct      */
-#include "inputstr.h"			/* DeviceIntPtr	     */
+#include <nx-X11/X.h>	/* for inputstr.h    */
+#include <nx-X11/Xproto.h>	/* Request macro     */
+#include "windowstr.h"	/* focus struct      */
+#include "inputstr.h"	/* DeviceIntPtr      */
 #include <nx-X11/extensions/XI.h>
 #include <nx-X11/extensions/XIproto.h>
 #include "extnsionst.h"
-#include "extinit.h"			/* LookupDeviceIntRec */
+#include "extinit.h"	/* LookupDeviceIntRec */
 #include "exglobals.h"
 
 #include "getfocus.h"
@@ -74,13 +74,12 @@ SOFTWARE.
  */
 
 int
-SProcXGetDeviceFocus(client)
-    register ClientPtr client;
-    {
+SProcXGetDeviceFocus(register ClientPtr client)
+{
     REQUEST(xGetDeviceFocusReq);
     swaps(&stuff->length);
-    return(ProcXGetDeviceFocus(client));
-    }
+    return (ProcXGetDeviceFocus(client));
+}
 
 /***********************************************************************
  *
@@ -89,22 +88,20 @@ SProcXGetDeviceFocus(client)
  */
 
 int
-ProcXGetDeviceFocus(client)
-    ClientPtr client;
-    {
-    DeviceIntPtr	dev;
-    FocusClassPtr 	focus;
+ProcXGetDeviceFocus(ClientPtr client)
+{
+    DeviceIntPtr dev;
+    FocusClassPtr focus;
     xGetDeviceFocusReply rep;
 
     REQUEST(xGetDeviceFocusReq);
     REQUEST_SIZE_MATCH(xGetDeviceFocusReq);
 
-    dev = LookupDeviceIntRec (stuff->deviceid);
-    if (dev == NULL || !dev->focus)
-	{
+    dev = LookupDeviceIntRec(stuff->deviceid);
+    if (dev == NULL || !dev->focus) {
 	SendErrorToClient(client, IReqCode, X_GetDeviceFocus, 0, BadDevice);
 	return Success;
-	}
+    }
 
     rep.repType = X_Reply;
     rep.RepType = X_GetDeviceFocus;
@@ -119,14 +116,14 @@ ProcXGetDeviceFocus(client)
 	rep.focus = PointerRoot;
     else if (focus->win == FollowKeyboardWin)
 	rep.focus = FollowKeyboard;
-    else 
+    else
 	rep.focus = focus->win->drawable.id;
 
     rep.time = focus->time.milliseconds;
     rep.revertTo = focus->revert;
-    WriteReplyToClient (client, sizeof(xGetDeviceFocusReply), &rep);
+    WriteReplyToClient(client, sizeof(xGetDeviceFocusReply), &rep);
     return Success;
-    }
+}
 
 /***********************************************************************
  *
@@ -136,14 +133,11 @@ ProcXGetDeviceFocus(client)
  */
 
 void
-SRepXGetDeviceFocus (client, size, rep)
-    ClientPtr	client;
-    int		size;
-    xGetDeviceFocusReply	*rep;
-    {
+SRepXGetDeviceFocus(ClientPtr client, int size, xGetDeviceFocusReply * rep)
+{
     swaps(&rep->sequenceNumber);
     swapl(&rep->length);
     swapl(&rep->focus);
     swapl(&rep->time);
     WriteToClient(client, size, rep);
-    }
+}

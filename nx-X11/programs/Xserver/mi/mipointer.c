@@ -45,7 +45,7 @@ in this Software without prior written authorization from The Open Group.
 # include   "dixstruct.h"
 # include   <nx-X11/extensions/XI.h>
 
-int  miPointerScreenIndex;
+int miPointerScreenIndex;
 static unsigned long miPointerGeneration = 0;
 
 #define GetScreenPrivate(s) ((miPointerScreenPtr) ((s)->devPrivates[miPointerScreenIndex].ptr))

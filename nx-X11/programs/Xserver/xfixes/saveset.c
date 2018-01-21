@@ -1,6 +1,4 @@
 /*
- * $Id: saveset.c,v 1.6 2005/07/03 07:37:35 daniels Exp $
- *
  * Copyright © 2002 Keith Packard
  *
  * Permission to use, copy, modify, distribute, and sell this software and its
@@ -37,10 +35,16 @@ ProcXFixesChangeSaveSet(ClientPtr client)
     REQUEST(xXFixesChangeSaveSetReq);
 		  
     REQUEST_SIZE_MATCH(xXFixesChangeSaveSetReq);
+#ifndef NXAGENT_SERVER
+    result = dixLookupWindow(&pWin, stuff->window, client, DixReadAccess);
+    if (result != Success)
+        return result;
+#else
     pWin = (WindowPtr)SecurityLookupWindow(stuff->window, client,
 					   DixReadAccess);
     if (!pWin)
         return(BadWindow);
+#endif
     if (client->clientAsMask == (CLIENT_BITS(pWin->drawable.id)))
         return BadMatch;
     if ((stuff->mode != SetModeInsert) && (stuff->mode != SetModeDelete))

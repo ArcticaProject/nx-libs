@@ -55,13 +55,13 @@ SOFTWARE.
 #include <dix-config.h>
 #endif
 
-#include <nx-X11/X.h>				/* for inputstr.h    */
-#include <nx-X11/Xproto.h>			/* Request macro     */
-#include "inputstr.h"			/* DeviceIntPtr	     */
+#include <nx-X11/X.h>	/* for inputstr.h    */
+#include <nx-X11/Xproto.h>	/* Request macro     */
+#include "inputstr.h"	/* DeviceIntPtr      */
 #include <nx-X11/extensions/XI.h>
 #include <nx-X11/extensions/XIproto.h>
 #include "extnsionst.h"
-#include "extinit.h"			/* LookupDeviceIntRec */
+#include "extinit.h"	/* LookupDeviceIntRec */
 #include "exevents.h"
 #include "exglobals.h"
 
@@ -75,9 +75,8 @@ SOFTWARE.
  */
 
 int
-SProcXChangeDeviceKeyMapping(client)
-    register ClientPtr client;
-    {
+SProcXChangeDeviceKeyMapping(register ClientPtr client)
+{
     unsigned int count;
 
     REQUEST(xChangeDeviceKeyMappingReq);
@@ -86,8 +85,8 @@ SProcXChangeDeviceKeyMapping(client)
     count = stuff->keyCodes * stuff->keySymsPerKeyCode;
     REQUEST_FIXED_SIZE(xChangeDeviceKeyMappingReq, count * sizeof(CARD32));
     SwapLongs((CARD32 *) (&stuff[1]), count);
-    return(ProcXChangeDeviceKeyMapping(client));
-    }
+    return (ProcXChangeDeviceKeyMapping(client));
+}
 
 /***********************************************************************
  *
@@ -96,10 +95,9 @@ SProcXChangeDeviceKeyMapping(client)
  */
 
 int
-ProcXChangeDeviceKeyMapping(client)
-    register ClientPtr client;
-    {
-    int	ret;
+ProcXChangeDeviceKeyMapping(register ClientPtr client)
+{
+    int ret;
     unsigned len;
     DeviceIntPtr dev;
     unsigned int count;
@@ -110,21 +108,19 @@ ProcXChangeDeviceKeyMapping(client)
     count = stuff->keyCodes * stuff->keySymsPerKeyCode;
     REQUEST_FIXED_SIZE(xChangeDeviceKeyMappingReq, count * sizeof(CARD32));
 
-    dev = LookupDeviceIntRec (stuff->deviceid);
-    if (dev == NULL)
-	{
-	SendErrorToClient (client, IReqCode, X_ChangeDeviceKeyMapping, 0, 
-		BadDevice);
+    dev = LookupDeviceIntRec(stuff->deviceid);
+    if (dev == NULL) {
+	SendErrorToClient(client, IReqCode, X_ChangeDeviceKeyMapping, 0,
+			  BadDevice);
 	return Success;
-	}
-    len = stuff->length - (sizeof(xChangeDeviceKeyMappingReq) >> 2);  
+    }
+    len = stuff->length - (sizeof(xChangeDeviceKeyMappingReq) >> 2);
 
-    ret = ChangeKeyMapping (client, dev, len, DeviceMappingNotify, 
-	stuff->firstKeyCode, stuff->keyCodes, stuff->keySymsPerKeyCode, 
-	(KeySym *)&stuff[1]);
+    ret = ChangeKeyMapping(client, dev, len, DeviceMappingNotify,
+			   stuff->firstKeyCode, stuff->keyCodes,
+			   stuff->keySymsPerKeyCode, (KeySym *) & stuff[1]);
 
     if (ret != Success)
-	SendErrorToClient (client, IReqCode, X_ChangeDeviceKeyMapping, 0, 
-		ret);
+	SendErrorToClient(client, IReqCode, X_ChangeDeviceKeyMapping, 0, ret);
     return Success;
-    }
+}

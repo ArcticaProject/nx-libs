@@ -55,14 +55,14 @@ SOFTWARE.
 #include <dix-config.h>
 #endif
 
-#include <nx-X11/X.h>				/* for inputstr.h    */
-#include <nx-X11/Xproto.h>			/* Request macro     */
-#include "inputstr.h"			/* DeviceIntPtr	     */
+#include <nx-X11/X.h>	/* for inputstr.h    */
+#include <nx-X11/Xproto.h>	/* Request macro     */
+#include "inputstr.h"	/* DeviceIntPtr      */
 #include <nx-X11/extensions/XI.h>
 #include <nx-X11/extensions/XIproto.h>
 
 #include "extnsionst.h"
-#include "extinit.h"			/* LookupDeviceIntRec */
+#include "extinit.h"	/* LookupDeviceIntRec */
 #include "exglobals.h"
 
 #include "allowev.h"
@@ -75,15 +75,14 @@ SOFTWARE.
  */
 
 int
-SProcXAllowDeviceEvents(client)
-    register ClientPtr client;
-    {
+SProcXAllowDeviceEvents(register ClientPtr client)
+{
     REQUEST(xAllowDeviceEventsReq);
     swaps(&stuff->length);
     REQUEST_SIZE_MATCH(xAllowDeviceEventsReq);
     swapl(&stuff->time);
-    return(ProcXAllowDeviceEvents(client));
-    }
+    return (ProcXAllowDeviceEvents(client));
+}
 
 /***********************************************************************
  *
@@ -92,48 +91,44 @@ SProcXAllowDeviceEvents(client)
  */
 
 int
-ProcXAllowDeviceEvents(client)
-    register ClientPtr client;
-    {
-    TimeStamp		time;
-    DeviceIntPtr	thisdev;
+ProcXAllowDeviceEvents(register ClientPtr client)
+{
+    TimeStamp time;
+    DeviceIntPtr thisdev;
 
     REQUEST(xAllowDeviceEventsReq);
     REQUEST_SIZE_MATCH(xAllowDeviceEventsReq);
 
-    thisdev = LookupDeviceIntRec (stuff->deviceid);
-    if (thisdev == NULL)
-	{
+    thisdev = LookupDeviceIntRec(stuff->deviceid);
+    if (thisdev == NULL) {
 	SendErrorToClient(client, IReqCode, X_AllowDeviceEvents, 0, BadDevice);
 	return Success;
-	}
+    }
     time = ClientTimeToServerTime(stuff->time);
 
-    switch (stuff->mode)
-        {
-	case ReplayThisDevice:
-	    AllowSome(client, time, thisdev, NOT_GRABBED);
-	    break;
-	case SyncThisDevice: 
-	    AllowSome(client, time, thisdev, FREEZE_NEXT_EVENT);
-	    break;
-	case AsyncThisDevice: 
-	    AllowSome(client, time, thisdev, THAWED);
-	    break;
-	case AsyncOtherDevices: 
-	    AllowSome(client, time, thisdev, THAW_OTHERS);
-	    break;
-	case SyncAll:
-	    AllowSome(client, time, thisdev, FREEZE_BOTH_NEXT_EVENT);
-	    break;
-	case AsyncAll:
-	    AllowSome(client, time, thisdev, THAWED_BOTH);
-	    break;
-	default: 
-	    SendErrorToClient(client, IReqCode, X_AllowDeviceEvents, 0, 
-		BadValue);
-	    client->errorValue = stuff->mode;
-	    return Success;
-        }
-    return Success;
+    switch (stuff->mode) {
+    case ReplayThisDevice:
+	AllowSome(client, time, thisdev, NOT_GRABBED);
+	break;
+    case SyncThisDevice:
+	AllowSome(client, time, thisdev, FREEZE_NEXT_EVENT);
+	break;
+    case AsyncThisDevice:
+	AllowSome(client, time, thisdev, THAWED);
+	break;
+    case AsyncOtherDevices:
+	AllowSome(client, time, thisdev, THAW_OTHERS);
+	break;
+    case SyncAll:
+	AllowSome(client, time, thisdev, FREEZE_BOTH_NEXT_EVENT);
+	break;
+    case AsyncAll:
+	AllowSome(client, time, thisdev, THAWED_BOTH);
+	break;
+    default:
+	SendErrorToClient(client, IReqCode, X_AllowDeviceEvents, 0, BadValue);
+	client->errorValue = stuff->mode;
+	return Success;
     }
+    return Success;
+}

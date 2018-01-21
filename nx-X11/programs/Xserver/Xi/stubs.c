@@ -91,16 +91,13 @@ SOFTWARE.
  */
 
 int
-ChangeKeyboardDevice (old_dev, new_dev)
-    DeviceIntPtr	old_dev;
-    DeviceIntPtr	new_dev;
-    {
+ChangeKeyboardDevice(DeviceIntPtr old_dev, DeviceIntPtr new_dev)
+{
     /***********************************************************************
      DeleteFocusClassDeviceStruct(old_dev);	 * defined in xchgptr.c *
     **********************************************************************/
     return BadMatch;
-    }
-
+}
 
 /***********************************************************************
  *
@@ -133,12 +130,9 @@ ChangeKeyboardDevice (old_dev, new_dev)
  */
 
 int
-ChangePointerDevice (
-    DeviceIntPtr	old_dev,
-    DeviceIntPtr	new_dev,
-    unsigned char	x,
-    unsigned char	y)
-    {
+ChangePointerDevice(DeviceIntPtr old_dev,
+		    DeviceIntPtr new_dev, unsigned char x, unsigned char y)
+{
     /***********************************************************************
     InitFocusClassDeviceStruct(old_dev);	* allow focusing old ptr*
 
@@ -150,7 +144,7 @@ ChangePointerDevice (
 	axes_changed = FALSE;
     *************************************************************************/
     return BadMatch;
-    }
+}
 
 /***********************************************************************
  *
@@ -166,11 +160,9 @@ ChangePointerDevice (
  */
 
 void
-CloseInputDevice (d, client)
-    DeviceIntPtr d;
-    ClientPtr client;
-    {
-    }
+CloseInputDevice(DeviceIntPtr d, ClientPtr client)
+{
+}
 
 /***********************************************************************
  *
@@ -199,8 +191,8 @@ CloseInputDevice (d, client)
  */
 
 void
-AddOtherInputDevices ()
-    {
+AddOtherInputDevices(void)
+{
     /**********************************************************************
      for each uninitialized device, do something like: 
 
@@ -214,7 +206,7 @@ AddOtherInputDevices ()
     dev->inited = ((*dev->deviceProc)(dev, DEVICE_INIT) == Success);
     ************************************************************************/
 
-    }
+}
 
 /***********************************************************************
  *
@@ -239,12 +231,9 @@ AddOtherInputDevices ()
  */
 
 void
-OpenInputDevice (dev, client, status)
-    DeviceIntPtr dev;
-    ClientPtr client;
-    int *status;
-    {
-    }
+OpenInputDevice(DeviceIntPtr dev, ClientPtr client, int *status)
+{
+}
 
 /****************************************************************************
  *
@@ -259,13 +248,10 @@ OpenInputDevice (dev, client, status)
  */
 
 int
-SetDeviceMode (client, dev, mode)
-    register	ClientPtr	client;
-    DeviceIntPtr dev;
-    int		mode;
-    {
+SetDeviceMode(register ClientPtr client, DeviceIntPtr dev, int mode)
+{
     return BadMatch;
-    }
+}
 
 /****************************************************************************
  *
@@ -280,15 +266,11 @@ SetDeviceMode (client, dev, mode)
  */
 
 int
-SetDeviceValuators (client, dev, valuators, first_valuator, num_valuators)
-    register	ClientPtr	client;
-    DeviceIntPtr dev;
-    int		*valuators;
-    int		first_valuator;
-    int		num_valuators;
-    {
+SetDeviceValuators(register ClientPtr client, DeviceIntPtr dev,
+		   int *valuators, int first_valuator, int num_valuators)
+{
     return BadMatch;
-    }
+}
 
 /****************************************************************************
  *
@@ -299,16 +281,13 @@ SetDeviceValuators (client, dev, valuators, first_valuator, num_valuators)
  */
 
 int
-ChangeDeviceControl (client, dev, control)
-    register	ClientPtr	client;
-    DeviceIntPtr dev;
-    xDeviceCtl	*control;
-    {
-    switch (control->control)
-	{
-	case DEVICE_RESOLUTION:
-	    return (BadMatch);
-	default:
-	    return (BadMatch);
-	}
+ChangeDeviceControl(register ClientPtr client, DeviceIntPtr dev,
+		    xDeviceCtl * control)
+{
+    switch (control->control) {
+    case DEVICE_RESOLUTION:
+	return (BadMatch);
+    default:
+	return (BadMatch);
     }
+}

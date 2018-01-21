@@ -1,6 +1,4 @@
 /*
- * $Id: region.c,v 1.7 2005/07/03 07:37:35 daniels Exp $
- *
  * Copyright © 2003 Keith Packard
  *
  * Permission to use, copy, modify, distribute, and sell this software and its
@@ -217,12 +215,21 @@ ProcXFixesCreateRegionFromGC (ClientPtr client)
 {
     RegionPtr	pRegion, pClip;
     GCPtr	pGC;
+#ifndef NXAGENT_SERVER
+    int 	rc;
+#endif
     REQUEST (xXFixesCreateRegionFromGCReq);
 
     REQUEST_SIZE_MATCH (xXFixesCreateRegionFromGCReq);
     LEGAL_NEW_RESOURCE (stuff->region, client);
 
+#ifndef NXAGENT_SERVER
+    rc = dixLookupGC(&pGC, stuff->gc, client, DixReadAccess);
+    if (rc != Success)
+	return rc;
+#else
     SECURITY_VERIFY_GC(pGC, stuff->gc, client, DixReadAccess);
+#endif
     
     switch (pGC->clientClipType) {
     case CT_PIXMAP:
@@ -615,10 +622,20 @@ ProcXFixesSetGCClipRegion (ClientPtr client)
     GCPtr	pGC;
     RegionPtr	pRegion;
     XID		vals[2];
+#ifndef NXAGENT_SERVER
+    int		rc;
+#endif
     REQUEST(xXFixesSetGCClipRegionReq);
 
     REQUEST_SIZE_MATCH(xXFixesSetGCClipRegionReq);
+
+#ifndef NXAGENT_SERVER
+    rc = dixLookupGC(&pGC, stuff->gc, client, DixWriteAccess);
+    if (rc != Success)
+	return rc;
+#else
     SECURITY_VERIFY_GC(pGC, stuff->gc, client, DixWriteAccess);
+#endif
     VERIFY_REGION_OR_NONE (pRegion, stuff->region, client, DixReadAccess);
 
     if (pRegion)
