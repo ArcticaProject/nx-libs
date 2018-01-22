@@ -52,6 +52,9 @@ SOFTWARE.
 
 #include <nx-X11/X.h>
 #include <nx-X11/Xproto.h>
+#include <stdio.h>
+#include <string.h>
+#include <strings.h>
 #include "misc.h"
 #include "dix.h"
 #include "colormapst.h"

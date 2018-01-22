@@ -547,13 +547,12 @@ ProcSendEvent(ClientPtr client)
     if (stuff->event.u.u.type == ClientMessage &&
 	stuff->event.u.u.detail != 8 &&
 	stuff->event.u.u.detail != 16 &&
-	stuff->event.u.u.detail != 32 &&
-	!permitOldBugs)
+	stuff->event.u.u.detail != 32)
     {
 	client->errorValue = stuff->event.u.u.detail;
 	return BadValue;
     }
-    if ((stuff->eventMask & ~AllEventMasks) && !permitOldBugs)
+    if (stuff->eventMask & ~AllEventMasks)
     {
 	client->errorValue = stuff->eventMask;
 	return BadValue;

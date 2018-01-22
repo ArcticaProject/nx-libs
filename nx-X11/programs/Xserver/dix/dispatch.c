@@ -2453,7 +2453,7 @@ ProcCreateColormap(register ClientPtr client)
 	    return(result);
     }
     client->errorValue = stuff->visual;
-    return(BadValue);
+    return(BadMatch);
 }
 
 int
@@ -3608,6 +3608,10 @@ CloseDownRetainedResources()
     }
 }
 
+extern int clientPrivateLen;
+extern unsigned *clientPrivateSizes;
+extern unsigned totalClientSize;
+
 void InitClient(ClientPtr client, int i, void * ospriv)
 {
     client->index = i;
@@ -3648,10 +3652,6 @@ void InitClient(ClientPtr client, int i, void * ospriv)
     client->clientIds = NULL;
 }
 
-extern int clientPrivateLen;
-extern unsigned *clientPrivateSizes;
-extern unsigned totalClientSize;
-
 #ifndef NXAGENT_SERVER
 int
 InitClientPrivates(ClientPtr client)
@@ -3684,6 +3684,17 @@ InitClientPrivates(ClientPtr client)
 	}
 	else
 	    ppriv->ptr = (void *)NULL;
+    }
+
+    /* Allow registrants to initialize the serverClient devPrivates */
+    if (!client->index && ClientStateCallback)
+    {
+	NewClientInfoRec clientinfo;
+
+	clientinfo.client = client;
+	clientinfo.prefix = (xConnSetupPrefix *)NULL;
+	clientinfo.setup = (xConnSetup *) NULL;
+	CallCallbacks((&ClientStateCallback), (void *)&clientinfo);
     }
     return 1;
 }

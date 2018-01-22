@@ -263,6 +263,7 @@ main(int argc, char *argv[], char *envp[])
 #else
 	InitGlyphCaching();
 #endif /* of HAS_XFONT2 */
+	ResetExtensionPrivates();
 	ResetClientPrivates();
 	ResetScreenPrivates();
 	ResetWindowPrivates();

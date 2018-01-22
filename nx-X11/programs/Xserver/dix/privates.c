@@ -42,12 +42,70 @@ from The Open Group.
 #include "servermd.h"
 #include "site.h"
 #include "inputstr.h"
+#include "extnsionst.h"
 
 /*
  *  See the Wrappers and devPrivates section in "Definition of the
  *  Porting Layer for the X v11 Sample Server" (doc/Server/ddx.tbl.ms)
  *  for information on how to use devPrivates.
  */
+
+/*
+ *  extension private machinery
+ */
+
+static int  extensionPrivateCount;
+int extensionPrivateLen;
+unsigned *extensionPrivateSizes;
+unsigned totalExtensionSize;
+
+void
+ResetExtensionPrivates()
+{
+    extensionPrivateCount = 0;
+    extensionPrivateLen = 0;
+    free(extensionPrivateSizes);
+    extensionPrivateSizes = (unsigned *)NULL;
+    totalExtensionSize =
+	((sizeof(ExtensionEntry) + sizeof(long) - 1) / sizeof(long)) * sizeof(long);
+}
+
+int
+AllocateExtensionPrivateIndex()
+{
+    return extensionPrivateCount++;
+}
+
+Bool
+AllocateExtensionPrivate(int index2, unsigned amount)
+{
+    unsigned oldamount;
+
+    /* Round up sizes for proper alignment */
+    amount = ((amount + (sizeof(long) - 1)) / sizeof(long)) * sizeof(long);
+
+    if (index2 >= extensionPrivateLen)
+    {
+	unsigned *nsizes;
+	nsizes = (unsigned *)realloc(extensionPrivateSizes,
+				      (index2 + 1) * sizeof(unsigned));
+	if (!nsizes)
+	    return FALSE;
+	while (extensionPrivateLen <= index2)
+	{
+	    nsizes[extensionPrivateLen++] = 0;
+	    totalExtensionSize += sizeof(DevUnion);
+	}
+	extensionPrivateSizes = nsizes;
+    }
+    oldamount = extensionPrivateSizes[index2];
+    if (amount > oldamount)
+    {
+	extensionPrivateSizes[index2] = amount;
+	totalExtensionSize += (amount - oldamount);
+    }
+    return TRUE;
+}
 
 /*
  *  client private machinery
