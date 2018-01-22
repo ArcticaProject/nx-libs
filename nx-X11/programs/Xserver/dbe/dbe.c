@@ -375,11 +375,17 @@ ProcDbeAllocateBackBufferName(ClientPtr client)
     REQUEST_SIZE_MATCH(xDbeAllocateBackBufferNameReq);
 
     /* The window must be valid. */
+#ifndef NXAGENT_SERVER
+    status = dixLookupWindow(&pWin, stuff->window, client, DixWriteAccess);
+    if (status != Success)
+	return status;
+#else
     if (!(pWin = SecurityLookupWindow(stuff->window, client,
 				      DixWriteAccess)))
     {
 	return(BadWindow);
     }
+#endif
 
     /* The window must be InputOutput. */
     if (pWin->drawable.class != InputOutput)
@@ -704,12 +710,21 @@ ProcDbeSwapBuffers(ClientPtr client)
         /* Check all windows to swap. */
 
         /* Each window must be a valid window - BadWindow. */
+#ifndef NXAGENT_SERVER
+	error = dixLookupWindow(&pWin, dbeSwapInfo[i].window, client,
+				DixWriteAccess);
+	if (error != Success) {
+            free(swapInfo);
+            return error;
+        }
+#else
         if (!(pWin = SecurityLookupWindow(dbeSwapInfo[i].window, client,
 					  DixWriteAccess)))
         {
             free(swapInfo);
 	    return(BadWindow);
         }
+#endif
 
         /* Each window must be double-buffered - BadMatch. */
         if (DBE_WINDOW_PRIV(pWin) == NULL)
@@ -867,12 +882,21 @@ ProcDbeGetVisualInfo(ClientPtr client)
 
         for (i = 0; i < stuff->n; i++)
         {
+#ifndef NXAGENT_SERVER
+            register int rc = dixLookupDrawable(pDrawables+i, drawables[i], client, 0,
+						DixReadAccess);
+            if (rc != Success) {
+                free(pDrawables);
+                return rc;
+            }
+#else
             if (!(pDrawables[i] = (DrawablePtr)SecurityLookupDrawable(
 				drawables[i], client, DixReadAccess)))
             {
                 free(pDrawables);
                 return(BadDrawable);
             }
+#endif
         }
     }
 
