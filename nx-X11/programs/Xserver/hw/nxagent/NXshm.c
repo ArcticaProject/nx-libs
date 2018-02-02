@@ -378,7 +378,6 @@ ProcShmPutImage(client)
 	memset(&ev, 0, sizeof(xShmCompletionEvent));
 	ev.type = ShmCompletionCode;
 	ev.drawable = stuff->drawable;
-	ev.sequenceNumber = client->sequence;
 	ev.minorEvent = X_ShmPutImage;
 	ev.majorEvent = ShmReqCode;
 	ev.shmseg = stuff->shmseg;
