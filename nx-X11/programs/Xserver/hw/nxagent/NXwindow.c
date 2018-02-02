@@ -138,9 +138,7 @@ extern void nxagentSetVersionProperty(WindowPtr pWin);
 
 void nxagentClearSplash(WindowPtr pW)
 {
-    ScreenPtr pScreen;
-
-    pScreen = pW->drawable.pScreen;
+    ScreenPtr pScreen = pW->drawable.pScreen;
 
     if (pW->backgroundState == BackgroundPixmap)
     {
@@ -189,9 +187,6 @@ MakeRootTile(WindowPtr pWin)
 	for (j = len; j > 0; j--)
 	    *to++ = *from;
 
-   if (blackRoot)
-       bzero(back, sizeof(back));
-
    (*pGC->ops->PutImage)((DrawablePtr)pWin->background.pixmap, pGC, 1,
 		    0, 0, len, 4, 0, XYBitmap, (char *)back);
 
@@ -203,7 +198,8 @@ MakeRootTile(WindowPtr pWin)
 void
 InitRootWindow(WindowPtr pWin)
 {
-    ScreenPtr pScreen;
+    ScreenPtr pScreen = pWin->drawable.pScreen;
+    int backFlag = CWBorderPixel | CWCursor | CWBackingStore;
 
     #ifdef TEST
     fprintf(stderr, "InitRootWindow: Called for window at [%p][%ld] with parent [%p].\n",
@@ -219,8 +215,6 @@ InitRootWindow(WindowPtr pWin)
 
       nxagentRootlessWindow = pWin;
     }
-
-    pScreen = pWin->drawable.pScreen;
 
     /*
      * A root window is created for each screen by main
@@ -254,20 +248,34 @@ InitRootWindow(WindowPtr pWin)
     pWin->cursorIsNone = FALSE;
     pWin->optional->cursor = rootCursor;
     rootCursor->refcnt++;
+
+#ifdef NXAGENT_SPLASH
+    if (blackRoot)
+      pWin->background.pixel = pScreen->blackPixel;
+    else
+      pWin->background.pixel = pScreen->whitePixel;
+    backFlag |= CWBackPixel;
+
+    MakeRootTile(pWin);
+#else
+    if (!blackRoot && !whiteRoot) {
+        MakeRootTile(pWin);
+        backFlag |= CWBackPixmap;
+    }
+    else {
+        if (blackRoot)
+            pWin->background.pixel = pScreen->blackPixel;
+        else
+            pWin->background.pixel = pScreen->whitePixel;
+        backFlag |= CWBackPixel;
+    }
+#endif
+
     pWin->backingStore = defaultBackingStore;
     pWin->forcedBS = (defaultBackingStore != NotUseful);
 
-    #ifdef NXAGENT_SPLASH
     /* We SHOULD check for an error value here XXX */
-    pWin -> background.pixel = pScreen -> blackPixel;
-    (*pScreen->ChangeWindowAttributes)(pWin,
-		       CWBackPixel|CWBorderPixel|CWCursor|CWBackingStore);
-    #else
-    (*pScreen->ChangeWindowAttributes)(pWin,
-		       CWBackPixmap|CWBorderPixel|CWCursor|CWBackingStore);
-    #endif
-
-    MakeRootTile(pWin);
+    (*pScreen->ChangeWindowAttributes)(pWin, backFlag);
 
     /*
      * Map both the root and the default agent window.
@@ -310,6 +318,7 @@ DeleteWindow(void * value, XID wid)
  {
     register WindowPtr pParent;
     register WindowPtr pWin = (WindowPtr)value;
+    xEvent event;
 
     UnmapWindow(pWin, FALSE);
 
@@ -318,7 +327,7 @@ DeleteWindow(void * value, XID wid)
     pParent = pWin->parent;
     if (wid && pParent && SubStrSend(pWin, pParent))
     {
-	xEvent event = {0};
+	memset(&event, 0, sizeof(xEvent));
 	event.u.u.type = DestroyNotify;
 	event.u.destroyNotify.window = pWin->drawable.id;
 	DeliverEvents(pWin, &event, 1, NullWindow);		
@@ -945,6 +954,7 @@ int
 UnmapWindow(register WindowPtr pWin, Bool fromConfigure)
 {
     register WindowPtr pParent;
+    xEvent event;
     Bool wasRealized = (Bool)pWin->realized;
     Bool wasViewable = (Bool)pWin->viewable;
     ScreenPtr pScreen = pWin->drawable.pScreen;
@@ -962,7 +972,7 @@ UnmapWindow(register WindowPtr pWin, Bool fromConfigure)
 	return(Success);
     if (SubStrSend(pWin, pParent) && MapUnmapEventsEnabled(pWin))
     {
-	xEvent event = {0};
+	memset(&event, 0, sizeof(xEvent));
 	event.u.u.type = UnmapNotify;
 	event.u.unmapNotify.window = pWin->drawable.id;
 	event.u.unmapNotify.fromConfigure = fromConfigure;
