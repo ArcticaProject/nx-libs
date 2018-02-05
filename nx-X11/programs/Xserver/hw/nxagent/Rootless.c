@@ -1002,7 +1002,7 @@ void nxagentImportProperty(Window window,
         wmHints.flags &= ~IconWindowHint;
 
         #ifdef WARNING
-        fprintf(stderr, "nxagenImportProperty: WARNING! Failed to look up remote icon "
+        fprintf(stderr, "nxagentImportProperty: WARNING! Failed to look up remote icon "
                     "window %x from hint importing property [%ld] type %s on window %p.\n",
                          (unsigned int) wmHints.icon_window,
                              (long int) property, typeS, (void *) pWin);

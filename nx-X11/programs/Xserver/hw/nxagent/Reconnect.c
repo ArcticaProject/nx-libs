@@ -463,7 +463,7 @@ Bool nxagentReconnectSession(void)
     failedStep = DISPLAY_STEP;
 
     #ifdef TEST
-    fprintf(stderr, "nxagentReconnect: WARNING! Failed display reconnection.\n");
+    fprintf(stderr, "nxagentReconnectSession: WARNING! Failed display reconnection.\n");
     #endif
 
     goto nxagentReconnectError;
@@ -491,7 +491,7 @@ Bool nxagentReconnectSession(void)
     else
     {
       #ifdef WARNING
-      fprintf(stderr, "nxagentReconnect: WARNING! Unable to retrieve all the fonts currently in use. "
+      fprintf(stderr, "nxagentReconnectSession: WARNING! Unable to retrieve all the fonts currently in use. "
                   "Missing fonts have been replaced.\n");
       #endif
 
@@ -594,7 +594,7 @@ Bool nxagentReconnectSession(void)
       #ifdef WARNING
       if (nxagentVerbose == 1)
       {
-        fprintf(stderr, "nxagentReconnect: Failed to reset keyboard device.\n");
+        fprintf(stderr, "nxagentReconnectSession: Failed to reset keyboard device.\n");
       }
       #endif
 
@@ -638,7 +638,7 @@ Bool nxagentReconnectSession(void)
   if (nxagentSessionState != SESSION_GOING_UP)
   {
     #ifdef WARNING
-    fprintf(stderr, "nxagentReconnect: WARNING! Unexpected session state [%s] while reconnecting.\n",
+    fprintf(stderr, "nxagentReconnectSession: WARNING! Unexpected session state [%s] while reconnecting.\n",
                 DECODE_SESSION_STATE(nxagentSessionState));
     #endif
 
@@ -666,7 +666,7 @@ Bool nxagentReconnectSession(void)
    */
 
   #ifdef TEST
-  fprintf(stderr, "nxagentReconnect: Setting the NX flush policy to deferred.\n");
+  fprintf(stderr, "nxagentReconnectSession: Setting the NX flush policy to deferred.\n");
   #endif
 
   NXSetDisplayPolicy(nxagentDisplay, NXPolicyDeferred);
@@ -680,7 +680,7 @@ nxagentReconnectError:
   if (failedStep == DISPLAY_STEP)
   {
     #ifdef TEST
-    fprintf(stderr, "nxagentReconnect: Reconnection failed in display step. Restoring options.\n");
+    fprintf(stderr, "nxagentReconnectSession: Reconnection failed in display step. Restoring options.\n");
     #endif
 
     nxagentRestoreOptions();
@@ -695,19 +695,19 @@ nxagentReconnectError:
     #ifdef WARNING
     if (nxagentVerbose == 1)
     {
-      fprintf(stderr, "nxagentReconnect: WARNING! The reconnect error message is not set. Failed step is [%d].\n",
+      fprintf(stderr, "nxagentReconnectSession: WARNING! The reconnect error message is not set. Failed step is [%d].\n",
                   failedStep);
     }
     #endif
 
     #ifdef TEST
-    fprintf(stderr, "nxagentReconnect: Reconnection failed due to a display error.\n");
+    fprintf(stderr, "nxagentReconnectSession: Reconnection failed due to a display error.\n");
     #endif
   }
   else
   {
     #ifdef TEST
-    fprintf(stderr, "nxagentReconnect: Reconnection failed with reason '%s'\n",
+    fprintf(stderr, "nxagentReconnectSession: Reconnection failed with reason '%s'\n",
                 nxagentGetReconnectError());
     #endif
   }
@@ -721,7 +721,7 @@ nxagentReconnectError:
   #ifdef TEST
   else
   {
-    fprintf(stderr, "nxagentReconnect: Cannot launch the dialog without a valid display.\n");
+    fprintf(stderr, "nxagentReconnectSession: Cannot launch the dialog without a valid display.\n");
   }
   #endif
 

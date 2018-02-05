@@ -3948,7 +3948,7 @@ void nxagentUngrabPointerAndKeyboard(XEvent *X)
   XUngrabKeyboard(nxagentDisplay, now);
 
   #ifdef TEST
-  fprintf(stderr, "nxagentGrabPointerAndKeyboard: Going to ungrab the pointer in context [B6].\n");
+  fprintf(stderr, "nxagentUngrabPointerAndKeyboard: Going to ungrab the pointer in context [B6].\n");
   #endif
 
   XUngrabPointer(nxagentDisplay, now);
@@ -3958,10 +3958,11 @@ void nxagentDeactivatePointerGrab()
 {
   GrabPtr grab = inputInfo.pointer -> grab;
 
-  XButtonEvent X;
-
   if (grab)
   {
+    XButtonEvent X;
+    memset(&X, 0, sizeof(XButtonEvent));
+
     X.type = ButtonRelease;
     X.serial = 0;
     X.send_event = FALSE;

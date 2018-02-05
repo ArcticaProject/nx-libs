@@ -2780,7 +2780,7 @@ int nxagentShadowInit(ScreenPtr pScreen, WindowPtr pWin)
 #endif
 
   #ifdef TEST
-  fprintf(stderr, "nxagentAddXConnection: Adding the X connection [%d] "
+  fprintf(stderr, "nxagentShadowInit: Adding the X connection [%d] "
               "to the device set.\n", fd);
   #endif
 

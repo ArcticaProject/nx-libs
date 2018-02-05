@@ -86,14 +86,14 @@ int nxagentShowSplashWindow(Window parentWindow)
   GC gc;
 
   #ifdef TEST
-  fprintf(stderr, "nxagentShowSplash: Got called.\n");
+  fprintf(stderr, "nxagentShowSplashWindow: Got called.\n");
   #endif
 
   #ifdef NXAGENT_TIMESTAMP
   {
     extern unsigned long startTime;
 
-    fprintf(stderr, "nxagentShowSplash: Initializing splash start at [%d] milliseconds.\n",
+    fprintf(stderr, "nxagentShowSplashWindow: Initializing splash start at [%d] milliseconds.\n",
             GetTimeInMillis() - startTime);
   }
   #endif
@@ -133,7 +133,7 @@ int nxagentShowSplashWindow(Window parentWindow)
   getAttributes.height = nxagentOption(RootHeight);
 
   #ifdef TEST
-  fprintf(stderr, "nxagentShowSplash: Going to create new splash window.\n");
+  fprintf(stderr, "nxagentShowSplashWindow: Going to create new splash window.\n");
   #endif
 
   nxagentSplashWindow =
@@ -146,7 +146,7 @@ int nxagentShowSplashWindow(Window parentWindow)
                           BlackPixel (nxagentDisplay, 0));
 
   #ifdef TEST
-  fprintf(stderr, "nxagentShowSplash: Created new splash window with id [%ld].\n",
+  fprintf(stderr, "nxagentShowSplashWindow: Created new splash window with id [%ld].\n",
               nxagentSplashWindow);
   #endif
 
@@ -162,7 +162,7 @@ int nxagentShowSplashWindow(Window parentWindow)
   #ifdef NXAGENT_TIMESTAMP
   {
     extern unsigned long startTime;
-    fprintf(stderr, "nxagentShowSplash: Splash ends [%d] milliseconds.\n",
+    fprintf(stderr, "nxagentShowSplashWindow: Splash ends [%d] milliseconds.\n",
             GetTimeInMillis() - startTime);
   }
   #endif
@@ -185,7 +185,7 @@ void nxagentPaintLogo(Window win, GC gc, int scale, int width, int height)
    }
 
   #ifdef DEBUG
-  fprintf(stderr, "nxagenShowtLogo: Got called.\n");
+  fprintf(stderr, "nxagentPaintLogo: Got called.\n");
   #endif
 
   #ifdef NXAGENT_LOGO_DEBUG

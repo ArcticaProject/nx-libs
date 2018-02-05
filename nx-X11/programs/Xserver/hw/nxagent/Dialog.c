@@ -91,7 +91,7 @@ void nxagentResetDialog(int pid)
   else if (pid == nxagentFontsReplacementDialogPid)
   {
     #ifdef TEST
-    fprintf(stderr, "nxagentFontsReplacementDialog: Resetting fonts replacement dialog pid [%d].\n", 
+    fprintf(stderr, "nxagentResetDialog: Resetting fonts replacement dialog pid [%d].\n",
                 nxagentFontsReplacementDialogPid);
     #endif
 

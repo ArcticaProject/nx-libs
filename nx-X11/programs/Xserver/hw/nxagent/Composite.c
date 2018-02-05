@@ -110,7 +110,7 @@ void nxagentCompositeExtensionInit()
   #ifdef TEST
   else
   {
-    fprintf(stderr, "nxagentRenderExtensionInit: Use of the composite extension not enabled.\n");
+    fprintf(stderr, "nxagentCompositeExtensionInit: Use of the composite extension not enabled.\n");
   }
   #endif
 }
@@ -188,7 +188,7 @@ void nxagentUnredirectWindow(WindowPtr pWin)
   if (nxagentWindowPriv(pWin) -> isRedirected == 1)
   {
     #ifdef TEST
-    fprintf(stderr, "nxagentRedirectWindow: Disabling redirection of window id [%ld] "
+    fprintf(stderr, "nxagentUnredirectWindow: Disabling redirection of window id [%ld] "
                 "to off-screen memory.\n", nxagentWindow(pWin));
     #endif
 

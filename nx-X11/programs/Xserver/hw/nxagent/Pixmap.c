@@ -540,7 +540,7 @@ Bool nxagentDestroyVirtualPixmap(PixmapPtr pPixmap)
 RegionPtr nxagentPixmapToRegion(PixmapPtr pPixmap)
 {
   #ifdef TEST
-  fprintf(stderr, "PixmapToRegion: Pixmap = [%p] nxagentVirtualPixmap = [%p]\n",
+  fprintf(stderr, "nxagentPixmapToRegion: Pixmap = [%p] nxagentVirtualPixmap = [%p]\n",
               (void *) pPixmap, (void *) nxagentVirtualPixmap(pPixmap));
   #endif
 
@@ -727,7 +727,7 @@ PixmapPtr nxagentPixmapPtr(Pixmap pixmap)
 
   if (pair.pMap == NULL)
   {
-    fprintf(stderr, "nxagentFindPixmap: WARNING! Failed to find "
+    fprintf(stderr, "nxagentPixmapPtr: WARNING! Failed to find "
 	    "remote pixmap [%ld].\n", (long int) pair.pixmap);
   }
   else if (nxagentDrawableStatus((DrawablePtr) pair.pMap) == NotSynchronized)

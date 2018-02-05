@@ -283,7 +283,7 @@ Bool nxagentCreateWindow(pWin)
       nxagentClearSplash(nxagentRootTileWindow);
   }
 #ifdef NXAGENT_LOGO_DEBUG
-  fprintf(stderr, "nxagentSplashCount: %d\n", nxagentSplashCount);
+  fprintf(stderr, "nxagentCreateWindow: nxagentSplashCount [%d]\n", nxagentSplashCount);
 #endif
 
   if (pWin->drawable.class == InputOnly) {
@@ -303,7 +303,7 @@ Bool nxagentCreateWindow(pWin)
     attributes.backing_store = NotUseful;
 
     #ifdef TEST
-    fprintf(stderr, "nxagentCreateWindow: Backing store on window at %p is %d.\n",
+    fprintf(stderr, "nxagentCreateWindow: Backing store on window at [%p] is [%d].\n",
                 (void*)pWin, attributes.backing_store);
     #endif
 
@@ -2865,7 +2865,7 @@ Bool nxagentSetWindowCursors(void *p0)
   }
 
   #ifdef NXAGENT_RECONNECT_WINDOW_DEBUG
-  fprintf(stderr, "nxagentLoopOverWindows: All cursors configured.\n");
+  fprintf(stderr, "nxagentSetWindowCursors: All cursors configured.\n");
   #endif
 
   nxagentReDisplayCurrentCursor();

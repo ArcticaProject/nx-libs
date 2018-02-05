@@ -423,7 +423,7 @@ void nxagentBlockHandler(void * data, struct timeval **timeout, void * mask)
     }
 
     #ifdef TEST
-    fprintf(stderr, "nxagentDispatchHandler: Reducing the display buffer to [%d] bytes.\n",
+    fprintf(stderr, "nxagentBlockHandler: Reducing the display buffer to [%d] bytes.\n",
                 nxagentBuffer);
     #endif
 
@@ -435,7 +435,7 @@ void nxagentBlockHandler(void * data, struct timeval **timeout, void * mask)
     nxagentBuffer = nxagentOption(DisplayBuffer);
 
     #ifdef TEST
-    fprintf(stderr, "nxagentDispatchHandler: Increasing the display buffer to [%d] bytes.\n",
+    fprintf(stderr, "nxagentBlockHandler: Increasing the display buffer to [%d] bytes.\n",
                 nxagentBuffer);
     #endif
 
@@ -590,7 +590,7 @@ void nxagentWakeupHandler(void * data, int count, void * mask)
     #endif
 
     #ifdef TEST
-    fprintf(stderr, "nxagentBlockHandler: Calling nxagentHandleConnectionStates "
+    fprintf(stderr, "nxagentWakeupHandler: Calling nxagentHandleConnectionStates "
                 "with ioError [%d] sigHup [%d].\n", nxagentException.ioError, nxagentException.sigHup);
     #endif
 
@@ -743,14 +743,14 @@ void nxagentShadowBlockHandler(void * data, struct timeval **timeout, void * mas
   if (nxagentSessionState == SESSION_DOWN && nxagentOption(SleepTime) > 0)
   {
 #ifdef TEST
-    fprintf(stderr, "nxagentBlockHandler: sleeping for %d milliseconds for slowdown.\n",
+    fprintf(stderr, "nxagentShadowBlockHandler: sleeping for %d milliseconds for slowdown.\n",
                     nxagentOption(SleepTime));
 #endif
     usleep(nxagentOption(SleepTime) * 1000);
   }
 #ifdef TEST
   else if (0 == nxagentOption(SleepTime)) {
-    fprintf(stderr, "nxagentBlockHandler: not sleeping for slowdown.\n");
+    fprintf(stderr, "nxagentShadowBlockHandler: not sleeping for slowdown.\n");
   }
 #endif
 
