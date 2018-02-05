@@ -349,12 +349,26 @@ ProcShmPutImage(client)
     fprintf(stderr, "ProcShmPutImage: Calling (*shmFuncs[pDraw->pScreen->myNum]->PutImage)().\n");
     #endif
 
-    (*shmFuncs[pDraw->pScreen->myNum]->PutImage)(
-                               pDraw, pGC, stuff->depth, stuff->format,
-                               stuff->totalWidth, stuff->totalHeight,
-                               stuff->srcX, stuff->srcY,
-                               stuff->srcWidth, stuff->srcHeight,
-                               stuff->dstX, stuff->dstY,
+    if ((((stuff->format == ZPixmap) && (stuff->srcX == 0)) ||
+	 ((stuff->format != ZPixmap) &&
+	  (stuff->srcX < screenInfo.bitmapScanlinePad) &&
+	  ((stuff->format == XYBitmap) ||
+	   ((stuff->srcY == 0) &&
+	    (stuff->srcHeight == stuff->totalHeight))))) &&
+	((stuff->srcX + stuff->srcWidth) == stuff->totalWidth))
+	(*pGC->ops->PutImage) (pDraw, pGC, stuff->depth,
+			       stuff->dstX, stuff->dstY,
+			       stuff->totalWidth, stuff->srcHeight,
+			       stuff->srcX, stuff->format,
+			       shmdesc->addr + stuff->offset +
+			       (stuff->srcY * length));
+    else
+	(*shmFuncs[pDraw->pScreen->myNum]->PutImage)(
+			       pDraw, pGC, stuff->depth, stuff->format,
+			       stuff->totalWidth, stuff->totalHeight,
+			       stuff->srcX, stuff->srcY,
+			       stuff->srcWidth, stuff->srcHeight,
+			       stuff->dstX, stuff->dstY,
                                shmdesc->addr + stuff->offset);
 
     if (stuff->sendEvent)
@@ -364,7 +378,6 @@ ProcShmPutImage(client)
 	memset(&ev, 0, sizeof(xShmCompletionEvent));
 	ev.type = ShmCompletionCode;
 	ev.drawable = stuff->drawable;
-	ev.sequenceNumber = client->sequence;
 	ev.minorEvent = X_ShmPutImage;
 	ev.majorEvent = ShmReqCode;
 	ev.shmseg = stuff->shmseg;
