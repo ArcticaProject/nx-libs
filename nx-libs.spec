@@ -125,12 +125,6 @@ BuildRequires:  zlib-devel
 BuildRequires:  libtirpc-devel
 %endif
 
-%if 0%{?suse_version} >= 1130 || 0%{?fedora}
-%define cond_noarch BuildArch: noarch
-%else
-%define cond_noarch %nil
-%endif
-
 Obsoletes:      nx < 3.5.0-19
 Provides:       nx = %{version}-%{release}
 Provides:       nx%{?_isa} = %{version}-%{release}
