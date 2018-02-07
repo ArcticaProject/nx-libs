@@ -127,6 +127,10 @@ int  defaultScreenSaverAllowExposures = DEFAULT_SCREEN_SAVER_EXPOSURES;
 int  logoScreenSaver = DEFAULT_LOGO_SCREEN_SAVER;
 #endif
 
+#ifdef SCREENSAVER
+Bool screenSaverSuspended = FALSE;
+#endif
+
 char *defaultFontPath = COMPILEDDEFAULTFONTPATH;
 char *defaultTextFont = COMPILEDDEFAULTFONT;
 char *defaultCursorFont = COMPILEDCURSORFONT;
