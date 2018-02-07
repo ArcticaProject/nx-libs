@@ -120,6 +120,11 @@ BuildRequires:  xorg-x11-font-utils
 BuildRequires:  xorg-x11-proto-devel
 BuildRequires:  zlib-devel
 
+# RPC headers. Fedora 28+ phased them out of glibc, like upstream did.
+%if 0%{?fedora} > 27
+BuildRequires:  libtirpc-devel
+%endif
+
 %if 0%{?suse_version} >= 1130 || 0%{?fedora}
 %define cond_noarch BuildArch: noarch
 %else
