@@ -1,7 +1,7 @@
 %global _hardened_build 1
 
 # Override values for specific architectures.
-%ifarch ppc64le
+%ifarch ppc64le && 0%{?rhel} == 7
 # Works around https://bugs.centos.org/view.php?id=13779 / https://bugzilla.redhat.com/show_bug.cgi?id=1489712
 # Compilation failure on PPC64LE due to a compiler bug.
 # REMEMBER TO REMOVE ONCE DOWNSTREAM FIXES THE ISSUE!
