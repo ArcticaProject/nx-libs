@@ -243,6 +243,7 @@ NX_VERSION_CURRENT_STRING  = nxVersionString
     defined(AMD64Architecture) || defined(SparcArchitecture) || \
     defined(Sparc64Architecture) || defined(MipsArchitecture) || \
     defined(AlphaArchitecture) || defined(PpcArchitecture) || \
+    defined(Ppc64Architecture) || defined(Ppc64LeArchitecture) || \
     defined(Mc68020Architecture) || defined(Arm32Architecture) || \
     defined(HPArchitecture) || defined(SuperHArchitecture)
 # ifndef XorgServer
@@ -765,7 +766,7 @@ XFREE86JAPANESEDOCDIR = $(DOCDIR)/Japanese
 # endif
 #endif
 
-#if HasGcc2 && defined(Ppc64Architecture)
+#if HasGcc2 && (defined(Ppc64Architecture) || defined(Ppc64LeArchitecture))
 # ifndef DefaultGcc2Ppc64Opt
 #  define DefaultGcc2Ppc64Opt -O2 GccAliasingArgs
 # endif

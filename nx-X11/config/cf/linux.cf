@@ -457,7 +457,7 @@ XCOMM binutils:	(LinuxBinUtilsMajorVersion)
 #define MkdirHierCmd		mkdir -p
 
 #ifndef HaveLib64
-# if defined (AMD64Architecture) || defined (s390xArchitecture) || defined (Ppc64Architecture)
+# if defined (AMD64Architecture) || defined (s390xArchitecture) || defined (Ppc64Architecture) || defined (Ppc64LeArchitecture)
 #  define HaveLib64	YES
 # else
 #  define HaveLib64	NO
@@ -480,7 +480,7 @@ XCOMM binutils:	(LinuxBinUtilsMajorVersion)
 #    define CplusplusCmd	c++ -m32
 #   endif
 #  endif
-#  if defined (Ppc64Architecture)
+#  if defined (Ppc64Architecture) || defined (Ppc64LeArchitecture)
 #   ifndef CcCmd
 #    define CcCmd		gcc -m64
 #   endif
@@ -764,7 +764,7 @@ XCOMM binutils:	(LinuxBinUtilsMajorVersion)
 # endif
 #endif
 
-#ifdef Ppc64Architecture
+#if defined (Ppc64Architecture) || defined (Ppc64LeArchitecture)
 # define DefaultCCOptions	-std=c99 GccWarningOptions -mminimal-toc
 # ifndef OptimizedCDebugFlags
 #  define OptimizedCDebugFlags	DefaultGcc2Ppc64Opt

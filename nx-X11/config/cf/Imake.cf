@@ -858,10 +858,25 @@ XCOMM Keep cpp from replacing path elements containing i486/i586/i686
 #  undef __powerpc__
 # endif
 # ifdef __powerpc64__
-#  ifndef Ppc64Architecture
-#   define Ppc64Architecture
+/* Can be both BE or LE. Trust that __BYTE_ORDER__ is set. */
+#  undef tmp_set_big_endian
+#  define tmp_set_big_endian 1
+#  if defined (__BYTE_ORDER__) && defined (__ORDER_LITTLE_ENDIAN__) && defined (__ORDER_BIG_ENDIAN__)
+#   if __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
+#    define tmp_set_big_endian 0
+#   endif
+#  endif
+#  if tmp_set_big_endian
+#   ifndef Ppc64Architecture
+#    define Ppc64Architecture
+#   endif
+#  else
+#   ifndef Ppc64LeArchitecture
+#    define Ppc64LeArchitecture
+#   endif
 #  endif
 #  undef __powerpc64__
+#  undef tmp_set_big_endian
 # endif
 # ifdef sparc
 #  define SparcArchitecture
