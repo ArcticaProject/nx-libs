@@ -60,8 +60,8 @@ SOFTWARE.
 #include <nx-X11/X.h>
 #include <nx-X11/Xproto.h>
 #include "inputstr.h"
-#include "gcstruct.h"   		/* pointer for extnsionst.h*/
-#include "extnsionst.h"			/* extension entry   */
+#include "gcstruct.h"	/* pointer for extnsionst.h */
+#include "extnsionst.h"	/* extension entry   */
 #include <nx-X11/extensions/XI.h>
 #include <nx-X11/extensions/XIproto.h>
 

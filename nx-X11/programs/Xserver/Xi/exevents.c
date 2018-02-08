@@ -66,10 +66,10 @@ SOFTWARE.
 #include "region.h"
 #include "exevents.h"
 #include "extnsionst.h"
-#include "extinit.h"			/* LookupDeviceIntRec */
+#include "extinit.h"	/* LookupDeviceIntRec */
 #include "exglobals.h"
-#include "dixevents.h"			/* DeliverFocusedEvent */
-#include "dixgrabs.h"			/* CreateGrab() */
+#include "dixevents.h"	/* DeliverFocusedEvent */
+#include "dixgrabs.h"	/* CreateGrab() */
 
 #include "chgptr.h"
 
