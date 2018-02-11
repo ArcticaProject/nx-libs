@@ -77,7 +77,7 @@ SOFTWARE.
 int
 SProcXChangeDeviceKeyMapping(client)
     register ClientPtr client;
-    {
+{
     unsigned int count;
 
     REQUEST(xChangeDeviceKeyMappingReq);
@@ -86,8 +86,8 @@ SProcXChangeDeviceKeyMapping(client)
     count = stuff->keyCodes * stuff->keySymsPerKeyCode;
     REQUEST_FIXED_SIZE(xChangeDeviceKeyMappingReq, count * sizeof(CARD32));
     SwapLongs((CARD32 *) (&stuff[1]), count);
-    return(ProcXChangeDeviceKeyMapping(client));
-    }
+    return (ProcXChangeDeviceKeyMapping(client));
+}
 
 /***********************************************************************
  *
@@ -98,8 +98,8 @@ SProcXChangeDeviceKeyMapping(client)
 int
 ProcXChangeDeviceKeyMapping(client)
     register ClientPtr client;
-    {
-    int	ret;
+{
+    int ret;
     unsigned len;
     DeviceIntPtr dev;
     unsigned int count;
@@ -110,16 +110,16 @@ ProcXChangeDeviceKeyMapping(client)
     count = stuff->keyCodes * stuff->keySymsPerKeyCode;
     REQUEST_FIXED_SIZE(xChangeDeviceKeyMappingReq, count * sizeof(CARD32));
 
-    dev = LookupDeviceIntRec (stuff->deviceid);
+    dev = LookupDeviceIntRec(stuff->deviceid);
     if (dev == NULL)
 	{
-	SendErrorToClient (client, IReqCode, X_ChangeDeviceKeyMapping, 0, 
-		BadDevice);
+	SendErrorToClient(client, IReqCode, X_ChangeDeviceKeyMapping, 0,
+			  BadDevice);
 	return Success;
-	}
-    len = stuff->length - (sizeof(xChangeDeviceKeyMappingReq) >> 2);  
+    }
+    len = stuff->length - (sizeof(xChangeDeviceKeyMappingReq) >> 2);
 
-    ret = ChangeKeyMapping (client, dev, len, DeviceMappingNotify, 
+    ret = ChangeKeyMapping(client, dev, len, DeviceMappingNotify,
 	stuff->firstKeyCode, stuff->keyCodes, stuff->keySymsPerKeyCode, 
 	(KeySym *)&stuff[1]);
 
@@ -127,4 +127,4 @@ ProcXChangeDeviceKeyMapping(client)
 	SendErrorToClient (client, IReqCode, X_ChangeDeviceKeyMapping, 0, 
 		ret);
     return Success;
-    }
+}

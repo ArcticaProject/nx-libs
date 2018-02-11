@@ -33,11 +33,11 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 int
 SProcXSetDeviceFocus(
 	ClientPtr              /* client */
-	);
+    );
 
 int
 ProcXSetDeviceFocus(
 	ClientPtr              /* client */
-	);
+    );
 
 #endif /* SETFOCUS_H */

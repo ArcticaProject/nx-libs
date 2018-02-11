@@ -77,11 +77,11 @@ SOFTWARE.
 int
 SProcXSetDeviceModifierMapping(client)
     register ClientPtr client;
-    {
+{
     REQUEST(xSetDeviceModifierMappingReq);
     swaps(&stuff->length);
-    return(ProcXSetDeviceModifierMapping(client));
-    }
+    return (ProcXSetDeviceModifierMapping(client));
+}
 
 /***********************************************************************
  *
@@ -92,22 +92,22 @@ SProcXSetDeviceModifierMapping(client)
 int
 ProcXSetDeviceModifierMapping(client)
     ClientPtr client;
-    {
-    int					ret;
-    xSetDeviceModifierMappingReply	rep;
-    DeviceIntPtr			dev;
-    KeyClassPtr 			kp;
-    
+{
+    int ret;
+    xSetDeviceModifierMappingReply rep;
+    DeviceIntPtr dev;
+    KeyClassPtr kp;
+
     REQUEST(xSetDeviceModifierMappingReq);
     REQUEST_AT_LEAST_SIZE(xSetDeviceModifierMappingReq);
 
-    dev = LookupDeviceIntRec (stuff->deviceid);
+    dev = LookupDeviceIntRec(stuff->deviceid);
     if (dev == NULL)
 	{
-	SendErrorToClient (client, IReqCode, X_SetDeviceModifierMapping, 0, 
-		BadDevice);
+	SendErrorToClient(client, IReqCode, X_SetDeviceModifierMapping, 0,
+			  BadDevice);
 	return Success;
-	}
+    }
 
     rep.repType = X_Reply;
     rep.RepType = X_SetDeviceModifierMapping;
@@ -122,19 +122,19 @@ ProcXSetDeviceModifierMapping(client)
         {
 	rep.success = ret;
 	if (ret == MappingSuccess)
-            SendDeviceMappingNotify(MappingModifier, 0, 0, dev);
+	    SendDeviceMappingNotify(MappingModifier, 0, 0, dev);
         WriteReplyToClient(client, sizeof(xSetDeviceModifierMappingReply),&rep);
         }
     else
 	{
-	if (ret==-1)
-	    ret=BadValue;
-	SendErrorToClient (client, IReqCode, X_SetDeviceModifierMapping, 0,ret);
-	}
+	if (ret == -1)
+	    ret = BadValue;
+	SendErrorToClient(client, IReqCode, X_SetDeviceModifierMapping, 0, ret);
+    }
 
 
     return Success;
-    }
+}
 
 /***********************************************************************
  *
@@ -148,9 +148,9 @@ SRepXSetDeviceModifierMapping (client, size, rep)
     ClientPtr	client;
     int		size;
     xSetDeviceModifierMappingReply	*rep;
-    {
+{
     swaps(&rep->sequenceNumber);
     swapl(&rep->length);
     WriteToClient(client, size, rep);
-    }
+}
 

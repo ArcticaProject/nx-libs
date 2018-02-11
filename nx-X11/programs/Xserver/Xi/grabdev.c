@@ -69,8 +69,8 @@ SOFTWARE.
 
 #include "grabdev.h"
 
-extern	XExtEventInfo	EventInfo[];
-extern int		ExtEventIndex;
+extern XExtEventInfo EventInfo[];
+extern int ExtEventIndex;
 
 /***********************************************************************
  *
@@ -81,7 +81,7 @@ extern int		ExtEventIndex;
 int
 SProcXGrabDevice(client)
     register ClientPtr client;
-    {
+{
     REQUEST(xGrabDeviceReq);
     swaps(&stuff->length);
     REQUEST_AT_LEAST_SIZE(xGrabDeviceReq);
@@ -90,12 +90,12 @@ SProcXGrabDevice(client)
     swaps(&stuff->event_count);
 
     if (stuff->length != (sizeof(xGrabDeviceReq) >> 2) + stuff->event_count)
-       return BadLength;
-    
+	return BadLength;
+
     SwapLongs((CARD32 *) (&stuff[1]), stuff->event_count);
 
-    return(ProcXGrabDevice(client));
-    }
+    return (ProcXGrabDevice(client));
+}
 
 /***********************************************************************
  *
@@ -106,38 +106,38 @@ SProcXGrabDevice(client)
 int
 ProcXGrabDevice(client)
     ClientPtr client;
-    {
-    int			error;
-    xGrabDeviceReply 	rep;
-    DeviceIntPtr 	dev;
-    struct tmask	tmp[EMASKSIZE];
+{
+    int error;
+    xGrabDeviceReply rep;
+    DeviceIntPtr dev;
+    struct tmask tmp[EMASKSIZE];
 
     REQUEST(xGrabDeviceReq);
     REQUEST_AT_LEAST_SIZE(xGrabDeviceReq);
 
     if (stuff->length !=(sizeof(xGrabDeviceReq)>>2) + stuff->event_count)
 	{
-	SendErrorToClient (client, IReqCode, X_GrabDevice, 0, BadLength);
+	SendErrorToClient(client, IReqCode, X_GrabDevice, 0, BadLength);
 	return Success;
-	}
+    }
 
     rep.repType = X_Reply;
     rep.RepType = X_GrabDevice;
     rep.sequenceNumber = client->sequence;
     rep.length = 0;
 
-    dev = LookupDeviceIntRec (stuff->deviceid);
+    dev = LookupDeviceIntRec(stuff->deviceid);
     if (dev == NULL)
 	{
 	SendErrorToClient(client, IReqCode, X_GrabDevice, 0, BadDevice);
 	return Success;
-	}
+    }
 
-    if (CreateMaskFromList (client, (XEventClass *)&stuff[1], 
+    if (CreateMaskFromList(client, (XEventClass *) & stuff[1],
 	stuff->event_count, tmp, dev, X_GrabDevice) != Success)
 	return Success;
 
-    error = GrabDevice (client, dev, stuff->this_device_mode, 
+    error = GrabDevice(client, dev, stuff->this_device_mode,
 	stuff->other_devices_mode, stuff->grabWindow, stuff->ownerEvents, 
 	stuff->time, tmp[stuff->deviceid].mask, &rep.status);
 
@@ -145,10 +145,10 @@ ProcXGrabDevice(client)
 	{
 	SendErrorToClient(client, IReqCode, X_GrabDevice, 0, error);
 	return Success;
-	}
+    }
     WriteReplyToClient(client, sizeof(xGrabDeviceReply), &rep);
     return Success;
-    }
+}
 
 
 /***********************************************************************
@@ -165,16 +165,16 @@ CreateMaskFromList (client, list, count, mask, dev, req)
     struct tmask	mask[];
     DeviceIntPtr	dev;
     int			req;
-    {
-    int			i,j;
-    int			device;
-    DeviceIntPtr	tdev;
+{
+    int i, j;
+    int device;
+    DeviceIntPtr tdev;
 
     for (i=0; i<EMASKSIZE; i++)
 	{
 	mask[i].mask = 0;
 	mask[i].dev = NULL;
-	}
+    }
 
     for (i=0; i<count; i++, list++)
 	{
@@ -183,24 +183,24 @@ CreateMaskFromList (client, list, count, mask, dev, req)
 	    {
 	    SendErrorToClient(client, IReqCode, req, 0, BadClass);
 	    return BadClass;
-	    }
-	tdev = LookupDeviceIntRec (device);
+	}
+	tdev = LookupDeviceIntRec(device);
 	if (tdev==NULL || (dev != NULL && tdev != dev))
 	    {
 	    SendErrorToClient(client, IReqCode, req, 0, BadClass);
 	    return BadClass;
-	    }
+	}
 
-	for (j=0; j<ExtEventIndex; j++)
+	for (j = 0; j < ExtEventIndex; j++)
 	    if (EventInfo[j].type == (*list & 0xff))
 		{
 		mask[device].mask |= EventInfo[j].mask;
 		mask[device].dev = (Pointer) tdev;
 		break;
-		}
-	}
-    return Success;
+	    }
     }
+    return Success;
+}
 
 /***********************************************************************
  *
@@ -214,8 +214,8 @@ SRepXGrabDevice (client, size, rep)
     ClientPtr	client;
     int		size;
     xGrabDeviceReply	*rep;
-    {
+{
     swaps(&rep->sequenceNumber);
     swapl(&rep->length);
     WriteToClient(client, size, rep);
-    }
+}

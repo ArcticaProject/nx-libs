@@ -33,11 +33,11 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 int
 SProcXUngrabDeviceKey(
 	ClientPtr              /* client */
-	);
+    );
 
 int
 ProcXUngrabDeviceKey(
 	ClientPtr              /* client */
-	);
+    );
 
 #endif /* UNGRDEVK_H */

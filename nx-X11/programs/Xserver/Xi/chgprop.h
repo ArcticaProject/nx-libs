@@ -33,11 +33,11 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 int
 SProcXChangeDeviceDontPropagateList (
 	ClientPtr              /* client */
-	);
+    );
 
 int
 ProcXChangeDeviceDontPropagateList (
 	ClientPtr              /* client */
-	);
+    );
 
 #endif /* CHGPROP_H */

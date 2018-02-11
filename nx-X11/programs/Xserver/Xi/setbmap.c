@@ -79,11 +79,11 @@ SOFTWARE.
 int
 SProcXSetDeviceButtonMapping(client)
     register ClientPtr client;
-    {
+{
     REQUEST(xSetDeviceButtonMappingReq);
     swaps(&stuff->length);
-    return(ProcXSetDeviceButtonMapping(client));
-    }
+    return (ProcXSetDeviceButtonMapping(client));
+}
 
 /***********************************************************************
  *
@@ -94,21 +94,21 @@ SProcXSetDeviceButtonMapping(client)
 int
 ProcXSetDeviceButtonMapping (client)
     register ClientPtr client;
-    {
-    int					ret;
-    xSetDeviceButtonMappingReply	rep;
+{
+    int ret;
+    xSetDeviceButtonMappingReply rep;
     DeviceIntPtr dev;
 
     REQUEST(xSetDeviceButtonMappingReq);
     REQUEST_AT_LEAST_SIZE(xSetDeviceButtonMappingReq);
 
-    if (stuff->length != (sizeof(xSetDeviceButtonMappingReq) + 
+    if (stuff->length != (sizeof(xSetDeviceButtonMappingReq) +
 	stuff->map_length + 3)>>2)
 	{
-	SendErrorToClient(client, IReqCode, X_SetDeviceButtonMapping, 0, 
-		BadLength);
+	SendErrorToClient(client, IReqCode, X_SetDeviceButtonMapping, 0,
+			  BadLength);
 	return Success;
-	}
+    }
 
     rep.repType = X_Reply;
     rep.RepType = X_SetDeviceButtonMapping;
@@ -116,15 +116,15 @@ ProcXSetDeviceButtonMapping (client)
     rep.sequenceNumber = client->sequence;
     rep.status = MappingSuccess;
 
-    dev = LookupDeviceIntRec (stuff->deviceid);
+    dev = LookupDeviceIntRec(stuff->deviceid);
     if (dev == NULL)
 	{
-	SendErrorToClient(client, IReqCode, X_SetDeviceButtonMapping, 0, 
-		BadDevice);
+	SendErrorToClient(client, IReqCode, X_SetDeviceButtonMapping, 0,
+			  BadDevice);
 	return Success;
-	}
+    }
 
-    ret = SetButtonMapping (client, dev, stuff->map_length, (BYTE *)&stuff[1]);
+    ret = SetButtonMapping(client, dev, stuff->map_length, (BYTE *) & stuff[1]);
 
     if (ret == BadValue || ret == BadMatch)
 	{
@@ -136,12 +136,12 @@ ProcXSetDeviceButtonMapping (client)
 	{
 	rep.status = ret;
 	WriteReplyToClient(client, sizeof(xSetDeviceButtonMappingReply), &rep);
-	}
+    }
 
     if (ret != MappingBusy)
-        SendDeviceMappingNotify(MappingPointer, 0, 0, dev);
+	SendDeviceMappingNotify(MappingPointer, 0, 0, dev);
     return Success;
-    }
+}
 
 /***********************************************************************
  *
@@ -155,8 +155,8 @@ SRepXSetDeviceButtonMapping (client, size, rep)
     ClientPtr	client;
     int		size;
     xSetDeviceButtonMappingReply	*rep;
-    {
+{
     swaps(&rep->sequenceNumber);
     swapl(&rep->length);
     WriteToClient(client, size, rep);
-    }
+}

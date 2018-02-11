@@ -77,11 +77,11 @@ SOFTWARE.
 int
 SProcXGetDeviceKeyMapping(client)
     register ClientPtr client;
-    {
+{
     REQUEST(xGetDeviceKeyMappingReq);
     swaps(&stuff->length);
-    return(ProcXGetDeviceKeyMapping(client));
-    }
+    return (ProcXGetDeviceKeyMapping(client));
+}
 
 /***********************************************************************
  *
@@ -92,29 +92,29 @@ SProcXGetDeviceKeyMapping(client)
 int
 ProcXGetDeviceKeyMapping(client)
     register ClientPtr client;
-    {
+{
     xGetDeviceKeyMappingReply rep;
     DeviceIntPtr dev;
-    KeySymsPtr	k;
+    KeySymsPtr k;
 
     REQUEST(xGetDeviceKeyMappingReq);
     REQUEST_SIZE_MATCH(xGetDeviceKeyMappingReq);
 
-    dev = LookupDeviceIntRec (stuff->deviceid);
+    dev = LookupDeviceIntRec(stuff->deviceid);
     if (dev == NULL)
 	{
-	SendErrorToClient (client, IReqCode, X_GetDeviceKeyMapping, 0, 
-		BadDevice);
+	SendErrorToClient(client, IReqCode, X_GetDeviceKeyMapping, 0,
+			  BadDevice);
 	return Success;
-	}
+    }
 
     if (dev->key == NULL)
 	{
 	SendErrorToClient (client, IReqCode, X_GetDeviceKeyMapping, 0, 
 		BadMatch);
 	return Success;
-	}
-    k =  &dev->key->curKeySyms;
+    }
+    k = &dev->key->curKeySyms;
 
     if ((stuff->firstKeyCode < k->minKeyCode) ||
         (stuff->firstKeyCode > k->maxKeyCode))
@@ -123,7 +123,7 @@ ProcXGetDeviceKeyMapping(client)
 	SendErrorToClient (client, IReqCode, X_GetDeviceKeyMapping, 0, 
 		BadValue);
 	return Success;
-        }
+    }
 
     if (stuff->firstKeyCode + stuff->count > k->maxKeyCode + 1)
         {
@@ -131,24 +131,24 @@ ProcXGetDeviceKeyMapping(client)
 	SendErrorToClient (client, IReqCode, X_GetDeviceKeyMapping, 0, 
 		BadValue);
 	return Success;
-        }
+    }
 
     rep.repType = X_Reply;
     rep.RepType = X_GetDeviceKeyMapping;
     rep.sequenceNumber = client->sequence;
     rep.keySymsPerKeyCode = k->mapWidth;
-    rep.length = (k->mapWidth * stuff->count); /* KeySyms are 4 bytes */
+    rep.length = (k->mapWidth * stuff->count);	/* KeySyms are 4 bytes */
     WriteReplyToClient(client, sizeof(xGetDeviceKeyMappingReply), &rep);
 
-    client->pSwapReplyFunc = (ReplySwapPtr)CopySwap32Write;
+    client->pSwapReplyFunc = (ReplySwapPtr) CopySwap32Write;
     WriteSwappedDataToClient(
 	client,
-	k->mapWidth * stuff->count * sizeof(KeySym),
-	&k->map[(stuff->firstKeyCode - k->minKeyCode) *
-	k->mapWidth]);
+			     k->mapWidth * stuff->count * sizeof(KeySym),
+			     &k->map[(stuff->firstKeyCode - k->minKeyCode) *
+				     k->mapWidth]);
 
     return Success;
-    }
+}
 
 /***********************************************************************
  *
@@ -162,9 +162,9 @@ SRepXGetDeviceKeyMapping (client, size, rep)
     ClientPtr	client;
     int		size;
     xGetDeviceKeyMappingReply	*rep;
-    {
+{
     swaps(&rep->sequenceNumber);
     swapl(&rep->length);
     WriteToClient(client, size, rep);
-    }
+}
 

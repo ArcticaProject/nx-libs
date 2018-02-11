@@ -76,11 +76,11 @@ SOFTWARE.
 int
 SProcXGetDeviceModifierMapping(client)
     register ClientPtr client;
-    {
+{
     REQUEST(xGetDeviceModifierMappingReq);
     swaps(&stuff->length);
-    return(ProcXGetDeviceModifierMapping(client));
-    }
+    return (ProcXGetDeviceModifierMapping(client));
+}
 
 /***********************************************************************
  *
@@ -91,45 +91,45 @@ SProcXGetDeviceModifierMapping(client)
 int
 ProcXGetDeviceModifierMapping(client)
     ClientPtr client;
-    {
-    CARD8				maxkeys;
-    DeviceIntPtr			dev;
-    xGetDeviceModifierMappingReply 	rep;
-    KeyClassPtr 			kp;
-    
+{
+    CARD8 maxkeys;
+    DeviceIntPtr dev;
+    xGetDeviceModifierMappingReply rep;
+    KeyClassPtr kp;
+
     REQUEST(xGetDeviceModifierMappingReq);
     REQUEST_SIZE_MATCH(xGetDeviceModifierMappingReq);
 
-    dev = LookupDeviceIntRec (stuff->deviceid);
+    dev = LookupDeviceIntRec(stuff->deviceid);
     if (dev == NULL)
 	{
-	SendErrorToClient (client, IReqCode, X_GetDeviceModifierMapping, 0, 
-		BadDevice);
+	SendErrorToClient(client, IReqCode, X_GetDeviceModifierMapping, 0,
+			  BadDevice);
 	return Success;
-	}
+    }
 
     kp = dev->key;
     if (kp == NULL)
 	{
-	SendErrorToClient (client, IReqCode, X_GetDeviceModifierMapping, 0, 
-		BadMatch);
+	SendErrorToClient(client, IReqCode, X_GetDeviceModifierMapping, 0,
+			  BadMatch);
 	return Success;
-	}
-    maxkeys =  kp->maxKeysPerModifier;
+    }
+    maxkeys = kp->maxKeysPerModifier;
 
     rep.repType = X_Reply;
     rep.RepType = X_GetDeviceModifierMapping;
     rep.numKeyPerModifier = maxkeys;
     rep.sequenceNumber = client->sequence;
     /* length counts 4 byte quantities - there are 8 modifiers 1 byte big */
-    rep.length = 2*maxkeys;
+    rep.length = 2 * maxkeys;
 
     WriteReplyToClient(client, sizeof(xGetDeviceModifierMappingReply), &rep);
 
     /* Reply with the (modified by DDX) map that SetModifierMapping passed in */
-    WriteToClient(client, 8*maxkeys, kp->modifierKeyMap);
+    WriteToClient(client, 8 * maxkeys, kp->modifierKeyMap);
     return Success;
-    }
+}
 
 /***********************************************************************
  *
@@ -143,8 +143,8 @@ SRepXGetDeviceModifierMapping (client, size, rep)
     ClientPtr	client;
     int		size;
     xGetDeviceModifierMappingReply	*rep;
-    {
+{
     swaps(&rep->sequenceNumber);
     swapl(&rep->length);
     WriteToClient(client, size, rep);
-    }
+}

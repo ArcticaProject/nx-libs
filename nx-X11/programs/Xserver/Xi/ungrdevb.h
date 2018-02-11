@@ -33,11 +33,11 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 int
 SProcXUngrabDeviceButton(
 	ClientPtr              /* client */
-	);
+    );
 
 int
 ProcXUngrabDeviceButton(
 	ClientPtr              /* client */
-	);
+    );
 
 #endif /* UNGRDEVB_H */

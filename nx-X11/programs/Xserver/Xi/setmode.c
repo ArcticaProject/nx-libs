@@ -76,11 +76,11 @@ SOFTWARE.
 int
 SProcXSetDeviceMode(client)
     register ClientPtr client;
-    {
+{
     REQUEST(xSetDeviceModeReq);
     swaps(&stuff->length);
-    return(ProcXSetDeviceMode(client));
-    }
+    return (ProcXSetDeviceMode(client));
+}
 
 /***********************************************************************
  *
@@ -91,9 +91,9 @@ SProcXSetDeviceMode(client)
 int
 ProcXSetDeviceMode(client)
     register ClientPtr client;
-    {
+{
     DeviceIntPtr dev;
-    xSetDeviceModeReply	rep;
+    xSetDeviceModeReply rep;
 
     REQUEST(xSetDeviceModeReq);
     REQUEST_SIZE_MATCH(xSetDeviceModeReq);
@@ -103,33 +103,33 @@ ProcXSetDeviceMode(client)
     rep.length = 0;
     rep.sequenceNumber = client->sequence;
 
-    dev = LookupDeviceIntRec (stuff->deviceid);
+    dev = LookupDeviceIntRec(stuff->deviceid);
     if (dev == NULL)
 	{
-	SendErrorToClient (client, IReqCode, X_SetDeviceMode, 0, BadDevice);
+	SendErrorToClient(client, IReqCode, X_SetDeviceMode, 0, BadDevice);
 	return Success;
-	}
+    }
     if (dev->valuator == NULL)
 	{
 	SendErrorToClient(client, IReqCode, X_SetDeviceMode, 0, BadMatch);
 	return Success;
-	}
+    }
     if ((dev->grab) && !SameClient(dev->grab, client))
 	rep.status = AlreadyGrabbed;
     else
-	rep.status = SetDeviceMode (client, dev, stuff->mode);
+	rep.status = SetDeviceMode(client, dev, stuff->mode);
 
-    if (rep.status == Success) 
-  	dev->valuator->mode = stuff->mode;
+    if (rep.status == Success)
+	dev->valuator->mode = stuff->mode;
     else if (rep.status != AlreadyGrabbed)
 	{
 	SendErrorToClient(client, IReqCode, X_SetDeviceMode, 0, rep.status);
-        return Success;
-	}
-
-    WriteReplyToClient (client, sizeof (xSetDeviceModeReply), &rep);
-    return Success;
+	return Success;
     }
+
+    WriteReplyToClient(client, sizeof(xSetDeviceModeReply), &rep);
+    return Success;
+}
 
 /***********************************************************************
  *
@@ -143,8 +143,8 @@ SRepXSetDeviceMode (client, size, rep)
     ClientPtr	client;
     int		size;
     xSetDeviceModeReply	*rep;
-    {
+{
     swaps(&rep->sequenceNumber);
     swapl(&rep->length);
     WriteToClient(client, size, rep);
-    }
+}

@@ -33,11 +33,11 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 int
 SProcXAllowDeviceEvents(
 	ClientPtr              /* client */
-	);
+    );
 
 int
 ProcXAllowDeviceEvents(
 	ClientPtr              /* client */
-	);
+    );
 
 #endif /* ALLOWEV_H */

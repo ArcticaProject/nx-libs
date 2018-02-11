@@ -75,13 +75,13 @@ SOFTWARE.
 int
 SProcXUngrabDevice(client)
 register ClientPtr client;
-    {
+{
     REQUEST(xUngrabDeviceReq);
     swaps(&stuff->length);
     REQUEST_SIZE_MATCH(xUngrabDeviceReq);
     swapl(&stuff->time);
-    return(ProcXUngrabDevice(client));
-    }
+    return (ProcXUngrabDevice(client));
+}
 
 /***********************************************************************
  *
@@ -92,26 +92,26 @@ register ClientPtr client;
 int
 ProcXUngrabDevice(client)
 register ClientPtr client;
-    {
-    DeviceIntPtr 	dev;
-    GrabPtr 		grab;
-    TimeStamp 		time;
+{
+    DeviceIntPtr dev;
+    GrabPtr grab;
+    TimeStamp time;
 
     REQUEST(xUngrabDeviceReq);
     REQUEST_SIZE_MATCH(xUngrabDeviceReq);
 
-    dev = LookupDeviceIntRec (stuff->deviceid);
+    dev = LookupDeviceIntRec(stuff->deviceid);
     if (dev == NULL)
 	{
 	SendErrorToClient(client, IReqCode, X_UngrabDevice, 0, BadDevice);
 	return Success;
-	}
-    grab =  dev->grab;
+    }
+    grab = dev->grab;
 
     time = ClientTimeToServerTime(stuff->time);
     if ((CompareTimeStamps(time, currentTime) != LATER) &&
 	(CompareTimeStamps(time, dev->grabTime) != EARLIER) &&
 	(grab) && SameClient(grab, client))
-	(*dev->DeactivateGrab)(dev);
+	(*dev->DeactivateGrab) (dev);
     return Success;
-    }
+}

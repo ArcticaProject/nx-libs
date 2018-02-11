@@ -79,13 +79,13 @@ SOFTWARE.
 int
 SProcXChangeFeedbackControl(client)
     register ClientPtr client;
-    {
+{
     REQUEST(xChangeFeedbackControlReq);
     swaps(&stuff->length);
     REQUEST_AT_LEAST_SIZE(xChangeFeedbackControlReq);
     swapl(&stuff->mask);
-    return(ProcXChangeFeedbackControl(client));
-    }
+    return (ProcXChangeFeedbackControl(client));
+}
 
 /***********************************************************************
  *
@@ -96,7 +96,7 @@ SProcXChangeFeedbackControl(client)
 int
 ProcXChangeFeedbackControl(client)
     ClientPtr client;
-    {
+{
     unsigned len;
     DeviceIntPtr dev;
     KbdFeedbackPtr k;
@@ -109,117 +109,117 @@ ProcXChangeFeedbackControl(client)
     REQUEST(xChangeFeedbackControlReq);
     REQUEST_AT_LEAST_SIZE(xChangeFeedbackControlReq);
 
-    len = stuff->length - (sizeof(xChangeFeedbackControlReq) >>2);
-    dev = LookupDeviceIntRec (stuff->deviceid);
+    len = stuff->length - (sizeof(xChangeFeedbackControlReq) >> 2);
+    dev = LookupDeviceIntRec(stuff->deviceid);
     if (dev == NULL)
 	{
-	SendErrorToClient (client, IReqCode, X_ChangeFeedbackControl, 0, 
-		BadDevice);
+	SendErrorToClient(client, IReqCode, X_ChangeFeedbackControl, 0,
+			  BadDevice);
 	return Success;
-	}
+    }
 
     switch (stuff->feedbackid)
 	{
-	case KbdFeedbackClass:
+    case KbdFeedbackClass:
 	    if (len != (sizeof(xKbdFeedbackCtl)>>2))
 		{
-		SendErrorToClient (client, IReqCode, X_ChangeFeedbackControl, 
-			0, BadLength);
-		return Success;
-		}
-	    for (k=dev->kbdfeed; k; k=k->next)
+	    SendErrorToClient(client, IReqCode, X_ChangeFeedbackControl,
+			      0, BadLength);
+	    return Success;
+	}
+	for (k = dev->kbdfeed; k; k = k->next)
 		if (k->ctrl.id == ((xKbdFeedbackCtl *) &stuff[1])->id)
 		    {
 		    ChangeKbdFeedback (client, dev, stuff->mask, k, (xKbdFeedbackCtl *)&stuff[1]);
-		    return Success;
-		    }
-	    break;
-	case PtrFeedbackClass:
+		return Success;
+	    }
+	break;
+    case PtrFeedbackClass:
 	    if (len != (sizeof(xPtrFeedbackCtl)>>2))
 		{
-		SendErrorToClient (client, IReqCode, X_ChangeFeedbackControl, 
-			0, BadLength);
-		return Success;
-		}
-	    for (p=dev->ptrfeed; p; p=p->next)
+	    SendErrorToClient(client, IReqCode, X_ChangeFeedbackControl,
+			      0, BadLength);
+	    return Success;
+	}
+	for (p = dev->ptrfeed; p; p = p->next)
 		if (p->ctrl.id == ((xPtrFeedbackCtl *) &stuff[1])->id)
 		    {
 		    ChangePtrFeedback (client, dev, stuff->mask, p, (xPtrFeedbackCtl *)&stuff[1]);
-		    return Success;
-		    }
-	    break;
-	case StringFeedbackClass:
-	    {
-	    xStringFeedbackCtl *f = ((xStringFeedbackCtl *) &stuff[1]);
+		return Success;
+	    }
+	break;
+    case StringFeedbackClass:
+    {
+	xStringFeedbackCtl *f = ((xStringFeedbackCtl *) & stuff[1]);
 	    if (client->swapped)
 		{
-		if (len < (sizeof(xStringFeedbackCtl) + 3) >> 2)
-		    return BadLength;
-		swaps(&f->num_keysyms);
-		}
+	    if (len < (sizeof(xStringFeedbackCtl) + 3) >> 2)
+		return BadLength;
+	    swaps(&f->num_keysyms);
+	}
 	    if (len != ((sizeof(xStringFeedbackCtl)>>2) + f->num_keysyms))
 		{
-		SendErrorToClient (client, IReqCode, X_ChangeFeedbackControl, 
-			0, BadLength);
-		return Success;
-		}
-	    for (s=dev->stringfeed; s; s=s->next)
+	    SendErrorToClient(client, IReqCode, X_ChangeFeedbackControl,
+			      0, BadLength);
+	    return Success;
+	}
+	for (s = dev->stringfeed; s; s = s->next)
 		if (s->ctrl.id == ((xStringFeedbackCtl *) &stuff[1])->id)
 		    {
 		    ChangeStringFeedback (client, dev, stuff->mask,s,(xStringFeedbackCtl *)&stuff[1]);
-		    return Success;
-		    }
-	    break;
+		return Success;
 	    }
-	case IntegerFeedbackClass:
+	break;
+    }
+    case IntegerFeedbackClass:
 	    if (len != (sizeof(xIntegerFeedbackCtl)>>2))
 		{
-		SendErrorToClient (client, IReqCode, X_ChangeFeedbackControl, 
-			0, BadLength);
-		return Success;
-		}
-	    for (i=dev->intfeed; i; i=i->next)
+	    SendErrorToClient(client, IReqCode, X_ChangeFeedbackControl,
+			      0, BadLength);
+	    return Success;
+	}
+	for (i = dev->intfeed; i; i = i->next)
 		if (i->ctrl.id == ((xIntegerFeedbackCtl *) &stuff[1])->id)
 		    {
 		    ChangeIntegerFeedback (client, dev,stuff->mask,i,(xIntegerFeedbackCtl *)&stuff[1]);
-		    return Success;
-		    }
-	    break;
-	case LedFeedbackClass:
+		return Success;
+	    }
+	break;
+    case LedFeedbackClass:
 	    if (len != (sizeof(xLedFeedbackCtl)>>2))
 		{
-		SendErrorToClient (client, IReqCode, X_ChangeFeedbackControl, 
-			0, BadLength);
-		return Success;
-		}
-	    for (l=dev->leds; l; l=l->next)
+	    SendErrorToClient(client, IReqCode, X_ChangeFeedbackControl,
+			      0, BadLength);
+	    return Success;
+	}
+	for (l = dev->leds; l; l = l->next)
 		if (l->ctrl.id == ((xLedFeedbackCtl *) &stuff[1])->id)
 		    {
 		    ChangeLedFeedback (client, dev, stuff->mask, l, (xLedFeedbackCtl *)&stuff[1]);
-		    return Success;
-		    }
-	    break;
-	case BellFeedbackClass:
+		return Success;
+	    }
+	break;
+    case BellFeedbackClass:
 	    if (len != (sizeof(xBellFeedbackCtl)>>2))
 		{
-		SendErrorToClient (client, IReqCode, X_ChangeFeedbackControl, 
-			0, BadLength);
-		return Success;
-		}
-	    for (b=dev->bell; b; b=b->next)
+	    SendErrorToClient(client, IReqCode, X_ChangeFeedbackControl,
+			      0, BadLength);
+	    return Success;
+	}
+	for (b = dev->bell; b; b = b->next)
 		if (b->ctrl.id == ((xBellFeedbackCtl *) &stuff[1])->id)
 		    {
 		    ChangeBellFeedback (client, dev, stuff->mask, b, (xBellFeedbackCtl *)&stuff[1]);
-		    return Success;
-		    }
-	    break;
-	default:
-	    break;
-	}
+		return Success;
+	    }
+	break;
+    default:
+	break;
+    }
 
-    SendErrorToClient (client, IReqCode, X_ChangeFeedbackControl, 0, BadMatch);
+    SendErrorToClient(client, IReqCode, X_ChangeFeedbackControl, 0, BadMatch);
     return Success;
-    } 
+}
 
 /******************************************************************************
  *
@@ -234,7 +234,7 @@ ChangeKbdFeedback (client, dev, mask, k, f)
     unsigned long 	mask;
     KbdFeedbackPtr	k;
     xKbdFeedbackCtl 	*f;
-    {
+{
     KeybdCtrl kctrl;
     int t;
     int key = DO_ALL;
@@ -246,7 +246,7 @@ ChangeKbdFeedback (client, dev, mask, k, f)
 	swaps(&f->duration);
 	swapl(&f->led_mask);
 	swapl(&f->led_values);
-	}
+    }
 
     kctrl = k->ctrl;
     if (mask & DvKeyClickPercent)
@@ -257,12 +257,12 @@ ChangeKbdFeedback (client, dev, mask, k, f)
 	else if (t < 0 || t > 100)
 	    {
 	    client->errorValue = t;
-	    SendErrorToClient (client, IReqCode, X_ChangeFeedbackControl, 0, 
-		BadValue);
+	    SendErrorToClient(client, IReqCode, X_ChangeFeedbackControl, 0,
+			      BadValue);
 	    return Success;
-	    }
+	}
 	kctrl.click = t;
-        }
+    }
 
     if (mask & DvPercent)
 	{
@@ -272,12 +272,12 @@ ChangeKbdFeedback (client, dev, mask, k, f)
 	else if (t < 0 || t > 100)
 	    {
 	    client->errorValue = t;
-	    SendErrorToClient (client, IReqCode, X_ChangeFeedbackControl, 0, 
-		BadValue);
+	    SendErrorToClient(client, IReqCode, X_ChangeFeedbackControl, 0,
+			      BadValue);
 	    return Success;
-	    }
-	kctrl.bell = t;
 	}
+	kctrl.bell = t;
+    }
 
     if (mask & DvPitch)
 	{
@@ -287,12 +287,12 @@ ChangeKbdFeedback (client, dev, mask, k, f)
 	else if (t < 0)
 	    {
 	    client->errorValue = t;
-	    SendErrorToClient (client, IReqCode, X_ChangeFeedbackControl, 0, 
-		BadValue);
+	    SendErrorToClient(client, IReqCode, X_ChangeFeedbackControl, 0,
+			      BadValue);
 	    return Success;
-	    }
-	kctrl.bell_pitch = t;
 	}
+	kctrl.bell_pitch = t;
+    }
 
     if (mask & DvDuration)
 	{
@@ -302,18 +302,18 @@ ChangeKbdFeedback (client, dev, mask, k, f)
 	else if (t < 0)
 	    {
 	    client->errorValue = t;
-	    SendErrorToClient (client, IReqCode, X_ChangeFeedbackControl, 0, 
-		BadValue);
+	    SendErrorToClient(client, IReqCode, X_ChangeFeedbackControl, 0,
+			      BadValue);
 	    return Success;
-	    }
+	}
 	kctrl.bell_duration = t;
-        }
+    }
 
     if (mask & DvLed)
         {
 	kctrl.leds &= ~(f->led_mask);
 	kctrl.leds |= (f->led_mask & f->led_values);
-        }
+    }
 
     if (mask & DvKey)
 	{
@@ -321,17 +321,17 @@ ChangeKbdFeedback (client, dev, mask, k, f)
 	if (key < 8 || key > 255)
 	    {
 	    client->errorValue = key;
-	    SendErrorToClient (client, IReqCode, X_ChangeFeedbackControl, 0, 
-		BadValue);
+	    SendErrorToClient(client, IReqCode, X_ChangeFeedbackControl, 0,
+			      BadValue);
 	    return Success;
-	    }
+	}
 	if (!(mask & DvAutoRepeatMode))
 	    {
-	    SendErrorToClient (client, IReqCode, X_ChangeFeedbackControl, 0, 
-		BadMatch);
+	    SendErrorToClient(client, IReqCode, X_ChangeFeedbackControl, 0,
+			      BadMatch);
 	    return Success;
-	    }
 	}
+    }
 
     if (mask & DvAutoRepeatMode)
 	{
@@ -365,16 +365,16 @@ ChangeKbdFeedback (client, dev, mask, k, f)
 	else
 	    {
 	    client->errorValue = t;
-	    SendErrorToClient (client, IReqCode, X_ChangeFeedbackControl, 0, 
-		BadValue);
+	    SendErrorToClient(client, IReqCode, X_ChangeFeedbackControl, 0,
+			      BadValue);
 	    return Success;
-	    }
-        }
+	}
+    }
 
     k->ctrl = kctrl;
-    (*k->CtrlProc)(dev, &k->ctrl);
+    (*k->CtrlProc) (dev, &k->ctrl);
     return Success;
-    }
+}
 
 /******************************************************************************
  *
@@ -389,8 +389,8 @@ ChangePtrFeedback (client, dev, mask, p, f)
     unsigned long 	mask;
     PtrFeedbackPtr 	p;
     xPtrFeedbackCtl 	*f;
-    {
-    PtrCtrl pctrl;		/* might get BadValue part way through */
+{
+    PtrCtrl pctrl;	/* might get BadValue part way through */
 
     if (client->swapped)
 	{
@@ -398,12 +398,12 @@ ChangePtrFeedback (client, dev, mask, p, f)
 	swaps(&f->num);
 	swaps(&f->denom);
 	swaps(&f->thresh);
-	}
+    }
 
     pctrl = p->ctrl;
     if (mask & DvAccelNum)
 	{
-	int	accelNum;
+	int accelNum;
 
 	accelNum = f->num;
 	if (accelNum == -1)
@@ -411,16 +411,16 @@ ChangePtrFeedback (client, dev, mask, p, f)
 	else if (accelNum < 0)
 	    {
 	    client->errorValue = accelNum;
-	    SendErrorToClient (client, IReqCode, X_ChangeFeedbackControl, 0, 
-		BadValue);
+	    SendErrorToClient(client, IReqCode, X_ChangeFeedbackControl, 0,
+			      BadValue);
 	    return Success;
 	    }
 	else pctrl.num = accelNum;
-	}
+    }
 
     if (mask & DvAccelDenom)
 	{
-	int	accelDenom;
+	int accelDenom;
 
 	accelDenom = f->denom;
 	if (accelDenom == -1)
@@ -428,16 +428,16 @@ ChangePtrFeedback (client, dev, mask, p, f)
 	else if (accelDenom <= 0)
 	    {
 	    client->errorValue = accelDenom;
-	    SendErrorToClient (client, IReqCode, X_ChangeFeedbackControl, 0, 
-		BadValue);
+	    SendErrorToClient(client, IReqCode, X_ChangeFeedbackControl, 0,
+			      BadValue);
 	    return Success;
 	    }
 	else pctrl.den = accelDenom;
-        }
+    }
 
     if (mask & DvThreshold)
 	{
-	int	threshold;
+	int threshold;
 
 	threshold = f->thresh;
 	if (threshold == -1)
@@ -445,17 +445,17 @@ ChangePtrFeedback (client, dev, mask, p, f)
 	else if (threshold < 0)
 	    {
 	    client->errorValue = threshold;
-	    SendErrorToClient (client, IReqCode, X_ChangeFeedbackControl, 0, 
-		BadValue);
+	    SendErrorToClient(client, IReqCode, X_ChangeFeedbackControl, 0,
+			      BadValue);
 	    return Success;
 	    }
 	else pctrl.threshold = threshold;
-        }
+    }
 
     p->ctrl = pctrl;
-    (*p->CtrlProc)(dev, &p->ctrl);
+    (*p->CtrlProc) (dev, &p->ctrl);
     return Success;
-    }
+}
 
 /******************************************************************************
  *
@@ -472,15 +472,15 @@ ChangeIntegerFeedback (client, dev, mask, i, f)
     xIntegerFeedbackCtl 	*f;
     {
     if (client->swapped)
-	{
+{
 	swaps(&f->length);
 	swapl(&f->int_to_display);
-	}
+    }
 
     i->ctrl.integer_displayed = f->int_to_display;
-    (*i->CtrlProc)(dev, &i->ctrl);
+    (*i->CtrlProc) (dev, &i->ctrl);
     return Success;
-    }
+}
 
 /******************************************************************************
  *
@@ -495,43 +495,43 @@ ChangeStringFeedback (client, dev, mask, s, f)
     unsigned long 	mask;
     StringFeedbackPtr 	s;
     xStringFeedbackCtl 	*f;
-    {
-    int		i, j;
-    KeySym	*syms, *sup_syms;
+{
+    int i, j;
+    KeySym *syms, *sup_syms;
 
-    syms = (KeySym *) (f+1);
+    syms = (KeySym *) (f + 1);
     if (client->swapped)
 	{
 	swaps(&f->length);	/* swapped num_keysyms in calling proc */
 	SwapLongs((CARD32 *) syms, f->num_keysyms);
-	}
+    }
 
     if (f->num_keysyms > s->ctrl.max_symbols)
 	{
-	SendErrorToClient(client, IReqCode, X_ChangeFeedbackControl, 0, 
-	    BadValue);
+	SendErrorToClient(client, IReqCode, X_ChangeFeedbackControl, 0,
+			  BadValue);
 	return Success;
-	}
+    }
     sup_syms = s->ctrl.symbols_supported;
     for (i=0; i<f->num_keysyms; i++)
 	{
-        for (j=0; j<s->ctrl.num_symbols_supported; j++)
-	    if (*(syms+i) == *(sup_syms+j))
+	for (j = 0; j < s->ctrl.num_symbols_supported; j++)
+	    if (*(syms + i) == *(sup_syms + j))
 		break;
 	if (j==s->ctrl.num_symbols_supported)
 	    {
-	    SendErrorToClient(client, IReqCode, X_ChangeFeedbackControl, 0, 
-		BadMatch);
+	    SendErrorToClient(client, IReqCode, X_ChangeFeedbackControl, 0,
+			      BadMatch);
 	    return Success;
-	    }
 	}
-
-    s->ctrl.num_symbols_displayed  = f->num_keysyms;
-    for (i=0; i<f->num_keysyms; i++)
-	*(s->ctrl.symbols_displayed+i) = *(syms+i);
-    (*s->CtrlProc)(dev, &s->ctrl);
-    return Success;
     }
+
+    s->ctrl.num_symbols_displayed = f->num_keysyms;
+    for (i = 0; i < f->num_keysyms; i++)
+	*(s->ctrl.symbols_displayed + i) = *(syms + i);
+    (*s->CtrlProc) (dev, &s->ctrl);
+    return Success;
+}
 
 /******************************************************************************
  *
@@ -546,16 +546,16 @@ ChangeBellFeedback (client, dev, mask, b, f)
     unsigned long 	mask;
     BellFeedbackPtr 	b;
     xBellFeedbackCtl 	*f;
-    {
+{
     int t;
-    BellCtrl bctrl;		/* might get BadValue part way through */
+    BellCtrl bctrl;	/* might get BadValue part way through */
 
     if (client->swapped)
 	{
 	swaps(&f->length);
 	swaps(&f->pitch);
 	swaps(&f->duration);
-	}
+    }
 
     bctrl = b->ctrl;
     if (mask & DvPercent)
@@ -566,12 +566,12 @@ ChangeBellFeedback (client, dev, mask, b, f)
 	else if (t < 0 || t > 100)
 	    {
 	    client->errorValue = t;
-	    SendErrorToClient (client, IReqCode, X_ChangeFeedbackControl, 0, 
-		BadValue);
+	    SendErrorToClient(client, IReqCode, X_ChangeFeedbackControl, 0,
+			      BadValue);
 	    return Success;
-	    }
-	bctrl.percent = t;
 	}
+	bctrl.percent = t;
+    }
 
     if (mask & DvPitch)
 	{
@@ -581,12 +581,12 @@ ChangeBellFeedback (client, dev, mask, b, f)
 	else if (t < 0)
 	    {
 	    client->errorValue = t;
-	    SendErrorToClient (client, IReqCode, X_ChangeFeedbackControl, 0, 
-		BadValue);
+	    SendErrorToClient(client, IReqCode, X_ChangeFeedbackControl, 0,
+			      BadValue);
 	    return Success;
-	    }
-	bctrl.pitch = t;
 	}
+	bctrl.pitch = t;
+    }
 
     if (mask & DvDuration)
 	{
@@ -596,16 +596,16 @@ ChangeBellFeedback (client, dev, mask, b, f)
 	else if (t < 0)
 	    {
 	    client->errorValue = t;
-	    SendErrorToClient (client, IReqCode, X_ChangeFeedbackControl, 0, 
-		BadValue);
+	    SendErrorToClient(client, IReqCode, X_ChangeFeedbackControl, 0,
+			      BadValue);
 	    return Success;
-	    }
+	}
 	bctrl.duration = t;
-        }
-    b->ctrl = bctrl;
-    (*b->CtrlProc)(dev, &b->ctrl);
-    return Success;
     }
+    b->ctrl = bctrl;
+    (*b->CtrlProc) (dev, &b->ctrl);
+    return Success;
+}
 
 /******************************************************************************
  *
@@ -620,15 +620,15 @@ ChangeLedFeedback (client, dev, mask, l, f)
     unsigned long 	mask;
     LedFeedbackPtr 	l;
     xLedFeedbackCtl 	*f;
-    {
-    LedCtrl lctrl;		/* might get BadValue part way through */
+{
+    LedCtrl lctrl;	/* might get BadValue part way through */
 
     if (client->swapped)
 	{
 	swaps(&f->length);
 	swapl(&f->led_values);
 	swapl(&f->led_mask);
-	}
+    }
 
     f->led_mask &= l->ctrl.led_mask;	/* set only supported leds */
     f->led_values &= l->ctrl.led_mask;	/* set only supported leds */
@@ -636,10 +636,10 @@ ChangeLedFeedback (client, dev, mask, l, f)
         {
 	lctrl.led_mask = f->led_mask;
 	lctrl.led_values = f->led_values;
-	(*l->CtrlProc)(dev, &lctrl);
-	l->ctrl.led_values &= ~(f->led_mask);		/* zero changed leds */
-	l->ctrl.led_values |= (f->led_mask & f->led_values);/* OR in set leds*/
-        }
+	(*l->CtrlProc) (dev, &lctrl);
+	l->ctrl.led_values &= ~(f->led_mask);	/* zero changed leds */
+	l->ctrl.led_values |= (f->led_mask & f->led_values);	/* OR in set leds */
+    }
 
     return Success;
-    }
+}

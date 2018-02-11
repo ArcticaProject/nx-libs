@@ -33,11 +33,11 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 int
 SProcXGrabDeviceKey(
 	ClientPtr              /* client */
-	);
+    );
 
 int
 ProcXGrabDeviceKey(
 	ClientPtr              /* client */
-	);
+    );
 
 #endif /* GRABDEVK_H */

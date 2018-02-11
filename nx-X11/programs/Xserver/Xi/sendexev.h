@@ -33,11 +33,11 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 int
 SProcXSendExtensionEvent(
 	ClientPtr              /* client */
-	);
+    );
 
 int
 ProcXSendExtensionEvent(
 	ClientPtr              /* client */
-	);
+    );
 
 #endif /* SENDEXEV_H */

@@ -84,11 +84,11 @@ SOFTWARE.
 
 static Bool		ShouldFreeInputMasks(
 				WindowPtr /* pWin */,
-				Bool /* ignoreSelectedEvents */
-				);
+				 Bool	/* ignoreSelectedEvents */
+    );
 static Bool		MakeInputMasks (
 				WindowPtr /* pWin */
-				);
+    );
 
 /**************************************************************************
  *
@@ -99,12 +99,12 @@ static Bool		MakeInputMasks (
 void
 RegisterOtherDevice (device)
     DeviceIntPtr device;
-    {
+{
     device->public.processInputProc = ProcessOtherEvent;
     device->public.realInputProc = ProcessOtherEvent;
     (device)->ActivateGrab = ActivateKeyboardGrab;
     (device)->DeactivateGrab = DeactivateKeyboardGrab;
-    }
+}
 
 /*ARGSUSED*/
 void
@@ -112,28 +112,28 @@ ProcessOtherEvent (xE, other, count)
     xEventPtr xE;
     register DeviceIntPtr other;
     int count;
-    {
-    register BYTE   	*kptr;
-    register int    	i;
-    register CARD16 	modifiers;
-    register CARD16 	mask;
-    GrabPtr         	grab = other->grab;
-    Bool            	deactivateDeviceGrab = FALSE;
-    int             	key = 0, bit = 0, rootX, rootY;
-    ButtonClassPtr	b = other->button;
-    KeyClassPtr		k = other->key;
-    ValuatorClassPtr	v = other->valuator;
-    deviceValuator	*xV = (deviceValuator *) xE;
+{
+    register BYTE *kptr;
+    register int i;
+    register CARD16 modifiers;
+    register CARD16 mask;
+    GrabPtr grab = other->grab;
+    Bool deactivateDeviceGrab = FALSE;
+    int key = 0, bit = 0, rootX, rootY;
+    ButtonClassPtr b = other->button;
+    KeyClassPtr k = other->key;
+    ValuatorClassPtr v = other->valuator;
+    deviceValuator *xV = (deviceValuator *) xE;
 
     if (xE->u.u.type != DeviceValuator) {
-        GetSpritePosition(&rootX, &rootY);
-        xE->u.keyButtonPointer.rootX = rootX;
-        xE->u.keyButtonPointer.rootY = rootY;
-        key = xE->u.u.detail;
-        NoticeEventTime(xE);
-        xE->u.keyButtonPointer.state = inputInfo.keyboard->key->state | 
-		    inputInfo.pointer->button->state;
-        bit = 1 << (key & 7);
+	GetSpritePosition(&rootX, &rootY);
+	xE->u.keyButtonPointer.rootX = rootX;
+	xE->u.keyButtonPointer.rootY = rootY;
+	key = xE->u.u.detail;
+	NoticeEventTime(xE);
+	xE->u.keyButtonPointer.state = inputInfo.keyboard->key->state |
+	    inputInfo.pointer->button->state;
+	bit = 1 << (key & 7);
     }
     if (DeviceEventCallback)
     {
@@ -142,7 +142,7 @@ ProcessOtherEvent (xE, other, count)
 	eventinfo.count = count;
 	CallCallbacks(&DeviceEventCallback, (void *)&eventinfo);
     }
-    for (i=1; i<count; i++)
+    for (i = 1; i < count; i++)
 	if ((++xV)->type == DeviceValuator)
 	    {
 	    int first = xV->first_valuator;
@@ -154,34 +154,34 @@ ProcessOtherEvent (xE, other, count)
 	    if (k)
 		xV->device_state |= k->state;
 	    if (b)
-	        xV->device_state |= b->state;
+		xV->device_state |= b->state;
 	    if (v && v->axisVal)
 		{
-	        axisvals = v->axisVal;
-	        switch (xV->num_valuators) {
-		    case 6:
-		        *(axisvals+first+5) = xV->valuator5;
-		    case 5:
-		        *(axisvals+first+4) = xV->valuator4;
-		    case 4:
-		        *(axisvals+first+3) = xV->valuator3;
-		    case 3:
-		        *(axisvals+first+2) = xV->valuator2;
-		    case 2:
-		        *(axisvals+first+1) = xV->valuator1;
-		    case 1:
-		        *(axisvals+first) = xV->valuator0;
-		    case 0:
-		    default:
-		        break;
-		    }
+		axisvals = v->axisVal;
+		switch (xV->num_valuators) {
+		case 6:
+		    *(axisvals + first + 5) = xV->valuator5;
+		case 5:
+		    *(axisvals + first + 4) = xV->valuator4;
+		case 4:
+		    *(axisvals + first + 3) = xV->valuator3;
+		case 3:
+		    *(axisvals + first + 2) = xV->valuator2;
+		case 2:
+		    *(axisvals + first + 1) = xV->valuator1;
+		case 1:
+		    *(axisvals + first) = xV->valuator0;
+		case 0:
+		default:
+		    break;
 		}
 	    }
-    
+	}
+
     if (xE->u.u.type == DeviceKeyPress)
 	{
 	modifiers = k->modifierMap[key];
-        kptr = &k->down[key >> 3];
+	kptr = &k->down[key >> 3];
 	if (*kptr & bit) /* allow ddx to generate multiple downs */
 	    {   
 	    if (!modifiers)
@@ -189,11 +189,11 @@ ProcessOtherEvent (xE, other, count)
 		xE->u.u.type = DeviceKeyRelease;
 		ProcessOtherEvent(xE, other, count);
 		xE->u.u.type = DeviceKeyPress;
-		/* release can have side effects, don't fall through */
+	/* release can have side effects, don't fall through */
 		ProcessOtherEvent(xE, other, count);
-		}
-	    return;
 	    }
+	    return;
+	}
 	if (other->valuator)
 	    other->valuator->motionHintWindow = NullWindow;
 	*kptr |= bit;
@@ -202,22 +202,22 @@ ProcessOtherEvent (xE, other, count)
 	    {
 	    if (mask & modifiers) 
 	        {
-		/* This key affects modifier "i" */
+	/* This key affects modifier "i" */
 		k->modifierKeyCount[i]++;
 		k->state |= mask;
 		modifiers &= ~mask;
-		}
 	    }
+	}
 	if (!grab && CheckDeviceGrabs(other, xE, 0, count))
 	    {
 	    other->activatingKey = key;
 	    return;
-	    }
+	}
 	}
     else if (xE->u.u.type == DeviceKeyRelease)
 	{
-        kptr = &k->down[key >> 3];
-	if (!(*kptr & bit)) /* guard against duplicates */
+	kptr = &k->down[key >> 3];
+	if (!(*kptr & bit))	/* guard against duplicates */
 	    return;
 	modifiers = k->modifierMap[key];
 	if (other->valuator)
@@ -228,22 +228,22 @@ ProcessOtherEvent (xE, other, count)
 	    {
 	    if (mask & modifiers) 
 	        {
-		/* This key affects modifier "i" */
+	/* This key affects modifier "i" */
 		if (--k->modifierKeyCount[i] <= 0) 
 		    {
 		    k->modifierKeyCount[i] = 0;
 		    k->state &= ~mask;
-		    }
-		modifiers &= ~mask;
 		}
+		modifiers &= ~mask;
 	    }
+	}
 
 	if (other->fromPassiveGrab && (key == other->activatingKey))
 	    deactivateDeviceGrab = TRUE;
 	}
     else if (xE->u.u.type == DeviceButtonPress)
 	{
-        kptr = &b->down[key >> 3];
+	kptr = &b->down[key >> 3];
 	*kptr |= bit;
 	if (other->valuator)
 	    other->valuator->motionHintWindow = NullWindow;
@@ -251,10 +251,10 @@ ProcessOtherEvent (xE, other, count)
 	b->motionMask = DeviceButtonMotionMask;
 	xE->u.u.detail = b->map[key];
 	if (xE->u.u.detail == 0)
-	     return;
+	    return;
 	if (xE->u.u.detail <= 5)
 	    b->state |= (Button1Mask >> 1) << xE->u.u.detail;
-	SetMaskForEvent(Motion_Filter(b),DeviceMotionNotify);
+	SetMaskForEvent(Motion_Filter(b), DeviceMotionNotify);
 	if (!grab)
 	    if (CheckDeviceGrabs(other, xE, 0, count))
 		return;
@@ -262,18 +262,18 @@ ProcessOtherEvent (xE, other, count)
 	}
     else if (xE->u.u.type == DeviceButtonRelease)
 	{
-        kptr = &b->down[key >> 3];
+	kptr = &b->down[key >> 3];
 	*kptr &= ~bit;
 	if (other->valuator)
 	    other->valuator->motionHintWindow = NullWindow;
 	if (!--b->buttonsDown)
-		b->motionMask = 0;
+	    b->motionMask = 0;
 	xE->u.u.detail = b->map[key];
 	if (xE->u.u.detail == 0)
 	    return;
 	if (xE->u.u.detail <= 5)
 	    b->state &= ~((Button1Mask >> 1) << xE->u.u.detail);
-	SetMaskForEvent(Motion_Filter(b),DeviceMotionNotify);
+	SetMaskForEvent(Motion_Filter(b), DeviceMotionNotify);
 	if (!b->state && other->fromPassiveGrab)
 	    deactivateDeviceGrab = TRUE;
 	}
@@ -291,15 +291,15 @@ ProcessOtherEvent (xE, other, count)
 			    other, count);
 
     if (deactivateDeviceGrab == TRUE)
-        (*other->DeactivateGrab)(other);
-    }
+	(*other->DeactivateGrab) (other);
+}
 
 int
-InitProximityClassDeviceStruct( DeviceIntPtr dev)
+InitProximityClassDeviceStruct(DeviceIntPtr dev)
 {
     register ProximityClassPtr proxc;
 
-    proxc = (ProximityClassPtr)malloc(sizeof(ProximityClassRec));
+    proxc = (ProximityClassPtr) malloc(sizeof(ProximityClassRec));
     if (!proxc)
 	return FALSE;
     dev->proximity = proxc;
@@ -344,13 +344,13 @@ FixDeviceStateNotify (
     if (b) {
 	ev->classes_reported |= (1 << ButtonClass);
 	ev->num_buttons = b->numButtons;
-	memmove((char *) &ev->buttons[0], (char *) b->down, 4);
+	memmove((char *)&ev->buttons[0], (char *)b->down, 4);
 	}
     else if (k) {
 	ev->classes_reported |= (1 << KeyClass);
 	ev->num_keys = k->curKeySyms.maxKeyCode - k->curKeySyms.minKeyCode;
-	memmove((char *) &ev->keys[0], (char *) k->down, 4);
-	}
+	memmove((char *)&ev->keys[0], (char *)k->down, 4);
+    }
     if (v) {
 	int nval = v->numAxes - first;
 	ev->classes_reported |= (1 << ValuatorClass);
@@ -358,23 +358,23 @@ FixDeviceStateNotify (
 	ev->num_valuators = nval < 3 ? nval : 3;
 	switch (ev->num_valuators) 
 	    {
-	    case 3:
-		ev->valuator2 = v->axisVal[first+2];
-	    case 2:
-		ev->valuator1 = v->axisVal[first+1];
-	    case 1:
-		ev->valuator0 = v->axisVal[first];
+	case 3:
+	    ev->valuator2 = v->axisVal[first + 2];
+	case 2:
+	    ev->valuator1 = v->axisVal[first + 1];
+	case 1:
+	    ev->valuator0 = v->axisVal[first];
 	    break;
-	    }
 	}
     }
+}
 
 static void
 FixDeviceValuator (
     DeviceIntPtr dev,
     deviceValuator *ev,
     ValuatorClassPtr v,
-    int first)
+		  int first)
 {
     int nval = v->numAxes - first;
 
@@ -383,24 +383,24 @@ FixDeviceValuator (
     ev->num_valuators = nval < 3 ? nval : 3;
     ev->first_valuator = first;
     switch (ev->num_valuators) {
-	case 3:
-	    ev->valuator2 = v->axisVal[first+2];
-	case 2:
-	    ev->valuator1 = v->axisVal[first+1];
-	case 1:
-	    ev->valuator0 = v->axisVal[first];
+    case 3:
+	ev->valuator2 = v->axisVal[first + 2];
+    case 2:
+	ev->valuator1 = v->axisVal[first + 1];
+    case 1:
+	ev->valuator0 = v->axisVal[first];
 	break;
-	}
-    first += ev->num_valuators;
     }
+    first += ev->num_valuators;
+}
 
 void
 DeviceFocusEvent(dev, type, mode, detail, pWin)
     DeviceIntPtr dev;
     int type, mode, detail;
     register WindowPtr pWin;
-    {
-    deviceFocus	event;
+{
+    deviceFocus event;
 
     if (type == FocusIn)
 	type = DeviceFocusIn;
@@ -414,29 +414,29 @@ DeviceFocusEvent(dev, type, mode, detail, pWin)
     event.window = pWin->drawable.id;
     event.time = currentTime.milliseconds;
 
-    (void) DeliverEventsToWindow(pWin, (xEvent *)&event, 1,
-    	DeviceFocusChangeMask, NullGrab, dev->id);
+    (void)DeliverEventsToWindow(pWin, (xEvent *) & event, 1,
+				DeviceFocusChangeMask, NullGrab, dev->id);
 
-    if ((type == DeviceFocusIn) && 
+    if ((type == DeviceFocusIn) &&
 	(wOtherInputMasks(pWin)) &&
 	(wOtherInputMasks(pWin)->inputEvents[dev->id] & DeviceStateNotifyMask))
-        {
-	int 			evcount = 1;
-	deviceStateNotify 	*ev, *sev;
-	deviceKeyStateNotify 	*kev;
+    {
+	int evcount = 1;
+	deviceStateNotify *ev, *sev;
+	deviceKeyStateNotify *kev;
 	deviceButtonStateNotify *bev;
 
 	KeyClassPtr k;
 	ButtonClassPtr b;
 	ValuatorClassPtr v;
-	int nval=0, nkeys=0, nbuttons=0, first=0;
+	int nval = 0, nkeys = 0, nbuttons = 0, first = 0;
 
-	if ((b=dev->button) != NULL) {
+	if ((b = dev->button) != NULL) {
 	    nbuttons = b->numButtons;
 	    if (nbuttons > 32)
 		evcount++;
 	}
-	if ((k=dev->key) != NULL) {
+	if ((k = dev->key) != NULL) {
 	    nkeys = k->curKeySyms.maxKeyCode - k->curKeySyms.minKeyCode;
 	    if (nkeys > 32)
 		evcount++;
@@ -444,7 +444,7 @@ DeviceFocusEvent(dev, type, mode, detail, pWin)
 		evcount++;
 	    }
 	}
-	if ((v=dev->valuator) != NULL) {
+	if ((v = dev->valuator) != NULL) {
 	    nval = v->numAxes;
 
 	    if (nval > 3)
@@ -458,63 +458,63 @@ DeviceFocusEvent(dev, type, mode, detail, pWin)
 	}
 
 	sev = ev = (deviceStateNotify *) malloc(evcount * sizeof(xEvent));
-	FixDeviceStateNotify (dev, ev, NULL, NULL, NULL, first);
+	FixDeviceStateNotify(dev, ev, NULL, NULL, NULL, first);
 
 	if (b != NULL) {
-	    FixDeviceStateNotify (dev, ev++, NULL, b, v, first);
+	    FixDeviceStateNotify(dev, ev++, NULL, b, v, first);
 	    first += 3;
 	    nval -= 3;
 	    if (nbuttons > 32) {
-		(ev-1)->deviceid |= MORE_EVENTS;
-		bev = (deviceButtonStateNotify *) ev++; 
+		(ev - 1)->deviceid |= MORE_EVENTS;
+		bev = (deviceButtonStateNotify *) ev++;
 		bev->type = DeviceButtonStateNotify;
 		bev->deviceid = dev->id;
-		memmove((char *) &bev->buttons[0], (char *) &b->down[4], 28);
+		memmove((char *)&bev->buttons[0], (char *)&b->down[4], 28);
 	    }
 	    if (nval > 0) {
-		(ev-1)->deviceid |= MORE_EVENTS;
-		FixDeviceValuator (dev, (deviceValuator *) ev++, v, first);
+		(ev - 1)->deviceid |= MORE_EVENTS;
+		FixDeviceValuator(dev, (deviceValuator *) ev++, v, first);
 		first += 3;
 		nval -= 3;
 	    }
 	}
 
 	if (k != NULL) {
-	    FixDeviceStateNotify (dev, ev++, k, NULL, v, first);
+	    FixDeviceStateNotify(dev, ev++, k, NULL, v, first);
 	    first += 3;
 	    nval -= 3;
 	    if (nkeys > 32) {
-		(ev-1)->deviceid |= MORE_EVENTS;
-		kev = (deviceKeyStateNotify *) ev++; 
+		(ev - 1)->deviceid |= MORE_EVENTS;
+		kev = (deviceKeyStateNotify *) ev++;
 		kev->type = DeviceKeyStateNotify;
 		kev->deviceid = dev->id;
-		memmove((char *) &kev->keys[0], (char *) &k->down[4], 28);
+		memmove((char *)&kev->keys[0], (char *)&k->down[4], 28);
 	    }
 	    if (nval > 0) {
-		(ev-1)->deviceid |= MORE_EVENTS;
-		FixDeviceValuator (dev, (deviceValuator *) ev++, v, first);
+		(ev - 1)->deviceid |= MORE_EVENTS;
+		FixDeviceValuator(dev, (deviceValuator *) ev++, v, first);
 		first += 3;
 		nval -= 3;
 	    }
 	}
 
 	while (nval > 0) {
-	    FixDeviceStateNotify (dev, ev++, NULL, NULL, v, first);
+	    FixDeviceStateNotify(dev, ev++, NULL, NULL, v, first);
 	    first += 3;
 	    nval -= 3;
 	    if (nval > 0) {
-		(ev-1)->deviceid |= MORE_EVENTS;
-		FixDeviceValuator (dev, (deviceValuator *) ev++, v, first);
+		(ev - 1)->deviceid |= MORE_EVENTS;
+		FixDeviceValuator(dev, (deviceValuator *) ev++, v, first);
 		first += 3;
 		nval -= 3;
 	    }
 	}
 
-	(void) DeliverEventsToWindow(pWin, (xEvent *)sev, evcount,
-	    DeviceStateNotifyMask, NullGrab, dev->id);
-	free (sev);
-        }
+	(void)DeliverEventsToWindow(pWin, (xEvent *) sev, evcount,
+				    DeviceStateNotifyMask, NullGrab, dev->id);
+	free(sev);
     }
+}
 
 int
 GrabButton(
@@ -539,13 +539,13 @@ GrabButton(
 	(this_device_mode != GrabModeAsync))
     {
 	client->errorValue = this_device_mode;
-        return BadValue;
+	return BadValue;
     }
     if ((other_devices_mode != GrabModeSync) &&
 	(other_devices_mode != GrabModeAsync))
     {
 	client->errorValue = other_devices_mode;
-        return BadValue;
+	return BadValue;
     }
     if ((modifiers != AnyModifier) &&
 	(modifiers & ~AllModifiersMask))
@@ -573,7 +573,7 @@ GrabButton(
 	cursor = NullCursor;
     else
     {
-	cursor = (CursorPtr)LookupIDByType(rcursor, RT_CURSOR);
+	cursor = (CursorPtr) LookupIDByType(rcursor, RT_CURSOR);
 	if (!cursor)
 	{
 	    client->errorValue = rcursor;
@@ -588,7 +588,7 @@ GrabButton(
     if (!grab)
 	return BadAlloc;
     return AddPassiveGrabToList(grab);
-    }
+}
 
 int
 GrabKey(
@@ -607,26 +607,26 @@ GrabKey(
     GrabPtr grab;
     KeyClassPtr k = dev->key;
 
-    if (k==NULL)
+    if (k == NULL)
 	return BadMatch;
     if ((other_devices_mode != GrabModeSync) &&
 	(other_devices_mode != GrabModeAsync))
     {
 	client->errorValue = other_devices_mode;
-        return BadValue;
+	return BadValue;
     }
     if ((this_device_mode != GrabModeSync) &&
 	(this_device_mode != GrabModeAsync))
     {
 	client->errorValue = this_device_mode;
-        return BadValue;
+	return BadValue;
     }
     if (((key > k->curKeySyms.maxKeyCode) || 
 	 (key < k->curKeySyms.minKeyCode))
 	&& (key != AnyKey))
     {
 	client->errorValue = key;
-        return BadValue;
+	return BadValue;
     }
     if ((modifiers != AnyModifier) &&
 	(modifiers & ~AllModifiersMask))
@@ -637,20 +637,20 @@ GrabKey(
     if ((ownerEvents != xTrue) && (ownerEvents != xFalse))
     {
 	client->errorValue = ownerEvents;
-        return BadValue;
+	return BadValue;
     }
     pWin = LookupWindow(grabWindow, client);
     if (!pWin)
 	return BadWindow;
 
-    grab = CreateGrab(client->index, dev, pWin, 
-	mask, ownerEvents, this_device_mode, other_devices_mode, 
+    grab = CreateGrab(client->index, dev, pWin,
+		      mask, ownerEvents, this_device_mode, other_devices_mode,
 	modifier_device, modifiers, DeviceKeyPress, key, NullWindow, 
 	NullCursor);
     if (!grab)
 	return BadAlloc;
     return AddPassiveGrabToList(grab);
-    }
+}
 
 int
 SelectForWindow(dev, pWin, client, mask, exclusivemasks, validmasks)
@@ -681,15 +681,15 @@ SelectForWindow(dev, pWin, client, mask, exclusivemasks, validmasks)
 				          it is OK, for some client to
 				          continue selecting on one of those
 				          events.  */
-	    for (others = wOtherInputMasks(pWin)->inputClients; others; 
+	    for (others = wOtherInputMasks(pWin)->inputClients; others;
 		others = others->next)
 	        {
-	        if (!SameClient(others, client) && (check & 
-		    others->mask[mskidx]))
+		if (!SameClient(others, client) && (check &
+						    others->mask[mskidx]))
 		    return BadAccess;
-	        }
-            }
-	for (others = wOtherInputMasks(pWin)->inputClients; others; 
+	    }
+	}
+	for (others = wOtherInputMasks(pWin)->inputClients; others;
 		others = others->next)
 	    {
 	    if (SameClient(others, client))
@@ -698,7 +698,7 @@ SelectForWindow(dev, pWin, client, mask, exclusivemasks, validmasks)
 		others->mask[mskidx] = mask;
 		if (mask == 0)
 		    {
-		    for (i=0; i<EMASKSIZE; i++)
+		    for (i = 0; i < EMASKSIZE; i++)
 			if (i != mskidx && others->mask[i] != 0)
 			    break;
 		    if (i == EMASKSIZE)
@@ -706,17 +706,17 @@ SelectForWindow(dev, pWin, client, mask, exclusivemasks, validmasks)
 			RecalculateDeviceDeliverableEvents(pWin);
 			if (ShouldFreeInputMasks(pWin, FALSE))
 			    FreeResource(others->resource, RT_NONE);
-		        return Success;
-			}
+			return Success;
 		    }
+		}
 		goto maskSet;
-	        }
 	    }
 	}
+    }
     check = 0;
-    if ((ret = AddExtensionClient (pWin, client, mask, mskidx)) != Success)
+    if ((ret = AddExtensionClient(pWin, client, mask, mskidx)) != Success)
 	return ret;
-maskSet: 
+  maskSet:
     if (dev->valuator)
 	if ((dev->valuator->motionHintWindow == pWin) &&
 	    (mask & DevicePointerMotionHintMask) &&
@@ -727,23 +727,23 @@ maskSet:
     return Success;
 }
 
-int 
+int
 AddExtensionClient (pWin, client, mask, mskidx)
     WindowPtr pWin;
     ClientPtr client;
     Mask mask;
     int mskidx;
-    {
+{
     InputClientsPtr others;
 
-    if (!pWin->optional && !MakeWindowOptional (pWin))
+    if (!pWin->optional && !MakeWindowOptional(pWin))
 	return BadAlloc;
     others = (InputClients *) malloc(sizeof(InputClients));
     if (!others)
 	return BadAlloc;
-    if (!pWin->optional->inputMasks && !MakeInputMasks (pWin))
+    if (!pWin->optional->inputMasks && !MakeInputMasks(pWin))
 	return BadAlloc;
-    bzero((char *) &others->mask[0], sizeof(Mask)*EMASKSIZE);
+    bzero((char *)&others->mask[0], sizeof(Mask) * EMASKSIZE);
     others->mask[mskidx] = mask;
     others->resource = FakeClientID(client->index);
     others->next = pWin->optional->inputMasks->inputClients;
@@ -751,29 +751,29 @@ AddExtensionClient (pWin, client, mask, mskidx)
     if (!AddResource(others->resource, RT_INPUTCLIENT, (void *)pWin))
 	return BadAlloc;
     return Success;
-    }
+}
 
 static Bool
 MakeInputMasks (pWin)
     WindowPtr	pWin;
-    {
+{
     struct _OtherInputMasks *imasks;
 
-    imasks = (struct _OtherInputMasks *) 
-	malloc (sizeof (struct _OtherInputMasks));
+    imasks = (struct _OtherInputMasks *)
+	malloc(sizeof(struct _OtherInputMasks));
     if (!imasks)
 	return FALSE;
-    bzero((char *) imasks, sizeof (struct _OtherInputMasks));
+    bzero((char *)imasks, sizeof(struct _OtherInputMasks));
     pWin->optional->inputMasks = imasks;
     return TRUE;
-    }
+}
 
 void
 RecalculateDeviceDeliverableEvents(pWin)
     WindowPtr pWin;
-    {
+{
     register InputClientsPtr others;
-    struct _OtherInputMasks *inputMasks;   /* default: NULL */
+    struct _OtherInputMasks *inputMasks;	/* default: NULL */
     register WindowPtr pChild, tmp;
     int i;
 
@@ -782,44 +782,44 @@ RecalculateDeviceDeliverableEvents(pWin)
 	{
 	if ((inputMasks = wOtherInputMasks(pChild)) != 0)
 	    {
-	    for (others = inputMasks->inputClients; others; 
+	    for (others = inputMasks->inputClients; others;
 		others = others->next)
 		{
-		for (i=0; i<EMASKSIZE; i++)
+		for (i = 0; i < EMASKSIZE; i++)
 		    inputMasks->inputEvents[i] |= others->mask[i];
-		}
-	    for (i=0; i<EMASKSIZE; i++)
-		inputMasks->deliverableEvents[i] = inputMasks->inputEvents[i];
-	    for (tmp = pChild->parent; tmp; tmp=tmp->parent)
-		if (wOtherInputMasks(tmp))
-		    for (i=0; i<EMASKSIZE; i++)
-			inputMasks->deliverableEvents[i] |=
-			(wOtherInputMasks(tmp)->deliverableEvents[i] 
-			& ~inputMasks->dontPropagateMask[i] & PropagateMask[i]);
 	    }
+	    for (i = 0; i < EMASKSIZE; i++)
+		inputMasks->deliverableEvents[i] = inputMasks->inputEvents[i];
+	    for (tmp = pChild->parent; tmp; tmp = tmp->parent)
+		if (wOtherInputMasks(tmp))
+		    for (i = 0; i < EMASKSIZE; i++)
+			inputMasks->deliverableEvents[i] |=
+			    (wOtherInputMasks(tmp)->deliverableEvents[i]
+			& ~inputMasks->dontPropagateMask[i] & PropagateMask[i]);
+	}
 	if (pChild->firstChild)
 	    {
 	    pChild = pChild->firstChild;
 	    continue;
-	    }
+	}
 	while (!pChild->nextSib && (pChild != pWin))
 	    pChild = pChild->parent;
 	if (pChild == pWin)
 	    break;
 	pChild = pChild->nextSib;
-	}
     }
+}
 
 int
 InputClientGone(pWin, id)
     register WindowPtr pWin;
     XID   id;
-    {
+{
     register InputClientsPtr other, prev;
     if (!wOtherInputMasks(pWin))
-	return(Success);
+	return (Success);
     prev = 0;
-    for (other = wOtherInputMasks(pWin)->inputClients; other; 
+    for (other = wOtherInputMasks(pWin)->inputClients; other;
 	other = other->next)
 	{
 	if (other->resource == id)
@@ -836,30 +836,30 @@ InputClientGone(pWin, id)
 		    wOtherInputMasks(pWin)->inputClients = other->next;
 		    free(wOtherInputMasks(pWin));
 		    pWin->optional->inputMasks = (OtherInputMasks *) NULL;
-		    CheckWindowOptionalNeed (pWin);
+		    CheckWindowOptionalNeed(pWin);
 		    free(other);
 		    }
 		else
 		    {
 		    other->resource = FakeClientID(0);
-		    if (!AddResource(other->resource, RT_INPUTCLIENT, 
-			(void *)pWin))
+		    if (!AddResource(other->resource, RT_INPUTCLIENT,
+				     (void *) pWin))
 			return BadAlloc;
-		    }
+		}
 		}
 	    else
 		{
 		wOtherInputMasks(pWin)->inputClients = other->next;
 		free(other);
-		}
-	    RecalculateDeviceDeliverableEvents(pWin);
-	    return(Success);
 	    }
+	    RecalculateDeviceDeliverableEvents(pWin);
+	    return (Success);
+	}
 	prev = other;
-        }
+    }
     FatalError("client not on device event list");
     /*NOTREACHED*/
-    }
+}
 
 int
 SendEvent (client, d, dest, propagate, ev, mask, count)
@@ -870,17 +870,17 @@ SendEvent (client, d, dest, propagate, ev, mask, count)
     xEvent		*ev;
     Mask		mask;
     int			count;
-    {
+{
     WindowPtr pWin;
-    WindowPtr effectiveFocus = NullWindow; /* only set if dest==InputFocus */
-    WindowPtr spriteWin=GetSpriteWindow();
+    WindowPtr effectiveFocus = NullWindow;	/* only set if dest==InputFocus */
+    WindowPtr spriteWin = GetSpriteWindow();
 
     if (dest == PointerWindow)
 	pWin = spriteWin;
     else if (dest == InputFocus)
     {
 	WindowPtr inputFocus;
-	
+
 	if (!d->focus)
 	    inputFocus = spriteWin;
 	else
@@ -894,7 +894,7 @@ SendEvent (client, d, dest, propagate, ev, mask, count)
 
 	/* If the input focus is PointerRootWin, send the event to where
 	the pointer is if possible, then perhaps propogate up to root. */
-   	if (inputFocus == PointerRootWin)
+	if (inputFocus == PointerRootWin)
 	    inputFocus = GetCurrentRootWindow();
 
 	if (IsParent(inputFocus, spriteWin))
@@ -919,7 +919,7 @@ SendEvent (client, d, dest, propagate, ev, mask, count)
     {
 	for (;pWin; pWin = pWin->parent)
 	{
-	    if (DeliverEventsToWindow( pWin, ev, count, mask, NullGrab, d->id))
+	    if (DeliverEventsToWindow(pWin, ev, count, mask, NullGrab, d->id))
 		return Success;
 	    if (pWin == effectiveFocus)
 		return Success;
@@ -930,9 +930,9 @@ SendEvent (client, d, dest, propagate, ev, mask, count)
 	}
     }
     else
-	(void)(DeliverEventsToWindow( pWin, ev, count, mask, NullGrab, d->id));
+	(void)(DeliverEventsToWindow(pWin, ev, count, mask, NullGrab, d->id));
     return Success;
-    }
+}
 
 int
 SetButtonMapping (client, dev, nElts, map)
@@ -940,7 +940,7 @@ SetButtonMapping (client, dev, nElts, map)
     DeviceIntPtr dev;
     int nElts;
     BYTE *map;
-    {
+{
     register int i;
     ButtonClassPtr b = dev->button;
 
@@ -954,16 +954,16 @@ SetButtonMapping (client, dev, nElts, map)
     }
     if (BadDeviceMap(&map[0], nElts, 1, 255, &client->errorValue))
 	return BadValue;
-    for (i=0; i < nElts; i++)
+    for (i = 0; i < nElts; i++)
 	if ((b->map[i + 1] != map[i]) &&
 		BitIsOn(b->down, i + 1))
-    	    return MappingBusy;
+	    return MappingBusy;
     for (i = 0; i < nElts; i++)
 	b->map[i + 1] = map[i];
     return Success;
-    }
+}
 
-int 
+int
 SetModifierMapping(client, dev, len, rlen, numKeyPerModifier, inputMap, k)
     ClientPtr client;
     DeviceIntPtr dev;
@@ -976,36 +976,36 @@ SetModifierMapping(client, dev, len, rlen, numKeyPerModifier, inputMap, k)
     KeyCode *map = NULL;
     int inputMapLen;
     register int i;
-    
+
     *k = dev->key;
     if (*k == NULL)
 	return BadMatch;
-    if (len != ((numKeyPerModifier<<1) + rlen))
+    if (len != ((numKeyPerModifier << 1) + rlen))
 	return BadLength;
 
-    inputMapLen = 8*numKeyPerModifier;
+    inputMapLen = 8 * numKeyPerModifier;
 
     /*
-     *	Now enforce the restriction that "all of the non-zero keycodes must be
-     *	in the range specified by min-keycode and max-keycode in the
-     *	connection setup (else a Value error)"
+     *  Now enforce the restriction that "all of the non-zero keycodes must be
+     *  in the range specified by min-keycode and max-keycode in the
+     *  connection setup (else a Value error)"
      */
     i = inputMapLen;
     while (i--) {
 	if (inputMap[i]
 	    && (inputMap[i] < (*k)->curKeySyms.minKeyCode
 		|| inputMap[i] > (*k)->curKeySyms.maxKeyCode)) {
-		client->errorValue = inputMap[i];
-		return -1; /* BadValue collides with MappingFailed */
-		}
+	    client->errorValue = inputMap[i];
+	    return -1;	/* BadValue collides with MappingFailed */
+	}
     }
 
     /*
-     *	Now enforce the restriction that none of the old or new
-     *	modifier keys may be down while we change the mapping,  and
-     *	that the DDX layer likes the choice.
+     *  Now enforce the restriction that none of the old or new
+     *  modifier keys may be down while we change the mapping,  and
+     *  that the DDX layer likes the choice.
      */
-    if (!AllModifierKeysAreUp (dev, (*k)->modifierKeyMap, 
+    if (!AllModifierKeysAreUp(dev, (*k)->modifierKeyMap,
 	(int)(*k)->maxKeysPerModifier, inputMap, (int)numKeyPerModifier)
 	    ||
 	!AllModifierKeysAreUp(dev, inputMap, (int)numKeyPerModifier,
@@ -1013,39 +1013,39 @@ SetModifierMapping(client, dev, len, rlen, numKeyPerModifier, inputMap, k)
 	return MappingBusy;
     } else {
 	for (i = 0; i < inputMapLen; i++) {
-	    if (inputMap[i] && !LegalModifier(inputMap[i], (DevicePtr)dev)) {
+	    if (inputMap[i] && !LegalModifier(inputMap[i], (DevicePtr) dev)) {
 		return MappingFailed;
 	    }
 	}
     }
 
     /*
-     *	Now build the keyboard's modifier bitmap from the
-     *	list of keycodes.
+     *  Now build the keyboard's modifier bitmap from the
+     *  list of keycodes.
      */
     if (inputMapLen) {
-	map = (KeyCode *)malloc(inputMapLen);
-        if (!map)
-            return BadAlloc;
+	map = (KeyCode *) malloc(inputMapLen);
+	if (!map)
+	    return BadAlloc;
     }
     if ((*k)->modifierKeyMap)
-        free((*k)->modifierKeyMap);
+	free((*k)->modifierKeyMap);
     if (inputMapLen) {
-        (*k)->modifierKeyMap = map;
-        memmove((char *)(*k)->modifierKeyMap, (char *)inputMap, inputMapLen);
+	(*k)->modifierKeyMap = map;
+	memmove((char *)(*k)->modifierKeyMap, (char *)inputMap, inputMapLen);
     } else
 	(*k)->modifierKeyMap = NULL;
 
     (*k)->maxKeysPerModifier = numKeyPerModifier;
     for (i = 0; i < MAP_LENGTH; i++)
-        (*k)->modifierMap[i] = 0;
+	(*k)->modifierMap[i] = 0;
     for (i = 0; i < inputMapLen; i++) if (inputMap[i]) {
-        (*k)->modifierMap[inputMap[i]]
-          |= (1<<(i/ (*k)->maxKeysPerModifier));
-    }
+	    (*k)->modifierMap[inputMap[i]]
+		|= (1 << (i / (*k)->maxKeysPerModifier));
+	}
 
-    return(MappingSuccess);
-    }
+    return (MappingSuccess);
+}
 
 void
 SendDeviceMappingNotify(
@@ -1055,7 +1055,7 @@ SendDeviceMappingNotify(
     DeviceIntPtr dev)
 {
     xEvent event;
-    deviceMappingNotify         *ev = (deviceMappingNotify *) &event;
+    deviceMappingNotify *ev = (deviceMappingNotify *) & event;
 
     ev->type = DeviceMappingNotify;
     ev->request = request;
@@ -1065,18 +1065,18 @@ SendDeviceMappingNotify(
 	{
 	ev->firstKeyCode = firstKeyCode;
 	ev->count = count;
-	}
-
-    SendEventToAllWindows (dev, DeviceMappingNotifyMask, (xEvent *)ev, 1);
     }
+
+    SendEventToAllWindows(dev, DeviceMappingNotifyMask, (xEvent *) ev, 1);
+}
 
 int
 ChangeKeyMapping(
     ClientPtr 	client,
-    DeviceIntPtr dev,
-    unsigned 	len,
-    int 	type,
-    KeyCode 	firstKeyCode,
+		 DeviceIntPtr dev,
+		 unsigned len,
+		 int type,
+		 KeyCode firstKeyCode,
     CARD8 	keyCodes,
     CARD8 	keySymsPerKeyCode,
     KeySym	*map)
@@ -1088,18 +1088,18 @@ ChangeKeyMapping(
 	return (BadMatch);
 
     if (len != (keyCodes * keySymsPerKeyCode))
-            return BadLength;
+	return BadLength;
 
     if ((firstKeyCode < k->curKeySyms.minKeyCode) ||
 	(firstKeyCode + keyCodes - 1 > k->curKeySyms.maxKeyCode))
     {
-	    client->errorValue = firstKeyCode;
-	    return BadValue;
+	client->errorValue = firstKeyCode;
+	return BadValue;
     }
     if (keySymsPerKeyCode == 0)
     {
-	    client->errorValue = 0;
-            return BadValue;
+	client->errorValue = 0;
+	return BadValue;
     }
     keysyms.minKeyCode = firstKeyCode;
     keysyms.maxKeyCode = firstKeyCode + keyCodes - 1;
@@ -1110,16 +1110,16 @@ ChangeKeyMapping(
     SendDeviceMappingNotify(MappingKeyboard, firstKeyCode, keyCodes,
 	dev);
     return client->noClientException;
-    }
+}
 
 void
 DeleteWindowFromAnyExtEvents(pWin, freeResources)
     WindowPtr		pWin;
     Bool		freeResources;
-    {
-    int			i;
-    DeviceIntPtr	dev;
-    InputClientsPtr	ic;
+{
+    int i;
+    DeviceIntPtr dev;
+    InputClientsPtr ic;
     struct _OtherInputMasks *inputMasks;
 
     for (dev=inputInfo.devices; dev; dev=dev->next)
@@ -1128,115 +1128,115 @@ DeleteWindowFromAnyExtEvents(pWin, freeResources)
 	    dev == inputInfo.keyboard)
 	    continue;
 	DeleteDeviceFromAnyExtEvents(pWin, dev);
-	}
+    }
 
-    for (dev=inputInfo.off_devices; dev; dev=dev->next)
+    for (dev = inputInfo.off_devices; dev; dev = dev->next)
 	DeleteDeviceFromAnyExtEvents(pWin, dev);
 
     if (freeResources)
 	while ((inputMasks = wOtherInputMasks(pWin)) != 0)
 	    {
 	    ic = inputMasks->inputClients;
-	    for (i=0; i<EMASKSIZE; i++)
+	    for (i = 0; i < EMASKSIZE; i++)
 		inputMasks->dontPropagateMask[i] = 0;
 	    FreeResource(ic->resource, RT_NONE);
-	    }
-    }
+	}
+}
 
 void
 DeleteDeviceFromAnyExtEvents(pWin, dev)
     WindowPtr		pWin;
     DeviceIntPtr	dev;
-    {
-    WindowPtr		parent;
+{
+    WindowPtr parent;
 
     /* Deactivate any grabs performed on this window, before making
 	any input focus changes.
         Deactivating a device grab should cause focus events. */
 
     if (dev->grab && (dev->grab->window == pWin))
-	(*dev->DeactivateGrab)(dev);
+	(*dev->DeactivateGrab) (dev);
 
     /* If the focus window is a root window (ie. has no parent) 
 	then don't delete the focus from it. */
-    
+
     if (dev->focus && (pWin==dev->focus->win) && (pWin->parent != NullWindow))
 	{
 	int focusEventMode = NotifyNormal;
 
- 	/* If a grab is in progress, then alter the mode of focus events. */
+	/* If a grab is in progress, then alter the mode of focus events. */
 
 	if (dev->grab)
 	    focusEventMode = NotifyWhileGrabbed;
 
 	switch (dev->focus->revert)
 	    {
-	    case RevertToNone:
+	case RevertToNone:
+	    DoFocusEvents(dev, pWin, NoneWin, focusEventMode);
+	    dev->focus->win = NoneWin;
+	    dev->focus->traceGood = 0;
+	    break;
+	case RevertToParent:
+	    parent = pWin;
+		do
+		    {
+		parent = parent->parent;
+		dev->focus->traceGood--;
+		    } while (!parent->realized);
+	    DoFocusEvents(dev, pWin, parent, focusEventMode);
+	    dev->focus->win = parent;
+	    dev->focus->revert = RevertToNone;
+	    break;
+	case RevertToPointerRoot:
+	    DoFocusEvents(dev, pWin, PointerRootWin, focusEventMode);
+	    dev->focus->win = PointerRootWin;
+	    dev->focus->traceGood = 0;
+	    break;
+	case RevertToFollowKeyboard:
+	    if (inputInfo.keyboard->focus->win) {
+		DoFocusEvents(dev, pWin, inputInfo.keyboard->focus->win,
+			      focusEventMode);
+		dev->focus->win = FollowKeyboardWin;
+		dev->focus->traceGood = 0;
+	    } else {
 		DoFocusEvents(dev, pWin, NoneWin, focusEventMode);
 		dev->focus->win = NoneWin;
 		dev->focus->traceGood = 0;
-		break;
-	    case RevertToParent:
-		parent = pWin;
-		do
-		    {
-		    parent = parent->parent;
-		    dev->focus->traceGood--;
-		    } while (!parent->realized);
-		DoFocusEvents(dev, pWin, parent, focusEventMode);
-		dev->focus->win = parent;
-		dev->focus->revert = RevertToNone;
-		break;
-	    case RevertToPointerRoot:
-		DoFocusEvents(dev, pWin, PointerRootWin, focusEventMode);
-		dev->focus->win = PointerRootWin;
-		dev->focus->traceGood = 0;
-		break;
-	    case RevertToFollowKeyboard:
-		if (inputInfo.keyboard->focus->win) {
-		    DoFocusEvents(dev, pWin, inputInfo.keyboard->focus->win,
-				  focusEventMode);
-		    dev->focus->win = FollowKeyboardWin;
-		    dev->focus->traceGood = 0;
-		} else {
-		    DoFocusEvents(dev, pWin, NoneWin, focusEventMode);
-		    dev->focus->win = NoneWin;
-		    dev->focus->traceGood = 0;
-		}
-		break;
 	    }
+	    break;
 	}
+    }
 
     if (dev->valuator)
 	if (dev->valuator->motionHintWindow == pWin)
 	    dev->valuator->motionHintWindow = NullWindow;
-    }
+}
 
 int
 MaybeSendDeviceMotionNotifyHint (pEvents, mask)
     deviceKeyButtonPointer *pEvents;
     Mask mask;
-    {
+{
     DeviceIntPtr dev;
 
-    dev = LookupDeviceIntRec (pEvents->deviceid & DEVICE_BITS);
+    dev = LookupDeviceIntRec(pEvents->deviceid & DEVICE_BITS);
     if (pEvents->type == DeviceMotionNotify)
 	{
 	if (mask & DevicePointerMotionHintMask)
 	    {
 	    if (WID(dev->valuator->motionHintWindow) == pEvents->event)
 		{
-		return 1; /* don't send, but pretend we did */
-		}
+		return 1;	/* don't send, but pretend we did */
+	    }
 	    pEvents->detail = NotifyHint;
 	    }
 	 else
 	    {
 	    pEvents->detail = NotifyNormal;
-	    }
 	}
-    return (0);
     }
+    return (0);
+}
 
 void
 CheckDeviceGrabAndHintWindow (pWin, type, xE, grab, client, deliveryMask)
@@ -1246,13 +1246,13 @@ CheckDeviceGrabAndHintWindow (pWin, type, xE, grab, client, deliveryMask)
     GrabPtr grab;
     ClientPtr client;
     Mask deliveryMask;
-    {
+{
     DeviceIntPtr dev;
 
-    dev = LookupDeviceIntRec (xE->deviceid & DEVICE_BITS);
+    dev = LookupDeviceIntRec(xE->deviceid & DEVICE_BITS);
     if (type == DeviceMotionNotify)
 	dev->valuator->motionHintWindow = pWin;
-    else if ((type == DeviceButtonPress) && (!grab) && 
+    else if ((type == DeviceButtonPress) && (!grab) &&
 	(deliveryMask & DeviceButtonGrabMask))
         {
 	GrabRec tempGrab;
@@ -1266,28 +1266,28 @@ CheckDeviceGrabAndHintWindow (pWin, type, xE, grab, client, deliveryMask)
 	tempGrab.pointerMode = GrabModeAsync;
 	tempGrab.confineTo = NullWindow;
 	tempGrab.cursor = NullCursor;
-	(*dev->ActivateGrab)(dev, &tempGrab, currentTime, TRUE);
-        }
+	(*dev->ActivateGrab) (dev, &tempGrab, currentTime, TRUE);
     }
+}
 
 Mask
 DeviceEventMaskForClient(dev, pWin, client)
     DeviceIntPtr	dev;
     WindowPtr		pWin;
     ClientPtr		client;
-    {
+{
     register InputClientsPtr other;
 
     if (!wOtherInputMasks(pWin))
 	return 0;
-    for (other = wOtherInputMasks(pWin)->inputClients; other; 
+    for (other = wOtherInputMasks(pWin)->inputClients; other;
 	other = other->next)
 	{
 	if (SameClient(other, client))
 	    return other->mask[dev->id];
-	}
-    return 0;
     }
+    return 0;
+}
 
 void
 MaybeStopDeviceHint(dev, client)
@@ -1305,7 +1305,7 @@ MaybeStopDeviceHint(dev, client)
 	    DevicePointerMotionHintMask)))) ||
 	(!grab &&
 	 (DeviceEventMaskForClient(dev, pWin, client) &
-	  DevicePointerMotionHintMask)))
+						 DevicePointerMotionHintMask)))
 	dev->valuator->motionHintWindow = NullWindow;
 }
 
@@ -1315,14 +1315,14 @@ DeviceEventSuppressForWindow(pWin, client, mask, maskndx)
 	ClientPtr client;
 	Mask mask;
 	int maskndx;
-    {
-    struct _OtherInputMasks *inputMasks = wOtherInputMasks (pWin);
+{
+    struct _OtherInputMasks *inputMasks = wOtherInputMasks(pWin);
 
     if (mask & ~PropagateMask[maskndx])
 	{
 	client->errorValue = mask;
 	return BadValue;
-	}
+    }
 
     if (mask == 0) 
 	{
@@ -1332,32 +1332,32 @@ DeviceEventSuppressForWindow(pWin, client, mask, maskndx)
     else 
 	{
 	if (!inputMasks)
-	    AddExtensionClient (pWin, client, 0, 0);
+	    AddExtensionClient(pWin, client, 0, 0);
 	inputMasks = wOtherInputMasks(pWin);
 	inputMasks->dontPropagateMask[maskndx] = mask;
-	}
+    }
     RecalculateDeviceDeliverableEvents(pWin);
     if (ShouldFreeInputMasks(pWin, FALSE))
-        FreeResource(inputMasks->inputClients->resource, RT_NONE);
+	FreeResource(inputMasks->inputClients->resource, RT_NONE);
     return Success;
-    }
+}
 
 static Bool
 ShouldFreeInputMasks (pWin, ignoreSelectedEvents)
     WindowPtr pWin;
     Bool ignoreSelectedEvents;
-    {
+{
     int i;
     Mask allInputEventMasks = 0;
-    struct _OtherInputMasks *inputMasks = wOtherInputMasks (pWin);
+    struct _OtherInputMasks *inputMasks = wOtherInputMasks(pWin);
 
-    for (i=0; i<EMASKSIZE; i++)
+    for (i = 0; i < EMASKSIZE; i++)
 	allInputEventMasks |= inputMasks->dontPropagateMask[i];
     if (!ignoreSelectedEvents)
-	for (i=0; i<EMASKSIZE; i++)
+	for (i = 0; i < EMASKSIZE; i++)
 	    allInputEventMasks |= inputMasks->inputEvents[i];
     if (allInputEventMasks == 0)
 	return TRUE;
     else
 	return FALSE;
-    }
+}

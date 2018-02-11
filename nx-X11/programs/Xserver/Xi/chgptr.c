@@ -83,12 +83,12 @@ SOFTWARE.
 int
 SProcXChangePointerDevice(client)
     register ClientPtr client;
-    {
+{
     REQUEST(xChangePointerDeviceReq);
     swaps(&stuff->length);
     REQUEST_SIZE_MATCH(xChangePointerDeviceReq);
-    return(ProcXChangePointerDevice(client));
-    }
+    return (ProcXChangePointerDevice(client));
+}
 
 /***********************************************************************
  *
@@ -99,12 +99,12 @@ SProcXChangePointerDevice(client)
 int
 ProcXChangePointerDevice (client)
     register ClientPtr client;
-    {
-    DeviceIntPtr 	xptr = inputInfo.pointer;
-    DeviceIntPtr 	dev;
-    ValuatorClassPtr 	v;
-    xChangePointerDeviceReply	rep;
-    changeDeviceNotify	ev;
+{
+    DeviceIntPtr xptr = inputInfo.pointer;
+    DeviceIntPtr dev;
+    ValuatorClassPtr v;
+    xChangePointerDeviceReply rep;
+    changeDeviceNotify ev;
 
     REQUEST(xChangePointerDeviceReq);
     REQUEST_SIZE_MATCH(xChangePointerDeviceReq);
@@ -114,30 +114,30 @@ ProcXChangePointerDevice (client)
     rep.length = 0;
     rep.sequenceNumber = client->sequence;
 
-    dev = LookupDeviceIntRec (stuff->deviceid);
+    dev = LookupDeviceIntRec(stuff->deviceid);
     if (dev == NULL)
 	{
 	rep.status = -1;
-	SendErrorToClient(client, IReqCode, X_ChangePointerDevice, 0, 
-	    BadDevice);
+	SendErrorToClient(client, IReqCode, X_ChangePointerDevice, 0,
+			  BadDevice);
 	return Success;
-	}
+    }
 
     v = dev->valuator;
-    if (v == NULL || v->numAxes < 2 || 
+    if (v == NULL || v->numAxes < 2 ||
 	stuff->xaxis >= v->numAxes ||
 	stuff->yaxis >= v->numAxes)
 	{
 	rep.status = -1;
 	SendErrorToClient(client, IReqCode, X_ChangePointerDevice, 0, BadMatch);
 	return Success;
-	}
+    }
 
     if (((dev->grab) && !SameClient(dev->grab, client)) ||
-        ((xptr->grab) && !SameClient(xptr->grab, client)))
+	((xptr->grab) && !SameClient(xptr->grab, client)))
 	rep.status = AlreadyGrabbed;
     else if ((dev->sync.frozen &&
-	     dev->sync.other && !SameClient(dev->sync.other, client)) ||
+	      dev->sync.other && !SameClient(dev->sync.other, client)) ||
 	     (xptr->sync.frozen &&
 	      xptr->sync.other && !SameClient(xptr->sync.other, client)))
 	rep.status = GrabFrozen;
@@ -146,43 +146,43 @@ ProcXChangePointerDevice (client)
 	if (ChangePointerDevice (
 	    xptr, dev, stuff->xaxis, stuff->yaxis) != Success)
 	    {
-	    SendErrorToClient(client, IReqCode, X_ChangePointerDevice, 0, 
-		BadDevice);
+	    SendErrorToClient(client, IReqCode, X_ChangePointerDevice, 0,
+			      BadDevice);
 	    return Success;
-	    }
+	}
 	if (dev->focus)
 	    DeleteFocusClassDeviceStruct(dev);
 	if (!dev->button)
-	    InitButtonClassDeviceStruct (dev, 0, NULL);
+	    InitButtonClassDeviceStruct(dev, 0, NULL);
 	if (!dev->ptrfeed)
-	   InitPtrFeedbackClassDeviceStruct(dev, (PtrCtrlProcPtr)NoopDDA);
-	RegisterOtherDevice (xptr);
-	RegisterPointerDevice (dev);
+	    InitPtrFeedbackClassDeviceStruct(dev, (PtrCtrlProcPtr) NoopDDA);
+	RegisterOtherDevice(xptr);
+	RegisterPointerDevice(dev);
 
 	ev.type = ChangeDeviceNotify;
 	ev.deviceid = stuff->deviceid;
 	ev.time = currentTime.milliseconds;
 	ev.request = NewPointer;
 
-	SendEventToAllWindows (dev, ChangeDeviceNotifyMask, (xEvent *)&ev, 1);
-	SendMappingNotify (MappingPointer, 0, 0, client);
+	SendEventToAllWindows(dev, ChangeDeviceNotifyMask, (xEvent *) & ev, 1);
+	SendMappingNotify(MappingPointer, 0, 0, client);
 
 	rep.status = 0;
-	}
+    }
 
     WriteReplyToClient (client, sizeof (xChangePointerDeviceReply), 
 	&rep);
     return Success;
-    }
+}
 
 void
 DeleteFocusClassDeviceStruct(dev)
     DeviceIntPtr dev;
-    {
+{
     free(dev->focus->trace);
     free(dev->focus);
     dev->focus = NULL;
-    }
+}
 
 /***********************************************************************
  *
@@ -196,7 +196,7 @@ SendEventToAllWindows (dev, mask, ev, count)
     Mask mask;
     xEvent *ev;
     int count;
-    {
+{
     int i;
     WindowPtr pWin, p1;
 
@@ -205,9 +205,9 @@ SendEventToAllWindows (dev, mask, ev, count)
 	pWin = screenInfo.screens[i]->root;
 	(void)DeliverEventsToWindow(pWin, ev, count, mask, NullGrab, dev->id);
 	p1 = pWin->firstChild;
-	FindInterestedChildren (dev, p1, mask, ev, count);
-	}
+	FindInterestedChildren(dev, p1, mask, ev, count);
     }
+}
 
 /***********************************************************************
  *
@@ -223,17 +223,17 @@ FindInterestedChildren (dev, p1, mask, ev, count)
     Mask		mask;
     xEvent		*ev;
     int			count;
-    {
+{
     WindowPtr p2;
 
     while (p1)
         {
-        p2 = p1->firstChild;
+	p2 = p1->firstChild;
 	(void)DeliverEventsToWindow(p1, ev, count, mask, NullGrab, dev->id);
-	FindInterestedChildren (dev, p2, mask, ev, count);
+	FindInterestedChildren(dev, p2, mask, ev, count);
 	p1 = p1->nextSib;
-        }
     }
+}
 
 /***********************************************************************
  *
@@ -247,8 +247,8 @@ SRepXChangePointerDevice (client, size, rep)
     ClientPtr	client;
     int		size;
     xChangePointerDeviceReply	*rep;
-    {
+{
     swaps(&rep->sequenceNumber);
     swapl(&rep->length);
     WriteToClient(client, size, rep);
-    }
+}

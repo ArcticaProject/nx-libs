@@ -33,18 +33,18 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 int
 SProcXGetDeviceButtonMapping(
 	ClientPtr              /* client */
-	);
+    );
 
 int
 ProcXGetDeviceButtonMapping (
 	ClientPtr              /* client */
-	);
+    );
 
 void
 SRepXGetDeviceButtonMapping (
 	ClientPtr              /* client */,
-	int                    /* size */,
-	xGetDeviceButtonMappingReply * /* rep */
-	);
+				 int /* size */ ,
+				 xGetDeviceButtonMappingReply *	/* rep */
+    );
 
 #endif /* GETBMAP_H */

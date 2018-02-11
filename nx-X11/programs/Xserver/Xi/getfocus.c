@@ -76,11 +76,11 @@ SOFTWARE.
 int
 SProcXGetDeviceFocus(client)
     register ClientPtr client;
-    {
+{
     REQUEST(xGetDeviceFocusReq);
     swaps(&stuff->length);
-    return(ProcXGetDeviceFocus(client));
-    }
+    return (ProcXGetDeviceFocus(client));
+}
 
 /***********************************************************************
  *
@@ -91,20 +91,20 @@ SProcXGetDeviceFocus(client)
 int
 ProcXGetDeviceFocus(client)
     ClientPtr client;
-    {
-    DeviceIntPtr	dev;
-    FocusClassPtr 	focus;
+{
+    DeviceIntPtr dev;
+    FocusClassPtr focus;
     xGetDeviceFocusReply rep;
 
     REQUEST(xGetDeviceFocusReq);
     REQUEST_SIZE_MATCH(xGetDeviceFocusReq);
 
-    dev = LookupDeviceIntRec (stuff->deviceid);
+    dev = LookupDeviceIntRec(stuff->deviceid);
     if (dev == NULL || !dev->focus)
 	{
 	SendErrorToClient(client, IReqCode, X_GetDeviceFocus, 0, BadDevice);
 	return Success;
-	}
+    }
 
     rep.repType = X_Reply;
     rep.RepType = X_GetDeviceFocus;
@@ -119,14 +119,14 @@ ProcXGetDeviceFocus(client)
 	rep.focus = PointerRoot;
     else if (focus->win == FollowKeyboardWin)
 	rep.focus = FollowKeyboard;
-    else 
+    else
 	rep.focus = focus->win->drawable.id;
 
     rep.time = focus->time.milliseconds;
     rep.revertTo = focus->revert;
-    WriteReplyToClient (client, sizeof(xGetDeviceFocusReply), &rep);
+    WriteReplyToClient(client, sizeof(xGetDeviceFocusReply), &rep);
     return Success;
-    }
+}
 
 /***********************************************************************
  *
@@ -140,10 +140,10 @@ SRepXGetDeviceFocus (client, size, rep)
     ClientPtr	client;
     int		size;
     xGetDeviceFocusReply	*rep;
-    {
+{
     swaps(&rep->sequenceNumber);
     swapl(&rep->length);
     swapl(&rep->focus);
     swapl(&rep->time);
     WriteToClient(client, size, rep);
-    }
+}

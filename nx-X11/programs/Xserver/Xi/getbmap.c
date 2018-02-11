@@ -75,11 +75,11 @@ SOFTWARE.
 int
 SProcXGetDeviceButtonMapping(client)
     register ClientPtr client;
-    {
+{
     REQUEST(xGetDeviceButtonMappingReq);
     swaps(&stuff->length);
-    return(ProcXGetDeviceButtonMapping(client));
-    }
+    return (ProcXGetDeviceButtonMapping(client));
+}
 
 /***********************************************************************
  *
@@ -90,10 +90,10 @@ SProcXGetDeviceButtonMapping(client)
 int
 ProcXGetDeviceButtonMapping (client)
     register ClientPtr client;
-    {
-    DeviceIntPtr	dev;
-    xGetDeviceButtonMappingReply	rep;
-    ButtonClassPtr	b;
+{
+    DeviceIntPtr dev;
+    xGetDeviceButtonMappingReply rep;
+    ButtonClassPtr b;
 
     REQUEST(xGetDeviceButtonMappingReq);
     REQUEST_SIZE_MATCH(xGetDeviceButtonMappingReq);
@@ -104,28 +104,28 @@ ProcXGetDeviceButtonMapping (client)
     rep.length = 0;
     rep.sequenceNumber = client->sequence;
 
-    dev = LookupDeviceIntRec (stuff->deviceid);
+    dev = LookupDeviceIntRec(stuff->deviceid);
     if (dev == NULL)
 	{
-	SendErrorToClient(client, IReqCode, X_GetDeviceButtonMapping, 0, 
-		BadDevice);
+	SendErrorToClient(client, IReqCode, X_GetDeviceButtonMapping, 0,
+			  BadDevice);
 	return Success;
-	}
+    }
 
     b = dev->button;
     if (b == NULL)
 	{
-	SendErrorToClient(client, IReqCode, X_GetDeviceButtonMapping, 0, 
-		BadMatch);
+	SendErrorToClient(client, IReqCode, X_GetDeviceButtonMapping, 0,
+			  BadMatch);
 	return Success;
-	}
+    }
     rep.nElts = b->numButtons;
-    rep.length = (rep.nElts + (4-1))/4;
-    WriteReplyToClient (client, sizeof (xGetDeviceButtonMappingReply), &rep);
+    rep.length = (rep.nElts + (4 - 1)) / 4;
+    WriteReplyToClient(client, sizeof(xGetDeviceButtonMappingReply), &rep);
     WriteToClient(client, rep.nElts,
 			(char *)&b->map[1]);
     return Success;
-    }
+}
 
 /***********************************************************************
  *
@@ -139,8 +139,8 @@ SRepXGetDeviceButtonMapping (client, size, rep)
     ClientPtr	client;
     int		size;
     xGetDeviceButtonMappingReply	*rep;
-    {
+{
     swaps(&rep->sequenceNumber);
     swapl(&rep->length);
     WriteToClient(client, size, rep);
-    }
+}

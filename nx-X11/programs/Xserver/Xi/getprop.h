@@ -33,27 +33,27 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 int
 SProcXGetDeviceDontPropagateList(
 	ClientPtr              /* client */
-	);
+    );
 
 int
 ProcXGetDeviceDontPropagateList (
 	ClientPtr              /* client */
-	);
+    );
 
 XEventClass *
 ClassFromMask (
 	XEventClass *          /* buf */,
-	Mask                   /* mask */,
-	int                    /* maskndx */,
-	CARD16 *               /* count */,
-	int                    /* mode */
-	);
+			   Mask /* mask */ ,
+			   int /* maskndx */ ,
+			   CARD16 * /* count */ ,
+			   int	/* mode */
+    );
 
 void
 SRepXGetDeviceDontPropagateList (
 	ClientPtr              /* client */,
-	int                    /* size */,
-	xGetDeviceDontPropagateListReply * /* rep */
-	);
+				     int /* size */ ,
+				     xGetDeviceDontPropagateListReply *	/* rep */
+    );
 
 #endif /* GETPROP_H */

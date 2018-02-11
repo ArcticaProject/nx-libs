@@ -78,7 +78,7 @@ SOFTWARE.
 int
 SProcXGrabDeviceButton(client)
     register ClientPtr client;
-    {
+{
     REQUEST(xGrabDeviceButtonReq);
     swaps(&stuff->length);
     REQUEST_AT_LEAST_SIZE(xGrabDeviceButtonReq);
@@ -86,11 +86,11 @@ SProcXGrabDeviceButton(client)
     swaps(&stuff->modifiers);
     swaps(&stuff->event_count);
     REQUEST_FIXED_SIZE(xGrabDeviceButtonReq,
-                      stuff->event_count * sizeof(CARD32));
+		       stuff->event_count * sizeof(CARD32));
     SwapLongs((CARD32 *) (&stuff[1]), stuff->event_count);
 
-    return(ProcXGrabDeviceButton(client));
-    }
+    return (ProcXGrabDeviceButton(client));
+}
 
 /***********************************************************************
  *
@@ -101,59 +101,59 @@ SProcXGrabDeviceButton(client)
 int
 ProcXGrabDeviceButton(client)
     ClientPtr client;
-    {
-    int			ret;
-    DeviceIntPtr	dev;
-    DeviceIntPtr	mdev;
-    XEventClass		*class;
-    struct tmask	tmp[EMASKSIZE];
+{
+    int ret;
+    DeviceIntPtr dev;
+    DeviceIntPtr mdev;
+    XEventClass *class;
+    struct tmask tmp[EMASKSIZE];
 
     REQUEST(xGrabDeviceButtonReq);
     REQUEST_AT_LEAST_SIZE(xGrabDeviceButtonReq);
 
     if (stuff->length !=(sizeof(xGrabDeviceButtonReq)>>2) + stuff->event_count)
 	{
-	SendErrorToClient (client, IReqCode, X_GrabDeviceButton, 0, BadLength);
+	SendErrorToClient(client, IReqCode, X_GrabDeviceButton, 0, BadLength);
 	return Success;
-	}
+    }
 
-    dev = LookupDeviceIntRec (stuff->grabbed_device);
+    dev = LookupDeviceIntRec(stuff->grabbed_device);
     if (dev == NULL)
 	{
 	SendErrorToClient(client, IReqCode, X_GrabDeviceButton, 0, 
 	    BadDevice);
 	return Success;
-	}
+    }
     if (stuff->modifier_device != UseXKeyboard)
 	{
-	mdev = LookupDeviceIntRec (stuff->modifier_device);
+	mdev = LookupDeviceIntRec(stuff->modifier_device);
 	if (mdev == NULL)
 	    {
-	    SendErrorToClient(client, IReqCode, X_GrabDeviceButton, 0, 
-	        BadDevice);
+	    SendErrorToClient(client, IReqCode, X_GrabDeviceButton, 0,
+			      BadDevice);
 	    return Success;
-	    }
+	}
 	if (mdev->key == NULL)
 	    {
-	    SendErrorToClient(client, IReqCode, X_GrabDeviceButton, 0, 
-		BadMatch);
+	    SendErrorToClient(client, IReqCode, X_GrabDeviceButton, 0,
+			      BadMatch);
 	    return Success;
-	    }
+	}
 	}
     else
 	mdev = (DeviceIntPtr) LookupKeyboardDevice();
 
     class = (XEventClass *) (&stuff[1]);	/* first word of values */
 
-    if ((ret = CreateMaskFromList (client, class,
+    if ((ret = CreateMaskFromList(client, class,
 	stuff->event_count, tmp, dev, X_GrabDeviceButton)) != Success)
-	    return Success;
-    ret = GrabButton(client, dev, stuff->this_device_mode, 
+	return Success;
+    ret = GrabButton(client, dev, stuff->this_device_mode,
 	stuff->other_devices_mode, stuff->modifiers, mdev, stuff->button, 
 	stuff->grabWindow, stuff->ownerEvents, (Cursor)0, (Window)0, 
 	tmp[stuff->grabbed_device].mask);
 
     if (ret != Success)
 	SendErrorToClient(client, IReqCode, X_GrabDeviceButton, 0, ret);
-    return(Success);
-    }
+    return (Success);
+}

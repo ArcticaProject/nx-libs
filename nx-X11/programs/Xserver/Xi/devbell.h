@@ -33,11 +33,11 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 int
 SProcXDeviceBell (
 	ClientPtr              /* client */
-	);
+    );
 
 int
 ProcXDeviceBell (
 	ClientPtr              /* client */
-	);
+    );
 
 #endif /* DEVBELL_H */

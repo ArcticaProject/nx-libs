@@ -76,11 +76,11 @@ SOFTWARE.
 int
 SProcXSetDeviceValuators(client)
     register ClientPtr client;
-    {
+{
     REQUEST(xSetDeviceValuatorsReq);
     swaps(&stuff->length);
-    return(ProcXSetDeviceValuators(client));
-    }
+    return (ProcXSetDeviceValuators(client));
+}
 
 /***********************************************************************
  *
@@ -91,9 +91,9 @@ SProcXSetDeviceValuators(client)
 int
 ProcXSetDeviceValuators(client)
     register ClientPtr client;
-    {
+{
     DeviceIntPtr dev;
-    xSetDeviceValuatorsReply	rep;
+    xSetDeviceValuatorsReply rep;
 
     REQUEST(xSetDeviceValuatorsReq);
     REQUEST_AT_LEAST_SIZE(xSetDeviceValuatorsReq);
@@ -104,48 +104,48 @@ ProcXSetDeviceValuators(client)
     rep.status = Success;
     rep.sequenceNumber = client->sequence;
 
-    if (stuff->length !=(sizeof(xSetDeviceValuatorsReq)>>2) + 
+    if (stuff->length != (sizeof(xSetDeviceValuatorsReq) >> 2) +
 	stuff->num_valuators)
 	{
 	SendErrorToClient (client, IReqCode, X_SetDeviceValuators, 0, 
 		BadLength);
 	return Success;
-	}
-    dev = LookupDeviceIntRec (stuff->deviceid);
+    }
+    dev = LookupDeviceIntRec(stuff->deviceid);
     if (dev == NULL)
 	{
 	SendErrorToClient (client, IReqCode, X_SetDeviceValuators, 0, 
 	    BadDevice);
 	return Success;
-	}
+    }
     if (dev->valuator == NULL)
 	{
 	SendErrorToClient(client, IReqCode, X_SetDeviceValuators, 0, 
 		BadMatch);
 	return Success;
-	}
+    }
 
     if (stuff->first_valuator + stuff->num_valuators > dev->valuator->numAxes)
 	{
 	SendErrorToClient(client, IReqCode, X_SetDeviceValuators, 0, 
 		BadValue);
 	return Success;
-	}
+    }
 
     if ((dev->grab) && !SameClient(dev->grab, client))
 	rep.status = AlreadyGrabbed;
     else
-	rep.status = SetDeviceValuators (client, dev, (int *) &stuff[1],
+	rep.status = SetDeviceValuators(client, dev, (int *)&stuff[1],
 	    stuff->first_valuator, stuff->num_valuators);
 
     if (rep.status != Success && rep.status != AlreadyGrabbed)
-	SendErrorToClient(client, IReqCode, X_SetDeviceValuators, 0, 
-	    rep.status);
+	SendErrorToClient(client, IReqCode, X_SetDeviceValuators, 0,
+			  rep.status);
     else
-	WriteReplyToClient (client, sizeof (xSetDeviceValuatorsReply), &rep);
+	WriteReplyToClient(client, sizeof(xSetDeviceValuatorsReply), &rep);
 
     return Success;
-    }
+}
 
 /***********************************************************************
  *
@@ -159,8 +159,8 @@ SRepXSetDeviceValuators (client, size, rep)
     ClientPtr	client;
     int		size;
     xSetDeviceValuatorsReply	*rep;
-    {
+{
     swaps(&rep->sequenceNumber);
     swapl(&rep->length);
     WriteToClient(client, size, rep);
-    }
+}

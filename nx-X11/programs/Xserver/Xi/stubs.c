@@ -94,12 +94,12 @@ int
 ChangeKeyboardDevice (old_dev, new_dev)
     DeviceIntPtr	old_dev;
     DeviceIntPtr	new_dev;
-    {
+{
     /***********************************************************************
      DeleteFocusClassDeviceStruct(old_dev);	 * defined in xchgptr.c *
     **********************************************************************/
     return BadMatch;
-    }
+}
 
 
 /***********************************************************************
@@ -138,7 +138,7 @@ ChangePointerDevice (
     DeviceIntPtr	new_dev,
     unsigned char	x,
     unsigned char	y)
-    {
+{
     /***********************************************************************
     InitFocusClassDeviceStruct(old_dev);	* allow focusing old ptr*
 
@@ -150,7 +150,7 @@ ChangePointerDevice (
 	axes_changed = FALSE;
     *************************************************************************/
     return BadMatch;
-    }
+}
 
 /***********************************************************************
  *
@@ -169,8 +169,8 @@ void
 CloseInputDevice (d, client)
     DeviceIntPtr d;
     ClientPtr client;
-    {
-    }
+{
+}
 
 /***********************************************************************
  *
@@ -200,7 +200,7 @@ CloseInputDevice (d, client)
 
 void
 AddOtherInputDevices ()
-    {
+{
     /**********************************************************************
      for each uninitialized device, do something like: 
 
@@ -214,7 +214,7 @@ AddOtherInputDevices ()
     dev->inited = ((*dev->deviceProc)(dev, DEVICE_INIT) == Success);
     ************************************************************************/
 
-    }
+}
 
 /***********************************************************************
  *
@@ -243,8 +243,8 @@ OpenInputDevice (dev, client, status)
     DeviceIntPtr dev;
     ClientPtr client;
     int *status;
-    {
-    }
+{
+}
 
 /****************************************************************************
  *
@@ -263,9 +263,9 @@ SetDeviceMode (client, dev, mode)
     register	ClientPtr	client;
     DeviceIntPtr dev;
     int		mode;
-    {
+{
     return BadMatch;
-    }
+}
 
 /****************************************************************************
  *
@@ -286,9 +286,9 @@ SetDeviceValuators (client, dev, valuators, first_valuator, num_valuators)
     int		*valuators;
     int		first_valuator;
     int		num_valuators;
-    {
+{
     return BadMatch;
-    }
+}
 
 /****************************************************************************
  *
@@ -305,10 +305,10 @@ ChangeDeviceControl (client, dev, control)
     xDeviceCtl	*control;
     {
     switch (control->control)
-	{
-	case DEVICE_RESOLUTION:
-	    return (BadMatch);
-	default:
-	    return (BadMatch);
-	}
+{
+    case DEVICE_RESOLUTION:
+	return (BadMatch);
+    default:
+	return (BadMatch);
     }
+}

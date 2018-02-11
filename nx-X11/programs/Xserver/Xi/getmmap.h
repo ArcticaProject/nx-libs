@@ -33,18 +33,18 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 int
 SProcXGetDeviceModifierMapping(
 	ClientPtr              /* client */
-	);
+    );
 
 int
 ProcXGetDeviceModifierMapping(
 	ClientPtr              /* client */
-	);
+    );
 
 void
 SRepXGetDeviceModifierMapping (
 	ClientPtr              /* client */,
-	int                    /* size */,
-	xGetDeviceModifierMappingReply * /* rep */
-	);
+				   int /* size */ ,
+				   xGetDeviceModifierMappingReply *	/* rep */
+    );
 
 #endif /* GETMMAP_H */

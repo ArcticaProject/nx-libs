@@ -66,7 +66,7 @@ SOFTWARE.
 
 #include "getvers.h"
 
-XExtensionVersion	AllExtensionVersions[128];
+XExtensionVersion AllExtensionVersions[128];
 
 /***********************************************************************
  *
@@ -77,13 +77,13 @@ XExtensionVersion	AllExtensionVersions[128];
 int
 SProcXGetExtensionVersion(client)
     register ClientPtr client;
-    {
+{
     REQUEST(xGetExtensionVersionReq);
     swaps(&stuff->length);
     REQUEST_AT_LEAST_SIZE(xGetExtensionVersionReq);
     swaps(&stuff->nbytes);
-    return(ProcXGetExtensionVersion(client));
-    }
+    return (ProcXGetExtensionVersion(client));
+}
 
 /***********************************************************************
  *
@@ -94,19 +94,19 @@ SProcXGetExtensionVersion(client)
 int
 ProcXGetExtensionVersion (client)
     register ClientPtr client;
-    {
-    xGetExtensionVersionReply	rep;
+{
+    xGetExtensionVersionReply rep;
 
     REQUEST(xGetExtensionVersionReq);
     REQUEST_AT_LEAST_SIZE(xGetExtensionVersionReq);
 
-    if (stuff->length != (sizeof(xGetExtensionVersionReq) + 
+    if (stuff->length != (sizeof(xGetExtensionVersionReq) +
 	stuff->nbytes + 3)>>2)
 	{
-	SendErrorToClient(client, IReqCode, X_GetExtensionVersion, 0, 
-		BadLength);
+	SendErrorToClient(client, IReqCode, X_GetExtensionVersion, 0,
+			  BadLength);
 	return Success;
-	}
+    }
 
     memset(&rep, 0, sizeof(xGetExtensionVersionReply));
     rep.repType = X_Reply;
@@ -123,11 +123,11 @@ ProcXGetExtensionVersion (client)
 	    AllExtensionVersions[IReqCode-128].major_version;
 	rep.minor_version = 
 	    AllExtensionVersions[IReqCode-128].minor_version;
-	}
-    WriteReplyToClient (client, sizeof (xGetExtensionVersionReply), &rep);
+    }
+    WriteReplyToClient(client, sizeof(xGetExtensionVersionReply), &rep);
 
     return Success;
-    }
+}
 
 /***********************************************************************
  *
@@ -141,10 +141,10 @@ SRepXGetExtensionVersion (client, size, rep)
     ClientPtr	client;
     int		size;
     xGetExtensionVersionReply	*rep;
-    {
+{
     swaps(&rep->sequenceNumber);
     swapl(&rep->length);
     swaps(&rep->major_version);
     swaps(&rep->minor_version);
     WriteToClient(client, size, rep);
-    }
+}

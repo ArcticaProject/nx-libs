@@ -33,40 +33,40 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 int
 SProcXChangePointerDevice(
 	ClientPtr              /* client */
-	);
+    );
 
 int
 ProcXChangePointerDevice (
 	ClientPtr              /* client */
-	);
+    );
 
 void
 DeleteFocusClassDeviceStruct(
 	DeviceIntPtr           /* dev */
-	);
+    );
 
 void
 SendEventToAllWindows (
 	DeviceIntPtr           /* dev */,
-	Mask                   /* mask */,
-	xEvent *               /* ev */,
-	int                    /* count */
-	);
+			   Mask /* mask */ ,
+			   xEvent * /* ev */ ,
+			   int	/* count */
+    );
 
 void
 FindInterestedChildren ( /* FIXME: could be static? */
-	DeviceIntPtr           /* dev */,
-	WindowPtr              /* p1 */,
-	Mask                   /* mask */,
-	xEvent *               /* ev */,
-	int                    /* count */
-	);
+			       DeviceIntPtr /* dev */ ,
+			       WindowPtr /* p1 */ ,
+			       Mask /* mask */ ,
+			       xEvent * /* ev */ ,
+			       int	/* count */
+    );
 
 void
 SRepXChangePointerDevice (
 	ClientPtr              /* client */,
-	int                    /* size */,
-	xChangePointerDeviceReply * /* rep */
-	);
+			      int /* size */ ,
+			      xChangePointerDeviceReply *	/* rep */
+    );
 
 #endif /* CHGPTR_H */

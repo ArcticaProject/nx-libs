@@ -33,70 +33,70 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 int
 SProcXListInputDevices(
 	ClientPtr              /* client */
-	);
+    );
 
 int
 ProcXListInputDevices (
 	ClientPtr              /* client */
-	);
+    );
 
 void
 SizeDeviceInfo (
 	DeviceIntPtr           /* d */,
-	int *                  /* namesize */,
-	int *                  /* size */
-	);
+		    int * /* namesize */ ,
+		    int *	/* size */
+    );
 
 void
 ListDeviceInfo (
 	ClientPtr              /* client */,
-	DeviceIntPtr           /* d */,
-	xDeviceInfoPtr         /* dev */,
-	char **                /* devbuf */,
-	char **                /* classbuf */,
-	char **                /* namebuf */
-	);
+		    DeviceIntPtr /* d */ ,
+		    xDeviceInfoPtr /* dev */ ,
+		    char ** /* devbuf */ ,
+		    char ** /* classbuf */ ,
+		    char **	/* namebuf */
+    );
 
 void
 CopyDeviceName (
 	char **                /* namebuf */,
-	char *                 /* name */
-	);
+		    char *	/* name */
+    );
 
 void
 CopySwapDevice (
 	ClientPtr              /* client */,
-	DeviceIntPtr           /* d */,
-	int                    /* num_classes */,
-	char **                /* buf */
-	);
+		    DeviceIntPtr /* d */ ,
+		    int /* num_classes */ ,
+		    char **	/* buf */
+    );
 
 void
 CopySwapKeyClass (
 	ClientPtr              /* client */,
-	KeyClassPtr            /* k */,
-	char **                /* buf */
-	);
+		      KeyClassPtr /* k */ ,
+		      char **	/* buf */
+    );
 
 void
 CopySwapButtonClass (
 	ClientPtr              /* client */,
-	ButtonClassPtr         /* b */,
-	char **                /* buf */
-	);
+			 ButtonClassPtr /* b */ ,
+			 char **	/* buf */
+    );
 
 int
 CopySwapValuatorClass (
 	ClientPtr              /* client */,
-	ValuatorClassPtr       /* v */,
-	char **                /* buf */
-	);
+			  ValuatorClassPtr /* v */ ,
+			  char **	/* buf */
+    );
 
 void
 SRepXListInputDevices (
 	ClientPtr              /* client */,
-	int                    /* size */,
-	xListInputDevicesReply * /* rep */
-	);
+			   int /* size */ ,
+			   xListInputDevicesReply *	/* rep */
+    );
 
 #endif /* LISTDEV_H */

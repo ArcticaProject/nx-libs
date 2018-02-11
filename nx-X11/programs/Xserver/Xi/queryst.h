@@ -33,18 +33,18 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 int
 SProcXQueryDeviceState(
 	ClientPtr              /* client */
-	);
+    );
 
 int
 ProcXQueryDeviceState(
 	ClientPtr              /* client */
-	);
+    );
 
 void
 SRepXQueryDeviceState (
 	ClientPtr              /* client */,
-	int                    /* size */,
-	xQueryDeviceStateReply * /* rep */
-	);
+			   int /* size */ ,
+			   xQueryDeviceStateReply *	/* rep */
+    );
 
 #endif /* QUERYST_H */

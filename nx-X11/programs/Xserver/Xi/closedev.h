@@ -33,25 +33,25 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 int
 SProcXCloseDevice(
 	ClientPtr              /* client */
-	);
+    );
 
 int
 ProcXCloseDevice(
 	ClientPtr              /* client */
-	);
+    );
 
 void
 DeleteEventsFromChildren(
 	DeviceIntPtr           /* dev */,
-	WindowPtr              /* p1 */,
-	ClientPtr              /* client */
-	);
+			      WindowPtr /* p1 */ ,
+			      ClientPtr	/* client */
+    );
 
 void
 DeleteDeviceEvents (
 	DeviceIntPtr           /* dev */,
-	WindowPtr              /* pWin */,
-	ClientPtr              /* client */
-	);
+			WindowPtr /* pWin */ ,
+			ClientPtr	/* client */
+    );
 
 #endif /* CLOSEDEV_H */

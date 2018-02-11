@@ -33,60 +33,60 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 int
 SProcXGetFeedbackControl(
 	ClientPtr              /* client */
-	);
+    );
 
 int
 ProcXGetFeedbackControl(
 	ClientPtr              /* client */
-	);
+    );
 
 void
 CopySwapKbdFeedback (
 	ClientPtr              /* client */,
-	KbdFeedbackPtr         /* k */,
-	char **                /* buf */
-	);
+			 KbdFeedbackPtr /* k */ ,
+			 char **	/* buf */
+    );
 
 void
 CopySwapPtrFeedback (
 	ClientPtr              /* client */,
-	PtrFeedbackPtr         /* p */,
-	char **                /* buf */
-	);
+			 PtrFeedbackPtr /* p */ ,
+			 char **	/* buf */
+    );
 
 void
 CopySwapIntegerFeedback (
 	ClientPtr              /* client */,
-	IntegerFeedbackPtr     /* i */,
-	char **                /* buf */
-	);
+			     IntegerFeedbackPtr /* i */ ,
+			     char **	/* buf */
+    );
 
 void
 CopySwapStringFeedback (
 	ClientPtr              /* client */,
-	StringFeedbackPtr      /* s */,
-	char **                /* buf */
-	);
+			    StringFeedbackPtr /* s */ ,
+			    char **	/* buf */
+    );
 
 void
 CopySwapLedFeedback (
 	ClientPtr              /* client */,
-	LedFeedbackPtr         /* l */,
-	char **                /* buf */
-	);
+			 LedFeedbackPtr /* l */ ,
+			 char **	/* buf */
+    );
 
 void
 CopySwapBellFeedback (
 	ClientPtr              /* client */,
-	BellFeedbackPtr        /* b */,
-	char **                /* buf */
-	);
+			  BellFeedbackPtr /* b */ ,
+			  char **	/* buf */
+    );
 
 void
 SRepXGetFeedbackControl (
 	ClientPtr              /* client */,
-	int                    /* size */,
-	xGetFeedbackControlReply * /* rep */
-	);
+			     int /* size */ ,
+			     xGetFeedbackControlReply *	/* rep */
+    );
 
 #endif /* GETFCTL_H */

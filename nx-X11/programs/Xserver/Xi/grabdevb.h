@@ -33,11 +33,11 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 int
 SProcXGrabDeviceButton(
 	ClientPtr              /* client */
-	);
+    );
 
 int
 ProcXGrabDeviceButton(
 	ClientPtr              /* client */
-	);
+    );
 
 #endif /* GRABDEVB_H */

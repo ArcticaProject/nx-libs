@@ -78,13 +78,13 @@ SOFTWARE.
 int
 SProcXChangeDeviceControl(client)
     register ClientPtr client;
-    {
+{
     REQUEST(xChangeDeviceControlReq);
     swaps(&stuff->length);
     REQUEST_AT_LEAST_EXTRA_SIZE(xChangeDeviceControlReq, sizeof(xDeviceCtl));
     swaps(&stuff->control);
-    return(ProcXChangeDeviceControl(client));
-    }
+    return (ProcXChangeDeviceControl(client));
+}
 
 /***********************************************************************
  *
@@ -95,7 +95,7 @@ SProcXChangeDeviceControl(client)
 int
 ProcXChangeDeviceControl(client)
     ClientPtr client;
-    {
+{
     unsigned len;
     int i, status;
     DeviceIntPtr dev;
@@ -107,14 +107,14 @@ ProcXChangeDeviceControl(client)
     REQUEST(xChangeDeviceControlReq);
     REQUEST_AT_LEAST_EXTRA_SIZE(xChangeDeviceControlReq, sizeof(xDeviceCtl));
 
-    len = stuff->length - (sizeof(xChangeDeviceControlReq) >>2);
-    dev = LookupDeviceIntRec (stuff->deviceid);
+    len = stuff->length - (sizeof(xChangeDeviceControlReq) >> 2);
+    dev = LookupDeviceIntRec(stuff->deviceid);
     if (dev == NULL)
 	{
-	SendErrorToClient (client, IReqCode, X_ChangeDeviceControl, 0, 
-		BadDevice);
+	SendErrorToClient(client, IReqCode, X_ChangeDeviceControl, 0,
+			  BadDevice);
 	return Success;
-	}
+    }
 
     rep.repType = X_Reply;
     rep.RepType = X_ChangeDeviceControl;
@@ -123,73 +123,73 @@ ProcXChangeDeviceControl(client)
 
     switch (stuff->control) 
 	{
-	case DEVICE_RESOLUTION:
-    	    r = (xDeviceResolutionCtl *) &stuff[1];
-	    if ((len < (sizeof(xDeviceResolutionCtl)>>2)) ||
+    case DEVICE_RESOLUTION:
+	r = (xDeviceResolutionCtl *) & stuff[1];
+	if ((len < (sizeof(xDeviceResolutionCtl) >> 2)) ||
 	        (len != (sizeof(xDeviceResolutionCtl)>>2) +
 		 r->num_valuators))
 		{
-		SendErrorToClient (client, IReqCode, X_ChangeDeviceControl, 
-			0, BadLength);
-		return Success;
-		}
+	    SendErrorToClient(client, IReqCode, X_ChangeDeviceControl,
+			      0, BadLength);
+	    return Success;
+	}
 	    if (!dev->valuator)
 		{
-		SendErrorToClient (client, IReqCode, X_ChangeDeviceControl, 0, 
-		    BadMatch);
-		return Success;
-		}
+	    SendErrorToClient(client, IReqCode, X_ChangeDeviceControl, 0,
+			      BadMatch);
+	    return Success;
+	}
 	    if ((dev->grab) && !SameClient(dev->grab, client))
 		{
-		rep.status = AlreadyGrabbed;
+	    rep.status = AlreadyGrabbed;
 		WriteReplyToClient(client, sizeof(xChangeDeviceControlReply), 
 		    &rep);
-		return Success;
-		}
-	    resolution = (CARD32 *) (r + 1);
+	    return Success;
+	}
+	resolution = (CARD32 *) (r + 1);
 	    if (r->first_valuator + r->num_valuators > dev->valuator->numAxes)
 		{
-		SendErrorToClient (client, IReqCode, X_ChangeDeviceControl, 0, 
-		    BadValue);
-		return Success;
-		}
-	    status = ChangeDeviceControl(client, dev, (xDeviceCtl*) r);
+	    SendErrorToClient(client, IReqCode, X_ChangeDeviceControl, 0,
+			      BadValue);
+	    return Success;
+	}
+	status = ChangeDeviceControl(client, dev, (xDeviceCtl *) r);
 	    if (status == Success)
 		{
-	        a = &dev->valuator->axes[r->first_valuator];
-		for (i=0; i<r->num_valuators; i++)
-		    if (*(resolution+i) < (a+i)->min_resolution ||
+	    a = &dev->valuator->axes[r->first_valuator];
+	    for (i = 0; i < r->num_valuators; i++)
+		if (*(resolution + i) < (a + i)->min_resolution ||
 		        *(resolution+i) > (a+i)->max_resolution)
 			{
-			SendErrorToClient (client, IReqCode, 
-			    X_ChangeDeviceControl, 0, BadValue);
-			return Success;
-			}
-		for (i=0; i<r->num_valuators; i++)
-		    (a++)->resolution = *resolution++; 
+		    SendErrorToClient(client, IReqCode,
+				      X_ChangeDeviceControl, 0, BadValue);
+		    return Success;
+		}
+	    for (i = 0; i < r->num_valuators; i++)
+		(a++)->resolution = *resolution++;
 		}
 	    else if (status == DeviceBusy)
 		{
-		rep.status = DeviceBusy;
+	    rep.status = DeviceBusy;
 		WriteReplyToClient(client, sizeof(xChangeDeviceControlReply), 
 		    &rep);
-		return Success;
+	    return Success;
 		}
 	    else 
 		{
-		SendErrorToClient (client, IReqCode, X_ChangeDeviceControl, 0, 
-		    BadMatch);
-		return Success;
-		}
-	    break;
-	default:
-	    SendErrorToClient (client, IReqCode, X_ChangeDeviceControl, 0, 
-		BadValue);
+	    SendErrorToClient(client, IReqCode, X_ChangeDeviceControl, 0,
+			      BadMatch);
 	    return Success;
 	}
+	break;
+    default:
+	    SendErrorToClient (client, IReqCode, X_ChangeDeviceControl, 0, 
+		BadValue);
+	return Success;
+    }
     WriteReplyToClient(client, sizeof(xChangeDeviceControlReply), &rep);
     return Success;
-    }
+}
 
 /***********************************************************************
  *
@@ -203,9 +203,9 @@ SRepXChangeDeviceControl (client, size, rep)
     ClientPtr	client;
     int		size;
     xChangeDeviceControlReply	*rep;
-    {
+{
     swaps(&rep->sequenceNumber);
     swapl(&rep->length);
     WriteToClient(client, size, rep);
-    }
+}
 

@@ -33,26 +33,26 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 int
 SProcXGetDeviceControl (
 	ClientPtr              /* client */
-	);
+    );
 
 int
 ProcXGetDeviceControl (
 	ClientPtr              /* client */
-	);
+    );
 
 void
 CopySwapDeviceResolution (
 	ClientPtr              /* client */,
-	ValuatorClassPtr       /* v */,
-	char *                 /* buf */,
-	int                    /* length */
-	);
+			      ValuatorClassPtr /* v */ ,
+			      char * /* buf */ ,
+			      int	/* length */
+    );
 
 void
 SRepXGetDeviceControl (
 	ClientPtr              /* client */,
-	int                    /* size */,
-	xGetDeviceControlReply * /* rep */
-	);
+			   int /* size */ ,
+			   xGetDeviceControlReply *	/* rep */
+    );
 
 #endif /* GETDCTL_H */

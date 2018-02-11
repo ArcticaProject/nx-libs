@@ -33,18 +33,18 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 int
 SProcXGetDeviceKeyMapping(
 	ClientPtr              /* client */
-	);
+    );
 
 int
 ProcXGetDeviceKeyMapping(
 	ClientPtr              /* client */
-	);
+    );
 
 void
 SRepXGetDeviceKeyMapping (
 	ClientPtr              /* client */,
-	int                    /* size */,
-	xGetDeviceKeyMappingReply * /* rep */
-	);
+			      int /* size */ ,
+			      xGetDeviceKeyMappingReply *	/* rep */
+    );
 
 #endif /* GETKMAP_H */

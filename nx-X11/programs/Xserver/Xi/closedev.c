@@ -78,12 +78,12 @@ SOFTWARE.
 int
 SProcXCloseDevice(client)
     register ClientPtr client;
-    {
+{
     REQUEST(xCloseDeviceReq);
     swaps(&stuff->length);
     REQUEST_SIZE_MATCH(xCloseDeviceReq);
-    return(ProcXCloseDevice(client));
-    }
+    return (ProcXCloseDevice(client));
+}
 
 /***********************************************************************
  *
@@ -94,23 +94,23 @@ SProcXCloseDevice(client)
 int
 ProcXCloseDevice(client)
     register ClientPtr client;
-    {
-    int			i;
-    WindowPtr 		pWin, p1;
-    DeviceIntPtr 	d;
+{
+    int i;
+    WindowPtr pWin, p1;
+    DeviceIntPtr d;
 
     REQUEST(xCloseDeviceReq);
     REQUEST_SIZE_MATCH(xCloseDeviceReq);
 
-    d = LookupDeviceIntRec (stuff->deviceid);
+    d = LookupDeviceIntRec(stuff->deviceid);
     if (d == NULL)
 	{
 	SendErrorToClient(client, IReqCode, X_CloseDevice, 0, BadDevice);
-        return Success;
-	}
+	return Success;
+    }
 
     if (d->grab && SameClient(d->grab, client))
-	(*d->DeactivateGrab)(d);		       /* release active grab */
+	(*d->DeactivateGrab) (d);	/* release active grab */
 
     /* Remove event selections from all windows for events from this device 
        and selected by this client.
@@ -119,14 +119,14 @@ ProcXCloseDevice(client)
     for (i=0; i<screenInfo.numScreens; i++)
 	{
 	pWin = screenInfo.screens[i]->root;
-        DeleteDeviceEvents (d, pWin, client);
+	DeleteDeviceEvents(d, pWin, client);
 	p1 = pWin->firstChild;
-	DeleteEventsFromChildren (d, p1, client);
-	}
-
-    CloseInputDevice (d, client);
-    return Success;
+	DeleteEventsFromChildren(d, p1, client);
     }
+
+    CloseInputDevice(d, client);
+    return Success;
+}
 
 /***********************************************************************
  *
@@ -140,17 +140,17 @@ DeleteEventsFromChildren(dev, p1, client)
     DeviceIntPtr	dev;
     WindowPtr 		p1;
     ClientPtr		client;
-    {
+{
     WindowPtr p2;
 
     while (p1)
         {
-        p2 = p1->firstChild;
-	DeleteDeviceEvents (dev, p1, client);
+	p2 = p1->firstChild;
+	DeleteDeviceEvents(dev, p1, client);
 	DeleteEventsFromChildren(dev, p2, client);
 	p1 = p1->nextSib;
-        }
     }
+}
 
 /***********************************************************************
  *
@@ -164,15 +164,15 @@ DeleteDeviceEvents (dev, pWin, client)
     DeviceIntPtr	dev;
     WindowPtr		pWin;
     ClientPtr		client;
-    {
-    InputClientsPtr	others;
-    OtherInputMasks	*pOthers;
-    GrabPtr		grab, next;
+{
+    InputClientsPtr others;
+    OtherInputMasks *pOthers;
+    GrabPtr grab, next;
 
     if ((pOthers = wOtherInputMasks(pWin)) != 0)
 	for (others=pOthers->inputClients; others; 
 	    others = others->next)
-	    if (SameClient(others,client))
+	    if (SameClient(others, client))
 		others->mask[dev->id] = NoEventMask;
 
     for (grab = wPassiveGrabs(pWin); grab; grab=next)
@@ -180,6 +180,6 @@ DeleteDeviceEvents (dev, pWin, client)
 	next = grab->next;
 	if ((grab->device == dev) &&
 	    (client->clientAsMask == CLIENT_BITS(grab->resource)))
-		FreeResource (grab->resource, RT_NONE);
-	}
+	    FreeResource(grab->resource, RT_NONE);
     }
+}

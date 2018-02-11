@@ -33,18 +33,18 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 int
 SProcXGetExtensionVersion(
 	ClientPtr              /* client */
-	);
+    );
 
 int
 ProcXGetExtensionVersion (
 	ClientPtr              /* client */
-	);
+    );
 
 void
 SRepXGetExtensionVersion (
 	ClientPtr              /* client */,
-	int                    /* size */,
-	xGetExtensionVersionReply * /* rep */
-	);
+			      int /* size */ ,
+			      xGetExtensionVersionReply *	/* rep */
+    );
 
 #endif /* GETVERS_H */

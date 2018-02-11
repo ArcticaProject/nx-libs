@@ -33,18 +33,18 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 int
 SProcXOpenDevice(
 	ClientPtr              /* client */
-	);
+    );
 
 int
 ProcXOpenDevice(
 	ClientPtr              /* client */
-	);
+    );
 
 void
 SRepXOpenDevice (
 	ClientPtr              /* client */,
-	int                    /* size */,
-	xOpenDeviceReply *     /* rep */
-	);
+		     int /* size */ ,
+		     xOpenDeviceReply *	/* rep */
+    );
 
 #endif /* OPENDEV_H */

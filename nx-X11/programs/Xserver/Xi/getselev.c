@@ -78,13 +78,13 @@ SOFTWARE.
 int
 SProcXGetSelectedExtensionEvents(client)
     register ClientPtr client;
-    {
+{
     REQUEST(xGetSelectedExtensionEventsReq);
     swaps(&stuff->length);
     REQUEST_SIZE_MATCH(xGetSelectedExtensionEventsReq);
     swapl(&stuff->window);
-    return(ProcXGetSelectedExtensionEvents(client));
-    }
+    return (ProcXGetSelectedExtensionEvents(client));
+}
 
 /***********************************************************************
  *
@@ -96,16 +96,16 @@ SProcXGetSelectedExtensionEvents(client)
 int
 ProcXGetSelectedExtensionEvents(client)
     register ClientPtr client;
-    {
-    int					i;
-    int					total_length = 0;
-    xGetSelectedExtensionEventsReply	rep;
-    WindowPtr				pWin;
-    XEventClass				*buf = NULL;
-    XEventClass				*tclient;
-    XEventClass				*aclient;
-    OtherInputMasks			*pOthers;
-    InputClientsPtr			others;
+{
+    int i;
+    int total_length = 0;
+    xGetSelectedExtensionEventsReply rep;
+    WindowPtr pWin;
+    XEventClass *buf = NULL;
+    XEventClass *tclient;
+    XEventClass *aclient;
+    OtherInputMasks *pOthers;
+    InputClientsPtr others;
 
     REQUEST(xGetSelectedExtensionEventsReq);
     REQUEST_SIZE_MATCH(xGetSelectedExtensionEventsReq);
@@ -119,53 +119,53 @@ ProcXGetSelectedExtensionEvents(client)
 
     if (!(pWin = LookupWindow(stuff->window, client)))
         {
-	SendErrorToClient(client, IReqCode, X_GetSelectedExtensionEvents, 0, 
-		BadWindow);
+	SendErrorToClient(client, IReqCode, X_GetSelectedExtensionEvents, 0,
+			  BadWindow);
 	return Success;
-        }
+    }
 
     if ((pOthers = wOtherInputMasks(pWin)) != 0)
 	{
-	for (others = pOthers->inputClients; others; others=others->next)
-	    for (i=0; i<EMASKSIZE; i++)
-		tclient = ClassFromMask (NULL, others->mask[i], i, 
-		    &rep.all_clients_count, COUNT);
+	for (others = pOthers->inputClients; others; others = others->next)
+	    for (i = 0; i < EMASKSIZE; i++)
+		tclient = ClassFromMask(NULL, others->mask[i], i,
+				  &rep.all_clients_count, COUNT);
 
-	for (others = pOthers->inputClients; others; others=others->next)
+	for (others = pOthers->inputClients; others; others = others->next)
 	    if (SameClient(others, client))
 		{
-		for (i=0; i<EMASKSIZE; i++)
-		    tclient = ClassFromMask (NULL, others->mask[i], i, 
-			&rep.this_client_count, COUNT);
+		for (i = 0; i < EMASKSIZE; i++)
+		    tclient = ClassFromMask(NULL, others->mask[i], i,
+				      &rep.this_client_count, COUNT);
 		break;
-		}
+	    }
 
-	total_length = (rep.all_clients_count + rep.this_client_count) * 
-	    sizeof (XEventClass);
+	total_length = (rep.all_clients_count + rep.this_client_count) *
+	    sizeof(XEventClass);
 	rep.length = (total_length + 3) >> 2;
-	buf = (XEventClass *) malloc (total_length);
+	buf = (XEventClass *) malloc(total_length);
 
 	tclient = buf;
 	aclient = buf + rep.this_client_count;
 	if (others)
-	    for (i=0; i<EMASKSIZE; i++)
+	    for (i = 0; i < EMASKSIZE; i++)
 		tclient = ClassFromMask (tclient, others->mask[i], i, NULL, CREATE);
 
-	for (others = pOthers->inputClients; others; others=others->next)
-	    for (i=0; i<EMASKSIZE; i++)
+	for (others = pOthers->inputClients; others; others = others->next)
+	    for (i = 0; i < EMASKSIZE; i++)
 		aclient = ClassFromMask (aclient, others->mask[i], i, NULL, CREATE);
-	}
+    }
 
-    WriteReplyToClient (client, sizeof(xGetSelectedExtensionEventsReply), &rep);
+    WriteReplyToClient(client, sizeof(xGetSelectedExtensionEventsReply), &rep);
 
     if (total_length)
 	{
 	client->pSwapReplyFunc = (ReplySwapPtr) Swap32Write;
-	WriteSwappedDataToClient( client, total_length, buf);
-	free (buf);
-	}
-    return Success;
+	WriteSwappedDataToClient(client, total_length, buf);
+	free(buf);
     }
+    return Success;
+}
 
 /***********************************************************************
  *
@@ -179,10 +179,10 @@ SRepXGetSelectedExtensionEvents (client, size, rep)
     ClientPtr	client;
     int		size;
     xGetSelectedExtensionEventsReply	*rep;
-    {
+{
     swaps(&rep->sequenceNumber);
     swapl(&rep->length);
     swaps(&rep->this_client_count);
     swaps(&rep->all_clients_count);
     WriteToClient(client, size, rep);
-    }
+}

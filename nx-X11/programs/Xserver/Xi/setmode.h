@@ -33,18 +33,18 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 int
 SProcXSetDeviceMode(
 	ClientPtr              /* client */
-	);
+    );
 
 int
 ProcXSetDeviceMode(
 	ClientPtr              /* client */
-	);
+    );
 
 void
 SRepXSetDeviceMode(
 	ClientPtr              /* client */,
-	int                    /* size */,
-	xSetDeviceModeReply *  /* rep */
-	);
+			int /* size */ ,
+			xSetDeviceModeReply *	/* rep */
+    );
 
 #endif /* SETMODE_H */

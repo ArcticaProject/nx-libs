@@ -67,7 +67,7 @@ SOFTWARE.
 
 #include "listdev.h"
 
-#define VPC	20			/* Max # valuators per chunk */
+#define VPC	20	/* Max # valuators per chunk */
 
 /***********************************************************************
  *
@@ -78,11 +78,11 @@ SOFTWARE.
 int
 SProcXListInputDevices(client)
     register ClientPtr client;
-    {
+{
     REQUEST(xListInputDevicesReq);
     swaps(&stuff->length);
-    return(ProcXListInputDevices(client));
-    }
+    return (ProcXListInputDevices(client));
+}
 
 /***********************************************************************
  *
@@ -93,18 +93,18 @@ SProcXListInputDevices(client)
 int
 ProcXListInputDevices (client)
     register ClientPtr client;
-    {
-    xListInputDevicesReply	rep;
-    int			numdevs;
-    int 		namesize = 1;	/* need 1 extra byte for strcpy */
-    int 		size = 0;
-    int 		total_length;
-    char		*devbuf;
-    char		*classbuf;
-    char		*namebuf;
-    char		*savbuf;
-    xDeviceInfo 	*dev;
-    DeviceIntPtr 	d;
+{
+    xListInputDevicesReply rep;
+    int numdevs;
+    int namesize = 1;	/* need 1 extra byte for strcpy */
+    int size = 0;
+    int total_length;
+    char *devbuf;
+    char *classbuf;
+    char *namebuf;
+    char *savbuf;
+    xDeviceInfo *dev;
+    DeviceIntPtr d;
 
     REQUEST_SIZE_MATCH(xListInputDevicesReq);
 
@@ -114,33 +114,33 @@ ProcXListInputDevices (client)
     rep.length = 0;
     rep.sequenceNumber = client->sequence;
 
-    AddOtherInputDevices ();
+    AddOtherInputDevices();
     numdevs = inputInfo.numDevices;
 
-    for (d=inputInfo.devices; d; d=d->next)
-	SizeDeviceInfo (d, &namesize, &size);
-    for (d=inputInfo.off_devices; d; d=d->next)
-	SizeDeviceInfo (d, &namesize, &size);
+    for (d = inputInfo.devices; d; d = d->next)
+	SizeDeviceInfo(d, &namesize, &size);
+    for (d = inputInfo.off_devices; d; d = d->next)
+	SizeDeviceInfo(d, &namesize, &size);
 
-    total_length = numdevs * sizeof (xDeviceInfo) + size + namesize;
-    devbuf = (char *) calloc (1, total_length);
-    classbuf = devbuf + (numdevs * sizeof (xDeviceInfo));
+    total_length = numdevs * sizeof(xDeviceInfo) + size + namesize;
+    devbuf = (char *)calloc(1, total_length);
+    classbuf = devbuf + (numdevs * sizeof(xDeviceInfo));
     namebuf = classbuf + size;
     savbuf = devbuf;
 
     dev = (xDeviceInfoPtr) devbuf;
-    for (d=inputInfo.devices; d; d=d->next,dev++)
-        ListDeviceInfo (client, d, dev, &devbuf, &classbuf, &namebuf);
-    for (d=inputInfo.off_devices; d; d=d->next,dev++)
-        ListDeviceInfo (client, d, dev, &devbuf, &classbuf, &namebuf);
+    for (d = inputInfo.devices; d; d = d->next, dev++)
+	ListDeviceInfo(client, d, dev, &devbuf, &classbuf, &namebuf);
+    for (d = inputInfo.off_devices; d; d = d->next, dev++)
+	ListDeviceInfo(client, d, dev, &devbuf, &classbuf, &namebuf);
 
     rep.ndevices = numdevs;
     rep.length = (total_length + 3) >> 2;
-    WriteReplyToClient (client, sizeof (xListInputDevicesReply), &rep);
+    WriteReplyToClient(client, sizeof(xListInputDevicesReply), &rep);
     WriteToClient(client, total_length, savbuf);
-    free (savbuf);
+    free(savbuf);
     return Success;
-    }
+}
 
 /***********************************************************************
  *
@@ -154,23 +154,23 @@ SizeDeviceInfo (d, namesize, size)
     DeviceIntPtr d;
     int *namesize;
     int *size;
-    {
+{
     int chunks;
 
     *namesize += 1;
     if (d->name)
-	*namesize += strlen (d->name);
+	*namesize += strlen(d->name);
     if (d->key != NULL)
-	*size += sizeof (xKeyInfo);
+	*size += sizeof(xKeyInfo);
     if (d->button != NULL)
-	*size += sizeof (xButtonInfo);
+	*size += sizeof(xButtonInfo);
     if (d->valuator != NULL)
 	{
-	chunks = ((int) d->valuator->numAxes + 19) / VPC;
-	*size += (chunks * sizeof(xValuatorInfo) + 
-		d->valuator->numAxes * sizeof(xAxisInfo));
-	}
+	chunks = ((int)d->valuator->numAxes + 19) / VPC;
+	*size += (chunks * sizeof(xValuatorInfo) +
+	     d->valuator->numAxes * sizeof(xAxisInfo));
     }
+}
 
 /***********************************************************************
  *
@@ -186,24 +186,24 @@ ListDeviceInfo (client, d, dev, devbuf, classbuf, namebuf)
     char **devbuf;
     char **classbuf;
     char **namebuf;
-    {
-    CopyDeviceName (namebuf, d->name);
-    CopySwapDevice (client, d, 0, devbuf);
+{
+    CopyDeviceName(namebuf, d->name);
+    CopySwapDevice(client, d, 0, devbuf);
     if (d->key != NULL)
 	{
 	CopySwapKeyClass(client, d->key, classbuf);
 	dev->num_classes++;
-	}
+    }
     if (d->button != NULL)
 	{
 	CopySwapButtonClass(client, d->button, classbuf);
 	dev->num_classes++;
-	}
+    }
     if (d->valuator != NULL)
 	{
 	dev->num_classes += CopySwapValuatorClass(client, d->valuator, classbuf);
-	}
     }
+}
 
 /***********************************************************************
  *
@@ -219,21 +219,21 @@ void
 CopyDeviceName (namebuf, name)
     char **namebuf;
     char *name;
-    {
-    char *nameptr = (char *) *namebuf;
+{
+    char *nameptr = (char *)*namebuf;
 
     if (name)
 	{
-	*nameptr++ = strlen (name);
-	strcpy (nameptr, name);
-	*namebuf += (strlen (name)+1);
+	*nameptr++ = strlen(name);
+	strcpy(nameptr, name);
+	*namebuf += (strlen(name) + 1);
 	}
     else
 	{
 	*nameptr++ = 0;
 	*namebuf += 1;
-	}
     }
+}
 
 /***********************************************************************
  *
@@ -247,10 +247,10 @@ CopySwapDevice (client, d, num_classes, buf)
     DeviceIntPtr	d;
     int			num_classes;
     char 		**buf;
-    {
+{
     xDeviceInfoPtr dev;
 
-    dev = (xDeviceInfoPtr) *buf;
+    dev = (xDeviceInfoPtr) * buf;
 
     dev->id = d->id;
     dev->type = d->type;
@@ -264,9 +264,9 @@ CopySwapDevice (client, d, num_classes, buf)
     if (client->swapped)
 	{
 	swapl(&dev->type);	/* macro - braces are required */
-	}
-    *buf += sizeof (xDeviceInfo);
     }
+    *buf += sizeof(xDeviceInfo);
+}
 
 /***********************************************************************
  *
@@ -279,21 +279,21 @@ CopySwapKeyClass (client, k, buf)
     register ClientPtr 	client;
     KeyClassPtr 	k;
     char 		**buf;
-    {
-    xKeyInfoPtr 	k2;
+{
+    xKeyInfoPtr k2;
 
-    k2 = (xKeyInfoPtr) *buf;
+    k2 = (xKeyInfoPtr) * buf;
     k2->class = KeyClass;
-    k2->length = sizeof (xKeyInfo);
+    k2->length = sizeof(xKeyInfo);
     k2->min_keycode = k->curKeySyms.minKeyCode;
     k2->max_keycode = k->curKeySyms.maxKeyCode;
     k2->num_keys = k2->max_keycode - k2->min_keycode + 1;
     if (client->swapped)
 	{
 	swaps(&k2->num_keys);
-	}
-    *buf += sizeof (xKeyInfo);
     }
+    *buf += sizeof(xKeyInfo);
+}
 
 /***********************************************************************
  *
@@ -306,19 +306,19 @@ CopySwapButtonClass (client, b, buf)
     register ClientPtr 	client;
     ButtonClassPtr 	b;
     char 		**buf;
-    {
-    xButtonInfoPtr 	b2;
+{
+    xButtonInfoPtr b2;
 
-    b2 = (xButtonInfoPtr) *buf;
+    b2 = (xButtonInfoPtr) * buf;
     b2->class = ButtonClass;
-    b2->length = sizeof (xButtonInfo);
+    b2->length = sizeof(xButtonInfo);
     b2->num_buttons = b->numButtons;
     if (client->swapped)
 	{
 	swaps(&b2->num_buttons);	/* macro - braces are required */
-	}
-    *buf += sizeof (xButtonInfo);
     }
+    *buf += sizeof(xButtonInfo);
+}
 
 /***********************************************************************
  *
@@ -338,29 +338,29 @@ CopySwapValuatorClass (client, v, buf)
     ValuatorClassPtr 	v;
     char 		**buf;
 {
-    int			i, j, axes, t_axes;
-    xValuatorInfoPtr 	v2;
-    AxisInfo 		*a;
-    xAxisInfoPtr 	a2;
+    int i, j, axes, t_axes;
+    xValuatorInfoPtr v2;
+    AxisInfo *a;
+    xAxisInfoPtr a2;
 
     for (i=0,axes=v->numAxes; i < ((v->numAxes+19)/VPC);  i++, axes-=VPC) {
 	t_axes = axes < VPC ? axes : VPC;
 	if (t_axes < 0)
 	    t_axes = v->numAxes % VPC;
-	v2 = (xValuatorInfoPtr) *buf;
+	v2 = (xValuatorInfoPtr) * buf;
 	v2->class = ValuatorClass;
-	v2->length = sizeof (xValuatorInfo) + t_axes * sizeof (xAxisInfo);
-	v2->num_axes  = t_axes;
-	v2->mode  = v->mode & DeviceMode;
-	v2->motion_buffer_size  = v->numMotionEvents;
+	v2->length = sizeof(xValuatorInfo) + t_axes * sizeof(xAxisInfo);
+	v2->num_axes = t_axes;
+	v2->mode = v->mode & DeviceMode;
+	v2->motion_buffer_size = v->numMotionEvents;
 	if (client->swapped)
 	    {
 	    swapl(&v2->motion_buffer_size);
-	    }
-	*buf += sizeof (xValuatorInfo);
+	}
+	*buf += sizeof(xValuatorInfo);
 	a = v->axes + (VPC * i);
-	a2 = (xAxisInfoPtr) *buf;
-	for (j=0; j<t_axes; j++) {
+	a2 = (xAxisInfoPtr) * buf;
+	for (j = 0; j < t_axes; j++) {
 	    a2->min_value = a->min_value;
 	    a2->max_value = a->max_value;
 	    a2->resolution = a->resolution;
@@ -371,7 +371,7 @@ CopySwapValuatorClass (client, v, buf)
 	    }
 	    a2++;
 	    a++;
-	    *buf += sizeof (xAxisInfo);
+	    *buf += sizeof(xAxisInfo);
 	}
     }
     return (i);
@@ -389,8 +389,8 @@ SRepXListInputDevices (client, size, rep)
     ClientPtr	client;
     int		size;
     xListInputDevicesReply	*rep;
-    {
+{
     swaps(&rep->sequenceNumber);
     swapl(&rep->length);
     WriteToClient(client, size, rep);
-    }
+}

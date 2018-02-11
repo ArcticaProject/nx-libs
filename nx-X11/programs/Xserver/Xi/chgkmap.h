@@ -33,11 +33,11 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 int
 SProcXChangeDeviceKeyMapping(
 	ClientPtr              /* client */
-	);
+    );
 
 int
 ProcXChangeDeviceKeyMapping(
 	ClientPtr              /* client */
-	);
+    );
 
 #endif /* CHGKMAP_H */
