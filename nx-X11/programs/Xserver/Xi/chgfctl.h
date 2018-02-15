@@ -30,64 +30,48 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #ifndef CHGFCTL_H
 #define CHGFCTL_H 1
 
-int
-SProcXChangeFeedbackControl(
-	ClientPtr              /* client */
+int SProcXChangeFeedbackControl(ClientPtr	/* client */
     );
 
-int
-ProcXChangeFeedbackControl(
-	ClientPtr              /* client */
+int ProcXChangeFeedbackControl(ClientPtr	/* client */
     );
 
-int
-ChangeKbdFeedback (
-	ClientPtr              /* client */,
+int ChangeKbdFeedback(ClientPtr /* client */ ,
 		      DeviceIntPtr /* dev */ ,
 		      unsigned long /* mask */ ,
 		      KbdFeedbackPtr /* k */ ,
 		      xKbdFeedbackCtl *	/* f */
     );
 
-int
-ChangePtrFeedback (
-	ClientPtr              /* client */,
+int ChangePtrFeedback(ClientPtr /* client */ ,
 		      DeviceIntPtr /* dev */ ,
 		      unsigned long /* mask */ ,
 		      PtrFeedbackPtr /* p */ ,
 		      xPtrFeedbackCtl *	/* f */
     );
 
-int
-ChangeIntegerFeedback (
-	ClientPtr              /* client */,
+int ChangeIntegerFeedback(ClientPtr /* client */ ,
 			  DeviceIntPtr /* dev */ ,
 			  unsigned long /* mask */ ,
 			  IntegerFeedbackPtr /* i */ ,
 			  xIntegerFeedbackCtl *	/* f */
     );
 
-int
-ChangeStringFeedback (
-	ClientPtr              /* client */,
+int ChangeStringFeedback(ClientPtr /* client */ ,
 			 DeviceIntPtr /* dev */ ,
 			 unsigned long /* mask */ ,
 			 StringFeedbackPtr /* s */ ,
 			 xStringFeedbackCtl *	/* f */
     );
 
-int
-ChangeBellFeedback (
-	ClientPtr              /* client */,
+int ChangeBellFeedback(ClientPtr /* client */ ,
 		       DeviceIntPtr /* dev */ ,
 		       unsigned long /* mask */ ,
 		       BellFeedbackPtr /* b */ ,
 		       xBellFeedbackCtl *	/* f */
     );
 
-int
-ChangeLedFeedback (
-	ClientPtr              /* client */,
+int ChangeLedFeedback(ClientPtr /* client */ ,
 		      DeviceIntPtr /* dev */ ,
 		      unsigned long /* mask */ ,
 		      LedFeedbackPtr /* l */ ,

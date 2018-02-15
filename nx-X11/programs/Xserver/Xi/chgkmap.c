@@ -75,8 +75,7 @@ SOFTWARE.
  */
 
 int
-SProcXChangeDeviceKeyMapping(client)
-    register ClientPtr client;
+SProcXChangeDeviceKeyMapping(register ClientPtr client)
 {
     unsigned int count;
 
@@ -96,8 +95,7 @@ SProcXChangeDeviceKeyMapping(client)
  */
 
 int
-ProcXChangeDeviceKeyMapping(client)
-    register ClientPtr client;
+ProcXChangeDeviceKeyMapping(register ClientPtr client)
 {
     int ret;
     unsigned len;

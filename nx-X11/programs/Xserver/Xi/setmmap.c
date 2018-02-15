@@ -75,8 +75,7 @@ SOFTWARE.
  */
 
 int
-SProcXSetDeviceModifierMapping(client)
-    register ClientPtr client;
+SProcXSetDeviceModifierMapping(register ClientPtr client)
 {
     REQUEST(xSetDeviceModifierMappingReq);
     swaps(&stuff->length);
@@ -90,8 +89,7 @@ SProcXSetDeviceModifierMapping(client)
  */
 
 int
-ProcXSetDeviceModifierMapping(client)
-    ClientPtr client;
+ProcXSetDeviceModifierMapping(ClientPtr client)
 {
     int ret;
     xSetDeviceModifierMappingReply rep;
@@ -144,13 +142,10 @@ ProcXSetDeviceModifierMapping(client)
  */
 
 void
-SRepXSetDeviceModifierMapping (client, size, rep)
-    ClientPtr	client;
-    int		size;
-    xSetDeviceModifierMappingReply	*rep;
+SRepXSetDeviceModifierMapping(ClientPtr client, int size,
+			      xSetDeviceModifierMappingReply * rep)
 {
     swaps(&rep->sequenceNumber);
     swapl(&rep->length);
     WriteToClient(client, size, rep);
 }
-

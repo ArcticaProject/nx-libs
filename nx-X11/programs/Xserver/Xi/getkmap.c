@@ -75,8 +75,7 @@ SOFTWARE.
  */
 
 int
-SProcXGetDeviceKeyMapping(client)
-    register ClientPtr client;
+SProcXGetDeviceKeyMapping(register ClientPtr client)
 {
     REQUEST(xGetDeviceKeyMappingReq);
     swaps(&stuff->length);
@@ -90,8 +89,7 @@ SProcXGetDeviceKeyMapping(client)
  */
 
 int
-ProcXGetDeviceKeyMapping(client)
-    register ClientPtr client;
+ProcXGetDeviceKeyMapping(register ClientPtr client)
 {
     xGetDeviceKeyMappingReply rep;
     DeviceIntPtr dev;
@@ -158,13 +156,10 @@ ProcXGetDeviceKeyMapping(client)
  */
 
 void
-SRepXGetDeviceKeyMapping (client, size, rep)
-    ClientPtr	client;
-    int		size;
-    xGetDeviceKeyMappingReply	*rep;
+SRepXGetDeviceKeyMapping(ClientPtr client, int size,
+			 xGetDeviceKeyMappingReply * rep)
 {
     swaps(&rep->sequenceNumber);
     swapl(&rep->length);
     WriteToClient(client, size, rep);
 }
-

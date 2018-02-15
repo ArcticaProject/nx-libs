@@ -78,8 +78,7 @@ extern int ExtEventIndex;
  */
 
 int
-SProcXGetDeviceDontPropagateList(client)
-    register ClientPtr client;
+SProcXGetDeviceDontPropagateList(register ClientPtr client)
 {
     REQUEST(xGetDeviceDontPropagateListReq);
     swaps(&stuff->length);
@@ -95,8 +94,7 @@ SProcXGetDeviceDontPropagateList(client)
  */
 
 int
-ProcXGetDeviceDontPropagateList (client)
-    register ClientPtr client;
+ProcXGetDeviceDontPropagateList(register ClientPtr client)
 {
     CARD16 count = 0;
     int i;
@@ -161,12 +159,8 @@ ProcXGetDeviceDontPropagateList (client)
  */
 
 XEventClass
-*ClassFromMask (buf, mask, maskndx, count, mode)
-    XEventClass *buf;
-    Mask	mask;
-    int		maskndx;
-    CARD16	*count;
-    int		mode;
+    * ClassFromMask(XEventClass * buf, Mask mask, int maskndx, CARD16 * count,
+		    int mode)
 {
     int i, j;
     int id = maskndx;
@@ -195,10 +189,8 @@ XEventClass
  */
 
 void
-SRepXGetDeviceDontPropagateList (client, size, rep)
-    ClientPtr	client;
-    int		size;
-    xGetDeviceDontPropagateListReply	*rep;
+SRepXGetDeviceDontPropagateList(ClientPtr client, int size,
+				xGetDeviceDontPropagateListReply * rep)
 {
     swaps(&rep->sequenceNumber);
     swapl(&rep->length);

@@ -74,8 +74,7 @@ SOFTWARE.
  */
 
 int
-SProcXGetDeviceControl(client)
-    register ClientPtr client;
+SProcXGetDeviceControl(register ClientPtr client)
 {
     REQUEST(xGetDeviceControlReq);
     swaps(&stuff->length);
@@ -91,8 +90,7 @@ SProcXGetDeviceControl(client)
  */
 
 int
-ProcXGetDeviceControl(client)
-    ClientPtr client;
+ProcXGetDeviceControl(ClientPtr client)
 {
     int total_length = 0;
     char *buf, *savbuf;
@@ -166,11 +164,8 @@ ProcXGetDeviceControl(client)
  */
 
 void
-CopySwapDeviceResolution (client, v, buf, length)
-    ClientPtr 		client;
-    ValuatorClassPtr	v;
-    char 		*buf;
-    int			length;
+CopySwapDeviceResolution(ClientPtr client, ValuatorClassPtr v, char *buf,
+			 int length)
 {
     AxisInfoPtr a;
     xDeviceResolutionState *r;
@@ -209,13 +204,9 @@ CopySwapDeviceResolution (client, v, buf, length)
  */
 
 void
-SRepXGetDeviceControl (client, size, rep)
-    ClientPtr	client;
-    int		size;
-    xGetDeviceControlReply	*rep;
+SRepXGetDeviceControl(ClientPtr client, int size, xGetDeviceControlReply * rep)
 {
     swaps(&rep->sequenceNumber);
     swapl(&rep->length);
     WriteToClient(client, size, rep);
 }
-

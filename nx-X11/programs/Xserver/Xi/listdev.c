@@ -76,8 +76,7 @@ SOFTWARE.
  */
 
 int
-SProcXListInputDevices(client)
-    register ClientPtr client;
+SProcXListInputDevices(register ClientPtr client)
 {
     REQUEST(xListInputDevicesReq);
     swaps(&stuff->length);
@@ -91,8 +90,7 @@ SProcXListInputDevices(client)
  */
 
 int
-ProcXListInputDevices (client)
-    register ClientPtr client;
+ProcXListInputDevices(register ClientPtr client)
 {
     xListInputDevicesReply rep;
     int numdevs;
@@ -150,10 +148,7 @@ ProcXListInputDevices (client)
  */
 
 void
-SizeDeviceInfo (d, namesize, size)
-    DeviceIntPtr d;
-    int *namesize;
-    int *size;
+SizeDeviceInfo(DeviceIntPtr d, int *namesize, int *size)
 {
     int chunks;
 
@@ -179,13 +174,8 @@ SizeDeviceInfo (d, namesize, size)
  */
 
 void
-ListDeviceInfo (client, d, dev, devbuf, classbuf, namebuf)
-    ClientPtr client;
-    DeviceIntPtr d;
-    xDeviceInfoPtr dev;
-    char **devbuf;
-    char **classbuf;
-    char **namebuf;
+ListDeviceInfo(ClientPtr client, DeviceIntPtr d, xDeviceInfoPtr dev,
+	       char **devbuf, char **classbuf, char **namebuf)
 {
     CopyDeviceName(namebuf, d->name);
     CopySwapDevice(client, d, 0, devbuf);
@@ -216,9 +206,7 @@ ListDeviceInfo (client, d, dev, devbuf, classbuf, namebuf)
  */
 
 void
-CopyDeviceName (namebuf, name)
-    char **namebuf;
-    char *name;
+CopyDeviceName(char **namebuf, char *name)
 {
     char *nameptr = (char *)*namebuf;
 
@@ -242,11 +230,8 @@ CopyDeviceName (namebuf, name)
  */
 
 void
-CopySwapDevice (client, d, num_classes, buf)
-    register ClientPtr 	client;
-    DeviceIntPtr	d;
-    int			num_classes;
-    char 		**buf;
+CopySwapDevice(register ClientPtr client, DeviceIntPtr d, int num_classes,
+	       char **buf)
 {
     xDeviceInfoPtr dev;
 
@@ -275,10 +260,7 @@ CopySwapDevice (client, d, num_classes, buf)
  */
 
 void
-CopySwapKeyClass (client, k, buf)
-    register ClientPtr 	client;
-    KeyClassPtr 	k;
-    char 		**buf;
+CopySwapKeyClass(register ClientPtr client, KeyClassPtr k, char **buf)
 {
     xKeyInfoPtr k2;
 
@@ -302,10 +284,7 @@ CopySwapKeyClass (client, k, buf)
  */
 
 void
-CopySwapButtonClass (client, b, buf)
-    register ClientPtr 	client;
-    ButtonClassPtr 	b;
-    char 		**buf;
+CopySwapButtonClass(register ClientPtr client, ButtonClassPtr b, char **buf)
 {
     xButtonInfoPtr b2;
 
@@ -333,10 +312,7 @@ CopySwapButtonClass (client, b, buf)
  */
 
 int
-CopySwapValuatorClass (client, v, buf)
-    register ClientPtr 	client;
-    ValuatorClassPtr 	v;
-    char 		**buf;
+CopySwapValuatorClass(register ClientPtr client, ValuatorClassPtr v, char **buf)
 {
     int i, j, axes, t_axes;
     xValuatorInfoPtr v2;
@@ -385,10 +361,7 @@ CopySwapValuatorClass (client, v, buf)
  */
 
 void
-SRepXListInputDevices (client, size, rep)
-    ClientPtr	client;
-    int		size;
-    xListInputDevicesReply	*rep;
+SRepXListInputDevices(ClientPtr client, int size, xListInputDevicesReply * rep)
 {
     swaps(&rep->sequenceNumber);
     swapl(&rep->length);

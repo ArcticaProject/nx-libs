@@ -77,8 +77,7 @@ SOFTWARE.
  */
 
 int
-SProcXChangeFeedbackControl(client)
-    register ClientPtr client;
+SProcXChangeFeedbackControl(register ClientPtr client)
 {
     REQUEST(xChangeFeedbackControlReq);
     swaps(&stuff->length);
@@ -94,8 +93,7 @@ SProcXChangeFeedbackControl(client)
  */
 
 int
-ProcXChangeFeedbackControl(client)
-    ClientPtr client;
+ProcXChangeFeedbackControl(ClientPtr client)
 {
     unsigned len;
     DeviceIntPtr dev;
@@ -228,12 +226,8 @@ ProcXChangeFeedbackControl(client)
  */
 
 int
-ChangeKbdFeedback (client, dev, mask, k, f)
-    ClientPtr client;
-    DeviceIntPtr dev;
-    unsigned long 	mask;
-    KbdFeedbackPtr	k;
-    xKbdFeedbackCtl 	*f;
+ChangeKbdFeedback(ClientPtr client, DeviceIntPtr dev, long unsigned int mask,
+		  KbdFeedbackPtr k, xKbdFeedbackCtl * f)
 {
     KeybdCtrl kctrl;
     int t;
@@ -383,12 +377,8 @@ ChangeKbdFeedback (client, dev, mask, k, f)
  */
 
 int
-ChangePtrFeedback (client, dev, mask, p, f)
-    ClientPtr 		client;
-    DeviceIntPtr 	dev;
-    unsigned long 	mask;
-    PtrFeedbackPtr 	p;
-    xPtrFeedbackCtl 	*f;
+ChangePtrFeedback(ClientPtr client, DeviceIntPtr dev, long unsigned int mask,
+		  PtrFeedbackPtr p, xPtrFeedbackCtl * f)
 {
     PtrCtrl pctrl;	/* might get BadValue part way through */
 
@@ -464,15 +454,11 @@ ChangePtrFeedback (client, dev, mask, p, f)
  */
 
 int
-ChangeIntegerFeedback (client, dev, mask, i, f)
-    ClientPtr 			client;
-    DeviceIntPtr 		dev;
-    unsigned long 		mask;
-    IntegerFeedbackPtr 		i;
-    xIntegerFeedbackCtl 	*f;
-    {
-    if (client->swapped)
+ChangeIntegerFeedback(ClientPtr client, DeviceIntPtr dev,
+		      long unsigned int mask, IntegerFeedbackPtr i,
+		      xIntegerFeedbackCtl * f)
 {
+    if (client->swapped) {
 	swaps(&f->length);
 	swapl(&f->int_to_display);
     }
@@ -489,12 +475,9 @@ ChangeIntegerFeedback (client, dev, mask, i, f)
  */
 
 int
-ChangeStringFeedback (client, dev, mask, s, f)
-    ClientPtr 		client;
-    DeviceIntPtr 	dev;
-    unsigned long 	mask;
-    StringFeedbackPtr 	s;
-    xStringFeedbackCtl 	*f;
+ChangeStringFeedback(ClientPtr client, DeviceIntPtr dev,
+		     long unsigned int mask, StringFeedbackPtr s,
+		     xStringFeedbackCtl * f)
 {
     int i, j;
     KeySym *syms, *sup_syms;
@@ -540,12 +523,9 @@ ChangeStringFeedback (client, dev, mask, s, f)
  */
 
 int
-ChangeBellFeedback (client, dev, mask, b, f)
-    ClientPtr 		client;
-    DeviceIntPtr 	dev;
-    unsigned long 	mask;
-    BellFeedbackPtr 	b;
-    xBellFeedbackCtl 	*f;
+ChangeBellFeedback(ClientPtr client, DeviceIntPtr dev,
+		   long unsigned int mask, BellFeedbackPtr b,
+		   xBellFeedbackCtl * f)
 {
     int t;
     BellCtrl bctrl;	/* might get BadValue part way through */
@@ -614,12 +594,8 @@ ChangeBellFeedback (client, dev, mask, b, f)
  */
 
 int
-ChangeLedFeedback (client, dev, mask, l, f)
-    ClientPtr 		client;
-    DeviceIntPtr 	dev;
-    unsigned long 	mask;
-    LedFeedbackPtr 	l;
-    xLedFeedbackCtl 	*f;
+ChangeLedFeedback(ClientPtr client, DeviceIntPtr dev, long unsigned int mask,
+		  LedFeedbackPtr l, xLedFeedbackCtl * f)
 {
     LedCtrl lctrl;	/* might get BadValue part way through */
 

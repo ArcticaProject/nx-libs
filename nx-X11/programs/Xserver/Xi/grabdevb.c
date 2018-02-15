@@ -76,8 +76,7 @@ SOFTWARE.
  */
 
 int
-SProcXGrabDeviceButton(client)
-    register ClientPtr client;
+SProcXGrabDeviceButton(register ClientPtr client)
 {
     REQUEST(xGrabDeviceButtonReq);
     swaps(&stuff->length);
@@ -99,8 +98,7 @@ SProcXGrabDeviceButton(client)
  */
 
 int
-ProcXGrabDeviceButton(client)
-    ClientPtr client;
+ProcXGrabDeviceButton(ClientPtr client)
 {
     int ret;
     DeviceIntPtr dev;

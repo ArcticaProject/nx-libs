@@ -30,19 +30,13 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #ifndef GTMOTION_H
 #define GTMOTION_H 1
 
-int
-SProcXGetDeviceMotionEvents(
-	ClientPtr              /* client */
+int SProcXGetDeviceMotionEvents(ClientPtr	/* client */
     );
 
-int
-ProcXGetDeviceMotionEvents(
-	ClientPtr              /* client */
+int ProcXGetDeviceMotionEvents(ClientPtr	/* client */
     );
 
-void
-SRepXGetDeviceMotionEvents (
-	ClientPtr              /* client */,
+void SRepXGetDeviceMotionEvents(ClientPtr /* client */ ,
 				int /* size */ ,
 				xGetDeviceMotionEventsReply *	/* rep */
     );

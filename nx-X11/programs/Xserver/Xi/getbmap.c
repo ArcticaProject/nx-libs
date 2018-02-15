@@ -73,8 +73,7 @@ SOFTWARE.
  */
 
 int
-SProcXGetDeviceButtonMapping(client)
-    register ClientPtr client;
+SProcXGetDeviceButtonMapping(register ClientPtr client)
 {
     REQUEST(xGetDeviceButtonMappingReq);
     swaps(&stuff->length);
@@ -88,8 +87,7 @@ SProcXGetDeviceButtonMapping(client)
  */
 
 int
-ProcXGetDeviceButtonMapping (client)
-    register ClientPtr client;
+ProcXGetDeviceButtonMapping(register ClientPtr client)
 {
     DeviceIntPtr dev;
     xGetDeviceButtonMappingReply rep;
@@ -135,10 +133,8 @@ ProcXGetDeviceButtonMapping (client)
  */
 
 void
-SRepXGetDeviceButtonMapping (client, size, rep)
-    ClientPtr	client;
-    int		size;
-    xGetDeviceButtonMappingReply	*rep;
+SRepXGetDeviceButtonMapping(ClientPtr client, int size,
+			    xGetDeviceButtonMappingReply * rep)
 {
     swaps(&rep->sequenceNumber);
     swapl(&rep->length);

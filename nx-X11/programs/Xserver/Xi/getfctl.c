@@ -74,8 +74,7 @@ SOFTWARE.
  */
 
 int
-SProcXGetFeedbackControl(client)
-    register ClientPtr client;
+SProcXGetFeedbackControl(register ClientPtr client)
 {
     REQUEST(xGetFeedbackControlReq);
     swaps(&stuff->length);
@@ -89,8 +88,7 @@ SProcXGetFeedbackControl(client)
  */
 
 int
-ProcXGetFeedbackControl(client)
-    ClientPtr client;
+ProcXGetFeedbackControl(ClientPtr client)
 {
     int total_length = 0;
     char *buf, *savbuf;
@@ -195,10 +193,7 @@ ProcXGetFeedbackControl(client)
  */
 
 void
-CopySwapKbdFeedback (client, k, buf)
-    ClientPtr 		client;
-    KbdFeedbackPtr 	k;
-    char 		**buf;
+CopySwapKbdFeedback(ClientPtr client, KbdFeedbackPtr k, char **buf)
 {
     int i;
     xKbdFeedbackState *k2;
@@ -233,10 +228,7 @@ CopySwapKbdFeedback (client, k, buf)
  */
 
 void
-CopySwapPtrFeedback (client, p, buf)
-    ClientPtr 		client;
-    PtrFeedbackPtr 	p;
-    char 		**buf;
+CopySwapPtrFeedback(ClientPtr client, PtrFeedbackPtr p, char **buf)
 {
     xPtrFeedbackState *p2;
 
@@ -264,10 +256,7 @@ CopySwapPtrFeedback (client, p, buf)
  */
 
 void
-CopySwapIntegerFeedback (client, i, buf)
-    ClientPtr 		client;
-    IntegerFeedbackPtr 	i;
-    char 		**buf;
+CopySwapIntegerFeedback(ClientPtr client, IntegerFeedbackPtr i, char **buf)
 {
     xIntegerFeedbackState *i2;
 
@@ -295,10 +284,7 @@ CopySwapIntegerFeedback (client, i, buf)
  */
 
 void
-CopySwapStringFeedback (client, s, buf)
-    ClientPtr 		client;
-    StringFeedbackPtr 	s;
-    char 		**buf;
+CopySwapStringFeedback(ClientPtr client, StringFeedbackPtr s, char **buf)
 {
     int i;
     xStringFeedbackState *s2;
@@ -336,10 +322,7 @@ CopySwapStringFeedback (client, s, buf)
  */
 
 void
-CopySwapLedFeedback (client, l, buf)
-    ClientPtr 		client;
-    LedFeedbackPtr 	l;
-    char 		**buf;
+CopySwapLedFeedback(ClientPtr client, LedFeedbackPtr l, char **buf)
 {
     xLedFeedbackState *l2;
 
@@ -365,10 +348,7 @@ CopySwapLedFeedback (client, l, buf)
  */
 
 void
-CopySwapBellFeedback (client, b, buf)
-    ClientPtr 		client;
-    BellFeedbackPtr 	b;
-    char 		**buf;
+CopySwapBellFeedback(ClientPtr client, BellFeedbackPtr b, char **buf)
 {
     xBellFeedbackState *b2;
 
@@ -396,10 +376,8 @@ CopySwapBellFeedback (client, b, buf)
  */
 
 void
-SRepXGetFeedbackControl (client, size, rep)
-    ClientPtr	client;
-    int		size;
-    xGetFeedbackControlReply	*rep;
+SRepXGetFeedbackControl(ClientPtr client, int size,
+			xGetFeedbackControlReply * rep)
 {
     swaps(&rep->sequenceNumber);
     swapl(&rep->length);

@@ -78,8 +78,7 @@ extern CARD8 event_base[];
  */
 
 int
-SProcXOpenDevice(client)
-    register ClientPtr client;
+SProcXOpenDevice(register ClientPtr client)
 {
     REQUEST(xOpenDeviceReq);
     swaps(&stuff->length);
@@ -93,8 +92,7 @@ SProcXOpenDevice(client)
  */
 
 int
-ProcXOpenDevice(client)
-    register ClientPtr client;
+ProcXOpenDevice(register ClientPtr client)
 {
     xInputClassInfo evbase[numInputClasses];
     Bool enableit = FALSE;
@@ -187,10 +185,7 @@ ProcXOpenDevice(client)
  */
 
 void
-SRepXOpenDevice (client, size, rep)
-    ClientPtr	client;
-    int		size;
-    xOpenDeviceReply	*rep;
+SRepXOpenDevice(ClientPtr client, int size, xOpenDeviceReply * rep)
 {
     swaps(&rep->sequenceNumber);
     swapl(&rep->length);

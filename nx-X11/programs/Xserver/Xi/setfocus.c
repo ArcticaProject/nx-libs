@@ -77,8 +77,7 @@ SOFTWARE.
  */
 
 int
-SProcXSetDeviceFocus(client)
-    register ClientPtr client;
+SProcXSetDeviceFocus(register ClientPtr client)
 {
     REQUEST(xSetDeviceFocusReq);
     swaps(&stuff->length);
@@ -95,8 +94,7 @@ SProcXSetDeviceFocus(client)
  */
 
 int
-ProcXSetDeviceFocus(client)
-    register ClientPtr client;
+ProcXSetDeviceFocus(register ClientPtr client)
 {
     int ret;
     register DeviceIntPtr dev;

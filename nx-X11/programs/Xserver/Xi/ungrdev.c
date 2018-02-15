@@ -73,8 +73,7 @@ SOFTWARE.
  */
 
 int
-SProcXUngrabDevice(client)
-register ClientPtr client;
+SProcXUngrabDevice(register ClientPtr client)
 {
     REQUEST(xUngrabDeviceReq);
     swaps(&stuff->length);
@@ -90,8 +89,7 @@ register ClientPtr client;
  */
 
 int
-ProcXUngrabDevice(client)
-register ClientPtr client;
+ProcXUngrabDevice(register ClientPtr client)
 {
     DeviceIntPtr dev;
     GrabPtr grab;

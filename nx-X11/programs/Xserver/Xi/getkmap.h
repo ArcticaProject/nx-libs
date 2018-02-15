@@ -30,19 +30,13 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #ifndef GETKMAP_H
 #define GETKMAP_H 1
 
-int
-SProcXGetDeviceKeyMapping(
-	ClientPtr              /* client */
+int SProcXGetDeviceKeyMapping(ClientPtr	/* client */
     );
 
-int
-ProcXGetDeviceKeyMapping(
-	ClientPtr              /* client */
+int ProcXGetDeviceKeyMapping(ClientPtr	/* client */
     );
 
-void
-SRepXGetDeviceKeyMapping (
-	ClientPtr              /* client */,
+void SRepXGetDeviceKeyMapping(ClientPtr /* client */ ,
 			      int /* size */ ,
 			      xGetDeviceKeyMappingReply *	/* rep */
     );

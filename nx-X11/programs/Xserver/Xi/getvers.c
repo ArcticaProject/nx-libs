@@ -75,8 +75,7 @@ XExtensionVersion AllExtensionVersions[128];
  */
 
 int
-SProcXGetExtensionVersion(client)
-    register ClientPtr client;
+SProcXGetExtensionVersion(register ClientPtr client)
 {
     REQUEST(xGetExtensionVersionReq);
     swaps(&stuff->length);
@@ -92,8 +91,7 @@ SProcXGetExtensionVersion(client)
  */
 
 int
-ProcXGetExtensionVersion (client)
-    register ClientPtr client;
+ProcXGetExtensionVersion(register ClientPtr client)
 {
     xGetExtensionVersionReply rep;
 
@@ -137,10 +135,8 @@ ProcXGetExtensionVersion (client)
  */
 
 void
-SRepXGetExtensionVersion (client, size, rep)
-    ClientPtr	client;
-    int		size;
-    xGetExtensionVersionReply	*rep;
+SRepXGetExtensionVersion(ClientPtr client, int size,
+			 xGetExtensionVersionReply * rep)
 {
     swaps(&rep->sequenceNumber);
     swapl(&rep->length);

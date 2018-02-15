@@ -76,8 +76,7 @@ SOFTWARE.
  */
 
 int
-SProcXCloseDevice(client)
-    register ClientPtr client;
+SProcXCloseDevice(register ClientPtr client)
 {
     REQUEST(xCloseDeviceReq);
     swaps(&stuff->length);
@@ -92,8 +91,7 @@ SProcXCloseDevice(client)
  */
 
 int
-ProcXCloseDevice(client)
-    register ClientPtr client;
+ProcXCloseDevice(register ClientPtr client)
 {
     int i;
     WindowPtr pWin, p1;
@@ -136,10 +134,7 @@ ProcXCloseDevice(client)
  */
 
 void
-DeleteEventsFromChildren(dev, p1, client)
-    DeviceIntPtr	dev;
-    WindowPtr 		p1;
-    ClientPtr		client;
+DeleteEventsFromChildren(DeviceIntPtr dev, WindowPtr p1, ClientPtr client)
 {
     WindowPtr p2;
 
@@ -160,10 +155,7 @@ DeleteEventsFromChildren(dev, p1, client)
  */
 
 void
-DeleteDeviceEvents (dev, pWin, client)
-    DeviceIntPtr	dev;
-    WindowPtr		pWin;
-    ClientPtr		client;
+DeleteDeviceEvents(DeviceIntPtr dev, WindowPtr pWin, ClientPtr client)
 {
     InputClientsPtr others;
     OtherInputMasks *pOthers;

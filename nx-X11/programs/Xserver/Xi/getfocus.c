@@ -74,8 +74,7 @@ SOFTWARE.
  */
 
 int
-SProcXGetDeviceFocus(client)
-    register ClientPtr client;
+SProcXGetDeviceFocus(register ClientPtr client)
 {
     REQUEST(xGetDeviceFocusReq);
     swaps(&stuff->length);
@@ -89,8 +88,7 @@ SProcXGetDeviceFocus(client)
  */
 
 int
-ProcXGetDeviceFocus(client)
-    ClientPtr client;
+ProcXGetDeviceFocus(ClientPtr client)
 {
     DeviceIntPtr dev;
     FocusClassPtr focus;
@@ -136,10 +134,7 @@ ProcXGetDeviceFocus(client)
  */
 
 void
-SRepXGetDeviceFocus (client, size, rep)
-    ClientPtr	client;
-    int		size;
-    xGetDeviceFocusReply	*rep;
+SRepXGetDeviceFocus(ClientPtr client, int size, xGetDeviceFocusReply * rep)
 {
     swaps(&rep->sequenceNumber);
     swapl(&rep->length);

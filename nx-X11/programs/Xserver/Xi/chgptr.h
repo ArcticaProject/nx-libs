@@ -30,31 +30,22 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #ifndef CHGPTR_H
 #define CHGPTR_H 1
 
-int
-SProcXChangePointerDevice(
-	ClientPtr              /* client */
+int SProcXChangePointerDevice(ClientPtr	/* client */
     );
 
-int
-ProcXChangePointerDevice (
-	ClientPtr              /* client */
+int ProcXChangePointerDevice(ClientPtr	/* client */
     );
 
-void
-DeleteFocusClassDeviceStruct(
-	DeviceIntPtr           /* dev */
+void DeleteFocusClassDeviceStruct(DeviceIntPtr	/* dev */
     );
 
-void
-SendEventToAllWindows (
-	DeviceIntPtr           /* dev */,
+void SendEventToAllWindows(DeviceIntPtr /* dev */ ,
 			   Mask /* mask */ ,
 			   xEvent * /* ev */ ,
 			   int	/* count */
     );
 
-void
-FindInterestedChildren ( /* FIXME: could be static? */
+void FindInterestedChildren(	/* FIXME: could be static? */
 			       DeviceIntPtr /* dev */ ,
 			       WindowPtr /* p1 */ ,
 			       Mask /* mask */ ,
@@ -62,9 +53,7 @@ FindInterestedChildren ( /* FIXME: could be static? */
 			       int	/* count */
     );
 
-void
-SRepXChangePointerDevice (
-	ClientPtr              /* client */,
+void SRepXChangePointerDevice(ClientPtr /* client */ ,
 			      int /* size */ ,
 			      xChangePointerDeviceReply *	/* rep */
     );

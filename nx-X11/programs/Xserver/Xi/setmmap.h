@@ -30,19 +30,13 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #ifndef SETMMAP_H
 #define SETMMAP_H 1
 
-int
-SProcXSetDeviceModifierMapping(
-	ClientPtr              /* client */
+int SProcXSetDeviceModifierMapping(ClientPtr	/* client */
     );
 
-int
-ProcXSetDeviceModifierMapping(
-	ClientPtr              /* client */
+int ProcXSetDeviceModifierMapping(ClientPtr	/* client */
     );
 
-void
-SRepXSetDeviceModifierMapping(
-	ClientPtr              /* client */,
+void SRepXSetDeviceModifierMapping(ClientPtr /* client */ ,
 				   int /* size */ ,
 				   xSetDeviceModifierMappingReply *	/* rep */
     );

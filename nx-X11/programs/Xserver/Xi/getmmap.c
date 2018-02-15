@@ -74,8 +74,7 @@ SOFTWARE.
  */
 
 int
-SProcXGetDeviceModifierMapping(client)
-    register ClientPtr client;
+SProcXGetDeviceModifierMapping(register ClientPtr client)
 {
     REQUEST(xGetDeviceModifierMappingReq);
     swaps(&stuff->length);
@@ -89,8 +88,7 @@ SProcXGetDeviceModifierMapping(client)
  */
 
 int
-ProcXGetDeviceModifierMapping(client)
-    ClientPtr client;
+ProcXGetDeviceModifierMapping(ClientPtr client)
 {
     CARD8 maxkeys;
     DeviceIntPtr dev;
@@ -139,10 +137,8 @@ ProcXGetDeviceModifierMapping(client)
  */
 
 void
-SRepXGetDeviceModifierMapping (client, size, rep)
-    ClientPtr	client;
-    int		size;
-    xGetDeviceModifierMappingReply	*rep;
+SRepXGetDeviceModifierMapping(ClientPtr client, int size,
+			      xGetDeviceModifierMappingReply * rep)
 {
     swaps(&rep->sequenceNumber);
     swapl(&rep->length);

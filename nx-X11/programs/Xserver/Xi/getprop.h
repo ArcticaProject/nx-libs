@@ -30,28 +30,20 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #ifndef GETPROP_H
 #define GETPROP_H 1
 
-int
-SProcXGetDeviceDontPropagateList(
-	ClientPtr              /* client */
+int SProcXGetDeviceDontPropagateList(ClientPtr	/* client */
     );
 
-int
-ProcXGetDeviceDontPropagateList (
-	ClientPtr              /* client */
+int ProcXGetDeviceDontPropagateList(ClientPtr	/* client */
     );
 
-XEventClass *
-ClassFromMask (
-	XEventClass *          /* buf */,
+XEventClass *ClassFromMask(XEventClass * /* buf */ ,
 			   Mask /* mask */ ,
 			   int /* maskndx */ ,
 			   CARD16 * /* count */ ,
 			   int	/* mode */
     );
 
-void
-SRepXGetDeviceDontPropagateList (
-	ClientPtr              /* client */,
+void SRepXGetDeviceDontPropagateList(ClientPtr /* client */ ,
 				     int /* size */ ,
 				     xGetDeviceDontPropagateListReply *	/* rep */
     );

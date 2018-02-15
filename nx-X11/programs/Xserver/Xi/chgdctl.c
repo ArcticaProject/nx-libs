@@ -76,8 +76,7 @@ SOFTWARE.
  */
 
 int
-SProcXChangeDeviceControl(client)
-    register ClientPtr client;
+SProcXChangeDeviceControl(register ClientPtr client)
 {
     REQUEST(xChangeDeviceControlReq);
     swaps(&stuff->length);
@@ -93,8 +92,7 @@ SProcXChangeDeviceControl(client)
  */
 
 int
-ProcXChangeDeviceControl(client)
-    ClientPtr client;
+ProcXChangeDeviceControl(ClientPtr client)
 {
     unsigned len;
     int i, status;
@@ -199,13 +197,10 @@ ProcXChangeDeviceControl(client)
  */
 
 void
-SRepXChangeDeviceControl (client, size, rep)
-    ClientPtr	client;
-    int		size;
-    xChangeDeviceControlReply	*rep;
+SRepXChangeDeviceControl(ClientPtr client, int size,
+			 xChangeDeviceControlReply * rep)
 {
     swaps(&rep->sequenceNumber);
     swapl(&rep->length);
     WriteToClient(client, size, rep);
 }
-

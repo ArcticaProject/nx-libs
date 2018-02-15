@@ -81,8 +81,7 @@ SOFTWARE.
  */
 
 int
-SProcXChangePointerDevice(client)
-    register ClientPtr client;
+SProcXChangePointerDevice(register ClientPtr client)
 {
     REQUEST(xChangePointerDeviceReq);
     swaps(&stuff->length);
@@ -97,8 +96,7 @@ SProcXChangePointerDevice(client)
  */
 
 int
-ProcXChangePointerDevice (client)
-    register ClientPtr client;
+ProcXChangePointerDevice(register ClientPtr client)
 {
     DeviceIntPtr xptr = inputInfo.pointer;
     DeviceIntPtr dev;
@@ -176,8 +174,7 @@ ProcXChangePointerDevice (client)
 }
 
 void
-DeleteFocusClassDeviceStruct(dev)
-    DeviceIntPtr dev;
+DeleteFocusClassDeviceStruct(DeviceIntPtr dev)
 {
     free(dev->focus->trace);
     free(dev->focus);
@@ -191,11 +188,7 @@ DeleteFocusClassDeviceStruct(dev)
  */
 
 void
-SendEventToAllWindows (dev, mask, ev, count)
-    DeviceIntPtr dev;
-    Mask mask;
-    xEvent *ev;
-    int count;
+SendEventToAllWindows(DeviceIntPtr dev, Mask mask, xEvent * ev, int count)
 {
     int i;
     WindowPtr pWin, p1;
@@ -217,12 +210,8 @@ SendEventToAllWindows (dev, mask, ev, count)
  */
 
 void
-FindInterestedChildren (dev, p1, mask, ev, count)
-    DeviceIntPtr	dev;
-    WindowPtr 		p1;
-    Mask		mask;
-    xEvent		*ev;
-    int			count;
+FindInterestedChildren(DeviceIntPtr dev, WindowPtr p1, Mask mask,
+		       xEvent * ev, int count)
 {
     WindowPtr p2;
 
@@ -243,10 +232,8 @@ FindInterestedChildren (dev, p1, mask, ev, count)
  */
 
 void
-SRepXChangePointerDevice (client, size, rep)
-    ClientPtr	client;
-    int		size;
-    xChangePointerDeviceReply	*rep;
+SRepXChangePointerDevice(ClientPtr client, int size,
+			 xChangePointerDeviceReply * rep)
 {
     swaps(&rep->sequenceNumber);
     swapl(&rep->length);

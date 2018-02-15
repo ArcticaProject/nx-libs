@@ -78,8 +78,7 @@ SOFTWARE.
  */
 
 int
-SProcXChangeKeyboardDevice(client)
-    register ClientPtr client;
+SProcXChangeKeyboardDevice(register ClientPtr client)
 {
     REQUEST(xChangeKeyboardDeviceReq);
     swaps(&stuff->length);
@@ -95,8 +94,7 @@ SProcXChangeKeyboardDevice(client)
  */
 
 int
-ProcXChangeKeyboardDevice (client)
-    register ClientPtr client;
+ProcXChangeKeyboardDevice(register ClientPtr client)
 {
     int i;
     DeviceIntPtr xkbd = inputInfo.keyboard;
@@ -197,10 +195,8 @@ ProcXChangeKeyboardDevice (client)
  */
 
 void
-SRepXChangeKeyboardDevice (client, size, rep)
-    ClientPtr	client;
-    int		size;
-    xChangeKeyboardDeviceReply	*rep;
+SRepXChangeKeyboardDevice(ClientPtr client, int size,
+			  xChangeKeyboardDeviceReply * rep)
 {
     swaps(&rep->sequenceNumber);
     swapl(&rep->length);
