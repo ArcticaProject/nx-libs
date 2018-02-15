@@ -107,15 +107,13 @@ ProcXGetDeviceMotionEvents(ClientPtr client)
 
     REQUEST_SIZE_MATCH(xGetDeviceMotionEventsReq);
     dev = LookupDeviceIntRec(stuff->deviceid);
-    if (dev == NULL)
-	{
+    if (dev == NULL) {
 	SendErrorToClient(client, IReqCode, X_GetDeviceMotionEvents, 0,
 			  BadDevice);
 	return Success;
     }
     v = dev->valuator;
-    if (v==NULL || v->numAxes == 0)
-	{
+    if (v == NULL || v->numAxes == 0) {
 	SendErrorToClient(client, IReqCode, X_GetDeviceMotionEvents, 0,
 			  BadMatch);
 	return Success;
@@ -133,16 +131,14 @@ ProcXGetDeviceMotionEvents(ClientPtr client)
     start = ClientTimeToServerTime(stuff->start);
     stop = ClientTimeToServerTime(stuff->stop);
     if (CompareTimeStamps(start, stop) == LATER ||
-	CompareTimeStamps(start, currentTime) == LATER)
-	{
+	CompareTimeStamps(start, currentTime) == LATER) {
 	WriteReplyToClient(client, sizeof(xGetDeviceMotionEventsReply), &rep);
 	return Success;
     }
     if (CompareTimeStamps(stop, currentTime) == LATER)
 	stop = currentTime;
     num_events = v->numMotionEvents;
-    if (num_events)
-    {
+    if (num_events) {
 	size = sizeof(Time) + (axes * sizeof(INT32));
 	tsize = num_events * size;
 	coords = (INT32 *) malloc(tsize);
@@ -152,24 +148,20 @@ ProcXGetDeviceMotionEvents(ClientPtr client)
 			      BadAlloc);
 	    return Success;
 	}
-	rep.nEvents = (v->GetMotionProc) (
-		dev, (xTimecoord *)coords, /* XXX */
-		start.milliseconds, stop.milliseconds, (ScreenPtr)NULL);
+	rep.nEvents = (v->GetMotionProc) (dev, (xTimecoord *) coords,	/* XXX */
+					  start.milliseconds, stop.milliseconds,
+					  (ScreenPtr) NULL);
     }
-    if (rep.nEvents > 0)
-	{
+    if (rep.nEvents > 0) {
 	length = (rep.nEvents * size + 3) >> 2;
 	rep.length = length;
     }
     nEvents = rep.nEvents;
     WriteReplyToClient(client, sizeof(xGetDeviceMotionEventsReply), &rep);
-    if (nEvents)
-        {
-	if (client->swapped)
-	    {
+    if (nEvents) {
+	if (client->swapped) {
 	    bufptr = coords;
-	    for (i=0; i<nEvents * (axes+1); i++)
-		{
+	    for (i = 0; i < nEvents * (axes + 1); i++) {
 		swapl(bufptr);
 		bufptr++;
 	    }

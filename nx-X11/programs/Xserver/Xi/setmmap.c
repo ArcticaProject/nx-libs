@@ -100,8 +100,7 @@ ProcXSetDeviceModifierMapping(ClientPtr client)
     REQUEST_AT_LEAST_SIZE(xSetDeviceModifierMappingReq);
 
     dev = LookupDeviceIntRec(stuff->deviceid);
-    if (dev == NULL)
-	{
+    if (dev == NULL) {
 	SendErrorToClient(client, IReqCode, X_SetDeviceModifierMapping, 0,
 			  BadDevice);
 	return Success;
@@ -113,18 +112,17 @@ ProcXSetDeviceModifierMapping(ClientPtr client)
     rep.sequenceNumber = client->sequence;
 
     ret = SetModifierMapping(client, dev, stuff->length,
-	(sizeof (xSetDeviceModifierMappingReq)>>2), stuff->numKeyPerModifier, 
-	(BYTE *)&stuff[1], &kp);
+			   (sizeof(xSetDeviceModifierMappingReq) >> 2),
+			     stuff->numKeyPerModifier, (BYTE *) & stuff[1],
+			     &kp);
 
-    if (ret==MappingSuccess || ret==MappingBusy || ret==MappingFailed)
-        {
+    if (ret == MappingSuccess || ret == MappingBusy || ret == MappingFailed) {
 	rep.success = ret;
 	if (ret == MappingSuccess)
 	    SendDeviceMappingNotify(MappingModifier, 0, 0, dev);
-        WriteReplyToClient(client, sizeof(xSetDeviceModifierMappingReply),&rep);
-        }
-    else
-	{
+	WriteReplyToClient(client, sizeof(xSetDeviceModifierMappingReply),
+			   &rep);
+    } else {
 	if (ret == -1)
 	    ret = BadValue;
 	SendErrorToClient(client, IReqCode, X_SetDeviceModifierMapping, 0, ret);

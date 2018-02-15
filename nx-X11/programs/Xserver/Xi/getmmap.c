@@ -99,16 +99,14 @@ ProcXGetDeviceModifierMapping(ClientPtr client)
     REQUEST_SIZE_MATCH(xGetDeviceModifierMappingReq);
 
     dev = LookupDeviceIntRec(stuff->deviceid);
-    if (dev == NULL)
-	{
+    if (dev == NULL) {
 	SendErrorToClient(client, IReqCode, X_GetDeviceModifierMapping, 0,
 			  BadDevice);
 	return Success;
     }
 
     kp = dev->key;
-    if (kp == NULL)
-	{
+    if (kp == NULL) {
 	SendErrorToClient(client, IReqCode, X_GetDeviceModifierMapping, 0,
 			  BadMatch);
 	return Success;

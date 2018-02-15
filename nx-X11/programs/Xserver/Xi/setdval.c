@@ -103,30 +103,22 @@ ProcXSetDeviceValuators(register ClientPtr client)
     rep.sequenceNumber = client->sequence;
 
     if (stuff->length != (sizeof(xSetDeviceValuatorsReq) >> 2) +
-	stuff->num_valuators)
-	{
-	SendErrorToClient (client, IReqCode, X_SetDeviceValuators, 0, 
-		BadLength);
+	stuff->num_valuators) {
+	SendErrorToClient(client, IReqCode, X_SetDeviceValuators, 0, BadLength);
 	return Success;
     }
     dev = LookupDeviceIntRec(stuff->deviceid);
-    if (dev == NULL)
-	{
-	SendErrorToClient (client, IReqCode, X_SetDeviceValuators, 0, 
-	    BadDevice);
+    if (dev == NULL) {
+	SendErrorToClient(client, IReqCode, X_SetDeviceValuators, 0, BadDevice);
 	return Success;
     }
-    if (dev->valuator == NULL)
-	{
-	SendErrorToClient(client, IReqCode, X_SetDeviceValuators, 0, 
-		BadMatch);
+    if (dev->valuator == NULL) {
+	SendErrorToClient(client, IReqCode, X_SetDeviceValuators, 0, BadMatch);
 	return Success;
     }
 
-    if (stuff->first_valuator + stuff->num_valuators > dev->valuator->numAxes)
-	{
-	SendErrorToClient(client, IReqCode, X_SetDeviceValuators, 0, 
-		BadValue);
+    if (stuff->first_valuator + stuff->num_valuators > dev->valuator->numAxes) {
+	SendErrorToClient(client, IReqCode, X_SetDeviceValuators, 0, BadValue);
 	return Success;
     }
 
@@ -134,7 +126,8 @@ ProcXSetDeviceValuators(register ClientPtr client)
 	rep.status = AlreadyGrabbed;
     else
 	rep.status = SetDeviceValuators(client, dev, (int *)&stuff[1],
-	    stuff->first_valuator, stuff->num_valuators);
+					stuff->first_valuator,
+					stuff->num_valuators);
 
     if (rep.status != Success && rep.status != AlreadyGrabbed)
 	SendErrorToClient(client, IReqCode, X_SetDeviceValuators, 0,

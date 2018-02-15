@@ -101,10 +101,8 @@ ProcXGetDeviceControl(ClientPtr client)
     REQUEST_SIZE_MATCH(xGetDeviceControlReq);
 
     dev = LookupDeviceIntRec(stuff->deviceid);
-    if (dev == NULL)
-	{
-	SendErrorToClient (client, IReqCode, X_GetDeviceControl, 0, 
-		BadDevice);
+    if (dev == NULL) {
+	SendErrorToClient(client, IReqCode, X_GetDeviceControl, 0, BadDevice);
 	return Success;
     }
 
@@ -113,11 +111,9 @@ ProcXGetDeviceControl(ClientPtr client)
     rep.length = 0;
     rep.sequenceNumber = client->sequence;
 
-    switch (stuff->control)
-	{
+    switch (stuff->control) {
     case DEVICE_RESOLUTION:
-	    if (!dev->valuator)
-		{
+	if (!dev->valuator) {
 	    SendErrorToClient(client, IReqCode, X_GetDeviceControl, 0,
 			      BadMatch);
 	    return Success;
@@ -126,25 +122,20 @@ ProcXGetDeviceControl(ClientPtr client)
 	    (3 * sizeof(int) * dev->valuator->numAxes);
 	break;
     default:
-	    SendErrorToClient (client, IReqCode, X_GetDeviceControl, 0, 
-		BadValue);
+	SendErrorToClient(client, IReqCode, X_GetDeviceControl, 0, BadValue);
 	return Success;
     }
 
     buf = (char *)malloc(total_length);
-    if (!buf)
-	{
-	SendErrorToClient(client, IReqCode, X_GetDeviceControl, 0, 
-		BadAlloc);
+    if (!buf) {
+	SendErrorToClient(client, IReqCode, X_GetDeviceControl, 0, BadAlloc);
 	return Success;
     }
     savbuf = buf;
 
-    switch (stuff->control)
-	{
+    switch (stuff->control) {
     case DEVICE_RESOLUTION:
-	    CopySwapDeviceResolution(client, dev->valuator, buf,
-		total_length);
+	CopySwapDeviceResolution(client, dev->valuator, buf, total_length);
 	break;
     default:
 	break;
@@ -183,14 +174,12 @@ CopySwapDeviceResolution(ClientPtr client, ValuatorClassPtr v, char *buf,
 	*iptr++ = a->min_resolution;
     for (i = 0, a = v->axes; i < v->numAxes; i++, a++)
 	*iptr++ = a->max_resolution;
-    if (client->swapped)
-	{
+    if (client->swapped) {
 	swaps(&r->control);
 	swaps(&r->length);
 	swapl(&r->num_valuators);
 	iptr = (int *)buf;
-	for (i=0; i < (3 * v->numAxes); i++,iptr++)
-	    {
+	for (i = 0; i < (3 * v->numAxes); i++, iptr++) {
 	    swapl(iptr);
 	}
     }

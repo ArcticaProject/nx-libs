@@ -113,8 +113,7 @@ ProcXGrabDevice(ClientPtr client)
     REQUEST(xGrabDeviceReq);
     REQUEST_AT_LEAST_SIZE(xGrabDeviceReq);
 
-    if (stuff->length !=(sizeof(xGrabDeviceReq)>>2) + stuff->event_count)
-	{
+    if (stuff->length != (sizeof(xGrabDeviceReq) >> 2) + stuff->event_count) {
 	SendErrorToClient(client, IReqCode, X_GrabDevice, 0, BadLength);
 	return Success;
     }
@@ -125,22 +124,22 @@ ProcXGrabDevice(ClientPtr client)
     rep.length = 0;
 
     dev = LookupDeviceIntRec(stuff->deviceid);
-    if (dev == NULL)
-	{
+    if (dev == NULL) {
 	SendErrorToClient(client, IReqCode, X_GrabDevice, 0, BadDevice);
 	return Success;
     }
 
     if (CreateMaskFromList(client, (XEventClass *) & stuff[1],
-	stuff->event_count, tmp, dev, X_GrabDevice) != Success)
+			   stuff->event_count, tmp, dev,
+	 X_GrabDevice) != Success)
 	return Success;
 
     error = GrabDevice(client, dev, stuff->this_device_mode,
-	stuff->other_devices_mode, stuff->grabWindow, stuff->ownerEvents, 
-	stuff->time, tmp[stuff->deviceid].mask, &rep.status);
+		   stuff->other_devices_mode, stuff->grabWindow,
+		       stuff->ownerEvents, stuff->time,
+		       tmp[stuff->deviceid].mask, &rep.status);
 
-    if (error != Success)
-	{
+    if (error != Success) {
 	SendErrorToClient(client, IReqCode, X_GrabDevice, 0, error);
 	return Success;
     }
@@ -163,30 +162,25 @@ CreateMaskFromList(ClientPtr client, XEventClass * list, int count,
     int device;
     DeviceIntPtr tdev;
 
-    for (i=0; i<EMASKSIZE; i++)
-	{
+    for (i = 0; i < EMASKSIZE; i++) {
 	mask[i].mask = 0;
 	mask[i].dev = NULL;
     }
 
-    for (i=0; i<count; i++, list++)
-	{
+    for (i = 0; i < count; i++, list++) {
 	device = *list >> 8;
-	if (device > 255)
-	    {
+	if (device > 255) {
 	    SendErrorToClient(client, IReqCode, req, 0, BadClass);
 	    return BadClass;
 	}
 	tdev = LookupDeviceIntRec(device);
-	if (tdev==NULL || (dev != NULL && tdev != dev))
-	    {
+	if (tdev == NULL || (dev != NULL && tdev != dev)) {
 	    SendErrorToClient(client, IReqCode, req, 0, BadClass);
 	    return BadClass;
 	}
 
 	for (j = 0; j < ExtEventIndex; j++)
-	    if (EventInfo[j].type == (*list & 0xff))
-		{
+	    if (EventInfo[j].type == (*list & 0xff)) {
 		mask[device].mask |= EventInfo[j].mask;
 		mask[device].dev = (Pointer) tdev;
 		break;

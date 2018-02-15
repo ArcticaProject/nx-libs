@@ -98,8 +98,7 @@ SProcXSendExtensionEvent(register ClientPtr client)
 	return BadLength;
 
     eventP = (xEvent *) & stuff[1];
-    for (i=0; i<stuff->num_events; i++,eventP++)
-        {
+    for (i = 0; i < stuff->num_events; i++, eventP++) {
 	proc = EventSwapVector[eventP->u.u.type & 0177];
 	if (proc == NotImplemented)	/* no swapping proc; invalid event type? */
 	    return (BadValue);
@@ -132,18 +131,14 @@ ProcXSendExtensionEvent(register ClientPtr client)
     REQUEST_AT_LEAST_SIZE(xSendExtensionEventReq);
 
     if (stuff->length != (sizeof(xSendExtensionEventReq) >> 2) + stuff->count +
-	(stuff->num_events * (sizeof (xEvent) >> 2)))
-	{
-	SendErrorToClient (client, IReqCode, X_SendExtensionEvent, 0, 
-		BadLength);
+	(stuff->num_events * (sizeof(xEvent) >> 2))) {
+	SendErrorToClient(client, IReqCode, X_SendExtensionEvent, 0, BadLength);
 	return Success;
     }
 
     dev = LookupDeviceIntRec(stuff->deviceid);
-    if (dev == NULL)
-	{
-	SendErrorToClient(client, IReqCode, X_SendExtensionEvent, 0, 
-		BadDevice);
+    if (dev == NULL) {
+	SendErrorToClient(client, IReqCode, X_SendExtensionEvent, 0, BadDevice);
 	return Success;
     }
 
@@ -160,11 +155,9 @@ ProcXSendExtensionEvent(register ClientPtr client)
 
     first = ((xEvent *) & stuff[1]);
     if (!((EXTENSION_EVENT_BASE <= first->u.u.type) &&
-	(first->u.u.type < lastEvent)) )
-	{
+	  (first->u.u.type < lastEvent))) {
 	client->errorValue = first->u.u.type;
-	SendErrorToClient(client, IReqCode, X_SendExtensionEvent, 0, 
-		BadValue);
+	SendErrorToClient(client, IReqCode, X_SendExtensionEvent, 0, BadValue);
 	return Success;
     }
 
@@ -174,8 +167,8 @@ ProcXSendExtensionEvent(register ClientPtr client)
 	return Success;
 
     ret = (SendEvent(client, dev, stuff->destination,
-	stuff->propagate, (xEvent *)&stuff[1], tmp[stuff->deviceid].mask, 
-	stuff->num_events));
+		     stuff->propagate, (xEvent *) & stuff[1],
+		     tmp[stuff->deviceid].mask, stuff->num_events));
 
     if (ret != Success)
 	SendErrorToClient(client, IReqCode, X_SendExtensionEvent, 0, ret);

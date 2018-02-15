@@ -107,57 +107,43 @@ ProcXUngrabDeviceKey(ClientPtr client)
     REQUEST_SIZE_MATCH(xUngrabDeviceKeyReq);
 
     dev = LookupDeviceIntRec(stuff->grabbed_device);
-    if (dev == NULL)
-	{
-	SendErrorToClient(client, IReqCode, X_UngrabDeviceKey, 0, 
-	    BadDevice);
+    if (dev == NULL) {
+	SendErrorToClient(client, IReqCode, X_UngrabDeviceKey, 0, BadDevice);
 	return Success;
     }
-    if (dev->key == NULL)
-	{
+    if (dev->key == NULL) {
 	SendErrorToClient(client, IReqCode, X_UngrabDeviceKey, 0, BadMatch);
 	return Success;
     }
 
-    if (stuff->modifier_device != UseXKeyboard)
-	{
+    if (stuff->modifier_device != UseXKeyboard) {
 	mdev = LookupDeviceIntRec(stuff->modifier_device);
-	if (mdev == NULL)
-	    {
+	if (mdev == NULL) {
 	    SendErrorToClient(client, IReqCode, X_UngrabDeviceKey, 0,
 			      BadDevice);
 	    return Success;
 	}
-	if (mdev->key == NULL)
-	    {
-	    SendErrorToClient(client, IReqCode, X_UngrabDeviceKey, 0, 
-		BadMatch);
+	if (mdev->key == NULL) {
+	    SendErrorToClient(client, IReqCode, X_UngrabDeviceKey, 0, BadMatch);
 	    return Success;
 	}
-	}
-    else
+    } else
 	mdev = (DeviceIntPtr) LookupKeyboardDevice();
 
     pWin = LookupWindow(stuff->grabWindow, client);
-    if (!pWin)
-	{
-	SendErrorToClient(client, IReqCode, X_UngrabDeviceKey, 0, 
-	    BadWindow);
+    if (!pWin) {
+	SendErrorToClient(client, IReqCode, X_UngrabDeviceKey, 0, BadWindow);
 	return Success;
     }
     if (((stuff->key > dev->key->curKeySyms.maxKeyCode) ||
 	 (stuff->key < dev->key->curKeySyms.minKeyCode))
-	&& (stuff->key != AnyKey))
-	{
-	SendErrorToClient(client, IReqCode, X_UngrabDeviceKey, 0, 
-	    BadValue);
+	&& (stuff->key != AnyKey)) {
+	SendErrorToClient(client, IReqCode, X_UngrabDeviceKey, 0, BadValue);
 	return Success;
     }
     if ((stuff->modifiers != AnyModifier) &&
-	(stuff->modifiers & ~AllModifiersMask))
-	{
-	SendErrorToClient(client, IReqCode, X_UngrabDeviceKey, 0, 
-	    BadValue);
+	(stuff->modifiers & ~AllModifiersMask)) {
+	SendErrorToClient(client, IReqCode, X_UngrabDeviceKey, 0, BadValue);
 	return Success;
     }
 

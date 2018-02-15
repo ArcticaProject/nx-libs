@@ -109,47 +109,42 @@ ProcXGrabDeviceButton(ClientPtr client)
     REQUEST(xGrabDeviceButtonReq);
     REQUEST_AT_LEAST_SIZE(xGrabDeviceButtonReq);
 
-    if (stuff->length !=(sizeof(xGrabDeviceButtonReq)>>2) + stuff->event_count)
-	{
+    if (stuff->length !=
+	(sizeof(xGrabDeviceButtonReq) >> 2) + stuff->event_count) {
 	SendErrorToClient(client, IReqCode, X_GrabDeviceButton, 0, BadLength);
 	return Success;
     }
 
     dev = LookupDeviceIntRec(stuff->grabbed_device);
-    if (dev == NULL)
-	{
-	SendErrorToClient(client, IReqCode, X_GrabDeviceButton, 0, 
-	    BadDevice);
+    if (dev == NULL) {
+	SendErrorToClient(client, IReqCode, X_GrabDeviceButton, 0, BadDevice);
 	return Success;
     }
-    if (stuff->modifier_device != UseXKeyboard)
-	{
+    if (stuff->modifier_device != UseXKeyboard) {
 	mdev = LookupDeviceIntRec(stuff->modifier_device);
-	if (mdev == NULL)
-	    {
+	if (mdev == NULL) {
 	    SendErrorToClient(client, IReqCode, X_GrabDeviceButton, 0,
 			      BadDevice);
 	    return Success;
 	}
-	if (mdev->key == NULL)
-	    {
+	if (mdev->key == NULL) {
 	    SendErrorToClient(client, IReqCode, X_GrabDeviceButton, 0,
 			      BadMatch);
 	    return Success;
 	}
-	}
-    else
+    } else
 	mdev = (DeviceIntPtr) LookupKeyboardDevice();
 
     class = (XEventClass *) (&stuff[1]);	/* first word of values */
 
     if ((ret = CreateMaskFromList(client, class,
-	stuff->event_count, tmp, dev, X_GrabDeviceButton)) != Success)
+				  stuff->event_count, tmp, dev,
+			    X_GrabDeviceButton)) != Success)
 	return Success;
     ret = GrabButton(client, dev, stuff->this_device_mode,
-	stuff->other_devices_mode, stuff->modifiers, mdev, stuff->button, 
-	stuff->grabWindow, stuff->ownerEvents, (Cursor)0, (Window)0, 
-	tmp[stuff->grabbed_device].mask);
+		   stuff->other_devices_mode, stuff->modifiers, mdev,
+		   stuff->button, stuff->grabWindow, stuff->ownerEvents,
+		   (Cursor) 0, (Window) 0, tmp[stuff->grabbed_device].mask);
 
     if (ret != Success)
 	SendErrorToClient(client, IReqCode, X_GrabDeviceButton, 0, ret);

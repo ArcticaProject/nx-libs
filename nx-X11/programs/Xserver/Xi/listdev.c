@@ -159,8 +159,7 @@ SizeDeviceInfo(DeviceIntPtr d, int *namesize, int *size)
 	*size += sizeof(xKeyInfo);
     if (d->button != NULL)
 	*size += sizeof(xButtonInfo);
-    if (d->valuator != NULL)
-	{
+    if (d->valuator != NULL) {
 	chunks = ((int)d->valuator->numAxes + 19) / VPC;
 	*size += (chunks * sizeof(xValuatorInfo) +
 	     d->valuator->numAxes * sizeof(xAxisInfo));
@@ -179,19 +178,17 @@ ListDeviceInfo(ClientPtr client, DeviceIntPtr d, xDeviceInfoPtr dev,
 {
     CopyDeviceName(namebuf, d->name);
     CopySwapDevice(client, d, 0, devbuf);
-    if (d->key != NULL)
-	{
+    if (d->key != NULL) {
 	CopySwapKeyClass(client, d->key, classbuf);
 	dev->num_classes++;
     }
-    if (d->button != NULL)
-	{
+    if (d->button != NULL) {
 	CopySwapButtonClass(client, d->button, classbuf);
 	dev->num_classes++;
     }
-    if (d->valuator != NULL)
-	{
-	dev->num_classes += CopySwapValuatorClass(client, d->valuator, classbuf);
+    if (d->valuator != NULL) {
+	dev->num_classes +=
+	    CopySwapValuatorClass(client, d->valuator, classbuf);
     }
 }
 
@@ -210,14 +207,11 @@ CopyDeviceName(char **namebuf, char *name)
 {
     char *nameptr = (char *)*namebuf;
 
-    if (name)
-	{
+    if (name) {
 	*nameptr++ = strlen(name);
 	strcpy(nameptr, name);
 	*namebuf += (strlen(name) + 1);
-	}
-    else
-	{
+    } else {
 	*nameptr++ = 0;
 	*namebuf += 1;
     }
@@ -246,8 +240,7 @@ CopySwapDevice(register ClientPtr client, DeviceIntPtr d, int num_classes,
 	dev->use = IsXPointer;
     else
 	dev->use = IsXExtensionDevice;
-    if (client->swapped)
-	{
+    if (client->swapped) {
 	swapl(&dev->type);	/* macro - braces are required */
     }
     *buf += sizeof(xDeviceInfo);
@@ -270,8 +263,7 @@ CopySwapKeyClass(register ClientPtr client, KeyClassPtr k, char **buf)
     k2->min_keycode = k->curKeySyms.minKeyCode;
     k2->max_keycode = k->curKeySyms.maxKeyCode;
     k2->num_keys = k2->max_keycode - k2->min_keycode + 1;
-    if (client->swapped)
-	{
+    if (client->swapped) {
 	swaps(&k2->num_keys);
     }
     *buf += sizeof(xKeyInfo);
@@ -292,8 +284,7 @@ CopySwapButtonClass(register ClientPtr client, ButtonClassPtr b, char **buf)
     b2->class = ButtonClass;
     b2->length = sizeof(xButtonInfo);
     b2->num_buttons = b->numButtons;
-    if (client->swapped)
-	{
+    if (client->swapped) {
 	swaps(&b2->num_buttons);	/* macro - braces are required */
     }
     *buf += sizeof(xButtonInfo);
@@ -319,7 +310,8 @@ CopySwapValuatorClass(register ClientPtr client, ValuatorClassPtr v, char **buf)
     AxisInfo *a;
     xAxisInfoPtr a2;
 
-    for (i=0,axes=v->numAxes; i < ((v->numAxes+19)/VPC);  i++, axes-=VPC) {
+    for (i = 0, axes = v->numAxes; i < ((v->numAxes + 19) / VPC);
+	 i++, axes -= VPC) {
 	t_axes = axes < VPC ? axes : VPC;
 	if (t_axes < 0)
 	    t_axes = v->numAxes % VPC;
@@ -329,8 +321,7 @@ CopySwapValuatorClass(register ClientPtr client, ValuatorClassPtr v, char **buf)
 	v2->num_axes = t_axes;
 	v2->mode = v->mode & DeviceMode;
 	v2->motion_buffer_size = v->numMotionEvents;
-	if (client->swapped)
-	    {
+	if (client->swapped) {
 	    swapl(&v2->motion_buffer_size);
 	}
 	*buf += sizeof(xValuatorInfo);

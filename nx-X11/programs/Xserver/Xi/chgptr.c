@@ -113,8 +113,7 @@ ProcXChangePointerDevice(register ClientPtr client)
     rep.sequenceNumber = client->sequence;
 
     dev = LookupDeviceIntRec(stuff->deviceid);
-    if (dev == NULL)
-	{
+    if (dev == NULL) {
 	rep.status = -1;
 	SendErrorToClient(client, IReqCode, X_ChangePointerDevice, 0,
 			  BadDevice);
@@ -123,9 +122,7 @@ ProcXChangePointerDevice(register ClientPtr client)
 
     v = dev->valuator;
     if (v == NULL || v->numAxes < 2 ||
-	stuff->xaxis >= v->numAxes ||
-	stuff->yaxis >= v->numAxes)
-	{
+	stuff->xaxis >= v->numAxes || stuff->yaxis >= v->numAxes) {
 	rep.status = -1;
 	SendErrorToClient(client, IReqCode, X_ChangePointerDevice, 0, BadMatch);
 	return Success;
@@ -139,11 +136,9 @@ ProcXChangePointerDevice(register ClientPtr client)
 	     (xptr->sync.frozen &&
 	      xptr->sync.other && !SameClient(xptr->sync.other, client)))
 	rep.status = GrabFrozen;
-    else
-	{
-	if (ChangePointerDevice (
-	    xptr, dev, stuff->xaxis, stuff->yaxis) != Success)
-	    {
+    else {
+	if (ChangePointerDevice(xptr, dev, stuff->xaxis, stuff->yaxis) !=
+	    Success) {
 	    SendErrorToClient(client, IReqCode, X_ChangePointerDevice, 0,
 			      BadDevice);
 	    return Success;
@@ -168,8 +163,7 @@ ProcXChangePointerDevice(register ClientPtr client)
 	rep.status = 0;
     }
 
-    WriteReplyToClient (client, sizeof (xChangePointerDeviceReply), 
-	&rep);
+    WriteReplyToClient(client, sizeof(xChangePointerDeviceReply), &rep);
     return Success;
 }
 
@@ -193,8 +187,7 @@ SendEventToAllWindows(DeviceIntPtr dev, Mask mask, xEvent * ev, int count)
     int i;
     WindowPtr pWin, p1;
 
-    for (i=0; i<screenInfo.numScreens; i++)
-	{
+    for (i = 0; i < screenInfo.numScreens; i++) {
 	pWin = screenInfo.screens[i]->root;
 	(void)DeliverEventsToWindow(pWin, ev, count, mask, NullGrab, dev->id);
 	p1 = pWin->firstChild;
@@ -215,8 +208,7 @@ FindInterestedChildren(DeviceIntPtr dev, WindowPtr p1, Mask mask,
 {
     WindowPtr p2;
 
-    while (p1)
-        {
+    while (p1) {
 	p2 = p1->firstChild;
 	(void)DeliverEventsToWindow(p1, ev, count, mask, NullGrab, dev->id);
 	FindInterestedChildren(dev, p2, mask, ev, count);

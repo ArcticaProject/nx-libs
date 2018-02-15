@@ -114,8 +114,7 @@ ProcXChangeKeyboardDevice(register ClientPtr client)
     rep.sequenceNumber = client->sequence;
 
     dev = LookupDeviceIntRec(stuff->deviceid);
-    if (dev == NULL)
-	{
+    if (dev == NULL) {
 	rep.status = -1;
 	SendErrorToClient(client, IReqCode, X_ChangeKeyboardDevice, 0,
 			  BadDevice);
@@ -123,8 +122,7 @@ ProcXChangeKeyboardDevice(register ClientPtr client)
     }
 
     k = dev->key;
-    if (k == NULL)
-	{
+    if (k == NULL) {
 	rep.status = -1;
 	SendErrorToClient(client, IReqCode, X_ChangeKeyboardDevice, 0,
 			  BadMatch);
@@ -139,10 +137,8 @@ ProcXChangeKeyboardDevice(register ClientPtr client)
 	     (xkbd->sync.frozen &&
 	      xkbd->sync.other && !SameClient(xkbd->sync.other, client)))
 	rep.status = GrabFrozen;
-    else
-	{
-	if (ChangeKeyboardDevice (xkbd, dev) != Success)
-	    {
+    else {
+	if (ChangeKeyboardDevice(xkbd, dev) != Success) {
 	    SendErrorToClient(client, IReqCode, X_ChangeKeyboardDevice, 0,
 			      BadDevice);
 	    return Success;
@@ -157,11 +153,11 @@ ProcXChangeKeyboardDevice(register ClientPtr client)
 	df->revert = xf->revert;
 	df->time = xf->time;
 	df->traceGood = xf->traceGood;
-	if (df->traceSize != xf->traceSize)
-	    {
+	if (df->traceSize != xf->traceSize) {
 	    Must_have_memory = TRUE;	/* XXX */
 	    df->trace = (WindowPtr *) realloc(df->trace,
-		xf->traceSize * sizeof(WindowPtr));
+					       xf->traceSize *
+					       sizeof(WindowPtr));
 	    Must_have_memory = FALSE;	/* XXX */
 	}
 	df->traceSize = xf->traceSize;
@@ -177,13 +173,13 @@ ProcXChangeKeyboardDevice(register ClientPtr client)
 
 	SendEventToAllWindows(dev, ChangeDeviceNotifyMask, (xEvent *) & ev, 1);
 	SendMappingNotify(MappingKeyboard, k->curKeySyms.minKeyCode,
-	    k->curKeySyms.maxKeyCode - k->curKeySyms.minKeyCode + 1,client);
+			  k->curKeySyms.maxKeyCode - k->curKeySyms.minKeyCode +
+			  1, client);
 
 	rep.status = 0;
     }
 
-    WriteReplyToClient (client, sizeof (xChangeKeyboardDeviceReply), 
-	&rep);
+    WriteReplyToClient(client, sizeof(xChangeKeyboardDeviceReply), &rep);
     return Success;
 }
 

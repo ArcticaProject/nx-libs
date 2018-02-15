@@ -98,8 +98,7 @@ ProcXGetDeviceFocus(ClientPtr client)
     REQUEST_SIZE_MATCH(xGetDeviceFocusReq);
 
     dev = LookupDeviceIntRec(stuff->deviceid);
-    if (dev == NULL || !dev->focus)
-	{
+    if (dev == NULL || !dev->focus) {
 	SendErrorToClient(client, IReqCode, X_GetDeviceFocus, 0, BadDevice);
 	return Success;
     }

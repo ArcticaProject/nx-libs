@@ -105,19 +105,16 @@ ProcXOpenDevice(register ClientPtr client)
     REQUEST_SIZE_MATCH(xOpenDeviceReq);
 
     if (stuff->deviceid == inputInfo.pointer->id ||
-	stuff->deviceid == inputInfo.keyboard->id)
-	{
+	stuff->deviceid == inputInfo.keyboard->id) {
 	SendErrorToClient(client, IReqCode, X_OpenDevice, 0, BadDevice);
 	return Success;
     }
 
-    if ((dev = LookupDeviceIntRec(stuff->deviceid)) == NULL) /* not open */
-	{
+    if ((dev = LookupDeviceIntRec(stuff->deviceid)) == NULL) {	/* not open */
 	for (dev = inputInfo.off_devices; dev; dev = dev->next)
 	    if (dev->id == stuff->deviceid)
 		break;
-	if (dev == NULL)
-	    {
+	if (dev == NULL) {
 	    SendErrorToClient(client, IReqCode, X_OpenDevice, 0, BadDevice);
 	    return Success;
 	}
@@ -125,8 +122,7 @@ ProcXOpenDevice(register ClientPtr client)
     }
 
     OpenInputDevice(dev, client, &status);
-    if (status != Success)
-	{
+    if (status != Success) {
 	SendErrorToClient(client, IReqCode, X_OpenDevice, 0, status);
 	return Success;
     }
@@ -137,34 +133,28 @@ ProcXOpenDevice(register ClientPtr client)
     rep.repType = X_Reply;
     rep.RepType = X_OpenDevice;
     rep.sequenceNumber = client->sequence;
-    if (dev->key != NULL)
-	{
+    if (dev->key != NULL) {
 	evbase[j].class = KeyClass;
 	evbase[j++].event_type_base = event_base[KeyClass];
     }
-    if (dev->button != NULL)
-	{
+    if (dev->button != NULL) {
 	evbase[j].class = ButtonClass;
 	evbase[j++].event_type_base = event_base[ButtonClass];
     }
-    if (dev->valuator != NULL)
-	{
+    if (dev->valuator != NULL) {
 	evbase[j].class = ValuatorClass;
 	evbase[j++].event_type_base = event_base[ValuatorClass];
     }
     if (dev->kbdfeed != NULL || dev->ptrfeed != NULL || dev->leds != NULL ||
-	dev->intfeed != NULL || dev->bell != NULL || dev->stringfeed != NULL)
-	{
+	dev->intfeed != NULL || dev->bell != NULL || dev->stringfeed != NULL) {
 	evbase[j].class = FeedbackClass;
 	evbase[j++].event_type_base = event_base[FeedbackClass];
     }
-    if (dev->focus != NULL)
-	{
+    if (dev->focus != NULL) {
 	evbase[j].class = FocusClass;
 	evbase[j++].event_type_base = event_base[FocusClass];
     }
-    if (dev->proximity != NULL)
-	{
+    if (dev->proximity != NULL) {
 	evbase[j].class = ProximityClass;
 	evbase[j++].event_type_base = event_base[ProximityClass];
     }

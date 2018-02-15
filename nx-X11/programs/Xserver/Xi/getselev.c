@@ -115,23 +115,20 @@ ProcXGetSelectedExtensionEvents(register ClientPtr client)
     rep.this_client_count = 0;
     rep.all_clients_count = 0;
 
-    if (!(pWin = LookupWindow(stuff->window, client)))
-        {
+    if (!(pWin = LookupWindow(stuff->window, client))) {
 	SendErrorToClient(client, IReqCode, X_GetSelectedExtensionEvents, 0,
 			  BadWindow);
 	return Success;
     }
 
-    if ((pOthers = wOtherInputMasks(pWin)) != 0)
-	{
+    if ((pOthers = wOtherInputMasks(pWin)) != 0) {
 	for (others = pOthers->inputClients; others; others = others->next)
 	    for (i = 0; i < EMASKSIZE; i++)
 		tclient = ClassFromMask(NULL, others->mask[i], i,
 				  &rep.all_clients_count, COUNT);
 
 	for (others = pOthers->inputClients; others; others = others->next)
-	    if (SameClient(others, client))
-		{
+	    if (SameClient(others, client)) {
 		for (i = 0; i < EMASKSIZE; i++)
 		    tclient = ClassFromMask(NULL, others->mask[i], i,
 				      &rep.this_client_count, COUNT);
@@ -147,17 +144,18 @@ ProcXGetSelectedExtensionEvents(register ClientPtr client)
 	aclient = buf + rep.this_client_count;
 	if (others)
 	    for (i = 0; i < EMASKSIZE; i++)
-		tclient = ClassFromMask (tclient, others->mask[i], i, NULL, CREATE);
+		tclient =
+		    ClassFromMask(tclient, others->mask[i], i, NULL, CREATE);
 
 	for (others = pOthers->inputClients; others; others = others->next)
 	    for (i = 0; i < EMASKSIZE; i++)
-		aclient = ClassFromMask (aclient, others->mask[i], i, NULL, CREATE);
+		aclient =
+		    ClassFromMask(aclient, others->mask[i], i, NULL, CREATE);
     }
 
     WriteReplyToClient(client, sizeof(xGetSelectedExtensionEventsReply), &rep);
 
-    if (total_length)
-	{
+    if (total_length) {
 	client->pSwapReplyFunc = (ReplySwapPtr) Swap32Write;
 	WriteSwappedDataToClient(client, total_length, buf);
 	free(buf);

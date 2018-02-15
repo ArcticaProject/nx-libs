@@ -102,13 +102,11 @@ ProcXSetDeviceMode(register ClientPtr client)
     rep.sequenceNumber = client->sequence;
 
     dev = LookupDeviceIntRec(stuff->deviceid);
-    if (dev == NULL)
-	{
+    if (dev == NULL) {
 	SendErrorToClient(client, IReqCode, X_SetDeviceMode, 0, BadDevice);
 	return Success;
     }
-    if (dev->valuator == NULL)
-	{
+    if (dev->valuator == NULL) {
 	SendErrorToClient(client, IReqCode, X_SetDeviceMode, 0, BadMatch);
 	return Success;
     }
@@ -119,8 +117,7 @@ ProcXSetDeviceMode(register ClientPtr client)
 
     if (rep.status == Success)
 	dev->valuator->mode = stuff->mode;
-    else if (rep.status != AlreadyGrabbed)
-	{
+    else if (rep.status != AlreadyGrabbed) {
 	SendErrorToClient(client, IReqCode, X_SetDeviceMode, 0, rep.status);
 	return Success;
     }

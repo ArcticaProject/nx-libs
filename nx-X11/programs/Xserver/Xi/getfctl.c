@@ -105,10 +105,8 @@ ProcXGetFeedbackControl(ClientPtr client)
     REQUEST_SIZE_MATCH(xGetFeedbackControlReq);
 
     dev = LookupDeviceIntRec(stuff->deviceid);
-    if (dev == NULL)
-	{
-	SendErrorToClient (client, IReqCode, X_GetFeedbackControl, 0, 
-		BadDevice);
+    if (dev == NULL) {
+	SendErrorToClient(client, IReqCode, X_GetFeedbackControl, 0, BadDevice);
 	return Success;
     }
 
@@ -118,50 +116,40 @@ ProcXGetFeedbackControl(ClientPtr client)
     rep.sequenceNumber = client->sequence;
     rep.num_feedbacks = 0;
 
-    for (k=dev->kbdfeed; k; k=k->next)
-	{
+    for (k = dev->kbdfeed; k; k = k->next) {
 	rep.num_feedbacks++;
 	total_length += sizeof(xKbdFeedbackState);
     }
-    for (p=dev->ptrfeed; p; p=p->next)
-	{
+    for (p = dev->ptrfeed; p; p = p->next) {
 	rep.num_feedbacks++;
 	total_length += sizeof(xPtrFeedbackState);
     }
-    for (s=dev->stringfeed; s; s=s->next)
-	{
+    for (s = dev->stringfeed; s; s = s->next) {
 	rep.num_feedbacks++;
 	total_length += sizeof(xStringFeedbackState) +
 	    (s->ctrl.num_symbols_supported * sizeof(KeySym));
     }
-    for (i=dev->intfeed; i; i=i->next)
-	{
+    for (i = dev->intfeed; i; i = i->next) {
 	rep.num_feedbacks++;
 	total_length += sizeof(xIntegerFeedbackState);
     }
-    for (l=dev->leds; l; l=l->next)
-	{
+    for (l = dev->leds; l; l = l->next) {
 	rep.num_feedbacks++;
 	total_length += sizeof(xLedFeedbackState);
     }
-    for (b=dev->bell; b; b=b->next)
-	{
+    for (b = dev->bell; b; b = b->next) {
 	rep.num_feedbacks++;
 	total_length += sizeof(xBellFeedbackState);
     }
 
-    if (total_length == 0)
-	{
-	SendErrorToClient(client, IReqCode, X_GetFeedbackControl, 0, 
-		BadMatch);
+    if (total_length == 0) {
+	SendErrorToClient(client, IReqCode, X_GetFeedbackControl, 0, BadMatch);
 	return Success;
     }
 
     buf = (char *)malloc(total_length);
-    if (!buf)
-	{
-	SendErrorToClient(client, IReqCode, X_GetFeedbackControl, 0, 
-		BadAlloc);
+    if (!buf) {
+	SendErrorToClient(client, IReqCode, X_GetFeedbackControl, 0, BadAlloc);
 	return Success;
     }
     savbuf = buf;
@@ -210,8 +198,7 @@ CopySwapKbdFeedback(ClientPtr client, KbdFeedbackPtr k, char **buf)
     k2->global_auto_repeat = k->ctrl.autoRepeat;
     for (i = 0; i < 32; i++)
 	k2->auto_repeats[i] = k->ctrl.autoRepeats[i];
-    if (client->swapped)
-	{
+    if (client->swapped) {
 	swaps(&k2->length);
 	swaps(&k2->pitch);
 	swaps(&k2->duration);
@@ -239,8 +226,7 @@ CopySwapPtrFeedback(ClientPtr client, PtrFeedbackPtr p, char **buf)
     p2->accelNum = p->ctrl.num;
     p2->accelDenom = p->ctrl.den;
     p2->threshold = p->ctrl.threshold;
-    if (client->swapped)
-	{
+    if (client->swapped) {
 	swaps(&p2->length);
 	swaps(&p2->accelNum);
 	swaps(&p2->accelDenom);
@@ -267,8 +253,7 @@ CopySwapIntegerFeedback(ClientPtr client, IntegerFeedbackPtr i, char **buf)
     i2->resolution = i->ctrl.resolution;
     i2->min_value = i->ctrl.min_value;
     i2->max_value = i->ctrl.max_value;
-    if (client->swapped)
-	{
+    if (client->swapped) {
 	swaps(&i2->length);
 	swapl(&i2->resolution);
 	swapl(&i2->min_value);
@@ -301,14 +286,12 @@ CopySwapStringFeedback(ClientPtr client, StringFeedbackPtr s, char **buf)
     kptr = (KeySym *) (*buf);
     for (i = 0; i < s->ctrl.num_symbols_supported; i++)
 	*kptr++ = *(s->ctrl.symbols_supported + i);
-    if (client->swapped)
-	{
+    if (client->swapped) {
 	swaps(&s2->length);
 	swaps(&s2->max_symbols);
 	swaps(&s2->num_syms_supported);
 	kptr = (KeySym *) (*buf);
-	for (i=0; i<s->ctrl.num_symbols_supported; i++,kptr++)
-	    {
+	for (i = 0; i < s->ctrl.num_symbols_supported; i++, kptr++) {
 	    swapl(kptr);
 	}
     }
@@ -332,8 +315,7 @@ CopySwapLedFeedback(ClientPtr client, LedFeedbackPtr l, char **buf)
     l2->id = l->ctrl.id;
     l2->led_values = l->ctrl.led_values;
     l2->led_mask = l->ctrl.led_mask;
-    if (client->swapped)
-	{
+    if (client->swapped) {
 	swaps(&l2->length);
 	swapl(&l2->led_values);
 	swapl(&l2->led_mask);
@@ -359,8 +341,7 @@ CopySwapBellFeedback(ClientPtr client, BellFeedbackPtr b, char **buf)
     b2->percent = b->ctrl.percent;
     b2->pitch = b->ctrl.pitch;
     b2->duration = b->ctrl.duration;
-    if (client->swapped)
-	{
+    if (client->swapped) {
 	swaps(&b2->length);
 	swaps(&b2->pitch);
 	swaps(&b2->duration);

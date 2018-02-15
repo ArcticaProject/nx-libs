@@ -99,8 +99,7 @@ ProcXGetExtensionVersion(register ClientPtr client)
     REQUEST_AT_LEAST_SIZE(xGetExtensionVersionReq);
 
     if (stuff->length != (sizeof(xGetExtensionVersionReq) +
-	stuff->nbytes + 3)>>2)
-	{
+			  stuff->nbytes + 3) >> 2) {
 	SendErrorToClient(client, IReqCode, X_GetExtensionVersion, 0,
 			  BadLength);
 	return Success;
@@ -115,12 +114,9 @@ ProcXGetExtensionVersion(register ClientPtr client)
     rep.minor_version = 0;
 
     rep.present = TRUE;
-    if (rep.present)
-	{
-	rep.major_version = 
-	    AllExtensionVersions[IReqCode-128].major_version;
-	rep.minor_version = 
-	    AllExtensionVersions[IReqCode-128].minor_version;
+    if (rep.present) {
+	rep.major_version = AllExtensionVersions[IReqCode - 128].major_version;
+	rep.minor_version = AllExtensionVersions[IReqCode - 128].minor_version;
     }
     WriteReplyToClient(client, sizeof(xGetExtensionVersionReply), &rep);
 

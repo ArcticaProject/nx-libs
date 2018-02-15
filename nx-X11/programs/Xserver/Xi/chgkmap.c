@@ -109,8 +109,7 @@ ProcXChangeDeviceKeyMapping(register ClientPtr client)
     REQUEST_FIXED_SIZE(xChangeDeviceKeyMappingReq, count * sizeof(CARD32));
 
     dev = LookupDeviceIntRec(stuff->deviceid);
-    if (dev == NULL)
-	{
+    if (dev == NULL) {
 	SendErrorToClient(client, IReqCode, X_ChangeDeviceKeyMapping, 0,
 			  BadDevice);
 	return Success;
@@ -118,11 +117,10 @@ ProcXChangeDeviceKeyMapping(register ClientPtr client)
     len = stuff->length - (sizeof(xChangeDeviceKeyMappingReq) >> 2);
 
     ret = ChangeKeyMapping(client, dev, len, DeviceMappingNotify,
-	stuff->firstKeyCode, stuff->keyCodes, stuff->keySymsPerKeyCode, 
-	(KeySym *)&stuff[1]);
+			   stuff->firstKeyCode, stuff->keyCodes,
+			   stuff->keySymsPerKeyCode, (KeySym *) & stuff[1]);
 
     if (ret != Success)
-	SendErrorToClient (client, IReqCode, X_ChangeDeviceKeyMapping, 0, 
-		ret);
+	SendErrorToClient(client, IReqCode, X_ChangeDeviceKeyMapping, 0, ret);
     return Success;
 }

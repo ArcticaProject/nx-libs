@@ -107,51 +107,39 @@ ProcXUngrabDeviceButton(ClientPtr client)
     REQUEST_SIZE_MATCH(xUngrabDeviceButtonReq);
 
     dev = LookupDeviceIntRec(stuff->grabbed_device);
-    if (dev == NULL)
-	{
-	SendErrorToClient(client, IReqCode, X_UngrabDeviceButton, 0, 
-	    BadDevice);
+    if (dev == NULL) {
+	SendErrorToClient(client, IReqCode, X_UngrabDeviceButton, 0, BadDevice);
 	return Success;
     }
-    if (dev->button == NULL)
-	{
-	SendErrorToClient(client, IReqCode, X_UngrabDeviceButton, 0, 
-		BadMatch);
+    if (dev->button == NULL) {
+	SendErrorToClient(client, IReqCode, X_UngrabDeviceButton, 0, BadMatch);
 	return Success;
     }
 
-    if (stuff->modifier_device != UseXKeyboard)
-	{
+    if (stuff->modifier_device != UseXKeyboard) {
 	mdev = LookupDeviceIntRec(stuff->modifier_device);
-	if (mdev == NULL)
-	    {
+	if (mdev == NULL) {
 	    SendErrorToClient(client, IReqCode, X_UngrabDeviceButton, 0,
 			      BadDevice);
 	    return Success;
 	}
-	if (mdev->key == NULL)
-	    {
+	if (mdev->key == NULL) {
 	    SendErrorToClient(client, IReqCode, X_UngrabDeviceButton, 0,
 			      BadMatch);
 	    return Success;
 	}
-	}
-    else
+    } else
 	mdev = (DeviceIntPtr) LookupKeyboardDevice();
 
     pWin = LookupWindow(stuff->grabWindow, client);
-    if (!pWin)
-	{
-	SendErrorToClient(client, IReqCode, X_UngrabDeviceButton, 0, 
-	    BadWindow);
+    if (!pWin) {
+	SendErrorToClient(client, IReqCode, X_UngrabDeviceButton, 0, BadWindow);
 	return Success;
     }
 
     if ((stuff->modifiers != AnyModifier) &&
-	(stuff->modifiers & ~AllModifiersMask))
-	{
-	SendErrorToClient(client, IReqCode, X_UngrabDeviceButton, 0, 
-	    BadValue);
+	(stuff->modifiers & ~AllModifiersMask)) {
+	SendErrorToClient(client, IReqCode, X_UngrabDeviceButton, 0, BadValue);
 	return Success;
     }
 

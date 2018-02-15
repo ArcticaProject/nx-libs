@@ -113,21 +113,18 @@ ProcXGetDeviceDontPropagateList(register ClientPtr client)
     rep.count = 0;
 
     pWin = (WindowPtr) LookupWindow(stuff->window, client);
-    if (!pWin)
-        {
+    if (!pWin) {
 	client->errorValue = stuff->window;
 	SendErrorToClient(client, IReqCode, X_GetDeviceDontPropagateList, 0,
 			  BadWindow);
 	return Success;
     }
 
-    if ((others = wOtherInputMasks(pWin)) != 0)
-	{
+    if ((others = wOtherInputMasks(pWin)) != 0) {
 	for (i = 0; i < EMASKSIZE; i++)
 	    tbuf = ClassFromMask(NULL, others->dontPropagateMask[i], i,
 				 &count, COUNT);
-	if (count)
-	    {
+	if (count) {
 	    rep.count = count;
 	    buf = (XEventClass *) malloc(rep.count * sizeof(XEventClass));
 	    rep.length = (rep.count * sizeof(XEventClass) + 3) >> 2;
@@ -139,11 +136,9 @@ ProcXGetDeviceDontPropagateList(register ClientPtr client)
 	}
     }
 
-    WriteReplyToClient (client, sizeof (xGetDeviceDontPropagateListReply), 
-	&rep);
+    WriteReplyToClient(client, sizeof(xGetDeviceDontPropagateListReply), &rep);
 
-    if (count)
-	{
+    if (count) {
 	client->pSwapReplyFunc = (ReplySwapPtr) Swap32Write;
 	WriteSwappedDataToClient(client, count * sizeof(XEventClass), buf);
 	free(buf);
@@ -167,11 +162,9 @@ XEventClass
     Mask tmask = 0x80000000;
 
     for (i = 0; i < 32; i++, tmask >>= 1)
-	if (tmask & mask)
-	    {
+	if (tmask & mask) {
 	    for (j = 0; j < ExtEventIndex; j++)
-		if (EventInfo[j].mask == tmask)
-		    {
+		if (EventInfo[j].mask == tmask) {
 		    if (mode == COUNT)
 			(*count)++;
 		    else

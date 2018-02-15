@@ -95,10 +95,8 @@ ProcXQueryDeviceState(register ClientPtr client)
     rep.sequenceNumber = client->sequence;
 
     dev = LookupDeviceIntRec(stuff->deviceid);
-    if (dev == NULL)
-	{
-	SendErrorToClient(client, IReqCode, X_QueryDeviceState, 0, 
-		BadDevice);
+    if (dev == NULL) {
+	SendErrorToClient(client, IReqCode, X_QueryDeviceState, 0, BadDevice);
 	return Success;
     }
 
@@ -107,36 +105,29 @@ ProcXQueryDeviceState(register ClientPtr client)
 	MaybeStopDeviceHint(dev, client);
 
     k = dev->key;
-    if (k != NULL)
-	{
+    if (k != NULL) {
 	total_length += sizeof(xKeyState);
 	num_classes++;
     }
 
     b = dev->button;
-    if (b != NULL)
-	{
+    if (b != NULL) {
 	total_length += sizeof(xButtonState);
 	num_classes++;
     }
 
-    if (v != NULL)
-	{
-	total_length += (sizeof(xValuatorState) + 
-			(v->numAxes * sizeof(int)));
+    if (v != NULL) {
+	total_length += (sizeof(xValuatorState) + (v->numAxes * sizeof(int)));
 	num_classes++;
     }
     buf = (char *)malloc(total_length);
-    if (!buf)
-	{
-	SendErrorToClient(client, IReqCode, X_QueryDeviceState, 0, 
-		BadAlloc);
+    if (!buf) {
+	SendErrorToClient(client, IReqCode, X_QueryDeviceState, 0, BadAlloc);
 	return Success;
     }
     savbuf = buf;
 
-    if (k != NULL)
-	{
+    if (k != NULL) {
 	tk = (xKeyState *) buf;
 	tk->class = KeyClass;
 	tk->length = sizeof(xKeyState);
@@ -146,8 +137,7 @@ ProcXQueryDeviceState(register ClientPtr client)
 	buf += sizeof(xKeyState);
     }
 
-    if (b != NULL)
-	{
+    if (b != NULL) {
 	tb = (xButtonState *) buf;
 	tb->class = ButtonClass;
 	tb->length = sizeof(xButtonState);
@@ -157,19 +147,16 @@ ProcXQueryDeviceState(register ClientPtr client)
 	buf += sizeof(xButtonState);
     }
 
-    if (v != NULL)
-	{
+    if (v != NULL) {
 	tv = (xValuatorState *) buf;
 	tv->class = ValuatorClass;
 	tv->length = sizeof(xValuatorState);
 	tv->num_valuators = v->numAxes;
 	tv->mode = v->mode;
 	buf += sizeof(xValuatorState);
-	for (i=0, values=v->axisVal; i<v->numAxes; i++)
-	    {
+	for (i = 0, values = v->axisVal; i < v->numAxes; i++) {
 	    *((int *)buf) = *values++;
-	    if (client->swapped)
-		{
+	    if (client->swapped) {
 		swapl((int *)buf);	/* macro - braces needed */
 	    }
 	    buf += sizeof(int);

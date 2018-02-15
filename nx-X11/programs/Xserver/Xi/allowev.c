@@ -100,15 +100,13 @@ ProcXAllowDeviceEvents(register ClientPtr client)
     REQUEST_SIZE_MATCH(xAllowDeviceEventsReq);
 
     thisdev = LookupDeviceIntRec(stuff->deviceid);
-    if (thisdev == NULL)
-	{
+    if (thisdev == NULL) {
 	SendErrorToClient(client, IReqCode, X_AllowDeviceEvents, 0, BadDevice);
 	return Success;
     }
     time = ClientTimeToServerTime(stuff->time);
 
-    switch (stuff->mode)
-        {
+    switch (stuff->mode) {
     case ReplayThisDevice:
 	AllowSome(client, time, thisdev, NOT_GRABBED);
 	break;
@@ -128,8 +126,7 @@ ProcXAllowDeviceEvents(register ClientPtr client)
 	AllowSome(client, time, thisdev, THAWED_BOTH);
 	break;
     default:
-	    SendErrorToClient(client, IReqCode, X_AllowDeviceEvents, 0, 
-		BadValue);
+	SendErrorToClient(client, IReqCode, X_AllowDeviceEvents, 0, BadValue);
 	client->errorValue = stuff->mode;
 	return Success;
     }

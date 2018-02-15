@@ -103,16 +103,14 @@ ProcXGetDeviceButtonMapping(register ClientPtr client)
     rep.sequenceNumber = client->sequence;
 
     dev = LookupDeviceIntRec(stuff->deviceid);
-    if (dev == NULL)
-	{
+    if (dev == NULL) {
 	SendErrorToClient(client, IReqCode, X_GetDeviceButtonMapping, 0,
 			  BadDevice);
 	return Success;
     }
 
     b = dev->button;
-    if (b == NULL)
-	{
+    if (b == NULL) {
 	SendErrorToClient(client, IReqCode, X_GetDeviceButtonMapping, 0,
 			  BadMatch);
 	return Success;
@@ -120,8 +118,7 @@ ProcXGetDeviceButtonMapping(register ClientPtr client)
     rep.nElts = b->numButtons;
     rep.length = (rep.nElts + (4 - 1)) / 4;
     WriteReplyToClient(client, sizeof(xGetDeviceButtonMappingReply), &rep);
-    WriteToClient(client, rep.nElts,
-			(char *)&b->map[1]);
+    WriteToClient(client, rep.nElts, (char *)&b->map[1]);
     return Success;
 }
 

@@ -99,8 +99,7 @@ ProcXUngrabDevice(register ClientPtr client)
     REQUEST_SIZE_MATCH(xUngrabDeviceReq);
 
     dev = LookupDeviceIntRec(stuff->deviceid);
-    if (dev == NULL)
-	{
+    if (dev == NULL) {
 	SendErrorToClient(client, IReqCode, X_UngrabDevice, 0, BadDevice);
 	return Success;
     }
