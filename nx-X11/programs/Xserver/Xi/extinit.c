@@ -219,7 +219,7 @@ static	XExtensionVersion	thisversion =
  */
 
 void
-XInputExtensionInit()
+XInputExtensionInit(void)
 {
     ExtensionEntry *extEntry;
 
@@ -747,7 +747,7 @@ FixExtensionEvents(ExtensionEntry * extEntry)
  */
 
 void
-RestoreExtensionEvents()
+RestoreExtensionEvents(void)
 {
     int i;
 
@@ -837,7 +837,7 @@ AssignTypeAndName(DeviceIntPtr dev, Atom type, char *name)
  */
 
 void
-MakeDeviceTypeAtoms()
+MakeDeviceTypeAtoms(void)
 {
     int i;
 
@@ -908,7 +908,7 @@ AllowPropagateSuppress(Mask mask)
  */
 
 Mask
-GetNextExtEventMask()
+GetNextExtEventMask(void)
 {
     int i;
     Mask mask = lastExtEventMask;

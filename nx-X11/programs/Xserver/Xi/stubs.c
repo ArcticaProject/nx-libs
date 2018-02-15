@@ -191,7 +191,7 @@ CloseInputDevice(DeviceIntPtr d, ClientPtr client)
  */
 
 void
-AddOtherInputDevices()
+AddOtherInputDevices(void)
 {
     /**********************************************************************
      for each uninitialized device, do something like: 
