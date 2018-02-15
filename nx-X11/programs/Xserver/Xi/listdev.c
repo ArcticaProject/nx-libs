@@ -121,7 +121,7 @@ ProcXListInputDevices(register ClientPtr client)
 	SizeDeviceInfo(d, &namesize, &size);
 
     total_length = numdevs * sizeof(xDeviceInfo) + size + namesize;
-    devbuf = (char *)calloc(1, total_length);
+    devbuf = (char *) calloc (1, total_length);
     classbuf = devbuf + (numdevs * sizeof(xDeviceInfo));
     namebuf = classbuf + size;
     savbuf = devbuf;
@@ -162,7 +162,7 @@ SizeDeviceInfo(DeviceIntPtr d, int *namesize, int *size)
     if (d->valuator != NULL) {
 	chunks = ((int)d->valuator->numAxes + 19) / VPC;
 	*size += (chunks * sizeof(xValuatorInfo) +
-	     d->valuator->numAxes * sizeof(xAxisInfo));
+		  d->valuator->numAxes * sizeof(xAxisInfo));
     }
 }
 

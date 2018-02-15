@@ -99,7 +99,6 @@ ChangeKeyboardDevice(DeviceIntPtr old_dev, DeviceIntPtr new_dev)
     return BadMatch;
 }
 
-
 /***********************************************************************
  *
  * Caller:	ProcXChangePointerDevice

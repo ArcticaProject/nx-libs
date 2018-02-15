@@ -203,8 +203,8 @@ Mask PropagateMask[MAX_DEVICES];
 
 static	XExtensionVersion	thisversion = 
 					{XI_Present, 
-    SERVER_XI_MAJOR_VERSION,
-    SERVER_XI_MINOR_VERSION,
+					 SERVER_XI_MAJOR_VERSION,
+					 SERVER_XI_MINOR_VERSION,
 };
 
 /**********************************************************************
@@ -443,7 +443,7 @@ SProcIDispatch(register ClientPtr client)
 void
 SReplyIDispatch(ClientPtr client, int len, xGrabDeviceReply * rep)
 					/* All we look at is the type field */
-{			/* This is common to all replies    */
+{	/* This is common to all replies    */
     if (rep->RepType == X_GetExtensionVersion)
 	SRepXGetExtensionVersion(client, len,
 				 (xGetExtensionVersionReply *) rep);
@@ -822,7 +822,7 @@ IResetProc(ExtensionEntry * unused)
  *
  */
 
-void
+ void
 AssignTypeAndName(DeviceIntPtr dev, Atom type, char *name)
 {
     dev->type = type;

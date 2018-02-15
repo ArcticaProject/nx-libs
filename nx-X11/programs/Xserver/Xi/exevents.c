@@ -130,9 +130,10 @@ ProcessOtherEvent(xEventPtr xE, register DeviceIntPtr other, int count)
     }
     if (DeviceEventCallback) {
 	DeviceEventInfoRec eventinfo;
+
 	eventinfo.events = (xEventPtr) xE;
 	eventinfo.count = count;
-	CallCallbacks(&DeviceEventCallback, (void *)&eventinfo);
+	CallCallbacks(&DeviceEventCallback, (void *) & eventinfo);
     }
     for (i = 1; i < count; i++)
 	if ((++xV)->type == DeviceValuator) {
@@ -180,7 +181,7 @@ ProcessOtherEvent(xEventPtr xE, register DeviceIntPtr other, int count)
 		xE->u.u.type = DeviceKeyRelease;
 		ProcessOtherEvent(xE, other, count);
 		xE->u.u.type = DeviceKeyPress;
-	/* release can have side effects, don't fall through */
+		/* release can have side effects, don't fall through */
 		ProcessOtherEvent(xE, other, count);
 	    }
 	    return;
@@ -191,7 +192,7 @@ ProcessOtherEvent(xEventPtr xE, register DeviceIntPtr other, int count)
 	k->prev_state = k->state;
 	for (i = 0, mask = 1; modifiers; i++, mask <<= 1) {
 	    if (mask & modifiers) {
-	/* This key affects modifier "i" */
+		/* This key affects modifier "i" */
 		k->modifierKeyCount[i]++;
 		k->state |= mask;
 		modifiers &= ~mask;
@@ -212,7 +213,7 @@ ProcessOtherEvent(xEventPtr xE, register DeviceIntPtr other, int count)
 	k->prev_state = k->state;
 	for (i = 0, mask = 1; modifiers; i++, mask <<= 1) {
 	    if (mask & modifiers) {
-	/* This key affects modifier "i" */
+		/* This key affects modifier "i" */
 		if (--k->modifierKeyCount[i] <= 0) {
 		    k->modifierKeyCount[i] = 0;
 		    k->state &= ~mask;
@@ -320,6 +321,7 @@ FixDeviceStateNotify(DeviceIntPtr dev, deviceStateNotify * ev, KeyClassPtr k,
     }
     if (v) {
 	int nval = v->numAxes - first;
+
 	ev->classes_reported |= (1 << ValuatorClass);
 	ev->classes_reported |= (dev->valuator->mode << ModeBitsShift);
 	ev->num_valuators = nval < 3 ? nval : 3;
@@ -660,7 +662,7 @@ AddExtensionClient(WindowPtr pWin, ClientPtr client, Mask mask, int mskidx)
     others->resource = FakeClientID(client->index);
     others->next = pWin->optional->inputMasks->inputClients;
     pWin->optional->inputMasks->inputClients = others;
-    if (!AddResource(others->resource, RT_INPUTCLIENT, (void *)pWin))
+    if (!AddResource(others->resource, RT_INPUTCLIENT, (void *) pWin))
 	return BadAlloc;
     return Success;
 }
@@ -721,6 +723,7 @@ int
 InputClientGone(register WindowPtr pWin, XID id)
 {
     register InputClientsPtr other, prev;
+
     if (!wOtherInputMasks(pWin))
 	return (Success);
     prev = 0;
@@ -876,7 +879,7 @@ SetModifierMapping(ClientPtr client, DeviceIntPtr dev, int len, int rlen,
      */
     if (!AllModifierKeysAreUp(dev, (*k)->modifierKeyMap,
 			      (int)(*k)->maxKeysPerModifier, inputMap,
-	 (int)numKeyPerModifier)
+			      (int)numKeyPerModifier)
 	|| !AllModifierKeysAreUp(dev, inputMap, (int)numKeyPerModifier,
 				 (*k)->modifierKeyMap,
 				 (int)(*k)->maxKeysPerModifier)) {
@@ -1131,6 +1134,7 @@ MaybeStopDeviceHint(register DeviceIntPtr dev, ClientPtr client)
 {
     WindowPtr pWin;
     GrabPtr grab = dev->grab;
+
     pWin = dev->valuator->motionHintWindow;
 
     if ((grab && SameClient(grab, client) &&
@@ -1140,7 +1144,7 @@ MaybeStopDeviceHint(register DeviceIntPtr dev, ClientPtr client)
 	    DevicePointerMotionHintMask)))) ||
 	(!grab &&
 	 (DeviceEventMaskForClient(dev, pWin, client) &
-						 DevicePointerMotionHintMask)))
+	  DevicePointerMotionHintMask)))
 	dev->valuator->motionHintWindow = NullWindow;
 }
 

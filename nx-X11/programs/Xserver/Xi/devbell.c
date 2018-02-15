@@ -96,7 +96,7 @@ ProcXDeviceBell(register ClientPtr client)
     int base;
     int newpercent;
     CARD8 class;
-    void *ctrl;
+    void * ctrl;
     BellProcPtr proc;
 
     REQUEST(xDeviceBellReq);
@@ -125,7 +125,7 @@ ProcXDeviceBell(register ClientPtr client)
 	}
 	base = k->ctrl.bell;
 	proc = k->BellProc;
-	ctrl = (void *)&(k->ctrl);
+	ctrl = (void *) &(k->ctrl);
 	class = KbdFeedbackClass;
     } else if (stuff->feedbackclass == BellFeedbackClass) {
 	for (b = dev->bell; b; b = b->next)
@@ -138,7 +138,7 @@ ProcXDeviceBell(register ClientPtr client)
 	}
 	base = b->ctrl.percent;
 	proc = b->BellProc;
-	ctrl = (void *)&(b->ctrl);
+	ctrl = (void *) &(b->ctrl);
 	class = BellFeedbackClass;
     } else {
 	client->errorValue = stuff->feedbackclass;

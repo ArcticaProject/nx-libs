@@ -147,9 +147,9 @@ ProcXChangeFeedbackControl(ClientPtr client)
 	xStringFeedbackCtl *f = ((xStringFeedbackCtl *) & stuff[1]);
 	    if (client->swapped)
 		{
-	    if (len < (sizeof(xStringFeedbackCtl) + 3) >> 2)
-		return BadLength;
-	    swaps(&f->num_keysyms);
+		if (len < (sizeof(xStringFeedbackCtl) + 3) >> 2)
+		    return BadLength;
+		swaps(&f->num_keysyms);
 	}
 	if (len != ((sizeof(xStringFeedbackCtl) >> 2) + f->num_keysyms)) {
 	    SendErrorToClient(client, IReqCode, X_ChangeFeedbackControl,
@@ -309,6 +309,7 @@ ChangeKbdFeedback(ClientPtr client, DeviceIntPtr dev, long unsigned int mask,
     if (mask & DvAutoRepeatMode) {
 	int inx = (key >> 3);
 	int kmask = (1 << (key & 7));
+
 	t = (CARD8) f->auto_repeat_mode;
 	if (t == AutoRepeatModeOff) {
 	    if (key == DO_ALL)

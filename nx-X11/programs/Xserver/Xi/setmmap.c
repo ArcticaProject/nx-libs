@@ -112,7 +112,7 @@ ProcXSetDeviceModifierMapping(ClientPtr client)
     rep.sequenceNumber = client->sequence;
 
     ret = SetModifierMapping(client, dev, stuff->length,
-			   (sizeof(xSetDeviceModifierMappingReq) >> 2),
+			     (sizeof(xSetDeviceModifierMappingReq) >> 2),
 			     stuff->numKeyPerModifier, (BYTE *) & stuff[1],
 			     &kp);
 
@@ -127,7 +127,6 @@ ProcXSetDeviceModifierMapping(ClientPtr client)
 	    ret = BadValue;
 	SendErrorToClient(client, IReqCode, X_SetDeviceModifierMapping, 0, ret);
     }
-
 
     return Success;
 }

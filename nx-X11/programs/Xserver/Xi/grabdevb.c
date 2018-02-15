@@ -85,7 +85,7 @@ SProcXGrabDeviceButton(register ClientPtr client)
     swaps(&stuff->modifiers);
     swaps(&stuff->event_count);
     REQUEST_FIXED_SIZE(xGrabDeviceButtonReq,
-		       stuff->event_count * sizeof(CARD32));
+                      stuff->event_count * sizeof(CARD32));
     SwapLongs((CARD32 *) (&stuff[1]), stuff->event_count);
 
     return (ProcXGrabDeviceButton(client));
@@ -139,12 +139,12 @@ ProcXGrabDeviceButton(ClientPtr client)
 
     if ((ret = CreateMaskFromList(client, class,
 				  stuff->event_count, tmp, dev,
-			    X_GrabDeviceButton)) != Success)
+				  X_GrabDeviceButton)) != Success)
 	return Success;
     ret = GrabButton(client, dev, stuff->this_device_mode,
-		   stuff->other_devices_mode, stuff->modifiers, mdev,
-		   stuff->button, stuff->grabWindow, stuff->ownerEvents,
-		   (Cursor) 0, (Window) 0, tmp[stuff->grabbed_device].mask);
+		     stuff->other_devices_mode, stuff->modifiers, mdev,
+		     stuff->button, stuff->grabWindow, stuff->ownerEvents,
+		     (Cursor) 0, (Window) 0, tmp[stuff->grabbed_device].mask);
 
     if (ret != Success)
 	SendErrorToClient(client, IReqCode, X_GrabDeviceButton, 0, ret);

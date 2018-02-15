@@ -135,7 +135,7 @@ ProcXGrabDeviceKey(ClientPtr client)
 
     if ((ret = CreateMaskFromList(client, class,
 				  stuff->event_count, tmp, dev,
-			    X_GrabDeviceKey)) != Success)
+				  X_GrabDeviceKey)) != Success)
 	return Success;
 
     ret = GrabKey(client, dev, stuff->this_device_mode,

@@ -85,7 +85,7 @@ SProcXChangeDeviceDontPropagateList(register ClientPtr client)
     swapl(&stuff->window);
     swaps(&stuff->count);
     REQUEST_FIXED_SIZE(xChangeDeviceDontPropagateListReq,
-		       stuff->count * sizeof(CARD32));
+                      stuff->count * sizeof(CARD32));
     SwapLongs((CARD32 *) (&stuff[1]), stuff->count);
     return (ProcXChangeDeviceDontPropagateList(client));
 }
@@ -131,7 +131,7 @@ ProcXChangeDeviceDontPropagateList(register ClientPtr client)
 
     if (CreateMaskFromList(client, (XEventClass *) & stuff[1],
 			   stuff->count, tmp, NULL,
-	 X_ChangeDeviceDontPropagateList) != Success)
+			   X_ChangeDeviceDontPropagateList) != Success)
 	return Success;
 
     others = wOtherInputMasks(pWin);

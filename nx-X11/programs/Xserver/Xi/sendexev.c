@@ -94,8 +94,8 @@ SProcXSendExtensionEvent(register ClientPtr client)
     swaps(&stuff->count);
 
     if (stuff->length != (sizeof(xSendExtensionEventReq) >> 2) + stuff->count +
-	(stuff->num_events * (sizeof(xEvent) >> 2)))
-	return BadLength;
+       (stuff->num_events * (sizeof(xEvent) >> 2)))
+       return BadLength;
 
     eventP = (xEvent *) & stuff[1];
     for (i = 0; i < stuff->num_events; i++, eventP++) {
@@ -106,7 +106,7 @@ SProcXSendExtensionEvent(register ClientPtr client)
 	*eventP = eventT;
     }
 
-    p = (CARD32 *) (((xEvent *) & stuff[1]) + stuff->num_events);
+    p = (CARD32 *)(((xEvent *) & stuff[1]) + stuff->num_events);
     SwapLongs(p, stuff->count);
     return (ProcXSendExtensionEvent(client));
 }
@@ -146,10 +146,10 @@ ProcXSendExtensionEvent(register ClientPtr client)
        the previous code here returned the unitialized variable ret,
        so using Success we have defined returncode at least. FIXME:
        Upstream works different here, we must check this!
-     */
+    */
     if (stuff->num_events == 0)
-	/* return ret; */
-	return Success;
+        /* return ret; */
+        return Success;
 
     /* The client's event type must be one defined by an extension. */
 
@@ -163,7 +163,7 @@ ProcXSendExtensionEvent(register ClientPtr client)
 
     list = (XEventClass *) (first + stuff->num_events);
     if ((ret = CreateMaskFromList(client, list, stuff->count, tmp, dev,
-			    X_SendExtensionEvent)) != Success)
+				  X_SendExtensionEvent)) != Success)
 	return Success;
 
     ret = (SendEvent(client, dev, stuff->destination,

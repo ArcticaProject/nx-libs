@@ -125,13 +125,13 @@ ProcXGetSelectedExtensionEvents(register ClientPtr client)
 	for (others = pOthers->inputClients; others; others = others->next)
 	    for (i = 0; i < EMASKSIZE; i++)
 		tclient = ClassFromMask(NULL, others->mask[i], i,
-				  &rep.all_clients_count, COUNT);
+					&rep.all_clients_count, COUNT);
 
 	for (others = pOthers->inputClients; others; others = others->next)
 	    if (SameClient(others, client)) {
 		for (i = 0; i < EMASKSIZE; i++)
 		    tclient = ClassFromMask(NULL, others->mask[i], i,
-				      &rep.this_client_count, COUNT);
+					    &rep.this_client_count, COUNT);
 		break;
 	    }
 

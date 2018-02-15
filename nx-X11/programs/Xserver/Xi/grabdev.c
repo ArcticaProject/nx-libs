@@ -51,7 +51,6 @@ SOFTWARE.
  *
  */
 
-
 #ifdef HAVE_DIX_CONFIG_H
 #include <dix-config.h>
 #endif
@@ -89,8 +88,8 @@ SProcXGrabDevice(register ClientPtr client)
     swaps(&stuff->event_count);
 
     if (stuff->length != (sizeof(xGrabDeviceReq) >> 2) + stuff->event_count)
-	return BadLength;
-
+       return BadLength;
+    
     SwapLongs((CARD32 *) (&stuff[1]), stuff->event_count);
 
     return (ProcXGrabDevice(client));
@@ -131,11 +130,11 @@ ProcXGrabDevice(ClientPtr client)
 
     if (CreateMaskFromList(client, (XEventClass *) & stuff[1],
 			   stuff->event_count, tmp, dev,
-	 X_GrabDevice) != Success)
+			   X_GrabDevice) != Success)
 	return Success;
 
     error = GrabDevice(client, dev, stuff->this_device_mode,
-		   stuff->other_devices_mode, stuff->grabWindow,
+		       stuff->other_devices_mode, stuff->grabWindow,
 		       stuff->ownerEvents, stuff->time,
 		       tmp[stuff->deviceid].mask, &rep.status);
 
@@ -146,7 +145,6 @@ ProcXGrabDevice(ClientPtr client)
     WriteReplyToClient(client, sizeof(xGrabDeviceReply), &rep);
     return Success;
 }
-
 
 /***********************************************************************
  *
