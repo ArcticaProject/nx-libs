@@ -155,6 +155,8 @@ void nxagentInitOptions()
 
   nxagentOptions.Menu = 1;
 
+  nxagentOptions.MagicPixel = 1;
+
   nxagentOptions.ClientOs = UNDEFINED;
 
   nxagentOptions.InhibitXkb = 1;
