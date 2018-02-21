@@ -2095,6 +2095,7 @@ void ddxUseMsg()
   ErrorF("-install               install colormaps directly\n");
 
   ErrorF("The NX system adds the following arguments:\n");
+  ErrorF("-options file|string   file or string containing nx/nx options\n");
   ErrorF("-forcenx               force use of NX protocol messages assuming communication through nxproxy\n");
   ErrorF("-timeout int           auto-disconnect timeout in seconds (minimum allowed: 60)\n");
   ErrorF("-norootlessexit        don't exit if there are no clients in rootless mode\n");
