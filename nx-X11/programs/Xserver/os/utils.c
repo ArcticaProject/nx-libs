@@ -556,7 +556,12 @@ AdjustWaitForDelay (void * waitTime, unsigned long newdelay)
 
 void UseMsg(void)
 {
+#ifdef NXAGENT_SERVER
+    extern const char *__progname;
+    ErrorF("Usage: %s [<options>] [:<display>]\n\n", __progname);
+#else
     ErrorF("use: X [:<display>] [option]\n");
+#endif
     ErrorF("-a #                   mouse acceleration (pixels)\n");
     ErrorF("-ac                    disable access control restrictions\n");
 #ifdef MEMBUG
