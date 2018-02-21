@@ -96,6 +96,8 @@ void nxagentSetBufferSize(void);
 void nxagentSetScheduler(void);
 void nxagentSetCoalescence(void);
 
+void nxagentShowVersionInfo(void);
+
 extern int nxagentUserDefinedFontPath;
 
 extern int nxagentRemoteMajor;

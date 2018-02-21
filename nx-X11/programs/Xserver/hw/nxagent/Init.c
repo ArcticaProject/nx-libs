@@ -85,9 +85,6 @@ is" without express or implied warranty.
 #undef  DEBUG
 #undef  DUMP
 
-#define NXAGENT_VERSION NX_VERSION_CURRENT
-#define NXAGENT_VERSION_STRING NX_VERSION_CURRENT_STRING
-
 /*
  * ProcVector array defined in tables.c.
  */
@@ -234,7 +231,7 @@ void InitOutput(ScreenInfo *screenInfo, int argc, char *argv[])
 
   if (serverGeneration <= 1)
   {
-    fprintf(stderr, "\nNXAGENT - Version " NXAGENT_VERSION_STRING "\n\n");
+    fprintf(stderr, "\nNXAGENT - Version " NX_VERSION_CURRENT_STRING "\n\n");
     fprintf(stderr, "Copyright (c) 2001, 2011 NoMachine (http://www.nomachine.com)\n");
     fprintf(stderr, "Copyright (c) 2008-2014 Oleksandr Shneyder <o.shneyder@phoca-gmbh.de>\n");
     fprintf(stderr, "Copyright (c) 2011-2016 Mike Gabriel <mike.gabriel@das-netzwerkteam.de>\n");

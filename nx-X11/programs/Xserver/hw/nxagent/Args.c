@@ -336,6 +336,12 @@ int ddxProcessArgument(int argc, char *argv[], int i)
     return 0;
   }
 
+  if (!strcmp(argv[i], "-version"))
+  {
+    nxagentShowVersionInfo();
+    exit(0);
+  }
+
   /*
    * This had to be '-options' since the beginning
    * but was '-option' by mistake. Now we have to
@@ -2112,6 +2118,7 @@ void ddxUseMsg()
   ErrorF("-R                     enable rootless mode\n");
   ErrorF("-S                     enable shadow mode\n");
   ErrorF("-B                     enable proxy binding mode\n");
+  ErrorF("-version               show version information and exit\n");
 }
 
 static int nxagentGetDialogName()
@@ -2609,3 +2616,7 @@ void nxagentSetCoalescence()
   nxagentChangeOption(DisplayCoalescence, timeout);
 }
 
+void nxagentShowVersionInfo(void)
+{
+    ErrorF("NXAGENT - Version " NX_VERSION_CURRENT_STRING "\n");
+}
