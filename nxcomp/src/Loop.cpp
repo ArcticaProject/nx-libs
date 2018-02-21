@@ -8476,7 +8476,8 @@ int ParseEnvironmentOptions(const char *env, int force)
                  strcasecmp(name, "tile") == 0 ||
                      strcasecmp(name, "menu") == 0 ||
                         strcasecmp(name, "magicpixel") == 0 ||
-                          strcasecmp(name, "state") == 0 )
+                          strcasecmp(name, "autodpi") == 0 ||
+                            strcasecmp(name, "state") == 0 )
     {
       nxdbg << "Loop: Ignoring agent option '" << name
             << "' with value '" << value << "'.\n"

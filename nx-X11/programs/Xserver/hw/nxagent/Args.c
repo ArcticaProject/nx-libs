@@ -1278,6 +1278,25 @@ static void nxagentParseOptions(char *name, char *value)
 
     return;
   }
+  else if (!strcmp(name, "autodpi"))
+  {
+    if (nxagentReconnectTrap == True)
+    {
+      #ifdef DEBUG
+      fprintf(stderr, "nxagentParseOptions: Ignoring option 'autodpi' at reconnection.\n");
+      #endif
+    }
+    else if (!strcmp(value, "0"))
+    {
+      nxagentAutoDPI = False;
+    }
+    else
+    {
+      nxagentAutoDPI = True;
+    }
+
+    return;
+  }
   else if (strcmp(name, "shadowuid") == 0)
   {
     nxagentShadowUid = atoi(value);

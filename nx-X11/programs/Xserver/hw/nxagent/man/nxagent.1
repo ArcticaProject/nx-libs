@@ -606,6 +606,11 @@ proxy <-> agent remote sessions)
 .B magicpixel=<bool>
 enable/disable magic pixel support in fullscreen mode (default: 1, enabled)
 .TP 8
+.B autodpi=<bool>
+enable/disable deriving session DPI automatically from real server
+(default: 0, disabled); only takes effect on session startups, gets
+ignored when reconnecting to a suspended session
+.TP 8
 .B sleep=<int>
 delay X server operations when suspended (provided in msec), set to
 \fI0\fR to keep \fBnxagent\fR session fully functional when suspended

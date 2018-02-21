@@ -344,6 +344,7 @@ defer=n\n\
 tile=s\n\
 menu=n\n\
 magicpixel=n\n\
+autodpi=n\n\
 sleep=n\n\
 tolerancechecks=s\n\
 keyconv=s\n\
