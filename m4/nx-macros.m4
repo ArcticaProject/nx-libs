@@ -407,6 +407,23 @@ FreeBSD=
 test "$nxconf_cv_freebsd" = yes && FreeBSD=yes
 ]) # NX_BUILD_ON_FreeBSD
 
+# Check to see if we're generating binaries in ELF format.
+
+AC_DEFUN([NX_TARGET_USE_ELF],
+[AC_CACHE_CHECK([if target system is ELF-based], [nxconf_cv_targetelf],
+[AC_COMPILE_IFELSE([AC_LANG_PROGRAM(
+[[
+#ifndef __ELF__
+#error not an ELF-based system
+error!
+#endif
+]],
+[[
+]])],
+[nxconf_cv_targetelf=yes], [nxconf_cv_targetelf=no])])
+AM_CONDITIONAL([TARGET_ELF], [test x"$nxconf_cv_targetelf" = "xyes"])
+]) # NX_TARGET_USE_ELF
+
 AC_DEFUN([LIBJPEG_FALLBACK_CHECK],[
 AC_MSG_CHECKING([for libjpeg shared libary file and headers])
 AC_CHECK_LIB([jpeg], [jpeg_destroy_compress],

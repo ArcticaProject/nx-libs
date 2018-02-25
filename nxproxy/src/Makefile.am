@@ -15,8 +15,13 @@ nxproxy_LDADD =						\
 
 nxproxy_LDFLAGS =					\
     $(PTHREAD_LDFLAGS)					\
+    $(NULL)
+
+if TARGET_ELF
+nxproxy_LDFLAGS +=					\
     -Wl,--enable-new-dtags				\
     $(NULL)
+endif TARGET_ELF
 
 nxproxy_CFLAGS =					\
     $(BASE_CFLAGS)					\

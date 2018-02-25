@@ -47,6 +47,8 @@ AC_LANG([C++])
 NX_COMPILER_BRAND
 NX_DEFAULT_OPTIONS
 
+NX_TARGET_USE_ELF
+
 AC_ARG_ENABLE([cxx11],
               [AS_HELP_STRING([--enable-cxx11],
                               [enable optional features requiring C++11 support (disabled by default)])],

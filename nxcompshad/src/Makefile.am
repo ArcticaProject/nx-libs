@@ -39,9 +39,13 @@ AM_CPPFLAGS =						\
 
 libXcompshad_la_LDFLAGS =				\
     -version-number @LT_COMPSHAD_VERSION@ -no-undefined	\
-    -Wl,--enable-new-dtags				\
     -R '$(libdir)/nx/X11'				\
     $(NULL)
+
+if TARGET_ELF
+libXcompshad_la_LDFLAGS +=				\
+    -Wl,--enable-new-dtags				\
+endif TARGET_ELF
 
 libXcompshadincludedir = $(includedir)/nx
 libXcompshadinclude_HEADERS =				\
