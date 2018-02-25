@@ -45,6 +45,7 @@ libXcompshad_la_LDFLAGS =				\
 if TARGET_ELF
 libXcompshad_la_LDFLAGS +=				\
     -Wl,--enable-new-dtags				\
+    $(NULL)
 endif TARGET_ELF
 
 libXcompshadincludedir = $(includedir)/nx
