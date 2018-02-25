@@ -26,6 +26,8 @@ AC_LANG([C])
 NX_COMPILER_BRAND
 NX_DEFAULT_OPTIONS
 
+NX_TARGET_USE_ELF
+
 dnl This is a workaround for a nasty libtool bug.
 dnl We actually compile libXcomp with pthread support, but libtool uses g++ ... -nostdlib ... -pthread
 dnl on Linux. -nostdlib causes -pthread to be ignored.
