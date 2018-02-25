@@ -33,7 +33,7 @@ Build-Depends:
  sed,
  coreutils,
  lsb-release
-Standards-Version: 4.1.0
+Standards-Version: 4.1.3
 Homepage: https://github.com/ArcticaProject/nx-libs/
 Vcs-Git: https://github.com/ArcticaProject/nx-libs/
 Vcs-Browser: https://github.com/ArcticaProject/nx-libs/
