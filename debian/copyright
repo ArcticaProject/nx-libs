@@ -80,6 +80,8 @@ Files: nx-X11/programs/Xserver/GL/mesa/main/WSDrawBuffer.h
  nx-X11/programs/Xserver/hw/nxagent/compext/Rle.h
  nx-X11/programs/Xserver/hw/nxagent/compext/Z.c
  nx-X11/programs/Xserver/hw/nxagent/compext/Z.h
+ nxcomp/src/Log.cpp
+ nxcomp/src/Log.h
  nxcompshad/include/Shadow.h
  nxcompshad/src/Core.cpp
  nxcompshad/src/Core.h
@@ -1034,8 +1036,6 @@ License: MIT~OpenGroup
 
 Files: make-changelog.sh
  regenerate-symbol-docs.sh
- bin/nxagent.in
- bin/nxproxy.in
 Copyright: 2012, Mike Gabriel <mike.gabriel@das-netzwerkteam.de>
   2016, Mike Gabriel <mike.gabriel@das-netzwerkteam.de>
 License: GPL-2+
@@ -2447,6 +2447,10 @@ Files: nx-X11/programs/Xserver/os/xprintf.c
 Copyright: 2004, Alexander Gottwald
 License: Expat
 
+Files: nx-X11/programs/Xserver/include/Xprintf.h
+Copyright: 2010, Oracle and/or its affiliates
+License: Expat
+
 Files: nx-X11/extras/Mesa/src/mesa/glapi/glapioffsets.h
 Copyright: 1999-2001, Brian Paul
   IBM Corporation 2004,
@@ -2920,6 +2924,8 @@ Files: ChangeLog
  doc/nxproxy/README-VALGRIND
  etc/keystrokes.cfg
  etc/nxagent.keyboard
+ nx-X11/config/cf/.gitignore
+ nx-X11/lib/.gitignore
  nx-X11/programs/Xserver/hw/nxagent/man/nxagent.1
  nx-X11/programs/Xserver/hw/nxagent/nxagent.xpm
  nx-X11/programs/Xserver/hw/nxagent/nxmissing.xpm
@@ -2927,6 +2933,9 @@ Files: ChangeLog
  nx-X11/Makefile
  nxcomp/Makefile.am
  nxcomp/src/Makefile.am
+ nxcomp/test/Makefile.am
+ nxcomp/test/logging_test.cpp
+ nxcomp/test/logging_test.h
  nxcomp/configure.ac
  nxcomp/nxcomp.pc.in
  nxcompshad/Makefile.am
@@ -3005,11 +3014,49 @@ Copyright: 2008, Stepan Kasal <kasal@ucw.cz>
   2008, Alexandre Oliva
 License: permissive
 
+Files: m4/ax_cxx_compile_stdcxx.m4
+ nxcomp/m4/ax_cxx_compile_stdcxx.m4
+ nxcompshad/m4/ax_cxx_compile_stdcxx.m4
+ nxproxy/m4/ax_cxx_compile_stdcxx.m4
+Copyright: 2008, Benjamin Kosnik <bkoz@redhat.com>
+  2012, Zack Weinberg <zackw@panix.com>
+  2013, Roy Stogner <roystgnr@ices.utexas.edu>
+  2014, 2015,  Google Inc.; contributed by Alexey Sokolov <sokolov@google.com>
+  2015, Paul Norman <penorman@mac.com>
+  2015, Moritz Klammler <moritz@klammler.eu>
+  2016, Krzesimir Nowak <qdlacz@gmail.com>
+License: permissive
+Comment:
+ Make lintian happy by listing all symlinks.
+
+Files: m4/ax_cxx_compile_stdcxx_11.m4
+ nxcomp/m4/ax_cxx_compile_stdcxx_11.m4
+ nxcompshad/m4/ax_cxx_compile_stdcxx_11.m4
+ nxproxy/m4/ax_cxx_compile_stdcxx_11.m4
+Copyright: 2008, Benjamin Kosnik <bkoz@redhat.com>
+  2012, Zack Weinberg <zackw@panix.com>
+  2013, Roy Stogner <roystgnr@ices.utexas.edu>
+  2014, 2015,  Google Inc.; contributed by Alexey Sokolov <sokolov@google.com>
+  2015, Paul Norman <penorman@mac.com>
+  2015, Moritz Klammler <moritz@klammler.eu>
+License: permissive
+Comment:
+ Make lintian happy by listing all symlinks.
+
+Files: m4/ax_pthread.m4
+ nxcomp/m4/ax_pthread.m4
+ nxproxy/m4/ax_pthread.m4
+Copyright: 2008, Steven G. Johnson <stevenj@alum.mit.edu>
+  2011, Daniel Richard G. <skunk@iSKUNK.ORG>
+License: GPL-3+
+Comment:
+ Make lintian happy by listing all symlinks.
+
 Files: debian/*
 Copyright: 2011-2016, Mike Gabriel <mike.gabriel@das-netzwerkteam.de>
   2011-2013, Reinhard Tartler <siretart@tauware.de>
   2015-2016, Mihai Moldovan <ionic@ionic.de>
-License: GPL-2 or GPL-2+ or GPL-3+ or Expat or Expat~NoAdvert or MIT~OpenGroup or MIT~X11 or MIT~Tektronix or MIT~Tektronix~3-clause or MIT~OldStyle or MIT~Adobe or MIT~VeryOldStyle~UniOfCalifornia or MIT~VeryOldStyle~NCD or MIT~ISC or SGI-1.1 or GLX-1.0 or Zlib or XFree86 or BSD-1-clause
+License: GPL-2 or GPL-2+ or GPL-3+ or Expat or Expat~NoAdvert or MIT~OpenGroup or MIT~X11 or MIT~Tektronix or MIT~Tektronix~3-clause or MIT~OldStyle or MIT~Adobe or MIT~VeryOldStyle~UniOfCalifornia or MIT~VeryOldStyle~NCD or MIT~ISC or SGI-1.1 or GLX-1.0 or Zlib or XFree86 or BSD-1-clause or permissive
 
 License: GPL-2
  This program is free software; you can redistribute it and/or modify it
