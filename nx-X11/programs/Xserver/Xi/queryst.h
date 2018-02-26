@@ -30,21 +30,15 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #ifndef QUERYST_H
 #define QUERYST_H 1
 
-int
-SProcXQueryDeviceState(
-	ClientPtr              /* client */
-	);
+int SProcXQueryDeviceState(ClientPtr	/* client */
+    );
 
-int
-ProcXQueryDeviceState(
-	ClientPtr              /* client */
-	);
+int ProcXQueryDeviceState(ClientPtr	/* client */
+    );
 
-void
-SRepXQueryDeviceState (
-	ClientPtr              /* client */,
-	int                    /* size */,
-	xQueryDeviceStateReply * /* rep */
-	);
+void SRepXQueryDeviceState(ClientPtr /* client */ ,
+			   int /* size */ ,
+			   xQueryDeviceStateReply *	/* rep */
+    );
 
 #endif /* QUERYST_H */

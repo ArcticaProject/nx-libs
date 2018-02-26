@@ -55,21 +55,21 @@ SOFTWARE.
 #include <dix-config.h>
 #endif
 
-#include <nx-X11/X.h>				/* for inputstr.h    */
-#include <nx-X11/Xproto.h>			/* Request macro     */
-#include "inputstr.h"			/* DeviceIntPtr	     */
-#include "windowstr.h"			/* window structs    */
+#include <nx-X11/X.h>	/* for inputstr.h    */
+#include <nx-X11/Xproto.h>	/* Request macro     */
+#include "inputstr.h"	/* DeviceIntPtr      */
+#include "windowstr.h"	/* window structs    */
 #include <nx-X11/extensions/XI.h>
 #include <nx-X11/extensions/XIproto.h>
 #include "extnsionst.h"
-#include "extinit.h"			/* LookupDeviceIntRec */
+#include "extinit.h"	/* LookupDeviceIntRec */
 #include "exglobals.h"
 #include "swaprep.h"
 
 #include "getprop.h"
 
-extern			XExtEventInfo EventInfo[];
-extern int	ExtEventIndex;
+extern XExtEventInfo EventInfo[];
+extern int ExtEventIndex;
 
 /***********************************************************************
  *
@@ -78,15 +78,14 @@ extern int	ExtEventIndex;
  */
 
 int
-SProcXGetDeviceDontPropagateList(client)
-    register ClientPtr client;
-    {
+SProcXGetDeviceDontPropagateList(register ClientPtr client)
+{
     REQUEST(xGetDeviceDontPropagateListReq);
     swaps(&stuff->length);
     REQUEST_SIZE_MATCH(xGetDeviceDontPropagateListReq);
     swapl(&stuff->window);
-    return(ProcXGetDeviceDontPropagateList(client));
-    }
+    return (ProcXGetDeviceDontPropagateList(client));
+}
 
 /***********************************************************************
  *
@@ -95,15 +94,14 @@ SProcXGetDeviceDontPropagateList(client)
  */
 
 int
-ProcXGetDeviceDontPropagateList (client)
-    register ClientPtr client;
-    {
-    CARD16				count = 0;
-    int					i;
-    XEventClass				*buf = NULL, *tbuf;
-    WindowPtr 				pWin;
-    xGetDeviceDontPropagateListReply	rep;
-    OtherInputMasks			*others;
+ProcXGetDeviceDontPropagateList(register ClientPtr client)
+{
+    CARD16 count = 0;
+    int i;
+    XEventClass *buf = NULL, *tbuf;
+    WindowPtr pWin;
+    xGetDeviceDontPropagateListReply rep;
+    OtherInputMasks *others;
 
     REQUEST(xGetDeviceDontPropagateListReq);
     REQUEST_SIZE_MATCH(xGetDeviceDontPropagateListReq);
@@ -114,44 +112,39 @@ ProcXGetDeviceDontPropagateList (client)
     rep.length = 0;
     rep.count = 0;
 
-    pWin = (WindowPtr) LookupWindow (stuff->window, client);
-    if (!pWin)
-        {
+    pWin = (WindowPtr) LookupWindow(stuff->window, client);
+    if (!pWin) {
 	client->errorValue = stuff->window;
-	SendErrorToClient(client, IReqCode, X_GetDeviceDontPropagateList, 0, 
-		BadWindow);
+	SendErrorToClient(client, IReqCode, X_GetDeviceDontPropagateList, 0,
+			  BadWindow);
 	return Success;
-        }
+    }
 
-    if ((others = wOtherInputMasks(pWin)) != 0)
-	{
-	for (i=0; i<EMASKSIZE; i++)
-	    tbuf = ClassFromMask (NULL, others->dontPropagateMask[i], i, 
-		&count, COUNT);
-	if (count)
-	    {
+    if ((others = wOtherInputMasks(pWin)) != 0) {
+	for (i = 0; i < EMASKSIZE; i++)
+	    tbuf = ClassFromMask(NULL, others->dontPropagateMask[i], i,
+				 &count, COUNT);
+	if (count) {
 	    rep.count = count;
-	    buf = (XEventClass *) malloc (rep.count * sizeof(XEventClass));
-	    rep.length = (rep.count * sizeof (XEventClass) + 3) >> 2;
+	    buf = (XEventClass *) malloc(rep.count * sizeof(XEventClass));
+	    rep.length = (rep.count * sizeof(XEventClass) + 3) >> 2;
 
 	    tbuf = buf;
-	    for (i=0; i<EMASKSIZE; i++)
-		tbuf = ClassFromMask (tbuf, others->dontPropagateMask[i], i, 
-		    NULL, CREATE);
-	    }
+	    for (i = 0; i < EMASKSIZE; i++)
+		tbuf = ClassFromMask(tbuf, others->dontPropagateMask[i], i,
+				     NULL, CREATE);
 	}
-
-    WriteReplyToClient (client, sizeof (xGetDeviceDontPropagateListReply), 
-	&rep);
-
-    if (count)
-	{
-	client->pSwapReplyFunc = (ReplySwapPtr)Swap32Write;
-	WriteSwappedDataToClient( client, count * sizeof(XEventClass), buf);
-	free (buf);
-	}
-    return Success;
     }
+
+    WriteReplyToClient(client, sizeof(xGetDeviceDontPropagateListReply), &rep);
+
+    if (count) {
+	client->pSwapReplyFunc = (ReplySwapPtr) Swap32Write;
+	WriteSwappedDataToClient(client, count * sizeof(XEventClass), buf);
+	free(buf);
+    }
+    return Success;
+}
 
 /***********************************************************************
  *
@@ -161,31 +154,25 @@ ProcXGetDeviceDontPropagateList (client)
  */
 
 XEventClass
-*ClassFromMask (buf, mask, maskndx, count, mode)
-    XEventClass *buf;
-    Mask	mask;
-    int		maskndx;
-    CARD16	*count;
-    int		mode;
-    {
-    int		i,j;
-    int		id = maskndx;
-    Mask	tmask = 0x80000000;
+    * ClassFromMask(XEventClass * buf, Mask mask, int maskndx, CARD16 * count,
+		    int mode)
+{
+    int i, j;
+    int id = maskndx;
+    Mask tmask = 0x80000000;
 
-    for (i=0; i<32; i++,tmask>>=1)
-	if (tmask & mask)
-	    {
-	    for (j=0; j<ExtEventIndex; j++)
-		if (EventInfo[j].mask == tmask)
-		    {
+    for (i = 0; i < 32; i++, tmask >>= 1)
+	if (tmask & mask) {
+	    for (j = 0; j < ExtEventIndex; j++)
+		if (EventInfo[j].mask == tmask) {
 		    if (mode == COUNT)
 			(*count)++;
 		    else
-		        *buf++ = (id << 8) | EventInfo[j].type;
-		    }
-	    }
+			*buf++ = (id << 8) | EventInfo[j].type;
+		}
+	}
     return (buf);
-    }
+}
 
 /***********************************************************************
  *
@@ -195,13 +182,11 @@ XEventClass
  */
 
 void
-SRepXGetDeviceDontPropagateList (client, size, rep)
-    ClientPtr	client;
-    int		size;
-    xGetDeviceDontPropagateListReply	*rep;
-    {
+SRepXGetDeviceDontPropagateList(ClientPtr client, int size,
+				xGetDeviceDontPropagateListReply * rep)
+{
     swaps(&rep->sequenceNumber);
     swapl(&rep->length);
     swaps(&rep->count);
     WriteToClient(client, size, rep);
-    }
+}

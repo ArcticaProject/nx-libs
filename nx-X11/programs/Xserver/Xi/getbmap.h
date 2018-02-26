@@ -30,21 +30,15 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #ifndef GETBMAP_H
 #define GETBMAP_H 1
 
-int
-SProcXGetDeviceButtonMapping(
-	ClientPtr              /* client */
-	);
+int SProcXGetDeviceButtonMapping(ClientPtr	/* client */
+    );
 
-int
-ProcXGetDeviceButtonMapping (
-	ClientPtr              /* client */
-	);
+int ProcXGetDeviceButtonMapping(ClientPtr	/* client */
+    );
 
-void
-SRepXGetDeviceButtonMapping (
-	ClientPtr              /* client */,
-	int                    /* size */,
-	xGetDeviceButtonMappingReply * /* rep */
-	);
+void SRepXGetDeviceButtonMapping(ClientPtr /* client */ ,
+				 int /* size */ ,
+				 xGetDeviceButtonMappingReply *	/* rep */
+    );
 
 #endif /* GETBMAP_H */

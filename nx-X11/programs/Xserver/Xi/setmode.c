@@ -55,14 +55,14 @@ SOFTWARE.
 #include <dix-config.h>
 #endif
 
-#include <nx-X11/X.h>				/* for inputstr.h    */
-#include <nx-X11/Xproto.h>			/* Request macro     */
-#include "inputstr.h"			/* DeviceIntPtr	     */
+#include <nx-X11/X.h>	/* for inputstr.h    */
+#include <nx-X11/Xproto.h>	/* Request macro     */
+#include "inputstr.h"	/* DeviceIntPtr      */
 #include <nx-X11/extensions/XI.h>
 #include <nx-X11/extensions/XIproto.h>
 #include "XIstubs.h"
 #include "extnsionst.h"
-#include "extinit.h"			/* LookupDeviceIntRec */
+#include "extinit.h"	/* LookupDeviceIntRec */
 #include "exglobals.h"
 
 #include "setmode.h"
@@ -74,13 +74,12 @@ SOFTWARE.
  */
 
 int
-SProcXSetDeviceMode(client)
-    register ClientPtr client;
-    {
+SProcXSetDeviceMode(register ClientPtr client)
+{
     REQUEST(xSetDeviceModeReq);
     swaps(&stuff->length);
-    return(ProcXSetDeviceMode(client));
-    }
+    return (ProcXSetDeviceMode(client));
+}
 
 /***********************************************************************
  *
@@ -89,11 +88,10 @@ SProcXSetDeviceMode(client)
  */
 
 int
-ProcXSetDeviceMode(client)
-    register ClientPtr client;
-    {
+ProcXSetDeviceMode(register ClientPtr client)
+{
     DeviceIntPtr dev;
-    xSetDeviceModeReply	rep;
+    xSetDeviceModeReply rep;
 
     REQUEST(xSetDeviceModeReq);
     REQUEST_SIZE_MATCH(xSetDeviceModeReq);
@@ -103,33 +101,30 @@ ProcXSetDeviceMode(client)
     rep.length = 0;
     rep.sequenceNumber = client->sequence;
 
-    dev = LookupDeviceIntRec (stuff->deviceid);
-    if (dev == NULL)
-	{
-	SendErrorToClient (client, IReqCode, X_SetDeviceMode, 0, BadDevice);
+    dev = LookupDeviceIntRec(stuff->deviceid);
+    if (dev == NULL) {
+	SendErrorToClient(client, IReqCode, X_SetDeviceMode, 0, BadDevice);
 	return Success;
-	}
-    if (dev->valuator == NULL)
-	{
+    }
+    if (dev->valuator == NULL) {
 	SendErrorToClient(client, IReqCode, X_SetDeviceMode, 0, BadMatch);
 	return Success;
-	}
+    }
     if ((dev->grab) && !SameClient(dev->grab, client))
 	rep.status = AlreadyGrabbed;
     else
-	rep.status = SetDeviceMode (client, dev, stuff->mode);
+	rep.status = SetDeviceMode(client, dev, stuff->mode);
 
-    if (rep.status == Success) 
-  	dev->valuator->mode = stuff->mode;
-    else if (rep.status != AlreadyGrabbed)
-	{
+    if (rep.status == Success)
+	dev->valuator->mode = stuff->mode;
+    else if (rep.status != AlreadyGrabbed) {
 	SendErrorToClient(client, IReqCode, X_SetDeviceMode, 0, rep.status);
-        return Success;
-	}
-
-    WriteReplyToClient (client, sizeof (xSetDeviceModeReply), &rep);
-    return Success;
+	return Success;
     }
+
+    WriteReplyToClient(client, sizeof(xSetDeviceModeReply), &rep);
+    return Success;
+}
 
 /***********************************************************************
  *
@@ -139,12 +134,9 @@ ProcXSetDeviceMode(client)
  */
 
 void
-SRepXSetDeviceMode (client, size, rep)
-    ClientPtr	client;
-    int		size;
-    xSetDeviceModeReply	*rep;
-    {
+SRepXSetDeviceMode(ClientPtr client, int size, xSetDeviceModeReply * rep)
+{
     swaps(&rep->sequenceNumber);
     swapl(&rep->length);
     WriteToClient(client, size, rep);
-    }
+}

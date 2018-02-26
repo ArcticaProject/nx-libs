@@ -55,17 +55,17 @@ SOFTWARE.
 #include <dix-config.h>
 #endif
 
-#include <nx-X11/X.h>				/* for inputstr.h    */
-#include <nx-X11/Xproto.h>			/* Request macro     */
-#include "windowstr.h"			/* focus struct      */
-#include "inputstr.h"			/* DeviceIntPtr	     */
+#include <nx-X11/X.h>	/* for inputstr.h    */
+#include <nx-X11/Xproto.h>	/* Request macro     */
+#include "windowstr.h"	/* focus struct      */
+#include "inputstr.h"	/* DeviceIntPtr      */
 #include <nx-X11/extensions/XI.h>
 #include <nx-X11/extensions/XIproto.h>
 
 #include "dixevents.h"
 
 #include "extnsionst.h"
-#include "extinit.h"			/* LookupDeviceIntRec */
+#include "extinit.h"	/* LookupDeviceIntRec */
 #include "exglobals.h"
 
 #include "setfocus.h"
@@ -77,16 +77,15 @@ SOFTWARE.
  */
 
 int
-SProcXSetDeviceFocus(client)
-    register ClientPtr client;
-    {
+SProcXSetDeviceFocus(register ClientPtr client)
+{
     REQUEST(xSetDeviceFocusReq);
     swaps(&stuff->length);
     REQUEST_SIZE_MATCH(xSetDeviceFocusReq);
     swapl(&stuff->focus);
     swapl(&stuff->time);
-    return(ProcXSetDeviceFocus(client));
-    }
+    return (ProcXSetDeviceFocus(client));
+}
 
 /***********************************************************************
  *
@@ -95,26 +94,24 @@ SProcXSetDeviceFocus(client)
  */
 
 int
-ProcXSetDeviceFocus(client)
-    register ClientPtr client;
-    {
-    int				ret;
-    register DeviceIntPtr	dev;
+ProcXSetDeviceFocus(register ClientPtr client)
+{
+    int ret;
+    register DeviceIntPtr dev;
 
     REQUEST(xSetDeviceFocusReq);
     REQUEST_SIZE_MATCH(xSetDeviceFocusReq);
 
-    dev = LookupDeviceIntRec (stuff->device);
-    if (dev==NULL || !dev->focus)
-	{
+    dev = LookupDeviceIntRec(stuff->device);
+    if (dev == NULL || !dev->focus) {
 	SendErrorToClient(client, IReqCode, X_SetDeviceFocus, 0, BadDevice);
 	return Success;
-	}
+    }
 
-    ret = SetInputFocus (client, dev, stuff->focus, stuff->revertTo, 
-	stuff->time, TRUE);
+    ret = SetInputFocus(client, dev, stuff->focus, stuff->revertTo,
+			stuff->time, TRUE);
     if (ret != Success)
 	SendErrorToClient(client, IReqCode, X_SetDeviceFocus, 0, ret);
 
     return Success;
-    }
+}
