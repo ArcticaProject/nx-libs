@@ -89,7 +89,7 @@ unsigned long serverGeneration = 0;
 /* these next four are initialized in main.c */
 CARD32 ScreenSaverTime;
 CARD32 ScreenSaverInterval;
-int  ScreenSaverBlanking;
+int ScreenSaverBlanking;
 int  ScreenSaverAllowExposures;
 
 #ifdef DPMSExtension

@@ -124,6 +124,7 @@ AllocatePixmap(ScreenPtr pScreen, int pixDataSize)
      * is a quick workaround intended to fix a problem reported
      * by Valgrind due to fbBlt() writing just after the end of
      * the pixmap buffer. This may be a RENDER bug.
+     * This is not included in xorg upstream!
      */
 
     pPixmap = (PixmapPtr)calloc(1, pScreen->totalPixmapSize + pixDataSize + 4);
