@@ -194,8 +194,8 @@ int nxagentX2go;
 
 void checkX2goAgent()
 {
-  extern const char *__progname;
-  if( strcasecmp(__progname,"x2goagent") == 0)
+  extern const char *nxagentProgName;
+  if( strcasecmp(nxagentProgName,"x2goagent") == 0)
   {
     fprintf(stderr, "\nrunning as X2Go Agent\n");
     nxagentX2go=1;

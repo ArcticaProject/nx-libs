@@ -557,8 +557,8 @@ AdjustWaitForDelay (void * waitTime, unsigned long newdelay)
 void UseMsg(void)
 {
 #ifdef NXAGENT_SERVER
-    extern const char *__progname;
-    ErrorF("Usage: %s [<options>] [:<display>]\n\n", __progname);
+    extern const char *nxagentProgName;
+    ErrorF("Usage: %s [<options>] [:<display>]\n\n", nxagentProgName);
 #else
     ErrorF("use: X [:<display>] [option]\n");
 #endif

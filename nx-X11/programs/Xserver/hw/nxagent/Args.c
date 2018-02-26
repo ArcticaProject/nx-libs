@@ -124,7 +124,7 @@ extern int _XGetBitsPerPixel(Display *dpy, int depth);
 
 extern char dispatchExceptionAtReset;
 
-extern const char *__progname;
+const char *nxagentProgName;
 
 char nxagentDisplayName[NXAGENTDISPLAYNAMELENGTH];
 Bool nxagentSynchronize = False;
@@ -184,6 +184,8 @@ int ddxProcessArgument(int argc, char *argv[], int i)
   /*
    * Ensure that the options are set to their defaults.
    */
+
+  nxagentProgName = argv[0];
 
   static Bool resetOptions = True;
 
@@ -1185,13 +1187,13 @@ static void nxagentParseOptions(char *name, char *value)
   {
 #if !defined(PANORAMIX) && !defined(RANDR)
     nxagentChangeOption(Xinerama, 0);
-    fprintf(stderr, "Warning: No Xinerama support compiled into %s.\n", __progname);
+    fprintf(stderr, "Warning: No Xinerama support compiled into %s.\n", nxagentProgName);
     return;
 #else
     if (PANORAMIX_DISABLED_COND && RRXINERAMA_DISABLED_COND)
     {
       nxagentChangeOption(Xinerama, 0);
-      fprintf(stderr, "Warning: XINERAMA extension has been disabled on %s startup.\n", __progname);
+      fprintf(stderr, "Warning: XINERAMA extension has been disabled on %s startup.\n", nxagentProgName);
       return;
     }
 
