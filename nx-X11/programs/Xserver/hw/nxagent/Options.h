@@ -386,6 +386,12 @@ typedef struct _AgentOptions
   int Menu;
 
   /*
+   * Enabling/disabling the magic pixel.
+   */
+
+  int MagicPixel;
+
+  /*
    * Specify the Operative System of the client.
    */
 

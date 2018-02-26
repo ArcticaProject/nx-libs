@@ -1218,7 +1218,7 @@ FIXME: Don't enqueue the KeyRelease event if the key was
 
         if (nxagentOption(Fullscreen))
         {
-          if (nxagentMagicPixelZone(X.xbutton.x, X.xbutton.y))
+          if ( (nxagentOption(MagicPixel) == 1) && (nxagentMagicPixelZone(X.xbutton.x, X.xbutton.y)) )
           {
             pScreen = nxagentScreen(X.xbutton.window);
 

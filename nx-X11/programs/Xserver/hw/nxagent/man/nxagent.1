@@ -399,6 +399,10 @@ auto-disconnect timeout in seconds (minimum allowed: 60)
 .B \-norootlessexit
 don't exit if there are no clients in rootless mode
 .TP 8
+.B \-nomagicpixel
+disable magic pixel support at session startup, can be re-enabled via nx/nx option on session
+resumption
+.TP 8
 .B \-norender
 disable the use of the render extension
 .TP 8
@@ -598,6 +602,9 @@ overrides the command line default.
 .B menu=<int>
 support pulldown menu in \fBnxagent\fR session (only available on
 proxy <-> agent remote sessions)
+.TP 8
+.B magicpixel=<int>
+enable/disable magic pixel support in fullscreen mode (default: 1, enabled)
 .TP 8
 .B sleep=<int>
 delay X server operations when suspended (provided in msec), set to

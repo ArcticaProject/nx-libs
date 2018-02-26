@@ -343,6 +343,7 @@ shadowmode=s\n\
 defer=n\n\
 tile=s\n\
 menu=n\n\
+magicpixel=n\n\
 sleep=n\n\
 tolerancechecks=s\n\
 keyconv=s\n\
