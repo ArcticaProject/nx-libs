@@ -574,6 +574,7 @@ rm %{buildroot}%{_libdir}/*.la
 %{_includedir}/nx-X11/extensions/scrnsaver.h
 %{_includedir}/nx-X11/extensions/security.h
 %{_includedir}/nx-X11/extensions/securstr.h
+%{_includedir}/nx-X11/extensions/shapeconst.h
 %{_includedir}/nx-X11/extensions/sync.h
 %{_includedir}/nx-X11/extensions/syncstr.h
 %{_includedir}/nx-X11/extensions/xcmiscstr.h
