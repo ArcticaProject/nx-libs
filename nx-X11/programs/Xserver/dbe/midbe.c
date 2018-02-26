@@ -57,14 +57,6 @@
 
 #include <stdio.h>
 
-/* DEFINES */
-
-
-/* TYPEDEFS */
-
-
-/* GLOBALS */
-
 static int	miDbePrivPrivGeneration  =  0;
 static int	miDbeWindowPrivPrivIndex = -1;
 static RESTYPE	dbeDrawableResType;
