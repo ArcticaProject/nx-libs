@@ -61,7 +61,6 @@ SOFTWARE.
 /* Thanks to Jack Palevich for testing and subsequently rewriting all this */
 
 /* Byte swap a list of longs */
-
 void
 SwapLongs (register CARD32 *list, register unsigned long count)
 {
@@ -86,7 +85,6 @@ SwapLongs (register CARD32 *list, register unsigned long count)
 }
 
 /* Byte swap a list of shorts */
-
 void
 SwapShorts (register short *list, register unsigned long count)
 {

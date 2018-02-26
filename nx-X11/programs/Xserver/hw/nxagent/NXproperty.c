@@ -275,7 +275,7 @@ ChangeWindowProperty(WindowPtr pWin, Atom property, Atom type, int format,
         {
 	    if (totalSize != pProp->size * (pProp->format >> 3))
 	    {
-	    	data = (void *)realloc(pProp->data, totalSize);
+		data = (void *)realloc(pProp->data, totalSize);
 	    	if (!data && len)
 		    return(BadAlloc);
             	pProp->data = data;
@@ -349,7 +349,6 @@ ProcGetProperty(ClientPtr client)
     REQUEST(xGetPropertyReq);
 
     REQUEST_SIZE_MATCH(xGetPropertyReq);
-
     if (stuff->delete)
 	UpdateCurrentTime();
     pWin = (WindowPtr)SecurityLookupWindow(stuff->window, client,

@@ -110,8 +110,8 @@ CARD32 defaultDPMSSuspendTime = DEFAULT_SUSPEND_TIME;
 CARD32 defaultDPMSOffTime = DEFAULT_OFF_TIME;
 CARD16 DPMSPowerLevel = 0;
 Bool defaultDPMSEnabled = DEFAULT_DPMS_ENABLED;
-Bool DPMSEnabledSwitch = FALSE;	  /* these denote the DPMS command line */
-Bool DPMSDisabledSwitch = FALSE;  /*                      switch states */
+Bool DPMSEnabledSwitch = FALSE;  /* these denote the DPMS command */
+Bool DPMSDisabledSwitch = FALSE; /* line switch states */
 Bool DPMSCapableFlag = FALSE;
 CARD32 DPMSStandbyTime;
 CARD32 DPMSSuspendTime;
