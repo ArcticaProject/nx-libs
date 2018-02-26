@@ -6,6 +6,14 @@
    INCLUDES = -I$(SERVERSRC)/include -I$(XINCLUDESRC) -I$(EXTINCSRC)  $(EXTRAINCLUDES) `pkg-config --cflags-only-I pixman-1`
    LINTLIBS = ../dix/llib-ldix.ln ../os/llib-los.ln
 
+#if defined(NXAgentServer) && NXAgentServer
+ NX_DEFINES = -DNXAGENT_SERVER
+#endif
+
+    DEFINES =                   \
+              $(NX_DEFINES)     \
+              $(NULL)
+
 NormalLibraryObjectRule()
 
 NormalLibraryTarget(dbe,$(OBJS))

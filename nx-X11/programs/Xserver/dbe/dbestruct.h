@@ -36,7 +36,6 @@
 
 /* INCLUDES */
 
-#define NEED_DBE_PROTOCOL
 #include <nx-X11/extensions/Xdbeproto.h>
 #include "windowstr.h"
 
@@ -219,11 +218,6 @@ typedef struct _DbeScreenPrivRec
 );
     void	(*ResetProc)(
 		ScreenPtr /*pScreen*/
-);
-    void	(*ValidateBuffer)(
-		WindowPtr /*pWin*/,
-		XID /*bufId*/,
-		Bool /*dstbuffer*/
 );
 
     /* Device-specific private information.
