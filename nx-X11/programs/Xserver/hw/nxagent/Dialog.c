@@ -525,7 +525,7 @@ void nxagentTerminateDialog(DialogType type)
   #endif
 }
 
-void nxagentTerminateDialogs()
+void nxagentTerminateDialogs(void)
 {
   DialogType type;
 

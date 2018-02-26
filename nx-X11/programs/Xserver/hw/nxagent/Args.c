@@ -2081,7 +2081,7 @@ Reply   Total	Cached	Bits In			Bits Out		Bits/Reply	  Ratio
     return useNXTrans;
 }
 
-void ddxUseMsg()
+void ddxUseMsg(void)
 {
   ErrorF("-display string        display name of the real server\n");
   ErrorF("-sync                  synchronize with the real server\n");
@@ -2122,7 +2122,7 @@ void ddxUseMsg()
   ErrorF("-version               show version information and exit\n");
 }
 
-static int nxagentGetDialogName()
+static int nxagentGetDialogName(void)
 {
   if (*nxagentSessionId != '\0')
   {
@@ -2306,7 +2306,7 @@ void nxagentSetPackMethod(void)
  *          of involved drawables.
  */
 
-void nxagentSetDeferLevel()
+void nxagentSetDeferLevel(void)
 {
   int deferLevel;
   int tileWidth;
@@ -2486,7 +2486,7 @@ void nxagentSetDeferLevel()
   }
 }
 
-void nxagentSetBufferSize()
+void nxagentSetBufferSize(void)
 {
   int size;
 
@@ -2545,7 +2545,7 @@ void nxagentSetBufferSize()
   }
 }
 
-void nxagentSetScheduler()
+void nxagentSetScheduler(void)
 {
   /*
    * The smart scheduler is the default.
@@ -2561,7 +2561,7 @@ void nxagentSetScheduler()
   }
 }
 
-void nxagentSetCoalescence()
+void nxagentSetCoalescence(void)
 {
   int timeout;
 

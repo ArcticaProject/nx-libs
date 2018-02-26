@@ -200,7 +200,7 @@ unsigned long startTime;
 extern void RejectWellKnownSockets(void);
 extern Bool nxagentReportWindowIds;
 
-int nxagentServerOrder()
+int nxagentServerOrder(void)
 {
   int whichbyte = 1;
 
@@ -800,7 +800,7 @@ static int nxagentDisplayErrorPredicate(Display *display, int error)
   return error;
 }
 
-void nxagentInstallDisplayHandlers()
+void nxagentInstallDisplayHandlers(void)
 {
   /*
    * If the display was already opened, be sure
@@ -849,7 +849,7 @@ void nxagentInstallDisplayHandlers()
   NXSetDisplayErrorPredicate(nxagentDisplayErrorPredicate);
 }
 
-void nxagentPostInstallDisplayHandlers()
+void nxagentPostInstallDisplayHandlers(void)
 {
   /*
    * This is executed after having opened the
@@ -880,7 +880,7 @@ FIXME: What is the most appropriate number of elements?
   XSetErrorHandler(nxagentErrorHandler);
 }
 
-void nxagentResetDisplayHandlers()
+void nxagentResetDisplayHandlers(void)
 {
   if (nxagentDisplay != NULL)
   {
@@ -934,7 +934,7 @@ void nxagentResetDisplayHandlers()
   nxagentDispatch.start  = 0;
 }
 
-void nxagentInstallSignalHandlers()
+void nxagentInstallSignalHandlers(void)
 {
   #ifdef TEST
   fprintf(stderr, "nxagentInstallSignalHandlers: Installing the agent signal handlers.\n");
@@ -1040,7 +1040,7 @@ void nxagentInstallSignalHandlers()
   }
 }
 
-void nxagentPostInstallSignalHandlers()
+void nxagentPostInstallSignalHandlers(void)
 {
   #ifdef TEST
   fprintf(stderr, "nxagentPostInstallSignalHandlers: Dealing with the proxy signal handlers.\n");
@@ -1079,7 +1079,7 @@ void nxagentPostInstallSignalHandlers()
    */
 }
 
-void nxagentResetSignalHandlers()
+void nxagentResetSignalHandlers(void)
 {
   struct sigaction newAction;
 
@@ -1553,7 +1553,7 @@ void nxagentInitVisuals(void)
   nxagentSetDefaultVisual();
 }
 
-void nxagentInitDepths()
+void nxagentInitDepths(void)
 {
   #ifdef TEST
   int i;
@@ -1586,7 +1586,7 @@ void nxagentInitDepths()
   #endif
 }
 
-void nxagentInitPixmapFormats()
+void nxagentInitPixmapFormats(void)
 {
   int i, j;
   int depth;
@@ -1673,7 +1673,7 @@ XXX: Some X server doesn't list 1 among available depths...
   #endif
 }
 
-void nxagentSetDefaultDrawables()
+void nxagentSetDefaultDrawables(void)
 {
   int i, j;
 
@@ -1744,7 +1744,7 @@ void nxagentSetDefaultDrawables()
   }
 }
 
-void nxagentCloseDisplay()
+void nxagentCloseDisplay(void)
 {
   #ifdef TEST
   fprintf(stderr, "nxagentCloseDisplay: Called with full generation [%d] and display [%p].\n",
@@ -1984,7 +1984,7 @@ Bool nxagentMakeIcon(Display *display, Pixmap *nxIcon, Pixmap *nxMask)
   return success;
 }
 
-Bool nxagentXServerGeometryChanged()
+Bool nxagentXServerGeometryChanged(void)
 {
   return  (WidthOfScreen(DefaultScreenOfDisplay(nxagentDisplay)) !=
                WidthOfScreen(DefaultScreenOfDisplay(nxagentDisplayBackup))) ||
@@ -2124,7 +2124,7 @@ void nxagentDisconnectDisplay(void)
   reconnectDisplayState = NOTHING;
 }
 
-static int nxagentCheckForDefaultDepthCompatibility()
+static int nxagentCheckForDefaultDepthCompatibility(void)
 {
   /*
    * Depending on the (reconnect) tolerance checks value, this
@@ -2190,7 +2190,7 @@ static int nxagentCheckForDefaultDepthCompatibility()
   }
 }
 
-static int nxagentCheckForDepthsCompatibility()
+static int nxagentCheckForDepthsCompatibility(void)
 {
   /*
    * Depending on the (reconnect) tolerance checks value, this
@@ -2348,7 +2348,7 @@ static int nxagentCheckForDepthsCompatibility()
   return (ret);
 }
 
-static int nxagentCheckForPixmapFormatsCompatibility()
+static int nxagentCheckForPixmapFormatsCompatibility(void)
 {
   /*
    * Depending on the (reconnect) tolerance checks value, this
@@ -2881,7 +2881,7 @@ Bool nxagentReconnectDisplay(void *p0)
   return True;
 }
 
-void nxagentAddXConnection()
+void nxagentAddXConnection(void)
 {
   int fd = XConnectionNumber(nxagentDisplay);
 
@@ -2895,7 +2895,7 @@ void nxagentAddXConnection()
   SetNotifyFd(XConnectionNumber(nxagentDisplay), nxagentNotifyConnection, X_NOTIFY_READ, NULL);
 }
 
-void nxagentRemoveXConnection()
+void nxagentRemoveXConnection(void)
 {
   #ifdef TEST
   fprintf(stderr, "nxagentRemoveXConnection: Removing the X connection [%d] "
@@ -2912,7 +2912,7 @@ void nxagentRemoveXConnection()
  * NX transport is terminated first.
  */
 
-void nxagentWaitDisplay()
+void nxagentWaitDisplay(void)
 {
   /*
    * Disable the smart scheduler's interrupts.
@@ -2962,7 +2962,7 @@ void nxagentWaitDisplay()
  * the Xlib display connection.
  */
 
-void nxagentAbortDisplay()
+void nxagentAbortDisplay(void)
 {
   /*
    * Be sure the X server socket in .X11-unix is

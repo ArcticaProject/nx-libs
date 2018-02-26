@@ -367,7 +367,7 @@ FIXME: We'll check for ReparentNotify and LeaveNotify events after XReparentWind
   }
 }
 
-Window nxagentCreateIconWindow()
+Window nxagentCreateIconWindow(void)
 {
   XSetWindowAttributes attributes;
   unsigned long valuemask;
@@ -4547,7 +4547,7 @@ void nxagentShadowAdaptToRatio(void)
   RegionUninit(&region);
 }
 
-void nxagentPrintGeometry()
+void nxagentPrintGeometry(void)
 {
   int i;
 

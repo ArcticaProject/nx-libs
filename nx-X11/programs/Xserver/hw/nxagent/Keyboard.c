@@ -1435,7 +1435,7 @@ void nxagentCheckModifierMasks(CARD8 keycode, int j)
 
 }
 
-void nxagentCheckRemoteKeycodes()
+void nxagentCheckRemoteKeycodes(void)
 {
   nxagentCapsLockKeycode = XKeysymToKeycode(nxagentDisplay, XK_Caps_Lock);
   nxagentNumLockKeycode  = XKeysymToKeycode(nxagentDisplay, XK_Num_Lock);

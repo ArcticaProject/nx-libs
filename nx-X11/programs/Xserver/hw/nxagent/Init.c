@@ -470,7 +470,7 @@ void InitInput(argc, argv)
  * by FatalError().
  */
 
-void AbortDDX()
+void AbortDDX(void)
 {
   nxagentDoFullGeneration = True;
 
@@ -492,7 +492,7 @@ void AbortDDX()
  * Called by GiveUp().
  */
 
-void ddxGiveUp()
+void ddxGiveUp(void)
 {
   AbortDDX();
 }
@@ -501,12 +501,12 @@ void ddxBeforeReset(void)
 {
 }
 
-void OsVendorInit()
+void OsVendorInit(void)
 {
   return;
 }
 
-void OsVendorFatalError()
+void OsVendorFatalError(void)
 {
   /*
    * Let the session terminate gracely
@@ -538,12 +538,12 @@ void OsVendorVErrorFFunction(const char *f, va_list args)
   }
 }
 
-void OsVendorStartRedirectErrorFFunction()
+void OsVendorStartRedirectErrorFFunction(void)
 {
   nxagentStartRedirectToClientsLog();
 }
 
-void OsVendorEndRedirectErrorFFunction()
+void OsVendorEndRedirectErrorFFunction(void)
 {
   nxagentEndRedirectToClientsLog();
 }

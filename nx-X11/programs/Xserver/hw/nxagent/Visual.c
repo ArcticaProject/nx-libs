@@ -145,7 +145,7 @@ Visual *nxagentVisualFromDepth(ScreenPtr pScreen, int depth)
  * of the remote display.
  */
 
-void nxagentInitAlphaVisual()
+void nxagentInitAlphaVisual(void)
 {
   nxagentAlphaVisual.visualid = XAllocID(nxagentDisplay);
 

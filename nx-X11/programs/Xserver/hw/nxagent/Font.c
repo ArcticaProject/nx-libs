@@ -1252,7 +1252,7 @@ static void nxagentFailedFontReconnect(FontPtr pFont, XID param1, void * param2)
   return;
 }
 
-static void nxagentFreeFailedToReconnectFonts()
+static void nxagentFreeFailedToReconnectFonts(void)
 {
   free(nxagentFailedToReconnectFonts.font);
   nxagentFailedToReconnectFonts.font = NULL;
@@ -1371,7 +1371,7 @@ Bool nxagentReconnectFailedFonts(void *p0)
   return True;
 }
 
-Bool nxagentDisconnectAllFonts()
+Bool nxagentDisconnectAllFonts(void)
 {
   int cid;
   Bool fontSuccess = True;

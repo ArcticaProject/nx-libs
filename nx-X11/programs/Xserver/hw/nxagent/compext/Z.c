@@ -239,7 +239,7 @@ int ZDeflate(char *dest, unsigned int *destLen, const char *source, unsigned int
   return result;
 }
 
-int ZInitEncoder()
+int ZInitEncoder(void)
 {
   if (zInitialized == 0)
   {
@@ -284,7 +284,7 @@ int ZInitEncoder()
   return zInitialized;
 }
 
-int ZResetEncoder()
+int ZResetEncoder(void)
 {
   int result;
 

@@ -247,7 +247,7 @@ int nxagentExitHandler(const char *message)
   return 0;
 }
 
-void nxagentOpenClientsLogFile()
+void nxagentOpenClientsLogFile(void)
 {
   if (*nxagentClientsLogName == '\0')
   {
@@ -577,7 +577,7 @@ char *nxagentGetSessionPath(void)
   return sessionPath;
 }
 
-void nxagentGetClientsPath()
+void nxagentGetClientsPath(void)
 {
 
   if (*nxagentClientsLogName == '\0')

@@ -788,7 +788,7 @@ void nxagentDisconnectPixmap(void *p0, XID x1, void *p2)
   }
 }
 
-Bool nxagentDisconnectAllPixmaps()
+Bool nxagentDisconnectAllPixmaps(void)
 {
   int r = 1;
   int i;
@@ -1185,7 +1185,7 @@ Bool nxagentCheckPixmapIntegrity(PixmapPtr pPixmap)
   return integrity;
 }
 
-Bool nxagentCheckAllPixmapIntegrity()
+Bool nxagentCheckAllPixmapIntegrity(void)
 {
   int i;
   Bool imageIsGood = True;
@@ -1445,7 +1445,7 @@ FIXME: If the pixmap has a different depth from the window, the
   return True;
 }
 
-Bool nxagentFbOnShadowDisplay()
+Bool nxagentFbOnShadowDisplay(void)
 {
   static Display *shadow;
   static Window win;
@@ -1608,7 +1608,7 @@ Bool nxagentFbOnShadowDisplay()
 
 #ifdef DEBUG
 
-void nxagentPrintResourceTypes()
+void nxagentPrintResourceTypes(void)
 {
   fprintf(stderr, "nxagentPrintResourceTypes: RT_PIXMAP [%lu].\n", (unsigned long) RT_PIXMAP);
   fprintf(stderr, "nxagentPrintResourceTypes: RT_NX_PIXMAP [%lu].\n", (unsigned long) RT_NX_PIXMAP);
@@ -1627,7 +1627,7 @@ void nxagentPrintResourcePredicate(void *value, XID id, XID type, void *cdata)
               (void *) value, (unsigned long) id, (unsigned long) type);
 }
 
-void nxagentPrintResources()
+void nxagentPrintResources(void)
 {
   Bool result;
   int i;

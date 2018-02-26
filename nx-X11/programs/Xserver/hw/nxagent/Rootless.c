@@ -118,7 +118,7 @@ static void nxagentRemovePropertyFromList(void);
 
 static void nxagentPrintRootlessTopLevelWindowMap(void);
 
-void nxagentPrintRootlessTopLevelWindowMap()
+void nxagentPrintRootlessTopLevelWindowMap(void)
 {
   int i;
 
@@ -245,7 +245,7 @@ void nxagentCirculateRootlessWindows(int direction)
 
 #ifdef DEBUG
 
-Bool nxagentRootlessTreesMatch()
+Bool nxagentRootlessTreesMatch(void)
 {
   Window root_return;
   Window parent_return;
@@ -1178,7 +1178,7 @@ static struct{
  * Removing first element from list.
  */
 
-void nxagentRemovePropertyFromList()
+void nxagentRemovePropertyFromList(void)
 {
   struct nxagentPropertyRec *tmp = nxagentPropertyList.first;
 
@@ -1242,7 +1242,7 @@ void nxagentAddPropertyToList(Atom property, WindowPtr pWin)
   nxagentPropertyList.size++;
 }
 
-void nxagentFreePropertyList()
+void nxagentFreePropertyList(void)
 {
   while (nxagentPropertyList.size != 0)
   {

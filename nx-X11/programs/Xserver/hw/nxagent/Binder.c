@@ -133,7 +133,7 @@ int nxagentCheckBinder(int argc, char *argv[], int i)
   return 0;
 }
 
-int nxagentBinderLoop()
+int nxagentBinderLoop(void)
 {
   struct timeval timeout;
 

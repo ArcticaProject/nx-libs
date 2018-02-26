@@ -114,7 +114,7 @@ static void catchAndRedirect(Display* dpy, XErrorEvent* X)
   }
 }
 
-static void startWMDetection()
+static void startWMDetection(void)
 {
   /*
    * We are trying to detect if is there any client
@@ -420,7 +420,7 @@ static void nxagentWriteAtom(Atom local, Atom remote, const char *string, Bool d
  * the Xserver values and the atom names.
  */
 
-void nxagentResetAtomMap()
+void nxagentResetAtomMap(void)
 {
   unsigned i;
 

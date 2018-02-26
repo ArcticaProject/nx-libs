@@ -321,7 +321,7 @@ TODO: This should be reset only when
   return 0;
 }
 
-void nxagentInitializeRecLossyLevel()
+void nxagentInitializeRecLossyLevel(void)
 {
   *(int *)reconnectLossyLevel[DISPLAY_STEP]    = 0;
   *(int *)reconnectLossyLevel[SCREEN_STEP]     = 0;
@@ -805,7 +805,7 @@ static char* nxagentGetReconnectError()
   return nxagentReconnectErrorMessage;
 }
 
-void nxagentHandleConnectionChanges()
+void nxagentHandleConnectionChanges(void)
 {
   #ifdef TEST
   fprintf(stderr, "nxagentHandleConnectionChanges: Called.\n");

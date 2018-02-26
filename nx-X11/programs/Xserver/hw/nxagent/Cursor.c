@@ -392,7 +392,7 @@ void nxagentReconnectCursor(void * p0, XID x1, void * p2)
  * The parameter is ignored at the moment.
  */
 
-void nxagentReDisplayCurrentCursor()
+void nxagentReDisplayCurrentCursor(void)
 {
   CursorPtr pCursor = GetSpriteCursor();
 
@@ -518,7 +518,7 @@ void nxagentDisconnectCursor(void * p0, XID x1, void * p2)
   }
 }
 
-Bool nxagentDisconnectAllCursor()
+Bool nxagentDisconnectAllCursor(void)
 {
   int i;
   Bool r = True;
