@@ -5,6 +5,7 @@ usr/include/*/nx-X11/extensions/dpmsstr.h
 usr/include/*/nx-X11/extensions/record*.h
 usr/include/*/nx-X11/extensions/security.h
 usr/include/*/nx-X11/extensions/securstr.h
+usr/include/*/nx-X11/extensions/shapeconst.h
 usr/include/*/nx-X11/extensions/sync.h
 usr/include/*/nx-X11/extensions/syncstr.h
 usr/include/*/nx-X11/extensions/xcmiscstr.h
