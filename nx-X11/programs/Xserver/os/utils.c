@@ -753,8 +753,6 @@ ProcessCommandLine(int argc, char *argv[])
 	    else
 		UseMsg();
 	}
-	else if ( strcmp( argv[i], "bc") == 0)
-	    permitOldBugs = TRUE;
 	else if ( strcmp( argv[i], "-br") == 0)
 	    blackRoot = TRUE;
 	else if ( strcmp( argv[i], "+bs") == 0)

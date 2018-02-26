@@ -167,7 +167,7 @@ ReplyNotSwappd(
 int
 main(int argc, char *argv[], char *envp[])
 {
-    int		i, error;
+    int		i;
     char	*xauthfile;
     HWEventQueueType	alwaysCheckForInput[2];
 
@@ -263,6 +263,7 @@ main(int argc, char *argv[], char *envp[])
 #else
 	InitGlyphCaching();
 #endif /* of HAS_XFONT2 */
+	ResetExtensionPrivates();
 	ResetClientPrivates();
 	ResetScreenPrivates();
 	ResetWindowPrivates();

@@ -74,7 +74,7 @@ SOFTWARE.
 #include "dixevents.h"
 
 DeviceIntPtr
-_AddInputDevice(DeviceProc deviceProc, Bool autoStart)
+AddInputDevice(DeviceProc deviceProc, Bool autoStart)
 {
     register DeviceIntPtr dev;
 
@@ -348,7 +348,7 @@ NumMotionEvents()
 }
 
 void
-_RegisterPointerDevice(DeviceIntPtr device)
+RegisterPointerDevice(DeviceIntPtr device)
 {
     inputInfo.pointer = device;
 #ifdef XKB
@@ -371,7 +371,7 @@ _RegisterPointerDevice(DeviceIntPtr device)
 }
 
 void
-_RegisterKeyboardDevice(DeviceIntPtr device)
+RegisterKeyboardDevice(DeviceIntPtr device)
 {
     inputInfo.keyboard = device;
 #ifdef XKB
@@ -1611,38 +1611,3 @@ ProcQueryKeymap(ClientPtr client)
     WriteReplyToClient(client, sizeof(xQueryKeymapReply), &rep);
     return Success;
 }
-
-/******************************************************************************
- * The following entrypoints are provided for binary compatibility with
- * previous versions (they make casts, where the current version changes types
- * for more stringent prototype checking).
- ******************************************************************************/
-#ifdef AddInputDevice
-#undef AddInputDevice
-
-DevicePtr
-AddInputDevice(DeviceProc deviceProc, Bool autoStart)
-{
-    return (DevicePtr)_AddInputDevice(deviceProc, autoStart);
-}
-#endif /* AddInputDevice */
-
-#ifdef RegisterPointerDevice
-#undef RegisterPointerDevice
-
-void
-RegisterPointerDevice(DevicePtr device)
-{
-    _RegisterPointerDevice((DeviceIntPtr)device);
-}
-#endif /* RegisterPointerDevice */
-
-#ifdef RegisterKeyboardDevice
-#undef RegisterKeyboardDevice
-
-void
-RegisterKeyboardDevice(DevicePtr device)
-{
-    _RegisterKeyboardDevice((DeviceIntPtr)device);
-}
-#endif /* RegisterKeyboardDevice */

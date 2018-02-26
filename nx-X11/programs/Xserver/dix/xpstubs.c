@@ -31,6 +31,8 @@ from The Open Group.
 
 #include "misc.h"
 #include <X11/fonts/font.h>
+extern Bool XpClientIsBitmapClient(ClientPtr client);
+extern Bool XpClientIsPrintClient(ClientPtr client, FontPathElementPtr fpe);
 
 Bool
 XpClientIsBitmapClient(

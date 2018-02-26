@@ -354,8 +354,7 @@ SQueryKeymapReply(ClientPtr pClient, int size, xQueryKeymapReply *pRep)
     WriteToClient(pClient, size, pRep);
 }
 
-static
-void
+static void
 SwapCharInfo(xCharInfo *pInfo)
 {
     swaps(&pInfo->leftSideBearing);
@@ -380,8 +379,7 @@ SwapFontInfo(xQueryFontReply *pr)
     swapl(&pr->nCharInfos);
 }
 
-static
-void
+static void
 SwapFont(xQueryFontReply *pr, Bool hasGlyphs)
 {
     unsigned	i;

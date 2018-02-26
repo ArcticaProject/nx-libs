@@ -89,7 +89,7 @@ unsigned long serverGeneration = 0;
 /* these next four are initialized in main.c */
 CARD32 ScreenSaverTime;
 CARD32 ScreenSaverInterval;
-int  ScreenSaverBlanking;
+int ScreenSaverBlanking;
 int  ScreenSaverAllowExposures;
 
 #ifdef DPMSExtension
@@ -103,15 +103,15 @@ int  ScreenSaverAllowExposures;
 #  define DEFAULT_OFF_TIME DEFAULT_SCREEN_SAVER_TIME * 4
 # endif
 # ifndef DEFAULT_DPMS_ENABLED
-#  define DEFAULT_DPMS_ENABLED FALSE
+#  define DEFAULT_DPMS_ENABLED TRUE
 # endif
 CARD32 defaultDPMSStandbyTime = DEFAULT_STANDBY_TIME;
 CARD32 defaultDPMSSuspendTime = DEFAULT_SUSPEND_TIME;
 CARD32 defaultDPMSOffTime = DEFAULT_OFF_TIME;
 CARD16 DPMSPowerLevel = 0;
 Bool defaultDPMSEnabled = DEFAULT_DPMS_ENABLED;
-Bool DPMSEnabledSwitch = FALSE;	  /* these denote the DPMS command line */
-Bool DPMSDisabledSwitch = FALSE;  /*                      switch states */
+Bool DPMSEnabledSwitch = FALSE;  /* these denote the DPMS command */
+Bool DPMSDisabledSwitch = FALSE; /* line switch states */
 Bool DPMSCapableFlag = FALSE;
 CARD32 DPMSStandbyTime;
 CARD32 DPMSSuspendTime;
@@ -140,14 +140,11 @@ FontPtr defaultFont;   /* not declared in dix.h to avoid including font.h in
 Bool loadableFonts = FALSE;
 CursorPtr rootCursor;
 Bool blackRoot=FALSE;
+Bool whiteRoot=FALSE;
 ClientPtr requestingClient;	/* XXX this should be obsolete now, remove? */
 
 TimeStamp currentTime;
 TimeStamp lastDeviceEventTime;
-
-Bool permitOldBugs = FALSE; /* turn off some error checking, to permit certain
-			     * old broken clients (like R2/R3 xterms) to work
-			     */
 
 int defaultColorVisualClass = -1;
 int monitorResolution = 0;

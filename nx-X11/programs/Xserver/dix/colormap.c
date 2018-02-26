@@ -52,6 +52,9 @@ SOFTWARE.
 
 #include <nx-X11/X.h>
 #include <nx-X11/Xproto.h>
+#include <stdio.h>
+#include <string.h>
+#include <strings.h>
 #include "misc.h"
 #include "dix.h"
 #include "colormapst.h"
@@ -273,6 +276,13 @@ CreateColormap (Colormap mid, ScreenPtr pScreen, VisualPtr pVisual,
     pmap = (ColormapPtr) malloc(sizebytes);
     if (!pmap)
 	return (BadAlloc);
+#if defined(_XSERVER64)
+    pmap->pad0 = 0;
+    pmap->pad1 = 0;
+#if (X_BYTE_ORDER == X_LITTLE_ENDIAN)
+    pmap->pad2 = 0;
+#endif
+#endif
     pmap->red = (EntryPtr)((char *)pmap + sizeof(ColormapRec));    
     sizebytes = size * sizeof(Entry);
     pmap->clientPixelsRed = (Pixel **)((char *)pmap->red + sizebytes);

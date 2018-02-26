@@ -1,5 +1,27 @@
 /*
 
+Copyright (c) 2006, Red Hat, Inc.
+
+Permission to use, copy, modify, distribute, and sell this software and its
+documentation for any purpose is hereby granted without fee, provided that
+the above copyright notice appear in all copies and that both that
+copyright notice and this permission notice appear in supporting
+documentation.
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL 
+RED HAT BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER 
+IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+Except as contained in this notice, the name of Red Hat shall not be
+used in advertising or otherwise to promote the sale, use or other dealings
+in this Software without prior written authorization from Red Hat.
+
 Copyright 1987, 1998  The Open Group
 
 Permission to use, copy, modify, distribute, and sell this software and its
@@ -320,9 +342,6 @@ MakeRootTile(WindowPtr pWin)
 	for (j = len; j > 0; j--)
 	    *to++ = *from;
 
-   if (blackRoot)
-       bzero(back, sizeof(back));
-
    (*pGC->ops->PutImage)((DrawablePtr)pWin->background.pixmap, pGC, 1,
 		    0, 0, len, 4, 0, XYBitmap, (char *)back);
 
@@ -358,6 +377,10 @@ AllocateWindow(ScreenPtr pScreen)
 	    else
 		ppriv->ptr = (void *)NULL;
 	}
+#if _XSERVER64
+	pWin->drawable.pad0 = 0;
+        pWin->drawable.pad1 = 0;
+#endif
     }
     return pWin;
 }
@@ -481,6 +504,7 @@ void
 InitRootWindow(WindowPtr pWin)
 {
     ScreenPtr pScreen = pWin->drawable.pScreen;
+    int backFlag = CWBorderPixel | CWCursor | CWBackingStore;
 
     if (!(*pScreen->CreateWindow)(pWin))
 	return; /* XXX */
@@ -489,12 +513,23 @@ InitRootWindow(WindowPtr pWin)
     pWin->cursorIsNone = FALSE;
     pWin->optional->cursor = rootCursor;
     rootCursor->refcnt++;
-    MakeRootTile(pWin);
+
+    if (!blackRoot && !whiteRoot) {
+        MakeRootTile(pWin);
+        backFlag |= CWBackPixmap;
+    }
+    else {
+        if (blackRoot)
+            pWin->background.pixel = pScreen->blackPixel;
+        else
+            pWin->background.pixel = pScreen->whitePixel;
+        backFlag |= CWBackPixel;
+    }
+
     pWin->backingStore = defaultBackingStore;
     pWin->forcedBS = (defaultBackingStore != NotUseful);
     /* We SHOULD check for an error value here XXX */
-    (*pScreen->ChangeWindowAttributes)(pWin,
-		       CWBackPixmap|CWBorderPixel|CWCursor|CWBackingStore);
+    (*pScreen->ChangeWindowAttributes)(pWin, backFlag);
 
     MapWindow(pWin, serverClient);
 }
@@ -2059,7 +2094,7 @@ WhereDoIGoInTheStack(
 	else
 	    return NullWindow;
       case TopIf:
-	if ((!pWin->mapped || (pSib && !pSib->mapped)) && !permitOldBugs)
+	if ((!pWin->mapped || (pSib && !pSib->mapped)))
 	    return(pWin->nextSib);
 	else if (pSib)
 	{
@@ -2074,7 +2109,7 @@ WhereDoIGoInTheStack(
 	else
 	    return(pWin->nextSib);
       case BottomIf:
-	if ((!pWin->mapped || (pSib && !pSib->mapped)) && !permitOldBugs)
+	if ((!pWin->mapped || (pSib && !pSib->mapped)))
 	    return(pWin->nextSib);
 	else if (pSib)
 	{
@@ -2089,7 +2124,7 @@ WhereDoIGoInTheStack(
 	else
 	    return(pWin->nextSib);
       case Opposite:
-	if ((!pWin->mapped || (pSib && !pSib->mapped)) && !permitOldBugs)
+	if ((!pWin->mapped || (pSib && !pSib->mapped)))
 	    return(pWin->nextSib);
 	else if (pSib)
 	{
@@ -2709,7 +2744,7 @@ MapWindow(register WindowPtr pWin, ClientPtr client)
 	}
 
 	pWin->mapped = TRUE;
-	if (SubStrSend(pWin, pParent))
+	if (SubStrSend(pWin, pParent) && MapUnmapEventsEnabled(pWin))
 	{
 	    memset(&event, 0, sizeof(xEvent));
 	    event.u.u.type = MapNotify;
@@ -2968,7 +3003,7 @@ UnmapWindow(register WindowPtr pWin, Bool fromConfigure)
 
     if ((!pWin->mapped) || (!(pParent = pWin->parent)))
 	return(Success);
-    if (SubStrSend(pWin, pParent))
+    if (SubStrSend(pWin, pParent) && MapUnmapEventsEnabled(pWin))
     {
 	memset(&event, 0, sizeof(xEvent));
 	event.u.u.type = UnmapNotify;
@@ -3271,6 +3306,29 @@ SendVisibilityNotify(WindowPtr pWin)
     DeliverEvents(pWin, &event, 1, NullWindow);
 }
 
+static WindowPtr windowDisableMapUnmapEvents;
+
+void
+DisableMapUnmapEvents(WindowPtr pWin)
+{
+    assert (windowDisableMapUnmapEvents == NULL);
+
+    windowDisableMapUnmapEvents = pWin;
+}
+
+void
+EnableMapUnmapEvents(WindowPtr pWin)
+{
+    assert (windowDisableMapUnmapEvents != NULL);
+
+    windowDisableMapUnmapEvents = NULL;
+}
+
+Bool
+MapUnmapEventsEnabled(WindowPtr pWin)
+{
+    return pWin != windowDisableMapUnmapEvents;
+}
 
 #define RANDOM_WIDTH 32
 

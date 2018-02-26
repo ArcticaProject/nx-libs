@@ -75,6 +75,39 @@ int lastEvent = EXTENSION_EVENT_BASE;
 static int lastError = FirstExtensionError;
 static unsigned int NumExtensions = 0;
 
+extern int extensionPrivateLen;
+extern unsigned *extensionPrivateSizes;
+extern unsigned totalExtensionSize;
+
+static void
+InitExtensionPrivates(ExtensionEntry *ext)
+{
+    register char *ptr;
+    DevUnion *ppriv;
+    register unsigned *sizes;
+    register unsigned size;
+    register int i;
+
+    if (totalExtensionSize == sizeof(ExtensionEntry))
+	ppriv = (DevUnion *)NULL;
+    else
+	ppriv = (DevUnion *)(ext + 1);
+
+    ext->devPrivates = ppriv;
+    sizes = extensionPrivateSizes;
+    ptr = (char *)(ppriv + extensionPrivateLen);
+    for (i = extensionPrivateLen; --i >= 0; ppriv++, sizes++)
+    {
+	if ( (size = *sizes) )
+	{
+	    ppriv->ptr = (void *)ptr;
+	    ptr += size;
+	}
+	else
+	    ppriv->ptr = (void *)NULL;
+    }
+}
+
 ExtensionEntry *
 AddExtension(char *name, int NumEvents, int NumErrors, 
 	     int (*MainProc)(ClientPtr c1), 
@@ -91,9 +124,11 @@ AddExtension(char *name, int NumEvents, int NumErrors,
 	        (unsigned)(lastError + NumErrors > LAST_ERROR))
         return((ExtensionEntry *) NULL);
 
-    ext = (ExtensionEntry *) malloc(sizeof(ExtensionEntry));
+    ext = (ExtensionEntry *) malloc(totalExtensionSize);
     if (!ext)
 	return((ExtensionEntry *) NULL);
+    bzero(ext, totalExtensionSize);
+    InitExtensionPrivates(ext);
     ext->name = (char *)malloc(strlen(name) + 1);
     ext->num_aliases = 0;
     ext->aliases = (char **)NULL;
@@ -204,6 +239,20 @@ CheckExtension(const char *extname)
 	return extensions[n];
     else
 	return NULL;
+}
+
+/*
+ * Added as part of Xace.
+ */
+ExtensionEntry *
+GetExtensionEntry(int major)
+{
+    if (major < EXTENSION_BASE)
+	return NULL;
+    major -= EXTENSION_BASE;
+    if (major >= NumExtensions)
+	return NULL;
+    return extensions[major];
 }
 
 void

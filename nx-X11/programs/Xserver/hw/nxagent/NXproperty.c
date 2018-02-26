@@ -208,13 +208,10 @@ ChangeWindowProperty(WindowPtr pWin, Atom property, Atom type, int format,
                      Bool sendevent)
 {
     PropertyPtr pProp;
-    xEvent event;
     int sizeInBytes;
     int totalSize;
     void * data;
     int copySize;
-
-    memset(&event, 0, sizeof(xEvent));
 
     sizeInBytes = format>>3;
     totalSize = len * sizeInBytes;
@@ -278,7 +275,7 @@ ChangeWindowProperty(WindowPtr pWin, Atom property, Atom type, int format,
         {
 	    if (totalSize != pProp->size * (pProp->format >> 3))
 	    {
-	    	data = (void *)realloc(pProp->data, totalSize);
+		data = (void *)realloc(pProp->data, totalSize);
 	    	if (!data && len)
 		    return(BadAlloc);
             	pProp->data = data;
@@ -320,6 +317,8 @@ ChangeWindowProperty(WindowPtr pWin, Atom property, Atom type, int format,
     }
     if (sendevent)
     {
+	xEvent event;
+	memset(&event, 0, sizeof(xEvent));
 	event.u.u.type = PropertyNotify;
 	event.u.property.window = pWin->drawable.id;
 	event.u.property.state = PropertyNewValue;
@@ -350,7 +349,6 @@ ProcGetProperty(ClientPtr client)
     REQUEST(xGetPropertyReq);
 
     REQUEST_SIZE_MATCH(xGetPropertyReq);
-
     if (stuff->delete)
 	UpdateCurrentTime();
     pWin = (WindowPtr)SecurityLookupWindow(stuff->window, client,

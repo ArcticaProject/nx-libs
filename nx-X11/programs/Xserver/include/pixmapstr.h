@@ -47,16 +47,27 @@ SOFTWARE.
 
 #ifndef PIXMAPSTRUCT_H
 #define PIXMAPSTRUCT_H
+#include <nx-X11/Xarch.h>
 #include "pixmap.h"
 #include "screenint.h"
 #include "regionstr.h"
+
+/*
+ * The padN members are unfortunate ABI BC.  See fdo bug #6924.
+ */
 
 typedef struct _Drawable {
     unsigned char	type;	/* DRAWABLE_<type> */
     unsigned char	class;	/* specific to type */
     unsigned char	depth;
     unsigned char	bitsPerPixel;
-    unsigned long	id;	/* resource id */
+#if defined(_XSERVER64)
+    XID			pad0;
+#endif
+    XID			id;	/* resource id */
+#if defined(_XSERVER64)
+    XID			pad1;
+#endif
     short		x;	/* window: screen absolute, pixmap: 0 */
     short		y;	/* window: screen absolute, pixmap: 0 */
     unsigned short	width;
