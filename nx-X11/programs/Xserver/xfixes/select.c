@@ -1,6 +1,4 @@
 /*
- * $Id$
- *
  * Copyright © 2002 Keith Packard
  *
  * Permission to use, copy, modify, distribute, and sell this software and its
@@ -206,7 +204,7 @@ ProcXFixesSelectSelectionInput (ClientPtr client)
         return rc;
 #else
     pWin = (WindowPtr)SecurityLookupWindow(stuff->window, client,
-					   DixReadAccess);
+                                          DixReadAccess);
     if (!pWin)
         return(BadWindow);
 #endif
