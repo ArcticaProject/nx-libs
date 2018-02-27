@@ -826,6 +826,7 @@ SetScreenSaverTimer(void)
                MIN(ScreenSaverTime, timeout) :
                ScreenSaverTime;
     }
+
 #ifdef SCREENSAVER
     if (timeout && !screenSaverSuspended) {
 #else
