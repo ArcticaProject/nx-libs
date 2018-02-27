@@ -1,4 +1,3 @@
-
 /*
 
 Copyright 1995, 1998  The Open Group
@@ -56,9 +55,7 @@ from The Open Group.
 #include "set.h"
 
 static int
-maxMemberInInterval(pIntervals, nIntervals)
-    RecordSetInterval *pIntervals;
-    int nIntervals;
+maxMemberInInterval(RecordSetInterval *pIntervals, int nIntervals)
 {
     int i;
     int maxMember = -1;
@@ -71,8 +68,7 @@ maxMemberInInterval(pIntervals, nIntervals)
 }
 
 static void
-NoopDestroySet(pSet)
-    RecordSetPtr pSet;
+NoopDestroySet(RecordSetPtr pSet)
 {
 }
 
@@ -89,16 +85,13 @@ typedef struct {
 #define BITS_PER_LONG (sizeof(unsigned long) * 8)
 
 static void
-BitVectorDestroySet(pSet)
-    RecordSetPtr pSet;
+BitVectorDestroySet(RecordSetPtr pSet)
 {
     free(pSet);
 }
 
 static unsigned long
-BitVectorIsMemberOfSet(pSet, pm)
-    RecordSetPtr pSet;
-    int pm;
+BitVectorIsMemberOfSet(RecordSetPtr pSet, int pm)
 {
     BitVectorSetPtr pbvs = (BitVectorSetPtr)pSet;
     unsigned long *pbitvec;
@@ -110,10 +103,7 @@ BitVectorIsMemberOfSet(pSet, pm)
 
 
 static int
-BitVectorFindBit(pSet, iterbit, bitval)
-    RecordSetPtr pSet;
-    int iterbit;
-    Bool bitval;
+BitVectorFindBit(RecordSetPtr pSet, int iterbit, Bool bitval)
 {
     BitVectorSetPtr pbvs = (BitVectorSetPtr)pSet;
     unsigned long *pbitvec = (unsigned long *)(&pbvs[1]);
@@ -159,10 +149,8 @@ BitVectorFindBit(pSet, iterbit, bitval)
 
 
 static RecordSetIteratePtr
-BitVectorIterateSet(pSet, pIter, pInterval)
-    RecordSetPtr pSet;
-    RecordSetIteratePtr pIter;
-    RecordSetInterval *pInterval;
+BitVectorIterateSet(RecordSetPtr pSet, RecordSetIteratePtr pIter,
+		    RecordSetInterval *pInterval)
 {
     int iterbit = (int)(long)pIter;
     int b;
@@ -183,11 +171,8 @@ RecordSetOperations BitVectorNoFreeOperations = {
     NoopDestroySet, BitVectorIsMemberOfSet, BitVectorIterateSet };
 
 static int
-BitVectorSetMemoryRequirements(pIntervals, nIntervals, maxMember, alignment)
-    RecordSetInterval *pIntervals;
-    int nIntervals;
-    int maxMember;
-    int *alignment;
+BitVectorSetMemoryRequirements(RecordSetInterval *pIntervals, int nIntervals,
+			       int maxMember, int *alignment)
 {
     int nlongs;
 
@@ -197,11 +182,8 @@ BitVectorSetMemoryRequirements(pIntervals, nIntervals, maxMember, alignment)
 }
 
 static RecordSetPtr
-BitVectorCreateSet(pIntervals, nIntervals, pMem, memsize)
-    RecordSetInterval *pIntervals;
-    int nIntervals;
-    void *pMem;
-    int memsize;
+BitVectorCreateSet(RecordSetInterval *pIntervals, int nIntervals,
+		   void *pMem, int memsize)
 {
     BitVectorSetPtr pbvs;
     int i, j;
@@ -249,16 +231,13 @@ typedef struct {
 } IntervalListSet, *IntervalListSetPtr;
 
 static void
-IntervalListDestroySet(pSet)
-    RecordSetPtr pSet;
+IntervalListDestroySet(RecordSetPtr pSet)
 {
     free(pSet);
 }
 
 static unsigned long
-IntervalListIsMemberOfSet(pSet, pm)
-    RecordSetPtr pSet;
-    int pm;
+IntervalListIsMemberOfSet(RecordSetPtr pSet, int pm)
 {
     IntervalListSetPtr prls = (IntervalListSetPtr)pSet;
     RecordSetInterval *pInterval = (RecordSetInterval *)(&prls[1]);
@@ -278,10 +257,8 @@ IntervalListIsMemberOfSet(pSet, pm)
 
 
 static RecordSetIteratePtr
-IntervalListIterateSet(pSet, pIter, pIntervalReturn)
-    RecordSetPtr pSet;
-    RecordSetIteratePtr pIter;
-    RecordSetInterval *pIntervalReturn;
+IntervalListIterateSet(RecordSetPtr pSet, RecordSetIteratePtr pIter,
+		       RecordSetInterval *pIntervalReturn)
 {
     RecordSetInterval *pInterval = (RecordSetInterval *)pIter;
     IntervalListSetPtr prls = (IntervalListSetPtr)pSet;
@@ -307,22 +284,16 @@ RecordSetOperations IntervalListNoFreeOperations = {
     NoopDestroySet, IntervalListIsMemberOfSet, IntervalListIterateSet };
 
 static int
-IntervalListMemoryRequirements(pIntervals, nIntervals, maxMember, alignment)
-    RecordSetInterval *pIntervals;
-    int nIntervals;
-    int maxMember;
-    int *alignment;
+IntervalListMemoryRequirements(RecordSetInterval *pIntervals, int nIntervals,
+			       int maxMember, int *alignment)
 {
     *alignment = sizeof(unsigned long);
     return sizeof(IntervalListSet) + nIntervals * sizeof(RecordSetInterval);
 }
 
 static RecordSetPtr
-IntervalListCreateSet(pIntervals, nIntervals, pMem, memsize)
-    RecordSetInterval *pIntervals;
-    int nIntervals;
-    void *pMem;
-    int memsize;
+IntervalListCreateSet(RecordSetInterval *pIntervals, int nIntervals,
+		      void *pMem, int memsize)
 {
     IntervalListSetPtr prls;
     int i, j, k;
@@ -401,11 +372,9 @@ typedef RecordSetPtr (*RecordCreateSetProcPtr)(
 );
 
 static int
-_RecordSetMemoryRequirements(pIntervals, nIntervals, alignment, ppCreateSet)
-    RecordSetInterval *pIntervals;
-    int nIntervals;
-    int *alignment;
-    RecordCreateSetProcPtr *ppCreateSet;
+_RecordSetMemoryRequirements(RecordSetInterval *pIntervals, int nIntervals,
+			     int *alignment,
+			     RecordCreateSetProcPtr *ppCreateSet)
 {
     int bmsize, rlsize, bma, rla;
     int maxMember;
