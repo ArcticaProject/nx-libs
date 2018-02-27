@@ -11010,8 +11010,8 @@ int SetPorts()
 
 
 
-  nxinfo << "Loop: cups port: " << cupsPort << "\n"
-         << std::flush;
+  nxinfo << "Loop: cups port: '" << cupsPort
+         << "'.\n" << std::flush;
 
   if (control -> ProxyMode == proxy_client) {
     auxPort.setDefaultTCPPort(DEFAULT_NX_AUX_PORT_OFFSET + proxyPort);
@@ -11031,8 +11031,8 @@ int SetPorts()
     }
   }
 
-  nxinfo << "Loop: aux port: " << auxPort << "\n"
-         << std::flush;
+  nxinfo << "Loop: aux port: '" << auxPort
+         << "'.\n" << std::flush;
 
   if (control -> ProxyMode == proxy_client) {
     smbPort.setDefaultTCPPort(DEFAULT_NX_SMB_PORT_OFFSET + proxyPort);
@@ -11042,8 +11042,8 @@ int SetPorts()
   }
 
 
-  nxinfo << "Loop: smb port: " << smbPort << "\n"
-         << std::flush;
+  nxinfo << "Loop: smb port: '" << smbPort
+         << "'.\n" << std::flush;
 
   if ( mediaPort.configured() ) {
     if (control -> ProxyMode == proxy_client) {
