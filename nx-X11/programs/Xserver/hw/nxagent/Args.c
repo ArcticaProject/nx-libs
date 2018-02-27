@@ -130,6 +130,8 @@ char nxagentDisplayName[NXAGENTDISPLAYNAMELENGTH];
 Bool nxagentSynchronize = False;
 Bool nxagentRealWindowProp = False;
 
+Bool nxagentAutoDPI = False;
+
 char nxagentShadowDisplayName[NXAGENTSHADOWDISPLAYNAMELENGTH] = {0};
 
 char nxagentWindowName[NXAGENTWINDOWNAMELENGTH];
@@ -743,6 +745,11 @@ int ddxProcessArgument(int argc, char *argv[], int i)
     return 1;
   }
 
+  if (!strcmp(argv[i], "-autodpi")) {
+    nxagentAutoDPI = True;
+    return 1;
+  }
+
   /*
    * The original -noreset option, disabling
    * dispatchExceptionAtReset, is the default.
@@ -1267,6 +1274,25 @@ static void nxagentParseOptions(char *name, char *value)
     else
     {
       nxagentChangeOption(MagicPixel, 1);
+    }
+
+    return;
+  }
+  else if (!strcmp(name, "autodpi"))
+  {
+    if (nxagentReconnectTrap == True)
+    {
+      #ifdef DEBUG
+      fprintf(stderr, "nxagentParseOptions: Ignoring option 'autodpi' at reconnection.\n");
+      #endif
+    }
+    else if (!strcmp(value, "0"))
+    {
+      nxagentAutoDPI = False;
+    }
+    else
+    {
+      nxagentAutoDPI = True;
     }
 
     return;
@@ -2091,6 +2117,7 @@ void ddxUseMsg(void)
   ErrorF("-class string          default visual class\n");
   ErrorF("-depth int             default depth\n");
   ErrorF("-geometry WxH+X+Y      window size and position\n");
+  ErrorF("-autodpi               detect real server's DPI and use that in the session\n");
   ErrorF("-bw int                window border width\n");
   ErrorF("-name string           window name\n");
   ErrorF("-scrns int             number of screens to generate\n");

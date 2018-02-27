@@ -338,14 +338,25 @@ static int nxagentRandRInitSizes(ScreenPtr pScreen)
     width = w[i];
     height = h[i];
 
-    mmWidth  = (width * 254 + monitorResolution * 5) / (monitorResolution * 10);
+    if (monitorResolution < 0)
+    {
+      mmWidth  = width * DisplayWidthMM(nxagentDisplay, DefaultScreen(nxagentDisplay)) /
+                     DisplayWidth(nxagentDisplay, DefaultScreen(nxagentDisplay));
+
+      mmHeight = height * DisplayHeightMM(nxagentDisplay, DefaultScreen(nxagentDisplay)) /
+                     DisplayHeight(nxagentDisplay, DefaultScreen(nxagentDisplay));
+    }
+    else
+    {
+      mmWidth  = (width * 254 + monitorResolution * 5) / (monitorResolution * 10);
+      mmHeight = (height * 254 + monitorResolution * 5) / (monitorResolution * 10);
+
+    }
 
     if (mmWidth < 1)
     {
       mmWidth = 1;
     }
-
-    mmHeight = (height * 254 + monitorResolution * 5) / (monitorResolution * 10);
 
     if (mmHeight < 1)
     {
