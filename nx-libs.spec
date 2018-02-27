@@ -116,10 +116,6 @@ BuildRequires:  libXinerama-devel
 BuildRequires:  xorg-x11-font-utils
 %endif
 
-%if 0%{?fedora} >= 28 || 0%{?rhel} >= 8
-BuildRequires: libtirpc-devel
-%endif
-
 # For imake
 BuildRequires:  xorg-x11-proto-devel
 BuildRequires:  zlib-devel
