@@ -35,7 +35,6 @@
 #include <nx-X11/Xos.h>
 #include <nx-X11/Xfuncs.h>
 
-
 #include <nx-X11/X.h>
 #include <nx-X11/keysym.h>
 #include <nx-X11/Xproto.h>

@@ -33,7 +33,6 @@
 #include <nx-X11/Xos.h>
 #include <nx-X11/Xfuncs.h>
 
-
 #include <nx-X11/X.h>
 #include <nx-X11/Xproto.h>
 #include <nx-X11/keysym.h>
@@ -50,7 +49,6 @@ XkbInternAtom(Display *dpy,char *str,Bool only_if_exists)
 	return None;
     return MakeAtom(str,strlen(str),!only_if_exists);
 }
-
 
 #ifndef SEEK_SET
 #define	SEEK_SET 0

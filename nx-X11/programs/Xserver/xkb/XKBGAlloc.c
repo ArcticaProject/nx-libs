@@ -37,7 +37,6 @@ THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #include <xkbsrv.h>
 #include "xkbgeom.h"
 
-
 #ifdef X_NOT_POSIX
 #define Size_t unsigned int
 #else

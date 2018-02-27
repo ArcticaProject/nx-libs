@@ -28,7 +28,6 @@ THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #include <dix-config.h>
 #endif
 
-
 #include <stdio.h>
 #include <nx-X11/X.h>
 #include <nx-X11/Xproto.h>
@@ -36,7 +35,6 @@ THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #include "inputstr.h"
 #include <xkbsrv.h>
 #include "xkbgeom.h"
-
 
 /***===================================================================***/
 

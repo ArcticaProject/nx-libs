@@ -36,7 +36,6 @@
 #define XOS_USE_NO_LOCKING
 #include <nx-X11/Xos_r.h>
 
-
 #include <nx-X11/Xproto.h>
 #include <nx-X11/X.h>
 #include <nx-X11/Xos.h>
@@ -48,7 +47,6 @@
 #include "dix.h"
 #include "xkbstr.h"
 #include <xkbsrv.h>
-
 
 #ifdef DEBUG
 #define PR_DEBUG(s)		fprintf(stderr,s)
@@ -1328,4 +1326,3 @@ XkbRF_GroupPtr	group;
 	_XkbFree(rules);
     return;
 }
-

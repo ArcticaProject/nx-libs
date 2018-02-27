@@ -134,7 +134,7 @@ char *			XkbOptionsUsed=	NULL;
 int			_XkbClientMajor=	XkbMajorVersion;
 int			_XkbClientMinor=	XkbMinorVersion;
 
-Bool			noXkbExtension=		XKB_DFLT_DISABLED;
+Bool		noXkbExtension=		XKB_DFLT_DISABLED;
 Bool			XkbWantRulesProp=	XKB_DFLT_RULES_PROP;
 
 /***====================================================================***/

@@ -17,4 +17,3 @@ XkbDDXPrivate(DeviceIntPtr dev,KeyCode key,XkbAction *act)
 {
     return 0;
 }
-
