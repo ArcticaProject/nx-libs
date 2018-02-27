@@ -8450,7 +8450,8 @@ int ParseEnvironmentOptions(const char *env, int force)
                                      strcasecmp(name, "streaming") == 0 ||
                                          strcasecmp(name, "backingstore") == 0 ||
                                              strcasecmp(name, "sleep") == 0 ||
-                                                 strcasecmp(name, "tolerancechecks") == 0)
+                                                 strcasecmp(name, "keyconv") == 0 ||
+                                                     strcasecmp(name, "tolerancechecks") == 0)
     {
       nxdbg << "Loop: Ignoring agent option '" << name
             << "' with value '" << value << "'.\n"
