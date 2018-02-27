@@ -548,7 +548,7 @@ void nxagentSetVersionProperty(WindowPtr pWin)
 #endif
 }
 
-Bool nxagentSomeWindowsAreMapped()
+Bool nxagentSomeWindowsAreMapped(void)
 {
   WindowPtr pWin = screenInfo.screens[0]->root -> firstChild;
 
@@ -2524,7 +2524,7 @@ void nxagentUnmapWindows(void)
   NXFlushDisplay(nxagentDisplay, NXFlushLink);
 }
 
-void nxagentMapDefaultWindows()
+void nxagentMapDefaultWindows(void)
 {
   int i;
 
@@ -3930,7 +3930,7 @@ int nxagentRemoveItemBSPixmapList(unsigned long pixmapId)
   return 0;
 }
 
-int nxagentEmptyBSPixmapList()
+int nxagentEmptyBSPixmapList(void)
 {
   int i;
 

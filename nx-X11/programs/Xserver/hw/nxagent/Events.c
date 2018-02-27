@@ -281,7 +281,7 @@ int nxagentCheckWindowConfiguration(XConfigureEvent* X);
 
 void nxagentRemoveDuplicatedKeys(XEvent *X);
 
-void ProcessInputEvents()
+void ProcessInputEvents(void)
 {
   #ifdef NX_DEBUG_INPUT
   if (nxagentDebugInput == 1)
@@ -734,7 +734,7 @@ int nxagentInputEventPredicate(Display *display, XEvent *event, XPointer paramet
   }
 }
 
-void nxagentInitDefaultEventMask()
+void nxagentInitDefaultEventMask(void)
 {
   Mask mask = NoEventMask;
 
@@ -3698,7 +3698,7 @@ int nxagentHandleReparentNotify(XEvent* X)
   return 1;
 }
 
-void nxagentEnableKeyboardEvents()
+void nxagentEnableKeyboardEvents(void)
 {
   int i;
   Mask mask;
@@ -3719,7 +3719,7 @@ void nxagentEnableKeyboardEvents()
                           NXAGENT_KEYBOARD_EXTENSION_EVENT_MASK);
 }
 
-void nxagentDisableKeyboardEvents()
+void nxagentDisableKeyboardEvents(void)
 {
   int i;
   Mask mask;
@@ -3738,7 +3738,7 @@ void nxagentDisableKeyboardEvents()
   XkbSelectEvents(nxagentDisplay, XkbUseCoreKbd, 0x0, 0x0);
 }
 
-void nxagentEnablePointerEvents()
+void nxagentEnablePointerEvents(void)
 {
   int i;
   Mask mask;
@@ -3755,7 +3755,7 @@ void nxagentEnablePointerEvents()
   }
 }
 
-void nxagentDisablePointerEvents()
+void nxagentDisablePointerEvents(void)
 {
   int i;
   Mask mask;
@@ -3793,7 +3793,7 @@ void nxagentSendFakeKey(int key)
   mieqEnqueue(&fake);
 }
 
-int nxagentInitXkbKeyboardState()
+int nxagentInitXkbKeyboardState(void)
 {
   XEvent X;
 
@@ -3954,7 +3954,7 @@ void nxagentUngrabPointerAndKeyboard(XEvent *X)
   XUngrabPointer(nxagentDisplay, now);
 }
 
-void nxagentDeactivatePointerGrab()
+void nxagentDeactivatePointerGrab(void)
 {
   GrabPtr grab = inputInfo.pointer -> grab;
 
@@ -4595,7 +4595,7 @@ void nxagentGuessDumpInputInfo(ClientPtr client, Atom property, char *data)
   }
 }
 
-void nxagentDeactivateInputDevicesGrabs()
+void nxagentDeactivateInputDevicesGrabs(void)
 {
   fprintf(stderr, "Info: Deactivating input devices grabs.\n");
 

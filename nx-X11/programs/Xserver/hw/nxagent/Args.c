@@ -124,7 +124,7 @@ extern int _XGetBitsPerPixel(Display *dpy, int depth);
 
 extern char dispatchExceptionAtReset;
 
-extern const char *__progname;
+const char *nxagentProgName;
 
 char nxagentDisplayName[NXAGENTDISPLAYNAMELENGTH];
 Bool nxagentSynchronize = False;
@@ -184,6 +184,8 @@ int ddxProcessArgument(int argc, char *argv[], int i)
   /*
    * Ensure that the options are set to their defaults.
    */
+
+  nxagentProgName = argv[0];
 
   static Bool resetOptions = True;
 
@@ -334,6 +336,12 @@ int ddxProcessArgument(int argc, char *argv[], int i)
     }
 
     return 0;
+  }
+
+  if (!strcmp(argv[i], "-version"))
+  {
+    nxagentShowVersionInfo();
+    exit(0);
   }
 
   /*
@@ -1179,13 +1187,13 @@ static void nxagentParseOptions(char *name, char *value)
   {
 #if !defined(PANORAMIX) && !defined(RANDR)
     nxagentChangeOption(Xinerama, 0);
-    fprintf(stderr, "Warning: No Xinerama support compiled into %s.\n", __progname);
+    fprintf(stderr, "Warning: No Xinerama support compiled into %s.\n", nxagentProgName);
     return;
 #else
     if (PANORAMIX_DISABLED_COND && RRXINERAMA_DISABLED_COND)
     {
       nxagentChangeOption(Xinerama, 0);
-      fprintf(stderr, "Warning: XINERAMA extension has been disabled on %s startup.\n", __progname);
+      fprintf(stderr, "Warning: XINERAMA extension has been disabled on %s startup.\n", nxagentProgName);
       return;
     }
 
@@ -2075,7 +2083,7 @@ Reply   Total	Cached	Bits In			Bits Out		Bits/Reply	  Ratio
     return useNXTrans;
 }
 
-void ddxUseMsg()
+void ddxUseMsg(void)
 {
   ErrorF("-display string        display name of the real server\n");
   ErrorF("-sync                  synchronize with the real server\n");
@@ -2089,6 +2097,7 @@ void ddxUseMsg()
   ErrorF("-install               install colormaps directly\n");
 
   ErrorF("The NX system adds the following arguments:\n");
+  ErrorF("-options file|string   file or string containing nx/nx options\n");
   ErrorF("-forcenx               force use of NX protocol messages assuming communication through nxproxy\n");
   ErrorF("-timeout int           auto-disconnect timeout in seconds (minimum allowed: 60)\n");
   ErrorF("-norootlessexit        don't exit if there are no clients in rootless mode\n");
@@ -2112,9 +2121,10 @@ void ddxUseMsg()
   ErrorF("-R                     enable rootless mode\n");
   ErrorF("-S                     enable shadow mode\n");
   ErrorF("-B                     enable proxy binding mode\n");
+  ErrorF("-version               show version information and exit\n");
 }
 
-static int nxagentGetDialogName()
+static int nxagentGetDialogName(void)
 {
   if (*nxagentSessionId != '\0')
   {
@@ -2298,7 +2308,7 @@ void nxagentSetPackMethod(void)
  *          of involved drawables.
  */
 
-void nxagentSetDeferLevel()
+void nxagentSetDeferLevel(void)
 {
   int deferLevel;
   int tileWidth;
@@ -2478,7 +2488,7 @@ void nxagentSetDeferLevel()
   }
 }
 
-void nxagentSetBufferSize()
+void nxagentSetBufferSize(void)
 {
   int size;
 
@@ -2537,7 +2547,7 @@ void nxagentSetBufferSize()
   }
 }
 
-void nxagentSetScheduler()
+void nxagentSetScheduler(void)
 {
   /*
    * The smart scheduler is the default.
@@ -2553,7 +2563,7 @@ void nxagentSetScheduler()
   }
 }
 
-void nxagentSetCoalescence()
+void nxagentSetCoalescence(void)
 {
   int timeout;
 
@@ -2609,3 +2619,7 @@ void nxagentSetCoalescence()
   nxagentChangeOption(DisplayCoalescence, timeout);
 }
 
+void nxagentShowVersionInfo(void)
+{
+    ErrorF("NXAGENT - Version " NX_VERSION_CURRENT_STRING "\n");
+}

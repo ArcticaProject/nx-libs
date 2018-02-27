@@ -447,7 +447,7 @@ nxagentCleanGlyphs(xGlyphInfo  *gi,
 
 #endif /* #ifdef NXAGENT_RENDER_CLEANUP */
 
-void nxagentRenderExtensionInit()
+void nxagentRenderExtensionInit(void)
 {
   int first_event, first_error;
   int major_version, minor_version;
@@ -2303,7 +2303,7 @@ void nxagentTriFan(CARD8 op, PicturePtr pSrc, PicturePtr pDst,
   #endif
 }
 
-void nxagentQueryFormats()
+void nxagentQueryFormats(void)
 {
   XRenderInfo *xri;
   XExtDisplayInfo *info = NULL;
@@ -3006,7 +3006,7 @@ void nxagentDisconnectPicture(void * p0, XID x1, void* p2)
   nxagentPicture(pPicture) = None;
 }
 
-Bool nxagentDisconnectAllPicture()
+Bool nxagentDisconnectAllPicture(void)
 {
   int i;
   Bool r;

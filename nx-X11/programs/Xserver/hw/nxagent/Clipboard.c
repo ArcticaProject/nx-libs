@@ -1027,7 +1027,7 @@ void nxagentNotifySelection(XEvent *X)
  * requests from real X clients.
  */
 
-void nxagentResetSelectionOwner()
+void nxagentResetSelectionOwner(void)
 {
   int i;
 

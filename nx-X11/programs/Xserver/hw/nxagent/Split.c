@@ -71,7 +71,7 @@ DrawablePtr nxagentSplitDrawable(DrawablePtr pDrawable)
   }
 }
 
-void nxagentInitSplitResources()
+void nxagentInitSplitResources(void)
 {
   int resource;
 
@@ -93,7 +93,7 @@ void nxagentInitSplitResources()
   }
 }
 
-SplitResourcePtr nxagentAllocSplitResource()
+SplitResourcePtr nxagentAllocSplitResource(void)
 {
   int resource;
 
@@ -193,14 +193,14 @@ void nxagentFreeSplitResource(SplitResourcePtr pResource)
   pResource -> gc       = NULL;
 }
 
-void nxagentInitUnpackResources()
+void nxagentInitUnpackResources(void)
 {
 /*
 FIXME: This must be implemented.
 */
 }
 
-UnpackResourcePtr nxagentAllocUnpackResource()
+UnpackResourcePtr nxagentAllocUnpackResource(void)
 {
 /*
 FIXME: This must be implemented.
@@ -1173,7 +1173,7 @@ FIXME: Implementing the valid region policy
   #endif
 }
 
-void nxagentHandleEmptySplitEvent()
+void nxagentHandleEmptySplitEvent(void)
 {
 /*
 FIXME: Should run a consistency check here.

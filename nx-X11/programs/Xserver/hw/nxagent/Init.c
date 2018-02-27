@@ -85,9 +85,6 @@ is" without express or implied warranty.
 #undef  DEBUG
 #undef  DUMP
 
-#define NXAGENT_VERSION NX_VERSION_CURRENT
-#define NXAGENT_VERSION_STRING NX_VERSION_CURRENT_STRING
-
 /*
  * ProcVector array defined in tables.c.
  */
@@ -197,8 +194,8 @@ int nxagentX2go;
 
 void checkX2goAgent()
 {
-  extern const char *__progname;
-  if( strcasecmp(__progname,"x2goagent") == 0)
+  extern const char *nxagentProgName;
+  if( strcasecmp(nxagentProgName,"x2goagent") == 0)
   {
     fprintf(stderr, "\nrunning as X2Go Agent\n");
     nxagentX2go=1;
@@ -234,7 +231,7 @@ void InitOutput(ScreenInfo *screenInfo, int argc, char *argv[])
 
   if (serverGeneration <= 1)
   {
-    fprintf(stderr, "\nNXAGENT - Version " NXAGENT_VERSION_STRING "\n\n");
+    fprintf(stderr, "\nNXAGENT - Version " NX_VERSION_CURRENT_STRING "\n\n");
     fprintf(stderr, "Copyright (c) 2001, 2011 NoMachine (http://www.nomachine.com)\n");
     fprintf(stderr, "Copyright (c) 2008-2014 Oleksandr Shneyder <o.shneyder@phoca-gmbh.de>\n");
     fprintf(stderr, "Copyright (c) 2011-2016 Mike Gabriel <mike.gabriel@das-netzwerkteam.de>\n");
@@ -473,7 +470,7 @@ void InitInput(argc, argv)
  * by FatalError().
  */
 
-void AbortDDX()
+void AbortDDX(void)
 {
   nxagentDoFullGeneration = True;
 
@@ -495,7 +492,7 @@ void AbortDDX()
  * Called by GiveUp().
  */
 
-void ddxGiveUp()
+void ddxGiveUp(void)
 {
   AbortDDX();
 }
@@ -504,12 +501,12 @@ void ddxBeforeReset(void)
 {
 }
 
-void OsVendorInit()
+void OsVendorInit(void)
 {
   return;
 }
 
-void OsVendorFatalError()
+void OsVendorFatalError(void)
 {
   /*
    * Let the session terminate gracely
@@ -541,12 +538,12 @@ void OsVendorVErrorFFunction(const char *f, va_list args)
   }
 }
 
-void OsVendorStartRedirectErrorFFunction()
+void OsVendorStartRedirectErrorFFunction(void)
 {
   nxagentStartRedirectToClientsLog();
 }
 
-void OsVendorEndRedirectErrorFFunction()
+void OsVendorEndRedirectErrorFFunction(void)
 {
   nxagentEndRedirectToClientsLog();
 }

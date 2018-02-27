@@ -50,7 +50,7 @@
 
 int nxagentCompositeEnable = UNDEFINED;
 
-void nxagentCompositeExtensionInit()
+void nxagentCompositeExtensionInit(void)
 {
   /*
    * Set the flag only if the initialization
@@ -115,7 +115,7 @@ void nxagentCompositeExtensionInit()
   #endif
 }
 
-void nxagentRedirectDefaultWindows()
+void nxagentRedirectDefaultWindows(void)
 {
   int i;
 

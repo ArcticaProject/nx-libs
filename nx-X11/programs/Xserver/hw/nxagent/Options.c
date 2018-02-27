@@ -56,7 +56,7 @@ unsigned int nxagentPrintGeometryFlags = 0;
  * the options repository to the default values.
  */
 
-void nxagentInitOptions()
+void nxagentInitOptions(void)
 {
   nxagentOptions.LinkType = UNDEFINED;
 
@@ -183,7 +183,7 @@ void nxagentInitOptions()
  * ting.
  */
 
-void nxagentResetOptions()
+void nxagentResetOptions(void)
 {
   if (nxagentLockDeferLevel == 0)
   {
@@ -201,12 +201,12 @@ void nxagentResetOptions()
   nxagentOptions.KeycodeConversion = DEFAULT_KEYCODE_CONVERSION;
 }
 
-void nxagentSaveOptions()
+void nxagentSaveOptions(void)
 {
   memcpy(&nxagentOptionsBackup, &nxagentOptions, sizeof(AgentOptionsRec));
 }
 
-void nxagentRestoreOptions()
+void nxagentRestoreOptions(void)
 {
   nxagentOptions.DeferLevel   = nxagentOptionsBackup.DeferLevel;
   nxagentOptions.DeferTimeout = nxagentOptionsBackup.DeferTimeout;

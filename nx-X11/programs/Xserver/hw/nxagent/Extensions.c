@@ -82,7 +82,7 @@ void DarwinHandleGUI(int argc, char *argv[])
 {
 }
 
-void DarwinGlxExtensionInit()
+void DarwinGlxExtensionInit(void)
 {
   GlxExtensionInit();
 }

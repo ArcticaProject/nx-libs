@@ -962,7 +962,7 @@ static void nxagentAddGCToList(GCPtr pGC)
   nxagentGCList.size++;
 }
 
-void nxagentFreeGCList()
+void nxagentFreeGCList(void)
 {
   struct nxagentGCRec *tempGC;
 
@@ -977,7 +977,7 @@ void nxagentFreeGCList()
   }
 }
 
-static void nxagentRestoreGCList()
+static void nxagentRestoreGCList(void)
 {
   struct nxagentGCRec *tempGC;
 
@@ -1215,7 +1215,7 @@ void nxagentDisconnectGC(void * p0, XID x1, void * p2)
   }
 } 
 
-Bool nxagentDisconnectAllGCs()
+Bool nxagentDisconnectAllGCs(void)
 {
   int cid;
   Bool success = True;

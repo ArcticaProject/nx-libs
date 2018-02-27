@@ -1616,7 +1616,7 @@ void nxagentGetImage(DrawablePtr pDrawable, int x, int y, int w, int h,
  * to the new proxy.
  */
 
-void nxagentResetVisualCache()
+void nxagentResetVisualCache(void)
 {
   int i;
 
@@ -1626,7 +1626,7 @@ void nxagentResetVisualCache()
   }
 }
 
-void nxagentResetAlphaCache()
+void nxagentResetAlphaCache(void)
 {
   int i;
 

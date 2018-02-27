@@ -253,7 +253,7 @@ void nxagentCheckIfShadowAgent(ClientPtr client)
   }
 }
 
-void nxagentWakeupByReconnect()
+void nxagentWakeupByReconnect(void)
 {
   int i;
 

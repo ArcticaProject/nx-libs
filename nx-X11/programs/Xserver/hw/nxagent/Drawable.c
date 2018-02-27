@@ -2593,7 +2593,7 @@ void nxagentCorruptedRegionOnWindow(void *p0, XID x, void *p2)
   RegionUninit(&visRegion);
 }
 
-void nxagentRegionsOnScreen()
+void nxagentRegionsOnScreen(void)
 {
   FindClientResourcesByType(clients[serverClient -> index], RT_NX_CORR_WINDOW,
                                 nxagentCorruptedRegionOnWindow, NULL);
@@ -3024,7 +3024,7 @@ void nxagentUnmarkExposedRegion(WindowPtr pWin, RegionPtr pRegion, RegionPtr pOt
   }
 }
 
-int nxagentSynchronizationPredicate()
+int nxagentSynchronizationPredicate(void)
 {
   if (nxagentCorruptedWindows == 0 &&
           nxagentCorruptedBackgrounds == 0 &&
