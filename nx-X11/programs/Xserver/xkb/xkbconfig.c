@@ -49,6 +49,12 @@
 
 #include <nx-X11/extensions/XKBconfig.h>
 
+#ifdef NEED_STRCASECMP
+extern int _XkbStrCaseCmp(char *s1, char *s2);
+#else
+#define _XkbStrCaseCmp strcasecmp
+#endif
+
 /***====================================================================***/
 
 #define	XKBCF_MAX_STR_LEN	100

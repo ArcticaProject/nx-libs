@@ -18,25 +18,20 @@ XKB_DDXDEFS = XkbServerDefines
  NX_DEFINES = -DNXAGENT_SERVER
 #endif
 
-#if (defined(XorgServer) && XorgServer)
-XF86INCLUDES = -I$(XF86COMSRC) -I$(XF86OSSRC)
-   XF86_OBJS = xf86KillSrv.o xf86VT.o xf86Private.o
-#endif
-
  DDX_SRCS = ddxBeep.c ddxCtrls.c ddxFakeBtn.c ddxFakeMtn.c ddxInit.c \
 	    ddxKeyClick.c ddxKillSrv.c ddxLEDs.c ddxVT.c ddxLoad.c \
-	    ddxList.c ddxConfig.c ddxDevBtn.c ddxPrivate.c xkbconfig.c
+	    ddxList.c ddxDevBtn.c ddxPrivate.c xkbconfig.c
  DDX_OBJS = ddxBeep.o ddxCtrls.o ddxFakeBtn.o ddxFakeMtn.o ddxInit.o \
 	    ddxKeyClick.o ddxKillSrv.o ddxLEDs.o ddxVT.o ddxLoad.o \
-	    ddxList.o ddxConfig.o ddxDevBtn.o ddxPrivate.o xkbconfig.o
+	    ddxList.o ddxDevBtn.o ddxPrivate.o xkbconfig.o
      SRCS = xkb.c xkbUtils.c xkbEvents.c xkbAccessX.c xkbSwap.c \
             xkbLEDs.c xkbInit.c xkbActions.c xkbPrKeyEv.c \
-	    xkmread.c xkbtext.c xkbfmisc.c xkberrs.c xkbout.c maprules.c \
+	    xkmread.c xkbfmisc.c xkberrs.c maprules.c \
 	    XKBMisc.c XKBMAlloc.c XKBAlloc.c XKBGAlloc.c \
 	    $(XKBXI_SRCS) $(DDX_SRCS)
      OBJS = xkb.o xkbUtils.o xkbEvents.o xkbAccessX.o xkbSwap.o \
             xkbLEDs.o xkbInit.o xkbActions.o xkbPrKeyEv.o \
-	    xkmread.o xkbtext.o xkbfmisc.o xkberrs.o xkbout.o maprules.o \
+	    xkmread.o xkbfmisc.o xkberrs.o maprules.o \
 	    XKBMisc.o XKBMAlloc.o XKBAlloc.o XKBGAlloc.o \
 	    $(XKBXI_OBJS) $(DDX_OBJS)
    INCLUDES = -I../include -I$(XINCLUDESRC) -I$(EXTINCSRC) -I$(SERVERSRC)/Xext \
@@ -51,13 +46,6 @@ NormalLibraryObjectRule()
 NormalLibraryTarget(xkb,$(OBJS))
 LintLibraryTarget(xkb,$(SRCS))
 NormalLintTarget($(SRCS))
-
-#if (defined(XorgServer) && XorgServer)
-ObjectFromSpecialSource(xf86KillSrv,ddxKillSrv,-DXF86DDXACTIONS)
-ObjectFromSpecialSource(xf86VT,ddxVT,-DXF86DDXACTIONS)
-ObjectFromSpecialSource(xf86Private,ddxPrivate,-DXF86DDXACTIONS)
-AllTarget($(XF86_OBJS))
-#endif
 
 SpecialCObjectRule(xkbInit,$(ICONFIGFILES),$(XKB_DEFINES))
 
