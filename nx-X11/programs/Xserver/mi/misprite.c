@@ -102,7 +102,7 @@ static void	    miSpriteComputeSaved(ScreenPtr pScreen);
     ((pScreen)->field = miSprite##field)
 
 /*
- * void *-sprite method table
+ * pointer-sprite method table
  */
 
 static Bool miSpriteRealizeCursor(ScreenPtr pScreen, CursorPtr pCursor);
