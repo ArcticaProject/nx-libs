@@ -66,10 +66,6 @@ extern Bool noDamageExtension;
 extern Bool noDbeExtension;
 #endif
 
-#ifdef DPSEXT
-extern Bool noDPSExtension;
-#endif
-
 #ifdef DPMSExtension
 extern Bool noDPMSExtension;
 #endif

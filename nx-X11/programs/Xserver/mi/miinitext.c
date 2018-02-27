@@ -243,9 +243,6 @@ extern void XFree86DRIExtensionInit(void);
 #ifdef DPMSExtension
 extern void DPMSExtensionInit(void);
 #endif
-#ifdef DPSEXT
-extern void DPSExtensionInit(void);
-#endif
 #ifdef RENDER
 extern void RenderExtensionInit(void);
 #endif
