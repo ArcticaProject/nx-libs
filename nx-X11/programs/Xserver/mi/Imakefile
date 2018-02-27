@@ -80,7 +80,6 @@ SRCS =  $(CBRT_SRC)             \
         misprite.c              \
         midispcur.c             \
         miscrinit.c             \
-        miclipn.c               \
         migc.c                  \
         micmap.c                \
         mioverlay.c             \
@@ -119,7 +118,6 @@ OBJS =  $(CBRT_OBJ)             \
         misprite.o              \
         midispcur.o             \
         miscrinit.o             \
-        miclipn.o               \
         migc.o                  \
         micmap.o                \
         mioverlay.o             \
