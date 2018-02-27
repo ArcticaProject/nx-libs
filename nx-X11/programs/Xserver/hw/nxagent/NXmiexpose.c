@@ -504,7 +504,7 @@ int what;
     BITS32 gcmask, index, mask;
     RegionRec prgnWin;
     DDXPointRec oldCorner;
-    BoxRec box;
+    BoxRec box = {0};
     WindowPtr	pBgWin;
     GCPtr pGC;
     register int i;
@@ -566,8 +566,7 @@ int what;
 	}
     }
 
-    prect = (xRectangle *)malloc(RegionNumRects(prgn) *
-					 sizeof(xRectangle));
+    prect = (xRectangle *)calloc(RegionNumRects(prgn), sizeof(xRectangle));
     if (!prect)
 	return;
 
