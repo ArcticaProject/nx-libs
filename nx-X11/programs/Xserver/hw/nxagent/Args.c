@@ -2111,24 +2111,24 @@ Reply   Total	Cached	Bits In			Bits Out		Bits/Reply	  Ratio
 
 void ddxUseMsg(void)
 {
-  ErrorF("-display string        display name of the real server\n");
-  ErrorF("-sync                  synchronize with the real server\n");
   ErrorF("-full                  utilize full regeneration\n");
   ErrorF("-class string          default visual class\n");
   ErrorF("-depth int             default depth\n");
   ErrorF("-geometry WxH+X+Y      window size and position\n");
-  ErrorF("-autodpi               detect real server's DPI and use that in the session\n");
   ErrorF("-bw int                window border width\n");
   ErrorF("-name string           window name\n");
   ErrorF("-scrns int             number of screens to generate\n");
   ErrorF("-install               install colormaps directly\n");
 
-  ErrorF("The NX system adds the following arguments:\n");
+  ErrorF("\nThe NX system adds the following arguments:\n");
   ErrorF("-options file|string   file or string containing nx/nx options\n");
   ErrorF("-forcenx               force use of NX protocol messages assuming communication through nxproxy\n");
   ErrorF("-timeout int           auto-disconnect timeout in seconds (minimum allowed: 60)\n");
   ErrorF("-norootlessexit        don't exit if there are no clients in rootless mode\n");
   ErrorF("-nomagicpixel          disable nxagent's magic pixel\n");
+  ErrorF("-autodpi               detect real server's DPI and use that in the session\n");
+  ErrorF("-display string        display name of the real server\n");
+  ErrorF("-sync                  synchronize with the real server\n");
 #ifdef RENDER
   ErrorF("-norender              disable the use of the render extension\n");
   ErrorF("-nocomposite           disable the use of the composite extension\n");

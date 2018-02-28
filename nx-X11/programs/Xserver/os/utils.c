@@ -269,7 +269,9 @@ long Memory_fail = 0;
 #include <stdlib.h>  /* for random() */
 #endif
 
+#ifndef NXAGENT_SERVER
 char *dev_tty_from_init = NULL;		/* since we need to parse it anyway */
+#endif
 
 extern char dispatchExceptionAtReset;
 
@@ -628,7 +630,9 @@ void UseMsg(void)
     ErrorF("-terminate             terminate at server reset\n");
     ErrorF("-to #                  connection time out\n");
     ErrorF("-tst                   disable testing extensions\n");
+#ifndef NXAGENT_SERVER
     ErrorF("ttyxx                  server started from init on /dev/ttyxx\n");
+#endif
     ErrorF("v                      video blanking for screen-saver\n");
     ErrorF("-v                     screen-saver without video blanking\n");
     ErrorF("-wm                    WhenMapped default backing-store\n");
@@ -1036,11 +1040,13 @@ ProcessCommandLine(int argc, char *argv[])
 	    /* ignore all remaining arguments */
 	    break;
 	}
+#ifndef NXAGENT_SERVER
 	else if (strncmp (argv[i], "tty", 3) == 0)
 	{
 	    /* just in case any body is interested */
 	    dev_tty_from_init = argv[i];
 	}
+#endif
 #ifdef XDMCP
 	else if ((skip = XdmcpOptions(argc, argv, i)) != i)
 	{
