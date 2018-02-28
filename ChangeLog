@@ -1,12 +1,511 @@
-2018-01-16 15:19:42 +0100 Mike Gabriel (cd50ef26e)
+2018-02-28 10:53:45 +0100 Mike Gabriel (3936db61a)
 
-	* release 3.5.99.13 (HEAD -> 3.6.x)
+	* release 3.5.99.14 (HEAD -> 3.6.x)
+
+2018-02-28 01:03:53 +0100 Mihai Moldovan (5c4777b2d)
+
+	* Merge branch 'uli42-pr/fix_autodpi_in_usage' into 3.6.x
+          (origin/HEAD, origin/3.6.x)
+
+2018-02-27 23:00:08 +0100 Ulrich Sibiller (809206d0c)
+
+	* os: hide ttyxx option
+
+2018-02-27 22:56:12 +0100 Ulrich Sibiller (9822e9703)
+
+	* nxagent: rearrange nx options in usage
+
+2018-02-28 00:55:13 +0100 Mihai Moldovan (1918bcb9c)
+
+	* Merge branch 'uli42-pr/update_xkb' into 3.6.x
+
+2018-02-28 00:52:10 +0100 Ulrich Sibiller (00e3e95e5)
+
+	* Lift xkb to xorg-xserver-7.1/1.1.0 state - non-functional changes
+          only
+
+2017-11-05 02:02:58 +0100 Ulrich Sibiller (9e6f87e20)
+
+	* Lift xkb to xorg-xserver-7.1/1.1.0 state
+
+2018-02-27 09:42:09 +0100 Mike Gabriel (a6cb8583a)
+
+	* Revert "nx-libs.spec: Starting with Fedora 28 / RHEL 8, SunRPC
+          support is being split out into a separate libraries
+          (libtirpc)."
+
+2018-02-27 09:37:58 +0100 Mike Gabriel (9f93e96ec)
+
+	* nx-libs.spec: Starting with Fedora 28 / RHEL 8, SunRPC support is
+          being split out into a separate libraries (libtirpc).
+
+2018-02-27 09:33:19 +0100 Mihai Moldovan (6d4049640)
+
+	* Merge branch 'sunweaver-pr/autodetect-dpi' into 3.6.x
+
+2018-02-21 22:21:15 +0100 Mike Gabriel (29c166dbe)
+
+	* nxagent: Also provide auto DPI feature via nx/nx option 'autodpi',
+          taking only effect on session startups.
+
+2017-10-09 11:36:23 +0200 Simon Matter (9dd2830e0)
+
+	* nxagent: Auto-detect client-side DPI at session startup.
+
+2018-02-27 07:47:49 +0100 Mike Gabriel (a88ca2717)
+
+	* nxcomp/src/Loop.cpp: Harmonize log output. Uniformly, embrace port
+          values by single quotes.
+
+2018-02-27 07:48:18 +0100 Mihai Moldovan (0ef6b0d59)
+
+	*
+          {nx-X11/programs/Xserver/hw/nxagent/man/nxagent.1,nxproxy/man/nxproxy.1}:
+          magicpixel takes a boolean argument for now.
+
+2018-02-27 07:39:57 +0100 Mihai Moldovan (842bb0f45)
+
+	* nx-X11/programs/Xserver/hw/nxagent/man/nxagent.1: remove empty line
+          on top of file.
+
+2018-02-27 07:34:54 +0100 Mike Gabriel (ea17fd059)
+
+	* nxcomp/src/Loop.cpp: Make know the agent option 'keyconv' to nxcomp
+          and tolerate it as a valid option.
+
+2018-02-27 05:11:06 +0100 Mihai Moldovan (f963593c7)
+
+	* nx-X11/programs/Xserver/{include/globals.h,mi/miinitext.c}: remove
+          DPSEXT left-overs.
+
+2018-02-27 03:20:46 +0100 Mihai Moldovan (7a4aa75de)
+
+	* Merge branch 'uli42-pr/update_os' into 3.6.x
+
+2018-02-27 03:13:55 +0100 Ulrich Sibiller (41ff6b034)
+
+	* Lift os to XORG-7_1 state - non-functional changes only
+
+2017-11-05 13:26:04 +0100 Ulrich Sibiller (2d59daca2)
+
+	* Lift os to XORG-7_1 state
+
+2018-02-27 03:02:00 +0100 Mihai Moldovan (78724c486)
+
+	* Remove unused X11R4 DDX compatibility function miClipNotify.
+
+2018-02-27 02:56:01 +0100 Mihai Moldovan (3fffa5bd8)
+
+	* Merge branch 'uli42-pr/update_mi' into 3.6.x
+
+2018-02-27 02:47:11 +0100 Ulrich Sibiller (7368b4540)
+
+	* Lift mi to xorg-xserver-7.1/1.1.0 state - non-functional changes
+          only
+
+2017-11-05 21:25:49 +0100 Ulrich Sibiller (6b0a1738f)
+
+	* Lift mi to xorg-xserver-7.1/1.1.0 state
+
+2017-11-05 13:45:31 +0100 Ulrich Sibiller (23dd2959b)
+
+	* Lift miext to xorg-xserver-7.1/1.1.10 state
+
+2018-02-27 02:14:07 +0100 Mihai Moldovan (eaae96101)
+
+	* Merge branch 'uli42-pr/update_record' into 3.6.x
+
+2017-11-05 23:24:55 +0100 Ulrich Sibiller (e5833a6a1)
+
+	* Lift record to xorg-server-1.4.2 state
+
+2018-02-27 01:47:50 +0100 Ulrich Sibiller (39a56dea4)
+
+	* Lift record to xorg-server-1.2.0/xorg-server-1.3.0.0 state -
+          non-functional changes only
+
+2017-11-05 23:15:07 +0100 Ulrich Sibiller (1c7abb05b)
+
+	* Lift record to xorg-server-1.2.0/xorg-server-1.3.0.0 state
+
+2018-02-27 01:38:29 +0100 Ulrich Sibiller (0b6259900)
+
+	* Lift record to xorg-xserver-7.1/1.1.0 state - non-functional
+          changes only
+
+2017-11-05 12:39:05 +0100 Ulrich Sibiller (db836fd78)
+
+	* Lift record to xorg-xserver-7.1/1.1.0 state
+
+2018-02-27 01:07:02 +0100 Mihai Moldovan (92d806399)
+
+	* Merge branch 'sunweaver-pr/version-cmdline-option' into 3.6.x
+
+2018-02-26 12:50:12 +0100 Mike Gabriel (0371276fb)
+
+	* hw/nxagent/: Stop using non-portable '__progname', set up our own
+          'nxagentProgName' instead and pass it around where needed.
+          (gh-sunweaver/pr/version-cmdline-option,
+          pr/version-cmdline-option)
+
+2018-02-26 12:22:15 +0100 Mike Gabriel (99fb9817f)
+
+	* hw/nxagent/: Use <function>(void) rather than <function>().
+
+2018-02-21 23:46:55 +0100 Simon Matter (deeac7e0f)
+
+	* nxagent/Args.c: Mention new -options cmdline parameter in usage
+          info.
+
+2018-02-21 23:49:55 +0100 Simon Matter (eded33173)
+
+	* nxagent: Print correct application in usage message.
+
+2018-02-21 23:39:23 +0100 Simon Matter (7c32938ac)
+
+	* nxagent: Add -version cmdline option.
+
+2018-02-26 07:46:22 +0100 Mihai Moldovan (751760421)
+
+	* nx-libs.spec: also package extensions/shapeconst.h in RPM packages.
+
+2018-02-26 06:17:08 +0100 Mihai Moldovan (711fd2447)
+
+	* Merge branch 'uli42-pr/update_dbe' into 3.6.x
+
+2018-01-22 22:44:54 +0100 Ulrich Sibiller (f1f2a360f)
+
+	* dbe: add NXAGENT_SERVER guard for DixLookup
+
+2018-02-26 06:15:49 +0100 Ulrich Sibiller (d364ea933)
+
+	* Lift dbe to xorg-xserver-1.4.2 state - non-functional changes only
+
+2018-01-22 22:26:59 +0100 Ulrich Sibiller (95b5cf795)
+
+	* Lift dbe to xorg-xserver-1.4.2 state
+
+2018-02-26 06:11:56 +0100 Ulrich Sibiller (4c5e9a295)
+
+	* Lift dbe to xorg-xserver-7.1/1.1.0 state - non-functional changes
+          only
+
+2017-11-05 22:00:44 +0100 Ulrich Sibiller (c529873d9)
+
+	* Lift dbe to xorg-xserver-7.1/1.1.0 state
+
+2018-02-26 05:18:12 +0100 Mihai Moldovan (3d8f8d7ab)
+
+	* debian/nx-x11proto-xext-dev.install: install new file
+          extensions/shapeconst.h.
+
+2018-02-26 05:12:20 +0100 Mihai Moldovan (a9787fc2e)
+
+	* Merge branch 'uli42-pr/update_dix' into 3.6.x
+
+2018-02-03 00:19:29 +0100 Ulrich Sibiller (6dcfcbabe)
+
+	* Transfer previous dix changes into hw/nxagent
+
+2018-02-26 05:03:53 +0100 Ulrich Sibiller (1b54f6462)
+
+	* Lift dix to xorg-xserver-1.3.0.0 state - non-functional changes
+          only
+
+2018-01-23 00:47:38 +0100 Ulrich Sibiller (485d62676)
+
+	* Lift dix to xorg-xserver-1.3.0.0 state
+
+2018-02-26 04:56:21 +0100 Ulrich Sibiller (2853ab292)
+
+	* Lift dix to xorg-xserver-7.1/1.1.0 state - non-functional changes
+          only
+
+2017-11-04 23:51:30 +0100 Ulrich Sibiller (50a337940)
+
+	* Lift dix to xorg-xserver-7.1/1.1.0 state
+
+2018-02-26 03:00:24 +0100 Mihai Moldovan (b40dec982)
+
+	* Merge branch 'uli42-pr/update_xfixes' into 3.6.x
+
+2018-02-26 02:56:58 +0100 Ulrich Sibiller (35d166b80)
+
+	* Lift XFIXES to xorg-xserver-1.4.2 state - non-functional changes
+          only
+
+2017-11-05 23:59:22 +0100 Ulrich Sibiller (d59e8d7f4)
+
+	* Lift XFIXES to xorg-xserver-1.4.2 state
+
+2018-02-26 02:44:10 +0100 Ulrich Sibiller (5706005f7)
+
+	* Lift XFIXES to xorg-xserver-7.1/1.1.0 state (XFIXES 4.0) -
+          non-functional changes only
+
+2017-10-31 01:54:47 +0100 Ulrich Sibiller (a667131e2)
+
+	* Lift XFIXES to xorg-xserver-7.1/1.1.0 state (XFIXES 4.0)
+
+2018-02-26 01:09:05 +0100 Mihai Moldovan (164263e1a)
+
+	* Merge branch 'sunweaver-pr/nomagicpixel' into 3.6.x
+
+2018-02-21 10:39:46 +0100 Mike Gabriel (8d00456ad)
+
+	* nxagent: Add support for optionally enabling/disabling the magic
+          pixel feature.
+
+2018-02-26 01:00:54 +0100 Mihai Moldovan (05152b788)
+
+	* Merge branch 'uli42-pr/update_xi' into arctica-3.6.x
+
+2018-02-15 21:56:52 +0100 Ulrich Sibiller (4598c0c3d)
+
+	* Xi: change () prototypes to (void)
+
+2018-02-15 21:42:51 +0100 Ulrich Sibiller (ebe1c2f22)
+
+	* Xi/getbmap.c: remove unnecessary cast
+
+2018-02-15 21:41:19 +0100 Ulrich Sibiller (8e188629f)
+
+	* Xi: small formatting changes to match Xorg 7.1's Xi
+
+2018-02-15 21:25:27 +0100 Ulrich Sibiller (b0abdf7bd)
+
+	* Xi: reformat
+
+2018-02-15 15:14:14 +0100 Ulrich Sibiller (7aca428ff)
+
+	* Xi: ansify function prototypes
+
+2018-02-11 22:01:11 +0100 Ulrich Sibiller (41a0ba729)
+
+	* Xi: reformat code, ansify
+
+2018-02-08 23:44:10 +0100 Ulrich Sibiller (5bfafee50)
+
+	* Xi: Adapt include sections to match Xorg 7.1
+
+2018-02-25 19:47:00 +0100 Mike Gabriel (e247900ed)
+
+	* debian/control: Don't B-D on build-essential packages.
+
+2018-02-25 19:46:08 +0100 Mike Gabriel (b18477eb4)
+
+	* debian/copyright: Update copyright attributions.
+
+2018-02-25 19:45:01 +0100 Mike Gabriel (4b81b8b38)
+
+	* debian/watch: Drop file. Not really useful in native /
+          upstream-provided package.
+
+2018-02-25 19:44:34 +0100 Mike Gabriel (7986787c1)
+
+	* debian/control: Bump Standards-Version: to 4.1.3. No changes
+          needed.
+
+2018-02-25 19:36:21 +0100 Mike Gabriel (e8552b7bb)
+
+	* nxcompshad: Regression fix for 990e61cc. Add missing $(NULL) in 'if
+          TARGET_ELF' clause.
+
+2018-02-25 15:03:52 +0100 Mike Gabriel (a653aed4c)
+
+	* Merge branch 'Ionic-bugfix/FTBFS-non-ELF' into 3.6.x
+
+2018-02-25 04:35:07 +0100 Mihai Moldovan (06c14b831)
+
+	* nxproxy/{configure.ac,src/Makefile.am}: only enable new ELF dtags
+          if target system actually is ELF-based.
+          (Ionic-bugfix/FTBFS-non-ELF)
+
+2018-02-25 04:33:52 +0100 Mihai Moldovan (990e61cc8)
+
+	* nxcompshad/{configure.ac,src/Makefile.am}: only enable new ELF
+          dtags if target system actually is ELF-based.
+
+2018-02-25 04:32:15 +0100 Mihai Moldovan (be1ae7087)
+
+	* m4/nx-macros.m4: add NX_TARGET_USE_ELF macro, setting TARGET_ELF
+          automake conditional if target compiler is generating ELF
+          binaries.
+
+2018-02-25 04:29:52 +0100 Mihai Moldovan (dd1ae1769)
+
+	* nxcomp{,shad}/configure.ac: trailing whitespace removal only.
+
+2018-02-09 03:41:22 +0100 Mihai Moldovan (7af47b583)
+
+	* Revert "NXhsm.c: add missing code"
+          (3.6.x-nxcomp-amend-compiler-warnings)
+
+2018-02-08 20:40:32 +0100 Mihai Moldovan (f76d4b541)
+
+	* nx-X11/config/cf/{Imake.{cf,tmpl},{linux,xorg}.cf}: support ppc64le
+          alongside ppc64(be).
+
+2018-02-07 23:19:33 +0100 Mihai Moldovan (aecdb5266)
+
+	* Merge branch 'uli42-pr/update_xext' into 3.6.x
+
+2017-10-21 02:54:33 +0200 Ulrich Sibiller (5ec2366c4)
+
+	* Xext: lift xvmain.c to xorg-xserver-7.1/1.1 state
+          (gh-uli42/pr/update_xext)
+
+2017-10-21 02:47:07 +0200 Ulrich Sibiller (8ebb5d23c)
+
+	* Xext: lift xres.c to xorg-xserver-7.1/1.1 state
+
+2017-10-21 02:43:20 +0200 Ulrich Sibiller (e85c6885e)
+
+	* Xext: lift sync.c to xorg-xserver-7.1/1.1 state
+
+2017-10-21 02:42:58 +0200 Ulrich Sibiller (62373d428)
+
+	* Xext: lift sleeputil.c to xorg-xserver-7.1/1.1 state
+
+2017-10-21 02:12:01 +0200 Ulrich Sibiller (d9c3a7249)
+
+	* Xext: lift panoramiX to xorg-xserver-7.1/1.1 state
+
+2017-10-21 02:04:30 +0200 Ulrich Sibiller (31900d41a)
+
+	* Xext: lift DPMS extension to xorg-xserver-7.1/1.1 state
+
+2017-10-21 01:47:40 +0200 Ulrich Sibiller (4ab18725c)
+
+	* Xext: lift screensaver extension to XORG-7_1 state
+
+2018-02-07 22:29:41 +0100 Mihai Moldovan (cbdae3b71)
+
+	* nx-libs.spec: delete useless cond_noarch macro that has never been
+          used.
+
+2018-02-07 22:28:02 +0100 Mihai Moldovan (6449b5548)
+
+	* nx-libs.spec: build-depend on libtirpc-devel for rpc/rpc.h and
+          friends on Fedora 28+.
+
+2018-02-07 22:21:35 +0100 Mihai Moldovan (88efaf8af)
+
+	* nx-libs.spec: only apply ppc64le workaround when compiled against
+          RHEL/EPEL 7.
+
+2018-02-05 14:07:27 +0100 Mike Gabriel (a110b0c45)
+
+	* Merge branch 'uli42-pr/update_fb' into 3.6.x
+
+2017-11-05 21:41:08 +0100 Ulrich Sibiller (f7207bcdc)
+
+	* Lift fb to xorg-xserver-7.1/1.1 state (gh-uli42/pr/update_fb,
+          uli42-pr/update_fb, pr/update_fb)
+
+2018-02-05 13:02:30 +0100 Mike Gabriel (b1c42dc98)
+
+	* Merge branch 'uli42-pr/some_cleanups' into 3.6.x
+
+2018-01-05 01:51:02 +0100 Ulrich Sibiller (7db6cff1c)
+
+	* Window.c: fix TEST/DEBUG output (gh-uli42/pr/some_cleanups,
+          uli42-pr/some_cleanups, pr/some_cleanups)
+
+2018-01-05 01:45:15 +0100 Ulrich Sibiller (ffc363c54)
+
+	* Split.c: make nxagentWaitDrawable TEST messages look like all the
+          others
+
+2018-01-05 01:44:58 +0100 Ulrich Sibiller (e3d749f68)
+
+	* Split.c: Fix wrong function names in TEST output
+
+2018-01-05 01:41:52 +0100 Ulrich Sibiller (0a2a9da33)
+
+	* Splash.c: Fix wrong function names in TEST/DEBUG output
+
+2018-01-05 01:39:00 +0100 Ulrich Sibiller (0e54be636)
+
+	* Screen.c: Fix wrong function names in TEST output
+
+2018-01-05 01:36:12 +0100 Ulrich Sibiller (1930f184c)
+
+	* Rootless.c: Fix wrong function name in WARNING output
+
+2018-01-05 01:34:11 +0100 Ulrich Sibiller (f511fba34)
+
+	* Reconnect.c: Fix wrong function names in TEST output
+
+2018-01-05 01:31:44 +0100 Ulrich Sibiller (87afc32f9)
+
+	* Pixmap.c: Fix wrong function names in TEST/WARNING output
+
+2018-01-05 01:19:40 +0100 Ulrich Sibiller (1c020ea9c)
+
+	* Events.c: change scope of XButtonEvent struct and clear it before
+          use
+
+2018-01-05 01:19:26 +0100 Ulrich Sibiller (1997c04ab)
+
+	* Events.c: Fix wrong function name in TEST output
+
+2018-01-05 01:08:18 +0100 Ulrich Sibiller (5cee71a3c)
+
+	* Dialog.c: Fix wrong function names in TEST output
+
+2018-01-05 01:05:44 +0100 Ulrich Sibiller (61e4d2949)
+
+	* Composite.c: Fix wrong function names in TEST output
+
+2018-01-05 00:50:29 +0100 Ulrich Sibiller (876063ce1)
+
+	* Client.c: Fix wrong function names in DEBUG/WARNING output
+
+2018-01-05 00:47:32 +0100 Ulrich Sibiller (9e22a10a5)
+
+	* NXdispatch.c: add FIXME
+
+2018-01-05 00:47:11 +0100 Ulrich Sibiller (acbc9cd31)
+
+	* NXdispatch.c: fix wrong indentation
+
+2018-01-05 00:46:34 +0100 Ulrich Sibiller (99b114370)
+
+	* Handlers.c: Fix wrong function names in TEST output
+
+2018-02-05 12:14:39 +0100 Mike Gabriel (995350d14)
+
+	* Merge branch 'uli42-pr/shm_missing_code' into 3.6.x
+
+2018-02-02 22:39:06 +0100 Ulrich Sibiller (9fb582f42)
+
+	* NXhsm.c: drop setting of sequence number
+          (gh-uli42/pr/shm_missing_code, uli42-pr/shm_missing_code)
+
+2018-02-02 22:40:23 +0100 Ulrich Sibiller (c804d99f2)
+
+	* NXhsm.c: add missing code
+
+2018-01-28 21:36:03 +0100 Helmut Grohne (ef0a3d636)
+
+	* debian/rules: Fix FTCBFS: (see Debian bug #875867) Fix build/host
+          confusion in debian/rules. Pass --host to ./configure.
+
+2018-01-20 14:03:28 +0100 Mike Gabriel (949b91c64)
+
+	* nxcomp/src/Loop.cpp: Typo fix in error msg.
+
+2018-01-16 15:19:42 +0100 Mike Gabriel (61265ff61)
+
+	* release 3.5.99.13 (tag: 3.5.99.13, origin/release-builds/3.6.x,
+          release-builds/3.6.x)
 
 2018-01-16 15:08:07 +0100 Mike Gabriel (9772277c6)
 
 	* Merge branch
           'sunweaver-pr/keep-disabled-rrxinerama-disabled-on-reconnects'
-          into 3.6.x (origin/HEAD, origin/3.6.x)
+          into 3.6.x
 
 2018-01-16 14:52:43 +0100 Mike Gabriel (05dd84256)
 
@@ -40,7 +539,7 @@
 
 2018-01-08 23:08:51 +0100 Ulrich Sibiller (f66820b57)
 
-	* panoramiX: fix includes
+	* panoramiX: fix includes (gh-uli42/pr/fix_xext_includes)
 
 2018-01-08 22:58:26 +0100 Mihai Moldovan (47ef330c5)
 
@@ -48,7 +547,7 @@
 
 2018-01-08 22:25:35 +0100 Ulrich Sibiller (43456713b)
 
-	* Re-enable XC-MISC extension
+	* Re-enable XC-MISC extension (gh-uli42/pr/reenable_xc-misc)
 
 2018-01-07 01:29:13 +0100 Mihai Moldovan (5f9f744cd)
 
@@ -56,7 +555,7 @@
 
 2018-01-03 22:28:43 +0100 Ulrich Sibiller (23c36c2d2)
 
-	* Display.c: drop helper variable in loop
+	* Display.c: drop helper variable in loop (gh-uli42/pr/fix_strings)
 
 2018-01-03 02:34:10 +0100 Ulrich Sibiller (b89b80949)
 
@@ -232,6 +731,7 @@
 2017-12-29 14:25:53 +0100 Ulrich Sibiller (367bec595)
 
 	* EncodeBuffer.cpp: add another VALGRIND guard
+          (gh-uli42/pr/fix_abstract)
 
 2017-12-28 11:19:44 +0100 Ulrich Sibiller (6e98e35cf)
 
@@ -308,6 +808,7 @@
 2017-12-27 23:54:34 +0100 Ulrich Sibiller (2cade632b)
 
 	* nxcompshad: silence GCC warnings
+          (gh-uli42/pr/silence_nxcompshad_warnings)
 
 2017-12-28 00:18:58 +0100 Mihai Moldovan (061c35772)
 
@@ -316,6 +817,7 @@
 2017-12-10 23:57:35 +0100 Ulrich Sibiller (6acbfab33)
 
 	* reduce usage of uninitialised bytes
+          (gh-uli42/pr/reduce_uninitialised)
 
 2017-12-27 22:09:29 +0100 Mihai Moldovan (bc5f9a236)
 
@@ -559,8 +1061,7 @@
 
 2017-12-15 12:40:31 +0100 Mike Gabriel (2b9025f79)
 
-	* release 3.5.99.12 (tag: 3.5.99.12, origin/release-builds/3.6.x,
-          release-builds/3.6.x)
+	* release 3.5.99.12 (tag: 3.5.99.12)
 
 2017-12-15 12:05:16 +0100 Mike Gabriel (4fb495432)
 
