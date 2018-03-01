@@ -209,7 +209,7 @@ void nxagentShadowAdaptDepth(unsigned int, unsigned int, unsigned int, char **);
 
 RegionRec nxagentShadowUpdateRegion;
 
-#define NXAGENT_DEFAULT_DPI 75
+#define NXAGENT_DEFAULT_DPI 96
 #define NXAGENT_AUTO_DPI -1
 
 extern Bool nxagentAutoDPI;
