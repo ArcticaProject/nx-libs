@@ -1,4 +1,4 @@
-# NX development by ArticaProject, X2Go and TheQVD
+# NX development by ArticaProject, X2Go and TheQVD [![Build Status](https://travis-ci.org/ArcticaProject/nx-libs.svg)](https://travis-ci.org/ArcticaProject/nx-libs)
 
 This source tree started as a re-distribution of those NX packages needed
 to setup FreeNX and/or X2Go on a Linux server.

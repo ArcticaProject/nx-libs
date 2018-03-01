@@ -363,7 +363,7 @@ void Poller::shmInit(void)
 
     shminfo_ -> shmaddr = (char *)shmat(shminfo_ -> shmid, 0, 0);
 
-    if (shminfo_ -> shmaddr < 0)
+    if (shminfo_ -> shmaddr < (void *)0)
     {
       logWarning("Poller::shmInit", "Couldn't attach to shm segment.");
     }

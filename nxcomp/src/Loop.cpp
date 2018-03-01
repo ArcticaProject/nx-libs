@@ -3573,7 +3573,7 @@ int SetupAuthInstance()
 
   if (control -> ProxyMode == proxy_server)
   {
-    if (authCookie != NULL && *authCookie != '\0')
+    if (*authCookie != '\0')
     {
       if (useLaunchdSocket == 1)
       {

@@ -1,0 +1,56 @@
+# Use new trusty images, should yield newer compilers and packages
+sudo: true
+dist: trusty
+language: cpp
+
+matrix:
+  include:
+    - os: linux
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+          packages:
+            - g++-4.9
+      env:
+         - MATRIX_EVAL="CC=gcc-4.9 && CXX=g++-4.9"
+
+    - os: linux
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+          packages:
+            - g++-7
+      env:
+        - MATRIX_EVAL="CC=gcc-7 && CXX=g++-7"
+
+    - os: linux
+      addons:
+        apt:
+          sources:
+            - llvm-toolchain-trusty-3.9
+          packages:
+            - clang-3.9
+      env:
+        - MATRIX_EVAL="CC=clang-3.9 && CXX=clang++-3.9"
+
+    - os: linux
+      addons:
+        apt:
+          sources:
+            - llvm-toolchain-trusty-5.0
+          packages:
+            - clang-5.0
+      env:
+        - MATRIX_EVAL="CC=clang-5.0 && CXX=clang++-5.0"
+
+before_install:
+  - sudo apt-get update -qq
+  # imake
+  - sudo apt-get install -y xutils-dev
+  # X11 libaries
+  - sudo apt-get install -y libxcomposite-dev libxfont-dev libxinerama-dev libxrandr-dev libxtst-dev x11proto-fonts-dev
+  - eval "${MATRIX_EVAL}"
+script:
+  - make
