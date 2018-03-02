@@ -3642,6 +3642,11 @@ Bool intersect(int ax1, int ay1, unsigned int aw, unsigned int ah,
 
     /* check if there's any intersection at all */
     if (ax2 < bx1 || bx2 < ax1 || ay2 < by1 || by2 < ay1) {
+
+        #ifdef DEBUG
+        fprintf(stderr, "intersect: the given rectangles do not intersect at all\n");
+        #endif
+
         return FALSE;
     }
 
@@ -3657,12 +3662,22 @@ Bool intersect(int ax1, int ay1, unsigned int aw, unsigned int ah,
 
     /* check if the resulting rectangle is feasible */
     if (iw <= 0 || ih <= 0) {
+
+        #ifdef DEBUG
+        fprintf(stderr, "intersect: intersection rectangle not feasible\n");
+        #endif
+
         return FALSE;
     }
     *x = ix;
     *y = iy;
     *w = iw;
     *h = ih;
+
+    #ifdef DEBUG
+    fprintf(stderr, "intersect: intersection is: ([%d],[%d]) [ %d x %d ]\n", *x, *y, *w, *h);
+    #endif
+
     return TRUE;
 }
 
@@ -3674,24 +3689,73 @@ Bool intersect_bb(int ax1, int ay1, unsigned int aw, unsigned int ah,
 	       int bbx1, int bby1, int bbx2, int bby2,
 	       int *x, int *y, unsigned int *w, unsigned int *h)
 {
+
+  #ifdef DEBUG
+  fprintf(stderr, "intersect_bb: session window: ([%d],[%d]) [ %d x %d ]\n", ax1, ay1, aw, ah);
+  fprintf(stderr, "intersect_bb: crtc: ([%d],[%d]) [ %d x %d ]\n", bx1, by1, bw, bh);
+  fprintf(stderr, "intersect_bb: bounding box: ([%d],[%d]) [ %d x %d ]\n", bbx1, bby1, bbx2-bbx1, bby2-bby1);
+  #endif
+
   Bool result = intersect(ax1, ay1, aw, ah, bx1, by1, bw, bh, x, y, w, h);
+
   if (result == TRUE) {
-    /* check if outside of bounding box */
-    if (ax1 < bbx1 || ax1 + aw > bbx2) {
+
+    /*
+     * ###### The X-Coordinate ######
+     */
+
+    /* check if outside-left of bounding box */
+    if (bx1 == bbx1 && ax1 < bbx1) {
+
+        *w += bbx1 - ax1;
+        *x  = 0;
+
         #ifdef DEBUG
-        fprintf(stderr, "intersect: box has parts outside bounding box - width stays unchanged [%d]\n", aw);
+        fprintf(stderr, "intersect_bb: session box is outside-left of the bounding box - width gets adapted to [%d]\n", *w);
         #endif
-	*w = aw;
+
+
     }
 
-    if (ay1 < bby1 || ay1 + ah > bby2) {
+     /* check if outside-right of bounding box */
+    if (bx1 + bw == bbx2 && ax1 + aw > bbx2) {
+
+        *w += ax1 + aw - bbx2;
+
         #ifdef DEBUG
-        fprintf(stderr, "intersect: box has parts outside bounding box - height stays unchanged [%d]\n", ah);
+        fprintf(stderr, "intersect_bb: session box is outside-right of the bounding box - width gets adapted to [%d]\n", *w);
         #endif
-	*h = ah;
+
     }
+
+    /*
+     * ###### The Y-Coordinate ######
+     */
+
+    /* check if outside-above of bounding box */
+    if (by1 == bby1 && ay1 < bby1) {
+
+        *h += bby1 - ay1;
+        *y  = 0;
+
+        #ifdef DEBUG
+        fprintf(stderr, "intersect_bb: session box is outside-above of the bounding box - height gets adapted to [%d]\n", *h);
+        #endif
+
+    }
+
+     /* check if outside-below of bounding box */
+    if (by1 + bh == bby2 && ay1 + ah > bby2) {
+
+        *h += ay1 + ah - bby2;
+
+        #ifdef DEBUG
+        fprintf(stderr, "intersect_bb: session box is outside-below of the bounding box - height gets adapted to [%d]\n", *h);
+        #endif
+
+    }
+
   }
-
   return result;
 }
 #endif
@@ -4057,8 +4121,10 @@ int nxagentAdjustRandRXinerama(ScreenPtr pScreen)
     for (i = 0; i < pScrPriv->numOutputs; i++) {
       Bool disable_output = FALSE;
       RRModePtr mymode, prevmode;
-      int new_x, new_y;
-      unsigned int new_w, new_h;
+      int new_x = 0;
+      int new_y = 0;
+      unsigned int new_w = 0;
+      unsigned int new_h = 0;
 
       /*
       if ((nxagentOption(X) < bbx1 || (nxagentOption(X) + width >= bbx2 )) {
@@ -4186,14 +4252,13 @@ int nxagentAdjustRandRXinerama(ScreenPtr pScreen)
           fprintf(stderr, "nxagentAdjustRandRXinerama: setting mode [%s] ([%p]) refcnt [%d] for output %d [%s]\n", mymode->name, (void *) mymode, mymode->refcnt, i, pScrPriv->outputs[i]->name);
           #endif
           RROutputSetModes(pScrPriv->outputs[i], &mymode, 1, 0);
-
-          #ifdef DEBUG
-          fprintf(stderr, "nxagentAdjustRandRXinerama: setting mode [%s] ([%p]) refcnt [%d] for crtc %d\n", mymode->name, (void *) mymode, mymode->refcnt, i);
-          #endif
-          RRCrtcSet(pScrPriv->crtcs[i], mymode, new_x, new_y, RR_Rotate_0, 1, &(pScrPriv->outputs[i]));
-
         }
       } /* if disable_output */
+
+      #ifdef DEBUG
+      fprintf(stderr, "nxagentAdjustRandRXinerama: setting mode [%s] ([%p]) refcnt [%d] for crtc %d\n", mymode->name, (void *) mymode, mymode->refcnt, i);
+      #endif
+      RRCrtcSet(pScrPriv->crtcs[i], mymode, new_x, new_y, RR_Rotate_0, 1, &(pScrPriv->outputs[i]));
 
       /* throw away the mode if otherwise unused. We do not need it
          anymore. We call FreeResource() to ensure the system will not
