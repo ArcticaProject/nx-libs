@@ -1342,6 +1342,8 @@ ProcScreenSaverUnsetAttributes (ClientPtr client)
        PanoramiXRes *draw;
        int i;
 
+       REQUEST_SIZE_MATCH(xScreenSaverUnsetAttributesReq);
+
        if(!(draw = (PanoramiXRes *)SecurityLookupIDByClass(
                    client, stuff->drawable, XRC_DRAWABLE, DixWriteAccess)))
            return BadDrawable;
