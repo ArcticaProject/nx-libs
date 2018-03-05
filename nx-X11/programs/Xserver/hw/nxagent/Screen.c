@@ -4126,22 +4126,6 @@ int nxagentAdjustRandRXinerama(ScreenPtr pScreen)
       unsigned int new_w = 0;
       unsigned int new_h = 0;
 
-      /*
-      if ((nxagentOption(X) < bbx1 || (nxagentOption(X) + width >= bbx2 )) {
-        #ifdef DEBUG
-        fprintf(stderr, "nxagentAdjustRandRXinerama: output [%d] name [%s]: window has parts outside visible area - width stays unchanged [%d]\n", i, pScrPriv->outputs[i]->name, width);
-        #endif
-	new_w = width;
-      }
-
-	if ((nxagentOption(Y) < bby1 || (nxagentOption(Y) + height >= bby2 ) {
-          #ifdef DEBUG
-          fprintf(stderr, "nxagentAdjustRandRXinerama: output [%d] name [%s]: window has parts outside visible area - height stays unchanged [%d]\n", i, pScrPriv->outputs[i]->name, height);
-          #endif
-	  new_h = height;
-	}
-      */
-
       /* if there's no intersection disconnect the output */
 #ifdef NXAGENT_RANDR_XINERAMA_CLIPPING
       disable_output = !intersect(nxagentOption(X), nxagentOption(Y),
