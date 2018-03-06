@@ -175,7 +175,7 @@ install-lite:
 install-full:
 	$(MAKE) -C nxcompshad install
 
-	$(INSTALL_DIR) $(DESTDIR)$(BINDIR)/bin
+	$(INSTALL_DIR) $(DESTDIR)$(BINDIR)/
 	$(INSTALL_PROGRAM) nx-X11/programs/Xserver/nxagent-relink $(DESTDIR)$(BINDIR)/nxagent
 
 	$(INSTALL_DIR) $(DESTDIR)$(PREFIX)/share/pixmaps
