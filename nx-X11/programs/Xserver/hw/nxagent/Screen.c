@@ -3918,7 +3918,7 @@ int nxagentAdjustRandRXinerama(ScreenPtr pScreen)
         output = pScrPriv->outputs[i];
       }
       #ifdef DEBUG
-      fprintf(stderr, "nxagentAdjustRandRXinerama: adjusting output [%s]\n", pScrPriv->outputs[i]->name);
+      fprintf(stderr, "nxagentAdjustRandRXinerama: adjusting output [%s]\n", output->name);
       #endif
       RROutputSetCrtcs(output, &(pScrPriv->crtcs[i]), 1);
       /* FIXME: Isn't there a function for setting this? */
