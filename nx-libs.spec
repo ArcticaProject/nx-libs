@@ -10,7 +10,7 @@
 %endif
 
 Name:           nx-libs
-Version:        3.5.99.14
+Version:        3.5.99.15
 Release:        0.0build1%{?dist}
 Summary:        NX X11 protocol compression libraries
 

@@ -1,11 +1,91 @@
-2018-02-28 10:53:45 +0100 Mike Gabriel (3936db61a)
+2018-03-07 23:46:48 +0100 Mike Gabriel (9f62b26c2)
 
-	* release 3.5.99.14 (HEAD -> 3.6.x)
+	* release 3.5.99.15 (HEAD -> 3.6.x)
+
+2018-03-07 21:55:36 +0100 Mihai Moldovan (18630e5dd)
+
+	* Merge branch
+          'sunweaver-pr/saver-unvalidated-lengths-ProcScreenSaverUnsetAttributes'
+          into 3.6.x (origin/HEAD, origin/3.6.x)
+
+2018-03-05 11:01:49 +0100 Nathan Kidd (7017c22c2)
+
+	* Xserver/Xext/saver.c Unvalidated lengths (X.org CVE-2017-12185).
+
+2018-03-07 21:35:51 +0100 Mihai Moldovan (f3231601b)
+
+	* nxcompshad/configure.ac: blindly copy-pasting might not be the
+          smartest idea; it's *COMPSHAD* here.
+
+2018-03-07 21:15:18 +0100 Ulrich Sibiller (570d3fea4)
+
+	* Merge branch 'sunweaver-pr/xinerama-bbox-corner-cases' into 3.6.x
+
+2018-03-05 15:34:52 +0100 Mike Gabriel (4b7b214a7)
+
+	* Xserver/hw/nxagent/Screen.c: Drop commented out code. Functionality
+          now implemented in intersect_bb() function.
+          (gh-sunweaver/pr/xinerama-bbox-corner-cases,
+          pr/xinerama-bbox-corner-cases)
+
+2018-03-02 14:01:29 +0100 Mike Gabriel (9117a5bf0)
+
+	* hw/nxagent/Screen.c: Cover Xinerama bounding box corner cases.
+
+2018-03-07 19:00:39 +0100 Mihai Moldovan (3352cfaba)
+
+	* nxcomp{,shad}/configure.ac: replace versionating non-portable sed
+          construct with hopefully more portable awk construct.
+
+2018-03-07 02:01:39 +0100 Mihai Moldovan (76e7d26b8)
+
+	* nx-X11/programs/Xserver/hw/nxagent/Init.c: disable DPMS support
+          within nxagent.
+
+2018-03-06 12:55:22 +0100 Mihai Moldovan (adb582abd)
+
+	* Makefile: we don't need $(BINDIR)/bin.
+
+2018-03-02 05:51:17 +0100 Mihai Moldovan (ed9512ed1)
+
+	* nxcomp{,shad}/configure.ac: pass more portable -E option to sed
+          instead of -r.
+
+2018-03-01 21:46:32 +0100 Mike Gabriel (ae40bb9c4)
+
+	* Merge branch 'mjtrangoni-WIP-travis' into 3.6.x
+
+2018-01-09 20:03:17 +0100 Mario Trangoni (66ef3e46f)
+
+	* README.md: Add travis badge (mjtrangoni-WIP-travis)
+
+2018-01-01 17:51:31 +0100 Mario Trangoni (ffadec783)
+
+	* Fix clang error: ordered comparison between pointer and zero ("char
+          *" and "int")
+
+2018-01-01 17:19:33 +0100 Mario Trangoni (d14d5838b)
+
+	* Fix clang error: comparison of array authCookie not equal to a null
+          pointer is always true
+
+2017-12-31 17:00:43 +0100 Mario Trangoni (e1ad1d473)
+
+	* Add travis yaml configuration file
+
+2018-03-01 08:31:23 +0100 Simon Matter (a5a0a5c29)
+
+	* hw/nxagent/Screen.c: Settle down with 96 DPI as the default
+          resolution, if nothing better can be detected.
+
+2018-02-28 10:53:45 +0100 Mike Gabriel (153be794d)
+
+	* release 3.5.99.14 (tag: 3.5.99.14, origin/release-builds/3.6.x,
+          release-builds/3.6.x)
 
 2018-02-28 01:03:53 +0100 Mihai Moldovan (5c4777b2d)
 
 	* Merge branch 'uli42-pr/fix_autodpi_in_usage' into 3.6.x
-          (origin/HEAD, origin/3.6.x)
 
 2018-02-27 23:00:08 +0100 Ulrich Sibiller (809206d0c)
 
@@ -498,8 +578,7 @@
 
 2018-01-16 15:19:42 +0100 Mike Gabriel (61265ff61)
 
-	* release 3.5.99.13 (tag: 3.5.99.13, origin/release-builds/3.6.x,
-          release-builds/3.6.x)
+	* release 3.5.99.13 (tag: 3.5.99.13)
 
 2018-01-16 15:08:07 +0100 Mike Gabriel (9772277c6)
 
