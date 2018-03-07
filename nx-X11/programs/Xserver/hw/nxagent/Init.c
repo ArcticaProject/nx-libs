@@ -572,7 +572,7 @@ int DPMSGet(int *level)
 
 Bool DPMSSupported(void)
 {
-  return 1;
+  return 0;
 }
 
 #endif
