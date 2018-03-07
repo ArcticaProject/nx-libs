@@ -22,7 +22,7 @@ AC_PROG_LIBTOOL
 COMP_VERSION=nxcomp_version
 AC_SUBST([COMP_VERSION])
 
-LT_COMP_VERSION=[`echo $COMP_VERSION | sed -E -e 's/^([0-9]+\.[0-9]+\.[0-9]+).*$/\1/' -e 's/\./:/g'`]
+LT_COMP_VERSION=["$(printf '%s\n' "${COMP_VERSION}" | awk -F '.' '/^[0-9]+\.[0-9]+\.[0-9]+.*$/ { print $1 ":" $2 ":" $3; }')"]
 AC_SUBST([LT_COMP_VERSION])
 
 # Silence warning: ar: 'u' modifier ignored since 'D' is the default
