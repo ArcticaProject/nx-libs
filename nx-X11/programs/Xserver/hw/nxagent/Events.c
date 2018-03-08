@@ -2500,7 +2500,7 @@ FIXME: This can be maybe optimized by consuming the
                        nxagentExposeQueue.exposures[index].remoteRegion, &sum);
 
       #ifdef TEST
-      fprintf(stderr, "nxagentHandleExposeEvent: Added region for window [%ld] to position [%d].\n",
+      fprintf(stderr, "nxagentHandleExposeEvent: Added region for window [%u] to position [%d].\n",
                   nxagentWindow(pWin), index);
       #endif
 
@@ -2520,7 +2520,7 @@ FIXME: This can be maybe optimized by consuming the
               nxagentSplashCount == 1 && X -> xexpose.count == 0)
       {
         #ifdef DEBUG
-        fprintf(stderr, "nxagentHandleExposeEvent: Clearing root tile window id [%ld].\n",
+        fprintf(stderr, "nxagentHandleExposeEvent: Clearing root tile window id [%u].\n",
                     nxagentWindowPriv(nxagentRootTileWindow) -> window);
         #endif
 
@@ -2759,7 +2759,7 @@ int nxagentHandleClientMessageEvent(XEvent *X, enum HandleEventResult *result)
       else
       {
         #ifdef TEST
-        fprintf(stderr, "Events: WM_DELETE_WINDOW arrived Atom = %ld.\n", wmAtom);
+        fprintf(stderr, "Events: WM_DELETE_WINDOW arrived Atom = %u.\n", wmAtom);
         #endif
 
         if (X -> xclient.window == nxagentIconWindow)
@@ -4127,7 +4127,7 @@ void nxagentSynchronizeExpose(void)
       {
         #ifdef TEST
         fprintf(stderr, "nxagentSynchronizeExpose: Going to call miWindowExposures"
-                    " for window [%ld] - rects [%ld].\n", nxagentWindow(pWin),
+                    " for window [%d] - rects [%d].\n", nxagentWindow(pWin),
                         RegionNumRects(nxagentExposeQueueHead.remoteRegion));
         #endif
 
