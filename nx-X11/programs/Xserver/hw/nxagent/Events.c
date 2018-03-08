@@ -1636,7 +1636,7 @@ FIXME: Don't enqueue the KeyRelease event if the key was
 
           #ifdef TEST
           fprintf(stderr, "nxagentDispatchEvents: nxagentLastEnteredTopLevelWindow [%p].\n",
-                      nxagentLastEnteredTopLevelWindow);
+                      (void *)nxagentLastEnteredTopLevelWindow);
           #endif
         }
 
@@ -4346,7 +4346,7 @@ int nxagentClipAndSendExpose(WindowPtr pWin, void * ptr)
     box = *RegionExtents(&pWin -> clipList);
 
     fprintf(stderr, "nxagentClipAndSendExpose: Clip list extents for window at [%p]: [%d] [%d] [%d] [%d].\n",
-                pWin, box.x1, box.y1, box.x2, box.y2);
+                (void *)pWin, box.x1, box.y1, box.x2, box.y2);
     #endif
 
     RegionIntersect(exposeRgn, remoteExposeRgn, &pWin -> clipList);
@@ -4355,7 +4355,7 @@ int nxagentClipAndSendExpose(WindowPtr pWin, void * ptr)
     {
       #ifdef DEBUG
       fprintf(stderr, "nxagentClipAndSendExpose: Forwarding expose to window at [%p] pWin.\n",
-                  pWin);
+                  (void *)pWin);
       #endif
 
       /*
