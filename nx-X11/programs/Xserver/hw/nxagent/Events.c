@@ -2693,10 +2693,6 @@ int nxagentHandleClientMessageEvent(XEvent *X, enum HandleEventResult *result)
 
     if (message_type == MakeAtom("WM_PROTOCOLS", strlen("WM_PROTOCOLS"), False))
     {
-      #ifdef TEST
-      char *message_data;
-      #endif
-
       xEvent x;
 
       memset(&x, 0, sizeof(xEvent));
@@ -2720,11 +2716,9 @@ int nxagentHandleClientMessageEvent(XEvent *X, enum HandleEventResult *result)
       #ifdef TEST
       else
       {
-        message_data = validateString(NameForAtom(x.u.clientMessage.u.l.longs0));
+        fprintf(stderr, "nxagentHandleClientMessageEvent: Sent client message of type WM_PROTOCOLS "
+                "and value [%s].\n", validateString(NameForAtom(x.u.clientMessage.u.l.longs0)));
       }
-
-      fprintf(stderr, "nxagentHandleClientMessageEvent: Sent client message of type WM_PROTOCOLS "
-                  "and value [%s].\n", message_data);
       #endif
 
       TryClientEvents(wClient(pWin), &x, 1, 1, 1, 0);
