@@ -821,7 +821,7 @@ void nxagentDispatchEvents(PredicateFuncPtr predicate)
 
   #ifdef TEST
   fprintf(stderr, "nxagentDispatchEvents: Going to handle new events with "
-              "predicate [%p].\n", predicate);
+              "predicate [%p].\n", *(void **)&predicate);
   #endif
 
   if (nxagentRemoteExposeRegion == NULL)
