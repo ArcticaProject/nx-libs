@@ -292,7 +292,7 @@ NXAGENTOBJS = hw/nxagent/miinitext.o     \
 XPMLIB    =  -lXpm
 XMLLIB    =  `pkg-config --libs libxml-2.0`
 PIXMANLIB =  `pkg-config --libs pixman-1`
-ZLIB      =  $$(pkg-config --exists 'zlib' >/dev/null 2>&1 && pkg-config --libs 'zlib' || echo "-lz")
+ZLIB      =  $$(pkg-config --exists 'zlib' >/dev/null 2>&1 && pkg-config --libs 'zlib' || printf '%s' '-lz')
 PNGLIB    =  `pkg-config --libs libpng`
 JPEGLIB   =  -ljpeg
 
