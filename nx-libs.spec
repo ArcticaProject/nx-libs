@@ -120,8 +120,8 @@ BuildRequires:  xorg-x11-font-utils
 BuildRequires:  xorg-x11-proto-devel
 BuildRequires:  zlib-devel
 
-# RPC headers. Fedora 28+ phased them out of glibc, like upstream did.
-%if 0%{?fedora} > 27
+# RPC headers. Fedora 28+ and OpenSuSE Tumbleweed phased them out of glibc, like upstream did.
+%if 0%{?fedora} > 27 || 0%{?suse_version} > 1500
 BuildRequires:  libtirpc-devel
 %endif
 
@@ -410,7 +410,13 @@ chmod a+x my_configure;
 export SHLIBGLOBALSFLAGS="%{__global_ldflags}"
 export LOCAL_LDFLAGS="%{__global_ldflags}"
 export CDEBUGFLAGS="%{?__global_cppflags} %{?__global_cflags} %{?optflags}"
-make %{?_smp_mflags} CONFIGURE="$PWD/my_configure" PREFIX=%{_prefix} LIBDIR=%{_libdir} CDEBUGFLAGS="${CDEBUGFLAGS}" LOCAL_LDFLAGS="${LOCAL_LDFLAGS}" SHLIBGLOBALSFLAGS="${SHLIBGLOBALSFLAGS}"
+IMAKE_DEFINES=''
+FORCE_TIRPC='NO'
+%if 0%{?fedora} > 27 || 0%{?suse_version} > 1500
+FORCE_TIRPC='YES'
+%endif
+IMAKE_DEFINES="-DUseTIRPC=${FORCE_TIRPC}"
+make %{?_smp_mflags} CONFIGURE="$PWD/my_configure" PREFIX=%{_prefix} LIBDIR=%{_libdir} CDEBUGFLAGS="${CDEBUGFLAGS}" LOCAL_LDFLAGS="${LOCAL_LDFLAGS}" SHLIBGLOBALSFLAGS="${SHLIBGLOBALSFLAGS}" IMAKE_DEFINES="${IMAKE_DEFINES}"
 
 %install
 make install \
