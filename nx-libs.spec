@@ -440,6 +440,9 @@ chmod 755  %{buildroot}%{_libdir}/lib*.so*
 rm -r %{buildroot}%{_includedir}/GL
 rm -r %{buildroot}%{_includedir}/nx-X11/extensions/XK*.h
 rm -r %{buildroot}%{_includedir}/nx-X11/extensions/*Xv*.h
+rm -r %{buildroot}%{_includedir}/nx-X11/extensions/XRes*.h
+rm -r %{buildroot}%{_includedir}/nx-X11/extensions/XIproto.h
+rm -r %{buildroot}%{_includedir}/nx-X11/extensions/XI.h
 rm -r %{buildroot}%{_includedir}/nx-X11/Xtrans
 
 #Remove our shared libraries' .la files before wrapping up the packages
@@ -553,9 +556,6 @@ rm %{buildroot}%{_libdir}/*.la
 %{_includedir}/nx-X11/keysym.h
 %{_includedir}/nx-X11/keysymdef.h
 %{_includedir}/nx-X11/extensions/Xdbeproto.h
-%{_includedir}/nx-X11/extensions/XI.h
-%{_includedir}/nx-X11/extensions/XIproto.h
-%{_includedir}/nx-X11/extensions/XResproto.h
 %{_includedir}/nx-X11/extensions/bigreqstr.h
 %{_includedir}/nx-X11/extensions/composite.h
 %{_includedir}/nx-X11/extensions/compositeproto.h
