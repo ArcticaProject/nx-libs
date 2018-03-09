@@ -296,10 +296,18 @@ ZLIB      =  $$(pkg-config --exists 'zlib' >/dev/null 2>&1 && pkg-config --libs 
 PNGLIB    =  `pkg-config --libs libpng`
 JPEGLIB   =  -ljpeg
 
+TIRPC_LIB =
+
+#if HasSecureRPC
+#if UseTIRPC
+TIRPC_LIB =  $$(pkg-config --libs 'libtirpc')
+#endif
+#endif
+
 NXAGENT = hw/nxagent/LibraryTargetName(nxagent)
 NXCOMPEXT =  hw/nxagent/compext/LibraryTargetName(compext)
 NXAGENTLIBS = PreFbLibs $(NXAGENT) FbPostFbLibs $(NXCOMPEXT) $(NXAGENT) $(MI)
-NXAGENTSYSLIBS = $(LDPRELIBS) $(XLIB) $(SYSLIBS) $(XPMLIB) $(XMLLIB) $(PIXMANLIB)
+NXAGENTSYSLIBS = $(LDPRELIBS) $(XLIB) $(SYSLIBS) $(XPMLIB) $(XMLLIB) $(PIXMANLIB) $(TIRPC_LIB)
 NXCOMPEXTSYSLIBS = $(ZLIB) $(PNGLIB) $(JPEGLIB)
 #if HasParallelMake
 MakeMutex($(NXAGENTDIRS) $(NXCOMPEXT) $(NXAGENTOBJS) $(NXAGENTLIBS) $(NXCOMPEXTSYSLIBS) $(NXAGENTSYSLIBS))

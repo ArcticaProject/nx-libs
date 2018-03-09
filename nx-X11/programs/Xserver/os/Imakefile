@@ -75,10 +75,17 @@ XDMAUTHOBJS =
 XDMAUTHSCRS =
 #endif
 
+TIRPC_INCLUDES =
+
 #if HasSecureRPC
 RPCDEFS = -DSECURE_RPC
 RPCOBJS = rpcauth.o
 RPCSRCS = rpcauth.c
+
+#if UseTIRPC
+TIRPC_INCLUDES = $$(pkg-config --cflags-only-I 'libtirpc')
+#endif
+
 #else
 RPCDEFS =
 RPCOBJS =
@@ -209,6 +216,7 @@ BOOTSTRAPCFLAGS =
                   -I$(TOP)/lib/Xau			\
                   $(NX_INCLUDES)			\
                   `pkg-config --cflags-only-I pixman-1`	\
+                  $(TIRPC_INCLUDES)			\
                   $(NULL)
 
  DEPEND_DEFINES = $(XDMCP_DEFINES)			\
