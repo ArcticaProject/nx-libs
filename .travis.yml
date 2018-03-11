@@ -10,10 +10,20 @@ matrix:
         apt:
           sources:
             - ubuntu-toolchain-r-test
+      env:
+        - MATRIX_EVAL="CC=gcc && CXX=g++"
+        - STATIC_ANALYSIS="yes"
+      fail_fast: true
+
+    - os: linux
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
           packages:
             - g++-4.9
       env:
-         - MATRIX_EVAL="CC=gcc-4.9 && CXX=g++-4.9"
+        - MATRIX_EVAL="CC=gcc-4.9 && CXX=g++-4.9"
 
     - os: linux
       addons:
@@ -47,10 +57,15 @@ matrix:
 
 before_install:
   - sudo apt-get update -qq
+  # cppcheck tool
+  - sudo apt-get install -y cppcheck/trusty-backports
   # imake
   - sudo apt-get install -y xutils-dev
   # X11 libaries
   - sudo apt-get install -y libxcomposite-dev libxfont-dev libxinerama-dev libxrandr-dev libxtst-dev x11proto-fonts-dev
   - eval "${MATRIX_EVAL}"
 script:
-  - make
+   # run static analysis tools
+   - ./run-static-analysis.sh
+   # build all packages
+   - make
