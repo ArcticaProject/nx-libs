@@ -148,6 +148,7 @@ Imake.tmpl provides defaults for the following variables:
 	UnalignedReferencesAllowed	boolean for unaligned copies ok
 	UsrLibDir		directory in which to install libraries
 	YaccCmd			command to run yacc
+	UseTIRPC		force usage of libtirpc
 
 X11.tmpl provides defaults for the following variables:
 

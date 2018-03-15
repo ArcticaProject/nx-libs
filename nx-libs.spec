@@ -120,8 +120,8 @@ BuildRequires:  xorg-x11-font-utils
 BuildRequires:  xorg-x11-proto-devel
 BuildRequires:  zlib-devel
 
-# RPC headers. Fedora 28+ phased them out of glibc, like upstream did.
-%if 0%{?fedora} > 27
+# RPC headers. Fedora 28+ and OpenSuSE Tumbleweed phased them out of glibc, like upstream did.
+%if 0%{?fedora} > 27 || 0%{?suse_version} > 1500
 BuildRequires:  libtirpc-devel
 %endif
 
@@ -407,10 +407,16 @@ EOF
 chmod a+x my_configure;
 # The RPM macro for the linker flags does not exist on EPEL
 %{!?__global_ldflags: %global __global_ldflags -Wl,-z,relro}
-export SHLIBGLOBALSFLAGS="%{__global_ldflags}"
-export LOCAL_LDFLAGS="%{__global_ldflags}"
-export CDEBUGFLAGS="%{?__global_cppflags} %{?__global_cflags} %{?optflags}"
-make %{?_smp_mflags} CONFIGURE="$PWD/my_configure" PREFIX=%{_prefix} LIBDIR=%{_libdir} CDEBUGFLAGS="${CDEBUGFLAGS}" LOCAL_LDFLAGS="${LOCAL_LDFLAGS}" SHLIBGLOBALSFLAGS="${SHLIBGLOBALSFLAGS}"
+SHLIBGLOBALSFLAGS="%{__global_ldflags}"
+LOCAL_LDFLAGS="%{__global_ldflags}"
+CDEBUGFLAGS="%{?__global_cppflags} %{?__global_cflags} %{?optflags}"
+IMAKE_DEFINES=''
+FORCE_TIRPC='NO'
+%if 0%{?fedora} > 27 || 0%{?suse_version} > 1500
+FORCE_TIRPC='YES'
+%endif
+IMAKE_DEFINES="-DUseTIRPC=${FORCE_TIRPC}"
+make %{?_smp_mflags} CONFIGURE="$PWD/my_configure" PREFIX=%{_prefix} LIBDIR=%{_libdir} CDEBUGFLAGS="${CDEBUGFLAGS}" LOCAL_LDFLAGS="${LOCAL_LDFLAGS}" SHLIBGLOBALSFLAGS="${SHLIBGLOBALSFLAGS}" IMAKE_DEFINES="${IMAKE_DEFINES}"
 
 %install
 make install \
@@ -440,6 +446,9 @@ chmod 755  %{buildroot}%{_libdir}/lib*.so*
 rm -r %{buildroot}%{_includedir}/GL
 rm -r %{buildroot}%{_includedir}/nx-X11/extensions/XK*.h
 rm -r %{buildroot}%{_includedir}/nx-X11/extensions/*Xv*.h
+rm -r %{buildroot}%{_includedir}/nx-X11/extensions/XRes*.h
+rm -r %{buildroot}%{_includedir}/nx-X11/extensions/XIproto.h
+rm -r %{buildroot}%{_includedir}/nx-X11/extensions/XI.h
 rm -r %{buildroot}%{_includedir}/nx-X11/Xtrans
 
 #Remove our shared libraries' .la files before wrapping up the packages
@@ -553,9 +562,6 @@ rm %{buildroot}%{_libdir}/*.la
 %{_includedir}/nx-X11/keysym.h
 %{_includedir}/nx-X11/keysymdef.h
 %{_includedir}/nx-X11/extensions/Xdbeproto.h
-%{_includedir}/nx-X11/extensions/XI.h
-%{_includedir}/nx-X11/extensions/XIproto.h
-%{_includedir}/nx-X11/extensions/XResproto.h
 %{_includedir}/nx-X11/extensions/bigreqstr.h
 %{_includedir}/nx-X11/extensions/composite.h
 %{_includedir}/nx-X11/extensions/compositeproto.h

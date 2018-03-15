@@ -292,20 +292,28 @@ NXAGENTOBJS = hw/nxagent/miinitext.o     \
 XPMLIB    =  -lXpm
 XMLLIB    =  `pkg-config --libs libxml-2.0`
 PIXMANLIB =  `pkg-config --libs pixman-1`
-ZLIB      =  $$(pkg-config --exists 'zlib' >/dev/null 2>&1 && pkg-config --libs 'zlib' || echo "-lz")
+ZLIB      =  $$(pkg-config --exists 'zlib' >/dev/null 2>&1 && pkg-config --libs 'zlib' || printf '%s' '-lz')
 PNGLIB    =  `pkg-config --libs libpng`
 JPEGLIB   =  -ljpeg
+
+TIRPC_LIB =
+
+#if HasSecureRPC
+#if UseTIRPC
+TIRPC_LIB =  $$(pkg-config --libs 'libtirpc')
+#endif
+#endif
 
 NXAGENT = hw/nxagent/LibraryTargetName(nxagent)
 NXCOMPEXT =  hw/nxagent/compext/LibraryTargetName(compext)
 NXAGENTLIBS = PreFbLibs $(NXAGENT) FbPostFbLibs $(NXCOMPEXT) $(NXAGENT) $(MI)
-NXAGENTSYSLIBS = $(LDPRELIBS) $(XLIB) $(SYSLIBS) $(XPMLIB) $(XMLLIB)
-NXCOMPEXTSYSLIBS = $(PIXMANLIB) $(ZLIB) $(PNGLIB) $(JPEGLIB)
+NXAGENTSYSLIBS = $(LDPRELIBS) $(XLIB) $(SYSLIBS) $(XPMLIB) $(XMLLIB) $(PIXMANLIB) $(TIRPC_LIB)
+NXCOMPEXTSYSLIBS = $(ZLIB) $(PNGLIB) $(JPEGLIB)
 #if HasParallelMake
 MakeMutex($(NXAGENTDIRS) $(NXCOMPEXT) $(NXAGENTOBJS) $(NXAGENTLIBS) $(NXCOMPEXTSYSLIBS) $(NXAGENTSYSLIBS))
 #endif
 #if ForceServerRemake
-$(NXAGENTOBJS) $(NXAGENTLIBS) $(NXAGENTSYSLIBS):: $(NXAGENTDIRS)
+$(NXAGENTOBJS) $(NXAGENTLIBS):: $(NXAGENTDIRS)
 	@if [ -f $@ ]; then touch $@ >/dev/null 2>&1 || exit 0; fi
 #endif
 #if NXLibraries
@@ -485,7 +493,7 @@ MakeMutex($(NXWINDIRS) $(NXWINOBJS) $(NXWINLIB) $(NXWINLIBS) $(NXWINSYSLIBS) $(N
 #endif
 
 #if ForceServerRemake
-$(NXWINOBJS) $(NXWINLIB) $(NXWINLIBS) $(NXWINSYSLIBS) $(NXWINNXLIBS):: $(NXWINDIRS)
+$(NXWINOBJS) $(NXWINLIB) $(NXWINLIBS):: $(NXWINDIRS)
 	@if [ -f $@ ]; then touch $@ >/dev/null 2>&1 || exit 0; fi
 #endif
 
@@ -542,7 +550,7 @@ MakeMutex($(NXWINDIRS) $(NXWINOBJS) $(NXWINLIB) $(NXWINLIBS) $(NXWINSYSLIBS) $(N
 #endif
 
 #if ForceServerRemake
-$(NXWINOBJS) $(NXWINLIB) $(NXWINLIBS) $(NXWINSYSLIBS) $(NXWINNXLIBS):: $(NXWINDIRS)
+$(NXWINOBJS) $(NXWINLIB) $(NXWINLIBS):: $(NXWINDIRS)
 	@if [ -f $@ ]; then touch $@ >/dev/null 2>&1 || exit 0; fi
 #endif
 
