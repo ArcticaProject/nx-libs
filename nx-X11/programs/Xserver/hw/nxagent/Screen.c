@@ -4120,7 +4120,7 @@ int nxagentAdjustRandRXinerama(ScreenPtr pScreen)
 
     for (i = 0; i < pScrPriv->numOutputs; i++) {
       Bool disable_output = FALSE;
-      RRModePtr mymode, prevmode;
+      RRModePtr mymode = NULL, prevmode = NULL;
       int new_x = 0;
       int new_y = 0;
       unsigned int new_w = 0;
