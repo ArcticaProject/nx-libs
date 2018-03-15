@@ -407,9 +407,9 @@ EOF
 chmod a+x my_configure;
 # The RPM macro for the linker flags does not exist on EPEL
 %{!?__global_ldflags: %global __global_ldflags -Wl,-z,relro}
-export SHLIBGLOBALSFLAGS="%{__global_ldflags}"
-export LOCAL_LDFLAGS="%{__global_ldflags}"
-export CDEBUGFLAGS="%{?__global_cppflags} %{?__global_cflags} %{?optflags}"
+SHLIBGLOBALSFLAGS="%{__global_ldflags}"
+LOCAL_LDFLAGS="%{__global_ldflags}"
+CDEBUGFLAGS="%{?__global_cppflags} %{?__global_cflags} %{?optflags}"
 IMAKE_DEFINES=''
 FORCE_TIRPC='NO'
 %if 0%{?fedora} > 27 || 0%{?suse_version} > 1500
