@@ -4237,12 +4237,12 @@ int nxagentAdjustRandRXinerama(ScreenPtr pScreen)
           #endif
           RROutputSetModes(pScrPriv->outputs[i], &mymode, 1, 0);
         }
-      } /* if disable_output */
 
-      #ifdef DEBUG
-      fprintf(stderr, "nxagentAdjustRandRXinerama: setting mode [%s] ([%p]) refcnt [%d] for crtc %d\n", mymode->name, (void *) mymode, mymode->refcnt, i);
-      #endif
-      RRCrtcSet(pScrPriv->crtcs[i], mymode, new_x, new_y, RR_Rotate_0, 1, &(pScrPriv->outputs[i]));
+        #ifdef DEBUG
+        fprintf(stderr, "nxagentAdjustRandRXinerama: setting mode [%s] ([%p]) refcnt [%d] for crtc %d\n", mymode->name, (void *) mymode, mymode->refcnt, i);
+        #endif
+        RRCrtcSet(pScrPriv->crtcs[i], mymode, new_x, new_y, RR_Rotate_0, 1, &(pScrPriv->outputs[i]));
+      } /* if disable_output */
 
       /* throw away the mode if otherwise unused. We do not need it
          anymore. We call FreeResource() to ensure the system will not
