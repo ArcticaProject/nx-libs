@@ -1,12 +1,81 @@
-2018-03-07 23:46:48 +0100 Mike Gabriel (9f62b26c2)
+2018-03-16 23:52:03 +0100 Mike Gabriel (ec23e1dad)
 
-	* release 3.5.99.15 (HEAD -> 3.6.x)
+	* release 3.5.99.16 (HEAD -> 3.6.x)
+
+2018-03-15 21:30:43 +0100 Mike Gabriel (3b05d0de6)
+
+	* Merge branch 'Ionic-feature/use-libtirpc' into 3.6.x (origin/HEAD,
+          origin/3.6.x)
+
+2018-03-15 12:46:12 +0100 Mihai Moldovan (2e1e9158e)
+
+	* nx-libs.spec: stop needlessly exporting variables that we pass down
+          directly anyway. (Ionic-feature/use-libtirpc)
+
+2018-03-09 09:11:06 +0100 Mihai Moldovan (9b1d00d30)
+
+	* nx-libs.spec: force usage of libtirpc on Fedora > 27 and OpenSuSE
+          Tumbleweed+ (soon to be Leap 15).
+
+2018-03-09 09:09:05 +0100 Mihai Moldovan (0cd1392de)
+
+	* nx-X11/config/cf/README: document new UseTIRPC macro.
+
+2018-03-09 09:08:35 +0100 Mihai Moldovan (25cc6fce5)
+
+	* nx-X11/programs/Xserver/{,os/}Imakefile: implement libtirpc forcing
+          via UseTIRPC.
+
+2018-03-09 09:06:11 +0100 Mihai Moldovan (090d4d19b)
+
+	* nx-X11/config/cf/Imake.tmpl: implement new UseTIRPC macro,
+          defaulting to NO.
+
+2018-03-15 12:18:21 +0100 Mihai Moldovan (daebc8b6a)
+
+	* nx-X11/programs/Xserver/Imakefile: move $(PIXMANLIB) to
+          NXAGENTSYSLIBS, since libXcompext doesn't actually need
+          it.
+
+2018-03-09 09:07:15 +0100 Mihai Moldovan (32dac66c6)
+
+	* nx-X11/programs/Xserver/Imakefile: use printf with no trailing
+          newline instead of echo for variable value.
+
+2018-03-15 12:15:27 +0100 Mihai Moldovan (7a901039c)
+
+	* Makefile: pass down IMAKE_DEFINES to nx-X11/programs/Xserver build
+          system.
+
+2018-03-10 02:04:25 +0100 Mihai Moldovan (63a359313)
+
+	* nx-X11/programs/Xserver/Imakefile: drop system libraries out of
+          target list for nxagent regeneration.
+
+2018-03-09 09:04:32 +0100 Mihai Moldovan (a47a73872)
+
+	* nx-libs.spec: sync removed files with debian/rules.
+
+2018-03-15 08:45:54 +0100 Mihai Moldovan (15e955545)
+
+	* nx-X11/programs/Xserver/hw/nxagent/Screen.c: do not try to set a
+          NULL mode if the output was disconnected before.
+
+2018-03-15 08:45:00 +0100 Mihai Moldovan (6f8cdebc6)
+
+	* nx-X11/programs/Xserver/hw/nxagent/Screen.c: initialize pointers to
+          NULL to avoid referencing random data.
+
+2018-03-07 23:46:48 +0100 Mike Gabriel (63e113de9)
+
+	* release 3.5.99.15 (tag: 3.5.99.15, origin/release-builds/3.6.x,
+          release-builds/3.6.x)
 
 2018-03-07 21:55:36 +0100 Mihai Moldovan (18630e5dd)
 
 	* Merge branch
           'sunweaver-pr/saver-unvalidated-lengths-ProcScreenSaverUnsetAttributes'
-          into 3.6.x (origin/HEAD, origin/3.6.x)
+          into 3.6.x
 
 2018-03-05 11:01:49 +0100 Nathan Kidd (7017c22c2)
 
@@ -80,8 +149,7 @@
 
 2018-02-28 10:53:45 +0100 Mike Gabriel (153be794d)
 
-	* release 3.5.99.14 (tag: 3.5.99.14, origin/release-builds/3.6.x,
-          release-builds/3.6.x)
+	* release 3.5.99.14 (tag: 3.5.99.14)
 
 2018-02-28 01:03:53 +0100 Mihai Moldovan (5c4777b2d)
 
