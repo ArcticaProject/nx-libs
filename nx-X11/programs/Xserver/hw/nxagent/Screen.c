@@ -3910,6 +3910,221 @@ int nxagentChangeScreenConfig(int screen, int width, int height)
 }
 
 /*
+ * Structure containing a list of splits.
+ *
+ * Only used locally, not exported.
+ */
+typedef struct {
+  size_t  x_count;
+  size_t  y_count;
+  INT32  *x_splits;
+  INT32  *y_splits;
+} nxagentScreenSplits;
+
+/*
+ * Helper function that takes a potential split point, the window bounds,
+ * a split count and a splits array.
+ *
+ * The function checks if the split point is within bounds, not already
+ * contained in the list and adds a new split point, modifying both the
+ * count parameter and the splits list.
+ *
+ * In case of errors, does nothing.
+ */
+static void nxagentAddToSplits(const CARD16 test_edge, const CARD16 rwin_start, const CARD16 rwin_end, size_t *split_count, INT32 *splits) {
+  if ((!(split_count)) || (!(splits))) {
+    return;
+  }
+
+  /* FIXME: think through and check edge case: 1px split. */
+  if ((rwin_start < test_edge) && (rwin_end > test_edge)) {
+    /* Edge somewhere inside of agent window, split point. */
+
+    /* Filter out if split point exists already. */
+    Bool exists = FALSE;
+    for (size_t i = 0; i < (*split_count); ++i) {
+      if (splits[i] == test_edge) {
+        exists = TRUE;
+        break;
+      }
+    }
+
+    if (!(exists)) {
+      splits[(*split_count)++] = test_edge;
+    }
+  }
+}
+
+/* Helper function used while sorting the split lists. */
+static int nxagentCompareSplits(const void *lhs, const void *rhs) {
+  int ret = 0;
+
+  const INT32 lhs_ = *((INT32*)(lhs)),
+              rhs_ = *((INT32*)(rhs));
+
+  if (lhs_ < rhs_) {
+    ret = -1;
+  }
+  else if (lhs_ > rhs_) {
+    ret = 1;
+  }
+
+  return(ret);
+}
+
+/* Helper function that deallocates a split list. */
+static void nxagentFreeSplits(nxagentScreenSplits **splits) {
+  if ((!(splits)) || (!(*splits))) {
+    return;
+  }
+
+  nxagentScreenSplits *splits_ = (*splits);
+
+  splits_->x_count = 0;
+  splits_->y_count = 0;
+
+  SAFE_FREE(splits_->x_splits);
+  SAFE_FREE(splits_->y_splits);
+  SAFE_FREE(splits_);
+}
+
+/*
+ * Helper function compacting an nxagentScreenSplits structure.
+ * The initial allocation assumes the worst case and overallocates memory,
+ * upper bounded by the maximum count of possible splits for a given screen
+ * configuration.
+ * This function compacts the lists back down into what is necessary only.
+ *
+ * In case of memory allocation errors, it frees all allocated datan and sets
+ * the splits list pointer to NULL!
+ */
+static void nxagentCompactSplits(nxagentScreenSplits **splits, const size_t actual_x_count, const size_t actual_y_count) {
+  if ((!(splits)) || (!(*splits))) {
+    return;
+  }
+
+  nxagentScreenSplits *splits_ = (*splits);
+
+  splits_->x_count = actual_x_count;
+  INT32 *new_data = NULL;
+  if (actual_x_count) {
+    /* Compact to accomodate actual data. */
+    new_data = realloc(splits_->x_splits, sizeof(INT32) * actual_x_count);
+
+    if (!(new_data)) {
+      nxagentFreeSplits(splits);
+
+      return;
+    }
+
+    splits_->x_splits = new_data;
+  }
+  else {
+    /* No splits in this dimension, drop data. */
+    SAFE_FREE(splits_->x_splits);
+  }
+
+  splits_->y_count = actual_y_count;
+  if (actual_y_count) {
+    new_data = realloc(splits_->y_splits, sizeof(INT32) * actual_y_count);
+
+    if (!(new_data)) {
+      nxagentFreeSplits(splits);
+
+      return;
+    }
+
+    splits_->y_splits = new_data;
+  }
+  else {
+    /* No splits in this dimension, drop data. */
+    SAFE_FREE(splits_->y_splits);
+  }
+}
+
+/*
+ * Generate a list of splits.
+ * This is based upon the client's system configuration and will
+ * generally create more splits than we need/want.
+ *
+ * In case of errors, returns NULL.
+ */
+static nxagentScreenSplits* nxagentGenerateScreenSplitList(const XineramaScreenInfo *screen_info, const size_t screen_count) {
+  nxagentScreenSplits *ret = NULL;
+
+  if (!(screen_info)) {
+    return(ret);
+  }
+
+  /*
+   * The maximum number of split points per axis
+   * is screen_count * 2 due to the rectangular nature of a screen
+   * (and hence two vertical or horizontal edges).
+   */
+  size_t split_counts = (screen_count * 2);
+
+  ret = calloc(1, sizeof(nxagentScreenSplits));
+  if (!ret) {
+    return(ret);
+  }
+
+  ret->x_splits = calloc(split_counts, sizeof(INT32));
+  ret->y_splits = calloc(split_counts, sizeof(INT32));
+  if ((!(ret->x_splits)) || (!(ret->y_splits))) {
+    SAFE_FREE(ret->x_splits);
+    SAFE_FREE(ret);
+
+    return(ret);
+  }
+
+  /*
+   * Initialize split arrays to -1, denoting no split.
+   * Could be done only for the first invalid element, but play it safe.
+   */
+  for (size_t i = 0; i < split_counts; ++i) {
+    ret->x_splits[i] = ret->y_splits[i] = -1;
+  }
+
+  const CARD16 sess_x_start = nxagentOption(X),
+               sess_y_start = nxagentOption(Y),
+               sess_x_end   = (sess_x_start + nxagentOption(Width)),
+               sess_y_end   = (sess_y_start + nxagentOption(Height));
+
+  size_t actual_x_splits = 0,
+         actual_y_splits = 0;
+
+  for (size_t i = 0; i < screen_count; ++i) {
+    /* Handle x component. */
+    size_t start_x = screen_info[i].x_org,
+           end_x = start_x + screen_info[i].width;
+
+    /* Left edge. */
+    nxagentAddToSplits(start_x, sess_x_start, sess_x_end, &actual_x_splits, ret->x_splits);
+
+    /* Right edge. */
+    nxagentAddToSplits(end_x, sess_x_start, sess_x_end, &actual_x_splits, ret->x_splits);
+
+    /* Handle y component. */
+    size_t start_y = screen_info[i].y_org,
+           end_y = start_y + screen_info[i].height;
+
+    /* Top edge. */
+    nxagentAddToSplits(start_y, sess_y_start, sess_y_end, &actual_y_splits, ret->y_splits);
+
+    /* Bottom edge. */
+    nxagentAddToSplits(end_y, sess_y_start, sess_y_end, &actual_y_splits, ret->y_splits);
+  }
+
+  /*
+   * Fetched all split points.
+   * Compact data and handle errors.
+   */
+  nxagentCompactSplits(&ret, actual_x_splits, actual_y_splits);
+
+  return(ret);
+}
+
+/*
  Destroy an output after removing it from any crtc that might reference it
  */
 void nxagentDropOutput(RROutputPtr o) {
