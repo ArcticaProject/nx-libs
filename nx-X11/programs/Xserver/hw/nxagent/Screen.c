@@ -3660,13 +3660,25 @@ static Bool intersect(int ax1, int ay1, unsigned int aw, unsigned int ah,
 
         return FALSE;
     }
-    *x = ix;
-    *y = iy;
-    *w = iw;
-    *h = ih;
+
+    if (x) {
+      *x = ix;
+    }
+
+    if (y) {
+      *y = iy;
+    }
+
+    if (w) {
+      *w = iw;
+    }
+
+    if (h) {
+      *h = ih;
+    }
 
     #ifdef DEBUG
-    fprintf(stderr, "intersect: intersection is: ([%d],[%d]) [ %d x %d ]\n", *x, *y, *w, *h);
+    fprintf(stderr, "intersect: intersection is: ([%d],[%d]) [ %d x %d ]\n", (x) ? *(x) : (-1), (y) ? (*y) : (-1), (w) ? (*w) : (-1), (h) ? (*h) : (-1));
     #endif
 
     return TRUE;
