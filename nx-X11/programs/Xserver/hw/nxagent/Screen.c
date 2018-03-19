@@ -55,6 +55,7 @@ is" without express or implied warranty.
 #include "../../randr/randrstr.h"
 #include "inputstr.h"
 #include "mivalidate.h"
+#include "list.h"
 
 #include "Agent.h"
 #include "Display.h"
@@ -3922,6 +3923,30 @@ typedef struct {
 } nxagentScreenSplits;
 
 /*
+ * Structure containing the boxes an nxagent session window is split into.
+ *
+ * Only used locally, not exported.
+ */
+typedef struct {
+  struct xorg_list entry;
+  Bool             obsolete;
+  ssize_t          screen_id; /* Mapping to actual screen. */
+  BoxPtr           box; /*
+                         * You might be tempted to use RegionPtr here. Do not.
+                         * A region is really an ordered and minimal set of horizontal
+                         * bands. A window tiling will in most cases not be minimal,
+                         * due to the need to split at display boundaries.
+                         * A Region is more minimal than this.
+                         * C.f., https://web.archive.org/web/20170520132137/http://magcius.github.io:80/xplain/article/regions.html
+                         */
+} nxagentScreenBoxesElem;
+
+typedef struct {
+  struct xorg_list head;
+  ssize_t          screen_id; /* Mapping to actual screen. */
+} nxagentScreenBoxes;
+
+/*
  * Helper function that takes a potential split point, the window bounds,
  * a split count and a splits array.
  *
@@ -4120,6 +4145,199 @@ static nxagentScreenSplits* nxagentGenerateScreenSplitList(const XineramaScreenI
    * Compact data and handle errors.
    */
   nxagentCompactSplits(&ret, actual_x_splits, actual_y_splits);
+
+  return(ret);
+}
+
+/* Helper function printing out a splits list. */
+static void nxagentPrintSplitsList(const INT32 *splits, const size_t count, const char *func, const Bool is_x) {
+  if (!(func)) {
+    func = "unknown function";
+  }
+
+  if (!(splits)) {
+    fprintf(stderr, "%s: tried to print invalid split list.\n", func);
+    return;
+  }
+
+  fprintf(stderr, "%s: ", func);
+  if (is_x) {
+    fprintf(stderr, "X");
+  }
+  else {
+    fprintf(stderr, "Y");
+  }
+  fprintf(stderr, " split list: [");
+
+  for (size_t i = 0; i < count; ++i) {
+    if (i > 0) {
+      fprintf(stderr, ", ");
+    }
+
+    fprintf(stderr, "%u", splits[i]);
+  }
+
+  fprintf(stderr, "]\n");
+}
+
+/* Helper to clear out a screen boxes list. */
+static void nxagentFreeScreenBoxes(nxagentScreenBoxes *boxes, const Bool free_data) {
+  if (!(boxes)) {
+    return;
+  }
+
+  nxagentScreenBoxesElem *cur  = NULL,
+                         *next = NULL;
+
+  xorg_list_for_each_entry_safe(cur, next, &(boxes->head), entry) {
+    xorg_list_del(&(cur->entry));
+
+    if (free_data) {
+      SAFE_FREE(cur->box);
+    }
+
+    SAFE_FREE(cur);
+  }
+
+  xorg_list_init(&(boxes->head));
+}
+
+/*
+ * Given a list of splits, sorts them and calculates a tile pattern for the
+ * current window.
+ *
+ * In case of errors, returns an empty list or NULL.
+ */
+static nxagentScreenBoxes* nxagentGenerateScreenCrtcs(nxagentScreenSplits *splits) {
+  nxagentScreenBoxes *ret = NULL;
+
+  ret = calloc(1, sizeof(nxagentScreenBoxes));
+
+  if (!(ret)) {
+    return(ret);
+  }
+
+  xorg_list_init(&(ret->head));
+  ret->screen_id = -1;
+
+  if ((!(splits)) || ((!(splits->x_splits)) && (splits->x_count)) || ((!(splits->y_splits)) && (splits->y_count))) {
+    return(ret);
+  }
+
+  /*
+   * Could drop these tests, since we checked the "if count is not zero the
+   * pointers must exist" constraint above already, but play it safe.
+   */
+  if (splits->x_splits) {
+    qsort(splits->x_splits, splits->x_count, sizeof(*(splits->x_splits)), nxagentCompareSplits);
+  }
+  if (splits->y_splits) {
+    qsort(splits->y_splits, splits->y_count, sizeof(*(splits->y_splits)), nxagentCompareSplits);
+  }
+
+#ifdef DEBUG
+  nxagentPrintSplitsList(splits->x_splits, splits->x_count, __func__, TRUE);
+  nxagentPrintSplitsList(splits->y_splits, splits->y_count, __func__, FALSE);
+#endif
+
+  /*
+   * Since the split lists are sorted now, we can go ahead and create boxes in
+   * an iterative manner.
+   */
+#ifdef DEBUG
+  {
+    /* Avoid using %zu printf specifier which may not be supported everywhere. */
+    const unsigned long long x_count = splits->x_count;
+    const unsigned long long y_count = splits->y_count;
+    fprintf(stderr, "%s: should generate (x_splits [%llu] + 1) * (y_splits [%llu] + 1) = %llu boxes.\n", __func__, x_count, y_count, (x_count + 1) * (y_count + 1));
+  }
+#endif
+  /*                    v-- implicit split point at agent window's bottommost edge! */
+  for (size_t i = 0; i <= splits->y_count; ++i) {
+    /* Looping over "rows" here (hence y splits). */
+    CARD32 start_y = -1,
+           end_y   = -1;
+
+    if (0 == i) {
+      start_y = nxagentOption(Y);
+    }
+    else {
+      start_y = splits->y_splits[i - 1];
+    }
+
+    if (i == splits->y_count) {
+      end_y = (nxagentOption(Y) + nxagentOption(Height));
+    }
+    else {
+      end_y = splits->y_splits[i];
+    }
+
+    /*                    v-- implicit split point at agent window's rightmost edge! */
+    for (size_t y = 0; y <= splits->x_count; ++y) {
+      /* Looping over "cols" here (hence x splits). */
+      CARD32 start_x = -1,
+             end_x   = -1;
+
+      if (0 == y) {
+        start_x = nxagentOption(X);
+      }
+      else {
+        start_x = splits->x_splits[y - 1];
+      }
+
+      if (y == splits->x_count) {
+        end_x = (nxagentOption(X) + nxagentOption(Width));
+      }
+      else {
+        end_x = splits->x_splits[y];
+      }
+
+      nxagentScreenBoxesElem *new_box_list_entry = calloc(1, sizeof(nxagentScreenBoxesElem));
+
+      if (!(new_box_list_entry)) {
+        nxagentFreeScreenBoxes(ret, TRUE);
+
+        return(ret);
+      }
+
+      new_box_list_entry->screen_id = -1;
+
+      BoxPtr new_box = calloc(1, sizeof(BoxRec));
+
+      if (!(new_box)) {
+        nxagentFreeScreenBoxes(ret, TRUE);
+
+        return(ret);
+      }
+
+      /* Box extends from (start_x, start_y) to (end_x, end_y). */
+      new_box->x1 = start_x;
+      new_box->x2 = end_x;
+      new_box->y1 = start_y;
+      new_box->y2 = end_y;
+
+      new_box_list_entry->box = new_box;
+
+      xorg_list_append(&(new_box_list_entry->entry), &(ret->head));
+    }
+  }
+
+#if defined(DEBUG) || defined(WARNING)
+  {
+    unsigned long long count = 0;
+    nxagentScreenBoxesElem *cur = NULL;
+    xorg_list_for_each_entry(cur, &(ret->head), entry) {
+      ++count;
+    }
+#ifdef DEBUG
+    fprintf(stderr, "%s: generated %llu boxes\n", __func__, count);
+#endif
+    if (count < ((splits->x_count + 1) * (splits->y_count + 1))) {
+      const unsigned long long expect = ((splits->x_count + 1) * (splits->y_count + 1));
+      fprintf(stderr, "%s: WARNING! Generated only %llu boxes, expected: %llu\n", __func__, count, expect);
+    }
+  }
+#endif
 
   return(ret);
 }
