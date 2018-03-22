@@ -4355,6 +4355,541 @@ static nxagentScreenBoxes* nxagentGenerateScreenCrtcs(nxagentScreenSplits *split
 }
 
 /*
+ * Helper returning true if a given box intersects with a given screen,
+ * otherwise and on error false.
+ */
+static Bool nxagentScreenBoxIntersectsScreen(const nxagentScreenBoxesElem *box, const XineramaScreenInfo *screen_info) {
+  Bool ret = FALSE;
+
+  if ((!(box)) || (!(box->box)) || (!(screen_info))) {
+    return(ret);
+  }
+
+  /* Find out if this box has intersections with display. */
+  INT32 box_width  = (box->box->x2 - box->box->x1),
+        box_height = (box->box->y2 - box->box->y1);
+  ret = intersect(box->box->x1, box->box->y1,
+                  box_width, box_height,
+                  screen_info->x_org, screen_info->y_org,
+                  screen_info->width, screen_info->height,
+                  NULL, NULL, NULL, NULL);
+
+  return(ret);
+}
+
+/* Helper printing out a single screen box. */
+static char* nxagentPrintScreenBoxesElem(const nxagentScreenBoxesElem *box) {
+  char *ret = NULL;
+
+  if ((!(box)) || (!(box->box))) {
+    return(ret);
+  }
+
+  BoxPtr box_data = box->box;
+
+  char *construct = NULL;
+  {
+    const signed long long screen_id = box->screen_id;
+    const unsigned obsolete = box->obsolete;
+    if (-1 == asprintf(&construct, "(%u)[(%d, %d), (%d, %d)]->%lld", obsolete, box_data->x1, box_data->y1, box_data->x2, box_data->y2, screen_id)) {
+      return(ret);
+    }
+  }
+
+  ret = construct;
+
+  return(ret);
+}
+
+/*
+ * Helper comparing two box elements.
+ * Returns true if both data sections match, false otherwise or on error.
+ */
+static Bool nxagentCompareScreenBoxData(const BoxPtr lhs, const BoxPtr rhs) {
+  Bool ret = FALSE;
+
+  if ((!(lhs)) || (!(rhs))) {
+    return(ret);
+  }
+
+  if ((lhs->x1 == rhs->x1) && (lhs->x2 == rhs->x2) && (lhs->y1 == rhs->y1) && (lhs->y2 == rhs->y2)) {
+    ret = TRUE;
+  }
+
+  return(ret);
+}
+
+/*
+ * Helper marking a box in the all boxes list as obsolete.
+ *
+ * Returns true if such a box has been found (and marked), false otherwise
+ * or on error.
+ */
+static Bool nxagentScreenBoxMarkObsolete(nxagentScreenBoxes *all_boxes, const nxagentScreenBoxesElem *ref) {
+  Bool ret = FALSE;
+
+  if ((!(ref)) || (!(all_boxes)) || (!(ref->box))) {
+    return(ret);
+  }
+
+  nxagentScreenBoxesElem *cur_obsolete = NULL;
+  xorg_list_for_each_entry(cur_obsolete, &(all_boxes->head), entry) {
+    if (nxagentCompareScreenBoxData(cur_obsolete->box, ref->box)) {
+      cur_obsolete->obsolete = TRUE;
+
+      ret = TRUE;
+
+      break;
+    }
+  }
+
+  return(ret);
+}
+
+/*
+ * Helper for checking box adjacency.
+ *
+ * The edges for which adjacency should be detected can be toggled via the
+ * left, right, top or bottom parameters. Checking for adjacency with no edge
+ * selected is an error.
+ *
+ * Adjancency can be strict of loose.
+ * If strict checking is enabled via the strict parameter, boxes must strictly
+ * share one of the enabled edges.
+ * If strict checking is disabled, sharing only part of an selected edge is
+ * enough make the check succeed.
+ *
+ * Returns true if boxes are adjacent to each other, false otherwise or on
+ * error.
+ */
+static Bool nxagentCheckBoxAdjacency(const BoxPtr lhs, const BoxPtr rhs, const Bool strict, const Bool left, const Bool right, const Bool top, const Bool bottom) {
+  Bool ret = FALSE;
+
+  if ((!(lhs)) || (!(rhs)) || ((!(left)) && (!(right)) && (!(top)) && (!(bottom)))) {
+    return(ret);
+  }
+
+  if (((left) && (lhs->x1 == rhs->x2)) || ((right) && (lhs->x2 == rhs->x1))) {
+    if (strict) {
+      if ((lhs->y1 == rhs->y1) && (lhs->y2 == rhs->y2)) {
+        ret = TRUE;
+      }
+    }
+    else {
+      /* rhs->{y1,y2-1} within {lhs->y1, lhs->y2) */
+      if (((rhs->y1 >= lhs->y1) && (rhs->y1 < lhs->y2)) || ((rhs->y2 > lhs->y1) && (rhs->y2 <= lhs->y2))) {
+        ret = TRUE;
+      }
+    }
+  }
+
+  if (((top) && (lhs->y1 == rhs->y2)) || ((bottom) && (lhs->y2 == rhs->y1))) {
+    if (strict) {
+      if ((lhs->x1 == rhs->x1) && (lhs->x2 == rhs->x2)) {
+        ret = TRUE;
+      }
+    }
+    else {
+      /* rhs->{x1,x2} within {lhs->x1, lhs->x2) */
+      if (((rhs->x1 >= lhs->x1) && (rhs->x1 < lhs->x2)) || ((rhs->x2 > lhs->x1) && (rhs->x2 <= lhs->x2))) {
+        ret = TRUE;
+      }
+    }
+  }
+
+  return(ret);
+}
+
+/*
+ * Helper used to shallow- or deep-copy an nxagentScreenBoxesElem object.
+ *
+ * Returns a pointer to the copy or NULL on failure.
+ */
+static nxagentScreenBoxesElem* nxagentScreenBoxesElemCopy(const nxagentScreenBoxesElem *box, const Bool deep) {
+  nxagentScreenBoxesElem *ret = NULL;
+
+  if (!(box)) {
+    return(ret);
+  }
+
+  ret = calloc(1, sizeof(nxagentScreenBoxesElem));
+
+  if (!(ret)) {
+    return(ret);
+  }
+
+  memmove(ret, box, sizeof(*box));
+
+  xorg_list_init(&(ret->entry));
+
+  /* For a deep copy, also copy the data. */
+  if (deep) {
+    BoxPtr new_box_data = calloc(1, sizeof(BoxRec));
+
+    if (!(new_box_data)) {
+      SAFE_FREE(ret);
+
+      return(ret);
+    }
+
+    memmove(new_box_data, box->box, sizeof(*(box->box)));
+
+    ret->box = new_box_data;
+  }
+
+  return(ret);
+}
+
+/*
+ * Helper merging boxes on a low level.
+ * Returns true if merging succeeded, otherwise or on error false.
+ *
+ * If merging succeded, the merge_boxes list shall contain only one element:
+ * the extended box representing a screen.
+ *
+ * In case of errors, the original list may or may not be modified.
+ * Assume that the data is invalid.
+ */
+static Bool nxagentMergeBoxes(nxagentScreenBoxes *all_boxes, nxagentScreenBoxes *merge_boxes) {
+  Bool ret = FALSE;
+
+  if ((!(all_boxes)) || (!(merge_boxes))) {
+    return(ret);
+  }
+
+  /*
+   * Special case: merge_boxes is empty. In such a case, return TRUE
+   * immediately.
+   */
+  if (xorg_list_is_empty(&(merge_boxes->head))) {
+    ret = TRUE;
+
+    return(ret);
+  }
+
+  /* Naïve approach: merge of all boxes is the bounding box. */
+  BoxRec bounding_box = { 0 };
+  nxagentScreenBoxesElem *cur = NULL;
+  Bool init = FALSE;
+  size_t merge_boxes_count = 0;
+  xorg_list_for_each_entry(cur, &(merge_boxes->head), entry) {
+    if (!(cur->box)) {
+      return(ret);
+    }
+
+    if (!(init)) {
+      bounding_box.x1 = cur->box->x1;
+      bounding_box.x2 = cur->box->x2;
+      bounding_box.y1 = cur->box->y1;
+      bounding_box.y2 = cur->box->y2;
+
+      init = TRUE;
+
+      ++merge_boxes_count;
+
+      continue;
+    }
+
+    bounding_box.x1 = MIN(cur->box->x1, bounding_box.x1);
+    bounding_box.x2 = MAX(cur->box->x2, bounding_box.x2);
+    bounding_box.y1 = MIN(cur->box->y1, bounding_box.y1);
+    bounding_box.y2 = MAX(cur->box->y2, bounding_box.y2);
+
+    ++merge_boxes_count;
+  }
+
+  /*
+   * Don't treat one box to merge as a special case.
+   * Returning directly is a mistake since in this case the corresponding box
+   * in the all boxes list wouldn't be correctly marked as obsolete.
+   *
+   * Copying the code for doing this into a special branch here doesn't make
+   * sense, so just let the normal algorithm handle that.
+   */
+
+  /* Try to find a suitable merge pair. */
+  cur = NULL;
+  nxagentScreenBoxesElem *merge_rhs = NULL;
+  Bool restart = TRUE;
+  while (restart) {
+    restart = FALSE;
+
+    xorg_list_for_each_entry(cur, &(merge_boxes->head), entry) {
+      if (!(cur->box)) {
+        return(ret);
+      }
+
+      /*
+       * Mark left-hand side box as obsolete.
+       * We pick a box (usually the first one, but if there no mergable boxes
+       * readily available maybe others), search for a different mergable box,
+       * merge the picked box with the other box by extending it and mark the
+       * right-hand side original box as obsolete in the all boxes list.
+       *
+       * Observant readers might have noticed that we will never mark a picked
+       * box as obsolete this way, so we'll have to work around that issue at
+       * the beginning.
+       */
+      if (cur->obsolete) {
+        if (!(nxagentScreenBoxMarkObsolete(all_boxes, cur))) {
+          /* False means that we haven't found a box to mark obsolete. */
+#ifdef WARNING
+          fprintf(stderr, "%s: couldn't find left-hand box in original list - box has likely already been merged into a different one.\n", __func__);
+#endif
+        }
+      }
+
+      xorg_list_for_each_entry(merge_rhs, &(cur->entry), entry) {
+        if (&(merge_rhs->entry) == &(merge_boxes->head)) {
+          /* Reached end of list. */
+          merge_rhs = NULL;
+          break;
+        }
+
+        /*
+         * Do not move this up.
+         *
+         * The list head won't have a box element and accessing it would
+         * actually read random data.
+         */
+        if (!(merge_rhs->box)) {
+          return(ret);
+        }
+
+        /* Check adjacency. */
+        if (nxagentCheckBoxAdjacency(cur->box, merge_rhs->box, TRUE, TRUE, TRUE, TRUE, TRUE)) {
+          break;
+        }
+      }
+
+      /* cur and merge_rhs are mergeable. */
+      /*
+       * Side note, since working with lists is tricky: normally, the element
+       * pointer shouldn't be used after iterating over all list elements.
+       * In such a case, it would point to an invalid entry, since the list
+       * head is a simple xorg_list structure instead of an element-type.
+       * The looping macro takes care of this internally by always checking
+       * it->member against the known list head, which adds a previously
+       * subtracted offset back to the pointer in the break statement. It does,
+       * however, not modify the iteration pointer itself.
+       * In this special case, continuing to use the iteration pointer is safe
+       * due to always breaking out of the loop early when we know that we are
+       * working on a valid element or setting the iterator pointer to NULL.
+       */
+      if (merge_rhs) {
+#ifdef DEBUG
+        {
+          char *box_left_str = nxagentPrintScreenBoxesElem(cur);
+          char *box_right_str = nxagentPrintScreenBoxesElem(merge_rhs);
+
+          fprintf(stderr, "%s: mergeable boxes found: ", __func__);
+          if (!(box_left_str)) {
+            fprintf(stderr, "box with invalid data [%p]", (void*)(cur));
+          }
+          else {
+            fprintf(stderr, "%s", box_left_str);
+          }
+
+          if (!(box_right_str)) {
+            fprintf(stderr, ", box with invalid data [%p]\n", (void*)(merge_rhs));
+          }
+          else {
+            fprintf(stderr, ", %s\n", box_right_str);
+          }
+
+          SAFE_FREE(box_left_str);
+          SAFE_FREE(box_right_str);
+        }
+#endif
+        cur->box->x1 = MIN(cur->box->x1, merge_rhs->box->x1);
+        cur->box->x2 = MAX(cur->box->x2, merge_rhs->box->x2);
+        cur->box->y1 = MIN(cur->box->y1, merge_rhs->box->y1);
+        cur->box->y2 = MAX(cur->box->y2, merge_rhs->box->y2);
+
+        /* Delete merge_rhs box out of merge list ... */
+        xorg_list_del(&(merge_rhs->entry));
+
+        /*
+         * ... and mark an equivalent box in the all boxes list as obsolete.
+         *
+         * Note that it is not an error condition if no such box exists in the
+         * all boxes list. More likely we tried to mark a box obsolete that
+         * has already been merged with a different one (and now covers more
+         * than one entry in the all boxes list).
+         */
+        if (merge_rhs->obsolete) {
+          if (!(nxagentScreenBoxMarkObsolete(all_boxes, merge_rhs))) {
+            /* False means that we haven't found a box to mark obsolete. */
+#ifdef WARNING
+            fprintf(stderr, "%s: merged boxes from merge list, but couldn't find right-hand box in original list - box has likely already been merged into a different one.\n", __func__);
+#endif
+          }
+        }
+
+        /*
+         * Remove merge_rhs's internal box data.
+         * Since it's a deep copy, only this element will be affected.
+         */
+        SAFE_FREE(merge_rhs->box);
+
+        /*
+         * At this point, merge_rhs's data has been free()d and the box
+         * element is not part of the merge_boxes lists.
+         * Delete the box element.
+         */
+        SAFE_FREE(merge_rhs);
+
+        /*
+         * Set restart flag and break out.
+         *
+         * After removing an entry from the list, we have to make sure to
+         * restart the loop, since otherwise we'd be operating on free'd
+         * data.
+         *
+         * An alternative would be to use xorg_list_for_each_entry_safe()
+         * to skip over the removed element, but this wouldn't rewind the
+         * pointer to the head element - which is what we also want to do.
+         */
+        restart = TRUE;
+
+        break;
+      }
+      else {
+#ifdef DEBUG
+        char *box_str = nxagentPrintScreenBoxesElem(cur);
+
+        fprintf(stderr, "%s: no mergeable box found for", __func__);
+        if (box_str) {
+          fprintf(stderr, " current box %s\n", box_str);
+        }
+        else {
+          fprintf(stderr, " box with invalid data [%p]\n", (void*)(cur));
+        }
+
+        SAFE_FREE(box_str);
+#endif
+      }
+    }
+  }
+
+  /* All boxes merged, we should only have one left. */
+  merge_boxes_count = 0;
+  xorg_list_for_each_entry(cur, &(merge_boxes->head), entry) {
+    if (!(cur->box)) {
+      return(ret);
+    }
+
+    ++merge_boxes_count;
+  }
+
+  if (1 < merge_boxes_count) {
+#ifdef WARNING
+    fprintf(stderr, "%s: WARNING: box merge operation produced more than one box - initial merge list was not a rectangle!\n", __func__);
+#endif
+  }
+  else if (0 == merge_boxes_count) {
+#ifdef WARNING
+    fprintf(stderr, "%s: WARNING: box merge operation produced a merged box count of 0!\n", __func__);
+#endif
+  }
+  else {
+    /* Just take the first element, there should only be one box. */
+    cur = xorg_list_first_entry(&(merge_boxes->head), nxagentScreenBoxesElem, entry);
+
+    /*
+     * Safe to use cur here as we know that list has exactly one element
+     * and we break out directly at a point for which we know that the
+     * pointer is valid.
+     */
+    if (nxagentCompareScreenBoxData(&bounding_box, cur->box)) {
+#ifdef DEBUG
+      fprintf(stderr, "%s: merging operations result is equal to bounding box, could have avoided complex calculations.\n", __func__);
+#endif
+      ret = TRUE;
+    }
+  }
+
+  return(ret);
+}
+
+/*
+ * Helper merging boxes that pertain to specific screen.
+ * Expects a list of all boxes, an array of screen boxes, a screen info array
+ * and the screen count.
+ * The screen boxes array msut have been allocated by the caller with at least
+ * screen count elements. Further elements are ignored.
+ *
+ * In case of errors, the original all boxes and screen boxes lists may or may
+ * not be modified or even the data free'd.
+ * Assume that the data is invalid.
+ */
+static Bool nxagentMergeScreenBoxes(nxagentScreenBoxes *all_boxes, nxagentScreenBoxes *screen_boxes, const XineramaScreenInfo *screen_info, const size_t screen_count) {
+  Bool ret = FALSE;
+
+  if ((!(all_boxes)) || (!(screen_boxes)) || (!(screen_info)) || (!(screen_count))) {
+    return(ret);
+  }
+
+  for (size_t i = 0; i < screen_count; ++i) {
+    /*
+     * Structure holding the box elements intersecting with
+     * the current screen.
+     */
+    nxagentScreenBoxes *cur_screen_boxes = (screen_boxes + i);
+    xorg_list_init(&(cur_screen_boxes->head));
+    cur_screen_boxes->screen_id = i;
+
+    nxagentScreenBoxesElem *cur_box = NULL;
+    xorg_list_for_each_entry(cur_box, &(all_boxes->head), entry) {
+      Bool cur_intersect = nxagentScreenBoxIntersectsScreen(cur_box, &(screen_info[i]));
+
+      if (cur_intersect) {
+        /*
+         * If a screen intersects the current box, we must:
+         *  - create a deep copy of this box
+         *  - add the copy to the screen boxes list
+         *  - set the obsolete flag appropriately
+         *  - start the low-level merge operation on the screen boxes list
+         *
+         * After this, assuming no error happened, the screen boxes list will
+         * contain only one element: a box containing the screen area.
+         */
+        nxagentScreenBoxesElem *box_copy = nxagentScreenBoxesElemCopy(cur_box, TRUE);
+
+        if (!(box_copy)) {
+          nxagentFreeScreenBoxes(all_boxes, TRUE);
+          nxagentFreeScreenBoxes(screen_boxes, TRUE);
+
+          return(ret);
+        }
+
+        box_copy->screen_id = cur_screen_boxes->screen_id;
+        box_copy->obsolete = TRUE;
+
+        for (size_t y = (i + 1); y < screen_count; ++y) {
+          if (nxagentScreenBoxIntersectsScreen(cur_box, &(screen_info[y]))) {
+            /* Protect box, if still needed later on after merging this set. */
+            box_copy->obsolete = FALSE;
+            break;
+          }
+        }
+
+        xorg_list_append(&(box_copy->entry), &(cur_screen_boxes->head));
+      }
+    }
+
+    /* Actually merge the boxes. */
+    if (!(nxagentMergeBoxes(all_boxes, cur_screen_boxes))) {
+      return(ret);
+    }
+  }
+
+  ret = TRUE;
+
+  return(ret);
+}
+
+/*
  Destroy an output after removing it from any crtc that might reference it
  */
 void nxagentDropOutput(RROutputPtr o) {
