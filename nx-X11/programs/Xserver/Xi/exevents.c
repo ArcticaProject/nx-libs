@@ -656,6 +656,7 @@ AddExtensionClient(WindowPtr pWin, ClientPtr client, Mask mask, int mskidx)
     if (!others)
 	return BadAlloc;
     if (!pWin->optional->inputMasks && !MakeInputMasks(pWin))
+	free(others);
 	return BadAlloc;
     bzero((char *)&others->mask[0], sizeof(Mask) * EMASKSIZE);
     others->mask[mskidx] = mask;

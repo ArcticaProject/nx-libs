@@ -121,9 +121,15 @@ int main (int argc, char *argv[])
 
     {
       char* fname = malloc(strlen(directory)+strlen(filename)+1);
+      if (fname == NULL)
+      {
+        printf("malloc failed\n");
+        exit(1);
+      }
       strcpy(fname,directory); strcat(fname,filename);
       f = fopen(fname,"w");
       if (f == NULL)
+        free(fname);
         exit(1);
     }
 
