@@ -42,6 +42,9 @@ is" without express or implied warranty.
  */
 
 #include <signal.h>
+#include <stdarg.h>
+#include <math.h>
+#include <float.h>
 
 #include "scrnintstr.h"
 #include "dix.h"
@@ -3959,6 +3962,25 @@ typedef struct {
 } nxagentScreenBoxes;
 
 /*
+ * Structure containing a (potentially partial) solution to a Crtc tiling.
+ *
+ * Only used locally, not exported.
+ */
+typedef struct {
+  struct xorg_list    entry;
+  size_t              rating_size_change;
+  size_t              rating_cover_penalty;
+  size_t              rating_extended_boxes_count;
+  double              rating; /* Calculated via the components above. */
+  nxagentScreenBoxes *solution_boxes;
+  nxagentScreenBoxes *all_boxes;
+} nxagentScreenCrtcsSolution;
+
+typedef struct xorg_list nxagentScreenCrtcsSolutions;
+
+#define INVALID_RATING ((-1) * (DBL_MAX))
+
+/*
  * Helper function that takes a potential split point, the window bounds,
  * a split count and a splits array.
  *
@@ -4885,6 +4907,618 @@ static Bool nxagentMergeScreenBoxes(nxagentScreenBoxes *all_boxes, nxagentScreen
   }
 
   ret = TRUE;
+
+  return(ret);
+}
+
+/*
+ * Helper used to deep-copy an nxagentScreenBoxes list.
+ *
+ * Returns a pointer to a complete copy or NULL on failure.
+ */
+static nxagentScreenBoxes* nxagentScreenBoxesCopy(const nxagentScreenBoxes *boxes) {
+  nxagentScreenBoxes *ret = NULL;
+
+  if (!(boxes)) {
+    return(ret);
+  }
+
+  ret = calloc(1, sizeof(nxagentScreenBoxes));
+
+  if (!(ret)) {
+    return(ret);
+  }
+
+  xorg_list_init(&(ret->head));
+
+  nxagentScreenBoxesElem *cur = NULL;
+  xorg_list_for_each_entry(cur, &(boxes->head), entry) {
+    nxagentScreenBoxesElem *copy = nxagentScreenBoxesElemCopy(cur, TRUE);
+
+    if (!(copy)) {
+      nxagentFreeScreenBoxes(ret, TRUE);
+
+      SAFE_FREE(ret);
+
+      return(ret);
+    }
+
+    xorg_list_append(&(copy->entry), &(ret->head));
+  }
+
+  ret->screen_id = boxes->screen_id;
+
+  return(ret);
+}
+
+/* Helper function that deallocates a single solution. */
+static void nxagentScreenCrtcsFreeSolution(nxagentScreenCrtcsSolution *solution) {
+  if (!(solution)) {
+    return;
+  }
+
+  xorg_list_del(&(solution->entry));
+
+  solution->rating_size_change = solution->rating_cover_penalty = solution->rating_extended_boxes_count = 0;
+  solution->rating = 0.0;
+
+  nxagentFreeScreenBoxes(solution->solution_boxes, TRUE);
+  SAFE_FREE(solution->solution_boxes);
+
+  nxagentFreeScreenBoxes(solution->all_boxes, TRUE);
+  SAFE_FREE(solution->all_boxes);
+}
+
+/*
+ * Helper to calculate a normalized sum for a list of boolean values.
+ *
+ * Each boolean value is normalized to to [0,1] range.
+ *
+ * Returns the sum of all normalized arguments.
+ */
+static size_t nxagentSumBools(const size_t count, ...) {
+  size_t ret = 0;
+
+  va_list ap;
+  va_start(ap, count);
+  for (size_t i = 0; i < count; ++i) {
+    ret += (!(!(va_arg(ap, size_t))));
+  }
+  va_end(ap);
+
+  return(ret);
+}
+
+/*
+ * Helper returning true if a given box intersects with a given screen box,
+ * otherwise and on error false.
+ */
+static Bool nxagentScreenBoxIntersectsScreenBox(const nxagentScreenBoxesElem *lhs, const nxagentScreenBoxesElem *rhs) {
+  Bool ret = FALSE;
+
+  if ((!(lhs)) || (!(lhs->box)) || (!(rhs)) || (!(rhs->box))) {
+    return(ret);
+  }
+
+  /* Find out if this box has intersections with display. */
+  INT32 lhs_width  = (lhs->box->x2 - lhs->box->x1),
+        lhs_height = (lhs->box->y2 - lhs->box->y1),
+        rhs_width  = (rhs->box->x2 - rhs->box->x1),
+        rhs_height = (rhs->box->y2 - rhs->box->y1);
+  ret = intersect(lhs->box->x1, lhs->box->y1,
+                  lhs_width, lhs_height,
+                  rhs->box->x1, rhs->box->y1,
+                  rhs_width, rhs_height,
+                  NULL, NULL, NULL, NULL);
+
+  return(ret);
+}
+
+/*
+ * Calculates the rating for a given solution.
+ *
+ * Expects the size change and cover penalty struct variables to be set
+ * correctly.
+ *
+ * If boost is true, the rating calculated here will receive a small boost.
+ *
+ * On errors, sets the rating to INVALID_RATING or does nothing.
+ */
+static void nxagentScreenCrtcsSolutionCalculateRating(nxagentScreenCrtcsSolution *solution, const Bool boost) {
+  if ((!(solution)) || (!(solution->all_boxes))) {
+    return;
+  }
+
+  size_t all_boxes_count = 0;
+  nxagentScreenBoxesElem *cur = NULL;
+  xorg_list_for_each_entry(cur, &(solution->all_boxes->head), entry) {
+    ++all_boxes_count;
+  }
+
+  if (!(all_boxes_count)) {
+    solution->rating = INVALID_RATING;
+    return;
+  }
+
+  solution->rating = (((double)(solution->rating_size_change) * ((double)(solution->rating_extended_boxes_count) + ((double)(solution->rating_size_change) / (double)(all_boxes_count)))) - (pow((double)(solution->rating_cover_penalty), 2.0)));
+
+  if (boost) {
+    /*
+     * This is a magic number.
+     * It should be big enough so that it boosts the rating a tiny bit to
+     * prefer specific solutions, but small enough to never reach or exceed
+     * a +1 boost.
+     */
+    solution->rating += (1.0 / 64.0);
+  }
+}
+
+/*
+ * Helper that generates a solution for extending a specific box in one
+ * direction.
+ *
+ * Only one of the left, right, top or bottom parameters may be set to TRUE.
+ *
+ * The parameter "box" will be extended as much as possible in the specified
+ * direction, with the following constraints:
+ *   - it's extended at least once unless hitting the nxagent window edge
+ *     directly
+ *   - it's further extended step-by-step IFF there are no "obsolete" boxes
+ *     (i.e., base-level boxes already covered by a different screen box) in
+ *     the extension direction.
+ *
+ * Note that the initial extension might not be a meaningful one. Calling
+ * functions must check the rating and determine if the solution is viable
+ * to them.
+ */
+static nxagentScreenCrtcsSolution* nxagentScreenCrtcsGenerateSolutionsSingleStep(const nxagentScreenBoxes *all_boxes, const nxagentScreenBoxesElem *box, const nxagentScreenBoxes *other_screens, const Bool left, const Bool right, const Bool top, const Bool bottom) {
+  nxagentScreenCrtcsSolution *ret = NULL;
+
+  const size_t sum = nxagentSumBools(4, left, right, top, bottom);
+  if ((0 == sum) || (1 < sum) || (!(all_boxes)) || (!(box)) || (!(other_screens))) {
+    return(ret);
+  }
+
+  ret = calloc(1, sizeof(nxagentScreenCrtcsSolution));
+
+  if (!(ret)) {
+    return(ret);
+  }
+
+  xorg_list_init(&(ret->entry));
+  ret->rating = INVALID_RATING;
+
+  Bool init = TRUE,
+       cont = TRUE;
+  const nxagentScreenBoxesElem *box_ref = box;
+  const nxagentScreenBoxes *all_boxes_ref = all_boxes;
+  while (cont) {
+    /*
+     * Move one step into selected direction, unless hitting an obsolete block or the
+     * window edge. Obsolete blocks are not an obstacle for the initial run.
+     */
+    size_t run_size_change = 0,
+           run_cover_penalty = 0;
+    nxagentScreenBoxesElem *cur = NULL;
+    nxagentScreenBoxes *merge_list = calloc(1, sizeof(nxagentScreenBoxes));
+
+    if (!(merge_list)) {
+      nxagentScreenCrtcsFreeSolution(ret);
+
+      SAFE_FREE(ret);
+
+      return(ret);
+    }
+
+    xorg_list_init(&(merge_list->head));
+    merge_list->screen_id = -1;
+    xorg_list_for_each_entry(cur, &(all_boxes->head), entry) {
+      /*
+       * Skip boxes already covered by this screen or other screens
+       * if we're looking for additional coverage.
+       */
+      if ((!(init)) && (cur->obsolete)) {
+        continue;
+      }
+
+      if (!(box_ref) || (!(box_ref->box)) || (!(cur->box))) {
+        nxagentFreeScreenBoxes(merge_list, TRUE);
+
+        nxagentScreenCrtcsFreeSolution(ret);
+
+        SAFE_FREE(merge_list);
+
+        SAFE_FREE(ret);
+
+        return(ret);
+      }
+
+      if (nxagentCheckBoxAdjacency(box_ref->box, cur->box, FALSE, left, right, top, bottom)) {
+        /* Copy current box. */
+        nxagentScreenBoxesElem *copy = nxagentScreenBoxesElemCopy(cur, TRUE);
+
+        if (!(copy)) {
+          nxagentFreeScreenBoxes(merge_list, TRUE);
+
+          nxagentScreenCrtcsFreeSolution(ret);
+
+          SAFE_FREE(merge_list);
+
+          SAFE_FREE(ret);
+
+          return(ret);
+        }
+
+        copy->obsolete = TRUE;
+
+        xorg_list_append(&(copy->entry), &(merge_list->head));
+
+        ++run_size_change;
+
+        /*
+         * Add a penalty value, if current box is already covered by at least
+         * one different screen box.
+         */
+        nxagentScreenBoxesElem *cur_penalty_box = NULL;
+        /* FIXME: do we need more thorough error-checking for other_screens? */
+        xorg_list_for_each_entry(cur_penalty_box, &(other_screens->head), entry) {
+          if (nxagentScreenBoxIntersectsScreenBox(cur, cur_penalty_box)) {
+            /*
+             * Add an initial penalty the first time for our current screen
+             * box.
+             */
+            if (0 == run_cover_penalty) {
+              ++run_cover_penalty;
+            }
+
+            ++run_cover_penalty;
+          }
+        }
+      }
+
+      /*
+       * Break out early if possible.
+       * This assumes that the all_boxes list is sorted according to rows and cols.
+       */
+      if ((left) || (right)) {
+        /*
+         * Discovering a box that is below the screen box means that any
+         * following boxes will be unsuitable for horizontal expansion.
+         */
+        if (cur->box->y1 >= box_ref->box->y2) {
+          break;
+        }
+      }
+
+      if (top) {
+        /*
+         * Discovering a box that is below the screen box's top edge means
+         * that any following boxes will be unsuitable for vertical expansion.
+         */
+        if (cur->box->y1 >= box_ref->box->y1) {
+          break;
+        }
+      }
+    }
+
+    /*
+     * At this point, merge_list should be populated with a list of boxes
+     * to merge with the current screen box.
+     * If it is incomplete (i.e., smaller height than the screen box for
+     * horizontal expansions or smaller width than the screen box for vertical
+     * expansions), merging will fail.
+     * Such a situation is fine, but will mean that we cannot extend the box.
+     */
+    if (!(xorg_list_is_empty(&(merge_list->head)))) {
+      nxagentScreenBoxes *all_boxes_copy = nxagentScreenBoxesCopy(all_boxes_ref);
+
+      if (!(all_boxes_copy)) {
+        nxagentFreeScreenBoxes(merge_list, TRUE);
+
+        nxagentScreenCrtcsFreeSolution(ret);
+
+        SAFE_FREE(merge_list);
+
+        SAFE_FREE(ret);
+
+        return(ret);
+      }
+
+      /* Deep-copy original screen box. */
+      nxagentScreenBoxesElem *screen_box_copy = nxagentScreenBoxesElemCopy(box_ref, TRUE);
+
+      if (!(screen_box_copy)) {
+        nxagentFreeScreenBoxes(all_boxes_copy, TRUE);
+        nxagentFreeScreenBoxes(merge_list, TRUE);
+
+        nxagentScreenCrtcsFreeSolution(ret);
+
+        SAFE_FREE(all_boxes_copy);
+        SAFE_FREE(merge_list);
+
+        SAFE_FREE(ret);
+
+        return(ret);
+      }
+
+      /* Add copy to merge list. */
+      /*
+       * DO NOT change this to xorg_list_append(). Putting the screen box first
+       * means that, theoretically, all other boxes will be merged into it and
+       * we can assume that its screen_id entry stays valid.
+       */
+      xorg_list_add(&(screen_box_copy->entry), &(merge_list->head));
+
+      /* Merge. */
+      if (!(nxagentMergeBoxes(all_boxes_copy, merge_list))) {
+        /*
+         * Merging failed. Forgetting data and stopping extension.
+         *
+         * Make sure to not clear out ret. We want to retain and return a
+         * previous solution/extension.
+         */
+        nxagentFreeScreenBoxes(all_boxes_copy, TRUE);
+        nxagentFreeScreenBoxes(merge_list, TRUE);
+
+        SAFE_FREE(all_boxes_copy);
+        SAFE_FREE(merge_list);
+
+        cont = FALSE;
+      }
+      else {
+        /* Merge successful. Create solution. */
+        nxagentFreeScreenBoxes(ret->all_boxes, TRUE);
+        SAFE_FREE(ret->all_boxes);
+        ret->all_boxes = all_boxes_copy;
+
+        nxagentFreeScreenBoxes(ret->solution_boxes, TRUE);
+        SAFE_FREE(ret->solution_boxes);
+        ret->solution_boxes = nxagentScreenBoxesCopy(merge_list);
+
+        /* Unconditionally get rid of data. */
+        nxagentFreeScreenBoxes(merge_list, TRUE);
+
+        SAFE_FREE(merge_list);
+
+        if (!(ret->solution_boxes)) {
+          nxagentScreenCrtcsFreeSolution(ret);
+
+          SAFE_FREE(ret);
+
+          return(ret);
+        }
+
+        /* Update reference variables. */
+        all_boxes_ref = ret->all_boxes;
+
+        /* Should only have one box, so taking the first entry is fine. */
+        box_ref = xorg_list_first_entry(&(ret->solution_boxes->head), nxagentScreenBoxesElem, entry);
+
+        /* Update size change. */
+        ret->rating_size_change += run_size_change;
+
+        /* Update cover penalty. */
+        ret->rating_cover_penalty += run_cover_penalty;
+
+        /* One box was extended, record. */
+        ret->rating_extended_boxes_count = 1;
+      }
+    }
+    else {
+      /*
+       * An empty merge list means that we didn't find other mergable boxes.
+       * Not an error, but rather an indication to stop the loop.
+       *
+       * Make sure to not clear out ret.
+       */
+      nxagentFreeScreenBoxes(merge_list, TRUE);
+
+      SAFE_FREE(merge_list);
+
+      cont = FALSE;
+    }
+
+    init = FALSE;
+  }
+
+  if ((ret) && (ret->all_boxes) && (ret->solution_boxes)) {
+    /*
+     * Calculate actual rating.
+     */
+    nxagentScreenCrtcsSolutionCalculateRating(ret, (top || bottom));
+  }
+  else {
+    /* Invalid solution, clear out. */
+    nxagentScreenCrtcsFreeSolution(ret);
+
+    SAFE_FREE(ret);
+  }
+
+  return(ret);
+}
+
+/*
+ * Helper that deep-copies a single solution.
+ *
+ * Returns a pointer to the copy or NULL on error.
+ */
+static nxagentScreenCrtcsSolution* nxagentScreenCrtcsSolutionCopy(const nxagentScreenCrtcsSolution *solution) {
+  nxagentScreenCrtcsSolution *ret = NULL;
+
+  if (!(solution)) {
+    return(ret);
+  }
+
+  ret = calloc(1, sizeof(nxagentScreenCrtcsSolution));
+
+  if (!(ret)) {
+    return(ret);
+  }
+
+  xorg_list_init(&(ret->entry));
+
+  ret->rating_size_change = solution->rating_size_change;
+  ret->rating_cover_penalty = solution->rating_cover_penalty;
+  ret->rating_extended_boxes_count = solution->rating_extended_boxes_count;
+  ret->rating = solution->rating;
+
+  if (solution->solution_boxes) {
+    ret->solution_boxes = nxagentScreenBoxesCopy(solution->solution_boxes);
+
+    if (!(ret->solution_boxes)) {
+      SAFE_FREE(ret);
+
+      return(ret);
+    }
+  }
+
+  if (solution->all_boxes) {
+    ret->all_boxes = nxagentScreenBoxesCopy(solution->all_boxes);
+
+    if (!(ret->all_boxes)) {
+      nxagentFreeScreenBoxes(ret->solution_boxes, TRUE);
+
+      SAFE_FREE(ret->solution_boxes);
+
+      SAFE_FREE(ret);
+
+      return(ret);
+    }
+  }
+
+  return(ret);
+}
+
+/* Helper function that deallocates a solutions list. */
+static void nxagentScreenCrtcsFreeSolutions(nxagentScreenCrtcsSolutions *solutions) {
+  if (!(solutions)) {
+    return;
+  }
+
+  nxagentScreenCrtcsSolution *cur, *next = NULL;
+  xorg_list_for_each_entry_safe(cur, next, solutions, entry) {
+    nxagentScreenCrtcsFreeSolution(cur);
+
+    SAFE_FREE(cur);
+  }
+
+  xorg_list_init(solutions);
+}
+
+/*
+ * Helper that extracts the best solutions out of a solutions list.
+ *
+ * Returns a list of best solutions or NULL on error. Might be empty.
+ */
+static nxagentScreenCrtcsSolutions* nxagentScreenCrtcsExtractBestSolutions(const nxagentScreenCrtcsSolutions *solutions) {
+  nxagentScreenCrtcsSolutions *ret = NULL;
+
+  if (!(solutions)) {
+    return(ret);
+  }
+
+  ret = calloc(1, sizeof(nxagentScreenCrtcsSolutions));
+
+  if (!(ret)) {
+    return(ret);
+  }
+
+  xorg_list_init(ret);
+
+  /* Get best rating value. */
+  double best_rating = INVALID_RATING;
+  nxagentScreenCrtcsSolution *cur = NULL;
+  xorg_list_for_each_entry(cur, solutions, entry) {
+    if (cur->rating > best_rating) {
+      best_rating = cur->rating;
+    }
+  }
+
+  if (INVALID_RATING == best_rating) {
+    /* No need to go through the list again, return empty list. */
+    return(ret);
+  }
+
+  xorg_list_for_each_entry(cur, solutions, entry) {
+    if (cur->rating == best_rating) {
+      nxagentScreenCrtcsSolution *cur_copy = nxagentScreenCrtcsSolutionCopy(cur);
+
+      if (!(cur_copy)) {
+        nxagentScreenCrtcsFreeSolutions(ret);
+
+        SAFE_FREE(ret);
+
+        return(ret);
+      }
+
+      xorg_list_append(&(cur_copy->entry), ret);
+    }
+  }
+
+  return(ret);
+}
+
+/*
+ * Helper generating a list of solutions, extending one specific initial
+ * screen box.
+ *
+ * Returns either a pointer to the solutions list or NULL on failure.
+ */
+static nxagentScreenCrtcsSolutions* nxagentScreenCrtcsGenerateSolutionsSingleScreen(const nxagentScreenBoxes *all_boxes, const nxagentScreenBoxesElem *box, const nxagentScreenBoxes *other_screens) {
+  nxagentScreenCrtcsSolutions *ret = NULL,
+                              *tmp_solutions = NULL;
+
+  if ((!(all_boxes)) || (!(box)) || (!(other_screens))) {
+    return(ret);
+  }
+
+  tmp_solutions = calloc(1, sizeof(nxagentScreenCrtcsSolutions));
+
+  if (!(tmp_solutions)) {
+    return(ret);
+  }
+
+  xorg_list_init(tmp_solutions);
+
+  nxagentScreenCrtcsSolution *cur_solution = NULL;
+
+  /* Left expansion. */
+  cur_solution = nxagentScreenCrtcsGenerateSolutionsSingleStep(all_boxes, box, other_screens, TRUE,  FALSE, FALSE, FALSE);
+
+  if (cur_solution) {
+    xorg_list_append(&(cur_solution->entry), tmp_solutions);
+  }
+
+  /* Right expansion. */
+  cur_solution = nxagentScreenCrtcsGenerateSolutionsSingleStep(all_boxes, box, other_screens, FALSE, TRUE,  FALSE, FALSE);
+
+  if (cur_solution) {
+    xorg_list_append(&(cur_solution->entry), tmp_solutions);
+  }
+
+  /* Top expansion. */
+  cur_solution = nxagentScreenCrtcsGenerateSolutionsSingleStep(all_boxes, box, other_screens, FALSE, FALSE, TRUE,  FALSE);
+
+  if (cur_solution) {
+    xorg_list_append(&(cur_solution->entry), tmp_solutions);
+  }
+
+  /* Bottom expansion. */
+  cur_solution = nxagentScreenCrtcsGenerateSolutionsSingleStep(all_boxes, box, other_screens, FALSE, FALSE, FALSE, TRUE);
+
+  if (cur_solution) {
+    xorg_list_append(&(cur_solution->entry), tmp_solutions);
+  }
+
+  ret = nxagentScreenCrtcsExtractBestSolutions(tmp_solutions);
+
+  /*
+   * Since the best solutions list is a deep copy, we can clear out the
+   * all solutions list.
+   */
+  nxagentScreenCrtcsFreeSolutions(tmp_solutions);
+
+  SAFE_FREE(tmp_solutions);
 
   return(ret);
 }
