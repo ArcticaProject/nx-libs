@@ -251,7 +251,7 @@ int CorePoller::isChanged(int (*checkIfInputCallback)(void *), void *arg, int *s
 
   for (; curLine < (int) height_; curLine++)
   {
-    logDebug("CorePoller::isChanged", "Analizing line [%d] move backward [%d] status [%d] priority [%d].",
+    logDebug("CorePoller::isChanged", "Analyzing line [%d] move backward [%d] status [%d] priority [%d].",
                 curLine, moveBackward, lineStatus_[curIlace], linePriority_[curLine]);
 
     //
