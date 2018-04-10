@@ -437,7 +437,7 @@ RestartLoop:
 
                 /*
                  * It's not enough to check if the number of elements has
-                 * changed, beacause it could happen that the number of
+                 * changed, because it could happen that the number of
                  * resources that have been added matches the number of
                  * the freed ones.
                  * 'nxagentResChangedFlag' is set if a resource has been
@@ -521,7 +521,7 @@ RestartLoop:
 
             /*
              * It's not enough to check if the number of elements has
-             * changed, beacause it could happen that the number of
+             * changed, because it could happen that the number of
              * resources that have been added matches the number of
              * the freed ones.
              * 'nxagentResChangedFlag' is set if a resource has been

@@ -84,7 +84,7 @@ void nxagentResetAlphaCache(void);
 
 /*
  * Byte swap the image if the display
- * uses a different endianess.
+ * uses a different endianness.
  */
 
 #define nxagentImageNormalize(image) \

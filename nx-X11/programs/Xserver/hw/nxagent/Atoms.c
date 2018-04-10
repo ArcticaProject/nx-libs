@@ -415,8 +415,8 @@ static void nxagentWriteAtom(Atom local, Atom remote, const char *string, Bool d
 
 /*
  * FIXME: We should clean up the atom map
- * at nxagent reset, in order to cancel 
- * all the local atoms but still mantaining 
+ * at nxagent reset, in order to cancel
+ * all the local atoms but still maintaining
  * the Xserver values and the atom names.
  */
 
@@ -470,8 +470,8 @@ static int nxagentInitAtomMap(char **atomNameList, int count, Atom *atomsRet)
   }
 
   /*
-   * Ask X-Server for ours Atoms
-   * ... if successfull cache them too.
+   * Ask X-Server for our Atoms
+   * ... if successful cache them too.
    */
 
   ret_value = XInternAtoms(nxagentDisplay, name_list, list_size, False, atom_list);
@@ -532,7 +532,7 @@ static int nxagentInitAtomMap(char **atomNameList, int count, Atom *atomsRet)
 }
 
 /*
- * If the nxagent has been resetted,
+ * If the nxagent has been reset,
  * the local value of the atoms stored
  * in cache could have the value None, 
  * do not call this function with None.
@@ -639,7 +639,7 @@ Atom nxagentMakeAtom(char *string, unsigned int length, Bool Makeit)
   {
     /*
      * Found Cached by name.
-     * It means that nxagent has been resetted,
+     * It means that nxagent has been reset,
      * but not the xserver so we still have cached its atoms.
      */
 

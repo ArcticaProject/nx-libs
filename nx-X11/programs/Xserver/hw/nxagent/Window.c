@@ -1752,7 +1752,7 @@ Bool nxagentChangeWindowAttributes(pWin, mask)
   }
 
   /*
-   * As we set this bit, whe must change dix in
+   * As we set this bit, we must change dix in
    * order not to perform PositionWindow and let
    * X move children windows for us.
    */
@@ -2635,7 +2635,7 @@ void nxagentMapDefaultWindows(void)
 
 Bool nxagentDisconnectAllWindows(void)
 {
-  Bool succeded = True;
+  Bool succeeded = True;
   int i;
   WindowPtr pWin;
 
@@ -2646,7 +2646,7 @@ Bool nxagentDisconnectAllWindows(void)
   for (i = 0; i < screenInfo.numScreens; i++)
   {
     pWin = screenInfo.screens[i]->root;
-    nxagentTraverseWindow( pWin, nxagentDisconnectWindow, &succeded);
+    nxagentTraverseWindow( pWin, nxagentDisconnectWindow, &succeeded);
     nxagentDefaultWindows[i] = None;
   }
 
@@ -2654,7 +2654,7 @@ Bool nxagentDisconnectAllWindows(void)
   fprintf(stderr, "nxagentDisconnectAllWindows: all windows disconnected\n");
   #endif
 
-  return succeded;
+  return succeeded;
 }
 
 /*
@@ -3270,7 +3270,7 @@ static void nxagentReconfigureWindow(void * param0, XID param1, void * data_buff
     }
 /*
 XXX: This would break Motif menus.
-     If pWin is mapped but not realized, a followin UnmapWindow() wouldn't
+     If pWin is mapped but not realized, a following UnmapWindow() wouldn't
      do anything, leaving this mapped window around. XMapWindow()
      is called in nxagentRealizeWindow() and there it is enough.
 
@@ -3387,7 +3387,7 @@ Bool nxagentCheckWindowIntegrity(WindowPtr pWin)
      {
        #ifdef WARNING
        fprintf(stderr, "nxagentCheckWindowIntegrity: Window %p has been realized "
-                   "now remote and frambuffer data are synchronized.\n", (void*) pWin);
+                   "now remote and framebuffer data are synchronized.\n", (void*) pWin);
        #endif
      }
 

@@ -96,7 +96,7 @@
 #define TIME_BEFORE_YIELD        500
 
 /*
- * Dinamically reduce the display buffer
+ * Dynamically reduce the display buffer
  * size after a congestion.
  */
 

@@ -245,7 +245,7 @@ void nxagentListRemoteFonts(const char *searchPattern, const int maxNames)
    * number of dashes in the pattern acts as
    * a rule to select how to search for the
    * font names, so the pattern '*' is useful
-   * to retrive the font aliases, while the
+   * to retrieve the font aliases, while the
    * other one will select the 'real' fonts.
    */
 
@@ -717,7 +717,7 @@ int nxagentDestroyNewFontResourceType(void * p, XID id)
 
 /*
 FIXME: It happens that this resource had been already
-       destroied. We should verify if the same font is
+       destroyed. We should verify if the same font is
        assigned both to the server client and another
        client. We had a crash when freeing server client
        resources.
@@ -788,7 +788,7 @@ static XFontStruct *nxagentLoadBestQueryFont(Display* dpy, char *fontName, FontP
       numSearchFields = nxagentSplitString(nxagentRemoteFontList.list[i]->name, searchFields, FIELDS+1, "-");
 
 
-      /* The following code attemps to find an accurate approximation
+      /* The following code attempts to find an accurate approximation
        * of the missing font. The current candidate and the missing font are
        * compared on the 14 fields of the X Logical Font Description Convention.
        * The selection is performed by the analysis of the matching fields,

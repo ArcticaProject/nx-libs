@@ -189,8 +189,8 @@ int nxagentImageReformat(char *base, int nbytes, int bpp, int order)
 {
   /*
    * This is used whenever we need to swap the image data.
-   * If we got an image from a X server having a different
-   * endianess, we will need to redormat the image to match
+   * If we got an image from an X server having a different
+   * endianness, we will need to reformat the image to match
    * our own image-order so that ProcGetImage can return
    * the expected format to the client.
    */
@@ -1157,9 +1157,9 @@ FIXME: Should use an unpack resource here.
 
   /*
    * We got the image data from the X client or
-   * from the frame-buffer with our own endianess.
+   * from the frame-buffer with our own endianness.
    * Byte swap the image data if the display has
-   * a different endianess than our own.
+   * a different endianness than our own.
    */
 
   if (nxagentImageNormalize(plainImage) != 0)

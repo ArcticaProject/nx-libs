@@ -1129,7 +1129,7 @@ Bool nxagentCheckPixmapIntegrity(PixmapPtr pPixmap)
 
       #ifdef TEST
       fprintf(stderr, "nxagentCheckPixmapIntegrity: Pixmap at [%p] has been realized. "
-                  "Now remote and frambuffer data are synchronized.\n", (void *) pPixmap);
+                  "Now remote and framebuffer data are synchronized.\n", (void *) pPixmap);
       #endif
     }
 

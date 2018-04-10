@@ -141,7 +141,7 @@ Visual *nxagentVisualFromDepth(ScreenPtr pScreen, int depth)
 
 /*
  * Create a fake 32 bits depth visual and
- * initialize it based on the endianess
+ * initialize it based on the endianness
  * of the remote display.
  */
 
@@ -152,7 +152,7 @@ void nxagentInitAlphaVisual(void)
   /*
    * Color masks are referred to bits inside
    * the pixel. This is independent from the
-   * endianess.
+   * endianness.
    */
 
   nxagentAlphaVisual.red_mask   = 0x00ff0000;

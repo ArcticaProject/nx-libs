@@ -334,7 +334,7 @@ typedef struct _AgentOptions
 
   /*
    * If set, prevent the shadow session to
-   * interact with master diplay.
+   * interact with master display.
    */
 
   int ViewOnly;
@@ -429,7 +429,7 @@ typedef struct _AgentOptions
   * we cannot rely on them because RandR and PanoramiX change their
   * values when trying to initialize. So we use this variable to
   * save the user preference provided by the -/+(rr)xinerama parameter(s)
-  * before initalizing those extensions.
+  * before initializing those extensions.
   */
 
   int Xinerama;
