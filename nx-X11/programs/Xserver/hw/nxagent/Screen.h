@@ -110,7 +110,7 @@ Bool nxagentMagicPixelZone(int x, int y);
 Bool nxagentResizeScreen(ScreenPtr pScreen, int width, int height,
                              int mmWidth, int mmHeight);
 
-int nxagentChangeScreenConfig(int screen, int width, int height, int mmWidth, int mmHeight);
+int nxagentChangeScreenConfig(int screen, int width, int height);
 
 int nxagentAdjustRandRXinerama(ScreenPtr pScreen);
 

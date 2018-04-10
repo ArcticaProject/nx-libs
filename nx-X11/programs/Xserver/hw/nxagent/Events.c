@@ -602,8 +602,7 @@ void nxagentSwitchResizeMode(ScreenPtr pScreen)
 
     nxagentLaunchDialog(DIALOG_ENABLE_DESKTOP_RESIZE_MODE);
 
-    nxagentChangeScreenConfig(0, nxagentOption(Width), nxagentOption(Height),
-                                  0, 0);
+    nxagentChangeScreenConfig(0, nxagentOption(Width), nxagentOption(Height));
 
     if (nxagentOption(ClientOs) == ClientOsWinnt)
     {
@@ -3451,7 +3450,7 @@ int nxagentHandleConfigureNotify(XEvent* X)
           #endif
 
           nxagentChangeScreenConfig(0, nxagentOption(Width),
-                                       nxagentOption(Height), 0, 0);
+                                       nxagentOption(Height));
         }
       }
 
@@ -3471,7 +3470,7 @@ int nxagentHandleConfigureNotify(XEvent* X)
         nxagentChangeOption(RootHeight, X -> xconfigure.height);
 
         nxagentChangeScreenConfig(0, nxagentOption(Width),
-                                     nxagentOption(Height), 0, 0);
+                                     nxagentOption(Height));
 
         return 1;
       }

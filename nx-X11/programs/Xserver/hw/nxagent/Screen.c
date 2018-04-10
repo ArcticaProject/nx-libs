@@ -3834,13 +3834,13 @@ void nxagentAdjustCustomMode(ScreenPtr pScreen)
   RRScreenSizeNotify(pScreen);
 }
 
-int nxagentChangeScreenConfig(int screen, int width, int height, int mmWidth, int mmHeight)
+int nxagentChangeScreenConfig(int screen, int width, int height)
 {
   ScreenPtr    pScreen;
   int          r;
 
   #ifdef DEBUG
-  fprintf(stderr, "nxagentChangeScreenConfig: called for screen [%d], width [%d] height [%d] mmWidth [%d] mmHeight [%d]\n", screen, width, height, mmWidth, mmHeight);
+  fprintf(stderr, "nxagentChangeScreenConfig: called for screen [%d], width [%d] height [%d]\n", screen, width, height);
   #endif
 
   #ifdef TEST
@@ -3885,10 +3885,10 @@ int nxagentChangeScreenConfig(int screen, int width, int height, int mmWidth, in
   pScreen = screenInfo.screens[screen] -> root -> drawable.pScreen;
 
   #ifdef TEST
-  fprintf(stderr, "nxagentChangeScreenConfig: Changing config to %d x %d (%dmm x %dmm).\n", width, height, mmWidth, mmHeight);
+  fprintf(stderr, "nxagentChangeScreenConfig: Changing config to %d x %d\n", width, height);
   #endif
 
-  r = nxagentResizeScreen(pScreen, width, height, mmWidth, mmHeight);
+  r = nxagentResizeScreen(pScreen, width, height, 0, 0);
 
   if (r != 0)
   {
