@@ -3365,8 +3365,7 @@ int nxagentHandleConfigureNotify(XEvent* X)
               nxagentWaitEvents(nxagentDisplay, &timeout);
 
               /*
-               * This should also flush
-               * the NX link for us.
+               * This should also flush the NX link for us.
                */
 
               XSync(nxagentDisplay, 0);

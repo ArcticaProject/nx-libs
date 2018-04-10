@@ -2471,7 +2471,7 @@ FIXME: We should try to restore the previously
   nxagentMoveViewport(pScreen, 0, 0);
 
   /*
-   * Update void * bounds.
+   * Update pointer bounds.
    */
 
   ScreenRestructured(pScreen);

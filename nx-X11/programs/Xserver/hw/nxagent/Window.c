@@ -869,8 +869,7 @@ void nxagentSwitchAllScreens(ScreenPtr pScreen, Bool switchOn)
       }
 
       /*
-       * This should also flush
-       * the NX link for us.
+       * This should also flush the NX link for us.
        */
 
       XSync(nxagentDisplay, 0);
