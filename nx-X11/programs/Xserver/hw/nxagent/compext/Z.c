@@ -261,7 +261,7 @@ int ZInitEncoder(void)
     zStream -> opaque = (voidpf) 0;
 
     #ifdef TEST
-    fprintf(stderr, "******ZInitEncoder: Initializing compressor with level [%d] and startegy [%d].\n",
+    fprintf(stderr, "******ZInitEncoder: Initializing compressor with level [%d] and strategy [%d].\n",
                 zCompressionLevel, zCompressionStrategy);
     #endif
 

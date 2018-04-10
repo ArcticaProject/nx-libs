@@ -258,7 +258,7 @@ char *PngCompressData(XImage *image, int *compressed_size)
   /*
    * TODO: Be sure the padded bytes are cleaned.
    * It would be better to set to zero the bytes
-   * that are not alligned to the word boundary
+   * that are not aligned to the word boundary
    * at the end of the procedure.
    */
 
@@ -491,7 +491,7 @@ char *PngCompressData(XImage *image, int *compressed_size)
     /*
      * TODO: Be sure the padded bytes are cleaned.
      * It would be better to set to zero the bytes
-     * that are not alligned to the word boundary
+     * that are not aligned to the word boundary
      * at the end of the procedure.
      */
 

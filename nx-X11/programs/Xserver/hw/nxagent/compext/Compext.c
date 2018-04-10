@@ -501,7 +501,7 @@ int NXSetDisplayBuffer(Display *dpy, int size)
 
 /*
  * If set, the Popen() function in the X server
- * wil remove the LD_LIBRARY_PATH variable from
+ * will remove the LD_LIBRARY_PATH variable from
  * the environment before calling the execl()
  * function on the child process.
  */
