@@ -50,7 +50,7 @@ class Agent
   //
   // Must be created by passing the fake descriptor that
   // will be used for simulating socket communication
-  // betwen the agent and the proxy. I/O will take place
+  // between the agent and the proxy. I/O will take place
   // by copying data to the agent's read and write buf-
   // fers.
   //

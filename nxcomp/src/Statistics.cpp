@@ -348,9 +348,9 @@ void Statistics::addCompressedBytes(unsigned int bytesIn, unsigned int bytesOut)
 // receives the data from the upper layers. The reason
 // is that data can be compressed by the stream com-
 // pressor, so we can become aware of the new bitrate
-// only afer having flushed the ZLIB stream. This also
-// means that, to have a reliable estimate, we need to
-// flush the link often.
+// only after having flushed the ZLIB stream. This also
+// means that, to have a reliable estimatation, we need
+// to flush the link often.
 //
 
 void Statistics::updateBitrate(int bytes)

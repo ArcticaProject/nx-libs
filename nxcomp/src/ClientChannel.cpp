@@ -3850,7 +3850,7 @@ int ClientChannel::handleWrite(const unsigned char *message, unsigned int length
               //
               // Use differential compression at startup and plain
               // data compression later. Check X_ListFonts message
-              // for an explaination.
+              // for an explanation.
               //
 
               MessageStore *messageStore = serverStore_ ->
@@ -5974,7 +5974,7 @@ int ClientChannel::handleRestart(T_sequence_mode mode, int resource)
   // integer number (0-255) referred to as the 'resource' field.
   //
   // Before the proxy will be able to report the status of the
-  // split, the agent will have to close the sequence by issueing
+  // split, the agent will have to close the sequence by issuing
   // an end-split. The proxy will then report the result of the
   // operation, so that the agent will have the option of suspend-
   // ing the client or marking the drawable as dirty and take

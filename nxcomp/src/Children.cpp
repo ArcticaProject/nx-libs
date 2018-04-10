@@ -893,7 +893,7 @@ int NXTransKeeper(int caches, int images, const char *root)
   }
 
   //
-  // Take care of the persisten image cache.
+  // Take care of the persistent image cache.
   // Run a number of iterations and then exit,
   // so we can keep the memory consumption
   // low. The parent will check our exit code

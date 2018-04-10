@@ -100,7 +100,7 @@ File::File()
 
 //
 // TODO: This class can leak industrial amounts of memory.
-// I'm 100% sure that the desctructor is called and that
+// I'm 100% sure that the destructor is called and that
 // also the string pointed in the File structure is dele-
 // ted. Everything is logged, but still the memory is not
 // freed. This is less a problem on Windows, where the me-
