@@ -51,7 +51,7 @@ AC_CHECK_DECL([__SUNPRO_C], [SUNCC="yes"], [SUNCC="no"])
 # NX_TESTSET_CFLAG(<variable>, <flag>, [<alternative flag>, ...])
 # ---------------
 # Test if the compiler works when passed the given flag as a command line argument.
-# If it succeeds, the flag is appeneded to the given variable.  If not, it tries the
+# If it succeeds, the flag is appended to the given variable.  If not, it tries the
 # next flag in the list until there are no more options.
 #
 # Note that this does not guarantee that the compiler supports the flag as some
@@ -212,7 +212,7 @@ NX_TESTSET_CFLAG([[BASE_]PREFIX[FLAGS]], [-Wlogical-op])
 # NX_TESTSET_CFLAG([[BASE_]PREFIX[FLAGS]], [-Wcast-align])
 # NX_TESTSET_CFLAG([[BASE_]PREFIX[FLAGS]], [-Wcast-qual])
 
-# Turn some warnings into errors, so we don't accidently get successful builds
+# Turn some warnings into errors, so we don't accidentally get successful builds
 # when there are problems that should be fixed.
 
 if test "x$SELECTIVE_WERROR" = "xyes" ; then
@@ -425,7 +425,7 @@ AM_CONDITIONAL([TARGET_ELF], [test x"$nxconf_cv_targetelf" = "xyes"])
 ]) # NX_TARGET_USE_ELF
 
 AC_DEFUN([LIBJPEG_FALLBACK_CHECK],[
-AC_MSG_CHECKING([for libjpeg shared libary file and headers])
+AC_MSG_CHECKING([for libjpeg shared library file and headers])
 AC_CHECK_LIB([jpeg], [jpeg_destroy_compress],
     [have_jpeg_lib=yes], [have_jpeg_lib=no])
 AC_CHECK_HEADERS([jpeglib.h],
@@ -443,7 +443,7 @@ fi
 ]) # LIBJPEG_FALLBACK_CHECK
 
 AC_DEFUN([ZLIB_FALLBACK_CHECK],[
-AC_MSG_CHECKING([for zlib shared libary file and headers])
+AC_MSG_CHECKING([for zlib shared library file and headers])
 AC_CHECK_LIB([z], [inflateEnd],
     [have_zlib_lib=yes], [have_zlib_lib=no])
 AC_CHECK_HEADERS([zlib.h],

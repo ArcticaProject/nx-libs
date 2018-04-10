@@ -11,7 +11,7 @@
 /*                                                                        */
 /* NX and NoMachine are trademarks of Medialogic S.p.A.                   */
 /*                                                                        */
-/* All rigths reserved.                                                   */
+/* All rights reserved.                                                   */
 /*                                                                        */
 /**************************************************************************/
 
