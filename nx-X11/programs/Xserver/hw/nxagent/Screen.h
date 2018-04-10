@@ -132,6 +132,8 @@ void nxagentShadowSetWindowsSize(void);
 
 void nxagentSetWMNormalHints(int, int, int);
 
+void nxagentSetWMNormalHintsMaxsize(ScreenPtr, int, int);
+
 void nxagentShadowSetRatio(float, float);
 
 /*
