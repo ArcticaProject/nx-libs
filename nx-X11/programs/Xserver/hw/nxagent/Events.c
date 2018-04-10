@@ -3248,6 +3248,7 @@ int nxagentHandleConfigureNotify(XEvent* X)
 
       pClient = wClient(pWinWindow);
 
+      /* FIXME: override_redirect is always FALSE here */
       if (X -> xconfigure.send_event || !nxagentWMIsRunning ||
                 X -> xconfigure.override_redirect)
       {

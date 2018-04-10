@@ -1891,6 +1891,7 @@ N/A
     if (nxagentUserGeometry.flag & WidthValue || nxagentUserGeometry.flag & HeightValue)
       sizeHints.flags |= USSize;
 
+    /* FIXME: deprecated, replaced by XSetWmProperties() */
     XSetStandardProperties(nxagentDisplay,
                            nxagentDefaultWindows[pScreen->myNum],
                            nxagentWindowName,
@@ -1976,6 +1977,8 @@ N/A
                 deleteWMatom);
     #endif
 
+    /* FIXME: This doing the same thing in both cases. The
+       comments do not seem accurate (anymore?) */
     if (nxagentOption(Rootless) == False)
     {
       /*
