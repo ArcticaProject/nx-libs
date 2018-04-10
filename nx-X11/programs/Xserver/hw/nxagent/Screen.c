@@ -2281,7 +2281,6 @@ Bool nxagentResizeScreen(ScreenPtr pScreen, int width, int height,
                              int mmWidth, int mmHeight)
 {
   BoxRec box;
-  XSizeHints sizeHints;
   PixmapPtr pPixmap;
   char *fbBits;
   
@@ -2407,37 +2406,7 @@ FIXME: We should try to restore the previously
 
   if ((nxagentOption(Fullscreen) == 0 && nxagentOption(AllScreens) == 0))
   {
-    sizeHints.flags = PPosition | PMinSize | PMaxSize;
-    sizeHints.x = nxagentOption(X);
-    sizeHints.y = nxagentOption(Y);
-
-    sizeHints.min_width = MIN_NXAGENT_WIDTH;
-    sizeHints.min_height = MIN_NXAGENT_HEIGHT;
-    sizeHints.width = width;
-    sizeHints.height = height;
-
-    if (nxagentOption(DesktopResize) == 1)
-    {
-      sizeHints.max_width = WidthOfScreen(DefaultScreenOfDisplay(nxagentDisplay));
-      sizeHints.max_height = HeightOfScreen(DefaultScreenOfDisplay(nxagentDisplay));
-    }
-    else
-    {
-      sizeHints.max_width = nxagentOption(RootWidth);
-      sizeHints.max_height = nxagentOption(RootHeight);
-    }
-
-    if (nxagentUserGeometry.flag & XValue || nxagentUserGeometry.flag & YValue)
-    {
-      sizeHints.flags |= USPosition;
-    }
-
-    if (nxagentUserGeometry.flag & WidthValue || nxagentUserGeometry.flag & HeightValue)
-    {
-      sizeHints.flags |= USSize;
-    }
-
-    XSetWMNormalHints(nxagentDisplay, nxagentDefaultWindows[pScreen->myNum], &sizeHints);
+    nxagentSetWMNormalHints(pScreen->myNum, width, height);
 
     XResizeWindow(nxagentDisplay, nxagentDefaultWindows[pScreen->myNum], width, height);
 
@@ -2838,7 +2807,7 @@ int nxagentShadowInit(ScreenPtr pScreen, WindowPtr pWin)
   {
     nxagentShadowSetWindowsSize();
 
-    nxagentSetWMNormalHints(0);
+    nxagentSetWMNormalHints(0, nxagentOption(Width), nxagentOption(Height));
   }
 
   XMapWindow(nxagentDisplay, nxagentDefaultWindows[0]);
@@ -4557,7 +4526,7 @@ void nxagentRestoreAreas(PixmapPtr pPixmap, RegionPtr prgnRestore, int xorg,
   return;
 }
 
-void nxagentSetWMNormalHints(int screen)
+void nxagentSetWMNormalHints(int screen, int width, int height)
 {
   XSizeHints sizeHints;
 
@@ -4572,8 +4541,8 @@ void nxagentSetWMNormalHints(int screen)
   sizeHints.min_width = MIN_NXAGENT_WIDTH;
   sizeHints.min_height = MIN_NXAGENT_HEIGHT;
 
-  sizeHints.width = nxagentOption(Width);
-  sizeHints.height = nxagentOption(Height);
+  sizeHints.width = width;
+  sizeHints.height = height;
 
   if (nxagentOption(DesktopResize) == 1)
   {

@@ -130,7 +130,7 @@ int nxagentShadowPoll(PixmapPtr, GCPtr, unsigned char, int, int, char *, int *, 
 
 void nxagentShadowSetWindowsSize(void);
 
-void nxagentSetWMNormalHints(int);
+void nxagentSetWMNormalHints(int, int, int);
 
 void nxagentShadowSetRatio(float, float);
 

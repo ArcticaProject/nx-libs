@@ -470,7 +470,7 @@ int nxagentRandRScreenSetSize(ScreenPtr pScreen, CARD16 width, CARD16 height,
           nxagentOption(Fullscreen) == 0 && nxagentOption(AllScreens) == 0)
   {
     nxagentRandRSetWindowsSize(width, height);
-    nxagentSetWMNormalHints(pScreen -> myNum);
+    nxagentSetWMNormalHints(pScreen -> myNum, nxagentOption(Width), nxagentOption(Height));
   }
 
   nxagentMoveViewport(pScreen, 0, 0);
