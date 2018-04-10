@@ -645,7 +645,7 @@ DRIVERSDKMODULEDIR = DriverSDKModuleDir
 DRIVERSDKINCLUDEDIR = DriverSDKIncludeDir
 
 /*
- * Some commonly refered to directories are defined here.
+ * Some commonly referred to directories are defined here.
  */
 
        XF86SRC = $(SERVERSRC)/hw/xfree86

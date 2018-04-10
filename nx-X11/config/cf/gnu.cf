@@ -142,7 +142,7 @@ XCOMM i386Architecture
 
 #define ConnectionFlags		-DUNIXCONN -DTCPCONN
 
-/* Some of these man page defaults are overriden in the above OS sections */
+/* Some of these man page defaults are overridden in the above OS sections */
 #ifndef ManSuffix
 # define ManSuffix	1x
 #endif

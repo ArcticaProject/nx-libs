@@ -1185,7 +1185,7 @@ clean::								@@\
 
 /* This rule is used for libs in Xserver/Imakefile which are loaded, not
  * linked into the core module. Since modules are called libXXXX.a,
- * this rule mustn't be overriden by .cf files.
+ * this rule mustn't be overridden by .cf files.
  */
 #ifndef ModuleLibraryTargetName
 #define ModuleLibraryTargetName(libname)Concat(lib,libname.a)
@@ -3609,7 +3609,7 @@ clean::									@@\
 #endif
 
 /* Phony targets - GNU make has a feature to mark a target as phony,
- * which means that it wont consider that target to be the name of a
+ * which means that it won't consider that target to be the name of a
  * file.  In general this speeds up make, since it doesn't have to
  * look for those files when it sets out to create a phony target.
  * However, on cygwin, this is actually required for correct
