@@ -192,7 +192,7 @@ int nxagentX2go;
  * Checking if agent is x2go agent
  */
 
-void checkX2goAgent()
+void checkX2goAgent(void)
 {
   extern const char *nxagentProgName;
   if( strcasecmp(nxagentProgName,"x2goagent") == 0)
@@ -219,11 +219,6 @@ void InitOutput(ScreenInfo *screenInfo, int argc, char *argv[])
   char *environment;
 
   #endif
-
-  /*
-   * Check if we running as X2Go Agent
-   */
-  checkX2goAgent();
 
   /*
    * Print our pid and version information.

@@ -56,6 +56,7 @@ is" without express or implied warranty.
 #include "servermd.h"
 #include "opaque.h"
 
+#include "Init.h"
 #include "Agent.h"
 #include "Display.h"
 #include "Args.h"
@@ -188,6 +189,11 @@ int ddxProcessArgument(int argc, char *argv[], int i)
    */
 
   nxagentProgName = argv[0];
+
+  /*
+   * Check if we running as X2Go Agent
+   */
+  checkX2goAgent();
 
   static Bool resetOptions = True;
 
@@ -1805,7 +1811,14 @@ N/A
 
     if (*nxagentWindowName == '\0')
     {
-      snprintf(nxagentWindowName, NXAGENTWINDOWNAMELENGTH, "NX");
+      if(nxagentX2go)
+      {
+        snprintf(nxagentWindowName, NXAGENTWINDOWNAMELENGTH, "X2Go Agent");
+      }
+      else
+      {
+        snprintf(nxagentWindowName, NXAGENTWINDOWNAMELENGTH, "NX Agent");
+      }
     }
 
     /*
