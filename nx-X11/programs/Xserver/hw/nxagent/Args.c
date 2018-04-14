@@ -40,6 +40,7 @@ is" without express or implied warranty.
 #include <stdio.h>
 #include <string.h>
 #include <errno.h>
+#include <libgen.h>
 
 #ifdef __sun
 #include <strings.h>
@@ -125,7 +126,7 @@ extern int _XGetBitsPerPixel(Display *dpy, int depth);
 
 extern char dispatchExceptionAtReset;
 
-const char *nxagentProgName;
+char *nxagentProgName;
 
 char nxagentDisplayName[NXAGENTDISPLAYNAMELENGTH];
 Bool nxagentSynchronize = False;
@@ -188,7 +189,9 @@ int ddxProcessArgument(int argc, char *argv[], int i)
    * Ensure that the options are set to their defaults.
    */
 
-  nxagentProgName = argv[0];
+  char *basec = strdup(argv[0]);
+  nxagentProgName = strdup(basename(basec));
+  free(basec);
 
   /*
    * Check if we running as X2Go Agent
