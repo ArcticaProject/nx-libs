@@ -32,7 +32,7 @@
 
 #define NXAGENT_ICON_NAME  "nxagent.xpm"
 
-#define X2GOAGENT_ICON_NAME  "x2go.xpm"
+#define X2GOAGENT_ICON_NAME  "x2goagent.xpm"
 
 #define NXAGENT_PLACEHOLDER_NAME  "nxmissing.xpm"
 
