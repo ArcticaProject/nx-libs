@@ -126,7 +126,9 @@ clean-env: version
 	[ -d exports/include/nx-X11/Xtrans ] && $(RM_DIR) exports/include/nx-X11/Xtrans/ || :
 	[ -d exports/include/nx-X11/ ]       && $(RM_DIR) exports/include/nx-X11/        || :
 
-	${MAKE} -C nx-X11 CleanEnv FONT_DEFINES="$(FONT_DEFINES)" XEXT_EXTRA_DEFINES="$(XEXT_EXTRA_DEFINES)" IMAKE_DEFINES="$(IMAKE_DEFINES)"
+	# no parallel clean-up in nx-X11, it fails...
+	# see: https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=895540
+	${MAKE} -j1 -C nx-X11 CleanEnv FONT_DEFINES="$(FONT_DEFINES)" XEXT_EXTRA_DEFINES="$(XEXT_EXTRA_DEFINES)" IMAKE_DEFINES="$(IMAKE_DEFINES)"
 
 build-lite:
 	cd nxcomp && autoreconf -vfsi && (${CONFIGURE}) && ${MAKE}
