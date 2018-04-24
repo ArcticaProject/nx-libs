@@ -6874,6 +6874,395 @@ static nxagentScreenCrtcsSolutions* nxagentScreenCrtcsGenerateSolutions(const nx
 
   ret = best_ret;
 
+  return(ret);
+}
+
+/* Helper printing out a screen boxes list. */
+static char* nxagentPrintScreenBoxes(const nxagentScreenBoxes *boxes) {
+  char *ret = NULL;
+
+  if ((!(boxes))) {
+    return(ret);
+  }
+
+  char *construct = NULL;
+  /* FIXME: xorg_list_is_empty is not const-correct. */
+  if (xorg_list_is_empty((struct xorg_list *)(&(boxes->head)))) {
+    if (-1 == asprintf(&construct, "empty")) {
+      return(ret);
+    }
+  }
+  else {
+    size_t total_length = 512,
+           last_pos = 0;
+    construct = calloc(total_length, sizeof(char));
+
+    if (!(construct)) {
+      return(ret);
+    }
+
+    nxagentScreenBoxesElem *cur = NULL;
+    xorg_list_for_each_entry(cur, &(boxes->head), entry) {
+      char *box_str = nxagentPrintScreenBoxesElem(cur);
+
+      if (!(box_str)) {
+        SAFE_FREE(construct);
+      }
+      else {
+        const size_t box_str_raw_len = (strlen(box_str) + 1);
+
+        /*                    v-- implicit " -- " chars */
+        while (((box_str_raw_len + 4) + last_pos) > total_length) {
+          /* Buffer space needs to be expanded. */
+          total_length += 512;
+          char *new_construct = realloc(construct, total_length);
+
+          if (!(new_construct)) {
+            SAFE_FREE(construct);
+
+            break;
+          }
+          else {
+            construct = new_construct;
+
+            memset((construct + last_pos), 0, (total_length - last_pos));
+          }
+        }
+
+        if (construct) {
+          const size_t write_count = snprintf((construct + last_pos), (total_length - last_pos), "%s -- ", box_str);
+
+          if (0 > write_count) {
+            const int errno_save = errno;
+
+            fprintf(stderr, "%s: error writing box string representation to buffer: %s\n", __func__, strerror(errno_save));
+
+            SAFE_FREE(construct);
+          }
+          else if (write_count >= (total_length - last_pos)) {
+            fprintf(stderr, "%s: buffer was too small to hold new box string representation. Algorithm error.\n", __func__);
+
+            SAFE_FREE(construct);
+          }
+          else {
+            last_pos += write_count;
+          }
+        }
+      }
+
+      SAFE_FREE(box_str);
+
+      if (!(construct)) {
+        break;
+      }
+    }
+
+    if (construct) {
+      /* Drop the last delimiter (" -- ") character string. */
+      construct[last_pos - 4] = 0;
+    }
+  }
+
+  ret = construct;
+
+  return(ret);
+}
+
+/*
+ * Helper generating a "fake" solutions list based on the global window data.
+ *
+ * This is useful if no screens intersect the nxagent window.
+ *
+ * No pointer parameters might be NULL.
+ *
+ * On success, returns a "fake" solutions list, otherwise NULL.
+ */
+static nxagentScreenCrtcsSolutions* nxagentScreenCrtcsGenerateFakeSolutions(const nxagentScreenBoxes *all_boxes) {
+  nxagentScreenCrtcsSolutions *ret = NULL;
+
+  if (!(all_boxes)) {
+    return(ret);
+  }
+
+  ret = calloc(1, sizeof(nxagentScreenCrtcsSolutions));
+
+  if (!(ret)) {
+    return(ret);
+  }
+
+  xorg_list_init(ret);
+
+  nxagentScreenBoxes *fake_screen = calloc(1, sizeof(nxagentScreenBoxes));
+
+  if (!(fake_screen)) {
+    SAFE_FREE(ret);
+
+    return(ret);
+  }
+
+  xorg_list_init(&(fake_screen->head));
+  fake_screen->screen_id = -1;
+
+  nxagentScreenBoxesElem *fake_screen_box = calloc(1, sizeof(nxagentScreenBoxesElem));
+
+  if (!(fake_screen_box)) {
+    SAFE_FREE(fake_screen);
+
+    SAFE_FREE(ret);
+
+    return(ret);
+  }
+
+  xorg_list_init(&(fake_screen_box->entry));
+  fake_screen_box->screen_id = -1;
+
+  BoxPtr fake_screen_box_data = calloc(1, sizeof(BoxRec));
+
+  if (!(fake_screen_box_data)) {
+    SAFE_FREE(fake_screen_box);
+
+    SAFE_FREE(fake_screen);
+
+    SAFE_FREE(ret);
+
+    return(ret);
+  }
+
+  fake_screen_box_data->x1 = fake_screen_box_data->x2 = nxagentOption(X);
+  fake_screen_box_data->y1 = fake_screen_box_data->y2 = nxagentOption(Y);
+  fake_screen_box_data->x2 += nxagentOption(Width);
+  fake_screen_box_data->y2 += nxagentOption(Height);
+
+  fake_screen_box->box = fake_screen_box_data;
+
+  xorg_list_append(&(fake_screen_box->entry), &(fake_screen->head));
+
+  nxagentScreenCrtcsSolution *solution = nxagentScreenCrtcsGenerateFakeSolution(all_boxes, fake_screen);
+
+  nxagentFreeScreenBoxes(fake_screen, TRUE);
+
+  SAFE_FREE(fake_screen);
+
+  if (!(solution)) {
+    SAFE_FREE(ret);
+
+    return(ret);
+  }
+
+  xorg_list_append(&(solution->entry), ret);
+
+  return(ret);
+}
+
+/*
+ * High-level wrapper generating a screen partition solution based upon a list
+ * of base boxes and the remote Xinerama screen information.
+ *
+ * No pointers might be NULL. screen_count might not be zero.
+ *
+ * On success, returns one specific screen partition solution, otherwise NULL.
+ */
+static nxagentScreenCrtcsSolution* nxagentMergeScreenCrtcs(nxagentScreenBoxes *boxes, const XineramaScreenInfo *screen_info, const size_t screen_count) {
+  nxagentScreenCrtcsSolution *ret = NULL;
+
+  if ((!(boxes)) || (!(screen_info)) || (!(screen_count))) {
+    return(ret);
+  }
+
+  size_t boxes_count = 0;
+  nxagentScreenBoxesElem *cur = NULL;
+  xorg_list_for_each_entry(cur, &(boxes->head), entry) {
+    ++boxes_count;
+  }
+
+  /*
+   * Step 1: consolidate boxes.
+   *
+   * Boxes might intersect with one screen, multiple screens or no screen.
+   * We will consolidate boxes on a per-screen basis, in a way such that each
+   * box will not be next to another that intersects the same screens.
+   * Overlapping screens are handled by leaving a box in place if intersected
+   * by multiple screens, if its neighbors are not also intersected by the
+   * same screens.
+   *
+   * Example:
+   *
+   * ┌─────┬──────┬─────┬─────┐
+   * │  1  │  1,2 │  2  │     │
+   * ├─────┼──────┼─────┼─────┤
+   * │  1  │  1   │     │     │
+   * └─────┴──────┴─────┴─────┘
+   *
+   * Will/should be merged to:
+   *
+   * ┌─────┬──────┬─────┬─────┐
+   * │  1  │  1,2 │  2  │     │
+   * │     └──────┼─────┼─────┤
+   * │  1     1   │     │     │
+   * └────────────┴─────┴─────┘
+   *
+   * I.e., after the operation, these boxes will/should exist:
+   *
+   * ┌────────────┐  ┌────────────┐
+   * │     1      │  │      2     │
+   * │            │  └────────────┘
+   * └────────────┘
+   */
+
+  nxagentScreenBoxes *screen_boxes = calloc(screen_count, sizeof(nxagentScreenBoxes));
+
+  if (!(screen_boxes)) {
+    nxagentFreeScreenBoxes(boxes, TRUE);
+
+    return(ret);
+  }
+
+  for (size_t i = 0; i < screen_count; ++i) {
+    xorg_list_init(&((screen_boxes + i)->head));
+  }
+
+  nxagentScreenBoxes *initial_screens = calloc(1, sizeof(nxagentScreenBoxes));
+
+  if (!(initial_screens)) {
+    nxagentFreeScreenBoxes(boxes, TRUE);
+
+    return(ret);
+  }
+
+  xorg_list_init(&(initial_screens->head));
+  initial_screens->screen_id = -1;
+
+  if (!(nxagentMergeScreenBoxes(boxes, screen_boxes, screen_info, screen_count))) {
+    for (size_t i = 0; i < screen_count; ++i) {
+      nxagentFreeScreenBoxes((screen_boxes + i), TRUE);
+    }
+
+    SAFE_FREE(screen_boxes);
+
+    nxagentFreeScreenBoxes(boxes, TRUE);
+
+    return(ret);
+  }
+
+  /* Step 2: merge screen boxes into initial_screens. */
+  size_t real_screen_count = 0;
+  for (size_t i = 0; i < screen_count; ++i) {
+    /* Filter out boxes with no intersections. */
+    if (!(xorg_list_is_empty(&((screen_boxes) + i)->head))) {
+      /* If merging was successful, we should only have one box per list. */
+      nxagentScreenBoxesElem *cur = xorg_list_first_entry(&((screen_boxes + i)->head), nxagentScreenBoxesElem, entry);
+
+      /* Remove from old list. */
+      xorg_list_del(&(cur->entry));
+
+      /* Add to the other list. */
+      xorg_list_append(&(cur->entry), &(initial_screens->head));
+
+      ++real_screen_count;
+
+#ifdef WARNING
+      if (i != cur->screen_id) {
+        const unsigned long long idx = i;
+        const signed long long screen_id = cur->screen_id;
+        fprintf(stderr, "%s: internal screen id %lld doesn't match expected screen id %llu! Algorithm warning.\n", __func__, screen_id, idx);
+      }
+#endif
+    }
+  }
+
+  /* Lists should be all empty now, get rid of list heads. */
+  SAFE_FREE(screen_boxes);
+
+#ifdef DEBUG
+  fprintf(stderr, "%s: merged initial screens into initial_screens, all boxes should be correctly marked.\n", __func__);
+
+  fprintf(stderr, "%s: dumping initial_screens:\n", __func__);
+  {
+    char *initial_screens_str = nxagentPrintScreenBoxes(initial_screens);
+
+    if (initial_screens_str) {
+      fprintf(stderr, "%s:   %s\n", __func__, initial_screens_str);
+    }
+    else {
+      fprintf(stderr, "%s:   error!\n", __func__);
+    }
+
+    SAFE_FREE(initial_screens_str);
+  }
+
+  fprintf(stderr, "%s: dumping all boxes:\n", __func__);
+  {
+    char *boxes_str = nxagentPrintScreenBoxes(boxes);
+
+    if (boxes_str) {
+      fprintf(stderr, "%s:   %s\n", __func__, boxes_str);
+    }
+    else {
+      fprintf(stderr, "%s:   error!\n", __func__);
+    }
+
+    SAFE_FREE(boxes_str);
+  }
+#endif
+
+  nxagentScreenCrtcsSolutions *solutions = NULL;
+  /* Step 3: extend original screen boxes to cover the whole area. */
+  if (real_screen_count) {
+    solutions = nxagentScreenCrtcsGenerateSolutions(boxes, initial_screens, boxes_count, real_screen_count, NULL);
+  }
+  else {
+    /*
+     * No screens intersecting the window maeans that we can create a fake
+     * solution containing just one (virtual) screen and just use that one.
+     */
+    solutions = nxagentScreenCrtcsGenerateFakeSolutions(boxes);
+  }
+
+  /*
+   * Everything should be copied internally, so get rid of our original data.
+   */
+  nxagentFreeScreenBoxes(initial_screens, TRUE);
+
+  SAFE_FREE(initial_screens);
+
+  if ((!(solutions)) || (xorg_list_is_empty(solutions))) {
+    /*
+     * Invalid or empty solutions list means that something is wrong.
+     * Error out.
+     */
+#ifdef WARNING
+    fprintf(stderr, "%s: solutions list empty or invalid. Algorithm error.\n", __func__);
+#endif
+
+    nxagentScreenCrtcsFreeSolutions(solutions);
+
+    SAFE_FREE(solutions);
+
+    return(ret);
+  }
+
+  /*
+   * Step 4: select specific solution.
+   * Should be valid, checked for emptiness before. It's possible to have
+   * multiple solutions (logically with the same rating), but we have to select
+   * a specific one here.
+   * We'll use the very first one.
+   */
+  nxagentScreenCrtcsSolution *first_entry = xorg_list_first_entry(solutions, nxagentScreenCrtcsSolution, entry);
+
+  ret = nxagentScreenCrtcsSolutionCopy(first_entry);
+
+  nxagentScreenCrtcsFreeSolutions(solutions);
+
+  SAFE_FREE(solutions);
+
+  if (!(ret)) {
+#ifdef WARNING
+    fprintf(stderr, "%s: unable to copy first solution entry.\n", __func__);
+#endif
+
+    return(ret);
+  }
 
   return(ret);
 }
