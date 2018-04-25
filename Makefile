@@ -65,26 +65,24 @@ NX_XTRANS_HEADERS =		\
 	Xtransutil.c		\
 	$(NULL)
 
-%:
-	if test -f nxcomp/Makefile; then ${MAKE} -C nxcomp "$@"; fi
-	if test -f nxproxy/Makefile; then ${MAKE} -C nxproxy "$@"; fi
-	if test -d nx-X11; then \
-	    if test -f nx-X11/lib/Makefile; then ${MAKE} -C nx-X11/lib "$@"; fi; \
-	    if test -f nxcompshad/Makefile; then ${MAKE} -C nxcompshad "$@"; fi; \
-	    if test -f nx-X11/Makefile; then ${MAKE} -C nx-X11 "$@"; fi; \
-	fi
+all: build
 
-	# clean auto-generated files
-	if [ "x$@" == "xclean" ] || [ "x$@" = "xdistclean" ]; then \
-	    if [ -x ./mesa-quilt ]; then ./mesa-quilt pop -a; fi; \
-	    rm -Rf nx-X11/extras/Mesa/.pc/; \
-	    rm -f nx-X11/config/cf/nxversion.def; \
-	    rm -f nx-X11/config/cf/date.def; \
-	    ${MAKE} clean-env; \
-	fi
+clean:
+	if test -f nxcomp/Makefile; then ${MAKE} -C nxcomp clean; fi
+	if test -f nxproxy/Makefile; then ${MAKE} -C nxproxy clean; fi
+	if test -f nx-X11/lib/Makefile; then ${MAKE} -C nx-X11/lib clean; fi
+	if test -f nxcompshad/Makefile; then ${MAKE} -C nxcompshad clean; fi
+	if test -d nx-X11; then ${MAKE} clean-env; fi
 
-all:
-	${MAKE} build
+distclean: clean
+	if test -f nxcomp/Makefile; then ${MAKE} -C nxcomp distclean; fi
+	if test -f nxproxy/Makefile; then ${MAKE} -C nxproxy distclean; fi
+	if test -f nx-X11/lib/Makefile; then ${MAKE} -C nx-X11/lib distclean; fi
+	if test -f nxcompshad/Makefile; then ${MAKE} -C nxcompshad distclean; fi
+	if test -d nx-X11; then ${MAKE} -C nx-X11 distclean; fi
+	if [ -x ./mesa-quilt ]; then ./mesa-quilt pop -a; fi
+	rm -Rf nx-X11/extras/Mesa/.pc/
+	rm -f nx-X11/config/cf/nxversion.def
 
 test:
 	echo "No testing for NX (redistributed)"
@@ -126,9 +124,7 @@ clean-env: version
 	[ -d exports/include/nx-X11/Xtrans ] && $(RM_DIR) exports/include/nx-X11/Xtrans/ || :
 	[ -d exports/include/nx-X11/ ]       && $(RM_DIR) exports/include/nx-X11/        || :
 
-	# no parallel clean-up in nx-X11, it fails...
-	# see: https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=895540
-	${MAKE} -j1 -C nx-X11 CleanEnv FONT_DEFINES="$(FONT_DEFINES)" XEXT_EXTRA_DEFINES="$(XEXT_EXTRA_DEFINES)" IMAKE_DEFINES="$(IMAKE_DEFINES)"
+	${MAKE} -C nx-X11 clean FONT_DEFINES="$(FONT_DEFINES)" XEXT_EXTRA_DEFINES="$(XEXT_EXTRA_DEFINES)" IMAKE_DEFINES="$(IMAKE_DEFINES)"
 
 build-lite:
 	cd nxcomp && autoreconf -vfsi && (${CONFIGURE}) && ${MAKE}

@@ -24,8 +24,8 @@ MAKE_OPTS = -f xmakefile
 MAKE_CMD = $(MAKE) $(MAKE_OPTS)
 
 all:
-	@${MAKE_CMD} xmakefile-exists || $(MAKE) all-initial
-	@${MAKE_CMD} $@
+	@${MAKE} ${MAKE_OPTS} xmakefile-exists || $(MAKE) all-initial
+	@${MAKE} ${MAKE_OPTS} $@
 
 all-initial:
 	@echo Please use make World, or on NT use nmake World.Win32.
@@ -33,57 +33,44 @@ all-initial:
 	@echo Read the release notes carefully before proceeding.
 	@echo Do not name your log file make.log or it will be deleted.
 
-World:
+World: BuildEnv
 	@echo ""
 	@echo Building $(RELEASE).
 	@echo ""
 	@date
 	@echo ""
-	if [ ! -f xmakefile ]; then ${MAKE} ${MFLAGS} BuildEnv; fi
-	${MAKE_CMD} $(MFLAGS) $(WORLDOPTS) World
+	${MAKE} ${MAKE_OPTS} $(MFLAGS) $(WORLDOPTS) World
 	@echo ""
 	@date
 	@echo ""
 	@echo Full build of $(RELEASE) complete.
 	@echo ""
 
-CleanEnv:
-	@if [ -f xmakefile ]; then \
-	    ${MAKE_CMD} -k distclean || \
-	    ${MAKE_CMD} -k clean || \
-	    $(RM) xmakefile; \
-	fi
-	@rm -f $(IRULESRC)/date.def; echo "" > $(IRULESRC)/date.def;
-	which $(IMAKE) 1>/dev/null && ${MAKE} $(MFLAGS) xmakefile || :
-	@if [ -f xmakefile ]; then \
-	    ${MAKE_CMD} $(MFLAGS) VerifyOS; \
-	    ${MAKE_CMD} $(MFLAGS) Makefiles; \
-	    ${MAKE_CMD} $(MFLAGS) BOOTSTRAPSUBDIRS= clean; \
-	fi
+CleanEnv: SetupEnv
+	${MAKE} ${MAKE_OPTS} -k clean
+	rm -f $(IRULESRC)/date.def; echo "" > $(IRULESRC)/date.def;
 
-BuildEnv: CleanEnv BuildIncludes BuildDependsOnly
+SetupEnv: xmakefile VerifyOS Makefiles
 
-BuildIncludes: CleanEnv
-	${MAKE_CMD} $(MFLAGS) includes
+BuildEnv: SetupEnv BuildIncludes BuildDependsOnly
 
-BuildDependsOnly:
-	${MAKE_CMD} $(MFLAGS) depend
+BuildIncludes: SetupEnv includes
 
-.PRECIOUS: Makefile
-
-# This is just a sequence of bootstrapping steps we have to do.
-# The steps are listed as separate targets so clearmake can wink in
-# the Makefile.proto files.
+BuildDependsOnly: SetupEnv depend
 
 Makefile::
 	$(MAKE) $(MFLAGS) xmakefile
+.PRECIOUS: Makefile
 
-xmakefile: Imakefile
-	@if [ -f xmakefile ]; then set -x; \
-	 $(RM) xmakefile.bak; $(MV) xmakefile xmakefile.bak; \
-	 else exit 0; fi
-	@rm -f $(IRULESRC)/date.def; echo "" > $(IRULESRC)/date.def;
-	$(IMAKE_CMD) -s xmakefile -DTOPDIR=$(TOP) -DCURDIR=$(CURRENT_DIR)
+xmakefile:
+	if [ -f xmakefile ]; then \
+	    set -x; \
+	    $(RM) xmakefile.bak; \
+	    $(MV) xmakefile xmakefile.bak; \
+	else \
+	    exit 0; \
+	fi
+	which $(IMAKE) 1>/dev/null && $(IMAKE_CMD) -s xmakefile -DTOPDIR=$(TOP) -DCURDIR=$(CURRENT_DIR)
 
 # don't allow any default rules in this Makefile
 .SUFFIXES:
@@ -92,36 +79,48 @@ xmakefile: Imakefile
 
 # a copy of every rule that might be invoked at top level
 
-clean:
-	-${MAKE_CMD} $@
-	find config lib programs include -type f -name Makefile | while read makefile; do rm -f $$makefile; done
+clean: CleanEnv
 
-dangerous_strip_clean:
-	    ${MAKE_CMD} $@
-distclean:
-	    -${MAKE_CMD} $@
-	    $(RM) xmakefile
-depend:
-	    ${MAKE_CMD} $@
-Everything:
-	    ${MAKE_CMD} $@
-external.ln:
-	    ${MAKE_CMD} $@
-includes:
-	    ${MAKE_CMD} $@
-install.sdk:
-	    ${MAKE_CMD} $@
-install.ln:
-	    ${MAKE_CMD} $@
-install.man:
-	    ${MAKE_CMD} $@
-install:
-	    ${MAKE_CMD} $@
-Makefiles:
-	    ${MAKE_CMD} $@
-man_keywords:
-	    ${MAKE_CMD} $@
-tags:
-	    ${MAKE_CMD} $@
-VerifyOS:
-	    ${MAKE_CMD} $@
+dangerous_strip_clean: xmakefile
+	${MAKE} ${MAKE_OPTS} $@
+
+distclean: clean
+	-${MAKE} ${MAKE_OPTS} ${MFLAGS} $@
+	find config programs include -type f -name Makefile | while read makefile; do rm -f $$makefile; done
+	$(RM) xmakefile
+
+depend: xmakefile
+	${MAKE} ${MAKE_OPTS} ${MFLAGS} $@
+
+Everything: SetupEnv
+	${MAKE} ${MAKE_OPTS} ${MFLAGS} $@
+
+external.ln: xmakefile
+	${MAKE} ${MAKE_OPTS} ${MFLAGS} $@
+
+includes: xmakefile VerifyOS Makefiles
+	${MAKE} ${MAKE_OPTS} ${MFLAGS} $@
+
+install.sdk: SetupEnv
+	${MAKE} ${MAKE_OPTS} ${MFLAGS} $@
+
+install.ln: SetupEnv
+	${MAKE} ${MAKE_OPTS} ${MFLAGS} $@
+
+install.man: SetupEnv
+	${MAKE} ${MAKE_OPTS} ${MFLAGS} $@
+
+install: SetupEnv
+	${MAKE} ${MAKE_OPTS} ${MFLAGS} $@
+
+Makefiles: xmakefile VerifyOS
+	${MAKE} ${MAKE_OPTS} ${MFLAGS} $@
+
+man_keywords: SetupEnv
+	${MAKE} ${MAKE_OPTS} ${MFLAGS} $@
+
+tags: xmakefile
+	${MAKE} ${MAKE_OPTS} ${MFLAGS} $@
+
+VerifyOS: xmakefile
+	${MAKE} ${MAKE_OPTS} ${MFLAGS} $@
