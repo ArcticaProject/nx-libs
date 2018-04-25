@@ -99,7 +99,7 @@ version:
 
 build-env: version
 	# prepare Makefiles and the nx-X11 symlinking magic
-	${MAKE} -C nx-X11 BuildIncludes FONT_DEFINES="$(FONT_DEFINES)" XEXT_EXTRA_DEFINES="$(XEXT_EXTRA_DEFINES)" IMAKE_DEFINES="$(IMAKE_DEFINES)"
+	${MAKE} -j1 -C nx-X11 BuildIncludes FONT_DEFINES="$(FONT_DEFINES)" XEXT_EXTRA_DEFINES="$(XEXT_EXTRA_DEFINES)" IMAKE_DEFINES="$(IMAKE_DEFINES)"
 
 	# set up environment for libNX_X11 build (X11 header files)
 	mkdir -p nx-X11/exports/include/nx-X11/
@@ -124,7 +124,7 @@ clean-env: version
 	[ -d exports/include/nx-X11/Xtrans ] && $(RM_DIR) exports/include/nx-X11/Xtrans/ || :
 	[ -d exports/include/nx-X11/ ]       && $(RM_DIR) exports/include/nx-X11/        || :
 
-	${MAKE} -C nx-X11 clean FONT_DEFINES="$(FONT_DEFINES)" XEXT_EXTRA_DEFINES="$(XEXT_EXTRA_DEFINES)" IMAKE_DEFINES="$(IMAKE_DEFINES)"
+	${MAKE} -j1 -C nx-X11 clean FONT_DEFINES="$(FONT_DEFINES)" XEXT_EXTRA_DEFINES="$(XEXT_EXTRA_DEFINES)" IMAKE_DEFINES="$(IMAKE_DEFINES)"
 
 build-lite:
 	cd nxcomp && autoreconf -vfsi && (${CONFIGURE}) && ${MAKE}
