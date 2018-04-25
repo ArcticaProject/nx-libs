@@ -23,7 +23,7 @@ export INCLUDEDIR = "/usr/include/$(DEB_HOST_MULTIARCH)"
 
 override_dh_auto_clean:
 	rm -Rf nx-X11/.build-exports
-	dh_auto_clean
+	dh_auto_clean  --no-parallel
 
 override_dh_install:
 
