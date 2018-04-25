@@ -12,6 +12,10 @@ export LIBDIR = "/usr/lib/$(DEB_HOST_MULTIARCH)"
 export LIBEXECDIR = "$(LIBDIR)/nx/bin"
 export INCLUDEDIR = "/usr/include/$(DEB_HOST_MULTIARCH)"
 
+ifneq (,$(filter parallel=%,$(DEB_BUILD_OPTIONS)))
+    NUMJOBS = $(patsubst parallel=%,%,$(filter parallel=%,$(DEB_BUILD_OPTIONS)))
+endif
+
 %:
 	CONFIGURE="./configure --disable-silent-rules \
 	                       --prefix=/usr \
@@ -116,7 +120,7 @@ override_dh_auto_install:
 
 override_dh_auto_build:
 	debian/compat.sh
-	PREFIX=/usr dh_auto_build --parallel -- CDEBUGFLAGS="$(CPPFLAGS) $(CFLAGS)" LOCAL_LDFLAGS="$(LDFLAGS)" SHLIBGLOBALSFLAGS='$(filter-out -pie,$(LDFLAGS))'
+	PREFIX=/usr make build -j${NUM_JOBS} CDEBUGFLAGS="$(CPPFLAGS) $(CFLAGS)" LOCAL_LDFLAGS="$(LDFLAGS)" SHLIBGLOBALSFLAGS='$(filter-out -pie,$(LDFLAGS))'
 
 override_dh_strip:
 	dh_strip -plibnx-x11-6 --dbg-package=libnx-x11-6-dbg
