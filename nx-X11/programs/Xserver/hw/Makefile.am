@@ -1,0 +1,11 @@
+NULL =
+
+if NXAGENT
+NXAGENT_SUBDIRS = nxagent
+endif
+
+SUBDIRS =			\
+	$(NXAGENT_SUBDIRS)	\
+	$(NULL)
+
+DIST_SUBDIRS = nxagent
