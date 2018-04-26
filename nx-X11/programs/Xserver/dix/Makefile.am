@@ -1,0 +1,39 @@
+noinst_LTLIBRARIES = libdix.la libxpstubs.la
+
+AM_CFLAGS = $(DIX_CFLAGS) @SERVER_DEFINES@ @LOADER_DEFINES@ \
+	-DVENDOR_STRING=\""@VENDOR_STRING@"\" \
+	-DVENDOR_RELEASE="@VENDOR_RELEASE@"
+
+libdix_la_SOURCES = 	\
+	atom.c		\
+	colormap.c	\
+	cursor.c	\
+	devices.c	\
+	dispatch.c	\
+	dispatch.h	\
+	dixfonts.c	\
+	dixutils.c	\
+	events.c	\
+	extension.c	\
+	ffs.c		\
+	gc.c		\
+	globals.c	\
+	glyphcurs.c	\
+	grabs.c		\
+	initatoms.c	\
+	main.c		\
+	pixmap.c	\
+	privates.c	\
+	property.c	\
+	resource.c	\
+	swaprep.c	\
+	swapreq.c	\
+	tables.c	\
+	window.c
+
+libxpstubs_la_SOURCES =	\
+	xpstubs.c
+
+AM_CPPFLAGS = -I$(top_srcdir)/Xprint
+
+EXTRA_DIST = buildatoms BuiltInAtoms CHANGES
