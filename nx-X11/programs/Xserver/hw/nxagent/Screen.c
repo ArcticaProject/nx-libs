@@ -45,6 +45,7 @@ is" without express or implied warranty.
 #include <stdarg.h>
 #include <math.h>
 #include <float.h>
+#include <time.h>
 
 #include "scrnintstr.h"
 #include "dix.h"
@@ -3980,6 +3981,8 @@ typedef struct xorg_list nxagentScreenCrtcsSolutions;
 
 #define INVALID_RATING ((-1) * (DBL_MAX))
 
+static nxagentScreenCrtcsSolution *nxagentScreenCrtcsTiling = NULL;
+
 /*
  * Helper function that takes a potential split point, the window bounds,
  * a split count and a splits array.
@@ -7288,6 +7291,276 @@ void nxagentDropOutput(RROutputPtr o) {
   RROutputDestroy(o);
 }
 
+/*
+ * Helper used to swap the *data* of two nxagentScreenBoxesElem objects.
+ * Metadata, such as the internal list pointers, is not touched.
+ *
+ * Returns true on success, otherwise false.
+ */
+static Bool nxagentScreenBoxesElemSwap(nxagentScreenBoxesElem *lhs, nxagentScreenBoxesElem *rhs) {
+  Bool ret = FALSE;
+
+  if ((!(lhs)) || (!(rhs))) {
+    return(ret);
+  }
+
+  nxagentScreenBoxesElem *tmp = nxagentScreenBoxesElemCopy(lhs, FALSE);
+
+  if (!(tmp)) {
+    return(ret);
+  }
+
+  lhs->obsolete  = rhs->obsolete;
+  lhs->screen_id = rhs->screen_id;
+  lhs->box       = rhs->box;
+
+  rhs->obsolete  = tmp->obsolete;
+  rhs->screen_id = tmp->screen_id;
+  rhs->box       = tmp->box;
+
+  SAFE_FREE(tmp);
+
+  ret = TRUE;
+
+  return(ret);
+}
+
+/*
+ * Helper executing the actual quicksort implementation.
+ *
+ * No pointer parameters might be NULL.
+ *
+ * Returns true on success, otherwise false.
+ */
+static Bool nxagentScreenBoxesQSortImpl(nxagentScreenBoxesElem *left, nxagentScreenBoxesElem *right, const size_t left_idx, const size_t right_idx, nxagentScreenBoxes *boxes) {
+  Bool ret = TRUE;
+
+  if ((!(left)) || (!(right)) || (!(boxes))) {
+    ret = FALSE;
+
+    return(ret);
+  }
+
+  if (left_idx >= right_idx) {
+    return(ret);
+  }
+
+  /* Select pivot. */
+  size_t diff = (right_idx - left_idx);
+  size_t pivot_i = (left_idx + (rand() % diff));
+
+  nxagentScreenBoxesElem *pivot = NULL;
+  {
+    size_t i = 0;
+    xorg_list_for_each_entry(pivot, &(boxes->head), entry) {
+      if (i++ == pivot_i) {
+        break;
+      }
+    }
+  }
+
+  /* IDs should be unique, so no need to optimize for same values. */
+  nxagentScreenBoxesElem *left_  = left,
+                         *right_ = right,
+                         *split  = NULL;
+  ssize_t left_i  = left_idx,
+          right_i = right_idx,
+          split_i = -1;
+  while (TRUE) {
+    /*
+     * Careful: xorg_list_for_each_entry() skips over the first element (since
+     * it's assumed to be the list head without actual data), so we'll need to
+     * "rewind" the pointer first.
+     *
+     * Don't do this for right_, since we use a special implementation for
+     * iterating backwards.
+     */
+    left_ = xorg_list_last_entry(&(left_->entry), nxagentScreenBoxesElem, entry);
+
+    xorg_list_for_each_entry(left_, &(left_->entry), entry) {
+      if (&(left_->entry) == &(boxes->head)) {
+        ret = FALSE;
+
+        break;
+      }
+
+      /*
+       * Normally implementations check if they should continue, we check if we
+       * should break out instead.
+       *
+       * N.B.: left_ should never reach the list head.
+       */
+      if ((left_->screen_id) >= (pivot->screen_id)) {
+        break;
+      }
+
+      ++left_i;
+    }
+
+    if (!(ret)) {
+      break;
+    }
+
+    /*
+     * The xorg_list implementation does not have a way to iterate over a list
+     * reversely, so implement it with basic building blocks.
+     */
+    while (&(right_->entry) != &(right->entry)) {
+      if (&(right_->entry) == &(boxes->head)) {
+        ret = FALSE;
+
+        break;
+      }
+
+      /*
+       * Normally implementations check if they should continue, we check if we
+       * should break out instead.
+       *
+       * N.B.: right_ should never reach the list head.
+       */
+      if ((right_->screen_id) <= (pivot->screen_id)) {
+        break;
+      }
+
+      --right_i;
+
+      /*
+       * Move backwards. Last entry is actually the previous one. For more
+       * information see the comments in nxagentScreenBoxesUpdateScreenBox().
+       */
+      right_ = xorg_list_last_entry(&(right_->entry), nxagentScreenBoxesElem, entry);
+    }
+
+    if (!(ret)) {
+      break;
+    }
+
+    if (left_i >= right_i) {
+      split   = right;
+      split_i = right_i;
+
+      break;
+    }
+
+    ret = nxagentScreenBoxesElemSwap(left_, right_);
+
+    if (!(ret)) {
+      break;
+    }
+  }
+
+  if (!(ret)) {
+    return(ret);
+  }
+
+  ret = nxagentScreenBoxesQSortImpl(left, split, left_idx, split_i, boxes);
+
+  if (!(ret)) {
+    return(ret);
+  }
+
+  ret = nxagentScreenBoxesQSortImpl(xorg_list_first_entry(&(split->entry), nxagentScreenBoxesElem, entry), right, (split_i + 1), right_idx, boxes);
+
+  return(ret);
+}
+
+/*
+ * Helper sorting an nxagentScreenBoxes list.
+ *
+ * No pointer parameters might be NULL.
+ *
+ * Returns true on success, otherwise false.
+ */
+static Bool nxagentScreenBoxesQSort(nxagentScreenBoxes *boxes) {
+  Bool ret = FALSE;
+
+  if (!(boxes)) {
+    return(ret);
+  }
+
+  if (xorg_list_is_empty(&(boxes->head))) {
+    ret = TRUE;
+
+    return(ret);
+  }
+
+  /*
+   * Questionable error handling: check that each screen_id is unique.
+   *
+   * Otherwise this implementation will crash.
+   * That's probably fine since having a list with duplicated screen_id entries
+   * is a bug in the generation code anyway.
+   */
+  Bool unique = TRUE;
+  {
+    nxagentScreenBoxesElem *lhs = NULL;
+    xorg_list_for_each_entry(lhs, &(boxes->head), entry) {
+      nxagentScreenBoxesElem *rhs = NULL;
+      xorg_list_for_each_entry(rhs, &(lhs->entry), entry) {
+        /* Check for actual list head and break out. */
+        if (&(rhs->entry) == &(boxes->head)) {
+          break;
+        }
+
+        /* Otherwise rhs is a valid entry. */
+        if (lhs->screen_id == rhs->screen_id) {
+          unique = FALSE;
+          break;
+        }
+      }
+
+      if (!(unique)) {
+        /* Found at least one duplicated entry, break out. */
+        break;
+      }
+    }
+  }
+
+  if (!(unique)) {
+    return(ret);
+  }
+
+  /*
+   * Questionable optimization: check if list is already sorted.
+   */
+  Bool sorted = TRUE;
+  {
+    ssize_t last_screen_id = -1;
+    nxagentScreenBoxesElem *cur = NULL;
+    xorg_list_for_each_entry(cur, &(boxes->head), entry) {
+      if (cur->screen_id < last_screen_id) {
+        sorted = FALSE;
+
+        break;
+      }
+
+      last_screen_id = cur->screen_id;
+    }
+  }
+
+  if (sorted) {
+    ret = TRUE;
+
+    return(ret);
+  }
+
+  /* Seed PRNG. We don't need good entropy, some is enough. */
+  srand((unsigned int)(time(NULL)));
+
+  /* Get boxes count. */
+  size_t boxes_count = 0;
+  {
+    nxagentScreenBoxesElem *cur = NULL;
+    xorg_list_for_each_entry(cur, &(boxes->head), entry) {
+      ++boxes_count;
+    }
+  }
+
+  ret = nxagentScreenBoxesQSortImpl(xorg_list_first_entry(&(boxes->head), nxagentScreenBoxesElem, entry), xorg_list_last_entry(&(boxes->head), nxagentScreenBoxesElem, entry), 0, (boxes_count - 1), boxes);
+
+  return(ret);
+}
+
 int nxagentAdjustRandRXinerama(ScreenPtr pScreen)
 {
   rrScrPrivPtr pScrPriv;
@@ -7295,13 +7568,10 @@ int nxagentAdjustRandRXinerama(ScreenPtr pScreen)
   xRRModeInfo  modeInfo;
   char         name[100];
   int          refresh = 60;
-  int          width = nxagentOption(Width);
-  int          height = nxagentOption(Height);
 
   pScrPriv = rrGetScrPriv(pScreen);
 
   if (pScrPriv) {
-    int i;
     int number = 0;
 
     XineramaScreenInfo *screeninfo = NULL;
@@ -7310,7 +7580,7 @@ int nxagentAdjustRandRXinerama(ScreenPtr pScreen)
     if (number) {
 #ifdef DEBUG
       fprintf(stderr, "nxagentAdjustRandRXinerama: XineramaQueryScreens() returned [%d] screens:\n", number);
-      for (int i=0; i < number; i++) {
+      for (size_t i = 0; i < number; ++i) {
         fprintf(stderr, "nxagentAdjustRandRXinerama:   screen_number [%d] x_org [%d] y_org [%d] width [%d] height [%d]\n", screeninfo[i].screen_number, screeninfo[i].x_org, screeninfo[i].y_org, screeninfo[i].width, screeninfo[i].height);
       }
 #endif
@@ -7322,7 +7592,7 @@ int nxagentAdjustRandRXinerama(ScreenPtr pScreen)
     }
 
     /*
-     * if there's no xinerama on the real server or xinerama is
+     * If there's no xinerama on the real server or xinerama is
      * disabled in nxagent we only report one big screen. Clients
      * still see xinerama enabled but it will report only one (big)
      * screen. This is consistent with the way rrxinerama always
@@ -7335,9 +7605,9 @@ int nxagentAdjustRandRXinerama(ScreenPtr pScreen)
       #endif
       number = 1;
 
-      free(screeninfo);
+      SAFE_FREE(screeninfo);
 
-      if (!(screeninfo = malloc(sizeof(XineramaScreenInfo)))) {
+      if (!(screeninfo = calloc(1, sizeof(XineramaScreenInfo)))) {
         return FALSE;
       }
 
@@ -7363,39 +7633,122 @@ int nxagentAdjustRandRXinerama(ScreenPtr pScreen)
       rrgetinfo = RRGetInfo(pScreen, FALSE);
 
       fprintf(stderr, "nxagentAdjustRandRXinerama: RRGetInfo returned [%d]\n", rrgetinfo);
+
+      const signed int x = nxagentOption(X),
+                       y = nxagentOption(Y),
+                       w = nxagentOption(Width),
+                       h = nxagentOption(Height);
+      fprintf(stderr, "%s: nxagent window extends: [(%d, %d), (%d, %d)]\n", __func__, x, y, (x + w), (y + h));
     }
 #else
     /* we are not interested in the return code */
     RRGetInfo(pScreen, FALSE);
 #endif
 
-#ifndef NXAGENT_RANDR_XINERAMA_CLIPPING
-    /* calculate bounding box (outer edges) */
-    int bbx2, bbx1, bby1, bby2;
-    bbx2 = bby2 = 0;
-    bbx1 = bby1 = INT_MAX;
+    nxagentScreenSplits *splits = nxagentGenerateScreenSplitList(screeninfo, number);
 
-    for (i = 0; i < number; i++) {
-      bbx2 = MAX(bbx2, screeninfo[i].x_org + screeninfo[i].width);
-      bby2 = MAX(bby2, screeninfo[i].y_org + screeninfo[i].height);
-      bbx1 = MIN(bbx1, screeninfo[i].x_org);
-      bby1 = MIN(bby1, screeninfo[i].y_org);
+    if (!(splits)) {
+      fprintf(stderr, "%s: unable to generate screen split list.\n", __func__);
+
+      SAFE_FREE(screeninfo);
+
+      return(FALSE);
     }
-    #ifdef DEBUG
-    fprintf(stderr, "nxagentAdjustRandRXinerama: bounding box: left [%d] right [%d] top [%d] bottom [%d]\n", bbx1, bbx2, bby1, bby2);
-    #endif
-#endif
+
+    nxagentScreenBoxes *all_boxes = nxagentGenerateScreenCrtcs(splits);
+
+    /* Get rid of splits. */
+    SAFE_FREE(splits->x_splits);
+    SAFE_FREE(splits->y_splits);
+    SAFE_FREE(splits);
+
+    if ((!(all_boxes)) || xorg_list_is_empty(&(all_boxes->head))) {
+      fprintf(stderr, "%s: unable to generate screen boxes list from screen splitting list.\n", __func__);
+
+      SAFE_FREE(screeninfo);
+
+      return(FALSE);
+    }
+
+    nxagentScreenCrtcsSolution *solution = nxagentMergeScreenCrtcs(all_boxes, screeninfo, number);
+
+    /* Get rid of all_boxes. */
+    nxagentFreeScreenBoxes(all_boxes, TRUE);
+
+    SAFE_FREE(all_boxes);
+
+    if ((!(solution)) || (!(solution->solution_boxes)) || (!(solution->all_boxes))) {
+      fprintf(stderr, "%s: unable to extract screen boxes from screen metadata.\n", __func__);
+
+      SAFE_FREE(screeninfo);
+
+      return(FALSE);
+    }
+
+    /* Sort new solution boxes list based on screen ID. */
+    Bool sorted = nxagentScreenBoxesQSort(solution->solution_boxes);
+
+    if (!(sorted)) {
+      fprintf(stderr, "%s: unable to sort solution screen boxes based on screen IDs.\n", __func__);
+
+      nxagentScreenCrtcsFreeSolution(solution);
+
+      SAFE_FREE(solution);
+
+      SAFE_FREE(screeninfo);
+
+      return(FALSE);
+    }
 
     #ifdef DEBUG
     fprintf(stderr, "nxagentAdjustRandRXinerama: numCrtcs [%d], numOutputs [%d]\n", pScrPriv->numCrtcs, pScrPriv->numOutputs);
     #endif
 
+    #ifdef WARNING
+    if (nxagentScreenCrtcsTiling) {
+      size_t old_screen_count = 0;
+      nxagentScreenBoxesElem *cur = NULL;
+      xorg_list_for_each_entry(cur, &(nxagentScreenCrtcsTiling->solution_boxes->head), entry) {
+        ++old_screen_count;
+      }
+
+      if (old_screen_count != pScrPriv->numCrtcs) {
+        const unsigned long long old_screen_count_ = old_screen_count;
+        const signed long long cur_crtcs_count = pScrPriv->numCrtcs;
+        fprintf(stderr, "%s: current CRTCs count [%lld] doesn't match old tiling data [%llu]. Algorithm warning.\n", __func__, cur_crtcs_count, old_screen_count_);
+      }
+    }
+    #endif
+
+    size_t new_crtcs_count = 0;
+    {
+      nxagentScreenBoxesElem *cur = NULL;
+      xorg_list_for_each_entry(cur, &(solution->solution_boxes->head), entry) {
+        ++new_crtcs_count;
+      }
+    }
+
     /*
-     * adjust the number of CRTCs to match the number of reported
-     * xinerama screens on the real server
+     * Adjust the number of CRTCs to match the number of reported Xinerama
+     * screens on the real server that intersect the nxagent window.
      */
-    while (number != pScrPriv->numCrtcs) {
-      if (number < pScrPriv->numCrtcs) {
+    /*
+     * The number of CRTCs might not be an appropriate means of setting up
+     * screen splitting since old and new screen IDs might differ. Doing some
+     * more complicated mapping between old and new screen IDs here would be
+     * possible, but likely isn't needed since each CRTC here is a purely
+     * virtual one in the first place.
+     *
+     * Pretend we have three screens in both the old and new solutions, but the
+     * middle one switched IDs from 2 to 4. Doing some complicated mapping
+     * wouldn't really lead to a different result, since we'd need to drop and
+     * re-add the virtual screen with a different size anyway. Just naïvely
+     * matching screen counts, however, has the added benefit of less virtual
+     * screen removals and additions if only metadata changed, but not the
+     * actual virtual screens count.
+     */
+    while (new_crtcs_count != pScrPriv->numCrtcs) {
+      if (new_crtcs_count < pScrPriv->numCrtcs) {
         #ifdef DEBUG
         fprintf(stderr, "nxagentAdjustRandRXinerama: destroying crtc\n");
         #endif
@@ -7416,11 +7769,10 @@ int nxagentAdjustRandRXinerama(ScreenPtr pScreen)
     #endif
 
     /*
-     * set gamma. Currently the only reason for doing this is
-     * preventing the xrandr command from complaining about missing
-     * gamma.
+     * Set gamma. Currently the only reason for doing this is preventing the
+     * xrandr command from complaining about missing gamma.
      */
-    for (i = 0; i < pScrPriv->numCrtcs; i++) {
+    for (size_t i = 0; i < pScrPriv->numCrtcs; ++i) {
       if (pScrPriv->crtcs[i]->gammaSize == 0) {
         CARD16 gamma = 0;
         RRCrtcGammaSetSize(pScrPriv->crtcs[i], 1);
@@ -7429,22 +7781,40 @@ int nxagentAdjustRandRXinerama(ScreenPtr pScreen)
       }
     }
 
-    /* delete superfluous non-NX outputs */
-    for (i = pScrPriv->numOutputs - 1; i >= 0; i--) {
+    /* Delete superfluous non-NX outputs. */
+    for (ptrdiff_t i = pScrPriv->numOutputs - 1; i >= 0; --i) {
       if (strncmp(pScrPriv->outputs[i]->name, "NX", 2)) {
         nxagentDropOutput(pScrPriv->outputs[i]);
       }
     }
 
-    /* at this stage only NX outputs are left - we delete the superfluous ones */
-    for (i = pScrPriv->numOutputs - 1; i >= number; i--) {
+    /*
+     * At this stage only NX outputs are left - we delete the superfluous
+     * ones.
+     */
+    if (new_crtcs_count > (ptrdiff_t)(PTRDIFF_MAX)) {
+      const unsigned long long new_crtcs_count_ = new_crtcs_count;
+      const unsigned long long max_crtcs = PTRDIFF_MAX;
+      fprintf(stderr, "%s: too many screen CRTCs [%llu], supporting at most [%llu]; erroring out, but keeping old solution.\n", __func__, new_crtcs_count_, max_crtcs);
+
+      nxagentScreenCrtcsFreeSolution(solution);
+
+      SAFE_FREE(solution);
+
+      SAFE_FREE(screeninfo);
+
+      return(FALSE);
+    }
+
+    for (ptrdiff_t i = pScrPriv->numOutputs - 1; i >= (ptrdiff_t)(new_crtcs_count); --i) {
       nxagentDropOutput(pScrPriv->outputs[i]);
     }
 
-    /* add and init outputs */
-    for (i = 0; i < number; i++) {
+    /* Add and init outputs. */
+    for (size_t i = 0; i < new_crtcs_count; ++i) {
       if (i >= pScrPriv->numOutputs) {
-        sprintf(name, "NX%d", i+1);
+        const unsigned long long i_ = i;
+        sprintf(name, "NX%llu", (i_ + 1));
         output = RROutputCreate(pScreen, name, strlen(name), NULL);
         /* will be done later
         RROutputSetConnection(output, RR_Disconnected);
@@ -7468,138 +7838,168 @@ int nxagentAdjustRandRXinerama(ScreenPtr pScreen)
       RROutputSetPhysicalSize(output, 0, 0);
     }
 
-    for (i = 0; i < pScrPriv->numOutputs; i++) {
-      Bool disable_output = FALSE;
+    nxagentScreenBoxesElem *cur_screen_box = xorg_list_first_entry(&(solution->solution_boxes->head), nxagentScreenBoxesElem, entry);
+    for (size_t i = 0; i < pScrPriv->numOutputs; ++i) {
       RRModePtr mymode = NULL, prevmode = NULL;
-      int new_x = 0;
-      int new_y = 0;
-      unsigned int new_w = 0;
-      unsigned int new_h = 0;
 
-      /* if there's no intersection disconnect the output */
-#ifdef NXAGENT_RANDR_XINERAMA_CLIPPING
-      disable_output = !intersect(nxagentOption(X), nxagentOption(Y),
-                                  width, height,
-                                  screeninfo[i].x_org, screeninfo[i].y_org,
-                                  screeninfo[i].width, screeninfo[i].height,
-                                  &new_x, &new_y, &new_w, &new_h);
-#else
-      disable_output = !intersect_bb(nxagentOption(X), nxagentOption(Y),
-                                  width, height,
-                                  screeninfo[i].x_org, screeninfo[i].y_org,
-                                  screeninfo[i].width, screeninfo[i].height,
-                                  bbx1, bby1, bbx2, bby2,
-                                  &new_x, &new_y, &new_w, &new_h);
-#endif
+      /* Sanity checks. */
+      Bool fail = FALSE;
+      if (cur_screen_box->box->x1 < nxagentOption(X)) {
+        fprintf(stderr, "%s: left X position out of bounds - less than left window bound [%d] < [%d]\n", __func__, cur_screen_box->box->x1, nxagentOption(X));
 
-      /* save previous mode */
+        fail = TRUE;
+      }
+
+      if (cur_screen_box->box->x1 >= (nxagentOption(X) + nxagentOption(Width))) {
+        fprintf(stderr, "%s: left X position out of bounds - higher than or equal right window bound [%d] >= [%d]\n", __func__, cur_screen_box->box->x1, (nxagentOption(X) + nxagentOption(Width)));
+
+        fail = TRUE;
+      }
+
+      if (cur_screen_box->box->x2 <= cur_screen_box->box->x1) {
+        fprintf(stderr, "%s: right X position out of bounds - less than or equal left X position [%d] <= [%d]\n", __func__, cur_screen_box->box->x2, cur_screen_box->box->x1);
+
+        fail = TRUE;
+      }
+
+      if (cur_screen_box->box->x2 > (nxagentOption(X) + nxagentOption(Width))) {
+        fprintf(stderr, "%s: right X position out of bounds - less than or equal right window bound [%d] <= [%d]\n", __func__, cur_screen_box->box->x2, (nxagentOption(X) + nxagentOption(Width)));
+
+        fail = TRUE;
+      }
+
+      if (cur_screen_box->box->y1 < nxagentOption(Y)) {
+        fprintf(stderr, "%s: top Y position out of bounds - less than top window bound [%d] < [%d]\n", __func__, cur_screen_box->box->y1, nxagentOption(Y));
+
+        fail = TRUE;
+      }
+
+      if (cur_screen_box->box->y1 >= (nxagentOption(Y) + nxagentOption(Height))) {
+        fprintf(stderr, "%s: top Y position out of bounds - higher than or equal top window bound [%d] >= [%d]\n", __func__, cur_screen_box->box->y1, (nxagentOption(Y) + nxagentOption(Height)));
+
+        fail = TRUE;
+      }
+
+      if (cur_screen_box->box->y2 <= cur_screen_box->box->y1) {
+        fprintf(stderr, "%s: bottom Y position out of bounds - less than or equal top Y position [%d] <= [%d]\n", __func__, cur_screen_box->box->y2, cur_screen_box->box->y1);
+
+        fail = TRUE;
+      }
+
+      if (cur_screen_box->box->y2 > (nxagentOption(Y) + nxagentOption(Height))) {
+        fprintf(stderr, "%s: bottom Y position out of bounds - less than or equal bottom window bound [%d] <= [%d]\n", __func__, cur_screen_box->box->y2, (nxagentOption(Y) + nxagentOption(Height)));
+
+        fail = TRUE;
+      }
+
+      if (fail) {
+        nxagentScreenCrtcsFreeSolution(solution);
+
+        SAFE_FREE(solution);
+
+        SAFE_FREE(screeninfo);
+
+        return(FALSE);
+      }
+
+      const int new_x = (cur_screen_box->box->x1 - nxagentOption(X)),
+                new_y = (cur_screen_box->box->y1 - nxagentOption(Y));
+      const unsigned int new_w = (cur_screen_box->box->x2 - cur_screen_box->box->x1),
+                         new_h = (cur_screen_box->box->y2 - cur_screen_box->box->y1);
+
+      /* Save previous mode. */
       prevmode = pScrPriv->crtcs[i]->mode;
       #ifdef DEBUG
-      if (prevmode) {
-        fprintf(stderr, "nxagentAdjustRandRXinerama: output [%d] name [%s]: prevmode [%s] ([%p]) refcnt [%d]\n", i, pScrPriv->outputs[i]->name, prevmode->name, (void *)prevmode, prevmode->refcnt);
-      }
-      else {
-        fprintf(stderr, "nxagentAdjustRandRXinerama: output [%d] name [%s]: no prevmode\n", i, pScrPriv->outputs[i]->name);
+      {
+        const unsigned long long i_ = i;
+        if (prevmode) {
+          fprintf(stderr, "nxagentAdjustRandRXinerama: output [%llu] name [%s]: prevmode [%s] ([%p]) refcnt [%d]\n", i_, pScrPriv->outputs[i]->name, prevmode->name, (void *)prevmode, prevmode->refcnt);
+        }
+        else {
+          fprintf(stderr, "nxagentAdjustRandRXinerama: output [%llu] name [%s]: no prevmode\n", i_, pScrPriv->outputs[i]->name);
+        }
       }
       #endif
 
+      /* Map output to CRTC. */
       RROutputSetCrtcs(pScrPriv->outputs[i], &(pScrPriv->crtcs[i]), 1);
 
-      if (disable_output) {
-        #ifdef DEBUG
-        fprintf(stderr, "nxagentAdjustRandRXinerama: output [%d] name [%s]: no (valid) intersection - disconnecting\n", i, pScrPriv->outputs[i]->name);
-        #endif
-        RROutputSetConnection(pScrPriv->outputs[i], RR_Disconnected);
-
-        /*
-         * Tests revealed that some window managers (e.g. LXDE) also
-         * take disconnected outputs into account when calculating
-         * stuff like wallpaper tile size and maximum window
-         * size. This is problematic when a disconnected output is
-         * smaller than any of the connected ones. Solution: unset the
-         * mode of the output's crtc. This also leads to xinerama not
-         * showing the disconnected head anymore.
-         */
-        if (prevmode) {
-          #ifdef DEBUG
-          fprintf(stderr, "nxagentAdjustRandRXinerama: removing mode from output [%d] name [%s]\n", i, pScrPriv->outputs[i]->name);
-          #endif
-          RROutputSetModes(pScrPriv->outputs[i], NULL, 0, 0);
-
-          #ifdef DEBUG
-          fprintf(stderr, "nxagentAdjustRandRXinerama: removing mode from ctrc [%d]\n", i);
-          #endif
-          RRCrtcSet(pScrPriv->crtcs[i], NULL, 0, 0, RR_Rotate_0, 1, &(pScrPriv->outputs[i]));
-        }
+      #ifdef DEBUG
+      {
+        const unsigned long long i_ = i;
+        fprintf(stderr, "nxagentAdjustRandRXinerama: output [%llu] name [%s]: CRTC is x [%d] y [%d] width [%d] height [%d]\n", i_, pScrPriv->outputs[i]->name, new_x, new_y, new_w, new_h);
       }
-      else {
-        #ifdef DEBUG
-        fprintf(stderr, "nxagentAdjustRandRXinerama: output [%d] name [%s]: intersection is x [%d] y [%d] width [%d] height [%d]\n", i, pScrPriv->outputs[i]->name, new_x, new_y, new_w, new_h);
-        #endif
+      #endif
 
-        RROutputSetConnection(pScrPriv->outputs[i], RR_Connected);
+      RROutputSetConnection(pScrPriv->outputs[i], RR_Connected);
 
-        memset(&modeInfo, '\0', sizeof(modeInfo));
+      memset(&modeInfo, '\0', sizeof(modeInfo));
 
 #ifdef NXAGENT_RANDR_MODE_PREFIX
-        /*
-         * Avoid collisions with pre-existing default modes by using a
-         * separate namespace. If we'd simply use XxY we could not
-         * distinguish between pre-existing modes which should stay
-         * and our own modes that should be removed after use.
-         */
-        sprintf(name, "nx_%dx%d", new_w, new_h);
+      /*
+       * Avoid collisions with pre-existing default modes by using a
+       * separate namespace. If we'd simply use XxY we could not
+       * distinguish between pre-existing modes which should stay
+       * and our own modes that should be removed after use.
+       */
+      sprintf(name, "nx_%dx%d", new_w, new_h);
 #else
-        sprintf(name, "%dx%d", new_w, new_h);
+      sprintf(name, "%dx%d", new_w, new_h);
 #endif
 
-        modeInfo.width  = new_w;
-        modeInfo.height = new_h;
-        modeInfo.hTotal = new_w;
-        modeInfo.vTotal = new_h;
-        modeInfo.dotClock = ((CARD32) new_w * (CARD32) new_h * (CARD32) refresh);
-        modeInfo.nameLength = strlen(name);
+      modeInfo.width  = new_w;
+      modeInfo.height = new_h;
+      modeInfo.hTotal = new_w;
+      modeInfo.vTotal = new_h;
+      modeInfo.dotClock = ((CARD32) new_w * (CARD32) new_h * (CARD32) refresh);
+      modeInfo.nameLength = strlen(name);
 
-        mymode = RRModeGet(&modeInfo, name);
+      mymode = RRModeGet(&modeInfo, name);
 
 #ifdef DEBUG
+      {
+        const unsigned long long i_ = i;
         if (mymode) {
-          fprintf(stderr, "nxagentAdjustRandRXinerama: output [%d] name [%s]: mode [%s] ([%p]) created/received, refcnt [%d]\n", i, pScrPriv->outputs[i]->name, name, (void *) mymode, mymode->refcnt);
+          fprintf(stderr, "nxagentAdjustRandRXinerama: output [%llu] name [%s]: mode [%s] ([%p]) created/received, refcnt [%d]\n", i_, pScrPriv->outputs[i]->name, name, (void *) mymode, mymode->refcnt);
         }
         else {
           /* FIXME: what is the correct behaviour in this case? */
-          fprintf(stderr, "nxagentAdjustRandRXinerama: output [%d] name [%s]: mode [%s] creation failed!\n", i, pScrPriv->outputs[i]->name, name);
+          fprintf(stderr, "nxagentAdjustRandRXinerama: output [%llu] name [%s]: mode [%s] creation failed!\n", i_, pScrPriv->outputs[i]->name, name);
         }
+      }
 #endif
-        if (prevmode && mymode == prevmode) {
-          #ifdef DEBUG
-          fprintf(stderr, "nxagentAdjustRandRXinerama: mymode [%s] ([%p]) == prevmode [%s] ([%p])\n", mymode->name, (void *) mymode, prevmode->name, (void *)prevmode);
-          #endif
-
-          /*
-           * If they are the same RRModeGet() has increased the
-           * refcnt by 1. We decrease it again by calling only
-           * RRModeDestroy() and forget about prevmode
-           */
-          RRModeDestroy(mymode);
-        }
-        else {
-          #ifdef DEBUG
-          fprintf(stderr, "nxagentAdjustRandRXinerama: setting mode [%s] ([%p]) refcnt [%d] for output %d [%s]\n", mymode->name, (void *) mymode, mymode->refcnt, i, pScrPriv->outputs[i]->name);
-          #endif
-          RROutputSetModes(pScrPriv->outputs[i], &mymode, 1, 0);
-        }
-
+      if (prevmode && mymode == prevmode) {
         #ifdef DEBUG
-        fprintf(stderr, "nxagentAdjustRandRXinerama: setting mode [%s] ([%p]) refcnt [%d] for crtc %d\n", mymode->name, (void *) mymode, mymode->refcnt, i);
+        fprintf(stderr, "nxagentAdjustRandRXinerama: mymode [%s] ([%p]) == prevmode [%s] ([%p])\n", mymode->name, (void *) mymode, prevmode->name, (void *)prevmode);
         #endif
-        RRCrtcSet(pScrPriv->crtcs[i], mymode, new_x, new_y, RR_Rotate_0, 1, &(pScrPriv->outputs[i]));
-      } /* if disable_output */
+
+        /*
+         * If they are the same RRModeGet() has increased the
+         * refcnt by 1. We decrease it again by calling only
+         * RRModeDestroy() and forget about prevmode.
+         */
+        RRModeDestroy(mymode);
+      }
+      else {
+        #ifdef DEBUG
+        const unsigned long long i_ = i;
+        fprintf(stderr, "nxagentAdjustRandRXinerama: setting mode [%s] ([%p]) refcnt [%d] for output %llu [%s]\n", mymode->name, (void *) mymode, mymode->refcnt, i_, pScrPriv->outputs[i]->name);
+        #endif
+        RROutputSetModes(pScrPriv->outputs[i], &mymode, 1, 0);
+      }
+
+      #ifdef DEBUG
+      {
+        const unsigned long long i_ = i;
+        fprintf(stderr, "nxagentAdjustRandRXinerama: setting mode [%s] ([%p]) refcnt [%d] for crtc %llu\n", mymode->name, (void *) mymode, mymode->refcnt, i_);
+      }
+      #endif
+      RRCrtcSet(pScrPriv->crtcs[i], mymode, new_x, new_y, RR_Rotate_0, 1, &(pScrPriv->outputs[i]));
 
       /*
        * Throw away the mode if otherwise unused. We do not need it
        * anymore. We call FreeResource() to ensure the system will not
-       * try to free it again on shutdown
+       * try to free it again on shutdown.
        */
       if (prevmode && prevmode->refcnt == 1) {
         #ifdef DEBUG
@@ -7610,25 +8010,36 @@ int nxagentAdjustRandRXinerama(ScreenPtr pScreen)
 
       RROutputChanged(pScrPriv->outputs[i], TRUE);
       RRCrtcChanged(pScrPriv->crtcs[i], TRUE);
+
+      cur_screen_box = xorg_list_first_entry(&(cur_screen_box->entry), nxagentScreenBoxesElem, entry);
     }
 
-    /* release allocated memory */
-    free(screeninfo);
-    screeninfo = NULL;
+    /* Update internal data. */
+    nxagentScreenCrtcsSolution *old_solution = nxagentScreenCrtcsTiling;
+    nxagentScreenCrtcsTiling = solution;
+
+    /* Release allocated memory. */
+    nxagentScreenCrtcsFreeSolution(old_solution);
+
+    SAFE_FREE(old_solution);
+
+    SAFE_FREE(screeninfo);
 
 #ifdef DEBUG
-    for (i = 0; i < pScrPriv->numCrtcs; i++) {
+    for (size_t i = 0; i < pScrPriv->numCrtcs; ++i) {
+      const unsigned long long i_ = i;
       RRModePtr mode = pScrPriv->crtcs[i]->mode;
       if (mode) {
-        fprintf(stderr, "nxagentAdjustRandRXinerama: crtc [%d] ([%p]) has mode [%s] ([%p]), refcnt [%d] and [%d] outputs:\n", i, (void *) pScrPriv->crtcs[i], pScrPriv->crtcs[i]->mode->name, (void *)pScrPriv->crtcs[i]->mode, pScrPriv->crtcs[i]->mode->refcnt, pScrPriv->crtcs[i]->numOutputs);
+        fprintf(stderr, "nxagentAdjustRandRXinerama: crtc [%llu] ([%p]) has mode [%s] ([%p]), refcnt [%d] and [%d] outputs:\n", i_, (void *) pScrPriv->crtcs[i], pScrPriv->crtcs[i]->mode->name, (void *)pScrPriv->crtcs[i]->mode, pScrPriv->crtcs[i]->mode->refcnt, pScrPriv->crtcs[i]->numOutputs);
       }
       else {
-        fprintf(stderr, "nxagentAdjustRandRXinerama: crtc [%d] ([%p]) has no mode and [%d] outputs:\n", i, (void *) pScrPriv->crtcs[i], pScrPriv->crtcs[i]->numOutputs);
+        fprintf(stderr, "nxagentAdjustRandRXinerama: crtc [%llu] ([%p]) has no mode and [%d] outputs:\n", i_, (void *) pScrPriv->crtcs[i], pScrPriv->crtcs[i]->numOutputs);
       }
 
       if (pScrPriv->crtcs[i]->numOutputs > 0) {
-        for (int j=0; j < pScrPriv->crtcs[i]->numOutputs; j++) {
-          fprintf(stderr, "nxagentAdjustRandRXinerama:   output [%d] name [%s]->crtc=[%p]\n", j, pScrPriv->crtcs[i]->outputs[j]->name, (void *)pScrPriv->crtcs[i]->outputs[j]->crtc);
+        for (size_t j = 0; j < pScrPriv->crtcs[i]->numOutputs; ++j) {
+          const unsigned long long j_ = j;
+          fprintf(stderr, "nxagentAdjustRandRXinerama:   output [%llu] name [%s]->crtc=[%p]\n", j_, pScrPriv->crtcs[i]->outputs[j]->name, (void *)pScrPriv->crtcs[i]->outputs[j]->crtc);
         }
       }
     }
