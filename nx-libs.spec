@@ -48,10 +48,6 @@ BuildRequires:  quilt
 BuildRequires:  patch
 %endif
 
-# suse_version 1315 is SLE-12
-%if 0%{?suse_version} != 1315 && 0%{?suse_version} >= 1230
-BuildRequires:  gpg-offline
-%endif
 %if 0%{?suse_version}
 BuildRequires:  fdupes
 
