@@ -3659,7 +3659,7 @@ static Bool intersect(int ax1, int ay1, unsigned int aw, unsigned int ah,
     if (iw <= 0 || ih <= 0) {
 
         #ifdef DEBUG
-        fprintf(stderr, "intersect: intersection rectangle not feasible\n");
+        fprintf(stderr, "%s: intersection rectangle not feasible: width [%u], calculated as ([%d] - [%d]) [%u]; height [%u], calculated as ([%d] - [%d]) [%u]\n", __func__, iw, tx2, tx1, (tx2 - tx1), ih, ty2, ty1, (ty2 - ty1));
         #endif
 
         return FALSE;
