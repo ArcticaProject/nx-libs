@@ -3636,8 +3636,7 @@ static Bool intersect(int ax1, int ay1, unsigned int aw, unsigned int ah,
     /* thanks to http://silentmatt.com/rectangle-intersection */
 
     /* check if there's any intersection at all */
-    if (ax2 < bx1 || bx2 < ax1 || ay2 < by1 || by2 < ay1) {
-
+    if ((ax1 >= bx2) || (ax2 <= bx1) || (ay1 >= by2) || (ay2 <= by1)) {
         #ifdef DEBUG
         fprintf(stderr, "intersect: the given rectangles do not intersect at all\n");
         #endif
