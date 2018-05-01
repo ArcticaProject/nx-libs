@@ -3625,6 +3625,10 @@ static Bool intersect(int ax1, int ay1, unsigned int aw, unsigned int ah,
 	       int bx1, int by1, unsigned int bw, unsigned int bh,
 	       int *x, int *y, unsigned int *w, unsigned int *h)
 {
+#ifdef DEBUG
+    fprintf(stderr, "%s: DEBUG: [(%d, %d) -> (%u, %u)]; [(%d, %d) -> (%u, %u)]; [%p], [%p], [%p], [%p]\n", __func__, ax1, ay1, aw, ah, bx1, by1, bw, bh, (void*)(x), (void*)(y), (void*)(w), (void*)(h));
+#endif
+
     int tx1, ty1, tx2, ty2, ix, iy;
     unsigned int iw, ih;
 
