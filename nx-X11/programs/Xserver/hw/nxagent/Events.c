@@ -3341,13 +3341,26 @@ int nxagentHandleConfigureNotify(XEvent* X)
     {
       if (nxagentOption(AllScreens) == 0)
       {
+        /*
+         * - WITHOUT window manager any position change is relevant
+         * - WITH window manager only synthetic position changes send
+         *   by the window manager are relevant, see ICCCM Chapter 4,
+         *   "Configuring the Window"
+         */
+        Bool updatePos = (nxagentWMIsRunning == 0 || X -> xconfigure.send_event != 0);
+        int newX = X -> xconfigure.x;
+        int newY = X -> xconfigure.y;
+
         if (nxagentOption(DesktopResize) == 1)
         {
           if (nxagentOption(Width) != X -> xconfigure.width ||
                 nxagentOption(Height) != X -> xconfigure.height ||
-                nxagentOption(X) != X -> xconfigure.x ||
-                nxagentOption(Y) != X -> xconfigure.y)
+                  (updatePos && (nxagentOption(X) != newX ||
+                                   nxagentOption(Y) != newY)))
           {
+            #ifdef DEBUG
+            int count = 0;
+            #endif
             Bool newEvents = False;
 
             doRandR = True;
@@ -3372,17 +3385,34 @@ int nxagentHandleConfigureNotify(XEvent* X)
               while (XCheckTypedWindowEvent(nxagentDisplay, nxagentDefaultWindows[pScreen -> myNum],
                                               ConfigureNotify, X))
               {
+                #ifdef DEBUG
+                count++;
+                #endif
+
+                if (nxagentWMIsRunning == 0 || X -> xconfigure.send_event)
+                {
+                  updatePos = True;
+                  newX = X -> xconfigure.x;
+                  newY = X -> xconfigure.y;
+                }
                 newEvents = True;
               }
 
             } while (newEvents);
+
+            #ifdef DEBUG
+            fprintf(stderr, "%s: accumulated %d events\n", __func__, count);
+            #endif
           }
         }
 
-        if (nxagentWMIsRunning == 0 || X -> xconfigure.send_event)
+        if (updatePos)
         {
-          nxagentChangeOption(X, X -> xconfigure.x);
-          nxagentChangeOption(Y, X -> xconfigure.y);
+          #ifdef DEBUG
+          fprintf(stderr, "%s: Updating nxagent window position [%d,%d]\n", __func__, newX, newY);
+          #endif
+          nxagentChangeOption(X, newX);
+          nxagentChangeOption(Y, newY);
         }
 
         if (nxagentOption(Shadow) == 1 && nxagentOption(DesktopResize) == 1 &&
