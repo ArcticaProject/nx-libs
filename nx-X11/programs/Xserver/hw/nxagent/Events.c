@@ -3303,7 +3303,6 @@ int nxagentHandleConfigureNotify(XEvent* X)
     ScreenPtr pScreen = nxagentScreen(X -> xconfigure.window);
 
     Bool doRandR = False;
-    struct timeval timeout;
 
     if (X -> xconfigure.window == nxagentDefaultWindows[pScreen -> myNum])
     {
@@ -3339,10 +3338,7 @@ int nxagentHandleConfigureNotify(XEvent* X)
             {
               newEvents = False;
 
-              timeout.tv_sec  = 0;
-              timeout.tv_usec = 500 * 1000;
-
-              nxagentWaitEvents(nxagentDisplay, &timeout);
+              nxagentWaitEvents(nxagentDisplay, 500);
 
               /*
                * This should also flush the NX link for us.
@@ -3809,7 +3805,7 @@ int nxagentWaitForResource(GetResourceFuncPtr pGetResource, PredicateFuncPtr pPr
 
   while ((resource = (*pGetResource)(nxagentDisplay)) == -1)
   {
-    if (nxagentWaitEvents(nxagentDisplay, NULL) == -1)
+    if (nxagentWaitEvents(nxagentDisplay, 0) == -1)
     {
       return -1;
     }
@@ -4490,14 +4486,11 @@ int nxagentPendingEvents(Display *dpy)
 }
 
 /*
- * Blocks until an event becomes
- * available.
+ * Blocks until an event becomes available.
  */
 
-int nxagentWaitEvents(Display *dpy, struct timeval *tm)
+int nxagentWaitEvents(Display *dpy, useconds_t msec)
 {
-  XEvent ev;
-
   #ifdef DEBUG
   fprintf(stderr, "nxagentWaitEvents called.\n");
   #endif
@@ -4505,33 +4498,41 @@ int nxagentWaitEvents(Display *dpy, struct timeval *tm)
   NXFlushDisplay(dpy, NXFlushLink);
 
   /*
-   * If the transport is not running we
-   * have to rely on Xlib to wait for an
-   * event. In this case the timeout is
-   * ignored.
+   * If the transport is not running we have to rely on Xlib to wait
+   * for an event. In this case the timeout is ignored.
    */
 
   if (NXTransRunning(NX_FD_ANY) == 1)
   {
-    NXTransContinue(tm);
+    if (msec > 0)
+    {
+      struct timeval tm = {
+	  .tv_sec  = 0,
+	  .tv_usec = msec * 1000
+      };
+      NXTransContinue(&tm);
+    }
+    else
+    {
+      NXTransContinue(NULL);
+    }
   }
   else
   {
+    XEvent ev;
     XPeekEvent(dpy, &ev);
   }
 
   /*
-   * Check if we encountered a display
-   * error. If we did, wait for the
+   * Check if we encountered a display error. If we did, wait for the
    * time requested by the caller.
    */
 
   if (NXDisplayError(dpy) == 1)
   {
-    if (tm != NULL)
+    if (msec > 0)
     {
-      usleep(tm -> tv_sec * 1000 * 1000 +
-                 tm -> tv_usec);
+      usleep(msec * 1000);
     }
 
     return -1;

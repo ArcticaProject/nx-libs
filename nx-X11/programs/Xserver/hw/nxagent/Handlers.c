@@ -1255,7 +1255,7 @@ void nxagentDispatchHandler(ClientPtr client, int in, int out)
 
       while (nxagentTokens.pending == TOKENS_PENDING_LIMIT)
       {
-        if (nxagentWaitEvents(nxagentDisplay, NULL) == -1)
+        if (nxagentWaitEvents(nxagentDisplay, 0) == -1)
         {
           nxagentTokens.pending = 0;
 

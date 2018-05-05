@@ -400,7 +400,7 @@ void nxagentWaitWakeupBySplit(ClientPtr client)
     fprintf(stderr, "++++++nxagentWaitWakeupBySplit: Yielding control to the NX transport.\n");
     #endif
 
-    nxagentWaitEvents(nxagentDisplay, NULL);
+    nxagentWaitEvents(nxagentDisplay, 0);
   }
 }
 

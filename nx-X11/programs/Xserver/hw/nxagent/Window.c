@@ -850,7 +850,6 @@ void nxagentSwitchAllScreens(ScreenPtr pScreen, Bool switchOn)
      * Change to fullscreen mode.
      */
 
-    struct timeval timeout;
     int i;
     XEvent e;
 
@@ -875,10 +874,7 @@ void nxagentSwitchAllScreens(ScreenPtr pScreen, Bool switchOn)
 
       XSync(nxagentDisplay, 0);
 
-      timeout.tv_sec  = 0;
-      timeout.tv_usec = 50 * 1000;
-
-      nxagentWaitEvents(nxagentDisplay, &timeout);
+      nxagentWaitEvents(nxagentDisplay, 50);
     }
 
     if (i < 100)

@@ -1565,6 +1565,10 @@ int NXTransRunning(int fd)
   return (control != NULL);
 }
 
+//
+// FIXME: why timeval? Passing milliseconds would be more convenient,
+// the timeval struct/T_timestamp could be built on demand.
+//
 int NXTransContinue(struct timeval *selectTs)
 {
   if (control != NULL)
