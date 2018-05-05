@@ -1812,20 +1812,6 @@ N/A
        * we need it to properly display all window parameters by some WMs
        * (for example on Maemo)
        */
-      if(nxagentX2go)
-      {
-        #ifdef TEST
-        fprintf(stderr, "nxagentOpenScreen: Setting WM_CLASS and WM_NAME for window with id [%ld].\n",
-                (long int)nxagentDefaultWindows[pScreen->myNum]);
-        #endif
-        XClassHint hint;
-        hint.res_name = strdup("X2GoAgent");
-        hint.res_class = strdup("X2GoAgent");
-        XSetClassHint(nxagentDisplay, nxagentDefaultWindows[pScreen->myNum], &hint);
-        free(hint.res_name);
-        free(hint.res_class);
-      }
-      else
       {
         #ifdef TEST
         fprintf(stderr, "nxagentOpenScreen: Setting WM_CLASS and WM_NAME for window with id [%ld].\n",
@@ -1833,8 +1819,17 @@ N/A
         #endif
 
         XClassHint hint;
-        hint.res_name = strdup("NXAgent");
-        hint.res_class = strdup("NXAgent");
+
+        if(nxagentX2go)
+        {
+          hint.res_name = strdup("X2GoAgent");
+          hint.res_class = strdup("X2GoAgent");
+        }
+        else
+        {
+          hint.res_name = strdup("NXAgent");
+          hint.res_class = strdup("NXAgent");
+        }
         XSetClassHint(nxagentDisplay, nxagentDefaultWindows[pScreen->myNum], &hint);
         free(hint.res_name);
         free(hint.res_class);
