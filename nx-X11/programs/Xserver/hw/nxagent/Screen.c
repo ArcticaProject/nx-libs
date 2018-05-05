@@ -365,7 +365,6 @@ FIXME: We'll check for ReparentNotify and LeaveNotify events after
 
       for (int i = 0; i < 100 && nxagentWMIsRunning; i++)
       {
-        struct timeval timeout;
         XEvent e;
 
         #ifdef TEST
@@ -379,10 +378,7 @@ FIXME: We'll check for ReparentNotify and LeaveNotify events after
 
         XSync(nxagentDisplay, 0);
 
-        timeout.tv_sec = 0;
-        timeout.tv_usec = 50 * 1000;
-
-        nxagentWaitEvents(nxagentDisplay, &timeout);
+        nxagentWaitEvents(nxagentDisplay, 50);
       }
     }
     else
