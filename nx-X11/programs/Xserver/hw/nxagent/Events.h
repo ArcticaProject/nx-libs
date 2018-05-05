@@ -231,7 +231,7 @@ Bool nxagentPendingEvents(Display *dpy);
     XEventsQueued((display), QueuedAfterReading)
 
 #define nxagentCheckEvents(display, event, predicate, argument) \
-    XCheckIfEventNoFlush((display), (event), (predicate), (argument)) 
+    XCheckIfEventNoFlush((display), (event), (predicate), (argument))
 
 int nxagentWaitEvents(Display *, struct timeval *);
 

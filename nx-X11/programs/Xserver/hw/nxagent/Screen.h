@@ -48,7 +48,7 @@ is" without express or implied warranty.
 
 #define nxagentSetPrintGeometry(screen) \
     nxagentPrintGeometryFlags = (1 << (screen));
-    
+
 extern int nxagentClients;
 
 extern int nxagentAutoDisconnectTimeout;

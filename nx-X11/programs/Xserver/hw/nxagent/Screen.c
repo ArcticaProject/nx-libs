@@ -1864,8 +1864,8 @@ N/A
                         nxagentDefaultWindows[pScreen->myNum],
                         nxagentAtoms[8], /* NX_AGENT_SIGNATURE */
                         XA_STRING,
-                        8, 
-                        PropModeReplace, 
+                        8,
+                        PropModeReplace,
                         (unsigned char*) "X-AGENT",
                         strlen("X-AGENT"));
       }
