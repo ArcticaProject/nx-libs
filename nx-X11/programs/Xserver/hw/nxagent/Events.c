@@ -734,9 +734,9 @@ void nxagentInitDefaultEventMask(void)
   defaultEventMask = mask;
 }
 
-void nxagentGetDefaultEventMask(Mask *mask_return)
+Mask nxagentGetDefaultEventMask(void)
 {
-  *mask_return = defaultEventMask;
+  return defaultEventMask;
 }
 
 void nxagentSetDefaultEventMask(Mask mask)
@@ -744,7 +744,7 @@ void nxagentSetDefaultEventMask(Mask mask)
   defaultEventMask = mask;
 }
 
-void nxagentGetEventMask(WindowPtr pWin, Mask *mask_return)
+Mask nxagentGetEventMask(WindowPtr pWin)
 {
   Mask mask = NoEventMask;
 
@@ -774,7 +774,7 @@ void nxagentGetEventMask(WindowPtr pWin, Mask *mask_return)
     mask = ExposureMask | VisibilityChangeMask;
   }
 
-  *mask_return = mask;
+  return mask;
 }
 
 static int nxagentChangeMapPrivate(WindowPtr pWin, void * ptr)
@@ -3729,9 +3729,7 @@ int nxagentHandleReparentNotify(XEvent* X)
 void nxagentEnableKeyboardEvents(void)
 {
   int i;
-  Mask mask;
-
-  nxagentGetDefaultEventMask(&mask);
+  Mask mask = nxagentGetDefaultEventMask();
 
   mask |= NXAGENT_KEYBOARD_EVENT_MASK;
 
@@ -3750,9 +3748,7 @@ void nxagentEnableKeyboardEvents(void)
 void nxagentDisableKeyboardEvents(void)
 {
   int i;
-  Mask mask;
-
-  nxagentGetDefaultEventMask(&mask);
+  Mask mask = nxagentGetDefaultEventMask();
 
   mask &= ~NXAGENT_KEYBOARD_EVENT_MASK;
 
@@ -3769,9 +3765,7 @@ void nxagentDisableKeyboardEvents(void)
 void nxagentEnablePointerEvents(void)
 {
   int i;
-  Mask mask;
-
-  nxagentGetDefaultEventMask(&mask);
+  Mask mask = nxagentGetDefaultEventMask();
 
   mask |= NXAGENT_POINTER_EVENT_MASK;
 
@@ -3786,9 +3780,7 @@ void nxagentEnablePointerEvents(void)
 void nxagentDisablePointerEvents(void)
 {
   int i;
-  Mask mask;
-
-  nxagentGetDefaultEventMask(&mask);
+  Mask mask = nxagentGetDefaultEventMask();
 
   mask &= ~NXAGENT_POINTER_EVENT_MASK;
 

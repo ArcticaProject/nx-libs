@@ -455,7 +455,7 @@ Window nxagentCreateIconWindow(void)
    * Enable events from the icon window.
    */
 
-  nxagentGetDefaultEventMask(&mask);
+  mask = nxagentGetDefaultEventMask();
 
   XSelectInput(nxagentDisplay, w, (mask & ~(KeyPressMask |
                    KeyReleaseMask)) | StructureNotifyMask);
@@ -1705,12 +1705,7 @@ N/A
                     (nxagentOption(AllScreens) == 1 ? CWOverrideRedirect : 0);
 
     attributes.background_pixel = nxagentBlackPixel;
-
-    /* Assume that the mask fits in int... broken on Big Endian 64bit systems. */
-    Mask tmp_mask = attributes.event_mask;
-    nxagentGetDefaultEventMask(&tmp_mask);
-    attributes.event_mask = (int)tmp_mask;
-
+    attributes.event_mask = nxagentGetDefaultEventMask();
     attributes.colormap = nxagentDefaultVisualColormap(nxagentDefaultVisual(pScreen));
 
     if (nxagentOption(AllScreens) == 1)
@@ -1741,7 +1736,7 @@ N/A
     {
       nxagentDefaultWindows[pScreen->myNum] = nxagentParentWindow;
 
-      nxagentGetDefaultEventMask(&mask);
+      mask = nxagentGetDefaultEventMask();
 
       XSelectInput(nxagentDisplay, nxagentDefaultWindows[pScreen->myNum], mask);
     }
@@ -1870,7 +1865,7 @@ N/A
                         strlen("X-AGENT"));
       }
 
-      nxagentGetDefaultEventMask(&mask);
+      mask = nxagentGetDefaultEventMask();
 
       XSelectInput(nxagentDisplay, nxagentFullscreenWindow, mask);
     }
@@ -2940,7 +2935,7 @@ int nxagentShadowCreateMainWindow(ScreenPtr pScreen, WindowPtr pWin, int width, 
 
   mask = CWBackPixmap | CWEventMask | CWCursor;
 
-  nxagentGetDefaultEventMask(&maskb);
+  maskb = nxagentGetDefaultEventMask();
   maskb |= ResizeRedirectMask | ExposureMask;
 
   vlist = values;
@@ -3597,7 +3592,7 @@ Bool nxagentReconnectScreen(void *p0)
                      h, 
                      1)));
 
-  nxagentGetDefaultEventMask(&mask);
+  mask = nxagentGetDefaultEventMask();
   mask |= NXAGENT_KEYBOARD_EVENT_MASK | NXAGENT_POINTER_EVENT_MASK;
   nxagentSetDefaultEventMask(mask);
   XSelectInput(nxagentDisplay, nxagentDefaultWindows[0], mask);

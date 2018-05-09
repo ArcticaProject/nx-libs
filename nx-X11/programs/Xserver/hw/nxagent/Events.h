@@ -88,9 +88,9 @@ extern void nxagentDisablePointerEvents(void);
  */
 
 extern void nxagentInitDefaultEventMask(void);
-extern void nxagentGetDefaultEventMask(Mask *mask_return);
+extern Mask nxagentGetDefaultEventMask(void);
 extern void nxagentSetDefaultEventMask(Mask mask);
-extern void nxagentGetEventMask(WindowPtr pWin, Mask *mask_return);
+extern Mask nxagentGetEventMask(WindowPtr pWin);
 
 /*
  * Bring keyboard device in known state. It needs
