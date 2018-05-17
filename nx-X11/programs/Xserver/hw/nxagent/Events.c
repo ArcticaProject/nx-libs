@@ -2041,6 +2041,18 @@ FIXME: Don't enqueue the KeyRelease event if the key was
           nxagentVisibilityTimeout = GetTimeInMillis() + 2000;
         }
 
+        /*
+         * without window manager there will be no ConfigureNotify
+         * event that would trigger xinerama updates. So we do that once
+         * the nxagent window gets mapped.
+         */
+        if (nxagentWMIsRunning == 0 &&
+            X.xmap.window == nxagentDefaultWindows[nxagentScreen(X.xmap.window)->myNum])
+        {
+          nxagentChangeScreenConfig(nxagentScreen(X.xmap.window)->myNum, nxagentOption(Width),
+                                    nxagentOption(Height));
+        }
+
         break;
       }
       case MappingNotify:
