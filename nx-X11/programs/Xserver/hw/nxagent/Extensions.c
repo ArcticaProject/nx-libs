@@ -124,7 +124,8 @@ void nxagentInitRandRExtension(ScreenPtr pScreen)
     fprintf(stderr, "Warning: Failed to initialize the RandR extension.\n");
   }
 
-
+  /*RRGetInfo(pScreen, FALSE);*/
+  /*RRScanOldConfig(pScreen, RR_Rotate_0);*/
   /* FIXME: do we need this at all with the new rand/xinerama stuff? */
   nxagentRandRInitSizes(pScreen);
 
@@ -251,6 +252,12 @@ nxagentRandRCrtcSet (ScreenPtr   pScreen,
 		     int         numOutputs,
 		     RROutputPtr *outputs)
 {
+  if (crtc->gammaSize == 0) {
+    CARD16 gamma = 0;
+    RRCrtcGammaSetSize(crtc, 1);
+    RRCrtcGammaSet(crtc, &gamma, &gamma, &gamma);
+    RRCrtcGammaNotify(crtc);
+  }
   return RRCrtcNotify(crtc, mode, x, y, rotation, NULL, numOutputs, outputs);
 }
 #endif
@@ -270,23 +277,18 @@ int nxagentRandRGetInfo(ScreenPtr pScreen, Rotation *pRotations)
 static int nxagentRandRInitSizes(ScreenPtr pScreen)
 {
   RRScreenSizePtr pSize;
-
   int width;
   int height;
 
   int maxWidth;
   int maxHeight;
 
-/*
-  int w[] = {0, 160, 320, 640, 800, 1024, 1152, 1280, 1280, 1280, 1280, 1280,
-                 1280, 1360, 1440, 1600, 1600, 1680, 1920, 1920, 0, 0};
-  int h[] = {0, 120, 240, 480, 600,  768,  864,  600,  720,  800,  854,  960,
-                 1024,  768,  900,  900, 1200, 1050, 1080, 1200, 0, 0};
-*/
+  /* the second to last resolution is here to extend the maximum
+     screen size to 32767x32767 */
   int w[] = {0, 320, 640, 640, 800, 800, 1024, 1024, 1152, 1280, 1280, 1280, 1360,
-                 1440, 1600, 1600, 1680, 1920, 1920, 0, 0};
+	     1440, 1600, 1600, 1680, 1920, 1920, MAXSHORT, 0};
   int h[] = {0, 240, 360, 480, 480, 600,  600,  768,  864,  720,  800, 1024,  768,
-                  900,  900, 1200, 1050, 1080, 1200, 0, 0};
+	     900,  900, 1200, 1050, 1080, 1200, MAXSHORT, 0};
 
   int i;
   int nSizes;
@@ -310,9 +312,6 @@ static int nxagentRandRInitSizes(ScreenPtr pScreen)
 
   w[nSizes - 1] = pScreen -> width;
   h[nSizes - 1] = pScreen -> height;
-
-  w[nSizes - 2] = maxWidth;
-  h[nSizes - 2] = maxHeight;
 
   /*
    * Compute default size.
@@ -374,7 +373,7 @@ static int nxagentRandRInitSizes(ScreenPtr pScreen)
   }
 
   RRSetCurrentConfig(pScreen, RR_Rotate_0, 60, pSize);
-
+  /*  RRScreenSetSizeRange(pScreen, w[1], h[1], MAXSHORT, MAXSHORT);*/
   return 1;
 }
 

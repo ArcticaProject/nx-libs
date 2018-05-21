@@ -1877,8 +1877,8 @@ N/A
 
     if (nxagentOption(DesktopResize) == 1 || nxagentOption(Fullscreen) == 1)
     {
-      sizeHints.max_width = WidthOfScreen(DefaultScreenOfDisplay(nxagentDisplay));
-      sizeHints.max_height = HeightOfScreen(DefaultScreenOfDisplay(nxagentDisplay));
+      sizeHints.max_width = MAXSHORT;
+      sizeHints.max_height = MAXSHORT;
     }
     else
     {
@@ -2418,8 +2418,8 @@ FIXME: We should try to restore the previously
 
     if (nxagentOption(DesktopResize) == 1)
     {
-      sizeHints.max_width = WidthOfScreen(DefaultScreenOfDisplay(nxagentDisplay));
-      sizeHints.max_height = HeightOfScreen(DefaultScreenOfDisplay(nxagentDisplay));
+      sizeHints.max_width = MAXSHORT;
+      sizeHints.max_height = MAXSHORT;
     }
     else
     {
@@ -3912,6 +3912,7 @@ int nxagentChangeScreenConfig(int screen, int width, int height, int mmWidth, in
   }
 
   #ifdef DEBUG
+  nxagentPrintAgentGeometry("Current geometry", "nxagentChangeScreenConfig:");
   fprintf(stderr, "nxagentChangeScreenConfig: current geometry: %d,%d %dx%d\n", nxagentOption(X), nxagentOption(Y), nxagentOption(Width), nxagentOption(Height));
   fprintf(stderr, "nxagentChangeScreenConfig: returning [%d]\n", r);
   #endif
@@ -3928,7 +3929,7 @@ void nxagentDropOutput(RROutputPtr o) {
     for (int i = 0; i < c->numOutputs; i++) {
       if (c->outputs[i] == o) {
 #ifdef DEBUG
-	fprintf(stderr, "nxagentDropOutput: output [%s] is in use by crtc [%p], removing it from there\n", o->name, c);
+	fprintf(stderr, "nxagentDropOutput: output [%s] is in use by crtc [%p], removing it from there\n", o->name, (void *)c);
 #endif
 	RRCrtcSet(c, NULL, 0, 0, RR_Rotate_0, 0, NULL);
       }
@@ -4188,6 +4189,17 @@ int nxagentAdjustRandRXinerama(ScreenPtr pScreen)
         #endif
 
         RROutputSetConnection(pScrPriv->outputs[i], RR_Connected);
+
+	/* calculate the size in mm based on the current dpi. If
+	  nxagent is run with a different dpi than the real X server
+	  the result will look wrong but it is mathematically correct. */
+	/*	RRRegisterSize(pScreen, bbx2-bbx1, bby2-bby1,
+		       ((bbx2-bbx1) * 254 + monitorResolution * 5) / (monitorResolution * 10),
+		       ((bby2-bby1) * 254 + monitorResolution * 5) / (monitorResolution * 10));*/
+
+	RROutputSetPhysicalSize(pScrPriv->outputs[i],
+				(new_w * 254 + monitorResolution * 5) / (monitorResolution * 10),
+				(new_h * 254 + monitorResolution * 5) / (monitorResolution * 10));
 
         memset(&modeInfo, '\0', sizeof(modeInfo));
 
@@ -4577,8 +4589,8 @@ void nxagentSetWMNormalHints(int screen)
 
   if (nxagentOption(DesktopResize) == 1)
   {
-    sizeHints.max_width = WidthOfScreen(DefaultScreenOfDisplay(nxagentDisplay));
-    sizeHints.max_height = HeightOfScreen(DefaultScreenOfDisplay(nxagentDisplay));
+    sizeHints.max_width = MAXSHORT;
+    sizeHints.max_height = MAXSHORT;
   }
   else
   {
