@@ -43,7 +43,7 @@
 #include "X11/include/Xfixes_nxagent.h"
 
 /*
- * Use asyncronous get property replies.
+ * Use asynchronous get property replies.
  */
 
 #include "compext/Compext.h"

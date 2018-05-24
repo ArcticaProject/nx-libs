@@ -65,7 +65,7 @@
 /*
  * To use the deprecated, old keyboard driver, uncomment this.  But
  * even better, make the new keyboard driver (hw/xfree86/input/keyboard)
- * work for your architechture.  The old driver will be removed in the
+ * work for your architecture.  The old driver will be removed in the
  * next release.
  *
 #define UseDeprecatedKeyboardDriver YES

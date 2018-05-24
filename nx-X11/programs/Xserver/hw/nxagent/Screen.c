@@ -236,7 +236,7 @@ void nxagentSetScreenInfo(ScreenInfo *screenInfo)
    * server this stuff is done after having opened the
    * real display as Xnest lets the screen reflect the
    * order of the remote end. Agent will instead set
-   * the order according to local endianess and swap
+   * the order according to local endianness and swap
    * data whenever it is appropriate.
    *
    * From a standard implementation:
@@ -329,7 +329,7 @@ void nxagentMaximizeToFullScreen(ScreenPtr pScreen)
 /*
 FIXME: We'll check for ReparentNotify and LeaveNotify events after XReparentWindow()
        in order to avoid the session window is iconified.
-       We could avoid the sesssion window is iconified when a LeaveNotify event is received,
+       We could avoid the session window is iconified when a LeaveNotify event is received,
        so this check would be unnecessary.
 */
     struct timeval timeout;
@@ -4012,7 +4012,7 @@ int nxagentAdjustRandRXinerama(ScreenPtr pScreen)
       /*
        * Convert old RANDR 1.0 data (if any) to current structure. This
        * is needed once at the first run of this function. If we don't
-       * do this here it will be done implicitely later and add mode(s) to
+       * do this here it will be done implicitly later and add mode(s) to
        * our crtc(s)!
        */
       rrgetinfo = RRGetInfo(pScreen, FALSE);

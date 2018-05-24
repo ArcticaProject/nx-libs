@@ -3231,7 +3231,7 @@ int nxagentHandleConfigureNotify(XEvent* X)
     if ((pWin = nxagentRootlessTopLevelWindow(X -> xconfigure.window)) != NULL)
     {
       /*
-       * Cheking for new geometry or stacking order changes.
+       * Checking for new geometry or stacking order changes.
        */
 
       nxagentCheckWindowConfiguration((XConfigureEvent*)X);

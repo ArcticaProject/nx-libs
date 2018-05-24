@@ -52,7 +52,7 @@ int GenericReadBuffer::locateMessage(const unsigned char *start,
                                                      unsigned int &trailerLength)
 {
   //
-  // We don't care about the endianess
+  // We don't care about the endianness
   // in generic channels.
   //
 

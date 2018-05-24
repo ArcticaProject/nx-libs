@@ -184,7 +184,7 @@ class Proxy
   static const int TOKEN_TYPES = 3;
 
   //
-  // Lenght of buffer we use to add our
+  // Length of buffer we use to add our
   // control messages plus the length of
   // the data frame.
   //

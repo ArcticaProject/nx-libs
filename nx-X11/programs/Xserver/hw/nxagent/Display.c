@@ -589,8 +589,8 @@ FIXME: Should print a warning if the user tries to let
        the agent impersonate the same display as the
        display where the agent is supposed to connect.
        We actually handle this by means of RejectWell-
-       KnownSockets() but without giving to the user
-       a friendly explaination for the error.
+       KnownSockets() but without giving a friendly
+       explanation for the error to the user.
 */
 
   newAction.sa_handler = nxagentRejectConnection;
@@ -1280,7 +1280,7 @@ N/A
 /*
 FIXME: Use of nxagentParentWindow is strongly deprecated.
        We need also to clarify which events are selected
-       in the diferent operating modes.
+       in the different operating modes.
 */
 
   nxagentInitDefaultEventMask();

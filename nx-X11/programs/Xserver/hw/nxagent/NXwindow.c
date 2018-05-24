@@ -543,7 +543,7 @@ ConfigureWindow(register WindowPtr pWin, register Mask mask, XID *vlist, ClientP
     if (!pParent)
 	return Success;
 
-	/* Figure out if the window should be moved.  Doesnt
+	/* Figure out if the window should be moved.  Doesn't
 	   make the changes to the window if event sent */
 
     #ifdef TEST
@@ -769,7 +769,7 @@ ReparentWindow(register WindowPtr pWin, register WindowPtr pParent,
     if (pWin->prevSib)
 	pWin->prevSib->nextSib = pWin->nextSib;
 
-    /* insert at begining of pParent */
+    /* insert at beginning of pParent */
     pWin->parent = pParent;
     pPrev = RealChildHead(pParent);
 

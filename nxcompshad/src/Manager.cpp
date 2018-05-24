@@ -239,7 +239,7 @@ void UpdateManager::handleInput()
     }
     catch (UpdaterClosing u)
     {
-      logTest("UpdateManager::handleInput", "Catched exception UpdaterClosing().");
+      logTest("UpdateManager::handleInput", "Caught exception UpdaterClosing().");
 
       removeUpdater((UpdaterHandle)updaterVector[i]);
 

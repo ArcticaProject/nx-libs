@@ -103,7 +103,7 @@ extern int NXSetDisplayBuffer(
 
 /*
  * If set, the Popen() function in the X server
- * wil remove the LD_LIBRARY_PATH variable from
+ * will remove the LD_LIBRARY_PATH variable from
  * the environment before calling the execl()
  * function on the child process. The function
  * returns the previous value.
@@ -334,7 +334,7 @@ extern Status NXGetUnpackParameters(
  * shared memory blocks. A MIT-SHM compliant protocol is used
  * between proxy and the real server, while a simplified
  * version is used between the agent and the client proxy to
- * accomodate both packed images and plain X bitmaps.
+ * accommodate both packed images and plain X bitmaps.
  */
 
 extern Status NXGetShmemParameters(

@@ -212,7 +212,7 @@ INCLUDES = \
 # NXAGENT_GLYPHCACHE
 # NXAGENT_GLYPHCACHE_SIZE          Slots for glyph cache
 # NXAGENT_SHAPE2 	           New shape code
-# NXAGENT_FIXKEYS     	           Force the release of pressed key when loosing focus
+# NXAGENT_FIXKEYS     	           Force the release of pressed key when losing focus
 # NXAGENT_EXPOSURES                Manage expose events
 # NXAGENT_CLIPBOARD                Enables clipboard cut and paste function between X servers.
 # NXAGENT_FONTEXCLUDE              Exclude some specific font names (only "-ult1mo" at this moment).

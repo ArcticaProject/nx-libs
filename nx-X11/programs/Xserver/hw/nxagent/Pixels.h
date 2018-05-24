@@ -111,10 +111,9 @@ while (0)
                  nxagentCongestion > 4)
 
 /*
-FIXME: The condition checking for the render
-       version is a workaround implemented to
-       avoid problems with the render composi-
-       te on XFree86 remote server.
+FIXME: The condition checking for the render version is a workaround
+       implemented to avoid problems with the render composite on
+       XFree86 remote server.
 */
 /*
 FIXME: Changed macro: NXAGENT_SHOULD_DEFER_COMPOSITE

@@ -568,7 +568,7 @@ ProcSendEvent(ClientPtr client)
 	    return Success;
 
 	/* If the input focus is PointerRootWin, send the event to where
-	the pointer is if possible, then perhaps propogate up to root. */
+	the pointer is if possible, then perhaps propagate up to root. */
    	if (inputFocus == PointerRootWin)
 	    inputFocus = ROOT;
 

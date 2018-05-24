@@ -212,7 +212,7 @@ char *Poller::getRect(XRectangle r)
 {
   logTrace("Poller::getRect");
 
-  logDebug("Poller::getRect", "Going to retrive rectangle [%d, %d, %d, %d].",
+  logDebug("Poller::getRect", "Going to retrieve rectangle [%d, %d, %d, %d].",
               r.x, r.y, r.width, r.height);
 
   if (shmExtension_ == 1)
@@ -1144,7 +1144,7 @@ SendKeycode:
 
   //
   // Use keysyms to translate keycodes across different
-  // keyboard models. Unuseful when both keyboards have
+  // keyboard models. Useless when both keyboards have
   // same keycodes (e.g. both are pc keyboards).
   //
 

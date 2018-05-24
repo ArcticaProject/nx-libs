@@ -60,7 +60,7 @@
 #include <string.h>
 
 /*
- * Try to determine the CPU endianess
+ * Try to determine the CPU endianness
  * at compile time.
  */
 

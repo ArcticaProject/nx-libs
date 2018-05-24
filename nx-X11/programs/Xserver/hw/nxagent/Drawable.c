@@ -71,8 +71,8 @@
 /*
  * If defined, send the XClearArea at the end
  * of the loop synchronizing the shadow pixmap.
- * In this way, large images can be splitted but
- * the user will see more updates togheter.
+ * In this way, large images can be split but
+ * the user will see more updates together.
  */
 
 #undef  COLLECTED_UPDATES
@@ -643,7 +643,7 @@ int nxagentSynchronizeRegion(DrawablePtr pDrawable, RegionPtr pRegion, unsigned 
     fprintf(stderr, "nxagentSynchronizeRegion: WARNING! Failed to allocate memory for synchronization.\n");
 
     /*
-     * Print detailed informations if the
+     * Print detailed information if the
      * image length is zero.
      */
 
@@ -2645,8 +2645,8 @@ void nxagentCreateDrawableBitmap(DrawablePtr pDrawable)
 
   /*
    * Should create a function to append
-   * a bitmap to another, instead of de-
-   * stroy the old one.
+   * a bitmap to another, instead of
+   * destroying the old one.
    */
 
   if (nxagentDrawableBitmap(pDrawable) != NullPixmap)

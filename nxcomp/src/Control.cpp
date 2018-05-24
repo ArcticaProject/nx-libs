@@ -131,7 +131,7 @@
 #define SHMEM_TIMEOUT                            200
 //
 // Before closing down the proxy, wait for the
-// given amount of miliseconds to let all the
+// given amount of milliseconds to let all the
 // running applications to close down their
 // connections.
 //

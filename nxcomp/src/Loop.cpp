@@ -751,7 +751,7 @@ static char sessionDir[DEFAULT_STRING_LENGTH] = { 0 };
 
 //
 // Log files for errors and statistics. Error log is
-// the place where we print also debug informations.
+// the place where we print also debug information.
 // Both files are closed, deleted and reopened as
 // their size exceed the limit set in control class.
 // The session log is not reopened, as it is used by
@@ -3100,7 +3100,7 @@ int InitBeforeNegotiation()
   SetDescriptors();
 
   //
-  // Set local endianess.
+  // Set local endianness.
   //
 
   unsigned int test = 1;
@@ -5664,7 +5664,7 @@ void HandleSignal(int signal)
       // if (agentFD[1] != -1)
       // {
       //   cerr << "Info" << ": Received signal 'SIGPIPE'. "
-      //        << "Closing agent conection.\n";
+      //        << "Closing agent connection.\n";
       //
       //   shutdown(agentFD[1], SHUT_RDWR);
       // }
@@ -6636,7 +6636,7 @@ int ConnectToRemote(ChannelEndPoint &socketAddress)
   // Show an alert after 20 seconds and use the
   // same timeout to interrupt the connect. The
   // retry timeout is incremental, starting from
-  // 100 miliseconds up to 1 second.
+  // 100 milliseconds up to 1 second.
   //
 
   int alertTimeout   = 20000;

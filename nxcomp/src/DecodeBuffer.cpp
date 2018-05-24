@@ -476,7 +476,7 @@ const unsigned char *DecodeBuffer::decodeMemory(unsigned int numBytes)
   //
   // Force ourselves to a byte boundary.
   // Is up to application to ensure data
-  // is word alligned when needed.
+  // is word aligned when needed.
   //
 
   if (srcMask_ != 0x80)

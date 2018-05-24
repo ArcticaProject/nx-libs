@@ -47,7 +47,7 @@
 #define PUTPACKEDIMAGE_ENABLE_COMPRESS                         0
 
 //
-// We can't exceed lenght of 262144 bytes.
+// We can't exceed a length of 262144 bytes.
 //
 
 #define PUTPACKEDIMAGE_DATA_LIMIT                              262144 - 40

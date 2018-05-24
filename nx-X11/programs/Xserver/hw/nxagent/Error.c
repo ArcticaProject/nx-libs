@@ -103,7 +103,7 @@ void nxagentGetClientsPath(void);
 static int nxagentPrintError(Display *dpy, XErrorEvent *event, FILE *fp);
 
 /* declare an error handler that does not exit when an error
- * event is catched.
+ * event is caught.
  */
 
 int nxagentErrorHandler(Display *dpy, XErrorEvent *event)
