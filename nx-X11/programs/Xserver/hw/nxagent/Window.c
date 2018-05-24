@@ -869,8 +869,7 @@ void nxagentSwitchAllScreens(ScreenPtr pScreen, Bool switchOn)
       }
 
       /*
-       * This should also flush
-       * the NX link for us.
+       * This should also flush the NX link for us.
        */
 
       XSync(nxagentDisplay, 0);
@@ -953,7 +952,7 @@ void nxagentSwitchAllScreens(ScreenPtr pScreen, Bool switchOn)
         if (nxagentOption(Shadow) == 0)
         {
           nxagentChangeScreenConfig(0, WidthOfScreen(DefaultScreenOfDisplay(nxagentDisplay)),
-                                        HeightOfScreen(DefaultScreenOfDisplay(nxagentDisplay)), 0, 0);
+                                        HeightOfScreen(DefaultScreenOfDisplay(nxagentDisplay)));
         }
         else
         {
@@ -1007,7 +1006,7 @@ void nxagentSwitchAllScreens(ScreenPtr pScreen, Bool switchOn)
       if (nxagentOption(Shadow) == 0)
       {
         nxagentChangeScreenConfig(0, nxagentOption(RootWidth),
-                                      nxagentOption(RootHeight), 0, 0);
+                                      nxagentOption(RootHeight));
       }
     }
 

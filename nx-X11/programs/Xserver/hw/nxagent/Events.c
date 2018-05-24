@@ -575,8 +575,6 @@ void nxagentInternalWindowsTree(WindowPtr pWin, int indent)
 
 void nxagentSwitchResizeMode(ScreenPtr pScreen)
 {
-  XSizeHints sizeHints;
-
   #ifdef DEBUG
   fprintf(stderr, "nxagentSwitchResizeMode called.\n");
   #endif
@@ -584,8 +582,6 @@ void nxagentSwitchResizeMode(ScreenPtr pScreen)
   int desktopResize = nxagentOption(DesktopResize);
 
   nxagentChangeOption(DesktopResize, !desktopResize);
-
-  sizeHints.flags = PMaxSize;
 
   if (nxagentOption(DesktopResize) == 0)
   {
@@ -595,11 +591,9 @@ void nxagentSwitchResizeMode(ScreenPtr pScreen)
 
     if (nxagentOption(Fullscreen) == 0)
     {
-      sizeHints.max_width = nxagentOption(RootWidth);
-      sizeHints.max_height = nxagentOption(RootHeight);
-
-      XSetWMNormalHints(nxagentDisplay, nxagentDefaultWindows[pScreen->myNum],
-                            &sizeHints);
+      nxagentSetWMNormalHintsMaxsize(pScreen,
+                                     nxagentOption(RootWidth),
+                                     nxagentOption(RootHeight));
     }
   }
   else
@@ -608,31 +602,24 @@ void nxagentSwitchResizeMode(ScreenPtr pScreen)
 
     nxagentLaunchDialog(DIALOG_ENABLE_DESKTOP_RESIZE_MODE);
 
-    nxagentChangeScreenConfig(0, nxagentOption(Width), nxagentOption(Height),
-                                  0, 0);
+    nxagentChangeScreenConfig(0, nxagentOption(Width), nxagentOption(Height));
 
     if (nxagentOption(ClientOs) == ClientOsWinnt)
     {
       NXSetExposeParameters(nxagentDisplay, 0, 0, 0);
     }
 
-    sizeHints.max_width = WidthOfScreen(DefaultScreenOfDisplay(nxagentDisplay));
-    sizeHints.max_height = HeightOfScreen(DefaultScreenOfDisplay(nxagentDisplay));
-
-    XSetWMNormalHints(nxagentDisplay, nxagentDefaultWindows[pScreen->myNum],
-                          &sizeHints);
+    nxagentSetWMNormalHintsMaxsize(pScreen,
+                                   WidthOfScreen(DefaultScreenOfDisplay(nxagentDisplay)),
+                                   HeightOfScreen(DefaultScreenOfDisplay(nxagentDisplay)));
   }
 }
 
 void nxagentShadowSwitchResizeMode(ScreenPtr pScreen)
 {
-  XSizeHints sizeHints;
-
   int desktopResize = nxagentOption(DesktopResize);
 
   nxagentChangeOption(DesktopResize, !desktopResize);
-
-  sizeHints.flags = PMaxSize;
 
   if (nxagentOption(DesktopResize) == 0)
   {
@@ -641,8 +628,9 @@ void nxagentShadowSwitchResizeMode(ScreenPtr pScreen)
     nxagentShadowCreateMainWindow(screenInfo.screens[DefaultScreen(nxagentDisplay)], screenInfo.screens[0]->root,
                                       screenInfo.screens[0]->root -> drawable.width, screenInfo.screens[0]->root -> drawable.height);
 
-    sizeHints.max_width = nxagentOption(RootWidth);
-    sizeHints.max_height = nxagentOption(RootHeight);
+    nxagentSetWMNormalHintsMaxsize(pScreen,
+                                   nxagentOption(RootWidth),
+                                   nxagentOption(RootHeight));
 
     fprintf(stderr,"Info: Disabled resize mode in shadow agent.\n");
   }
@@ -657,14 +645,12 @@ void nxagentShadowSwitchResizeMode(ScreenPtr pScreen)
                                       screenInfo.screens[0]->root, screenInfo.screens[0]->root -> drawable.width,
                                           screenInfo.screens[0]->root -> drawable.height);
 
-    sizeHints.max_width = WidthOfScreen(DefaultScreenOfDisplay(nxagentDisplay));
-    sizeHints.max_height = HeightOfScreen(DefaultScreenOfDisplay(nxagentDisplay));
+    nxagentSetWMNormalHintsMaxsize(pScreen,
+                                   WidthOfScreen(DefaultScreenOfDisplay(nxagentDisplay)),
+                                   HeightOfScreen(DefaultScreenOfDisplay(nxagentDisplay)));
 
     fprintf(stderr,"Info: Enabled resize mode in shadow agent.\n");
   }
-
-  XSetWMNormalHints(nxagentDisplay, nxagentDefaultWindows[pScreen->myNum],
-                       &sizeHints);
 }
 
 static void nxagentSwitchDeferMode(void)
@@ -3248,6 +3234,7 @@ int nxagentHandleConfigureNotify(XEvent* X)
 
       pClient = wClient(pWinWindow);
 
+      /* FIXME: override_redirect is always FALSE here */
       if (X -> xconfigure.send_event || !nxagentWMIsRunning ||
                 X -> xconfigure.override_redirect)
       {
@@ -3354,13 +3341,26 @@ int nxagentHandleConfigureNotify(XEvent* X)
     {
       if (nxagentOption(AllScreens) == 0)
       {
+        /*
+         * - WITHOUT window manager any position change is relevant
+         * - WITH window manager only synthetic position changes send
+         *   by the window manager are relevant, see ICCCM Chapter 4,
+         *   "Configuring the Window"
+         */
+        Bool updatePos = (nxagentWMIsRunning == 0 || X -> xconfigure.send_event != 0);
+        int newX = X -> xconfigure.x;
+        int newY = X -> xconfigure.y;
+
         if (nxagentOption(DesktopResize) == 1)
         {
           if (nxagentOption(Width) != X -> xconfigure.width ||
                 nxagentOption(Height) != X -> xconfigure.height ||
-                nxagentOption(X) != X -> xconfigure.x ||
-                nxagentOption(Y) != X -> xconfigure.y)
+                  (updatePos && (nxagentOption(X) != newX ||
+                                   nxagentOption(Y) != newY)))
           {
+            #ifdef DEBUG
+            int count = 0;
+            #endif
             Bool newEvents = False;
 
             doRandR = True;
@@ -3377,8 +3377,7 @@ int nxagentHandleConfigureNotify(XEvent* X)
               nxagentWaitEvents(nxagentDisplay, &timeout);
 
               /*
-               * This should also flush
-               * the NX link for us.
+               * This should also flush the NX link for us.
                */
 
               XSync(nxagentDisplay, 0);
@@ -3386,17 +3385,34 @@ int nxagentHandleConfigureNotify(XEvent* X)
               while (XCheckTypedWindowEvent(nxagentDisplay, nxagentDefaultWindows[pScreen -> myNum],
                                               ConfigureNotify, X))
               {
+                #ifdef DEBUG
+                count++;
+                #endif
+
+                if (nxagentWMIsRunning == 0 || X -> xconfigure.send_event)
+                {
+                  updatePos = True;
+                  newX = X -> xconfigure.x;
+                  newY = X -> xconfigure.y;
+                }
                 newEvents = True;
               }
 
             } while (newEvents);
+
+            #ifdef DEBUG
+            fprintf(stderr, "%s: accumulated %d events\n", __func__, count);
+            #endif
           }
         }
 
-        if (nxagentWMIsRunning == 0 || X -> xconfigure.send_event)
+        if (updatePos)
         {
-          nxagentChangeOption(X, X -> xconfigure.x);
-          nxagentChangeOption(Y, X -> xconfigure.y);
+          #ifdef DEBUG
+          fprintf(stderr, "%s: Updating nxagent window position [%d,%d]\n", __func__, newX, newY);
+          #endif
+          nxagentChangeOption(X, newX);
+          nxagentChangeOption(Y, newY);
         }
 
         if (nxagentOption(Shadow) == 1 && nxagentOption(DesktopResize) == 1 &&
@@ -3464,7 +3480,7 @@ int nxagentHandleConfigureNotify(XEvent* X)
           #endif
 
           nxagentChangeScreenConfig(0, nxagentOption(Width),
-                                       nxagentOption(Height), 0, 0);
+                                       nxagentOption(Height));
         }
       }
 
@@ -3484,7 +3500,7 @@ int nxagentHandleConfigureNotify(XEvent* X)
         nxagentChangeOption(RootHeight, X -> xconfigure.height);
 
         nxagentChangeScreenConfig(0, nxagentOption(Width),
-                                     nxagentOption(Height), 0, 0);
+                                     nxagentOption(Height));
 
         return 1;
       }

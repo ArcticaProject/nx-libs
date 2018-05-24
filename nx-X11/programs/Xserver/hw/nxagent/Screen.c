@@ -376,8 +376,8 @@ Window nxagentCreateIconWindow(void)
   unsigned long valuemask;
   char* window_name;
   XTextProperty windowName;
-  XSizeHints sizeHints;
-  XWMHints wmHints;
+  XSizeHints* sizeHints;
+  XWMHints* wmHints;
   Window w;
   Mask mask;
 
@@ -416,26 +416,40 @@ Window nxagentCreateIconWindow(void)
 
   window_name = nxagentWindowName;
   XStringListToTextProperty(&window_name, 1, &windowName);
-  sizeHints.flags = PMinSize | PMaxSize;
-  sizeHints.min_width = sizeHints.max_width = 1;
-  sizeHints.min_height = sizeHints.max_height = 1;
-  wmHints.flags = IconPixmapHint | IconMaskHint;
-  wmHints.initial_state = IconicState;
-  wmHints.icon_pixmap = nxagentIconPixmap;
 
-  if (useXpmIcon)
+  if ((sizeHints = XAllocSizeHints()))
   {
-    wmHints.icon_mask = nxagentIconShape;
-    wmHints.flags = IconPixmapHint | IconMaskHint;
+    sizeHints->flags = PMinSize | PMaxSize;
+    sizeHints->min_width = sizeHints->max_width = 1;
+    sizeHints->min_height = sizeHints->max_height = 1;
   }
-  else
+
+  if ((wmHints = XAllocWMHints()))
   {
-    wmHints.flags = StateHint | IconPixmapHint;
+    wmHints->flags = IconPixmapHint | IconMaskHint;
+    wmHints->initial_state = IconicState;
+    wmHints->icon_pixmap = nxagentIconPixmap;
+
+    if (useXpmIcon)
+    {
+      wmHints->icon_mask = nxagentIconShape;
+      wmHints->flags = IconPixmapHint | IconMaskHint;
+    }
+    else
+    {
+      wmHints->flags = StateHint | IconPixmapHint;
+    }
   }
 
   XSetWMProperties(nxagentDisplay, w,
                       &windowName, &windowName,
-                          NULL , 0 , &sizeHints, &wmHints, NULL);
+                          NULL , 0 , sizeHints, wmHints, NULL);
+
+  if (sizeHints)
+    XFree(sizeHints);
+
+  if (wmHints)
+    XFree(wmHints);
 
   /*
    * Enable events from the icon window.
@@ -839,8 +853,8 @@ Bool nxagentOpenScreen(ScreenPtr pScreen,
   unsigned long valuemask;
   XSetWindowAttributes attributes;
   XWindowAttributes gattributes;
-  XSizeHints sizeHints;
-  XWMHints wmHints;
+  XSizeHints* sizeHints;
+  XWMHints* wmHints;
   Mask mask;
   Bool resetAgentPosition = False;
 
@@ -1798,20 +1812,6 @@ N/A
        * we need it to properly display all window parameters by some WMs
        * (for example on Maemo)
        */
-      if(nxagentX2go)
-      {
-        #ifdef TEST
-        fprintf(stderr, "nxagentOpenScreen: Setting WM_CLASS and WM_NAME for window with id [%ld].\n",
-                (long int)nxagentDefaultWindows[pScreen->myNum]);
-        #endif
-        XClassHint hint;
-        hint.res_name = strdup("X2GoAgent");
-        hint.res_class = strdup("X2GoAgent");
-        XSetClassHint(nxagentDisplay, nxagentDefaultWindows[pScreen->myNum], &hint);
-        free(hint.res_name);
-        free(hint.res_class);
-      }
-      else
       {
         #ifdef TEST
         fprintf(stderr, "nxagentOpenScreen: Setting WM_CLASS and WM_NAME for window with id [%ld].\n",
@@ -1819,8 +1819,17 @@ N/A
         #endif
 
         XClassHint hint;
-        hint.res_name = strdup("NXAgent");
-        hint.res_class = strdup("NXAgent");
+
+        if(nxagentX2go)
+        {
+          hint.res_name = strdup("X2GoAgent");
+          hint.res_class = strdup("X2GoAgent");
+        }
+        else
+        {
+          hint.res_name = strdup("NXAgent");
+          hint.res_class = strdup("NXAgent");
+        }
         XSetClassHint(nxagentDisplay, nxagentDefaultWindows[pScreen->myNum], &hint);
         free(hint.res_name);
         free(hint.res_class);
@@ -1855,8 +1864,8 @@ N/A
                         nxagentDefaultWindows[pScreen->myNum],
                         nxagentAtoms[8], /* NX_AGENT_SIGNATURE */
                         XA_STRING,
-                        8, 
-                        PropModeReplace, 
+                        8,
+                        PropModeReplace,
                         (unsigned char*) "X-AGENT",
                         strlen("X-AGENT"));
       }
@@ -1866,51 +1875,61 @@ N/A
       XSelectInput(nxagentDisplay, nxagentFullscreenWindow, mask);
     }
 
-    sizeHints.flags = PPosition | PMinSize | PMaxSize;
-    sizeHints.x = nxagentOption(X) + POSITION_OFFSET;
-    sizeHints.y = nxagentOption(Y) + POSITION_OFFSET;
-    sizeHints.min_width = MIN_NXAGENT_WIDTH;
-    sizeHints.min_height = MIN_NXAGENT_HEIGHT;
-
-    sizeHints.width = nxagentOption(RootWidth);
-    sizeHints.height = nxagentOption(RootHeight);
-
-    if (nxagentOption(DesktopResize) == 1 || nxagentOption(Fullscreen) == 1)
+    if ((sizeHints = XAllocSizeHints()))
     {
-      sizeHints.max_width = WidthOfScreen(DefaultScreenOfDisplay(nxagentDisplay));
-      sizeHints.max_height = HeightOfScreen(DefaultScreenOfDisplay(nxagentDisplay));
-    }
-    else
-    {
-      sizeHints.max_width = nxagentOption(RootWidth);
-      sizeHints.max_height = nxagentOption(RootHeight);
-    }
+      sizeHints->flags = PPosition | PMinSize | PMaxSize;
+      sizeHints->x = nxagentOption(X) + POSITION_OFFSET;
+      sizeHints->y = nxagentOption(Y) + POSITION_OFFSET;
+      sizeHints->min_width = MIN_NXAGENT_WIDTH;
+      sizeHints->min_height = MIN_NXAGENT_HEIGHT;
 
-    if (nxagentUserGeometry.flag & XValue || nxagentUserGeometry.flag & YValue)
-      sizeHints.flags |= USPosition;
-    if (nxagentUserGeometry.flag & WidthValue || nxagentUserGeometry.flag & HeightValue)
-      sizeHints.flags |= USSize;
+      sizeHints->width = nxagentOption(RootWidth);
+      sizeHints->height = nxagentOption(RootHeight);
 
+      if (nxagentOption(DesktopResize) == 1 || nxagentOption(Fullscreen) == 1)
+      {
+        sizeHints->max_width = WidthOfScreen(DefaultScreenOfDisplay(nxagentDisplay));
+        sizeHints->max_height = HeightOfScreen(DefaultScreenOfDisplay(nxagentDisplay));
+      }
+      else
+      {
+        sizeHints->max_width = nxagentOption(RootWidth);
+        sizeHints->max_height = nxagentOption(RootHeight);
+      }
+
+      if (nxagentUserGeometry.flag & XValue || nxagentUserGeometry.flag & YValue)
+        sizeHints->flags |= USPosition;
+      if (nxagentUserGeometry.flag & WidthValue || nxagentUserGeometry.flag & HeightValue)
+        sizeHints->flags |= USSize;
+    }
+    /* FIXME: deprecated, replaced by XSetWmProperties() */
     XSetStandardProperties(nxagentDisplay,
                            nxagentDefaultWindows[pScreen->myNum],
                            nxagentWindowName,
                            nxagentWindowName,
                            nxagentIconPixmap,
-                           argv, argc, &sizeHints);
+                           argv, argc, sizeHints);
 
-    wmHints.icon_pixmap = nxagentIconPixmap;
+    if (sizeHints)
+      XFree(sizeHints);
 
-    if (useXpmIcon)
+    if ((wmHints = XAllocWMHints()))
     {
-      wmHints.icon_mask = nxagentIconShape;
-      wmHints.flags = IconPixmapHint | IconMaskHint;
-    }
-    else
-    {
-      wmHints.flags = IconPixmapHint;
-    }
+      wmHints->icon_pixmap = nxagentIconPixmap;
 
-    XSetWMHints(nxagentDisplay, nxagentDefaultWindows[pScreen->myNum], &wmHints);
+      if (useXpmIcon)
+      {
+        wmHints->icon_mask = nxagentIconShape;
+        wmHints->flags = IconPixmapHint | IconMaskHint;
+      }
+      else
+      {
+        wmHints->flags = IconPixmapHint;
+      }
+
+      XSetWMHints(nxagentDisplay, nxagentDefaultWindows[pScreen->myNum], wmHints);
+      XFree(wmHints);
+    }
 
     /*
      * Clear the window but let it unmapped. We'll map it
@@ -1976,6 +1995,8 @@ N/A
                 deleteWMatom);
     #endif
 
+    /* FIXME: This doing the same thing in both cases. The
+       comments do not seem accurate (anymore?) */
     if (nxagentOption(Rootless) == False)
     {
       /*
@@ -2281,7 +2302,6 @@ Bool nxagentResizeScreen(ScreenPtr pScreen, int width, int height,
                              int mmWidth, int mmHeight)
 {
   BoxRec box;
-  XSizeHints sizeHints;
   PixmapPtr pPixmap;
   char *fbBits;
   
@@ -2407,37 +2427,7 @@ FIXME: We should try to restore the previously
 
   if ((nxagentOption(Fullscreen) == 0 && nxagentOption(AllScreens) == 0))
   {
-    sizeHints.flags = PPosition | PMinSize | PMaxSize;
-    sizeHints.x = nxagentOption(X);
-    sizeHints.y = nxagentOption(Y);
-
-    sizeHints.min_width = MIN_NXAGENT_WIDTH;
-    sizeHints.min_height = MIN_NXAGENT_HEIGHT;
-    sizeHints.width = width;
-    sizeHints.height = height;
-
-    if (nxagentOption(DesktopResize) == 1)
-    {
-      sizeHints.max_width = WidthOfScreen(DefaultScreenOfDisplay(nxagentDisplay));
-      sizeHints.max_height = HeightOfScreen(DefaultScreenOfDisplay(nxagentDisplay));
-    }
-    else
-    {
-      sizeHints.max_width = nxagentOption(RootWidth);
-      sizeHints.max_height = nxagentOption(RootHeight);
-    }
-
-    if (nxagentUserGeometry.flag & XValue || nxagentUserGeometry.flag & YValue)
-    {
-      sizeHints.flags |= USPosition;
-    }
-
-    if (nxagentUserGeometry.flag & WidthValue || nxagentUserGeometry.flag & HeightValue)
-    {
-      sizeHints.flags |= USSize;
-    }
-
-    XSetWMNormalHints(nxagentDisplay, nxagentDefaultWindows[pScreen->myNum], &sizeHints);
+    nxagentSetWMNormalHints(pScreen->myNum, width, height);
 
     XResizeWindow(nxagentDisplay, nxagentDefaultWindows[pScreen->myNum], width, height);
 
@@ -2476,7 +2466,7 @@ FIXME: We should try to restore the previously
   nxagentMoveViewport(pScreen, 0, 0);
 
   /*
-   * Update void * bounds.
+   * Update pointer bounds.
    */
 
   ScreenRestructured(pScreen);
@@ -2838,7 +2828,7 @@ int nxagentShadowInit(ScreenPtr pScreen, WindowPtr pWin)
   {
     nxagentShadowSetWindowsSize();
 
-    nxagentSetWMNormalHints(0);
+    nxagentSetWMNormalHints(0, nxagentOption(Width), nxagentOption(Height));
   }
 
   XMapWindow(nxagentDisplay, nxagentDefaultWindows[0]);
@@ -3839,13 +3829,13 @@ void nxagentAdjustCustomMode(ScreenPtr pScreen)
   RRScreenSizeNotify(pScreen);
 }
 
-int nxagentChangeScreenConfig(int screen, int width, int height, int mmWidth, int mmHeight)
+int nxagentChangeScreenConfig(int screen, int width, int height)
 {
   ScreenPtr    pScreen;
   int          r;
 
   #ifdef DEBUG
-  fprintf(stderr, "nxagentChangeScreenConfig: called for screen [%d], width [%d] height [%d] mmWidth [%d] mmHeight [%d]\n", screen, width, height, mmWidth, mmHeight);
+  fprintf(stderr, "nxagentChangeScreenConfig: called for screen [%d], width [%d] height [%d]\n", screen, width, height);
   #endif
 
   #ifdef TEST
@@ -3890,10 +3880,10 @@ int nxagentChangeScreenConfig(int screen, int width, int height, int mmWidth, in
   pScreen = screenInfo.screens[screen] -> root -> drawable.pScreen;
 
   #ifdef TEST
-  fprintf(stderr, "nxagentChangeScreenConfig: Changing config to %d x %d (%dmm x %dmm).\n", width, height, mmWidth, mmHeight);
+  fprintf(stderr, "nxagentChangeScreenConfig: Changing config to %d x %d\n", width, height);
   #endif
 
-  r = nxagentResizeScreen(pScreen, width, height, mmWidth, mmHeight);
+  r = nxagentResizeScreen(pScreen, width, height, 0, 0);
 
   if (r != 0)
   {
@@ -4557,51 +4547,75 @@ void nxagentRestoreAreas(PixmapPtr pPixmap, RegionPtr prgnRestore, int xorg,
   return;
 }
 
-void nxagentSetWMNormalHints(int screen)
+void nxagentSetWMNormalHints(int screen, int width, int height)
 {
-  XSizeHints sizeHints;
+  XSizeHints* sizeHints = XAllocSizeHints();
+
+  if (!sizeHints)
+    return;
 
   /*
    * Change agent window size and size hints.
    */
 
-  sizeHints.flags = PPosition | PMinSize | PMaxSize;
-  sizeHints.x = nxagentOption(X);
-  sizeHints.y = nxagentOption(Y);
+  sizeHints->flags = PPosition | PMinSize | PMaxSize;
+  sizeHints->x = nxagentOption(X);
+  sizeHints->y = nxagentOption(Y);
 
-  sizeHints.min_width = MIN_NXAGENT_WIDTH;
-  sizeHints.min_height = MIN_NXAGENT_HEIGHT;
+  sizeHints->min_width = MIN_NXAGENT_WIDTH;
+  sizeHints->min_height = MIN_NXAGENT_HEIGHT;
 
-  sizeHints.width = nxagentOption(Width);
-  sizeHints.height = nxagentOption(Height);
+  sizeHints->width = width;
+  sizeHints->height = height;
 
   if (nxagentOption(DesktopResize) == 1)
   {
-    sizeHints.max_width = WidthOfScreen(DefaultScreenOfDisplay(nxagentDisplay));
-    sizeHints.max_height = HeightOfScreen(DefaultScreenOfDisplay(nxagentDisplay));
+    sizeHints->max_width = WidthOfScreen(DefaultScreenOfDisplay(nxagentDisplay));
+    sizeHints->max_height = HeightOfScreen(DefaultScreenOfDisplay(nxagentDisplay));
   }
   else
   {
-    sizeHints.max_width = nxagentOption(RootWidth);
-    sizeHints.max_height = nxagentOption(RootHeight);
+    sizeHints->max_width = nxagentOption(RootWidth);
+    sizeHints->max_height = nxagentOption(RootHeight);
   }
 
   if (nxagentUserGeometry.flag & XValue || nxagentUserGeometry.flag & YValue)
   {
-    sizeHints.flags |= USPosition;
+    sizeHints->flags |= USPosition;
   }
 
   if (nxagentUserGeometry.flag & WidthValue || nxagentUserGeometry.flag & HeightValue)
   {
-    sizeHints.flags |= USSize;
+    sizeHints->flags |= USSize;
   }
 
-  XSetWMNormalHints(nxagentDisplay, nxagentDefaultWindows[screen], &sizeHints);
+  XSetWMNormalHints(nxagentDisplay, nxagentDefaultWindows[screen], sizeHints);
+
+  XFree(sizeHints);
+}
+
+/*
+  set maxsize in WMNormalSizeHints
+  Note: this will _drop_ all existing hints since XSetWMNormalHints()
+  replaces any existing property
+*/
+void nxagentSetWMNormalHintsMaxsize(ScreenPtr pScreen, int maxwidth, int maxheight)
+{
+  XSizeHints* sizeHints;
+
+  if ((sizeHints = XAllocSizeHints()))
+  {
+    sizeHints->flags = PMaxSize;
+    sizeHints->max_width = maxwidth;
+    sizeHints->max_height = maxheight;
+    XSetWMNormalHints(nxagentDisplay, nxagentDefaultWindows[pScreen->myNum],
+                      sizeHints);
+    XFree(sizeHints);
+  }
 }
 
 void nxagentShadowAdaptToRatio(void)
 {
-  XSizeHints sizeHints;
   ScreenPtr pScreen;
   RegionRec region;
   BoxRec box;
@@ -4613,12 +4627,9 @@ void nxagentShadowAdaptToRatio(void)
 
   nxagentShadowCreateMainWindow(pScreen, screenInfo.screens[0]->root, nxagentShadowWidth, nxagentShadowHeight);
 
-  sizeHints.max_width = WidthOfScreen(DefaultScreenOfDisplay(nxagentDisplay));
-  sizeHints.max_height = HeightOfScreen(DefaultScreenOfDisplay(nxagentDisplay));
-
-  sizeHints.flags = PMaxSize;
-
-  XSetWMNormalHints(nxagentDisplay, nxagentDefaultWindows[pScreen->myNum], &sizeHints);
+  nxagentSetWMNormalHintsMaxsize(pScreen,
+                                 WidthOfScreen(DefaultScreenOfDisplay(nxagentDisplay)),
+                                 HeightOfScreen(DefaultScreenOfDisplay(nxagentDisplay)));
 
   box.x1 = 0;
   box.y1 = 0;

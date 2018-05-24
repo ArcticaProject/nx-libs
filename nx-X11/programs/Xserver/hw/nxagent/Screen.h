@@ -48,7 +48,7 @@ is" without express or implied warranty.
 
 #define nxagentSetPrintGeometry(screen) \
     nxagentPrintGeometryFlags = (1 << (screen));
-    
+
 extern int nxagentClients;
 
 extern int nxagentAutoDisconnectTimeout;
@@ -110,7 +110,7 @@ Bool nxagentMagicPixelZone(int x, int y);
 Bool nxagentResizeScreen(ScreenPtr pScreen, int width, int height,
                              int mmWidth, int mmHeight);
 
-int nxagentChangeScreenConfig(int screen, int width, int height, int mmWidth, int mmHeight);
+int nxagentChangeScreenConfig(int screen, int width, int height);
 
 int nxagentAdjustRandRXinerama(ScreenPtr pScreen);
 
@@ -130,7 +130,9 @@ int nxagentShadowPoll(PixmapPtr, GCPtr, unsigned char, int, int, char *, int *, 
 
 void nxagentShadowSetWindowsSize(void);
 
-void nxagentSetWMNormalHints(int);
+void nxagentSetWMNormalHints(int, int, int);
+
+void nxagentSetWMNormalHintsMaxsize(ScreenPtr, int, int);
 
 void nxagentShadowSetRatio(float, float);
 
