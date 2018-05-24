@@ -19,7 +19,7 @@ export INCLUDEDIR = "/usr/include/$(DEB_HOST_MULTIARCH)"
 	                       --includedir=$(INCLUDEDIR) \
 	                       --libexecdir=$(LIBEXECDIR) \
 	                       --build=$(DEB_BUILD_GNU_TYPE) \
-	                       --host=$(DEB_HOST_GNU_TYPE)"  dh $@ --with quilt
+	                       --host=$(DEB_HOST_GNU_TYPE)"  dh $@ --no-parallel --with quilt
 
 override_dh_auto_clean:
 	rm -Rf nx-X11/.build-exports
@@ -47,11 +47,11 @@ override_dh_install:
 	dh_install --fail-missing
 
 override_dh_auto_install:
-	PREFIX=/usr dh_auto_install -Smakefile
+	PREFIX=/usr dh_auto_install --no-parallel -Smakefile
 
 override_dh_auto_build:
 	debian/compat.sh
-	PREFIX=/usr dh_auto_build --parallel -- CDEBUGFLAGS="$(CPPFLAGS) $(CFLAGS)" LOCAL_LDFLAGS="$(LDFLAGS)" SHLIBGLOBALSFLAGS='$(filter-out -pie,$(LDFLAGS))'
+	PREFIX=/usr dh_auto_build ---no-parallel -- CDEBUGFLAGS="$(CPPFLAGS) $(CFLAGS)" LOCAL_LDFLAGS="$(LDFLAGS)" SHLIBGLOBALSFLAGS='$(filter-out -pie,$(LDFLAGS))'
 
 override_dh_strip:
 	dh_strip -plibnx-x11-6 --dbg-package=libnx-x11-6-dbg
