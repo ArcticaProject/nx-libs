@@ -37,6 +37,7 @@
 #include "Trap.h"
 #include "Rootless.h"
 #include "Clipboard.h"
+#include "Utils.h"
 
 #include "gcstruct.h"
 #include "xfixeswire.h"
