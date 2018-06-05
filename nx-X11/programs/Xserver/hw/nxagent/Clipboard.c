@@ -168,15 +168,39 @@ int GetWindowProperty(WindowPtr pWin, Atom property, long longOffset, long longL
 
 Bool nxagentValidServerTargets(Atom target)
 {
-  #ifdef DEBUG
-  fprintf(stderr, "nxagentValidServerTargets: Got called.\n");
-  #endif
-
-  if (target == XA_STRING) return True;
-  if (target == serverTEXT) return True;
+  if (target == XA_STRING)
+  {
+    #ifdef DEBUG
+    fprintf(stderr, "%s: valid target [XA_STRING].\n", __func__);
+    #endif
+    return True;
+  }
+  else if (target == serverTEXT)
+  {
+    #ifdef DEBUG
+    fprintf(stderr, "%s: valid target [TEXT].\n", __func__);
+    #endif
+    return True;
+  }
   /* by dimbor */
-  if (target == serverUTF8_STRING) return True;
+  else if (target == serverUTF8_STRING)
+  {
+    #ifdef DEBUG
+    fprintf(stderr, "%s: valid target [UTF8_STRING].\n", __func__);
+    #endif
+    return True;
+  }
+  else if (target == serverTARGETS)
+  {
+    #ifdef DEBUG
+    fprintf(stderr, "%s: special target [TARGETS].\n", __func__);
+    #endif
+    return False;
+  }
 
+  #ifdef DEBUG
+  fprintf(stderr, "%s: invalid target [%ld].\n", __func__, target);
+  #endif
   return False;
 }
 
