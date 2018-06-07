@@ -157,6 +157,109 @@ void nxagentNotifyConvertFailure(ClientPtr client, Window requestor,
                                      Atom selection, Atom target, Time time);
 int nxagentSendNotify(xEvent *event);
 
+void nxagentPrintClipboardStat(char *);
+
+void nxagentPrintClipboardStat(char *header)
+{
+  #ifdef DEBUG
+  char *s =NULL;
+
+  fprintf(stderr, "/----- Clipboard internal status - %s -----\n", header);
+
+  fprintf(stderr, "  current time                    (Time) [%u]\n", GetTimeInMillis());
+  fprintf(stderr, "  agentClipboardStatus             (int) [%d]\n", agentClipboardStatus);
+  fprintf(stderr, "  clientAccum                      (int) [%d]\n", clientAccum);
+  fprintf(stderr, "  nxagentMaxSelections             (int) [%d]\n", nxagentMaxSelections);
+  fprintf(stderr, "  NumCurrentSelections             (int) [%d]\n", NumCurrentSelections);
+  fprintf(stderr, "  serverWindow                  (Window) [0x%x]\n", serverWindow);
+  fprintf(stderr, "  nxagentLastClipboardClient       (int) [%d]\n", nxagentLastClipboardClient);
+
+  fprintf(stderr, "  ClipboardMode                          ");
+  switch(nxagentOption(Clipboard))
+  {
+    case ClipboardBoth:    fprintf(stderr, "[Both]"); break;;
+    case ClipboardClient:  fprintf(stderr, "[Client]"); break;;
+    case ClipboardServer:  fprintf(stderr, "[Server]"); break;;
+    case ClipboardNone:    fprintf(stderr, "[None]"); break;;
+    default:               fprintf(stderr, "[UNKNOWN] (FAIL!)"); break;;
+  }
+  fprintf(stderr,"\n");
+
+  fprintf(stderr, "lastServer\n");
+  fprintf(stderr, "  lastServerRequestor           (Window) [0x%x]\n", lastServerRequestor);
+  if (s) XFree(s); s = XGetAtomName(nxagentDisplay, lastServerProperty);
+  fprintf(stderr, "  lastServerProperty              (Atom) [% 4d][%s]\n", lastServerProperty, s);
+  if (s) XFree(s); s = XGetAtomName(nxagentDisplay, lastServerTarget);
+  fprintf(stderr, "  lastServerTarget                (Atom) [% 4d][%s]\n", lastServerTarget, s);
+  fprintf(stderr, "  lastServerTime                  (Time) [%u]\n", lastServerTime);
+
+  fprintf(stderr, "lastClient\n");
+  fprintf(stderr, "  lastClientWindowPtr        (WindowPtr) [%p]\n", (void *)lastClientWindowPtr);
+  fprintf(stderr, "  lastClientClientPtr        (ClientPtr) [%p]\n", (void *)lastClientClientPtr);
+  fprintf(stderr, "  lastClientRequestor           (Window) [0x%x]\n", lastClientRequestor);
+  fprintf(stderr, "  lastClientProperty              (Atom) [% 4d][%s]\n", lastClientProperty, NameForAtom(lastClientProperty));
+  fprintf(stderr, "  lastClientSelection             (Atom) [% 4d][%s]\n", lastClientSelection, NameForAtom(lastClientSelection));
+  fprintf(stderr, "  lastClientTarget                (Atom) [% 4d][%s]\n", lastClientTarget, NameForAtom(lastClientTarget));
+  fprintf(stderr, "  lastClientTime                  (Time) [%u]\n", lastServerTime);
+  fprintf(stderr, "  lastClientReqTime               (Time) [%u]\n", lastServerTime);
+  fprintf(stderr, "  lastClientPropertySize (unsigned long) [%lu]\n", lastClientPropertySize);
+  fprintf(stderr, "  lastClientStage (ClientSelectionStage) [%d]", lastClientStage);
+  switch(lastClientStage)
+  {
+    case SelectionStageNone:      fprintf(stderr, "[None]"); break;;
+    case SelectionStageQuerySize: fprintf(stderr, "[QuerySize]"); break;;
+    case SelectionStageWaitSize:  fprintf(stderr, "[WaitSize]"); break;;
+    case SelectionStageQueryData: fprintf(stderr, "[QueryData]"); break;;
+    case SelectionStageWaitData:  fprintf(stderr, "[WaitData]"); break;;
+    default:                      fprintf(stderr, "[UNKNOWN] (FAIL!)"); break;;
+  }
+  fprintf(stderr,"\n");
+
+  fprintf(stderr, "PRIMARY\n");
+  fprintf(stderr, "  lastSelectionOwner[].client            [%p]\n", (void *)lastSelectionOwner[nxagentPrimarySelection].client);
+  fprintf(stderr, "  lastSelectionOwner[].window            [0x%x]\n", lastSelectionOwner[nxagentPrimarySelection].window);
+  fprintf(stderr, "  lastSelectionOwner[].windowPtr         [%p]\n", (void *)lastSelectionOwner[nxagentPrimarySelection].windowPtr);
+  fprintf(stderr, "  lastSelectionOwner[].lastTimeChanged   [%u]\n", lastSelectionOwner[nxagentPrimarySelection].lastTimeChanged);
+  fprintf(stderr, "  CurrentSelections[].client             [%p]\n", (void *)CurrentSelections[nxagentPrimarySelection].client);
+  fprintf(stderr, "  CurrentSelections[].window             [0x%x]\n", CurrentSelections[nxagentPrimarySelection].window);
+
+  fprintf(stderr, "CLIPBOARD\n");
+  fprintf(stderr, "  lastSelectionOwner[].client            [%p]\n", (void *)lastSelectionOwner[nxagentClipboardSelection].client);
+  fprintf(stderr, "  lastSelectionOwner[].window            [0x%x]\n", lastSelectionOwner[nxagentClipboardSelection].window);
+  fprintf(stderr, "  lastSelectionOwner[].windowPtr         [%p]\n", (void *)lastSelectionOwner[nxagentClipboardSelection].windowPtr);
+  fprintf(stderr, "  lastSelectionOwner[].lastTimeChanged   [%u]\n", lastSelectionOwner[nxagentClipboardSelection].lastTimeChanged);
+  fprintf(stderr, "  CurrentSelections[].client             [%p]\n", (void *)CurrentSelections[nxagentClipboardSelection].client);
+  fprintf(stderr, "  CurrentSelections[].window             [0x%x]\n", CurrentSelections[nxagentClipboardSelection].window);
+
+  fprintf(stderr, "Atoms (server side)\n");
+  if (s) XFree(s); s = XGetAtomName(nxagentDisplay, serverTARGETS);
+  fprintf(stderr, "  serverTARGETS                          [% 4d][%s]\n", serverTARGETS, validateString(s));
+  if (s) XFree(s); s = XGetAtomName(nxagentDisplay, serverTEXT);
+  fprintf(stderr, "  serverTEXT                             [% d][%s]\n", serverTEXT, s);
+  if (s) XFree(s); s = XGetAtomName(nxagentDisplay, serverUTF8_STRING);
+  fprintf(stderr, "  serverUTF8_STRING                      [% 4d][%s]\n", serverUTF8_STRING, s);
+  if (s) XFree(s); s = XGetAtomName(nxagentDisplay, serverCutProperty);
+  fprintf(stderr, "  serverCutProperty                      [% 4d][%s]\n", serverCutProperty, s);
+
+  if (s) XFree(s); s = XGetAtomName(nxagentDisplay, nxagentClipboardAtom);
+  fprintf(stderr, "  nxagentClipboardAtom                   [% 4d][%s]\n", nxagentClipboardAtom, s);
+  if (s) XFree(s); s = XGetAtomName(nxagentDisplay, nxagentTimestampAtom);
+  fprintf(stderr, "  nxagentTimestampAtom                   [% 4d][%s]\n", nxagentTimestampAtom, s);
+
+  fprintf(stderr, "Atoms (inside nxagent)\n");
+  fprintf(stderr, "  clientTARGETS                          [% 4d][%s]\n", clientTARGETS, NameForAtom(clientTARGETS));
+  fprintf(stderr, "  clientTEXT                             [% 4d][%s]\n", clientTEXT, NameForAtom(clientTEXT));
+  fprintf(stderr, "  clientCOMPOUND_TEXT                    [% 4d][%s]\n", clientCOMPOUND_TEXT, NameForAtom(clientCOMPOUND_TEXT));
+  fprintf(stderr, "  clientUTF8_STRING                      [% 4d][%s]\n", clientUTF8_STRING, NameForAtom(clientUTF8_STRING));
+  fprintf(stderr, "  clientCutProperty                      [% 4d][%s]\n", clientCutProperty, NameForAtom(clientCutProperty));
+  fprintf(stderr, "  nxagentLastRequestedSelection          [% 4d][%s]\n", nxagentLastRequestedSelection, NameForAtom(nxagentLastRequestedSelection));
+
+  fprintf(stderr, "\\------------------------------------------------------------------------------\n");
+
+  if (s) XFree(s); s = NULL;
+#endif
+}
+
 /*
  * This is from NXproperty.c.
  */
@@ -213,6 +316,8 @@ void nxagentClearClipboard(ClientPtr pClient, WindowPtr pWindow)
               (void *) pClient, (void *) pWindow);
   #endif
 
+  nxagentPrintClipboardStat("before nxagentClearClipboard");
+
   /*
    * Only for PRIMARY and CLIPBOARD selections.
    */
@@ -238,13 +343,14 @@ void nxagentClearClipboard(ClientPtr pClient, WindowPtr pWindow)
       lastServerRequestor = None;
     }
   }
- 
+
   if (pWindow == lastClientWindowPtr)
   {
     lastClientWindowPtr = NULL;
     lastClientStage = SelectionStageNone;
   }
 
+  nxagentPrintClipboardStat("after nxagentClearClipboard");
 }
 
 void nxagentClearSelection(XEvent *X)
@@ -254,6 +360,8 @@ void nxagentClearSelection(XEvent *X)
   #ifdef DEBUG
   fprintf(stderr, "nxagentClearSelection: Got called.\n");
   #endif
+
+  nxagentPrintClipboardStat("before nxagentClearSelection");
 
   if (agentClipboardStatus != 1 ||
           nxagentOption(Clipboard) == ClipboardServer)
@@ -297,6 +405,7 @@ void nxagentClearSelection(XEvent *X)
 
   lastClientWindowPtr = NULL;
   lastClientStage = SelectionStageNone;
+  nxagentPrintClipboardStat("after nxagentClearSelection");
 }
 
 void nxagentRequestSelection(XEvent *X)
@@ -305,11 +414,13 @@ void nxagentRequestSelection(XEvent *X)
   int result;
   #endif
   int i = 0;
-  XSelectionEvent eventSelection;
+  XSelectionEvent eventSelection = {0};
 
   #ifdef DEBUG
   fprintf(stderr, "nxagentRequestSelection: Got called.\n");
   #endif
+
+  nxagentPrintClipboardStat("before nxagentRequestSelection");
 
   if (agentClipboardStatus != 1)
   {
@@ -517,6 +628,7 @@ FIXME: Do we need this?
       }
     }
   }
+  nxagentPrintClipboardStat("after nxagentRequestSelection");
 }
 
 void nxagentSendSelectionNotify(Atom property)
