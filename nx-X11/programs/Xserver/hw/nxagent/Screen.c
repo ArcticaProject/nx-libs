@@ -441,8 +441,8 @@ Window nxagentCreateIconWindow(void)
     }
   }
 
-  XSetWMProperties(nxagentDisplay, w,
-                      &windowName, &windowName,
+  Xutf8SetWMProperties(nxagentDisplay, w,
+                      window_name, window_name,
                           NULL , 0 , sizeHints, wmHints, NULL);
 
   if (sizeHints)
@@ -866,6 +866,9 @@ Bool nxagentOpenScreen(ScreenPtr pScreen,
   int sizeInBytes;
 
   int defaultVisualIndex = 0;
+
+  XTextProperty  xtpWmName;
+  char* wmName = nxagentWindowName;
 
   #ifdef TEST
   fprintf(stderr, "nxagentOpenScreen: Called for screen index [%d].\n",
@@ -1909,6 +1912,9 @@ N/A
                            nxagentWindowName,
                            nxagentIconPixmap,
                            argv, argc, sizeHints);
+
+    if (Xutf8TextListToTextProperty(nxagentDisplay, &wmName, 1, XCompoundTextStyle, &xtpWmName) >= Success)
+       XSetWMName(nxagentDisplay, nxagentDefaultWindows[pScreen->myNum], &xtpWmName);
 
     if (sizeHints)
       XFree(sizeHints);
