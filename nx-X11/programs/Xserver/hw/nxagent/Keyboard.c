@@ -1105,15 +1105,7 @@ XkbError:
         if (xkb == NULL || xkb->geom == NULL)
         {
           #ifdef TEST
-          fprintf(stderr, "nxagentKeyboardProc: No current keyboard.\n");
-          if (xkb == NULL)
-          {
-            fprintf(stderr, "nxagentKeyboardProc: xkb is null.\n");
-          }
-          else
-          {
-            fprintf(stderr, "nxagentKeyboardProc: xkb->geom is null.\n");
-          }
+          fprintf(stderr, "%s: No current keyboard: xkb%s is null.\n", __func__, xkb ? "->geom" : "");
           fprintf(stderr, "nxagentKeyboardProc: Going to set rules and init device.\n");
           #endif
           #ifdef DEBUG
