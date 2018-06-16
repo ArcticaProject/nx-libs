@@ -70,7 +70,7 @@ xmakefile:
 	else \
 	    exit 0; \
 	fi
-	which $(IMAKE) 1>/dev/null && $(IMAKE_CMD) -s xmakefile -DTOPDIR=$(TOP) -DCURDIR=$(CURRENT_DIR)
+	which $(IMAKE) 1>/dev/null && $(IMAKE_CMD) $(MFLAGS) -s xmakefile -DTOPDIR=$(TOP) -DCURDIR=$(CURRENT_DIR)
 
 # don't allow any default rules in this Makefile
 .SUFFIXES:
