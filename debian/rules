@@ -47,11 +47,13 @@ override_dh_install:
 	dh_install --fail-missing
 
 override_dh_auto_install:
-	PREFIX=/usr dh_auto_install --no-parallel -Smakefile
+	PREFIX='/usr' dh_auto_install --no-parallel -Smakefile || \
+	PREFIX='/usr' dh_auto_install -Smakefile
 
 override_dh_auto_build:
 	debian/compat.sh
-	PREFIX=/usr dh_auto_build --no-parallel -- CDEBUGFLAGS="$(CPPFLAGS) $(CFLAGS)" LOCAL_LDFLAGS="$(LDFLAGS)" SHLIBGLOBALSFLAGS='$(filter-out -pie,$(LDFLAGS))'
+	PREFIX='/usr' dh_auto_build --no-parallel -- CDEBUGFLAGS="$(CPPFLAGS) $(CFLAGS)" LOCAL_LDFLAGS="$(LDFLAGS)" SHLIBGLOBALSFLAGS='$(filter-out -pie,$(LDFLAGS))' || \
+	PREFIX='/usr' dh_auto_build -- CDEBUGFLAGS="$(CPPFLAGS) $(CFLAGS)" LOCAL_LDFLAGS="$(LDFLAGS)" SHLIBGLOBALSFLAGS='$(filter-out -pie,$(LDFLAGS))'
 
 override_dh_strip:
 	dh_strip -plibnx-x11-6 --dbg-package=libnx-x11-6-dbg
