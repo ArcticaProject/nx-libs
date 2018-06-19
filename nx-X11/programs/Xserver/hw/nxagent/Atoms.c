@@ -678,18 +678,31 @@ Atom nxagentLocalToRemoteAtom(Atom local)
   const char    *string;
   Atom    remote;
 
+  #ifdef TEST
+  fprintf(stderr, "%s: entering\n", __func__);
+  #endif
+
   if (!ValidAtom(local))
   {
+    #ifdef DEBUG
+    fprintf(stderr, "%s: local [%d] is no valid - returning None\n", __func__, remote);
+    #endif
     return None;
   }
 
   if (local <= XA_LAST_PREDEFINED)
   {
+    #ifdef DEBUG
+    fprintf(stderr, "%s: local [%d] is < XA_LAST_PREDEFINED [%d]\n", __func__, local, XA_LAST_PREDEFINED);
+    #endif
     return local;
   }
 
   if ((current = nxagentFindAtomByLocalValue(local)))
   {
+    #ifdef TEST
+    fprintf(stderr, "%s: local [%d] -> remote [%d]\n", __func__, local, current->remote);
+    #endif
     return current->remote;
   }
 
@@ -708,6 +721,10 @@ Atom nxagentLocalToRemoteAtom(Atom local)
 
   nxagentWriteAtom(local, remote, string, True);
 
+  #ifdef TEST
+  fprintf(stderr, "%s: local [%d] -> remote [%d (%s)]\n", __func__, local, remote, string);
+  #endif
+
   return remote;
 }
 
@@ -719,11 +736,17 @@ Atom nxagentRemoteToLocalAtom(Atom remote)
 
   if (remote == None || remote == BAD_RESOURCE)
   {
+    #ifdef DEBUG
+    fprintf(stderr, "%s: remote [%d] is None or BAD_RESOURCE\n", __func__, remote);
+    #endif
     return None;
   }
 
   if (remote <= XA_LAST_PREDEFINED)
   {
+    #ifdef DEBUG
+    fprintf(stderr, "%s: remote [%d] is <= XA_LAST_PREDEFINED [%d]\n", __func__, remote, XA_LAST_PREDEFINED);
+    #endif
     return remote;
   }
 
@@ -747,6 +770,9 @@ Atom nxagentRemoteToLocalAtom(Atom remote)
       }
     }
 
+    #ifdef DEBUG
+    fprintf(stderr, "%s: remote [%d] -> local [%d]\n", __func__, remote, current->local);
+    #endif
     return current->local;
   }
 
@@ -765,6 +791,9 @@ Atom nxagentRemoteToLocalAtom(Atom remote)
 
     nxagentWriteAtom(local, remote, string, True);
 
+    #ifdef TEST
+    fprintf(stderr, "%s: remote [%d (%s)] -> local [%d]\n", __func__, remote, string, local);
+    #endif
     XFree(string);
 
     return local;
