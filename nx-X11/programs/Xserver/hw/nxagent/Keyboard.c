@@ -997,7 +997,7 @@ XkbError:
           goto XkbError;
         }
 
-        xkb = XkbGetKeyboard(nxagentDisplay, XkbGBN_AllComponentsMask, XkbUseCoreKbd);
+        xkb = XkbGetKeyboard(nxagentDisplay, XkbAllComponentsMask, XkbUseCoreKbd);
 
         nxagentKeycodeConversionSetup();
 
