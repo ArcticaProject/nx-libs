@@ -690,7 +690,7 @@ ListFonts(ClientPtr client, unsigned char *pattern, unsigned length,
     if (length > XLFDMAXFONTNAMELEN)
 	return BadAlloc;
 
-    if (!(c = (LFclosurePtr) malloc(sizeof *c)))
+    if (!(c = (LFclosurePtr) calloc(1, sizeof *c)))
 	return BadAlloc;
     c->fpe_list = (FontPathElementPtr *)
 	malloc(sizeof(FontPathElementPtr) * num_fpes);
