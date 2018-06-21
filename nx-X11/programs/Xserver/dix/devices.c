@@ -1156,17 +1156,20 @@ ProcGetKeyboardMapping(ClientPtr client)
 int
 ProcGetPointerMapping(ClientPtr client)
 {
+    int nElts;
     xGetPointerMappingReply rep = {0};
 
     ButtonClassPtr butc = inputInfo.pointer->button;
 
+    nElts = (butc) ? butc->numButtons : 0;
     REQUEST_SIZE_MATCH(xReq);
     rep.type = X_Reply;
+    rep.nElts = nElts;
     rep.sequenceNumber = client->sequence;
-    rep.nElts = butc->numButtons;
-    rep.length = ((unsigned)rep.nElts + (4-1))/4;
+    rep.length = ((unsigned)nElts + (4-1))/4;
     WriteReplyToClient(client, sizeof(xGetPointerMappingReply), &rep);
-    WriteToClient(client, (int)rep.nElts, &butc->map[1]);
+    if (butc)
+        WriteToClient(client, nElts, &butc->map[1]);
     return Success;
 }
 
