@@ -704,7 +704,7 @@ int nxagentKeyboardProc(DeviceIntPtr pDev, int onoff)
   int mapWidth;
   int min_keycode, max_keycode;
   KeySymsRec keySyms;
-  CARD8 modmap[256];
+  CARD8 modmap[MAP_LENGTH];
   int i, j;
   XKeyboardState values;
   char *model = NULL, *layout = NULL;
@@ -765,7 +765,7 @@ N/A
 #ifdef _XSERVER64
       {
         KeySym64 *keymap64;
-        int i, len;
+        int len;
         keymap64 = XGetKeyboardMapping(nxagentDisplay,
                                      min_keycode,
                                      max_keycode - min_keycode + 1,
@@ -807,8 +807,7 @@ N/A
       nxagentCapsMask = 0;
       nxagentNumlockMask = 0;
 
-      for (i = 0; i < 256; i++)
-        modmap[i] = 0;
+      memset(modmap, 0, sizeof(modmap));
       for (j = 0; j < 8; j++)
         for(i = 0; i < modifier_keymap->max_keypermod; i++) {
           CARD8 keycode;
@@ -823,6 +822,7 @@ N/A
           }
         }
       XFreeModifiermap(modifier_keymap);
+      modifier_keymap = NULL;
 
       nxagentCheckRemoteKeycodes();
 
