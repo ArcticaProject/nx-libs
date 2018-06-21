@@ -361,7 +361,7 @@ doListFontsAndAliases(ClientPtr client, LFclosurePtr c)
     int		nnames;
     int         stringLens;
     int         i;
-    xListFontsReply reply;
+    xListFontsReply reply = {0};
     char	*bufptr;
     char	*bufferStart;
     int		aliascount = 0;
@@ -602,13 +602,12 @@ finish:
     for (i = 0; i < nnames; i++)
 	stringLens += (names->length[i] <= 255) ? names->length[i] : 0;
 
-    memset(&reply, 0, sizeof(xListFontsReply));
     reply.type = X_Reply;
     reply.length = (stringLens + nnames + 3) >> 2;
     reply.nFonts = nnames;
     reply.sequenceNumber = client->sequence;
 
-    bufptr = bufferStart = (char *) malloc(reply.length << 2);
+    bufptr = bufferStart = (char *) calloc(1, reply.length << 2);
 
     if (!bufptr && reply.length) {
 	SendErrorToClient(client, X_ListFonts, 0, 0, BadAlloc);
@@ -744,7 +743,7 @@ doListFontsWithInfo(ClientPtr client, LFWIclosurePtr c)
     xFontProp  *pFP;
     int         i;
     int		aliascount = 0;
-    xListFontsWithInfoReply finalReply;
+    xListFontsWithInfoReply finalReply = {0};
 
     if (client->clientGone)
     {
@@ -967,7 +966,6 @@ doListFontsWithInfo(ClientPtr client, LFWIclosurePtr c)
     }
 finish:
     length = sizeof(xListFontsWithInfoReply);
-    bzero((char *) &finalReply, sizeof(xListFontsWithInfoReply));
     finalReply.type = X_Reply;
     finalReply.sequenceNumber = client->sequence;
     finalReply.length = (sizeof(xListFontsWithInfoReply)
