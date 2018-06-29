@@ -996,7 +996,6 @@ _XkbFilterSwitchScreen(	XkbSrvInfoPtr	xkbi,
     return 1;
 }
 
-#ifdef XFree86Server
 static int
 _XkbFilterXF86Private(	XkbSrvInfoPtr	xkbi,
 			XkbFilterPtr	filter,
@@ -1018,7 +1017,6 @@ _XkbFilterXF86Private(	XkbSrvInfoPtr	xkbi,
     }
     return 1;
 }
-#endif
 
 #ifdef XINPUT
 
@@ -1248,12 +1246,10 @@ xkbDeviceInfoPtr xkbPrivPtr = XKBDEVICEINFO(dev);
 		    sendEvent= _XkbFilterDeviceBtn(xkbi,filter,key,&act);
 		    break;
 #endif
-#ifdef XFree86Server
 		case XkbSA_XFree86Private:
 		    filter = _XkbNextFreeFilter();
 		    sendEvent= _XkbFilterXF86Private(xkbi,filter,key,&act);
 		    break;
-#endif
 	    }
 	}
     }

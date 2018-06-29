@@ -47,13 +47,6 @@ static	int	XkbKeyboardErrorCode;
 CARD32	xkbDebugFlags = 0;
 static	CARD32	xkbDebugCtrls = 0;
 
-
-#ifndef XKB_SRV_UNSUPPORTED_XI_FEATURES
-#define	XKB_SRV_UNSUPPORTED_XI_FEATURES	XkbXI_KeyboardsMask
-#endif
-
-unsigned XkbXIUnsupported= XKB_SRV_UNSUPPORTED_XI_FEATURES;
-
 static RESTYPE	RT_XKBCLIENT;
 
 /***====================================================================***/
@@ -167,11 +160,6 @@ ProcXkbUseExtension(ClientPtr client)
 		    (stuff->wantedMajor==0)&&(stuff->wantedMinor==65));
     }
     else supported = 1;
-
-#ifdef XKB_SWAPPING_BUSTED
-    if (client->swapped)
-	supported= 0;
-#endif
 
     if ((supported) && (!(client->xkbClientFlags&_XkbClientInitialized))) {
 	client->xkbClientFlags= _XkbClientInitialized;
@@ -2891,7 +2879,6 @@ ProcXkbGetNamedIndicator(ClientPtr client)
     register int		i = 0;
     XkbSrvLedInfoPtr		sli;
     XkbIndicatorMapPtr		map = NULL;
-    Bool			supported;
 
     REQUEST(xkbGetNamedIndicatorReq);
     REQUEST_SIZE_MATCH(xkbGetNamedIndicatorReq);
@@ -2906,25 +2893,15 @@ ProcXkbGetNamedIndicator(ClientPtr client)
     if (!sli)
 	return BadAlloc;
 
-    supported= True;
-    if (XkbXIUnsupported&XkbXI_IndicatorsMask) {
-	if ((dev!=(DeviceIntPtr)LookupKeyboardDevice())||
-					((sli->flags&XkbSLI_IsDefault)==0)) {
-	    supported= False;
-	}
-    }
-
-    if (supported) {
-	i= 0;
-	map= NULL;
-	if ((sli->names)&&(sli->maps)) {
-	    for (i=0;i<XkbNumIndicators;i++) {
-		if (stuff->indicator==sli->names[i]) {
-		    map= &sli->maps[i];
-		    break;
-		}
-	    }
-	}
+    i= 0;
+    map= NULL;
+    if ((sli->names)&&(sli->maps)) {
+        for (i=0;i<XkbNumIndicators;i++) {
+            if (stuff->indicator==sli->names[i]) {
+                map= &sli->maps[i];
+                break;
+            }
+        }
     }
 
     rep.type= X_Reply;
@@ -2932,7 +2909,7 @@ ProcXkbGetNamedIndicator(ClientPtr client)
     rep.sequenceNumber = client->sequence;
     rep.deviceID = dev->id;
     rep.indicator= stuff->indicator;
-    if ((map!=NULL)&&(supported)) {
+    if (map!=NULL) {
 	rep.found= 		True;
 	rep.on=			((sli->effectiveState&(1<<i))!=0);
 	rep.realIndicator=	((sli->physIndicators&(1<<i))!=0);
@@ -2960,7 +2937,7 @@ ProcXkbGetNamedIndicator(ClientPtr client)
 	rep.realMods= 		0;
 	rep.virtualMods= 	0;
 	rep.ctrls= 		0;
-	rep.supported= 		supported;
+	rep.supported= 		True;
     }
     if ( client->swapped ) {
 	swapl(&rep.length);
@@ -2971,21 +2948,6 @@ ProcXkbGetNamedIndicator(ClientPtr client)
     }
 
     WriteToClient(client,SIZEOF(xkbGetNamedIndicatorReply), &rep);
-    if (!supported) {
-	xkbExtensionDeviceNotify        edev;
-
-	bzero(&edev,sizeof(xkbExtensionDeviceNotify));
-	edev.reason=            XkbXI_UnsupportedFeatureMask;
-	edev.ledClass=          stuff->ledClass;
-	edev.ledID=             stuff->ledID;
-	edev.ledsDefined=       sli->namesPresent|sli->mapsPresent;
-	edev.ledState=          sli->effectiveState;
-	edev.firstBtn=          0;
-	edev.nBtns=             0;
-	edev.unsupported=       XkbXIUnsupported&XkbXI_IndicatorsMask;
-	edev.supported=         XkbXI_AllFeaturesMask&(~XkbXIUnsupported);
-	XkbSendExtensionDeviceNotify(dev,client,&edev);
-    }
     return client->noClientException;
 }
 
@@ -3020,24 +2982,6 @@ ProcXkbSetNamedIndicator(ClientPtr client)
     if (!sli)
 	return BadAlloc;
 
-    if (XkbXIUnsupported&XkbXI_IndicatorsMask) {
-	if ((dev!=(DeviceIntPtr)LookupKeyboardDevice())||
-					((sli->flags&XkbSLI_IsDefault)==0)) {
-	    bzero(&ed,sizeof(xkbExtensionDeviceNotify));
-	    ed.reason=            XkbXI_UnsupportedFeatureMask;
-	    ed.ledClass=          stuff->ledClass;
-	    ed.ledID=             stuff->ledID;
-	    ed.ledsDefined=       sli->namesPresent|sli->mapsPresent;
-	    ed.ledState=          sli->effectiveState;
-	    ed.firstBtn=          0;
-	    ed.nBtns=             0;
-	    ed.unsupported=       XkbXIUnsupported&XkbXI_IndicatorsMask;
-	    ed.supported=         XkbXI_AllFeaturesMask&(~XkbXIUnsupported);
-	    XkbSendExtensionDeviceNotify(dev,client,&ed);
-	    return client->noClientException;
-	}
-    }
-
     statec= mapc= namec= 0;
     map= NULL;
     if (sli->names && sli->maps) {
@@ -3052,7 +2996,8 @@ ProcXkbSetNamedIndicator(ClientPtr client)
 	if (!stuff->createMap)
 	    return client->noClientException;
 	for (led=0,map=NULL;(led<XkbNumIndicators)&&(map==NULL);led++) {
-	    if ((sli->names[led]==None)&&(!XkbIM_InUse(&sli->maps[led]))) {
+	    if ((sli->names)&&(sli->maps)&&(sli->names[led]==None)&&
+                (!XkbIM_InUse(&sli->maps[led]))) {
 		map= &sli->maps[led];
 		sli->names[led]= stuff->indicator;
 		break;
@@ -3261,118 +3206,121 @@ char *			desc;
     start = desc = (char *)malloc(length);
     if ( !start )
 	return BadAlloc;
-    if (which&XkbKeycodesNameMask) {
-	*((CARD32 *)desc)= xkb->names->keycodes;
-	if (client->swapped) {
+    if (xkb->names) {
+        if (which&XkbKeycodesNameMask) {
+            *((CARD32 *)desc)= xkb->names->keycodes;
+            if (client->swapped) {
 	    swapl((int *)desc);
-	}
-	desc+= 4;
-    }
-    if (which&XkbGeometryNameMask)  {
-	*((CARD32 *)desc)= xkb->names->geometry;
-	if (client->swapped) {
+            }
+            desc+= 4;
+        }
+        if (which&XkbGeometryNameMask)  {
+            *((CARD32 *)desc)= xkb->names->geometry;
+            if (client->swapped) {
 	    swapl((int *)desc);
-	}
-	desc+= 4;
-    }
-    if (which&XkbSymbolsNameMask) {
-	*((CARD32 *)desc)= xkb->names->symbols;
-	if (client->swapped) {
+            }
+            desc+= 4;
+        }
+        if (which&XkbSymbolsNameMask) {
+            *((CARD32 *)desc)= xkb->names->symbols;
+            if (client->swapped) {
 	    swapl((int *)desc);
-	}
-	desc+= 4;
-    }
-    if (which&XkbPhysSymbolsNameMask) {
-	register CARD32 *atm= (CARD32 *)desc;
-	atm[0]= (CARD32)xkb->names->phys_symbols;
-	if (client->swapped) {
+            }
+            desc+= 4;
+        }
+        if (which&XkbPhysSymbolsNameMask) {
+            register CARD32 *atm= (CARD32 *)desc;
+            atm[0]= (CARD32)xkb->names->phys_symbols;
+            if (client->swapped) {
 	    swapl(&atm[0]);
-	}
-	desc+= 4;
-    }
-    if (which&XkbTypesNameMask) {
-	*((CARD32 *)desc)= (CARD32)xkb->names->types;
-	if (client->swapped) {
+            }
+            desc+= 4;
+        }
+        if (which&XkbTypesNameMask) {
+            *((CARD32 *)desc)= (CARD32)xkb->names->types;
+            if (client->swapped) {
 	    swapl((int *)desc);
-	}
-	desc+= 4;
-    }
-    if (which&XkbCompatNameMask) {
-	*((CARD32 *)desc)= (CARD32)xkb->names->compat;
-	if (client->swapped) {
+            }
+            desc+= 4;
+        }
+        if (which&XkbCompatNameMask) {
+            *((CARD32 *)desc)= (CARD32)xkb->names->compat;
+            if (client->swapped) {
 	    swapl((int *)desc);
-	}
-	desc+= 4;
-    }
-    if (which&XkbKeyTypeNamesMask) {
-	register CARD32 *atm= (CARD32 *)desc;
-	register XkbKeyTypePtr type= xkb->map->types;
+            }
+            desc+= 4;
+        }
+        if (which&XkbKeyTypeNamesMask) {
+            register CARD32 *atm= (CARD32 *)desc;
+            register XkbKeyTypePtr type= xkb->map->types;
 
-	for (i=0;i<xkb->map->num_types;i++,atm++,type++) {
-	    *atm= (CARD32)type->name;
-	    if (client->swapped) {
+            for (i=0;i<xkb->map->num_types;i++,atm++,type++) {
+                *atm= (CARD32)type->name;
+                if (client->swapped) {
 		swapl(atm);
-	    }
-	}
-	desc= (char *)atm;
-    }
-    if (which&XkbKTLevelNamesMask) {
-	XkbKeyTypePtr type = xkb->map->types;
-	register CARD32 *atm;
-	for (i=0;i<rep->nTypes;i++,type++) {
-	    *desc++ = type->num_levels;
-	}
-	desc+= XkbPaddedSize(rep->nTypes)-rep->nTypes;
+                }
+            }
+            desc= (char *)atm;
+        }
+        if (which&XkbKTLevelNamesMask && xkb->map) {
+            XkbKeyTypePtr type = xkb->map->types;
+            register CARD32 *atm;
+            for (i=0;i<rep->nTypes;i++,type++) {
+                *desc++ = type->num_levels;
+            }
+            desc+= XkbPaddedSize(rep->nTypes)-rep->nTypes;
 
-	atm= (CARD32 *)desc;
-	type = xkb->map->types;
-	for (i=0;i<xkb->map->num_types;i++,type++) {
-	    register unsigned l;
-	    if (type->level_names) {
-		for (l=0;l<type->num_levels;l++,atm++) {
-		    *atm= type->level_names[l];
-		    if (client->swapped) {
+            atm= (CARD32 *)desc;
+            type = xkb->map->types;
+            for (i=0;i<xkb->map->num_types;i++,type++) {
+                register unsigned l;
+                if (type->level_names) {
+                    for (l=0;l<type->num_levels;l++,atm++) {
+                        *atm= type->level_names[l];
+                        if (client->swapped) {
 			swapl(atm);
-		    }
-		}
-		desc+= type->num_levels*4;
-	    }
-	}
-    }
-    if (which&XkbIndicatorNamesMask) {
-	desc= _XkbWriteAtoms(desc,xkb->names->indicators,XkbNumIndicators,
-							 client->swapped);
-    }
-    if (which&XkbVirtualModNamesMask) {
-	desc= _XkbWriteAtoms(desc,xkb->names->vmods,XkbNumVirtualMods,
-							client->swapped);
-    }
-    if (which&XkbGroupNamesMask) {
-	desc= _XkbWriteAtoms(desc,xkb->names->groups,XkbNumKbdGroups,
-							client->swapped);
-    }
-    if (which&XkbKeyNamesMask) {
-	for (i=0;i<rep->nKeys;i++,desc+= sizeof(XkbKeyNameRec)) {
-	    *((XkbKeyNamePtr)desc)= xkb->names->keys[i+rep->firstKey];
-	}
-    }
-    if (which&XkbKeyAliasesMask) {
-	XkbKeyAliasPtr	pAl;
-	pAl= xkb->names->key_aliases;
-	for (i=0;i<rep->nKeyAliases;i++,pAl++,desc+=2*XkbKeyNameLength) {
-	    *((XkbKeyAliasPtr)desc)= *pAl;
-	}
-    }
-    if ((which&XkbRGNamesMask)&&(rep->nRadioGroups>0)) {
-	register CARD32	*atm= (CARD32 *)desc;
-	for (i=0;i<rep->nRadioGroups;i++,atm++) {
-	    *atm= (CARD32)xkb->names->radio_groups[i];
-	    if (client->swapped) {
+                        }
+                    }
+                    desc+= type->num_levels*4;
+                }
+            }
+        }
+        if (which&XkbIndicatorNamesMask) {
+            desc= _XkbWriteAtoms(desc,xkb->names->indicators,XkbNumIndicators,
+                                 client->swapped);
+        }
+        if (which&XkbVirtualModNamesMask) {
+            desc= _XkbWriteAtoms(desc,xkb->names->vmods,XkbNumVirtualMods,
+                                 client->swapped);
+        }
+        if (which&XkbGroupNamesMask) {
+            desc= _XkbWriteAtoms(desc,xkb->names->groups,XkbNumKbdGroups,
+                                 client->swapped);
+        }
+        if (which&XkbKeyNamesMask) {
+            for (i=0;i<rep->nKeys;i++,desc+= sizeof(XkbKeyNameRec)) {
+                *((XkbKeyNamePtr)desc)= xkb->names->keys[i+rep->firstKey];
+            }
+        }
+        if (which&XkbKeyAliasesMask) {
+            XkbKeyAliasPtr	pAl;
+            pAl= xkb->names->key_aliases;
+            for (i=0;i<rep->nKeyAliases;i++,pAl++,desc+=2*XkbKeyNameLength) {
+                *((XkbKeyAliasPtr)desc)= *pAl;
+            }
+        }
+        if ((which&XkbRGNamesMask)&&(rep->nRadioGroups>0)) {
+            register CARD32	*atm= (CARD32 *)desc;
+            for (i=0;i<rep->nRadioGroups;i++,atm++) {
+                *atm= (CARD32)xkb->names->radio_groups[i];
+                if (client->swapped) {
 		swapl(atm);
-	    }
-	}
-	desc+= rep->nRadioGroups*4;
+                }
+            }
+            desc+= rep->nRadioGroups*4;
+        }
     }
+
     if ((desc-start)!=(length)) {
 	ErrorF("BOGUS LENGTH in write names, expected %d, got %ld\n",
 					length, (unsigned long)(desc-start));
@@ -4722,7 +4670,7 @@ char *		wire;
 	if (XkbAddGeomProperty(geom,name,val)==NULL) {
             free(name);
             free(val);
-	    return BadAlloc;
+            return BadAlloc;
         }
         free(name);
         free(val);
@@ -5610,7 +5558,7 @@ char *			str;
 	wanted&= ~XkbXI_ButtonActionsMask;
     if ((!dev->kbdfeed)&&(!dev->leds))
 	wanted&= ~XkbXI_IndicatorsMask;
-    wanted&= ~XkbXIUnsupported;
+    wanted&= ~XkbXI_KeyboardsMask;
 
     nameLen= XkbSizeCountedString(dev->name);
     rep.type = X_Reply;
@@ -5618,8 +5566,8 @@ char *			str;
     rep.sequenceNumber = client->sequence;
     rep.length = nameLen/4;
     rep.present = wanted;
-    rep.supported = XkbXI_AllDeviceFeaturesMask&(~XkbXIUnsupported);
-    rep.unsupported = XkbXIUnsupported;
+    rep.supported = XkbXI_AllDeviceFeaturesMask&(~XkbXI_KeyboardsMask);
+    rep.unsupported = XkbXI_KeyboardsMask;
     rep.firstBtnWanted = rep.nBtnsWanted = 0;
     rep.firstBtnRtrn = rep.nBtnsRtrn = 0;
     if (dev->button)

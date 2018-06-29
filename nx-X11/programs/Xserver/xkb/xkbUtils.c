@@ -711,11 +711,11 @@ unsigned char	grp;
 
     grp= state->locked_group;
     if (grp>=ctrls->num_groups)
-	state->locked_group= XkbAdjustGroup(grp,ctrls);
+	state->locked_group= XkbAdjustGroup(XkbCharToInt(grp),ctrls);
 
     grp= state->locked_group+state->base_group+state->latched_group;
     if (grp>=ctrls->num_groups)
-	 state->group= XkbAdjustGroup(grp,ctrls);
+	 state->group= XkbAdjustGroup(XkbCharToInt(grp),ctrls);
     else state->group= grp;
     XkbComputeCompatState(xkbi);
     return;

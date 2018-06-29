@@ -164,8 +164,6 @@ char	tmpname[PATH_MAX];
 	if ((list->pattern[what][0]=='*')&&(list->pattern[what][1]=='\0')) {
 	    buf = Xprintf("%s/%s.dir",XkbBaseDirectory,componentDirs[what]);
 	    in= fopen(buf,"r");
-	    free (buf);
-	    buf = NULL;
 	}
 	if (!in) {
 	    haveDir= False;
@@ -181,8 +179,6 @@ char	tmpname[PATH_MAX];
 	if ((list->pattern[what][0]=='*')&&(list->pattern[what][1]=='\0')) {
 	    buf = Xprintf("%s.dir",componentDirs[what]);
 	    in= fopen(buf,"r");
-	    free (buf);
-	    buf = NULL;
 	}
 	if (!in) {
 	    haveDir= False;
@@ -219,6 +215,13 @@ char	tmpname[PATH_MAX];
 	return BadImplementation;
     }
     list->nFound[what]= 0;
+    if (buf) {
+        free(buf);
+        buf = NULL;
+    }
+    buf = malloc(PATH_MAX * sizeof(char));
+    if (!buf)
+        return BadAlloc;
     while ((status==Success)&&((tmp=fgets(buf,PATH_MAX,in))!=NULL)) {
 	unsigned flags;
 	register unsigned int i;
@@ -263,7 +266,7 @@ char	tmpname[PATH_MAX];
 #ifndef WIN32
     if (haveDir)
 	fclose(in);
-    else if ((rval=pclose(in))!=0) {
+    else if ((rval=Pclose(in))!=0) {
 	if (xkbDebugFlags)
 	    ErrorF("xkbcomp returned exit code %d\n",rval);
     }

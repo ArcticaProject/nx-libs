@@ -38,6 +38,7 @@ THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #include <xkbsrv.h>
 #include <nx-X11/extensions/XI.h>
 
+
 /*#define FALLING_TONE	1*/
 /*#define RISING_TONE	1*/
 #define FALLING_TONE	10

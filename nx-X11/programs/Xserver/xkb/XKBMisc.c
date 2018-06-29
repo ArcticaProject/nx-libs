@@ -366,8 +366,11 @@ unsigned		changed,tmp;
 	unsigned int	new_vmodmask;
 	changed|= XkbKeyActionsMask;
 	pActs= XkbResizeKeyActions(xkb,key,nSyms);
-	if (!pActs)
+	if (!pActs) {
+            if (nSyms > IBUF_SIZE)
+                free(interps);
 	    return False;
+        }
 	new_vmodmask= 0;
 	for (n=0;n<nSyms;n++) {
 	    if (interps[n]) {
@@ -470,7 +473,7 @@ register int	i;
 int		width,nOldGroups,oldWidth,newTypes[XkbNumKbdGroups];
 
     if ((!xkb) || (!XkbKeycodeInRange(xkb,key)) || (!xkb->map) ||
-	(!xkb->map->types)||((groups&XkbAllGroupsMask)==0)||
+	(!xkb->map->types)||(!newTypesIn)||((groups&XkbAllGroupsMask)==0)||
 	(nGroups>XkbNumKbdGroups)) {
 	return BadMatch;
     }

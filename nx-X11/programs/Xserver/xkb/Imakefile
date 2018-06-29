@@ -26,13 +26,13 @@ XKB_DDXDEFS = XkbServerDefines
 	    ddxList.o ddxDevBtn.o ddxPrivate.o
      SRCS = xkb.c xkbUtils.c xkbEvents.c xkbAccessX.c xkbSwap.c \
             xkbLEDs.c xkbInit.c xkbActions.c xkbPrKeyEv.c \
-	    xkmread.c xkbfmisc.c xkberrs.c maprules.c \
-	    XKBMisc.c XKBMAlloc.c XKBAlloc.c XKBGAlloc.c \
+	    xkmread.c xkbtext.c xkbfmisc.c xkberrs.c maprules.c \
+	    XKBMisc.c XKBMAlloc.c XKBAlloc.c XKBGAlloc.c xkbout.c \
 	    $(XKBXI_SRCS) $(DDX_SRCS)
      OBJS = xkb.o xkbUtils.o xkbEvents.o xkbAccessX.o xkbSwap.o \
             xkbLEDs.o xkbInit.o xkbActions.o xkbPrKeyEv.o \
-	    xkmread.o xkbfmisc.o xkberrs.o maprules.o \
-	    XKBMisc.o XKBMAlloc.o XKBAlloc.o XKBGAlloc.o \
+	    xkmread.o xkbtext.o xkbfmisc.o xkberrs.o maprules.o \
+	    XKBMisc.o XKBMAlloc.o XKBAlloc.o XKBGAlloc.o xkbout.o \
 	    $(XKBXI_OBJS) $(DDX_OBJS)
    INCLUDES = -I../include -I$(XINCLUDESRC) -I$(EXTINCSRC) -I$(SERVERSRC)/Xext \
 	      -I$(SERVERSRC)/mi $(XF86INCLUDES) \
