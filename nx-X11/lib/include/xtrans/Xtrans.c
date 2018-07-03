@@ -1004,7 +1004,6 @@ TRANS(GetPeerAddr) (XtransConnInfo ciptr, int *familyp, int *addrlenp,
         return -1;
     }
     memcpy(*addrp, ciptr->peeraddr, ciptr->peeraddrlen);
-    free(addrp);
     return 0;
 }
 
