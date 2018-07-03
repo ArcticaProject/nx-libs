@@ -9,11 +9,24 @@ matrix:
       addons:
         apt:
           sources:
+            - sourceline: 'deb http://archive.ubuntu.com/ubuntu trusty-backports main restricted universe multiverse'
             - ubuntu-toolchain-r-test
           packages:
-            - g++-4.9
+            - cppcheck/trusty-backports
+            # imake
+            - xutils-dev
+            # X11 libaries
+            - libxcomposite-dev
+            - libxfont-dev
+            - libxinerama-dev
+            - libxrandr-dev
+            - libxtst-dev
+            - x11proto-fonts-dev
+
       env:
-         - MATRIX_EVAL="CC=gcc-4.9 && CXX=g++-4.9"
+        - MATRIX_EVAL="CC=gcc && CXX=g++"
+        - STATIC_ANALYSIS="yes"
+      fail_fast: true
 
     - os: linux
       addons:
@@ -21,9 +34,20 @@ matrix:
           sources:
             - ubuntu-toolchain-r-test
           packages:
-            - g++-7
+            - g++-8
+            # imake
+            - xutils-dev
+            # X11 libaries
+            - libxcomposite-dev
+            - libxfont-dev
+            - libxinerama-dev
+            - libxrandr-dev
+            - libxtst-dev
+            - x11proto-fonts-dev
+
       env:
-        - MATRIX_EVAL="CC=gcc-7 && CXX=g++-7"
+        - MATRIX_EVAL="CC=gcc-8 && CXX=g++-8"
+        - STATIC_ANALYSIS="no"
 
     - os: linux
       addons:
@@ -32,25 +56,47 @@ matrix:
             - llvm-toolchain-trusty-3.9
           packages:
             - clang-3.9
+            # imake
+            - xutils-dev
+            # X11 libaries
+            - libxcomposite-dev
+            - libxfont-dev
+            - libxinerama-dev
+            - libxrandr-dev
+            - libxtst-dev
+            - x11proto-fonts-dev
+
       env:
         - MATRIX_EVAL="CC=clang-3.9 && CXX=clang++-3.9"
+        - STATIC_ANALYSIS="no"
 
     - os: linux
       addons:
         apt:
           sources:
-            - llvm-toolchain-trusty-5.0
+            - llvm-toolchain-trusty-6.0
+            - ubuntu-toolchain-r-test
           packages:
-            - clang-5.0
+            - clang-6.0
+            - g++-4.9
+            # imake
+            - xutils-dev
+            # X11 libaries
+            - libxcomposite-dev
+            - libxfont-dev
+            - libxinerama-dev
+            - libxrandr-dev
+            - libxtst-dev
+            - x11proto-fonts-dev
+
       env:
-        - MATRIX_EVAL="CC=clang-5.0 && CXX=clang++-5.0"
+        - MATRIX_EVAL="CC=clang-6.0 && CXX=clang++-6.0"
+        - STATIC_ANALYSIS="no"
 
 before_install:
-  - sudo apt-get update -qq
-  # imake
-  - sudo apt-get install -y xutils-dev
-  # X11 libaries
-  - sudo apt-get install -y libxcomposite-dev libxfont-dev libxinerama-dev libxrandr-dev libxtst-dev x11proto-fonts-dev
-  - eval "${MATRIX_EVAL}"
+   - eval "${MATRIX_EVAL}"
 script:
-  - make
+   # run static analysis tools
+   - ./run-static-analysis.sh
+   # build all packages
+   - make

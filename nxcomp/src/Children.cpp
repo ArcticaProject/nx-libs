@@ -1038,6 +1038,7 @@ int UnsetEnv(const char *name)
   }
 
   result = 0;
+  delete[] varName;
 
   #else
 

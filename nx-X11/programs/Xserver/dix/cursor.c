@@ -371,6 +371,7 @@ AllocGlyphCursor(Font source, unsigned sourceChar, Font mask, unsigned maskChar,
 	    if (!pShare)
 	    {
 		FreeCursorBits(bits);
+		free(pCurs);
 		return BadAlloc;
 	    }
 	    pShare->font = sourcefont;

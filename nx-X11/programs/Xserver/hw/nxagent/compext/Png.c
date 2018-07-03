@@ -283,6 +283,7 @@ char *PngCompressData(XImage *image, int *compressed_size)
                 bitsPerPixel);
     #endif
 
+    free(image_index);
     return NULL;
   }
 
@@ -315,6 +316,7 @@ char *PngCompressData(XImage *image, int *compressed_size)
     fprintf(stderr, "******PngCompressData: PANIC! Failed creating the png_create_write_struct.\n");
     #endif
 
+    free(image_index);
     return NULL;
   }
 
@@ -327,7 +329,7 @@ char *PngCompressData(XImage *image, int *compressed_size)
     #endif
 
     png_destroy_write_struct(&png_ptr, NULL);
-
+    free(image_index);
     return NULL;
   }
 
@@ -339,6 +341,7 @@ char *PngCompressData(XImage *image, int *compressed_size)
 
     png_destroy_write_struct(&png_ptr, &info_ptr);
 
+    free(image_index);
     return NULL;
   }
 
@@ -360,6 +363,7 @@ char *PngCompressData(XImage *image, int *compressed_size)
                 PNG_DEST_SIZE(w, h));
     #endif
 
+    free(image_index);
     return NULL;
   }
 
@@ -374,7 +378,6 @@ char *PngCompressData(XImage *image, int *compressed_size)
     png_destroy_write_struct(&png_ptr, &info_ptr);
 
     free(pngCompBuf);
-
     return NULL;
   }
 
@@ -470,7 +473,7 @@ char *PngCompressData(XImage *image, int *compressed_size)
     png_destroy_write_struct(&png_ptr, &info_ptr);
 
     free(pngCompBuf);
-
+    free(image_index);
     return NULL;
   }
 
@@ -484,7 +487,7 @@ char *PngCompressData(XImage *image, int *compressed_size)
       fprintf(stderr, "******PngCompressData: PANIC! Cannot allocate [%d] bytes.\n",
                   (int) (w * sizeof(CARD8)));
       #endif
-
+      free(image_index);
       return NULL;
     }
 
@@ -516,7 +519,7 @@ char *PngCompressData(XImage *image, int *compressed_size)
     #endif
 
     free(pngCompBuf);
-
+    free(image_index);
     return NULL;
   }
 
