@@ -240,6 +240,11 @@ SyncInitServerTime(
     void
 );
 
+static void
+SyncInitIdleTime(
+    void
+);
+
 static void 
 SyncResetProc(
     ExtensionEntry * /* extEntry */
@@ -2365,6 +2370,7 @@ SyncExtensionInit(void)
      * because there is always a servertime counter.
      */
     SyncInitServerTime();
+    SyncInitIdleTime();
 
 #ifdef DEBUG
     fprintf(stderr, "Sync Extension %d.%d\n",
@@ -2484,4 +2490,157 @@ SyncInitServerTime()
 			    XSyncCounterNeverDecreases,
 			    ServertimeQueryValue, ServertimeBracketValues);
     pnext_time = NULL;
+}
+
+
+/*
+ * IDLETIME implementation
+ */
+
+static SyncCounter *IdleTimeCounter;
+static XSyncValue *pIdleTimeValueLess;
+static XSyncValue *pIdleTimeValueGreater;
+
+static void
+IdleTimeQueryValue (pointer pCounter, CARD64 *pValue_return)
+{
+    CARD32 idle = GetTimeInMillis() - lastDeviceEventTime.milliseconds;
+    XSyncIntsToValue (pValue_return, idle, 0);
+}
+
+static void
+IdleTimeBlockHandler (pointer env, struct timeval **wt, pointer LastSelectMask)
+{
+    XSyncValue idle, old_idle;
+    SyncTriggerList *list = IdleTimeCounter->pTriglist;
+    SyncTrigger *trig;
+
+    if (!pIdleTimeValueLess && !pIdleTimeValueGreater)
+	return;
+
+    old_idle = IdleTimeCounter->value;
+    IdleTimeQueryValue (NULL, &idle);
+    IdleTimeCounter->value = idle; /* push, so CheckTrigger works */
+
+    if (pIdleTimeValueLess &&
+        XSyncValueLessOrEqual (idle, *pIdleTimeValueLess))
+    {
+       /*
+	* We've been idle for less than the threshold value, and someone
+	* wants to know about that, but now we need to know whether they
+	* want level or edge trigger.  Check the trigger list against the
+	* current idle time, and if any succeed, bomb out of select()
+	* immediately so we can reschedule.
+	*/
+
+	for (list = IdleTimeCounter->pTriglist; list; list = list->next) {
+	    trig = list->pTrigger;
+	    if (trig->CheckTrigger(trig, old_idle)) {
+		AdjustWaitForDelay(wt, 0);
+		break;
+	    }
+	}
+
+       /*
+	* We've been called exactly on the idle time, but we have a
+	* NegativeTransition trigger which requires a transition from an
+	* idle time greater than this.  Schedule a wakeup for the next
+	* millisecond so we won't miss a transition.
+	*/
+	if (XSyncValueEqual (idle, *pIdleTimeValueLess))
+	    AdjustWaitForDelay(wt, 1);
+    }
+    else if (pIdleTimeValueGreater)
+    {
+       /*
+	* There's a threshold in the positive direction.  If we've been
+	* idle less than it, schedule a wakeup for sometime in the future.
+	* If we've been idle more than it, and someone wants to know about
+	* that level-triggered, schedule an immediate wakeup.
+	*/
+	unsigned long timeout = -1;
+
+	if (XSyncValueLessThan (idle, *pIdleTimeValueGreater)) {
+	    XSyncValue value;
+	    Bool overflow;
+
+	    XSyncValueSubtract (&value, *pIdleTimeValueGreater,
+	                        idle, &overflow);
+	    timeout = min(timeout, XSyncValueLow32 (value));
+	} else {
+	   for (list = IdleTimeCounter->pTriglist; list; list = list->next) {
+		trig = list->pTrigger;
+		if (trig->CheckTrigger(trig, old_idle)) {
+		    timeout = min(timeout, 0);
+		    break;
+		}
+	   }
+	}
+
+	AdjustWaitForDelay (wt, timeout);
+    }
+
+    IdleTimeCounter->value = old_idle; /* pop */
+}
+
+static void
+IdleTimeWakeupHandler (pointer env,
+                       int rc,
+                       pointer LastSelectMask)
+{
+    XSyncValue idle;
+
+    if (!pIdleTimeValueLess && !pIdleTimeValueGreater)
+	return;
+
+    IdleTimeQueryValue (NULL, &idle);
+
+    if ((pIdleTimeValueGreater &&
+         XSyncValueGreaterOrEqual (idle, *pIdleTimeValueGreater)) ||
+        (pIdleTimeValueLess &&
+        XSyncValueLessOrEqual (idle, *pIdleTimeValueLess)))
+    {
+	SyncChangeCounter (IdleTimeCounter, idle);
+    }
+}
+
+static void
+IdleTimeBracketValues (pointer pCounter,
+                       CARD64 *pbracket_less,
+                       CARD64 *pbracket_greater)
+{
+    Bool registered = (pIdleTimeValueLess || pIdleTimeValueGreater);
+
+    if (registered && !pbracket_less && !pbracket_greater)
+    {
+	RemoveBlockAndWakeupHandlers(IdleTimeBlockHandler,
+	                             IdleTimeWakeupHandler,
+	                             NULL);
+    }
+    else if (!registered && (pbracket_less || pbracket_greater))
+    {
+	RegisterBlockAndWakeupHandlers(IdleTimeBlockHandler,
+	                               IdleTimeWakeupHandler,
+	                               NULL);
+    }
+
+    pIdleTimeValueGreater = pbracket_greater;
+    pIdleTimeValueLess    = pbracket_less;
+}
+
+static void
+SyncInitIdleTime (void)
+{
+    CARD64 resolution;
+    XSyncValue idle;
+
+    IdleTimeQueryValue (NULL, &idle);
+    XSyncIntToValue (&resolution, 4);
+
+    IdleTimeCounter = SyncCreateSystemCounter ("IDLETIME", idle, resolution,
+                                               XSyncCounterUnrestricted,
+                                               IdleTimeQueryValue,
+                                               IdleTimeBracketValues);
+
+    pIdleTimeValueLess = pIdleTimeValueGreater = NULL;
 }
