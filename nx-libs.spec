@@ -592,7 +592,6 @@ rm %{buildroot}%{_libdir}/*.la
 %defattr(-,root,root)
 %dir %{_sysconfdir}/nxagent
 %config(noreplace) %{_sysconfdir}/nxagent/keystrokes.cfg
-%config(noreplace) %{_sysconfdir}/nxagent/nxagent.keyboard
 %doc doc/nxagent/README.keystrokes
 %{_bindir}/nxagent
 # FIXME: compatibility symlink to BINDIR/nxagent, remove for 3.6.0

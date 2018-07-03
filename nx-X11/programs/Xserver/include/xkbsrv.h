@@ -30,15 +30,11 @@ THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #define XkbAllocClientMap		SrvXkbAllocClientMap
 #define XkbAllocServerMap		SrvXkbAllocServerMap
 #define XkbChangeTypesOfKey		SrvXkbChangeTypesOfKey
-#define	XkbAddKeyType			SrvXkbAddKeyType
-#define XkbCopyKeyType			SrvXkbCopyKeyType
 #define XkbCopyKeyTypes			SrvXkbCopyKeyTypes
 #define XkbFreeClientMap		SrvXkbFreeClientMap
 #define XkbFreeServerMap		SrvXkbFreeServerMap
-#define XkbInitCanonicalKeyTypes	SrvXkbInitCanonicalKeyTypes
 #define	XkbKeyTypesForCoreSymbols	SrvXkbKeyTypesForCoreSymbols
 #define	XkbApplyCompatMapToKey		SrvXkbApplyCompatMapToKey
-#define	XkbUpdateMapFromCore		SrvXkbUpdateMapFromCore
 #define XkbResizeKeyActions		SrvXkbResizeKeyActions
 #define XkbResizeKeySyms		SrvXkbResizeKeySyms
 #define XkbResizeKeyType		SrvXkbResizeKeyType
@@ -48,21 +44,13 @@ THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #define XkbAllocKeyboard		SrvXkbAllocKeyboard
 #define XkbAllocNames			SrvXkbAllocNames
 #define XkbFreeCompatMap		SrvXkbFreeCompatMap
-#define XkbFreeControls			SrvXkbFreeControls
-#define XkbFreeIndicatorMaps		SrvXkbFreeIndicatorMaps
 #define XkbFreeKeyboard			SrvXkbFreeKeyboard
 #define XkbFreeNames			SrvXkbFreeNames
-#define	XkbAddDeviceLedInfo		SrvXkbAddDeviceLedInfo
-#define	XkbAllocDeviceInfo		SrvXkbAllocDeviceInfo
-#define	XkbFreeDeviceInfo		SrvXkbFreeDeviceInfo
-#define	XkbResizeDeviceButtonActions	SrvXkbResizeDeviceButtonActions
 #define XkbLatchModifiers		SrvXkbLatchModifiers
 #define XkbLatchGroup			SrvXkbLatchGroup
 #define XkbVirtualModsToReal		SrvXkbVirtualModsToReal
 #define	XkbChangeKeycodeRange		SrvXkbChangeKeycodeRange
 #define	XkbApplyVirtualModChanges	SrvXkbApplyVirtualModChanges
-#define	XkbUpdateActionVirtualMods	SrvXkbUpdateActionVirtualMods
-#define XkbUpdateKeyTypeVirtualMods	SrvXkbUpdateKeyTypeVirtualMods
 
 #include <nx-X11/extensions/XKBproto.h>
 #include "xkbstr.h"
@@ -276,23 +264,17 @@ typedef struct
 
 extern int	XkbReqCode;
 extern int	XkbEventBase;
-extern int	XkbKeyboardErrorCode;
 extern int	XkbDisableLockActions;
 extern char *	XkbBaseDirectory;
 extern char *	XkbBinDirectory;
 extern char *	XkbInitialMap;
-extern int	_XkbClientMajor;
-extern int	_XkbClientMinor;
 extern unsigned	int XkbXIUnsupported;
 
-extern char *	XkbModelUsed,*XkbLayoutUsed,*XkbVariantUsed,*XkbOptionsUsed;
 extern Bool	noXkbExtension;
-extern Bool	XkbWantRulesProp;
 
 extern void *	XkbLastRepeatEvent;
 
 extern CARD32	xkbDebugFlags;
-extern CARD32	xkbDebugCtrls;
 
 
 #define	_XkbAlloc(s)		malloc((s))
@@ -448,11 +430,6 @@ extern	Status XkbAllocNames(
 extern	Status	XkbAllocControls(
 	XkbDescPtr		/* xkb */,
 	unsigned int		/* which*/
-);
-
-extern	Status	XkbCopyKeyType(
-    XkbKeyTypePtr		/* from */,
-    XkbKeyTypePtr		/* into */
 );
 
 extern	Status	XkbCopyKeyTypes(
@@ -622,25 +599,11 @@ extern void XkbApplyLedStateChanges(
     XkbEventCausePtr		/* cause */
 );
 
-extern void XkbUpdateLedAutoState(
-    DeviceIntPtr		/* dev */,
-    XkbSrvLedInfoPtr		/* sli */,
-    unsigned int		/* maps_to_check */,
-    xkbExtensionDeviceNotify *	/* ed */,
-    XkbChangesPtr		/* changes */,
-    XkbEventCausePtr		/* cause */
-);
-
 extern void XkbFlushLedEvents(	
     DeviceIntPtr		/* dev */,
     DeviceIntPtr		/* kbd */,
     XkbSrvLedInfoPtr		/* sli */,
     xkbExtensionDeviceNotify *	/* ed */,
-    XkbChangesPtr		/* changes */,
-    XkbEventCausePtr		/* cause */
-);
-
-extern void XkbUpdateAllDeviceIndicators(
     XkbChangesPtr		/* changes */,
     XkbEventCausePtr		/* cause */
 );
@@ -699,12 +662,6 @@ extern	void XkbSendControlsNotify(
 extern	void XkbSendCompatMapNotify(
 	DeviceIntPtr		/* kbd */,
 	xkbCompatMapNotify *	/* ev */
-);
-
-extern	void XkbSendIndicatorNotify(
-       DeviceIntPtr		/* kbd */,
-       int			/* xkbType */,
-       xkbIndicatorNotify *	/* ev */
 );
 
 extern	void XkbHandleBell(
@@ -877,11 +834,6 @@ extern void XkbDDXChangeControls(
 	DeviceIntPtr	/* dev */,
 	XkbControlsPtr 	/* old */,
 	XkbControlsPtr 	/* new */
-);
-
-extern void XkbDDXUpdateIndicators(
-	DeviceIntPtr	/* keybd */,
-	CARD32		/* newState */
 );
 
 extern void XkbDDXUpdateDeviceIndicators(
@@ -1057,31 +1009,8 @@ extern Bool XkbUpdateMapFromCore(
 	XkbChangesPtr		/* changes */
 );
 
-extern void XkbFreeControls(
-	XkbDescPtr		/* xkb */,
-	unsigned int		/* which */,
-	Bool			/* freeMap */
-);
-
-extern void XkbFreeIndicatorMaps(
-	XkbDescPtr		/* xkb */
-);
-
 extern Bool XkbApplyVirtualModChanges(
 	XkbDescPtr		/* xkb */,
-	unsigned int		/* changed */,
-	XkbChangesPtr		/* changes */
-);
-
-extern Bool XkbUpdateActionVirtualMods(
-	XkbDescPtr		/* xkb */,
-	XkbAction *		/* act */,
-	unsigned int		/* changed */
-);
-
-extern void XkbUpdateKeyTypeVirtualMods(
-	XkbDescPtr		/* xkb */,
-	XkbKeyTypePtr		/* type */,
 	unsigned int		/* changed */,
 	XkbChangesPtr		/* changes */
 );
@@ -1116,16 +1045,6 @@ typedef struct _XkbSrvListInfo {
 	int		nFound[_XkbListNumComponents];
 } XkbSrvListInfoRec,*XkbSrvListInfoPtr;
 
-char *
-XkbGetRulesDflts(
-	XkbRF_VarDefsPtr	/* defs */
-);
-
-extern void	XkbSetRulesUsed(
-	XkbRF_VarDefsPtr	/* defs */
-);
-
-
 extern	Status	XkbDDXList(
 	DeviceIntPtr		/* dev */,
 	XkbSrvListInfoPtr	/* listing */,
@@ -1149,11 +1068,6 @@ extern	Bool XkbDDXNamesFromRules(
 	XkbComponentNamesPtr	/* names */
 );
 
-extern	FILE *XkbDDXOpenConfigFile(
-	char *	/* mapName */,
-	char *	/* fileNameRtrn */,
-	int	/* fileNameRtrnLen */
-);
 
 extern	Bool XkbDDXApplyConfig(
 	XPointer	/* cfg_in */,

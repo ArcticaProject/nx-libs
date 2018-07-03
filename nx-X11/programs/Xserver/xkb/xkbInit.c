@@ -115,8 +115,7 @@ typedef struct	_SrvXkmInfo {
 
 char	*		XkbBaseDirectory=	XKB_BASE_DIRECTORY;
 char	*		XkbBinDirectory=	XKB_BIN_DIRECTORY;
-char	*		XkbInitialMap=		NULL;
-int	 		XkbWantAccessX=		0;	
+static int 		XkbWantAccessX=		0;
 static XkbFileInfo *	_XkbInitFileInfo=	NULL;
 
 static Bool		rulesDefined=		False;
@@ -126,20 +125,17 @@ static char *		XkbLayoutDflt=		NULL;
 static char *		XkbVariantDflt=		NULL;
 static char *		XkbOptionsDflt=		NULL;
 
-char *			XkbModelUsed=	NULL;
-char *			XkbLayoutUsed=	NULL;
-char *			XkbVariantUsed=	NULL;
-char *			XkbOptionsUsed=	NULL;
+static char *		XkbModelUsed=		NULL;
+static char *		XkbLayoutUsed=		NULL;
+static char *		XkbVariantUsed=		NULL;
+static char *		XkbOptionsUsed=		NULL;
 
-int			_XkbClientMajor=	XkbMajorVersion;
-int			_XkbClientMinor=	XkbMinorVersion;
-
-Bool		noXkbExtension=		XKB_DFLT_DISABLED;
-Bool			XkbWantRulesProp=	XKB_DFLT_RULES_PROP;
+Bool			noXkbExtension=		XKB_DFLT_DISABLED;
+static Bool		XkbWantRulesProp=	XKB_DFLT_RULES_PROP;
 
 /***====================================================================***/
 
-char *
+static char *
 XkbGetRulesDflts(XkbRF_VarDefsPtr defs)
 {
     if (XkbModelDflt)	defs->model= XkbModelDflt;
@@ -153,7 +149,7 @@ XkbGetRulesDflts(XkbRF_VarDefsPtr defs)
     return (rulesDefined?XkbRulesFile:XKB_DFLT_RULES_FILE);
 }
 
-Bool
+static Bool
 XkbWriteRulesProp(ClientPtr client, void * closure)
 {
 int 			len,out;
@@ -222,7 +218,7 @@ char *			pval;
     return True;
 }
 
-void
+static void
 XkbSetRulesUsed(XkbRF_VarDefsPtr defs)
 {
     if (XkbModelUsed)
@@ -300,9 +296,6 @@ XkbSetRulesDflts(char *rulesFile,char *model,char *layout,
 #endif
 
 #include "xkbDflts.h"
-
-/* A dummy to keep the compiler quiet */
-void * xkbBogus = &indicators;
 
 static Bool
 XkbInitKeyTypes(XkbDescPtr xkb,SrvXkmInfo *file)
@@ -503,35 +496,6 @@ XkbEventCauseRec	cause;
     file.file=NULL;
     bzero(&file.xkbinfo,sizeof(XkbFileInfo));
     bzero(&changes,sizeof(XkbChangesRec));
-    if (XkbInitialMap!=NULL) {
-	if ((file.file=XkbDDXOpenConfigFile(XkbInitialMap,NULL,0))!=NULL) {
-	    XkmReadFile(file.file,0,XkmKeymapLegal,&file.xkbinfo);
-	    if (file.xkbinfo.xkb==NULL) {
-		LogMessage(X_ERROR,
-				"Error loading keymap file %s (%s in %s)\n"
-				"\treverting to defaults\n",
-				XkbInitialMap, _XkbErrMessages[_XkbErrCode],
-				(_XkbErrLocation?_XkbErrLocation:"unknown"));
-		fclose(file.file);
-		file.file= NULL;
-		bzero(&file.xkbinfo,sizeof(XkbFileInfo));
-	    }
-	    else {
-		if (_XkbInitFileInfo!=NULL) {
-		    XkbDescPtr	tmp;
-		    if ((tmp=_XkbInitFileInfo->xkb)!=NULL) {
-			XkbFreeKeyboard(tmp,XkbAllComponentsMask,True);
-			_XkbInitFileInfo->xkb= NULL;
-		    }
-		}
-		_XkbInitFileInfo= &file.xkbinfo;
-	    }
-	}
-	else {
-	    LogMessage(X_ERROR, "Error opening keymap file %s, reverting to defaults\n",
-	    	    XkbInitialMap);
-	}
-    }
     pXDev->key->xkbInfo= xkbi= _XkbTypedCalloc(1,XkbSrvInfoRec);
     if ( xkbi ) {
 	XkbDescPtr	xkb;
@@ -914,20 +878,6 @@ XkbProcessArguments(int argc,char *argv[],int i)
 	    return -1;
 	}
     }
-    else if (strncmp(argv[i], "-xkbmap", 7) == 0) {
-	if(++i < argc) {
-	    if (strlen(argv[i]) < PATH_MAX) {
-		XkbInitialMap= argv[i];
-		return 2;
-	    } else {
-		LogMessage(X_ERROR, "-xkbmap pathname too long\n");
-		return -1;
-	    }
-	}
-	else {
-	    return -1;
-	}
-    }
     else if ((strncmp(argv[i],"-accessx",8)==0)||
                  (strncmp(argv[i],"+accessx",8)==0)) {
 	int j=1;	    
@@ -990,5 +940,4 @@ XkbUseMsg(void)
     ErrorF("                       enable/disable accessx key sequences\n");
     ErrorF("-ardelay               set XKB autorepeat delay\n");
     ErrorF("-arinterval            set XKB autorepeat interval\n");
-    ErrorF("-xkbmap                XKB keyboard description to load on startup\n");
 }
