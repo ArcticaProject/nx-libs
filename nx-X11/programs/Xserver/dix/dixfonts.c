@@ -741,7 +741,7 @@ doListFontsAndAliases(ClientPtr client, LFclosurePtr c)
 		    return TRUE;
 		}
 		if (err == FontNameAlias) {
-		    if (resolved) free(resolved);
+		    free(resolved);
 		    resolved = (char *) malloc(resolvedlen + 1);
 		    if (resolved)
 			memmove(resolved, tmpname, resolvedlen + 1);
@@ -807,8 +807,7 @@ doListFontsAndAliases(ClientPtr client, LFclosurePtr c)
 		{
 		    c->saved = c->current;
 		    c->haveSaved = TRUE;
-		    if (c->savedName)
-			free(c->savedName);
+		    free(c->savedName);
 		    c->savedName = (char *)malloc(namelen + 1);
 		    if (c->savedName)
 			memmove(c->savedName, name, namelen + 1);
@@ -904,14 +903,14 @@ bail:
     for (i = 0; i < c->num_fpes; i++)
 	FreeFPE(c->fpe_list[i]);
     free(c->fpe_list);
-    if (c->savedName) free(c->savedName);
+    free(c->savedName);
 #ifdef HAS_XFONT2
     xfont2_free_font_names(names);
 #else
     FreeFontNames(names);
 #endif /* HAS_XFONT2 */
     free(c);
-    if (resolved) free(resolved);
+    free(resolved);
     return TRUE;
 }
 
@@ -931,7 +930,7 @@ ListFonts(ClientPtr client, unsigned char *pattern, unsigned length,
     if (length > XLFDMAXFONTNAMELEN)
 	return BadAlloc;
 
-    if (!(c = (LFclosurePtr) malloc(sizeof *c)))
+    if (!(c = (LFclosurePtr) calloc(1, sizeof *c)))
 	return BadAlloc;
     c->fpe_list = (FontPathElementPtr *)
 	malloc(sizeof(FontPathElementPtr) * num_fpes);
@@ -1091,8 +1090,7 @@ doListFontsWithInfo(ClientPtr client, LFWIclosurePtr c)
 		c->saved = c->current;
 		c->haveSaved = TRUE;
 		c->savedNumFonts = numFonts;
-		if (c->savedName)
-		  free(c->savedName);
+		free(c->savedName);
 		c->savedName = (char *)malloc(namelen + 1);
 		if (c->savedName)
 		  memmove(c->savedName, name, namelen + 1);
@@ -1203,7 +1201,7 @@ bail:
 	FreeFPE(c->fpe_list[i]);
     free(c->reply);
     free(c->fpe_list);
-    if (c->savedName) free(c->savedName);
+    free(c->savedName);
     free(c);
     return TRUE;
 }

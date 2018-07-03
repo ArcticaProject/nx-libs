@@ -1120,7 +1120,12 @@ FlushClient(ClientPtr who, OsCommPtr oc, const void *__extraBuf, int extraCount)
 		unsigned char *obuf = NULL;
 
 		if (notWritten + BUFSIZE <= INT_MAX) {
-		    obuf = realloc(oco->buf, notWritten + BUFSIZE);
+		    obuf = calloc(1, notWritten + BUFSIZE);
+		    if (obuf)
+		    {
+			memmove(obuf, oco->buf, oco->size);
+			free(oco->buf);
+		    }
 		}
 		if (!obuf)
 		{

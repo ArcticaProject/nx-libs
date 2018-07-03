@@ -361,7 +361,7 @@ doListFontsAndAliases(ClientPtr client, LFclosurePtr c)
     int		nnames;
     int         stringLens;
     int         i;
-    xListFontsReply reply;
+    xListFontsReply reply = {0};
     char	*bufptr;
     char	*bufferStart;
     int		aliascount = 0;
@@ -478,7 +478,7 @@ doListFontsAndAliases(ClientPtr client, LFclosurePtr c)
 		    return TRUE;
 		}
 		if (err == FontNameAlias) {
-		    if (resolved) free(resolved);
+		    free(resolved);
 		    resolved = (char *) malloc(resolvedlen + 1);
 		    if (resolved)
 			memmove(resolved, tmpname, resolvedlen + 1);
@@ -544,8 +544,7 @@ doListFontsAndAliases(ClientPtr client, LFclosurePtr c)
 		{
 		    c->saved = c->current;
 		    c->haveSaved = TRUE;
-		    if (c->savedName)
-			free(c->savedName);
+		    free(c->savedName);
 		    c->savedName = (char *)malloc(namelen + 1);
 		    if (c->savedName)
 			memmove(c->savedName, name, namelen + 1);
@@ -602,13 +601,12 @@ finish:
     for (i = 0; i < nnames; i++)
 	stringLens += (names->length[i] <= 255) ? names->length[i] : 0;
 
-    memset(&reply, 0, sizeof(xListFontsReply));
     reply.type = X_Reply;
     reply.length = (stringLens + nnames + 3) >> 2;
     reply.nFonts = nnames;
     reply.sequenceNumber = client->sequence;
 
-    bufptr = bufferStart = (char *) malloc(reply.length << 2);
+    bufptr = bufferStart = (char *) calloc(1, reply.length << 2);
 
     if (!bufptr && reply.length) {
 	SendErrorToClient(client, X_ListFonts, 0, 0, BadAlloc);
@@ -664,14 +662,14 @@ bail:
     for (i = 0; i < c->num_fpes; i++)
 	FreeFPE(c->fpe_list[i]);
     free(c->fpe_list);
-    if (c->savedName) free(c->savedName);
+    free(c->savedName);
 #ifdef HAS_XFONT2
     xfont2_free_font_names(names);
 #else
     FreeFontNames(names);
 #endif /* HAS_XFONT2 */
     free(c);
-    if (resolved) free(resolved);
+    free(resolved);
     return TRUE;
 }
 
@@ -691,7 +689,7 @@ ListFonts(ClientPtr client, unsigned char *pattern, unsigned length,
     if (length > XLFDMAXFONTNAMELEN)
 	return BadAlloc;
 
-    if (!(c = (LFclosurePtr) malloc(sizeof *c)))
+    if (!(c = (LFclosurePtr) calloc(1, sizeof *c)))
 	return BadAlloc;
     c->fpe_list = (FontPathElementPtr *)
 	malloc(sizeof(FontPathElementPtr) * num_fpes);
@@ -744,7 +742,7 @@ doListFontsWithInfo(ClientPtr client, LFWIclosurePtr c)
     xFontProp  *pFP;
     int         i;
     int		aliascount = 0;
-    xListFontsWithInfoReply finalReply;
+    xListFontsWithInfoReply finalReply = {0};
 
     if (client->clientGone)
     {
@@ -857,8 +855,7 @@ doListFontsWithInfo(ClientPtr client, LFWIclosurePtr c)
 		c->saved = c->current;
 		c->haveSaved = TRUE;
 		c->savedNumFonts = numFonts;
-		if (c->savedName)
-		  free(c->savedName);
+		free(c->savedName);
 		c->savedName = (char *)malloc(namelen + 1);
 		if (c->savedName)
 		  memmove(c->savedName, name, namelen + 1);
@@ -967,7 +964,6 @@ doListFontsWithInfo(ClientPtr client, LFWIclosurePtr c)
     }
 finish:
     length = sizeof(xListFontsWithInfoReply);
-    bzero((char *) &finalReply, sizeof(xListFontsWithInfoReply));
     finalReply.type = X_Reply;
     finalReply.sequenceNumber = client->sequence;
     finalReply.length = (sizeof(xListFontsWithInfoReply)
@@ -985,7 +981,7 @@ bail:
 	FreeFPE(c->fpe_list[i]);
     free(c->reply);
     free(c->fpe_list);
-    if (c->savedName) free(c->savedName);
+    free(c->savedName);
     free(c);
     return TRUE;
 }
@@ -1203,7 +1199,7 @@ nxdoListFontsAndAliases(client, fss)
 		    return TRUE;
 		}
 		if (err == FontNameAlias) {
-		    if (resolved) free(resolved);
+		    free(resolved);
 		    resolved = (char *) malloc(resolvedlen + 1);
 		    if (resolved)
                     {
@@ -1275,8 +1271,7 @@ nxdoListFontsAndAliases(client, fss)
 		{
 		    c->saved = c->current;
 		    c->haveSaved = TRUE;
-		    if (c->savedName)
-			free(c->savedName);
+		    free(c->savedName);
 		    c->savedName = (char *)malloc(namelen + 1);
 		    if (c->savedName)
                     {
@@ -1372,7 +1367,7 @@ finish:
     for (i = 0; i < c->num_fpes; i++)
 	FreeFPE(c->fpe_list[i]);
     free(c->fpe_list);
-    if (c->savedName) free(c->savedName);
+    free(c->savedName);
 #ifdef HAS_XFONT2
     xfont2_free_font_names(c->names);
 #else
@@ -1380,7 +1375,7 @@ finish:
 #endif /* HAS_XFONT2 */
     free(c);
     free(fss);
-    if (resolved) free(resolved);
+    free(resolved);
 
     return doOpenFont(client, oc);
 }

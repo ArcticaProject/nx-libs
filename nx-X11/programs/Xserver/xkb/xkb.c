@@ -159,7 +159,7 @@ int
 ProcXkbUseExtension(ClientPtr client)
 {
     REQUEST(xkbUseExtensionReq);
-    xkbUseExtensionReply	rep;
+    xkbUseExtensionReply	rep = {0};
     int	supported;
 
     REQUEST_SIZE_MATCH(xkbUseExtensionReq);
@@ -187,7 +187,6 @@ ProcXkbUseExtension(ClientPtr client)
 					stuff->wantedMajor,stuff->wantedMinor,
 					SERVER_XKB_MAJOR_VERSION,SERVER_XKB_MINOR_VERSION);
     }
-    memset(&rep, 0, sizeof(xkbUseExtensionReply));
     rep.type = X_Reply;
     rep.supported = supported;
     rep.length = 0;
@@ -502,7 +501,7 @@ ProcXkbGetState(ClientPtr client)
 {
     REQUEST(xkbGetStateReq);
     DeviceIntPtr	dev;
-    xkbGetStateReply	 rep;
+    xkbGetStateReply	 rep = {0};
     XkbStateRec		*xkb;
 
     REQUEST_SIZE_MATCH(xkbGetStateReq);
@@ -513,7 +512,6 @@ ProcXkbGetState(ClientPtr client)
     CHK_KBD_DEVICE(dev,stuff->deviceSpec);
 
     xkb= &dev->key->xkbInfo->state;
-    bzero(&rep,sizeof(xkbGetStateReply));
     rep.type= X_Reply;
     rep.sequenceNumber= client->sequence;
     rep.length = 0;
@@ -1350,7 +1348,7 @@ int
 ProcXkbGetMap(ClientPtr client)
 {
     DeviceIntPtr	 dev;
-    xkbGetMapReply	 rep;
+    xkbGetMapReply	 rep = {0};
     XkbDescRec		*xkb;
     int			 n,status;
 
@@ -1366,7 +1364,6 @@ ProcXkbGetMap(ClientPtr client)
     CHK_MASK_LEGAL(0x03,stuff->partial,XkbAllMapComponentsMask);
 
     xkb= dev->key->xkbInfo->desc;
-    bzero(&rep,sizeof(xkbGetMapReply));
     rep.type= X_Reply;
     rep.sequenceNumber= client->sequence;
     rep.length = (SIZEOF(xkbGetMapReply)-SIZEOF(xGenericReply))>>2;
@@ -2542,7 +2539,7 @@ int		size;
 int
 ProcXkbGetCompatMap(ClientPtr client)
 {
-    xkbGetCompatMapReply 	rep;
+    xkbGetCompatMapReply 	rep = {0};
     DeviceIntPtr 		dev;
     XkbDescPtr			xkb;
     XkbCompatMapPtr		compat;
@@ -2718,7 +2715,7 @@ ProcXkbSetCompatMap(ClientPtr client)
 int
 ProcXkbGetIndicatorState(ClientPtr client)
 {
-    xkbGetIndicatorStateReply 	rep;
+    xkbGetIndicatorStateReply 	rep = {0};;
     XkbSrvLedInfoPtr		sli;
     DeviceIntPtr 		dev;
 
@@ -2827,7 +2824,7 @@ register unsigned	bit;
 int
 ProcXkbGetIndicatorMap(ClientPtr client)
 {
-xkbGetIndicatorMapReply rep;
+    xkbGetIndicatorMapReply rep = {0};
 DeviceIntPtr		dev;
 XkbDescPtr		xkb;
 XkbIndicatorPtr		leds;
@@ -2937,7 +2934,7 @@ int
 ProcXkbGetNamedIndicator(ClientPtr client)
 {
     DeviceIntPtr 		dev;
-    xkbGetNamedIndicatorReply 	rep;
+    xkbGetNamedIndicatorReply 	rep = {0};
     register int		i = 0;
     XkbSrvLedInfoPtr		sli;
     XkbIndicatorMapPtr		map = NULL;
@@ -3438,7 +3435,7 @@ ProcXkbGetNames(ClientPtr client)
 {
     DeviceIntPtr	dev;
     XkbDescPtr		xkb;
-    xkbGetNamesReply 	rep;
+    xkbGetNamesReply 	rep = {0};
 
     REQUEST(xkbGetNamesReq);
     REQUEST_SIZE_MATCH(xkbGetNamesReq);
@@ -3450,7 +3447,6 @@ ProcXkbGetNames(ClientPtr client)
     CHK_MASK_LEGAL(0x01,stuff->which,XkbAllNamesMask);
 
     xkb = dev->key->xkbInfo->desc;
-    memset(&rep, 0, sizeof(xkbGetNamesReply));
     rep.type= X_Reply;
     rep.sequenceNumber= client->sequence;
     rep.length = 0;
@@ -4368,7 +4364,7 @@ int
 ProcXkbGetGeometry(ClientPtr client)
 {
     DeviceIntPtr 	dev;
-    xkbGetGeometryReply rep;
+    xkbGetGeometryReply rep = {0};
     XkbGeometryPtr	geom;
     Bool		shouldFree;
     Status		status;
@@ -4907,7 +4903,7 @@ int
 ProcXkbPerClientFlags(ClientPtr client)
 {
     DeviceIntPtr 		dev;
-    xkbPerClientFlagsReply 	rep;
+    xkbPerClientFlagsReply 	rep = {0};
     XkbInterestPtr		interest;
 
     REQUEST(xkbPerClientFlagsReq);
@@ -4921,7 +4917,6 @@ ProcXkbPerClientFlags(ClientPtr client)
     CHK_MASK_MATCH(0x02,stuff->change,stuff->value);
 
     interest = XkbFindClientResource((DevicePtr)dev,client);
-    memset(&rep, 0, sizeof(xkbPerClientFlagsReply));
     rep.type= X_Reply;
     rep.length = 0;
     rep.sequenceNumber = client->sequence;
@@ -5040,7 +5035,7 @@ int
 ProcXkbListComponents(ClientPtr client)
 {
     DeviceIntPtr 		dev;
-    xkbListComponentsReply 	rep;
+    xkbListComponentsReply 	rep = {0};
     unsigned			len;
     int				status;
     unsigned char *		str;
@@ -5076,7 +5071,6 @@ ProcXkbListComponents(ClientPtr client)
 	}
 	return status;
     }
-    bzero(&rep,sizeof(xkbListComponentsReply));
     rep.type= X_Reply;
     rep.deviceID = dev->id;
     rep.sequenceNumber = client->sequence;
@@ -5117,12 +5111,12 @@ ProcXkbGetKbdByName(ClientPtr client)
 {
     DeviceIntPtr 		dev;
     XkbFileInfo			finfo;
-    xkbGetKbdByNameReply 	rep;
-    xkbGetMapReply		mrep;
-    xkbGetCompatMapReply	crep;
-    xkbGetIndicatorMapReply	irep;
-    xkbGetNamesReply		nrep;
-    xkbGetGeometryReply		grep;
+    xkbGetKbdByNameReply 	rep = {0};
+    xkbGetMapReply		mrep = {0};
+    xkbGetCompatMapReply	crep = {0};
+    xkbGetIndicatorMapReply	irep = {0};
+    xkbGetNamesReply		nrep = {0};
+    xkbGetGeometryReply		grep = {0};
     XkbComponentNamesRec	names;
     XkbDescPtr			xkb;
     unsigned char *		str;
@@ -5641,7 +5635,7 @@ int
 ProcXkbGetDeviceInfo(ClientPtr client)
 {
 DeviceIntPtr		dev;
-xkbGetDeviceInfoReply	rep;
+xkbGetDeviceInfoReply	rep = {0};
 int			status,nDeviceLedFBs;
 unsigned		length,nameLen;
 CARD16			ledClass,ledID;
@@ -5666,7 +5660,6 @@ char *			str;
     wanted&= ~XkbXIUnsupported;
 
     nameLen= XkbSizeCountedString(dev->name);
-    bzero((char *)&rep,SIZEOF(xkbGetDeviceInfoReply));
     rep.type = X_Reply;
     rep.deviceID= dev->id;
     rep.sequenceNumber = client->sequence;
@@ -6059,7 +6052,7 @@ int
 ProcXkbSetDebuggingFlags(ClientPtr client)
 {
 CARD32 				newFlags,newCtrls,extraLength;
-xkbSetDebuggingFlagsReply 	rep;
+xkbSetDebuggingFlagsReply 	rep = {0};
 
     REQUEST(xkbSetDebuggingFlagsReq);
     REQUEST_AT_LEAST_SIZE(xkbSetDebuggingFlagsReq);

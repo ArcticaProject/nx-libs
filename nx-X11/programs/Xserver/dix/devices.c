@@ -908,7 +908,7 @@ AllModifierKeysAreUp(dev, map1, per1, map2, per2)
 int 
 ProcSetModifierMapping(ClientPtr client)
 {
-    xSetModifierMappingReply rep;
+    xSetModifierMappingReply rep = {0};
     REQUEST(xSetModifierMappingReq);
     KeyCode *inputMap;
     int inputMapLen;
@@ -1016,11 +1016,10 @@ ProcSetModifierMapping(ClientPtr client)
 int
 ProcGetModifierMapping(ClientPtr client)
 {
-    xGetModifierMappingReply rep;
+    xGetModifierMappingReply rep = {0};
     register KeyClassPtr keyc = inputInfo.keyboard->key;
 
     REQUEST_SIZE_MATCH(xReq);
-    memset(&rep, 0, sizeof(xGetModifierMappingReply));
     rep.type = X_Reply;
     rep.numKeyPerModifier = keyc->maxKeysPerModifier;
     rep.sequenceNumber = client->sequence;
@@ -1082,7 +1081,7 @@ ProcSetPointerMapping(ClientPtr client)
 {
     REQUEST(xSetPointerMappingReq);
     BYTE *map;
-    xSetPointerMappingReply rep;
+    xSetPointerMappingReply rep = {0};
     register unsigned int i;
     DeviceIntPtr mouse = inputInfo.pointer;
 
@@ -1119,7 +1118,7 @@ ProcSetPointerMapping(ClientPtr client)
 int
 ProcGetKeyboardMapping(ClientPtr client)
 {
-    xGetKeyboardMappingReply rep;
+    xGetKeyboardMappingReply rep = {0};
     REQUEST(xGetKeyboardMappingReq);
     KeySymsPtr curKeySyms = &inputInfo.keyboard->key->curKeySyms;
 
@@ -1138,7 +1137,6 @@ ProcGetKeyboardMapping(ClientPtr client)
         return BadValue;
     }
 
-    memset(&rep, 0, sizeof(xGetKeyboardMappingReply));
     rep.type = X_Reply;
     rep.sequenceNumber = client->sequence;
     rep.keySymsPerKeyCode = curKeySyms->mapWidth;
@@ -1158,17 +1156,20 @@ ProcGetKeyboardMapping(ClientPtr client)
 int
 ProcGetPointerMapping(ClientPtr client)
 {
+    int nElts;
     xGetPointerMappingReply rep = {0};
 
     ButtonClassPtr butc = inputInfo.pointer->button;
 
+    nElts = (butc) ? butc->numButtons : 0;
     REQUEST_SIZE_MATCH(xReq);
     rep.type = X_Reply;
+    rep.nElts = nElts;
     rep.sequenceNumber = client->sequence;
-    rep.nElts = butc->numButtons;
-    rep.length = ((unsigned)rep.nElts + (4-1))/4;
+    rep.length = ((unsigned)nElts + (4-1))/4;
     WriteReplyToClient(client, sizeof(xGetPointerMappingReply), &rep);
-    WriteToClient(client, (int)rep.nElts, &butc->map[1]);
+    if (butc)
+        WriteToClient(client, nElts, &butc->map[1]);
     return Success;
 }
 
@@ -1387,7 +1388,7 @@ ProcGetKeyboardControl (ClientPtr client)
 {
     int i;
     register KeybdCtrl *ctrl = &inputInfo.keyboard->kbdfeed->ctrl;
-    xGetKeyboardControlReply rep;
+    xGetKeyboardControlReply rep = {0};
 
     REQUEST_SIZE_MATCH(xReq);
     rep.type = X_Reply;
@@ -1492,7 +1493,7 @@ int
 ProcGetPointerControl(ClientPtr client)
 {
     register PtrCtrl *ctrl = &inputInfo.pointer->ptrfeed->ctrl;
-    xGetPointerControlReply rep;
+    xGetPointerControlReply rep = {0};
 
     REQUEST_SIZE_MATCH(xReq);
     rep.type = X_Reply;
@@ -1526,7 +1527,7 @@ ProcGetMotionEvents(ClientPtr client)
 {
     WindowPtr pWin;
     xTimecoord * coords = (xTimecoord *) NULL;
-    xGetMotionEventsReply rep;
+    xGetMotionEventsReply rep = {0};
     int     i, count, xmin, xmax, ymin, ymax;
     unsigned long nEvents;
     DeviceIntPtr mouse = inputInfo.pointer;
@@ -1591,7 +1592,7 @@ ProcGetMotionEvents(ClientPtr client)
 int
 ProcQueryKeymap(ClientPtr client)
 {
-    xQueryKeymapReply rep;
+    xQueryKeymapReply rep = {0};
     int i;
     CARD8 *down = inputInfo.keyboard->key->down;
 
