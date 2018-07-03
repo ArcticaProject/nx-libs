@@ -3348,8 +3348,6 @@ SaveScreens(int on, int mode)
 
     if (on == SCREEN_SAVER_FORCER)
     {
-	UpdateCurrentTimeIf();
-	lastDeviceEventTime = currentTime;
 	if (mode == ScreenSaverReset)
 	    what = SCREEN_SAVER_OFF;
 	else
