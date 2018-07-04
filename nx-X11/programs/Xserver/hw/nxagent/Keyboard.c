@@ -42,15 +42,12 @@ is" without express or implied warranty.
 #include <string.h>
 #include <stdlib.h>
 
-#include "X.h"
-#include "Xproto.h"
 #include "keysym.h"
 #include "screenint.h"
 #include "inputstr.h"
 #include "misc.h"
 #include "scrnintstr.h"
 #include "servermd.h"
-#include "dixstruct.h"
 #include "extnsionst.h"
 
 #include "Agent.h"
@@ -66,10 +63,6 @@ is" without express or implied warranty.
 #include <nx/Shadow.h>
 
 #ifdef XKB
-
-#include "globals.h"
-#include "property.h"
-#include "Init.h"
 
 #include <nx-X11/extensions/XKB.h>
 
