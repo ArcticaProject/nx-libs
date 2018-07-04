@@ -148,12 +148,6 @@ extern        Status        XkbGetControls(
 #ifndef XKB_ALTERNATE_BASE_DIRECTORY
 #define XKB_ALTERNATE_BASE_DIRECTORY   "/usr/X11R6/lib/X11/xkb"
 #endif
-#ifndef XKB_CONFIG_FILE_NX
-#define XKB_CONFIG_FILE_NX   "/etc/nxagent/nxagent.keyboard"
-#endif
-#ifndef XKB_CONFIG_FILE_X2GO
-#define XKB_CONFIG_FILE_X2GO "/etc/x2go/x2goagent.keyboard"
-#endif
 #ifndef XKB_DFLT_RULES_FILE
 #define XKB_DFLT_RULES_FILE  "base"
 #endif
