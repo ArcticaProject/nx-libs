@@ -135,12 +135,6 @@ extern        Status        XkbGetControls(
 #endif
 );
 
-#ifndef XKB_BASE_DIRECTORY
-#define XKB_BASE_DIRECTORY   "/usr/share/X11/xkb"
-#endif
-#ifndef XKB_ALTERNATE_BASE_DIRECTORY
-#define XKB_ALTERNATE_BASE_DIRECTORY   "/usr/X11R6/lib/X11/xkb"
-#endif
 #ifndef XKB_DFLT_RULES_FILE
 #define XKB_DFLT_RULES_FILE  "base"
 #endif
