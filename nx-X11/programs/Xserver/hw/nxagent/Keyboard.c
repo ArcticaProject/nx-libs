@@ -135,25 +135,6 @@ extern        Status        XkbGetControls(
 #endif
 );
 
-#ifndef XKB_DFLT_RULES_FILE
-#define XKB_DFLT_RULES_FILE  "base"
-#endif
-#ifndef XKB_ALTS_RULES_FILE
-#define XKB_ALTS_RULES_FILE  "xorg"
-#endif
-#ifndef XKB_DFLT_KB_LAYOUT
-#define XKB_DFLT_KB_LAYOUT   "us"
-#endif
-#ifndef XKB_DFLT_KB_MODEL
-#define XKB_DFLT_KB_MODEL    "pc102"
-#endif
-#ifndef XKB_DFLT_KB_VARIANT
-#define XKB_DFLT_KB_VARIANT  NULL
-#endif
-#ifndef XKB_DFLT_KB_OPTIONS
-#define XKB_DFLT_KB_OPTIONS  NULL
-#endif
-
 extern int XkbDfltRepeatDelay;
 extern int XkbDfltRepeatInterval;
 
@@ -179,8 +160,6 @@ XkbAgentStateRec nxagentXkbState = { 0, 0, 0, 0, 0 };
 XkbWrapperRec nxagentXkbWrapper;
 
 extern char *nxagentKeyboard;
-
-static char *nxagentXkbGetRules(void);
 
 unsigned int nxagentAltMetaMask;
 unsigned int nxagentAltMask;
@@ -481,73 +460,6 @@ static int nxagentRestoreKeyboardDeviceData(DeviceIntPtr devBackup, DeviceIntPtr
 
 static int nxagentFreeKeyboardDeviceData(DeviceIntPtr dev);
 
-static char *nxagentXkbGetRules()
-{
-  int ret;
-  char *path;
-  struct stat buf;
-
-  #ifdef TEST
-  fprintf(stderr, "nxagentXkbGetRules: XkbBaseDirectory [%s].\n",
-              XkbBaseDirectory);
-  #endif
-
-  if (-1 == asprintf(&path, "%s/rules/%s", XkbBaseDirectory, XKB_DFLT_RULES_FILE))
-  {
-    FatalError("nxagentXkbGetRules: malloc failed.");
-  }
-
-  #ifdef TEST
-  fprintf(stderr, "nxagentXkbGetRules: checking rules file [%s]\n", path);
-  #endif
-  ret = stat(path, &buf);
-
-  if (ret == 0)
-  {
-    free(path);
-    #ifdef TEST
-    fprintf(stderr, "nxagentXkbGetRules: returning default rules file [%s]\n", XKB_DFLT_RULES_FILE);
-    #endif
-    return XKB_DFLT_RULES_FILE;
-  }
-
-  #ifdef TEST
-  fprintf(stderr, "nxagentXkbGetRules: WARNING! Failed to stat file [%s]: %s.\n", path, strerror(ret));
-  #endif
-
-  free(path);
-  path = NULL;
-
-  if (-1 == asprintf(&path, "%s/rules/%s", XkbBaseDirectory, XKB_ALTS_RULES_FILE))
-  {
-    FatalError("nxagentXkbGetRules: malloc failed.");
-  }
-
-  #ifdef TEST
-  fprintf(stderr, "nxagentXkbGetRules: checking rules file [%s]\n", path);
-  #endif
-  ret = stat(path, &buf);
-
-  if (ret == 0)
-  {
-    free(path);
-    #ifdef TEST
-    fprintf(stderr, "nxagentXkbGetRules: returning alternative rules file [%s]\n", XKB_ALTS_RULES_FILE);
-    #endif
-    return XKB_ALTS_RULES_FILE;
-  }
-
-  #ifdef WARNING
-  fprintf(stderr, "nxagentXkbGetRules: WARNING! Failed to stat file [%s]: %s.\n", path, strerror(ret));
-  #endif
-
-  free(path);
-  #ifdef TEST
-  fprintf(stderr, "nxagentXkbGetRules: returning default rules file [%s]\n", XKB_DFLT_RULES_FILE);
-  #endif
-  return XKB_DFLT_RULES_FILE;
-}
- 
 void nxagentBell(int volume, DeviceIntPtr pDev, void * ctrl, int cls)
 {
   XBell(nxagentDisplay, volume);
@@ -843,8 +755,7 @@ XkbError:
         fprintf(stderr, "nxagentKeyboardProc: nxagentKeyboard is [%s].\n", nxagentKeyboard ? nxagentKeyboard : "NULL");
         #endif
 
-
-        rules = nxagentXkbGetRules();
+        rules = NULL; /* use xkb default */
 
         /*
           from nxagent changelog:
@@ -901,8 +812,8 @@ XkbError:
         }
         else
         {
-          layout = XKB_DFLT_KB_LAYOUT;
-          model = XKB_DFLT_KB_MODEL;
+          layout = NULL; /* use xkb default */
+          model = NULL; /* use xkb default */
 
           #ifdef TEST
           fprintf(stderr, "nxagentKeyboardProc: Using default keyboard: model [%s] layout [%s].\n",
@@ -910,8 +821,8 @@ XkbError:
           #endif
         }
 
-        variants = XKB_DFLT_KB_VARIANT;
-        options = XKB_DFLT_KB_OPTIONS;
+        variants = NULL; /* use xkb default */
+        options = NULL; /* use xkb default */
 
         #ifdef TEST
         fprintf(stderr, "nxagentKeyboardProc: Init XKB extension.\n");
