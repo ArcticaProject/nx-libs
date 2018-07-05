@@ -481,37 +481,6 @@ static int nxagentRestoreKeyboardDeviceData(DeviceIntPtr devBackup, DeviceIntPtr
 
 static int nxagentFreeKeyboardDeviceData(DeviceIntPtr dev);
 
-static void nxagentCheckXkbBaseDirectory(void)
-{
-
-  /*
-   * Set XkbBaseDirectory global
-   * variable appropriately.
-   */
-
-  #ifdef TEST
-  fprintf(stderr, "nxagentCheckXkbBaseDirectory: "
-              "Before calling _NXGetXkbBasePath:\n");
-
-  fprintf(stderr, "nxagentCheckXkbBaseDirectory: "
-              "XkbBaseDirectory variable [%s].\n",
-                  XkbBaseDirectory);
-  #endif
-
-  XkbBaseDirectory = _NXGetXkbBasePath(XkbBaseDirectory);
-
-  #ifdef TEST
-  fprintf(stderr, "nxagentCheckXkbBaseDirectory: "
-              "After calling _NXGetXkbBasePath:\n");
-
-  fprintf(stderr, "nxagentCheckXkbBaseDirectory: "
-              "XkbBaseDirectory variable [%s].\n",
-                  XkbBaseDirectory);
-  #endif
-
-  return;
-}
-
 static char *nxagentXkbGetRules()
 {
   int ret;
@@ -819,8 +788,6 @@ N/A
        * of XkbBaseDirectory global
        * variable is checked.
        */
-
-      nxagentCheckXkbBaseDirectory();
 
       if (noXkbExtension) {
         #ifdef TEST
