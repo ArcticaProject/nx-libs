@@ -40,7 +40,7 @@ XKB_DDXDEFS = XkbServerDefines
    LINTLIBS = ../dix/llib-ldix.ln ../os/llib-los.ln
 
 DEFINES = $(XKB_DDXDEFS) $(NX_DEFINES)
-XKB_DEFINES = -DXKB_BASE_DIRECTORY=\"$(LIBDIR)/xkb\" $(XKB_DISABLE)
+XKB_DEFINES = -DXKB_BASE_DIRECTORY=\"/usr/share/X11/xkb\" -DXKB_BIN_DIRECTORY=\"/usr/bin\" -DXKB_DFLT_RULES_FILE=\"base\" -DXKB_DFLT_KB_LAYOUT=\"us\" -DXKB_DFLT_KB_MODEL=\"pc102\" $(XKB_DISABLE)
 
 NormalLibraryObjectRule()
 NormalLibraryTarget(xkb,$(OBJS))
