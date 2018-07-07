@@ -107,8 +107,7 @@ typedef struct	_SrvXkmInfo {
 
 char	*		XkbBaseDirectory=	XKB_BASE_DIRECTORY;
 char	*		XkbBinDirectory=	XKB_BIN_DIRECTORY;
-
-static int 		XkbWantAccessX=		0;
+static int	 	XkbWantAccessX=		0;	
 static XkbFileInfo *	_XkbInitFileInfo=	NULL;
 
 static Bool		rulesDefined=		False;
@@ -118,12 +117,12 @@ static char *		XkbLayoutDflt=		NULL;
 static char *		XkbVariantDflt=		NULL;
 static char *		XkbOptionsDflt=		NULL;
 
-static char *		XkbModelUsed=		NULL;
-static char *		XkbLayoutUsed=		NULL;
-static char *		XkbVariantUsed=		NULL;
-static char *		XkbOptionsUsed=		NULL;
+static char *		XkbModelUsed=	NULL;
+static char *		XkbLayoutUsed=	NULL;
+static char *		XkbVariantUsed=	NULL;
+static char *		XkbOptionsUsed=	NULL;
 
-Bool			noXkbExtension=		XKB_DFLT_DISABLED;
+Bool		noXkbExtension=		XKB_DFLT_DISABLED;
 static Bool		XkbWantRulesProp=	XKB_DFLT_RULES_PROP;
 
 /***====================================================================***/

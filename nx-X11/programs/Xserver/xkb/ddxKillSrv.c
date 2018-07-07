@@ -41,7 +41,8 @@ int
 XkbDDXTerminateServer(DeviceIntPtr dev,KeyCode key,XkbAction *act)
 {
 #ifndef NXAGENT_SERVER
-    GiveUp(1);
+    if (dev != inputInfo.keyboard)
+        GiveUp(1);
 #endif /* NXAGENT_SERVER */
     return 0;
 }

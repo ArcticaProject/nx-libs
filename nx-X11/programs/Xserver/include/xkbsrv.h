@@ -124,6 +124,24 @@ typedef struct	_XkbEventCause {
 #define	_BEEP_LED_CHANGE	14
 #define	_BEEP_BOUNCE_REJECT	15
 
+struct _XkbSrvInfo; /* definition see below */
+
+typedef struct _XkbFilter {
+	CARD16			  keycode;
+	CARD8			  what;
+	CARD8			  active;
+	CARD8			  filterOthers;
+	CARD32			  priv;
+	XkbAction		  upAction;
+	int			(*filter)(
+					struct _XkbSrvInfo* 	/* xkbi */,
+					struct _XkbFilter *	/* filter */,
+					unsigned		/* keycode */,
+					XkbAction *		/* action */
+				  );
+	struct _XkbFilter	 *next;
+} XkbFilterRec,*XkbFilterPtr;
+
 typedef struct _XkbSrvInfo {
 	XkbStateRec	 prev_state;
 	XkbStateRec	 state;
@@ -167,6 +185,9 @@ typedef struct _XkbSrvInfo {
 	OsTimerPtr	 bounceKeysTimer;
 	OsTimerPtr	 repeatKeyTimer;
 	OsTimerPtr	 krgTimer;
+
+	int		 szFilters;
+	XkbFilterPtr	 filters;
 } XkbSrvInfoRec, *XkbSrvInfoPtr;
 
 #define	XkbSLI_IsDefault	(1L<<0)
@@ -218,6 +239,14 @@ typedef struct	_XkbSrvLedInfo {
 typedef struct
 {
     ProcessInputProc processInputProc;
+    /* If processInputProc is set to something different than realInputProc,
+     * UNWRAP and COND_WRAP will not touch processInputProc and update only
+     * realInputProc.  This ensures that
+     *   processInputProc == (frozen ? EnqueueEvent : realInputProc)
+     *
+     * WRAP_PROCESS_INPUT_PROC should only be called during initialization,
+     * since it may destroy this invariant.
+     */
     ProcessInputProc realInputProc;
     DeviceUnwrapProc unwrapProc;
 } xkbDeviceInfoRec, *xkbDeviceInfoPtr;
@@ -239,12 +268,17 @@ typedef struct
 	oldprocs->unwrapProc = device->unwrapProc; \
 	device->unwrapProc = unwrapproc;
 
-#define UNWRAP_PROCESS_INPUT_PROC(device, oldprocs) \
-	device->public.processInputProc = oldprocs->processInputProc; \
+#define UNWRAP_PROCESS_INPUT_PROC(device, oldprocs, backupproc) \
+        backupproc = device->public.realInputProc; \
+	if (device->public.processInputProc == device->public.realInputProc)\
+	    device->public.processInputProc = oldprocs->realInputProc; \
 	device->public.realInputProc = oldprocs->realInputProc; \
 	device->unwrapProc = oldprocs->unwrapProc;
 
+extern int xkbDevicePrivateIndex;
 #define XKBDEVICEINFO(dev) ((xkbDeviceInfoPtr) (dev)->devPrivates[xkbDevicePrivateIndex].ptr)
+
+extern void xkbUnwrapProc(DeviceIntPtr, DeviceHandleProc, pointer);
 
 /***====================================================================***/
 
@@ -291,8 +325,9 @@ extern CARD32	xkbDebugFlags;
 #define	_XkbErrCode3(a,b,c)	_XkbErrCode2(a,(((unsigned int)(b))<<16)|(c))
 #define	_XkbErrCode4(a,b,c,d) _XkbErrCode3(a,b,((((unsigned int)(c))<<8)|(d)))
 
-extern	int	DeviceKeyPress,DeviceKeyRelease;
+extern	int	DeviceKeyPress,DeviceKeyRelease,DeviceMotionNotify;
 extern	int	DeviceButtonPress,DeviceButtonRelease;
+extern	int	DeviceEnterNotify,DeviceLeaveNotify;
 
 #ifdef XINPUT
 #define	_XkbIsPressEvent(t)	(((t)==KeyPress)||((t)==DeviceKeyPress))
@@ -459,21 +494,6 @@ extern Bool XkbCheckActionVMods(
 	XkbDescPtr		/* xkb */,
 	XkbAction *		/* act */,
 	unsigned int 		/* changed */
-);
-
-extern Bool XkbApplyVModChanges(
-    XkbSrvInfoPtr	/* xkbi */,
-    unsigned int	/* changed */,
-    XkbChangesPtr	/* pChanges */,
-    unsigned int *	/* needChecksRtrn */,
-    XkbEventCausePtr	/* cause */
-);
-
-extern void XkbApplyVModChangesToAllDevices(
-    DeviceIntPtr	/* dev */,
-    XkbDescPtr 		/* xkb */,
-    unsigned int 	/* changed */,
-    XkbEventCausePtr	/* cause */
 );
 
 extern	unsigned int XkbMaskForVMask(
@@ -1064,7 +1084,6 @@ extern	Bool XkbDDXNamesFromRules(
 	XkbRF_VarDefsPtr	/* defs */,
 	XkbComponentNamesPtr	/* names */
 );
-
 
 extern	Bool XkbDDXApplyConfig(
 	XPointer	/* cfg_in */,

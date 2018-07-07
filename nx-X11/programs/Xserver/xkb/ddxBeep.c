@@ -38,7 +38,6 @@ THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #include <xkbsrv.h>
 #include <nx-X11/extensions/XI.h>
 
-
 /*#define FALLING_TONE	1*/
 /*#define RISING_TONE	1*/
 #define FALLING_TONE	10
@@ -110,9 +109,6 @@ _XkbDDXBeepInitAtoms(void)
     stickyLock=		MAKE_ATOM(STICKY_LOCK);
     stickyUnlock= 	MAKE_ATOM(STICKY_UNLOCK);
     bounceReject= 	MAKE_ATOM(BOUNCE_REJECT);
-#if defined(sun)
-    doesPitch = 0;
-#endif
     return;
 }
 
