@@ -107,6 +107,7 @@ typedef struct	_SrvXkmInfo {
 
 char	*		XkbBaseDirectory=	XKB_BASE_DIRECTORY;
 char	*		XkbBinDirectory=	XKB_BIN_DIRECTORY;
+
 static int 		XkbWantAccessX=		0;
 static XkbFileInfo *	_XkbInitFileInfo=	NULL;
 

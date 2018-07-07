@@ -274,13 +274,13 @@ unsigned			oldState;
 	changes->indicators.state_changes|= affected;
     }
 
-    ed->reason|=	(XkbXI_IndicatorStateMask&(~XkbXIUnsupported));
+    ed->reason|=	(XkbXI_IndicatorStateMask&(~XkbXI_KeyboardsMask));
     ed->ledClass= 	sli->class;
     ed->ledID=		sli->id;
     ed->ledsDefined=	sli->namesPresent|sli->mapsPresent;
     ed->ledState=	sli->effectiveState;
-    ed->unsupported|=	XkbXIUnsupported&XkbXI_IndicatorStateMask;
-    ed->supported=	XkbXI_AllFeaturesMask&(~XkbXIUnsupported);
+    ed->unsupported|=	XkbXI_KeyboardsMask&XkbXI_IndicatorStateMask;
+    ed->supported=	XkbXI_AllFeaturesMask&(~XkbXI_KeyboardsMask);
 
     if (changes!=&my_changes)	changes= NULL;
     if (ed!=&my_ed)		ed= NULL;
