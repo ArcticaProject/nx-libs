@@ -1346,9 +1346,12 @@ ProcRenderCompositeGlyphs (ClientPtr client)
     {
 	listsBase = (GlyphListPtr) malloc (nlist * sizeof (GlyphListRec));
 	if (!listsBase)
+	{
 	    free(glyphsBase);
 	    free(listsBase);
+
 	    return BadAlloc;
+	}
     }
     buffer = (CARD8 *) (stuff + 1);
     glyphs = glyphsBase;
@@ -2920,6 +2923,8 @@ PanoramiXRenderFillRectangles (ClientPtr client)
 	    result = (*PanoramiXSaveRenderVector[X_RenderFillRectangles]) (client);
 	    if(result != Success) break;
 	}
+
+	free(extra);
     }
     return result;
 }
@@ -2979,9 +2984,10 @@ PanoramiXRenderTrapezoids(ClientPtr client)
 
 	    if(result != Success) break;
 	}
+
+	free(extra);
     }
 
-    free(extra);
     return result;
 }
 
@@ -3036,9 +3042,10 @@ PanoramiXRenderTriangles(ClientPtr client)
 
 	    if(result != Success) break;
 	}
-	
+
+	free(extra);
     }
-    free(extra);
+
     return result;
 }
 
@@ -3089,9 +3096,10 @@ PanoramiXRenderTriStrip(ClientPtr client)
 
 	    if(result != Success) break;
 	}
-	
+
+	free(extra);
     }
-    free(extra);
+
     return result;
 }
 
@@ -3142,9 +3150,10 @@ PanoramiXRenderTriFan(ClientPtr client)
 
 	    if(result != Success) break;
 	}
-	
+
+	free(extra);
     }
-    free(extra);
+
     return result;
 }
 
@@ -3272,8 +3281,10 @@ PanoramiXRenderAddTraps (ClientPtr client)
 	    result = (*PanoramiXSaveRenderVector[X_RenderAddTraps]) (client);
 	    if(result != Success) break;
 	}
+
+	free(extra);
     }
-    free(extra);
+
     return result;
 }
 

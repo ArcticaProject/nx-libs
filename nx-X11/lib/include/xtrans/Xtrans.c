@@ -980,17 +980,17 @@ TRANS(GetMyAddr) (XtransConnInfo ciptr, int *familyp, int *addrlenp,
     {
        prmsg (1,"GetMyAddr: malloc failed\n");
        return -1;
-    } else {
-       memcpy(*addrp, ciptr->addr, ciptr->addrlen);
-       free(addrp);
     }
+
+    memcpy(*addrp, ciptr->addr, ciptr->addrlen);
+
     return 0;
 }
 #endif
 
 int
 TRANS(GetPeerAddr) (XtransConnInfo ciptr, int *familyp, int *addrlenp,
-                 Xtransaddr **addrp)
+                   Xtransaddr **addrp)
 
 {
     prmsg (2,"GetPeerAddr(%d)\n", ciptr->fd);
@@ -1003,7 +1003,9 @@ TRANS(GetPeerAddr) (XtransConnInfo ciptr, int *familyp, int *addrlenp,
         prmsg (1,"GetPeerAddr: malloc failed\n");
         return -1;
     }
+
     memcpy(*addrp, ciptr->peeraddr, ciptr->peeraddrlen);
+
     return 0;
 }
 

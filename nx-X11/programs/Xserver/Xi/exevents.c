@@ -655,9 +655,10 @@ AddExtensionClient(WindowPtr pWin, ClientPtr client, Mask mask, int mskidx)
     others = (InputClients *) malloc(sizeof(InputClients));
     if (!others)
 	return BadAlloc;
-    if (!pWin->optional->inputMasks && !MakeInputMasks(pWin))
+    if (!pWin->optional->inputMasks && !MakeInputMasks(pWin)) {
 	free(others);
 	return BadAlloc;
+    }
     bzero((char *)&others->mask[0], sizeof(Mask) * EMASKSIZE);
     others->mask[mskidx] = mask;
     others->resource = FakeClientID(client->index);

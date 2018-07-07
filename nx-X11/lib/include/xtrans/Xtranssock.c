@@ -2442,7 +2442,7 @@ SocketUNIXConnectPost:
        (ciptr->peeraddr = malloc(namelen)) == NULL)
     {
         prmsg (1,
-        "SocketUNIXCreateListener: Can't allocate space for the addr\n");
+       "SocketUNIXCreateListener: Can't allocate space for the addr\n");
         return TRANS_CONNECT_FAILED;
     }
 
@@ -2454,6 +2454,7 @@ SocketUNIXConnectPost:
     ciptr->peeraddrlen = namelen;
     memcpy (ciptr->addr, &sockname, ciptr->addrlen);
     memcpy (ciptr->peeraddr, &sockname, ciptr->peeraddrlen);
+
     return 0;
 }
 

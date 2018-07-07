@@ -995,8 +995,10 @@ ProcRenderCompositeGlyphs (ClientPtr client)
     {
 	listsBase = (GlyphListPtr) malloc (nlist * sizeof (GlyphListRec));
 	if (!listsBase)
+	{
 	    free(glyphsBase);
 	    return BadAlloc;
+	}
     }
 
     elementsBase = malloc(nlist * sizeof(XGlyphElt8));

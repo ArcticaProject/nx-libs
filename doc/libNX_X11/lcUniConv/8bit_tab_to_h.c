@@ -129,8 +129,10 @@ int main (int argc, char *argv[])
       strcpy(fname,directory); strcat(fname,filename);
       f = fopen(fname,"w");
       if (f == NULL)
+      {
         free(fname);
         exit(1);
+      }
     }
 
     fprintf(f, "\n");

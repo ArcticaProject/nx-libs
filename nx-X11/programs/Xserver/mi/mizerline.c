@@ -158,9 +158,12 @@ miZeroLine(pDraw, pGC, mode, npt, pptInit)
     pspanInit = (DDXPointPtr)malloc(list_len * sizeof(DDXPointRec));
     pwidthInit = (int *)malloc(list_len * sizeof(int));
     if (!pspanInit || !pwidthInit)
+    {
         free(pspanInit);
         free(pwidthInit);
+
         return;
+    }
 
     Nspans = 0;
     new_span = TRUE;

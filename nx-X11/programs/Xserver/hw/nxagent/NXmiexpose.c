@@ -628,14 +628,17 @@ int what;
 		return;
 	    screenContext[i] = CreateGC((DrawablePtr)pWin, (BITS32) 0,
 					(XID *)NULL, &status);
-	    if (!screenContext[i])
+	    if (!screenContext[i]) {
 		free(prect);
 		return;
+	    }
 	    numGCs++;
 	    if (!AddResource(FakeClientID(0), ResType,
-				    (void *)screenContext[i]))
+			     (void *)screenContext[i]))
+	    {
 		free(prect);
 		return;
+	    }
 	}
 	pGC = screenContext[i];
 	newValues[SUBWINDOW].val = IncludeInferiors;
