@@ -693,6 +693,18 @@ N/A
       keySyms.mapWidth = mapWidth;
       keySyms.map = keymap;
 
+      if (XkbQueryExtension(nxagentDisplay,
+                            &nxagentXkbInfo.Opcode,
+                            &nxagentXkbInfo.EventBase,
+                            &nxagentXkbInfo.ErrorBase,
+                            &nxagentXkbInfo.MajorVersion,
+                            &nxagentXkbInfo.MinorVersion) == 0)
+      {
+          ErrorF("Unable to initialize XKEYBOARD extension.\n");
+          goto XkbError;
+      }
+
+
 #ifdef XKB
 
       /*
@@ -827,18 +839,6 @@ XkbError:
         #ifdef TEST
         fprintf(stderr, "nxagentKeyboardProc: Init XKB extension.\n");
         #endif
-
-        if (XkbQueryExtension(nxagentDisplay,
-                              &nxagentXkbInfo.Opcode,
-                              &nxagentXkbInfo.EventBase,
-                              &nxagentXkbInfo.ErrorBase,
-                              &nxagentXkbInfo.MajorVersion,
-                              &nxagentXkbInfo.MinorVersion) == 0)
-        {
-          ErrorF("Unable to initialize XKEYBOARD extension.\n");
-
-          goto XkbError;
-        }
 
         xkb = XkbGetKeyboard(nxagentDisplay, XkbGBN_AllComponentsMask, XkbUseCoreKbd);
 
