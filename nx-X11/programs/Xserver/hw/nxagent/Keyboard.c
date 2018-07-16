@@ -828,39 +828,16 @@ XkbError:
 
         nxagentKeycodeConversionSetup();
 
-        if (xkb == NULL || xkb->geom == NULL)
+        if (xkb && xkb->geom)
         {
-          #ifdef TEST
-          fprintf(stderr, "nxagentKeyboardProc: No current keyboard.\n");
-          if (xkb == NULL)
-          {
-            fprintf(stderr, "nxagentKeyboardProc: xkb is null.\n");
-          }
-          else
-          {
-            fprintf(stderr, "nxagentKeyboardProc: xkb->geom is null.\n");
-          }
-          fprintf(stderr, "nxagentKeyboardProc: Going to set rules and init device.\n");
-          #endif
-          #ifdef DEBUG
-          fprintf(stderr, "nxagentKeyboardProc: Going to set rules and init device: "
-                          "[rules='%s',model='%s',layout='%s',variants='%s',options='%s'].\n",
-                          rules, model, layout, variants, options);
-          #endif
-
-          XkbSetRulesDflts(rules, model, layout, variants, options);
-          XkbInitKeyboardDeviceStruct((void *)pDev, &names, &keySyms, modmap,
-                                          nxagentBell, nxagentChangeKeyboardControl);
-
-          if (!nxagentKeyboard || strcmp(nxagentKeyboard, "query") == 0)
-          {
-            goto XkbError;
-          }
-
-          goto XkbEnd;
+            XkbGetControls(nxagentDisplay, XkbAllControlsMask, xkb);
         }
-
-        XkbGetControls(nxagentDisplay, XkbAllControlsMask, xkb);
+#ifdef TEST
+        else
+        {
+            fprintf(stderr, "nxagentKeyboardProc: No current keyboard.\n");
+        }
+#endif
 
         #ifdef DEBUG
         fprintf(stderr, "nxagentKeyboardProc: Going to set rules and init device: "
@@ -875,6 +852,11 @@ XkbError:
         if (!nxagentKeyboard || strcmp(nxagentKeyboard, "query") == 0)
         {
           goto XkbError;
+        }
+
+        if (xkb && xkb->geom)
+        {
+            XkbDDXChangeControls(pDev, xkb->ctrls, xkb->ctrls);
         }
 
         if (nxagentOption(Shadow) == 1 && pDev && pDev->key)
