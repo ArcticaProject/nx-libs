@@ -570,7 +570,6 @@ int nxagentKeyboardProc(DeviceIntPtr pDev, int onoff)
   int i, j;
   XKeyboardState values;
   char *model = NULL, *layout = NULL;
-  int free_model = 0, free_layout = 0;
   XkbDescPtr xkb = NULL;
 
   switch (onoff)
@@ -726,16 +725,9 @@ XkbError:
 
         XkbFreeKeyboard(xkb, XkbAllComponentsMask, True);
         xkb = NULL;
-        if (free_model) 
-        {
-          free_model = 0;
-          free(model);
-        }
-        if (free_layout)
-        {
-          free_layout = 0;
-          free(layout);
-        }
+
+        free(model);
+        free(layout);
 #endif
         XGetKeyboardControl(nxagentDisplay, &values);
 
@@ -757,7 +749,7 @@ XkbError:
 #ifdef XKB
       } else { /* if (noXkbExtension) */
         XkbComponentNamesRec names = {0};
-        char *rules, *variants, *options;
+        char *rules = NULL, *variants = NULL, *options = NULL; /* use xkb default */
 
         #ifdef TEST
         fprintf(stderr, "nxagentKeyboardProc: Using XKB extension.\n");
@@ -766,8 +758,6 @@ XkbError:
         #ifdef TEST
         fprintf(stderr, "nxagentKeyboardProc: nxagentKeyboard is [%s].\n", nxagentKeyboard ? nxagentKeyboard : "NULL");
         #endif
-
-        rules = NULL; /* use xkb default */
 
         /*
           from nxagent changelog:
@@ -791,11 +781,8 @@ XkbError:
             goto XkbError;
           }
 
-          free_model = 1;
-	  model = strndup(nxagentKeyboard, i);
-
-          free_layout = 1;
-	  layout = strdup(&nxagentKeyboard[i + 1]);
+          model = strndup(nxagentKeyboard, i);
+          layout = strdup(&nxagentKeyboard[i + 1]);
 
           /*
            * There is no description for pc105 on Solaris.
@@ -824,17 +811,11 @@ XkbError:
         }
         else
         {
-          layout = NULL; /* use xkb default */
-          model = NULL; /* use xkb default */
-
           #ifdef TEST
           fprintf(stderr, "nxagentKeyboardProc: Using default keyboard: model [%s] layout [%s].\n",
                       model, layout);
           #endif
         }
-
-        variants = NULL; /* use xkb default */
-        options = NULL; /* use xkb default */
 
         #ifdef TEST
         fprintf(stderr, "nxagentKeyboardProc: Init XKB extension.\n");
@@ -900,20 +881,11 @@ XkbEnd:
           NXShadowInitKeymap(&(pDev->key->curKeySyms));
         }
 
-        if (free_model) 
-        {
-          free_model = 0;
-          free(model);
-        }
-
-        if (free_layout)
-        {
-          free_layout = 0;
-          free(layout);
-        }
-
         XkbFreeKeyboard(xkb, XkbAllComponentsMask, True);
         xkb = NULL;
+
+        free(model);
+        free(layout);
       }
 #endif
 
