@@ -723,14 +723,6 @@ XkbError:
         fprintf(stderr, "nxagentKeyboardProc: XKB error.\n");
         #endif
 
-        if (xkb)
-        {
-            XkbFreeKeyboard(xkb, XkbAllComponentsMask, True);
-            xkb = NULL;
-        }
-
-        free(model);
-        free(layout);
 #endif
         XGetKeyboardControl(nxagentDisplay, &values);
 
@@ -863,16 +855,16 @@ XkbError:
         {
           NXShadowInitKeymap(&(pDev->key->curKeySyms));
         }
-
-        if (xkb)
-        {
-            XkbFreeKeyboard(xkb, XkbAllComponentsMask, True);
-            xkb = NULL;
-        }
-
-        free(model);
-        free(layout);
       }
+
+      if (xkb)
+      {
+          XkbFreeKeyboard(xkb, XkbAllComponentsMask, True);
+          xkb = NULL;
+      }
+
+      free(model);
+      free(layout);
 #endif
 
       #ifdef WATCH
