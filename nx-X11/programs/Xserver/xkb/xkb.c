@@ -3203,7 +3203,7 @@ char *			desc;
 	swapl(&rep->indicators);
     }
 
-    start = desc = (char *)malloc(length);
+    start = desc = (char *)calloc(1, length);
     if ( !start )
 	return BadAlloc;
     if (xkb->names) {
