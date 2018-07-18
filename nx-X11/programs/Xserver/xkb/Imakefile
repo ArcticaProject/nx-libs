@@ -18,11 +18,11 @@ XKB_DDXDEFS = XkbServerDefines
  NX_DEFINES = -DNXAGENT_SERVER
 #endif
 
- DDX_SRCS = ddxBeep.c ddxCtrls.c ddxFakeBtn.c ddxFakeMtn.c ddxInit.c \
-	    ddxKeyClick.c ddxKillSrv.c ddxLEDs.c ddxVT.c ddxLoad.c \
+ DDX_SRCS = ddxBeep.c ddxCtrls.c ddxFakeBtn.c ddxFakeMtn.c \
+	    ddxKillSrv.c ddxLEDs.c ddxVT.c ddxLoad.c \
 	    ddxList.c ddxDevBtn.c ddxPrivate.c
- DDX_OBJS = ddxBeep.o ddxCtrls.o ddxFakeBtn.o ddxFakeMtn.o ddxInit.o \
-	    ddxKeyClick.o ddxKillSrv.o ddxLEDs.o ddxVT.o ddxLoad.o \
+ DDX_OBJS = ddxBeep.o ddxCtrls.o ddxFakeBtn.o ddxFakeMtn.o \
+	    ddxKillSrv.o ddxLEDs.o ddxVT.o ddxLoad.o \
 	    ddxList.o ddxDevBtn.o ddxPrivate.o
      SRCS = xkb.c xkbUtils.c xkbEvents.c xkbAccessX.c xkbSwap.c \
             xkbLEDs.c xkbInit.c xkbActions.c xkbPrKeyEv.c \

@@ -543,8 +543,6 @@ XkbEventCauseRec	cause;
 
 	XkbInitIndicatorMap(xkbi,&file);
 
-	XkbDDXInitDevice(pXDev);
-
 	if (!(file.xkbinfo.defined&XkmSymbolsMask)) {
 	    XkbUpdateKeyTypesFromCore(pXDev,xkb->min_key_code,XkbNumKeys(xkb),
 								&changes);
