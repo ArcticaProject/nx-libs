@@ -5018,7 +5018,7 @@ ProcXkbGetKbdByName(ClientPtr client)
     xkbGetIndicatorMapReply	irep = {0};
     xkbGetNamesReply		nrep = {0};
     xkbGetGeometryReply		grep = {0};
-    XkbComponentNamesRec	names;
+    XkbComponentNamesRec	names = {0};
     XkbDescPtr			xkb;
     unsigned char *		str;
     char 			mapFile[PATH_MAX];
