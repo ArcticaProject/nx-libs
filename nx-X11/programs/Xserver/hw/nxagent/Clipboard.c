@@ -1696,7 +1696,7 @@ int nxagentInitClipboard(WindowPtr pWin)
   free(lastSelectionOwner);
   lastSelectionOwner = NULL;
 
-  lastSelectionOwner = (SelectionOwner *) malloc(2 * sizeof(SelectionOwner));
+  lastSelectionOwner = (SelectionOwner *) malloc(nxagentMaxSelections * sizeof(SelectionOwner));
 
   if (lastSelectionOwner == NULL)
   {
