@@ -1,0 +1,22 @@
+An overview of where we stand with upgrading to latest xorg-xserver
+code base. This ignores any security fixes that have been
+backported, it rather describes what functionality level the modules
+are at (roughly):
+
+module            xorg version
+composite         6.9/7.0
+damageext         6.9/7.0
+dbe               1.4.2
+dix               1.3.0.0
+fb                7.1/1.1
+GL                6.9/7.0
+mi                7.1/1.1
+miext             7.1/1.1
+os                7.1/1.1
+randr             1.18.0
+record            1.4.2
+render            6.9/7.0
+Xext              7.1/1.1
+xfixes            1.4.2
+Xi                7.1/1.1
+xkb               7.1/1.1
