@@ -867,9 +867,6 @@ Bool nxagentOpenScreen(ScreenPtr pScreen,
 
   int defaultVisualIndex = 0;
 
-  XTextProperty  xtpWmName;
-  char* wmName = nxagentWindowName;
-
   #ifdef TEST
   fprintf(stderr, "nxagentOpenScreen: Called for screen index [%d].\n",
               pScreen->myNum);
@@ -1905,16 +1902,12 @@ N/A
       if (nxagentUserGeometry.flag & WidthValue || nxagentUserGeometry.flag & HeightValue)
         sizeHints->flags |= USSize;
     }
-    /* FIXME: deprecated, replaced by XSetWmProperties() */
-    XSetStandardProperties(nxagentDisplay,
-                           nxagentDefaultWindows[pScreen->myNum],
-                           nxagentWindowName,
-                           nxagentWindowName,
-                           nxagentIconPixmap,
-                           argv, argc, sizeHints);
 
-    if (Xutf8TextListToTextProperty(nxagentDisplay, &wmName, 1, XCompoundTextStyle, &xtpWmName) >= Success)
-       XSetWMName(nxagentDisplay, nxagentDefaultWindows[pScreen->myNum], &xtpWmName);
+    Xutf8SetWMProperties(nxagentDisplay, 
+                         nxagentDefaultWindows[pScreen->myNum],
+                         nxagentWindowName, 
+                         nxagentWindowName,
+                         argv , argc , &sizeHints, &wmHints, NULL);
 
     if (sizeHints)
       XFree(sizeHints);
