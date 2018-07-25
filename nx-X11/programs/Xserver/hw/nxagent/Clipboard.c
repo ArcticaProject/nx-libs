@@ -1588,13 +1588,20 @@ int nxagentConvertSelection(ClientPtr client, WindowPtr pWin, Atom selection,
 int nxagentSendNotify(xEvent *event)
 {
   #ifdef DEBUG
-  fprintf(stderr, "nxagentSendNotify: Got called.\n");
+  fprintf(stderr, "%s: Got called.\n", __func__);
   #endif
 
   if (agentClipboardStatus != 1)
   {
+    #ifdef DEBUG
+    fprintf(stderr, "%s: agentClipboardStatus != 1 - doing nothing.\n", __func__);
+    #endif
     return 0;
   }
+
+  #ifdef DEBUG
+  fprintf(stderr, "%s: property is [%d][%s].\n", __func__, event->u.selectionNotify.property, NameForAtom(event->u.selectionNotify.property));
+  #endif
 
   if (event->u.selectionNotify.property == clientCutProperty)
   {
@@ -1630,7 +1637,7 @@ int nxagentSendNotify(xEvent *event)
     x.time = CurrentTime;
 
     #ifdef DEBUG
-    fprintf(stderr, "nxagentSendNotify: Propagating clientCutProperty to requestor [%p].\n", x.requestor);
+    fprintf(stderr, "%s: Propagating clientCutProperty to requestor [%p].\n", __func__, x.requestor);
     #endif
 
     result = XSendEvent (nxagentDisplay, x.requestor, False,
@@ -1646,7 +1653,9 @@ int nxagentSendNotify(xEvent *event)
 
     return 1;
   }
-
+  #ifdef DEBUG
+  fprintf(stderr, "nxagentSendNotify: sent nothing.\n");
+  #endif
   return 0;
 }
 
