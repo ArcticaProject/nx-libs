@@ -2891,9 +2891,21 @@ int nxagentHandleXFixesSelectionNotify(XEvent *X)
 
   XFixesSelectionEvent *xfixesEvent = (XFixesSelectionEvent *) X;
 
-  if (nxagentXFixesInfo.Initialized == 0 ||
-          xfixesEvent -> type != (nxagentXFixesInfo.EventBase + XFixesSelectionNotify))
-    return 0;
+  if (nxagentXFixesInfo.Initialized == 0)
+  {
+      #ifdef DEBUG
+      fprintf(stderr, "nxagentHandleXFixesSelectionNotify: XFixes not initialized - doing nothing.\n");
+      #endif
+      return 0;
+  }
+
+  if (xfixesEvent -> type != (nxagentXFixesInfo.EventBase + XFixesSelectionNotify))
+  {
+      #ifdef DEBUG
+      fprintf(stderr, "nxagentHandleXFixesSelectionNotify: event type is [%d] - doing nothing.\n", xfixesEvent->type);
+      #endif
+      return 0;
+  }
 
   #ifdef TEST
   fprintf(stderr, "nxagentHandleXFixesSelectionNotify: Handling event.\n");
