@@ -97,14 +97,11 @@ static void	    miSpriteStoreColors(ColormapPtr pMap, int ndef,
 static void	    miSpriteComputeSaved(ScreenPtr pScreen);
 
 
-// FIXME: Backport X.org commit 8fb43b8bf9fcbe015d4e98c7e09889184d136a1e
-//        to handle sprite screen wrapping correctly.
-
 #define SCREEN_PROLOGUE(pScreen, field) ((pScreen)->field = \
    ((miSpriteScreenPtr)dixLookupPrivate(&(pScreen)->devPrivates, \
                                        &miSpriteScreenKeyRec))->field)
-#define SCREEN_EPILOGUE(pScreen, field, wrapper)\
-    ((pScreen)->field = wrapper)
+#define SCREEN_EPILOGUE(pScreen, field)\
+    ((pScreen)->field = miSprite##field)
 
 /*
  * pointer-sprite method table
