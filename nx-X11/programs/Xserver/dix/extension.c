@@ -73,39 +73,6 @@ int lastEvent = EXTENSION_EVENT_BASE;
 static int lastError = FirstExtensionError;
 static unsigned int NumExtensions = 0;
 
-extern int extensionPrivateLen;
-extern unsigned *extensionPrivateSizes;
-extern unsigned totalExtensionSize;
-
-static void
-InitExtensionPrivates(ExtensionEntry *ext)
-{
-    register char *ptr;
-    DevUnion *ppriv;
-    register unsigned *sizes;
-    register unsigned size;
-    register int i;
-
-    if (totalExtensionSize == sizeof(ExtensionEntry))
-	ppriv = (DevUnion *)NULL;
-    else
-	ppriv = (DevUnion *)(ext + 1);
-
-    ext->devPrivates = ppriv;
-    sizes = extensionPrivateSizes;
-    ptr = (char *)(ppriv + extensionPrivateLen);
-    for (i = extensionPrivateLen; --i >= 0; ppriv++, sizes++)
-    {
-	if ( (size = *sizes) )
-	{
-	    ppriv->ptr = (void *)ptr;
-	    ptr += size;
-	}
-	else
-	    ppriv->ptr = (void *)NULL;
-    }
-}
-
 ExtensionEntry *
 AddExtension(char *name, int NumEvents, int NumErrors, 
 	     int (*MainProc)(ClientPtr c1), 
@@ -122,7 +89,7 @@ AddExtension(char *name, int NumEvents, int NumErrors,
 	        (unsigned)(lastError + NumErrors > LAST_ERROR))
         return((ExtensionEntry *) NULL);
 
-    ext = (ExtensionEntry *) malloc(totalExtensionSize);
+    ext = (ExtensionEntry *) malloc(sizeof(ExtensionEntry));
     if (!ext)
 	return((ExtensionEntry *) NULL);
     if (!dixAllocatePrivates(&ext->devPrivates, PRIVATE_EXTENSION)) {
