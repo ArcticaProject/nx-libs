@@ -47,7 +47,7 @@
 #include "xfixesint.h"
 #include "protocol-versions.h"
 
-static unsigned char	XFixesReqCode;
+unsigned char	XFixesReqCode;
 int		XFixesEventBase;
 int		XFixesErrorBase;
 
