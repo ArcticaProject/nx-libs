@@ -78,7 +78,6 @@ DevPrivateKeyRec miPointerPrivKeyRec;
     (IsFloating(dev) ? \
         (miPointerPtr)dixLookupPrivate(&(dev)->devPrivates, miPointerPrivKey): \
         (miPointerPtr)dixLookupPrivate(&(GetMaster(dev, MASTER_POINTER))->devPrivates, miPointerPrivKey))
->>>>>>> d70a1b1e3... mi: Backport latest devPrivates ABI from X.org.
 
 /*
  * until more than one pointer device exists.
