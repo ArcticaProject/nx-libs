@@ -266,14 +266,13 @@ ScreenSaverExtensionInit(void)
     AttrType = CreateNewResourceType(ScreenSaverFreeAttr);
     EventType = CreateNewResourceType(ScreenSaverFreeEvents);
     SuspendType = CreateNewResourceType(ScreenSaverFreeSuspend);
-    ScreenPrivateIndex = AllocateScreenPrivateIndex ();
 
     for (i = 0; i < screenInfo.numScreens; i++)
     {
 	pScreen = screenInfo.screens[i];
 	SetScreenPrivate (pScreen, NULL);
     }
-    if (AttrType && EventType && SuspendType && ScreenPrivateIndex != -1 &&
+    if (AttrType && EventType && SuspendType &&
 	(extEntry = AddExtension(ScreenSaverName, ScreenSaverNumberEvents, 0,
 				 ProcScreenSaverDispatch, SProcScreenSaverDispatch,
 				 ScreenSaverResetProc, StandardMinorOpcode)))
