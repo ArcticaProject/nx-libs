@@ -70,11 +70,10 @@ typedef struct _ExtensionEntry {
     void * extPrivate;
     unsigned short (* MinorOpcode)(	/* called for errors */
 	ClientPtr /* client */);
-    PrivateRec *devPrivates;
 #ifdef XCSECURITY
     Bool secure;		/* extension visible to untrusted clients? */
 #endif
-    DevUnion *devPrivates;
+    PrivateRec *devPrivates;
 } ExtensionEntry;
 
 /* 
