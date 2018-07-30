@@ -97,7 +97,7 @@ AddInputDevice(DeviceProc deviceProc, Bool autoStart)
     dev->public.processInputProc = (ProcessInputProc)NoopDDA;
     dev->public.realInputProc = (ProcessInputProc)NoopDDA;
 
-    dev->public.eqnqueueInputProc = EnqueueEvent;
+    dev->public.enqueueInputProc = EnqueueEvent;
     dev->deviceProc = deviceProc;
     dev->startup = autoStart;
     dev->sync.frozen = FALSE;
