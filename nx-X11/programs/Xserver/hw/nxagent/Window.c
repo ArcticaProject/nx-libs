@@ -345,10 +345,7 @@ FIXME: We need to set save under on the real display?
 
   if (mask & CWEventMask)
   {
-    /* Assume that the mask fits in int... broken on Big Endian 64bit systems. */
-    Mask tmp_mask = attributes.event_mask;
-    nxagentGetEventMask(pWin, &tmp_mask);
-    attributes.event_mask = (int)tmp_mask;
+    attributes.event_mask = nxagentGetEventMask(pWin);
   }
   #ifdef WARNING
   else
@@ -2970,10 +2967,7 @@ FIXME: Do we need to set save unders attribute here?
 
   if (mask & CWEventMask)
   {
-    /* Assume that the mask fits in int... broken on Big Endian 64bit systems. */
-    Mask tmp_mask = attributes.event_mask;
-    nxagentGetEventMask(pWin, &tmp_mask);
-    attributes.event_mask = (int)tmp_mask;
+    attributes.event_mask = nxagentGetEventMask(pWin);
   }
   #ifdef WARNING
   else
@@ -3446,10 +3440,7 @@ void nxagentSetTopLevelEventMask(pWin)
 
   if (nxagentOption(Rootless) && nxagentWindowTopLevel(pWin))
   {
-    /* Assume that the mask fits in int... broken on Big Endian 64bit systems. */
-    Mask tmp_mask = attributes.event_mask = NoEventMask;
-    nxagentGetEventMask(pWin, &tmp_mask);
-    attributes.event_mask = (int)tmp_mask;
+    attributes.event_mask = nxagentGetEventMask(pWin);
 
     XChangeWindowAttributes(nxagentDisplay, nxagentWindow(pWin), mask, &attributes);
   }
