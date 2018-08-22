@@ -52,4 +52,6 @@ static inline const char * validateString(const char *str) {
   return str ? str : "(null)";
 }
 
+#define SAFE_FREE(ptr) do { free(ptr); ptr = NULL; } while (0)
+
 #endif /* __Utils_H__ */

@@ -218,7 +218,6 @@ INCLUDES = \
 # NXAGENT_FONTEXCLUDE              Exclude some specific font names (only "-ult1mo" at this moment).
 # NXAGENT FULLSCREEN               Fullscreen mode
 # NXAGENT_RANDR_MODE_PREFIX        Use prefixed (i.e., nx_<x>x<y>) RandR modes
-# NXAGENT_RANDR_XINERAMA_CLIPPING  cut off invisible window parts in xinerama mode (you probably do not want this)
 
 #if nxVersion
 NX_DEFINES = \

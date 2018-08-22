@@ -42,6 +42,10 @@ is" without express or implied warranty.
  */
 
 #include <signal.h>
+#include <stdarg.h>
+#include <math.h>
+#include <float.h>
+#include <time.h>
 
 #include "scrnintstr.h"
 #include "dix.h"
@@ -55,6 +59,7 @@ is" without express or implied warranty.
 #include "../../randr/randrstr.h"
 #include "inputstr.h"
 #include "mivalidate.h"
+#include "list.h"
 
 #include "Agent.h"
 #include "Display.h"
@@ -3610,10 +3615,14 @@ Bool nxagentReconnectScreen(void *p0)
 }
 
 /* intersect two rectangles */
-Bool intersect(int ax1, int ay1, unsigned int aw, unsigned int ah,
+static Bool intersect(int ax1, int ay1, unsigned int aw, unsigned int ah,
 	       int bx1, int by1, unsigned int bw, unsigned int bh,
 	       int *x, int *y, unsigned int *w, unsigned int *h)
 {
+#ifdef DEBUG
+    fprintf(stderr, "%s: DEBUG: [(%d, %d) -> (%u, %u)]; [(%d, %d) -> (%u, %u)]; [%p], [%p], [%p], [%p]\n", __func__, ax1, ay1, aw, ah, bx1, by1, bw, bh, (void*)(x), (void*)(y), (void*)(w), (void*)(h));
+#endif
+
     int tx1, ty1, tx2, ty2, ix, iy;
     unsigned int iw, ih;
 
@@ -3625,8 +3634,7 @@ Bool intersect(int ax1, int ay1, unsigned int aw, unsigned int ah,
     /* thanks to http://silentmatt.com/rectangle-intersection */
 
     /* check if there's any intersection at all */
-    if (ax2 < bx1 || bx2 < ax1 || ay2 < by1 || by2 < ay1) {
-
+    if ((ax1 >= bx2) || (ax2 <= bx1) || (ay1 >= by2) || (ay2 <= by1)) {
         #ifdef DEBUG
         fprintf(stderr, "intersect: the given rectangles do not intersect at all\n");
         #endif
@@ -3648,101 +3656,34 @@ Bool intersect(int ax1, int ay1, unsigned int aw, unsigned int ah,
     if (iw <= 0 || ih <= 0) {
 
         #ifdef DEBUG
-        fprintf(stderr, "intersect: intersection rectangle not feasible\n");
+        fprintf(stderr, "%s: intersection rectangle not feasible: width [%u], calculated as ([%d] - [%d]) [%u]; height [%u], calculated as ([%d] - [%d]) [%u]\n", __func__, iw, tx2, tx1, (tx2 - tx1), ih, ty2, ty1, (ty2 - ty1));
         #endif
 
         return FALSE;
     }
-    *x = ix;
-    *y = iy;
-    *w = iw;
-    *h = ih;
+
+    if (x) {
+      *x = ix;
+    }
+
+    if (y) {
+      *y = iy;
+    }
+
+    if (w) {
+      *w = iw;
+    }
+
+    if (h) {
+      *h = ih;
+    }
 
     #ifdef DEBUG
-    fprintf(stderr, "intersect: intersection is: ([%d],[%d]) [ %d x %d ]\n", *x, *y, *w, *h);
+    fprintf(stderr, "intersect: intersection is: ([%d],[%d]) [ %d x %d ]\n", (x) ? *(x) : (-1), (y) ? (*y) : (-1), (w) ? (*w) : (-1), (h) ? (*h) : (-1));
     #endif
 
     return TRUE;
 }
-
-#ifndef NXAGENT_RANDR_XINERAMA_CLIPPING
-/* intersect two rectangles, return aw/ah for w/h if resulting
-   rectangle is (partly) outside of bounding box */
-Bool intersect_bb(int ax1, int ay1, unsigned int aw, unsigned int ah,
-	       int bx1, int by1, unsigned int bw, unsigned int bh,
-	       int bbx1, int bby1, int bbx2, int bby2,
-	       int *x, int *y, unsigned int *w, unsigned int *h)
-{
-
-  #ifdef DEBUG
-  fprintf(stderr, "intersect_bb: session window: ([%d],[%d]) [ %d x %d ]\n", ax1, ay1, aw, ah);
-  fprintf(stderr, "intersect_bb: crtc: ([%d],[%d]) [ %d x %d ]\n", bx1, by1, bw, bh);
-  fprintf(stderr, "intersect_bb: bounding box: ([%d],[%d]) [ %d x %d ]\n", bbx1, bby1, bbx2-bbx1, bby2-bby1);
-  #endif
-
-  Bool result = intersect(ax1, ay1, aw, ah, bx1, by1, bw, bh, x, y, w, h);
-
-  if (result == TRUE) {
-
-    /*
-     * ###### The X-Coordinate ######
-     */
-
-    /* check if outside-left of bounding box */
-    if (bx1 == bbx1 && ax1 < bbx1) {
-
-        *w += bbx1 - ax1;
-        *x  = 0;
-
-        #ifdef DEBUG
-        fprintf(stderr, "intersect_bb: session box is outside-left of the bounding box - width gets adapted to [%d]\n", *w);
-        #endif
-
-
-    }
-
-     /* check if outside-right of bounding box */
-    if (bx1 + bw == bbx2 && ax1 + aw > bbx2) {
-
-        *w += ax1 + aw - bbx2;
-
-        #ifdef DEBUG
-        fprintf(stderr, "intersect_bb: session box is outside-right of the bounding box - width gets adapted to [%d]\n", *w);
-        #endif
-
-    }
-
-    /*
-     * ###### The Y-Coordinate ######
-     */
-
-    /* check if outside-above of bounding box */
-    if (by1 == bby1 && ay1 < bby1) {
-
-        *h += bby1 - ay1;
-        *y  = 0;
-
-        #ifdef DEBUG
-        fprintf(stderr, "intersect_bb: session box is outside-above of the bounding box - height gets adapted to [%d]\n", *h);
-        #endif
-
-    }
-
-     /* check if outside-below of bounding box */
-    if (by1 + bh == bby2 && ay1 + ah > bby2) {
-
-        *h += ay1 + ah - bby2;
-
-        #ifdef DEBUG
-        fprintf(stderr, "intersect_bb: session box is outside-below of the bounding box - height gets adapted to [%d]\n", *h);
-        #endif
-
-    }
-
-  }
-  return result;
-}
-#endif
 
 RRModePtr    nxagentRRCustomMode = NULL;
 
@@ -3904,6 +3845,3350 @@ int nxagentChangeScreenConfig(int screen, int width, int height)
 }
 
 /*
+ * Structure containing a list of splits.
+ *
+ * Only used locally, not exported.
+ */
+typedef struct {
+  size_t  x_count;
+  size_t  y_count;
+  INT32  *x_splits;
+  INT32  *y_splits;
+} nxagentScreenSplits;
+
+/*
+ * Structure containing the boxes an nxagent session window is split into.
+ *
+ * Only used locally, not exported.
+ */
+typedef struct {
+  struct xorg_list entry;
+  Bool             obsolete;
+  ssize_t          screen_id; /* Mapping to actual screen. */
+  BoxPtr           box; /*
+                         * You might be tempted to use RegionPtr here. Do not.
+                         * A region is really an ordered and minimal set of horizontal
+                         * bands. A window tiling will in most cases not be minimal,
+                         * due to the need to split at display boundaries.
+                         * A Region is more minimal than this.
+                         * C.f., https://web.archive.org/web/20170520132137/http://magcius.github.io:80/xplain/article/regions.html
+                         */
+} nxagentScreenBoxesElem;
+
+typedef struct {
+  struct xorg_list head;
+  ssize_t          screen_id; /* Mapping to actual screen. */
+} nxagentScreenBoxes;
+
+/*
+ * Structure containing a (potentially partial) solution to a Crtc tiling.
+ *
+ * Only used locally, not exported.
+ */
+typedef struct {
+  struct xorg_list    entry;
+  size_t              rating_size_change;
+  size_t              rating_cover_penalty;
+  size_t              rating_extended_boxes_count;
+  double              rating; /* Calculated via the components above. */
+  nxagentScreenBoxes *solution_boxes;
+  nxagentScreenBoxes *all_boxes;
+} nxagentScreenCrtcsSolution;
+
+typedef struct xorg_list nxagentScreenCrtcsSolutions;
+
+#define INVALID_RATING ((-1) * (DBL_MAX))
+
+static nxagentScreenCrtcsSolution *nxagentScreenCrtcsTiling = NULL;
+
+/*
+ * Helper function that takes a potential split point, the window bounds,
+ * a split count and a splits array.
+ *
+ * The function checks if the split point is within bounds, not already
+ * contained in the list and adds a new split point, modifying both the
+ * count parameter and the splits list.
+ *
+ * In case of errors, does nothing.
+ */
+static void nxagentAddToSplits(const CARD16 test_edge, const CARD16 rwin_start, const CARD16 rwin_end, size_t *split_count, INT32 *splits) {
+  if ((!(split_count)) || (!(splits))) {
+    return;
+  }
+
+  /* FIXME: think through and check edge case: 1px split. */
+  if ((rwin_start < test_edge) && (rwin_end > test_edge)) {
+    /* Edge somewhere inside of agent window, split point. */
+
+    /* Filter out if split point exists already. */
+    Bool exists = FALSE;
+    for (size_t i = 0; i < (*split_count); ++i) {
+      if (splits[i] == test_edge) {
+        exists = TRUE;
+        break;
+      }
+    }
+
+    if (!(exists)) {
+      splits[(*split_count)++] = test_edge;
+    }
+  }
+}
+
+/* Helper function used while sorting the split lists. */
+static int nxagentCompareSplits(const void *lhs, const void *rhs) {
+  int ret = 0;
+
+  const INT32 lhs_ = *((INT32*)(lhs)),
+              rhs_ = *((INT32*)(rhs));
+
+  if (lhs_ < rhs_) {
+    ret = -1;
+  }
+  else if (lhs_ > rhs_) {
+    ret = 1;
+  }
+
+  return(ret);
+}
+
+/* Helper function that deallocates a split list. */
+static void nxagentFreeSplits(nxagentScreenSplits **splits) {
+  if ((!(splits)) || (!(*splits))) {
+    return;
+  }
+
+  nxagentScreenSplits *splits_ = (*splits);
+
+  splits_->x_count = 0;
+  splits_->y_count = 0;
+
+  SAFE_FREE(splits_->x_splits);
+  SAFE_FREE(splits_->y_splits);
+  SAFE_FREE(splits_);
+}
+
+/*
+ * Helper function compacting an nxagentScreenSplits structure.
+ * The initial allocation assumes the worst case and overallocates memory,
+ * upper bounded by the maximum count of possible splits for a given screen
+ * configuration.
+ * This function compacts the lists back down into what is necessary only.
+ *
+ * In case of memory allocation errors, it frees all allocated datan and sets
+ * the splits list pointer to NULL!
+ */
+static void nxagentCompactSplits(nxagentScreenSplits **splits, const size_t actual_x_count, const size_t actual_y_count) {
+  if ((!(splits)) || (!(*splits))) {
+    return;
+  }
+
+  nxagentScreenSplits *splits_ = (*splits);
+
+  splits_->x_count = actual_x_count;
+  INT32 *new_data = NULL;
+  if (actual_x_count) {
+    /* Compact to accomodate actual data. */
+    new_data = realloc(splits_->x_splits, sizeof(INT32) * actual_x_count);
+
+    if (!(new_data)) {
+      nxagentFreeSplits(splits);
+
+      return;
+    }
+
+    splits_->x_splits = new_data;
+  }
+  else {
+    /* No splits in this dimension, drop data. */
+    SAFE_FREE(splits_->x_splits);
+  }
+
+  splits_->y_count = actual_y_count;
+  if (actual_y_count) {
+    new_data = realloc(splits_->y_splits, sizeof(INT32) * actual_y_count);
+
+    if (!(new_data)) {
+      nxagentFreeSplits(splits);
+
+      return;
+    }
+
+    splits_->y_splits = new_data;
+  }
+  else {
+    /* No splits in this dimension, drop data. */
+    SAFE_FREE(splits_->y_splits);
+  }
+}
+
+/*
+ * Generate a list of splits.
+ * This is based upon the client's system configuration and will
+ * generally create more splits than we need/want.
+ *
+ * In case of errors, returns NULL.
+ */
+static nxagentScreenSplits* nxagentGenerateScreenSplitList(const XineramaScreenInfo *screen_info, const size_t screen_count) {
+  nxagentScreenSplits *ret = NULL;
+
+  if (!(screen_info)) {
+    return(ret);
+  }
+
+  /*
+   * The maximum number of split points per axis
+   * is screen_count * 2 due to the rectangular nature of a screen
+   * (and hence two vertical or horizontal edges).
+   */
+  size_t split_counts = (screen_count * 2);
+
+  ret = calloc(1, sizeof(nxagentScreenSplits));
+  if (!ret) {
+    return(ret);
+  }
+
+  ret->x_splits = calloc(split_counts, sizeof(INT32));
+  ret->y_splits = calloc(split_counts, sizeof(INT32));
+  if ((!(ret->x_splits)) || (!(ret->y_splits))) {
+    SAFE_FREE(ret->x_splits);
+    SAFE_FREE(ret);
+
+    return(ret);
+  }
+
+  /*
+   * Initialize split arrays to -1, denoting no split.
+   * Could be done only for the first invalid element, but play it safe.
+   */
+  for (size_t i = 0; i < split_counts; ++i) {
+    ret->x_splits[i] = ret->y_splits[i] = -1;
+  }
+
+  const CARD16 sess_x_start = nxagentOption(X),
+               sess_y_start = nxagentOption(Y),
+               sess_x_end   = (sess_x_start + nxagentOption(Width)),
+               sess_y_end   = (sess_y_start + nxagentOption(Height));
+
+  size_t actual_x_splits = 0,
+         actual_y_splits = 0;
+
+  for (size_t i = 0; i < screen_count; ++i) {
+    /* Handle x component. */
+    size_t start_x = screen_info[i].x_org,
+           end_x = start_x + screen_info[i].width;
+
+    /* Left edge. */
+    nxagentAddToSplits(start_x, sess_x_start, sess_x_end, &actual_x_splits, ret->x_splits);
+
+    /* Right edge. */
+    nxagentAddToSplits(end_x, sess_x_start, sess_x_end, &actual_x_splits, ret->x_splits);
+
+    /* Handle y component. */
+    size_t start_y = screen_info[i].y_org,
+           end_y = start_y + screen_info[i].height;
+
+    /* Top edge. */
+    nxagentAddToSplits(start_y, sess_y_start, sess_y_end, &actual_y_splits, ret->y_splits);
+
+    /* Bottom edge. */
+    nxagentAddToSplits(end_y, sess_y_start, sess_y_end, &actual_y_splits, ret->y_splits);
+  }
+
+  /*
+   * Fetched all split points.
+   * Compact data and handle errors.
+   */
+  nxagentCompactSplits(&ret, actual_x_splits, actual_y_splits);
+
+  return(ret);
+}
+
+/* Helper function printing out a splits list. */
+static void nxagentPrintSplitsList(const INT32 *splits, const size_t count, const char *func, const Bool is_x) {
+  if (!(func)) {
+    func = "unknown function";
+  }
+
+  if (!(splits)) {
+    fprintf(stderr, "%s: tried to print invalid split list.\n", func);
+    return;
+  }
+
+  fprintf(stderr, "%s: ", func);
+  if (is_x) {
+    fprintf(stderr, "X");
+  }
+  else {
+    fprintf(stderr, "Y");
+  }
+  fprintf(stderr, " split list: [");
+
+  for (size_t i = 0; i < count; ++i) {
+    if (i > 0) {
+      fprintf(stderr, ", ");
+    }
+
+    fprintf(stderr, "%u", splits[i]);
+  }
+
+  fprintf(stderr, "]\n");
+}
+
+/* Helper to clear out a screen boxes list. */
+static void nxagentFreeScreenBoxes(nxagentScreenBoxes *boxes, const Bool free_data) {
+  if (!(boxes)) {
+    return;
+  }
+
+  nxagentScreenBoxesElem *cur  = NULL,
+                         *next = NULL;
+
+  xorg_list_for_each_entry_safe(cur, next, &(boxes->head), entry) {
+    xorg_list_del(&(cur->entry));
+
+    if (free_data) {
+      SAFE_FREE(cur->box);
+    }
+
+    SAFE_FREE(cur);
+  }
+
+  xorg_list_init(&(boxes->head));
+}
+
+/*
+ * Given a list of splits, sorts them and calculates a tile pattern for the
+ * current window.
+ *
+ * In case of errors, returns an empty list or NULL.
+ */
+static nxagentScreenBoxes* nxagentGenerateScreenCrtcs(nxagentScreenSplits *splits) {
+  nxagentScreenBoxes *ret = NULL;
+
+  ret = calloc(1, sizeof(nxagentScreenBoxes));
+
+  if (!(ret)) {
+    return(ret);
+  }
+
+  xorg_list_init(&(ret->head));
+  ret->screen_id = -1;
+
+  if ((!(splits)) || ((!(splits->x_splits)) && (splits->x_count)) || ((!(splits->y_splits)) && (splits->y_count))) {
+    return(ret);
+  }
+
+  /*
+   * Could drop these tests, since we checked the "if count is not zero the
+   * pointers must exist" constraint above already, but play it safe.
+   */
+  if (splits->x_splits) {
+    qsort(splits->x_splits, splits->x_count, sizeof(*(splits->x_splits)), nxagentCompareSplits);
+  }
+  if (splits->y_splits) {
+    qsort(splits->y_splits, splits->y_count, sizeof(*(splits->y_splits)), nxagentCompareSplits);
+  }
+
+#ifdef DEBUG
+  nxagentPrintSplitsList(splits->x_splits, splits->x_count, __func__, TRUE);
+  nxagentPrintSplitsList(splits->y_splits, splits->y_count, __func__, FALSE);
+#endif
+
+  /*
+   * Since the split lists are sorted now, we can go ahead and create boxes in
+   * an iterative manner.
+   */
+#ifdef DEBUG
+  {
+    /* Avoid using %zu printf specifier which may not be supported everywhere. */
+    const unsigned long long x_count = splits->x_count;
+    const unsigned long long y_count = splits->y_count;
+    fprintf(stderr, "%s: should generate (x_splits [%llu] + 1) * (y_splits [%llu] + 1) = %llu boxes.\n", __func__, x_count, y_count, (x_count + 1) * (y_count + 1));
+  }
+#endif
+  /*                    v-- implicit split point at agent window's bottommost edge! */
+  for (size_t i = 0; i <= splits->y_count; ++i) {
+    /* Looping over "rows" here (hence y splits). */
+    CARD32 start_y = -1,
+           end_y   = -1;
+
+    if (0 == i) {
+      start_y = nxagentOption(Y);
+    }
+    else {
+      start_y = splits->y_splits[i - 1];
+    }
+
+    if (i == splits->y_count) {
+      end_y = (nxagentOption(Y) + nxagentOption(Height));
+    }
+    else {
+      end_y = splits->y_splits[i];
+    }
+
+    /*                    v-- implicit split point at agent window's rightmost edge! */
+    for (size_t y = 0; y <= splits->x_count; ++y) {
+      /* Looping over "cols" here (hence x splits). */
+      CARD32 start_x = -1,
+             end_x   = -1;
+
+      if (0 == y) {
+        start_x = nxagentOption(X);
+      }
+      else {
+        start_x = splits->x_splits[y - 1];
+      }
+
+      if (y == splits->x_count) {
+        end_x = (nxagentOption(X) + nxagentOption(Width));
+      }
+      else {
+        end_x = splits->x_splits[y];
+      }
+
+      nxagentScreenBoxesElem *new_box_list_entry = calloc(1, sizeof(nxagentScreenBoxesElem));
+
+      if (!(new_box_list_entry)) {
+        nxagentFreeScreenBoxes(ret, TRUE);
+
+        return(ret);
+      }
+
+      new_box_list_entry->screen_id = -1;
+
+      BoxPtr new_box = calloc(1, sizeof(BoxRec));
+
+      if (!(new_box)) {
+        nxagentFreeScreenBoxes(ret, TRUE);
+
+        return(ret);
+      }
+
+      /* Box extends from (start_x, start_y) to (end_x, end_y). */
+      new_box->x1 = start_x;
+      new_box->x2 = end_x;
+      new_box->y1 = start_y;
+      new_box->y2 = end_y;
+
+      new_box_list_entry->box = new_box;
+
+      xorg_list_append(&(new_box_list_entry->entry), &(ret->head));
+    }
+  }
+
+#if defined(DEBUG) || defined(WARNING)
+  {
+    unsigned long long count = 0;
+    nxagentScreenBoxesElem *cur = NULL;
+    xorg_list_for_each_entry(cur, &(ret->head), entry) {
+      ++count;
+    }
+#ifdef DEBUG
+    fprintf(stderr, "%s: generated %llu boxes\n", __func__, count);
+#endif
+    if (count < ((splits->x_count + 1) * (splits->y_count + 1))) {
+      const unsigned long long expect = ((splits->x_count + 1) * (splits->y_count + 1));
+      fprintf(stderr, "%s: WARNING! Generated only %llu boxes, expected: %llu\n", __func__, count, expect);
+    }
+  }
+#endif
+
+  return(ret);
+}
+
+/*
+ * Helper returning true if a given box intersects with a given screen,
+ * otherwise and on error false.
+ */
+static Bool nxagentScreenBoxIntersectsScreen(const nxagentScreenBoxesElem *box, const XineramaScreenInfo *screen_info) {
+  Bool ret = FALSE;
+
+  if ((!(box)) || (!(box->box)) || (!(screen_info))) {
+    return(ret);
+  }
+
+  /* Find out if this box has intersections with display. */
+  INT32 box_width  = (box->box->x2 - box->box->x1),
+        box_height = (box->box->y2 - box->box->y1);
+  ret = intersect(box->box->x1, box->box->y1,
+                  box_width, box_height,
+                  screen_info->x_org, screen_info->y_org,
+                  screen_info->width, screen_info->height,
+                  NULL, NULL, NULL, NULL);
+
+  return(ret);
+}
+
+/* Helper printing out a single screen box. */
+static char* nxagentPrintScreenBoxesElem(const nxagentScreenBoxesElem *box) {
+  char *ret = NULL;
+
+  if ((!(box)) || (!(box->box))) {
+    return(ret);
+  }
+
+  BoxPtr box_data = box->box;
+
+  char *construct = NULL;
+  {
+    const signed long long screen_id = box->screen_id;
+    const unsigned obsolete = box->obsolete;
+    if (-1 == asprintf(&construct, "(%u)[(%d, %d), (%d, %d)]->%lld", obsolete, box_data->x1, box_data->y1, box_data->x2, box_data->y2, screen_id)) {
+      return(ret);
+    }
+  }
+
+  ret = construct;
+
+  return(ret);
+}
+
+/*
+ * Helper comparing two box elements.
+ * Returns true if both data sections match, false otherwise or on error.
+ */
+static Bool nxagentCompareScreenBoxData(const BoxPtr lhs, const BoxPtr rhs) {
+  Bool ret = FALSE;
+
+  if ((!(lhs)) || (!(rhs))) {
+    return(ret);
+  }
+
+  if ((lhs->x1 == rhs->x1) && (lhs->x2 == rhs->x2) && (lhs->y1 == rhs->y1) && (lhs->y2 == rhs->y2)) {
+    ret = TRUE;
+  }
+
+  return(ret);
+}
+
+/*
+ * Helper marking a box in the all boxes list as obsolete.
+ *
+ * Returns true if such a box has been found (and marked), false otherwise
+ * or on error.
+ */
+static Bool nxagentScreenBoxMarkObsolete(nxagentScreenBoxes *all_boxes, const nxagentScreenBoxesElem *ref) {
+  Bool ret = FALSE;
+
+  if ((!(ref)) || (!(all_boxes)) || (!(ref->box))) {
+    return(ret);
+  }
+
+  nxagentScreenBoxesElem *cur_obsolete = NULL;
+  xorg_list_for_each_entry(cur_obsolete, &(all_boxes->head), entry) {
+    if (nxagentCompareScreenBoxData(cur_obsolete->box, ref->box)) {
+      cur_obsolete->obsolete = TRUE;
+
+      ret = TRUE;
+
+      break;
+    }
+  }
+
+  return(ret);
+}
+
+/*
+ * Helper for checking box adjacency.
+ *
+ * The edges for which adjacency should be detected can be toggled via the
+ * left, right, top or bottom parameters. Checking for adjacency with no edge
+ * selected is an error.
+ *
+ * Adjancency can be strict of loose.
+ * If strict checking is enabled via the strict parameter, boxes must strictly
+ * share one of the enabled edges.
+ * If strict checking is disabled, sharing only part of an selected edge is
+ * enough make the check succeed.
+ *
+ * Returns true if boxes are adjacent to each other, false otherwise or on
+ * error.
+ */
+static Bool nxagentCheckBoxAdjacency(const BoxPtr lhs, const BoxPtr rhs, const Bool strict, const Bool left, const Bool right, const Bool top, const Bool bottom) {
+  Bool ret = FALSE;
+
+  if ((!(lhs)) || (!(rhs)) || ((!(left)) && (!(right)) && (!(top)) && (!(bottom)))) {
+    return(ret);
+  }
+
+  if (((left) && (lhs->x1 == rhs->x2)) || ((right) && (lhs->x2 == rhs->x1))) {
+    if (strict) {
+      if ((lhs->y1 == rhs->y1) && (lhs->y2 == rhs->y2)) {
+        ret = TRUE;
+      }
+    }
+    else {
+      /* rhs->{y1,y2-1} within {lhs->y1, lhs->y2) */
+      if (((rhs->y1 >= lhs->y1) && (rhs->y1 < lhs->y2)) || ((rhs->y2 > lhs->y1) && (rhs->y2 <= lhs->y2))) {
+        ret = TRUE;
+      }
+    }
+  }
+
+  if (((top) && (lhs->y1 == rhs->y2)) || ((bottom) && (lhs->y2 == rhs->y1))) {
+    if (strict) {
+      if ((lhs->x1 == rhs->x1) && (lhs->x2 == rhs->x2)) {
+        ret = TRUE;
+      }
+    }
+    else {
+      /* rhs->{x1,x2} within {lhs->x1, lhs->x2) */
+      if (((rhs->x1 >= lhs->x1) && (rhs->x1 < lhs->x2)) || ((rhs->x2 > lhs->x1) && (rhs->x2 <= lhs->x2))) {
+        ret = TRUE;
+      }
+    }
+  }
+
+  return(ret);
+}
+
+/*
+ * Helper used to shallow- or deep-copy an nxagentScreenBoxesElem object.
+ *
+ * Returns a pointer to the copy or NULL on failure.
+ */
+static nxagentScreenBoxesElem* nxagentScreenBoxesElemCopy(const nxagentScreenBoxesElem *box, const Bool deep) {
+  nxagentScreenBoxesElem *ret = NULL;
+
+  if (!(box)) {
+    return(ret);
+  }
+
+  ret = calloc(1, sizeof(nxagentScreenBoxesElem));
+
+  if (!(ret)) {
+    return(ret);
+  }
+
+  memmove(ret, box, sizeof(*box));
+
+  xorg_list_init(&(ret->entry));
+
+  /* For a deep copy, also copy the data. */
+  if (deep) {
+    BoxPtr new_box_data = calloc(1, sizeof(BoxRec));
+
+    if (!(new_box_data)) {
+      SAFE_FREE(ret);
+
+      return(ret);
+    }
+
+    memmove(new_box_data, box->box, sizeof(*(box->box)));
+
+    ret->box = new_box_data;
+  }
+
+  return(ret);
+}
+
+/*
+ * Helper merging boxes on a low level.
+ * Returns true if merging succeeded, otherwise or on error false.
+ *
+ * If merging succeded, the merge_boxes list shall contain only one element:
+ * the extended box representing a screen.
+ *
+ * In case of errors, the original list may or may not be modified.
+ * Assume that the data is invalid.
+ */
+static Bool nxagentMergeBoxes(nxagentScreenBoxes *all_boxes, nxagentScreenBoxes *merge_boxes) {
+  Bool ret = FALSE;
+
+  if ((!(all_boxes)) || (!(merge_boxes))) {
+    return(ret);
+  }
+
+  /*
+   * Special case: merge_boxes is empty. In such a case, return TRUE
+   * immediately.
+   */
+  if (xorg_list_is_empty(&(merge_boxes->head))) {
+    ret = TRUE;
+
+    return(ret);
+  }
+
+  /* Naïve approach: merge of all boxes is the bounding box. */
+  BoxRec bounding_box = { 0 };
+  nxagentScreenBoxesElem *cur = NULL;
+  Bool init = FALSE;
+  size_t merge_boxes_count = 0;
+  xorg_list_for_each_entry(cur, &(merge_boxes->head), entry) {
+    if (!(cur->box)) {
+      return(ret);
+    }
+
+    if (!(init)) {
+      bounding_box.x1 = cur->box->x1;
+      bounding_box.x2 = cur->box->x2;
+      bounding_box.y1 = cur->box->y1;
+      bounding_box.y2 = cur->box->y2;
+
+      init = TRUE;
+
+      ++merge_boxes_count;
+
+      continue;
+    }
+
+    bounding_box.x1 = MIN(cur->box->x1, bounding_box.x1);
+    bounding_box.x2 = MAX(cur->box->x2, bounding_box.x2);
+    bounding_box.y1 = MIN(cur->box->y1, bounding_box.y1);
+    bounding_box.y2 = MAX(cur->box->y2, bounding_box.y2);
+
+    ++merge_boxes_count;
+  }
+
+  /*
+   * Don't treat one box to merge as a special case.
+   * Returning directly is a mistake since in this case the corresponding box
+   * in the all boxes list wouldn't be correctly marked as obsolete.
+   *
+   * Copying the code for doing this into a special branch here doesn't make
+   * sense, so just let the normal algorithm handle that.
+   */
+
+  /* Try to find a suitable merge pair. */
+  cur = NULL;
+  nxagentScreenBoxesElem *merge_rhs = NULL;
+  Bool restart = TRUE;
+  while (restart) {
+    restart = FALSE;
+
+    xorg_list_for_each_entry(cur, &(merge_boxes->head), entry) {
+      if (!(cur->box)) {
+        return(ret);
+      }
+
+      /*
+       * Mark left-hand side box as obsolete.
+       * We pick a box (usually the first one, but if there no mergable boxes
+       * readily available maybe others), search for a different mergable box,
+       * merge the picked box with the other box by extending it and mark the
+       * right-hand side original box as obsolete in the all boxes list.
+       *
+       * Observant readers might have noticed that we will never mark a picked
+       * box as obsolete this way, so we'll have to work around that issue at
+       * the beginning.
+       */
+      if (cur->obsolete) {
+        if (!(nxagentScreenBoxMarkObsolete(all_boxes, cur))) {
+          /* False means that we haven't found a box to mark obsolete. */
+#ifdef WARNING
+          fprintf(stderr, "%s: couldn't find left-hand box in original list - box has likely already been merged into a different one.\n", __func__);
+#endif
+        }
+      }
+
+      xorg_list_for_each_entry(merge_rhs, &(cur->entry), entry) {
+        if (&(merge_rhs->entry) == &(merge_boxes->head)) {
+          /* Reached end of list. */
+          merge_rhs = NULL;
+          break;
+        }
+
+        /*
+         * Do not move this up.
+         *
+         * The list head won't have a box element and accessing it would
+         * actually read random data.
+         */
+        if (!(merge_rhs->box)) {
+          return(ret);
+        }
+
+        /* Check adjacency. */
+        if (nxagentCheckBoxAdjacency(cur->box, merge_rhs->box, TRUE, TRUE, TRUE, TRUE, TRUE)) {
+          break;
+        }
+      }
+
+      /* cur and merge_rhs are mergeable. */
+      /*
+       * Side note, since working with lists is tricky: normally, the element
+       * pointer shouldn't be used after iterating over all list elements.
+       * In such a case, it would point to an invalid entry, since the list
+       * head is a simple xorg_list structure instead of an element-type.
+       * The looping macro takes care of this internally by always checking
+       * it->member against the known list head, which adds a previously
+       * subtracted offset back to the pointer in the break statement. It does,
+       * however, not modify the iteration pointer itself.
+       * In this special case, continuing to use the iteration pointer is safe
+       * due to always breaking out of the loop early when we know that we are
+       * working on a valid element or setting the iterator pointer to NULL.
+       */
+      if (merge_rhs) {
+#ifdef DEBUG
+        {
+          char *box_left_str = nxagentPrintScreenBoxesElem(cur);
+          char *box_right_str = nxagentPrintScreenBoxesElem(merge_rhs);
+
+          fprintf(stderr, "%s: mergeable boxes found: ", __func__);
+          if (!(box_left_str)) {
+            fprintf(stderr, "box with invalid data [%p]", (void*)(cur));
+          }
+          else {
+            fprintf(stderr, "%s", box_left_str);
+          }
+
+          if (!(box_right_str)) {
+            fprintf(stderr, ", box with invalid data [%p]\n", (void*)(merge_rhs));
+          }
+          else {
+            fprintf(stderr, ", %s\n", box_right_str);
+          }
+
+          SAFE_FREE(box_left_str);
+          SAFE_FREE(box_right_str);
+        }
+#endif
+        cur->box->x1 = MIN(cur->box->x1, merge_rhs->box->x1);
+        cur->box->x2 = MAX(cur->box->x2, merge_rhs->box->x2);
+        cur->box->y1 = MIN(cur->box->y1, merge_rhs->box->y1);
+        cur->box->y2 = MAX(cur->box->y2, merge_rhs->box->y2);
+
+        /* Delete merge_rhs box out of merge list ... */
+        xorg_list_del(&(merge_rhs->entry));
+
+        /*
+         * ... and mark an equivalent box in the all boxes list as obsolete.
+         *
+         * Note that it is not an error condition if no such box exists in the
+         * all boxes list. More likely we tried to mark a box obsolete that
+         * has already been merged with a different one (and now covers more
+         * than one entry in the all boxes list).
+         */
+        if (merge_rhs->obsolete) {
+          if (!(nxagentScreenBoxMarkObsolete(all_boxes, merge_rhs))) {
+            /* False means that we haven't found a box to mark obsolete. */
+#ifdef WARNING
+            fprintf(stderr, "%s: merged boxes from merge list, but couldn't find right-hand box in original list - box has likely already been merged into a different one.\n", __func__);
+#endif
+          }
+        }
+
+        /*
+         * Remove merge_rhs's internal box data.
+         * Since it's a deep copy, only this element will be affected.
+         */
+        SAFE_FREE(merge_rhs->box);
+
+        /*
+         * At this point, merge_rhs's data has been free()d and the box
+         * element is not part of the merge_boxes lists.
+         * Delete the box element.
+         */
+        SAFE_FREE(merge_rhs);
+
+        /*
+         * Set restart flag and break out.
+         *
+         * After removing an entry from the list, we have to make sure to
+         * restart the loop, since otherwise we'd be operating on free'd
+         * data.
+         *
+         * An alternative would be to use xorg_list_for_each_entry_safe()
+         * to skip over the removed element, but this wouldn't rewind the
+         * pointer to the head element - which is what we also want to do.
+         */
+        restart = TRUE;
+
+        break;
+      }
+      else {
+#ifdef DEBUG
+        char *box_str = nxagentPrintScreenBoxesElem(cur);
+
+        fprintf(stderr, "%s: no mergeable box found for", __func__);
+        if (box_str) {
+          fprintf(stderr, " current box %s\n", box_str);
+        }
+        else {
+          fprintf(stderr, " box with invalid data [%p]\n", (void*)(cur));
+        }
+
+        SAFE_FREE(box_str);
+#endif
+      }
+    }
+  }
+
+  /* All boxes merged, we should only have one left. */
+  merge_boxes_count = 0;
+  xorg_list_for_each_entry(cur, &(merge_boxes->head), entry) {
+    if (!(cur->box)) {
+      return(ret);
+    }
+
+    ++merge_boxes_count;
+  }
+
+  if (1 < merge_boxes_count) {
+#ifdef WARNING
+    fprintf(stderr, "%s: WARNING: box merge operation produced more than one box - initial merge list was not a rectangle!\n", __func__);
+#endif
+  }
+  else if (0 == merge_boxes_count) {
+#ifdef WARNING
+    fprintf(stderr, "%s: WARNING: box merge operation produced a merged box count of 0!\n", __func__);
+#endif
+  }
+  else {
+    /* Just take the first element, there should only be one box. */
+    cur = xorg_list_first_entry(&(merge_boxes->head), nxagentScreenBoxesElem, entry);
+
+    /*
+     * Safe to use cur here as we know that list has exactly one element
+     * and we break out directly at a point for which we know that the
+     * pointer is valid.
+     */
+    if (nxagentCompareScreenBoxData(&bounding_box, cur->box)) {
+#ifdef DEBUG
+      fprintf(stderr, "%s: merging operations result is equal to bounding box, could have avoided complex calculations.\n", __func__);
+#endif
+      ret = TRUE;
+    }
+  }
+
+  return(ret);
+}
+
+/*
+ * Helper merging boxes that pertain to specific screen.
+ * Expects a list of all boxes, an array of screen boxes, a screen info array
+ * and the screen count.
+ * The screen boxes array msut have been allocated by the caller with at least
+ * screen count elements. Further elements are ignored.
+ *
+ * In case of errors, the original all boxes and screen boxes lists may or may
+ * not be modified or even the data free'd.
+ * Assume that the data is invalid.
+ */
+static Bool nxagentMergeScreenBoxes(nxagentScreenBoxes *all_boxes, nxagentScreenBoxes *screen_boxes, const XineramaScreenInfo *screen_info, const size_t screen_count) {
+  Bool ret = FALSE;
+
+  if ((!(all_boxes)) || (!(screen_boxes)) || (!(screen_info)) || (!(screen_count))) {
+    return(ret);
+  }
+
+  for (size_t i = 0; i < screen_count; ++i) {
+    /*
+     * Structure holding the box elements intersecting with
+     * the current screen.
+     */
+    nxagentScreenBoxes *cur_screen_boxes = (screen_boxes + i);
+    xorg_list_init(&(cur_screen_boxes->head));
+    cur_screen_boxes->screen_id = i;
+
+    nxagentScreenBoxesElem *cur_box = NULL;
+    xorg_list_for_each_entry(cur_box, &(all_boxes->head), entry) {
+      Bool cur_intersect = nxagentScreenBoxIntersectsScreen(cur_box, &(screen_info[i]));
+
+      if (cur_intersect) {
+        /*
+         * If a screen intersects the current box, we must:
+         *  - create a deep copy of this box
+         *  - add the copy to the screen boxes list
+         *  - set the obsolete flag appropriately
+         *  - start the low-level merge operation on the screen boxes list
+         *
+         * After this, assuming no error happened, the screen boxes list will
+         * contain only one element: a box containing the screen area.
+         */
+        nxagentScreenBoxesElem *box_copy = nxagentScreenBoxesElemCopy(cur_box, TRUE);
+
+        if (!(box_copy)) {
+          nxagentFreeScreenBoxes(all_boxes, TRUE);
+          nxagentFreeScreenBoxes(screen_boxes, TRUE);
+
+          return(ret);
+        }
+
+        box_copy->screen_id = cur_screen_boxes->screen_id;
+        box_copy->obsolete = TRUE;
+
+        for (size_t y = (i + 1); y < screen_count; ++y) {
+          if (nxagentScreenBoxIntersectsScreen(cur_box, &(screen_info[y]))) {
+            /* Protect box, if still needed later on after merging this set. */
+            box_copy->obsolete = FALSE;
+            break;
+          }
+        }
+
+        xorg_list_append(&(box_copy->entry), &(cur_screen_boxes->head));
+      }
+    }
+
+    /* Actually merge the boxes. */
+    if (!(nxagentMergeBoxes(all_boxes, cur_screen_boxes))) {
+      return(ret);
+    }
+  }
+
+  ret = TRUE;
+
+  return(ret);
+}
+
+/*
+ * Helper used to deep-copy an nxagentScreenBoxes list.
+ *
+ * Returns a pointer to a complete copy or NULL on failure.
+ */
+static nxagentScreenBoxes* nxagentScreenBoxesCopy(const nxagentScreenBoxes *boxes) {
+  nxagentScreenBoxes *ret = NULL;
+
+  if (!(boxes)) {
+    return(ret);
+  }
+
+  ret = calloc(1, sizeof(nxagentScreenBoxes));
+
+  if (!(ret)) {
+    return(ret);
+  }
+
+  xorg_list_init(&(ret->head));
+
+  nxagentScreenBoxesElem *cur = NULL;
+  xorg_list_for_each_entry(cur, &(boxes->head), entry) {
+    nxagentScreenBoxesElem *copy = nxagentScreenBoxesElemCopy(cur, TRUE);
+
+    if (!(copy)) {
+      nxagentFreeScreenBoxes(ret, TRUE);
+
+      SAFE_FREE(ret);
+
+      return(ret);
+    }
+
+    xorg_list_append(&(copy->entry), &(ret->head));
+  }
+
+  ret->screen_id = boxes->screen_id;
+
+  return(ret);
+}
+
+/* Helper function that deallocates a single solution. */
+static void nxagentScreenCrtcsFreeSolution(nxagentScreenCrtcsSolution *solution) {
+  if (!(solution)) {
+    return;
+  }
+
+  xorg_list_del(&(solution->entry));
+
+  solution->rating_size_change = solution->rating_cover_penalty = solution->rating_extended_boxes_count = 0;
+  solution->rating = 0.0;
+
+  nxagentFreeScreenBoxes(solution->solution_boxes, TRUE);
+  SAFE_FREE(solution->solution_boxes);
+
+  nxagentFreeScreenBoxes(solution->all_boxes, TRUE);
+  SAFE_FREE(solution->all_boxes);
+}
+
+/*
+ * Helper to calculate a normalized sum for a list of boolean values.
+ *
+ * Each boolean value is normalized to to [0,1] range.
+ *
+ * Returns the sum of all normalized arguments.
+ */
+static size_t nxagentSumBools(const size_t count, ...) {
+  size_t ret = 0;
+
+  va_list ap;
+  va_start(ap, count);
+  for (size_t i = 0; i < count; ++i) {
+    ret += (!(!(va_arg(ap, size_t))));
+  }
+  va_end(ap);
+
+  return(ret);
+}
+
+/*
+ * Helper returning true if a given box intersects with a given screen box,
+ * otherwise and on error false.
+ */
+static Bool nxagentScreenBoxIntersectsScreenBox(const nxagentScreenBoxesElem *lhs, const nxagentScreenBoxesElem *rhs) {
+  Bool ret = FALSE;
+
+  if ((!(lhs)) || (!(lhs->box)) || (!(rhs)) || (!(rhs->box))) {
+    return(ret);
+  }
+
+  /* Find out if this box has intersections with display. */
+  INT32 lhs_width  = (lhs->box->x2 - lhs->box->x1),
+        lhs_height = (lhs->box->y2 - lhs->box->y1),
+        rhs_width  = (rhs->box->x2 - rhs->box->x1),
+        rhs_height = (rhs->box->y2 - rhs->box->y1);
+  ret = intersect(lhs->box->x1, lhs->box->y1,
+                  lhs_width, lhs_height,
+                  rhs->box->x1, rhs->box->y1,
+                  rhs_width, rhs_height,
+                  NULL, NULL, NULL, NULL);
+
+  return(ret);
+}
+
+/*
+ * Calculates the rating for a given solution.
+ *
+ * Expects the size change and cover penalty struct variables to be set
+ * correctly.
+ *
+ * If boost is true, the rating calculated here will receive a small boost.
+ *
+ * On errors, sets the rating to INVALID_RATING or does nothing.
+ */
+static void nxagentScreenCrtcsSolutionCalculateRating(nxagentScreenCrtcsSolution *solution, const Bool boost) {
+  if ((!(solution)) || (!(solution->all_boxes))) {
+    return;
+  }
+
+  size_t all_boxes_count = 0;
+  nxagentScreenBoxesElem *cur = NULL;
+  xorg_list_for_each_entry(cur, &(solution->all_boxes->head), entry) {
+    ++all_boxes_count;
+  }
+
+  if (!(all_boxes_count)) {
+    solution->rating = INVALID_RATING;
+    return;
+  }
+
+  solution->rating = (((double)(solution->rating_size_change) * ((double)(solution->rating_extended_boxes_count) + ((double)(solution->rating_size_change) / (double)(all_boxes_count)))) - (pow((double)(solution->rating_cover_penalty), 2.0)));
+
+  if (boost) {
+    /*
+     * This is a magic number.
+     * It should be big enough so that it boosts the rating a tiny bit to
+     * prefer specific solutions, but small enough to never reach or exceed
+     * a +1 boost.
+     */
+    solution->rating += (1.0 / 64.0);
+  }
+}
+
+/*
+ * Helper that generates a solution for extending a specific box in one
+ * direction.
+ *
+ * Only one of the left, right, top or bottom parameters may be set to TRUE.
+ *
+ * The parameter "box" will be extended as much as possible in the specified
+ * direction, with the following constraints:
+ *   - it's extended at least once unless hitting the nxagent window edge
+ *     directly
+ *   - it's further extended step-by-step IFF there are no "obsolete" boxes
+ *     (i.e., base-level boxes already covered by a different screen box) in
+ *     the extension direction.
+ *
+ * Note that the initial extension might not be a meaningful one. Calling
+ * functions must check the rating and determine if the solution is viable
+ * to them.
+ */
+static nxagentScreenCrtcsSolution* nxagentScreenCrtcsGenerateSolutionsSingleStep(const nxagentScreenBoxes *all_boxes, const nxagentScreenBoxesElem *box, const nxagentScreenBoxes *other_screens, const Bool left, const Bool right, const Bool top, const Bool bottom) {
+  nxagentScreenCrtcsSolution *ret = NULL;
+
+  const size_t sum = nxagentSumBools(4, left, right, top, bottom);
+  if ((0 == sum) || (1 < sum) || (!(all_boxes)) || (!(box)) || (!(other_screens))) {
+    return(ret);
+  }
+
+  ret = calloc(1, sizeof(nxagentScreenCrtcsSolution));
+
+  if (!(ret)) {
+    return(ret);
+  }
+
+  xorg_list_init(&(ret->entry));
+  ret->rating = INVALID_RATING;
+
+  Bool init = TRUE,
+       cont = TRUE;
+  const nxagentScreenBoxesElem *box_ref = box;
+  const nxagentScreenBoxes *all_boxes_ref = all_boxes;
+  while (cont) {
+    /*
+     * Move one step into selected direction, unless hitting an obsolete block or the
+     * window edge. Obsolete blocks are not an obstacle for the initial run.
+     */
+    size_t run_size_change = 0,
+           run_cover_penalty = 0;
+    nxagentScreenBoxesElem *cur = NULL;
+    nxagentScreenBoxes *merge_list = calloc(1, sizeof(nxagentScreenBoxes));
+
+    if (!(merge_list)) {
+      nxagentScreenCrtcsFreeSolution(ret);
+
+      SAFE_FREE(ret);
+
+      return(ret);
+    }
+
+    xorg_list_init(&(merge_list->head));
+    merge_list->screen_id = -1;
+    xorg_list_for_each_entry(cur, &(all_boxes->head), entry) {
+      /*
+       * Skip boxes already covered by this screen or other screens
+       * if we're looking for additional coverage.
+       */
+      if ((!(init)) && (cur->obsolete)) {
+        continue;
+      }
+
+      if (!(box_ref) || (!(box_ref->box)) || (!(cur->box))) {
+        nxagentFreeScreenBoxes(merge_list, TRUE);
+
+        nxagentScreenCrtcsFreeSolution(ret);
+
+        SAFE_FREE(merge_list);
+
+        SAFE_FREE(ret);
+
+        return(ret);
+      }
+
+      if (nxagentCheckBoxAdjacency(box_ref->box, cur->box, FALSE, left, right, top, bottom)) {
+        /* Copy current box. */
+        nxagentScreenBoxesElem *copy = nxagentScreenBoxesElemCopy(cur, TRUE);
+
+        if (!(copy)) {
+          nxagentFreeScreenBoxes(merge_list, TRUE);
+
+          nxagentScreenCrtcsFreeSolution(ret);
+
+          SAFE_FREE(merge_list);
+
+          SAFE_FREE(ret);
+
+          return(ret);
+        }
+
+        copy->obsolete = TRUE;
+
+        xorg_list_append(&(copy->entry), &(merge_list->head));
+
+        ++run_size_change;
+
+        /*
+         * Add a penalty value, if current box is already covered by at least
+         * one different screen box.
+         */
+        nxagentScreenBoxesElem *cur_penalty_box = NULL;
+        /* FIXME: do we need more thorough error-checking for other_screens? */
+        xorg_list_for_each_entry(cur_penalty_box, &(other_screens->head), entry) {
+          if (nxagentScreenBoxIntersectsScreenBox(cur, cur_penalty_box)) {
+            /*
+             * Add an initial penalty the first time for our current screen
+             * box.
+             */
+            if (0 == run_cover_penalty) {
+              ++run_cover_penalty;
+            }
+
+            ++run_cover_penalty;
+          }
+        }
+      }
+
+      /*
+       * Break out early if possible.
+       * This assumes that the all_boxes list is sorted according to rows and cols.
+       */
+      if ((left) || (right)) {
+        /*
+         * Discovering a box that is below the screen box means that any
+         * following boxes will be unsuitable for horizontal expansion.
+         */
+        if (cur->box->y1 >= box_ref->box->y2) {
+          break;
+        }
+      }
+
+      if (top) {
+        /*
+         * Discovering a box that is below the screen box's top edge means
+         * that any following boxes will be unsuitable for vertical expansion.
+         */
+        if (cur->box->y1 >= box_ref->box->y1) {
+          break;
+        }
+      }
+    }
+
+    /*
+     * At this point, merge_list should be populated with a list of boxes
+     * to merge with the current screen box.
+     * If it is incomplete (i.e., smaller height than the screen box for
+     * horizontal expansions or smaller width than the screen box for vertical
+     * expansions), merging will fail.
+     * Such a situation is fine, but will mean that we cannot extend the box.
+     */
+    if (!(xorg_list_is_empty(&(merge_list->head)))) {
+      nxagentScreenBoxes *all_boxes_copy = nxagentScreenBoxesCopy(all_boxes_ref);
+
+      if (!(all_boxes_copy)) {
+        nxagentFreeScreenBoxes(merge_list, TRUE);
+
+        nxagentScreenCrtcsFreeSolution(ret);
+
+        SAFE_FREE(merge_list);
+
+        SAFE_FREE(ret);
+
+        return(ret);
+      }
+
+      /* Deep-copy original screen box. */
+      nxagentScreenBoxesElem *screen_box_copy = nxagentScreenBoxesElemCopy(box_ref, TRUE);
+
+      if (!(screen_box_copy)) {
+        nxagentFreeScreenBoxes(all_boxes_copy, TRUE);
+        nxagentFreeScreenBoxes(merge_list, TRUE);
+
+        nxagentScreenCrtcsFreeSolution(ret);
+
+        SAFE_FREE(all_boxes_copy);
+        SAFE_FREE(merge_list);
+
+        SAFE_FREE(ret);
+
+        return(ret);
+      }
+
+      /* Add copy to merge list. */
+      /*
+       * DO NOT change this to xorg_list_append(). Putting the screen box first
+       * means that, theoretically, all other boxes will be merged into it and
+       * we can assume that its screen_id entry stays valid.
+       */
+      xorg_list_add(&(screen_box_copy->entry), &(merge_list->head));
+
+      /* Merge. */
+      if (!(nxagentMergeBoxes(all_boxes_copy, merge_list))) {
+        /*
+         * Merging failed. Forgetting data and stopping extension.
+         *
+         * Make sure to not clear out ret. We want to retain and return a
+         * previous solution/extension.
+         */
+        nxagentFreeScreenBoxes(all_boxes_copy, TRUE);
+        nxagentFreeScreenBoxes(merge_list, TRUE);
+
+        SAFE_FREE(all_boxes_copy);
+        SAFE_FREE(merge_list);
+
+        cont = FALSE;
+      }
+      else {
+        /* Merge successful. Create solution. */
+        nxagentFreeScreenBoxes(ret->all_boxes, TRUE);
+        SAFE_FREE(ret->all_boxes);
+        ret->all_boxes = all_boxes_copy;
+
+        nxagentFreeScreenBoxes(ret->solution_boxes, TRUE);
+        SAFE_FREE(ret->solution_boxes);
+        ret->solution_boxes = nxagentScreenBoxesCopy(merge_list);
+
+        /* Unconditionally get rid of data. */
+        nxagentFreeScreenBoxes(merge_list, TRUE);
+
+        SAFE_FREE(merge_list);
+
+        if (!(ret->solution_boxes)) {
+          nxagentScreenCrtcsFreeSolution(ret);
+
+          SAFE_FREE(ret);
+
+          return(ret);
+        }
+
+        /* Update reference variables. */
+        all_boxes_ref = ret->all_boxes;
+
+        /* Should only have one box, so taking the first entry is fine. */
+        box_ref = xorg_list_first_entry(&(ret->solution_boxes->head), nxagentScreenBoxesElem, entry);
+
+        /* Update size change. */
+        ret->rating_size_change += run_size_change;
+
+        /* Update cover penalty. */
+        ret->rating_cover_penalty += run_cover_penalty;
+
+        /* One box was extended, record. */
+        ret->rating_extended_boxes_count = 1;
+      }
+    }
+    else {
+      /*
+       * An empty merge list means that we didn't find other mergable boxes.
+       * Not an error, but rather an indication to stop the loop.
+       *
+       * Make sure to not clear out ret.
+       */
+      nxagentFreeScreenBoxes(merge_list, TRUE);
+
+      SAFE_FREE(merge_list);
+
+      cont = FALSE;
+    }
+
+    init = FALSE;
+  }
+
+  if ((ret) && (ret->all_boxes) && (ret->solution_boxes)) {
+    /*
+     * Calculate actual rating.
+     */
+    nxagentScreenCrtcsSolutionCalculateRating(ret, (top || bottom));
+  }
+  else {
+    /* Invalid solution, clear out. */
+    nxagentScreenCrtcsFreeSolution(ret);
+
+    SAFE_FREE(ret);
+  }
+
+  return(ret);
+}
+
+/*
+ * Helper that deep-copies a single solution.
+ *
+ * Returns a pointer to the copy or NULL on error.
+ */
+static nxagentScreenCrtcsSolution* nxagentScreenCrtcsSolutionCopy(const nxagentScreenCrtcsSolution *solution) {
+  nxagentScreenCrtcsSolution *ret = NULL;
+
+  if (!(solution)) {
+    return(ret);
+  }
+
+  ret = calloc(1, sizeof(nxagentScreenCrtcsSolution));
+
+  if (!(ret)) {
+    return(ret);
+  }
+
+  xorg_list_init(&(ret->entry));
+
+  ret->rating_size_change = solution->rating_size_change;
+  ret->rating_cover_penalty = solution->rating_cover_penalty;
+  ret->rating_extended_boxes_count = solution->rating_extended_boxes_count;
+  ret->rating = solution->rating;
+
+  if (solution->solution_boxes) {
+    ret->solution_boxes = nxagentScreenBoxesCopy(solution->solution_boxes);
+
+    if (!(ret->solution_boxes)) {
+      SAFE_FREE(ret);
+
+      return(ret);
+    }
+  }
+
+  if (solution->all_boxes) {
+    ret->all_boxes = nxagentScreenBoxesCopy(solution->all_boxes);
+
+    if (!(ret->all_boxes)) {
+      nxagentFreeScreenBoxes(ret->solution_boxes, TRUE);
+
+      SAFE_FREE(ret->solution_boxes);
+
+      SAFE_FREE(ret);
+
+      return(ret);
+    }
+  }
+
+  return(ret);
+}
+
+/* Helper function that deallocates a solutions list. */
+static void nxagentScreenCrtcsFreeSolutions(nxagentScreenCrtcsSolutions *solutions) {
+  if (!(solutions)) {
+    return;
+  }
+
+  nxagentScreenCrtcsSolution *cur, *next = NULL;
+  xorg_list_for_each_entry_safe(cur, next, solutions, entry) {
+    nxagentScreenCrtcsFreeSolution(cur);
+
+    SAFE_FREE(cur);
+  }
+
+  xorg_list_init(solutions);
+}
+
+/*
+ * Helper that extracts the best solutions out of a solutions list.
+ *
+ * Returns a list of best solutions or NULL on error. Might be empty.
+ */
+static nxagentScreenCrtcsSolutions* nxagentScreenCrtcsExtractBestSolutions(const nxagentScreenCrtcsSolutions *solutions) {
+  nxagentScreenCrtcsSolutions *ret = NULL;
+
+  if (!(solutions)) {
+    return(ret);
+  }
+
+  ret = calloc(1, sizeof(nxagentScreenCrtcsSolutions));
+
+  if (!(ret)) {
+    return(ret);
+  }
+
+  xorg_list_init(ret);
+
+  /* Get best rating value. */
+  double best_rating = INVALID_RATING;
+  nxagentScreenCrtcsSolution *cur = NULL;
+  xorg_list_for_each_entry(cur, solutions, entry) {
+    if (cur->rating > best_rating) {
+      best_rating = cur->rating;
+    }
+  }
+
+  if (INVALID_RATING == best_rating) {
+    /* No need to go through the list again, return empty list. */
+    return(ret);
+  }
+
+  xorg_list_for_each_entry(cur, solutions, entry) {
+    if (cur->rating == best_rating) {
+      nxagentScreenCrtcsSolution *cur_copy = nxagentScreenCrtcsSolutionCopy(cur);
+
+      if (!(cur_copy)) {
+        nxagentScreenCrtcsFreeSolutions(ret);
+
+        SAFE_FREE(ret);
+
+        return(ret);
+      }
+
+      xorg_list_append(&(cur_copy->entry), ret);
+    }
+  }
+
+  return(ret);
+}
+
+/*
+ * Helper generating a list of solutions, extending one specific initial
+ * screen box.
+ *
+ * Returns either a pointer to the solutions list or NULL on failure.
+ */
+static nxagentScreenCrtcsSolutions* nxagentScreenCrtcsGenerateSolutionsSingleScreen(const nxagentScreenBoxes *all_boxes, const nxagentScreenBoxesElem *box, const nxagentScreenBoxes *other_screens) {
+  nxagentScreenCrtcsSolutions *ret = NULL,
+                              *tmp_solutions = NULL;
+
+  if ((!(all_boxes)) || (!(box)) || (!(other_screens))) {
+    return(ret);
+  }
+
+  tmp_solutions = calloc(1, sizeof(nxagentScreenCrtcsSolutions));
+
+  if (!(tmp_solutions)) {
+    return(ret);
+  }
+
+  xorg_list_init(tmp_solutions);
+
+  nxagentScreenCrtcsSolution *cur_solution = NULL;
+
+  /* Left expansion. */
+  cur_solution = nxagentScreenCrtcsGenerateSolutionsSingleStep(all_boxes, box, other_screens, TRUE,  FALSE, FALSE, FALSE);
+
+  if (cur_solution) {
+    xorg_list_append(&(cur_solution->entry), tmp_solutions);
+  }
+
+  /* Right expansion. */
+  cur_solution = nxagentScreenCrtcsGenerateSolutionsSingleStep(all_boxes, box, other_screens, FALSE, TRUE,  FALSE, FALSE);
+
+  if (cur_solution) {
+    xorg_list_append(&(cur_solution->entry), tmp_solutions);
+  }
+
+  /* Top expansion. */
+  cur_solution = nxagentScreenCrtcsGenerateSolutionsSingleStep(all_boxes, box, other_screens, FALSE, FALSE, TRUE,  FALSE);
+
+  if (cur_solution) {
+    xorg_list_append(&(cur_solution->entry), tmp_solutions);
+  }
+
+  /* Bottom expansion. */
+  cur_solution = nxagentScreenCrtcsGenerateSolutionsSingleStep(all_boxes, box, other_screens, FALSE, FALSE, FALSE, TRUE);
+
+  if (cur_solution) {
+    xorg_list_append(&(cur_solution->entry), tmp_solutions);
+  }
+
+  ret = nxagentScreenCrtcsExtractBestSolutions(tmp_solutions);
+
+  /*
+   * Since the best solutions list is a deep copy, we can clear out the
+   * all solutions list.
+   */
+  nxagentScreenCrtcsFreeSolutions(tmp_solutions);
+
+  SAFE_FREE(tmp_solutions);
+
+  return(ret);
+}
+
+/*
+ * Helper calculating an obsolete boxes count, given a list of all boxes.
+ *
+ * Note that it might be zero if there are no obsolete boxes or an error
+ * happened. If the error parameter is non-NULL, its value will be set to true
+ * to indicate an error.
+ */
+#ifdef DEBUG
+/*
+ * When debugging, make sure the guards are not optimized away. Otherwise
+ * providing NULL for the err parameter will crash when calling the function
+ * directly in debuggers.
+ */
+__attribute__((optimize("O0")))
+#endif
+static size_t nxagentScreenBoxesObsoleteCount(const nxagentScreenBoxes *all_boxes, Bool *err) {
+  size_t ret = 0;
+
+  if (err) {
+    *err = FALSE;
+  }
+
+  if (!(all_boxes)) {
+    if (err) {
+      *err = TRUE;
+    }
+
+    return(ret);
+  }
+
+  nxagentScreenBoxesElem *cur = NULL;
+  xorg_list_for_each_entry(cur, &(all_boxes->head), entry) {
+    if (cur->obsolete) {
+      ++ret;
+    }
+  }
+
+  return(ret);
+}
+
+/*
+ * Helper that exchanges a screen box for a new one.
+ * The original box is destroyed, the new box is deep-copied.
+ *
+ * Returns true on success, otherwise false.
+ */
+static Bool nxagentScreenBoxesUpdateScreenBox(nxagentScreenBoxes *boxes, const size_t screen_number, const nxagentScreenBoxesElem *new_box) {
+  Bool ret = FALSE;
+
+  if ((!(boxes)) || (!(new_box))) {
+    return(ret);
+  }
+
+  nxagentScreenBoxesElem *cur_box = NULL;
+  size_t i = 0;
+  xorg_list_for_each_entry(cur_box, &(boxes->head), entry) {
+    if (cur_box->screen_id == new_box->screen_id) {
+      /* Need to exchange the current box. */
+      nxagentScreenBoxesElem *new_copy = nxagentScreenBoxesElemCopy(new_box, TRUE);
+
+      if (!(new_copy)) {
+        return(ret);
+      }
+
+      /*
+       * Taking out the magic wand here:
+       * Since an xorg_list is cyclic and we know that the current element
+       * exists, we can use an append operation to insert the new element and
+       * then delete the old one.
+       * Instead of appending to the original list head (in this case boxes),
+       * we'll append to the current element. The actual magic is that a list
+       * append operation is *actually* a prepend operation relative to the
+       * passed head element.
+       *
+       * Example:
+       *   Original list (each edge is actually a double edge pointing in both
+       *   directions):
+       *
+       *   ┌──────────────────────────────────────────┐
+       *   ↓                                          │
+       * [HEAD] ↔ [elem1] ↔ [elem2] ↔ [elem3] ↔ ... ←─┘
+       *
+       * Append operation relative to HEAD:
+       *
+       *   ┌───────────────────────────────────────────────────────┐
+       *   ↓                                                       │
+       * [HEAD] ↔ [elem1] ↔ [elem2] ↔ [elem3] ↔ ... ↔ [new_elem] ←─┘
+       *
+       * Append operation relative to elem2:
+       *
+       *   ┌───────────────────────────────────────────────────────┐
+       *   ↓                                                       │
+       * [HEAD] ↔ [elem1] ↔ [new_elem] ↔ [elem2] ↔ [elem3] ↔ ... ←─┘
+       *
+       * Afterwards, delete operation on elem2:
+       *
+       *   ┌─────────────────────────────────────────────┐
+       *   ↓                                             │
+       * [HEAD] ↔ [elem1] ↔ [new_elem] ↔ [elem3] ↔ ... ←─┘
+       *
+       * Observant readers might have noticed that using either a list append
+       * or add operation (i.e., relative to given head element an inverse
+       * append or "real" append operation) followed by a delete operation for
+       * the current element will lead to the same result.
+       *
+       * We'll use an append/inverse append operation, though, since this makes
+       * the most sense.
+       */
+      xorg_list_append(&(new_copy->entry), &(cur_box->entry));
+      xorg_list_del(&(cur_box->entry));
+
+      /* Get rid of cur_box. */
+      SAFE_FREE(cur_box);
+
+      ret = TRUE;
+      break;
+    }
+
+    i++;
+  }
+
+  /*
+   * If ret is still false here it means that the list did not contain an
+   * element at position pos (i.e., it was too small).
+   *
+   * No need for special treatment.
+   */
+
+  return(ret);
+}
+
+/*
+ * Helper that generates an array with solution lists for each screen box and
+ * direction.
+ *
+ * The array will always be screen_count-sized.
+ *
+ * Returns a pointer to the array. Will be NULL on failure.
+ */
+static nxagentScreenCrtcsSolutions** nxagentScreenCrtcsGeneratePotentialSolutionArray(const nxagentScreenBoxes *all_boxes, const nxagentScreenBoxes *screen_boxes, const size_t screen_count) {
+  nxagentScreenCrtcsSolutions **ret = NULL;
+
+  /* FIXME: xorg_list_is_empty is not const-correct. */
+  if ((!(screen_count)) || (xorg_list_is_empty((struct xorg_list *)(&(screen_boxes->head)))) || (xorg_list_is_empty((struct xorg_list *)(&(all_boxes->head))))) {
+    return(ret);
+  }
+
+  ret = calloc(screen_count, sizeof(nxagentScreenCrtcsSolutions*));
+
+  if (!(ret)) {
+    return(ret);
+  }
+
+  for (size_t i = 0; i < screen_count; ++i) {
+    nxagentScreenBoxesElem *tmp_box = NULL;
+    {
+      size_t y = 0;
+      xorg_list_for_each_entry(tmp_box, &(screen_boxes->head), entry) {
+        /* y == i means that we found our current box and can break out. */
+        if (y++ == i) {
+          break;
+        }
+      }
+
+      if ((&(tmp_box->entry)) == &(screen_boxes->head)) {
+#ifdef WARNING
+        fprintf(stderr, "%s: reached end of list while fetching specific box. Algorithm error.\n", __func__);
+#endif
+
+        for (size_t z = 0; z < screen_count; ++z) {
+          nxagentScreenCrtcsFreeSolutions(ret[z]);
+
+          SAFE_FREE(ret[z]);
+        }
+
+        SAFE_FREE(ret);
+
+        return(ret);
+      }
+    }
+
+    /* Build other_screens list. */
+    nxagentScreenBoxes *other_screens = calloc(1, sizeof(nxagentScreenBoxes));
+
+    if (!(other_screens)) {
+#ifdef WARNING
+      fprintf(stderr, "%s: unable to allocate space for other_screens list.\n", __func__);
+#endif
+
+      for (size_t y = 0; y < screen_count; ++y) {
+        nxagentScreenCrtcsFreeSolutions(ret[y]);
+
+        SAFE_FREE(ret[y]);
+      }
+
+      SAFE_FREE(ret);
+
+      return(ret);
+    }
+
+    xorg_list_init(&(other_screens->head));
+    other_screens->screen_id = -1;
+
+    nxagentScreenBoxesElem *tmp = NULL;
+    xorg_list_for_each_entry(tmp, &(screen_boxes->head), entry) {
+      if (tmp != tmp_box) {
+        /* Copy current element. */
+        nxagentScreenBoxesElem *box_copy = nxagentScreenBoxesElemCopy(tmp, TRUE);
+
+        if (!(box_copy)) {
+#ifdef WARNING
+          fprintf(stderr, "%s: unable to copy current screen box.\n", __func__);
+#endif
+
+          for (size_t y = 0; y < screen_count; ++y) {
+            nxagentScreenCrtcsFreeSolutions(ret[y]);
+
+            SAFE_FREE(ret[y]);
+          }
+
+          nxagentFreeScreenBoxes(other_screens, TRUE);
+
+          SAFE_FREE(other_screens);
+
+          SAFE_FREE(ret);
+
+          return(ret);
+        }
+
+        /* Add to other_screens list. */
+        xorg_list_append(&(box_copy->entry), &(other_screens->head));
+      }
+    }
+
+    /*
+     * Right now, all_boxes contains all boxes, including obsolete
+     * information, tmp_box is the current screen box to extend and
+     * other_screens contains the other screen boxes.
+     *
+     * With that, we can fetch a solutions list comprising of the best(!)
+     * solutions for extending the current box in all directions.
+     */
+    nxagentScreenCrtcsSolutions *cur_screen_solutions = nxagentScreenCrtcsGenerateSolutionsSingleScreen(all_boxes, tmp_box, other_screens);
+
+    /*
+     * Clean up other_screens. Doing that now means we don't have to do it in
+     * the error handling.
+     */
+    nxagentFreeScreenBoxes(other_screens, TRUE);
+
+    SAFE_FREE(other_screens);
+
+    /* NULL means failure or no solutions. */
+    if (!(cur_screen_solutions)) {
+#ifdef WARNING
+      fprintf(stderr, "%s: no solution found for current configuration. Algorithm error.\n", __func__);
+#endif
+
+      for (size_t y = 0; y < screen_count; ++y) {
+        nxagentScreenCrtcsFreeSolutions(ret[y]);
+
+        SAFE_FREE(ret[y]);
+      }
+
+      SAFE_FREE(ret);
+
+      return(ret);
+    }
+
+    /*
+     * If everything worked out, we'll have a solutions list.
+     * It might contain multiple entries, but at this point we don't care,
+     * since they may not have the highest overall rating.
+     * Just add them to our general solutions list.
+     *
+     * We're just setting plain pointer values here, which should work fine
+     * since the next and prev pointers point to the addresses of an
+     * element's entry xorg_list struct.
+     *
+     * Be careful, though.
+     */
+    ret[i] = cur_screen_solutions;
+  }
+
+  return(ret);
+}
+
+/*
+ * Helper that extracts the best solutions from a screen_count-sized solutions
+ * array and, at the same time, records if a screen is suitable for extension.
+ *
+ * The arrays will always likewise be screen_count-sized.
+ *
+ * The last two parameters are output parameters that expect to be passed a
+ * valid address. NULL pointers for any parameter or a zero screen count will be
+ * treated as an error. init might be zero (i.e., false).
+ *
+ * Returns true on success, otherwise false.
+ */
+static Bool nxagentScreenCrtcsFilterScreenSolutions(const nxagentScreenCrtcsSolutions * const *solutions, const size_t screen_count, const Bool init, const Bool *screens_init, nxagentScreenCrtcsSolutions ***best_screen_solutions, Bool **screen_selection) {
+  Bool ret = FALSE;
+
+  if ((!(solutions)) || (!(screen_count)) || (!(screens_init)) || (!(best_screen_solutions)) || (!(screen_selection))) {
+    return(ret);
+  }
+
+  (*screen_selection) = NULL;
+  (*best_screen_solutions) = NULL;
+
+  double *screen_ratings = calloc(screen_count, sizeof(double));
+
+  if (!(screen_ratings)) {
+    return(ret);
+  }
+
+  Bool *screen_overlap_free = calloc(screen_count, sizeof(Bool));
+
+  if (!(screen_overlap_free)) {
+    SAFE_FREE(screen_ratings);
+
+    return(ret);
+  }
+
+  (*screen_selection) = calloc(screen_count, sizeof(Bool));
+  (*best_screen_solutions) = calloc(screen_count, sizeof(nxagentScreenCrtcsSolutions*));
+
+  if ((!((*screen_selection))) || (!((*best_screen_solutions)))) {
+    SAFE_FREE(screen_ratings);
+    SAFE_FREE(screen_overlap_free);
+
+    /* Let caller handle other cleanup. It'll be done there anyway. */
+    return(ret);
+  }
+
+  /*
+   * We consider two different cases when filtering solutions:
+   *   - the initial case, used as long as we have non-extended (i.e.,
+   *     initial) screen boxes and
+   *   - the normal case.
+   *
+   * The initial case is slightly different, since we generally need to
+   * consider every best solution per initial box.
+   * This ensures initial expansion (together with the rating function
+   * favoring initial expansion).
+   *
+   * In both cases, we still have to consider all screen boxes (i.e., also
+   * the already extended ones in the initial case), since we want to fish
+   * out solutions with no additional overlap.
+   *
+   * Viable solutions will be selected with this preference (n.b.: as the
+   * name implies, all solutions we can select from are the best for their
+   * respective screen):
+   *   - if we have solutions with no additional overlap, take the best
+   *     one(s)
+   *   otherwise
+   *   - if there are still screens to extend, take the best one(s) for an
+   *     unextended screen
+   *   otherwise
+   *   - take the overall best one(s).
+   *
+   * Mixing all solutions into one list and extracting the best solutions is
+   * not feasible in this algorithmic branch siince we wouldn't be able to
+   * map the solution back to an initial screen.
+   *
+   * Instead, we'll mark screens as selected and pull out solutions manually.
+   */
+
+  /* Update the screen_overlap_free and screen_ratings arrays. */
+  Bool overlap_free = FALSE;
+  double max_rating = INVALID_RATING,
+         max_overlap_free_rating = INVALID_RATING;
+  for (size_t i = 0; i < screen_count; ++i) {
+    screen_ratings[i] = INVALID_RATING;
+    screen_overlap_free[i] = FALSE;
+
+    /* Extract best solutions first. */
+    (*best_screen_solutions)[i] = nxagentScreenCrtcsExtractBestSolutions(solutions[i]);
+
+    if (!((*best_screen_solutions)[i])) {
+      SAFE_FREE(screen_ratings);
+      SAFE_FREE(screen_overlap_free);
+
+      /* Let caller handle other cleanup. It'll be done there anyway. */
+      return(ret);
+    }
+
+    /* Skip this part if we have no solutions in the list. */
+    if (!(xorg_list_is_empty((*best_screen_solutions)[i]))) {
+      nxagentScreenCrtcsSolution *cur = xorg_list_first_entry((*best_screen_solutions)[i], nxagentScreenCrtcsSolution, entry);
+
+      /*
+       * Rating must be the same for all entries in a list as returned by
+       * nxagentScreenCrtcsExtractBestSolutions().
+       */
+      screen_ratings[i] = cur->rating;
+
+      /*
+       * Covers might be different per-solution, so go through the full list.
+       */
+      cur = NULL;
+      xorg_list_for_each_entry(cur, (*best_screen_solutions)[i], entry) {
+        if (!(cur->rating_cover_penalty)) {
+          screen_overlap_free[i] = TRUE;
+
+          if (screen_ratings[i] > max_overlap_free_rating) {
+            max_overlap_free_rating = screen_ratings[i];
+          }
+
+          /* First non-overlapping solution is all we care about. */
+          break;
+        }
+      }
+    }
+
+    overlap_free |= screen_overlap_free[i];
+
+    /*
+     * max_rating is useful in the case we have no overlap-free solutions.
+     *
+     * We care for all screens after initialization or for non-extended screens
+     * prior to initialization.
+     */
+    if ((init) || (!(screens_init[i]))) {
+      if (screen_ratings[i] > max_rating) {
+        max_rating = screen_ratings[i];
+      }
+    }
+  }
+
+  if (((overlap_free) && (INVALID_RATING == max_overlap_free_rating)) || ((!(overlap_free)) && (INVALID_RATING == max_rating))) {
+#ifdef WARNING
+    fprintf(stderr, "%s: no solution found for current configuration in %sscreen extension run%s. Algorithm error.\n", __func__, init ? "initial " : "", init ? ", but not all initial screen boxes have been extended yet" : "");
+#endif
+
+    SAFE_FREE(screen_ratings);
+    SAFE_FREE(screen_overlap_free);
+
+    /* Let caller handle other cleanup. It'll be done there anyway. */
+    return(ret);
+  }
+
+  if (overlap_free) {
+    /*
+     * We know that there is at least one overlap-free solution. The real
+     * question left is which screens have the highest-rating solutions.
+     *
+     * Go through the list and compare with the best rating.
+     *
+     * FIXME: do we want some more magic here to prefer non-extended screens
+     *        during the initial extension run, even if that would mean picking
+     *        worse (i.e., non-best) solutions?
+     */
+    for (size_t i = 0; i < screen_count; ++i) {
+      if ((screen_overlap_free[i]) && (screen_ratings[i] == max_overlap_free_rating)) {
+        /*
+         * This screen has a maximum overlap-free rating. Since it may also
+         * contain non-overlap-free solutions, filter them out to make later
+         * handling easier.
+         */
+        nxagentScreenCrtcsSolution *cur = NULL,
+                                   *tmp = NULL;
+        xorg_list_for_each_entry_safe(cur, tmp, (*best_screen_solutions)[i], entry) {
+          if (cur->rating_cover_penalty) {
+            xorg_list_del(&(cur->entry));
+
+            nxagentScreenCrtcsFreeSolution(cur);
+
+            SAFE_FREE(cur);
+          }
+        }
+
+        /* Mark this screen as suitable for further processing. */
+        (*screen_selection)[i] = TRUE;
+      }
+    }
+  }
+  else {
+    /*
+     * No non-overlapping solutions found, so either select the best-rated
+     * non-extended screen(s) or generally the best-rated screen(s).
+     *
+     * Luckily we've already got the best rating value as max_rating, so we'll
+     * just need to go through the list again and mark the affected solutions
+     * as selected.
+     */
+    for (size_t i = 0; i < screen_count; ++i) {
+      if (screen_ratings[i] == max_rating) {
+        (*screen_selection)[i] = TRUE;
+      }
+    }
+  }
+
+  ret = TRUE;
+
+  SAFE_FREE(screen_ratings);
+  SAFE_FREE(screen_overlap_free);
+
+  return(ret);
+}
+
+/*
+ * Helper setting up its my_solution output parameter according to the first
+ * solution in the best_screen_solutions list.
+ *
+ * No pointer parameters may be NULL. screen_number is allowed to be zero
+ * (indicating the first screen).
+ *
+ * Returns true on success, otherwise false.
+ */
+static Bool nxagentScreenCrtcsSelectSolution(const nxagentScreenBoxes *screen_boxes, const size_t screen_number, const Bool *screens_init, const nxagentScreenCrtcsSolutions *best_screen_solutions, nxagentScreenCrtcsSolution **my_solution) {
+  Bool ret = FALSE;
+
+  if ((!(screen_boxes)) || (!(screens_init)) || (!(best_screen_solutions)) || (!(my_solution))) {
+    return(ret);
+  }
+
+  /*
+   * Always take the first entry for the current run.
+   */
+  nxagentScreenCrtcsSolution *first_entry = xorg_list_first_entry(best_screen_solutions, nxagentScreenCrtcsSolution, entry);
+
+  /*
+   * Assert that first_entry is always a legit one - since we checked
+   * the amount of solutions before, that should be safe.
+   * This is why we don't check the return value here.
+   */
+
+  nxagentScreenCrtcsSolution *tmp_solution = nxagentScreenCrtcsSolutionCopy(first_entry);
+
+  if (!(tmp_solution)) {
+#ifdef WARNING
+    fprintf(stderr, "%s: unable to copy generated solution.\n", __func__);
+#endif
+
+    return(ret);
+  }
+
+  if (!(*my_solution)) {
+    /* If we don't have a solution yet, use this one. */
+    (*my_solution) = tmp_solution;
+  }
+  else {
+    /* Otherwise, modify my_solution. */
+    (*my_solution)->rating_size_change += tmp_solution->rating_size_change;
+    (*my_solution)->rating_cover_penalty += tmp_solution->rating_cover_penalty;
+
+    if (!(screens_init[screen_number])) {
+      (*my_solution)->rating_extended_boxes_count += tmp_solution->rating_extended_boxes_count; /* Should always be +1. */
+    }
+
+    (*my_solution)->rating += tmp_solution->rating;
+
+    /* Plainly take the all_boxes pointer. */
+    nxagentFreeScreenBoxes((*my_solution)->all_boxes, TRUE);
+    SAFE_FREE((*my_solution)->all_boxes);
+    (*my_solution)->all_boxes = nxagentScreenBoxesCopy(tmp_solution->all_boxes);
+
+    if (!((*my_solution)->all_boxes)) {
+#ifdef WARNING
+      fprintf(stderr, "%s: unable to copy current all boxes state.\n", __func__);
+#endif
+
+      return(ret);
+    }
+  }
+
+  /*
+   * The solution boxes list handling is more complicated.
+   * Our new, temporary solution only has the extended screen box
+   * in its solution list - we will want to merge that into our
+   * solutions list, replacing the original one in there (if it
+   * exists).
+   */
+
+  /* Take a copy of the original solutions boxes pointer. */
+  nxagentScreenBoxes *orig_solution_boxes = (*my_solution)->solution_boxes;
+
+  /* Copy work_screens to the solution boxes of my_solution. */
+  (*my_solution)->solution_boxes = nxagentScreenBoxesCopy(screen_boxes);
+
+  if (!((*my_solution)->solution_boxes)) {
+#ifdef WARNING
+    fprintf(stderr, "%s: unable to copy current screen state.\n", __func__);
+#endif
+
+    return(ret);
+  }
+
+  if ((!(orig_solution_boxes)) || (xorg_list_is_empty(&(orig_solution_boxes->head)))) {
+#ifdef WARNING
+    fprintf(stderr, "%s: original solution boxes list invalid or empty.\n", __func__);
+#endif
+
+    nxagentFreeScreenBoxes(orig_solution_boxes, TRUE);
+
+    SAFE_FREE(orig_solution_boxes);
+
+    return(ret);
+  }
+
+  /*
+   * Fetch actual screen box. The solutions list should only
+   * contain one element, so breaking out directly should be
+   * safe.
+   */
+  nxagentScreenBoxesElem *cur_box = xorg_list_first_entry(&(first_entry->solution_boxes->head), nxagentScreenBoxesElem, entry);
+
+  const Bool update = nxagentScreenBoxesUpdateScreenBox((*my_solution)->solution_boxes, screen_number, cur_box);
+
+  /*
+   * Outside of error handling, since we need to get rid of this
+   * data unconditionally.
+   */
+  nxagentFreeScreenBoxes(orig_solution_boxes, TRUE);
+
+  SAFE_FREE(orig_solution_boxes);
+
+  if (!(update)) {
+#ifdef WARNING
+    {
+      const unsigned long long screen_number_ = screen_number;
+      fprintf(stderr, "%s: unable to update solution screen number %llu.\n", __func__, screen_number_);
+    }
+#endif
+
+    return(ret);
+  }
+
+  /* Delete taken solution out of the list. */
+  xorg_list_del(&(first_entry->entry));
+
+  /* Get rid of the entry. */
+  nxagentScreenCrtcsFreeSolution(first_entry);
+
+  SAFE_FREE(first_entry);
+
+  ret = TRUE;
+
+  return(ret);
+}
+
+/*
+ * Declaration needed since the next function is using one that is only defined
+ * at a later point.
+ *
+ * Moving it up would be problematic since in that case we'd need even more
+ * declarations for other functions.
+ */
+static nxagentScreenCrtcsSolutions* nxagentScreenCrtcsGenerateSolutions(const nxagentScreenBoxes *all_boxes, const nxagentScreenBoxes *initial_screens, const size_t all_boxes_count, const size_t screen_count, const Bool *orig_screens_init);
+
+/*
+ * Helper handling all the solutions in best_screen_solutions recursively,
+ * adding them to the ret_solutions output parameter list.
+ *
+ * No pointer parameters may be NULL. screen_count and screen_number might be
+ * zero.
+ *
+ * Returns true on success, otherwise false.
+ */
+static Bool nxagentScreenCrtcsRecurseSolutions(const nxagentScreenBoxes *screen_boxes, const size_t screen_count, const size_t all_boxes_count, const Bool *screens_init, const size_t screen_number, const nxagentScreenCrtcsSolutions *best_screen_solutions, nxagentScreenCrtcsSolutions *ret_solutions) {
+  Bool ret = FALSE;
+
+  if ((!(screen_boxes)) || (!(screen_count)) || (!(all_boxes_count)) || (!(screens_init)) || (!(best_screen_solutions)) || (!(ret_solutions))) {
+    return(ret);
+  }
+
+  nxagentScreenCrtcsSolution *cur_solution = NULL;
+  xorg_list_for_each_entry(cur_solution, best_screen_solutions, entry) {
+    /* Other solutions will be handled recursively. */
+
+    /* Copy screens_init and set current screen value to true. */
+    Bool *recursive_screens_init = calloc(screen_count, sizeof(Bool));
+
+    if (!(recursive_screens_init)) {
+#ifdef WARNING
+      fprintf(stderr, "%s: unable to copy screen initialization array.\n", __func__);
+#endif
+
+      return(ret);
+    }
+
+    memmove(recursive_screens_init, screens_init, (screen_count * sizeof(Bool)));
+
+    recursive_screens_init[screen_number] = TRUE;
+
+    nxagentScreenBoxes *recursive_work_screens = nxagentScreenBoxesCopy(screen_boxes);
+
+    if (!(recursive_work_screens)) {
+#ifdef WARNING
+      fprintf(stderr, "%s: unable to copy current screen state.\n", __func__);
+#endif
+
+      SAFE_FREE(recursive_screens_init);
+
+      return(ret);
+    }
+
+    if ((!(cur_solution->solution_boxes)) || (xorg_list_is_empty(&(cur_solution->solution_boxes->head)))) {
+#ifdef WARNING
+      fprintf(stderr, "%s: current solution boxes list is empty or invalid. Algorithm error.\n", __func__);
+#endif
+
+      nxagentFreeScreenBoxes(recursive_work_screens, TRUE);
+
+      SAFE_FREE(recursive_work_screens);
+
+      SAFE_FREE(recursive_screens_init);
+
+      return(ret);
+    }
+
+    nxagentScreenBoxesElem *cur_box = xorg_list_first_entry(&(cur_solution->solution_boxes->head), nxagentScreenBoxesElem, entry);
+
+    const Bool update = nxagentScreenBoxesUpdateScreenBox(recursive_work_screens, screen_number, cur_box);
+
+    if (!(update)) {
+#ifdef WARNING
+      fprintf(stderr, "%s: unable to update screen state.\n", __func__);
+#endif
+
+      nxagentFreeScreenBoxes(recursive_work_screens, TRUE);
+
+      SAFE_FREE(recursive_screens_init);
+
+      SAFE_FREE(recursive_work_screens);
+
+      return(ret);
+    }
+
+    nxagentScreenCrtcsSolutions *tmp_solutions = nxagentScreenCrtcsGenerateSolutions(cur_solution->all_boxes, recursive_work_screens, all_boxes_count, screen_count, recursive_screens_init);
+
+    /* Get rid of the temporary screens init array again. */
+    SAFE_FREE(recursive_screens_init);
+
+    /* Get rid of the modified work screens list. */
+    nxagentFreeScreenBoxes(recursive_work_screens, TRUE);
+
+    SAFE_FREE(recursive_work_screens);
+
+    if (!(tmp_solutions)) {
+#ifdef WARNING
+      fprintf(stderr, "%s: unable to generate a new solutions list. Algorithm error.\n", __func__);
+#endif
+
+      return(ret);
+    }
+
+    /*
+     * tmp_solutions should now contain a list of possible solutions,
+     * add to ret_solutions.
+     */
+    nxagentScreenCrtcsSolution *cur_solution_it = NULL,
+                               *next_solution = NULL;
+    xorg_list_for_each_entry_safe(cur_solution_it, next_solution, tmp_solutions, entry) {
+      xorg_list_del(&(cur_solution_it->entry));
+      xorg_list_append(&(cur_solution_it->entry), ret_solutions);
+    }
+
+    /* tmp_solutions should be empty now, safe to free. */
+    SAFE_FREE(tmp_solutions);
+  }
+
+  ret = TRUE;
+
+  return(ret);
+}
+
+/*
+ * Helper for handling solution lists. This probably is the heart of the screen
+ * extension code. The function is called once per extension run and calls
+ * other functions to save the very first solution and recursively generate
+ * alternative solutions.
+ *
+ * No pointer parameters might be NULL. init might be zero (i.e., false).
+ *
+ * Returns true on success, otherwise false.
+ */
+static Bool nxagentScreenCrtcsHandleSolutions(const nxagentScreenBoxes *all_boxes, const nxagentScreenBoxes *screen_boxes, const Bool init, const Bool *screens_init, const size_t screen_count, const size_t all_boxes_count, const Bool *screen_selection, nxagentScreenCrtcsSolutions *ret_solutions, ssize_t *screen_to_init, nxagentScreenCrtcsSolutions **best_screen_solutions, nxagentScreenCrtcsSolution **my_solution) {
+  Bool ret = FALSE;
+
+  if ((!(all_boxes)) || (!(screen_boxes)) || (!(screens_init)) || (!(screen_count)) || (!(all_boxes_count)) || (!(screen_selection)) || (!(ret_solutions)) || (!(screen_to_init)) || (!(best_screen_solutions)) || (!(my_solution))) {
+    return(ret);
+  }
+
+  /*
+   * In case we have multiple solutions with a maximum rating, we need to
+   * consider each solution, which means branching off for all but one
+   * solution and only handling one solution in this run.
+   * Selecting the solution for the current run is tricky, though. We
+   * could either take the very first one, which is relatively easy, the
+   * last one, which is complicated because there might be multiple
+   * screens with a maximum rating and finding the last one is tricky
+   * with a spread-out array. Merging all solutions into one list and then
+   * taking the last element would be easy to do, but has the negative
+   * consequence of not being able to tell what screen the individual
+   * solutions belonged to originally - at least not without
+   * "sophisticated" means like keeping the original list and deep-checking
+   * objects for equality or creating another structure.
+   * Selecting a more or less random solution at the end of the first
+   * screen would work, but feels weird if there are more screens with
+   * potential solutions.
+   *
+   * Hence, let's go for selecting the very first solution.
+   */
+  Bool fetched_solution = FALSE;
+  (*screen_to_init) = -1;
+  for (size_t i = 0; i < screen_count; ++i) {
+    if (screen_selection[i]) {
+      /*
+       * This screen has been selected.
+       * Its solution list may include more than one solution, though,
+       * which means that we have to branch off and consider each
+       * individual solution.
+       * At the very end, we select (potentially one of) the overall best
+       * solution.
+       */
+
+      if ((!(best_screen_solutions[i])) || (xorg_list_is_empty(best_screen_solutions[i]))) {
+#ifdef WARNING
+        fprintf(stderr, "%s: current screen marked with a maximum rating, but no solutions found in screen extension run. Algorithm error.\n", __func__);
+#endif
+
+        return(ret);
+      }
+
+      /*
+       * One or more solution(s), if necessary take the first one as the
+       * current solution and then branch off for the others.
+       */
+      if (!(fetched_solution)) {
+        Bool fetch = nxagentScreenCrtcsSelectSolution(screen_boxes, i, screens_init, best_screen_solutions[i], my_solution);
+
+        if (!(fetch)) {
+#ifdef WARNING
+          fprintf(stderr, "%s: error while selecting solution for current run.\n", __func__);
+#endif
+
+          return(ret);
+        }
+
+        fetched_solution = TRUE;
+
+        /*
+         * DO NOT modify other data (screen, all boxes or screen initialization
+         * array) here!
+         * We will need to change these variables eventually, but given
+         * that we may have further solutions to process/generate, doing
+         * it here would be an error.
+         * Refer to the later part of nxagentScreenCrtcsGenerateSolutions for
+         * this.
+         */
+        if (init) {
+          (*screen_to_init) = i;
+        }
+      }
+
+      Bool recursive_solutions = nxagentScreenCrtcsRecurseSolutions(screen_boxes, screen_count, all_boxes_count, screens_init, i, best_screen_solutions[i], ret_solutions);
+
+      if (!(recursive_solutions)) {
+#ifdef WARNING
+        fprintf(stderr, "%s: error while handling other solutions recursively in current run.\n", __func__);
+#endif
+
+        return(ret);
+      }
+    }
+  }
+
+  ret = TRUE;
+
+  return(ret);
+}
+
+/*
+ * Helper updating internal data in nxagentScreenCrtcsGenerateSolutions().
+ * This mostly exists to avoid complicated data freeing while updating the
+ * internal data.
+ *
+ * No pointers might be NULL. screens_to_init is allowed to be zero or
+ * negative, although negative values will not lead to changed data. This is
+ * not considered an error.
+ *
+ * Returns true on success, otherwise false.
+ */
+static Bool nxagentScreenCrtcsGenerateSolutionsUpdateInternalData(const nxagentScreenBoxes *all_boxes, const nxagentScreenBoxes *screen_boxes, const ssize_t screen_to_init, nxagentScreenBoxes **work_all_boxes, nxagentScreenBoxes **work_screens, Bool *screens_init) {
+  Bool ret = FALSE;
+
+  if ((!(all_boxes)) || (!(screen_boxes)) || (!(work_all_boxes)) || (!(work_screens)) || (!(screens_init))) {
+    return(ret);
+  }
+
+  nxagentFreeScreenBoxes((*work_all_boxes), TRUE);
+
+  SAFE_FREE((*work_all_boxes));
+
+  nxagentFreeScreenBoxes((*work_screens), TRUE);
+
+  SAFE_FREE((*work_screens));
+
+  (*work_all_boxes) = nxagentScreenBoxesCopy(all_boxes);
+
+  if (!((*work_all_boxes))) {
+#ifdef WARNING
+    fprintf(stderr, "%s: unable to copy current screen boxes.\n", __func__);
+#endif
+
+    return(ret);
+  }
+
+  (*work_screens) = nxagentScreenBoxesCopy(screen_boxes);
+
+  if (!((*work_screens))) {
+#ifdef WARNING
+    fprintf(stderr, "%s: unable to copy current screen boxes.\n", __func__);
+#endif
+
+    nxagentFreeScreenBoxes((*work_all_boxes), TRUE);
+
+    SAFE_FREE((*work_all_boxes));
+
+    return(ret);
+  }
+
+  /*
+   * Mark the current screen as initialized.
+   * DO NOT move this to the other functions, since we might have
+   * multiple screens with a maximum rating, but will not extend
+   * the other screens in the current run (but rather in recursive
+   * calls).
+   */
+  if (0 <= screen_to_init) {
+#ifdef WARNING
+    if (screens_init[screen_to_init]) {
+      const unsigned long long screen_number = screen_to_init;
+      fprintf(stderr, "%s: shall set screen init for screen number %llu to TRUE, but already marked as initialized. Algorithm warning.\n", __func__, screen_number);
+    }
+#endif
+
+    screens_init[screen_to_init] = TRUE;
+  }
+
+  ret = TRUE;
+
+  return(ret);
+}
+
+/*
+ * Helper generating a "fake" solution based on the passed-in data.
+ *
+ * This is useful if no screens needed extension.
+ *
+ * No pointer parameters might be NULL.
+ *
+ * On success, returns a "fake" solution, otherwise NULL.
+ */
+static nxagentScreenCrtcsSolution* nxagentScreenCrtcsGenerateFakeSolution(const nxagentScreenBoxes *all_boxes, const nxagentScreenBoxes *screen_boxes) {
+  nxagentScreenCrtcsSolution *ret = NULL;
+
+  if ((!(all_boxes)) || (!(screen_boxes))) {
+    return(ret);
+  }
+
+  ret = calloc(1, sizeof(nxagentScreenCrtcsSolution));
+
+  if (!(ret)) {
+    return(ret);
+  }
+
+  xorg_list_init(&(ret->entry));
+
+  ret->all_boxes = nxagentScreenBoxesCopy(all_boxes);
+
+  if (!(ret->all_boxes)) {
+    nxagentScreenCrtcsFreeSolution(ret);
+
+    SAFE_FREE(ret);
+
+    return(ret);
+  }
+
+  ret->solution_boxes = nxagentScreenBoxesCopy(screen_boxes);
+
+  if (!(ret->solution_boxes)) {
+    nxagentScreenCrtcsFreeSolution(ret);
+
+    SAFE_FREE(ret);
+
+    return(ret);
+  }
+
+  ret->rating_size_change = ret->rating_cover_penalty = ret->rating_extended_boxes_count = 0;
+  ret->rating = 0.0;
+
+  nxagentScreenCrtcsSolutionCalculateRating(ret, FALSE);
+
+  return(ret);
+}
+
+/*
+ * Helper generating a list of solutions, extending the initial screen boxes.
+ *
+ * All pointer arguments but orig_screens_init must be non-NULL. All size
+ * parameters must be non-zero.
+ *
+ * Returns either a pointer to the solutions list or NULL on failure.
+ */
+static nxagentScreenCrtcsSolutions* nxagentScreenCrtcsGenerateSolutions(const nxagentScreenBoxes *all_boxes, const nxagentScreenBoxes *initial_screens, const size_t all_boxes_count, const size_t screen_count, const Bool *orig_screens_init) {
+  nxagentScreenCrtcsSolutions *ret = NULL;
+
+  /*
+   * We assume that the screen and all boxes count as passed in match the
+   * actual data.
+   *
+   * We also assume that there is at least one screen. Otherwise, generating a
+   * fake one here and running an expensive algorithm on this which trivially
+   * will cover all base boxes anyway doesn't make a lot of sense.
+   * Theoretically, such a situation could occur if moving the nxagent window
+   * completely out of any screen bounds. This could potentially also happen if
+   * the window is initialized on a screen, which is later disconnected.
+   * Normally X11 window managers should take care of this situation and move
+   * the window to a connected screen again, but that doesn't happen on Windows
+   * for instance. This makes such windows inaccessible and would lead to an
+   * empty initial screens list.
+   */
+  if ((!(all_boxes)) || (!(initial_screens)) || (!(all_boxes_count)) || (!(screen_count))) {
+    return(ret);
+  }
+
+  /* Check that initial_screens and all_boxes are not empty. */
+  /* FIXME: xorg_list_is_empty is not const-correct. */
+  if ((xorg_list_is_empty((struct xorg_list *)(&(initial_screens->head)))) || (xorg_list_is_empty((struct xorg_list *)(&(all_boxes->head))))) {
+#ifdef WARNING
+    fprintf(stderr, "%s: initial_screens or all_boxes empty, assuming error and returning NULL.\n", __func__);
+#endif
+
+    return(ret);
+  }
+
+  Bool err = FALSE;
+  size_t obsolete_boxes_count = nxagentScreenBoxesObsoleteCount(all_boxes, &err);
+
+  if (err) {
+    return(ret);
+  }
+
+#ifdef DEBUG
+  {
+    const unsigned long long obsolete_boxes_count_ = obsolete_boxes_count;
+    fprintf(stderr, "%s: calculated initial obsolete boxes count: %llu\n", __func__, obsolete_boxes_count_);
+  }
+#endif
+
+  /*
+   * orig_screens_init as passed-in to the function (if non-NULL) will serve as
+   * the base initialization of the array.
+   * Each function execution is reponsible for freeing the memory at the end -
+   * not callees.
+   */
+  Bool *screens_init = calloc(screen_count, sizeof(Bool));
+
+  if (!(screens_init)) {
+    return(ret);
+  }
+
+  if (orig_screens_init) {
+    memmove(screens_init, orig_screens_init, (screen_count * sizeof(*screens_init)));
+  }
+
+  /*
+   * Let work_screens and work_all_boxes point to initial_screens and all_boxes
+   * respectively.
+   */
+  nxagentScreenBoxes *work_screens = nxagentScreenBoxesCopy(initial_screens);
+
+  if (!(work_screens)) {
+    SAFE_FREE(screens_init);
+
+    return(ret);
+  }
+
+  nxagentScreenBoxes *work_all_boxes = nxagentScreenBoxesCopy(all_boxes);
+
+  if (!(work_all_boxes)) {
+    nxagentFreeScreenBoxes(work_screens, TRUE);
+
+    SAFE_FREE(work_screens);
+
+    SAFE_FREE(screens_init);
+
+    return(ret);
+  }
+
+  ret = calloc(1, sizeof(nxagentScreenCrtcsSolutions));
+
+  if (!(ret)) {
+    nxagentFreeScreenBoxes(work_screens, TRUE);
+    nxagentFreeScreenBoxes(work_all_boxes, TRUE);
+
+    SAFE_FREE(work_screens);
+    SAFE_FREE(work_all_boxes);
+
+    SAFE_FREE(screens_init);
+
+    return(ret);
+  }
+
+  xorg_list_init(ret);
+
+  Bool init = TRUE;
+  nxagentScreenCrtcsSolution *my_solution = NULL;
+  while (obsolete_boxes_count < all_boxes_count) {
+    ssize_t screen_to_init = -1;
+
+    nxagentScreenCrtcsSolutions **extended_screens = nxagentScreenCrtcsGeneratePotentialSolutionArray(work_all_boxes, work_screens, screen_count);
+
+    if (!(extended_screens)) {
+      nxagentScreenCrtcsFreeSolutions(ret);
+
+      nxagentScreenCrtcsFreeSolution(my_solution);
+
+      nxagentFreeScreenBoxes(work_screens, TRUE);
+      nxagentFreeScreenBoxes(work_all_boxes, TRUE);
+
+      SAFE_FREE(ret);
+
+      SAFE_FREE(my_solution);
+
+      SAFE_FREE(work_screens);
+      SAFE_FREE(work_all_boxes);
+
+      SAFE_FREE(screens_init);
+
+      return(ret);
+    }
+
+    init = FALSE;
+
+    /* If one screen wasn't extended yet, init should be true. Sync state. */
+    for (size_t i = 0; i < screen_count; ++i) {
+      init |= (!(screens_init[i]));
+    }
+
+    nxagentScreenCrtcsSolutions **best_screen_solutions = NULL;
+    Bool *screen_selection = NULL;
+
+    /*
+     * Could work without an explicit cast, but C doesn't implement a more
+     * complicated implicit cast rule while C++ does.
+     */
+    Bool filter = nxagentScreenCrtcsFilterScreenSolutions((const nxagentScreenCrtcsSolutions * const *)(extended_screens), screen_count, init, screens_init, &best_screen_solutions, &screen_selection);
+
+    /*
+     * Clean up extended_screens. We don't need it any longer.
+     * Do this before error handling, since it will need to be free'd in any
+     * case.
+     */
+    for (size_t i = 0; i < screen_count; ++i) {
+      nxagentScreenCrtcsFreeSolutions(extended_screens[i]);
+
+      SAFE_FREE(extended_screens[i]);
+    }
+
+    SAFE_FREE(extended_screens);
+
+    if (!(filter)) {
+      for (size_t i = 0; i < screen_count; ++i) {
+        nxagentScreenCrtcsFreeSolutions(best_screen_solutions[i]);
+
+        SAFE_FREE(best_screen_solutions[i]);
+      }
+
+      nxagentScreenCrtcsFreeSolutions(ret);
+
+      nxagentScreenCrtcsFreeSolution(my_solution);
+
+      nxagentFreeScreenBoxes(work_screens, TRUE);
+      nxagentFreeScreenBoxes(work_all_boxes, TRUE);
+
+      SAFE_FREE(best_screen_solutions);
+
+      SAFE_FREE(ret);
+
+      SAFE_FREE(my_solution);
+
+      SAFE_FREE(work_screens);
+      SAFE_FREE(work_all_boxes);
+
+      SAFE_FREE(screens_init);
+      SAFE_FREE(screen_selection);
+
+      return(ret);
+    }
+
+    Bool solution_handling = nxagentScreenCrtcsHandleSolutions(work_all_boxes, work_screens, init, screens_init, screen_count, all_boxes_count, screen_selection, ret, &screen_to_init, best_screen_solutions, &my_solution);
+
+    /* Unconditionally get rid of best_screen_solutions. */
+    for (size_t i = 0; i < screen_count; ++i) {
+      nxagentScreenCrtcsFreeSolutions(best_screen_solutions[i]);
+
+      SAFE_FREE(best_screen_solutions[i]);
+    }
+
+    SAFE_FREE(best_screen_solutions);
+
+    /* And screen_selection. */
+    SAFE_FREE(screen_selection);
+
+    if (!(solution_handling)) {
+#ifdef WARNING
+      fprintf(stderr, "%s: unable to handle screen boxes in current run.\n", __func__);
+#endif
+
+      nxagentScreenCrtcsFreeSolutions(ret);
+
+      nxagentScreenCrtcsFreeSolution(my_solution);
+
+      nxagentFreeScreenBoxes(work_screens, TRUE);
+      nxagentFreeScreenBoxes(work_all_boxes, TRUE);
+
+      SAFE_FREE(ret);
+
+      SAFE_FREE(my_solution);
+
+      SAFE_FREE(work_screens);
+      SAFE_FREE(work_all_boxes);
+
+      SAFE_FREE(screens_init);
+
+      return(ret);
+    }
+
+    /*
+     * This is actually the right place to change these variables. For more
+     * information, refer to comments in the other functions.
+     */
+    Bool update_data = nxagentScreenCrtcsGenerateSolutionsUpdateInternalData(my_solution->all_boxes, my_solution->solution_boxes, screen_to_init, &work_all_boxes, &work_screens, screens_init);
+
+    if (!(update_data)) {
+#ifdef WARNING
+      fprintf(stderr, "%s: unable to update internal data in current run.\n", __func__);
+#endif
+
+      nxagentScreenCrtcsFreeSolutions(ret);
+
+      nxagentScreenCrtcsFreeSolution(my_solution);
+
+      nxagentFreeScreenBoxes(work_screens, TRUE);
+      nxagentFreeScreenBoxes(work_all_boxes, TRUE);
+
+      SAFE_FREE(ret);
+
+      SAFE_FREE(my_solution);
+
+      SAFE_FREE(work_screens);
+      SAFE_FREE(work_all_boxes);
+
+      SAFE_FREE(screens_init);
+
+      return(ret);
+    }
+
+    obsolete_boxes_count = nxagentScreenBoxesObsoleteCount(work_all_boxes, &err);
+
+    if (err) {
+#ifdef WARNING
+      fprintf(stderr, "%s: unable to update obsolete base boxes.\n", __func__);
+#endif
+
+      nxagentScreenCrtcsFreeSolutions(ret);
+
+      nxagentScreenCrtcsFreeSolution(my_solution);
+
+      nxagentFreeScreenBoxes(work_screens, TRUE);
+      nxagentFreeScreenBoxes(work_all_boxes, TRUE);
+
+      SAFE_FREE(ret);
+
+      SAFE_FREE(my_solution);
+
+      SAFE_FREE(work_screens);
+      SAFE_FREE(work_all_boxes);
+
+      SAFE_FREE(screens_init);
+
+      return(ret);
+    }
+
+#ifdef DEBUG
+    {
+      const unsigned long long obsolete_boxes_count_ = obsolete_boxes_count;
+      fprintf(stderr, "%s: recalculated obsolete boxes count: %llu\n", __func__, obsolete_boxes_count_);
+    }
+#endif
+  }
+
+  /* Unconditional cleanup. */
+  SAFE_FREE(screens_init);
+
+  /*
+   * Having no solution means that we didn't have to generate one, i.e., that
+   * the original screen boxes were all extended in the first place.
+   *
+   * In such a case, copy the input data and recalculate the rating with size
+   * changes set to zero.
+   */
+  if (!(my_solution)) {
+    my_solution = nxagentScreenCrtcsGenerateFakeSolution(work_all_boxes, work_screens);
+  }
+
+  /* Cleanup. */
+  nxagentFreeScreenBoxes(work_screens, TRUE);
+  nxagentFreeScreenBoxes(work_all_boxes, TRUE);
+
+  SAFE_FREE(work_screens);
+  SAFE_FREE(work_all_boxes);
+
+  if (!(my_solution)) {
+#ifdef WARNING
+    fprintf(stderr, "%s: unable to generate \"fake\" solution.\n", __func__);
+#endif
+
+    nxagentScreenCrtcsFreeSolutions(ret);
+
+    SAFE_FREE(ret);
+
+    return(ret);
+  }
+
+  /*
+   * Reaching this point means that we've extended everything to cover all
+   * non-obsoleted base boxes.
+   *
+   * my_solution isn't part of ret yet, so add it.
+   */
+  xorg_list_append(&(my_solution->entry), ret);
+
+  /*
+   * At the end of this function, we should only have fully extended solutions
+   * (i.e., no partial ones).
+   * Due to that, extracing the best solution(s) should work fine and leave out
+   * solutions that are not interesting to us.
+   */
+  nxagentScreenCrtcsSolutions *best_ret = nxagentScreenCrtcsExtractBestSolutions(ret);
+
+  /* Get rid of old solutions list. */
+  nxagentScreenCrtcsFreeSolutions(ret);
+
+  SAFE_FREE(ret);
+
+  ret = best_ret;
+
+  return(ret);
+}
+
+/* Helper printing out a screen boxes list. */
+static char* nxagentPrintScreenBoxes(const nxagentScreenBoxes *boxes) {
+  char *ret = NULL;
+
+  if ((!(boxes))) {
+    return(ret);
+  }
+
+  char *construct = NULL;
+  /* FIXME: xorg_list_is_empty is not const-correct. */
+  if (xorg_list_is_empty((struct xorg_list *)(&(boxes->head)))) {
+    if (-1 == asprintf(&construct, "empty")) {
+      return(ret);
+    }
+  }
+  else {
+    size_t total_length = 512,
+           last_pos = 0;
+    construct = calloc(total_length, sizeof(char));
+
+    if (!(construct)) {
+      return(ret);
+    }
+
+    nxagentScreenBoxesElem *cur = NULL;
+    xorg_list_for_each_entry(cur, &(boxes->head), entry) {
+      char *box_str = nxagentPrintScreenBoxesElem(cur);
+
+      if (!(box_str)) {
+        SAFE_FREE(construct);
+      }
+      else {
+        const size_t box_str_raw_len = (strlen(box_str) + 1);
+
+        /*                    v-- implicit " -- " chars */
+        while (((box_str_raw_len + 4) + last_pos) > total_length) {
+          /* Buffer space needs to be expanded. */
+          total_length += 512;
+          char *new_construct = realloc(construct, total_length);
+
+          if (!(new_construct)) {
+            SAFE_FREE(construct);
+
+            break;
+          }
+          else {
+            construct = new_construct;
+
+            memset((construct + last_pos), 0, (total_length - last_pos));
+          }
+        }
+
+        if (construct) {
+          const size_t write_count = snprintf((construct + last_pos), (total_length - last_pos), "%s -- ", box_str);
+
+          if (0 > write_count) {
+            const int errno_save = errno;
+
+            fprintf(stderr, "%s: error writing box string representation to buffer: %s\n", __func__, strerror(errno_save));
+
+            SAFE_FREE(construct);
+          }
+          else if (write_count >= (total_length - last_pos)) {
+            fprintf(stderr, "%s: buffer was too small to hold new box string representation. Algorithm error.\n", __func__);
+
+            SAFE_FREE(construct);
+          }
+          else {
+            last_pos += write_count;
+          }
+        }
+      }
+
+      SAFE_FREE(box_str);
+
+      if (!(construct)) {
+        break;
+      }
+    }
+
+    if (construct) {
+      /* Drop the last delimiter (" -- ") character string. */
+      construct[last_pos - 4] = 0;
+    }
+  }
+
+  ret = construct;
+
+  return(ret);
+}
+
+/*
+ * Helper generating a "fake" solutions list based on the global window data.
+ *
+ * This is useful if no screens intersect the nxagent window.
+ *
+ * No pointer parameters might be NULL.
+ *
+ * On success, returns a "fake" solutions list, otherwise NULL.
+ */
+static nxagentScreenCrtcsSolutions* nxagentScreenCrtcsGenerateFakeSolutions(const nxagentScreenBoxes *all_boxes) {
+  nxagentScreenCrtcsSolutions *ret = NULL;
+
+  if (!(all_boxes)) {
+    return(ret);
+  }
+
+  ret = calloc(1, sizeof(nxagentScreenCrtcsSolutions));
+
+  if (!(ret)) {
+    return(ret);
+  }
+
+  xorg_list_init(ret);
+
+  nxagentScreenBoxes *fake_screen = calloc(1, sizeof(nxagentScreenBoxes));
+
+  if (!(fake_screen)) {
+    SAFE_FREE(ret);
+
+    return(ret);
+  }
+
+  xorg_list_init(&(fake_screen->head));
+  fake_screen->screen_id = -1;
+
+  nxagentScreenBoxesElem *fake_screen_box = calloc(1, sizeof(nxagentScreenBoxesElem));
+
+  if (!(fake_screen_box)) {
+    SAFE_FREE(fake_screen);
+
+    SAFE_FREE(ret);
+
+    return(ret);
+  }
+
+  xorg_list_init(&(fake_screen_box->entry));
+  fake_screen_box->screen_id = -1;
+
+  BoxPtr fake_screen_box_data = calloc(1, sizeof(BoxRec));
+
+  if (!(fake_screen_box_data)) {
+    SAFE_FREE(fake_screen_box);
+
+    SAFE_FREE(fake_screen);
+
+    SAFE_FREE(ret);
+
+    return(ret);
+  }
+
+  fake_screen_box_data->x1 = fake_screen_box_data->x2 = nxagentOption(X);
+  fake_screen_box_data->y1 = fake_screen_box_data->y2 = nxagentOption(Y);
+  fake_screen_box_data->x2 += nxagentOption(Width);
+  fake_screen_box_data->y2 += nxagentOption(Height);
+
+  fake_screen_box->box = fake_screen_box_data;
+
+  xorg_list_append(&(fake_screen_box->entry), &(fake_screen->head));
+
+  nxagentScreenCrtcsSolution *solution = nxagentScreenCrtcsGenerateFakeSolution(all_boxes, fake_screen);
+
+  nxagentFreeScreenBoxes(fake_screen, TRUE);
+
+  SAFE_FREE(fake_screen);
+
+  if (!(solution)) {
+    SAFE_FREE(ret);
+
+    return(ret);
+  }
+
+  xorg_list_append(&(solution->entry), ret);
+
+  return(ret);
+}
+
+/*
+ * High-level wrapper generating a screen partition solution based upon a list
+ * of base boxes and the remote Xinerama screen information.
+ *
+ * No pointers might be NULL. screen_count might not be zero.
+ *
+ * On success, returns one specific screen partition solution, otherwise NULL.
+ */
+static nxagentScreenCrtcsSolution* nxagentMergeScreenCrtcs(nxagentScreenBoxes *boxes, const XineramaScreenInfo *screen_info, const size_t screen_count) {
+  nxagentScreenCrtcsSolution *ret = NULL;
+
+  if ((!(boxes)) || (!(screen_info)) || (!(screen_count))) {
+    return(ret);
+  }
+
+  size_t boxes_count = 0;
+  nxagentScreenBoxesElem *cur = NULL;
+  xorg_list_for_each_entry(cur, &(boxes->head), entry) {
+    ++boxes_count;
+  }
+
+  /*
+   * Step 1: consolidate boxes.
+   *
+   * Boxes might intersect with one screen, multiple screens or no screen.
+   * We will consolidate boxes on a per-screen basis, in a way such that each
+   * box will not be next to another that intersects the same screens.
+   * Overlapping screens are handled by leaving a box in place if intersected
+   * by multiple screens, if its neighbors are not also intersected by the
+   * same screens.
+   *
+   * Example:
+   *
+   * ┌─────┬──────┬─────┬─────┐
+   * │  1  │  1,2 │  2  │     │
+   * ├─────┼──────┼─────┼─────┤
+   * │  1  │  1   │     │     │
+   * └─────┴──────┴─────┴─────┘
+   *
+   * Will/should be merged to:
+   *
+   * ┌─────┬──────┬─────┬─────┐
+   * │  1  │  1,2 │  2  │     │
+   * │     └──────┼─────┼─────┤
+   * │  1     1   │     │     │
+   * └────────────┴─────┴─────┘
+   *
+   * I.e., after the operation, these boxes will/should exist:
+   *
+   * ┌────────────┐  ┌────────────┐
+   * │     1      │  │      2     │
+   * │            │  └────────────┘
+   * └────────────┘
+   */
+
+  nxagentScreenBoxes *screen_boxes = calloc(screen_count, sizeof(nxagentScreenBoxes));
+
+  if (!(screen_boxes)) {
+    nxagentFreeScreenBoxes(boxes, TRUE);
+
+    return(ret);
+  }
+
+  for (size_t i = 0; i < screen_count; ++i) {
+    xorg_list_init(&((screen_boxes + i)->head));
+  }
+
+  nxagentScreenBoxes *initial_screens = calloc(1, sizeof(nxagentScreenBoxes));
+
+  if (!(initial_screens)) {
+    nxagentFreeScreenBoxes(boxes, TRUE);
+
+    return(ret);
+  }
+
+  xorg_list_init(&(initial_screens->head));
+  initial_screens->screen_id = -1;
+
+  if (!(nxagentMergeScreenBoxes(boxes, screen_boxes, screen_info, screen_count))) {
+    for (size_t i = 0; i < screen_count; ++i) {
+      nxagentFreeScreenBoxes((screen_boxes + i), TRUE);
+    }
+
+    SAFE_FREE(screen_boxes);
+
+    nxagentFreeScreenBoxes(boxes, TRUE);
+
+    return(ret);
+  }
+
+  /* Step 2: merge screen boxes into initial_screens. */
+  size_t real_screen_count = 0;
+  for (size_t i = 0; i < screen_count; ++i) {
+    /* Filter out boxes with no intersections. */
+    if (!(xorg_list_is_empty(&((screen_boxes) + i)->head))) {
+      /* If merging was successful, we should only have one box per list. */
+      nxagentScreenBoxesElem *cur = xorg_list_first_entry(&((screen_boxes + i)->head), nxagentScreenBoxesElem, entry);
+
+      /* Remove from old list. */
+      xorg_list_del(&(cur->entry));
+
+      /* Add to the other list. */
+      xorg_list_append(&(cur->entry), &(initial_screens->head));
+
+      ++real_screen_count;
+
+#ifdef WARNING
+      if (i != cur->screen_id) {
+        const unsigned long long idx = i;
+        const signed long long screen_id = cur->screen_id;
+        fprintf(stderr, "%s: internal screen id %lld doesn't match expected screen id %llu! Algorithm warning.\n", __func__, screen_id, idx);
+      }
+#endif
+    }
+  }
+
+  /* Lists should be all empty now, get rid of list heads. */
+  SAFE_FREE(screen_boxes);
+
+#ifdef DEBUG
+  fprintf(stderr, "%s: merged initial screens into initial_screens, all boxes should be correctly marked.\n", __func__);
+
+  fprintf(stderr, "%s: dumping initial_screens:\n", __func__);
+  {
+    char *initial_screens_str = nxagentPrintScreenBoxes(initial_screens);
+
+    if (initial_screens_str) {
+      fprintf(stderr, "%s:   %s\n", __func__, initial_screens_str);
+    }
+    else {
+      fprintf(stderr, "%s:   error!\n", __func__);
+    }
+
+    SAFE_FREE(initial_screens_str);
+  }
+
+  fprintf(stderr, "%s: dumping all boxes:\n", __func__);
+  {
+    char *boxes_str = nxagentPrintScreenBoxes(boxes);
+
+    if (boxes_str) {
+      fprintf(stderr, "%s:   %s\n", __func__, boxes_str);
+    }
+    else {
+      fprintf(stderr, "%s:   error!\n", __func__);
+    }
+
+    SAFE_FREE(boxes_str);
+  }
+#endif
+
+  nxagentScreenCrtcsSolutions *solutions = NULL;
+  /* Step 3: extend original screen boxes to cover the whole area. */
+  if (real_screen_count) {
+    solutions = nxagentScreenCrtcsGenerateSolutions(boxes, initial_screens, boxes_count, real_screen_count, NULL);
+  }
+  else {
+    /*
+     * No screens intersecting the window maeans that we can create a fake
+     * solution containing just one (virtual) screen and just use that one.
+     */
+    solutions = nxagentScreenCrtcsGenerateFakeSolutions(boxes);
+  }
+
+  /*
+   * Everything should be copied internally, so get rid of our original data.
+   */
+  nxagentFreeScreenBoxes(initial_screens, TRUE);
+
+  SAFE_FREE(initial_screens);
+
+  if ((!(solutions)) || (xorg_list_is_empty(solutions))) {
+    /*
+     * Invalid or empty solutions list means that something is wrong.
+     * Error out.
+     */
+#ifdef WARNING
+    fprintf(stderr, "%s: solutions list empty or invalid. Algorithm error.\n", __func__);
+#endif
+
+    nxagentScreenCrtcsFreeSolutions(solutions);
+
+    SAFE_FREE(solutions);
+
+    return(ret);
+  }
+
+  /*
+   * Step 4: select specific solution.
+   * Should be valid, checked for emptiness before. It's possible to have
+   * multiple solutions (logically with the same rating), but we have to select
+   * a specific one here.
+   * We'll use the very first one.
+   */
+  nxagentScreenCrtcsSolution *first_entry = xorg_list_first_entry(solutions, nxagentScreenCrtcsSolution, entry);
+
+  ret = nxagentScreenCrtcsSolutionCopy(first_entry);
+
+  nxagentScreenCrtcsFreeSolutions(solutions);
+
+  SAFE_FREE(solutions);
+
+  if (!(ret)) {
+#ifdef WARNING
+    fprintf(stderr, "%s: unable to copy first solution entry.\n", __func__);
+#endif
+
+    return(ret);
+  }
+
+  return(ret);
+}
+
+/*
  Destroy an output after removing it from any crtc that might reference it
  */
 void nxagentDropOutput(RROutputPtr o) {
@@ -3924,6 +7209,276 @@ void nxagentDropOutput(RROutputPtr o) {
   RROutputDestroy(o);
 }
 
+/*
+ * Helper used to swap the *data* of two nxagentScreenBoxesElem objects.
+ * Metadata, such as the internal list pointers, is not touched.
+ *
+ * Returns true on success, otherwise false.
+ */
+static Bool nxagentScreenBoxesElemSwap(nxagentScreenBoxesElem *lhs, nxagentScreenBoxesElem *rhs) {
+  Bool ret = FALSE;
+
+  if ((!(lhs)) || (!(rhs))) {
+    return(ret);
+  }
+
+  nxagentScreenBoxesElem *tmp = nxagentScreenBoxesElemCopy(lhs, FALSE);
+
+  if (!(tmp)) {
+    return(ret);
+  }
+
+  lhs->obsolete  = rhs->obsolete;
+  lhs->screen_id = rhs->screen_id;
+  lhs->box       = rhs->box;
+
+  rhs->obsolete  = tmp->obsolete;
+  rhs->screen_id = tmp->screen_id;
+  rhs->box       = tmp->box;
+
+  SAFE_FREE(tmp);
+
+  ret = TRUE;
+
+  return(ret);
+}
+
+/*
+ * Helper executing the actual quicksort implementation.
+ *
+ * No pointer parameters might be NULL.
+ *
+ * Returns true on success, otherwise false.
+ */
+static Bool nxagentScreenBoxesQSortImpl(nxagentScreenBoxesElem *left, nxagentScreenBoxesElem *right, const size_t left_idx, const size_t right_idx, nxagentScreenBoxes *boxes) {
+  Bool ret = TRUE;
+
+  if ((!(left)) || (!(right)) || (!(boxes))) {
+    ret = FALSE;
+
+    return(ret);
+  }
+
+  if (left_idx >= right_idx) {
+    return(ret);
+  }
+
+  /* Select pivot. */
+  size_t diff = (right_idx - left_idx);
+  size_t pivot_i = (left_idx + (rand() % diff));
+
+  nxagentScreenBoxesElem *pivot = NULL;
+  {
+    size_t i = 0;
+    xorg_list_for_each_entry(pivot, &(boxes->head), entry) {
+      if (i++ == pivot_i) {
+        break;
+      }
+    }
+  }
+
+  /* IDs should be unique, so no need to optimize for same values. */
+  nxagentScreenBoxesElem *left_  = left,
+                         *right_ = right,
+                         *split  = NULL;
+  ssize_t left_i  = left_idx,
+          right_i = right_idx,
+          split_i = -1;
+  while (TRUE) {
+    /*
+     * Careful: xorg_list_for_each_entry() skips over the first element (since
+     * it's assumed to be the list head without actual data), so we'll need to
+     * "rewind" the pointer first.
+     *
+     * Don't do this for right_, since we use a special implementation for
+     * iterating backwards.
+     */
+    left_ = xorg_list_last_entry(&(left_->entry), nxagentScreenBoxesElem, entry);
+
+    xorg_list_for_each_entry(left_, &(left_->entry), entry) {
+      if (&(left_->entry) == &(boxes->head)) {
+        ret = FALSE;
+
+        break;
+      }
+
+      /*
+       * Normally implementations check if they should continue, we check if we
+       * should break out instead.
+       *
+       * N.B.: left_ should never reach the list head.
+       */
+      if ((left_->screen_id) >= (pivot->screen_id)) {
+        break;
+      }
+
+      ++left_i;
+    }
+
+    if (!(ret)) {
+      break;
+    }
+
+    /*
+     * The xorg_list implementation does not have a way to iterate over a list
+     * reversely, so implement it with basic building blocks.
+     */
+    while (&(right_->entry) != &(right->entry)) {
+      if (&(right_->entry) == &(boxes->head)) {
+        ret = FALSE;
+
+        break;
+      }
+
+      /*
+       * Normally implementations check if they should continue, we check if we
+       * should break out instead.
+       *
+       * N.B.: right_ should never reach the list head.
+       */
+      if ((right_->screen_id) <= (pivot->screen_id)) {
+        break;
+      }
+
+      --right_i;
+
+      /*
+       * Move backwards. Last entry is actually the previous one. For more
+       * information see the comments in nxagentScreenBoxesUpdateScreenBox().
+       */
+      right_ = xorg_list_last_entry(&(right_->entry), nxagentScreenBoxesElem, entry);
+    }
+
+    if (!(ret)) {
+      break;
+    }
+
+    if (left_i >= right_i) {
+      split   = right;
+      split_i = right_i;
+
+      break;
+    }
+
+    ret = nxagentScreenBoxesElemSwap(left_, right_);
+
+    if (!(ret)) {
+      break;
+    }
+  }
+
+  if (!(ret)) {
+    return(ret);
+  }
+
+  ret = nxagentScreenBoxesQSortImpl(left, split, left_idx, split_i, boxes);
+
+  if (!(ret)) {
+    return(ret);
+  }
+
+  ret = nxagentScreenBoxesQSortImpl(xorg_list_first_entry(&(split->entry), nxagentScreenBoxesElem, entry), right, (split_i + 1), right_idx, boxes);
+
+  return(ret);
+}
+
+/*
+ * Helper sorting an nxagentScreenBoxes list.
+ *
+ * No pointer parameters might be NULL.
+ *
+ * Returns true on success, otherwise false.
+ */
+static Bool nxagentScreenBoxesQSort(nxagentScreenBoxes *boxes) {
+  Bool ret = FALSE;
+
+  if (!(boxes)) {
+    return(ret);
+  }
+
+  if (xorg_list_is_empty(&(boxes->head))) {
+    ret = TRUE;
+
+    return(ret);
+  }
+
+  /*
+   * Questionable error handling: check that each screen_id is unique.
+   *
+   * Otherwise this implementation will crash.
+   * That's probably fine since having a list with duplicated screen_id entries
+   * is a bug in the generation code anyway.
+   */
+  Bool unique = TRUE;
+  {
+    nxagentScreenBoxesElem *lhs = NULL;
+    xorg_list_for_each_entry(lhs, &(boxes->head), entry) {
+      nxagentScreenBoxesElem *rhs = NULL;
+      xorg_list_for_each_entry(rhs, &(lhs->entry), entry) {
+        /* Check for actual list head and break out. */
+        if (&(rhs->entry) == &(boxes->head)) {
+          break;
+        }
+
+        /* Otherwise rhs is a valid entry. */
+        if (lhs->screen_id == rhs->screen_id) {
+          unique = FALSE;
+          break;
+        }
+      }
+
+      if (!(unique)) {
+        /* Found at least one duplicated entry, break out. */
+        break;
+      }
+    }
+  }
+
+  if (!(unique)) {
+    return(ret);
+  }
+
+  /*
+   * Questionable optimization: check if list is already sorted.
+   */
+  Bool sorted = TRUE;
+  {
+    ssize_t last_screen_id = -1;
+    nxagentScreenBoxesElem *cur = NULL;
+    xorg_list_for_each_entry(cur, &(boxes->head), entry) {
+      if (cur->screen_id < last_screen_id) {
+        sorted = FALSE;
+
+        break;
+      }
+
+      last_screen_id = cur->screen_id;
+    }
+  }
+
+  if (sorted) {
+    ret = TRUE;
+
+    return(ret);
+  }
+
+  /* Seed PRNG. We don't need good entropy, some is enough. */
+  srand((unsigned int)(time(NULL)));
+
+  /* Get boxes count. */
+  size_t boxes_count = 0;
+  {
+    nxagentScreenBoxesElem *cur = NULL;
+    xorg_list_for_each_entry(cur, &(boxes->head), entry) {
+      ++boxes_count;
+    }
+  }
+
+  ret = nxagentScreenBoxesQSortImpl(xorg_list_first_entry(&(boxes->head), nxagentScreenBoxesElem, entry), xorg_list_last_entry(&(boxes->head), nxagentScreenBoxesElem, entry), 0, (boxes_count - 1), boxes);
+
+  return(ret);
+}
+
 int nxagentAdjustRandRXinerama(ScreenPtr pScreen)
 {
   rrScrPrivPtr pScrPriv;
@@ -3931,37 +7486,31 @@ int nxagentAdjustRandRXinerama(ScreenPtr pScreen)
   xRRModeInfo  modeInfo;
   char         name[100];
   int          refresh = 60;
-  int          width = nxagentOption(Width);
-  int          height = nxagentOption(Height);
 
   pScrPriv = rrGetScrPriv(pScreen);
 
-  if (pScrPriv)
-  {
-    int i;
+  if (pScrPriv) {
     int number = 0;
 
     XineramaScreenInfo *screeninfo = NULL;
 
     screeninfo = XineramaQueryScreens(nxagentDisplay, &number);
-    if (number)
-    {
+    if (number) {
 #ifdef DEBUG
       fprintf(stderr, "nxagentAdjustRandRXinerama: XineramaQueryScreens() returned [%d] screens:\n", number);
-      for (int i=0; i < number; i++) {
-	fprintf(stderr, "nxagentAdjustRandRXinerama:   screen_number [%d] x_org [%d] y_org [%d] width [%d] height [%d]\n", screeninfo[i].screen_number, screeninfo[i].x_org, screeninfo[i].y_org, screeninfo[i].width, screeninfo[i].height);
+      for (size_t i = 0; i < number; ++i) {
+        fprintf(stderr, "nxagentAdjustRandRXinerama:   screen_number [%d] x_org [%d] y_org [%d] width [%d] height [%d]\n", screeninfo[i].screen_number, screeninfo[i].x_org, screeninfo[i].y_org, screeninfo[i].width, screeninfo[i].height);
       }
 #endif
     }
-    else
-    {
+    else {
 #ifdef DEBUG
       fprintf(stderr, "nxagentAdjustRandRXinerama: XineramaQueryScreens() failed - continuing without Xinerama\n");
 #endif
     }
 
     /*
-     * if there's no xinerama on the real server or xinerama is
+     * If there's no xinerama on the real server or xinerama is
      * disabled in nxagent we only report one big screen. Clients
      * still see xinerama enabled but it will report only one (big)
      * screen. This is consistent with the way rrxinerama always
@@ -3974,10 +7523,10 @@ int nxagentAdjustRandRXinerama(ScreenPtr pScreen)
       #endif
       number = 1;
 
-      free(screeninfo);
+      SAFE_FREE(screeninfo);
 
-      if (!(screeninfo = malloc(sizeof(XineramaScreenInfo)))) {
-	return FALSE;
+      if (!(screeninfo = calloc(1, sizeof(XineramaScreenInfo)))) {
+        return FALSE;
       }
 
       /* fake a xinerama screeninfo that covers the whole screen */
@@ -4002,37 +7551,122 @@ int nxagentAdjustRandRXinerama(ScreenPtr pScreen)
       rrgetinfo = RRGetInfo(pScreen, FALSE);
 
       fprintf(stderr, "nxagentAdjustRandRXinerama: RRGetInfo returned [%d]\n", rrgetinfo);
+
+      const signed int x = nxagentOption(X),
+                       y = nxagentOption(Y),
+                       w = nxagentOption(Width),
+                       h = nxagentOption(Height);
+      fprintf(stderr, "%s: nxagent window extends: [(%d, %d), (%d, %d)]\n", __func__, x, y, (x + w), (y + h));
     }
 #else
     /* we are not interested in the return code */
     RRGetInfo(pScreen, FALSE);
 #endif
 
-#ifndef NXAGENT_RANDR_XINERAMA_CLIPPING
-    /* calculate bounding box (outer edges) */
-    int bbx2, bbx1, bby1, bby2;
-    bbx2 = bby2 = 0;
-    bbx1 = bby1 = INT_MAX;
+    nxagentScreenSplits *splits = nxagentGenerateScreenSplitList(screeninfo, number);
 
-    for (i = 0; i < number; i++) {
-      bbx2 = MAX(bbx2, screeninfo[i].x_org + screeninfo[i].width);
-      bby2 = MAX(bby2, screeninfo[i].y_org + screeninfo[i].height);
-      bbx1 = MIN(bbx1, screeninfo[i].x_org);
-      bby1 = MIN(bby1, screeninfo[i].y_org);
+    if (!(splits)) {
+      fprintf(stderr, "%s: unable to generate screen split list.\n", __func__);
+
+      SAFE_FREE(screeninfo);
+
+      return(FALSE);
     }
-    #ifdef DEBUG
-    fprintf(stderr, "nxagentAdjustRandRXinerama: bounding box: left [%d] right [%d] top [%d] bottom [%d]\n", bbx1, bbx2, bby1, bby2);
-    #endif
-#endif
+
+    nxagentScreenBoxes *all_boxes = nxagentGenerateScreenCrtcs(splits);
+
+    /* Get rid of splits. */
+    SAFE_FREE(splits->x_splits);
+    SAFE_FREE(splits->y_splits);
+    SAFE_FREE(splits);
+
+    if ((!(all_boxes)) || xorg_list_is_empty(&(all_boxes->head))) {
+      fprintf(stderr, "%s: unable to generate screen boxes list from screen splitting list.\n", __func__);
+
+      SAFE_FREE(screeninfo);
+
+      return(FALSE);
+    }
+
+    nxagentScreenCrtcsSolution *solution = nxagentMergeScreenCrtcs(all_boxes, screeninfo, number);
+
+    /* Get rid of all_boxes. */
+    nxagentFreeScreenBoxes(all_boxes, TRUE);
+
+    SAFE_FREE(all_boxes);
+
+    if ((!(solution)) || (!(solution->solution_boxes)) || (!(solution->all_boxes))) {
+      fprintf(stderr, "%s: unable to extract screen boxes from screen metadata.\n", __func__);
+
+      SAFE_FREE(screeninfo);
+
+      return(FALSE);
+    }
+
+    /* Sort new solution boxes list based on screen ID. */
+    Bool sorted = nxagentScreenBoxesQSort(solution->solution_boxes);
+
+    if (!(sorted)) {
+      fprintf(stderr, "%s: unable to sort solution screen boxes based on screen IDs.\n", __func__);
+
+      nxagentScreenCrtcsFreeSolution(solution);
+
+      SAFE_FREE(solution);
+
+      SAFE_FREE(screeninfo);
+
+      return(FALSE);
+    }
 
     #ifdef DEBUG
     fprintf(stderr, "nxagentAdjustRandRXinerama: numCrtcs [%d], numOutputs [%d]\n", pScrPriv->numCrtcs, pScrPriv->numOutputs);
     #endif
 
-    /* adjust the number of CRTCs to match the number of reported
-       xinerama screens on the real server */
-    while (number != pScrPriv->numCrtcs) {
-      if (number < pScrPriv->numCrtcs) {
+    #ifdef WARNING
+    if (nxagentScreenCrtcsTiling) {
+      size_t old_screen_count = 0;
+      nxagentScreenBoxesElem *cur = NULL;
+      xorg_list_for_each_entry(cur, &(nxagentScreenCrtcsTiling->solution_boxes->head), entry) {
+        ++old_screen_count;
+      }
+
+      if (old_screen_count != pScrPriv->numCrtcs) {
+        const unsigned long long old_screen_count_ = old_screen_count;
+        const signed long long cur_crtcs_count = pScrPriv->numCrtcs;
+        fprintf(stderr, "%s: current CRTCs count [%lld] doesn't match old tiling data [%llu]. Algorithm warning.\n", __func__, cur_crtcs_count, old_screen_count_);
+      }
+    }
+    #endif
+
+    size_t new_crtcs_count = 0;
+    {
+      nxagentScreenBoxesElem *cur = NULL;
+      xorg_list_for_each_entry(cur, &(solution->solution_boxes->head), entry) {
+        ++new_crtcs_count;
+      }
+    }
+
+    /*
+     * Adjust the number of CRTCs to match the number of reported Xinerama
+     * screens on the real server that intersect the nxagent window.
+     */
+    /*
+     * The number of CRTCs might not be an appropriate means of setting up
+     * screen splitting since old and new screen IDs might differ. Doing some
+     * more complicated mapping between old and new screen IDs here would be
+     * possible, but likely isn't needed since each CRTC here is a purely
+     * virtual one in the first place.
+     *
+     * Pretend we have three screens in both the old and new solutions, but the
+     * middle one switched IDs from 2 to 4. Doing some complicated mapping
+     * wouldn't really lead to a different result, since we'd need to drop and
+     * re-add the virtual screen with a different size anyway. Just naïvely
+     * matching screen counts, however, has the added benefit of less virtual
+     * screen removals and additions if only metadata changed, but not the
+     * actual virtual screens count.
+     */
+    while (new_crtcs_count != pScrPriv->numCrtcs) {
+      if (new_crtcs_count < pScrPriv->numCrtcs) {
         #ifdef DEBUG
         fprintf(stderr, "nxagentAdjustRandRXinerama: destroying crtc\n");
         #endif
@@ -4040,8 +7674,7 @@ int nxagentAdjustRandRXinerama(ScreenPtr pScreen)
         RRCrtcSet(pScrPriv->crtcs[pScrPriv->numCrtcs - 1], NULL, 0, 0, RR_Rotate_0, 0, NULL);
         RRCrtcDestroy(pScrPriv->crtcs[pScrPriv->numCrtcs - 1]);
       }
-      else
-      {
+      else {
         #ifdef DEBUG
         fprintf(stderr, "nxagentAdjustRandRXinerama: adding crtc\n");
         #endif
@@ -4053,41 +7686,62 @@ int nxagentAdjustRandRXinerama(ScreenPtr pScreen)
     fprintf(stderr, "nxagentAdjustRandRXinerama: numCrtcs [%d], numOutputs [%d]\n", pScrPriv->numCrtcs, pScrPriv->numOutputs);
     #endif
 
-    /* set gamma. Currently the only reason for doing this is
-       preventing the xrandr command from complaining about missing
-       gamma. */
-    for (i = 0; i < pScrPriv->numCrtcs; i++) {
+    /*
+     * Set gamma. Currently the only reason for doing this is preventing the
+     * xrandr command from complaining about missing gamma.
+     */
+    for (size_t i = 0; i < pScrPriv->numCrtcs; ++i) {
       if (pScrPriv->crtcs[i]->gammaSize == 0) {
-	CARD16 gamma = 0;
-	RRCrtcGammaSetSize(pScrPriv->crtcs[i], 1);
-	RRCrtcGammaSet(pScrPriv->crtcs[i], &gamma, &gamma, &gamma);
-	RRCrtcGammaNotify(pScrPriv->crtcs[i]);
+        CARD16 gamma = 0;
+        RRCrtcGammaSetSize(pScrPriv->crtcs[i], 1);
+        RRCrtcGammaSet(pScrPriv->crtcs[i], &gamma, &gamma, &gamma);
+        RRCrtcGammaNotify(pScrPriv->crtcs[i]);
       }
     }
 
-    /* delete superfluous non-NX outputs */
-    for (i = pScrPriv->numOutputs - 1; i >= 0; i--)
-      if (strncmp(pScrPriv->outputs[i]->name, "NX", 2))
+    /* Delete superfluous non-NX outputs. */
+    for (ptrdiff_t i = pScrPriv->numOutputs - 1; i >= 0; --i) {
+      if (strncmp(pScrPriv->outputs[i]->name, "NX", 2)) {
         nxagentDropOutput(pScrPriv->outputs[i]);
+      }
+    }
 
-    /* at this stage only NX outputs are left - we delete the superfluous ones */
-    for (i = pScrPriv->numOutputs - 1; i >= number; i--)
+    /*
+     * At this stage only NX outputs are left - we delete the superfluous
+     * ones.
+     */
+    if (new_crtcs_count > (ptrdiff_t)(PTRDIFF_MAX)) {
+      const unsigned long long new_crtcs_count_ = new_crtcs_count;
+      const unsigned long long max_crtcs = PTRDIFF_MAX;
+      fprintf(stderr, "%s: too many screen CRTCs [%llu], supporting at most [%llu]; erroring out, but keeping old solution.\n", __func__, new_crtcs_count_, max_crtcs);
+
+      nxagentScreenCrtcsFreeSolution(solution);
+
+      SAFE_FREE(solution);
+
+      SAFE_FREE(screeninfo);
+
+      return(FALSE);
+    }
+
+    for (ptrdiff_t i = pScrPriv->numOutputs - 1; i >= (ptrdiff_t)(new_crtcs_count); --i) {
       nxagentDropOutput(pScrPriv->outputs[i]);
+    }
 
-    /* add and init outputs */
-    for (i = 0; i < number; i++) {
+    /* Add and init outputs. */
+    for (size_t i = 0; i < new_crtcs_count; ++i) {
       if (i >= pScrPriv->numOutputs) {
-        sprintf(name, "NX%d", i+1);
+        const unsigned long long i_ = i;
+        sprintf(name, "NX%llu", (i_ + 1));
         output = RROutputCreate(pScreen, name, strlen(name), NULL);
-	/* will be done later
-	RROutputSetConnection(output, RR_Disconnected); 
-	*/
+        /* will be done later
+        RROutputSetConnection(output, RR_Disconnected);
+        */
         #ifdef DEBUG
         fprintf(stderr, "nxagentAdjustRandRXinerama: created new output [%s]\n", name);
         #endif
       }
-      else
-      {
+      else {
         output = pScrPriv->outputs[i];
       }
       #ifdef DEBUG
@@ -4102,164 +7756,210 @@ int nxagentAdjustRandRXinerama(ScreenPtr pScreen)
       RROutputSetPhysicalSize(output, 0, 0);
     }
 
-    for (i = 0; i < pScrPriv->numOutputs; i++) {
-      Bool disable_output = FALSE;
+    nxagentScreenBoxesElem *cur_screen_box = xorg_list_first_entry(&(solution->solution_boxes->head), nxagentScreenBoxesElem, entry);
+    for (size_t i = 0; i < pScrPriv->numOutputs; ++i) {
       RRModePtr mymode = NULL, prevmode = NULL;
-      int new_x = 0;
-      int new_y = 0;
-      unsigned int new_w = 0;
-      unsigned int new_h = 0;
 
-      /* if there's no intersection disconnect the output */
-#ifdef NXAGENT_RANDR_XINERAMA_CLIPPING
-      disable_output = !intersect(nxagentOption(X), nxagentOption(Y),
-                                  width, height,
-                                  screeninfo[i].x_org, screeninfo[i].y_org,
-                                  screeninfo[i].width, screeninfo[i].height,
-                                  &new_x, &new_y, &new_w, &new_h);
-#else
-      disable_output = !intersect_bb(nxagentOption(X), nxagentOption(Y),
-                                  width, height,
-                                  screeninfo[i].x_org, screeninfo[i].y_org,
-                                  screeninfo[i].width, screeninfo[i].height,
-	                          bbx1, bby1, bbx2, bby2,
-                                  &new_x, &new_y, &new_w, &new_h);
-#endif
+      /* Sanity checks. */
+      Bool fail = FALSE;
+      if (cur_screen_box->box->x1 < nxagentOption(X)) {
+        fprintf(stderr, "%s: left X position out of bounds - less than left window bound [%d] < [%d]\n", __func__, cur_screen_box->box->x1, nxagentOption(X));
 
-      /* save previous mode */
+        fail = TRUE;
+      }
+
+      if (cur_screen_box->box->x1 >= (nxagentOption(X) + nxagentOption(Width))) {
+        fprintf(stderr, "%s: left X position out of bounds - higher than or equal right window bound [%d] >= [%d]\n", __func__, cur_screen_box->box->x1, (nxagentOption(X) + nxagentOption(Width)));
+
+        fail = TRUE;
+      }
+
+      if (cur_screen_box->box->x2 <= cur_screen_box->box->x1) {
+        fprintf(stderr, "%s: right X position out of bounds - less than or equal left X position [%d] <= [%d]\n", __func__, cur_screen_box->box->x2, cur_screen_box->box->x1);
+
+        fail = TRUE;
+      }
+
+      if (cur_screen_box->box->x2 > (nxagentOption(X) + nxagentOption(Width))) {
+        fprintf(stderr, "%s: right X position out of bounds - less than or equal right window bound [%d] <= [%d]\n", __func__, cur_screen_box->box->x2, (nxagentOption(X) + nxagentOption(Width)));
+
+        fail = TRUE;
+      }
+
+      if (cur_screen_box->box->y1 < nxagentOption(Y)) {
+        fprintf(stderr, "%s: top Y position out of bounds - less than top window bound [%d] < [%d]\n", __func__, cur_screen_box->box->y1, nxagentOption(Y));
+
+        fail = TRUE;
+      }
+
+      if (cur_screen_box->box->y1 >= (nxagentOption(Y) + nxagentOption(Height))) {
+        fprintf(stderr, "%s: top Y position out of bounds - higher than or equal top window bound [%d] >= [%d]\n", __func__, cur_screen_box->box->y1, (nxagentOption(Y) + nxagentOption(Height)));
+
+        fail = TRUE;
+      }
+
+      if (cur_screen_box->box->y2 <= cur_screen_box->box->y1) {
+        fprintf(stderr, "%s: bottom Y position out of bounds - less than or equal top Y position [%d] <= [%d]\n", __func__, cur_screen_box->box->y2, cur_screen_box->box->y1);
+
+        fail = TRUE;
+      }
+
+      if (cur_screen_box->box->y2 > (nxagentOption(Y) + nxagentOption(Height))) {
+        fprintf(stderr, "%s: bottom Y position out of bounds - less than or equal bottom window bound [%d] <= [%d]\n", __func__, cur_screen_box->box->y2, (nxagentOption(Y) + nxagentOption(Height)));
+
+        fail = TRUE;
+      }
+
+      if (fail) {
+        nxagentScreenCrtcsFreeSolution(solution);
+
+        SAFE_FREE(solution);
+
+        SAFE_FREE(screeninfo);
+
+        return(FALSE);
+      }
+
+      const int new_x = (cur_screen_box->box->x1 - nxagentOption(X)),
+                new_y = (cur_screen_box->box->y1 - nxagentOption(Y));
+      const unsigned int new_w = (cur_screen_box->box->x2 - cur_screen_box->box->x1),
+                         new_h = (cur_screen_box->box->y2 - cur_screen_box->box->y1);
+
+      /* Save previous mode. */
       prevmode = pScrPriv->crtcs[i]->mode;
       #ifdef DEBUG
-      if (prevmode) {
-        fprintf(stderr, "nxagentAdjustRandRXinerama: output [%d] name [%s]: prevmode [%s] ([%p]) refcnt [%d]\n", i, pScrPriv->outputs[i]->name, prevmode->name, (void *)prevmode, prevmode->refcnt);
-      } else {
-        fprintf(stderr, "nxagentAdjustRandRXinerama: output [%d] name [%s]: no prevmode\n", i, pScrPriv->outputs[i]->name);
+      {
+        const unsigned long long i_ = i;
+        if (prevmode) {
+          fprintf(stderr, "nxagentAdjustRandRXinerama: output [%llu] name [%s]: prevmode [%s] ([%p]) refcnt [%d]\n", i_, pScrPriv->outputs[i]->name, prevmode->name, (void *)prevmode, prevmode->refcnt);
+        }
+        else {
+          fprintf(stderr, "nxagentAdjustRandRXinerama: output [%llu] name [%s]: no prevmode\n", i_, pScrPriv->outputs[i]->name);
+        }
       }
       #endif
 
+      /* Map output to CRTC. */
       RROutputSetCrtcs(pScrPriv->outputs[i], &(pScrPriv->crtcs[i]), 1);
 
-      if (disable_output) {
-        #ifdef DEBUG
-        fprintf(stderr, "nxagentAdjustRandRXinerama: output [%d] name [%s]: no (valid) intersection - disconnecting\n", i, pScrPriv->outputs[i]->name);
-        #endif
-        RROutputSetConnection(pScrPriv->outputs[i], RR_Disconnected);
-
-        /*
-         * Tests revealed that some window managers (e.g. LXDE) also
-         * take disconnected outputs into account when calculating
-         * stuff like wallpaper tile size and maximum window
-         * size. This is problematic when a disconnected output is
-         * smaller than any of the connected ones. Solution: unset the
-         * mode of the output's crtc. This also leads to xinerama not
-         * showing the disconnected head anymore.
-         */
-        if (prevmode) {
-          #ifdef DEBUG
-          fprintf(stderr, "nxagentAdjustRandRXinerama: removing mode from output [%d] name [%s]\n", i, pScrPriv->outputs[i]->name);
-          #endif
-          RROutputSetModes(pScrPriv->outputs[i], NULL, 0, 0);
-
-          #ifdef DEBUG
-          fprintf(stderr, "nxagentAdjustRandRXinerama: removing mode from ctrc [%d]\n", i);
-          #endif
-          RRCrtcSet(pScrPriv->crtcs[i], NULL, 0, 0, RR_Rotate_0, 1, &(pScrPriv->outputs[i]));
-        }
-      }
-      else
+      #ifdef DEBUG
       {
-        #ifdef DEBUG
-        fprintf(stderr, "nxagentAdjustRandRXinerama: output [%d] name [%s]: intersection is x [%d] y [%d] width [%d] height [%d]\n", i, pScrPriv->outputs[i]->name, new_x, new_y, new_w, new_h);
-        #endif
+        const unsigned long long i_ = i;
+        fprintf(stderr, "nxagentAdjustRandRXinerama: output [%llu] name [%s]: CRTC is x [%d] y [%d] width [%d] height [%d]\n", i_, pScrPriv->outputs[i]->name, new_x, new_y, new_w, new_h);
+      }
+      #endif
 
-        RROutputSetConnection(pScrPriv->outputs[i], RR_Connected);
+      RROutputSetConnection(pScrPriv->outputs[i], RR_Connected);
 
-        memset(&modeInfo, '\0', sizeof(modeInfo));
+      memset(&modeInfo, '\0', sizeof(modeInfo));
 
 #ifdef NXAGENT_RANDR_MODE_PREFIX
-        /* avoid collisions with pre-existing default modes by using a
-           separate namespace. If we'd simply use XxY we could not
-           distinguish between pre-existing modes which should stay
-           and our own modes that should be removed after use. */
-        sprintf(name, "nx_%dx%d", new_w, new_h);
+      /*
+       * Avoid collisions with pre-existing default modes by using a
+       * separate namespace. If we'd simply use XxY we could not
+       * distinguish between pre-existing modes which should stay
+       * and our own modes that should be removed after use.
+       */
+      sprintf(name, "nx_%dx%d", new_w, new_h);
 #else
-        sprintf(name, "%dx%d", new_w, new_h);
+      sprintf(name, "%dx%d", new_w, new_h);
 #endif
 
-        modeInfo.width  = new_w;
-        modeInfo.height = new_h;
-        modeInfo.hTotal = new_w;
-        modeInfo.vTotal = new_h;
-        modeInfo.dotClock = ((CARD32) new_w * (CARD32) new_h * (CARD32) refresh);
-        modeInfo.nameLength = strlen(name);
+      modeInfo.width  = new_w;
+      modeInfo.height = new_h;
+      modeInfo.hTotal = new_w;
+      modeInfo.vTotal = new_h;
+      modeInfo.dotClock = ((CARD32) new_w * (CARD32) new_h * (CARD32) refresh);
+      modeInfo.nameLength = strlen(name);
 
-        mymode = RRModeGet(&modeInfo, name);
+      mymode = RRModeGet(&modeInfo, name);
 
 #ifdef DEBUG
+      {
+        const unsigned long long i_ = i;
         if (mymode) {
-          fprintf(stderr, "nxagentAdjustRandRXinerama: output [%d] name [%s]: mode [%s] ([%p]) created/received, refcnt [%d]\n", i, pScrPriv->outputs[i]->name, name, (void *) mymode, mymode->refcnt);
+          fprintf(stderr, "nxagentAdjustRandRXinerama: output [%llu] name [%s]: mode [%s] ([%p]) created/received, refcnt [%d]\n", i_, pScrPriv->outputs[i]->name, name, (void *) mymode, mymode->refcnt);
         }
-        else
-        {
-	  /* FIXME: what is the correct behaviour in this case? */
-          fprintf(stderr, "nxagentAdjustRandRXinerama: output [%d] name [%s]: mode [%s] creation failed!\n", i, pScrPriv->outputs[i]->name, name);
+        else {
+          /* FIXME: what is the correct behaviour in this case? */
+          fprintf(stderr, "nxagentAdjustRandRXinerama: output [%llu] name [%s]: mode [%s] creation failed!\n", i_, pScrPriv->outputs[i]->name, name);
         }
+      }
 #endif
-	if (prevmode && mymode == prevmode) {
-          #ifdef DEBUG
-          fprintf(stderr, "nxagentAdjustRandRXinerama: mymode [%s] ([%p]) == prevmode [%s] ([%p])\n", mymode->name, (void *) mymode, prevmode->name, (void *)prevmode);
-          #endif
-
-          /* if they are the same RRModeGet() has increased the
-	     refcnt by 1. We decrease it again by calling only
-	     RRModeDestroy() and forget about prevmode */
-	  RRModeDestroy(mymode);
-        }
-        else
-	{ 
-          #ifdef DEBUG
-          fprintf(stderr, "nxagentAdjustRandRXinerama: setting mode [%s] ([%p]) refcnt [%d] for output %d [%s]\n", mymode->name, (void *) mymode, mymode->refcnt, i, pScrPriv->outputs[i]->name);
-          #endif
-          RROutputSetModes(pScrPriv->outputs[i], &mymode, 1, 0);
-        }
-
+      if (prevmode && mymode == prevmode) {
         #ifdef DEBUG
-        fprintf(stderr, "nxagentAdjustRandRXinerama: setting mode [%s] ([%p]) refcnt [%d] for crtc %d\n", mymode->name, (void *) mymode, mymode->refcnt, i);
+        fprintf(stderr, "nxagentAdjustRandRXinerama: mymode [%s] ([%p]) == prevmode [%s] ([%p])\n", mymode->name, (void *) mymode, prevmode->name, (void *)prevmode);
         #endif
-        RRCrtcSet(pScrPriv->crtcs[i], mymode, new_x, new_y, RR_Rotate_0, 1, &(pScrPriv->outputs[i]));
-      } /* if disable_output */
 
-      /* throw away the mode if otherwise unused. We do not need it
-         anymore. We call FreeResource() to ensure the system will not
-         try to free it again on shutdown */
+        /*
+         * If they are the same RRModeGet() has increased the
+         * refcnt by 1. We decrease it again by calling only
+         * RRModeDestroy() and forget about prevmode.
+         */
+        RRModeDestroy(mymode);
+      }
+      else {
+        #ifdef DEBUG
+        const unsigned long long i_ = i;
+        fprintf(stderr, "nxagentAdjustRandRXinerama: setting mode [%s] ([%p]) refcnt [%d] for output %llu [%s]\n", mymode->name, (void *) mymode, mymode->refcnt, i_, pScrPriv->outputs[i]->name);
+        #endif
+        RROutputSetModes(pScrPriv->outputs[i], &mymode, 1, 0);
+      }
+
+      #ifdef DEBUG
+      {
+        const unsigned long long i_ = i;
+        fprintf(stderr, "nxagentAdjustRandRXinerama: setting mode [%s] ([%p]) refcnt [%d] for crtc %llu\n", mymode->name, (void *) mymode, mymode->refcnt, i_);
+      }
+      #endif
+      RRCrtcSet(pScrPriv->crtcs[i], mymode, new_x, new_y, RR_Rotate_0, 1, &(pScrPriv->outputs[i]));
+
+      /*
+       * Throw away the mode if otherwise unused. We do not need it
+       * anymore. We call FreeResource() to ensure the system will not
+       * try to free it again on shutdown.
+       */
       if (prevmode && prevmode->refcnt == 1) {
         #ifdef DEBUG
         fprintf(stderr, "nxagentAdjustRandRXinerama: destroying prevmode [%s]\n", prevmode->name);
         #endif
-	FreeResource(prevmode->mode.id, 0);
+        FreeResource(prevmode->mode.id, 0);
       }
 
       RROutputChanged(pScrPriv->outputs[i], TRUE);
       RRCrtcChanged(pScrPriv->crtcs[i], TRUE);
+
+      cur_screen_box = xorg_list_first_entry(&(cur_screen_box->entry), nxagentScreenBoxesElem, entry);
     }
 
-    /* release allocated memory */
-    free(screeninfo);
-    screeninfo = NULL;
+    /* Update internal data. */
+    nxagentScreenCrtcsSolution *old_solution = nxagentScreenCrtcsTiling;
+    nxagentScreenCrtcsTiling = solution;
+
+    /* Release allocated memory. */
+    nxagentScreenCrtcsFreeSolution(old_solution);
+
+    SAFE_FREE(old_solution);
+
+    SAFE_FREE(screeninfo);
 
 #ifdef DEBUG
-    for (i = 0; i < pScrPriv->numCrtcs; i++) {
+    for (size_t i = 0; i < pScrPriv->numCrtcs; ++i) {
+      const unsigned long long i_ = i;
       RRModePtr mode = pScrPriv->crtcs[i]->mode;
       if (mode) {
-	fprintf(stderr, "nxagentAdjustRandRXinerama: crtc [%d] ([%p]) has mode [%s] ([%p]), refcnt [%d] and [%d] outputs:\n", i, (void *) pScrPriv->crtcs[i], pScrPriv->crtcs[i]->mode->name, (void *)pScrPriv->crtcs[i]->mode, pScrPriv->crtcs[i]->mode->refcnt, pScrPriv->crtcs[i]->numOutputs);
+        fprintf(stderr, "nxagentAdjustRandRXinerama: crtc [%llu] ([%p]) has mode [%s] ([%p]), refcnt [%d] and [%d] outputs:\n", i_, (void *) pScrPriv->crtcs[i], pScrPriv->crtcs[i]->mode->name, (void *)pScrPriv->crtcs[i]->mode, pScrPriv->crtcs[i]->mode->refcnt, pScrPriv->crtcs[i]->numOutputs);
       }
-      else
-      {
-	fprintf(stderr, "nxagentAdjustRandRXinerama: crtc [%d] ([%p]) has no mode and [%d] outputs:\n", i, (void *) pScrPriv->crtcs[i], pScrPriv->crtcs[i]->numOutputs);
+      else {
+        fprintf(stderr, "nxagentAdjustRandRXinerama: crtc [%llu] ([%p]) has no mode and [%d] outputs:\n", i_, (void *) pScrPriv->crtcs[i], pScrPriv->crtcs[i]->numOutputs);
       }
 
-      if (pScrPriv->crtcs[i]->numOutputs > 0)
-        for (int j=0; j < pScrPriv->crtcs[i]->numOutputs; j++)
-	  fprintf(stderr, "nxagentAdjustRandRXinerama:   output [%d] name [%s]->crtc=[%p]\n", j, pScrPriv->crtcs[i]->outputs[j]->name, (void *)pScrPriv->crtcs[i]->outputs[j]->crtc);
+      if (pScrPriv->crtcs[i]->numOutputs > 0) {
+        for (size_t j = 0; j < pScrPriv->crtcs[i]->numOutputs; ++j) {
+          const unsigned long long j_ = j;
+          fprintf(stderr, "nxagentAdjustRandRXinerama:   output [%llu] name [%s]->crtc=[%p]\n", j_, pScrPriv->crtcs[i]->outputs[j]->name, (void *)pScrPriv->crtcs[i]->outputs[j]->crtc);
+        }
+      }
     }
 #endif
 
@@ -4643,7 +8343,7 @@ void nxagentPrintGeometry(void)
 
   for (i = 0; i < screenInfo.numScreens; i++)
   {
-    if (nxagentPrintGeometryFlags && (1 << i))
+    if (nxagentPrintGeometryFlags & (1 << i))
     {
       fprintf(stderr, "Info: Screen [%d] resized to geometry [%dx%d] "
                   "fullscreen [%d].\n", i, screenInfo.screens[i] -> width,
