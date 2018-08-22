@@ -821,7 +821,7 @@ void nxagentDispatchEvents(PredicateFuncPtr predicate)
 
   #ifdef TEST
   fprintf(stderr, "nxagentDispatchEvents: Going to handle new events with "
-              "predicate [%p].\n", predicate);
+              "predicate [%p].\n", *(void **)&predicate);
   #endif
 
   if (nxagentRemoteExposeRegion == NULL)
@@ -1636,7 +1636,7 @@ FIXME: Don't enqueue the KeyRelease event if the key was
 
           #ifdef TEST
           fprintf(stderr, "nxagentDispatchEvents: nxagentLastEnteredTopLevelWindow [%p].\n",
-                      nxagentLastEnteredTopLevelWindow);
+                      (void *)nxagentLastEnteredTopLevelWindow);
           #endif
         }
 
@@ -2500,7 +2500,7 @@ FIXME: This can be maybe optimized by consuming the
                        nxagentExposeQueue.exposures[index].remoteRegion, &sum);
 
       #ifdef TEST
-      fprintf(stderr, "nxagentHandleExposeEvent: Added region for window [%ld] to position [%d].\n",
+      fprintf(stderr, "nxagentHandleExposeEvent: Added region for window [%u] to position [%d].\n",
                   nxagentWindow(pWin), index);
       #endif
 
@@ -2520,7 +2520,7 @@ FIXME: This can be maybe optimized by consuming the
               nxagentSplashCount == 1 && X -> xexpose.count == 0)
       {
         #ifdef DEBUG
-        fprintf(stderr, "nxagentHandleExposeEvent: Clearing root tile window id [%ld].\n",
+        fprintf(stderr, "nxagentHandleExposeEvent: Clearing root tile window id [%u].\n",
                     nxagentWindowPriv(nxagentRootTileWindow) -> window);
         #endif
 
@@ -2693,10 +2693,6 @@ int nxagentHandleClientMessageEvent(XEvent *X, enum HandleEventResult *result)
 
     if (message_type == MakeAtom("WM_PROTOCOLS", strlen("WM_PROTOCOLS"), False))
     {
-      #ifdef TEST
-      char *message_data;
-      #endif
-
       xEvent x;
 
       memset(&x, 0, sizeof(xEvent));
@@ -2720,11 +2716,9 @@ int nxagentHandleClientMessageEvent(XEvent *X, enum HandleEventResult *result)
       #ifdef TEST
       else
       {
-        message_data = validateString(NameForAtom(x.u.clientMessage.u.l.longs0));
+        fprintf(stderr, "nxagentHandleClientMessageEvent: Sent client message of type WM_PROTOCOLS "
+                "and value [%s].\n", validateString(NameForAtom(x.u.clientMessage.u.l.longs0)));
       }
-
-      fprintf(stderr, "nxagentHandleClientMessageEvent: Sent client message of type WM_PROTOCOLS "
-                  "and value [%s].\n", message_data);
       #endif
 
       TryClientEvents(wClient(pWin), &x, 1, 1, 1, 0);
@@ -2759,7 +2753,7 @@ int nxagentHandleClientMessageEvent(XEvent *X, enum HandleEventResult *result)
       else
       {
         #ifdef TEST
-        fprintf(stderr, "Events: WM_DELETE_WINDOW arrived Atom = %ld.\n", wmAtom);
+        fprintf(stderr, "Events: WM_DELETE_WINDOW arrived Atom = %u.\n", wmAtom);
         #endif
 
         if (X -> xclient.window == nxagentIconWindow)
@@ -4127,7 +4121,7 @@ void nxagentSynchronizeExpose(void)
       {
         #ifdef TEST
         fprintf(stderr, "nxagentSynchronizeExpose: Going to call miWindowExposures"
-                    " for window [%ld] - rects [%ld].\n", nxagentWindow(pWin),
+                    " for window [%d] - rects [%d].\n", nxagentWindow(pWin),
                         RegionNumRects(nxagentExposeQueueHead.remoteRegion));
         #endif
 
@@ -4346,7 +4340,7 @@ int nxagentClipAndSendExpose(WindowPtr pWin, void * ptr)
     box = *RegionExtents(&pWin -> clipList);
 
     fprintf(stderr, "nxagentClipAndSendExpose: Clip list extents for window at [%p]: [%d] [%d] [%d] [%d].\n",
-                pWin, box.x1, box.y1, box.x2, box.y2);
+                (void *)pWin, box.x1, box.y1, box.x2, box.y2);
     #endif
 
     RegionIntersect(exposeRgn, remoteExposeRgn, &pWin -> clipList);
@@ -4355,7 +4349,7 @@ int nxagentClipAndSendExpose(WindowPtr pWin, void * ptr)
     {
       #ifdef DEBUG
       fprintf(stderr, "nxagentClipAndSendExpose: Forwarding expose to window at [%p] pWin.\n",
-                  pWin);
+                  (void *)pWin);
       #endif
 
       /*
