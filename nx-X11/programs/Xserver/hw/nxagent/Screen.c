@@ -441,8 +441,8 @@ Window nxagentCreateIconWindow(void)
     }
   }
 
-  XSetWMProperties(nxagentDisplay, w,
-                      &windowName, &windowName,
+  Xutf8SetWMProperties(nxagentDisplay, w,
+                      window_name, window_name,
                           NULL , 0 , sizeHints, wmHints, NULL);
 
   if (sizeHints)
@@ -1902,13 +1902,12 @@ N/A
       if (nxagentUserGeometry.flag & WidthValue || nxagentUserGeometry.flag & HeightValue)
         sizeHints->flags |= USSize;
     }
-    /* FIXME: deprecated, replaced by XSetWmProperties() */
-    XSetStandardProperties(nxagentDisplay,
-                           nxagentDefaultWindows[pScreen->myNum],
-                           nxagentWindowName,
-                           nxagentWindowName,
-                           nxagentIconPixmap,
-                           argv, argc, sizeHints);
+
+    Xutf8SetWMProperties(nxagentDisplay, 
+                         nxagentDefaultWindows[pScreen->myNum],
+                         nxagentWindowName, 
+                         nxagentWindowName,
+                         argv , argc , &sizeHints, &wmHints, NULL);
 
     if (sizeHints)
       XFree(sizeHints);
