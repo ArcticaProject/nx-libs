@@ -853,8 +853,6 @@ Bool nxagentOpenScreen(ScreenPtr pScreen,
   unsigned long valuemask;
   XSetWindowAttributes attributes;
   XWindowAttributes gattributes;
-  XSizeHints* sizeHints;
-  XWMHints* wmHints;
   Mask mask;
   Bool resetAgentPosition = False;
 
@@ -1870,6 +1868,9 @@ N/A
       XSelectInput(nxagentDisplay, nxagentFullscreenWindow, mask);
     }
 
+    XSizeHints* sizeHints;
+    XWMHints* wmHints;
+
     if ((sizeHints = XAllocSizeHints()))
     {
       sizeHints->flags = PPosition | PMinSize | PMaxSize;
@@ -1898,15 +1899,6 @@ N/A
         sizeHints->flags |= USSize;
     }
 
-    Xutf8SetWMProperties(nxagentDisplay, 
-                         nxagentDefaultWindows[pScreen->myNum],
-                         nxagentWindowName, 
-                         nxagentWindowName,
-                         argv , argc , &sizeHints, &wmHints, NULL);
-
-    if (sizeHints)
-      XFree(sizeHints);
-
     if ((wmHints = XAllocWMHints()))
     {
       wmHints->icon_pixmap = nxagentIconPixmap;
@@ -1920,9 +1912,24 @@ N/A
       {
         wmHints->flags = IconPixmapHint;
       }
+    }
 
-      XSetWMHints(nxagentDisplay, nxagentDefaultWindows[pScreen->myNum], wmHints);
-      XFree(wmHints);
+    Xutf8SetWMProperties(nxagentDisplay,
+                         nxagentDefaultWindows[pScreen->myNum],
+                         nxagentWindowName,
+                         nxagentWindowName,
+                         argv , argc , sizeHints, wmHints, NULL);
+
+    if (sizeHints)
+    {
+        XFree(sizeHints);
+        sizeHints = NULL;
+    }
+
+    if (wmHints)
+    {
+        XFree(wmHints);
+        wmHints = NULL;
     }
 
     /*
