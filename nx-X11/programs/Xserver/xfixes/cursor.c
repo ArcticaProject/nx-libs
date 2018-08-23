@@ -55,12 +55,14 @@
 static RESTYPE		CursorClientType;
 static RESTYPE		CursorHideCountType;
 static RESTYPE		CursorWindowType;
-static int		CursorScreenPrivateIndex = -1;
-static int		CursorGeneration;
 static CursorPtr	CursorCurrent;
 static CursorPtr        pInvisibleCursor = NULL;
 
 static void deleteCursorHideCountsForScreen (ScreenPtr pScreen);
+
+static DevPrivateKeyRec		CursorScreenPrivateKeyRec;
+
+#define CursorScreenPrivateKey (&CursorScreenPrivateKeyRec)
 
 #define VERIFY_CURSOR(pCursor, cursor, client, access) { \
     pCursor = (CursorPtr)SecurityLookupIDByType((client), (cursor), \
@@ -113,9 +115,9 @@ typedef struct _CursorScreen {
     CursorHideCountPtr          pCursorHideCounts;
 } CursorScreenRec, *CursorScreenPtr;
 
-#define GetCursorScreen(s)	((CursorScreenPtr) ((s)->devPrivates[CursorScreenPrivateIndex].ptr))
-#define GetCursorScreenIfSet(s) ((CursorScreenPrivateIndex != -1) ? GetCursorScreen(s) : NULL)
-#define SetCursorScreen(s,p)	((s)->devPrivates[CursorScreenPrivateIndex].ptr = (void *) (p))
+#define GetCursorScreen(s) ((CursorScreenPtr)dixLookupPrivate(&(s)->devPrivates, CursorScreenPrivateKey))
+#define GetCursorScreenIfSet(s) GetCursorScreen(s)
+#define SetCursorScreen(s,p) dixSetPrivate(&(s)->devPrivates, CursorScreenPrivateKey, p)
 #define Wrap(as,s,elt,func)	(((as)->elt = (s)->elt), (s)->elt = func)
 #define Unwrap(as,s,elt)	((s)->elt = (as)->elt)
 
@@ -169,8 +171,6 @@ CursorCloseScreen (ScreenPtr pScreen)
     deleteCursorHideCountsForScreen(pScreen);
     ret = (*pScreen->CloseScreen) (pScreen);
     free (cs);
-    if (screenInfo.numScreens <= 1)
-       CursorScreenPrivateIndex = -1;
     return ret;
 }
 
@@ -1002,13 +1002,9 @@ XFixesCursorInit (void)
 {
     int	i;
     
-    if (CursorGeneration != serverGeneration)
-    {
-	CursorScreenPrivateIndex = AllocateScreenPrivateIndex ();
-	if (CursorScreenPrivateIndex < 0)
-	    return FALSE;
-	CursorGeneration = serverGeneration;
-    }
+    if (!dixRegisterPrivateKey(&CursorScreenPrivateKeyRec, PRIVATE_SCREEN, 0))
+        return FALSE;
+
     for (i = 0; i < screenInfo.numScreens; i++)
     {
 	ScreenPtr	pScreen = screenInfo.screens[i];

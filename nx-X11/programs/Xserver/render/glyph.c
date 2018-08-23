@@ -94,50 +94,6 @@ FindGlyphHashSet (CARD32 filled)
     return 0;
 }
 
-static int _GlyphSetPrivateAllocateIndex = 0;
-
-int
-AllocateGlyphSetPrivateIndex (void)
-{
-    return _GlyphSetPrivateAllocateIndex++;
-}
-
-void
-ResetGlyphSetPrivateIndex (void)
-{
-    _GlyphSetPrivateAllocateIndex = 0;
-}
-
-Bool
-_GlyphSetSetNewPrivate (GlyphSetPtr glyphSet, int n, void * ptr)
-{
-    void **new;
-
-    if (n > glyphSet->maxPrivate) {
-	if (glyphSet->devPrivates &&
-	    glyphSet->devPrivates != (void *)(&glyphSet[1])) {
-	    new = (void **) realloc (glyphSet->devPrivates,
-					(n + 1) * sizeof (void *));
-	    if (!new)
-		return FALSE;
-	} else {
-	    new = (void **) malloc ((n + 1) * sizeof (void *));
-	    if (!new)
-		return FALSE;
-	    if (glyphSet->devPrivates)
-		memcpy (new,
-			glyphSet->devPrivates,
-			(glyphSet->maxPrivate + 1) * sizeof (void *));
-	}
-	glyphSet->devPrivates = new;
-	/* Zero out new, uninitialize privates */
-	while (++glyphSet->maxPrivate < n)
-	    glyphSet->devPrivates[glyphSet->maxPrivate] = (void *)0;
-    }
-    glyphSet->devPrivates[n] = ptr;
-    return TRUE;
-}
-
 Bool
 GlyphInit (ScreenPtr pScreen)
 {
@@ -263,7 +219,7 @@ FreeGlyph (GlyphPtr glyph, int format)
 	    gr->signature = 0;
 	    globalGlyphs[format].tableEntries--;
 	}
-	free (glyph);
+	dixFreeObjectWithPrivates(glyph, PRIVATE_GLYPH);
     }
 }
 
@@ -280,7 +236,7 @@ AddGlyph (GlyphSetPtr glyphSet, GlyphPtr glyph, Glyph id)
     gr = FindGlyphRef (&globalGlyphs[glyphSet->fdepth], hash, TRUE, glyph);
     if (gr->glyph && gr->glyph != DeletedGlyph)
     {
-	free (glyph);
+	dixFreeObjectWithPrivates(glyph, PRIVATE_GLYPH);
 	glyph = gr->glyph;
     }
     else
@@ -339,18 +295,21 @@ AllocateGlyph (xGlyphInfo *gi, int fdepth)
 {
     int		size;
     GlyphPtr	glyph;
-    size_t	     padded_width;
+    size_t	padded_width;
     
     padded_width = PixmapBytePad (gi->width, glyphDepths[fdepth]);
     if (gi->height && padded_width > (UINT32_MAX - sizeof(GlyphRec))/gi->height)
 	return 0;
-    size = gi->height * padded_width;
-    glyph = (GlyphPtr) malloc (size + sizeof (GlyphRec));
+    size = gi->height * padded_width + dixPrivatesSize(PRIVATE_GLYPH);
+    glyph = (GlyphPtr) malloc (size);
     if (!glyph)
 	return 0;
     glyph->refcnt = 0;
     glyph->size = size + sizeof (xGlyphInfo);
     glyph->info = *gi;
+
+    dixInitPrivates(glyph, (char *) glyph + gi->height * padded_width, PRIVATE_GLYPH);
+
     return glyph;
 }
     
@@ -423,7 +382,6 @@ GlyphSetPtr
 AllocateGlyphSet (int fdepth, PictFormatPtr format)
 {
     GlyphSetPtr	glyphSet;
-    int size;
     
     if (!globalGlyphs[fdepth].hashSet)
     {
@@ -431,15 +389,9 @@ AllocateGlyphSet (int fdepth, PictFormatPtr format)
 	    return FALSE;
     }
 
-    size = (sizeof (GlyphSetRec) +
-	    (sizeof (void *) * _GlyphSetPrivateAllocateIndex));
-    glyphSet = malloc (size);
+    glyphSet = dixAllocateObjectWithPrivates(GlyphSetRec, PRIVATE_GLYPHSET);
     if (!glyphSet)
 	return FALSE;
-    bzero((char *)glyphSet, size);
-    glyphSet->maxPrivate = _GlyphSetPrivateAllocateIndex - 1;
-    if (_GlyphSetPrivateAllocateIndex)
-	glyphSet->devPrivates = (void *)(&glyphSet[1]);
 
     if (!AllocateGlyphHash (&glyphSet->hash, &glyphHashSets[0]))
     {

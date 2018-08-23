@@ -56,6 +56,7 @@ SOFTWARE.
 #include "region.h"
 #include "pixmap.h"
 #include "screenint.h"
+#include "privates.h"
 #include <nx-X11/Xprotostr.h>
 
 /*
@@ -92,7 +93,6 @@ typedef struct _GCFuncs {
     void	(* CopyClip)(
 		GCPtr /*pgcDst*/,
 		GCPtr /*pgcSrc*/);
-    DevUnion	devPrivate;
 } GCFuncs;
 
 /*
@@ -265,8 +265,6 @@ typedef struct _GCOps {
 #ifdef NEED_LINEHELPER
     void	(* LineHelper)();
 #endif
-
-    DevUnion	devPrivate;
 } GCOps;
 
 /* there is padding in the bit fields because the Sun compiler doesn't
@@ -312,7 +310,7 @@ typedef struct _GC {
     unsigned long       serialNumber;
     GCFuncs		*funcs;
     GCOps		*ops;
-    DevUnion		*devPrivates;
+    PrivateRec		*devPrivates;
     /*
      * The following were moved here from private storage to allow device-
      * independent access to them from screen wrappers.

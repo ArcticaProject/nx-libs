@@ -39,9 +39,8 @@ fbCloseScreen (ScreenPtr pScreen)
     free (depths);
     free (pScreen->visuals);
     free (pScreen->devPrivate);
-#ifdef FB_SCREEN_PRIVATE
-    free (pScreen->devPrivates[fbScreenPrivateIndex].ptr);
-#endif
+    if (pScreen->devPrivate)
+        FreePixmap((PixmapPtr)pScreen->devPrivate);
     return TRUE;
 }
 
@@ -96,7 +95,7 @@ _fbSetWindowPixmap (WindowPtr pWindow, PixmapPtr pPixmap)
 #ifdef FB_NO_WINDOW_PIXMAPS
     FatalError ("Attempted to set window pixmap without fb support\n");
 #else
-    pWindow->devPrivates[fbWinPrivateIndex].ptr = (void *) pPixmap;
+    dixSetPrivate(&pWindow->devPrivates, fbGetWinPrivateKey(pWindow), pPixmap);
 #endif
 }
 #endif
@@ -111,7 +110,7 @@ fbSetupScreen(ScreenPtr	pScreen,
 	      int	width,		/* pixel width of frame buffer */
 	      int	bpp)		/* bits per pixel for screen */
 {
-    if (!fbAllocatePrivates(pScreen, (int *) 0))
+    if (!fbAllocatePrivates(pScreen))
 	return FALSE;
     pScreen->defColormap = FakeClientID(0);
     /* let CreateDefColormap do whatever it wants for pixels */ 
@@ -146,12 +145,6 @@ fbSetupScreen(ScreenPtr	pScreen,
 #ifndef FB_OLD_SCREEN
     pScreen->GetWindowPixmap = _fbGetWindowPixmap;
     pScreen->SetWindowPixmap = _fbSetWindowPixmap;
-
-    pScreen->BackingStoreFuncs.SaveAreas = fbSaveAreas;
-    pScreen->BackingStoreFuncs.RestoreAreas = fbRestoreAreas;
-    pScreen->BackingStoreFuncs.SetClipmaskRgn = 0;
-    pScreen->BackingStoreFuncs.GetImagePixmap = 0;
-    pScreen->BackingStoreFuncs.GetSpansPixmap = 0;
 #endif
     
     return TRUE;
@@ -213,7 +206,6 @@ fbFinishScreenInit(ScreenPtr	pScreen,
 	}	    
     }
 #endif
-#ifdef FB_SCREEN_PRIVATE
     if (imagebpp == 32)
     {
 	fbGetScreenPrivate(pScreen)->win32bpp = bpp;
@@ -224,7 +216,6 @@ fbFinishScreenInit(ScreenPtr	pScreen,
 	fbGetScreenPrivate(pScreen)->win32bpp = 32;
 	fbGetScreenPrivate(pScreen)->pix32bpp = 32;
     }
-#endif
     rootdepth = 0;
     if (!fbInitVisuals (&visuals, &depths, &nvisuals, &ndepths, &rootdepth,
 			&defaultVisual,((unsigned long)1<<(imagebpp-1)), 8))
@@ -245,14 +236,6 @@ fbFinishScreenInit(ScreenPtr	pScreen,
 	pScreen->ModifyPixmapHeader = fb24_32ModifyPixmapHeader;
 	pScreen->CreateScreenResources = fb24_32CreateScreenResources;
     }
-#endif
-#if 0
-    /* leave backing store initialization to the enclosing code so
-     * it can choose the correct order of wrappers
-     */
-    /* init backing store here so we can overwrite CloseScreen without stepping
-     * on the backing store wrapped version */
-    fbInitializeBackingStore (pScreen);
 #endif
     return TRUE;
 }
@@ -275,26 +258,3 @@ fbScreenInit(ScreenPtr	pScreen,
 	return FALSE;
     return TRUE;
 }
-
-
-#ifdef FB_OLD_SCREEN
-const miBSFuncRec fbBSFuncRec = {
-    fbSaveAreas,
-    fbRestoreAreas,
-    (void (*)(GCPtr, RegionPtr)) 0,
-    (PixmapPtr (*)(void)) 0,
-    (PixmapPtr (*)(void)) 0,
-};
-#endif
-
-#if 0
-void
-fbInitializeBackingStore (ScreenPtr pScreen)
-{
-#ifdef FB_OLD_SCREEN
-    miInitializeBackingStore (pScreen, (miBSFuncRec *) &fbBSFuncRec);
-#else
-    miInitializeBackingStore (pScreen);
-#endif
-}
-#endif

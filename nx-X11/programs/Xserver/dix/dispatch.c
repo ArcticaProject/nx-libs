@@ -3566,7 +3566,7 @@ CloseDownClient(register ClientPtr client)
 	    nextFreeClientID = client->index;
 	clients[client->index] = NullClient;
 	SmartLastClient = NullClient;
-	free(client);
+	dixFreeObjectWithPrivates(client, PRIVATE_CLIENT);
 
 	while (!clients[currentMaxClients-1])
 	    currentMaxClients--;
@@ -3652,54 +3652,6 @@ void InitClient(ClientPtr client, int i, void * ospriv)
     client->clientIds = NULL;
 }
 
-#ifndef NXAGENT_SERVER
-int
-InitClientPrivates(ClientPtr client)
-{
-    register char *ptr;
-    DevUnion *ppriv;
-    register unsigned *sizes;
-    register unsigned size;
-    register int i;
-
-    if (totalClientSize == sizeof(ClientRec))
-	ppriv = (DevUnion *)NULL;
-    else if (client->index)
-	ppriv = (DevUnion *)(client + 1);
-    else
-    {
-	ppriv = (DevUnion *)malloc(totalClientSize - sizeof(ClientRec));
-	if (!ppriv)
-	    return 0;
-    }
-    client->devPrivates = ppriv;
-    sizes = clientPrivateSizes;
-    ptr = (char *)(ppriv + clientPrivateLen);
-    for (i = clientPrivateLen; --i >= 0; ppriv++, sizes++)
-    {
-	if ( (size = *sizes) )
-	{
-	    ppriv->ptr = (void *)ptr;
-	    ptr += size;
-	}
-	else
-	    ppriv->ptr = (void *)NULL;
-    }
-
-    /* Allow registrants to initialize the serverClient devPrivates */
-    if (!client->index && ClientStateCallback)
-    {
-	NewClientInfoRec clientinfo;
-
-	clientinfo.client = client;
-	clientinfo.prefix = (xConnSetupPrefix *)NULL;
-	clientinfo.setup = (xConnSetup *) NULL;
-	CallCallbacks((&ClientStateCallback), (void *)&clientinfo);
-    }
-    return 1;
-}
-#endif /* NXAGENT_SERVER */
-
 /************************
  * int NextAvailableClient(ospriv)
  *
@@ -3716,14 +3668,14 @@ ClientPtr NextAvailableClient(void * ospriv)
     i = nextFreeClientID;
     if (i == MAXCLIENTS)
 	return (ClientPtr)NULL;
-    clients[i] = client = (ClientPtr)malloc(totalClientSize);
+    clients[i] = client =
+	dixAllocateObjectWithPrivates(ClientRec, PRIVATE_CLIENT);
     if (!client)
 	return (ClientPtr)NULL;
     InitClient(client, i, ospriv);
-    InitClientPrivates(client);
     if (!InitClientResources(client))
     {
-	free(client);
+	dixFreeObjectWithPrivates(client, PRIVATE_CLIENT);
 	return (ClientPtr)NULL;
     }
     data.reqType = 1;
@@ -3731,7 +3683,7 @@ ClientPtr NextAvailableClient(void * ospriv)
     if (!InsertFakeRequest(client, (char *)&data, sz_xReq))
     {
 	FreeClientResources(client);
-	free(client);
+	dixFreeObjectWithPrivates(client, PRIVATE_CLIENT);
 	return (ClientPtr)NULL;
     }
     if (i == currentMaxClients)
@@ -4070,20 +4022,13 @@ static int init_screen(ScreenPtr pScreen, int i)
     void	(**jNI) ();
 #endif /* DEBUG */
 
+    dixInitScreenSpecificPrivates(pScreen);
+
+    if (!dixAllocatePrivates(&pScreen->devPrivates, PRIVATE_SCREEN)) {
+        return -1;
+    }
+
     pScreen->myNum = i;
-    pScreen->WindowPrivateLen = 0;
-    pScreen->WindowPrivateSizes = (unsigned *)NULL;
-    pScreen->totalWindowSize =
-        ((sizeof(WindowRec) + sizeof(long) - 1) / sizeof(long)) * sizeof(long);
-    pScreen->GCPrivateLen = 0;
-    pScreen->GCPrivateSizes = (unsigned *)NULL;
-    pScreen->totalGCSize =
-        ((sizeof(GC) + sizeof(long) - 1) / sizeof(long)) * sizeof(long);
-#ifdef PIXPRIV
-    pScreen->PixmapPrivateLen = 0;
-    pScreen->PixmapPrivateSizes = (unsigned *)NULL;
-    pScreen->totalPixmapSize = BitmapBytePad(sizeof(PixmapRec)*8);
-#endif
     pScreen->ClipNotify = 0;	/* for R4 ddx compatibility */
     pScreen->CreateScreenResources = 0;
 
@@ -4130,15 +4075,6 @@ static int init_screen(ScreenPtr pScreen, int i)
     return 0;
 }
 
-void FreeScreen(ScreenPtr);
-
-/*
-    grow the array of screenRecs if necessary.
-    call the device-supplied initialization procedure
-    with its screen number, a pointer to its ScreenRec, argc, and argv.
-    return the number of successfully installed screens.
-*/
-
 int
 AddScreen(Bool (*pfnInit) (ScreenPtr /*pScreen */ ,
                            int /*argc */ ,
@@ -4156,11 +4092,6 @@ AddScreen(Bool (*pfnInit) (ScreenPtr /*pScreen */ ,
 
     pScreen = (ScreenPtr) calloc(1, sizeof(ScreenRec));
     if (!pScreen)
-        return -1;
-
-    pScreen->devPrivates = (DevUnion *)calloc(sizeof(DevUnion),
-                               screenPrivateCount);
-    if (!pScreen->devPrivates && screenPrivateCount)
         return -1;
 
     ret = init_screen(pScreen, i);
@@ -4181,22 +4112,15 @@ AddScreen(Bool (*pfnInit) (ScreenPtr /*pScreen */ ,
     screenInfo.numScreens++;
     if (!(*pfnInit)(pScreen, argc, argv))
     {
-    FreeScreen(pScreen);
-    screenInfo.numScreens--;
-    return -1;
+        dixFreeScreenSpecificPrivates(pScreen);
+        dixFreePrivates(pScreen->devPrivates, PRIVATE_SCREEN);
+        free(pScreen);
+        screenInfo.numScreens--;
+        return -1;
     }
-    return i;
-}
 
-void
-FreeScreen(ScreenPtr pScreen)
-{
-    pScreen->root = NullWindow;
-    free(pScreen->WindowPrivateSizes);
-    free(pScreen->GCPrivateSizes);
-#ifdef PIXPRIV
-    free(pScreen->PixmapPrivateSizes);
-#endif
-    free(pScreen->devPrivates);
-    free(pScreen);
+    dixRegisterScreenPrivateKey(&cursorScreenDevPriv, pScreen, PRIVATE_CURSOR,
+                                0);
+
+    return i;
 }

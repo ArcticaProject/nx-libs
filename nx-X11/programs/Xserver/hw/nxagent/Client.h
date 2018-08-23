@@ -26,6 +26,8 @@
 #ifndef __Client_H__
 #define __Client_H__
 
+#include "privates.h"
+
 #define MAX_CONNECTIONS 256
 
 /*
@@ -50,12 +52,14 @@ typedef struct _PrivClientRec
   long clientBytes;
   enum ClientHint clientHint;
 
-} PrivClientRec;
+} nxagentPrivClientRec, *nxagentPrivClientPtr;
 
-extern int nxagentClientPrivateIndex;
+extern DevPrivateKeyRec nxagentClientPrivateKeyRec;
 
-#define nxagentClientPriv(pClient) \
-  ((PrivClientRec *)((pClient)->devPrivates[nxagentClientPrivateIndex].ptr))
+#define nxagentClientPrivateKey (&nxagentClientPrivateKeyRec)
+
+#define nxagentClientPriv(pClient) ((nxagentPrivClientPtr) \
+                                   dixLookupPrivate(&(pClient)->devPrivates, nxagentClientPrivateKey))
 
 void nxagentInitClientPrivates(ClientPtr);
 

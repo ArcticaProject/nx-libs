@@ -50,12 +50,12 @@ SOFTWARE.
 
 #include "screenint.h"
 #include "regionstr.h"
-#include "bstore.h"
 #include "colormap.h"
 #include "cursor.h"
 #include "validate.h"
 #include <nx-X11/Xproto.h>
 #include "dix.h"
+#include "privates.h"
 
 typedef struct _PixmapFormat {
     unsigned char	depth;
@@ -213,48 +213,6 @@ typedef    PixmapPtr (* CreatePixmapProcPtr)(
 typedef    Bool (* DestroyPixmapProcPtr)(
 	PixmapPtr /*pPixmap*/);
 
-typedef    void (* SaveDoomedAreasProcPtr)(
-	WindowPtr /*pWindow*/,
-	RegionPtr /*prgnSave*/,
-	int /*xorg*/,
-	int /*yorg*/);
-
-typedef    RegionPtr (* RestoreAreasProcPtr)(
-	WindowPtr /*pWindow*/,
-	RegionPtr /*prgnRestore*/);
-
-typedef    void (* ExposeCopyProcPtr)(
-	WindowPtr /*pSrc*/,
-	DrawablePtr /*pDst*/,
-	GCPtr /*pGC*/,
-	RegionPtr /*prgnExposed*/,
-	int /*srcx*/,
-	int /*srcy*/,
-	int /*dstx*/,
-	int /*dsty*/,
-	unsigned long /*plane*/);
-
-typedef    RegionPtr (* TranslateBackingStoreProcPtr)(
-	WindowPtr /*pWindow*/,
-	int /*windx*/,
-	int /*windy*/,
-	RegionPtr /*oldClip*/,
-	int /*oldx*/,
-	int /*oldy*/);
-
-typedef    RegionPtr (* ClearBackingStoreProcPtr)(
-	WindowPtr /*pWindow*/,
-	int /*x*/,
-	int /*y*/,
-	int /*w*/,
-	int /*h*/,
-	Bool /*generateExposures*/);
-
-typedef    void (* DrawGuaranteeProcPtr)(
-	WindowPtr /*pWindow*/,
-	GCPtr /*pGC*/,
-	int /*guarantee*/);
-    
 typedef    Bool (* RealizeFontProcPtr)(
 	ScreenPtr /*pScreen*/,
 	FontPtr /*pFont*/);
@@ -566,12 +524,8 @@ typedef struct _Screen {
     short       	numVisuals;
     VisualPtr		visuals;
     WindowPtr		root;
-    int			WindowPrivateLen;
-    unsigned		*WindowPrivateSizes;
-    unsigned		totalWindowSize;
-    int			GCPrivateLen;
-    unsigned		*GCPrivateSizes;
-    unsigned		totalGCSize;
+
+    DevPrivateSetRec    screenSpecificPrivates[PRIVATE_LAST];
 
     /* Random screen procedures */
 
@@ -606,20 +560,6 @@ typedef struct _Screen {
     CreatePixmapProcPtr		CreatePixmap;
     DestroyPixmapProcPtr	DestroyPixmap;
 
-    /* Backing store procedures */
-
-    SaveDoomedAreasProcPtr	SaveDoomedAreas;
-    RestoreAreasProcPtr		RestoreAreas;
-    ExposeCopyProcPtr		ExposeCopy;
-    TranslateBackingStoreProcPtr TranslateBackingStore;
-    ClearBackingStoreProcPtr	ClearBackingStore;
-    DrawGuaranteeProcPtr	DrawGuarantee;
-    /*
-     * A read/write copy of the lower level backing store vector is needed now
-     * that the functions can be wrapped.
-     */
-    BSFuncRec			BackingStoreFuncs;
-    
     /* Font procedures */
 
     RealizeFontProcPtr		RealizeFont;
@@ -690,7 +630,7 @@ typedef struct _Screen {
     void * wakeupData;
 
     /* anybody can get a piece of this array */
-    DevUnion	*devPrivates;
+    PrivateRec	*devPrivates;
 
     CreateScreenResourcesProcPtr CreateScreenResources;
     ModifyPixmapHeaderProcPtr	ModifyPixmapHeader;

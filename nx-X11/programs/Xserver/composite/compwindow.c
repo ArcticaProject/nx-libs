@@ -717,28 +717,6 @@ compGetRedirectBorderClip (WindowPtr pWin)
     return &cw->borderClip;
 }
 
-static VisualPtr
-compGetWindowVisual (WindowPtr pWin)
-{
-    ScreenPtr	    pScreen = pWin->drawable.pScreen;
-    VisualID	    vid = wVisual (pWin);
-    int		    i;
-
-    for (i = 0; i < pScreen->numVisuals; i++)
-	if (pScreen->visuals[i].vid == vid)
-	    return &pScreen->visuals[i];
-    return 0;
-}
-
-PictFormatPtr
-compWindowFormat (WindowPtr pWin)
-{
-    ScreenPtr	pScreen = pWin->drawable.pScreen;
-    
-    return PictureMatchVisual (pScreen, pWin->drawable.depth,
-			       compGetWindowVisual (pWin));
-}
-
 static void
 compWindowUpdateAutomatic (WindowPtr pWin)
 {
@@ -746,8 +724,8 @@ compWindowUpdateAutomatic (WindowPtr pWin)
     ScreenPtr	    pScreen = pWin->drawable.pScreen;
     WindowPtr	    pParent = pWin->parent;
     PixmapPtr	    pSrcPixmap = (*pScreen->GetWindowPixmap) (pWin);
-    PictFormatPtr   pSrcFormat = compWindowFormat (pWin);
-    PictFormatPtr   pDstFormat = compWindowFormat (pWin->parent);
+    PictFormatPtr   pSrcFormat = PictureWindowFormat (pWin);
+    PictFormatPtr   pDstFormat = PictureWindowFormat (pWin->parent);
     int		    error;
     RegionPtr	    pRegion = DamageRegion (cw->damage);
     PicturePtr	    pSrcPicture = CreatePicture (0, &pSrcPixmap->drawable,

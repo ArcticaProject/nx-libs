@@ -62,8 +62,6 @@ SOFTWARE.
 #include <nx-X11/extensions/security.h>
 #endif
 
-#define EXTENSION_BASE  128
-#define EXTENSION_EVENT_BASE  64
 #define LAST_EVENT  128
 #define LAST_ERROR 255
 
@@ -74,39 +72,6 @@ static ExtensionEntry **extensions = (ExtensionEntry **)NULL;
 int lastEvent = EXTENSION_EVENT_BASE;
 static int lastError = FirstExtensionError;
 static unsigned int NumExtensions = 0;
-
-extern int extensionPrivateLen;
-extern unsigned *extensionPrivateSizes;
-extern unsigned totalExtensionSize;
-
-static void
-InitExtensionPrivates(ExtensionEntry *ext)
-{
-    register char *ptr;
-    DevUnion *ppriv;
-    register unsigned *sizes;
-    register unsigned size;
-    register int i;
-
-    if (totalExtensionSize == sizeof(ExtensionEntry))
-	ppriv = (DevUnion *)NULL;
-    else
-	ppriv = (DevUnion *)(ext + 1);
-
-    ext->devPrivates = ppriv;
-    sizes = extensionPrivateSizes;
-    ptr = (char *)(ppriv + extensionPrivateLen);
-    for (i = extensionPrivateLen; --i >= 0; ppriv++, sizes++)
-    {
-	if ( (size = *sizes) )
-	{
-	    ppriv->ptr = (void *)ptr;
-	    ptr += size;
-	}
-	else
-	    ppriv->ptr = (void *)NULL;
-    }
-}
 
 ExtensionEntry *
 AddExtension(char *name, int NumEvents, int NumErrors, 
@@ -124,16 +89,19 @@ AddExtension(char *name, int NumEvents, int NumErrors,
 	        (unsigned)(lastError + NumErrors > LAST_ERROR))
         return((ExtensionEntry *) NULL);
 
-    ext = (ExtensionEntry *) malloc(totalExtensionSize);
+    ext = (ExtensionEntry *) malloc(sizeof(ExtensionEntry));
     if (!ext)
 	return((ExtensionEntry *) NULL);
-    bzero(ext, totalExtensionSize);
-    InitExtensionPrivates(ext);
+    if (!dixAllocatePrivates(&ext->devPrivates, PRIVATE_EXTENSION)) {
+        free(ext);
+        return NULL;
+    }
     ext->name = (char *)malloc(strlen(name) + 1);
     ext->num_aliases = 0;
     ext->aliases = (char **)NULL;
     if (!ext->name)
     {
+	dixFreePrivates(ext->devPrivates, PRIVATE_EXTENSION);
 	free(ext);
 	return((ExtensionEntry *) NULL);
     }
@@ -144,6 +112,7 @@ AddExtension(char *name, int NumEvents, int NumErrors,
     if (!newexts)
     {
 	free(ext->name);
+	dixFreePrivates(ext->devPrivates, PRIVATE_EXTENSION);
 	free(ext);
 	return((ExtensionEntry *) NULL);
     }
@@ -312,6 +281,7 @@ CloseDownExtensions()
 	for (j = extensions[i]->num_aliases; --j >= 0;)
 	    free(extensions[i]->aliases[j]);
 	free(extensions[i]->aliases);
+	dixFreePrivates(extensions[i]->devPrivates, PRIVATE_EXTENSION);
 	free(extensions[i]);
     }
     free(extensions);

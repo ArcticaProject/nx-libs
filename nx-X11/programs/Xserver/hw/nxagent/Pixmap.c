@@ -69,7 +69,7 @@ RESTYPE  RT_NX_PIXMAP;
 #include "Font.h"
 #endif
 
-int nxagentPixmapPrivateIndex;
+DevPrivateKeyRec nxagentPixmapPrivateKeyRec;
 
 int nxagentCorruptedPixmaps;
 int nxagentCorruptedBackgrounds;
@@ -452,8 +452,6 @@ Bool nxagentDestroyPixmap(PixmapPtr pPixmap)
               (void *) pPixmap);
   #endif
 
-  nxagentRemoveItemBSPixmapList(nxagentPixmap(pPixmap));
-
   nxagentDestroyVirtualPixmap(pPixmap);
 
   if (pPixmapPriv -> corruptedRegion != NullRegion)
@@ -501,7 +499,7 @@ Bool nxagentDestroyPixmap(PixmapPtr pPixmap)
     FreeResource(pPixmapPriv -> mid, RT_NONE);
   }
 
-  free(pPixmap);
+  FreePixmap(pPixmap);
 
   return True;
 }

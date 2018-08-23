@@ -36,7 +36,6 @@
 #include "windowstr.h"
 #include "mi.h"
 #include "migc.h"
-#include "mibstore.h"
 #ifdef RENDER
 #include "picturestr.h"
 #else
@@ -558,14 +557,12 @@ extern void fbSetBits (FbStip *bits, int stride, FbStip data);
     }							    \
 }
 
-/* XXX fb*PrivateIndex should be static, but it breaks the ABI */
+extern DevPrivateKey fbGetScreenPrivateKey(void);
 
-extern int	fbGCPrivateIndex;
-extern int	fbGetGCPrivateIndex(void);
-#ifndef FB_NO_WINDOW_PIXMAPS
-extern int	fbWinPrivateIndex;
-extern int	fbGetWinPrivateIndex(void);
-#endif
+#define fbGetScreenPrivate(pScreen) ((FbScreenPrivPtr) \
+                                     dixLookupPrivate(&(pScreen)->devPrivates, fbGetScreenPrivateKey()))
+
+
 extern const GCOps	fbGCOps;
 extern const GCFuncs	fbGCFuncs;
 
@@ -578,23 +575,15 @@ extern const GCFuncs	fbGCFuncs;
 # define FB_OLD_MISCREENINIT   /* miScreenInit requires 14 args, not 13 */
 #endif
 
-#ifdef FB_24_32BIT
-#define FB_SCREEN_PRIVATE
-#endif
-
-#ifdef FB_SCREEN_PRIVATE
-extern int	fbScreenPrivateIndex;
-extern int	fbGetScreenPrivateIndex(void);
-
 /* private field of a screen */
 typedef struct {
     unsigned char	win32bpp;	/* window bpp for 32-bpp images */
     unsigned char	pix32bpp;	/* pixmap bpp for 32-bpp images */
+    DevPrivateKeyRec    gcPrivateKeyRec;
+    #ifndef FB_NO_WINDOW_PIXMAPS
+    DevPrivateKeyRec    winPrivateKeyRec;
+    #endif
 } FbScreenPrivRec, *FbScreenPrivPtr;
-
-#define fbGetScreenPrivate(pScreen) ((FbScreenPrivPtr) \
-				     (pScreen)->devPrivates[fbGetScreenPrivateIndex()].ptr)
-#endif
 
 /* private field of GC */
 typedef struct {
@@ -616,8 +605,10 @@ typedef struct {
     unsigned char    	bpp;		/* current drawable bpp */
 } FbGCPrivRec, *FbGCPrivPtr;
 
-#define fbGetGCPrivate(pGC)	((FbGCPrivPtr)\
-	(pGC)->devPrivates[fbGetGCPrivateIndex()].ptr)
+#define fbGetGCPrivateKey(pGC)  (&fbGetScreenPrivate((pGC)->pScreen)->gcPrivateKeyRec)
+
+#define fbGetGCPrivate(pGC)     ((FbGCPrivPtr)\
+                                 dixLookupPrivate(&(pGC)->devPrivates, fbGetGCPrivateKey(pGC)))
 
 #ifdef FB_OLD_GC
 #define fbGetCompositeClip(pGC) (fbGetGCPrivate(pGC)->pCompositeClip)
@@ -635,8 +626,10 @@ typedef struct {
 #ifdef FB_NO_WINDOW_PIXMAPS
 #define fbGetWindowPixmap(d)	fbGetScreenPixmap(((DrawablePtr) (d))->pScreen)
 #else
-#define fbGetWindowPixmap(pWin)	((PixmapPtr)\
-	((WindowPtr) (pWin))->devPrivates[fbGetWinPrivateIndex()].ptr)
+#define fbGetWinPrivateKey(pWin)        (&fbGetScreenPrivate(((DrawablePtr) (pWin))->pScreen)->winPrivateKeyRec)
+
+#define fbGetWindowPixmap(pWin) ((PixmapPtr)\
+                                 dixLookupPrivate(&((WindowPtr)(pWin))->devPrivates, fbGetWinPrivateKey(pWin)))
 #endif
 
 #ifdef ROOTLESS
@@ -793,7 +786,7 @@ fb24_32ModifyPixmapHeader (PixmapPtr   pPixmap,
  * fballpriv.c
  */
 Bool
-fbAllocatePrivates(ScreenPtr pScreen, int *pGCIndex);
+fbAllocatePrivates(ScreenPtr pScreen);
     
 /*
  * fbarc.c
@@ -1219,23 +1212,6 @@ fbBltPlane (FbBits	    *src,
 	    FbStip	    bgand,
 	    FbStip	    bgxor,
 	    Pixel	    planeMask);
-
-/*
- * fbbstore.c
- */
-void
-fbSaveAreas(PixmapPtr	pPixmap,
-	    RegionPtr	prgnSave,
-	    int		xorg,
-	    int		yorg,
-	    WindowPtr	pWin);
-
-void
-fbRestoreAreas(PixmapPtr    pPixmap,
-	       RegionPtr    prgnRestore,
-	       int	    xorg,
-	       int	    yorg,
-	       WindowPtr    pWin);
 
 /*
  * fbcmap.c

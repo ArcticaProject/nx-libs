@@ -280,13 +280,13 @@ ChangeWindowProperty(WindowPtr pWin, Atom property, Atom type, int format,
     {
 	if (!pWin->optional && !MakeWindowOptional (pWin))
 	    return(BadAlloc);
-        pProp = (PropertyPtr)malloc(sizeof(PropertyRec));
+        pProp = dixAllocateObjectWithPrivates(PropertyRec, PRIVATE_PROPERTY);
 	if (!pProp)
 	    return(BadAlloc);
         data = (void *)malloc(totalSize);
 	if (!data && len)
 	{
-	    free(pProp);
+	    dixFreeObjectWithPrivates(pProp, PRIVATE_PROPERTY);
 	    return(BadAlloc);
 	}
         pProp->propertyName = property;
@@ -404,7 +404,7 @@ DeleteProperty(WindowPtr pWin, Atom propName)
 	event.u.property.time = currentTime.milliseconds;
 	DeliverEvents(pWin, &event, 1, (WindowPtr)NULL);
 	free(pProp->data);
-        free(pProp);
+        dixFreeObjectWithPrivates(pProp, PRIVATE_PROPERTY);
     }
     return(Success);
 }
@@ -427,7 +427,7 @@ DeleteAllWindowProperties(WindowPtr pWin)
 	DeliverEvents(pWin, &event, 1, (WindowPtr)NULL);
 	pNextProp = pProp->next;
         free(pProp->data);
-        free(pProp);
+        dixFreeObjectWithPrivates(pProp, PRIVATE_PROPERTY);
 	pProp = pNextProp;
     }
 }
@@ -601,7 +601,7 @@ ProcGetProperty(ClientPtr client)
 	else
 	    prevProp->next = pProp->next;
 	free(pProp->data);
-	free(pProp);
+	dixFreeObjectWithPrivates(pProp, PRIVATE_PROPERTY);
     }
     return(client->noClientException);
 }

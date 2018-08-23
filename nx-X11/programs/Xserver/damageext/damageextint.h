@@ -46,7 +46,7 @@
 extern unsigned char	DamageReqCode;
 extern int		DamageEventBase;
 extern int		DamageErrorBase;
-extern int		DamageClientPrivateIndex;
+extern DevPrivateKeyRec		DamageClientPrivateKeyRec;
 extern RESTYPE		DamageExtType;
 extern RESTYPE		DamageExtWinType;
 
@@ -56,7 +56,7 @@ typedef struct _DamageClient {
     int		critical;
 } DamageClientRec, *DamageClientPtr;
 
-#define GetDamageClient(pClient)    ((DamageClientPtr) (pClient)->devPrivates[DamageClientPrivateIndex].ptr)
+#define GetDamageClient(pClient) ((DamageClientPtr)dixLookupPrivate(&(pClient)->devPrivates, DamageClientPrivateKey))
 
 typedef struct _DamageExt {
     DamagePtr		pDamage;

@@ -62,6 +62,7 @@ SOFTWARE.
 #define REQUEST(type) \
 	register type *stuff = (type *)client->requestBuffer
 
+#define ARRAY_SIZE(a)  (sizeof((a)) / sizeof((a)[0]))
 
 #define REQUEST_SIZE_MATCH(req)\
     if ((sizeof(req) >> 2) != client->req_len)\
@@ -666,14 +667,6 @@ extern void WindowsRestructured(void);
 void
 ScreenRestructured (ScreenPtr pScreen);
 #endif
-
-extern void ResetClientPrivates(void);
-
-extern int AllocateClientPrivateIndex(void);
-
-extern Bool AllocateClientPrivate(
-    int /*index*/,
-    unsigned /*amount*/);
 
 /*
  *  callback manager stuff

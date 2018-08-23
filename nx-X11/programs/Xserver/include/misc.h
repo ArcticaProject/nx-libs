@@ -109,6 +109,9 @@ extern unsigned long serverGeneration;
 #define MAXFORMATS	8
 #define MAXVISUALS_PER_SCREEN 50
 
+#define EXTENSION_EVENT_BASE 64
+#define EXTENSION_BASE  128
+
 typedef unsigned long PIXEL;
 typedef unsigned long ATOM;
 

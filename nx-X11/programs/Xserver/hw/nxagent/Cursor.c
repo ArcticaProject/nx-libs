@@ -239,9 +239,8 @@ Bool nxagentRealizeCursor(ScreenPtr pScreen, CursorPtr pCursor)
   bg_color.green = pCursor->backGreen;
   bg_color.blue = pCursor->backBlue;
 
-  pCursor->devPriv[pScreen->myNum] = (void *) malloc(sizeof(nxagentPrivCursor));
-
-  nxagentCursorPriv(pCursor, pScreen)->cursor =
+  nxagentSetCursorPriv(pCursor, pScreen, malloc(sizeof(nxagentPrivCursorRec)));
+  nxagentCursor(pCursor, pScreen) =
          XCreatePixmapCursor(nxagentDisplay, source, mask, &fg_color,
                                  &bg_color, pCursor->bits->xhot, pCursor->bits->yhot);
 
@@ -249,8 +248,8 @@ Bool nxagentRealizeCursor(ScreenPtr pScreen, CursorPtr pCursor)
 
   #ifdef TEST
   fprintf(stderr, "nxagentRealizeCursor: Set cursor private at [%p] cursor is [%ld].\n",
-              (void *) nxagentCursorPriv(pCursor, pScreen),
-                  nxagentCursorPriv(pCursor, pScreen) -> cursor);
+              (void *) nxagentGetCursorPriv(pCursor, pScreen),
+                  nxagentCursor(pCursor, pScreen));
   #endif
 
   XFreePixmap(nxagentDisplay, source);
@@ -275,7 +274,7 @@ Bool nxagentUnrealizeCursor(ScreenPtr pScreen, CursorPtr pCursor)
     nxagentCursor(pCursor, pScreen) = None;
   }
 
-  free(nxagentCursorPriv(pCursor, pScreen));
+  free(nxagentGetCursorPriv(pCursor, pScreen));
 
   return True;
 }
@@ -340,7 +339,7 @@ void nxagentReconnectCursor(void * p0, XID x1, void * p2)
     return;
   }
 
-  if (nxagentCursorPriv(pCursor, nxagentDefaultScreen) == 0)
+  if (nxagentGetCursorPriv(pCursor, nxagentDefaultScreen))
   {
     if (nxagentIsAnimCursor(pCursor))
     {
@@ -374,7 +373,7 @@ void nxagentReconnectCursor(void * p0, XID x1, void * p2)
     }
     else
     {
-      free(nxagentCursorPriv(pCursor, nxagentDefaultScreen));
+      free(nxagentGetCursorPriv(pCursor, nxagentDefaultScreen));
       if (!nxagentRealizeCursor(nxagentDefaultScreen, pCursor))
       {
         fprintf(stderr, "nxagentReconnectCursor: nxagentRealizeCursor failed\n");
@@ -397,7 +396,7 @@ void nxagentReDisplayCurrentCursor(void)
   CursorPtr pCursor = GetSpriteCursor();
 
   if (pCursor &&
-          nxagentCursorPriv(pCursor, nxagentDefaultScreen) &&
+          nxagentGetCursorPriv(pCursor, nxagentDefaultScreen) &&
               nxagentCursor(pCursor, nxagentDefaultScreen))
   {
     nxagentDisplayCursor(nxagentDefaultScreen, pCursor);
@@ -454,7 +453,7 @@ void nxagentDisconnectCursor(void * p0, XID x1, void * p2)
     return;
   }
 
-  if (nxagentCursorPriv(pCursor, nxagentDefaultScreen) == 0)
+  if (nxagentGetCursorPriv(pCursor, nxagentDefaultScreen))
   {
     if (nxagentIsAnimCursor(pCursor))
     {
@@ -492,7 +491,7 @@ void nxagentDisconnectCursor(void * p0, XID x1, void * p2)
               (void *) nxagentDefaultScreen);
 
   fprintf(stderr, "nxagentDisconnectCursor: Cursor private is at [%p].\n",
-              (void *) nxagentCursorPriv(pCursor, nxagentDefaultScreen));
+              (void *) nxagentGetCursorPriv(pCursor, nxagentDefaultScreen));
   #endif
 
   #ifdef TEST

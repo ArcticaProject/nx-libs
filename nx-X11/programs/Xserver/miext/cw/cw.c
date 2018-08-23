@@ -44,14 +44,13 @@
 #define CW_ASSERT(x) do {} while (0)
 #endif
 
-int cwGCIndex;
-int cwScreenIndex;
-int cwWindowIndex;
+DevPrivateKeyRec cwGCKeyRec;
+DevPrivateKeyRec cwScreenKeyRec;
+DevPrivateKeyRec cwWindowKeyRec;
 #ifdef RENDER
-int cwPictureIndex;
+DevPrivateKeyRec cwPictureKeyRec;
 #endif
 static Bool cwDisabled[MAXSCREENS];
-static unsigned long cwGeneration = 0;
 extern GCOps cwGCOps;
 
 static Bool
@@ -239,7 +238,7 @@ cwValidateGC(GCPtr pGC, unsigned long stateChanges, DrawablePtr pDrawable)
 static void
 cwChangeGC(GCPtr pGC, unsigned long mask)
 {
-    cwGCPtr	pPriv = (cwGCPtr)(pGC)->devPrivates[cwGCIndex].ptr;
+    cwGCPtr	pPriv = (cwGCPtr) dixLookupPrivate(&pGC->devPrivates, cwGCKey);
 
     FUNC_PROLOGUE(pGC, pPriv);
 
@@ -251,7 +250,7 @@ cwChangeGC(GCPtr pGC, unsigned long mask)
 static void
 cwCopyGC(GCPtr pGCSrc, unsigned long mask, GCPtr pGCDst)
 {
-    cwGCPtr	pPriv = (cwGCPtr)(pGCDst)->devPrivates[cwGCIndex].ptr;
+    cwGCPtr	pPriv = (cwGCPtr) dixLookupPrivate(&pGCDst->devPrivates, cwGCKey);
 
     FUNC_PROLOGUE(pGCDst, pPriv);
 
@@ -263,7 +262,7 @@ cwCopyGC(GCPtr pGCSrc, unsigned long mask, GCPtr pGCDst)
 static void
 cwDestroyGC(GCPtr pGC)
 {
-    cwGCPtr	pPriv = (cwGCPtr)(pGC)->devPrivates[cwGCIndex].ptr;
+    cwGCPtr	pPriv = (cwGCPtr) dixLookupPrivate(&pGC->devPrivates, cwGCKey);
 
     FUNC_PROLOGUE(pGC, pPriv);
 
@@ -277,7 +276,7 @@ cwDestroyGC(GCPtr pGC)
 static void
 cwChangeClip(GCPtr pGC, int type, void * pvalue, int nrects)
 {
-    cwGCPtr	pPriv = (cwGCPtr)(pGC)->devPrivates[cwGCIndex].ptr;
+    cwGCPtr	pPriv =  (cwGCPtr) dixLookupPrivate(&pGC->devPrivates, cwGCKey);
 
     FUNC_PROLOGUE(pGC, pPriv);
 
@@ -289,7 +288,7 @@ cwChangeClip(GCPtr pGC, int type, void * pvalue, int nrects)
 static void
 cwCopyClip(GCPtr pgcDst, GCPtr pgcSrc)
 {
-    cwGCPtr	pPriv = (cwGCPtr)(pgcDst)->devPrivates[cwGCIndex].ptr;
+    cwGCPtr	pPriv = (cwGCPtr) dixLookupPrivate(&pgcDst->devPrivates, cwGCKey);
 
     FUNC_PROLOGUE(pgcDst, pPriv);
 
@@ -301,7 +300,7 @@ cwCopyClip(GCPtr pgcDst, GCPtr pgcSrc)
 static void
 cwDestroyClip(GCPtr pGC)
 {
-    cwGCPtr	pPriv = (cwGCPtr)(pGC)->devPrivates[cwGCIndex].ptr;
+    cwGCPtr	pPriv = (cwGCPtr) dixLookupPrivate(&pGC->devPrivates, cwGCKey);;
 
     FUNC_PROLOGUE(pGC, pPriv);
 
@@ -623,32 +622,26 @@ miInitializeCompositeWrapper(ScreenPtr pScreen)
     if (cwDisabled[pScreen->myNum])
 	return;
 
-    if (cwGeneration != serverGeneration)
-    {
-	cwScreenIndex = AllocateScreenPrivateIndex();
-	if (cwScreenIndex < 0)
-	    return;
-	cwGCIndex = AllocateGCPrivateIndex();
-	cwWindowIndex = AllocateWindowPrivateIndex();
-#ifdef RENDER
-	cwPictureIndex = AllocatePicturePrivateIndex();
-#endif
-	cwGeneration = serverGeneration;
-    }
-    if (!AllocateGCPrivate(pScreen, cwGCIndex, sizeof(cwGCRec)))
+    if (!dixRegisterPrivateKey(&cwScreenKeyRec, PRIVATE_SCREEN, 0))
 	return;
-    if (!AllocateWindowPrivate(pScreen, cwWindowIndex, 0))
+
+    if (!dixRegisterPrivateKey(&cwGCKeyRec, PRIVATE_GC, sizeof(cwGCRec)))
 	return;
+
+    if (!dixRegisterPrivateKey(&cwWindowKeyRec, PRIVATE_WINDOW, 0))
+	return;
+
 #ifdef RENDER
-    if (!AllocatePicturePrivate(pScreen, cwPictureIndex, 0))
+    if (!dixRegisterPrivateKey(&cwPictureKeyRec, PRIVATE_PICTURE, 0))
 	return;
 #endif
+
     pScreenPriv = (cwScreenPtr)malloc(sizeof(cwScreenRec));
     if (!pScreenPriv)
 	return;
 
-    pScreen->devPrivates[cwScreenIndex].ptr = (void *)pScreenPriv;
-    
+    dixSetPrivate(&pScreen->devPrivates, cwScreenKey, pScreenPriv);
+
     SCREEN_EPILOGUE(pScreen, CloseScreen, cwCloseScreen);
     SCREEN_EPILOGUE(pScreen, GetImage, cwGetImage);
     SCREEN_EPILOGUE(pScreen, GetSpans, cwGetSpans);
@@ -680,7 +673,8 @@ cwCloseScreen (ScreenPtr pScreen)
     PictureScreenPtr ps = GetPictureScreenIfSet(pScreen);
 #endif
 
-    pScreenPriv = (cwScreenPtr)pScreen->devPrivates[cwScreenIndex].ptr;
+    pScreenPriv = (cwScreenPtr) dixLookupPrivate(&pScreen->devPrivates,
+                                                 cwScreenKey);
 
     pScreen->CloseScreen = pScreenPriv->CloseScreen;
     pScreen->GetImage = pScreenPriv->GetImage;

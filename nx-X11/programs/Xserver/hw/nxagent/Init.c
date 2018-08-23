@@ -72,6 +72,10 @@ is" without express or implied warranty.
 #include "Error.h"
 #include "Keystroke.h"
 
+#ifdef XKB
+#include "xkbsrv.h"
+#endif
+
 #include <nx/NX.h>
 #include "compext/Compext.h"
 #include "Reconnect.h"
@@ -95,7 +99,7 @@ extern int (*ProcVector[256])(ClientPtr);
  * From the fb code.
  */
 
-extern int fbGCPrivateIndex;
+extern DevPrivateKeyRec fbGCPrivateKeyRec;
 
 /*
  * Stubs for the DPMS extension.
@@ -312,8 +316,6 @@ void InitOutput(ScreenInfo *screenInfo, int argc, char *argv[])
     }
   }
 
-  nxagentInitBSPixmapList();
-
   /*
    * Open the display. We are at the early startup and
    * the information we'll get from the remote X server
@@ -362,8 +364,6 @@ FIXME: These variables, if not removed at all because have probably
    * Get our own privates' index.
    */
 
-  nxagentWindowPrivateIndex = AllocateWindowPrivateIndex();
-  nxagentGCPrivateIndex = AllocateGCPrivateIndex();
   RT_NX_GC = CreateNewResourceType(nxagentDestroyNewGCResourceType);
 #ifdef HAS_XFONT2
   nxagentFontPrivateIndex = xfont2_allocate_font_private_index();
@@ -371,15 +371,12 @@ FIXME: These variables, if not removed at all because have probably
   nxagentFontPrivateIndex = AllocateFontPrivateIndex();
 #endif /* HAS_XFONT2 */
   RT_NX_FONT = CreateNewResourceType(nxagentDestroyNewFontResourceType); 
-  nxagentClientPrivateIndex = AllocateClientPrivateIndex();
-  nxagentPixmapPrivateIndex = AllocatePixmapPrivateIndex();
   RT_NX_PIXMAP = CreateNewResourceType(nxagentDestroyNewPixmapResourceType); 
 
   RT_NX_CORR_BACKGROUND = CreateNewResourceType(nxagentDestroyCorruptedBackgroundResource);
   RT_NX_CORR_WINDOW = CreateNewResourceType(nxagentDestroyCorruptedWindowResource);
   RT_NX_CORR_PIXMAP = CreateNewResourceType(nxagentDestroyCorruptedPixmapResource);
 
-  fbGCPrivateIndex = AllocateGCPrivateIndex();
 
   if (nxagentNumScreens == 0)
   {
@@ -424,6 +421,11 @@ void InitInput(argc, argv)
      char *argv[];
 {
   void *ptr, *kbd;
+
+#ifdef XKB
+  if (!noXkbExtension)
+       XkbInitPrivates();
+#endif
 
   ptr = AddInputDevice(nxagentPointerProc, True);
   kbd = AddInputDevice(nxagentKeyboardProc, True);

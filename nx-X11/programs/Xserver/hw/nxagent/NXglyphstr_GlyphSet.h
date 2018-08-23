@@ -57,7 +57,7 @@ typedef struct _GlyphSet {
     int		    fdepth;
     GlyphHashRec    hash;
     int             maxPrivate;
-    void            **devPrivates;
+    PrivateRec      *devPrivates;
     CARD32          remoteID;
 } GlyphSetRec, *GlyphSetPtr;
 

@@ -63,12 +63,17 @@ in this Software without prior written authorization from The Open Group.
 #define SPRITE_DEBUG(x)
 #endif
 
+static DevPrivateKeyRec miSpriteScreenKeyRec;
+
+static miSpriteScreenPtr
+GetSpriteScreen(ScreenPtr pScreen)
+{
+    return dixLookupPrivate(&pScreen->devPrivates, &miSpriteScreenKeyRec);
+}
+
 /*
  * screen wrappers
  */
-
-static int  miSpriteScreenIndex;
-static unsigned long miSpriteGeneration = 0;
 
 static Bool	    miSpriteCloseScreen(ScreenPtr pScreen);
 static void	    miSpriteGetImage(DrawablePtr pDrawable, int sx, int sy,
@@ -89,15 +94,12 @@ static void	    miSpriteInstallColormap(ColormapPtr pMap);
 static void	    miSpriteStoreColors(ColormapPtr pMap, int ndef,
 					xColorItem *pdef);
 
-static void	    miSpriteSaveDoomedAreas(WindowPtr pWin,
-					    RegionPtr pObscured, int dx,
-					    int dy);
 static void	    miSpriteComputeSaved(ScreenPtr pScreen);
 
-#define SCREEN_PROLOGUE(pScreen, field)\
-  ((pScreen)->field = \
-   ((miSpriteScreenPtr) (pScreen)->devPrivates[miSpriteScreenIndex].ptr)->field)
 
+#define SCREEN_PROLOGUE(pScreen, field) ((pScreen)->field = \
+   ((miSpriteScreenPtr)dixLookupPrivate(&(pScreen)->devPrivates, \
+                                       &miSpriteScreenKeyRec))->field)
 #define SCREEN_EPILOGUE(pScreen, field)\
     ((pScreen)->field = miSprite##field)
 
@@ -129,11 +131,10 @@ static void
 miSpriteReportDamage (DamagePtr pDamage, RegionPtr pRegion, void *closure)
 {
     ScreenPtr		    pScreen = closure;
-    miSpriteScreenPtr	    pScreenPriv;
     
-    pScreenPriv = (miSpriteScreenPtr) pScreen->devPrivates[miSpriteScreenIndex].ptr;
-    
+    miSpriteScreenPtr pScreenPriv = GetSpriteScreen(pScreen);
     if (pScreenPriv->isUp &&
+
 	RegionContainsRect(pRegion, &pScreenPriv->saved) != rgnOUT)
     {
 	SPRITE_DEBUG(("Damage remove\n"));
@@ -155,19 +156,14 @@ miSpriteInitialize (pScreen, cursorFuncs, screenFuncs)
 {
     miSpriteScreenPtr	pScreenPriv;
     VisualPtr		pVisual;
-    
+
     if (!DamageSetup (pScreen))
 	return FALSE;
 
-    if (miSpriteGeneration != serverGeneration)
-    {
-	miSpriteScreenIndex = AllocateScreenPrivateIndex ();
-	if (miSpriteScreenIndex < 0)
-	    return FALSE;
-	miSpriteGeneration = serverGeneration;
-    }
-    
-    pScreenPriv = (miSpriteScreenPtr) malloc (sizeof (miSpriteScreenRec));
+    if (!dixRegisterPrivateKey(&miSpriteScreenKeyRec, PRIVATE_SCREEN, 0))
+        return FALSE;
+
+    pScreenPriv = GetSpriteScreen(pScreen);
     if (!pScreenPriv)
 	return FALSE;
     
@@ -195,8 +191,6 @@ miSpriteInitialize (pScreen, cursorFuncs, screenFuncs)
 
     pScreenPriv->CopyWindow = pScreen->CopyWindow;
     
-    pScreenPriv->SaveDoomedAreas = pScreen->SaveDoomedAreas;
-    
     pScreenPriv->InstallColormap = pScreen->InstallColormap;
     pScreenPriv->StoreColors = pScreen->StoreColors;
     
@@ -219,16 +213,15 @@ miSpriteInitialize (pScreen, cursorFuncs, screenFuncs)
     pScreenPriv->colors[MASK_COLOR].red = 0;
     pScreenPriv->colors[MASK_COLOR].green = 0;
     pScreenPriv->colors[MASK_COLOR].blue = 0;
-    pScreen->devPrivates[miSpriteScreenIndex].ptr = (void *) pScreenPriv;
-    
+
+    dixSetPrivate(&pScreen->devPrivates, &miSpriteScreenKeyRec, pScreenPriv);
+
     pScreen->CloseScreen = miSpriteCloseScreen;
     pScreen->GetImage = miSpriteGetImage;
     pScreen->GetSpans = miSpriteGetSpans;
     pScreen->SourceValidate = miSpriteSourceValidate;
     
     pScreen->CopyWindow = miSpriteCopyWindow;
-    
-    pScreen->SaveDoomedAreas = miSpriteSaveDoomedAreas;
     
     pScreen->InstallColormap = miSpriteInstallColormap;
     pScreen->StoreColors = miSpriteStoreColors;
@@ -251,9 +244,7 @@ static Bool
 miSpriteCloseScreen (pScreen)
     ScreenPtr	pScreen;
 {
-    miSpriteScreenPtr   pScreenPriv;
-
-    pScreenPriv = (miSpriteScreenPtr) pScreen->devPrivates[miSpriteScreenIndex].ptr;
+    miSpriteScreenPtr pScreenPriv = GetSpriteScreen(pScreen);
 
     pScreen->CloseScreen = pScreenPriv->CloseScreen;
     pScreen->GetImage = pScreenPriv->GetImage;
@@ -263,7 +254,6 @@ miSpriteCloseScreen (pScreen)
     pScreen->InstallColormap = pScreenPriv->InstallColormap;
     pScreen->StoreColors = pScreenPriv->StoreColors;
 
-    pScreen->SaveDoomedAreas = pScreenPriv->SaveDoomedAreas;
     miSpriteIsUpFALSE (pScreen, pScreenPriv);
     DamageDestroy (pScreenPriv->pDamage);
     
@@ -285,7 +275,7 @@ miSpriteGetImage (pDrawable, sx, sy, w, h, format, planemask, pdstLine)
     
     SCREEN_PROLOGUE (pScreen, GetImage);
 
-    pScreenPriv = (miSpriteScreenPtr) pScreen->devPrivates[miSpriteScreenIndex].ptr;
+    pScreenPriv = GetSpriteScreen(pScreen);
 
     if (pDrawable->type == DRAWABLE_WINDOW &&
         pScreenPriv->isUp &&
@@ -315,7 +305,7 @@ miSpriteGetSpans (pDrawable, wMax, ppt, pwidth, nspans, pdstStart)
     
     SCREEN_PROLOGUE (pScreen, GetSpans);
 
-    pScreenPriv = (miSpriteScreenPtr) pScreen->devPrivates[miSpriteScreenIndex].ptr;
+    pScreenPriv = GetSpriteScreen(pScreen);
 
     if (pDrawable->type == DRAWABLE_WINDOW && pScreenPriv->isUp)
     {
@@ -357,7 +347,7 @@ miSpriteSourceValidate (pDrawable, x, y, width, height)
     
     SCREEN_PROLOGUE (pScreen, SourceValidate);
 
-    pScreenPriv = (miSpriteScreenPtr) pScreen->devPrivates[miSpriteScreenIndex].ptr;
+    pScreenPriv = GetSpriteScreen(pScreen);
 
     if (pDrawable->type == DRAWABLE_WINDOW && pScreenPriv->isUp &&
 	ORG_OVERLAP(&pScreenPriv->saved, pDrawable->x, pDrawable->y,
@@ -381,7 +371,7 @@ miSpriteCopyWindow (WindowPtr pWindow, DDXPointRec ptOldOrg, RegionPtr prgnSrc)
     
     SCREEN_PROLOGUE (pScreen, CopyWindow);
 
-    pScreenPriv = (miSpriteScreenPtr) pScreen->devPrivates[miSpriteScreenIndex].ptr;
+    pScreenPriv = GetSpriteScreen(pScreen);
     /*
      * Damage will take care of destination check
      */
@@ -404,9 +394,8 @@ miSpriteBlockHandler (i, blockData, pTimeout, pReadmask)
     void *	pReadmask;
 {
     ScreenPtr		pScreen = screenInfo.screens[i];
-    miSpriteScreenPtr	pPriv;
 
-    pPriv = (miSpriteScreenPtr) pScreen->devPrivates[miSpriteScreenIndex].ptr;
+    miSpriteScreenPtr pPriv = GetSpriteScreen(pScreen);
 
     SCREEN_PROLOGUE(pScreen, BlockHandler);
     
@@ -426,9 +415,7 @@ miSpriteInstallColormap (pMap)
     ColormapPtr	pMap;
 {
     ScreenPtr		pScreen = pMap->pScreen;
-    miSpriteScreenPtr	pPriv;
-
-    pPriv = (miSpriteScreenPtr) pScreen->devPrivates[miSpriteScreenIndex].ptr;
+    miSpriteScreenPtr pPriv = GetSpriteScreen(pScreen);
 
     SCREEN_PROLOGUE(pScreen, InstallColormap);
     
@@ -452,12 +439,11 @@ miSpriteStoreColors (pMap, ndef, pdef)
     xColorItem	*pdef;
 {
     ScreenPtr		pScreen = pMap->pScreen;
-    miSpriteScreenPtr	pPriv;
     int			i;
     int			updated;
     VisualPtr		pVisual;
 
-    pPriv = (miSpriteScreenPtr) pScreen->devPrivates[miSpriteScreenIndex].ptr;
+    miSpriteScreenPtr pPriv = GetSpriteScreen(pScreen);
 
     SCREEN_PROLOGUE(pScreen, StoreColors);
     
@@ -524,8 +510,7 @@ miSpriteStoreColors (pMap, ndef, pdef)
 static void
 miSpriteFindColors (ScreenPtr pScreen)
 {
-    miSpriteScreenPtr	pScreenPriv = (miSpriteScreenPtr)
-			    pScreen->devPrivates[miSpriteScreenIndex].ptr;
+    miSpriteScreenPtr	pScreenPriv = GetSpriteScreen(pScreen);
     CursorPtr		pCursor;
     xColorItem		*sourceColor, *maskColor;
 
@@ -557,45 +542,6 @@ miSpriteFindColors (ScreenPtr pScreen)
 }
 
 /*
- * BackingStore wrappers
- */
-
-static void
-miSpriteSaveDoomedAreas (pWin, pObscured, dx, dy)
-    WindowPtr	pWin;
-    RegionPtr	pObscured;
-    int		dx, dy;
-{
-    ScreenPtr		pScreen;
-    miSpriteScreenPtr   pScreenPriv;
-    BoxRec		cursorBox;
-
-    pScreen = pWin->drawable.pScreen;
-    
-    SCREEN_PROLOGUE (pScreen, SaveDoomedAreas);
-
-    pScreenPriv = (miSpriteScreenPtr) pScreen->devPrivates[miSpriteScreenIndex].ptr;
-    if (pScreenPriv->isUp)
-    {
-	cursorBox = pScreenPriv->saved;
-
-	if (dx || dy)
- 	{
-	    cursorBox.x1 += dx;
-	    cursorBox.y1 += dy;
-	    cursorBox.x2 += dx;
-	    cursorBox.y2 += dy;
-	}
-	if (RegionContainsRect(pObscured, &cursorBox) != rgnOUT)
-	    miSpriteRemoveCursor (pScreen);
-    }
-
-    (*pScreen->SaveDoomedAreas) (pWin, pObscured, dx, dy);
-
-    SCREEN_EPILOGUE (pScreen, SaveDoomedAreas);
-}
-
-/*
  * miPointer interface routines
  */
 
@@ -606,9 +552,7 @@ miSpriteRealizeCursor (pScreen, pCursor)
     ScreenPtr	pScreen;
     CursorPtr	pCursor;
 {
-    miSpriteScreenPtr	pScreenPriv;
-
-    pScreenPriv = (miSpriteScreenPtr) pScreen->devPrivates[miSpriteScreenIndex].ptr;
+    miSpriteScreenPtr pScreenPriv = GetSpriteScreen(pScreen);
     if (pCursor == pScreenPriv->pCursor)
 	pScreenPriv->checkPixels = TRUE;
     return (*pScreenPriv->funcs->RealizeCursor) (pScreen, pCursor);
@@ -619,9 +563,7 @@ miSpriteUnrealizeCursor (pScreen, pCursor)
     ScreenPtr	pScreen;
     CursorPtr	pCursor;
 {
-    miSpriteScreenPtr	pScreenPriv;
-
-    pScreenPriv = (miSpriteScreenPtr) pScreen->devPrivates[miSpriteScreenIndex].ptr;
+    miSpriteScreenPtr pScreenPriv = GetSpriteScreen(pScreen);
     return (*pScreenPriv->funcs->UnrealizeCursor) (pScreen, pCursor);
 }
 
@@ -632,9 +574,7 @@ miSpriteSetCursor (pScreen, pCursor, x, y)
     int		x;
     int		y;
 {
-    miSpriteScreenPtr	pScreenPriv;
-
-    pScreenPriv = (miSpriteScreenPtr) pScreen->devPrivates[miSpriteScreenIndex].ptr;
+    miSpriteScreenPtr pScreenPriv = GetSpriteScreen(pScreen);
     if (!pCursor)
     {
     	pScreenPriv->shouldBeUp = FALSE;
@@ -732,9 +672,7 @@ miSpriteMoveCursor (pScreen, x, y)
     ScreenPtr	pScreen;
     int		x, y;
 {
-    miSpriteScreenPtr	pScreenPriv;
-
-    pScreenPriv = (miSpriteScreenPtr) pScreen->devPrivates[miSpriteScreenIndex].ptr;
+    miSpriteScreenPtr pScreenPriv = GetSpriteScreen(pScreen);
     miSpriteSetCursor (pScreen, pScreenPriv->pCursor, x, y);
 }
 
@@ -746,10 +684,10 @@ static void
 miSpriteRemoveCursor (pScreen)
     ScreenPtr	pScreen;
 {
-    miSpriteScreenPtr   pScreenPriv;
+    miSpriteScreenPtr  pScreenPriv;
 
     DamageDrawInternal (pScreen, TRUE);
-    pScreenPriv = (miSpriteScreenPtr) pScreen->devPrivates[miSpriteScreenIndex].ptr;
+    pScreenPriv = GetSpriteScreen(pScreen);
     miSpriteIsUpFALSE (pScreen, pScreenPriv);
     pScreenPriv->pCacheWin = NullWindow;
     if (!(*pScreenPriv->funcs->RestoreUnderCursor) (pScreen,
@@ -778,7 +716,7 @@ miSpriteRestoreCursor (pScreen)
 
     DamageDrawInternal (pScreen, TRUE);
     miSpriteComputeSaved (pScreen);
-    pScreenPriv = (miSpriteScreenPtr) pScreen->devPrivates[miSpriteScreenIndex].ptr;
+    pScreenPriv = GetSpriteScreen(pScreen);
     pCursor = pScreenPriv->pCursor;
     x = pScreenPriv->x - (int)pCursor->bits->xhot;
     y = pScreenPriv->y - (int)pCursor->bits->yhot;
@@ -808,12 +746,11 @@ static void
 miSpriteComputeSaved (pScreen)
     ScreenPtr	pScreen;
 {
-    miSpriteScreenPtr   pScreenPriv;
     int		    x, y, w, h;
     int		    wpad, hpad;
     CursorPtr	    pCursor;
 
-    pScreenPriv = (miSpriteScreenPtr) pScreen->devPrivates[miSpriteScreenIndex].ptr;
+    miSpriteScreenPtr pScreenPriv = GetSpriteScreen(pScreen);
     pCursor = pScreenPriv->pCursor;
     x = pScreenPriv->x - (int)pCursor->bits->xhot;
     y = pScreenPriv->y - (int)pCursor->bits->yhot;

@@ -83,14 +83,9 @@ static int SProcRRDispatch(ClientPtr pClient);
 int RREventBase;
 int RRErrorBase;
 RESTYPE RRClientType, RREventType;      /* resource types for event masks */
+DevPrivateKeyRec RRClientPrivateKeyRec;
 
-#ifndef NXAGENT_SERVER
-DevPrivateKey RRClientPrivateKey = &RRClientPrivateKey;
-DevPrivateKey rrPrivKey = &rrPrivKey;
-#else
-int RRClientPrivateIndex;
-int rrPrivIndex = -1;
-#endif
+DevPrivateKeyRec rrPrivKeyRec;
 
 static void
 RRClientCallback(CallbackListPtr *list, void *closure, void *data)
@@ -294,10 +289,6 @@ Bool
 RRInit(void)
 {
     if (RRGeneration != serverGeneration) {
-#ifdef NXAGENT_SERVER
-        if ((rrPrivIndex = AllocateScreenPrivateIndex()) < 0)
-            return FALSE;
-#endif
         if (!RRModeInit())
             return FALSE;
         if (!RRCrtcInit())
@@ -308,10 +299,8 @@ RRInit(void)
             return FALSE;
         RRGeneration = serverGeneration;
     }
-#ifndef NXAGENT_SERVER
     if (!dixRegisterPrivateKey(&rrPrivKeyRec, PRIVATE_SCREEN, 0))
         return FALSE;
-#endif                          /* !defined(NXAGENT_SERVER) */
 
     return TRUE;
 }
@@ -435,18 +424,10 @@ RRExtensionInit(void)
     if (RRNScreens == 0)
         return;
 
-#ifndef NXAGENT_SERVER
     if (!dixRegisterPrivateKey(&RRClientPrivateKeyRec, PRIVATE_CLIENT,
                                sizeof(RRClientRec) +
                                screenInfo.numScreens * sizeof(RRTimesRec)))
         return;
-#else                           /* !defined(NXAGENT_SERVER) */
-    RRClientPrivateIndex = AllocateClientPrivateIndex();
-    if (!AllocateClientPrivate(RRClientPrivateIndex,
-                               sizeof(RRClientRec) +
-                               screenInfo.numScreens * sizeof(RRTimesRec)))
-        return;
-#endif                          /* !defined(NXAGENT_SERVER) */
 
     if (!AddCallback(&ClientStateCallback, RRClientCallback, 0))
         return;

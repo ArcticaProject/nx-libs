@@ -43,13 +43,38 @@ is" without express or implied warranty.
 #include "cursorstr.h"
 #include "picturestr.h"
 
+extern DevPrivateKeyRec nxagentCursorScreenKeyRec;
+
+#define nxagentCursorScreenKey (&nxagentCursorScreenKeyRec)
+
 typedef struct {
   Cursor cursor;
   PicturePtr picture;
   int uses_render;
   int x;
   int y;
-} nxagentPrivCursor;
+} nxagentPrivCursorRec, *nxagentPrivCursorPtr;
+
+#define nxagentGetCursorPriv(pCursor, pScreen) ((nxagentPrivCursorPtr) \
+    dixLookupScreenPrivate(&(pCursor)->devPrivates, CursorScreenKey, pScreen))
+
+#define nxagentSetCursorPriv(pCursor, pScreen, v) \
+    dixSetScreenPrivate(&(pCursor)->devPrivates, CursorScreenKey, pScreen, v)
+
+#define nxagentCursor(pCursor, pScreen) \
+  (nxagentGetCursorPriv(pCursor, pScreen)->cursor)
+
+#define nxagentCursorPicture(pCursor, pScreen) \
+  (nxagentGetCursorPriv(pCursor, pScreen)->picture)
+
+#define nxagentCursorUsesRender(pCursor, pScreen) \
+  (nxagentGetCursorPriv(pCursor, pScreen)->uses_render)
+
+#define nxagentCursorXOffset(pCursor, pScreen) \
+  (nxagentGetCursorPriv(pCursor, pScreen)->x)
+
+#define nxagentCursorYOffset(pCursor, pScreen) \
+  (nxagentGetCursorPriv(pCursor, pScreen)->y)
 
 /*
  * _AnimCurElt and _AnimCur already defined in animcur.c.
@@ -69,25 +94,6 @@ CursorBitsPtr nxagentAnimCursorBits;
 
 #define nxagentIsAnimCursor(c)        ((c)->bits == nxagentAnimCursorBits)
 #define nxagentGetAnimCursor(c)       ((AnimCurPtr) ((c) + 1))
-
-#define nxagentCursorPriv(pCursor, pScreen) \
-  ((nxagentPrivCursor *)((pCursor)->devPriv[pScreen->myNum]))
-
-#define nxagentCursor(pCursor, pScreen) \
-  (nxagentCursorPriv(pCursor, pScreen)->cursor)
-
-#define nxagentCursorPicture(pCursor, pScreen) \
-  (nxagentCursorPriv(pCursor, pScreen)->picture)
-
-#define nxagentCursorUsesRender(pCursor, pScreen) \
-  (nxagentCursorPriv(pCursor, pScreen)->uses_render)
-
-#define nxagentCursorXOffset(pCursor, pScreen) \
-  (nxagentCursorPriv(pCursor, pScreen)->x)
-
-#define nxagentCursorYOffset(pCursor, pScreen) \
-  (nxagentCursorPriv(pCursor, pScreen)->y)
-
 void nxagentConstrainCursor(ScreenPtr pScreen, BoxPtr pBox);
 
 void nxagentCursorLimits(ScreenPtr pScreen, CursorPtr pCursor,

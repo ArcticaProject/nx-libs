@@ -28,6 +28,7 @@
 
 #include "resource.h"
 #include "Split.h"
+#include "privates.h"
 
 extern RESTYPE RT_NX_PIXMAP;
 
@@ -72,14 +73,12 @@ typedef struct
 
 typedef nxagentPrivPixmapRec *nxagentPrivPixmapPtr;
 
-extern int nxagentPixmapPrivateIndex;
+extern DevPrivateKeyRec nxagentPixmapPrivateKeyRec;
 
-/*
- * Pixmap privates macro.
- */
+#define nxagentPixmapPrivateKey (&nxagentPixmapPrivateKeyRec)
 
-#define nxagentPixmapPriv(pPixmap) \
-    ((nxagentPrivPixmapPtr)((pPixmap) -> devPrivates[nxagentPixmapPrivateIndex].ptr))
+#define nxagentPixmapPriv(pPixmap) ((nxagentPrivPixmapPtr) \
+    dixLookupPrivate(&(pPixmap)->devPrivates, nxagentPixmapPrivateKey))
 
 #define nxagentPixmap(pPixmap) (nxagentPixmapPriv(pPixmap) -> id)
 

@@ -1508,11 +1508,6 @@ ProcRenderCreateAnimCursor (ClientPtr client)
 
     nxagentAnimCursorBits = pCursor -> bits;
 
-    for (i = 0; i < MAXSCREENS; i++)
-    {
-      pCursor -> devPriv[i] = NULL;
-    }
-
     if (AddResource (stuff->cid, RT_CURSOR, (void *)pCursor))
 	return client->noClientException;
     return BadAlloc;

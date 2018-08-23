@@ -29,15 +29,9 @@
 #include "compint.h"
 #include "compositeext.h"
 
-#ifndef NXAGENT_SERVER
 DevPrivateKeyRec CompScreenPrivateKeyRec;
 DevPrivateKeyRec CompWindowPrivateKeyRec;
 DevPrivateKeyRec CompSubwindowsPrivateKeyRec;
-#else /* !defined(NXAGENT_SERVER) */
-int CompScreenPrivIndex = -1;
-int CompWindowPrivIndex = -1;
-int CompSubwindowsPrivIndex = -1;
-#endif
 
 static Bool
 compCloseScreen (ScreenPtr pScreen)
@@ -99,8 +93,6 @@ compInstallColormap (ColormapPtr pColormap)
     pScreen->InstallColormap = compInstallColormap;
 }
 
-/* Unsupported by current architecture, drop for now. */
-#if 0
 static void
 compCheckBackingStore(WindowPtr pWin)
 {
@@ -134,7 +126,6 @@ compChangeWindowAttributes(WindowPtr pWin, unsigned long mask)
 
     return ret;
 }
-#endif /* 0 */
 
 static void
 compGetImage(DrawablePtr pDrawable,
@@ -371,27 +362,12 @@ compScreenInit (ScreenPtr pScreen)
 {
     CompScreenPtr   cs;
 
-#ifndef NXAGENT_SERVER
     if (!dixRegisterPrivateKey(&CompScreenPrivateKeyRec, PRIVATE_SCREEN, 0))
 	    return FALSE;
     if (!dixRegisterPrivateKey(&CompWindowPrivateKeyRec, PRIVATE_WINDOW, 0))
 	return FALSE;
     if (!dixRegisterPrivateKey(&CompSubwindowsPrivateKeyRec, PRIVATE_WINDOW, 0))
 	return FALSE;
-#else /* !defined(NXAGENT_SERVER) */
-    if ((CompScreenPrivIndex = AllocateScreenPrivateIndex()) < 0)
-        return FALSE;
-    if ((CompWindowPrivIndex = AllocateWindowPrivateIndex()) < 0)
-        return FALSE;
-    if ((CompSubwindowsPrivIndex = AllocateWindowPrivateIndex()) < 0)
-        return FALSE;
-
-    if (!AllocateWindowPrivate (pScreen, CompWindowPrivIndex, 0))
-	return FALSE;
-
-    if (!AllocateWindowPrivate (pScreen, CompSubwindowsPrivIndex, 0))
-	return FALSE;
-#endif
 
     if (GetCompScreen (pScreen))
 	return TRUE;
@@ -464,11 +440,8 @@ compScreenInit (ScreenPtr pScreen)
     cs->InstallColormap = pScreen->InstallColormap;
     pScreen->InstallColormap = compInstallColormap;
 
-    /* Unsupported by our current architecture, drop for now. */
-    /*
     cs->ChangeWindowAttributes = pScreen->ChangeWindowAttributes;
     pScreen->ChangeWindowAttributes = compChangeWindowAttributes;
-    */
 
     cs->BlockHandler = NULL;
 

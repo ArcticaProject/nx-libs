@@ -55,6 +55,8 @@ SOFTWARE.
 #include <X11/fonts/font.h>
 #include "input.h"
 #include "cursor.h"
+#include "privates.h"
+#include "colormap.h"
 
 #define MiBits	CARD32
 
@@ -456,7 +458,7 @@ extern Bool miScreenInit(
     VisualPtr /*visuals*/
 );
 
-extern int miAllocateGCPrivateIndex(
+extern DevPrivateKeyRec miAllocateGCPrivateKeyRec(
     void
 );
 
@@ -528,16 +530,6 @@ extern void miClearToBackground(
     int /*w*/,
     int /*h*/,
     Bool /*generateExposures*/
-);
-
-extern Bool miChangeSaveUnder(
-    WindowPtr /*pWin*/,
-    WindowPtr /*first*/
-);
-
-extern void miPostChangeSaveUnder(
-    WindowPtr /*pWin*/,
-    WindowPtr /*pFirst*/
 );
 
 extern void miMarkWindow(

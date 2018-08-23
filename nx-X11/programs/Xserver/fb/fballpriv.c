@@ -28,65 +28,30 @@
 
 #include "fb.h"
 
-#ifdef FB_SCREEN_PRIVATE
-int fbScreenPrivateIndex;
-int fbGetScreenPrivateIndex(void)
+static DevPrivateKeyRec fbScreenPrivateKeyRec;
+DevPrivateKey
+fbGetScreenPrivateKey(void)
 {
-    return fbScreenPrivateIndex;
+    return &fbScreenPrivateKeyRec;
 }
-#endif
-int fbGCPrivateIndex;
-int fbGetGCPrivateIndex(void)
-{
-    return fbGCPrivateIndex;
-}
-#ifndef FB_NO_WINDOW_PIXMAPS
-int fbWinPrivateIndex;
-int fbGetWinPrivateIndex(void)
-{
-    return fbWinPrivateIndex;
-}
-#endif
-int fbGeneration;
-
-#ifdef FB_OLD_SCREEN
-#define miAllocateGCPrivateIndex()  AllocateGCPrivateIndex()
-#endif
 
 Bool
-fbAllocatePrivates(ScreenPtr pScreen, int *pGCIndex)
+fbAllocatePrivates(ScreenPtr pScreen)
 {
-    if (fbGeneration != serverGeneration)
-    {
-	fbGCPrivateIndex = miAllocateGCPrivateIndex ();
-#ifndef FB_NO_WINDOW_PIXMAPS
-	fbWinPrivateIndex = AllocateWindowPrivateIndex();
-#endif
-#ifdef FB_SCREEN_PRIVATE
-	fbScreenPrivateIndex = AllocateScreenPrivateIndex ();
-	if (fbScreenPrivateIndex == -1)
-	    return FALSE;
-#endif
-	
-	fbGeneration = serverGeneration;
-    }
-    if (pGCIndex)
-	*pGCIndex = fbGCPrivateIndex;
-    if (!AllocateGCPrivate(pScreen, fbGCPrivateIndex, sizeof(FbGCPrivRec)))
-	return FALSE;
-#ifndef FB_NO_WINDOW_PIXMAPS
-    if (!AllocateWindowPrivate(pScreen, fbWinPrivateIndex, 0))
-	return FALSE;
-#endif
-#ifdef FB_SCREEN_PRIVATE
-    {
-	FbScreenPrivPtr	pScreenPriv;
+    FbScreenPrivPtr     pScrPriv;
 
-	pScreenPriv = (FbScreenPrivPtr) malloc (sizeof (FbScreenPrivRec));
-	if (!pScreenPriv)
-	    return FALSE;
-	pScreen->devPrivates[fbScreenPrivateIndex].ptr = (void *) pScreenPriv;
-    }
+    if (!dixRegisterPrivateKey
+        (&fbScreenPrivateKeyRec, PRIVATE_SCREEN, sizeof(FbScreenPrivRec)))
+        return FALSE;
+
+    pScrPriv = fbGetScreenPrivate(pScreen);
+
+    if (!dixRegisterScreenSpecificPrivateKey (pScreen, &pScrPriv->gcPrivateKeyRec, PRIVATE_GC, sizeof(FbGCPrivRec)))
+        return FALSE;
+#ifndef FB_NO_WINDOW_PIXMAPS
+    if (!dixRegisterScreenSpecificPrivateKey (pScreen, &pScrPriv->winPrivateKeyRec, PRIVATE_WINDOW, 0))
+        return FALSE;
 #endif
+
     return TRUE;
 }

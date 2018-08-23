@@ -146,8 +146,6 @@ extern Bool XkbFilterEvents(ClientPtr, int, xEvent *);
 #include "dixgrabs.h"
 #include "dispatch.h"
 
-#define EXTENSION_EVENT_BASE  64
-
 #define NoSuchEvent 0x80000000	/* so doesn't match NoEventMask */
 #define StructureAndSubMask ( StructureNotifyMask | SubstructureNotifyMask )
 #define AllButtonsMask ( \

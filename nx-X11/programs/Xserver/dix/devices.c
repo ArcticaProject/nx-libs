@@ -83,6 +83,12 @@ AddInputDevice(DeviceProc deviceProc, Bool autoStart)
     dev = (DeviceIntPtr) calloc(1, sizeof(DeviceIntRec));
     if (!dev)
 	return (DeviceIntPtr)NULL;
+
+    if (!dixAllocatePrivates(&dev->devPrivates, PRIVATE_DEVICE)) {
+	free(dev);
+	return NULL;
+    }
+
     dev->name = (char *)NULL;
     dev->type = 0;
     dev->id = inputInfo.numDevices;
@@ -90,6 +96,7 @@ AddInputDevice(DeviceProc deviceProc, Bool autoStart)
     dev->public.on = FALSE;
     dev->public.processInputProc = (ProcessInputProc)NoopDDA;
     dev->public.realInputProc = (ProcessInputProc)NoopDDA;
+
     dev->public.enqueueInputProc = EnqueueEvent;
     dev->deviceProc = deviceProc;
     dev->startup = autoStart;

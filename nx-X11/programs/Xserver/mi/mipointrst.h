@@ -3,7 +3,6 @@
  *
  */
 
-
 /*
 
 Copyright 1989, 1998  The Open Group
@@ -29,34 +28,17 @@ used in advertising or otherwise to promote the sale, use or other dealings
 in this Software without prior written authorization from The Open Group.
 */
 
+#ifndef MIPOINTRST_H
+#define MIPOINTRST_H
+
 #include "mipointer.h"
 #include "scrnintstr.h"
 
-#define MOTION_SIZE	256
-
 typedef struct {
-    xTimecoord	    event;
-    ScreenPtr	    pScreen;
-} miHistoryRec, *miHistoryPtr;
-
-typedef struct {
-    ScreenPtr		    pScreen;    /* current screen */
-    ScreenPtr		    pSpriteScreen;/* screen containing current sprite */
-    CursorPtr		    pCursor;    /* current cursor */
-    CursorPtr		    pSpriteCursor;/* cursor on screen */
-    BoxRec		    limits;	/* current constraints */
-    Bool		    confined;	/* pointer can't change screens */
-    int			    x, y;	/* hot spot location */
-    int			    devx, devy;	/* sprite position */
-    DevicePtr		    pPointer;   /* pointer device structure */
-    miHistoryRec	    history[MOTION_SIZE];
-    int			    history_start, history_end;
-} miPointerRec, *miPointerPtr;
-
-typedef struct {
-    miPointerSpriteFuncPtr  spriteFuncs;	/* sprite-specific methods */
-    miPointerScreenFuncPtr  screenFuncs;	/* screen-specific methods */
-    CloseScreenProcPtr	    CloseScreen;
-    Bool		    waitForUpdate;	/* don't move cursor in SIGIO */
-    Bool		    showTransparent;	/* show empty cursors */
+    miPointerSpriteFuncPtr spriteFuncs; /* sprite-specific methods */
+    miPointerScreenFuncPtr screenFuncs; /* screen-specific methods */
+    CloseScreenProcPtr CloseScreen;
+    Bool waitForUpdate;         /* don't move cursor from input thread */
+    Bool showTransparent;       /* show empty cursors */
 } miPointerScreenRec, *miPointerScreenPtr;
+#endif                          /* MIPOINTRST_H */

@@ -6145,6 +6145,9 @@ XkbExtensionInit(void)
 {
     ExtensionEntry *extEntry;
 
+    if (!XkbInitPrivates())
+        return;
+
     if ((extEntry = AddExtension(XkbName, XkbNumberEvents, XkbNumberErrors,
 				 ProcXkbDispatch, SProcXkbDispatch,
 				 XkbResetProc, StandardMinorOpcode))) {

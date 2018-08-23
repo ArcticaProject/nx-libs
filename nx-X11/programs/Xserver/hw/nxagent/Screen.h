@@ -116,10 +116,6 @@ int nxagentAdjustRandRXinerama(ScreenPtr pScreen);
 
 extern Bool nxagentReconnectScreen(void *p0);
 
-void nxagentSaveAreas(PixmapPtr pPixmap, RegionPtr prgnSave, int xorg, int yorg, WindowPtr pWin);
-
-void nxagentRestoreAreas(PixmapPtr pPixmap, RegionPtr prgnRestore, int xorg, int yorg, WindowPtr pWin);
-
 extern int monitorResolution;
 
 int nxagentShadowCreateMainWindow( ScreenPtr pScreen, WindowPtr pWin,int width, int height);

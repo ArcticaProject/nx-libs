@@ -49,6 +49,8 @@ SOFTWARE.
 #define CURSORSTRUCT_H 
 
 #include "cursor.h"
+#include "privates.h"
+
 /* 
  * device-independent cursor storage
  */
@@ -63,23 +65,27 @@ typedef struct _CursorBits {
     Bool emptyMask;				/* all zeros mask */
     unsigned short width, height, xhot, yhot;	/* metrics */
     int refcnt;					/* can be shared */
-    void * devPriv[MAXSCREENS];		/* set by pScr->RealizeCursor*/
+    PrivateRec *devPrivates;                    /* set by pScr->RealizeCursor */
 #ifdef ARGB_CURSOR
     CARD32 *argb;				/* full-color alpha blended */
 #endif
 } CursorBits, *CursorBitsPtr;
+
+#define CURSOR_BITS_SIZE (sizeof(CursorBits) + dixPrivatesSize(PRIVATE_CURSOR_BITS))
 
 typedef struct _Cursor {
     CursorBitsPtr bits;
     unsigned short foreRed, foreGreen, foreBlue; /* device-independent color */
     unsigned short backRed, backGreen, backBlue; /* device-independent color */
     int refcnt;
-    void * devPriv[MAXSCREENS];		/* set by pScr->RealizeCursor*/
+    PrivateRec *devPrivates;                     /* set by pScr->RealizeCursor */
 #ifdef XFIXES
     CARD32 serialNumber;
     Atom name;
 #endif
 } CursorRec;
+
+#define CURSOR_REC_SIZE (sizeof(CursorRec) + dixPrivatesSize(PRIVATE_CURSOR))
 
 typedef struct _CursorMetric {
     unsigned short width, height, xhot, yhot;

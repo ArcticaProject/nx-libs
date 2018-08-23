@@ -100,7 +100,7 @@ void nxagentCheckRestartedClients(struct timeval **timeout);
  * Allow attaching private members to the client.
  */
 
-int nxagentClientPrivateIndex;
+DevPrivateKeyRec nxagentClientPrivateKeyRec;
 
 /*
  * The master nxagent holds in nxagentShadowCounter
@@ -108,6 +108,8 @@ int nxagentClientPrivateIndex;
  */
 
 int nxagentShadowCounter = 0;
+
+// FIXME: Where to attach the agent client privates???
 
 void nxagentInitClientPrivates(ClientPtr client)
 {

@@ -51,6 +51,7 @@ SOFTWARE.
 #include "misc.h"
 #include "screenint.h"
 #include "window.h"
+#include "privates.h"
 
 #define NullCursor ((CursorPtr)NULL)
 
@@ -61,6 +62,10 @@ SOFTWARE.
 
 typedef struct _Cursor *CursorPtr;
 typedef struct _CursorMetric *CursorMetricPtr;
+
+extern DevScreenPrivateKeyRec cursorScreenDevPriv;
+
+#define CursorScreenKey (&cursorScreenDevPriv)
 
 extern CursorPtr rootCursor;
 

@@ -56,7 +56,6 @@
 /* prototypes */
 
 PictFormatPtr PictureCreateDefaultFormats (ScreenPtr pScreen, int *nformatp);
-PicturePtr AllocatePicture (ScreenPtr  pScreen);
 PicturePtr CreatePicture (Picture       pid,
                           DrawablePtr   pDrawable,
                           PictFormatPtr pFormat,
@@ -185,40 +184,6 @@ PictureCreateDefaultFormats (ScreenPtr pScreen, int *nformatp)
 }
 
 PicturePtr
-AllocatePicture (ScreenPtr  pScreen)
-{
-    PictureScreenPtr	ps = GetPictureScreen(pScreen);
-    PicturePtr		pPicture;
-    char		*ptr;
-    DevUnion		*ppriv;
-    unsigned int    	*sizes;
-    unsigned int    	size;
-    int			i;
-
-    pPicture = (PicturePtr) calloc(1, ps->totalPictureSize);
-    if (!pPicture)
-	return 0;
-    ppriv = (DevUnion *)(pPicture + 1);
-    pPicture->devPrivates = ppriv;
-    sizes = ps->PicturePrivateSizes;
-    ptr = (char *)(ppriv + ps->PicturePrivateLen);
-    for (i = ps->PicturePrivateLen; --i >= 0; ppriv++, sizes++)
-    {
-	if ( (size = *sizes) )
-	{
-	    ppriv->ptr = (void *)ptr;
-	    ptr += size;
-	}
-	else
-	    ppriv->ptr = (void *)NULL;
-    }
-
-    nxagentPicturePriv(pPicture) -> picture = 0;
-
-    return pPicture;
-}
-
-PicturePtr
 CreatePicture (Picture		pid,
 	       DrawablePtr	pDrawable,
 	       PictFormatPtr	pFormat,
@@ -230,7 +195,8 @@ CreatePicture (Picture		pid,
     PicturePtr		pPicture;
     PictureScreenPtr	ps = GetPictureScreen(pDrawable->pScreen);
 
-    pPicture = AllocatePicture (pDrawable->pScreen);
+    pPicture = dixAllocateScreenObjectWithPrivates(pDrawable->pScreen,
+                                                   PictureRec, PRIVATE_PICTURE);
     if (!pPicture)
     {
 	*error = BadAlloc;
@@ -304,48 +270,10 @@ CreateSolidPicture (Picture pid, xRenderColor *color, int *error)
 static PicturePtr createSourcePicture(void)
 {
     PicturePtr pPicture;
-
-    extern int nxagentPicturePrivateIndex;
-
-    unsigned int totalPictureSize;
-
-    DevUnion *ppriv;
-
-    char *privPictureRecAddr;
-
-    int i;
-
-    /*
-     * Compute size of entire PictureRect, plus privates.
-     */
-
-    totalPictureSize = sizeof(PictureRec) +
-                           picturePrivateCount * sizeof(DevUnion) +
-                               sizeof(nxagentPrivPictureRec);
-
-    pPicture = (PicturePtr) calloc(1, totalPictureSize);
-
-    if (pPicture != NULL)
-    {
-      ppriv = (DevUnion *) (pPicture + 1);
-
-      for (i = 0; i < picturePrivateCount; ++i)
-      {
-        /*
-         * Other privates are inaccessible.
-         */
-
-        ppriv[i].ptr = NULL;
-      }
-
-      privPictureRecAddr = (char *) &ppriv[picturePrivateCount];
-
-      ppriv[nxagentPicturePrivateIndex].ptr = (void *) privPictureRecAddr;
-
-      pPicture -> devPrivates = ppriv;
-
-      nxagentPicturePriv(pPicture) -> picture = 0;
-    }
+    pPicture = dixAllocateScreenObjectWithPrivates(NULL, PictureRec,
+                                                   PRIVATE_PICTURE);
+    if (!pPicture)
+        return 0;
 
     pPicture->pDrawable = 0;
     pPicture->pFormat = 0;
@@ -356,17 +284,19 @@ static PicturePtr createSourcePicture(void)
 }
 
 int
-FreePicture (void *	value,
-	     XID	pid)
+FreePicture (void *     value,
+             XID        pid)
 {
-    PicturePtr	pPicture = (PicturePtr) value;
+    PicturePtr  pPicture = (PicturePtr) value;
+
 
     if (--pPicture->refcnt == 0)
     {
+
         nxagentDestroyPicture(pPicture);
 
-	if (pPicture->transform)
-	    free (pPicture->transform);
+        if (pPicture->transform)
+            free (pPicture->transform);
         if (!pPicture->pDrawable) {
             if (pPicture->pSourcePict) {
                 if (pPicture->pSourcePict->type != SourcePictTypeSolidFill)
@@ -374,21 +304,21 @@ FreePicture (void *	value,
                 free(pPicture->pSourcePict);
             }
         } else {
-            ScreenPtr	    pScreen = pPicture->pDrawable->pScreen;
+            ScreenPtr       pScreen = pPicture->pDrawable->pScreen;
             PictureScreenPtr    ps = GetPictureScreen(pScreen);
-	
+        
             if (pPicture->alphaMap)
                 FreePicture ((void *) pPicture->alphaMap, (XID) 0);
             (*ps->DestroyPicture) (pPicture);
             (*ps->DestroyPictureClip) (pPicture);
             if (pPicture->pDrawable->type == DRAWABLE_WINDOW)
             {
-                WindowPtr	pWindow = (WindowPtr) pPicture->pDrawable;
-                PicturePtr	*pPrev;
+                WindowPtr       pWindow = (WindowPtr) pPicture->pDrawable;
+                PicturePtr      *pPrev;
 
-                for (pPrev = (PicturePtr *) &((pWindow)->devPrivates[PictureWindowPrivateIndex].ptr);
-                     *pPrev;
-                     pPrev = &(*pPrev)->pNext)
+                for (pPrev = (PicturePtr *) dixLookupPrivateAddr
+                     (&pWindow->devPrivates, PictureWindowPrivateKey);
+                     *pPrev; pPrev = &(*pPrev)->pNext)
                 {
                     if (*pPrev == pPicture)
                     {
@@ -402,7 +332,7 @@ FreePicture (void *	value,
                 (*pScreen->DestroyPixmap) ((PixmapPtr)pPicture->pDrawable);
             }
         }
-	free (pPicture);
+        dixFreeObjectWithPrivates(pPicture, PRIVATE_PICTURE);
     }
     return Success;
 }

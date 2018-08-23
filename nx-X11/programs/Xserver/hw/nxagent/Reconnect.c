@@ -394,8 +394,6 @@ void nxagentDisconnectSession(void)
     nxagentDisconnectAllPicture();
   }
 
-  nxagentEmptyAllBackingStoreRegions();
-
   nxagentDisconnectAllWindows();
   nxagentDisconnectAllCursor();
   nxagentDisconnectAllPixmaps();
@@ -515,8 +513,6 @@ Bool nxagentReconnectSession(void)
   XFlush(nxagentDisplay);
 
   NXTransContinue(NULL);
-
-  nxagentEmptyBSPixmapList();
 
   if (nxagentReconnectAllPixmaps(reconnectLossyLevel[PIXMAP_STEP]) == 0)
   {

@@ -120,8 +120,6 @@ Equipment Corporation.
 #include "dpmsproc.h"
 #endif
 
-extern int InitClientPrivates(ClientPtr client);
-
 extern void Dispatch(void);
 
 xConnSetupPrefix connSetupPrefix;
@@ -130,8 +128,6 @@ extern FontPtr defaultFont;
 
 extern void InitProcVectors(void);
 extern Bool CreateGCperDepthArray(void);
-
-extern void FreeScreen(ScreenPtr pScreen);
 
 #ifndef PANORAMIX
 static
@@ -248,6 +244,15 @@ main(int argc, char *argv[], char *envp[])
 	clients[0] = serverClient;
 	currentMaxClients = 1;
 
+        /* Initialize privates before first allocation */
+        dixResetPrivates();
+
+        /* Initialize server client devPrivates, to be reallocated as
+         * more client privates are registered
+         */
+        if (!dixAllocatePrivates(&serverClient->devPrivates, PRIVATE_CLIENT))
+            FatalError("failed to create server client privates");
+
 	if (!InitClientResources(serverClient))      /* for root resources */
 	    FatalError("couldn't init server resources");
 
@@ -263,16 +268,6 @@ main(int argc, char *argv[], char *envp[])
 #else
 	InitGlyphCaching();
 #endif /* of HAS_XFONT2 */
-	ResetExtensionPrivates();
-	ResetClientPrivates();
-	ResetScreenPrivates();
-	ResetWindowPrivates();
-	ResetGCPrivates();
-#ifdef PIXPRIV
-	ResetPixmapPrivates();
-#endif
-	ResetColormapPrivates();
-	ResetDevicePrivateIndex();
 	InitFonts();
 	InitCallbackManager();
 	InitVisualWrap();
@@ -283,8 +278,7 @@ main(int argc, char *argv[], char *envp[])
 	if (screenInfo.numVideoScreens < 0)
 	    screenInfo.numVideoScreens = screenInfo.numScreens;
 	InitExtensions(argc, argv);
-	if (!InitClientPrivates(serverClient))
-	    FatalError("failed to allocate serverClient devprivates");
+
 	for (i = 0; i < screenInfo.numScreens; i++)
 	{
 	    ScreenPtr pScreen = screenInfo.screens[i];
@@ -300,11 +294,6 @@ main(int argc, char *argv[], char *envp[])
 	    if (!CreateRootWindow(pScreen))
 		FatalError("failed to create root window");
 	}
-	InitInput(argc, argv);
-	if (InitAndStartDevices() != Success)
-	    FatalError("failed to initialize core devices");
-	ReserveClientIds(serverClient);
-
 	if (loadableFonts) {
 	    SetFontPath(serverClient, 0, (unsigned char *)defaultFontPath);
 	} else {
@@ -335,6 +324,12 @@ main(int argc, char *argv[], char *envp[])
 	for (i = 0; i < screenInfo.numScreens; i++)
 	    InitRootWindow(screenInfo.screens[i]->root);
 	DefineInitialRootWindow(screenInfo.screens[0]->root);
+
+	InitInput(argc, argv);
+	if (InitAndStartDevices() != Success)
+	    FatalError("failed to initialize core devices");
+	ReserveClientIds(serverClient);
+
 	SaveScreens(SCREEN_SAVER_FORCER, ScreenSaverReset);
 
 #ifdef PANORAMIX
@@ -379,8 +374,10 @@ main(int argc, char *argv[], char *envp[])
 	    FreeScratchPixmapsForScreen(i);
 	    FreeGCperDepth(i);
 	    FreeDefaultStipple(i);
+	    dixFreeScreenSpecificPrivates(screenInfo.screens[i]);
 	    (* screenInfo.screens[i]->CloseScreen)(screenInfo.screens[i]);
-	    FreeScreen(screenInfo.screens[i]);
+	    dixFreePrivates(screenInfo.screens[i]->devPrivates, PRIVATE_SCREEN);
+	    free(screenInfo.screens[i]);
 	    screenInfo.numScreens = i;
 	}
 	FreeFonts();
@@ -388,7 +385,7 @@ main(int argc, char *argv[], char *envp[])
 	FreeAuditTimer();
 
 	ReleaseClientIds(serverClient);
-	free(serverClient->devPrivates);
+	dixFreePrivates(serverClient->devPrivates, PRIVATE_CLIENT);
 	serverClient->devPrivates = NULL;
 
 	if (dispatchException & DE_TERMINATE)
@@ -520,7 +517,7 @@ CreateConnectionBlock()
 	root.maxInstalledMaps = pScreen->maxInstalledCmaps; 
 	root.rootVisualID = pScreen->rootVisual;		
 	root.backingStore = pScreen->backingStoreSupport;
-	root.saveUnders = pScreen->saveUnderSupport != NotUseful;
+	root.saveUnders = FALSE;
 	root.rootDepth = pScreen->rootDepth;
 	root.nDepths = pScreen->numDepths;
 	memmove(pBuf, (char *)&root, sizeof(xWindowRoot));

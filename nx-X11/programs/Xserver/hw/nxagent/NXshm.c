@@ -90,8 +90,8 @@ ShmExtensionInit(void)
 #ifdef MUST_CHECK_FOR_SHM_SYSCALL
     if (!CheckForShmSyscall())
     {
-	ErrorF("MIT-SHM extension disabled due to lack of kernel support\n");
-	return;
+        ErrorF("MIT-SHM extension disabled due to lack of kernel support\n");
+        return;
     }
 #endif
 
@@ -100,58 +100,39 @@ ShmExtensionInit(void)
       return;
     }
 
+    if (!ShmRegisterPrivates())
+        return;
+
     sharedPixmaps = xFalse;
-    pixmapFormat = 0;
     {
-      sharedPixmaps = nxagentOption(SharedPixmaps);
-      pixmapFormat = shmPixFormat[0];
-      for (i = 0; i < screenInfo.numScreens; i++)
-      {
-	if (!shmFuncs[i])
-        {
-            #ifdef TEST
-            fprintf(stderr, "ShmExtensionInit: Registering shmFuncs as miFuncs.\n");
-            #endif
-	    shmFuncs[i] = &miFuncs;
+        sharedPixmaps = xTrue;
+        for (i = 0; i < screenInfo.numScreens; i++) {
+            ShmScrPrivateRec *screen_priv =
+                ShmInitScreenPriv(screenInfo.screens[i]);
+            if (!screen_priv->shmFuncs)
+                screen_priv->shmFuncs = &miFuncs;
+            if (!screen_priv->shmFuncs->CreatePixmap)
+                sharedPixmaps = xFalse;
         }
-	if (!shmFuncs[i]->CreatePixmap)
-	    sharedPixmaps = xFalse;
-	if (shmPixFormat[i] && (shmPixFormat[i] != pixmapFormat))
-	{
-	    sharedPixmaps = xFalse;
-	    pixmapFormat = 0;
-	}
-      }
-      if (!pixmapFormat)
-	pixmapFormat = ZPixmap;
-      if (sharedPixmaps)
-      {
-	for (i = 0; i < screenInfo.numScreens; i++)
-	{
-	    destroyPixmap[i] = screenInfo.screens[i]->DestroyPixmap;
-	    screenInfo.screens[i]->DestroyPixmap = ShmDestroyPixmap;
-	}
-#ifdef PIXPRIV
-	shmPixmapPrivate = AllocatePixmapPrivateIndex();
-	for (i = 0; i < screenInfo.numScreens; i++)
-	{
-	    if (!AllocatePixmapPrivate(screenInfo.screens[i],
-				       shmPixmapPrivate, 0))
-		return;
-	}
-#endif
-      }
+        if (sharedPixmaps)
+            for (i = 0; i < screenInfo.numScreens; i++) {
+                ShmScrPrivateRec *screen_priv =
+                    ShmGetScreenPriv(screenInfo.screens[i]);
+                screen_priv->destroyPixmap =
+                    screenInfo.screens[i]->DestroyPixmap;
+                screenInfo.screens[i]->DestroyPixmap = ShmDestroyPixmap;
+            }
     }
     ShmSegType = CreateNewResourceType(ShmDetachSegment);
     if (ShmSegType &&
-	(extEntry = AddExtension(SHMNAME, ShmNumberEvents, ShmNumberErrors,
-				 ProcShmDispatch, SProcShmDispatch,
-				 ShmResetProc, StandardMinorOpcode)))
+        (extEntry = AddExtension(SHMNAME, ShmNumberEvents, ShmNumberErrors,
+                                 ProcShmDispatch, SProcShmDispatch,
+                                 ShmResetProc, StandardMinorOpcode)))
     {
-	ShmReqCode = (unsigned char)extEntry->base;
-	ShmCompletionCode = extEntry->eventBase;
-	BadShmSegCode = extEntry->errorBase;
-	EventSwapVector[ShmCompletionCode] = (EventSwapPtr) SShmCompletionEvent;
+        ShmReqCode = (unsigned char)extEntry->base;
+        ShmCompletionCode = extEntry->eventBase;
+        BadShmSegCode = extEntry->errorBase;
+        EventSwapVector[ShmCompletionCode] = (EventSwapPtr) SShmCompletionEvent;
     }
 }
 
@@ -275,8 +256,9 @@ ProcShmPutImage(client)
     register DrawablePtr pDraw;
     long length;
     ShmDescPtr shmdesc;
-    REQUEST(xShmPutImageReq);
+    ShmScrPrivateRec *screen_priv;
 
+    REQUEST(xShmPutImageReq);
     REQUEST_SIZE_MATCH(xShmPutImageReq);
     VALIDATE_DRAWABLE_AND_GC(stuff->drawable, pDraw, pGC, client);
     VERIFY_SHMPTR(stuff->shmseg, stuff->offset, FALSE, shmdesc, client);
@@ -346,10 +328,11 @@ ProcShmPutImage(client)
     #endif
 
     #ifdef TEST
-    fprintf(stderr, "ProcShmPutImage: Calling (*shmFuncs[pDraw->pScreen->myNum]->PutImage)().\n");
+    fprintf(stderr, "ProcShmPutImage: Calling (*screen_priv->shmFuncs->PutImage)().\n");
     #endif
 
-    (*shmFuncs[pDraw->pScreen->myNum]->PutImage)(
+    screen_priv = ShmGetScreenPriv(pDraw->pScreen);
+    (*screen_priv->shmFuncs->PutImage)(
                                pDraw, pGC, stuff->depth, stuff->format,
                                stuff->totalWidth, stuff->totalHeight,
                                stuff->srcX, stuff->srcY,

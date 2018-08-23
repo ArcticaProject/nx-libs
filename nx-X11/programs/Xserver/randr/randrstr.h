@@ -366,28 +366,13 @@ typedef struct _rrScrPriv {
 
 } rrScrPrivRec, *rrScrPrivPtr;
 
-#ifndef NXAGENT_SERVER
 extern _X_EXPORT DevPrivateKeyRec rrPrivKeyRec;
 
 #define rrPrivKey (&rrPrivKeyRec)
-extern DevPrivateKey rrPrivKey;
-#else
-extern int rrPrivIndex;
-#endif
-
-#ifndef NXAGENT_SERVER
 
 #define rrGetScrPriv(pScr) ((rrScrPrivPtr)dixLookupPrivate(&(pScr)->devPrivates, rrPrivKey))
 #define rrScrPriv(pScr)	rrScrPrivPtr pScrPriv = rrGetScrPriv(pScr)
 #define SetRRScreen(s,p) dixSetPrivate(&(s)->devPrivates, rrPrivKey, p)
-
-#else                           /* !defined(NXAGENT_SERVER) */
-
-#define rrGetScrPriv(pScr) ((rrScrPrivPtr) (pScr)->devPrivates[rrPrivIndex].ptr)
-#define rrScrPriv(pScr) rrScrPrivPtr pScrPriv = rrGetScrPriv(pScr)
-#define SetRRScreen(s,p) ((s)->devPrivates[rrPrivIndex].ptr = (void *) (p))
-
-#endif                          /* !defined(NXAGENT_SERVER) */
 
 /*
  * each window has a list of clients requesting
@@ -419,13 +404,9 @@ typedef struct _RRClient {
 } RRClientRec, *RRClientPtr;
 
 extern RESTYPE RRClientType, RREventType;       /* resource types for event masks */
+extern DevPrivateKeyRec RRClientPrivateKeyRec;
 
-#ifndef NXAGENT_SERVER
-extern DevPrivateKey RRClientPrivateKey;
-#else
-extern int RRClientPrivateIndex;
-#endif
-
+#define RRClientPrivateKey (&RRClientPrivateKeyRec)
 extern _X_EXPORT RESTYPE RRCrtcType, RRModeType, RROutputType, RRProviderType;
 
 #ifdef NXAGENT_SERVER
@@ -448,16 +429,7 @@ extern _X_EXPORT RESTYPE RRCrtcType, RRModeType, RROutputType, RRProviderType;
 
 #endif
 
-#ifndef NXAGENT_SERVER
-
-#define RRClientPrivateKey (&RRClientPrivateKeyRec)
 #define GetRRClient(pClient) ((RRClientPtr)dixLookupPrivate(&(pClient)->devPrivates, RRClientPrivateKey))
-
-#else                           /* !defined/NXAGENT_SERVER) */
-
-#define GetRRClient(pClient) ((RRClientPtr) (pClient)->devPrivates[RRClientPrivateIndex].ptr)
-
-#endif                          /* !defined(NXAGENT_SERVER) */
 #define rrClientPriv(pClient) RRClientPtr pRRClient = GetRRClient(pClient)
 
 /* Initialize the extension */

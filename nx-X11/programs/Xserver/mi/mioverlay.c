@@ -10,6 +10,7 @@
 #include "mi.h"
 #include "gcstruct.h"
 #include "regionstr.h"
+#include "privates.h"
 #include "mivalidate.h"
 #include "mioverlay.h"
 #include "migc.h"
@@ -53,9 +54,12 @@ typedef struct {
    Bool				copyUnderlay;
 } miOverlayScreenRec, *miOverlayScreenPtr;
 
-static unsigned long miOverlayGeneration = 0;
-int miOverlayWindowIndex = -1;
-int miOverlayScreenIndex = -1;
+static DevPrivateKeyRec miOverlayWindowKeyRec;
+
+#define miOverlayWindowKey (&miOverlayWindowKeyRec)
+static DevPrivateKeyRec miOverlayScreenKeyRec;
+
+#define miOverlayScreenKey (&miOverlayScreenKeyRec)
 
 static void RebuildTree(WindowPtr);
 static Bool HasUnderlayChildren(WindowPtr);
@@ -85,10 +89,10 @@ static void miOverlaySetShape(WindowPtr);
 #endif
 static void miOverlayChangeBorderWidth(WindowPtr, unsigned int);
 
-#define MIOVERLAY_GET_SCREEN_PRIVATE(pScreen) \
-	((miOverlayScreenPtr)((pScreen)->devPrivates[miOverlayScreenIndex].ptr))
-#define MIOVERLAY_GET_WINDOW_PRIVATE(pWin) \
-	((miOverlayWindowPtr)((pWin)->devPrivates[miOverlayWindowIndex].ptr))
+#define MIOVERLAY_GET_SCREEN_PRIVATE(pScreen) ((miOverlayScreenPtr) \
+       dixLookupPrivate(&(pScreen)->devPrivates, miOverlayScreenKey))
+#define MIOVERLAY_GET_WINDOW_PRIVATE(pWin) ((miOverlayWindowPtr) \
+       dixLookupPrivate(&(pWin)->devPrivates, miOverlayWindowKey))
 #define MIOVERLAY_GET_WINDOW_TREE(pWin) \
 	(MIOVERLAY_GET_WINDOW_PRIVATE(pWin)->tree)
 
@@ -112,22 +116,17 @@ miInitOverlay(
 
     if(!inOverlayFunc || !transFunc) return FALSE;
 
-    if(miOverlayGeneration != serverGeneration) {
-	if(((miOverlayScreenIndex = AllocateScreenPrivateIndex()) < 0) ||
-	   ((miOverlayWindowIndex = AllocateWindowPrivateIndex()) < 0))
-	    return FALSE;
-	
-	miOverlayGeneration = serverGeneration;
-    }
+    if (!dixRegisterPrivateKey
+        (&miOverlayWindowKeyRec, PRIVATE_WINDOW, sizeof(miOverlayWindowRec)))
+        return FALSE;
 
-    if(!AllocateWindowPrivate(pScreen, miOverlayWindowIndex,
-				sizeof(miOverlayWindowRec)))
-	return FALSE;
+    if (!dixRegisterPrivateKey(&miOverlayScreenKeyRec, PRIVATE_SCREEN, 0))
+        return FALSE;
 
     if(!(pScreenPriv = malloc(sizeof(miOverlayScreenRec))))
 	return FALSE;
 
-    pScreen->devPrivates[miOverlayScreenIndex].ptr = (void *)pScreenPriv;
+    dixSetPrivate(&pScreen->devPrivates, miOverlayScreenKey, pScreenPriv);
 
     pScreenPriv->InOverlay = inOverlayFunc;
     pScreenPriv->MakeTransparent = transFunc;
@@ -943,9 +942,6 @@ miOverlayMoveWindow(
     short bw;
     RegionRec overReg, underReg;
     DDXPointRec oldpt;
-#ifdef DO_SAVE_UNDERS
-    Bool dosave = FALSE;
-#endif
 
     if (!(pParent = pWin->parent))
        return ;
@@ -983,11 +979,6 @@ miOverlayMoveWindow(
 	miOverlayScreenPtr pPriv = MIOVERLAY_GET_SCREEN_PRIVATE(pScreen);
 	(*pScreen->MarkOverlappedWindows) (pWin, windowToValidate, NULL);
 
-#ifdef DO_SAVE_UNDERS
-	if (DO_SAVE_UNDERS(pWin))
-	    dosave = (*pScreen->ChangeSaveUnder)(pWin, windowToValidate);
-#endif /* DO_SAVE_UNDERS */
-
 	(*pScreen->ValidateTree)(pWin->parent, NullWindow, kind);
 	if(RegionNotEmpty(&underReg)) {
 	    pPriv->copyUnderlay = TRUE;
@@ -1001,10 +992,6 @@ miOverlayMoveWindow(
 	RegionUninit(&overReg);
 	(*pScreen->HandleExposures)(pWin->parent);
 
-#ifdef DO_SAVE_UNDERS
-	if (dosave)
-	    (*pScreen->PostChangeSaveUnder)(pWin, windowToValidate);
-#endif /* DO_SAVE_UNDERS */
 	if (pScreen->PostValidateTree)
 	    (*pScreen->PostValidateTree)(pWin->parent, NullWindow, kind);
     }
@@ -1025,8 +1012,6 @@ miOverlayWindowExposures(
     RegionPtr   exposures = prgn;
     ScreenPtr pScreen = pWin->drawable.pScreen;
 
-    if (pWin->backStorage && prgn)
-	exposures = (*pScreen->RestoreAreas)(pWin, prgn);
     if ((prgn && !RegionNil(prgn)) || 
 	(exposures && !RegionNil(exposures)) || other_exposed)
     {
@@ -1067,15 +1052,6 @@ miOverlayWindowExposures(
 	    } else
 		RegionIntersect(prgn, prgn, &pWin->clipList);
 
-	    /* need to clear out new areas of backing store, too */
-	    if (pWin->backStorage)
-		(void) (*pScreen->ClearBackingStore)(
-					     pWin,
-					     box.x1 - pWin->drawable.x,
-					     box.y1 - pWin->drawable.y,
-					     box.x2 - box.x1,
-					     box.y2 - box.y1,
-					     FALSE);
 	}
 	if (prgn && !RegionNil(prgn))
 	    (*pScreen->PaintWindowBackground)(
@@ -1172,12 +1148,8 @@ miOverlayResizeWindow(
     RegionPtr	oldWinClip = NULL, oldWinClip2 = NULL;	
     RegionPtr	borderVisible = NullRegion; 
     RegionPtr	borderVisible2 = NullRegion; 
-    RegionPtr	bsExposed = NullRegion;	    /* backing store exposures */
     Bool	shrunk = FALSE; /* shrunk in an inner dimension */
     Bool	moved = FALSE;	/* window position changed */
-#ifdef DO_SAVE_UNDERS
-    Bool	dosave = FALSE;
-#endif
     Bool	doUnderlay;
 
     /* if this is a root window, can't be resized */
@@ -1309,11 +1281,6 @@ miOverlayResizeWindow(
 	if(pTree)
 	    pTree->valdata->borderVisible = borderVisible2;
 
-#ifdef DO_SAVE_UNDERS
-	if (DO_SAVE_UNDERS(pWin))
-	    dosave = (*pScreen->ChangeSaveUnder)(pWin, pFirstChange);
-#endif /* DO_SAVE_UNDERS */
-
 	(*pScreen->ValidateTree)(pWin->parent, pFirstChange, VTOther);
 	/*
 	 * the entire window is trashed unless bitGravity
@@ -1325,17 +1292,6 @@ miOverlayResizeWindow(
     }
 
     GravityTranslate (x, y, oldx, oldy, dw, dh, pWin->bitGravity, &nx, &ny);
-
-    if (pWin->backStorage && ((pWin->backingStore == Always) || WasViewable)) {
-	if (!WasViewable)
-	    pRegion = &pWin->clipList; /* a convenient empty region */
-	if (pWin->bitGravity == ForgetGravity)
-	    bsExposed = (*pScreen->TranslateBackingStore)
-				(pWin, 0, 0, NullRegion, oldx, oldy);
-	else
-	    bsExposed = (*pScreen->TranslateBackingStore)
-			     (pWin, nx - x, ny - y, pRegion, oldx, oldy);
-    }
 
     if (WasViewable) {
 	miOverlayScreenPtr pPriv = MIOVERLAY_GET_SCREEN_PRIVATE(pScreen);
@@ -1544,27 +1500,9 @@ miOverlayResizeWindow(
 	    RegionDestroy(destClip);
 	if (destClip2)
 	    RegionDestroy(destClip2);
-	if (bsExposed) {
-	    RegionPtr	valExposed = NullRegion;
-
-	    if (pWin->valdata)
-		valExposed = &pWin->valdata->after.exposed;
-	    (*pScreen->WindowExposures) (pWin, valExposed, bsExposed);
-	    if (valExposed)
-		RegionEmpty(valExposed);
-	    RegionDestroy(bsExposed);
-	}
 	(*pScreen->HandleExposures)(pWin->parent);
-#ifdef DO_SAVE_UNDERS
-	if (dosave)
-	    (*pScreen->PostChangeSaveUnder)(pWin, pFirstChange);
-#endif /* DO_SAVE_UNDERS */
 	if (pScreen->PostValidateTree)
 	    (*pScreen->PostValidateTree)(pWin->parent, pFirstChange, VTOther);
-    }
-    else if (bsExposed) {
-	(*pScreen->WindowExposures) (pWin, NullRegion, bsExposed);
-	RegionDestroy(bsExposed);
     }
     if (pWin->realized)
 	WindowsRestructured ();
@@ -1577,10 +1515,7 @@ miOverlaySetShape(WindowPtr pWin)
 {
     Bool	WasViewable = (Bool)(pWin->viewable);
     ScreenPtr 	pScreen = pWin->drawable.pScreen;
-    RegionPtr	pOldClip = NULL, bsExposed;
-#ifdef DO_SAVE_UNDERS
-    Bool	dosave = FALSE;
-#endif
+    RegionPtr	pOldClip = NULL;
 
     if (WasViewable) {
 	(*pScreen->MarkOverlappedWindows)(pWin, pWin, NULL);
@@ -1618,40 +1553,11 @@ miOverlaySetShape(WindowPtr pWin)
 
 	(*pScreen->MarkOverlappedWindows)(pWin, pWin, NULL);
 
-#ifdef DO_SAVE_UNDERS
-	if (DO_SAVE_UNDERS(pWin))
-	    dosave = (*pScreen->ChangeSaveUnder)(pWin, pWin);
-#endif /* DO_SAVE_UNDERS */
-
 	(*pScreen->ValidateTree)(pWin->parent, NullWindow, VTOther);
     }
 
-    if (pWin->backStorage && ((pWin->backingStore == Always) || WasViewable)) {
-	if (!WasViewable)
-	    pOldClip = &pWin->clipList; /* a convenient empty region */
-	bsExposed = (*pScreen->TranslateBackingStore)
-			     (pWin, 0, 0, pOldClip,
-			      pWin->drawable.x, pWin->drawable.y);
-	if (WasViewable)
-	    RegionDestroy(pOldClip);
-	if (bsExposed)
-	{
-	    RegionPtr	valExposed = NullRegion;
-    
-	    if (pWin->valdata)
-		valExposed = &pWin->valdata->after.exposed;
-	    (*pScreen->WindowExposures) (pWin, valExposed, bsExposed);
-	    if (valExposed)
-		RegionEmpty(valExposed);
-	    RegionDestroy(bsExposed);
-	}
-    }
     if (WasViewable) {
 	(*pScreen->HandleExposures)(pWin->parent);
-#ifdef DO_SAVE_UNDERS
-	if (dosave)
-	    (*pScreen->PostChangeSaveUnder)(pWin, pWin);
-#endif /* DO_SAVE_UNDERS */
 	if (pScreen->PostValidateTree)
 	    (*pScreen->PostValidateTree)(pWin->parent, NullWindow, VTOther);
     }
@@ -1672,9 +1578,6 @@ miOverlayChangeBorderWidth(
     register ScreenPtr pScreen;
     Bool WasViewable = (Bool)(pWin->viewable);
     Bool HadBorder;
-#ifdef DO_SAVE_UNDERS
-    Bool	dosave = FALSE;
-#endif
 
     oldwidth = wBorderWidth (pWin);
     if (oldwidth == width)
@@ -1708,17 +1611,9 @@ miOverlayChangeBorderWidth(
 		}
 	    }
 	}
-#ifdef DO_SAVE_UNDERS
-	if (DO_SAVE_UNDERS(pWin))
-	    dosave = (*pScreen->ChangeSaveUnder)(pWin, pWin->nextSib);
-#endif /* DO_SAVE_UNDERS */
 	(*pScreen->ValidateTree)(pWin->parent, pWin, VTOther);
 	(*pScreen->HandleExposures)(pWin->parent);
 
-#ifdef DO_SAVE_UNDERS
-	if (dosave)
-	    (*pScreen->PostChangeSaveUnder)(pWin, pWin->nextSib);
-#endif /* DO_SAVE_UNDERS */
 	if (pScreen->PostValidateTree)
 	    (*pScreen->PostValidateTree)(pWin->parent, pWin, VTOther);
     }
@@ -1798,10 +1693,6 @@ miOverlayClearToBackground(
     box.y1 = y1; box.y2 = y2;
 
     RegionInit(&reg, &box, 1);
-    if (pWin->backStorage) {
-        pBSReg = (* pScreen->ClearBackingStore)(pWin, x, y, w, h,
-                                                 generateExposures);
-    }
 
     RegionIntersect(&reg, &reg, clipList);
     if (generateExposures)
