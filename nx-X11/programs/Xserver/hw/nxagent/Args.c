@@ -1037,6 +1037,39 @@ int ddxProcessArgument(int argc, char *argv[], int i)
   return 0;
 }
 
+/* copy from nxcomp's Loop.cpp */
+static int
+hexval(char c) {
+    if ((c >= '0') && (c <= '9'))
+        return c - '0';
+    if ((c >= 'a') && (c <= 'f'))
+        return c - 'a' + 10;
+    if ((c >= 'A') && (c <= 'F'))
+        return c - 'A' + 10;
+    return -1;
+}
+
+static void
+URLDecodeInPlace(char *str)
+{
+  if (str) {
+    char *to = str;
+    while (str[0])
+    {
+      if ((str[0] == '%') &&
+          (hexval(str[1]) >= 0) &&
+          (hexval(str[2]) >= 0))
+      {
+        *(to++) = hexval(str[1]) * 16 + hexval(str[2]);
+        str += 3;
+      }
+      else
+        *(to++) = *(str++);
+    }
+    *to = '\0';
+  }
+}
+
 static void nxagentParseSingleOption(char *name, char *value)
 {
   int size, argc;
@@ -1047,6 +1080,8 @@ static void nxagentParseSingleOption(char *name, char *value)
   fprintf(stderr, "nxagentParseSingleOption: Processing option '%s' = '%s'.\n",
               validateString(name), validateString(value));
   #endif
+
+  URLDecodeInPlace(value);
 
   if (!strcmp(name, "kbtype") ||
           !strcmp(name, "keyboard") ||

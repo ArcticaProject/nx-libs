@@ -480,6 +480,11 @@ As <proxy-port> you can pick an arbitrary (unused) TCP port or Unix
 socket file path. This is the port / socket that you have to connect to
 with the \fBnxproxy\fR application.
 .PP
+The right hand side of an option (the part following the "=" character)
+can include URL encoded characters. It is required to URL encode at
+least "," (as %2D) and "=" (as %3D) to avoid wrong parsing of the
+options string.
+.PP
 Available \fBnxagent\fR options (as an addition to nx/nx options supported
 by nxcomp already):
 .TP 8
