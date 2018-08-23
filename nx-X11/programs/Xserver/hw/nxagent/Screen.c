@@ -55,6 +55,7 @@ is" without express or implied warranty.
 #include "../../randr/randrstr.h"
 #include "inputstr.h"
 #include "mivalidate.h"
+#include "misc.h"
 
 #include "Agent.h"
 #include "Display.h"
@@ -3641,10 +3642,10 @@ Bool intersect(int ax1, int ay1, unsigned int aw, unsigned int ah,
         return FALSE;
     }
 
-    tx1 = MAX(ax1, bx1);
-    ty1 = MAX(ay1, by1);
-    tx2 = MIN(ax2, bx2);
-    ty2 = MIN(ay2, by2);
+    tx1 = max(ax1, bx1);
+    ty1 = max(ay1, by1);
+    tx2 = min(ax2, bx2);
+    ty2 = min(ay2, by2);
 
     ix = tx1 - ax1;
     iy = ty1 - ay1;
@@ -4022,10 +4023,10 @@ int nxagentAdjustRandRXinerama(ScreenPtr pScreen)
     bbx1 = bby1 = INT_MAX;
 
     for (i = 0; i < number; i++) {
-      bbx2 = MAX(bbx2, screeninfo[i].x_org + screeninfo[i].width);
-      bby2 = MAX(bby2, screeninfo[i].y_org + screeninfo[i].height);
-      bbx1 = MIN(bbx1, screeninfo[i].x_org);
-      bby1 = MIN(bby1, screeninfo[i].y_org);
+      bbx2 = max(bbx2, screeninfo[i].x_org + screeninfo[i].width);
+      bby2 = max(bby2, screeninfo[i].y_org + screeninfo[i].height);
+      bbx1 = min(bbx1, screeninfo[i].x_org);
+      bby1 = min(bby1, screeninfo[i].y_org);
     }
     #ifdef DEBUG
     fprintf(stderr, "nxagentAdjustRandRXinerama: bounding box: left [%d] right [%d] top [%d] bottom [%d]\n", bbx1, bbx2, bby1, bby2);

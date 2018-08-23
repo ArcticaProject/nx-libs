@@ -25,6 +25,7 @@
 
 #include "dixstruct.h"
 #include "../../fb/fb.h"
+#include "misc.h"
 
 #include "Agent.h"
 #include "Display.h"
@@ -696,11 +697,11 @@ int nxagentSynchronizeRegion(DrawablePtr pDrawable, RegionPtr pRegion, unsigned 
 
     for (y = box.y1; y < box.y2; y += h)
     {
-      h = MIN(box.y2 - y, tileHeight);
+      h = min(box.y2 - y, tileHeight);
 
       for (x = box.x1; x < box.x2; x += w)
       {
-        w = MIN(box.x2 - x, tileWidth);
+        w = min(box.x2 - x, tileWidth);
 
         /*
          * FIXME: This should not occur.

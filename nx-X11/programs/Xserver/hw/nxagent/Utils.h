@@ -40,14 +40,6 @@
 
 #define nxagentScale(i, ratio) (((i) * (ratio)) >> (PRECISION))
 
-#ifndef MIN
-#define MIN(A, B) ( (A) < (B) ? (A) : (B) )
-#endif
-
-#ifndef MAX
-#define MAX(A, B) ( (A) > (B) ? (A) : (B) );
-#endif
-
 static inline const char * validateString(const char *str) {
   return str ? str : "(null)";
 }
