@@ -775,7 +775,7 @@ static XFontStruct *nxagentLoadBestQueryFont(Display* dpy, char *fontName, FontP
   if (numFontFields <= FIELDS)
   {
     #ifdef WARNING
-    if (nxagentVerbose == 1)
+    if (nxagentVerbose == True)
     {
       fprintf(stderr, "nxagentLoadBestQueryFont: WARNING! Font name in non standard format. \n");
     }
@@ -844,7 +844,7 @@ static XFontStruct *nxagentLoadBestQueryFont(Display* dpy, char *fontName, FontP
   }
 
   #ifdef WARNING
-  if (nxagentVerbose == 1)
+  if (nxagentVerbose == True)
   {
     fprintf(stderr, "nxagentLoadBestQueryFont: WARNING! Failed to load font '%s'. Replacing with '%s'.\n",
                 fontName, substFontBuf);

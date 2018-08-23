@@ -592,7 +592,7 @@ Bool nxagentReconnectSession(void)
     if (nxagentResetKeyboard() == 0)
     {
       #ifdef WARNING
-      if (nxagentVerbose == 1)
+      if (nxagentVerbose == True)
       {
         fprintf(stderr, "nxagentReconnectSession: Failed to reset keyboard device.\n");
       }
@@ -693,7 +693,7 @@ nxagentReconnectError:
   if (*nxagentGetReconnectError() == '\0')
   {
     #ifdef WARNING
-    if (nxagentVerbose == 1)
+    if (nxagentVerbose == True)
     {
       fprintf(stderr, "nxagentReconnectSession: WARNING! The reconnect error message is not set. Failed step is [%d].\n",
                   failedStep);

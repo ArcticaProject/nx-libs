@@ -177,10 +177,13 @@ static void nxagentParseOptionString(char*);
 
 static int nxagentGetDialogName(void);
 
-char nxagentVerbose = 0;
+Bool nxagentVerbose = False;
 
 char *nxagentKeystrokeFile = NULL;
 
+/*
+ * This is the entry point, called from os/utils.c
+ */
 int ddxProcessArgument(int argc, char *argv[], int i)
 {
   /*
@@ -191,6 +194,11 @@ int ddxProcessArgument(int argc, char *argv[], int i)
 
   static Bool resetOptions = True;
 
+  /*
+   * the first call of ddxProcessArgument is used to setup defaults
+   * and read/process the options from environment and/or the options
+   * file.
+  */
   if (resetOptions == True)
   {
     char *envOptions = NULL;
@@ -202,10 +210,9 @@ int ddxProcessArgument(int argc, char *argv[], int i)
     resetOptions = False;
 
     /*
-     * Ensure the correct order of options evaluation:
-     * the environment first, then those included in
-     * the options file and, last, the command line
-     * options.
+     * Ensure the correct order of options evaluation: the -display
+     * option first, then the environment, then those included in the
+     * options file and, last, the command line options.
      */
 
     envDisplay = getenv("DISPLAY");
@@ -219,63 +226,46 @@ int ddxProcessArgument(int argc, char *argv[], int i)
     {
       if ((!strcmp(argv[j], "-display")) && (j + 1 < argc))
       {
-        envOptions = strdup(argv[j + 1]);
-
-        #ifdef WARNING
-        if (envOptions == NULL)
+        if ((envOptions = strdup(argv[j+1])) == NULL)
         {
-          fprintf(stderr, "ddxProcessArgument: WARNING! failed string allocation.\n");
+          FatalError("malloc for -display failed");
         }
-        #endif
-
         break;
       }
     }
 
     if ((envOptions == NULL) && (envDisplay != NULL))
     {
-      envOptions = strdup(envDisplay);
-
-      #ifdef WARNING
-      if (envOptions == NULL)
+      if ((envOptions = strdup(envDisplay)) == NULL)
       {
-        fprintf(stderr, "ddxProcessArgument: WARNING! failed string allocation.\n");
+        FatalError("malloc for envoptions failed");
       }
-      #endif
     }
 
     if (envOptions != NULL)
     {
+      /* envOptions will be modified! */
       nxagentParseOptionString(envOptions);
-
       free(envOptions);
     }
 
     for (j = 0; j < argc; j++)
     {
+      /*
+       * Read the _last_ options file only and only at startup.
+
+       * This had to be '-options' since the beginning
+       * but was '-option' by mistake. Now we have to
+       * handle the backward compatibility.
+       */
       if ((!strcmp(argv[j], "-options") || !strcmp(argv[j], "-option")) && j + 1 < argc)
       {
-        if (nxagentOptionsFilenameOrString)
+        free(nxagentOptionsFilenameOrString);
+        if ((nxagentOptionsFilenameOrString = strdup(argv[j + 1])) == NULL)
         {
-          nxagentOptionsFilenameOrString = (char *) realloc(nxagentOptionsFilenameOrString, strlen(argv[j + 1]) + 1);
+          FatalError("malloc for -options failed");
         }
-        else
-        {
-          nxagentOptionsFilenameOrString = (char *) malloc(strlen(argv[j + 1]) +1);
-        }
-
-        if (nxagentOptionsFilenameOrString != NULL)
-        {
-          nxagentOptionsFilenameOrString = strcpy(nxagentOptionsFilenameOrString, argv[j + 1]);
-        }
-        #ifdef WARNING
-        else
-        {
-          fprintf(stderr, "ddxProcessArgument: WARNING! failed string allocation.\n");
-        }
-        #endif
-
-        break;
+        j++;
       }
     }
 
@@ -291,9 +281,8 @@ int ddxProcessArgument(int argc, char *argv[], int i)
     if (nxagentCheckBinder(argc, argv, i) > 0)
     {
       /*
-       * We are going to run the agent with the
-       * 'binder' option. Go straight to the
-       * proxy loop.
+       * We are going to run the agent with the 'binder' option. Go
+       * straight to the proxy loop.
        */
 
       #ifdef TEST
@@ -302,19 +291,11 @@ int ddxProcessArgument(int argc, char *argv[], int i)
 
       nxagentBinderLoop();
 
-      /*
-       * This will make an exit.
-       */
-
-      nxagentBinderExit(0);
+      nxagentBinderExit(0);      /* This will make an exit.*/
     }
     else
     {
-      /*
-       * Exit with an error.
-       */
-
-      nxagentBinderExit(1);
+      nxagentBinderExit(1);      /* Exit with an error.*/
     }
   }
 
@@ -325,7 +306,6 @@ int ddxProcessArgument(int argc, char *argv[], int i)
       snprintf(nxagentDisplayName, NXAGENTDISPLAYNAMELENGTH, "%s", argv[i]);
       return 2;
     }
-
     return 0;
   }
 
@@ -336,7 +316,6 @@ int ddxProcessArgument(int argc, char *argv[], int i)
       snprintf(nxagentSessionId, NXAGENTSESSIONIDLENGTH, "%s", argv[i]);
       return 2;
     }
-
     return 0;
   }
 
@@ -347,26 +326,17 @@ int ddxProcessArgument(int argc, char *argv[], int i)
   }
 
   /*
-   * This had to be '-options' since the beginning
-   * but was '-option' by mistake. Now we have to
-   * handle the backward compatibility.
+   * an options string/filename can only be provided via the command
+   * line or environment. Both are handled above in the one-time init
+   * part and will not change during runtime. As we do not want an
+   * options file to include another "options" option we skip this
+   * here. Due to the way nxagent handles all this option stuff we
+   * cannot remove the check completely.
    */
-
   if (!strcmp(argv[i], "-options") || !strcmp(argv[i], "-option"))
   {
-    if (++i < argc)
-    {
-      free(nxagentOptionsFilenameOrString);
-      nxagentOptionsFilenameOrString = NULL;
-
-      if (-1 == asprintf(&nxagentOptionsFilenameOrString, "%s", argv[i]))
-      {
-        FatalError("malloc failed");
-      }
-      return 2;
-    }
-
-    return 0;
+    /* skip -options and its argument */
+    return 2;
   }
 
   if (!strcmp(argv[i], "-sync")) {
@@ -434,9 +404,9 @@ int ddxProcessArgument(int argc, char *argv[], int i)
     if (++i < argc && sscanf(argv[i], "%i", &nxagentDefaultClass) == 1) {
       if (nxagentDefaultClass >= 0 && nxagentDefaultClass <= 5) {
         nxagentUserDefaultClass = True;
-        /* lex the OS layer process it as well, so return 0 */
       }
     }
+    /* let the OS layer process it as well, so return 0 */
     return 0;
   }
 
@@ -462,8 +432,7 @@ int ddxProcessArgument(int argc, char *argv[], int i)
                   !strcmp(argv[i], "-sss"))
   {
     fprintf(stderr, "Warning: Ignoring deprecated command line option '%s'.\n",
-                argv[i]);
-
+                    argv[i]);
     return 1;
   }
 
@@ -479,12 +448,10 @@ int ddxProcessArgument(int argc, char *argv[], int i)
       {
         nxagentChangeOption(BackingStore, BackingStoreForce);
       }
-
       return 2;
     }
-
     return 0;
-  } 
+  }
 
   if (!strcmp(argv[i], "-streaming"))
   {
@@ -498,10 +465,8 @@ int ddxProcessArgument(int argc, char *argv[], int i)
       {
         nxagentChangeOption(Streaming, 1);
       }
-
       return 2;
     }
-
     return 0;
   }
 
@@ -525,10 +490,8 @@ int ddxProcessArgument(int argc, char *argv[], int i)
 
         nxagentLockDeferLevel = 1;
       }
-
       return 2;
     }
-
     return 0;
   }
 
@@ -540,11 +503,8 @@ int ddxProcessArgument(int argc, char *argv[], int i)
             sscanf(argv[i], "%i", &limit) == 1)
     {
       nxagentChangeOption(ImageRateLimit, limit);
-
-  
       return 2;
     }
-
     return 0;
   }
 
@@ -556,13 +516,11 @@ int ddxProcessArgument(int argc, char *argv[], int i)
     if (++i < argc &&
             sscanf(argv[i], "%ix%i", &width, &height) == 2 &&
                 width >= 32 && height >= 32)
-    { 
+    {
       nxagentChangeOption(TileWidth,  width);
       nxagentChangeOption(TileHeight, height);
-
       return 2;
     }
-
     return 0;
   }
 
@@ -570,7 +528,6 @@ int ddxProcessArgument(int argc, char *argv[], int i)
   {
     if(++i < argc)
     {
-
       #ifdef TEST
       fprintf(stderr, "ddxProcessArgument: User defined font path [%s].\n", argv[i]);
       #endif
@@ -592,32 +549,29 @@ int ddxProcessArgument(int argc, char *argv[], int i)
       if (!strcmp(argv[i],"fullscreen"))
       {
         nxagentChangeOption(Fullscreen, True);
-
         nxagentChangeOption(AllScreens, True);
       }
       else if (!strcmp(argv[i],"ipaq"))
       {
         nxagentChangeOption(Fullscreen, True);
-
         nxagentChangeOption(AllScreens, True);
 
         nxagentIpaq = True;
       }
       else
-      { 
-        if (nxagentUserGeometry.flag == 0) 
+      {
+        if (nxagentUserGeometry.flag == 0)
         {
-          nxagentUserGeometry.flag = XParseGeometry(argv[i], 
-                                                        &nxagentUserGeometry.X, 
-                                                            &nxagentUserGeometry.Y, 
-                                                                &nxagentUserGeometry.Width, 
+          nxagentUserGeometry.flag = XParseGeometry(argv[i],
+                                                        &nxagentUserGeometry.X,
+                                                            &nxagentUserGeometry.Y,
+                                                                &nxagentUserGeometry.Width,
                                                                     &nxagentUserGeometry.Height);
         }
       }
 
       if (nxagentUserGeometry.flag || (nxagentOption(Fullscreen) == 1)) return 2;
     }
-
     return 0;
   }
 
@@ -636,7 +590,6 @@ int ddxProcessArgument(int argc, char *argv[], int i)
         return 2;
       }
     }
-
     return 0;
   }
 
@@ -647,7 +600,6 @@ int ddxProcessArgument(int argc, char *argv[], int i)
       snprintf(nxagentWindowName, NXAGENTWINDOWNAMELENGTH, "%s", argv[i]);
       return 2;
     }
-
     return 0;
   }
 
@@ -703,20 +655,18 @@ int ddxProcessArgument(int argc, char *argv[], int i)
     if (++i < argc)
     {
       free(nxagentKeyboard);
-      nxagentKeyboard = NULL;
 
-      nxagentKeyboard = strdup(argv[i]);
-      if (nxagentKeyboard == NULL)
+      if ((nxagentKeyboard = strdup(argv[i])) == NULL)
       {
-        FatalError("malloc failed");
+        FatalError("malloc for -keyboard failed");
       }
 
       return 2;
     }
-
     return 0;
   }
 
+  /* FIXME: seems to be ignored; is not documented */
   if (!strcmp(argv[i], "-extensions"))
   {
      return 1;
@@ -726,7 +676,6 @@ int ddxProcessArgument(int argc, char *argv[], int i)
   if (!strcmp(argv[i], "-norender"))
   {
     nxagentRenderEnable = False;
-
     return 1;
   }
   #endif
@@ -734,14 +683,12 @@ int ddxProcessArgument(int argc, char *argv[], int i)
   if (!strcmp(argv[i], "-nocomposite"))
   {
     nxagentChangeOption(Composite, 0);
-
     return 1;
   }
 
   if (!strcmp(argv[i], "-nodamage"))
   {
     nxagentChangeOption(UseDamage, 0);
-
     return 1;
   }
 
@@ -760,65 +707,55 @@ int ddxProcessArgument(int argc, char *argv[], int i)
   if (!strcmp(argv[i], "-reset"))
   {
     nxagentChangeOption(Reset, True);
-
     return 1;
   }
 
   if (!strcmp(argv[i], "-persistent"))
   {
     nxagentChangeOption(Persistent, True);
-
     return 1;
   }
 
   if (!strcmp(argv[i], "-nopersistent"))
   {
     nxagentChangeOption(Persistent, False);
-
     return 1;
   }
 
   if (!strcmp(argv[i], "-noshmem"))
   {
     nxagentChangeOption(SharedMemory, False);
-
     return 1;
   }
 
   if (!strcmp(argv[i], "-shmem"))
   {
     nxagentChangeOption(SharedMemory, True);
-
     return 1;
   }
 
   if (!strcmp(argv[i], "-noignore"))
   {
     nxagentChangeOption(DeviceControl, True);
-
     nxagentChangeOption(DeviceControlUserDefined , True);
-
     return 1;
   }
 
   if (!strcmp(argv[i], "-nokbreset"))
   {
     nxagentChangeOption(ResetKeyboardAtResume, False);
-
     return 1;
   }
 
   if (!strcmp(argv[i], "-noxkblock"))
   {
     nxagentChangeOption(InhibitXkb, 0);
-
     return 1;
   }
 
   /*
    * Enable pseudo-rootless mode.
    */
-
   if (!strcmp(argv[i], "-R"))
   {
     if (nxagentOption(Binder) == UNDEFINED ||
@@ -833,29 +770,24 @@ int ddxProcessArgument(int argc, char *argv[], int i)
   }
 
   /*
-   * Enable the "desktop" mode. This is
-   * the default.
+   * Enable the "desktop" mode. This is the default.
    */
-
   if (!strcmp(argv[i], "-D"))
   {
     nxagentChangeOption(Binder, False);
     nxagentChangeOption(Rootless, False);
     nxagentChangeOption(Desktop, True);
-
     return 1;
   }
 
   /*
    * Enable the "shadow" mode.
    */
-
   if (!strcmp(argv[i], "-S"))
   {
     nxagentChangeOption(Shadow, 1);
     nxagentChangeOption(DeferLevel, 0);
     nxagentChangeOption(Persistent, 0);
-
     return 1;
   }
 
@@ -872,7 +804,6 @@ int ddxProcessArgument(int argc, char *argv[], int i)
 
       return 2;
     }
-
     return 0;
   }
 
@@ -889,10 +820,8 @@ int ddxProcessArgument(int argc, char *argv[], int i)
       {
         nxagentChangeOption(ViewOnly, 0);
       }
-
       return 2;
     }
-
     return 0;
   }
 
@@ -912,13 +841,10 @@ int ddxProcessArgument(int argc, char *argv[], int i)
         {
           seconds = 60;
         }
-
         nxagentChangeOption(Timeout, seconds);
-
         return 2;
       }
     }
-
     return 0;
   }
 
@@ -935,7 +861,6 @@ int ddxProcessArgument(int argc, char *argv[], int i)
     nxagentChangeOption(Xdmcp, True);
 
     nxagentMaxAllowedResets = 0;
-
     return 0;
   }
 
@@ -946,7 +871,6 @@ int ddxProcessArgument(int argc, char *argv[], int i)
     nxagentChangeOption(Xdmcp, True);
 
     nxagentMaxAllowedResets = 0;
-
     return 0;
   }
 
@@ -956,21 +880,18 @@ int ddxProcessArgument(int argc, char *argv[], int i)
     nxagentChangeOption(Xdmcp, True);
 
     nxagentMaxAllowedResets = 1;
-
     return 0;
   }
 
   if (!strcmp(argv[i], "-noshpix"))
   {
     nxagentChangeOption(SharedPixmaps, False);
-
     return 1;
   }
 
   if (!strcmp(argv[i], "-shpix"))
   {
     nxagentChangeOption(SharedPixmaps, True);
-
     return 1;
   }
 
@@ -996,7 +917,6 @@ int ddxProcessArgument(int argc, char *argv[], int i)
     {
       nxagentChangeOption(Clipboard, ClipboardBoth);
     }
-
     return 2;
   }
 
@@ -1008,8 +928,7 @@ int ddxProcessArgument(int argc, char *argv[], int i)
 
   if (!strcmp(argv[i], "-verbose"))
   {
-    nxagentVerbose = 1;
-
+    nxagentVerbose = True;
     return 1;
   }
 
@@ -1017,12 +936,11 @@ int ddxProcessArgument(int argc, char *argv[], int i)
   {
     if (i + 1 < argc)
     {
-      if (NULL != (nxagentKeystrokeFile = strdup(argv[i + 1])))
+      if ((nxagentKeystrokeFile = strdup(argv[i + 1])) == NULL)
       {
-        return 2;
-      } else {
-	FatalError("malloc failed");
+        FatalError("malloc for -keystrokefile failed");
       }
+      return 2;
     }
     return 0;
   }
@@ -1045,9 +963,13 @@ static void nxagentParseOptions(char *name, char *value)
 
   #ifdef TEST
   fprintf(stderr, "nxagentParseOptions: Processing option '%s' = '%s'.\n",
-              validateString(name), validateString(value));
+                  validateString(name), validateString(value));
   #endif
 
+  /*
+   * these options are also command line options (prefixed with "-")
+   * and require an argument. They are handled by ddxProcessArgument()
+   */
   if (!strcmp(name, "kbtype") ||
           !strcmp(name, "keyboard") ||
               !strcmp(name, "id") ||
@@ -1063,25 +985,31 @@ static void nxagentParseOptions(char *name, char *value)
                                                       !strcmp(name, "tile"))
   {
     argv[1] = value;
-
     argc = 2;
   }
   else if (!strcmp(name, "R") && !strcmp(value, "1"))
   {
+    /*
+     * this option is a command line option and requires no
+     * argument. It is handled by ddxProcessArgument()
+     */
     argc = 1;
   }
   else if (!strcmp(name, "fast") || !strcmp(name, "slow"))
   {
     fprintf(stderr, "Warning: Ignoring deprecated option '%s'.\n", name);
-
     return;
   }
+  /*
+   * the following options are only allowed in the options parameter and
+   * always require an argument.
+   */
   else if (!strcmp(name, "render"))
   {
     if (nxagentReconnectTrap == True)
     {
       #ifdef DEBUG
-      fprintf(stderr, "nxagentParseOptions: Ignoring option 'render' at reconnection.\n");
+      fprintf(stderr, "nxagentParseOptions: Ignoring option '%s' at reconnection.\n", name);
       #endif
     }
     else if (nxagentRenderEnable == UNDEFINED)
@@ -1096,11 +1024,10 @@ static void nxagentParseOptions(char *name, char *value)
       }
       else
       {
-        fprintf(stderr, "Warning: Ignoring bad value '%s' for option 'render'.\n",
-                    validateString(value));
+        fprintf(stderr, "Warning: Ignoring bad value '%s' for option '%s'.\n",
+                        validateString(value), name);
       }
     }
-
     return;
   }
   else if (!strcmp(name, "state"))
@@ -1113,27 +1040,24 @@ static void nxagentParseOptions(char *name, char *value)
     if (nxagentReconnectTrap == True)
     {
       #ifdef DEBUG
-      fprintf(stderr, "nxagentParseOptions: Ignoring option 'fullscreen' at reconnection.\n");
+      fprintf(stderr, "nxagentParseOptions: Ignoring option '%s' at reconnection.\n", name);
       #endif
     }
     else if (!strcmp(value, "1"))
     {
       nxagentChangeOption(Fullscreen, True);
-
       nxagentChangeOption(AllScreens, True);
     }
     else if (!strcmp(value, "0"))
     {
       nxagentChangeOption(Fullscreen, False);
-
       nxagentChangeOption(AllScreens, False);
     }
     else
     {
       fprintf(stderr, "Warning: Ignoring bad value '%s' for option 'fullscreen'.\n",
-                  validateString(value));
+                      validateString(value));
     }
-
     return;
   }
   else if (!strcmp(name, "shpix"))
@@ -1148,10 +1072,9 @@ static void nxagentParseOptions(char *name, char *value)
     }
     else
     {
-      fprintf(stderr, "Warning: Ignoring bad value '%s' for option 'shpix'.\n",
-                  validateString(value));
+      fprintf(stderr, "Warning: Ignoring bad value '%s' for option '%s'.\n",
+                      validateString(value), name);
     }
-
     return;
   }
   else if (!strcmp(name, "shmem"))
@@ -1166,10 +1089,9 @@ static void nxagentParseOptions(char *name, char *value)
     }
     else
     {
-      fprintf(stderr, "Warning: Ignoring bad value '%s' for option 'shmem'.\n",
-                  validateString(value));
+      fprintf(stderr, "Warning: Ignoring bad value '%s' for option '%s'.\n",
+                      validateString(value), name);
     }
-
     return;
   }
   else if (!strcmp(name, "composite"))
@@ -1184,10 +1106,9 @@ static void nxagentParseOptions(char *name, char *value)
     }
     else
     {
-      fprintf(stderr, "Warning: Ignoring bad value '%s' for option 'composite'.\n",
-                  validateString(value));
+      fprintf(stderr, "Warning: Ignoring bad value '%s' for option '%s'.\n",
+                      validateString(value), name);
     }
-
     return;
   }
   else if (!strcmp(name, "xinerama"))
@@ -1215,8 +1136,8 @@ static void nxagentParseOptions(char *name, char *value)
     }
     else
     {
-      fprintf(stderr, "Warning: Ignoring bad value '%s' for option 'xinerama'.\n",
-              validateString(value));
+      fprintf(stderr, "Warning: Ignoring bad value '%s' for option '%s'.\n",
+                      validateString(value), name);
     }
     return;
 #endif
@@ -1233,10 +1154,9 @@ static void nxagentParseOptions(char *name, char *value)
     }
     else
     {
-      fprintf(stderr, "Warning: Ignoring bad value '%s' for option 'resize'.\n",
-                  validateString(value));
+      fprintf(stderr, "Warning: Ignoring bad value '%s' for option '%s'.\n",
+                      validateString(value), name);
     }
-
     return;
   }
   else if (!strcmp(name, "backingstore"))
@@ -1249,7 +1169,6 @@ static void nxagentParseOptions(char *name, char *value)
     {
       nxagentChangeOption(BackingStore, BackingStoreForce);
     }
-
     return;
   }
   else if (!strcmp(name, "menu"))
@@ -1262,7 +1181,6 @@ static void nxagentParseOptions(char *name, char *value)
     {
       nxagentChangeOption(Menu, 1);
     }
-
     return;
   }
   else if (!strcmp(name, "magicpixel"))
@@ -1300,13 +1218,11 @@ static void nxagentParseOptions(char *name, char *value)
   else if (strcmp(name, "shadowuid") == 0)
   {
     nxagentShadowUid = atoi(value);
-
     return;
   }
   else if (strcmp(name, "clients") == 0)
   {
     snprintf(nxagentClientsLogName, NXAGENTCLIENTSLOGNAMELENGTH, "%s", value);
-
     return;
   }
   else if (strcmp(name, "client") == 0)
@@ -1327,13 +1243,11 @@ static void nxagentParseOptions(char *name, char *value)
     {
       nxagentChangeOption(ClientOs, ClientOsMac);
     }
-
     return;
   }
   else if  (strcmp(name, "copysize") == 0)
   {
     nxagentChangeOption(CopyBufferSize, atoi(value));
-
     return;
   }
   else if  (strcmp(name, "clipboard") == 0)
@@ -1366,12 +1280,11 @@ static void nxagentParseOptions(char *name, char *value)
     errno = 0;
     sleep_parse = strtol(value, NULL, 10);
 
-    if ((errno) && (0 == sleep_parse))
+    if ((errno) && (sleep_parse == 0))
     {
-      fprintf(stderr, "nxagentParseOptions: Unable to convert value [%s] of option [%s]. "
+      fprintf(stderr, "Warning: Unable to convert value '%s' of option '%s'. "
                       "Ignoring option.\n",
-                      validateString(value), validateString(name));
-
+                      validateString(value), name);
       return;
     }
 
@@ -1379,22 +1292,20 @@ static void nxagentParseOptions(char *name, char *value)
     {
       sleep_parse = UINT_MAX;
 
-      fprintf(stderr, "nxagentParseOptions: Warning: value [%s] of option [%s] "
-                      "out of range, clamped to [%lu].\n",
-                      validateString(value), validateString(name), sleep_parse);
+      fprintf(stderr, "Warning: value '%s' of option '%s' "
+                      "out of range, clamped to '%lu'.\n",
+                      validateString(value), name, sleep_parse);
     }
 
     if (0 > sleep_parse)
     {
       sleep_parse = 0;
 
-      fprintf(stderr, "nxagentParseOptions: Warning: value [%s] of option [%s] "
-                      "out of range, clamped to [%lu].\n",
-                      validateString(value), validateString(name), sleep_parse);
+      fprintf(stderr, "Warning: value '%s' of option '%s' "
+                      "out of range, clamped to '%lu'.\n",
+                      validateString(value), name, sleep_parse);
     }
-
     nxagentChangeOption(SleepTime, sleep_parse);
-
     return;
   }
   else if (!strcmp(name, "tolerancechecks"))
@@ -1425,12 +1336,11 @@ static void nxagentParseOptions(char *name, char *value)
       errno = 0;
       tolerance_parse = strtol(value, NULL, 10);
 
-      if ((errno) && (0 == tolerance_parse))
+      if ((errno) && (tolerance_parse == 0))
       {
-        fprintf(stderr, "nxagentParseOptions: Unable to convert value [%s] of option [%s]. "
+        fprintf(stderr, "Warning: Unable to convert value '%s' of option '%s'. "
                         "Ignoring option.\n",
-                        validateString(value), validateString(name));
-
+                        validateString(value), name);
         return;
       }
 
@@ -1438,18 +1348,18 @@ static void nxagentParseOptions(char *name, char *value)
       {
         tolerance_parse = UINT_MAX;
 
-        fprintf(stderr, "nxagentParseOptions: Warning: value [%s] of option [%s] "
-                        "out of range, clamped to [%lu].\n",
-                        validateString(value), validateString(name), tolerance_parse);
+        fprintf(stderr, "Warning: value '%s' of option '%s' "
+                        "out of range, clamped to '%lu'.\n",
+                        validateString(value), name, tolerance_parse);
       }
 
       if (0 > tolerance_parse)
       {
         tolerance_parse = 0;
 
-        fprintf(stderr, "nxagentParseOptions: Warning: value [%s] of option [%s] "
-                        "out of range, clamped to [%lu].\n",
-                        validateString(value), validateString(name), tolerance_parse);
+        fprintf(stderr, "Warning: value '%s' of option '%s' "
+                        "out of range, clamped to '%lu'.\n",
+                        validateString(value), name, tolerance_parse);
       }
 
       #ifdef TEST
@@ -1458,19 +1368,18 @@ static void nxagentParseOptions(char *name, char *value)
         case ToleranceChecksSafe:
         case ToleranceChecksRisky:
         case ToleranceChecksBypass:
-                               break;
+          break;
         default:
-                               fprintf(stderr, "nxagentParseOptions: Warning: value [%s] of "
-                                               "option [%s] unknown, will be mapped to "
-                                               "\"Bypass\" [%u] value internally.\n",
-                                       validateString(value), validateString(name),
-                                       (unsigned int)ToleranceChecksBypass);
+          fprintf(stderr, "nxagentParseOptions: Warning: value [%s] of "
+                          "option [%s] unknown, will be mapped to "
+                          "\"Bypass\" [%u] value internally.\n",
+                          validateString(value), name,
+                          (unsigned int)ToleranceChecksBypass);
       }
       #endif
 
       nxagentChangeOption(ReconnectTolerance, tolerance_parse);
     }
-
     return;
   }
   else if (!strcmp(name, "keyconv"))
@@ -1496,9 +1405,8 @@ static void nxagentParseOptions(char *name, char *value)
   {
     #ifdef DEBUG
     fprintf(stderr, "nxagentParseOptions: Ignored option [%s] with value [%s].\n",
-                validateString(name), validateString(value));
+                    validateString(name), validateString(value));
     #endif
-
     return;
   }
 
@@ -1513,8 +1421,7 @@ static void nxagentParseOptions(char *name, char *value)
     if ((argv[0] = malloc(size + 1)) == NULL)
     {
       fprintf(stderr, "Warning: Ignoring option '%s' due to lack of memory.\n",
-                  name);
-
+                      name);
       return;
     }
 
@@ -1538,11 +1445,11 @@ static void nxagentParseOptionString(char *string)
    * Remove the port specification.
    */
 
-  delimiter = rindex(string, ':');
+  delimiter = strrchr(string, ':');
 
   if (delimiter)
   {
-    *delimiter = 0;
+    *delimiter = '\0';
   }
   else
   {
@@ -1551,18 +1458,17 @@ static void nxagentParseOptionString(char *string)
 
   while ((option = strtok(option ? NULL : string, ",")))
   {
-    delimiter = rindex(option, '=');
+    delimiter = strrchr(option, '=');
 
     if (delimiter)
     {
-      *delimiter = 0;
+      *delimiter = '\0';
       value = delimiter + 1;
     }
     else
     {
       value = NULL;
     }
-
     nxagentParseOptions(option, value);
   }
 }
@@ -1574,7 +1480,7 @@ void nxagentProcessOptions(char * string)
 
   #ifdef DEBUG
   fprintf(stderr, "%s: Going to process option string/filename [%s].\n",
-          __func__, validateString(string));
+                  __func__, validateString(string));
   #endif
 
   /* if the "filename" starts with an nx marker treat it
@@ -1604,11 +1510,11 @@ void nxagentProcessOptionsFile(char * filename)
   int size;
 
   int sizeOfFile;
-  int maxFileSize = 1024;
+  int maxFileSize = 1024; /* FIXME: why? */
 
   #ifdef DEBUG
   fprintf(stderr, "nxagentProcessOptionsFile: Going to process option file [%s].\n",
-          validateString(filename));
+                  validateString(filename));
   #endif
 
   /*
@@ -1624,30 +1530,27 @@ void nxagentProcessOptionsFile(char * filename)
   if ((file = fopen(filename, "r")) == NULL)
   {
     fprintf(stderr, "Warning: Couldn't open option file '%s'. Error is '%s'.\n",
-                validateString(filename), strerror(errno));
-
+                    validateString(filename), strerror(errno));
     goto nxagentProcessOptionsFileExit;
   }
 
   if (fseek(file, 0, SEEK_END) != 0)
   {
     fprintf(stderr, "Warning: Couldn't position inside option file '%s'. Error is '%s'.\n",
-                validateString(filename), strerror(errno));
-
+                    validateString(filename), strerror(errno));
     goto nxagentProcessOptionsFileExit;
   }
 
   if ((sizeOfFile = ftell(file)) == -1)
   {
     fprintf(stderr, "Warning: Couldn't get the size of option file '%s'. Error is '%s'.\n",
-                validateString(filename), strerror(errno));
-
+                    validateString(filename), strerror(errno));
     goto nxagentProcessOptionsFileExit;
   }
 
   #ifdef DEBUG
   fprintf(stderr, "nxagentProcessOptionsFile: Processing option file [%s].\n",
-              validateString(filename));
+                  validateString(filename));
   #endif
 
   rewind(file);
@@ -1655,16 +1558,14 @@ void nxagentProcessOptionsFile(char * filename)
   if (sizeOfFile > maxFileSize)
   {
     fprintf(stderr, "Warning: Maximum file size exceeded for options '%s'.\n",
-                validateString(filename));
-
+                    validateString(filename));
     goto nxagentProcessOptionsFileExit;
   }
 
   if ((data = malloc(sizeOfFile + 1)) == NULL)
   {
     fprintf(stderr, "Warning: Memory allocation failed processing file '%s'.\n",
-                validateString(filename));
-
+                    validateString(filename));
     goto nxagentProcessOptionsFileExit;
   }
 
@@ -1678,8 +1579,7 @@ void nxagentProcessOptionsFile(char * filename)
     if (ferror(file) != 0)
     {
       fprintf(stderr, "Warning: Error reading the option file '%s'.\n",
-                validateString(filename));
-
+                      validateString(filename));
       goto nxagentProcessOptionsFileExit;
     }
 
@@ -1695,8 +1595,7 @@ void nxagentProcessOptionsFile(char * filename)
   if (size != sizeOfFile)
   {
     fprintf(stderr, "Warning: Premature end of option file '%s' while reading.\n",
-              validateString(filename));
-
+                    validateString(filename));
     goto nxagentProcessOptionsFileExit;
   }
 
@@ -1706,7 +1605,7 @@ void nxagentProcessOptionsFile(char * filename)
 
   for (offset = 0; (offset < sizeOfFile) && (data[offset] != '\n'); offset++);
 
-  data[offset] = 0;
+  data[offset] = '\0';
 
   nxagentParseOptionString(data);
 
@@ -1719,10 +1618,9 @@ nxagentProcessOptionsFileExit:
     if (fclose(file) != 0)
     {
       fprintf(stderr, "Warning: Couldn't close option file '%s'. Error is '%s'.\n",
-              validateString(filename), strerror(errno));
+                      validateString(filename), strerror(errno));
     }
   }
-
   return;
 }
 
@@ -1843,16 +1741,13 @@ N/A
 
       #ifdef TEST
       fprintf(stderr, "nxagentPostProcessArgs: Got local version [%d.%d.%d] remote version [%d.%d.%d].\n",
-                  localMajor, localMinor, localPatch, remoteMajor, remoteMinor, remotePatch);
-
+                      localMajor, localMinor, localPatch, remoteMajor, remoteMinor, remotePatch);
       fprintf(stderr, "nxagentPostProcessArgs: Got split timeout [%d] motion timeout [%d].\n",
-                  splitTimeout, motionTimeout);
-
+                      splitTimeout, motionTimeout);
       fprintf(stderr, "nxagentPostProcessArgs: Got split mode [%d] split size [%d].\n",
-                  splitMode, splitSize);
-
+                      splitMode, splitSize);
       fprintf(stderr, "nxagentPostProcessArgs: Got preferred pack method [%d] and quality [%d].\n",
-                  packMethod, packQuality);
+                      packMethod, packQuality);
       #endif
 
       if (remoteMajor < 2)
@@ -1904,7 +1799,7 @@ N/A
       enableServer = 1;
 
       if (NXGetShmemParameters(dpy, &enableClient, &enableServer, &clientSegment,
-                                   &serverSegment, &clientSize, &serverSize) == 0)
+                               &serverSegment, &clientSize, &serverSize) == 0)
       {
         fprintf(stderr, "Warning: Failed to get the shared memory parameters.\n");
       }
@@ -1912,13 +1807,13 @@ N/A
       if (enableServer == 1)
       {
         fprintf(stderr, "Info: Using shared memory parameters %d/%d/%d/%dK.\n",
-                    nxagentOption(SharedMemory), nxagentOption(SharedPixmaps),
-                         enableServer, serverSize / 1024);
+                        nxagentOption(SharedMemory), nxagentOption(SharedPixmaps),
+                        enableServer, serverSize / 1024);
       }
       else
       {
         fprintf(stderr, "Info: Using shared memory parameters %d/%d/0/0K.\n",
-                    nxagentOption(SharedMemory), nxagentOption(SharedPixmaps));
+                        nxagentOption(SharedMemory), nxagentOption(SharedPixmaps));
       }
 
       /*
@@ -1933,7 +1828,6 @@ N/A
       /*
        * We don't have a proxy on the remote side.
        */
-
       nxagentChangeOption(LinkType, LINK_TYPE_NONE);
     }
 
@@ -2026,12 +1920,12 @@ FIXME: In rootless mode the backing-store support is not functional yet.
      * command line as this has the priority
      * over the option file.
      */
- 
+
     if (nxagentRenderEnable == UNDEFINED)
     {
       nxagentRenderEnable = True;
     }
-    
+
     if (nxagentRenderEnable == True)
     {
       nxagentAlphaEnabled = True;
@@ -2065,7 +1959,7 @@ FIXME: In rootless mode the backing-store support is not functional yet.
     /*
      * We skip server reset by default. This should
      * be equivalent to passing the -noreset option
-     * to a standard XFree86 server.
+     * to a standard XOrg server.
      */
 
     if (nxagentOption(Reset) == False)
@@ -2078,14 +1972,14 @@ FIXME: In rootless mode the backing-store support is not functional yet.
     }
 
     /*
-     * Check if the user activated the auto-disconect
+     * Check if the user activated the auto-disconnect
      * feature.
      */
 
     if (nxagentOption(Timeout) > 0)
     {
       fprintf(stderr, "Info: Using auto-disconnect timeout of %d seconds.\n",
-                  nxagentOption(Timeout));
+                      nxagentOption(Timeout));
 
       nxagentAutoDisconnectTimeout = nxagentOption(Timeout) * MILLI_PER_SECOND;
     }
@@ -2189,7 +2083,6 @@ void nxagentSetPackMethod(void)
     nxagentPackLossless = PACK_NONE;
 
     nxagentSplitThreshold = 0;
-
     return;
   }
 
@@ -2206,7 +2099,6 @@ void nxagentSetPackMethod(void)
     #ifdef TEST
     fprintf(stderr, "nxagentSetPackMethod: Using adaptive mode for image compression.\n");
     #endif
-
     nxagentChangeOption(Adaptive, 1);
   }
   else
@@ -2214,10 +2106,9 @@ void nxagentSetPackMethod(void)
     #ifdef TEST
     fprintf(stderr, "nxagentSetPackMethod: Not using adaptive mode for image compression.\n");
     #endif
-
     nxagentChangeOption(Adaptive, 0);
   }
-  
+
   if (method == PACK_LOSSY || method == PACK_ADAPTIVE)
   {
     nxagentPackMethod = PACK_JPEG_16M_COLORS;
@@ -2232,20 +2123,17 @@ void nxagentSetPackMethod(void)
       case LINK_TYPE_WAN:
       {
         nxagentPackMethod = PACK_BITMAP_16M_COLORS;
-
         break;
       }
       case LINK_TYPE_LAN:
       {
         nxagentPackMethod = PACK_RLE_16M_COLORS;
-
         break;
       }
       default:
       {
         fprintf(stderr, "Warning: Unknown link type '%d' while setting the pack method.\n",
-                    nxagentOption(LinkType));
-
+                        nxagentOption(LinkType));
         break;
       }
     }
@@ -2299,11 +2187,9 @@ void nxagentSetPackMethod(void)
     if (supportedMethods[nxagentPackMethod] == 0)
     {
       fprintf(stderr, "Warning: Pack method '%d' not supported by the proxy.\n",
-                  nxagentPackMethod);
-
+                      nxagentPackMethod);
       fprintf(stderr, "Warning: Replacing with lossless pack method '%d'.\n",
-                  nxagentPackLossless);
-
+                      nxagentPackLossless);
       nxagentPackMethod = nxagentPackLossless;
     }
   }
@@ -2351,7 +2237,6 @@ void nxagentSetDeferLevel(void)
   if (nxagentOption(Streaming) == 1)
   {
     fprintf(stderr, "Warning: Streaming of images not available in this agent.\n");
-
     nxagentChangeOption(Streaming, 0);
   }
 
@@ -2360,71 +2245,52 @@ void nxagentSetDeferLevel(void)
     case LINK_TYPE_MODEM:
     {
       deferLevel = 2;
-
       tileWidth  = 64;
       tileHeight = 64;
-
       deferTimeout = 200;
-
       break;
     }
     case LINK_TYPE_ISDN:
     {
       deferLevel = 2;
-
       tileWidth  = 64;
       tileHeight = 64;
-
       deferTimeout = 200;
-
       break;
     }
     case LINK_TYPE_ADSL:
     {
       deferLevel = 2;
-
       deferTimeout = 200;
-
       tileWidth  = 4096;
       tileHeight = 4096;
-
       break;
     }
     case LINK_TYPE_WAN:
     {
       deferLevel = 1;
-
       deferTimeout = 200;
-
       tileWidth  = 4096;
       tileHeight = 4096;
-
       break;
     }
     case LINK_TYPE_NONE:
     case LINK_TYPE_LAN:
     {
       deferLevel = 0;
-
       deferTimeout = 200;
-
       tileWidth  = 4096;
       tileHeight = 4096;
-
       break;
     }
     default:
     {
-      fprintf(stderr, "Warning: Unknown link type [%d] processing the defer option.\n",
-                  nxagentOption(LinkType));
-
+      fprintf(stderr, "Warning: Unknown link type '%d' processing the defer option.\n",
+                      nxagentOption(LinkType));
       deferLevel = 0;
-
       tileWidth  = 64;
       tileHeight = 64;
-
       deferTimeout = 200;
-
       break;
     }
   }
@@ -2458,8 +2324,8 @@ void nxagentSetDeferLevel(void)
   {
     #ifdef TEST
     fprintf(stderr, "nxagentSetDeferLevel: Not overriding the [defer] option "
-                "with value [%d]. Defer timeout is [%ld] ms.\n", nxagentOption(DeferLevel),
-                    nxagentOption(DeferTimeout));
+                    "with value [%d]. Defer timeout is [%ld] ms.\n",
+                    nxagentOption(DeferLevel), nxagentOption(DeferTimeout));
     #endif
   }
   else
@@ -2468,7 +2334,7 @@ void nxagentSetDeferLevel(void)
 
     #ifdef TEST
     fprintf(stderr, "nxagentSetDeferLevel: Assuming defer level [%d] with timeout of [%ld] ms.\n",
-                nxagentOption(DeferLevel), nxagentOption(DeferTimeout));
+                    nxagentOption(DeferLevel), nxagentOption(DeferTimeout));
     #endif
   }
 
@@ -2480,7 +2346,7 @@ void nxagentSetDeferLevel(void)
   {
     #ifdef TEST
     fprintf(stderr, "nxagentSetDeferLevel: Not overriding the [tile] option "
-                "width value [%d].\n", nxagentOption(TileWidth));
+                    "width value [%d].\n", nxagentOption(TileWidth));
     #endif
   }
   else
@@ -2489,19 +2355,19 @@ void nxagentSetDeferLevel(void)
 
     #ifdef TEST
     fprintf(stderr, "nxagentSetDeferLevel: Assuming tile width [%d].\n",
-                 nxagentOption(TileWidth));
+                    nxagentOption(TileWidth));
     #endif
   }
 
   /*
    * Set the tile height.
    */
-  
+
   if (nxagentOption(TileHeight) != UNDEFINED)
   {
     #ifdef TEST
     fprintf(stderr, "nxagentSetDeferLevel: Not overriding the [tile] option "
-                "height value [%d].\n", nxagentOption(TileHeight));
+                    "height value [%d].\n", nxagentOption(TileHeight));
     #endif
   }
   else
@@ -2510,7 +2376,7 @@ void nxagentSetDeferLevel(void)
 
     #ifdef TEST
     fprintf(stderr, "nxagentSetDeferLevel: Assuming tile height [%d].\n",
-                 nxagentOption(TileHeight));
+                    nxagentOption(TileHeight));
     #endif
   }
 }
@@ -2524,41 +2390,34 @@ void nxagentSetBufferSize(void)
     case LINK_TYPE_MODEM:
     {
       size = 4096;
-
       break;
     }
     case LINK_TYPE_ISDN:
     {
       size = 4096;
-
       break;
     }
     case LINK_TYPE_ADSL:
     {
       size = 8192;
-
       break;
     }
     case LINK_TYPE_WAN:
     {
       size = 16384;
-
       break;
     }
     case LINK_TYPE_NONE:
     case LINK_TYPE_LAN:
     {
       size = 16384;
-
       break;
     }
     default:
     {
       fprintf(stderr, "Warning: Unknown link type '%d' while setting the display buffer size.\n",
-                  nxagentOption(LinkType));
-
+                      nxagentOption(LinkType));
       size = 16384;
-
       break;
     }
   }
@@ -2569,8 +2428,8 @@ void nxagentSetBufferSize(void)
 
   if (NXSetDisplayBuffer(nxagentDisplay, nxagentBuffer) < 0)
   {
-    fprintf(stderr, "Warning: Can't set the display buffer size to [%d].\n",
-                nxagentBuffer);
+    fprintf(stderr, "Warning: Can't set the display buffer size to '%d'.\n",
+                    nxagentBuffer);
   }
 }
 
@@ -2585,7 +2444,6 @@ void nxagentSetScheduler(void)
     #ifdef TEST
     fprintf(stderr, "nxagentSetScheduler: Using the dumb scheduler in shadow mode.\n");
     #endif
-
     nxagentDisableTimer();
   }
 }
@@ -2599,48 +2457,41 @@ void nxagentSetCoalescence(void)
     case LINK_TYPE_MODEM:
     {
       timeout = 50;
-
       break;
     }
     case LINK_TYPE_ISDN:
     {
       timeout = 20;
-
       break;
     }
     case LINK_TYPE_ADSL:
     {
       timeout = 10;
-
       break;
     }
     case LINK_TYPE_WAN:
     {
       timeout = 5;
-
       break;
     }
     case LINK_TYPE_NONE:
     case LINK_TYPE_LAN:
     {
       timeout = 0;
-
       break;
     }
     default:
     {
       fprintf(stderr, "Warning: Unknown link type '%d' while setting the display coalescence.\n",
-                  nxagentOption(LinkType));
-
+                      nxagentOption(LinkType));
       timeout = 0;
-
       break;
     }
   }
 
   #ifdef TEST
   fprintf(stderr, "nxagentSetCoalescence: Using coalescence timeout of [%d] ms.\n",
-              timeout);
+                  timeout);
   #endif
 
   nxagentChangeOption(DisplayCoalescence, timeout);
