@@ -1415,7 +1415,7 @@ static Bool nxagentGetFontServerPath(char * fontServerPath, int size)
 
     if (len)
     {
-      snprintf(fontServerPath, MIN(size, len + 1), "%s", path + 1);
+      snprintf(fontServerPath, min(size, len + 1), "%s", path + 1);
 
       #ifdef TEST
       fprintf(stderr, "nxagentGetFontServerPath: Got path [%s].\n",
