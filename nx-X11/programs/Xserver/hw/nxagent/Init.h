@@ -46,6 +46,7 @@ extern int nxagentBackingStore;
 extern int nxagentSaveUnder;
 
 extern int  nxagentX2go;
+void checkX2goAgent(void);
 
 extern ServerGrabInfoRec nxagentGrabServerInfo;
 

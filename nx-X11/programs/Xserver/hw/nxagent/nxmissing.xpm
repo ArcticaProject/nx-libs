@@ -23,6 +23,7 @@
 /*                                                                        */
 /**************************************************************************/
 
+/* XPM */
 static char *placeholderXpm[] = {
 /* columns rows colors chars-per-pixel */
 "14 16 10 1",
