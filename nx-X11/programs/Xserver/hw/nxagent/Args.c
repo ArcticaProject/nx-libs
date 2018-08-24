@@ -1037,16 +1037,51 @@ int ddxProcessArgument(int argc, char *argv[], int i)
   return 0;
 }
 
-static void nxagentParseOptions(char *name, char *value)
+/* copy from nxcomp's Loop.cpp */
+static int
+hexval(char c) {
+    if ((c >= '0') && (c <= '9'))
+        return c - '0';
+    if ((c >= 'a') && (c <= 'f'))
+        return c - 'a' + 10;
+    if ((c >= 'A') && (c <= 'F'))
+        return c - 'A' + 10;
+    return -1;
+}
+
+static void
+URLDecodeInPlace(char *str)
+{
+  if (str) {
+    char *to = str;
+    while (str[0])
+    {
+      if ((str[0] == '%') &&
+          (hexval(str[1]) >= 0) &&
+          (hexval(str[2]) >= 0))
+      {
+        *(to++) = hexval(str[1]) * 16 + hexval(str[2]);
+        str += 3;
+      }
+      else
+        *(to++) = *(str++);
+    }
+    *to = '\0';
+  }
+}
+
+static void nxagentParseSingleOption(char *name, char *value)
 {
   int size, argc;
 
   char *argv[2] = { NULL, NULL };
 
   #ifdef TEST
-  fprintf(stderr, "nxagentParseOptions: Processing option '%s' = '%s'.\n",
+  fprintf(stderr, "nxagentParseSingleOption: Processing option '%s' = '%s'.\n",
               validateString(name), validateString(value));
   #endif
+
+  URLDecodeInPlace(value);
 
   if (!strcmp(name, "kbtype") ||
           !strcmp(name, "keyboard") ||
@@ -1081,7 +1116,7 @@ static void nxagentParseOptions(char *name, char *value)
     if (nxagentReconnectTrap == True)
     {
       #ifdef DEBUG
-      fprintf(stderr, "nxagentParseOptions: Ignoring option 'render' at reconnection.\n");
+      fprintf(stderr, "nxagentParseSingleOption: Ignoring option 'render' at reconnection.\n");
       #endif
     }
     else if (nxagentRenderEnable == UNDEFINED)
@@ -1113,7 +1148,7 @@ static void nxagentParseOptions(char *name, char *value)
     if (nxagentReconnectTrap == True)
     {
       #ifdef DEBUG
-      fprintf(stderr, "nxagentParseOptions: Ignoring option 'fullscreen' at reconnection.\n");
+      fprintf(stderr, "nxagentParseSingleOption: Ignoring option 'fullscreen' at reconnection.\n");
       #endif
     }
     else if (!strcmp(value, "1"))
@@ -1283,7 +1318,7 @@ static void nxagentParseOptions(char *name, char *value)
     if (nxagentReconnectTrap == True)
     {
       #ifdef DEBUG
-      fprintf(stderr, "nxagentParseOptions: Ignoring option 'autodpi' at reconnection.\n");
+      fprintf(stderr, "nxagentParseSingleOption: Ignoring option 'autodpi' at reconnection.\n");
       #endif
     }
     else if (!strcmp(value, "0"))
@@ -1368,7 +1403,7 @@ static void nxagentParseOptions(char *name, char *value)
 
     if ((errno) && (0 == sleep_parse))
     {
-      fprintf(stderr, "nxagentParseOptions: Unable to convert value [%s] of option [%s]. "
+      fprintf(stderr, "nxagentParseSingleOption: Unable to convert value [%s] of option [%s]. "
                       "Ignoring option.\n",
                       validateString(value), validateString(name));
 
@@ -1379,7 +1414,7 @@ static void nxagentParseOptions(char *name, char *value)
     {
       sleep_parse = UINT_MAX;
 
-      fprintf(stderr, "nxagentParseOptions: Warning: value [%s] of option [%s] "
+      fprintf(stderr, "nxagentParseSingleOption: Warning: value [%s] of option [%s] "
                       "out of range, clamped to [%lu].\n",
                       validateString(value), validateString(name), sleep_parse);
     }
@@ -1388,7 +1423,7 @@ static void nxagentParseOptions(char *name, char *value)
     {
       sleep_parse = 0;
 
-      fprintf(stderr, "nxagentParseOptions: Warning: value [%s] of option [%s] "
+      fprintf(stderr, "nxagentParseSingleOption: Warning: value [%s] of option [%s] "
                       "out of range, clamped to [%lu].\n",
                       validateString(value), validateString(name), sleep_parse);
     }
@@ -1427,7 +1462,7 @@ static void nxagentParseOptions(char *name, char *value)
 
       if ((errno) && (0 == tolerance_parse))
       {
-        fprintf(stderr, "nxagentParseOptions: Unable to convert value [%s] of option [%s]. "
+        fprintf(stderr, "nxagentParseSingleOption: Unable to convert value [%s] of option [%s]. "
                         "Ignoring option.\n",
                         validateString(value), validateString(name));
 
@@ -1438,7 +1473,7 @@ static void nxagentParseOptions(char *name, char *value)
       {
         tolerance_parse = UINT_MAX;
 
-        fprintf(stderr, "nxagentParseOptions: Warning: value [%s] of option [%s] "
+        fprintf(stderr, "nxagentParseSingleOption: Warning: value [%s] of option [%s] "
                         "out of range, clamped to [%lu].\n",
                         validateString(value), validateString(name), tolerance_parse);
       }
@@ -1447,7 +1482,7 @@ static void nxagentParseOptions(char *name, char *value)
       {
         tolerance_parse = 0;
 
-        fprintf(stderr, "nxagentParseOptions: Warning: value [%s] of option [%s] "
+        fprintf(stderr, "nxagentParseSingleOption: Warning: value [%s] of option [%s] "
                         "out of range, clamped to [%lu].\n",
                         validateString(value), validateString(name), tolerance_parse);
       }
@@ -1460,7 +1495,7 @@ static void nxagentParseOptions(char *name, char *value)
         case ToleranceChecksBypass:
                                break;
         default:
-                               fprintf(stderr, "nxagentParseOptions: Warning: value [%s] of "
+                               fprintf(stderr, "nxagentParseSingleOption: Warning: value [%s] of "
                                                "option [%s] unknown, will be mapped to "
                                                "\"Bypass\" [%u] value internally.\n",
                                        validateString(value), validateString(name),
@@ -1495,7 +1530,7 @@ static void nxagentParseOptions(char *name, char *value)
   else
   {
     #ifdef DEBUG
-    fprintf(stderr, "nxagentParseOptions: Ignored option [%s] with value [%s].\n",
+    fprintf(stderr, "nxagentParseSingleOption: Ignored option [%s] with value [%s].\n",
                 validateString(name), validateString(value));
     #endif
 
@@ -1563,7 +1598,7 @@ static void nxagentParseOptionString(char *string)
       value = NULL;
     }
 
-    nxagentParseOptions(option, value);
+    nxagentParseSingleOption(option, value);
   }
 }
 
