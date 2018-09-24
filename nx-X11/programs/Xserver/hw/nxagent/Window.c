@@ -2725,8 +2725,6 @@ Bool nxagentReconnectAllWindows(void *p0)
 {
   int flexibility = *(int *) p0;
 
-  flexibility = flexibility;
-
   #if defined(NXAGENT_RECONNECT_DEBUG) || defined(NXAGENT_RECONNECT_WINDOW_DEBUG)
   fprintf(stderr, "nxagentReconnectAllWindows\n");
   #endif
@@ -2844,8 +2842,6 @@ Bool nxagentReconnectAllWindows(void *p0)
 Bool nxagentSetWindowCursors(void *p0)
 {
   int flexibility = *(int *) p0;
-
-  flexibility = flexibility;
 
   #if defined(NXAGENT_RECONNECT_DEBUG) || defined(NXAGENT_RECONNECT_WINDOW_DEBUG)
   fprintf(stderr, "nxagentSetWindowCursors: Going to loop over the windows.\n");
