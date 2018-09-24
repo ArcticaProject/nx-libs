@@ -310,7 +310,7 @@ Bool nxagentCreateWindow(pWin)
 /*
 FIXME: We need to set save under on the real display?
 */
-    if (nxagentSaveUnder == True)
+    if (nxagentSaveUnder)
       {
         mask |= CWSaveUnder;
         attributes.save_under = False;
@@ -749,7 +749,7 @@ void nxagentSwitchFullscreen(ScreenPtr pScreen, Bool switchOn)
     return;
   }
 
-  if (switchOn == 0)
+  if (!switchOn)
   {
     nxagentWMDetect();
 
@@ -793,7 +793,7 @@ void nxagentSwitchFullscreen(ScreenPtr pScreen, Bool switchOn)
   XSendEvent(nxagentDisplay, DefaultRootWindow(nxagentDisplay), False,
                  SubstructureRedirectMask, &e);
 
-  if (switchOn == 1)
+  if (switchOn)
   {
     nxagentFullscreenWindow = nxagentDefaultWindows[pScreen -> myNum];
 
@@ -2683,7 +2683,7 @@ void nxagentDisconnectWindow(void * p0, XID x1, void * p2)
 
     nxagentDisconnectCursor(pCursor, (XID)0, pBool);
 
-    if (*pBool == False)
+    if (!*pBool)
     {
       #ifdef WARNING
       fprintf(stderr, "nxagentDisconnectWindow: WARNING failed disconnection of cursor at [%p]"
@@ -2937,7 +2937,7 @@ static void nxagentReconnectWindow(void * param0, XID param1, void * data_buffer
 /*
 FIXME: Do we need to set save unders attribute here?
 */
-    if (nxagentSaveUnder == True)
+    if (nxagentSaveUnder)
     {
       mask |= CWSaveUnder;
       attributes.save_under = pWin->saveUnder;
