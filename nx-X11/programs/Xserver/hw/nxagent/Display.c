@@ -2492,11 +2492,9 @@ static int nxagentInitAndCheckVisuals(int flexibility)
 
   long viMask;
   int i, n;
-  int matched;
-  int compatible;
+  bool matched;
+  bool compatible = true;
   int viNumList;
-
-  compatible = 1;
 
   viMask = VisualScreenMask;
   viTemplate.screen = DefaultScreen(nxagentDisplay);
@@ -2507,7 +2505,7 @@ static int nxagentInitAndCheckVisuals(int flexibility)
 
   for (i = 0; i < nxagentNumVisuals; i++)
   {
-    matched = 0;
+    matched = false;
 
     for (n = 0; n < viNumList; n++)
     {
@@ -2528,7 +2526,7 @@ FIXME: Should the visual be ignored in this case?
           #endif
         }
 
-        matched = 1;
+        matched = true;
 
         nxagentVisualHasBeenIgnored[i] = FALSE;
 
@@ -2538,7 +2536,7 @@ FIXME: Should the visual be ignored in this case?
       }
     }
 
-    if (matched == 0)
+    if (!matched)
     {
       if (nxagentVisuals[i].class == DirectColor)
       {
@@ -2564,7 +2562,7 @@ FIXME: Should the visual be ignored in this case?
         fprintf(stderr, "\tbits_per_rgb = %d\n", nxagentVisuals[i].bits_per_rgb);
         #endif
 
-        compatible = 0;
+        compatible = false;
 
         break;
       }
@@ -2573,7 +2571,7 @@ FIXME: Should the visual be ignored in this case?
 
   XFree(viList);
 
-  if (compatible == 1)
+  if (compatible)
   {
     #ifdef TEST
     fprintf(stderr, "nxagentInitAndCheckVisuals: New visuals match with old visuals.\n");
