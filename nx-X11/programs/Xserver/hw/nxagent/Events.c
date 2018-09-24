@@ -373,7 +373,7 @@ void nxagentRemoteWindowID(Window window, Bool newline)
     }
   }
 
-  if (newline == TRUE)
+  if (newline)
   {
     fprintf(stderr, "\n");
   }
@@ -411,7 +411,7 @@ void nxagentRemoteWindowInfo(Window win, int indent, Bool newLine)
                                  (attributes.override_redirect == 0) ?
                                      "No" : "Yes" );
 
-  if (newLine == TRUE)
+  if (newLine)
   {
     fprintf(stderr, "\n");
   }
@@ -537,7 +537,7 @@ void nxagentInternalWindowInfo(WindowPtr pWin, int indent, Bool newLine)
                                      (pWin -> overrideRedirect == 0) ?
                                          "No" : "Yes");
 
-  if (newLine == TRUE)
+  if (newLine)
   {
     fprintf(stderr, "\n");
   }
@@ -4061,8 +4061,7 @@ void nxagentHandleCollectPropertyEvent(XEvent *X)
       nxagentImportProperty(window, property, atomReturnType, resultFormat,
                                 ulReturnItems, ulReturnBytesLeft, pszReturnData);
     }
-
-    if (result == 0)
+    else
     {
       #ifdef DEBUG
       fprintf (stderr, "nxagentHandleCollectPropertyEvent: Failed to get reply data for client [%d].\n",
