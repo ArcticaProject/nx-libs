@@ -3057,7 +3057,7 @@ int nxagentShadowPoll(PixmapPtr nxagentShadowPixmapPtr, GCPtr nxagentShadowGCPtr
 
   if (result == 1)
   {
-    if (nxagentWMPassed == 0)
+    if (!nxagentWMPassed)
     {
       nxagentRemoveSplashWindow(NULL);
     }

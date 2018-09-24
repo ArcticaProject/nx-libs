@@ -142,7 +142,7 @@ void nxagentWaitDisplay(void);
 void nxagentListRemoteFonts(const char *, int);
 
 unsigned int nxagentWMtimeout = 0;
-Bool         nxagentWMPassed  = 0;
+Bool         nxagentWMPassed  = False;
 
 /*
  * Timeouts based on screen saver time.
