@@ -977,7 +977,7 @@ Bool nxagentOpenScreen(ScreenPtr pScreen,
    * fullscreen mode.
    */
 
-  if (nxagentOption(Rootless) == False && nxagentWMIsRunning == False)
+  if (nxagentOption(Rootless) == False && !nxagentWMIsRunning)
   {
     #ifdef TEST
     fprintf(stderr, "nxagentOpenScreen: Forcing fullscreen mode with no window manager running.\n");

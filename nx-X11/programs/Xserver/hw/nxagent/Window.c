@@ -762,7 +762,7 @@ void nxagentSwitchFullscreen(ScreenPtr pScreen, Bool switchOn)
 
     isItTimeToYield = 1;
 
-    if (nxagentWMIsRunning == 0)
+    if (!nxagentWMIsRunning)
     {
       #ifdef WARNING
       fprintf(stderr, "Warning: Can't switch to window mode, no window manager "
@@ -2552,7 +2552,7 @@ void nxagentMapDefaultWindows(void)
        * Windows client.
        */
 
-      if (nxagentOption(Shadow) == 0 || nxagentWMIsRunning == 0)
+      if (nxagentOption(Shadow) == 0 || !nxagentWMIsRunning)
       {
         #ifdef TEST
         fprintf(stderr, "nxagentMapDefaultWindows: Mapping default window id [%ld].\n",
@@ -2561,7 +2561,7 @@ void nxagentMapDefaultWindows(void)
 
         XMapWindow(nxagentDisplay, nxagentDefaultWindows[pScreen->myNum]);
 
-        if (nxagentOption(Fullscreen) == 1 && nxagentWMIsRunning == 1)
+        if (nxagentOption(Fullscreen) == 1 && nxagentWMIsRunning)
         {
           nxagentMaximizeToFullScreen(pScreen);
         }

@@ -106,7 +106,7 @@ static void catchAndRedirect(Display* dpy, XErrorEvent* X)
       X -> request_code == X_ChangeWindowAttributes &&
       X -> resourceid == DefaultRootWindow(dpy))
   {
-    nxagentWMIsRunning = TRUE;
+    nxagentWMIsRunning = True;
   }
   else
   {
@@ -122,7 +122,7 @@ static void startWMDetection(void)
    * window.
    */
 
-  nxagentWMIsRunning = FALSE;
+  nxagentWMIsRunning = False;
 
   previousErrorHandler = XSetErrorHandler((XErrorHandler)&catchAndRedirect);
 
@@ -166,7 +166,7 @@ static void finishWMDetection(Bool verbose)
 void nxagentWMDetect() 
 {
   Bool verbose = False;
-  int windowManagerWasRunning = nxagentWMIsRunning;
+  Bool windowManagerWasRunning = nxagentWMIsRunning;
 
   startWMDetection();
 

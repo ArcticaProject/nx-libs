@@ -402,7 +402,7 @@ void nxagentDisconnectSession(void)
   nxagentDisconnectAllGCs();
   nxagentDisconnectDisplay();
 
-  nxagentWMIsRunning = 0;
+  nxagentWMIsRunning = False;
 
   #ifdef TEST
   fprintf(stderr, "nxagentDisconnectSession: Disconnection completed. SigHup is [%d]. IoError is [%d].\n",

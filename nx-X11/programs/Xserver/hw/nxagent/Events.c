@@ -2046,7 +2046,7 @@ FIXME: Don't enqueue the KeyRelease event if the key was
          * event that would trigger xinerama updates. So we do that once
          * the nxagent window gets mapped.
          */
-        if (nxagentWMIsRunning == 0 &&
+        if (!nxagentWMIsRunning &&
             X.xmap.window == nxagentDefaultWindows[nxagentScreen(X.xmap.window)->myNum])
         {
           nxagentChangeScreenConfig(nxagentScreen(X.xmap.window)->myNum, nxagentOption(Width),
@@ -2767,7 +2767,7 @@ int nxagentHandleClientMessageEvent(XEvent *X, enum HandleEventResult *result)
 
         if (X -> xclient.window == (nxagentOption(Fullscreen) ?
                 nxagentIconWindow : nxagentDefaultWindows[0]) ||
-                    nxagentWMIsRunning == 0)
+                    !nxagentWMIsRunning)
         {
           *result = doCloseSession;
         }
@@ -3353,7 +3353,7 @@ int nxagentHandleConfigureNotify(XEvent* X)
          *   by the window manager are relevant, see ICCCM Chapter 4,
          *   "Configuring the Window"
          */
-        Bool updatePos = (nxagentWMIsRunning == 0 || X -> xconfigure.send_event != 0);
+        Bool updatePos = (!nxagentWMIsRunning || X -> xconfigure.send_event != 0);
         int newX = X -> xconfigure.x;
         int newY = X -> xconfigure.y;
 
@@ -3395,7 +3395,7 @@ int nxagentHandleConfigureNotify(XEvent* X)
                 count++;
                 #endif
 
-                if (nxagentWMIsRunning == 0 || X -> xconfigure.send_event)
+                if (!nxagentWMIsRunning || X -> xconfigure.send_event)
                 {
                   updatePos = True;
                   newX = X -> xconfigure.x;
@@ -3626,7 +3626,7 @@ int nxagentHandleReparentNotify(XEvent* X)
 
     return 1;
   }
-  else if (nxagentWMIsRunning == 1 && nxagentOption(Fullscreen) == 0 &&
+  else if (nxagentWMIsRunning && nxagentOption(Fullscreen) == 0 &&
                nxagentOption(WMBorderWidth) == -1)
   {
     XlibWindow w;
