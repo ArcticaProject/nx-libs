@@ -140,6 +140,30 @@ static char szAgentUTF8_STRING[] = "UTF8_STRING";
 static char szAgentNX_CUT_BUFFER_CLIENT[] = "NX_CUT_BUFFER_CLIENT";
 
 /*
+ * some helpers for debugging output
+ */
+
+#ifdef DEBUG
+const char * GetClientSelectionStageString(int stage)
+{
+  switch(stage)
+  {
+    case SelectionStageNone:      return("None"); break;;
+    case SelectionStageQuerySize: return("QuerySize"); break;;
+    case SelectionStageWaitSize:  return("WaitSize"); break;;
+    case SelectionStageQueryData: return("QueryData"); break;;
+    case SelectionStageWaitData:  return("WaitData"); break;;
+    default:                      return("UNKNOWN!"); break;;
+  }
+}
+#define SetClientSelectionStage(stage) do {fprintf(stderr, "%s: Changing selection stage from [%s] to [%s]\n", __func__, GetClientSelectionStageString(lastClientStage), GetClientSelectionStageString(SelectionStage##stage)); lastClientStage = SelectionStage##stage;} while (0)
+#define PrintClientSelectionStage() do {fprintf(stderr, "%s: Current selection stage [%s]\n", __func__, GetClientSelectionStageString(lastClientStage));} while (0)
+#else
+#define SetClientSelectionStage(stage) do {lastClientStage = SelectionStage##stage;} while (0)
+#define PrintClientSelectionStage()
+#endif
+
+/*
  * Save the values queried from X server.
  */
 
@@ -203,17 +227,7 @@ void nxagentPrintClipboardStat(char *header)
   fprintf(stderr, "  lastClientTime                  (Time) [%u]\n", lastServerTime);
   fprintf(stderr, "  lastClientReqTime               (Time) [%u]\n", lastServerTime);
   fprintf(stderr, "  lastClientPropertySize (unsigned long) [%lu]\n", lastClientPropertySize);
-  fprintf(stderr, "  lastClientStage (ClientSelectionStage) [%d]", lastClientStage);
-  switch(lastClientStage)
-  {
-    case SelectionStageNone:      fprintf(stderr, "[None]"); break;;
-    case SelectionStageQuerySize: fprintf(stderr, "[QuerySize]"); break;;
-    case SelectionStageWaitSize:  fprintf(stderr, "[WaitSize]"); break;;
-    case SelectionStageQueryData: fprintf(stderr, "[QueryData]"); break;;
-    case SelectionStageWaitData:  fprintf(stderr, "[WaitData]"); break;;
-    default:                      fprintf(stderr, "[UNKNOWN] (FAIL!)"); break;;
-  }
-  fprintf(stderr,"\n");
+  fprintf(stderr, "  lastClientStage (ClientSelectionStage) [%d][%s]\n", lastClientStage, GetClientSelectionStageString(lastClientStage));
 
   fprintf(stderr, "PRIMARY\n");
   fprintf(stderr, "  lastSelectionOwner[].client            [%p]\n", (void *)lastSelectionOwner[nxagentPrimarySelection].client);
@@ -338,7 +352,7 @@ void nxagentClearClipboard(ClientPtr pClient, WindowPtr pWindow)
       lastSelectionOwner[i].lastTimeChanged = GetTimeInMillis();
 
       lastClientWindowPtr = NULL;
-      lastClientStage = SelectionStageNone;
+      SetClientSelectionStage(None);
 
       lastServerRequestor = None;
     }
@@ -347,7 +361,7 @@ void nxagentClearClipboard(ClientPtr pClient, WindowPtr pWindow)
   if (pWindow == lastClientWindowPtr)
   {
     lastClientWindowPtr = NULL;
-    lastClientStage = SelectionStageNone;
+    SetClientSelectionStage(None);
   }
 
   nxagentPrintClipboardStat("after nxagentClearClipboard");
@@ -404,7 +418,7 @@ void nxagentClearSelection(XEvent *X)
   }
 
   lastClientWindowPtr = NULL;
-  lastClientStage = SelectionStageNone;
+  SetClientSelectionStage(None);
   nxagentPrintClipboardStat("after nxagentClearSelection");
 }
 
@@ -600,7 +614,7 @@ FIXME: Do we need this?
       else
       {
         /*
-         * Probably we must to send a Notify
+         * Probably we must send a Notify
          * to requestor with property None.
          */
 
@@ -670,7 +684,7 @@ void nxagentTransferSelection(int resource)
     nxagentSendSelectionNotify(None);
 
     lastClientWindowPtr = NULL;
-    lastClientStage = SelectionStageNone;
+    SetClientSelectionStage(None);
 
     return;
   }
@@ -679,6 +693,7 @@ void nxagentTransferSelection(int resource)
   {
     case SelectionStageQuerySize:
     {
+      PrintClientSelectionStage();
       /*
        * Don't get data yet, just get size. We skip
        * this stage in current implementation and
@@ -717,22 +732,19 @@ void nxagentTransferSelection(int resource)
         nxagentSendSelectionNotify(None);
 
         lastClientWindowPtr = NULL;
-        lastClientStage = SelectionStageNone;
+        SetClientSelectionStage(None);
 
         return;
       }
 
-      #ifdef DEBUG
-      fprintf (stderr, "nxagentTransferSelection: Setting stage to [%d] for client [%d].\n",
-                   SelectionStageWaitSize, lastClientClientPtr -> index);
-      #endif
-
-      lastClientStage = SelectionStageWaitSize;
+      SetClientSelectionStage(WaitSize);
 
       break;
     }
     case SelectionStageQueryData:
     {
+      PrintClientSelectionStage();
+
       /*
        * Request the selection data now.
        */
@@ -773,25 +785,20 @@ void nxagentTransferSelection(int resource)
         nxagentSendSelectionNotify(None);
 
         lastClientWindowPtr = NULL;
-        lastClientStage = SelectionStageNone;
+        SetClientSelectionStage(None);
 
         return;
       }
 
-      #ifdef DEBUG
-      fprintf (stderr, "nxagentTransferSelection: Setting stage to [%d] for client [%d].\n",
-                   SelectionStageWaitData, lastClientClientPtr -> index);
-      #endif
-
-      lastClientStage = SelectionStageWaitData;
+      SetClientSelectionStage(WaitData);
 
       break;
     }
     default:
     {
       #ifdef DEBUG
-      fprintf (stderr, "nxagentTransferSelection: WARNING! Inconsistent state [%d] for client [%d].\n",
-                   lastClientStage, lastClientClientPtr -> index);
+      fprintf (stderr, "nxagentTransferSelection: WARNING! Inconsistent state [%s] for client [%d].\n",
+                   GetClientSelectionStageString(lastClientStage), lastClientClientPtr -> index);
       #endif
 
       break;
@@ -834,7 +841,7 @@ void nxagentCollectPropertyEvent(int resource)
     nxagentSendSelectionNotify(None);
 
     lastClientWindowPtr = NULL;
-    lastClientStage = SelectionStageNone;
+    SetClientSelectionStage(None);
 
     if (pszReturnData != NULL)
     {
@@ -858,7 +865,7 @@ void nxagentCollectPropertyEvent(int resource)
     }
 
     lastClientWindowPtr = NULL;
-    lastClientStage = SelectionStageNone;
+    SetClientSelectionStage(None);
 
     if (pszReturnData != NULL)
     {
@@ -872,6 +879,7 @@ void nxagentCollectPropertyEvent(int resource)
   {
     case SelectionStageWaitSize:
     {
+      PrintClientSelectionStage();
       #ifdef DEBUG
       fprintf (stderr, "nxagentCollectPropertyEvent: Got size notify event for client [%d].\n",
                    lastClientClientPtr -> index);
@@ -887,7 +895,7 @@ void nxagentCollectPropertyEvent(int resource)
         nxagentSendSelectionNotify(None);
 
         lastClientWindowPtr = NULL;
-        lastClientStage = SelectionStageNone;
+        SetClientSelectionStage(None);
 
         if (pszReturnData != NULL)
         {
@@ -906,7 +914,7 @@ void nxagentCollectPropertyEvent(int resource)
        */
 
       lastClientPropertySize = ulReturnBytesLeft;
-      lastClientStage = SelectionStageQueryData;
+      SetClientSelectionStage(QueryData);
 
       nxagentTransferSelection(resource);
 
@@ -914,6 +922,7 @@ void nxagentCollectPropertyEvent(int resource)
     }
     case SelectionStageWaitData:
     {
+      PrintClientSelectionStage();
       #ifdef DEBUG
       fprintf (stderr, "nxagentCollectPropertyEvent: Got data notify event for client [%d].\n",
                    lastClientClientPtr -> index);
@@ -929,7 +938,7 @@ void nxagentCollectPropertyEvent(int resource)
         nxagentSendSelectionNotify(None);
 
         lastClientWindowPtr = NULL;
-        lastClientStage = SelectionStageNone;
+        SetClientSelectionStage(None);
 
         if (pszReturnData != NULL)
         {
@@ -961,15 +970,15 @@ void nxagentCollectPropertyEvent(int resource)
        */
 
       lastClientWindowPtr = NULL;
-      lastClientStage = SelectionStageNone;
+      SetClientSelectionStage(None);
 
       break;
     }
     default:
     {
       #ifdef DEBUG
-      fprintf (stderr, "nxagentCollectPropertyEvent: WARNING! Inconsistent state [%d] for client [%d].\n",
-                   lastClientStage, lastClientClientPtr -> index);
+      fprintf (stderr, "nxagentCollectPropertyEvent: WARNING! Inconsistent state [%s] for client [%d].\n",
+                   GetClientSelectionStageString(lastClientStage), lastClientClientPtr -> index);
       #endif
 
       break;
@@ -999,6 +1008,8 @@ void nxagentNotifySelection(XEvent *X)
   fprintf(stderr, "nxagentNotifySelection: SelectionNotify event.\n");
   #endif
 
+  PrintClientSelectionStage();
+
   if (lastClientWindowPtr != NULL)
   {
     if ((lastClientStage == SelectionStageNone) && (X->xselection.property == serverCutProperty))
@@ -1019,7 +1030,7 @@ void nxagentNotifySelection(XEvent *X)
        * tions.
        */
 
-      lastClientStage = SelectionStageQueryData;
+      SetClientSelectionStage(QueryData);
       lastClientPropertySize = 262144;
 
       nxagentTransferSelection(lastClientClientPtr -> index);
@@ -1034,7 +1045,7 @@ void nxagentNotifySelection(XEvent *X)
       nxagentSendSelectionNotify(None);
 
       lastClientWindowPtr = NULL;
-      lastClientStage = SelectionStageNone;
+      SetClientSelectionStage(None);
     }
 
     return;
@@ -1195,7 +1206,7 @@ void nxagentResetSelectionOwner(void)
   }
 
   lastClientWindowPtr = NULL;
-  lastClientStage = SelectionStageNone;
+  SetClientSelectionStage(None);
 
   lastServerRequestor = None;
 
@@ -1245,7 +1256,7 @@ void nxagentSetSelectionOwner(Selection *pSelection)
   }
 
   lastClientWindowPtr = NULL;
-  lastClientStage = SelectionStageNone;
+  SetClientSelectionStage(None);
 
   lastServerRequestor = None;
 
@@ -1262,7 +1273,7 @@ FIXME
       lastSelectionOwnerWindowPtr = pSelection->pWin;
 
       lastClientWindowPtr = NULL;
-      lastClientStage     = SelectionStageNone;
+      SetClientSelectionStage(None);
 
       lastServerRequestor = None;
    }
@@ -1346,7 +1357,7 @@ int nxagentConvertSelection(ClientPtr client, WindowPtr pWin, Atom selection,
                                      lastClientSelection, lastClientTarget, lastClientTime);
 
       lastClientWindowPtr = NULL;
-      lastClientStage = SelectionStageNone;
+      SetClientSelectionStage(None);
     }
     else
     {
@@ -1473,7 +1484,7 @@ int nxagentConvertSelection(ClientPtr client, WindowPtr pWin, Atom selection,
                   (target == clientUTF8_STRING))
   {
     lastClientWindowPtr = pWin;
-    lastClientStage = SelectionStageNone;
+    SetClientSelectionStage(None);
     lastClientRequestor = requestor;
     lastClientClientPtr = client;
     lastClientTime = time;
@@ -1767,7 +1778,7 @@ int nxagentInitClipboard(WindowPtr pWin)
     lastServerRequestor = None;
 
     lastClientWindowPtr = NULL;
-    lastClientStage = SelectionStageNone;
+    SetClientSelectionStage(None);
     lastClientReqTime = GetTimeInMillis();
 
     clientCutProperty = MakeAtom(szAgentNX_CUT_BUFFER_CLIENT,
