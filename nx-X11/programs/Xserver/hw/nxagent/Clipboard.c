@@ -211,9 +211,9 @@ void nxagentPrintClipboardStat(char *header)
 
   fprintf(stderr, "lastServer\n");
   fprintf(stderr, "  lastServerRequestor           (Window) [0x%x]\n", lastServerRequestor);
-  if (s) XFree(s); s = XGetAtomName(nxagentDisplay, lastServerProperty);
+  SAFE_XFree(s); s = XGetAtomName(nxagentDisplay, lastServerProperty);
   fprintf(stderr, "  lastServerProperty              (Atom) [% 4d][%s]\n", lastServerProperty, s);
-  if (s) XFree(s); s = XGetAtomName(nxagentDisplay, lastServerTarget);
+  SAFE_XFree(s); s = XGetAtomName(nxagentDisplay, lastServerTarget);
   fprintf(stderr, "  lastServerTarget                (Atom) [% 4d][%s]\n", lastServerTarget, s);
   fprintf(stderr, "  lastServerTime                  (Time) [%u]\n", lastServerTime);
 
@@ -246,18 +246,18 @@ void nxagentPrintClipboardStat(char *header)
   fprintf(stderr, "  CurrentSelections[].window             [0x%x]\n", CurrentSelections[nxagentClipboardSelection].window);
 
   fprintf(stderr, "Atoms (server side)\n");
-  if (s) XFree(s); s = XGetAtomName(nxagentDisplay, serverTARGETS);
+  SAFE_XFree(s); s = XGetAtomName(nxagentDisplay, serverTARGETS);
   fprintf(stderr, "  serverTARGETS                          [% 4d][%s]\n", serverTARGETS, validateString(s));
-  if (s) XFree(s); s = XGetAtomName(nxagentDisplay, serverTEXT);
+  SAFE_XFree(s); s = XGetAtomName(nxagentDisplay, serverTEXT);
   fprintf(stderr, "  serverTEXT                             [% d][%s]\n", serverTEXT, s);
-  if (s) XFree(s); s = XGetAtomName(nxagentDisplay, serverUTF8_STRING);
+  SAFE_XFree(s); s = XGetAtomName(nxagentDisplay, serverUTF8_STRING);
   fprintf(stderr, "  serverUTF8_STRING                      [% 4d][%s]\n", serverUTF8_STRING, s);
-  if (s) XFree(s); s = XGetAtomName(nxagentDisplay, serverCutProperty);
+  SAFE_XFree(s); s = XGetAtomName(nxagentDisplay, serverCutProperty);
   fprintf(stderr, "  serverCutProperty                      [% 4d][%s]\n", serverCutProperty, s);
 
-  if (s) XFree(s); s = XGetAtomName(nxagentDisplay, nxagentClipboardAtom);
+  SAFE_XFree(s); s = XGetAtomName(nxagentDisplay, nxagentClipboardAtom);
   fprintf(stderr, "  nxagentClipboardAtom                   [% 4d][%s]\n", nxagentClipboardAtom, s);
-  if (s) XFree(s); s = XGetAtomName(nxagentDisplay, nxagentTimestampAtom);
+  SAFE_XFree(s); s = XGetAtomName(nxagentDisplay, nxagentTimestampAtom);
   fprintf(stderr, "  nxagentTimestampAtom                   [% 4d][%s]\n", nxagentTimestampAtom, s);
 
   fprintf(stderr, "Atoms (inside nxagent)\n");
@@ -270,7 +270,7 @@ void nxagentPrintClipboardStat(char *header)
 
   fprintf(stderr, "\\------------------------------------------------------------------------------\n");
 
-  if (s) XFree(s); s = NULL;
+  SAFE_XFree(s);
 #endif
 }
 
@@ -460,10 +460,7 @@ FIXME: Do we need this?
     fprintf(stderr, "SelectionRequest event aborting sele=[%s] ext target=[%s] Atom size is [%d]\n",
                 validateString(NameForAtom(X->xselectionrequest.selection)), strTarget, sizeof(Atom));
 
-    if (strTarget != NULL)
-    {
-      XFree(strTarget);
-    }
+    SAFE_XFree(strTarget);
 */
     memset(&eventSelection, 0, sizeof(XSelectionEvent));
     eventSelection.property = None;
@@ -843,11 +840,7 @@ void nxagentCollectPropertyEvent(int resource)
     lastClientWindowPtr = NULL;
     SetClientSelectionStage(None);
 
-    if (pszReturnData != NULL)
-    {
-      XFree(pszReturnData);
-    }
-
+    SAFE_XFree(pszReturnData);
     return;
   }
  
@@ -867,11 +860,7 @@ void nxagentCollectPropertyEvent(int resource)
     lastClientWindowPtr = NULL;
     SetClientSelectionStage(None);
 
-    if (pszReturnData != NULL)
-    {
-      XFree(pszReturnData);
-    }
-
+    SAFE_XFree(pszReturnData);
     return;
   }
 
@@ -897,11 +886,7 @@ void nxagentCollectPropertyEvent(int resource)
         lastClientWindowPtr = NULL;
         SetClientSelectionStage(None);
 
-        if (pszReturnData != NULL)
-        {
-          XFree(pszReturnData);
-        }
-
+        SAFE_XFree(pszReturnData);
         return;
       }
 
@@ -940,11 +925,7 @@ void nxagentCollectPropertyEvent(int resource)
         lastClientWindowPtr = NULL;
         SetClientSelectionStage(None);
 
-        if (pszReturnData != NULL)
-        {
-          XFree(pszReturnData);
-        }
-
+        SAFE_XFree(pszReturnData);
         return;
       }
 
@@ -985,8 +966,7 @@ void nxagentCollectPropertyEvent(int resource)
     }
   }
 
-  XFree(pszReturnData);
-  pszReturnData = NULL;
+  SAFE_XFree(pszReturnData);
 }
 
 void nxagentNotifySelection(XEvent *X)
@@ -1122,8 +1102,7 @@ void nxagentNotifySelection(XEvent *X)
           }
 
           /*
-           * XFree(pszReturnData);
-           * pszReturnData=NULL;
+           * SAFE_XFree(pszReturnData);
            */
 
         }
