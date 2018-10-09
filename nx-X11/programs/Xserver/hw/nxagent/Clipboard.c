@@ -1619,7 +1619,7 @@ WindowPtr nxagentGetClipboardWindow(Atom property, WindowPtr pWin)
   int i = 0;
 
   #ifdef DEBUG
-  fprintf(stderr, "nxagentGetClipboardWindow: Got called.\n");
+  fprintf(stderr, "%s: Got called, property [%d][%s] window [%p].\n", __func__, property, NameForAtom(property), pWin);
   #endif
 
   while ((i < nxagentMaxSelections) &&
@@ -1632,7 +1632,7 @@ WindowPtr nxagentGetClipboardWindow(Atom property, WindowPtr pWin)
           (lastSelectionOwner[i].windowPtr != NULL))
   {
     #ifdef DEBUG
-    fprintf(stderr, "nxagentGetClipboardWindow: Returning last clipboard owner window.\n");
+    fprintf(stderr, "%s: Returning last clipboard owner window [%p].\n", __func__, lastSelectionOwner[i].windowPtr);
     #endif
 
     return lastSelectionOwner[i].windowPtr;
@@ -1640,7 +1640,7 @@ WindowPtr nxagentGetClipboardWindow(Atom property, WindowPtr pWin)
   else
   {
     #ifdef DEBUG
-    fprintf(stderr, "nxagentGetClipboardWindow: Returning original target window.\n");
+    fprintf(stderr, "%s: Returning original target window [%p].\n", __func__, pWin);
     #endif
 
     return pWin;
