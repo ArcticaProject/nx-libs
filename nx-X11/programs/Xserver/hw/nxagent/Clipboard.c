@@ -164,6 +164,35 @@ const char * GetClientSelectionStageString(int stage)
 #endif
 
 /*
+ * see also nx-X11/lib/src/ErrDes.c
+ */
+const char * GetXErrorString(int code)
+{
+  switch(code)
+  {
+    case Success:           return("Success"); break;;
+    case BadRequest:        return("BadRequest"); break;;
+    case BadValue:          return("BadValue"); break;;
+    case BadWindow:         return("BadWindow"); break;;
+    case BadPixmap:         return("BadPixmap"); break;;
+    case BadAtom:           return("BadAtom"); break;;
+    case BadCursor:         return("BadCursor"); break;;
+    case BadFont:           return("BadFont"); break;;
+    case BadMatch:          return("BadMatch"); break;;
+    case BadDrawable:       return("BadDrawable"); break;;
+    case BadAccess:         return("BadAccess"); break;;
+    case BadAlloc:          return("BadAlloc"); break;;
+    case BadColor:          return("BadColor"); break;;
+    case BadGC:             return("BadGC"); break;;
+    case BadIDChoice:       return("BadIDChoice"); break;;
+    case BadName:           return("BadName"); break;;
+    case BadLength:         return("BadLength"); break;;
+    case BadImplementation: return("BadImplementation"); break;;
+    default:                return("UNKNOWN!"); break;;
+  }
+}
+
+/*
  * Save the values queried from X server.
  */
 
@@ -513,13 +542,14 @@ FIXME: Do we need this?
                         (XEvent *) &eventSelection);
 
     #ifdef DEBUG
+    fprintf(stderr, "%s: XSendEvent() returned [%s]\n", __func__, GetXErrorString(result));
     if (result == BadValue || result == BadWindow)
     {
-      fprintf(stderr, "nxagentRequestSelection: WARNING! XSendEvent failed.\n");
+      fprintf(stderr, "%s: WARNING! XSendEvent failed.\n", __func__);
     }
     else
     {
-      fprintf(stderr, "nxagentRequestSelection: XSendEvent sent to window [0x%lx].\n",
+      fprintf(stderr, "%s: XSendEvent sent to window [0x%lx].\n", __func__,
                   eventSelection.requestor);
     }
     #endif
@@ -631,7 +661,16 @@ FIXME: Do we need this?
                             (XEvent *) &eventSelection);
 
         #ifdef DEBUG
-        fprintf(stderr, "nxagentRequestSelection: Executed XSendEvent with property None.\n");
+        fprintf(stderr, "%s: XSendEvent() returned [%s]\n", __func__, GetXErrorString(result));
+        if (result == BadValue || result == BadWindow)
+        {
+          fprintf(stderr, "%s: WARNING! XSendEvent failed.\n", __func__);
+        }
+        else
+        {
+          fprintf(stderr, "%s: XSendEvent with property None sent to window [0x%lx].\n", __func__,
+                      eventSelection.requestor);
+        }
         #endif
       }
     }
@@ -1050,24 +1089,15 @@ void nxagentNotifySelection(XEvent *X)
                                            AnyPropertyType, &atomReturnType, &resultFormat,
                                                &ulReturnItems, &ulReturnBytesLeft, &pszReturnData);
 
+        #ifdef DEBUG
+        fprintf(stderr, "%s: GetWindowProperty() returned [%s]\n", __func__, GetXErrorString(result));
+        #endif
         if (result == BadAlloc || result == BadAtom ||
                 result == BadMatch || result == BadValue ||
                     result == BadWindow)
         {
-          fprintf (stderr, "Client GetProperty failed error =");
+          fprintf (stderr, "Client GetProperty failed. Error = %s", GetXErrorString(result));
           lastServerProperty = None;
-          switch (result)
-          {
-            case BadAtom:
-                 fprintf (stderr, "BadAtom\n");
-                 break;
-            case BadValue:
-                 fprintf (stderr, "BadValue\n");
-                 break;
-            case BadWindow:
-                 fprintf (stderr, "BadWindow\n");
-                 break;
-          }
         }
         else
         {
@@ -1075,12 +1105,15 @@ void nxagentNotifySelection(XEvent *X)
                                          ulReturnBytesLeft, False, AnyPropertyType, &atomReturnType,
                                              &resultFormat, &ulReturnItems, &ulReturnBytesLeft,
                                                  &pszReturnData);
+          #ifdef DEBUG
+          fprintf(stderr, "%s: GetWindowProperty() returned [%s]\n", __func__, GetXErrorString(result));
+          #endif
 
           if (result == BadAlloc || result == BadAtom ||
                   result == BadMatch || result == BadValue ||
                       result == BadWindow)
           {
-            fprintf (stderr, "SelectionNotify - XChangeProperty failed\n");
+            fprintf (stderr, "SelectionNotify - XChangeProperty failed. Error = %s\n", GetXErrorString(result));
 
             lastServerProperty = None;
           }
@@ -1095,6 +1128,9 @@ void nxagentNotifySelection(XEvent *X)
                                      pszReturnData,
                                      ulReturnItems);
           }
+          #ifdef DEBUG
+          fprintf(stderr, "%s: XChangeProperty() returned [%s]\n", __func__, GetXErrorString(result));
+          #endif
 
           /*
            * SAFE_XFree(pszReturnData);
@@ -1124,7 +1160,7 @@ void nxagentNotifySelection(XEvent *X)
          */
 
         #ifdef DEBUG
-        fprintf(stderr, "nxagentNotifySelection: Sending event to requestor.\n");
+        fprintf(stderr, "nxagentNotifySelection: Sending event to requestor [%p].\n", eventSelection.requestor);
         #endif
 
         result = XSendEvent(nxagentDisplay,
@@ -1133,6 +1169,9 @@ void nxagentNotifySelection(XEvent *X)
                              0L,
                              (XEvent *) &eventSelection);
 
+        #ifdef DEBUG
+        fprintf(stderr, "%s: XSendEvent() returned [%s]\n", __func__, GetXErrorString(result));
+        #endif
         if (result == BadValue || result == BadWindow)
         {
           fprintf (stderr, "SelectionRequest - XSendEvent failed\n");
@@ -1559,15 +1598,18 @@ int nxagentSendNotify(xEvent *event)
     x.time = CurrentTime;
 
     #ifdef DEBUG
-    fprintf(stderr, "nxagentSendNotify: Propagating clientCutProperty.\n");
+    fprintf(stderr, "nxagentSendNotify: Propagating clientCutProperty to requestor [%p].\n", x.requestor);
     #endif
 
     result = XSendEvent (nxagentDisplay, x.requestor, False,
                              0L, (XEvent *) &x);
 
+    #ifdef DEBUG
+    fprintf(stderr, "%s: XSendEvent() returned [%s]\n", __func__, GetXErrorString(result));
+    #endif
     if (result == BadValue || result == BadWindow)
     {
-       fprintf (stderr, "nxagentSendNotify: XSendEvent failed.\n");
+      fprintf (stderr, "%s: XSendEvent failed.\n", __func__);
     }
 
     return 1;
