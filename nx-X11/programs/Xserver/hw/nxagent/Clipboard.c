@@ -562,6 +562,7 @@ FIXME: Do we need this?
 
   nxagentLastRequestedSelection = X->xselectionrequest.selection;
 
+  /* FIXME: shouldn't we reset i to 0 here first? */
   while ((i < nxagentMaxSelections) &&
             (lastSelectionOwner[i].selection != X->xselectionrequest.selection))
   {
