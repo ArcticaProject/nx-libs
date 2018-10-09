@@ -504,8 +504,7 @@ FIXME: Do we need this?
                                 1);
       eventSelection.property = X->xselectionrequest.property;
     }
-
-    if (X->xselectionrequest.target == nxagentTimestampAtom)
+    else if (X->xselectionrequest.target == nxagentTimestampAtom)
     {
       while ((i < NumCurrentSelections) &&
                 lastSelectionOwner[i].selection != X->xselectionrequest.selection) i++;
