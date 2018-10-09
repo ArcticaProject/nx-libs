@@ -424,9 +424,6 @@ void nxagentClearSelection(XEvent *X)
 
 void nxagentRequestSelection(XEvent *X)
 {
-  #ifdef DEBUG
-  int result;
-  #endif
   int i = 0;
   XSelectionEvent eventSelection = {0};
 
@@ -507,7 +504,7 @@ FIXME: Do we need this?
     eventSelection.time = X->xselectionrequest.time;
 
     #ifdef DEBUG
-    result =
+    int result =
     #endif
     XSendEvent(nxagentDisplay,
                         eventSelection.requestor,
@@ -625,7 +622,7 @@ FIXME: Do we need this?
         eventSelection.time = X->xselectionrequest.time;
 
         #ifdef DEBUG
-        result =
+        int result =
         #endif
         XSendEvent(nxagentDisplay,
                             eventSelection.requestor,
@@ -971,8 +968,6 @@ void nxagentCollectPropertyEvent(int resource)
 
 void nxagentNotifySelection(XEvent *X)
 {
-  int result;
-
   XSelectionEvent eventSelection;
 
   #ifdef DEBUG
@@ -1051,9 +1046,9 @@ void nxagentNotifySelection(XEvent *X)
         unsigned long   ulReturnBytesLeft;
         unsigned char   *pszReturnData = NULL;
 
-        result = GetWindowProperty(lastSelectionOwner[i].windowPtr, clientCutProperty, 0, 0, False,
-                                       AnyPropertyType, &atomReturnType, &resultFormat,
-                                           &ulReturnItems, &ulReturnBytesLeft, &pszReturnData);
+        int result = GetWindowProperty(lastSelectionOwner[i].windowPtr, clientCutProperty, 0, 0, False,
+                                           AnyPropertyType, &atomReturnType, &resultFormat,
+                                               &ulReturnItems, &ulReturnBytesLeft, &pszReturnData);
 
         if (result == BadAlloc || result == BadAtom ||
                 result == BadMatch || result == BadValue ||
@@ -1400,7 +1395,6 @@ int nxagentConvertSelection(ClientPtr client, WindowPtr pWin, Atom selection,
 
   if (target == MakeAtom("TIMESTAMP", 9, 1))
   {
-    xEvent x;
     int i = 0;
 
     while ((i < NumCurrentSelections) &&
@@ -1408,6 +1402,7 @@ int nxagentConvertSelection(ClientPtr client, WindowPtr pWin, Atom selection,
 
     if (i < NumCurrentSelections)
     {
+      xEvent x;
       ChangeWindowProperty(pWin,
                            property,
                            target,
