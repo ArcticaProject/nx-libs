@@ -1092,8 +1092,7 @@ void nxagentNotifySelection(XEvent *X)
         fprintf(stderr, "%s: GetWindowProperty() returned [%s]\n", __func__, GetXErrorString(result));
         #endif
         if (result == BadAlloc || result == BadAtom ||
-                result == BadMatch || result == BadValue ||
-                    result == BadWindow)
+                result == BadWindow || result == BadValue)
         {
           fprintf (stderr, "Client GetProperty failed. Error = %s", GetXErrorString(result));
           lastServerProperty = None;
@@ -1109,11 +1108,9 @@ void nxagentNotifySelection(XEvent *X)
           #endif
 
           if (result == BadAlloc || result == BadAtom ||
-                  result == BadMatch || result == BadValue ||
-                      result == BadWindow)
+                  result == BadWindow || result == BadValue)
           {
             fprintf (stderr, "SelectionNotify - XChangeProperty failed. Error = %s\n", GetXErrorString(result));
-
             lastServerProperty = None;
           }
           else
