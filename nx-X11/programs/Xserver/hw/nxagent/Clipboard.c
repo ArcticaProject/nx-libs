@@ -882,7 +882,6 @@ void nxagentCollectPropertyEvent(int resource)
  
   if (resultFormat != 8 && resultFormat != 16 && resultFormat != 32)
   {
-
     #ifdef DEBUG
     fprintf (stderr, "nxagentCollectPropertyEvent: WARNING! Invalid property "
                  "value.\n");
@@ -1731,7 +1730,6 @@ int nxagentInitClipboard(WindowPtr pWin)
   {
     ErrorF("Unable to initialize XFixes extension.\n");
   }
-
   else
   {
     #ifdef TEST
@@ -1832,4 +1830,3 @@ int nxagentInitClipboard(WindowPtr pWin)
 
   return 1;
 }
-
