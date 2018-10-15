@@ -212,6 +212,57 @@ int nxagentSendNotify(xEvent *event);
 
 void nxagentPrintClipboardStat(char *);
 
+#ifdef DEBUG
+void nxagentPrintSelectionStat(int sel)
+{
+  SelectionOwner lOwner = lastSelectionOwner[sel];
+  Selection curSel = CurrentSelections[sel];
+  char *s =NULL;
+
+#ifdef CLIENTIDS
+  fprintf(stderr, "  lastSelectionOwner[].client            [%p] index [%d] PID [%d] Cmd [%s]\n",
+          lOwner.client,
+          lOwner.client ? lOwner.client->index : -1,
+          GetClientPid(lOwner.client),
+          GetClientCmdName(lOwner.client));
+#else
+  fprintf(stderr, "  lastSelectionOwner[].client            [%p] index [%d]\n",
+          lOwner.client,
+          lOwner.client ? lOwner.client->index : -1);
+#endif
+  fprintf(stderr, "  lastSelectionOwner[].window            [0x%x]\n", lOwner.window);
+  fprintf(stderr, "  lastSelectionOwner[].windowPtr         [%p]\n", lOwner.windowPtr);
+  fprintf(stderr, "  lastSelectionOwner[].lastTimeChanged   [%u]\n", lOwner.lastTimeChanged);
+
+  /*
+    print the selection name.
+  */
+  if (lOwner.client)
+  {
+    fprintf(stderr, "  lastSelectionOwner[].selection         [% 4d][%s] (local)\n", lOwner.selection, NameForAtom(lOwner.selection));
+  }
+  else
+  {
+    SAFE_XFree(s); s = XGetAtomName(nxagentDisplay, lOwner.selection);
+    fprintf(stderr, "  lastSelectionOwner[].selection         [% 4d][%s] (remote)\n", lOwner.selection, validateString(s));
+    SAFE_XFree(s);
+  }
+#ifdef CLIENTIDS
+  fprintf(stderr, "  CurrentSelections[].client             [%p] index [%d] PID [%d] Cmd [%s]\n",
+          curSel.client,
+          curSel.client ? curSel.client->index : -1,
+          GetClientPid(curSel.client),
+          GetClientCmdName(curSel.client));
+#else
+  fprintf(stderr, "  CurrentSelections[].client             [%p] index [%d]\n",
+          curSel.client,
+          curSel.client ? curSel.client->index : -1);
+#endif
+  fprintf(stderr, "  CurrentSelections[].window             [0x%x]\n", curSel.window);
+  return;
+}
+#endif
+
 void nxagentPrintClipboardStat(char *header)
 {
   #ifdef DEBUG
@@ -259,20 +310,9 @@ void nxagentPrintClipboardStat(char *header)
   fprintf(stderr, "  lastClientStage (ClientSelectionStage) [%d][%s]\n", lastClientStage, GetClientSelectionStageString(lastClientStage));
 
   fprintf(stderr, "PRIMARY\n");
-  fprintf(stderr, "  lastSelectionOwner[].client            [%p]\n", (void *)lastSelectionOwner[nxagentPrimarySelection].client);
-  fprintf(stderr, "  lastSelectionOwner[].window            [0x%x]\n", lastSelectionOwner[nxagentPrimarySelection].window);
-  fprintf(stderr, "  lastSelectionOwner[].windowPtr         [%p]\n", (void *)lastSelectionOwner[nxagentPrimarySelection].windowPtr);
-  fprintf(stderr, "  lastSelectionOwner[].lastTimeChanged   [%u]\n", lastSelectionOwner[nxagentPrimarySelection].lastTimeChanged);
-  fprintf(stderr, "  CurrentSelections[].client             [%p]\n", (void *)CurrentSelections[nxagentPrimarySelection].client);
-  fprintf(stderr, "  CurrentSelections[].window             [0x%x]\n", CurrentSelections[nxagentPrimarySelection].window);
-
+  nxagentPrintSelectionStat(nxagentPrimarySelection);
   fprintf(stderr, "CLIPBOARD\n");
-  fprintf(stderr, "  lastSelectionOwner[].client            [%p]\n", (void *)lastSelectionOwner[nxagentClipboardSelection].client);
-  fprintf(stderr, "  lastSelectionOwner[].window            [0x%x]\n", lastSelectionOwner[nxagentClipboardSelection].window);
-  fprintf(stderr, "  lastSelectionOwner[].windowPtr         [%p]\n", (void *)lastSelectionOwner[nxagentClipboardSelection].windowPtr);
-  fprintf(stderr, "  lastSelectionOwner[].lastTimeChanged   [%u]\n", lastSelectionOwner[nxagentClipboardSelection].lastTimeChanged);
-  fprintf(stderr, "  CurrentSelections[].client             [%p]\n", (void *)CurrentSelections[nxagentClipboardSelection].client);
-  fprintf(stderr, "  CurrentSelections[].window             [0x%x]\n", CurrentSelections[nxagentClipboardSelection].window);
+  nxagentPrintSelectionStat(nxagentClipboardSelection);
 
   fprintf(stderr, "Atoms (server side)\n");
   SAFE_XFree(s); s = XGetAtomName(nxagentDisplay, serverTARGETS);
