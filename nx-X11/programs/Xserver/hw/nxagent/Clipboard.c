@@ -441,7 +441,7 @@ void nxagentClearSelection(XEvent *X)
   int i = 0;
 
   #ifdef DEBUG
-  fprintf(stderr, "nxagentClearSelection: Got called.\n");
+  fprintf(stderr, "%s: SelectionClear event for selection [%d].\n", __func__, X->xselectionclear.selection);
   #endif
 
   nxagentPrintClipboardStat("before nxagentClearSelection");
@@ -451,10 +451,6 @@ void nxagentClearSelection(XEvent *X)
   {
     return;
   }
-
-  #ifdef DEBUG
-  fprintf(stderr, "nxagentClearSelection: SelectionClear event.\n");
-  #endif
 
   while ((i < nxagentMaxSelections) &&
             (lastSelectionOwner[i].selection != X->xselectionclear.selection))
