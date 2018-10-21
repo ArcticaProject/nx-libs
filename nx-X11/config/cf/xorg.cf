@@ -594,7 +594,7 @@ IPLAN2P8_DEFS = -DUSE_IPLAN2P8
 
 #ifndef XFree86ServerOSDefines
 # define XFree86ServerOSDefines	-DDDXOSINIT -DSERVER_LOCK -DDDXOSFATALERROR \
-				-DDDXOSVERRORF
+				-DDDXOSVERRORF -DCLIENTIDS
 #endif
 
 #ifndef XFree86ConsoleDefines
