@@ -557,4 +557,10 @@ extern int snprintf(char *str, size_t size, const char *format, ...)
 extern int vsnprintf(char *str, size_t size, const char *format, va_list ap);
 #endif
 
+#ifdef DEBUG
+#define DebugF ErrorF
+#else
+#define DebugF(...)             /* */
+#endif
+
 #endif /* OS_H */
