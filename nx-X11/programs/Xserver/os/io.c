@@ -301,7 +301,8 @@ ReadRequestFromClient(ClientPtr client)
 	 */
 
 	oci->lenLastReq = 0;
-	if (needed > MAXBUFSIZE)
+#ifdef BIGREQS
+	if (needed > maxBigRequestSize << 2)
 	{
 	    /* request is too big for us to handle */
 	    /*
@@ -312,6 +313,7 @@ ReadRequestFromClient(ClientPtr client)
 	    oci->lenLastReq = gotnow;
 	    return needed;
 	}
+#endif
 	if ((gotnow == 0) ||
 	    ((oci->bufptr - oci->buffer + needed) > oci->size))
 	{
