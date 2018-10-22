@@ -2784,7 +2784,7 @@ void nxagentReconnectGlyphSet(void* p0, XID x1, void *p2)
 
 Bool nxagentReconnectAllGlyphSet(void *p)
 {
-  Bool success = TRUE;
+  Bool success = True;
   int i;
 
   nxagentQueryFormats();
@@ -2826,7 +2826,7 @@ void nxagentReconnectPicture(void * p0, XID x1, void *p2)
    * and that the involved objects are valid.
    */
 
-  if (*pBool == 0 || pPicture == NULL ||
+  if (!*pBool || pPicture == NULL ||
           nxagentPicture(pPicture) != 0)
   {
     return;
@@ -2959,7 +2959,7 @@ Bool nxagentReconnectAllPicture(void *p)
   fprintf(stderr, "nxagentReconnectAllPicture: Going to recreate all pictures.\n");
   #endif
 
-  for (i = 0, r = 1; i < MAXCLIENTS; i++)
+  for (i = 0, r = True; i < MAXCLIENTS; i++)
   {
     if (clients[i])
     {
@@ -2967,7 +2967,7 @@ Bool nxagentReconnectAllPicture(void *p)
 
       #ifdef WARNING
 
-      if (r == False)
+      if (!r)
       {
         fprintf(stderr, "nxagentReconnectAllPicture: WARNING! Failed to recreate "
                     "picture for client [%d].\n", i);
@@ -3015,7 +3015,7 @@ Bool nxagentDisconnectAllPicture(void)
   fprintf(stderr, "nxagentDisconnectAllPicture.\n");
   #endif
 
-  for (i = 0, r = 1; i < MAXCLIENTS; i++)
+  for (i = 0, r = True; i < MAXCLIENTS; i++)
   {
     if (clients[i])
     {
@@ -3023,7 +3023,7 @@ Bool nxagentDisconnectAllPicture(void)
 
       #ifdef WARNING
 
-      if (r == False)
+      if (!r)
       {
         fprintf(stderr, "nxagentDisconnectAllPicture: WARNING! Failed to disconnect "
                     "picture for client [%d].\n", i);

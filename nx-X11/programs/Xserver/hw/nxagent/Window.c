@@ -310,7 +310,7 @@ Bool nxagentCreateWindow(pWin)
 /*
 FIXME: We need to set save under on the real display?
 */
-    if (nxagentSaveUnder == True)
+    if (nxagentSaveUnder)
       {
         mask |= CWSaveUnder;
         attributes.save_under = False;
@@ -749,7 +749,7 @@ void nxagentSwitchFullscreen(ScreenPtr pScreen, Bool switchOn)
     return;
   }
 
-  if (switchOn == 0)
+  if (!switchOn)
   {
     nxagentWMDetect();
 
@@ -762,7 +762,7 @@ void nxagentSwitchFullscreen(ScreenPtr pScreen, Bool switchOn)
 
     isItTimeToYield = 1;
 
-    if (nxagentWMIsRunning == 0)
+    if (!nxagentWMIsRunning)
     {
       #ifdef WARNING
       fprintf(stderr, "Warning: Can't switch to window mode, no window manager "
@@ -793,7 +793,7 @@ void nxagentSwitchFullscreen(ScreenPtr pScreen, Bool switchOn)
   XSendEvent(nxagentDisplay, DefaultRootWindow(nxagentDisplay), False,
                  SubstructureRedirectMask, &e);
 
-  if (switchOn == 1)
+  if (switchOn)
   {
     nxagentFullscreenWindow = nxagentDefaultWindows[pScreen -> myNum];
 
@@ -2552,7 +2552,7 @@ void nxagentMapDefaultWindows(void)
        * Windows client.
        */
 
-      if (nxagentOption(Shadow) == 0 || nxagentWMIsRunning == 0)
+      if (nxagentOption(Shadow) == 0 || !nxagentWMIsRunning)
       {
         #ifdef TEST
         fprintf(stderr, "nxagentMapDefaultWindows: Mapping default window id [%ld].\n",
@@ -2561,7 +2561,7 @@ void nxagentMapDefaultWindows(void)
 
         XMapWindow(nxagentDisplay, nxagentDefaultWindows[pScreen->myNum]);
 
-        if (nxagentOption(Fullscreen) == 1 && nxagentWMIsRunning == 1)
+        if (nxagentOption(Fullscreen) == 1 && nxagentWMIsRunning)
         {
           nxagentMaximizeToFullScreen(pScreen);
         }
@@ -2683,7 +2683,7 @@ void nxagentDisconnectWindow(void * p0, XID x1, void * p2)
 
     nxagentDisconnectCursor(pCursor, (XID)0, pBool);
 
-    if (*pBool == False)
+    if (!*pBool)
     {
       #ifdef WARNING
       fprintf(stderr, "nxagentDisconnectWindow: WARNING failed disconnection of cursor at [%p]"
@@ -2724,8 +2724,6 @@ void nxagentDisconnectWindow(void * p0, XID x1, void * p2)
 Bool nxagentReconnectAllWindows(void *p0)
 {
   int flexibility = *(int *) p0;
-
-  flexibility = flexibility;
 
   #if defined(NXAGENT_RECONNECT_DEBUG) || defined(NXAGENT_RECONNECT_WINDOW_DEBUG)
   fprintf(stderr, "nxagentReconnectAllWindows\n");
@@ -2845,8 +2843,6 @@ Bool nxagentSetWindowCursors(void *p0)
 {
   int flexibility = *(int *) p0;
 
-  flexibility = flexibility;
-
   #if defined(NXAGENT_RECONNECT_DEBUG) || defined(NXAGENT_RECONNECT_WINDOW_DEBUG)
   fprintf(stderr, "nxagentSetWindowCursors: Going to loop over the windows.\n");
   #endif
@@ -2937,7 +2933,7 @@ static void nxagentReconnectWindow(void * param0, XID param1, void * data_buffer
 /*
 FIXME: Do we need to set save unders attribute here?
 */
-    if (nxagentSaveUnder == True)
+    if (nxagentSaveUnder)
     {
       mask |= CWSaveUnder;
       attributes.save_under = pWin->saveUnder;

@@ -860,10 +860,10 @@ void nxagentReconnectPixmap(void *p0, XID x1, void *p2)
   Bool *pBool = (Bool*) p2;
   nxagentPrivPixmapPtr pPixmapPriv;
 
-  if (*pBool == 0 || pPixmap == NULL ||
+  if (!*pBool || pPixmap == NULL ||
           NXDisplayError(nxagentDisplay) == 1)
   {
-    *pBool = 0;
+    *pBool = False;
 
     #ifdef TEST
     fprintf(stderr, "nxagentReconnectPixmap: Ignoring pixmap at [%p] while "
@@ -929,7 +929,7 @@ void nxagentReconnectPixmap(void *p0, XID x1, void *p2)
 
     nxagentSplitTrap = 0;
 
-    if (*pBool == 0)
+    if (!*pBool)
     {
       #ifdef PANIC
       fprintf(stderr, "nxagentReconnectPixmap: PANIC! Failed to synchronize the pixmap.\n");
@@ -1035,7 +1035,7 @@ static void nxagentCheckOnePixmapIntegrity(void *p0, XID x1, void *p2)
   PixmapPtr pPixmap = (PixmapPtr) p0;
   Bool      *pBool = (Bool*) p2;
 
-  if (*pBool == False)
+  if (!*pBool)
   {
     return;
   }
@@ -1065,7 +1065,7 @@ static void nxagentCheckOnePixmapIntegrity(void *p0, XID x1, void *p2)
 
 Bool nxagentCheckPixmapIntegrity(PixmapPtr pPixmap)
 {
-  Bool integrity = 1;
+  Bool integrity = True;
   XImage *image;
   char *data;
   int format;
@@ -1121,11 +1121,11 @@ Bool nxagentCheckPixmapIntegrity(PixmapPtr pPixmap)
 
     if (image != NULL && memcmp(image -> data, data, length) != 0)
     {
-      integrity = 0;
+      integrity = False;
     }
     else
     {
-      integrity = 1;
+      integrity = True;
 
       #ifdef TEST
       fprintf(stderr, "nxagentCheckPixmapIntegrity: Pixmap at [%p] has been realized. "
@@ -1135,7 +1135,7 @@ Bool nxagentCheckPixmapIntegrity(PixmapPtr pPixmap)
 
     #ifdef WARNING
 
-    if (integrity == 0)
+    if (!integrity)
     {
 
       int i;
