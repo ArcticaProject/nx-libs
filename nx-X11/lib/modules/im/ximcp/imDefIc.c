@@ -231,10 +231,9 @@ _XimReCreateIC(ic)
 
     _XimRegisterFilter(ic);
     MARK_IC_CONNECTED(ic);
-    if (save_ic->private.proto.ic_resources)
-	Xfree(save_ic->private.proto.ic_resources);
-    if (save_ic->private.proto.ic_inner_resources)
-	Xfree(save_ic->private.proto.ic_inner_resources);
+
+    Xfree(save_ic->private.proto.ic_resources);
+    Xfree(save_ic->private.proto.ic_inner_resources);
     Xfree(save_ic);
     return True;
 
@@ -833,7 +832,7 @@ _XimDestroyICCheck(
      && (imid == im->private.proto.imid)
      && (buf_s[2] & XIM_ICID_VALID)
      && (icid == ic->private.proto.icid))
-    ret = False;
+        ret = False;
     return ret;
 }
 
@@ -845,22 +844,22 @@ _XimProtoICFree(
     Xim		 im = (Xim)ic->core.im;
 #endif
 
-    if (ic->private.proto.preedit_font) {
-	Xfree(ic->private.proto.preedit_font);
-	ic->private.proto.preedit_font = NULL;
-    }
-    if (ic->private.proto.status_font) {
-	Xfree(ic->private.proto.status_font);
-	ic->private.proto.status_font = NULL;
-    }
+
+    Xfree(ic->private.proto.preedit_font);
+    ic->private.proto.preedit_font = NULL;
+
+
+    Xfree(ic->private.proto.status_font);
+    ic->private.proto.status_font = NULL;
+
     if (ic->private.proto.commit_info) {
 	_XimFreeCommitInfo(ic);
 	ic->private.proto.commit_info = NULL;
     }
-    if (ic->private.proto.ic_inner_resources) {
-	Xfree(ic->private.proto.ic_inner_resources);
-	ic->private.proto.ic_inner_resources = NULL;
-    }
+
+    Xfree(ic->private.proto.ic_inner_resources);
+    ic->private.proto.ic_inner_resources = NULL;
+
 
 #ifdef XIM_CONNECTABLE
     if (IS_SERVER_CONNECTED(im) && IS_RECONNECTABLE(im)) {
@@ -868,18 +867,16 @@ _XimProtoICFree(
     }
 #endif /* XIM_CONNECTABLE */
 
-    if (ic->private.proto.saved_icvalues) {
-	Xfree(ic->private.proto.saved_icvalues);
-	ic->private.proto.saved_icvalues = NULL;
-    }
-    if (ic->private.proto.ic_resources) {
-	Xfree(ic->private.proto.ic_resources);
-	ic->private.proto.ic_resources = NULL;
-    }
-    if (ic->core.hotkey) {
-	Xfree(ic->core.hotkey);
-	ic->core.hotkey = NULL;
-    }
+    Xfree(ic->private.proto.saved_icvalues);
+    ic->private.proto.saved_icvalues = NULL;
+
+
+    Xfree(ic->private.proto.ic_resources);
+    ic->private.proto.ic_resources = NULL;
+
+
+    Xfree(ic->core.hotkey);
+    ic->core.hotkey = NULL;
 
     return;
 }
@@ -927,6 +924,30 @@ _XimProtoDestroyIC(
     return;
 }
 
+/*
+ * Some functions require the request queue from the server to be flushed
+ * so that the ordering of client initiated status changes and those requested
+ * by the server is well defined.
+ * _XimSync() would be the function of choice here as it should get a
+ * XIM_SYNC_REPLY back from the server.
+ * This however isn't implemented in the piece of junk that is used by most
+ * input servers as the server side protocol if to XIM.
+ * Since this code is not shipped as a library together with the client side
+ * XIM code but is duplicated by every input server around the world there
+ * is no easy fix to this but this ugly hack below.
+ * Obtaining an IC value from the server sends a request and empties out the
+ * event/server request queue until the answer to this request is found.
+ * Thus it is guaranteed that any pending server side request gets processed.
+ * This is what the hack below is doing.
+ */
+
+static void
+BrokenSyncWithServer(XIC xic)
+{
+    CARD32 dummy;
+    XGetICValues(xic, XNFilterEvents, &dummy, NULL);
+}
+
 static void
 _XimProtoSetFocus(
     XIC		 xic)
@@ -957,6 +978,7 @@ _XimProtoSetFocus(
 	}
     }
 #endif /* XIM_CONNECTABLE */
+    BrokenSyncWithServer(xic);
 
     buf_s[0] = im->private.proto.imid;		/* imid */
     buf_s[1] = ic->private.proto.icid;		/* icid */
@@ -1002,6 +1024,8 @@ _XimProtoUnsetFocus(
 	}
     }
 #endif /* XIM_CONNECTABLE */
+
+    BrokenSyncWithServer(xic);
 
     buf_s[0] = im->private.proto.imid;		/* imid */
     buf_s[1] = ic->private.proto.icid;		/* icid */

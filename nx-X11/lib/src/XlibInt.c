@@ -836,8 +836,12 @@ _XWaitForReadable(
 
 static int sync_hazard(Display *dpy)
 {
-    unsigned long span = dpy->request - dpy->last_request_read;
-    unsigned long hazard = min((dpy->bufmax - dpy->buffer) / SIZEOF(xReq), 65535 - 10);
+    /*
+     * "span" and "hazard" need to be signed such that the ">=" comparision
+     * works correctly in the case that hazard is greater than 65525
+     */
+    int64_t span = X_DPY_GET_REQUEST(dpy) - X_DPY_GET_LAST_REQUEST_READ(dpy);
+    int64_t hazard = min((dpy->bufmax - dpy->buffer) / SIZEOF(xReq), 65535 - 10);
     return span >= 65535 - hazard - 10;
 }
 
@@ -876,7 +880,7 @@ void _XSeqSyncFunction(
         return;
     }
 #endif /* NX_TRANS_SOCKET */
-    if ((dpy->request - dpy->last_request_read) >= (65535 - BUFSIZE/SIZEOF(xReq))) {
+    if ((X_DPY_GET_REQUEST(dpy) - X_DPY_GET_LAST_REQUEST_READ(dpy)) >= (65535 - BUFSIZE/SIZEOF(xReq))) {
 	GetEmptyReq(GetInputFocus, req);
 	(void) _XReply (dpy, (xReply *)&rep, 0, xTrue);
 	sync_while_locked(dpy);
@@ -2072,9 +2076,9 @@ _XSetLastRequestRead(
     register Display *dpy,
     register xGenericReply *rep)
 {
-    register unsigned long	newseq, lastseq;
+    register uint64_t	newseq, lastseq;
 
-    lastseq = dpy->last_request_read;
+    lastseq = X_DPY_GET_LAST_REQUEST_READ(dpy);
     /*
      * KeymapNotify has no sequence number, but is always guaranteed
      * to immediately follow another event, except when generated via
@@ -2083,30 +2087,31 @@ _XSetLastRequestRead(
     if ((rep->type & 0x7f) == KeymapNotify)
 	return(lastseq);
 
-    newseq = (lastseq & ~((unsigned long)0xffff)) | rep->sequenceNumber;
+    newseq = (lastseq & ~((uint64_t)0xffff)) | rep->sequenceNumber;
 
     if (newseq < lastseq) {
 	newseq += 0x10000;
-	if (newseq > dpy->request) {
+	if (newseq > X_DPY_GET_REQUEST(dpy)) {
 #ifdef NX_TRANS_SOCKET
 	    if (_NXLostSequenceFunction != NULL)
-            {
-                (*_NXLostSequenceFunction)(dpy, newseq, dpy->request,
-                                               (unsigned int) rep->type);
-            }
-            else
+	    {
+		(*_NXLostSequenceFunction)(dpy, newseq, X_DPY_GET_REQUEST(dpy),
+					       (unsigned int) rep->type);
+	    }
+	    else
 #endif /* #ifdef NX_TRANS_SOCKET */
-            {
-                (void) fprintf (stderr, 
-                "Xlib: sequence lost (0x%lx > 0x%lx) in reply type 0x%x!\n",
-                                newseq, dpy->request, 
-                                (unsigned int) rep->type);
-            }
+	    {
+		(void) fprintf (stderr,
+				"Xlib: sequence lost (0x%llx > 0x%llx) in reply type 0x%x!\n",
+				(unsigned long long)newseq,
+				(unsigned long long)(X_DPY_GET_REQUEST(dpy)),
+				(unsigned int) rep->type);
+	    }
 	    newseq -= 0x10000;
 	}
     }
 
-    dpy->last_request_read = newseq;
+    X_DPY_SET_LAST_REQUEST_READ(dpy, newseq);
     return(newseq);
 }
 
@@ -2652,8 +2657,8 @@ XAddConnectionWatch(
 
     /* allocate new watch data */
     for (info_list=dpy->im_fd_info; info_list; info_list=info_list->next) {
-        wd_array = Xrealloc(info_list->watch_data,
-                           (dpy->watcher_count + 1) * sizeof(XPointer));
+	wd_array = Xrealloc(info_list->watch_data,
+			    (dpy->watcher_count + 1) * sizeof(XPointer));
 	if (!wd_array) {
 	    UnlockDisplay(dpy);
 	    return 0;
@@ -2921,15 +2926,12 @@ void _XEnq(
 		/* If dpy->qfree is non-NULL do this, else malloc a new one. */
 		dpy->qfree = qelt->next;
 	}
-        else if ((qelt = Xmalloc(sizeof(_XQEvent))) == NULL) {
+	else if ((qelt = Xmalloc(sizeof(_XQEvent))) == NULL) {
 		/* Malloc call failed! */
 		ESET(ENOMEM);
-#ifdef NX_TRANS_SOCKET
                 _XIOError(dpy);
-
+#ifdef NX_TRANS_SOCKET
                 return;
-#else
-		_XIOError(dpy);
 #endif
 	}
 	qelt->next = NULL;
@@ -3590,10 +3592,10 @@ static int _XPrintDefaultError(
 			  mesg, BUFSIZ);
     fputs("  ", fp);
     (void) fprintf(fp, mesg, event->serial);
-    XGetErrorDatabaseText(dpy, mtype, "CurrentSerial", "Current Serial #%d",
+    XGetErrorDatabaseText(dpy, mtype, "CurrentSerial", "Current Serial #%lld",
 			  mesg, BUFSIZ);
     fputs("\n  ", fp);
-    (void) fprintf(fp, mesg, dpy->request);
+    (void) fprintf(fp, mesg, (unsigned long long)(X_DPY_GET_REQUEST(dpy)));
     fputs("\n", fp);
     if (event->error_code == BadImplementation) return 0;
     return 1;
@@ -3658,17 +3660,17 @@ int _XError (
 	return 0;
     if (_XErrorFunction != NULL) {
 	int rtn_val;
-#if defined(XTHREADS) && !USE_XCB
+#ifdef XTHREADS
 	if (dpy->lock)
 	    (*dpy->lock->user_lock_display)(dpy);
 	UnlockDisplay(dpy);
-#endif /* XTHREADS && !USE_XCB */
+#endif
 	rtn_val = (*_XErrorFunction)(dpy, (XErrorEvent *)&event); /* upcall */
-#if defined(XTHREADS) && !USE_XCB
+#ifdef XTHREADS
 	LockDisplay(dpy);
 	if (dpy->lock)
 	    (*dpy->lock->user_unlock_display)(dpy);
-#endif /* XTHREADS && !USE_XCB */
+#endif
 	return rtn_val;
     } else {
 	return _XDefaultError(dpy, (XErrorEvent *)&event);
@@ -3978,20 +3980,20 @@ void *_XGetRequest(Display *dpy, CARD8 type, size_t len)
     xReq *req;
 
     if (dpy->bufptr + len > dpy->bufmax)
-       _XFlush(dpy);
+	_XFlush(dpy);
     /* Request still too large, so do not allow it to overflow. */
     if (dpy->bufptr + len > dpy->bufmax) {
-       fprintf(stderr,
-               "Xlib: request %d length %zd would exceed buffer size.\n",
-               type, len);
-       /* Changes failure condition from overflow to NULL dereference. */
-       return NULL;
+	fprintf(stderr,
+		"Xlib: request %d length %zd would exceed buffer size.\n",
+		type, len);
+	/* Changes failure condition from overflow to NULL dereference. */
+	return NULL;
     }
 
     if (len % 4)
-       fprintf(stderr,
-               "Xlib: request %d length %zd not a multiple of 4.\n",
-               type, len);
+	fprintf(stderr,
+		"Xlib: request %d length %zd not a multiple of 4.\n",
+		type, len);
 
     dpy->last_req = dpy->bufptr;
 
@@ -3999,7 +4001,7 @@ void *_XGetRequest(Display *dpy, CARD8 type, size_t len)
     req->reqType = type;
     req->length = len / 4;
     dpy->bufptr += len;
-    dpy->request++;
+    X_DPY_REQUEST_INCREMENT(dpy);
     return req;
 }
 
