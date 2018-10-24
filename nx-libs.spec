@@ -32,6 +32,8 @@ BuildRequires:  pkgconfig
 %if 0%{?suse_version} && 0%{?suse_version} < 1210
 BuildRequires:  xorg-x11-util-devel
 %else
+# we need xkbcomp.pc
+BuildRequires:  xorg-x11-xkb-utils-devel
 BuildRequires:  imake
 %endif
 
