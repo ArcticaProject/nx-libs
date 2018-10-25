@@ -257,7 +257,10 @@ WindowPtr nxagentWindowPtr(Window window)
   {
     WalkTree(screenInfo.screens[i], nxagentFindWindowMatch, (void *) &match);
 
-    if (match.pWin) break;
+    if (match.pWin)
+    {
+      break;
+    }
   }
 
   return match.pWin;
@@ -285,11 +288,13 @@ Bool nxagentCreateWindow(WindowPtr pWin)
   fprintf(stderr, "nxagentCreateWindow: nxagentSplashCount [%d]\n", nxagentSplashCount);
 #endif
 
-  if (pWin->drawable.class == InputOnly) {
+  if (pWin->drawable.class == InputOnly)
+  {
     mask = CWEventMask;
     visual = CopyFromParent;
   }
-  else {
+  else
+  {
     mask = CWEventMask | CWBackingStore;
 
     if (pWin->optional)
@@ -310,31 +315,41 @@ Bool nxagentCreateWindow(WindowPtr pWin)
       FIXME: We need to set save under on the real display?
     */
     if (nxagentSaveUnder)
-      {
-        mask |= CWSaveUnder;
-        attributes.save_under = False;
-      }
+    {
+      mask |= CWSaveUnder;
+      attributes.save_under = False;
+    }
 
-    if (pWin->parent) {
-      if (pWin->optional && pWin->optional->visual != wVisual(pWin->parent)) {
+    if (pWin->parent)
+    {
+      if (pWin->optional && pWin->optional->visual != wVisual(pWin->parent))
+      {
         visual = nxagentVisualFromID(pWin->drawable.pScreen, wVisual(pWin));
         mask |= CWColormap;
-        if (pWin->optional->colormap) {
+        if (pWin->optional->colormap)
+        {
           pCmap = (ColormapPtr)LookupIDByType(wColormap(pWin), RT_COLORMAP);
           attributes.colormap = nxagentColormap(pCmap);
         }
         else
+        {
           attributes.colormap = nxagentDefaultVisualColormap(visual);
+        }
       }
       else if (pWin->optional)
-       visual = CopyFromParent;
-      else {
+      {
+        visual = CopyFromParent;
+      }
+      else
+      {
         visual = nxagentVisualFromID(pWin->drawable.pScreen, wVisual(pWin));
         mask |= CWColormap;
         attributes.colormap = nxagentDefaultVisualColormap(visual);
       }
     }
-    else { /* root windows have their own colormaps at creation time */
+    else
+    {
+      /* root windows have their own colormaps at creation time */
       visual = nxagentVisualFromID(pWin->drawable.pScreen, wVisual(pWin));
       pCmap = (ColormapPtr)LookupIDByType(wColormap(pWin), RT_COLORMAP);
       mask |= CWColormap;
@@ -473,11 +488,15 @@ Bool nxagentCreateWindow(WindowPtr pWin)
     Atom prop = MakeAtom("NX_REAL_WINDOW", strlen("NX_REAL_WINDOW"), True);
 
     if (ChangeWindowProperty(pWin, prop, XA_WINDOW, 32, PropModeReplace, 1, nxagentWindowPriv(pWin), 1) != Success)
-        fprintf(stderr, "nxagentCreateWindow: Adding NX_REAL_WINDOW failed.\n");
-#ifdef DEBUG
+    {
+      fprintf(stderr, "nxagentCreateWindow: Adding NX_REAL_WINDOW failed.\n");
+    }
+    #ifdef DEBUG
     else
-        fprintf(stderr, "nxagentCreateWindow: Added NX_REAL_WINDOW for Window ID [%x].\n", nxagentWindowPriv(pWin)->window);
-#endif
+    {
+      fprintf(stderr, "nxagentCreateWindow: Added NX_REAL_WINDOW for Window ID [%x].\n", nxagentWindowPriv(pWin)->window);
+    }
+    #endif
   }
 
   nxagentWindowPriv(pWin)->x = pWin->origin.x - wBorderWidth(pWin);
@@ -537,11 +556,15 @@ void nxagentSetVersionProperty(WindowPtr pWin)
   Atom prop = MakeAtom(name, strlen(name), True);
 
   if (ChangeWindowProperty(pWin, prop, XA_STRING, 8, PropModeReplace, strlen(NX_VERSION_CURRENT_STRING), NX_VERSION_CURRENT_STRING, True) != Success)
+  {
     fprintf(stderr, "%s: Adding property [%s], value [%s] failed.\n", __func__, name, NX_VERSION_CURRENT_STRING);
-#ifdef DEBUG
+  }
+  #ifdef DEBUG
   else
-    fprintf(stderr, "%s: Added property [%s], value [%s] for root window [%x].\n", __func__, name, NX_VERSION_CURRENT_STRING, pWin);
-#endif
+  {
+      fprintf(stderr, "%s: Added property [%s], value [%s] for root window [%x].\n", __func__, name, NX_VERSION_CURRENT_STRING, pWin);
+  }
+  #endif
 }
 
 Bool nxagentSomeWindowsAreMapped(void)
@@ -1907,7 +1930,9 @@ Bool nxagentRealizeWindow(WindowPtr pWin)
     wmState.state = 1; /* NormalState */
     wmState.icon = None;
     if (ChangeWindowProperty(pWin, prop, prop, 32, 0, 2, &wmState, 1) != Success)
+    {
       fprintf(stderr, "nxagentRealizeWindow: Adding WM_STATE fail.\n");
+    }
   }
 
   #ifdef SHAPE
@@ -1963,7 +1988,9 @@ Bool nxagentUnrealizeWindow(WindowPtr pWin)
     wmState.state = 3; /* WithdrawnState */
     wmState.icon = None;
     if (ChangeWindowProperty(pWin, prop, prop, 32, 0, 2, &wmState, 1) != Success)
+    {
       fprintf(stderr, "nxagentUnRealizeWindow: Changing WM_STATE failed.\n");
+    }
   }
 
   XUnmapWindow(nxagentDisplay, nxagentWindow(pWin));
@@ -2121,7 +2148,7 @@ void nxagentWindowExposures(WindowPtr pWin, RegionPtr pRgn, RegionPtr other_expo
    *
    * - We create a "fake" off-screen window. For every generated region
    *   we send a ConfigureWindow request for that window to synchronize
-   *  ourselves with both the remote X server and/or the window manager.
+   *   ourselves with both the remote X server and/or the window manager.
    *
    * - When the ConfigureNotify is received, we calculate the difference
    *   between the "remote-region" and the "local-region" for the window
@@ -2301,9 +2328,15 @@ static Bool nxagentRegionEqual(RegionPtr pReg1, RegionPtr pReg2)
   BoxPtr pBox1, pBox2;
   unsigned int n1, n2;
 
-  if (pReg1 == pReg2) return True;
+  if (pReg1 == pReg2)
+  {
+    return True;
+  }
 
-  if (pReg1 == NullRegion || pReg2 == NullRegion) return False;
+  if (pReg1 == NullRegion || pReg2 == NullRegion)
+  {
+    return False;
+  }
 
   pBox1 = RegionRects(pReg1);
   n1 = RegionNumRects(pReg1);
@@ -2311,11 +2344,20 @@ static Bool nxagentRegionEqual(RegionPtr pReg1, RegionPtr pReg2)
   pBox2 = RegionRects(pReg2);
   n2 = RegionNumRects(pReg2);
 
-  if (n1 != n2) return False;
+  if (n1 != n2)
+  {
+    return False;
+  }
 
-  if (pBox1 == pBox2) return True;
+  if (pBox1 == pBox2)
+  {
+    return True;
+  }
 
-  if (memcmp(pBox1, pBox2, n1 * sizeof(BoxRec))) return False;
+  if (memcmp(pBox1, pBox2, n1 * sizeof(BoxRec)))
+  {
+    return False;
+  }
 
   return True;
 }
@@ -2697,11 +2739,15 @@ void nxagentDisconnectWindow(void * p0, XID x1, void * p2)
     Atom prop = MakeAtom("NX_REAL_WINDOW", strlen("NX_REAL_WINDOW"), True);
 
     if (DeleteProperty(pWin, prop) != Success)
+    {
         fprintf(stderr, "nxagentDisconnectWindow: Deleting NX_REAL_WINDOW failed.\n");
-#ifdef DEBUG
+    }
+    #ifdef DEBUG
     else
-        fprintf(stderr, "nxagentDisconnectWindow: Deleting NX_REAL_WINDOW from Window ID [%x].\n", nxagentWindowPriv(pWin)->window);
-#endif
+    {
+      fprintf(stderr, "nxagentDisconnectWindow: Deleting NX_REAL_WINDOW from Window ID [%x].\n", nxagentWindowPriv(pWin)->window);
+    }
+    #endif
   }
 
   nxagentWindow(pWin) = None;
@@ -2899,17 +2945,21 @@ static void nxagentReconnectWindow(void * param0, XID param1, void * data_buffer
   ColormapPtr pCmap;
 
   if (!pWin || !*pBool)
+  {
     return;
+  }
 
   #ifdef NXAGENT_RECONNECT_WINDOW_DEBUG
   fprintf(stderr, "nxagentReconnectWindow: %p - ID %lx\n", pWin, nxagentWindow(pWin));
   #endif
 
-  if (pWin->drawable.class == InputOnly) {
+  if (pWin->drawable.class == InputOnly)
+  {
     mask = CWEventMask;
     visual = CopyFromParent;
   }
-  else {
+  else
+  {
     mask = CWEventMask | CWBackingStore;
 
     attributes.backing_store = NotUseful;
@@ -2930,21 +2980,30 @@ static void nxagentReconnectWindow(void * param0, XID param1, void * data_buffer
       attributes.save_under = pWin->saveUnder;
     }
 
-    if (pWin->parent) {
-        if (pWin->optional && pWin->optional->visual != wVisual(pWin->parent)) {
+    if (pWin->parent)
+    {
+      if (pWin->optional && pWin->optional->visual != wVisual(pWin->parent))
+      {
         visual = nxagentVisualFromID(pWin->drawable.pScreen, wVisual(pWin));
         mask |= CWColormap;
-        if (pWin->optional->colormap) {
+        if (pWin->optional->colormap)
+        {
           pCmap = (ColormapPtr)LookupIDByType(wColormap(pWin), RT_COLORMAP);
           attributes.colormap = nxagentColormap(pCmap);
         }
         else
+        {
           attributes.colormap = nxagentDefaultVisualColormap(visual);
+        }
       }
       else
+      {
         visual = CopyFromParent;
+      }
     }
-    else { /* root windows have their own colormaps at creation time */
+    else
+    {
+      /* root windows have their own colormaps at creation time */
       visual = nxagentVisualFromID(pWin->drawable.pScreen, wVisual(pWin));
       pCmap = (ColormapPtr)LookupIDByType(wColormap(pWin), RT_COLORMAP);
       mask |= CWColormap;
@@ -3138,11 +3197,15 @@ static void nxagentReconnectWindow(void * param0, XID param1, void * data_buffer
     Atom prop = MakeAtom("NX_REAL_WINDOW", strlen("NX_REAL_WINDOW"), True);
 
     if (ChangeWindowProperty(pWin, prop, XA_WINDOW, 32, PropModeReplace, 1, nxagentWindowPriv(pWin), 1) != Success)
-        fprintf(stderr, "nxagentReconnectWindow: Updating NX_REAL_WINDOW failed.\n");
-#ifdef DEBUG
+    {
+      fprintf(stderr, "nxagentReconnectWindow: Updating NX_REAL_WINDOW failed.\n");
+    }
+    #ifdef DEBUG
     else
-        fprintf(stderr, "nxagentReconnectWindow: Updated NX_REAL_WINDOW for Window ID [%x].\n", nxagentWindowPriv(pWin)->window);
-#endif
+    {
+      fprintf(stderr, "nxagentReconnectWindow: Updated NX_REAL_WINDOW for Window ID [%x].\n", nxagentWindowPriv(pWin)->window);
+    }
+    #endif
   }
 
   if (nxagentDrawableStatus((DrawablePtr) pWin) == NotSynchronized)
@@ -3159,7 +3222,9 @@ static void nxagentReconfigureWindowCursor(void * param0, XID param1, void * dat
   ScreenPtr   pScreen;
 
   if (!pWin || !*pBool || !(pCursor = wCursor(pWin)))
+  {
     return;
+  }
 
   pScreen = pWin -> drawable.pScreen;
 
@@ -3216,16 +3281,19 @@ static void nxagentReconfigureWindow(void * param0, XID param1, void * data_buff
   #endif
 
   if (pWin -> drawable.class == InputOnly)
+  {
     mask = CWWinGravity | CWEventMask | CWDontPropagate | CWOverrideRedirect | CWCursor;
+  }
   else
+  {
     mask = CWBackPixmap | CWBackPixel | CWBorderPixmap | CWBorderPixel |
          CWBitGravity | CWWinGravity | CWBackingStore | CWBackingPlanes |
          CWBackingPixel | CWOverrideRedirect | CWSaveUnder | CWEventMask |
          CWDontPropagate | CWColormap | CWCursor;
-
+  }
   nxagentChangeWindowAttributes(pWin, mask);
 
-#ifdef SHAPE
+  #ifdef SHAPE
   if (nxagentWindowPriv(pWin) -> boundingShape)
   {
     RegionDestroy(
@@ -3240,7 +3308,7 @@ static void nxagentReconfigureWindow(void * param0, XID param1, void * data_buff
     nxagentWindowPriv(pWin) -> clipShape = NULL;
   }
   nxagentShapeWindow(pWin);
-#endif
+  #endif
 
   if (pWin != screenInfo.screens[0]->root)
   {
