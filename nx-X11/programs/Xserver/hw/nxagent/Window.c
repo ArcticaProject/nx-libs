@@ -129,7 +129,7 @@ int nxagentSplashCount = 0;
 
 Bool nxagentExposeArrayIsInitialized = False;
 Window nxagentConfiguredSynchroWindow;
-static int nxagentExposeSerial = 0; 
+static int nxagentExposeSerial = 0;
 
 StoringPixmapPtr nxagentBSPixmapList[BSPIXMAPLIMIT];
 
@@ -142,13 +142,10 @@ typedef struct _WindowMatch
 {
   WindowPtr pWin;
   Window    id;
-
 } WindowMatchRec;
 
 Bool nxagentReconnectAllWindows(void *);
-
 Bool nxagentDisconnectAllWindows(void);
-
 Bool nxagentIsIconic(WindowPtr);
 
 /*
@@ -169,21 +166,13 @@ void nxagentClearSplash(WindowPtr pWin);
  */
 
 static Bool nxagentSomeWindowsAreMapped(void);
-
 static void nxagentFrameBufferPaintWindow(WindowPtr pWin, RegionPtr pRegion, int what);
-
 static void nxagentTraverseWindow(WindowPtr, void(*)(void *, XID, void *), void *);
-
 static void nxagentDisconnectWindow(void *, XID, void *);
-
 static Bool nxagentLoopOverWindows(void(*)(void *, XID, void *));
-
 static void nxagentReconfigureWindowCursor(void *, XID, void *);
-
 static void nxagentReconnectWindow(void *, XID, void *);
-
 static void nxagentReconfigureWindow(void *, XID, void *);
-
 static int nxagentForceExposure(WindowPtr pWin, void * ptr);
 
 /* by dimbor */
@@ -199,9 +188,7 @@ nxagentWMStateRec;
  */
 
 #ifdef TEST
-
 static Bool nxagentCheckWindowIntegrity(WindowPtr pWin);
-
 #endif
 
 WindowPtr nxagentGetWindowFromID(Window id)
@@ -235,7 +222,6 @@ static int nxagentFindWindowMatch(WindowPtr pWin, void * ptr)
   if (match -> id == nxagentWindow(pWin))
   {
     match -> pWin = pWin;
-
     return WT_STOPWALKING;
   }
   else
@@ -247,7 +233,6 @@ static int nxagentFindWindowMatch(WindowPtr pWin, void * ptr)
 WindowPtr nxagentWindowPtr(Window window)
 {
   int i;
-
   WindowMatchRec match;
 
   match.pWin = NullWindow;
@@ -406,23 +391,14 @@ Bool nxagentCreateWindow(WindowPtr pWin)
 
   nxagentWindowPriv(pWin) -> isMapped = 0;
   nxagentWindowPriv(pWin) -> isRedirected = 0;
-
   nxagentWindowPriv(pWin) -> visibilityState = VisibilityUnobscured;
-
   nxagentWindowPriv(pWin) -> corruptedRegion = RegionCreate(NULL, 1);
-
   nxagentWindowPriv(pWin) -> hasTransparentChildren = 0;
-
   nxagentWindowPriv(pWin) -> containGlyphs = 0;
-
   nxagentWindowPriv(pWin) -> corruptedId = 0;
-
   nxagentWindowPriv(pWin) -> deferredBackgroundExpose = 0;
-
   nxagentWindowPriv(pWin) -> synchronizationBitmap = NullPixmap;
-
   nxagentWindowPriv(pWin) -> corruptedTimestamp = 0;
-
   nxagentWindowPriv(pWin) -> splitResource = NULL;
 
   if (nxagentOption(Rootless) == 1)
@@ -464,7 +440,6 @@ Bool nxagentCreateWindow(WindowPtr pWin)
   if (nxagentOption(Rootless) && nxagentWindowTopLevel(pWin))
   {
     Atom prop = nxagentMakeAtom("WM_PROTOCOLS", strlen("WM_PROTOCOLS"), True);
-
     XlibAtom atom = nxagentMakeAtom("WM_DELETE_WINDOW", strlen("WM_DELETE_WINDOW"), True);
 
     XSetWMProtocols(nxagentDisplay, nxagentWindowPriv(pWin)->window, &atom, 1);
@@ -552,7 +527,6 @@ Bool nxagentCreateWindow(WindowPtr pWin)
 void nxagentSetVersionProperty(WindowPtr pWin)
 {
   char *name = "NX_AGENT_VERSION";
-
   Atom prop = MakeAtom(name, strlen(name), True);
 
   if (ChangeWindowProperty(pWin, prop, XA_STRING, 8, PropModeReplace, strlen(NX_VERSION_CURRENT_STRING), NX_VERSION_CURRENT_STRING, True) != Success)
@@ -630,39 +604,26 @@ Bool nxagentDestroyWindow(WindowPtr pWin)
            pWindowPriv->siblingAbove;
   }
 
-  #ifdef NXAGENT_SHAPE2
-
+#ifdef NXAGENT_SHAPE2
   #ifdef SHAPE
-
   if (pWindowPriv->boundingShape)
   {
-    RegionDestroy(
-                       pWindowPriv->boundingShape);
+    RegionDestroy(pWindowPriv->boundingShape);
   }
 
   if (pWindowPriv->clipShape)
   {
-    RegionDestroy(
-                       pWindowPriv->clipShape);
+    RegionDestroy(pWindowPriv->clipShape);
   }
-
   #endif
-
-  #else
-
-  RegionDestroy(
-                     pWindowPriv->boundingShape);
-
-  RegionDestroy(
-                     pWindowPriv->clipShape);
-
-  #endif
+#else
+  RegionDestroy(pWindowPriv->boundingShape);
+  RegionDestroy(pWindowPriv->clipShape);
+#endif
 
   if (pWindowPriv -> corruptedRegion)
   {
-    RegionDestroy(
-                       pWindowPriv -> corruptedRegion);
-
+    RegionDestroy(pWindowPriv -> corruptedRegion);
     pWindowPriv -> corruptedRegion = NULL;
   }
 
@@ -677,7 +638,6 @@ Bool nxagentDestroyWindow(WindowPtr pWin)
   }
 
   nxagentDestroyCorruptedResource((DrawablePtr) pWin, RT_NX_CORR_WINDOW);
-
   nxagentDestroyDrawableBitmap((DrawablePtr) pWin);
 
   if (pWindowPriv -> splitResource != NULL)
@@ -707,7 +667,6 @@ Bool nxagentDestroyWindow(WindowPtr pWin)
   if (pWin == nxagentRootTileWindow)
   {
     nxagentWindowPriv(nxagentRootTileWindow)->window = None;
-
     nxagentRootTileWindow = None;
   }
 
@@ -758,7 +717,6 @@ void nxagentRestackWindow(WindowPtr pWin, WindowPtr pOldNextSib)
   }
 
   nxagentAddConfiguredWindow(pWin, CW_RootlessRestack);
-
 }
 
 void nxagentSwitchFullscreen(ScreenPtr pScreen, Bool switchOn)
@@ -817,15 +775,13 @@ void nxagentSwitchFullscreen(ScreenPtr pScreen, Bool switchOn)
   if (switchOn)
   {
     nxagentFullscreenWindow = nxagentDefaultWindows[pScreen -> myNum];
-
     nxagentGrabPointerAndKeyboard(NULL);
   }
   else
   {
     nxagentFullscreenWindow = None;
-
     nxagentUngrabPointerAndKeyboard(NULL);
-  } 
+  }
 }
 
 void nxagentSwitchAllScreens(ScreenPtr pScreen, Bool switchOn)
@@ -907,7 +863,6 @@ void nxagentSwitchAllScreens(ScreenPtr pScreen, Bool switchOn)
 
       nxagentChangeOption(Fullscreen, True);
       nxagentChangeOption(AllScreens, True);
-      
 
       /*
        * Save the window-mode configuration.
@@ -956,7 +911,6 @@ void nxagentSwitchAllScreens(ScreenPtr pScreen, Bool switchOn)
       if (nxagentIconWindow == None)
       {
         nxagentIconWindow = nxagentCreateIconWindow();
-
         XMapWindow(nxagentDisplay, nxagentIconWindow);
       }
 
@@ -988,7 +942,7 @@ void nxagentSwitchAllScreens(ScreenPtr pScreen, Bool switchOn)
       #ifdef WARNING
       fprintf(stderr, "nxagentSwitchAllScreens: WARNING! Expected ReparentNotify event missing.\n");
       #endif
- 
+
       nxagentWMIsRunning = False;
       attributes.override_redirect = False;
       XChangeWindowAttributes(nxagentDisplay, w, valuemask, &attributes);
@@ -1030,10 +984,8 @@ void nxagentSwitchAllScreens(ScreenPtr pScreen, Bool switchOn)
 
     if (nxagentOption(WMBorderWidth) > 0 && nxagentOption(WMTitleHeight) > 0)
     {
-      nxagentChangeOption(X, nxagentOption(SavedX) -
-                              nxagentOption(WMBorderWidth));
-      nxagentChangeOption(Y, nxagentOption(SavedY) -
-                              nxagentOption(WMTitleHeight));
+      nxagentChangeOption(X, nxagentOption(SavedX) - nxagentOption(WMBorderWidth));
+      nxagentChangeOption(Y, nxagentOption(SavedY) - nxagentOption(WMTitleHeight));
     }
     else
     {
@@ -1064,7 +1016,7 @@ void nxagentSwitchAllScreens(ScreenPtr pScreen, Bool switchOn)
   XMoveResizeWindow(nxagentDisplay, nxagentInputWindows[0], 0, 0,
                         nxagentOption(Width), nxagentOption(Height));
 
-  nxagentSetPrintGeometry(pScreen -> myNum); 
+  nxagentSetPrintGeometry(pScreen -> myNum);
 }
 
 #ifdef VIEWPORT_FRAME
@@ -1141,7 +1093,6 @@ void nxagentMoveViewport(ScreenPtr pScreen, int hShift, int vShift)
   #endif
 
   nxagentChangeOption(ViewportXSpan, nxagentOption(Width) - nxagentOption(RootWidth));
-
   nxagentChangeOption(ViewportYSpan, nxagentOption(Height) - nxagentOption(RootHeight));
 
   if (nxagentOption(ViewportXSpan) < 0)
@@ -1224,7 +1175,7 @@ void nxagentMoveViewport(ScreenPtr pScreen, int hShift, int vShift)
 
     if (nxagentOption(ClientOs) == ClientOsWinnt)
     {
-      /* 
+      /*
        * If doMove is True we add exposed rectangles
        * to the remote expose region. This is done to
        * refresh the areas showed newly in the viewport.
@@ -1505,7 +1456,6 @@ void nxagentConfigureWindow(WindowPtr pWin, unsigned int mask)
   }
 
   #ifdef NXAGENT_SPLASH
-
   /*
    * This should bring again the splash window
    * on top, so why the else clause? Is this
@@ -1531,8 +1481,7 @@ void nxagentConfigureWindow(WindowPtr pWin, unsigned int mask)
    *    }
    *  }
    */
-
-  #endif
+  #endif /* NXAGENT_SPLASH */
 
   if (mask & CW_RootlessRestack)
   {
@@ -1571,12 +1520,10 @@ void nxagentConfigureWindow(WindowPtr pWin, unsigned int mask)
   }
 
   #ifdef SHAPE
-
   if (mask & CW_Shape)
   {
     nxagentShapeWindow(pWin);
   }
-
   #endif
 
   if (mask & CW_Map &&
@@ -1584,7 +1531,6 @@ void nxagentConfigureWindow(WindowPtr pWin, unsigned int mask)
              nxagentRootlessWindow != pWin))
   {
     XMapWindow(nxagentDisplay, nxagentWindow(pWin));
-
     return;
   }
 }
@@ -1873,7 +1819,7 @@ Bool nxagentChangeWindowAttributes(WindowPtr pWin, unsigned long mask)
   {
     if (nxagentOption(Rootless))
     {
-      if (pWin->cursorIsNone == 0 && pWin->optional != NULL && 
+      if (pWin->cursorIsNone == 0 && pWin->optional != NULL &&
               pWin->optional->cursor != NULL && nxagentCursorPriv(pWin ->
                   optional -> cursor, pWin -> drawable.pScreen) != NULL)
       {
@@ -1934,15 +1880,13 @@ Bool nxagentRealizeWindow(WindowPtr pWin)
     }
   }
 
-  #ifdef SHAPE
-
   /*
    * Not needed.
    *
-   * nxagentShapeWindow(pWin);
+    #ifdef SHAPE
+    nxagentShapeWindow(pWin);
+    #endif
    */
-
-  #endif /* SHAPE */
 
   /*
    * Mapping of the root window is called by
@@ -1999,7 +1943,6 @@ Bool nxagentUnrealizeWindow(WindowPtr pWin)
 
 void nxagentFrameBufferPaintWindow(WindowPtr pWin, RegionPtr pRegion, int what)
 {
-
   void (*PaintWindowBackgroundBackup)(WindowPtr, RegionPtr, int);
 
   if (pWin->backgroundState == BackgroundPixmap)
@@ -2065,11 +2008,8 @@ void nxagentPaintWindowBackground(WindowPtr pWin, RegionPtr pRegion, int what)
    */
 
   RegionInit(&temp, NullBox, 1);
-
   RegionIntersect(&temp, pRegion, &pWin -> clipList);
-
   nxagentFrameBufferPaintWindow(pWin, &temp, what);
-
   RegionUninit(&temp);
 }
 
@@ -2084,11 +2024,8 @@ void nxagentPaintWindowBorder(WindowPtr pWin, RegionPtr pRegion, int what)
    */
 
   RegionInit(&temp, NullBox, 1);
-
   RegionIntersect(&temp, pRegion, &pWin -> borderClip);
-
   nxagentFrameBufferPaintWindow(pWin, &temp, what);
-
   RegionUninit(&temp);
 }
 
@@ -2106,18 +2043,12 @@ void nxagentClipNotify(WindowPtr pWin, int dx, int dy)
   nxagentAddConfiguredWindow(pWin, CWStackingOrder);
   nxagentAddConfiguredWindow(pWin, CW_Shape);
 
-#ifdef NXAGENT_SHAPE
-  return;
-#else
-
-#ifdef SHAPE
-
-/*
+#ifndef NXAGENT_SHAPE
+  #ifdef SHAPE
+ /*
  * nxagentShapeWindow(pWin);
  */
-
-#endif /* SHAPE */
-
+ #endif /* SHAPE */
 #endif /* NXAGENT_SHAPE */
 }
 
@@ -2184,11 +2115,9 @@ void nxagentWindowExposures(WindowPtr pWin, RegionPtr pRgn, RegionPtr other_expo
         nxagentExposeQueue.exposures[i].serial = 0;
       }
 
-      nxagentExposeQueue.length = 0;
-
-      nxagentExposeSerial = 0;
-
       nxagentExposeQueue.start = 0;
+      nxagentExposeQueue.length = 0;
+      nxagentExposeSerial = 0;
 
       nxagentConfiguredSynchroWindow = XCreateWindow(nxagentDisplay, DefaultRootWindow(nxagentDisplay), 0, 0,
                                                            1, 1, 0, 0, InputOutput, 0, CWEventMask, &attributes);
@@ -2228,7 +2157,6 @@ void nxagentWindowExposures(WindowPtr pWin, RegionPtr pRgn, RegionPtr other_expo
         int index = (nxagentExposeQueue.start + nxagentExposeQueue.length) % EXPOSED_SIZE;
 
         nxagentExposeQueue.exposures[index].pWindow = pWin;
-
         nxagentExposeQueue.exposures[index].localRegion = RegionCreate(NULL, 1);
 
         if (nxagentOption(Rootless) && nxagentWindowPriv(pWin) &&
@@ -2270,7 +2198,6 @@ void nxagentWindowExposures(WindowPtr pWin, RegionPtr pRgn, RegionPtr other_expo
          */
 
         nxagentExposeQueue.exposures[index].synchronize = 1;
-
         nxagentExposeQueue.length++;
 
         if (nxagentOption(Rootless) && nxagentWindowPriv(pWin) &&
@@ -2390,12 +2317,11 @@ void nxagentShapeWindow(WindowPtr pWin)
 #ifdef NXAGENT_SHAPE2
       if (!nxagentWindowPriv(pWin)->boundingShape)
       {
-         nxagentWindowPriv(pWin)->boundingShape = RegionCreate(NULL, 1);
+        nxagentWindowPriv(pWin)->boundingShape = RegionCreate(NULL, 1);
       }
 #endif
 
-      RegionCopy(
-                      nxagentWindowPriv(pWin)->boundingShape, wBoundingShape(pWin));
+      RegionCopy(nxagentWindowPriv(pWin)->boundingShape, wBoundingShape(pWin));
 
       reg = XCreateRegion();
       pBox = RegionRects(nxagentWindowPriv(pWin)->boundingShape);
@@ -2423,8 +2349,7 @@ void nxagentShapeWindow(WindowPtr pWin)
       fprintf(stderr, "nxagentShapeWindow: wBounding shape does not exist. Removing the shape.\n");
       #endif
 
-      RegionEmpty(
-                       nxagentWindowPriv(pWin)->boundingShape);
+      RegionEmpty(nxagentWindowPriv(pWin)->boundingShape);
 
 #ifndef NXAGENT_SHAPE
       XShapeCombineMask(nxagentDisplay, nxagentWindow(pWin),
@@ -2454,8 +2379,7 @@ void nxagentShapeWindow(WindowPtr pWin)
       }
 #endif
 
-      RegionCopy(
-                  nxagentWindowPriv(pWin)->clipShape, wClipShape(pWin));
+      RegionCopy(nxagentWindowPriv(pWin)->clipShape, wClipShape(pWin));
 
       reg = XCreateRegion();
       pBox = RegionRects(nxagentWindowPriv(pWin)->clipShape);
@@ -2483,8 +2407,7 @@ void nxagentShapeWindow(WindowPtr pWin)
       fprintf(stderr, "nxagentShapeWindow: wClip shape does not exist. Removing the shape.\n");
       #endif
 
-      RegionEmpty(
-                       nxagentWindowPriv(pWin)->clipShape);
+      RegionEmpty(nxagentWindowPriv(pWin)->clipShape);
 
 #ifndef NXAGENT_SHAPE
       XShapeCombineMask(nxagentDisplay, nxagentWindow(pWin),
@@ -2554,7 +2477,6 @@ void nxagentMapDefaultWindows(void)
   for (i = 0; i < screenInfo.numScreens; i++)
   {
     WindowPtr pWin = screenInfo.screens[i]->root;
-
     ScreenPtr pScreen = pWin -> drawable.pScreen;
 
     MapWindow(pWin, serverClient);
@@ -2819,11 +2741,8 @@ Bool nxagentReconnectAllWindows(void *p0)
   }
 
   #ifdef NXAGENT_RECONNECT_WINDOW_DEBUG
-
   XSync(nxagentDisplay, 0);
-
   fprintf(stderr, "nxagentReconnectAllWindows: All windows reconfigured.\n");
-
   #endif
 
   if (nxagentInitClipboard(screenInfo.screens[0]->root) == -1)
@@ -2836,15 +2755,11 @@ Bool nxagentReconnectAllWindows(void *p0)
   }
 
   #ifdef NXAGENT_RECONNECT_WINDOW_DEBUG
-
   XSync(nxagentDisplay, 0);
-
   fprintf(stderr, "nxagentReconnectAllWindows: Clipboard initialized.\n");
-
   #endif
 
   #ifdef VIEWPORT_FRAME
-
   /*
    * We move the viewport frames out of the way on the X server side.
    */
@@ -2863,7 +2778,6 @@ Bool nxagentReconnectAllWindows(void *p0)
     XMoveWindow(nxagentDisplay, nxagentWindow(nxagentViewportFrameBelow),
                     0, nxagentOption(RootHeight));
   }
-
   #endif /* #ifdef VIEWPORT_FRAME */
 
   return True;
@@ -3015,9 +2929,6 @@ static void nxagentReconnectWindow(void * param0, XID param1, void * data_buffer
 
   #ifdef TEST
   fprintf(stderr, "nxagentReconnectWindow: Going to create new window.\n");
-  #endif
-
-  #ifdef TEST
   fprintf(stderr, "nxagentReconnectWindow: Recreating %swindow at %p current event mask = %lX mask & CWEventMask = %ld "
               "event_mask = %lX\n",
                   nxagentWindowTopLevel(pWin) ? "toplevel " : "", (void*)pWin, pWin -> eventMask,
@@ -3104,10 +3015,8 @@ static void nxagentReconnectWindow(void * param0, XID param1, void * data_buffer
       XSizeHints hints = {0};
       unsigned char *data = NULL;
       #ifdef _XSERVER64
-
       unsigned char *data64 = NULL;
       unsigned int i;
-
       #endif
 
       ret = GetWindowProperty(pWin,
@@ -3148,11 +3057,8 @@ static void nxagentReconnectWindow(void * param0, XID param1, void * data_buffer
         }
 
         props = (XSizeHints *) data64;
-
         #else
-
         props = (XSizeHints *) data;
-
         #endif   /* _XSERVER64 */
 
         hints = *props;
@@ -3284,15 +3190,13 @@ static void nxagentReconfigureWindow(void * param0, XID param1, void * data_buff
   #ifdef SHAPE
   if (nxagentWindowPriv(pWin) -> boundingShape)
   {
-    RegionDestroy(
-                   nxagentWindowPriv(pWin) -> boundingShape);
+    RegionDestroy(nxagentWindowPriv(pWin) -> boundingShape);
     nxagentWindowPriv(pWin) -> boundingShape = NULL;
   }
 
   if (nxagentWindowPriv(pWin) -> clipShape)
   {
-    RegionDestroy(
-                   nxagentWindowPriv(pWin) -> clipShape);
+    RegionDestroy(nxagentWindowPriv(pWin) -> clipShape);
     nxagentWindowPriv(pWin) -> clipShape = NULL;
   }
   nxagentShapeWindow(pWin);
@@ -3330,7 +3234,6 @@ XXX: This would break Motif menus.
 
     XMoveWindow(nxagentDisplay, nxagentWindow(pWin),
                     nxagentOption(RootX), nxagentOption(RootY));
-
     XMapWindow(nxagentDisplay, nxagentWindow(pWin));
   }
 }
@@ -3350,7 +3253,6 @@ Bool nxagentCheckIllegalRootMonitoring(WindowPtr pWin, Mask mask)
 }
 
 #ifdef TEST
-
 Bool nxagentCheckWindowIntegrity(WindowPtr pWin)
 {
   Bool integrity = True;
@@ -3444,8 +3346,7 @@ Bool nxagentCheckWindowIntegrity(WindowPtr pWin)
 
   return integrity;
 }
-
-#endif
+#endif /* TEST */
 
 Bool nxagentIsIconic(WindowPtr pWin)
 {
@@ -3499,13 +3400,11 @@ void nxagentSetTopLevelEventMask(WindowPtr pWin)
 int nxagentExtentsPredicate(int total)
 {
   #ifdef TEST
-
   if (total == 6 || total == 11 || total == 10)
   {
     fprintf(stderr, "nxagentExtentsPredicate: WARNING! Returning [%d] with [%d] rectangles.\n",
                 (total == 6 || total == 11 || total == 10), total);
   }
-
   #endif
 
   return (total == 6 || total == 11 || total == 10);
@@ -3996,7 +3895,7 @@ StoringPixmapPtr nxagentFindItemBSPixmapList(unsigned long pixmapId)
   #ifdef TEST
   fprintf(stderr, "nxagentFindItemBSPixmapList: WARNING! Item not found.\n");
   #endif
-  
+
   #ifdef TEST
   fprintf(stderr, "nxagentFindItemBSPixmapList: Pixmap with id [%lu] not found.\n",
               pixmapId);
@@ -4006,4 +3905,3 @@ StoringPixmapPtr nxagentFindItemBSPixmapList(unsigned long pixmapId)
 
   return NULL;
 }
-
