@@ -306,9 +306,9 @@ Bool nxagentCreateWindow(WindowPtr pWin)
                 (void*)pWin, attributes.backing_store);
     #endif
 
-/*
-FIXME: We need to set save under on the real display?
-*/
+    /*
+      FIXME: We need to set save under on the real display?
+    */
     if (nxagentSaveUnder)
       {
         mask |= CWSaveUnder;
@@ -461,10 +461,10 @@ FIXME: We need to set save under on the real display?
      * memory, if the composite extension is
      * supported on the display.
      */
-/*
-FIXME: Do all the windows for which nxagentWindowTopLevel(pWin)
-       returns true need to be redirected?
-*/
+    /*
+      FIXME: Do all the windows for which nxagentWindowTopLevel(pWin)
+             returns true need to be redirected?
+    */
     nxagentRedirectWindow(pWin);
   }
 
@@ -1753,10 +1753,10 @@ Bool nxagentChangeWindowAttributes(WindowPtr pWin, unsigned long mask)
     attributes.win_gravity = pWin -> winGravity;
   }
 
-/*
-FIXME: Do we need to set the attribute on the
-       remote display?
-*/
+  /*
+    FIXME: Do we need to set the attribute on the
+           remote display?
+  */
   if (mask & CWBackingStore)
   {
     attributes.backing_store = pWin -> backingStore;
@@ -1796,10 +1796,10 @@ FIXME: Do we need to set the attribute on the
     attributes.override_redirect = pWin -> overrideRedirect;
   }
 
-/*
-FIXME: Do we need to set the attribute on the
-       remote display?
-*/
+  /*
+    FIXME: Do we need to set the attribute on the
+           remote display?
+  */
   if (mask & CWSaveUnder)
   {
     attributes.save_under = pWin -> saveUnder;
@@ -1825,11 +1825,11 @@ FIXME: Do we need to set the attribute on the
 
     pCmap = (ColormapPtr) LookupIDByType(wColormap(pWin), RT_COLORMAP);
 
-/*
-FIXME: When the caller is nxagentReconfigureWindow
-       sometimes wColormap(pWin) is 0. Could a window
-       have no colormap?
-*/
+    /*
+      FIXME: When the caller is nxagentReconfigureWindow
+             sometimes wColormap(pWin) is 0. Could a window
+             have no colormap?
+    */
     if (pCmap != NULL)
     {
       attributes.colormap = nxagentColormap(pCmap);
@@ -2647,7 +2647,7 @@ Bool nxagentDisconnectAllWindows(void)
 /*
  * FIXME: We are giving up reconnecting those void *
  * that are not resource, and we are just disconnecting them.
- * perhaps we could do better and reconnect them.
+ * Perhaps we could do better and reconnect them.
  */
 
 void nxagentDisconnectWindow(void * p0, XID x1, void * p2)
@@ -2921,9 +2921,9 @@ static void nxagentReconnectWindow(void * param0, XID param1, void * data_buffer
       attributes.backing_pixel = pWin->optional->backingPixel;
     }
 
-/*
-FIXME: Do we need to set save unders attribute here?
-*/
+    /*
+      FIXME: Do we need to set save unders attribute here?
+    */
     if (nxagentSaveUnder)
     {
       mask |= CWSaveUnder;
@@ -3528,11 +3528,11 @@ void nxagentFlushConfigureWindow(void)
 
 void nxagentPostValidateTree(WindowPtr pParent, WindowPtr pChild, VTKind kind)
 {
-/*
-FIXME: Do we need this here?
+  /*
+    FIXME: Do we need this here?
 
   nxagentFlushConfigureWindow();
-*/
+  */
 
   return;
 }
