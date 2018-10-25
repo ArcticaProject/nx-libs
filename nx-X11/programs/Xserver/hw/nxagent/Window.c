@@ -263,8 +263,7 @@ WindowPtr nxagentWindowPtr(Window window)
   return match.pWin;
 }
 
-Bool nxagentCreateWindow(pWin)
-     WindowPtr pWin;
+Bool nxagentCreateWindow(WindowPtr pWin)
 {
   unsigned long mask;
   XSetWindowAttributes attributes;
@@ -1568,9 +1567,7 @@ void nxagentConfigureWindow(WindowPtr pWin, unsigned int mask)
   }
 }
 
-void nxagentReparentWindow(pWin, pOldParent)
-     WindowPtr pWin;
-     WindowPtr pOldParent;
+void nxagentReparentWindow(WindowPtr pWin, WindowPtr pOldParent)
 {
   if (nxagentScreenTrap)
   {
@@ -1589,9 +1586,7 @@ void nxagentReparentWindow(pWin, pOldParent)
                               pWin->origin.y - wBorderWidth(pWin));
 }
 
-Bool nxagentChangeWindowAttributes(pWin, mask)
-     WindowPtr pWin;
-     unsigned long mask;
+Bool nxagentChangeWindowAttributes(WindowPtr pWin, unsigned long mask)
 {
   XSetWindowAttributes attributes;
 
@@ -1953,8 +1948,7 @@ Bool nxagentRealizeWindow(WindowPtr pWin)
   return True;
 }
 
-Bool nxagentUnrealizeWindow(pWin)
-    WindowPtr pWin;
+Bool nxagentUnrealizeWindow(WindowPtr pWin)
 {
   if (nxagentScreenTrap)
   {
@@ -2011,10 +2005,7 @@ void nxagentFrameBufferPaintWindow(WindowPtr pWin, RegionPtr pRegion, int what)
   }
 }
 
-void nxagentPaintWindowBackground(pWin, pRegion, what)
-     WindowPtr pWin;
-     RegionPtr pRegion;
-     int what;
+void nxagentPaintWindowBackground(WindowPtr pWin, RegionPtr pRegion, int what)
 {
   int i;
 
@@ -3428,8 +3419,7 @@ Bool nxagentIsIconic(WindowPtr pWin)
   }
 }
 
-void nxagentSetTopLevelEventMask(pWin)
-     WindowPtr pWin;
+void nxagentSetTopLevelEventMask(WindowPtr pWin)
 {
   unsigned long mask = CWEventMask;
   XSetWindowAttributes attributes;
