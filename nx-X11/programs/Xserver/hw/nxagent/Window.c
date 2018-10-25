@@ -721,7 +721,7 @@ void nxagentRestackWindow(WindowPtr pWin, WindowPtr pOldNextSib)
 
 void nxagentSwitchFullscreen(ScreenPtr pScreen, Bool switchOn)
 {
-  XEvent e;
+  XEvent e = {0};
 
   if (nxagentOption(Rootless) == 1)
   {
@@ -758,8 +758,6 @@ void nxagentSwitchFullscreen(ScreenPtr pScreen, Bool switchOn)
   #endif
 
   nxagentChangeOption(Fullscreen, switchOn);
-
-  memset(&e, 0, sizeof(e));
 
   e.xclient.type = ClientMessage;
   e.xclient.message_type = nxagentAtoms[13]; /* _NET_WM_STATE */
@@ -1066,14 +1064,8 @@ void nxagentUpdateViewportFrame(int x, int y, int w, int h)
 
 void nxagentMoveViewport(ScreenPtr pScreen, int hShift, int vShift)
 {
-  int newX;
-  int newY;
-  int oldX;
-  int oldY;
-
+  int newX, newY, oldX = 0, oldY = 0;
   Bool doMove = False;
-  oldX = 0;
-  oldY = 0;
 
   if (nxagentOption(Rootless))
   {
@@ -1244,11 +1236,9 @@ void nxagentConfigureWindow(WindowPtr pWin, unsigned int mask)
 {
   unsigned int valuemask;
   XWindowChanges values;
-  int offX, offY;
   int j;
-
-  offX = nxagentWindowPriv(pWin)->x - pWin->origin.x;
-  offY = nxagentWindowPriv(pWin)->y - pWin->origin.y;
+  int offX = nxagentWindowPriv(pWin)->x - pWin->origin.x;
+  int offY = nxagentWindowPriv(pWin)->y - pWin->origin.y;
 
   if (nxagentScreenTrap == 1)
   {
@@ -1789,9 +1779,7 @@ Bool nxagentChangeWindowAttributes(WindowPtr pWin, unsigned long mask)
 
   if (mask & CWColormap)
   {
-    ColormapPtr pCmap;
-
-    pCmap = (ColormapPtr) LookupIDByType(wColormap(pWin), RT_COLORMAP);
+    ColormapPtr pCmap = (ColormapPtr) LookupIDByType(wColormap(pWin), RT_COLORMAP);
 
     /*
       FIXME: When the caller is nxagentReconfigureWindow
@@ -2098,13 +2086,9 @@ void nxagentWindowExposures(WindowPtr pWin, RegionPtr pRgn, RegionPtr other_expo
     {
       int i;
 
-      XSetWindowAttributes attributes;
-
       #ifdef TEST
       fprintf(stderr, "nxagentWindowExposures: Initializing expose queue.\n");
       #endif
-
-      attributes.event_mask = StructureNotifyMask;
 
       for (i = 0; i < EXPOSED_SIZE; i++)
       {
@@ -2119,6 +2103,7 @@ void nxagentWindowExposures(WindowPtr pWin, RegionPtr pRgn, RegionPtr other_expo
       nxagentExposeQueue.length = 0;
       nxagentExposeSerial = 0;
 
+      XSetWindowAttributes attributes = {.event_mask = StructureNotifyMask};
       nxagentConfiguredSynchroWindow = XCreateWindow(nxagentDisplay, DefaultRootWindow(nxagentDisplay), 0, 0,
                                                            1, 1, 0, 0, InputOutput, 0, CWEventMask, &attributes);
 
@@ -2423,7 +2408,6 @@ static int nxagentForceExposure(WindowPtr pWin, void * ptr)
   if (pWin -> drawable.class != InputOnly)
   {
     BoxRec Box;
-    RegionPtr exposedRgn;
     WindowPtr pRoot = pWin->drawable.pScreen->root;
 
     Box.x1 = pWin->drawable.x;
@@ -2431,7 +2415,8 @@ static int nxagentForceExposure(WindowPtr pWin, void * ptr)
     Box.x2 = Box.x1 + pWin->drawable.width;
     Box.y2 = Box.y1 + pWin->drawable.height;
 
-    exposedRgn = RegionCreate(&Box, 1);
+    RegionPtr exposedRgn = RegionCreate(&Box, 1);
+
     RegionIntersect(exposedRgn, exposedRgn, &pRoot->winSize);
 
     if (exposedRgn != NULL && RegionNotEmpty(exposedRgn) != 0)
@@ -3270,14 +3255,11 @@ Bool nxagentCheckWindowIntegrity(WindowPtr pWin)
   if (width && height)
   {
      length = nxagentImageLength(width, height, format, 0, depth);
-     data = malloc(length);
-
+     data = calloc(1, length);
      if (data == NULL)
      {
        FatalError("nxagentCheckWindowIntegrity: Failed to allocate a buffer of size %d.\n", length);
      }
-
-     memset(data, 0, length);
 
      image = XGetImage(nxagentDisplay, nxagentWindow(pWin), 0, 0,
                                    width, height, plane_mask, format);
@@ -3378,14 +3360,10 @@ Bool nxagentIsIconic(WindowPtr pWin)
 
 void nxagentSetTopLevelEventMask(WindowPtr pWin)
 {
-  unsigned long mask = CWEventMask;
-  XSetWindowAttributes attributes;
-
   if (nxagentOption(Rootless) && nxagentWindowTopLevel(pWin))
   {
-    attributes.event_mask = nxagentGetEventMask(pWin);
-
-    XChangeWindowAttributes(nxagentDisplay, nxagentWindow(pWin), mask, &attributes);
+    XSetWindowAttributes attributes = {.event_mask = nxagentGetEventMask(pWin)};
+    XChangeWindowAttributes(nxagentDisplay, nxagentWindow(pWin), CWEventMask, &attributes);
   }
 }
 
@@ -3541,28 +3519,20 @@ void nxagentAddConfiguredWindow(WindowPtr pWin, unsigned int valuemask)
     valuemask |= CWStackingOrder;
   }
 
-  if (nxagentConfiguredWindowList == NULL)
   {
+    ConfiguredWindowStruct *tmp = nxagentConfiguredWindowList;
+
     nxagentConfiguredWindowList = malloc(sizeof(ConfiguredWindowStruct));
-    nxagentConfiguredWindowList -> next = NULL;
+    nxagentConfiguredWindowList -> next = tmp; /* can be NULL */
     nxagentConfiguredWindowList -> prev = NULL;
-
     nxagentConfiguredWindowList -> pWin = pWin;
+    nxagentConfiguredWindowList -> valuemask = valuemask;
+
+    if (tmp)
+    {
+      tmp -> prev = nxagentConfiguredWindowList;
+    }
   }
-  else
-  {
-    ConfiguredWindowStruct *tmp;
-
-    tmp = malloc(sizeof(ConfiguredWindowStruct));
-
-    tmp -> next = nxagentConfiguredWindowList;
-    nxagentConfiguredWindowList -> prev = tmp;
-    tmp -> prev = NULL;
-    nxagentConfiguredWindowList = tmp;
-    nxagentConfiguredWindowList -> pWin = pWin;
-  }
-
-  nxagentConfiguredWindowList -> valuemask = valuemask;
 
   return;
 }
@@ -3623,22 +3593,15 @@ void nxagentDeleteConfiguredWindow(WindowPtr pWin)
 
 void nxagentAddStaticResizedWindow(WindowPtr pWin, unsigned long sequence, int offX, int offY)
 {
-  if (nxagentStaticResizedWindowList == NULL)
-  {
-    nxagentStaticResizedWindowList = malloc(sizeof(StaticResizedWindowStruct));
-    nxagentStaticResizedWindowList -> next = NULL;
-    nxagentStaticResizedWindowList -> prev = NULL;
-  }
-  else
-  {
-    StaticResizedWindowStruct *tmp;
+  StaticResizedWindowStruct *tmp = nxagentStaticResizedWindowList;
 
-    tmp = malloc(sizeof(StaticResizedWindowStruct));
+  nxagentStaticResizedWindowList = malloc(sizeof(StaticResizedWindowStruct));
+  nxagentStaticResizedWindowList -> next = tmp;
+  nxagentStaticResizedWindowList -> prev = NULL;
 
-    tmp -> next = nxagentStaticResizedWindowList;
-    nxagentStaticResizedWindowList -> prev = tmp;
-    tmp -> prev = NULL;
-    nxagentStaticResizedWindowList = tmp;
+  if (tmp)
+  {
+    tmp -> prev = nxagentStaticResizedWindowList;
   }
 
   nxagentStaticResizedWindowList -> pWin = pWin;
