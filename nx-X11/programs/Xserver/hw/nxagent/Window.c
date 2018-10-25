@@ -587,7 +587,6 @@ Bool nxagentSomeWindowsAreMapped(void)
 
 Bool nxagentDestroyWindow(WindowPtr pWin)
 {
-  int i;
   int j;
 
   nxagentPrivWindowPtr pWindowPriv;
@@ -601,7 +600,7 @@ Bool nxagentDestroyWindow(WindowPtr pWin)
 
   for (j = 0; j < nxagentExposeQueue.length; j++)
   {
-    i = (nxagentExposeQueue.start + j) % EXPOSED_SIZE;
+    int i = (nxagentExposeQueue.start + j) % EXPOSED_SIZE;
 
     if (nxagentExposeQueue.exposures[i].pWindow == pWin)
     {
@@ -1295,7 +1294,7 @@ void nxagentConfigureWindow(WindowPtr pWin, unsigned int mask)
   unsigned int valuemask;
   XWindowChanges values;
   int offX, offY;
-  int i, j;
+  int j;
 
   offX = nxagentWindowPriv(pWin)->x - pWin->origin.x;
   offY = nxagentWindowPriv(pWin)->y - pWin->origin.y;
@@ -1397,7 +1396,7 @@ void nxagentConfigureWindow(WindowPtr pWin, unsigned int mask)
 
       for (j = 0; j < nxagentExposeQueue.length; j++)
       {
-        i = (nxagentExposeQueue.start + j) % EXPOSED_SIZE;
+        int i = (nxagentExposeQueue.start + j) % EXPOSED_SIZE;
 
         if (nxagentExposeQueue.exposures[i].pWindow == pWin &&
                 nxagentExposeQueue.exposures[i].remoteRegion != NullRegion)
@@ -2034,15 +2033,12 @@ void nxagentFrameBufferPaintWindow(WindowPtr pWin, RegionPtr pRegion, int what)
 
 void nxagentPaintWindowBackground(WindowPtr pWin, RegionPtr pRegion, int what)
 {
-  int i;
-
   RegionRec temp;
 
   if (pWin -> realized)
   {
-    BoxPtr pBox;
-
-    pBox = RegionRects(pRegion);
+    int i;
+    BoxPtr pBox = RegionRects(pRegion);
 
     for (i = 0; i < RegionNumRects(pRegion); i++)
     {
@@ -2229,9 +2225,7 @@ void nxagentWindowExposures(WindowPtr pWin, RegionPtr pRgn, RegionPtr other_expo
 
       if (nxagentExposeQueue.length < EXPOSED_SIZE)
       {
-        int index;
-
-        index = (nxagentExposeQueue.start + nxagentExposeQueue.length) % EXPOSED_SIZE;
+        int index = (nxagentExposeQueue.start + nxagentExposeQueue.length) % EXPOSED_SIZE;
 
         nxagentExposeQueue.exposures[index].pWindow = pWin;
 
@@ -2503,12 +2497,12 @@ void nxagentShapeWindow(WindowPtr pWin)
 
 static int nxagentForceExposure(WindowPtr pWin, void * ptr)
 {
-  RegionPtr exposedRgn;
-  BoxRec Box;
-  WindowPtr pRoot = pWin->drawable.pScreen->root;
-
   if (pWin -> drawable.class != InputOnly)
   {
+    BoxRec Box;
+    RegionPtr exposedRgn;
+    WindowPtr pRoot = pWin->drawable.pScreen->root;
+
     Box.x1 = pWin->drawable.x;
     Box.y1 = pWin->drawable.y;
     Box.x2 = Box.x1 + pWin->drawable.width;
@@ -2537,10 +2531,10 @@ void nxagentRefreshWindows(WindowPtr pWin)
 
 void nxagentUnmapWindows(void)
 {
-  int i;
-
   if (nxagentOption(Fullscreen) == 1)
   {
+    int i;
+
     for (i = 0; i < screenInfo.numScreens; i++)
     {
       if (nxagentDefaultWindows[i])
@@ -2666,7 +2660,6 @@ Bool nxagentDisconnectAllWindows(void)
 {
   Bool succeeded = True;
   int i;
-  WindowPtr pWin;
 
   #if defined(NXAGENT_RECONNECT_DEBUG) || defined(NXAGENT_RECONNECT_WINDOW_DEBUG)
   fprintf(stderr, "nxagentDisconnectAllWindows\n");
@@ -2674,7 +2667,7 @@ Bool nxagentDisconnectAllWindows(void)
 
   for (i = 0; i < screenInfo.numScreens; i++)
   {
-    pWin = screenInfo.screens[i]->root;
+    WindowPtr pWin = screenInfo.screens[i]->root;
     nxagentTraverseWindow( pWin, nxagentDisconnectWindow, &succeeded);
     nxagentDefaultWindows[i] = None;
   }
@@ -2924,12 +2917,10 @@ static Bool nxagentLoopOverWindows(void (*pF)(void *, XID, void *))
 {
   int i;
   Bool windowSuccess = True;
-  WindowPtr pWin;
 
   for (i = 0; i < screenInfo.numScreens; i++)
   {
-    pWin = screenInfo.screens[i]->root;
-    nxagentTraverseWindow(pWin, pF, &windowSuccess);
+    nxagentTraverseWindow(screenInfo.screens[i]->root, pF, &windowSuccess);
   }
 
   return windowSuccess;
@@ -3110,17 +3101,14 @@ static void nxagentReconnectWindow(void * param0, XID param1, void * data_buffer
       Atom type;
       int format;
       unsigned long nItems, bytesLeft;
-      XSizeHints *props, hints;
+      XSizeHints hints = {0};
       unsigned char *data = NULL;
-
       #ifdef _XSERVER64
 
       unsigned char *data64 = NULL;
       unsigned int i;
 
       #endif
-
-      hints.flags = 0;
 
       ret = GetWindowProperty(pWin,
                                   XA_WM_NORMAL_HINTS,
@@ -3138,13 +3126,13 @@ static void nxagentReconnectWindow(void * param0, XID param1, void * data_buffer
                   bytesLeft == 0 &&
                       type == XA_WM_SIZE_HINTS)
       {
+        XSizeHints *props;
         #ifdef TEST
         fprintf(stderr, "nxagentReconnectWindow: setting WMSizeHints on window %p [%lx - %lx].\n",
                     (void*)pWin, pWin -> drawable.id, nxagentWindow(pWin));
         #endif
 
         #ifdef _XSERVER64
-
         data64 = (unsigned char *) malloc(sizeof(XSizeHints) + 4);
 
         for (i = 0; i < 4; i++)
@@ -3527,7 +3515,6 @@ void nxagentFlushConfigureWindow(void)
 {
   ConfiguredWindowStruct *index;
   XWindowChanges changes;
-  int i;
   int j;
 
   index = nxagentConfiguredWindowList;
@@ -3544,8 +3531,6 @@ void nxagentFlushConfigureWindow(void)
 
   while (index)
   {
-    ConfiguredWindowStruct *tmp;
-
     WindowPtr pWin = index -> pWin;
     unsigned int valuemask = index -> valuemask;
 
@@ -3554,23 +3539,24 @@ void nxagentFlushConfigureWindow(void)
       nxagentConfigureWindow(pWin, valuemask);
     }
 
-    tmp = index;
-
     if (index == nxagentConfiguredWindowList)
     {
-      free(tmp);
+      free(index);
       break;
     }
-
-    index = index -> prev;
-    free(tmp);
-  }
+    else
+    {
+      ConfiguredWindowStruct *tmp = index;
+      index = index -> prev;
+      free(tmp);
+    }
+}
 
   nxagentConfiguredWindowList = NULL;
 
   for (j = 0; j < nxagentExposeQueue.length; j++)
   {
-    i = (nxagentExposeQueue.start + j) % EXPOSED_SIZE;
+    int i = (nxagentExposeQueue.start + j) % EXPOSED_SIZE;
 
     if (nxagentExposeQueue.exposures[i].synchronize == 1)
     {
@@ -3929,7 +3915,6 @@ int nxagentAddItemBSPixmapList(unsigned long id, PixmapPtr pPixmap, WindowPtr pW
 int nxagentRemoveItemBSPixmapList(unsigned long pixmapId)
 {
   int i;
-  int j;
 
   if (pixmapId == 0 || nxagentBSPixmapList[0] == NULL)
   {
@@ -3946,6 +3931,8 @@ int nxagentRemoveItemBSPixmapList(unsigned long pixmapId)
 
       if (i < BSPIXMAPLIMIT - 1)
       {
+        int j;
+
         for (j = i; j < BSPIXMAPLIMIT -1; j++)
         {
           nxagentBSPixmapList[j] = nxagentBSPixmapList[j + 1];
