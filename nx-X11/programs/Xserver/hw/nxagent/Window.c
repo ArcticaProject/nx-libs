@@ -2660,7 +2660,10 @@ void nxagentDisconnectWindow(void * p0, XID x1, void * p2)
 
 Bool nxagentReconnectAllWindows(void *p0)
 {
-  int flexibility = *(int *) p0;
+  /*
+    access the parameter like this if this function needs it in future:
+    int flexibility = *(int *) p0;
+  */
 
   #if defined(NXAGENT_RECONNECT_DEBUG) || defined(NXAGENT_RECONNECT_WINDOW_DEBUG)
   fprintf(stderr, "nxagentReconnectAllWindows\n");
@@ -2770,7 +2773,10 @@ Bool nxagentReconnectAllWindows(void *p0)
 
 Bool nxagentSetWindowCursors(void *p0)
 {
-  int flexibility = *(int *) p0;
+  /*
+    access the parameter like this if this function needs it in future:
+    int flexibility = *(int *) p0;
+   */
 
   #if defined(NXAGENT_RECONNECT_DEBUG) || defined(NXAGENT_RECONNECT_WINDOW_DEBUG)
   fprintf(stderr, "nxagentSetWindowCursors: Going to loop over the windows.\n");
