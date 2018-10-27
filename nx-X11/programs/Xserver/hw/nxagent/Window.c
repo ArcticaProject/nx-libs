@@ -232,10 +232,7 @@ static int nxagentFindWindowMatch(WindowPtr pWin, void * ptr)
 
 WindowPtr nxagentWindowPtr(Window window)
 {
-  WindowMatchRec match;
-
-  match.pWin = NullWindow;
-  match.id   = window;
+  WindowMatchRec match = {.pWin = NullWindow, .id   = window};
 
   for (int i = 0; i < nxagentNumScreens; i++)
   {
@@ -716,8 +713,6 @@ void nxagentRestackWindow(WindowPtr pWin, WindowPtr pOldNextSib)
 
 void nxagentSwitchFullscreen(ScreenPtr pScreen, Bool switchOn)
 {
-  XEvent e = {0};
-
   if (nxagentOption(Rootless) == 1)
   {
     return;
@@ -754,14 +749,15 @@ void nxagentSwitchFullscreen(ScreenPtr pScreen, Bool switchOn)
 
   nxagentChangeOption(Fullscreen, switchOn);
 
-  e.xclient.type = ClientMessage;
-  e.xclient.message_type = nxagentAtoms[13]; /* _NET_WM_STATE */
-  e.xclient.display = nxagentDisplay;
-  e.xclient.window = nxagentDefaultWindows[pScreen -> myNum];
-  e.xclient.format = 32;
-  e.xclient.data.l[0] = nxagentOption(Fullscreen) ? 1 : 0;
-  e.xclient.data.l[1] = nxagentAtoms[14]; /* _NET_WM_STATE_FULLSCREEN */
-
+  XEvent e = {
+    .xclient.type = ClientMessage,
+    .xclient.message_type = nxagentAtoms[13], /* _NET_WM_STATE */
+    .xclient.display = nxagentDisplay,
+    .xclient.window = nxagentDefaultWindows[pScreen -> myNum],
+    .xclient.format = 32,
+    .xclient.data.l[0] = nxagentOption(Fullscreen) ? 1 : 0,
+    .xclient.data.l[1] = nxagentAtoms[14] /* _NET_WM_STATE_FULLSCREEN */
+  };
   XSendEvent(nxagentDisplay, DefaultRootWindow(nxagentDisplay), False,
                  SubstructureRedirectMask, &e);
 
@@ -1170,11 +1166,7 @@ void nxagentMoveViewport(ScreenPtr pScreen, int hShift, int vShift)
        * pan and one for vertical pan.
        */
 
-      BoxRec hRect;
-      BoxRec vRect;
-
-      hRect.x1 = -newX;
-      hRect.y1 = -newY;
+      BoxRec hRect = {.x1 = -newX, .y1 = -newY};
 
       if (hShift < 0)
       {
@@ -1192,8 +1184,7 @@ void nxagentMoveViewport(ScreenPtr pScreen, int hShift, int vShift)
       fprintf(stderr, "nxagentMoveViewport: hRect p1[%i, %i] - p2[%i, %i].\n", hRect.x1, hRect.y1, hRect.x2, hRect.y2);
       #endif
 
-      vRect.x1 = -newX;
-      vRect.y1 = -newY;
+      BoxRec vRect = {.x1 = -newX, .y1 = -newY};
 
       if (vShift < 0)
       {
@@ -2263,7 +2254,6 @@ void nxagentShapeWindow(WindowPtr pWin)
 {
   Region reg;
   BoxPtr pBox;
-  XRectangle rect;
 
   if (NXDisplayError(nxagentDisplay) == 1)
   {
@@ -2308,10 +2298,12 @@ void nxagentShapeWindow(WindowPtr pWin)
            i < RegionNumRects(nxagentWindowPriv(pWin)->boundingShape);
            i++)
       {
-        rect.x = pBox[i].x1;
-        rect.y = pBox[i].y1;
-        rect.width = pBox[i].x2 - pBox[i].x1;
-        rect.height = pBox[i].y2 - pBox[i].y1;
+        XRectangle rect = {
+          .x = pBox[i].x1,
+          .y = pBox[i].y1,
+          .width = pBox[i].x2 - pBox[i].x1,
+          .height = pBox[i].y2 - pBox[i].y1
+        };
         XUnionRectWithRegion(&rect, reg, reg);
       }
 
@@ -2365,10 +2357,12 @@ void nxagentShapeWindow(WindowPtr pWin)
            i < RegionNumRects(nxagentWindowPriv(pWin)->clipShape);
            i++)
       {
-        rect.x = pBox[i].x1;
-        rect.y = pBox[i].y1;
-        rect.width = pBox[i].x2 - pBox[i].x1;
-        rect.height = pBox[i].y2 - pBox[i].y1;
+        XRectangle rect = {
+          .x = pBox[i].x1,
+          .y = pBox[i].y1,
+          .width = pBox[i].x2 - pBox[i].x1,
+          .height = pBox[i].y2 - pBox[i].y1
+        };
         XUnionRectWithRegion(&rect, reg, reg);
       }
 
@@ -2400,14 +2394,13 @@ static int nxagentForceExposure(WindowPtr pWin, void * ptr)
 {
   if (pWin -> drawable.class != InputOnly)
   {
-    BoxRec Box;
     WindowPtr pRoot = pWin->drawable.pScreen->root;
-
-    Box.x1 = pWin->drawable.x;
-    Box.y1 = pWin->drawable.y;
-    Box.x2 = Box.x1 + pWin->drawable.width;
-    Box.y2 = Box.y1 + pWin->drawable.height;
-
+    BoxRec Box = {
+      .x1 = pWin->drawable.x,
+      .y1 = pWin->drawable.y,
+      .x2 = Box.x1 + pWin->drawable.width,
+      .y2 = Box.y1 + pWin->drawable.height,
+    };
     RegionPtr exposedRgn = RegionCreate(&Box, 1);
 
     RegionIntersect(exposedRgn, exposedRgn, &pRoot->winSize);
