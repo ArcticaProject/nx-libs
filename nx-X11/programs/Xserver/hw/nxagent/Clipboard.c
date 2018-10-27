@@ -140,6 +140,59 @@ static char szAgentUTF8_STRING[] = "UTF8_STRING";
 static char szAgentNX_CUT_BUFFER_CLIENT[] = "NX_CUT_BUFFER_CLIENT";
 
 /*
+ * some helpers for debugging output
+ */
+
+#ifdef DEBUG
+const char * GetClientSelectionStageString(int stage)
+{
+  switch(stage)
+  {
+    case SelectionStageNone:      return("None"); break;;
+    case SelectionStageQuerySize: return("QuerySize"); break;;
+    case SelectionStageWaitSize:  return("WaitSize"); break;;
+    case SelectionStageQueryData: return("QueryData"); break;;
+    case SelectionStageWaitData:  return("WaitData"); break;;
+    default:                      return("UNKNOWN!"); break;;
+  }
+}
+#define SetClientSelectionStage(stage) do {fprintf(stderr, "%s: Changing selection stage from [%s] to [%s]\n", __func__, GetClientSelectionStageString(lastClientStage), GetClientSelectionStageString(SelectionStage##stage)); lastClientStage = SelectionStage##stage;} while (0)
+#define PrintClientSelectionStage() do {fprintf(stderr, "%s: Current selection stage [%s]\n", __func__, GetClientSelectionStageString(lastClientStage));} while (0)
+#else
+#define SetClientSelectionStage(stage) do {lastClientStage = SelectionStage##stage;} while (0)
+#define PrintClientSelectionStage()
+#endif
+
+/*
+ * see also nx-X11/lib/src/ErrDes.c
+ */
+const char * GetXErrorString(int code)
+{
+  switch(code)
+  {
+    case Success:           return("Success"); break;;
+    case BadRequest:        return("BadRequest"); break;;
+    case BadValue:          return("BadValue"); break;;
+    case BadWindow:         return("BadWindow"); break;;
+    case BadPixmap:         return("BadPixmap"); break;;
+    case BadAtom:           return("BadAtom"); break;;
+    case BadCursor:         return("BadCursor"); break;;
+    case BadFont:           return("BadFont"); break;;
+    case BadMatch:          return("BadMatch"); break;;
+    case BadDrawable:       return("BadDrawable"); break;;
+    case BadAccess:         return("BadAccess"); break;;
+    case BadAlloc:          return("BadAlloc"); break;;
+    case BadColor:          return("BadColor"); break;;
+    case BadGC:             return("BadGC"); break;;
+    case BadIDChoice:       return("BadIDChoice"); break;;
+    case BadName:           return("BadName"); break;;
+    case BadLength:         return("BadLength"); break;;
+    case BadImplementation: return("BadImplementation"); break;;
+    default:                return("UNKNOWN!"); break;;
+  }
+}
+
+/*
  * Save the values queried from X server.
  */
 
@@ -157,6 +210,139 @@ void nxagentNotifyConvertFailure(ClientPtr client, Window requestor,
                                      Atom selection, Atom target, Time time);
 int nxagentSendNotify(xEvent *event);
 
+void nxagentPrintClipboardStat(char *);
+
+#ifdef DEBUG
+void nxagentPrintSelectionStat(int sel)
+{
+  SelectionOwner lOwner = lastSelectionOwner[sel];
+  Selection curSel = CurrentSelections[sel];
+  char *s =NULL;
+
+#ifdef CLIENTIDS
+  fprintf(stderr, "  lastSelectionOwner[].client            [%p] index [%d] PID [%d] Cmd [%s]\n",
+          (void *)lOwner.client,
+          lOwner.client ? lOwner.client->index : -1,
+          GetClientPid(lOwner.client),
+          GetClientCmdName(lOwner.client));
+#else
+  fprintf(stderr, "  lastSelectionOwner[].client            [%p] index [%d]\n",
+          (void *)lOwner.client,
+          lOwner.client ? lOwner.client->index : -1);
+#endif
+  fprintf(stderr, "  lastSelectionOwner[].window            [0x%x]\n", lOwner.window);
+  fprintf(stderr, "  lastSelectionOwner[].windowPtr         [%p]\n", (void *)lOwner.windowPtr);
+  fprintf(stderr, "  lastSelectionOwner[].lastTimeChanged   [%u]\n", lOwner.lastTimeChanged);
+
+  /*
+    print the selection name.
+  */
+  if (lOwner.client)
+  {
+    fprintf(stderr, "  lastSelectionOwner[].selection         [% 4d][%s] (local)\n", lOwner.selection, NameForAtom(lOwner.selection));
+  }
+  else
+  {
+    SAFE_XFree(s); s = XGetAtomName(nxagentDisplay, lOwner.selection);
+    fprintf(stderr, "  lastSelectionOwner[].selection         [% 4d][%s] (remote)\n", lOwner.selection, validateString(s));
+    SAFE_XFree(s);
+  }
+#ifdef CLIENTIDS
+  fprintf(stderr, "  CurrentSelections[].client             [%p] index [%d] PID [%d] Cmd [%s]\n",
+          (void *)curSel.client,
+          curSel.client ? curSel.client->index : -1,
+          GetClientPid(curSel.client),
+          GetClientCmdName(curSel.client));
+#else
+  fprintf(stderr, "  CurrentSelections[].client             [%p] index [%d]\n",
+          (void *)curSel.client,
+          curSel.client ? curSel.client->index : -1);
+#endif
+  fprintf(stderr, "  CurrentSelections[].window             [0x%x]\n", curSel.window);
+  return;
+}
+#endif
+
+void nxagentPrintClipboardStat(char *header)
+{
+  #ifdef DEBUG
+  char *s =NULL;
+
+  fprintf(stderr, "/----- Clipboard internal status - %s -----\n", header);
+
+  fprintf(stderr, "  current time                    (Time) [%u]\n", GetTimeInMillis());
+  fprintf(stderr, "  agentClipboardStatus             (int) [%d]\n", agentClipboardStatus);
+  fprintf(stderr, "  clientAccum                      (int) [%d]\n", clientAccum);
+  fprintf(stderr, "  nxagentMaxSelections             (int) [%d]\n", nxagentMaxSelections);
+  fprintf(stderr, "  NumCurrentSelections             (int) [%d]\n", NumCurrentSelections);
+  fprintf(stderr, "  serverWindow                  (Window) [0x%x]\n", serverWindow);
+  fprintf(stderr, "  nxagentLastClipboardClient       (int) [%d]\n", nxagentLastClipboardClient);
+
+  fprintf(stderr, "  ClipboardMode                          ");
+  switch(nxagentOption(Clipboard))
+  {
+    case ClipboardBoth:    fprintf(stderr, "[Both]"); break;;
+    case ClipboardClient:  fprintf(stderr, "[Client]"); break;;
+    case ClipboardServer:  fprintf(stderr, "[Server]"); break;;
+    case ClipboardNone:    fprintf(stderr, "[None]"); break;;
+    default:               fprintf(stderr, "[UNKNOWN] (FAIL!)"); break;;
+  }
+  fprintf(stderr,"\n");
+
+  fprintf(stderr, "lastServer\n");
+  fprintf(stderr, "  lastServerRequestor           (Window) [0x%x]\n", lastServerRequestor);
+  SAFE_XFree(s); s = XGetAtomName(nxagentDisplay, lastServerProperty);
+  fprintf(stderr, "  lastServerProperty              (Atom) [% 4d][%s]\n", lastServerProperty, s);
+  SAFE_XFree(s); s = XGetAtomName(nxagentDisplay, lastServerTarget);
+  fprintf(stderr, "  lastServerTarget                (Atom) [% 4d][%s]\n", lastServerTarget, s);
+  fprintf(stderr, "  lastServerTime                  (Time) [%u]\n", lastServerTime);
+
+  fprintf(stderr, "lastClient\n");
+  fprintf(stderr, "  lastClientWindowPtr        (WindowPtr) [%p]\n", (void *)lastClientWindowPtr);
+  fprintf(stderr, "  lastClientClientPtr        (ClientPtr) [%p]\n", (void *)lastClientClientPtr);
+  fprintf(stderr, "  lastClientRequestor           (Window) [0x%x]\n", lastClientRequestor);
+  fprintf(stderr, "  lastClientProperty              (Atom) [% 4d][%s]\n", lastClientProperty, NameForAtom(lastClientProperty));
+  fprintf(stderr, "  lastClientSelection             (Atom) [% 4d][%s]\n", lastClientSelection, NameForAtom(lastClientSelection));
+  fprintf(stderr, "  lastClientTarget                (Atom) [% 4d][%s]\n", lastClientTarget, NameForAtom(lastClientTarget));
+  fprintf(stderr, "  lastClientTime                  (Time) [%u]\n", lastServerTime);
+  fprintf(stderr, "  lastClientReqTime               (Time) [%u]\n", lastServerTime);
+  fprintf(stderr, "  lastClientPropertySize (unsigned long) [%lu]\n", lastClientPropertySize);
+  fprintf(stderr, "  lastClientStage (ClientSelectionStage) [%d][%s]\n", lastClientStage, GetClientSelectionStageString(lastClientStage));
+
+  fprintf(stderr, "PRIMARY\n");
+  nxagentPrintSelectionStat(nxagentPrimarySelection);
+  fprintf(stderr, "CLIPBOARD\n");
+  nxagentPrintSelectionStat(nxagentClipboardSelection);
+
+  fprintf(stderr, "Atoms (server side)\n");
+  SAFE_XFree(s); s = XGetAtomName(nxagentDisplay, serverTARGETS);
+  fprintf(stderr, "  serverTARGETS                          [% 4d][%s]\n", serverTARGETS, validateString(s));
+  SAFE_XFree(s); s = XGetAtomName(nxagentDisplay, serverTEXT);
+  fprintf(stderr, "  serverTEXT                             [% d][%s]\n", serverTEXT, s);
+  SAFE_XFree(s); s = XGetAtomName(nxagentDisplay, serverUTF8_STRING);
+  fprintf(stderr, "  serverUTF8_STRING                      [% 4d][%s]\n", serverUTF8_STRING, s);
+  SAFE_XFree(s); s = XGetAtomName(nxagentDisplay, serverCutProperty);
+  fprintf(stderr, "  serverCutProperty                      [% 4d][%s]\n", serverCutProperty, s);
+
+  SAFE_XFree(s); s = XGetAtomName(nxagentDisplay, nxagentClipboardAtom);
+  fprintf(stderr, "  nxagentClipboardAtom                   [% 4d][%s]\n", nxagentClipboardAtom, s);
+  SAFE_XFree(s); s = XGetAtomName(nxagentDisplay, nxagentTimestampAtom);
+  fprintf(stderr, "  nxagentTimestampAtom                   [% 4d][%s]\n", nxagentTimestampAtom, s);
+
+  fprintf(stderr, "Atoms (inside nxagent)\n");
+  fprintf(stderr, "  clientTARGETS                          [% 4d][%s]\n", clientTARGETS, NameForAtom(clientTARGETS));
+  fprintf(stderr, "  clientTEXT                             [% 4d][%s]\n", clientTEXT, NameForAtom(clientTEXT));
+  fprintf(stderr, "  clientCOMPOUND_TEXT                    [% 4d][%s]\n", clientCOMPOUND_TEXT, NameForAtom(clientCOMPOUND_TEXT));
+  fprintf(stderr, "  clientUTF8_STRING                      [% 4d][%s]\n", clientUTF8_STRING, NameForAtom(clientUTF8_STRING));
+  fprintf(stderr, "  clientCutProperty                      [% 4d][%s]\n", clientCutProperty, NameForAtom(clientCutProperty));
+  fprintf(stderr, "  nxagentLastRequestedSelection          [% 4d][%s]\n", nxagentLastRequestedSelection, NameForAtom(nxagentLastRequestedSelection));
+
+  fprintf(stderr, "\\------------------------------------------------------------------------------\n");
+
+  SAFE_XFree(s);
+#endif
+}
+
 /*
  * This is from NXproperty.c.
  */
@@ -168,15 +354,39 @@ int GetWindowProperty(WindowPtr pWin, Atom property, long longOffset, long longL
 
 Bool nxagentValidServerTargets(Atom target)
 {
-  #ifdef DEBUG
-  fprintf(stderr, "nxagentValidServerTargets: Got called.\n");
-  #endif
-
-  if (target == XA_STRING) return True;
-  if (target == serverTEXT) return True;
+  if (target == XA_STRING)
+  {
+    #ifdef DEBUG
+    fprintf(stderr, "%s: valid target [XA_STRING].\n", __func__);
+    #endif
+    return True;
+  }
+  else if (target == serverTEXT)
+  {
+    #ifdef DEBUG
+    fprintf(stderr, "%s: valid target [TEXT].\n", __func__);
+    #endif
+    return True;
+  }
   /* by dimbor */
-  if (target == serverUTF8_STRING) return True;
+  else if (target == serverUTF8_STRING)
+  {
+    #ifdef DEBUG
+    fprintf(stderr, "%s: valid target [UTF8_STRING].\n", __func__);
+    #endif
+    return True;
+  }
+  else if (target == serverTARGETS)
+  {
+    #ifdef DEBUG
+    fprintf(stderr, "%s: special target [TARGETS].\n", __func__);
+    #endif
+    return False;
+  }
 
+  #ifdef DEBUG
+  fprintf(stderr, "%s: invalid target [%u].\n", __func__, target);
+  #endif
   return False;
 }
 
@@ -185,9 +395,11 @@ void nxagentClearClipboard(ClientPtr pClient, WindowPtr pWindow)
   int i;
 
   #ifdef DEBUG
-  fprintf(stderr, "nxagentClearClipboard: Called with client [%p] window [%p].\n",
+  fprintf(stderr, "%s: Called with client [%p] window [%p].\n", __func__,
               (void *) pClient, (void *) pWindow);
   #endif
+
+  nxagentPrintClipboardStat("before nxagentClearClipboard");
 
   /*
    * Only for PRIMARY and CLIPBOARD selections.
@@ -199,7 +411,7 @@ void nxagentClearClipboard(ClientPtr pClient, WindowPtr pWindow)
             (pWindow != NULL && lastSelectionOwner[i].windowPtr == pWindow))
     {
       #ifdef TEST
-      fprintf(stderr, "nxagentClearClipboard: Resetting state with client [%p] window [%p].\n",
+      fprintf(stderr, "%s: Resetting state with client [%p] window [%p].\n", __func__,
                   (void *) pClient, (void *) pWindow);
       #endif
 
@@ -209,18 +421,19 @@ void nxagentClearClipboard(ClientPtr pClient, WindowPtr pWindow)
       lastSelectionOwner[i].lastTimeChanged = GetTimeInMillis();
 
       lastClientWindowPtr = NULL;
-      lastClientStage = SelectionStageNone;
+      SetClientSelectionStage(None);
 
       lastServerRequestor = None;
     }
   }
- 
+
   if (pWindow == lastClientWindowPtr)
   {
     lastClientWindowPtr = NULL;
-    lastClientStage = SelectionStageNone;
+    SetClientSelectionStage(None);
   }
 
+  nxagentPrintClipboardStat("after nxagentClearClipboard");
 }
 
 void nxagentClearSelection(XEvent *X)
@@ -228,18 +441,16 @@ void nxagentClearSelection(XEvent *X)
   int i = 0;
 
   #ifdef DEBUG
-  fprintf(stderr, "nxagentClearSelection: Got called.\n");
+  fprintf(stderr, "%s: SelectionClear event for selection [%lu].\n", __func__, X->xselectionclear.selection);
   #endif
+
+  nxagentPrintClipboardStat("before nxagentClearSelection");
 
   if (agentClipboardStatus != 1 ||
           nxagentOption(Clipboard) == ClipboardServer)
   {
     return;
   }
-
-  #ifdef DEBUG
-  fprintf(stderr, "nxagentClearSelection: SelectionClear event.\n");
-  #endif
 
   while ((i < nxagentMaxSelections) &&
             (lastSelectionOwner[i].selection != X->xselectionclear.selection))
@@ -272,20 +483,20 @@ void nxagentClearSelection(XEvent *X)
   }
 
   lastClientWindowPtr = NULL;
-  lastClientStage = SelectionStageNone;
+  SetClientSelectionStage(None);
+  nxagentPrintClipboardStat("after nxagentClearSelection");
 }
 
 void nxagentRequestSelection(XEvent *X)
 {
-  #ifdef DEBUG
-  int result;
-  #endif
   int i = 0;
-  XSelectionEvent eventSelection;
+  XSelectionEvent eventSelection = {0};
 
   #ifdef DEBUG
-  fprintf(stderr, "nxagentRequestSelection: Got called.\n");
+  fprintf(stderr, "%s: Got called.\n", __func__);
   #endif
+
+  nxagentPrintClipboardStat("before nxagentRequestSelection");
 
   if (agentClipboardStatus != 1)
   {
@@ -311,10 +522,7 @@ FIXME: Do we need this?
     fprintf(stderr, "SelectionRequest event aborting sele=[%s] ext target=[%s] Atom size is [%d]\n",
                 validateString(NameForAtom(X->xselectionrequest.selection)), strTarget, sizeof(Atom));
 
-    if (strTarget != NULL)
-    {
-      XFree(strTarget);
-    }
+    SAFE_XFree(strTarget);
 */
     memset(&eventSelection, 0, sizeof(XSelectionEvent));
     eventSelection.property = None;
@@ -332,8 +540,7 @@ FIXME: Do we need this?
                                 1);
       eventSelection.property = X->xselectionrequest.property;
     }
-
-    if (X->xselectionrequest.target == nxagentTimestampAtom)
+    else if (X->xselectionrequest.target == nxagentTimestampAtom)
     {
       while ((i < NumCurrentSelections) &&
                 lastSelectionOwner[i].selection != X->xselectionrequest.selection) i++;
@@ -361,7 +568,7 @@ FIXME: Do we need this?
     eventSelection.time = X->xselectionrequest.time;
 
     #ifdef DEBUG
-    result =
+    int result =
     #endif
     XSendEvent(nxagentDisplay,
                         eventSelection.requestor,
@@ -370,13 +577,14 @@ FIXME: Do we need this?
                         (XEvent *) &eventSelection);
 
     #ifdef DEBUG
+    fprintf(stderr, "%s: XSendEvent() returned [%s]\n", __func__, GetXErrorString(result));
     if (result == BadValue || result == BadWindow)
     {
-      fprintf(stderr, "nxagentRequestSelection: WARNING! XSendEvent failed.\n");
+      fprintf(stderr, "%s: WARNING! XSendEvent failed.\n", __func__);
     }
     else
     {
-      fprintf(stderr, "nxagentRequestSelection: XSendEvent sent to window [0x%lx].\n",
+      fprintf(stderr, "%s: XSendEvent sent to window [0x%lx].\n", __func__,
                   eventSelection.requestor);
     }
     #endif
@@ -390,6 +598,7 @@ FIXME: Do we need this?
 
   nxagentLastRequestedSelection = X->xselectionrequest.selection;
 
+  /* FIXME: shouldn't we reset i to 0 here first? */
   while ((i < nxagentMaxSelections) &&
             (lastSelectionOwner[i].selection != X->xselectionrequest.selection))
   {
@@ -405,7 +614,7 @@ FIXME: Do we need this?
                                 serverWindow, lastClientTime);
 
       #ifdef DEBUG
-      fprintf(stderr, "nxagentRequestSelection: Sent XConvertSelection.\n");
+      fprintf(stderr, "%s: Sent XConvertSelection.\n", __func__);
       #endif
     }
     else
@@ -459,13 +668,13 @@ FIXME: Do we need this?
                                NullGrab);
 
         #ifdef DEBUG
-        fprintf(stderr, "nxagentRequestSelection: Executed TryClientEvents with clientCutProperty.\n");
+        fprintf(stderr, "%s: Executed TryClientEvents with clientCutProperty.\n", __func__);
         #endif
       }
       else
       {
         /*
-         * Probably we must to send a Notify
+         * Probably we must send a Notify
          * to requestor with property None.
          */
 
@@ -479,7 +688,7 @@ FIXME: Do we need this?
         eventSelection.time = X->xselectionrequest.time;
 
         #ifdef DEBUG
-        result =
+        int result =
         #endif
         XSendEvent(nxagentDisplay,
                             eventSelection.requestor,
@@ -488,11 +697,21 @@ FIXME: Do we need this?
                             (XEvent *) &eventSelection);
 
         #ifdef DEBUG
-        fprintf(stderr, "nxagentRequestSelection: Executed XSendEvent with property None.\n");
+        fprintf(stderr, "%s: XSendEvent() returned [%s]\n", __func__, GetXErrorString(result));
+        if (result == BadValue || result == BadWindow)
+        {
+          fprintf(stderr, "%s: WARNING! XSendEvent failed.\n", __func__);
+        }
+        else
+        {
+          fprintf(stderr, "%s: XSendEvent with property None sent to window [0x%lx].\n", __func__,
+                      eventSelection.requestor);
+        }
         #endif
       }
     }
   }
+  nxagentPrintClipboardStat("after nxagentRequestSelection");
 }
 
 void nxagentSendSelectionNotify(Atom property)
@@ -500,7 +719,7 @@ void nxagentSendSelectionNotify(Atom property)
   xEvent x;
 
   #ifdef DEBUG
-  fprintf (stderr, "nxagentSendSelectionNotify: Sending event to client [%d].\n",
+  fprintf (stderr, "%s: Sending event to client [%d].\n", __func__,
                lastClientClientPtr -> index);
   #endif
 
@@ -527,14 +746,14 @@ void nxagentTransferSelection(int resource)
   if (lastClientClientPtr -> index != resource)
   {
     #ifdef DEBUG
-    fprintf (stderr, "nxagentTransferSelection: WARNING! Inconsistent resource [%d] with current client [%d].\n",
+    fprintf (stderr, "%s: WARNING! Inconsistent resource [%d] with current client [%d].\n", __func__,
                  resource, lastClientClientPtr -> index);
     #endif
 
     nxagentSendSelectionNotify(None);
 
     lastClientWindowPtr = NULL;
-    lastClientStage = SelectionStageNone;
+    SetClientSelectionStage(None);
 
     return;
   }
@@ -543,6 +762,7 @@ void nxagentTransferSelection(int resource)
   {
     case SelectionStageQuerySize:
     {
+      PrintClientSelectionStage();
       /*
        * Don't get data yet, just get size. We skip
        * this stage in current implementation and
@@ -554,7 +774,7 @@ void nxagentTransferSelection(int resource)
       if (nxagentLastClipboardClient == -1)
       {
         #ifdef WARNING
-        fprintf(stderr, "nxagentTransferSelection: WARNING! Asynchronous GetProperty queue full.\n");
+        fprintf(stderr, "%s: WARNING! Asynchronous GetProperty queue full.\n", __func__);
         #endif
 
         result = -1;
@@ -574,35 +794,32 @@ void nxagentTransferSelection(int resource)
       if (result == -1)
       {
         #ifdef DEBUG
-        fprintf (stderr, "nxagentTransferSelection: Aborting selection notify procedure for client [%d].\n",
+        fprintf (stderr, "%s: Aborting selection notify procedure for client [%d].\n", __func__,
                      lastClientClientPtr -> index);
         #endif
 
         nxagentSendSelectionNotify(None);
 
         lastClientWindowPtr = NULL;
-        lastClientStage = SelectionStageNone;
+        SetClientSelectionStage(None);
 
         return;
       }
 
-      #ifdef DEBUG
-      fprintf (stderr, "nxagentTransferSelection: Setting stage to [%d] for client [%d].\n",
-                   SelectionStageWaitSize, lastClientClientPtr -> index);
-      #endif
-
-      lastClientStage = SelectionStageWaitSize;
+      SetClientSelectionStage(WaitSize);
 
       break;
     }
     case SelectionStageQueryData:
     {
+      PrintClientSelectionStage();
+
       /*
        * Request the selection data now.
        */
 
       #ifdef DEBUG
-      fprintf(stderr, "nxagentTransferSelection: Getting property content from remote server.\n");
+      fprintf(stderr, "%s: Getting property content from remote server.\n", __func__);
       #endif
 
       nxagentLastClipboardClient = NXGetCollectPropertyResource(nxagentDisplay);
@@ -610,7 +827,7 @@ void nxagentTransferSelection(int resource)
       if (nxagentLastClipboardClient == -1)
       {
         #ifdef WARNING
-        fprintf(stderr, "nxagentTransferSelection: WARNING! Asynchronous GetProperty queue full.\n");
+        fprintf(stderr, "%s: WARNING! Asynchronous GetProperty queue full.\n", __func__);
         #endif
 
         result = -1;
@@ -630,32 +847,27 @@ void nxagentTransferSelection(int resource)
       if (result == -1)
       {
         #ifdef DEBUG
-        fprintf (stderr, "nxagentTransferSelection: Aborting selection notify procedure for client [%d].\n",
+        fprintf (stderr, "%s: Aborting selection notify procedure for client [%d].\n", __func__,
                      lastClientClientPtr -> index);
         #endif
 
         nxagentSendSelectionNotify(None);
 
         lastClientWindowPtr = NULL;
-        lastClientStage = SelectionStageNone;
+        SetClientSelectionStage(None);
 
         return;
       }
 
-      #ifdef DEBUG
-      fprintf (stderr, "nxagentTransferSelection: Setting stage to [%d] for client [%d].\n",
-                   SelectionStageWaitData, lastClientClientPtr -> index);
-      #endif
-
-      lastClientStage = SelectionStageWaitData;
+      SetClientSelectionStage(WaitData);
 
       break;
     }
     default:
     {
       #ifdef DEBUG
-      fprintf (stderr, "nxagentTransferSelection: WARNING! Inconsistent state [%d] for client [%d].\n",
-                   lastClientStage, lastClientClientPtr -> index);
+      fprintf (stderr, "%s: WARNING! Inconsistent state [%s] for client [%d].\n", __func__,
+                   GetClientSelectionStageString(lastClientStage), lastClientClientPtr -> index);
       #endif
 
       break;
@@ -691,29 +903,23 @@ void nxagentCollectPropertyEvent(int resource)
   if (result == 0)
   {
     #ifdef DEBUG
-    fprintf (stderr, "nxagentCollectPropertyEvent: Failed to get reply data for client [%d].\n",
+    fprintf (stderr, "%s: Failed to get reply data for client [%d].\n", __func__,
                  lastClientClientPtr -> index);
     #endif
 
     nxagentSendSelectionNotify(None);
 
     lastClientWindowPtr = NULL;
-    lastClientStage = SelectionStageNone;
+    SetClientSelectionStage(None);
 
-    if (pszReturnData != NULL)
-    {
-      XFree(pszReturnData);
-    }
-
+    SAFE_XFree(pszReturnData);
     return;
   }
  
   if (resultFormat != 8 && resultFormat != 16 && resultFormat != 32)
   {
-
     #ifdef DEBUG
-    fprintf (stderr, "nxagentCollectPropertyEvent: WARNING! Invalid property "
-                 "value.\n");
+    fprintf (stderr, "%s: WARNING! Invalid property value.\n", __func__);
     #endif
 
     if (lastClientClientPtr != NULL)
@@ -722,13 +928,9 @@ void nxagentCollectPropertyEvent(int resource)
     }
 
     lastClientWindowPtr = NULL;
-    lastClientStage = SelectionStageNone;
+    SetClientSelectionStage(None);
 
-    if (pszReturnData != NULL)
-    {
-      XFree(pszReturnData);
-    }
-
+    SAFE_XFree(pszReturnData);
     return;
   }
 
@@ -736,33 +938,30 @@ void nxagentCollectPropertyEvent(int resource)
   {
     case SelectionStageWaitSize:
     {
+      PrintClientSelectionStage();
       #ifdef DEBUG
-      fprintf (stderr, "nxagentCollectPropertyEvent: Got size notify event for client [%d].\n",
+      fprintf (stderr, "%s: Got size notify event for client [%d].\n", __func__,
                    lastClientClientPtr -> index);
       #endif
 
       if (ulReturnBytesLeft == 0)
       {
         #ifdef DEBUG
-        fprintf (stderr, "nxagentCollectPropertyEvent: Aborting selection notify procedure for client [%d].\n",
+        fprintf (stderr, "%s: Aborting selection notify procedure for client [%d].\n", __func__,
                      lastClientClientPtr -> index);
         #endif
 
         nxagentSendSelectionNotify(None);
 
         lastClientWindowPtr = NULL;
-        lastClientStage = SelectionStageNone;
+        SetClientSelectionStage(None);
 
-        if (pszReturnData != NULL)
-        {
-          XFree(pszReturnData);
-        }
-
+        SAFE_XFree(pszReturnData);
         return;
       }
 
       #ifdef DEBUG
-      fprintf(stderr, "nxagentCollectPropertyEvent: Got property size from remote server.\n");
+      fprintf(stderr, "%s: Got property size from remote server.\n", __func__);
       #endif
 
       /*
@@ -770,7 +969,7 @@ void nxagentCollectPropertyEvent(int resource)
        */
 
       lastClientPropertySize = ulReturnBytesLeft;
-      lastClientStage = SelectionStageQueryData;
+      SetClientSelectionStage(QueryData);
 
       nxagentTransferSelection(resource);
 
@@ -778,33 +977,30 @@ void nxagentCollectPropertyEvent(int resource)
     }
     case SelectionStageWaitData:
     {
+      PrintClientSelectionStage();
       #ifdef DEBUG
-      fprintf (stderr, "nxagentCollectPropertyEvent: Got data notify event for client [%d].\n",
+      fprintf (stderr, "%s: Got data notify event for client [%d].\n", __func__,
                    lastClientClientPtr -> index);
       #endif
 
       if (ulReturnBytesLeft != 0)
       {
         #ifdef DEBUG
-        fprintf (stderr, "nxagentCollectPropertyEvent: Aborting selection notify procedure for client [%d].\n",
+        fprintf (stderr, "%s: Aborting selection notify procedure for client [%d].\n", __func__,
                      lastClientClientPtr -> index);
         #endif
 
         nxagentSendSelectionNotify(None);
 
         lastClientWindowPtr = NULL;
-        lastClientStage = SelectionStageNone;
+        SetClientSelectionStage(None);
 
-        if (pszReturnData != NULL)
-        {
-          XFree(pszReturnData);
-        }
-
+        SAFE_XFree(pszReturnData);
         return;
       }
 
       #ifdef DEBUG
-      fprintf(stderr, "nxagentCollectPropertyEvent: Got property content from remote server.\n");
+      fprintf(stderr, "%s: Got property content from remote server.\n", __func__);
       #endif
 
       ChangeWindowProperty(lastClientWindowPtr,
@@ -814,7 +1010,7 @@ void nxagentCollectPropertyEvent(int resource)
                            ulReturnItems, pszReturnData, 1);
 
       #ifdef DEBUG
-      fprintf(stderr, "nxagentCollectPropertyEvent: Selection property [%s] changed to [%s]\n",
+      fprintf(stderr, "%s: Selection property [%s] changed to [%s]\n", __func__,
                    validateString(NameForAtom(lastClientProperty)), pszReturnData);
       #endif
 
@@ -825,33 +1021,30 @@ void nxagentCollectPropertyEvent(int resource)
        */
 
       lastClientWindowPtr = NULL;
-      lastClientStage = SelectionStageNone;
+      SetClientSelectionStage(None);
 
       break;
     }
     default:
     {
       #ifdef DEBUG
-      fprintf (stderr, "nxagentCollectPropertyEvent: WARNING! Inconsistent state [%d] for client [%d].\n",
-                   lastClientStage, lastClientClientPtr -> index);
+      fprintf (stderr, "%s: WARNING! Inconsistent state [%s] for client [%d].\n", __func__,
+                   GetClientSelectionStageString(lastClientStage), lastClientClientPtr -> index);
       #endif
 
       break;
     }
   }
 
-  XFree(pszReturnData);
-  pszReturnData = NULL;
+  SAFE_XFree(pszReturnData);
 }
 
 void nxagentNotifySelection(XEvent *X)
 {
-  int result;
-
   XSelectionEvent eventSelection;
 
   #ifdef DEBUG
-  fprintf(stderr, "nxagentNotifySelection: Got called.\n");
+  fprintf(stderr, "%s: Got called.\n", __func__);
   #endif
 
   if (agentClipboardStatus != 1)
@@ -860,15 +1053,17 @@ void nxagentNotifySelection(XEvent *X)
   }
 
   #ifdef DEBUG
-  fprintf(stderr, "nxagentNotifySelection: SelectionNotify event.\n");
+  fprintf(stderr, "%s: SelectionNotify event.\n", __func__);
   #endif
+
+  PrintClientSelectionStage();
 
   if (lastClientWindowPtr != NULL)
   {
     if ((lastClientStage == SelectionStageNone) && (X->xselection.property == serverCutProperty))
     {
       #ifdef DEBUG
-      fprintf(stderr, "nxagentNotifySelection: Starting selection transferral for client [%d].\n",
+      fprintf(stderr, "%s: Starting selection transferral for client [%d].\n", __func__,
                   lastClientClientPtr -> index);
       #endif
 
@@ -883,7 +1078,7 @@ void nxagentNotifySelection(XEvent *X)
        * tions.
        */
 
-      lastClientStage = SelectionStageQueryData;
+      SetClientSelectionStage(QueryData);
       lastClientPropertySize = 262144;
 
       nxagentTransferSelection(lastClientClientPtr -> index);
@@ -891,14 +1086,14 @@ void nxagentNotifySelection(XEvent *X)
     else
     {
       #ifdef DEBUG
-      fprintf(stderr, "nxagentNotifySelection: WARNING! Resetting selection transferral for client [%d].\n",
+      fprintf(stderr, "%s: WARNING! Resetting selection transferral for client [%d].\n", __func__,
                   lastClientClientPtr -> index);
       #endif
 
       nxagentSendSelectionNotify(None);
 
       lastClientWindowPtr = NULL;
-      lastClientStage = SelectionStageNone;
+      SetClientSelectionStage(None);
     }
 
     return;
@@ -924,28 +1119,18 @@ void nxagentNotifySelection(XEvent *X)
         unsigned long   ulReturnBytesLeft;
         unsigned char   *pszReturnData = NULL;
 
-        result = GetWindowProperty(lastSelectionOwner[i].windowPtr, clientCutProperty, 0, 0, False,
-                                       AnyPropertyType, &atomReturnType, &resultFormat,
-                                           &ulReturnItems, &ulReturnBytesLeft, &pszReturnData);
+        int result = GetWindowProperty(lastSelectionOwner[i].windowPtr, clientCutProperty, 0, 0, False,
+                                           AnyPropertyType, &atomReturnType, &resultFormat,
+                                               &ulReturnItems, &ulReturnBytesLeft, &pszReturnData);
 
+        #ifdef DEBUG
+        fprintf(stderr, "%s: GetWindowProperty() returned [%s]\n", __func__, GetXErrorString(result));
+        #endif
         if (result == BadAlloc || result == BadAtom ||
-                result == BadMatch || result == BadValue ||
-                    result == BadWindow)
+                result == BadWindow || result == BadValue)
         {
-          fprintf (stderr, "Client GetProperty failed error =");
+          fprintf (stderr, "Client GetProperty failed. Error = %s", GetXErrorString(result));
           lastServerProperty = None;
-          switch (result)
-          {
-            case BadAtom:
-                 fprintf (stderr, "BadAtom\n");
-                 break;
-            case BadValue:
-                 fprintf (stderr, "BadValue\n");
-                 break;
-            case BadWindow:
-                 fprintf (stderr, "BadWindow\n");
-                 break;
-          }
         }
         else
         {
@@ -953,13 +1138,14 @@ void nxagentNotifySelection(XEvent *X)
                                          ulReturnBytesLeft, False, AnyPropertyType, &atomReturnType,
                                              &resultFormat, &ulReturnItems, &ulReturnBytesLeft,
                                                  &pszReturnData);
+          #ifdef DEBUG
+          fprintf(stderr, "%s: GetWindowProperty() returned [%s]\n", __func__, GetXErrorString(result));
+          #endif
 
           if (result == BadAlloc || result == BadAtom ||
-                  result == BadMatch || result == BadValue ||
-                      result == BadWindow)
+                  result == BadWindow || result == BadValue)
           {
-            fprintf (stderr, "SelectionNotify - XChangeProperty failed\n");
-
+            fprintf (stderr, "SelectionNotify - XChangeProperty failed. Error = %s\n", GetXErrorString(result));
             lastServerProperty = None;
           }
           else
@@ -973,10 +1159,12 @@ void nxagentNotifySelection(XEvent *X)
                                      pszReturnData,
                                      ulReturnItems);
           }
+          #ifdef DEBUG
+          fprintf(stderr, "%s: XChangeProperty() returned [%s]\n", __func__, GetXErrorString(result));
+          #endif
 
           /*
-           * XFree(pszReturnData);
-           * pszReturnData=NULL;
+           * SAFE_XFree(pszReturnData);
            */
 
         }
@@ -1003,7 +1191,7 @@ void nxagentNotifySelection(XEvent *X)
          */
 
         #ifdef DEBUG
-        fprintf(stderr, "nxagentNotifySelection: Sending event to requestor.\n");
+        fprintf(stderr, "%s: Sending event to requestor [%p].\n", __func__, (void *)eventSelection.requestor);
         #endif
 
         result = XSendEvent(nxagentDisplay,
@@ -1012,6 +1200,9 @@ void nxagentNotifySelection(XEvent *X)
                              0L,
                              (XEvent *) &eventSelection);
 
+        #ifdef DEBUG
+        fprintf(stderr, "%s: XSendEvent() returned [%s]\n", __func__, GetXErrorString(result));
+        #endif
         if (result == BadValue || result == BadWindow)
         {
           fprintf (stderr, "SelectionRequest - XSendEvent failed\n");
@@ -1035,8 +1226,8 @@ void nxagentResetSelectionOwner(void)
   if (lastServerRequestor != None)
   {
     #ifdef TEST
-    fprintf (stderr, "nxagentResetSelectionOwner: WARNING! Requestor window [0x%lx] already found.\n",
-                 lastServerRequestor);
+    fprintf(stderr, "%s: WARNING! Requestor window [0x%x] already found.\n", __func__,
+                lastServerRequestor);
     #endif
 
     return;
@@ -1050,7 +1241,7 @@ void nxagentResetSelectionOwner(void)
   {
     XSetSelectionOwner(nxagentDisplay, lastSelectionOwner[i].selection, serverWindow, CurrentTime);
 
-    fprintf (stderr, "nxagentResetSelectionOwner: Reset clipboard state.\n");
+    fprintf(stderr, "%s: Reset clipboard state.\n", __func__);
 
     lastSelectionOwner[i].client = NULL;
     lastSelectionOwner[i].window = None;
@@ -1059,7 +1250,7 @@ void nxagentResetSelectionOwner(void)
   }
 
   lastClientWindowPtr = NULL;
-  lastClientStage = SelectionStageNone;
+  SetClientSelectionStage(None);
 
   lastServerRequestor = None;
 
@@ -1070,7 +1261,7 @@ void nxagentSetSelectionOwner(Selection *pSelection)
 {
   int i;
   #ifdef DEBUG
-  fprintf(stderr, "nxagentSetSelectionOwner: Got called.\n");
+  fprintf(stderr, "%s: Got called.\n", __func__);
   #endif
 
   if (agentClipboardStatus != 1)
@@ -1079,14 +1270,14 @@ void nxagentSetSelectionOwner(Selection *pSelection)
   }
 
   #ifdef DEBUG
-  fprintf(stderr, "nxagentSetSelectionOwner: Setting selection owner to window [0x%lx].\n",
+  fprintf(stderr, "%s: Setting selection owner to window [0x%x].\n", __func__,
               serverWindow);
   #endif
 
   #ifdef TEST
   if (lastServerRequestor != None)
   {
-    fprintf (stderr, "nxagentSetSelectionOwner: WARNING! Requestor window [0x%lx] already found.\n",
+    fprintf (stderr, "%s: WARNING! Requestor window [0x%x] already found.\n", __func__,
                  lastServerRequestor);
   }
   #endif
@@ -1109,7 +1300,7 @@ void nxagentSetSelectionOwner(Selection *pSelection)
   }
 
   lastClientWindowPtr = NULL;
-  lastClientStage = SelectionStageNone;
+  SetClientSelectionStage(None);
 
   lastServerRequestor = None;
 
@@ -1118,7 +1309,7 @@ FIXME
 
    if (XGetSelectionOwner(nxagentDisplay,pSelection->selection)==serverWindow)
    {
-      fprintf (stderr, "NXdispatch: SetSelectionOwner OK\n");
+      fprintf (stderr, "%s: SetSelectionOwner OK\n", __func__);
 
       lastSelectionOwnerSelection = pSelection;
       lastSelectionOwnerClient = pSelection->client;
@@ -1126,11 +1317,11 @@ FIXME
       lastSelectionOwnerWindowPtr = pSelection->pWin;
 
       lastClientWindowPtr = NULL;
-      lastClientStage     = SelectionStageNone;
+      SetClientSelectionStage(None);
 
       lastServerRequestor = None;
    }
-   else fprintf (stderr, "nxagentSetSelectionOwner: SetSelectionOwner failed\n");
+   else fprintf (stderr, "%s: SetSelectionOwner failed\n", __func__);
 */
 }
 
@@ -1146,7 +1337,7 @@ FIXME: Why this pointer can be not a valid
   if (clients[client -> index] != client)
   {
     #ifdef WARNING
-    fprintf(stderr, "nxagentNotifyConvertFailure: WARNING! Invalid client pointer.");
+    fprintf(stderr, "%s: WARNING! Invalid client pointer.", __func__);
     #endif
 
     return;
@@ -1196,27 +1387,27 @@ int nxagentConvertSelection(ClientPtr client, WindowPtr pWin, Atom selection,
   if (lastClientWindowPtr != NULL)
   {
     #ifdef TEST
-    fprintf(stderr, "nxagentConvertSelection: lastClientWindowPtr != NULL.\n");
+    fprintf(stderr, "%s: lastClientWindowPtr != NULL.\n", __func__);
     #endif
 
     if ((GetTimeInMillis() - lastClientReqTime) > 5000)
     {
       #ifdef DEBUG
-      fprintf(stderr, "nxagentConvertSelection: timeout expired on last request, "
-                        "notifying failure to client\n");
+      fprintf(stderr, "%s: timeout expired on last request, "
+                  "notifying failure to client\n", __func__);
       #endif
 
       nxagentNotifyConvertFailure(lastClientClientPtr, lastClientRequestor,
                                      lastClientSelection, lastClientTarget, lastClientTime);
 
       lastClientWindowPtr = NULL;
-      lastClientStage = SelectionStageNone;
+      SetClientSelectionStage(None);
     }
     else
     {
       #ifdef DEBUG
-      fprintf(stderr, "nxagentConvertSelection: got request "
-                        "before timeout expired on last request, notifying failure to client\n");
+      fprintf(stderr, "%s: got request "
+                  "before timeout expired on last request, notifying failure to client\n", __func__);
       #endif
 
       nxagentNotifyConvertFailure(client, requestor, selection, target, time);
@@ -1226,8 +1417,8 @@ int nxagentConvertSelection(ClientPtr client, WindowPtr pWin, Atom selection,
   }
 
   #ifdef TEST
-  fprintf(stderr, "nxagentConvertSelection: client [%d] ask for sel [%s] "
-              "on window [%lx] prop [%s] target [%s].\n",
+  fprintf(stderr, "%s: client [%d] ask for sel [%s] "
+              "on window [%x] prop [%s] target [%s].\n", __func__,
                   client -> index, validateString(NameForAtom(selection)), requestor,
                       validateString(NameForAtom(property)), validateString(NameForAtom(target)));
   #endif
@@ -1274,7 +1465,6 @@ int nxagentConvertSelection(ClientPtr client, WindowPtr pWin, Atom selection,
 
   if (target == MakeAtom("TIMESTAMP", 9, 1))
   {
-    xEvent x;
     int i = 0;
 
     while ((i < NumCurrentSelections) &&
@@ -1282,6 +1472,7 @@ int nxagentConvertSelection(ClientPtr client, WindowPtr pWin, Atom selection,
 
     if (i < NumCurrentSelections)
     {
+      xEvent x;
       ChangeWindowProperty(pWin,
                            property,
                            target,
@@ -1316,8 +1507,8 @@ int nxagentConvertSelection(ClientPtr client, WindowPtr pWin, Atom selection,
      */
 
     #ifdef DEBUG
-    fprintf(stderr, "nxagentConvertSelection: Consecutives request from client [%p] selection [%ld] "
-                "elapsed time [%lu] clientAccum [%d]\n", (void *) client, selection,
+    fprintf(stderr, "%s: Consecutives request from client [%p] selection [%u] "
+                "elapsed time [%u] clientAccum [%d]\n", __func__, (void *) client, selection,
                     GetTimeInMillis() - lastClientReqTime, clientAccum);
     #endif
 
@@ -1337,7 +1528,7 @@ int nxagentConvertSelection(ClientPtr client, WindowPtr pWin, Atom selection,
                   (target == clientUTF8_STRING))
   {
     lastClientWindowPtr = pWin;
-    lastClientStage = SelectionStageNone;
+    SetClientSelectionStage(None);
     lastClientRequestor = requestor;
     lastClientClientPtr = client;
     lastClientTime = time;
@@ -1365,7 +1556,7 @@ int nxagentConvertSelection(ClientPtr client, WindowPtr pWin, Atom selection,
     }
 
     #ifdef DEBUG
-    fprintf(stderr, "nxagentConvertSelection: Sent XConvertSelection with target=[%s], property [%s]\n",
+    fprintf(stderr, "%s: Sent XConvertSelection with target=[%s], property [%s]\n", __func__,
                 validateString(NameForAtom(target)), validateString(NameForAtom(property)));
     #endif
 
@@ -1376,8 +1567,8 @@ int nxagentConvertSelection(ClientPtr client, WindowPtr pWin, Atom selection,
     xEvent x;
 
     #ifdef DEBUG
-    fprintf(stderr, "nxagentConvertSelection: Xserver generates a SelectionNotify event "
-               "to the requestor with property None.\n");
+    fprintf(stderr, "%s: Xserver generates a SelectionNotify event "
+                "to the requestor with property None.\n", __func__);
     #endif
 
     memset(&x, 0, sizeof(xEvent));
@@ -1396,13 +1587,20 @@ int nxagentConvertSelection(ClientPtr client, WindowPtr pWin, Atom selection,
 int nxagentSendNotify(xEvent *event)
 {
   #ifdef DEBUG
-  fprintf(stderr, "nxagentSendNotify: Got called.\n");
+  fprintf(stderr, "%s: Got called.\n", __func__);
   #endif
 
   if (agentClipboardStatus != 1)
   {
+    #ifdef DEBUG
+    fprintf(stderr, "%s: agentClipboardStatus != 1 - doing nothing.\n", __func__);
+    #endif
     return 0;
   }
+
+  #ifdef DEBUG
+  fprintf(stderr, "%s: property is [%d][%s].\n", __func__, event->u.selectionNotify.property, NameForAtom(event->u.selectionNotify.property));
+  #endif
 
   if (event->u.selectionNotify.property == clientCutProperty)
   {
@@ -1438,20 +1636,25 @@ int nxagentSendNotify(xEvent *event)
     x.time = CurrentTime;
 
     #ifdef DEBUG
-    fprintf(stderr, "nxagentSendNotify: Propagating clientCutProperty.\n");
+    fprintf(stderr, "%s: Propagating clientCutProperty to requestor [%p].\n", __func__, (void *)x.requestor);
     #endif
 
     result = XSendEvent (nxagentDisplay, x.requestor, False,
                              0L, (XEvent *) &x);
 
+    #ifdef DEBUG
+    fprintf(stderr, "%s: XSendEvent() returned [%s]\n", __func__, GetXErrorString(result));
+    #endif
     if (result == BadValue || result == BadWindow)
     {
-       fprintf (stderr, "nxagentSendNotify: XSendEvent failed.\n");
+      fprintf (stderr, "%s: XSendEvent failed.\n", __func__);
     }
 
     return 1;
   }
-
+  #ifdef DEBUG
+  fprintf(stderr, "%s: sent nothing.\n", __func__);
+  #endif
   return 0;
 }
 
@@ -1460,7 +1663,7 @@ WindowPtr nxagentGetClipboardWindow(Atom property, WindowPtr pWin)
   int i = 0;
 
   #ifdef DEBUG
-  fprintf(stderr, "nxagentGetClipboardWindow: Got called.\n");
+  fprintf(stderr, "%s: Got called, property [%d][%s] window [%p].\n", __func__, property, NameForAtom(property), (void *)pWin);
   #endif
 
   while ((i < nxagentMaxSelections) &&
@@ -1473,7 +1676,7 @@ WindowPtr nxagentGetClipboardWindow(Atom property, WindowPtr pWin)
           (lastSelectionOwner[i].windowPtr != NULL))
   {
     #ifdef DEBUG
-    fprintf(stderr, "nxagentGetClipboardWindow: Returning last clipboard owner window.\n");
+    fprintf(stderr, "%s: Returning last clipboard owner window [%p].\n", __func__, (void *)lastSelectionOwner[i].windowPtr);
     #endif
 
     return lastSelectionOwner[i].windowPtr;
@@ -1481,7 +1684,7 @@ WindowPtr nxagentGetClipboardWindow(Atom property, WindowPtr pWin)
   else
   {
     #ifdef DEBUG
-    fprintf(stderr, "nxagentGetClipboardWindow: Returning original target window.\n");
+    fprintf(stderr, "%s: Returning original target window [%p].\n", __func__, (void *)pWin);
     #endif
 
     return pWin;
@@ -1495,13 +1698,13 @@ int nxagentInitClipboard(WindowPtr pWin)
   Window iWindow = nxagentWindow(pWin);
 
   #ifdef DEBUG
-  fprintf(stderr, "nxagentInitClipboard: Got called.\n");
+  fprintf(stderr, "%s: Got called.\n", __func__);
   #endif
 
   free(lastSelectionOwner);
   lastSelectionOwner = NULL;
 
-  lastSelectionOwner = (SelectionOwner *) malloc(2 * sizeof(SelectionOwner));
+  lastSelectionOwner = (SelectionOwner *) malloc(nxagentMaxSelections * sizeof(SelectionOwner));
 
   if (lastSelectionOwner == NULL)
   {
@@ -1527,7 +1730,7 @@ int nxagentInitClipboard(WindowPtr pWin)
   {
     extern unsigned long startTime;
 
-    fprintf(stderr, "nxagentInitClipboard: Initializing start [%d] milliseconds.\n",
+    fprintf(stderr, "%s: Initializing start [%d] milliseconds.\n", __func__,
             GetTimeInMillis() - startTime);
   }
   #endif
@@ -1547,14 +1750,14 @@ int nxagentInitClipboard(WindowPtr pWin)
   if (serverCutProperty == None)
   {
     #ifdef PANIC
-    fprintf(stderr, "nxagentInitClipboard: PANIC! Could not create NX_CUT_BUFFER_SERVER atom\n");
+    fprintf(stderr, "%s: PANIC! Could not create NX_CUT_BUFFER_SERVER atom\n", __func__);
     #endif
 
     return -1;
   }
 
   #ifdef TEST
-  fprintf(stderr, "nxagentInitClipboard: Setting owner of selection [%s][%d] on window 0x%lx\n",
+  fprintf(stderr, "%s: Setting owner of selection [%s][%d] on window 0x%x\n", __func__,
               "NX_CUT_BUFFER_SERVER", (int) serverCutProperty, iWindow);
   #endif
 
@@ -1568,11 +1771,10 @@ int nxagentInitClipboard(WindowPtr pWin)
   {
     ErrorF("Unable to initialize XFixes extension.\n");
   }
-
   else
   {
     #ifdef TEST
-    fprintf(stderr, "nxagentInitClipboard: Registering for XFixesSelectionNotify events.\n");
+    fprintf(stderr, "%s: Registering for XFixesSelectionNotify events.\n", __func__);
     #endif
 
     for (i = 0; i < nxagentMaxSelections; i++)
@@ -1598,8 +1800,8 @@ int nxagentInitClipboard(WindowPtr pWin)
   if (nxagentSessionId[0])
   {
     #ifdef TEST
-    fprintf(stderr, "nxagentInitClipboard: setting the ownership of %s to %lx"
-                " and registering for PropertyChangeMask events\n",
+    fprintf(stderr, "%s: setting the ownership of %s to %lx"
+                " and registering for PropertyChangeMask events\n", __func__,
                     validateString(XGetAtomName(nxagentDisplay, nxagentAtoms[10])), iWindow);
     #endif
 
@@ -1631,7 +1833,7 @@ int nxagentInitClipboard(WindowPtr pWin)
     lastServerRequestor = None;
 
     lastClientWindowPtr = NULL;
-    lastClientStage = SelectionStageNone;
+    SetClientSelectionStage(None);
     lastClientReqTime = GetTimeInMillis();
 
     clientCutProperty = MakeAtom(szAgentNX_CUT_BUFFER_CLIENT,
@@ -1644,8 +1846,8 @@ int nxagentInitClipboard(WindowPtr pWin)
     if (clientCutProperty == None)
     {
       #ifdef PANIC
-      fprintf(stderr, "nxagentInitClipboard: PANIC! "
-                  "Could not create NX_CUT_BUFFER_CLIENT atom.\n");
+      fprintf(stderr, "%s: PANIC! "
+              "Could not create NX_CUT_BUFFER_CLIENT atom.\n", __func__);
       #endif
 
       return -1;
@@ -1655,18 +1857,17 @@ int nxagentInitClipboard(WindowPtr pWin)
   agentClipboardStatus = 1;
 
   #ifdef DEBUG
-  fprintf(stderr, "nxagentInitClipboard: Clipboard initialization completed.\n");
+  fprintf(stderr, "%s: Clipboard initialization completed.\n", __func__);
   #endif
 
   #ifdef NXAGENT_TIMESTAMP
   {
     extern unsigned long startTime;
 
-    fprintf(stderr, "nxagentInitClipboard: initializing ends [%d] milliseconds.\n",
+    fprintf(stderr, "%s: initializing ends [%d] milliseconds.\n", __func__,
                 GetTimeInMillis() - startTime);
   }
   #endif
 
   return 1;
 }
-

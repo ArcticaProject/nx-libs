@@ -88,6 +88,11 @@ typedef struct
 nxagentWMStateRec;
 #endif
 
+#define PANIC
+#define WARNING
+#undef  TEST
+#undef  DEBUG
+
 int 
 ProcChangeProperty(ClientPtr client)
 {	      
@@ -563,15 +568,25 @@ GetWindowProperty(pWin, property, longOffset, longLength, delete,
     unsigned long n, len, ind;
 
     if (!pWin)
+    {
+#ifdef DEBUG
+	fprintf(stderr, "%s: invalid window\n", __func__);
+#endif
 	return BadWindow;
-
+    }
 
     if (!ValidAtom(property))
     {
+#ifdef DEBUG
+	fprintf(stderr, "%s: invalid atom [%d]\n", __func__, property);
+#endif
 	return(BadAtom);
     }
     if ((type != AnyPropertyType) && !ValidAtom(type))
     {
+#ifdef DEBUG
+	fprintf(stderr, "%s: invalid type [%d]\n", __func__, type);
+#endif
 	return(BadAtom);
     }
 
@@ -588,7 +603,12 @@ GetWindowProperty(pWin, property, longOffset, longLength, delete,
 
 
     if (!pProp)
+    {
+#ifdef DEBUG
+	fprintf(stderr, "%s: property not found [%d]\n", __func__, property);
+#endif
 	return (BadAtom);
+    }
 
     /* If the request type and actual type don't match. Return the
     property information, but not the data. */
@@ -615,6 +635,9 @@ GetWindowProperty(pWin, property, longOffset, longLength, delete,
 
     if (n < ind)
     {
+#ifdef DEBUG
+	fprintf(stderr, "%s: negative property len\n", __func__);
+#endif
 	return BadValue;
     }
 
