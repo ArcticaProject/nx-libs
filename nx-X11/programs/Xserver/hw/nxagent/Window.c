@@ -2275,6 +2275,10 @@ void nxagentShapeWindow(WindowPtr pWin)
               (void *) pWin, nxagentWindow(pWin));
   #endif
 
+  /*
+    FIXME: this is the same code as below, just with another shape. Maybe move
+    this code to a helper function?
+   */
   if (!nxagentRegionEqual(nxagentWindowPriv(pWin)->boundingShape,
                         wBoundingShape(pWin)))
   {
