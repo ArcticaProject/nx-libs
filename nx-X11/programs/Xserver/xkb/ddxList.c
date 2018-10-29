@@ -167,6 +167,7 @@ char	tmpname[PATH_MAX];
 	}
 	if (!in) {
 	    haveDir= False;
+	    free(buf);
 	    buf = Xprintf(
 		"'%s/xkbcomp' '-R%s/%s' -w %ld -l -vlfhpR '%s'" W32_tmparg,
                 XkbBinDirectory,XkbBaseDirectory,componentDirs[what],(long)
@@ -182,6 +183,7 @@ char	tmpname[PATH_MAX];
 	}
 	if (!in) {
 	    haveDir= False;
+	    free(buf);
 	    buf = Xprintf(
 		"xkbcomp -R%s -w %ld -l -vlfhpR '%s'" W32_tmparg,
                 componentDirs[what],(long)
