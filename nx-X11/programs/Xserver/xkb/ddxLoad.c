@@ -248,19 +248,21 @@ char 	*cmd = NULL,file[PATH_MAX],xkm_output_dir[PATH_MAX],*map,*outFile;
         char *xkbbasedir = XkbBaseDirectory;
         char *xkbbindir = XkbBinDirectory;
 
-	cmd = Xprintf("\"%s" PATHSEPARATOR "xkbcomp\" -w %d \"-R%s\" -xkm %s%s -em1 %s -emp %s -eml %s keymap/%s \"%s%s.xkm\"",
+	if (asprintf(&cmd,"\"%s" PATHSEPARATOR "xkbcomp\" -w %d \"-R%s\" -xkm %s%s -em1 %s -emp %s -eml %s keymap/%s \"%s%s.xkm\"",
 		xkbbindir,
 		((xkbDebugFlags<2)?1:((xkbDebugFlags>10)?10:(int)xkbDebugFlags)),
 		xkbbasedir,(map?"-m ":""),(map?map:""),
 		PRE_ERROR_MSG,ERROR_PREFIX,POST_ERROR_MSG1,file,
-		xkm_output_dir,outFile);
+		xkm_output_dir,outFile) == -1)
+            cmd = NULL;
     }
     else {
-	cmd = Xprintf("xkbcomp -w %d -xkm %s%s -em1 %s -emp %s -eml %s keymap/%s \"%s%s.xkm\"",
+	if (asprintf(&cmd, "xkbcomp -w %d -xkm %s%s -em1 %s -emp %s -eml %s keymap/%s \"%s%s.xkm\"",
 		((xkbDebugFlags<2)?1:((xkbDebugFlags>10)?10:(int)xkbDebugFlags)),
 		(map?"-m ":""),(map?map:""),
 		PRE_ERROR_MSG,ERROR_PREFIX,POST_ERROR_MSG1,file,
-		xkm_output_dir,outFile);
+		xkm_output_dir,outFile) == -1)
+            cmd = NULL;
     }
 #ifdef DEBUG
     if (xkbDebugFlags) {
@@ -336,13 +338,14 @@ char tmpname[PATH_MAX];
         char *xkbbasedir = XkbBaseDirectory;
         char *xkbbindir = XkbBinDirectory;
         
-	buf = Xprintf(
-	   "\"%s" PATHSEPARATOR "xkbcomp\" -w %d \"-R%s\" -xkm \"%s\" -em1 %s -emp %s -eml %s \"%s%s.xkm\"",
+	if (asprintf(&buf,
+		"\"%s" PATHSEPARATOR "xkbcomp\" -w %d \"-R%s\" -xkm \"%s\" -em1 %s -emp %s -eml %s \"%s%s.xkm\"",
 		xkbbindir,
 		((xkbDebugFlags<2)?1:((xkbDebugFlags>10)?10:(int)xkbDebugFlags)),
 		xkbbasedir, xkmfile,
 		PRE_ERROR_MSG,ERROR_PREFIX,POST_ERROR_MSG1,
-		xkm_output_dir,keymap);
+		xkm_output_dir,keymap) == -1)
+            buf = NULL;
     }
     else {
 #ifndef WIN32
@@ -350,12 +353,13 @@ char tmpname[PATH_MAX];
 #else
         char *xkmfile = tmpname;
 #endif
-	buf = Xprintf(
+	if (asprintf(&buf,
 		"xkbcomp -w %d -xkm \"%s\" -em1 %s -emp %s -eml %s \"%s%s.xkm\"",
 		((xkbDebugFlags<2)?1:((xkbDebugFlags>10)?10:(int)xkbDebugFlags)),
                 xkmfile,
 		PRE_ERROR_MSG,ERROR_PREFIX,POST_ERROR_MSG1,
-		xkm_output_dir,keymap);
+		xkm_output_dir,keymap) == -1)
+            buf = NULL;
     }
     
     #ifdef TEST
