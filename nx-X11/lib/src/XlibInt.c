@@ -875,7 +875,7 @@ void _XSeqSyncFunction(
     if (dpy->flags & XlibDisplayIOError)
     {
 #ifdef NX_TRANS_DEBUG
-        fprintf(stderr, "_XSeqSyncFunction: Returning 0 with I/O error detected.\n");
+        fprintf(stderr, "_XSeqSyncFunction: Returning with I/O error detected.\n");
 #endif
         return;
     }
