@@ -1,4 +1,3 @@
-
 /************************************************************
 
 Copyright 1989, 1998  The Open Group
@@ -142,8 +141,7 @@ ProcXGetDeviceMotionEvents(ClientPtr client)
 	size = sizeof(Time) + (axes * sizeof(INT32));
 	tsize = num_events * size;
 	coords = (INT32 *) malloc(tsize);
-	if (!coords)
-	    {
+	if (!coords) {
 	    SendErrorToClient(client, IReqCode, X_GetDeviceMotionEvents, 0,
 			      BadAlloc);
 	    return Success;

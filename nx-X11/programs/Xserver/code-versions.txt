@@ -18,5 +18,5 @@ record            1.4.2
 render            6.9/7.0
 Xext              7.1/1.1
 xfixes            1.4.2
-Xi                7.1/1.1
+Xi                1.3.0.0
 xkb               7.1/1.1
