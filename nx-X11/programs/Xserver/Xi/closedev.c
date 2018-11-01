@@ -75,7 +75,7 @@ SOFTWARE.
  */
 
 int
-SProcXCloseDevice(register ClientPtr client)
+SProcXCloseDevice(ClientPtr client)
 {
     REQUEST(xCloseDeviceReq);
     swaps(&stuff->length);
@@ -90,7 +90,7 @@ SProcXCloseDevice(register ClientPtr client)
  */
 
 int
-ProcXCloseDevice(register ClientPtr client)
+ProcXCloseDevice(ClientPtr client)
 {
     int i;
     WindowPtr pWin, p1;

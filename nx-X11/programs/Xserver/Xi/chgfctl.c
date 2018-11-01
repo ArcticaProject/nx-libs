@@ -76,7 +76,7 @@ SOFTWARE.
  */
 
 int
-SProcXChangeFeedbackControl(register ClientPtr client)
+SProcXChangeFeedbackControl(ClientPtr client)
 {
     REQUEST(xChangeFeedbackControlReq);
     swaps(&stuff->length);

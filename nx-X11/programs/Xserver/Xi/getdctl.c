@@ -73,7 +73,7 @@ SOFTWARE.
  */
 
 int
-SProcXGetDeviceControl(register ClientPtr client)
+SProcXGetDeviceControl(ClientPtr client)
 {
     REQUEST(xGetDeviceControlReq);
     swaps(&stuff->length);
@@ -145,7 +145,7 @@ ProcXGetDeviceControl(ClientPtr client)
 {
     int total_length = 0;
     char *buf, *savbuf;
-    register DeviceIntPtr dev;
+    DeviceIntPtr dev;
     xGetDeviceControlReply rep;
 
     REQUEST(xGetDeviceControlReq);

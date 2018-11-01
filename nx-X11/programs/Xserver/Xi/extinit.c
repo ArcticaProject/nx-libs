@@ -215,7 +215,7 @@ static	XExtensionVersion	thisversion =
  */
 
 int
-ProcIDispatch(register ClientPtr client)
+ProcIDispatch(ClientPtr client)
 {
     REQUEST(xReq);
     if (stuff->data == X_GetExtensionVersion)
@@ -304,7 +304,7 @@ ProcIDispatch(register ClientPtr client)
  */
 
 int
-SProcIDispatch(register ClientPtr client)
+SProcIDispatch(ClientPtr client)
 {
     REQUEST(xReq);
     if (stuff->data == X_GetExtensionVersion)
@@ -469,7 +469,7 @@ SReplyIDispatch(ClientPtr client, int len, xGrabDeviceReply * rep)
 void
 SEventDeviceValuator(deviceValuator * from, deviceValuator * to)
 {
-    register int i;
+    int i;
     INT32 *ip B32;
 
     *to = *from;
@@ -493,7 +493,7 @@ SEventFocus(deviceFocus * from, deviceFocus * to)
 void
 SDeviceStateNotifyEvent(deviceStateNotify * from, deviceStateNotify * to)
 {
-    register int i;
+    int i;
     INT32 *ip B32;
 
     *to = *from;

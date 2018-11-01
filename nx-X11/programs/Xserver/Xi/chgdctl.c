@@ -75,7 +75,7 @@ SOFTWARE.
  */
 
 int
-SProcXChangeDeviceControl(register ClientPtr client)
+SProcXChangeDeviceControl(ClientPtr client)
 {
     REQUEST(xChangeDeviceControlReq);
     swaps(&stuff->length);

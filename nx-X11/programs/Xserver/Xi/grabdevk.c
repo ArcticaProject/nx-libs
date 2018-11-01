@@ -75,7 +75,7 @@ SOFTWARE.
  */
 
 int
-SProcXGrabDeviceKey(register ClientPtr client)
+SProcXGrabDeviceKey(ClientPtr client)
 {
     REQUEST(xGrabDeviceKeyReq);
     swaps(&stuff->length);

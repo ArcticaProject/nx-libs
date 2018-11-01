@@ -76,7 +76,7 @@ SOFTWARE.
  */
 
 int
-SProcXChangeDeviceDontPropagateList(register ClientPtr client)
+SProcXChangeDeviceDontPropagateList(ClientPtr client)
 {
     REQUEST(xChangeDeviceDontPropagateListReq);
     swaps(&stuff->length);
@@ -96,7 +96,7 @@ SProcXChangeDeviceDontPropagateList(register ClientPtr client)
  */
 
 int
-ProcXChangeDeviceDontPropagateList(register ClientPtr client)
+ProcXChangeDeviceDontPropagateList(ClientPtr client)
 {
     int i;
     WindowPtr pWin;

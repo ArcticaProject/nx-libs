@@ -73,7 +73,7 @@ SOFTWARE.
  */
 
 int
-SProcXGetDeviceFocus(register ClientPtr client)
+SProcXGetDeviceFocus(ClientPtr client)
 {
     REQUEST(xGetDeviceFocusReq);
     swaps(&stuff->length);

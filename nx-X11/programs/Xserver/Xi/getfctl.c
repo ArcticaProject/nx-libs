@@ -73,7 +73,7 @@ SOFTWARE.
  */
 
 int
-SProcXGetFeedbackControl(register ClientPtr client)
+SProcXGetFeedbackControl(ClientPtr client)
 {
     REQUEST(xGetFeedbackControlReq);
     swaps(&stuff->length);
@@ -283,7 +283,7 @@ ProcXGetFeedbackControl(ClientPtr client)
 {
     int total_length = 0;
     char *buf, *savbuf;
-    register DeviceIntPtr dev;
+    DeviceIntPtr dev;
     KbdFeedbackPtr k;
     PtrFeedbackPtr p;
     IntegerFeedbackPtr i;

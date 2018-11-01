@@ -80,7 +80,7 @@ SOFTWARE.
  */
 
 int
-SProcXChangePointerDevice(register ClientPtr client)
+SProcXChangePointerDevice(ClientPtr client)
 {
     REQUEST(xChangePointerDeviceReq);
     swaps(&stuff->length);
@@ -95,7 +95,7 @@ SProcXChangePointerDevice(register ClientPtr client)
  */
 
 int
-ProcXChangePointerDevice(register ClientPtr client)
+ProcXChangePointerDevice(ClientPtr client)
 {
     DeviceIntPtr xptr = inputInfo.pointer;
     DeviceIntPtr dev;
