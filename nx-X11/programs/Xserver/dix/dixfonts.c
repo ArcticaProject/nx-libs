@@ -84,7 +84,7 @@ Equipment Corporation.
 #define QUERYCHARINFO(pci, pr)  *(pr) = (pci)->metrics
 
 #ifndef HAS_XFONT2
-extern void register_fpe_functions(void);
+extern void _fpe_functions(void);
 #endif
 
 extern void * fosNaturalParams;
@@ -1263,9 +1263,9 @@ static XID clearGC[] = { CT_NONE };
 #define clearGCmask (GCClipMask)
 
 int
-doPolyText(ClientPtr client, register PTclosurePtr c)
+doPolyText(ClientPtr client, PTclosurePtr c)
 {
-    register FontPtr pFont = c->pGC->font, oldpFont;
+    FontPtr pFont = c->pGC->font, oldpFont;
     Font	fid, oldfid;
     int err = Success, lgerr;	/* err is in X error, not font error, space */
     enum { NEVER_SLEPT, START_SLEEP, SLEEPING } client_state = NEVER_SLEPT;
@@ -1580,7 +1580,7 @@ PolyText(ClientPtr client, DrawablePtr pDraw, GC *pGC, unsigned char *pElt,
 #undef FontShiftSize
 
 int
-doImageText(ClientPtr client, register ITclosurePtr c)
+doImageText(ClientPtr client, ITclosurePtr c)
 {
     int err = Success, lgerr;	/* err is in X error, not font error, space */
     FontPathElementPtr fpe;
@@ -2115,7 +2115,7 @@ DeleteClientFontStuff(ClientPtr client)
 
 #ifdef HAS_XFONT2
 static int
-register_fpe_funcs(const xfont2_fpe_funcs_rec *funcs)
+_fpe_funcs(const xfont2_fpe_funcs_rec *funcs)
 {
     xfont2_fpe_funcs_rec const **new;
 
@@ -2140,9 +2140,9 @@ InitFonts ()
 #ifdef LEGACY_XFONT1
     BuiltinRegisterFpeFunctions();
     FontFileRegisterFpeFunctions();
-    fs_register_fpe_functions();
+    fs__fpe_functions();
 #else
-    register_fpe_functions();
+    _fpe_functions();
 #endif
 }
 #endif /* HAS_XFONT2 */
@@ -2482,7 +2482,7 @@ static const xfont2_client_funcs_rec xfont2_client_funcs = {
     .get_new_font_client_id = get_new_font_client_id,
     .get_time_in_millis = GetTimeInMillis,
     .init_fs_handlers = _init_fs_handlers,
-    .register_fpe_funcs = register_fpe_funcs,
+    ._fpe_funcs = register_fpe_funcs,
     .remove_fs_handlers = _remove_fs_handlers,
     .get_server_client = get_server_client,
     .set_font_authorizations = set_font_authorizations,

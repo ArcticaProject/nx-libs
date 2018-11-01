@@ -75,10 +75,10 @@ cursor metrics.
 
 #ifndef NXAGENT_SERVER
 int
-ServerBitsFromGlyph(FontPtr pfont, unsigned ch, register CursorMetricPtr cm, unsigned char **ppbits)
+ServerBitsFromGlyph(FontPtr pfont, unsigned ch, CursorMetricPtr cm, unsigned char **ppbits)
 {
-    register ScreenPtr pScreen;
-    register GCPtr pGC;
+    ScreenPtr pScreen;
+    GCPtr pGC;
     xRectangle rect;
     PixmapPtr ppix;
     long nby;
@@ -142,7 +142,7 @@ ServerBitsFromGlyph(FontPtr pfont, unsigned ch, register CursorMetricPtr cm, uns
 #endif /* NXAGENT_SERVER */
 
 Bool
-CursorMetricsFromGlyph(register FontPtr pfont, unsigned ch, register CursorMetricPtr cm)
+CursorMetricsFromGlyph(FontPtr pfont, unsigned ch, register CursorMetricPtr cm)
 {
     CharInfoPtr 	pci;
     unsigned long	nglyphs;

@@ -94,8 +94,8 @@ static int BlueComp(
 );
 
 static void FreePixels(
-    register ColormapPtr /*pmap*/,
-    register int /*client*/
+    ColormapPtr /*pmap*/,
+    int /*client*/
 );
 
 static void CopyFree(
@@ -258,9 +258,9 @@ CreateColormap (Colormap mid, ScreenPtr pScreen, VisualPtr pVisual,
     int		class, size;
     unsigned long sizebytes;
     ColormapPtr	pmap;
-    register	EntryPtr	pent;
+    EntryPtr	pent;
     int		i;
-    register	Pixel	*ppix, **pptr;
+    Pixel	*ppix, **pptr;
 
     class = pVisual->class;
     if(!(class & DynamicClass) && (alloc != AllocNone) && (client != SERVER_ID))
@@ -428,7 +428,7 @@ int
 FreeColormap (void * value, XID mid)
 {
     int		i;
-    register EntryPtr pent;
+    EntryPtr pent;
     ColormapPtr	pmap = (ColormapPtr)value;
 
     if(CLIENT_ID(mid) != SERVER_ID)
@@ -743,9 +743,9 @@ static void
 UpdateColors (ColormapPtr pmap)
 {
     xColorItem		*defs;
-    register xColorItem *pdef;
-    register EntryPtr 	pent;
-    register VisualPtr	pVisual;
+    xColorItem *pdef;
+    EntryPtr 	pent;
+    VisualPtr	pVisual;
     int			i, n, size;
 
     pVisual = pmap->pVisual;
@@ -992,14 +992,14 @@ AllocColor (ColormapPtr pmap,
  */
 
 void
-FakeAllocColor (register ColormapPtr pmap, register xColorItem *item)
+FakeAllocColor (ColormapPtr pmap, register xColorItem *item)
 {
     Pixel	pixR, pixG, pixB;
     Pixel	temp;
     int		entries;
     xrgb	rgb;
     int		class;
-    register VisualPtr	pVisual;
+    VisualPtr	pVisual;
 
     pVisual = pmap->pVisual;
     rgb.red = item->red;
@@ -1058,9 +1058,9 @@ FakeAllocColor (register ColormapPtr pmap, register xColorItem *item)
 
 /* free a pixel value obtained from FakeAllocColor */
 void
-FakeFreeColor(register ColormapPtr pmap, Pixel pixel)
+FakeFreeColor(ColormapPtr pmap, Pixel pixel)
 {
-    register VisualPtr pVisual;
+    VisualPtr pVisual;
     Pixel pixR, pixG, pixB;
 
     switch (pmap->class) {
@@ -1506,10 +1506,10 @@ QueryColors (ColormapPtr pmap, int count, Pixel *ppixIn, xrgb *prgbList)
 }
 
 static void
-FreePixels(register ColormapPtr pmap, register int client)
+FreePixels(ColormapPtr pmap, register int client)
 {
-    register Pixel		*ppix, *ppixStart;
-    register int 		n;
+    Pixel		*ppix, *ppixStart;
+    int 		n;
     int				class;
 
     class = pmap->class;
@@ -1645,8 +1645,8 @@ AllocColorPlanes (int client, ColormapPtr pmap, int colors,
 {
     int		ok;
     Pixel	mask, *ppixFirst;
-    register Pixel shift;
-    register int i;
+    Pixel shift;
+    int i;
     int		class;
     int		oldcount;
     colorResource *pcr = (colorResource *)NULL;
@@ -2407,10 +2407,10 @@ FreeCo (ColormapPtr pmap, int client, int color, int npixIn, Pixel *ppixIn, Pixe
 int
 StoreColors (ColormapPtr pmap, int count, xColorItem *defs)
 {
-    register Pixel 	pix;
-    register xColorItem *pdef;
-    register EntryPtr 	pent, pentT, pentLast;
-    register VisualPtr	pVisual;
+    Pixel 	pix;
+    xColorItem *pdef;
+    EntryPtr 	pent, pentT, pentLast;
+    VisualPtr	pVisual;
     SHAREDCOLOR		*pred, *pgreen, *pblue;
     int			n, ChgRed, ChgGreen, ChgBlue, idef;
     int			class, errVal = Success;

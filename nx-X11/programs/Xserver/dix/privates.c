@@ -225,7 +225,7 @@ AllocateWindowPrivateIndex()
 }
 
 Bool
-AllocateWindowPrivate(register ScreenPtr pScreen, int index2, unsigned amount)
+AllocateWindowPrivate(ScreenPtr pScreen, int index2, unsigned amount)
 {
     unsigned oldamount;
 
@@ -275,7 +275,7 @@ AllocateGCPrivateIndex()
 }
 
 Bool
-AllocateGCPrivate(register ScreenPtr pScreen, int index2, unsigned amount)
+AllocateGCPrivate(ScreenPtr pScreen, int index2, unsigned amount)
 {
     unsigned oldamount;
 
@@ -325,7 +325,7 @@ AllocatePixmapPrivateIndex()
 }
 
 Bool
-AllocatePixmapPrivate(register ScreenPtr pScreen, int index2, unsigned amount)
+AllocatePixmapPrivate(ScreenPtr pScreen, int index2, unsigned amount)
 {
     unsigned oldamount;
 

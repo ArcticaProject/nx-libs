@@ -77,10 +77,10 @@ void FreeAtom(NodePtr patom);
 Atom 
 MakeAtom(const char *string, unsigned len, Bool makeit)
 {
-    register    NodePtr * np;
+    NodePtr * np;
     unsigned i;
     int     comp;
-    register unsigned int   fp = 0;
+    unsigned int   fp = 0;
 
     np = &atomRoot;
     for (i = 0; i < (len+1)/2; i++)
@@ -107,7 +107,7 @@ MakeAtom(const char *string, unsigned len, Bool makeit)
     }
     if (makeit)
     {
-	register NodePtr nd;
+	NodePtr nd;
 
 	nd = (NodePtr) malloc(sizeof(NodeRec));
 	if (!nd)

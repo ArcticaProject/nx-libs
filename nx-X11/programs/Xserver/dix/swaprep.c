@@ -71,9 +71,9 @@ static void SwapFont(xQueryFontReply *pr, Bool hasGlyphs);
  *  \param size size in bytes
  */
 void
-Swap32Write(ClientPtr pClient, int size, register CARD32 *pbuf)
+Swap32Write(ClientPtr pClient, int size, CARD32 *pbuf)
 {
-    register int i;
+    int i;
 
     size >>= 2;
     for(i = 0; i < size; i++)
@@ -94,7 +94,7 @@ CopySwap32Write(ClientPtr pClient, int size, CARD32 *pbuf)
 {
     int bufsize = size;
     CARD32 *pbufT;
-    register CARD32 *from, *to, *fromLast, *toLast;
+    CARD32 *from, *to, *fromLast, *toLast;
     CARD32 tmpbuf[1];
     
     /* Allocate as big a buffer as we can... */
@@ -142,7 +142,7 @@ CopySwap16Write(ClientPtr pClient, int size, short *pbuf)
 {
     int bufsize = size;
     short *pbufT;
-    register short *from, *to, *fromLast, *toLast;
+    short *from, *to, *fromLast, *toLast;
     short tmpbuf[2];
     
     /* Allocate as big a buffer as we can... */

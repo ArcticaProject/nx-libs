@@ -75,7 +75,7 @@ PERFORMANCE OF THIS SOFTWARE.  ADOBE WILL NOT PROVIDE ANY TRAINING OR OTHER
 SUPPORT FOR THE SOFTWARE.
 
 Adobe, PostScript, and Display PostScript are trademarks of Adobe Systems
-Incorporated which may be registered in certain jurisdictions.
+Incorporated which may be ed in certain jurisdictions.
 
 Author:  Adobe Systems Incorporated
 
@@ -171,7 +171,7 @@ ISOLatin1ToLower (unsigned char source)
 void
 CopyISOLatin1Lowered(char *dest, const char *source, int length)
 {
-    register int i;
+    int i;
 
     for (i = 0; i < length; i++, source++, dest++)
 	*dest = ISOLatin1ToLower (*source);
@@ -220,7 +220,7 @@ SecurityLookupWindow(XID rid, ClientPtr client, Mask access_mode)
 void *
 SecurityLookupDrawable(XID rid, ClientPtr client, Mask access_mode)
 {
-    register DrawablePtr pDraw;
+    DrawablePtr pDraw;
 
     if(rid == INVALID)
 	return (void *) NULL;
@@ -264,7 +264,7 @@ LookupWindow(XID rid, ClientPtr client)
 void *
 LookupDrawable(XID rid, ClientPtr client)
 {
-    register DrawablePtr pDraw;
+    DrawablePtr pDraw;
 
     if(rid == INVALID)
 	return (void *) NULL;
@@ -350,8 +350,8 @@ AlterSaveSetForClient(ClientPtr client, WindowPtr pWin, unsigned mode,
 void
 DeleteWindowFromAnySaveSet(WindowPtr pWin)
 {
-    register int i;
-    register ClientPtr client;
+    int i;
+    ClientPtr client;
     
     for (i = 0; i< currentMaxClients; i++)
     {    
@@ -392,7 +392,7 @@ static Bool		handlerDeleted;
 void
 BlockHandler(void * pTimeout, void * pReadmask)
 {
-    register int i, j;
+    int i, j;
     
     ++inHandler;
     for (i = 0; i < screenInfo.numScreens; i++)
@@ -426,7 +426,7 @@ BlockHandler(void * pTimeout, void * pReadmask)
 void
 WakeupHandler(int result, void * pReadmask)
 {
-    register int i, j;
+    int i, j;
 
     ++inHandler;
     for (i = numHandlers - 1; i >= 0; i--)

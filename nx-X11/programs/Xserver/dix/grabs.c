@@ -127,7 +127,7 @@ FreeGrab(GrabPtr pGrab)
 int
 DeletePassiveGrab(void * value, XID id)
 {
-    register GrabPtr g, prev;
+    GrabPtr g, prev;
     GrabPtr pGrab = (GrabPtr)value;
 
     /* it is OK if the grab isn't found */
@@ -152,8 +152,8 @@ DeletePassiveGrab(void * value, XID id)
 static Mask *
 DeleteDetailFromMask(Mask *pDetailMask, unsigned short detail)
 {
-    register Mask *mask;
-    register int i;
+    Mask *mask;
+    int i;
 
     mask = (Mask *)malloc(sizeof(Mask) * MasksPerDetailMask);
     if (mask)
@@ -304,7 +304,7 @@ AddPassiveGrabToList(GrabPtr pGrab)
 Bool
 DeletePassiveGrabFromList(GrabPtr pMinuendGrab)
 {
-    register GrabPtr grab;
+    GrabPtr grab;
     GrabPtr *deletes, *adds;
     Mask ***updates, **details;
     int i, ndels, nadds, nups;
