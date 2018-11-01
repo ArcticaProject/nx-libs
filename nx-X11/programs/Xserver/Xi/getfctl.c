@@ -86,7 +86,7 @@ SProcXGetFeedbackControl(ClientPtr client)
  *
  */
 
-void
+static void
 CopySwapKbdFeedback(ClientPtr client, KbdFeedbackPtr k, char **buf)
 {
     int i;
@@ -120,7 +120,7 @@ CopySwapKbdFeedback(ClientPtr client, KbdFeedbackPtr k, char **buf)
  *
  */
 
-void
+static void
 CopySwapPtrFeedback(ClientPtr client, PtrFeedbackPtr p, char **buf)
 {
     xPtrFeedbackState *p2;
@@ -147,7 +147,7 @@ CopySwapPtrFeedback(ClientPtr client, PtrFeedbackPtr p, char **buf)
  *
  */
 
-void
+static void
 CopySwapIntegerFeedback(ClientPtr client, IntegerFeedbackPtr i, char **buf)
 {
     xIntegerFeedbackState *i2;
@@ -174,7 +174,7 @@ CopySwapIntegerFeedback(ClientPtr client, IntegerFeedbackPtr i, char **buf)
  *
  */
 
-void
+static void
 CopySwapStringFeedback(ClientPtr client, StringFeedbackPtr s, char **buf)
 {
     int i;
@@ -210,7 +210,7 @@ CopySwapStringFeedback(ClientPtr client, StringFeedbackPtr s, char **buf)
  *
  */
 
-void
+static void
 CopySwapLedFeedback(ClientPtr client, LedFeedbackPtr l, char **buf)
 {
     xLedFeedbackState *l2;
@@ -235,7 +235,7 @@ CopySwapLedFeedback(ClientPtr client, LedFeedbackPtr l, char **buf)
  *
  */
 
-void
+static void
 CopySwapBellFeedback(ClientPtr client, BellFeedbackPtr b, char **buf)
 {
     xBellFeedbackState *b2;

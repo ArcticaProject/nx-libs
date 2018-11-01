@@ -18,5 +18,6 @@ record            1.4.2
 render            6.9/7.0
 Xext              1.4.2
 xfixes            1.4.2
-Xi                1.3.0.0
+Xi                1.4.2
 xkb               1.4.2
+

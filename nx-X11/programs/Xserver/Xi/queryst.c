@@ -56,7 +56,7 @@ from The Open Group.
  */
 
 int
-SProcXQueryDeviceState(register ClientPtr client)
+SProcXQueryDeviceState(ClientPtr client)
 {
     REQUEST(xQueryDeviceStateReq);
     swaps(&stuff->length);
@@ -70,7 +70,7 @@ SProcXQueryDeviceState(register ClientPtr client)
  */
 
 int
-ProcXQueryDeviceState(register ClientPtr client)
+ProcXQueryDeviceState(ClientPtr client)
 {
     int i;
     int num_classes = 0;

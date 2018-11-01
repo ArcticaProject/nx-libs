@@ -78,7 +78,7 @@ SOFTWARE.
  */
 
 int
-SProcXUngrabDeviceKey(register ClientPtr client)
+SProcXUngrabDeviceKey(ClientPtr client)
 {
     REQUEST(xUngrabDeviceKeyReq);
     swaps(&stuff->length);

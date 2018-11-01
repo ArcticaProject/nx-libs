@@ -89,7 +89,7 @@ SProcXListInputDevices(ClientPtr client)
  *
  */
 
-void
+static void
 SizeDeviceInfo(DeviceIntPtr d, int *namesize, int *size)
 {
     int chunks;
@@ -118,7 +118,7 @@ SizeDeviceInfo(DeviceIntPtr d, int *namesize, int *size)
  *
  */
 
-void
+static void
 CopyDeviceName(char **namebuf, char *name)
 {
     char *nameptr = (char *)*namebuf;
@@ -139,7 +139,7 @@ CopyDeviceName(char **namebuf, char *name)
  *
  */
 
-void
+static void
 CopySwapButtonClass(ClientPtr client, ButtonClassPtr b, char **buf)
 {
     xButtonInfoPtr b2;
@@ -160,7 +160,7 @@ CopySwapButtonClass(ClientPtr client, ButtonClassPtr b, char **buf)
  *
  */
 
-void
+static void
 CopySwapDevice(ClientPtr client, DeviceIntPtr d, int num_classes,
 	       char **buf)
 {
@@ -175,6 +175,10 @@ CopySwapDevice(ClientPtr client, DeviceIntPtr d, int num_classes,
 	dev->use = IsXKeyboard;
     else if (d == inputInfo.pointer)
 	dev->use = IsXPointer;
+    else if (d->key && d->kbdfeed)
+        dev->use = IsXExtensionKeyboard;
+    else if (d->valuator && d->button)
+        dev->use = IsXExtensionPointer;
     else
 	dev->use = IsXExtensionDevice;
     if (client->swapped) {
@@ -189,7 +193,7 @@ CopySwapDevice(ClientPtr client, DeviceIntPtr d, int num_classes,
  *
  */
 
-void
+static void
 CopySwapKeyClass(ClientPtr client, KeyClassPtr k, char **buf)
 {
     xKeyInfoPtr k2;
@@ -218,7 +222,7 @@ CopySwapKeyClass(ClientPtr client, KeyClassPtr k, char **buf)
  *
  */
 
-int
+static int
 CopySwapValuatorClass(ClientPtr client, ValuatorClassPtr v, char **buf)
 {
     int i, j, axes, t_axes;
@@ -266,7 +270,7 @@ CopySwapValuatorClass(ClientPtr client, ValuatorClassPtr v, char **buf)
  *
  */
 
-void
+static void
 ListDeviceInfo(ClientPtr client, DeviceIntPtr d, xDeviceInfoPtr dev,
 	       char **devbuf, char **classbuf, char **namebuf)
 {
@@ -296,7 +300,7 @@ int
 ProcXListInputDevices(ClientPtr client)
 {
     xListInputDevicesReply rep;
-    int numdevs;
+    int numdevs = 0;
     int namesize = 1;	/* need 1 extra byte for strcpy */
     int size = 0;
     int total_length;
@@ -316,12 +320,15 @@ ProcXListInputDevices(ClientPtr client)
     rep.sequenceNumber = client->sequence;
 
     AddOtherInputDevices();
-    numdevs = inputInfo.numDevices;
 
-    for (d = inputInfo.devices; d; d = d->next)
+    for (d = inputInfo.devices; d; d = d->next) {
 	SizeDeviceInfo(d, &namesize, &size);
-    for (d = inputInfo.off_devices; d; d = d->next)
+        numdevs++;
+    }
+    for (d = inputInfo.off_devices; d; d = d->next) {
 	SizeDeviceInfo(d, &namesize, &size);
+        numdevs++;
+    }
 
     total_length = numdevs * sizeof(xDeviceInfo) + size + namesize;
     devbuf = (char *) calloc (1, total_length);

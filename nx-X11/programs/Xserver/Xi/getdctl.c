@@ -88,7 +88,7 @@ SProcXGetDeviceControl(ClientPtr client)
  *
  */
 
-void
+static void
 CopySwapDeviceResolution(ClientPtr client, ValuatorClassPtr v, char *buf,
 			 int length)
 {
@@ -116,6 +116,91 @@ CopySwapDeviceResolution(ClientPtr client, ValuatorClassPtr v, char *buf,
 	for (i = 0; i < (3 * v->numAxes); i++, iptr++) {
 	    swapl(iptr);
 	}
+    }
+}
+
+static void CopySwapDeviceAbsCalib (ClientPtr client, AbsoluteClassPtr dts,
+                                char *buf)
+{
+    xDeviceAbsCalibState *calib = (xDeviceAbsCalibState *) buf;
+
+    calib->control = DEVICE_ABS_CALIB;
+    calib->length = sizeof(calib);
+    calib->min_x = dts->min_x;
+    calib->max_x = dts->max_x;
+    calib->min_y = dts->min_y;
+    calib->max_y = dts->max_y;
+    calib->flip_x = dts->flip_x;
+    calib->flip_y = dts->flip_y;
+    calib->rotation = dts->rotation;
+    calib->button_threshold = dts->button_threshold;
+
+    if (client->swapped) {
+        swaps(&calib->control);
+        swaps(&calib->length);
+        swapl(&calib->min_x);
+        swapl(&calib->max_x);
+        swapl(&calib->min_y);
+        swapl(&calib->max_y);
+        swapl(&calib->flip_x);
+        swapl(&calib->flip_y);
+        swapl(&calib->rotation);
+        swapl(&calib->button_threshold);
+    }
+}
+
+static void CopySwapDeviceAbsArea (ClientPtr client, AbsoluteClassPtr dts,
+                                char *buf)
+{
+    xDeviceAbsAreaState *area = (xDeviceAbsAreaState *) buf;
+
+    area->control = DEVICE_ABS_AREA;
+    area->length = sizeof(area);
+    area->offset_x = dts->offset_x;
+    area->offset_y = dts->offset_y;
+    area->width = dts->width;
+    area->height = dts->height;
+    area->screen = dts->screen;
+    area->following = dts->following;
+
+    if (client->swapped) {
+        swaps(&area->control);
+        swaps(&area->length);
+        swapl(&area->offset_x);
+        swapl(&area->offset_y);
+        swapl(&area->width);
+        swapl(&area->height);
+        swapl(&area->screen);
+        swapl(&area->following);
+    }
+}
+
+static void CopySwapDeviceCore (ClientPtr client, DeviceIntPtr dev, char *buf)
+{
+    xDeviceCoreState *c = (xDeviceCoreState *) buf;
+
+    c->control = DEVICE_CORE;
+    c->length = sizeof(c);
+    c->status = dev->coreEvents;
+    c->iscore = (dev == inputInfo.keyboard || dev == inputInfo.pointer);
+
+    if (client->swapped) {
+        swaps(&c->control);
+        swaps(&c->length);
+    }
+}
+
+static void CopySwapDeviceEnable (ClientPtr client, DeviceIntPtr dev, char *buf)
+{
+    xDeviceEnableState *e = (xDeviceEnableState *) buf;
+
+    e->control = DEVICE_ENABLE;
+    e->length = sizeof(e);
+    e->enable = dev->enabled;
+
+    if (client->swapped) {
+        swaps(&e->control);
+        swaps(&e->length);
     }
 }
 
@@ -172,6 +257,30 @@ ProcXGetDeviceControl(ClientPtr client)
 	total_length = sizeof(xDeviceResolutionState) +
 	    (3 * sizeof(int) * dev->valuator->numAxes);
 	break;
+    case DEVICE_ABS_CALIB:
+        if (!dev->absolute) {
+            SendErrorToClient(client, IReqCode, X_GetDeviceControl, 0,
+                              BadMatch);
+            return Success;
+        }
+
+        total_length = sizeof(xDeviceAbsCalibCtl);
+        break;
+    case DEVICE_ABS_AREA:
+        if (!dev->absolute) {
+            SendErrorToClient(client, IReqCode, X_GetDeviceControl, 0,
+                              BadMatch);
+            return Success;
+        }
+
+        total_length = sizeof(xDeviceAbsAreaCtl);
+        break;
+    case DEVICE_CORE:
+        total_length = sizeof(xDeviceCoreCtl);
+        break;
+    case DEVICE_ENABLE:
+        total_length = sizeof(xDeviceEnableCtl);
+        break;
     default:
 	SendErrorToClient(client, IReqCode, X_GetDeviceControl, 0, BadValue);
 	return Success;
@@ -188,6 +297,18 @@ ProcXGetDeviceControl(ClientPtr client)
     case DEVICE_RESOLUTION:
 	CopySwapDeviceResolution(client, dev->valuator, buf, total_length);
 	break;
+    case DEVICE_ABS_CALIB:
+        CopySwapDeviceAbsCalib(client, dev->absolute, buf);
+        break;
+    case DEVICE_ABS_AREA:
+        CopySwapDeviceAbsArea(client, dev->absolute, buf);
+        break;
+    case DEVICE_CORE:
+        CopySwapDeviceCore(client, dev, buf);
+        break;
+    case DEVICE_ENABLE:
+        CopySwapDeviceEnable(client, dev, buf);
+        break;
     default:
 	break;
     }

@@ -78,10 +78,10 @@ extern int lastEvent;	/* Defined in extension.c */
  */
 
 int
-SProcXSendExtensionEvent(register ClientPtr client)
+SProcXSendExtensionEvent(ClientPtr client)
 {
     CARD32 *p;
-    register int i;
+    int i;
     xEvent eventT;
     xEvent *eventP;
     EventSwapPtr proc;
@@ -118,7 +118,7 @@ SProcXSendExtensionEvent(register ClientPtr client)
  */
 
 int
-ProcXSendExtensionEvent(register ClientPtr client)
+ProcXSendExtensionEvent(ClientPtr client)
 {
     int ret;
     DeviceIntPtr dev;

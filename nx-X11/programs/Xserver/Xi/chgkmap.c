@@ -106,7 +106,6 @@ ProcXChangeDeviceKeyMapping(ClientPtr client)
 
     count = stuff->keyCodes * stuff->keySymsPerKeyCode;
     REQUEST_FIXED_SIZE(xChangeDeviceKeyMappingReq, count * sizeof(CARD32));
-
     dev = LookupDeviceIntRec(stuff->deviceid);
     if (dev == NULL) {
 	SendErrorToClient(client, IReqCode, X_ChangeDeviceKeyMapping, 0,
