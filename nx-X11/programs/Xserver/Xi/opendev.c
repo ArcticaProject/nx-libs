@@ -1,4 +1,3 @@
-
 /************************************************************
 
 Copyright 1989, 1998  The Open Group
@@ -163,7 +162,7 @@ ProcXOpenDevice(register ClientPtr client)
     rep.length = (j * sizeof(xInputClassInfo) + 3) >> 2;
     rep.num_classes = j;
     WriteReplyToClient(client, sizeof(xOpenDeviceReply), &rep);
-    WriteToClient(client, j * sizeof (xInputClassInfo), evbase);
+    WriteToClient(client, j * sizeof(xInputClassInfo), evbase);
     return (Success);
 }
 

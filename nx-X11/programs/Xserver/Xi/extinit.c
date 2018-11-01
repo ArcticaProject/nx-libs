@@ -1,4 +1,3 @@
-
 /************************************************************
 
 Copyright 1989, 1998  The Open Group
@@ -201,8 +200,8 @@ Mask PropagateMask[MAX_DEVICES];
  *
  */
 
-static	XExtensionVersion	thisversion = 
-					{XI_Present, 
+static	XExtensionVersion	thisversion =
+					{XI_Present,
 					 SERVER_XI_MAJOR_VERSION,
 					 SERVER_XI_MINOR_VERSION,
 };
@@ -576,8 +575,7 @@ SEventDeviceValuator(deviceValuator * from, deviceValuator * to)
     swaps(&to->sequenceNumber);
     swaps(&to->device_state);
     ip = &to->valuator0;
-    for (i=0; i<6; i++)
-	{
+    for (i = 0; i < 6; i++) {
 	swapl((ip + i));	/* macro - braces are required      */
     }
 }
@@ -822,7 +820,7 @@ IResetProc(ExtensionEntry * unused)
  *
  */
 
- void
+void
 AssignTypeAndName(DeviceIntPtr dev, Atom type, char *name)
 {
     dev->type = type;

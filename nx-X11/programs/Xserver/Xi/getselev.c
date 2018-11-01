@@ -44,7 +44,6 @@ SOFTWARE.
 
 ********************************************************/
 
-
 /***********************************************************************
  *
  * Extension function to get the current selected events for a given window.
