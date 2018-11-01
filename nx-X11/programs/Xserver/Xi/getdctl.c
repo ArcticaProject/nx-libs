@@ -84,6 +84,58 @@ SProcXGetDeviceControl(register ClientPtr client)
 
 /***********************************************************************
  *
+ * This procedure copies DeviceResolution data, swapping if necessary.
+ *
+ */
+
+void
+CopySwapDeviceResolution(ClientPtr client, ValuatorClassPtr v, char *buf,
+			 int length)
+{
+    AxisInfoPtr a;
+    xDeviceResolutionState *r;
+    int i, *iptr;
+
+    r = (xDeviceResolutionState *) buf;
+    r->control = DEVICE_RESOLUTION;
+    r->length = length;
+    r->num_valuators = v->numAxes;
+    buf += sizeof(xDeviceResolutionState);
+    iptr = (int *)buf;
+    for (i = 0, a = v->axes; i < v->numAxes; i++, a++)
+	*iptr++ = a->resolution;
+    for (i = 0, a = v->axes; i < v->numAxes; i++, a++)
+	*iptr++ = a->min_resolution;
+    for (i = 0, a = v->axes; i < v->numAxes; i++, a++)
+	*iptr++ = a->max_resolution;
+    if (client->swapped) {
+	swaps(&r->control);
+	swaps(&r->length);
+	swapl(&r->num_valuators);
+	iptr = (int *)buf;
+	for (i = 0; i < (3 * v->numAxes); i++, iptr++) {
+	    swapl(iptr);
+	}
+    }
+}
+
+/***********************************************************************
+ *
+ * This procedure writes the reply for the xGetDeviceControl function,
+ * if the client and server have a different byte ordering.
+ *
+ */
+
+void
+SRepXGetDeviceControl(ClientPtr client, int size, xGetDeviceControlReply * rep)
+{
+    swaps(&rep->sequenceNumber);
+    swapl(&rep->length);
+    WriteToClient(client, size, rep);
+}
+
+/***********************************************************************
+ *
  * Get the state of the specified device control.
  *
  */
@@ -145,56 +197,4 @@ ProcXGetDeviceControl(ClientPtr client)
     WriteToClient(client, total_length, savbuf);
     free(savbuf);
     return Success;
-}
-
-/***********************************************************************
- *
- * This procedure copies DeviceResolution data, swapping if necessary.
- *
- */
-
-void
-CopySwapDeviceResolution(ClientPtr client, ValuatorClassPtr v, char *buf,
-			 int length)
-{
-    AxisInfoPtr a;
-    xDeviceResolutionState *r;
-    int i, *iptr;
-
-    r = (xDeviceResolutionState *) buf;
-    r->control = DEVICE_RESOLUTION;
-    r->length = length;
-    r->num_valuators = v->numAxes;
-    buf += sizeof(xDeviceResolutionState);
-    iptr = (int *)buf;
-    for (i = 0, a = v->axes; i < v->numAxes; i++, a++)
-	*iptr++ = a->resolution;
-    for (i = 0, a = v->axes; i < v->numAxes; i++, a++)
-	*iptr++ = a->min_resolution;
-    for (i = 0, a = v->axes; i < v->numAxes; i++, a++)
-	*iptr++ = a->max_resolution;
-    if (client->swapped) {
-	swaps(&r->control);
-	swaps(&r->length);
-	swapl(&r->num_valuators);
-	iptr = (int *)buf;
-	for (i = 0; i < (3 * v->numAxes); i++, iptr++) {
-	    swapl(iptr);
-	}
-    }
-}
-
-/***********************************************************************
- *
- * This procedure writes the reply for the xGetDeviceControl function,
- * if the client and server have a different byte ordering.
- *
- */
-
-void
-SRepXGetDeviceControl(ClientPtr client, int size, xGetDeviceControlReply * rep)
-{
-    swaps(&rep->sequenceNumber);
-    swapl(&rep->length);
-    WriteToClient(client, size, rep);
 }

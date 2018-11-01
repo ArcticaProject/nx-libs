@@ -82,99 +82,6 @@ SProcXGetFeedbackControl(register ClientPtr client)
 
 /***********************************************************************
  *
- * Get the feedback control state.
- *
- */
-
-int
-ProcXGetFeedbackControl(ClientPtr client)
-{
-    int total_length = 0;
-    char *buf, *savbuf;
-    register DeviceIntPtr dev;
-    KbdFeedbackPtr k;
-    PtrFeedbackPtr p;
-    IntegerFeedbackPtr i;
-    StringFeedbackPtr s;
-    BellFeedbackPtr b;
-    LedFeedbackPtr l;
-    xGetFeedbackControlReply rep;
-
-    REQUEST(xGetFeedbackControlReq);
-    REQUEST_SIZE_MATCH(xGetFeedbackControlReq);
-
-    dev = LookupDeviceIntRec(stuff->deviceid);
-    if (dev == NULL) {
-	SendErrorToClient(client, IReqCode, X_GetFeedbackControl, 0, BadDevice);
-	return Success;
-    }
-
-    rep.repType = X_Reply;
-    rep.RepType = X_GetFeedbackControl;
-    rep.length = 0;
-    rep.sequenceNumber = client->sequence;
-    rep.num_feedbacks = 0;
-
-    for (k = dev->kbdfeed; k; k = k->next) {
-	rep.num_feedbacks++;
-	total_length += sizeof(xKbdFeedbackState);
-    }
-    for (p = dev->ptrfeed; p; p = p->next) {
-	rep.num_feedbacks++;
-	total_length += sizeof(xPtrFeedbackState);
-    }
-    for (s = dev->stringfeed; s; s = s->next) {
-	rep.num_feedbacks++;
-	total_length += sizeof(xStringFeedbackState) +
-	    (s->ctrl.num_symbols_supported * sizeof(KeySym));
-    }
-    for (i = dev->intfeed; i; i = i->next) {
-	rep.num_feedbacks++;
-	total_length += sizeof(xIntegerFeedbackState);
-    }
-    for (l = dev->leds; l; l = l->next) {
-	rep.num_feedbacks++;
-	total_length += sizeof(xLedFeedbackState);
-    }
-    for (b = dev->bell; b; b = b->next) {
-	rep.num_feedbacks++;
-	total_length += sizeof(xBellFeedbackState);
-    }
-
-    if (total_length == 0) {
-	SendErrorToClient(client, IReqCode, X_GetFeedbackControl, 0, BadMatch);
-	return Success;
-    }
-
-    buf = (char *)malloc(total_length);
-    if (!buf) {
-	SendErrorToClient(client, IReqCode, X_GetFeedbackControl, 0, BadAlloc);
-	return Success;
-    }
-    savbuf = buf;
-
-    for (k = dev->kbdfeed; k; k = k->next)
-	CopySwapKbdFeedback(client, k, &buf);
-    for (p = dev->ptrfeed; p; p = p->next)
-	CopySwapPtrFeedback(client, p, &buf);
-    for (s = dev->stringfeed; s; s = s->next)
-	CopySwapStringFeedback(client, s, &buf);
-    for (i = dev->intfeed; i; i = i->next)
-	CopySwapIntegerFeedback(client, i, &buf);
-    for (l = dev->leds; l; l = l->next)
-	CopySwapLedFeedback(client, l, &buf);
-    for (b = dev->bell; b; b = b->next)
-	CopySwapBellFeedback(client, b, &buf);
-
-    rep.length = (total_length + 3) >> 2;
-    WriteReplyToClient(client, sizeof(xGetFeedbackControlReply), &rep);
-    WriteToClient(client, total_length, savbuf);
-    free(savbuf);
-    return Success;
-}
-
-/***********************************************************************
- *
  * This procedure copies KbdFeedbackClass data, swapping if necessary.
  *
  */
@@ -363,4 +270,97 @@ SRepXGetFeedbackControl(ClientPtr client, int size,
     swapl(&rep->length);
     swaps(&rep->num_feedbacks);
     WriteToClient(client, size, rep);
+}
+
+/***********************************************************************
+ *
+ * Get the feedback control state.
+ *
+ */
+
+int
+ProcXGetFeedbackControl(ClientPtr client)
+{
+    int total_length = 0;
+    char *buf, *savbuf;
+    register DeviceIntPtr dev;
+    KbdFeedbackPtr k;
+    PtrFeedbackPtr p;
+    IntegerFeedbackPtr i;
+    StringFeedbackPtr s;
+    BellFeedbackPtr b;
+    LedFeedbackPtr l;
+    xGetFeedbackControlReply rep;
+
+    REQUEST(xGetFeedbackControlReq);
+    REQUEST_SIZE_MATCH(xGetFeedbackControlReq);
+
+    dev = LookupDeviceIntRec(stuff->deviceid);
+    if (dev == NULL) {
+	SendErrorToClient(client, IReqCode, X_GetFeedbackControl, 0, BadDevice);
+	return Success;
+    }
+
+    rep.repType = X_Reply;
+    rep.RepType = X_GetFeedbackControl;
+    rep.length = 0;
+    rep.sequenceNumber = client->sequence;
+    rep.num_feedbacks = 0;
+
+    for (k = dev->kbdfeed; k; k = k->next) {
+	rep.num_feedbacks++;
+	total_length += sizeof(xKbdFeedbackState);
+    }
+    for (p = dev->ptrfeed; p; p = p->next) {
+	rep.num_feedbacks++;
+	total_length += sizeof(xPtrFeedbackState);
+    }
+    for (s = dev->stringfeed; s; s = s->next) {
+	rep.num_feedbacks++;
+	total_length += sizeof(xStringFeedbackState) +
+	    (s->ctrl.num_symbols_supported * sizeof(KeySym));
+    }
+    for (i = dev->intfeed; i; i = i->next) {
+	rep.num_feedbacks++;
+	total_length += sizeof(xIntegerFeedbackState);
+    }
+    for (l = dev->leds; l; l = l->next) {
+	rep.num_feedbacks++;
+	total_length += sizeof(xLedFeedbackState);
+    }
+    for (b = dev->bell; b; b = b->next) {
+	rep.num_feedbacks++;
+	total_length += sizeof(xBellFeedbackState);
+    }
+
+    if (total_length == 0) {
+	SendErrorToClient(client, IReqCode, X_GetFeedbackControl, 0, BadMatch);
+	return Success;
+    }
+
+    buf = (char *)malloc(total_length);
+    if (!buf) {
+	SendErrorToClient(client, IReqCode, X_GetFeedbackControl, 0, BadAlloc);
+	return Success;
+    }
+    savbuf = buf;
+
+    for (k = dev->kbdfeed; k; k = k->next)
+	CopySwapKbdFeedback(client, k, &buf);
+    for (p = dev->ptrfeed; p; p = p->next)
+	CopySwapPtrFeedback(client, p, &buf);
+    for (s = dev->stringfeed; s; s = s->next)
+	CopySwapStringFeedback(client, s, &buf);
+    for (i = dev->intfeed; i; i = i->next)
+	CopySwapIntegerFeedback(client, i, &buf);
+    for (l = dev->leds; l; l = l->next)
+	CopySwapLedFeedback(client, l, &buf);
+    for (b = dev->bell; b; b = b->next)
+	CopySwapBellFeedback(client, b, &buf);
+
+    rep.length = (total_length + 3) >> 2;
+    WriteReplyToClient(client, sizeof(xGetFeedbackControlReply), &rep);
+    WriteToClient(client, total_length, savbuf);
+    free(savbuf);
+    return Success;
 }

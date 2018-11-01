@@ -84,63 +84,6 @@ SProcXListInputDevices(register ClientPtr client)
 
 /***********************************************************************
  *
- * This procedure lists the input devices available to the server.
- *
- */
-
-int
-ProcXListInputDevices(register ClientPtr client)
-{
-    xListInputDevicesReply rep;
-    int numdevs;
-    int namesize = 1;	/* need 1 extra byte for strcpy */
-    int size = 0;
-    int total_length;
-    char *devbuf;
-    char *classbuf;
-    char *namebuf;
-    char *savbuf;
-    xDeviceInfo *dev;
-    DeviceIntPtr d;
-
-    REQUEST_SIZE_MATCH(xListInputDevicesReq);
-
-    memset(&rep, 0, sizeof(xListInputDevicesReply));
-    rep.repType = X_Reply;
-    rep.RepType = X_ListInputDevices;
-    rep.length = 0;
-    rep.sequenceNumber = client->sequence;
-
-    AddOtherInputDevices();
-    numdevs = inputInfo.numDevices;
-
-    for (d = inputInfo.devices; d; d = d->next)
-	SizeDeviceInfo(d, &namesize, &size);
-    for (d = inputInfo.off_devices; d; d = d->next)
-	SizeDeviceInfo(d, &namesize, &size);
-
-    total_length = numdevs * sizeof(xDeviceInfo) + size + namesize;
-    devbuf = (char *) calloc (1, total_length);
-    classbuf = devbuf + (numdevs * sizeof(xDeviceInfo));
-    namebuf = classbuf + size;
-    savbuf = devbuf;
-
-    dev = (xDeviceInfoPtr) devbuf;
-    for (d = inputInfo.devices; d; d = d->next, dev++)
-	ListDeviceInfo(client, d, dev, &devbuf, &classbuf, &namebuf);
-    for (d = inputInfo.off_devices; d; d = d->next, dev++)
-	ListDeviceInfo(client, d, dev, &devbuf, &classbuf, &namebuf);
-
-    rep.ndevices = numdevs;
-    rep.length = (total_length + 3) >> 2;
-    WriteReplyToClient(client, sizeof(xListInputDevicesReply), &rep);
-    WriteToClient(client, total_length, savbuf);
-    free(savbuf);
-    return Success;
-}
-
-/***********************************************************************
- *
  * This procedure calculates the size of the information to be returned
  * for an input device.
  *
@@ -167,32 +110,6 @@ SizeDeviceInfo(DeviceIntPtr d, int *namesize, int *size)
 
 /***********************************************************************
  *
- * This procedure lists information to be returned for an input device.
- *
- */
-
-void
-ListDeviceInfo(ClientPtr client, DeviceIntPtr d, xDeviceInfoPtr dev,
-	       char **devbuf, char **classbuf, char **namebuf)
-{
-    CopyDeviceName(namebuf, d->name);
-    CopySwapDevice(client, d, 0, devbuf);
-    if (d->key != NULL) {
-	CopySwapKeyClass(client, d->key, classbuf);
-	dev->num_classes++;
-    }
-    if (d->button != NULL) {
-	CopySwapButtonClass(client, d->button, classbuf);
-	dev->num_classes++;
-    }
-    if (d->valuator != NULL) {
-	dev->num_classes +=
-	    CopySwapValuatorClass(client, d->valuator, classbuf);
-    }
-}
-
-/***********************************************************************
- *
  * This procedure copies data to the DeviceInfo struct, swapping if necessary.
  *
  * We need the extra byte in the allocated buffer, because the trailing null
@@ -214,6 +131,27 @@ CopyDeviceName(char **namebuf, char *name)
 	*nameptr++ = 0;
 	*namebuf += 1;
     }
+}
+
+/***********************************************************************
+ *
+ * This procedure copies ButtonClass information, swapping if necessary.
+ *
+ */
+
+void
+CopySwapButtonClass(register ClientPtr client, ButtonClassPtr b, char **buf)
+{
+    xButtonInfoPtr b2;
+
+    b2 = (xButtonInfoPtr) * buf;
+    b2->class = ButtonClass;
+    b2->length = sizeof(xButtonInfo);
+    b2->num_buttons = b->numButtons;
+    if (client->swapped) {
+	swaps(&b2->num_buttons);	/* macro - braces are required */
+    }
+    *buf += sizeof(xButtonInfo);
 }
 
 /***********************************************************************
@@ -270,27 +208,6 @@ CopySwapKeyClass(register ClientPtr client, KeyClassPtr k, char **buf)
 
 /***********************************************************************
  *
- * This procedure copies ButtonClass information, swapping if necessary.
- *
- */
-
-void
-CopySwapButtonClass(register ClientPtr client, ButtonClassPtr b, char **buf)
-{
-    xButtonInfoPtr b2;
-
-    b2 = (xButtonInfoPtr) * buf;
-    b2->class = ButtonClass;
-    b2->length = sizeof(xButtonInfo);
-    b2->num_buttons = b->numButtons;
-    if (client->swapped) {
-	swaps(&b2->num_buttons);	/* macro - braces are required */
-    }
-    *buf += sizeof(xButtonInfo);
-}
-
-/***********************************************************************
- *
  * This procedure copies ValuatorClass information, swapping if necessary.
  *
  * Devices may have up to 255 valuators.  The length of a ValuatorClass is
@@ -341,6 +258,89 @@ CopySwapValuatorClass(register ClientPtr client, ValuatorClassPtr v, char **buf)
 	}
     }
     return (i);
+}
+
+/***********************************************************************
+ *
+ * This procedure lists information to be returned for an input device.
+ *
+ */
+
+void
+ListDeviceInfo(ClientPtr client, DeviceIntPtr d, xDeviceInfoPtr dev,
+	       char **devbuf, char **classbuf, char **namebuf)
+{
+    CopyDeviceName(namebuf, d->name);
+    CopySwapDevice(client, d, 0, devbuf);
+    if (d->key != NULL) {
+	CopySwapKeyClass(client, d->key, classbuf);
+	dev->num_classes++;
+    }
+    if (d->button != NULL) {
+	CopySwapButtonClass(client, d->button, classbuf);
+	dev->num_classes++;
+    }
+    if (d->valuator != NULL) {
+	dev->num_classes +=
+	    CopySwapValuatorClass(client, d->valuator, classbuf);
+    }
+}
+
+/***********************************************************************
+ *
+ * This procedure lists the input devices available to the server.
+ *
+ */
+
+int
+ProcXListInputDevices(register ClientPtr client)
+{
+    xListInputDevicesReply rep;
+    int numdevs;
+    int namesize = 1;	/* need 1 extra byte for strcpy */
+    int size = 0;
+    int total_length;
+    char *devbuf;
+    char *classbuf;
+    char *namebuf;
+    char *savbuf;
+    xDeviceInfo *dev;
+    DeviceIntPtr d;
+
+    REQUEST_SIZE_MATCH(xListInputDevicesReq);
+
+    memset(&rep, 0, sizeof(xListInputDevicesReply));
+    rep.repType = X_Reply;
+    rep.RepType = X_ListInputDevices;
+    rep.length = 0;
+    rep.sequenceNumber = client->sequence;
+
+    AddOtherInputDevices();
+    numdevs = inputInfo.numDevices;
+
+    for (d = inputInfo.devices; d; d = d->next)
+	SizeDeviceInfo(d, &namesize, &size);
+    for (d = inputInfo.off_devices; d; d = d->next)
+	SizeDeviceInfo(d, &namesize, &size);
+
+    total_length = numdevs * sizeof(xDeviceInfo) + size + namesize;
+    devbuf = (char *) calloc (1, total_length);
+    classbuf = devbuf + (numdevs * sizeof(xDeviceInfo));
+    namebuf = classbuf + size;
+    savbuf = devbuf;
+
+    dev = (xDeviceInfoPtr) devbuf;
+    for (d = inputInfo.devices; d; d = d->next, dev++)
+	ListDeviceInfo(client, d, dev, &devbuf, &classbuf, &namebuf);
+    for (d = inputInfo.off_devices; d; d = d->next, dev++)
+	ListDeviceInfo(client, d, dev, &devbuf, &classbuf, &namebuf);
+
+    rep.ndevices = numdevs;
+    rep.length = (total_length + 3) >> 2;
+    WriteReplyToClient(client, sizeof(xListInputDevicesReply), &rep);
+    WriteToClient(client, total_length, savbuf);
+    free(savbuf);
+    return Success;
 }
 
 /***********************************************************************
