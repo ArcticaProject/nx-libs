@@ -869,8 +869,7 @@ XkbError:
         XkbInitKeyboardDeviceStruct((void *)pDev, &names, &keySyms, modmap,
                                     nxagentBell, nxagentChangeKeyboardControl);
 
-        if (!nxagentKeyboard ||
-               (nxagentKeyboard && (strcmp(nxagentKeyboard, "query") == 0)))
+        if (!nxagentKeyboard || strcmp(nxagentKeyboard, "query") == 0)
         {
           goto XkbError;
         }
