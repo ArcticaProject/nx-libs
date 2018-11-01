@@ -30,6 +30,8 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #ifndef EXEVENTS_H
 #define EXEVENTS_H
 
+#include <nx-X11/extensions/XIproto.h>
+
 extern void RegisterOtherDevice (
 	DeviceIntPtr           /* device */);
 
@@ -129,6 +131,7 @@ extern int SetModifierMapping(
 	KeyClassPtr *          /* k */);
 
 extern void SendDeviceMappingNotify(
+        ClientPtr              /* client, */,
 	CARD8                  /* request, */,
 	KeyCode                /* firstKeyCode */,
 	CARD8                  /* count */,
@@ -148,10 +151,6 @@ extern void DeleteWindowFromAnyExtEvents(
 	WindowPtr              /* pWin */,
 	Bool                   /* freeResources */);
 
-extern void DeleteDeviceFromAnyExtEvents(
-	WindowPtr              /* pWin */,
-	DeviceIntPtr           /* dev */);
-
 extern int MaybeSendDeviceMotionNotifyHint (
 	deviceKeyButtonPointer * /* pEvents */,
 	Mask                   /* mask */);
@@ -164,11 +163,6 @@ extern void CheckDeviceGrabAndHintWindow (
 	ClientPtr              /* client */,
 	Mask                   /* deliveryMask */);
 
-extern Mask DeviceEventMaskForClient(
-	DeviceIntPtr           /* dev */,
-	WindowPtr              /* pWin */,
-	ClientPtr              /* client */);
-
 extern void MaybeStopDeviceHint(
 	DeviceIntPtr           /* dev */,
 	ClientPtr              /* client */);
@@ -178,5 +172,11 @@ extern int DeviceEventSuppressForWindow(
 	ClientPtr              /* client */,
 	Mask                   /* mask */,
 	int                    /* maskndx */);
+
+void SendEventToAllWindows(
+        DeviceIntPtr           /* dev */,
+        Mask                   /* mask */,
+        xEvent *               /* ev */,
+        int                    /* count */);
 
 #endif /* EXEVENTS_H */

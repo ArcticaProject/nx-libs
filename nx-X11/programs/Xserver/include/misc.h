@@ -156,7 +156,7 @@ typedef struct _xReq *xReqPtr;
 #define max(a, b) (((a) > (b)) ? (a) : (b))
 /* abs() is a function, not a macro; include the file declaring
  * it in case we haven't done that yet.
- */  
+ */
 #include <stdlib.h>
 #ifndef Fabs
 #define Fabs(a) ((a) > 0.0 ? (a) : -(a))	/* floating absolute value */
@@ -183,7 +183,6 @@ typedef struct _xReq *xReqPtr;
  */
 
 #include <math.h>
-#endif
 #undef MAXSHORT
 #define MAXSHORT SHRT_MAX
 #undef MINSHORT
@@ -196,6 +195,8 @@ typedef struct _xReq *xReqPtr;
 #include <assert.h>
 #include <ctype.h>
 #include <stdio.h>	/* for fopen, etc... */
+
+#endif
 
 /**
  * Calculate the number of bytes needed to hold bits.
