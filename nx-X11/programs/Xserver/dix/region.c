@@ -21,20 +21,20 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 Except as contained in this notice, the name of The Open Group shall not be
 used in advertising or otherwise to promote the sale, use or other dealings
 in this Software without prior written authorization from The Open Group.
- 
 
-Copyright 1987, 1988, 1989 by 
-Digital Equipment Corporation, Maynard, Massachusetts. 
+
+Copyright 1987, 1988, 1989 by
+Digital Equipment Corporation, Maynard, Massachusetts.
 
                         All Rights Reserved
 
-Permission to use, copy, modify, and distribute this software and its 
-documentation for any purpose and without fee is hereby granted, 
+Permission to use, copy, modify, and distribute this software and its
+documentation for any purpose and without fee is hereby granted,
 provided that the above copyright notice appear in all copies and that
-both that copyright notice and this permission notice appear in 
+both that copyright notice and this permission notice appear in
 supporting documentation, and that the name of Digital not be
 used in advertising or publicity pertaining to distribution of the
-software without specific, written prior permission.  
+software without specific, written prior permission.
 
 DIGITAL DISCLAIMS ALL WARRANTIES WITH REGARD TO THIS SOFTWARE, INCLUDING
 ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS, IN NO EVENT SHALL
@@ -119,9 +119,9 @@ Equipment Corporation.
  * there is no separate list of band start pointers.
  *
  * The y-x band representation does not minimize rectangles.  In particular,
- * if a rectangle vertically crosses a band (the rectangle has scanlines in 
+ * if a rectangle vertically crosses a band (the rectangle has scanlines in
  * the y1 to y2 area spanned by the band), then the rectangle may be broken
- * down into two or more smaller rectangles stacked one atop the other. 
+ * down into two or more smaller rectangles stacked one atop the other.
  *
  *  -----------				    -----------
  *  |         |				    |         |		    band 0
@@ -360,7 +360,7 @@ RegionRectAlloc(
 {
     RegDataPtr	data;
     size_t rgnSize;
-    
+
     if (!pRgn->data)
     {
 	n++;
@@ -632,7 +632,7 @@ RegionOp(
      */
     if (RegionNar (reg1) || RegionNar(reg2))
 	return RegionBreak (newReg);
-    
+
     /*
      * Initialization:
      *	set r1, r2, r1End and r2End appropriately, save the rectangles
@@ -684,7 +684,7 @@ RegionOp(
      */
 
     ybot = min(r1->y1, r2->y1);
-    
+
     /*
      * prevBand serves to mark the start of the previous band so rectangles
      * can be coalesced into larger rectangles. qv. RegionCoalesce, above.
@@ -695,7 +695,7 @@ RegionOp(
      * array of rectangles.
      */
     prevBand = 0;
-    
+
     do {
 	/*
 	 * This algorithm proceeds one source-band (as opposed to a
@@ -706,7 +706,7 @@ RegionOp(
 	 */
 	assert(r1 != r1End);
 	assert(r2 != r2End);
-    
+
 	FindBand(r1, r1BandEnd, r1End, r1y1);
 	FindBand(r2, r2BandEnd, r2End, r2y1);
 
@@ -958,7 +958,7 @@ RegionUnionO (
 	    MERGERECT(r2);
 	} while (r2 != r2End);
     }
-    
+
     /* Add current rectangle */
     NEWRECT(pReg, pNextRect, x1, y1, x2, y2);
 
@@ -972,7 +972,7 @@ RegionUnionO (
 /*-
  *-----------------------------------------------------------------------
  * RegionAppend --
- * 
+ *
  *      "Append" the rgn rectangles onto the end of dstrgn, maintaining
  *      knowledge of YX-banding when it's easy.  Otherwise, dstrgn just
  *      becomes a non-y-x-banded random collection of rectangles, and not
@@ -997,7 +997,7 @@ RegionAppend(dstrgn, rgn)
 
     if (RegionNar(rgn))
 	return RegionBreak (dstrgn);
-    
+
     if (!rgn->data && (dstrgn->data == &RegionEmptyData))
     {
 	dstrgn->extents = rgn->extents;
@@ -1058,7 +1058,7 @@ RegionAppend(dstrgn, rgn)
 	if (dnumRects == 1)
 	    *new = *RegionBoxptr(dstrgn);
 	else
-	    memmove((char *)new,(char *)RegionBoxptr(dstrgn), 
+	    memmove((char *)new,(char *)RegionBoxptr(dstrgn),
 		  dnumRects * sizeof(BoxRec));
 	new = RegionBoxptr(dstrgn);
     }
@@ -1072,7 +1072,7 @@ RegionAppend(dstrgn, rgn)
     return TRUE;
 }
 
-   
+
 #define ExchangeRects(a, b) \
 {			    \
     BoxRec     t;	    \
@@ -1143,7 +1143,7 @@ QuickSortRects(
 /*-
  *-----------------------------------------------------------------------
  * RegionValidate --
- * 
+ *
  *      Take a ``region'' which is a non-y-x-banded random collection of
  *      rectangles, and compute a nice region which is the union of all the
  *      rectangles.
@@ -1453,7 +1453,7 @@ miRegionDataCopy(
 {
     good(dst);
     good(src);
-    if (dst->data) 
+    if (dst->data)
 	return TRUE;
     if (dst == src)
 	return TRUE;
@@ -1616,7 +1616,7 @@ RegionClipSpans(
     if (!prgnDst->data)
     {
 	/* Do special fast code with clip boundaries in s(?) */
-	/* It doesn't pay much to make use of fSorted in this case, 
+	/* It doesn't pay much to make use of fSorted in this case,
 	   so we lump everything together. */
 
 	int clipx1, clipx2, clipy1, clipy2;
@@ -1625,7 +1625,7 @@ RegionClipSpans(
 	clipy1 = prgnDst->extents.y1;
 	clipx2 = prgnDst->extents.x2;
 	clipy2 = prgnDst->extents.y2;
-	    
+	
 	for (; ppt != pptLast; ppt++, pwidth++)
 	{
 	    y = ppt->y;
@@ -1663,7 +1663,7 @@ RegionClipSpans(
 
 	pboxBandStart = RegionBoxptr(prgnDst);
 	pboxLast = pboxBandStart + numRects;
-    
+
 	NextBand();
 
 	for (; ppt != pptLast; )

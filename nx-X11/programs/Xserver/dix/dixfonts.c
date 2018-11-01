@@ -265,7 +265,7 @@ doOpenFont(ClientPtr client, OFclosurePtr c)
     /*
      * Decide at runtime what FontFormat to use.
      */
-    Mask FontFormat = 
+    Mask FontFormat =
 
 	((screenInfo.imageByteOrder == LSBFirst) ?
 	    BitmapFormatByteOrderLSB : BitmapFormatByteOrderMSB) |
@@ -609,7 +609,7 @@ QueryFont(FontPtr pFont, xQueryFontReply *pReply, int nProtoCCIStructs)
 	    chars[i++] = r;
 	    chars[i++] = c;
 	}
-	(*pFont->get_metrics) (pFont, ncols, chars, 
+	(*pFont->get_metrics) (pFont, ncols, chars,
 				TwoD16Bit, &count, charInfos);
 	i = 0;
 	for (i = 0; i < (int) count && ninfos < nProtoCCIStructs; i++) {
@@ -915,13 +915,13 @@ bail:
 }
 
 int
-ListFonts(ClientPtr client, unsigned char *pattern, unsigned length, 
+ListFonts(ClientPtr client, unsigned char *pattern, unsigned length,
           unsigned max_names)
 {
     int         i;
     LFclosurePtr c;
 
-    /* 
+    /*
      * The right error to return here would be BadName, however the
      * specification does not allow for a Name error on this request.
      * Perhaps a better solution would be to return a nil list, i.e.
@@ -1208,13 +1208,13 @@ bail:
 #endif /* NXAGENT_SERVER */
 
 int
-StartListFontsWithInfo(ClientPtr client, int length, unsigned char *pattern, 
+StartListFontsWithInfo(ClientPtr client, int length, unsigned char *pattern,
                        int max_names)
 {
     int		    i;
     LFWIclosurePtr  c;
 
-    /* 
+    /*
      * The right error to return here would be BadName, however the
      * specification does not allow for a Name error on this request.
      * Perhaps a better solution would be to return a nil list, i.e.
@@ -1478,7 +1478,7 @@ doPolyText(ClientPtr client, PTclosurePtr c)
 		    origGC = c->pGC;
 		    c->pGC = pGC;
 		    ValidateGC(c->pDraw, c->pGC);
-		    
+		
 		    c->slept = TRUE;
 		    ClientSleep(client,
 		    	     (ClientSleepProcPtr)doPolyText,
@@ -1545,7 +1545,7 @@ bail:
 }
 
 int
-PolyText(ClientPtr client, DrawablePtr pDraw, GC *pGC, unsigned char *pElt, 
+PolyText(ClientPtr client, DrawablePtr pDraw, GC *pGC, unsigned char *pElt,
          unsigned char *endReq, int xorg, int yorg, int reqType, XID did)
 {
     PTclosureRec local_closure;
@@ -1721,7 +1721,7 @@ bail:
 }
 
 int
-ImageText(ClientPtr client, DrawablePtr pDraw, GC *pGC, int nChars, 
+ImageText(ClientPtr client, DrawablePtr pDraw, GC *pGC, int nChars,
           unsigned char *data, int xorg, int yorg, int reqType, XID did)
 {
     ITclosureRec local_closure;
@@ -1834,11 +1834,11 @@ SetFontPathElements(int npaths, unsigned char *paths, int *bad, Bool persist)
 	    (*fpe_functions[i].set_path_hook) ();
 #endif /* HAS_XFONT2 */
     }
-    for (i = 0; i < npaths; i++) 
+    for (i = 0; i < npaths; i++)
     {
 	len = (unsigned int) (*cp++);
 
-	if (len == 0) 
+	if (len == 0)
 	{
 	    if (persist)
 		ErrorF ("Removing empty element from the valid list of fontpaths\n");
@@ -1852,14 +1852,14 @@ SetFontPathElements(int npaths, unsigned char *paths, int *bad, Bool persist)
 	     * them, though it'd muck up refcounting
 	     */
 	    fpe = find_existing_fpe(font_path_elements, num_fpes, cp, len);
-	    if (fpe) 
+	    if (fpe)
 	    {
 #ifdef HAS_XFONT2
 		err = (*fpe_functions[fpe->type]->reset_fpe) (fpe);
 #else
 		err = (*fpe_functions[fpe->type].reset_fpe) (fpe);
 #endif /* HAS_XFONT2 */
-		if (err == Successful) 
+		if (err == Successful)
 		{
 		    UseFPE(fpe);/* since it'll be decref'd later when freed
 				 * from the old list */
@@ -1871,20 +1871,20 @@ SetFontPathElements(int npaths, unsigned char *paths, int *bad, Bool persist)
 	    if (!fpe)
 	    {
 		fpe = (FontPathElementPtr) malloc(sizeof(FontPathElementRec));
-		if (!fpe) 
+		if (!fpe)
 		{
 		    err = BadAlloc;
 		    goto bail;
 		}
 		fpe->name = (char *) malloc(len + 1);
-		if (!fpe->name) 
+		if (!fpe->name)
 		{
 		    free(fpe);
 		    err = BadAlloc;
 		    goto bail;
 		}
 		fpe->refcount = 1;
-    
+
 		strncpy(fpe->name, (char *) cp, (int) len);
 		fpe->name[len] = '\0';
 		fpe->name_length = len;
@@ -2115,7 +2115,7 @@ DeleteClientFontStuff(ClientPtr client)
 
 #ifdef HAS_XFONT2
 static int
-_fpe_funcs(const xfont2_fpe_funcs_rec *funcs)
+register_fpe_funcs(const xfont2_fpe_funcs_rec *funcs)
 {
     xfont2_fpe_funcs_rec const **new;
 
@@ -2131,7 +2131,7 @@ _fpe_funcs(const xfont2_fpe_funcs_rec *funcs)
 }
 #else
 void
-InitFonts ()
+InitFonts (void)
 {
     patternCache = MakeFontPatternCache();
 
@@ -2140,9 +2140,9 @@ InitFonts ()
 #ifdef LEGACY_XFONT1
     BuiltinRegisterFpeFunctions();
     FontFileRegisterFpeFunctions();
-    fs__fpe_functions();
+    fs_register_fpe_functions();
 #else
-    _fpe_functions();
+    register_fpe_functions();
 #endif
 }
 #endif /* HAS_XFONT2 */
@@ -2209,20 +2209,20 @@ GetClientResolutions (int *num)
  */
 
 int
-RegisterFPEFunctions(NameCheckFunc name_func, 
-		     InitFpeFunc init_func, 
-		     FreeFpeFunc free_func, 
-		     ResetFpeFunc reset_func, 
-		     OpenFontFunc open_func, 
-		     CloseFontFunc close_func, 
-		     ListFontsFunc list_func, 
-		     StartLfwiFunc start_lfwi_func, 
-		     NextLfwiFunc next_lfwi_func, 
-		     WakeupFpeFunc wakeup_func, 
-		     ClientDiedFunc client_died, 
-		     LoadGlyphsFunc load_glyphs, 
-		     StartLaFunc start_list_alias_func, 
-		     NextLaFunc next_list_alias_func, 
+RegisterFPEFunctions(NameCheckFunc name_func,
+		     InitFpeFunc init_func,
+		     FreeFpeFunc free_func,
+		     ResetFpeFunc reset_func,
+		     OpenFontFunc open_func,
+		     CloseFontFunc close_func,
+		     ListFontsFunc list_func,
+		     StartLfwiFunc start_lfwi_func,
+		     NextLfwiFunc next_lfwi_func,
+		     WakeupFpeFunc wakeup_func,
+		     ClientDiedFunc client_died,
+		     LoadGlyphsFunc load_glyphs,
+		     StartLaFunc start_list_alias_func,
+		     NextLaFunc next_list_alias_func,
 		     SetPathFunc set_path_func)
 {
     FPEFunctions *new;
@@ -2259,7 +2259,7 @@ RegisterFPEFunctions(NameCheckFunc name_func,
 #endif /* !HAS_XFONT2 */
 
 void
-FreeFonts()
+FreeFonts(void)
 {
     if (patternCache) {
 #ifdef HAS_XFONT2
@@ -2482,7 +2482,7 @@ static const xfont2_client_funcs_rec xfont2_client_funcs = {
     .get_new_font_client_id = get_new_font_client_id,
     .get_time_in_millis = GetTimeInMillis,
     .init_fs_handlers = _init_fs_handlers,
-    ._fpe_funcs = register_fpe_funcs,
+    .register_fpe_funcs = register_fpe_funcs,
     .remove_fs_handlers = _remove_fs_handlers,
     .get_server_client = get_server_client,
     .set_font_authorizations = set_font_authorizations,

@@ -268,6 +268,7 @@ typedef struct _WorkQueue	*WorkQueuePtr;
 extern ClientPtr *clients;
 extern ClientPtr serverClient;
 extern int currentMaxClients;
+extern char dispatchExceptionAtReset;
 
 typedef int HWEventQueueType;
 typedef HWEventQueueType* HWEventQueuePtr;
@@ -488,6 +489,12 @@ extern void FreeAllAtoms(void);
 
 extern void InitAtoms(void);
 
+/* main.c */
+
+extern void SetVendorRelease(int release);
+
+extern void SetVendorString(char *string);
+
 /* events.c */
 
 extern void SetMaskForEvent(
@@ -660,6 +667,9 @@ extern int TryClientEvents(
 
 extern void WindowsRestructured(void);
 
+#ifdef PANORAMIX
+extern void ReinitializeRootWindow(WindowPtr win, int xoff, int yoff);
+#endif
 
 #ifdef RANDR
 void
@@ -673,6 +683,8 @@ extern int AllocateClientPrivateIndex(void);
 extern Bool AllocateClientPrivate(
     int /*index*/,
     unsigned /*amount*/);
+
+extern int ffs(int i);
 
 /*
  *  callback manager stuff
@@ -781,5 +793,11 @@ typedef struct {
     struct _Selection	    *selection;
     SelectionCallbackKind   kind;
 } SelectionInfoRec;
+
+/* strcasecmp.c */
+#if NEED_STRCASECMP
+#define strcasecmp xstrcasecmp
+extern int xstrcasecmp(char *s1, char *s2);
+#endif
 
 #endif /* DIX_H */

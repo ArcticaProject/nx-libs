@@ -27,13 +27,13 @@ Copyright 1987 by Digital Equipment Corporation, Maynard, Massachusetts.
 
                         All Rights Reserved
 
-Permission to use, copy, modify, and distribute this software and its 
-documentation for any purpose and without fee is hereby granted, 
+Permission to use, copy, modify, and distribute this software and its
+documentation for any purpose and without fee is hereby granted,
 provided that the above copyright notice appear in all copies and that
-both that copyright notice and this permission notice appear in 
+both that copyright notice and this permission notice appear in
 supporting documentation, and that the name of Digital not be
 used in advertising or publicity pertaining to distribution of the
-software without specific, written prior permission.  
+software without specific, written prior permission.
 
 DIGITAL DISCLAIMS ALL WARRANTIES WITH REGARD TO THIS SOFTWARE, INCLUDING
 ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS, IN NO EVENT SHALL
@@ -139,7 +139,7 @@ CheckForEmptyMask(CursorBitsPtr bits)
     int n = BitmapBytePad(bits->width) * bits->height;
 
     bits->emptyMask = FALSE;
-    while(n--) 
+    while(n--)
 	if(*(msk++) != 0) return;
 #ifdef ARGB_CURSOR
     if (bits->argb)
@@ -161,10 +161,10 @@ CheckForEmptyMask(CursorBitsPtr bits)
  *  \param pmaskbits server-defined padding
  *  \param argb      no padding
  */
-CursorPtr 
-AllocCursorARGB(unsigned char *psrcbits, unsigned char *pmaskbits, CARD32 *argb, 
+CursorPtr
+AllocCursorARGB(unsigned char *psrcbits, unsigned char *pmaskbits, CARD32 *argb,
                 CursorMetricPtr cm,
-                unsigned foreRed, unsigned foreGreen, unsigned foreBlue, 
+                unsigned foreRed, unsigned foreGreen, unsigned foreBlue,
                 unsigned backRed, unsigned backGreen, unsigned backBlue)
 {
     CursorBitsPtr  bits;
@@ -233,8 +233,8 @@ AllocCursorARGB(unsigned char *psrcbits, unsigned char *pmaskbits, CARD32 *argb,
  * \param psrcbits   server-defined padding
  * \param pmaskbits  server-defined padding
  */
-CursorPtr 
-AllocCursor(unsigned char *psrcbits, unsigned char *pmaskbits, 
+CursorPtr
+AllocCursor(unsigned char *psrcbits, unsigned char *pmaskbits,
             CursorMetricPtr cm,
             unsigned foreRed, unsigned foreGreen, unsigned foreBlue,
             unsigned backRed, unsigned backGreen, unsigned backBlue)
@@ -246,7 +246,7 @@ AllocCursor(unsigned char *psrcbits, unsigned char *pmaskbits,
 
 int
 AllocGlyphCursor(Font source, unsigned sourceChar, Font mask, unsigned maskChar,
-                unsigned foreRed, unsigned foreGreen, unsigned foreBlue, 
+                unsigned foreRed, unsigned foreGreen, unsigned foreBlue,
                 unsigned backRed, unsigned backGreen, unsigned backBlue,
                 CursorPtr *ppCurs, ClientPtr client)
 {
@@ -430,26 +430,42 @@ AllocGlyphCursor(Font source, unsigned sourceChar, Font mask, unsigned maskChar,
  * add the cursor to the resource table
  *************************************************************/
 
-CursorPtr 
-CreateRootCursor(char *pfilename, unsigned glyph)
+CursorPtr
+CreateRootCursor(char *unused1, unsigned int unused2)
 {
     CursorPtr 	curs;
+#ifdef NULL_ROOT_CURSOR
+    CursorMetricRec cm;
+#else
     FontPtr 	cursorfont;
     int	err;
     XID		fontID;
+#endif
 
+#ifdef NULL_ROOT_CURSOR
+    cm.width = 0;
+    cm.height = 0;
+    cm.xhot = 0;
+    cm.yhot = 0;
+
+    curs = AllocCursor(NULL, NULL, &cm, 0, 0, 0, 0, 0, 0);
+
+    if (curs == NullCursor)
+        return NullCursor;
+#else
     fontID = FakeClientID(0);
     err = OpenFont(serverClient, fontID, FontLoadAll | FontOpenSync,
-	(unsigned)strlen( pfilename), pfilename);
+	(unsigned)strlen(defaultCursorFont), defaultCursorFont);
     if (err != Success)
 	return NullCursor;
 
     cursorfont = (FontPtr)LookupIDByType(fontID, RT_FONT);
     if (!cursorfont)
 	return NullCursor;
-    if (AllocGlyphCursor(fontID, glyph, fontID, glyph + 1,
+    if (AllocGlyphCursor(fontID, 0, fontID, 1,
 			 0, 0, 0, ~0, ~0, ~0, &curs, serverClient) != Success)
 	return NullCursor;
+#endif
 
     if (!AddResource(FakeClientID(0), RT_CURSOR, (void *)curs))
 	return NullCursor;

@@ -27,13 +27,13 @@ Copyright 1987 by Digital Equipment Corporation, Maynard, Massachusetts.
 
                         All Rights Reserved
 
-Permission to use, copy, modify, and distribute this software and its 
-documentation for any purpose and without fee is hereby granted, 
+Permission to use, copy, modify, and distribute this software and its
+documentation for any purpose and without fee is hereby granted,
 provided that the above copyright notice appear in all copies and that
-both that copyright notice and this permission notice appear in 
+both that copyright notice and this permission notice appear in
 supporting documentation, and that the name of Digital not be
 used in advertising or publicity pertaining to distribution of the
-software without specific, written prior permission.  
+software without specific, written prior permission.
 
 DIGITAL DISCLAIMS ALL WARRANTIES WITH REGARD TO THIS SOFTWARE, INCLUDING
 ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS, IN NO EVENT SHALL
@@ -92,6 +92,19 @@ PrintPropertys(WindowPtr pWin)
 }
 #endif
 
+static void
+deliverPropertyNotifyEvent(WindowPtr pWin, int state, Atom atom)
+{
+    xEvent event = {0};
+
+    event.u.u.type = PropertyNotify;
+    event.u.property.window = pWin->drawable.id;
+    event.u.property.state = state;
+    event.u.property.atom = atom;
+    event.u.property.time = currentTime.milliseconds;
+    DeliverEvents(pWin, &event, 1, (WindowPtr)NULL);
+}
+
 int
 ProcRotateProperties(ClientPtr client)
 {
@@ -99,7 +112,7 @@ ProcRotateProperties(ClientPtr client)
     REQUEST(xRotatePropertiesReq);
     WindowPtr pWin;
     Atom * atoms;
-    PropertyPtr * props;               /* array of pointer */
+    PropertyPtr * props;               /* array of void * */
     PropertyPtr pProp;
 
     REQUEST_FIXED_SIZE(xRotatePropertiesReq, stuff->nAtoms << 2);
@@ -152,7 +165,7 @@ ProcRotateProperties(ClientPtr client)
         }
         free(props);
         return BadMatch;
-found: 
+found:
         props[i] = pProp;
     }
     delta = stuff->nPositions;
@@ -160,24 +173,15 @@ found:
     /* If the rotation is a complete 360 degrees, then moving the properties
 	around and generating PropertyNotify events should be skipped. */
 
-    if ( (stuff->nAtoms != 0) && (abs(delta) % stuff->nAtoms) != 0 ) 
+    if ( (stuff->nAtoms != 0) && (abs(delta) % stuff->nAtoms) != 0 )
     {
 	while (delta < 0)                  /* faster if abs value is small */
             delta += stuff->nAtoms;
     	for (i = 0; i < stuff->nAtoms; i++)
- 	{
-	    /* Generate a PropertyNotify event for each property whose value
-		is changed in the order in which they appear in the request. */
-            xEvent event;
- 
-            memset(&event, 0, sizeof(xEvent));
- 	    event.u.u.type = PropertyNotify;
-            event.u.property.window = pWin->drawable.id;
-    	    event.u.property.state = PropertyNewValue;
-	    event.u.property.atom = props[i]->propertyName;	
-	    event.u.property.time = currentTime.milliseconds;
-	    DeliverEvents(pWin, &event, 1, (WindowPtr)NULL);
-	
+	{
+	    deliverPropertyNotifyEvent(pWin, PropertyNewValue,
+				       props[i]->propertyName);
+
             props[i]->propertyName = atoms[(i + delta) % stuff->nAtoms];
 	}
     }
@@ -186,15 +190,13 @@ found:
 }
 
 #ifndef NXAGENT_SERVER
-int 
+int
 ProcChangeProperty(ClientPtr client)
-{	      
+{
     WindowPtr pWin;
     char format, mode;
     unsigned long len;
-    int sizeInBytes;
-    int totalSize;
-    int err;
+    int sizeInBytes, totalSize, err;
     REQUEST(xChangePropertyReq);
 
     REQUEST_AT_LEAST_SIZE(xChangePropertyReq);
@@ -343,7 +345,7 @@ ChangeWindowProperty(WindowPtr pWin, Atom property, Atom type, int format,
 	    if (!data)
 		return(BadAlloc);
             pProp->data = data;
-	    memmove(&((char *)data)[pProp->size * sizeInBytes], 
+	    memmove(&((char *)data)[pProp->size * sizeInBytes],
 		    (char *)value,
 		  totalSize);
             pProp->size += len;
@@ -353,7 +355,7 @@ ChangeWindowProperty(WindowPtr pWin, Atom property, Atom type, int format,
             data = (void *)malloc(sizeInBytes * (len + pProp->size));
 	    if (!data)
 		return(BadAlloc);
-	    memmove(&((char *)data)[totalSize], (char *)pProp->data, 
+	    memmove(&((char *)data)[totalSize], (char *)pProp->data,
 		  (int)(pProp->size * sizeInBytes));
             memmove((char *)data, (char *)value, totalSize);
 	    free(pProp->data);
@@ -361,17 +363,10 @@ ChangeWindowProperty(WindowPtr pWin, Atom property, Atom type, int format,
             pProp->size += len;
 	}
     }
+
     if (sendevent)
-    {
-	xEvent event;
-	memset(&event, 0, sizeof(xEvent));
-	event.u.u.type = PropertyNotify;
-	event.u.property.window = pWin->drawable.id;
-	event.u.property.state = PropertyNewValue;
-	event.u.property.atom = pProp->propertyName;
-	event.u.property.time = currentTime.milliseconds;
-	DeliverEvents(pWin, &event, 1, (WindowPtr)NULL);
-    }
+	deliverPropertyNotifyEvent(pWin, PropertyNewValue, pProp->propertyName);
+
     return(Success);
 }
 
@@ -390,9 +385,8 @@ DeleteProperty(WindowPtr pWin, Atom propName)
         prevProp = pProp;
 	pProp = pProp->next;
     }
-    if (pProp) 
-    {		    
-        xEvent event;
+    if (pProp)
+    {
         if (prevProp == (PropertyPtr)NULL)      /* takes care of head */
         {
             if (!(pWin->optional->userProps = pProp->next))
@@ -402,13 +396,7 @@ DeleteProperty(WindowPtr pWin, Atom propName)
         {
             prevProp->next = pProp->next;
         }
-	memset(&event, 0, sizeof(xEvent));
-	event.u.u.type = PropertyNotify;
-	event.u.property.window = pWin->drawable.id;
-	event.u.property.state = PropertyDelete;
-        event.u.property.atom = pProp->propertyName;
-	event.u.property.time = currentTime.milliseconds;
-	DeliverEvents(pWin, &event, 1, (WindowPtr)NULL);
+	deliverPropertyNotifyEvent(pWin, PropertyDelete, pProp->propertyName);
 	free(pProp->data);
         free(pProp);
     }
@@ -419,18 +407,11 @@ void
 DeleteAllWindowProperties(WindowPtr pWin)
 {
     PropertyPtr pProp, pNextProp;
-    xEvent event;
 
-    memset(&event, 0, sizeof(xEvent));
     pProp = wUserProps (pWin);
     while (pProp)
     {
-	event.u.u.type = PropertyNotify;
-	event.u.property.window = pWin->drawable.id;
-	event.u.property.state = PropertyDelete;
-	event.u.property.atom = pProp->propertyName;
-	event.u.property.time = currentTime.milliseconds;
-	DeliverEvents(pWin, &event, 1, (WindowPtr)NULL);
+	deliverPropertyNotifyEvent(pWin, PropertyDelete, pProp->propertyName);
 	pNextProp = pProp->next;
         free(pProp->data);
         free(pProp);
@@ -503,7 +484,7 @@ ProcGetProperty(ClientPtr client)
     prevProp = (PropertyPtr)NULL;
     while (pProp)
     {
-	if (pProp->propertyName == stuff->property) 
+	if (pProp->propertyName == stuff->property)
 	    break;
 	prevProp = pProp;
 	pProp = pProp->next;
@@ -512,7 +493,7 @@ ProcGetProperty(ClientPtr client)
     memset(&reply, 0, sizeof(xGetPropertyReply));
     reply.type = X_Reply;
     reply.sequenceNumber = client->sequence;
-    if (!pProp) 
+    if (!pProp)
 	return NullPropertyReply(client, None, 0, &reply);
 
 #ifdef XCSECURITY
@@ -553,7 +534,7 @@ ProcGetProperty(ClientPtr client)
  *  Return type, format, value to client
  */
     n = (pProp->format/8) * pProp->size; /* size (bytes) of prop */
-    ind = stuff->longOffset << 2;        
+    ind = stuff->longOffset << 2;
 
    /* If longOffset is invalid such that it causes "len" to
 	    be negative, it's a value error. */
@@ -573,17 +554,7 @@ ProcGetProperty(ClientPtr client)
     reply.propertyType = pProp->type;
 
     if (stuff->delete && (reply.bytesAfter == 0))
-    { /* send the event */
-	xEvent event;
-
-	memset(&event, 0, sizeof(xEvent));
-	event.u.u.type = PropertyNotify;
-	event.u.property.window = pWin->drawable.id;
-	event.u.property.state = PropertyDelete;
-	event.u.property.atom = pProp->propertyName;
-	event.u.property.time = currentTime.milliseconds;
-	DeliverEvents(pWin, &event, 1, (WindowPtr)NULL);
-    }
+	deliverPropertyNotifyEvent(pWin, PropertyDelete, pProp->propertyName);
 
     WriteReplyToClient(client, sizeof(xGenericReply), &reply);
     if (len)
@@ -631,7 +602,7 @@ ProcListProperties(ClientPtr client)
 
     pProp = wUserProps (pWin);
     while (pProp)
-    {        
+    {
         pProp = pProp->next;
 	numProps++;
     }
@@ -662,13 +633,13 @@ ProcListProperties(ClientPtr client)
 }
 
 #ifndef NXAGENT_SERVER
-int 
+int
 ProcDeleteProperty(ClientPtr client)
 {
     WindowPtr pWin;
     REQUEST(xDeletePropertyReq);
     int result;
-              
+
     REQUEST_SIZE_MATCH(xDeletePropertyReq);
     UpdateCurrentTime();
     pWin = (WindowPtr)SecurityLookupWindow(stuff->window, client,

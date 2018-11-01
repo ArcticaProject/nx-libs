@@ -50,7 +50,7 @@ from The Open Group.
 
 /* callable by ddx */
 PixmapPtr
-GetScratchPixmapHeader(ScreenPtr pScreen, int width, int height, int depth, 
+GetScratchPixmapHeader(ScreenPtr pScreen, int width, int height, int depth,
                        int bitsPerPixel, int devKind, void * pPixData)
 {
     PixmapPtr pPixmap = pScreen->pScratchPixmap;
@@ -118,7 +118,7 @@ AllocatePixmap(ScreenPtr pScreen, int pixDataSize)
 
     if (pScreen->totalPixmapSize > ((size_t)-1) - pixDataSize)
 	return NullPixmap;
-    
+
     /*
      * FIXME: Allocate 4 bytes at the end of each pixmap. This
      * is a quick workaround intended to fix a problem reported

@@ -27,13 +27,13 @@ Copyright 1987 by Digital Equipment Corporation, Maynard, Massachusetts.
 
                         All Rights Reserved
 
-Permission to use, copy, modify, and distribute this software and its 
-documentation for any purpose and without fee is hereby granted, 
+Permission to use, copy, modify, and distribute this software and its
+documentation for any purpose and without fee is hereby granted,
 provided that the above copyright notice appear in all copies and that
-both that copyright notice and this permission notice appear in 
+both that copyright notice and this permission notice appear in
 supporting documentation, and that the name of Digital not be
 used in advertising or publicity pertaining to distribution of the
-software without specific, written prior permission.  
+software without specific, written prior permission.
 
 DIGITAL DISCLAIMS ALL WARRANTIES WITH REGARD TO THIS SOFTWARE, INCLUDING
 ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS, IN NO EVENT SHALL
@@ -74,8 +74,6 @@ Equipment Corporation.
 
 ******************************************************************/
 
-/* $TOG: main.c /main/86 1998/02/09 14:20:03 kaleb $ */
-
 #ifdef HAVE_DIX_CONFIG_H
 #include <dix-config.h>
 #endif
@@ -103,6 +101,7 @@ Equipment Corporation.
 #endif /* HAS_XFONT2 */
 #include "opaque.h"
 #include "servermd.h"
+#include "hotplug.h"
 #include "site.h"
 #include "dixfont.h"
 #include "extnsionst.h"
@@ -167,13 +166,14 @@ ReplyNotSwappd(
 int
 main(int argc, char *argv[], char *envp[])
 {
-    int		i;
+    int	i;
     char	*xauthfile;
     HWEventQueueType	alwaysCheckForInput[2];
 
     display = "0";
 
     InitGlobals();
+    InitRegions();
 
     /* Quartz support on Mac OS X requires that the Cocoa event loop be in
      * the main thread. This allows the X server main to be called again
@@ -228,7 +228,8 @@ main(int argc, char *argv[], char *envp[])
 #endif
 	InitBlockAndWakeupHandlers();
 	/* Perform any operating system dependent initializations you'd like */
-	OsInit();		
+	OsInit();
+        config_init();
 	if(serverGeneration == 1)
 	{
 	    CreateWellKnownSockets();
@@ -236,7 +237,7 @@ main(int argc, char *argv[], char *envp[])
 	    clients = (ClientPtr *)malloc(MAXCLIENTS * sizeof(ClientPtr));
 	    if (!clients)
 		FatalError("couldn't create client array");
-	    for (i=1; i<MAXCLIENTS; i++) 
+	    for (i=1; i<MAXCLIENTS; i++)
 		clients[i] = NullClient;
 	    serverClient = (ClientPtr)malloc(sizeof(ClientRec));
 	    if (!serverClient)
@@ -297,6 +298,7 @@ main(int argc, char *argv[], char *envp[])
 	    if (!CreateRootWindow(pScreen))
 		FatalError("failed to create root window");
 	}
+        InitCoreDevices();
 	InitInput(argc, argv);
 	if (InitAndStartDevices() != Success)
 	    FatalError("failed to initialize core devices");
@@ -309,11 +311,15 @@ main(int argc, char *argv[], char *envp[])
 		ErrorF("failed to set default font path '%s'\n",
 			defaultFontPath);
 	}
-	if (!SetDefaultFont(defaultTextFont))
+	if (!SetDefaultFont(defaultTextFont)) {
 	    FatalError("could not open default font '%s'", defaultTextFont);
-	if (!(rootCursor = CreateRootCursor(defaultCursorFont, 0)))
+	}
+
+	if (!(rootCursor = CreateRootCursor(NULL, 0))) {
 	    FatalError("could not open default cursor font '%s'",
 		       defaultCursorFont);
+	}
+
 #ifdef DPMSExtension
  	/* check all screens, looking for DPMS Capabilities */
  	DPMSCapableFlag = DPMSSupported();
@@ -336,13 +342,15 @@ main(int argc, char *argv[], char *envp[])
 
 #ifdef PANORAMIX
 	if (!noPanoramiXExtension) {
-	    if (!PanoramiXCreateConnectionBlock())
+	    if (!PanoramiXCreateConnectionBlock()) {
 		FatalError("could not create connection block info");
+	    }
 	} else
 #endif
 	{
-	    if (!CreateConnectionBlock())
+	    if (!CreateConnectionBlock()) {
 	    	FatalError("could not create connection block info");
+	    }
 	}
 
 	NotifyParentProcess();
@@ -366,11 +374,10 @@ main(int argc, char *argv[], char *envp[])
 	FreeAllResources();
 #endif
 
+        config_fini();
 	for (i = 0; i < screenInfo.numScreens; i++)
 	   screenInfo.screens[i]->root = NullWindow;
 	CloseDownDevices();
-	CloseDownEvents();
-
 	for (i = screenInfo.numScreens - 1; i >= 0; i--)
 	{
 	    FreeScratchPixmapsForScreen(i);
@@ -380,6 +387,7 @@ main(int argc, char *argv[], char *envp[])
 	    FreeScreen(screenInfo.screens[i]);
 	    screenInfo.numScreens = i;
 	}
+  	CloseDownEvents();
 	FreeFonts();
 
 	FreeAuditTimer();
@@ -428,7 +436,7 @@ static int padlength[4] = {0, 3, 2, 1};
 static
 #endif
 Bool
-CreateConnectionBlock()
+CreateConnectionBlock(void)
 {
     xConnSetup setup;
     xWindowRoot root;
@@ -441,11 +449,10 @@ CreateConnectionBlock()
         sizesofar = 0;
     char *pBuf;
 
-    
-    memset(&setup, 0, sizeof(xConnSetup));
-    /* Leave off the ridBase and ridMask, these must be sent with 
-       connection */
+   /* Leave off the ridBase and ridMask, these must be sent with
+      connection */
 
+    memset(&setup, 0, sizeof(xConnSetup));
     setup.release = VendorRelease;
     /*
      * per-server image and bitmap parameters are defined in Xmd.h
@@ -458,12 +465,12 @@ CreateConnectionBlock()
     setup.bitmapBitOrder = screenInfo.bitmapBitOrder;
     setup.motionBufferSize = NumMotionEvents();
     setup.numRoots = screenInfo.numScreens;
-    setup.nbytesVendor = strlen(VendorString); 
+    setup.nbytesVendor = strlen(VendorString);
     setup.numFormats = screenInfo.numPixmapFormats;
     setup.maxRequestSize = MAX_REQUEST_SIZE;
     QueryMinMaxKeyCodes(&setup.minKeyCode, &setup.maxKeyCode);
-    
-    lenofblock = sizeof(xConnSetup) + 
+
+    lenofblock = sizeof(xConnSetup) +
             ((setup.nbytesVendor + 3) & ~3) +
 	    (setup.numFormats * sizeof(xPixmapFormat)) +
             (setup.numRoots * sizeof(xWindowRoot));
@@ -482,7 +489,7 @@ CreateConnectionBlock()
     sizesofar += i;
     while (--i >= 0)
 	*pBuf++ = 0;
-    
+
     memset(&format, 0, sizeof(xPixmapFormat));
     for (i=0; i<screenInfo.numPixmapFormats; i++)
     {
@@ -497,7 +504,7 @@ CreateConnectionBlock()
     connBlockScreenStart = sizesofar;
     memset(&depth, 0, sizeof(xDepth));
     memset(&visual, 0, sizeof(xVisualType));
-    for (i=0; i<screenInfo.numScreens; i++) 
+    for (i=0; i<screenInfo.numScreens; i++)
     {
 	ScreenPtr	pScreen;
 	DepthPtr	pDepth;
@@ -514,7 +521,7 @@ CreateConnectionBlock()
 	root.mmWidth = pScreen->mmWidth;
 	root.mmHeight = pScreen->mmHeight;
 	root.minInstalledMaps = pScreen->minInstalledCmaps;
-	root.maxInstalledMaps = pScreen->maxInstalledCmaps; 
+	root.maxInstalledMaps = pScreen->maxInstalledCmaps;
 	root.rootVisualID = pScreen->rootVisual;		
 	root.backingStore = pScreen->backingStoreSupport;
 	root.saveUnders = pScreen->saveUnderSupport != NotUseful;
@@ -527,7 +534,7 @@ CreateConnectionBlock()
 	pDepth = pScreen->allowedDepths;
 	for(j = 0; j < pScreen->numDepths; j++, pDepth++)
 	{
-	    lenofblock += sizeof(xDepth) + 
+	    lenofblock += sizeof(xDepth) +
 		    (pDepth->numVids * sizeof(xVisualType));
 	    pBuf = (char *)realloc(ConnectionInfo, lenofblock);
 	    if (!pBuf)
@@ -536,7 +543,7 @@ CreateConnectionBlock()
 		return FALSE;
 	    }
 	    ConnectionInfo = pBuf;
-	    pBuf += sizesofar;            
+	    pBuf += sizesofar;
 	    depth.depth = pDepth->depth;
 	    depth.nVisuals = pDepth->numVids;
 	    memmove(pBuf, (char *)&depth, sizeof(xDepth));

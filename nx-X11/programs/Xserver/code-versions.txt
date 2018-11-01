@@ -7,7 +7,7 @@ module            xorg version
 composite         1.12 (~ 9838b70 2012-03-21 Introduce a consistent coding style [Keith Packard])
 damageext         6.9/7.0
 dbe               1.4.2
-dix               1.3.0.0
+dix               1.4.2
 fb                7.1/1.1
 GL                6.9/7.0
 mi                7.1/1.1

@@ -27,13 +27,13 @@ Copyright 1987 by Digital Equipment Corporation, Maynard, Massachusetts.
 
                         All Rights Reserved
 
-Permission to use, copy, modify, and distribute this software and its 
-documentation for any purpose and without fee is hereby granted, 
+Permission to use, copy, modify, and distribute this software and its
+documentation for any purpose and without fee is hereby granted,
 provided that the above copyright notice appear in all copies and that
-both that copyright notice and this permission notice appear in 
+both that copyright notice and this permission notice appear in
 supporting documentation, and that the name of Digital not be
 used in advertising or publicity pertaining to distribution of the
-software without specific, written prior permission.  
+software without specific, written prior permission.
 
 DIGITAL DISCLAIMS ALL WARRANTIES WITH REGARD TO THIS SOFTWARE, INCLUDING
 ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS, IN NO EVENT SHALL
@@ -199,11 +199,11 @@ static void FindColorInRootCmap (
 
 #define RGBMASK(vis) (vis->redMask | vis->greenMask | vis->blueMask | ALPHAMASK(vis))
 
-/* GetNextBitsOrBreak(bits, mask, base)  -- 
+/* GetNextBitsOrBreak(bits, mask, base)  --
  * (Suggestion: First read the macro, then read this explanation.
  *
  * Either generate the next value to OR in to a pixel or break out of this
- * while loop 
+ * while loop
  *
  * This macro is used when we're trying to generate all 2^n combinations of
  * bits in mask.  What we're doing here is counting in binary, except that
@@ -215,11 +215,11 @@ static void FindColorInRootCmap (
  * base has 1 bit set where the least significant bit of mask is set
  *
  * For example,if mask is 01010, base should be 0010 and we count like this:
- * 00010 (see this isn't so hard), 
+ * 00010 (see this isn't so hard),
  *     then we add base to bits and get 0100. (bits & ~mask) is (0100 & 0100) so
  *      we add that to bits getting (0100 + 0100) =
  * 01000 for our next value.
- *      then we add 0010 to get 
+ *      then we add 0010 to get
  * 01010 and we're done (easy as 1, 2, 3)
  */
 #define GetNextBitsOrBreak(bits, mask, base)	\
@@ -245,14 +245,14 @@ typedef struct _colorResource
  */
 
 
-/** 
- * Create and initialize the color map 
- * 
+/**
+ * Create and initialize the color map
+ *
  * \param mid    resource to use for this colormap
  * \param alloc  1 iff all entries are allocated writable
  */
-int 
-CreateColormap (Colormap mid, ScreenPtr pScreen, VisualPtr pVisual, 
+int
+CreateColormap (Colormap mid, ScreenPtr pScreen, VisualPtr pVisual,
                 ColormapPtr *ppcmap, int alloc, int client)
 {
     int		class, size;
@@ -283,7 +283,7 @@ CreateColormap (Colormap mid, ScreenPtr pScreen, VisualPtr pVisual,
     pmap->pad2 = 0;
 #endif
 #endif
-    pmap->red = (EntryPtr)((char *)pmap + sizeof(ColormapRec));    
+    pmap->red = (EntryPtr)((char *)pmap + sizeof(ColormapRec));
     sizebytes = size * sizeof(Entry);
     pmap->clientPixelsRed = (Pixel **)((char *)pmap->red + sizebytes);
     pmap->numPixelsRed = (int *)((char *)pmap->clientPixelsRed +
@@ -427,7 +427,7 @@ CreateColormap (Colormap mid, ScreenPtr pScreen, VisualPtr pVisual,
 int
 FreeColormap (void * value, XID mid)
 {
-    int		i;
+    int	i;
     EntryPtr pent;
     ColormapPtr	pmap = (ColormapPtr)value;
 
@@ -557,7 +557,7 @@ TellGainedMap (WindowPtr pwin, void * value)
     return (WT_WALKCHILDREN);
 }
 
-  
+
 int
 CopyColormapAndFree (Colormap mid, ColormapPtr pSrc, int client)
 {
@@ -807,8 +807,8 @@ UpdateColors (ColormapPtr pmap)
  * Returns by changing the value in pred, pgreen, pblue and pPix
  */
 int
-AllocColor (ColormapPtr pmap, 
-            unsigned short *pred, unsigned short *pgreen, unsigned short *pblue, 
+AllocColor (ColormapPtr pmap,
+            unsigned short *pred, unsigned short *pgreen, unsigned short *pblue,
             Pixel *pPix, int client)
 {
     Pixel	pixR, pixG, pixB;
@@ -905,7 +905,7 @@ AllocColor (ColormapPtr pmap,
 					 RT_COLORMAP, DixReadAccess);
 
 	    if (pmap->class == prootmap->class)
-		FindColorInRootCmap (prootmap, prootmap->red, entries, &rgb, 
+		FindColorInRootCmap (prootmap, prootmap->red, entries, &rgb,
 			pPix, PSEUDOMAP, AllComp);
 	}
 	if (FindColor(pmap, pmap->red, entries, &rgb, pPix, PSEUDOMAP,
@@ -923,31 +923,31 @@ AllocColor (ColormapPtr pmap,
 
 	    if (pmap->class == prootmap->class)
 	    {
-		pixR = (*pPix & pVisual->redMask) >> pVisual->offsetRed; 
-		FindColorInRootCmap (prootmap, prootmap->red, entries, &rgb, 
+		pixR = (*pPix & pVisual->redMask) >> pVisual->offsetRed;
+		FindColorInRootCmap (prootmap, prootmap->red, entries, &rgb,
 			&pixR, REDMAP, RedComp);
-		pixG = (*pPix & pVisual->greenMask) >> pVisual->offsetGreen; 
-		FindColorInRootCmap (prootmap, prootmap->green, entries, &rgb, 
+		pixG = (*pPix & pVisual->greenMask) >> pVisual->offsetGreen;
+		FindColorInRootCmap (prootmap, prootmap->green, entries, &rgb,
 			&pixG, GREENMAP, GreenComp);
-		pixB = (*pPix & pVisual->blueMask) >> pVisual->offsetBlue; 
-		FindColorInRootCmap (prootmap, prootmap->blue, entries, &rgb, 
+		pixB = (*pPix & pVisual->blueMask) >> pVisual->offsetBlue;
+		FindColorInRootCmap (prootmap, prootmap->blue, entries, &rgb,
 			&pixB, BLUEMAP, BlueComp);
 		*pPix = pixR | pixG | pixB;
 	    }
 	}
 
-	pixR = (*pPix & pVisual->redMask) >> pVisual->offsetRed; 
+	pixR = (*pPix & pVisual->redMask) >> pVisual->offsetRed;
 	if (FindColor(pmap, pmap->red, NUMRED(pVisual), &rgb, &pixR, REDMAP,
 		      client, RedComp) != Success)
 	    return (BadAlloc);
-	pixG = (*pPix & pVisual->greenMask) >> pVisual->offsetGreen; 
+	pixG = (*pPix & pVisual->greenMask) >> pVisual->offsetGreen;
 	if (FindColor(pmap, pmap->green, NUMGREEN(pVisual), &rgb, &pixG,
 		      GREENMAP, client, GreenComp) != Success)
 	{
 	    (void)FreeCo(pmap, client, REDMAP, 1, &pixR, (Pixel)0);
 	    return (BadAlloc);
 	}
-	pixB = (*pPix & pVisual->blueMask) >> pVisual->offsetBlue; 
+	pixB = (*pPix & pVisual->blueMask) >> pVisual->offsetBlue;
 	if (FindColor(pmap, pmap->blue, NUMBLUE(pVisual), &rgb, &pixB, BLUEMAP,
 		      client, BlueComp) != Success)
 	{
@@ -992,14 +992,14 @@ AllocColor (ColormapPtr pmap,
  */
 
 void
-FakeAllocColor (ColormapPtr pmap, register xColorItem *item)
+FakeAllocColor (ColormapPtr pmap, xColorItem *item)
 {
-    Pixel	pixR, pixG, pixB;
-    Pixel	temp;
-    int		entries;
-    xrgb	rgb;
-    int		class;
-    VisualPtr	pVisual;
+    Pixel pixR, pixG, pixB;
+    Pixel temp;
+    int	entries;
+    xrgb rgb;
+    int	class;
+    VisualPtr pVisual;
 
     pVisual = pmap->pVisual;
     rgb.red = item->red;
@@ -1026,9 +1026,9 @@ FakeAllocColor (ColormapPtr pmap, register xColorItem *item)
 
     case DirectColor:
 	/* Look up each component in its own map, then OR them together */
-	pixR = (item->pixel & pVisual->redMask) >> pVisual->offsetRed; 
-	pixG = (item->pixel & pVisual->greenMask) >> pVisual->offsetGreen; 
-	pixB = (item->pixel & pVisual->blueMask) >> pVisual->offsetBlue; 
+	pixR = (item->pixel & pVisual->redMask) >> pVisual->offsetRed;
+	pixG = (item->pixel & pVisual->greenMask) >> pVisual->offsetGreen;
+	pixB = (item->pixel & pVisual->blueMask) >> pVisual->offsetBlue;
 	if (FindColor(pmap, pmap->red, NUMRED(pVisual), &rgb, &pixR, REDMAP,
 		      -1, RedComp) != Success)
 	    pixR = FindBestPixel(pmap->red, NUMRED(pVisual), &rgb, REDMAP)
@@ -1071,9 +1071,9 @@ FakeFreeColor(ColormapPtr pmap, Pixel pixel)
 	break;
     case DirectColor:
 	pVisual = pmap->pVisual;
-	pixR = (pixel & pVisual->redMask) >> pVisual->offsetRed; 
-	pixG = (pixel & pVisual->greenMask) >> pVisual->offsetGreen; 
-	pixB = (pixel & pVisual->blueMask) >> pVisual->offsetBlue; 
+	pixR = (pixel & pVisual->redMask) >> pVisual->offsetRed;
+	pixG = (pixel & pVisual->greenMask) >> pVisual->offsetGreen;
+	pixB = (pixel & pVisual->blueMask) >> pVisual->offsetBlue;
 	if (pmap->red[pixR].refcnt == AllocTemporary)
 	    pmap->red[pixR].refcnt = 0;
 	if (pmap->green[pixG].refcnt == AllocTemporary)
@@ -1170,8 +1170,8 @@ FindBestPixel(EntryPtr pentFirst, int size, xrgb *prgb, int channel)
 }
 
 static void
-FindColorInRootCmap (ColormapPtr pmap, EntryPtr pentFirst, int size, 
-                     xrgb *prgb, Pixel *pPixel, int channel, 
+FindColorInRootCmap (ColormapPtr pmap, EntryPtr pentFirst, int size,
+                     xrgb *prgb, Pixel *pPixel, int channel,
                      ColorCompareProcPtr comp)
 {
     EntryPtr    pent;
@@ -1209,8 +1209,8 @@ FindColorInRootCmap (ColormapPtr pmap, EntryPtr pentFirst, int size,
  * load *pPixel with that value, otherwise set it to 0
  */
 int
-FindColor (ColormapPtr pmap, EntryPtr pentFirst, int size, xrgb *prgb, 
-           Pixel *pPixel, int channel, int client, 
+FindColor (ColormapPtr pmap, EntryPtr pentFirst, int size, xrgb *prgb,
+           Pixel *pPixel, int channel, int client,
            ColorCompareProcPtr comp)
 {
     EntryPtr	pent;
@@ -1396,7 +1396,7 @@ AllComp (EntryPtr pent, xrgb *prgb)
 static int
 RedComp (EntryPtr pent, xrgb *prgb)
 {
-    if (pent->co.local.red == prgb->red) 
+    if (pent->co.local.red == prgb->red)
 	return (1);
     return (0);
 }
@@ -1404,7 +1404,7 @@ RedComp (EntryPtr pent, xrgb *prgb)
 static int
 GreenComp (EntryPtr pent, xrgb *prgb)
 {
-    if (pent->co.local.green == prgb->green) 
+    if (pent->co.local.green == prgb->green)
 	return (1);
     return (0);
 }
@@ -1412,7 +1412,7 @@ GreenComp (EntryPtr pent, xrgb *prgb)
 static int
 BlueComp (EntryPtr pent, xrgb *prgb)
 {
-    if (pent->co.local.blue == prgb->blue) 
+    if (pent->co.local.blue == prgb->blue)
 	return (1);
     return (0);
 }
@@ -1506,11 +1506,11 @@ QueryColors (ColormapPtr pmap, int count, Pixel *ppixIn, xrgb *prgbList)
 }
 
 static void
-FreePixels(ColormapPtr pmap, register int client)
+FreePixels(ColormapPtr pmap, int client)
 {
-    Pixel		*ppix, *ppixStart;
-    int 		n;
-    int				class;
+    Pixel *ppix, *ppixStart;
+    int n;
+    int	class;
 
     class = pmap->class;
     ppixStart = pmap->clientPixelsRed[client];
@@ -1527,7 +1527,7 @@ FreePixels(ColormapPtr pmap, register int client)
     free(ppixStart);
     pmap->clientPixelsRed[client] = (Pixel *) NULL;
     pmap->numPixelsRed[client] = 0;
-    if ((class | DynamicClass) == DirectColor) 
+    if ((class | DynamicClass) == DirectColor)
     {
         ppixStart = pmap->clientPixelsGreen[client];
 	if (class & DynamicClass)
@@ -1547,7 +1547,7 @@ FreePixels(ColormapPtr pmap, register int client)
     }
 }
 
-/** 
+/**
  * Frees all of a client's colors and cells.
  *
  *  \param value  must conform to DeleteType
@@ -1567,7 +1567,7 @@ FreeClientPixels (void * value, XID fakeid)
 }
 
 int
-AllocColorCells (int client, ColormapPtr pmap, int colors, int planes, 
+AllocColorCells (int client, ColormapPtr pmap, int colors, int planes,
                  Bool contig, Pixel *ppix, Pixel *masks)
 {
     Pixel	rmask, gmask, bmask, *ppixFirst, r, g, b;
@@ -1639,8 +1639,8 @@ AllocColorCells (int client, ColormapPtr pmap, int colors, int planes,
 
 
 int
-AllocColorPlanes (int client, ColormapPtr pmap, int colors, 
-                  int r, int g, int b, Bool contig, Pixel *pixels, 
+AllocColorPlanes (int client, ColormapPtr pmap, int colors,
+                  int r, int g, int b, Bool contig, Pixel *pixels,
                   Pixel *prmask, Pixel *pgmask, Pixel *pbmask)
 {
     int		ok;
@@ -1674,7 +1674,7 @@ AllocColorPlanes (int client, ColormapPtr pmap, int colors,
 	/* Allocate the proper pixels */
 	/* XXX This is sort of bad, because of contig is set, we force all
 	 * r + g + b bits to be contiguous.  Should only force contiguity
-	 * per mask 
+	 * per mask
 	 */
         ok = AllocPseudo (client, pmap, colors, r + g + b, contig, pixels,
 			  &mask, &ppixFirst);
@@ -1729,7 +1729,7 @@ AllocColorPlanes (int client, ColormapPtr pmap, int colors,
 }
 
 static int
-AllocDirect (int client, ColormapPtr pmap, int c, int r, int g, int b, Bool contig, 
+AllocDirect (int client, ColormapPtr pmap, int c, int r, int g, int b, Bool contig,
              Pixel *pixels, Pixel *prmask, Pixel *pgmask, Pixel *pbmask)
 {
     Pixel	*ppixRed, *ppixGreen, *ppixBlue;
@@ -1848,7 +1848,7 @@ AllocDirect (int client, ColormapPtr pmap, int c, int r, int g, int b, Bool cont
 }
 
 static int
-AllocPseudo (int client, ColormapPtr pmap, int c, int r, Bool contig, 
+AllocPseudo (int client, ColormapPtr pmap, int c, int r, Bool contig,
              Pixel *pixels, Pixel *pmask, Pixel **pppixFirst)
 {
     Pixel	*ppix, *p, *pDst, *ppixTemp;
@@ -1898,12 +1898,12 @@ AllocPseudo (int client, ColormapPtr pmap, int c, int r, Bool contig,
  * pixels are the unique pixels.  *pMask has the mask to Or with the
  * unique pixels to get the rest of them.
  *
- * Returns True iff all pixels could be allocated 
+ * Returns True iff all pixels could be allocated
  * All cells allocated will have refcnt set to AllocPrivate and shared to FALSE
  * (see AllocShared for why we care)
  */
 static Bool
-AllocCP (ColormapPtr pmap, EntryPtr pentFirst, int count, int planes, 
+AllocCP (ColormapPtr pmap, EntryPtr pentFirst, int count, int planes,
          Bool contig, Pixel *pixels, Pixel *pMask)
 {
     EntryPtr	ent;
@@ -2016,7 +2016,7 @@ AllocCP (ColormapPtr pmap, EntryPtr pentFirst, int count, int planes,
        If dplanes = 32, then we can't calculate (1<<dplanes) and we have
        to use:
          ( (1<<(planes-1)) - 1) << (dplanes-planes+1) + (1<<(dplanes-planes-1))
-	  
+	
 	  << Thank you, Loretta>>>
 
     */
@@ -2078,7 +2078,7 @@ AllocCP (ColormapPtr pmap, EntryPtr pentFirst, int count, int planes,
  *  \param ppixFirst  First of the client's new pixels
  */
 static Bool
-AllocShared (ColormapPtr pmap, Pixel *ppix, int c, int r, int g, int b, 
+AllocShared (ColormapPtr pmap, Pixel *ppix, int c, int r, int g, int b,
              Pixel rmask, Pixel gmask, Pixel bmask, Pixel *ppixFirst)
 {
     Pixel	*pptr, *cptr;
@@ -2209,7 +2209,7 @@ AllocShared (ColormapPtr pmap, Pixel *ppix, int c, int r, int g, int b,
 
 
 /** FreeColors
- * Free colors and/or cells (probably slow for large numbers) 
+ * Free colors and/or cells (probably slow for large numbers)
  */
 int
 FreeColors (ColormapPtr pmap, int client, int count, Pixel *pixels, Pixel mask)
@@ -2253,7 +2253,7 @@ FreeColors (ColormapPtr pmap, int client, int count, Pixel *pixels, Pixel mask)
 /**
  * Helper for FreeColors -- frees all combinations of *newpixels and mask bits
  * which the client has allocated in channel colormap cells of pmap.
- * doesn't change newpixels if it doesn't need to 
+ * doesn't change newpixels if it doesn't need to
  *
  *  \param pmap   which colormap head
  *  \param color  which sub-map, eg, RED, BLUE, PSEUDO

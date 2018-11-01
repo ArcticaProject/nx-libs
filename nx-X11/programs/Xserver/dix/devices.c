@@ -27,13 +27,13 @@ Copyright 1987 by Digital Equipment Corporation, Maynard, Massachusetts.
 
                         All Rights Reserved
 
-Permission to use, copy, modify, and distribute this software and its 
-documentation for any purpose and without fee is hereby granted, 
+Permission to use, copy, modify, and distribute this software and its
+documentation for any purpose and without fee is hereby granted,
 provided that the above copyright notice appear in all copies and that
-both that copyright notice and this permission notice appear in 
+both that copyright notice and this permission notice appear in
 supporting documentation, and that the name of Digital not be
 used in advertising or publicity pertaining to distribution of the
-software without specific, written prior permission.  
+software without specific, written prior permission.
 
 DIGITAL DISCLAIMS ALL WARRANTIES WITH REGARD TO THIS SOFTWARE, INCLUDING
 ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS, IN NO EVENT SHALL
@@ -73,19 +73,52 @@ SOFTWARE.
 #include "swaprep.h"
 #include "dixevents.h"
 
+extern void XkbFreePrivates(DeviceIntPtr device);
+
+#include <nx-X11/extensions/XI.h>
+#include <nx-X11/extensions/XIproto.h>
+#include "exglobals.h"
+#include "exevents.h"
+
+/** @file
+ * This file handles input device-related stuff.
+ */
+
+int CoreDevicePrivatesIndex = 0;
+static int CoreDevicePrivatesGeneration = -1;
+
+/**
+ * Create a new input device and init it to sane values. The device is added
+ * to the server's off_devices list.
+ *
+ * @param deviceProc Callback for device control function (switch dev on/off).
+ * @return The newly created device.
+ */
 DeviceIntPtr
 AddInputDevice(DeviceProc deviceProc, Bool autoStart)
 {
-    DeviceIntPtr dev;
+    DeviceIntPtr dev, *prev; /* not a typo */
+    DeviceIntPtr devtmp;
+    int devid;
+    char devind[MAX_DEVICES];
 
-    if (inputInfo.numDevices >= MAX_DEVICES)
+    /* Find next available id */
+    memset(devind, 0, sizeof(char)*MAX_DEVICES);
+    for (devtmp = inputInfo.devices; devtmp; devtmp = devtmp->next)
+	devind[devtmp->id]++;
+    for (devtmp = inputInfo.off_devices; devtmp; devtmp = devtmp->next)
+	devind[devtmp->id]++;
+    for (devid = 0; devid < MAX_DEVICES && devind[devid]; devid++)
+	;
+
+    if (devid >= MAX_DEVICES)
 	return (DeviceIntPtr)NULL;
-    dev = (DeviceIntPtr) calloc(1, sizeof(DeviceIntRec));
+    dev = (DeviceIntPtr) calloc(sizeof(DeviceIntRec), 1);
     if (!dev)
 	return (DeviceIntPtr)NULL;
     dev->name = (char *)NULL;
     dev->type = 0;
-    dev->id = inputInfo.numDevices;
+    dev->id = devid;
     inputInfo.numDevices++;
     dev->public.on = FALSE;
     dev->public.processInputProc = (ProcessInputProc)NoopDDA;
@@ -106,45 +139,90 @@ AddInputDevice(DeviceProc deviceProc, Bool autoStart)
     dev->button = (ButtonClassPtr)NULL;
     dev->focus = (FocusClassPtr)NULL;
     dev->proximity = (ProximityClassPtr)NULL;
+    dev->absolute = (AbsoluteClassPtr)NULL;
     dev->kbdfeed = (KbdFeedbackPtr)NULL;
     dev->ptrfeed = (PtrFeedbackPtr)NULL;
     dev->intfeed = (IntegerFeedbackPtr)NULL;
     dev->stringfeed = (StringFeedbackPtr)NULL;
     dev->bell = (BellFeedbackPtr)NULL;
     dev->leds = (LedFeedbackPtr)NULL;
-    dev->next = inputInfo.off_devices;
 #ifdef XKB
-    dev->xkb_interest= NULL;
+    dev->xkb_interest = NULL;
 #endif
+    dev->config_info = NULL;
     dev->nPrivates = 0;
     dev->devPrivates = NULL;
     dev->unwrapProc = NULL;
-    inputInfo.off_devices = dev;
+    dev->coreEvents = TRUE;
+    dev->inited = FALSE;
+    dev->enabled = FALSE;
+
+    for (prev = &inputInfo.off_devices; *prev; prev = &(*prev)->next)
+        ;
+    *prev = dev;
+    dev->next = NULL;
+
     return dev;
 }
 
+/**
+ * Switch device ON through the driver and push it onto the global device
+ * list. All clients are notified about the device being enabled.
+ *
+ * A device will send events once enabled.
+ *
+ * @param The device to be enabled.
+ * @return TRUE on success or FALSE otherwise.
+ */
 Bool
 EnableDevice(DeviceIntPtr dev)
 {
     DeviceIntPtr *prev;
+    int ret;
+    DeviceIntRec dummyDev;
+    devicePresenceNotify ev;
 
     for (prev = &inputInfo.off_devices;
 	 *prev && (*prev != dev);
 	 prev = &(*prev)->next)
 	;
     if ((*prev != dev) || !dev->inited ||
-	((*dev->deviceProc)(dev, DEVICE_ON) != Success))
+	((ret = (*dev->deviceProc)(dev, DEVICE_ON)) != Success)) {
+        ErrorF("couldn't enable device %d\n", dev->id);
 	return FALSE;
+    }
+    dev->enabled = TRUE;
     *prev = dev->next;
-    dev->next = inputInfo.devices;
-    inputInfo.devices = dev;
+
+    for (prev = &inputInfo.devices; *prev; prev = &(*prev)->next)
+        ;
+    *prev = dev;
+    dev->next = NULL;
+
+    ev.type = DevicePresenceNotify;
+    ev.time = currentTime.milliseconds;
+    ev.devchange = DeviceEnabled;
+    ev.deviceid = dev->id;
+    dummyDev.id = 0;
+    SendEventToAllWindows(&dummyDev, DevicePresenceNotifyMask,
+                          (xEvent *) &ev, 1);
+
     return TRUE;
 }
 
+/**
+ * Switch a device off through the driver and push it onto the off_devices
+ * list. A device will not send events while disabled. All clients are
+ * notified about the device being disabled.
+ *
+ * @return TRUE on success or FALSE otherwise.
+ */
 Bool
 DisableDevice(DeviceIntPtr dev)
 {
     DeviceIntPtr *prev;
+    DeviceIntRec dummyDev;
+    devicePresenceNotify ev;
 
     for (prev = &inputInfo.devices;
 	 *prev && (*prev != dev);
@@ -153,21 +231,254 @@ DisableDevice(DeviceIntPtr dev)
     if (*prev != dev)
 	return FALSE;
     (void)(*dev->deviceProc)(dev, DEVICE_OFF);
+    dev->enabled = FALSE;
     *prev = dev->next;
     dev->next = inputInfo.off_devices;
     inputInfo.off_devices = dev;
+
+    ev.type = DevicePresenceNotify;
+    ev.time = currentTime.milliseconds;
+    ev.devchange = DeviceDisabled;
+    ev.deviceid = dev->id;
+    dummyDev.id = 0;
+    SendEventToAllWindows(&dummyDev, DevicePresenceNotifyMask,
+                          (xEvent *) &ev, 1);
+
     return TRUE;
 }
 
+/**
+ * Initialise a new device through the driver and tell all clients about the
+ * new device.
+ *
+ * The device will NOT send events until it is enabled!
+ *
+ * @return Success or an error code on failure.
+ */
 int
-InitAndStartDevices()
+ActivateDevice(DeviceIntPtr dev)
+{
+    int ret = Success;
+    devicePresenceNotify ev;
+    DeviceIntRec dummyDev;
+
+    if (!dev || !dev->deviceProc)
+        return BadImplementation;
+
+    ret = (*dev->deviceProc) (dev, DEVICE_INIT);
+    dev->inited = (ret == Success);
+
+    ev.type = DevicePresenceNotify;
+    ev.time = currentTime.milliseconds;
+    ev.devchange = DeviceAdded;
+    ev.deviceid = dev->id;
+    dummyDev.id = 0;
+    SendEventToAllWindows(&dummyDev, DevicePresenceNotifyMask,
+                          (xEvent *) &ev, 1);
+
+    return ret;
+}
+
+/**
+ * Ring the bell.
+ * The actual task of ringing the bell is the job of the DDX.
+ */
+static void
+CoreKeyboardBell(int volume, DeviceIntPtr pDev, void * arg, int something)
+{
+    KeybdCtrl *ctrl = arg;
+
+    DDXRingBell(volume, ctrl->bell_pitch, ctrl->bell_duration);
+}
+
+static void
+CoreKeyboardCtl(DeviceIntPtr pDev, KeybdCtrl *ctrl)
+{
+    return;
+}
+
+/**
+ * Device control function for the Virtual Core Keyboard.
+ */
+static int
+CoreKeyboardProc(DeviceIntPtr pDev, int what)
+{
+    CARD8 *modMap;
+    KeySymsRec keySyms;
+#ifdef XKB
+    XkbComponentNamesRec names;
+#endif
+
+    switch (what) {
+    case DEVICE_INIT:
+        keySyms.minKeyCode = 8;
+        keySyms.maxKeyCode = 255;
+        keySyms.mapWidth = 4;
+        keySyms.map = (KeySym *)calloc(sizeof(KeySym),
+                                        (keySyms.maxKeyCode -
+                                         keySyms.minKeyCode + 1) *
+                                        keySyms.mapWidth);
+        if (!keySyms.map) {
+            ErrorF("Couldn't allocate core keymap\n");
+            return BadAlloc;
+        }
+
+        modMap = (CARD8 *)malloc(MAP_LENGTH);
+        if (!modMap) {
+            ErrorF("Couldn't allocate core modifier map\n");
+            return BadAlloc;
+        }
+        bzero((char *)modMap, MAP_LENGTH);
+
+#ifdef XKB
+        if (!noXkbExtension) {
+            bzero(&names, sizeof(names));
+            XkbSetRulesDflts("base", "pc105", "us", NULL, NULL);
+            XkbInitKeyboardDeviceStruct(pDev, &names, &keySyms, modMap,
+                                        CoreKeyboardBell, CoreKeyboardCtl);
+        }
+        else
+#endif
+        {
+            /* FIXME Our keymap here isn't exactly useful. */
+            InitKeyboardDeviceStruct((DevicePtr)pDev, &keySyms, modMap,
+                                     CoreKeyboardBell, CoreKeyboardCtl);
+        }
+
+        free(keySyms.map);
+        free(modMap);
+
+        break;
+
+    case DEVICE_CLOSE:
+        pDev->devPrivates[CoreDevicePrivatesIndex].ptr = NULL;
+        break;
+
+    default:
+        break;
+    }
+    return Success;
+}
+
+/**
+ * Device control function for the Virtual Core Pointer.
+ */
+static int
+CorePointerProc(DeviceIntPtr pDev, int what)
+{
+    BYTE map[33];
+    int i = 0;
+
+    switch (what) {
+    case DEVICE_INIT:
+        for (i = 1; i <= 32; i++)
+            map[i] = i;
+        InitPointerDeviceStruct((DevicePtr)pDev, map, 32,
+                                GetMotionHistory, (PtrCtrlProcPtr)NoopDDA,
+                                GetMotionHistorySize(), 2);
+        pDev->valuator->axisVal[0] = screenInfo.screens[0]->width / 2;
+        pDev->valuator->lastx = pDev->valuator->axisVal[0];
+        pDev->valuator->axisVal[1] = screenInfo.screens[0]->height / 2;
+        pDev->valuator->lasty = pDev->valuator->axisVal[1];
+        break;
+
+    case DEVICE_CLOSE:
+        pDev->devPrivates[CoreDevicePrivatesIndex].ptr = NULL;
+        break;
+
+    default:
+        break;
+    }
+
+    return Success;
+}
+
+/**
+ * Initialise the two core devices, VCP and VCK (see events.c).
+ * The devices are activated but not enabled.
+ * Note that the server MUST have two core devices at all times, even if there
+ * is no physical device connected.
+ */
+void
+InitCoreDevices(void)
+{
+    DeviceIntPtr dev;
+
+    if (CoreDevicePrivatesGeneration != serverGeneration) {
+        CoreDevicePrivatesIndex = AllocateDevicePrivateIndex();
+        CoreDevicePrivatesGeneration = serverGeneration;
+    }
+
+    if (!inputInfo.keyboard) {
+        dev = AddInputDevice(CoreKeyboardProc, TRUE);
+        if (!dev)
+            FatalError("Failed to allocate core keyboard");
+        dev->name = strdup("Virtual core keyboard");
+#ifdef XKB
+        dev->public.processInputProc = CoreProcessKeyboardEvent;
+        dev->public.realInputProc = CoreProcessKeyboardEvent;
+        if (!noXkbExtension)
+           XkbSetExtension(dev, ProcessKeyboardEvent);
+#else
+        dev->public.processInputProc = ProcessKeyboardEvent;
+        dev->public.realInputProc = ProcessKeyboardEvent;
+#endif
+        dev->ActivateGrab = ActivateKeyboardGrab;
+        dev->DeactivateGrab = DeactivateKeyboardGrab;
+        dev->coreEvents = FALSE;
+        if (!AllocateDevicePrivate(dev, CoreDevicePrivatesIndex))
+            FatalError("Couldn't allocate keyboard devPrivates\n");
+        dev->devPrivates[CoreDevicePrivatesIndex].ptr = NULL;
+        (void)ActivateDevice(dev);
+        inputInfo.keyboard = dev;
+    }
+
+    if (!inputInfo.pointer) {
+        dev = AddInputDevice(CorePointerProc, TRUE);
+        if (!dev)
+            FatalError("Failed to allocate core pointer");
+        dev->name = strdup("Virtual core pointer");
+#ifdef XKB
+        dev->public.processInputProc = CoreProcessPointerEvent;
+        dev->public.realInputProc = CoreProcessPointerEvent;
+        if (!noXkbExtension)
+           XkbSetExtension(dev, ProcessPointerEvent);
+#else
+        dev->public.processInputProc = ProcessPointerEvent;
+        dev->public.realInputProc = ProcessPointerEvent;
+#endif
+        dev->ActivateGrab = ActivatePointerGrab;
+        dev->DeactivateGrab = DeactivatePointerGrab;
+        dev->coreEvents = FALSE;
+        if (!AllocateDevicePrivate(dev, CoreDevicePrivatesIndex))
+            FatalError("Couldn't allocate void * devPrivates\n");
+        dev->devPrivates[CoreDevicePrivatesIndex].ptr = NULL;
+        (void)ActivateDevice(dev);
+        inputInfo.pointer = dev;
+    }
+}
+
+/**
+ * Activate all switched-off devices and then enable all those devices.
+ *
+ * Will return an error if no core keyboard or core void * is present.
+ * In theory this should never happen if you call InitCoreDevices() first.
+ *
+ * @return Success or error code on failure.
+ */
+int
+InitAndStartDevices(void)
 {
     DeviceIntPtr dev, next;
 
-    for (dev = inputInfo.off_devices; dev; dev = dev->next)
-	dev->inited = ((*dev->deviceProc)(dev, DEVICE_INIT) == Success);
+    for (dev = inputInfo.off_devices; dev; dev = dev->next) {
+        DebugF("(dix) initialising device %d\n", dev->id);
+        if (!dev->inited)
+            ActivateDevice(dev);
+    }
     for (dev = inputInfo.off_devices; dev; dev = next)
     {
+        DebugF("(dix) enabling device %d\n", dev->id);
 	next = dev->next;
 	if (dev->inited && dev->startup)
 	    (void)EnableDevice(dev);
@@ -191,6 +502,13 @@ InitAndStartDevices()
     return Success;
 }
 
+/**
+ * Close down a device and free all resources.
+ * Once closed down, the driver will probably not expect you that you'll ever
+ * enable it again and free associated structs. If you want the device to just
+ * be disabled, DisableDevice().
+ * Don't call this function directly, use RemoveDevice() instead.
+ */
 static void
 CloseDevice(DeviceIntPtr dev)
 {
@@ -218,25 +536,37 @@ CloseDevice(DeviceIntPtr dev)
 	if (dev->key->xkbInfo)
 	    XkbFreeInfo(dev->key->xkbInfo);
 #endif
-	dev->key->xkbInfo = NULL;
+        dev->key->xkbInfo = NULL;
 	free(dev->key->curKeySyms.map);
 	free(dev->key->modifierKeyMap);
 	free(dev->key);
     }
-    free(dev->valuator);
+
+    if (dev->valuator) {
+        /* Counterpart to 'biggest hack ever' in init. */
+        if (dev->valuator->motion &&
+            dev->valuator->GetMotionProc == GetMotionHistory)
+            free(dev->valuator->motion);
+        free(dev->valuator);
+    }
+
+    if (dev->button) {
 #ifdef XKB
-    if ((dev->button)&&(dev->button->xkb_acts))
-	free(dev->button->xkb_acts);
+        if (dev->button->xkb_acts)
+            free(dev->button->xkb_acts);
 #endif
-    free(dev->button);
-    if (dev->focus)
-    {
+        free(dev->button);
+    }
+
+    if (dev->focus) {
 	free(dev->focus->trace);
 	free(dev->focus);
     }
-    free(dev->proximity);
-    for (k=dev->kbdfeed; k; k=knext)
-    {
+
+    if (dev->proximity)
+        free(dev->proximity);
+
+    for (k = dev->kbdfeed; k; k = knext) {
 	knext = k->next;
 #ifdef XKB
 	if (k->xkb_sli)
@@ -244,30 +574,30 @@ CloseDevice(DeviceIntPtr dev)
 #endif
 	free(k);
     }
-    for (p=dev->ptrfeed; p; p=pnext)
-    {
+
+    for (p = dev->ptrfeed; p; p = pnext) {
 	pnext = p->next;
 	free(p);
     }
-    for (i=dev->intfeed; i; i=inext)
-    {
+
+    for (i = dev->intfeed; i; i = inext) {
 	inext = i->next;
 	free(i);
     }
-    for (s=dev->stringfeed; s; s=snext)
-    {
+
+    for (s = dev->stringfeed; s; s = snext) {
 	snext = s->next;
 	free(s->ctrl.symbols_supported);
 	free(s->ctrl.symbols_displayed);
 	free(s);
     }
-    for (b=dev->bell; b; b=bnext)
-    {
+
+    for (b = dev->bell; b; b = bnext) {
 	bnext = b->next;
 	free(b);
     }
-    for (l=dev->leds; l; l=lnext)
-    {
+
+    for (l = dev->leds; l; l = lnext) {
 	lnext = l->next;
 #ifdef XKB
 	if (l->xkb_sli)
@@ -281,13 +611,16 @@ CloseDevice(DeviceIntPtr dev)
 #endif
 
     free(dev->devPrivates);
-
     free(dev->sync.event);
     free(dev);
 }
 
+/**
+ * Shut down all devices, free all resources, etc.
+ * Only useful if you're shutting down the server!
+ */
 void
-CloseDownDevices()
+CloseDownDevices(void)
 {
     DeviceIntPtr dev, next;
 
@@ -307,52 +640,75 @@ CloseDownDevices()
     inputInfo.pointer = NULL;
 }
 
-void
+/**
+ * Remove a device from the device list, closes it and thus frees all
+ * resources.
+ * Removes both enabled and disabled devices and notifies all devices about
+ * the removal of the device.
+ */
+int
 RemoveDevice(DeviceIntPtr dev)
 {
     DeviceIntPtr prev,tmp,next;
+    int ret = BadMatch;
+    devicePresenceNotify ev;
+    DeviceIntRec dummyDev;
+    int deviceid;
 
-    prev= NULL;
-    for (tmp= inputInfo.devices; tmp; (prev = tmp), (tmp = next)) {
+    DebugF("(dix) removing device %d\n", dev->id);
+
+    if (!dev || dev == inputInfo.keyboard || dev == inputInfo.pointer)
+        return BadImplementation;
+
+    deviceid = dev->id;
+    DisableDevice(dev);
+
+    prev = NULL;
+    for (tmp = inputInfo.devices; tmp; (prev = tmp), (tmp = next)) {
 	next = tmp->next;
-	if (tmp==dev) {
+	if (tmp == dev) {
 	    CloseDevice(tmp);
+
 	    if (prev==NULL)
 		inputInfo.devices = next;
 	    else
 		prev->next = next;
-	    inputInfo.numDevices--;
-	    if (inputInfo.keyboard == tmp)
-	        inputInfo.keyboard = NULL;
-	    else if (inputInfo.pointer == tmp)
-	        inputInfo.pointer = NULL;
-	    return;
+
+	    ret = Success;
 	}
     }
 
-    prev= NULL;
-    for (tmp= inputInfo.off_devices; tmp; (prev = tmp), (tmp = next)) {
+    prev = NULL;
+    for (tmp = inputInfo.off_devices; tmp; (prev = tmp), (tmp = next)) {
 	next = tmp->next;
-	if (tmp==dev) {
+	if (tmp == dev) {
 	    CloseDevice(tmp);
-	    if (prev==NULL)
+
+	    if (prev == NULL)
 		inputInfo.off_devices = next;
 	    else
 		prev->next = next;
-	    inputInfo.numDevices--;
-	    if (inputInfo.keyboard == tmp)
-	        inputInfo.keyboard = NULL;
-	    else if (inputInfo.pointer == tmp)
-	        inputInfo.pointer = NULL;
-	    return;
+
+            ret = Success;
 	}
     }
-    ErrorF("Internal Error! Attempt to remove a non-existent device\n");
-    return;
+
+    if (ret == Success) {
+        inputInfo.numDevices--;
+        ev.type = DevicePresenceNotify;
+        ev.time = currentTime.milliseconds;
+        ev.devchange = DeviceRemoved;
+        ev.deviceid = deviceid;
+        dummyDev.id = 0;
+        SendEventToAllWindows(&dummyDev, DevicePresenceNotifyMask,
+                              (xEvent *) &ev, 1);
+    }
+
+    return ret;
 }
 
 int
-NumMotionEvents()
+NumMotionEvents(void)
 {
     return inputInfo.pointer->valuator->numMotionEvents;
 }
@@ -360,57 +716,23 @@ NumMotionEvents()
 void
 RegisterPointerDevice(DeviceIntPtr device)
 {
-    inputInfo.pointer = device;
-#ifdef XKB
-    device->public.processInputProc = CoreProcessPointerEvent;
-    device->public.realInputProc = CoreProcessPointerEvent;
-    if (!noXkbExtension)
-       XkbSetExtension(device,ProcessPointerEvent);
-#else
-    device->public.processInputProc = ProcessPointerEvent;
-    device->public.realInputProc = ProcessPointerEvent;
-#endif
-    device->ActivateGrab = ActivatePointerGrab;
-    device->DeactivateGrab = DeactivatePointerGrab;
-    if (!device->name)
-    {
-	char *p = "pointer";
-	device->name = (char *)malloc(strlen(p) + 1);
-	strcpy(device->name, p);
-    }
+    RegisterOtherDevice(device);
 }
 
 void
 RegisterKeyboardDevice(DeviceIntPtr device)
 {
-    inputInfo.keyboard = device;
-#ifdef XKB
-    device->public.processInputProc = CoreProcessKeyboardEvent;
-    device->public.realInputProc = CoreProcessKeyboardEvent;
-    if (!noXkbExtension)
-       XkbSetExtension(device,ProcessKeyboardEvent);
-#else
-    device->public.processInputProc = ProcessKeyboardEvent;
-    device->public.realInputProc = ProcessKeyboardEvent;
-#endif
-    device->ActivateGrab = ActivateKeyboardGrab;
-    device->DeactivateGrab = DeactivateKeyboardGrab;
-    if (!device->name)
-    {
-	char *k = "keyboard";
-	device->name = (char *)malloc(strlen(k) + 1);
-	strcpy(device->name, k);
-    }
+    RegisterOtherDevice(device);
 }
 
 DevicePtr
-LookupKeyboardDevice()
+LookupKeyboardDevice(void)
 {
     return inputInfo.keyboard ? &inputInfo.keyboard->public : NULL;
 }
 
 DevicePtr
-LookupPointerDevice()
+LookupPointerDevice(void)
 {
     return inputInfo.pointer ? &inputInfo.pointer->public : NULL;
 }
@@ -441,12 +763,12 @@ QueryMinMaxKeyCodes(KeyCode *minCode, KeyCode *maxCode)
 }
 
 Bool
-SetKeySymsMap(KeySymsPtr dst, register KeySymsPtr src)
+SetKeySymsMap(KeySymsPtr dst, KeySymsPtr src)
 {
     int i, j;
     int rowDif = src->minKeyCode - dst->minKeyCode;
-           /* if keysym map size changes, grow map first */
 
+    /* if keysym map size changes, grow map first */
     if (src->mapWidth < dst->mapWidth)
     {
         for (i = src->minKeyCode; i <= src->maxKeyCode; i++)
@@ -569,7 +891,7 @@ InitKeyClassDeviceStruct(DeviceIntPtr dev, KeySymsPtr pKeySyms, CARD8 pModifiers
 }
 
 Bool
-InitButtonClassDeviceStruct(DeviceIntPtr dev, int numButtons, 
+InitButtonClassDeviceStruct(DeviceIntPtr dev, int numButtons,
                             CARD8 *map)
 {
     ButtonClassPtr butc;
@@ -593,28 +915,78 @@ InitButtonClassDeviceStruct(DeviceIntPtr dev, int numButtons,
 }
 
 Bool
-InitValuatorClassDeviceStruct(DeviceIntPtr dev, int numAxes, 
-                              ValuatorMotionProcPtr motionProc, 
+InitValuatorClassDeviceStruct(DeviceIntPtr dev, int numAxes,
+                              ValuatorMotionProcPtr motionProc,
                               int numMotionEvents, int mode)
 {
     int i;
     ValuatorClassPtr valc;
 
-    valc = (ValuatorClassPtr)calloc(1, sizeof(ValuatorClassRec) +
+    if (!dev)
+        return FALSE;
+
+    valc = (ValuatorClassPtr)malloc(sizeof(ValuatorClassRec) +
 				    numAxes * sizeof(AxisInfo) +
 				    numAxes * sizeof(unsigned int));
     if (!valc)
 	return FALSE;
+
+    valc->motion = NULL;
+    valc->first_motion = 0;
+    valc->last_motion = 0;
     valc->GetMotionProc = motionProc;
+
     valc->numMotionEvents = numMotionEvents;
     valc->motionHintWindow = NullWindow;
     valc->numAxes = numAxes;
     valc->mode = mode;
     valc->axes = (AxisInfoPtr)(valc + 1);
     valc->axisVal = (int *)(valc->axes + numAxes);
-    for (i=0; i<numAxes; i++)
-	valc->axisVal[i]=0;
+    valc->lastx = 0;
+    valc->lasty = 0;
+    valc->dxremaind = 0;
+    valc->dyremaind = 0;
     dev->valuator = valc;
+
+    /* biggest hack ever. */
+    if (motionProc == GetMotionHistory)
+        AllocateMotionHistory(dev);
+
+    for (i=0; i<numAxes; i++) {
+        InitValuatorAxisStruct(dev, i, 0, -1, 0, 0, 0);
+	valc->axisVal[i]=0;
+    }
+    return TRUE;
+}
+
+Bool
+InitAbsoluteClassDeviceStruct(DeviceIntPtr dev)
+{
+    AbsoluteClassPtr abs;
+
+    abs = (AbsoluteClassPtr)malloc(sizeof(AbsoluteClassRec));
+    if (!abs)
+        return FALSE;
+
+    /* we don't do anything sensible with these, but should */
+    abs->min_x = -1;
+    abs->min_y = -1;
+    abs->max_x = -1;
+    abs->max_y = -1;
+    abs->flip_x = 0;
+    abs->flip_y = 0;
+    abs->rotation = 0;
+    abs->button_threshold = 0;
+
+    abs->offset_x = 0;
+    abs->offset_y = 0;
+    abs->width = -1;
+    abs->height = -1;
+    abs->following = 0;
+    abs->screen = 0;
+
+    dev->absolute = abs;
+
     return TRUE;
 }
 
@@ -637,7 +1009,7 @@ InitFocusClassDeviceStruct(DeviceIntPtr dev)
 }
 
 Bool
-InitKbdFeedbackClassDeviceStruct(DeviceIntPtr dev, BellProcPtr bellProc, 
+InitKbdFeedbackClassDeviceStruct(DeviceIntPtr dev, BellProcPtr bellProc,
                                  KbdCtrlProcPtr controlProc)
 {
     KbdFeedbackPtr feedc;
@@ -683,16 +1055,16 @@ InitPtrFeedbackClassDeviceStruct(DeviceIntPtr dev, PtrCtrlProcPtr controlProc)
 }
 
 
-LedCtrl defaultLedControl = {
+static LedCtrl defaultLedControl = {
 	DEFAULT_LEDS, DEFAULT_LEDS_MASK, 0};
 
-BellCtrl defaultBellControl = {
+static BellCtrl defaultBellControl = {
 	DEFAULT_BELL,
 	DEFAULT_BELL_PITCH,
 	DEFAULT_BELL_DURATION,
 	0};
 
-IntegerCtrl defaultIntegerControl = {
+static IntegerCtrl defaultIntegerControl = {
 	DEFAULT_INT_RESOLUTION,
 	DEFAULT_INT_MIN_VALUE,
 	DEFAULT_INT_MAX_VALUE,
@@ -701,22 +1073,22 @@ IntegerCtrl defaultIntegerControl = {
 
 Bool
 InitStringFeedbackClassDeviceStruct (
-      DeviceIntPtr dev, StringCtrlProcPtr controlProc, 
+      DeviceIntPtr dev, StringCtrlProcPtr controlProc,
       int max_symbols, int num_symbols_supported, KeySym *symbols)
 {
     int i;
     StringFeedbackPtr feedc;
 
-    feedc = (StringFeedbackPtr)calloc(1, sizeof(StringFeedbackClassRec));
+    feedc = (StringFeedbackPtr)malloc(sizeof(StringFeedbackClassRec));
     if (!feedc)
 	return FALSE;
     feedc->CtrlProc = controlProc;
     feedc->ctrl.num_symbols_supported = num_symbols_supported;
     feedc->ctrl.num_symbols_displayed = 0;
     feedc->ctrl.max_symbols = max_symbols;
-    feedc->ctrl.symbols_supported = (KeySym *) 
+    feedc->ctrl.symbols_supported = (KeySym *)
 	calloc (num_symbols_supported, sizeof (KeySym));
-    feedc->ctrl.symbols_displayed = (KeySym *) 
+    feedc->ctrl.symbols_displayed = (KeySym *)
 	calloc (max_symbols, sizeof (KeySym));
     if (!feedc->ctrl.symbols_supported || !feedc->ctrl.symbols_displayed)
     {
@@ -740,7 +1112,7 @@ InitStringFeedbackClassDeviceStruct (
 }
 
 Bool
-InitBellFeedbackClassDeviceStruct (DeviceIntPtr dev, BellProcPtr bellProc, 
+InitBellFeedbackClassDeviceStruct (DeviceIntPtr dev, BellProcPtr bellProc,
                                    BellCtrlProcPtr controlProc)
 {
     BellFeedbackPtr feedc;
@@ -799,22 +1171,23 @@ InitIntegerFeedbackClassDeviceStruct (DeviceIntPtr dev, IntegerCtrlProcPtr contr
 }
 
 Bool
-InitPointerDeviceStruct(DevicePtr device, CARD8 *map, int numButtons, 
-                        ValuatorMotionProcPtr motionProc, 
-                        PtrCtrlProcPtr controlProc, int numMotionEvents)
+InitPointerDeviceStruct(DevicePtr device, CARD8 *map, int numButtons,
+                        ValuatorMotionProcPtr motionProc,
+                        PtrCtrlProcPtr controlProc, int numMotionEvents,
+                        int numAxes)
 {
     DeviceIntPtr dev = (DeviceIntPtr)device;
 
     return(InitButtonClassDeviceStruct(dev, numButtons, map) &&
-	   InitValuatorClassDeviceStruct(dev, 2, motionProc,
+	   InitValuatorClassDeviceStruct(dev, numAxes, motionProc,
 					 numMotionEvents, 0) &&
 	   InitPtrFeedbackClassDeviceStruct(dev, controlProc));
 }
 
 Bool
-InitKeyboardDeviceStruct(DevicePtr device, KeySymsPtr pKeySyms, 
-                         CARD8 pModifiers[], BellProcPtr bellProc, 
-                         KbdCtrlProcPtr controlProc) 
+InitKeyboardDeviceStruct(DevicePtr device, KeySymsPtr pKeySyms,
+                         CARD8 pModifiers[], BellProcPtr bellProc,
+                         KbdCtrlProcPtr controlProc)
 {
     DeviceIntPtr dev = (DeviceIntPtr)device;
 
@@ -824,7 +1197,7 @@ InitKeyboardDeviceStruct(DevicePtr device, KeySymsPtr pKeySyms,
 }
 
 void
-SendMappingNotify(unsigned request, unsigned firstKeyCode, unsigned count, 
+SendMappingNotify(unsigned request, unsigned firstKeyCode, unsigned count,
                   ClientPtr client)
 {
     int i;
@@ -839,10 +1212,9 @@ SendMappingNotify(unsigned request, unsigned firstKeyCode, unsigned count,
     }
 #ifdef XKB
     if (!noXkbExtension &&
-	((request == MappingKeyboard) || (request == MappingModifier))) {
-	XkbApplyMappingChange(inputInfo.keyboard,request,firstKeyCode,count,
-									client);
-    }
+	((request == MappingKeyboard) || (request == MappingModifier)))
+        XkbApplyMappingChange(inputInfo.keyboard, request, firstKeyCode, count,
+                              client);
 #endif
 
    /* 0 is the server client */
@@ -870,7 +1242,7 @@ SendMappingNotify(unsigned request, unsigned firstKeyCode, unsigned count,
 Bool
 BadDeviceMap(BYTE *buff, int length, unsigned low, unsigned high, XID *errval)
 {
-    int     i, j;
+    int i, j;
 
     for (i = 0; i < length; i++)
 	if (buff[i])		       /* only check non-zero elements */
@@ -915,112 +1287,103 @@ AllModifierKeysAreUp(dev, map1, per1, map2, per2)
     return TRUE;
 }
 
-int 
+static int
+DoSetModifierMapping(ClientPtr client, KeyCode *inputMap,
+                     int numKeyPerModifier)
+{
+    DeviceIntPtr pDev = NULL;
+    int i = 0, inputMapLen = numKeyPerModifier * 8;
+
+    for (pDev = inputInfo.devices; pDev; pDev = pDev->next) {
+        if ((pDev->coreEvents || pDev == inputInfo.keyboard) && pDev->key) {
+            for (i = 0; i < inputMapLen; i++) {
+                /* Check that all the new modifiers fall within the advertised
+                 * keycode range, and are okay with the DDX. */
+                if (inputMap[i] && ((inputMap[i] < pDev->key->curKeySyms.minKeyCode ||
+                                    inputMap[i] > pDev->key->curKeySyms.maxKeyCode) ||
+                                    !LegalModifier(inputMap[i], pDev))) {
+                    client->errorValue = inputMap[i];
+                    return BadValue;
+                }
+            }
+
+            if (!XaceHook(XACE_DEVICE_ACCESS, client, pDev, TRUE))
+                return BadAccess;
+
+            /* None of the modifiers (old or new) may be down while we change
+             * the map. */
+            if (!AllModifierKeysAreUp(pDev, pDev->key->modifierKeyMap,
+                                      pDev->key->maxKeysPerModifier,
+                                      inputMap, numKeyPerModifier) ||
+                !AllModifierKeysAreUp(pDev, inputMap, numKeyPerModifier,
+                                      pDev->key->modifierKeyMap,
+                                      pDev->key->maxKeysPerModifier)) {
+                return MappingBusy;
+            }
+        }
+    }
+
+    for (pDev = inputInfo.devices; pDev; pDev = pDev->next) {
+
+        if ((pDev->coreEvents || pDev == inputInfo.keyboard) && pDev->key) {
+            bzero(pDev->key->modifierMap, MAP_LENGTH);
+
+            /* Annoyingly, we lack a modifierKeyMap size, so we have to just free
+             * and re-alloc it every time. */
+            if (pDev->key->modifierKeyMap)
+                free(pDev->key->modifierKeyMap);
+
+            if (inputMapLen) {
+                pDev->key->modifierKeyMap = (KeyCode *) malloc(inputMapLen);
+                if (!pDev->key->modifierKeyMap)
+                    return BadAlloc;
+
+                memcpy(pDev->key->modifierKeyMap, inputMap, inputMapLen);
+                pDev->key->maxKeysPerModifier = numKeyPerModifier;
+
+                for (i = 0; i < inputMapLen; i++) {
+                    if (inputMap[i]) {
+                        pDev->key->modifierMap[inputMap[i]] |=
+                            (1 << (((unsigned int)i) / numKeyPerModifier));
+                    }
+                }
+            }
+            else {
+                pDev->key->modifierKeyMap = NULL;
+                pDev->key->maxKeysPerModifier = 0;
+            }
+        }
+    }
+
+    return Success;
+}
+
+int
 ProcSetModifierMapping(ClientPtr client)
 {
     xSetModifierMappingReply rep = {0};
+    DeviceIntPtr dev;
     REQUEST(xSetModifierMappingReq);
-    KeyCode *inputMap;
-    int inputMapLen;
-    int i;
-    DeviceIntPtr keybd = inputInfo.keyboard;
-    KeyClassPtr keyc = keybd->key;
-    
+
     REQUEST_AT_LEAST_SIZE(xSetModifierMappingReq);
 
-    if (client->req_len != ((stuff->numKeyPerModifier<<1) +
-			    (sizeof (xSetModifierMappingReq)>>2)))
+    if (client->req_len != ((stuff->numKeyPerModifier << 1) +
+			    (sizeof (xSetModifierMappingReq) >> 2)))
 	return BadLength;
-
-    inputMapLen = 8*stuff->numKeyPerModifier;
-    inputMap = (KeyCode *)&stuff[1];
-
-    /*
-     *	Now enforce the restriction that "all of the non-zero keycodes must be
-     *	in the range specified by min-keycode and max-keycode in the
-     *	connection setup (else a Value error)"
-     */
-    i = inputMapLen;
-    while (i--)
-    {
-	if (inputMap[i]
-	    && (inputMap[i] < keyc->curKeySyms.minKeyCode
-		|| inputMap[i] > keyc->curKeySyms.maxKeyCode))
-	{
-	    client->errorValue = inputMap[i];
-	    return BadValue;
-	}
-    }
-
-#ifdef XCSECURITY
-    if (!SecurityCheckDeviceAccess(client, keybd, TRUE))
-	return BadAccess;
-#endif 
 
     rep.type = X_Reply;
     rep.length = 0;
     rep.sequenceNumber = client->sequence;
-    rep.success = MappingSuccess;
 
-    /*
-     *	Now enforce the restriction that none of the old or new
-     *	modifier keys may be down while we change the mapping,  and
-     *	that the DDX layer likes the choice.
-     */
-    if (!AllModifierKeysAreUp(keybd, keyc->modifierKeyMap,
-			      (int)keyc->maxKeysPerModifier,
-			      inputMap, (int)stuff->numKeyPerModifier)
-	    ||
-	!AllModifierKeysAreUp(keybd, inputMap, (int)stuff->numKeyPerModifier,
-			      keyc->modifierKeyMap,
-			      (int)keyc->maxKeysPerModifier))
-    {
-	rep.success = MappingBusy;
-    }
-    else
-    {
-	for (i = 0; i < inputMapLen; i++)
-	{
-	    if (inputMap[i] && !LegalModifier(inputMap[i], (DevicePtr)keybd))
-	    {
-		rep.success = MappingFailed;
-		break;
-	    }
-	}
-    }
+    rep.success = DoSetModifierMapping(client, (KeyCode *)&stuff[1],
+                                       stuff->numKeyPerModifier);
 
-    if (rep.success == MappingSuccess)
-    {
-	KeyCode *map;
-	/*
-	 *	Now build the keyboard's modifier bitmap from the
-	 *	list of keycodes.
-	 */
-	map = (KeyCode *)malloc(inputMapLen);
-	if (!map && inputMapLen)
-	    return BadAlloc;
-	if (keyc->modifierKeyMap)
-	    free(keyc->modifierKeyMap);
-	keyc->modifierKeyMap = map;
-	memmove((char *)map, (char *)inputMap, inputMapLen);
-
-	keyc->maxKeysPerModifier = stuff->numKeyPerModifier;
-	for (i = 0; i < MAP_LENGTH; i++)
-	    keyc->modifierMap[i] = 0;
-	for (i = 0; i < inputMapLen; i++)
-	{
-	    if (inputMap[i])
-		keyc->modifierMap[inputMap[i]] |=
-		    (1<<(((unsigned int)i)/keyc->maxKeysPerModifier));
-	}
-    }
-
-    if (rep.success == MappingSuccess)
-        SendMappingNotify(MappingModifier, 0, 0, client);
-
+    SendMappingNotify(MappingModifier, 0, 0, client);
+    for (dev = inputInfo.devices; dev; dev = dev->next)
+        if (dev->key && dev->coreEvents)
+            SendDeviceMappingNotify(client, MappingModifier, 0, 0, dev);
     WriteReplyToClient(client, sizeof(xSetModifierMappingReply), &rep);
-
-    return(client->noClientException);
+    return client->noClientException;
 }
 
 int
@@ -1051,39 +1414,80 @@ ProcChangeKeyboardMapping(ClientPtr client)
     unsigned len;
     KeySymsRec keysyms;
     KeySymsPtr curKeySyms = &inputInfo.keyboard->key->curKeySyms;
+    DeviceIntPtr pDev = NULL;
     REQUEST_AT_LEAST_SIZE(xChangeKeyboardMappingReq);
 
-    len = client->req_len - (sizeof(xChangeKeyboardMappingReq) >> 2);  
+    len = client->req_len - (sizeof(xChangeKeyboardMappingReq) >> 2);
     if (len != (stuff->keyCodes * stuff->keySymsPerKeyCode))
             return BadLength;
+
     if ((stuff->firstKeyCode < curKeySyms->minKeyCode) ||
-	(stuff->firstKeyCode > curKeySyms->maxKeyCode))
-    {
+	(stuff->firstKeyCode > curKeySyms->maxKeyCode)) {
 	    client->errorValue = stuff->firstKeyCode;
 	    return BadValue;
+
     }
-    if ( ((unsigned)(stuff->firstKeyCode + stuff->keyCodes - 1) >
-	  curKeySyms->maxKeyCode) ||
-	(stuff->keySymsPerKeyCode == 0))
-    {
+    if (((unsigned)(stuff->firstKeyCode + stuff->keyCodes - 1) >
+        curKeySyms->maxKeyCode) || (stuff->keySymsPerKeyCode == 0)) {
 	    client->errorValue = stuff->keySymsPerKeyCode;
 	    return BadValue;
     }
-#ifdef XCSECURITY
-    if (!SecurityCheckDeviceAccess(client, inputInfo.keyboard,
-				   TRUE))
-	return BadAccess;
-#endif 
+
+    for (pDev = inputInfo.devices; pDev; pDev = pDev->next) {
+        if ((pDev->coreEvents || pDev == inputInfo.keyboard) && pDev->key) {
+            if (!XaceHook(XACE_DEVICE_ACCESS, client, pDev, TRUE))
+                return BadAccess;
+        }
+    }
+
     keysyms.minKeyCode = stuff->firstKeyCode;
     keysyms.maxKeyCode = stuff->firstKeyCode + stuff->keyCodes - 1;
     keysyms.mapWidth = stuff->keySymsPerKeyCode;
     keysyms.map = (KeySym *)&stuff[1];
-    if (!SetKeySymsMap(curKeySyms, &keysyms))
-	return BadAlloc;
-    SendMappingNotify(MappingKeyboard, stuff->firstKeyCode, stuff->keyCodes,
-									client);
-    return client->noClientException;
+    for (pDev = inputInfo.devices; pDev; pDev = pDev->next)
+        if ((pDev->coreEvents || pDev == inputInfo.keyboard) && pDev->key)
+            if (!SetKeySymsMap(&pDev->key->curKeySyms, &keysyms))
+                return BadAlloc;
 
+    SendMappingNotify(MappingKeyboard, stuff->firstKeyCode, stuff->keyCodes,
+                      client);
+    for (pDev = inputInfo.devices; pDev; pDev = pDev->next)
+        if (pDev->key && pDev->coreEvents)
+            SendDeviceMappingNotify(client, MappingKeyboard,
+                                    stuff->firstKeyCode, stuff->keyCodes,
+                                    pDev);
+
+    return client->noClientException;
+}
+
+static int
+DoSetPointerMapping(DeviceIntPtr device, BYTE *map, int n)
+{
+    int i = 0;
+    DeviceIntPtr dev = NULL;
+
+    if (!device || !device->button)
+        return BadDevice;
+
+    for (dev = inputInfo.devices; dev; dev = dev->next) {
+        if ((dev->coreEvents || dev == inputInfo.pointer) && dev->button) {
+            for (i = 0; i < n; i++) {
+                if ((device->button->map[i + 1] != map[i]) &&
+                    BitIsOn(device->button->down, i + 1)) {
+                    return MappingBusy;
+                }
+            }
+        }
+    }
+
+    for (dev = inputInfo.devices; dev; dev = dev->next) {
+        if ((dev->coreEvents || dev == inputInfo.pointer) && dev->button) {
+            for (i = 0; i < n; i++)
+                dev->button->map[i + 1] = map[i];
+        }
+    }
+
+    return Success;
 }
 
 int
@@ -1091,9 +1495,8 @@ ProcSetPointerMapping(ClientPtr client)
 {
     REQUEST(xSetPointerMappingReq);
     BYTE *map;
+    int ret;
     xSetPointerMappingReply rep = {0};
-    unsigned int i;
-    DeviceIntPtr mouse = inputInfo.pointer;
 
     REQUEST_AT_LEAST_SIZE(xSetPointerMappingReq);
     if (client->req_len != (sizeof(xSetPointerMappingReq)+stuff->nElts+3) >> 2)
@@ -1103,23 +1506,24 @@ ProcSetPointerMapping(ClientPtr client)
     rep.sequenceNumber = client->sequence;
     rep.success = MappingSuccess;
     map = (BYTE *)&stuff[1];
-    if (stuff->nElts != mouse->button->numButtons)
-    {
+
+    /* So we're bounded here by the number of core buttons.  This check
+     * probably wants disabling through XFixes. */
+    if (stuff->nElts != inputInfo.pointer->button->numButtons) {
 	client->errorValue = stuff->nElts;
 	return BadValue;
     }
     if (BadDeviceMap(&map[0], (int)stuff->nElts, 1, 255, &client->errorValue))
 	return BadValue;
-    for (i=0; i < stuff->nElts; i++)
-	if ((mouse->button->map[i + 1] != map[i]) &&
-	    BitIsOn(mouse->button->down, i + 1))
-	{
-    	    rep.success = MappingBusy;
-	    WriteReplyToClient(client, sizeof(xSetPointerMappingReply), &rep);
-            return Success;
-	}
-    for (i = 0; i < stuff->nElts; i++)
-	mouse->button->map[i + 1] = map[i];
+
+    ret = DoSetPointerMapping(inputInfo.pointer, map, stuff->nElts);
+    if (ret != Success) {
+        rep.success = ret;
+        WriteReplyToClient(client, sizeof(xSetPointerMappingReply), &rep);
+        return Success;
+    }
+
+    /* FIXME: Send mapping notifies for all the extended devices as well. */
     SendMappingNotify(MappingPointer, 0, 0, client);
     WriteReplyToClient(client, sizeof(xSetPointerMappingReply), &rep);
     return Success;
@@ -1135,14 +1539,12 @@ ProcGetKeyboardMapping(ClientPtr client)
     REQUEST_SIZE_MATCH(xGetKeyboardMappingReq);
 
     if ((stuff->firstKeyCode < curKeySyms->minKeyCode) ||
-        (stuff->firstKeyCode > curKeySyms->maxKeyCode))
-    {
+        (stuff->firstKeyCode > curKeySyms->maxKeyCode)) {
 	client->errorValue = stuff->firstKeyCode;
 	return BadValue;
     }
     if (stuff->firstKeyCode + stuff->count >
-	(unsigned)(curKeySyms->maxKeyCode + 1))
-    {
+	(unsigned)(curKeySyms->maxKeyCode + 1)) {
 	client->errorValue = stuff->count;
         return BadValue;
     }
@@ -1203,43 +1605,30 @@ Ones(unsigned long mask)             /* HACKMEM 169 */
     return (((y + (y >> 3)) & 030707070707) % 077);
 }
 
-int
-ProcChangeKeyboardControl (ClientPtr client)
+static int
+DoChangeKeyboardControl (ClientPtr client, DeviceIntPtr keybd, XID *vlist,
+                         BITS32 vmask)
 {
 #define DO_ALL    (-1)
     KeybdCtrl ctrl;
-    DeviceIntPtr keybd = inputInfo.keyboard;
-    XID *vlist;
     int t;
     int led = DO_ALL;
     int key = DO_ALL;
-    BITS32 vmask, index2;
-    int mask, i;
-    REQUEST(xChangeKeyboardControlReq);
+    BITS32 index2;
+    int mask = vmask, i;
 
-    REQUEST_AT_LEAST_SIZE(xChangeKeyboardControlReq);
-    vmask = stuff->mask;
-    if (client->req_len != (sizeof(xChangeKeyboardControlReq)>>2)+Ones(vmask))
-	return BadLength;
-#ifdef XCSECURITY
-    if (!SecurityCheckDeviceAccess(client, keybd, TRUE))
-	return BadAccess;
-#endif 
-    vlist = (XID *)&stuff[1];		/* first word of values */
     ctrl = keybd->kbdfeed->ctrl;
-    while (vmask)
-    {
+    while (vmask) {
 	index2 = (BITS32) lowbit (vmask);
 	vmask &= ~index2;
-	switch (index2)
-	{
-	case KBKeyClickPercent: 
+	switch (index2) {
+	case KBKeyClickPercent:
 	    t = (INT8)*vlist;
 	    vlist++;
-	    if (t == -1)
+	    if (t == -1) {
 		t = defaultKeyboardControl.click;
-	    else if (t < 0 || t > 100)
-	    {
+            }
+	    else if (t < 0 || t > 100) {
 		client->errorValue = t;
 		return BadValue;
 	    }
@@ -1248,10 +1637,10 @@ ProcChangeKeyboardControl (ClientPtr client)
 	case KBBellPercent:
 	    t = (INT8)*vlist;
 	    vlist++;
-	    if (t == -1)
+	    if (t == -1) {
 		t = defaultKeyboardControl.bell;
-	    else if (t < 0 || t > 100)
-	    {
+            }
+	    else if (t < 0 || t > 100) {
 		client->errorValue = t;
 		return BadValue;
 	    }
@@ -1260,10 +1649,10 @@ ProcChangeKeyboardControl (ClientPtr client)
 	case KBBellPitch:
 	    t = (INT16)*vlist;
 	    vlist++;
-	    if (t == -1)
+	    if (t == -1) {
 		t = defaultKeyboardControl.bell_pitch;
-	    else if (t < 0)
-	    {
+            }
+	    else if (t < 0) {
 		client->errorValue = t;
 		return BadValue;
 	    }
@@ -1274,8 +1663,7 @@ ProcChangeKeyboardControl (ClientPtr client)
 	    vlist++;
 	    if (t == -1)
 		t = defaultKeyboardControl.bell_duration;
-	    else if (t < 0)
-	    {
+	    else if (t < 0) {
 		client->errorValue = t;
 		return BadValue;
 	    }
@@ -1284,56 +1672,51 @@ ProcChangeKeyboardControl (ClientPtr client)
 	case KBLed:
 	    led = (CARD8)*vlist;
 	    vlist++;
-	    if (led < 1 || led > 32)
-	    {
+	    if (led < 1 || led > 32) {
 		client->errorValue = led;
 		return BadValue;
 	    }
-	    if (!(stuff->mask & KBLedMode))
+	    if (!(mask & KBLedMode))
 		return BadMatch;
 	    break;
 	case KBLedMode:
 	    t = (CARD8)*vlist;
 	    vlist++;
-	    if (t == LedModeOff)
-	    {
+	    if (t == LedModeOff) {
 		if (led == DO_ALL)
 		    ctrl.leds = 0x0;
 		else
 		    ctrl.leds &= ~(((Leds)(1)) << (led - 1));
 	    }
-	    else if (t == LedModeOn)
-	    {
+	    else if (t == LedModeOn) {
 		if (led == DO_ALL)
 		    ctrl.leds = ~0L;
 		else
 		    ctrl.leds |= (((Leds)(1)) << (led - 1));
 	    }
-	    else
-	    {
+	    else {
 		client->errorValue = t;
 		return BadValue;
 	    }
 #ifdef XKB
-	    if (!noXkbExtension) {
-		XkbEventCauseRec	cause;
-		XkbSetCauseCoreReq(&cause,X_ChangeKeyboardControl,client);
-		XkbSetIndicators(keybd,((led == DO_ALL) ? ~0L : (1L<<(led-1))),
+            if (!noXkbExtension) {
+                XkbEventCauseRec cause;
+                XkbSetCauseCoreReq(&cause,X_ChangeKeyboardControl,client);
+                XkbSetIndicators(keybd,((led == DO_ALL) ? ~0L : (1L<<(led-1))),
 				 			ctrl.leds, &cause);
-		ctrl.leds = keybd->kbdfeed->ctrl.leds;
-	    }
+                ctrl.leds = keybd->kbdfeed->ctrl.leds;
+            }
 #endif
 	    break;
 	case KBKey:
 	    key = (KeyCode)*vlist;
 	    vlist++;
 	    if ((KeyCode)key < inputInfo.keyboard->key->curKeySyms.minKeyCode ||
-		(KeyCode)key > inputInfo.keyboard->key->curKeySyms.maxKeyCode)
-	    {
+		(KeyCode)key > inputInfo.keyboard->key->curKeySyms.maxKeyCode) {
 		client->errorValue = key;
 		return BadValue;
 	    }
-	    if (!(stuff->mask & KBAutoRepeatMode))
+	    if (!(mask & KBAutoRepeatMode))
 		return BadMatch;
 	    break;
 	case KBAutoRepeatMode:
@@ -1342,25 +1725,22 @@ ProcChangeKeyboardControl (ClientPtr client)
 	    t = (CARD8)*vlist;
 	    vlist++;
 #ifdef XKB
-	    if (!noXkbExtension && key != DO_ALL)
-		XkbDisableComputedAutoRepeats(keybd,key);
+            if (!noXkbExtension && key != DO_ALL)
+                XkbDisableComputedAutoRepeats(keybd,key);
 #endif
-	    if (t == AutoRepeatModeOff)
-	    {
+	    if (t == AutoRepeatModeOff) {
 		if (key == DO_ALL)
 		    ctrl.autoRepeat = FALSE;
 		else
 		    ctrl.autoRepeats[i] &= ~mask;
 	    }
-	    else if (t == AutoRepeatModeOn)
-	    {
+	    else if (t == AutoRepeatModeOn) {
 		if (key == DO_ALL)
 		    ctrl.autoRepeat = TRUE;
 		else
 		    ctrl.autoRepeats[i] |= mask;
 	    }
-	    else if (t == AutoRepeatModeDefault)
-	    {
+	    else if (t == AutoRepeatModeDefault) {
 		if (key == DO_ALL)
 		    ctrl.autoRepeat = defaultKeyboardControl.autoRepeat;
 		else
@@ -1368,30 +1748,68 @@ ProcChangeKeyboardControl (ClientPtr client)
 			    (ctrl.autoRepeats[i] & ~mask) |
 			    (defaultKeyboardControl.autoRepeats[i] & mask);
 	    }
-	    else
-	    {
+	    else {
 		client->errorValue = t;
 		return BadValue;
 	    }
 	    break;
 	default:
-	    client->errorValue = stuff->mask;
+	    client->errorValue = mask;
 	    return BadValue;
 	}
     }
     keybd->kbdfeed->ctrl = ctrl;
+
 #ifdef XKB
     /* The XKB RepeatKeys control and core protocol global autorepeat */
     /* value are linked	*/
-    if (!noXkbExtension) {
-	XkbSetRepeatKeys(keybd,key,keybd->kbdfeed->ctrl.autoRepeat);
-    }
+    if (!noXkbExtension)
+        XkbSetRepeatKeys(keybd, key, keybd->kbdfeed->ctrl.autoRepeat);
     else
 #endif
-    (*keybd->kbdfeed->CtrlProc)(keybd, &keybd->kbdfeed->ctrl);
+        (*keybd->kbdfeed->CtrlProc)(keybd, &keybd->kbdfeed->ctrl);
+
     return Success;
+
 #undef DO_ALL
-} 
+}
+
+int
+ProcChangeKeyboardControl (ClientPtr client)
+{
+    XID *vlist;
+    BITS32 vmask;
+    int ret = Success, error = Success;
+    DeviceIntPtr pDev = NULL;
+    REQUEST(xChangeKeyboardControlReq);
+
+    REQUEST_AT_LEAST_SIZE(xChangeKeyboardControlReq);
+
+    vmask = stuff->mask;
+    vlist = (XID *)&stuff[1];
+
+    if (client->req_len != (sizeof(xChangeKeyboardControlReq)>>2)+Ones(vmask))
+	return BadLength;
+
+    for (pDev = inputInfo.devices; pDev; pDev = pDev->next) {
+        if ((pDev->coreEvents || pDev == inputInfo.keyboard) &&
+            pDev->kbdfeed && pDev->kbdfeed->CtrlProc) {
+            if (!XaceHook(XACE_DEVICE_ACCESS, client, pDev, TRUE))
+                return BadAccess;
+        }
+    }
+
+    for (pDev = inputInfo.devices; pDev; pDev = pDev->next) {
+        if ((pDev->coreEvents || pDev == inputInfo.keyboard) &&
+            pDev->kbdfeed && pDev->kbdfeed->CtrlProc) {
+            ret = DoChangeKeyboardControl(client, pDev, vlist, vmask);
+            if (ret != Success)
+                error = ret;
+        }
+    }
+
+    return error;
+}
 
 int
 ProcGetKeyboardControl (ClientPtr client)
@@ -1414,7 +1832,7 @@ ProcGetKeyboardControl (ClientPtr client)
 	rep.map[i] = ctrl->autoRepeats[i];
     WriteReplyToClient(client, sizeof(xGetKeyboardControlReply), &rep);
     return Success;
-} 
+}
 
 int
 ProcBell(ClientPtr client)
@@ -1424,26 +1842,37 @@ ProcBell(ClientPtr client)
     int newpercent;
     REQUEST(xBellReq);
     REQUEST_SIZE_MATCH(xBellReq);
-    if (stuff->percent < -100 || stuff->percent > 100)
-    {
+
+    if (!keybd->kbdfeed->BellProc)
+        return BadDevice;
+
+    if (stuff->percent < -100 || stuff->percent > 100) {
 	client->errorValue = stuff->percent;
 	return BadValue;
     }
+
     newpercent = (base * stuff->percent) / 100;
     if (stuff->percent < 0)
         newpercent = base + newpercent;
     else
     	newpercent = base - newpercent + stuff->percent;
+
+    for (keybd = inputInfo.devices; keybd; keybd = keybd->next) {
+        if ((keybd->coreEvents || keybd == inputInfo.keyboard) &&
+            keybd->kbdfeed && keybd->kbdfeed->BellProc) {
 #ifdef XKB
-    if (!noXkbExtension)
-	XkbHandleBell(FALSE,FALSE, keybd, newpercent, &keybd->kbdfeed->ctrl, 0, 
-		      None, NULL, client);
-	else
+            if (!noXkbExtension)
+                XkbHandleBell(FALSE, FALSE, keybd, newpercent,
+                              &keybd->kbdfeed->ctrl, 0, None, NULL, client);
+            else
 #endif
-    (*keybd->kbdfeed->BellProc)(newpercent, keybd,
-				(void *) &keybd->kbdfeed->ctrl, 0);
+                (*keybd->kbdfeed->BellProc)(newpercent, keybd,
+                                            &keybd->kbdfeed->ctrl, 0);
+        }
+    }
+
     return Success;
-} 
+}
 
 int
 ProcChangePointerControl(ClientPtr client)
@@ -1453,51 +1882,66 @@ ProcChangePointerControl(ClientPtr client)
     REQUEST(xChangePointerControlReq);
 
     REQUEST_SIZE_MATCH(xChangePointerControlReq);
+
+    if (!mouse->ptrfeed->CtrlProc)
+        return BadDevice;
+
     ctrl = mouse->ptrfeed->ctrl;
-    if ((stuff->doAccel != xTrue) && (stuff->doAccel != xFalse))
-    {
+    if ((stuff->doAccel != xTrue) && (stuff->doAccel != xFalse)) {
 	client->errorValue = stuff->doAccel;
 	return(BadValue);
     }
-    if ((stuff->doThresh != xTrue) && (stuff->doThresh != xFalse))
-    {
+    if ((stuff->doThresh != xTrue) && (stuff->doThresh != xFalse)) {
 	client->errorValue = stuff->doThresh;
 	return(BadValue);
     }
-    if (stuff->doAccel)
-    {
-	if (stuff->accelNum == -1)
+    if (stuff->doAccel) {
+	if (stuff->accelNum == -1) {
 	    ctrl.num = defaultPointerControl.num;
-	else if (stuff->accelNum < 0)
-	{
+        }
+	else if (stuff->accelNum < 0) {
 	    client->errorValue = stuff->accelNum;
 	    return BadValue;
 	}
-	else ctrl.num = stuff->accelNum;
-	if (stuff->accelDenum == -1)
+	else {
+            ctrl.num = stuff->accelNum;
+        }
+
+	if (stuff->accelDenum == -1) {
 	    ctrl.den = defaultPointerControl.den;
-	else if (stuff->accelDenum <= 0)
-	{
+        }
+	else if (stuff->accelDenum <= 0) {
 	    client->errorValue = stuff->accelDenum;
 	    return BadValue;
 	}
-	else ctrl.den = stuff->accelDenum;
+	else {
+            ctrl.den = stuff->accelDenum;
+        }
     }
-    if (stuff->doThresh)
-    {
-	if (stuff->threshold == -1)
+    if (stuff->doThresh) {
+	if (stuff->threshold == -1) {
 	    ctrl.threshold = defaultPointerControl.threshold;
-	else if (stuff->threshold < 0)
-	{
+        }
+	else if (stuff->threshold < 0) {
 	    client->errorValue = stuff->threshold;
 	    return BadValue;
 	}
-	else ctrl.threshold = stuff->threshold;
+	else {
+            ctrl.threshold = stuff->threshold;
+        }
     }
-    mouse->ptrfeed->ctrl = ctrl;
-    (*mouse->ptrfeed->CtrlProc)(mouse, &mouse->ptrfeed->ctrl);
+
+
+    for (mouse = inputInfo.devices; mouse; mouse = mouse->next) {
+        if ((mouse->coreEvents || mouse == inputInfo.pointer) &&
+            mouse->ptrfeed && mouse->ptrfeed->CtrlProc) {
+            mouse->ptrfeed->ctrl = ctrl;
+            (*mouse->ptrfeed->CtrlProc)(mouse, &mouse->ptrfeed->ctrl);
+        }
+    }
+
     return Success;
-} 
+}
 
 int
 ProcGetPointerControl(ClientPtr client)
@@ -1538,7 +1982,7 @@ ProcGetMotionEvents(ClientPtr client)
     WindowPtr pWin;
     xTimecoord * coords = (xTimecoord *) NULL;
     xGetMotionEventsReply rep = {0};
-    int     i, count, xmin, xmax, ymin, ymax;
+    int i, count, xmin, xmax, ymin, ymax;
     unsigned long nEvents;
     DeviceIntPtr mouse = inputInfo.pointer;
     TimeStamp start, stop;
@@ -1617,8 +2061,8 @@ ProcQueryKeymap(ClientPtr client)
     }
     else
 #endif
-    for (i = 0; i<32; i++)
-	rep.map[i] = down[i];
+	for (i = 0; i<32; i++)
+	    rep.map[i] = down[i];
     WriteReplyToClient(client, sizeof(xQueryKeymapReply), &rep);
     return Success;
 }
