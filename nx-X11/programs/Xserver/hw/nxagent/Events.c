@@ -53,6 +53,7 @@
 #include "Keystroke.h"
 #include "Events.h"
 #include "Pointer.h"
+#include "mipointer.h"
 #include "Rootless.h"
 #include "Splash.h"
 #include "Trap.h"
@@ -295,6 +296,7 @@ void ProcessInputEvents(void)
   #endif
 
   mieqProcessInputEvents();
+  miPointerUpdate();
 }
 
 #ifdef DEBUG
@@ -828,21 +830,27 @@ static int nxagentChangeVisibilityPrivate(WindowPtr pWin, void * ptr)
    use_time: if != NULL and <= current time use this timestamp instead
              of the current time
 
+  FIXME: unfortunately xorg does not offer a way to pass an own event
+  time for an event to queue. So use_time is currently ignored, but
+  expected to be used by some callers. The effects of this are
+  currently unknown.
+
+  Maybe we can modify the time to the generated events in
+  nxagentEvents prior to enqueueing them.
+
  */
 void nxagentQueueKeyEvent(int type, unsigned int keycode, Bool update_last_event_time, Time use_time)
 {
   Time now = GetTimeInMillis();
 
+#if 0
   xEvent x = {
       .u.u.type = type,
       .u.u.detail = keycode,
       .u.keyButtonPointer.time = now,
   };
 
-  if (update_last_event_time)
-    nxagentLastEventTime = now;
-
-  if (use_time)
+  if (use_time != 0)
   {
     if (use_time > now)
     {
@@ -853,7 +861,18 @@ void nxagentQueueKeyEvent(int type, unsigned int keycode, Bool update_last_event
       x.u.keyButtonPointer.time = use_time;
     }
   }
-  mieqEnqueue(nxagentKeyboardDevice, &x);
+#endif
+
+  if (update_last_event_time)
+    nxagentLastEventTime = now;
+
+#if 0
+  mieqEnqueue(&x);
+#else
+  int n = GetKeyboardEvents(nxagentEvents, nxagentKeyboardDevice, type, keycode);
+  for (int i = 0; i < n; i++)
+    mieqEnqueue(nxagentKeyboardDevice, nxagentEvents + i);
+#endif
 }
 
 void nxagentDispatchEvents(PredicateFuncPtr predicate)
@@ -1199,10 +1218,12 @@ FIXME: Don't enqueue the KeyRelease event if the key was not already
 
         if (!(nxagentCheckSpecialKeystroke(&X.xkey, &result)) && sendKey == 1)
         {
-          nxagentQueueKeyEvent(KeyRelease,
+            /* FIXME: Current implementation ignored the last
+             * parameter (desired event time)! */
+            nxagentQueueKeyEvent(KeyRelease,
                                nxagentConvertKeycode(X.xkey.keycode),
                                True,
-                               nxagentLastKeyPressTime + (X.xkey.time - nxagentLastServerTime))
+                               nxagentLastKeyPressTime + (X.xkey.time - nxagentLastServerTime));
 
           CriticalOutputPending = 1;
 
@@ -1296,7 +1317,20 @@ FIXME: Don't enqueue the KeyRelease event if the key was not already
           }
           #endif
 
+          x.u.keyButtonPointer.time = nxagentLastEventTime = GetTimeInMillis();
+
+#if 0
           mieqEnqueue(&x);
+#else
+          int valuators[2];
+          valuators[0] = x.u.keyButtonPointer.rootX;
+          valuators[1] = x.u.keyButtonPointer.rootY;
+          int n = GetPointerEvents(nxagentEvents, nxagentPointerDevice, ButtonRelease,
+                                   inputInfo.pointer -> button -> map[nxagentReversePointerMap[X.xbutton.button]],
+                                   POINTER_ABSOLUTE, 0, 2, valuators);
+          for (int i = 0; i < n; i++)
+            mieqEnqueue(nxagentPointerDevice, nxagentEvents + i);
+#endif
 
           CriticalOutputPending = 1;
         }
@@ -1350,7 +1384,6 @@ FIXME: Don't enqueue the KeyRelease event if the key was not already
           memset(&x, 0, sizeof(xEvent));
           x.u.u.type = ButtonRelease;
           x.u.u.detail = inputInfo.pointer -> button -> map[nxagentReversePointerMap[X.xbutton.button]];
-          x.u.keyButtonPointer.time = nxagentLastEventTime = GetTimeInMillis();
 
           if (nxagentOption(Rootless))
           {
@@ -1370,7 +1403,19 @@ FIXME: Don't enqueue the KeyRelease event if the key was not already
           }
           #endif
 
+          nxagentLastEventTime = GetTimeInMillis();
+#if 0
           mieqEnqueue(&x);
+#else
+          int valuators[2];
+          valuators[0] = x.u.keyButtonPointer.rootX;
+          valuators[1] = x.u.keyButtonPointer.rootY;
+          int n = GetPointerEvents(nxagentEvents, nxagentPointerDevice, ButtonPress,
+                                   inputInfo.pointer -> button -> map[nxagentReversePointerMap[X.xbutton.button]],
+                                   POINTER_ABSOLUTE, 0, 2, valuators);
+          for (int i = 0; i < n; i++)
+            mieqEnqueue(nxagentPointerDevice, nxagentEvents + i);
+#endif
 
           CriticalOutputPending = 1;
         }
@@ -1466,7 +1511,19 @@ FIXME: Don't enqueue the KeyRelease event if the key was not already
           }
           #endif
 
+#if 0
           mieqEnqueue(&x);
+#else
+          /* FIXME: drop the event x altogether; this is just to make it compile */
+          //miPointerAbsoluteCursor(x.u.keyButtonPointer.rootX, x.u.keyButtonPointer.rootY, x.u.keyButtonPointer.time);
+          int valuators[2];
+          valuators[0] = x.u.keyButtonPointer.rootX;
+          valuators[1] = x.u.keyButtonPointer.rootY;
+          int n = GetPointerEvents(nxagentEvents, nxagentPointerDevice, MotionNotify,
+                                   0, POINTER_ABSOLUTE, 0, 2, valuators);
+          for (int i = 0; i < n; i++)
+            mieqEnqueue(nxagentPointerDevice, nxagentEvents + i);
+#endif
         }
 
         /*
@@ -1631,7 +1688,7 @@ FIXME: Don't enqueue the KeyRelease event if the key was not already
                       NXShadowEvent(nxagentDisplay, xM);
                     }
 
-                    nxagentQueueKeyEvent(KeyRelease, i * 8 + k, True, NULL);
+                    nxagentQueueKeyEvent(KeyRelease, i * 8 + k, True, 0);
                   }
                 }
               }
@@ -1766,8 +1823,19 @@ FIXME: Don't enqueue the KeyRelease event if the key was not already
 
             x.u.keyButtonPointer.time = nxagentLastEventTime = GetTimeInMillis();
 
+#if 0
             mieqEnqueue(&x);
-
+#else
+            /* FIXME: drop the event x altogether; this is just to make it compile */
+            //miPointerAbsoluteCursor(x.u.keyButtonPointer.rootX, x.u.keyButtonPointer.rootY, x.u.keyButtonPointer.time);
+            int valuators[2];
+            valuators[0] = x.u.keyButtonPointer.rootX;
+            valuators[1] = x.u.keyButtonPointer.rootY;
+            int n = GetPointerEvents(nxagentEvents, nxagentPointerDevice, MotionNotify,
+                                     0, POINTER_ABSOLUTE, 0, 2, valuators);
+            for (int i = 0; i < n; i++)
+              mieqEnqueue(nxagentPointerDevice, nxagentEvents + i);
+#endif
             nxagentDirectInstallColormaps(pScreen);
           }
         }
@@ -2307,10 +2375,10 @@ int nxagentHandleKeyPress(XEvent *X, enum HandleEventResult *result)
     nxagentXkbState.Num = (~nxagentXkbState.Num & 1);
   }
 
-  nxagentQueueKeyEvent(KeyPress, nxagentConvertKeycode(X -> xkey.keycode), True, NULL);
+  nxagentQueueKeyEvent(KeyPress, nxagentConvertKeycode(X -> xkey.keycode), True, 0);
 
   nxagentLastServerTime = X -> xkey.time;
-  nxagentLastKeyPressTime = nxagentLastEventTime
+  nxagentLastKeyPressTime = nxagentLastEventTime;
 
   CriticalOutputPending = 1;
 
@@ -3670,8 +3738,8 @@ void nxagentDisablePointerEvents(void)
 
 void nxagentSendFakeKey(int key)
 {
-  nxagentQueueKeyEvent(KeyPress, key, false, NULL);
-  nxagentQueueKeyEvent(KeyRelease, key, false, NULL);
+  nxagentQueueKeyEvent(KeyPress, key, False, 0);
+  nxagentQueueKeyEvent(KeyRelease, key, False, 0);
 }
 
 int nxagentInitXkbKeyboardState(void)
