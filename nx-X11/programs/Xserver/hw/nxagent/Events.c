@@ -143,9 +143,7 @@ int nxagentDebugInput = 0;
 extern Bool nxagentRootlessTreesMatch(void);
 #endif
 
-extern xEvent *nxagentEvent;
-extern DeviceIntPtr nxagentKeyboardDevice;
-extern DeviceIntPtr nxagentPointerDevice;
+extern xEvent *nxagentEvents;
 
 extern Selection *CurrentSelections;
 extern int NumCurrentSelections;

@@ -72,6 +72,8 @@ is" without express or implied warranty.
 
 unsigned char nxagentReversePointerMap[MAXBUTTONS];
 
+DeviceIntPtr nxagentPointerDevice = NULL;
+
 void nxagentChangePointerControl(DeviceIntPtr pDev, PtrCtrl *ctrl)
 {
   /*
