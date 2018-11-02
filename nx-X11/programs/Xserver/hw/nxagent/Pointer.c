@@ -124,7 +124,7 @@ int nxagentPointerProc(DeviceIntPtr pDev, int onoff)
       InitPointerDeviceStruct((DevicePtr) pDev, map, nmap,
 			      miPointerGetMotionEvents,
 			      nxagentChangePointerControl,
-			      miPointerGetMotionBufferSize());
+			      miPointerGetMotionBufferSize(), 2);
       break;
     case DEVICE_ON:
 
