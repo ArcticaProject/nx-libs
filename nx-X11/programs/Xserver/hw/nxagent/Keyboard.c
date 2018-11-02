@@ -270,6 +270,11 @@ void nxagentBell(int volume, DeviceIntPtr pDev, void * ctrl, int cls)
   XBell(nxagentDisplay, volume);
 }
 
+void DDXRingBell(int volume, int pitch, int duration)
+{
+  XBell(nxagentDisplay, volume);
+}
+
 void nxagentChangeKeyboardControl(DeviceIntPtr pDev, KeybdCtrl *ctrl)
 {
   #ifdef XKB
