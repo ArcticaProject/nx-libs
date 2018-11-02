@@ -842,7 +842,7 @@ XkbError:
         {
           #ifdef TEST
           fprintf(stderr, "nxagentKeyboardProc: Using default keyboard: model [%s] layout [%s].\n",
-                      model, layout);
+                      model?model:"(default)", layout?layout:"(default)");
           #endif
         }
 
@@ -917,7 +917,8 @@ XkbError:
         #ifdef DEBUG
         fprintf(stderr, "nxagentKeyboardProc: Going to set rules and init device: "
                         "[rules='%s',model='%s',layout='%s',variant='%s',options='%s'].\n",
-                        rules, model, layout, variant, options);
+                        rules?rules:"(default)", model?model:"(default)", layout?layout:"(default)",
+                        variant?variant:"(default)", options?options:"(default)");
         #endif
 
         XkbSetRulesDflts(rules, model, layout, variant, options);
