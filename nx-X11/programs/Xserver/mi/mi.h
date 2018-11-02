@@ -85,18 +85,6 @@ extern RegionPtr miCopyArea(
     int /*yOut*/
 );
 
-extern void miOpqStipDrawable(
-    DrawablePtr /*pDraw*/,
-    GCPtr /*pGC*/,
-    RegionPtr /*prgnSrc*/,
-    MiBits * /*pbits*/,
-    int /*srcx*/,
-    int /*w*/,
-    int /*h*/,
-    int /*dstx*/,
-    int /*dsty*/
-);
-
 extern RegionPtr miCopyPlane(
     DrawablePtr /*pSrcDrawable*/,
     DrawablePtr /*pDstDrawable*/,
@@ -144,15 +132,6 @@ extern void miRecolorCursor(
 
 /* midash.c */
 
-extern miDashPtr miDashLine(
-    int /*npt*/,
-    DDXPointPtr /*ppt*/,
-    unsigned int /*nDash*/,
-    unsigned char * /*pDash*/,
-    unsigned int /*offset*/,
-    int * /*pnseg*/
-);
-
 extern void miStepDash(
     int /*dist*/,
     int * /*pDashIndex*/,
@@ -169,11 +148,11 @@ typedef struct _DeviceRec *DevicePtr;
 #endif
 
 extern Bool mieqInit(
-    DevicePtr /*pKbd*/,
-    DevicePtr /*pPtr*/
+    void
 );
 
 extern void mieqEnqueue(
+    DeviceIntPtr /*pDev*/,
     xEventPtr /*e*/
 );
 
@@ -185,6 +164,9 @@ extern void mieqSwitchScreen(
 extern void mieqProcessInputEvents(
     void
 );
+
+typedef void (*mieqHandler)(int, xEventPtr, DeviceIntPtr, int);
+void mieqSetHandler(int event, mieqHandler handler);
 
 /* miexpose.c */
 
@@ -323,16 +305,6 @@ extern void miPolySegment(
 
 /* mipolytext.c */
 
-extern int miPolyText(
-    DrawablePtr /*pDraw*/,
-    GCPtr /*pGC*/,
-    int /*x*/,
-    int /*y*/,
-    int /*count*/,
-    char * /*chars*/,
-    FontEncoding /*fontEncoding*/
-);
-
 extern int miPolyText8(
     DrawablePtr /*pDraw*/,
     GCPtr /*pGC*/,
@@ -349,16 +321,6 @@ extern int miPolyText16(
     int /*y*/,
     int /*count*/,
     unsigned short * /*chars*/
-);
-
-extern int miImageText(
-    DrawablePtr /*pDraw*/,
-    GCPtr /*pGC*/,
-    int /*x*/,
-    int /*y*/,
-    int /*count*/,
-    char * /*chars*/,
-    FontEncoding /*fontEncoding*/
 );
 
 extern void miImageText8(
@@ -391,15 +353,13 @@ extern void miPushPixels(
     int /*yOrg*/
 );
 
+/* miregion.c */
+
 /* see also region.h */
 
-extern Bool RegionRectAlloc(
+extern Bool miRectAlloc(
     RegionPtr /*pRgn*/,
     int /*n*/
-);
-
-extern void RegionSetExtents(
-    RegionPtr /*pReg*/
 );
 
 extern int miFindMaxBand(
@@ -407,12 +367,12 @@ extern int miFindMaxBand(
 );
 
 #ifdef DEBUG
-extern Bool RegionIsValid(
+extern Bool miValidRegion(
     RegionPtr /*prgn*/
 );
 #endif
 
-extern Bool RegionBroken(RegionPtr pReg);
+extern Bool miRegionBroken(RegionPtr pReg);
 
 /* miscrinit.c */
 
@@ -424,10 +384,6 @@ extern Bool miModifyPixmapHeader(
     int /*bitsPerPixel*/,
     int /*devKind*/,
     void * /*pPixData*/
-);
-
-extern Bool miCloseScreen(
-    ScreenPtr /*pScreen*/
 );
 
 extern Bool miCreateScreenResources(
@@ -509,14 +465,6 @@ extern void miWideDash(
     int /*mode*/,
     int /*npt*/,
     DDXPointPtr /*pPts*/
-);
-
-extern void miMiter(
-    void
-);
-
-extern void miNotMiter(
-    void
 );
 
 /* miwindow.c */

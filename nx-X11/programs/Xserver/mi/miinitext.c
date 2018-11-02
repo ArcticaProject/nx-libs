@@ -143,11 +143,7 @@ typedef void (*InitExtension)(void);
 
 #ifdef MITSHM
 #define _XSHM_SERVER_
-#ifdef LEGACY_XEXT_PROTO
 #include <X11/extensions/shmstr.h>
-#else
-#include <X11/extensions/shmproto.h>
-#endif
 #endif
 #ifdef XTEST
 #define _XTEST_SERVER_
@@ -155,6 +151,9 @@ typedef void (*InitExtension)(void);
 #endif
 #ifdef XKB
 #include <nx-X11/extensions/XKB.h>
+#endif
+#ifdef XACE
+#include "xace.h"
 #endif
 #ifdef XCSECURITY
 #define _SECURITY_SERVER
@@ -214,25 +213,30 @@ extern void RecordExtensionInit(void);
 #ifdef DBE
 extern void DbeExtensionInit(void);
 #endif
+#ifdef XACE
+extern void XaceExtensionInit(void);
+#endif
 #ifdef XCSECURITY
+extern void SecurityExtensionSetup(void);
 extern void SecurityExtensionInit(void);
 #endif
 #ifdef XF86BIGFONT
 extern void XFree86BigfontExtensionInit(void);
 #endif
 #ifdef GLXEXT
-/*
-typedef struct __GLXprovider __GLXprovider;
-extern __GLXprovider __glXMesaProvider;
-extern void GlxPushProvider(__GLXprovider *impl);
-*/
-#ifndef __DARWIN__
-extern void GlxExtensionInit(void);
-#else
-extern void DarwinGlxExtensionInit(void);
+// typedef struct __GLXprovider __GLXprovider;
+#ifdef INXDARWINAPP
+extern __GLXprovider* __DarwinglXMesaProvider;
+extern void DarwinGlxPushProvider(__GLXprovider *impl);
+extern void DarwinGlxExtensionInit(INITARGS);
 extern void DarwinGlxWrapInitVisuals(miInitVisualsProcPtr *);
-#endif
-#endif
+#else
+// extern __GLXprovider __glXMesaProvider;
+// extern void GlxPushProvider(__GLXprovider *impl);
+extern void GlxExtensionInit(void);
+extern void GlxWrapInitVisuals(miInitVisualsProcPtr *);
+#endif // INXDARWINAPP
+#endif // GLXEXT
 #ifdef XF86DRI
 extern void XFree86DRIExtensionInit(void);
 #endif
@@ -367,12 +371,16 @@ void EnableDisableExtensionError(char *name, Bool enable)
 	ErrorF("    %s\n", ext->name);
 }
 
+
 /*ARGSUSED*/
 void
 InitExtensions(argc, argv)
     int		argc;
     char	*argv[];
 {
+#ifdef XCSECURITY
+    SecurityExtensionSetup();
+#endif
 #ifdef PANORAMIX
 # if !defined(PRINT_ONLY_SERVER) && !defined(NO_PANORAMIX)
   if (!noPanoramiXExtension) PanoramiXExtensionInit();
@@ -384,7 +392,7 @@ InitExtensions(argc, argv)
 #ifdef MITSHM
     if (!noMITShmExtension) ShmExtensionInit();
 #endif
-#if defined(XINPUT) && !defined(NO_HW_ONLY_EXTS)
+#if defined(XINPUT)
     if (!noXInputExtension) XInputExtensionInit();
 #endif
 #ifdef XTEST
@@ -408,7 +416,7 @@ InitExtensions(argc, argv)
 #ifdef XSYNC
     if (!noSyncExtension) SyncExtensionInit();
 #endif
-#if defined(XKB) && !defined(PRINT_ONLY_SERVER) && !defined(NO_HW_ONLY_EXTS)
+#if defined(XKB) && !defined(PRINT_ONLY_SERVER)
     if (!noXkbExtension) XkbExtensionInit();
 #endif
 #ifdef XCMISC
@@ -419,6 +427,9 @@ InitExtensions(argc, argv)
 #endif
 #ifdef DBE
     if (!noDbeExtension) DbeExtensionInit();
+#endif
+#ifdef XACE
+    XaceExtensionInit();
 #endif
 #ifdef XCSECURITY
     if (!noSecurityExtension) SecurityExtensionInit();
@@ -434,16 +445,16 @@ InitExtensions(argc, argv)
     if (!noXFree86DRIExtension) XFree86DRIExtensionInit();
 #endif
 #endif
+
 #ifdef GLXEXT
-    /*
-    GlxPushProvider(&__glXMesaProvider);
-    */
-#ifndef __DARWIN__
-    if (!noGlxExtension) GlxExtensionInit();
-#else
+#ifdef INXDARWINAPP
+    DarwinGlxPushProvider(__DarwinglXMesaProvider);
     if (!noGlxExtension) DarwinGlxExtensionInit();
-#endif
-#endif
+#else
+    // GlxPushProvider(&__glXMesaProvider);
+    if (!noGlxExtension) GlxExtensionInit();
+#endif // INXDARWINAPP
+#endif // GLXEXT
 #ifdef XFIXES
     /* must be before Render to layer DisplayCursor correctly */
     if (!noXFixesExtension) XFixesExtensionInit();
@@ -473,9 +484,8 @@ InitVisualWrap()
 {
     miResetInitVisuals();
 #ifdef GLXEXT
-#ifdef __DARWIN__
+#ifdef INXDARWINAPP
     DarwinGlxWrapInitVisuals(&miInitVisualsProc);
-#endif
-#endif
+#endif // INXDARWINAPP
+#endif // GLXEXT
 }
-

@@ -27,11 +27,6 @@ NULL =
 
 #include <Server.tmpl>
 
-#if ! HasCbrt
-CBRT_SRC = cbrt.c
-CBRT_OBJ = cbrt.o
-#endif
-
 #if HasFfs
 FFS_DEFINES = -DHAS_FFS
 #endif
@@ -39,8 +34,7 @@ FFS_DEFINES = -DHAS_FFS
 MIINITEXTSRC = miinitext.c
 MIINITEXTOBJ = miinitext.o
 
-SRCS =  $(CBRT_SRC)             \
-        mivaltree.c             \
+SRCS =  mivaltree.c             \
         mipolyseg.c             \
         mipolyrect.c            \
         mipoly.c                \
@@ -77,8 +71,7 @@ SRCS =  $(CBRT_SRC)             \
         miexpose.c              \
         $(NULL)
 
-OBJS =  $(CBRT_OBJ)             \
-        mivaltree.o             \
+OBJS =  mivaltree.o             \
         mipolyseg.o             \
         mipolyrect.o            \
         mipoly.o                \
@@ -144,6 +137,7 @@ INCLUDES = -I.                  \
            -I../xfixes          \
            -I../damageext       \
            -I../miext/damage    \
+           -I../Xi              \
            -I$(XINCLUDESRC)     \
            -I$(EXTINCSRC)       \
            -I$(SERVERSRC)/Xext  \
@@ -161,10 +155,6 @@ NormalLibraryObjectRule()
 NormalLibraryTarget(mi,$(OBJS))
 LintLibraryTarget(mi,$(SRCS))
 NormalLintTarget($(SRCS))
-
-#ifndef Win32Architecture
-NormalLibraryTarget(cbrt,cbrt.o)
-#endif
 
 SpecialCObjectRule(miinitext,$(ICONFIGFILES),$(EXT_DEFINES))
 SpecialCObjectRule(miscrinit,$(ICONFIGFILES),$(EXT_DEFINES))

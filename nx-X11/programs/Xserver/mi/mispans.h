@@ -48,8 +48,8 @@ SOFTWARE.
 
 typedef struct {
     int         count;		/* number of spans		    */
-    DDXPointPtr points;		/* pointer to list of start points  */
-    int         *widths;	/* pointer to list of widths	    */
+    DDXPointPtr points;		/* void * to list of start points  */
+    int         *widths;	/* void * to list of widths	    */
 } Spans;
 
 typedef struct {
@@ -71,13 +71,6 @@ extern void miAppendSpans(
     Spans * /*spans*/
 );
 
-/* Paint a span group, possibly with some overlap */
-extern void miFillSpanGroup(
-    DrawablePtr /*pDraw*/,
-    GCPtr /*pGC*/,
-    SpanGroup * /*spanGroup*/
-);
-
 /* Paint a span group, insuring that each pixel is painted at most once */
 extern void miFillUniqueSpanGroup(
     DrawablePtr /*pDraw*/,
@@ -90,16 +83,7 @@ extern void miFreeSpanGroup(
     SpanGroup * /*spanGroup*/
 );
 
-extern void miSubtractSpans(
-    SpanGroup * /*spanGroup*/,
-    Spans * /*sub*/
-);
-
-extern void miDisposeSpanGroup(
-    SpanGroup * /*spanGroup*/
-);
-
-extern int RegionClipSpans(
+extern int miClipSpans(
     RegionPtr /*prgnDst*/,
     DDXPointPtr /*ppt*/,
     int * /*pwidth*/,

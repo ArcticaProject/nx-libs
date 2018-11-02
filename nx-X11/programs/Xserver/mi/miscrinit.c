@@ -53,7 +53,7 @@ from The Open Group.
 
 typedef struct
 {
-    void * pbits; /* pointer to framebuffer */
+    void * pbits; /* void * to framebuffer */
     int width;    /* delta to add to a framebuffer addr to move one row down */
 } miScreenInitParmsRec, *miScreenInitParmsPtr;
 
@@ -125,11 +125,8 @@ miModifyPixmapHeader(pPixmap, width, height, depth, bitsPerPixel, devKind,
     return TRUE;
 }
 
-
-/*ARGSUSED*/
-Bool
-miCloseScreen (pScreen)
-    ScreenPtr	pScreen;
+static Bool
+miCloseScreen (ScreenPtr pScreen)
 {
     return ((*pScreen->DestroyPixmap)((PixmapPtr)pScreen->devPrivate));
 }
@@ -183,7 +180,7 @@ miCreateScreenResources(pScreen)
 
 Bool
 miScreenDevPrivateInit(pScreen, width, pbits)
-    register ScreenPtr pScreen;
+    ScreenPtr pScreen;
     int width;
     void * pbits;
 {
@@ -205,8 +202,8 @@ miScreenDevPrivateInit(pScreen, width, pbits)
 Bool
 miScreenInit(pScreen, pbits, xsize, ysize, dpix, dpiy, width,
 	     rootDepth, numDepths, depths, rootVisual, numVisuals, visuals)
-    register ScreenPtr pScreen;
-    void * pbits;		/* pointer to screen bits */
+    ScreenPtr pScreen;
+    void * pbits;		/* void * to screen bits */
     int xsize, ysize;		/* in pixels */
     int dpix, dpiy;		/* dots per inch */
     int width;			/* pixel width of frame buffer */
@@ -310,7 +307,7 @@ miAllocateGCPrivateIndex()
 }
 
 int miZeroLineScreenIndex;
-unsigned int miZeroLineGeneration = 0;
+static unsigned int miZeroLineGeneration = 0;
 
 void
 miSetZeroLineBias(pScreen, bias)
