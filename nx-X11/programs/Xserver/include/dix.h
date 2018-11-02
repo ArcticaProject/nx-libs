@@ -299,8 +299,6 @@ extern int dixDestroyPixmap(
     void * /*value*/,
     XID /*pid*/);
 
-extern void CloseDownRetainedResources(void);
-
 extern void InitClient(
     ClientPtr /*client*/,
     int /*i*/,
@@ -329,17 +327,6 @@ extern int GetGeometry(
 extern int SendConnSetup(
     ClientPtr /*client*/,
     char* /*reason*/);
-
-extern int DoGetImage(
-    ClientPtr	/*client*/,
-    int /*format*/,
-    Drawable /*drawable*/,
-    int /*x*/, 
-    int /*y*/, 
-    int /*width*/, 
-    int /*height*/,
-    Mask /*planemask*/,
-    xGetImageReply ** /*im_return*/);
 
 #if defined(DDXBEFORERESET)
 extern void ddxBeforeReset (void);
@@ -793,11 +780,5 @@ typedef struct {
     struct _Selection	    *selection;
     SelectionCallbackKind   kind;
 } SelectionInfoRec;
-
-/* strcasecmp.c */
-#if NEED_STRCASECMP
-#define strcasecmp xstrcasecmp
-extern int xstrcasecmp(char *s1, char *s2);
-#endif
 
 #endif /* DIX_H */

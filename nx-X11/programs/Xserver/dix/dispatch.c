@@ -253,7 +253,6 @@ long	    SmartScheduleMaxSlice = SMART_SCHEDULE_MAX_SLICE;
 long	    SmartScheduleTime;
 static ClientPtr   SmartLastClient;
 static int	   SmartLastIndex[SMART_MAX_PRIORITY-SMART_MIN_PRIORITY+1];
-int         SmartScheduleClient(int *clientReady, int nready);
 
 #ifdef SMART_DEBUG
 long	    SmartLastPrint;
