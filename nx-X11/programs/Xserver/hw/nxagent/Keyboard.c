@@ -828,9 +828,7 @@ Reply   Total	Cached	Bits In			Bits Out		Bits/Reply	  Ratio
   return Success;
 }
 
-Bool LegalModifier(key, pDev)
-     unsigned int key;
-     DevicePtr pDev;
+Bool LegalModifier(unsigned int key, DeviceIntPtr pDev)
 {
   return TRUE;
 }
