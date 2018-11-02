@@ -11,7 +11,7 @@ dix               1.4.2
 fb                7.1/1.1
 GL                6.9/7.0
 mi                1.4.2
-miext             7.1/1.1
+miext             1.4.2
 os                ? 7.1/1.1 + many backports, some of them from 2017
 randr             1.18.0
 record            1.4.2
