@@ -124,9 +124,9 @@ int nxagentPointerProc(DeviceIntPtr pDev, int onoff)
       for (int i = 0; i <= nmap; i++)
 	map[i] = i; /* buttons are already mapped */
       InitPointerDeviceStruct((DevicePtr) pDev, map, nmap,
-			      miPointerGetMotionEvents,
+			      GetMotionHistory,
 			      nxagentChangePointerControl,
-			      miPointerGetMotionBufferSize(), 2);
+			      GetMotionHistorySize(), 2);
       break;
     case DEVICE_ON:
 
