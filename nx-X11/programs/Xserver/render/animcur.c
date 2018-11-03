@@ -1,4 +1,5 @@
 /*
+ *
  * Copyright © 2002 Keith Packard, member of The XFree86 Project, Inc.
  *
  * Permission to use, copy, modify, distribute, and sell this software and its
@@ -86,8 +87,8 @@ static CursorBits   animCursorBits = {
     empty, empty, 2, 1, 1, 0, 0, 1
 };
 
-int	AnimCurScreenPrivateIndex = -1;
-int	AnimCurGeneration;
+static int AnimCurScreenPrivateIndex = -1;
+static int AnimCurGeneration;
 
 #define IsAnimCur(c)	    ((c)->bits == &animCursorBits)
 #define GetAnimCur(c)	    ((AnimCurPtr) ((c) + 1))
@@ -128,7 +129,7 @@ AnimCurCloseScreen (ScreenPtr pScreen)
     ret = (*pScreen->CloseScreen) (pScreen);
     free (as);
     if (screenInfo.numScreens <= 1)
-      AnimCurScreenPrivateIndex = -1;
+	AnimCurScreenPrivateIndex = -1;
     return ret;
 }
 

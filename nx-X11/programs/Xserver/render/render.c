@@ -1,4 +1,5 @@
 /*
+ *
  * Copyright © 2000 SuSE, Inc.
  *
  * Permission to use, copy, modify, distribute, and sell this software and its
@@ -289,14 +290,12 @@ ProcRenderQueryVersion (ClientPtr client)
 
     REQUEST(xRenderQueryVersionReq);
 
-    REQUEST_SIZE_MATCH(xRenderQueryVersionReq);
-
     pRenderClient->major_version = stuff->majorVersion;
     pRenderClient->minor_version = stuff->minorVersion;
 
     if (client->swapped) {
-	swaps(&rep.sequenceNumber);
-	swapl(&rep.length);
+    	swaps(&rep.sequenceNumber);
+    	swapl(&rep.length);
 	swapl(&rep.majorVersion);
 	swapl(&rep.minorVersion);
     }
@@ -639,7 +638,10 @@ ProcRenderCreatePicture (ClientPtr client)
 
     LEGAL_NEW_RESOURCE(stuff->pid, client);
     SECURITY_VERIFY_DRAWABLE(pDrawable, stuff->drawable, client,
-			     DixWriteAccess);
+			   DixWriteAccess);
+    if (rc != Success)
+	return rc;
+
     pFormat = (PictFormatPtr) SecurityLookupIDByType (client, 
 						      stuff->format,
 						      PictFormatType,
@@ -759,12 +761,12 @@ ProcRenderComposite (ClientPtr client)
 		    RenderErrBase + BadPicture);
     if (!pDst->pDrawable)
         return BadDrawable;
-    VERIFY_PICTURE (pSrc, stuff->src, client, DixReadAccess,
+    VERIFY_PICTURE (pSrc, stuff->src, client, DixReadAccess, 
 		    RenderErrBase + BadPicture);
-    VERIFY_ALPHA (pMask, stuff->mask, client, DixReadAccess,
+    VERIFY_ALPHA (pMask, stuff->mask, client, DixReadAccess, 
 		  RenderErrBase + BadPicture);
     if ((pSrc->pDrawable && pSrc->pDrawable->pScreen != pDst->pDrawable->pScreen) ||
-	(pMask && pMask->pDrawable && pSrc->pDrawable->pScreen != pMask->pDrawable->pScreen))
+	(pMask && pMask->pDrawable && pDst->pDrawable->pScreen != pMask->pDrawable->pScreen))
 	return BadMatch;
     CompositePicture (stuff->op,
 		      pSrc,
@@ -803,9 +805,9 @@ ProcRenderTrapezoids (ClientPtr client)
 	client->errorValue = stuff->op;
 	return BadValue;
     }
-    VERIFY_PICTURE (pSrc, stuff->src, client, DixReadAccess,
+    VERIFY_PICTURE (pSrc, stuff->src, client, DixReadAccess, 
 		    RenderErrBase + BadPicture);
-    VERIFY_PICTURE (pDst, stuff->dst, client, DixWriteAccess,
+    VERIFY_PICTURE (pDst, stuff->dst, client, DixWriteAccess, 
 		    RenderErrBase + BadPicture);
     if (!pDst->pDrawable)
         return BadDrawable;
@@ -851,9 +853,9 @@ ProcRenderTriangles (ClientPtr client)
 	client->errorValue = stuff->op;
 	return BadValue;
     }
-    VERIFY_PICTURE (pSrc, stuff->src, client, DixReadAccess,
+    VERIFY_PICTURE (pSrc, stuff->src, client, DixReadAccess, 
 		    RenderErrBase + BadPicture);
-    VERIFY_PICTURE (pDst, stuff->dst, client, DixWriteAccess,
+    VERIFY_PICTURE (pDst, stuff->dst, client, DixWriteAccess, 
 		    RenderErrBase + BadPicture);
     if (!pDst->pDrawable)
         return BadDrawable;
@@ -898,9 +900,9 @@ ProcRenderTriStrip (ClientPtr client)
 	client->errorValue = stuff->op;
 	return BadValue;
     }
-    VERIFY_PICTURE (pSrc, stuff->src, client, DixReadAccess,
+    VERIFY_PICTURE (pSrc, stuff->src, client, DixReadAccess, 
 		    RenderErrBase + BadPicture);
-    VERIFY_PICTURE (pDst, stuff->dst, client, DixWriteAccess,
+    VERIFY_PICTURE (pDst, stuff->dst, client, DixWriteAccess, 
 		    RenderErrBase + BadPicture);
     if (!pDst->pDrawable)
         return BadDrawable;
@@ -945,9 +947,9 @@ ProcRenderTriFan (ClientPtr client)
 	client->errorValue = stuff->op;
 	return BadValue;
     }
-    VERIFY_PICTURE (pSrc, stuff->src, client, DixReadAccess,
+    VERIFY_PICTURE (pSrc, stuff->src, client, DixReadAccess, 
 		    RenderErrBase + BadPicture);
-    VERIFY_PICTURE (pDst, stuff->dst, client, DixWriteAccess,
+    VERIFY_PICTURE (pDst, stuff->dst, client, DixWriteAccess, 
 		    RenderErrBase + BadPicture);
     if (!pDst->pDrawable)
         return BadDrawable;
@@ -1355,7 +1357,7 @@ ProcRenderCompositeGlyphs (ClientPtr client)
 	    if (glyphsBase != glyphsLocal)
 	        free(glyphsBase);
 	    return BadAlloc;
-	}
+    }
     }
     buffer = (CARD8 *) (stuff + 1);
     glyphs = glyphsBase;
@@ -1459,7 +1461,7 @@ ProcRenderFillRectangles (ClientPtr client)
 	client->errorValue = stuff->op;
 	return BadValue;
     }
-    VERIFY_PICTURE (pDst, stuff->dst, client, DixWriteAccess,
+    VERIFY_PICTURE (pDst, stuff->dst, client, DixWriteAccess, 
 		    RenderErrBase + BadPicture);
     if (!pDst->pDrawable)
         return BadDrawable;
@@ -1527,7 +1529,7 @@ ProcRenderCreateCursor (ClientPtr client)
     REQUEST_SIZE_MATCH (xRenderCreateCursorReq);
     LEGAL_NEW_RESOURCE(stuff->cid, client);
     
-    VERIFY_PICTURE (pSrc, stuff->src, client, DixReadAccess,
+    VERIFY_PICTURE (pSrc, stuff->src, client, DixReadAccess, 
 		    RenderErrBase + BadPicture);
     if (!pSrc->pDrawable)
         return BadDrawable;
@@ -1818,8 +1820,8 @@ ProcRenderQueryFilters (ClientPtr client)
 	{
 	    swaps (&aliases[i]);
 	}
-	swaps(&reply->sequenceNumber);
-	swapl(&reply->length);
+    	swaps(&reply->sequenceNumber);
+    	swapl(&reply->length);
 	swapl(&reply->numAliases);
 	swapl(&reply->numFilters);
     }
@@ -1904,7 +1906,7 @@ ProcRenderAddTraps (ClientPtr client)
     REQUEST(xRenderAddTrapsReq);
 
     REQUEST_AT_LEAST_SIZE(xRenderAddTrapsReq);
-    VERIFY_PICTURE (pPicture, stuff->picture, client, DixWriteAccess,
+    VERIFY_PICTURE (pPicture, stuff->picture, client, DixWriteAccess, 
 		    RenderErrBase + BadPicture);
     if (!pPicture->pDrawable)
         return BadDrawable;
@@ -2115,6 +2117,8 @@ SProcRenderSetPictureClipRectangles (ClientPtr client)
     REQUEST_AT_LEAST_SIZE(xRenderSetPictureClipRectanglesReq);
     swaps(&stuff->length);
     swapl(&stuff->picture);
+    swaps(&stuff->xOrigin);
+    swaps(&stuff->yOrigin);
     SwapRestS(stuff);
     return (*ProcRenderVector[stuff->renderReqType]) (client);
 }
@@ -2345,7 +2349,7 @@ SProcRenderCompositeGlyphs (ClientPtr client)
     
     REQUEST(xRenderCompositeGlyphsReq);
     REQUEST_AT_LEAST_SIZE(xRenderCompositeGlyphsReq);
-
+    
     switch (stuff->renderReqType) {
     default:			    size = 1; break;
     case X_RenderCompositeGlyphs16: size = 2; break;
@@ -2817,11 +2821,11 @@ PanoramiXRenderComposite (ClientPtr client)
 
     REQUEST_SIZE_MATCH(xRenderCompositeReq);
     
-    VERIFY_XIN_PICTURE (src, stuff->src, client, DixReadAccess,
+    VERIFY_XIN_PICTURE (src, stuff->src, client, DixReadAccess, 
 			RenderErrBase + BadPicture);
-    VERIFY_XIN_ALPHA (msk, stuff->mask, client, DixReadAccess,
+    VERIFY_XIN_ALPHA (msk, stuff->mask, client, DixReadAccess, 
 		      RenderErrBase + BadPicture);
-    VERIFY_XIN_PICTURE (dst, stuff->dst, client, DixWriteAccess,
+    VERIFY_XIN_PICTURE (dst, stuff->dst, client, DixWriteAccess, 
 			RenderErrBase + BadPicture);
     
     orig = *stuff;
@@ -2908,7 +2912,7 @@ PanoramiXRenderFillRectangles (ClientPtr client)
     int		    extra_len;
 
     REQUEST_AT_LEAST_SIZE (xRenderFillRectanglesReq);
-    VERIFY_XIN_PICTURE (dst, stuff->dst, client, DixWriteAccess,
+    VERIFY_XIN_PICTURE (dst, stuff->dst, client, DixWriteAccess, 
 			RenderErrBase + BadPicture);
     extra_len = (client->req_len << 2) - sizeof (xRenderFillRectanglesReq);
     if (extra_len &&
@@ -2938,9 +2942,9 @@ PanoramiXRenderFillRectangles (ClientPtr client)
 	    result = (*PanoramiXSaveRenderVector[X_RenderFillRectangles]) (client);
 	    if(result != Success) break;
 	}
-
 	free(extra);
     }
+
     return result;
 }
 
@@ -2999,8 +3003,8 @@ PanoramiXRenderTrapezoids(ClientPtr client)
 
 	    if(result != Success) break;
 	}
-
-	free(extra);
+	
+        free(extra);
     }
 
     return result;
@@ -3057,8 +3061,8 @@ PanoramiXRenderTriangles(ClientPtr client)
 
 	    if(result != Success) break;
 	}
-
-	free(extra);
+	
+        free(extra);
     }
 
     return result;
@@ -3111,8 +3115,8 @@ PanoramiXRenderTriStrip(ClientPtr client)
 
 	    if(result != Success) break;
 	}
-
-	free(extra);
+	
+        free(extra);
     }
 
     return result;
@@ -3165,8 +3169,8 @@ PanoramiXRenderTriFan(ClientPtr client)
 
 	    if(result != Success) break;
 	}
-
-	free(extra);
+	
+        free(extra);
     }
 
     return result;
@@ -3275,7 +3279,7 @@ PanoramiXRenderAddTraps (ClientPtr client)
     INT16    	    x_off, y_off;
 
     REQUEST_AT_LEAST_SIZE (xRenderAddTrapsReq);
-    VERIFY_XIN_PICTURE (picture, stuff->picture, client, DixWriteAccess,
+    VERIFY_XIN_PICTURE (picture, stuff->picture, client, DixWriteAccess, 
 			RenderErrBase + BadPicture);
     extra_len = (client->req_len << 2) - sizeof (xRenderAddTrapsReq);
     if (extra_len &&
@@ -3296,7 +3300,6 @@ PanoramiXRenderAddTraps (ClientPtr client)
 	    result = (*PanoramiXSaveRenderVector[X_RenderAddTraps]) (client);
 	    if(result != Success) break;
 	}
-
 	free(extra);
     }
 

@@ -15,7 +15,7 @@ miext             1.4.2
 os                ? 7.1/1.1 + many backports, some of them from 2017
 randr             1.18.0
 record            1.4.2
-render            6.9/7.0
+render            1.4.2
 Xext              1.4.2
 xfixes            1.4.2
 Xi                1.4.2

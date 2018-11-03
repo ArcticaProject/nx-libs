@@ -1,4 +1,5 @@
 /*
+ *
  * Copyright © 2000 SuSE, Inc.
  *
  * Permission to use, copy, modify, distribute, and sell this software and its
@@ -27,6 +28,8 @@
 #include <nx-X11/extensions/renderproto.h>
 #include "picture.h"
 #include "screenint.h"
+#include "regionstr.h"
+#include "miscstruct.h"
 
 #define GlyphFormat1	0
 #define GlyphFormat4	1
@@ -37,19 +40,16 @@
 
 typedef struct _Glyph {
     CARD32	refcnt;
+    DevUnion	*devPrivates;
     CARD32	size;	/* info + bitmap */
     xGlyphInfo	info;
     /* bits follow */
 } GlyphRec, *GlyphPtr;
 
-#ifdef NXAGENT_SERVER
-#include "../hw/nxagent/NXglyphstr_GlyphRef.h"
-#else
 typedef struct _GlyphRef {
     CARD32	signature;
     GlyphPtr	glyph;
 } GlyphRefRec, *GlyphRefPtr;
-#endif /* NXAGENT_SERVER */
 
 #define DeletedGlyph	((GlyphPtr) 1)
 
@@ -65,18 +65,14 @@ typedef struct _GlyphHash {
     CARD32	    tableEntries;
 } GlyphHashRec, *GlyphHashPtr;
 
-#ifdef NXAGENT_SERVER
-#include "../hw/nxagent/NXglyphstr_GlyphSet.h"
-#else
 typedef struct _GlyphSet {
     CARD32	    refcnt;
     PictFormatPtr   format;
     int		    fdepth;
     GlyphHashRec    hash;
     int             maxPrivate;
-    void            **devPrivates;
+    void *         *devPrivates;
 } GlyphSetRec, *GlyphSetPtr;
-#endif /* NXAGENT_SERVER */
 
 #define GlyphSetGetPrivate(pGlyphSet,n)					\
 	((n) > (pGlyphSet)->maxPrivate ?				\
@@ -95,8 +91,6 @@ typedef struct _GlyphList {
     PictFormatPtr   format;
 } GlyphListRec, *GlyphListPtr;
 
-extern GlyphHashRec	globalGlyphs[GlyphFormatNum];
-
 GlyphHashSetPtr
 FindGlyphHashSet (CARD32 filled);
 
@@ -109,8 +103,28 @@ ResetGlyphSetPrivateIndex (void);
 Bool
 _GlyphSetSetNewPrivate (GlyphSetPtr glyphSet, int n, void * ptr);
 
+void
+ResetGlyphPrivates (void);
+
+int
+AllocateGlyphPrivateIndex (void);
+
+Bool
+AllocateGlyphPrivate (ScreenPtr pScreen,
+		      int	index2,
+		      unsigned	amount);
+
 Bool
 GlyphInit (ScreenPtr pScreen);
+
+Bool
+GlyphFinishInit (ScreenPtr pScreen);
+
+void
+GlyphUninit (ScreenPtr pScreen);
+
+GlyphHashSetPtr
+FindGlyphHashSet (CARD32 filled);
 
 GlyphRefPtr
 FindGlyphRef (GlyphHashPtr hash, CARD32 signature, Bool match, GlyphPtr compare);

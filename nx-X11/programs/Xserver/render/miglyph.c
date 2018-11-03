@@ -1,5 +1,4 @@
 /*
- * $XFree86: xc/programs/Xserver/render/miglyph.c,v 1.4 2000/11/20 07:13:13 keithp Exp $
  *
  * Copyright © 2000 SuSE, Inc.
  *
@@ -34,6 +33,19 @@
 #include "mi.h"
 #include "picturestr.h"
 #include "mipict.h"
+
+Bool
+miRealizeGlyph (ScreenPtr pScreen,
+		GlyphPtr  glyph)
+{
+    return TRUE;
+}
+
+void
+miUnrealizeGlyph (ScreenPtr pScreen,
+		  GlyphPtr  glyph)
+{
+}
 
 void
 miGlyphExtents (int		nlist,
@@ -89,7 +101,6 @@ miGlyphExtents (int		nlist,
 
 #define NeedsComponent(f) (PICT_FORMAT_A(f) != 0 && PICT_FORMAT_RGB(f) != 0)
 
-#ifndef NXAGENT_SERVER
 void
 miGlyphs (CARD8		op,
 	  PicturePtr	pSrc,
@@ -242,4 +253,3 @@ miGlyphs (CARD8		op,
 	(*pScreen->DestroyPixmap) (pMaskPixmap);
     }
 }
-#endif
