@@ -1794,9 +1794,29 @@ CompositePicture (CARD8		op,
 }
 
 void
-CompositeRects(CARD8 op,
-               PicturePtr pDst,
-               xRenderColor * color, int nRect, xRectangle *rects)
+CompositeGlyphs (CARD8		op,
+		 PicturePtr	pSrc,
+		 PicturePtr	pDst,
+		 PictFormatPtr	maskFormat,
+		 INT16		xSrc,
+		 INT16		ySrc,
+		 int		nlist,
+		 GlyphListPtr	lists,
+		 GlyphPtr	*glyphs)
+{
+    PictureScreenPtr	ps = GetPictureScreen(pDst->pDrawable->pScreen);
+    
+    ValidatePicture (pSrc);
+    ValidatePicture (pDst);
+    (*ps->Glyphs) (op, pSrc, pDst, maskFormat, xSrc, ySrc, nlist, lists, glyphs);
+}
+
+void
+CompositeRects (CARD8		op,
+		PicturePtr	pDst,
+		xRenderColor	*color,
+		int		nRect,
+		xRectangle      *rects)
 {
     PictureScreenPtr	ps = GetPictureScreen(pDst->pDrawable->pScreen);
     

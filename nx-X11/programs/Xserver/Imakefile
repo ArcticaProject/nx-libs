@@ -243,6 +243,7 @@ NXAGENTOBJS = hw/nxagent/miinitext.o     \
               hw/nxagent/NXglyph.o       \
               hw/nxagent/NXpicture.o     \
               hw/nxagent/NXglxext.o      \
+              hw/nxagent/NXmiglyph.o     \
               hw/nxagent/NXresource.o    \
               $(NULL)
 #elif !defined(Win32Architecture)
@@ -258,6 +259,7 @@ NXAGENTOBJS = hw/nxagent/miinitext.o     \
               hw/nxagent/NXpicture.o     \
               hw/nxagent/NXglxext.o      \
               hw/nxagent/NXxvdisp.o      \
+              hw/nxagent/NXmiglyph.o     \
               hw/nxagent/NXresource.o    \
               $(NULL)
 #else
@@ -273,6 +275,7 @@ NXAGENTOBJS = hw/nxagent/miinitext.o     \
               hw/nxagent/NXpicture.o     \
               hw/nxagent/NXglxext.o      \
               hw/nxagent/NXxvdisp.o      \
+              hw/nxagent/NXmiglyph.o     \
               hw/nxagent/NXresource.o    \
               dix/main.o                 \
               $(NULL)
