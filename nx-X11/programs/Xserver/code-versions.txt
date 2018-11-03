@@ -8,7 +8,7 @@ composite         1.12 (~ 9838b70 2012-03-21 Introduce a consistent coding style
 damageext         1.4.2
 dbe               1.4.2
 dix               1.4.2
-fb                7.1/1.1
+fb                1.4.2
 GL                6.9/7.0
 mi                1.4.2
 miext             1.4.2

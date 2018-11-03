@@ -1,4 +1,5 @@
 /*
+ *
  * Copyright © 1998 Keith Packard
  *
  * Permission to use, copy, modify, distribute, and sell this software and its
@@ -25,6 +26,8 @@
 #define _FB_H_
 
 #include <nx-X11/X.h>
+#include <pixman.h>
+
 #include "scrnintstr.h"
 #include "pixmap.h"
 #include "pixmapstr.h"
@@ -41,6 +44,39 @@
 #include "picturestr.h"
 #else
 #include "picture.h"
+#endif
+
+#ifdef FB_ACCESS_WRAPPER
+
+#include "wfbrename.h"
+#define FBPREFIX(x) wfb##x
+#define WRITE(ptr, val) ((*wfbWriteMemory)((ptr), (val), sizeof(*(ptr))))
+#define READ(ptr) ((*wfbReadMemory)((ptr), sizeof(*(ptr))))
+
+#define MEMCPY_WRAPPED(dst, src, size) do {                       \
+    size_t _i;                                                    \
+    CARD8 *_dst = (CARD8*)(dst), *_src = (CARD8*)(src);           \
+    for(_i = 0; _i < size; _i++) {                                \
+        WRITE(_dst +_i, READ(_src + _i));                         \
+    }                                                             \
+} while(0)
+
+#define MEMSET_WRAPPED(dst, val, size) do {                       \
+    size_t _i;                                                    \
+    CARD8 *_dst = (CARD8*)(dst);                                  \
+    for(_i = 0; _i < size; _i++) {                                \
+        WRITE(_dst +_i, (val));                                   \
+    }                                                             \
+} while(0)
+
+#else
+
+#define FBPREFIX(x) fb##x
+#define WRITE(ptr, val) (*(ptr) = (val))
+#define READ(ptr) (*(ptr))
+#define MEMCPY_WRAPPED(dst, src, size) memcpy((dst), (src), (size))
+#define MEMSET_WRAPPED(dst, val, size) memset((dst), (val), (size))
+
 #endif
 
 /*
@@ -63,6 +99,9 @@
     
 #if GLYPHPADBYTES != 4
 #error "GLYPHPADBYTES must be 4"
+#endif
+#if GETLEFTBITS_ALIGNMENT != 1
+#error "GETLEFTBITS_ALIGNMENT must be 1"
 #endif
 /* whether to bother to include 24bpp support */
 #ifndef FBNO24BIT
@@ -94,20 +133,17 @@
 #define FbFullMask(n)   ((n) == FB_UNIT ? FB_ALLONES : ((((FbBits) 1) << n) - 1))
     
 #if FB_SHIFT == 6
-# ifdef WIN32
-typedef unsigned __int64    FbBits;
-# else
 #  if defined(__alpha__) || defined(__alpha) || \
       defined(ia64) || defined(__ia64__) || \
       defined(__sparc64__) || defined(_LP64) || \
       defined(__s390x__) || \
       defined(amd64) || defined (__amd64__) || \
-      defined (__powerpc64__)
+      defined (__powerpc64__) || \
+      (defined(sgi) && (_MIPS_SZLONG == 64))
 typedef unsigned long	    FbBits;
 #  else
 typedef unsigned long long  FbBits;
 #  endif
-# endif
 #endif
 
 #if FB_SHIFT == 5
@@ -217,8 +253,8 @@ extern void fbSetBits (FbStip *bits, int stride, FbStip data);
 
 #define FbPtrOffset(p,o,t)		((t *) ((CARD8 *) (p) + (o)))
 #define FbSelectPatternPart(xor,o,t)	((xor) >> (FbPatternOffset (o,t) << 3))
-#define FbStorePart(dst,off,t,xor)	(*FbPtrOffset(dst,off,t) = \
-					 FbSelectPart(xor,off,t))
+#define FbStorePart(dst,off,t,xor)	(WRITE(FbPtrOffset(dst,off,t), \
+					 FbSelectPart(xor,off,t)))
 #ifndef FbSelectPart
 #define FbSelectPart(x,o,t) FbSelectPatternPart(x,o,t)
 #endif
@@ -398,7 +434,7 @@ extern void fbSetBits (FbStip *bits, int stride, FbStip data);
 	FbStorePart(dst,sizeof (FbBits) - 1,CARD8,xor); \
 	break; \
     default: \
-	*dst = FbDoMaskRRop(*dst, and, xor, l); \
+	WRITE(dst, FbDoMaskRRop(READ(dst), and, xor, l)); \
 	break; \
     } \
 }
@@ -418,7 +454,7 @@ extern void fbSetBits (FbStip *bits, int stride, FbStip data);
 	break; \
     FbDoRightMaskByteRRop6Cases(dst,xor) \
     default: \
-	*dst = FbDoMaskRRop (*dst, and, xor, r); \
+	WRITE(dst, FbDoMaskRRop (READ(dst), and, xor, r)); \
     } \
 }
 #endif
@@ -450,20 +486,20 @@ extern void fbSetBits (FbStip *bits, int stride, FbStip data);
  * The term "lane" comes from the hardware term "byte-lane" which
  */
 
-#define FbLaneCase1(n,a,o)  ((n) == 0x01 ? \
-			     (*(CARD8 *) ((a)+FbPatternOffset(o,CARD8)) = \
-			      fgxor) : 0)
-#define FbLaneCase2(n,a,o)  ((n) == 0x03 ? \
-			     (*(CARD16 *) ((a)+FbPatternOffset(o,CARD16)) = \
+#define FbLaneCase1(n,a,o)  ((n) == 0x01 ? (void) \
+			     WRITE((CARD8 *) ((a)+FbPatternOffset(o,CARD8)), \
+			      fgxor) : (void) 0)
+#define FbLaneCase2(n,a,o)  ((n) == 0x03 ? (void) \
+			     WRITE((CARD16 *) ((a)+FbPatternOffset(o,CARD16)), \
 			      fgxor) : \
 			     ((void)FbLaneCase1((n)&1,a,o), \
 				    FbLaneCase1((n)>>1,a,(o)+1)))
-#define FbLaneCase4(n,a,o)  ((n) == 0x0f ? \
-			     (*(CARD32 *) ((a)+FbPatternOffset(o,CARD32)) = \
+#define FbLaneCase4(n,a,o)  ((n) == 0x0f ? (void) \
+			     WRITE((CARD32 *) ((a)+FbPatternOffset(o,CARD32)), \
 			      fgxor) : \
 			     ((void)FbLaneCase2((n)&3,a,o), \
 				    FbLaneCase2((n)>>2,a,(o)+2)))
-#define FbLaneCase8(n,a,o)  ((n) == 0x0ff ? (*(FbBits *) ((a)+(o)) = fgxor) : \
+#define FbLaneCase8(n,a,o)  ((n) == 0x0ff ? (void) (*(FbBits *) ((a)+(o)) = fgxor) : \
 			     ((void)FbLaneCase4((n)&15,a,o), \
 				    FbLaneCase4((n)>>4,a,(o)+4)))
 
@@ -569,18 +605,35 @@ extern int	fbGetWinPrivateIndex(void);
 extern const GCOps	fbGCOps;
 extern const GCFuncs	fbGCFuncs;
 
-#ifdef TEKX11
-#define FB_OLD_GC
-#define FB_OLD_SCREEN
-#endif
-
-#ifdef FB_OLD_SCREEN
-# define FB_OLD_MISCREENINIT   /* miScreenInit requires 14 args, not 13 */
-#endif
-
 #ifdef FB_24_32BIT
 #define FB_SCREEN_PRIVATE
 #endif
+
+/* Framebuffer access wrapper */
+typedef FbBits (*ReadMemoryProcPtr)(const void *src, int size);
+typedef void (*WriteMemoryProcPtr)(void *dst, FbBits value, int size);
+typedef void (*SetupWrapProcPtr)(ReadMemoryProcPtr  *pRead,
+                                 WriteMemoryProcPtr *pWrite,
+                                 DrawablePtr         pDraw);
+typedef void (*FinishWrapProcPtr)(DrawablePtr pDraw);
+
+#ifdef FB_ACCESS_WRAPPER
+
+#define fbPrepareAccess(pDraw) \
+	fbGetScreenPrivate((pDraw)->pScreen)->setupWrap( \
+		&wfbReadMemory, \
+		&wfbWriteMemory, \
+		(pDraw))
+#define fbFinishAccess(pDraw) \
+	fbGetScreenPrivate((pDraw)->pScreen)->finishWrap(pDraw)
+
+#else
+
+#define fbPrepareAccess(pPix)
+#define fbFinishAccess(pDraw)
+
+#endif
+
 
 #ifdef FB_SCREEN_PRIVATE
 extern int	fbScreenPrivateIndex;
@@ -590,6 +643,10 @@ extern int	fbGetScreenPrivateIndex(void);
 typedef struct {
     unsigned char	win32bpp;	/* window bpp for 32-bpp images */
     unsigned char	pix32bpp;	/* pixmap bpp for 32-bpp images */
+#ifdef FB_ACCESS_WRAPPER
+    SetupWrapProcPtr	setupWrap;	/* driver hook to set pixmap access wrapping */
+    FinishWrapProcPtr	finishWrap;	/* driver hook to clean up pixmap access wrapping */
+#endif
 } FbScreenPrivRec, *FbScreenPrivPtr;
 
 #define fbGetScreenPrivate(pScreen) ((FbScreenPrivPtr) \
@@ -598,15 +655,6 @@ typedef struct {
 
 /* private field of GC */
 typedef struct {
-#ifdef FB_OLD_GC
-    unsigned char       pad1;
-    unsigned char       pad2;
-    unsigned char       pad3;
-    unsigned		fExpose:1;
-    unsigned		freeCompClip:1;
-    PixmapPtr		pRotatedPixmap;
-    RegionPtr		pCompositeClip;
-#endif    
     FbBits		and, xor;	/* reduced rop values */
     FbBits		bgand, bgxor;	/* for stipples */
     FbBits		fg, bg, pm;	/* expanded and filled */
@@ -619,17 +667,10 @@ typedef struct {
 #define fbGetGCPrivate(pGC)	((FbGCPrivPtr)\
 	(pGC)->devPrivates[fbGetGCPrivateIndex()].ptr)
 
-#ifdef FB_OLD_GC
-#define fbGetCompositeClip(pGC) (fbGetGCPrivate(pGC)->pCompositeClip)
-#define fbGetExpose(pGC)	(fbGetGCPrivate(pGC)->fExpose)
-#define fbGetFreeCompClip(pGC)	(fbGetGCPrivate(pGC)->freeCompClip)
-#define fbGetRotatedPixmap(pGC)	(fbGetGCPrivate(pGC)->pRotatedPixmap)
-#else
 #define fbGetCompositeClip(pGC) ((pGC)->pCompositeClip)
 #define fbGetExpose(pGC)	((pGC)->fExpose)
 #define fbGetFreeCompClip(pGC)	((pGC)->freeCompClip)
 #define fbGetRotatedPixmap(pGC)	((pGC)->pRotatedPixmap)
-#endif
 
 #define fbGetScreenPixmap(s)	((PixmapPtr) (s)->devPrivate)
 #ifdef FB_NO_WINDOW_PIXMAPS
@@ -668,6 +709,7 @@ typedef struct {
 	(xoff) = __fbPixOffXPix(_pPix); \
 	(yoff) = __fbPixOffYPix(_pPix); \
     } \
+    fbPrepareAccess(pDrawable); \
     (pointer) = (FbBits *) _pPix->devPrivate.ptr; \
     (stride) = ((int) _pPix->devKind) / sizeof (FbBits); (void)(stride); \
     (bpp) = _pPix->drawable.bitsPerPixel;  (void)(bpp); \
@@ -684,6 +726,7 @@ typedef struct {
 	(xoff) = __fbPixOffXPix(_pPix); \
 	(yoff) = __fbPixOffYPix(_pPix); \
     } \
+    fbPrepareAccess(pDrawable); \
     (pointer) = (FbStip *) _pPix->devPrivate.ptr; \
     (stride) = ((int) _pPix->devKind) / sizeof (FbStip); (void)(stride); \
     (bpp) = _pPix->drawable.bitsPerPixel; (void)(bpp); \
@@ -701,12 +744,6 @@ typedef struct {
 #define fbDrawableEnabled(pDrawable) \
     ((pDrawable)->type == DRAWABLE_PIXMAP ? \
      TRUE : fbWindowEnabled((WindowPtr) pDrawable))
-
-#ifdef FB_OLD_SCREEN
-#define BitsPerPixel(d) (\
-    ((1 << PixmapWidthPaddingInfo[d].padBytesLog2) * 8 / \
-    (PixmapWidthPaddingInfo[d].padRoundUp+1)))
-#endif
 
 #define FbPowerOfTwo(w)	    (((w) & ((w) - 1)) == 0)
 /*
@@ -1271,6 +1308,9 @@ void
 fbClearVisualTypes(void);
 
 Bool
+fbHasVisualTypes (int depth);
+
+Bool
 fbSetVisualTypes (int depth, int visuals, int bitsPerRGB);
 
 Bool
@@ -1715,13 +1755,11 @@ fbQueryBestSize (int class,
 		 unsigned short *width, unsigned short *height,
 		 ScreenPtr pScreen);
 
-#ifndef FB_OLD_SCREEN
 PixmapPtr
 _fbGetWindowPixmap (WindowPtr pWindow);
 
 void
 _fbSetWindowPixmap (WindowPtr pWindow, PixmapPtr pPixmap);
-#endif
 
 Bool
 fbSetupScreen(ScreenPtr	pScreen, 
@@ -1732,6 +1770,30 @@ fbSetupScreen(ScreenPtr	pScreen,
 	      int	dpiy,
 	      int	width,		/* pixel width of frame buffer */
 	      int	bpp);		/* bits per pixel of frame buffer */
+
+Bool
+wfbFinishScreenInit(ScreenPtr	pScreen,
+		    void *	pbits,
+		    int		xsize,
+		    int		ysize,
+		    int		dpix,
+		    int		dpiy,
+		    int		width,
+		    int		bpp,
+		    SetupWrapProcPtr setupWrap,
+		    FinishWrapProcPtr finishWrap);
+
+Bool
+wfbScreenInit(ScreenPtr	pScreen,
+	      void *	pbits,
+	      int	xsize,
+	      int	ysize,
+	      int	dpix,
+	      int	dpiy,
+	      int	width,
+	      int	bpp,
+	      SetupWrapProcPtr setupWrap,
+	      FinishWrapProcPtr finishWrap);
 
 Bool
 fbFinishScreenInit(ScreenPtr	pScreen,
@@ -1933,6 +1995,7 @@ fbEvenTile (FbBits	*dst,
 	    int		height,
 
 	    FbBits	*tile,
+	    FbStride	tileStride,
 	    int		tileHeight,
 
 	    int		alu,
@@ -1989,6 +2052,11 @@ fbReplicatePixel (Pixel p, int bpp);
 void
 fbReduceRasterOp (int rop, FbBits fg, FbBits pm, FbBits *andp, FbBits *xorp);
 
+#ifdef FB_ACCESS_WRAPPER
+extern ReadMemoryProcPtr wfbReadMemory;
+extern WriteMemoryProcPtr wfbWriteMemory;
+#endif
+
 /*
  * fbwindow.c
  */
@@ -2044,4 +2112,9 @@ void
 fbPaintWindow(WindowPtr pWin, RegionPtr pRegion, int what);
 
 
+pixman_image_t *image_from_pict (PicturePtr pict,
+				 Bool       has_clip);
+void free_pixman_pict (PicturePtr, pixman_image_t *);
+
 #endif /* _FB_H_ */
+

@@ -1,6 +1,4 @@
 /*
- * Id: fbcopy.c,v 1.1 1999/11/02 03:54:45 keithp Exp $
- *
  * Copyright © 1998 Keith Packard
  *
  * Permission to use, copy, modify, distribute, and sell this software and its
@@ -59,6 +57,23 @@ fbCopyNtoN (DrawablePtr	pSrcDrawable,
 
     while (nbox--)
     {
+#ifndef FB_ACCESS_WRAPPER /* pixman_blt() doesn't support accessors yet */
+	if (pm == FB_ALLONES && alu == GXcopy && !reverse &&
+	    !upsidedown)
+	{
+	    if (!pixman_blt ((uint32_t *)src, (uint32_t *)dst, srcStride, dstStride, srcBpp, dstBpp,
+			     (pbox->x1 + dx + srcXoff),
+			     (pbox->y1 + dy + srcYoff),
+			     (pbox->x1 + dstXoff),
+			     (pbox->y1 + dstYoff),
+			     (pbox->x2 - pbox->x1),
+			     (pbox->y2 - pbox->y1)))
+		goto fallback;
+	    else
+		goto next;
+	}
+    fallback:
+#endif
 	fbBlt (src + (pbox->y1 + dy + srcYoff) * srcStride,
 	       srcStride,
 	       (pbox->x1 + dx + srcXoff) * srcBpp,
@@ -76,8 +91,13 @@ fbCopyNtoN (DrawablePtr	pSrcDrawable,
 	       
 	       reverse,
 	       upsidedown);
+#ifndef FB_ACCESS_WRAPPER
+    next:
+#endif
 	pbox++;
     }    
+    fbFinishAccess (pDstDrawable);
+    fbFinishAccess (pSrcDrawable);
 }
 
 void
@@ -148,6 +168,9 @@ fbCopy1toN (DrawablePtr	pSrcDrawable,
 	}
 	pbox++;
     }
+
+    fbFinishAccess (pDstDrawable);
+    fbFinishAccess (pSrcDrawable);
 }
 
 void
@@ -196,6 +219,8 @@ fbCopyNto1 (DrawablePtr	pSrcDrawable,
 			(FbStip) pPriv->and, (FbStip) pPriv->xor,
 			(FbStip) pPriv->bgand, (FbStip) pPriv->bgxor,
 			bitplane);
+	    fbFinishAccess (pDstDrawable);
+	    fbFinishAccess (pSrcDrawable);
 	}
 	else
 	{
@@ -256,6 +281,9 @@ fbCopyNto1 (DrawablePtr	pSrcDrawable,
 		      pPriv->and, pPriv->xor,
 		      pPriv->bgand, pPriv->bgxor);
 	    free (tmp);
+
+	    fbFinishAccess (pDstDrawable);
+	    fbFinishAccess (pSrcDrawable);
 	}
 	pbox++;
     }

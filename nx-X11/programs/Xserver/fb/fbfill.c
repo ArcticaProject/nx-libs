@@ -1,6 +1,4 @@
 /*
- * Id: fbfill.c,v 1.1 1999/11/02 03:54:45 keithp Exp $
- *
  * Copyright © 1998 Keith Packard
  *
  * Permission to use, copy, modify, distribute, and sell this software and its
@@ -46,12 +44,18 @@ fbFill (DrawablePtr pDrawable,
 
     switch (pGC->fillStyle) {
     case FillSolid:
-	fbSolid (dst + (y + dstYoff) * dstStride, 
-		 dstStride, 
-		 (x + dstXoff) * dstBpp,
-		 dstBpp,
-		 width * dstBpp, height,
-		 pPriv->and, pPriv->xor);
+#ifndef FB_ACCESS_WRAPPER
+	if (pPriv->and || !pixman_fill ((uint32_t *)dst, dstStride, dstBpp,
+					x + dstXoff, y + dstYoff,
+					width, height,
+					pPriv->xor))
+#endif	    
+	    fbSolid (dst + (y + dstYoff) * dstStride, 
+		     dstStride, 
+		     (x + dstXoff) * dstBpp,
+		     dstBpp,
+		     width * dstBpp, height,
+		     pPriv->and, pPriv->xor);
 	break;
     case FillStippled:
     case FillOpaqueStippled: {
@@ -86,6 +90,7 @@ fbFill (DrawablePtr pDrawable,
 		    
 		    (pGC->patOrg.x + pDrawable->x + dstXoff),
 		    pGC->patOrg.y + pDrawable->y - y);
+	    fbFinishAccess (&pStip->drawable);
 	}
 	else
 	{
@@ -123,6 +128,7 @@ fbFill (DrawablePtr pDrawable,
 		       bgand, bgxor,
 		       pGC->patOrg.x + pDrawable->x + dstXoff,
 		       pGC->patOrg.y + pDrawable->y - y);
+	    fbFinishAccess (&pStip->drawable);
 	}
 	break;
     }
@@ -151,10 +157,12 @@ fbFill (DrawablePtr pDrawable,
 		dstBpp,
 		(pGC->patOrg.x + pDrawable->x + dstXoff) * dstBpp,
 		pGC->patOrg.y + pDrawable->y - y);
+	fbFinishAccess (&pTile->drawable);
 	break;
     }
     }
     fbValidateDrawable (pDrawable);
+    fbFinishAccess (pDrawable);
 }
 
 void
@@ -202,14 +210,21 @@ fbSolidBoxClipped (DrawablePtr	pDrawable,
 	
 	if (partY2 <= partY1)
 	    continue;
-	
-	fbSolid (dst + (partY1 + dstYoff) * dstStride,
-		 dstStride,
-		 (partX1 + dstXoff) * dstBpp,
-		 dstBpp,
 
-		 (partX2 - partX1) * dstBpp,
-		 (partY2 - partY1),
-		 and, xor);
+#ifndef FB_ACCESS_WRAPPER
+	if (and || !pixman_fill ((uint32_t *)dst, dstStride, dstBpp,
+				 partX1 + dstXoff, partY1 + dstYoff,
+				 (partX2 - partX1), (partY2 - partY1),
+				 xor))
+#endif
+	    fbSolid (dst + (partY1 + dstYoff) * dstStride,
+		     dstStride,
+		     (partX1 + dstXoff) * dstBpp,
+		     dstBpp,
+		     
+		     (partX2 - partX1) * dstBpp,
+		     (partY2 - partY1),
+		     and, xor);
     }
+    fbFinishAccess (pDrawable);
 }

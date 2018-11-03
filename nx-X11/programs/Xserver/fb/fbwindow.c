@@ -1,6 +1,4 @@
 /*
- * Id: fbwindow.c,v 1.1 1999/11/02 03:54:45 keithp Exp $
- *
  * Copyright © 1998 Keith Packard
  *
  * Permission to use, copy, modify, distribute, and sell this software and its
@@ -114,6 +112,9 @@ fbCopyWindowProc (DrawablePtr	pSrcDrawable,
 	       upsidedown);
 	pbox++;
     }
+
+    fbFinishAccess (pDstDrawable);
+    fbFinishAccess (pSrcDrawable);
 }
 
 void 
@@ -137,7 +138,7 @@ fbCopyWindow(WindowPtr	    pWin,
 
 #ifdef COMPOSITE
     if (pPixmap->screen_x || pPixmap->screen_y)
-	RegionTranslate(&rgnDst,
+	RegionTranslate(&rgnDst, 
 			  -pPixmap->screen_x, -pPixmap->screen_y);
 #endif
 
@@ -215,20 +216,39 @@ fbFillRegionSolid (DrawablePtr	pDrawable,
     int		n = RegionNumRects(pRegion);
     BoxPtr	pbox = RegionRects(pRegion);
 
+#ifndef FB_ACCESS_WRAPPER
+    int try_mmx = 0;
+    if (!and)
+        try_mmx = 1;
+#endif
+
     fbGetDrawable (pDrawable, dst, dstStride, dstBpp, dstXoff, dstYoff);
     
     while (n--)
     {
-	fbSolid (dst + (pbox->y1 + dstYoff) * dstStride,
-		 dstStride,
-		 (pbox->x1 + dstXoff) * dstBpp,
-		 dstBpp,
-		 (pbox->x2 - pbox->x1) * dstBpp,
-		 pbox->y2 - pbox->y1,
-		 and, xor);
+#ifndef FB_ACCESS_WRAPPER
+	if (!try_mmx || !pixman_fill (dst, dstStride, dstBpp,
+				      pbox->x1 + dstXoff, pbox->y1 + dstYoff,
+				      (pbox->x2 - pbox->x1),
+				      (pbox->y2 - pbox->y1),
+				      xor))
+	{
+#endif
+	    fbSolid (dst + (pbox->y1 + dstYoff) * dstStride,
+		     dstStride,
+		     (pbox->x1 + dstXoff) * dstBpp,
+		     dstBpp,
+		     (pbox->x2 - pbox->x1) * dstBpp,
+		     pbox->y2 - pbox->y1,
+		     and, xor);
+#ifndef FB_ACCESS_WRAPPER
+	}
+#endif
 	fbValidateDrawable (pDrawable);
 	pbox++;
     }
+    
+    fbFinishAccess (pDrawable);
 }
 
 #ifdef PANORAMIX
@@ -291,6 +311,9 @@ fbFillRegionTiled (DrawablePtr	pDrawable,
 		yRot - (pbox->y1 + dstYoff));
 	pbox++;
     }
+
+    fbFinishAccess (&pTile->drawable);
+    fbFinishAccess (pDrawable);
 }
 
 void
