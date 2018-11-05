@@ -168,12 +168,10 @@ ProcXTestFakeInput(client)
     register ClientPtr client;
 {
     REQUEST(xXTestFakeInputReq);
-    int nev;
-    int        n;
+    int nev, n, type;
     xEvent *ev;
     DeviceIntPtr dev = NULL;
     WindowPtr root;
-    int type;
 #ifdef XINPUT
     Bool extension = FALSE;
     deviceValuator *dv = NULL;
@@ -437,6 +435,8 @@ ProcXTestFakeInput(client)
 	    (root->drawable.pScreen,
 	     ev->u.keyButtonPointer.rootX,
 	     ev->u.keyButtonPointer.rootY, FALSE);
+        dev->valuator->lastx = ev->u.keyButtonPointer.rootX;
+        dev->valuator->lasty = ev->u.keyButtonPointer.rootY;
 	break;
     case ButtonPress:
     case ButtonRelease:

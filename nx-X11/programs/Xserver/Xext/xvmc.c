@@ -668,7 +668,7 @@ SProcXvMCDispatch (ClientPtr client)
 }
 
 void 
-XvMCExtensionInit()
+XvMCExtensionInit(void)
 {
    ExtensionEntry *extEntry;
 

@@ -71,9 +71,8 @@ PERFORMANCE OF THIS SOFTWARE.
 #include "protocol-versions.h"
 
 #include <stdio.h>
-#if !defined(WIN32)
 #include <sys/time.h>
-#endif
+
 
 /*
  * Local Global Variables
@@ -572,7 +571,7 @@ SyncSendAlarmNotifyEvents(pAlarm)
 
     /* send to other interested clients */
     for (pcl = pAlarm->pEventClients; pcl; pcl = pcl->next)
-	WriteEventsToClient(pcl->client, 1, (xEvent *) &ane);
+	    WriteEventsToClient(pcl->client, 1, (xEvent *) &ane);
 }
 
 
@@ -1112,7 +1111,7 @@ SyncComputeBracketValues(pCounter, startOver)
 {
     SyncTriggerList *pCur;
     SyncTrigger *pTrigger;
-    SysCounterInfo *psci = pCounter->pSysCounterInfo;
+    SysCounterInfo *psci;
     CARD64 *pnewgtval = NULL;
     CARD64 *pnewltval = NULL;
     SyncCounterType ct;
@@ -1120,6 +1119,7 @@ SyncComputeBracketValues(pCounter, startOver)
     if (!pCounter)
 	return;
 
+    psci = pCounter->pSysCounterInfo;
     ct = pCounter->pSysCounterInfo->counterType;
     if (ct == XSyncCounterNeverChanges)
 	return;
@@ -2460,7 +2460,7 @@ ServertimeQueryValue(pCounter, pValue_return)
 
 static void
 ServertimeBracketValues(pCounter, pbracket_less, pbracket_greater)
-    void * pCounter;
+    void *pCounter;
     CARD64 *pbracket_less;
     CARD64 *pbracket_greater;
 {
@@ -2480,7 +2480,7 @@ ServertimeBracketValues(pCounter, pbracket_less, pbracket_greater)
 }
 
 static void
-SyncInitServerTime()
+SyncInitServerTime(void)
 {
     CARD64 resolution;
 
@@ -2502,14 +2502,14 @@ static XSyncValue *pIdleTimeValueLess;
 static XSyncValue *pIdleTimeValueGreater;
 
 static void
-IdleTimeQueryValue (pointer pCounter, CARD64 *pValue_return)
+IdleTimeQueryValue (void *pCounter, CARD64 *pValue_return)
 {
     CARD32 idle = GetTimeInMillis() - lastDeviceEventTime.milliseconds;
     XSyncIntsToValue (pValue_return, idle, 0);
 }
 
 static void
-IdleTimeBlockHandler (pointer env, struct timeval **wt, pointer LastSelectMask)
+IdleTimeBlockHandler (void *env, struct timeval **wt, void *LastSelectMask)
 {
     XSyncValue idle, old_idle;
     SyncTriggerList *list = IdleTimeCounter->pTriglist;
@@ -2584,9 +2584,9 @@ IdleTimeBlockHandler (pointer env, struct timeval **wt, pointer LastSelectMask)
 }
 
 static void
-IdleTimeWakeupHandler (pointer env,
+IdleTimeWakeupHandler (void * env,
                        int rc,
-                       pointer LastSelectMask)
+                       void * LastSelectMask)
 {
     XSyncValue idle;
 
@@ -2598,14 +2598,14 @@ IdleTimeWakeupHandler (pointer env,
     if ((pIdleTimeValueGreater &&
          XSyncValueGreaterOrEqual (idle, *pIdleTimeValueGreater)) ||
         (pIdleTimeValueLess &&
-        XSyncValueLessOrEqual (idle, *pIdleTimeValueLess)))
+	 XSyncValueLessOrEqual (idle, *pIdleTimeValueLess)))
     {
 	SyncChangeCounter (IdleTimeCounter, idle);
     }
 }
 
 static void
-IdleTimeBracketValues (pointer pCounter,
+IdleTimeBracketValues (void *pCounter,
                        CARD64 *pbracket_less,
                        CARD64 *pbracket_greater)
 {

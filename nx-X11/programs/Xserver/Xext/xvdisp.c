@@ -381,10 +381,8 @@ ProcXvQueryAdaptors(ClientPtr client)
   xvFormat format;
   xvAdaptorInfo ainfo;
   xvQueryAdaptorsReply rep;
-  int totalSize;
-  int na;
+  int totalSize, na, nf;
   XvAdaptorPtr pa;
-  int nf;
   XvFormatPtr pf;
   WindowPtr pWin;
   ScreenPtr pScreen;
@@ -539,9 +537,9 @@ ProcXvQueryEncodings(ClientPtr client)
 static int
 ProcXvPutVideo(ClientPtr client)
 {
-  register DrawablePtr pDraw;
+  DrawablePtr pDraw;
   XvPortPtr pPort;
-  register GCPtr pGC;
+  GCPtr pGC;
   int status;
 
   REQUEST(xvPutVideoReq);
@@ -585,9 +583,9 @@ ProcXvPutVideo(ClientPtr client)
 static int
 ProcXvPutStill(ClientPtr client)
 {
-  register DrawablePtr pDraw;
+  DrawablePtr pDraw;
   XvPortPtr pPort;
-  register GCPtr pGC;
+  GCPtr pGC;
   int status;
 
   REQUEST(xvPutStillReq);
@@ -632,9 +630,9 @@ ProcXvPutStill(ClientPtr client)
 static int
 ProcXvGetVideo(ClientPtr client)
 {
-  register DrawablePtr pDraw;
+  DrawablePtr pDraw;
   XvPortPtr pPort;
-  register GCPtr pGC;
+  GCPtr pGC;
   int status;
 
   REQUEST(xvGetVideoReq);
@@ -679,9 +677,9 @@ ProcXvGetVideo(ClientPtr client)
 static int
 ProcXvGetStill(ClientPtr client)
 {
-  register DrawablePtr pDraw;
+  DrawablePtr pDraw;
   XvPortPtr pPort;
-  register GCPtr pGC;
+  GCPtr pGC;
   int status;
 
   REQUEST(xvGetStillReq);
@@ -725,7 +723,7 @@ ProcXvGetStill(ClientPtr client)
 static int
 ProcXvSelectVideoNotify(ClientPtr client)
 {
-  register DrawablePtr pDraw;
+  DrawablePtr pDraw;
   REQUEST(xvSelectVideoNotifyReq);
   REQUEST_SIZE_MATCH(xvSelectVideoNotifyReq);
 
@@ -831,7 +829,7 @@ static int
 ProcXvStopVideo(ClientPtr client)
 {
   int status;
-  register DrawablePtr pDraw;
+  DrawablePtr pDraw;
   XvPortPtr pPort;
   REQUEST(xvStopVideoReq);
   REQUEST_SIZE_MATCH(xvStopVideoReq);
