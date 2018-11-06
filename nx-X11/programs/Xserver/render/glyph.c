@@ -79,7 +79,10 @@ static GlyphHashSetRec glyphHashSets[] = {
 
 #define NGLYPHHASHSETS	(sizeof(glyphHashSets)/sizeof(glyphHashSets[0]))
 
-static const CARD8	glyphDepths[GlyphFormatNum] = { 1, 4, 8, 16, 32 };
+#ifndef NXAGENT_SERVER
+static
+#endif
+const CARD8	glyphDepths[GlyphFormatNum] = { 1, 4, 8, 16, 32 };
 
 static GlyphHashRec	globalGlyphs[GlyphFormatNum];
 

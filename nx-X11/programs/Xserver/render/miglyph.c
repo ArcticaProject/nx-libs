@@ -101,6 +101,7 @@ miGlyphExtents (int		nlist,
 
 #define NeedsComponent(f) (PICT_FORMAT_A(f) != 0 && PICT_FORMAT_RGB(f) != 0)
 
+#ifndef NXAGENT_SERVER
 void
 miGlyphs (CARD8		op,
 	  PicturePtr	pSrc,
@@ -137,7 +138,7 @@ miGlyphs (CARD8		op,
 	    return;
 	width = extents.x2 - extents.x1;
 	height = extents.y2 - extents.y1;
-	pMaskPixmap = (*pScreen->CreatePixmap) (pScreen, width, height, maskFormat->depth);
+	pMaskPixmap = (*pScreen->CreatePixmap) (pScreen, width, height, maskFormat->depth, 0);
 	if (!pMaskPixmap)
 	    return;
 	component_alpha = NeedsComponent(maskFormat->format);
@@ -253,3 +254,4 @@ miGlyphs (CARD8		op,
 	(*pScreen->DestroyPixmap) (pMaskPixmap);
     }
 }
+#endif

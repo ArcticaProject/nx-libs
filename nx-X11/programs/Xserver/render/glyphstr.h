@@ -1,5 +1,4 @@
 /*
- *
  * Copyright © 2000 SuSE, Inc.
  *
  * Permission to use, copy, modify, distribute, and sell this software and its
@@ -46,10 +45,14 @@ typedef struct _Glyph {
     /* bits follow */
 } GlyphRec, *GlyphPtr;
 
+#ifdef NXAGENT_SERVER
+#include "../hw/nxagent/NXglyphstr_GlyphRef.h"
+#else
 typedef struct _GlyphRef {
     CARD32	signature;
     GlyphPtr	glyph;
 } GlyphRefRec, *GlyphRefPtr;
+#endif /* NXAGENT_SERVER */
 
 #define DeletedGlyph	((GlyphPtr) 1)
 
@@ -65,14 +68,18 @@ typedef struct _GlyphHash {
     CARD32	    tableEntries;
 } GlyphHashRec, *GlyphHashPtr;
 
+#ifdef NXAGENT_SERVER
+#include "../hw/nxagent/NXglyphstr_GlyphSet.h"
+#else
 typedef struct _GlyphSet {
     CARD32	    refcnt;
     PictFormatPtr   format;
     int		    fdepth;
     GlyphHashRec    hash;
     int             maxPrivate;
-    void *         *devPrivates;
+    void            **devPrivates;
 } GlyphSetRec, *GlyphSetPtr;
+#endif /* NXAGENT_SERVER */
 
 #define GlyphSetGetPrivate(pGlyphSet,n)					\
 	((n) > (pGlyphSet)->maxPrivate ?				\

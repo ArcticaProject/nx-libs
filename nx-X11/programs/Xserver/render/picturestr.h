@@ -55,6 +55,8 @@ typedef struct _PictFormat {
 typedef struct pixman_vector PictVector, *PictVectorPtr;
 typedef struct pixman_transform PictTransform, *PictTransformPtr;
 
+#define pict_f_transform pixman_f_transform
+
 #define PICT_GRADIENT_STOPTABLE_SIZE 1024
 #define SourcePictTypeSolidFill 0
 #define SourcePictTypeLinear 1
@@ -65,11 +67,15 @@ typedef struct pixman_transform PictTransform, *PictTransformPtr;
 #define SourcePictClassHorizontal 1
 #define SourcePictClassVertical   2
 
+#ifdef NXAGENT_SERVER
+#include "../hw/nxagent/NXpicturestr_PictSolidFill.h"
+#else
 typedef struct _PictSolidFill {
     unsigned int type;
     unsigned int class;
     CARD32 color;
 } PictSolidFill, *PictSolidFillPtr;
+#endif /* NXAGENT_SERVER */
 
 typedef struct _PictGradientStop {
     xFixed x;
@@ -164,7 +170,7 @@ typedef struct _Picture {
     DDXPointRec	    alphaOrigin;
 
     DDXPointRec	    clipOrigin;
-    void *	    clientClip;
+    void	    *clientClip;
 
     Atom	    dither;
 
@@ -183,12 +189,14 @@ typedef struct _Picture {
     SourcePictPtr   pSourcePict;
 } PictureRec;
 
-typedef Bool (*PictFilterValidateParamsProcPtr) (PicturePtr pPicture, int id,
-						 xFixed *params, int nparams);
+typedef Bool (*PictFilterValidateParamsProcPtr) (ScreenPtr pScreen, int id,
+						 xFixed *params, int nparams,
+                                                 int *width, int *height);
 typedef struct {
     char			    *name;
     int				    id;
     PictFilterValidateParamsProcPtr ValidateParams;
+    int width, height;
 } PictFilterRec, *PictFilterPtr;
 
 #define PictFilterNearest	0
@@ -493,7 +501,12 @@ PictFilterPtr
 PictureFindFilter (ScreenPtr pScreen, char *name, int len);
 
 int
-SetPictureFilter (PicturePtr pPicture, char *name, int len, xFixed *params, int nparams);
+SetPicturePictFilter (PicturePtr pPicture, PictFilterPtr pFilter,
+		      xFixed *params, int nparams);
+
+int
+SetPictureFilter (PicturePtr pPicture, char *name, int len,
+		  xFixed *params, int nparams);
 
 Bool
 PictureFinishInit (void);
@@ -701,5 +714,23 @@ CreateConicalGradientPicture (Picture pid,
 void PanoramiXRenderInit (void);
 void PanoramiXRenderReset (void);
 #endif
+
+/*
+ * matrix.c
+ */
+
+extern _X_EXPORT void
+PictTransform_from_xRenderTransform(PictTransformPtr pict,
+                                    xRenderTransform * render);
+
+extern _X_EXPORT void
+xRenderTransform_from_PictTransform(xRenderTransform * render,
+                                    PictTransformPtr pict);
+
+extern _X_EXPORT Bool
+ PictureTransformPoint(PictTransformPtr transform, PictVectorPtr vector);
+
+extern _X_EXPORT Bool
+ PictureTransformPoint3d(PictTransformPtr transform, PictVectorPtr vector);
 
 #endif /* _PICTURESTR_H_ */

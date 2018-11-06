@@ -106,7 +106,7 @@ miGlyphs (CARD8		op,
 	    return;
 	width = extents.x2 - extents.x1;
 	height = extents.y2 - extents.y1;
-	pMaskPixmap = (*pScreen->CreatePixmap) (pScreen, width, height, maskFormat->depth);
+	pMaskPixmap = (*pScreen->CreatePixmap) (pScreen, width, height, maskFormat->depth, 0);
 
 	if (!pMaskPixmap)
 	    return;
