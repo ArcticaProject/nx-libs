@@ -12,7 +12,7 @@ fb                1.4.2
 GL                6.9/7.0
 mi                1.4.2
 miext             1.4.2
-os                ? 7.1/1.1 + many backports, some of them from 2017
+os                1.4.2 + many backports, some of them from 2019
 randr             1.18.0
 record            1.4.2
 render            1.4.2

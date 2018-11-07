@@ -794,8 +794,7 @@ FlushAllOutput(void)
 	    if (client->clientGone)
 		continue;
 	    oc = (OsCommPtr)client->osPrivate;
-	    if (
-		FD_ISSET(oc->fd, &ClientsWithInput))
+	    if (FD_ISSET(oc->fd, &ClientsWithInput))
 	    {
 		FD_SET(oc->fd, &OutputPending); /* set the bit again */
 		NewOutputPending = TRUE;
