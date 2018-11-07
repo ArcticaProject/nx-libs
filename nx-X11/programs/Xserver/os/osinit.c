@@ -65,9 +65,6 @@ SOFTWARE.
 #endif
 #endif
 
-#if defined(__SCO__)
-#include <sys/wait.h>
-#endif
 
 #if !defined(SYSV) && !defined(WIN32)
 #include <sys/resource.h>
@@ -104,7 +101,7 @@ OsInit(void)
 
 	InitNotifyFds();
 
-#if !defined(__SCO__) && !defined(__CYGWIN__) && !defined(__UNIXWARE__)
+#if !defined(__CYGWIN__) && !defined(__UNIXWARE__)
 	fclose(stdin);
 	fclose(stdout);
 #endif

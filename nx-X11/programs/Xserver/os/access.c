@@ -80,9 +80,9 @@ SOFTWARE.
 #include <sys/ioctl.h>
 #include <ctype.h>
 
-#if defined(TCPCONN) || defined(__SCO__)
+#if defined(TCPCONN)
 #include <netinet/in.h>
-#endif /* TCPCONN || __SCO__ */
+#endif /* TCPCONN */
 
 #ifdef HAS_GETPEERUCRED
 # include <ucred.h>
@@ -91,10 +91,10 @@ SOFTWARE.
 # endif
 #endif
 
-#if defined(SVR4) ||  (defined(SYSV) && defined(i386)) || defined(__GNU__)
+#if defined(SVR4) ||  (defined(SYSV) && defined(__i386__)) || defined(__GNU__)
 # include <sys/utsname.h>
 #endif
-#if defined(SYSV) &&  defined(i386)
+#if defined(SYSV) &&  defined(__i386__)
 # include <sys/stream.h>
 #endif
 #ifdef __GNU__
@@ -154,10 +154,6 @@ SOFTWARE.
 #endif
 #endif 
 
-#ifdef __SCO__
-/* The system defined value is wrong. MAXPATHLEN is set in sco5.cf. */
-#undef PATH_MAX
-#endif
 
 #define X_INCLUDE_NETDB_H
 #include <nx-X11/Xos_r.h>
