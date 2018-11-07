@@ -42,7 +42,6 @@ SRCS =  \
 	Keystroke.c \
 	Pointer.c \
 	Screen.c \
-	TestExt.c \
 	Visual.c \
 	Drawable.c \
 	Window.c \
@@ -104,7 +103,6 @@ OBJS =  \
 	Keystroke.o \
 	Pointer.o \
 	Screen.o \
-	TestExt.o \
 	Visual.o \
 	Drawable.o \
 	Window.o \
