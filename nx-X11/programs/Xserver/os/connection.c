@@ -65,9 +65,6 @@ SOFTWARE.
 #include <dix-config.h>
 #endif
 
-#ifdef WIN32
-#include <nx-X11/Xwinsock.h>
-#endif
 #include <nx-X11/X.h>
 #include <nx-X11/Xproto.h>
 #define XSERV_t
@@ -81,7 +78,6 @@ SOFTWARE.
 #include <stdlib.h>
 #include <unistd.h>
 
-#ifndef WIN32
 #include <sys/socket.h>
 
 #if defined(TCPCONN)
@@ -104,7 +100,6 @@ SOFTWARE.
 #endif
 
 #include <sys/uio.h>
-#endif /* WIN32 */
 #include "misc.h"
 #include "osdep.h"
 #include <nx-X11/Xpoll.h>
@@ -155,98 +150,7 @@ int GrabInProgress = 0;
 static void
 QueueNewConnections(int curconn, int ready, void *data);
 
-#if !defined(WIN32)
 int *ConnectionTranslation = NULL;
-#else
-/*
- * On NT fds are not between 0 and MAXSOCKS, they are unrelated, and there is
- * not even a known maximum value, so use something quite arbitrary for now.
- * Do storage is a hash table of size 256. Collisions are handled in a linked
- * list.
- */
-
-#undef MAXSOCKS
-#define MAXSOCKS 500
-#undef MAXSELECT
-#define MAXSELECT 500
-#define MAXFD 500
-
-struct _ct_node {
-    struct _ct_node *next;
-    int key;
-    int value;
-};
-
-struct _ct_node *ct_head[256];
-
-void InitConnectionTranslation(void)
-{
-    bzero(ct_head, sizeof(ct_head));
-}
-
-int GetConnectionTranslation(int conn)
-{
-    struct _ct_node *node = ct_head[conn & 0xff];
-    while (node != NULL)
-    {
-        if (node->key == conn)
-            return node->value;
-        node = node->next;
-    }
-    return 0;
-}
-
-void SetConnectionTranslation(int conn, int client)
-{
-    struct _ct_node **node = ct_head + (conn & 0xff);
-    if (client == 0) /* remove entry */
-    {
-        while (*node != NULL)
-        {
-            if ((*node)->key == conn)
-            {
-                struct _ct_node *temp = *node;
-                *node = (*node)->next;
-                free(temp);
-                return;
-            }
-            node = &((*node)->next);
-        }
-        return;
-    } else 
-    {
-        while (*node != NULL)
-        {
-            if ((*node)->key == conn)
-            {
-                (*node)->value = client;
-                return;
-            }
-            node = &((*node)->next);
-        }
-        *node = (struct _ct_node*)malloc(sizeof(struct _ct_node));
-        (*node)->next = NULL;
-        (*node)->key = conn;
-        (*node)->value = client;
-        return;
-    }
-}
-
-void ClearConnectionTranslation(void)
-{
-    unsigned i;
-    for (i = 0; i < 256; i++)
-    {
-        struct _ct_node *node = ct_head[i];
-        while (node != NULL)
-        {
-            struct _ct_node *temp = node;
-            node = node->next;
-            free(temp);
-        }
-    }
-}
-#endif
 
 XtransConnInfo 	*ListenTransConns = NULL;
 int	       	*ListenTransFds = NULL;
@@ -318,11 +222,7 @@ InitConnectionLimits(void)
     ErrorF("InitConnectionLimits: MaxClients = %d\n", MaxClients);
 #endif
 
-#if !defined(WIN32)
     ConnectionTranslation = (int *)xnfalloc(sizeof(int)*(lastfdesc + 1));
-#else
-    InitConnectionTranslation();
-#endif
 }
 
 /*
@@ -341,7 +241,6 @@ InitConnectionLimits(void)
 static void
 InitParentProcess(void)
 {
-#if !defined(WIN32)
     OsSigHandlerPtr handler;
     handler = OsSignal (SIGUSR1, SIG_IGN);
     if ( handler == SIG_IGN)
@@ -357,13 +256,11 @@ InitParentProcess(void)
      */
     ParentProcess = GetPPID (ParentProcess);
 #endif /* __UNIXOS2__ */
-#endif
 }
 
 void
 NotifyParentProcess(void)
 {
-#if !defined(WIN32)
     if (displayfd >= 0) {
 #ifdef NXAGENT_SERVER
 	if (displayfd == STDERR_FILENO)
@@ -385,7 +282,6 @@ NotifyParentProcess(void)
            kill (ParentProcess, SIGUSR1);
        }
     }
-#endif
 }
 
 static Bool
@@ -416,11 +312,7 @@ CreateWellKnownSockets(void)
     FD_ZERO(&LastSelectMask);
     FD_ZERO(&ClientsWithInput);
 
-#if !defined(WIN32)
     for (i=0; i<MaxClients; i++) ConnectionTranslation[i] = 0;
-#else
-    ClearConnectionTranslation();
-#endif
 
     /* display is initialized to "0" by main(). It is then set to the display
      * number if specified on the command line. */
@@ -473,10 +365,8 @@ CreateWellKnownSockets(void)
 
     if (ListenTransCount == 0 && !NoListenAll)
         FatalError ("Cannot establish any listening sockets - Make sure an X server isn't already running");
-#if !defined(WIN32)
     OsSignal (SIGPIPE, SIG_IGN);
     OsSignal (SIGHUP, AutoResetServer);
-#endif
     OsSignal (SIGINT, GiveUp);
     OsSignal (SIGTERM, GiveUp);
     ResetHosts(display);
@@ -802,11 +692,7 @@ AllocNewConnection (XtransConnInfo trans_conn, int fd, CARD32 conn_time)
     ClientPtr	client;
     
     if (
-#ifndef WIN32
 	fd >= lastfdesc
-#else
-	XFD_SETCOUNT(&AllClients) >= MaxClients
-#endif
 	)
 	return NullClient;
     oc = (OsCommPtr)malloc(sizeof(OsCommRec));
@@ -825,11 +711,7 @@ AllocNewConnection (XtransConnInfo trans_conn, int fd, CARD32 conn_time)
     }
     client->local = ComputeLocalClient(client);
     {
-#if !defined(WIN32)
 	ConnectionTranslation[fd] = client->index;
-#else
-	SetConnectionTranslation(fd, client->index);
-#endif
 	if (GrabInProgress)
 	{
 	    FD_SET(fd, &SavedAllClients);
@@ -893,11 +775,7 @@ EstablishNewConnections(ClientPtr clientUnused, void * closure)
     if (newconn < lastfdesc) {
 	int clientid;
 
-#if !defined(WIN32)
 	clientid = ConnectionTranslation[newconn];
-#else
-	clientid = GetConnectionTranslation(newconn);
-#endif
 	if (clientid && (client = clients[clientid]))
 	    CloseDownClient(client);
     }
@@ -990,11 +868,7 @@ CloseDownFileDescriptor(OsCommPtr oc)
     }
     FreeOsBuffers(oc);
     free(oc);
-#ifndef WIN32
     ConnectionTranslation[connection] = 0;
-#else
-    SetConnectionTranslation(connection, 0);
-#endif    
     FD_CLR(connection, &AllSockets);
     FD_CLR(connection, &AllClients);
     FD_CLR(connection, &ClientsWithInput);
@@ -1023,22 +897,16 @@ CloseDownFileDescriptor(OsCommPtr oc)
 void
 CheckConnections(void)
 {
-#ifndef WIN32
     fd_mask		mask;
-#endif
     fd_set		tmask; 
     int			curclient, curoff;
     int			i;
     struct timeval	notime;
     int r;
-#ifdef WIN32
-    fd_set savedAllClients;
-#endif
 
     notime.tv_sec = 0;
     notime.tv_usec = 0;
 
-#ifndef WIN32
     for (i=0; i<howmany(XFD_SETSIZE, NFDBITS); i++)
     {
 	mask = AllClients.fds_bits[i];
@@ -1054,18 +922,6 @@ CheckConnections(void)
 	    mask &= ~((fd_mask)1 << curoff);
 	}
     }	
-#else
-    XFD_COPYSET(&AllClients, &savedAllClients);
-    for (i = 0; i < XFD_SETCOUNT(&savedAllClients); i++)
-    {
-	curclient = XFD_FD(&savedAllClients, i);
-	FD_ZERO(&tmask);
-	FD_SET(curclient, &tmask);
-	r = Select (curclient + 1, &tmask, NULL, NULL, &notime);
-	if (r < 0)
-	    CloseDownClient(clients[GetConnectionTranslation(curclient)]);
-    }	
-#endif
 }
 
 

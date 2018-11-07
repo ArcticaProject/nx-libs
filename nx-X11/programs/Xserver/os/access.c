@@ -58,9 +58,6 @@ SOFTWARE.
 #include <dix-config.h>
 #endif
 
-#ifdef WIN32
-#include <nx-X11/Xwinsock.h>
-#endif
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -75,7 +72,6 @@ SOFTWARE.
 #include "site.h"
 #include <errno.h>
 #include <sys/types.h>
-#ifndef WIN32
 #include <sys/socket.h>
 #include <sys/ioctl.h>
 #include <ctype.h>
@@ -141,7 +137,6 @@ SOFTWARE.
 /* #endif */
 #endif
 
-#endif /* WIN32 */
 
 #ifndef PATH_MAX
 #include <sys/param.h>
@@ -474,13 +469,7 @@ DefineSelf (int fd)
     int		family;
     register HOST	*host;
 
-#ifndef WIN32
     struct utsname name;
-#else
-    struct {
-        char  nodename[512];	    
-    } name;
-#endif
 
     register struct hostent  *hp;
 
@@ -504,11 +493,7 @@ DefineSelf (int fd)
      * uname() lets me access to the whole string (it smashes release, you
      * see), whereas gethostname() kindly truncates it for me.
      */
-#ifndef WIN32
     uname(&name);
-#else
-    gethostname(name.nodename, sizeof(name.nodename));
-#endif
 
     hp = _XGethostbyname(name.nodename, hparams);
     if (hp != NULL)
@@ -1692,10 +1677,6 @@ ConvertAddr (
         return FamilyLocal;
 #if defined(TCPCONN)
     case AF_INET:
-#ifdef WIN32
-        if (16777343 == *(long*)&((struct sockaddr_in *) saddr)->sin_addr)
-            return FamilyLocal;
-#endif
         *len = sizeof (struct in_addr);
         *addr = (void *) &(((struct sockaddr_in *) saddr)->sin_addr);
         return FamilyInternet;

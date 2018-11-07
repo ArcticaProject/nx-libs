@@ -60,9 +60,6 @@ SOFTWARE.
 #if 0
 #define DEBUG_COMMUNICATION
 #endif
-#ifdef WIN32
-#include <nx-X11/Xwinsock.h>
-#endif
 #include <stdio.h>
 #define XSERV_t
 #define TRANS_SERVER
@@ -70,9 +67,7 @@ SOFTWARE.
 #include <nx-X11/Xtrans/Xtrans.h>
 #include <nx-X11/Xmd.h>
 #include <errno.h>
-#if !defined(WIN32)
 #include <sys/uio.h>
-#endif
 #include <nx-X11/X.h>
 #include <nx-X11/Xproto.h>
 #include "os.h"
@@ -88,7 +83,6 @@ CallbackListPtr       FlushCallback;
 /* check for both EAGAIN and EWOULDBLOCK, because some supposedly POSIX
  * systems are broken and return EWOULDBLOCK when they should return EAGAIN
  */
-#ifndef WIN32
 #if defined(EAGAIN) && defined(EWOULDBLOCK)
 #define ETEST(err) (err == EAGAIN || err == EWOULDBLOCK)
 #else
@@ -97,9 +91,6 @@ CallbackListPtr       FlushCallback;
 #else
 #define ETEST(err) (err == EWOULDBLOCK)
 #endif
-#endif
-#else /* WIN32 The socket errorcodes differ from the normal errors*/
-#define ETEST(err) (err == EAGAIN || err == WSAEWOULDBLOCK)
 #endif
 
 Bool CriticalOutputPending;
@@ -777,9 +768,6 @@ FlushAllOutput(void)
     OsCommPtr oc;
     register ClientPtr client;
     Bool newoutput = NewOutputPending;
-#if defined(WIN32)
-    fd_set newOutputPending;
-#endif
 
     if (!newoutput)
 	return;
@@ -792,7 +780,6 @@ FlushAllOutput(void)
     CriticalOutputPending = FALSE;
     NewOutputPending = FALSE;
 
-#ifndef WIN32
     for (base = 0; base < howmany(XFD_SETSIZE, NFDBITS); base++)
     {
 	mask = OutputPending.fds_bits[ base ];
@@ -817,28 +804,6 @@ FlushAllOutput(void)
 		(void)FlushClient(client, oc, (char *)NULL, 0);
 	}
     }
-#else  /* WIN32 */
-    FD_ZERO(&newOutputPending);
-    for (base = 0; base < XFD_SETCOUNT(&OutputPending); base++)
-    {
-	    index = XFD_FD(&OutputPending, base);
-	    if ((index = GetConnectionTranslation(index)) == 0)
-		continue;
-	    client = clients[index];
-	    if (client->clientGone)
-		continue;
-	    oc = (OsCommPtr)client->osPrivate;
-	    if (
-		FD_ISSET(oc->fd, &ClientsWithInput))
-	    {
-		FD_SET(oc->fd, &newOutputPending); /* set the bit again */
-		NewOutputPending = TRUE;
-	    }
-	    else
-		(void)FlushClient(client, oc, (char *)NULL, 0);
-    }
-    XFD_COPYSET(&newOutputPending, &OutputPending);
-#endif /* WIN32 */
 }
 
 void

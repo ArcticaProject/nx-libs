@@ -83,9 +83,6 @@ OR PERFORMANCE OF THIS SOFTWARE.
 #include <signal.h>
 #endif
 
-#if defined(WIN32) && !defined(__CYGWIN__)
-#include <nx-X11/Xwinsock.h>
-#endif
 #include <nx-X11/Xos.h>
 #include <stdio.h>
 #include "misc.h"
@@ -115,10 +112,8 @@ OR PERFORMANCE OF THIS SOFTWARE.
 #undef _POSIX_SOURCE
 #endif
 #endif
-#ifndef WIN32
 #include <sys/wait.h>
-#endif
-#if !defined(SYSV) && !defined(WIN32)
+#if !defined(SYSV)
 #include <sys/resource.h>
 #endif
 #include <time.h>
@@ -132,9 +127,7 @@ OR PERFORMANCE OF THIS SOFTWARE.
 #include <stdlib.h>	/* for malloc() */
 
 #if defined(TCPCONN)
-# ifndef WIN32
 #  include <netdb.h>
-# endif
 #endif
 
 #include "opaque.h"
@@ -910,7 +903,7 @@ ProcessCommandLine(int argc, char *argv[])
 #ifdef SERVER_LOCK
 	else if ( strcmp ( argv[i], "-nolock") == 0)
 	{
-#if !defined(WIN32) && !defined(__CYGWIN__)
+#if  !defined(__CYGWIN__)
 	  if (getuid() != 0)
 	    ErrorF("Warning: the -nolock option can only be used by root\n");
 	  else
@@ -1230,7 +1223,7 @@ ExpandCommandLine(int *pargc, char ***pargv)
 {
     int i;
 
-#if !defined(WIN32) && !defined(__CYGWIN__)
+#if  !defined(__CYGWIN__)
     if (getuid() != geteuid())
 	return;
 #endif
@@ -1566,7 +1559,6 @@ OsReleaseSignals (void)
 #endif
 }
 
-#if !defined(WIN32)
 /*
  * "safer" versions of system(3), popen(3) and pclose(3) which give up
  * all privs before running a command.
@@ -1948,7 +1940,6 @@ Fclose(void * iop)
 #endif
 }
 
-#endif /* !WIN32 */
 
 
 /*
@@ -1981,11 +1972,7 @@ Fclose(void * iop)
 
 /* Check args and env only if running setuid (euid == 0 && euid != uid) ? */
 #ifndef CHECK_EUID
-#ifndef WIN32
 #define CHECK_EUID 1
-#else
-#define CHECK_EUID 0
-#endif
 #endif
 
 /*

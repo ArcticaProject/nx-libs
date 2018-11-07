@@ -71,9 +71,6 @@ from The Open Group.
 #define _SECURITY_SERVER
 # include   <nx-X11/extensions/security.h>
 #endif
-#ifdef WIN32
-#include    <nx-X11/Xw32defs.h>
-#endif
 
 struct protocol {
     unsigned short   name_length;
