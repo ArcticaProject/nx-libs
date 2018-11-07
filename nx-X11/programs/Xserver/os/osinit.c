@@ -101,7 +101,7 @@ OsInit(void)
 
 	InitNotifyFds();
 
-#if !defined(__CYGWIN__) && !defined(__UNIXWARE__)
+#if !defined(__CYGWIN__)
 	fclose(stdin);
 	fclose(stdout);
 #endif
