@@ -80,9 +80,9 @@ SOFTWARE.
 #include <sys/ioctl.h>
 #include <ctype.h>
 
-#if defined(TCPCONN) || defined(ISC) || defined(__SCO__)
+#if defined(TCPCONN) || defined(__SCO__)
 #include <netinet/in.h>
-#endif /* TCPCONN || ISC || __SCO__ */
+#endif /* TCPCONN || __SCO__ */
 
 #ifdef HAS_GETPEERUCRED
 # include <ucred.h>
@@ -96,10 +96,6 @@ SOFTWARE.
 #endif
 #if defined(SYSV) &&  defined(i386)
 # include <sys/stream.h>
-# ifdef ISC
-#  include <sys/stropts.h>
-#  include <sys/sioctl.h>
-# endif /* ISC */
 #endif
 #ifdef __GNU__
 #undef SIOCGIFCONF
@@ -282,7 +278,7 @@ AccessUsingXdmcp (void)
 }
 
 
-#if ((defined(SVR4) && !defined(SCO325) && !defined(sun) && !defined(NCR)) || defined(ISC)) && defined(SIOCGIFCONF) && !defined(USE_SIOCGLIFCONF)
+#if ((defined(SVR4) && !defined(SCO325) && !defined(sun) && !defined(NCR))) && defined(SIOCGIFCONF) && !defined(USE_SIOCGLIFCONF)
 
 /* Deal with different SIOCGIFCONF ioctl semantics on these OSs */
 
@@ -299,17 +295,6 @@ ifioctl (int fd, int cmd, char *arg)
     {
 	ioc.ic_len = ((struct ifconf *) arg)->ifc_len;
 	ioc.ic_dp = ((struct ifconf *) arg)->ifc_buf;
-#ifdef ISC
-	/* SIOCGIFCONF is somewhat brain damaged on ISC. The argument
-	 * buffer must contain the ifconf structure as header. Ifc_req
-	 * is also not a pointer but a one element array of ifreq
-	 * structures. On return this array is extended by enough
-	 * ifreq fields to hold all interfaces. The return buffer length
-	 * is placed in the buffer header.
-	 */
-        ((struct ifconf *) ioc.ic_dp)->ifc_len =
-                                         ioc.ic_len - sizeof(struct ifconf);
-#endif
     }
     else
     {
@@ -321,19 +306,11 @@ ifioctl (int fd, int cmd, char *arg)
 #ifdef SVR4
 	((struct ifconf *) arg)->ifc_len = ioc.ic_len;
 #endif
-#ifdef ISC
-    {
-	((struct ifconf *) arg)->ifc_len =
-				 ((struct ifconf *)ioc.ic_dp)->ifc_len;
-	((struct ifconf *) arg)->ifc_buf = 
-			(caddr_t)((struct ifconf *)ioc.ic_dp)->ifc_req;
-    }
-#endif
     return(ret);
 }
 #else /* Case sun, SCO325 NCR and others  */
 #define ifioctl ioctl
-#endif /* ((SVR4 && !sun !SCO325 !NCR) || ISC) && SIOCGIFCONF */
+#endif /* ((SVR4 && !sun !SCO325 !NCR)) && SIOCGIFCONF */
 
 /*
  * DefineSelf (fd):
@@ -723,11 +700,7 @@ DefineSelf (int fd)
     ifc.ifc_buf = bufptr;
 
 #define IFC_IOCTL_REQ SIOCGIFCONF
-#ifdef ISC
-#define IFC_IFC_REQ (struct ifreq *) ifc.ifc_buf
-#else
 #define IFC_IFC_REQ ifc.ifc_req
-#endif /* ISC */
 #define IFC_IFC_LEN ifc.ifc_len
 #define IFR_IFR_ADDR ifr->ifr_addr
 #define IFR_IFR_NAME ifr->ifr_name
