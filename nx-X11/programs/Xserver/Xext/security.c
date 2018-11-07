@@ -114,6 +114,23 @@ static char _NXPolicyFilePath[1024];
 
 static int SecurityErrorBase;  /* first Security error number */
 static int SecurityEventBase;  /* first Security event number */
+static int securityClientPrivateIndex;
+static int securityExtnsnPrivateIndex;
+
+/* this is what we store as client security state */
+typedef struct {
+    unsigned int trustLevel;
+    XID authId;
+} SecurityClientStateRec;
+
+#define STATEVAL(extnsn) \
+    ((extnsn)->devPrivates[securityExtnsnPrivateIndex].val)
+#define STATEPTR(client) \
+    ((client)->devPrivates[securityClientPrivateIndex].ptr)
+#define TRUSTLEVEL(client) \
+    (((SecurityClientStateRec*)STATEPTR(client))->trustLevel)
+#define AUTHID(client) \
+    (((SecurityClientStateRec*)STATEPTR(client))->authId)
 
 CallbackListPtr SecurityValidateGroupCallback = NULL;  /* see security.h */
 
@@ -2110,6 +2127,49 @@ XSecurityOptions(argc, argv, i)
     return (i);
 } /* XSecurityOptions */
 
+
+/* SecurityExtensionSetup
+ *
+ * Arguments: none.
+ *
+ * Returns: nothing.
+ *
+ * Side Effects:
+ *	Sets up the Security extension if possible.
+ *      This function contains things that need to be done
+ *      before any other extension init functions get called.
+ */
+
+void
+SecurityExtensionSetup()
+{
+    /* Allocate the client private index */
+    securityClientPrivateIndex = AllocateClientPrivateIndex();
+    if (!AllocateClientPrivate(securityClientPrivateIndex,
+			       sizeof (SecurityClientStateRec)))
+	FatalError("SecurityExtensionSetup: Can't allocate client private.\n");
+
+    /* Allocate the extension private index */
+    securityExtnsnPrivateIndex = AllocateExtensionPrivateIndex();
+    if (!AllocateExtensionPrivate(securityExtnsnPrivateIndex, 0))
+	FatalError("SecurityExtensionSetup: Can't allocate extnsn private.\n");
+
+    /* register callbacks */
+/*
+  currently disabled because we are not using XACE yet.
+#define XaceRC XaceRegisterCallback
+    XaceRC(XACE_RESOURCE_ACCESS, SecurityCheckResourceIDAccess, NULL);
+    XaceRC(XACE_DEVICE_ACCESS, SecurityCheckDeviceAccess, NULL);
+    XaceRC(XACE_PROPERTY_ACCESS, SecurityCheckPropertyAccess, NULL);
+    XaceRC(XACE_DRAWABLE_ACCESS, SecurityCheckDrawableAccess, NULL);
+    XaceRC(XACE_MAP_ACCESS, SecurityCheckMapAccess, NULL);
+    XaceRC(XACE_BACKGRND_ACCESS, SecurityCheckBackgrndAccess, NULL);
+    XaceRC(XACE_EXT_DISPATCH, SecurityCheckExtAccess, NULL);
+    XaceRC(XACE_EXT_ACCESS, SecurityCheckExtAccess, NULL);
+    XaceRC(XACE_HOSTLIST_ACCESS, SecurityCheckHostlistAccess, NULL);
+    XaceRC(XACE_DECLARE_EXT_SECURE, SecurityDeclareExtSecure, NULL);
+*/
+} /* SecurityExtensionSetup */
 
 
 /* SecurityExtensionInit
