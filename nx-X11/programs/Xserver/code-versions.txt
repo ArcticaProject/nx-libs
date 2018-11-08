@@ -12,7 +12,7 @@ fb                7.1/1.1
 GL                6.9/7.0
 mi                7.1/1.1
 miext             7.1/1.1
-os                7.1/1.1
+os                ? 7.1/1.1 + many backports, some of them from 2017
 randr             1.18.0
 record            1.4.2
 render            6.9/7.0
