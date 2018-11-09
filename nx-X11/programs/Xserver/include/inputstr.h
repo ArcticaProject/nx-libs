@@ -147,6 +147,11 @@ typedef struct _ValuatorClassRec {
     AxisInfoPtr 	axes;
     unsigned short	numAxes;
     int			*axisVal;
+    /* the next two are only written by xtest and never read currently. They exist
+    to satisfy the compiler. Once Xi is updated, too, they will be a regular member
+    anyway */
+    int			lastx, lasty; /* last event recorded, not posted to
+                                               * client; see dix/devices.c */
     CARD8	 	mode;
 } ValuatorClassRec, *ValuatorClassPtr;
 

@@ -16,7 +16,7 @@ os                7.1/1.1
 randr             1.18.0
 record            1.4.2
 render            6.9/7.0
-Xext              7.1/1.1
+Xext              1.4.2
 xfixes            1.4.2
 Xi                1.3.0.0
 xkb               1.3.0.0

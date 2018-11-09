@@ -68,6 +68,7 @@ SProcPanoramiXGetState(ClientPtr client)
 
 	swaps (&stuff->length);
 	REQUEST_SIZE_MATCH(xPanoramiXGetStateReq);
+	swapl (&stuff->window);
 	return ProcPanoramiXGetState(client);
 }
 
@@ -78,6 +79,7 @@ SProcPanoramiXGetScreenCount(ClientPtr client)
 
 	swaps (&stuff->length);
 	REQUEST_SIZE_MATCH(xPanoramiXGetScreenCountReq);
+	swapl (&stuff->window);
 	return ProcPanoramiXGetScreenCount(client);
 }
 
@@ -88,6 +90,8 @@ SProcPanoramiXGetScreenSize(ClientPtr client)
 
 	swaps (&stuff->length);
 	REQUEST_SIZE_MATCH(xPanoramiXGetScreenSizeReq);
+	swapl (&stuff->window);
+	swapl (&stuff->screen);
 	return ProcPanoramiXGetScreenSize(client);
 }
 

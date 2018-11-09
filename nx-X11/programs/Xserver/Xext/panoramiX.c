@@ -55,7 +55,9 @@ Equipment Corporation.
 #ifdef RENDER
 #include "picturestr.h"
 #endif
+
 #include "protocol-versions.h"
+
 
 #ifdef GLXPROXY
 extern VisualPtr glxMatchVisual(ScreenPtr pScreen,
@@ -107,7 +109,6 @@ static void PanoramiXResetProc(ExtensionEntry*);
 #include "panoramiXh.h"
 
 int (* SavedProcVector[256]) (ClientPtr client) = { NULL, };
-ScreenInfo *GlobalScrInfo = NULL;
 
 static int PanoramiXGCIndex = -1;
 static int PanoramiXScreenIndex = -1;
@@ -133,7 +134,7 @@ static void XineramaChangeClip(GCPtr, int, void *, int);
 static void XineramaDestroyClip(GCPtr);
 static void XineramaCopyClip(GCPtr, GCPtr);
 
-GCFuncs XineramaGCFuncs = {
+static GCFuncs XineramaGCFuncs = {
     XineramaValidateGC, XineramaChangeGC, XineramaCopyGC, XineramaDestroyGC,
     XineramaChangeClip, XineramaDestroyClip, XineramaCopyClip
 };
@@ -166,7 +167,7 @@ XineramaCloseScreen (ScreenPtr pScreen)
     return (*pScreen->CloseScreen) (pScreen);
 }
 
-Bool
+static Bool
 XineramaCreateGC(GCPtr pGC)
 {
     ScreenPtr pScreen = pGC->pScreen;
@@ -337,31 +338,10 @@ XineramaDeleteResource(void * data, XID id)
     return 1;
 }
 
-
-static Bool 
-XineramaFindIDOnAnyScreen(void * resource, XID id, void * privdata)
-{
-    PanoramiXRes *res = (PanoramiXRes*)resource;
-    int j;
-
-    FOR_NSCREENS(j) 
-	if(res->info[j].id == *((XID*)privdata)) return TRUE;
-    
-    return FALSE;
-}
-
-PanoramiXRes *
-PanoramiXFindIDOnAnyScreen(RESTYPE type, XID id)
-{
-    return LookupClientResourceComplex(clients[CLIENT_ID(id)], type,
-		XineramaFindIDOnAnyScreen, &id);
-}
-
 typedef struct {
    int screen;
    int id;
 } PanoramiXSearchData; 
-
 
 static Bool 
 XineramaFindIDByScrnum(void * resource, XID id, void * privdata)
@@ -385,23 +365,6 @@ PanoramiXFindIDByScrnum(RESTYPE type, XID id, int screen)
 
     return LookupClientResourceComplex(clients[CLIENT_ID(id)], type,
 		XineramaFindIDByScrnum, &data);
-}
-
-WindowPtr
-PanoramiXChangeWindow(int ScrnNum, WindowPtr pWin)
-{
-    int num = pWin->drawable.pScreen->myNum;
-
-    if(num != ScrnNum) {
-	PanoramiXRes	*win;
-
-	win = PanoramiXFindIDByScrnum(XRT_WINDOW, pWin->drawable.id, num);
-
-        if (win) 
-           pWin = (WindowPtr) LookupIDByType(win->info[ScrnNum].id, RT_WINDOW);
-    }
-  
-    return pWin;
 }
 
 typedef struct _connect_callback_list {
@@ -494,7 +457,6 @@ void PanoramiXExtensionInit(int argc, char *argv[])
     if (noPanoramiXExtension) 
 	return;
 
-    GlobalScrInfo = &screenInfo;		/* For debug visibility */
     PanoramiXNumScreens = screenInfo.numScreens;
     if (PanoramiXNumScreens == 1) {		/* Only 1 screen 	*/
 	noPanoramiXExtension = TRUE;

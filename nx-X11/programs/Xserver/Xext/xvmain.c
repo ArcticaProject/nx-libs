@@ -153,7 +153,7 @@ static int XvdiSendVideoNotify(XvPortPtr, DrawablePtr, int);
 */
 
 void 
-XvExtensionInit()
+XvExtensionInit(void)
 {
   ExtensionEntry *extEntry;
 
@@ -205,7 +205,7 @@ XvExtensionInit()
 }
 
 static Bool
-CreateResourceTypes()
+CreateResourceTypes(void)
 
 {
   

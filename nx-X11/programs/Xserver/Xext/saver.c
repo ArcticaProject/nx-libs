@@ -1,5 +1,4 @@
 /*
- * $XConsortium: saver.c,v 1.12 94/04/17 20:59:36 dpw Exp $
  *
 Copyright (c) 1992  X Consortium
 
@@ -65,7 +64,7 @@ static unsigned char ScreenSaverReqCode = 0;
 #endif
 static int ScreenSaverEventBase = 0;
 
-extern DISPATCH_PROC(ProcScreenSaverQueryInfo);
+static DISPATCH_PROC(ProcScreenSaverQueryInfo);
 static DISPATCH_PROC(ProcScreenSaverDispatch);
 static DISPATCH_PROC(ProcScreenSaverQueryVersion);
 static DISPATCH_PROC(ProcScreenSaverSelectInput);
@@ -137,7 +136,7 @@ typedef struct _ScreenSaverSuspension
 } ScreenSaverSuspensionRec;
 
 static int ScreenSaverFreeSuspend(
-    pointer /*value */,
+    void * /*value */,
     XID /* id */
 );
 
@@ -461,7 +460,7 @@ ScreenSaverFreeAttr (value, id)
 }
 
 static int
-ScreenSaverFreeSuspend (pointer value, XID id)
+ScreenSaverFreeSuspend (void * value, XID id)
 {
     ScreenSaverSuspensionPtr data = (ScreenSaverSuspensionPtr) value;
     ScreenSaverSuspensionPtr *prev, this;
@@ -767,7 +766,7 @@ ProcScreenSaverQueryVersion (client)
     return (client->noClientException);
 }
 
-int
+static int
 ProcScreenSaverQueryInfo (client)
     register ClientPtr	client;
 {
@@ -863,9 +862,7 @@ ScreenSaverSetAttributes (ClientPtr client)
     ScreenPtr			pScreen;
     ScreenSaverScreenPrivatePtr pPriv = 0;
     ScreenSaverAttrPtr		pAttr = 0;
-    int				ret;
-    int				len;
-    int				class, bw, depth;
+    int				ret, len, class, bw, depth;
     unsigned long		visual;
     int				idepth, ivisual;
     Bool			fOK;
@@ -1404,7 +1401,7 @@ ProcScreenSaverSuspend (ClientPtr client)
     this->count          = 1;
     this->clientResource = FakeClientID (client->index);
 
-    if (!AddResource (this->clientResource, SuspendType, (pointer) this))
+    if (!AddResource (this->clientResource, SuspendType, (void *) this))
     {
 	free (this);
 	return BadAlloc;

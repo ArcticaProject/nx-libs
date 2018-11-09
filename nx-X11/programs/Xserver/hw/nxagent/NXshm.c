@@ -95,15 +95,21 @@ ShmExtensionInit(void)
     }
 #endif
 
+#ifdef NXAGENT_SERVER
     if (nxagentOption(SharedMemory) == False)
     {
       return;
     }
+#endif
 
     sharedPixmaps = xFalse;
     pixmapFormat = 0;
     {
+#ifdef NXAGENT_SERVER
       sharedPixmaps = nxagentOption(SharedPixmaps);
+#else
+      sharedPixmaps = xTrue;
+#endif
       pixmapFormat = shmPixFormat[0];
       for (i = 0; i < screenInfo.numScreens; i++)
       {
@@ -156,7 +162,7 @@ ShmExtensionInit(void)
 }
 
 static void
-miShmPutImage(dst, pGC, depth, format, w, h, sx, sy, sw, sh, dx, dy, data)
+nxagent_miShmPutImage(dst, pGC, depth, format, w, h, sx, sy, sw, sh, dx, dy, data)
     DrawablePtr dst;
     GCPtr	pGC;
     int		depth, w, h, sx, sy, sw, sh, dx, dy;
@@ -166,18 +172,15 @@ miShmPutImage(dst, pGC, depth, format, w, h, sx, sy, sw, sh, dx, dy, data)
     PixmapPtr pmap;
     GCPtr putGC;
 
-    nxagentShmTrap = 0;
     putGC = GetScratchGC(depth, dst->pScreen);
     if (!putGC)
     {
-        nxagentShmTrap = 1;
 	return;
     }
     pmap = (*dst->pScreen->CreatePixmap)(dst->pScreen, sw, sh, depth,
                                         CREATE_PIXMAP_USAGE_SCRATCH);
     if (!pmap)
     {
-        nxagentShmTrap = 1;
 	FreeScratchGC(putGC);
 	return;
     }
@@ -192,8 +195,27 @@ miShmPutImage(dst, pGC, depth, format, w, h, sx, sy, sw, sh, dx, dy, data)
 	(void)(*pGC->ops->CopyArea)((DrawablePtr)pmap, dst, pGC, 0, 0, sw, sh,
 				    dx, dy);
     (*pmap->drawable.pScreen->DestroyPixmap)(pmap);
-    nxagentShmTrap = 1;
 }
+
+static void
+miShmPutImage(dst, pGC, depth, format, w, h, sx, sy, sw, sh, dx, dy, data)
+    DrawablePtr dst;
+    GCPtr	pGC;
+    int		depth, w, h, sx, sy, sw, sh, dx, dy;
+    unsigned int format;
+    char 	*data;
+{
+    /* Careful! This wrapper DEACTIVATES the trap! */
+
+    nxagentShmTrap = 0;
+
+    nxagent_miShmPutImage(dst, pGC, depth, format, w, h, sx, sy, sw, sh, dx, dy, data);
+
+    nxagentShmTrap = 1;
+
+    return;
+}
+
 
 static void
 fbShmPutImage(dst, pGC, depth, format, w, h, sx, sy, sw, sh, dx, dy, data)
@@ -203,6 +225,7 @@ fbShmPutImage(dst, pGC, depth, format, w, h, sx, sy, sw, sh, dx, dy, data)
     unsigned int format;
     char 	*data;
 {
+#ifdef NXAGENT_SERVER
     int length;
     char *newdata;
     extern int nxagentImageLength(int, int, int, int, int);
@@ -211,6 +234,7 @@ fbShmPutImage(dst, pGC, depth, format, w, h, sx, sy, sw, sh, dx, dy, data)
     fprintf(stderr, "fbShmPutImage: Called with drawable at [%p] GC at [%p] data at [%p].\n",
                 (void *) dst, (void *) pGC, (void *) data);
     #endif
+#endif
 
     if ((format == ZPixmap) || (depth == 1))
     {
@@ -227,6 +251,7 @@ fbShmPutImage(dst, pGC, depth, format, w, h, sx, sy, sw, sh, dx, dy, data)
 	    (void)(*pGC->ops->CopyArea)((DrawablePtr)pPixmap, dst, pGC,
 					sx, sy, sw, sh, dx, dy);
 
+#ifdef NXAGENT_SERVER
         /*
          * We updated the internal framebuffer,
          * now we want to go on the real X.
@@ -255,6 +280,7 @@ fbShmPutImage(dst, pGC, depth, format, w, h, sx, sy, sw, sh, dx, dy, data)
           #endif
         }
 
+#endif /* NXAGENT_SERVER */
 	FreeScratchPixmapHeader(pPixmap);
     }
     else
@@ -345,17 +371,46 @@ ProcShmPutImage(client)
                     stuff->srcY, stuff->totalWidth, stuff->totalHeight);
     #endif
 
-    #ifdef TEST
-    fprintf(stderr, "ProcShmPutImage: Calling (*shmFuncs[pDraw->pScreen->myNum]->PutImage)().\n");
-    #endif
+#ifndef NXAGENT_SERVER
+    /*
+    It seems like this code was removed for a good reason. Including
+    it leads to very strange issues when coupled with libXcomp and using
+    connection speed settings lower than LAN (and even on LAN some icons
+    are not showing up correctly, e.g., when using MATE).
 
-    (*shmFuncs[pDraw->pScreen->myNum]->PutImage)(
-                               pDraw, pGC, stuff->depth, stuff->format,
-                               stuff->totalWidth, stuff->totalHeight,
-                               stuff->srcX, stuff->srcY,
-                               stuff->srcWidth, stuff->srcHeight,
+    Further investigation on why this happens pending and might happen at a
+    later time.
+
+    See also ArcticaProject/nx-libs#656
+    */
+    if ((((stuff->format == ZPixmap) && (stuff->srcX == 0)) ||
+         ((stuff->format != ZPixmap) &&
+          (stuff->srcX < screenInfo.bitmapScanlinePad) &&
+          ((stuff->format == XYBitmap) ||
+           -          ((stuff->srcY == 0) &&
+                       -           (stuff->srcHeight == stuff->totalHeight))))) &&
+        ((stuff->srcX + stuff->srcWidth) == stuff->totalWidth))
+        (*pGC->ops->PutImage) (pDraw, pGC, stuff->depth,
                                stuff->dstX, stuff->dstY,
-                               shmdesc->addr + stuff->offset);
+                               stuff->totalWidth, stuff->srcHeight,
+                               stuff->srcX, stuff->format,
+                               shmdesc->addr + stuff->offset +
+                               (stuff->srcY * length));
+-    else
+#endif
+    {
+        #ifdef TEST
+        fprintf(stderr, "ProcShmPutImage: Calling (*shmFuncs[pDraw->pScreen->myNum]->PutImage)().\n");
+        #endif
+
+        (*shmFuncs[pDraw->pScreen->myNum]->PutImage)(
+                                   pDraw, pGC, stuff->depth, stuff->format,
+                                   stuff->totalWidth, stuff->totalHeight,
+                                   stuff->srcX, stuff->srcY,
+                                   stuff->srcWidth, stuff->srcHeight,
+                                   stuff->dstX, stuff->dstY,
+                                   shmdesc->addr + stuff->offset);
+    }
 
     if (stuff->sendEvent)
     {
@@ -376,7 +431,7 @@ ProcShmPutImage(client)
 
 
 static PixmapPtr
-fbShmCreatePixmap (pScreen, width, height, depth, addr)
+nxagent_fbShmCreatePixmap (pScreen, width, height, depth, addr)
     ScreenPtr	pScreen;
     int		width;
     int		height;
@@ -385,47 +440,59 @@ fbShmCreatePixmap (pScreen, width, height, depth, addr)
 {
     register PixmapPtr pPixmap;
 
-    nxagentShmPixmapTrap = 1;
-
     pPixmap = (*pScreen->CreatePixmap)(pScreen, width, height, depth, 0);
 
     if (!pPixmap)
     {
-      nxagentShmPixmapTrap = 0;
-
       return NullPixmap;
     }
 
-    #ifdef TEST
+    #if defined(NXAGENT_SERVER) && defined(TEST)
     fprintf(stderr,"fbShmCreatePixmap: Width [%d] Height [%d] Depth [%d] Hint[%d]\n", width, height, depth, 0);
     #endif
 
     if (!(*pScreen->ModifyPixmapHeader)(pPixmap, width, height, depth,
 	    BitsPerPixel(depth), PixmapBytePad(width, depth), (void *)addr)) 
     {
-      #ifdef WARNING
+      #if defined(NXAGENT_SERVER) && defined(WARNING)
       fprintf(stderr,"fbShmCreatePixmap: Return Null Pixmap.\n");
       #endif
 
       (*pScreen->DestroyPixmap)(pPixmap);
 
-      nxagentShmPixmapTrap = 0;
-
       return NullPixmap;
     }
-
-    nxagentShmPixmapTrap = 0;
 
     return pPixmap;
 }
 
+static PixmapPtr
+fbShmCreatePixmap (pScreen, width, height, depth, addr)
+    ScreenPtr	pScreen;
+    int		width;
+    int		height;
+    int		depth;
+    char	*addr;
+{
+    PixmapPtr result;
+
+    nxagentShmPixmapTrap = 1;
+
+    result = nxagent_fbShmCreatePixmap(pScreen, width, height, depth, addr);
+
+    nxagentShmPixmapTrap = 0;
+
+    return result;
+}
+
 
 static int
-ProcShmDispatch (client)
+nxagent_ProcShmDispatch (client)
     register ClientPtr	client;
 {
     REQUEST(xReq);
 
+#ifdef NXAGENT_SERVER
     #ifdef TEST
     fprintf(stderr, "ProcShmDispatch: Going to execute operation [%d] for client [%d].\n", 
                 stuff -> data, client -> index);
@@ -436,6 +503,7 @@ ProcShmDispatch (client)
                   nxagentShmRequestLiteral[stuff->data], stuff->data);
     }
     #endif
+#endif
 
     switch (stuff->data)
     {
@@ -447,36 +515,18 @@ ProcShmDispatch (client)
 	return ProcShmDetach(client);
     case X_ShmPutImage:
       {
-        int result;
-
+#ifdef NXAGENT_SERVER
         #ifdef TEST
         fprintf(stderr, "ProcShmDispatch: Going to execute ProcShmPutImage() for client [%d].\n", 
                     client -> index);
         #endif
-
-        nxagentShmTrap = 1;
+#endif
 
 #ifdef PANORAMIX
         if ( !noPanoramiXExtension )
-        {
-           result = ProcPanoramiXShmPutImage(client);
-
-           nxagentShmTrap = 0;
-
-           return result;
-        }
+           return ProcPanoramiXShmPutImage(client);
 #endif
-
-        result = ProcShmPutImage(client);
-
-        nxagentShmTrap = 0;
-
-        #ifdef TEST
-        fprintf(stderr, "ProcShmDispatch: Returning from ProcShmPutImage() for client [%d].\n", 
-                    client -> index);
-        #endif
-
-        return result;
+        return ProcShmPutImage(client);
       }
     case X_ShmGetImage:
 #ifdef PANORAMIX
@@ -493,6 +543,23 @@ ProcShmDispatch (client)
     default:
 	return BadRequest;
     }
+}
+
+/* A wrapper that handles the trap. This construct is used
+   to keep the derived code closer to the original
+*/
+static int
+ProcShmDispatch (register ClientPtr client)
+{
+    int result;
+
+    nxagentShmTrap = 1;
+
+    result = nxagent_ProcShmDispatch(client);
+
+    nxagentShmTrap = 0;
+
+    return result;
 }
 
 static int
@@ -523,11 +590,15 @@ SProcShmDispatch (client)
                     client -> index);
         #endif
 
+#ifdef NXAGENT_SERVER
         nxagentShmTrap = 1;
+#endif
 
         result = SProcShmPutImage(client);
 
+#ifdef NXAGENT_SERVER
         nxagentShmTrap = 0;
+#endif
 
         #ifdef TEST
         fprintf(stderr, "SProcShmDispatch: Returning from SProcShmPutImage() for client [%d].\n", 

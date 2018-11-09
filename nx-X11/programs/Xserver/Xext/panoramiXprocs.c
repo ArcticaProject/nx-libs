@@ -572,7 +572,7 @@ int PanoramiXTranslateCoords(ClientPtr client)
     INT16 x, y;
     REQUEST(xTranslateCoordsReq);
 
-    register WindowPtr pWin, pDst;
+    WindowPtr pWin, pDst;
     xTranslateCoordsReply rep;
 
     REQUEST_SIZE_MATCH(xTranslateCoordsReq);
@@ -1080,8 +1080,8 @@ int PanoramiXCopyArea(ClientPtr client)
 	    VALIDATE_DRAWABLE_AND_GC(stuff->dstDrawable, pDst, pGC, client); 
 	    if (stuff->dstDrawable != stuff->srcDrawable) {
 		SECURITY_VERIFY_DRAWABLE(pSrc, stuff->srcDrawable, client,
-                                 DixReadAccess);
-		if ((pDst->pScreen != pSrc->pScreen) || 
+				       DixReadAccess);
+		if ((pDst->pScreen != pSrc->pScreen) ||
 		    (pDst->depth != pSrc->depth)) {
 			client->errorValue = stuff->dstDrawable;
 			return (BadMatch);
@@ -1186,7 +1186,7 @@ int PanoramiXCopyPlane(ClientPtr client)
 	VALIDATE_DRAWABLE_AND_GC(stuff->dstDrawable, pdstDraw, pGC, client);
 	if (stuff->dstDrawable != stuff->srcDrawable) {
 	    SECURITY_VERIFY_DRAWABLE(psrcDraw, stuff->srcDrawable, client,
-                                 DixReadAccess);
+				   DixReadAccess);
             if (pdstDraw->pScreen != psrcDraw->pScreen) {
 		client->errorValue = stuff->dstDrawable;
 		return (BadMatch);

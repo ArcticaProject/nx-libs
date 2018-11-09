@@ -758,10 +758,10 @@ CreatePmap:
     if (sizeof(size) == 4 && BitsPerPixel(depth) > 8) {
         if (size < width * height)
             return BadAlloc;
-        /* thankfully, offset is unsigned */
-        if (stuff->offset + size < size)
-            return BadAlloc;
     }
+    /* thankfully, offset is unsigned */
+    if (stuff->offset + size < size)
+	return BadAlloc;
 
     VERIFY_SHMSIZE(shmdesc, stuff->offset, size, client);
 
@@ -820,8 +820,8 @@ static int
 ProcShmPutImage(client)
     register ClientPtr client;
 {
-    register GCPtr pGC;
-    register DrawablePtr pDraw;
+    GCPtr pGC;
+    DrawablePtr pDraw;
     long length;
     ShmDescPtr shmdesc;
     REQUEST(xShmPutImageReq);
@@ -933,7 +933,7 @@ static int
 ProcShmGetImage(client)
     register ClientPtr client;
 {
-    register DrawablePtr pDraw;
+    DrawablePtr		pDraw;
     long		lenPer = 0, length;
     Mask		plane = 0;
     xShmGetImageReply	xgi;
@@ -1070,7 +1070,7 @@ ProcShmCreatePixmap(client)
     register ClientPtr client;
 {
     PixmapPtr pMap;
-    register DrawablePtr pDraw;
+    DrawablePtr pDraw;
     DepthPtr pDepth;
     register int i;
     ShmDescPtr shmdesc;
@@ -1112,9 +1112,9 @@ CreatePmap:
     if (sizeof(size) == 4 && BitsPerPixel(depth) > 8) {
 	if (size < width * height)
 	    return BadAlloc;
-	/* thankfully, offset is unsigned */
-	if (stuff->offset + size < size)
-	    return BadAlloc;
+    /* thankfully, offset is unsigned */
+    if (stuff->offset + size < size)
+	return BadAlloc;
     }
 
     VERIFY_SHMSIZE(shmdesc, stuff->offset, size, client);
