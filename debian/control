@@ -34,7 +34,7 @@ Build-Depends:
  xutils-dev,
  zlib1g-dev,
  lsb-release
-Standards-Version: 4.1.3
+Standards-Version: 4.2.1
 Homepage: https://github.com/ArcticaProject/nx-libs/
 Vcs-Git: https://github.com/ArcticaProject/nx-libs/
 Vcs-Browser: https://github.com/ArcticaProject/nx-libs/
