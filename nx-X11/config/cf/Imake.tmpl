@@ -784,6 +784,12 @@ TCLIBDIR = TclLibDir
 #ifndef SystemUsrIncDir
 #define SystemUsrIncDir /usr/include
 #endif
+#ifndef SystemXkbConfigDir
+#define SystemXkbConfigDir /usr/share/X11/xkb
+#endif
+#ifndef SystemXkbBinDir
+#define SystemXkbBinDir /usr/bin
+#endif
 
 #ifndef ShLibDir
 #define ShLibDir UsrLibDir
@@ -1660,6 +1666,8 @@ TCLIBDIR = TclLibDir
         VARLIBDIR = VarLibDir		/* xdm runtime files */
   SYSTEMUSRLIBDIR = SystemUsrLibDir	/* system's "/usr/lib" */
   SYSTEMUSRINCDIR = SystemUsrIncDir	/* system's "/usr/include" */
+ SYSTEMXKBCONFDIR = SystemXkbConfigDir	/* system's "/usr/share/xkb" */
+  SYSTEMXKBBINDIR = SystemXkbBinDir	/* system's "/usr/bin" */
          SHLIBDIR = ShLibDir            /* shared libraries */
        LINTLIBDIR = LintlibDir		/* lint libraries */
           MANPATH = ManPath		/* top of manual page tree */

@@ -42,15 +42,12 @@ is" without express or implied warranty.
 #include <string.h>
 #include <stdlib.h>
 
-#include "X.h"
-#include "Xproto.h"
 #include "keysym.h"
 #include "screenint.h"
 #include "inputstr.h"
 #include "misc.h"
 #include "scrnintstr.h"
 #include "servermd.h"
-#include "dixstruct.h"
 #include "extnsionst.h"
 
 #include "Agent.h"
@@ -66,10 +63,6 @@ is" without express or implied warranty.
 #include <nx/Shadow.h>
 
 #ifdef XKB
-
-#include "globals.h"
-#include "property.h"
-#include "Init.h"
 
 #include <nx-X11/extensions/XKB.h>
 
@@ -142,37 +135,6 @@ extern        Status        XkbGetControls(
 #endif
 );
 
-#ifndef XKB_BASE_DIRECTORY
-#define XKB_BASE_DIRECTORY   "/usr/share/X11/xkb"
-#endif
-#ifndef XKB_ALTERNATE_BASE_DIRECTORY
-#define XKB_ALTERNATE_BASE_DIRECTORY   "/usr/X11R6/lib/X11/xkb"
-#endif
-#ifndef XKB_CONFIG_FILE_NX
-#define XKB_CONFIG_FILE_NX   "/etc/nxagent/nxagent.keyboard"
-#endif
-#ifndef XKB_CONFIG_FILE_X2GO
-#define XKB_CONFIG_FILE_X2GO "/etc/x2go/x2goagent.keyboard"
-#endif
-#ifndef XKB_DFLT_RULES_FILE
-#define XKB_DFLT_RULES_FILE  "xfree86"
-#endif
-#ifndef XKB_ALTS_RULES_FILE
-#define XKB_ALTS_RULES_FILE  "xorg"
-#endif
-#ifndef XKB_DFLT_KB_LAYOUT
-#define XKB_DFLT_KB_LAYOUT   "us"
-#endif
-#ifndef XKB_DFLT_KB_MODEL
-#define XKB_DFLT_KB_MODEL    "pc102"
-#endif
-#ifndef XKB_DFLT_KB_VARIANT
-#define XKB_DFLT_KB_VARIANT  NULL
-#endif
-#ifndef XKB_DFLT_KB_OPTIONS
-#define XKB_DFLT_KB_OPTIONS  NULL
-#endif
-
 extern int XkbDfltRepeatDelay;
 extern int XkbDfltRepeatInterval;
 
@@ -198,8 +160,6 @@ XkbAgentStateRec nxagentXkbState = { 0, 0, 0, 0, 0 };
 XkbWrapperRec nxagentXkbWrapper;
 
 extern char *nxagentKeyboard;
-
-static char *nxagentXkbGetRules(void);
 
 unsigned int nxagentAltMetaMask;
 unsigned int nxagentAltMask;
@@ -500,104 +460,6 @@ static int nxagentRestoreKeyboardDeviceData(DeviceIntPtr devBackup, DeviceIntPtr
 
 static int nxagentFreeKeyboardDeviceData(DeviceIntPtr dev);
 
-static void nxagentCheckXkbBaseDirectory(void)
-{
-
-  /*
-   * Set XkbBaseDirectory global
-   * variable appropriately.
-   */
-
-  #ifdef TEST
-  fprintf(stderr, "nxagentCheckXkbBaseDirectory: "
-              "Before calling _NXGetXkbBasePath:\n");
-
-  fprintf(stderr, "nxagentCheckXkbBaseDirectory: "
-              "XkbBaseDirectory variable [%s].\n",
-                  XkbBaseDirectory);
-  #endif
-
-  XkbBaseDirectory = _NXGetXkbBasePath(XkbBaseDirectory);
-
-  #ifdef TEST
-  fprintf(stderr, "nxagentCheckXkbBaseDirectory: "
-              "After calling _NXGetXkbBasePath:\n");
-
-  fprintf(stderr, "nxagentCheckXkbBaseDirectory: "
-              "XkbBaseDirectory variable [%s].\n",
-                  XkbBaseDirectory);
-  #endif
-
-  return;
-}
-
-static char *nxagentXkbGetRules()
-{
-  int ret;
-  char *path;
-  struct stat buf;
-
-  #ifdef TEST
-  fprintf(stderr, "nxagentXkbGetRules: XkbBaseDirectory [%s].\n",
-              XkbBaseDirectory);
-  #endif
-
-  if (-1 == asprintf(&path, "%s/rules/%s", XkbBaseDirectory, XKB_DFLT_RULES_FILE))
-  {
-    FatalError("nxagentXkbGetRules: malloc failed.");
-  }
-
-  #ifdef TEST
-  fprintf(stderr, "nxagentXkbGetRules: checking rules file [%s]\n", path);
-  #endif
-  ret = stat(path, &buf);
-
-  if (ret == 0)
-  {
-    free(path);
-    #ifdef TEST
-    fprintf(stderr, "nxagentXkbGetRules: returning default rules file [%s]\n", XKB_DFLT_RULES_FILE);
-    #endif
-    return XKB_DFLT_RULES_FILE;
-  }
-
-  #ifdef TEST
-  fprintf(stderr, "nxagentXkbGetRules: WARNING! Failed to stat file [%s]: %s.\n", path, strerror(ret));
-  #endif
-
-  free(path);
-  path = NULL;
-
-  if (-1 == asprintf(&path, "%s/rules/%s", XkbBaseDirectory, XKB_ALTS_RULES_FILE))
-  {
-    FatalError("nxagentXkbGetRules: malloc failed.");
-  }
-
-  #ifdef TEST
-  fprintf(stderr, "nxagentXkbGetRules: checking rules file [%s]\n", path);
-  #endif
-  ret = stat(path, &buf);
-
-  if (ret == 0)
-  {
-    free(path);
-    #ifdef TEST
-    fprintf(stderr, "nxagentXkbGetRules: returning alternative rules file [%s]\n", XKB_ALTS_RULES_FILE);
-    #endif
-    return XKB_ALTS_RULES_FILE;
-  }
-
-  #ifdef WARNING
-  fprintf(stderr, "nxagentXkbGetRules: WARNING! Failed to stat file [%s]: %s.\n", path, strerror(ret));
-  #endif
-
-  free(path);
-  #ifdef TEST
-  fprintf(stderr, "nxagentXkbGetRules: returning default rules file [%s]\n", XKB_DFLT_RULES_FILE);
-  #endif
-  return XKB_DFLT_RULES_FILE;
-}
- 
 void nxagentBell(int volume, DeviceIntPtr pDev, void * ctrl, int cls)
 {
   XBell(nxagentDisplay, volume);
@@ -708,7 +570,6 @@ int nxagentKeyboardProc(DeviceIntPtr pDev, int onoff)
   int i, j;
   XKeyboardState values;
   char *model = NULL, *layout = NULL;
-  int free_model = 0, free_layout = 0;
   XkbDescPtr xkb = NULL;
 
   switch (onoff)
@@ -831,6 +692,18 @@ N/A
       keySyms.mapWidth = mapWidth;
       keySyms.map = keymap;
 
+      if (XkbQueryExtension(nxagentDisplay,
+                            &nxagentXkbInfo.Opcode,
+                            &nxagentXkbInfo.EventBase,
+                            &nxagentXkbInfo.ErrorBase,
+                            &nxagentXkbInfo.MajorVersion,
+                            &nxagentXkbInfo.MinorVersion) == 0)
+      {
+          ErrorF("Unable to initialize XKEYBOARD extension.\n");
+          goto XkbError;
+      }
+
+
 #ifdef XKB
 
       /*
@@ -838,8 +711,6 @@ N/A
        * of XkbBaseDirectory global
        * variable is checked.
        */
-
-      nxagentCheckXkbBaseDirectory();
 
       if (noXkbExtension) {
         #ifdef TEST
@@ -852,18 +723,6 @@ XkbError:
         fprintf(stderr, "nxagentKeyboardProc: XKB error.\n");
         #endif
 
-        XkbFreeKeyboard(xkb, XkbAllComponentsMask, True);
-        xkb = NULL;
-        if (free_model) 
-        {
-          free_model = 0;
-          free(model);
-        }
-        if (free_layout)
-        {
-          free_layout = 0;
-          free(layout);
-        }
 #endif
         XGetKeyboardControl(nxagentDisplay, &values);
 
@@ -885,7 +744,7 @@ XkbError:
 #ifdef XKB
       } else { /* if (noXkbExtension) */
         XkbComponentNamesRec names = {0};
-        char *rules, *variants, *options;
+        char *rules = NULL, *variants = NULL, *options = NULL; /* use xkb default */
 
         #ifdef TEST
         fprintf(stderr, "nxagentKeyboardProc: Using XKB extension.\n");
@@ -894,9 +753,6 @@ XkbError:
         #ifdef TEST
         fprintf(stderr, "nxagentKeyboardProc: nxagentKeyboard is [%s].\n", nxagentKeyboard ? nxagentKeyboard : "NULL");
         #endif
-
-
-        rules = nxagentXkbGetRules();
 
         /*
           from nxagent changelog:
@@ -920,11 +776,8 @@ XkbError:
             goto XkbError;
           }
 
-          free_model = 1;
-	  model = strndup(nxagentKeyboard, i);
-
-          free_layout = 1;
-	  layout = strdup(&nxagentKeyboard[i + 1]);
+          model = strndup(nxagentKeyboard, i);
+          layout = strdup(&nxagentKeyboard[i + 1]);
 
           /*
            * There is no description for pc105 on Solaris.
@@ -953,71 +806,30 @@ XkbError:
         }
         else
         {
-          layout = XKB_DFLT_KB_LAYOUT;
-          model = XKB_DFLT_KB_MODEL;
-
           #ifdef TEST
           fprintf(stderr, "nxagentKeyboardProc: Using default keyboard: model [%s] layout [%s].\n",
                       model, layout);
           #endif
         }
 
-        variants = XKB_DFLT_KB_VARIANT;
-        options = XKB_DFLT_KB_OPTIONS;
-
         #ifdef TEST
         fprintf(stderr, "nxagentKeyboardProc: Init XKB extension.\n");
         #endif
-
-        if (XkbQueryExtension(nxagentDisplay,
-                              &nxagentXkbInfo.Opcode,
-                              &nxagentXkbInfo.EventBase,
-                              &nxagentXkbInfo.ErrorBase,
-                              &nxagentXkbInfo.MajorVersion,
-                              &nxagentXkbInfo.MinorVersion) == 0)
-        {
-          ErrorF("Unable to initialize XKEYBOARD extension.\n");
-
-          goto XkbError;
-        }
 
         xkb = XkbGetKeyboard(nxagentDisplay, XkbGBN_AllComponentsMask, XkbUseCoreKbd);
 
         nxagentKeycodeConversionSetup();
 
-        if (xkb == NULL || xkb->geom == NULL)
+        if (xkb && xkb->geom)
         {
-          #ifdef TEST
-          fprintf(stderr, "nxagentKeyboardProc: No current keyboard.\n");
-          if (xkb == NULL)
-          {
-            fprintf(stderr, "nxagentKeyboardProc: xkb is null.\n");
-          }
-          else
-          {
-            fprintf(stderr, "nxagentKeyboardProc: xkb->geom is null.\n");
-          }
-          fprintf(stderr, "nxagentKeyboardProc: Going to set rules and init device.\n");
-          #endif
-          #ifdef DEBUG
-          fprintf(stderr, "nxagentKeyboardProc: Going to set rules and init device: "
-                          "[rules='%s',model='%s',layout='%s',variants='%s',options='%s'].\n",
-                          rules, model, layout, variants, options);
-          #endif
-
-          XkbSetRulesDflts(rules, model, layout, variants, options);
-          XkbInitKeyboardDeviceStruct((void *)pDev, &names, &keySyms, modmap,
-                                          nxagentBell, nxagentChangeKeyboardControl);
-
-          if (!nxagentKeyboard || strcmp(nxagentKeyboard, "query") == 0)
-          {
-            goto XkbError;
-          }
-
-          goto XkbEnd;
+            XkbGetControls(nxagentDisplay, XkbAllControlsMask, xkb);
         }
-
-        XkbGetControls(nxagentDisplay, XkbAllControlsMask, xkb);
+#ifdef TEST
+        else
+        {
+            fprintf(stderr, "nxagentKeyboardProc: No current keyboard.\n");
+        }
+#endif
 
         #ifdef DEBUG
         fprintf(stderr, "nxagentKeyboardProc: Going to set rules and init device: "
@@ -1029,33 +841,30 @@ XkbError:
         XkbInitKeyboardDeviceStruct((void *)pDev, &names, &keySyms, modmap,
                                     nxagentBell, nxagentChangeKeyboardControl);
 
-        if (!nxagentKeyboard ||
-               (nxagentKeyboard && (strcmp(nxagentKeyboard, "query") == 0)))
+        if (nxagentKeyboard && strcmp(nxagentKeyboard, "query") == 0)
         {
           goto XkbError;
         }
 
-XkbEnd:
+        if (xkb && xkb->geom)
+        {
+            XkbDDXChangeControls(pDev, xkb->ctrls, xkb->ctrls);
+        }
+
         if (nxagentOption(Shadow) == 1 && pDev && pDev->key)
         {
           NXShadowInitKeymap(&(pDev->key->curKeySyms));
         }
-
-        if (free_model) 
-        {
-          free_model = 0;
-          free(model);
-        }
-
-        if (free_layout)
-        {
-          free_layout = 0;
-          free(layout);
-        }
-
-        XkbFreeKeyboard(xkb, XkbAllComponentsMask, True);
-        xkb = NULL;
       }
+
+      if (xkb)
+      {
+          XkbFreeKeyboard(xkb, XkbAllComponentsMask, True);
+          xkb = NULL;
+      }
+
+      free(model);
+      free(layout);
 #endif
 
       #ifdef WATCH

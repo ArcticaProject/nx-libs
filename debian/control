@@ -27,6 +27,7 @@ Build-Depends:
  libxtst-dev,
  pkg-config,
  quilt (>= 0.46-7~),
+ x11-xkb-utils,
  x11proto-core-dev,
  xutils-dev,
  zlib1g-dev,

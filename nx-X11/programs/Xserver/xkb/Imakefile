@@ -18,21 +18,21 @@ XKB_DDXDEFS = XkbServerDefines
  NX_DEFINES = -DNXAGENT_SERVER
 #endif
 
- DDX_SRCS = ddxBeep.c ddxCtrls.c ddxFakeBtn.c ddxFakeMtn.c ddxInit.c \
-	    ddxKeyClick.c ddxKillSrv.c ddxLEDs.c ddxVT.c ddxLoad.c \
+ DDX_SRCS = ddxBeep.c ddxCtrls.c ddxFakeBtn.c ddxFakeMtn.c \
+	    ddxKillSrv.c ddxLEDs.c ddxVT.c ddxLoad.c \
 	    ddxList.c ddxDevBtn.c ddxPrivate.c
- DDX_OBJS = ddxBeep.o ddxCtrls.o ddxFakeBtn.o ddxFakeMtn.o ddxInit.o \
-	    ddxKeyClick.o ddxKillSrv.o ddxLEDs.o ddxVT.o ddxLoad.o \
+ DDX_OBJS = ddxBeep.o ddxCtrls.o ddxFakeBtn.o ddxFakeMtn.o \
+	    ddxKillSrv.o ddxLEDs.o ddxVT.o ddxLoad.o \
 	    ddxList.o ddxDevBtn.o ddxPrivate.o
      SRCS = xkb.c xkbUtils.c xkbEvents.c xkbAccessX.c xkbSwap.c \
             xkbLEDs.c xkbInit.c xkbActions.c xkbPrKeyEv.c \
-	    xkmread.c xkbfmisc.c xkberrs.c maprules.c \
-	    XKBMisc.c XKBMAlloc.c XKBAlloc.c XKBGAlloc.c \
+	    xkmread.c xkbtext.c xkbfmisc.c xkberrs.c maprules.c \
+	    XKBMisc.c XKBMAlloc.c XKBAlloc.c XKBGAlloc.c xkbout.c \
 	    $(XKBXI_SRCS) $(DDX_SRCS)
      OBJS = xkb.o xkbUtils.o xkbEvents.o xkbAccessX.o xkbSwap.o \
             xkbLEDs.o xkbInit.o xkbActions.o xkbPrKeyEv.o \
-	    xkmread.o xkbfmisc.o xkberrs.o maprules.o \
-	    XKBMisc.o XKBMAlloc.o XKBAlloc.o XKBGAlloc.o \
+	    xkmread.o xkbtext.o xkbfmisc.o xkberrs.o maprules.o \
+	    XKBMisc.o XKBMAlloc.o XKBAlloc.o XKBGAlloc.o xkbout.o \
 	    $(XKBXI_OBJS) $(DDX_OBJS)
    INCLUDES = -I../include -I$(XINCLUDESRC) -I$(EXTINCSRC) -I$(SERVERSRC)/Xext \
 	      -I$(SERVERSRC)/mi $(XF86INCLUDES) \
@@ -40,7 +40,7 @@ XKB_DDXDEFS = XkbServerDefines
    LINTLIBS = ../dix/llib-ldix.ln ../os/llib-los.ln
 
 DEFINES = $(XKB_DDXDEFS) $(NX_DEFINES)
-XKB_DEFINES = -DXKB_BASE_DIRECTORY=\"$(LIBDIR)/xkb\" $(XKB_DISABLE)
+XKB_DEFINES = -DXKB_BASE_DIRECTORY=\"$(SYSTEMXKBCONFDIR)\" -DXKB_BIN_DIRECTORY=\"$(SYSTEMXKBBINDIR)\" -DXKB_DFLT_RULES_FILE=\"base\" -DXKB_DFLT_KB_LAYOUT=\"us\" -DXKB_DFLT_KB_MODEL=\"pc102\" $(XKB_DISABLE)
 
 NormalLibraryObjectRule()
 NormalLibraryTarget(xkb,$(OBJS))

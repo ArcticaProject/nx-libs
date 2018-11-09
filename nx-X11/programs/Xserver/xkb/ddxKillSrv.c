@@ -28,10 +28,6 @@ THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #include <dix-config.h>
 #endif
 
-#ifdef HAVE_XORG_CONFIG_H
-#include <xorg-config.h>
-#endif
-
 #include <stdio.h>
 #include <nx-X11/X.h>
 #include <nx-X11/Xproto.h>
@@ -40,7 +36,6 @@ THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #include "scrnintstr.h"
 #include "windowstr.h"
 #include <xkbsrv.h>
-#include <nx-X11/extensions/XI.h>
 
 int
 XkbDDXTerminateServer(DeviceIntPtr dev,KeyCode key,XkbAction *act)

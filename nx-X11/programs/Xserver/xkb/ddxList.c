@@ -162,36 +162,46 @@ char	tmpname[PATH_MAX];
 #endif
     if (XkbBaseDirectory!=NULL) {
 	if ((list->pattern[what][0]=='*')&&(list->pattern[what][1]=='\0')) {
-	    buf = Xprintf("%s/%s.dir",XkbBaseDirectory,componentDirs[what]);
-	    in= fopen(buf,"r");
-	    free (buf);
-	    buf = NULL;
+	   if (asprintf(&buf, "%s/%s.dir", XkbBaseDirectory,
+			componentDirs[what]) == -1)
+	       buf = NULL;
+	   else
+	       in = fopen(buf,"r");
 	}
 	if (!in) {
 	    haveDir= False;
-	    buf = Xprintf(
+	    free(buf);
+	    if (asprintf
+	       (&buf,
 		"'%s/xkbcomp' '-R%s/%s' -w %ld -l -vlfhpR '%s'" W32_tmparg,
-                XkbBinDirectory,XkbBaseDirectory,componentDirs[what],(long)
-		((xkbDebugFlags<2)?1:((xkbDebugFlags>10)?10:xkbDebugFlags)),
+		XkbBinDirectory, XkbBaseDirectory, componentDirs[what],
+		(long) ((xkbDebugFlags < 2) ? 1 :
+			((xkbDebugFlags > 10) ? 10 : xkbDebugFlags)),
 		file W32_tmpfile
-                );
+		   ) == -1)
+	       buf = NULL;
 	}
     }
     else {
 	if ((list->pattern[what][0]=='*')&&(list->pattern[what][1]=='\0')) {
-	    buf = Xprintf("%s.dir",componentDirs[what]);
-	    in= fopen(buf,"r");
-	    free (buf);
+	   if (asprintf(&buf, "%s.dir", componentDirs[what]) == -1)
+	       buf = NULL;
+	   else
+	       in = fopen(buf,"r");
 	    buf = NULL;
 	}
 	if (!in) {
 	    haveDir= False;
-	    buf = Xprintf(
+	    free(buf);
+	    if (asprintf
+	       (&buf,
 		"xkbcomp -R%s -w %ld -l -vlfhpR '%s'" W32_tmparg,
-                componentDirs[what],(long)
-		((xkbDebugFlags<2)?1:((xkbDebugFlags>10)?10:xkbDebugFlags)),
+		componentDirs[what],
+		(long) ((xkbDebugFlags < 2) ? 1 :
+			((xkbDebugFlags > 10) ? 10 : xkbDebugFlags)),
 		file W32_tmpfile
-                );
+		   ) == -1)
+	       buf = NULL;
 	}
     }
     status= Success;
@@ -211,14 +221,20 @@ char	tmpname[PATH_MAX];
     }
     if (!in)
     {
-        if (buf != NULL)
-	    free (buf);
+	free (buf);
 #ifdef WIN32
 	unlink(tmpname);
 #endif
 	return BadImplementation;
     }
     list->nFound[what]= 0;
+    if (buf) {
+        free(buf);
+        buf = NULL;
+    }
+    buf = malloc(PATH_MAX * sizeof(char));
+    if (!buf)
+        return BadAlloc;
     while ((status==Success)&&((tmp=fgets(buf,PATH_MAX,in))!=NULL)) {
 	unsigned flags;
 	register unsigned int i;
@@ -263,7 +279,7 @@ char	tmpname[PATH_MAX];
 #ifndef WIN32
     if (haveDir)
 	fclose(in);
-    else if ((rval=pclose(in))!=0) {
+    else if ((rval=Pclose(in))!=0) {
 	if (xkbDebugFlags)
 	    ErrorF("xkbcomp returned exit code %d\n",rval);
     }
@@ -271,8 +287,7 @@ char	tmpname[PATH_MAX];
     fclose(in);
     unlink(tmpname);
 #endif
-    if (buf != NULL)
-        free (buf);
+    free (buf);
     return status;
 }
 

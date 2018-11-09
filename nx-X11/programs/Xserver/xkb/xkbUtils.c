@@ -711,11 +711,11 @@ unsigned char	grp;
 
     grp= state->locked_group;
     if (grp>=ctrls->num_groups)
-	state->locked_group= XkbAdjustGroup(grp,ctrls);
+	state->locked_group= XkbAdjustGroup(XkbCharToInt(grp),ctrls);
 
     grp= state->locked_group+state->base_group+state->latched_group;
     if (grp>=ctrls->num_groups)
-	 state->group= XkbAdjustGroup(grp,ctrls);
+	 state->group= XkbAdjustGroup(XkbCharToInt(grp),ctrls);
     else state->group= grp;
     XkbComputeCompatState(xkbi);
     return;
@@ -763,7 +763,7 @@ XkbSrvLedInfoPtr	sli;
     if (cause!=NULL) {
 	xkbControlsNotify cn;
 	cn.numGroups= ctrls->num_groups;
-	cn.changedControls|= XkbControlsEnabledMask;
+	cn.changedControls= XkbControlsEnabledMask;
 	cn.enabledControls= ctrls->enabled_ctrls;
 	cn.enabledControlChanges= (ctrls->enabled_ctrls^old);
 	cn.keycode= cause->kc;

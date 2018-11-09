@@ -54,13 +54,6 @@ THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 #define	CREATE_ATOM(s)	MakeAtom(s,sizeof(s)-1,1)
 
-#if defined(ultrix) || defined(__alpha) || defined(__alpha__)
-#define	LED_COMPOSE	2
-#define LED_CAPS	3
-#define	LED_SCROLL	4
-#define	LED_NUM		5
-#define	PHYS_LEDS	0x1f
-#else
 #ifdef sun
 #define LED_NUM		1
 #define	LED_SCROLL	2
@@ -72,7 +65,6 @@ THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #define	LED_NUM		2
 #define	LED_SCROLL	3
 #define	PHYS_LEDS	0x07
-#endif
 #endif
 
 #define	MAX_TOC	16
@@ -115,6 +107,7 @@ typedef struct	_SrvXkmInfo {
 
 char	*		XkbBaseDirectory=	XKB_BASE_DIRECTORY;
 char	*		XkbBinDirectory=	XKB_BIN_DIRECTORY;
+
 static int 		XkbWantAccessX=		0;
 static XkbFileInfo *	_XkbInitFileInfo=	NULL;
 
@@ -549,8 +542,6 @@ XkbEventCauseRec	cause;
 	   memcpy(xkb->map->modmap,pXDev->key->modifierMap,xkb->max_key_code+1);
 
 	XkbInitIndicatorMap(xkbi,&file);
-
-	XkbDDXInitDevice(pXDev);
 
 	if (!(file.xkbinfo.defined&XkmSymbolsMask)) {
 	    XkbUpdateKeyTypesFromCore(pXDev,xkb->min_key_code,XkbNumKeys(xkb),
