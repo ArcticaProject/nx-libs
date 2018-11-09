@@ -19,6 +19,8 @@ Build-Depends:
  libxext-dev,
  libxfixes-dev,
  libxfont-dev (>= 1.4.2),
+# libxkbfile-dev is required by xkbcomp.pc, see Debian bug #913359
+ libxkbfile-dev,
  libxinerama-dev,
  libxml2-dev,
  libxpm-dev,
