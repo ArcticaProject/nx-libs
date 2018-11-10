@@ -50,11 +50,6 @@ endif
 
 IMAKE_DEFINES	?=
 
-NX_VERSION_MAJOR=$(shell ./version.sh 1)
-NX_VERSION_MINOR=$(shell ./version.sh 2)
-NX_VERSION_MICRO=$(shell ./version.sh 3)
-NX_VERSION_PATCH=$(shell ./version.sh 4)
-
 SHELL:=/bin/bash
 
 NX_X11_HEADERS =		\
@@ -106,10 +101,10 @@ test:
 version:
 	# prepare nx-X11/config/cf/nxversion.def
 	sed \
-	    -e 's/###NX_VERSION_MAJOR###/$(NX_VERSION_MAJOR)/' \
-	    -e 's/###NX_VERSION_MINOR###/$(NX_VERSION_MINOR)/' \
-	    -e 's/###NX_VERSION_MICRO###/$(NX_VERSION_MICRO)/' \
-	    -e 's/###NX_VERSION_PATCH###/$(NX_VERSION_PATCH)/' \
+	    -e 's/###NX_VERSION_MAJOR###/$(shell ./version.sh 1)/' \
+	    -e 's/###NX_VERSION_MINOR###/$(shell ./version.sh 2)/' \
+	    -e 's/###NX_VERSION_MICRO###/$(shell ./version.sh 3)/' \
+	    -e 's/###NX_VERSION_PATCH###/$(shell ./version.sh 4)/' \
 	    nx-X11/config/cf/nxversion.def.in \
 	    > nx-X11/config/cf/nxversion.def
 
