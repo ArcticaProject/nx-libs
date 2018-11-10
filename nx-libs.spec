@@ -32,9 +32,16 @@ BuildRequires:  pkgconfig
 %if 0%{?suse_version} && 0%{?suse_version} < 1210
 BuildRequires:  xorg-x11-util-devel
 %else
-# we need xkbcomp.pc
-BuildRequires:  xorg-x11-xkb-utils-devel
 BuildRequires:  imake
+%endif
+# For xkbcomp.pc.
+%if 0%{?suse_version}
+# Earlier versions don't have xkbcomp.pc at all.
+%if 0%{?suse_version} >= 1210
+BuildRequires:  xkbcomp-devel
+%endif
+%else
+BuildRequires:  xorg-x11-xkb-utils-devel
 %endif
 
 # ideally we build with quilt (for mesa-quilt patch appliance script),
