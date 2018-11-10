@@ -14,6 +14,7 @@ SYMLINK_FILE=ln -f -s
 # helpers for "clean" and "uninstall" targets
 RM_FILE=rm -f
 RM_DIR=rmdir -p --ignore-fail-on-non-empty
+RM_DIR_REC=rm -Rf
 
 ETCDIR_NX       ?= /etc/nxagent
 PREFIX          ?= /usr/local
@@ -74,9 +75,9 @@ distclean: clean
 	if test -f nxcompshad/Makefile; then ${MAKE} -C nxcompshad distclean; fi
 	if test -d nx-X11; then ${MAKE} -C nx-X11 distclean; fi
 	if [ -x ./mesa-quilt ]; then ./mesa-quilt pop -a; fi
-	rm -Rf nx-X11/extras/Mesa/.pc/
-	rm -f nx-X11/config/cf/nxversion.def
-	rm -f nx-X11/config/cf/nxconfig.def
+	$(RM_DIR_REC) nx-X11/extras/Mesa/.pc/
+	$(RM_FILE) nx-X11/config/cf/nxversion.def
+	$(RM_FILE) nx-X11/config/cf/nxconfig.def
 
 test:
 	echo "No testing for NX (redistributed)"
@@ -205,7 +206,7 @@ install-full:
 	gzip $(DESTDIR)$(PREFIX)/share/man/man1/*.1
 
 	# create a clean nx-X11/.build-exports space
-	rm -Rf nx-X11/.build-exports
+	$(RM_DIR_REC) nx-X11/.build-exports
 	mkdir -p nx-X11/.build-exports/include
 	mkdir -p nx-X11/.build-exports/lib
 
@@ -263,5 +264,5 @@ uninstall-full:
 	$(RM_FILE) $(DESTDIR)$(PREFIX)/share/nx/VERSION.nxagent
 	$(RM_DIR) $(DESTDIR)$(PREFIX)/share/nx/
 
-	if test -d $(DESTDIR)$(NXLIBDIR); then rm -rf $(DESTDIR)$(NXLIBDIR); fi
-	if test -d $(DESTDIR)$(INCLUDEDIR)/nx; then rm -rf $(DESTDIR)$(INCLUDEDIR)/nx; fi
+	$(RM_DIR_REC) $(DESTDIR)$(NXLIBDIR)
+	$(RM_DIR_REC) $(DESTDIR)$(INCLUDEDIR)/nx
