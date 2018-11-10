@@ -62,19 +62,19 @@ NX_XTRANS_HEADERS =		\
 all: build
 
 clean:
-	if test -f nxcomp/Makefile; then ${MAKE} -C nxcomp clean; fi
-	if test -f nxproxy/Makefile; then ${MAKE} -C nxproxy clean; fi
-	if test -f nx-X11/lib/Makefile; then ${MAKE} -C nx-X11/lib clean; fi
-	if test -f nxcompshad/Makefile; then ${MAKE} -C nxcompshad clean; fi
-	if test -d nx-X11; then ${MAKE} clean-env; fi
+	test -f nxcomp/Makefile     && ${MAKE} -C nxcomp clean
+	test -f nxproxy/Makefile    && ${MAKE} -C nxproxy clean
+	test -f nx-X11/lib/Makefile && ${MAKE} -C nx-X11/lib clean
+	test -f nxcompshad/Makefile && ${MAKE} -C nxcompshad clean
+	test -d nx-X11              && ${MAKE} clean-env
 
 distclean: clean
-	if test -f nxcomp/Makefile; then ${MAKE} -C nxcomp distclean; fi
-	if test -f nxproxy/Makefile; then ${MAKE} -C nxproxy distclean; fi
-	if test -f nx-X11/lib/Makefile; then ${MAKE} -C nx-X11/lib distclean; fi
-	if test -f nxcompshad/Makefile; then ${MAKE} -C nxcompshad distclean; fi
-	if test -d nx-X11; then ${MAKE} -C nx-X11 distclean; fi
-	if [ -x ./mesa-quilt ]; then ./mesa-quilt pop -a; fi
+	test -f nxcomp/Makefile     && ${MAKE} -C nxcomp distclean; fi
+	test -f nxproxy/Makefile    && ${MAKE} -C nxproxy distclean; fi
+	test -f nx-X11/lib/Makefile && ${MAKE} -C nx-X11/lib distclean; fi
+	test -f nxcompshad/Makefile && ${MAKE} -C nxcompshad distclean; fi
+	test -d nx-X11              && ${MAKE} -C nx-X11 distclean; fi
+	test -x ./mesa-quilt        && ./mesa-quilt pop -a
 	$(RM_DIR_REC) nx-X11/extras/Mesa/.pc/
 	$(RM_FILE) nx-X11/config/cf/nxversion.def
 	$(RM_FILE) nx-X11/config/cf/nxconfig.def
@@ -140,7 +140,7 @@ clean-env: version
 	${MAKE} -j1 -C nx-X11 clean IMAKE_DEFINES="$(IMAKE_DEFINES)"
 
 build-lite:
-	cd nxcomp && autoreconf -vfsi && (${CONFIGURE}) && ${MAKE}
+	cd nxcomp  && autoreconf -vfsi && (${CONFIGURE}) && ${MAKE}
 	cd nxproxy && autoreconf -vfsi && (${CONFIGURE}) && ${MAKE}
 
 build-full: build-env
@@ -249,15 +249,15 @@ uninstall:
 	[ ! -d nx-X11 ] || $(MAKE) uninstall-full
 
 uninstall-lite:
-	if test -f nxcomp/Makefile; then ${MAKE} -C nxcomp "$@"; fi
-	if test -f nxproxy/Makefile; then ${MAKE} -C nxproxy "$@"; fi
+	test -f nxcomp/Makefile  && ${MAKE} -C nxcomp "$@"
+	test -f nxproxy/Makefile && ${MAKE} -C nxproxy "$@"
 
 	$(RM_FILE) $(DESTDIR)$(PREFIX)/share/nx/VERSION.nxproxy
 	$(RM_DIR) $(DESTDIR)$(PREFIX)/share/nx/
 
 uninstall-full:
-	if test -f nxcompshad/Makefile; then ${MAKE} -C nxcompshad "$@"; fi
-	if test -f nx-X11/lib/Makefile; then ${MAKE} -C nx-X11/lib "$@"; fi
+	test -f nxcompshad/Makefile && ${MAKE} -C nxcompshad "$@"
+	test -f nx-X11/lib/Makefile && ${MAKE} -C nx-X11/lib "$@"
 
 	$(RM_FILE) $(DESTDIR)$(BINDIR)/nxagent
 
