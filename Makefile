@@ -34,13 +34,19 @@ IMAKE_FONT_DEFINES	?= $(shell pkg-config --modversion xfont2 1>/dev/null 2>/dev/
 XEXT_EXTRA_DEFINES	?= $(shell pkg-config --exists 'xextproto < 7.1.0' 1>/dev/null 2>/dev/null && echo "-DLEGACY_XEXT_PROTO")
 
 # check if the xkbcomp devel pkg is available - we need it for the next step
+HAS_XKBCOMP_DEVEL="yes"
 ifneq ($(shell pkg-config --exists xkbcomp && echo yes), yes)
-    $(error required xkbcomp devel package missing)
+    $(warning xkbcomp devel package missing, using default values)
+    HAS_XKBCOMP_DEVEL="no"
 endif
 
 # the system's directory with the xkb data files (this needs to be
 # independent of Imake's ProjectRoot or the configure prefix.)
+ifeq ($(HAS_XKBCOMP_DEVEL),yes)
 XKB_SYS_DEFINES	?= -DSystemXkbConfigDir=$(shell pkg-config xkbcomp --variable=xkbconfigdir) -DSystemXkbBinDir=$(shell pkg-config xkbcomp --variable=prefix)/bin
+else
+XKB_SYS_DEFINES	?= -DSystemXkbConfigDir=/usr/share/X11/xkb -DSystemXkbBinDir=/usr/bin
+endif
 
 IMAKE_DEFINES	?=
 
