@@ -25,27 +25,9 @@ USRLIBDIR       ?= $(NXLIBDIR)/X11
 INCLUDEDIR      ?= $(PREFIX)/include
 CONFIGURE       ?= ./configure --prefix="$(PREFIX)"
 
-# use Xfont2 if available in the build env
-FONT_DEFINES	?= $(shell pkg-config --modversion xfont2 1>/dev/null 2>/dev/null && echo "-DHAS_XFONT2") $(shell pkg-config --exists 'xfont < 1.4.2' 1>/dev/null 2>/dev/null && echo "-DLEGACY_XFONT1")
-XFONTLIB	?= $(shell pkg-config --modversion xfont2 1>/dev/null 2>/dev/null && echo "-lXfont2" || echo "-lXfont")
-IMAKE_FONT_DEFINES	?= $(shell pkg-config --modversion xfont2 1>/dev/null 2>/dev/null && echo "-DHasXfont2=YES" || echo "-DHasXfont2=NO")
-
-# Support older libXext versions.
-XEXT_EXTRA_DEFINES	?= $(shell pkg-config --exists 'xextproto < 7.1.0' 1>/dev/null 2>/dev/null && echo "-DLEGACY_XEXT_PROTO")
-
 # check if the xkbcomp devel pkg is available - we need it for the next step
-HAS_XKBCOMP_DEVEL="yes"
 ifneq ($(shell pkg-config --exists xkbcomp && echo yes), yes)
-    $(warning xkbcomp devel package missing, using default values)
-    HAS_XKBCOMP_DEVEL="no"
-endif
-
-# the system's directory with the xkb data files (this needs to be
-# independent of Imake's ProjectRoot or the configure prefix.)
-ifeq ($(HAS_XKBCOMP_DEVEL),yes)
-XKB_SYS_DEFINES	?= -DSystemXkbConfigDir=$(shell pkg-config xkbcomp --variable=xkbconfigdir) -DSystemXkbBinDir=$(shell pkg-config xkbcomp --variable=prefix)/bin
-else
-XKB_SYS_DEFINES	?= -DSystemXkbConfigDir=/usr/share/X11/xkb -DSystemXkbBinDir=/usr/bin
+    $(warning xkbcomp devel package missing, using imake default values)
 endif
 
 IMAKE_DEFINES	?=
@@ -94,6 +76,7 @@ distclean: clean
 	if [ -x ./mesa-quilt ]; then ./mesa-quilt pop -a; fi
 	rm -Rf nx-X11/extras/Mesa/.pc/
 	rm -f nx-X11/config/cf/nxversion.def
+	rm -f nx-X11/config/cf/nxconfig.def
 
 test:
 	echo "No testing for NX (redistributed)"
@@ -108,9 +91,27 @@ version:
 	    nx-X11/config/cf/nxversion.def.in \
 	    > nx-X11/config/cf/nxversion.def
 
-build-env: version
+imakeconfig:
+	# auto-config some setting
+
+	# check if system supports Xfont2
+	(echo "#define HasXfont2 `pkg-config --exists xfont2 && echo YES || echo NO`") >nx-X11/config/cf/nxconfig.def
+
+	# check if system has an _old_ release of Xfont1
+	(echo "#define HasLegacyXfont1 `pkg-config --exists 'xfont < 1.4.2' && echo YES || echo NO`") >>nx-X11/config/cf/nxconfig.def
+
+	# check if system has an _old_ release of XextProto
+	(echo "#define HasLegacyXextProto `pkg-config --exists 'xextproto < 7.1.0' && echo YES || echo NO`") >>nx-X11/config/cf/nxconfig.def
+
+	# the system's directory with the xkb data and binary files (these
+	# needs to be independent of Imake's ProjectRoot or the configure
+	# prefix.)
+	(pkg-config --exists xkbcomp && echo "#define SystemXkbConfigDir `pkg-config xkbcomp --variable=xkbconfigdir`"; :) >>nx-X11/config/cf/nxconfig.def
+	(pkg-config --exists xkbcomp && echo "#define SystemXkbBinDir `pkg-config xkbcomp --variable=prefix`/bin"; :) >>nx-X11/config/cf/nxconfig.def
+
+build-env: version imakeconfig
 	# prepare Makefiles and the nx-X11 symlinking magic
-	${MAKE} -j1 -C nx-X11 BuildIncludes FONT_DEFINES="$(FONT_DEFINES)" XEXT_EXTRA_DEFINES="$(XEXT_EXTRA_DEFINES)" IMAKE_DEFINES="$(IMAKE_DEFINES) $(IMAKE_FONT_DEFINES) $(XKB_SYS_DEFINES)"
+	${MAKE} -j1 -C nx-X11 BuildIncludes IMAKE_DEFINES="$(IMAKE_DEFINES)"
 
 	# set up environment for libNX_X11 build (X11 header files)
 	mkdir -p nx-X11/exports/include/nx-X11/
@@ -135,7 +136,7 @@ clean-env: version
 	[ -d exports/include/nx-X11/Xtrans ] && $(RM_DIR) exports/include/nx-X11/Xtrans/ || :
 	[ -d exports/include/nx-X11/ ]       && $(RM_DIR) exports/include/nx-X11/        || :
 
-	${MAKE} -j1 -C nx-X11 clean FONT_DEFINES="$(FONT_DEFINES)" XEXT_EXTRA_DEFINES="$(XEXT_EXTRA_DEFINES)" IMAKE_DEFINES="$(IMAKE_DEFINES) $(IMAKE_FONT_DEFINES) $(XKB_SYS_DEFINES)"
+	${MAKE} -j1 -C nx-X11 clean IMAKE_DEFINES="$(IMAKE_DEFINES)"
 
 build-lite:
 	cd nxcomp && autoreconf -vfsi && (${CONFIGURE}) && ${MAKE}
@@ -159,8 +160,8 @@ build-full: build-env
 
 	# build nxagent fourth
 	./mesa-quilt push -a
-	${MAKE} -j1 -C nx-X11 BuildDependsOnly FONT_DEFINES="$(FONT_DEFINES)" XEXT_EXTRA_DEFINES="$(XEXT_EXTRA_DEFINES)" IMAKE_DEFINES="$(IMAKE_DEFINES) $(IMAKE_FONT_DEFINES) $(XKB_SYS_DEFINES)"
-	${MAKE} -C nx-X11 World USRLIBDIR="$(USRLIBDIR)" SHLIBDIR="$(SHLIBDIR)" FONT_DEFINES="$(FONT_DEFINES)" XFONTLIB="$(XFONTLIB)" XEXT_EXTRA_DEFINES="$(XEXT_EXTRA_DEFINES)" IMAKE_DEFINES="$(IMAKE_DEFINES) $(IMAKE_FONT_DEFINES) $(XKB_SYS_DEFINES)"
+	${MAKE} -j1 -C nx-X11 BuildDependsOnly IMAKE_DEFINES="$(IMAKE_DEFINES)"
+	${MAKE} -C nx-X11 World USRLIBDIR="$(USRLIBDIR)" SHLIBDIR="$(SHLIBDIR)" IMAKE_DEFINES="$(IMAKE_DEFINES)"
 
 	# build nxproxy fifth
 	cd nxproxy && autoreconf -vfsi && (${CONFIGURE}) && ${MAKE}
