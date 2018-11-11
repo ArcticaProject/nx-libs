@@ -1,0 +1,25 @@
+/*
+  our own rules to have a much cleaner compilation output
+
+  derived from Imake.rules
+*/
+
+#define RemoveFileQuiet(file) @$(RM) -f file \&>/dev/null
+
+#define ObjectCompile(options) RemoveFileQuiet($@)				@@\
+	ClearmakeOSName \
+	@echo \ \ CC $*.c						@@\
+	@$(CC) -c $(CFLAGS) options $*.c || { echo \ \ CC failed: $(CC)·-c·$(CFLAGS)·options·$*.c; exit 1; }
+
+#define RunPrintIfFailed(cmd)	@cmd || { echo failed command: cmd; exit 1; }
+
+#define NormalLibraryTarget(libname,objlist)				@@\
+AllTarget(LibraryTargetName(libname))					@@\
+									@@\
+LibraryTargetName(libname): objlist $(EXTRALIBRARYDEPS)		@@\
+	@echo \ \ Creating lib: $@					@@\
+	RemoveFileQuiet($@)						@@\
+	RunPrintIfFailed(MakeLibrary($@,objlist))			@@\
+	RunPrintIfFailed(RanLibrary($@))				@@\
+	RunPrintIfFailed(_LinkBuildLibrary($@))
+

@@ -53,7 +53,7 @@ RELEASE_VERSION = ReleaseVersion
 
 #if NXAgentServer
 #include "nxconfig.def"
-
+#include "nxcompile.def"
 #include "nxversion.def"
 
 #if !defined(nxVersionString) && \
