@@ -17,7 +17,7 @@
 AllTarget(LibraryTargetName(libname))					@@\
 									@@\
 LibraryTargetName(libname): objlist $(EXTRALIBRARYDEPS)		@@\
-	@echo \ \ Creating lib: $@					@@\
+	@echo \ \ CCLD $@						@@\
 	RemoveFileQuiet($@)						@@\
 	RunPrintIfFailed(MakeLibrary($@,objlist))			@@\
 	RunPrintIfFailed(RanLibrary($@))				@@\
