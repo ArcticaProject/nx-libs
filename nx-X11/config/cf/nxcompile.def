@@ -1,5 +1,5 @@
 /*
-  our own rules to have a much cleaner compilation output
+  Rules to have a much cleaner compilation output
 
   derived from Imake.rules
 */
