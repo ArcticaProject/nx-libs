@@ -6,12 +6,12 @@
 
 #define RemoveFileQuiet(file) @$(RM) -f file \&>/dev/null
 
-#define ObjectCompile(options) RemoveFileQuiet($@)				@@\
+#define RunPrintIfFailed(cmd)	@cmd || { echo failed command: cmd; exit 1; }
+
+#define ObjectCompile(options) RemoveFileQuiet($@)			@@\
 	ClearmakeOSName \
 	@echo \ \ CC $*.c						@@\
-	@$(CC) -c $(CFLAGS) options $*.c || { echo \ \ CC failed: $(CC)·-c·$(CFLAGS)·options·$*.c; exit 1; }
-
-#define RunPrintIfFailed(cmd)	@cmd || { echo failed command: cmd; exit 1; }
+	RunPrintIfFailed($(CC) -c $(CFLAGS) options $*.c)
 
 #define NormalLibraryTarget(libname,objlist)				@@\
 AllTarget(LibraryTargetName(libname))					@@\
@@ -23,3 +23,8 @@ LibraryTargetName(libname): objlist $(EXTRALIBRARYDEPS)		@@\
 	RunPrintIfFailed(RanLibrary($@))				@@\
 	RunPrintIfFailed(_LinkBuildLibrary($@))
 
+#define	DependTarget()						@@\
+DependDependency()							@@\
+									@@\
+depend::								@@\
+	RunPrintIfFailed($(DEPEND) $(DEPENDFLAGS) -- $(ALLDEFINES) $(DEPEND_DEFINES) -- $(SRCS))
