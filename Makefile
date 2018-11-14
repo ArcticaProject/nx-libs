@@ -110,6 +110,9 @@ imakeconfig:
 	(pkg-config --exists xkbcomp && echo "#define SystemXkbConfigDir `pkg-config xkbcomp --variable=xkbconfigdir`"; :) >>nx-X11/config/cf/nxconfig.def
 	(pkg-config --exists xkbcomp && echo "#define SystemXkbBinDir `pkg-config xkbcomp --variable=prefix`/bin"; :) >>nx-X11/config/cf/nxconfig.def
 
+	# let's create the nx-X11 Makefiles now, once everything has been defined
+	$(MAKE) -j1 -C nx-X11 Makefiles IMAKE_DEFINES="$(IMAKE_DEFINES)"
+
 build-env: version imakeconfig
 	# prepare Makefiles and the nx-X11 symlinking magic
 	${MAKE} -j1 -C nx-X11 BuildIncludes IMAKE_DEFINES="$(IMAKE_DEFINES)"
