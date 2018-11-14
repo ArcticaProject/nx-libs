@@ -61,14 +61,14 @@ NX_XTRANS_HEADERS =		\
 
 all: build
 
-clean:
+clean: version imakeconfig
 	test -f nxcomp/Makefile     && ${MAKE} -C nxcomp clean         || true
 	test -f nxproxy/Makefile    && ${MAKE} -C nxproxy clean        || true
 	test -f nx-X11/lib/Makefile && ${MAKE} -C nx-X11/lib clean     || true
 	test -f nxcompshad/Makefile && ${MAKE} -C nxcompshad clean     || true
 	test -d nx-X11              && ${MAKE} clean-env               || true
 
-distclean: clean
+distclean: clean version imakeconfig
 	test -f nxcomp/Makefile     && ${MAKE} -C nxcomp distclean     || true
 	test -f nxproxy/Makefile    && ${MAKE} -C nxproxy distclean    || true
 	test -f nx-X11/lib/Makefile && ${MAKE} -C nx-X11/lib distclean || true
