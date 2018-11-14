@@ -62,18 +62,18 @@ NX_XTRANS_HEADERS =		\
 all: build
 
 clean:
-	test -f nxcomp/Makefile     && ${MAKE} -C nxcomp clean
-	test -f nxproxy/Makefile    && ${MAKE} -C nxproxy clean
-	test -f nx-X11/lib/Makefile && ${MAKE} -C nx-X11/lib clean
-	test -f nxcompshad/Makefile && ${MAKE} -C nxcompshad clean
-	test -d nx-X11              && ${MAKE} clean-env
+	test -f nxcomp/Makefile     && ${MAKE} -C nxcomp clean         || true
+	test -f nxproxy/Makefile    && ${MAKE} -C nxproxy clean        || true
+	test -f nx-X11/lib/Makefile && ${MAKE} -C nx-X11/lib clean     || true
+	test -f nxcompshad/Makefile && ${MAKE} -C nxcompshad clean     || true
+	test -d nx-X11              && ${MAKE} clean-env               || true
 
 distclean: clean
-	test -f nxcomp/Makefile     && ${MAKE} -C nxcomp distclean
-	test -f nxproxy/Makefile    && ${MAKE} -C nxproxy distclean
-	test -f nx-X11/lib/Makefile && ${MAKE} -C nx-X11/lib distclean
-	test -f nxcompshad/Makefile && ${MAKE} -C nxcompshad distclean
-	test -d nx-X11              && ${MAKE} -C nx-X11 distclean
+	test -f nxcomp/Makefile     && ${MAKE} -C nxcomp distclean     || true
+	test -f nxproxy/Makefile    && ${MAKE} -C nxproxy distclean    || true
+	test -f nx-X11/lib/Makefile && ${MAKE} -C nx-X11/lib distclean || true
+	test -f nxcompshad/Makefile && ${MAKE} -C nxcompshad distclean || true
+	test -d nx-X11              && ${MAKE} -C nx-X11 distclean     || true
 	test -x ./mesa-quilt        && ./mesa-quilt pop -a
 	$(RM_DIR_REC) nx-X11/extras/Mesa/.pc/
 	$(RM_FILE) nx-X11/config/cf/nxversion.def
