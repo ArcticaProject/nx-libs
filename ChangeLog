@@ -1,16 +1,841 @@
-2018-03-16 23:52:03 +0100 Mike Gabriel (ec23e1dad)
+2018-11-20 16:03:22 +0100 Mike Gabriel (b0c5dcd51)
 
-	* release 3.5.99.16 (HEAD -> 3.6.x)
+	* release 3.5.99.17 (HEAD -> 3.6.x, tag: 3.5.99.17)
+
+2018-11-14 20:21:46 +0100 Ulrich Sibiller (623a74ae1)
+
+	* Makefile: fix (dist)clean dependencies
+
+2018-11-14 16:09:17 +0100 Mike Gabriel (071e41b6c)
+
+	* Makefile: Assure that nx-X11's Makefiles are created after
+          everything has been defined.
+
+2018-11-14 15:18:22 +0100 Mike Gabriel (e4a7baf15)
+
+	* Regression fix for a93f64e4. The test executables bails out on test
+          failure, whereas ifdef does not. Adding "|| true" where
+          needed.
+
+2018-11-11 15:54:22 +0100 Mike Gabriel (a118ab801)
+
+	* debian/patches: Rebase 2001_nx-X11_install-location.debian.patch.
+
+2018-11-11 15:50:21 +0100 Mike Gabriel (1a429016c)
+
+	* Merge branch 'uli42-pr/fix_font_defines_once_more2' into 3.6.x
+
+2018-11-11 15:48:17 +0100 Mike Gabriel (f78a8b3eb)
+
+	* nx-X11/config/cf/nxcompile.def: Rephrase header comment slightly.
+
+2018-11-11 12:31:19 +0100 Ulrich Sibiller (8632895b8)
+
+	* imake: adapt output to automake output as seen in lib/src
+
+2018-11-11 12:30:54 +0100 Ulrich Sibiller (c4656c5e9)
+
+	* imake: also silence makedepend
+
+2018-11-11 11:02:07 +0100 Ulrich Sibiller (ffc723e73)
+
+	* silence imake compilation
+
+2018-11-10 14:26:49 +0100 Ulrich Sibiller (a93f64e4f)
+
+	* Makefile: use test + && instead of if test/else/fi
+
+2018-11-10 14:26:15 +0100 Ulrich Sibiller (58615f9fc)
+
+	* Makefile: use (more) RM macros
+
+2018-11-10 14:48:52 +0100 Ulrich Sibiller (77b392312)
+
+	* Makefile: Rework handling auto-determined values for imake
+
+2018-11-10 14:46:23 +0100 Ulrich Sibiller (abf47feca)
+
+	* Makefile: drop intermediate NX version vars
+
+2018-11-10 07:30:23 +0100 Mihai Moldovan (93c9b8862)
+
+	* nx-libs.spec: newer versions of SLE* and OpenSuSE use
+          xkbcomp-devel, while RedHat-based distros want
+          xorg-x11-xkb-utils-devel for xkbcomp.pc.
+
+2018-11-10 07:27:14 +0100 Mihai Moldovan (89f1e3baa)
+
+	* Makefile: support systems without xkbcomp.pc.
+
+2018-11-09 23:14:16 +0100 Mike Gabriel (a12ab412d)
+
+	* debian/contrl: Bump Standards-Version: to 4.2.1. No changes needed.
+
+2018-11-09 23:10:51 +0100 Mike Gabriel (7b08c7dfc)
+
+	* debian/control: Add to B-D: libxkbfile-dev. Required by xkbcomp.pc
+          (pkg-config).
+
+2018-11-09 15:53:42 +0100 Mike Gabriel (d2dae84b3)
+
+	* Merge branch 'uli42-pr/Xext-1.4.2' into 3.6.x
+
+2018-11-05 22:16:25 +0100 Ulrich Sibiller (49607e93f)
+
+	* Lift Xext to xorg 1.4.2
+
+2018-11-09 15:33:02 +0100 Mike Gabriel (fccef5fc5)
+
+	* Merge branch 'uli42-pr/xkb_1.3.0.0' into 3.6.x
+
+2018-11-01 13:29:16 +0100 Ulrich Sibiller (3965f24be)
+
+	* adapt code-versions.txt
+
+2018-10-30 00:00:45 +0100 Ulrich Sibiller (b09a72b08)
+
+	* Convert existing Xprintf style calls to asprintf style
+
+2018-10-29 23:39:03 +0100 Ulrich Sibiller (b01e29eff)
+
+	* xkb: Don't check for NULL before calling free
+
+2018-10-29 23:34:10 +0100 Ulrich Sibiller (90b83a79e)
+
+	* xkb: Fix memory leak if opening file fails
+
+2018-10-25 00:46:12 +0200 Ulrich Sibiller (f23189e73)
+
+	* Make: Automatically determine xkb dir
+
+2018-07-25 22:39:17 +0200 Ulrich Sibiller (824b62973)
+
+	* XKB: Fix size_syms calculation bug
+
+2018-07-25 22:27:47 +0200 Ulrich Sibiller (1ca0aee93)
+
+	* Event.c: improve DEBUG output
+
+2018-07-18 23:54:46 +0200 Ulrich Sibiller (3c1b1efad)
+
+	* XKB: Remove unused DDX functions
+
+2018-07-18 23:50:28 +0200 Ulrich Sibiller (7487d7fa2)
+
+	* XKB: Fix logic error
+
+2018-07-18 23:26:10 +0200 Ulrich Sibiller (6625e78c1)
+
+	* XKB: Fix garbage initialization
+
+2018-07-18 23:15:07 +0200 Ulrich Sibiller (69475953b)
+
+	* ProcXkbGetKbdByName: fix use of uninitialised bytes valgrind error.
+
+2018-07-18 23:09:32 +0200 Ulrich Sibiller (018b2d0c6)
+
+	* XkbSendNames: fix use of uninitialised bytes valgrind error.
+
+2018-07-18 22:16:48 +0200 Ulrich Sibiller (59524cd06)
+
+	* Keyboard.c: simplify even more: free stuff at one place
+
+2018-07-18 19:14:40 +0200 Ulrich Sibiller (b8ae794e4)
+
+	* Keyboard.c: fix keyboard=query logic
+
+2018-07-16 22:23:56 +0200 Ulrich Sibiller (05e03b965)
+
+	* Keyboard.c: greatly simplify the code in nxagentKeyboardProc
+
+2018-07-16 22:23:05 +0200 Ulrich Sibiller (d8bbbcf29)
+
+	* Keyboard.c: guard XkbFreeKeyboard calls
+
+2018-11-01 14:46:54 +0100 Ulrich Sibiller (1b05251a0)
+
+	* Keyboard.c: simplify over-specific if
+
+2018-07-16 22:22:10 +0200 Ulrich Sibiller (6186383e7)
+
+	* Keyboard.c: simplify RLMVO string handling
+
+2018-07-16 22:07:26 +0200 Ulrich Sibiller (b891e5f68)
+
+	* Keyboard.c: always ask for remote XKB
+
+2018-07-07 23:51:27 +0200 Ulrich Sibiller (3fbef7da7)
+
+	* Lift xkb to XORG-1.3.0.0 state
+
+2018-07-06 23:30:45 +0200 Ulrich Sibiller (4ed8145f7)
+
+	* XKB: provide XKB defines via Imakefile
+
+2018-07-05 23:23:11 +0200 Ulrich Sibiller (eb07ed57b)
+
+	* Keyboard.c: do not define own RLMVO defaults
+
+2018-07-05 23:16:30 +0200 Ulrich Sibiller (11a1f31d7)
+
+	* no more own XkbBaseDirectory handling
+
+2018-07-05 23:14:05 +0200 Ulrich Sibiller (d54f1fb73)
+
+	* Keyboard.c: remove unused defines
+
+2018-07-04 23:16:26 +0200 Ulrich Sibiller (0fc536886)
+
+	* Keyboard.c: remove unnecessary includes
+
+2018-07-04 23:15:11 +0200 Ulrich Sibiller (bebdf0990)
+
+	* Keyboard.c: Remove (now) unused defines
+
+2018-06-29 22:34:32 +0200 Ulrich Sibiller (9808c66ec)
+
+	* Lift xkb to XORG-1.2.0 state
+
+2018-06-24 23:33:33 +0200 Ulrich Sibiller (2db519141)
+
+	* Check nxagentXkbInfo.EventBase before use
+
+2018-11-01 20:12:44 +0100 Mike Gabriel (122db3fde)
+
+	* Merge branch 'uli42-pr/Xi-1.2.0' into 3.6.x
+
+2018-11-01 15:41:34 +0100 Ulrich Sibiller (266c3d68d)
+
+	* Lift Xi to 1.3.0.0 (identical to 1.2.0)
+
+2018-10-27 21:06:11 +0200 Mike Gabriel (70b49467c)
+
+	* Merge branch 'uli42-pr/small_improvements' into 3.6.x
+
+2018-10-27 02:50:12 +0200 Ulrich Sibiller (e2421bbd7)
+
+	* Window.c: use C99 designated initializers at some places
+
+2018-10-27 02:26:28 +0200 Ulrich Sibiller (728a3d1c8)
+
+	* Window.c: add FIXME
+
+2018-10-27 01:28:23 +0200 Ulrich Sibiller (1eb560354)
+
+	* Window.c: save some lines by declaring loop variables in the loop
+
+2018-10-27 00:53:44 +0200 Ulrich Sibiller (c8383b83d)
+
+	* Window.c: indent ifdefs for better readability
+
+2018-10-27 00:19:33 +0200 Ulrich Sibiller (df531c16f)
+
+	* Window.c: silence compiler warnings
+
+2018-10-25 17:46:15 +0200 Ulrich Sibiller (9e6e43137)
+
+	* Window.c: some code simplifications
+
+2018-10-25 17:24:49 +0200 Ulrich Sibiller (ea275309b)
+
+	* Window.c: whitespace cleanup
+
+2018-10-25 17:24:35 +0200 Ulrich Sibiller (1fb32cf73)
+
+	* Window.c: scope improvements
+
+2018-10-25 17:23:45 +0200 Ulrich Sibiller (7a0b401bc)
+
+	* Window.c: reformat/add braces for readability
+
+2018-10-25 17:23:00 +0200 Ulrich Sibiller (2769cbb9d)
+
+	* Window.c: indent FIXMEs
+
+2018-10-25 17:18:38 +0200 Ulrich Sibiller (e8c6a7418)
+
+	* Window.c: convert old-style function definitions to ANSI C89 style
+
+2018-10-27 20:56:24 +0200 Mike Gabriel (280432016)
+
+	* Merge branch 'uli42-pr/clipboard_debug' into 3.6.x
+
+2018-10-22 00:30:01 +0200 Ulrich Sibiller (60bce146e)
+
+	* Clipboard.c: use __func__ everywhere
+
+2018-10-22 00:29:35 +0200 Ulrich Sibiller (6ea7558d1)
+
+	* Clipboard.c: fix fprintf type warnings
+
+2018-07-25 22:25:22 +0200 Ulrich Sibiller (2517d8c1f)
+
+	* Clipboard.c: more DEBUG output
+
+2018-07-25 22:13:30 +0200 Ulrich Sibiller (934d9eae6)
+
+	* Clipboard.c: Use constant instead of hardcoded value
+
+2018-10-16 00:20:41 +0200 Ulrich Sibiller (f8bfdc87b)
+
+	* Clipboard.c: improve nxagentClearSelection() debug code
+
+2018-10-16 00:19:58 +0200 Ulrich Sibiller (5d26addd3)
+
+	* Clipboard.c: new debug function to reduce duplicate code
+
+2018-10-10 01:15:17 +0200 Ulrich Sibiller (1c4c9f609)
+
+	* Clipboard.c: more debugging info for nxagentGetClipboardWindow()
+
+2018-10-10 00:26:54 +0200 Ulrich Sibiller (1af67b4df)
+
+	* Clipboard.c: GetWindowProperty() does not return BadMatch
+
+2018-10-10 00:22:38 +0200 Ulrich Sibiller (018b561b7)
+
+	* Clipboard.c: whitespace fixes
+
+2018-10-10 00:22:21 +0200 Ulrich Sibiller (719488da9)
+
+	* Clipboard.c: add FIXME
+
+2018-10-10 00:21:48 +0200 Ulrich Sibiller (9a5f519a0)
+
+	* Clipboard.c: Code optimization (missing else)
+
+2018-10-10 00:21:13 +0200 Ulrich Sibiller (888de83ac)
+
+	* Clipboard.c: print X errors
+
+2018-10-10 00:13:57 +0200 Ulrich Sibiller (e90306ec4)
+
+	* Clipboard.c: some scope optimizations
+
+2018-10-09 23:00:08 +0200 Ulrich Sibiller (85a28a68e)
+
+	* Clipboard.c: add macro for safe XFree calls with ptr clearance
+
+2018-10-09 22:51:55 +0200 Ulrich Sibiller (fab6911bd)
+
+	* Clipboard.c: introduce helper macros for easier debugging
+
+2018-06-09 15:02:32 +0200 Ulrich Sibiller (35f6b32c6)
+
+	* NXproperty.c:add debug output
+
+2018-06-07 23:40:51 +0200 Ulrich Sibiller (6cdddadf9)
+
+	* Clipboard.c: add function for debugging output
+
+2018-06-06 00:32:38 +0200 Ulrich Sibiller (8baec5d70)
+
+	* Clipboard: print requested target in debugging mode
+
+2018-10-23 12:14:51 +0200 Mike Gabriel (2eb4a65eb)
+
+	* Merge branch 'uli42-pr/libX11_1.6.6' into 3.6.x
+
+2018-10-22 22:44:23 +0200 Ulrich Sibiller (701e702a1)
+
+	* libNX_X11: upgrade to X.org upstream version 1.6.7
+
+2018-08-22 22:30:34 +0200 Ulrich Sibiller (e1938c189)
+
+	* libNX_X11: upgrade to X.org upstream version 1.6.6
+
+2018-10-22 14:39:10 +0200 Mike Gabriel (3dc459556)
+
+	* Merge branch 'uli42-pr/enableclientids' into 3.6.x
+
+2018-10-21 23:54:10 +0200 Ulrich Sibiller (71abe0beb)
+
+	* enable CLIENTIDS functions in xserver
+
+2018-10-21 23:53:42 +0200 Ulrich Sibiller (97f768a26)
+
+	* X11.tmpl: whitespace fix
+
+2018-10-22 14:35:08 +0200 Mike Gabriel (7392dd6a9)
+
+	* Merge branch 'uli42-pr/cleanup_wmisrunning' into 3.6.x
+
+2018-09-24 21:49:23 +0200 Ulrich Sibiller (450760bca)
+
+	* Events.c: improve Bool usage
+
+2018-09-24 21:47:45 +0200 Ulrich Sibiller (7f7895ee5)
+
+	* Window.c: remove useless code
+
+2018-09-24 21:47:28 +0200 Ulrich Sibiller (158439555)
+
+	* Window.c: improve Bool usage
+
+2018-09-24 21:36:50 +0200 Ulrich Sibiller (7b8aef83a)
+
+	* nxagentInitAndCheckVisuals: adapt bool usage to match the previous
+          function
+
+2018-09-24 21:24:49 +0200 Ulrich Sibiller (67432ac25)
+
+	* Render.c: improve Bool usage
+
+2018-09-24 21:19:08 +0200 Ulrich Sibiller (f91f02d9d)
+
+	* Pixmap.c: use some Bools as Bools not integers
+
+2018-09-24 21:08:18 +0200 Ulrich Sibiller (1a8c4532e)
+
+	* nxagent: use nxagentWMPassed as Bool all over the place
+
+2018-09-24 21:03:15 +0200 Ulrich Sibiller (6b2033bd2)
+
+	* nxagent: use nxagentWMIsRunning as Bool all over the place
+
+2018-10-22 14:17:04 +0200 Mike Gabriel (c478ba293)
+
+	* Merge branch 'uli42-pr/fix_bigrequests' into 3.6.x
+
+2018-10-06 20:59:25 +0200 Ulrich Sibiller (da9d1a529)
+
+	* nxagent: Fix an excessive request size limitation that broke
+          big-requests.
+
+2018-08-24 23:54:13 +0200 Mike Gabriel (d3bbca712)
+
+	* Merge branch 'sunweaver-pr/drop-nomachine-icon' into 3.6.x
+
+2018-04-14 22:35:18 +0200 Mike Gabriel (31ac5a179)
+
+	* X2Go Agent XPM: Rename from x2go.xpm to x2goagent.xpm (like the
+          symlink name we expect).
+
+2018-04-14 22:29:03 +0200 Mike Gabriel (c2b4e42a2)
+
+	* X2Go XPM icon: white background, not transparent.
+
+2018-04-14 03:09:33 +0200 Mike Gabriel (25c7f0252)
+
+	* Use basename() to derive nxagentProgName cleanly.
+
+2018-04-14 03:05:17 +0200 Mike Gabriel (373836468)
+
+	* Call checkX2goAgent much earlier (in ddxProcessArgument) and adapt
+          NXAGENTWINDOWNAMELENGTH to its result.
+
+2018-04-14 02:25:21 +0200 Mike Gabriel (4d6bae082)
+
+	* Application icon: Drop NoMachine logo as nxagent icon, switch to
+          X11 icon for now.
+
+2018-04-14 02:23:52 +0200 Mike Gabriel (c7eadb8ae)
+
+	* nxmissing.xpm: Add XPM marker so that image viewers recognize the
+          image file format.
+
+2018-08-24 11:55:24 +0200 Mike Gabriel (930bd2833)
+
+	* Merge branch 'uli42-pr/decode_options' into 3.6.x
+
+2018-08-23 23:09:44 +0200 Ulrich Sibiller (30a962733)
+
+	* Args.c: allow options to contain URL encoded characters
+
+2018-08-23 23:08:30 +0200 Ulrich Sibiller (f8e20d05f)
+
+	* Args.c: rename nxagentParseOptions to nxagentParseSingleOption
+
+2018-08-24 10:55:02 +0200 Mike Gabriel (fad80bc4f)
+
+	* Merge branch 'uli42-pr/drop_double_min_max' into 3.6.x
+
+2018-08-23 22:57:27 +0200 Ulrich Sibiller (3bd41aaf7)
+
+	* Replace MIN/MAX macros by min/max from misc.h
+
+2018-08-22 20:18:48 +0200 Mike Gabriel (b517b66ef)
+
+	* Merge branch 'uli42-pr/fix_wm_props' into 3.6.x
+
+2018-08-22 19:37:13 +0200 Ulrich Sibiller (f9c2d560d)
+
+	* Fix broken 9a7c0b081fad98bfcfcceff9557781f4b39ec572
+
+2018-08-22 15:37:48 +0200 Mike Gabriel (f9e4a54c4)
+
+	* Merge branch 'uli42-pr/fix_events_debug_warnings' into 3.6.x
+
+2018-03-08 22:32:01 +0100 Ulrich Sibiller (0db177073)
+
+	* Events.c: drop variable that caused compilation warning
+
+2018-03-08 22:29:53 +0100 Ulrich Sibiller (553b96f05)
+
+	* Events.c: fix wrong printf format specifiers
+
+2018-03-08 22:28:29 +0100 Ulrich Sibiller (2fe89c5bf)
+
+	* Events.c: fix compiler warnings
+
+2018-03-08 22:25:15 +0100 Ulrich Sibiller (f8e76fd69)
+
+	* Events.c: mitigate compiler warning
+
+2018-08-22 15:35:49 +0200 Mike Gabriel (9f4eb6a0b)
+
+	* Merge branch 'uli42-pr/refactor_defaulteventmask' into 3.6.x
+
+2018-05-10 00:29:21 +0200 Ulrich Sibiller (129d1cc91)
+
+	* refactor nxagentGet(Default)EventMask
+
+2018-08-22 15:29:49 +0200 Mike Gabriel (c0bef5e39)
+
+	* Merge branch 'uli42-pr/track_versions' into 3.6.x
+
+2018-07-25 23:39:06 +0200 Ulrich Sibiller (0154ef4b9)
+
+	* add list with versions of the xserver modules
+
+2018-08-22 15:21:49 +0200 Mike Gabriel (aaae5d574)
+
+	* Merge branch 'Etersoft-fix-nxagent-window-title-encoding' into
+          3.6.x
+
+2018-07-26 02:51:00 +0300 Pavel Vaynerman (9a7c0b081)
+
+	* nxagent: Used 'Xutf8SetVMPropertis' instead of
+          'XSetStandardProperties' + 'Xutf8SetWMProperties'
+
+2018-06-09 14:11:34 +0300 Pavel Vaynerman (643e13bf3)
+
+	* fix window title encoding (use utf8) for nxagent
+
+2018-08-21 18:50:16 +0200 Alan Coopersmith (489c17313)
+
+	* Use min() [defined in include/misc.h] instead of MIN() [not defined
+          in any Xorg header].
+
+2018-07-18 02:17:44 +0200 Mihai Moldovan (1e1693929)
+
+	* [PATCH] os: XDMCP options like -query etc. should imply -listen tcp
+
+2018-07-07 08:04:51 +0200 Mihai Moldovan (992673157)
+
+	* misc: fix more regressions and whitespace weirdness introduced in
+          913fcf1a74426725f14380dd5b34286a21c37ab7.
+
+2018-07-03 22:38:26 +0200 Mike Gabriel (15f69488d)
+
+	* nx-X11/lib/include/xtrans/Xtrans.c: Regression fix for 913fcf1a.
+
+2018-06-19 23:40:33 +0200 Ulrich Sibiller (7bb238065)
+
+	* XKB.h: Use the correct value for XkbAllAccessXEventsMask
+
+2018-07-03 16:41:02 +0200 Mike Gabriel (5a8549c6e)
+
+	* Merge branch 'mjtrangoni-WIP-add-cppcheck' into 3.6.x
+
+2018-06-10 18:22:45 +0200 Mario Trangoni (5651680bb)
+
+	* travis.yml: refactor some config options, add gcc-8 and clang-6.0.
+
+2018-03-25 16:13:10 +0200 Mario Trangoni (913fcf1a7)
+
+	* Fix some memory leaks.
+
+2018-03-11 19:22:22 +0100 Mario Trangoni (c58cbc26c)
+
+	* travis.yml: Add cppcheck - A tool for static C/C++ code analysis.
+
+2018-07-03 16:35:41 +0200 Mike Gabriel (fd9de0086)
+
+	* Merge branch 'uli42-pr/fix_xfont2' into 3.6.x
+
+2018-06-19 22:05:18 +0200 Ulrich Sibiller (416f8c411)
+
+	* Makefile: pass down Xfont2 define for Imake
+
+2018-07-03 16:32:11 +0200 Mike Gabriel (c86a119da)
+
+	* Merge branch 'uli42-gh-sunweaver/pr/xserver-xkb-cleanup' into 3.6.x
+
+2017-02-16 21:33:18 +0000 Mike Gabriel (b82a6a107)
+
+	* debian/nxagent.*: Drop conffile /etc/nxagent/nxagent.keyboard. Not
+          shipped upstream anymore.
+
+2017-02-16 21:32:45 +0000 Mike Gabriel (70a74a5c5)
+
+	* nx-libs.spec: Drop reference to obsolete nxagent.keyboard file.
+
+2017-02-16 21:32:28 +0000 Mike Gabriel (3872cd143)
+
+	* etc/nxagent.keyboard: Drop file. Not required anymore.
+
+2017-02-16 21:04:53 +0000 Mike Gabriel (6eb77137e)
+
+	* Xserver/xkb: Remove XkbCF DDX configuration code.
+
+2017-02-16 20:18:42 +0000 Mike Gabriel (e734ca217)
+
+	* Removal of dead code in Xserver/xkb. Follow-up commit for 3739a9b.
+
+2017-02-16 20:53:04 +0000 Daniel Stone (ec0cfcecf)
+
+	* Xserver/xkb: Remove -xkbmap argument.
+
+2017-02-16 21:16:50 +0000 Mike Gabriel (cc27ebb25)
+
+	* hw/nxagent/Keyboard.c: Drop support for loading XKB config from
+          file.
+
+2018-07-03 16:25:31 +0200 Mike Gabriel (b1e4d6e84)
+
+	* Merge branch 'uli42-pr/more_debug' into 3.6.x
+
+2018-06-19 19:54:01 +0200 Ulrich Sibiller (f2d3eac89)
+
+	* Atoms.c: more debugging output
+
+2018-07-03 16:20:55 +0200 Mike Gabriel (ce83b566a)
+
+	* Merge branch 'uli42-pr/misc' into 3.6.x
+
+2018-07-03 16:19:21 +0200 Mike Gabriel (b394eac8f)
+
+	* dixfonts.c: use calloc for LFclosurePtr
+
+2018-07-03 16:17:56 +0200 Mike Gabriel (59e46dc54)
+
+	* dix/dixfonts.c: free() can handle NULL
+
+2018-06-21 23:30:34 +0200 Ulrich Sibiller (a2008b28e)
+
+	* NXdixfonts.c: free() can handle NULL
+
+2018-06-21 23:18:36 +0200 Ulrich Sibiller (e0291f30d)
+
+	* NXdixfonts.c: use calloc for LFclosurePtr
+
+2018-06-21 23:14:41 +0200 Ulrich Sibiller (cfcaa442d)
+
+	* xkb/xkb.c: init all reply structs
+
+2018-06-21 23:05:05 +0200 Ulrich Sibiller (e5975a70e)
+
+	* os/io.c: fix unitialised bytes
+
+2018-06-21 22:08:08 +0200 Ulrich Sibiller (389e3a445)
+
+	* ProcGetPointerMapping uses rep.nElts before it is initialized
+
+2018-06-21 21:46:52 +0200 Ulrich Sibiller (1e3db85a0)
+
+	* Fix some valgrind findings
+
+2018-06-21 22:16:58 +0200 Ulrich Sibiller (7a627e644)
+
+	* Some small Keyboard.c improvements
+
+2018-07-03 16:04:16 +0200 Mike Gabriel (983495123)
+
+	* Merge branch 'sunweaver-pr/idletime-counter' into 3.6.x
+
+2018-07-03 14:50:32 +0200 Mike Gabriel (222153af4)
+
+	* Don't reset the lastDeviceEventTime when doing DPMS actions
+
+2018-07-03 14:48:43 +0200 Richard Hughes (7401a6691)
+
+	* Do not reset lastDeviceEventTime when we do dixSaveScreens
+
+2018-07-03 14:43:26 +0200 Mike Gabriel (14f734873)
+
+	* Backport IDLETIME system counter to nx-X11 Xserver.
+
+2018-06-17 01:41:37 +0200 Mihai Moldovan (72f11ee83)
+
+	* nx-X11/Makefile: pass down $(MFLAGS) to imake call, because... we
+          probably want that. Likely.
+
+2018-06-17 01:32:58 +0200 Mihai Moldovan (da51a3694)
+
+	* nx-libs.spec: disable parallel builds, was pure luck that it worked
+          before.
+
+2018-06-17 01:05:05 +0200 Mihai Moldovan (942ae190e)
+
+	* debian/rules: more Jessie unbreaking, also for
+          dh_auto_{build,install}.
+
+2018-06-16 16:59:00 +0200 Mihai Moldovan (8f73bf7cb)
+
+	* debian/rules: unbreak Jessie: dh_auto_clean doesn't gracefully
+          discard unknown --no-parallel flag.
+
+2018-06-06 10:22:15 +0200 Mike Gabriel (742957393)
+
+	* Merge branch 'uli42-pr/fix_missing_include' into 3.6.x
+
+2018-06-05 22:26:51 +0200 Ulrich Sibiller (70ac10c8c)
+
+	* Clipboard.c: add missing include
+
+2018-05-24 11:15:38 +0200 Mike Gabriel (7ec73ef21)
+
+	* Merge branch 'uli42-pr/xinerama_without_wm' into 3.6.x
+
+2018-05-17 23:13:38 +0200 Ulrich Sibiller (3f6d8f3e8)
+
+	* Update Xinerama on XMapEvent
+
+2018-05-24 09:43:11 +0200 Mike Gabriel (c0f67abb4)
+
+	* Merge branch 'uli42-pr/cleanup_window_hints' into 3.6.x
+
+2018-05-05 20:14:04 +0200 Ulrich Sibiller (9138a9e3b)
+
+	* whitespace fixes
+
+2018-05-05 20:13:20 +0200 Ulrich Sibiller (016759198)
+
+	* Screen.c: simplify setting of window name/class
+
+2018-05-04 22:29:55 +0200 Ulrich Sibiller (f9bae7554)
+
+	* Events.c: catch intermediate window position changes
+
+2018-04-11 00:39:40 +0200 Ulrich Sibiller (00c1f05ef)
+
+	* nxagent: remove mmwidth/mmheight from nxagentChangeScreenConfig
+
+2018-04-11 00:28:04 +0200 Ulrich Sibiller (845ae6eab)
+
+	* Screen.c/Events.c: fix some comments
+
+2018-04-11 00:10:20 +0200 Ulrich Sibiller (82dc00539)
+
+	* nxagent: use XAllocSizeHints() instead of XSizeHints struct
+
+2018-04-10 23:34:14 +0200 Ulrich Sibiller (82c4c28ea)
+
+	* Screen.c/Events.c: add some FIXMEs
+
+2018-04-10 23:32:57 +0200 Ulrich Sibiller (9937fbdf5)
+
+	* Screen.c: replace XSetWMNormalHints code block by already existing
+          function
+
+2018-05-24 09:41:27 +0200 Mike Gabriel (985bed954)
+
+	* debian/rules: Typo fix in dh_auto_build --no-parallel option.
+
+2018-05-24 09:05:55 +0200 Mike Gabriel (7cb00355c)
+
+	* debian/rules: Highly enforce --no-parallel mode while Xserver is
+          still on imake. Can be re-parallelized after autotools
+          conversion.
+
+2018-05-24 09:04:43 +0200 Mike Gabriel (11b534ab0)
+
+	* Merge branch 'uli42-pr/codespell' into 3.6.x
+
+2018-04-10 21:27:00 +0200 Ulrich Sibiller (cce975654)
+
+	* config/cf: fix spelling errors as reported by codespell
+
+2018-04-10 21:15:50 +0200 Ulrich Sibiller (e91406e9b)
+
+	* nxproxy: fix spelling errors as reported by codespell
+
+2018-04-10 21:12:44 +0200 Ulrich Sibiller (781b8a057)
+
+	* compext: fix spelling errors as reported by codespell
+
+2018-04-10 21:12:19 +0200 Ulrich Sibiller (d5da7e76f)
+
+	* manpage: fix spelling error as reported by codespell
+
+2018-04-10 21:11:57 +0200 Ulrich Sibiller (170416d26)
+
+	* hw/nxagent: fix spelling errors as reported by codespell
+
+2018-04-10 21:06:01 +0200 Ulrich Sibiller (94f7ce7d1)
+
+	* nxcompshad: fix spelling errors as reported by codespell
+
+2018-04-10 21:05:29 +0200 Ulrich Sibiller (a32554dbf)
+
+	* nxcomp: fix spelling errors as reported by codespell
+
+2018-04-30 23:40:56 +0200 Mihai Moldovan (997f2bbd2)
+
+	* nx-libs.spec: we never used gpg-offline, drop it.
+
+2018-04-25 21:40:25 +0200 Mike Gabriel (01dbfdecc)
+
+	* debian/rules: Run dh_auto_clean with --no-parallel.
+
+2018-04-25 21:34:46 +0200 Mike Gabriel (90156e3e8)
+
+	* Makefile: Run BuildIncludes and clean target in nx-X11/ with -j1.
+
+2018-04-25 21:31:32 +0200 Mike Gabriel (3d8818f60)
+
+	* Revert "debian/rules: Avoid dh_auto_build. It adds -Oline since
+          11.2 which let's make choke in nx-X11/ subdir on the
+          Makefiles target. Reason unknown."
+
+2018-04-25 21:31:21 +0200 Mike Gabriel (b81759286)
+
+	* Revert "debian/rules: Typo fix (NUMJOBS, not NUM_JOBS)."
+
+2018-04-25 21:14:33 +0200 Mike Gabriel (0fc50407e)
+
+	* Makefile: Enforce -j1 for BuildDependsOnly target.
+
+2018-04-25 20:06:55 +0200 Mike Gabriel (190e3df41)
+
+	* debian/rules: Typo fix (NUMJOBS, not NUM_JOBS).
+
+2018-04-25 18:41:25 +0200 Mike Gabriel (f944a0da6)
+
+	* debian/rules: Drop override_dh_clean. Makefile (et al.) removal in
+          nx-X11/ has now been moved to the distclean target.
+
+2018-04-25 18:40:55 +0200 Mike Gabriel (94d77e27a)
+
+	* debian/rules: Avoid dh_auto_build. It adds -Oline since 11.2 which
+          let's make choke in nx-X11/ subdir on the Makefiles
+          target. Reason unknown.
+
+2018-04-25 18:37:39 +0200 Mike Gabriel (da4770474)
+
+	* Makefile targets: Rewriting and consolidating the target structure
+          for nx-X11/ subdir (except nx-X11/lib/).
+
+2018-04-20 09:03:05 +0200 Mike Gabriel (13bf7c037)
+
+	* Makefile: Don't do a parallel clean-up of nx-X11. We have seen
+          failures and due to the upcoming switch to autotools, it
+          is pointless to dive into fixing it in the Imakefile
+          stack.
+
+2018-03-16 23:52:03 +0100 Mike Gabriel (28c14accd)
+
+	* release 3.5.99.16 (tag: 3.5.99.16)
 
 2018-03-15 21:30:43 +0100 Mike Gabriel (3b05d0de6)
 
-	* Merge branch 'Ionic-feature/use-libtirpc' into 3.6.x (origin/HEAD,
-          origin/3.6.x)
+	* Merge branch 'Ionic-feature/use-libtirpc' into 3.6.x
 
 2018-03-15 12:46:12 +0100 Mihai Moldovan (2e1e9158e)
 
 	* nx-libs.spec: stop needlessly exporting variables that we pass down
-          directly anyway. (Ionic-feature/use-libtirpc)
+          directly anyway.
 
 2018-03-09 09:11:06 +0100 Mihai Moldovan (9b1d00d30)
 
@@ -68,8 +893,7 @@
 
 2018-03-07 23:46:48 +0100 Mike Gabriel (63e113de9)
 
-	* release 3.5.99.15 (tag: 3.5.99.15, origin/release-builds/3.6.x,
-          release-builds/3.6.x)
+	* release 3.5.99.15 (tag: 3.5.99.15)
 
 2018-03-07 21:55:36 +0100 Mihai Moldovan (18630e5dd)
 
@@ -94,8 +918,6 @@
 
 	* Xserver/hw/nxagent/Screen.c: Drop commented out code. Functionality
           now implemented in intersect_bb() function.
-          (gh-sunweaver/pr/xinerama-bbox-corner-cases,
-          pr/xinerama-bbox-corner-cases)
 
 2018-03-02 14:01:29 +0100 Mike Gabriel (9117a5bf0)
 
@@ -126,7 +948,7 @@
 
 2018-01-09 20:03:17 +0100 Mario Trangoni (66ef3e46f)
 
-	* README.md: Add travis badge (mjtrangoni-WIP-travis)
+	* README.md: Add travis badge
 
 2018-01-01 17:51:31 +0100 Mario Trangoni (ffadec783)
 
@@ -293,8 +1115,6 @@
 
 	* hw/nxagent/: Stop using non-portable '__progname', set up our own
           'nxagentProgName' instead and pass it around where needed.
-          (gh-sunweaver/pr/version-cmdline-option,
-          pr/version-cmdline-option)
 
 2018-02-26 12:22:15 +0100 Mike Gabriel (99fb9817f)
 
@@ -467,7 +1287,6 @@
 
 	* nxproxy/{configure.ac,src/Makefile.am}: only enable new ELF dtags
           if target system actually is ELF-based.
-          (Ionic-bugfix/FTBFS-non-ELF)
 
 2018-02-25 04:33:52 +0100 Mihai Moldovan (990e61cc8)
 
@@ -487,7 +1306,6 @@
 2018-02-09 03:41:22 +0100 Mihai Moldovan (7af47b583)
 
 	* Revert "NXhsm.c: add missing code"
-          (3.6.x-nxcomp-amend-compiler-warnings)
 
 2018-02-08 20:40:32 +0100 Mihai Moldovan (f76d4b541)
 
@@ -501,7 +1319,6 @@
 2017-10-21 02:54:33 +0200 Ulrich Sibiller (5ec2366c4)
 
 	* Xext: lift xvmain.c to xorg-xserver-7.1/1.1 state
-          (gh-uli42/pr/update_xext)
 
 2017-10-21 02:47:07 +0200 Ulrich Sibiller (8ebb5d23c)
 
@@ -548,8 +1365,7 @@
 
 2017-11-05 21:41:08 +0100 Ulrich Sibiller (f7207bcdc)
 
-	* Lift fb to xorg-xserver-7.1/1.1 state (gh-uli42/pr/update_fb,
-          uli42-pr/update_fb, pr/update_fb)
+	* Lift fb to xorg-xserver-7.1/1.1 state
 
 2018-02-05 13:02:30 +0100 Mike Gabriel (b1c42dc98)
 
@@ -557,8 +1373,7 @@
 
 2018-01-05 01:51:02 +0100 Ulrich Sibiller (7db6cff1c)
 
-	* Window.c: fix TEST/DEBUG output (gh-uli42/pr/some_cleanups,
-          uli42-pr/some_cleanups, pr/some_cleanups)
+	* Window.c: fix TEST/DEBUG output
 
 2018-01-05 01:45:15 +0100 Ulrich Sibiller (ffc363c54)
 
@@ -629,7 +1444,6 @@
 2018-02-02 22:39:06 +0100 Ulrich Sibiller (9fb582f42)
 
 	* NXhsm.c: drop setting of sequence number
-          (gh-uli42/pr/shm_missing_code, uli42-pr/shm_missing_code)
 
 2018-02-02 22:40:23 +0100 Ulrich Sibiller (c804d99f2)
 
@@ -659,7 +1473,6 @@
 	* hw/nxagent/Screen.c: Additionally check for noRRXineramaExtension
           set to FALSE before using the nxagentAdjustRandRXinerama()
           function and providing a Xinerama-like user experience.
-          (sunweaver-pr/keep-disabled-rrxinerama-disabled-on-reconnects)
 
 2018-01-11 10:01:18 +0100 Mihai Moldovan (7c43682e8)
 
@@ -686,7 +1499,7 @@
 
 2018-01-08 23:08:51 +0100 Ulrich Sibiller (f66820b57)
 
-	* panoramiX: fix includes (gh-uli42/pr/fix_xext_includes)
+	* panoramiX: fix includes
 
 2018-01-08 22:58:26 +0100 Mihai Moldovan (47ef330c5)
 
@@ -694,7 +1507,7 @@
 
 2018-01-08 22:25:35 +0100 Ulrich Sibiller (43456713b)
 
-	* Re-enable XC-MISC extension (gh-uli42/pr/reenable_xc-misc)
+	* Re-enable XC-MISC extension
 
 2018-01-07 01:29:13 +0100 Mihai Moldovan (5f9f744cd)
 
@@ -702,7 +1515,7 @@
 
 2018-01-03 22:28:43 +0100 Ulrich Sibiller (23c36c2d2)
 
-	* Display.c: drop helper variable in loop (gh-uli42/pr/fix_strings)
+	* Display.c: drop helper variable in loop
 
 2018-01-03 02:34:10 +0100 Ulrich Sibiller (b89b80949)
 
@@ -878,7 +1691,6 @@
 2017-12-29 14:25:53 +0100 Ulrich Sibiller (367bec595)
 
 	* EncodeBuffer.cpp: add another VALGRIND guard
-          (gh-uli42/pr/fix_abstract)
 
 2017-12-28 11:19:44 +0100 Ulrich Sibiller (6e98e35cf)
 
@@ -955,7 +1767,6 @@
 2017-12-27 23:54:34 +0100 Ulrich Sibiller (2cade632b)
 
 	* nxcompshad: silence GCC warnings
-          (gh-uli42/pr/silence_nxcompshad_warnings)
 
 2017-12-28 00:18:58 +0100 Mihai Moldovan (061c35772)
 
@@ -964,7 +1775,6 @@
 2017-12-10 23:57:35 +0100 Ulrich Sibiller (6acbfab33)
 
 	* reduce usage of uninitialised bytes
-          (gh-uli42/pr/reduce_uninitialised)
 
 2017-12-27 22:09:29 +0100 Mihai Moldovan (bc5f9a236)
 
@@ -1230,9 +2040,7 @@
 2017-12-14 11:27:35 +0100 Mike Gabriel (5597f2ea5)
 
 	* Xserver/hw/nxagent/Clipboard.c: Fix free calls (free back to
-          XFree). (gh-sunweaver/pr/more-X-memory-macro-fixes,
-          sunweaver-pr/more-X-memory-macro-fixes,
-          pr/more-X-memory-macro-fixes)
+          XFree).
 
 2017-12-14 11:15:09 +0100 Mike Gabriel (d4465b719)
 
@@ -1255,8 +2063,6 @@
 
 	* Xserver/GL/glx/glxcmds.c: Cast small-int values through intptr_t
           when passed as pointers
-          (gh-sunweaver/pr/fix-compiler-warnings,
-          pr/fix-compiler-warnings)
 
 2017-03-17 14:06:15 +0000 Mike Gabriel (ac6a216c5)
 
@@ -1326,9 +2132,6 @@
 2017-11-13 21:06:36 +0100 Ulrich Sibiller (a02b645b2)
 
 	* nxagent manpage: extend description of keyboard option
-          (gh-uli42/pr/improve_keyboard_light,
-          uli42-pr/improve_keyboard_light,
-          pr/improve_keyboard_light)
 
 2017-08-31 16:17:29 +0200 Ulrich Sibiller (7dbc6cf86)
 
@@ -1393,9 +2196,7 @@
 
 2017-07-13 18:33:17 +0200 Ulrich Sibiller (bd1ca625e)
 
-	* small code cosmetics (gh-uli42/pr/pre-rrxinerama-fallback,
-          uli42-pr/pre-rrxinerama-fallback,
-          pr/pre-rrxinerama-fallback)
+	* small code cosmetics
 
 2017-07-13 15:52:47 +0200 Ulrich Sibiller (0852aa52c)
 
@@ -1426,8 +2227,7 @@
 2017-12-10 18:00:15 +0100 Ulrich Sibiller (018c557c4)
 
 	* Silence warning: "ar: 'u' modifier ignored since 'D' is the
-          default" (gh-uli42/pr/fix_shadow_warning,
-          uli42-pr/fix_shadow_warning, pr/fix_shadow_warning)
+          default"
 
 2017-12-10 16:23:03 +0100 Ulrich Sibiller (d5c3e75b3)
 
@@ -1440,8 +2240,6 @@
 2017-12-10 21:36:15 +0100 Ulrich Sibiller (0eb1dc67d)
 
 	* Xtranssock.c: simplify code in SocketWritev
-          (gh-uli42/pr/simplify_xtrans, uli42-pr/simplify_xtrans,
-          pr/simplify_xtrans)
 
 2017-12-11 09:41:08 +0100 Mike Gabriel (4988e7c5f)
 
@@ -1453,9 +2251,6 @@
 
 	* Xserver/os/xprintf.c: Drop NoMachine's own implementation of
           Xvasprintf(). Use stock implementation instead.
-          (gh-sunweaver/pr/drop-NoMachines-own-Xvasprintf-implementation,
-          sunweaver-pr/drop-NoMachines-own-Xvasprintf-implementation,
-          pr/drop-NoMachines-own-Xvasprintf-implementation)
 
 2017-12-11 01:05:50 +0100 Mihai Moldovan (c31cd7737)
 
@@ -1469,7 +2264,6 @@
 2017-12-07 12:11:53 +0100 Daniel Kurtz (a6e632aac)
 
 	* os/xprintf: add Xvscnprintf and Xscnprintf
-          (Ionic-feature/backport-asprintf)
 
 2017-12-07 10:57:06 +0100 Colin Harrison (c281c6e06)
 
@@ -1485,7 +2279,7 @@
 
 2017-12-07 22:35:59 +0100 Ulrich Sibiller (4dbee3a3f)
 
-	* nxcomp: use new macro SAFE_FREE(ptr) (gh-uli42/pr/fix_memleaks)
+	* nxcomp: use new macro SAFE_FREE(ptr)
 
 2017-11-28 21:58:07 +0100 Ulrich Sibiller (2814677a7)
 
@@ -1513,7 +2307,7 @@
 
 2017-12-04 23:44:58 +0100 Ulrich Sibiller (eff0f366d)
 
-	* Reintroduce -co as no-op (gh-uli42/pr/keep_co)
+	* Reintroduce -co as no-op
 
 2017-12-07 08:35:54 +0100 Mihai Moldovan (eb9618739)
 
@@ -1522,7 +2316,6 @@
 2017-12-05 21:25:12 +0100 Ulrich Sibiller (ad53af097)
 
 	* Events.c: add ifdef around nxagentRemoteWindowsTree
-          (gh-uli42/p/xquerytree_leak)
 
 2017-12-05 00:29:10 +0100 Ulrich Sibiller (cdaec755d)
 
@@ -1543,7 +2336,6 @@
 2017-12-05 22:39:34 +0100 Daniel Stone (aac4c5f59)
 
 	* DIX: XKB: Set xkbInfo to NULL as well as freeing it
-          (gh-uli42/pr/various_backports)
 
 2017-12-05 22:22:55 +0100 Daniel Stone (e05b90814)
 
@@ -1584,7 +2376,6 @@
 2017-11-29 00:02:01 +0100 Ulrich Sibiller (9e3381cc8)
 
 	* nxproxy/nxcomp: document logging options
-          (gh-uli42/pr/improve_nxproxy_help)
 
 2017-11-27 23:37:58 +0100 Ulrich Sibiller (3fcb8e4ee)
 
@@ -1601,7 +2392,6 @@
 2017-11-26 23:16:59 +0100 Mike Gabriel (c54558e3c)
 
 	* Makefile: Quote '$@' in make calls with double quotes.
-          (gh-sunweaver/pr/drop-bin-wrappers)
 
 2017-11-21 13:45:55 +0100 Mike Gabriel (1539c20e5)
 
@@ -1619,7 +2409,6 @@
 2017-12-02 01:32:35 +0100 Ulrich Sibiller (b8c929773)
 
 	* nxcomp: use lowercase abbreviations for seconds and milliseconds
-          (gh-uli42/pr/fix_global_tcpFD, uli42-pr/fix_global_tcpFD)
 
 2017-12-02 01:07:03 +0100 Ulrich Sibiller (3bd7e03e1)
 
@@ -1636,7 +2425,6 @@
 2017-11-23 15:19:02 +0100 Ulrich Sibiller (66046f138)
 
 	* Keyboard.c: make nxagentKeycodeConversion a Boolean
-          (gh-uli42/pr/nokeyconv)
 
 2017-11-19 01:11:05 +0100 Ulrich Sibiller (8fd25cf83)
 
@@ -1663,8 +2451,7 @@
 2017-11-22 06:16:01 +0100 Mihai Moldovan (df9b5306e)
 
 	* nx-X11/lib/include/xtrans/Xtranssock.c: drop UNIX path overrides as
-          well. (gh-Ionic/bugfix/hardcode-socket-paths-in-libX11,
-          Ionic-bugfix/hardcode-socket-paths-in-libX11)
+          well.
 
 2017-11-21 11:47:04 +0100 Mike Gabriel (ce182e88a)
 
@@ -1672,8 +2459,7 @@
 
 2017-11-18 23:35:39 +0100 Ulrich Sibiller (dc43f4c98)
 
-	* Error.c: simply nxagentGetClientsPath() (gh-uli42/pr/simplify_free,
-          uli42-pr/simplify_free)
+	* Error.c: simply nxagentGetClientsPath()
 
 2017-11-18 23:33:53 +0100 Ulrich Sibiller (7e975e3cc)
 
@@ -1686,7 +2472,6 @@
 2017-11-18 22:32:21 +0100 Ulrich Sibiller (4ef4fbf16)
 
 	* Args.c: simplify nxagentProcessOptionsFile()
-          (uli42-pr/options_on_reconnect)
 
 2017-11-18 22:18:26 +0100 Ulrich Sibiller (6c9622963)
 
@@ -1702,8 +2487,7 @@
 
 2017-10-18 00:28:23 +0200 Ulrich Sibiller (9a1604372)
 
-	* fix broken path due to missing / (gh-uli42/small_fixes,
-          uli42-small_fixes, small_fixes)
+	* fix broken path due to missing /
 
 2017-10-18 00:22:53 +0200 Ulrich Sibiller (ac66ba349)
 
@@ -1724,7 +2508,6 @@
 2017-11-17 00:04:57 +0100 Ulrich Sibiller (72c1f83fb)
 
 	* nxagent manpage: some minor formatting improvements and typo fixes
-          (gh-uli42/pr/fix_manpage, uli42-pr/fix_manpage)
 
 2017-11-10 23:14:13 +0100 Mihai Moldovan (71511a765)
 
@@ -1758,8 +2541,6 @@
 2017-11-03 12:57:25 +0100 Mihai Moldovan (79257eed0)
 
 	* nxcomp/src/Loop.cpp: hardcode X11 and (legacy/xfs) font UNIX paths.
-          (gh-Ionic/bugfix/hardcode-some-socket-paths,
-          Ionic-bugfix/hardcode-some-socket-paths)
 
 2017-11-04 08:00:32 +0100 Mihai Moldovan (2c75b00f3)
 
@@ -1778,8 +2559,6 @@
 
 	* nxcomp/src/Auth.cpp: handle launchd sockets in DISPLAY variable
           correctly when fetching X cookie.
-          (gh-Ionic/bugfix/fix-X-cookie-on-osx,
-          Ionic-bugfix/fix-X-cookie-on-osx)
 
 2017-11-02 07:18:27 +0100 Mihai Moldovan (288cc6fec)
 
@@ -1817,7 +2596,6 @@
 2017-09-29 21:05:04 +0200 Mihai Moldovan (ab0c4f842)
 
 	* nxcomp/src/Loop.cpp: fix whitespace errors on continued lines.
-          (theqvd-improved-logging-loop)
 
 2017-03-22 16:33:58 +0100 Vadim Troshchinskiy (d202b052e)
 
@@ -1834,7 +2612,6 @@
 2017-09-30 16:58:16 +0200 Mihai Moldovan (ceac07763)
 
 	* nxcomp: add basic logging_test utility in test subdirectory.
-          (theqvd-improved-logging)
 
 2017-09-30 16:53:48 +0200 Mihai Moldovan (5efcd39fc)
 
@@ -1948,7 +2725,6 @@
 2017-10-10 13:04:08 +0200 Vadim Troshchinskiy (f2c73bd84)
 
 	* Fix bug #525: PANIC! No port specified for multimedia connections
-          (theqvd-media_argument_bugfix)
 
 2017-10-10 10:53:31 +0200 Simon Matter (e73464e4f)
 
@@ -1963,8 +2739,6 @@
 2017-10-10 07:17:27 +0200 Mihai Moldovan (0336aab79)
 
 	* .gitignore: ignore vim swap files.
-          (gh-Ionic/add-stray-files-to-gitignore,
-          Ionic-add-stray-files-to-gitignore)
 
 2017-10-10 07:16:36 +0200 Mihai Moldovan (5d44c595a)
 
@@ -1980,8 +2754,6 @@
 	* nxcomp/src/Loop.cpp: Reduce control->TokenSize slightly again in
           order to fix fragmentation of packages when on VPN (or
           otherwise encapsulated) connections.
-          (gh-sunweaver/pr/nxcomp-tokensize-in-vpn-tunnels,
-          pr/nxcomp-tokensize-in-vpn-tunnels)
 
 2017-10-09 12:52:01 +0200 Mike Gabriel (27c14b4eb)
 
@@ -1991,7 +2763,6 @@
 2017-09-29 20:55:36 +0200 Mihai Moldovan (371c71276)
 
 	* nxcomp/src/Loop.cpp: whitespace fixes only.
-          (pr/gcstruct-type-mismatch)
 
 2017-09-29 17:58:28 +0200 Mihai Moldovan (b5c714690)
 
@@ -2013,7 +2784,7 @@
 2017-09-15 15:59:30 +0200 Mike Gabriel (3c95d6040)
 
 	* debian/control: Bump Standards-Version: to 4.1.0. No changes
-          needed. (pr/autoreconf-nxagent)
+          needed.
 
 2017-09-15 15:59:03 +0200 Mike Gabriel (4bc1d6ccc)
 
@@ -2033,8 +2804,6 @@
 
 	* Assure that headers from libNX_X11 are always included from
           $(INCDIR)/nx-X11/.
-          (gh-sunweaver/pr/assure-that-Mesa-includes-headers-from-libNX_X11,
-          pr/assure-that-Mesa-includes-headers-from-libNX_X11)
 
 2017-09-13 11:50:40 +0200 Mihai Moldovan (0815fb06f)
 
@@ -2053,8 +2822,6 @@
           variants) the sockaddr_un.sun_path property is 104 chars
           long, not 108. Hard-coding Unix domain sockets in nxcomp
           the string length 104.
-          (gh-sunweaver/pr/sun-path-is-104-on-debian-kfreebsd,
-          pr/sun-path-is-104-on-debian-kfreebsd)
 
 2017-08-30 22:36:05 +0200 Mike Gabriel (d3f97cea2)
 
@@ -2114,8 +2881,6 @@
 
 	* nxcompshad: Drop Cygwin/Win32 support. Has been untested and unused
           for a long time.
-          (gh-sunweaver/pr/drop-nxcompshad-cygwin-support,
-          pr/drop-nxcompshad-cygwin-support)
 
 2017-08-26 23:29:58 +0200 Mihai Moldovan (bc66da714)
 
@@ -2126,8 +2891,6 @@
 	* nx-X11/programs/Xserver/Render.c: Re-introduce
           nxagentGlyphsCleanup() from libNX_Xrender's formerly
           removed XRenderGlyphsCleanup().
-          (gh-sunweaver/pr/nxagent-render-cleanup,
-          pr/nxagent-render-cleanup)
 
 2017-08-25 19:18:17 +0200 Mike Gabriel (7290aea3b)
 
@@ -2150,8 +2913,7 @@
 2017-08-11 12:53:50 -0400 Mike Gabriel (3b7e5a42f)
 
 	* debian/rules: Re-order configure options for the sake of more
-          beauty. (gh-sunweaver/pr/libnx-x11-autoreconf,
-          pr/libnx-x11-autoreconf)
+          beauty.
 
 2017-08-11 12:51:52 -0400 Mike Gabriel (9a79e09a5)
 
@@ -2190,7 +2952,6 @@
 2017-08-10 00:50:27 +0200 Ulrich Sibiller (715fcfe6d)
 
 	* Set NX_AGENT_VERSION property for root window
-          (gh-uli42/pr/versionprop, uli42-pr/versionprop)
 
 2017-08-09 06:46:30 +0200 Mihai Moldovan (8235925a2)
 
@@ -2210,8 +2971,7 @@
 
 	* nxcomp/configure.ac: Don't rely on pkg-config alone when it comes
           to testing for presence of libjpeg shared lib and header
-          files. (gh-sunweaver/pr/find-libjpeg-without-pkgconfig,
-          pr/find-libjpeg-without-pkgconfig)
+          files.
 
 2017-08-03 10:39:50 +0200 Mihai Moldovan (1077270f8)
 
@@ -2239,9 +2999,6 @@
 2017-07-31 13:20:12 +0200 Oleksandr Shneyder (da43f047a)
 
 	* Render.c: Improve situation for multiple trapezoid requests.
-          (gh-sunweaver/pr/fix-multi-trapez-requests,
-          sunweaver-pr/fix-multi-trapez-requests,
-          pr/fix-multi-trapez-requests)
 
 2017-07-26 10:38:46 +0200 Mihai Moldovan (7897834ce)
 
@@ -2250,8 +3007,7 @@
 2017-07-12 13:35:57 +0200 Mike Gabriel (4afc641fd)
 
 	* nxcomp: Add __attribute__((noreturn)) to more functions where
-          appropriate. (gh-sunweaver/pr/nxcomp-autoreconf,
-          pr/nxcomp-autoreconf)
+          appropriate.
 
 2017-07-12 21:51:40 +0200 Mike Gabriel (b3a3382ad)
 
@@ -2330,7 +3086,6 @@
 2017-07-24 23:45:48 +0200 Ulrich Sibiller (3f7b30019)
 
 	* treat options parameter as option string if it starts with nx/nx
-          (gh-uli42/pr/cmdline, uli42-pr/cmdline)
 
 2017-07-24 23:45:24 +0200 Ulrich Sibiller (36e583cf5)
 
@@ -2346,8 +3101,7 @@
 
 2017-07-12 20:01:44 +0200 Ulrich Sibiller (79001dd8a)
 
-	* Improve keystroke file handling (gh-uli42/pr/fix_keystroke_files,
-          uli42-pr/fix_keystroke_files)
+	* Improve keystroke file handling
 
 2017-07-14 10:42:15 +0200 Mike Gabriel (ccd7c6962)
 
@@ -2370,8 +3124,6 @@
 
 	* nxcompshad: Rewrite Logger class methods to properly take advantage
           of the 'gnu_printf' format attribute.
-          (gh-sunweaver/pr/nxcompshad-autoreconf,
-          pr/nxcompshad-autoreconf)
 
 2017-07-12 22:26:38 +0200 Mike Gabriel (8f5ce18d4)
 
@@ -2416,8 +3168,6 @@
 
 	* debian/rules: Drop redundant --with-symbols configure option, '-g'
           already gets added by debhelper.
-          (gh-sunweaver/pr/nxproxy-autoreconf,
-          pr/nxproxy-autoreconf)
 
 2017-04-26 13:26:47 +0200 Mike Gabriel (41ea54b02)
 
@@ -2442,8 +3192,6 @@
 	* Report Xlib-side window IDs to session.log in machine readable
           form. This feature can be enabled by the cmdline options
           -reportwids and -reportprivatewids.
-          (gh-sunweaver/pr/report-window-ids,
-          sunweaver-pr/report-window-ids, pr/report-window-ids)
 
 2017-07-04 23:32:04 +0200 Mike Gabriel (000a869b3)
 
@@ -2474,8 +3222,6 @@
 
 	* README.Mesa.patches: Define some rules for patch naming and
           numbering scheme.
-          (gh-sunweaver/pr/mese-quilt-without-quilt,
-          pr/mese-quilt-without-quilt)
 
 2017-06-27 19:21:23 +0200 Mike Gabriel (638b334c8)
 
@@ -2497,8 +3243,6 @@
 	* nxcomp: Set TokenSize to 1536 for link type ADSL and WAN. Improving
           non-xrender based  browser scrolling behaviour when link
           type is set to ADSL or WAN.
-          (gh-sunweaver/pr/browser-scrolling-improvements,
-          pr/browser-scrolling-improvements)
 
 2017-06-30 16:22:25 +0200 Mike Gabriel (4365fe38e)
 
@@ -2507,8 +3251,6 @@
 2017-05-30 21:28:03 +0200 Mike Gabriel (588be6386)
 
 	* hw/nxagent/Window.c: Introduce NX_REAL_WINDOW window property.
-          (gh-sunweaver/pr/nx-real-wid, sunweaver-pr/nx-real-wid,
-          pr/nx-real-wid)
 
 2017-05-30 21:33:33 +0200 Mike Gabriel (c88e87bc8)
 
@@ -2523,8 +3265,7 @@
 2017-05-06 01:31:14 +0200 Mike Gabriel (65c420515)
 
 	* debian/patches: Update 016_nx-X11_install-location.debian.patch
-          (line numbers only). (gh-sunweaver/pr/fix-ftbfs-on-hppa,
-          pr/fix-ftbfs-on-hppa)
+          (line numbers only).
 
 2017-05-06 00:38:01 +0200 Mike Gabriel (347363f3f)
 
@@ -2545,8 +3286,6 @@
 	* nx-X11/config/cf/linux.cf: Drop AsOutputArchSize macro from
           Sparc(64)Architecture ifdef-block. It does not seem to be
           used anywhere else.
-          (gh-sunweaver/pr/fix-ftbfs-on-mips64el,
-          pr/fix-ftbfs-on-mips64el)
 
 2017-05-07 19:47:27 +0200 Mike Gabriel (1839dd642)
 
@@ -2571,7 +3310,7 @@
 2017-06-27 15:53:30 +0200 ftrapero (fa70485dc)
 
 	* roll-tarball.sh: Fix resolution of symbolic links and removal of
-          useless Mesa versions (frantracer-mesa-update-6.4.2)
+          useless Mesa versions
 
 2017-06-27 12:12:09 +0200 ftrapero (2dd6ca0c8)
 
@@ -2599,7 +3338,6 @@
 
 	* roll-tarball.sh: Drop various unused files from the bundled Mesa
           version when creating release tarballs.
-          (frantracer-mesa-squash-subtree)
 
 2017-02-20 12:54:14 +0100 Mike Gabriel (c20b946b4)
 
@@ -2625,8 +3363,7 @@
 
 2017-06-09 22:27:20 +0200 Ulrich Sibiller (19116a61c)
 
-	* Args.c: fix sync option parsing (gh-uli42/pr/fix_sync_segfault,
-          uli42-pr/fix_sync_segfault)
+	* Args.c: fix sync option parsing
 
 2017-06-06 20:33:55 +0200 Mike Gabriel (7fd59fbd1)
 
@@ -2634,8 +3371,7 @@
 
 2016-11-04 00:30:02 +0100 Ulrich Sibiller (52d65a4f6)
 
-	* remove BuildRman define (gh-uli42/pr/remove_unused_defines,
-          uli42-pr/remove_unused_defines)
+	* remove BuildRman define
 
 2017-06-06 14:29:20 +0200 Mike Gabriel (7b00b7bb8)
 
@@ -2644,7 +3380,6 @@
 2017-05-31 11:44:59 +0200 Salvador Fandiño (320352d64)
 
 	* Don't force root ownership of dirs when installing
-          (salva-install-as-non-root)
 
 2017-05-31 14:30:32 +0200 Salvador Fandiño (f61956c16)
 
@@ -2657,12 +3392,10 @@
 2017-05-25 08:14:49 -0400 Mike DePaulo (c7ce96546)
 
 	* nx-libs.xpec: Fix FTBFS on F24 due to missing Xfont2
-          (gh-mikedep333/f24-ftbfs, mikedep333-f24-ftbfs)
 
 2017-05-06 02:01:47 +0200 Mike Gabriel (150cbc23d)
 
 	* debian/copyright: Update copyright attributions.
-          (gh-mikedep333/3.6.x)
 
 2017-05-06 00:03:48 +0200 Mike Gabriel (6479ed576)
 
@@ -2676,7 +3409,7 @@
 
 2017-04-25 14:47:48 +0200 Ulrich Sibiller (444e62156)
 
-	* nx-libs.spec: fix FTBFS on RHEL6 (gh-uli42/pr/fix_rhel6)
+	* nx-libs.spec: fix FTBFS on RHEL6
 
 2017-05-05 00:16:41 +0200 Mike Gabriel (5d5336541)
 
@@ -2690,7 +3423,6 @@
 
 	* nxcompshad/Shadow.cpp: Use EBADF instead of EBADFD (which is not
           portable to GNU/Hurd and GNU/kFreeBSD).
-          (gh-sunweaver/pr/gnu-hurd-i386-support)
 
 2017-04-13 12:00:26 +0200 Mike Gabriel (d8a25946e)
 
@@ -2709,8 +3441,6 @@
 
 	* Revert "Switch from using libNX_X11's deprecated XKeycodeToKeysym()
           function to using XGetKeyboardMapping()."
-          (gh-uli42/pr/fix_keyboard_delay,
-          uli42-pr/fix_keyboard_delay)
 
 2017-04-25 14:20:55 +0200 Mihai Moldovan (60d7c02e0)
 
@@ -2734,8 +3464,7 @@
 	* Xserver/Imakefile: Drop redundant library path option
           -L../../../nx-X11/exports/lib when linking nxagent. As
           -L../../exports/lib is already present and points to the
-          same location. (gh-sunweaver/pr/use-source-tree-nxcomp,
-          pr/use-source-tree-nxcomp)
+          same location.
 
 2017-03-08 11:26:16 +0100 Mike Gabriel (4818c13e7)
 
@@ -2750,8 +3479,7 @@
 2017-03-07 20:52:43 +0100 Mike Gabriel (0f67af9d7)
 
 	* nxcomp/Children.cpp: Don't generate warnings with duplicated NX
-          paths. (gh-sunweaver/pr/nxagent-dialog-fixes,
-          pr/nxagent-dialog-fixes)
+          paths.
 
 2017-03-08 12:21:20 +0000 Mike Gabriel (522e743f6)
 
@@ -2777,8 +3505,6 @@
 
 	* man/nxagent.1: Document the nxagent specific usage pattern of the
           displayfd cmdline option.
-          (gh-sunweaver/pr/enhance-displayfd-auto-detection,
-          pr/enhance-displayfd-auto-detection)
 
 2017-04-07 15:27:50 +0200 Mike Gabriel (ec185d7f7)
 
@@ -2799,8 +3525,7 @@
 
 2017-04-18 00:10:46 +0200 Ulrich Sibiller (394246855)
 
-	* nxagent.1: some more rephrasing (gh-uli42/pr/extend_manpage,
-          uli42-pr/extend_manpage)
+	* nxagent.1: some more rephrasing
 
 2017-04-18 00:08:55 +0200 Ulrich Sibiller (4998c41de)
 
@@ -2857,7 +3582,6 @@
 
 	* nx-libs.spec: sync up RPM builds after Xext proto change in
           a51cb94559e9228a55e01956f242dabccc5e6b14.
-          (gh-Ionic/add-xkbcomp-dep, Ionic-add-xkbcomp-dep)
 
 2017-04-18 17:21:53 +0000 Mihai Moldovan (adb2f80cc)
 
@@ -2908,8 +3632,6 @@
 2017-04-11 10:21:30 +0200 Mike Gabriel (244ce534a)
 
 	* Xserver: Build nxagent with MIT-SCREEN-SAVER extension enabled.
-          (gh-sunweaver/pr/enable-mit-screen-saver-extension,
-          pr/enable-mit-screen-saver-extension)
 
 2017-04-13 17:05:32 +0200 Mihai Moldovan (680de79fb)
 
@@ -2921,8 +3643,6 @@
 
 	* Mesa.patches: Define USE_IEEE for __aarch64__ and __mc68000__, as
           well.
-          (gh-sunweaver/pr/Mesa-define-USE_IEEE-macro-for-more-platforms,
-          pr/Mesa-define-USE_IEEE-macro-for-more-platforms)
 
 2017-04-13 16:13:04 +0200 Mike Gabriel (85b925e3f)
 
@@ -2933,9 +3653,6 @@
 
 	* Makefile: Make sure that 'make all' only calls 'make build' and
           _not_ the global '%:' ruleset afterwards.
-          (gh-sunweaver/pr/Makefile-only-call-build-on-make-all,
-          pr/clean-up-remnants-of-libNX_Xext,
-          pr/Makefile-only-call-build-on-make-all)
 
 2017-04-13 15:58:46 +0200 Mike Gabriel (f843d1b14)
 
@@ -2953,8 +3670,6 @@
 
 	* nx-X11/config/cf/linux.cf: Fix FTBFS on Linux SPARC64 due to
           missing -D_XSERVER64 definition.
-          (gh-sunweaver/pr/fix-ftbfs-on-linux-sparc64,
-          pr/fix-ftbfs-on-linux-sparc64)
 
 2017-04-13 14:02:22 +0200 Mihai Moldovan (138b52c9b)
 
@@ -2964,8 +3679,6 @@
 
 	* nx-X11/config/cf/linux.cf: Fix FTBFS on arm64 (aarch64) due to
           missing -D_XSERVER64 definition.
-          (gh-sunweaver/pr/fix-ftbfs-on-aarch64,
-          pr/fix-ftbfs-on-hpppa, pr/fix-ftbfs-on-aarch64)
 
 2017-04-11 17:01:25 +0200 Mike Gabriel (3a2ecb9a5)
 
@@ -2989,8 +3702,6 @@
 
 	* hw/nxagent/Pixmap.c et al.: Propagate usage_hint through
           nxagentCreatePixmap, as well.
-          (gh-sunweaver/pr/createpixmap-alloc-hints-abi-change,
-          pr/createpixmap-alloc-hints-abi-change)
 
 2017-03-11 01:13:58 +0100 Mike Gabriel (560c95643)
 
@@ -3011,8 +3722,7 @@
 2017-04-10 12:43:33 +0200 Mike Gabriel (c4c548547)
 
 	* nx-libs.spec: Prefer libXfont2-devel on RPM distro versions that
-          have it.~ (gh-sunweaver/pr/switch-to-libXfont2-API,
-          pr/switch-to-libXfont2-API)
+          have it.~
 
 2017-04-10 10:09:32 +0000 Mike Gabriel (a5432aac8)
 
@@ -3066,8 +3776,6 @@
 2017-03-11 00:53:01 +0100 Dave Airlie (93ea74e53)
 
 	* xserver: remove index from CloseScreen (API/ABI breakage)
-          (gh-sunweaver/pr/remove-index-from-CloseScreen-ABI-backport,
-          pr/remove-index-from-CloseScreen-ABI-backport)
 
 2017-04-07 16:20:47 +0200 Vadim Troshchinskiy (ab3974f22)
 
@@ -3078,8 +3786,6 @@
 
 	* nxproxy: Support communication over stdin. Allow nxcl to use
           standard ssh instead of nxssh.
-          (gh-sunweaver/pr/nxproxy-read-from-stdin,
-          pr/nxproxy-read-from-stdin)
 
 2017-04-07 13:48:56 +0200 Mike Gabriel (1441b02f0)
 
@@ -3095,9 +3801,6 @@
 
 	* NXpicturestr_PictSolidFill.h: Drop file and revert db8705. Not an
           issue anymore nowadays.
-          (gh-sunweaver/pr/drop-render-fullcolor-workaround,
-          sunweaver-pr/drop-render-fullcolor-workaround,
-          pr/drop-render-fullcolor-workaround)
 
 2017-04-06 14:09:19 +0200 Erkki Seppälä (c8a4e1e75)
 
@@ -3123,8 +3826,7 @@
 2017-03-27 22:58:38 +0200 Ulrich Sibiller (ee18cd43d)
 
 	* Keystrokes: rename left/up/right/down keystrokes to descriptive
-          names (gh-uli42/pr/cleanup_keystroke,
-          uli42-pr/cleanup_keystroke)
+          names
 
 2017-03-27 22:46:47 +0200 Ulrich Sibiller (d28cf5574)
 
@@ -3200,7 +3902,6 @@
 2017-03-10 14:16:26 +0100 Michal Srb (f34eff0a2)
 
 	* xinerama: Swap the response in RRXineramaWriteMonitor
-          (sunweaver-pr/xinerama-response-swapping-in-RRXineramaWriteMonitor)
 
 2017-04-03 20:39:06 +0200 Mike Gabriel (4e0e7c472)
 
@@ -3209,8 +3910,6 @@
 2017-03-29 21:52:25 -0400 Mike DePaulo (1a2bea981)
 
 	* Remove EMX (MS-DOS & OS/2) support
-          (gh-mikedep333/pr/cygwin-nxcomp-ftbfs,
-          mikedep333-pr/cygwin-nxcomp-ftbfs)
 
 2017-03-29 07:19:25 -0400 Mike DePaulo (995851206)
 
@@ -3229,7 +3928,6 @@
 2017-02-01 15:02:41 +0100 Arthur Huillet (00405b278)
 
 	* _XDefaultError: set XlibDisplayIOError flag before calling exit
-          (gh-uli42/pr/libX11-HEAD, uli42-pr/libX11-HEAD)
 
 2017-01-07 16:20:31 +0100 Julien Cristau (8ad49a03e)
 
@@ -3242,8 +3940,6 @@
 2017-03-11 00:48:03 +0100 Mike Gabriel (c1fc4ba78)
 
 	* dix: Remove insane BC hacks
-          (gh-sunweaver/pr/dix-dispatch-backports,
-          pr/dix-dispatch-backports)
 
 2017-03-10 16:48:54 +0100 Mike Gabriel (cb9e50c2f)
 
@@ -3262,8 +3958,6 @@
 2017-03-20 13:22:50 +0100 Adam Jackson (565421ba1)
 
 	* os: Remove the useless -x option
-          (gh-sunweaver/pr/various-os-backports,
-          pr/various-os-backports)
 
 2017-03-15 15:46:32 +0000 Keith Packard (a95cfdf48)
 
@@ -3401,7 +4095,6 @@
 2017-03-19 21:59:17 +0100 Ulrich Sibiller (7065e0bf2)
 
 	* Keystroke.c: ignore CapsLock and NumLock most of the time
-          (gh-uli42/pr/ignore_caps, uli42-pr/ignore_caps)
 
 2017-03-17 20:39:28 +0100 Mihai Moldovan (7fd5d934c)
 
@@ -3410,7 +4103,6 @@
 2017-02-24 13:03:30 +0000 Mike Gabriel (f315ae066)
 
 	* os: Initialize NotifyFds earlier in startup
-          (gh-sunweaver/pr/setnotifyfd-ABI, pr/setnotifyfd-ABI)
 
 2017-02-09 23:33:44 +0000 Keith Packard (761d74a68)
 
@@ -3562,7 +4254,7 @@
 
 2017-03-04 01:12:24 +0100 Ulrich Sibiller (ee2a933c3)
 
-	* Xext: fix compiler warning (gh-uli42/pr/misc_cherries)
+	* Xext: fix compiler warning
 
 2017-03-04 00:28:01 +0100 Ulrich Sibiller (e021bc231)
 
@@ -3649,7 +4341,6 @@
 2008-12-03 15:06:37 +1000 Peter Hutterer (2794e674c)
 
 	* xkb: Allow NULL as rulesFile in XkbSetRulesDflts.
-          (gh-uli42/pr/backup_null_rulesfile)
 
 2017-03-07 22:34:09 +0100 Mihai Moldovan (c6f0e6b2c)
 
@@ -3657,7 +4348,7 @@
 
 2017-03-04 16:10:38 +0100 Ulrich Sibiller (22f542626)
 
-	* os: add timingsafe_memcmp to Imake (gh-uli42/pr/cve-2017-2624)
+	* os: add timingsafe_memcmp to Imake
 
 2017-03-03 22:46:33 +0100 Ulrich Sibiller (65c5d8ad7)
 
@@ -3666,7 +4357,6 @@
 2017-03-03 22:44:58 +0100 Mike Gabriel (05aabb4e6)
 
 	* Merge branch 'uli42-pr/fix_validatestring' into 3.6.x
-          (pr/keystrokes-cfg-example)
 
 2017-03-02 15:38:08 +0100 Ulrich Sibiller (06bb154df)
 
@@ -3699,7 +4389,6 @@
 2017-03-02 15:38:08 +0100 Ulrich Sibiller (09ef99919)
 
 	* replace (DE)ALLOCATE_LOCAL by malloc/free
-          (gh-uli42/pr/remove_allocate_local)
 
 2017-03-03 16:21:33 +0100 Mihai Moldovan (89ccf26d6)
 
@@ -3710,7 +4399,6 @@
 
 	* Xserver/mi/miscrinit.c: Use new shmint.h for making
           ShmRegisterFbFuncs() available.
-          (gh-sunweaver/pr/really-enable-MITSHM-in-fboverlay-c)
 
 2017-02-05 23:23:52 +0000 Mike Gabriel (269651e47)
 
@@ -3755,7 +4443,6 @@
 2017-03-03 11:06:58 +0100 Mike Gabriel (6e770378c)
 
 	* Xserver/GL/glx/glxcmd.c: Fix uninitialized xGLXQueryVersionReply.
-          (gh-sunweaver/pr/happyvalgrind-in-glXQueryVersion)
 
 2016-09-16 23:58:54 +0000 Mihai Moldovan (7011de155)
 
@@ -3799,7 +4486,6 @@
 
 	* hw/nxagent/Display.c: Fix uninitialized newAction in
           nxagentResetSignalHandlers().
-          (gh-sunweaver/pr/happyvalgrind-nxagentResetSignalHandlers)
 
 2017-03-03 11:04:10 +0100 Mike Gabriel (20029dbc8)
 
@@ -3808,7 +4494,6 @@
 2017-02-25 02:17:18 +0100 Ulrich Sibiller (3e315cd17)
 
 	* Fix "uninitialised byte(s)" complaints from valgrind
-          (gh-uli42/pr/happyvalgrind)
 
 2017-03-02 11:24:18 +0100 Mihai Moldovan (9d41e84ea)
 
@@ -3819,7 +4504,6 @@
 
 	* nxcomp/Loop.cpp: Allow nx/nx:<disp> as DISPLAY variable (i.e. an
           empty nx/nx options string.
-          (gh-sunweaver/pr/allow-empty-nx-options-string)
 
 2017-02-05 12:41:28 +0100 Mike Gabriel (a4be1b89f)
 
@@ -3833,7 +4517,6 @@
 2017-02-27 13:52:29 +0000 Mike Gabriel (9c3669c6b)
 
 	* Xserver/dix/atom.c (et al.): Constify atom name strings.
-          (gh-sunweaver/pr/constify-atom-name-strings)
 
 2017-03-01 15:19:26 +0100 Mihai Moldovan (f42d36fb7)
 
@@ -4070,8 +4753,7 @@
 2017-02-27 11:20:38 +0100 Mike Gabriel (3e8d98f33)
 
 	* nx-libs.spec: Add BR filesystem for SUSE builds (as it provides
-          /usr/share/fonts). (gh-sunweaver/pr/support-builtin-fonts,
-          pr/support-builtin-fonts)
+          /usr/share/fonts).
 
 2017-02-14 09:35:32 +0000 Mike Gabriel (b981dd16f)
 
@@ -4149,7 +4831,6 @@
 
 	* debian/patches: Update/rebase
           016_nx-X11_install-location.debian.patch.
-          (gh-sunweaver/pr/hard-code-rgb-colors)
 
 2017-02-06 14:30:03 +0100 Mike Gabriel (0b3447540)
 
@@ -4185,7 +4866,6 @@
 2017-02-15 09:59:00 +0100 Mike Gabriel (104a3e9e2)
 
 	* Naming change: Security*Access -> Dix*Access
-          (gh-sunweaver/pr/security-acl-naming-change)
 
 2017-02-20 10:21:01 +0100 Mike Gabriel (c79f2d289)
 
@@ -4197,7 +4877,6 @@
 
 	* Switch from using libNX_X11's deprecated XKeycodeToKeysym()
           function to using XGetKeyboardMapping().
-          (gh-sunweaver/pr/use-xgetkeyboardMapping-instead-of-deprecated-xkeycodetokeysym)
 
 2017-02-18 10:24:21 +0100 Mihai Moldovan (73ec915bc)
 
@@ -4207,8 +4886,6 @@
 2017-02-09 14:05:32 +0100 Mathieu Bérard (6884e6a5b)
 
 	* The smart scheduler is not optional.
-          (gh-sunweaver/pr/smart-scheduler-is-not-optional,
-          pr/smart-scheduler-is-not-optional)
 
 2017-02-10 00:47:32 +0100 Mihai Moldovan (0a7df0770)
 
@@ -4218,7 +4895,6 @@
 
 	* Makefile: Fix flawed uninstall-* targets. Spotted by Ionic while
           reviewing the nxagent RPATH changeset. Thanks!
-          (gh-sunweaver/pr/use-rpath-for-nxagent)
 
 2017-02-08 16:31:00 +0100 Mike Gabriel (52760b6e8)
 
@@ -4272,7 +4948,7 @@
 
 	* nx-X11/include/Xos_r.h: Drop one _POSIX_REENTRANT_FUNCTIONS macro
           block, where offenders AIXV3, AIXV4 and __osf__ are gone
-          now. (gh-sunweaver/pr/drop-support-for-ancient-platforms)
+          now.
 
 2017-02-04 16:25:13 +0100 Daniel Stone (7dae94814)
 
@@ -4316,8 +4992,7 @@
 
 2017-02-08 21:43:45 +0100 Ulrich Sibiller (3790a28fe)
 
-	* Screen.c: clean up superfluous whitespace (gh-uli42/pr/fix_#293,
-          gh-sunweaver/uli42-pr/fix_#293)
+	* Screen.c: clean up superfluous whitespace
 
 2017-02-08 21:13:38 +0100 Ulrich Sibiller (184c07e24)
 
@@ -4331,7 +5006,6 @@
 
 	* nx-X11/config/cf/X11.tmpl: Fix DefaultRGBDatabase path to
           $(USRDATADIR)/rgb (not $(LIBDIR)/rgb).
-          (gh-sunweaver/pr/fix-DefaultRGBDatabase-path)
 
 2017-02-04 15:41:18 +0100 Mike Gabriel (d6f475f67)
 
@@ -4343,7 +5017,6 @@
 	* Xserver/randr: Regression fix introduced by c2b1f48. Re-introduce
           RegisterResourceName() calls after each
           CreateNewResourceType() call.
-          (gh-sunweaver/pr/randr-regression-fix-re-adding-RegisterResourceName-calls)
 
 2017-02-03 14:58:06 +0100 Mike Gabriel (1cd73ccb7)
 
@@ -4360,7 +5033,6 @@
 2017-01-12 10:23:02 +0100 Mike Gabriel (93447eb2b)
 
 	* Merge branch 'opoplawski-symlink' into 3.6.x
-          (gh-sunweaver/pr/no-extra-mode-freeing-in-nxagentAdjustRandRXinerama)
 
 2017-01-05 16:43:17 -0700 Orion Poplawski (f92820948)
 
@@ -4437,8 +5109,6 @@
 2016-12-07 21:50:40 +0100 Ulrich Sibiller (6f3fb5248)
 
 	* Screen.c: more debug output formatting improvements
-          (gh-uli42/pr/improve_xinerama_debug,
-          gh-uli42/pr/cherry_picks)
 
 2016-12-07 21:17:26 +0100 Ulrich Sibiller (e14309892)
 
@@ -4469,7 +5139,6 @@
 2016-11-02 20:30:07 +0100 Mike Gabriel (4e33fd4be)
 
 	* Mesa: Convert some files with MSDOS EOL style to Unix EOL style.
-          (gh-sunweaver/pr/drop-glx-ansic)
 
 2016-11-01 21:30:22 +0100 Kristian Høgsberg (4146d1aa7)
 
@@ -4489,7 +5158,6 @@
 
 	* Remove libcwrapper usage from xorg server modules. The libcwrapper
           is not used in nxagent.
-          (gh-sunweaver/pr/extmod-xfree86loader-cleanup)
 
 2016-12-04 21:09:52 +0100 Mike Gabriel (62f8e50e7)
 
@@ -4499,7 +5167,6 @@
 2016-12-03 23:31:26 +0100 Ulrich Sibiller (b0106e75a)
 
 	* slightly improve rrxinerama debug output
-          (gh-uli42/pr/compilation_fixes_and_debug_improvements)
 
 2016-12-03 23:06:32 +0100 Ulrich Sibiller (c5e06d408)
 
@@ -4519,7 +5186,7 @@
 
 2016-11-03 23:53:46 +0100 Ulrich Sibiller (7993d28f1)
 
-	* add .gitignore files (gh-uli42/pr/gitignore)
+	* add .gitignore files
 
 2016-11-17 20:49:53 +0100 Mike Gabriel (1f6070437)
 
@@ -4527,7 +5194,7 @@
 
 2016-11-04 00:25:25 +0100 Ulrich Sibiller (de4eca171)
 
-	* LibX11: drop unused xlibi18n (gh-uli42/pr/remove_xlibi18n)
+	* LibX11: drop unused xlibi18n
 
 2016-11-15 17:06:18 +0100 Mike Gabriel (cb8bcbec8)
 
@@ -4536,7 +5203,6 @@
 2016-11-07 12:32:09 +0100 Mike Gabriel (00725f16a)
 
 	* testscripts: Use non-NoMachine file headers for our testscripts.
-          (gh-sunweaver/pr/testscripts-file-headers)
 
 2016-11-15 17:02:11 +0100 Mike Gabriel (91d06723b)
 
@@ -4551,7 +5217,6 @@
 2016-11-09 16:45:47 +0100 Mike Gabriel (9ad0aae5d)
 
 	* Xserver/Imakefile: Some whitespace fixes.
-          (gh-sunweaver/pr/move-nxcompext-into-Xserver)
 
 2016-11-03 00:19:26 +0100 Mike Gabriel (80b5de3f5)
 
@@ -4569,7 +5234,6 @@
 2016-10-27 01:00:23 +0200 Ulrich Sibiller (2f2ade61a)
 
 	* Keyboard.c: evdev is only existing on Linux
-          (gh-uli42/pr/keyboard_fixes)
 
 2006-10-02 20:58:33 +0300 Daniel Stone (926e90abc)
 
@@ -4638,7 +5302,7 @@
 2016-10-29 14:23:58 +0200 Mike Gabriel (f5c5cb10f)
 
 	* Xserver/fb: Drop fbmmx.[ch] files and code passages wrapped-in by
-          USE_MMX macro. (gh-sunweaver/pr/drop-fbmmx)
+          USE_MMX macro.
 
 2016-10-29 14:23:25 +0200 Mike Gabriel (89e1457d1)
 
@@ -4652,7 +5316,6 @@
 2016-11-02 23:57:43 +0100 Ulrich Sibiller (47fab08aa)
 
 	* xtrans: fix const warnings for SocketConnectConnInfo
-          (gh-uli42/pr/libX11_xtrans_silence_compiler_warnings)
 
 2016-11-02 23:55:23 +0100 Ulrich Sibiller (882c034c3)
 
@@ -4766,7 +5429,7 @@
 
 2016-10-30 19:05:56 +0100 Ulrich Sibiller (7d884049b)
 
-	* remove unused mkks.sh (pr/unused_files)
+	* remove unused mkks.sh
 
 2016-10-30 19:02:36 +0100 Ulrich Sibiller (bac5ce7b5)
 
@@ -4848,7 +5511,6 @@
 2016-10-30 21:36:53 +0100 Mike Gabriel (b99c78721)
 
 	* Xserver/Imakefile: Drop references to already removed afb code.
-          (gh-sunweaver/pr/drop-mfb-maskbits-h)
 
 2016-10-30 21:36:03 +0100 Mike Gabriel (65e25bd47)
 
@@ -4870,7 +5532,6 @@
 2016-10-30 13:11:38 +0100 Mike Gabriel (1ddbe39ad)
 
 	* nxcompext: Drop (nowadays) no-op file NXlibint.h.
-          (gh-sunweaver/pr/drop-nxlibint-h)
 
 2016-10-30 14:25:57 +0100 Mike Gabriel (23ad270b5)
 
@@ -4891,13 +5552,12 @@
 2016-10-29 10:32:51 +0200 Mike Gabriel (a375d178f)
 
 	* Merge branch 'sunweaver-pr/build-includes-robustness' into 3.6.x
-          (gh-uli42/3.6.x)
 
 2016-10-28 15:19:10 +0200 Mike Gabriel (2f2a5a920)
 
 	* Imake.rules: Make BuildIncludes{,Top}() more robust in case people
           attempt providing path names instead of file names via
-          srclist. (gh-sunweaver/pr/build-includes-robustness)
+          srclist.
 
 2016-10-29 10:30:27 +0200 Mike Gabriel (ecd335fa6)
 
@@ -4915,7 +5575,6 @@
 
 	* debian/patches: Rebase
           102_xserver-xext_set-securitypolicy-path.debian.patch.
-          (pr/harmonize-xkb-defaults)
 
 2016-10-28 14:48:25 +0200 Mike Gabriel (c9da511cf)
 
@@ -4924,7 +5583,6 @@
 2016-10-24 13:27:52 +0200 Vadim Troshchinskiy (c7eac1f95)
 
 	* Add description of NX_SLAVE_CMD to man and help
-          (theqvd-slave-channel)
 
 2016-10-18 09:19:28 +0200 Vadim Troshchinskiy (30af52eb3)
 
@@ -6345,7 +7003,6 @@
 2011-03-22 11:28:56 +1000 Peter Hutterer (5dcf0d573)
 
 	* Add XF86TouchpadOn and XF86TouchpadOff to keysymdb
-          (gh-sunweaver/pr/update-X11s-XKeysymDB)
 
 2016-08-25 00:52:51 +0200 Mike Gabriel (34cb7b558)
 
@@ -6359,7 +7016,6 @@
 2016-10-01 12:04:54 +0200 Mike Gabriel (b1603713e)
 
 	* Imake.tmpl: Use gccmakedep instead of makedepend.
-          (gh-sunweaver/pr/use-gccmakedep)
 
 2016-10-01 20:16:39 +0200 Mike Gabriel (e3ea74823)
 
@@ -6369,7 +7025,6 @@
 
 	* include/extensions/damageproto.h: Use nx-X11's xfixesproto.h and
           damagewire.h instead of X.org's.
-          (gh-sunweaver/pr/fix-protoheader-mess)
 
 2016-10-01 11:25:29 +0200 Mike Gabriel (9acfa3b28)
 
@@ -6518,7 +7173,6 @@
 
 	* nx-X11/programs/Xserver/hw/nxagent/Display.c: add FIXME comment to
           nxagentCheckForColormapsCompatibility().
-          (gh-Ionic/feature/reconnect-checks)
 
 2016-07-03 23:52:06 +0000 Mihai Moldovan (5ec7e48ac)
 
@@ -6578,7 +7232,7 @@
 
 2016-07-06 10:38:25 +0200 Mike Gabriel (470611e02)
 
-	* release 3.5.99.0 (tag: 3.5.99.0, gh-Ionic/3.6.x)
+	* release 3.5.99.0 (tag: 3.5.99.0)
 
 2016-07-06 10:02:37 +0200 Mike Gabriel (961fa2a0e)
 
@@ -6600,7 +7254,7 @@
 2016-07-05 16:32:57 +0200 Mike Gabriel (6144b615d)
 
 	* VCS info lines: Remove ancient X.org / XFree86 VCS info line from
-          code files. (gh-sunweaver/pr/update-license-files)
+          code files.
 
 2016-07-05 16:22:51 +0200 Mike Gabriel (51c3d42f3)
 
@@ -6684,7 +7338,6 @@
 2016-07-04 00:28:47 +0200 Alan Coopersmith (f6a1bda2d)
 
 	* Remove unneccesary casts from WriteToClient calls
-          (gh-sunweaver/pr/no-more-type-casting-in-writetoclient)
 
 2016-07-04 00:21:45 +0200 Kristian Høgsberg (ff81a5269)
 
@@ -6757,7 +7410,7 @@
 2016-07-05 09:54:47 +0200 Mike Gabriel (058ae3e76)
 
 	* nx-libs.spec: Add Conflicts: fields for removed shared library
-          bin:packages. (gh-sunweaver/pr/rpm-packaging-updates)
+          bin:packages.
 
 2016-07-04 16:34:38 +0200 Mike Gabriel (1910142cf)
 
@@ -6795,7 +7448,6 @@
 
 	* Set event sequence number in WriteEventsToClient instead of at
           callers.
-          (gh-sunweaver/pr/writeeventstoclients-no-sequencenumber)
 
 2016-07-03 22:06:43 +0200 Jamey Sharp (9ea88717d)
 
@@ -6809,7 +7461,6 @@
 2016-07-05 08:16:09 +0200 Tomas Carnecky (b15fc63f4)
 
 	* Replace INITARGS with void
-          (gh-sunweaver/pr/silencing-compiler-warnings)
 
 2016-06-29 15:07:16 +0200 Mike Gabriel (f0af82cbb)
 
@@ -6940,7 +7591,6 @@
 	* test scripts: Add test scripts for testing Unix file socket support
           (i.e. proxy2proxy and proxy2agent sessions via Unix file
           sockets).
-          (gh-sunweaver/pr/proxy-to-proxy-over-unix-socket)
 
 2016-06-15 10:29:12 +0200 Mike Gabriel (c6e956512)
 
@@ -6986,7 +7636,6 @@
 2016-06-28 20:30:42 +0200 Mike Gabriel (1bd2463a2)
 
 	* libNX_X11 data files: Install libNX_X11 related data files.
-          (gh-sunweaver/pr/xerrordb-from-xorg)
 
 2016-07-04 16:37:55 +0200 Mike Gabriel (27b0b5723)
 
@@ -6996,7 +7645,6 @@
 
 	* Use internal temp variable for swap macros. Make swaps/swapl type
           safe (introducing wrong_size check at build time).
-          (gh-sunweaver/pr/type-safe-swapping)
 
 2016-06-15 16:46:10 +0200 Mike Gabriel (d1d859dfd)
 
@@ -7015,7 +7663,6 @@
 2016-06-27 12:53:03 +0200 Mike Gabriel (e85808245)
 
 	* debian/patches: Refresh patches after changes in upstream code.
-          (gh-sunweaver/pr/backport-Xorg-memory-handling)
 
 2016-06-28 16:55:26 +0200 Mike Gabriel (40e398409)
 
@@ -7056,7 +7703,7 @@
 
 	* Xserver/include/protocol-versions.h: Switch to having an
           Xserver-specific header file containing all use protocol
-          versions. (gh-sunweaver/pr/protocols-version-h)
+          versions.
 
 2016-06-28 12:06:50 +0200 Mike Gabriel (a08e2323e)
 
@@ -7070,7 +7717,6 @@
 2016-06-30 23:50:12 +0200 Mike Gabriel (5934d03ef)
 
 	* Rework nxagent and nxproxy wrapper scripts.
-          (gh-sunweaver/pr/ld-loading-libX11-hack)
 
 2016-07-01 16:00:04 +0200 Mike Gabriel (da7261cfe)
 
@@ -7099,7 +7745,6 @@
 2016-06-23 10:46:48 +0200 Mike Gabriel (204545286)
 
 	* nxagent Xserver: Drop Kerberos code. Not used in nxagent.
-          (gh-sunweaver/pr/libXau-cleanup)
 
 2016-06-23 10:31:42 +0200 Mike Gabriel (26bf48bab)
 
@@ -7119,7 +7764,6 @@
 
 	* debian/*.dirs: Don't create directories in the Debian package. All
           handled well by the upstream Makefile.
-          (gh-sunweaver/pr/debian-packaging-updates)
 
 2016-06-23 21:33:23 +0200 Mike Gabriel (2d016f826)
 
@@ -7202,7 +7846,6 @@
 
 	* build flags: Use -D_DEFAULT_SOURCE instead of deprecated
           -D_BSD_SOURCE and -D_SVID_SOURCE.
-          (gh-sunweaver/pr/define-default-source-not-bsd+svid-source)
 
 2016-07-01 13:13:48 +0200 Mike Gabriel (4b3081c48)
 
@@ -7211,7 +7854,7 @@
 2016-06-23 09:58:54 +0200 Mike Gabriel (f0bf303c8)
 
 	* nx-X11/lib/X10: Drop really ancient X10 API code. Not used within
-          nxagent. (gh-sunweaver/pr/drop-really-old-X10-API-code)
+          nxagent.
 
 2016-07-01 13:10:06 +0200 Mike Gabriel (b666a3776)
 
@@ -7222,7 +7865,6 @@
 
 	* OPTFLAGS: Properly propagate build option flags to
           nxcomp{,ext,shad} and the nx-X11 build scripts.
-          (gh-sunweaver/pr/properly-apply-optflags-at-buildtime)
 
 2016-06-23 09:58:54 +0200 Mike Gabriel (4693c3203)
 
@@ -7287,7 +7929,6 @@
 
 	* nx-X11/Makefile: Drop build support for World.Win32 and World.OS2.
           Not our target platforms.
-          (gh-sunweaver/pr/drop-embedded-imake-and-makedepend)
 
 2016-06-22 12:41:50 +0200 Mike Gabriel (2f3d394e8)
 
@@ -7302,7 +7943,6 @@
 2016-06-29 21:44:08 +0200 Ulrich Sibiller (bd2650ca0)
 
 	* Port _XEatDataWords
-          (gh-sunweaver/pr/backport-xgetrequest-and-xeatdatawords)
 
 2016-06-29 21:25:24 +0200 Ulrich Sibiller (36d0fac77)
 
@@ -7316,7 +7956,6 @@
 
 	* Makefile,debian/*,nx-libs.spec,<misc>: Drop references to X2Go
           Project, esp. drop x2goagent.
-          (gh-sunweaver/pr/drop-x2goagent)
 
 2016-06-29 11:13:34 +0200 Mike Gabriel (b9fb7a05a)
 
@@ -7327,7 +7966,6 @@
 
 	* libNX_Xext: Drop unused extensions: DPMS, XTestExt1, XSync,
           XSecurity.
-          (gh-sunweaver/pr/libnx-xext-drop-unused-extensions)
 
 2016-06-28 12:13:27 +0000 Mike Gabriel (e9857d5ea)
 
@@ -7343,7 +7981,6 @@
 2016-06-28 11:43:06 +0000 Mike Gabriel (3ded4a2d6)
 
 	* Fix linking order hack in nxagent.
-          (gh-sunweaver/pr/linking-order-fix)
 
 2016-06-28 04:13:10 +0200 Mihai Moldovan (7bdc7ef23)
 
@@ -7367,7 +8004,6 @@
 
 	* hw/nxagent: Drop code referring to the following removed Xserver
           extensions: XAPPGROUP, LBX, XEVIE.
-          (gh-sunweaver/pr/hw-nxagent-drop-duplicate-Xserver-code_disable-Xserver-code-and-include-in-nxagent)
 
 2016-05-02 11:29:53 +0200 Mike Gabriel (3bdcd1727)
 
@@ -7532,8 +8168,6 @@
 2016-06-25 00:31:35 +0200 Ulrich Sibiller (e079b0b35)
 
 	* Screen.c: fix RRGetInfo call
-          (gh-uli42/pr/run_xinerama_without_debug_output,
-          gh-uli42/pr/run_xinerama_without_debug_outout)
 
 2016-06-25 00:31:05 +0200 Ulrich Sibiller (cec31e2f0)
 
@@ -7555,7 +8189,6 @@
 
 	* debian/patches: Update
           102_xserver-xext_set-securitypolicy-path.debian.patch.
-          (gh-sunweaver/pr/xrandr-extension-upgrade-1.5)
 
 2016-06-20 11:10:06 +0200 Mike Gabriel (c2b1f489d)
 
@@ -7719,7 +8352,6 @@
 
 	* Properly enable/disable Xinerama support in nxagent via cmdline
           options provider in Xserver/os/utils.c.
-          (gh-sunweaver/pr/rrxinerama-vs-panoramix-with-disable-support)
 
 2016-06-09 16:24:10 +0200 Mike Gabriel (3f8aa38fe)
 
@@ -7735,7 +8367,6 @@
 	*
           {nx-X11/programs/Xserver/hw/nxagent/{{Args,Handlers,Image,Options}.c,Options.h},nxcomp/{Loop,Misc}.cpp}:
           add configurable sleep delay if session is suspended.
-          (gh-Ionic/feature/configurablesleep)
 
 2016-06-15 00:39:04 +0200 Mike Gabriel (3dea5a88c)
 
@@ -7748,7 +8379,6 @@
 	* nxagentReversePointerMap: Don't assume Xevent.xbutton.button is
           always greater than zero. We have seen
           Xevent.xbutton.button being set to AnyButton (equaling 0).
-          (gh-sunweaver/pr/nxagentReversePointerMapping-negative-index)
 
 2016-06-13 21:07:38 +0200 Mike Gabriel (61d0fbea7)
 
@@ -7758,7 +8388,7 @@
 
 	* nx-X11/programs/Xserver/hw/nxagent/Handlers.h: fix stack smashing
           related to different data type sizes between Xserver and
-          Xlib. (gh-Ionic/bugfix/Xserver-Xlib-type-mismatch)
+          Xlib.
 
 2016-06-13 13:13:55 +0200 Mike Gabriel (35613d1dc)
 
@@ -7769,7 +8399,6 @@
 
 	* nx-X11/programs/Xserver: Include nxcomp{,ext,shad} headers like one
           would do with system-wide shared libraries.
-          (gh-sunweaver/pr/nxcomp+ext+shad-system-wide-headers)
 
 2016-04-05 14:29:02 +0200 Mike Gabriel (2f706cbeb)
 
@@ -7805,7 +8434,6 @@
 
 	* XTRAP: Drop all Xserver code blocks that relate to removed XTRAP
           extension.
-          (gh-sunweaver/pr/xserver-drop-outdated-xext-extensions)
 
 2016-04-19 12:04:57 +0200 Mike Gabriel (8c1d16dae)
 
@@ -7879,7 +8507,7 @@
 
 2016-05-31 12:12:39 +0200 Mike Gabriel (e3051f7a7)
 
-	* Merge branch 'nitomartinez-3.6.x' into 3.6.x (origin/3713346f)
+	* Merge branch 'nitomartinez-3.6.x' into 3.6.x
 
 2016-05-30 16:10:32 +0000 Mihai Moldovan (36c3613a7)
 
@@ -7917,7 +8545,6 @@
 
 	* nx-X11/programs/Xserver/{hw/nxagent/NX,render/}picture.c: add and
           use new function ReduceCompositeOp().
-          (gh-Ionic/feature/composite-update)
 
 2016-04-09 19:41:48 +0000 Mihai Moldovan (dd9eb3adf)
 
@@ -7946,7 +8573,6 @@
 2016-05-03 19:42:46 +0200 Mike Gabriel (52dc49607)
 
 	* hw/nxagent/Display.c: Avoid incompatible pointer type.
-          (gh-sunweaver/pr/nxagent-no-compiler-warnings)
 
 2016-05-03 19:28:48 +0200 Mike Gabriel (a0e5589ed)
 
@@ -8152,7 +8778,6 @@
 2016-03-22 14:23:12 +0100 Mike Gabriel (6c6b6b962)
 
 	* lib/Imakefile: Drop $(XINERAMADIR) from nx-X11/lib/Imakefile.
-          (gh-sunweaver/3.6.x)
 
 2016-04-27 14:00:57 +0200 Mike Gabriel (2137ee7e2)
 
@@ -8163,7 +8788,6 @@
 
 	* Provide support for channel endpoints being UNIX file sockets in
           addition to being TCP/IP sockets.
-          (gh-sunweaver/pr/nxcomp-unix-sockets-for-channels)
 
 2016-04-27 13:56:55 +0200 Mike Gabriel (b326eda73)
 
@@ -8186,7 +8810,6 @@
 
 	* library-cleanup: Don't build libNX_Xrender anymore. Use system's
           libXrender shared library.
-          (gh-sunweaver/pr/libxrender-cleanup)
 
 2016-04-20 16:16:40 +0200 Mike Gabriel (5729783db)
 
@@ -8263,7 +8886,7 @@
 
 2016-01-18 22:37:46 -0500 Mike DePaulo (0239ba72b)
 
-	* README.md: Add debuild instructions (gh-mikedep333/README.md)
+	* README.md: Add debuild instructions
 
 2016-01-18 21:49:03 -0500 Mike DePaulo (474e9c0ba)
 
@@ -8310,7 +8933,6 @@
 2016-01-01 09:52:26 -0500 Mike DePaulo (daace15e2)
 
 	* Add instructions for building using Mock under Fedora/EPEL
-          (gh-mikedep333/mock-build-instructions)
 
 2015-12-30 19:25:08 +0100 Mike Gabriel (fa497ac95)
 
@@ -8329,7 +8951,6 @@
 2015-10-08 22:25:09 +0200 Ulrich Sibiller (c4a388937)
 
 	* Xinerama: do not cut off at outer edges
-          (gh-sunweaver/pr/xinerama-xrandr)
 
 2015-10-07 20:45:14 +0200 Mike Gabriel (4ba8df855)
 
@@ -8507,9 +9128,7 @@
 2015-09-28 08:15:52 +0200 Mike Gabriel (d35a3622d)
 
 	* Xinerama symlinking: Attach Xinerama symlinking to nxagent
-          bin:package (and not libnx-xinerama1). (origin/3.5.0.x,
-          gh-sunweaver/3.5.0.x, gh-mikedep333/3.5.0.x,
-          gh-Ionic/3.5.0.x)
+          bin:package (and not libnx-xinerama1).
 
 2015-09-28 07:59:12 +0200 Mike Gabriel (ca990cf0a)
 
@@ -8705,7 +9324,6 @@
 2015-09-26 00:28:14 +0200 Ulrich Sibiller (1fe33b710)
 
 	* use xfree instead of free for xalloced data
-          (gh-uli42/pr/backported_fixes)
 
 2015-09-23 12:16:22 +0200 Mike Gabriel (3027f5019)
 
@@ -8956,7 +9574,7 @@
 2015-05-27 12:34:12 +0200 Mike Gabriel (06d389a0c)
 
 	* library clean-up: Drop libXx86{misc,vm,dga} libraries. Not needed
-          by nx-libs. (gh-sunweaver/pr/libXx86FOO-cleanup)
+          by nx-libs.
 
 2015-06-22 03:38:46 +0200 Mihai Moldovan (e7dfbd511)
 
@@ -8966,7 +9584,6 @@
 
 	* library clean-up: Drop nx-X11/lib/Xxf86rush and references to
           libglide{2,3}. Unused in nx-libs.
-          (gh-sunweaver/pr/libxf86rush-cleanup)
 
 2015-06-21 10:50:31 +0200 Mihai Moldovan (fb2a4e4c5)
 
@@ -8975,7 +9592,6 @@
 2015-05-27 09:48:26 +0200 Mike Gabriel (26091f4bd)
 
 	* nx-X11/config/cf: Drop build-logic for all hardware drivers.
-          (gh-sunweaver/pr/hw-driver-cleanup)
 
 2015-05-27 08:38:11 +0200 Mike Gabriel (ae443bd5b)
 
@@ -9025,7 +9641,6 @@
 
 	* imake clean-up: Enforce build of Mesa GLX extension. Drop all other
           GLX build methods (built-in DRI drivers, etc.).
-          (gh-sunweaver/pr/libglx-cleanup)
 
 2015-05-26 16:44:49 +0200 Mike Gabriel (73fa89991)
 
@@ -9120,7 +9735,6 @@
 
 	* library clean-up: Don't compile (i.e., remove) libNX_Xres.a
           anymore. It is not used anywhere.
-          (gh-sunweaver/pr/libxres-cleanup)
 
 2015-05-31 17:21:10 +0200 Mike Gabriel (01b142ddf)
 
@@ -9137,15 +9751,12 @@
 2014-01-26 19:23:17 -0800 Alan Coopersmith (d1ca2119a)
 
 	* Xv: unvalidated lengths in XVideo extension swapped procs
-          [CVE-2014-8099] (origin/pr/Xext-cve-fixes,
-          gh-mikedep333/pr/Xext-cve-fixes,
-          gh-Ionic/pr/Xext-cve-fixes)
+          [CVE-2014-8099]
 
 2015-05-01 13:09:24 +0200 Keith Packard (2db01a9a2)
 
 	* dix: Allow zero-height PutImage requests (fix for X.Org's
-          CVE-2015-3418). (origin/pr/dix-cve-fixes,
-          gh-mikedep333/pr/dix-cve-fixes, gh-Ionic/pr/dix-cve-fixes)
+          CVE-2015-3418).
 
 2014-01-22 21:11:16 -0800 Alan Coopersmith (8623faa42)
 
@@ -9248,9 +9859,7 @@
 2014-01-26 19:51:29 -0800 Alan Coopersmith (a0c90ad34)
 
 	* render: unvalidated lengths in Render extn. swapped procs
-          [CVE-2014-8100 2/2] (origin/pr/render-cve-fixes,
-          gh-mikedep333/pr/render-cve-fixes,
-          gh-Ionic/pr/render-cve-fixes)
+          [CVE-2014-8100 2/2]
 
 2014-10-28 10:30:04 +0100 Julien Cristau (e469cff02)
 
@@ -9610,9 +10219,6 @@
 
 	* library clean-up: Don't build and link libXfont.a anymore. Use
           system's libXfont shared library and link dynamically.
-          (origin/pr/libxfont-cleanup,
-          gh-mikedep333/pr/libxfont-cleanup,
-          gh-Ionic/pr/libxfont-cleanup)
 
 2015-04-21 15:28:25 +0200 Mike Gabriel (a77ca871c)
 
@@ -9919,8 +10525,7 @@
 
 2015-02-18 07:43:20 -0500 Mike DePaulo (2b2a02f93)
 
-	* X.org CVE-2015-0255 patch and its 3 prereq patches (origin/master,
-          gh-mikedep333/master, gh-Ionic/master)
+	* X.org CVE-2015-0255 patch and its 3 prereq patches
 
 2015-02-18 08:01:54 +0100 Mike Gabriel (ec018a79c)
 
@@ -9984,7 +10589,6 @@
 	* Update
           1042-Do-proper-input-validation-to-fix-for-CVE-2011-2895.patch.
           Fix broken comment paragraph, whitespace fix.
-          (gh-sunweaver/master)
 
 2015-02-16 09:40:16 +0100 Mihai Moldovan (650181c23)
 
@@ -10877,11 +11481,11 @@
 
 2015-02-01 22:27:06 +0100 Ulrich Sibiller (f8fa7cb19)
 
-	* Fix patch rollout in tarball (gh-uli42/x2go)
+	* Fix patch rollout in tarball
 
 2015-01-29 13:04:46 +0100 Mike Gabriel (dc7495063)
 
-	* Assure that BuildRoot: is set. (gh-uli42/master)
+	* Assure that BuildRoot: is set.
 
 2015-01-29 12:48:05 +0100 Mike Gabriel (d9a48367e)
 
@@ -12392,9 +12996,7 @@
 
 2012-05-22 00:49:10 +0200 Mike Gabriel (222a4a222)
 
-	* Imported nxagent-3.5.0-9.tar.gz (origin/nxagent,
-          gh-sunweaver/nxagent, gh-mikedep333/nxagent,
-          gh-Ionic/nxagent)
+	* Imported nxagent-3.5.0-9.tar.gz
 
 2012-05-11 23:57:35 +0200 Mike Gabriel (fe72988fb)
 
@@ -13448,9 +14050,7 @@
 
 2011-11-13 09:53:38 +0100 Reinhard Tartler (6dc46faed)
 
-	* Imported nxproxy-3.5.0-1.tar.gz (tag: nxproxy/3.5.0-1,
-          origin/nxproxy, gh-sunweaver/nxproxy,
-          gh-mikedep333/nxproxy, gh-Ionic/nxproxy)
+	* Imported nxproxy-3.5.0-1.tar.gz (tag: nxproxy/3.5.0-1)
 
 2011-11-13 09:53:38 +0100 Reinhard Tartler (d83d9f6be)
 
@@ -13474,9 +14074,7 @@
 
 2011-11-13 09:53:12 +0100 Reinhard Tartler (bf85c6e69)
 
-	* Imported nxcompshad-3.5.0-2.tar.gz (tag: nxcompshad/3.5.0-2,
-          origin/nxcompshad, gh-sunweaver/nxcompshad,
-          gh-mikedep333/nxcompshad, gh-Ionic/nxcompshad)
+	* Imported nxcompshad-3.5.0-2.tar.gz (tag: nxcompshad/3.5.0-2)
 
 2011-11-13 09:53:12 +0100 Reinhard Tartler (c70adf725)
 
@@ -13508,9 +14106,7 @@
 
 2011-11-13 09:52:38 +0100 Reinhard Tartler (88dace9a9)
 
-	* Imported nxcompext-3.5.0-1.tar.gz (tag: nxcompext/3.5.0-1,
-          origin/nxcompext, gh-sunweaver/nxcompext,
-          gh-mikedep333/nxcompext, gh-Ionic/nxcompext)
+	* Imported nxcompext-3.5.0-1.tar.gz (tag: nxcompext/3.5.0-1)
 
 2011-11-13 09:52:38 +0100 Reinhard Tartler (9573b5669)
 
@@ -13538,9 +14134,7 @@
 
 2011-11-13 09:27:53 +0100 Reinhard Tartler (232dfc41d)
 
-	* Imported nxcomp-3.5.0-2.tar.gz (tag: nxcomp/3.5.0-2, origin/nxcomp,
-          gh-sunweaver/nxcomp, gh-mikedep333/nxcomp,
-          gh-Ionic/nxcomp)
+	* Imported nxcomp-3.5.0-2.tar.gz (tag: nxcomp/3.5.0-2)
 
 2011-11-13 09:27:53 +0100 Reinhard Tartler (233de71fc)
 
@@ -13712,9 +14306,7 @@
 
 2011-10-10 17:47:59 +0200 Reinhard Tartler (15cee47a4)
 
-	* Imported nx-X11-3.5.0-2.tar.gz (tag: nx-X11/3.5.0-2, origin/nx-X11,
-          gh-sunweaver/nx-X11, gh-mikedep333/nx-X11,
-          gh-Ionic/nx-X11)
+	* Imported nx-X11-3.5.0-2.tar.gz (tag: nx-X11/3.5.0-2)
 
 2011-10-10 17:47:52 +0200 Reinhard Tartler (964f53964)
 

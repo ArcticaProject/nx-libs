@@ -1,4 +1,11 @@
-nx-libs (2:3.5.99.16-1) unstable; urgency=medium
+nx-libs (2:3.5.99.17-0) UNRELEASED; urgency=medium
+
+  * Upstream-provided Debian package for nx-libs.
+    See upstream ChangeLog for recent changes.
+
+ -- Mike Gabriel <mike.gabriel@das-netzwerkteam.de>  Tue, 20 Nov 2018 16:02:49 +0100
+
+nx-libs (2:3.5.99.16-0) unstable; urgency=medium
 
   * Upstream-provided Debian package for nx-libs.
     See upstream ChangeLog for recent changes.
