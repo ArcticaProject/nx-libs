@@ -1,4 +1,4 @@
-Format: http://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
+Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
 Upstream-Name: NXv3 (aka nx-libs)
 Upstream-Contact: Mike Gabriel <mike.gabriel@das-netzwerkteam.de>
 Source: https://github.com/ArcticaProject/nx-libs/
@@ -105,6 +105,11 @@ Copyright: 2001, 2011, NoMachine (http://www.nomachine.com)
   2014-2016, Mihai Moldovan <ionic@ionic.de>
   2014-2016, Ulrich Sibiller <uli42@gmx.de>
   2015-2016, Qindel Group (http://www.qindel.com)
+License: GPL-2
+
+Files: nx-X11/programs/Xserver/hw/nxagent/x2goagent.xpm
+Copyright: 2008, Heinz-M. Graesing <heinz-m.graesing@obviously-nice.de>
+  2018, Mike Gabriel <mike.gabriel@das-netzwerkteam.de>
 License: GPL-2
 
 Files: nx-X11/programs/Xserver/include/client.h
@@ -722,6 +727,7 @@ Files: nx-X11/include/XWDFile.h
  nx-X11/include/extensions/bigreqstr.h
  nx-X11/include/extensions/security.h
  nx-X11/include/extensions/securstr.h
+ nx-X11/include/extensions/shapeconst.h
  nx-X11/include/extensions/xcmiscstr.h
  nx-X11/include/extensions/xtestconst.h
  nx-X11/include/extensions/xteststr.h
@@ -973,7 +979,6 @@ Files: nx-X11/include/XWDFile.h
  nx-X11/programs/Xserver/include/validate.h
  nx-X11/programs/Xserver/mi/cbrt.c
  nx-X11/programs/Xserver/mi/mibstorest.h
- nx-X11/programs/Xserver/mi/miclipn.c
  nx-X11/programs/Xserver/mi/midispcur.c
  nx-X11/programs/Xserver/mi/mieq.c
  nx-X11/programs/Xserver/mi/mifillarc.c
@@ -1176,6 +1181,7 @@ Files: nx-X11/Imakefile
  nx-X11/config/cf/lnxLib.rules
  nx-X11/config/cf/lnxLib.tmpl
  nx-X11/config/cf/noop.rules
+ nx-X11/config/cf/nxcompile.def
  nx-X11/config/cf/nxversion.def.in
  nx-X11/config/cf/site.def
  nx-X11/config/cf/xf86.rules
@@ -1188,6 +1194,7 @@ Files: nx-X11/Imakefile
  nx-X11/include/extensions/Imakefile
  nx-X11/programs/Imakefile
  nx-X11/programs/Xserver/Xi/Imakefile
+ nx-X11/programs/Xserver/code-versions.txt
  nx-X11/programs/Xserver/composite/Imakefile
  nx-X11/programs/Xserver/damageext/Imakefile
  nx-X11/programs/Xserver/dbe/Imakefile
@@ -1453,13 +1460,10 @@ Files: nx-X11/include/extensions/composite.h
  nx-X11/programs/Xserver/render/mipict.c
  nx-X11/programs/Xserver/render/renderedge.c
  nx-X11/programs/Xserver/render/renderedge.h
- nx-X11/programs/Xserver/xfixes/cursor.c
  nx-X11/programs/Xserver/xfixes/region.c
  nx-X11/programs/Xserver/xfixes/saveset.c
  nx-X11/programs/Xserver/xfixes/select.c
- nx-X11/programs/Xserver/xfixes/xfixes.c
  nx-X11/programs/Xserver/xfixes/xfixes.h
- nx-X11/programs/Xserver/xfixes/xfixesint.h
  nx-X11/programs/Xserver/Xext/shmint.h
  nxcompshad/src/X11/include/Xdamage_nxcompshad.h
 Copyright: 1998, Keith Packard
@@ -1512,13 +1516,10 @@ Files: nx-X11/include/extensions/XKB.h
  nx-X11/programs/Xserver/xkb/XKBMAlloc.c
  nx-X11/programs/Xserver/xkb/XKBMisc.c
  nx-X11/programs/Xserver/xkb/ddxBeep.c
- nx-X11/programs/Xserver/xkb/ddxConfig.c
  nx-X11/programs/Xserver/xkb/ddxCtrls.c
  nx-X11/programs/Xserver/xkb/ddxDevBtn.c
  nx-X11/programs/Xserver/xkb/ddxFakeBtn.c
  nx-X11/programs/Xserver/xkb/ddxFakeMtn.c
- nx-X11/programs/Xserver/xkb/ddxInit.c
- nx-X11/programs/Xserver/xkb/ddxKeyClick.c
  nx-X11/programs/Xserver/xkb/ddxKillSrv.c
  nx-X11/programs/Xserver/xkb/ddxLEDs.c
  nx-X11/programs/Xserver/xkb/ddxList.c
@@ -1535,7 +1536,6 @@ Files: nx-X11/include/extensions/XKB.h
  nx-X11/programs/Xserver/xkb/xkbPrOtherEv.c
  nx-X11/programs/Xserver/xkb/xkbSwap.c
  nx-X11/programs/Xserver/xkb/xkbUtils.c
- nx-X11/programs/Xserver/xkb/xkbconfig.c
  nx-X11/programs/Xserver/xkb/xkberrs.c
  nx-X11/programs/Xserver/xkb/xkbfmisc.c
  nx-X11/programs/Xserver/xkb/xkbgeom.h
@@ -1944,9 +1944,7 @@ Comment:
  with NXAGENT_SERVER) must be considered as strictly GPL-2
  licensed additions.
 
-Files: nx-X11/include/extensions/xfixesproto.h
- nx-X11/include/extensions/xfixeswire.h
- nx-X11/programs/Xserver/fb/fbcompose.c
+Files: nx-X11/programs/Xserver/fb/fbcompose.c
  nx-X11/programs/Xserver/fb/fbpict.h
  nx-X11/programs/Xserver/render/animcur.c
  nx-X11/programs/Xserver/render/miindex.c
@@ -2039,11 +2037,25 @@ Comment:
  Adaptations required for the nxagent DDX done by NoMachine
  need to be considered as strictly GPL-2 licensed additions.
 
+Files: nx-X11/programs/Xserver/dix/events.c
+Copyright: 1987, 1998, The Open Group
+  1987, Digital Equipment Corporation, Maynard, Massachusetts
+  1991, 1997, Digital Equipment Corporation, Maynard, Massachusetts
+  2003-2005, Sun Microsystems, Inc.
+License: MIT~OpenGroup
+Comment:
+ Contributions by Digital Equipment Corporation, Maynard, Massachusetts
+ have been licensed under MIT~OldStyle.
+ .
+ Contributions by Digital Equipment Corporation, Maynard, Massachusetts
+ from 1991 and 1997 have been licensed under Expat.
+ .
+ Contributions by Sun Microsystems, Inc. from 2003-2005 have been licensed
+ under Expat.
+
 Files: nx-X11/programs/Xserver/dix/dispatch.c
- nx-X11/programs/Xserver/dix/events.c
  nx-X11/programs/Xserver/dix/main.c
  nx-X11/programs/Xserver/dix/resource.c
- nx-X11/programs/Xserver/dix/window.c
  nx-X11/programs/Xserver/mi/miexpose.c
 Copyright: 1987, 1989, Digital Equipment Corporation, Maynard, Massachusetts
   1987, 1989, 1998, The Open Group
@@ -2054,6 +2066,22 @@ License: MIT~OpenGroup
 Comment:
  Contributions by Digital Equipment Corporation, Maynard, Massachusetts
  have been licensed under MIT~OldStyle.
+ .
+ Contributions by Digital Equipment Corporation, Maynard, Massachusetts
+ from 1991 and 1997 have been licensed under Expat.
+
+Files: nx-X11/programs/Xserver/dix/window.c
+Copyright: 1987, 1998, The Open Group
+  2006, Red Hat, Inc.
+  1991, 1997 Digital Equipment Corporation, Maynard, Massachusetts.
+  1987, Digital Equipment Corporation, Maynard, Massachusetts,
+License: MIT~OpenGroup
+Comment:
+ Contributions by Digital Equipment Corporation, Maynard, Massachusetts
+ from 1987 have been licensed under MIT~OldStyle.
+ .
+ Contributions by Digital Equipment Corporation, Maynard, Massachusetts
+ from 1991 and 1997 have been licensed under Expat.
 
 Files: nx-X11/include/extensions/Xdbeproto.h
  nx-X11/programs/Xserver/dbe/dbe.c
@@ -2081,6 +2109,33 @@ Files: nx-X11/extras/Mesa/src/mesa/tnl/t_save_api.c
 Copyright: 2002, Tungsten Graphics Inc., Cedar Park, Texas
   2004, Tungsten Graphics Inc., Cedar Park, Texas
 License: Expat
+
+Files: nx-X11/lib/src/FreeEventData.c
+ nx-X11/lib/src/GetEventData.c
+ nx-X11/programs/Xserver/include/protocol-versions.h
+Copyright: 2006, Red Hat, Inc.
+  2009, Red Hat, Inc.
+License: Expat
+
+Files: nx-X11/include/extensions/xfixesproto.h
+ nx-X11/include/extensions/xfixeswire.h
+Copyright: 2006, Oracle and/or its affiliates.
+  2010, Red Hat, Inc.
+  2011, Red Hat, Inc.
+  2002, Keith Packard
+License: MIT~X11
+Comment:
+ Original work by Keith Packard has been licensed under MIT~X11.
+ .
+ Later contributions by Oracle and/or its affiliates and Red Hat Inc.
+ have been licensed under Expat.
+
+Files: nx-X11/programs/Xserver/xfixes/cursor.c
+ nx-X11/programs/Xserver/xfixes/xfixes.c
+ nx-X11/programs/Xserver/xfixes/xfixesint.h
+Copyright: 2006, Sun Microsystems
+  2002, Keith Packard
+License: MIT~X11
 
 Files: nx-X11/lib/include/xtrans/Xtrans.c
  nx-X11/lib/include/xtrans/Xtrans.h
@@ -2160,12 +2215,6 @@ Files: nx-X11/extras/Mesa/src/mesa/shader/atifragshader.c
  nx-X11/extras/Mesa/src/mesa/swrast/s_atifragshader.h
 Copyright: 1999-2003, David Airlie
   2004, David Airlie
-License: Expat
-
-Files: nx-X11/lib/src/FreeEventData.c
- nx-X11/lib/src/GetEventData.c
- nx-X11/programs/Xserver/include/protocol-versions.h
-Copyright: 2009, Red Hat, Inc
 License: Expat
 
 Files: nx-X11/include/extensions/xf86bigfont.h
@@ -2369,6 +2418,12 @@ License: MIT~X11
 Files: nx-X11/lib/src/xlibi18n/lcFile.c
 Copyright: 1993, IBM Corporation
 License: MIT~OldStyle
+
+Files: doc/nxagent/x11.svg
+ nx-X11/programs/Xserver/hw/nxagent/x11.svg
+ nx-X11/programs/Xserver/hw/nxagent/nxagent.xpm
+Copyright: 2006, Marian Sigler
+License: public-domain
 
 Files: nx-X11/include/extensions/record.h
  nx-X11/include/extensions/recordstr.h
@@ -2902,7 +2957,8 @@ Files: m4/nx-xtrans.m4
 Copyright: 2005, 2006, Oracle and/or its affiliates
 License: Expat
 
-Files: ChangeLog
+Files: .travis.yml
+ ChangeLog
  Makefile
  doc/README.NX-development
  VERSION
@@ -2923,13 +2979,10 @@ Files: ChangeLog
  doc/nxcompext/symbols/nxcompext::symbols.txt
  doc/nxproxy/README-VALGRIND
  etc/keystrokes.cfg
- etc/nxagent.keyboard
  nx-X11/config/cf/.gitignore
  nx-X11/lib/.gitignore
  nx-X11/programs/Xserver/hw/nxagent/man/nxagent.1
- nx-X11/programs/Xserver/hw/nxagent/nxagent.xpm
  nx-X11/programs/Xserver/hw/nxagent/nxmissing.xpm
- nx-X11/programs/Xserver/hw/nxagent/x2go.xpm
  nx-X11/Makefile
  nxcomp/Makefile.am
  nxcomp/src/Makefile.am
@@ -2947,6 +3000,7 @@ Files: ChangeLog
  nxproxy/configure.ac
  nxproxy/man/Makefile.am
  nxproxy/src/Makefile.am
+ run-static-analysis.sh
 Copyright: 2001, 2011, NoMachine (http://www.nomachine.com)
   2008-2014, Oleksandr Shneyder <o.shneyder@phoca-gmbh.de>
   2011-2016, Mike Gabriel <mike.gabriel@das-netzwerkteam.de>*/
@@ -3842,3 +3896,8 @@ License: permissive
  permitted in any medium without royalty provided the copyright notice
  and this notice are preserved. This file is offered as-is, without any
  warranty.
+
+License: public-domain
+ All rights to this package are hereby disclaimed and its contents released
+ into the public domain by the author. Where this is not possible, you may
+ use this file under the same terms of the software you want to use it with.

@@ -26,6 +26,7 @@ Files: nx-X11/include/DECkeysym.h
  nx-X11/include/extensions/bigreqstr.h
  nx-X11/include/extensions/security.h
  nx-X11/include/extensions/securstr.h
+ nx-X11/include/extensions/shapeconst.h
  nx-X11/include/extensions/sync.h
  nx-X11/include/extensions/syncstr.h
  nx-X11/include/extensions/xcmiscstr.h
@@ -354,7 +355,6 @@ Files: nx-X11/include/DECkeysym.h
  nx-X11/programs/Xserver/dix/swaprep.c
  nx-X11/programs/Xserver/dix/swapreq.c
  nx-X11/programs/Xserver/dix/tables.c
- nx-X11/programs/Xserver/dix/window.c
  nx-X11/programs/Xserver/dix/xpstubs.c
  nx-X11/programs/Xserver/hw/nxagent/BitmapUtils.c
  nx-X11/programs/Xserver/hw/nxagent/X11/include/Xinerama_nxagent.h
@@ -395,7 +395,6 @@ Files: nx-X11/include/DECkeysym.h
  nx-X11/programs/Xserver/mi/miarc.c
  nx-X11/programs/Xserver/mi/mibitblt.c
  nx-X11/programs/Xserver/mi/mibstorest.h
- nx-X11/programs/Xserver/mi/miclipn.c
  nx-X11/programs/Xserver/mi/micursor.c
  nx-X11/programs/Xserver/mi/midash.c
  nx-X11/programs/Xserver/mi/midispcur.c
@@ -590,7 +589,6 @@ Files: nx-X11/Imakefile
  nx-X11/programs/Xserver/hw/nxagent/compext/Rle.h
  nx-X11/programs/Xserver/hw/nxagent/compext/Z.c
  nx-X11/programs/Xserver/hw/nxagent/compext/Z.h
- nx-X11/programs/Xserver/hw/nxagent/nxagent.xpm
  nx-X11/programs/Xserver/hw/nxagent/nxmissing.xpm
  nx-X11/programs/Xserver/hw/nxagent/screensaver
  nx-X11/programs/Xserver/mi/Imakefile
@@ -697,6 +695,8 @@ Files: nx-X11/Imakefile
  nxcomp/src/List.h
  nxcomp/src/ListFontsReply.cpp
  nxcomp/src/ListFontsReply.h
+ nxcomp/src/Log.cpp
+ nxcomp/src/Log.h
  nxcomp/src/Loop.cpp
  nxcomp/src/Message.cpp
  nxcomp/src/Message.h
@@ -1162,9 +1162,11 @@ Copyright: 1999-2001, Brian Paul
 License: MIT/X11 (BSD like)
  FIXME
 
-Files: Makefile
+Files: ChangeLog
+ Makefile
  VERSION
  debian/README.source
+ debian/changelog
  debian/compat
  debian/control
  debian/files
@@ -1181,6 +1183,7 @@ Files: Makefile
  debian/libxcompshad-dev.install
  debian/libxcompshad-dev.links
  debian/libxcompshad3.install
+ debian/libxcompshad3.lintian-overrides
  debian/libxcompshad3.triggers
  debian/nx-x11-common.install
  debian/nx-x11proto-composite-dev.install
@@ -1206,6 +1209,7 @@ Files: Makefile
  debian/patches/series
  debian/rules
  debian/source/format
+ debian/upstream
  debian/upstream/signing-key.asc
  debian/watch
  doc/README.NX-development
@@ -1215,7 +1219,6 @@ Files: Makefile
  doc/nxagent/README.keystrokes.debug
  doc/nxproxy/README-VALGRIND
  etc/keystrokes.cfg
- etc/nxagent.keyboard
  nx-X11/Makefile
  nx-X11/config/Imakefile
  nx-X11/config/cf/Imake.cf
@@ -1235,6 +1238,7 @@ Files: Makefile
  nx-X11/config/cf/lnxLib.rules
  nx-X11/config/cf/lnxLib.tmpl
  nx-X11/config/cf/noop.rules
+ nx-X11/config/cf/nxcompile.def
  nx-X11/config/cf/nxversion.def.in
  nx-X11/config/cf/site.def
  nx-X11/config/cf/xf86.rules
@@ -1246,6 +1250,7 @@ Files: Makefile
  nx-X11/extras/Mesa.patches/4002_no-special-glx-memfunctions.patch
  nx-X11/extras/Mesa.patches/4003_CreatePixmap-AllocationHints.patch
  nx-X11/extras/Mesa.patches/4004_define-USE_IEEE-macro-for-more-platforms.patch
+ nx-X11/extras/Mesa.patches/4005_adapt-all-libX11-include-paths-to-libNX_X11.patch
  nx-X11/extras/Mesa.patches/5001_nasty-typo-fixes.patch
  nx-X11/extras/Mesa.patches/series
  nx-X11/extras/Mesa/src/mesa/main/KNOWN_BUGS
@@ -1376,6 +1381,7 @@ Files: Makefile
  nx-X11/programs/Xserver/Xext/xvmc.c
  nx-X11/programs/Xserver/Xext/xvmcext.h
  nx-X11/programs/Xserver/Xi/Imakefile
+ nx-X11/programs/Xserver/code-versions.txt
  nx-X11/programs/Xserver/composite/Imakefile
  nx-X11/programs/Xserver/damageext/Imakefile
  nx-X11/programs/Xserver/dbe/Imakefile
@@ -1386,6 +1392,7 @@ Files: Makefile
  nx-X11/programs/Xserver/fix-region
  nx-X11/programs/Xserver/hw/nxagent/Imakefile
  nx-X11/programs/Xserver/hw/nxagent/compext/Imakefile
+ nx-X11/programs/Xserver/hw/nxagent/nxagent.xpm
  nx-X11/programs/Xserver/include/Imakefile
  nx-X11/programs/Xserver/include/globals.h
  nx-X11/programs/Xserver/mi/micmap.h
@@ -1407,6 +1414,9 @@ Files: Makefile
  nxcomp/configure.ac
  nxcomp/nxcomp.pc.in
  nxcomp/src/Makefile.am
+ nxcomp/test/Makefile.am
+ nxcomp/test/logging_test.cpp
+ nxcomp/test/logging_test.h
  nxcompshad/Makefile.am
  nxcompshad/VERSION
  nxcompshad/configure.ac
@@ -1418,6 +1428,7 @@ Files: Makefile
  nxproxy/man/Makefile.am
  nxproxy/man/nxproxy.1
  nxproxy/src/Makefile.am
+ run-static-analysis.sh
 Copyright: NONE
 License: UNKNOWN
  FIXME
@@ -1487,13 +1498,10 @@ Files: nx-X11/include/extensions/composite.h
  nx-X11/programs/Xserver/render/mipict.c
  nx-X11/programs/Xserver/render/renderedge.c
  nx-X11/programs/Xserver/render/renderedge.h
- nx-X11/programs/Xserver/xfixes/cursor.c
  nx-X11/programs/Xserver/xfixes/region.c
  nx-X11/programs/Xserver/xfixes/saveset.c
  nx-X11/programs/Xserver/xfixes/select.c
- nx-X11/programs/Xserver/xfixes/xfixes.c
  nx-X11/programs/Xserver/xfixes/xfixes.h
- nx-X11/programs/Xserver/xfixes/xfixesint.h
  nxcompshad/src/X11/include/Xdamage_nxcompshad.h
 Copyright: 1998, Keith Packard
   1999, Keith Packard
@@ -1547,13 +1555,10 @@ Files: nx-X11/include/extensions/XKB.h
  nx-X11/programs/Xserver/xkb/XKBMAlloc.c
  nx-X11/programs/Xserver/xkb/XKBMisc.c
  nx-X11/programs/Xserver/xkb/ddxBeep.c
- nx-X11/programs/Xserver/xkb/ddxConfig.c
  nx-X11/programs/Xserver/xkb/ddxCtrls.c
  nx-X11/programs/Xserver/xkb/ddxDevBtn.c
  nx-X11/programs/Xserver/xkb/ddxFakeBtn.c
  nx-X11/programs/Xserver/xkb/ddxFakeMtn.c
- nx-X11/programs/Xserver/xkb/ddxInit.c
- nx-X11/programs/Xserver/xkb/ddxKeyClick.c
  nx-X11/programs/Xserver/xkb/ddxKillSrv.c
  nx-X11/programs/Xserver/xkb/ddxLEDs.c
  nx-X11/programs/Xserver/xkb/ddxList.c
@@ -1570,7 +1575,6 @@ Files: nx-X11/include/extensions/XKB.h
  nx-X11/programs/Xserver/xkb/xkbPrOtherEv.c
  nx-X11/programs/Xserver/xkb/xkbSwap.c
  nx-X11/programs/Xserver/xkb/xkbUtils.c
- nx-X11/programs/Xserver/xkb/xkbconfig.c
  nx-X11/programs/Xserver/xkb/xkberrs.c
  nx-X11/programs/Xserver/xkb/xkbfmisc.c
  nx-X11/programs/Xserver/xkb/xkbgeom.h
@@ -1952,9 +1956,19 @@ Copyright: 1991-1992, Oracle and/or its affiliates.
 License: NTP (legal disclaimer)
  FIXME
 
-Files: nx-X11/include/extensions/xfixesproto.h
- nx-X11/include/extensions/xfixeswire.h
- nx-X11/programs/Xserver/fb/fbcompose.c
+Files: 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+Copyright: NONE
+License: 
+ FIXME
+
+Files: nx-X11/programs/Xserver/fb/fbcompose.c
  nx-X11/programs/Xserver/fb/fbpict.h
  nx-X11/programs/Xserver/render/animcur.c
  nx-X11/programs/Xserver/render/miindex.c
@@ -1965,17 +1979,6 @@ Copyright: 2000, Keith Packard, member of The XFree86 Project, Inc.
   2001, Keith Packard, member of The XFree86 Project, Inc.
   2002, Keith Packard, member of The XFree86 Project, Inc.
 License: NTP (legal disclaimer)
- FIXME
-
-Files: 
- 
- 
- 
- 
- 
- 
-Copyright: NONE
-License: 
  FIXME
 
 Files: nx-X11/extras/Mesa/src/mesa/tnl/t_save_api.c
@@ -2053,6 +2056,18 @@ Copyright: 2001, 2011, NoMachine, http:www.nomachine.com/.
 License: UNKNOWN
  FIXME
 
+Files: m4/nx-xtrans.m4
+ nx-X11/include/Sunkeysym.h
+ nx-X11/lib/m4/nx-xtrans.m4
+ nx-X11/lib/modules/im/ximcp/imDefIm.c
+ nx-X11/programs/Xserver/include/Xprintf.h
+Copyright: 1990-1992, Oracle and/or its affiliates.
+  1991, Oracle and/or its affiliates.
+  2005, Oracle and/or its affiliates.
+  2010, Oracle and/or its affiliates.
+License: UNKNOWN
+ FIXME
+
 Files: nx-X11/extras/Mesa/include/GL/xmesa_xf86.h
  nx-X11/programs/Xserver/GL/mesa/X/xf86glx.c
  nx-X11/programs/Xserver/GL/mesa/X/xf86glx_util.c
@@ -2060,6 +2075,33 @@ Files: nx-X11/extras/Mesa/include/GL/xmesa_xf86.h
  nx-X11/programs/Xserver/GL/mesa/X/xf86glxint.h
 Copyright: 1998-1999, Precision Insight, Inc., Cedar Park, Texas.
 License: UNKNOWN
+ FIXME
+
+Files: m4/ax_cxx_compile_stdcxx.m4
+ nxcomp/m4/ax_cxx_compile_stdcxx.m4
+ nxcompshad/m4/ax_cxx_compile_stdcxx.m4
+ nxproxy/m4/ax_cxx_compile_stdcxx.m4
+Copyright: 2008, Benjamin Kosnik <bkoz@redhat.com>
+  2012, Zack Weinberg <zackw@panix.com>
+  2013, Roy Stogner <roystgnr@ices.utexas.edu>
+  2014-2015, Google Inc.; contributed by Alexey Sokolov <sokolov@google.com>
+  2015, Moritz Klammler <moritz@klammler.eu>
+  2015, Paul Norman <penorman@mac.com>
+  2016, Krzesimir Nowak <qdlacz@gmail.com>
+License: FSF All Permissive
+ FIXME
+
+Files: m4/ax_cxx_compile_stdcxx_11.m4
+ nxcomp/m4/ax_cxx_compile_stdcxx_11.m4
+ nxcompshad/m4/ax_cxx_compile_stdcxx_11.m4
+ nxproxy/m4/ax_cxx_compile_stdcxx_11.m4
+Copyright: 2008, Benjamin Kosnik <bkoz@redhat.com>
+  2012, Zack Weinberg <zackw@panix.com>
+  2013, Roy Stogner <roystgnr@ices.utexas.edu>
+  2014-2015, Google Inc.; contributed by Alexey Sokolov <sokolov@google.com>
+  2015, Moritz Klammler <moritz@klammler.eu>
+  2015, Paul Norman <penorman@mac.com>
+License: FSF All Permissive
  FIXME
 
 Files: nx-X11/extras/Mesa/src/mesa/glapi/glapioffsets.h
@@ -2097,13 +2139,12 @@ Copyright: 2004, Eric Anholt
 License: NTP (legal disclaimer)
  FIXME
 
-Files: m4/nx-xtrans.m4
- nx-X11/include/Sunkeysym.h
- nx-X11/lib/m4/nx-xtrans.m4
- nx-X11/lib/modules/im/ximcp/imDefIm.c
-Copyright: 1990-1992, Oracle and/or its affiliates.
-  1991, Oracle and/or its affiliates.
-  2005, Oracle and/or its affiliates.
+Files: nx-X11/lib/src/FreeEventData.c
+ nx-X11/lib/src/GetEventData.c
+ nx-X11/programs/Xserver/dix/window.c
+ nx-X11/programs/Xserver/include/protocol-versions.h
+Copyright: 2006, Red Hat, Inc.
+  2009, Red Hat, Inc.
 License: UNKNOWN
  FIXME
 
@@ -2115,12 +2156,12 @@ Copyright: 2003, Tungsten Graphics, inc.
 License: UNKNOWN
  FIXME
 
-Files: bin/nxagent.in
- bin/nxproxy.in
- mesa-quilt
-Copyright: 2012, Mike Gabriel <mike.gabriel@das-netzwerkteam.de>
-  2017, Mike Gabriel <mike.gabriel@das-netzwerkteam.de>
-License: GPL (v3 or later)
+Files: m4/ax_pthread.m4
+ nxcomp/m4/ax_pthread.m4
+ nxproxy/m4/ax_pthread.m4
+Copyright: 2008, Steven G. Johnson <stevenj@alum.mit.edu>
+  2011, Daniel Richard G. <skunk@iSKUNK.ORG>
+License: GPL
  FIXME
 
 Files: nx-X11/extras/Mesa/src/mesa/shader/atifragshader.c
@@ -2138,18 +2179,27 @@ Copyright: 1987, the Regents of the University of California
 License: NTP
  FIXME
 
+Files: nx-X11/include/extensions/xfixesproto.h
+ nx-X11/include/extensions/xfixeswire.h
+ nx-X11/programs/Xserver/hw/nxagent/X11/include/Xfixes_nxagent.h
+Copyright: 2006, Oracle and/or its affiliates.
+  2010, Red Hat, Inc.
+  2011, Red Hat, Inc.
+License: NTP (legal disclaimer)
+ FIXME
+
+Files: nx-X11/programs/Xserver/xfixes/cursor.c
+ nx-X11/programs/Xserver/xfixes/xfixes.c
+ nx-X11/programs/Xserver/xfixes/xfixesint.h
+Copyright: 2006, Sun Microsystems
+License: NTP (legal disclaimer)
+ FIXME
+
 Files: nx-X11/include/extensions/xf86bigfont.h
  nx-X11/include/extensions/xf86bigfproto.h
  nx-X11/programs/Xserver/Xext/xf86bigfont.c
 Copyright: 1999-2000, Bruno Haible
   1999-2000, The XFree86 Project, Inc.
-License: UNKNOWN
- FIXME
-
-Files: nx-X11/lib/src/FreeEventData.c
- nx-X11/lib/src/GetEventData.c
- nx-X11/programs/Xserver/include/protocol-versions.h
-Copyright: 2009, Red Hat, Inc.
 License: UNKNOWN
  FIXME
 
@@ -2275,6 +2325,12 @@ Copyright: 1987, Digital Equipment Corporation, Maynard, Massachusetts,
 License: UNKNOWN
  FIXME
 
+Files: doc/nxagent/x11.svg
+ nx-X11/programs/Xserver/hw/nxagent/x11.svg
+Copyright: 2006, Marian Sigler -->
+License: UNKNOWN
+ FIXME
+
 Files: nx-X11/include/extensions/record.h
  nx-X11/include/extensions/recordstr.h
 Copyright: 1995, Network Computing Devices
@@ -2360,11 +2416,6 @@ Copyright: IBM Corporation 2005
 License: GENERATED FILE
  FIXME
 
-Files: debian/changelog
-Copyright: attributions.
-License: GENERATED FILE
- FIXME
-
 Files: replace.sh
 Copyright: 2013, Jan Engelhardt <jengelh@inai.de>
 License: GPL (v2 or later)
@@ -2402,6 +2453,11 @@ License: GPL (v2)
 Files: nxcomp/src/Version.c
 Copyright: 2015, Qindel Formacion y Servicios SL.
 License: GPL (v2)
+ FIXME
+
+Files: mesa-quilt
+Copyright: 2017, Mike Gabriel <mike.gabriel@das-netzwerkteam.de>
+License: GPL (v3 or later)
  FIXME
 
 Files: roll-tarballs.sh
@@ -2521,12 +2577,6 @@ Copyright: 1990-1991, OMRON Corporation, NTT Software Corporation,
 License: NTP (legal disclaimer)
  FIXME
 
-Files: nx-X11/programs/Xserver/hw/nxagent/X11/include/Xfixes_nxagent.h
-Copyright: 2006, Oracle and/or its affiliates.
-  2011, Red Hat, Inc.
-License: NTP (legal disclaimer)
- FIXME
-
 Files: nx-X11/programs/Xserver/randr/rrprovider.c
 Copyright: 2012, Red Hat Inc.
 License: NTP (legal disclaimer)
@@ -2588,8 +2638,9 @@ Copyright: 1989, 1991, Free Software Foundation, Inc.,
 License: UNKNOWN
  FIXME
 
-Files: nx-X11/programs/Xserver/hw/nxagent/x2go.xpm
+Files: nx-X11/programs/Xserver/hw/nxagent/x2goagent.xpm
 Copyright: 2008, Heinz-M. Graesing <heinz-m.graesing@obviously-nice.de>
+  2018, Mike Gabriel <mike.gabriel@das-netzwerkteam.de>
   of the aforementioned persons and companies.
 License: UNKNOWN
  FIXME
@@ -2644,11 +2695,6 @@ License: UNKNOWN
 
 Files: debian/copyright
 Copyright: -format/1.0/
-License: UNKNOWN
- FIXME
-
-Files: ChangeLog
-Copyright: Update copyright attributions.
 License: UNKNOWN
  FIXME
 
