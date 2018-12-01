@@ -819,20 +819,20 @@ XkbError:
         #endif
 
         {
-          char *drules = NULL;
-          char *dmodel = NULL;
-          char *dlayout = NULL;
-          char *dvariant = NULL;
-          char *doptions = NULL;
+          char *remoterules = NULL;
+          char *remotemodel = NULL;
+          char *remotelayout = NULL;
+          char *remotevariant = NULL;
+          char *remoteoptions = NULL;
 
-          unsigned int drulesLen = nxagentXkbGetNames(&drules, &dmodel, &dlayout,
-                                                      &dvariant, &doptions);
+          unsigned int remoteruleslen = nxagentXkbGetNames(&remoterules, &remotemodel, &remotelayout,
+                                                           &remotevariant, &remoteoptions);
 
           #ifdef DEBUG
-          if (drulesLen && drules && dmodel)
+          if (remoteruleslen && remoterules && remotemodel)
           {
             fprintf(stderr, "%s: Remote: [rules='%s',model='%s',layout='%s',variant='%s',options='%s'].\n",
-                    __func__, drules, dmodel, dlayout, dvariant, doptions);
+                    __func__, remoterules, remotemodel, remotelayout, remotevariant, remoteoptions);
           }
           else
           {
@@ -840,12 +840,12 @@ XkbError:
           }
           #endif
 
-          nxagentWriteKeyboardFile(drulesLen, drules, dmodel, dlayout, dvariant, doptions);
-          nxagentKeycodeConversionSetup(drules, dmodel);
+          nxagentWriteKeyboardFile(remoteruleslen, remoterules, remotemodel, remotelayout, remotevariant, remoteoptions);
+          nxagentKeycodeConversionSetup(remoterules, remotemodel);
 
-          if (drules)
+          if (remoterules)
           {
-            XFree(drules);
+            XFree(remoterules);
           }
         }
 
@@ -1687,21 +1687,21 @@ void nxagentResetKeycodeConversion(void)
 
   if (result != 0)
   {
-    char *drules = NULL;
-    char *dmodel = NULL;
-    char *dlayout = NULL;
-    char *dvariant = NULL;
-    char *doptions = NULL;
-    unsigned int drulesLen;
+    char *remoterules = NULL;
+    char *remotemodel = NULL;
+    char *remotelayout = NULL;
+    char *remotevariant = NULL;
+    char *remoteoptions = NULL;
+    unsigned int remoteruleslen;
 
-    drulesLen = nxagentXkbGetNames(&drules, &dmodel, &dlayout,
-                                   &dvariant, &doptions);
+    remoteruleslen = nxagentXkbGetNames(&remoterules, &remotemodel, &remotelayout,
+                                        &remotevariant, &remoteoptions);
 
-    if (drulesLen && drules && dmodel)
-      nxagentKeycodeConversionSetup(drules, dmodel);
+    if (remoteruleslen && remoterules && remotemodel)
+      nxagentKeycodeConversionSetup(remoterules, remotemodel);
 
-    if (drules)
-      XFree(drules);
+    if (remoterules)
+      XFree(remoterules);
   }
   else
   {
