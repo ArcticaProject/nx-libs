@@ -1644,35 +1644,34 @@ void nxagentKeycodeConversionSetup(char * rules, char * model)
   {
     fprintf(stderr, "Info: Keycode conversion is off\n");
     nxagentKeycodeConversion = False;
-    return;
   }
   else if (nxagentOption(KeycodeConversion) == KeycodeConversionOn)
   {
     fprintf(stderr, "Info: Keycode conversion is on\n");
     nxagentKeycodeConversion = True;
-    return;
-  }
-
-  if (rules && model &&
-      (strcmp(rules, "evdev") == 0 ||
-       strcmp(model, "evdev") == 0))
-  {
-    #ifdef DEBUG
-    fprintf(stderr, "%s: Activating KeyCode conversion.\n", __func__);
-    #endif
-
-    fprintf(stderr, "Info: Keycode conversion auto-determined as on\n");
-    nxagentKeycodeConversion = True;
   }
   else
   {
-    #ifdef DEBUG
-    fprintf(stderr, "%s: Deactivating KeyCode conversion.\n", __func__);
-    #endif
+    if (rules && model &&
+        (strcmp(rules, "evdev") == 0 ||
+         strcmp(model, "evdev") == 0))
+    {
+      #ifdef DEBUG
+      fprintf(stderr, "%s: Activating KeyCode conversion.\n", __func__);
+      #endif
 
-    fprintf(stderr, "Info: Keycode conversion auto-determined as off\n");
+      fprintf(stderr, "Info: Keycode conversion auto-determined as on\n");
+      nxagentKeycodeConversion = True;
+    }
+    else
+    {
+      #ifdef DEBUG
+      fprintf(stderr, "%s: Deactivating KeyCode conversion.\n", __func__);
+      #endif
 
-    nxagentKeycodeConversion = False;
+      fprintf(stderr, "Info: Keycode conversion auto-determined as off\n");
+      nxagentKeycodeConversion = False;
+    }
   }
 }
 
