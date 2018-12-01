@@ -746,7 +746,7 @@ XkbError:
 #ifdef XKB
       } else { /* if (noXkbExtension) */
         XkbComponentNamesRec names = {0};
-        char *rules = NULL, *variants = NULL, *options = NULL; /* use xkb default */
+        char *rules = NULL, *variant = NULL, *options = NULL; /* use xkb default */
 
         #ifdef TEST
         fprintf(stderr, "nxagentKeyboardProc: Using XKB extension.\n");
@@ -864,11 +864,11 @@ XkbError:
 
         #ifdef DEBUG
         fprintf(stderr, "nxagentKeyboardProc: Going to set rules and init device: "
-                        "[rules='%s',model='%s',layout='%s',variants='%s',options='%s'].\n",
-                        rules, model, layout, variants, options);
+                        "[rules='%s',model='%s',layout='%s',variant='%s',options='%s'].\n",
+                        rules, model, layout, variant, options);
         #endif
 
-        XkbSetRulesDflts(rules, model, layout, variants, options);
+        XkbSetRulesDflts(rules, model, layout, variant, options);
         XkbInitKeyboardDeviceStruct((void *)pDev, &names, &keySyms, modmap,
                                     nxagentBell, nxagentChangeKeyboardControl);
 
