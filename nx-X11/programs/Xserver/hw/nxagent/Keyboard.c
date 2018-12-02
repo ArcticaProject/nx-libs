@@ -774,8 +774,33 @@ XkbError:
             goto XkbError;
           }
 
-          model = strndup(nxagentKeyboard, i);
-          layout = strdup(&nxagentKeyboard[i + 1]);
+          /*
+            The original nxagent only supports model/layout values
+            here. It uses these values together with the default rules
+            and empty variant and options. We use a more or less
+            compatible hack here: The special keyword rlmvo for model
+            means that the layout part of the string will contain a
+            full RMLVO config, separated by #, e.g.
+            rlmvo/base#pc105#de,us#nodeadkeys#lv3:rwin_switch
+          */
+          if (strncmp(nxagentKeyboard, "rlmvo/", 6) == 0)
+          {
+            const char * sep = "#";
+            char * rmlvo = strdup(&nxagentKeyboard[i+1]);
+            char * tmp = rmlvo;
+            /* strtok cannot handle empty fields, so use strsep */
+            rules = strdup(strsep(&tmp, sep));
+            model = strdup(strsep(&tmp, sep));
+            layout = strdup(strsep(&tmp, sep));
+            variant = strdup(strsep(&tmp, sep));
+            options = strdup(strsep(&tmp, sep));
+            free(rmlvo);
+          }
+          else
+          {
+            model = strndup(nxagentKeyboard, i);
+            layout = strdup(&nxagentKeyboard[i + 1]);
+          }
 
           /*
            * There is no description for pc105 on Solaris.
@@ -783,8 +808,8 @@ XkbError:
            */
 
           #ifdef TEST
-          fprintf(stderr, "nxagentKeyboardProc: Using keyboard model [%s] with layout [%s].\n",
-                      model, layout);
+          fprintf(stderr, "%s: Using [rules='%s',model='%s',layout='%s',variant='%s',options='%s'].\n",
+                  __func__, rules, model, layout, variant, options);
           #endif
 
           #ifdef __sun
@@ -793,7 +818,6 @@ XkbError:
           {
             #ifdef TEST
             fprintf(stderr, "nxagentKeyboardProc: WARNING! Keyboard model 'pc105' unsupported on Solaris.\n");
-
             fprintf(stderr, "nxagentKeyboardProc: WARNING! Forcing keyboard model to 'pc104'.\n");
             #endif
 
