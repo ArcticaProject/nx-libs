@@ -708,12 +708,6 @@ N/A
 
 #ifdef XKB
 
-      /*
-       * First of all the validity
-       * of XkbBaseDirectory global
-       * variable is checked.
-       */
-
       if (noXkbExtension) {
         #ifdef TEST
         fprintf(stderr, "nxagentKeyboardProc: No XKB extension.\n");
