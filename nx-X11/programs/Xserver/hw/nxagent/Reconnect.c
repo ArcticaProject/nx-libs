@@ -584,6 +584,9 @@ Bool nxagentReconnectSession(void)
     goto nxagentReconnectError;
   }
 
+  /* Update remote XKB information */
+  nxagentGetRemoteXkbExtension();
+
   /* if there's no keyboard definition in the options file
      restore the previous value. */
   #ifdef DEBUG
