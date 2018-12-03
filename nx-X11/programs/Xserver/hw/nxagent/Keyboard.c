@@ -78,11 +78,11 @@ is" without express or implied warranty.
 
 #include <errno.h>
 
-void nxagentXkbGetNames(void);
+static void nxagentXkbGetNames(void);
 
 void nxagentKeycodeConversionSetup(void);
 
-void nxagentWriteKeyboardFile(char *rules, char *model, char *layout, char *variant, char *options);
+static void nxagentWriteKeyboardFile(char *rules, char *model, char *layout, char *variant, char *options);
 
 #endif /* XKB */
 
@@ -1545,7 +1545,7 @@ void nxagentXkbClearNames(void)
   free(nxagentRemoteOptions); nxagentRemoteOptions = NULL;
 }
 
-void nxagentXkbGetNames(void)
+static void nxagentXkbGetNames(void)
 {
   Atom atom;
   #ifdef _XSERVER64
@@ -1627,7 +1627,7 @@ void nxagentXkbGetNames(void)
   return;
 }
 
-void writeKeyboardfileData(FILE *out, char *rules, char *model, char *layout, char *variant, char *options)
+static void writeKeyboardfileData(FILE *out, char *rules, char *model, char *layout, char *variant, char *options)
 {
   /*
     How to set "empty" values with setxkbmap, result of trial and error:
@@ -1645,7 +1645,7 @@ void writeKeyboardfileData(FILE *out, char *rules, char *model, char *layout, ch
   fprintf(out, "options=\",%s\"\n", options ? options : "");
 }
 
-void nxagentWriteKeyboardFile(char *rules, char *model, char *layout, char *variant, char *options)
+static void nxagentWriteKeyboardFile(char *rules, char *model, char *layout, char *variant, char *options)
 {
   if (rules && rules[0] != '\0')
   {
