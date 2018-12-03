@@ -584,6 +584,17 @@ Bool nxagentReconnectSession(void)
     goto nxagentReconnectError;
   }
 
+  /* if there's no keyboard definition in the options file
+     restore the previous value. */
+  #ifdef DEBUG
+  fprintf(stderr, "%s: nxagentKeyboard [%s] nxagentOldKeyboard [%s]\n", __func__, nxagentKeyboard, nxagentOldKeyboard);
+  #endif
+  if (nxagentKeyboard == NULL)
+  {
+    nxagentKeyboard = nxagentOldKeyboard;
+    nxagentOldKeyboard = NULL;
+  }
+
   if (nxagentOption(ResetKeyboardAtResume) == 1 &&
          (nxagentKeyboard  == NULL || nxagentOldKeyboard == NULL ||
              strcmp(nxagentKeyboard, nxagentOldKeyboard) != 0 ||
