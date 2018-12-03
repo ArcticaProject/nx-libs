@@ -1691,10 +1691,14 @@ void nxagentWriteKeyboardFile(char *rules, char *model, char *layout, char *vari
 
 void nxagentKeycodeConversionSetup(void)
 {
+  nxagentKeycodeConversion = False;
+
+  if (nxagentXkbInfo.Opcode == -1)
+    return;
+
   if (nxagentOption(KeycodeConversion) == KeycodeConversionOff)
   {
     fprintf(stderr, "Info: Keycode conversion is off\n");
-    nxagentKeycodeConversion = False;
   }
   else if (nxagentOption(KeycodeConversion) == KeycodeConversionOn)
   {
@@ -1721,20 +1725,7 @@ void nxagentKeycodeConversionSetup(void)
       #endif
 
       fprintf(stderr, "Info: Keycode conversion auto-determined as off\n");
-      nxagentKeycodeConversion = False;
     }
-  }
-}
-
-void nxagentResetKeycodeConversion(void)
-{
-  if (nxagentXkbInfo.Opcode != -1)
-  {
-    nxagentKeycodeConversionSetup();
-  }
-  else
-  {
-    nxagentKeycodeConversion = False;
   }
 }
 

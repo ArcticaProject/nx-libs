@@ -620,7 +620,7 @@ Bool nxagentReconnectSession(void)
   }
   else
   {
-    nxagentResetKeycodeConversion();
+    nxagentKeycodeConversionSetup();
   }
 
   nxagentXkbState.Initialized = 0;
