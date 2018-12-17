@@ -253,6 +253,15 @@ specifies the types of fonts for which the server should attempt to use
 deferred glyph loading.  \fIwhichfonts\fP can be all (all fonts),
 none (no fonts), or 16 (16 bit fonts only).
 .TP 8
+.B \-depth \fIint\fP
+This option specifies the default visual depth of the nested server.
+The depth of the default visual of the nested server need not be the
+same as the depth of the default visual of the real server, but it
+must be supported by the real server.  Use
+.BR xdpyinfo (__appmansuffix__)
+to obtain a list of supported visual depths on the real server before
+starting \fBnxagent\fR.
+.TP 8
 .B \-dpi \fIresolution\fP
 sets the resolution for all screens, in dots per inch.
 To be used when the server cannot determine the screen size(s) from the
