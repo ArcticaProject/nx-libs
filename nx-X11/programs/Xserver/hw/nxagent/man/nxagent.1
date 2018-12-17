@@ -199,6 +199,12 @@ e.g.:
 display number string written to STDERR is beautified with some human-readable
 (machine-parseable) text.
 .TP 8
+.B \-sync
+This option tells \fBnxagent\fR to synchronize its window and graphics
+operations with the real server.  This is a useful option for
+debugging, but it will slow down \fBnxagent\fR's performance
+considerably.  It should not be used unless absolutely necessary.
+.TP 8
 .B \-deferglyphs \fIwhichfonts\fP
 specifies the types of fonts for which the server should attempt to use
 deferred glyph loading.  \fIwhichfonts\fP can be all (all fonts),
