@@ -205,6 +205,17 @@ operations with the real server.  This is a useful option for
 debugging, but it will slow down \fBnxagent\fR's performance
 considerably.  It should not be used unless absolutely necessary.
 .TP 8
+.B \-full
+This option tells \fBnxagent\fR to utilize full regeneration of real
+server objects and reopen a new connection to the real server each
+time \fBnxagent\fR regenerates.  The sample server implementation
+regenerates all objects in the server when the last client of this
+server terminates.  When this happens, \fBnxagent\fR by default
+maintains the same top-level window and the same real server
+connection in each new generation.  If the user selects full
+regeneration, even the top-level window and the connection to the real
+server will be regenerated for each server generation.
+.TP 8
 .B \-deferglyphs \fIwhichfonts\fP
 specifies the types of fonts for which the server should attempt to use
 deferred glyph loading.  \fIwhichfonts\fP can be all (all fonts),
