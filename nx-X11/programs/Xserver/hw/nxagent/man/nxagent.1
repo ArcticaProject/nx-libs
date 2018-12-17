@@ -282,9 +282,14 @@ and
 to be 3/4ths the dimensions of the root window of the real server.
 .TP 8
 .B \-dpi \fIresolution\fP
-sets the resolution for all screens, in dots per inch.
-To be used when the server cannot determine the screen size(s) from the
-hardware.
+sets the resolution for all screens, in dots per inch. If this option
+is not specified \fBnxagent\fR will assume 96. There's also
+.B \-autodpi
+which will clone the real server's dpi. Note that the resolution specified via
+.B \-dpi
+is a per session setting. It cannot be changed on reconnect! This means that
+clients may look "wrong" when reconnecting a session that had been
+started with a different dpi than the current real xserver.
 .TP 8
 .B dpms
 enables DPMS (display power management services), where supported.  The
@@ -468,7 +473,15 @@ auto-disconnect timeout in seconds (minimum allowed: 60)
 don't exit if there are no clients in rootless mode
 .TP 8
 .B \-autodpi
-detect real server's DPI and set it in the agent session; the \fI-dpi <dpi>\fR cmdline option overrides \fI-autodpi\fR
+detect real server's DPI and set it in the agent session; the
+.B \-dpi\fP cmdline option overrides
+.B \-autodpi\fP.
+Note that using
+.B \-autodpi
+will also adapt the DPI on reconnect which will cause
+newly started clients respecting the new DPI while clients that had
+been started before the reconnect still use the old DPI. This may lead
+to applications looking "weird".
 .TP 8
 .B \-nomagicpixel
 disable magic pixel support at session startup, can be re-enabled via nx/nx option on session
