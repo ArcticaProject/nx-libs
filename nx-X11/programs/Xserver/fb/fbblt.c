@@ -67,8 +67,41 @@ fbBlt (FbBits   *srcLine,
     int	    n, nmiddle;
     Bool    destInvarient;
     int	    startbyte, endbyte;
-    int     careful;
+
     FbDeclareMergeRop ();
+
+    if (alu == GXcopy && pm == FB_ALLONES &&
+        !(srcX & 7) && !(dstX & 7) && !(width & 7))
+    {
+        CARD8           *src_byte = (CARD8 *) srcLine + (srcX >> 3);
+        CARD8           *dst_byte = (CARD8 *) dstLine + (dstX >> 3);
+        FbStride        src_byte_stride = srcStride << (FB_SHIFT - 3);
+        FbStride        dst_byte_stride = dstStride << (FB_SHIFT - 3);
+        int             width_byte = (width >> 3);
+
+        /* Make sure there's no overlap; we can't use memcpy in that
+         * case as it's not well defined, so fall through to the
+         * general code
+         */
+        if (src_byte + width_byte <= dst_byte ||
+            dst_byte + width_byte <= src_byte)
+        {
+            int i;
+
+            if (!upsidedown)
+                for (i = 0; i < height; i++)
+                    memcpy(dst_byte + i * dst_byte_stride,
+                           src_byte + i * src_byte_stride,
+                           width_byte);
+            else
+                for (i = height - 1; i >= 0; i--)
+                    memcpy(dst_byte + i * dst_byte_stride,
+                           src_byte + i * src_byte_stride,
+                           width_byte);
+
+            return;
+        }
+    }
 
 #ifdef FB_24BIT
     if (bpp == 24 && !FbCheck24Pix (pm))
@@ -78,32 +111,6 @@ fbBlt (FbBits   *srcLine,
 	return;
     }
 #endif
-
-    careful = !((srcLine < dstLine && srcLine + width * (bpp>>3) > dstLine) ||
-                (dstLine < srcLine && dstLine + width * (bpp>>3) > srcLine)) ||
-              (bpp & 7);
-
-    if (alu == GXcopy && pm == FB_ALLONES && !careful &&
-            !(srcX & 7) && !(dstX & 7) && !(width & 7)) {
-        int i;
-        CARD8 *src = (CARD8 *) srcLine;
-        CARD8 *dst = (CARD8 *) dstLine;
-
-        srcStride *= sizeof(FbBits);
-        dstStride *= sizeof(FbBits);
-        width >>= 3;
-        src += (srcX >> 3);
-        dst += (dstX >> 3);
-
-        if (!upsidedown)
-            for (i = 0; i < height; i++)
-                memcpy(dst + i * dstStride, src + i * srcStride, width);
-        else
-            for (i = height - 1; i >= 0; i--)
-                memcpy(dst + i * dstStride, src + i * srcStride, width);
-
-        return;
-    }
 
     FbInitializeMergeRop(alu, pm);
     destInvarient = FbDestInvarientMergeRop();
