@@ -67,6 +67,7 @@ fbBlt (FbBits   *srcLine,
     int	    n, nmiddle;
     Bool    destInvarient;
     int	    startbyte, endbyte;
+    int     careful;
     FbDeclareMergeRop ();
 
 #ifdef FB_24BIT
@@ -78,7 +79,11 @@ fbBlt (FbBits   *srcLine,
     }
 #endif
 
-    if (alu == GXcopy && pm == FB_ALLONES && !reverse &&
+    careful = !((srcLine < dstLine && srcLine + width * (bpp>>3) > dstLine) ||
+                (dstLine < srcLine && dstLine + width * (bpp>>3) > srcLine)) ||
+              (bpp & 7);
+
+    if (alu == GXcopy && pm == FB_ALLONES && !careful &&
             !(srcX & 7) && !(dstX & 7) && !(width & 7)) {
         int i;
         CARD8 *src = (CARD8 *) srcLine;
