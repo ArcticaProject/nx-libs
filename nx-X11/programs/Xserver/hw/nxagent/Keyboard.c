@@ -81,7 +81,9 @@ is" without express or implied warranty.
 static int nxagentXkbGetNames(char **rules, char **model, char **layout,
                                   char **variant, char **options);
 
-static void nxagentKeycodeConversionSetup(void);
+static void nxagentKeycodeConversionSetup(char *rules, char *model);
+
+void nxagentWriteKeyboardFile(char *rules, char *model, char *layout, char *variant, char *options);
 
 #endif /* XKB */
 
@@ -706,12 +708,6 @@ N/A
 
 #ifdef XKB
 
-      /*
-       * First of all the validity
-       * of XkbBaseDirectory global
-       * variable is checked.
-       */
-
       if (noXkbExtension) {
         #ifdef TEST
         fprintf(stderr, "nxagentKeyboardProc: No XKB extension.\n");
@@ -744,7 +740,7 @@ XkbError:
 #ifdef XKB
       } else { /* if (noXkbExtension) */
         XkbComponentNamesRec names = {0};
-        char *rules = NULL, *variants = NULL, *options = NULL; /* use xkb default */
+        char *rules = NULL, *variant = NULL, *options = NULL; /* use xkb default */
 
         #ifdef TEST
         fprintf(stderr, "nxagentKeyboardProc: Using XKB extension.\n");
@@ -816,9 +812,38 @@ XkbError:
         fprintf(stderr, "nxagentKeyboardProc: Init XKB extension.\n");
         #endif
 
-        xkb = XkbGetKeyboard(nxagentDisplay, XkbGBN_AllComponentsMask, XkbUseCoreKbd);
+        {
+          char *remoterules = NULL;
+          char *remotemodel = NULL;
+          char *remotelayout = NULL;
+          char *remotevariant = NULL;
+          char *remoteoptions = NULL;
 
-        nxagentKeycodeConversionSetup();
+          unsigned int remoteruleslen = nxagentXkbGetNames(&remoterules, &remotemodel, &remotelayout,
+                                                           &remotevariant, &remoteoptions);
+
+          #ifdef DEBUG
+          if (remoteruleslen && remoterules && remotemodel)
+          {
+            fprintf(stderr, "%s: Remote: [rules='%s',model='%s',layout='%s',variant='%s',options='%s'].\n",
+                    __func__, remoterules, remotemodel, remotelayout, remotevariant, remoteoptions);
+          }
+          else
+          {
+            fprintf(stderr, "%s: Failed to retrieve remote rules.\n", __func__);
+          }
+          #endif
+
+          nxagentWriteKeyboardFile(remoterules, remotemodel, remotelayout, remotevariant, remoteoptions);
+          nxagentKeycodeConversionSetup(remoterules, remotemodel);
+
+          if (remoterules)
+          {
+            XFree(remoterules);
+          }
+        }
+
+        xkb = XkbGetKeyboard(nxagentDisplay, XkbGBN_AllComponentsMask, XkbUseCoreKbd);
 
         if (xkb && xkb->geom)
         {
@@ -833,11 +858,11 @@ XkbError:
 
         #ifdef DEBUG
         fprintf(stderr, "nxagentKeyboardProc: Going to set rules and init device: "
-                        "[rules='%s',model='%s',layout='%s',variants='%s',options='%s'].\n",
-                        rules, model, layout, variants, options);
+                        "[rules='%s',model='%s',layout='%s',variant='%s',options='%s'].\n",
+                        rules, model, layout, variant, options);
         #endif
 
-        XkbSetRulesDflts(rules, model, layout, variants, options);
+        XkbSetRulesDflts(rules, model, layout, variant, options);
         XkbInitKeyboardDeviceStruct((void *)pDev, &names, &keySyms, modmap,
                                     nxagentBell, nxagentChangeKeyboardControl);
 
@@ -1557,49 +1582,32 @@ static int nxagentXkbGetNames(char **rules, char **model, char **layout,
   return n;
 }
 
-void nxagentKeycodeConversionSetup(void)
+void writeKeyboardfileData(FILE *out, char *rules, char *model, char *layout, char *variant, char *options)
 {
-  char *drules = NULL;
-  char *dmodel = NULL;
-  char *dlayout = NULL;
-  char *dvariant = NULL;
-  char *doptions = NULL;
-  unsigned int drulesLen;
+  /*
+    How to set "empty" values with setxkbmap, result of trial and error:
+    - model and layout: empty strings are accepted by setxkbmap.
+    - rules: setxkbmap will fail if rules is an empty string
+      (code will intercept in an earlier stage in that case)
+    - variant: the variant line must be omitted completely.
+    - options: prepend value with "," to override, otherwise options will be added.
+  */
+  fprintf(out, "rules=\"%s\"\n", rules);
+  fprintf(out, "model=\"%s\"\n", model ? model : "");
+  fprintf(out, "layout=\"%s\"\n", layout ? layout : "");
+  if (variant && variant[0] != '\0')
+    fprintf(out, "variant=\"%s\"\n", variant);
+  fprintf(out, "options=\",%s\"\n", options ? options : "");
+}
 
-  if (nxagentOption(KeycodeConversion) == KeycodeConversionOff)
+void nxagentWriteKeyboardFile(char *rules, char *model, char *layout, char *variant, char *options)
+{
+  if (rules && rules[0] != '\0')
   {
-    fprintf(stderr, "Info: Keycode conversion is off\n");
-    nxagentKeycodeConversion = False;
-    return;
-  }
-  else if (nxagentOption(KeycodeConversion) == KeycodeConversionOn)
-  {
-    fprintf(stderr, "Info: Keycode conversion is on\n");
-    nxagentKeycodeConversion = True;
-    return;
-  }
+    #ifdef DEBUG
+    writeKeyboardfileData(stderr, rules, model, layout, variant, options);
+    #endif
 
-  nxagentKeycodeConversion = False;
-
-  drulesLen = nxagentXkbGetNames(&drules, &dmodel, &dlayout,
-                                     &dvariant, &doptions);
-
-  #ifdef DEBUG
-  if (drulesLen != 0 && drules && dmodel)
-  {
-    fprintf(stderr, "nxagentKeycodeConversionSetup: "
-                    "Remote: [rules='%s',model='%s',layout='%s',variant='%s',options='%s'].\n",
-                    drules, dmodel, dlayout, dvariant, doptions);
-  }
-  else
-  {
-    fprintf(stderr, "nxagentKeycodeConversionSetup: "
-                "Failed to retrieve remote rules.\n");
-  }
-  #endif
-
-  if (drulesLen != 0)
-  {
     char *sessionpath = nxagentGetSessionPath();
     if (sessionpath)
     {
@@ -1613,16 +1621,8 @@ void nxagentKeycodeConversionSetup(void)
       free(sessionpath);
       if ((keyboard_file = fopen(keyboard_file_path, "w")))
       {
-        if (drules)
-          fprintf(keyboard_file, "rules=\"%s\"\n", drules[0] == '\0' ? "," : drules);
-        if (dmodel)
-          fprintf(keyboard_file, "model=\"%s\"\n", dmodel[0] == '\0' ? "," : dmodel);
-        if (dlayout)
-          fprintf(keyboard_file, "layout=\"%s\"\n", dlayout[0] == '\0' ? "," : dlayout);
-        if (dvariant)
-          fprintf(keyboard_file, "variant=\"%s\"\n", dvariant[0] == '\0' ? "," : dvariant);
-        if (doptions)
-          fprintf(keyboard_file, "options=\"%s\"\n", doptions[0] == '\0' ? "," : doptions);
+        writeKeyboardfileData(keyboard_file, rules, model, layout, variant, options);
+
         fclose(keyboard_file);
         fprintf(stderr, "Info: keyboard file created: '%s'\n", keyboard_file_path);
       }
@@ -1635,34 +1635,49 @@ void nxagentKeycodeConversionSetup(void)
     }
     else
     {
-      fprintf(stderr, "Warning: SessionPath not defined\n");
+      fprintf(stderr, "Warning: Failed to create keyboard file: SessionPath not defined\n");
     }
   }
   else
   {
     fprintf(stderr, "Warning: Failed to create the keyboard file\n");
   }
+}
 
-  if (drules && dmodel &&
-      (strcmp(drules, "evdev") == 0 ||
-       strcmp(dmodel, "evdev") == 0))
+void nxagentKeycodeConversionSetup(char * rules, char * model)
+{
+  if (nxagentOption(KeycodeConversion) == KeycodeConversionOff)
   {
-    #ifdef DEBUG
-    fprintf(stderr, "nxagentKeycodeConversionSetup: "
-                "Activating KeyCode conversion.\n");
-    #endif
-
-    fprintf(stderr, "Info: Keycode conversion auto-determined as on\n");
+    fprintf(stderr, "Info: Keycode conversion is off\n");
+    nxagentKeycodeConversion = False;
+  }
+  else if (nxagentOption(KeycodeConversion) == KeycodeConversionOn)
+  {
+    fprintf(stderr, "Info: Keycode conversion is on\n");
     nxagentKeycodeConversion = True;
   }
   else
   {
-    fprintf(stderr, "Info: Keycode conversion auto-determined as off\n");
-  }
+    if (rules && model &&
+        (strcmp(rules, "evdev") == 0 ||
+         strcmp(model, "evdev") == 0))
+    {
+      #ifdef DEBUG
+      fprintf(stderr, "%s: Activating KeyCode conversion.\n", __func__);
+      #endif
 
-  if (drules)
-  {
-    XFree(drules);
+      fprintf(stderr, "Info: Keycode conversion auto-determined as on\n");
+      nxagentKeycodeConversion = True;
+    }
+    else
+    {
+      #ifdef DEBUG
+      fprintf(stderr, "%s: Deactivating KeyCode conversion.\n", __func__);
+      #endif
+
+      fprintf(stderr, "Info: Keycode conversion auto-determined as off\n");
+      nxagentKeycodeConversion = False;
+    }
   }
 }
 
@@ -1677,7 +1692,21 @@ void nxagentResetKeycodeConversion(void)
 
   if (result != 0)
   {
-    nxagentKeycodeConversionSetup();
+    char *remoterules = NULL;
+    char *remotemodel = NULL;
+    char *remotelayout = NULL;
+    char *remotevariant = NULL;
+    char *remoteoptions = NULL;
+    unsigned int remoteruleslen;
+
+    remoteruleslen = nxagentXkbGetNames(&remoterules, &remotemodel, &remotelayout,
+                                        &remotevariant, &remoteoptions);
+
+    if (remoteruleslen && remoterules && remotemodel)
+      nxagentKeycodeConversionSetup(remoterules, remotemodel);
+
+    if (remoterules)
+      XFree(remoterules);
   }
   else
   {
