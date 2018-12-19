@@ -78,12 +78,11 @@ is" without express or implied warranty.
 
 #include <errno.h>
 
-static int nxagentXkbGetNames(char **rules, char **model, char **layout,
-                                  char **variant, char **options);
+static void nxagentXkbGetNames(void);
 
-static void nxagentKeycodeConversionSetup(char *rules, char *model);
+void nxagentKeycodeConversionSetup(void);
 
-void nxagentWriteKeyboardFile(char *rules, char *model, char *layout, char *variant, char *options);
+static void nxagentWriteKeyboardFile(char *rules, char *model, char *layout, char *variant, char *options);
 
 #endif /* XKB */
 
@@ -139,6 +138,13 @@ extern        Status        XkbGetControls(
 
 extern int XkbDfltRepeatDelay;
 extern int XkbDfltRepeatInterval;
+
+/* xkb configuration of the real X server */
+static char *nxagentRemoteRules = NULL;
+static char *nxagentRemoteModel = NULL;
+static char *nxagentRemoteLayout = NULL;
+static char *nxagentRemoteVariant = NULL;
+static char *nxagentRemoteOptions = NULL;
 
 #endif /* XKB */
 
@@ -571,8 +577,10 @@ int nxagentKeyboardProc(DeviceIntPtr pDev, int onoff)
   CARD8 modmap[MAP_LENGTH];
   int i, j;
   XKeyboardState values;
+#ifdef XKB
   char *model = NULL, *layout = NULL;
   XkbDescPtr xkb = NULL;
+#endif
 
   switch (onoff)
   {
@@ -694,19 +702,12 @@ N/A
       keySyms.mapWidth = mapWidth;
       keySyms.map = keymap;
 
-      if (XkbQueryExtension(nxagentDisplay,
-                            &nxagentXkbInfo.Opcode,
-                            &nxagentXkbInfo.EventBase,
-                            &nxagentXkbInfo.ErrorBase,
-                            &nxagentXkbInfo.MajorVersion,
-                            &nxagentXkbInfo.MinorVersion) == 0)
-      {
-          ErrorF("Unable to initialize XKEYBOARD extension.\n");
-          goto XkbError;
-      }
-
-
 #ifdef XKB
+      if (!nxagentGetRemoteXkbExtension())
+      {
+        ErrorF("Unable to query XKEYBOARD extension.\n");
+        goto XkbError;
+      }
 
       if (noXkbExtension) {
         #ifdef TEST
@@ -761,7 +762,9 @@ XkbError:
           layout.
         */
 
-        if (nxagentKeyboard && (strcmp(nxagentKeyboard, "query") != 0))
+        if (nxagentKeyboard &&
+            (strcmp(nxagentKeyboard, "query") != 0) &&
+            (strcmp(nxagentKeyboard, "clone") != 0))
         {
           for (i = 0; nxagentKeyboard[i] != '/' && nxagentKeyboard[i] != 0; i++);
 
@@ -772,8 +775,33 @@ XkbError:
             goto XkbError;
           }
 
-          model = strndup(nxagentKeyboard, i);
-          layout = strdup(&nxagentKeyboard[i + 1]);
+          /*
+            The original nxagent only supports model/layout values
+            here. It uses these values together with the default rules
+            and empty variant and options. We use a more or less
+            compatible hack here: The special keyword rlmvo for model
+            means that the layout part of the string will contain a
+            full RMLVO config, separated by #, e.g.
+            rlmvo/base#pc105#de,us#nodeadkeys#lv3:rwin_switch
+          */
+          if (strncmp(nxagentKeyboard, "rlmvo/", 6) == 0)
+          {
+            const char * sep = "#";
+            char * rmlvo = strdup(&nxagentKeyboard[i+1]);
+            char * tmp = rmlvo;
+            /* strtok cannot handle empty fields, so use strsep */
+            rules = strdup(strsep(&tmp, sep));
+            model = strdup(strsep(&tmp, sep));
+            layout = strdup(strsep(&tmp, sep));
+            variant = strdup(strsep(&tmp, sep));
+            options = strdup(strsep(&tmp, sep));
+            free(rmlvo);
+          }
+          else
+          {
+            model = strndup(nxagentKeyboard, i);
+            layout = strdup(&nxagentKeyboard[i + 1]);
+          }
 
           /*
            * There is no description for pc105 on Solaris.
@@ -781,8 +809,8 @@ XkbError:
            */
 
           #ifdef TEST
-          fprintf(stderr, "nxagentKeyboardProc: Using keyboard model [%s] with layout [%s].\n",
-                      model, layout);
+          fprintf(stderr, "%s: Using [rules='%s',model='%s',layout='%s',variant='%s',options='%s'].\n",
+                  __func__, rules, model, layout, variant, options);
           #endif
 
           #ifdef __sun
@@ -791,7 +819,6 @@ XkbError:
           {
             #ifdef TEST
             fprintf(stderr, "nxagentKeyboardProc: WARNING! Keyboard model 'pc105' unsupported on Solaris.\n");
-
             fprintf(stderr, "nxagentKeyboardProc: WARNING! Forcing keyboard model to 'pc104'.\n");
             #endif
 
@@ -812,36 +839,47 @@ XkbError:
         fprintf(stderr, "nxagentKeyboardProc: Init XKB extension.\n");
         #endif
 
+        if (nxagentRemoteRules && nxagentRemoteModel)
         {
-          char *remoterules = NULL;
-          char *remotemodel = NULL;
-          char *remotelayout = NULL;
-          char *remotevariant = NULL;
-          char *remoteoptions = NULL;
-
-          unsigned int remoteruleslen = nxagentXkbGetNames(&remoterules, &remotemodel, &remotelayout,
-                                                           &remotevariant, &remoteoptions);
-
           #ifdef DEBUG
-          if (remoteruleslen && remoterules && remotemodel)
+          fprintf(stderr, "%s: Remote: [rules='%s',model='%s',layout='%s',variant='%s',options='%s'].\n",
+                  __func__, nxagentRemoteRules, nxagentRemoteModel, nxagentRemoteLayout, nxagentRemoteVariant, nxagentRemoteOptions);
+          #endif
+
+          /*
+           * Keyboard has always been tricky with nxagent. For that
+           * reason X2Go offers "auto" keyboard configuration. You can
+           * specify it in the client side session configuration. In
+           * "auto" mode x2goserver expects nxagent to write the
+           * remote keyboard config to a file on startup and
+           * x2goserver would then pick that file and pass it to
+           * setxkbmap. This functionality is obsoleted by the "clone"
+           * stuff but we still need it because x2goserver does not
+           * know about that yet. Once x2go starts using clone
+           * we can drop this here.
+           */
+          nxagentWriteKeyboardFile(nxagentRemoteRules, nxagentRemoteModel, nxagentRemoteLayout, nxagentRemoteVariant, nxagentRemoteOptions);
+
+          /* Only setup keycode conversion if we are NOT in clone mode */
+          if (nxagentKeyboard && (strcmp(nxagentKeyboard, "clone") == 0))
           {
-            fprintf(stderr, "%s: Remote: [rules='%s',model='%s',layout='%s',variant='%s',options='%s'].\n",
-                    __func__, remoterules, remotemodel, remotelayout, remotevariant, remoteoptions);
+            free(rules); rules = strdup(nxagentRemoteRules);
+            free(model); model = strdup(nxagentRemoteModel);
+            free(layout); layout = strdup(nxagentRemoteLayout);
+            free(variant); variant = strdup(nxagentRemoteVariant);
+            free(options); options = strdup(nxagentRemoteOptions);
           }
           else
           {
-            fprintf(stderr, "%s: Failed to retrieve remote rules.\n", __func__);
-          }
-          #endif
-
-          nxagentWriteKeyboardFile(remoterules, remotemodel, remotelayout, remotevariant, remoteoptions);
-          nxagentKeycodeConversionSetup(remoterules, remotemodel);
-
-          if (remoterules)
-          {
-            XFree(remoterules);
+            nxagentKeycodeConversionSetup();
           }
         }
+        #ifdef DEBUG
+        else
+        {
+          fprintf(stderr, "%s: Failed to retrieve remote rules.\n", __func__);
+        }
+        #endif
 
         xkb = XkbGetKeyboard(nxagentDisplay, XkbGBN_AllComponentsMask, XkbUseCoreKbd);
 
@@ -1498,8 +1536,16 @@ void nxagentTuneXkbWrapper(void)
   }
 }
 
-static int nxagentXkbGetNames(char **rules, char **model, char **layout,
-                                  char **variant, char **options)
+void nxagentXkbClearNames(void)
+{
+  free(nxagentRemoteRules); nxagentRemoteRules = NULL;
+  free(nxagentRemoteModel); nxagentRemoteModel = NULL;
+  free(nxagentRemoteLayout); nxagentRemoteLayout = NULL;
+  free(nxagentRemoteVariant); nxagentRemoteVariant = NULL;
+  free(nxagentRemoteOptions); nxagentRemoteOptions = NULL;
+}
+
+static void nxagentXkbGetNames(void)
 {
   Atom atom;
   #ifdef _XSERVER64
@@ -1514,20 +1560,17 @@ static int nxagentXkbGetNames(char **rules, char **model, char **layout,
   char *name;
   Status result;
 
-  data = name = NULL;
-
-  *rules = NULL;
-  *model = NULL;
-  *layout = NULL;
-  *variant = NULL;
-  *options = NULL;
+  if (nxagentRemoteRules)
+    return;
 
   atom = XInternAtom(nxagentDisplay, "_XKB_RULES_NAMES", 1);
 
   if (atom == 0)
   {
-    return 0; 
+    return;
   }
+
+  data = name = NULL;
 
   result = XGetWindowProperty(nxagentDisplay, DefaultRootWindow(nxagentDisplay),
                                   atom, 0, 256, 0, XA_STRING, &type, &format,
@@ -1535,7 +1578,7 @@ static int nxagentXkbGetNames(char **rules, char **model, char **layout,
 
   if (result != Success || !data)
   {
-    return 0;
+    return;
   }
 
   if ((after > 0) || (type != XA_STRING) || (format != 8))
@@ -1543,7 +1586,7 @@ static int nxagentXkbGetNames(char **rules, char **model, char **layout,
     if (data)
     {
       XFree(data);
-      return 0;
+      return;
     }
   }
 
@@ -1551,38 +1594,40 @@ static int nxagentXkbGetNames(char **rules, char **model, char **layout,
 
   if (name < data + n)
   {
-    *rules = name;
+    nxagentRemoteRules = strdup(name);
     name += strlen(name) + 1;
   }
 
   if (name < data + n)
   {
-    *model = name;
+    nxagentRemoteModel = strdup(name);
     name += strlen(name) + 1;
   }
 
   if (name < data + n)
   {
-    *layout = name;
+    nxagentRemoteLayout = strdup(name);
     name += strlen(name) + 1;
   }
 
   if (name < data + n)
   {
-    *variant = name;
+    nxagentRemoteVariant = strdup(name);
     name += strlen(name) + 1;
   }
 
   if (name < data + n)
   {
-    *options = name;
+    nxagentRemoteOptions = strdup(name);
     name += strlen(name) + 1;
   }
 
-  return n;
+  XFree(data);
+
+  return;
 }
 
-void writeKeyboardfileData(FILE *out, char *rules, char *model, char *layout, char *variant, char *options)
+static void writeKeyboardfileData(FILE *out, char *rules, char *model, char *layout, char *variant, char *options)
 {
   /*
     How to set "empty" values with setxkbmap, result of trial and error:
@@ -1600,7 +1645,7 @@ void writeKeyboardfileData(FILE *out, char *rules, char *model, char *layout, ch
   fprintf(out, "options=\",%s\"\n", options ? options : "");
 }
 
-void nxagentWriteKeyboardFile(char *rules, char *model, char *layout, char *variant, char *options)
+static void nxagentWriteKeyboardFile(char *rules, char *model, char *layout, char *variant, char *options)
 {
   if (rules && rules[0] != '\0')
   {
@@ -1644,12 +1689,16 @@ void nxagentWriteKeyboardFile(char *rules, char *model, char *layout, char *vari
   }
 }
 
-void nxagentKeycodeConversionSetup(char * rules, char * model)
+void nxagentKeycodeConversionSetup(void)
 {
+  nxagentKeycodeConversion = False;
+
+  if (nxagentXkbInfo.Opcode == -1)
+    return;
+
   if (nxagentOption(KeycodeConversion) == KeycodeConversionOff)
   {
     fprintf(stderr, "Info: Keycode conversion is off\n");
-    nxagentKeycodeConversion = False;
   }
   else if (nxagentOption(KeycodeConversion) == KeycodeConversionOn)
   {
@@ -1658,9 +1707,9 @@ void nxagentKeycodeConversionSetup(char * rules, char * model)
   }
   else
   {
-    if (rules && model &&
-        (strcmp(rules, "evdev") == 0 ||
-         strcmp(model, "evdev") == 0))
+    if (nxagentRemoteRules && nxagentRemoteModel &&
+        (strcmp(nxagentRemoteRules, "evdev") == 0 ||
+         strcmp(nxagentRemoteModel, "evdev") == 0))
     {
       #ifdef DEBUG
       fprintf(stderr, "%s: Activating KeyCode conversion.\n", __func__);
@@ -1676,47 +1725,33 @@ void nxagentKeycodeConversionSetup(char * rules, char * model)
       #endif
 
       fprintf(stderr, "Info: Keycode conversion auto-determined as off\n");
-      nxagentKeycodeConversion = False;
     }
   }
 }
 
-void nxagentResetKeycodeConversion(void)
+Bool nxagentGetRemoteXkbExtension(void)
 {
-  int result;
-  XkbAgentInfoRec info;
+  Bool result;
 
-  result = XkbQueryExtension(nxagentDisplay, &info.Opcode, &info.EventBase,
-                                 &info.ErrorBase, &info.MajorVersion,
-                                     &info.MinorVersion);
+  nxagentXkbInfo.Opcode = nxagentXkbInfo.EventBase = nxagentXkbInfo.ErrorBase = nxagentXkbInfo.MajorVersion = nxagentXkbInfo.MinorVersion = -1;
+  nxagentXkbClearNames();
 
-  if (result != 0)
+  if ((result = XkbQueryExtension(nxagentDisplay,
+                                 &nxagentXkbInfo.Opcode,
+                                 &nxagentXkbInfo.EventBase,
+                                 &nxagentXkbInfo.ErrorBase,
+                                 &nxagentXkbInfo.MajorVersion,
+                                 &nxagentXkbInfo.MinorVersion)))
   {
-    char *remoterules = NULL;
-    char *remotemodel = NULL;
-    char *remotelayout = NULL;
-    char *remotevariant = NULL;
-    char *remoteoptions = NULL;
-    unsigned int remoteruleslen;
-
-    remoteruleslen = nxagentXkbGetNames(&remoterules, &remotemodel, &remotelayout,
-                                        &remotevariant, &remoteoptions);
-
-    if (remoteruleslen && remoterules && remotemodel)
-      nxagentKeycodeConversionSetup(remoterules, remotemodel);
-
-    if (remoterules)
-      XFree(remoterules);
+    nxagentXkbGetNames();
   }
+  #ifdef WARNING
   else
   {
-    #ifdef WARNING
-    fprintf(stderr, "nxagentResetKeycodeConversion: "
-                "WARNING! Failed to query XKB extension.\n");
-    #endif
-
-    nxagentKeycodeConversion = False;
+    fprintf(stderr, "%s: WARNING! Failed to query XKB extension.\n", __func__);
   }
-}
+  #endif
 
+  return result;
+}
 #endif /* XKB */

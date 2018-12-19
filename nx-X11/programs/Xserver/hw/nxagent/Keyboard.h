@@ -117,8 +117,9 @@ void nxagentEnableXkbExtension(void);
 
 void nxagentTuneXkbWrapper(void);
 
-void nxagentResetKeycodeConversion(void);
+void nxagentKeycodeConversionSetup(void);
 
+Bool nxagentGetRemoteXkbExtension(void);
 #endif
 
 CARD8 nxagentConvertKeycode(CARD8 k);

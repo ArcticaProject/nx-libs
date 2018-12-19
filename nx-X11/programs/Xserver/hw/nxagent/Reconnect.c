@@ -584,6 +584,9 @@ Bool nxagentReconnectSession(void)
     goto nxagentReconnectError;
   }
 
+  /* Update remote XKB information */
+  nxagentGetRemoteXkbExtension();
+
   /* if there's no keyboard definition in the options file
      restore the previous value. */
   #ifdef DEBUG
@@ -598,7 +601,8 @@ Bool nxagentReconnectSession(void)
   if (nxagentOption(ResetKeyboardAtResume) == 1 &&
          (nxagentKeyboard  == NULL || nxagentOldKeyboard == NULL ||
              strcmp(nxagentKeyboard, nxagentOldKeyboard) != 0 ||
-                 strcmp(nxagentKeyboard, "query") == 0))
+                 strcmp(nxagentKeyboard, "query") == 0 ||
+                     strcmp(nxagentKeyboard, "clone") == 0))
   {
     if (nxagentResetKeyboard() == 0)
     {
@@ -616,7 +620,7 @@ Bool nxagentReconnectSession(void)
   }
   else
   {
-    nxagentResetKeycodeConversion();
+    nxagentKeycodeConversionSetup();
   }
 
   nxagentXkbState.Initialized = 0;
