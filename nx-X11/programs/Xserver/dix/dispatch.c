@@ -3716,7 +3716,7 @@ ClientPtr NextAvailableClient(void * ospriv)
     i = nextFreeClientID;
     if (i == MAXCLIENTS)
 	return (ClientPtr)NULL;
-    clients[i] = client = (ClientPtr)malloc(totalClientSize);
+    clients[i] = client = (ClientPtr)calloc(1,totalClientSize);
     if (!client)
 	return (ClientPtr)NULL;
     InitClient(client, i, ospriv);

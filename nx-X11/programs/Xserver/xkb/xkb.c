@@ -1185,7 +1185,7 @@ XkbSizeVirtualModMap(XkbDescPtr xkb,xkbGetMapReply *rep)
 	rep->totalVModMapKeys= 0;
 	return 0;
     }
-    for (nRtrn=i=0;i<rep->nVModMapKeys-1;i++) {
+    for (nRtrn=i=0;i<rep->nVModMapKeys;i++) {
 	if (xkb->server->vmodmap[i+rep->firstVModMapKey]!=0)
 	    nRtrn++;
     }
@@ -3783,7 +3783,7 @@ ProcXkbSetNames(ClientPtr client)
 static char *
 XkbWriteCountedString(char *wire,char *str,Bool swap)
 {
-CARD16	len,*pLen;
+CARD16	len,*pLen, paddedLen;
 
     len= (str?strlen(str):0);
     pLen= (CARD16 *)wire;
@@ -3791,8 +3791,9 @@ CARD16	len,*pLen;
     if (swap) {
 	swaps(pLen);
     }
-    memcpy(&wire[2],str,len);
-    wire+= ((2+len+3)/4)*4;
+    paddedLen= pad_to_int32(sizeof(len)+len)-sizeof(len);
+    strncpy(&wire[sizeof(len)],str,paddedLen);
+    wire+= sizeof(len)+paddedLen;
     return wire;
 }
 
@@ -3903,6 +3904,7 @@ xkbShapeWireDesc *	shapeWire;
 	if (shape->approx!=NULL)
 	     shapeWire->approxNdx= XkbOutlineIndex(shape,shape->approx);
 	else shapeWire->approxNdx= XkbNoShape;
+	shapeWire->pad= 0;
 	if (swap) {
 	    swapl(&shapeWire->name);
 	}
@@ -3914,6 +3916,7 @@ xkbShapeWireDesc *	shapeWire;
 	    olWire= (xkbOutlineWireDesc *)wire;
 	    olWire->nPoints= ol->num_points;
 	    olWire->cornerRadius= ol->corner_radius;
+	    olWire->pad= 0;
 	    wire= (char *)&olWire[1];
 	    ptWire= (xkbPointWireDesc *)wire;
 	    for (p=0,pt=ol->points;p<ol->num_points;p++,pt++) {
@@ -4023,6 +4026,8 @@ xkbOverlayWireDesc *	olWire;
    olWire= (xkbOverlayWireDesc *)wire;
    olWire->name= ol->name;
    olWire->nRows= ol->num_rows;
+   olWire->pad1= 0;
+   olWire->pad2= 0;
    if (swap) {
 	swapl(&olWire->name);
    }
@@ -4034,6 +4039,7 @@ xkbOverlayWireDesc *	olWire;
 	rowWire= (xkbOverlayRowWireDesc *)wire;
 	rowWire->rowUnder= row->row_under;
 	rowWire->nKeys= row->num_keys;
+	rowWire->pad1= 0;
 	wire= (char *)&rowWire[1];
 	for (k=0,key=row->keys;k<row->num_keys;k++,key++) {
 	    xkbOverlayKeyWireDesc *	keyWire;
@@ -5128,7 +5134,7 @@ ProcXkbGetKbdByName(ClientPtr client)
 	    mrep.present = 0;
 	    mrep.totalSyms = mrep.totalActs =
 		mrep.totalKeyBehaviors= mrep.totalKeyExplicit= 
-		mrep.totalModMapKeys= 0;
+		mrep.totalModMapKeys= mrep.totalVModMapKeys= 0;
 	    if (rep.reported&(XkbGBN_TypesMask|XkbGBN_ClientSymbolsMask)) {
 		mrep.present|= XkbKeyTypesMask;
 		mrep.firstType = 0;
@@ -5154,6 +5160,8 @@ ProcXkbGetKbdByName(ClientPtr client)
 			mrep.firstKeyExplicit = finfo.xkb->min_key_code;
 		mrep.nKeyActs = mrep.nKeyBehaviors = 
 			mrep.nKeyExplicit = XkbNumKeys(finfo.xkb);
+		mrep.firstVModMapKey= finfo.xkb->min_key_code;
+		mrep.nVModMapKeys= XkbNumKeys(finfo.xkb);
 	    }
 	    else {
 		mrep.virtualMods= 0;
