@@ -875,7 +875,7 @@ void _XSeqSyncFunction(
     if (dpy->flags & XlibDisplayIOError)
     {
 #ifdef NX_TRANS_DEBUG
-        fprintf(stderr, "_XSeqSyncFunction: Returning 0 with I/O error detected.\n");
+        fprintf(stderr, "_XSeqSyncFunction: Returning with I/O error detected.\n");
 #endif
         return;
     }
@@ -892,6 +892,16 @@ void _XSeqSyncFunction(
 static int
 _XPrivSyncFunction (Display *dpy)
 {
+#ifdef NX_TRANS_SOCKET
+    if (dpy->flags & XlibDisplayIOError)
+    {
+#ifdef NX_TRANS_DEBUG
+        fprintf(stderr, "%s: Returning 0 with I/O error detected.\n", __func__);
+#endif
+        return 0;
+    }
+#endif /* NX_TRANS_SOCKET */
+
 #ifdef XTHREADS
     assert(!dpy->lock_fns);
 #endif
