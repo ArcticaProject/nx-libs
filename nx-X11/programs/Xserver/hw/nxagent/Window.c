@@ -1822,6 +1822,18 @@ Bool nxagentChangeWindowAttributes(WindowPtr pWin, unsigned long mask)
   return 1;
 }
 
+void nxagentSetWMState(WindowPtr pWin, CARD32 desired)
+{
+  Atom prop = MakeAtom("WM_STATE", strlen("WM_STATE"), True);
+  nxagentWMStateRec wmState = {.state = desired, .icon = None};
+  if (ChangeWindowProperty(pWin, prop, prop, 32, 0, 2, &wmState, 1) != Success)
+  {
+    #ifdef WARNING
+    fprintf(stderr, "%s: Changing WM_STATE failed.\n", __func__);
+    #endif
+  }
+}
+
 Bool nxagentRealizeWindow(WindowPtr pWin)
 {
   if (nxagentScreenTrap == 1)
@@ -1843,14 +1855,7 @@ Bool nxagentRealizeWindow(WindowPtr pWin)
   /* add by dimbor */
   if (nxagentOption(Rootless) && nxagentWindowTopLevel(pWin))
   {
-    Atom prop = MakeAtom("WM_STATE", strlen("WM_STATE"), True);
-    nxagentWMStateRec wmState;
-    wmState.state = 1; /* NormalState */
-    wmState.icon = None;
-    if (ChangeWindowProperty(pWin, prop, prop, 32, 0, 2, &wmState, 1) != Success)
-    {
-      fprintf(stderr, "nxagentRealizeWindow: Adding WM_STATE fail.\n");
-    }
+    nxagentSetWMState(pWin, NormalState);
   }
 
   /*
@@ -1878,7 +1883,7 @@ Bool nxagentRealizeWindow(WindowPtr pWin)
   #ifdef TEST
   if (nxagentOption(Rootless) && nxagentLastWindowDestroyed)
   {
-    fprintf(stderr, "nxagentRealizeWindow: Window realized. Stopped termination for rootless session.\n");
+    fprintf(stderr, "%s: Window realized. Stopped termination for rootless session.\n", __func__);
   }
   #endif
 
@@ -1899,14 +1904,11 @@ Bool nxagentUnrealizeWindow(WindowPtr pWin)
   /* add by dimbor */
   if (nxagentOption(Rootless) && nxagentWindowTopLevel(pWin))
   {
-    Atom prop = MakeAtom("WM_STATE", strlen("WM_STATE"), True);
-    nxagentWMStateRec wmState;
-    wmState.state = 3; /* WithdrawnState */
-    wmState.icon = None;
-    if (ChangeWindowProperty(pWin, prop, prop, 32, 0, 2, &wmState, 1) != Success)
-    {
-      fprintf(stderr, "nxagentUnRealizeWindow: Changing WM_STATE failed.\n");
-    }
+    /*
+     * The original _comment_ was WithdrawnState, while the _value_
+     * was 3, which is IconicState.
+     */
+    nxagentSetWMState(pWin, IconicState);
   }
 
   XUnmapWindow(nxagentDisplay, nxagentWindow(pWin));
