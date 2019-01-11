@@ -318,10 +318,10 @@ static int nxagentRandRInitSizes(ScreenPtr pScreen)
    * Compute default size.
    */
 
-  w[0] = w[2];
-  h[0] = h[2];
+  w[0] = w[1];
+  h[0] = h[1];
 
-  for (i = 3; i < nSizes - 1; i++)
+  for (i = 2; i < nSizes - 1; i++)
   {
     if ((w[i] <= maxWidth * 3 / 4) && 
             (h[i] <= maxHeight * 3 / 4) &&
