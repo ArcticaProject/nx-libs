@@ -1019,10 +1019,7 @@ Bool nxagentOpenScreen(ScreenPtr pScreen,
     /* first time screen initialization or resize during reconnect */
     if (nxagentReconnectTrap == False || nxagentResizeDesktopAtStartup)
     {
-      nxagentChangeOption(RootWidth, w);
-      nxagentChangeOption(RootHeight, h);
-
-      if (nxagentOption(RootWidth) > w)
+      if (nxagentOption(RootWidth) >= w)
       {
         nxagentChangeOption(SavedWidth, w * 3 / 4);
       }
@@ -1031,7 +1028,7 @@ Bool nxagentOpenScreen(ScreenPtr pScreen,
         nxagentChangeOption(SavedWidth, nxagentOption(RootWidth));
       }
 
-      if (nxagentOption(RootHeight) > h)
+      if (nxagentOption(RootHeight) >= h)
       {
         nxagentChangeOption(SavedHeight, h * 3 / 4);
       }
@@ -1039,6 +1036,9 @@ Bool nxagentOpenScreen(ScreenPtr pScreen,
       {
         nxagentChangeOption(SavedHeight, nxagentOption(RootHeight));
       }
+
+      nxagentChangeOption(RootWidth, w);
+      nxagentChangeOption(RootHeight, h);
 
       nxagentChangeOption(RootX, 0);
       nxagentChangeOption(RootY, 0);
