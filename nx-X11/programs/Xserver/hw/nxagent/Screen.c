@@ -885,8 +885,7 @@ Bool nxagentOpenScreen(ScreenPtr pScreen,
   #endif
 
   /*
-   * Forced geometry parameter
-   * to user geometry.
+   * Forced geometry parameter to user geometry.
    */
 
   if (nxagentResizeDesktopAtStartup)
@@ -903,32 +902,26 @@ Bool nxagentOpenScreen(ScreenPtr pScreen,
 
     if (nxagentUserGeometry.flag & WidthValue)
     {
-      nxagentChangeOption(Width, nxagentUserGeometry.Width);
-      nxagentChangeOption(RootWidth, nxagentUserGeometry.Width);
+      int uw = nxagentUserGeometry.Width;
 
-      if (nxagentOption(SavedWidth) > nxagentUserGeometry.Width)
-      {
-        nxagentChangeOption(SavedWidth, nxagentUserGeometry.Width);
-      }
+      nxagentChangeOption(Width, uw);
+      nxagentChangeOption(RootWidth, uw);
+      nxagentChangeOption(SavedWidth, min(nxagentOption(SavedWidth), uw));
     }
 
     if (nxagentUserGeometry.flag & HeightValue)
     {
-      nxagentChangeOption(Height, nxagentUserGeometry.Height);
-      nxagentChangeOption(RootHeight, nxagentUserGeometry.Height);
+      int uh = nxagentUserGeometry.Height;
 
-      if (nxagentOption(SavedHeight) > nxagentUserGeometry.Height)
-      {
-        nxagentChangeOption(SavedHeight, nxagentUserGeometry.Height);
-      }
+      nxagentChangeOption(Height, uh);
+      nxagentChangeOption(RootHeight, uh);
+      nxagentChangeOption(SavedHeight, min(nxagentOption(SavedHeight), uh));
     }
   }
 
   /*
-   * This is first time the
-   * screen is initialized.
-   * Filling the geometry parameter
-   * from user geometry.
+   * This is first time the screen is initialized.
+   * Filling the geometry parameter from user geometry.
    */
 
   if (nxagentReconnectTrap == False)
@@ -971,10 +964,8 @@ Bool nxagentOpenScreen(ScreenPtr pScreen,
   }
 
   /*
-   * Determine the size of the root window.
-   * It is the maximum size of the screen
-   * if we are either in rootless or in
-   * fullscreen mode.
+   * Determine the size of the root window.  It is the maximum size of
+   * the screen if we are either in rootless or in fullscreen mode.
    */
 
   if (nxagentOption(Rootless) == False && !nxagentWMIsRunning)
@@ -1013,46 +1004,58 @@ Bool nxagentOpenScreen(ScreenPtr pScreen,
 
   nxagentChangeOption(BorderWidth, 0);
 
+  /* get the screen size of the real X server once */
+  int w = WidthOfScreen(DefaultScreenOfDisplay(nxagentDisplay));
+  int h = HeightOfScreen(DefaultScreenOfDisplay(nxagentDisplay));
+
   if (nxagentOption(Fullscreen))
   {
     nxagentChangeOption(X, 0);
     nxagentChangeOption(Y, 0);
 
-    nxagentChangeOption(Width, WidthOfScreen(DefaultScreenOfDisplay(nxagentDisplay)));
-    nxagentChangeOption(Height, HeightOfScreen(DefaultScreenOfDisplay(nxagentDisplay)));
+    nxagentChangeOption(Width, w);
+    nxagentChangeOption(Height, h);
 
-
+    /* first time screen initialization or resize during reconnect */
     if (nxagentReconnectTrap == False || nxagentResizeDesktopAtStartup)
     {
-      nxagentChangeOption(RootWidth, WidthOfScreen(DefaultScreenOfDisplay(nxagentDisplay)));
-      nxagentChangeOption(RootHeight, HeightOfScreen(DefaultScreenOfDisplay(nxagentDisplay)));
+      nxagentChangeOption(RootWidth, w);
+      nxagentChangeOption(RootHeight, h);
 
-      if (nxagentOption(RootWidth) > WidthOfScreen(DefaultScreenOfDisplay(nxagentDisplay)))
+      if (nxagentOption(RootWidth) > w)
       {
-        nxagentChangeOption(SavedWidth, WidthOfScreen(DefaultScreenOfDisplay(nxagentDisplay)) * 3 / 4);
+        nxagentChangeOption(SavedWidth, w * 3 / 4);
       }
       else
       {
         nxagentChangeOption(SavedWidth, nxagentOption(RootWidth));
       }
 
-      if (nxagentOption(RootHeight) > HeightOfScreen(DefaultScreenOfDisplay(nxagentDisplay)))
+      if (nxagentOption(RootHeight) > h)
       {
-        nxagentChangeOption(SavedHeight, HeightOfScreen(DefaultScreenOfDisplay(nxagentDisplay)) * 3 / 4);
+        nxagentChangeOption(SavedHeight, h * 3 / 4);
       }
       else
       {
         nxagentChangeOption(SavedHeight, nxagentOption(RootHeight));
       }
-    }
 
-    nxagentChangeOption(RootX, ((WidthOfScreen(DefaultScreenOfDisplay(nxagentDisplay)) -
-                            nxagentOption(RootWidth)) / 2));
-    nxagentChangeOption(RootY, ((HeightOfScreen(DefaultScreenOfDisplay(nxagentDisplay)) -
-                            nxagentOption(RootHeight)) / 2));
+      nxagentChangeOption(RootX, 0);
+      nxagentChangeOption(RootY, 0);
+    }
+    else
+    {
+      /* center */
+      nxagentChangeOption(RootX, (w - nxagentOption(RootWidth)) / 2);
+      nxagentChangeOption(RootY, (h - nxagentOption(RootHeight)) / 2);
+    }
   }
   else
   {
+    /*
+     * screen is initialized for the first time
+     */
+
     if (nxagentReconnectTrap == False)
     {
       nxagentChangeOption(RootX, 0);
@@ -1063,53 +1066,44 @@ Bool nxagentOpenScreen(ScreenPtr pScreen,
     }
 
     /*
-     * Be sure that the agent window won't be bigger
+     * Ensure that the agent window won't be bigger
      * than the root window.
      */
 
-    if (nxagentOption(Width) > nxagentOption(RootWidth))
-    {
-      nxagentChangeOption(Width, nxagentOption(RootWidth));
-    }
-
-    if (nxagentOption(Height) > nxagentOption(RootHeight))
-    {
-      nxagentChangeOption(Height, nxagentOption(RootHeight));
-    }
+    nxagentChangeOption(Width, min(nxagentOption(Width), nxagentOption(RootWidth)));
+    nxagentChangeOption(Height, min(nxagentOption(Height), nxagentOption(RootHeight)));
 
     /*
      * Be sure that the agent window won't be bigger
      * than the X server root window.
      */
 
-    if (nxagentOption(Width) > WidthOfScreen(DefaultScreenOfDisplay(nxagentDisplay)))
+    if (nxagentOption(Width) > w)
     {
-      nxagentChangeOption(Width, WidthOfScreen(DefaultScreenOfDisplay(nxagentDisplay)) * 3 / 4);
+      nxagentChangeOption(Width, w * 3 / 4);
     }
 
-    if (nxagentOption(Height) > HeightOfScreen(DefaultScreenOfDisplay(nxagentDisplay)))
+    if (nxagentOption(Height) > h)
     {
-      nxagentChangeOption(Height, HeightOfScreen(DefaultScreenOfDisplay(nxagentDisplay)) * 3 / 4);
+      nxagentChangeOption(Height, h * 3 / 4);
     }
 
     /*
-     * Forcing the agent window geometry to be equal to
-     * the root window geometry the first time the
-     * screen is initialized if the geometry hasn't been
-     * esplicitly set in the option file and if
-     * the root window isn't bigger than the X server
-     * root window..
+     * Forcing the agent window geometry to be equal to the root
+     * window geometry the first time the screen is initialized if the
+     * geometry hasn't been explicitly set in the option file and if
+     * the root window isn't bigger than the X server root window..
      */
 
     if (nxagentReconnectTrap == False)
     {
-      if ((nxagentOption(RootWidth) < WidthOfScreen(DefaultScreenOfDisplay(nxagentDisplay))) &&
+      if ((nxagentOption(RootWidth) < w) &&
               !(nxagentUserGeometry.flag & WidthValue))
       {
         nxagentChangeOption(Width, nxagentOption(RootWidth));
       }
 
-      if ((nxagentOption(RootHeight) < HeightOfScreen(DefaultScreenOfDisplay(nxagentDisplay))) &&
+      if ((nxagentOption(RootHeight) < h) &&
               !(nxagentUserGeometry.flag & HeightValue))
       {
         nxagentChangeOption(Height, nxagentOption(RootHeight));
@@ -1118,11 +1112,9 @@ Bool nxagentOpenScreen(ScreenPtr pScreen,
 
     if (resetAgentPosition)
     {
-      nxagentChangeOption(X, ((WidthOfScreen(DefaultScreenOfDisplay(nxagentDisplay)) -
-                              nxagentOption(Width)) / 2));
-
-      nxagentChangeOption(Y, ((HeightOfScreen(DefaultScreenOfDisplay(nxagentDisplay)) -
-                              nxagentOption(Height)) / 2));
+      /* center */
+      nxagentChangeOption(X, (w - nxagentOption(Width)) / 2);
+      nxagentChangeOption(Y, (h - nxagentOption(Height)) / 2);
     }
 
     nxagentChangeOption(SavedWidth, nxagentOption(RootWidth));
@@ -1131,8 +1123,8 @@ Bool nxagentOpenScreen(ScreenPtr pScreen,
 
   if (nxagentOption(Rootless))
   {
-    nxagentChangeOption(RootWidth, WidthOfScreen(DefaultScreenOfDisplay(nxagentDisplay)));
-    nxagentChangeOption(RootHeight, HeightOfScreen(DefaultScreenOfDisplay(nxagentDisplay)));
+    nxagentChangeOption(RootWidth, w);
+    nxagentChangeOption(RootHeight, h);
   }
 
   nxagentChangeOption(SavedRootWidth, nxagentOption(RootWidth));
