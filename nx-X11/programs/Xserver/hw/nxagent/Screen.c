@@ -1080,12 +1080,26 @@ Bool nxagentOpenScreen(ScreenPtr pScreen,
 
     if (nxagentOption(Width) > w)
     {
-      nxagentChangeOption(Width, w * 3 / 4);
+      if (nxagentOption(Rootless))
+      {
+        nxagentChangeOption(Width, w);
+      }
+      else
+      {
+        nxagentChangeOption(Width, w * 3 / 4);
+      }
     }
 
     if (nxagentOption(Height) > h)
     {
-      nxagentChangeOption(Height, h * 3 / 4);
+      if (nxagentOption(Rootless))
+      {
+        nxagentChangeOption(Height, h);
+      }
+      else
+      {
+        nxagentChangeOption(Height, h * 3 / 4);
+      }
     }
 
     /*
