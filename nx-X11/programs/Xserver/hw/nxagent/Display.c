@@ -1356,7 +1356,7 @@ FIXME: Use of nxagentParentWindow is strongly deprecated.
   {
     if (!(nxagentUserGeometry.flag & WidthValue))
     {
-      if (nxagentOption(Fullscreen))
+      if (nxagentOption(Fullscreen) || nxagentOption(Rootless))
       {
         nxagentChangeOption(RootWidth, DisplayWidth(nxagentDisplay, DefaultScreen(nxagentDisplay)));
       }
@@ -1369,7 +1369,7 @@ FIXME: Use of nxagentParentWindow is strongly deprecated.
 
     if (!(nxagentUserGeometry.flag & HeightValue))
     {
-      if (nxagentOption(Fullscreen))
+      if (nxagentOption(Fullscreen) || nxagentOption(Rootless))
       {
         nxagentChangeOption(RootHeight, DisplayHeight(nxagentDisplay, DefaultScreen(nxagentDisplay)));
       }

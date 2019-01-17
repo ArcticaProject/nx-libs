@@ -269,40 +269,30 @@ int nxagentRandRGetInfo(ScreenPtr pScreen, Rotation *pRotations)
 
 static int nxagentRandRInitSizes(ScreenPtr pScreen)
 {
-  RRScreenSizePtr pSize;
+  const int refresh_rate = 60;
+  RRScreenSizePtr pSize = NULL;
 
-  int width;
-  int height;
+  /*
+    Index[0]: default size
+    Index[nsizes-1]: current size
+    Index[nsizes-2]: max size
+  */
 
-  int maxWidth;
-  int maxHeight;
-
-/*
+  /*
   int w[] = {0, 160, 320, 640, 800, 1024, 1152, 1280, 1280, 1280, 1280, 1280,
                  1280, 1360, 1440, 1600, 1600, 1680, 1920, 1920, 0, 0};
   int h[] = {0, 120, 240, 480, 600,  768,  864,  600,  720,  800,  854,  960,
                  1024,  768,  900,  900, 1200, 1050, 1080, 1200, 0, 0};
-*/
+  */
   int w[] = {0, 320, 640, 640, 800, 800, 1024, 1024, 1152, 1280, 1280, 1280, 1360,
                  1440, 1600, 1600, 1680, 1920, 1920, 0, 0};
   int h[] = {0, 240, 360, 480, 480, 600,  600,  768,  864,  720,  800, 1024,  768,
                   900,  900, 1200, 1050, 1080, 1200, 0, 0};
 
-  int i;
-  int nSizes;
+  int maxWidth  = WidthOfScreen(DefaultScreenOfDisplay(nxagentDisplay));
+  int maxHeight = HeightOfScreen(DefaultScreenOfDisplay(nxagentDisplay));
 
-  int mmWidth;
-  int mmHeight;
-
-  /*
-   * Register all the supported sizes. The third
-   * parameter is the refresh rate.
-   */
-
-  maxWidth  = WidthOfScreen(DefaultScreenOfDisplay(nxagentDisplay));
-  maxHeight = HeightOfScreen(DefaultScreenOfDisplay(nxagentDisplay));
-
-  nSizes = sizeof w / sizeof(int);
+  int nSizes = sizeof w / sizeof(int);
 
   /*
    * Add current and max sizes.
@@ -318,10 +308,10 @@ static int nxagentRandRInitSizes(ScreenPtr pScreen)
    * Compute default size.
    */
 
-  w[0] = w[2];
-  h[0] = h[2];
+  w[0] = w[1];
+  h[0] = h[1];
 
-  for (i = 3; i < nSizes - 1; i++)
+  for (int i = 2; i < nSizes - 1; i++)
   {
     if ((w[i] <= maxWidth * 3 / 4) && 
             (h[i] <= maxHeight * 3 / 4) &&
@@ -333,47 +323,46 @@ static int nxagentRandRInitSizes(ScreenPtr pScreen)
     }
   }
 
-  for (i = 0; i < nSizes; i++)
+  /*
+   * Register all the supported sizes at a fixed refresh rate.
+   */
+
+  for (int i = 0; i < nSizes; i++)
   {
-    width = w[i];
-    height = h[i];
+    int mmWidth, mmHeight;
 
     if (monitorResolution < 0)
     {
-      mmWidth  = width * DisplayWidthMM(nxagentDisplay, DefaultScreen(nxagentDisplay)) /
+      mmWidth  = w[i] * DisplayWidthMM(nxagentDisplay, DefaultScreen(nxagentDisplay)) /
                      DisplayWidth(nxagentDisplay, DefaultScreen(nxagentDisplay));
 
-      mmHeight = height * DisplayHeightMM(nxagentDisplay, DefaultScreen(nxagentDisplay)) /
+      mmHeight = h[i] * DisplayHeightMM(nxagentDisplay, DefaultScreen(nxagentDisplay)) /
                      DisplayHeight(nxagentDisplay, DefaultScreen(nxagentDisplay));
     }
     else
     {
-      mmWidth  = (width * 254 + monitorResolution * 5) / (monitorResolution * 10);
-      mmHeight = (height * 254 + monitorResolution * 5) / (monitorResolution * 10);
-
+      mmWidth  = (w[i] * 254 + monitorResolution * 5) / (monitorResolution * 10);
+      mmHeight = (h[i] * 254 + monitorResolution * 5) / (monitorResolution * 10);
     }
 
-    if (mmWidth < 1)
-    {
-      mmWidth = 1;
-    }
-
-    if (mmHeight < 1)
-    {
-      mmHeight = 1;
-    }
-
-    pSize = RRRegisterSize(pScreen, width, height, mmWidth, mmHeight);
+    pSize = RRRegisterSize(pScreen, w[i], h[i], mmWidth < 1 ? 1 : mmWidth, mmHeight < 1 ? 1 : mmHeight);
 
     if (pSize == NULL)
     {
       return 0;
     }
 
-    RRRegisterRate (pScreen, pSize, 60);
+    RRRegisterRate (pScreen, pSize, refresh_rate);
   }
 
-  RRSetCurrentConfig(pScreen, RR_Rotate_0, 60, pSize);
+  /*
+   * the last registered size should be the current size
+   */
+
+  if (pSize)
+  {
+    RRSetCurrentConfig(pScreen, RR_Rotate_0, refresh_rate, pSize);
+  }
 
   return 1;
 }
