@@ -209,8 +209,6 @@ ChannelEndPoint::getUnixPath(char **unixPath) const {
 
   if (unixPath)
     *unixPath = NULL;
-  else
-    return false;
 
   long p;
   char *path = NULL;
@@ -230,7 +228,9 @@ ChannelEndPoint::getUnixPath(char **unixPath) const {
       return false;
   }
 
-  *unixPath = strdup(path);
+  // Only return value wanted
+  if ( unixPath )
+    *unixPath = strdup(path);
 
   return true;
 }
