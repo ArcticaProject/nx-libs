@@ -46,17 +46,17 @@ class Logger
 {
   public:
 
-  void user(const char *format, ...) __attribute__((format(gnu_printf, 2, 3)));
+  void user(const char *format, ...) __attribute__((format(printf, 2, 3)));
 
   void error(const char *name, int error);
 
-  void warning(const char *name, const char *format, ...) __attribute__((format(gnu_printf, 3, 4)));
+  void warning(const char *name, const char *format, ...) __attribute__((format(printf, 3, 4)));
 
-  void test(const char *name, const char *format, ...) __attribute__((format(gnu_printf, 3, 4)));
+  void test(const char *name, const char *format, ...) __attribute__((format(printf, 3, 4)));
 
   void trace(const char *name);
 
-  void debug(const char *name, const char *format, ...) __attribute__((format(gnu_printf, 3, 4)));
+  void debug(const char *name, const char *format, ...) __attribute__((format(printf, 3, 4)));
 
   void dump(const char *name, const char *data, int size);
 };
