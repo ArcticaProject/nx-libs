@@ -1,6 +1,6 @@
-# Use new trusty images, should yield newer compilers and packages
+# Use new xenial images, should yield newer compilers and packages
 sudo: true
-dist: trusty
+dist: xenial
 language: cpp
 
 matrix:
@@ -9,16 +9,18 @@ matrix:
       addons:
         apt:
           sources:
-            - sourceline: 'deb http://archive.ubuntu.com/ubuntu trusty-backports main restricted universe multiverse'
+            - sourceline: 'deb http://archive.ubuntu.com/ubuntu main restricted universe multiverse'
             - ubuntu-toolchain-r-test
           packages:
-            - cppcheck/trusty-backports
+            - cppcheck
             # imake
             - xutils-dev
             # X11 libaries
             - libxcomposite-dev
+            - libxdamage-dev
             - libxfont-dev
             - libxinerama-dev
+            - libxpm-dev
             - libxrandr-dev
             - libxtst-dev
             - x11proto-fonts-dev
@@ -39,8 +41,10 @@ matrix:
             - xutils-dev
             # X11 libaries
             - libxcomposite-dev
+            - libxdamage-dev
             - libxfont-dev
             - libxinerama-dev
+            - libxpm-dev
             - libxrandr-dev
             - libxtst-dev
             - x11proto-fonts-dev
@@ -53,15 +57,17 @@ matrix:
       addons:
         apt:
           sources:
-            - llvm-toolchain-trusty-3.9
+            - llvm-toolchain-xenial-3.9
           packages:
             - clang-3.9
             # imake
             - xutils-dev
             # X11 libaries
             - libxcomposite-dev
+            - libxdamage-dev
             - libxfont-dev
             - libxinerama-dev
+            - libxpm-dev
             - libxrandr-dev
             - libxtst-dev
             - x11proto-fonts-dev
@@ -74,7 +80,7 @@ matrix:
       addons:
         apt:
           sources:
-            - llvm-toolchain-trusty-6.0
+            - llvm-toolchain-xenial-6.0
             - ubuntu-toolchain-r-test
           packages:
             - clang-6.0
@@ -83,8 +89,10 @@ matrix:
             - xutils-dev
             # X11 libaries
             - libxcomposite-dev
+            - libxdamage-dev
             - libxfont-dev
             - libxinerama-dev
+            - libxpm-dev
             - libxrandr-dev
             - libxtst-dev
             - x11proto-fonts-dev
