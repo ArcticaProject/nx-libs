@@ -68,7 +68,7 @@ static inline void logError(const char *name, int error) \
     __attribute__((__unused__));
 
 static inline void logWarning(const char *name, const char *format, ...) \
-    __attribute__((__unused__));
+    __attribute__((format(printf, 2, 3))) __attribute__((__unused__));
 
 static inline void logTest(const char *name, const char *format, ...) \
     __attribute__((format(printf, 2, 3))) __attribute__((__unused__));
