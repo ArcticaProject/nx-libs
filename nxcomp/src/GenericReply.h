@@ -83,7 +83,6 @@ class GenericReplyMessage : public Message
   private:
 
   unsigned char  byte_data;
-  unsigned int   int_data[6];
   unsigned short short_data[12];
 };
 
