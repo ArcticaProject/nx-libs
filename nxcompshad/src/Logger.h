@@ -29,9 +29,6 @@
 #include <cerrno>
 #include <cstdarg>
 
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wformat-nonliteral"
-
 //
 // Error handling macros.
 //
@@ -46,17 +43,17 @@ class Logger
 {
   public:
 
-  void user(const char *format, ...) __attribute__((format(printf, 2, 3)));
+  void user(const char *format, ...) __attribute__((format(printf, 2, 0)));
 
   void error(const char *name, int error);
 
-  void warning(const char *name, const char *format, ...) __attribute__((format(printf, 3, 4)));
+  void warning(const char *name, const char *format, ...) __attribute__((format(printf, 3, 0)));
 
-  void test(const char *name, const char *format, ...) __attribute__((format(printf, 3, 4)));
+  void test(const char *name, const char *format, ...) __attribute__((format(printf, 3, 0)));
 
   void trace(const char *name);
 
-  void debug(const char *name, const char *format, ...) __attribute__((format(printf, 3, 4)));
+  void debug(const char *name, const char *format, ...) __attribute__((format(printf, 3, 0)));
 
   void dump(const char *name, const char *data, int size);
 };
@@ -166,7 +163,5 @@ static inline void logDump(const char *name, const char *data, int size)
 
   #endif
 }
-
-#pragma GCC diagnostic pop
 
 #endif /* Logger_H */
