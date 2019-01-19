@@ -24,6 +24,9 @@ matrix:
             - libxrandr-dev
             - libxtst-dev
             - x11proto-fonts-dev
+            # soft requirements
+            - quilt
+            - x11-xkb-utils
 
       env:
         - MATRIX_EVAL="CC=gcc && CXX=g++"
@@ -48,6 +51,9 @@ matrix:
             - libxrandr-dev
             - libxtst-dev
             - x11proto-fonts-dev
+            # soft requirements
+            - quilt
+            - x11-xkb-utils
 
       env:
         - MATRIX_EVAL="CC=gcc-8 && CXX=g++-8"
@@ -71,6 +77,9 @@ matrix:
             - libxrandr-dev
             - libxtst-dev
             - x11proto-fonts-dev
+            # soft requirements
+            - quilt
+            - x11-xkb-utils
 
       env:
         - MATRIX_EVAL="CC=clang-3.9 && CXX=clang++-3.9"
@@ -95,6 +104,9 @@ matrix:
             - libxrandr-dev
             - libxtst-dev
             - x11proto-fonts-dev
+            # soft requirements
+            - quilt
+            - x11-xkb-utils
 
       env:
         - MATRIX_EVAL="CC=clang-7 && CXX=clang++-7"
