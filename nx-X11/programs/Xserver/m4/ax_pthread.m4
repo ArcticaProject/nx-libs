@@ -1,1 +1,1 @@
-/home/mike/MyDocuments/4projects/arctica-upstream/nx-libs.upstream/nx-libs.36/m4/ax_pthread.m4
+../../../../m4/ax_pthread.m4
