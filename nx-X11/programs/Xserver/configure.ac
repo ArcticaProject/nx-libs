@@ -678,7 +678,7 @@ MIEXT_SHADOW_INC='-I$(top_srcdir)/miext/shadow'
 MIEXT_SHADOW_LIB='$(top_builddir)/miext/shadow/libshadow.la'
 MIEXT_LAYER_LIB='$(top_builddir)/miext/layer/liblayer.la'
 XPSTUBS_LIB='$(top_builddir)/dix/libxpstubs.la'
-CORE_INCS='-I$(top_srcdir)/include -I$(top_builddir)/include'
+CORE_INCS='-I$(top_srcdir)/../../exports/include -I$(top_srcdir)/include -I$(top_builddir)/include'
 
 PKG_CHECK_MODULES([XSERVERCFLAGS], [$REQUIRED_MODULES $REQUIRED_LIBS])
 PKG_CHECK_MODULES([XSERVERLIBS], [$REQUIRED_LIBS])
