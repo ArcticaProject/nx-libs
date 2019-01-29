@@ -438,8 +438,14 @@ XEXT_LIB='$(top_builddir)/Xext/libXext.la'
 XEXTXORG_LIB='$(top_builddir)/Xext/libXextbuiltin.la'
 
 dnl Core modules for most extensions, et al.
-REQUIRED_MODULES="randrproto renderproto fixesproto damageproto xcmiscproto xextproto xproto xtrans xf86miscproto xf86vidmodeproto xf86bigfontproto scrnsaverproto bigreqsproto resourceproto fontsproto inputproto xf86dgaproto"
+REQUIRED_MODULES="randrproto renderproto fixesproto damageproto xcmiscproto xextproto xproto xtrans xf86vidmodeproto xf86bigfontproto scrnsaverproto bigreqsproto resourceproto fontsproto inputproto xf86dgaproto"
+REQUIRED_MODULES_XF86MISC="xf86miscproto"
 REQUIRED_LIBS="xfont2 xau fontenc nx-x11"
+
+AM_CONDITIONAL(XF86MISC, [test "x$XF86MISC" = xyes])
+if test "x$XF86MISC" = xyes; then
+	REQUIRED_MODULES="$REQUIRED_MODULES $REQUIRED_MODULES_XF86MISC"
+fi
 
 AM_CONDITIONAL(XV, [test "x$XV" = xyes])
 if test "x$XV" = xyes; then
