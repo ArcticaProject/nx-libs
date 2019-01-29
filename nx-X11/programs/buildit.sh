@@ -61,6 +61,6 @@ export XSERVERCFLAGS_CFLAGS="				\
                             ${NULL}"
 
 export XSERVERCFLAGS_LIBS="				\
-                           $(NULL)"
+                           ${NULL}"
 
 build Xserver $CONFFLAGS --with-mesa-source=$PWD/${SRC}/../extras/Mesa/ PKG_CONFIG_LIBDIR="$PKG_CONFIG_LIBDIR" || exit 1
