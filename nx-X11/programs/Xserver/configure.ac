@@ -440,7 +440,7 @@ XEXTXORG_LIB='$(top_builddir)/Xext/libXextbuiltin.la'
 dnl Core modules for most extensions, et al.
 REQUIRED_MODULES="randrproto renderproto fixesproto damageproto xcmiscproto xextproto xproto xtrans xf86vidmodeproto xf86bigfontproto scrnsaverproto bigreqsproto resourceproto fontsproto inputproto xf86dgaproto"
 REQUIRED_MODULES_XF86MISC="xf86miscproto"
-REQUIRED_LIBS="xfont2 xau fontenc nx-x11"
+REQUIRED_LIBS="xfont2 xau fontenc nx-x11 pixman-1"
 
 AM_CONDITIONAL(XF86MISC, [test "x$XF86MISC" = xyes])
 if test "x$XF86MISC" = xyes; then
