@@ -792,7 +792,7 @@ dnl nxagent DDX
 
 dnl only check if "yes" or "auto"
 if test "x$NXAGENT" != xno; then
-	PKG_CHECK_MODULES(NXAGENTMODULES, [nxcomp nxcompext nxcompshad xfont2 xext nx-x11 xau xpm xcomposite xrender $XDMCP_MODULES], [have_nxagent=yes], [have_nxagent=no])
+	PKG_CHECK_MODULES(NXAGENTMODULES, [nxcomp nxcompshad xfont2 xext nx-x11 xau xpm xcomposite xrender $XDMCP_MODULES], [have_nxagent=yes], [have_nxagent=no])
 	# print result only when it fails (cover strange behaviour of the macro)
 	if test "x$have_nxagent" != xyes; then
 		AC_MSG_RESULT([$have_nxagent])
