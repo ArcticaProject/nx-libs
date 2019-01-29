@@ -143,7 +143,7 @@ extern int _XSelect(int maxfds, fd_set *readfds, fd_set *writefds,
 
 #endif /* #ifdef NX_TRANS_SOCKET */
 
-#define __X_FDS_BITS @USE_FDS_BITS@
+#define __X_FDS_BITS fds_bits
 
 #ifndef __FDS_BITS
 # define __FDS_BITS(p)  ((p)->__X_FDS_BITS)
