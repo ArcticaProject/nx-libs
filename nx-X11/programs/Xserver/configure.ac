@@ -406,6 +406,13 @@ dnl environment variable to find it, such as:
 dnl	ACLOCAL="aclocal -I ${PREFIX}/share/aclocal"
 m4_pattern_forbid([^XTRANS_CONNECTION_FLAGS$])
 
+dnl if there's libtirpc available, prefer that over the system
+dnl implementation.
+PKG_CHECK_MODULES([TIRPC], [libtirpc], [
+	CFLAGS="$CFLAGS $TIRPC_CFLAGS"
+	LIBS="$LIBS $TIRPC_LIBS"
+], [:;])
+
 # Transport selection macro from xtrans.m4
 XTRANS_CONNECTION_FLAGS
 
@@ -437,10 +444,26 @@ XEXT_INC='-I$(top_srcdir)/Xext'
 XEXT_LIB='$(top_builddir)/Xext/libXext.la'
 XEXTXORG_LIB='$(top_builddir)/Xext/libXextbuiltin.la'
 
-dnl Core modules for most extensions, et al.
 REQUIRED_MODULES="randrproto renderproto fixesproto damageproto xcmiscproto xextproto xproto xtrans xf86vidmodeproto xf86bigfontproto scrnsaverproto bigreqsproto resourceproto fontsproto inputproto xf86dgaproto"
 REQUIRED_MODULES_XF86MISC="xf86miscproto"
-REQUIRED_LIBS="xfont2 xau fontenc nx-x11 pixman-1"
+
+dnl if there's pixman-1 available
+dnl implementation.
+PKG_CHECK_MODULES([pixman], [pixman-1 >= 0.27.2], [
+	CFLAGS="$CFLAGS $(pkg-config --cflags pixman-1)"
+	LIBS="$LIBS $(pkg-config --libs pixman-1)"], [
+	AC_MSG_ERROR([pixman explicitly requested, but required 
+		      modules not found.])])
+
+dnl if there's xfont available
+dnl implementation.
+PKG_CHECK_MODULES([xfont2], [xfont2 >= 2.0.0], [
+	CFLAGS="$CFLAGS $(pkg-config --cflags xfont2)"
+	LIBS="$LIBS $(pkg-config --libs xfont2)"], [
+	AC_MSG_ERROR([xfont2 explicitly requested, but required
+		      modules not found.])])
+
+REQUIRED_LIBS="$REQUIRED_LIBS xau fontenc nx-x11"
 
 AM_CONDITIONAL(XF86MISC, [test "x$XF86MISC" = xyes])
 if test "x$XF86MISC" = xyes; then

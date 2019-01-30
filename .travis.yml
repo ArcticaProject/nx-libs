@@ -9,7 +9,7 @@ matrix:
       addons:
         apt:
           sources:
-            - sourceline: 'deb http://archive.ubuntu.com/ubuntu main restricted universe multiverse'
+            - sourceline: 'deb http://archive.ubuntu.com/ubuntu main restricted security universe multiverse'
             - ubuntu-toolchain-r-test
           packages:
             - cppcheck
@@ -18,15 +18,18 @@ matrix:
             # X11 libaries
             - libxcomposite-dev
             - libxdamage-dev
+            - libxkbfile-dev
             - libxfont-dev
             - libxinerama-dev
             - libxpm-dev
             - libxrandr-dev
             - libxtst-dev
             - x11proto-fonts-dev
+            - xfonts-utils
             # soft requirements
             - quilt
             - x11-xkb-utils
+            - ghostscript
 
       env:
         - MATRIX_EVAL="CC=gcc && CXX=g++"
@@ -44,6 +47,7 @@ matrix:
             - xutils-dev
             # X11 libaries
             - libxcomposite-dev
+            - libxkbfile-dev
             - libxdamage-dev
             - libxfont-dev
             - libxinerama-dev
@@ -51,9 +55,11 @@ matrix:
             - libxrandr-dev
             - libxtst-dev
             - x11proto-fonts-dev
+            - xfonts-utils
             # soft requirements
             - quilt
             - x11-xkb-utils
+            - ghostscript
 
       env:
         - MATRIX_EVAL="CC=gcc-9 && CXX=g++-9"
@@ -70,6 +76,7 @@ matrix:
             - xutils-dev
             # X11 libaries
             - libxcomposite-dev
+            - libxkbfile-dev
             - libxdamage-dev
             - libxfont-dev
             - libxinerama-dev
@@ -77,9 +84,11 @@ matrix:
             - libxrandr-dev
             - libxtst-dev
             - x11proto-fonts-dev
+            - xfonts-utils
             # soft requirements
             - quilt
             - x11-xkb-utils
+            - ghostscript
 
       env:
         - MATRIX_EVAL="CC=clang-3.9 && CXX=clang++-3.9"
@@ -97,6 +106,7 @@ matrix:
             - xutils-dev
             # X11 libaries
             - libxcomposite-dev
+            - libxkbfile-dev
             - libxdamage-dev
             - libxfont-dev
             - libxinerama-dev
@@ -104,9 +114,11 @@ matrix:
             - libxrandr-dev
             - libxtst-dev
             - x11proto-fonts-dev
+            - xfonts-utils
             # soft requirements
             - quilt
             - x11-xkb-utils
+            - ghostscript
 
       env:
         - MATRIX_EVAL="CC=clang-8 && CXX=clang++-8"
