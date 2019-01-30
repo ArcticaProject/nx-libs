@@ -30,6 +30,8 @@ build() {
 		./autogen.sh $OPT || exit 1
 	fi
 
+	make
+	
 	popd >/dev/null
 }
 
