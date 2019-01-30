@@ -254,7 +254,6 @@ build-env: version
 	done
 
 clean-env: version
-
 	for header in $(NX_X11_HEADERS); do \
 	    ${RM_FILE} nx-X11/exports/include/nx-X11/$${header}; \
 	done
@@ -290,8 +289,6 @@ build-lite:
 	cd nxproxy && autoreconf -vfsi && (${CONFIGURE}) && ${MAKE}
 
 build-full: build-env
-# in the full case, we rely on "magic" in the nx-X11 imake-based makefiles...
-
 	# build nxcomp first
 	cd nxcomp && autoreconf -vfsi && (${CONFIGURE}) && ${MAKE}
 
