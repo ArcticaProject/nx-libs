@@ -129,6 +129,7 @@ INCLUDES = \
 	-I../../../../extras/Mesa/include \
 	-I$(XBUILDINCDIR) \
 	-I../../mi \
+	-I../../Xi \
 	-I../../include \
 	-I../../os \
 	-I../../miext/cw \
