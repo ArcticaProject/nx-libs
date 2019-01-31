@@ -1,6 +1,224 @@
-2018-11-20 16:03:22 +0100 Mike Gabriel (b0c5dcd51)
+2019-01-31 14:10:36 +0100 Mike Gabriel (b5d411337)
 
-	* release 3.5.99.17 (HEAD -> 3.6.x, tag: 3.5.99.17)
+	* release 3.5.99.18 (HEAD -> 3.6.x, tag: 3.5.99.18)
+
+2019-01-25 16:37:29 +0100 Mike Gabriel (26e483d49)
+
+	* Merge branch 'theqvd-unix_socket_forwarding' into 3.6.x
+
+2019-01-18 13:15:18 +0100 Vadim (889de46f7)
+
+	* Fix parsing ports set to unix sockets
+
+2019-01-18 12:28:51 +0100 Vadim (5c99eb7d5)
+
+	* Make getUnixPath() return the right value when called without an
+          argument.
+
+2019-01-17 12:06:34 +0100 Mike Gabriel (ca8236e7f)
+
+	* Merge branch 'uli42-pr/window_fixes' into 3.6.x
+
+2019-01-12 01:01:55 +0100 Ulrich Sibiller (d16a5fbb1)
+
+	* Screen.c: fix handling of fullscreen startup
+
+2019-01-13 23:47:53 +0100 Ulrich Sibiller (3c92b5db9)
+
+	* Screen.c: fix size calculation in rootless mode
+
+2019-01-13 23:46:49 +0100 Ulrich Sibiller (43d3b655d)
+
+	* Screen.c: improve readability of size calculations
+
+2019-01-11 23:25:39 +0100 Ulrich Sibiller (8dea30751)
+
+	* Screen.c: move identical line out of both parts of an if clause
+
+2019-01-11 22:39:34 +0100 Ulrich Sibiller (c4c39bc94)
+
+	* Extensions.c: Cleanup nxagentRandRInitSizes()
+
+2019-01-11 21:58:50 +0100 Ulrich Sibiller (6c0098a3e)
+
+	* Extensions.c: fix first resolution being ignored
+
+2019-01-11 00:59:55 +0100 Ulrich Sibiller (d175fd4c6)
+
+	* Set default screen size to the whole screen in rootless mode
+
+2019-01-10 22:35:02 +0100 Ulrich Sibiller (4a7faa8bd)
+
+	* Window.c: move WM_STATE handling to separate function
+
+2018-12-22 22:02:15 +0100 Mike Gabriel (4214a719a)
+
+	* Merge branch 'uli42-pr/fix_xlibcrash' into 3.6.x
+
+2018-10-31 23:44:15 +0100 Ulrich Sibiller (633f4617b)
+
+	* XlibInt: check for XlibError before accessing other dpy fields
+
+2018-10-31 23:43:58 +0100 Ulrich Sibiller (a61b1a72d)
+
+	* XlibInt.c: fix wrong debug message
+
+2018-12-19 12:39:59 +0100 Mike Gabriel (d98255968)
+
+	* nxagent.1 man page: Grammar fix.
+
+2018-12-19 12:38:59 +0100 Mike Gabriel (669af5300)
+
+	* Merge branch 'uli42-pr/x2go_bypass' into 3.6.x
+
+2017-07-22 22:21:05 +0200 Ulrich Sibiller (522106e20)
+
+	* nxagent: bypass X2go's keyboard configuration hack
+
+2018-12-19 12:36:28 +0100 Mike Gabriel (a8c65ab62)
+
+	* Merge branch 'uli42-pr/improve_keyboard2' into 3.6.x
+
+2018-12-03 23:35:56 +0100 Ulrich Sibiller (a70ec920d)
+
+	* Keyboard.c: add static keyword where appropriate
+
+2018-12-03 22:03:58 +0100 Ulrich Sibiller (d5c9733b2)
+
+	* nxagent: simplify keycode conversion setup
+
+2018-12-03 21:54:15 +0100 Ulrich Sibiller (1d6c241d3)
+
+	* nxagent: store remote keyboard in global variables
+
+2018-12-02 17:08:31 +0100 Ulrich Sibiller (161515d24)
+
+	* nxagent: add additional keyboard config option rmlvo
+
+2017-07-22 19:03:19 +0200 Ulrich Sibiller (1de6ca599)
+
+	* nxagent: add keyboard=clone configuration option
+
+2018-12-19 12:31:05 +0100 Mike Gabriel (ab3e14850)
+
+	* Merge branch 'uli42-pr/keyboard_cleanup' into 3.6.x
+
+2018-12-03 21:34:40 +0100 Ulrich Sibiller (26b033b84)
+
+	* Reconnect.c: restore old keyboard value if no new one is given
+
+2018-12-03 21:52:33 +0100 Ulrich Sibiller (4dfe84eaf)
+
+	* Keyboard.c: remove non-fitting comment
+
+2018-12-01 22:37:40 +0100 Ulrich Sibiller (21a0ce367)
+
+	* nxagent: fix references to default rules in manpage
+
+2017-07-23 02:03:58 +0200 Ulrich Sibiller (3b62184a1)
+
+	* Keyboard.c: improve creation of keyboard config file
+
+2018-12-01 18:17:40 +0100 Ulrich Sibiller (fb31220f2)
+
+	* Keyboard.c: reformat nxagentKeycodeConversionSetup
+
+2018-12-02 00:09:00 +0100 Ulrich Sibiller (3c4a8da12)
+
+	* Keyboard.c: use 'variant' all over the place
+
+2018-12-01 23:59:36 +0100 Ulrich Sibiller (d0d6c1bdb)
+
+	* Keyboard.c: rename variables to better reflect their meaning
+
+2017-07-22 18:56:13 +0200 Ulrich Sibiller (269a352ff)
+
+	* Keyboard.c: refactor keycode conversion
+
+2017-07-22 17:34:22 +0200 Ulrich Sibiller (d610e9c3c)
+
+	* Keyboard.c: move keyboard file creation to extra function
+
+2018-12-19 12:25:53 +0100 Mike Gabriel (70cb1926c)
+
+	* Merge branch 'uli42-pr/xnest_manpages' into 3.6.x
+
+2018-12-17 22:36:44 +0100 Ulrich Sibiller (c8947d8aa)
+
+	* manpage: reformat some lines
+
+2018-12-17 22:36:34 +0100 Ulrich Sibiller (b405b962f)
+
+	* manpage: add -name
+
+2018-12-17 22:36:07 +0100 Ulrich Sibiller (b8138d97d)
+
+	* manpage: add/extend -dpi/-autodpi
+
+2018-12-17 22:35:35 +0100 Ulrich Sibiller (338e20510)
+
+	* manpage: add -geometry
+
+2018-12-17 22:35:18 +0100 Ulrich Sibiller (51664049f)
+
+	* manpage: add -depth
+
+2018-12-17 22:34:43 +0100 Ulrich Sibiller (3b508010d)
+
+	* manpage: add -class
+
+2018-12-17 22:34:15 +0100 Ulrich Sibiller (0b454d2d3)
+
+	* manpage: add -full
+
+2018-12-17 22:33:52 +0100 Ulrich Sibiller (79e4c20a0)
+
+	* manpage: add -sync
+
+2018-12-19 12:20:10 +0100 Mike Gabriel (22fea29cf)
+
+	* Merge branch 'uli42-pr/fb_fastpath' into 3.6.x
+
+2018-12-18 21:39:04 +0100 Ulrich Sibiller (034228d75)
+
+	* fb: fix fast-path blt detection
+
+2018-12-18 21:32:37 +0100 Ulrich Sibiller (020ef045e)
+
+	* fb: Fix memcpy abuse
+
+2018-12-19 12:18:27 +0100 Mike Gabriel (8d6a4a9b7)
+
+	* Merge branch 'uli42-pr/fix_uninit' into 3.6.x
+
+2018-12-18 00:17:51 +0100 Ulrich Sibiller (44c59e12d)
+
+	* Fix uninitialized bytes
+
+2018-12-18 00:05:50 +0100 Ulrich Sibiller (5b0bf752a)
+
+	* xkb: Initialize pad bytes sent in replies of geometry requests.
+
+2018-12-17 23:58:16 +0100 Ulrich Sibiller (a4fad8f58)
+
+	* Fix crash due to uninitialized VModMap fields.
+
+2018-11-22 13:16:20 +0100 Mike Gabriel (989398afe)
+
+	* debian/*: Adopt packaging changes from official Debian package.
+
+2018-11-22 11:46:01 +0100 Mike Gabriel (6d7784eb0)
+
+	* debian/nxagent.{post,pre}*: Fix versions in dpkg-maintscript-helper
+          calls.
+
+2018-11-22 11:45:29 +0100 Mike Gabriel (afa56ea64)
+
+	* debian/changelog: post-release fix (UNRELEASED -> unstable).
+
+2018-11-20 16:03:22 +0100 Mike Gabriel (3a19d8d17)
+
+	* release 3.5.99.17 (tag: 3.5.99.17)
 
 2018-11-14 20:21:46 +0100 Ulrich Sibiller (623a74ae1)
 
