@@ -428,7 +428,7 @@ FIXME: Here the split trap is always set and so the caching of
               resource, nxagentSplitTrap);
   #endif
 
-  if (nxagentSplitTrap == 1 || nxagentUnpackAlpha[resource] == NULL ||
+  if (nxagentSplitTrap || nxagentUnpackAlpha[resource] == NULL ||
           nxagentUnpackAlpha[resource] -> size != size ||
               memcmp(nxagentUnpackAlpha[resource] -> data, data, size) != 0)
   {
@@ -584,8 +584,8 @@ FIXME: Should use these.
   int framebuffer = 1;
   int realize     = 1;
 */
-  if (nxagentGCTrap == 1 && nxagentReconnectTrap == 0 &&
-          nxagentFBTrap == 0 && nxagentShmTrap == 0)
+  if (nxagentGCTrap && !nxagentReconnectTrap &&
+          !nxagentFBTrap && !nxagentShmTrap)
   {
     if (pDrawable -> type == DRAWABLE_PIXMAP)
     {
@@ -601,11 +601,10 @@ FIXME: Should use these.
     goto nxagentPutImageEnd;
   }
 
-  if (nxagentReconnectTrap == 0 &&
-          nxagentSplitTrap == 0)
+  if (!nxagentReconnectTrap && !nxagentSplitTrap)
   {
     if (pDrawable -> type == DRAWABLE_PIXMAP &&
-            nxagentFBTrap == 0 && nxagentShmTrap == 0)
+            !nxagentFBTrap && !nxagentShmTrap)
     {
       fbPutImage(nxagentVirtualDrawable(pDrawable), pGC, depth,
                      dstX, dstY, dstWidth, dstHeight, leftPad, format, data);
@@ -693,11 +692,11 @@ FIXME: Should use these.
 /*
 FIXME: Should we disable the split with link LAN?
 
-  split = (nxagentOption(Streaming) == 1 &&
+  split = (nxagentOption(Streaming) &&
                nxagentOption(LinkType) != LINK_TYPE_NONE &&
                    nxagentOption(LinkType) != LINK_TYPE_LAN
 */
-  split = (nxagentOption(Streaming) == 1 &&
+  split = (nxagentOption(Streaming) &&
                nxagentOption(LinkType) != LINK_TYPE_NONE
 /*
 FIXME: Do we stream the images from GLX or Xv? If we do that,
@@ -710,8 +709,8 @@ FIXME: Do we stream the images from GLX or Xv? If we do that,
 /*
 FIXME: Temporarily stream the GLX data.
 
-                           && nxagentGlxTrap == 0
-                               && nxagentXvTrap == 0
+                           && !nxagentGlxTrap
+                               && !nxagentXvTrap
 */
 );
 
@@ -720,12 +719,11 @@ FIXME: Temporarily stream the GLX data.
    * is less than 15.
    */
 
-  if (split == 1 && (nxagentSplitTrap == 1 || depth < 15))
+  if (split == 1 && (nxagentSplitTrap || depth < 15))
   {
     #ifdef TEST
 
-    if (nxagentSplitTrap == 1 ||
-            nxagentReconnectTrap == 1)
+    if (nxagentSplitTrap || nxagentReconnectTrap)
     {
       fprintf(stderr, "nxagentPutImage: Not splitting with reconnection [%d] trap [%d] "
                   "depth [%d].\n", nxagentSplitTrap, nxagentReconnectTrap, depth);
@@ -767,7 +765,7 @@ FIXME: Temporarily stream the GLX data.
    */
 
   if (nxagentOption(LinkType) != LINK_TYPE_NONE &&
-          (nxagentGlxTrap == 1 || nxagentXvTrap == 1))
+          (nxagentGlxTrap || nxagentXvTrap))
   {
     #ifdef TEST
     fprintf(stderr, "nxagentPutImage: Disabling the use of the cache with GLX or Xvideo.\n");
@@ -974,7 +972,7 @@ void nxagentRealizeImage(DrawablePtr pDrawable, GCPtr pGC, int depth,
 
   bytesPerLine = nxagentImagePad(w, format, leftPad, depth);
 
-  if (nxagentOption(Shadow) == 1 && format == ZPixmap &&
+  if (nxagentOption(Shadow) && format == ZPixmap &&
           (nxagentOption(XRatio) != DONT_SCALE ||
               nxagentOption(YRatio) != DONT_SCALE) &&
                   pDrawable == (DrawablePtr) nxagentShadowPixmapPtr)
@@ -1197,7 +1195,7 @@ FIXME: Should use an unpack resource here.
 
     if (w <= IMAGE_PACK_WIDTH || h <= IMAGE_PACK_HEIGHT ||
             nxagentImageLength(w, h, format, leftPad, depth) <=
-                IMAGE_PACK_LENGTH || nxagentLosslessTrap == 1)
+                IMAGE_PACK_LENGTH || nxagentLosslessTrap)
     {
       if (nxagentPackLossless == PACK_NONE)
       {
@@ -1273,8 +1271,8 @@ FIXME: Should try to locate the image anyway, if the lossless
        again using the preferred method.
 */
     if (nxagentNeedCache(plainImage, packMethod) &&
-            nxagentGlxTrap == 0 && nxagentXvTrap == 0 &&
-                nxagentLosslessTrap == 0 && NXImageCacheSize > 0)
+            !nxagentGlxTrap && !nxagentXvTrap &&
+                !nxagentLosslessTrap && NXImageCacheSize > 0)
     {
       /*
        * Be sure that the padding bits are
@@ -1341,7 +1339,7 @@ FIXME: There should be a callback registered by the agent that
      * compress better.
      */
 
-    if (lossless == 0 && nxagentOption(Adaptive) == 1)
+    if (lossless == 0 && nxagentOption(Adaptive))
     {
       int ratio = nxagentUniquePixels(plainImage);
 

@@ -373,9 +373,9 @@ void nxagentRootlessRestack(unsigned long children[], unsigned int nchildren)
       mask = CWSibling | CWStackMode;
       values[0] = pWin -> drawable.id;
       pClient = wClient(toplevel[ntoplevel]);
-      nxagentScreenTrap = 1;
+      nxagentScreenTrap = True;
       ConfigureWindow(toplevel[ntoplevel], mask, (XID *) values, pClient);
-      nxagentScreenTrap = 0;
+      nxagentScreenTrap = False;
 
       #ifdef TEST
       fprintf(stderr, "nxagentRootlessRestack: Restacked window [%p].\n", (void*) toplevel[ntoplevel]);

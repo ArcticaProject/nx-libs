@@ -217,7 +217,7 @@ PixmapPtr nxagentCreatePixmap(ScreenPtr pScreen, int width, int height,
    * id of the drawable in the checksum.
    */
 
-  if (width != 0 && height != 0 && nxagentGCTrap == 0)
+  if (width != 0 && height != 0 && !nxagentGCTrap)
   {
     pPixmapPriv -> id = XCreatePixmap(nxagentDisplay,
                                       nxagentDefaultWindows[pScreen -> myNum],
@@ -348,7 +348,7 @@ PixmapPtr nxagentCreatePixmap(ScreenPtr pScreen, int width, int height,
       fprintf(stderr, "Warning: Disabling render extension due to missing pixmap format.\n");
       #endif
 
-      nxagentRenderTrap = 1;
+      nxagentRenderTrap = True;
     }
 
     nxagentDestroyPixmap(pPixmap);
@@ -923,11 +923,11 @@ void nxagentReconnectPixmap(void *p0, XID x1, void *p2)
       return;
     }
 
-    nxagentSplitTrap = 1;
+    nxagentSplitTrap = True;
 
     *pBool = nxagentSynchronizeDrawableData((DrawablePtr) pPixmap, NEVER_BREAK, NULL);
 
-    nxagentSplitTrap = 0;
+    nxagentSplitTrap = False;
 
     if (!*pBool)
     {
@@ -1256,11 +1256,11 @@ void nxagentSynchronizeShmPixmap(DrawablePtr pDrawable, int xPict, int yPict,
 
     saveTrap = nxagentGCTrap;
 
-    nxagentGCTrap = 0;
+    nxagentGCTrap = False;
 
-    nxagentSplitTrap = 1;
+    nxagentSplitTrap = True;
 
-    nxagentFBTrap = 1;
+    nxagentFBTrap = True;
 
     if ((data = malloc(length)) != NULL)
     {
@@ -1281,9 +1281,9 @@ void nxagentSynchronizeShmPixmap(DrawablePtr pDrawable, int xPict, int yPict,
 
     nxagentGCTrap = saveTrap;
 
-    nxagentSplitTrap = 0;
+    nxagentSplitTrap = False;
 
-    nxagentFBTrap = 0;
+    nxagentFBTrap = False;
 
     nxagentFreeScratchGC(pGC);
   }

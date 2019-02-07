@@ -148,7 +148,7 @@ int nxagentSynchronizeDrawable(DrawablePtr pDrawable, int wait, unsigned int bre
 
   pDrawable = nxagentSplitDrawable(pDrawable);
 
-  if (nxagentLosslessTrap == 0)
+  if (!nxagentLosslessTrap)
   {
     if (nxagentDrawableStatus(pDrawable) == Synchronized)
     {
@@ -171,15 +171,15 @@ int nxagentSynchronizeDrawable(DrawablePtr pDrawable, int wait, unsigned int bre
    * transferred in a single operation.
    */
 
-  nxagentFBTrap = 1;
+  nxagentFBTrap = True;
 
-  nxagentSplitTrap = 1;
+  nxagentSplitTrap = True;
 
   result = nxagentSynchronizeDrawableData(pDrawable, breakMask, owner);
 
-  nxagentSplitTrap = 0;
+  nxagentSplitTrap = False;
 
-  nxagentFBTrap = 0;
+  nxagentFBTrap = False;
 
   if (wait == DO_WAIT && nxagentSplitResource(pDrawable) != NULL)
   {
@@ -253,7 +253,7 @@ int nxagentSynchronizeDrawableData(DrawablePtr pDrawable, unsigned int breakMask
      * compression turned off.
      */
 
-    if (nxagentLosslessTrap == 1)
+    if (nxagentLosslessTrap)
     {
       pGC = nxagentGetGraphicContext(pDrawable);
 
@@ -285,7 +285,7 @@ int nxagentSynchronizeDrawableData(DrawablePtr pDrawable, unsigned int breakMask
 
       goto nxagentSynchronizeDrawableDataEnd;
     }
-    else if (nxagentReconnectTrap == 1)
+    else if (nxagentReconnectTrap)
     {
       /*
        * The pixmap data is not synchronized unless
@@ -298,7 +298,7 @@ int nxagentSynchronizeDrawableData(DrawablePtr pDrawable, unsigned int breakMask
       {
         #ifdef TEST
 
-        if (nxagentReconnectTrap == 1)
+        if (nxagentReconnectTrap)
         {
           static int totalLength;
           static int totalReconnectedPixmaps;
@@ -586,11 +586,11 @@ int nxagentSynchronizeRegion(DrawablePtr pDrawable, RegionPtr pRegion, unsigned 
 
   saveTrap = nxagentGCTrap;
 
-  nxagentGCTrap = 0;
+  nxagentGCTrap = False;
 
-  nxagentFBTrap = 1;
+  nxagentFBTrap = True;
 
-  nxagentSplitTrap = 1;
+  nxagentSplitTrap = True;
 
   pGC = nxagentGetGraphicContext(pDrawable);
 
@@ -894,7 +894,7 @@ int nxagentSynchronizeRegion(DrawablePtr pDrawable, RegionPtr pRegion, unsigned 
 
         if (owner != NULL)
         {
-          if (nxagentOption(Shadow) == 1 &&
+          if (nxagentOption(Shadow) &&
                   (nxagentOption(XRatio) != DONT_SCALE ||
                       nxagentOption(YRatio) != DONT_SCALE))
           {
@@ -945,15 +945,15 @@ int nxagentSynchronizeRegion(DrawablePtr pDrawable, RegionPtr pRegion, unsigned 
 
 nxagentSynchronizeRegionStop:
 
-  nxagentSplitTrap = 0;
+  nxagentSplitTrap = False;
 
-  nxagentFBTrap = 0;
+  nxagentFBTrap = False;
 
   nxagentGCTrap = saveTrap;
 
   success = 1;
 
-  if (nxagentOption(Shadow) == 0)
+  if (!nxagentOption(Shadow))
   {
     if (nxagentSynchronization.abort == 1)
     {
@@ -1025,7 +1025,7 @@ nxagentSynchronizeRegionStop:
         w = RegionRects(&collectedUpdates)[i].x2 - RegionRects(&collectedUpdates)[i].x1;
         h = RegionRects(&collectedUpdates)[i].y2 - RegionRects(&collectedUpdates)[i].y1;
        
-        if (nxagentOption(Shadow) == 1 &&
+        if (nxagentOption(Shadow) &&
                 (nxagentOption(XRatio) != DONT_SCALE ||
                     nxagentOption(YRatio) != DONT_SCALE))
         {
@@ -2633,7 +2633,7 @@ void nxagentCreateDrawableBitmap(DrawablePtr pDrawable)
 
   saveTrap = nxagentGCTrap;
 
-  nxagentGCTrap = 1;
+  nxagentGCTrap = True;
 
   if (nxagentDrawableStatus(pDrawable) == Synchronized)
   {

@@ -522,7 +522,7 @@ int ddxProcessArgument(int argc, char *argv[], int i)
             sscanf(argv[i], "%i", &level) == 1 &&
                 level >= 0 && level <= 2)
     {
-      if (nxagentOption(Shadow) == 0)
+      if (!nxagentOption(Shadow))
       {
         nxagentChangeOption(DeferLevel, level);
 
@@ -624,7 +624,7 @@ int ddxProcessArgument(int argc, char *argv[], int i)
         }
       }
 
-      if (nxagentUserGeometry.flag || (nxagentOption(Fullscreen) == 1)) return 2;
+      if (nxagentUserGeometry.flag || nxagentOption(Fullscreen)) return 2;
     }
 
     return 0;
@@ -1122,7 +1122,7 @@ static void nxagentParseSingleOption(char *name, char *value)
   }
   else if (!strcmp(name, "render"))
   {
-    if (nxagentReconnectTrap == True)
+    if (nxagentReconnectTrap)
     {
       #ifdef DEBUG
       fprintf(stderr, "nxagentParseSingleOption: Ignoring option 'render' at reconnection.\n");
@@ -1154,7 +1154,7 @@ static void nxagentParseSingleOption(char *name, char *value)
   }
   else if (!strcmp(name, "fullscreen"))
   {
-    if (nxagentReconnectTrap == True)
+    if (nxagentReconnectTrap)
     {
       #ifdef DEBUG
       fprintf(stderr, "nxagentParseSingleOption: Ignoring option 'fullscreen' at reconnection.\n");
@@ -1267,13 +1267,13 @@ static void nxagentParseSingleOption(char *name, char *value)
   }
   else if (!strcmp(name, "resize"))
   {
-    if (nxagentOption(DesktopResize) == 0 || strcmp(value, "0") == 0)
+    if (!nxagentOption(DesktopResize) || strcmp(value, "0") == 0)
     {
-      nxagentResizeDesktopAtStartup = 0;
+      nxagentResizeDesktopAtStartup = False;
     }
     else if (strcmp(value, "1") == 0)
     {
-      nxagentResizeDesktopAtStartup = 1;
+      nxagentResizeDesktopAtStartup = True;
     }
     else
     {
@@ -1324,7 +1324,7 @@ static void nxagentParseSingleOption(char *name, char *value)
   }
   else if (!strcmp(name, "autodpi"))
   {
-    if (nxagentReconnectTrap == True)
+    if (nxagentReconnectTrap)
     {
       #ifdef DEBUG
       fprintf(stderr, "nxagentParseSingleOption: Ignoring option 'autodpi' at reconnection.\n");
@@ -1793,7 +1793,7 @@ N/A
 
     #endif
 
-    if ((nxagentOption(Rootless) == 1) && nxagentOption(Fullscreen) == 1)
+    if (nxagentOption(Rootless) && nxagentOption(Fullscreen))
     {
       #ifdef TEST
       fprintf(stderr, "WARNING: Ignoring fullscreen option for rootless session.\n");
@@ -2092,7 +2092,7 @@ FIXME: In rootless mode the backing-store support is not functional yet.
       nxagentAlphaEnabled = False;
     }
 
-    if ((nxagentOption(Rootless) == 1) && nxagentOption(Xdmcp))
+    if (nxagentOption(Rootless) && nxagentOption(Xdmcp))
     {
       FatalError("PANIC! Cannot start a XDMCP session in rootless mode.\n");
     }
@@ -2102,7 +2102,7 @@ FIXME: In rootless mode the backing-store support is not functional yet.
      * XDMCP sessions.
      */
 
-    if (nxagentOption(Reset) == True && nxagentMaxAllowedResets == 0)
+    if (nxagentOption(Reset) && nxagentMaxAllowedResets == 0)
     {
       #ifdef WARNING
       fprintf(stderr, "nxagentPostProcessArgs: Disabling the server reset.\n");
@@ -2119,7 +2119,7 @@ FIXME: In rootless mode the backing-store support is not functional yet.
      * to a standard XFree86 server.
      */
 
-    if (nxagentOption(Reset) == False)
+    if (!nxagentOption(Reset))
     {
       #ifdef TEST
       fprintf(stderr, "nxagentPostProcessArgs: Disabling dispatch of exception at server reset.\n");
@@ -2399,7 +2399,7 @@ void nxagentSetDeferLevel(void)
    * of the agent.
    */
 
-  if (nxagentOption(Streaming) == 1)
+  if (nxagentOption(Streaming))
   {
     fprintf(stderr, "Warning: Streaming of images not available in this agent.\n");
 
@@ -2484,7 +2484,7 @@ void nxagentSetDeferLevel(void)
    * Set the defer timeout.
    */
 
-  if (nxagentOption(Shadow) == 1)
+  if (nxagentOption(Shadow))
   {
     #ifdef TEST
     fprintf(stderr, "nxagentSetDeferLevel: Ignoring defer timeout parameter in shadow mode.\n");
@@ -2499,7 +2499,7 @@ void nxagentSetDeferLevel(void)
    * Set the defer level.
    */
 
-  if (nxagentOption(Shadow) == 1)
+  if (nxagentOption(Shadow) )
   {
     #ifdef TEST
     fprintf(stderr, "nxagentSetDeferLevel: Ignoring defer parameter in shadow mode.\n");
@@ -2631,7 +2631,7 @@ void nxagentSetScheduler(void)
    * The smart scheduler is the default.
    */
 
-  if (nxagentOption(Shadow) == 1)
+  if (nxagentOption(Shadow))
   {
     #ifdef TEST
     fprintf(stderr, "nxagentSetScheduler: Using the dumb scheduler in shadow mode.\n");

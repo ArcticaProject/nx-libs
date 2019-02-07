@@ -31,7 +31,7 @@
  * reentrancy in GC operations.
  */
 
-int nxagentGCTrap = 0;
+int nxagentGCTrap = False;
 
 /*
  * Set if we are enqueing an internal
@@ -39,14 +39,14 @@ int nxagentGCTrap = 0;
  * Window. Used to remove any screen operation.
  */
 
-int nxagentScreenTrap = 0;
+int nxagentScreenTrap = False;
 
 /*
  * Set if we detected that our RENDER
  * implementation is faulty.
  */
 
-int nxagentRenderTrap = 0;
+int nxagentRenderTrap = False;
 
 /*
  * Set if we are executing a GC operation
@@ -54,55 +54,55 @@ int nxagentRenderTrap = 0;
  * reentrancy in FB layer.
  */
 
-int nxagentFBTrap = 0;
+int nxagentFBTrap = False;
 
 /*
  * Set if we are dispatching a shared
  * memory extension request.
  */
 
-int nxagentShmTrap = 0;
+int nxagentShmTrap = False;
 
 /*
  * Set if a shared pixmap operation is
  * requested by the client.
  */
 
-int nxagentShmPixmapTrap = 0;
+int nxagentShmPixmapTrap = False;
 
 /*
  * Set if we are dispatching a XVideo
  * extension request.
  */
 
-int nxagentXvTrap = 0;
+int nxagentXvTrap = False;
 
 /*
  * Set if we are dispatching a GLX
  * extension request.
  */
 
-int nxagentGlxTrap = 0;
+int nxagentGlxTrap = False;
 
 /*
  * Set while we are resuming the session.
  */
 
-int nxagentReconnectTrap = 0;
+int nxagentReconnectTrap = False;
 
 /*
  * Set if we need to realize a drawable
  * by using a lossless encoding.
  */
 
-int nxagentLosslessTrap = 0;
+int nxagentLosslessTrap = False;
 
 /*
  * Set to force the synchronization of
  * a drawable.
  */
 
-int nxagentSplitTrap = 0;
+int nxagentSplitTrap = False;
 
 /*
  * Set to avoid CapsLock synchronization
@@ -110,7 +110,7 @@ int nxagentSplitTrap = 0;
  * key to be pressed in the session.
  */
 
-int nxagentXkbCapsTrap = 0;
+int nxagentXkbCapsTrap = False;
 
 /*
  * Set to avoid NumLock synchronization
@@ -118,5 +118,5 @@ int nxagentXkbCapsTrap = 0;
  * key to be pressed in the session.
  */
 
-int nxagentXkbNumTrap = 0;
+int nxagentXkbNumTrap = False;
 

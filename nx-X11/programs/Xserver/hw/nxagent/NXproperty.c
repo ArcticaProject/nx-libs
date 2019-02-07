@@ -189,7 +189,7 @@ ProcChangeProperty(ClientPtr client)
 	return err;
     else
     {
-      if (nxagentOption(Rootless) == 1)
+      if (nxagentOption(Rootless))
       {
         nxagentExportProperty(pWin, stuff->property, stuff->type, (int) format,
                                   (int) mode, len, (void *) &stuff[1]);
