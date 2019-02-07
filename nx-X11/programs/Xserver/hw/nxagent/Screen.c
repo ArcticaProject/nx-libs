@@ -1050,8 +1050,22 @@ Bool nxagentOpenScreen(ScreenPtr pScreen,
       nxagentChangeOption(RootY, (h - nxagentOption(RootHeight)) / 2);
     }
   }
-  else
+  else if (nxagentOption(Rootless))
   {
+    nxagentChangeOption(X, 0);
+    nxagentChangeOption(Y, 0);
+
+    nxagentChangeOption(RootX, 0);
+    nxagentChangeOption(RootY, 0);
+
+    nxagentChangeOption(RootWidth, w);
+    nxagentChangeOption(RootHeight, h);
+
+    nxagentChangeOption(Width, w);
+    nxagentChangeOption(Height, h);
+ }
+ else /* window mode */
+ {
     /*
      * screen is initialized for the first time
      */
@@ -1080,26 +1094,12 @@ Bool nxagentOpenScreen(ScreenPtr pScreen,
 
     if (nxagentOption(Width) > w)
     {
-      if (nxagentOption(Rootless))
-      {
-        nxagentChangeOption(Width, w);
-      }
-      else
-      {
-        nxagentChangeOption(Width, w * 3 / 4);
-      }
+      nxagentChangeOption(Width, w * 3 / 4);
     }
 
     if (nxagentOption(Height) > h)
     {
-      if (nxagentOption(Rootless))
-      {
-        nxagentChangeOption(Height, h);
-      }
-      else
-      {
-        nxagentChangeOption(Height, h * 3 / 4);
-      }
+      nxagentChangeOption(Height, h * 3 / 4);
     }
 
     /*
@@ -1133,12 +1133,6 @@ Bool nxagentOpenScreen(ScreenPtr pScreen,
 
     nxagentChangeOption(SavedWidth, nxagentOption(RootWidth));
     nxagentChangeOption(SavedHeight, nxagentOption(RootHeight));
-  }
-
-  if (nxagentOption(Rootless))
-  {
-    nxagentChangeOption(RootWidth, w);
-    nxagentChangeOption(RootHeight, h);
   }
 
   nxagentChangeOption(SavedRootWidth, nxagentOption(RootWidth));
