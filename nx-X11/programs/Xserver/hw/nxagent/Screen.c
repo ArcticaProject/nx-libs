@@ -885,10 +885,10 @@ Bool nxagentOpenScreen(ScreenPtr pScreen,
   #endif
 
   /*
-   * Forced geometry parameter to user geometry.
+   * Force geometry parameter to user geometry except if in rootless mode.
    */
 
-  if (nxagentResizeDesktopAtStartup)
+  if (nxagentResizeDesktopAtStartup && !nxagentOption(Rootless))
   {
     if (nxagentUserGeometry.flag & XValue)
     {
@@ -922,9 +922,11 @@ Bool nxagentOpenScreen(ScreenPtr pScreen,
   /*
    * This is first time the screen is initialized.
    * Filling the geometry parameter from user geometry.
+   * we do not need this in rootless mode since we ignore
+   * user geometry then.
    */
 
-  if (nxagentReconnectTrap == False)
+  if (nxagentReconnectTrap == False && !nxagentOption(Rootless))
   {
     if (nxagentUserGeometry.flag & XValue)
     {
@@ -1067,7 +1069,7 @@ Bool nxagentOpenScreen(ScreenPtr pScreen,
  else /* window mode */
  {
     /*
-     * screen is initialized for the first time
+     * screen is initialized for the first time.
      */
 
     if (nxagentReconnectTrap == False)
