@@ -85,7 +85,7 @@ void nxagentChangePointerControl(DeviceIntPtr pDev, PtrCtrl *ctrl)
    * window.
    */
 
-  if (nxagentOption(DeviceControl) == True)
+  if (nxagentOption(DeviceControl))
   {
     #ifdef TEST
     fprintf(stderr, "nxagentChangePointerControl: WARNING! Propagating changes to pointer settings.\n");

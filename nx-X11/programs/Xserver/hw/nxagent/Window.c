@@ -397,7 +397,7 @@ Bool nxagentCreateWindow(WindowPtr pWin)
   nxagentWindowPriv(pWin) -> corruptedTimestamp = 0;
   nxagentWindowPriv(pWin) -> splitResource = NULL;
 
-  if (nxagentOption(Rootless) == 1)
+  if (nxagentOption(Rootless))
   {
     if (pWin != nxagentRootlessWindow)
     {
@@ -557,7 +557,7 @@ Bool nxagentDestroyWindow(WindowPtr pWin)
 {
   nxagentPrivWindowPtr pWindowPriv;
 
-  if (nxagentScreenTrap == 1)
+  if (nxagentScreenTrap)
   {
     return 1;
   }
@@ -685,7 +685,7 @@ Bool nxagentDestroyWindow(WindowPtr pWin)
 
 Bool nxagentPositionWindow(WindowPtr pWin, int x, int y)
 {
-  if (nxagentScreenTrap == 1)
+  if (nxagentScreenTrap)
   {
     return True;
   }
@@ -703,7 +703,7 @@ Bool nxagentPositionWindow(WindowPtr pWin, int x, int y)
 
 void nxagentRestackWindow(WindowPtr pWin, WindowPtr pOldNextSib)
 {
-  if (nxagentScreenTrap == 1)
+  if (nxagentScreenTrap)
   {
     return;
   }
@@ -713,7 +713,7 @@ void nxagentRestackWindow(WindowPtr pWin, WindowPtr pOldNextSib)
 
 void nxagentSwitchFullscreen(ScreenPtr pScreen, Bool switchOn)
 {
-  if (nxagentOption(Rootless) == 1)
+  if (nxagentOption(Rootless))
   {
     return;
   }
@@ -908,9 +908,9 @@ void nxagentSwitchAllScreens(ScreenPtr pScreen, Bool switchOn)
       XCheckTypedWindowEvent(nxagentDisplay, w, LeaveNotify, &e);
       nxagentFullscreenWindow = w;
 
-      if (nxagentOption(DesktopResize) == 1)
+      if (nxagentOption(DesktopResize))
       {
-        if (nxagentOption(Shadow) == 0)
+        if (!nxagentOption(Shadow))
         {
           nxagentChangeScreenConfig(0, WidthOfScreen(DefaultScreenOfDisplay(nxagentDisplay)),
                                         HeightOfScreen(DefaultScreenOfDisplay(nxagentDisplay)));
@@ -959,12 +959,12 @@ void nxagentSwitchAllScreens(ScreenPtr pScreen, Bool switchOn)
 
     nxagentIconWindow = nxagentFullscreenWindow = None;
 
-    if (nxagentOption(DesktopResize) == 1)
+    if (nxagentOption(DesktopResize))
     {
       nxagentChangeOption(RootWidth, nxagentOption(SavedRootWidth));
       nxagentChangeOption(RootHeight, nxagentOption(SavedRootHeight));
 
-      if (nxagentOption(Shadow) == 0)
+      if (!nxagentOption(Shadow))
       {
         nxagentChangeScreenConfig(0, nxagentOption(RootWidth),
                                       nxagentOption(RootHeight));
@@ -985,7 +985,7 @@ void nxagentSwitchAllScreens(ScreenPtr pScreen, Bool switchOn)
     nxagentChangeOption(Width, nxagentOption(SavedWidth));
     nxagentChangeOption(Height, nxagentOption(SavedHeight));
 
-    if (nxagentOption(Shadow) == 1 && nxagentOption(DesktopResize) == 1)
+    if (nxagentOption(Shadow) && nxagentOption(DesktopResize))
     {
       nxagentShadowAdaptToRatio();
     }
@@ -1225,7 +1225,7 @@ void nxagentConfigureWindow(WindowPtr pWin, unsigned int mask)
   int offX = nxagentWindowPriv(pWin)->x - pWin->origin.x;
   int offY = nxagentWindowPriv(pWin)->y - pWin->origin.y;
 
-  if (nxagentScreenTrap == 1)
+  if (nxagentScreenTrap)
   {
     #ifdef TEST
     fprintf(stderr, "nxagentConfigureWindow: WARNING: Called with the screen trap set.\n");
@@ -1234,7 +1234,7 @@ void nxagentConfigureWindow(WindowPtr pWin, unsigned int mask)
     return;
   }
 
-  if (nxagentOption(Rootless) == 1 &&
+  if (nxagentOption(Rootless) &&
           nxagentWindowTopLevel(pWin) == 1)
   {
     mask &= ~(CWSibling | CWStackMode);
@@ -1836,7 +1836,7 @@ void nxagentSetWMState(WindowPtr pWin, CARD32 desired)
 
 Bool nxagentRealizeWindow(WindowPtr pWin)
 {
-  if (nxagentScreenTrap == 1)
+  if (nxagentScreenTrap)
   {
     return True;
   }
@@ -2427,7 +2427,7 @@ void nxagentRefreshWindows(WindowPtr pWin)
 
 void nxagentUnmapWindows(void)
 {
-  if (nxagentOption(Fullscreen) == 1)
+  if (nxagentOption(Fullscreen))
   {
     for (int i = 0; i < screenInfo.numScreens; i++)
     {
@@ -2450,7 +2450,7 @@ void nxagentMapDefaultWindows(void)
 
     MapWindow(pWin, serverClient);
 
-    if (nxagentOption(Rootless) == 0)
+    if (!nxagentOption(Rootless))
     {
       /*
        * Show the NX splash screen.
@@ -2470,7 +2470,7 @@ void nxagentMapDefaultWindows(void)
        * Windows client.
        */
 
-      if (nxagentOption(Shadow) == 0 || !nxagentWMIsRunning)
+      if (!nxagentOption(Shadow) || !nxagentWMIsRunning)
       {
         #ifdef TEST
         fprintf(stderr, "nxagentMapDefaultWindows: Mapping default window id [%ld].\n",
@@ -2479,7 +2479,7 @@ void nxagentMapDefaultWindows(void)
 
         XMapWindow(nxagentDisplay, nxagentDefaultWindows[pScreen->myNum]);
 
-        if (nxagentOption(Fullscreen) == 1 && nxagentWMIsRunning)
+        if (nxagentOption(Fullscreen) && nxagentWMIsRunning)
         {
           nxagentMaximizeToFullScreen(pScreen);
         }
@@ -2497,7 +2497,7 @@ void nxagentMapDefaultWindows(void)
        * after the Root Window is mapped.
        */
 
-      if (nxagentReconnectTrap == 0)
+      if (!nxagentReconnectTrap)
       {
         XRaiseWindow(nxagentDisplay, nxagentInputWindows[pScreen->myNum]);
       }
@@ -2693,7 +2693,7 @@ Bool nxagentReconnectAllWindows(void *p0)
    * Windows is raised.
    */
 
-  if (nxagentOption(Rootless) == 0)
+  if (!nxagentOption(Rootless))
   {
     for (int i = 0; i < screenInfo.numScreens; i++)
     {
@@ -3196,7 +3196,7 @@ XXX: This would break Motif menus.
       XIconifyWindow(nxagentDisplay, nxagentWindow(pWin), pWin -> drawable.pScreen -> myNum);
     }
   }
-  else if (nxagentOption(Rootless) == 0)
+  else if (!nxagentOption(Rootless))
   {
     /*
      * Map the root window.

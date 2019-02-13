@@ -64,11 +64,7 @@ ProcRRQueryVersion(ClientPtr client)
         swapl(&rep.majorVersion);
         swapl(&rep.minorVersion);
     }
-#ifndef NXAGENT_SERVER
     WriteToClient(client, sizeof(xRRQueryVersionReply), &rep);
-#else
-    WriteToClient(client, sizeof(xRRQueryVersionReply), &rep);
-#endif
     return Success;
 }
 

@@ -385,7 +385,7 @@ void nxagentChangeGC(GCPtr pGC, unsigned long mask)
     else
     {
       if (nxagentDrawableStatus((DrawablePtr) pGC -> tile.pixmap) == NotSynchronized &&
-              nxagentGCTrap == 0)
+              !nxagentGCTrap)
       {
         /*
          * If the tile is corrupted and is not too
@@ -437,7 +437,7 @@ void nxagentChangeGC(GCPtr pGC, unsigned long mask)
   if (mask & GCStipple)
   {
     if (nxagentDrawableStatus((DrawablePtr) pGC -> stipple) == NotSynchronized &&
-            nxagentGCTrap == 0)
+            !nxagentGCTrap)
     {
       #ifdef TEST
       fprintf(stderr, "nxagentChangeGC: WARNING! Synchronizing GC at [%p] due the stipple at [%p].\n",
@@ -535,7 +535,7 @@ void nxagentChangeGC(GCPtr pGC, unsigned long mask)
   {
     mask &= ~GCDashList;
 
-    if (nxagentGCTrap == 0)
+    if (!nxagentGCTrap)
     {
       XSetDashes(nxagentDisplay, nxagentGC(pGC),
                      pGC->dashOffset, (char *)pGC->dash, pGC->numInDashList);
@@ -549,7 +549,7 @@ void nxagentChangeGC(GCPtr pGC, unsigned long mask)
     changeFlag += nxagentTestGC(values.arc_mode, arc_mode);
   }
 
-  if (nxagentGCTrap == 1)
+  if (nxagentGCTrap)
   {
     #ifdef TEST
     fprintf(stderr, "nxagentChangeGC: Skipping change of GC at [%p] on the real X server.\n",
@@ -668,7 +668,7 @@ void nxagentChangeClip(GCPtr pGC, int type, void * pValue, int nRects)
   {
     case CT_NONE:
     {
-      if (clipsMatch == 0 && nxagentGCTrap == 0)
+      if (clipsMatch == 0 && !nxagentGCTrap)
       {
         XSetClipMask(nxagentDisplay, nxagentGC(pGC), None);
       }
@@ -677,7 +677,7 @@ void nxagentChangeClip(GCPtr pGC, int type, void * pValue, int nRects)
     }
     case CT_REGION:
     {
-      if (clipsMatch == 0 && nxagentGCTrap == 0)
+      if (clipsMatch == 0 && !nxagentGCTrap)
       {
         nRects = RegionNumRects((RegionPtr)pValue);
         size = nRects * sizeof(*pRects);
@@ -701,7 +701,7 @@ void nxagentChangeClip(GCPtr pGC, int type, void * pValue, int nRects)
     }
     case CT_PIXMAP:
     {
-      if (nxagentGCTrap == 0)
+      if (!nxagentGCTrap)
       {
         XSetClipMask(nxagentDisplay, nxagentGC(pGC),
                          nxagentPixmap((PixmapPtr)pValue));
@@ -719,7 +719,7 @@ void nxagentChangeClip(GCPtr pGC, int type, void * pValue, int nRects)
     }
     case CT_UNSORTED:
     {
-      if (clipsMatch == 0 && nxagentGCTrap == 0)
+      if (clipsMatch == 0 && !nxagentGCTrap)
       {    
         XSetClipRectangles(nxagentDisplay, nxagentGC(pGC),
                                pGC->clipOrg.x, pGC->clipOrg.y,
@@ -730,7 +730,7 @@ void nxagentChangeClip(GCPtr pGC, int type, void * pValue, int nRects)
     }
     case CT_YSORTED:
     {
-      if (clipsMatch == 0 && nxagentGCTrap == 0)
+      if (clipsMatch == 0 && !nxagentGCTrap)
       {
         XSetClipRectangles(nxagentDisplay, nxagentGC(pGC),
                            pGC->clipOrg.x, pGC->clipOrg.y,
@@ -741,7 +741,7 @@ void nxagentChangeClip(GCPtr pGC, int type, void * pValue, int nRects)
     }
     case CT_YXSORTED:
     {
-      if (clipsMatch == 0 && nxagentGCTrap == 0)
+      if (clipsMatch == 0 && !nxagentGCTrap)
       {
         XSetClipRectangles(nxagentDisplay, nxagentGC(pGC),
                            pGC->clipOrg.x, pGC->clipOrg.y,
@@ -752,7 +752,7 @@ void nxagentChangeClip(GCPtr pGC, int type, void * pValue, int nRects)
     }
     case CT_YXBANDED:
     {
-      if (clipsMatch == 0 && nxagentGCTrap == 0)
+      if (clipsMatch == 0 && !nxagentGCTrap)
       {
         XSetClipRectangles(nxagentDisplay, nxagentGC(pGC),
                          pGC->clipOrg.x, pGC->clipOrg.y,
@@ -809,7 +809,7 @@ void nxagentDestroyClip(GCPtr pGC)
 
   nxagentDestroyClipHelper(pGC);
 
-  if (nxagentGCTrap == 0)
+  if (!nxagentGCTrap)
   {
     XSetClipMask(nxagentDisplay, nxagentGC(pGC), None);
   }
@@ -1453,7 +1453,7 @@ GCPtr nxagentGetScratchGC(unsigned depth, ScreenPtr pScreen)
 
   nxagentSaveGCTrap = nxagentGCTrap;
 
-  nxagentGCTrap = 0;
+  nxagentGCTrap = False;
 
   pGC = GetScratchGC(depth, pScreen);
 
