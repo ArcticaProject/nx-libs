@@ -96,7 +96,7 @@ ShmExtensionInit(void)
 #endif
 
 #ifdef NXAGENT_SERVER
-    if (!nxagentOption(SharedMemory))
+    if (nxagentOption(SharedMemory) == False)
     {
       return;
     }
@@ -207,11 +207,11 @@ miShmPutImage(dst, pGC, depth, format, w, h, sx, sy, sw, sh, dx, dy, data)
 {
     /* Careful! This wrapper DEACTIVATES the trap! */
 
-    nxagentShmTrap = False;
+    nxagentShmTrap = 0;
 
     nxagent_miShmPutImage(dst, pGC, depth, format, w, h, sx, sy, sw, sh, dx, dy, data);
 
-    nxagentShmTrap = True;
+    nxagentShmTrap = 1;
 
     return;
 }
@@ -476,11 +476,11 @@ fbShmCreatePixmap (pScreen, width, height, depth, addr)
 {
     PixmapPtr result;
 
-    nxagentShmPixmapTrap = True;
+    nxagentShmPixmapTrap = 1;
 
     result = nxagent_fbShmCreatePixmap(pScreen, width, height, depth, addr);
 
-    nxagentShmPixmapTrap = False;
+    nxagentShmPixmapTrap = 0;
 
     return result;
 }
@@ -553,11 +553,11 @@ ProcShmDispatch (register ClientPtr client)
 {
     int result;
 
-    nxagentShmTrap = True;
+    nxagentShmTrap = 1;
 
     result = nxagent_ProcShmDispatch(client);
 
-    nxagentShmTrap = False;
+    nxagentShmTrap = 0;
 
     return result;
 }
@@ -591,13 +591,13 @@ SProcShmDispatch (client)
         #endif
 
 #ifdef NXAGENT_SERVER
-        nxagentShmTrap = True;
+        nxagentShmTrap = 1;
 #endif
 
         result = SProcShmPutImage(client);
 
 #ifdef NXAGENT_SERVER
-        nxagentShmTrap = False;
+        nxagentShmTrap = 0;
 #endif
 
         #ifdef TEST

@@ -240,7 +240,7 @@ TODO: This should be reset only when
 */
     nxagentException.ioError = 0;
 
-    if (nxagentOption(Persistent) && nxagentSessionState != SESSION_STARTING)
+    if (nxagentOption(Persistent) == 1 && nxagentSessionState != SESSION_STARTING)
     {
       if (nxagentSessionState == SESSION_UP)
       {
@@ -338,7 +338,7 @@ void nxagentInitializeRecLossyLevel(void)
 
 void nxagentInitReconnector(void)
 {
-  nxagentReconnectTrap = False;
+  nxagentReconnectTrap = 0;
 
   reconnectLossyLevel[DISPLAY_STEP]    = malloc(sizeof(int));
   reconnectLossyLevel[SCREEN_STEP]     = malloc(sizeof(int));
@@ -608,8 +608,8 @@ Bool nxagentReconnectSession(void)
     nxagentOldKeyboard = NULL;
   }
 
-  if (nxagentOption(ResetKeyboardAtResume) &&
-         (nxagentKeyboard == NULL || nxagentOldKeyboard == NULL ||
+  if (nxagentOption(ResetKeyboardAtResume) == 1 &&
+         (nxagentKeyboard  == NULL || nxagentOldKeyboard == NULL ||
              strcmp(nxagentKeyboard, nxagentOldKeyboard) != 0 ||
                  strcmp(nxagentKeyboard, "query") == 0 ||
                      strcmp(nxagentKeyboard, "clone") == 0))
@@ -648,7 +648,7 @@ Bool nxagentReconnectSession(void)
 
   nxagentRedirectDefaultWindows();
 
-  if (nxagentResizeDesktopAtStartup || nxagentOption(Rootless) || nxagentOption(Xinerama))
+  if (nxagentResizeDesktopAtStartup || nxagentOption(Rootless) == True || nxagentOption(Xinerama) == True)
   {
     nxagentChangeScreenConfig(0, nxagentOption(RootWidth),
                                   nxagentOption(RootHeight));

@@ -569,11 +569,11 @@ int nxagentRenderRealizeCursor(ScreenPtr pScreen, CursorPtr pCursor)
 
   nxagentMarkCorruptedRegion(pPicture -> pDrawable, NULL);
 
-  nxagentLosslessTrap = True;
+  nxagentLosslessTrap = 1;
 
   nxagentSynchronizeDrawable(pPicture -> pDrawable, DO_WAIT, NEVER_BREAK, NULL);
 
-  nxagentLosslessTrap = False;
+  nxagentLosslessTrap = 0;
 
   cid = XRenderCreateCursor(nxagentDisplay, nxagentPicture(pPicture), x, y);
 
@@ -2741,7 +2741,7 @@ void nxagentReconnectGlyphSet(void* p0, XID x1, void *p2)
 
   int i;
 
-  if (!nxagentReconnectTrap)
+  if (nxagentReconnectTrap == 0)
   {
     #ifdef DEBUG
     fprintf(stderr, "nxagentReconnectGlyphSet: GlyphSet at [%p].\n", (void *) pGly);

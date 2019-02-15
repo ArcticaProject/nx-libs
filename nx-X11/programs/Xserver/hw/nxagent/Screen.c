@@ -596,7 +596,7 @@ FIXME: Do we need to check the key grab if the
 
         raise(SIGTERM);
       }
-      else if (!nxagentOption(Persistent))
+      else if (nxagentOption(Persistent) == 0)
       {
         fprintf(stderr, "Info: Terminating session with persistence not allowed.\n");
 
@@ -871,7 +871,7 @@ Bool nxagentOpenScreen(ScreenPtr pScreen,
               pScreen->myNum);
   #endif
 
-  if (nxagentRenderEnable && !nxagentReconnectTrap)
+  if (nxagentRenderEnable && nxagentReconnectTrap == False)
   {
     PictureScreenPrivateIndex = -1;
   }
@@ -926,7 +926,7 @@ Bool nxagentOpenScreen(ScreenPtr pScreen,
    * user geometry then.
    */
 
-  if (!nxagentReconnectTrap && !nxagentOption(Rootless))
+  if (nxagentReconnectTrap == False && !nxagentOption(Rootless))
   {
     if (nxagentUserGeometry.flag & XValue)
     {
@@ -970,7 +970,7 @@ Bool nxagentOpenScreen(ScreenPtr pScreen,
    * the screen if we are either in rootless or in fullscreen mode.
    */
 
-  if (!nxagentOption(Rootless) && !nxagentWMIsRunning)
+  if (nxagentOption(Rootless) == False && !nxagentWMIsRunning)
   {
     #ifdef TEST
     fprintf(stderr, "nxagentOpenScreen: Forcing fullscreen mode with no window manager running.\n");
@@ -979,7 +979,7 @@ Bool nxagentOpenScreen(ScreenPtr pScreen,
     nxagentChangeOption(Fullscreen, True);
 
     if (nxagentOption(ClientOs) == ClientOsWinnt &&
-            (!nxagentReconnectTrap || nxagentResizeDesktopAtStartup))
+            (nxagentReconnectTrap == False || nxagentResizeDesktopAtStartup))
     {
       NXSetExposeParameters(nxagentDisplay, 0, 0, 0);
     }
@@ -988,7 +988,7 @@ Bool nxagentOpenScreen(ScreenPtr pScreen,
   if (nxagentOption(Fullscreen) &&
           nxagentWMIsRunning &&
               nxagentReconnectTrap &&
-                  !nxagentResizeDesktopAtStartup &&
+                  nxagentResizeDesktopAtStartup == False &&
                       nxagentXServerGeometryChanged())
   {
     #ifdef TEST
@@ -1019,7 +1019,7 @@ Bool nxagentOpenScreen(ScreenPtr pScreen,
     nxagentChangeOption(Height, h);
 
     /* first time screen initialization or resize during reconnect */
-    if (!nxagentReconnectTrap || nxagentResizeDesktopAtStartup)
+    if (nxagentReconnectTrap == False || nxagentResizeDesktopAtStartup)
     {
       if (nxagentOption(RootWidth) >= w)
       {
@@ -1072,7 +1072,7 @@ Bool nxagentOpenScreen(ScreenPtr pScreen,
      * screen is initialized for the first time.
      */
 
-    if (!nxagentReconnectTrap)
+    if (nxagentReconnectTrap == False)
     {
       nxagentChangeOption(RootX, 0);
       nxagentChangeOption(RootY, 0);
@@ -1111,7 +1111,7 @@ Bool nxagentOpenScreen(ScreenPtr pScreen,
      * the root window isn't bigger than the X server root window..
      */
 
-    if (!nxagentReconnectTrap)
+    if (nxagentReconnectTrap == False)
     {
       if ((nxagentOption(RootWidth) < w) &&
               !(nxagentUserGeometry.flag & WidthValue))
@@ -1143,7 +1143,7 @@ Bool nxagentOpenScreen(ScreenPtr pScreen,
   nxagentChangeOption(ViewportXSpan, nxagentOption(Width) - nxagentOption(RootWidth));
   nxagentChangeOption(ViewportYSpan, nxagentOption(Height) - nxagentOption(RootHeight));
 
-  if (!nxagentReconnectTrap)
+  if (nxagentReconnectTrap == 0)
   {
     if (nxagentOption(Persistent))
     {
@@ -1344,11 +1344,11 @@ Bool nxagentOpenScreen(ScreenPtr pScreen,
                   rootDepth, (long unsigned int)defaultVisual);
     #endif
 
-    if ((monitorResolution < 1) && !nxagentAutoDPI)
+    if ((monitorResolution < 1) && (nxagentAutoDPI == False))
     {
       monitorResolution = NXAGENT_DEFAULT_DPI;
     }
-    else if ((monitorResolution < 1) && nxagentAutoDPI)
+    else if ((monitorResolution < 1) && (nxagentAutoDPI == True))
     {
       monitorResolution = NXAGENT_AUTO_DPI;
     }
@@ -1699,21 +1699,21 @@ N/A
   #endif
 
   if (nxagentDoFullGeneration == 1 ||
-          nxagentReconnectTrap)
+          nxagentReconnectTrap == 1)
   {
     valuemask = CWBackPixel | CWEventMask | CWColormap |
-                    (nxagentOption(AllScreens) ? CWOverrideRedirect : 0);
+                    (nxagentOption(AllScreens) == 1 ? CWOverrideRedirect : 0);
 
     attributes.background_pixel = nxagentBlackPixel;
     attributes.event_mask = nxagentGetDefaultEventMask();
     attributes.colormap = nxagentDefaultVisualColormap(nxagentDefaultVisual(pScreen));
 
-    if (nxagentOption(AllScreens))
+    if (nxagentOption(AllScreens) == 1)
     {
       attributes.override_redirect = True;
     }
 
-    if (nxagentOption(Fullscreen))
+    if (nxagentOption(Fullscreen) == 1)
     {
       if (nxagentReconnectTrap)
       {
@@ -1749,7 +1749,7 @@ N/A
        * handling the splash screen.
        */
 
-      if (nxagentOption(Rootless))
+      if (nxagentOption(Rootless) == True)
       {
         nxagentDefaultWindows[pScreen->myNum] = DefaultRootWindow(nxagentDisplay);
 
@@ -1776,7 +1776,7 @@ N/A
                         nxagentDefaultVisual(pScreen),
                         valuemask, &attributes);
 
-       if (!nxagentOption(Rootless))
+       if (nxagentOption(Rootless) == 0)
        {
          valuemask = CWEventMask;
          mask = PointerMotionMask;
@@ -1884,7 +1884,7 @@ N/A
       sizeHints->width = nxagentOption(RootWidth);
       sizeHints->height = nxagentOption(RootHeight);
 
-      if (nxagentOption(DesktopResize) || nxagentOption(Fullscreen))
+      if (nxagentOption(DesktopResize) == 1 || nxagentOption(Fullscreen) == 1)
       {
         sizeHints->max_width = WidthOfScreen(DefaultScreenOfDisplay(nxagentDisplay));
         sizeHints->max_height = HeightOfScreen(DefaultScreenOfDisplay(nxagentDisplay));
@@ -2000,7 +2000,7 @@ N/A
 
     /* FIXME: This doing the same thing in both cases. The
        comments do not seem accurate (anymore?) */
-    if (!nxagentOption(Rootless))
+    if (nxagentOption(Rootless) == False)
     {
       /*
        * Set the WM_DELETE_WINDOW protocol for the main agent
@@ -2049,7 +2049,7 @@ N/A
    * and pointer settings.
    */
 
-  if (!nxagentOption(DeviceControl))
+  if (nxagentOption(DeviceControl) == False)
   {
     fprintf(stderr, "Info: Not using local device configuration changes.\n");
   }
@@ -2428,13 +2428,13 @@ FIXME: We should try to restore the previously
    * Change agent window size and size hints.
    */
 
-  if (!nxagentOption(Fullscreen) && !nxagentOption(AllScreens))
+  if ((nxagentOption(Fullscreen) == 0 && nxagentOption(AllScreens) == 0))
   {
     nxagentSetWMNormalHints(pScreen->myNum, width, height);
 
     XResizeWindow(nxagentDisplay, nxagentDefaultWindows[pScreen->myNum], width, height);
 
-    if (!nxagentOption(Rootless))
+    if (nxagentOption(Rootless) == 0)
     {
       XResizeWindow(nxagentDisplay, nxagentInputWindows[pScreen -> myNum], width, height);
     }
@@ -2589,7 +2589,7 @@ int nxagentShadowInit(ScreenPtr pScreen, WindowPtr pWin)
     NXShadowSetDisplayUid(nxagentShadowUid);
   }
 
-  if (!nxagentOption(UseDamage))
+  if (nxagentOption(UseDamage) == 0)
   {
     NXShadowDisableDamage();
   }
@@ -2634,7 +2634,7 @@ int nxagentShadowInit(ScreenPtr pScreen, WindowPtr pWin)
 
   #ifndef __CYGWIN32__
 
-  if (nxagentOption(Fullscreen))
+  if (nxagentOption(Fullscreen) == 1)
   {
     nxagentShadowSetRatio(WidthOfScreen(DefaultScreenOfDisplay(nxagentDisplay)) * 1.0 / nxagentShadowWidth,
                               HeightOfScreen(DefaultScreenOfDisplay(nxagentDisplay)) * 1.0 / nxagentShadowHeight);
@@ -4571,7 +4571,7 @@ void nxagentSetWMNormalHints(int screen, int width, int height)
   sizeHints->width = width;
   sizeHints->height = height;
 
-  if (nxagentOption(DesktopResize))
+  if (nxagentOption(DesktopResize) == 1)
   {
     sizeHints->max_width = WidthOfScreen(DefaultScreenOfDisplay(nxagentDisplay));
     sizeHints->max_height = HeightOfScreen(DefaultScreenOfDisplay(nxagentDisplay));

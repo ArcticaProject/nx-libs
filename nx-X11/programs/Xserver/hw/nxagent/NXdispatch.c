@@ -326,7 +326,7 @@ Reply   Total	Cached	Bits In			Bits Out		Bits/Reply	  Ratio
 
         clientReady[0] = 0;
 
-        if (nxagentSplashWindow != None || (nxagentOption(Xdmcp) && nxagentXdmcpUp == 0))
+        if (nxagentSplashWindow != None || (nxagentOption(Xdmcp) == 1 && nxagentXdmcpUp == 0))
         {
           #ifdef TEST
           fprintf(stderr, "******Dispatch: Requesting a timeout of [%d] Ms.\n",
@@ -339,7 +339,7 @@ Reply   Total	Cached	Bits In			Bits Out		Bits/Reply	  Ratio
 
         if (serverGeneration > nxagentMaxAllowedResets &&
                 nxagentSessionState == SESSION_STARTING &&
-                    (!nxagentOption(Xdmcp) || nxagentXdmcpUp == 1))
+                    (nxagentOption(Xdmcp) == 0 || nxagentXdmcpUp == 1))
         {
           #ifdef NX_DEBUG_INPUT
           fprintf(stderr, "Session: Session started at '%s' timestamp [%lu].\n",
@@ -568,7 +568,7 @@ Reply   Total	Cached	Bits In			Bits Out		Bits/Reply	  Ratio
       fprintf(stderr, "Session: Session terminated at '%s'.\n", GetTimeAsString());
     }
 
-    if (nxagentOption(Shadow))
+    if (nxagentOption(Shadow) == 1)
     {
       NXShadowDestroy();
     }

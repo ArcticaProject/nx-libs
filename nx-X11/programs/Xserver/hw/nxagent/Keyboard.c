@@ -753,7 +753,7 @@ XkbError:
         fprintf(stderr, "nxagentKeyboardProc: nxagentKeyboard is [%s].\n", nxagentKeyboard ? nxagentKeyboard : "NULL");
         #endif
 
-        if (nxagentX2go && nxagentKeyboard && (strcmp(nxagentKeyboard, "null/null") == 0))
+        if (nxagentX2go == 1 && nxagentKeyboard && (strcmp(nxagentKeyboard, "null/null") == 0))
         {
           #ifdef TEST
           fprintf(stderr, "%s: changing nxagentKeyboard from [null/null] to [clone].\n", __func__);
@@ -873,7 +873,7 @@ XkbError:
              * instead of a file. Which is achieved by passing NULL to
              * nxagentWriteKeyboardFile.
              */
-            if (nxagentX2go)
+            if (nxagentX2go == 1)
               nxagentWriteKeyboardDir();
           }
           else
@@ -891,7 +891,7 @@ XkbError:
              * know about that yet. Once x2go starts using clone
              * we can drop this here.
              */
-            if (nxagentX2go)
+            if (nxagentX2go == 1)
               nxagentWriteKeyboardFile(nxagentRemoteRules, nxagentRemoteModel, nxagentRemoteLayout, nxagentRemoteVariant, nxagentRemoteOptions);
           }
         }
@@ -935,7 +935,7 @@ XkbError:
             XkbDDXChangeControls(pDev, xkb->ctrls, xkb->ctrls);
         }
 
-        if (nxagentOption(Shadow) && pDev && pDev->key)
+        if (nxagentOption(Shadow) == 1 && pDev && pDev->key)
         {
           NXShadowInitKeymap(&(pDev->key->curKeySyms));
         }

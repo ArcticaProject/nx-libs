@@ -26,14 +26,6 @@
 #ifndef __Traps_H__
 #define __Traps_H__
 
-#ifndef True
-# define True 1
-#endif
-
-#ifndef False
-# define False 0
-#endif
-
 /*
  * Set if we are dispatching a render
  * extension request. Used to avoid

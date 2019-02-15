@@ -1683,11 +1683,11 @@ ProcRenderDispatch (ClientPtr client)
          * avoid reentrancy in GCOps.c.
          */
 
-        nxagentGCTrap = True;
+        nxagentGCTrap = 1;
 
         result = (*ProcRenderVector[stuff->data]) (client);
 
-        nxagentGCTrap = False;
+        nxagentGCTrap = 0;
 
         return result;
     }
@@ -1720,11 +1720,11 @@ SProcRenderDispatch (ClientPtr client)
          * avoid reentrancy in GCOps.c.
          */
 
-        nxagentGCTrap = True;
+        nxagentGCTrap = 1;
 
         result = (*SProcRenderVector[stuff->data]) (client);
 
-        nxagentGCTrap = False;
+        nxagentGCTrap = 0;
 
         return result;
     }

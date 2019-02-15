@@ -162,11 +162,11 @@ ProcXvDispatch(ClientPtr client)
               stuff->data, client -> index);
   #endif
 
-  nxagentXvTrap = True;
+  nxagentXvTrap = 1;
 
   result = nxagent_ProcXvDispatch(client);
 
-  nxagentXvTrap = False;
+  nxagentXvTrap = 0;
 
   #ifdef TEST
   fprintf(stderr, "ProcXvDispatch: Dispatched XVideo operation [%d] for client [%d].\n",
@@ -239,11 +239,11 @@ SProcXvDispatch(ClientPtr client)
               stuff->data, client -> index);
   #endif
 
-  nxagentXvTrap = True;
+  nxagentXvTrap = 1;
 
   result = nxagent_SProcXvDispatch(client);
 
-  nxagentXvTrap = False;
+  nxagentXvTrap = 0;
 
   #ifdef TEST
   fprintf(stderr, "SProcXvDispatch: Dispatched XVideo operation [%d] for client [%d].\n",

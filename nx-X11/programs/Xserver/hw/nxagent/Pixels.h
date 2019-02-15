@@ -145,7 +145,7 @@ FIXME: Changed macro: NXAGENT_SHOULD_DEFER_COMPOSITE
 
 
 #define NXAGENT_SHOULD_DEFER_PUTIMAGE(pDrawable) \
-    (!nxagentSplitTrap &&                    \
+    (nxagentSplitTrap == 0 &&                    \
          nxagentOption(DeferLevel) > 0)
 
 /*

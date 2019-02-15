@@ -199,7 +199,7 @@ ActivatePointerGrab(register DeviceIntPtr mouse, register GrabPtr grab,
      * }
      */
 
-    if (nxagentOption(Rootless))
+    if (nxagentOption(Rootless) == 1)
     {
       /*
        * FIXME: We should use the correct value
@@ -245,7 +245,7 @@ DeactivatePointerGrab(register DeviceIntPtr mouse)
 
     #ifdef NXAGENT_SERVER
 
-    if (nxagentOption(Rootless))
+    if (nxagentOption(Rootless) == 1)
     {
       XUngrabPointer(nxagentDisplay, CurrentTime);
 
