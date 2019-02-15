@@ -59,7 +59,7 @@ void nxagentCompositeExtensionInit(void)
 
   nxagentCompositeEnable = 0;
 
-  if (nxagentOption(Composite))
+  if (nxagentOption(Composite) == 1)
   {
     int eventBase, errorBase;
 
@@ -119,7 +119,7 @@ void nxagentRedirectDefaultWindows(void)
 {
   int i;
 
-  if (nxagentOption(Rootless) ||
+  if (nxagentOption(Rootless) == 1 ||
           nxagentCompositeEnable == 0)
   {
     #ifdef TEST
@@ -159,7 +159,7 @@ void nxagentRedirectDefaultWindows(void)
 
 void nxagentRedirectWindow(WindowPtr pWin)
 {
-  if (!nxagentOption(Rootless) ||
+  if (nxagentOption(Rootless) == 0 ||
           nxagentCompositeEnable == 0)
   {
     #ifdef TEST
