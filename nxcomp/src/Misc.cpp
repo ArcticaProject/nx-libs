@@ -163,8 +163,11 @@ static const char UsageInfo[] =
                'wan', 'lan', 'local' or a bandwidth specification,\n\
                like for example '56k', '1m', '100m', etc.\n\
 \n\
-  type=s       Type of session, for example 'windows', 'unix-kde'.\n\
-               'unix-application', etc.\n\
+  type=s       Type of session. Known types are: 'agent', 'proxy' and\n\
+               'shadow'. The following types are also allowed and will\n\
+               map to one of the three mentioned before: 'desktop',\n\								\
+               'rootless', 'console', 'default', 'gnome', 'kde',\n\
+               'cde', 'xdm', 'win', 'vnc', 'application', 'raw'\n\
 \n\
   display=s    Specify the real display where X connections have\n\
                to be forwarded by the proxy running on the client.\n\
