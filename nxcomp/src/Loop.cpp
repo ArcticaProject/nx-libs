@@ -7803,7 +7803,6 @@ int ParseEnvironmentOptions(const char *env, int force)
   strcpy(opts, env);
 
   char *nextOpts = opts;
-  bool nxdisplay_found = false;
 
   //
   // Ensure that DISPLAY environment variable
@@ -7825,17 +7824,14 @@ int ParseEnvironmentOptions(const char *env, int force)
   else if (strncasecmp(opts, "nx/nx,", 6) == 0)
   {
     nextOpts += 6;
-    nxdisplay_found = true;
   }
   else if (strncasecmp(opts, "nx,", 3) == 0)
   {
     nextOpts += 3;
-    nxdisplay_found = true;
   }
   else if (strncasecmp(opts, "nx:", 3) == 0)
   {
     nextOpts += 3;
-    nxdisplay_found = true;
   }
   else if (force == 0)
   {
@@ -7864,7 +7860,7 @@ int ParseEnvironmentOptions(const char *env, int force)
 
   value = strrchr(nextOpts, ':');
 
-  if (value != NULL && nxdisplay_found )
+  if (value != NULL)
   {
     char *check = value + 1;
 
