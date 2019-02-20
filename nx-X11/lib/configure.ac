@@ -1,6 +1,6 @@
 # Initialize Autoconf
 AC_PREREQ([2.60])
-AC_INIT([libNX_X11], [1.6.5],
+AC_INIT([libNX_X11], [1.6.7],
         [https://github.com/ArcticaProject/nx-libs/issues], [libNX_X11])
 AC_CONFIG_AUX_DIR([build-aux])
 AC_CONFIG_SRCDIR([Makefile.am])
