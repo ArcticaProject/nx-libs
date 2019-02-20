@@ -54,6 +54,39 @@ m4_pattern_forbid([^NX_XTRANS_CONNECTION_FLAGS$])
 # Transport selection macro from nx-xtrans.m4
 NX_XTRANS_CONNECTION_FLAGS
 
+# Check for dlopen
+AC_MSG_CHECKING([if run-time linking is supported])
+AC_SEARCH_LIBS(dlopen,[dl svld])
+if test "x$ac_cv_search_dlopen" = xno; then
+	AC_SEARCH_LIBS(shl_load,[dld])
+	if test "x$ac_cv_search_shl_load" != xno; then
+		AC_DEFINE(HAVE_SHL_LOAD,1,
+		          [Use shl_load to load shared libraries])
+		AC_CHECK_HEADERS([dl.h])
+	fi
+else
+	AC_DEFINE(HAVE_DLOPEN,1,[Use dlopen to load shared libraries])
+	AC_CHECK_HEADERS([dlfcn.h])
+fi
+if test "x$ac_cv_header_dlfcn_h" = xyes -o "x$ac_cv_header_dl_h" = xyes; then
+	HAVE_LOADABLE_MODULES=yes
+else
+	HAVE_LOADABLE_MODULES=no
+fi
+AC_MSG_RESULT($HAVE_LOADABLE_MODULES)
+
+AC_MSG_CHECKING([if loadable Xcursor library support should be enabled])
+AC_ARG_ENABLE(loadable-xcursor,
+              AS_HELP_STRING([--disable-loadable-xcursor],
+               [Controls loadable xcursor library support]),
+               [XLIB_LOADABLE_XCURSOR=$enableval],
+               [XLIB_LOADABLE_XCURSOR=$HAVE_LOADABLE_MODULES])
+if test x$XLIB_LOADABLE_XCURSOR = xyes; then
+	AC_DEFINE(USE_DYNAMIC_XCURSOR,1,
+	          [Use the X cursor library to load cursors])
+fi
+AC_MSG_RESULT($XLIB_LOADABLE_XCURSOR)
+
 # Checks for header files.
 AC_CHECK_HEADERS([sys/select.h])
 
