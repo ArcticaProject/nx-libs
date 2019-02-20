@@ -165,7 +165,7 @@ static const char UsageInfo[] =
 \n\
   type=s       Type of session. Known types are: 'agent', 'proxy' and\n\
                'shadow'. The following types are also allowed and will\n\
-               map to one of the three mentioned before: 'desktop',\n\								\
+               map to one of the three mentioned before: 'desktop',\n\
                'rootless', 'console', 'default', 'gnome', 'kde',\n\
                'cde', 'xdm', 'win', 'vnc', 'application', 'raw'\n\
 \n\
