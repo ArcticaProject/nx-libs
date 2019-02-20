@@ -332,6 +332,7 @@ AC_OUTPUT
 
 echo ""
 echo "NX_X11 will be built with the following settings:"
+echo " Loadable xcursor library support:        "$XLIB_LOADABLE_XCURSOR
 echo " Threading support:                       "$xthreads
 echo " Use Threads safe API:                    "$mtsafeapi
 echo " Threads stubs in libNX_X11:              "$thrstubs
