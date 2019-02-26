@@ -67,6 +67,9 @@ m4_pattern_forbid([^NX_XTRANS_CONNECTION_FLAGS$])
 # Transport selection macro from nx-xtrans.m4
 NX_XTRANS_CONNECTION_FLAGS
 
+# Secure RPC detection macro from xtrans.m4
+NX_XTRANS_SECURE_RPC_FLAGS
+
 # Check for dlopen
 AC_MSG_CHECKING([if run-time linking is supported])
 AC_SEARCH_LIBS(dlopen,[dl svld])
