@@ -42,6 +42,19 @@ PKG_PROG_PKG_CONFIG
 X11_REQUIRES='nx-xproto nx-xextproto nx-xtrans'
 X11_EXTRA_DEPS=""
 
+X11_REQUIRES="${X11_REQUIRES} xau xcmiscproto bigreqsproto"
+X11_EXTRA_DEPS="xau"
+PKG_CHECK_MODULES(XDMCP, xdmcp,
+	AC_CHECK_LIB(Xdmcp, XdmcpWrap,
+		[
+		AC_CHECK_LIB(Xdmcp, XdmcpWrap, [xdmauth="yes"], [xdmauth="no"], [$XDMCP_LIBS])
+		X11_EXTRA_DEPS="$X11_EXTRA_DEPS xdmcp"
+		],
+		[
+		XDMCP_CFLAGS=
+		XDMCP_LIBS=
+		], [$XDMCP_LIBS]),
+	[AC_MSG_RESULT(no)])
 AC_SUBST(X11_EXTRA_DEPS)
 
 # Silence warning: ar: 'u' modifier ignored since 'D' is the default
@@ -155,6 +168,17 @@ if test x$xthreads = xyes ; then
 fi
 AC_SUBST(XTHREADLIB)
 AC_SUBST(XTHREAD_CFLAGS)
+
+case x$xdmauth in
+xyes)
+	XDMCP_CFLAGS="$XDMCP_CFLAGS -DHASXDMAUTH"
+	;;
+xno)
+	XDMCP_LIBS=""
+	;;
+esac
+AC_SUBST(XDMCP_CFLAGS)
+AC_SUBST(XDMCP_LIBS)
 
 AC_CHECK_FUNC(poll, [has_poll="yes"], [has_poll="no"])
 
