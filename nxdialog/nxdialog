@@ -1,5 +1,11 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python
 #
+# ^^^ This is working with python2 and python3 so we choose a shebang
+#     that will find either version.
+#     Citing PEP394: "One exception to this is scripts that are
+#     deliberately written to be source compatible with both Python
+#     2.x and 3.x. Such scripts may continue to use python on their
+#     shebang line.
 
 # Copyright (C) 2008 Google Inc.
 # Copyright (C) 2019 Ulrich Sibiller <uli42@gmx.de>
@@ -32,11 +38,14 @@
 # - removed neatx entry from the pulldoww menu
 # - use PyGObject instead of PyGtk and thus Gtk3
 # - replace optparse by argparse
+# - make code compatible to python2 and python3. 
 
 """nxdialog program for handling dialog display."""
 
 # If an "NX_CLIENT" environment variable is not provided to nxagent
 # nxcomp library assumes this script is located in /usr/NX/bin/nxclient
+
+from __future__ import print_function
 
 import argparse
 import os
@@ -155,7 +164,7 @@ class PullDownMenu(object):
         menu_width = menu.get_allocated_width()
 
         # Calculate center
-        center_x = win_x + ((win_width - menu_width) / 2)
+        center_x = int(win_x + ((win_width - menu_width) / 2))
 
         return (center_x, win_y, True)
 
@@ -224,11 +233,11 @@ def handle_session_action(agentpid, action):
     """
 
     if action == DISCONNECT:
-        print "Disconnecting from session, sending SIGHUP to %s" % (agentpid)
+        print("Disconnecting from session, sending SIGHUP to %s" % (agentpid))
         os.kill(agentpid, signal.SIGHUP)
 
     elif action == TERMINATE:
-        print "Terminating session, sending SIGTERM to process %s" % (agentpid)
+        print("Terminating session, sending SIGTERM to process %s" % (agentpid))
         os.kill(agentpid, signal.SIGTERM)
 
     elif action is None:
@@ -273,11 +282,12 @@ class NxDialogProgram(object):
         except (SystemExit, KeyboardInterrupt):
             raise
 
-        except Exception, expt:
+        except Exception as expt:
             sys.stderr.write("Caught exception: %s\n" % (expt))
             sys.exit(EXIT_FAILURE)
 
-    def parse_args(self):
+    @staticmethod
+    def parse_args():
         """ init parser """
 
         parser = argparse.ArgumentParser(description="Helper for nxagent to display dialogs")
