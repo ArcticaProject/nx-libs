@@ -81,7 +81,10 @@ NX_XTRANS_SECURE_RPC_FLAGS
 # to correct user/group."
 #
 # -> we want to always fail in that scenario.
-AC_DEFINE(FAIL_HARD,1,[Fail if the xtrans socket directory has wrong permissions])
+AC_DEFINE(FAIL_HARD,1,[Fail if the xtrans socket directory cannot be chowned/chmod'ed])
+
+# Actually disable all of the FD passing code, NX does not support it.
+AC_DEFINE(XTRANS_SEND_FDS,0,[Disable xtrans FD passing code.])
 
 # Check for dlopen
 AC_MSG_CHECKING([if run-time linking is supported])
