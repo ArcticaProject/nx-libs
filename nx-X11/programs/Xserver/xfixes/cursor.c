@@ -456,11 +456,13 @@ ProcXFixesGetCursorName (ClientPtr client)
 	str = "";
     len = strlen (str);
     
-    reply.type = X_Reply;
-    reply.length = (len + 3) >> 2;
-    reply.sequenceNumber = client->sequence;
-    reply.atom = pCursor->name;
-    reply.nbytes = len;
+    reply = (xXFixesGetCursorNameReply) {
+        .type = X_Reply,
+        .sequenceNumber = client->sequence,
+        .length = (len + 3) >> 2,
+        .atom = pCursor->name,
+        .nbytes = len
+    };
     if (client->swapped) {
 	swaps(&reply.sequenceNumber);
 	swapl(&reply.length);

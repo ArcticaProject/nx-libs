@@ -312,15 +312,15 @@ static int
 ProcDbeGetVersion(ClientPtr client)
 {
     /* REQUEST(xDbeGetVersionReq); */
-    xDbeGetVersionReply	rep;
+    xDbeGetVersionReply rep = {
+        .type = X_Reply,
+        .sequenceNumber = client->sequence,
+        .length = 0,
+        .majorVersion = DBE_MAJOR_VERSION,
+        .minorVersion = DBE_MINOR_VERSION
+    };
 
     REQUEST_SIZE_MATCH(xDbeGetVersionReq);
-
-    rep.type           = X_Reply;
-    rep.length         = 0;
-    rep.sequenceNumber = client->sequence;
-    rep.majorVersion   = DBE_MAJOR_VERSION;
-    rep.minorVersion   = DBE_MINOR_VERSION;
 
     if (client->swapped)
     {
@@ -946,10 +946,12 @@ ProcDbeGetVisualInfo(ClientPtr client)
         length += pScrVisInfo[i].count * sizeof(xDbeVisInfo);
     }
 
-    rep.type           = X_Reply;
-    rep.sequenceNumber = client->sequence;
-    rep.length         = length >> 2;
-    rep.m              = count;
+    rep = (xDbeGetVisualInfoReply) {
+        .type = X_Reply,
+        .sequenceNumber = client->sequence,
+        .length = length >> 2,
+        .m = count
+    };
 
     if (client->swapped)
     {
@@ -1041,7 +1043,11 @@ static int
 ProcDbeGetBackBufferAttributes(ClientPtr client)
 {
     REQUEST(xDbeGetBackBufferAttributesReq);
-    xDbeGetBackBufferAttributesReply	rep;
+    xDbeGetBackBufferAttributesReply rep = {
+        .type = X_Reply,
+        .sequenceNumber = client->sequence,
+        .length = 0
+    };
     DbeWindowPrivPtr			pDbeWindowPriv;
 
     REQUEST_SIZE_MATCH(xDbeGetBackBufferAttributesReq);
@@ -1056,10 +1062,6 @@ ProcDbeGetBackBufferAttributes(ClientPtr client)
         rep.attributes = pDbeWindowPriv->pWindow->drawable.id;
     }
         
-    rep.type           = X_Reply;
-    rep.sequenceNumber = client->sequence;
-    rep.length         = 0;
-    
     if (client->swapped)
     {
         swaps(&rep.sequenceNumber);
