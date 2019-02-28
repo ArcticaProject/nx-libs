@@ -590,7 +590,7 @@ SyncSendCounterNotifyEvents(client, ppAwait, num_events)
     if (client->clientGone)
 	return;
     pev = pEvents = (xSyncCounterNotifyEvent *)
-		 malloc(num_events * sizeof(xSyncCounterNotifyEvent));
+		 calloc(num_events, sizeof(xSyncCounterNotifyEvent));
     if (!pEvents) 
 	return;
     UpdateCurrentTime();

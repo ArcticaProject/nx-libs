@@ -2084,7 +2084,7 @@ int __glXQueryExtensionsString(__GLXclientState *cl, GLbyte *pc)
     reply.n = n;
 
     /* Allocate buffer to make sure it's a multiple of 4 bytes big.*/
-    buf = (char *) malloc(length << 2);
+    buf = calloc(length, 4);
     if (buf == NULL)
         return BadAlloc;
     memcpy(buf, ptr, n);
@@ -2141,7 +2141,7 @@ int __glXQueryServerString(__GLXclientState *cl, GLbyte *pc)
     reply.length = length;
     reply.n = n;
 
-    if ((buf = (char *) malloc(length << 2)) == NULL) {
+    if ((buf = calloc(length, 4)) == NULL) {
         return BadAlloc;
     }
     memcpy(buf, ptr, n);
