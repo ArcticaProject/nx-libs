@@ -76,294 +76,301 @@ VALID_DLG_TYPES = frozenset([
     DLG_TYPE_QUIT,
     DLG_TYPE_YESNO,
     DLG_TYPE_YESNOSUSPEND,
-    ])
+])
+
 
 class PullDownMenu(object):
-  """ Shows a popup menu to disconnect/terminate session. """
+    """ Shows a popup menu to disconnect/terminate session. """
 
-  def __init__(self, window_id):
-    """ Initializes this class.
+    def __init__(self, window_id):
+        """ Initializes this class.
 
-    @type window_id: int
-    @param window_id: X11 window id of target window
+        @type window_id: int
+        @param window_id: X11 window id of target window
+
+        """
+        self.window_id = window_id
+        self.result = None
+
+    def show(self):
+        """ Shows popup and returns result. """
+
+        win = gtk.gdk.window_foreign_new(self.window_id)
+
+        menu = gtk.Menu()
+        menu.connect("deactivate", self.menu_deactivate)
+
+        # TODO: Show title item in bold font
+        title = gtk.MenuItem(label="Session control")
+        title.set_sensitive(False)
+        menu.append(title)
+
+        disconnect = gtk.MenuItem(label=DISCONNECT_TEXT)
+        disconnect.connect("activate", self.item_activate, DISCONNECT)
+        menu.append(disconnect)
+
+        terminate = gtk.MenuItem(label=TERMINATE_TEXT)
+        terminate.connect("activate", self.item_activate, TERMINATE)
+        menu.append(terminate)
+
+        menu.append(gtk.SeparatorMenuItem())
+
+        cancel = gtk.MenuItem(label=CANCEL_TEXT)
+        menu.append(cancel)
+
+        menu.show_all()
+
+        menu.popup(parent_menu_shell=None, parent_menu_item=None,
+                   func=self.pos_menu, data=win,
+                   button=0, activate_time=gtk.get_current_event_time())
+
+        gtk.main()
+
+        return self.result
+
+    def item_activate(self, _, result):
+        """ called when a menu item is selected """
+        self.result = result
+        gtk.main_quit()
+
+    @staticmethod
+    def menu_deactivate(_):
+        """ called when menu is deactivated """
+        gtk.main_quit()
+
+    @staticmethod
+    def pos_menu(menu, parent):
+        """ Positions menu at the top center of the parent window. """
+        # Get parent geometry and origin
+        (_, _, win_width, _, _) = parent.get_geometry()
+        (win_x, win_y) = parent.get_origin()
+
+        # Calculate width of menu
+        (menu_width, _) = menu.size_request()
+
+        # Calculate center
+        center_x = win_x + ((win_width - menu_width) / 2)
+
+        return (center_x, win_y, True)
+
+
+def show_yes_no_suspend_box(title, text):
+    """ Shows a message box to disconnect/terminate session.
+
+    @type title: str
+    @param title: Message box title
+    @type text: str
+    @param text: Message box text
+    @return: Choosen action
 
     """
-    self._window_id = window_id
-    self._result = None
+    dlg = gtk.MessageDialog(type=gtk.MESSAGE_QUESTION, flags=gtk.DIALOG_MODAL)
+    dlg.set_title(title)
+    dlg.set_markup(text)
+    dlg.add_button(DISCONNECT_TEXT, DISCONNECT)
+    dlg.add_button(TERMINATE_TEXT, TERMINATE)
+    dlg.add_button(CANCEL_TEXT, gtk.RESPONSE_CANCEL)
 
-  def Show(self):
-    """ Shows popup and returns result. """
+    res = dlg.run()
 
-    win = gtk.gdk.window_foreign_new(self._window_id)
+    if res in (DISCONNECT, TERMINATE):
+        return res
 
-    menu = gtk.Menu()
-    menu.connect("deactivate", self._MenuDeactivate)
-
-    # TODO: Show title item in bold font
-    title = gtk.MenuItem(label="Session control")
-    title.set_sensitive(False)
-    menu.append(title)
-
-    disconnect = gtk.MenuItem(label=DISCONNECT_TEXT)
-    disconnect.connect("activate", self._ItemActivate, DISCONNECT)
-    menu.append(disconnect)
-
-    terminate = gtk.MenuItem(label=TERMINATE_TEXT)
-    terminate.connect("activate", self._ItemActivate, TERMINATE)
-    menu.append(terminate)
-
-    menu.append(gtk.SeparatorMenuItem())
-
-    cancel = gtk.MenuItem(label=CANCEL_TEXT)
-    menu.append(cancel)
-
-    menu.show_all()
-
-    menu.popup(parent_menu_shell=None, parent_menu_item=None,
-               func=self._PosMenu, data=win,
-               button=0, activate_time=gtk.get_current_event_time())
-
-    gtk.main()
-
-    return self._result
-
-  def _ItemActivate(self, _, result):
-    """ called when a menu item is selected """
-    self._result = result
-    gtk.main_quit()
-
-  def _MenuDeactivate(self, _):
-    """ called when menu is deactivated """
-    gtk.main_quit()
-
-  def _PosMenu(self, menu, parent):
-    """ Positions menu at the top center of the parent window. """
-    # Get parent geometry and origin
-    (_, _, win_width, _, _) = parent.get_geometry()
-    (win_x, win_y) = parent.get_origin()
-
-    # Calculate width of menu
-    (menu_width, _) = menu.size_request()
-
-    # Calculate center
-    x = win_x + ((win_width - menu_width) / 2)
-
-    return (x, win_y, True)
+    # Everything else is cancel
+    return None
 
 
-def ShowYesNoSuspendBox(title, text):
-  """ Shows a message box to disconnect/terminate session.
+def show_yes_no_box(title, text):
+    """ Shows a message box with answers yes and no.
 
-  @type title: str
-  @param title: Message box title
-  @type text: str
-  @param text: Message box text
-  @return: Choosen action
+    @type title: str
+    @param title: Message box title
+    @type text: str
+    @param text: Message box text
+    @return: Choosen action
 
-  """
-  dlg = gtk.MessageDialog(type=gtk.MESSAGE_QUESTION, flags=gtk.DIALOG_MODAL)
-  dlg.set_title(title)
-  dlg.set_markup(text)
-  dlg.add_button(DISCONNECT_TEXT, DISCONNECT)
-  dlg.add_button(TERMINATE_TEXT, TERMINATE)
-  dlg.add_button(CANCEL_TEXT, gtk.RESPONSE_CANCEL)
+    """
+    dlg = gtk.MessageDialog(type=gtk.MESSAGE_QUESTION, flags=gtk.DIALOG_MODAL)
+    dlg.set_title(title)
+    dlg.set_markup(text)
+    dlg.add_button(YES_TEXT, TERMINATE)
+    dlg.add_button(NO_TEXT, gtk.RESPONSE_CANCEL)
 
-  res = dlg.run()
+    res = dlg.run()
 
-  if res in (DISCONNECT, TERMINATE):
-    return res
+    if res == TERMINATE:
+        return res
 
-  # Everything else is cancel
-  return None
-
-
-def ShowYesNoBox(title, text):
-  """ Shows a message box with answers yes and no.
-
-  @type title: str
-  @param title: Message box title
-  @type text: str
-  @param text: Message box text
-  @return: Choosen action
-
-  """
-  dlg = gtk.MessageDialog(type=gtk.MESSAGE_QUESTION, flags=gtk.DIALOG_MODAL)
-  dlg.set_title(title)
-  dlg.set_markup(text)
-  dlg.add_button(YES_TEXT, TERMINATE)
-  dlg.add_button(NO_TEXT, gtk.RESPONSE_CANCEL)
-
-  res = dlg.run()
-
-  if res == TERMINATE:
-    return res
-
-  # Everything else is cancel
-  return None
+    # Everything else is cancel
+    return None
 
 
-def HandleSessionAction(agentpid, action):
-  """ Execute session action choosen by user.
+def handle_session_action(agentpid, action):
+    """ Execute session action choosen by user.
 
-  @type agentpid: int
-  @param agentpid: Nxagent process id as passed by command line
-  @type action: int or None
-  @param action: Choosen action
+    @type agentpid: int
+    @param agentpid: Nxagent process id as passed by command line
+    @type action: int or None
+    @param action: Choosen action
 
-  """
+    """
 
-  if action == DISCONNECT:
-    print "Disconnecting from session, sending SIGHUP to %s" % (agentpid)
-    os.kill(agentpid, signal.SIGHUP)
+    if action == DISCONNECT:
+        print "Disconnecting from session, sending SIGHUP to %s" % (agentpid)
+        os.kill(agentpid, signal.SIGHUP)
 
-  elif action == TERMINATE:
-    print "Terminating session, sending SIGTERM to process %s" % (agentpid)
-    os.kill(agentpid, signal.SIGTERM)
+    elif action == TERMINATE:
+        print "Terminating session, sending SIGTERM to process %s" % (agentpid)
+        os.kill(agentpid, signal.SIGTERM)
 
-  elif action is None:
-    pass
+    elif action is None:
+        pass
 
-  else:
-    raise NotImplementedError()
+    else:
+        raise NotImplementedError()
 
 
-def ShowSimpleMessageBox(icon, title, text):
-  """ Shows a simple message box.
+def show_simple_message_box(icon, title, text):
+    """ Shows a simple message box.
 
-  @type icon: QMessageBox.Icon
-  @param icon: Icon for message box
-  @type title: str
-  @param title: Message box title
-  @type text: str
-  @param text: Message box text
+    @type icon: QMessageBox.Icon
+    @param icon: Icon for message box
+    @type title: str
+    @param title: Message box title
+    @type text: str
+    @param text: Message box text
 
-  """
-  dlg = gtk.MessageDialog(type=icon, flags=gtk.DIALOG_MODAL,
-                          buttons=gtk.BUTTONS_OK)
-  dlg.set_title(title)
-  dlg.set_markup(text)
-  dlg.run()
+    """
+    dlg = gtk.MessageDialog(type=icon, flags=gtk.DIALOG_MODAL,
+                            buttons=gtk.BUTTONS_OK)
+    dlg.set_title(title)
+    dlg.set_markup(text)
+    dlg.run()
 
 
 class NxDialogProgram(object):
-  """ the main program """
-  def __init__(self):
-    self.args = None
-    self.options = None
+    """ the main program """
 
-  def Main(self):
-    """ let's do something """
-    try:
-      (self.options, self.args) = self.ParseArgs()
+    def __init__(self):
+        self.args = None
+        self.options = None
 
-      self.Run()
+    def main(self):
+        """ let's do something """
+        try:
+            (self.options, self.args) = self.parse_args()
 
-    except (SystemExit, KeyboardInterrupt):
-      raise
+            self.run()
 
-    except Exception, e:
-      sys.stderr.write("Caught exception: %s\n" % (e))
-      sys.exit(EXIT_FAILURE)
+        except (SystemExit, KeyboardInterrupt):
+            raise
 
-  def ParseArgs(self):
-    """ init parser """
-    parser = optparse.OptionParser(option_list=self.BuildOptions(),
-                                   formatter=optparse.TitledHelpFormatter())
-    return parser.parse_args()
+        except Exception, expt:
+            sys.stderr.write("Caught exception: %s\n" % (expt))
+            sys.exit(EXIT_FAILURE)
 
-  def BuildOptions(self):
-    """ build options for the parser """
-    return [
-        # nxagent 3.5.99.18 only uses yesno, ok, pulldown and yesnosuspend
-        # yesno dialogs will always kill the session if "yes" is selected
-        optparse.make_option("--dialog", type="string", dest="dialog_type",
-                             help='type of dialog to show, one of "yesno", \
-                             "ok", "error", "panic", "quit", "pulldown", \
-                             "yesnosuspend"'),
-        optparse.make_option("--message", type="string", dest="text",
-                             help="message text to display in the dialog"),
-        optparse.make_option("--caption", type="string", dest="caption",
-                             help="window title of the dialog"),
-        optparse.make_option("--display", type="string", dest="display",
-                             help="X11 display where the dialog should be \
-                             shown"),
-        optparse.make_option("--parent", type="int", dest="agentpid",
-                             help="pid of the nxagent"),
-        optparse.make_option("--window", type="int", dest="window",
-                             help="id of window where to embed the \
-                             pulldown dialog type"),
-        # -class, -local, -allowmultiple are unused in nxlibs 3.5.99.18
-        optparse.make_option("--class", type="string", dest="dlgclass",
-                             default="info",
-                             help="class of the message (info, warning, error) \
-                             default: info) [currently unimplemented]"),
-        optparse.make_option("--local", action="store_true", dest="local",
-                             help="specify that proxy mode is used \
+    def parse_args(self):
+        """ init parser """
+        parser = optparse.OptionParser(option_list=self.build_options(),
+                                       formatter=optparse.TitledHelpFormatter())
+        return parser.parse_args()
+
+    @staticmethod
+    def build_options():
+        """ build options for the parser """
+        return [
+            # nxagent 3.5.99.18 only uses yesno, ok, pulldown and yesnosuspend
+            # yesno dialogs will always kill the session if "yes" is selected
+            optparse.make_option("--dialog", type="string", dest="dialog_type",
+                                 help='type of dialog to show, one of "yesno", \
+                                 "ok", "error", "panic", "quit", "pulldown", \
+                                 "yesnosuspend"'),
+            optparse.make_option("--message", type="string", dest="text",
+                                 help="message text to display in the dialog"),
+            optparse.make_option("--caption", type="string", dest="caption",
+                                 help="window title of the dialog"),
+            optparse.make_option("--display", type="string", dest="display",
+                                 help="X11 display where the dialog should be \
+                                 shown"),
+            optparse.make_option("--parent", type="int", dest="agentpid",
+                                 help="pid of the nxagent"),
+            optparse.make_option("--window", type="int", dest="window",
+                                 help="id of window where to embed the \
+                                 pulldown dialog type"),
+            # -class, -local, -allowmultiple are unused in nxlibs 3.5.99.18
+            optparse.make_option("--class", type="string", dest="dlgclass",
+                                 default="info",
+                                 help="class of the message (info, warning, error) \
+                                 default: info) [currently unimplemented]"),
+            optparse.make_option("--local", action="store_true", dest="local",
+                                 help="specify that proxy mode is used \
                              [currently unimplemented]"),
-        optparse.make_option("--allowmultiple", action="store_true",
-                             dest="allowmultiple",
-                             help="allow launching more than one dialog with \
-                             the same message [currently unimplemented]"),
-    ]
+            optparse.make_option("--allowmultiple", action="store_true",
+                                 dest="allowmultiple",
+                                 help="allow launching more than one dialog with \
+                                 the same message [currently unimplemented]"),
+        ]
 
-  def Run(self):
-    """ Disconnect/terminate NX session upon user's request. """
+    def run(self):
+        """ Disconnect/terminate NX session upon user's request. """
 
-    if not self.options.dialog_type:
-      sys.stderr.write("Dialog type not supplied via --type\n")
-      sys.exit(EXIT_FAILURE)
+        if not self.options.dialog_type:
+            sys.stderr.write("Dialog type not supplied via --type\n")
+            sys.exit(EXIT_FAILURE)
 
-    dlgtype = self.options.dialog_type
+        dlgtype = self.options.dialog_type
 
-    if dlgtype not in VALID_DLG_TYPES:
-      sys.stderr.write("Invalid dialog type '%s'\n" % (dlgtype))
-      sys.exit(EXIT_FAILURE)
+        if dlgtype not in VALID_DLG_TYPES:
+            sys.stderr.write("Invalid dialog type '%s'\n" % (dlgtype))
+            sys.exit(EXIT_FAILURE)
 
-    if dlgtype in (DLG_TYPE_PULLDOWN,
-                   DLG_TYPE_YESNOSUSPEND,
-                   DLG_TYPE_YESNO) and not self.options.agentpid:
-      sys.stderr.write("Agent pid not supplied via --parent\n")
-      sys.exit(EXIT_FAILURE)
+        if dlgtype in (DLG_TYPE_PULLDOWN,
+                       DLG_TYPE_YESNOSUSPEND,
+                       DLG_TYPE_YESNO) and not self.options.agentpid:
+            sys.stderr.write("Agent pid not supplied via --parent\n")
+            sys.exit(EXIT_FAILURE)
 
-    if dlgtype == DLG_TYPE_PULLDOWN and not self.options.window:
-      sys.stderr.write("Window id not supplied via --window\n")
-      sys.exit(EXIT_FAILURE)
+        if dlgtype == DLG_TYPE_PULLDOWN and not self.options.window:
+            sys.stderr.write("Window id not supplied via --window\n")
+            sys.exit(EXIT_FAILURE)
 
-    if self.options.caption:
-      message_caption = self.options.caption
-    else:
-      message_caption = sys.argv[0]
+        if self.options.caption:
+            message_caption = self.options.caption
+        else:
+            message_caption = sys.argv[0]
 
-    if self.options.text:
-      message_text = self.options.text
-    else:
-      message_text = ""
+        if self.options.text:
+            message_text = self.options.text
+        else:
+            message_text = ""
 
-    if self.options.display:
-      os.environ["DISPLAY"] = self.options.display
+        if self.options.display:
+            os.environ["DISPLAY"] = self.options.display
 
-    if dlgtype == DLG_TYPE_OK:
-      ShowSimpleMessageBox(gtk.MESSAGE_INFO, message_caption, message_text)
+        if dlgtype == DLG_TYPE_OK:
+            show_simple_message_box(
+                gtk.MESSAGE_INFO, message_caption, message_text)
 
-    elif dlgtype in (DLG_TYPE_ERROR, DLG_TYPE_PANIC):
-      ShowSimpleMessageBox(gtk.MESSAGE_ERROR, message_caption, message_text)
+        elif dlgtype in (DLG_TYPE_ERROR, DLG_TYPE_PANIC):
+            show_simple_message_box(
+                gtk.MESSAGE_ERROR, message_caption, message_text)
 
-    elif dlgtype == DLG_TYPE_PULLDOWN:
-      HandleSessionAction(self.options.agentpid,
-                          PullDownMenu(self.options.window).Show())
+        elif dlgtype == DLG_TYPE_PULLDOWN:
+            handle_session_action(self.options.agentpid,
+                                  PullDownMenu(self.options.window).show())
 
-    elif dlgtype == DLG_TYPE_YESNOSUSPEND:
-      HandleSessionAction(self.options.agentpid,
-                          ShowYesNoSuspendBox(message_caption, message_text))
+        elif dlgtype == DLG_TYPE_YESNOSUSPEND:
+            handle_session_action(self.options.agentpid,
+                                  show_yes_no_suspend_box(message_caption, message_text))
 
-    elif dlgtype == DLG_TYPE_YESNO:
-      HandleSessionAction(self.options.agentpid,
-                          ShowYesNoBox(message_caption, message_text))
+        elif dlgtype == DLG_TYPE_YESNO:
+            handle_session_action(self.options.agentpid,
+                                  show_yes_no_box(message_caption, message_text))
 
-    else:
-      # TODO: Implement all dialog types
-      sys.stderr.write("Dialog type '%s' not implemented" % (dlgtype))
-      sys.exit(EXIT_FAILURE)
+        else:
+            # TODO: Implement all dialog types
+            sys.stderr.write("Dialog type '%s' not implemented" % (dlgtype))
+            sys.exit(EXIT_FAILURE)
 
 
-NxDialogProgram().Main()
+NxDialogProgram().main()
