@@ -67,8 +67,21 @@ m4_pattern_forbid([^NX_XTRANS_CONNECTION_FLAGS$])
 # Transport selection macro from nx-xtrans.m4
 NX_XTRANS_CONNECTION_FLAGS
 
+
 # Secure RPC detection macro from xtrans.m4
 NX_XTRANS_SECURE_RPC_FLAGS
+
+# Original comments regarding FAIL_HARD from libxtrans:
+# "fail hard if socket directories cannot be chowned to root or
+# chmod'ed to the requested mode if 'sticky' bit is requested for this
+# directory instead of just print a warning that will remain unnoticed
+# most of the times.
+# Set the define XtransFailSoft to restore the old
+# behavior to fail softly when socket directory cannot chowned/chmod
+# to correct user/group."
+#
+# -> we want to always fail in that scenario.
+AC_DEFINE(FAIL_HARD,1,[Fail if the xtrans socket directory has wrong permissions])
 
 # Check for dlopen
 AC_MSG_CHECKING([if run-time linking is supported])
