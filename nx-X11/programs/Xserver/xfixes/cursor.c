@@ -201,7 +201,7 @@ XFixesSelectCursorInput (ClientPtr	pClient,
     }
     if (!e)
     {
-	e = (CursorEventPtr) malloc (sizeof (CursorEventRec));
+	e = (CursorEventPtr) calloc (1, sizeof (CursorEventRec));
 	if (!e)
 	    return BadAlloc;
 
@@ -759,7 +759,7 @@ createCursorHideCount (ClientPtr pClient, ScreenPtr pScreen)
     CursorScreenPtr    cs = GetCursorScreen(pScreen);
     CursorHideCountPtr pChc;
 
-    pChc = (CursorHideCountPtr) malloc(sizeof(CursorHideCountRec));
+    pChc = (CursorHideCountPtr) calloc(1, sizeof(CursorHideCountRec));
     if (pChc == NULL) {
 	return BadAlloc;
     }
