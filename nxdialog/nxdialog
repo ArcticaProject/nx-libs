@@ -30,6 +30,7 @@
 # - added missing docstrings
 # - pylint improvements
 # - removed neatx entry from the pulldoww menu
+# - use PyGObject instead of PyGtk and thus Gtk3
 
 """nxdialog program for handling dialog display."""
 
@@ -41,10 +42,10 @@ import os
 import signal
 import sys
 
-import gtk
-
-import pygtk
-pygtk.require("2.0")
+import gi
+gi.require_version('Gtk', '3.0')
+# pylint: disable=wrong-import-position
+from gi.repository import Gtk, Gdk, GdkX11
 
 PROGRAM = "nxdialog"
 
@@ -95,58 +96,62 @@ class PullDownMenu(object):
     def show(self):
         """ Shows popup and returns result. """
 
-        win = gtk.gdk.window_foreign_new(self.window_id)
+        display = Gdk.Display.get_default()
+        win = GdkX11.X11Window.foreign_new_for_display(display, self.window_id)
 
-        menu = gtk.Menu()
+        menu = Gtk.Menu()
         menu.connect("deactivate", self.menu_deactivate)
 
         # TODO: Show title item in bold font
-        title = gtk.MenuItem(label="Session control")
+        title = Gtk.MenuItem(label="Session control")
         title.set_sensitive(False)
         menu.append(title)
 
-        disconnect = gtk.MenuItem(label=DISCONNECT_TEXT)
+        disconnect = Gtk.MenuItem(label=DISCONNECT_TEXT)
         disconnect.connect("activate", self.item_activate, DISCONNECT)
         menu.append(disconnect)
 
-        terminate = gtk.MenuItem(label=TERMINATE_TEXT)
+        terminate = Gtk.MenuItem(label=TERMINATE_TEXT)
         terminate.connect("activate", self.item_activate, TERMINATE)
         menu.append(terminate)
 
-        menu.append(gtk.SeparatorMenuItem())
+        menu.append(Gtk.SeparatorMenuItem())
 
-        cancel = gtk.MenuItem(label=CANCEL_TEXT)
+        cancel = Gtk.MenuItem(label=CANCEL_TEXT)
         menu.append(cancel)
 
         menu.show_all()
 
         menu.popup(parent_menu_shell=None, parent_menu_item=None,
                    func=self.pos_menu, data=win,
-                   button=0, activate_time=gtk.get_current_event_time())
+                   button=0, activate_time=Gtk.get_current_event_time())
 
-        gtk.main()
+        Gtk.main()
 
         return self.result
 
     def item_activate(self, _, result):
         """ called when a menu item is selected """
         self.result = result
-        gtk.main_quit()
+        Gtk.main_quit()
 
     @staticmethod
     def menu_deactivate(_):
         """ called when menu is deactivated """
-        gtk.main_quit()
+        Gtk.main_quit()
 
     @staticmethod
-    def pos_menu(menu, parent):
+    def pos_menu(menu, _xpos, _ypos, *data):
         """ Positions menu at the top center of the parent window. """
+        parent = data[0]
+
         # Get parent geometry and origin
-        (_, _, win_width, _, _) = parent.get_geometry()
-        (win_x, win_y) = parent.get_origin()
+        _, _, win_width, _ = parent.get_geometry()
+        _, win_x, win_y = parent.get_origin()
 
         # Calculate width of menu
-        (menu_width, _) = menu.size_request()
+        #menu_width = menu.get_preferred_width().natural_width
+        menu_width = menu.get_allocated_width()
 
         # Calculate center
         center_x = win_x + ((win_width - menu_width) / 2)
@@ -164,12 +169,13 @@ def show_yes_no_suspend_box(title, text):
     @return: Choosen action
 
     """
-    dlg = gtk.MessageDialog(type=gtk.MESSAGE_QUESTION, flags=gtk.DIALOG_MODAL)
+    dlg = Gtk.MessageDialog(type=Gtk.MessageType.QUESTION,
+                            flags=Gtk.DialogFlags.MODAL)
     dlg.set_title(title)
     dlg.set_markup(text)
     dlg.add_button(DISCONNECT_TEXT, DISCONNECT)
     dlg.add_button(TERMINATE_TEXT, TERMINATE)
-    dlg.add_button(CANCEL_TEXT, gtk.RESPONSE_CANCEL)
+    dlg.add_button(CANCEL_TEXT, Gtk.ResponseType.CANCEL)
 
     res = dlg.run()
 
@@ -190,11 +196,12 @@ def show_yes_no_box(title, text):
     @return: Choosen action
 
     """
-    dlg = gtk.MessageDialog(type=gtk.MESSAGE_QUESTION, flags=gtk.DIALOG_MODAL)
+    dlg = Gtk.MessageDialog(type=Gtk.MessageType.QUESTION,
+                            flags=Gtk.DialogFlags.MODAL)
     dlg.set_title(title)
     dlg.set_markup(text)
     dlg.add_button(YES_TEXT, TERMINATE)
-    dlg.add_button(NO_TEXT, gtk.RESPONSE_CANCEL)
+    dlg.add_button(NO_TEXT, Gtk.ResponseType.CANCEL)
 
     res = dlg.run()
 
@@ -241,8 +248,8 @@ def show_simple_message_box(icon, title, text):
     @param text: Message box text
 
     """
-    dlg = gtk.MessageDialog(type=icon, flags=gtk.DIALOG_MODAL,
-                            buttons=gtk.BUTTONS_OK)
+    dlg = Gtk.MessageDialog(type=icon, flags=Gtk.DialogFlags.MODAL,
+                            buttons=Gtk.ButtonsType.OK)
     dlg.set_title(title)
     dlg.set_markup(text)
     dlg.run()
@@ -304,7 +311,7 @@ class NxDialogProgram(object):
                                  default: info) [currently unimplemented]"),
             optparse.make_option("--local", action="store_true", dest="local",
                                  help="specify that proxy mode is used \
-                             [currently unimplemented]"),
+                                 [currently unimplemented]"),
             optparse.make_option("--allowmultiple", action="store_true",
                                  dest="allowmultiple",
                                  help="allow launching more than one dialog with \
@@ -349,11 +356,11 @@ class NxDialogProgram(object):
 
         if dlgtype == DLG_TYPE_OK:
             show_simple_message_box(
-                gtk.MESSAGE_INFO, message_caption, message_text)
+                Gtk.MessageType.INFO, message_caption, message_text)
 
         elif dlgtype in (DLG_TYPE_ERROR, DLG_TYPE_PANIC):
             show_simple_message_box(
-                gtk.MESSAGE_ERROR, message_caption, message_text)
+                Gtk.MessageType.ERROR, message_caption, message_text)
 
         elif dlgtype == DLG_TYPE_PULLDOWN:
             handle_session_action(self.options.agentpid,
