@@ -31,13 +31,14 @@
 # - pylint improvements
 # - removed neatx entry from the pulldoww menu
 # - use PyGObject instead of PyGtk and thus Gtk3
+# - replace optparse by argparse
 
 """nxdialog program for handling dialog display."""
 
 # If an "NX_CLIENT" environment variable is not provided to nxagent
 # nxcomp library assumes this script is located in /usr/NX/bin/nxclient
 
-import optparse
+import argparse
 import os
 import signal
 import sys
@@ -265,7 +266,7 @@ class NxDialogProgram(object):
     def main(self):
         """ let's do something """
         try:
-            (self.options, self.args) = self.parse_args()
+            self.options = self.parse_args()
 
             self.run()
 
@@ -278,45 +279,40 @@ class NxDialogProgram(object):
 
     def parse_args(self):
         """ init parser """
-        parser = optparse.OptionParser(option_list=self.build_options(),
-                                       formatter=optparse.TitledHelpFormatter())
-        return parser.parse_args()
 
-    @staticmethod
-    def build_options():
-        """ build options for the parser """
-        return [
-            # nxagent 3.5.99.18 only uses yesno, ok, pulldown and yesnosuspend
-            # yesno dialogs will always kill the session if "yes" is selected
-            optparse.make_option("--dialog", type="string", dest="dialog_type",
-                                 help='type of dialog to show, one of "yesno", \
-                                 "ok", "error", "panic", "quit", "pulldown", \
-                                 "yesnosuspend"'),
-            optparse.make_option("--message", type="string", dest="text",
-                                 help="message text to display in the dialog"),
-            optparse.make_option("--caption", type="string", dest="caption",
-                                 help="window title of the dialog"),
-            optparse.make_option("--display", type="string", dest="display",
-                                 help="X11 display where the dialog should be \
-                                 shown"),
-            optparse.make_option("--parent", type="int", dest="agentpid",
-                                 help="pid of the nxagent"),
-            optparse.make_option("--window", type="int", dest="window",
-                                 help="id of window where to embed the \
-                                 pulldown dialog type"),
-            # -class, -local, -allowmultiple are unused in nxlibs 3.5.99.18
-            optparse.make_option("--class", type="string", dest="dlgclass",
-                                 default="info",
-                                 help="class of the message (info, warning, error) \
-                                 default: info) [currently unimplemented]"),
-            optparse.make_option("--local", action="store_true", dest="local",
-                                 help="specify that proxy mode is used \
-                                 [currently unimplemented]"),
-            optparse.make_option("--allowmultiple", action="store_true",
-                                 dest="allowmultiple",
-                                 help="allow launching more than one dialog with \
-                                 the same message [currently unimplemented]"),
-        ]
+        parser = argparse.ArgumentParser(description="Helper for nxagent to display dialogs")
+
+        # nxagent 3.5.99.18 only uses yesno, ok, pulldown and yesnosuspend
+        # yesno dialogs will always kill the session if "yes" is selected
+        parser.add_argument("--dialog", dest="dialog_type",
+                            help='type of dialog to show, one of "yesno", \
+                            "ok", "error", "panic", "quit", "pulldown", \
+                            "yesnosuspend"')
+        parser.add_argument("--message", dest="text",
+                            help="message text to display in the dialog")
+        parser.add_argument("--caption", dest="caption",
+                            help="window title of the dialog")
+        parser.add_argument("--display", dest="display",
+                            help="X11 display where the dialog should be \
+                            shown")
+        parser.add_argument("--parent", type=int, dest="agentpid",
+                            help="pid of the nxagent")
+        parser.add_argument("--window", type=int, dest="window",
+                            help="id of window where to embed the \
+                            pulldown dialog type")
+        # -class, -local, -allowmultiple are unused in nxlibs 3.5.99.18
+        parser.add_argument("--class", dest="dlgclass", default="info",
+                            help="class of the message (info, warning, error) \
+                            default: info) [currently unimplemented]")
+        parser.add_argument("--local", action="store_true", dest="local",
+                            help="specify that proxy mode is used \
+                            [currently unimplemented]")
+        parser.add_argument("--allowmultiple", action="store_true",
+                            dest="allowmultiple",
+                            help="allow launching more than one dialog with \
+                            the same message [currently unimplemented]")
+
+        return parser.parse_args()
 
     def run(self):
         """ Disconnect/terminate NX session upon user's request. """
