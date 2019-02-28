@@ -498,7 +498,7 @@ _X11TransConnectDisplay (
 
 #endif
 
-#if defined(TCPCONN) || defined(UNIXCONN) || defined(LOCALCONN) || defined(MNX_TCPCONN)
+#if defined(TCPCONN) || defined(UNIXCONN) || defined(LOCALCONN)
     if (!pprotocol) {
 #if defined(UNIXCONN)
 	if (phostname && (strcmp (phostname, "unix") == 0)) {
