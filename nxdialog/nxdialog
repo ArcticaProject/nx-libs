@@ -234,11 +234,13 @@ def handle_session_action(agentpid, action):
 
     if action == DISCONNECT:
         print("Disconnecting from session, sending SIGHUP to %s" % (agentpid))
-        os.kill(agentpid, signal.SIGHUP)
+        if agentpid != 0:
+            os.kill(agentpid, signal.SIGHUP)
 
     elif action == TERMINATE:
         print("Terminating session, sending SIGTERM to process %s" % (agentpid))
-        os.kill(agentpid, signal.SIGTERM)
+        if agentpid != 0:
+            os.kill(agentpid, signal.SIGTERM)
 
     elif action is None:
         pass
@@ -339,7 +341,7 @@ class NxDialogProgram(object):
 
         if dlgtype in (DLG_TYPE_PULLDOWN,
                        DLG_TYPE_YESNOSUSPEND,
-                       DLG_TYPE_YESNO) and not self.options.agentpid:
+                       DLG_TYPE_YESNO) and self.options.agentpid is None:
             sys.stderr.write("Agent pid not supplied via --parent\n")
             sys.exit(EXIT_FAILURE)
 
