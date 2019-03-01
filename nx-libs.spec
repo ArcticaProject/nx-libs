@@ -459,6 +459,10 @@ rm -r %{buildroot}%{_includedir}/nx-X11/Xtrans
 #Remove our shared libraries' .la files before wrapping up the packages
 rm %{buildroot}%{_libdir}/*.la
 
+#FIXME: leaving nxdialog integration to Ionic
+rm -f %{buildroot}%{_bindir}/nxdialog
+rm -f %{buildroot}%{_datadir}/man/man1/nxdialog.1*
+
 %if 0%{?fdupes:1}
 %fdupes %{buildroot}%{_prefix}
 %endif
