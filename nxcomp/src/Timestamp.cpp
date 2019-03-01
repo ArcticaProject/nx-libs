@@ -49,7 +49,6 @@ std::string strTimestamp(const T_timestamp &ts)
   std::string ret;
 
   char ctime_now[26] = { };
-  bool err = true;
 
 #if HAVE_CTIME_S
   errno_t retval = ::ctime_s(ctime_now, sizeof(ctime_now), static_cast<const time_t*>(&ts.tv_sec));

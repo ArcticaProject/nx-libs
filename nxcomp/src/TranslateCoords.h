@@ -84,10 +84,10 @@ class TranslateCoordsMessage : public Message
   unsigned int  src_x;
   unsigned int  src_y;
 
-  unsigned char r_same_screen;
-  unsigned int  r_child_window;
-  unsigned int  r_dst_x;
-  unsigned int  r_dst_y;
+  // unsigned char r_same_screen;
+  // unsigned int  r_child_window;
+  // unsigned int  r_dst_x;
+  // unsigned int  r_dst_y;
 };
 
 class TranslateCoordsStore : public MessageStore

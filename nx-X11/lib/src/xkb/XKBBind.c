@@ -165,7 +165,7 @@ XKeysymToKeycode(Display *dpy, KeySym ks)
         for (i = dpy->min_keycode; i <= dpy->max_keycode; i++) {
             if (j < (int) XkbKeyNumSyms(xkb, i)) {
                 gotOne = 1;
-                if ((XkbKeySym(xkb, i, j) == ks))
+                if (XkbKeySym(xkb, i, j) == ks)
                     return i;
             }
         }

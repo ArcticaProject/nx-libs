@@ -709,12 +709,12 @@ extern void _XFlushGCCache(Display *dpy, GC gc);
 #define Data32(dpy, data, len) _XData32(dpy, (_Xconst long *)data, len)
 extern int _XData32(
 	     Display *dpy,
-             register _Xconst long *data,
+             _Xconst long *data,
 	     unsigned len
 );
 extern void _XRead32(
 	     Display *dpy,
-	     register long *data,
+	     long *data,
 	     long len
 );
 #else
@@ -1415,10 +1415,10 @@ extern int _XF86LoadQueryLocaleFont(
 );
 
 extern void _XProcessWindowAttributes (
-    register Display *dpy,
+    Display *dpy,
     xChangeWindowAttributesReq *req,
-    register unsigned long valuemask,
-    register XSetWindowAttributes *attributes);
+    unsigned long valuemask,
+    XSetWindowAttributes *attributes);
 
 extern int _XDefaultError(
         Display *dpy,
@@ -1428,7 +1428,7 @@ extern int _XDefaultIOError(
         Display *dpy);
 
 extern void _XSetClipRectangles (
-    register Display *dpy,
+    Display *dpy,
     GC gc,
     int clip_x_origin, int clip_y_origin,
     XRectangle *rectangles,
@@ -1436,13 +1436,13 @@ extern void _XSetClipRectangles (
     int ordering);
 
 Status _XGetWindowAttributes(
-    register Display *dpy,
+    Display *dpy,
     Window w,
     XWindowAttributes *attr);
 
 int _XPutBackEvent (
-    register Display *dpy,
-    register XEvent *event);
+    Display *dpy,
+    XEvent *event);
 
 extern Bool _XIsEventCookie(
         Display *dpy,

@@ -77,10 +77,6 @@ class Poller : public CorePoller
 
   Damage damage_;
 
-  Region repair_;
-
-  char damageChanges_;
-
   XShmSegmentInfo *shminfo_;
 
   XImage *image_;
