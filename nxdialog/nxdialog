@@ -44,6 +44,9 @@
 
 # If an "NX_CLIENT" environment variable is not provided to nxagent
 # nxcomp library assumes this script is located in /usr/NX/bin/nxclient
+#
+# Example:
+# nxdialog --dialog yesno --message "message text" --caption "message title" --parent 0
 
 from __future__ import print_function
 
