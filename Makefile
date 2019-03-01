@@ -170,6 +170,9 @@ build-full: build-env
 	# build nxproxy fifth
 	cd nxproxy && autoreconf -vfsi && (${CONFIGURE}) && ${MAKE}
 
+	# "build" nxdialog last
+	cd nxdialog && autoreconf -vfsi && (${CONFIGURE}) && ${MAKE}
+
 build:
 	if ! test -d nx-X11; then \
 	    ${MAKE} build-lite; \
@@ -247,6 +250,9 @@ install-full:
 
 	$(MAKE) -C nx-X11/lib install
 
+	# install the nxdialog executable and its man page
+	$(MAKE) -C nxdialog install
+
 uninstall:
 	$(MAKE) uninstall-lite
 	[ ! -d nx-X11 ] || $(MAKE) uninstall-full
@@ -269,3 +275,5 @@ uninstall-full:
 
 	$(RM_DIR_REC) $(DESTDIR)$(NXLIBDIR)
 	$(RM_DIR_REC) $(DESTDIR)$(INCLUDEDIR)/nx
+
+	test -f nxdialog/Makefile && ${MAKE} -C nxdialog "$@"
