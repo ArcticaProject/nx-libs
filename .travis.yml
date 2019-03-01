@@ -1,6 +1,6 @@
-# Use new trusty images, should yield newer compilers and packages
+# Use new xenial images, should yield newer compilers and packages
 sudo: true
-dist: trusty
+dist: xenial
 language: cpp
 
 matrix:
@@ -9,19 +9,24 @@ matrix:
       addons:
         apt:
           sources:
-            - sourceline: 'deb http://archive.ubuntu.com/ubuntu trusty-backports main restricted universe multiverse'
+            - sourceline: 'deb http://archive.ubuntu.com/ubuntu main restricted universe multiverse'
             - ubuntu-toolchain-r-test
           packages:
-            - cppcheck/trusty-backports
+            - cppcheck
             # imake
             - xutils-dev
             # X11 libaries
             - libxcomposite-dev
+            - libxdamage-dev
             - libxfont-dev
             - libxinerama-dev
+            - libxpm-dev
             - libxrandr-dev
             - libxtst-dev
             - x11proto-fonts-dev
+            # soft requirements
+            - quilt
+            - x11-xkb-utils
 
       env:
         - MATRIX_EVAL="CC=gcc && CXX=g++"
@@ -39,11 +44,16 @@ matrix:
             - xutils-dev
             # X11 libaries
             - libxcomposite-dev
+            - libxdamage-dev
             - libxfont-dev
             - libxinerama-dev
+            - libxpm-dev
             - libxrandr-dev
             - libxtst-dev
             - x11proto-fonts-dev
+            # soft requirements
+            - quilt
+            - x11-xkb-utils
 
       env:
         - MATRIX_EVAL="CC=gcc-8 && CXX=g++-8"
@@ -53,18 +63,23 @@ matrix:
       addons:
         apt:
           sources:
-            - llvm-toolchain-trusty-3.9
+            - llvm-toolchain-xenial-3.9
           packages:
             - clang-3.9
             # imake
             - xutils-dev
             # X11 libaries
             - libxcomposite-dev
+            - libxdamage-dev
             - libxfont-dev
             - libxinerama-dev
+            - libxpm-dev
             - libxrandr-dev
             - libxtst-dev
             - x11proto-fonts-dev
+            # soft requirements
+            - quilt
+            - x11-xkb-utils
 
       env:
         - MATRIX_EVAL="CC=clang-3.9 && CXX=clang++-3.9"
@@ -74,23 +89,27 @@ matrix:
       addons:
         apt:
           sources:
-            - llvm-toolchain-trusty-6.0
+            - llvm-toolchain-xenial-7
             - ubuntu-toolchain-r-test
           packages:
-            - clang-6.0
-            - g++-4.9
+            - clang-7
             # imake
             - xutils-dev
             # X11 libaries
             - libxcomposite-dev
+            - libxdamage-dev
             - libxfont-dev
             - libxinerama-dev
+            - libxpm-dev
             - libxrandr-dev
             - libxtst-dev
             - x11proto-fonts-dev
+            # soft requirements
+            - quilt
+            - x11-xkb-utils
 
       env:
-        - MATRIX_EVAL="CC=clang-6.0 && CXX=clang++-6.0"
+        - MATRIX_EVAL="CC=clang-7 && CXX=clang++-7"
         - STATIC_ANALYSIS="no"
 
 before_install:
