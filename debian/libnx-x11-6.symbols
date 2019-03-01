@@ -875,8 +875,8 @@ libNX_X11.so.6 libnx-x11-6 #MINVER#
  _XLockMutex_fn@Base 3.5.0.29
  _XLookupKeysym@Base 3.5.0.29
  _XLookupString@Base 3.5.0.29
-#MISSING: 3.5.99.9# _XNoticeCreateBitmap@Base 3.5.0.29
-#MISSING: 3.5.99.9# _XNoticePutBitmap@Base 3.5.0.29
+ _XNoticeCreateBitmap@Base 2:3.5.99.18-0
+ _XNoticePutBitmap@Base 2:3.5.99.18-0
  _XOpenLC@Base 3.5.0.29
  _XParseBaseFontNameList@Base 3.5.0.29
  _XPollfdCacheAdd@Base 3.5.0.29
@@ -910,7 +910,7 @@ libNX_X11.so.6 libnx-x11-6 #MINVER#
  _XTextHeight@Base 3.5.0.29
  _XTranslateKey@Base 3.5.0.29
  _XTranslateKeySym@Base 3.5.0.29
-#MISSING: 2:3.5.99.9# _XTryShapeBitmapCursor@Base 3.5.0.29
+ _XTryShapeBitmapCursor@Base 2:3.5.99.18-0
  _XUnknownCopyEventCookie@Base 3.5.99.2
  _XUnknownNativeEvent@Base 3.5.0.29
  _XUnknownWireEvent@Base 3.5.0.29
