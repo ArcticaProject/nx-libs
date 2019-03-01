@@ -1,0 +1,72 @@
+'\" -*- coding: utf-8 -*-
+.if \n(.g .ds T< \\FC
+.if \n(.g .ds T> \\F[\n[.fam]]
+.de URL
+\\$2 \(la\\$1\(ra\\$3
+..
+.if \n(.g .mso www.tmac
+.TH nxdialog 1 "Jan 2019" "Version 3.5.99.18" "NX Dialog"
+.SH NAME
+nxdialog \- NX Dialog Helper
+.SH SYNOPSIS
+'nh
+.fi
+.ad l
+\fBnxdialog\fR \fI[-h] [--dialog DIALOG_TYPE] [--message TEXT]
+         [--caption CAPTION] [--display DISPLAY] [--parent AGENTPID]
+         [--window WINDOW] [--class DLGCLASS] [--local]
+         [--allowmultiple]\fR
+
+.SH DESCRIPTION
+\fBnxdialog\fR is a GUI helper that can be used with nxagent to provide
+user interaction on certain events inside nxagent. It adds graphical
+widgets (menus, dialog boxes, etc.) to nxagent that allow a smarter user
+interaction with the agent.
+.PP
+\fBnxagent\fR is not using \fBnxdialog\fR by default, set the
+\fI$NX_CLIENT\fR environment variable to make the \fBnxdialog\fR path known to
+\fBnxagent\fR.
+.PP
+If you want to disable \fBnxdialog\fR usage in \fBnxagent\fR, then make
+sure that the \fI$NX_CLIENT\fR environment variable is unset.
+.PP
+.SH COMMAND LINE OPTIONS
+.TP 8
+.B \-h, \-\-help
+Show this help message and exit.
+.TP 8
+.B --dialog DIALOG_TYPE
+Type of dialog to show, one of "yesno", "ok", "error", "panic", "quit", "pulldown", "yesnosuspend".
+.TP 8
+.B --message \fITEXT\fR
+Message text to display in the dialog.
+.TP 8
+.B --caption CAPTION
+Window title of the dialog.
+.TP 8
+.B --display DISPLAY
+X11 display where the dialog should be shown (default: \fI$DISPLAY\fR).
+.TP 8
+.B --parent AGENTPID
+PID of the nxagent. The agent PID can be 0 for testing \fBnxdialog\fR.
+.TP 8
+.B --window WINDOW
+X11 id of window where to embed the pulldown dialog type.
+.TP 8
+.B --class DLGCLASS
+Class of the message (info, warning, error) default: info) [currently unimplemented].
+.TP 8
+.B --local
+Specify that proxy mode is used [currently unimplemented].
+.TP 8
+.B --allowmultiple
+Allow launching more than one dialog with the same message [currently unimplemented].
+
+.SH AUTHOR
+The \fBnxdialog\fR application has been derived from Google's
+NeatX client application by Ulrich Sibiller <uli42@gmx.de>.
+.PP
+This manual has been written by Mike Gabriel
+<mike.gabriel@das\-netzwerkteam.de> for the X2Go Project
+(https://wiki.x2go.org) and the Arctica Project
+(https://arctica-project.org).
