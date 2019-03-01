@@ -1,0 +1,11 @@
+Description: Enforce usage of Python3
+Author: Mike Gabriel <mike.gabriel@das-netzwerkteam.de>
+
+--- a/nxdialog/bin/nxdialog
++++ b/nxdialog/bin/nxdialog
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env python
++#!/usr/bin/env python3
+ #
+ # ^^^ This is working with python2 and python3 so we choose a shebang
+ #     that will find either version.

@@ -1,7 +1,9 @@
 etc/nxagent/keystrokes.cfg
 usr/bin/nxagent
+usr/bin/nxdialog
 usr/lib/*/nx/X11/
 usr/share/man/man1/nxagent.1*
+usr/share/man/man1/nxdialog.1*
 usr/share/nx/VERSION.nxagent
 usr/share/pixmaps/nxagent.xpm
 # FIXME: compatibility symlink, drop for 3.6.0 release

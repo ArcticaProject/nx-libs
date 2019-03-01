@@ -330,9 +330,12 @@ Depends:
  libnx-x11-6 (= ${binary:Version}),
  libxcomp3 (= ${binary:Version}),
  libxcompshad3 (= ${binary:Version}),
+ python3,
+ python3-gi,
+ gir1.2-gtk-3.0,
  x11-xkb-utils,
  ${misc:Depends},
- ${shlibs:Depends}
+ ${shlibs:Depends},
 Recommends: xfonts-base, xkb-data
 Breaks: libxcompext3 (<< 2:3.5.99.3~), nxauth
 Replaces: libxcompext3, nxauth
