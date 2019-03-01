@@ -121,7 +121,6 @@ libXcomp_la_LIBADD =					\
     @JPEG_LIBS@						\
     @PNG_LIBS@						\
     @Z_LIBS@						\
-    @PTHREAD_LIBS@					\
     $(NULL)
 
 AM_CXXFLAGS = 						\
@@ -129,17 +128,18 @@ AM_CXXFLAGS = 						\
     $(JPEG_CFLAGS)					\
     $(PNG_CFLAGS)					\
     $(Z_CFLAGS)						\
-    $(PTHREAD_CFLAGS)					\
     $(NULL)
 
 AM_CPPFLAGS =						\
     -I$(top_srcdir)/include				\
+    $(PTHREAD_CFLAGS)					\
     $(NULL)
 
 libXcomp_la_LDFLAGS =					\
     -version-number @LT_COMP_VERSION@			\
     -no-undefined					\
     @PTHREAD_LIBS@					\
+    $(PTHREAD_CFLAGS)					\
     $(NULL)
 
 libXcompincludedir = $(includedir)/nx
