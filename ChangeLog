@@ -1,6 +1,230 @@
-2019-01-31 14:10:36 +0100 Mike Gabriel (b5d411337)
+2019-03-01 16:48:17 +0100 Mike Gabriel (3339072a7)
 
-	* release 3.5.99.18 (HEAD -> 3.6.x, tag: 3.5.99.18)
+	* release 3.5.99.19 (HEAD -> 3.6.x, tag: 3.5.99.19)
+
+2019-03-01 16:48:04 +0100 Mike Gabriel (da9a1bc0b)
+
+	* debian/patches: Add 2004_enforce-lpthread.patch. On Debian, enforce
+          -lpthread when building nxcomp. This is a nasty work
+          around for a missing symbols issue that needs to get
+          addressed otherwise in later release.
+
+2019-03-01 15:32:12 +0100 Mike Gabriel (400b627e4)
+
+	* nx-libs.spec: Dropping nxdialog files from installation for now
+          when building RPMs. Postponing nxdialog integration with
+          RPM packaging for now.
+
+2019-03-01 15:25:36 +0100 Ulrich Sibiller (ff1b3e9e8)
+
+	* nxdialog: Allow user to specify hexadecimal X11 window IDs.
+
+2019-03-01 15:24:44 +0100 Mike Gabriel (ca8d889da)
+
+	* debian/libnx-x11-6.symbols: Update symbols.
+
+2019-03-01 15:23:49 +0100 Mike Gabriel (00f8d49a3)
+
+	* debian/*: Debianize package inclusion of nxdialog (ships with
+          nxagent bin:pkg for now).
+
+2019-03-01 15:22:03 +0100 Mike Gabriel (ae565e1da)
+
+	* Merge branch 'sunweaver-pr/nxdialog-autotools' into 3.6.x
+
+2019-03-01 13:50:31 +0100 Mike Gabriel (6812657f0)
+
+	* Makefile: Integrate new subproject "nxdialog".
+
+2019-03-01 13:47:39 +0100 Mike Gabriel (57ca69fe0)
+
+	* nxdialog: Turn into autotools project, add man page.
+
+2019-03-01 12:50:32 +0100 Mike Gabriel (df79c3b35)
+
+	* Merge branch 'uli42-pr/add_nxdialog' into 3.6.x
+
+2019-03-01 10:52:39 +0100 Ulrich Sibiller (d0e40f8b2)
+
+	* nxdialog: add example call
+
+2019-03-01 10:50:16 +0100 Ulrich Sibiller (07052a25c)
+
+	* nxdialog: allow to provide --parent 0 for testing
+
+2019-02-28 20:17:39 +0100 Ulrich Sibiller (acffe15b5)
+
+	* nxdialog: make code compatible to python2 _and_ python3
+
+2019-02-28 18:13:47 +0100 Ulrich Sibiller (57700cd6b)
+
+	* nxdialog: convert from optparse to argparse
+
+2019-02-28 17:49:28 +0100 Ulrich Sibiller (3a097e6e0)
+
+	* nxdialog: use gtk3 instead of gtk2
+
+2019-02-28 17:46:48 +0100 Ulrich Sibiller (2aa575f0d)
+
+	* nxdialog: pylint improvements
+
+2019-02-09 01:55:59 +0100 Ulrich Sibiller (486cc6f50)
+
+	* add nxdialog for displaying dialogs
+
+2019-03-01 12:12:58 +0100 Mike Gabriel (4538d2133)
+
+	* Merge branch 'mjtrangoni-move-to-xenial' into 3.6.x
+
+2019-01-19 12:17:32 +0100 Mario Trangoni (440ce3f54)
+
+	* .travis.yml: add some soft requirements
+
+2019-01-18 20:38:03 +0100 Mario Trangoni (f2a1e877d)
+
+	* .travis.yml: Update clang-6.0 to clang-7
+
+2019-01-18 19:10:03 +0100 Mario Trangoni (ebd1ea036)
+
+	* .travis.yml: move from Ubuntu Trusty to Xenial.
+
+2019-03-01 12:04:25 +0100 Mike Gabriel (176f9b471)
+
+	* Merge branch 'uli42-pr/fix_clang_warnings' into 3.6.x
+
+2019-01-18 23:57:04 +0100 Ulrich Sibiller (7c8214f31)
+
+	* GenericReply.h: remove unused variable
+
+2019-01-18 23:45:26 +0100 Ulrich Sibiller (059028ce7)
+
+	* Logger.h: remove pragma, correct attributes
+
+2019-01-18 23:44:47 +0100 Ulrich Sibiller (a53c65547)
+
+	* Logger.h: fix missing compiler attribute
+
+2019-01-18 22:51:40 +0100 Ulrich Sibiller (74fe99dab)
+
+	* xcompshad: remove unused variables
+
+2019-01-18 22:47:38 +0100 Ulrich Sibiller (a8ed28234)
+
+	* Xlib: remove register keywords
+
+2019-01-18 22:44:21 +0100 Ulrich Sibiller (e1f2a24f6)
+
+	* xlib: remove superflous parens
+
+2019-01-18 22:41:05 +0100 Ulrich Sibiller (0934b1e67)
+
+	* nxcomp: fix unused variables
+
+2019-01-18 22:38:31 +0100 Ulrich Sibiller (0e481f8aa)
+
+	* nxcomp: fix unused variable
+
+2019-01-18 22:10:54 +0100 Ulrich Sibiller (471342933)
+
+	* Fix: clang does not know about gnu_printf
+
+2019-03-01 11:59:55 +0100 Mike Gabriel (d156ce5ab)
+
+	* Merge branch 'uli42-pr/xfixes_memset' into 3.6.x
+
+2019-02-28 23:15:22 +0100 Ulrich Sibiller (e7a50079e)
+
+	* xfixes: use calloc for some structs
+
+2019-02-28 23:13:49 +0100 Ulrich Sibiller (c6b6a8fcb)
+
+	* Use C99 designated initializers in various extension Replies
+
+2019-02-28 23:11:23 +0100 Ulrich Sibiller (c81a45785)
+
+	* Use calloc to zero fill buffers being allocated for replies &
+          events
+
+2019-02-28 22:09:28 +0100 Ulrich Sibiller (a70e36c81)
+
+	* ConnDis.c: remove obsolete MNX_TCPCONN
+
+2019-02-20 22:39:48 +0100 Ulrich Sibiller (f2e48fb73)
+
+	* nx-X11/lib/configure.ac: add forgotten status line
+
+2019-02-20 22:25:46 +0100 Ulrich Sibiller (71a3b8447)
+
+	* nx-X11/lib/configure.ac: fix version number
+
+2019-02-20 22:05:01 +0100 Ulrich Sibiller (0eb71d78a)
+
+	* Merge branch 'gh-sunweaver/pr/xlib-loadable-modules' into 3.6.x
+
+2019-02-20 13:14:43 +0100 Mike Gabriel (36a7f0413)
+
+	* nx-X11/lib/configure.ac: Assure that the USE_DYNAMIC_XCURSOR macro
+          is defined at build-time.
+
+2019-02-20 10:40:20 +0100 Mike Gabriel (de421e4fe)
+
+	* Revert "Fix parsing ports set to unix sockets"
+
+2019-02-20 10:37:16 +0100 Mike Gabriel (3572b251e)
+
+	* Regression fix for bfc05af7. Properly end lines in help/usage text.
+
+2019-02-18 08:47:40 +0100 Mike Gabriel (66315e4f3)
+
+	* Merge branch 'uli42-pr/session_types' into 3.6.x
+
+2019-02-18 08:45:11 +0100 Mike Gabriel (fc2907759)
+
+	* Keyboard.c: fix comment.
+
+2019-02-17 18:00:28 +0100 Ulrich Sibiller (bfc05af73)
+
+	* nxproxy: list known session types in help output
+
+2019-02-15 11:48:27 +0100 Mike Gabriel (a3dc87d6b)
+
+	* Merge branch 'uli42-pr/fix_keystrokes' into 3.6.x
+
+2019-02-15 09:27:29 +0100 Ulrich Sibiller (f1b27c4fd)
+
+	* keystrokes.cfg: Add missing Shift=1 for viewport_move_up/down/right
+
+2019-02-15 11:45:14 +0100 Mike Gabriel (24d7d0faa)
+
+	* Merge branch 'uli42-pr/revert' into 3.6.x
+
+2019-02-15 09:37:18 +0100 Ulrich Sibiller (586742b71)
+
+	* Revert "nxagent: rework Bool handling"
+
+2019-02-13 12:32:06 +0100 Mike Gabriel (b61934be2)
+
+	* Merge branch 'uli42-pr/misc' into 3.6.x
+
+2019-02-08 00:44:48 +0100 Ulrich Sibiller (16cd2bbe1)
+
+	* nxagent: rework Bool handling
+
+2019-02-07 23:06:58 +0100 Ulrich Sibiller (5bbab001a)
+
+	* Screen.c: code optimization for rootless mode
+
+2019-02-07 23:04:23 +0100 Ulrich Sibiller (34e4291de)
+
+	* Screen.c: simplify and fix handling of rootless mode
+
+2019-02-07 21:40:05 +0100 Ulrich Sibiller (f729ac996)
+
+	* rrdispatch.c: remove obsolete ifdef
+
+2019-01-31 14:10:36 +0100 Mike Gabriel (427ac344c)
+
+	* release 3.5.99.18 (tag: 3.5.99.18)
 
 2019-01-25 16:37:29 +0100 Mike Gabriel (26e483d49)
 
