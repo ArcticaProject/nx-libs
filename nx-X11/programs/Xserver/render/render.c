@@ -274,7 +274,13 @@ static int
 ProcRenderQueryVersion (ClientPtr client)
 {
     RenderClientPtr pRenderClient = GetRenderClient (client);
-    xRenderQueryVersionReply rep;
+    xRenderQueryVersionReply rep = {
+        .type = X_Reply,
+        .sequenceNumber = client->sequence,
+        .length = 0,
+        .majorVersion = SERVER_RENDER_MAJOR_VERSION,
+        .minorVersion = SERVER_RENDER_MINOR_VERSION
+    };
 
     REQUEST(xRenderQueryVersionReq);
 
@@ -283,12 +289,6 @@ ProcRenderQueryVersion (ClientPtr client)
     pRenderClient->major_version = stuff->majorVersion;
     pRenderClient->minor_version = stuff->minorVersion;
 
-    memset(&rep, 0, sizeof(xRenderQueryVersionReply));
-    rep.type = X_Reply;
-    rep.length = 0;
-    rep.sequenceNumber = client->sequence;
-    rep.majorVersion = SERVER_RENDER_MAJOR_VERSION;
-    rep.minorVersion = SERVER_RENDER_MINOR_VERSION;
     if (client->swapped) {
 	swaps(&rep.sequenceNumber);
 	swapl(&rep.length);
@@ -580,7 +580,7 @@ ProcRenderQueryPictIndexValues (ClientPtr client)
     num = pFormat->index.nvalues;
     rlength = (sizeof (xRenderQueryPictIndexValuesReply) + 
 	       num * sizeof(xIndexValue));
-    reply = (xRenderQueryPictIndexValuesReply *) malloc (rlength);
+    reply = (xRenderQueryPictIndexValuesReply *) calloc (1, rlength);
     if (!reply)
 	return BadAlloc;
 
@@ -1746,7 +1746,7 @@ ProcRenderQueryFilters (ClientPtr client)
     }
     len = ((nnames + 1) >> 1) + ((nbytesName + 3) >> 2);
     total_bytes = sizeof (xRenderQueryFiltersReply) + (len << 2);
-    reply = (xRenderQueryFiltersReply *) malloc (total_bytes);
+    reply = (xRenderQueryFiltersReply *) calloc (1, total_bytes);
     if (!reply)
 	return BadAlloc;
     aliases = (INT16 *) (reply + 1);

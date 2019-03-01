@@ -201,7 +201,7 @@ XFixesSelectCursorInput (ClientPtr	pClient,
     }
     if (!e)
     {
-	e = (CursorEventPtr) malloc (sizeof (CursorEventRec));
+	e = (CursorEventPtr) calloc (1, sizeof (CursorEventRec));
 	if (!e)
 	    return BadAlloc;
 
@@ -364,8 +364,8 @@ ProcXFixesGetCursorImage (ClientPtr client)
     width = pCursor->bits->width;
     height = pCursor->bits->height;
     npixels = width * height;
-    rep = malloc (sizeof (xXFixesGetCursorImageReply) +
-		  npixels * sizeof (CARD32));
+    rep = calloc (sizeof (xXFixesGetCursorImageReply) +
+		  npixels * sizeof (CARD32), 1);
     if (!rep)
 	return BadAlloc;
 
@@ -456,11 +456,13 @@ ProcXFixesGetCursorName (ClientPtr client)
 	str = "";
     len = strlen (str);
     
-    reply.type = X_Reply;
-    reply.length = (len + 3) >> 2;
-    reply.sequenceNumber = client->sequence;
-    reply.atom = pCursor->name;
-    reply.nbytes = len;
+    reply = (xXFixesGetCursorNameReply) {
+        .type = X_Reply,
+        .sequenceNumber = client->sequence,
+        .length = (len + 3) >> 2,
+        .atom = pCursor->name,
+        .nbytes = len
+    };
     if (client->swapped) {
 	swaps(&reply.sequenceNumber);
 	swapl(&reply.length);
@@ -508,8 +510,8 @@ ProcXFixesGetCursorImageAndName (ClientPtr client)
     name = pCursor->name ? NameForAtom (pCursor->name) : "";
     nbytes = strlen (name);
     nbytesRound = (nbytes + 3) & ~3;
-    rep = malloc (sizeof (xXFixesGetCursorImageAndNameReply) +
-		  npixels * sizeof (CARD32) + nbytesRound);
+    rep = calloc (sizeof (xXFixesGetCursorImageAndNameReply) +
+		  npixels * sizeof (CARD32) + nbytesRound, 1);
     if (!rep)
 	return BadAlloc;
 
@@ -757,7 +759,7 @@ createCursorHideCount (ClientPtr pClient, ScreenPtr pScreen)
     CursorScreenPtr    cs = GetCursorScreen(pScreen);
     CursorHideCountPtr pChc;
 
-    pChc = (CursorHideCountPtr) malloc(sizeof(CursorHideCountRec));
+    pChc = (CursorHideCountPtr) calloc(1, sizeof(CursorHideCountRec));
     if (pChc == NULL) {
 	return BadAlloc;
     }
