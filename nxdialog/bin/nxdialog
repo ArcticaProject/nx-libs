@@ -45,8 +45,9 @@
 # If an "NX_CLIENT" environment variable is not provided to nxagent
 # nxcomp library assumes this script is located in /usr/NX/bin/nxclient
 #
-# Example:
+# Examples:
 # nxdialog --dialog yesno --message "message text" --caption "message title" --parent 0
+# nxdialog --dialog yesno --message "message text" --caption "message title" --window 0x123456 --parent 0
 
 from __future__ import print_function
 
@@ -110,7 +111,7 @@ class PullDownMenu(object):
         """ Shows popup and returns result. """
 
         display = Gdk.Display.get_default()
-        win = GdkX11.X11Window.foreign_new_for_display(display, self.window_id)
+        win = GdkX11.X11Window.foreign_new_for_display(display, int(self.window_id, 0))
 
         menu = Gtk.Menu()
         menu.connect("deactivate", self.menu_deactivate)
@@ -312,7 +313,7 @@ class NxDialogProgram(object):
                             shown")
         parser.add_argument("--parent", type=int, dest="agentpid",
                             help="pid of the nxagent")
-        parser.add_argument("--window", type=int, dest="window",
+        parser.add_argument("--window", dest="window",
                             help="id of window where to embed the \
                             pulldown dialog type")
         # -class, -local, -allowmultiple are unused in nxlibs 3.5.99.18
