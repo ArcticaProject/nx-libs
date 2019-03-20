@@ -107,8 +107,7 @@ SOFTWARE.
 #include "dixstruct.h"
 #include "list.h"
 #ifdef XCSECURITY
-#define _SECURITY_SERVER
-#include <nx-X11/extensions/security.h>
+#include "securitysrv.h"
 #endif
 
 #ifdef X_NOT_POSIX

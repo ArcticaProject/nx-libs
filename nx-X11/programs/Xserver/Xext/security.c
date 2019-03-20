@@ -62,7 +62,7 @@ in this Software without prior written authorization from The Open Group.
 #include "colormapst.h"
 #include "propertyst.h"
 #include "protocol-versions.h"
-#define _SECURITY_SERVER
+#include "securitysrv.h"
 #include <nx-X11/extensions/securstr.h>
 #include <assert.h>
 #include <stdarg.h>

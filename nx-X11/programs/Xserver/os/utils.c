@@ -138,8 +138,7 @@ OR PERFORMANCE OF THIS SOFTWARE.
 #include "xkbsrv.h"
 #endif
 #ifdef XCSECURITY
-#define _SECURITY_SERVER
-#include <nx-X11/extensions/security.h>
+#include "securitysrv.h"
 #endif
 
 #ifdef RENDER

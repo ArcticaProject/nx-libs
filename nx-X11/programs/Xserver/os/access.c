@@ -157,8 +157,7 @@ SOFTWARE.
 #include "osdep.h"
 
 #ifdef XCSECURITY
-#define _SECURITY_SERVER
-#include <nx-X11/extensions/security.h>
+#include "securitysrv.h"
 #endif
 
 #ifndef PATH_MAX
