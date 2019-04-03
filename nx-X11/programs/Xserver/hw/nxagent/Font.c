@@ -1443,9 +1443,43 @@ static Bool nxagentGetFontServerPath(char * fontServerPath, int size)
   return True;
 }
 
-void nxagentVerifyDefaultFontPath(void)
+void nxagentVerifySingleFontPath(char **dest, const char *fontDir, const char *fontPath)
 {
   struct stat dirStat;
+  char * newdest = NULL;
+
+  if (!dest || !*dest)
+    return;
+
+  if (stat(fontDir, &dirStat) == 0 &&
+          S_ISDIR(dirStat.st_mode) != 0)
+  {
+    #ifdef TEST
+    fprintf(stderr, "%s: Assuming fonts in directory [%s].\n", __func__,
+                validateString(fontDir));
+    #endif
+
+    if (**dest != '\0')
+    {
+      newdest = realloc(*dest, strlen(*dest) + strlen(fontPath) + 2);
+      if (newdest == NULL)
+        return;
+      strcat(newdest, ",");
+    }
+    else
+    {
+      newdest = realloc(*dest, strlen(*dest) + strlen(fontPath) + 1);
+      if (newdest == NULL)
+        return;
+    }
+
+    strcat(newdest, fontPath);
+    *dest = newdest;
+  }
+}
+
+void nxagentVerifyDefaultFontPath(void)
+{
   static char *fontPath;
 
   #ifdef TEST
@@ -1466,105 +1500,11 @@ void nxagentVerifyDefaultFontPath(void)
     return;
   }
 
-  if (stat(NXAGENT_DEFAULT_FONT_DIR, &dirStat) == 0 &&
-          S_ISDIR(dirStat.st_mode) != 0)
-  {
-    /*
-     * Let's use the old "/usr/share/nx/fonts" style.
-     */
+  nxagentVerifySingleFontPath(&fontPath, NXAGENT_DEFAULT_FONT_DIR, NXAGENT_DEFAULT_FONT_PATH);
+  nxagentVerifySingleFontPath(&fontPath, NXAGENT_ALTERNATE_FONT_DIR, NXAGENT_ALTERNATE_FONT_PATH);
+  nxagentVerifySingleFontPath(&fontPath, NXAGENT_ALTERNATE_FONT_DIR_2, NXAGENT_ALTERNATE_FONT_PATH_2);
+  nxagentVerifySingleFontPath(&fontPath, NXAGENT_ALTERNATE_FONT_DIR_3, NXAGENT_ALTERNATE_FONT_PATH_3);
 
-    #ifdef TEST
-    fprintf(stderr, "nxagentVerifyDefaultFontPath: Assuming fonts in directory [%s].\n",
-                validateString(NXAGENT_DEFAULT_FONT_DIR));
-    #endif
-
-    if (*fontPath != '\0')
-    {
-      fontPath = realloc(fontPath, strlen(fontPath) + strlen(NXAGENT_DEFAULT_FONT_PATH) + 2);
-      strcat(fontPath, ",");
-    }
-    else
-    {
-      fontPath = realloc(fontPath, strlen(fontPath) + strlen(NXAGENT_DEFAULT_FONT_PATH) + 1);
-    }
-
-    strcat(fontPath, NXAGENT_DEFAULT_FONT_PATH);
-  }
-
-  if (stat(NXAGENT_ALTERNATE_FONT_DIR, &dirStat) == 0 &&
-          S_ISDIR(dirStat.st_mode) != 0)
-  {
-    /*
-     * Let's use the new "/usr/share/X11/fonts" path.
-     */
-
-    #ifdef TEST
-    fprintf(stderr, "nxagentVerifyDefaultFontPath: Assuming fonts in directory [%s].\n",
-                validateString(NXAGENT_ALTERNATE_FONT_DIR));
-    #endif
-
-    if (*fontPath != '\0')
-    {
-      fontPath = realloc(fontPath, strlen(fontPath) + strlen(NXAGENT_ALTERNATE_FONT_PATH) + 2);
-      strcat(fontPath, ",");
-    }
-    else
-    {
-      fontPath = realloc(fontPath, strlen(fontPath) + strlen(NXAGENT_ALTERNATE_FONT_PATH) + 1);
-    }
-
-    strcat(fontPath, NXAGENT_ALTERNATE_FONT_PATH);
-  }
-
-  if (stat(NXAGENT_ALTERNATE_FONT_DIR_2, &dirStat) == 0 &&
-          S_ISDIR(dirStat.st_mode) != 0)
-  {
-    /*
-     * Let's use the "/usr/share/fonts/X11" path.
-     */
-
-    #ifdef TEST
-    fprintf(stderr, "nxagentVerifyDefaultFontPath: Assuming fonts in directory [%s].\n",
-                validateString(NXAGENT_ALTERNATE_FONT_DIR_2));
-    #endif
-
-    if (*fontPath != '\0')
-    {
-      fontPath = realloc(fontPath, strlen(fontPath) + strlen(NXAGENT_ALTERNATE_FONT_PATH_2) + 2);
-      strcat(fontPath, ",");
-    }
-    else
-    {
-      fontPath = realloc(fontPath, strlen(fontPath) + strlen(NXAGENT_ALTERNATE_FONT_PATH_2) + 1);
-    }
-
-    strcat(fontPath, NXAGENT_ALTERNATE_FONT_PATH_2);
-  }
-
-  if (stat(NXAGENT_ALTERNATE_FONT_DIR_3, &dirStat) == 0 &&
-          S_ISDIR(dirStat.st_mode) != 0)
-  {
-    /*
-     * Let's use the "/usr/X11R6/lib/X11/fonts" path.
-     */
-
-    #ifdef TEST
-    fprintf(stderr, "nxagentVerifyDefaultFontPath: Assuming fonts in directory [%s].\n",
-                validateString(NXAGENT_ALTERNATE_FONT_DIR_3));
-    #endif
-
-    if (*fontPath != '\0')
-    {
-      fontPath = realloc(fontPath, strlen(fontPath) + strlen(NXAGENT_ALTERNATE_FONT_PATH_3) + 2);
-      strcat(fontPath, ",");
-    }
-    else
-    {
-      fontPath = realloc(fontPath, strlen(fontPath) + strlen(NXAGENT_ALTERNATE_FONT_PATH_3) + 1);
-    }
-
-    strcat(fontPath, NXAGENT_ALTERNATE_FONT_PATH_3);
-  }
   if (*fontPath == '\0') 
   {
     #ifdef WARNING
@@ -1576,6 +1516,8 @@ void nxagentVerifyDefaultFontPath(void)
   }
   else
   {
+    /* do _not_ free defaultFontPath here - it's either set at compile time or
+       part of argv */
     defaultFontPath = fontPath;
  
     #ifdef TEST
