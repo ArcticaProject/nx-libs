@@ -139,7 +139,7 @@ AM_CPPFLAGS =						\
 libXcomp_la_LDFLAGS =					\
     -version-number @LT_COMP_VERSION@			\
     -no-undefined					\
-    $(PTHREAD_LDFLAGS)					\
+    @PTHREAD_LIBS@					\
     $(NULL)
 
 libXcompincludedir = $(includedir)/nx
