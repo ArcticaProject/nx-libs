@@ -82,7 +82,8 @@
 #   modified version of the Autoconf Macro, you may extend this special
 #   exception to the GPL to apply to your modified version as well.
 
-#serial 24
+#serial 25
+#arctica-serial 1
 
 AU_ALIAS([ACX_PTHREAD], [AX_PTHREAD])
 AC_DEFUN([AX_PTHREAD], [
@@ -334,6 +335,42 @@ for ax_pthread_try_flag in $ax_pthread_flags; do
                 PTHREAD_LIBS="-lpthread"
                 ;;
 
+                -pthread)
+                AC_MSG_CHECKING([whether pthreads work with $ax_pthread_try_flag])
+                PTHREAD_CFLAGS="$ax_pthread_try_flag"
+
+                if test "x$GCC" = "xyes"; then
+                        # Thanks to libtool bug #13550, we have to consider the possibility
+                        # that -nostdlib will be used during compilation at some point.
+                        # Try to determine the first pthread library available,
+                        # ignoring any other variants.
+                        for ax_pthread_try_lib_flag in $ax_pthread_flags; do
+                                case $ax_pthread_try_lib_flag in
+                                        none|-*|pthread-config)
+                                        continue
+                                        ;;
+
+                                        *)
+                                        PTHREAD_LIBS="-l$ax_pthread_try_lib_flag"
+
+                                        ax_pthread_save_LIBS="$LIBS"
+                                        LIBS="$PTHREAD_LIBS $LIBS"
+
+                                        # We only need to link a trivial program with
+                                        # the current library value.
+                                        # Linking should fail if the library doesn't
+                                        # exist, otherwise we should be good to go.
+                                        AC_LINK_IFELSE([AC_LANG_PROGRAM([], [])],
+                                            [LIBS="$ax_pthread_save_LIBS"
+                                             break],
+                                            [LIBS="$ax_pthread_save_LIBS"
+                                             PTHREAD_LIBS=""])
+                                        ;;
+                                esac
+                        done
+                fi
+                ;;
+
                 -*)
                 AC_MSG_CHECKING([whether pthreads work with $ax_pthread_try_flag])
                 PTHREAD_CFLAGS="$ax_pthread_try_flag"
@@ -438,7 +475,8 @@ if test "x$ax_pthread_ok" = "xyes"; then
         AC_CACHE_CHECK([for PTHREAD_PRIO_INHERIT],
             [ax_cv_PTHREAD_PRIO_INHERIT],
             [AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <pthread.h>]],
-                                             [[int i = PTHREAD_PRIO_INHERIT;]])],
+                                             [[int i = PTHREAD_PRIO_INHERIT;
+                                               return i;]])],
                             [ax_cv_PTHREAD_PRIO_INHERIT=yes],
                             [ax_cv_PTHREAD_PRIO_INHERIT=no])
             ])

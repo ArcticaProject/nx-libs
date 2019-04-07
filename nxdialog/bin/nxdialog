@@ -47,7 +47,7 @@
 #
 # Examples:
 # nxdialog --dialog yesno --message "message text" --caption "message title" --parent 0
-# nxdialog --dialog yesno --message "message text" --caption "message title" --window 0x123456 --parent 0
+# nxdialog --dialog pulldown --message "message text" --caption "message title" --window 0x123456 --parent 0
 
 from __future__ import print_function
 
