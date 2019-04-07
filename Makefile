@@ -67,6 +67,7 @@ clean: version imakeconfig
 	test -f nx-X11/lib/Makefile && ${MAKE} -C nx-X11/lib clean     || true
 	test -f nxcompshad/Makefile && ${MAKE} -C nxcompshad clean     || true
 	test -d nx-X11              && ${MAKE} clean-env               || true
+	test -f nxdialog/Makefile   && ${MAKE} -C nxdialog clean       || true
 
 distclean: clean version imakeconfig
 	test -f nxcomp/Makefile     && ${MAKE} -C nxcomp distclean     || true
@@ -74,6 +75,7 @@ distclean: clean version imakeconfig
 	test -f nx-X11/lib/Makefile && ${MAKE} -C nx-X11/lib distclean || true
 	test -f nxcompshad/Makefile && ${MAKE} -C nxcompshad distclean || true
 	test -d nx-X11              && ${MAKE} -C nx-X11 distclean     || true
+	test -f nxdialog/Makefile   && ${MAKE} -C nxdialog distclean   || true
 	test -x ./mesa-quilt        && ./mesa-quilt pop -a
 	$(RM_DIR_REC) nx-X11/extras/Mesa/.pc/
 	$(RM_FILE) nx-X11/config/cf/nxversion.def
