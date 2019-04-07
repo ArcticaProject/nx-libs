@@ -8,6 +8,7 @@ MAINTAINERCLEANFILES =			\
     $(srcdir)/autom4te.cache/*		\
     $(srcdir)/build-aux/*		\
     $(srcdir)/Makefile.in		\
+    $(srcdir)/bin/Makefile.in		\
     $(srcdir)/man/Makefile.in		\
     $(srcdir)/src/Makefile.in		\
     $(srcdir)/aclocal.m4		\
