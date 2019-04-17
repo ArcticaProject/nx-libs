@@ -1,6 +1,70 @@
-2019-03-01 16:48:17 +0100 Mike Gabriel (3339072a7)
+2019-04-17 11:04:51 +0200 Mike Gabriel (f1f744a41)
 
-	* release 3.5.99.19 (HEAD -> 3.6.x, tag: 3.5.99.19)
+	* release 3.5.99.20 (HEAD -> 3.6.x, tag: 3.5.99.20)
+
+2019-04-17 10:52:00 +0200 Mike Gabriel (2a10438f7)
+
+	* nxdialog/bin/nxdialog: Fix error dialog-type-not-supplied error
+          message.
+
+2019-04-08 11:50:08 +0200 Mihai Moldovan (f0aac0897)
+
+	* Merge branch 'sunweaver-pr/pthread-flags' into arctica-3.6.x
+
+2019-03-01 23:16:49 +0100 Mike Gabriel (80ecfad95)
+
+	* nxcomp/src/Makefile.am: Correct usage of PTHREAD_CFLAGS and
+          PTHREAD_LIBS. PTHREAD_CFLAGS is also supposed to be used
+          when linking. See comments in m4/ax_pthread.m4.
+
+2019-04-07 21:59:37 +0200 Mike Gabriel (1ff05c8e2)
+
+	* nxdialog/Makefile.am: We forgot to clean up
+          nxdialog/bin/Makefile.in.
+
+2019-04-07 21:59:00 +0200 Mike Gabriel (34011ccad)
+
+	* Makefile: Add clean/distclean target calls for nxdialog subdir to
+          master Makefile's clean/distclean targets.
+
+2019-04-07 21:36:05 +0200 Mike Gabriel (cb5c042a1)
+
+	* Merge branch 'Ionic-bugfix/libXcomp-pthread-underlinking' into
+          3.6.x
+
+2019-04-04 13:07:40 +0200 Mihai Moldovan (dd0d49c4e)
+
+	* debian/patches/{,series}: remove 2004_enforce-lpthread.patch.
+
+2019-04-04 11:15:22 +0200 Mihai Moldovan (d1fe6a601)
+
+	* nxproxy/{m4,configure.ac,src/Makefile.am}: drop pthread
+          overlinking.
+
+2019-04-04 11:06:05 +0200 Mihai Moldovan (95f8cf7ea)
+
+	* m4/ax_pthread.m4: implement workaround for libtool bug #13550.
+
+2019-04-01 09:16:43 +0200 Mihai Moldovan (2efaa423b)
+
+	* m4/: update external macros from autoconf-archive.
+
+2019-04-04 11:18:35 +0200 Mihai Moldovan (1b6da5992)
+
+	* nxcomp/src/Makefile.am: PTHREAD_LDFLAGS does not exist, replace
+          with PTHREAD_LIBS.
+
+2019-03-25 06:42:08 +0100 Mihai Moldovan (3af59f806)
+
+	* nxdialog/: create (almost) empty m4 directory.
+
+2019-03-01 18:59:22 +0100 Ulrich Sibiller (cf3ac71a3)
+
+	* nxdialog: fix example
+
+2019-03-01 16:48:17 +0100 Mike Gabriel (59305c8b9)
+
+	* release 3.5.99.19 (tag: 3.5.99.19)
 
 2019-03-01 16:48:04 +0100 Mike Gabriel (da9a1bc0b)
 

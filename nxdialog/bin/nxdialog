@@ -298,7 +298,7 @@ class NxDialogProgram(object):
 
         parser = argparse.ArgumentParser(description="Helper for nxagent to display dialogs")
 
-        # nxagent 3.5.99.19 only uses yesno, ok, pulldown and yesnosuspend
+        # nxagent 3.5.99.20 only uses yesno, ok, pulldown and yesnosuspend
         # yesno dialogs will always kill the session if "yes" is selected
         parser.add_argument("--dialog", dest="dialog_type",
                             help='type of dialog to show, one of "yesno", \
@@ -316,7 +316,7 @@ class NxDialogProgram(object):
         parser.add_argument("--window", dest="window",
                             help="id of window where to embed the \
                             pulldown dialog type")
-        # -class, -local, -allowmultiple are unused in nxlibs 3.5.99.19
+        # -class, -local, -allowmultiple are unused in nxlibs 3.5.99.20
         parser.add_argument("--class", dest="dlgclass", default="info",
                             help="class of the message (info, warning, error) \
                             default: info) [currently unimplemented]")
