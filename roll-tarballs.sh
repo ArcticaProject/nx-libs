@@ -172,6 +172,7 @@ else
     rm -f  "bin/nxagent"*
     rm -Rf "nxcompshad"*
     rm -Rf "nx-X11"*
+    rm -Rf "nxdialog"*
     rm -Rf "etc"*
     rm -f  "generate-symbol-docs.sh"
     rm -Rf "testscripts/"*nxagent*
