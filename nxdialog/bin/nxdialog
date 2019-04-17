@@ -334,7 +334,7 @@ class NxDialogProgram(object):
         """ Disconnect/terminate NX session upon user's request. """
 
         if not self.options.dialog_type:
-            sys.stderr.write("Dialog type not supplied via --type\n")
+            sys.stderr.write("Dialog type not supplied via --dialog\n")
             sys.exit(EXIT_FAILURE)
 
         dlgtype = self.options.dialog_type
