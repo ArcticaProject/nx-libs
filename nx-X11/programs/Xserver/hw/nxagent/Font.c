@@ -703,7 +703,7 @@ Bool nxagentUnrealizeFont(ScreenPtr pScreen, FontPtr pFont)
 int nxagentDestroyNewFontResourceType(void * p, XID id)
 {
   #ifdef TEST
-  fprintf(stderr, "nxagentDestroyNewFontResourceType: Destroying mirror id [%ld] for font at [%p].\n",
+  fprintf(stderr, "%s: Destroying mirror id [%ld] for font at [%p].\n", __func__,
               nxagentFontPriv((FontPtr) p) -> mirrorID, (void *) p);
   #endif
 
@@ -1410,14 +1410,14 @@ static Bool nxagentGetFontServerPath(char * fontServerPath, int size)
       snprintf(fontServerPath, min(size, len + 1), "%s", path + 1);
 
       #ifdef TEST
-      fprintf(stderr, "nxagentGetFontServerPath: Got path [%s].\n",
+      fprintf(stderr, "%s: Got path [%s].\n", __func__,
                   fontServerPath);
       #endif
     }
     else
     {
       #ifdef TEST
-      fprintf(stderr, "nxagentGetFontServerPath: WARNING! Font server tunneling not enabled.\n");
+      fprintf(stderr, "%s: WARNING! Font server tunneling not enabled.\n", __func__);
       #endif
 
       return False;
@@ -1426,7 +1426,7 @@ static Bool nxagentGetFontServerPath(char * fontServerPath, int size)
   else
   {
     #ifdef TEST
-    fprintf(stderr, "nxagentGetFontServerPath: WARNING! Failed to get path for font server tunneling.\n");
+    fprintf(stderr, "%s: WARNING! Failed to get path for font server tunneling.\n", __func__);
     #endif
 
     return False;
@@ -1478,7 +1478,7 @@ void nxagentVerifyDefaultFontPath(void)
   static char *fontPath;
 
   #ifdef TEST
-  fprintf(stderr, "nxagentVerifyDefaultFontPath: Going to search for one or more valid font paths.\n");
+  fprintf(stderr, "%s: Going to search for one or more valid font paths.\n", __func__);
   #endif
 
   /*
@@ -1488,8 +1488,9 @@ void nxagentVerifyDefaultFontPath(void)
   if ((fontPath = strdup(defaultFontPath)) == NULL)
   {
     #ifdef WARNING
-    fprintf(stderr, "nxagentVerifyDefaultFontPath: WARNING! Unable to allocate memory for a new font path. "
-                "Using the default font path [%s].\n", validateString(defaultFontPath));
+    fprintf(stderr, "%s: WARNING! Unable to allocate memory for a new font path. "
+            "Using the default font path [%s].\n", __func__,
+            validateString(defaultFontPath));
     #endif
 
     return;
@@ -1529,13 +1530,12 @@ void nxagentVerifyDefaultFontPath(void)
     }
   }
 
-  if (*fontPath == '\0') 
+  if (*fontPath == '\0')
   {
     #ifdef WARNING
-    fprintf(stderr, "nxagentVerifyDefaultFontPath: WARNING! Can't find a valid font directory.\n");
-
-    fprintf(stderr, "nxagentVerifyDefaultFontPath: WARNING! Using font path [%s].\n",
-                validateString(defaultFontPath));
+    fprintf(stderr, "%s: WARNING! Can't find a valid font directory.\n", __func__);
+    fprintf(stderr, "%s: WARNING! Using font path [%s].\n", __func__,
+            validateString(defaultFontPath));
     #endif
   }
   else
@@ -1543,10 +1543,10 @@ void nxagentVerifyDefaultFontPath(void)
     /* do _not_ free defaultFontPath here - it's either set at compile time or
        part of argv */
     defaultFontPath = fontPath;
- 
+
     #ifdef TEST
-    fprintf(stderr, "nxagentVerifyDefaultFontPath: Using font path [%s].\n",
-                validateString(defaultFontPath));
+    fprintf(stderr, "%s: Using font path [%s].\n", __func__,
+            validateString(defaultFontPath));
     #endif
  }
 
