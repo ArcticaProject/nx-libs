@@ -255,6 +255,7 @@ DEFINES = \
 	-DRANDR_15_INTERFACE=1 \
         -DPANORAMIX \
         -UDEBUG_TREE \
+        -DSYSTEMFONTDIR=\"$(SYSTEMFONTDIR)\" \
 	$(NULL)
 
 all:: $(OBJS)

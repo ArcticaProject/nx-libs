@@ -791,6 +791,10 @@ TCLIBDIR = TclLibDir
 #define SystemXkbBinDir /usr/bin
 #endif
 
+#ifndef SystemFontDir
+#define SystemFontDir /usr/share/fonts/X11
+#endif
+
 #ifndef ShLibDir
 #define ShLibDir UsrLibDir
 #endif
@@ -1668,6 +1672,7 @@ TCLIBDIR = TclLibDir
   SYSTEMUSRINCDIR = SystemUsrIncDir	/* system's "/usr/include" */
  SYSTEMXKBCONFDIR = SystemXkbConfigDir	/* system's "/usr/share/xkb" */
   SYSTEMXKBBINDIR = SystemXkbBinDir	/* system's "/usr/bin" */
+    SYSTEMFONTDIR = SystemFontDir	/* system's "/usr/share/fonts/X11" */
          SHLIBDIR = ShLibDir            /* shared libraries */
        LINTLIBDIR = LintlibDir		/* lint libraries */
           MANPATH = ManPath		/* top of manual page tree */
