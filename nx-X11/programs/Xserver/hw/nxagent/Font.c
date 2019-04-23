@@ -1433,45 +1433,39 @@ static Bool nxagentGetFontServerPath(char * fontServerPath, int size)
 
 void nxagentVerifySingleFontPath(char **dest, const char *fontDir)
 {
-  struct stat dirStat;
-
   if (!dest || !*dest)
     return;
 
-  if (stat(fontDir, &dirStat) == 0 &&
-          S_ISDIR(dirStat.st_mode) != 0)
+  #ifdef TEST
+  fprintf(stderr, "%s: Assuming fonts in directory [%s].\n", __func__,
+	  validateString(fontDir));
+  #endif
+
+  for (int i = 0; ; i++)
   {
-    #ifdef TEST
-    fprintf(stderr, "%s: Assuming fonts in directory [%s].\n", __func__,
-                validateString(fontDir));
-    #endif
+    char *tmppath = NULL;
+    int rc;
 
-    for (int i = 0; ; i++)
+    const char *subdir = nxagentFontSubdirs[i];
+
+    if (subdir == NULL)
+      return;
+
+    if (**dest != '\0')
     {
-      char *tmppath = NULL;
-      int rc;
-
-      const char *subdir = nxagentFontSubdirs[i];
-
-      if (subdir == NULL)
-        return;
-
-      if (**dest != '\0')
-      {
-        rc = asprintf(&tmppath, "%s,%s/%s", *dest, fontDir, subdir);
-      }
-      else
-      {
-        rc = asprintf(&tmppath, "%s/%s", fontDir, subdir);
-      }
-
-      if (rc == -1)
-        return;
-
-      free(*dest);
-      *dest = tmppath;
-      tmppath = NULL;
+      rc = asprintf(&tmppath, "%s,%s/%s", *dest, fontDir, subdir);
     }
+    else
+    {
+      rc = asprintf(&tmppath, "%s/%s", fontDir, subdir);
+    }
+
+    if (rc == -1)
+      return;
+
+    free(*dest);
+    *dest = tmppath;
+    tmppath = NULL;
   }
 }
 
