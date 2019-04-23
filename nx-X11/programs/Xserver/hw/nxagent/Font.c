@@ -71,10 +71,13 @@ is" without express or implied warranty.
 #undef  TEST
 #undef  DEBUG
 
-#define NXAGENT_DEFAULT_FONT_DIR      "/usr/share/nx/fonts"
-#define NXAGENT_ALTERNATE_FONT_DIR    "/usr/share/X11/fonts"
-#define NXAGENT_ALTERNATE_FONT_DIR_2  "/usr/share/fonts/X11"
-#define NXAGENT_ALTERNATE_FONT_DIR_3  "/usr/X11R6/lib/X11/fonts"
+const char * nxagentFontDirs[] = {
+  "/usr/share/nx/fonts",
+  "/usr/share/X11/fonts",
+  "/usr/share/fonts/X11",
+  "/usr/X11R6/lib/X11/fonts",
+  NULL
+};
 
 const char * nxagentFontSubdirs[] = {
   "Type1",
@@ -1491,10 +1494,15 @@ void nxagentVerifyDefaultFontPath(void)
     return;
   }
 
-  nxagentVerifySingleFontPath(&fontPath, NXAGENT_DEFAULT_FONT_DIR);
-  nxagentVerifySingleFontPath(&fontPath, NXAGENT_ALTERNATE_FONT_DIR);
-  nxagentVerifySingleFontPath(&fontPath, NXAGENT_ALTERNATE_FONT_DIR_2);
-  nxagentVerifySingleFontPath(&fontPath, NXAGENT_ALTERNATE_FONT_DIR_3);
+  for (int i = 0; ; i++)
+  {
+    char *dir = nxagentFontDirs[i];
+
+    if (dir == NULL)
+      break;
+    else
+      nxagentVerifySingleFontPath(&fontPath, dir);
+  }
 
   if (*fontPath == '\0') 
   {
