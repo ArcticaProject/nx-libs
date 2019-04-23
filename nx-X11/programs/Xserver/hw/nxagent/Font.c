@@ -1497,12 +1497,36 @@ void nxagentVerifyDefaultFontPath(void)
 
   for (int i = 0; ; i++)
   {
-    char *dir = nxagentFontDirs[i];
+    int j;
+    const char *dir = nxagentFontDirs[i];
 
     if (dir == NULL)
+    {
       break;
+    }
     else
-      nxagentVerifySingleFontPath(&fontPath, dir);
+    {
+      for (j = 0; j <= i; j++)
+      {
+        //if (strcmp(nxagentFontDirs[j], dir) == 0)
+        if (nxagentFontDirs[j] == dir)
+        {
+          break;
+        }
+      }
+
+      if (j == i)
+      {
+        nxagentVerifySingleFontPath(&fontPath, dir);
+      }
+#ifdef TEST
+      else
+      {
+        fprintf(stderr, "%s: Skipping duplicate font dir [%s].\n", __func__,
+                validateString(dir));
+      }
+#endif
+    }
   }
 
   if (*fontPath == '\0') 
