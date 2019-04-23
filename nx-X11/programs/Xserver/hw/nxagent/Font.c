@@ -76,21 +76,13 @@ is" without express or implied warranty.
 #define NXAGENT_ALTERNATE_FONT_DIR_2  "/usr/share/fonts/X11"
 #define NXAGENT_ALTERNATE_FONT_DIR_3  "/usr/X11R6/lib/X11/fonts"
 
-#define NXAGENT_DEFAULT_FONT_PATH  \
-"/usr/share/nx/fonts/Type1/,/usr/share/nx/fonts/75dpi/,\
-/usr/share/nx/fonts/100dpi/,/usr/share/nx/fonts/TTF/"
-
-#define NXAGENT_ALTERNATE_FONT_PATH  \
-"/usr/share/X11/fonts/Type1/,/usr/share/X11/fonts/75dpi/,\
-/usr/share/X11/fonts/100dpi/,/usr/share/X11/fonts/TTF/"
-
-#define NXAGENT_ALTERNATE_FONT_PATH_2  \
-"/usr/share/fonts/X11/Type1/,/usr/share/fonts/X11/75dpi/,\
-/usr/share/fonts/X11/100dpi/,/usr/share/fonts/X11/TTF/"
-
-#define NXAGENT_ALTERNATE_FONT_PATH_3  \
-"/usr/X11R6/lib/X11/fonts/Type1/,/usr/X11R6/lib/X11/fonts/75dpi/,\
-/usr/X11R6/lib/X11/fonts/100dpi/,/usr/X11R6/lib/X11/fonts/TTF/"
+const char * nxagentFontSubdirs[] = {
+  "Type1",
+  "75dpi",
+  "100dpi",
+  "TTF",
+  NULL
+};
 
 #undef NXAGENT_FONTCACHE_DEBUG
 #undef NXAGENT_RECONNECT_FONT_DEBUG
@@ -1439,10 +1431,9 @@ static Bool nxagentGetFontServerPath(char * fontServerPath, int size)
   return True;
 }
 
-void nxagentVerifySingleFontPath(char **dest, const char *fontDir, const char *fontPath)
+void nxagentVerifySingleFontPath(char **dest, const char *fontDir)
 {
   struct stat dirStat;
-  char * newdest = NULL;
 
   if (!dest || !*dest)
     return;
@@ -1455,22 +1446,32 @@ void nxagentVerifySingleFontPath(char **dest, const char *fontDir, const char *f
                 validateString(fontDir));
     #endif
 
-    if (**dest != '\0')
+    for (int i = 0; ; i++)
     {
-      newdest = realloc(*dest, strlen(*dest) + strlen(fontPath) + 2);
-      if (newdest == NULL)
-        return;
-      strcat(newdest, ",");
-    }
-    else
-    {
-      newdest = realloc(*dest, strlen(*dest) + strlen(fontPath) + 1);
-      if (newdest == NULL)
-        return;
-    }
+      char *tmppath = NULL;
+      int rc;
 
-    strcat(newdest, fontPath);
-    *dest = newdest;
+      const char *subdir = nxagentFontSubdirs[i];
+
+      if (subdir == NULL)
+        return;
+
+      if (**dest != '\0')
+      {
+        rc = asprintf(&tmppath, "%s,%s/%s", *dest, fontDir, subdir);
+      }
+      else
+      {
+        rc = asprintf(&tmppath, "%s/%s", fontDir, subdir);
+      }
+
+      if (rc == -1)
+        return;
+
+      free(*dest);
+      *dest = tmppath;
+      tmppath = NULL;
+    }
   }
 }
 
@@ -1496,10 +1497,10 @@ void nxagentVerifyDefaultFontPath(void)
     return;
   }
 
-  nxagentVerifySingleFontPath(&fontPath, NXAGENT_DEFAULT_FONT_DIR, NXAGENT_DEFAULT_FONT_PATH);
-  nxagentVerifySingleFontPath(&fontPath, NXAGENT_ALTERNATE_FONT_DIR, NXAGENT_ALTERNATE_FONT_PATH);
-  nxagentVerifySingleFontPath(&fontPath, NXAGENT_ALTERNATE_FONT_DIR_2, NXAGENT_ALTERNATE_FONT_PATH_2);
-  nxagentVerifySingleFontPath(&fontPath, NXAGENT_ALTERNATE_FONT_DIR_3, NXAGENT_ALTERNATE_FONT_PATH_3);
+  nxagentVerifySingleFontPath(&fontPath, NXAGENT_DEFAULT_FONT_DIR);
+  nxagentVerifySingleFontPath(&fontPath, NXAGENT_ALTERNATE_FONT_DIR);
+  nxagentVerifySingleFontPath(&fontPath, NXAGENT_ALTERNATE_FONT_DIR_2);
+  nxagentVerifySingleFontPath(&fontPath, NXAGENT_ALTERNATE_FONT_DIR_3);
 
   if (*fontPath == '\0') 
   {
