@@ -180,7 +180,7 @@ def show_yes_no_suspend_box(title, text):
     @param title: Message box title
     @type text: str
     @param text: Message box text
-    @return: Choosen action
+    @return: Chosen action
 
     """
     dlg = Gtk.MessageDialog(type=Gtk.MessageType.QUESTION,
@@ -207,7 +207,7 @@ def show_yes_no_box(title, text):
     @param title: Message box title
     @type text: str
     @param text: Message box text
-    @return: Choosen action
+    @return: Chosen action
 
     """
     dlg = Gtk.MessageDialog(type=Gtk.MessageType.QUESTION,
@@ -227,12 +227,12 @@ def show_yes_no_box(title, text):
 
 
 def handle_session_action(agentpid, action):
-    """ Execute session action choosen by user.
+    """ Execute session action chosen by user.
 
     @type agentpid: int
     @param agentpid: Nxagent process id as passed by command line
     @type action: int or None
-    @param action: Choosen action
+    @param action: Chosen action
 
     """
 

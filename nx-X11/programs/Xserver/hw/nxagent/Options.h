@@ -365,7 +365,7 @@ typedef struct _AgentOptions
   int DeferLevel;
 
   /*
-   * Maxuimum elapsed time before a new full
+   * Maximum elapsed time before a new full
    * synchronization.
    */
 

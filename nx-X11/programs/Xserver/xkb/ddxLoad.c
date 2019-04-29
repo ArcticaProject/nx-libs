@@ -389,7 +389,7 @@ char tmpname[PATH_MAX];
 #ifdef __sun
         if (Pclose(out) != 0)
         {
-            ErrorF("Warning: Spurious failure reported in Pclose() runnning 'xkbcomp'.\n");
+            ErrorF("Warning: Spurious failure reported in Pclose() running 'xkbcomp'.\n");
         }
         if (1)
 #else
