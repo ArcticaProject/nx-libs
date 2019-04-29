@@ -134,7 +134,7 @@ static enum RECONNECTION_STEP failedStep;
 /*
  * Path of state File
  */
-char stateFile[PATH_MAX];
+char stateFile[PATH_MAX] = {0};
 
 
 void setStatePath(char* path)
