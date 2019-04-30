@@ -223,6 +223,13 @@ RegDataRec RegionEmptyData = {0, 0};
 RegDataRec  RegionBrokenData = {0, 0};
 RegionRec   RegionBrokenRegion = { { 0, 0, 0, 0 }, &RegionBrokenData };
 
+void
+InitRegions(void)
+{
+  pixman_region_set_static_pointers(&RegionEmptyBox, &RegionEmptyData,
+				    &RegionBrokenData);
+}
+
 #ifdef DEBUG
 int
 RegionPrint(rgn)

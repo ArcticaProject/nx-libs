@@ -173,7 +173,7 @@ main(int argc, char *argv[], char *envp[])
     display = "0";
 
     InitGlobals();
-    /*InitRegions();*/
+    InitRegions();
 
     /* Quartz support on Mac OS X requires that the Cocoa event loop be in
      * the main thread. This allows the X server main to be called again
