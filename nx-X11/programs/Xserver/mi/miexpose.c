@@ -626,7 +626,6 @@ tossGC (
     return 0;
 }
 
-#ifndef NXAGENT_SERVER
 void
 miPaintWindow(pWin, prgn, what)
 register WindowPtr pWin;
@@ -652,8 +651,8 @@ int what;
     ChangeGCVal newValues [COUNT_BITS] = {{ 0 }};
 
     BITS32 gcmask, index, mask;
-    RegionRec prgnWin;
-    DDXPointRec oldCorner;
+    RegionRec prgnWin = {0};
+    DDXPointRec oldCorner = {0};
     BoxRec box = {0};
     WindowPtr	pBgWin;
     GCPtr pGC;
@@ -881,7 +880,6 @@ int what;
 	FreeScratchGC(pGC);
     }
 }
-#endif
 
 /* MICLEARDRAWABLE -- sets the entire drawable to the background color of
  * the GC.  Useful when we have a scratch drawable and need to initialize 
