@@ -224,10 +224,12 @@ static int SWriteImageFormatInfo(ClientPtr, xvImageFormatInfo*);
 **
 */
 
-#if !defined(NXAGENT_SERVER) || defined(__sun) || defined(__CYGWIN__)
-
 int
+#ifdef NXAGENT_SERVER
+xorg_ProcXvDispatch(ClientPtr client)
+#else
 ProcXvDispatch(ClientPtr client)
+#endif
 {
   REQUEST(xReq);
 
@@ -309,7 +311,11 @@ ProcXvDispatch(ClientPtr client)
 }
 
 int
+#ifdef NXAGENT_SERVER
+xorg_SProcXvDispatch(ClientPtr client)
+#else
 SProcXvDispatch(ClientPtr client)
+#endif
 {
   REQUEST(xReq);
 
@@ -353,7 +359,6 @@ SProcXvDispatch(ClientPtr client)
 	}
     }
 }
-#endif /* !defined(NXAGENT_SERVER) || defined(__sun) || defined(__CYGWIN__) */
 
 
 static int
