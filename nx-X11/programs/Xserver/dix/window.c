@@ -3391,7 +3391,6 @@ static void DrawLogo(
 );
 #endif
 
-#ifndef NXAGENT_SERVER
 void
 SaveScreens(int on, int mode)
 {
@@ -3420,9 +3419,21 @@ SaveScreens(int on, int mode)
 	   (* screenInfo.screens[i]->SaveScreen) (screenInfo.screens[i], on);
 	if (savedScreenInfo[i].ExternalScreenSaver)
 	{
-	    if ((*savedScreenInfo[i].ExternalScreenSaver)
-		(screenInfo.screens[i], type, on == SCREEN_SAVER_FORCER))
-		continue;
+#ifdef NXAGENT_SERVER
+            if (nxagentOption(Timeout) != 0)
+            {
+                #ifdef TEST
+                fprintf(stderr, "SaveScreens: An external screen-saver handler is installed. "
+                            "Ignoring it to let the auto-disconnect feature work.\n");
+                #endif
+            }
+            else
+#endif
+	    {
+	        if ((*savedScreenInfo[i].ExternalScreenSaver)
+		    (screenInfo.screens[i], type, on == SCREEN_SAVER_FORCER))
+		    continue;
+	    }
 	}
 	if (type == screenIsSaved)
 	    continue;
@@ -3502,7 +3513,6 @@ SaveScreens(int on, int mode)
     if (mode == ScreenSaverReset)
        SetScreenSaverTimer();
 }
-#endif /* NXAGENT_SERVER */
 
 static Bool
 TileScreenSaver(int i, int kind)
