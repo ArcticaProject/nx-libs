@@ -486,70 +486,6 @@ fbShmCreatePixmap (pScreen, width, height, depth, addr)
     return result;
 }
 
-
-static int
-nxagent_ProcShmDispatch (client)
-    register ClientPtr	client;
-{
-    REQUEST(xReq);
-    switch (stuff->data)
-    {
-    case X_ShmQueryVersion:
-	return ProcShmQueryVersion(client);
-    case X_ShmAttach:
-	return ProcShmAttach(client);
-    case X_ShmDetach:
-	return ProcShmDetach(client);
-    case X_ShmPutImage:
-      {
-#ifdef PANORAMIX
-        if ( !noPanoramiXExtension )
-           return ProcPanoramiXShmPutImage(client);
-#endif
-        return ProcShmPutImage(client);
-      }
-    case X_ShmGetImage:
-#ifdef PANORAMIX
-        if ( !noPanoramiXExtension )
-	   return ProcPanoramiXShmGetImage(client);
-#endif
-	return ProcShmGetImage(client);
-    case X_ShmCreatePixmap:
-#ifdef PANORAMIX
-        if ( !noPanoramiXExtension )
-	   return ProcPanoramiXShmCreatePixmap(client);
-#endif
-	   return ProcShmCreatePixmap(client);
-    default:
-	return BadRequest;
-    }
-}
-
-static int
-nxagent_SProcShmDispatch (client)
-    register ClientPtr	client;
-{
-    REQUEST(xReq);
-
-    switch (stuff->data)
-    {
-    case X_ShmQueryVersion:
-	return SProcShmQueryVersion(client);
-    case X_ShmAttach:
-	return SProcShmAttach(client);
-    case X_ShmDetach:
-	return SProcShmDetach(client);
-    case X_ShmPutImage:
-        return SProcShmPutImage(client);
-    case X_ShmGetImage:
-	return SProcShmGetImage(client);
-    case X_ShmCreatePixmap:
-	return SProcShmCreatePixmap(client);
-    default:
-	return BadRequest;
-    }
-}
-
 /* A wrapper that handles the trap. This construct is used
    to keep the derived code closer to the original
 */
@@ -560,25 +496,16 @@ ProcShmDispatch (register ClientPtr client)
 
     #ifdef TEST
     REQUEST(xReq);
-    fprintf(stderr, "ProcShmDispatch: Going to execute operation [%d] for client [%d].\n",
-                stuff -> data, client -> index);
-
     if (stuff->data <= X_ShmCreatePixmap)
     {
-      fprintf(stderr, "ProcShmDispatch: Request [%s] OPCODE#%d.\n",
-                  nxagentShmRequestLiteral[stuff->data], stuff->data);
-    }
-
-    if (stuff->data == X_ShmPutImage)
-    {
-      fprintf(stderr, "ProcShmDispatch: Going to execute ProcShmPutImage() for client [%d].\n",
-                      client -> index);
+      fprintf(stderr, "ProcShmDispatch: Request [%s] OPCODE [%d] for client [%d].\n",
+                      nxagentShmRequestLiteral[stuff->data], stuff->data, client->index);
     }
     #endif
 
     nxagentShmTrap = 1;
 
-    result = nxagent_ProcShmDispatch(client);
+    result = xorg_ProcShmDispatch(client);
 
     nxagentShmTrap = 0;
 
@@ -592,25 +519,16 @@ SProcShmDispatch (register ClientPtr client)
 
     #ifdef TEST
     REQUEST(xReq);
-    fprintf(stderr, "SProcShmDispatch: Going to execute operation [%d] for client [%d].\n", 
-                stuff -> data, client -> index);
-
     if (stuff->data <= X_ShmCreatePixmap)
     {
-      fprintf(stderr, "ProcShmDispatch: Request [%s] OPCODE#%d.\n",
-                  nxagentShmRequestLiteral[stuff->data], stuff->data);
-    }
-
-    if (stuff->data == X_ProxShmPutImage)
-    {
-      fprintf(stderr, "SProcShmDispatch: Going to execute SProcShmPutImage() for client [%d].\n",
-                      client -> index);
+      fprintf(stderr, "SProcShmDispatch: Request [%s] OPCODE [%d] for client [%d].\n",
+                      nxagentShmRequestLiteral[stuff->data], stuff->data, client->index);
     }
     #endif
 
     nxagentShmTrap = 1;
 
-    result = nxagent_SProcShmDispatch(client);
+    result = xorg_SProcShmDispatch(client);
 
     nxagentShmTrap = 0;
 

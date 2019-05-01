@@ -1138,9 +1138,12 @@ CreatePmap:
     return (BadAlloc);
 }
 
-#ifndef NXAGENT_SERVER
 static int
+#ifdef NXAGENT_SERVER
+xorg_ProcShmDispatch (client)
+#else
 ProcShmDispatch (client)
+#endif
     register ClientPtr	client;
 {
     REQUEST(xReq);
@@ -1174,7 +1177,6 @@ ProcShmDispatch (client)
 	return BadRequest;
     }
 }
-#endif /* NXAGENT_SERVER */
 
 static void
 SShmCompletionEvent(from, to)
@@ -1278,9 +1280,12 @@ SProcShmCreatePixmap(client)
     return ProcShmCreatePixmap(client);
 }
 
-#ifndef NXAGENT_SERVER
 static int
+#ifdef NXAGENT_SERVER
+xorg_SProcShmDispatch (client)
+#else
 SProcShmDispatch (client)
+#endif
     register ClientPtr	client;
 {
     REQUEST(xReq);
@@ -1302,4 +1307,3 @@ SProcShmDispatch (client)
 	return BadRequest;
     }
 }
-#endif /* NXAGENT_SERVER */
