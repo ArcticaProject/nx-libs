@@ -913,7 +913,6 @@ CrushTree(WindowPtr pWin)
  *	 If wid is None, don't send any events
  *****/
 
-#ifndef NXAGENT_SERVER
 int
 DeleteWindow(void * value, XID wid)
  {
@@ -949,7 +948,6 @@ DeleteWindow(void * value, XID wid)
     free(pWin);
     return Success;
 }
-#endif /* NXAGENT_SERVER */
 
 void
 DestroySubwindows(register WindowPtr pWin, ClientPtr client)

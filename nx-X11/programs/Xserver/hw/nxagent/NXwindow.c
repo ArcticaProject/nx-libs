@@ -226,56 +226,6 @@ InitRootWindow(WindowPtr pWin)
     nxagentSetVersionProperty(pWin);
 }
 
-/*****
- *  DeleteWindow
- *	 Deletes child of window then window itself
- *	 If wid is None, don't send any events
- *****/
-
-int
-DeleteWindow(void * value, XID wid)
- {
-    register WindowPtr pParent;
-    register WindowPtr pWin = (WindowPtr)value;
-    xEvent event;
-
-    UnmapWindow(pWin, FALSE);
-
-    CrushTree(pWin);
-
-    pParent = pWin->parent;
-    if (wid && pParent && SubStrSend(pWin, pParent))
-    {
-	memset(&event, 0, sizeof(xEvent));
-	event.u.u.type = DestroyNotify;
-	event.u.destroyNotify.window = pWin->drawable.id;
-	DeliverEvents(pWin, &event, 1, NullWindow);		
-    }
-
-    FreeWindowResources(pWin);
-    if (pParent)
-    {
-	if (pParent->firstChild == pWin)
-	    pParent->firstChild = pWin->nextSib;
-	if (pParent->lastChild == pWin)
-	    pParent->lastChild = pWin->prevSib;
-	if (pWin->nextSib)
-	    pWin->nextSib->prevSib = pWin->prevSib;
-	if (pWin->prevSib)
-	    pWin->prevSib->nextSib = pWin->nextSib;
-    }
-
-    if (pWin -> optional &&
-            pWin -> optional -> colormap &&
-                pWin -> parent)
-    {
-      nxagentSetInstalledColormapWindows(pWin -> drawable.pScreen);
-    }
-
-    free(pWin);
-    return Success;
-}
-
 /* XXX need to retile border on each window with ParentRelative origin */
 void
 ResizeChildrenWinSize(register WindowPtr pWin, int dx, int dy, int dw, int dh)
