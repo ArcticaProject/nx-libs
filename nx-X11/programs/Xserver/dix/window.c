@@ -2560,7 +2560,6 @@ CompareWIDs(
  *  ReparentWindow
  *****/
 
-#ifndef NXAGENT_SERVER
 int
 ReparentWindow(register WindowPtr pWin, register WindowPtr pParent,
                int x, int y, ClientPtr client)
@@ -2611,6 +2610,14 @@ ReparentWindow(register WindowPtr pWin, register WindowPtr pParent,
     /* insert at begining of pParent */
     pWin->parent = pParent;
     pPrev = RealChildHead(pParent);
+
+#ifdef NXAGENT_SERVER
+    if (pWin->parent == screenInfo.screens[0]->root)
+    {
+      nxagentSetTopLevelEventMask(pWin);
+    }
+#endif
+
     if (pPrev)
     {
 	pWin->nextSib = pPrev->nextSib;
@@ -2653,7 +2660,6 @@ ReparentWindow(register WindowPtr pWin, register WindowPtr pParent,
     RecalculateDeliverableEvents(pWin);
     return(Success);
 }
-#endif /* NXAGENT_SERVER */
 
 static void
 RealizeTree(WindowPtr pWin)
