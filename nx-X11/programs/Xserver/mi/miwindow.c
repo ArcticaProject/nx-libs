@@ -1052,6 +1052,7 @@ miSetShape(pWin)
 	 * pointer to the parent, so maybe doesn't change
 	 * the attribute of the window itself. This is to
 	 * be better investigated.
+	 * Update: Red Hat fixed this bug the same way (BZ 676270).
 	 */
 
 	if (WasViewable && pOldClip)
