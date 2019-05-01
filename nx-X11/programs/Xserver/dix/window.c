@@ -2988,9 +2988,12 @@ UnrealizeTree(
  *    generated.  Cannot unmap a root window.
  *****/
 
-#ifndef NXAGENT_SERVER
 int
+#ifdef NXAGENT_SERVER
+xorg_UnmapWindow(register WindowPtr pWin, Bool fromConfigure)
+#else
 UnmapWindow(register WindowPtr pWin, Bool fromConfigure)
+#endif
 {
     register WindowPtr pParent;
     xEvent event;
@@ -3042,7 +3045,6 @@ UnmapWindow(register WindowPtr pWin, Bool fromConfigure)
 	WindowsRestructured ();
     return(Success);
 }
-#endif /* NXAGENT_SERVER */
 
 /*****
  * UnmapSubwindows
