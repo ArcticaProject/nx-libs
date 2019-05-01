@@ -1799,7 +1799,6 @@ GravityTranslate (register int x, register int y, int oldx, int oldy,
 }
 
 /* XXX need to retile border on each window with ParentRelative origin */
-#ifndef NXAGENT_SERVER
 void
 ResizeChildrenWinSize(register WindowPtr pWin, int dx, int dy, int dw, int dh)
 {
@@ -1836,7 +1835,23 @@ ResizeChildrenWinSize(register WindowPtr pWin, int dx, int dy, int dw, int dh)
 	pSib->drawable.y = pWin->drawable.y + pSib->origin.y;
 	SetWinSize (pSib);
 	SetBorderSize (pSib);
+
+#ifdef NXAGENT_SERVER
+        /*
+         * Don't force X to move children. It will position them
+         * according with gravity.
+         *
+         * (*pScreen->PositionWindow)(pSib, pSib->drawable.x, pSib->drawable.y);
+         */
+
+        /*
+         * Update pSib privates, as this window is moved by X.
+         */
+
+        nxagentAddConfiguredWindow(pSib, CW_Update);
+#else
 	(*pScreen->PositionWindow)(pSib, pSib->drawable.x, pSib->drawable.y);
+#endif
 
 	if ( (pChild = pSib->firstChild) )
 	{
@@ -1864,7 +1879,6 @@ ResizeChildrenWinSize(register WindowPtr pWin, int dx, int dy, int dw, int dh)
 	}
     }
 }
-#endif /* NXAGENT_SERVER */
 
 #define GET_INT16(m, f) \
 	if (m & mask) \
