@@ -387,8 +387,8 @@ ProcShmPutImage(client)
          ((stuff->format != ZPixmap) &&
           (stuff->srcX < screenInfo.bitmapScanlinePad) &&
           ((stuff->format == XYBitmap) ||
-           -          ((stuff->srcY == 0) &&
-                       -           (stuff->srcHeight == stuff->totalHeight))))) &&
+	   ((stuff->srcY == 0) &&
+	    (stuff->srcHeight == stuff->totalHeight))))) &&
         ((stuff->srcX + stuff->srcWidth) == stuff->totalWidth))
         (*pGC->ops->PutImage) (pDraw, pGC, stuff->depth,
                                stuff->dstX, stuff->dstY,
@@ -396,7 +396,7 @@ ProcShmPutImage(client)
                                stuff->srcX, stuff->format,
                                shmdesc->addr + stuff->offset +
                                (stuff->srcY * length));
--    else
+    else
 #endif
     {
         #ifdef TEST
