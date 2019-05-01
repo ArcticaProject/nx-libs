@@ -20,9 +20,9 @@
               $(NX_DEFINES)	\
               $(NULL)
 
-NormalLibraryTarget(damage,$(OBJS))
+NormalLibraryTarget(damageext,$(OBJS))
 NormalLibraryObjectRule()
-LintLibraryTarget(damage,$(SRCS))
+LintLibraryTarget(damageext,$(SRCS))
 NormalLintTarget($(SRCS))
 
 DependTarget()
