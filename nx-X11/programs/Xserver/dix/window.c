@@ -2222,7 +2222,6 @@ ReflectStackChange(
  * ConfigureWindow
  *****/
 
-#ifndef NXAGENT_SERVER
 int
 ConfigureWindow(register WindowPtr pWin, register Mask mask, XID *vlist, ClientPtr client)
 {
@@ -2240,7 +2239,7 @@ ConfigureWindow(register WindowPtr pWin, register Mask mask, XID *vlist, ClientP
 		   h = pWin->drawable.height,
 		   bw = pWin->borderWidth;
     int action, smode = Above;
-    xEvent event;
+    xEvent event = {0};
 
     if ((pWin->drawable.class == InputOnly) && (mask & IllegalInputOnlyConfigureMask))
 	return(BadMatch);
@@ -2328,6 +2327,32 @@ ConfigureWindow(register WindowPtr pWin, register Mask mask, XID *vlist, ClientP
 
 	/* Figure out if the window should be moved.  Doesnt
 	   make the changes to the window if event sent */
+
+#ifdef NXAGENT_SERVER
+    extern Bool nxagentScreenTrap;
+
+    #ifdef TEST
+    if (nxagentWindowTopLevel(pWin))
+    {
+
+      fprintf(stderr, "ConfigureWindow: pWin [%p] mask [%lu] client [%p]\n",
+                  pWin, mask, client);
+
+      fprintf(stderr, "ConfigureWindow: x [%d] y [%d] w [%d] h [%d] CWStackMode [%d] "
+                  "smode [%d] pSib [%p]\n",
+                      x, y, w, h, (mask & CWStackMode) ? 1 : 0, smode, pSib);
+    }
+    #endif
+
+    if (nxagentOption(Rootless) && nxagentWindowTopLevel(pWin) &&
+            pWin -> overrideRedirect == 0 &&
+                nxagentScreenTrap == 0)
+    {
+      nxagentConfigureRootlessWindow(pWin, x, y, w, h, bw, pSib, smode, mask);
+
+      return Success;
+    }
+#endif
 
     if (mask & CWStackMode)
 	pSib = WhereDoIGoInTheStack(pWin, pSib, pParent->drawable.x + x,
@@ -2470,13 +2495,17 @@ ActuallyDoSomething:
 
     if (action != RESTACK_WIN)
 	CheckCursorConfinement(pWin);
+
+#ifdef NXAGENT_SERVER
+    nxagentFlushConfigureWindow();
+#endif
+
     return(Success);
 #undef RESTACK_WIN
 #undef MOVE_WIN
 #undef RESIZE_WIN
 #undef REBORDER_WIN
 }
-#endif /* NXAGENT_SERVER */
 
 
 /******
