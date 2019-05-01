@@ -857,23 +857,9 @@ MapWindow(register WindowPtr pWin, ClientPtr client)
     return(Success);
 }
 
-/*****
- * UnmapWindow
- *    If the window is already unmapped, this request has no effect.
- *    Otherwise, the window is unmapped and an UnMapNotify event is
- *    generated.  Cannot unmap a root window.
- *****/
-
 int
 UnmapWindow(register WindowPtr pWin, Bool fromConfigure)
 {
-    register WindowPtr pParent;
-    xEvent event;
-    Bool wasRealized = (Bool)pWin->realized;
-    Bool wasViewable = (Bool)pWin->viewable;
-    ScreenPtr pScreen = pWin->drawable.pScreen;
-    WindowPtr pLayerWin = pWin;
-
     #ifdef TEST
     if (nxagentWindowTopLevel(pWin))
     {
@@ -882,48 +868,7 @@ UnmapWindow(register WindowPtr pWin, Bool fromConfigure)
     }
     #endif
 
-    if ((!pWin->mapped) || (!(pParent = pWin->parent)))
-	return(Success);
-    if (SubStrSend(pWin, pParent) && MapUnmapEventsEnabled(pWin))
-    {
-	memset(&event, 0, sizeof(xEvent));
-	event.u.u.type = UnmapNotify;
-	event.u.unmapNotify.window = pWin->drawable.id;
-	event.u.unmapNotify.fromConfigure = fromConfigure;
-	DeliverEvents(pWin, &event, 1, NullWindow);
-    }
-    if (wasViewable && !fromConfigure)
-    {
-	pWin->valdata = UnmapValData;
-	(*pScreen->MarkOverlappedWindows)(pWin, pWin->nextSib, &pLayerWin);
-	(*pScreen->MarkWindow)(pLayerWin->parent);
-    }
-    pWin->mapped = FALSE;
-    if (wasRealized)
-	UnrealizeTree(pWin, fromConfigure);
-    if (wasViewable)
-    {
-	if (!fromConfigure)
-	{
-	    (*pScreen->ValidateTree)(pLayerWin->parent, pWin, VTUnmap);
-	    (*pScreen->HandleExposures)(pLayerWin->parent);
-	}
-#ifdef DO_SAVE_UNDERS
-	if (DO_SAVE_UNDERS(pWin))
-	{
-	    if ( (*pScreen->ChangeSaveUnder)(pLayerWin, pWin->nextSib) )
-	    {
-		(*pScreen->PostChangeSaveUnder)(pLayerWin, pWin->nextSib);
-	    }
-	}
-	pWin->DIXsaveUnder = FALSE;
-#endif /* DO_SAVE_UNDERS */
-	if (!fromConfigure && pScreen->PostValidateTree)
-	    (*pScreen->PostValidateTree)(pLayerWin->parent, pWin, VTUnmap);
-    }
-    if (wasRealized && !fromConfigure)
-	WindowsRestructured ();
-    return(Success);
+    return xorg_UnmapWindow(pWin, fromConfigure);
 }
 
 void
