@@ -203,12 +203,9 @@ extern int nxagentMaxSelections;
 extern int nxOpenFont(ClientPtr, XID, Mask, unsigned, char*);
 
 void
-InitSelections()
+InitSelections(void)
 {
-    if (CurrentSelections)
-	free(CurrentSelections);
-    CurrentSelections = (Selection *)NULL;
-    NumCurrentSelections = 0;
+    xorg_InitSelections();
 
 #ifdef NXAGENT_CLIPBOARD
     {
@@ -232,7 +229,6 @@ InitSelections()
       CurrentSelections[nxagentClipboardSelection].client = NullClient;
     }
 #endif
-
 }
 
 #define MAJOROP ((xReq *)client->requestBuffer)->reqType
