@@ -449,6 +449,10 @@ Dispatch(void)
 			      client->sequence, client->index, result);
 #endif
 
+
+                if (!SmartScheduleSignalEnable)
+                    SmartScheduleTime = GetTimeInMillis();
+
 		if (result != Success)
 		{
 		    if (client->noClientException != Success)

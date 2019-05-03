@@ -240,11 +240,11 @@ InitSelections(void)
 void
 Dispatch(void)
 {
-    register int        *clientReady;     /* array of request ready clients */
-    register int	result;
-    register ClientPtr	client;
-    register int	nready;
-    register HWEventQueuePtr* icheck = checkForInput;
+    int        *clientReady;     /* array of request ready clients */
+    int	result;
+    ClientPtr	client;
+    int	nready;
+    HWEventQueuePtr* icheck = checkForInput;
     long			start_tick;
 
     nextFreeClientID = 1;
@@ -280,6 +280,10 @@ Dispatch(void)
     clientReady = (int *) malloc(sizeof(int) * MaxClients);
     if (!clientReady)
 	return;
+
+#ifdef XSERVER_DTRACE
+    LoadRequestNames();
+#endif
 
 #ifdef NXAGENT_SERVER
     #ifdef WATCH
@@ -365,7 +369,6 @@ Reply   Total	Cached	Bits In			Bits Out		Bits/Reply	  Ratio
 #endif /* NXAGENT_SERVER */
 
 	nready = WaitForSomething(clientReady);
-
 #ifdef NXAGENT_SERVER
         #ifdef BLOCKS
         fprintf(stderr, "[Begin dispatch]\n");
@@ -442,6 +445,7 @@ Reply   Total	Cached	Bits In			Bits Out		Bits/Reply	  Ratio
 		/* Update currentTime so request time checks, such as for input
 		 * device grabs, are calculated correctly */
 		UpdateCurrentTimeIf();
+
 #ifdef NXAGENT_SERVER
                 #ifdef TEST
                 fprintf(stderr, "******Dispatch: Reading request from client [%d].\n",
@@ -481,6 +485,11 @@ Reply   Total	Cached	Bits In			Bits Out		Bits/Reply	  Ratio
 #endif
 
 		client->sequence++;
+#ifdef XSERVER_DTRACE
+		XSERVER_REQUEST_START(GetRequestName(MAJOROP), MAJOROP,
+			      ((xReq *)client->requestBuffer)->length,
+			      client->index, client->requestBuffer);
+#endif
 		if (result > (maxBigRequestSize << 2))
 		    result = BadLength;
 		else
@@ -515,6 +524,11 @@ Reply   Total	Cached	Bits In			Bits Out		Bits/Reply	  Ratio
 #endif
                 }
 
+#ifdef XSERVER_DTRACE
+		XSERVER_REQUEST_DONE(GetRequestName(MAJOROP), MAJOROP,
+			      client->sequence, client->index, result);
+#endif
+
                 if (!SmartScheduleSignalEnable)
                     SmartScheduleTime = GetTimeInMillis();
 
@@ -545,7 +559,6 @@ Reply   Total	Cached	Bits In			Bits Out		Bits/Reply	  Ratio
 #if defined(DDXBEFORERESET)
     ddxBeforeReset ();
 #endif
-
 #ifdef NXAGENT_SERVER
     /* FIXME: maybe move the code up to the KillAllClients() call to ddxBeforeReset? */
     if ((dispatchException & DE_RESET) &&
@@ -582,19 +595,23 @@ Reply   Total	Cached	Bits In			Bits Out		Bits/Reply	  Ratio
     saveAgentState("TERMINATED");
 #endif /* NXAGENT_SERVER */
 
+#endif /* NXAGENT_SERVER */
     KillAllClients();
     free(clientReady);
     dispatchException &= ~DE_RESET;
+#ifdef XSERVER_DTRACE
+    FreeRequestNames();
+#endif
 }
 
 #undef MAJOROP
 
 int
-ProcReparentWindow(register ClientPtr client)
+ProcReparentWindow(ClientPtr client)
 {
-    register WindowPtr pWin, pParent;
+    WindowPtr pWin, pParent;
     REQUEST(xReparentWindowReq);
-    register int result;
+    int result;
 
     REQUEST_SIZE_MATCH(xReparentWindowReq);
     pWin = (WindowPtr)SecurityLookupWindow(stuff->window, client,
@@ -631,11 +648,11 @@ ProcReparentWindow(register ClientPtr client)
 
 
 int
-ProcQueryTree(register ClientPtr client)
+ProcQueryTree(ClientPtr client)
 {
     xQueryTreeReply reply = {0};
     int numChildren = 0;
-    register WindowPtr pChild, pWin, pHead;
+    WindowPtr pChild, pWin, pHead;
     Window  *childIDs = (Window *)NULL;
     REQUEST(xResourceReq);
 
@@ -700,7 +717,7 @@ ProcQueryTree(register ClientPtr client)
 
 
 int
-ProcConvertSelection(register ClientPtr client)
+ProcConvertSelection(ClientPtr client)
 {
     Bool paramsOkay;
     xEvent event;
@@ -788,7 +805,7 @@ ProcConvertSelection(register ClientPtr client)
 
 
 int
-ProcOpenFont(register ClientPtr client)
+ProcOpenFont(ClientPtr client)
 {
     int	err;
     REQUEST(xOpenFontReq);
@@ -823,7 +840,7 @@ ProcOpenFont(register ClientPtr client)
 }
 
 int
-ProcCloseFont(register ClientPtr client)
+ProcCloseFont(ClientPtr client)
 {
     FontPtr pFont;
     REQUEST(xResourceReq);
@@ -880,7 +897,7 @@ ProcCloseFont(register ClientPtr client)
 
 
 int
-ProcListFonts(register ClientPtr client)
+ProcListFonts(ClientPtr client)
 {
     REQUEST(xListFontsReq);
 
@@ -901,7 +918,7 @@ ProcListFonts(register ClientPtr client)
 }
 
 int
-ProcListFontsWithInfo(register ClientPtr client)
+ProcListFontsWithInfo(ClientPtr client)
 {
     REQUEST(xListFontsWithInfoReq);
 
@@ -922,7 +939,7 @@ ProcListFontsWithInfo(register ClientPtr client)
 }
 
 int
-ProcFreePixmap(register ClientPtr client)
+ProcFreePixmap(ClientPtr client)
 {
     PixmapPtr pMap;
 
@@ -979,7 +996,7 @@ ProcFreePixmap(register ClientPtr client)
 
 
 int
-ProcSetScreenSaver (register ClientPtr client)
+ProcSetScreenSaver (ClientPtr client)
 {
     int blankingOption, exposureOption;
     REQUEST(xSetScreenSaverReq);
@@ -1082,7 +1099,7 @@ ProcSetScreenSaver (register ClientPtr client)
 }
 
 
-int ProcForceScreenSaver(register ClientPtr client)
+int ProcForceScreenSaver(ClientPtr client)
 {
     REQUEST(xForceScreenSaverReq);
 
@@ -1134,7 +1151,7 @@ int ProcForceScreenSaver(register ClientPtr client)
  *********************/
 
 void
-CloseDownClient(register ClientPtr client)
+CloseDownClient(ClientPtr client)
 {
 #ifdef NXAGENT_SERVER
     /*
