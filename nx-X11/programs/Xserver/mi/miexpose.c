@@ -126,7 +126,6 @@ exposing is done by the backing store's GraphicsExpose function, of course.
 
 */
 
-#ifndef NXAGENT_SERVER
 RegionPtr
 miHandleExposures(pSrcDrawable, pDstDrawable,
 		  pGC, srcx, srcy, width, height, dstx, dsty, plane)
@@ -373,7 +372,6 @@ miHandleExposures(pSrcDrawable, pDstDrawable,
 	return NULL;
     }
 }
-#endif
 
 /* send GraphicsExpose events, or a NoExpose event, based on the region */
 
