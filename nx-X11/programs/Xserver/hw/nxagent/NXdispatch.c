@@ -1140,6 +1140,8 @@ CloseDownClient(register ClientPtr client)
     xorg_CloseDownClient(client);
 }
 
+/* FIXME: Instead of having a own function use the provided Callback
+   mechanism */
 int
 InitClientPrivates(ClientPtr client)
 {
