@@ -52,13 +52,13 @@ Copyright 1987, 1989 by Digital Equipment Corporation, Maynard, Massachusetts.
 
                         All Rights Reserved
 
-Permission to use, copy, modify, and distribute this software and its 
-documentation for any purpose and without fee is hereby granted, 
+Permission to use, copy, modify, and distribute this software and its
+documentation for any purpose and without fee is hereby granted,
 provided that the above copyright notice appear in all copies and that
-both that copyright notice and this permission notice appear in 
+both that copyright notice and this permission notice appear in
 supporting documentation, and that the name of Digital not be
 used in advertising or publicity pertaining to distribution of the
-software without specific, written prior permission.  
+software without specific, written prior permission.
 
 DIGITAL DISCLAIMS ALL WARRANTIES WITH REGARD TO THIS SOFTWARE, INCLUDING
 ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS, IN NO EVENT SHALL
@@ -375,7 +375,7 @@ Reply   Total	Cached	Bits In			Bits Out		Bits/Reply	  Ratio
         fprintf(stderr, "******Dispatch: Running with [%d] clients ready.\n",
                     nready);
         #endif
-        
+
         #ifdef NXAGENT_ONSTART
 
 	/*
@@ -398,9 +398,9 @@ Reply   Total	Cached	Bits In			Bits Out		Bits/Reply	  Ratio
 	    clientReady[0] = SmartScheduleClient (clientReady, nready);
 	    nready = 1;
 	}
-       /***************** 
-	*  Handle events in round robin fashion, doing input between 
-	*  each round 
+       /*****************
+	*  Handle events in round robin fashion, doing input between
+	*  each round
 	*****************/
 
 	while (!dispatchException && (--nready >= 0))
@@ -450,7 +450,7 @@ Reply   Total	Cached	Bits In			Bits Out		Bits/Reply	  Ratio
 #endif /* NXAGENT_SERVER */
 
 	        result = ReadRequestFromClient(client);
-	        if (result <= 0) 
+	        if (result <= 0)
 	        {
 		    if (result < 0)
 			CloseDownClient(client);
@@ -518,7 +518,7 @@ Reply   Total	Cached	Bits In			Bits Out		Bits/Reply	  Ratio
                 if (!SmartScheduleSignalEnable)
                     SmartScheduleTime = GetTimeInMillis();
 
-		if (result != Success) 
+		if (result != Success)
 		{
 		    if (client->noClientException != Success)
                         CloseDownClient(client);
@@ -548,7 +548,7 @@ Reply   Total	Cached	Bits In			Bits Out		Bits/Reply	  Ratio
 
 #ifdef NXAGENT_SERVER
     /* FIXME: maybe move the code up to the KillAllClients() call to ddxBeforeReset? */
-    if ((dispatchException & DE_RESET) && 
+    if ((dispatchException & DE_RESET) &&
             (serverGeneration > nxagentMaxAllowedResets))
     {
         dispatchException &= ~DE_RESET;
@@ -566,7 +566,7 @@ Reply   Total	Cached	Bits In			Bits Out		Bits/Reply	  Ratio
        * error on the display and wait until the
        * NX transport is gone.
        */
-  
+
       fprintf(stderr, "Session: Terminating session at '%s'.\n", GetTimeAsString());
       saveAgentState("TERMINATING");
 
@@ -618,14 +618,14 @@ ProcReparentWindow(register ClientPtr client)
 	if ((pWin->drawable.class != InputOnly) &&
 	    (pParent->drawable.class == InputOnly))
 	    return BadMatch;
-        result =  ReparentWindow(pWin, pParent, 
+        result =  ReparentWindow(pWin, pParent,
 			 (short)stuff->x, (short)stuff->y, client);
 	if (client->noClientException != Success)
             return(client->noClientException);
 	else
             return(result);
     }
-    else 
+    else
         return (BadMatch);
 }
 
@@ -683,10 +683,10 @@ ProcQueryTree(register ClientPtr client)
             childIDs[curChild++] = pChild->drawable.id;
 #endif
     }
-    
+
     reply.nChildren = numChildren;
     reply.length = (numChildren * sizeof(Window)) >> 2;
-    
+
     WriteReplyToClient(client, sizeof(xQueryTreeReply), &reply);
     if (numChildren)
     {
@@ -738,7 +738,7 @@ ProcConvertSelection(register ClientPtr client)
 	int i;
 
 	i = 0;
-	while ((i < NumCurrentSelections) && 
+	while ((i < NumCurrentSelections) &&
 	       CurrentSelections[i].selection != stuff->selection) i++;
 	if ((i < NumCurrentSelections) &&
 #ifdef NXAGENT_SERVER
@@ -753,11 +753,11 @@ ProcConvertSelection(register ClientPtr client)
 					CurrentSelections[i].pWin))
 #endif
 	    )
-	{        
+	{
 	    memset(&event, 0, sizeof(xEvent));
 	    event.u.u.type = SelectionRequest;
 	    event.u.selectionRequest.time = stuff->time;
-	    event.u.selectionRequest.owner = 
+	    event.u.selectionRequest.owner =
 			CurrentSelections[i].window;
 	    event.u.selectionRequest.requestor = stuff->requestor;
 	    event.u.selectionRequest.selection = stuff->selection;
@@ -779,7 +779,7 @@ ProcConvertSelection(register ClientPtr client)
 			       NoEventMask /* CantBeFiltered */, NullGrab);
 	return (client->noClientException);
     }
-    else 
+    else
     {
 	client->errorValue = stuff->property;
         return (BadAtom);
@@ -896,8 +896,7 @@ ProcListFonts(register ClientPtr client)
 #endif
     nxagentListRemoteFonts(tmp, stuff -> maxNames < nxagentMaxFontNames ? nxagentMaxFontNames : stuff->maxNames);
 #endif
-
-    return ListFonts(client, (unsigned char *) &stuff[1], stuff->nbytes, 
+    return ListFonts(client, (unsigned char *) &stuff[1], stuff->nbytes,
 	stuff->maxNames);
 }
 
@@ -932,7 +931,7 @@ ProcFreePixmap(register ClientPtr client)
     REQUEST_SIZE_MATCH(xResourceReq);
     pMap = (PixmapPtr)SecurityLookupIDByType(client, stuff->id, RT_PIXMAP,
 					     DixDestroyAccess);
-    if (pMap) 
+    if (pMap)
     {
         #ifdef NXAGENT_SERVER
 
@@ -971,7 +970,7 @@ ProcFreePixmap(register ClientPtr client)
 	FreeResource(stuff->id, RT_NONE);
 	return(client->noClientException);
     }
-    else 
+    else
     {
 	client->errorValue = stuff->id;
 	return (BadPixmap);
@@ -1035,7 +1034,7 @@ ProcSetScreenSaver (register ClientPtr client)
       }
       else
       {
-	ScreenSaverBlanking = blankingOption; 
+	ScreenSaverBlanking = blankingOption;
       }
 
       if (exposureOption == DefaultExposures)
