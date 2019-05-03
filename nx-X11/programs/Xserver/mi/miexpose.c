@@ -151,7 +151,7 @@ miHandleExposures(pSrcDrawable, pDstDrawable,
 				   the window background
 				*/
     WindowPtr pSrcWin;
-    BoxRec expBox;
+    BoxRec expBox = { 0, };
     Bool extents;
 
     /* This prevents warning about pscr not being used. */
