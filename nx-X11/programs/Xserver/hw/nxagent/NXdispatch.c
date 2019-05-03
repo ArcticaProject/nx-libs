@@ -278,9 +278,9 @@ Dispatch(void)
     if (!clientReady)
 	return;
 
-  #ifdef WATCH
+    #ifdef WATCH
 
-  fprintf(stderr, "Dispatch: Watchpoint 12.\n");
+    fprintf(stderr, "Dispatch: Watchpoint 12.\n");
 
 /*
 Reply   Total	Cached	Bits In			Bits Out		Bits/Reply	  Ratio
@@ -294,22 +294,22 @@ Reply   Total	Cached	Bits In			Bits Out		Bits/Reply	  Ratio
 #98     1		256 bits (0 KB) ->	34 bits (0 KB) ->	256/1 -> 34/1	= 7.529:1
 */
 
-  sleep(30);
+    sleep(30);
 
-  #endif
+    #endif
 
-  #ifdef TEST
-  fprintf(stderr, "Dispatch: Value of dispatchException is [%x].\n",
-              dispatchException);
+    #ifdef TEST
+    fprintf(stderr, "Dispatch: Value of dispatchException is [%x].\n",
+                dispatchException);
 
-  fprintf(stderr, "Dispatch: Value of dispatchExceptionAtReset is [%x].\n",
-              dispatchExceptionAtReset);
-  #endif
+    fprintf(stderr, "Dispatch: Value of dispatchExceptionAtReset is [%x].\n",
+                dispatchExceptionAtReset);
+    #endif
 
-  if (!(dispatchException & DE_TERMINATE))
-    dispatchException = 0;
+    if (!(dispatchException & DE_TERMINATE))
+        dispatchException = 0;
 
-  while (!dispatchException)
+    while (!dispatchException)
     {
         if (*icheck[0] != *icheck[1])
 	{
