@@ -1309,6 +1309,9 @@ CloseDownClient(register ClientPtr client)
 	    CallCallbacks((&ClientStateCallback), (void *)&clientinfo);
 	} 	    
 	FreeClientResources(client);
+	/* Disable client ID tracking. This must be done after
+	 * ClientStateCallback. */
+	ReleaseClientIds(client);
 	if (client->index < nextFreeClientID)
 	    nextFreeClientID = client->index;
 	clients[client->index] = NullClient;
