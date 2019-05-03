@@ -626,7 +626,7 @@ ProcReparentWindow(register ClientPtr client)
 int
 ProcQueryTree(register ClientPtr client)
 {
-    xQueryTreeReply reply;
+    xQueryTreeReply reply = {0};
     int numChildren = 0;
     register WindowPtr pChild, pWin, pHead;
     Window  *childIDs = (Window *)NULL;
@@ -637,7 +637,6 @@ ProcQueryTree(register ClientPtr client)
 					   DixReadAccess);
     if (!pWin)
         return(BadWindow);
-    memset(&reply, 0, sizeof(xQueryTreeReply));
     reply.type = X_Reply;
     reply.root = pWin->drawable.pScreen->root->drawable.id;
     reply.sequenceNumber = client->sequence;
@@ -720,8 +719,6 @@ ProcSetSelectionOwner(register ClientPtr client)
             i++;
         if (i < NumCurrentSelections)
         {        
-	    xEvent event = {0};
-
 	    /* If the timestamp in client's request is in the past relative
 		to the time stamp indicating the last time the owner of the
 		selection was set, do not set the selection, just return 
@@ -732,6 +729,7 @@ ProcSetSelectionOwner(register ClientPtr client)
 	    if (CurrentSelections[i].client &&
 		(!pWin || (CurrentSelections[i].client != client)))
 	    {
+		xEvent event = {0};
 		event.u.u.type = SelectionClear;
 		event.u.selectionClear.time = time.milliseconds;
 		event.u.selectionClear.window = CurrentSelections[i].window;
@@ -765,7 +763,7 @@ ProcSetSelectionOwner(register ClientPtr client)
 	CurrentSelections[i].client = (pWin ? client : NullClient);
 	if (SelectionCallback)
 	{
-	    SelectionInfoRec	info;
+	    SelectionInfoRec	info = {0};
 
 	    info.selection = &CurrentSelections[i];
 	    info.kind= SelectionSetOwner;
