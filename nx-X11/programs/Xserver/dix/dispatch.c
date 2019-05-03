@@ -213,16 +213,18 @@ UpdateCurrentTimeIf()
 	currentTime = systime;
 }
 
-#ifndef NXAGENT_SERVER
 void
-InitSelections()
+#ifdef NXAGENT_SERVER
+xorg_InitSelections(void)
+#else
+InitSelections(void)
+#endif
 {
     if (CurrentSelections)
 	free(CurrentSelections);
     CurrentSelections = (Selection *)NULL;
     NumCurrentSelections = 0;
 }
-#endif /* NXAGENT_SERVER */
 
 #undef SMART_DEBUG
 

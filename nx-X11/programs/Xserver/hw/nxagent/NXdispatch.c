@@ -196,12 +196,9 @@ extern int nxagentFindClientResource(int, RESTYPE, void *);
 
 
 void
-InitSelections()
+InitSelections(void)
 {
-    if (CurrentSelections)
-	free(CurrentSelections);
-    CurrentSelections = (Selection *)NULL;
-    NumCurrentSelections = 0;
+    xorg_InitSelections();
 
 #ifdef NXAGENT_CLIPBOARD
     {
@@ -225,7 +222,6 @@ InitSelections()
       CurrentSelections[1].client = NullClient;
     }
 #endif
-
 }
 
 #define MAJOROP ((xReq *)client->requestBuffer)->reqType
