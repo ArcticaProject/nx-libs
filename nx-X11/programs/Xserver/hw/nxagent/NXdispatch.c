@@ -128,8 +128,6 @@ Equipment Corporation.
 
 const int nxagentMaxFontNames = 10000;
 
-char dispatchExceptionAtReset = DE_RESET;
-
 /*
  * This allows the agent to exit if no
  * client is connected within a timeout.
@@ -1087,9 +1085,6 @@ int ProcForceScreenSaver(register ClientPtr client)
 void
 CloseDownClient(register ClientPtr client)
 {
-    Bool really_close_down = client->clientGone ||
-			     client->closeDownMode == DestroyAll;
-
     /*
      * There must be a better way to hook a
      * call-back function to be called any
@@ -1112,85 +1107,7 @@ CloseDownClient(register ClientPtr client)
 
     nxagentCheckIfShadowAgent(client);
 
-    if (!client->clientGone)
-    {
-	/* ungrab server if grabbing client dies */
-	if (grabState != GrabNone && grabClient == client)
-	{
-	    UngrabServer(client);
-	}
-	BITCLEAR(grabWaiters, client->index);
-	DeleteClientFromAnySelections(client);
-	ReleaseActiveGrabs(client);
-	DeleteClientFontStuff(client);
-	if (!really_close_down)
-	{
-	    /*  This frees resources that should never be retained
-	     *  no matter what the close down mode is.  Actually we
-	     *  could do this unconditionally, but it's probably
-	     *  better not to traverse all the client's resources
-	     *  twice (once here, once a few lines down in
-	     *  FreeClientResources) in the common case of
-	     *  really_close_down == TRUE.
-	     */
-	    FreeClientNeverRetainResources(client);
-	    client->clientState = ClientStateRetained;
-  	    if (ClientStateCallback)
-            {
-		NewClientInfoRec clientinfo;
-
-		clientinfo.client = client; 
-		clientinfo.prefix = (xConnSetupPrefix *)NULL;  
-		clientinfo.setup = (xConnSetup *) NULL;
-		CallCallbacks((&ClientStateCallback), (void *)&clientinfo);
-            } 
-	}
-	client->clientGone = TRUE;  /* so events aren't sent to client */
-	if (ClientIsAsleep(client))
-	    ClientSignal (client);
-	ProcessWorkQueueZombies();
-	CloseDownConnection(client);
-
-	/* If the client made it to the Running stage, nClients has
-	 * been incremented on its behalf, so we need to decrement it
-	 * now.  If it hasn't gotten to Running, nClients has *not*
-	 * been incremented, so *don't* decrement it.
-	 */
-	if (client->clientState != ClientStateInitial &&
-	    client->clientState != ClientStateAuthenticating )
-	{
-	    --nClients;
-	}
-    }
-
-    if (really_close_down)
-    {
-	if (client->clientState == ClientStateRunning && nClients == 0)
-	    dispatchException |= dispatchExceptionAtReset;
-
-	client->clientState = ClientStateGone;
-	if (ClientStateCallback)
-	{
-	    NewClientInfoRec clientinfo;
-
-	    clientinfo.client = client; 
-	    clientinfo.prefix = (xConnSetupPrefix *)NULL;  
-	    clientinfo.setup = (xConnSetup *) NULL;
-	    CallCallbacks((&ClientStateCallback), (void *)&clientinfo);
-	} 	    
-	FreeClientResources(client);
-	/* Disable client ID tracking. This must be done after
-	 * ClientStateCallback. */
-	ReleaseClientIds(client);
-	if (client->index < nextFreeClientID)
-	    nextFreeClientID = client->index;
-	clients[client->index] = NullClient;
-	SmartLastClient = NullClient;
-	free(client);
-
-	while (!clients[currentMaxClients-1])
-	    currentMaxClients--;
-    }
+    xorg_CloseDownClient(client);
 }
 
 int
