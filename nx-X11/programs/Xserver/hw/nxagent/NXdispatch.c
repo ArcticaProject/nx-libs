@@ -1113,41 +1113,17 @@ CloseDownClient(register ClientPtr client)
 int
 InitClientPrivates(ClientPtr client)
 {
-    register char *ptr;
-    DevUnion *ppriv;
-    register unsigned *sizes;
-    register unsigned size;
-    register int i;
+    int ret = xorg_InitClientPrivates(client);
 
-    if (totalClientSize == sizeof(ClientRec))
-	ppriv = (DevUnion *)NULL;
-    else if (client->index)
-	ppriv = (DevUnion *)(client + 1);
-    else
+    if (ret == 1)
     {
-	ppriv = (DevUnion *)malloc(totalClientSize - sizeof(ClientRec));
-	if (!ppriv)
-	    return 0;
-    }
-    client->devPrivates = ppriv;
-    sizes = clientPrivateSizes;
-    ptr = (char *)(ppriv + clientPrivateLen);
-    for (i = clientPrivateLen; --i >= 0; ppriv++, sizes++)
-    {
-	if ( (size = *sizes) )
-	{
-	    ppriv->ptr = (void *)ptr;
-	    ptr += size;
-	}
-	else
-	    ppriv->ptr = (void *)NULL;
+
+      /*
+       * Initialize the private members.
+       */
+
+      nxagentInitClientPrivates(client);
     }
 
-    /*
-     * Initialize the private members.
-     */
-
-    nxagentInitClientPrivates(client);
-
-    return 1;
+    return ret;
 }

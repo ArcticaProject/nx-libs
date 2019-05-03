@@ -3645,9 +3645,12 @@ void InitClient(ClientPtr client, int i, void * ospriv)
     client->clientIds = NULL;
 }
 
-#ifndef NXAGENT_SERVER
 int
+#ifdef NXAGENT_SERVER
+xorg_InitClientPrivates(ClientPtr client)
+#else
 InitClientPrivates(ClientPtr client)
+#endif
 {
     register char *ptr;
     DevUnion *ppriv;
@@ -3691,7 +3694,6 @@ InitClientPrivates(ClientPtr client)
     }
     return 1;
 }
-#endif /* NXAGENT_SERVER */
 
 /************************
  * int NextAvailableClient(ospriv)
