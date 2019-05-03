@@ -3480,11 +3480,14 @@ InitProcVectors(void)
  *  then killed again, the client is really destroyed.
  *********************/
 
-#ifndef NXAGENT_SERVER
 char dispatchExceptionAtReset = DE_RESET;
 
 void
-CloseDownClient(register ClientPtr client)
+#ifdef NXAGENT_SERVER
+xorg_CloseDownClient(ClientPtr client)
+#else
+CloseDownClient(ClientPtr client)
+#endif
 {
     Bool really_close_down = client->clientGone ||
 			     client->closeDownMode == DestroyAll;
@@ -3569,7 +3572,6 @@ CloseDownClient(register ClientPtr client)
 	    currentMaxClients--;
     }
 }
-#endif /* NXAGENT_SERVER */
 
 static void
 KillAllClients()
