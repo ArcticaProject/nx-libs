@@ -807,7 +807,7 @@ ProcCloseFont(register ClientPtr client)
     REQUEST_SIZE_MATCH(xResourceReq);
     pFont = (FontPtr)SecurityLookupIDByType(client, stuff->id, RT_FONT,
 					    DixDestroyAccess);
-    if (pFont != (FontPtr)NULL)
+    if ( pFont != (FontPtr)NULL)	/* id was valid */
     {
         #ifdef NXAGENT_SERVER
 
