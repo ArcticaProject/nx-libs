@@ -1216,10 +1216,14 @@ CheckGrabForSyncs(register DeviceIntPtr thisDev, Bool thisMode, Bool otherMode)
     ComputeFreezes();
 }
 
-#ifndef NXAGENT_SERVER
 void
-ActivatePointerGrab(register DeviceIntPtr mouse, register GrabPtr grab, 
+#ifdef NXAGENT_SERVER
+xorg_ActivatePointerGrab(register DeviceIntPtr mouse, register GrabPtr grab,
                     TimeStamp time, Bool autoGrab)
+#else
+ActivatePointerGrab(register DeviceIntPtr mouse, register GrabPtr grab,
+                    TimeStamp time, Bool autoGrab)
+#endif
 {
     WindowPtr oldWin = (mouse->grab) ? mouse->grab->window
 				     : sprite.win;
@@ -1246,7 +1250,11 @@ ActivatePointerGrab(register DeviceIntPtr mouse, register GrabPtr grab,
 }
 
 void
+#ifdef NXAGENT_SERVER
+xorg_DeactivatePointerGrab(register DeviceIntPtr mouse)
+#else
 DeactivatePointerGrab(register DeviceIntPtr mouse)
+#endif
 {
     register GrabPtr grab = mouse->grab;
     register DeviceIntPtr dev;
@@ -1268,7 +1276,6 @@ DeactivatePointerGrab(register DeviceIntPtr mouse)
 	FreeCursor(grab->cursor, (Cursor)0);
     ComputeFreezes();
 }
-#endif /* NXAGENT_SERVER */
 
 void
 ActivateKeyboardGrab(register DeviceIntPtr keybd, GrabPtr grab, TimeStamp time, Bool passive)

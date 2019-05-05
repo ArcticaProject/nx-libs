@@ -151,28 +151,7 @@ void
 ActivatePointerGrab(register DeviceIntPtr mouse, register GrabPtr grab, 
                     TimeStamp time, Bool autoGrab)
 {
-    WindowPtr oldWin = (mouse->grab) ? mouse->grab->window
-				     : sprite.win;
-
-    if (grab->confineTo)
-    {
-	if (grab->confineTo->drawable.pScreen != sprite.hotPhys.pScreen)
-	    sprite.hotPhys.x = sprite.hotPhys.y = 0;
-	ConfineCursorToWindow(grab->confineTo, FALSE, TRUE);
-    }
-    DoEnterLeaveEvents(oldWin, grab->window, NotifyGrab);
-    mouse->valuator->motionHintWindow = NullWindow;
-    if (syncEvents.playingEvents)
-	mouse->grabTime = syncEvents.time;
-    else
-	mouse->grabTime = time;
-    if (grab->cursor)
-	grab->cursor->refcnt++;
-    mouse->activeGrab = *grab;
-    mouse->grab = &mouse->activeGrab;
-    mouse->fromPassiveGrab = autoGrab;
-    PostNewCursor();
-    CheckGrabForSyncs(mouse,(Bool)grab->pointerMode, (Bool)grab->keyboardMode);
+    xorg_ActivatePointerGrab(mouse, grab, time, autoGrab);
 
     #ifdef NXAGENT_SERVER
 
@@ -223,25 +202,7 @@ ActivatePointerGrab(register DeviceIntPtr mouse, register GrabPtr grab,
 void
 DeactivatePointerGrab(register DeviceIntPtr mouse)
 {
-    register GrabPtr grab = mouse->grab;
-    register DeviceIntPtr dev;
-
-    mouse->valuator->motionHintWindow = NullWindow;
-    mouse->grab = NullGrab;
-    mouse->sync.state = NOT_GRABBED;
-    mouse->fromPassiveGrab = FALSE;
-    for (dev = inputInfo.devices; dev; dev = dev->next)
-    {
-	if (dev->sync.other == grab)
-	    dev->sync.other = NullGrab;
-    }
-    DoEnterLeaveEvents(grab->window, sprite.win, NotifyUngrab);
-    if (grab->confineTo)
-	ConfineCursorToWindow(ROOT, FALSE, FALSE);
-    PostNewCursor();
-    if (grab->cursor)
-	FreeCursor(grab->cursor, (Cursor)0);
-    ComputeFreezes();
+    xorg_DeactivatePointerGrab(mouse);
 
     #ifdef NXAGENT_SERVER
 
