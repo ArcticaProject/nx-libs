@@ -21,7 +21,7 @@ SRCS =  \
         NXglxext.c \
         NXxvdisp.c \
         NXresource.c \
-	NXdamage.c \
+	damage.c \
 	NXmitrap.c \
 	Args.c \
 	Binder.c \
@@ -81,7 +81,7 @@ OBJS =  \
         NXglxext.o \
         NXxvdisp.o \
         NXresource.o \
-	NXdamage.o \
+	damage.o \
 	NXmitrap.o \
 	Args.o \
 	Binder.o \
@@ -258,6 +258,7 @@ all:: $(OBJS)
 LinkSourceFile(stubs.c,$(SERVERSRC)/Xi)
 LinkSourceFile(xpstubs.c,$(SERVERSRC)/dix)
 LinkSourceFile(miinitext.c,$(SERVERSRC)/mi)
+LinkSourceFile(damage.c,$(SERVERSRC)/miext/damage)
 SpecialCObjectRule(miinitext,$(ICONFIGFILES), $(_NOOP_))
 
 NormalLibraryObjectRule()
