@@ -380,7 +380,6 @@ ProcQueryExtension(ClientPtr client)
     return(client->noClientException);
 }
 
-#ifndef NXAGENT_SERVER
 int
 ProcListExtensions(ClientPtr client)
 {
@@ -408,6 +407,15 @@ ProcListExtensions(ClientPtr client)
 	    if (client->trustLevel == XSecurityClientUntrusted &&
 		!extensions[i]->secure)
 		continue;
+#endif
+#ifdef NXAGENT_SERVER
+            /*
+             * Hide RENDER if our implementation
+             * is faulty.
+             */
+
+            if (nxagentRenderTrap && strcmp(extensions[i]->name, "RENDER") == 0)
+                continue;
 #endif
 	    total_length += strlen(extensions[i]->name) + 1;
 	    reply.nExtensions += 1 + extensions[i]->num_aliases;
@@ -445,7 +453,6 @@ ProcListExtensions(ClientPtr client)
     }
     return(client->noClientException);
 }
-#endif
 
 ExtensionLookupProc 
 LookupProc(char *name, GCPtr pGC)
