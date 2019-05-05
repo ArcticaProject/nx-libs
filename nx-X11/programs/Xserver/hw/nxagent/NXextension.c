@@ -75,53 +75,6 @@ SOFTWARE.
 #include "../../dix/extension.c"
 
 int
-ProcQueryExtension(ClientPtr client)
-{
-    xQueryExtensionReply reply;
-    int i;
-    REQUEST(xQueryExtensionReq);
-
-    REQUEST_FIXED_SIZE(xQueryExtensionReq, stuff->nbytes);
-    
-    memset(&reply, 0, sizeof(xQueryExtensionReply));
-    reply.type = X_Reply;
-    reply.length = 0;
-    reply.major_opcode = 0;
-    reply.sequenceNumber = client->sequence;
-
-    if ( ! NumExtensions )
-        reply.present = xFalse;
-    else
-    {
-	i = FindExtension((char *)&stuff[1], stuff->nbytes);
-        if (i < 0
-
-            /*
-             * Hide RENDER if our implementation
-             * is faulty.
-             */
-
-            || (nxagentRenderTrap && strcmp(extensions[i]->name, "RENDER") == 0)
-#ifdef XCSECURITY
-	    /* don't show insecure extensions to untrusted clients */
-	    || (client->trustLevel == XSecurityClientUntrusted &&
-		!extensions[i]->secure)
-#endif
-	    )
-            reply.present = xFalse;
-        else
-        {            
-            reply.present = xTrue;
-	    reply.major_opcode = extensions[i]->base;
-	    reply.first_event = extensions[i]->eventBase;
-	    reply.first_error = extensions[i]->errorBase;
-	}
-    }
-    WriteReplyToClient(client, sizeof(xQueryExtensionReply), &reply);
-    return(client->noClientException);
-}
-
-int
 ProcListExtensions(ClientPtr client)
 {
     xListExtensionsReply reply;

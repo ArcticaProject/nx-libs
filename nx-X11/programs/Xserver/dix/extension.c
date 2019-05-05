@@ -332,7 +332,6 @@ CloseDownExtensions()
     }
 }
 
-#ifndef NXAGENT_SERVER
 int
 ProcQueryExtension(ClientPtr client)
 {
@@ -354,6 +353,14 @@ ProcQueryExtension(ClientPtr client)
     {
 	i = FindExtension((char *)&stuff[1], stuff->nbytes);
         if (i < 0
+#ifdef NXAGENT_SERVER
+            /*
+             * Hide RENDER if our implementation
+             * is faulty.
+             */
+
+            || (nxagentRenderTrap && strcmp(extensions[i]->name, "RENDER") == 0)
+#endif
 #ifdef XCSECURITY
 	    /* don't show insecure extensions to untrusted clients */
 	    || (client->trustLevel == XSecurityClientUntrusted &&
@@ -373,6 +380,7 @@ ProcQueryExtension(ClientPtr client)
     return(client->noClientException);
 }
 
+#ifndef NXAGENT_SERVER
 int
 ProcListExtensions(ClientPtr client)
 {
