@@ -332,7 +332,6 @@ CloseDownExtensions()
     }
 }
 
-#ifndef NXAGENT_SERVER
 int
 ProcQueryExtension(ClientPtr client)
 {
@@ -373,6 +372,7 @@ ProcQueryExtension(ClientPtr client)
     return(client->noClientException);
 }
 
+#ifndef NXAGENT_SERVER
 int
 ProcListExtensions(ClientPtr client)
 {
