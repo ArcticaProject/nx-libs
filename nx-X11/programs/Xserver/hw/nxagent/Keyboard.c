@@ -756,7 +756,7 @@ XkbError:
         fprintf(stderr, "nxagentKeyboardProc: nxagentKeyboard is [%s].\n", nxagentKeyboard ? nxagentKeyboard : "NULL");
         #endif
 
-        if (nxagentX2go == 1 && nxagentKeyboard && (strcmp(nxagentKeyboard, "null/null") == 0))
+        if (nxagentX2go && nxagentKeyboard && (strcmp(nxagentKeyboard, "null/null") == 0))
         {
           #ifdef TEST
           fprintf(stderr, "%s: changing nxagentKeyboard from [null/null] to [clone].\n", __func__);
@@ -874,7 +874,7 @@ XkbError:
              * method for switching that off is the creation of a dir
              * instead of a file.
              */
-            if (nxagentX2go == 1)
+            if (nxagentX2go)
             {
               nxagentWriteKeyboardDir();
             }
@@ -894,7 +894,7 @@ XkbError:
              * know about that yet. Once x2go starts using clone
              * we can drop this here.
              */
-            if (nxagentX2go == 1)
+            if (nxagentX2go)
             {
               nxagentWriteKeyboardFile(nxagentRemoteRules, nxagentRemoteModel, nxagentRemoteLayout, nxagentRemoteVariant, nxagentRemoteOptions);
             }
