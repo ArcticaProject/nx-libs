@@ -126,7 +126,7 @@ extern int _XGetBitsPerPixel(Display *dpy, int depth);
 
 extern char dispatchExceptionAtReset;
 
-char *nxagentProgName;
+const char *nxagentProgName = NULL;
 
 char nxagentDisplayName[NXAGENTDISPLAYNAMELENGTH];
 Bool nxagentSynchronize = False;
@@ -186,17 +186,31 @@ char *nxagentKeystrokeFile = NULL;
 int ddxProcessArgument(int argc, char *argv[], int i)
 {
   /*
-   * Ensure that the options are set to their defaults.
+   * The flavour can never change, so only set it once.
+   *
+   * FIXME: ddxProcessArgument() is called once for every command line
+   * argument, with argv[0] being the argument and not the program
+   * name! We should move this check somewhere else.
    */
+  if (nxagentProgName == NULL)
+  {
+    char *basec = strdup(argv[0]);
+    nxagentProgName = strdup(basename(basec));
+    free(basec);
 
-  char *basec = strdup(argv[0]);
-  nxagentProgName = strdup(basename(basec));
-  free(basec);
+    /*
+     * Check if we are running as X2Go Agent
+     */
+    checkX2goAgent();
+  }
+
+  #ifdef TEST
+  fprintf(stderr, "%s: argv[0] [%s]  nxagentProgName [%s]\n", __func__, argv[0], nxagentProgName);
+  #endif
 
   /*
-   * Check if we running as X2Go Agent
+   * Ensure that the options are set to their defaults.
    */
-  checkX2goAgent();
 
   static Bool resetOptions = True;
 
