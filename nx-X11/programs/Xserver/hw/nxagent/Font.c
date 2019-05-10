@@ -71,30 +71,22 @@ is" without express or implied warranty.
 #undef  TEST
 #undef  DEBUG
 
-#define NXAGENT_DEFAULT_FONT_DIR      "/usr/share/nx/fonts"
-#define NXAGENT_ALTERNATE_FONT_DIR    "/usr/share/X11/fonts"
-#define NXAGENT_ALTERNATE_FONT_DIR_2  "/usr/share/fonts/X11"
-#define NXAGENT_ALTERNATE_FONT_DIR_3  "/usr/X11R6/lib/X11/fonts"
+const char * nxagentFontDirs[] = {
+  SYSTEMFONTDIR,
+  "/usr/share/nx/fonts",
+  "/usr/share/X11/fonts",
+  "/usr/share/fonts/X11",
+  "/usr/X11R6/lib/X11/fonts",
+  NULL
+};
 
-#define NXAGENT_DEFAULT_FONT_PATH  \
-"/usr/share/nx/fonts/misc/,/usr/share/nx/fonts/Speedo/,\
-/usr/share/nx/fonts/Type1/,/usr/share/nx/fonts/75dpi/,\
-/usr/share/nx/fonts/100dpi/,/usr/share/nx/fonts/TTF/"
-
-#define NXAGENT_ALTERNATE_FONT_PATH  \
-"/usr/share/X11/fonts/misc/,/usr/share/X11/fonts/Speedo/,\
-/usr/share/X11/fonts/Type1/,/usr/share/X11/fonts/75dpi/,\
-/usr/share/X11/fonts/100dpi/,/usr/share/X11/fonts/TTF/"
-
-#define NXAGENT_ALTERNATE_FONT_PATH_2  \
-"/usr/share/fonts/X11/misc/,/usr/share/fonts/X11/Speedo/,\
-/usr/share/fonts/X11/Type1/,/usr/share/fonts/X11/75dpi/,\
-/usr/share/fonts/X11/100dpi/,/usr/share/fonts/X11/TTF/"
-
-#define NXAGENT_ALTERNATE_FONT_PATH_3  \
-"/usr/X11R6/lib/X11/fonts/misc/,/usr/X11R6/lib/X11/fonts/Speedo/,\
-/usr/X11R6/lib/X11/fonts/Type1/,/usr/X11R6/lib/X11/fonts/75dpi/,\
-/usr/X11R6/lib/X11/fonts/100dpi/,/usr/X11R6/lib/X11/fonts/TTF/"
+const char * nxagentFontSubdirs[] = {
+  "Type1",
+  "75dpi",
+  "100dpi",
+  "TTF",
+  NULL
+};
 
 #undef NXAGENT_FONTCACHE_DEBUG
 #undef NXAGENT_RECONNECT_FONT_DEBUG
@@ -711,7 +703,7 @@ Bool nxagentUnrealizeFont(ScreenPtr pScreen, FontPtr pFont)
 int nxagentDestroyNewFontResourceType(void * p, XID id)
 {
   #ifdef TEST
-  fprintf(stderr, "nxagentDestroyNewFontResourceType: Destroying mirror id [%ld] for font at [%p].\n",
+  fprintf(stderr, "%s: Destroying mirror id [%ld] for font at [%p].\n", __func__,
               nxagentFontPriv((FontPtr) p) -> mirrorID, (void *) p);
   #endif
 
@@ -1418,14 +1410,14 @@ static Bool nxagentGetFontServerPath(char * fontServerPath, int size)
       snprintf(fontServerPath, min(size, len + 1), "%s", path + 1);
 
       #ifdef TEST
-      fprintf(stderr, "nxagentGetFontServerPath: Got path [%s].\n",
+      fprintf(stderr, "%s: Got path [%s].\n", __func__,
                   fontServerPath);
       #endif
     }
     else
     {
       #ifdef TEST
-      fprintf(stderr, "nxagentGetFontServerPath: WARNING! Font server tunneling not enabled.\n");
+      fprintf(stderr, "%s: WARNING! Font server tunneling not enabled.\n", __func__);
       #endif
 
       return False;
@@ -1434,7 +1426,7 @@ static Bool nxagentGetFontServerPath(char * fontServerPath, int size)
   else
   {
     #ifdef TEST
-    fprintf(stderr, "nxagentGetFontServerPath: WARNING! Failed to get path for font server tunneling.\n");
+    fprintf(stderr, "%s: WARNING! Failed to get path for font server tunneling.\n", __func__);
     #endif
 
     return False;
@@ -1443,13 +1435,50 @@ static Bool nxagentGetFontServerPath(char * fontServerPath, int size)
   return True;
 }
 
+void nxagentVerifySingleFontPath(char **dest, const char *fontDir)
+{
+  if (!dest || !*dest)
+    return;
+
+  #ifdef TEST
+  fprintf(stderr, "%s: Assuming fonts in directory [%s].\n", __func__,
+	  validateString(fontDir));
+  #endif
+
+  for (int i = 0; ; i++)
+  {
+    char *tmppath = NULL;
+    int rc;
+
+    const char *subdir = nxagentFontSubdirs[i];
+
+    if (subdir == NULL)
+      return;
+
+    if (**dest != '\0')
+    {
+      rc = asprintf(&tmppath, "%s,%s/%s", *dest, fontDir, subdir);
+    }
+    else
+    {
+      rc = asprintf(&tmppath, "%s/%s", fontDir, subdir);
+    }
+
+    if (rc == -1)
+      return;
+
+    free(*dest);
+    *dest = tmppath;
+    tmppath = NULL;
+  }
+}
+
 void nxagentVerifyDefaultFontPath(void)
 {
-  struct stat dirStat;
   static char *fontPath;
 
   #ifdef TEST
-  fprintf(stderr, "nxagentVerifyDefaultFontPath: Going to search for one or more valid font paths.\n");
+  fprintf(stderr, "%s: Going to search for one or more valid font paths.\n", __func__);
   #endif
 
   /*
@@ -1459,128 +1488,65 @@ void nxagentVerifyDefaultFontPath(void)
   if ((fontPath = strdup(defaultFontPath)) == NULL)
   {
     #ifdef WARNING
-    fprintf(stderr, "nxagentVerifyDefaultFontPath: WARNING! Unable to allocate memory for a new font path. "
-                "Using the default font path [%s].\n", validateString(defaultFontPath));
+    fprintf(stderr, "%s: WARNING! Unable to allocate memory for a new font path. "
+            "Using the default font path [%s].\n", __func__,
+            validateString(defaultFontPath));
     #endif
 
     return;
   }
 
-  if (stat(NXAGENT_DEFAULT_FONT_DIR, &dirStat) == 0 &&
-          S_ISDIR(dirStat.st_mode) != 0)
+  for (int i = 0; ; i++)
   {
-    /*
-     * Let's use the old "/usr/share/nx/fonts" style.
-     */
+    int j;
+    const char *dir = nxagentFontDirs[i];
 
-    #ifdef TEST
-    fprintf(stderr, "nxagentVerifyDefaultFontPath: Assuming fonts in directory [%s].\n",
-                validateString(NXAGENT_DEFAULT_FONT_DIR));
-    #endif
-
-    if (*fontPath != '\0')
+    if (dir == NULL)
     {
-      fontPath = realloc(fontPath, strlen(fontPath) + strlen(NXAGENT_DEFAULT_FONT_PATH) + 2);
-      strcat(fontPath, ",");
+      break;
     }
     else
     {
-      fontPath = realloc(fontPath, strlen(fontPath) + strlen(NXAGENT_DEFAULT_FONT_PATH) + 1);
-    }
+      for (j = 0; j <= i; j++)
+      {
+        //if (strcmp(nxagentFontDirs[j], dir) == 0)
+        if (nxagentFontDirs[j] == dir)
+        {
+          break;
+        }
+      }
 
-    strcat(fontPath, NXAGENT_DEFAULT_FONT_PATH);
+      if (j == i)
+      {
+        nxagentVerifySingleFontPath(&fontPath, dir);
+      }
+#ifdef TEST
+      else
+      {
+        fprintf(stderr, "%s: Skipping duplicate font dir [%s].\n", __func__,
+                validateString(dir));
+      }
+#endif
+    }
   }
 
-  if (stat(NXAGENT_ALTERNATE_FONT_DIR, &dirStat) == 0 &&
-          S_ISDIR(dirStat.st_mode) != 0)
-  {
-    /*
-     * Let's use the new "/usr/share/X11/fonts" path.
-     */
-
-    #ifdef TEST
-    fprintf(stderr, "nxagentVerifyDefaultFontPath: Assuming fonts in directory [%s].\n",
-                validateString(NXAGENT_ALTERNATE_FONT_DIR));
-    #endif
-
-    if (*fontPath != '\0')
-    {
-      fontPath = realloc(fontPath, strlen(fontPath) + strlen(NXAGENT_ALTERNATE_FONT_PATH) + 2);
-      strcat(fontPath, ",");
-    }
-    else
-    {
-      fontPath = realloc(fontPath, strlen(fontPath) + strlen(NXAGENT_ALTERNATE_FONT_PATH) + 1);
-    }
-
-    strcat(fontPath, NXAGENT_ALTERNATE_FONT_PATH);
-  }
-
-  if (stat(NXAGENT_ALTERNATE_FONT_DIR_2, &dirStat) == 0 &&
-          S_ISDIR(dirStat.st_mode) != 0)
-  {
-    /*
-     * Let's use the "/usr/share/fonts/X11" path.
-     */
-
-    #ifdef TEST
-    fprintf(stderr, "nxagentVerifyDefaultFontPath: Assuming fonts in directory [%s].\n",
-                validateString(NXAGENT_ALTERNATE_FONT_DIR_2));
-    #endif
-
-    if (*fontPath != '\0')
-    {
-      fontPath = realloc(fontPath, strlen(fontPath) + strlen(NXAGENT_ALTERNATE_FONT_PATH_2) + 2);
-      strcat(fontPath, ",");
-    }
-    else
-    {
-      fontPath = realloc(fontPath, strlen(fontPath) + strlen(NXAGENT_ALTERNATE_FONT_PATH_2) + 1);
-    }
-
-    strcat(fontPath, NXAGENT_ALTERNATE_FONT_PATH_2);
-  }
-
-  if (stat(NXAGENT_ALTERNATE_FONT_DIR_3, &dirStat) == 0 &&
-          S_ISDIR(dirStat.st_mode) != 0)
-  {
-    /*
-     * Let's use the "/usr/X11R6/lib/X11/fonts" path.
-     */
-
-    #ifdef TEST
-    fprintf(stderr, "nxagentVerifyDefaultFontPath: Assuming fonts in directory [%s].\n",
-                validateString(NXAGENT_ALTERNATE_FONT_DIR_3));
-    #endif
-
-    if (*fontPath != '\0')
-    {
-      fontPath = realloc(fontPath, strlen(fontPath) + strlen(NXAGENT_ALTERNATE_FONT_PATH_3) + 2);
-      strcat(fontPath, ",");
-    }
-    else
-    {
-      fontPath = realloc(fontPath, strlen(fontPath) + strlen(NXAGENT_ALTERNATE_FONT_PATH_3) + 1);
-    }
-
-    strcat(fontPath, NXAGENT_ALTERNATE_FONT_PATH_3);
-  }
-  if (*fontPath == '\0') 
+  if (*fontPath == '\0')
   {
     #ifdef WARNING
-    fprintf(stderr, "nxagentVerifyDefaultFontPath: WARNING! Can't find a valid font directory.\n");
-
-    fprintf(stderr, "nxagentVerifyDefaultFontPath: WARNING! Using font path [%s].\n",
-                validateString(defaultFontPath));
+    fprintf(stderr, "%s: WARNING! Can't find a valid font directory.\n", __func__);
+    fprintf(stderr, "%s: WARNING! Using font path [%s].\n", __func__,
+            validateString(defaultFontPath));
     #endif
   }
   else
   {
+    /* do _not_ free defaultFontPath here - it's either set at compile time or
+       part of argv */
     defaultFontPath = fontPath;
- 
+
     #ifdef TEST
-    fprintf(stderr, "nxagentVerifyDefaultFontPath: Using font path [%s].\n",
-                validateString(defaultFontPath));
+    fprintf(stderr, "%s: Using font path [%s].\n", __func__,
+            validateString(defaultFontPath));
     #endif
  }
 

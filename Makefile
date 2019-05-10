@@ -30,6 +30,9 @@ CONFIGURE       ?= ./configure --prefix="$(PREFIX)"
 ifneq ($(shell pkg-config --exists xkbcomp && echo yes), yes)
     $(warning xkbcomp devel package missing, using imake default values)
 endif
+ifneq ($(shell pkg-config --exists fontutil && echo yes), yes)
+    $(warning fontutil devel package missing, using imake default values)
+endif
 
 IMAKE_DEFINES	?=
 
@@ -111,6 +114,8 @@ imakeconfig:
 	# prefix.)
 	(pkg-config --exists xkbcomp && echo "#define SystemXkbConfigDir `pkg-config xkbcomp --variable=xkbconfigdir`"; :) >>nx-X11/config/cf/nxconfig.def
 	(pkg-config --exists xkbcomp && echo "#define SystemXkbBinDir `pkg-config xkbcomp --variable=prefix`/bin"; :) >>nx-X11/config/cf/nxconfig.def
+
+	(pkg-config --exists fontutil && echo "#define SystemFontRootDir `pkg-config fontutil --variable=fontrootdir`"; :) >>nx-X11/config/cf/nxconfig.def
 
 	# let's create the nx-X11 Makefiles now, once everything has been defined
 	$(MAKE) -j1 -C nx-X11 Makefiles IMAKE_DEFINES="$(IMAKE_DEFINES)"
