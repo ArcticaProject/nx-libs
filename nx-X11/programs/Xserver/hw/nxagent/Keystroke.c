@@ -113,8 +113,6 @@ struct nxagentSpecialKeystrokeMap default_map[] = {
   {KEYSTROKE_FULLSCREEN, ControlMask | ShiftMask, True, XK_f},
   {KEYSTROKE_MINIMIZE, ControlMask, True, XK_m},
   {KEYSTROKE_DEFER, ControlMask, True, XK_e},
-  {KEYSTROKE_IGNORE, ControlMask, True, XK_BackSpace},
-  {KEYSTROKE_IGNORE, 0, False, XK_Terminate_Server},
   {KEYSTROKE_FORCE_SYNCHRONIZATION, ControlMask, True, XK_j},
 #ifdef DUMP
   {KEYSTROKE_REGIONS_ON_SCREEN, ControlMask, True, XK_a},

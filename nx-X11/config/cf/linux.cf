@@ -683,7 +683,7 @@ XCOMM binutils:	(LinuxBinUtilsMajorVersion)
 #  define OptimizedCDebugFlags	DefaultGcc2AxpOpt
 # endif
 # define LinuxMachineDefines	-D__alpha__
-# define ServerOSDefines	XFree86ServerOSDefines -DDDXTIME
+# define ServerOSDefines	XFree86ServerOSDefines
 # define ServerExtraDefines	-DGCCUSESGAS XFree86ServerDefines -D_XSERVER64 -DJENSEN_SUPPORT
 # ifdef UseCompaqMathLibrary
 #  define MathLibrary		-lcpml -lm
@@ -693,7 +693,7 @@ XCOMM binutils:	(LinuxBinUtilsMajorVersion)
 #ifdef HPArchitecture
 # define OptimizedCDebugFlags	-O2  GccAliasingArgs
 # define LinuxMachineDefines	-D__hppa__
-# define ServerOSDefines	XFree86ServerOSDefines -DDDXTIME
+# define ServerOSDefines	XFree86ServerOSDefines
 # define ServerExtraDefines	-DGCCUSESGAS XFree86ServerDefines
 #endif /* HPArchitecture */
 
@@ -702,7 +702,7 @@ XCOMM binutils:	(LinuxBinUtilsMajorVersion)
 #  define OptimizedCDebugFlags	-O3
 # endif
 # define LinuxMachineDefines	-D__arm__ -D__arm32__ -U__arm -Uarm
-# define ServerOSDefines	XFree86ServerOSDefines -DDDXTIME
+# define ServerOSDefines	XFree86ServerOSDefines
 # define ServerExtraDefines	-DGCCUSESGAS XFree86ServerDefines
 #endif /* Arm32Achitecture */
 
@@ -711,7 +711,7 @@ XCOMM binutils:	(LinuxBinUtilsMajorVersion)
 #  define OptimizedCDebugFlags	-O3
 # endif
 # define LinuxMachineDefines	-D__aarch64__ -U__arm -Uarm
-# define ServerOSDefines	XFree86ServerOSDefines -DDDXTIME
+# define ServerOSDefines	XFree86ServerOSDefines
 # define ServerExtraDefines	-DGCCUSESGAS XFree86ServerDefines -D_XSERVER64
 #endif /* Arm64Achitecture */
 
@@ -720,7 +720,7 @@ XCOMM binutils:	(LinuxBinUtilsMajorVersion)
 #  define OptimizedCDebugFlags	DefaultGcc2i386Opt
 # endif
 # define LinuxMachineDefines	-D__i386__
-# define ServerOSDefines	XFree86ServerOSDefines -DDDXTIME
+# define ServerOSDefines	XFree86ServerOSDefines
 # define ServerExtraDefines	-DGCCUSESGAS XFree86ServerDefines
 #endif /* i386Architecture */
 
@@ -729,7 +729,7 @@ XCOMM binutils:	(LinuxBinUtilsMajorVersion)
 #  define OptimizedCDebugFlags	-O2  GccAliasingArgs
 # endif
 # define LinuxMachineDefines	-D__ia64__
-# define ServerOSDefines	XFree86ServerOSDefines -DDDXTIME
+# define ServerOSDefines	XFree86ServerOSDefines
 # define ServerExtraDefines	-DGCCUSESGAS XFree86ServerDefines -D_XSERVER64
 #endif /* ia64Architecture */
 
@@ -738,7 +738,7 @@ XCOMM binutils:	(LinuxBinUtilsMajorVersion)
 #  define OptimizedCDebugFlags	-O2  GccAliasingArgs
 # endif
 # define LinuxMachineDefines	-D__mc68000__
-# define ServerOSDefines	XFree86ServerOSDefines -DDDXTIME
+# define ServerOSDefines	XFree86ServerOSDefines
 # define ServerExtraDefines	-DGCCUSESGAS XFree86ServerDefines
 #endif /* Mc68020Architecture */
 
@@ -747,7 +747,7 @@ XCOMM binutils:	(LinuxBinUtilsMajorVersion)
 #  define OptimizedCDebugFlags	DefaultGcc2MipsOpt
 # endif
 # define LinuxMachineDefines	-D__mips__
-# define ServerOSDefines	XFree86ServerOSDefines -DDDXTIME
+# define ServerOSDefines	XFree86ServerOSDefines
 # define ServerExtraDefines	-DGCCUSESGAS XFree86ServerDefines
 #endif
 
@@ -756,7 +756,7 @@ XCOMM binutils:	(LinuxBinUtilsMajorVersion)
 #  define OptimizedCDebugFlags	DefaultGcc2MipsOpt
 # endif
 # define LinuxMachineDefines	-D__MIPSEL__
-# define ServerOSDefines	XFree86ServerOSDefines -DDDXTIME
+# define ServerOSDefines	XFree86ServerOSDefines
 # ifdef Mips64elArchitecture
 #  define ServerExtraDefines	-DGCCUSESGAS XFree86ServerDefines -D_XSERVER64
 # else
@@ -770,7 +770,7 @@ XCOMM binutils:	(LinuxBinUtilsMajorVersion)
 #  define OptimizedCDebugFlags	DefaultGcc2Ppc64Opt
 # endif
 # define LinuxMachineDefines	-D__powerpc64__ -D__powerpc__
-# define ServerOSDefines	XFree86ServerOSDefines -DDDXTIME -DPART_NET
+# define ServerOSDefines	XFree86ServerOSDefines -DPART_NET
 # define ServerExtraDefines	-DGCCUSESGAS XFree86ServerDefines -D_XSERVER64
 #endif /* Ppc64Architecture */
 
@@ -779,7 +779,7 @@ XCOMM binutils:	(LinuxBinUtilsMajorVersion)
 #  define OptimizedCDebugFlags	DefaultGcc2PpcOpt
 # endif
 # define LinuxMachineDefines	-D__powerpc__
-# define ServerOSDefines	XFree86ServerOSDefines -DDDXTIME
+# define ServerOSDefines	XFree86ServerOSDefines
 # define ServerExtraDefines	-DGCCUSESGAS XFree86ServerDefines
 #endif /* PpcArchitecture */
 
@@ -788,7 +788,7 @@ XCOMM binutils:	(LinuxBinUtilsMajorVersion)
 #  define OptimizedCDebugFlags	-O2 -fomit-frame-pointer GccAliasingArgs
 # endif
 # define LinuxMachineDefines	-D__s390__
-# define ServerOSDefines	XFree86ServerOSDefines -DDDXTIME
+# define ServerOSDefines	XFree86ServerOSDefines
 # define ServerExtraDefines	-DGCCUSESGAS XFree86ServerDefines
 #endif /* s390Architecture */
 
@@ -796,7 +796,7 @@ XCOMM binutils:	(LinuxBinUtilsMajorVersion)
 /*#define DefaultCCOptions	-fsigned-char */
 #define OptimizedCDebugFlags	-O3 -fomit-frame-pointer
 #define LinuxMachineDefines	-D__s390x__
-#define ServerOSDefines		XFree86ServerOSDefines -DDDXTIME
+#define ServerOSDefines		XFree86ServerOSDefines
 #define ServerExtraDefines	-DGCCUSESGAS XFree86ServerDefines -D_XSERVER64
 #endif /* s390xArchitecture */
 
@@ -805,7 +805,7 @@ XCOMM binutils:	(LinuxBinUtilsMajorVersion)
 #  define OptimizedCDebugFlags	-O2  GccAliasingArgs
 # endif
 # define LinuxMachineDefines	-D__sparc__
-# define ServerOSDefines	XFree86ServerOSDefines -DDDXTIME
+# define ServerOSDefines	XFree86ServerOSDefines
 # define AsVISOption		-Av9a
 # ifdef Sparc64Architecture
 #  define ServerExtraDefines	-DGCCUSESGAS XFree86ServerDefines -D_XSERVER64
@@ -835,7 +835,7 @@ XCOMM binutils:	(LinuxBinUtilsMajorVersion)
 #  define OptimizedCDebugFlags	-O2 SuperHArchOptFlags SuperHEndianFlags  GccAliasingArgs
 # endif
 # define LinuxMachineDefines	-D__sh__
-# define ServerOSDefines	XFree86ServerOSDefines -DDDXTIME
+# define ServerOSDefines	XFree86ServerOSDefines
 # define ServerExtraDefines	-DGCCUSESGAS XFree86ServerDefines
 #endif
 
@@ -844,7 +844,7 @@ XCOMM binutils:	(LinuxBinUtilsMajorVersion)
 #  define OptimizedCDebugFlags	DefaultGcc2AMD64Opt
 # endif
 # define LinuxMachineDefines   -D__amd64__
-# define ServerOSDefines	XFree86ServerOSDefines -DDDXTIME
+# define ServerOSDefines	XFree86ServerOSDefines
 # define ServerExtraDefines	-DGCCUSESGAS XFree86ServerDefines -D_XSERVER64
 #endif /* AMD64Architecture */
 

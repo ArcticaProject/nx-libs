@@ -171,9 +171,6 @@ typedef void (*InitExtension)(void);
 #endif
 
 /* FIXME: this whole block of externs should be from the appropriate headers */
-#ifdef XTESTEXT1
-extern void XTestExtension1Init(void);
-#endif
 #ifdef SHAPE
 extern void ShapeExtensionInit(void);
 #endif
@@ -381,9 +378,6 @@ InitExtensions(argc, argv)
 # if !defined(PRINT_ONLY_SERVER) && !defined(NO_PANORAMIX)
   if (!noPanoramiXExtension) PanoramiXExtensionInit();
 # endif
-#endif
-#ifdef XTESTEXT1
-    if (!noTestExtensions) XTestExtension1Init();
 #endif
 #ifdef SHAPE
     if (!noShapeExtension) ShapeExtensionInit();

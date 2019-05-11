@@ -143,13 +143,6 @@ mffs(fd_mask mask)
 #include <nx-X11/extensions/dpms.h>
 #endif
 
-#ifdef XTESTEXT1
-/*
- * defined in xtestext1dd.c
- */
-extern int playback_on;
-#endif /* XTESTEXT1 */
-
 struct _OsTimerRec {
     OsTimerPtr		next;
     CARD32		expires;
@@ -244,13 +237,6 @@ WaitForSomething(int *pClientsReady)
 	BlockHandler((void *)&wt, (void *)&LastSelectMask);
 	if (NewOutputPending)
 	    FlushAllOutput();
-#ifdef XTESTEXT1
-	/* XXX how does this interact with new write block handling? */
-	if (playback_on) {
-	    wt = &waittime;
-	    XTestComputeWaitTime (&waittime);
-	}
-#endif /* XTESTEXT1 */
 
 #if defined(NX_TRANS_SOCKET) && defined(NX_TRANS_WAKEUP)
 
@@ -375,11 +361,7 @@ WaitForSomething(int *pClientsReady)
 #endif
 	selecterr = GetErrno();
 	WakeupHandler(i, (void *)&LastSelectMask);
-#ifdef XTESTEXT1
-	if (playback_on) {
-	    i = XTestProcessInputAction (i, &waittime);
-	}
-#endif /* XTESTEXT1 */
+
 	SmartScheduleStartTimer ();
 
 	if (i <= 0) /* An error or timeout occurred */

@@ -127,7 +127,7 @@ XCOMM Not implemented and will always fail.
 XCOMM i386Architecture
 #define OptimizedCDebugFlags	DefaultGcc2i386Opt
 #define GNUMachineDefines	-D__i386__
-#define ServerOSDefines		XFree86ServerOSDefines -DDDXTIME
+#define ServerOSDefines		XFree86ServerOSDefines
 #define ServerExtraDefines	-DGCCUSESGAS XFree86ServerDefines
 #define HasPlugin		YES
 #define VendorHasX11R6_3libXext	YES

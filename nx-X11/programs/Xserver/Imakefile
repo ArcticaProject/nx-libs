@@ -115,7 +115,7 @@ INSTPGMFLAGS =
 #endif
 #if BuildDamage
       DAMAGEDIR = damageext
-      DAMAGELIB = $(DAMAGEDIR)/libdamage.a
+      DAMAGELIB = $(DAMAGEDIR)/libdamageext.a
 #endif
 #if BuildComposite
           CWDIR = miext/cw

@@ -278,9 +278,9 @@ Dispatch(void)
     if (!clientReady)
 	return;
 
-  #ifdef WATCH
+    #ifdef WATCH
 
-  fprintf(stderr, "Dispatch: Watchpoint 12.\n");
+    fprintf(stderr, "Dispatch: Watchpoint 12.\n");
 
 /*
 Reply   Total	Cached	Bits In			Bits Out		Bits/Reply	  Ratio
@@ -294,22 +294,22 @@ Reply   Total	Cached	Bits In			Bits Out		Bits/Reply	  Ratio
 #98     1		256 bits (0 KB) ->	34 bits (0 KB) ->	256/1 -> 34/1	= 7.529:1
 */
 
-  sleep(30);
+    sleep(30);
 
-  #endif
+    #endif
 
-  #ifdef TEST
-  fprintf(stderr, "Dispatch: Value of dispatchException is [%x].\n",
-              dispatchException);
+    #ifdef TEST
+    fprintf(stderr, "Dispatch: Value of dispatchException is [%x].\n",
+                dispatchException);
 
-  fprintf(stderr, "Dispatch: Value of dispatchExceptionAtReset is [%x].\n",
-              dispatchExceptionAtReset);
-  #endif
+    fprintf(stderr, "Dispatch: Value of dispatchExceptionAtReset is [%x].\n",
+                dispatchExceptionAtReset);
+    #endif
 
-  if (!(dispatchException & DE_TERMINATE))
-    dispatchException = 0;
+    if (!(dispatchException & DE_TERMINATE))
+        dispatchException = 0;
 
-  while (!dispatchException)
+    while (!dispatchException)
     {
         if (*icheck[0] != *icheck[1])
 	{
@@ -626,7 +626,7 @@ ProcReparentWindow(register ClientPtr client)
 int
 ProcQueryTree(register ClientPtr client)
 {
-    xQueryTreeReply reply;
+    xQueryTreeReply reply = {0};
     int numChildren = 0;
     register WindowPtr pChild, pWin, pHead;
     Window  *childIDs = (Window *)NULL;
@@ -637,7 +637,6 @@ ProcQueryTree(register ClientPtr client)
 					   DixReadAccess);
     if (!pWin)
         return(BadWindow);
-    memset(&reply, 0, sizeof(xQueryTreeReply));
     reply.type = X_Reply;
     reply.root = pWin->drawable.pScreen->root->drawable.id;
     reply.sequenceNumber = client->sequence;
@@ -720,8 +719,6 @@ ProcSetSelectionOwner(register ClientPtr client)
             i++;
         if (i < NumCurrentSelections)
         {        
-	    xEvent event = {0};
-
 	    /* If the timestamp in client's request is in the past relative
 		to the time stamp indicating the last time the owner of the
 		selection was set, do not set the selection, just return 
@@ -732,6 +729,7 @@ ProcSetSelectionOwner(register ClientPtr client)
 	    if (CurrentSelections[i].client &&
 		(!pWin || (CurrentSelections[i].client != client)))
 	    {
+		xEvent event = {0};
 		event.u.u.type = SelectionClear;
 		event.u.selectionClear.time = time.milliseconds;
 		event.u.selectionClear.window = CurrentSelections[i].window;
@@ -765,7 +763,7 @@ ProcSetSelectionOwner(register ClientPtr client)
 	CurrentSelections[i].client = (pWin ? client : NullClient);
 	if (SelectionCallback)
 	{
-	    SelectionInfoRec	info;
+	    SelectionInfoRec	info = {0};
 
 	    info.selection = &CurrentSelections[i];
 	    info.kind= SelectionSetOwner;
@@ -1309,6 +1307,9 @@ CloseDownClient(register ClientPtr client)
 	    CallCallbacks((&ClientStateCallback), (void *)&clientinfo);
 	} 	    
 	FreeClientResources(client);
+	/* Disable client ID tracking. This must be done after
+	 * ClientStateCallback. */
+	ReleaseClientIds(client);
 	if (client->index < nextFreeClientID)
 	    nextFreeClientID = client->index;
 	clients[client->index] = NullClient;

@@ -73,21 +73,21 @@ XF86BIGFOBJS = xf86bigfont.o
 #endif
 
        SRCS = shape.c $(SHMSRCS) xcmisc.c\
-              xtest.c xtest1di.c xtest1dd.c sleepuntil.c \
+              xtest.c sleepuntil.c \
 	      bigreq.c sync.c $(SCRNSAVSRC) \
 	      $(XF86BIGFSRCS) $(SECURITYSRCS) \
 	      $(PNRXSRCS) $(DPMSSRCS) \
 	      $(XVSRCS) $(XRESSRCS) $(DMXSRCS)
 
        OBJS = shape.o $(SHMOBJS) xcmisc.o \
-              xtest.o xtest1di.o xtest1dd.o sleepuntil.o \
+              xtest.o sleepuntil.o \
               bigreq.o sync.o $(SCRNSAVOBJ) \
 	      $(XF86BIGFOBJS) $(SECURITYOBJS) \
 	      $(PNRXOBJS) $(DPMSOBJS) \
 	      $(XVOBJS) $(XRESOBJS) $(DMXOBJS)
 
       SOBJS = $(SHMOBJS) $(SECURITYOBJS) \
-	      shape.o xtest.o xtest1di.o xtest1dd.o sleepuntil.o $(PNRXOBJS) \
+	      shape.o xtest.o sleepuntil.o $(PNRXOBJS) \
 	      $(XF86BIGFOBJS)
 
 #if defined(NXAgentServer) && NXAgentServer

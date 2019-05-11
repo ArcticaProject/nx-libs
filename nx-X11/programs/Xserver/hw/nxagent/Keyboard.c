@@ -647,14 +647,15 @@ N/A
         if (keymap64 == NULL)
         {
           XFreeModifiermap(modifier_keymap);
-
           return -1;
         }
 
         len = (max_keycode - min_keycode + 1) * mapWidth;
         keymap = (KeySym *)malloc(len * sizeof(KeySym));
         for(i = 0; i < len; ++i)
+        {
           keymap[i] = keymap64[i];
+        }
         XFree(keymap64);
       }
 
@@ -668,7 +669,6 @@ N/A
       if (keymap == NULL)
       {
         XFreeModifiermap(modifier_keymap);
-
         return -1;
       }
 
@@ -682,18 +682,24 @@ N/A
 
       memset(modmap, 0, sizeof(modmap));
       for (j = 0; j < 8; j++)
-        for(i = 0; i < modifier_keymap->max_keypermod; i++) {
+      {
+        for(i = 0; i < modifier_keymap->max_keypermod; i++)
+        {
           CARD8 keycode;
           if ((keycode =
               modifier_keymap->
                 modifiermap[j * modifier_keymap->max_keypermod + i]))
+          {
             modmap[keycode] |= 1<<j;
+          }
 
           if (keycode > 0)
           {
             nxagentCheckModifierMasks(keycode, j);
           }
         }
+      }
+
       XFreeModifiermap(modifier_keymap);
       modifier_keymap = NULL;
 
@@ -747,13 +753,10 @@ XkbError:
 
         #ifdef TEST
         fprintf(stderr, "nxagentKeyboardProc: Using XKB extension.\n");
-        #endif
-
-        #ifdef TEST
         fprintf(stderr, "nxagentKeyboardProc: nxagentKeyboard is [%s].\n", nxagentKeyboard ? nxagentKeyboard : "NULL");
         #endif
 
-        if (nxagentX2go == 1 && nxagentKeyboard && (strcmp(nxagentKeyboard, "null/null") == 0))
+        if (nxagentX2go && nxagentKeyboard && (strcmp(nxagentKeyboard, "null/null") == 0))
         {
           #ifdef TEST
           fprintf(stderr, "%s: changing nxagentKeyboard from [null/null] to [clone].\n", __func__);
@@ -779,10 +782,9 @@ XkbError:
         {
           for (i = 0; nxagentKeyboard[i] != '/' && nxagentKeyboard[i] != 0; i++);
 
-          if(nxagentKeyboard[i] == 0 || nxagentKeyboard[i + 1] == 0 || i == 0)
+          if (nxagentKeyboard[i] == 0 || nxagentKeyboard[i + 1] == 0 || i == 0)
           {
             ErrorF("Warning: Wrong keyboard type: %s.\n", nxagentKeyboard);
-
             goto XkbError;
           }
 
@@ -842,7 +844,7 @@ XkbError:
         {
           #ifdef TEST
           fprintf(stderr, "nxagentKeyboardProc: Using default keyboard: model [%s] layout [%s].\n",
-                      model, layout);
+                      model?model:"(default)", layout?layout:"(default)");
           #endif
         }
 
@@ -872,8 +874,10 @@ XkbError:
              * method for switching that off is the creation of a dir
              * instead of a file.
              */
-            if (nxagentX2go == 1)
+            if (nxagentX2go)
+            {
               nxagentWriteKeyboardDir();
+            }
           }
           else
           {
@@ -890,8 +894,10 @@ XkbError:
              * know about that yet. Once x2go starts using clone
              * we can drop this here.
              */
-            if (nxagentX2go == 1)
+            if (nxagentX2go)
+            {
               nxagentWriteKeyboardFile(nxagentRemoteRules, nxagentRemoteModel, nxagentRemoteLayout, nxagentRemoteVariant, nxagentRemoteOptions);
+            }
           }
         }
         #ifdef DEBUG
@@ -905,19 +911,20 @@ XkbError:
 
         if (xkb && xkb->geom)
         {
-            XkbGetControls(nxagentDisplay, XkbAllControlsMask, xkb);
+          XkbGetControls(nxagentDisplay, XkbAllControlsMask, xkb);
         }
 #ifdef TEST
         else
         {
-            fprintf(stderr, "nxagentKeyboardProc: No current keyboard.\n");
+          fprintf(stderr, "nxagentKeyboardProc: No current keyboard.\n");
         }
 #endif
 
         #ifdef DEBUG
         fprintf(stderr, "nxagentKeyboardProc: Going to set rules and init device: "
                         "[rules='%s',model='%s',layout='%s',variant='%s',options='%s'].\n",
-                        rules, model, layout, variant, options);
+                        rules?rules:"(default)", model?model:"(default)", layout?layout:"(default)",
+                        variant?variant:"(default)", options?options:"(default)");
         #endif
 
         XkbSetRulesDflts(rules, model, layout, variant, options);
@@ -931,7 +938,7 @@ XkbError:
 
         if (xkb && xkb->geom)
         {
-            XkbDDXChangeControls(pDev, xkb->ctrls, xkb->ctrls);
+          XkbDDXChangeControls(pDev, xkb->ctrls, xkb->ctrls);
         }
 
         if (nxagentOption(Shadow) == 1 && pDev && pDev->key)
@@ -942,8 +949,8 @@ XkbError:
 
       if (xkb)
       {
-          XkbFreeKeyboard(xkb, XkbAllComponentsMask, True);
-          xkb = NULL;
+        XkbFreeKeyboard(xkb, XkbAllComponentsMask, True);
+        xkb = NULL;
       }
 
       free(model);

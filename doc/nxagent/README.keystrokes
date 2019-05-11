@@ -58,21 +58,35 @@ usually you will need Mod1 and Control. Boolean in this context means
 '0', 'false' and an unspecified attribute are false, anything else is
 considered true.
 
-Everything in this file is case-sensitive. Unknown lines are ignored.
-Keybindings are evaluated from top to bottom, so if a keybinding
-matches, other keybindings further down will be ignored. The contents
-of the file replaces the default keybindings, and only one file is
-read, no merging between different configuration files is done. This
-also means that an empty or invalid configuration file deactivates all
+Everything in this file is case-sensitive. Unknown lines are ignored
+(accompanied by a warning in the session log).  Keybindings are
+evaluated from top to bottom, so if a keybinding matches, other
+keybindings further down will be ignored. The contents of the file
+replaces the default keybindings, and only one file is read, no
+merging between different configuration files is done. This also means
+that an empty or invalid configuration file deactivates all
 keybindings.
 
 If an attribute occurs more than once in a line the last one wins.
+
+Some of the actions can open a dialog window. Depending on the user's
+answer the selected action will be taken. Some actions will only show
+a dialog informing the user about the taken action. All these dialogs
+will only work if the nxagent/x2goagent process has a properly
+configured NX_CLIENT environment variable pointing to an executable
+(like nxdialog) that is responsible for showing the dialogs and taking
+the action(s). If that executable cannot be run no dialog will show up
+and no action will be taken.
 
 List of possible 'action' attributes:
 -------------------------------------
 
 close_session
-  This terminates the session.
+  This terminates the session. If a proper dialog helper is available
+  ask the user if he wants to disconnect
+  or terminate the session and then perform the selected
+  action. Without proper helper it will do nothing (except writing an
+  error the session log)
 
 fullscreen
   Switches the client window into or out of fullscreen mode, using
@@ -98,11 +112,15 @@ viewport_scroll_left/up/right/down
   (maximum step size is 200px).
 
 defer
-  Activates/deactivates deferred screen updates.
+  Activates/deactivates deferred screen updates. With a proper
+  dialog helper (see above) it will open a dialog informing the user
+  about the action taken.
 
 ignore
   Ignores the following keystroke, nothing will happen when this
-  keystroke is pressed.
+  keystroke is pressed. The keystroke will NOT be passed to the
+  clients. If you want the clients to see the keystroke you need to
+  eliminate the line from the config file instead of using 'ignore'.
 
 reread_keystrokes
   Forces nxagent to re-read the keystroke configuration. Useful to

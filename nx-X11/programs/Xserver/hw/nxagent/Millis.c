@@ -29,19 +29,6 @@
 #include "Xos.h"
 #include "Millis.h"
 
-#ifdef DDXTIME
-
-CARD32 GetTimeInMillis()
-{
-  struct timeval ts;
-
-  X_GETTIMEOFDAY(&ts);
-
-  return(ts.tv_sec * 1000) + (ts.tv_usec / 1000);
-}
-
-#endif
-
 const char *GetTimeAsString()
 {
   char *value;

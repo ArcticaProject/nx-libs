@@ -28,8 +28,6 @@
 
 #include "Xmd.h"
 
-CARD32 GetTimeInMillis(void);
-
 const char *GetTimeInMillisAsString(void);
 
 const char *GetTimeAsString(void);

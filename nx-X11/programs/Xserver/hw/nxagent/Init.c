@@ -183,13 +183,13 @@ int nxagentSaveUnder;
 int nxagentDoFullGeneration = 1;
 
  /*
- * 1 if agent running as X2goAgent
- * 0 if NX Agent
+ * True if agent is running as X2goAgent
+ * False if agent is running as NXAgent
  */
-int nxagentX2go;
+Bool nxagentX2go;
 
 /*
- * Checking if agent is x2go agent
+ * Check if agent is x2go agent
  */
 
 void checkX2goAgent(void)
@@ -200,13 +200,13 @@ void checkX2goAgent(void)
   fprintf(stderr, "%s: nxagentProgName [%s]\n", __func__, nxagentProgName);
   #endif
 
-  if( strcasecmp(nxagentProgName,"x2goagent") == 0)
+  if (strcasecmp(nxagentProgName,"x2goagent") == 0)
   {
     fprintf(stderr, "\nrunning as X2Go Agent\n");
-    nxagentX2go=1;
+    nxagentX2go = True;
   }
   else
-    nxagentX2go=0;
+    nxagentX2go = False;
 }
 
 
