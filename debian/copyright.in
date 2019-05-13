@@ -2122,15 +2122,6 @@ Copyright: 1992, X Consortium
 License: MIT/X11 (BSD like)
  FIXME
 
-Files: nx-X11/include/extensions/xtestext1.h
- nx-X11/programs/Xserver/Xext/xtest1dd.c
- nx-X11/programs/Xserver/Xext/xtest1di.c
- nx-X11/programs/Xserver/mi/mibstore.c
-Copyright: 1986-1988, 1998, The Open Group
-  1987, 1998, The Open Group
-License: NTP
- FIXME
-
 Files: nx-X11/programs/Xserver/miext/cw/cw.c
  nx-X11/programs/Xserver/miext/cw/cw.h
  nx-X11/programs/Xserver/miext/cw/cw_ops.c

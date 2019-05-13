@@ -598,7 +598,6 @@ rm -f %{buildroot}%{_datadir}/man/man1/nxdialog.1*
 %{_includedir}/nx-X11/extensions/xfixesproto.h
 %{_includedir}/nx-X11/extensions/xfixeswire.h
 %{_includedir}/nx-X11/extensions/xtestconst.h
-%{_includedir}/nx-X11/extensions/xtestext1.h
 %{_includedir}/nx-X11/extensions/xteststr.h
 
 %files -n nxagent
