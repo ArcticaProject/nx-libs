@@ -685,6 +685,10 @@ unsigned	act;
 	    else group= newGroup;
 	}
 	else {
+#ifdef NXAGENT_SERVER
+	  /* we have seen division by zero here */
+	  if (ctrls->num_groups != 0)
+#endif
 	    group%= ctrls->num_groups;
 	}
     }
