@@ -2246,35 +2246,6 @@ Copyright: 1989, 1998, The Open Group
   1996, 1998, The Open Group
 License: MIT~OpenGroup
 
-Files: nx-X11/include/extensions/xtestext1.h
- nx-X11/programs/Xserver/Xext/xtest1dd.c
- nx-X11/programs/Xserver/Xext/xtest1di.c
-Copyright: 1986-1988, 1998, The Open Group
-  1986-1988, Hewlett-Packard Corporation
-License: MIT~OpenGroup
-Comment:
- Contributions by Hewlett-Packard Corporation have been licensed
- under the following license:
- .
- Permission to use, copy, modify, and distribute this
- software and its documentation for any purpose and without
- fee is hereby granted, provided that the above copyright
- notice appear in all copies and that both that copyright
- notice and this permission notice appear in supporting
- documentation, and that the name of Hewlett-Packard not be used in
- advertising or publicity pertaining to distribution of the
- software without specific, written prior permission.
- .
- Hewlett-Packard makes no representations about the
- suitability of this software for any purpose.  It is provided
- "as is" without express or implied warranty.
- .
- As additional note, we find:
- .
- This software is not subject to any license of the American
- Telephone and Telegraph Company or of the Regents of the
- University of California.
-
 Files: nx-X11/programs/Xserver/hw/nxagent/NXdamage.c
  nx-X11/programs/Xserver/randr/rrmode.c
  nx-X11/programs/Xserver/randr/rrscreen.c

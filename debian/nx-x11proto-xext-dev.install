@@ -12,5 +12,4 @@ usr/include/*/nx-X11/extensions/xcmiscstr.h
 usr/include/*/nx-X11/extensions/xf86bigfont.h
 usr/include/*/nx-X11/extensions/xf86bigfproto.h
 usr/include/*/nx-X11/extensions/xtestconst.h
-usr/include/*/nx-X11/extensions/xtestext1.h
 usr/include/*/nx-X11/extensions/xteststr.h
