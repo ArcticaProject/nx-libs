@@ -79,6 +79,10 @@ extern int extensionPrivateLen;
 extern unsigned *extensionPrivateSizes;
 extern unsigned totalExtensionSize;
 
+#ifdef NXAGENT_SERVER
+#include "NXhooks.h"
+#endif
+
 static void
 InitExtensionPrivates(ExtensionEntry *ext)
 {
@@ -354,12 +358,7 @@ ProcQueryExtension(ClientPtr client)
 	i = FindExtension((char *)&stuff[1], stuff->nbytes);
         if (i < 0
 #ifdef NXAGENT_SERVER
-            /*
-             * Hide RENDER if our implementation
-             * is faulty.
-             */
-
-            || (nxagentRenderTrap && strcmp(extensions[i]->name, "RENDER") == 0)
+            || nxagentHook_IsFaultyRenderExtension(extensions[i]->name)
 #endif
 #ifdef XCSECURITY
 	    /* don't show insecure extensions to untrusted clients */
@@ -409,12 +408,7 @@ ProcListExtensions(ClientPtr client)
 		continue;
 #endif
 #ifdef NXAGENT_SERVER
-            /*
-             * Hide RENDER if our implementation
-             * is faulty.
-             */
-
-            if (nxagentRenderTrap && strcmp(extensions[i]->name, "RENDER") == 0)
+            if (nxagentHook_IsFaultyRenderExtension(extensions[i]->name))
                 continue;
 #endif
 	    total_length += strlen(extensions[i]->name) + 1;

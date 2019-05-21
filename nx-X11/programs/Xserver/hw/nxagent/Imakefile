@@ -19,6 +19,7 @@ SRCS =  \
 	NXextension.c \
 	NXshm.c \
         NXglxext.c \
+        NXhooks.c \
         NXxvdisp.c \
         NXresource.c \
 	damage.c \
@@ -79,6 +80,7 @@ OBJS =  \
 	NXextension.o \
 	NXshm.o \
         NXglxext.o \
+        NXhooks.o \
         NXxvdisp.o \
         NXresource.o \
 	damage.o \
