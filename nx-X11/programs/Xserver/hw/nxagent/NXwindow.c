@@ -236,7 +236,14 @@ MapWindow(register WindowPtr pWin, ClientPtr client)
     }
     #endif
 
-    return xorg_MapWindow(pWin, client);
+    /*
+     * MapWindow() always returns Success. (Our) xorg_MapWindow() uses
+     * BadImplementation as a means to inform us to call
+     * nxagentFlushConfigureWindow()
+     */
+    if (xorg_MapWindow(pWin, client) == BadImplementation)
+      nxagentFlushConfigureWindow();
+    return(Success);
 }
 
 int

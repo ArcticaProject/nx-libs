@@ -2848,7 +2848,14 @@ MapWindow(register WindowPtr pWin, ClientPtr client)
     }
 
 #ifdef NXAGENT_SERVER
-    nxagentFlushConfigureWindow();
+    /*
+     * MapWindow() is always returning Success, no matter
+     * what. Therefore its returncode is never checked anywhere! We
+     * make use of that to inform the (parent) NX version of
+     * MapWindow() that it needs to call
+     * nxagentFlushConfigureWindow()
+     */
+    return(BadImplementation);
 #endif
 
     return(Success);
