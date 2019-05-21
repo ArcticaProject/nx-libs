@@ -226,25 +226,9 @@ InitRootWindow(WindowPtr pWin)
     nxagentSetVersionProperty(pWin);
 }
 
-/*****
- * MapWindow
- *    If some other client has selected SubStructureReDirect on the parent
- *    and override-redirect is xFalse, then a MapRequest event is generated,
- *    but the window remains unmapped.	Otherwise, the window is mapped and a
- *    MapNotify event is generated.
- *****/
-
 int
 MapWindow(register WindowPtr pWin, ClientPtr client)
 {
-    register ScreenPtr pScreen;
-
-    register WindowPtr pParent;
-#ifdef DO_SAVE_UNDERS
-    Bool	dosave = FALSE;
-#endif
-    WindowPtr  pLayerWin;
-
     #ifdef TEST
     if (nxagentWindowTopLevel(pWin))
     {
@@ -252,98 +236,7 @@ MapWindow(register WindowPtr pWin, ClientPtr client)
     }
     #endif
 
-    if (pWin->mapped)
-	return(Success);
-
-#ifdef XCSECURITY
-    /*  don't let an untrusted client map a child-of-trusted-window, InputOnly
-     *  window; too easy to steal device input
-     */
-    if ( (client->trustLevel != XSecurityClientTrusted) &&
-	 (pWin->drawable.class == InputOnly) &&
-	 (wClient(pWin->parent)->trustLevel == XSecurityClientTrusted) )
-	 return Success;
-#endif	
-
-    pScreen = pWin->drawable.pScreen;
-    if ( (pParent = pWin->parent) )
-    {
-	xEvent event;
-	Bool anyMarked;
-
-	if ((!pWin->overrideRedirect) && 
-	    (RedirectSend(pParent)
-	))
-	{
-	    memset(&event, 0, sizeof(xEvent));
-	    event.u.u.type = MapRequest;
-	    event.u.mapRequest.window = pWin->drawable.id;
-	    event.u.mapRequest.parent = pParent->drawable.id;
-
-	    if (MaybeDeliverEventsToClient(pParent, &event, 1,
-		SubstructureRedirectMask, client) == 1)
-		return(Success);
-	}
-
-	pWin->mapped = TRUE;
-	if (SubStrSend(pWin, pParent) && MapUnmapEventsEnabled(pWin))
-	{
-	    memset(&event, 0, sizeof(xEvent));
-	    event.u.u.type = MapNotify;
-	    event.u.mapNotify.window = pWin->drawable.id;
-	    event.u.mapNotify.override = pWin->overrideRedirect;
-	    DeliverEvents(pWin, &event, 1, NullWindow);
-	}
-
-	if (!pParent->realized)
-	    return(Success);
-	RealizeTree(pWin);
-	if (pWin->viewable)
-	{
-	    anyMarked = (*pScreen->MarkOverlappedWindows)(pWin, pWin,
-							  &pLayerWin);
-#ifdef DO_SAVE_UNDERS
-	    if (DO_SAVE_UNDERS(pWin))
-	    {
-		dosave = (*pScreen->ChangeSaveUnder)(pLayerWin, pWin->nextSib);
-	    }
-#endif /* DO_SAVE_UNDERS */
-	    if (anyMarked)
-	    {
-		(*pScreen->ValidateTree)(pLayerWin->parent, pLayerWin, VTMap);
-		(*pScreen->HandleExposures)(pLayerWin->parent);
-	    }
-#ifdef DO_SAVE_UNDERS
-	    if (dosave)
-		(*pScreen->PostChangeSaveUnder)(pLayerWin, pWin->nextSib);
-#endif /* DO_SAVE_UNDERS */
-	if (anyMarked && pScreen->PostValidateTree)
-	    (*pScreen->PostValidateTree)(pLayerWin->parent, pLayerWin, VTMap);
-	}
-	WindowsRestructured ();
-    }
-    else
-    {
-	RegionRec   temp;
-
-	pWin->mapped = TRUE;
-	pWin->realized = TRUE;	   /* for roots */
-	pWin->viewable = pWin->drawable.class == InputOutput;
-	/* We SHOULD check for an error value here XXX */
-	(*pScreen->RealizeWindow)(pWin);
-	if (pScreen->ClipNotify)
-	    (*pScreen->ClipNotify) (pWin, 0, 0);
-	if (pScreen->PostValidateTree)
-	    (*pScreen->PostValidateTree)(NullWindow, pWin, VTMap);
-	RegionNull(&temp);
-	RegionCopy(&temp, &pWin->clipList);
-	(*pScreen->WindowExposures) (pWin, &temp, NullRegion);
-	RegionUninit(&temp);
-    }
-
-    nxagentFlushConfigureWindow();
-
-    return(Success);
+    return xorg_MapWindow(pWin, client);
 }
 
 int

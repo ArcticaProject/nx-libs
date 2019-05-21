@@ -2743,9 +2743,12 @@ RealizeTree(WindowPtr pWin)
  *    MapNotify event is generated.
  *****/
 
-#ifndef NXAGENT_SERVER
 int
+#ifdef NXAGENT_SERVER
+xorg_MapWindow(register WindowPtr pWin, ClientPtr client)
+#else
 MapWindow(register WindowPtr pWin, ClientPtr client)
+#endif
 {
     register ScreenPtr pScreen;
 
@@ -2844,9 +2847,12 @@ MapWindow(register WindowPtr pWin, ClientPtr client)
 	RegionUninit(&temp);
     }
 
+#ifdef NXAGENT_SERVER
+    nxagentFlushConfigureWindow();
+#endif
+
     return(Success);
 }
-#endif /* NXAGENT_SERVER */
 
 /*****
  * MapSubwindows
