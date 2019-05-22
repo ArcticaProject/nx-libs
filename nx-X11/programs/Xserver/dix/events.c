@@ -2070,9 +2070,12 @@ void ReinitializeRootWindow(WindowPtr win, int xoff, int yoff)
 }
 #endif
 
-#ifndef NXAGENT_SERVER
 void
+#ifdef NXAGENT_SERVER
+xorg_DefineInitialRootWindow(register WindowPtr win)
+#else
 DefineInitialRootWindow(register WindowPtr win)
+#endif
 {
     register ScreenPtr pScreen = win->drawable.pScreen;
 
@@ -2112,7 +2115,6 @@ DefineInitialRootWindow(register WindowPtr win)
     }
 #endif
 }
-#endif /* NXAGENT_SERVER */
 
 /*
  * This does not take any shortcuts, and even ignores its argument, since

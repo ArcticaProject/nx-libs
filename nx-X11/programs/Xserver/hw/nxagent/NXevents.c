@@ -436,41 +436,8 @@ void
 DefineInitialRootWindow(register WindowPtr win)
 {
     register ScreenPtr pScreen = win->drawable.pScreen;
-    sprite.hotPhys.pScreen = pScreen;
-    sprite.hotPhys.x = pScreen->width / 2;
-    sprite.hotPhys.y = pScreen->height / 2;
-    sprite.hot = sprite.hotPhys;
-    sprite.hotLimits.x2 = pScreen->width;
-    sprite.hotLimits.y2 = pScreen->height;
-    sprite.win = win;
-    sprite.current = wCursor (win);
-    sprite.current->refcnt++;
-    spriteTraceGood = 1;
-    ROOT = win;
-    (*pScreen->CursorLimits) (
-	pScreen, sprite.current, &sprite.hotLimits, &sprite.physLimits);
-    sprite.confined = FALSE;
-    (*pScreen->ConstrainCursor) (pScreen, &sprite.physLimits);
-    (*pScreen->SetCursorPosition) (pScreen, sprite.hot.x, sprite.hot.y, FALSE);
-    (*pScreen->DisplayCursor) (pScreen, sprite.current);
 
-#ifdef PANORAMIX
-    if(!noPanoramiXExtension) {
-	sprite.hotLimits.x1 = -panoramiXdataPtr[0].x;
-	sprite.hotLimits.y1 = -panoramiXdataPtr[0].y;
-	sprite.hotLimits.x2 = PanoramiXPixWidth  - panoramiXdataPtr[0].x;
-	sprite.hotLimits.y2 = PanoramiXPixHeight - panoramiXdataPtr[0].y;
-	sprite.physLimits = sprite.hotLimits;
-	sprite.confineWin = NullWindow;
-#ifdef SHAPE
-        sprite.hotShape = NullRegion;
-#endif
-	sprite.screen = pScreen;
-	/* gotta UNINIT these someplace */
-	RegionNull(&sprite.Reg1);
-	RegionNull(&sprite.Reg2);
-    }
-#endif
+    xorg_DefineInitialRootWindow(win);
 
     #ifdef VIEWPORT_FRAME
     nxagentInitViewportFrame(pScreen, win);
