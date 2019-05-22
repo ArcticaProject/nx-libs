@@ -1436,7 +1436,11 @@ AllowSome(ClientPtr client, TimeStamp time, DeviceIntPtr thisDev, int newState)
 }
 
 int
+#ifdef NXAGENT_SERVER
+xorg_ProcAllowEvents(register ClientPtr client)
+#else
 ProcAllowEvents(register ClientPtr client)
+#endif
 {
     TimeStamp		time;
     DeviceIntPtr	mouse = inputInfo.pointer;
