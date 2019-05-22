@@ -245,6 +245,8 @@ static WindowPtr XYToWindow(
     int y
 );
 
+static Bool CheckMotion(xEvent *xE);
+
 extern int lastEvent;
 
 static Mask lastEventMask;
@@ -1951,6 +1953,7 @@ XYToWindow(int x, int y)
 }
 #endif /* NXAGENT_SERVER */
 
+#ifndef NXAGENT_SERVER
 static Bool
 CheckMotion(xEvent *xE)
 {
@@ -2015,6 +2018,7 @@ CheckMotion(xEvent *xE)
     }
     return TRUE;
 }
+#endif /* NXAGENT_SERVER */
 
 void
 WindowsRestructured()
