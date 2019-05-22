@@ -100,6 +100,7 @@ ServerBitsFromGlyph(FontPtr pfont, unsigned ch, register CursorMetricPtr cm, uns
     PixmapPtr ppix;
     long nby;
     char *pbits;
+    ChangeGCVal gcval[3];
     unsigned char char2b[2];
 
     /* turn glyph index into a protocol-format char2b */
@@ -114,7 +115,8 @@ ServerBitsFromGlyph(FontPtr pfont, unsigned ch, register CursorMetricPtr cm, uns
     /* zeroing the (pad) bits seems to help some ddx cursor handling */
     bzero(pbits, nby);
 
-    ppix = fbCreatePixmap(pScreen, cm->width, cm->height, 1,
+    ppix = fbCreatePixmap(pScreen, cm->width,
+                          cm->height, 1,
                           CREATE_PIXMAP_USAGE_SCRATCH);
     pGC = GetScratchGC(1, pScreen);
     if (!ppix || !pGC)
@@ -143,28 +145,21 @@ ServerBitsFromGlyph(FontPtr pfont, unsigned ch, register CursorMetricPtr cm, uns
     rect.width = cm->width;
     rect.height = cm->height;
 
-    pGC->stateChanges |= GCFunction | GCForeground | GCFont;
-    pGC->alu = GXcopy;
-
-    pGC->fgPixel = 0;
-
-    pfont->refcnt++;
-
-    if (pGC->font)
-      CloseFont(pGC->font, (Font)0);
-
-    pGC->font = pfont;
-
+    /* fill the pixmap with 0 */
+    gcval[0].val = GXcopy;
+    gcval[1].val = 0;
+    gcval[2].ptr = (void *)pfont;
+    dixChangeGC(NullClient, pGC, GCFunction | GCForeground | GCFont,
+		NULL, gcval);
     ValidateGC((DrawablePtr)ppix, pGC);
     fbPolyFillRect((DrawablePtr)ppix, pGC, 1, &rect);
 
     /* draw the glyph */
-    pGC->fgPixel = 1;
-
-    pGC->stateChanges |= GCForeground;
-
+    gcval[0].val = 1;
+    dixChangeGC(NullClient, pGC, GCForeground, NULL, gcval);
     ValidateGC((DrawablePtr)ppix, pGC);
-    miPolyText16((DrawablePtr)ppix, pGC, (int)cm->xhot, (int)cm->yhot, (int)1, (unsigned short*)char2b);
+    miPolyText16((DrawablePtr)ppix, pGC, (int)cm->xhot, (int)cm->yhot,
+                 (int)1, (unsigned short*)char2b);
     fbGetImage((DrawablePtr)ppix, 0, 0, cm->width, cm->height,
                          XYPixmap, 1, pbits);
     *ppbits = (unsigned char *)pbits;
