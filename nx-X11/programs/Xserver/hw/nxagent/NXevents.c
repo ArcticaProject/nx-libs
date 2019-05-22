@@ -292,6 +292,7 @@ XYToWindow(int x, int y)
 
     spriteTraceGood = 1;	/* root window still there */
 
+#ifdef NXAGENT_SERVER
     if (nxagentOption(Rootless))
     {
       if (nxagentLastEnteredWindow == NULL)
@@ -310,7 +311,9 @@ XYToWindow(int x, int y)
     {
       pWin = ROOT->firstChild;
     }
-
+#else
+    pWin = ROOT->firstChild;
+#endif
     while (pWin)
     {
 	if ((pWin->mapped) &&
