@@ -161,30 +161,35 @@ AddGlyph (GlyphSetPtr glyphSet, GlyphPtr glyph, Glyph id)
     CheckDuplicates (&globalGlyphs[glyphSet->fdepth], "AddGlyph bottom");
 }
 
-GlyphPtr FindGlyph (GlyphSetPtr glyphSet, Glyph id)
+GlyphPtr
+FindGlyph (GlyphSetPtr glyphSet, Glyph id)
 {
-  GlyphRefPtr gr;
-  GlyphPtr    glyph;
+    GlyphPtr    glyph;
 
-  gr = FindGlyphRef (&glyphSet->hash, id, FALSE, 0);
-  glyph = gr -> glyph;
-
-  if (glyph == DeletedGlyph)
-  {
-    glyph = 0;
-  }
-  else if (gr -> corruptedGlyph == 1)
-  {
-     #ifdef DEBUG
-     fprintf(stderr, "FindGlyphRef: Going to synchronize the glyph [%p] for glyphset [%p].\n",
+#ifdef NXAGENT_SERVER
+    GlyphRefPtr gr = FindGlyphRef (&glyphSet->hash, id, FALSE, 0);
+    glyph = gr -> glyph;
+#else
+    glyph = FindGlyphRef (&glyphSet->hash, id, FALSE, 0)->glyph;
+#endif
+    if (glyph == DeletedGlyph)
+    {
+        glyph = 0;
+    }
+#ifdef NXAGENT_SERVER
+    else if (gr -> corruptedGlyph == 1)
+    {
+        #ifdef DEBUG
+        fprintf(stderr, "FindGlyphRef: Going to synchronize the glyph [%p] for glyphset [%p].\n",
                  (void *) glyph, (void *) glyphSet);
-     #endif
+        #endif
 
-    nxagentAddGlyphs(glyphSet, &id, &(glyph -> info), 1,
+        nxagentAddGlyphs(glyphSet, &id, &(glyph -> info), 1,
                          (CARD8*)(glyph + 1), glyph -> size - sizeof(xGlyphInfo));
-  }
+    }
+#endif
 
-  return glyph;
+    return glyph;
 }
 
 Bool
