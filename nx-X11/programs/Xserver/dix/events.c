@@ -3947,9 +3947,12 @@ CloseDownEvents(void)
   spriteTraceSize = 0;
 }
 
-#ifndef NXAGENT_SERVER
 int
+#ifdef NXAGENT_SERVER
+xorg_ProcSendEvent(ClientPtr client)
+#else
 ProcSendEvent(ClientPtr client)
+#endif
 {
     WindowPtr pWin;
     WindowPtr effectiveFocus = NullWindow; /* only set if dest==InputFocus */
@@ -4034,7 +4037,6 @@ ProcSendEvent(ClientPtr client)
 				    NullGrab, 0);
     return Success;
 }
-#endif /* NXAGENT_SERVER */
 
 int
 ProcUngrabKey(ClientPtr client)
