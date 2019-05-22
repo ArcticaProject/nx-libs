@@ -488,17 +488,11 @@ DefineInitialRootWindow(register WindowPtr win)
 int
 ProcSendEvent(ClientPtr client)
 {
-    WindowPtr pWin;
-    WindowPtr effectiveFocus = NullWindow; /* only set if dest==InputFocus */
+#ifdef NXAGENT_CLIPBOARD
+
     REQUEST(xSendEventReq);
 
     REQUEST_SIZE_MATCH(xSendEventReq);
-
-    /* The client's event type must be a core event type or one defined by an
-	extension. */
-
-
-#ifdef NXAGENT_CLIPBOARD
 
     if (stuff -> event.u.u.type == SelectionNotify)
     {
@@ -506,78 +500,5 @@ ProcSendEvent(ClientPtr client)
 	  return Success;
     }
 #endif
-
-    if ( ! ((stuff->event.u.u.type > X_Reply &&
-	     stuff->event.u.u.type < LASTEvent) || 
-	    (stuff->event.u.u.type >= EXTENSION_EVENT_BASE &&
-	     stuff->event.u.u.type < (unsigned)lastEvent)))
-    {
-	client->errorValue = stuff->event.u.u.type;
-	return BadValue;
-    }
-    if (stuff->event.u.u.type == ClientMessage &&
-	stuff->event.u.u.detail != 8 &&
-	stuff->event.u.u.detail != 16 &&
-	stuff->event.u.u.detail != 32)
-    {
-	client->errorValue = stuff->event.u.u.detail;
-	return BadValue;
-    }
-    if (stuff->eventMask & ~AllEventMasks)
-    {
-	client->errorValue = stuff->eventMask;
-	return BadValue;
-    }
-
-    if (stuff->destination == PointerWindow)
-	pWin = sprite.win;
-    else if (stuff->destination == InputFocus)
-    {
-	WindowPtr inputFocus = inputInfo.keyboard->focus->win;
-
-	if (inputFocus == NoneWin)
-	    return Success;
-
-	/* If the input focus is PointerRootWin, send the event to where
-	the pointer is if possible, then perhaps propagate up to root. */
-   	if (inputFocus == PointerRootWin)
-	    inputFocus = ROOT;
-
-	if (IsParent(inputFocus, sprite.win))
-	{
-	    effectiveFocus = inputFocus;
-	    pWin = sprite.win;
-	}
-	else
-	    effectiveFocus = pWin = inputFocus;
-    }
-    else
-	pWin = SecurityLookupWindow(stuff->destination, client,
-				    DixReadAccess);
-    if (!pWin)
-	return BadWindow;
-    if ((stuff->propagate != xFalse) && (stuff->propagate != xTrue))
-    {
-	client->errorValue = stuff->propagate;
-	return BadValue;
-    }
-    stuff->event.u.u.type |= 0x80;
-    if (stuff->propagate)
-    {
-	for (;pWin; pWin = pWin->parent)
-	{
-	    if (DeliverEventsToWindow(pWin, &stuff->event, 1, stuff->eventMask,
-				      NullGrab, 0))
-		return Success;
-	    if (pWin == effectiveFocus)
-		return Success;
-	    stuff->eventMask &= ~wDontPropagateMask(pWin);
-	    if (!stuff->eventMask)
-		break;
-	}
-    }
-    else
-	(void)DeliverEventsToWindow(pWin, &stuff->event, 1, stuff->eventMask,
-				    NullGrab, 0);
-    return Success;
+    return xorg_ProcSendEvent(client);
 }
