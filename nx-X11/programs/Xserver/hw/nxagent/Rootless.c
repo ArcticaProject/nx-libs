@@ -120,12 +120,10 @@ static void nxagentPrintRootlessTopLevelWindowMap(void);
 
 void nxagentPrintRootlessTopLevelWindowMap(void)
 {
-  int i;
-
   fprintf(stderr, "nxagentPrintRootlessTopLevelWindowMap: Map size is [%d] num of entry [%d].\n",
               topLevelParentMap.size, topLevelParentMap.next);
 
-  for (i = 0; i < topLevelParentMap.next; i++)
+  for (int i = 0; i < topLevelParentMap.next; i++)
   {
     fprintf(stderr, "nxagentPrintRootlessTopLevelWindowMap: [%d] pWin at [%p] XID at [%ld].\n",
                 i, (void *) topLevelParentMap.elt[i].pWin, (long int) topLevelParentMap.elt[i].xid);
@@ -136,9 +134,7 @@ void nxagentPrintRootlessTopLevelWindowMap(void)
 
 void nxagentRootlessAddTopLevelWindow(WindowPtr pWin, Window w)
 {
-  int i;
-
-  for (i = 0; i < topLevelParentMap.next; i++)
+  for (int i = 0; i < topLevelParentMap.next; i++)
   {
     if (topLevelParentMap.elt[i].pWin == pWin)
     {
@@ -181,9 +177,7 @@ void nxagentRootlessAddTopLevelWindow(WindowPtr pWin, Window w)
 
 WindowPtr nxagentRootlessTopLevelWindow(Window w)
 {
-  int i;
-
-  for (i = 0; i < topLevelParentMap.next; i++)
+  for (int i = 0; i < topLevelParentMap.next; i++)
   {
     if (w == topLevelParentMap.elt[i].xid)
     {
@@ -196,9 +190,7 @@ WindowPtr nxagentRootlessTopLevelWindow(Window w)
 
 void nxagentRootlessDelTopLevelWindow(WindowPtr pWin)
 {
-  int i;
-
-  for (i = 0; i < topLevelParentMap.next; i++)
+  for (int i = 0; i < topLevelParentMap.next; i++)
   {
     if (pWin == topLevelParentMap.elt[i].pWin)
     {
@@ -506,7 +498,6 @@ int nxagentExportProperty(pWin, property, type, format, mode, nUnits, value)
     /* FIXME: is it okay here to ignore malloc fails? */
     unsigned long *buffer = malloc(nUnits * sizeof(*buffer));
     int *input = value;
-    int i;
 
     if (buffer)
     {
@@ -514,7 +505,7 @@ int nxagentExportProperty(pWin, property, type, format, mode, nUnits, value)
       export = True;
       output = (char*) buffer;
 
-      for (i = 0; i < nUnits; i++)
+      for (int i = 0; i < nUnits; i++)
       {
         buffer[i] = input[i];
       }
@@ -644,7 +635,6 @@ int nxagentExportProperty(pWin, property, type, format, mode, nUnits, value)
     XlibAtom *atoms = malloc(nUnits * sizeof(*atoms));
     Atom *input = value;
     const char *atomName = NULL;
-    int i;
     int j = 0;
 
     if (!atoms)
@@ -659,7 +649,7 @@ int nxagentExportProperty(pWin, property, type, format, mode, nUnits, value)
     export = True;
     output = (char *) atoms;
 
-    for (i = 0; i < nUnits; i++)
+    for (int i = 0; i < nUnits; i++)
     {
       /*
        * Exporting the _NET_WM_PING property could
@@ -703,7 +693,6 @@ int nxagentExportProperty(pWin, property, type, format, mode, nUnits, value)
     XlibWindow *wind = malloc(nUnits * sizeof(*wind));
     ClientPtr pClient = wClient(pWin);
     WindowPtr pWindow;
-    int i;
 
     if (!wind)
     {
@@ -717,7 +706,7 @@ int nxagentExportProperty(pWin, property, type, format, mode, nUnits, value)
     export = True;
     output = (char*) wind;
 
-    for (i = 0; i < nUnits; i++)
+    for (int i = 0; i < nUnits; i++)
     {
       pWindow = (WindowPtr)SecurityLookupWindow(input[i], pClient,
                                                     DixDestroyAccess);
@@ -774,15 +763,14 @@ int nxagentExportProperty(pWin, property, type, format, mode, nUnits, value)
       }
       else if (mode == PropModeReplace)
       {
-        int n;
-        char *data;
+        char * data = (char *) output;
 
         XDeleteProperty(nxagentDisplay, nxagentWindow(pWin), propertyX);
 
-        data = (char *) output;
-
         while (nUnits > 0)
         {
+          int n;
+
           if ((format >> 3) * nUnits + sizeof(xChangePropertyReq) <
                   (MAX_REQUEST_SIZE << 2))
           {
@@ -1055,7 +1043,6 @@ void nxagentImportProperty(Window window,
   {
     Atom *atoms = malloc(nitems * sizeof(Atom));
     Atom *input = (Atom*) buffer;
-    int i;
 
     if (atoms == NULL)
     {
@@ -1070,7 +1057,7 @@ void nxagentImportProperty(Window window,
     import = True;
     output = (char *) atoms;
 
-    for (i = 0; i < nitems; i++)
+    for (int i = 0; i < nitems; i++)
     {
       atoms[i] = nxagentRemoteToLocalAtom(input[i]);
 
@@ -1088,7 +1075,6 @@ void nxagentImportProperty(Window window,
     Window *input = (Window*) buffer;
     Window *wind = malloc(nitems * sizeof(Window));
     WindowPtr pWindow;
-    int i;
 
     if (!wind)
     {
@@ -1102,7 +1088,7 @@ void nxagentImportProperty(Window window,
     import = True;
     output = (char*) wind;
 
-    for (i = 0; i < nitems; i++)
+    for (int i = 0; i < nitems; i++)
     {
       pWindow = nxagentWindowPtr(input[i]);
 

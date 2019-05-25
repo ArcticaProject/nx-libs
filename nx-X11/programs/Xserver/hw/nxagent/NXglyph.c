@@ -138,12 +138,6 @@ ResizeGlyphHash (GlyphHashPtr hash, CARD32 change, Bool global)
     int		    oldSize;
     CARD32	    s;
 
-    #ifdef NXAGENT_SERVER
-
-    CARD32          c;
-
-    #endif
-
     tableEntries = hash->tableEntries + change;
     hashSet = FindGlyphHashSet (tableEntries);
     if (hashSet == hash->hashSet)
@@ -164,7 +158,7 @@ ResizeGlyphHash (GlyphHashPtr hash, CARD32 change, Bool global)
 
                 #ifdef NXAGENT_SERVER
 
-                c = hash->table[i].corruptedGlyph;
+                CARD32 c = hash->table[i].corruptedGlyph;
 
                 #endif
 

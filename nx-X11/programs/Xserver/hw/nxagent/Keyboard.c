@@ -1299,8 +1299,6 @@ static int nxagentRestoreKeyboardDeviceData(DeviceIntPtr devBackup, DeviceIntPtr
 
 static int nxagentFreeKeyboardDeviceData(DeviceIntPtr dev)
 {
-  KbdFeedbackPtr k, knext;
-
   if (!dev)
   {
     #ifdef PANIC
@@ -1336,7 +1334,7 @@ static int nxagentFreeKeyboardDeviceData(DeviceIntPtr dev)
 
   if (dev->kbdfeed)
   {
-      for (k = dev->kbdfeed; k; k = knext)
+      for (KbdFeedbackPtr k = dev->kbdfeed, knext; k; k = knext)
       {
           knext = k->next;
           #ifdef XKB

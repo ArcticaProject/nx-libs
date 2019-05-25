@@ -309,12 +309,6 @@ static PicturePtr createSourcePicture(void)
 
     unsigned int totalPictureSize;
 
-    DevUnion *ppriv;
-
-    char *privPictureRecAddr;
-
-    int i;
-
     /*
      * Compute size of entire PictureRect, plus privates.
      */
@@ -327,9 +321,9 @@ static PicturePtr createSourcePicture(void)
 
     if (pPicture != NULL)
     {
-      ppriv = (DevUnion *) (pPicture + 1);
+      DevUnion *ppriv = (DevUnion *) (pPicture + 1);
 
-      for (i = 0; i < picturePrivateCount; ++i)
+      for (int i = 0; i < picturePrivateCount; ++i)
       {
         /*
          * Other privates are inaccessible.
@@ -338,7 +332,7 @@ static PicturePtr createSourcePicture(void)
         ppriv[i].ptr = NULL;
       }
 
-      privPictureRecAddr = (char *) &ppriv[picturePrivateCount];
+      char *privPictureRecAddr = (char *) &ppriv[picturePrivateCount];
 
       ppriv[nxagentPicturePrivateIndex].ptr = (void *) privPictureRecAddr;
 

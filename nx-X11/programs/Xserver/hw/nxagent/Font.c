@@ -165,8 +165,6 @@ static struct _nxagentFailedToReconnectFonts
 
 void nxagentFreeFontCache(void)
 {
-  int i;
-
   #ifdef NXAGENT_FONTCACHE_DEBUG
   fprintf(stderr, "Font: Freeing nxagent font cache\n");
   #endif
@@ -178,7 +176,7 @@ void nxagentFreeFontCache(void)
   fprintf(stderr, "Font: Freeing nxagent font cache, there are [%d] entries.\n", CACHE_INDEX);
   #endif
 
-  for (i = 0; i < CACHE_INDEX; i++)
+  for (int i = 0; i < CACHE_INDEX; i++)
   {
     #ifdef NXAGENT_FONTCACHE_DEBUG
     fprintf(stderr, "Font: Freeing nxagent font cache entry [%d] entry pointer is [%p], name [%s]\n",
@@ -208,8 +206,6 @@ void nxagentFreeFontCache(void)
 
 void nxagentListRemoteFonts(const char *searchPattern, const int maxNames)
 {
-  int i, q, p;
-
   char **xList;
   int  xLen = 0;
 
@@ -241,7 +237,7 @@ void nxagentListRemoteFonts(const char *searchPattern, const int maxNames)
    * other one will select the 'real' fonts.
    */
 
-  for (p = 0; p < patternsQt; p++)
+  for (int p = 0; p < patternsQt; p++)
   {
     xList = XListFonts(nxagentDisplay, patterns[p], maxNames, &xLen);
 
@@ -256,11 +252,9 @@ void nxagentListRemoteFonts(const char *searchPattern, const int maxNames)
 
     nxagentListRemoteAddName(searchPattern, maxNames);
 
-    for (i = 0; i < xLen; i++)
+    for (int i = 0; i < xLen; i++)
     {
-      q = 1;
-
-      nxagentListRemoteAddName(xList[i], q);
+      nxagentListRemoteAddName(xList[i], 1);
     }
 
     XFreeFontNames(xList);
@@ -270,7 +264,7 @@ void nxagentListRemoteFonts(const char *searchPattern, const int maxNames)
 
   fprintf(stderr, "nxagentListRemoteFonts: Printing remote font list.\n");
 
-  for (i = 0; i < nxagentRemoteFontList.length; i++)
+  for (int i = 0; i < nxagentRemoteFontList.length; i++)
   {
     fprintf(stderr, "Font# %d, \"%s\"\n", i, nxagentRemoteFontList.list[i]->name);
   }
@@ -353,9 +347,7 @@ void nxagentListRemoteAddName(const char *name, int status)
 
 static void nxagentFreeRemoteFontList(nxagentFontList *listRec)
 {
-  int l;
-
-  for (l = 0; l < listRec -> length; l++)
+  for (int l = 0; l < listRec -> length; l++)
   {
     if (listRec -> list[l])
     {
@@ -857,7 +849,6 @@ static void nxagentFontDisconnect(FontPtr pFont, XID param1, void * param2)
 {
   nxagentPrivFont *privFont;
   Bool *pBool = (Bool*)param2;
-  int i;
 
   if (pFont == NULL || !*pBool)
     return;
@@ -869,7 +860,7 @@ static void nxagentFontDisconnect(FontPtr pFont, XID param1, void * param2)
               (void *) pFont, privFont -> font_struct ? nxagentFont(pFont) : 0);
   #endif
 
-  for (i = 0; i < CACHE_INDEX; i++)
+  for (int i = 0; i < CACHE_INDEX; i++)
   {
     if (strcasecmp(CACHE_NAME(i), privFont -> fontName) == 0)
     {
@@ -1043,13 +1034,11 @@ static void nxagentFontReconnect(FontPtr pFont, XID param1, void * param2)
 
 static void nxagentFreeCacheBeforeReconnect(void)
 {
-  int i;
-
   #ifdef NXAGENT_RECONNECT_FONT_DEBUG
   printFontCacheDump("nxagentFreeCacheBeforeReconnect");
   #endif
 
-  for (i = 0; i < CACHE_INDEX; i++)
+  for (int i = 0; i < CACHE_INDEX; i++)
   {
     if (CACHE_FSTRUCT(i))
     {
@@ -1061,15 +1050,13 @@ static void nxagentFreeCacheBeforeReconnect(void)
 
 static void nxagentCleanCacheAfterReconnect(void)
 {
-  int i, j;
   int real_size = CACHE_INDEX;
-  nxCacheFontEntryRecPtr swapEntryPtr;
 
   #ifdef NXAGENT_RECONNECT_FONT_DEBUG
   printFontCacheDump("nxagentCleanCacheAfterReconnect");
   #endif
 
-  for (i = 0; i < CACHE_INDEX; i++)
+  for (int i = 0; i < CACHE_INDEX; i++)
   {
     if(CACHE_FSTRUCT(i) == NULL)
     {
@@ -1078,8 +1065,11 @@ static void nxagentCleanCacheAfterReconnect(void)
     }
   }
 
-  for (i = 0; i < real_size; i++)
+  for (int i = 0; i < real_size; i++)
   {
+      int j;
+      nxCacheFontEntryRecPtr swapEntryPtr;
+
       /* Find - first bad occurrence if exist. */
       while ((i < real_size) && CACHE_FSTRUCT(i)) i++;
 
@@ -1108,11 +1098,9 @@ static void nxagentCleanCacheAfterReconnect(void)
 #ifdef NXAGENT_RECONNECT_FONT_DEBUG
 static void printFontCacheDump(char* msg)
 {
-  int i;
-
   fprintf(stderr, "%s - begin -\n", msg);
 
-  for (i = 0; i < CACHE_INDEX; i++)
+  for (int i = 0; i < CACHE_INDEX; i++)
   {
     if (CACHE_FSTRUCT(i))
     {
@@ -1129,7 +1117,6 @@ static void printFontCacheDump(char* msg)
 
 Bool nxagentReconnectAllFonts(void *p0)
 {
-  int cid;
   Bool fontSuccess = True;
 
   reconnectFlexibility = *((int *) p0);
@@ -1147,7 +1134,7 @@ Bool nxagentReconnectAllFonts(void *p0)
   FindClientResourcesByType(clients[serverClient -> index], RT_NX_FONT,
                                 (FindResType) nxagentFontReconnect, &fontSuccess);
 
-  for (cid = 0; cid < MAXCLIENTS; cid++)
+  for (int cid = 0; cid < MAXCLIENTS; cid++)
   {
     if (clients[cid])
     {
@@ -1258,7 +1245,6 @@ static void nxagentFreeFailedToReconnectFonts(void)
 
 Bool nxagentReconnectFailedFonts(void *p0)
 {
-  int i;
   int attempt = 1;
   const int maxAttempt = 5;
 
@@ -1312,7 +1298,7 @@ Bool nxagentReconnectFailedFonts(void *p0)
     nxagentFreeRemoteFontList(&nxagentRemoteFontList);
     nxagentListRemoteFonts("*", nxagentMaxFontNames);
 
-    for(i = 0; i < nxagentFailedToReconnectFonts.index; i++)
+    for(int i = 0; i < nxagentFailedToReconnectFonts.index; i++)
     {
       fontSuccess = True;
 
@@ -1365,7 +1351,6 @@ Bool nxagentReconnectFailedFonts(void *p0)
 
 Bool nxagentDisconnectAllFonts(void)
 {
-  int cid;
   Bool fontSuccess = True;
 
   #if defined(NXAGENT_RECONNECT_DEBUG) || defined(NXAGENT_RECONNECT_FONT_DEBUG)
@@ -1384,7 +1369,7 @@ Bool nxagentDisconnectAllFonts(void)
   FindClientResourcesByType(clients[serverClient -> index], RT_NX_FONT,
                                 (FindResType) nxagentFontDisconnect, &fontSuccess);
 
-  for(cid = 0; cid < MAXCLIENTS; cid++)
+  for(int cid = 0; cid < MAXCLIENTS; cid++)
   {
     if( clients[cid] && fontSuccess )
     {

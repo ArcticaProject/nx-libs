@@ -2143,8 +2143,6 @@ Reply   Total	Cached	Bits In			Bits Out		Bits/Reply	  Ratio
 
 Bool nxagentCloseScreen(ScreenPtr pScreen)
 {
-  int i;
-
   #ifdef DEBUG
   fprintf(stderr, "running nxagentCloseScreen()\n");
   #endif
@@ -2157,7 +2155,7 @@ Bool nxagentCloseScreen(ScreenPtr pScreen)
    * them again.
    */
 
-  for (i = 0; i < pScreen->numDepths; i++)
+  for (int i = 0; i < pScreen->numDepths; i++)
   {
     #ifdef DEBUG
     fprintf(stderr, "%s: freeing depth [%d] index [%d] vids [%p]\n", __func__, pScreen->allowedDepths[i].depth, i, (void*) pScreen->allowedDepths[i].vids);
