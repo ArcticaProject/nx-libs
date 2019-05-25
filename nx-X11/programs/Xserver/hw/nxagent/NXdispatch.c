@@ -622,12 +622,17 @@ ProcQueryTree(register ClientPtr client)
         reply.parent = (Window)None;
     pHead = RealChildHead(pWin);
     for (pChild = pWin->lastChild; pChild != pHead; pChild = pChild->prevSib)
+#ifdef NXAGENT_SERVER
     {
-      if (!IsViewportFrame(pChild))
-      {
-	numChildren++;
-      }
+        if (!IsViewportFrame(pChild))
+        {
+            numChildren++;
+        }
+
     }
+#else
+        numChildren++;
+#endif
     if (numChildren)
     {
 	int curChild = 0;
@@ -636,12 +641,16 @@ ProcQueryTree(register ClientPtr client)
 	if (!childIDs)
 	    return BadAlloc;
 	for (pChild = pWin->lastChild; pChild != pHead; pChild = pChild->prevSib)
-        {
-          if (!IsViewportFrame(pChild))
-          {
-	    childIDs[curChild++] = pChild->drawable.id;
-          }
+#ifdef NXAGENT_SERVER
+	{
+            if (!IsViewportFrame(pChild))
+            {
+	        childIDs[curChild++] = pChild->drawable.id;
+            }
         }
+#else
+            childIDs[curChild++] = pChild->drawable.id;
+#endif
     }
     
     reply.nChildren = numChildren;
@@ -704,8 +713,12 @@ ProcConvertSelection(register ClientPtr client)
 	i = 0;
 	while ((i < NumCurrentSelections) && 
 	       CurrentSelections[i].selection != stuff->selection) i++;
-	if ((i < NumCurrentSelections) && 
+	if ((i < NumCurrentSelections) &&
+#ifdef NXAGENT_SERVER
 	    (CurrentSelections[i].window != None) && (CurrentSelections[i].client != NullClient)
+#else
+	    (CurrentSelections[i].window != None))
+#endif
 #ifdef XCSECURITY
 	    && (!client->CheckAccess ||
 		(* client->CheckAccess)(client, CurrentSelections[i].window,
@@ -713,7 +726,6 @@ ProcConvertSelection(register ClientPtr client)
 					CurrentSelections[i].pWin))
 #endif
 	    )
-
 	{        
 	    memset(&event, 0, sizeof(xEvent));
 	    event.u.u.type = SelectionRequest;
@@ -752,13 +764,14 @@ int
 ProcOpenFont(register ClientPtr client)
 {
     int	err;
-    char fontReq[256];
     REQUEST(xOpenFontReq);
 
     REQUEST_FIXED_SIZE(xOpenFontReq, stuff->nbytes);
     client->errorValue = stuff->fid;
     LEGAL_NEW_RESOURCE(stuff->fid, client);
 
+#ifdef NXAGENT_SERVER
+    char fontReq[256];
     memcpy(fontReq,(char *)&stuff[1],(stuff->nbytes<256)?stuff->nbytes:255);
     fontReq[stuff->nbytes]=0;
     if (strchr(fontReq,'*') || strchr(fontReq,'?'))
@@ -771,6 +784,7 @@ ProcOpenFont(register ClientPtr client)
        err = nxOpenFont(client, stuff->fid, (Mask) 0,
 		stuff->nbytes, (char *)&stuff[1]);
     }
+#endif
     else
     err = OpenFont(client, stuff->fid, (Mask) 0,
 		stuff->nbytes, (char *)&stuff[1]);
@@ -842,11 +856,12 @@ ProcCloseFont(register ClientPtr client)
 int
 ProcListFonts(register ClientPtr client)
 {
-    char tmp[256];
-
     REQUEST(xListFontsReq);
 
     REQUEST_FIXED_SIZE(xListFontsReq, stuff->nbytes);
+
+#ifdef NXAGENT_SERVER
+    char tmp[256];
     memcpy(tmp,(unsigned char *) &stuff[1],(stuff->nbytes<256)?stuff->nbytes:255);
     tmp[stuff->nbytes]=0;
 
@@ -854,6 +869,8 @@ ProcListFonts(register ClientPtr client)
     fprintf(stderr, "Dispatch: ListFont request with pattern %s max_names=%d\n",tmp,stuff->maxNames);
 #endif
     nxagentListRemoteFonts(tmp, stuff -> maxNames < nxagentMaxFontNames ? nxagentMaxFontNames : stuff->maxNames);
+#endif
+
     return ListFonts(client, (unsigned char *) &stuff[1], stuff->nbytes, 
 	stuff->maxNames);
 }
@@ -861,22 +878,23 @@ ProcListFonts(register ClientPtr client)
 int
 ProcListFontsWithInfo(register ClientPtr client)
 {
-    char tmp[256];
     REQUEST(xListFontsWithInfoReq);
 
     REQUEST_FIXED_SIZE(xListFontsWithInfoReq, stuff->nbytes);
 
+#ifdef NXAGENT_SERVER
+    char tmp[256];
     memcpy(tmp,(unsigned char *) &stuff[1],(stuff->nbytes<256)?stuff->nbytes:255);
     tmp[stuff->nbytes]=0;
 #ifdef NXAGENT_FONTMATCH_DEBUG
     fprintf(stderr, "Dispatch: ListFont with info request with pattern %s max_names=%d\n",tmp,stuff->maxNames);
 #endif
     nxagentListRemoteFonts(tmp, stuff -> maxNames < nxagentMaxFontNames ? nxagentMaxFontNames :stuff->maxNames);
+#endif
 
     return StartListFontsWithInfo(client, stuff->nbytes,
 				  (unsigned char *) &stuff[1], stuff->maxNames);
 }
-
 
 int
 ProcFreePixmap(register ClientPtr client)
@@ -969,6 +987,7 @@ ProcSetScreenSaver (register ClientPtr client)
         return BadValue;
     }
 
+#ifdef NXAGENT_SERVER
     /*
      * The NX agent uses the screen saver procedure
      * to monitor the user activities and launch its
@@ -983,6 +1002,7 @@ ProcSetScreenSaver (register ClientPtr client)
 
     if (nxagentOption(Timeout) == 0)
     {
+#endif
       if (blankingOption == DefaultBlanking)
       {
 	ScreenSaverBlanking = defaultScreenSaverBlanking;
@@ -1020,7 +1040,9 @@ ProcSetScreenSaver (register ClientPtr client)
       }
 
       SetScreenSaverTimer();
+#ifdef NXAGENT_SERVER
     }
+
     #ifdef TEST
 
     else
@@ -1030,7 +1052,7 @@ ProcSetScreenSaver (register ClientPtr client)
     }
 
     #endif
-
+#endif
     return (client->noClientException);
 }
 
@@ -1048,6 +1070,7 @@ int ProcForceScreenSaver(register ClientPtr client)
         return BadValue;
     }
 
+#ifdef NXAGENT_SERVER
     /*
      * The NX agent uses the screen saver procedure
      * to monitor the user activities and launch its
@@ -1058,7 +1081,9 @@ int ProcForceScreenSaver(register ClientPtr client)
 
     if (nxagentOption(Timeout) == 0)
     {
+#endif
       SaveScreens(SCREEN_SAVER_FORCER, (int)stuff->mode);
+#ifdef NXAGENT_SERVER
     }
 
     #ifdef TEST
@@ -1070,6 +1095,7 @@ int ProcForceScreenSaver(register ClientPtr client)
     }
 
     #endif
+#endif
 
     return client->noClientException;
 }
@@ -1085,6 +1111,7 @@ int ProcForceScreenSaver(register ClientPtr client)
 void
 CloseDownClient(register ClientPtr client)
 {
+#ifdef NXAGENT_SERVER
     /*
      * There must be a better way to hook a
      * call-back function to be called any
@@ -1106,6 +1133,7 @@ CloseDownClient(register ClientPtr client)
      */
 
     nxagentCheckIfShadowAgent(client);
+#endif
 
     xorg_CloseDownClient(client);
 }

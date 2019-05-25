@@ -139,8 +139,13 @@ ProcRenderQueryVersion (ClientPtr client)
         .type = X_Reply,
         .sequenceNumber = client->sequence,
         .length = 0,
+#ifdef NXAGENT_SERVER
         .majorVersion = nxagentRenderVersionMajor,
         .minorVersion = nxagentRenderVersionMinor
+#else
+        .majorVersion = SERVER_RENDER_MAJOR_VERSION,
+        .minorVersion = SERVER_RENDER_MINOR_VERSION
+#endif
     };
 
     REQUEST(xRenderQueryVersionReq);
@@ -408,7 +413,10 @@ ProcRenderCreatePicture (ClientPtr client)
 			      &error);
     if (!pPicture)
 	return error;
+#ifdef NXAGENT_SERVER
+    /* FIXME: shouldn't this be integrated into CreatePicture? */
     nxagentCreatePicture(pPicture, stuff -> mask);
+#endif
 
     if (!AddResource (stuff->pid, PictureType, (void *)pPicture))
 	return BadAlloc;
@@ -421,7 +429,6 @@ ProcRenderChangePicture (ClientPtr client)
     PicturePtr	    pPicture;
     REQUEST(xRenderChangePictureReq);
     int len;
-    int error;
 
     REQUEST_AT_LEAST_SIZE(xRenderChangePictureReq);
     VERIFY_PICTURE (pPicture, stuff->picture, client, DixWriteAccess,
@@ -431,12 +438,19 @@ ProcRenderChangePicture (ClientPtr client)
     if (Ones(stuff->mask) != len)
 	return BadLength;
     
-    error = ChangePicture (pPicture, stuff->mask, (XID *) (stuff + 1),
-			  (DevUnion *) 0, client);
+#ifdef NXAGENT_SERVER
+    {
+	int error = ChangePicture (pPicture, stuff->mask, (XID *) (stuff + 1),
+				   (DevUnion *) 0, client);
     
-    nxagentChangePicture(pPicture, stuff->mask);
+	nxagentChangePicture(pPicture, stuff->mask);
 
-    return error;
+	return error;
+    }
+#else
+    return ChangePicture (pPicture, stuff->mask, (XID *) (stuff + 1),
+			  (DevUnion *) 0, client);
+#endif
 }
 
 static int
@@ -453,6 +467,7 @@ ProcRenderSetPictureClipRectangles (ClientPtr client)
     if (!pPicture->pDrawable)
         return BadDrawable;
 
+#ifdef NXAGENT_SERVER
     /*
      * The original code used sizeof(xRenderChangePictureReq).
      * This was harmless, as both structures have the same size.
@@ -460,18 +475,23 @@ ProcRenderSetPictureClipRectangles (ClientPtr client)
      * nr = (client->req_len << 2) - sizeof(xRenderChangePictureReq);
      */
     nr = (client->req_len << 2) - sizeof(xRenderSetPictureClipRectanglesReq);
+#else
+    nr = (client->req_len << 2) - sizeof(xRenderChangePictureReq);
+#endif
     if (nr & 4)
 	return BadLength;
     nr >>= 3;
     result = SetPictureClipRects (pPicture, 
 				  stuff->xOrigin, stuff->yOrigin,
 				  nr, (xRectangle *) &stuff[1]);
+#ifdef NXAGENT_SERVER
     nxagentChangePictureClip (pPicture,
                               CT_NONE,
                               nr,
                               (xRectangle *) &stuff[1],
                               (int)stuff -> xOrigin,
                               (int)stuff -> yOrigin);
+#endif
 
     if (client->noClientException != Success)
         return(client->noClientException);
@@ -712,15 +732,15 @@ ProcRenderTrapezoids (ClientPtr client)
 	return BadLength;
     ntraps /= sizeof (xTrapezoid);
     if (ntraps)
+#ifdef NXAGENT_SERVER
     {
       if (pFormat != NULL)
       {
-        if (nxagentTrapezoidExtents && nxagentTrapezoidExtents != NullBox)
-          free(nxagentTrapezoidExtents);
+	if (nxagentTrapezoidExtents && nxagentTrapezoidExtents != NullBox)
+	  free(nxagentTrapezoidExtents);
 
-        nxagentTrapezoidExtents = (BoxPtr) malloc(sizeof(BoxRec));
-
-        miTrapezoidBounds (ntraps, (xTrapezoid *) &stuff[1], nxagentTrapezoidExtents);
+	nxagentTrapezoidExtents = (BoxPtr) malloc(sizeof(BoxRec));
+	miTrapezoidBounds (ntraps, (xTrapezoid *) &stuff[1], nxagentTrapezoidExtents);
       }
 
       if (nxagentCompositePredicate(pSrc, pDst) == 1)
@@ -737,10 +757,14 @@ ProcRenderTrapezoids (ClientPtr client)
       if (nxagentTrapezoidExtents != NullBox)
       {
         free(nxagentTrapezoidExtents);
-
         nxagentTrapezoidExtents = NullBox;
       }
     }
+#else
+	CompositeTrapezoids (stuff->op, pSrc, pDst, pFormat,
+			     stuff->xSrc, stuff->ySrc,
+			     ntraps, (xTrapezoid *) &stuff[1]);
+#endif
 
     return client->noClientException;
 }
@@ -792,7 +816,9 @@ ProcRenderCreateGlyphSet (ClientPtr client)
     if (!AddResource (stuff->gsid, GlyphSetType, (void *)glyphSet))
 	return BadAlloc;
 
+#ifdef NXAGENT_SERVER
     nxagentCreateGlyphSet(glyphSet);
+#endif
 
     return Success;
 }
@@ -818,7 +844,9 @@ ProcRenderReferenceGlyphSet (ClientPtr client)
     }
     glyphSet->refcnt++;
 
+#ifdef NXAGENT_SERVER
     nxagentReferenceGlyphSet(glyphSet);
+#endif
 
     if (!AddResource (stuff->gsid, GlyphSetType, (void *)glyphSet))
 	return BadAlloc;
@@ -842,7 +870,9 @@ ProcRenderFreeGlyphSet (ClientPtr client)
 	return RenderErrBase + BadGlyphSet;
     }
 
+#ifdef NXAGENT_SERVER
     nxagentFreeGlyphSet(glyphSet);
+#endif
 
     FreeResource (stuff->glyphset, RT_NONE);
     return client->noClientException;
@@ -870,7 +900,9 @@ ProcRenderFreeGlyphs (ClientPtr client)
     nglyph = ((client->req_len << 2) - sizeof (xRenderFreeGlyphsReq)) >> 2;
     gids = (CARD32 *) (stuff + 1);
 
+#ifdef NXAGENT_SERVER
     nxagentFreeGlyphs(glyphSet, gids, nglyph);
+#endif
 
     while (nglyph-- > 0)
     {
@@ -912,7 +944,9 @@ ProcRenderCompositeGlyphs (ClientPtr client)
     int		    size;
     int		    n;
     
+#ifdef NXAGENT_SERVER
     XGlyphElt8      *elements, *elementsBase;
+#endif
 
     REQUEST(xRenderCompositeGlyphsReq);
 
@@ -1006,6 +1040,7 @@ ProcRenderCompositeGlyphs (ClientPtr client)
 	}
     }
 
+#ifdef NXAGENT_SERVER
     elementsBase = malloc(nlist * sizeof(XGlyphElt8));
     if (!elementsBase)
     {
@@ -1015,11 +1050,12 @@ ProcRenderCompositeGlyphs (ClientPtr client)
 	    free(listsBase);
 	return BadAlloc;
     }
+    elements = elementsBase;
+#endif
 
     buffer = (CARD8 *) (stuff + 1);
     glyphs = glyphsBase;
     lists = listsBase;
-    elements = elementsBase;
     while (buffer + sizeof (xGlyphElt) < end)
     {
 	elt = (xGlyphElt *) buffer;
@@ -1027,10 +1063,12 @@ ProcRenderCompositeGlyphs (ClientPtr client)
 	
 	if (elt->len == 0xff)
 	{
+#ifdef NXAGENT_SERVER
             #ifdef DEBUG
             fprintf(stderr, "ProcRenderCompositeGlyphs: Glyphset change with base size [%d].\n",
                         size);
             #endif
+#endif
 
 	    if (buffer + sizeof (GlyphSet) < end)
 	    {
@@ -1061,6 +1099,7 @@ ProcRenderCompositeGlyphs (ClientPtr client)
 	    lists->format = glyphSet->format;
 	    lists->len = 0;
 
+#ifdef NXAGENT_SERVER
             if (glyphSet -> remoteID == 0)
             {
               #ifdef TEST
@@ -1076,6 +1115,7 @@ ProcRenderCompositeGlyphs (ClientPtr client)
             elements -> nchars = elt->len;
             elements -> xOff = elt->deltax;
             elements -> yOff = elt->deltay;
+#endif
 	    n = elt->len;
 	    while (n--)
 	    {
@@ -1102,7 +1142,9 @@ ProcRenderCompositeGlyphs (ClientPtr client)
 	    if (space & 3)
 		buffer += 4 - (space & 3);
 	    lists++;
+#ifdef NXAGENT_SERVER
             elements++;
+#endif
 	}
     }
     if (buffer > end)
@@ -1117,6 +1159,7 @@ ProcRenderCompositeGlyphs (ClientPtr client)
 	return BadLength;
     }
 
+#ifdef NXAGENT_SERVER
     /*
      * We need to know the glyphs extents to synchronize
      * the drawables involved in the composite text ope-
@@ -1159,17 +1202,28 @@ ProcRenderCompositeGlyphs (ClientPtr client)
                       listsBase,
                       glyphsBase);
     }
-
     free(nxagentGlyphsExtents);
     nxagentGlyphsExtents = NullBox;
+
+    free(elementsBase);
+
+#else
+    CompositeGlyphs (stuff->op,
+		     pSrc,
+		     pDst,
+		     pFormat,
+		     stuff->xSrc,
+		     stuff->ySrc,
+		     nlist,
+		     listsBase,
+		     glyphsBase);
+#endif
 
     if (glyphsBase != glyphsLocal)
 	free (glyphsBase);
     if (listsBase != listsLocal)
 	free (listsBase);
     
-    free(elementsBase);
-
     return client->noClientException;
 }
 
@@ -1202,12 +1256,14 @@ ProcRenderFillRectangles (ClientPtr client)
 		    things,
 		    (xRectangle *) &stuff[1]);
 
+#ifdef NXAGENT_SERVER
     ValidatePicture (pDst);
     nxagentCompositeRects(stuff -> op,
                           pDst,
                           &stuff -> color,
                           things,
                           (xRectangle *) &stuff[1]);
+#endif
     
     return client->noClientException;
 }
@@ -1229,8 +1285,6 @@ ProcRenderCreateCursor (ClientPtr client)
     CursorPtr	    pCursor;
     CARD32	    twocolor[3];
     int		    ncolor;
-
-    RealizeCursorProcPtr saveRealizeCursor;
 
     REQUEST_SIZE_MATCH (xRenderCreateCursorReq);
     LEGAL_NEW_RESOURCE(stuff->cid, client);
@@ -1291,7 +1345,7 @@ ProcRenderCreateCursor (ClientPtr client)
 	    return (BadImplementation);
 	}
 	pPixmap = (*pScreen->CreatePixmap) (pScreen, width, height, 32,
-	                                   CREATE_PIXMAP_USAGE_SCRATCH);
+	                                    CREATE_PIXMAP_USAGE_SCRATCH);
 	if (!pPixmap)
 	{
 	    free (argbbits);
@@ -1401,6 +1455,7 @@ ProcRenderCreateCursor (ClientPtr client)
     cm.xhot = stuff->x;
     cm.yhot = stuff->y;
 
+#ifdef NXAGENT_SERVER
     /*
      * This cursor uses RENDER, so we make sure
      * that it is allocated in a way that allows
@@ -1410,10 +1465,10 @@ ProcRenderCreateCursor (ClientPtr client)
      * client.
      */
 
-    saveRealizeCursor = pScreen -> RealizeCursor;
+    RealizeCursorProcPtr saveRealizeCursor = pScreen -> RealizeCursor;
 
     pScreen -> RealizeCursor = nxagentCursorSaveRenderInfo;
-
+#endif
     pCursor = AllocCursorARGB (srcbits, mskbits, argbbits, &cm,
 			       GetColor(twocolor[0], 16),
 			       GetColor(twocolor[0], 8),
@@ -1422,6 +1477,7 @@ ProcRenderCreateCursor (ClientPtr client)
 			       GetColor(twocolor[1], 8),
 			       GetColor(twocolor[1], 0));
 
+#ifdef NXAGENT_SERVER
     pScreen -> RealizeCursor = saveRealizeCursor;
 
     /*
@@ -1440,8 +1496,8 @@ ProcRenderCreateCursor (ClientPtr client)
     nxagentCursorPostSaveRenderInfo(pCursor, pScreen, pSrc, stuff -> x, stuff -> y);
 
     nxagentRenderRealizeCursor(pScreen, pCursor);
-
-    if (AddResource(stuff->cid, RT_CURSOR, (void *)pCursor))
+#endif
+    if (pCursor && AddResource(stuff->cid, RT_CURSOR, (void *)pCursor))
 	return (client->noClientException);
     return BadAlloc;
 }
@@ -1458,8 +1514,10 @@ ProcRenderSetPictureTransform (ClientPtr client)
 		    RenderErrBase + BadPicture);
     result = SetPictureTransform (pPicture, (PictTransform *) &stuff->transform);
 
+#ifdef NXAGENT_SERVER
     nxagentSetPictureTransform(pPicture, &stuff->transform);
-    
+#endif
+
     if (client->noClientException != Success)
         return(client->noClientException);
     else
@@ -1484,7 +1542,9 @@ ProcRenderSetPictureFilter (ClientPtr client)
     nparams = ((xFixed *) stuff + client->req_len) - params;
     result = SetPictureFilter (pPicture, name, stuff->nbytes, params, nparams);
 
+#ifdef NXAGENT_SERVER
     nxagentSetPictureFilter(pPicture, name, stuff->nbytes, params, nparams);
+#endif
 
     return result;
 }
@@ -1529,12 +1589,14 @@ ProcRenderCreateAnimCursor (ClientPtr client)
     if (ret != Success)
 	return ret;
 
+#ifdef NXAGENT_SERVER
     nxagentAnimCursorBits = pCursor -> bits;
 
     for (i = 0; i < MAXSCREENS; i++)
     {
       pCursor -> devPriv[i] = NULL;
     }
+#endif
 
     if (AddResource (stuff->cid, RT_CURSOR, (void *)pCursor))
 	return client->noClientException;
@@ -1554,11 +1616,11 @@ static int ProcRenderCreateSolidFill(ClientPtr client)
     pPicture = CreateSolidPicture(stuff->pid, &stuff->color, &error);
     if (!pPicture)
 	return error;
-    /* AGENT SERVER */
 
+#ifdef NXAGENT_SERVER
     nxagentRenderCreateSolidFill(pPicture, &stuff -> color);
+#endif
 
-    /* AGENT SERVER */
     if (!AddResource (stuff->pid, PictureType, (void *)pPicture))
 	return BadAlloc;
     return Success;
@@ -1590,12 +1652,12 @@ static int ProcRenderCreateLinearGradient (ClientPtr client)
                                             stuff->nStops, stops, colors, &error);
     if (!pPicture)
 	return error;
-    /* AGENT SERVER */
 
+#ifdef NXAGENT_SERVER
     nxagentRenderCreateLinearGradient(pPicture, &stuff->p1, &stuff->p2,
                                           stuff->nStops, stops, colors);
+#endif
 
-    /* AGENT SERVER */
     if (!AddResource (stuff->pid, PictureType, (void *)pPicture))
 	return BadAlloc;
     return Success;
@@ -1626,14 +1688,15 @@ static int ProcRenderCreateRadialGradient (ClientPtr client)
                                             stuff->nStops, stops, colors, &error);
     if (!pPicture)
 	return error;
-    /* AGENT SERVER */
 
+#ifdef NXAGENT_SERVER
     nxagentRenderCreateRadialGradient(pPicture, &stuff->inner, &stuff->outer,
                                           stuff->inner_radius,
                                               stuff->outer_radius, 
                                                   stuff->nStops, stops, colors);
 
-    /* AGENT SERVER */
+#endif
+
     if (!AddResource (stuff->pid, PictureType, (void *)pPicture))
 	return BadAlloc;
     return Success;
@@ -1663,13 +1726,13 @@ static int ProcRenderCreateConicalGradient (ClientPtr client)
                                              stuff->nStops, stops, colors, &error);
     if (!pPicture)
 	return error;
-    /* AGENT SERVER */
 
+#ifdef NXAGENT_SERVER
     nxagentRenderCreateConicalGradient(pPicture, &stuff->center,
                                            stuff->angle, stuff->nStops, stops,
                                                colors);
+#endif
 
-    /* AGENT SERVER */
     if (!AddResource (stuff->pid, PictureType, (void *)pPicture))
 	return BadAlloc;
     return Success;
