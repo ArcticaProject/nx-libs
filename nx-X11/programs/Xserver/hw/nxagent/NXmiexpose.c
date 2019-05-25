@@ -107,9 +107,6 @@ miWindowExposures(pWin, prgn, other_exposed)
     WindowPtr pWin;
     register RegionPtr prgn, other_exposed;
 {
-
-    int total;
-
     RegionPtr   exposures = prgn;
     if (pWin->backStorage && prgn)
 	/*
@@ -146,15 +143,19 @@ miWindowExposures(pWin, prgn, other_exposed)
 	    exposures = other_exposed;
 	}
 
+#ifdef NXAGENT_SERVER
         /*
          * If the number of rectangles is greater
          * than 4, let the function decide.
          */
 
-        total = RegionNumRects(exposures);
+        int total = RegionNumRects(exposures);
 
         if (clientInterested && exposures && (total > RECTLIMIT ||
                 (total > 4 && nxagentExtentsPredicate(total) == 1)))
+ #else
+        if (clientInterested && exposures && (RegionNumRects(exposures) > RECTLIMIT))
+ #endif
 	{
 	    /*
 	     * If we have LOTS of rectangles, we decide to take the extents
