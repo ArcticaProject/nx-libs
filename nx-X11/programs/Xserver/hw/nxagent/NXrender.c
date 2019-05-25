@@ -188,8 +188,6 @@ ProcRenderQueryPictFormats (ClientPtr client)
     int				    s;
     int				    numScreens;
     int				    numSubpixel;
-
-    extern int                      nxagentAlphaEnabled;
 /*    REQUEST(xRenderQueryPictFormatsReq); */
 
     REQUEST_SIZE_MATCH(xRenderQueryPictFormatsReq);
@@ -233,9 +231,11 @@ ProcRenderQueryPictFormats (ClientPtr client)
 	       ndepth * sizeof (xPictDepth) +
 	       nvisual * sizeof (xPictVisual) +
 	       numSubpixel * sizeof (CARD32));
-    reply = (xRenderQueryPictFormatsReply *) calloc (1, rlength);
+    reply = (xRenderQueryPictFormatsReply *) malloc (rlength);
     if (!reply)
 	return BadAlloc;
+    memset(reply, 0, rlength);
+
     reply->type = X_Reply;
     reply->sequenceNumber = client->sequence;
     reply->length = (rlength - sizeof(xGenericReply)) >> 2;
@@ -266,7 +266,12 @@ ProcRenderQueryPictFormats (ClientPtr client)
 		pictForm->direct.greenMask = pFormat->direct.greenMask;
 		pictForm->direct.blue = pFormat->direct.blue;
 		pictForm->direct.blueMask = pFormat->direct.blueMask;
+#ifdef NXAGENT_SERVER
+		extern int nxagentAlphaEnabled;
 		pictForm->direct.alpha = nxagentAlphaEnabled ? pFormat->direct.alpha : 0;
+#else
+		pictForm->direct.alpha = pFormat->direct.alpha;
+#endif
 		pictForm->direct.alphaMask = pFormat->direct.alphaMask;
 		if (pFormat->type == PictTypeIndexed && pFormat->index.pColormap)
 		    pictForm->colormap = pFormat->index.pColormap->mid;
