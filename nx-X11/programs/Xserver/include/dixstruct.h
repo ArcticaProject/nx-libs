@@ -37,10 +37,6 @@ SOFTWARE.
  *      translation from client ids to server addresses.
  */
 
-#ifdef DEBUG
-#define MAX_REQUEST_LOG 100
-#endif
-
 extern CallbackListPtr ClientStateCallback;
 
 typedef struct {
@@ -121,10 +117,6 @@ typedef struct _Client {
     KeyCode		minKC,maxKC;
 #endif
 
-#ifdef DEBUG
-    unsigned char requestLog[MAX_REQUEST_LOG];
-    int         requestLogIndex;
-#endif
     unsigned long replyBytesRemaining;
 #ifdef XCSECURITY
     XID		authId;

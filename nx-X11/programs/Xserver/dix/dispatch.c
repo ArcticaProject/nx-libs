@@ -416,12 +416,6 @@ Dispatch(void)
 	        }
 
 		client->sequence++;
-#ifdef DEBUG
-		if (client->requestLogIndex == MAX_REQUEST_LOG)
-		    client->requestLogIndex = 0;
-		client->requestLog[client->requestLogIndex] = MAJOROP;
-		client->requestLogIndex++;
-#endif
 		if (result > (maxBigRequestSize << 2))
 		    result = BadLength;
 		else
@@ -3622,9 +3616,6 @@ void InitClient(ClientPtr client, int i, void * ospriv)
     client->numSaved = 0;
     client->saveSet = (SaveSetElt *)NULL;
     client->noClientException = Success;
-#ifdef DEBUG
-    client->requestLogIndex = 0;
-#endif
     client->requestVector = InitialVector;
     client->osPrivate = ospriv;
     client->swapped = FALSE;
