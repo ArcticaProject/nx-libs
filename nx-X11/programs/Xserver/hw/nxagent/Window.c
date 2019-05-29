@@ -3938,16 +3938,16 @@ int nxagentEmptyBSPixmapList(void)
 
 StoringPixmapPtr nxagentFindItemBSPixmapList(unsigned long pixmapId)
 {
-  int i;
-
-  for (i = 0; i < BSPIXMAPLIMIT; i++)
+  for (int i = 0; i < BSPIXMAPLIMIT; i++)
   {
     if ((nxagentBSPixmapList[i] != NULL) &&
             (nxagentBSPixmapList[i] -> storingPixmapId == pixmapId))
     {
       #ifdef TEST
-      fprintf(stderr, "nxagentFindItemBSPixmapList: pixmapId [%lu].\n", pixmapId);
-      fprintf(stderr, "nxagentFindItemBSPixmapList: nxagentBSPixmapList[%d] -> storingPixmapId [%lu].\n",
+      fprintf(stderr, "%s: pixmapId [%lu].\n", __func__, pixmapId);
+      fprintf(stderr, "%s: nxagentBSPixmapList[%d] = [%p].\n", __func__,
+                  i, (void *) nxagentBSPixmapList[i]);
+      fprintf(stderr, "%s: nxagentBSPixmapList[%d] -> storingPixmapId [%lu].\n", __func__,
                   i, nxagentBSPixmapList[i] -> storingPixmapId);
       #endif
 
@@ -3955,15 +3955,13 @@ StoringPixmapPtr nxagentFindItemBSPixmapList(unsigned long pixmapId)
     }
   }
 
-  #ifdef TEST
-  fprintf(stderr, "nxagentFindItemBSPixmapList: WARNING! Item not found.\n");
+  #ifdef WARNING
+  fprintf(stderr, "%s: WARNING! Item not found.\n", __func__);
   #endif
 
   #ifdef TEST
-  fprintf(stderr, "nxagentFindItemBSPixmapList: Pixmap with id [%lu] not found.\n",
+  fprintf(stderr, "%s: Pixmap with id [%lu] not found.\n", __func__,
               pixmapId);
-  fprintf(stderr, "nxagentBSPixmapList[%d] = [%p].\n",
-              i, (void *) nxagentBSPixmapList[i]);
   #endif
 
   return NULL;
