@@ -727,7 +727,7 @@ Bool nxagentPositionWindow(WindowPtr pWin, int x, int y)
               (void *) pWin, nxagentWindow(pWin), x, y);
   #endif
 
-  nxagentAddConfiguredWindow(pWin, CWParent | CWX | CWY | CWWidth |
+  nxagentAddConfiguredWindow(pWin, CWSibling | CWX | CWY | CWWidth |
                                  CWHeight | CWBorderWidth);
 
   return True;
@@ -1284,7 +1284,7 @@ void nxagentConfigureWindow(WindowPtr pWin, unsigned int mask)
   {
     if (mask & CW_RootlessRestack)
     {
-      mask = CWStackingOrder;
+      mask = CWStackMode;
     }
   }
 
@@ -1299,7 +1299,7 @@ void nxagentConfigureWindow(WindowPtr pWin, unsigned int mask)
 
   if (mask & CW_Update)
   {
-    mask |= CWX | CWY | CWWidth | CWHeight | CWBorderWidth | CWStackingOrder;
+    mask |= CWX | CWY | CWWidth | CWHeight | CWBorderWidth | CWStackMode;
   }
 
   if (mask & CWX)
@@ -1378,7 +1378,7 @@ void nxagentConfigureWindow(WindowPtr pWin, unsigned int mask)
     MAKE_SYNC_CONFIGURE_WINDOW;
   }
 
-  if (mask & CWStackingOrder &&
+  if (mask & CWStackMode &&
           nxagentWindowPriv(pWin)->siblingAbove != nxagentWindowSiblingAbove(pWin))
   {
     WindowPtr pSib;
@@ -1478,7 +1478,7 @@ void nxagentConfigureWindow(WindowPtr pWin, unsigned int mask)
    * really needed?
    *
    *
-   *  else if (mask & CWStackingOrder)
+   *  else if (mask & CWStackMode)
    *  {
    *    if (nxagentSplashWindow)
    *    {
@@ -1920,12 +1920,12 @@ Bool nxagentRealizeWindow(WindowPtr pWin)
   /*
    * Not needed.
    *
-   * nxagentConfigureWindow(pWin, CWStackingOrder);
+   * nxagentConfigureWindow(pWin, CWStackMode);
    *
    * nxagentFlushConfigureWindow();
    */
 
-  nxagentAddConfiguredWindow(pWin, CWStackingOrder);
+  nxagentAddConfiguredWindow(pWin, CWStackMode);
   nxagentAddConfiguredWindow(pWin, CW_Shape);
 
   /* add by dimbor */
@@ -2116,10 +2116,10 @@ void nxagentCopyWindow(WindowPtr pWin, xPoint oldOrigin, RegionPtr oldRegion)
 void nxagentClipNotify(WindowPtr pWin, int dx, int dy)
 {
   /*
-   * nxagentConfigureWindow(pWin, CWStackingOrder);
+   * nxagentConfigureWindow(pWin, CWStackMode);
    */
 
-  nxagentAddConfiguredWindow(pWin, CWStackingOrder);
+  nxagentAddConfiguredWindow(pWin, CWStackMode);
   nxagentAddConfiguredWindow(pWin, CW_Shape);
 
   #ifndef NXAGENT_SHAPE
@@ -3572,10 +3572,10 @@ void nxagentAddConfiguredWindow(WindowPtr pWin, unsigned int valuemask)
 {
   unsigned int mask;
 
-  mask = valuemask & (CWParent | CWX | CWY | CWWidth | CWHeight |
-                   CWBorderWidth | CWStackingOrder | CW_Map | CW_Update | CW_Shape);
+  mask = valuemask & (CWSibling | CWX | CWY | CWWidth | CWHeight |
+                   CWBorderWidth | CWStackMode | CW_Map | CW_Update | CW_Shape);
 
-  valuemask &= ~(CWParent | CWX | CWY | CWWidth | CWHeight | CWBorderWidth | CWStackingOrder);
+  valuemask &= ~(CWSibling | CWX | CWY | CWWidth | CWHeight | CWBorderWidth | CWStackMode);
 
   if (mask & CWX &&
           nxagentWindowPriv(pWin)->x !=
@@ -3612,11 +3612,11 @@ void nxagentAddConfiguredWindow(WindowPtr pWin, unsigned int valuemask)
     valuemask |= CWBorderWidth;
   }
 
-  if (mask & CWStackingOrder &&
+  if (mask & CWStackMode &&
           nxagentWindowPriv(pWin)->siblingAbove !=
               nxagentWindowSiblingAbove(pWin))
   {
-    valuemask |= CWStackingOrder;
+    valuemask |= CWStackMode;
   }
 
   {
