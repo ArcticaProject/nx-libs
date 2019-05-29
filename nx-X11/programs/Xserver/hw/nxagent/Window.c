@@ -1942,20 +1942,6 @@ Bool nxagentRealizeWindow(WindowPtr pWin)
     #endif
    */
 
-  /*
-   * Mapping of the root window is called by
-   * InitRootWindow in DIX. Skip the operation
-   * if we are in rootless mode.
-   */
-
-  /*
-   * if (!nxagentOption(Rootless) ||
-   *         nxagentRootlessWindow != pWin)
-   * {
-   *   XMapWindow(nxagentDisplay, nxagentWindow(pWin));
-   * }
-   */
-
   #ifdef TEST
   if (nxagentOption(Rootless) && nxagentLastWindowDestroyed)
   {
