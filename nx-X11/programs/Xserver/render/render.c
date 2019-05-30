@@ -2022,10 +2022,15 @@ static int ProcRenderCreateConicalGradient (ClientPtr client)
 	return BadAlloc;
     return Success;
 }
+#endif /* NXAGENT_SERVER */
 
 
 static int
+#ifdef NXAGENT_SERVER
+xorg_ProcRenderDispatch (ClientPtr client)
+#else
 ProcRenderDispatch (ClientPtr client)
+#endif
 {
     REQUEST(xReq);
     
@@ -2034,7 +2039,6 @@ ProcRenderDispatch (ClientPtr client)
     else
 	return BadRequest;
 }
-#endif /* NXAGENT_SERVER */
 
 static int
 SProcRenderQueryVersion (ClientPtr client)
@@ -2606,9 +2610,12 @@ SProcRenderCreateConicalGradient (ClientPtr client)
     return (*ProcRenderVector[stuff->renderReqType]) (client);
 }
 
-#ifndef NXAGENT_SERVER
 static int
+#ifdef NXAGENT_SERVER
+xorg_SProcRenderDispatch (ClientPtr client)
+#else
 SProcRenderDispatch (ClientPtr client)
+#endif
 {
     REQUEST(xReq);
     
@@ -2617,7 +2624,6 @@ SProcRenderDispatch (ClientPtr client)
     else
 	return BadRequest;
 }
-#endif /* NXAGENT_SERVER */
 
 #ifdef PANORAMIX
 #include "panoramiX.h"

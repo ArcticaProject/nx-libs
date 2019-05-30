@@ -1743,14 +1743,13 @@ static int ProcRenderCreateConicalGradient (ClientPtr client)
     return Success;
 }
 
+static int xorg_ProcRenderDispatch (ClientPtr client);
 
 static int
 ProcRenderDispatch (ClientPtr client)
 {
     int result;
 
-    REQUEST(xReq);
-
     /*
      * Let the client fail if we are
      * hiding the RENDER extension.
@@ -1761,38 +1760,33 @@ ProcRenderDispatch (ClientPtr client)
         return BadRequest;
     }
 
-    if (stuff->data < RenderNumberRequests)
-    {
-        #ifdef TEST
-        fprintf(stderr, "ProcRenderDispatch: Request [%s] OPCODE#%d.\n",
-                    nxagentRenderRequestLiteral[stuff->data], stuff->data);
-        #endif
+    #ifdef TEST
+    fprintf(stderr, "ProcRenderDispatch: Request [%s] OPCODE#%d.\n",
+	        nxagentRenderRequestLiteral[stuff->data], stuff->data);
+    #endif
 
-        /*
-         * Set the nxagentGCTrap flag while
-         * dispatching a render operation to
-         * avoid reentrancy in GCOps.c.
-         */
+    /*
+     * Set the nxagentGCTrap flag while
+     * dispatching a render operation to
+     * avoid reentrancy in GCOps.c.
+     */
 
-        nxagentGCTrap = 1;
+    nxagentGCTrap = 1;
 
-        result = (*ProcRenderVector[stuff->data]) (client);
+    result = xorg_ProcRenderDispatch(client);
 
-        nxagentGCTrap = 0;
+    nxagentGCTrap = 0;
 
-        return result;
-    }
-    else
-	return BadRequest;
+    return result;
 }
+
+static int xorg_SProcRenderDispatch (ClientPtr client);
 
 static int
 SProcRenderDispatch (ClientPtr client)
 {
     int result;
 
-    REQUEST(xReq);
-    
     /*
      * Let the client fail if we are
      * hiding the RENDER extension.
@@ -1803,22 +1797,17 @@ SProcRenderDispatch (ClientPtr client)
         return BadRequest;
     }
 
-    if (stuff->data < RenderNumberRequests)
-    {
-        /*
-         * Set the nxagentGCTrap flag while
-         * dispatching a render operation to
-         * avoid reentrancy in GCOps.c.
-         */
+    /*
+     * Set the nxagentGCTrap flag while
+     * dispatching a render operation to
+     * avoid reentrancy in GCOps.c.
+     */
 
-        nxagentGCTrap = 1;
+    nxagentGCTrap = 1;
 
-        result = (*SProcRenderVector[stuff->data]) (client);
+    result = xorg_SProcRenderDispatch(client);
 
-        nxagentGCTrap = 0;
+    nxagentGCTrap = 0;
 
-        return result;
-    }
-    else
-	return BadRequest;
+    return result;
 }
