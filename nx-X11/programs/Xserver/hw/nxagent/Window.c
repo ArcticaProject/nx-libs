@@ -3470,6 +3470,12 @@ void nxagentSetTopLevelEventMask(WindowPtr pWin)
 }
 
 /*
+ * Run nxagentConfigureWindow() on all windows in
+ * nxagentConfiguredWindowList and move them from the list
+ * afterwards. The list will be empty then.
+ *
+ * This is also taking care of entries in nxagentExposeQueue that need
+ * to be synchronized with the real X server.
  */
 void nxagentFlushConfigureWindow(void)
 {
