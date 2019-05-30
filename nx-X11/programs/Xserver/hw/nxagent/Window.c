@@ -247,6 +247,15 @@ WindowPtr nxagentWindowPtr(Window window)
   return match.pWin;
 }
 
+/*
+ * from "Definition of the Porting Layer for X v11 Sample Server":
+ *
+ * This routine is a hook for when DIX creates a window. It should
+ * fill in the "Window Procedures in the WindowRec" below and also
+ * allocate the devPrivate block for it.
+ *
+ * See Xserver/fb/fbwindow.c for the sample server implementation.
+ */
 Bool nxagentCreateWindow(WindowPtr pWin)
 {
   unsigned long mask;
@@ -530,7 +539,7 @@ void nxagentSetVersionProperty(WindowPtr pWin)
   #ifdef DEBUG
   else
   {
-      fprintf(stderr, "%s: Added property [%s], value [%s] for root window [%x].\n", __func__, name, NX_VERSION_CURRENT_STRING, pWin);
+    fprintf(stderr, "%s: Added property [%s], value [%s] for root window [%x].\n", __func__, name, NX_VERSION_CURRENT_STRING, pWin);
   }
   #endif
 }
@@ -553,6 +562,15 @@ Bool nxagentSomeWindowsAreMapped(void)
   return False;
 }
 
+/*
+ * from "Definition of the Porting Layer for X v11 Sample Server":
+ *
+ * This routine is a hook for when DIX destroys a window. It should
+ * deallocate the devPrivate block for it and any other blocks that
+ * need to be freed, besides doing other cleanup actions.
+ *
+ * See Xserver/fb/fbwindow.c for the sample server implementation.
+ */
 Bool nxagentDestroyWindow(WindowPtr pWin)
 {
   nxagentPrivWindowPtr pWindowPriv;
@@ -683,6 +701,20 @@ Bool nxagentDestroyWindow(WindowPtr pWin)
   return True;
 }
 
+/*
+ * from "Definition of the Porting Layer for X v11 Sample Server":
+ *
+ * This routine is a hook for when DIX moves or resizes a window. It
+ * should do whatever private operations need to be done when a window
+ * is moved or resized. For instance, if DDX keeps a pixmap tile used
+ * for drawing the background or border, and it keeps the tile rotated
+ * such that it is longword aligned to longword locations in the frame
+ * buffer, then you should rotate your tiles here. The actual graphics
+ * involved in moving the pixels on the screen and drawing the border
+ * are handled by CopyWindow(), below.
+ *
+ * See Xserver/fb/fbwindow.c for the sample server implementation.
+ */
 Bool nxagentPositionWindow(WindowPtr pWin, int x, int y)
 {
   if (nxagentScreenTrap == 1)
@@ -1218,6 +1250,15 @@ void nxagentMoveViewport(ScreenPtr pScreen, int hShift, int vShift)
                                  nxagentOption(Width), nxagentOption(Height));
 }
 
+/*
+ * This will update the window on the real X server by calling
+ * XConfigureWindow()/XMapWindow()/XLowerWindow()/XRaiseWindow()
+ * mask definesthe values that need to be updated, see e.g
+ * man XConfigureWindow.
+ *
+ * In addition to the bit flags known to Xorg it uses these
+ * self-defined ones: CW_Update, CW_Shape, CW_Map, CW_RootlessRestack.
+ */
 void nxagentConfigureWindow(WindowPtr pWin, unsigned int mask)
 {
   unsigned int valuemask;
@@ -1510,6 +1551,16 @@ void nxagentConfigureWindow(WindowPtr pWin, unsigned int mask)
   }
 }
 
+/*
+ * from "Definition of the Porting Layer for X v11 Sample Server":
+ *
+ * This function will be called when a window is reparented. At the
+ * time of the call, pWin will already be spliced into its new
+ * position in the window tree, and pPriorParent is its previous
+ * parent. This function can be NULL.
+ *
+ * We simply pass this pver to the real X server.
+ */
 void nxagentReparentWindow(WindowPtr pWin, WindowPtr pOldParent)
 {
   if (nxagentScreenTrap)
@@ -1529,6 +1580,16 @@ void nxagentReparentWindow(WindowPtr pWin, WindowPtr pOldParent)
                               pWin->origin.y - wBorderWidth(pWin));
 }
 
+/*
+ * from "Definition of the Porting Layer for X v11 Sample Server":
+ *
+ * ChangeWindowAttributes is called whenever DIX changes window
+ * attributes, such as the size, front-to-back ordering, title, or
+ * anything of lesser severity that affects the window itself. The
+ * sample server implements this routine. It computes accelerators for
+ * quickly putting up background and border tiles. (See description of
+ * the set of routines stored in the WindowRec.)
+ */
 Bool nxagentChangeWindowAttributes(WindowPtr pWin, unsigned long mask)
 {
   XSetWindowAttributes attributes;
@@ -1822,6 +1883,7 @@ Bool nxagentChangeWindowAttributes(WindowPtr pWin, unsigned long mask)
   return 1;
 }
 
+/* Set the WM_STATE property of pWin to the desired value */
 void nxagentSetWMState(WindowPtr pWin, CARD32 desired)
 {
   Atom prop = MakeAtom("WM_STATE", strlen("WM_STATE"), True);
@@ -1834,6 +1896,20 @@ void nxagentSetWMState(WindowPtr pWin, CARD32 desired)
   }
 }
 
+/*
+ * from "Definition of the Porting Layer for X v11 Sample Server":
+ *
+ * RealizeWindow/UnRealizeWindow:
+ * These routines are hooks for when DIX maps (makes visible) and
+ * unmaps (makes invisible) a window. It should do whatever private
+ * operations need to be done when these happen, such as allocating or
+ * deallocating structures that are only needed for visible
+ * windows. RealizeWindow does NOT draw the window border, background
+ * or contents; UnrealizeWindow does NOT erase the window or generate
+ * exposure events for underlying windows; this is taken care of by
+ * DIX. DIX does, however, call PaintWindowBackground() and
+ * PaintWindowBorder() to perform some of these.
+-+ */
 Bool nxagentRealizeWindow(WindowPtr pWin)
 {
   if (nxagentScreenTrap == 1)
@@ -1894,6 +1970,7 @@ Bool nxagentRealizeWindow(WindowPtr pWin)
   return True;
 }
 
+/* See nxagentRealizeWindow for a description */
 Bool nxagentUnrealizeWindow(WindowPtr pWin)
 {
   if (nxagentScreenTrap)
@@ -1918,8 +1995,6 @@ Bool nxagentUnrealizeWindow(WindowPtr pWin)
 
 void nxagentFrameBufferPaintWindow(WindowPtr pWin, RegionPtr pRegion, int what)
 {
-  void (*PaintWindowBackgroundBackup)(WindowPtr, RegionPtr, int);
-
   if (pWin->backgroundState == BackgroundPixmap)
   {
     pWin->background.pixmap = nxagentVirtualPixmap(pWin->background.pixmap);
@@ -1930,13 +2005,22 @@ void nxagentFrameBufferPaintWindow(WindowPtr pWin, RegionPtr pRegion, int what)
     pWin->border.pixmap = nxagentVirtualPixmap(pWin->border.pixmap);
   }
 
-  PaintWindowBackgroundBackup = pWin->drawable.pScreen -> PaintWindowBackground;
+  /*
+   * Call fbPaintWindow(). We need to temporarily replace
+   * PaintWindowBackground() by ourself because fbPaintWindow() is
+   * recursively calling it for parent windows, too.
+   */
+  {
+    void (*PaintWindowBackgroundBackup)(WindowPtr, RegionPtr, int);
 
-  pWin->drawable.pScreen -> PaintWindowBackground = nxagentFrameBufferPaintWindow;
+    PaintWindowBackgroundBackup = pWin->drawable.pScreen -> PaintWindowBackground;
 
-  fbPaintWindow(pWin, pRegion, what);
+    pWin->drawable.pScreen -> PaintWindowBackground = nxagentFrameBufferPaintWindow;
 
-  pWin->drawable.pScreen -> PaintWindowBackground = PaintWindowBackgroundBackup;
+    fbPaintWindow(pWin, pRegion, what);
+
+    pWin->drawable.pScreen -> PaintWindowBackground = PaintWindowBackgroundBackup;
+  }
 
   if (pWin->backgroundState == BackgroundPixmap)
   {
@@ -2003,11 +2087,46 @@ void nxagentPaintWindowBorder(WindowPtr pWin, RegionPtr pRegion, int what)
   RegionUninit(&temp);
 }
 
+/*
+ * from "Definition of the Porting Layer for X v11 Sample Server":
+ *
+ * CopyWindow is called when a window is moved, and graphically moves
+ * to pixels of a window on the screen. It should not change any other
+ * state within DDX (see PositionWindow(), above).
+ *
+ * oldpt is the old location of the upper-left corner. oldRegion is
+ * the old region it is coming from. The new location and new region
+ * is stored in the WindowRec. oldRegion might modified in place by
+ * this routine (the sample implementation does this).
+ *
+ * CopyArea could be used, except that this operation has more
+ * complications. First of all, you do not want to copy a rectangle
+ * onto a rectangle. The original window may be obscured by other
+ * windows, and the new window location may be similarly
+ * obscured. Second, some hardware supports multiple windows with
+ * multiple depths, and your routine needs to take care of that.
+ *
+ * The pixels in oldRegion (with reference point oldpt) are copied to
+ * the window's new region (pWin->borderClip). pWin->borderClip is
+ * gotten directly from the window, rather than passing it as a
+ * parameter.
+ *
+ * The sample server implementation is in Xserver/fb/fbwindow.c.
+ */
 void nxagentCopyWindow(WindowPtr pWin, xPoint oldOrigin, RegionPtr oldRegion)
 {
   fbCopyWindow(pWin, oldOrigin, oldRegion);
 }
 
+/*
+ * from "Definition of the Porting Layer for X v11 Sample Server":
+ *
+ * Whenever the cliplist for a window is changed, this function is
+ * called to perform whatever hardware manipulations might be
+ * necessary. When called, the clip list and border clip regions in
+ * the window are set to the new values. dx,dy are the distance that
+ * the window has been moved (if at all).
+ */
 void nxagentClipNotify(WindowPtr pWin, int dx, int dy)
 {
   /*
@@ -2026,6 +2145,20 @@ void nxagentClipNotify(WindowPtr pWin, int dx, int dy)
   #endif /* NXAGENT_SHAPE */
 }
 
+/*
+ * from "Definition of the Porting Layer for X v11 Sample Server":
+ *
+ * The WindowExposures() routine paints the border and generates
+ * exposure events for the window. pRegion is an unoccluded region of
+ * the window, and pBSRegion is an occluded region that has backing
+ * store. Since exposure events include a rectangle describing what
+ * was exposed, this routine may have to send back a series of
+ * exposure events, one for each rectangle of the region. The count
+ * field in the expose event is a hint to the client as to the number
+ * of regions that are after this one. This routine must be
+ * provided. The sample server has a machine-independent version in
+ * Xserver/mi/miexpose.c.
+ */
 void nxagentWindowExposures(WindowPtr pWin, RegionPtr pRgn, RegionPtr other_exposed)
 {
   /*
@@ -3340,6 +3473,7 @@ Bool nxagentIsIconic(WindowPtr pWin)
   }
 }
 
+/* pass Eventmask to the real X server (for the rootless toplevel window only) */
 void nxagentSetTopLevelEventMask(WindowPtr pWin)
 {
   if (nxagentOption(Rootless) && nxagentWindowTopLevel(pWin))
@@ -3408,7 +3542,7 @@ void nxagentFlushConfigureWindow(void)
       index = index -> prev;
       free(tmp);
     }
-}
+  }
 
   nxagentConfiguredWindowList = NULL;
 
@@ -3438,6 +3572,14 @@ void nxagentFlushConfigureWindow(void)
   return;
 }
 
+/*
+ * from "Definition of the Porting Layer for X v11 Sample Server":
+ *
+ * If this routine is not NULL, DIX calls it shortly after calling
+ * ValidateTree, passing it the same arguments. This is useful for
+ * managing multi-layered framebuffers. The sample server sets this to
+ * NULL.
+ */
 void nxagentPostValidateTree(WindowPtr pParent, WindowPtr pChild, VTKind kind)
 {
   /*
@@ -3449,6 +3591,16 @@ void nxagentPostValidateTree(WindowPtr pParent, WindowPtr pChild, VTKind kind)
   return;
 }
 
+/*
+ * Add the given window to the beginning of
+ * nxagentconfiguredWindowList. This list collects all windows that
+ * need to be reconfigured on the real X server. valuemask defines
+ * what changes need to be done. The required values (like position,
+ * size, ...) are already stored in pWin).
+ *
+ * Note that we just add the window to the list here. The actual work
+ * will be done by nxagentFlushConfigureWindow() later.
+ */
 void nxagentAddConfiguredWindow(WindowPtr pWin, unsigned int valuemask)
 {
   unsigned int mask;
@@ -3518,6 +3670,12 @@ void nxagentAddConfiguredWindow(WindowPtr pWin, unsigned int valuemask)
   return;
 }
 
+/*
+ * remove pWin from nxgentConfigureWindowList
+ *
+ * This is just updating the linked list and freeing the
+ * given entry. It will not perform any X stuff
+ */
 void nxagentDeleteConfiguredWindow(WindowPtr pWin)
 {
   ConfiguredWindowStruct *index, *previous, *tmp;
