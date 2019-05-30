@@ -997,7 +997,8 @@ ProcRenderCompositeGlyphs (ClientPtr client)
 	listsBase = (GlyphListPtr) malloc (nlist * sizeof (GlyphListRec));
 	if (!listsBase)
 	{
-	    free(glyphsBase);
+	    if (glyphsBase != glyphsLocal)
+		free(glyphsBase);
 	    return BadAlloc;
 	}
     }
@@ -1005,9 +1006,11 @@ ProcRenderCompositeGlyphs (ClientPtr client)
     elementsBase = malloc(nlist * sizeof(XGlyphElt8));
     if (!elementsBase)
     {
-        free(glyphsBase);
-        free(listsBase);
-        return BadAlloc;
+	if (glyphsBase != glyphsLocal)
+	    free(glyphsBase);
+	if (listsBase != listsLocal)
+	    free(listsBase);
+	return BadAlloc;
     }
 
     buffer = (CARD8 *) (stuff + 1);
@@ -1040,6 +1043,9 @@ ProcRenderCompositeGlyphs (ClientPtr client)
 			free (glyphsBase);
 		    if (listsBase != listsLocal)
 			free (listsBase);
+#ifdef NXAGENT_SERVER
+		    free(elementsBase);
+#endif
 		    return RenderErrBase + BadGlyphSet;
 		}
 	    }
@@ -1097,7 +1103,16 @@ ProcRenderCompositeGlyphs (ClientPtr client)
 	}
     }
     if (buffer > end)
+    {
+	if (glyphsBase != glyphsLocal)
+	    free(glyphsBase);
+	if (listsBase != listsLocal)
+	    free(listsBase);
+#ifdef NXAGENT_SERVER
+	free(elementsBase);
+#endif
 	return BadLength;
+    }
 
     /*
      * We need to know the glyphs extents to synchronize

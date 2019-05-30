@@ -1347,9 +1347,8 @@ ProcRenderCompositeGlyphs (ClientPtr client)
 	listsBase = (GlyphListPtr) malloc (nlist * sizeof (GlyphListRec));
 	if (!listsBase)
 	{
-	    free(glyphsBase);
-	    free(listsBase);
-
+	    if (glyphsBase != glyphsLocal)
+	        free(glyphsBase);
 	    return BadAlloc;
 	}
     }
@@ -1417,8 +1416,13 @@ ProcRenderCompositeGlyphs (ClientPtr client)
 	}
     }
     if (buffer > end)
+    {
+	if (glyphsBase != glyphsLocal)
+	    free(glyphsBase);
+	if (listsBase != listsLocal)
+	    free(listsBase);
 	return BadLength;
-
+    }
     CompositeGlyphs (stuff->op,
 		     pSrc,
 		     pDst,
