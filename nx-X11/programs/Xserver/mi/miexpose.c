@@ -489,7 +489,6 @@ miSendExposures(pWin, pRgn, dx, dy)
     free(pEvent);
 }
 
-#ifndef NXAGENT_SERVER
 void 
 miWindowExposures(pWin, prgn, other_exposed)
     WindowPtr pWin;
@@ -578,7 +577,6 @@ miWindowExposures(pWin, prgn, other_exposed)
     else if (exposures && exposures != prgn)
 	RegionDestroy(exposures);
 }
-#endif
 
 /*
     this code is highly unlikely.  it is not haile selassie.

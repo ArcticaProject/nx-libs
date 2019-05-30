@@ -39,15 +39,6 @@ FFS_DEFINES = -DHAS_FFS
 MIINITEXTSRC = miinitext.c
 MIINITEXTOBJ = miinitext.o
 
-#if (!(defined(NXAgentServer) && NXAgentServer))
-NXAGENT_SKIP_SRCS =                     \
-                    miexpose.c          \
-                    $(NULL)
-NXAGENT_SKIP_OBJS =                     \
-                    miexpose.o          \
-                    $(NULL)
-#endif
-
 SRCS =  $(CBRT_SRC)             \
         mivaltree.c             \
         mipolyseg.c             \
@@ -83,7 +74,7 @@ SRCS =  $(CBRT_SRC)             \
         migc.c                  \
         micmap.c                \
         mioverlay.c             \
-        $(NXAGENT_SKIP_SRCS)    \
+        miexpose.c              \
         $(NULL)
 
 OBJS =  $(CBRT_OBJ)             \
@@ -121,7 +112,7 @@ OBJS =  $(CBRT_OBJ)             \
         migc.o                  \
         micmap.o                \
         mioverlay.o             \
-        $(NXAGENT_SKIP_OBJS)    \
+        miexpose.o              \
         $(NULL)
 
 #if defined(XorgVersion)
