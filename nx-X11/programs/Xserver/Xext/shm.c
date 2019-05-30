@@ -490,9 +490,12 @@ ProcShmDetach(client)
     return(client->noClientException);
 }
 
-#ifndef NXAGENT_SERVER
 static void
+#ifdef NXAGENT_SERVER
+xorg_miShmPutImage(dst, pGC, depth, format, w, h, sx, sy, sw, sh, dx, dy, data)
+#else
 miShmPutImage(dst, pGC, depth, format, w, h, sx, sy, sw, sh, dx, dy, data)
+#endif
     DrawablePtr dst;
     GCPtr	pGC;
     int		depth, w, h, sx, sy, sw, sh, dx, dy;
@@ -525,6 +528,7 @@ miShmPutImage(dst, pGC, depth, format, w, h, sx, sy, sw, sh, dx, dy, data)
     (*pmap->drawable.pScreen->DestroyPixmap)(pmap);
 }
 
+#ifndef NXAGENT_SERVER
 static void
 fbShmPutImage(dst, pGC, depth, format, w, h, sx, sy, sw, sh, dx, dy, data)
     DrawablePtr dst;
