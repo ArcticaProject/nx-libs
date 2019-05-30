@@ -140,42 +140,6 @@ ShmExtensionInit(void)
 }
 
 static void
-nxagent_miShmPutImage(dst, pGC, depth, format, w, h, sx, sy, sw, sh, dx, dy, data)
-    DrawablePtr dst;
-    GCPtr	pGC;
-    int		depth, w, h, sx, sy, sw, sh, dx, dy;
-    unsigned int format;
-    char 	*data;
-{
-    PixmapPtr pmap;
-    GCPtr putGC;
-
-    putGC = GetScratchGC(depth, dst->pScreen);
-    if (!putGC)
-    {
-	return;
-    }
-    pmap = (*dst->pScreen->CreatePixmap)(dst->pScreen, sw, sh, depth,
-                                        CREATE_PIXMAP_USAGE_SCRATCH);
-    if (!pmap)
-    {
-	FreeScratchGC(putGC);
-	return;
-    }
-    ValidateGC((DrawablePtr)pmap, putGC);
-    (*putGC->ops->PutImage)((DrawablePtr)pmap, putGC, depth, -sx, -sy, w, h, 0,
-			    (format == XYPixmap) ? XYPixmap : ZPixmap, data);
-    FreeScratchGC(putGC);
-    if (format == XYBitmap)
-	(void)(*pGC->ops->CopyPlane)((DrawablePtr)pmap, dst, pGC, 0, 0, sw, sh,
-				     dx, dy, 1L);
-    else
-	(void)(*pGC->ops->CopyArea)((DrawablePtr)pmap, dst, pGC, 0, 0, sw, sh,
-				    dx, dy);
-    (*pmap->drawable.pScreen->DestroyPixmap)(pmap);
-}
-
-static void
 miShmPutImage(dst, pGC, depth, format, w, h, sx, sy, sw, sh, dx, dy, data)
     DrawablePtr dst;
     GCPtr	pGC;
@@ -187,7 +151,7 @@ miShmPutImage(dst, pGC, depth, format, w, h, sx, sy, sw, sh, dx, dy, data)
 
     nxagentShmTrap = 0;
 
-    nxagent_miShmPutImage(dst, pGC, depth, format, w, h, sx, sy, sw, sh, dx, dy, data);
+    xorg_miShmPutImage(dst, pGC, depth, format, w, h, sx, sy, sw, sh, dx, dy, data);
 
     nxagentShmTrap = 1;
 
