@@ -189,9 +189,12 @@ static Bool CheckForShmSyscall()
 
 #endif
 
-#ifndef NXAGENT_SERVER
 void
+#ifdef NXAGENT_SERVER
+xorg_ShmExtensionInit(void)
+#else
 ShmExtensionInit(void)
+#endif
 {
     ExtensionEntry *extEntry;
     int i;
@@ -253,7 +256,6 @@ ShmExtensionInit(void)
 	EventSwapVector[ShmCompletionCode] = (EventSwapPtr) SShmCompletionEvent;
     }
 }
-#endif /* NXAGENT_SERVER */
 
 /*ARGSUSED*/
 static void
