@@ -20,7 +20,6 @@ extern int monitorResolution;
 extern Bool loadableFonts;
 extern int defaultColorVisualClass;
 
-extern Bool Must_have_memory;
 extern int GrabInProgress;
 extern char *ConnectionInfo;
 extern Bool noTestExtensions;

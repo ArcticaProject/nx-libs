@@ -153,11 +153,9 @@ ProcXChangeKeyboardDevice(register ClientPtr client)
 	df->time = xf->time;
 	df->traceGood = xf->traceGood;
 	if (df->traceSize != xf->traceSize) {
-	    Must_have_memory = TRUE;	/* XXX */
 	    df->trace = (WindowPtr *) realloc(df->trace,
 					       xf->traceSize *
 					       sizeof(WindowPtr));
-	    Must_have_memory = FALSE;	/* XXX */
 	}
 	df->traceSize = xf->traceSize;
 	for (i = 0; i < df->traceSize; i++)
