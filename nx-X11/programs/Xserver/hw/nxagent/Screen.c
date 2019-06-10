@@ -1781,6 +1781,11 @@ N/A
         fprintf(stderr, "NXAGENT_WINDOW_ID: SCREEN_WINDOW:[%d],WID:[0x%x]\n", pScreen->myNum, nxagentDefaultWindows[pScreen->myNum]);
       }
 
+      #ifdef TEST
+      fprintf(stderr, "nxagentOpenScreen: Created new default window for screen [%d] with id [0x%x].\n",
+              pScreen->myNum, nxagentDefaultWindows[pScreen->myNum]);
+      #endif
+
       if (nxagentOption(Rootless) == 0)
       {
         valuemask = CWEventMask;
@@ -1801,12 +1806,12 @@ N/A
         {
           fprintf(stderr, "NXAGENT_WINDOW_ID: INPUT_WINDOW:[%d],WID:[0x%x]\n", pScreen->myNum, nxagentInputWindows[pScreen->myNum]);
         }
-      }
 
-      #ifdef TEST
-      fprintf(stderr, "nxagentOpenScreen: Created new default window with id [0x%x].\n",
-              nxagentDefaultWindows[pScreen->myNum]);
-      #endif
+        #ifdef TEST
+        fprintf(stderr, "nxagentOpenScreen: Created new input window for screen [%d] with id [0x%x].\n",
+                pScreen->myNum, nxagentInputWindows[pScreen->myNum]);
+        #endif
+      }
 
       /*
        * Setting WM_CLASS to "X2GoAgent" when running in X2Go Agent mode
