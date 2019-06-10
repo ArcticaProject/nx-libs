@@ -305,7 +305,7 @@ void nxagentPrintClipboardStat(char *header)
   fprintf(stderr, "  lastClientSelection             (Atom) [% 4d][%s]\n", lastClientSelection, NameForAtom(lastClientSelection));
   fprintf(stderr, "  lastClientTarget                (Atom) [% 4d][%s]\n", lastClientTarget, NameForAtom(lastClientTarget));
   fprintf(stderr, "  lastClientTime                  (Time) [%u]\n", lastServerTime);
-  fprintf(stderr, "  lastClientReqTime               (Time) [%u]\n", lastServerTime);
+  fprintf(stderr, "  lastClientReqTime               (Time) [%u]\n", lastServerReqTime);
   fprintf(stderr, "  lastClientPropertySize (unsigned long) [%lu]\n", lastClientPropertySize);
   fprintf(stderr, "  lastClientStage (ClientSelectionStage) [%d][%s]\n", lastClientStage, GetClientSelectionStageString(lastClientStage));
 
