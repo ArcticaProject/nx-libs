@@ -392,8 +392,6 @@ Bool nxagentValidServerTargets(Atom target)
 
 void nxagentClearClipboard(ClientPtr pClient, WindowPtr pWindow)
 {
-  int i;
-
   #ifdef DEBUG
   fprintf(stderr, "%s: Called with client [%p] window [%p].\n", __func__,
               (void *) pClient, (void *) pWindow);
@@ -405,7 +403,7 @@ void nxagentClearClipboard(ClientPtr pClient, WindowPtr pWindow)
    * Only for PRIMARY and CLIPBOARD selections.
    */
 
-  for (i = 0; i < nxagentMaxSelections; i++)
+  for (int i = 0; i < nxagentMaxSelections; i++)
   {
     if ((pClient != NULL && lastSelectionOwner[i].client == pClient) ||
             (pWindow != NULL && lastSelectionOwner[i].windowPtr == pWindow))
@@ -1259,7 +1257,6 @@ void nxagentResetSelectionOwner(void)
 
 void nxagentSetSelectionOwner(Selection *pSelection)
 {
-  int i;
   #ifdef DEBUG
   fprintf(stderr, "%s: Got called.\n", __func__);
   #endif
@@ -1286,7 +1283,7 @@ void nxagentSetSelectionOwner(Selection *pSelection)
    * Only for PRIMARY and CLIPBOARD selections.
    */
 
-  for (i = 0; i < nxagentMaxSelections; i++)
+  for (int i = 0; i < nxagentMaxSelections; i++)
   {
     if (pSelection->selection == CurrentSelections[i].selection)
     {
