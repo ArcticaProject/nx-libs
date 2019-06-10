@@ -407,7 +407,7 @@ Bool nxagentCreateWindow(WindowPtr pWin)
 
   if (nxagentReportPrivateWindowIds)
   {
-    fprintf (stderr, "NXAGENT_WINDOW_ID: PRIVATE_WINDOW,WID:[0x%x]\n", nxagentWindowPriv(pWin)->window);
+    fprintf(stderr, "NXAGENT_WINDOW_ID: PRIVATE_WINDOW,WID:[0x%x],INT:[0x%x]\n", nxagentWindowPriv(pWin)->window, pWin->drawable.id);
   }
   #ifdef TEST
   fprintf(stderr, "nxagentCreateWindow: Created new window with id [0x%x].\n",
@@ -3037,7 +3037,7 @@ static void nxagentReconnectWindow(void * param0, XID param1, void * data_buffer
 
   if (nxagentReportPrivateWindowIds)
   {
-    fprintf (stderr, "NXAGENT_WINDOW_ID: PRIVATE_WINDOW,WID:[0x%x]\n", nxagentWindowPriv(pWin)->window);
+    fprintf(stderr, "NXAGENT_WINDOW_ID: PRIVATE_WINDOW,WID:[0x%x],INT:[0x%x]\n", nxagentWindowPriv(pWin)->window, pWin->drawable.id);
   }
   #ifdef TEST
   fprintf(stderr, "nxagentReconnectWindow: Created new window with id [0x%x].\n",
