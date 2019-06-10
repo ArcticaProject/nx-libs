@@ -404,11 +404,11 @@ Window nxagentCreateIconWindow(void)
 
   if (nxagentReportWindowIds)
   {
-    fprintf (stderr, "NXAGENT_WINDOW_ID: ICON_WINDOW,WID:[0x%x]\n", nxagentIconWindow);
+    fprintf (stderr, "NXAGENT_WINDOW_ID: ICON_WINDOW,WID:[0x%x]\n", w);
   }
   #ifdef TEST
   fprintf(stderr, "nxagentCreateIconWindow: Created new icon window with id [0x%x].\n",
-              nxagentIconWindow);
+              w);
   #endif
 
   /*
