@@ -2940,6 +2940,13 @@ int nxagentHandleXFixesSelectionNotify(XEvent *X)
       #endif
 
       #ifdef DEBUG
+      fprintf(stderr, "%s: CurrentSelections[i].lastTimeChanged [%d]\n", __func__, CurrentSelections[i].lastTimeChanged.milliseconds);
+      fprintf(stderr, "%s: Event timestamp [%ld]\n", __func__, xfixesEvent->xfixesselection.timestamp);
+      fprintf(stderr, "%s: Event selection timestamp [%ld]\n", __func__, xfixesEvent->xfixesselection.selection_timestamp);
+      fprintf(stderr, "%s: Event selection window [0x%x]\n", __func__, xfixesEvent->xfixesselection.window);
+      fprintf(stderr, "%s: Event selection owner [0x%x]\n", __func__, xfixesEvent->xfixesselection.owner);
+      fprintf(stderr, "%s: Event selection [%s]\n", __func__, NameForAtom(nxagentRemoteToLocalAtom(xfixesEvent->xfixesselection.selection)));
+
       fprintf(stderr, "nxagentHandleXFixesSelectionNotify: Subtype ");
 
       switch (xfixesEvent -> xfixesselection.subtype)
