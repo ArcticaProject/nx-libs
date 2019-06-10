@@ -1257,6 +1257,75 @@ void nxagentResetSelectionOwner(void)
   return;
 }
 
+#ifdef NXAGENT_CLIPBOARD
+void nxagentSetSelectionCallback(CallbackListPtr *callbacks, void *data,
+                                   void *args)
+{
+  /*
+   * Only act if the Trap is unset. The trap indicates that we are
+   * triggered by a clipboard event originating from the real X
+   * server. In that case we do not want to propagate back changes to
+   * the real X server, because it already knows about them and we
+   * would end up in an infinite loop of events. If there was a better
+   * way to identify that situation during Callback processing we
+   * could get rid of the Trap...
+  */
+  if (nxagentExternalClipboardEventTrap != 0)
+  {
+    #ifdef DEBUG
+    fprintf(stderr, "%s: Trap is set, doing nothing\n", __func__);
+    #endif
+    return;
+  }
+
+  SelectionInfoRec *info = (SelectionInfoRec *)args;
+
+  Selection * pCurSel = (Selection *)info->selection;
+
+  #ifdef DEBUG
+  fprintf(stderr, "%s: pCurSel->lastTimeChanged [%d]\n", __func__, pCurSel->lastTimeChanged.milliseconds);
+  #endif
+
+  if (info->kind == SelectionSetOwner)
+  {
+    #ifdef DEBUG
+    fprintf(stderr, "%s: called with SelectionCallbackKind SelectionSetOwner\n", __func__);
+    fprintf(stderr, "%s: pCurSel->pWin [0x%x]\n", __func__, pCurSel->pWin ? pCurSel->pWin->drawable.id : NULL);
+    fprintf(stderr, "%s: pCurSel->selection [%s]\n", __func__, NameForAtom(pCurSel->selection));
+    #endif
+
+    if ((pCurSel->pWin != NULL) &&
+        (nxagentOption(Clipboard) != ClipboardNone) &&
+        ((pCurSel->selection == XA_PRIMARY) ||
+         (pCurSel->selection == MakeAtom("CLIPBOARD", 9, 0))))
+    {
+      #ifdef DEBUG
+      fprintf(stderr, "%s: calling nxagentSetSelectionOwner\n", __func__);
+      #endif
+      nxagentSetSelectionOwner(pCurSel);
+    }
+  }
+  else if (info->kind == SelectionWindowDestroy)
+  {
+    #ifdef DEBUG
+    fprintf(stderr, "%s: called with SelectionCallbackKind SelectionWindowDestroy\n", __func__);
+    #endif
+  }
+  else if (info->kind == SelectionClientClose)
+  {
+    #ifdef DEBUG
+    fprintf(stderr, "%s: called with SelectionCallbackKind SelectionClientClose\n", __func__);
+    #endif
+  }
+  else
+  {
+    #ifdef DEBUG
+    fprintf(stderr, "%s: called with unknown SelectionCallbackKind\n", __func__);
+    #endif
+  }
+}
+#endif
+
 void nxagentSetSelectionOwner(Selection *pSelection)
 {
   #ifdef DEBUG
