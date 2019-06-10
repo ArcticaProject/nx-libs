@@ -120,3 +120,11 @@ int nxagentXkbCapsTrap = 0;
 
 int nxagentXkbNumTrap = 0;
 
+
+/*
+ * Set to indicate we are processing a clipboard event triggered by
+ * the real X server. This is used to avoid endless loops if callbacks
+ * would trigger another event by the real X server
+ */
+
+int nxagentExternalClipboardEventTrap = 0;

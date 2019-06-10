@@ -121,4 +121,12 @@ extern int nxagentXkbCapsTrap;
 
 extern int nxagentXkbNumTrap;
 
+/*
+ * Set to indicate we are processing a clipboard event triggered by
+ * the real X server. This is used to avoid endless loops if callbacks
+ * would trigger another event by the real X server
+ */
+
+extern int nxagentExternalClipboardEventTrap;
+
 #endif /* __Trap_H__ */
