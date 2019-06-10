@@ -1778,7 +1778,7 @@ N/A
 
       if (nxagentReportWindowIds)
       {
-        fprintf(stderr, "NXAGENT_WINDOW_ID: SCREEN_WINDOW:[%d],WID:[0x%x]\n", pScreen -> myNum, nxagentDefaultWindows[pScreen->myNum]);
+        fprintf(stderr, "NXAGENT_WINDOW_ID: SCREEN_WINDOW:[%d],WID:[0x%x]\n", pScreen->myNum, nxagentDefaultWindows[pScreen->myNum]);
       }
 
       if (nxagentOption(Rootless) == 0)
@@ -1787,9 +1787,9 @@ N/A
         mask = PointerMotionMask;
         attributes.event_mask = mask;
 
-        nxagentInputWindows[pScreen -> myNum] =
+        nxagentInputWindows[pScreen->myNum] =
             XCreateWindow(nxagentDisplay,
-                          nxagentDefaultWindows[pScreen -> myNum],
+                          nxagentDefaultWindows[pScreen->myNum],
                           0, 0,
                           nxagentOption(Width),
                           nxagentOption(Height),
@@ -1799,7 +1799,7 @@ N/A
 
         if (nxagentReportWindowIds)
         {
-          fprintf(stderr, "NXAGENT_WINDOW_ID: INPUT_WINDOW:[%d],WID:[0x%x]\n", pScreen -> myNum, nxagentInputWindows[pScreen->myNum]);
+          fprintf(stderr, "NXAGENT_WINDOW_ID: INPUT_WINDOW:[%d],WID:[0x%x]\n", pScreen->myNum, nxagentInputWindows[pScreen->myNum]);
         }
       }
 
