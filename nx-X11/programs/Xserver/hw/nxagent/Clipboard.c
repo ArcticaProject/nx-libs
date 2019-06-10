@@ -1239,7 +1239,9 @@ void nxagentResetSelectionOwner(void)
   {
     XSetSelectionOwner(nxagentDisplay, lastSelectionOwner[i].selection, serverWindow, CurrentTime);
 
+    #ifdef DEBUG
     fprintf(stderr, "%s: Reset clipboard state.\n", __func__);
+    #endif
 
     lastSelectionOwner[i].client = NULL;
     lastSelectionOwner[i].window = None;
@@ -1267,7 +1269,7 @@ void nxagentSetSelectionOwner(Selection *pSelection)
   }
 
   #ifdef DEBUG
-  fprintf(stderr, "%s: Setting selection owner to window [0x%x].\n", __func__,
+  fprintf(stderr, "%s: Setting selection owner to serverwindow ([0x%x]).\n", __func__,
               serverWindow);
   #endif
 
@@ -1287,6 +1289,20 @@ void nxagentSetSelectionOwner(Selection *pSelection)
   {
     if (pSelection->selection == CurrentSelections[i].selection)
     {
+      #ifdef DEBUG
+      fprintf(stderr, "%s: lastSelectionOwner.client [0x%x] -> [0x%x]\n", __func__, lastSelectionOwner[i].client, pSelection->client);
+      fprintf(stderr, "%s: lastSelectionOwner.window [0x%x] -> [0x%x]\n", __func__, lastSelectionOwner[i].window, pSelection->window);
+      fprintf(stderr, "%s: lastSelectionOwner.windowPtr [0x%x] -> [0x%x] [0x%x] (serverWindow: [0x%x])\n", __func__, lastSelectionOwner[i].windowPtr, pSelection->pWin, nxagentWindow(pSelection->pWin), serverWindow);
+      fprintf(stderr, "%s: lastSelectionOwner.lastTimeChanged [%d]\n", __func__, lastSelectionOwner[i].lastTimeChanged);
+      #endif
+
+      /*
+       * inform the real X server that our serverWindow is the
+       * clipboard owner. The real owner window (inside nxagent) is
+       * stored in lastSelectionOwner.window.
+       * lastSelectionOwner.windowPtr points to the struct that
+       * contains all information about the owner window
+       */
       XSetSelectionOwner(nxagentDisplay, lastSelectionOwner[i].selection, serverWindow, CurrentTime);
 
       lastSelectionOwner[i].client = pSelection->client;
