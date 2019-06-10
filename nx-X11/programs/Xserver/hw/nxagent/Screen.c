@@ -1776,6 +1776,11 @@ N/A
                         nxagentDefaultVisual(pScreen),
                         valuemask, &attributes);
 
+      if (nxagentReportWindowIds)
+      {
+        fprintf (stderr, "NXAGENT_WINDOW_ID: SCREEN_WINDOW:[%d],WID:[0x%x]\n", pScreen -> myNum, nxagentDefaultWindows[pScreen->myNum]);
+      }
+
        if (nxagentOption(Rootless) == 0)
        {
          valuemask = CWEventMask;
@@ -1791,12 +1796,12 @@ N/A
                            0, 0, InputOnly,
                            nxagentDefaultVisual(pScreen),
                            valuemask , &attributes);
+         if (nxagentReportWindowIds)
+         {
+           fprintf (stderr, "NXAGENT_WINDOW_ID: INPUT_WINDOW:[%d],WID:[0x%x]\n", pScreen -> myNum, nxagentInputWindows[pScreen->myNum]);
+         }
       }
 
-      if (nxagentReportWindowIds)
-      {
-        fprintf (stderr, "NXAGENT_WINDOW_ID: SCREEN_WINDOW:[%d],WID:[0x%x]\n", pScreen -> myNum, nxagentInputWindows[pScreen->myNum]);
-      }
       #ifdef TEST
       fprintf(stderr, "nxagentOpenScreen: Created new default window with id [0x%x].\n",
               nxagentDefaultWindows[pScreen->myNum]);
