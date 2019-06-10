@@ -764,15 +764,6 @@ ProcSetSelectionOwner(register ClientPtr client)
 	    CallCallbacks(&SelectionCallback, &info);
 	}
 
-#ifdef NXAGENT_CLIPBOARD
-      if ((CurrentSelections[i].pWin != NULL) &&
-              (nxagentOption(Clipboard) != ClipboardNone) &&
-                  ((CurrentSelections[i].selection == XA_PRIMARY) ||
-                       (CurrentSelections[i].selection == MakeAtom("CLIPBOARD", 9, 0))))
-      {
-        nxagentSetSelectionOwner(&CurrentSelections[i]);
-      }
-#endif
 	return (client->noClientException);
     }
     else 
