@@ -404,11 +404,11 @@ Window nxagentCreateIconWindow(void)
 
   if (nxagentReportWindowIds)
   {
-    fprintf (stderr, "NXAGENT_WINDOW_ID: ICON_WINDOW,WID:[0x%x]\n", nxagentIconWindow);
+    fprintf(stderr, "NXAGENT_WINDOW_ID: ICON_WINDOW,WID:[0x%x]\n", w);
   }
   #ifdef TEST
   fprintf(stderr, "nxagentCreateIconWindow: Created new icon window with id [0x%x].\n",
-              nxagentIconWindow);
+              w);
   #endif
 
   /*
@@ -1776,31 +1776,42 @@ N/A
                         nxagentDefaultVisual(pScreen),
                         valuemask, &attributes);
 
-       if (nxagentOption(Rootless) == 0)
-       {
-         valuemask = CWEventMask;
-         mask = PointerMotionMask;
-         attributes.event_mask = mask;
-
-         nxagentInputWindows[pScreen -> myNum] =
-             XCreateWindow(nxagentDisplay,
-                           nxagentDefaultWindows[pScreen -> myNum],
-                           0, 0,
-                           nxagentOption(Width),
-                           nxagentOption(Height),
-                           0, 0, InputOnly,
-                           nxagentDefaultVisual(pScreen),
-                           valuemask , &attributes);
-      }
-
       if (nxagentReportWindowIds)
       {
-        fprintf (stderr, "NXAGENT_WINDOW_ID: SCREEN_WINDOW:[%d],WID:[0x%x]\n", pScreen -> myNum, nxagentInputWindows[pScreen->myNum]);
+        fprintf(stderr, "NXAGENT_WINDOW_ID: SCREEN_WINDOW:[%d],WID:[0x%x]\n", pScreen->myNum, nxagentDefaultWindows[pScreen->myNum]);
       }
+
       #ifdef TEST
-      fprintf(stderr, "nxagentOpenScreen: Created new default window with id [0x%x].\n",
-              nxagentDefaultWindows[pScreen->myNum]);
+      fprintf(stderr, "nxagentOpenScreen: Created new default window for screen [%d] with id [0x%x].\n",
+              pScreen->myNum, nxagentDefaultWindows[pScreen->myNum]);
       #endif
+
+      if (nxagentOption(Rootless) == 0)
+      {
+        valuemask = CWEventMask;
+        mask = PointerMotionMask;
+        attributes.event_mask = mask;
+
+        nxagentInputWindows[pScreen->myNum] =
+            XCreateWindow(nxagentDisplay,
+                          nxagentDefaultWindows[pScreen->myNum],
+                          0, 0,
+                          nxagentOption(Width),
+                          nxagentOption(Height),
+                          0, 0, InputOnly,
+                          nxagentDefaultVisual(pScreen),
+                          valuemask , &attributes);
+
+        if (nxagentReportWindowIds)
+        {
+          fprintf(stderr, "NXAGENT_WINDOW_ID: INPUT_WINDOW:[%d],WID:[0x%x]\n", pScreen->myNum, nxagentInputWindows[pScreen->myNum]);
+        }
+
+        #ifdef TEST
+        fprintf(stderr, "nxagentOpenScreen: Created new input window for screen [%d] with id [0x%x].\n",
+                pScreen->myNum, nxagentInputWindows[pScreen->myNum]);
+        #endif
+      }
 
       /*
        * Setting WM_CLASS to "X2GoAgent" when running in X2Go Agent mode
