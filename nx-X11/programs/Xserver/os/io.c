@@ -424,8 +424,6 @@ ReadRequestFromClient(ClientPtr client)
 
     if (oci->ignoreBytes > 0) {
 	assert(needed == oci->ignoreBytes || needed == oci->size);
-	oci->ignoreBytes -= gotnow;
-	needed = gotnow = 0;
 	/*
 	 * The _XSERVTransRead call above may return more or fewer bytes than we
 	 * want to ignore.  Ignore the smaller of the two sizes.

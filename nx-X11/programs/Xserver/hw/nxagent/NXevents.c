@@ -381,79 +381,88 @@ XYToWindow(int x, int y)
     return spriteTrace[spriteTraceGood-1];
 }
 
-// static Bool
-// CheckMotion(xEvent *xE)
-// {
-//     WindowPtr prevSpriteWin = sprite.win;
-// 
+static Bool
+CheckMotion(xEvent *xE)
+{
+    WindowPtr prevSpriteWin = sprite.win;
+
 #ifdef PANORAMIX
-//     if(!noPanoramiXExtension)
-// 	return XineramaCheckMotion(xE);
+    if(!noPanoramiXExtension)
+	return XineramaCheckMotion(xE);
 #endif
 
-//     if (xE && !syncEvents.playingEvents)
-//     {
-// 	if (sprite.hot.pScreen != sprite.hotPhys.pScreen)
-// 	{
-// 	    sprite.hot.pScreen = sprite.hotPhys.pScreen;
-// 	    ROOT = sprite.hot.pScreen->root;
-// 	}
-// 	sprite.hot.x = XE_KBPTR.rootX;
-// 	sprite.hot.y = XE_KBPTR.rootY;
-// 	if (sprite.hot.x < sprite.physLimits.x1)
-// 	    sprite.hot.x = sprite.physLimits.x1;
-// 	else if (sprite.hot.x >= sprite.physLimits.x2)
-// 	    sprite.hot.x = sprite.physLimits.x2 - 1;
-// 	if (sprite.hot.y < sprite.physLimits.y1)
-// 	    sprite.hot.y = sprite.physLimits.y1;
-// 	else if (sprite.hot.y >= sprite.physLimits.y2)
-// 	    sprite.hot.y = sprite.physLimits.y2 - 1;
+    if (xE && !syncEvents.playingEvents)
+    {
+	if (sprite.hot.pScreen != sprite.hotPhys.pScreen)
+	{
+	    sprite.hot.pScreen = sprite.hotPhys.pScreen;
+	    ROOT = sprite.hot.pScreen->root;
+	}
+	sprite.hot.x = XE_KBPTR.rootX;
+	sprite.hot.y = XE_KBPTR.rootY;
+	if (sprite.hot.x < sprite.physLimits.x1)
+	    sprite.hot.x = sprite.physLimits.x1;
+	else if (sprite.hot.x >= sprite.physLimits.x2)
+	    sprite.hot.x = sprite.physLimits.x2 - 1;
+	if (sprite.hot.y < sprite.physLimits.y1)
+	    sprite.hot.y = sprite.physLimits.y1;
+	else if (sprite.hot.y >= sprite.physLimits.y2)
+	    sprite.hot.y = sprite.physLimits.y2 - 1;
 #ifdef SHAPE
-// 	if (sprite.hotShape)
-// 	    ConfineToShape(sprite.hotShape, &sprite.hot.x, &sprite.hot.y);
+	if (sprite.hotShape)
+	    ConfineToShape(sprite.hotShape, &sprite.hot.x, &sprite.hot.y);
 #endif
-// 	sprite.hotPhys = sprite.hot;
-// 
-//         /*
-//          * This code force cursor position to be inside the
-//          * root window of the agent. We can't view a reason
-//          * to do this and it interacts in an undesirable way
-//          * with toggling fullscreen.
-//          *
-//          * if ((sprite.hotPhys.x != XE_KBPTR.rootX) ||
-//          *          (sprite.hotPhys.y != XE_KBPTR.rootY))
-//          * {
-//          *   (*sprite.hotPhys.pScreen->SetCursorPosition)(
-//          *       sprite.hotPhys.pScreen,
-//          *           sprite.hotPhys.x, sprite.hotPhys.y, FALSE);
-//          * }
-//          */
-// 
-// 	XE_KBPTR.rootX = sprite.hot.x;
-// 	XE_KBPTR.rootY = sprite.hot.y;
-//     }
-// 
-//     sprite.win = XYToWindow(sprite.hot.x, sprite.hot.y);
+	sprite.hotPhys = sprite.hot;
+
+#ifdef NXAGENT_SERVER
+        /*
+         * This code force cursor position to be inside the
+         * root window of the agent. We can't view a reason
+         * to do this and it interacts in an undesirable way
+         * with toggling fullscreen.
+         *
+         * if ((sprite.hotPhys.x != XE_KBPTR.rootX) ||
+         *          (sprite.hotPhys.y != XE_KBPTR.rootY))
+         * {
+         *   (*sprite.hotPhys.pScreen->SetCursorPosition)(
+         *       sprite.hotPhys.pScreen,
+         *           sprite.hotPhys.x, sprite.hotPhys.y, FALSE);
+         * }
+         */
+#else
+	if ((sprite.hotPhys.x != XE_KBPTR.rootX) ||
+	    (sprite.hotPhys.y != XE_KBPTR.rootY))
+	{
+	    (*sprite.hotPhys.pScreen->SetCursorPosition)(
+		sprite.hotPhys.pScreen,
+		sprite.hotPhys.x, sprite.hotPhys.y, FALSE);
+	}
+#endif
+	XE_KBPTR.rootX = sprite.hot.x;
+	XE_KBPTR.rootY = sprite.hot.y;
+    }
+
+    sprite.win = XYToWindow(sprite.hot.x, sprite.hot.y);
 #ifdef notyet
-//     if (!(sprite.win->deliverableEvents &
-// 	  Motion_Filter(inputInfo.pointer->button))
-// 	!syncEvents.playingEvents)
-//     {
-// 	/* XXX Do PointerNonInterestBox here */
-//     }
+    if (!(sprite.win->deliverableEvents &
+	  Motion_Filter(inputInfo.pointer->button))
+	!syncEvents.playingEvents)
+    {
+	/* XXX Do PointerNonInterestBox here */
+    }
 #endif
-//     if (sprite.win != prevSpriteWin)
-//     {
-// 	if (prevSpriteWin != NullWindow) {
-// 	    if (!xE)
-// 		UpdateCurrentTimeIf();
-// 	    DoEnterLeaveEvents(prevSpriteWin, sprite.win, NotifyNormal);
-// 	}
-// 	PostNewCursor();
-//         return FALSE;
-//     }
-//     return TRUE;
-// }
+    if (sprite.win != prevSpriteWin)
+    {
+	if (prevSpriteWin != NullWindow) {
+	    if (!xE)
+		UpdateCurrentTimeIf();
+	    DoEnterLeaveEvents(prevSpriteWin, sprite.win, NotifyNormal);
+	}
+	PostNewCursor();
+        return FALSE;
+    }
+    return TRUE;
+}
 
 void
 DefineInitialRootWindow(register WindowPtr win)
