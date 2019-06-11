@@ -591,89 +591,18 @@ Bool nxagentModifyPixmapHeader(PixmapPtr pPixmap, int width, int height, int dep
                   bitsPerPixel, devKind, (void *) pPixData);
   #endif
 
-  if ((width > 0) && (height > 0) && (depth > 0) &&
-          (bitsPerPixel > 0) && (devKind > 0) && pPixData)
+  /*
+   * ignore return code, because the only case where this will return
+   * FALSE is pPixmap == NULL, which we have already caught above.
+   */
+  miModifyPixmapHeader(pPixmap, width, height, depth, bitsPerPixel, devKind, pPixData);
+  miModifyPixmapHeader(pVirtualPixmap, width, height, depth, bitsPerPixel, devKind, pPixData);
+
+  #ifdef PANIC
+
+  if (!((width > 0) && (height > 0) && (depth > 0) && (bitsPerPixel > 0) &&
+	(devKind > 0) && pPixData))
   {
-    pPixmap->drawable.depth = depth;
-    pPixmap->drawable.bitsPerPixel = bitsPerPixel;
-    pPixmap->drawable.id = 0;
-    pPixmap->drawable.serialNumber = NEXT_SERIAL_NUMBER;
-    pPixmap->drawable.x = 0;
-    pPixmap->drawable.y = 0;
-    pPixmap->drawable.width = width;
-    pPixmap->drawable.height = height;
-    pPixmap->devKind = devKind;
-    pPixmap->refcnt = 1;
-    pPixmap->devPrivate.ptr = pPixData;
-
-    pVirtualPixmap->drawable.depth = depth;
-    pVirtualPixmap->drawable.bitsPerPixel = bitsPerPixel;
-    pVirtualPixmap->drawable.id = 0;
-    pVirtualPixmap->drawable.serialNumber = NEXT_SERIAL_NUMBER;
-    pVirtualPixmap->drawable.x = 0;
-    pVirtualPixmap->drawable.y = 0;
-    pVirtualPixmap->drawable.width = width;
-    pVirtualPixmap->drawable.height = height;
-    pVirtualPixmap->devKind = devKind;
-    pVirtualPixmap->refcnt = 1;
-    pVirtualPixmap->devPrivate.ptr = pPixData;
-  }
-  else
-  {
-    if (width > 0)
-        pPixmap->drawable.width = width;
-
-    if (height > 0)
-        pPixmap->drawable.height = height;
-
-    if (depth > 0)
-        pPixmap->drawable.depth = depth;
-
-    if (bitsPerPixel > 0)
-        pPixmap->drawable.bitsPerPixel = bitsPerPixel;
-    else if ((bitsPerPixel < 0) && (depth > 0))
-        pPixmap->drawable.bitsPerPixel = BitsPerPixel(depth);
-
-    if (devKind > 0)
-        pPixmap->devKind = devKind;
-    else if ((devKind < 0) && ((width > 0) || (depth > 0)))
-        pPixmap->devKind = PixmapBytePad(pPixmap->drawable.width,
-            pPixmap->drawable.depth);
-
-    if (pPixData)
-       pPixmap->devPrivate.ptr = pPixData; 
-
-     /*
-      * XXX This was the previous assignment:
-      *
-      * pVirtualPixmap->devPrivate.ptr = pPixData;
-      */
-
-    if (width > 0)
-        pVirtualPixmap->drawable.width = width;
-
-    if (height > 0)
-        pVirtualPixmap->drawable.height = height;
-
-    if (depth > 0)
-        pVirtualPixmap->drawable.depth = depth;
-
-    if (bitsPerPixel > 0)
-        pVirtualPixmap->drawable.bitsPerPixel = bitsPerPixel;
-    else if ((bitsPerPixel < 0) && (depth > 0))
-        pVirtualPixmap->drawable.bitsPerPixel = BitsPerPixel(depth);
-
-    if (devKind > 0)
-        pVirtualPixmap->devKind = devKind;
-    else if ((devKind < 0) && ((width > 0) || (depth > 0)))
-        pVirtualPixmap->devKind = PixmapBytePad(pVirtualPixmap->drawable.width,
-            pVirtualPixmap->drawable.depth);
-
-    if (pPixData)
-        pVirtualPixmap->devPrivate.ptr = pPixData;
-
-    #ifdef PANIC
-
     if (pPixmap->drawable.x != 0 || pPixmap->drawable.y != 0)
     {
       fprintf(stderr, "nxagentModifyPixmapHeader: PANIC! Pixmap at [%p] has x [%d] and y [%d].\n",
@@ -681,9 +610,8 @@ Bool nxagentModifyPixmapHeader(PixmapPtr pPixmap, int width, int height, int dep
 
       FatalError("nxagentModifyPixmapHeader: PANIC! Pixmap has x or y greater than zero.");
     }
-
-    #endif
   }
+  #endif
 
   return True;
 }
