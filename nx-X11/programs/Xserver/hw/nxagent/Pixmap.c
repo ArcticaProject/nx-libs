@@ -1355,7 +1355,7 @@ Bool nxagentPixmapOnShadowDisplay(PixmapPtr pMap)
 
 /*
 FIXME: If the pixmap has a different depth from the window, the
-       XPutImage returns a BadMatch. For example this may happens if
+       XPutImage returns a BadMatch. For example this may happen if
        the Render extension is enabled.
        Can we fix this creating a new pixmap?
 */
@@ -1372,7 +1372,7 @@ FIXME: If the pixmap has a different depth from the window, the
 
   /*
    * If the framebuffer is updated continuously, the nxagent
-   * visualization become too much slow.
+   * visualization becomes much too slow.
    */
 
   if ((GetTimeInMillis() - showTime) < 500)
