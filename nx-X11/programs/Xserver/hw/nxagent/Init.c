@@ -143,6 +143,11 @@ void OsVendorEndRedirectErrorFFunction();
 static void nxagentGrabServerCallback(CallbackListPtr *callbacks, void *data,
                                    void *args);
 
+#ifdef NXAGENT_CLIPBOARD
+extern void nxagentSetSelectionCallback(CallbackListPtr *callbacks, void *data,
+                                   void *args);
+#endif
+
 void ddxInitGlobals(void)
 {
   /*
@@ -411,6 +416,10 @@ FIXME: These variables, if not removed at all because have probably
   blackRoot = TRUE;
 
   nxagentInitKeystrokes(False);
+
+#ifdef NXAGENT_CLIPBOARD
+  AddCallback(&SelectionCallback, nxagentSetSelectionCallback, NULL);
+#endif
 }
 
 void

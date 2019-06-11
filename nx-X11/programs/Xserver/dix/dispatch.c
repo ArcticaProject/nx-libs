@@ -919,7 +919,6 @@ ProcGetAtomName(register ClientPtr client)
     }
 }
 
-#ifndef NXAGENT_SERVER
 int
 ProcSetSelectionOwner(register ClientPtr client)
 {
@@ -1014,7 +1013,6 @@ ProcSetSelectionOwner(register ClientPtr client)
         return (BadAtom);
     }
 }
-#endif /* NXAGENT_SERVER */
 
 int
 ProcGetSelectionOwner(register ClientPtr client)

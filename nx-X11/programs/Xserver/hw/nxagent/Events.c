@@ -2968,7 +2968,19 @@ int nxagentHandleXFixesSelectionNotify(XEvent *X)
 
       info.selection = &CurrentSelections[i];
       info.kind = xfixesEvent->xfixesselection.subtype;
+
+      /*
+       * The trap indicates that we are triggered by a clipboard event
+       * originating from the real X server. In that case we do not
+       * want to propagate back changes to the real X server, because
+       * it already knows about them and we would end up in an
+       * infinite loop of events. If there was a better way to
+       * identify that situation during Callback processing we could
+       * get rid of the Trap...
+       */
+      nxagentExternalClipboardEventTrap = 1;
       CallCallbacks(&SelectionCallback, &info);
+      nxagentExternalClipboardEventTrap = 0;
     }
   }
   return 1;
