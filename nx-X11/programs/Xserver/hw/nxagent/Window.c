@@ -3484,26 +3484,7 @@ void nxagentSetTopLevelEventMask(WindowPtr pWin)
 }
 
 /*
- * This function must return 1 if we want the
- * exposures to be sent as the window's extents.
- * This is actually a harmless, but useful hack,
- * as it speeds up the window redraws considera-
- * bly, when using a very popular WM theme.
  */
-
-int nxagentExtentsPredicate(int total)
-{
-  #ifdef TEST
-  if (total == 6 || total == 11 || total == 10)
-  {
-    fprintf(stderr, "nxagentExtentsPredicate: WARNING! Returning [%d] with [%d] rectangles.\n",
-                (total == 6 || total == 11 || total == 10), total);
-  }
-  #endif
-
-  return (total == 6 || total == 11 || total == 10);
-}
-
 void nxagentFlushConfigureWindow(void)
 {
   ConfiguredWindowStruct *index;

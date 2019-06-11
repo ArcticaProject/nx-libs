@@ -20,7 +20,6 @@ SRCS =  \
 	NXshm.c \
         NXglxext.c \
         NXxvdisp.c \
-        NXmiexpose.c \
         NXresource.c \
 	NXdamage.c \
 	NXmitrap.c \
@@ -81,7 +80,6 @@ OBJS =  \
 	NXshm.o \
         NXglxext.o \
         NXxvdisp.o \
-        NXmiexpose.o \
         NXresource.o \
 	NXdamage.o \
 	NXmitrap.o \
