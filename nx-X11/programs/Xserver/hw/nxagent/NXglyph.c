@@ -274,18 +274,21 @@ miGlyphs (CARD8		op,
     BoxRec	extents;
     CARD32	component_alpha;
 
+#ifdef NXAGENT_SERVER
     /*
      * Get rid of the warning.
      */
 
     extents.x1 = 0;
     extents.y1 = 0;
+#endif
 
     if (maskFormat)
     {
 	GCPtr	    pGC;
 	xRectangle  rect;
 
+#ifdef NXAGENT_SERVER
         if (nxagentGlyphsExtents != NullBox)
         {
           memcpy(&extents, nxagentGlyphsExtents, sizeof(BoxRec));
@@ -298,6 +301,9 @@ miGlyphs (CARD8		op,
 
           memcpy(nxagentGlyphsExtents, &extents, sizeof(BoxRec));
         }
+#else
+	GlyphExtents (nlist, list, glyphs, &extents);
+#endif
 
 	if (extents.x2 <= extents.x1 || extents.y2 <= extents.y1)
 	    return;
@@ -369,6 +375,7 @@ miGlyphs (CARD8		op,
 					    glyph->info.width, glyph->info.height,
 					    0, 0, -1, (void *) (glyph + 1));
 
+#ifdef NXAGENT_SERVER
             /*
              * The following line fixes a problem with glyphs that appeared
              * as clipped. It was a side effect due the validate function
@@ -378,7 +385,7 @@ miGlyphs (CARD8		op,
              */
 
             pPicture->pDrawable->serialNumber = NEXT_SERIAL_NUMBER;
-
+#endif
 	    pPixmap->drawable.serialNumber = NEXT_SERIAL_NUMBER;
 	    if (maskFormat)
 	    {
