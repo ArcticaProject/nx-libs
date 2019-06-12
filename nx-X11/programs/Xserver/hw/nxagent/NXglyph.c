@@ -132,6 +132,17 @@ AddGlyph (GlyphSetPtr glyphSet, GlyphPtr glyph, Glyph id)
     gr = FindGlyphRef (&globalGlyphs[glyphSet->fdepth], hash, TRUE, glyph);
     if (gr->glyph && gr->glyph != DeletedGlyph)
     {
+	PictureScreenPtr ps;
+	int              i;
+
+	for (i = 0; i < screenInfo.numScreens; i++)
+	{
+	    ps = GetPictureScreenIfSet (screenInfo.screens[i]);
+	    if (ps)
+		(*ps->UnrealizeGlyph) (screenInfo.screens[i], glyph);
+	}
+	if (glyph->devPrivates)
+	    free (glyph->devPrivates);
 	free (glyph);
 	glyph = gr->glyph;
     }
