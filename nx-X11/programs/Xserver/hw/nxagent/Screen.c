@@ -2141,20 +2141,32 @@ Bool nxagentCloseScreen(ScreenPtr pScreen)
   fprintf(stderr, "running nxagentCloseScreen()\n");
   #endif
 
+  /*
+   * We have called fbScreenInit() in nxagenOpenScreen, which in turn
+   * called fbOpenScreen. But we are not using the data as created by
+   * fbOpenScreen but have freed it and replaced by our own. So we free
+   * our own stuff here and take care that fbCloseScreen will not free
+   * them again.
+   */
+
   for (i = 0; i < pScreen->numDepths; i++)
   {
     free(pScreen->allowedDepths[i].vids);
+    pScreen->allowedDepths[i].vids = NULL;
   }
+
+  pScreen->numDepths = 0;
 
   /*
    * Free the frame buffer.
    */
 
   free(((PixmapPtr)pScreen -> devPrivate) -> devPrivate.ptr);
+  free(pScreen->devPrivate);pScreen->devPrivate = NULL;
+  free(pScreen->allowedDepths); pScreen->allowedDepths = NULL;
+  free(pScreen->visuals); pScreen->visuals = NULL;
 
-  free(pScreen->allowedDepths);
-  free(pScreen->visuals);
-  free(pScreen->devPrivate);
+  fbCloseScreen(pScreen);
 
   /*
    * Reset the geometry and alpha information
