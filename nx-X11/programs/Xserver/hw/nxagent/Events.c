@@ -4011,21 +4011,23 @@ void nxagentDeactivatePointerGrab(void)
 
   if (grab)
   {
-    XButtonEvent X;
-    memset(&X, 0, sizeof(XButtonEvent));
-
-    X.type = ButtonRelease;
-    X.serial = 0;
-    X.send_event = FALSE;
-    X.time = currentTime.milliseconds;
-    X.display = nxagentDisplay;
-    X.window = nxagentWindow(grab -> window);
-    X.root = RootWindow(nxagentDisplay, 0);
-    X.subwindow = 0;
-    X.x = X.y = X.x_root = X.y_root = 0;
-    X.state = 0x100;
-    X.button = 1;
-    X.same_screen = TRUE;
+    XButtonEvent X = {
+      .type = ButtonRelease,
+      .serial = 0,
+      .send_event = FALSE,
+      .time = currentTime.milliseconds,
+      .display = nxagentDisplay,
+      .window = nxagentWindow(grab -> window),
+      .root = RootWindow(nxagentDisplay, 0),
+      .subwindow = 0,
+      .x = 0,
+      .y = 0,
+      .x_root = 0,
+      .y_root = 0,
+      .state = 0x100,
+      .button = 1,
+      .same_screen = TRUE,
+    };
 
     XPutBackEvent(nxagentDisplay, (XEvent*)&X);
   }
