@@ -1402,13 +1402,6 @@ Bool nxagentOpenScreen(ScreenPtr pScreen,
     pScreen -> rootDepth = rootDepth;
 
     /*
-     * Complete the initialization of the RANDR
-     * extension.
-     */
-
-    nxagentInitRandRExtension(pScreen);
-
-    /*
      * Set up the internal structures used for
      * tracking the proxy resources associated
      * to the unpack and split operations.
@@ -1693,6 +1686,13 @@ N/A
     #define POSITION_OFFSET (pScreen->myNum * (nxagentOption(Width) + \
                                nxagentOption(Height)) / 32)
   }
+
+  /*
+   * Complete the initialization of the RANDR
+   * extension.
+   */
+
+  nxagentInitRandRExtension(pScreen);
 
   #ifdef TEST
   nxagentPrintAgentGeometry(NULL, "nxagentOpenScreen:");
