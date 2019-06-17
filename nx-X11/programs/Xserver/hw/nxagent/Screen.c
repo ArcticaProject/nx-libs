@@ -1391,15 +1391,23 @@ Bool nxagentOpenScreen(ScreenPtr pScreen,
      * by fbScreenInit with our own.
      */
 
-    free(pScreen -> visuals);
-    free(pScreen -> allowedDepths);
+    for (int i = 0; i < pScreen->numDepths; i++)
+    {
+      #ifdef DEBUG
+      fprintf(stderr, "%s: depth [%d] index [%d] vids [%p]\n", __func__, pScreen->allowedDepths[i].depth, i, (void*) pScreen->allowedDepths[i].vids);
+      #endif
+      free(pScreen->allowedDepths[i].vids);
+    }
 
-    pScreen -> visuals = visuals;
+    free(pScreen -> allowedDepths);
     pScreen -> allowedDepths = depths;
-    pScreen -> numVisuals = numVisuals;
     pScreen -> numDepths = numDepths;
-    pScreen -> rootVisual = defaultVisual;
     pScreen -> rootDepth = rootDepth;
+
+    free(pScreen -> visuals);
+    pScreen -> visuals = visuals;
+    pScreen -> numVisuals = numVisuals;
+    pScreen -> rootVisual = defaultVisual;
 
     /*
      * Set up the internal structures used for
