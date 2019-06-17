@@ -1327,14 +1327,18 @@ static int nxagentFreeKeyboardDeviceData(DeviceIntPtr dev)
       dev->focus = NULL;
   }
 
-  for (k = dev->kbdfeed; k; k = knext)
+  if (dev->kbdfeed)
   {
-      knext = k->next;
-      #ifdef XKB
-      if (k->xkb_sli)
-          XkbFreeSrvLedInfo(k->xkb_sli);
-      #endif
-      free(k);
+      for (k = dev->kbdfeed; k; k = knext)
+      {
+          knext = k->next;
+          #ifdef XKB
+          if (k->xkb_sli)
+              XkbFreeSrvLedInfo(k->xkb_sli);
+          #endif
+          free(k);
+      }
+      dev->kbdfeed = NULL;
   }
 
   #ifdef DEBUG
