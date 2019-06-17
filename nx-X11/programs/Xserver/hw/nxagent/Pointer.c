@@ -40,7 +40,7 @@ is" without express or implied warranty.
 #include "X.h"
 #include "Xproto.h"
 #include "screenint.h"
-#include "input.h"
+#include "inputstr.h"
 #include "misc.h"
 #include "scrnintstr.h"
 #include "servermd.h"
@@ -162,10 +162,17 @@ int nxagentPointerProc(DeviceIntPtr pDev, int onoff)
       break;
 
     case DEVICE_CLOSE:
-
       #ifdef TEST
       fprintf(stderr, "nxagentPointerProc: Called for [DEVICE_CLOSE].\n");
       #endif
+
+      for (int i = 0; i < pDev->nPrivates; i++)
+      {
+        free(pDev->devPrivates[i].ptr);
+        pDev->devPrivates[i].ptr = NULL;
+      }
+      free(pDev->devPrivates);
+      pDev->devPrivates = NULL;
 
       break;
     }
