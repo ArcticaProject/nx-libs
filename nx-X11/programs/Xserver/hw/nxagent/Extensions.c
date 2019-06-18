@@ -98,13 +98,12 @@ void nxagentInitGlxExtension(VisualPtr *visuals, DepthPtr *depths,
                                  int *numVisuals, int *numDepths, int *rootDepth,
                                      VisualID *defaultVisual)
 {
-  miInitVisualsProcPtr initVisuals;
 
   /*
    * Initialize the visuals to use the GLX extension.
    */
 
-  initVisuals = NULL;
+  miInitVisualsProcPtr initVisuals = NULL;
 
   GlxWrapInitVisuals(&initVisuals);
 
@@ -372,15 +371,13 @@ static int nxagentRandRInitSizes(ScreenPtr pScreen)
 int nxagentRandRSetConfig(ScreenPtr pScreen, Rotation rotation,
                               int rate, RRScreenSizePtr pSize)
 {
-  int r;
-
   UpdateCurrentTime();
 
   /*
    * Whatever size is OK for us.
    */
 
-  r = nxagentResizeScreen(pScreen, pSize -> width, pSize -> height,
+  int r = nxagentResizeScreen(pScreen, pSize -> width, pSize -> height,
                                  pSize -> mmWidth, pSize -> mmHeight);
 
   nxagentMoveViewport(pScreen, 0, 0);
@@ -430,8 +427,6 @@ void nxagentRandRSetWindowsSize(int width, int height)
 int nxagentRandRScreenSetSize(ScreenPtr pScreen, CARD16 width, CARD16 height,
                                    CARD32 mmWidth, CARD32 mmHeight)
 {
-  int result;
-
   UpdateCurrentTime();
 
   if (nxagentOption(DesktopResize) == 1 &&
@@ -453,7 +448,7 @@ int nxagentRandRScreenSetSize(ScreenPtr pScreen, CARD16 width, CARD16 height,
     nxagentChangeOption(Height, height);
   }
 
-  result = nxagentResizeScreen(pScreen, width, height, mmWidth, mmHeight);
+  int result = nxagentResizeScreen(pScreen, width, height, mmWidth, mmHeight);
 
   if (result == 1 && nxagentOption(DesktopResize) == 1 &&
           nxagentOption(Fullscreen) == 0 && nxagentOption(AllScreens) == 0)
