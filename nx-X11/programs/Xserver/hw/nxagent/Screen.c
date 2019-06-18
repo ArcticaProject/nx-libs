@@ -1394,7 +1394,7 @@ Bool nxagentOpenScreen(ScreenPtr pScreen,
     for (int i = 0; i < pScreen->numDepths; i++)
     {
       #ifdef DEBUG
-      fprintf(stderr, "%s: depth [%d] index [%d] vids [%p]\n", __func__, pScreen->allowedDepths[i].depth, i, (void*) pScreen->allowedDepths[i].vids);
+      fprintf(stderr, "%s: freeing depth [%d] index [%d] vids [%p]\n", __func__, pScreen->allowedDepths[i].depth, i, (void*) pScreen->allowedDepths[i].vids);
       #endif
       free(pScreen->allowedDepths[i].vids);
     }
@@ -2159,6 +2159,9 @@ Bool nxagentCloseScreen(ScreenPtr pScreen)
 
   for (i = 0; i < pScreen->numDepths; i++)
   {
+    #ifdef DEBUG
+    fprintf(stderr, "%s: freeing depth [%d] index [%d] vids [%p]\n", __func__, pScreen->allowedDepths[i].depth, i, (void*) pScreen->allowedDepths[i].vids);
+    #endif
     free(pScreen->allowedDepths[i].vids);
     pScreen->allowedDepths[i].vids = NULL;
   }
