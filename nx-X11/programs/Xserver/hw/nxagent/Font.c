@@ -369,18 +369,16 @@ static void nxagentFreeRemoteFontList(nxagentFontList *listRec)
 
 Bool nxagentFontFind(const char *name, int *pos)
 {
- int low,high,res,iter,lpos;
-
  if (!nxagentRemoteFontList.length)
  {
     *pos=0;
     return False;
  }
- low = 0;
- high = nxagentRemoteFontList.length - 1;
- iter = 0;
- res = 1;
- lpos = nxagentRemoteFontList.length;
+ int low = 0;
+ int high = nxagentRemoteFontList.length - 1;
+ int iter = 0;
+ int res = 1;
+ int lpos = nxagentRemoteFontList.length;
  while (low <= high)
  {
    *pos = (high + low)/2;
@@ -416,18 +414,15 @@ Bool nxagentFontFind(const char *name, int *pos)
 Bool nxagentFontLookUp(const char *name)
 {
   int i;
-  int result;
-
-  char *scalable;
 
   if (name != NULL && strlen(name) == 0)
   {
     return 0;
   }
 
-  result = nxagentFontFind(name, &i);
+  int result = nxagentFontFind(name, &i);
 
-  scalable = NULL;
+  char *scalable = NULL;
 
   /*
    * Let's try with the scalable font description.
@@ -435,9 +430,7 @@ Bool nxagentFontLookUp(const char *name)
 
   if (result == 0)
   {
-    scalable = nxagentMakeScalableFontName(name, 0); 
-
-    if (scalable != NULL)
+    if ((scalable = nxagentMakeScalableFontName(name, 0)) != NULL)
     {
       result = nxagentFontFind(scalable, &i);
 
@@ -451,9 +444,7 @@ Bool nxagentFontLookUp(const char *name)
 
   if (result == 0)
   {
-    scalable = nxagentMakeScalableFontName(name, 1); 
-
-    if (scalable != NULL)
+    if ((scalable = nxagentMakeScalableFontName(name, 1)) != NULL)
     {
       result = nxagentFontFind(scalable, &i);
 
@@ -888,7 +879,6 @@ static void nxagentFontDisconnect(FontPtr pFont, XID param1, void * param2)
 
 static void nxagentCollectFailedFont(FontPtr fpt, XID id)
 {
-
   if (nxagentFailedToReconnectFonts.font == NULL)
   {
     nxagentFailedToReconnectFonts.size = 8;
@@ -1632,7 +1622,6 @@ XFontStruct* nxagentLoadQueryFont(register Display *dpy, char *name, FontPtr pFo
 
 int nxagentFreeFont(XFontStruct *fs)
 {
-
   if (fs -> per_char)
   {
     #ifdef USE_XF86BIGFONT
