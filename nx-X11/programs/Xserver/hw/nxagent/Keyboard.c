@@ -945,6 +945,10 @@ XkbError:
         {
           NXShadowInitKeymap(&(pDev->key->curKeySyms));
         }
+
+	free(rules);
+	free(variant);
+	free(options);
       }
 
       if (xkb)
