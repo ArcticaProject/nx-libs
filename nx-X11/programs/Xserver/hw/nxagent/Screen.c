@@ -844,6 +844,19 @@ static int nxagentColorOffset(unsigned long mask)
   return count;
 }
 
+void freeDepths(DepthPtr depths, int num)
+{
+  for (int i = 0; i < num; i++)
+  {
+    #ifdef DEBUG
+    fprintf(stderr, "%s: freeing depth [%d] index [%d] vids [%p]\n", __func__, depths[i].depth, i, (void*) depths[i].vids);
+    #endif
+    free(depths[i].vids);
+    depths[i].vids = NULL;
+  }
+  free(depths);
+}
+
 Bool nxagentOpenScreen(ScreenPtr pScreen,
                            int argc, char *argv[])
 {
@@ -1335,6 +1348,7 @@ Bool nxagentOpenScreen(ScreenPtr pScreen,
 
     if (!pFrameBufferBits)
     {
+      freeDepths(depths, numDepths);
       return FALSE;
     }
 
@@ -1356,6 +1370,7 @@ Bool nxagentOpenScreen(ScreenPtr pScreen,
     if (!fbScreenInit(pScreen, pFrameBufferBits, nxagentOption(RootWidth), nxagentOption(RootHeight),
           monitorResolution, monitorResolution, PixmapBytePad(nxagentOption(RootWidth), rootDepth), bitsPerPixel))
     {
+      freeDepths(depths, numDepths);
       return FALSE;
     }
 
@@ -1391,15 +1406,7 @@ Bool nxagentOpenScreen(ScreenPtr pScreen,
      * by fbScreenInit with our own.
      */
 
-    for (int i = 0; i < pScreen->numDepths; i++)
-    {
-      #ifdef DEBUG
-      fprintf(stderr, "%s: freeing depth [%d] index [%d] vids [%p]\n", __func__, pScreen->allowedDepths[i].depth, i, (void*) pScreen->allowedDepths[i].vids);
-      #endif
-      free(pScreen->allowedDepths[i].vids);
-    }
-
-    free(pScreen -> allowedDepths);
+    freeDepths(pScreen->allowedDepths, pScreen->numDepths);
     pScreen -> allowedDepths = depths;
     pScreen -> numDepths = numDepths;
     pScreen -> rootDepth = rootDepth;
@@ -2155,15 +2162,8 @@ Bool nxagentCloseScreen(ScreenPtr pScreen)
    * them again.
    */
 
-  for (int i = 0; i < pScreen->numDepths; i++)
-  {
-    #ifdef DEBUG
-    fprintf(stderr, "%s: freeing depth [%d] index [%d] vids [%p]\n", __func__, pScreen->allowedDepths[i].depth, i, (void*) pScreen->allowedDepths[i].vids);
-    #endif
-    free(pScreen->allowedDepths[i].vids);
-    pScreen->allowedDepths[i].vids = NULL;
-  }
-
+  freeDepths(pScreen->allowedDepths, pScreen->numDepths);
+  pScreen->allowedDepths = NULL;
   pScreen->numDepths = 0;
 
   /*
@@ -2172,7 +2172,6 @@ Bool nxagentCloseScreen(ScreenPtr pScreen)
 
   free(((PixmapPtr)pScreen -> devPrivate) -> devPrivate.ptr);
   free(pScreen->devPrivate);pScreen->devPrivate = NULL;
-  free(pScreen->allowedDepths); pScreen->allowedDepths = NULL;
   free(pScreen->visuals); pScreen->visuals = NULL;
 
   fbCloseScreen(pScreen);
