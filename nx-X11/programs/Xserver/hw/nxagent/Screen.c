@@ -1349,6 +1349,7 @@ Bool nxagentOpenScreen(ScreenPtr pScreen,
     if (!pFrameBufferBits)
     {
       freeDepths(depths, numDepths);
+      free(visuals);
       return FALSE;
     }
 
@@ -1371,6 +1372,7 @@ Bool nxagentOpenScreen(ScreenPtr pScreen,
           monitorResolution, monitorResolution, PixmapBytePad(nxagentOption(RootWidth), rootDepth), bitsPerPixel))
     {
       freeDepths(depths, numDepths);
+      free(visuals);
       return FALSE;
     }
 
