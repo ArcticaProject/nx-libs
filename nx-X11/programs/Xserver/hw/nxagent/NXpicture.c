@@ -318,6 +318,8 @@ static PicturePtr createSourcePicture(void)
                                sizeof(nxagentPrivPictureRec);
 
     pPicture = (PicturePtr) calloc(1, totalPictureSize);
+    if (!pPicture)
+      return 0;
 
     if (pPicture != NULL)
     {
