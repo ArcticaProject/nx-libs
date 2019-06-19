@@ -144,6 +144,7 @@ GlyphInit (ScreenPtr pScreen)
     return TRUE;
 }
 
+#ifndef NXAGENT_SERVER
 GlyphRefPtr
 FindGlyphRef (GlyphHashPtr hash, CARD32 signature, Bool match, GlyphPtr compare)
 {
@@ -192,6 +193,7 @@ FindGlyphRef (GlyphHashPtr hash, CARD32 signature, Bool match, GlyphPtr compare)
     }
     return gr;
 }
+#endif
 
 CARD32
 HashGlyph (GlyphPtr glyph)
