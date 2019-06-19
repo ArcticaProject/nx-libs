@@ -303,21 +303,17 @@ CreateSolidPicture (Picture pid, xRenderColor *color, int *error)
 
 static PicturePtr createSourcePicture(void)
 {
-    PicturePtr pPicture;
-
     extern int nxagentPicturePrivateIndex;
-
-    unsigned int totalPictureSize;
 
     /*
      * Compute size of entire PictureRect, plus privates.
      */
 
-    totalPictureSize = sizeof(PictureRec) +
+    unsigned int totalPictureSize = sizeof(PictureRec) +
                            picturePrivateCount * sizeof(DevUnion) +
                                sizeof(nxagentPrivPictureRec);
 
-    pPicture = (PicturePtr) calloc(1, totalPictureSize);
+    PicturePtr pPicture = (PicturePtr) calloc(1, totalPictureSize);
     if (!pPicture)
       return 0;
 
