@@ -481,47 +481,23 @@ char *PngCompressData(XImage *image, int *compressed_size)
     return NULL;
   }
 
+  int count;
   if (color_type == PNG_COLOR_TYPE_PALETTE)
   {
-    srcBuf = (CARD8 *) malloc(w * sizeof(CARD8));
-
-    if (srcBuf == NULL)
-    {
-      #ifdef PANIC
-      fprintf(stderr, "******PngCompressData: PANIC! Cannot allocate [%d] bytes.\n",
-                  (int) (w * sizeof(CARD8)));
-      #endif
-
-      free(image_index);
-
-      return NULL;
-    }
-
-    /*
-     * TODO: Be sure the padded bytes are cleaned.
-     * It would be better to set to zero the bytes
-     * that are not aligned to the word boundary
-     * at the end of the procedure.
-     */
-
-    memset(srcBuf, 0, w * sizeof(CARD8));
+    count = w;
   }
   else
   {
-    srcBuf = (CARD8 *) malloc(w * 3 * sizeof(CARD8));
-
-    /*
-     * TODO: See above.
-     */
-
-    memset(srcBuf, 0, w * 3 * sizeof(CARD8));
+    count = 3 * w;
   }
+
+  srcBuf = (CARD8 *) calloc(count, sizeof(CARD8));
 
   if (srcBuf == NULL)
   {
     #ifdef PANIC
     fprintf(stderr, "******PngCompressData: PANIC! Cannot allocate [%d] bytes.\n",
-                w * 3);
+                  (int) (count * sizeof(CARD8)));
     #endif
 
     free(pngCompBuf);
@@ -529,6 +505,13 @@ char *PngCompressData(XImage *image, int *compressed_size)
 
     return NULL;
   }
+
+  /*
+   * TODO: Be sure the padded bytes are cleaned.
+   * It would be better to set to zero the bytes
+   * that are not aligned to the word boundary
+   * at the end of the procedure.
+   */
 
   for (dy = 0; dy < h; dy++)
   {
