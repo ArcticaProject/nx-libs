@@ -757,7 +757,10 @@ int what;
 	if (screenContext[i] == (GCPtr)NULL)
 	{
 	    if (!ResType && !(ResType = CreateNewResourceType(tossGC)))
+	    {
+		free(prect);
 		return;
+	    }
 	    screenContext[i] = CreateGC((DrawablePtr)pWin, (BITS32) 0,
 					(XID *)NULL, &status);
 	    if (!screenContext[i])
