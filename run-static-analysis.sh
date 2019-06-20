@@ -6,9 +6,9 @@ if [[ "${STATIC_ANALYSIS}" == "yes" ]]; then
         echo 'Error: cppcheck is not installed.' >&2
         exit 1
     fi
-    CPPCHECK_OPTS='--error-exitcode=0 --force --quiet'
+    CPPCHECK_OPTS='--error-exitcode=0 --force --quiet --suppressions-list=./static-analysis-suppressions'
     # we exclude some external projects
-    CPPCHECK_EXCLUDES='-i ./nx-X11/extras/Mesa* -i ./nx-X11/extras/Mesa_* -i nx-X11/programs/Xserver/GL/mesa*'
+    CPPCHECK_EXCLUDES='-i ./nx-X11/extras/ -i nx-X11/programs/Xserver/GL/mesa* -i ./.pc -i ./nx-X11/.build-exports -i ./nx-X11/exports -i ./doc'
     echo "$(cppcheck --version):";
     cppcheck $CPPCHECK_OPTS $CPPCHECK_EXCLUDES .;
 fi
