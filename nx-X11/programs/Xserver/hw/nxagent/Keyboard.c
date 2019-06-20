@@ -1696,7 +1696,10 @@ static char* getKeyboardFilePath(void)
       free(sessionpath);
       FatalError("malloc for keyboard file path failed.");
     }
-    free(sessionpath);
+    else
+    {
+      free(sessionpath);
+    }
   }
   else
   {
