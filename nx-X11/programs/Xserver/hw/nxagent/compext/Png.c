@@ -532,8 +532,8 @@ char *PngCompressData(XImage *image, int *compressed_size)
               dy, h);
   #endif
 
-  free(srcBuf);
-  free(image_index);
+  free(srcBuf); srcBuf = NULL;
+  free(image_index); image_index = NULL;
 
   if (setjmp(png_jmpbuf(png_ptr)))
   {
