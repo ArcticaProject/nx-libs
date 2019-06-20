@@ -1216,7 +1216,7 @@ nxdoListFontsAndAliases(client, fss)
 		    if (c->savedName)
 		    {
 		       memcpy(tmp,c->savedName,c->savedNameLen>255?255:c->savedNameLen);
-		       tmp[c->savedNameLen>255?256:c->savedNameLen]=0;
+		       tmp[c->savedNameLen>255?255:c->savedNameLen]=0;
 		       if (nxagentFontLookUp(tmp))
 		          break;
 			else tmp[0]=0;
@@ -1225,7 +1225,7 @@ nxdoListFontsAndAliases(client, fss)
 		else
 		{
 		   memcpy(tmp,name,namelen>255?255:namelen);
-		   tmp[namelen>255?256:namelen]=0;
+		   tmp[namelen>255?255:namelen]=0;
 		   if (nxagentFontLookUp(tmp))
 		      break;
 		   else tmp[0]=0;
