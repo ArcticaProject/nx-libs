@@ -1177,8 +1177,12 @@ char 		name[100];
 		return Xstrdup(name);
 	    break;
 	default:
+	  /* tmpTOC is unitilaoized here, so we use the one from toc for now.
 	    _XkbLibError(_XkbErrBadImplementation,
 				XkbConfigText(tmpTOC.type,XkbMessage),0);
+	   */
+	    _XkbLibError(_XkbErrBadImplementation,
+				XkbConfigText(toc->type,XkbMessage),0);
 	    break;
     }
     return NULL;
