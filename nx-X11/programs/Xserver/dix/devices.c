@@ -429,7 +429,6 @@ InitCoreDevices(void)
         if (!AllocateDevicePrivate(dev, CoreDevicePrivatesIndex))
             FatalError("Couldn't allocate keyboard devPrivates\n");
         dev->devPrivates[CoreDevicePrivatesIndex].ptr = NULL;
-        (void)ActivateDevice(dev);
         inputInfo.keyboard = dev;
     }
 
@@ -453,7 +452,6 @@ InitCoreDevices(void)
         if (!AllocateDevicePrivate(dev, CoreDevicePrivatesIndex))
             FatalError("Couldn't allocate void * devPrivates\n");
         dev->devPrivates[CoreDevicePrivatesIndex].ptr = NULL;
-        (void)ActivateDevice(dev);
         inputInfo.pointer = dev;
     }
 }
