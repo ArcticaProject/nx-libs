@@ -715,6 +715,9 @@ ProcRenderTrapezoids (ClientPtr client)
     {
       if (pFormat != NULL)
       {
+        if (nxagentTrapezoidExtents && nxagentTrapezoidExtents != NullBox)
+          free(nxagentTrapezoidExtents);
+
         nxagentTrapezoidExtents = (BoxPtr) malloc(sizeof(BoxRec));
 
         miTrapezoidBounds (ntraps, (xTrapezoid *) &stuff[1], nxagentTrapezoidExtents);
