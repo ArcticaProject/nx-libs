@@ -5677,10 +5677,8 @@ char *			str;
 	    return status;
     }
     else if (length!=0)  {
-#ifdef DEBUG
 	ErrorF("Internal Error!  BadLength in ProcXkbGetDeviceInfo\n");
 	ErrorF("                 Wrote %d fewer bytes than expected\n",length);
-#endif
 	return BadLength;
     }
     if (stuff->wanted&(~supported)) {
