@@ -380,6 +380,9 @@ int nxagentKeyboardProc(DeviceIntPtr pDev, int onoff)
   {
     case DEVICE_INIT:
 
+      if (!pDev->name)
+	pDev->name = strdup("NX keyboard");
+
       #ifdef TEST
       fprintf(stderr, "%s: Called for [DEVICE_INIT].\n", __func__);
       #endif
