@@ -553,7 +553,7 @@ void nxagentChangeKeyboardControl(DeviceIntPtr pDev, KeybdCtrl *ctrl)
 
     value_mask = KBLed | KBLedMode;
 
-    for (int i = 1; i <= 32; i++)
+    for (int i = 1; i <= XkbNumIndicators; i++)
     {
       unsigned int mask = (unsigned int)1 << (i - 1);
       values.led = i;
