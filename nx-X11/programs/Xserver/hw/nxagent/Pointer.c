@@ -53,6 +53,7 @@ is" without express or implied warranty.
 #include "Pointer.h"
 #include "Events.h"
 #include "Options.h"
+#include "xkbsrv.h"
 
 #include "compext/Compext.h"
 
@@ -167,6 +168,8 @@ int nxagentPointerProc(DeviceIntPtr pDev, int onoff)
       #ifdef TEST
       fprintf(stderr, "%s: Called for [DEVICE_CLOSE].\n", __func__);
       #endif
+
+      XkbFreePrivates(pDev);
 
       break;
     }

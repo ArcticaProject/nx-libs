@@ -279,6 +279,7 @@ extern int xkbDevicePrivateIndex;
 #define XKBDEVICEINFO(dev) ((xkbDeviceInfoPtr) (dev)->devPrivates[xkbDevicePrivateIndex].ptr)
 
 extern void xkbUnwrapProc(DeviceIntPtr, DeviceHandleProc, pointer);
+extern void XkbFreePrivates(DeviceIntPtr);
 
 /***====================================================================***/
 

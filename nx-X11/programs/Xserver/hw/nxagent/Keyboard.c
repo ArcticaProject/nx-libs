@@ -87,6 +87,8 @@ void nxagentKeycodeConversionSetup(void);
 static void nxagentWriteKeyboardDir(void);
 static void nxagentWriteKeyboardFile(char *rules, char *model, char *layout, char *variant, char *options);
 
+extern void XkbFreePrivates(DeviceIntPtr device);
+
 #endif /* XKB */
 
 /*
@@ -831,6 +833,8 @@ Reply   Total	Cached	Bits In			Bits Out		Bits/Reply	  Ratio
       #ifdef TEST
       fprintf(stderr, "%s: Called for [DEVICE_CLOSE].\n", __func__);
       #endif
+
+      XkbFreePrivates(pDev);
 
       break;
   }

@@ -351,6 +351,17 @@ CoreKeyboardProc(DeviceIntPtr pDev, int what)
         break;
 
     case DEVICE_CLOSE:
+        #ifdef DEBUG
+        fprintf(stderr, "%s: DEVICE_CLOSE: device [%p] nPrivates [%d] name [%s] \n",
+                __func__, pDev, pDev->nPrivates, pDev->name);
+        #endif
+
+#ifdef XKB
+        if (!noXkbExtension)
+        {
+            XkbFreePrivates(pDev);
+        }
+#endif
         pDev->devPrivates[CoreDevicePrivatesIndex].ptr = NULL;
         break;
 
@@ -383,6 +394,17 @@ CorePointerProc(DeviceIntPtr pDev, int what)
         break;
 
     case DEVICE_CLOSE:
+        #ifdef DEBUG
+        fprintf(stderr, "%s: DEVICE_CLOSE: device [%p] nPrivates [%d] name [%s] \n",
+                __func__, pDev, pDev->nPrivates, pDev->name);
+        #endif
+
+#ifdef XKB
+        if (!noXkbExtension)
+        {
+            XkbFreePrivates(pDev);
+        }
+#endif
         pDev->devPrivates[CoreDevicePrivatesIndex].ptr = NULL;
         break;
 
