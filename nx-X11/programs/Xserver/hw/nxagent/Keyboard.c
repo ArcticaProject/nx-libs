@@ -555,8 +555,9 @@ void nxagentChangeKeyboardControl(DeviceIntPtr pDev, KeybdCtrl *ctrl)
 
     for (int i = 1; i <= 32; i++)
     {
+      unsigned int mask = (unsigned int)1 << (i - 1);
       values.led = i;
-      values.led_mode = (ctrl->leds & (1 << (i - 1))) ? LedModeOn : LedModeOff;
+      values.led_mode = (ctrl->leds & mask) ? LedModeOn : LedModeOff;
 
       XChangeKeyboardControl(nxagentDisplay, value_mask, &values);
     }
