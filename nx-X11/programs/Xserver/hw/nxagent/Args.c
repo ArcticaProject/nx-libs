@@ -1394,30 +1394,6 @@ static void nxagentParseSingleOption(char *name, char *value)
 
     return;
   }
-  else if  (strcmp(name, "clipboard") == 0)
-  {
-    if ((strcmp(value, "both") == 0) || (strcmp(value, "1") == 0))
-    {
-      nxagentChangeOption(Clipboard, ClipboardBoth);
-    }
-    else if (strcmp(value, "client") == 0)
-    {
-      nxagentChangeOption(Clipboard, ClipboardClient);
-    }
-    else if (strcmp(value, "server") == 0)
-    {
-      nxagentChangeOption(Clipboard, ClipboardServer);
-    }
-    else if ((strcmp(value, "none") == 0) || (strcmp(value, "0") == 0))
-    {
-      nxagentChangeOption(Clipboard, ClipboardNone);
-    }
-    else
-    {
-      nxagentChangeOption(Clipboard, ClipboardBoth);
-    }
-    return;
-  }
   else if (!strcmp(name, "sleep"))
   {
     long sleep_parse = 0;
