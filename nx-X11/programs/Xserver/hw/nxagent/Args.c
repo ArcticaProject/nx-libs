@@ -277,32 +277,18 @@ int ddxProcessArgument(int argc, char *argv[], int i)
     {
       if ((!strcmp(argv[j], "-options") || !strcmp(argv[j], "-option")) && j + 1 < argc)
       {
-        if (nxagentOptionsFilenameOrString)
-        {
-          nxagentOptionsFilenameOrString = (char *) realloc(nxagentOptionsFilenameOrString, strlen(argv[j + 1]) + 1);
-        }
-        else
-        {
-          nxagentOptionsFilenameOrString = (char *) malloc(strlen(argv[j + 1]) +1);
-        }
+        SAFE_free(nxagentOptionsFilenameOrString);
 
-        if (nxagentOptionsFilenameOrString != NULL)
+        if (-1 == asprintf(&nxagentOptionsFilenameOrString, "%s", argv[j + 1]))
         {
-          nxagentOptionsFilenameOrString = strcpy(nxagentOptionsFilenameOrString, argv[j + 1]);
+          FatalError("malloc failed");
         }
-        #ifdef WARNING
-        else
-        {
-          fprintf(stderr, "ddxProcessArgument: WARNING! failed string allocation.\n");
-        }
-        #endif
-
         break;
       }
     }
 
     nxagentProcessOptions(nxagentOptionsFilenameOrString);
-  }
+  }  /* if (resetOptions == True) */
 
   if (!strcmp(argv[i], "-B"))
   {
