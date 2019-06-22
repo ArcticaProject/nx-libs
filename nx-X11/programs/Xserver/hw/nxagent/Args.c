@@ -270,8 +270,8 @@ int ddxProcessArgument(int argc, char *argv[], int i)
     if (envOptions != NULL)
     {
       nxagentParseOptionString(envOptions);
-
       free(envOptions);
+      envOptions = NULL;
     }
 
     for (j = 0; j < argc; j++)
