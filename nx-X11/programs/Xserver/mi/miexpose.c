@@ -151,7 +151,7 @@ miHandleExposures(pSrcDrawable, pDstDrawable,
 				   the window background
 				*/
     WindowPtr pSrcWin;
-    BoxRec expBox;
+    BoxRec expBox = { 0, };
     Bool extents;
 
     /* This prevents warning about pscr not being used. */
@@ -757,7 +757,10 @@ int what;
 	if (screenContext[i] == (GCPtr)NULL)
 	{
 	    if (!ResType && !(ResType = CreateNewResourceType(tossGC)))
+	    {
+		free(prect);
 		return;
+	    }
 	    screenContext[i] = CreateGC((DrawablePtr)pWin, (BITS32) 0,
 					(XID *)NULL, &status);
 	    if (!screenContext[i])

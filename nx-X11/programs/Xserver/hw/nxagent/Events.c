@@ -1964,14 +1964,14 @@ FIXME: Don't enqueue the KeyRelease event if the key was
       }
       case UnmapNotify:
       {
-        WindowPtr pWin;
-
         #ifdef TEST
         fprintf(stderr, "nxagentDispatchEvents: Going to handle new UnmapNotify event.\n");
         #endif
 
         if (nxagentOption(Rootless) == 1)
         {
+          WindowPtr pWin;
+
           if ((pWin = nxagentRootlessTopLevelWindow(X.xunmap.window)) != NULL ||
                   ((pWin = nxagentWindowPtr(X.xunmap.window)) != NULL &&
                       nxagentWindowTopLevel(pWin) == 1))
@@ -1995,22 +1995,19 @@ FIXME: Don't enqueue the KeyRelease event if the key was
       }
       case MapNotify:
       {
-        WindowPtr pWin;
-        ClientPtr pClient;
-
         #ifdef TEST
         fprintf(stderr, "nxagentDispatchEvents: Going to handle new MapNotify event.\n");
         #endif
 
         if (nxagentOption(Rootless) == 1)
         {
-          Bool value = 1;
+          WindowPtr pWin;
 
           if ((pWin = nxagentRootlessTopLevelWindow(X.xmap.window)) != NULL ||
                   ((pWin = nxagentWindowPtr(X.xmap.window)) != NULL &&
                       nxagentWindowTopLevel(pWin) == 1))
           {
-            pClient = wClient(pWin);
+            ClientPtr pClient = wClient(pWin);
 
             nxagentScreenTrap = 1;
 
@@ -2021,6 +2018,8 @@ FIXME: Don't enqueue the KeyRelease event if the key was
 
           if (pWin != NULL)
           {
+            Bool value = 1;
+
             TraverseTree(pWin, nxagentChangeMapPrivate, &value);
           }
         }
@@ -2355,8 +2354,6 @@ int nxagentHandleKeyPress(XEvent *X, enum HandleEventResult *result)
 
 int nxagentHandlePropertyNotify(XEvent *X)
 {
-  int resource;
-
   if (nxagentOption(Rootless) && !nxagentNotifyMatchChangeProperty((XPropertyEvent *) X))
   {
     #ifdef TEST
@@ -2366,7 +2363,7 @@ int nxagentHandlePropertyNotify(XEvent *X)
 
     if (nxagentWindowPtr(X -> xproperty.window) != NULL)
     {
-      resource = NXGetCollectPropertyResource(nxagentDisplay);
+      int resource = NXGetCollectPropertyResource(nxagentDisplay);
 
       if (resource == -1)
       {
@@ -2643,8 +2640,6 @@ int nxagentHandleGraphicsExposeEvent(XEvent *X)
 
 int nxagentHandleClientMessageEvent(XEvent *X, enum HandleEventResult *result)
 {
-  WindowPtr pWin;
-
   *result = doNothing;
 
   #ifdef TEST
@@ -2680,7 +2675,7 @@ int nxagentHandleClientMessageEvent(XEvent *X, enum HandleEventResult *result)
       return 0;
     }
 
-    pWin = nxagentWindowPtr(X -> xclient.window);
+    WindowPtr pWin = nxagentWindowPtr(X -> xclient.window);
 
     if (pWin == NULL)
     {
@@ -2886,7 +2881,6 @@ int nxagentHandleXkbKeyboardStateEvent(XEvent *X)
 
 int nxagentHandleXFixesSelectionNotify(XEvent *X)
 {
-  int i;
   Atom local;
 
   XFixesSelectionEvent *xfixesEvent = (XFixesSelectionEvent *) X;
@@ -2915,7 +2909,7 @@ int nxagentHandleXFixesSelectionNotify(XEvent *X)
 
   if (SelectionCallback)
   {
-    i = 0;
+    int i = 0;
 
     while ((i < NumCurrentSelections) &&
             CurrentSelections[i].selection != local)
@@ -4011,21 +4005,23 @@ void nxagentDeactivatePointerGrab(void)
 
   if (grab)
   {
-    XButtonEvent X;
-    memset(&X, 0, sizeof(XButtonEvent));
-
-    X.type = ButtonRelease;
-    X.serial = 0;
-    X.send_event = FALSE;
-    X.time = currentTime.milliseconds;
-    X.display = nxagentDisplay;
-    X.window = nxagentWindow(grab -> window);
-    X.root = RootWindow(nxagentDisplay, 0);
-    X.subwindow = 0;
-    X.x = X.y = X.x_root = X.y_root = 0;
-    X.state = 0x100;
-    X.button = 1;
-    X.same_screen = TRUE;
+    XButtonEvent X = {
+      .type = ButtonRelease,
+      .serial = 0,
+      .send_event = FALSE,
+      .time = currentTime.milliseconds,
+      .display = nxagentDisplay,
+      .window = nxagentWindow(grab -> window),
+      .root = RootWindow(nxagentDisplay, 0),
+      .subwindow = 0,
+      .x = 0,
+      .y = 0,
+      .x_root = 0,
+      .y_root = 0,
+      .state = 0x100,
+      .button = 1,
+      .same_screen = TRUE,
+    };
 
     XPutBackEvent(nxagentDisplay, (XEvent*)&X);
   }

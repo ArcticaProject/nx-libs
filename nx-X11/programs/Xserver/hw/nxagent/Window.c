@@ -727,7 +727,7 @@ Bool nxagentPositionWindow(WindowPtr pWin, int x, int y)
               (void *) pWin, nxagentWindow(pWin), x, y);
   #endif
 
-  nxagentAddConfiguredWindow(pWin, CWParent | CWX | CWY | CWWidth |
+  nxagentAddConfiguredWindow(pWin, CWSibling | CWX | CWY | CWWidth |
                                  CWHeight | CWBorderWidth);
 
   return True;
@@ -1284,7 +1284,7 @@ void nxagentConfigureWindow(WindowPtr pWin, unsigned int mask)
   {
     if (mask & CW_RootlessRestack)
     {
-      mask = CWStackingOrder;
+      mask = CWStackMode;
     }
   }
 
@@ -1299,7 +1299,7 @@ void nxagentConfigureWindow(WindowPtr pWin, unsigned int mask)
 
   if (mask & CW_Update)
   {
-    mask |= CWX | CWY | CWWidth | CWHeight | CWBorderWidth | CWStackingOrder;
+    mask |= CWX | CWY | CWWidth | CWHeight | CWBorderWidth | CWStackMode;
   }
 
   if (mask & CWX)
@@ -1378,7 +1378,7 @@ void nxagentConfigureWindow(WindowPtr pWin, unsigned int mask)
     MAKE_SYNC_CONFIGURE_WINDOW;
   }
 
-  if (mask & CWStackingOrder &&
+  if (mask & CWStackMode &&
           nxagentWindowPriv(pWin)->siblingAbove != nxagentWindowSiblingAbove(pWin))
   {
     WindowPtr pSib;
@@ -1478,7 +1478,7 @@ void nxagentConfigureWindow(WindowPtr pWin, unsigned int mask)
    * really needed?
    *
    *
-   *  else if (mask & CWStackingOrder)
+   *  else if (mask & CWStackMode)
    *  {
    *    if (nxagentSplashWindow)
    *    {
@@ -1920,12 +1920,12 @@ Bool nxagentRealizeWindow(WindowPtr pWin)
   /*
    * Not needed.
    *
-   * nxagentConfigureWindow(pWin, CWStackingOrder);
+   * nxagentConfigureWindow(pWin, CWStackMode);
    *
    * nxagentFlushConfigureWindow();
    */
 
-  nxagentAddConfiguredWindow(pWin, CWStackingOrder);
+  nxagentAddConfiguredWindow(pWin, CWStackMode);
   nxagentAddConfiguredWindow(pWin, CW_Shape);
 
   /* add by dimbor */
@@ -1940,20 +1940,6 @@ Bool nxagentRealizeWindow(WindowPtr pWin)
     #ifdef SHAPE
     nxagentShapeWindow(pWin);
     #endif
-   */
-
-  /*
-   * Mapping of the root window is called by
-   * InitRootWindow in DIX. Skip the operation
-   * if we are in rootless mode.
-   */
-
-  /*
-   * if (!nxagentOption(Rootless) ||
-   *         nxagentRootlessWindow != pWin)
-   * {
-   *   XMapWindow(nxagentDisplay, nxagentWindow(pWin));
-   * }
    */
 
   #ifdef TEST
@@ -2130,10 +2116,10 @@ void nxagentCopyWindow(WindowPtr pWin, xPoint oldOrigin, RegionPtr oldRegion)
 void nxagentClipNotify(WindowPtr pWin, int dx, int dy)
 {
   /*
-   * nxagentConfigureWindow(pWin, CWStackingOrder);
+   * nxagentConfigureWindow(pWin, CWStackMode);
    */
 
-  nxagentAddConfiguredWindow(pWin, CWStackingOrder);
+  nxagentAddConfiguredWindow(pWin, CWStackMode);
   nxagentAddConfiguredWindow(pWin, CW_Shape);
 
   #ifndef NXAGENT_SHAPE
@@ -3484,6 +3470,12 @@ void nxagentSetTopLevelEventMask(WindowPtr pWin)
 }
 
 /*
+ * Run nxagentConfigureWindow() on all windows in
+ * nxagentConfiguredWindowList and move them from the list
+ * afterwards. The list will be empty then.
+ *
+ * This is also taking care of entries in nxagentExposeQueue that need
+ * to be synchronized with the real X server.
  */
 void nxagentFlushConfigureWindow(void)
 {
@@ -3586,10 +3578,10 @@ void nxagentAddConfiguredWindow(WindowPtr pWin, unsigned int valuemask)
 {
   unsigned int mask;
 
-  mask = valuemask & (CWParent | CWX | CWY | CWWidth | CWHeight |
-                   CWBorderWidth | CWStackingOrder | CW_Map | CW_Update | CW_Shape);
+  mask = valuemask & (CWSibling | CWX | CWY | CWWidth | CWHeight |
+                   CWBorderWidth | CWStackMode | CW_Map | CW_Update | CW_Shape);
 
-  valuemask &= ~(CWParent | CWX | CWY | CWWidth | CWHeight | CWBorderWidth | CWStackingOrder);
+  valuemask &= ~(CWSibling | CWX | CWY | CWWidth | CWHeight | CWBorderWidth | CWStackMode);
 
   if (mask & CWX &&
           nxagentWindowPriv(pWin)->x !=
@@ -3626,11 +3618,11 @@ void nxagentAddConfiguredWindow(WindowPtr pWin, unsigned int valuemask)
     valuemask |= CWBorderWidth;
   }
 
-  if (mask & CWStackingOrder &&
+  if (mask & CWStackMode &&
           nxagentWindowPriv(pWin)->siblingAbove !=
               nxagentWindowSiblingAbove(pWin))
   {
-    valuemask |= CWStackingOrder;
+    valuemask |= CWStackMode;
   }
 
   {
@@ -3952,16 +3944,16 @@ int nxagentEmptyBSPixmapList(void)
 
 StoringPixmapPtr nxagentFindItemBSPixmapList(unsigned long pixmapId)
 {
-  int i;
-
-  for (i = 0; i < BSPIXMAPLIMIT; i++)
+  for (int i = 0; i < BSPIXMAPLIMIT; i++)
   {
     if ((nxagentBSPixmapList[i] != NULL) &&
             (nxagentBSPixmapList[i] -> storingPixmapId == pixmapId))
     {
       #ifdef TEST
-      fprintf(stderr, "nxagentFindItemBSPixmapList: pixmapId [%lu].\n", pixmapId);
-      fprintf(stderr, "nxagentFindItemBSPixmapList: nxagentBSPixmapList[%d] -> storingPixmapId [%lu].\n",
+      fprintf(stderr, "%s: pixmapId [%lu].\n", __func__, pixmapId);
+      fprintf(stderr, "%s: nxagentBSPixmapList[%d] = [%p].\n", __func__,
+                  i, (void *) nxagentBSPixmapList[i]);
+      fprintf(stderr, "%s: nxagentBSPixmapList[%d] -> storingPixmapId [%lu].\n", __func__,
                   i, nxagentBSPixmapList[i] -> storingPixmapId);
       #endif
 
@@ -3969,15 +3961,13 @@ StoringPixmapPtr nxagentFindItemBSPixmapList(unsigned long pixmapId)
     }
   }
 
-  #ifdef TEST
-  fprintf(stderr, "nxagentFindItemBSPixmapList: WARNING! Item not found.\n");
+  #ifdef WARNING
+  fprintf(stderr, "%s: WARNING! Item not found.\n", __func__);
   #endif
 
   #ifdef TEST
-  fprintf(stderr, "nxagentFindItemBSPixmapList: Pixmap with id [%lu] not found.\n",
+  fprintf(stderr, "%s: Pixmap with id [%lu] not found.\n", __func__,
               pixmapId);
-  fprintf(stderr, "nxagentBSPixmapList[%d] = [%p].\n",
-              i, (void *) nxagentBSPixmapList[i]);
   #endif
 
   return NULL;

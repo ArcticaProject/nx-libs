@@ -2363,7 +2363,7 @@ ProcXkbSetMap(ClientPtr client)
 	else first= last= 0;
 	if (change.map.num_modmap_keys>0) {
 	    firstMM= change.map.first_modmap_key;
-	    lastMM= first+change.map.num_modmap_keys-1;
+	    lastMM= firstMM + change.map.num_modmap_keys - 1;
 	}
 	else firstMM= lastMM= 0;
 	if ((last>0) && (lastMM>0)) {
@@ -5677,10 +5677,8 @@ char *			str;
 	    return status;
     }
     else if (length!=0)  {
-#ifdef DEBUG
 	ErrorF("Internal Error!  BadLength in ProcXkbGetDeviceInfo\n");
 	ErrorF("                 Wrote %d fewer bytes than expected\n",length);
-#endif
 	return BadLength;
     }
     if (stuff->wanted&(~supported)) {

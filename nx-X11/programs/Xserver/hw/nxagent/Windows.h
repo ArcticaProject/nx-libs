@@ -159,9 +159,6 @@ extern int nxagentWindowPrivateIndex;
 #define nxagentDefaultWindowIsVisible() \
               (nxagentVisibility != VisibilityFullyObscured)
 
-#define CWParent CWSibling
-#define CWStackingOrder CWStackMode
-
 #define CW_Map    (1 << 15)
 #define CW_Update (1 << 16)
 #define CW_Shape  (1 << 17)

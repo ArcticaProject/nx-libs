@@ -228,7 +228,6 @@ extern void GlxPushProvider(__GLXprovider *impl);
 */
 #ifndef __DARWIN__
 extern void GlxExtensionInit(void);
-extern void GlxWrapInitVisuals(miInitVisualsProcPtr *);
 #else
 extern void DarwinGlxExtensionInit(void);
 extern void DarwinGlxWrapInitVisuals(miInitVisualsProcPtr *);
@@ -474,9 +473,7 @@ InitVisualWrap()
 {
     miResetInitVisuals();
 #ifdef GLXEXT
-#ifndef __DARWIN__
-    GlxWrapInitVisuals(&miInitVisualsProc);
-#else
+#ifdef __DARWIN__
     DarwinGlxWrapInitVisuals(&miInitVisualsProc);
 #endif
 #endif

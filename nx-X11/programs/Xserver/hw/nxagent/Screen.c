@@ -844,6 +844,19 @@ static int nxagentColorOffset(unsigned long mask)
   return count;
 }
 
+void freeDepths(DepthPtr depths, int num)
+{
+  for (int i = 0; i < num; i++)
+  {
+    #ifdef DEBUG
+    fprintf(stderr, "%s: freeing depth [%d] index [%d] vids [%p]\n", __func__, depths[i].depth, i, (void*) depths[i].vids);
+    #endif
+    free(depths[i].vids);
+    depths[i].vids = NULL;
+  }
+  free(depths);
+}
+
 Bool nxagentOpenScreen(ScreenPtr pScreen,
                            int argc, char *argv[])
 {
@@ -1335,6 +1348,8 @@ Bool nxagentOpenScreen(ScreenPtr pScreen,
 
     if (!pFrameBufferBits)
     {
+      freeDepths(depths, numDepths);
+      free(visuals);
       return FALSE;
     }
 
@@ -1356,6 +1371,8 @@ Bool nxagentOpenScreen(ScreenPtr pScreen,
     if (!fbScreenInit(pScreen, pFrameBufferBits, nxagentOption(RootWidth), nxagentOption(RootHeight),
           monitorResolution, monitorResolution, PixmapBytePad(nxagentOption(RootWidth), rootDepth), bitsPerPixel))
     {
+      freeDepths(depths, numDepths);
+      free(visuals);
       return FALSE;
     }
 
@@ -1391,22 +1408,15 @@ Bool nxagentOpenScreen(ScreenPtr pScreen,
      * by fbScreenInit with our own.
      */
 
-    free(pScreen -> visuals);
-    free(pScreen -> allowedDepths);
-
-    pScreen -> visuals = visuals;
+    freeDepths(pScreen->allowedDepths, pScreen->numDepths);
     pScreen -> allowedDepths = depths;
-    pScreen -> numVisuals = numVisuals;
     pScreen -> numDepths = numDepths;
-    pScreen -> rootVisual = defaultVisual;
     pScreen -> rootDepth = rootDepth;
 
-    /*
-     * Complete the initialization of the RANDR
-     * extension.
-     */
-
-    nxagentInitRandRExtension(pScreen);
+    free(pScreen -> visuals);
+    pScreen -> visuals = visuals;
+    pScreen -> numVisuals = numVisuals;
+    pScreen -> rootVisual = defaultVisual;
 
     /*
      * Set up the internal structures used for
@@ -1693,6 +1703,13 @@ N/A
     #define POSITION_OFFSET (pScreen->myNum * (nxagentOption(Width) + \
                                nxagentOption(Height)) / 32)
   }
+
+  /*
+   * Complete the initialization of the RANDR
+   * extension.
+   */
+
+  nxagentInitRandRExtension(pScreen);
 
   #ifdef TEST
   nxagentPrintAgentGeometry(NULL, "nxagentOpenScreen:");
@@ -2135,26 +2152,31 @@ Reply   Total	Cached	Bits In			Bits Out		Bits/Reply	  Ratio
 
 Bool nxagentCloseScreen(ScreenPtr pScreen)
 {
-  int i;
-
   #ifdef DEBUG
   fprintf(stderr, "running nxagentCloseScreen()\n");
   #endif
 
-  for (i = 0; i < pScreen->numDepths; i++)
-  {
-    free(pScreen->allowedDepths[i].vids);
-  }
+  /*
+   * We have called fbScreenInit() in nxagenOpenScreen, which in turn
+   * called fbOpenScreen. But we are not using the data as created by
+   * fbOpenScreen but have freed it and replaced by our own. So we free
+   * our own stuff here and take care that fbCloseScreen will not free
+   * them again.
+   */
+
+  freeDepths(pScreen->allowedDepths, pScreen->numDepths);
+  pScreen->allowedDepths = NULL;
+  pScreen->numDepths = 0;
 
   /*
    * Free the frame buffer.
    */
 
   free(((PixmapPtr)pScreen -> devPrivate) -> devPrivate.ptr);
+  free(pScreen->devPrivate);pScreen->devPrivate = NULL;
+  free(pScreen->visuals); pScreen->visuals = NULL;
 
-  free(pScreen->allowedDepths);
-  free(pScreen->visuals);
-  free(pScreen->devPrivate);
+  fbCloseScreen(pScreen);
 
   /*
    * Reset the geometry and alpha information

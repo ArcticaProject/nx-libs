@@ -700,7 +700,6 @@ static void nxagentPixmapMatchID(void *p0, XID x1, void *p2)
 
 PixmapPtr nxagentPixmapPtr(Pixmap pixmap)
 {
-  int i;
   struct nxagentPixmapPair pair;
 
   if (pixmap == None)
@@ -714,7 +713,7 @@ PixmapPtr nxagentPixmapPtr(Pixmap pixmap)
   FindClientResourcesByType(clients[serverClient -> index], RT_NX_PIXMAP,
                                 nxagentPixmapMatchID, &pair);
 
-  for (i = 0; (pair.pMap == NULL) && (i < MAXCLIENTS); i++)
+  for (int i = 0; (pair.pMap == NULL) && (i < MAXCLIENTS); i++)
   {
     if (clients[i])
     {
@@ -790,8 +789,8 @@ void nxagentDisconnectPixmap(void *p0, XID x1, void *p2)
 
 Bool nxagentDisconnectAllPixmaps(void)
 {
-  int r = 1;
   int i;
+  int r = 1;
 
   #ifdef TEST
   fprintf(stderr, "nxagentDisconnectAllPixmaps: Going to iterate through pixmap resources.\n");
@@ -958,8 +957,6 @@ Bool nxagentReconnectAllPixmaps(void *p0)
 {
   Bool result = 1;
 
-  int i;
-
   #ifdef TEST
   fprintf(stderr, "nxagentReconnectAllPixmaps: Going to recreate all pixmaps.\n");
   #endif
@@ -991,7 +988,7 @@ Bool nxagentReconnectAllPixmaps(void *p0)
 
   #endif
 
-  for (i = 0, result = 1; i < MAXCLIENTS; result = 1, i++)
+  for (int i = 0, result = 1; i < MAXCLIENTS; result = 1, i++)
   {
     if (clients[i] != NULL)
     {
@@ -1138,10 +1135,9 @@ Bool nxagentCheckPixmapIntegrity(PixmapPtr pPixmap)
     if (!integrity)
     {
 
-      int i;
       char *p, *q;
 
-      for (i = 0, p = image -> data, q = data; i < length; i++)
+      for (int i = 0, p = image -> data, q = data; i < length; i++)
       {
         if (p[i] != q[i])
         {
@@ -1187,7 +1183,6 @@ Bool nxagentCheckPixmapIntegrity(PixmapPtr pPixmap)
 
 Bool nxagentCheckAllPixmapIntegrity(void)
 {
-  int i;
   Bool imageIsGood = True;
 
   #ifdef TEST
@@ -1197,7 +1192,7 @@ Bool nxagentCheckAllPixmapIntegrity(void)
   FindClientResourcesByType(clients[serverClient -> index], RT_NX_PIXMAP,
                                 nxagentCheckOnePixmapIntegrity, &imageIsGood);
 
-  for (i = 0; (i < MAXCLIENTS) && (imageIsGood); i++)
+  for (int i = 0; (i < MAXCLIENTS) && (imageIsGood); i++)
   {
     if (clients[i])
     {
@@ -1355,7 +1350,7 @@ Bool nxagentPixmapOnShadowDisplay(PixmapPtr pMap)
 
 /*
 FIXME: If the pixmap has a different depth from the window, the
-       XPutImage returns a BadMatch. For example this may happens if
+       XPutImage returns a BadMatch. For example this may happen if
        the Render extension is enabled.
        Can we fix this creating a new pixmap?
 */
@@ -1372,7 +1367,7 @@ FIXME: If the pixmap has a different depth from the window, the
 
   /*
    * If the framebuffer is updated continuously, the nxagent
-   * visualization become too much slow.
+   * visualization becomes much too slow.
    */
 
   if ((GetTimeInMillis() - showTime) < 500)
@@ -1630,11 +1625,10 @@ void nxagentPrintResourcePredicate(void *value, XID id, XID type, void *cdata)
 void nxagentPrintResources(void)
 {
   Bool result;
-  int i;
 
   nxagentPrintResourceTypes();
 
-  for (i = 0; i < MAXCLIENTS; i++)
+  for (int i = 0; i < MAXCLIENTS; i++)
   {
     if (clients[i])
     {

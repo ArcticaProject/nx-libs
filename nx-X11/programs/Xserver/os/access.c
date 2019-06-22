@@ -1348,6 +1348,7 @@ GetLocalClientCreds(ClientPtr client, LocalClientCredRec **lccp)
     if (getpeerucred(fd, &peercred) < 0) {
 	FreeLocalClientCreds(lcc);
 	return -1;
+    }
     lcc->euid = ucred_geteuid(peercred);
     if (lcc->euid != -1)
 	lcc->fieldsSet |= LCC_UID_SET;

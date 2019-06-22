@@ -37,12 +37,6 @@ THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #include <xkbsrv.h>
 #include "xkbgeom.h"
 
-#ifdef X_NOT_POSIX
-#define Size_t unsigned int
-#else
-#define Size_t size_t
-#endif
-
 /***====================================================================***/
 
 static void 
@@ -463,7 +457,7 @@ _XkbGeomAlloc(	XPointer *		old,
 		unsigned short *	num,
 		unsigned short *	total,
 		int			num_new,
-		Size_t			sz_elem)
+		size_t			sz_elem)
 {
     if (num_new<1)
 	return Success;
@@ -708,7 +702,8 @@ register XkbKeyAliasPtr alias;
     for (i=0,alias=geom->key_aliases;i<geom->num_key_aliases;i++,alias++) {
 	if (strncmp(alias->alias,aliasStr,XkbKeyNameLength)==0) {
 	    bzero(alias->real,XkbKeyNameLength);
-	    strncpy(alias->real,realStr,XkbKeyNameLength);
+	    memcpy(alias->real, realStr,
+		   min(XkbKeyNameLength, strlen(realStr)));
 	    return alias;
 	}
     }
@@ -718,8 +713,8 @@ register XkbKeyAliasPtr alias;
     }
     alias= &geom->key_aliases[geom->num_key_aliases];
     bzero(alias,sizeof(XkbKeyAliasRec));
-    strncpy(alias->alias,aliasStr,XkbKeyNameLength);
-    strncpy(alias->real,realStr,XkbKeyNameLength);
+    memcpy(alias->alias, aliasStr, min(XkbKeyNameLength, strlen(aliasStr)));
+    memcpy(alias->real, realStr, min(XkbKeyNameLength, strlen(realStr)));
     geom->num_key_aliases++;
     return alias;
 }
@@ -936,8 +931,8 @@ Bool		found;
     if ((row->num_keys>=row->sz_keys)&&(_XkbAllocOverlayKeys(row,1)!=Success))
 	return NULL;
     key= &row->keys[row->num_keys];
-    strncpy(key->under.name,under,XkbKeyNameLength);
-    strncpy(key->over.name,over,XkbKeyNameLength);
+    memcpy(key->under.name, under, min(XkbKeyNameLength, strlen(under)));
+    memcpy(key->over.name, over, min(XkbKeyNameLength, strlen(over)));
     row->num_keys++;
     return key;
 }

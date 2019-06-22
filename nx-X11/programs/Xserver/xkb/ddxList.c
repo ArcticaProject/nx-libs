@@ -41,14 +41,6 @@ THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #include <xkbsrv.h>
 #include <nx-X11/extensions/XI.h>
 
-#ifndef PATH_MAX
-#ifdef MAXPATHLEN
-#define	PATH_MAX MAXPATHLEN
-#else
-#define	PATH_MAX 1024
-#endif
-#endif
-
 #ifdef WIN32
 /* from ddxLoad.c */
 extern const char* Win32TempDir();
@@ -210,9 +202,8 @@ char	tmpname[PATH_MAX];
 #ifndef WIN32
 	in= Popen(buf,"r");
 #else
-#ifdef DEBUG_CMD
-	ErrorF("xkb executes: %s\n",buf);
-#endif
+        if (xkbDebugFlags)
+	    DebugF("xkb executes: %s\n",buf);
 	if (System(buf) < 0)
 	    ErrorF("Could not invoke keymap compiler\n");
 	else

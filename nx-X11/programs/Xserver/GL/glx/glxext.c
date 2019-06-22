@@ -64,6 +64,7 @@ static void ResetClientState(int clientIndex)
     if (cl->returnBuf) free(cl->returnBuf);
     if (cl->largeCmdBuf) free(cl->largeCmdBuf);
     if (cl->currentContexts) free(cl->currentContexts);
+    if (cl->GLClientextensions) free(cl->GLClientextensions);
     memset(cl, 0, sizeof(__GLXclientState));
     /*
     ** By default, assume that the client supports
@@ -71,9 +72,6 @@ static void ResetClientState(int clientIndex)
     */
     cl->GLClientmajorVersion = 1;
     cl->GLClientminorVersion = 0;
-    if (cl->GLClientextensions)
-	free(cl->GLClientextensions);
-
 }
 
 /*

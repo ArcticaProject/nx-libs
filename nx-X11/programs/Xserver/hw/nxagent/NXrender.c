@@ -1004,7 +1004,11 @@ ProcRenderCompositeGlyphs (ClientPtr client)
 
     elementsBase = malloc(nlist * sizeof(XGlyphElt8));
     if (!elementsBase)
-      return BadAlloc;
+    {
+        free(glyphsBase);
+        free(listsBase);
+        return BadAlloc;
+    }
 
     buffer = (CARD8 *) (stuff + 1);
     glyphs = glyphsBase;

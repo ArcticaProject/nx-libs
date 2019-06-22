@@ -253,17 +253,6 @@ char *PngCompressData(XImage *image, int *compressed_size)
   NXColorTable color_table[NB_COLOR_MAX];
   CARD8       *image_index;
 
-  image_index = (CARD8 *) malloc((image -> height) * (image -> width) * sizeof(CARD8));
-
-  /*
-   * TODO: Be sure the padded bytes are cleaned.
-   * It would be better to set to zero the bytes
-   * that are not aligned to the word boundary
-   * at the end of the procedure.
-   */
-
-  memset(image_index, 0, (image -> height) * (image -> width) * sizeof(CARD8));
-
   *compressed_size = 0;
 
   pngDataLen = 0;
@@ -283,7 +272,6 @@ char *PngCompressData(XImage *image, int *compressed_size)
                 bitsPerPixel);
     #endif
 
-    free(image_index);
     return NULL;
   }
 
@@ -316,7 +304,6 @@ char *PngCompressData(XImage *image, int *compressed_size)
     fprintf(stderr, "******PngCompressData: PANIC! Failed creating the png_create_write_struct.\n");
     #endif
 
-    free(image_index);
     return NULL;
   }
 
@@ -329,7 +316,6 @@ char *PngCompressData(XImage *image, int *compressed_size)
     #endif
 
     png_destroy_write_struct(&png_ptr, NULL);
-    free(image_index);
 
     return NULL;
   }
@@ -341,7 +327,6 @@ char *PngCompressData(XImage *image, int *compressed_size)
     #endif
 
     png_destroy_write_struct(&png_ptr, &info_ptr);
-    free(image_index);
 
     return NULL;
   }
@@ -364,8 +349,6 @@ char *PngCompressData(XImage *image, int *compressed_size)
                 PNG_DEST_SIZE(w, h));
     #endif
 
-    free(image_index);
-
     return NULL;
   }
 
@@ -382,6 +365,24 @@ char *PngCompressData(XImage *image, int *compressed_size)
 
     return NULL;
   }
+
+  image_index = (CARD8 *) calloc(1, (image -> height) * (image -> width) * sizeof(CARD8));
+  if (image_index == NULL)
+  {
+    #ifdef PANIC
+    fprintf(stderr, "******PngCompressData: PANIC! Could not alloc image_index.\n");
+    #endif
+
+    free(pngCompBuf);
+    return NULL;
+  }
+
+  /*
+   * TODO: Be sure the padded bytes are cleaned.
+   * It would be better to set to zero the bytes
+   * that are not aligned to the word boundary
+   * at the end of the procedure.
+   */
 
   png_set_compression_level(png_ptr, PNG_Z_LEVEL);
 
@@ -480,47 +481,23 @@ char *PngCompressData(XImage *image, int *compressed_size)
     return NULL;
   }
 
+  int count;
   if (color_type == PNG_COLOR_TYPE_PALETTE)
   {
-    srcBuf = (CARD8 *) malloc(w * sizeof(CARD8));
-
-    if (srcBuf == NULL)
-    {
-      #ifdef PANIC
-      fprintf(stderr, "******PngCompressData: PANIC! Cannot allocate [%d] bytes.\n",
-                  (int) (w * sizeof(CARD8)));
-      #endif
-
-      free(image_index);
-
-      return NULL;
-    }
-
-    /*
-     * TODO: Be sure the padded bytes are cleaned.
-     * It would be better to set to zero the bytes
-     * that are not aligned to the word boundary
-     * at the end of the procedure.
-     */
-
-    memset(srcBuf, 0, w * sizeof(CARD8));
+    count = w;
   }
   else
   {
-    srcBuf = (CARD8 *) malloc(w * 3 * sizeof(CARD8));
-
-    /*
-     * TODO: See above.
-     */
-
-    memset(srcBuf, 0, w * 3 * sizeof(CARD8));
+    count = 3 * w;
   }
+
+  srcBuf = (CARD8 *) calloc(count, sizeof(CARD8));
 
   if (srcBuf == NULL)
   {
     #ifdef PANIC
     fprintf(stderr, "******PngCompressData: PANIC! Cannot allocate [%d] bytes.\n",
-                w * 3);
+                  (int) (count * sizeof(CARD8)));
     #endif
 
     free(pngCompBuf);
@@ -528,6 +505,13 @@ char *PngCompressData(XImage *image, int *compressed_size)
 
     return NULL;
   }
+
+  /*
+   * TODO: Be sure the padded bytes are cleaned.
+   * It would be better to set to zero the bytes
+   * that are not aligned to the word boundary
+   * at the end of the procedure.
+   */
 
   for (dy = 0; dy < h; dy++)
   {
@@ -548,8 +532,8 @@ char *PngCompressData(XImage *image, int *compressed_size)
               dy, h);
   #endif
 
-  free(srcBuf);
-  free(image_index);
+  free(srcBuf); srcBuf = NULL;
+  free(image_index); image_index = NULL;
 
   if (setjmp(png_jmpbuf(png_ptr)))
   {

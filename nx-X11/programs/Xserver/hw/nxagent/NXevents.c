@@ -367,10 +367,8 @@ XYToWindow(int x, int y)
 	    if (spriteTraceGood >= spriteTraceSize)
 	    {
 		spriteTraceSize += 10;
-		Must_have_memory = TRUE; /* XXX */
-		spriteTrace = (WindowPtr *)realloc(
+		spriteTrace = realloc(
 		    spriteTrace, spriteTraceSize*sizeof(WindowPtr));
-		Must_have_memory = FALSE; /* XXX */
 	    }
 	    spriteTrace[spriteTraceGood++] = pWin;
 	    pWin = pWin->firstChild;

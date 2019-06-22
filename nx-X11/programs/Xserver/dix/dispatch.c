@@ -4150,7 +4150,10 @@ AddScreen(Bool (*pfnInit) (ScreenPtr /*pScreen */ ,
     pScreen->devPrivates = (DevUnion *)calloc(sizeof(DevUnion),
                                screenPrivateCount);
     if (!pScreen->devPrivates && screenPrivateCount)
+    {
+        free(pScreen);
         return -1;
+    }
 
     ret = init_screen(pScreen, i);
     if (ret != 0) {

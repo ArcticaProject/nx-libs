@@ -553,10 +553,11 @@ void nxagentChangeKeyboardControl(DeviceIntPtr pDev, KeybdCtrl *ctrl)
 
     value_mask = KBLed | KBLedMode;
 
-    for (int i = 1; i <= 32; i++)
+    for (int i = 1; i <= XkbNumIndicators; i++)
     {
+      unsigned int mask = (unsigned int)1 << (i - 1);
       values.led = i;
-      values.led_mode = (ctrl->leds & (1 << (i - 1))) ? LedModeOn : LedModeOff;
+      values.led_mode = (ctrl->leds & mask) ? LedModeOn : LedModeOff;
 
       XChangeKeyboardControl(nxagentDisplay, value_mask, &values);
     }
@@ -945,6 +946,10 @@ XkbError:
         {
           NXShadowInitKeymap(&(pDev->key->curKeySyms));
         }
+
+	free(rules);
+	free(variant);
+	free(options);
       }
 
       if (xkb)
@@ -1025,10 +1030,17 @@ Reply   Total	Cached	Bits In			Bits Out		Bits/Reply	  Ratio
       break;
 
     case DEVICE_CLOSE:
-
       #ifdef TEST
       fprintf(stderr, "nxagentKeyboardProc: Called for [DEVICE_CLOSE].\n");
       #endif
+
+      for (int i = 0; i < pDev->nPrivates; i++)
+      {
+        free(pDev->devPrivates[i].ptr);
+        pDev->devPrivates[i].ptr = NULL;
+      }
+      free(pDev->devPrivates);
+      pDev->devPrivates = NULL;
 
       break;
   }
@@ -1292,8 +1304,6 @@ static int nxagentRestoreKeyboardDeviceData(DeviceIntPtr devBackup, DeviceIntPtr
 
 static int nxagentFreeKeyboardDeviceData(DeviceIntPtr dev)
 {
-  KbdFeedbackPtr k, knext;
-
   if (!dev)
   {
     #ifdef PANIC
@@ -1327,14 +1337,18 @@ static int nxagentFreeKeyboardDeviceData(DeviceIntPtr dev)
       dev->focus = NULL;
   }
 
-  for (k = dev->kbdfeed; k; k = knext)
+  if (dev->kbdfeed)
   {
-      knext = k->next;
-      #ifdef XKB
-      if (k->xkb_sli)
-          XkbFreeSrvLedInfo(k->xkb_sli);
-      #endif
-      free(k);
+      for (KbdFeedbackPtr k = dev->kbdfeed, knext; k; k = knext)
+      {
+          knext = k->next;
+          #ifdef XKB
+          if (k->xkb_sli)
+              XkbFreeSrvLedInfo(k->xkb_sli);
+          #endif
+          free(k);
+      }
+      dev->kbdfeed = NULL;
   }
 
   #ifdef DEBUG
@@ -1683,7 +1697,10 @@ static char* getKeyboardFilePath(void)
       free(sessionpath);
       FatalError("malloc for keyboard file path failed.");
     }
-    free(sessionpath);
+    else
+    {
+      free(sessionpath);
+    }
   }
   else
   {

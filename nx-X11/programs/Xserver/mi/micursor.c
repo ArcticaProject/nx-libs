@@ -53,8 +53,6 @@ SOFTWARE.
 #include "misc.h"
 #include "mi.h"
 
-extern Bool Must_have_memory;
-
 void
 miRecolorCursor( pScr, pCurs, displayed)
     ScreenPtr	pScr;
@@ -65,11 +63,9 @@ miRecolorCursor( pScr, pCurs, displayed)
      * This is guaranteed to correct any color-dependent state which may have
      * been bound up in private state created by RealizeCursor
      */
-    (* pScr->UnrealizeCursor)( pScr, pCurs);
-    Must_have_memory = TRUE; /* XXX */
-    (* pScr->RealizeCursor)( pScr, pCurs);
-    Must_have_memory = FALSE; /* XXX */
-    if ( displayed)
-	(* pScr->DisplayCursor)( pScr, pCurs);
+    pScr->UnrealizeCursor(pScr, pCurs);
+    pScr->RealizeCursor(pScr, pCurs);
+    if (displayed)
+	pScr->DisplayCursor(pScr, pCurs);
 
 }

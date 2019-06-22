@@ -203,7 +203,15 @@ CloseDevice(register DeviceIntPtr dev)
 
     if (dev->inited)
 	(void)(*dev->deviceProc)(dev, DEVICE_CLOSE);
+
+#ifdef XKB
+    while (dev->xkb_interest) {
+	XkbRemoveResourceClient((DevicePtr)dev,dev->xkb_interest->resource);
+    }
+#endif
+
     free(dev->name);
+
     if (dev->key)
     {
 #ifdef XKB
@@ -267,11 +275,6 @@ CloseDevice(register DeviceIntPtr dev)
 #endif
 	free(l);
     }
-#ifdef XKB
-    while (dev->xkb_interest) {
-	XkbRemoveResourceClient((DevicePtr)dev,dev->xkb_interest->resource);
-    }
-#endif
     free(dev->sync.event);
     free(dev);
 }
