@@ -1416,6 +1416,7 @@ static void nxagentParseSingleOption(char *name, char *value)
     {
       nxagentChangeOption(Clipboard, ClipboardBoth);
     }
+    return;
   }
   else if (!strcmp(name, "sleep"))
   {
