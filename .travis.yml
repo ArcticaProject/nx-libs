@@ -117,5 +117,7 @@ before_install:
 script:
    # run static analysis tools
    - ./run-static-analysis.sh
+   # print compiler version
+   - ${CC} --version
    # build all packages
    - make
