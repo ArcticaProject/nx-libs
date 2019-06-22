@@ -81,6 +81,20 @@ XkbSetExtension(DeviceIntPtr device, ProcessInputProc proc)
 			    proc,xkbUnwrapProc);
 }
 
+void
+XkbFreePrivates(DeviceIntPtr device)
+{
+  if (device &&
+      device->devPrivates &&
+      device->nPrivates > 0 &&
+      xkbDevicePrivateIndex != -1 &&
+      xkbDevicePrivateIndex < device->nPrivates)
+    {
+      free(device->devPrivates[xkbDevicePrivateIndex].ptr);
+      device->devPrivates[xkbDevicePrivateIndex].ptr = NULL;
+    }
+}
+
 #ifdef XINPUT
 extern	void	ProcessOtherEvent(
     xEvent *		/* xE */,
