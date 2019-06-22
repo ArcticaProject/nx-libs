@@ -1011,7 +1011,7 @@ int ddxProcessArgument(int argc, char *argv[], int i)
     {
       nxagentChangeOption(Clipboard, ClipboardServer);
     }
-    else if ((!strcmp(argv[i+1], "none")) || (!strcmp(argv[i+1], "1")))
+    else if ((!strcmp(argv[i+1], "none")) || (!strcmp(argv[i+1], "0")))
     {
       nxagentChangeOption(Clipboard, ClipboardNone);
     }
