@@ -1034,14 +1034,6 @@ Reply   Total	Cached	Bits In			Bits Out		Bits/Reply	  Ratio
       fprintf(stderr, "nxagentKeyboardProc: Called for [DEVICE_CLOSE].\n");
       #endif
 
-      for (int i = 0; i < pDev->nPrivates; i++)
-      {
-        free(pDev->devPrivates[i].ptr);
-        pDev->devPrivates[i].ptr = NULL;
-      }
-      free(pDev->devPrivates);
-      pDev->devPrivates = NULL;
-
       break;
   }
 
