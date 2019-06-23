@@ -39,7 +39,7 @@ matrix:
           sources:
             - ubuntu-toolchain-r-test
           packages:
-            - g++-8
+            - g++-9
             # imake
             - xutils-dev
             # X11 libaries
@@ -56,7 +56,7 @@ matrix:
             - x11-xkb-utils
 
       env:
-        - MATRIX_EVAL="CC=gcc-8 && CXX=g++-8"
+        - MATRIX_EVAL="CC=gcc-9 && CXX=g++-9"
         - STATIC_ANALYSIS="no"
 
     - os: linux
@@ -117,5 +117,7 @@ before_install:
 script:
    # run static analysis tools
    - ./run-static-analysis.sh
+   # print compiler version
+   - ${CC} --version
    # build all packages
    - make
