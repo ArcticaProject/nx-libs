@@ -2868,7 +2868,7 @@ int nxagentHandleXFixesSelectionNotify(XEvent *X)
       #endif
 
       #ifdef DEBUG
-      fprintf(stderr, "%s: CurrentSelections[i].lastTimeChanged [%d]\n", __func__, CurrentSelections[i].lastTimeChanged.milliseconds);
+      fprintf(stderr, "%s: CurrentSelections[%d].lastTimeChanged [%u]\n", __func__, i, CurrentSelections[i].lastTimeChanged.milliseconds);
       fprintf(stderr, "%s: Event timestamp [%ld]\n", __func__, xfixesEvent->xfixesselection.timestamp);
       fprintf(stderr, "%s: Event selection timestamp [%ld]\n", __func__, xfixesEvent->xfixesselection.selection_timestamp);
       fprintf(stderr, "%s: Event selection window [0x%lx]\n", __func__, xfixesEvent->xfixesselection.window);

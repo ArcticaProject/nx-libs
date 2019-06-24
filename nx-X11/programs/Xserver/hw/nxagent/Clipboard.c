@@ -1571,7 +1571,7 @@ void nxagentSetSelectionCallback(CallbackListPtr *callbacks, void *data,
   Selection * pCurSel = (Selection *)info->selection;
 
   #ifdef DEBUG
-  fprintf(stderr, "%s: pCurSel->lastTimeChanged [%d]\n", __func__, pCurSel->lastTimeChanged.milliseconds);
+  fprintf(stderr, "%s: pCurSel->lastTimeChanged [%u]\n", __func__, pCurSel->lastTimeChanged.milliseconds);
   #endif
 
   if (info->kind == SelectionSetOwner)
