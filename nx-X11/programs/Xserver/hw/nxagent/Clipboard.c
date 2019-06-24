@@ -74,9 +74,9 @@ Atom serverCutProperty;
 Atom clientCutProperty;
 static Window serverWindow;
 
-static const int nxagentPrimarySelection = 0;
-static const int nxagentClipboardSelection = 1;
-static const int nxagentMaxSelections = 2;
+const int nxagentPrimarySelection = 0;
+const int nxagentClipboardSelection = 1;
+const int nxagentMaxSelections = 2;
 
 typedef struct _SelectionOwner
 {
