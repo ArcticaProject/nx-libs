@@ -297,6 +297,28 @@ void nxagentSetPixmapFormats(ScreenInfo *screenInfo)
   }
 }
 
+/* check if possible_parent is parent of candidate */
+Bool nxagentIsParentOf(Display *d, Window possible_parent, Window candidate)
+{
+  Window parent, root, *children = NULL;
+  unsigned int num_children;
+
+  if (XQueryTree(d, candidate, &root, &parent, &children, &num_children))
+  {
+    if (children)
+      XFree((char *)children);
+
+    #ifdef TEST
+    fprintf(stderr, "%s: parent of full screen window [%p] root [%p] possible_parent [%p] candidate [%p]\n", __func__, parent, root, possible_parent, candidate);
+    #endif
+    return (parent == possible_parent);
+  }
+  else
+  {
+    return False;
+  }
+}
+
 void nxagentMinimizeFromFullScreen(ScreenPtr pScreen)
 {
   XUnmapWindow(nxagentDisplay, nxagentFullscreenWindow);
