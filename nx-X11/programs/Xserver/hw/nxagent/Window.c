@@ -831,6 +831,11 @@ void nxagentSwitchAllScreens(ScreenPtr pScreen, Bool switchOn)
   }
 
   w = nxagentDefaultWindows[pScreen -> myNum];
+
+  /*
+   * override_redirect makes the window manager ignore the window and
+   * not add decorations, see ICCCM)
+   */
   attributes.override_redirect = switchOn;
   valuemask = CWOverrideRedirect;
   XUnmapWindow(nxagentDisplay, w);
@@ -1002,6 +1007,13 @@ void nxagentSwitchAllScreens(ScreenPtr pScreen, Bool switchOn)
                                       nxagentOption(RootHeight));
       }
     }
+
+    /*
+     * FIXME: These are 0 most of the time nowadays. The effect is,
+     * that the window is moving a bit to right/bottom every time
+     * fullscreen mode is left. To fix this query the frame extents
+     * from the window manager via _NET_REQUEST_FRAME_EXTENTS
+     */
 
     if (nxagentOption(WMBorderWidth) > 0 && nxagentOption(WMTitleHeight) > 0)
     {
