@@ -1015,14 +1015,21 @@ void nxagentSwitchAllScreens(ScreenPtr pScreen, Bool switchOn)
      * from the window manager via _NET_REQUEST_FRAME_EXTENTS
      */
 
-    if (nxagentOption(WMBorderWidth) > 0 && nxagentOption(WMTitleHeight) > 0)
+    if (nxagentOption(WMBorderWidth) > 0)
     {
       nxagentChangeOption(X, nxagentOption(SavedX) - nxagentOption(WMBorderWidth));
-      nxagentChangeOption(Y, nxagentOption(SavedY) - nxagentOption(WMTitleHeight));
     }
     else
     {
       nxagentChangeOption(X, nxagentOption(SavedX));
+    }
+
+    if (nxagentOption(WMTitleHeight) > 0)
+    {
+      nxagentChangeOption(Y, nxagentOption(SavedY) - nxagentOption(WMTitleHeight));
+    }
+    else
+    {
       nxagentChangeOption(Y, nxagentOption(SavedY));
     }
 
