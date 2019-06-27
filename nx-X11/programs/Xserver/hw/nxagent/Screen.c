@@ -298,9 +298,9 @@ void nxagentSetPixmapFormats(ScreenInfo *screenInfo)
 }
 
 /* check if possible_parent is parent of candidate */
-Bool nxagentIsParentOf(Display *d, Window possible_parent, Window candidate)
+Bool nxagentIsParentOf(Display *d, XlibWindow possible_parent, XlibWindow candidate)
 {
-  Window parent, root, *children = NULL;
+  XlibWindow parent, root, *children = NULL;
   unsigned int num_children;
 
   if (XQueryTree(d, candidate, &root, &parent, &children, &num_children))
