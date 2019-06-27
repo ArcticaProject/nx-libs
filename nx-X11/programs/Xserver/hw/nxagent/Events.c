@@ -1700,7 +1700,7 @@ FIXME: Don't enqueue the KeyRelease event if the key was
 
         #endif /* NXAGENT_FIXKEYS */
 
-        if (nxagentOption(AutoGrab))
+        if (nxagentOption(AutoGrab) && !nxagentFullscreenWindow)
         {
           XlibWindow w;
           int revert_to;
