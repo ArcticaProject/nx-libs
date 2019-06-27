@@ -135,7 +135,6 @@ void nxagentFbRestoreArea(PixmapPtr pPixmap, WindowPtr pWin, int xSrc, int ySrc,
 #include "unistd.h"
 #endif
 
-extern Bool nxagentIpaq;
 extern Pixmap nxagentIconPixmap;
 extern Pixmap nxagentIconShape;
 extern Bool useXpmIcon;
@@ -329,12 +328,6 @@ Bool nxagentIsParentOf(Display *d, XlibWindow possible_parent, XlibWindow candid
 void nxagentMinimizeFromFullScreen(ScreenPtr pScreen)
 {
   XUnmapWindow(nxagentDisplay, nxagentFullscreenWindow);
-
-  if (nxagentIpaq)
-  {
-    XMapWindow(nxagentDisplay, nxagentIconWindow);
-  }
-
   XIconifyWindow(nxagentDisplay, nxagentIconWindow,
                        DefaultScreen(nxagentDisplay));
 }
@@ -349,16 +342,8 @@ void nxagentMinimizeFromFullScreen(ScreenPtr pScreen)
  */
 void nxagentMaximizeToFullScreen(ScreenPtr pScreen)
 {
-  if (nxagentIpaq)
-  {
-    XUnmapWindow(nxagentDisplay, nxagentIconWindow);
-
-    XMapWindow(nxagentDisplay, nxagentFullscreenWindow);
-  }
-  else
-  {
 /*
-    XUnmapWindow(nxagentDisplay, nxagentIconWindow);
+  XUnmapWindow(nxagentDisplay, nxagentIconWindow);
 */
 
     Window root = RootWindow(nxagentDisplay, DefaultScreen(nxagentDisplay));
@@ -407,10 +392,10 @@ FIXME: We'll check for ReparentNotify and LeaveNotify events after
       #endif
     }
 
-    XMapRaised(nxagentDisplay, nxagentFullscreenWindow);
+  XMapRaised(nxagentDisplay, nxagentFullscreenWindow);
 
-    XIconifyWindow(nxagentDisplay, nxagentIconWindow,
-                       DefaultScreen(nxagentDisplay));
+  XIconifyWindow(nxagentDisplay, nxagentIconWindow,
+                     DefaultScreen(nxagentDisplay));
 
     /* swallow all LeaveNotify events for the FullscreenWindow;
        Normally this does not swallow anything these days, but when
@@ -426,9 +411,8 @@ FIXME: We'll check for ReparentNotify and LeaveNotify events after
     }
 
 /*
-    XMapWindow(nxagentDisplay, nxagentIconWindow);
+  XMapWindow(nxagentDisplay, nxagentIconWindow);
 */
-  }
 }
 
 Window nxagentCreateIconWindow(void)
@@ -1921,17 +1905,6 @@ N/A
       if (nxagentOption(Fullscreen))
       {
         nxagentFullscreenWindow = nxagentDefaultWindows[pScreen->myNum];
-      }
-
-      if (nxagentIpaq)
-      {
-        XWindowChanges ch;
-        unsigned int ch_mask;
-
-        ch.stack_mode = Below;
-        ch_mask = CWStackMode;
-
-        XConfigureWindow(nxagentDisplay, nxagentFullscreenWindow, ch_mask, &ch);
       }
     }
 

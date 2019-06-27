@@ -1214,11 +1214,6 @@ FIXME: Don't enqueue the KeyRelease event if the key was
           }
         }
 
-        if (nxagentIpaq && nxagentClients <= 0)
-        {
-          closeSession = TRUE;
-        }
-
         if (nxagentOption(DesktopResize) == False &&
                 (X.xbutton.state & (ControlMask | Mod1Mask)) == (ControlMask | Mod1Mask))
         {

@@ -2662,12 +2662,6 @@ void nxagentMapDefaultWindows(void)
     #endif
 
     XMapWindow(nxagentDisplay, nxagentIconWindow);
-
-    if (nxagentIpaq != 0)
-    {
-      XIconifyWindow(nxagentDisplay, nxagentIconWindow,
-                         DefaultScreen(nxagentDisplay));
-    }
   }
 
   /*

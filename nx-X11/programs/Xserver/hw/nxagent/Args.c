@@ -153,7 +153,6 @@ Bool nxagentReportWindowIds = False;
 Bool nxagentReportPrivateWindowIds = False;
 Bool nxagentDoDirectColormaps = False;
 Window nxagentParentWindow = 0;
-Bool nxagentIpaq = False;
 
 int nxagentLockDeferLevel = 0;
 
@@ -617,14 +616,6 @@ int ddxProcessArgument(int argc, char *argv[], int i)
         nxagentChangeOption(Fullscreen, True);
 
         nxagentChangeOption(AllScreens, True);
-      }
-      else if (!strcmp(argv[i],"ipaq"))
-      {
-        nxagentChangeOption(Fullscreen, True);
-
-        nxagentChangeOption(AllScreens, True);
-
-        nxagentIpaq = True;
       }
       else
       { 

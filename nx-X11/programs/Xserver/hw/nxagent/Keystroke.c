@@ -44,7 +44,6 @@
 #include <libxml/tree.h>
 
 extern Bool nxagentWMIsRunning;
-extern Bool nxagentIpaq;
 extern char *nxagentKeystrokeFile;
 
 #ifdef NX_DEBUG_INPUT
@@ -506,13 +505,6 @@ Bool nxagentCheckSpecialKeystroke(XKeyEvent *X, enum HandleEventResult *result)
    * FIXME: We should use the keysym instead that the keycode
    *        here.
    */
-
-  if (X -> keycode == 130 && nxagentIpaq)
-  {
-    *result = doStartKbd;
-
-    return True;
-  }
 
   switch (stroke) {
 #ifdef DEBUG_TREE
