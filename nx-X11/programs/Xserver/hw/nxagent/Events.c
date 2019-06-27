@@ -804,7 +804,6 @@ void nxagentDispatchEvents(PredicateFuncPtr predicate)
   ScreenPtr pScreen = NULL;
 
   Bool minimize = False;
-  Bool startKbd = False;
   Bool closeSession = False;
   Bool switchFullscreen = False;
   Bool switchAllScreens = False;
@@ -941,7 +940,7 @@ void nxagentDispatchEvents(PredicateFuncPtr predicate)
           viewportLastKeyPressResult = result;
         }
 
-        if (result != doNothing && result != doStartKbd)
+        if (result != doNothing)
         {
           pScreen = nxagentScreen(X.xkey.window);
         }
@@ -977,12 +976,6 @@ void nxagentDispatchEvents(PredicateFuncPtr predicate)
           case doMinimize:
           {
             minimize = TRUE;
-
-            break;
-          }
-          case doStartKbd:
-          {
-            startKbd = TRUE;
 
             break;
           }
@@ -2168,72 +2161,6 @@ FIXME: Don't enqueue the KeyRelease event if the key was
     else
     {
       nxagentSwitchAllScreens(pScreen, !nxagentOption(AllScreens));
-    }
-  }
-
-  if (startKbd)
-  {
-    if (xkbdRunning)
-    {
-      #ifdef NXAGENT_XKBD_DEBUG
-      fprintf(stderr, "Events: nxkbd now is NOT running: %d, %d\n",
-                  X.xkey.keycode, escapecode);
-      #endif
-
-      xkbdRunning = False;
-
-      kill(pidkbd, 9);
-    }
-    else
-    {
-      char kbddisplay[6];
-      char *kbdargs[6];
-
-      strcpy(kbddisplay,":");
-      /* FIXME: why limit to 4? */
-      strncat(kbddisplay, display, 4);
-
-      kbdargs[0] = "nxkbd";
-      kbdargs[1] = "-geometry";
-      kbdargs[2] = "240x70+0+250";
-      kbdargs[3] = "-display";
-      kbdargs[4] = kbddisplay;
-      kbdargs[5] = NULL;
-
-      switch (pidkbd = fork())
-      {
-        case 0:
-        {
-          execvp(kbdargs[0], kbdargs);
-
-          #ifdef NXAGENT_XKBD_DEBUG
-          fprintf(stderr, "Events: The execvp of nxkbd process failed.\n");
-          #endif
-
-          exit(1);
-
-          break;
-        }
-        case -1:
-        {
-          #ifdef NXAGENT_XKBD_DEBUG
-          fprintf(stderr, "Events: Can't fork to run the nxkbd process.\n");
-          #endif
-
-          break;
-        }
-        default:
-        {
-          break;
-        }
-      }
-
-      #ifdef NXAGENT_XKBD_DEBUG
-      fprintf(stderr, "Events: The nxkbd process now running with [%d][%d].\n",
-                  X.xkey.keycode, escapecode);
-      #endif
-
-      xkbdRunning = True;
     }
   }
 
