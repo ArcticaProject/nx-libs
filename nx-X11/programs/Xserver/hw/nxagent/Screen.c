@@ -2042,7 +2042,7 @@ N/A
     }
     else
     {
-      nxagentIconWindow = 0;
+      nxagentIconWindow = None;
     }
 
     /*

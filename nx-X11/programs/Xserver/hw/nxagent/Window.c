@@ -2654,7 +2654,7 @@ void nxagentMapDefaultWindows(void)
    * Map the icon window.
    */
 
-  if (nxagentIconWindow != 0)
+  if (nxagentIconWindow != None)
   {
     #ifdef TEST
     fprintf(stderr, "nxagentMapDefaultWindows: Mapping icon window id [%ld].\n",
