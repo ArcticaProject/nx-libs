@@ -39,7 +39,6 @@ enum HandleEventResult
   doMinimize,
   doDebugTree,
   doCloseSession,
-  doStartKbd,
   doSwitchFullscreen,
   doSwitchAllScreens,
   doViewportMoveUp,

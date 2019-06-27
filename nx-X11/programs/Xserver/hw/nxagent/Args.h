@@ -82,7 +82,6 @@ extern Bool nxagentDoDirectColormaps;
 extern Window nxagentParentWindow;
 extern int nxagentMaxAllowedReset;
 extern Bool nxagentResizeDesktopAtStartup;
-extern Bool nxagentIpaq;
 
 extern int nxagentLockDeferLevel;
 
