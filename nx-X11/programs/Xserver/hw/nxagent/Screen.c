@@ -319,6 +319,13 @@ Bool nxagentIsParentOf(Display *d, Window possible_parent, Window candidate)
   }
 }
 
+/*
+ * Pressing the minimize keystroke while in fullscreen mode will call
+ * this function. It will unmap the fullscreen window and iconify the
+ * previously created icon window immediately. The window manager may
+ * decide how to show an iconified window. kwin e.g. shows it in the
+ * task bar.
+ */
 void nxagentMinimizeFromFullScreen(ScreenPtr pScreen)
 {
   XUnmapWindow(nxagentDisplay, nxagentFullscreenWindow);
@@ -326,14 +333,10 @@ void nxagentMinimizeFromFullScreen(ScreenPtr pScreen)
   if (nxagentIpaq)
   {
     XMapWindow(nxagentDisplay, nxagentIconWindow);
-    XIconifyWindow(nxagentDisplay, nxagentIconWindow,
-                       DefaultScreen(nxagentDisplay));
   }
-  else
-  {
-    XIconifyWindow(nxagentDisplay, nxagentIconWindow,
+
+  XIconifyWindow(nxagentDisplay, nxagentIconWindow,
                        DefaultScreen(nxagentDisplay));
-  }
 }
 
 /*
