@@ -1113,8 +1113,8 @@ FIXME: If we don't flush the queue here, it could happen
 /*
 FIXME: Don't enqueue the KeyRelease event if the key was
        not already pressed. This workaround avoids a fake
-       KeyPress is enqueued by the XKEYBOARD extension.
-       Another solution would be to let the events are
+       KeyPress being enqueued by the XKEYBOARD extension.
+       Another solution would be to let the events
        enqueued and to remove the KeyPress afterwards.
 */
         if (BitIsOn(inputInfo.keyboard -> key -> down,
@@ -1153,6 +1153,9 @@ FIXME: Don't enqueue the KeyRelease event if the key was
           nxagentXkbNumTrap = 0;
         }
 
+	/* Calculate the time elapsed between this and the last event we
+	   received. Add this delta to time we recorded for the last
+	   KeyPress event we passed on to our clients.  */
         memset(&x, 0, sizeof(xEvent));
         x.u.u.type = KeyRelease;
         x.u.u.detail = nxagentConvertKeycode(X.xkey.keycode);
@@ -1168,8 +1171,14 @@ FIXME: Don't enqueue the KeyRelease event if the key was
           x.u.keyButtonPointer.time = nxagentLastEventTime;
         }
 
-        if (!(nxagentCheckSpecialKeystroke(&X.xkey, &result)) && sendKey == 1)
+        /* do not send a KeyRelease for a special keystroke since we
+           also did not send a KeyPress event in that case */
+        if (!(nxagentCheckSpecialKeystroke(&X.xkey, &result)) && (sendKey == 1))
         {
+          #ifdef TEST
+          fprintf(stderr, "%s: passing KeyRelease event to clients\n", __func__);
+          #endif
+
           mieqEnqueue(&x);
 
           CriticalOutputPending = 1;
@@ -1180,6 +1189,12 @@ FIXME: Don't enqueue the KeyRelease event if the key was
 
             NXShadowEvent(nxagentDisplay, X);
           }
+        }
+        else
+        {
+          #ifdef TEST
+          fprintf(stderr, "%s: NOT passing KeyRelease event to clients\n", __func__);
+          #endif
         }
 
         break;
@@ -2244,6 +2259,9 @@ int nxagentHandleKeyPress(XEvent *X, enum HandleEventResult *result)
 
   if (nxagentCheckSpecialKeystroke(&X -> xkey, result))
   {
+    #ifdef TEST
+    fprintf(stderr, "%s: NOT passing KeyPress event to clients\n", __func__);
+    #endif
     return 1;
   }
 
@@ -2264,6 +2282,10 @@ int nxagentHandleKeyPress(XEvent *X, enum HandleEventResult *result)
   x.u.u.type = KeyPress;
   x.u.u.detail = nxagentConvertKeycode(X -> xkey.keycode);
   x.u.keyButtonPointer.time = nxagentLastKeyPressTime;
+
+  #ifdef TEST
+  fprintf(stderr, "%s: passing KeyPress event to clients\n", __func__);
+  #endif
 
   mieqEnqueue(&x);
 
