@@ -2225,8 +2225,6 @@ FIXME: Don't enqueue the KeyRelease event if the key was
 
 int nxagentHandleKeyPress(XEvent *X, enum HandleEventResult *result)
 {
-  xEvent x;
-
   if (nxagentXkbState.Initialized == 0)
   {
     if (X -> xkey.keycode == nxagentCapsLockKeycode)
@@ -2258,14 +2256,14 @@ int nxagentHandleKeyPress(XEvent *X, enum HandleEventResult *result)
     nxagentXkbState.Num = (~nxagentXkbState.Num & 1);
   }
 
+  nxagentLastServerTime = X -> xkey.time;
+
   nxagentLastEventTime = nxagentLastKeyPressTime = GetTimeInMillis();
-  
-  memset(&x, 0, sizeof(xEvent));
+
+  xEvent x = {0};
   x.u.u.type = KeyPress;
   x.u.u.detail = nxagentConvertKeycode(X -> xkey.keycode);
   x.u.keyButtonPointer.time = nxagentLastKeyPressTime;
-
-  nxagentLastServerTime = X -> xkey.time;
 
   mieqEnqueue(&x);
 
