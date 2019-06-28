@@ -480,6 +480,9 @@ static enum nxagentSpecialKeystroke find_keystroke(XKeyEvent *X)
   return ret;
 }
 
+/*
+ * returns True if a special keystroke has been pressed. *result will contain the action.
+ */
 Bool nxagentCheckSpecialKeystroke(XKeyEvent *X, enum HandleEventResult *result)
 {
   enum nxagentSpecialKeystroke stroke = find_keystroke(X);
@@ -629,5 +632,5 @@ Bool nxagentCheckSpecialKeystroke(XKeyEvent *X, enum HandleEventResult *result)
     case KEYSTROKE_MAX:
       break;
   }
-  return (*result == doNothing);
+  return (*result != doNothing);
 }
