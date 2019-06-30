@@ -20,6 +20,7 @@ matrix:
             - libxdamage-dev
             - libxkbfile-dev
             - libxfont-dev
+            - libxfont1-dev
             - libxinerama-dev
             - libxpm-dev
             - libxrandr-dev
@@ -40,6 +41,7 @@ matrix:
       addons:
         apt:
           sources:
+            - sourceline: 'deb http://archive.ubuntu.com/ubuntu main restricted security universe multiverse'
             - ubuntu-toolchain-r-test
           packages:
             - g++-9
@@ -50,6 +52,7 @@ matrix:
             - libxkbfile-dev
             - libxdamage-dev
             - libxfont-dev
+            - libxfont1-dev
             - libxinerama-dev
             - libxpm-dev
             - libxrandr-dev
@@ -69,6 +72,7 @@ matrix:
       addons:
         apt:
           sources:
+            - sourceline: 'deb http://archive.ubuntu.com/ubuntu main restricted security universe multiverse'
             - llvm-toolchain-xenial-3.9
           packages:
             - clang-3.9
@@ -79,6 +83,7 @@ matrix:
             - libxkbfile-dev
             - libxdamage-dev
             - libxfont-dev
+            - libxfont1-dev
             - libxinerama-dev
             - libxpm-dev
             - libxrandr-dev
@@ -98,6 +103,7 @@ matrix:
       addons:
         apt:
           sources:
+            - sourceline: 'deb http://archive.ubuntu.com/ubuntu main restricted security universe multiverse'
             - llvm-toolchain-xenial-8
             - ubuntu-toolchain-r-test
           packages:
@@ -109,6 +115,7 @@ matrix:
             - libxkbfile-dev
             - libxdamage-dev
             - libxfont-dev
+            - libxfont1-dev
             - libxinerama-dev
             - libxpm-dev
             - libxrandr-dev
