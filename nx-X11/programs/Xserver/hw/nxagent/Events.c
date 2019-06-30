@@ -452,6 +452,19 @@ void nxagentRemoteWindowInfo(Window win, int indent, Bool newLine)
 
 /*
  * Walk remote windows tree.
+ *
+ * FIXME:
+ * ========== nxagentRemoteWindowsTree ============
+ *
+ *   Root Window ID: 0x169 (the root window)  (has no name)
+ *   Parent window ID: 0x2a00063 "NX Agent"
+ *      0 children.
+ *
+ * ========== nxagentInternalWindowsTree ==========
+ * Window ID=[0x9d] Remote ID=[0x2a0007e] Name: ( has no name )
+ * x=0 y=0 width=1440 height=810 class=InputOutput map_state=IsViewable override_redirect=No
+ *
+ * -> Internal root window's remote id is not listed in RemoteWindowsTree.
  */
 
 void nxagentRemoteWindowsTree(Window window, int level)
