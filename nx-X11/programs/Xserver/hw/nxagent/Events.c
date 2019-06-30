@@ -456,7 +456,6 @@ void nxagentRemoteWindowInfo(Window win, int indent, Bool newLine)
 }
 
 
-#ifdef DEBUG_TREE
 /*
  * Walk remote windows tree.
  */
@@ -517,7 +516,6 @@ void nxagentRemoteWindowsTree(Window window, int level)
 
   SAFE_XFree((char *) childList);
 }
-#endif
 
 /*
  * Print info about internal window.
