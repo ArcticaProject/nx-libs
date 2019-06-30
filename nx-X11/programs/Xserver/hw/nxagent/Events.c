@@ -526,8 +526,8 @@ void nxagentInternalWindowInfo(WindowPtr pWin, int indent, Bool newLine)
   int           iReturnFormat;
   unsigned char *pszReturnData = NULL;
 
-  fprintf(stderr, "Window ID=[0x%lx] Remote ID=[0x%lx] ", pWin -> drawable.id,
-             nxagentWindow(pWin));
+  fprintf(stderr, "Window ID=[0x%x] %s Remote ID=[0x%x] ", pWin -> drawable.id,
+	  pWin->parent ? "" : "(the root window)", nxagentWindow(pWin));
 
   result = GetWindowProperty(pWin, MakeAtom("WM_NAME", 7, False) , 0,
                                 sizeof(CARD32), False, AnyPropertyType,
