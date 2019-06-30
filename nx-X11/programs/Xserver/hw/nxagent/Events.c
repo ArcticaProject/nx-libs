@@ -426,20 +426,14 @@ void nxagentRemoteWindowID(Window window, Bool newline)
 void nxagentRemoteWindowInfo(Window win, int indent, Bool newLine)
 {
   XWindowAttributes attributes;
-  int i;
 
   if (XGetWindowAttributes(nxagentDisplay, win, &attributes) == 0)
   {
     return;
   }
 
-  for (i = 0; i < indent; i++)
-  {
-    fprintf(stderr, " ");
-  }
-
-  fprintf(stderr, "x=%d y=%d width=%d height=%d class=%s map_state=%s "
-             "override_redirect=%s\n", attributes.x, attributes.y,
+  fprintf(stderr, "%*sx=%d y=%d width=%d height=%d class=%s map_state=%s "
+	  "override_redirect=%s\n", indent, "", attributes.x, attributes.y,
                  attributes.width, attributes.height,
                      (attributes.class == 0) ? "CopyFromParent" :
                      ((attributes.class == 1) ? "InputOutput" : "InputOnly"),
@@ -462,7 +456,6 @@ void nxagentRemoteWindowInfo(Window win, int indent, Bool newLine)
 
 void nxagentRemoteWindowsTree(Window window, int level)
 {
-  int i, j;
   unsigned long rootWin, parentWin;
   unsigned int numChildren;
   unsigned long *childList = NULL;
@@ -487,25 +480,15 @@ void nxagentRemoteWindowsTree(Window window, int level)
 
   if (level == 0 || numChildren > 0)
   {
-    fprintf(stderr, "     ");
-
-    for (j = 0; j < level; j++)
-    {
-      fprintf(stderr, "    ");
-    }
+    fprintf(stderr, "%*s", (level * 4) + 5, ""); /* 4 spaces per level */
 
     fprintf(stderr, "%d child%s%s\n", numChildren, (numChildren == 1) ? "" :
                "ren", (numChildren == 1) ? ":" : ".");
   }
 
-  for (i = (int) numChildren - 1; i >= 0; i--)
+  for (int i = (int) numChildren - 1; i >= 0; i--)
   {
-    fprintf(stderr, "      ");
-
-    for (j = 0; j < level; j++)
-    {
-      fprintf(stderr, "     ");
-    }
+    fprintf(stderr, "%*s", (level * 5) + 6, ""); /* 5 spaces per level */
 
     nxagentRemoteWindowID(childList[i], TRUE);
 
@@ -523,7 +506,6 @@ void nxagentRemoteWindowsTree(Window window, int level)
 
 void nxagentInternalWindowInfo(WindowPtr pWin, int indent, Bool newLine)
 {
-  int i;
   int result;
   unsigned long ulReturnItems;
   unsigned long ulReturnBytesLeft;
@@ -551,13 +533,8 @@ void nxagentInternalWindowInfo(WindowPtr pWin, int indent, Bool newLine)
     fprintf(stderr, "%s\n", "( has no name )");
   }
 
-  for (i = 0; i < indent; i++)
-  {
-    fprintf(stderr, " ");
-  }
-
-  fprintf(stderr, "x=%d y=%d width=%d height=%d class=%s map_state=%s "
-             "override_redirect=%s", pWin -> drawable.x, pWin -> drawable.y,
+  fprintf(stderr, "%*sx=%d y=%d width=%d height=%d class=%s map_state=%s "
+	  "override_redirect=%s", indent, "", pWin -> drawable.x, pWin -> drawable.y,
                  pWin -> drawable.width, pWin -> drawable.height,
                      (pWin -> drawable.class == 0) ? "CopyFromParent" :
                      ((pWin -> drawable.class == 1) ? "InputOutput" :
@@ -580,17 +557,11 @@ void nxagentInternalWindowInfo(WindowPtr pWin, int indent, Bool newLine)
 
 void nxagentInternalWindowsTree(WindowPtr pWin, int indent)
 {
-  WindowPtr pChild;
-  int i;
-
   while (pWin)
   {
-    pChild = pWin -> firstChild;
+    WindowPtr pChild = pWin -> firstChild;
 
-    for (i = 0; i < indent; i++)
-    {
-      fprintf(stderr, " ");
-    }
+    fprintf(stderr, "%*s", indent, "");
 
     nxagentInternalWindowInfo(pWin, indent, TRUE);
 
@@ -1021,7 +992,7 @@ void nxagentDispatchEvents(PredicateFuncPtr predicate)
 
           case doDebugTree:
           {
-            fprintf(stderr, "\n ========== nxagentRemoteWindowsTree ==========\n");
+            fprintf(stderr, "\n========== nxagentRemoteWindowsTree ============\n");
             nxagentRemoteWindowsTree(nxagentWindow(screenInfo.screens[0]->root), 0);
 
             fprintf(stderr, "\n========== nxagentInternalWindowsTree ==========\n");
