@@ -1317,7 +1317,7 @@ XORG_MANPAGE_SECTIONS
 # XORG in this case refers to the roll-up releases, not the Xorg DDX.
 XORG_RELEASE_VERSION
 
-AC_OUTPUT([
+AC_CONFIG_FILES([
 Makefile
 GL/Makefile
 GL/glx/Makefile
@@ -1356,3 +1356,5 @@ xfixes/Makefile
 hw/Makefile
 hw/nxagent/Makefile
 ])
+
+AC_OUTPUT
