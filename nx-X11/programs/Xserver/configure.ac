@@ -689,6 +689,9 @@ AC_DEFINE(XCMISC, 1, [Support XCMisc extension])
 AC_DEFINE(BIGREQS, 1, [Support BigRequests extension])
 AC_DEFINE(PIXPRIV, 1, [Support pixmap privates])
 
+dnl Checks if setitimer function is available
+AC_CHECK_FUNC(setitimer, AC_DEFINE(HAVE_SETITIMER, 1, [Check setitimer availability]))
+
 DIX_LIB='$(top_builddir)/dix/libdix.la'
 OS_LIB='$(top_builddir)/os/libos.la'
 MI_LIB='$(top_builddir)/mi/libmi.la'
