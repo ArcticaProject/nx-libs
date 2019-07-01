@@ -433,6 +433,9 @@
 /* Have a monotonic clock from clock_gettime() */
 #undef MONOTONIC_CLOCK
 
+/* Define to 1 if we want to build the X keyboard extension */
+#undef XKB
+
 /* Define to 1 if the DTrace Xserver provider probes should be built in */
 #undef XSERVER_DTRACE
 
