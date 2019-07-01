@@ -17,7 +17,7 @@ build() {
 
 	OPT="$@"
 
-	pushd "${SRC}/$PKG" >/dev/null
+	pushd "${SRC}/$PKG"
 	if [ -e Makefile ]; then
 		make distclean
 	fi
@@ -31,8 +31,8 @@ build() {
 	fi
 
 	make
-	
-	popd >/dev/null
+
+	popd
 }
 
 # FIXME: this is not clean, should be done in the configure.ac scripts
