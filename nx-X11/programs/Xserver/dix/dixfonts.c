@@ -65,7 +65,7 @@ Equipment Corporation.
 #include "dixfontstr.h"
 #include "closestr.h"
 #ifdef HAS_XFONT2
-# include <X11/fonts/libxfont2.h>
+#include <X11/fonts/libxfont2.h>
 #endif /* HAS_XFONT2 */
 
 #ifdef DEBUG
