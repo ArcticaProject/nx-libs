@@ -345,7 +345,7 @@ void nxagentRemoteWindowID(Window window, Bool newline)
     XTextProperty tp;
 #endif
 
-  fprintf(stderr, "0x%lx", window);
+  fprintf(stderr, "0x%x", window);
 
   if (!window)
   {
