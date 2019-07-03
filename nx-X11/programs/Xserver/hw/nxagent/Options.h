@@ -295,16 +295,6 @@ typedef struct _AgentOptions
   int Xdmcp;
 
   /*
-   * Latency of the link. It is simply set
-   * to a reference value, calculated based
-   * on the time required to complete the
-   * query of the agent's atoms at session
-   * startup.
-   */
-
-  int DisplayLatency;
-
-  /*
    * Size of the Xlib display buffer. The
    * default is set according to the link
    * type.

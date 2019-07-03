@@ -211,12 +211,8 @@ int nxagentQueryAtoms(ScreenPtr pScreen)
   int num_of_atoms = NXAGENT_NUMBER_OF_ATOMS;
   char *names[NXAGENT_NUMBER_OF_ATOMS];
 
-  unsigned long int startingTime = GetTimeInMillis();
-
   #ifdef TEST
   fprintf(stderr, "nxagentQueryAtoms: Going to create the intern atoms on real display.\n");
-
-  fprintf(stderr, "nxagentQueryAtoms: Starting time is [%ld].\n", startingTime);
   #endif
 
   nxagentPrintAtomMapInfo("nxagentQueryAtoms: Entering");
@@ -317,14 +313,6 @@ int nxagentQueryAtoms(ScreenPtr pScreen)
     fprintf(stderr, "nxagentQueryAtoms: Created intern atom [%s] with id [%ld].\n",
                 names[i], nxagentAtoms[i]);
   }
-
-  #endif
-
-  nxagentChangeOption(DisplayLatency, GetTimeInMillis() - startingTime);
-
-  #ifdef TEST
-  fprintf(stderr, "nxagentQueryAtoms: Ending time is [%ld] reference latency is [%d] Ms.\n",
-              GetTimeInMillis(), nxagentOption(DisplayLatency));
   #endif
 
   nxagentPrintAtomMapInfo("nxagentQueryAtoms: Exiting");
