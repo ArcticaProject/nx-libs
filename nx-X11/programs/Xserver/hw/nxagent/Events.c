@@ -378,13 +378,11 @@ void nxagentRemoteWindowID(Window window, Bool newline)
     }
     else if (tp.nitems > 0)
     {
-      int count = 0;
-      int ret;
-      char **list = NULL;
-
       fprintf(stderr, " \"");
 
-      ret = XmbTextPropertyToTextList(nxagentDisplay, &tp, &list, &count);
+      int count = 0;
+      char **list = NULL;
+      int ret = XmbTextPropertyToTextList(nxagentDisplay, &tp, &list, &count);
 
       if ((ret == Success || ret > 0) && list != NULL)
       {
@@ -1643,9 +1641,6 @@ FIXME: Don't enqueue the KeyRelease event if the key was
             {
               for (int k = 0; k < 8; k++)
               {
-                const int mask = 1;
-
-                if (val & (mask << k))
                 {
                   #ifdef NXAGENT_FIXKEYS_DEBUG
                   fprintf(stderr, "sending KeyRelease event for keycode: %x\n",
@@ -4679,7 +4674,6 @@ static const char *nxagentGrabStateToString(int state)
 
 void nxagentDumpInputDevicesState(void)
 {
-  int mask = 1;
   DeviceIntPtr dev;
   GrabPtr grab;
   WindowPtr pWin = NULL;
@@ -4697,7 +4691,7 @@ void nxagentDumpInputDevicesState(void)
     {
       for (int k = 0; k < 8; k++)
       {
-        if (val & (mask << k))
+        if (val & (1 << k))
         {
           fprintf(stderr, "\n\t[%d] [%s]", i * 8 + k,
                       XKeysymToString(XKeycodeToKeysym(nxagentDisplay, i * 8 + k, 0)));
@@ -4758,7 +4752,7 @@ void nxagentDumpInputDevicesState(void)
     {
       for (int k = 0; k < 8; k++)
       {
-        if (val & (mask << k))
+        if (val & (1 << k))
         {
           fprintf(stderr, "\n\t[%d]", i * 8 + k);
         }
