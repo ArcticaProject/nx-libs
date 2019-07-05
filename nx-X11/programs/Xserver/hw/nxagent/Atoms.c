@@ -814,7 +814,7 @@ static void nxagentPrintAtomMapInfo(char *message)
 
   for (i = 0; i < privLastAtom; i++)
   {
-    fprintf(stderr, "[%5.1d] local: %6.1lu - remote: %6.1lu - [%p] %s\n", i,
+    fprintf(stderr, "[%5.1d] local: %6.1u - remote: %6.1u - [%p] %s\n", i,
                 privAtomMap[i].local,
                     privAtomMap[i].remote,
                         privAtomMap[i].string, validateString(privAtomMap[i].string));
