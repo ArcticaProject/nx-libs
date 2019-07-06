@@ -477,7 +477,7 @@
 #define _XITYPEDEF_POINTER      1
 
 /* Ask fontsproto to make font path element names const */
-#define FONT_PATH_ELEMENT_NAME_CONST    1
+#define FONT_PATH_ELEMENT_NAME_CONST    0
 
 /* Build GLAMOR */
 #undef GLAMOR
