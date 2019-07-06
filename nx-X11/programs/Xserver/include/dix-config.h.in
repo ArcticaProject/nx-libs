@@ -521,4 +521,7 @@
 /* Have epoll_create1() */
 #undef HAVE_EPOLL_CREATE1
 
+/* use xfont2 instead of xfont1 */
+#undef HAS_XFONT2
+
 #endif /* _DIX_CONFIG_H_ */

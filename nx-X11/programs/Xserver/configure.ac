@@ -459,7 +459,8 @@ dnl if there's xfont available
 dnl implementation.
 PKG_CHECK_MODULES([xfont2], [xfont2 >= 2.0.0], [
 	CFLAGS="$CFLAGS $(pkg-config --cflags xfont2)"
-	LIBS="$LIBS $(pkg-config --libs xfont2)"], [
+	LIBS="$LIBS $(pkg-config --libs xfont2)"
+	AC_DEFINE(HAS_XFONT2, 1, [Use Xfont2])], [
 	AC_MSG_ERROR([xfont2 explicitly requested, but required
 		      modules not found.])])
 
