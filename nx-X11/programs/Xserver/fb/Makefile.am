@@ -1,6 +1,6 @@
 NULL =
 
-noinst_LTLIBRARIES = libfb.la libfbmmx.la
+noinst_LTLIBRARIES = libfb.la
 
 AM_CPPFLAGS =						\
 	-I$(top_srcdir)/hw/xfree86/os-support		\
@@ -10,7 +10,7 @@ AM_CPPFLAGS =						\
 
 AM_CFLAGS = $(DIX_CFLAGS) @SERVER_DEFINES@ @MODULE_DEFINES@ @LOADER_DEFINES@
 
-sdk_HEADERS = fb.h fbrop.h fbpseudocolor.h fboverlay.h
+sdk_HEADERS = fb.h fbrop.h fboverlay.h
 
 libfb_la_SOURCES = 	\
 	fb.h		\
@@ -50,8 +50,6 @@ libfb_la_SOURCES = 	\
 	fbtrap.c	\
 	fbutil.c	\
 	fbwindow.c	\
-	fbpseudocolor.c \
-	fbpseudocolor.h \
 	fbedge.c	\
 	fbedgeimp.h
 
