@@ -1,6 +1,6 @@
 noinst_LTLIBRARIES = libminimi.la libmi.la
 
-sdk_HEADERS = mibank.h micmap.h miline.h mipointer.h mi.h mibstore.h \
+sdk_HEADERS = micmap.h miline.h mipointer.h mi.h mibstore.h \
               migc.h mipointrst.h mizerarc.h micoord.h mifillarc.h \
               mispans.h miwideline.h mistruct.h mifpoly.h
 
@@ -11,13 +11,10 @@ libminimi_la_SOURCES = 	\
 	cbrt.c		\
 	mi.h		\
 	miarc.c		\
-	mibank.c	\
-	mibank.h	\
 	mibitblt.c	\
 	mibstore.c	\
 	mibstore.h	\
 	mibstorest.h	\
-	miclipn.c	\
 	micmap.c	\
 	micmap.h	\
 	micoord.h	\
