@@ -464,6 +464,14 @@ PKG_CHECK_MODULES([xfont2], [xfont2 >= 2.0.0], [
 	AC_MSG_ERROR([xfont2 explicitly requested, but required
 		      modules not found.])])
 
+dnl if there's xfont available
+dnl implementation.
+PKG_CHECK_MODULES(XML, libxml-2.0, [
+	CFLAGS="$CFLAGS $(pkg-config --cflags libxml-2.0)"
+	LIBS="$LIBS $(pkg-config --libs libxml-2.0)"], [
+	AC_MSG_ERROR([libxml-2.0 explicitly requested, but required
+		      modules not found.])])
+
 REQUIRED_LIBS="$REQUIRED_LIBS xau fontenc nx-x11"
 
 AM_CONDITIONAL(XF86MISC, [test "x$XF86MISC" = xyes])
