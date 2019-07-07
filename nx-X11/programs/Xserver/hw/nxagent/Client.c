@@ -37,7 +37,7 @@
 #include "dixstruct.h"
 #include "scrnintstr.h"
 #include "windowstr.h"
-#include "osdep.h"
+#include "../os/osdep.h"
 
 /*
  * NX specific includes and definitions.
