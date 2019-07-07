@@ -37,6 +37,10 @@ is" without express or implied warranty.
 
 */
 
+#ifdef HAVE_NXAGENT_CONFIG_H
+#include <nxagent-config.h>
+#endif
+
 #include <sys/types.h>
 #include <unistd.h>
 #include <stdarg.h>
