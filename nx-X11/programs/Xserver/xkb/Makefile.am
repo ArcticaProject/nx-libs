@@ -8,12 +8,9 @@ DDX_SRCS = \
         ddxCtrls.c \
         ddxFakeBtn.c \
         ddxFakeMtn.c \
-        ddxInit.c \
-        ddxKeyClick.c \
         ddxLEDs.c \
         ddxLoad.c \
         ddxList.c \
-        ddxConfig.c \
         ddxDevBtn.c
 
 DIX_SRCS = \
@@ -34,7 +31,6 @@ XKBFILE_SRCS = \
         xkbtext.c \
         xkbfmisc.c \
         xkberrs.c \
-        xkbconfig.c \
         xkbout.c
 
 X11_SRCS = \
@@ -52,4 +48,3 @@ libxkbstubs_la_SOURCES = ddxVT.c ddxPrivate.c ddxKillSrv.c
 EXTRA_DIST = xkb.h xkbDflts.h
 
 xkbcompileddir = $(XKB_COMPILED_DIR)
-dist_xkbcompiled_DATA = README.compiled
