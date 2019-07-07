@@ -123,6 +123,10 @@ Equipment Corporation.
  *      resource "owned" by the client.
  */
 
+#ifdef HAVE_NXAGENT_CONFIG_H
+#include <nxagent-config.h>
+#endif
+
 #include "../../dix/resource.c"
 
 #include "Agent.h"

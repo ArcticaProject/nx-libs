@@ -41,6 +41,10 @@ is" without express or implied warranty.
  * Used by the auto-disconnect feature.
  */
 
+#ifdef HAVE_NXAGENT_CONFIG_H
+#include <nxagent-config.h>
+#endif
+
 #include <signal.h>
 
 #include "scrnintstr.h"
