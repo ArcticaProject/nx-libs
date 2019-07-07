@@ -36,9 +36,9 @@ build() {
 }
 
 # FIXME: this is not clean, should be done in the configure.ac scripts
-export CPPFLAGS="$CPPFLAGS -DNX_MODIFICATION"
-export CXXFLAGS="$CXXFLAGS -DNX_MODIFICATION"
-export CFLAGS="$CFLAGS -DNX_MODIFICATION"
+export CPPFLAGS="$CPPFLAGS -DNX_MODIFICATION -DNXAGENT_SERVER"
+export CXXFLAGS="$CXXFLAGS -DNX_MODIFICATION -DNXAGENT_SERVER"
+export CFLAGS="$CFLAGS -DNX_MODIFICATION -DNXAGENT_SERVER"
 
 export CONFFLAGS="--enable-unix-transport		\
                   --enable-tcp-transport		\
