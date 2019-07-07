@@ -59,7 +59,9 @@ export CONFFLAGS="--enable-unix-transport		\
                   ${NULL}"
 
 export XSERVERCFLAGS_CFLAGS="				\
-                            -I../include		\
+                            -I`pwd`/../exports/include		\
+                            -I`pwd`/../exports/include/nx-X11		\
+                            -I`pwd`/../exports/include/nx-X11/extensions		\
                             ${NULL}"
 
 export XSERVERCFLAGS_LIBS="				\
