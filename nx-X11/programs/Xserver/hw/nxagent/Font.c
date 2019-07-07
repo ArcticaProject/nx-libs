@@ -76,7 +76,7 @@ is" without express or implied warranty.
 #undef  DEBUG
 
 const char * nxagentFontDirs[] = {
-  SYSTEMFONTDIR,
+  COMPILEDDEFAULTFONTPATH,
   "/usr/share/nx/fonts",
   "/usr/share/X11/fonts",
   "/usr/share/fonts/X11",
