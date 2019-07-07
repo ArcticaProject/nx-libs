@@ -35,8 +35,10 @@ build() {
 	popd
 }
 
+VERSIONSTRING=$(cat ../../VERSION)
+
 # FIXME: this is not clean, should be done in the configure.ac scripts
-export CPPFLAGS="$CPPFLAGS -DNXAGENT_SERVER"
+export CPPFLAGS="$CPPFLAGS -DNXAGENT_SERVER -DNX_VERSION_CURRENT_STRING='\"${VERSIONSTRING}\"'"
 export CXXFLAGS="$CXXFLAGS -DNXAGENT_SERVER"
 export CFLAGS="$CFLAGS -DNXAGENT_SERVER"
 
