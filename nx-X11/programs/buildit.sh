@@ -65,6 +65,7 @@ export XSERVERCFLAGS_CFLAGS="						  \
                             -I`pwd`/../exports/include/nx-X11		  \
                             -I`pwd`/../exports/include/nx-X11/extensions  \
                             -I`pwd`/Xserver/miext/cw			  \
+                            -I`pwd`/../extras/Mesa/include		  \
                             ${NULL}"
 
 export XSERVERCFLAGS_LIBS="						  \
