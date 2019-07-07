@@ -358,6 +358,9 @@
 /* Build XvMC Extension */
 #undef XvMCExtension
 
+/* Build XRes extension */
+#undef XResExtension
+
 /* Support XSync extension */
 #undef XSYNC
 
