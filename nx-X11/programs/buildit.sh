@@ -60,13 +60,14 @@ export CONFFLAGS="--enable-unix-transport		\
                   --enable-nxagent			\
                   ${NULL}"
 
-export XSERVERCFLAGS_CFLAGS="				\
-                            -I`pwd`/../exports/include		\
-                            -I`pwd`/../exports/include/nx-X11		\
-                            -I`pwd`/../exports/include/nx-X11/extensions		\
+export XSERVERCFLAGS_CFLAGS="						  \
+                            -I`pwd`/../exports/include			  \
+                            -I`pwd`/../exports/include/nx-X11		  \
+                            -I`pwd`/../exports/include/nx-X11/extensions  \
+                            -I`pwd`/Xserver/miext/cw			  \
                             ${NULL}"
 
-export XSERVERCFLAGS_LIBS="				\
+export XSERVERCFLAGS_LIBS="						  \
                            ${NULL}"
 
 build Xserver $CONFFLAGS --with-mesa-source=$PWD/${SRC}/../extras/Mesa/ PKG_CONFIG_LIBDIR="$PKG_CONFIG_LIBDIR" || exit 1
