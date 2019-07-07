@@ -442,6 +442,9 @@
 /* Have a monotonic clock from clock_gettime() */
 #undef MONOTONIC_CLOCK
 
+/* Support X Input extension */
+#undef XINPUT
+
 /* Define to 1 if we want to build the X keyboard extension */
 #undef XKB
 
