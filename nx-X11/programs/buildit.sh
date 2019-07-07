@@ -71,4 +71,11 @@ export XSERVERCFLAGS_CFLAGS="						  \
 export XSERVERCFLAGS_LIBS="						  \
                            ${NULL}"
 
+export NXAGENTMODULES_LIBS="-L`pwd`/../exports/lib			  \
+                            -L`pwd`/../../nxcomp/src/.libs		  \
+                            -L`pwd`/../../nxcompshad/src/.libs		  \
+                            -lXcomp -lXcompshad -lNX_X11		  \
+                            -lXext -lXfixes -lXrandr -lXrender -lXdmcp	  \
+                            ${NULL}"
+
 build Xserver $CONFFLAGS --with-mesa-source=$PWD/${SRC}/../extras/Mesa/ PKG_CONFIG_LIBDIR="$PKG_CONFIG_LIBDIR" || exit 1
