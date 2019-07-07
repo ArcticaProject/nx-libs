@@ -47,6 +47,11 @@
  * PERFORMANCE OF THIS SOFTWARE.
  */
 
+
+#ifdef HAVE_NXAGENT_CONFIG_H
+#include <nxagent-config.h>
+#endif
+
 #include "regionstr.h"
 #include "../../miext/damage/damage.h"
 #include <X11/fonts/font.h>
