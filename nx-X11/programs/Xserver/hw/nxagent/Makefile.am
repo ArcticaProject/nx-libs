@@ -46,11 +46,6 @@ SRCS =  Agent.h \
 	Literals.h \
 	Millis.c \
 	Millis.h \
-	NXcomposite.c \
-	NXcompositeext.h \
-	NXcomposite.h \
-	NXcompositeint.h \
-	NXcompositeproto.h \
 	NXdamage.c \
 	NXdixfonts.c \
 	NXevents.c \
@@ -58,18 +53,13 @@ SRCS =  Agent.h \
 	NXglyph.c \
 	NXglyphcurs.c \
 	NXglyphstr.h \
-	NXmiglyph.c \
 	NXmitrap.c \
-	NXmiwindow.c \
 	NXpicture.c \
 	NXpicturestr.h \
 	NXproperty.c \
 	NXrender.c \
 	NXresource.c \
 	NXshm.c \
-	NXxrandr.c \
-	NXxrandr.h \
-	NXxrandrint.h \
 	NXxvdisp.c \
 	Options.c \
 	Options.h \
