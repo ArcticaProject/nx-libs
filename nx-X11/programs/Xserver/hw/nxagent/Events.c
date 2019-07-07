@@ -39,7 +39,7 @@
 #include "keysym.h"
 #include "fb.h"
 #include "mibstorest.h"
-#include "osdep.h"
+#include "../os/osdep.h"
 
 #include "Agent.h"
 #include "Args.h"

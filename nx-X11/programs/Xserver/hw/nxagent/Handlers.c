@@ -30,7 +30,7 @@
 #include "dixstruct.h"
 #include "scrnintstr.h"
 #include "windowstr.h"
-#include "osdep.h"
+#include "../os/osdep.h"
 
 #include "Agent.h"
 #include "Handlers.h"
