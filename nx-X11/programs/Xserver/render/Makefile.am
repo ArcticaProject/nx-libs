@@ -2,6 +2,13 @@ noinst_LTLIBRARIES = librender.la
 
 AM_CFLAGS = $(DIX_CFLAGS) @SERVER_DEFINES@ @LOADER_DEFINES@
 
+if NXAGENT
+SPECIAL =
+else
+SPECIAL = picture.c render.c
+endif
+
+
 librender_la_SOURCES =	\
 	animcur.c	\
 	filter.c	\
@@ -11,8 +18,7 @@ librender_la_SOURCES =	\
 	mirect.c	\
 	mitrap.c	\
 	mitri.c		\
-	picture.c	\
-	render.c	\
+	$(SPECIAL)	\
 	renderedge.c
 
 sdk_HEADERS = picture.h mipict.h glyphstr.h picturestr.h renderedge.h
