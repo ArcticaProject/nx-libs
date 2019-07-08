@@ -68,7 +68,7 @@ export XSERVERCFLAGS_CFLAGS="						  \
                             -I`pwd`/../extras/Mesa/include		  \
                             ${NULL}"
 
-export XSERVERCFLAGS_LIBS="						  \
+export XSERVERLIBS_LIBS="						  \
                            ${NULL}"
 
 export NXAGENTMODULES_LIBS="-L`pwd`/../exports/lib			  \
