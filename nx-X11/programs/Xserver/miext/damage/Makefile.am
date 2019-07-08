@@ -7,7 +7,7 @@ AM_CPPFLAGS = -I$(srcdir)/../cw
 if NXAGENT
 DAMAGEC =
 else
-DAMAGEC = damage.c 
+DAMAGEC = damage.c
 endif
 
 libdamage_la_SOURCES =	\
