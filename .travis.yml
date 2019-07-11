@@ -28,6 +28,8 @@ matrix:
             - x11proto-fonts-dev
             - x11proto-resource-dev
             - x11proto-video-dev
+            - x11proto-xcmisc-dev
+            - x11proto-xf86vidmode-dev
             - xfonts-utils
             # soft requirements
             - quilt
@@ -62,6 +64,8 @@ matrix:
             - x11proto-fonts-dev
             - x11proto-resource-dev
             - x11proto-video-dev
+            - x11proto-xcmisc-dev
+            - x11proto-xf86vidmode-dev
             - xfonts-utils
             # soft requirements
             - quilt
@@ -95,6 +99,8 @@ matrix:
             - x11proto-fonts-dev
             - x11proto-resource-dev
             - x11proto-video-dev
+            - x11proto-xcmisc-dev
+            - x11proto-xf86vidmode-dev
             - xfonts-utils
             # soft requirements
             - quilt
@@ -129,6 +135,8 @@ matrix:
             - x11proto-fonts-dev
             - x11proto-resource-dev
             - x11proto-video-dev
+            - x11proto-xcmisc-dev
+            - x11proto-xf86vidmode-dev
             - xfonts-utils
             # soft requirements
             - quilt
