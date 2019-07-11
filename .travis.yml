@@ -27,6 +27,7 @@ matrix:
             - libxtst-dev
             - x11proto-fonts-dev
             - x11proto-resource-dev
+            - x11proto-video-dev
             - xfonts-utils
             # soft requirements
             - quilt
@@ -60,6 +61,7 @@ matrix:
             - libxtst-dev
             - x11proto-fonts-dev
             - x11proto-resource-dev
+            - x11proto-video-dev
             - xfonts-utils
             # soft requirements
             - quilt
@@ -92,6 +94,7 @@ matrix:
             - libxtst-dev
             - x11proto-fonts-dev
             - x11proto-resource-dev
+            - x11proto-video-dev
             - xfonts-utils
             # soft requirements
             - quilt
@@ -125,6 +128,7 @@ matrix:
             - libxtst-dev
             - x11proto-fonts-dev
             - x11proto-resource-dev
+            - x11proto-video-dev
             - xfonts-utils
             # soft requirements
             - quilt
