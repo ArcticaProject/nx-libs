@@ -26,6 +26,7 @@ matrix:
             - libxrandr-dev
             - libxtst-dev
             - x11proto-fonts-dev
+            - x11proto-resource-dev
             - xfonts-utils
             # soft requirements
             - quilt
@@ -58,6 +59,7 @@ matrix:
             - libxrandr-dev
             - libxtst-dev
             - x11proto-fonts-dev
+            - x11proto-resource-dev
             - xfonts-utils
             # soft requirements
             - quilt
@@ -89,6 +91,7 @@ matrix:
             - libxrandr-dev
             - libxtst-dev
             - x11proto-fonts-dev
+            - x11proto-resource-dev
             - xfonts-utils
             # soft requirements
             - quilt
@@ -121,6 +124,7 @@ matrix:
             - libxrandr-dev
             - libxtst-dev
             - x11proto-fonts-dev
+            - x11proto-resource-dev
             - xfonts-utils
             # soft requirements
             - quilt
