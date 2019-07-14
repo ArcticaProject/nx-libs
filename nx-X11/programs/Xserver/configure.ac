@@ -472,6 +472,9 @@ PKG_CHECK_MODULES(XML, libxml-2.0, [
 	AC_MSG_ERROR([libxml-2.0 explicitly requested, but required
 		      modules not found.])])
 
+dnl if there's jpeglib headers
+AC_CHECK_HEADERS([jpeglib.h])
+
 REQUIRED_LIBS="$REQUIRED_LIBS xau fontenc nx-x11"
 
 AM_CONDITIONAL(XF86MISC, [test "x$XF86MISC" = xyes])
