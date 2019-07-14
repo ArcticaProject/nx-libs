@@ -472,8 +472,12 @@ PKG_CHECK_MODULES(XML, libxml-2.0, [
 	AC_MSG_ERROR([libxml-2.0 explicitly requested, but required
 		      modules not found.])])
 
-dnl if there's jpeglib headers
-AC_CHECK_HEADERS([jpeglib.h])
+dnl if there's libjpeg headers
+PKG_CHECK_MODULES(LIBJPEG, libjpeg, [
+	CFLAGS="$CFLAGS $(pkg-config --cflags libjpeg)"
+	LIBS="$LIBS $(pkg-config --libs libjpeg)"], [
+	AC_MSG_ERROR([libjpeg explicitly requested, but required
+		      modules not found.])])
 
 REQUIRED_LIBS="$REQUIRED_LIBS xau fontenc nx-x11"
 
