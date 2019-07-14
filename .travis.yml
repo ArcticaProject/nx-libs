@@ -14,7 +14,6 @@ matrix:
           packages:
             - cppcheck
             # X11 libaries
-            - libjpeg-turbo8-dev
             - libxcomposite-dev
             - libxdamage-dev
             - libxkbfile-dev
@@ -35,7 +34,6 @@ matrix:
             - xfonts-utils
             # soft requirements
             - quilt
-            - x11-xkb-utils
             - ghostscript
 
       env:
@@ -52,7 +50,6 @@ matrix:
           packages:
             - g++-9
             # X11 libaries
-            - libjpeg-turbo8-dev
             - libxcomposite-dev
             - libxkbfile-dev
             - libxdamage-dev
@@ -73,7 +70,6 @@ matrix:
             - xfonts-utils
             # soft requirements
             - quilt
-            - x11-xkb-utils
             - ghostscript
 
       env:
@@ -89,7 +85,6 @@ matrix:
           packages:
             - clang-3.9
             # X11 libaries
-            - libjpeg-turbo8-dev
             - libxcomposite-dev
             - libxkbfile-dev
             - libxdamage-dev
@@ -110,7 +105,6 @@ matrix:
             - xfonts-utils
             # soft requirements
             - quilt
-            - x11-xkb-utils
             - ghostscript
 
       env:
@@ -127,7 +121,6 @@ matrix:
           packages:
             - clang-8
             # X11 libaries
-            - libjpeg-turbo8-dev
             - libxcomposite-dev
             - libxkbfile-dev
             - libxdamage-dev
@@ -148,7 +141,6 @@ matrix:
             - xfonts-utils
             # soft requirements
             - quilt
-            - x11-xkb-utils
             - ghostscript
 
       env:
