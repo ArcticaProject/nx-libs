@@ -2,7 +2,7 @@ AUTOMAKE_OPTIONS = dist-bzip2 foreign subdir-objects
 
 bin_PROGRAMS = nxagent
 
-SRCS =  Agent.h \
+nxagent_SOURCES =  Agent.h \
 	Args.c \
 	Args.h \
 	Atoms.c \
@@ -128,20 +128,17 @@ SRCS =  Agent.h \
 	X11/include/Xrandr_nxagent.h \
 	X11/include/Xrenderint_nxagent.h \
 	X11/include/Xrender_nxagent.h \
-	$(top_srcdir)/Xi/stubs.c \
-	$(top_srcdir)/mi/miinitext.c \
-	$(top_srcdir)/fb/fbcmap.c
-
-
-nxagent_SOURCES = $(SRCS)
+	../../Xi/stubs.c \
+	../../mi/miinitext.c \
+	../../fb/fbcmap.c
 
 nxagent_LDADD = $(XORG_CORE_LIBS) \
 		$(NXAGENT_LIBS) \
 		$(NXAGENTMODULES_LIBS)
 
 # don't warn during linking when a symbol is defined more than once.
-# This is a fundamental principle in nxagent: Replace upstream functions 
-# with own functions. 
+# This is a fundamental principle in nxagent: Replace upstream functions
+# with own functions.
 nxagent_LDFLAGS = -Wl,-zmuldefs
 
 ### NXAGENT Defines:
@@ -165,30 +162,29 @@ nxagent_LDFLAGS = -Wl,-zmuldefs
 #FIXME: move these to configure.ac
 #FIXME: the 5 -U can probably be removed
 AM_CFLAGS = -DHAVE_NXAGENT_CONFIG_H \
-            -UXF86VIDMODE -UXFreeXDGA -UXF86MISC -UXF86DRI -UXFree86LOADER \
-            -DNXAGENT_SERVER \
-            -DNXAGENT_SHAPE2 \
-            -DNXAGENT_FIXKEYS \
-            -DNXAGENT_CLIPBOARD \
-            -DNXAGENT_WAKEUP=1000 \
-            -DNXAGENT_ONSTART \
-            -DNXAGENT_SPLASH \
-            -DNXAGENT_ARTSD \
-            -DNXAGENT_UPGRADE \
-            -UNX_DEBUG_INPUT \
-            -DRANDR_10_INTERFACE \
-            -DRANDR_12_INTERFACE \
-            -UPANORAMIX \
-            -UDEBUG_TREE \
-            $(NXAGENTMODULES_CFLAGS) \
-            -I../../GL/include \
-            -IX11/include \
-            -I$(top_srcdir)/include
+	-UXF86VIDMODE -UXFreeXDGA -UXF86MISC -UXF86DRI -UXFree86LOADER \
+	-DNXAGENT_SERVER \
+	-DNXAGENT_SHAPE2 \
+	-DNXAGENT_FIXKEYS \
+	-DNXAGENT_CLIPBOARD \
+	-DNXAGENT_WAKEUP=1000 \
+	-DNXAGENT_ONSTART \
+	-DNXAGENT_SPLASH \
+	-DNXAGENT_ARTSD \
+	-DNXAGENT_UPGRADE \
+	-UNX_DEBUG_INPUT \
+	-DRANDR_10_INTERFACE \
+	-DRANDR_12_INTERFACE \
+	-UPANORAMIX \
+	-UDEBUG_TREE \
+	$(NXAGENTMODULES_CFLAGS) \
+	-I../../GL/include \
+	-IX11/include \
+	-I$(top_srcdir)/include
 
 EXTRA_DIST = os2Stub.c \
              nxagent.xpm \
              nxmissing.xpm
-
 
 # Man page
 include $(top_srcdir)/cpprules.in
