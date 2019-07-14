@@ -1,4 +1,4 @@
-AUTOMAKE_OPTIONS = subdir-objects
+#AUTOMAKE_OPTIONS = subdir-objects
 
 bin_PROGRAMS = nxagent
 
@@ -99,6 +99,35 @@ SRCS =  Agent.h \
 	Render.c \
 	Screen.c \
 	nxagent-config.h \
+	compext/Alpha.c \
+	compext/Alpha.h \
+	compext/Bitmap.c \
+	compext/Bitmap.h \
+	compext/Clean.c \
+	compext/Clean.h \
+	compext/Colormap.c \
+	compext/Colormap.h \
+	compext/Compext.c \
+	compext/Compext.h \
+	compext/Jpeg.c \
+	compext/Jpeg.h \
+	compext/Mask.c \
+	compext/Mask.h \
+	compext/Png.c \
+	compext/Png.h \
+	compext/Rgb.c \
+	compext/Rgb.h \
+	compext/Rle.c \
+	compext/Rle.h \
+	compext/Z.c \
+	compext/Z.h \
+	X11/include/Xcomposite_nxagent.h \
+	X11/include/Xfixes_nxagent.h \
+	X11/include/Xinerama_nxagent.h \
+	X11/include/xpm_nxagent.h \
+	X11/include/Xrandr_nxagent.h \
+	X11/include/Xrenderint_nxagent.h \
+	X11/include/Xrender_nxagent.h \
 	$(top_srcdir)/Xi/stubs.c \
 	$(top_srcdir)/mi/miinitext.c \
 	$(top_srcdir)/fb/fbcmap.c
@@ -153,6 +182,7 @@ AM_CFLAGS = -DHAVE_NXAGENT_CONFIG_H \
             -UDEBUG_TREE \
             $(NXAGENTMODULES_CFLAGS) \
             -I../../GL/include \
+            -IX11/include \
             -I$(top_srcdir)/include
 
 EXTRA_DIST = os2Stub.c \
