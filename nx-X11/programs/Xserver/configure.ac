@@ -486,6 +486,13 @@ PKG_CHECK_MODULES(LIBPNG, libpng, [
 	AC_MSG_ERROR([libpng explicitly requested, but required
 		      modules not found.])])
 
+dnl if there's zlib headers
+PKG_CHECK_MODULES(ZLIB, zlib, [
+	CFLAGS="$CFLAGS $(pkg-config --cflags zlib)"
+	LIBS="$LIBS $(pkg-config --libs zlib)"], [
+	AC_MSG_ERROR([zlib explicitly requested, but required
+		      modules not found.])])
+
 REQUIRED_LIBS="$REQUIRED_LIBS xau fontenc nx-x11"
 
 AM_CONDITIONAL(XF86MISC, [test "x$XF86MISC" = xyes])
