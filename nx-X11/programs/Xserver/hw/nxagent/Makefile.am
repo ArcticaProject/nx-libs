@@ -1,4 +1,4 @@
-AUTOMAKE_OPTIONS += subdir-objects
+AUTOMAKE_OPTIONS = dist-bzip2 foreign subdir-objects
 
 bin_PROGRAMS = nxagent
 
