@@ -32,7 +32,6 @@ matrix:
             - x11proto-xf86dga-dev
             - x11proto-xf86vidmode-dev
             - xfonts-utils
-            - zlib1g-dev
             # soft requirements
             - quilt
             - ghostscript
@@ -69,7 +68,6 @@ matrix:
             - x11proto-xf86dga-dev
             - x11proto-xf86vidmode-dev
             - xfonts-utils
-            - zlib1g-dev
             # soft requirements
             - quilt
             - ghostscript
@@ -105,7 +103,6 @@ matrix:
             - x11proto-xf86dga-dev
             - x11proto-xf86vidmode-dev
             - xfonts-utils
-            - zlib1g-dev
             # soft requirements
             - quilt
             - ghostscript
@@ -142,7 +139,6 @@ matrix:
             - x11proto-xf86dga-dev
             - x11proto-xf86vidmode-dev
             - xfonts-utils
-            - zlib1g-dev
             # soft requirements
             - quilt
             - ghostscript
