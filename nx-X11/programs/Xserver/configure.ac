@@ -479,6 +479,13 @@ PKG_CHECK_MODULES(LIBJPEG, libjpeg, [
 	AC_MSG_ERROR([libjpeg explicitly requested, but required
 		      modules not found.])])
 
+dnl if there's libpng headers
+PKG_CHECK_MODULES(LIBPNG, libpng, [
+	CFLAGS="$CFLAGS $(pkg-config --cflags libpng)"
+	LIBS="$LIBS $(pkg-config --libs libpng)"], [
+	AC_MSG_ERROR([libpng explicitly requested, but required
+		      modules not found.])])
+
 REQUIRED_LIBS="$REQUIRED_LIBS xau fontenc nx-x11"
 
 AM_CONDITIONAL(XF86MISC, [test "x$XF86MISC" = xyes])
