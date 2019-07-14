@@ -13,9 +13,8 @@ matrix:
             - ubuntu-toolchain-r-test
           packages:
             - cppcheck
-            # imake
-            - xutils-dev
             # X11 libaries
+            - libjpeg8-dev
             - libxcomposite-dev
             - libxdamage-dev
             - libxkbfile-dev
@@ -52,9 +51,8 @@ matrix:
             - ubuntu-toolchain-r-test
           packages:
             - g++-9
-            # imake
-            - xutils-dev
             # X11 libaries
+            - libjpeg8-dev
             - libxcomposite-dev
             - libxkbfile-dev
             - libxdamage-dev
@@ -90,9 +88,8 @@ matrix:
             - llvm-toolchain-xenial-3.9
           packages:
             - clang-3.9
-            # imake
-            - xutils-dev
             # X11 libaries
+            - libjpeg8-dev
             - libxcomposite-dev
             - libxkbfile-dev
             - libxdamage-dev
@@ -129,9 +126,8 @@ matrix:
             - ubuntu-toolchain-r-test
           packages:
             - clang-8
-            # imake
-            - xutils-dev
             # X11 libaries
+            - libjpeg8-dev
             - libxcomposite-dev
             - libxkbfile-dev
             - libxdamage-dev
