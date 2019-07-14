@@ -1,4 +1,4 @@
-#AUTOMAKE_OPTIONS = subdir-objects
+AUTOMAKE_OPTIONS += subdir-objects
 
 bin_PROGRAMS = nxagent
 
