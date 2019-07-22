@@ -281,10 +281,7 @@ Bool nxagentRootlessTreesMatch(void)
     }
   }
 
-  if (children_return)
-  {
-    XFree(children_return);
-  }
+  SAFE_XFree(children_return);
 
   return treesMatch;
 }
@@ -332,7 +329,7 @@ void nxagentRootlessRestack(unsigned long children[], unsigned int nchildren)
 
   if (!ntoplevel)
   {
-    free(toplevel);
+    SAFE_free(toplevel);
     return;
   }
 
@@ -397,7 +394,7 @@ void nxagentRootlessRestack(unsigned long children[], unsigned int nchildren)
 
   #endif
 
-  free(toplevel);
+  SAFE_free(toplevel);
 
   return;
 }
@@ -818,7 +815,7 @@ int nxagentExportProperty(pWin, property, type, format, mode, nUnits, value)
 
   if (freeMem)
   {
-    free(output);
+    SAFE_free(output);
   }
 
   return export;
@@ -1131,7 +1128,7 @@ void nxagentImportProperty(Window window,
 
   if (freeMem)
   {
-    free(output);
+    SAFE_free(output);
   }
 
   return;
@@ -1183,7 +1180,7 @@ void nxagentRemovePropertyFromList(void)
       nxagentPropertyList.last = NULL;
     }
 
-    free(tmp);
+    SAFE_free(tmp);
   }
 }
 
