@@ -195,7 +195,7 @@ int ddxProcessArgument(int argc, char *argv[], int i)
   {
     char *basec = strdup(argv[0]);
     nxagentProgName = strdup(basename(basec));
-    free(basec);
+    SAFE_free(basec);
 
     /*
      * Check if we are running as X2Go Agent
@@ -270,7 +270,7 @@ int ddxProcessArgument(int argc, char *argv[], int i)
     {
       nxagentParseOptionString(envOptions);
 
-      free(envOptions);
+      SAFE_free(envOptions);
     }
 
     for (j = 0; j < argc; j++)
@@ -378,8 +378,7 @@ int ddxProcessArgument(int argc, char *argv[], int i)
   {
     if (++i < argc)
     {
-      free(nxagentOptionsFilenameOrString);
-      nxagentOptionsFilenameOrString = NULL;
+      SAFE_free(nxagentOptionsFilenameOrString);
 
       if (-1 == asprintf(&nxagentOptionsFilenameOrString, "%s", argv[i]))
       {
@@ -716,8 +715,7 @@ int ddxProcessArgument(int argc, char *argv[], int i)
   {
     if (++i < argc)
     {
-      free(nxagentKeyboard);
-      nxagentKeyboard = NULL;
+      SAFE_free(nxagentKeyboard);
 
       nxagentKeyboard = strdup(argv[i]);
       if (nxagentKeyboard == NULL)
@@ -1574,7 +1572,7 @@ static void nxagentParseSingleOption(char *name, char *value)
 
   ddxProcessArgument(argc, argv, 0);
 
-  free(argv[0]);
+  SAFE_free(argv[0]);
 }
 
 static void nxagentParseOptionString(char *string)
@@ -1761,7 +1759,7 @@ void nxagentProcessOptionsFile(char * filename)
 
 nxagentProcessOptionsFileExit:
 
-  free(data);
+  SAFE_free(data);
 
   if (file)
   {
