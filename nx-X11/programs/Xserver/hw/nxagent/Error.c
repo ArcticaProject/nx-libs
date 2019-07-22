@@ -42,6 +42,7 @@
 
 #include "Error.h"
 #include "Args.h"
+#include "Utils.h"
 
 /*
  * Set here the required log level.
@@ -425,7 +426,7 @@ char *nxagentGetRootPath(void)
                     "home directory '%s'.\n", homeEnv);
         #endif
 
-        free(homeEnv);
+        SAFE_free(homeEnv);
 
         return NULL;
       }
@@ -436,7 +437,7 @@ char *nxagentGetRootPath(void)
 
       snprintf(nxagentRootDir, DEFAULT_STRING_LENGTH, "%s/.nx", homeEnv);
 
-      free(homeEnv);
+      SAFE_free(homeEnv);
 
       /*
        * Create the NX root directory.
@@ -534,14 +535,14 @@ char *nxagentGetSessionPath(void)
                   nxagentSessionDir);
       #endif
 
-      free(rootPath);
+      SAFE_free(rootPath);
 
       return NULL;
     }
 
     snprintf(nxagentSessionDir, DEFAULT_STRING_LENGTH, "%s/C-%s", rootPath, nxagentSessionId);
 
-    free(rootPath);
+    SAFE_free(rootPath);
 
     if ((stat(nxagentSessionDir, &dirStat) == -1) && (errno == ENOENT))
     {
@@ -595,14 +596,14 @@ void nxagentGetClientsPath(void)
       fprintf(stderr, "nxagentGetClientsPath: PANIC! Invalid value for the NX clients Log File Path ''.\n");
       #endif
 
-      free(sessionPath);
+      SAFE_free(sessionPath);
 
       return;
     }
 
     snprintf(nxagentClientsLogName, NXAGENTCLIENTSLOGNAMELENGTH, "%s/clients", sessionPath);
 
-    free(sessionPath);
+    SAFE_free(sessionPath);
   }
 
   return;
