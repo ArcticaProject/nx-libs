@@ -63,6 +63,7 @@
 #include "Init.h"
 #include "Composite.h"
 #include "Events.h"
+#include "Utils.h"
 
 #include <nx/NX.h>
 #include "compext/Compext.h"
@@ -1482,10 +1483,7 @@ void nxagentConfigureWindow(WindowPtr pWin, unsigned int mask)
         fprintf(stderr, "nxagentConfigureWindow: Failed QueryTree request.\n ");
       }
 
-      if (children_return)
-      {
-        XFree(children_return);
-      }
+      SAFE_XFree(children_return);
     }
     #endif
   }
@@ -3183,7 +3181,7 @@ static void nxagentReconnectWindow(void * param0, XID param1, void * data_buffer
                               &hints);
 
       #ifdef _XSERVER64
-      free(data64);
+      SAFE_free(data64);
       #endif
     }
   }
@@ -3430,7 +3428,7 @@ Bool nxagentCheckWindowIntegrity(WindowPtr pWin)
        XDestroyImage(image);
      }
 
-     free(data);
+     SAFE_free(data);
   }
   else
   {
@@ -3519,14 +3517,14 @@ void nxagentFlushConfigureWindow(void)
 
     if (index == nxagentConfiguredWindowList)
     {
-      free(index);
+      SAFE_free(index);
       break;
     }
     else
     {
       ConfiguredWindowStruct *tmp = index;
       index = index -> prev;
-      free(tmp);
+      SAFE_free(tmp);
     }
   }
 
@@ -3676,16 +3674,14 @@ void nxagentDeleteConfiguredWindow(WindowPtr pWin)
     {
       if (index -> prev == NULL && index -> next == NULL)
       {
-        free(nxagentConfiguredWindowList);
-        nxagentConfiguredWindowList = NULL;
-
+        SAFE_free(nxagentConfiguredWindowList);
         return;
       }
       else if (index -> prev == NULL)
       {
         tmp = nxagentConfiguredWindowList;
         index = nxagentConfiguredWindowList = tmp -> next;
-        free(tmp);
+        SAFE_free(tmp);
         nxagentConfiguredWindowList -> prev = NULL;
 
         continue;
@@ -3694,7 +3690,7 @@ void nxagentDeleteConfiguredWindow(WindowPtr pWin)
       {
         tmp = index;
         index = index -> prev;
-        free(tmp);
+        SAFE_free(tmp);
         index -> next = NULL;
 
         return;
@@ -3705,7 +3701,7 @@ void nxagentDeleteConfiguredWindow(WindowPtr pWin)
       index = index -> next;
       previous -> next = index;
       index -> prev = previous;
-      free(tmp);
+      SAFE_free(tmp);
 
       continue;
     }
@@ -3747,16 +3743,14 @@ void nxagentDeleteStaticResizedWindow(unsigned long sequence)
     {
       if (index -> prev == NULL && index -> next == NULL)
       {
-        free(nxagentStaticResizedWindowList);
-        nxagentStaticResizedWindowList = NULL;
-
+        SAFE_free(nxagentStaticResizedWindowList);
         return;
       }
       else if (index -> prev == NULL)
       {
         tmp = nxagentStaticResizedWindowList;
         index = nxagentStaticResizedWindowList = tmp -> next;
-        free(tmp);
+        SAFE_free(tmp);
         nxagentStaticResizedWindowList -> prev = NULL;
 
         continue;
@@ -3765,7 +3759,7 @@ void nxagentDeleteStaticResizedWindow(unsigned long sequence)
       {
         tmp = index;
         index = index -> prev;
-        free(tmp);
+        SAFE_free(tmp);
         index -> next = NULL;
 
         return;
@@ -3776,7 +3770,7 @@ void nxagentDeleteStaticResizedWindow(unsigned long sequence)
       index = index -> next;
       previous -> next = index;
       index -> prev = previous;
-      free(tmp);
+      SAFE_free(tmp);
 
       continue;
     }
@@ -3909,8 +3903,7 @@ int nxagentRemoveItemBSPixmapList(unsigned long pixmapId)
     if ((nxagentBSPixmapList[i] != NULL) &&
             (nxagentBSPixmapList[i] -> storingPixmapId == pixmapId))
     {
-      free(nxagentBSPixmapList[i]);
-      nxagentBSPixmapList[i] = NULL;
+      SAFE_free(nxagentBSPixmapList[i]);
 
       if (i < BSPIXMAPLIMIT - 1)
       {
@@ -3948,8 +3941,7 @@ int nxagentEmptyBSPixmapList(void)
 {
   for (int i = 0; i < BSPIXMAPLIMIT; i++)
   {
-    free(nxagentBSPixmapList[i]);
-    nxagentBSPixmapList[i] = NULL;
+    SAFE_free(nxagentBSPixmapList[i]);
   }
 
   return 1;
