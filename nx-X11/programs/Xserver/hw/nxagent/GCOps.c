@@ -57,6 +57,7 @@ is" without express or implied warranty.
 #include "Holder.h"
 #include "Args.h"
 #include "Screen.h"
+#include "Utils.h"
 
 #include "compext/Compext.h"
 
@@ -787,7 +788,7 @@ RegionPtr nxagentCopyArea(DrawablePtr pSrcDrawable, DrawablePtr pDstDrawable,
                    srcx, srcy, width, height);
     #endif
 
-    free(data);
+    SAFE_free(data);
 
     /*
      * If the source is a shared memory pixmap, the
@@ -1007,7 +1008,7 @@ RegionPtr nxagentCopyPlane(DrawablePtr pSrcDrawable, DrawablePtr pDstDrawable,
                    srcx, srcy, width, height);
     #endif
 
-    free(data);
+    SAFE_free(data);
 
     /*
      * If the source is a shared memory pixmap, the
@@ -1545,7 +1546,7 @@ void nxagentFillPolygon(DrawablePtr pDrawable, GCPtr pGC, int shape,
     RESET_GC_TRAP();
   }
 
-  free(newPoints);
+  SAFE_free(newPoints);
 }
 
 void nxagentPolyFillRect(DrawablePtr pDrawable, GCPtr pGC,
