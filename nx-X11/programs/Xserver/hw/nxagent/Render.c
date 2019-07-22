@@ -45,6 +45,7 @@
 #include "Drawable.h"
 #include "Trap.h"
 #include "Args.h"
+#include "Utils.h"
 
 #define Atom   XlibAtom
 #define Pixmap XlibPixmap
@@ -2528,7 +2529,7 @@ void nxagentAddGlyphs(GlyphSetPtr glyphSet, Glyph *gids, xGlyphInfo *gi,
 
   if (normalizedImages != images)
   {
-    free(normalizedImages);
+    SAFE_free(normalizedImages);
   }
 
   #ifdef DEBUG
@@ -2636,7 +2637,7 @@ FIXME: Is this useful or just a waste of bandwidth?
                           nparams);
   #endif
 
-  free(szFilter);
+  SAFE_free(szFilter);
 }
 
 
