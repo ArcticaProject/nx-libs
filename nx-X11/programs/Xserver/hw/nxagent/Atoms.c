@@ -43,6 +43,7 @@
 #include "Screen.h"
 #include "Options.h"
 #include "Agent.h"
+#include "Utils.h"
 
 /*
  * Set here the required log level.
@@ -52,11 +53,6 @@
 #define WARNING
 #undef  TEST
 #undef  DEBUG
-
-#ifdef DEBUG
-/* for validateString() */
-#include "Utils.h"
-#endif
 
 /*
  * These values should be moved in
@@ -482,8 +478,8 @@ static int nxagentInitAtomMap(char **atomNameList, int count, Atom *atomsRet)
     fprintf(stderr, "nxagentInitAtomMap: WARNING! XInternAtoms request failed.\n");
     #endif
 
-    free(atom_list);
-    free(name_list);
+    SAFE_free(atom_list);
+    SAFE_free(name_list);
 
     return 0;
   }
@@ -523,8 +519,8 @@ static int nxagentInitAtomMap(char **atomNameList, int count, Atom *atomsRet)
     }
   }
 
-  free(atom_list);
-  free(name_list);
+  SAFE_free(atom_list);
+  SAFE_free(name_list);
 
   nxagentPrintAtomMapInfo("nxagentInitAtomMap: Exiting");
 
@@ -794,7 +790,7 @@ Atom nxagentRemoteToLocalAtom(Atom remote)
     #ifdef TEST
     fprintf(stderr, "%s: remote [%d (%s)] -> local [%d]\n", __func__, remote, string, local);
     #endif
-    XFree(string);
+    SAFE_XFree(string);
 
     return local;
   }
