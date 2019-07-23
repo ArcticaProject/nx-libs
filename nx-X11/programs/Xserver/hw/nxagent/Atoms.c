@@ -177,7 +177,7 @@ void nxagentWMDetect()
   finishWMDetection(verbose);
 }
 
-int nxagentInitAtoms(WindowPtr pWin)
+int nxagentInitAtoms()
 {
   /*
    * Value of nxagentAtoms[8] is "NX_AGENT_SIGNATURE".

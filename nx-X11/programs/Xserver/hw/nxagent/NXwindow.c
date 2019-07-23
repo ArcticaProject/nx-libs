@@ -204,7 +204,7 @@ InitRootWindow(WindowPtr pWin)
     fprintf(stderr, "InitRootWindow: Mapping default windows.\n");
     #endif
 
-    nxagentInitAtoms(pWin);
+    nxagentInitAtoms();
 
     nxagentInitClipboard(pWin);
 
