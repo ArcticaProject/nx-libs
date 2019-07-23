@@ -670,7 +670,7 @@ Atom nxagentLocalToRemoteAtom(Atom local)
   if (!ValidAtom(local))
   {
     #ifdef DEBUG
-    fprintf(stderr, "%s: local [%d] is no valid - returning None\n", __func__, remote);
+    fprintf(stderr, "%s: local [%d] is no valid - returning None\n", __func__, local);
     #endif
     return None;
   }
