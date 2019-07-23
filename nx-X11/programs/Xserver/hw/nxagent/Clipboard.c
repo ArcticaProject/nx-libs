@@ -1783,8 +1783,7 @@ int nxagentInitClipboard(WindowPtr pWin)
   fprintf(stderr, "%s: Got called.\n", __func__);
   #endif
 
-  free(lastSelectionOwner);
-  lastSelectionOwner = NULL;
+  SAFE_free(lastSelectionOwner);
 
   lastSelectionOwner = (SelectionOwner *) malloc(nxagentMaxSelections * sizeof(SelectionOwner));
 
