@@ -682,3 +682,50 @@ GetWindowProperty(pWin, property, longOffset, longLength, delete,
     return(Success);
 }
 #endif
+
+int
+ProcDeleteProperty(register ClientPtr client)
+{
+    WindowPtr pWin;
+    REQUEST(xDeletePropertyReq);
+    int result;
+
+    REQUEST_SIZE_MATCH(xDeletePropertyReq);
+    UpdateCurrentTime();
+    pWin = (WindowPtr)SecurityLookupWindow(stuff->window, client,
+                                           DixWriteAccess);
+    if (!pWin)
+        return(BadWindow);
+    if (!ValidAtom(stuff->property))
+    {
+        client->errorValue = stuff->property;
+        return (BadAtom);
+    }
+
+#ifdef XCSECURITY
+    switch(SecurityCheckPropertyAccess(client, pWin, stuff->property,
+                                       DixDestroyAccess))
+    {
+        case SecurityErrorOperation:
+            client->errorValue = stuff->property;
+            return BadAtom;;
+        case SecurityIgnoreOperation:
+            return Success;
+    }
+#endif
+
+#ifdef NXAGENT_SERVER
+    /* prevent clients from deleting the NX_AGENT_VERSION property */
+    {
+      Atom prop = MakeAtom("NX_AGENT_VERSION", strlen("NX_AGENT_VERSION"), True);
+      if (stuff->property == prop)
+        return client->noClientException;
+    }
+#endif
+
+    result = DeleteProperty(pWin, stuff->property);
+    if (client->noClientException != Success)
+        return(client->noClientException);
+    else
+        return(result);
+}

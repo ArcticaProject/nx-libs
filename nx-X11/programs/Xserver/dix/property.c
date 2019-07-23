@@ -655,6 +655,7 @@ ProcListProperties(ClientPtr client)
     return(client->noClientException);
 }
 
+#ifndef NXAGENT_SERVER
 int 
 ProcDeleteProperty(register ClientPtr client)
 {
@@ -692,3 +693,4 @@ ProcDeleteProperty(register ClientPtr client)
     else
 	return(result);
 }
+#endif
