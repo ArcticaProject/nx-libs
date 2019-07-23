@@ -4694,7 +4694,7 @@ void nxagentPrintGeometry(void)
 
   for (i = 0; i < screenInfo.numScreens; i++)
   {
-    if (nxagentPrintGeometryFlags && (1 << i))
+    if (nxagentPrintGeometryFlags & (1 << i))
     {
       fprintf(stderr, "Info: Screen [%d] resized to geometry [%dx%d] "
                   "fullscreen [%d].\n", i, screenInfo.screens[i] -> width,
