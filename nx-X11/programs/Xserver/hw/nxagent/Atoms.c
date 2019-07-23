@@ -161,6 +161,7 @@ static void finishWMDetection(Bool verbose)
 
 void nxagentWMDetect() 
 {
+  /* FIXME: verbose is always false, there's no code to set it to true */
   Bool verbose = False;
   Bool windowManagerWasRunning = nxagentWMIsRunning;
 
