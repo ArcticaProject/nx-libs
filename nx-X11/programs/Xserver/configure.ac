@@ -493,10 +493,22 @@ PKG_CHECK_MODULES(ZLIB, zlib, [
 	AC_MSG_ERROR([zlib explicitly requested, but required
 		      modules not found.])])
 
-dnl if there's zlib headers
+dnl if there's xcomposite headers
 PKG_CHECK_MODULES(XCOMPOSITE, xcomposite, [
 	LIBS="$LIBS $(pkg-config --libs xcomposite)"], [
 	AC_MSG_ERROR([xcomposite explicitly requested, but required
+		      modules not found.])])
+
+dnl if there's xtst headers
+PKG_CHECK_MODULES(XTST, xtst, [
+	LIBS="$LIBS $(pkg-config --libs xtst)"], [
+	AC_MSG_ERROR([xtst explicitly requested, but required
+		      modules not found.])])
+
+dnl if there's xdamage headers
+PKG_CHECK_MODULES(XDAMAGE, xdamage, [
+	LIBS="$LIBS $(pkg-config --libs xdamage)"], [
+	AC_MSG_ERROR([xdamage explicitly requested, but required
 		      modules not found.])])
 
 REQUIRED_LIBS="$REQUIRED_LIBS xau fontenc nx-x11"
