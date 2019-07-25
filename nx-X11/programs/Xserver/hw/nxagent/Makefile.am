@@ -179,6 +179,7 @@ AM_CFLAGS = -DHAVE_NXAGENT_CONFIG_H \
 	-UPANORAMIX \
 	-UDEBUG_TREE \
 	$(NXAGENTMODULES_CFLAGS) \
+	$(DIX_CFLAGS) \
 	-I../../GL/include \
 	-IX11/include \
 	-I$(top_srcdir)/include
