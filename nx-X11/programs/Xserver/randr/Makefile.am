@@ -13,10 +13,14 @@ librandr_la_SOURCES =	\
 	rrdispatch.c	\
 	rrinfo.c	\
 	rrmode.c	\
+	rrmonitor.c	\
 	rroutput.c	\
 	rrpointer.c	\
 	rrproperty.c	\
+	rrprovider.c	\
+	rrproviderproperty.c	\
 	rrscreen.c	\
-	rrsdispatch.c   \
-        rrxinerama.c
+	rrtransform.c	\
+	rrsdispatch.c	\
+	rrxinerama.c
 
