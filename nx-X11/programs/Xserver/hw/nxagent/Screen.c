@@ -891,7 +891,7 @@ Bool nxagentOpenScreen(ScreenPtr pScreen,
   VisualPtr visuals;
   DepthPtr depths;
   int numVisuals, numDepths;
-  int i, j, depthIndex;
+  int depthIndex;
   unsigned long valuemask;
   XSetWindowAttributes attributes;
   XWindowAttributes gattributes;
@@ -1221,7 +1221,7 @@ Bool nxagentOpenScreen(ScreenPtr pScreen,
 
     depths = (DepthPtr) malloc(nxagentNumDepths * sizeof(DepthRec));
 
-    for (i = 0; i < nxagentNumDepths; i++)
+    for (int i = 0; i < nxagentNumDepths; i++)
     {
       depths[i].depth = nxagentDepths[i];
       depths[i].numVids = 0;
@@ -1242,7 +1242,7 @@ Bool nxagentOpenScreen(ScreenPtr pScreen,
 
     visuals = (VisualPtr) malloc(nxagentNumVisuals * sizeof(VisualRec));
 
-    for (i = 0; i < nxagentNumVisuals; i++)
+    for (int i = 0; i < nxagentNumVisuals; i++)
     {
       visuals[numVisuals].vid = FakeClientID(0);
       visuals[numVisuals].class = nxagentVisuals[i].class;
@@ -1271,6 +1271,7 @@ Bool nxagentOpenScreen(ScreenPtr pScreen,
       }
       else
       {
+        int j;
         for (j = 0; j < numVisuals; j++)
         {
           if (visuals[numVisuals].class == visuals[j].class &&
@@ -1300,7 +1301,7 @@ Bool nxagentOpenScreen(ScreenPtr pScreen,
                   (long unsigned int)visuals[numVisuals].vid); 
       #endif
 
-      for (j = 0; j < numDepths; j++)
+      for (int j = 0; j < numDepths; j++)
       {
         if (depths[j].depth == nxagentVisuals[i].depth)
         {
@@ -1461,7 +1462,7 @@ Bool nxagentOpenScreen(ScreenPtr pScreen,
      * pixmap for each depth.
      */
 
-    for (i = 0; i < numDepths; i++)
+    for (int i = 0; i < numDepths; i++)
     {
       nxagentMarkPlaceholderNotLoaded(i);
     }
@@ -2581,7 +2582,6 @@ void nxagentShadowSetWindowOptions(void)
 
 int nxagentShadowInit(ScreenPtr pScreen, WindowPtr pWin)
 {
-  int i;
   char *layout = NULL;
   extern char *nxagentKeyboard;
   XlibGC gc;
@@ -2604,6 +2604,7 @@ int nxagentShadowInit(ScreenPtr pScreen, WindowPtr pWin)
 
   if (nxagentKeyboard != NULL)
   {
+    int i;
     for (i = 0; nxagentKeyboard[i] != '/' && nxagentKeyboard[i] != 0; i++);
 
     if(nxagentKeyboard[i] == 0 || nxagentKeyboard[i + 1] == 0 || i == 0)
@@ -3427,7 +3428,6 @@ void nxagentPropagateArtsdProperties(ScreenPtr pScreen, char *port)
   unsigned char         *pszReturnData = NULL;
   int                   iReturn;
 
-  int i,in;
   char tchar[] = "    ";
 /*
 FIXME: The port information is not used at the moment and produces a
@@ -3480,6 +3480,7 @@ FIXME: The port information is not used at the moment and produces a
     {
       memset(local_buf, 0, strlen((char *) pszReturnData));
 
+      int i, in;
       for (i = 0, in = 0; pszReturnData[i] != '\0'; i++)
       {
         local_buf[in]=pszReturnData[i];
