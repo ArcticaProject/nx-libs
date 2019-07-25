@@ -511,6 +511,12 @@ PKG_CHECK_MODULES(XDAMAGE, xdamage, [
 	AC_MSG_ERROR([xdamage explicitly requested, but required
 		      modules not found.])])
 
+dnl if there's xpm headers
+PKG_CHECK_MODULES(XPM, xpm, [
+	LIBS="$LIBS $(pkg-config --libs xpm)"], [
+	AC_MSG_ERROR([xpm explicitly requested, but required
+		      modules not found.])])
+
 REQUIRED_LIBS="$REQUIRED_LIBS xau fontenc nx-x11"
 
 AM_CONDITIONAL(XF86MISC, [test "x$XF86MISC" = xyes])
