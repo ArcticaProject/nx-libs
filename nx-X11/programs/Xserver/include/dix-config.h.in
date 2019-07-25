@@ -536,4 +536,16 @@
 /* use xfont2 instead of xfont1 */
 #undef HAS_XFONT2
 
+/* */
+#undef NX_TRANS_EXIT
+#undef NX_TRANS_SOCKET
+#undef NX_TRANS_AUTH
+#undef NX_TRANS_SLEEP
+#undef NX_TRANS_FOPEN
+#undef NX_TRANS_TRANS_WAKEUP
+#undef NX_TRANS_WARN
+#undef NX_TRANS_INFO
+#undef NX_TRANS_TEST
+#undef NX_TRANS_DEBUG
+
 #endif /* _DIX_CONFIG_H_ */
