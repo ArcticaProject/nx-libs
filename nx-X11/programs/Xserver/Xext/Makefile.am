@@ -35,14 +35,22 @@ MODULE_SRCS =			\
 
 # Optional sources included if extension enabled by configure.ac rules
 
+if NXAGENT
+
+else
 # MIT Shared Memory extension
 MITSHM_SRCS = shm.c
 if MITSHM
 BUILTIN_SRCS += $(MITSHM_SRCS)
 endif
+endif
 
 # XVideo extension
+if NXAGENT
+XV_SRCS = xvmain.c xvmc.c xvdix.h xvmcext.h xvdisp.h
+else
 XV_SRCS = xvmain.c xvdisp.c xvmc.c xvdix.h xvmcext.h xvdisp.h
+endif
 if XV
 MODULE_SRCS  += $(XV_SRCS)
 endif
