@@ -444,7 +444,7 @@ XEXT_INC='-I$(top_srcdir)/Xext'
 XEXT_LIB='$(top_builddir)/Xext/libXext.la'
 XEXTXORG_LIB='$(top_builddir)/Xext/libXextbuiltin.la'
 
-REQUIRED_MODULES="randrproto renderproto fixesproto damageproto xcmiscproto xextproto xproto xtrans xf86vidmodeproto xf86bigfontproto scrnsaverproto bigreqsproto resourceproto fontsproto inputproto xf86dgaproto"
+REQUIRED_MODULES="randrproto renderproto fixesproto damageproto xcmiscproto xextproto xproto xtrans xf86vidmodeproto xf86bigfontproto scrnsaverproto bigreqsproto resourceproto fontsproto inputproto xf86dgaproto xineramaproto"
 REQUIRED_MODULES_XF86MISC="xf86miscproto"
 
 dnl if there's pixman-1 available
@@ -516,6 +516,13 @@ PKG_CHECK_MODULES(XPM, xpm, [
 	LIBS="$LIBS $(pkg-config --libs xpm)"], [
 	AC_MSG_ERROR([xpm explicitly requested, but required
 		      modules not found.])])
+
+dnl if there's xinerama headers
+PKG_CHECK_MODULES(XINERAMA, xinerama, [
+	LIBS="$LIBS $(pkg-config --libs xinerama)"], [
+	AC_MSG_ERROR([xinerama explicitly requested, but required
+		      modules not found.])])
+
 
 REQUIRED_LIBS="$REQUIRED_LIBS xau fontenc nx-x11"
 
