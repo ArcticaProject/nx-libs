@@ -493,6 +493,12 @@ PKG_CHECK_MODULES(ZLIB, zlib, [
 	AC_MSG_ERROR([zlib explicitly requested, but required
 		      modules not found.])])
 
+dnl if there's zlib headers
+PKG_CHECK_MODULES(XCOMPOSITE, xcomposite, [
+	LIBS="$LIBS $(pkg-config --libs xcomposite)"], [
+	AC_MSG_ERROR([xcomposite explicitly requested, but required
+		      modules not found.])])
+
 REQUIRED_LIBS="$REQUIRED_LIBS xau fontenc nx-x11"
 
 AM_CONDITIONAL(XF86MISC, [test "x$XF86MISC" = xyes])
