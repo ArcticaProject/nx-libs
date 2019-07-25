@@ -16,6 +16,12 @@ AM_CPPFLAGS = -I$(top_srcdir)/GL/include -I$(top_srcdir)/hw/xfree86/os-support
 
 nodist_libglx_la_SOURCES = indirect_size.c indirect_size.h
 
+if NXAGENT
+SPECIAL =
+else
+SPECIAL = glxext.c
+endif
+
 libglx_la_SOURCES = \
         g_disptab.c \
         g_disptab.h \
@@ -35,7 +41,6 @@ libglx_la_SOURCES = \
         glxcontext.h \
         glxdrawable.h \
         glxerror.h \
-        glxext.c \
         glxext.h \
         glxfb.c \
         glxfb.h \
