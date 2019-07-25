@@ -187,9 +187,7 @@ static int nxagentCountInstalledColormapWindows(WindowPtr pWin, void * ptr)
 {
   nxagentInstalledColormapWindows *icws = (nxagentInstalledColormapWindows *) ptr;
 
-  int i;
-
-  for (i = 0; i < icws->numCmapIDs; i++)
+  for (int i = 0; i < icws->numCmapIDs; i++)
     if (SEARCH_PREDICATE) {
       icws->numWindows++;
       return WT_DONTWALKCHILDREN;
@@ -201,9 +199,8 @@ static int nxagentCountInstalledColormapWindows(WindowPtr pWin, void * ptr)
 static int nxagentGetInstalledColormapWindows(WindowPtr pWin, void * ptr)
 {
   nxagentInstalledColormapWindows *icws = (nxagentInstalledColormapWindows *)ptr;
-  int i;
 
-  for (i = 0; i < icws->numCmapIDs; i++)
+  for (int i = 0; i < icws->numCmapIDs; i++)
     if (SEARCH_PREDICATE) {
       icws->windows[icws->index++] = nxagentWindow(pWin);
       return WT_DONTWALKCHILDREN;
@@ -262,10 +259,9 @@ void nxagentSetInstalledColormapWindows(ScreenPtr pScreen)
 
 #ifdef _XSERVER64
     {
-      int i;
       Window64 *windows = (Window64 *)malloc(numWindows * sizeof(Window64));
 
-      for(i = 0; i < numWindows; ++i)
+      for(int i = 0; i < numWindows; ++i)
 	  windows[i] = icws.windows[i];
       XSetWMColormapWindows(nxagentDisplay, nxagentDefaultWindows[pScreen->myNum],
 			    windows, numWindows);
@@ -347,17 +343,14 @@ void nxagentSetScreenSaverColormapWindow(ScreenPtr pScreen)
 
 void nxagentDirectInstallColormaps(ScreenPtr pScreen)
 {
-  int i, n;
   Colormap pCmapIDs[MAXCMAPS];
 
   if (!nxagentDoDirectColormaps) return;
 
-  n = (*pScreen->ListInstalledColormaps)(pScreen, pCmapIDs);
+  int n = (*pScreen->ListInstalledColormaps)(pScreen, pCmapIDs);
 
-  for (i = 0; i < n; i++) {
-    ColormapPtr pCmap;
-
-    pCmap = (ColormapPtr)LookupIDByType(pCmapIDs[i], RT_COLORMAP);
+  for (int i = 0; i < n; i++) {
+    ColormapPtr pCmap = (ColormapPtr)LookupIDByType(pCmapIDs[i], RT_COLORMAP);
     if (pCmap)
       XInstallColormap(nxagentDisplay, nxagentColormap(pCmap));
   }
@@ -365,14 +358,13 @@ void nxagentDirectInstallColormaps(ScreenPtr pScreen)
 
 void nxagentDirectUninstallColormaps(ScreenPtr pScreen)
 {
-  int i, n;
   Colormap pCmapIDs[MAXCMAPS];
 
   if (!nxagentDoDirectColormaps) return;
 
-  n = (*pScreen->ListInstalledColormaps)(pScreen, pCmapIDs);
+  int n = (*pScreen->ListInstalledColormaps)(pScreen, pCmapIDs);
 
-  for (i = 0; i < n; i++) {
+  for (int i = 0; i < n; i++) {
     ColormapPtr pCmap;
 
     pCmap = (ColormapPtr)LookupIDByType(pCmapIDs[i], RT_COLORMAP);
@@ -429,7 +421,6 @@ int nxagentListInstalledColormaps(ScreenPtr pScreen, Colormap *pCmapIds)
   if (nxagentInstalledDefaultColormap)
   {
     *pCmapIds = InstalledMaps[pScreen->myNum]->mid;
-
     return 1;
   }
   else
@@ -443,10 +434,9 @@ void nxagentStoreColors(ColormapPtr pCmap, int nColors, xColorItem *pColors)
   if (pCmap->pVisual->class & DynamicClass)
 #ifdef _XSERVER64
   {
-    int i;
     XColor *pColors64 = (XColor *)malloc(nColors * sizeof(XColor) );
 
-    for(i = 0; i < nColors; ++i)
+    for(int i = 0; i < nColors; ++i)
     {
       pColors64[i].pixel = pColors[i].pixel;
       pColors64[i].red = pColors[i].red;
