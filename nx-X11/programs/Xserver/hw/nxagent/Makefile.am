@@ -9,6 +9,7 @@ nxagent_SOURCES =  Agent.h \
 	Atoms.h \
 	Binder.c \
 	Binder.h \
+	BitmapUtils.c \
 	Client.c \
 	Client.h \
 	Clipboard.c \
