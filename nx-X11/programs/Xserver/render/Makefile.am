@@ -5,7 +5,7 @@ AM_CFLAGS = $(DIX_CFLAGS) @SERVER_DEFINES@ @LOADER_DEFINES@
 if NXAGENT
 SPECIAL =
 else
-SPECIAL = picture.c render.c
+SPECIAL = picture.c render.c mitrap.c
 endif
 
 
@@ -17,7 +17,6 @@ librender_la_SOURCES =	\
 	miindex.c	\
 	mipict.c	\
 	mirect.c	\
-	mitrap.c	\
 	mitri.c		\
 	$(SPECIAL)	\
 	renderedge.c
