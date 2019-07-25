@@ -16,12 +16,16 @@ libos_la_SOURCES = 	\
 	WaitFor.c	\
 	access.c	\
 	auth.c		\
+	client.c	\
 	connection.c	\
 	io.c		\
 	mitauth.c	\
 	oscolor.c	\
 	osdep.h		\
 	osinit.c	\
+	reallocarray.c	\
+	rpcauth.c	\
+	timingsafe_memcmp.c \
 	utils.c		\
 	xdmauth.c	\
 	xstrans.c	\
