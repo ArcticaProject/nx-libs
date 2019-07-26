@@ -34,8 +34,8 @@ SUBDIRS =			\
 aclocaldir = $(datadir)/aclocal
 aclocal_DATA = xorg-server.m4
 
-pkgconfigdir = $(libdir)/pkgconfig
-pkgconfig_DATA = xorg-server.pc
+#pkgconfigdir = $(libdir)/pkgconfig
+#pkgconfig_DATA = xorg-server.pc
 
 ACLOCAL_AMFLAGS = -I m4
 
