@@ -49,6 +49,8 @@ AC_CONFIG_HEADERS(include/xorg-config.h)
 dnl xkb-config.h covers XKB for the Xorg and Xnest and nxagent DDXs.
 AC_CONFIG_HEADERS(include/xkb-config.h)
 
+dnl Remember externally set CFLAGS
+EXTERNAL_CFLAGS="$CFLAGS"
 
 AC_PROG_CC
 AM_PROG_AS
@@ -62,6 +64,9 @@ PKG_PROG_PKG_CONFIG
 AC_PROG_LEX
 AC_PROG_YACC
 XORG_PROG_RAWCPP
+
+dnl Reset the externally set CFLAGS after calling AC_PROG*
+CFLAGS="-DNXAGENT_SERVER $EXTERNAL_CFLAGS"
 
 AC_HEADER_DIRENT
 AC_HEADER_STDC
