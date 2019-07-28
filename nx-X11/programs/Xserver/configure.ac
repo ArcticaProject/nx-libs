@@ -26,9 +26,7 @@ AC_PREREQ(2.69)
 dnl This is the not the Xorg version number, it's the server version number.
 dnl Yes, that's weird.
 
-m4_define([nxagent_version], m4_esyscmd([tr -d '\n' < VERSION]))
-
-AC_INIT([nxagent], [nxagent_version], [https://github.com/ArcticaProject/nx-libs/issues], nxagent)
+AC_INIT([nxagent], [m4_esyscmd_s([cat VERSION])], [https://github.com/ArcticaProject/nx-libs/issues], nxagent)
 
 AC_CONFIG_SRCDIR([Makefile.am])
 AC_CONFIG_MACRO_DIRS([m4])
@@ -49,9 +47,6 @@ AC_CONFIG_HEADERS(include/xorg-config.h)
 dnl xkb-config.h covers XKB for the Xorg and Xnest and nxagent DDXs.
 AC_CONFIG_HEADERS(include/xkb-config.h)
 
-dnl Remember externally set CFLAGS
-EXTERNAL_CFLAGS="$CFLAGS"
-
 AC_PROG_CC
 AM_PROG_AS
 AC_PROG_INSTALL
@@ -65,8 +60,9 @@ AC_PROG_LEX
 AC_PROG_YACC
 XORG_PROG_RAWCPP
 
-dnl Reset the externally set CFLAGS after calling AC_PROG*
-CFLAGS="-DNXAGENT_SERVER $EXTERNAL_CFLAGS"
+CFLAGS="$CFLAGS -DNXAGENT_SERVER"
+CPPFLAGS="$CPPFLAGS -DNXAGENT_SERVER -DNX_VERSION_CURRENT_STRING='\"$(cat VERSION)\"'"
+CXXFLAGS="$CXXFLAGS -DNXAGENT_SERVER"
 
 AC_HEADER_DIRENT
 AC_HEADER_STDC
