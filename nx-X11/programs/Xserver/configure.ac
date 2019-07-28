@@ -22,7 +22,7 @@ dnl PERFORMANCE OF THIS SOFTWARE.
 dnl
 dnl Process this file with autoconf to create configure.
 
-AC_PREREQ(2.57)
+AC_PREREQ(2.69)
 dnl This is the not the Xorg version number, it's the server version number.
 dnl Yes, that's weird.
 
