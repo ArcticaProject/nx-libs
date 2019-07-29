@@ -448,6 +448,9 @@
 /* Define to 1 if we want to build the X keyboard extension */
 #undef XKB
 
+/* Disable XKB per default */
+#undef XKB_DFLT_DISABLED
+
 /* Define to 1 if the DTrace Xserver provider probes should be built in */
 #undef XSERVER_DTRACE
 
