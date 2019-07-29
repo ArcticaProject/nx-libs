@@ -537,6 +537,29 @@ PKG_CHECK_MODULES(XINERAMA, xinerama, [
 	AC_MSG_ERROR([xinerama explicitly requested, but required
 		      modules not found.])])
 
+dnl if there's xrandr headers
+PKG_CHECK_MODULES(XRANDR, xrandr, [
+	LIBS="$LIBS $(pkg-config --libs xrandr)"], [
+	AC_MSG_ERROR([xrandr explicitly requested, but required
+		      modules not found.])])
+
+dnl if there's xext headers
+PKG_CHECK_MODULES(XEXT, xext, [
+	LIBS="$LIBS $(pkg-config --libs xext)"], [
+	AC_MSG_ERROR([xext explicitly requested, but required
+		      modules not found.])])
+
+dnl if there's xdmcp headers
+PKG_CHECK_MODULES(XDMCP, xdmcp, [
+	LIBS="$LIBS $(pkg-config --libs xdmcp)"], [
+	AC_MSG_ERROR([xdmcp explicitly requested, but required
+		      modules not found.])])
+
+dnl if there's xrender headers
+PKG_CHECK_MODULES(XRENDER, xrender, [
+	LIBS="$LIBS $(pkg-config --libs xrender)"], [
+	AC_MSG_ERROR([xrender explicitly requested, but required
+		      modules not found.])])
 
 REQUIRED_LIBS="$REQUIRED_LIBS xau fontenc nx-x11"
 
