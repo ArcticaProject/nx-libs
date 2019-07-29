@@ -132,6 +132,9 @@ of the copyright holder.
 
 ******************************************************************/
 
+#ifdef HAVE_NXAGENT_CONFIG_H
+#include <nxagent-config.h>
+#endif
 
 #include <nx-X11/Xlib.h>
 

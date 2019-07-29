@@ -46,6 +46,10 @@
  * Author:  Keith Packard, SuSE, Inc.
  */
 
+#ifdef HAVE_NXAGENT_CONFIG_H
+#include <nxagent-config.h>
+#endif
+
 #include "../render/render.c"
 
 #include "Trap.h"

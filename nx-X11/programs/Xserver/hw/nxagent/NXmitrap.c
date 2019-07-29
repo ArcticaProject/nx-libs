@@ -45,6 +45,10 @@
  * PERFORMANCE OF THIS SOFTWARE.
  */
 
+#ifdef HAVE_NXAGENT_CONFIG_H
+#include <nxagent-config.h>
+#endif
+
 #include "Render.h"
 
 #include "../../render/mitrap.c"

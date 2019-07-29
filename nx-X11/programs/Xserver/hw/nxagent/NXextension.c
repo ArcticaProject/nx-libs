@@ -70,6 +70,10 @@ SOFTWARE.
 
 ******************************************************************/
 
+#ifdef HAVE_NXAGENT_CONFIG_H
+#include <nxagent-config.h>
+#endif
+
 #include "Trap.h"
 
 #include "../../dix/extension.c"
