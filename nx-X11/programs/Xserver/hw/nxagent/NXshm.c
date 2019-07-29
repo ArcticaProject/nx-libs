@@ -51,6 +51,9 @@ in this Software without prior written authorization from The Open Group.
 
 /* THIS IS NOT AN X CONSORTIUM STANDARD OR AN X PROJECT TEAM SPECIFICATION */
 
+#ifdef HAVE_NXAGENT_CONFIG_H
+#include <nxagent-config.h>
+#endif
 
 #include <nx-X11/X.h>
 #include "Trap.h"

@@ -23,6 +23,10 @@
 /*                                                                        */
 /**************************************************************************/
 
+#ifdef HAVE_NXAGENT_CONFIG_H
+#include <nxagent-config.h>
+#endif
+
 #include <stdio.h>
 #include <string.h>
 #include <signal.h>

@@ -47,6 +47,10 @@ SOFTWARE.
 
 ******************************************************************/
 
+#ifdef HAVE_NXAGENT_CONFIG_H
+#include <nxagent-config.h>
+#endif
+
 #if !defined(__sun) && !defined(__CYGWIN__)
 
 #include "Trap.h"

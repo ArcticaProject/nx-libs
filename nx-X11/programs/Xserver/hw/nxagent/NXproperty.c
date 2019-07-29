@@ -70,6 +70,10 @@ SOFTWARE.
 
 ******************************************************************/
 
+#ifdef HAVE_NXAGENT_CONFIG_H
+#include <nxagent-config.h>
+#endif
+
 #include "../../dix/property.c"
 
 #include "Options.h"
