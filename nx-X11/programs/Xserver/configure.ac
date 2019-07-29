@@ -47,6 +47,19 @@ AC_CONFIG_HEADERS(include/xorg-config.h)
 dnl xkb-config.h covers XKB for the Xorg and Xnest and nxagent DDXs.
 AC_CONFIG_HEADERS(include/xkb-config.h)
 
+# dnl Set default flags if not present.
+if test -z $CFLAGS; then
+	CFLAGS="-O0 -g3"
+fi
+
+if test -z $CPPFLAGS; then
+	CPPFLAGS="-O0 -g3"
+fi
+
+if test -z $CXXFLAGS; then
+	CXXFLAGS="-O0 -g3"
+fi
+
 AC_PROG_CC
 AM_PROG_AS
 AC_PROG_INSTALL
