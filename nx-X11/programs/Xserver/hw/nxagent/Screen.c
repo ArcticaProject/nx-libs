@@ -1278,18 +1278,16 @@ Bool nxagentOpenScreen(ScreenPtr pScreen,
         int j;
         for (j = 0; j < numVisuals; j++)
         {
-          if (visuals[numVisuals].class == visuals[j].class &&
-              visuals[numVisuals].bitsPerRGBValue ==
-                  visuals[j].bitsPerRGBValue &&
-              visuals[numVisuals].ColormapEntries ==
-                  visuals[j].ColormapEntries &&
-              visuals[numVisuals].nplanes == visuals[j].nplanes &&
-              visuals[numVisuals].redMask == visuals[j].redMask &&
-              visuals[numVisuals].greenMask == visuals[j].greenMask &&
-              visuals[numVisuals].blueMask == visuals[j].blueMask &&
-              visuals[numVisuals].offsetRed == visuals[j].offsetRed &&
-              visuals[numVisuals].offsetGreen == visuals[j].offsetGreen &&
-              visuals[numVisuals].offsetBlue == visuals[j].offsetBlue)
+          if (visuals[numVisuals].class           == visuals[j].class &&
+              visuals[numVisuals].bitsPerRGBValue == visuals[j].bitsPerRGBValue &&
+              visuals[numVisuals].ColormapEntries == visuals[j].ColormapEntries &&
+              visuals[numVisuals].nplanes         == visuals[j].nplanes &&
+              visuals[numVisuals].redMask         == visuals[j].redMask &&
+              visuals[numVisuals].greenMask       == visuals[j].greenMask &&
+              visuals[numVisuals].blueMask        == visuals[j].blueMask &&
+              visuals[numVisuals].offsetRed       == visuals[j].offsetRed &&
+              visuals[numVisuals].offsetGreen     == visuals[j].offsetGreen &&
+              visuals[numVisuals].offsetBlue      == visuals[j].offsetBlue)
             break;
         }
  
