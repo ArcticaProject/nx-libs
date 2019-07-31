@@ -210,6 +210,10 @@ RegionRec nxagentShadowUpdateRegion;
 #define NXAGENT_DEFAULT_DPI 96
 #define NXAGENT_AUTO_DPI -1
 
+#ifndef NXAGENT_RANDR_MODE_PREFIX
+#define NXAGENT_RANDR_MODE_PREFIX nx_
+#endif
+
 extern Bool nxagentAutoDPI;
 
 /*
@@ -4220,15 +4224,11 @@ int nxagentAdjustRandRXinerama(ScreenPtr pScreen)
 
         memset(&modeInfo, '\0', sizeof(modeInfo));
 
-#ifdef NXAGENT_RANDR_MODE_PREFIX
         /* avoid collisions with pre-existing default modes by using a
            separate namespace. If we'd simply use XxY we could not
            distinguish between pre-existing modes which should stay
            and our own modes that should be removed after use. */
-        sprintf(name, "nx_%dx%d", new_w, new_h);
-#else
-        sprintf(name, "%dx%d", new_w, new_h);
-#endif
+	sprintf(name, "%s%dx%d", QUOTE(NXAGENT_RANDR_MODE_PREFIX), new_w, new_h);
 
         modeInfo.width  = new_w;
         modeInfo.height = new_h;
