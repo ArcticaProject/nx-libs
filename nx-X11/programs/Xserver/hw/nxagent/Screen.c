@@ -401,7 +401,7 @@ FIXME: We'll check for ReparentNotify and LeaveNotify events after
       if (!XCheckTypedWindowEvent(nxagentDisplay, nxagentFullscreenWindow, LeaveNotify, &e))
         break;
       #ifdef TEST
-      fprintf(stderr, "%d: swallowing LeaveNotify event\n", __func__);
+      fprintf(stderr, "%s: swallowing LeaveNotify event\n", __func__);
       #endif
     }
 
