@@ -539,7 +539,8 @@
 /* use xfont2 instead of xfont1 */
 #undef HAS_XFONT2
 
-/* */
+/* FIXME: these are only required on the os directory, so move them
+   there */
 #undef NX_TRANS_EXIT
 #undef NX_TRANS_SOCKET
 #undef NX_TRANS_AUTH
