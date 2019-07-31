@@ -411,7 +411,7 @@ static XkbSymInterpretRec dfltSI[69]= {
          255,
        {   XkbSA_LockControls, { 0x00, 0x00, 0x00, 0x00, 0x40, 0x00, 0x00 } } },
 
-#ifndef NX_TRANS_SOCKET
+#ifndef NXAGENT_SERVER
 
     /*
      * Make sure that the server can't be killed
