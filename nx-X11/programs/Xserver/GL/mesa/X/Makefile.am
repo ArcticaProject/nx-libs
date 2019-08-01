@@ -15,8 +15,7 @@ AM_CPPFLAGS = -I@MESA_SOURCE@/include \
               -I.. \
               -I../../glx \
               -I$(top_srcdir)/GL/glx \
-              -I$(top_srcdir)/GL/include \
-              -I$(top_srcdir)/hw/xfree86/os-support
+              -I$(top_srcdir)/GL/include
 
 # -DXFree86Server is required because the X11 driver in Mesa thinks that
 # symbol means "being built in the server"

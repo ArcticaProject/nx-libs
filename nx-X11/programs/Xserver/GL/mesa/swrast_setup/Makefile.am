@@ -12,7 +12,6 @@ AM_CPPFLAGS = -I@MESA_SOURCE@/include \
               -I../swrast \
               -I../swrast_setup \
               -I../tnl \
-              -I.. \
-              -I$(top_srcdir)/hw/xfree86/os-support
+              -I..
 
 nodist_libss_la_SOURCES = ss_context.c ss_triangle.c

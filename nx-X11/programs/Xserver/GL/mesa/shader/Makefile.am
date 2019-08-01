@@ -16,8 +16,7 @@ AM_CPPFLAGS = -I@MESA_SOURCE@/include \
               -I../swrast \
               -I../swrast_setup \
               -I../tnl \
-              -I.. \
-              -I$(top_srcdir)/hw/xfree86/os-support
+              -I..
 
 nodist_libshader_la_SOURCES = arbfragparse.c \
                       arbprogparse.c \
