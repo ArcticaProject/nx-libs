@@ -1,19 +1,12 @@
-noinst_LTLIBRARIES = libdbe.la libdbemodule.la
+noinst_LTLIBRARIES = libdbe.la
 
-AM_CFLAGS = $(DIX_CFLAGS) @SERVER_DEFINES@ @LOADER_DEFINES@
+AM_CFLAGS = $(DIX_CFLAGS)
 
-AM_CPPFLAGS = -I$(top_srcdir)/hw/xfree86/os-support
+AM_CPPFLAGS =
 
 sdk_HEADERS = dbestruct.h
 
 libdbe_la_SOURCES = \
-        dbe.c \
-        midbe.c \
-        midbe.h \
-        midbestr.h
-
-libdbemodule_la_CFLAGS = $(AM_CFLAGS) @MODULE_DEFINES@
-libdbemodule_la_SOURCES = \
         dbe.c \
         midbe.c \
         midbe.h \

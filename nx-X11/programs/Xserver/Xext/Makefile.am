@@ -4,13 +4,11 @@ NULL =
 #                    Xnest, Xdmx and Xprt
 # libXextbuiltin.la: includes those extensions that are built directly into
 #                    Xorg by default
-# libXextmodule.la:  includes those extensions that are built into a module
-#                    that Xorg loads
-noinst_LTLIBRARIES = libXext.la libXextbuiltin.la libXextmodule.la
+noinst_LTLIBRARIES = libXext.la libXextbuiltin.la
 
-AM_CPPFLAGS = -I$(top_srcdir)/hw/xfree86/dixmods/extmod -I$(top_srcdir)/hw/xfree86/os-support
+AM_CPPFLAGS =
 
-AM_CFLAGS = $(DIX_CFLAGS) @SERVER_DEFINES@ @LOADER_DEFINES@
+AM_CFLAGS = $(DIX_CFLAGS)
 
 sdk_HEADERS = xvdix.h xvmcext.h
 
@@ -23,7 +21,7 @@ BUILTIN_SRCS =			\
         xf86bigfont.c		\
         $(NULL)
 
-# Sources always included in libXextmodule.la & libXext.la
+# Sources always included in libXext.la
 MODULE_SRCS =			\
         bigreq.c		\
         shape.c			\
@@ -68,14 +66,14 @@ MODULE_SRCS  += $(SCREENSAVER_SRCS)
 endif
 
 # Xinerama extension: making multiple video devices act as one virtual screen
-XINERAMA_SRCS = panoramiX.c panoramiX.h panoramiXh.h panoramiXsrv.h panoramiXprocs.c panoramiXSwap.c 
+XINERAMA_SRCS = panoramiX.c panoramiX.h panoramiXh.h panoramiXsrv.h panoramiXprocs.c panoramiXSwap.c
 if XINERAMA
 BUILTIN_SRCS += $(XINERAMA_SRCS)
 endif
 
 # Security extension: multi-level security to protect clients from each other
 XCSECURITY_SRCS = security.c
-if XCSECURITY   
+if XCSECURITY
 BUILTIN_SRCS += $(XCSECURITY_SRCS)
 
 SERVERCONFIGdir = $(libdir)/xserver
@@ -88,9 +86,6 @@ endif
 libXext_la_SOURCES =		$(BUILTIN_SRCS) $(MODULE_SRCS)
 
 libXextbuiltin_la_SOURCES =	$(BUILTIN_SRCS)
-
-libXextmodule_la_SOURCES =	$(MODULE_SRCS)
-libXextmodule_la_CFLAGS = 	$(AM_CFLAGS) @MODULE_DEFINES@ -DEXTMODULE
 
 EXTRA_DIST =			\
         SecurityPolicy		\
