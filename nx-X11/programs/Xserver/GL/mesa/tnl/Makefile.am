@@ -12,8 +12,7 @@ AM_CPPFLAGS = -I@MESA_SOURCE@/include \
               -I../swrast \
               -I../swrast_setup \
               -I../tnl \
-              -I.. \
-              -I$(top_srcdir)/hw/xfree86/os-support
+              -I..
 
 nodist_libtnl_la_SOURCES = t_array_api.c \
                       t_array_import.c \

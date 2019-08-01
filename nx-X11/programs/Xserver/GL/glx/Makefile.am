@@ -10,7 +10,7 @@ AM_CFLAGS = \
 # none yet
 #sdk_HEADERS =
 
-AM_CPPFLAGS = -I$(top_srcdir)/GL/include -I$(top_srcdir)/hw/xfree86/os-support
+AM_CPPFLAGS = -I$(top_srcdir)/GL/include
 
 nodist_libglx_la_SOURCES = indirect_size.c indirect_size.h
 

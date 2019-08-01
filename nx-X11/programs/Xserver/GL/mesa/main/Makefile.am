@@ -12,8 +12,7 @@ AM_CPPFLAGS = -I@MESA_SOURCE@/include \
               -I../swrast \
               -I../swrast_setup \
               -I../tnl \
-              -I.. \
-              -I$(top_srcdir)/hw/xfree86/os-support
+              -I..
 
 if NEED_VSNPRINTF
 VSNPRINTF_SOURCES = vsnprintf.c

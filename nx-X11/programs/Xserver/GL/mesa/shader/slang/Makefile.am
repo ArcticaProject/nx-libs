@@ -13,8 +13,7 @@ AM_CPPFLAGS = -I@MESA_SOURCE@/include \
               -I../../swrast \
               -I../../swrast_setup \
               -I../../tnl \
-              -I../.. \
-              -I$(top_srcdir)/hw/xfree86/os-support
+              -I../..
 
 nodist_libslang_la_SOURCES = slang_assemble_assignment.c \
                       slang_assemble.c \
