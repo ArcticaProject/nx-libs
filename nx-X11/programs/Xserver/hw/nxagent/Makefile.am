@@ -183,9 +183,9 @@ nxagent_LDFLAGS = -Wl,-zmuldefs
 # NX_DEBUG_INPUT
 
 #FIXME: move these to configure.ac
-#FIXME: the 4 -U can probably be removed
+#FIXME: -UXF86DRI can probably be removed
 AM_CFLAGS = -DHAVE_NXAGENT_CONFIG_H \
-	-UXF86VIDMODE -UXFreeXDGA -UXF86MISC -UXF86DRI \
+	-UXF86DRI \
 	-DNXAGENT_SERVER \
 	-DNXAGENT_RENDER_CLEANUP \
 	-DNXAGENT_SHAPE2 \
