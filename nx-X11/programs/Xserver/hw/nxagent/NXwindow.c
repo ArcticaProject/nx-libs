@@ -215,9 +215,7 @@ InitRootWindow(WindowPtr pWin)
     #ifdef NXAGENT_ARTSD
     {
       char artsd_port[10];
-      short int nPort;
-      extern void nxagentPropagateArtsdProperties(ScreenPtr pScreen, char *port);
-      nPort = atoi(display) + 7000;
+      short int nPort = atoi(display) + 7000;
       sprintf(artsd_port,"%d", nPort);
       nxagentPropagateArtsdProperties(pScreen, artsd_port);
     }

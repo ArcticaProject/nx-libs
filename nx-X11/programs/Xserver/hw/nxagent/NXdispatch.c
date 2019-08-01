@@ -200,6 +200,8 @@ extern int nxagentClipboardSelection;
 extern int nxagentMaxSelections;
 #endif
 
+extern int nxOpenFont(ClientPtr, XID, Mask, unsigned, char*);
+
 void
 InitSelections()
 {
@@ -774,7 +776,6 @@ ProcOpenFont(register ClientPtr client)
     fontReq[stuff->nbytes]=0;
     if (strchr(fontReq,'*') || strchr(fontReq,'?'))
     {
-       extern int nxOpenFont(ClientPtr, XID, Mask, unsigned, char*);
 #ifdef NXAGENT_FONTMATCH_DEBUG
        fprintf(stderr, "Dispatch: ProcOpenFont try to find a common font with font pattern=%s\n",fontReq);
 #endif

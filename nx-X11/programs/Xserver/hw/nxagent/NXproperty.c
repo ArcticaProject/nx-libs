@@ -93,6 +93,14 @@ nxagentWMStateRec;
 #undef  TEST
 #undef  DEBUG
 
+#ifdef NXAGENT_CLIPBOARD
+extern WindowPtr nxagentGetClipboardWindow(Atom, WindowPtr);
+#endif
+
+#ifdef NXAGENT_ARTSD
+extern Atom mcop_local_atom;
+#endif
+
 int 
 ProcChangeProperty(ClientPtr client)
 {	      
@@ -127,11 +135,7 @@ ProcChangeProperty(ClientPtr client)
     REQUEST_FIXED_SIZE(xChangePropertyReq, totalSize);
 
 #ifdef NXAGENT_CLIPBOARD
-    {
-       extern WindowPtr nxagentGetClipboardWindow(Atom, WindowPtr);
-
-       pWin = nxagentGetClipboardWindow(stuff->property, NULL);
-    }
+    pWin = nxagentGetClipboardWindow(stuff->property, NULL);
 
     if (pWin == NULL)
 #endif
@@ -168,7 +172,6 @@ ProcChangeProperty(ClientPtr client)
       they are already set reflecting the server side settings.
       Just return success.
     */
-      extern Atom mcop_local_atom;
       if (stuff->property == mcop_local_atom)
         return client->noClientException;
     }

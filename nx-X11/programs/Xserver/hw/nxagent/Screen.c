@@ -141,6 +141,10 @@ extern Bool useXpmIcon;
 
 extern Bool nxagentReportWindowIds;
 
+#ifdef NXAGENT_TIMESTAMP
+extern unsigned long startTime;
+#endif
+
 Window nxagentDefaultWindows[MAXSCREENS];
 Window nxagentInputWindows[MAXSCREENS];
 Window nxagentScreenSaverWindows[MAXSCREENS];
@@ -215,6 +219,8 @@ RegionRec nxagentShadowUpdateRegion;
 #endif
 
 extern Bool nxagentAutoDPI;
+
+extern char *nxagentKeyboard;
 
 /*
  * From randr/randr.c. This was originally static
@@ -1197,14 +1203,8 @@ Bool nxagentOpenScreen(ScreenPtr pScreen,
     }
 
     #ifdef NXAGENT_TIMESTAMP
-
-    {
-      extern unsigned long startTime;
-
-      fprintf(stderr, "Screen: going to open screen, time is [%d] milliseconds.\n",
-                  GetTimeInMillis() - startTime);
-    }
-
+    fprintf(stderr, "Screen: going to open screen, time is [%d] milliseconds.\n",
+                GetTimeInMillis() - startTime);
     #endif
 
     /*
@@ -2131,13 +2131,8 @@ N/A
   XSelectInput(nxagentDisplay, DefaultRootWindow(nxagentDisplay), StructureNotifyMask);
 
   #ifdef NXAGENT_TIMESTAMP
-
-  {
-    extern unsigned long startTime;
-
-    fprintf(stderr, "Screen: open screen finished, time is [%d] milliseconds.\n",
-                GetTimeInMillis() - startTime);
-  }
+  fprintf(stderr, "Screen: open screen finished, time is [%d] milliseconds.\n",
+              GetTimeInMillis() - startTime);
 
   #endif
 
@@ -2585,7 +2580,6 @@ void nxagentShadowSetWindowOptions(void)
 int nxagentShadowInit(ScreenPtr pScreen, WindowPtr pWin)
 {
   char *layout = NULL;
-  extern char *nxagentKeyboard;
   XlibGC gc;
   XGCValues value;
 

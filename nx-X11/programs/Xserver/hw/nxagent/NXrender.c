@@ -124,6 +124,8 @@ extern void nxagentRenderCreateConicalGradient(PicturePtr pPicture,
                                                xFixed *stops, 
                                                xRenderColor *colors);
 
+extern int nxagentAlphaEnabled;
+
 /*
  * The void pointer is actually a XGlyphElt8.
  */
@@ -184,7 +186,6 @@ ProcRenderQueryPictFormats (ClientPtr client)
     int				    numScreens;
     int				    numSubpixel;
 
-    extern int                      nxagentAlphaEnabled;
 /*    REQUEST(xRenderQueryPictFormatsReq); */
 
     REQUEST_SIZE_MATCH(xRenderQueryPictFormatsReq);

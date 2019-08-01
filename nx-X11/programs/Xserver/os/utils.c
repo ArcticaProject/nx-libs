@@ -271,6 +271,14 @@ long Memory_fail = 0;
 char *dev_tty_from_init = NULL;		/* since we need to parse it anyway */
 #endif
 
+#ifdef NXAGENT_SERVER
+extern const char *nxagentProgName;
+#endif
+
+#ifdef NX_TRANS_SOCKET
+extern char **environ;
+#endif
+
 extern char dispatchExceptionAtReset;
 
 /* Extension enable/disable in miinitext.c */
@@ -554,7 +562,6 @@ AdjustWaitForDelay (void * waitTime, unsigned long newdelay)
 void UseMsg(void)
 {
 #ifdef NXAGENT_SERVER
-    extern const char *nxagentProgName;
     ErrorF("Usage: %s [<options>] [:<display>]\n\n", nxagentProgName);
 #else
     ErrorF("use: X [:<display>] [option]\n");
@@ -1730,8 +1737,6 @@ Popen(char *command, char *type)
           unsetenv ("LD_LIBRARY_PATH");
 
           #else
-
-          extern char **environ;
 
           char **ep = environ;
 

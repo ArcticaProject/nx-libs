@@ -81,6 +81,8 @@ void *nxagentMatchingFormats(PictFormatPtr pForm);
 
 void nxagentPictureCreateDefaultFormats(ScreenPtr pScreen, FormatInitRec *formats, int *nformats);
 
+extern int nxagentPicturePrivateIndex;
+
 PictFormatPtr
 PictureCreateDefaultFormats (ScreenPtr pScreen, int *nformatp)
 {
@@ -303,8 +305,6 @@ CreateSolidPicture (Picture pid, xRenderColor *color, int *error)
 
 static PicturePtr createSourcePicture(void)
 {
-    extern int nxagentPicturePrivateIndex;
-
     /*
      * Compute size of entire PictureRect, plus privates.
      */

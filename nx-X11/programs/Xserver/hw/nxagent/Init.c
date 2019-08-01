@@ -148,6 +148,8 @@ extern void nxagentSetSelectionCallback(CallbackListPtr *callbacks, void *data,
                                    void *args);
 #endif
 
+extern const char *nxagentProgName;
+
 void ddxInitGlobals(void)
 {
   /*
@@ -199,8 +201,6 @@ Bool nxagentX2go;
 
 void checkX2goAgent(void)
 {
-  extern const char *nxagentProgName;
-
   #ifdef TEST
   fprintf(stderr, "%s: nxagentProgName [%s]\n", __func__, nxagentProgName);
   #endif
