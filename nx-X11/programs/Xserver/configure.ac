@@ -957,6 +957,10 @@ fi
 
 dnl Xorg DDX
 
+dnl as we do not have --enable-xorg the variable needs to be
+dnl set manually
+XORG=auto
+
 AC_MSG_CHECKING([whether to build Xorg DDX])
 if test "x$XORG" = xauto; then
 	XORG="yes"
