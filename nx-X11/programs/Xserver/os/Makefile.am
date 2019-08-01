@@ -2,7 +2,7 @@ AUTOMAKE_OPTIONS = subdir-objects
 
 noinst_LTLIBRARIES = libos.la
 
-AM_CFLAGS = $(DIX_CFLAGS) @SERVER_DEFINES@ @LOADER_DEFINES@
+AM_CFLAGS = $(DIX_CFLAGS)
 
 # FIXME: Add support for these in configure.ac
 SECURERPC_SRCS = rpcauth.c

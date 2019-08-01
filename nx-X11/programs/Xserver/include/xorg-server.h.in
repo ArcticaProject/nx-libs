@@ -200,9 +200,6 @@
 /* System has wscons console */
 #undef WSCONS_SUPPORT
 
-/* Loadable XFree86 server awesomeness */
-#define XFree86LOADER
-
 /* Use libpciaccess */
 #undef XSERVER_LIBPCIACCESS
 
