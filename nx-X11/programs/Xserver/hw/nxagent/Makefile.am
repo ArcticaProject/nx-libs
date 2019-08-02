@@ -212,7 +212,8 @@ AM_CFLAGS = -DHAVE_NXAGENT_CONFIG_H \
 
 EXTRA_DIST = os2Stub.c \
              nxagent.xpm \
-             nxmissing.xpm
+             nxmissing.xpm \
+             screensaver
 
 # Man page
 include $(top_srcdir)/cpprules.in
