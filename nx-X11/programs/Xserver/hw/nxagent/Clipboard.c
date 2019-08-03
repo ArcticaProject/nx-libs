@@ -406,6 +406,27 @@ int SendEventToClient(ClientPtr client, xEvent *pEvents)
   return TryClientEvents (client, pEvents, 1, NoEventMask, NoEventMask, NullGrab);
 }
 
+int SendSelectionNotifyEventToClient(ClientPtr client,
+                                     Time time,
+                                     Window requestor,
+                                     Atom selection,
+                                     Atom target,
+                                     Atom property)
+{
+  #ifdef DEBUG
+  fprintf (stderr, "%s: Sending event to client [%d].\n", __func__, client -> index);
+  #endif
+
+  xEvent x = {0};
+  x.u.u.type = SelectionNotify;
+  x.u.selectionNotify.time = time;
+  x.u.selectionNotify.requestor = requestor;
+  x.u.selectionNotify.selection = selection;
+  x.u.selectionNotify.target = target;
+  x.u.selectionNotify.property = property;
+  return SendEventToClient(client, &x);
+}
+
 Bool nxagentValidServerTargets(Atom target)
 {
   if (target == XA_STRING)
@@ -726,26 +747,12 @@ void nxagentSendSelectionNotify(Atom property)
     return;
   }
 
-  xEvent x;
-
-  #ifdef DEBUG
-  fprintf (stderr, "%s: Sending event to client [%d].\n", __func__,
-               lastClientClientPtr -> index);
-  #endif
-
-  memset(&x, 0, sizeof(xEvent));
-  x.u.u.type = SelectionNotify;
-
-  x.u.selectionNotify.time = lastClientTime;
-  x.u.selectionNotify.requestor = lastClientRequestor;
-  x.u.selectionNotify.selection = lastClientSelection;
-  x.u.selectionNotify.target = lastClientTarget;
-
-  x.u.selectionNotify.property = property;
-
-  SendEventToClient(lastClientClientPtr, &x);
-
-  return;
+  SendSelectionNotifyEventToClient(lastClientClientPtr,
+				   lastClientTime,
+				   lastClientRequestor,
+				   lastClientSelection,
+				   lastClientTarget,
+				   property);
 }
 
 /*
@@ -1392,8 +1399,6 @@ FIXME
 void nxagentNotifyConvertFailure(ClientPtr client, Window requestor,
                                      Atom selection, Atom target, Time time)
 {
-  xEvent x;
-
 /*
 FIXME: Why this pointer can be not a valid
        client pointer?
@@ -1407,15 +1412,7 @@ FIXME: Why this pointer can be not a valid
     return;
   }
 
-  memset(&x, 0, sizeof(xEvent));
-  x.u.u.type = SelectionNotify;
-  x.u.selectionNotify.time = time;
-  x.u.selectionNotify.requestor = requestor;
-  x.u.selectionNotify.selection = selection;
-  x.u.selectionNotify.target = target;
-  x.u.selectionNotify.property = None;
-
-  SendEventToClient(client, &x);
+  SendSelectionNotifyEventToClient(client, time, requestor, selection, target, None);
 }
 
 int nxagentConvertSelection(ClientPtr client, WindowPtr pWin, Atom selection,
@@ -1496,7 +1493,6 @@ int nxagentConvertSelection(ClientPtr client, WindowPtr pWin, Atom selection,
   if (target == clientTARGETS)
   {
     Atom xa_STRING[4];
-    xEvent x;
 
     /* --- Order changed by dimbor (prevent sending COMPOUND_TEXT to client --- */
     xa_STRING[0] = XA_STRING;
@@ -1512,15 +1508,7 @@ int nxagentConvertSelection(ClientPtr client, WindowPtr pWin, Atom selection,
                          4,
                          &xa_STRING, 1);
 
-    memset(&x, 0, sizeof(xEvent));
-    x.u.u.type = SelectionNotify;
-    x.u.selectionNotify.time = time;
-    x.u.selectionNotify.requestor = requestor;
-    x.u.selectionNotify.selection = selection;
-    x.u.selectionNotify.target = target;
-    x.u.selectionNotify.property = property;
-
-    SendEventToClient(client, &x);
+    SendSelectionNotifyEventToClient(client, time, requestor, selection, target, property);
 
     return 1;
   }
@@ -1534,7 +1522,6 @@ int nxagentConvertSelection(ClientPtr client, WindowPtr pWin, Atom selection,
 
     if (i < NumCurrentSelections)
     {
-      xEvent x;
       ChangeWindowProperty(pWin,
                            property,
                            target,
@@ -1544,18 +1531,9 @@ int nxagentConvertSelection(ClientPtr client, WindowPtr pWin, Atom selection,
                            (unsigned char *) &lastSelectionOwner[i].lastTimeChanged,
                            1);
 
-      memset(&x, 0, sizeof(xEvent));
-      x.u.u.type = SelectionNotify;
-      x.u.selectionNotify.time = time;
-      x.u.selectionNotify.requestor = requestor;
-      x.u.selectionNotify.selection = selection;
-      x.u.selectionNotify.target = target;
-      x.u.selectionNotify.property = property;
-
-      SendEventToClient(client, &x);
+      SendSelectionNotifyEventToClient(client, time, requestor, selection, target, property);
 
       return 1;
-
     }
   }
 
@@ -1625,21 +1603,13 @@ int nxagentConvertSelection(ClientPtr client, WindowPtr pWin, Atom selection,
   }
   else
   {
-    xEvent x;
-
     #ifdef DEBUG
     fprintf(stderr, "%s: Xserver generates a SelectionNotify event "
                 "to the requestor with property None.\n", __func__);
     #endif
 
-    memset(&x, 0, sizeof(xEvent));
-    x.u.u.type = SelectionNotify;
-    x.u.selectionNotify.time = time;
-    x.u.selectionNotify.requestor = requestor;
-    x.u.selectionNotify.selection = selection;
-    x.u.selectionNotify.target = target;
-    x.u.selectionNotify.property = None;
-    SendEventToClient(client, &x);
+    SendSelectionNotifyEventToClient(client, time, requestor, selection, target, None);
+
     return 1;
   }
   return 0;
