@@ -714,6 +714,14 @@ FIXME: Do we need this?
 
 void nxagentSendSelectionNotify(Atom property)
 {
+  if (lastClientClientPtr == NULL)
+  {
+    #ifdef DEBUG
+    fprintf(stderr, "%s: lastClientClientPtr is NULL - doing nothing.\n", __func__);
+    #endif
+    return;
+  }
+
   xEvent x;
 
   #ifdef DEBUG
@@ -920,10 +928,7 @@ void nxagentCollectPropertyEvent(int resource)
     fprintf (stderr, "%s: WARNING! Invalid property value.\n", __func__);
     #endif
 
-    if (lastClientClientPtr != NULL)
-    {
-      nxagentSendSelectionNotify(None);
-    }
+    nxagentSendSelectionNotify(None);
 
     lastClientWindowPtr = NULL;
     SetClientSelectionStage(None);
