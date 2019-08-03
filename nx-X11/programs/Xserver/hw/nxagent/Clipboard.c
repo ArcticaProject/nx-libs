@@ -401,6 +401,11 @@ Status SendSelectionNotifyEventToServer(XSelectionEvent *event_to_send)
   return result;
 }
 
+int SendEventToClient(ClientPtr client, xEvent *pEvents)
+{
+  return TryClientEvents (client, pEvents, 1, NoEventMask, NoEventMask, NullGrab);
+}
+
 Bool nxagentValidServerTargets(Atom target)
 {
   if (target == XA_STRING)
@@ -516,9 +521,7 @@ void nxagentClearSelection(XEvent *X)
       x.u.selectionClear.window = lastSelectionOwner[i].window;
       x.u.selectionClear.atom = CurrentSelections[i].selection;
 
-      (void) TryClientEvents(lastSelectionOwner[i].client, &x, 1,
-                             NoEventMask, NoEventMask,
-                             NullGrab);
+      SendEventToClient(lastSelectionOwner[i].client, &x);
     }
 
     CurrentSelections[i].window = screenInfo.screens[0]->root->drawable.id;
@@ -687,9 +690,7 @@ FIXME: Do we need this?
 
         x.u.selectionRequest.property = clientCutProperty;
 
-        (void) TryClientEvents(lastSelectionOwner[i].client, &x, 1,
-                               NoEventMask, NoEventMask /* CantBeFiltered */,
-                               NullGrab);
+        SendEventToClient(lastSelectionOwner[i].client, &x);
 
         #ifdef DEBUG
         fprintf(stderr, "%s: Executed TryClientEvents with clientCutProperty.\n", __func__);
@@ -742,8 +743,7 @@ void nxagentSendSelectionNotify(Atom property)
 
   x.u.selectionNotify.property = property;
 
-  TryClientEvents(lastClientClientPtr, &x, 1, NoEventMask,
-                      NoEventMask , NullGrab);
+  SendEventToClient(lastClientClientPtr, &x);
 
   return;
 }
@@ -1415,8 +1415,7 @@ FIXME: Why this pointer can be not a valid
   x.u.selectionNotify.target = target;
   x.u.selectionNotify.property = None;
 
-  (void) TryClientEvents(client, &x, 1, NoEventMask,
-                           NoEventMask , NullGrab);
+  SendEventToClient(client, &x);
 }
 
 int nxagentConvertSelection(ClientPtr client, WindowPtr pWin, Atom selection,
@@ -1521,8 +1520,7 @@ int nxagentConvertSelection(ClientPtr client, WindowPtr pWin, Atom selection,
     x.u.selectionNotify.target = target;
     x.u.selectionNotify.property = property;
 
-    (void) TryClientEvents(client, &x, 1, NoEventMask,
-                           NoEventMask , NullGrab);
+    SendEventToClient(client, &x);
 
     return 1;
   }
@@ -1554,8 +1552,7 @@ int nxagentConvertSelection(ClientPtr client, WindowPtr pWin, Atom selection,
       x.u.selectionNotify.target = target;
       x.u.selectionNotify.property = property;
 
-      (void) TryClientEvents(client, &x, 1, NoEventMask,
-                             NoEventMask , NullGrab);
+      SendEventToClient(client, &x);
 
       return 1;
 
@@ -1642,7 +1639,7 @@ int nxagentConvertSelection(ClientPtr client, WindowPtr pWin, Atom selection,
     x.u.selectionNotify.selection = selection;
     x.u.selectionNotify.target = target;
     x.u.selectionNotify.property = None;
-    (void) TryClientEvents(client, &x, 1, NoEventMask, NoEventMask , NullGrab);
+    SendEventToClient(client, &x);
     return 1;
   }
   return 0;
