@@ -599,15 +599,17 @@ FIXME: Do we need this?
 
     if (X->xselectionrequest.target == serverTARGETS)
     {
-      Atom xa_STRING = XA_STRING;
+      Atom targets[] = {XA_STRING};
+      int numTargets = 1;
+
       XChangeProperty (nxagentDisplay,
                                 X->xselectionrequest.requestor,
                                 X->xselectionrequest.property,
                                 XInternAtom(nxagentDisplay, "ATOM", 0),
                                 sizeof(Atom)*8,
                                 PropModeReplace,
-                                (unsigned char*)&xa_STRING,
-                                1);
+                                (unsigned char*)&targets,
+                                numTargets);
       eventSelection.property = X->xselectionrequest.property;
     }
     else if (X->xselectionrequest.target == nxagentTimestampAtom)
@@ -1479,21 +1481,18 @@ int nxagentConvertSelection(ClientPtr client, WindowPtr pWin, Atom selection,
 
   if (target == clientTARGETS)
   {
-    Atom xa_STRING[4];
-
     /* --- Order changed by dimbor (prevent sending COMPOUND_TEXT to client --- */
-    xa_STRING[0] = XA_STRING;
-    xa_STRING[1] = clientUTF8_STRING;
-    xa_STRING[2] = clientTEXT;
-    xa_STRING[3] = clientCOMPOUND_TEXT;
+    Atom targets[] = {XA_STRING, clientUTF8_STRING, clientTEXT, clientCOMPOUND_TEXT};
+    int numTargets = 4;
 
     ChangeWindowProperty(pWin,
                          property,
                          MakeAtom("ATOM", 4, 1),
                          sizeof(Atom)*8,
                          PropModeReplace,
-                         4,
-                         &xa_STRING, 1);
+                         numTargets,
+                         &targets,
+                         1);
 
     SendSelectionNotifyEventToClient(client, time, requestor, selection, target, property);
 
