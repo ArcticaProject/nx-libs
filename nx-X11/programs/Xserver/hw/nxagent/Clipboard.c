@@ -217,7 +217,7 @@ void nxagentPrintSelectionStat(int sel)
 {
   SelectionOwner lOwner = lastSelectionOwner[sel];
   Selection curSel = CurrentSelections[sel];
-  char *s =NULL;
+  char *s = NULL;
 
 #ifdef CLIENTIDS
   fprintf(stderr, "  lastSelectionOwner[].client            [%p] index [%d] PID [%d] Cmd [%s]\n",
@@ -617,7 +617,7 @@ FIXME: Do we need this?
     }
     else
     {
-      if (lastSelectionOwner[i].client != NULL && 
+      if (lastSelectionOwner[i].client != NULL &&
              nxagentOption(Clipboard) != ClipboardClient)
       {
         xEvent x;
@@ -913,7 +913,7 @@ void nxagentCollectPropertyEvent(int resource)
     SAFE_XFree(pszReturnData);
     return;
   }
- 
+
   if (resultFormat != 8 && resultFormat != 16 && resultFormat != 32)
   {
     #ifdef DEBUG
@@ -1571,10 +1571,10 @@ int nxagentConvertSelection(ClientPtr client, WindowPtr pWin, Atom selection,
       x.u.selectionNotify.selection = selection;
       x.u.selectionNotify.target = target;
       x.u.selectionNotify.property = property;
-  
+
       (void) TryClientEvents(client, &x, 1, NoEventMask,
                              NoEventMask , NullGrab);
-  
+
       return 1;
 
     }
