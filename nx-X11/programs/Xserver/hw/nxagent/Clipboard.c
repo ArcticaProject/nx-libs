@@ -201,7 +201,6 @@ XFixesAgentInfoRec nxagentXFixesInfo = { -1, -1, -1, 0 };
 extern Display *nxagentDisplay;
 
 Bool nxagentValidServerTargets(Atom target);
-void nxagentSendSelectionNotify(Atom property);
 static void endTransfer(Bool success);
 #define SELECTION_SUCCESS True
 #define SELECTION_FAULT False
@@ -737,7 +736,13 @@ FIXME: Do we need this?
   nxagentPrintClipboardStat("after nxagentRequestSelection");
 }
 
-void nxagentSendSelectionNotify(Atom property)
+/*
+ * client and resetting the corresponding variables and the state
+ * machine. If success is False send a None reply, meaning "request
+ * denied/failed"
+ * Use SELECTION_SUCCESS and SELECTION_FAULT macros for success.
+ */
+static void endTransfer(Bool success)
 {
   if (lastClientClientPtr == NULL)
   {
@@ -748,29 +753,11 @@ void nxagentSendSelectionNotify(Atom property)
   }
 
   SendSelectionNotifyEventToClient(lastClientClientPtr,
-				   lastClientTime,
-				   lastClientRequestor,
-				   lastClientSelection,
-				   lastClientTarget,
-				   property);
-}
-
-/*
- * client and resetting the corresponding variables and the state
- * machine. If success is False send a None reply, meaning "request
- * denied/failed"
- * Use SELECTION_SUCCESS and SELECTION_FAULT macros for success.
- */
-static void endTransfer(Bool success)
-{
-  if (success == SELECTION_SUCCESS)
-  {
-    nxagentSendSelectionNotify(lastClientProperty);
-  }
-  else
-  {
-    nxagentSendSelectionNotify(None);
-  }
+                                   lastClientTime,
+                                   lastClientRequestor,
+                                   lastClientSelection,
+                                   lastClientTarget,
+                                   success == SELECTION_SUCCESS ? lastClientProperty : None);
 
   /*
    * Enable further requests from clients.
