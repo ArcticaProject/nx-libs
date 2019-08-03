@@ -202,6 +202,9 @@ extern Display *nxagentDisplay;
 
 Bool nxagentValidServerTargets(Atom target);
 void nxagentSendSelectionNotify(Atom property);
+static void endTransfer(Bool success);
+#define SELECTION_SUCCESS True
+#define SELECTION_FAULT False
 void nxagentTransferSelection(int resource);
 void nxagentCollectPropertyEvent(int resource);
 void nxagentResetSelectionOwner(void);
@@ -745,6 +748,30 @@ void nxagentSendSelectionNotify(Atom property)
   return;
 }
 
+/*
+ * client and resetting the corresponding variables and the state
+ * machine. If success is False send a None reply, meaning "request
+ * denied/failed"
+ * Use SELECTION_SUCCESS and SELECTION_FAULT macros for success.
+ */
+static void endTransfer(Bool success)
+{
+  if (success == SELECTION_SUCCESS)
+  {
+    nxagentSendSelectionNotify(lastClientProperty);
+  }
+  else
+  {
+    nxagentSendSelectionNotify(None);
+  }
+
+  /*
+   * Enable further requests from clients.
+   */
+  lastClientWindowPtr = NULL;
+  SetClientSelectionStage(None);
+}
+
 void nxagentTransferSelection(int resource)
 {
   int result;
@@ -756,10 +783,7 @@ void nxagentTransferSelection(int resource)
                  resource, lastClientClientPtr -> index);
     #endif
 
-    nxagentSendSelectionNotify(None);
-
-    lastClientWindowPtr = NULL;
-    SetClientSelectionStage(None);
+    endTransfer(SELECTION_FAULT);
 
     return;
   }
@@ -804,10 +828,7 @@ void nxagentTransferSelection(int resource)
                      lastClientClientPtr -> index);
         #endif
 
-        nxagentSendSelectionNotify(None);
-
-        lastClientWindowPtr = NULL;
-        SetClientSelectionStage(None);
+        endTransfer(SELECTION_FAULT);
 
         return;
       }
@@ -857,10 +878,7 @@ void nxagentTransferSelection(int resource)
                      lastClientClientPtr -> index);
         #endif
 
-        nxagentSendSelectionNotify(None);
-
-        lastClientWindowPtr = NULL;
-        SetClientSelectionStage(None);
+        endTransfer(SELECTION_FAULT);
 
         return;
       }
@@ -913,10 +931,7 @@ void nxagentCollectPropertyEvent(int resource)
                  lastClientClientPtr -> index);
     #endif
 
-    nxagentSendSelectionNotify(None);
-
-    lastClientWindowPtr = NULL;
-    SetClientSelectionStage(None);
+    endTransfer(SELECTION_FAULT);
 
     SAFE_XFree(pszReturnData);
     return;
@@ -928,10 +943,7 @@ void nxagentCollectPropertyEvent(int resource)
     fprintf (stderr, "%s: WARNING! Invalid property value.\n", __func__);
     #endif
 
-    nxagentSendSelectionNotify(None);
-
-    lastClientWindowPtr = NULL;
-    SetClientSelectionStage(None);
+    endTransfer(SELECTION_FAULT);
 
     SAFE_XFree(pszReturnData);
     return;
@@ -954,10 +966,7 @@ void nxagentCollectPropertyEvent(int resource)
                      lastClientClientPtr -> index);
         #endif
 
-        nxagentSendSelectionNotify(None);
-
-        lastClientWindowPtr = NULL;
-        SetClientSelectionStage(None);
+        endTransfer(SELECTION_FAULT);
 
         SAFE_XFree(pszReturnData);
         return;
@@ -993,10 +1002,7 @@ void nxagentCollectPropertyEvent(int resource)
                      lastClientClientPtr -> index);
         #endif
 
-        nxagentSendSelectionNotify(None);
-
-        lastClientWindowPtr = NULL;
-        SetClientSelectionStage(None);
+        endTransfer(SELECTION_FAULT);
 
         SAFE_XFree(pszReturnData);
         return;
@@ -1017,14 +1023,7 @@ void nxagentCollectPropertyEvent(int resource)
                    validateString(NameForAtom(lastClientProperty)), pszReturnData);
       #endif
 
-      nxagentSendSelectionNotify(lastClientProperty);
-
-      /*
-       * Enable further requests from clients.
-       */
-
-      lastClientWindowPtr = NULL;
-      SetClientSelectionStage(None);
+      endTransfer(SELECTION_SUCCESS);
 
       break;
     }
@@ -1093,10 +1092,7 @@ void nxagentNotifySelection(XEvent *X)
                   lastClientClientPtr -> index);
       #endif
 
-      nxagentSendSelectionNotify(None);
-
-      lastClientWindowPtr = NULL;
-      SetClientSelectionStage(None);
+      endTransfer(SELECTION_FAULT);
     }
 
     return;
