@@ -810,8 +810,8 @@ CORE_INCS='-I$(top_srcdir)/../../exports/include -I$(top_srcdir)/include -I$(top
 PKG_CHECK_MODULES([XSERVERCFLAGS], [$REQUIRED_MODULES $REQUIRED_LIBS])
 PKG_CHECK_MODULES([XSERVERLIBS], [$REQUIRED_LIBS])
 
-XSERVER_CFLAGS="${XSERVERCFLAGS_CFLAGS}"
-XSERVER_LIBS="${XSERVERLIBS_LIBS} -lm -lz"
+XSERVER_CFLAGS="-I`pwd`/../../exports/include -I`pwd`/../../exports/include/nx-X11 -I`pwd`/../../exports/include/nx-X11/extensions -I`pwd`/miext/cw -I`pwd`/../../extras/Mesa/include"
+XSERVER_LIBS="-lm -lz"
 AC_SUBST([XSERVER_LIBS])
 
 
