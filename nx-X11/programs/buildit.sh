@@ -53,14 +53,6 @@ export CONFFLAGS="--enable-unix-transport		\
                   --enable-nxagent			\
                   ${NULL}"
 
-export XSERVERCFLAGS_CFLAGS="						  \
-                            -I`pwd`/../exports/include			  \
-                            -I`pwd`/../exports/include/nx-X11		  \
-                            -I`pwd`/../exports/include/nx-X11/extensions  \
-                            -I`pwd`/Xserver/miext/cw			  \
-                            -I`pwd`/../extras/Mesa/include		  \
-                            ${NULL}"
-
 export NXAGENTMODULES_LIBS="-L`pwd`/../exports/lib			  \
                             -L`pwd`/../../nxcomp/src/.libs		  \
                             -L`pwd`/../../nxcompshad/src/.libs		  \
