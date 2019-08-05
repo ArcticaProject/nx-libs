@@ -663,13 +663,13 @@ FIXME: Do we need this?
       int numTargets = 1;
 
       XChangeProperty (nxagentDisplay,
-                                X->xselectionrequest.requestor,
-                                X->xselectionrequest.property,
-                                XInternAtom(nxagentDisplay, "ATOM", 0),
-                                sizeof(Atom)*8,
-                                PropModeReplace,
-                                (unsigned char*)&targets,
-                                numTargets);
+                       X->xselectionrequest.requestor,
+                       X->xselectionrequest.property,
+                       XInternAtom(nxagentDisplay, "ATOM", 0),
+                       sizeof(Atom)*8,
+                       PropModeReplace,
+                       (unsigned char*)&targets,
+                       numTargets);
       nxagentReplyRequestSelection(X, True);
     }
     else if (X->xselectionrequest.target == serverTIMESTAMP)
@@ -678,13 +678,13 @@ FIXME: Do we need this?
       if (i < nxagentMaxSelections)
       {
         XChangeProperty(nxagentDisplay,
-                                 X->xselectionrequest.requestor,
-                                 X->xselectionrequest.property,
-                                 XA_INTEGER,
-                                 32,
-                                 PropModeReplace,
-                                 (unsigned char *) &lastSelectionOwner[i].lastTimeChanged,
-                                 1);
+                        X->xselectionrequest.requestor,
+                        X->xselectionrequest.property,
+                        XA_INTEGER,
+                        32,
+                        PropModeReplace,
+                        (unsigned char *) &lastSelectionOwner[i].lastTimeChanged,
+                        1);
         nxagentReplyRequestSelection(X, True);
       }
     }
