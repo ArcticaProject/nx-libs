@@ -1678,6 +1678,15 @@ WindowPtr nxagentGetClipboardWindow(Atom property)
   }
 }
 
+void nxagentInitSelectionOwner(SelectionOwner *owner, Atom selection)
+{
+  owner->selection = selection;
+  owner->client = NullClient;
+  owner->window = screenInfo.screens[0]->root->drawable.id;
+  owner->windowPtr = NULL;
+  owner->lastTimeChanged = GetTimeInMillis();
+}
+
 int nxagentInitClipboard(WindowPtr pWin)
 {
   Window iWindow = nxagentWindow(pWin);
@@ -1697,17 +1706,8 @@ int nxagentInitClipboard(WindowPtr pWin)
 
   serverTIMESTAMP = nxagentAtoms[11];   /* TIMESTAMP */
 
-  lastSelectionOwner[nxagentPrimarySelection].selection = XA_PRIMARY;
-  lastSelectionOwner[nxagentPrimarySelection].client = NullClient;
-  lastSelectionOwner[nxagentPrimarySelection].window = screenInfo.screens[0]->root->drawable.id;
-  lastSelectionOwner[nxagentPrimarySelection].windowPtr = NULL;
-  lastSelectionOwner[nxagentPrimarySelection].lastTimeChanged = GetTimeInMillis();
-
-  lastSelectionOwner[nxagentClipboardSelection].selection = nxagentAtoms[10]; /* CLIPBOARD */
-  lastSelectionOwner[nxagentClipboardSelection].client = NullClient;
-  lastSelectionOwner[nxagentClipboardSelection].window = screenInfo.screens[0]->root->drawable.id;
-  lastSelectionOwner[nxagentClipboardSelection].windowPtr = NULL;
-  lastSelectionOwner[nxagentClipboardSelection].lastTimeChanged = GetTimeInMillis();
+  nxagentInitSelectionOwner(&lastSelectionOwner[nxagentPrimarySelection], XA_PRIMARY);
+  nxagentInitSelectionOwner(&lastSelectionOwner[nxagentClipboardSelection], nxagentAtoms[10]);   /* CLIPBOARD */
 
   #ifdef NXAGENT_TIMESTAMP
   {
