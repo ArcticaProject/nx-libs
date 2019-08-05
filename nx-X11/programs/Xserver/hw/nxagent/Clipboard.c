@@ -1119,8 +1119,6 @@ void nxagentNotifySelection(XEvent *X)
 
       endTransfer(SELECTION_FAULT);
     }
-
-    return;
   }
   else
   {
