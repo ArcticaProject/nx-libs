@@ -595,10 +595,37 @@ void nxagentClearSelection(XEvent *X)
   nxagentPrintClipboardStat("after nxagentClearSelection");
 }
 
+/*
+ * Send a SelectionNotify event as reply to the RequestSelection
+ * event X. If success is True take the property from the event, else
+ * take None (which reports "failed/denied" to the requestor.
+ */
+
+void nxagentReplyRequestSelection(XEvent *X, Bool success)
+{
+  XSelectionEvent eventSelection = {
+    .requestor = X->xselectionrequest.requestor,
+    .selection = X->xselectionrequest.selection,
+    .target = X->xselectionrequest.target,
+    .time = X->xselectionrequest.time,
+    .property = X->xselectionrequest.property
+  };
+
+  if (!success)
+  {
+    #ifdef DEBUG
+    fprintf(stderr, "%s: denying request\n", __func__);
+    #endif
+    eventSelection.property = None;
+  }
+
+  SendSelectionNotifyEventToServer(&eventSelection);
+
+  NXFlushDisplay(nxagentDisplay, NXFlushLink);
+}
+
 void nxagentRequestSelection(XEvent *X)
 {
-  XSelectionEvent eventSelection = {0};
-
   #ifdef DEBUG
   fprintf(stderr, "%s: Got called.\n", __func__);
   #endif
@@ -631,9 +658,6 @@ FIXME: Do we need this?
 
     SAFE_XFree(strTarget);
 */
-    memset(&eventSelection, 0, sizeof(XSelectionEvent));
-    eventSelection.property = None;
-
     if (X->xselectionrequest.target == serverTARGETS)
     {
       Atom targets[] = {XA_STRING};
@@ -647,7 +671,7 @@ FIXME: Do we need this?
                                 PropModeReplace,
                                 (unsigned char*)&targets,
                                 numTargets);
-      eventSelection.property = X->xselectionrequest.property;
+      nxagentReplyRequestSelection(X, True);
     }
     else if (X->xselectionrequest.target == serverTIMESTAMP)
     {
@@ -662,17 +686,14 @@ FIXME: Do we need this?
                                  PropModeReplace,
                                  (unsigned char *) &lastSelectionOwner[i].lastTimeChanged,
                                  1);
-        eventSelection.property = X->xselectionrequest.property;
+        nxagentReplyRequestSelection(X, True);
       }
     }
-
-    eventSelection.requestor = X->xselectionrequest.requestor;
-    eventSelection.selection = X->xselectionrequest.selection;
-    eventSelection.target = X->xselectionrequest.target;
-    eventSelection.time = X->xselectionrequest.time;
-
-    SendSelectionNotifyEventToServer(&eventSelection);
-
+    else
+    {
+      /* deny the request */
+      nxagentReplyRequestSelection(X, False);
+    }
     return;
   }
 
@@ -750,18 +771,8 @@ FIXME: Do we need this?
       }
       else
       {
-        /*
-         * Probably we must send a Notify
-         * to requestor with property None.
-         */
-
-        eventSelection.requestor = X->xselectionrequest.requestor;
-        eventSelection.selection = X->xselectionrequest.selection;
-        eventSelection.target = X->xselectionrequest.target;
-        eventSelection.property = None;
-        eventSelection.time = X->xselectionrequest.time;
-
-	SendSelectionNotifyEventToServer(&eventSelection);
+	/* deny the request */
+        nxagentReplyRequestSelection(X, False);
       }
     }
   }
