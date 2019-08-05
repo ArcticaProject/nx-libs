@@ -159,6 +159,8 @@ const char * GetClientSelectionStageString(int stage)
 }
 #define SetClientSelectionStage(stage) do {fprintf(stderr, "%s: Changing selection stage from [%s] to [%s]\n", __func__, GetClientSelectionStageString(lastClientStage), GetClientSelectionStageString(SelectionStage##stage)); lastClientStage = SelectionStage##stage;} while (0)
 #define PrintClientSelectionStage() do {fprintf(stderr, "%s: Current selection stage [%s]\n", __func__, GetClientSelectionStageString(lastClientStage));} while (0)
+#define WINDOWID(ptr) (ptr) ? (ptr->drawable.id) : 0
+#define CLINDEX(clientptr) (clientptr) ? (clientptr->index) : -1
 #else
 #define SetClientSelectionStage(stage) do {lastClientStage = SelectionStage##stage;} while (0)
 #define PrintClientSelectionStage()
@@ -225,13 +227,13 @@ void nxagentPrintSelectionStat(int sel)
 #ifdef CLIENTIDS
   fprintf(stderr, "  lastSelectionOwner[].client            [%p] index [%d] PID [%d] Cmd [%s]\n",
           (void *)lOwner.client,
-          lOwner.client ? lOwner.client->index : -1,
+          CLINDEX(lOwner.client),
           GetClientPid(lOwner.client),
           GetClientCmdName(lOwner.client));
 #else
   fprintf(stderr, "  lastSelectionOwner[].client            [%p] index [%d]\n",
           (void *)lOwner.client,
-          lOwner.client ? lOwner.client->index : -1);
+          CLINDEX(lOwner.client));
 #endif
   fprintf(stderr, "  lastSelectionOwner[].window            [0x%x]\n", lOwner.window);
   fprintf(stderr, "  lastSelectionOwner[].windowPtr         [%p]\n", (void *)lOwner.windowPtr);
@@ -253,13 +255,13 @@ void nxagentPrintSelectionStat(int sel)
 #ifdef CLIENTIDS
   fprintf(stderr, "  CurrentSelections[].client             [%p] index [%d] PID [%d] Cmd [%s]\n",
           (void *)curSel.client,
-          curSel.client ? curSel.client->index : -1,
+          CLINDEX(curSel.client),
           GetClientPid(curSel.client),
           GetClientCmdName(curSel.client));
 #else
   fprintf(stderr, "  CurrentSelections[].client             [%p] index [%d]\n",
           (void *)curSel.client,
-          curSel.client ? curSel.client->index : -1);
+          CLINDEX(curSel.client);
 #endif
   fprintf(stderr, "  CurrentSelections[].window             [0x%x]\n", curSel.window);
   return;
@@ -412,7 +414,7 @@ int SendSelectionNotifyEventToClient(ClientPtr client,
                                      Atom property)
 {
   #ifdef DEBUG
-  fprintf (stderr, "%s: Sending event to client [%d].\n", __func__, client -> index);
+  fprintf (stderr, "%s: Sending event to client [%d].\n", __func__, CLINDEX(client));
   #endif
 
   xEvent x = {0};
@@ -483,8 +485,8 @@ void nxagentStoreSelectionOwner(SelectionOwner *owner, Selection *sel)
 void nxagentClearClipboard(ClientPtr pClient, WindowPtr pWindow)
 {
   #ifdef DEBUG
-  fprintf(stderr, "%s: Called with client [%p] window [%p].\n", __func__,
-              (void *) pClient, (void *) pWindow);
+  fprintf(stderr, "%s: Called with client [%p] index [%d] window [%p] ([0x%x]).\n", __func__,
+              (void *) pClient, CLINDEX(pClient), (void *) pWindow, WINDOWID(pWindow));
   #endif
 
   nxagentPrintClipboardStat("before nxagentClearClipboard");
@@ -797,7 +799,7 @@ void nxagentTransferSelection(int resource)
   {
     #ifdef DEBUG
     fprintf (stderr, "%s: WARNING! Inconsistent resource [%d] with current client [%d].\n", __func__,
-                 resource, lastClientClientPtr -> index);
+                 resource, CLINDEX(lastClientClientPtr));
     #endif
 
     endTransfer(SELECTION_FAULT);
@@ -842,7 +844,7 @@ void nxagentTransferSelection(int resource)
       {
         #ifdef DEBUG
         fprintf (stderr, "%s: Aborting selection notify procedure for client [%d].\n", __func__,
-                     lastClientClientPtr -> index);
+                     CLINDEX(lastClientClientPtr));
         #endif
 
         endTransfer(SELECTION_FAULT);
@@ -892,7 +894,7 @@ void nxagentTransferSelection(int resource)
       {
         #ifdef DEBUG
         fprintf (stderr, "%s: Aborting selection notify procedure for client [%d].\n", __func__,
-                     lastClientClientPtr -> index);
+                     CLINDEX(lastClientClientPtr));
         #endif
 
         endTransfer(SELECTION_FAULT);
@@ -908,7 +910,7 @@ void nxagentTransferSelection(int resource)
     {
       #ifdef DEBUG
       fprintf (stderr, "%s: WARNING! Inconsistent state [%s] for client [%d].\n", __func__,
-                   GetClientSelectionStageString(lastClientStage), lastClientClientPtr -> index);
+                   GetClientSelectionStageString(lastClientStage), CLINDEX(lastClientClientPtr));
       #endif
 
       break;
@@ -945,7 +947,7 @@ void nxagentCollectPropertyEvent(int resource)
   {
     #ifdef DEBUG
     fprintf (stderr, "%s: Failed to get reply data for client [%d].\n", __func__,
-                 lastClientClientPtr -> index);
+                 CLINDEX(lastClientClientPtr));
     #endif
 
     endTransfer(SELECTION_FAULT);
@@ -973,14 +975,14 @@ void nxagentCollectPropertyEvent(int resource)
       PrintClientSelectionStage();
       #ifdef DEBUG
       fprintf (stderr, "%s: Got size notify event for client [%d].\n", __func__,
-                   lastClientClientPtr -> index);
+                   CLINDEX(lastClientClientPtr));
       #endif
 
       if (ulReturnBytesLeft == 0)
       {
         #ifdef DEBUG
         fprintf (stderr, "%s: Aborting selection notify procedure for client [%d].\n", __func__,
-                     lastClientClientPtr -> index);
+                     CLINDEX(lastClientClientPtr));
         #endif
 
         endTransfer(SELECTION_FAULT);
@@ -1009,14 +1011,14 @@ void nxagentCollectPropertyEvent(int resource)
       PrintClientSelectionStage();
       #ifdef DEBUG
       fprintf (stderr, "%s: Got data notify event for client [%d].\n", __func__,
-                   lastClientClientPtr -> index);
+                   CLINDEX(lastClientClientPtr));
       #endif
 
       if (ulReturnBytesLeft != 0)
       {
         #ifdef DEBUG
         fprintf (stderr, "%s: Aborting selection notify procedure for client [%d].\n", __func__,
-                     lastClientClientPtr -> index);
+                     CLINDEX(lastClientClientPtr));
         #endif
 
         endTransfer(SELECTION_FAULT);
@@ -1048,7 +1050,7 @@ void nxagentCollectPropertyEvent(int resource)
     {
       #ifdef DEBUG
       fprintf (stderr, "%s: WARNING! Inconsistent state [%s] for client [%d].\n", __func__,
-                   GetClientSelectionStageString(lastClientStage), lastClientClientPtr -> index);
+                   GetClientSelectionStageString(lastClientStage), CLINDEX(lastClientClientPtr));
       #endif
 
       break;
@@ -1083,7 +1085,7 @@ void nxagentNotifySelection(XEvent *X)
     {
       #ifdef DEBUG
       fprintf(stderr, "%s: Starting selection transferral for client [%d].\n", __func__,
-                  lastClientClientPtr -> index);
+                  CLINDEX(lastClientClientPtr));
       #endif
 
       /*
@@ -1106,7 +1108,7 @@ void nxagentNotifySelection(XEvent *X)
     {
       #ifdef DEBUG
       fprintf(stderr, "%s: WARNING! Resetting selection transferral for client [%d].\n", __func__,
-                  lastClientClientPtr -> index);
+                  CLINDEX(lastClientClientPtr));
       #endif
 
       endTransfer(SELECTION_FAULT);
@@ -1281,7 +1283,7 @@ void nxagentSetSelectionCallback(CallbackListPtr *callbacks, void *data,
   {
     #ifdef DEBUG
     fprintf(stderr, "%s: called with SelectionCallbackKind SelectionSetOwner\n", __func__);
-    fprintf(stderr, "%s: pCurSel->pWin [0x%x]\n", __func__, pCurSel->pWin ? pCurSel->pWin->drawable.id : NULL);
+    fprintf(stderr, "%s: pCurSel->pWin [0x%x]\n", __func__, WINDOWID(pCurSel->pWin));
     fprintf(stderr, "%s: pCurSel->selection [%s]\n", __func__, NameForAtom(pCurSel->selection));
     #endif
 
@@ -1477,7 +1479,7 @@ int nxagentConvertSelection(ClientPtr client, WindowPtr pWin, Atom selection,
   #ifdef TEST
   fprintf(stderr, "%s: client [%d] ask for sel [%s] "
               "on window [%x] prop [%s] target [%s].\n", __func__,
-                  client -> index, validateString(NameForAtom(selection)), requestor,
+                  CLINDEX(client), validateString(NameForAtom(selection)), requestor,
                       validateString(NameForAtom(property)), validateString(NameForAtom(target)));
   #endif
 
@@ -1675,7 +1677,7 @@ WindowPtr nxagentGetClipboardWindow(Atom property)
           (lastSelectionOwner[i].windowPtr != NULL))
   {
     #ifdef DEBUG
-    fprintf(stderr, "%s: Returning last clipboard owner window [%p].\n", __func__, (void *)lastSelectionOwner[i].windowPtr);
+    fprintf(stderr, "%s: Returning last clipboard owner window [%p] (0x%x).\n", __func__, (void *)lastSelectionOwner[i].windowPtr, WINDOWID(lastSelectionOwner[i].windowPtr));
     #endif
 
     return lastSelectionOwner[i].windowPtr;
