@@ -805,8 +805,6 @@ static void endTransfer(Bool success)
 
 void nxagentTransferSelection(int resource)
 {
-  int result;
-
   if (lastClientClientPtr -> index != resource)
   {
     #ifdef DEBUG
@@ -823,6 +821,8 @@ void nxagentTransferSelection(int resource)
   {
     case SelectionStageQuerySize:
     {
+      int result;
+
       PrintClientSelectionStage();
       /*
        * Don't get data yet, just get size. We skip
@@ -870,6 +870,8 @@ void nxagentTransferSelection(int resource)
     }
     case SelectionStageQueryData:
     {
+      int result;
+
       PrintClientSelectionStage();
 
       /*
@@ -1210,8 +1212,6 @@ void nxagentNotifySelection(XEvent *X)
 
 void nxagentResetSelectionOwner(void)
 {
-  int i;
-
   if (lastServerRequestor != None)
   {
     #ifdef TEST
@@ -1226,7 +1226,7 @@ void nxagentResetSelectionOwner(void)
    * Only for PRIMARY and CLIPBOARD selections.
    */
 
-  for (i = 0; i < nxagentMaxSelections; i++)
+  for (int i = 0; i < nxagentMaxSelections; i++)
   {
     XSetSelectionOwner(nxagentDisplay, lastSelectionOwner[i].selection, serverWindow, CurrentTime);
 
@@ -1415,8 +1415,6 @@ FIXME: Why this pointer can be not a valid
 int nxagentConvertSelection(ClientPtr client, WindowPtr pWin, Atom selection,
                                 Window requestor, Atom property, Atom target, Time time)
 {
-  const char *strTarget;
-
   if (agentClipboardStatus != 1 ||
            nxagentOption(Clipboard) == ClipboardServer)
   {
@@ -1479,7 +1477,7 @@ int nxagentConvertSelection(ClientPtr client, WindowPtr pWin, Atom selection,
                       validateString(NameForAtom(property)), validateString(NameForAtom(target)));
   #endif
 
-  strTarget = NameForAtom(target);
+  const char *strTarget = NameForAtom(target);
 
   if (strTarget == NULL)
   {
@@ -1682,7 +1680,6 @@ WindowPtr nxagentGetClipboardWindow(Atom property)
 
 int nxagentInitClipboard(WindowPtr pWin)
 {
-  int i;
   Window iWindow = nxagentWindow(pWin);
 
   #ifdef DEBUG
@@ -1763,7 +1760,7 @@ int nxagentInitClipboard(WindowPtr pWin)
     fprintf(stderr, "%s: Registering for XFixesSelectionNotify events.\n", __func__);
     #endif
 
-    for (i = 0; i < nxagentMaxSelections; i++)
+    for (int i = 0; i < nxagentMaxSelections; i++)
     {
       XFixesSelectSelectionInput(nxagentDisplay, iWindow,
                                  lastSelectionOwner[i].selection,
@@ -1803,7 +1800,7 @@ int nxagentInitClipboard(WindowPtr pWin)
      * Only for PRIMARY and CLIPBOARD selections.
      */
 
-    for (i = 0; i < nxagentMaxSelections; i++)
+    for (int i = 0; i < nxagentMaxSelections; i++)
     {
       if (lastSelectionOwner[i].client && lastSelectionOwner[i].window)
       {
