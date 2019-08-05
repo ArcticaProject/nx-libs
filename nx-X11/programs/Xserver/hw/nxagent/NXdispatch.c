@@ -691,11 +691,7 @@ ProcConvertSelection(register ClientPtr client)
            (stuff->selection == MakeAtom("CLIPBOARD", 9, 0))) &&
                nxagentOption(Clipboard) != ClipboardNone)
     {
-      int i = 0;
-
-      while ((i < NumCurrentSelections) &&
-                CurrentSelections[i].selection != stuff->selection) i++;
-
+      int i = nxagentFindCurrentSelectionIndex(stuff->selection);
       if ((i < NumCurrentSelections) && (CurrentSelections[i].window != None))
       {
         if (nxagentConvertSelection(client, pWin, stuff->selection, stuff->requestor,

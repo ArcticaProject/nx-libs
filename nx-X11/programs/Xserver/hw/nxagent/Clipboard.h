@@ -66,4 +66,5 @@ void nxagentClearSelection();
 void nxagentRequestSelection();
 void nxagentNotifySelection();
 
+int nxagentFindCurrentSelectionIndex(Atom sel);
 #endif /* __Clipboard_H__ */

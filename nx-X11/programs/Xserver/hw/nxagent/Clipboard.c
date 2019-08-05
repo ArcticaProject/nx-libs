@@ -524,10 +524,30 @@ void nxagentClearClipboard(ClientPtr pClient, WindowPtr pWindow)
   nxagentPrintClipboardStat("after nxagentClearClipboard");
 }
 
-void nxagentClearSelection(XEvent *X)
+int nxagentFindLastSelectionOwnerIndex(Atom sel)
 {
   int i = 0;
+  while ((i < nxagentMaxSelections) &&
+            (lastSelectionOwner[i].selection != sel))
+  {
+    i++;
+  }
+  return i;
+}
 
+int nxagentFindCurrentSelectionIndex(Atom sel)
+{
+  int i = 0;
+  while ((i < NumCurrentSelections) &&
+            (CurrentSelections[i].selection != sel))
+  {
+    i++;
+  }
+  return i;
+}
+
+void nxagentClearSelection(XEvent *X)
+{
   #ifdef DEBUG
   fprintf(stderr, "%s: SelectionClear event for selection [%lu].\n", __func__, X->xselectionclear.selection);
   #endif
@@ -540,11 +560,7 @@ void nxagentClearSelection(XEvent *X)
     return;
   }
 
-  while ((i < nxagentMaxSelections) &&
-            (lastSelectionOwner[i].selection != X->xselectionclear.selection))
-  {
-    i++;
-  }
+  int i = nxagentFindLastSelectionOwnerIndex(X->xselectionclear.selection);
 
   if (i < nxagentMaxSelections)
   {
@@ -573,7 +589,6 @@ void nxagentClearSelection(XEvent *X)
 
 void nxagentRequestSelection(XEvent *X)
 {
-  int i = 0;
   XSelectionEvent eventSelection = {0};
 
   #ifdef DEBUG
@@ -628,10 +643,8 @@ FIXME: Do we need this?
     }
     else if (X->xselectionrequest.target == nxagentTimestampAtom)
     {
-      while ((i < NumCurrentSelections) &&
-                lastSelectionOwner[i].selection != X->xselectionrequest.selection) i++;
-
-      if (i < NumCurrentSelections)
+      int i = nxagentFindLastSelectionOwnerIndex(X->xselectionrequest.selection);
+      if (i < nxagentMaxSelections)
       {
         XChangeProperty(nxagentDisplay,
                                  X->xselectionrequest.requestor,
@@ -661,13 +674,8 @@ FIXME: Do we need this?
 
   nxagentLastRequestedSelection = X->xselectionrequest.selection;
 
-  /* FIXME: shouldn't we reset i to 0 here first? */
-  while ((i < nxagentMaxSelections) &&
-            (lastSelectionOwner[i].selection != X->xselectionrequest.selection))
-  {
-    i++;
-  }
-
+  /* find the index of the requested selection */
+  int i = nxagentFindLastSelectionOwnerIndex(X->xselectionrequest.selection);
   if (i < nxagentMaxSelections)
   {
     if ((lastClientWindowPtr != NULL) && (lastSelectionOwner[i].client != NULL))
@@ -1109,13 +1117,7 @@ void nxagentNotifySelection(XEvent *X)
   }
   else
   {
-    int i = 0;
-
-    while ((i < nxagentMaxSelections) && (lastSelectionOwner[i].selection != X->xselection.selection))
-    {
-      i++;
-    }
-
+    int i = nxagentFindLastSelectionOwnerIndex(X->xselection.selection);
     if (i < nxagentMaxSelections)
     {
       if ((lastSelectionOwner[i].client != NULL) &&
@@ -1417,7 +1419,6 @@ int nxagentConvertSelection(ClientPtr client, WindowPtr pWin, Atom selection,
                                 Window requestor, Atom property, Atom target, Time time)
 {
   const char *strTarget;
-  int i;
 
   if (agentClipboardStatus != 1 ||
            nxagentOption(Clipboard) == ClipboardServer)
@@ -1433,7 +1434,7 @@ int nxagentConvertSelection(ClientPtr client, WindowPtr pWin, Atom selection,
    * Only for PRIMARY and CLIPBOARD selections.
    */
 
-  for (i = 0; i < nxagentMaxSelections; i++)
+  for (int i = 0; i < nxagentMaxSelections; i++)
   {
     if ((selection == CurrentSelections[i].selection) &&
            (lastSelectionOwner[i].client != NULL))
@@ -1510,11 +1511,7 @@ int nxagentConvertSelection(ClientPtr client, WindowPtr pWin, Atom selection,
 
   if (target == MakeAtom("TIMESTAMP", 9, 1))
   {
-    int i = 0;
-
-    while ((i < NumCurrentSelections) &&
-              CurrentSelections[i].selection != selection) i++;
-
+    int i = nxagentFindCurrentSelectionIndex(selection);
     if (i < NumCurrentSelections)
     {
       ChangeWindowProperty(pWin,
@@ -1673,17 +1670,11 @@ int nxagentSendNotify(xEvent *event)
 
 WindowPtr nxagentGetClipboardWindow(Atom property, WindowPtr pWin)
 {
-  int i = 0;
-
   #ifdef DEBUG
   fprintf(stderr, "%s: Got called, property [%d][%s] window [%p].\n", __func__, property, NameForAtom(property), (void *)pWin);
   #endif
 
-  while ((i < nxagentMaxSelections) &&
-            (lastSelectionOwner[i].selection != nxagentLastRequestedSelection))
-  {
-    i++;
-  }
+  int i = nxagentFindLastSelectionOwnerIndex(nxagentLastRequestedSelection);
 
   if ((i < nxagentMaxSelections) && (property == clientCutProperty) &&
           (lastSelectionOwner[i].windowPtr != NULL))
