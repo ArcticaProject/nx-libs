@@ -724,33 +724,28 @@ FIXME: Do we need this?
         lastServerProperty = X->xselectionrequest.property;
         lastServerRequestor = X->xselectionrequest.requestor;
         lastServerTarget = X->xselectionrequest.target;
+        lastServerTime = X->xselectionrequest.time;
 
         /* by dimbor */
         if (lastServerTarget != XA_STRING)
             lastServerTarget = serverUTF8_STRING;
 
-        lastServerTime = X->xselectionrequest.time;
-
+        /* prepare the request (like XConvertSelection, but internally) */
         xEvent x = {0};
         x.u.u.type = SelectionRequest;
         x.u.selectionRequest.time = GetTimeInMillis();
         x.u.selectionRequest.owner = lastSelectionOwner[i].window;
+        x.u.selectionRequest.selection = CurrentSelections[i].selection;
+        x.u.selectionRequest.property = clientCutProperty;
+        x.u.selectionRequest.requestor = screenInfo.screens[0]->root->drawable.id; /* Fictitious window.*/
 
         /*
-         * Fictitious window.
-         */
-
-        x.u.selectionRequest.requestor = screenInfo.screens[0]->root->drawable.id;
-
-        /*
-         * Don't send the same window, some programs are
-         * clever and verify cut and paste operations
-         * inside the same window and don't Notify at all.
+         * Don't send the same window, some programs are clever and
+         * verify cut and paste operations inside the same window and
+         * don't Notify at all.
          *
          * x.u.selectionRequest.requestor = lastSelectionOwnerWindow;
          */
-
-        x.u.selectionRequest.selection = CurrentSelections[i].selection;
 
         /* by dimbor (idea from zahvatov) */
         if (X->xselectionrequest.target != XA_STRING)
@@ -758,12 +753,14 @@ FIXME: Do we need this?
         else
           x.u.selectionRequest.target = XA_STRING;
 
-        x.u.selectionRequest.property = clientCutProperty;
-
         SendEventToClient(lastSelectionOwner[i].client, &x);
 
         #ifdef DEBUG
-        fprintf(stderr, "%s: Executed TryClientEvents with clientCutProperty.\n", __func__);
+        fprintf(stderr, "%s: sent SelectionRequest event to client [%d] property [%d][%s] target [%d][%s] requestor [0x%x].\n", __func__,
+		CLINDEX(lastSelectionOwner[i].client),
+		x.u.selectionRequest.property, NameForAtom(x.u.selectionRequest.property),
+		x.u.selectionRequest.target, NameForAtom(x.u.selectionRequest.target),
+		x.u.selectionRequest.requestor);
         #endif
       }
       else
