@@ -68,7 +68,9 @@ extern Selection *CurrentSelections;
 int nxagentLastClipboardClient = -1;
 
 static int agentClipboardStatus;
+#ifdef DEBUG
 static int clientAccum;
+#endif
 
 Atom serverCutProperty;
 Atom clientCutProperty;
@@ -1529,29 +1531,29 @@ int nxagentConvertSelection(ClientPtr client, WindowPtr pWin, Atom selection,
     }
   }
 
+  #ifdef DEBUG
   if (lastClientClientPtr == client && (GetTimeInMillis() - lastClientReqTime < 5000))
   {
     /*
-     * The same client made consecutive requests
-     * of clipboard contents with less than 5
-     * seconds time interval between them.
+     * The same client made consecutive requests of clipboard contents
+     * with less than 5 seconds time interval between them.
      */
 
-    #ifdef DEBUG
     fprintf(stderr, "%s: Consecutives request from client [%p] selection [%u] "
                 "elapsed time [%u] clientAccum [%d]\n", __func__, (void *) client, selection,
                     GetTimeInMillis() - lastClientReqTime, clientAccum);
-    #endif
 
     clientAccum++;
   }
   else
   {
+    /* reset clientAccum as now another client requested the clipboard content */
     if (lastClientClientPtr != client)
     {
       clientAccum = 0;
     }
   }
+  #endif
 
   if ((target == clientTEXT) ||
           (target == XA_STRING) ||
