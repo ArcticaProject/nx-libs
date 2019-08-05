@@ -1,6 +1,553 @@
-2019-04-17 11:04:51 +0200 Mike Gabriel (f1f744a41)
+2019-08-05 18:32:16 +0200 Mike Gabriel (0166fc3a3)
 
-	* release 3.5.99.20 (HEAD -> 3.6.x, tag: 3.5.99.20)
+	* release 3.5.99.21 (HEAD -> 3.6.x, tag: 3.5.99.21)
+
+2019-06-27 22:48:09 +0200 Mike Gabriel (c2ca013fb)
+
+	* Merge branch 'uli42-pr/drop_ipaq' into 3.6.x
+
+2019-06-27 21:50:53 +0200 Ulrich Sibiller (738686685)
+
+	* drop onscreen keyboard support
+
+2019-06-27 21:44:31 +0200 Ulrich Sibiller (6bdf9c2fa)
+
+	* Drop Ipaq support
+
+2019-06-27 21:03:03 +0200 Mike Gabriel (1ebf78519)
+
+	* Merge branch 'uli42-pr/fix_fullscreen' into 3.6.x
+
+2019-06-27 20:38:10 +0200 Ulrich Sibiller (032ed3511)
+
+	* Screen.c: use XlibWindow so silence the compiler
+
+2019-06-27 20:15:15 +0200 Ulrich Sibiller (d487d5879)
+
+	* Consistently use None instead of 0 for nxagentIconWindow everywhere
+
+2019-06-27 19:51:03 +0200 Ulrich Sibiller (ea571387b)
+
+	* Screen.c: simplify nxagentMinimizeFromFullscreen
+
+2019-06-26 19:04:41 +0200 Ulrich Sibiller (6657b8cc8)
+
+	* nxagentMaximizeToFullScreen: only reparent if necessary
+
+2019-06-26 18:50:44 +0200 Ulrich Sibiller (d32706888)
+
+	* Screen.c: add nxagentIsParentOf helper
+
+2019-06-26 18:49:36 +0200 Ulrich Sibiller (c190fd187)
+
+	* Window.c: rearrange code regarding window decorations sizes
+
+2019-06-26 18:49:13 +0200 Ulrich Sibiller (ca54fabed)
+
+	* Window.c: add some comments about fullscreen handling
+
+2019-06-23 22:21:24 +0200 Mike Gabriel (5858ebc6d)
+
+	* Merge branch 'mjtrangoni-add-gcc-9' into 3.6.x
+
+2019-06-22 18:44:25 +0200 Mario Trangoni (1ffe92a6f)
+
+	* TravisCI: Print compiler version currently used
+
+2019-06-22 18:26:14 +0200 Mario Trangoni (fba18967f)
+
+	* TravisCI: move from gcc 8.x to gcc 9.x
+
+2019-06-23 21:39:51 +0200 Mike Gabriel (4a440feaf)
+
+	* Merge branch 'uli42-pr/fix_xkb_privates' into 3.6.x
+
+2019-06-22 16:03:06 +0200 Ulrich Sibiller (3aabc92cf)
+
+	* rework xkb device private handling
+
+2019-06-22 11:32:42 +0200 Mike Gabriel (abf374136)
+
+	* Merge branch 'uli42-pr/various' into 3.6.x
+
+2019-06-20 12:51:23 +0200 Ulrich Sibiller (c8a5e33fc)
+
+	* Suppress false positives in static analysis
+
+2019-06-21 12:04:23 +0200 Ulrich Sibiller (b91b3d807)
+
+	* record/set.c: silence cpp finding
+
+2019-06-21 11:39:03 +0200 Ulrich Sibiller (364035c00)
+
+	* Keyboard.c: use existing define instead of hardcoced value
+
+2019-06-21 11:38:39 +0200 Ulrich Sibiller (2bb498a4c)
+
+	* Keyboard.c: fix another cppcheck finding
+
+2019-06-21 11:22:28 +0200 Ulrich Sibiller (5be6d271b)
+
+	* xkb: fix what looks to be a copy-paste error with first vs firstMM
+
+2019-06-21 11:13:46 +0200 Ulrich Sibiller (31c3d27ea)
+
+	* xkmread.c: fix compiler warning
+
+2019-06-21 11:01:59 +0200 Ulrich Sibiller (813acdd2d)
+
+	* xkb: Silence some compiler warnings
+
+2019-06-21 10:57:09 +0200 Ulrich Sibiller (054e906f6)
+
+	* xkb: Use snprintf to measure string lengths instead of manual
+          strlen math
+
+2019-06-21 10:45:57 +0200 Ulrich Sibiller (2070891cb)
+
+	* xkbEvents.c: Fix "warning: unused variable `s'".
+
+2019-06-21 10:41:36 +0200 Ulrich Sibiller (4962c5a8d)
+
+	* XKB: Remove a bunch of mad ifdefs
+
+2019-06-21 10:10:21 +0200 Ulrich Sibiller (56dcc8a4b)
+
+	* xkb: remove oldState from XkbHandleActions.
+
+2019-06-20 23:14:09 +0200 Ulrich Sibiller (c8520ac0a)
+
+	* mi/miexpose.c: add missing free()
+
+2019-06-20 19:54:44 +0200 Ulrich Sibiller (956caeb8a)
+
+	* compext/Png.c: Nullify after free
+
+2019-06-20 19:53:39 +0200 Ulrich Sibiller (e440e722d)
+
+	* compext/Png.c: simplify srcBuf allocation
+
+2019-06-20 19:51:00 +0200 Ulrich Sibiller (d48824195)
+
+	* compext/Png.c: late image_index allocation
+
+2019-06-20 19:14:10 +0200 Ulrich Sibiller (b4d3dc5bf)
+
+	* NXdixfonts.c: fix index out of bounds
+
+2019-06-20 18:52:31 +0200 Ulrich Sibiller (fd7e1f989)
+
+	* Keyboard.c: rearrange code to make cppcheck happy
+
+2019-06-20 01:35:22 +0200 Ulrich Sibiller (3c0469971)
+
+	* os/access.c: add missing }
+
+2019-06-20 01:31:17 +0200 Ulrich Sibiller (528e1e4ef)
+
+	* NXpicture.c: code simplification
+
+2019-06-20 01:29:21 +0200 Ulrich Sibiller (bb08043a6)
+
+	* Screen.c: fix two more memleaks of visuals
+
+2019-06-20 01:21:44 +0200 Ulrich Sibiller (213e63eed)
+
+	* Screen.c: fix two memleaks
+
+2019-06-20 00:59:16 +0200 Ulrich Sibiller (e63d9de45)
+
+	* NXrender: fix another memleak
+
+2019-06-20 00:51:32 +0200 Ulrich Sibiller (78eff73e4)
+
+	* render: Propagate allocation failure from createSourcePicture()
+
+2019-06-20 00:42:01 +0200 Ulrich Sibiller (9f9b790f8)
+
+	* fb: fix memory leak in fbOverlayFinishScreenInit
+
+2019-06-20 00:26:47 +0200 Ulrich Sibiller (f55402572)
+
+	* dix/dispatch: fix a small memory leak
+
+2019-06-20 00:13:25 +0200 Ulrich Sibiller (6f954bb7d)
+
+	* Quarks.c: add missing )
+
+2019-06-19 23:44:40 +0200 Ulrich Sibiller (6da106610)
+
+	* Keyboard.c: fix three memory leaks
+
+2019-06-19 23:10:40 +0200 Ulrich Sibiller (234be0245)
+
+	* glyph.c: fix a read beyond end of heap buffer
+
+2019-06-19 01:12:26 +0200 Ulrich Sibiller (8205db425)
+
+	* Font.c: code simplifications
+
+2019-05-25 19:38:14 +0200 Ulrich Sibiller (cb508b263)
+
+	* various scope improvements
+
+2019-06-18 23:36:45 +0200 Ulrich Sibiller (bffdacc48)
+
+	* glxext.c: fix another memory leak
+
+2019-06-18 19:10:38 +0200 Ulrich Sibiller (b5eb7c76e)
+
+	* Screen.c: more debug output
+
+2019-06-18 19:04:12 +0200 Ulrich Sibiller (7e12c9ba5)
+
+	* Extension.c: code simplifications
+
+2019-06-17 21:57:45 +0200 Ulrich Sibiller (17d5e62ba)
+
+	* Events.c: use designated initializer in
+          nxagentDeactivatePointerGrab
+
+2019-06-18 18:57:17 +0200 Ulrich Sibiller (5cb497146)
+
+	* mi/miinitext.c: fix memleaks: remove (double) glx initialization
+
+2019-06-17 23:37:51 +0200 Ulrich Sibiller (756442226)
+
+	* Screen.c: fix another memory leak
+
+2019-06-17 20:25:09 +0200 Ulrich Sibiller (4dd1f3cbd)
+
+	* Fix memleaks: Free devPrivates of devices on shutdown
+
+2019-06-17 18:15:05 +0200 Ulrich Sibiller (ca741177e)
+
+	* CloseDevice: call XkbRemoveResourceClient before freeing key class
+          struct
+
+2019-06-17 17:31:32 +0200 Ulrich Sibiller (340de78e2)
+
+	* Keyboard.c: nullify freed pointers
+
+2019-06-17 16:06:02 +0200 Ulrich Sibiller (3b06ad51d)
+
+	* Screen.c: Fix: make sure RRCloseScreen is being called
+
+2019-06-14 00:14:17 +0200 Ulrich Sibiller (0f8dbbab2)
+
+	* Screen.c: correctly free stuff in nxagentCloseScreen
+
+2019-06-13 22:56:45 +0200 Ulrich Sibiller (308824ba9)
+
+	* xkb: initialize tsyms
+
+2019-06-12 19:25:57 +0200 Ulrich Sibiller (6d00a387f)
+
+	* Rootless.c: improve TEST/WARN/DEBUG outout
+
+2019-06-12 00:16:48 +0200 Ulrich Sibiller (2b25eb3d2)
+
+	* Pixmap.c: fix comment phrasing/spelling
+
+2019-05-30 11:38:10 +0200 Ulrich Sibiller (1bfafc127)
+
+	* Window.c: add missing comment about nxagentConfiguredWindowList
+
+2019-05-30 00:30:46 +0200 Ulrich Sibiller (1a8de6352)
+
+	* dix/window.c: fix compiler warning
+
+2019-05-01 10:40:47 +0200 Ulrich Sibiller (3900ba3f8)
+
+	* NXshm.c: remove left-overs from patch
+
+2019-05-01 02:06:30 +0200 Ulrich Sibiller (b961e190b)
+
+	* miwindow.c: add hint to Red Hat Bugzilla + fix
+
+2019-05-04 01:44:36 +0200 Ulrich Sibiller (28e42b3bd)
+
+	* mi: Hush an almost certainly bogus warning
+
+2019-05-30 00:10:43 +0200 Ulrich Sibiller (9f5ddede9)
+
+	* Window.c: Drop defines CWParent and CWStackingOrder
+
+2019-05-29 23:52:44 +0200 Ulrich Sibiller (a3e0376f9)
+
+	* Window.c: remove leftover (commented) code
+
+2019-05-30 23:50:53 +0200 Ulrich Sibiller (d8f5e647c)
+
+	* NXwindow.c: fix compiler warning
+
+2019-06-01 00:52:06 +0200 Ulrich Sibiller (a765857aa)
+
+	* Remove the Must_have_memory hack.
+
+2019-06-11 12:24:44 +0200 Mike Gabriel (c0754a357)
+
+	* Merge branch 'uli42-pr/use_selection_callback' into 3.6.x
+
+2019-06-10 14:25:53 +0200 Ulrich Sibiller (848dee5c4)
+
+	* NXdispatch.c: use upstream version of ProcSetSelectionOwner
+
+2019-06-10 14:21:43 +0200 Ulrich Sibiller (09ba97b2d)
+
+	* NXdispatch.c: Use Callback instead of a modified function
+
+2019-06-10 14:20:47 +0200 Ulrich Sibiller (2972f6af1)
+
+	* Add nxagentSetSelectionCallback
+
+2019-06-10 14:18:06 +0200 Ulrich Sibiller (3fd7e5f93)
+
+	* Add nxagentExternalClipboardEventTrap
+
+2019-06-11 12:10:25 +0200 Mike Gabriel (58cd35745)
+
+	* Merge branch 'uli42-pr/drop_nxmiexpose' into 3.6.x
+
+2019-05-30 16:04:43 +0200 Ulrich Sibiller (073c6c17e)
+
+	* NXmiexpose.c: drop file altogether
+
+2019-05-30 16:02:53 +0200 Ulrich Sibiller (6ce9fb5f2)
+
+	* Window.c/NXmiexpose.c: remove hack for certain WM theme
+
+2019-05-25 17:29:17 +0200 Ulrich Sibiller (af1c4b9b7)
+
+	* NXmiexpose.c: mark NX changes
+
+2019-05-01 01:22:39 +0200 Ulrich Sibiller (9e051eab0)
+
+	* NXmiexpose.c: use upstream version of miPaintWindows()
+
+2019-05-04 01:47:50 +0200 Ulrich Sibiller (39ff69c72)
+
+	* NXmiexpose.c: use upstream miHandleExposures()
+
+2019-06-11 12:05:42 +0200 Mike Gabriel (a25232734)
+
+	* Merge branch 'uli42-pr/various_small_things' into 3.6.x
+
+2019-05-30 11:36:18 +0200 Ulrich Sibiller (2da476a67)
+
+	* Window.c: comment on the purpose of some functions
+
+2019-06-10 15:32:38 +0200 Ulrich Sibiller (d38fb8137)
+
+	* Events.c: add debug output
+
+2019-06-10 15:27:02 +0200 Ulrich Sibiller (9cb29cce2)
+
+	* Clipboard.c: more debugging output
+
+2019-06-10 15:23:55 +0200 Ulrich Sibiller (9739c7009)
+
+	* Clipboard.c: Scope improvements
+
+2019-06-10 15:21:45 +0200 Ulrich Sibiller (4b19c4975)
+
+	* Clipboard.c: fix wrong variable being printed
+
+2019-06-10 12:09:16 +0200 Ulrich Sibiller (d9b1272fb)
+
+	* Screen.c: more TEST output
+
+2019-06-10 12:06:31 +0200 Ulrich Sibiller (0e496e5d1)
+
+	* Screen.c: use consistent spacing on pointer references
+
+2019-06-10 12:05:24 +0200 Ulrich Sibiller (8365ce463)
+
+	* Screen.c: whitespace/formatting fixes
+
+2019-06-10 12:04:20 +0200 Ulrich Sibiller (d98eeec02)
+
+	* Screen.c: report both created windows (and with the right name)
+
+2019-06-10 12:01:05 +0200 Ulrich Sibiller (61255ac1a)
+
+	* Window.c: fix: report correct window on icon window creation
+
+2019-06-11 12:00:48 +0200 Mike Gabriel (92f41213e)
+
+	* Merge branch 'uli42-pr/fix_broken_cursor_handling' into 3.6.x
+
+2019-05-27 15:42:11 +0200 Ulrich Sibiller (a736122f5)
+
+	* os: fix BigReq ignoring when another request is pending
+
+2019-05-23 00:17:21 +0200 Ulrich Sibiller (49adb1e5c)
+
+	* render/glyph.c: add missing usage_hint
+
+2019-05-22 22:22:36 +0200 Ulrich Sibiller (fd8427002)
+
+	* Fix NXevents.c: Reactivate errornously commented function
+
+2019-06-11 11:31:05 +0200 Mike Gabriel (126cbe1ff)
+
+	* Merge branch 'uli42-pr/remove_requestlog' into 3.6.x
+
+2019-05-27 20:35:25 +0200 Ulrich Sibiller (0eab060d1)
+
+	* dix: remove unused requestLogIndex
+
+2019-05-21 10:57:22 +0200 Mike Gabriel (789d3a37e)
+
+	* Merge branch 'uli42-pr/fix_xkb_crash' into 3.6.x
+
+2019-05-15 19:54:24 +0200 Ulrich Sibiller (20353e96a)
+
+	* libNX_X11: add additional checks for dpy and xkb
+
+2019-05-15 19:42:29 +0200 Ulrich Sibiller (4df77fe73)
+
+	* xkbUtils.c: Catch division by zero
+
+2019-05-17 15:51:36 +0200 Mike Gabriel (6981e9bb0)
+
+	* Merge branch 'andschwa-xtestext1h' into 3.6.x
+
+2019-05-13 21:32:07 +0000 Andrew Schwartzmeyer (6a938063b)
+
+	* Remove Debian build references to `xtestext1.h`
+
+2019-05-11 09:41:15 +0200 Mike Gabriel (226493690)
+
+	* Merge branch 'uli42-pr/small_fixes' into 3.6.x
+
+2019-05-08 23:23:54 +0200 Ulrich Sibiller (fac36b24f)
+
+	* nxagent: make nxagentX2go a Boolean
+
+2019-05-08 22:25:02 +0200 Ulrich Sibiller (1b9d735b0)
+
+	* README.keystrokes: mention nxdialog
+
+2019-05-08 21:49:50 +0200 Ulrich Sibiller (79a2b7b24)
+
+	* Remove useless "ignore" keystroke for Ctrl-Alt-Backspace
+
+2019-05-08 21:57:01 +0200 Ulrich Sibiller (a31d28014)
+
+	* README.keystrokes: refine description
+
+2019-05-04 01:04:06 +0200 Ulrich Sibiller (0db8b0353)
+
+	* NXdispatch.c: indent code to match environment
+
+2019-05-04 00:40:49 +0200 Ulrich Sibiller (f6845fbd9)
+
+	* NXdispatch.c: add missing fixes
+
+2019-05-04 00:30:21 +0200 Ulrich Sibiller (3d254765c)
+
+	* NXdispatch.c: add missing change
+
+2019-05-01 20:11:14 +0200 Ulrich Sibiller (0312a8cfe)
+
+	* Rename libdamage to (correct) libdamageext
+
+2019-05-01 15:04:26 +0200 Ulrich Sibiller (f0ba303d4)
+
+	* NXdamage.c: add missing upstream fixes
+
+2019-05-01 14:38:31 +0200 Ulrich Sibiller (249be6680)
+
+	* NXwindow.c: add missing change
+
+2019-04-30 21:00:31 +0200 Ulrich Sibiller (34e9c6b0b)
+
+	* Keyboard.c: clean/unify formatting
+
+2018-11-02 20:56:55 +0100 Ulrich Sibiller (0a211b6b6)
+
+	* Keyboard.c: improve TEST and DEBUG output
+
+2019-04-29 15:37:10 +0200 Ulrich Sibiller (bee0f13ce)
+
+	* nxagent: Remove own GetTimeInMillis() implementation
+
+2018-11-07 21:29:19 +0100 Ulrich Sibiller (b32a984f8)
+
+	* Die XTESTEXT1, die!
+
+2019-04-29 22:02:47 +0200 Ulrich Sibiller (dece08252)
+
+	* Reconnect.c: initialize stateFile path
+
+2019-04-29 22:02:24 +0200 Ulrich Sibiller (ff5740e03)
+
+	* spelling fixes
+
+2019-05-10 16:37:20 +0200 Mike Gabriel (f6177d2ad)
+
+	* Merge branch 'uli42-pr/short_font_code' into 3.6.x
+
+2019-04-23 20:09:25 +0200 Ulrich Sibiller (453edbd21)
+
+	* Font.c: use __func__ in TEST prints
+
+2019-04-23 20:08:57 +0200 Ulrich Sibiller (0086b8c24)
+
+	* Font.c: Avoid duplicate font paths
+
+2019-04-23 18:22:45 +0200 Ulrich Sibiller (78a16245a)
+
+	* auto-determine system font path and add to list of font paths
+
+2019-04-23 19:34:57 +0200 Ulrich Sibiller (898f04e42)
+
+	* Font.c: Loop over font paths
+
+2019-04-23 19:21:41 +0200 Ulrich Sibiller (dfb5602a6)
+
+	* Font.c: Let dix check if a font path exists
+
+2019-04-23 19:19:04 +0200 Ulrich Sibiller (8029141e7)
+
+	* Font.c: build the font paths at runtime
+
+2019-04-23 18:34:04 +0200 Ulrich Sibiller (bcb5c7962)
+
+	* Drop Speedo font support
+
+2019-04-03 22:33:33 +0200 Ulrich Sibiller (dff2e0a01)
+
+	* Font.c: factor out font checks
+
+2019-05-10 16:10:46 +0200 Mike Gabriel (d94e9ba24)
+
+	* Merge branch 'uli42-pr/fix_flavour_change' into 3.6.x
+
+2019-05-08 23:21:30 +0200 Ulrich Sibiller (3c9ee1ff7)
+
+	* nxagent: Determine nxagentProgName only once
+
+2019-04-23 08:42:43 +0200 Mike Gabriel (4ce890758)
+
+	* Merge branch 'mjtrangoni-update-clang-8' into 3.6.x
+
+2019-04-22 17:26:33 +0200 Mario Trangoni (ee82317b5)
+
+	* travis.yml: Update clang 7.0 => 8.0
+
+2019-04-17 11:12:29 +0200 Mike Gabriel (c9cac948f)
+
+	* roll-tarballs.sh: Fix script removal from nx-libs-lite tarballs.
+
+2019-04-17 11:07:36 +0200 Mike Gabriel (3dc2c9aac)
+
+	* roll-tarballs.sh: Remove nxdialog/* in nx-libs-lite tarballs.
+
+2019-04-17 11:04:51 +0200 Mike Gabriel (e2b73ab90)
+
+	* release 3.5.99.20 (tag: 3.5.99.20)
 
 2019-04-17 10:52:00 +0200 Mike Gabriel (2a10438f7)
 
