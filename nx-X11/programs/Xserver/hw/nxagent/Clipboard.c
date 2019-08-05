@@ -930,6 +930,13 @@ void nxagentTransferSelection(int resource)
   }
 }
 
+/*
+   Called from Events.c/nxagentHandlePropertyNotify
+
+   This event is generated after XChangeProperty(), XDeleteProperty() or
+   XGetWindowProperty(delete=True)
+*/
+
 void nxagentCollectPropertyEvent(int resource)
 {
   Atom                  atomReturnType;
@@ -940,9 +947,8 @@ void nxagentCollectPropertyEvent(int resource)
   int                   result;
 
   /*
-   * We have received the notification so
-   * we can safely retrieve data from the
-   * client structure.
+   * We have received the notification so we can safely retrieve data
+   * from the client structure.
    */
 
   result = NXGetCollectedProperty(nxagentDisplay,
@@ -958,117 +964,105 @@ void nxagentCollectPropertyEvent(int resource)
   if (result == 0)
   {
     #ifdef DEBUG
-    fprintf (stderr, "%s: Failed to get reply data for client [%d].\n", __func__,
-                 CLINDEX(lastClientClientPtr));
+    fprintf (stderr, "%s: Failed to get reply data.\n", __func__);
     #endif
 
     endTransfer(SELECTION_FAULT);
-
-    SAFE_XFree(pszReturnData);
-    return;
   }
-
-  if (resultFormat != 8 && resultFormat != 16 && resultFormat != 32)
+  else if (resultFormat != 8 && resultFormat != 16 && resultFormat != 32)
   {
     #ifdef DEBUG
-    fprintf (stderr, "%s: WARNING! Invalid property value.\n", __func__);
+    fprintf (stderr, "%s: WARNING! Invalid property format.\n", __func__);
     #endif
 
     endTransfer(SELECTION_FAULT);
-
-    SAFE_XFree(pszReturnData);
-    return;
   }
-
-  switch (lastClientStage)
+  else
   {
-    case SelectionStageWaitSize:
+    switch (lastClientStage)
     {
-      PrintClientSelectionStage();
-      #ifdef DEBUG
-      fprintf (stderr, "%s: Got size notify event for client [%d].\n", __func__,
-                   CLINDEX(lastClientClientPtr));
-      #endif
-
-      if (ulReturnBytesLeft == 0)
+      case SelectionStageWaitSize:
       {
+        PrintClientSelectionStage();
         #ifdef DEBUG
-        fprintf (stderr, "%s: Aborting selection notify procedure for client [%d].\n", __func__,
+        fprintf (stderr, "%s: Got size notify event for client [%d].\n", __func__,
                      CLINDEX(lastClientClientPtr));
         #endif
 
-        endTransfer(SELECTION_FAULT);
+        if (ulReturnBytesLeft == 0)
+        {
+          #ifdef DEBUG
+          fprintf (stderr, "%s: Aborting selection notify procedure.\n", __func__);
+          #endif
 
-        SAFE_XFree(pszReturnData);
-        return;
+          endTransfer(SELECTION_FAULT);
+        }
+        else
+        {
+          #ifdef DEBUG
+          fprintf(stderr, "%s: Got property size from remote server.\n", __func__);
+          #endif
+
+          /*
+           * Request the selection data now.
+           */
+          lastClientPropertySize = ulReturnBytesLeft;
+          SetClientSelectionStage(QueryData);
+
+          nxagentTransferSelection(resource);
+        }
+        break;
       }
-
-      #ifdef DEBUG
-      fprintf(stderr, "%s: Got property size from remote server.\n", __func__);
-      #endif
-
-      /*
-       * Request the selection data now.
-       */
-
-      lastClientPropertySize = ulReturnBytesLeft;
-      SetClientSelectionStage(QueryData);
-
-      nxagentTransferSelection(resource);
-
-      break;
-    }
-    case SelectionStageWaitData:
-    {
-      PrintClientSelectionStage();
-      #ifdef DEBUG
-      fprintf (stderr, "%s: Got data notify event for client [%d].\n", __func__,
-                   CLINDEX(lastClientClientPtr));
-      #endif
-
-      if (ulReturnBytesLeft != 0)
+      case SelectionStageWaitData:
       {
+        PrintClientSelectionStage();
         #ifdef DEBUG
-        fprintf (stderr, "%s: Aborting selection notify procedure for client [%d].\n", __func__,
+        fprintf (stderr, "%s: Got data notify event for client [%d].\n", __func__,
                      CLINDEX(lastClientClientPtr));
         #endif
 
-        endTransfer(SELECTION_FAULT);
+        if (ulReturnBytesLeft != 0)
+        {
+          #ifdef DEBUG
+          fprintf (stderr, "%s: Aborting selection notify procedure.\n", __func__);
+          #endif
 
-        SAFE_XFree(pszReturnData);
-        return;
+          endTransfer(SELECTION_FAULT);
+        }
+        else
+        {
+          #ifdef DEBUG
+          fprintf(stderr, "%s: Got property content from remote server.\n", __func__);
+          #endif
+
+          ChangeWindowProperty(lastClientWindowPtr,
+                               lastClientProperty,
+                               lastClientTarget,
+                               resultFormat, PropModeReplace,
+                               ulReturnItems, pszReturnData, 1);
+
+          #ifdef DEBUG
+          fprintf(stderr, "%s: Selection property [%d][%s] changed to [\"%*.*s\"...]\n", __func__,
+                      lastClientProperty, validateString(NameForAtom(lastClientProperty)),
+                          (int)(min(20, ulReturnItems * resultFormat / 8)),
+                              (int)(min(20, ulReturnItems * resultFormat / 8)),
+                                 pszReturnData);
+          #endif
+
+          endTransfer(SELECTION_SUCCESS);
+        }
+        break;
       }
-
-      #ifdef DEBUG
-      fprintf(stderr, "%s: Got property content from remote server.\n", __func__);
-      #endif
-
-      ChangeWindowProperty(lastClientWindowPtr,
-                           lastClientProperty,
-                           lastClientTarget,
-                           resultFormat, PropModeReplace,
-                           ulReturnItems, pszReturnData, 1);
-
-      #ifdef DEBUG
-      fprintf(stderr, "%s: Selection property [%s] changed to [%s]\n", __func__,
-                   validateString(NameForAtom(lastClientProperty)), pszReturnData);
-      #endif
-
-      endTransfer(SELECTION_SUCCESS);
-
-      break;
-    }
-    default:
-    {
-      #ifdef DEBUG
-      fprintf (stderr, "%s: WARNING! Inconsistent state [%s] for client [%d].\n", __func__,
-                   GetClientSelectionStageString(lastClientStage), CLINDEX(lastClientClientPtr));
-      #endif
-
-      break;
+      default:
+      {
+        #ifdef DEBUG
+        fprintf (stderr, "%s: WARNING! Inconsistent state [%s] for client [%d].\n", __func__,
+                     GetClientSelectionStageString(lastClientStage), CLINDEX(lastClientClientPtr));
+        #endif
+        break;
+      }
     }
   }
-
   SAFE_XFree(pszReturnData);
 }
 
