@@ -90,8 +90,6 @@ typedef struct _SelectionOwner
 
 static SelectionOwner *lastSelectionOwner;
 static Atom nxagentLastRequestedSelection;
-static Atom nxagentClipboardAtom;
-static Atom nxagentTimestampAtom;
 
 /*
  * Needed to handle the notify selection event to
@@ -126,6 +124,8 @@ static Atom   lastServerTarget;
 static Time   lastServerTime;
 
 static Atom serverTARGETS;
+static Atom serverCLIPBOARD;
+static Atom serverTIMESTAMP;
 static Atom serverTEXT;
 static Atom serverUTF8_STRING;
 static Atom clientTARGETS;
@@ -326,10 +326,10 @@ void nxagentPrintClipboardStat(char *header)
   SAFE_XFree(s); s = XGetAtomName(nxagentDisplay, serverCutProperty);
   fprintf(stderr, "  serverCutProperty                      [% 4d][%s]\n", serverCutProperty, s);
 
-  SAFE_XFree(s); s = XGetAtomName(nxagentDisplay, nxagentClipboardAtom);
-  fprintf(stderr, "  nxagentClipboardAtom                   [% 4d][%s]\n", nxagentClipboardAtom, s);
-  SAFE_XFree(s); s = XGetAtomName(nxagentDisplay, nxagentTimestampAtom);
-  fprintf(stderr, "  nxagentTimestampAtom                   [% 4d][%s]\n", nxagentTimestampAtom, s);
+  SAFE_XFree(s); s = XGetAtomName(nxagentDisplay, serverCLIPBOARD);
+  fprintf(stderr, "  serverCLIPBOARD                        [% 4d][%s]\n", serverCLIPBOARD, s);
+  SAFE_XFree(s); s = XGetAtomName(nxagentDisplay, serverTIMESTAMP);
+  fprintf(stderr, "  serverTIMESTAMP                        [% 4d][%s]\n", serverTIMESTAMP, s);
 
   fprintf(stderr, "Atoms (inside nxagent)\n");
   fprintf(stderr, "  clientTARGETS                          [% 4d][%s]\n", clientTARGETS, NameForAtom(clientTARGETS));
@@ -641,7 +641,7 @@ FIXME: Do we need this?
                                 numTargets);
       eventSelection.property = X->xselectionrequest.property;
     }
-    else if (X->xselectionrequest.target == nxagentTimestampAtom)
+    else if (X->xselectionrequest.target == serverTIMESTAMP)
     {
       int i = nxagentFindLastSelectionOwnerIndex(X->xselectionrequest.selection);
       if (i < nxagentMaxSelections)
@@ -1714,8 +1714,8 @@ int nxagentInitClipboard(WindowPtr pWin)
     FatalError("nxagentInitClipboard: Failed to allocate memory for the clipboard selections.\n");
   }
 
-  nxagentClipboardAtom = nxagentAtoms[10];   /* CLIPBOARD */
-  nxagentTimestampAtom = nxagentAtoms[11];   /* TIMESTAMP */
+  serverCLIPBOARD = nxagentAtoms[10];   /* CLIPBOARD */
+  serverTIMESTAMP = nxagentAtoms[11];   /* TIMESTAMP */
 
   lastSelectionOwner[nxagentPrimarySelection].selection = XA_PRIMARY;
   lastSelectionOwner[nxagentPrimarySelection].client = NullClient;
@@ -1723,7 +1723,7 @@ int nxagentInitClipboard(WindowPtr pWin)
   lastSelectionOwner[nxagentPrimarySelection].windowPtr = NULL;
   lastSelectionOwner[nxagentPrimarySelection].lastTimeChanged = GetTimeInMillis();
 
-  lastSelectionOwner[nxagentClipboardSelection].selection = nxagentClipboardAtom;
+  lastSelectionOwner[nxagentClipboardSelection].selection = serverCLIPBOARD;
   lastSelectionOwner[nxagentClipboardSelection].client = NullClient;
   lastSelectionOwner[nxagentClipboardSelection].window = screenInfo.screens[0]->root->drawable.id;
   lastSelectionOwner[nxagentClipboardSelection].windowPtr = NULL;
