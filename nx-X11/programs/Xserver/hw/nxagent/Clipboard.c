@@ -574,8 +574,7 @@ void nxagentClearSelection(XEvent *X)
   {
     if (lastSelectionOwner[i].client != NULL)
     {
-      xEvent x;
-      memset(&x, 0, sizeof(xEvent));
+      xEvent x = {0};
       x.u.u.type = SelectionClear;
       x.u.selectionClear.time = GetTimeInMillis();
       x.u.selectionClear.window = lastSelectionOwner[i].window;
@@ -606,9 +605,9 @@ void nxagentReplyRequestSelection(XEvent *X, Bool success)
   XSelectionEvent eventSelection = {
     .requestor = X->xselectionrequest.requestor,
     .selection = X->xselectionrequest.selection,
-    .target = X->xselectionrequest.target,
-    .time = X->xselectionrequest.time,
-    .property = X->xselectionrequest.property
+    .target    = X->xselectionrequest.target,
+    .time      = X->xselectionrequest.time,
+    .property  = X->xselectionrequest.property
   };
 
   if (!success)
@@ -722,8 +721,6 @@ FIXME: Do we need this?
       if (lastSelectionOwner[i].client != NULL &&
              nxagentOption(Clipboard) != ClipboardClient)
       {
-        xEvent x;
-
         lastServerProperty = X->xselectionrequest.property;
         lastServerRequestor = X->xselectionrequest.requestor;
         lastServerTarget = X->xselectionrequest.target;
@@ -734,7 +731,7 @@ FIXME: Do we need this?
 
         lastServerTime = X->xselectionrequest.time;
 
-        memset(&x, 0, sizeof(xEvent));
+        xEvent x = {0};
         x.u.u.type = SelectionRequest;
         x.u.selectionRequest.time = GetTimeInMillis();
         x.u.selectionRequest.owner = lastSelectionOwner[i].window;
@@ -1080,8 +1077,6 @@ void nxagentCollectPropertyEvent(int resource)
 
 void nxagentNotifySelection(XEvent *X)
 {
-  XSelectionEvent eventSelection;
-
   #ifdef DEBUG
   fprintf(stderr, "%s: Got called.\n", __func__);
   #endif
@@ -1199,23 +1194,15 @@ void nxagentNotifySelection(XEvent *X)
 
         }
 
-        memset(&eventSelection, 0, sizeof(XSelectionEvent));
-        eventSelection.requestor = lastServerRequestor;
-
-        eventSelection.selection = X->xselection.selection;
-
-        /*
-         * eventSelection.target = X->xselection.target;
-         */
-
-        eventSelection.target = lastServerTarget;
-        eventSelection.property = lastServerProperty;
-        eventSelection.time = lastServerTime;
-
-        /*
-         * eventSelection.time = CurrentTime;
-         * eventSelection.time = lastServerTime;
-         */
+        XSelectionEvent eventSelection = {
+          .requestor = lastServerRequestor,
+          .selection = X->xselection.selection,
+          /* .target = X->xselection.target, */
+          .target    = lastServerTarget,
+          .property  = lastServerProperty,
+          .time      = lastServerTime,
+          /* .time   = CurrentTime */
+        };
 
         SendSelectionNotifyEventToServer(&eventSelection);
 
@@ -1646,14 +1633,18 @@ int nxagentSendNotify(xEvent *event)
 
   if (event->u.selectionNotify.property == clientCutProperty)
   {
-    XSelectionEvent x;
 
     /*
      * Setup selection notify event to real server.
      */
 
-    memset(&x, 0, sizeof(XSelectionEvent));
-    x.requestor = serverWindow;
+    XSelectionEvent eventSelection = {
+      .requestor = serverWindow,
+      .selection = event->u.selectionNotify.selection,
+      .target    = event->u.selectionNotify.target,
+      .property  = event->u.selectionNotify.property,
+      .time      = CurrentTime,
+    };
 
     /*
      * On real server, the right CLIPBOARD atom is
@@ -1662,22 +1653,14 @@ int nxagentSendNotify(xEvent *event)
 
     if (event->u.selectionNotify.selection == MakeAtom("CLIPBOARD", 9, 0))
     {
-      x.selection = lastSelectionOwner[nxagentClipboardSelection].selection;
+      eventSelection.selection = lastSelectionOwner[nxagentClipboardSelection].selection;
     }
-    else
-    {
-      x.selection = event->u.selectionNotify.selection;
-    }
-
-    x.target = event->u.selectionNotify.target;
-    x.property = event->u.selectionNotify.property;
-    x.time = CurrentTime;
 
     #ifdef DEBUG
-    fprintf(stderr, "%s: Propagating clientCutProperty to requestor [%p].\n", __func__, (void *)x.requestor);
+    fprintf(stderr, "%s: Propagating clientCutProperty to requestor [%p].\n", __func__, (void *)eventSelection.requestor);
     #endif
 
-    SendSelectionNotifyEventToServer(&x);
+    SendSelectionNotifyEventToServer(&eventSelection);
 
     return 1;
   }
