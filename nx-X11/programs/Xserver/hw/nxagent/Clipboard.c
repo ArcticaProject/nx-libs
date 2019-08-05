@@ -1562,8 +1562,9 @@ int nxagentConvertSelection(ClientPtr client, WindowPtr pWin, Atom selection,
     lastClientSelection = selection;
     lastClientTarget = target;
 
-    lastClientReqTime = (GetTimeInMillis() - lastClientReqTime) > 5000 ?
-                          GetTimeInMillis() : lastClientReqTime;
+    /* if the last client request time is more than 5s ago update it. Why? */
+    if ((GetTimeInMillis() - lastClientReqTime) > 5000)
+      lastClientReqTime = GetTimeInMillis();
 
     if (selection == MakeAtom("CLIPBOARD", 9, 0))
     {
