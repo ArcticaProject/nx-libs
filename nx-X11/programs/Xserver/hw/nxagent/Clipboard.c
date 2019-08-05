@@ -458,6 +458,13 @@ Bool nxagentValidServerTargets(Atom target)
     #endif
     return False;
   }
+  else if (target == serverTIMESTAMP)
+  {
+    #ifdef DEBUG
+    fprintf(stderr, "%s: special target [TIMESTAMP].\n", __func__);
+    #endif
+    return False;
+  }
 
   #ifdef DEBUG
   fprintf(stderr, "%s: invalid target [%u].\n", __func__, target);
