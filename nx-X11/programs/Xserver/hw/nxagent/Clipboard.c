@@ -208,7 +208,7 @@ static void endTransfer(Bool success);
 void nxagentTransferSelection(int resource);
 void nxagentCollectPropertyEvent(int resource);
 void nxagentResetSelectionOwner(void);
-WindowPtr nxagentGetClipboardWindow(Atom property, WindowPtr pWin);
+WindowPtr nxagentGetClipboardWindow(Atom property);
 void nxagentNotifyConvertFailure(ClientPtr client, Window requestor,
                                      Atom selection, Atom target, Time time);
 int nxagentSendNotify(xEvent *event);
@@ -1667,12 +1667,8 @@ int nxagentSendNotify(xEvent *event)
   return 0;
 }
 
-WindowPtr nxagentGetClipboardWindow(Atom property, WindowPtr pWin)
+WindowPtr nxagentGetClipboardWindow(Atom property)
 {
-  #ifdef DEBUG
-  fprintf(stderr, "%s: Got called, property [%d][%s] window [%p].\n", __func__, property, NameForAtom(property), (void *)pWin);
-  #endif
-
   int i = nxagentFindLastSelectionOwnerIndex(nxagentLastRequestedSelection);
 
   if ((i < nxagentMaxSelections) && (property == clientCutProperty) &&
@@ -1686,13 +1682,8 @@ WindowPtr nxagentGetClipboardWindow(Atom property, WindowPtr pWin)
   }
   else
   {
-    #ifdef DEBUG
-    fprintf(stderr, "%s: Returning original target window [%p].\n", __func__, (void *)pWin);
-    #endif
-
-    return pWin;
+    return NULL;
   }
-
 }
 
 int nxagentInitClipboard(WindowPtr pWin)
