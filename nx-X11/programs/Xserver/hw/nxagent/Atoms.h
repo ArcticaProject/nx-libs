@@ -30,7 +30,7 @@
 #include "../../include/window.h"
 #include "screenint.h"
 
-#define NXAGENT_NUMBER_OF_ATOMS  16
+#define NXAGENT_NUMBER_OF_ATOMS  17
 
 extern Atom nxagentAtoms[NXAGENT_NUMBER_OF_ATOMS];
 

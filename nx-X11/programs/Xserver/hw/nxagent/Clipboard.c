@@ -129,6 +129,7 @@ static Atom serverTARGETS;
 static Atom serverTIMESTAMP;
 static Atom serverTEXT;
 static Atom serverUTF8_STRING;
+static Atom serverClientCutProperty;
 static Atom clientTARGETS;
 static Atom clientTEXT;
 static Atom clientCOMPOUND_TEXT;
@@ -328,6 +329,8 @@ void nxagentPrintClipboardStat(char *header)
   fprintf(stderr, "  serverUTF8_STRING                      [% 4d][%s]\n", serverUTF8_STRING, s);
   SAFE_XFree(s); s = XGetAtomName(nxagentDisplay, serverCutProperty);
   fprintf(stderr, "  serverCutProperty                      [% 4d][%s]\n", serverCutProperty, s);
+  SAFE_XFree(s); s = XGetAtomName(nxagentDisplay, serverClientCutProperty);
+  fprintf(stderr, "  serverClientCutProperty                [% 4d][%s]\n", serverClientCutProperty, s);
 
   SAFE_XFree(s); s = XGetAtomName(nxagentDisplay, serverTIMESTAMP);
   fprintf(stderr, "  serverTIMESTAMP                        [% 4d][%s]\n", serverTIMESTAMP, s);
@@ -1127,7 +1130,7 @@ void nxagentNotifySelection(XEvent *X)
     {
       if ((lastSelectionOwner[i].client != NULL) &&
              (lastSelectionOwner[i].windowPtr != NULL) &&
-                 (X->xselection.property == clientCutProperty))
+                 (X->xselection.property == serverClientCutProperty))
       {
         Atom            atomReturnType;
         int             resultFormat;
@@ -1624,19 +1627,30 @@ int nxagentSendNotify(xEvent *event)
 
     /*
      * Setup selection notify event to real server.
+     *
+     * .property must be a server-side Atom. As this property is only
+     * set on our serverWindow and normally there are no other
+     * properties except serverCutProperty, the only thing we need to
+     * ensure is that the internal Atom clientCutProperty must differ
+     * from the server-side serverCutProperty Atom. The actual name is
+     * not important. To be clean here we use a seperate
+     * serverClientCutProperty.
      */
 
     XSelectionEvent eventSelection = {
       .requestor = serverWindow,
       .selection = event->u.selectionNotify.selection,
       .target    = event->u.selectionNotify.target,
-      .property  = event->u.selectionNotify.property,
+      .property  = serverClientCutProperty,
       .time      = CurrentTime,
     };
 
     /*
-     * On real server, the right CLIPBOARD atom is
-     * XInternAtom(nxagentDisplay, "CLIPBOARD", 1).
+     * On the real server, the right CLIPBOARD atom is
+     * XInternAtom(nxagentDisplay, "CLIPBOARD", 1), which is stored in
+     * lastSelectionOwner[nxagentClipboardSelection].selection. For
+     * PRIMARY there's nothing to map because that is identical on all
+     * X servers (defined in Xatom.h).
      */
 
     if (event->u.selectionNotify.selection == MakeAtom("CLIPBOARD", 9, 0))
@@ -1728,6 +1742,8 @@ int nxagentInitClipboard(WindowPtr pWin)
   serverTARGETS = nxagentAtoms[6];  /* TARGETS */
   serverTEXT = nxagentAtoms[7];  /* TEXT */
   serverUTF8_STRING = nxagentAtoms[12]; /* UTF8_STRING */
+  /* see nxagentSendNotify for an explanation */
+  serverClientCutProperty = nxagentAtoms[15]; /* NX_CUT_BUFFER_CLIENT */
 
   if (serverCutProperty == None)
   {

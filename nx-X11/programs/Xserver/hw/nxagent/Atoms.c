@@ -90,6 +90,7 @@ static char *nxagentAtomNames[NXAGENT_NUMBER_OF_ATOMS + 1] =
   "UTF8_STRING",                 /* 12 */
   "_NET_WM_STATE",               /* 13 */
   "_NET_WM_STATE_FULLSCREEN",    /* 14 */
+  "NX_CUT_BUFFER_CLIENT",        /* 15 */
   NULL,
   NULL
 };
