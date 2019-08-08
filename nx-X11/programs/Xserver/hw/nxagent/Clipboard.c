@@ -706,22 +706,6 @@ void nxagentRequestSelection(XEvent *X)
              ((X->xselectionrequest.selection != lastSelectionOwner[nxagentPrimarySelection].selection) &&
                  (X->xselectionrequest.selection != lastSelectionOwner[nxagentClipboardSelection].selection)))
   {
-/*
-FIXME: Do we need this?
-
-    char *strTarget;
-
-    strTarget = XGetAtomName(nxagentDisplay, X->xselectionrequest.target);
-
-    fprintf(stderr, "SelectionRequest event aborting sele=[%s] target=[%s]\n",
-                validateString(NameForAtom(X->xselectionrequest.selection)),
-                    validateString(NameForAtom(X->xselectionrequest.target)));
-
-    fprintf(stderr, "SelectionRequest event aborting sele=[%s] ext target=[%s] Atom size is [%d]\n",
-                validateString(NameForAtom(X->xselectionrequest.selection)), strTarget, sizeof(Atom));
-
-    SAFE_XFree(strTarget);
-*/
     if (X->xselectionrequest.target == serverTARGETS)
     {
       /*
