@@ -991,6 +991,8 @@ void nxagentTransferSelection(int resource)
 
       SetClientSelectionStage(WaitSize);
 
+      NXFlushDisplay(nxagentDisplay, NXFlushLink);
+
       break;
     }
     case SelectionStageQueryData:
@@ -1042,6 +1044,10 @@ void nxagentTransferSelection(int resource)
       }
 
       SetClientSelectionStage(WaitData);
+
+      /* we've seen situations where you had to move the mouse or press a
+	 key to let the transfer complete. Flushing here fixed it */
+      NXFlushDisplay(nxagentDisplay, NXFlushLink);
 
       break;
     }
