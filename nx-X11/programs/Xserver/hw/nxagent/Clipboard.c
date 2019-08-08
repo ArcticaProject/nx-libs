@@ -1313,15 +1313,17 @@ void nxagentNotifySelection(XEvent *X)
           }
           else
           {
-            result = XChangeProperty(nxagentDisplay,
-                                     lastServerRequestor,
-                                     lastServerProperty,
-                                     lastServerTarget,
-                                     8,
-                                     PropModeReplace,
-                                     pszReturnData,
-                                     ulReturnItems);
             /* Fill the property on the initial requestor with the requested data */
+            /* The XChangeProperty source code reveals it will always
+               return 1, no matter what, so no need to check the result */
+            XChangeProperty(nxagentDisplay,
+                            lastServerRequestor,
+                            lastServerProperty,
+                            lastServerTarget,
+                            8,
+                            PropModeReplace,
+                            pszReturnData,
+                            ulReturnItems);
 
             #ifdef DEBUG
             {
