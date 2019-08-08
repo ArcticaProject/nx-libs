@@ -715,6 +715,14 @@ void nxagentRequestSelection(XEvent *X)
        *
        * The selection does not matter here, we will return this for
        * PRIMARY and CLIPBOARD.
+       *
+       * FIXME: shouldn't we support UTF8_STRING, too?
+       * FIXME: I am wondering if we should align this with
+       * nxagentConvertSelection, where we report more formats.
+       * FIXME: the perfect solution should not just answer with
+       * XA_STRING but ask the real owner what format it supports. The
+       * should then be sent to the original requestor.
+       * FIXME: these must be external Atoms!
        */
 
       Atom targets[] = {XA_STRING};
@@ -753,6 +761,8 @@ void nxagentRequestSelection(XEvent *X)
        * timestamp used to acquire ownership, selection owners must
        * support conversion to TIMESTAMP, returning the timestamp they
        * used to obtain the selection.
+       *
+       * FIXME: ensure we are reporting an _external_ timestamp
        */
 
       int i = nxagentFindLastSelectionOwnerIndex(X->xselectionrequest.selection);
@@ -796,6 +806,7 @@ void nxagentRequestSelection(XEvent *X)
       /*
        * Request the real X server to transfer the selection content
        * to the NX_CUT_BUFFER_CLIENT property of the serverWindow.
+       * FIXME: document how we can end up here
        */
       XConvertSelection(nxagentDisplay, CurrentSelections[i].selection,
                             X->xselectionrequest.target, serverCutProperty,
@@ -1306,6 +1317,7 @@ void nxagentNotifySelection(XEvent *X)
             /* Fill the property on the initial requestor with the requested data */
             /* The XChangeProperty source code reveals it will always
                return 1, no matter what, so no need to check the result */
+            /* FIXME: better use the format returned by above request */
             XChangeProperty(nxagentDisplay,
                             lastServerRequestor,
                             lastServerProperty,
@@ -1331,6 +1343,7 @@ void nxagentNotifySelection(XEvent *X)
             #endif
           }
 
+          /* FIXME: free it or not? */
           /*
            * SAFE_XFree(pszReturnData);
            */
@@ -1384,6 +1397,7 @@ void nxagentResetSelectionOwner(void)
                 lastServerRequestor);
     #endif
 
+    /* FIXME: maybe we should put back the event that lead us here. */
     return;
   }
 
@@ -1521,6 +1535,7 @@ void nxagentSetSelectionOwner(Selection *pSelection)
 
   for (int i = 0; i < nxagentMaxSelections; i++)
   {
+    /* FIXME: using CurrentSelections with the index limited my MaxSelections looks wrong */
     if (pSelection->selection == CurrentSelections[i].selection)
     {
       #ifdef DEBUG
@@ -1679,6 +1694,9 @@ int nxagentConvertSelection(ClientPtr client, WindowPtr pWin, Atom selection,
   /*
    * The selection request target is TARGETS. The requestor is asking
    * for a list of supported data formats. Currently there's 4 of them.
+   *
+   * FIXME: I am wondering if we should align this with
+   * nxagentRequestSelection, where we only report one format.
    */
   if (target == clientTARGETS)
   {
@@ -1818,6 +1836,8 @@ int nxagentConvertSelection(ClientPtr client, WindowPtr pWin, Atom selection,
       XConvertSelection(nxagentDisplay, selection, XA_STRING, serverCutProperty,
                            serverWindow, CurrentTime);
     }
+
+    /* FIXME: check returncode of XConvertSelection */
 
     #ifdef DEBUG
     fprintf(stderr, "%s: Sent XConvertSelection with target=[%s], property [%s]\n", __func__,
