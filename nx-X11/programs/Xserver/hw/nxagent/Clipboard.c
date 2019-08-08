@@ -1895,7 +1895,14 @@ int nxagentSendNotify(xEvent *event)
   fprintf(stderr, "%s: lastServerRequestor is [0x%x].\n", __func__, lastServerRequestor);
   #endif
 
-  if (event->u.selectionNotify.property == clientCutProperty)
+  /*
+   * If we have nested sessions there are situations where we do not
+   * need to send out anything to the real X server because
+   * communication happens completely between our own clients (some of
+   * which can be nxagents themselves). In that case we return 0 (tell
+   * dix to go on) and do nothing!
+   */
+  if (event->u.selectionNotify.property == clientCutProperty && lastServerRequestor != None)
   {
 
     /*
