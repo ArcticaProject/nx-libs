@@ -82,14 +82,19 @@ const int nxagentMaxSelections = 2;
 
 typedef struct _SelectionOwner
 {
-    Atom selection;
-    ClientPtr client;
-    Window window;
-    WindowPtr windowPtr;
-    Time lastTimeChanged;
-
+  Atom selection;       /* _external_ Atom */
+  ClientPtr client;     /* internal client */
+  Window window;        /* internal window id */
+  WindowPtr windowPtr;  /* internal window struct */
+  Time lastTimeChanged; /* internal time */
 } SelectionOwner;
 
+/*
+ * this contains the last selection owner in nxagent. The
+ * lastTimeChanged is always an internal time. If .client is NULL the
+ * owner is outside nxagent. .selection will _always_ contain the
+ * external atom of the selection
+ */
 static SelectionOwner *lastSelectionOwner;
 static Atom nxagentLastRequestedSelection;
 
@@ -438,6 +443,11 @@ int SendSelectionNotifyEventToClient(ClientPtr client,
   return SendEventToClient(client, &x);
 }
 
+/*
+ * Check if target is a valid content type target sent by the real X
+ * server, like .e.g XA_STRING or UTF8_STRING. Other, non content type
+ * targets like "TARGETS" or "TIMESTAMP" will return false.
+ */
 Bool nxagentValidServerTargets(Atom target)
 {
   if (target == XA_STRING)
@@ -565,6 +575,11 @@ int nxagentFindCurrentSelectionIndex(Atom sel)
   return i;
 }
 
+/*
+ * This is called from Events.c dispatch loop on reception of a
+ * SelectionClear event. We receive this event if someone on the real
+ * X server claims the selection ownership.
+ */
 void nxagentClearSelection(XEvent *X)
 {
   #ifdef DEBUG
@@ -585,6 +600,7 @@ void nxagentClearSelection(XEvent *X)
   {
     if (lastSelectionOwner[i].client != NULL)
     {
+      /* send a SelectionClear event to (our) previous owner */
       xEvent x = {0};
       x.u.u.type = SelectionClear;
       x.u.selectionClear.time = GetTimeInMillis();
@@ -594,6 +610,11 @@ void nxagentClearSelection(XEvent *X)
       SendEventToClient(lastSelectionOwner[i].client, &x);
     }
 
+    /*
+     * set the root window with the NullClient as selection owner. Our
+     * clients asking for the owner via XGetSelectionOwner() will get
+     * these for an answer
+     */
     CurrentSelections[i].window = screenInfo.screens[0]->root->drawable.id;
     CurrentSelections[i].client = NullClient;
 
@@ -634,6 +655,13 @@ void nxagentReplyRequestSelection(XEvent *X, Bool success)
   NXFlushDisplay(nxagentDisplay, NXFlushLink);
 }
 
+/*
+ * This is called from Events.c dispatch loop on reception of a
+ * SelectionRequest event, meaning a client of the real X server wants
+ * to have the selection content. The real X server knows the nxagent
+ * as selection owner. But in reality one of our windows is the owner,
+ * so we must pass the request on to the real owner.
+ */
 void nxagentRequestSelection(XEvent *X)
 {
   #ifdef DEBUG
@@ -664,6 +692,15 @@ void nxagentRequestSelection(XEvent *X)
     return;
   }
 
+  /*
+   * check if this request needs special treatment by checking
+   * if any of the following is true:
+   * - this is a special request like TARGETS or TIMESTAMP
+   * - lastServerRequestor in non-NULL (= we are currenty in the transfer phase)
+   * - the selection in this request is none we own.
+   * In all cases we'll send back a SelectionNotify event with an
+   * appropriate answer
+   */
   if (!nxagentValidServerTargets(X->xselectionrequest.target) ||
          (lastServerRequestor != None) ||
              ((X->xselectionrequest.selection != lastSelectionOwner[nxagentPrimarySelection].selection) &&
@@ -687,6 +724,15 @@ FIXME: Do we need this?
 */
     if (X->xselectionrequest.target == serverTARGETS)
     {
+      /*
+       * the selection request target is TARGETS. The requestor is
+       * asking for a list of supported data formats. Currently
+       * there's only one format we support: XA_STRING
+       *
+       * The selection does not matter here, we will return this for
+       * PRIMARY and CLIPBOARD.
+       */
+
       Atom targets[] = {XA_STRING};
       int numTargets = 1;
 
@@ -714,6 +760,17 @@ FIXME: Do we need this?
     }
     else if (X->xselectionrequest.target == serverTIMESTAMP)
     {
+      /*
+       * Section 2.6.2 of the ICCCM states:
+       * TIMESTAMP - To avoid some race conditions, it is important
+       * that requestors be able to discover the timestamp the owner
+       * used to acquire ownership. Until and unless the protocol is
+       * changed so that a GetSelectionOwner request returns the
+       * timestamp used to acquire ownership, selection owners must
+       * support conversion to TIMESTAMP, returning the timestamp they
+       * used to obtain the selection.
+       */
+
       int i = nxagentFindLastSelectionOwnerIndex(X->xselectionrequest.selection);
       if (i < nxagentMaxSelections)
       {
@@ -737,9 +794,13 @@ FIXME: Do we need this?
   }
 
   /*
-   * This is necessary in nxagentGetClipboardWindow.
+   * reaching this means the request is neither a special request nor
+   * invalid. We can process it now.
    */
 
+  /*
+   * This is required for nxagentGetClipboardWindow.
+   */
   nxagentLastRequestedSelection = X->xselectionrequest.selection;
 
   /* find the index of the requested selection */
@@ -748,6 +809,10 @@ FIXME: Do we need this?
   {
     if ((lastClientWindowPtr != NULL) && (lastSelectionOwner[i].client != NULL))
     {
+      /*
+       * Request the real X server to transfer the selection content
+       * to the NX_CUT_BUFFER_CLIENT property of the serverWindow.
+       */
       XConvertSelection(nxagentDisplay, CurrentSelections[i].selection,
                             X->xselectionrequest.target, serverCutProperty,
                                 serverWindow, lastClientTime);
@@ -758,9 +823,18 @@ FIXME: Do we need this?
     }
     else
     {
+      /*
+       * if one of our clients owns the selection we ask it to copy
+       * the selection to the clientCutProperty on nxagent's root
+       * window
+       */
       if (lastSelectionOwner[i].client != NULL &&
              nxagentOption(Clipboard) != ClipboardClient)
       {
+        /*
+         * store who on the real X server requested the data and how
+	 * and where it wants to have it
+         */
         lastServerProperty = X->xselectionrequest.property;
         lastServerRequestor = X->xselectionrequest.requestor;
         lastServerTarget = X->xselectionrequest.target;
@@ -815,6 +889,7 @@ FIXME: Do we need this?
 }
 
 /*
+ * end current selection transfer by sending a notification to the
  * client and resetting the corresponding variables and the state
  * machine. If success is False send a None reply, meaning "request
  * denied/failed"
@@ -1118,6 +1193,11 @@ void nxagentCollectPropertyEvent(int resource)
   SAFE_XFree(pszReturnData);
 }
 
+/*
+ * This is _only_ called from Events.c dispatch loop on reception of a
+ * SelectionNotify event from the real X server. These events are
+ * sent out by nxagent itself!
+ */
 void nxagentNotifySelection(XEvent *X)
 {
   if (agentClipboardStatus != 1)
@@ -1143,6 +1223,14 @@ void nxagentNotifySelection(XEvent *X)
 
   if (lastClientWindowPtr != NULL)
   {
+    /*
+     * We reach here after a paste inside the nxagent, triggered by
+     * the XConvertSelection call in nxagentConvertSelection(). This
+     * means that data we need has been transferred to the
+     * serverCutProperty of the serverWindow (our window on the real X
+     * server). We now need to transfer it to the original requestor,
+     * which is stored in the lastClient* variables.
+     */
     if ((lastClientStage == SelectionStageNone) && (X->xselection.property == serverCutProperty))
     {
       #ifdef DEBUG
@@ -1181,6 +1269,7 @@ void nxagentNotifySelection(XEvent *X)
     int i = nxagentFindLastSelectionOwnerIndex(X->xselection.selection);
     if (i < nxagentMaxSelections)
     {
+      /* if the last owner was an internal one */
       if ((lastSelectionOwner[i].client != NULL) &&
              (lastSelectionOwner[i].windowPtr != NULL) &&
                  (X->xselection.property == serverClientCutProperty))
@@ -1191,6 +1280,7 @@ void nxagentNotifySelection(XEvent *X)
         unsigned long   ulReturnBytesLeft;
         unsigned char   *pszReturnData = NULL;
 
+        /* first get size values ... */
         int result = GetWindowProperty(lastSelectionOwner[i].windowPtr, clientCutProperty, 0, 0, False,
                                            AnyPropertyType, &atomReturnType, &resultFormat,
                                                &ulReturnItems, &ulReturnBytesLeft, &pszReturnData);
@@ -1206,6 +1296,7 @@ void nxagentNotifySelection(XEvent *X)
         }
         else
         {
+          /* ... then use the size values for the actual request */
           result = GetWindowProperty(lastSelectionOwner[i].windowPtr, clientCutProperty, 0,
                                          ulReturnBytesLeft, False, AnyPropertyType, &atomReturnType,
                                              &resultFormat, &ulReturnItems, &ulReturnBytesLeft,
@@ -1230,6 +1321,7 @@ void nxagentNotifySelection(XEvent *X)
                                      PropModeReplace,
                                      pszReturnData,
                                      ulReturnItems);
+            /* Fill the property on the initial requestor with the requested data */
 
             #ifdef DEBUG
             {
@@ -1252,6 +1344,14 @@ void nxagentNotifySelection(XEvent *X)
            */
         }
 
+        /*
+         * inform the initial requestor that the requested data has
+         * arrived in the desired property. If we have been unable to
+         * get the data from the owner XChangeProperty will not have
+         * been called and lastServerProperty will be None which
+         * effectively will send a "Request denied" to the initial
+         * requestor.
+         */
         XSelectionEvent eventSelection = {
           .requestor = lastServerRequestor,
           .selection = X->xselection.selection,
@@ -1275,10 +1375,10 @@ void nxagentNotifySelection(XEvent *X)
 }
 
 /*
- * Acquire selection so we don't get selection
- * requests from real X clients.
+ * Let nxagent's serverWindow acquire the selection. All requests from
+ * the real X server (or its clients) will be sent to this window. The
+ * real X server never communicates with our windows directly.
  */
-
 void nxagentResetSelectionOwner(void)
 {
   if (lastServerRequestor != None)
@@ -1314,22 +1414,31 @@ void nxagentResetSelectionOwner(void)
   lastClientWindowPtr = NULL;
   SetClientSelectionStage(None);
 
+  /* Hmm, this is already None when reaching this */
   lastServerRequestor = None;
 
   return;
 }
 
 #ifdef NXAGENT_CLIPBOARD
+
+/*
+ * The callback is called from dix. This is the normal operation
+ * mode. The callback is also called when nxagent gets XFixes events
+ * from the real X server. In that case the Trap is set and the
+ * callback will do nothing.
+ */
+
 void nxagentSetSelectionCallback(CallbackListPtr *callbacks, void *data,
                                    void *args)
 {
   /*
-   * Only act if the Trap is unset. The trap indicates that we are
-   * triggered by a clipboard event originating from the real X
-   * server. In that case we do not want to propagate back changes to
-   * the real X server, because it already knows about them and we
+   * Only act if the trap is unset. The trap indicates that we are
+   * triggered by an XFixes clipboard event originating from the real
+   * X server. In that case we do not want to propagate back changes
+   * to the real X server, because it already knows about them and we
    * would end up in an infinite loop of events. If there was a better
-   * way to identify that situation during Callback processing we
+   * way to identify that situation during callback processing we
    * could get rid of the Trap...
   */
   if (nxagentExternalClipboardEventTrap != 0)
@@ -1388,6 +1497,10 @@ void nxagentSetSelectionCallback(CallbackListPtr *callbacks, void *data,
 }
 #endif
 
+/*
+ * This is called from the nxagentSetSelectionCallback, so it is using
+ * internal Atoms
+ */
 void nxagentSetSelectionOwner(Selection *pSelection)
 {
   if (agentClipboardStatus != 1)
@@ -1437,13 +1550,16 @@ void nxagentSetSelectionOwner(Selection *pSelection)
 
       /*
        * inform the real X server that our serverWindow is the
-       * clipboard owner. The real owner window (inside nxagent) is
-       * stored in lastSelectionOwner.window.
-       * lastSelectionOwner.windowPtr points to the struct that
-       * contains all information about the owner window
+       * clipboard owner.
        */
       XSetSelectionOwner(nxagentDisplay, lastSelectionOwner[i].selection, serverWindow, CurrentTime);
 
+      /*
+       * The real owner window (inside nxagent) is stored in
+       * lastSelectionOwner.window.  lastSelectionOwner.windowPtr
+       * points to the struct that contains all information about the
+       * owner window.
+       */
       nxagentStoreSelectionOwner(&lastSelectionOwner[i], pSelection);
     }
   }
@@ -1477,10 +1593,9 @@ FIXME
 void nxagentNotifyConvertFailure(ClientPtr client, Window requestor,
                                      Atom selection, Atom target, Time time)
 {
-/*
-FIXME: Why this pointer can be not a valid
-       client pointer?
-*/
+  /*
+   * Check if the client is still valid.
+   */
   if (clients[client -> index] != client)
   {
     #ifdef WARNING
@@ -1493,6 +1608,13 @@ FIXME: Why this pointer can be not a valid
   SendSelectionNotifyEventToClient(client, time, requestor, selection, target, None);
 }
 
+/*
+ * This is called from dix (ProcConvertSelection) if an nxagent client
+ * issues a ConvertSelection request. So all the Atoms are internal
+ * return codes:
+ * 0: let dix process the request
+ * 1: don't let dix process the request
+ */
 int nxagentConvertSelection(ClientPtr client, WindowPtr pWin, Atom selection,
                                 Window requestor, Atom property, Atom target, Time time)
 {
@@ -1502,19 +1624,14 @@ int nxagentConvertSelection(ClientPtr client, WindowPtr pWin, Atom selection,
     return 0;
   }
 
-  /*
-   * There is a client owner on the agent side, let normal stuff happen.
-   */
-
-  /*
-   * Only for PRIMARY and CLIPBOARD selections.
-   */
-
   for (int i = 0; i < nxagentMaxSelections; i++)
   {
     if ((selection == CurrentSelections[i].selection) &&
            (lastSelectionOwner[i].client != NULL))
     {
+      /*
+       * There is a client owner on the agent side, let normal dix stuff happen.
+       */
       return 0;
     }
   }
@@ -1569,6 +1686,10 @@ int nxagentConvertSelection(ClientPtr client, WindowPtr pWin, Atom selection,
     return 1;
   }
 
+  /*
+   * The selection request target is TARGETS. The requestor is asking
+   * for a list of supported data formats. Currently there's 4 of them.
+   */
   if (target == clientTARGETS)
   {
     /* --- Order changed by dimbor (prevent sending COMPOUND_TEXT to client --- */
@@ -1596,11 +1717,28 @@ int nxagentConvertSelection(ClientPtr client, WindowPtr pWin, Atom selection,
     return 1;
   }
 
+  /*
+   * Section 2.6.2 of the ICCCM states:
+   * "TIMESTAMP - To avoid some race conditions, it is important
+   * that requestors be able to discover the timestamp the owner
+   * used to acquire ownership. Until and unless the protocol is
+   * changed so that a GetSelectionOwner request returns the
+   * timestamp used to acquire ownership, selection owners must
+   * support conversion to TIMESTAMP, returning the timestamp they
+   * used to obtain the selection."
+   */
   if (target == MakeAtom("TIMESTAMP", 9, 1))
   {
     int i = nxagentFindCurrentSelectionIndex(selection);
     if (i < NumCurrentSelections)
     {
+      /*
+       * "If the specified property is not None, the owner should place
+       * the data resulting from converting the selection into the
+       * specified property on the requestor window and should set the
+       * property's type to some appropriate value, which need not be
+       * the same as the specified target."
+       */
       ChangeWindowProperty(pWin,
                            property,
                            XA_INTEGER,
@@ -1620,7 +1758,7 @@ int nxagentConvertSelection(ClientPtr client, WindowPtr pWin, Atom selection,
   if (lastClientClientPtr == client && (GetTimeInMillis() - lastClientReqTime < 5000))
   {
     /*
-     * The same client made consecutive requests of clipboard contents
+     * The same client made consecutive requests of clipboard content
      * with less than 5 seconds time interval between them.
      */
 
@@ -1647,6 +1785,10 @@ int nxagentConvertSelection(ClientPtr client, WindowPtr pWin, Atom selection,
   {
     lastClientWindowPtr = pWin;
     SetClientSelectionStage(None);
+    /*
+     * store the original requestor, we need that later after
+     * serverCutProperty contains the desired selection content
+     */
     lastClientRequestor = requestor;
     lastClientClientPtr = client;
     lastClientTime = time;
@@ -1663,6 +1805,10 @@ int nxagentConvertSelection(ClientPtr client, WindowPtr pWin, Atom selection,
       selection = lastSelectionOwner[nxagentClipboardSelection].selection;
     }
 
+    /*
+     * we only convert to either UTF8 or XA_STRING, despite accepting
+     * TEXT and COMPOUND_TEXT.
+     */
     if (target == clientUTF8_STRING)
     {
       #ifdef DEBUG
@@ -1700,6 +1846,23 @@ int nxagentConvertSelection(ClientPtr client, WindowPtr pWin, Atom selection,
   return 0;
 }
 
+/*
+ * This is _only_ called from ProcSendEvent in NXevents.c. It is used
+ * to send a SelectionNotify event to our server window which will
+ * trigger the dispatch loop in Events.c to run nxagentNotifySelection
+ * which in turn will take care of transferring the selection content
+ * from the owning client to to a property of the server window.
+ *
+ * Returning 1 here means the client request will not be further
+ * handled by dix. Returning 0 means a SelectionNotify event being
+ * pushed out to our clients.
+ *
+ * From https://tronche.com/gui/x/xlib/events/client-communication/selection.html:
+ * "This event is generated by the X server in response to a
+ * ConvertSelection protocol request when there is no owner for the
+ * selection. When there is an owner, it should be generated by the
+ * owner of the selection by using XSendEvent()."
+ */
 int nxagentSendNotify(xEvent *event)
 {
   #ifdef DEBUG
