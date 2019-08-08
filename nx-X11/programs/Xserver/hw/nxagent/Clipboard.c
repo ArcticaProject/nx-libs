@@ -1927,6 +1927,29 @@ int nxagentSendNotify(xEvent *event)
       eventSelection.selection = lastSelectionOwner[nxagentClipboardSelection].selection;
     }
 
+    /*
+     * .target must be translated, too, as a client on the real
+     * server is requested to fill our property and it needs to know
+     * the format.
+     */
+
+    if (event->u.selectionNotify.target == clientUTF8_STRING)
+    {
+      eventSelection.target = serverUTF8_STRING;
+    }
+    else if (event->u.selectionNotify.target == clientTEXT)
+    {
+      eventSelection.target = serverTEXT;
+    }
+    /*else if (event->u.selectionNotify.target == clientCOMPOUND_TEXT)
+    {
+      eventSelection.target = serverCOMPOUND_TEXT;
+    }*/
+    else
+    {
+      eventSelection.target = XA_STRING;
+    }
+
     #ifdef DEBUG
     fprintf(stderr, "%s: mapping local to remote Atom: [%d] -> [%ld] [%s]\n", __func__,
             event->u.selectionNotify.selection, eventSelection.selection,
