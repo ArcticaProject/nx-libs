@@ -1418,8 +1418,6 @@ void nxagentResetSelectionOwner(void)
 
   /* Hmm, this is already None when reaching this */
   lastServerRequestor = None;
-
-  return;
 }
 
 #ifdef NXAGENT_CLIPBOARD
