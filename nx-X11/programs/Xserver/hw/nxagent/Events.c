@@ -944,7 +944,7 @@ void nxagentDispatchEvents(PredicateFuncPtr predicate)
         fprintf(stderr, "nxagentDispatchEvents: Going to handle new SelectionNotify event.\n");
         #endif
 
-        nxagentNotifySelection(&X);
+        nxagentHandleSelectionNotifyFromXServer(&X);
 
         break;
       }

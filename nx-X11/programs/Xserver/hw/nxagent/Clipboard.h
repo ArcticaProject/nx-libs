@@ -64,7 +64,7 @@ extern int nxagentConvertSelection(ClientPtr client, WindowPtr pWin, Atom select
 
 void nxagentClearSelection();
 void nxagentRequestSelection();
-void nxagentNotifySelection();
+void nxagentHandleSelectionNotifyFromXServer();
 
 int nxagentFindCurrentSelectionIndex(Atom sel);
 #endif /* __Clipboard_H__ */

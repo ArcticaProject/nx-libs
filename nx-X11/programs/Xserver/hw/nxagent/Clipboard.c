@@ -1199,7 +1199,7 @@ void nxagentCollectPropertyEvent(int resource)
  * SelectionNotify event from the real X server. These events are
  * sent out by nxagent itself!
  */
-void nxagentNotifySelection(XEvent *X)
+void nxagentHandleSelectionNotifyFromXServer(XEvent *X)
 {
   if (agentClipboardStatus != 1)
   {
@@ -1859,9 +1859,10 @@ int nxagentConvertSelection(ClientPtr client, WindowPtr pWin, Atom selection,
 /*
  * This is _only_ called from ProcSendEvent in NXevents.c. It is used
  * to send a SelectionNotify event to our server window which will
- * trigger the dispatch loop in Events.c to run nxagentNotifySelection
- * which in turn will take care of transferring the selection content
- * from the owning client to to a property of the server window.
+ * trigger the dispatch loop in Events.c to run
+ * nxagentHandleSelectionNotifyFromXServer which in turn will take
+ * care of transferring the selection content from the owning client
+ * to to a property of the server window.
  *
  * Returning 1 here means the client request will not be further
  * handled by dix. Returning 0 means a SelectionNotify event being
