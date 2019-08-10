@@ -64,7 +64,7 @@ int nxagentLogoRed;
 int nxagentLogoBlack;
 int nxagentLogoGray;
 
-void nxagentPaintLogo(Window win, GC gc, int scale, int width, int height);
+static void nxagentPaintLogo(Window win, GC gc, int scale, int width, int height);
 
 /*
  * From Screen.c.
@@ -92,14 +92,14 @@ void nxagentShowSplashWindow(Window parentWindow)
     return;
 
   #ifdef TEST
-  fprintf(stderr, "nxagentShowSplashWindow: Got called.\n");
+  fprintf(stderr, "%s: Got called.\n", __func__);
   #endif
 
   #ifdef NXAGENT_TIMESTAMP
   {
     extern unsigned long startTime;
 
-    fprintf(stderr, "nxagentShowSplashWindow: Initializing splash start at [%d] milliseconds.\n",
+    fprintf(stderr, "%s: Initializing splash start at [%d] milliseconds.\n", __func__,
             GetTimeInMillis() - startTime);
   }
   #endif
@@ -139,7 +139,7 @@ void nxagentShowSplashWindow(Window parentWindow)
   getAttributes.height = nxagentOption(RootHeight);
 
   #ifdef TEST
-  fprintf(stderr, "nxagentShowSplashWindow: Going to create new splash window.\n");
+  fprintf(stderr, "%s: Going to create new splash window.\n", __func__);
   #endif
 
   nxagentSplashWindow =
@@ -152,7 +152,7 @@ void nxagentShowSplashWindow(Window parentWindow)
                           BlackPixel (nxagentDisplay, 0));
 
   #ifdef TEST
-  fprintf(stderr, "nxagentShowSplashWindow: Created new splash window with id [%ld].\n",
+  fprintf(stderr, "%s: Created new splash window with id [%ld].\n", __func__,
               nxagentSplashWindow);
   #endif
 
@@ -168,7 +168,7 @@ void nxagentShowSplashWindow(Window parentWindow)
   #ifdef NXAGENT_TIMESTAMP
   {
     extern unsigned long startTime;
-    fprintf(stderr, "nxagentShowSplashWindow: Splash ends [%d] milliseconds.\n",
+    fprintf(stderr, "%s: Splash ends [%d] milliseconds.\n", __func__,
             GetTimeInMillis() - startTime);
   }
   #endif
@@ -176,26 +176,25 @@ void nxagentShowSplashWindow(Window parentWindow)
 
 void nxagentPaintLogo(Window win, GC gc, int scale, int width, int height)
 {
-  XPoint    rect[4];
-  int w, h, c, w2, h2;
-
   #ifdef DEBUG
-  fprintf(stderr, "nxagentPaintLogo: Got called.\n");
+  fprintf(stderr, "%s: Got called.\n", __func__);
   #endif
 
   #ifdef NXAGENT_LOGO_DEBUG
-  fprintf(stderr, "nxagentPaintLogo: begin\n");
-  fprintf(stderr, "nxagentPaintLogo: gen params are: w=%d h=%d d=%d r=%x w=%x b=%x\n",width, height,
+  fprintf(stderr, "%s: begin\n", __func__);
+  fprintf(stderr, "%s: gen params are: w=%d h=%d d=%d r=%x w=%x b=%x\n", __func__,
+          width, height,
           nxagentLogoDepth, nxagentLogoRed,
           nxagentLogoWhite, nxagentLogoBlack);
   #endif
 
-  w = width/scale;
-  h = height/scale;
+  int w = width/scale;
+  int h = height/scale;
 
-  w2 = w/2;
-  h2 = h/2;
+  int w2 = w/2;
+  int h2 = h/2;
 
+  int c;
   if (height > width)
   {
     c = w/30;
@@ -205,6 +204,7 @@ void nxagentPaintLogo(Window win, GC gc, int scale, int width, int height)
     c = w/48;
   }
 
+  XPoint rect[4];
   rect[0].x = 0;               rect[0].y = 0;
   rect[1].x = 0;               rect[1].y = h;
   rect[2].x = w;               rect[2].y = h;
@@ -225,7 +225,7 @@ void nxagentPaintLogo(Window win, GC gc, int scale, int width, int height)
   XFillPolygon(nxagentDisplay, nxagentPixmapLogo, gc, rect, 4, Convex, CoordModeOrigin);
 
   #ifdef NXAGENT_LOGO_DEBUG
-  fprintf(stderr, "filled first poly\n");
+  fprintf(stderr, "%s: filled first poly\n", __func__);
   #endif
 
   XSetForeground(nxagentDisplay, gc, nxagentLogoRed);
@@ -374,16 +374,17 @@ void nxagentPaintLogo(Window win, GC gc, int scale, int width, int height)
   XSetWindowBackgroundPixmap(nxagentDisplay, win, nxagentPixmapLogo);
 
   #ifdef NXAGENT_LOGO_DEBUG
-  fprintf(stderr, "nxagentPaintLogo: end\n");
+  fprintf(stderr, "%s: end\n", __func__);
   #endif
 }
 
 void nxagentRemoveSplashWindow(WindowPtr pWin)
 {
-  if (nxagentReconnectTrap) return;
+  if (nxagentReconnectTrap)
+    return;
 
   #ifdef TEST
-  fprintf(stderr, "nxagentRemoveSplashWindow: Destroying the splash window.\n");
+  fprintf(stderr, "%s: Destroying the splash window.\n", __func__);
   #endif
 
   if (!nxagentWMPassed)
@@ -402,7 +403,7 @@ void nxagentRemoveSplashWindow(WindowPtr pWin)
     nxagentRefreshWindows(screenInfo.screens[0]->root);
 
     #ifdef TEST
-    fprintf(stderr, "nxagentRemoveSplashWindow: setting the ownership of %s (%d) on window 0x%lx\n",
+    fprintf(stderr, "%s: setting the ownership of %s (%d) on window 0x%lx\n", __func__
                 "NX_CUT_BUFFER_SERVER", (int)serverCutProperty, nxagentWindow(screenInfo.screens[0]->root));
     #endif
 
@@ -413,7 +414,6 @@ void nxagentRemoveSplashWindow(WindowPtr pWin)
   if (nxagentPixmapLogo)
   {
     XFreePixmap(nxagentDisplay, nxagentPixmapLogo);
-
     nxagentPixmapLogo = (Pixmap) 0;
   }
 }
