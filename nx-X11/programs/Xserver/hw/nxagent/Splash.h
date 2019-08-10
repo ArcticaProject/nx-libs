@@ -47,7 +47,7 @@ extern Window nxagentSplashWindow;
 
 extern int nxagentWMPassed;
 
-extern int nxagentShowSplashWindow(Window);
+extern void nxagentShowSplashWindow(Window);
 
 extern void nxagentRemoveSplashWindow(WindowPtr pWin);
 

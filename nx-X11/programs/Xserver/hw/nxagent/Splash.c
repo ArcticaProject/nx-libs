@@ -78,7 +78,7 @@ extern Atom nxagentWMStart;
 
 extern Atom serverCutProperty;
 
-int nxagentShowSplashWindow(Window parentWindow)
+void nxagentShowSplashWindow(Window parentWindow)
 {
   XWindowAttributes getAttributes;
   XWindowChanges    values;
@@ -89,7 +89,7 @@ int nxagentShowSplashWindow(Window parentWindow)
    * Show splash window only when running as X2Go Agent
    */
   if(!nxagentX2go)
-    return False;
+    return;
 
   #ifdef TEST
   fprintf(stderr, "nxagentShowSplashWindow: Got called.\n");
@@ -172,8 +172,6 @@ int nxagentShowSplashWindow(Window parentWindow)
             GetTimeInMillis() - startTime);
   }
   #endif
-
-  return True;
 }
 
 void nxagentPaintLogo(Window win, GC gc, int scale, int width, int height)
