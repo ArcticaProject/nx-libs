@@ -249,18 +249,14 @@ InitRootWindow(WindowPtr pWin)
     pWin->optional->cursor = rootCursor;
     rootCursor->refcnt++;
 
-#ifdef NXAGENT_SPLASH
-    if (blackRoot)
-      pWin->background.pixel = pScreen->blackPixel;
-    else
-      pWin->background.pixel = pScreen->whitePixel;
-    backFlag |= CWBackPixel;
-#else
+#ifndef NXAGENT_SPLASH
     if (!blackRoot && !whiteRoot) {
         MakeRootTile(pWin);
         backFlag |= CWBackPixmap;
     }
-    else {
+    else
+#else
+    {
         if (blackRoot)
             pWin->background.pixel = pScreen->blackPixel;
         else
