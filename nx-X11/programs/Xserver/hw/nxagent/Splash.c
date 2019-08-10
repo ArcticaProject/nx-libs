@@ -85,6 +85,12 @@ int nxagentShowSplashWindow(Window parentWindow)
   XSetWindowAttributes attributes;
   GC gc;
 
+  /*
+   * Show splash window only when running as X2Go Agent
+   */
+  if(!nxagentX2go)
+    return False;
+
   #ifdef TEST
   fprintf(stderr, "nxagentShowSplashWindow: Got called.\n");
   #endif
@@ -174,15 +180,6 @@ void nxagentPaintLogo(Window win, GC gc, int scale, int width, int height)
 {
   XPoint    rect[4];
   int w, h, c, w2, h2;
-
-  /*
-   * Show only X2GO Logo when running as X2Go Agent
-   */
-   if(! nxagentX2go)
-   {
-     nxagentPixmapLogo = 0L;
-     return;
-   }
 
   #ifdef DEBUG
   fprintf(stderr, "nxagentPaintLogo: Got called.\n");

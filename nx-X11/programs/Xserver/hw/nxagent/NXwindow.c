@@ -138,11 +138,14 @@ extern void nxagentSetVersionProperty(WindowPtr pWin);
 
 void nxagentClearSplash(WindowPtr pW)
 {
+    if (!pW)
+        return;
+
     ScreenPtr pScreen = pW->drawable.pScreen;
 
     if (pW->backgroundState == BackgroundPixmap)
     {
-      (*pScreen->DestroyPixmap)(pW->background.pixmap);
+        (*pScreen->DestroyPixmap)(pW->background.pixmap);
     }
 
     pW->backgroundState = BackgroundPixel;
