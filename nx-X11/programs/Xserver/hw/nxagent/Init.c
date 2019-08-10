@@ -413,7 +413,8 @@ FIXME: These variables, if not removed at all because have probably
    * background.
    */
 
-  blackRoot = TRUE;
+  if (!whiteRoot)
+    blackRoot = TRUE;
 
   nxagentInitKeystrokes(False);
 
