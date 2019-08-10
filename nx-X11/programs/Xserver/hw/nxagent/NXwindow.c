@@ -255,8 +255,6 @@ InitRootWindow(WindowPtr pWin)
     else
       pWin->background.pixel = pScreen->whitePixel;
     backFlag |= CWBackPixel;
-
-    MakeRootTile(pWin);
 #else
     if (!blackRoot && !whiteRoot) {
         MakeRootTile(pWin);
