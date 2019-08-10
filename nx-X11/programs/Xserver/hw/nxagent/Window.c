@@ -670,15 +670,18 @@ Bool nxagentDestroyWindow(WindowPtr pWin)
               nxagentSplashCount);
   #endif
 
-  if (nxagentSplashCount == 1)
+  if (nxagentRootTileWindow)
   {
-    XClearWindow(nxagentDisplay, nxagentWindowPriv(nxagentRootTileWindow) -> window);
-  }
+    if (nxagentSplashCount == 1)
+    {
+      XClearWindow(nxagentDisplay, nxagentWindowPriv(nxagentRootTileWindow) -> window);
+    }
 
-  if (pWin == nxagentRootTileWindow)
-  {
-    nxagentWindowPriv(nxagentRootTileWindow)->window = None;
-    nxagentRootTileWindow = None;
+    if (pWin == nxagentRootTileWindow)
+    {
+      nxagentWindowPriv(nxagentRootTileWindow)->window = None;
+      nxagentRootTileWindow = None;
+    }
   }
 
   pWindowPriv->window = None;
