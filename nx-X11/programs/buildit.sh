@@ -39,7 +39,6 @@ export CONFFLAGS="--enable-unix-transport		\
                   --enable-tcp-transport		\
                   --disable-install-libxf86config	\
                   --disable-install-setuid		\
-                  --disable-xorgcfg			\
                   --disable-kbd_mode			\
                   --disable-xf86misc			\
                   --disable-xf86vidmode			\
