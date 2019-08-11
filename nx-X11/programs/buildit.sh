@@ -40,7 +40,6 @@ export CONFFLAGS="--enable-unix-transport		\
                   --disable-install-libxf86config	\
                   --disable-install-setuid		\
                   --disable-kbd_mode			\
-                  --disable-xf86misc			\
                   --enable-ipv6				\
                   --enable-secure-rpc			\
                   --enable-mitshm			\
