@@ -41,7 +41,6 @@ export CONFFLAGS="--enable-unix-transport		\
                   --disable-install-setuid		\
                   --disable-xorgcfg			\
                   --disable-kbd_mode			\
-                  --enable-screensaver			\
                   --disable-xf86misc			\
                   --disable-xf86vidmode			\
                   --enable-ipv6				\
