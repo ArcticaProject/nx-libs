@@ -391,7 +391,7 @@ AC_ARG_ENABLE(nxagent,        AS_HELP_STRING([--disable-nxagent], [Build nxagent
 
 dnl chown/chmod to be setuid root as part of build
 dnl Replaces InstallXserverSetUID in imake
-AC_ARG_ENABLE(install-setuid, 
+AC_ARG_ENABLE(install-setuid,
     AS_HELP_STRING([--enable-install-setuid],
        [Install Xorg server as owned by root with setuid bit (default: disabled)]),
     [SETUID=$enableval], [SETUID=no])
@@ -1349,7 +1349,7 @@ AC_SUBST(XORGCONFIG_DEP_CFLAGS)
 AC_SUBST(XORGCONFIG_DEP_LIBS)
 
 dnl xorgcfg GUI configuration utility
-AC_ARG_ENABLE(xorgcfg, AS_HELP_STRING([--enable-xorgcfg], 
+AC_ARG_ENABLE(xorgcfg, AS_HELP_STRING([--enable-xorgcfg],
 	[Build xorgcfg GUI configuration utility (default: no)]),
 	[XORGCFG=$enableval],[XORGCFG=no])
 if test x$XORGCFG = xyes ; then
@@ -1369,7 +1369,7 @@ fi
 AM_CONDITIONAL(BUILD_XORGCFG, [test x$XORGCFG = xyes])
 AM_CONDITIONAL(USE_CURSES, [test x$CURSES = xyes])
 
-AC_ARG_ENABLE(kbd_mode, AS_HELP_STRING([--enable-kbd_mode],
+AC_ARG_ENABLE(kbd-mode, AS_HELP_STRING([--enable-kbd-mode],
 	[Build kbd_mode utility (default: disabled)]),
 	[BUILD_KBD_MODE=$enable_val], [BUILD_KBD_MODE="no"])
 if test x$BUILD_KBD_MODE != xno ; then
@@ -1450,5 +1450,52 @@ xfixes/Makefile
 hw/Makefile
 hw/nxagent/Makefile
 ])
+
+dnl Resume configure status
+AC_MSG_NOTICE(resume:)
+ACX_FEATURE([enable],[werror],$WERROR)
+ACX_FEATURE([enable],[debug],$DEBUGGING)
+ACX_FEATURE([with],[int10],$INT10)
+ACX_FEATURE([with],[vendor-string],$VENDOR_STRING)
+ACX_FEATURE([with],[vendor-string-short],$VENDOR_STRING_SHORT)
+ACX_FEATURE([with],[release-major],$VERSION_MAJOR)
+ACX_FEATURE([with],[release-minor],$VERSION_MINOR)
+ACX_FEATURE([with],[release-patch],$VERSION_PATCH)
+ACX_FEATURE([with],[release-snap],$VERSION_SNAP)
+ACX_FEATURE([with],[release-date],$RELEASE_DATE)
+ACX_FEATURE([with],[vendor-web],$VENDOR_WEB)
+ACX_FEATURE([with],[log-dir],$logdir)
+ACX_FEATURE([with],[builder-addr],$BUILDERADDR)
+ACX_FEATURE([with],[os-name],$OSNAME)
+ACX_FEATURE([with],[os-vendor],$OSVENDOR)
+ACX_FEATURE([with],[mesa-source],$MESA_SOURCE)
+ACX_FEATURE([with],[fontdir],$FONTDIR)
+ACX_FEATURE([with],[default-font-path],$FONTPATH)
+ACX_FEATURE([with],[xkb-path],$XKBPATH)
+ACX_FEATURE([with],[xkb-output],$XKBOUTPUT)
+ACX_FEATURE([with],[rgb-path],$RGBPATH)
+ACX_FEATURE([enable],[builddocs],$BUILDDOCS)
+ACX_FEATURE([enable],[install-libxf86config],$INSTALL_LIBXF86CONFIG)
+ACX_FEATURE([enable],[composite],$COMPOSITE)
+ACX_FEATURE([enable],[shm],$MITSHM)
+ACX_FEATURE([enable],[xres],$RES)
+ACX_FEATURE([enable],[record],$RECORD)
+ACX_FEATURE([enable],[xv],$XV)
+ACX_FEATURE([enable],[xvmc],$XVMC)
+ACX_FEATURE([enable],[dga],$DGA)
+ACX_FEATURE([enable],[screensaver],$SCREENSAVER)
+ACX_FEATURE([enable],[xdmcp],$XDMCP)
+ACX_FEATURE([enable],[xdm-auth-1],$XDMAUTH)
+ACX_FEATURE([enable],[glx],$GLX)
+ACX_FEATURE([enable],[xinerama],$XINERAMA)
+ACX_FEATURE([enable],[xf86vidmode],$XF86VIDMODE)
+ACX_FEATURE([enable],[xf86misc],$XF86MISC)
+ACX_FEATURE([enable],[xcsecurity],$XCSECURITY)
+ACX_FEATURE([enable],[fontcache],$FONTCACHE)
+ACX_FEATURE([enable],[dbe],$DBE)
+ACX_FEATURE([enable],[nxagent],$NXAGENT)
+ACX_FEATURE([enable],[install-setuid],$SETUID)
+ACX_FEATURE([enable],[xorgcfg],$XORGCFG)
+ACX_FEATURE([enable],[kbd-mode],$BUILD_KBD_MODE)
 
 AC_OUTPUT
