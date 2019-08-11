@@ -37,7 +37,6 @@ build() {
 
 export CONFFLAGS="--enable-unix-transport		\
                   --enable-tcp-transport		\
-                  --disable-xvmc			\
                   --disable-install-libxf86config	\
                   --disable-install-setuid		\
                   --disable-xorgcfg			\
