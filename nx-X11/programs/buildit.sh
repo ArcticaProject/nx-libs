@@ -41,7 +41,6 @@ export CONFFLAGS="--enable-unix-transport		\
                   --disable-install-setuid		\
                   --disable-kbd_mode			\
                   --disable-xf86misc			\
-                  --disable-xf86vidmode			\
                   --enable-ipv6				\
                   --enable-secure-rpc			\
                   --enable-mitshm			\
