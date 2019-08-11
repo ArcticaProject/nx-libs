@@ -47,4 +47,4 @@ export NXAGENTMODULES_LIBS="-L`pwd`/../exports/lib			  \
                             -lXcomp -lXcompshad -lNX_X11		  \
                             ${NULL}"
 
-build Xserver $CONFFLAGS --with-mesa-source=$PWD/${SRC}/../extras/Mesa/ PKG_CONFIG_LIBDIR="$PKG_CONFIG_LIBDIR" || exit 1
+build Xserver $CONFFLAGS PKG_CONFIG_LIBDIR="$PKG_CONFIG_LIBDIR" || exit 1
