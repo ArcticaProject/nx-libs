@@ -38,7 +38,6 @@ build() {
 export CONFFLAGS="--enable-unix-transport		\
                   --enable-tcp-transport		\
                   --disable-install-libxf86config	\
-                  --disable-install-setuid		\
                   --disable-kbd_mode			\
                   --enable-ipv6				\
                   --enable-secure-rpc			\
