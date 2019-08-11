@@ -387,7 +387,7 @@ AC_ARG_ENABLE(fontcache,      AS_HELP_STRING([--enable-fontcache], [Build FontCa
 AC_ARG_ENABLE(dbe,            AS_HELP_STRING([--disable-dbe], [Build DBE extension (default: enabled)]), [DBE=$enableval], [DBE=yes])
 
 dnl DDXes.
-AC_ARG_ENABLE(nxagent,        AS_HELP_STRING([--enable-nxagent], [Build nxagent server (default: auto)]), [NXAGENT=$enableval], [NXAGENT=auto])
+AC_ARG_ENABLE(nxagent,        AS_HELP_STRING([--disable-nxagent], [Build nxagent server (default: enabled)]), [NXAGENT=$enableval], [NXAGENT=yes])
 
 dnl chown/chmod to be setuid root as part of build
 dnl Replaces InstallXserverSetUID in imake

@@ -39,7 +39,6 @@ export CONFFLAGS="--enable-unix-transport		\
                   --enable-tcp-transport		\
                   --enable-ipv6				\
                   --enable-secure-rpc			\
-                  --enable-nxagent			\
                   ${NULL}"
 
 export NXAGENTMODULES_LIBS="-L`pwd`/../exports/lib			  \
