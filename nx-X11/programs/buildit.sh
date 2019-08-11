@@ -44,7 +44,6 @@ export CONFFLAGS="--enable-unix-transport		\
                   --disable-xf86vidmode			\
                   --enable-ipv6				\
                   --enable-xinerama			\
-                  --enable-glx				\
                   --enable-secure-rpc			\
                   --enable-mitshm			\
                   --enable-nxagent			\
