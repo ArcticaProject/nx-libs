@@ -393,8 +393,8 @@ dnl chown/chmod to be setuid root as part of build
 dnl Replaces InstallXserverSetUID in imake
 AC_ARG_ENABLE(install-setuid, 
     AS_HELP_STRING([--enable-install-setuid],
-       [Install Xorg server as owned by root with setuid bit (default: auto)]),
-    [SETUID=$enableval], [SETUID=auto])
+       [Install Xorg server as owned by root with setuid bit (default: disabled)]),
+    [SETUID=$enableval], [SETUID=no])
 AC_MSG_CHECKING([to see if we can install the Xorg server as root])
 if test "x$SETUID" = "xauto" ; then
 	case $host_os in
