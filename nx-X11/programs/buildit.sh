@@ -42,7 +42,6 @@ export CONFFLAGS="--enable-unix-transport		\
                   --disable-kbd_mode			\
                   --enable-ipv6				\
                   --enable-secure-rpc			\
-                  --enable-mitshm			\
                   --enable-nxagent			\
                   ${NULL}"
 
