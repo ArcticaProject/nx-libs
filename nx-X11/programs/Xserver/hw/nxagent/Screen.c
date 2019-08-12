@@ -1735,14 +1735,14 @@ N/A
 
     #define POSITION_OFFSET (pScreen->myNum * (nxagentOption(Width) + \
                                nxagentOption(Height)) / 32)
+
+    /*
+     * Complete the initialization of the RANDR
+     * extension.
+     */
+
+    nxagentInitRandRExtension(pScreen);
   }
-
-  /*
-   * Complete the initialization of the RANDR
-   * extension.
-   */
-
-  nxagentInitRandRExtension(pScreen);
 
   #ifdef TEST
   nxagentPrintAgentGeometry(NULL, "nxagentOpenScreen:");
