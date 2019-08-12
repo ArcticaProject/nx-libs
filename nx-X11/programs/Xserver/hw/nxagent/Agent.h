@@ -109,7 +109,9 @@ typedef XID KeySym64;
 
 #endif  /*_XSERVER64*/
 
+#ifndef NX_TRANS_SOCKET
 #define NX_TRANS_SOCKET
+#endif
 #define GC XlibGC
 #include <nx-X11/Xlib.h>
 #include <X11/extensions/shape.h>
