@@ -4,7 +4,7 @@ set -x
 
 NULL=
 
-PKG_CONFIG_DEFAULT_LIBDIR=$( pkg-config --variable pc_path pkg-config)
+PKG_CONFIG_DEFAULT_LIBDIR=$(pkg-config --variable pc_path pkg-config)
 export PKG_CONFIG_LIBDIR="../../../nxcomp:../../lib/:../../../nxcompshad:$PKG_CONFIG_DEFAULT_LIBDIR"
 
 SRC=.
@@ -18,13 +18,9 @@ build() {
 	OPT="$@"
 
 	pushd "${SRC}/$PKG"
-	if [ -e Makefile ]; then
-		make distclean
-	fi
+	[ -e Makefile ] && make distclean
 
-	if [ -e configure ]; then
-		rm -f configure
-	fi
+	[ -e configure ] && rm -f configure
 
 	if [ ! -e configure ]; then
 		./autogen.sh $OPT || exit 1
