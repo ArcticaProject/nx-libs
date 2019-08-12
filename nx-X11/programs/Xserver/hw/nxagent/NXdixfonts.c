@@ -84,6 +84,8 @@ static Bool doOpenFont(ClientPtr client, OFclosurePtr c);
 static Bool doListFontsAndAliases(ClientPtr client, LFclosurePtr c);
 int nxOpenFont(ClientPtr client, XID fid, Mask flags, unsigned lenfname, char *pfontname);
 
+extern RESTYPE RT_NX_FONT;
+
 #include "../../dix/dixfonts.c"
 
 /*
@@ -309,8 +311,6 @@ doOpenFont(ClientPtr client, OFclosurePtr c)
     }
     if( nxagentFontPriv(pfont) -> mirrorID == 0 )
     {
-      extern RESTYPE RT_NX_FONT;
-
       nxagentFontPriv(pfont) -> mirrorID = FakeClientID(0);
       if (!AddResource(nxagentFontPriv(pfont) -> mirrorID, RT_NX_FONT, (void *) pfont)) {
         FreeResource(c->fontid, RT_NONE);

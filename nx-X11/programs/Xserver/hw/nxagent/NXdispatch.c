@@ -203,8 +203,6 @@ extern int nxagentClipboardSelection;
 extern int nxagentMaxSelections;
 #endif
 
-extern int nxOpenFont(ClientPtr, XID, Mask, unsigned, char*);
-
 void
 InitSelections()
 {
@@ -759,6 +757,8 @@ ProcConvertSelection(register ClientPtr client)
     }
 }
 
+
+extern int nxOpenFont(ClientPtr, XID, Mask, unsigned, char*);
 
 int
 ProcOpenFont(register ClientPtr client)

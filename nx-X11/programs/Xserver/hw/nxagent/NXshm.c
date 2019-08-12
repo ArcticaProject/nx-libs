@@ -216,6 +216,8 @@ miShmPutImage(DrawablePtr dst, GCPtr pGC, int depth, unsigned int format, int w,
 }
 
 
+extern int nxagentImageLength(int, int, int, int, int);
+
 static void
 fbShmPutImage(DrawablePtr dst, GCPtr pGC, int depth, unsigned int format, int w, int h,
 	          int sx, int sy, int sw, int sh, int dx, int dy, char *data)

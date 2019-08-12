@@ -159,7 +159,6 @@ extern int  nxagentShadowInit(ScreenPtr, WindowPtr);
 extern int nxagentSendNotify(xEvent*);
 #endif
 
-
 void
 ActivatePointerGrab(register DeviceIntPtr mouse, register GrabPtr grab, 
                     TimeStamp time, Bool autoGrab)

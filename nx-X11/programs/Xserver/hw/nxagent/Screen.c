@@ -145,6 +145,8 @@ extern Bool useXpmIcon;
 
 extern Bool nxagentReportWindowIds;
 
+extern char *nxagentKeyboard;
+
 #ifdef NXAGENT_TIMESTAMP
 extern unsigned long startTime;
 #endif

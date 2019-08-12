@@ -72,8 +72,9 @@ static PicturePtr createSourcePicture(void);
 int FreePicture (void *value, XID pid);
 Bool nxagentReconnectAllPictFormat(void *p);
 
-#include "../../render/picture.c"
+extern int nxagentPicturePrivateIndex;
 
+#include "../../render/picture.c"
 
 #define PANIC
 #define WARNING

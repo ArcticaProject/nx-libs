@@ -111,6 +111,14 @@ GetWindowProperty(WindowPtr pWin, Atom property, long longOffset, long longLengt
                           unsigned long *nItems, unsigned long *bytesAfter,
                               unsigned char **propData);
 
+#ifdef NXAGENT_CLIPBOARD
+extern WindowPtr nxagentGetClipboardWindow(Atom, WindowPtr);
+#endif
+
+#ifdef NXAGENT_ARTSD
+extern Atom mcop_local_atom;
+#endif
+
 int 
 ProcChangeProperty(ClientPtr client)
 {	      
