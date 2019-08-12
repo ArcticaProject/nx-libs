@@ -109,6 +109,9 @@ static Bool nxagentGetFontServerPath(char * fontServerPath, int size);
 
 static char * nxagentMakeScalableFontName(const char *fontName, int scalableResolution);
 
+Bool nxagentReconnectFailedFonts(void *p0);
+static void nxagentVerifySingleFontPath(char **dest, const char *fontDir);
+
 RESTYPE RT_NX_FONT;
 
 #ifdef NXAGENT_RECONNECT_FONT_DEBUG

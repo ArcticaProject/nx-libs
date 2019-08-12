@@ -185,6 +185,19 @@ WindowPtr nxagentViewportFrameBelow;
 Bool nxagentCreateScreenResources(ScreenPtr pScreen);
 void nxagentPrintAgentGeometry(char *hdrMessage, char *prefix);
 
+static Bool nxagentIsParentOf(Display *d, XlibWindow possible_parent, XlibWindow candidate);
+static void freeDepths(DepthPtr depths, int num);
+static void nxagentShadowSetWindowOptions(void);
+int nxagentShadowInit(ScreenPtr pScreen, WindowPtr pWin);
+static Bool intersect(int ax1, int ay1, unsigned int aw, unsigned int ah,
+                      int bx1, int by1, unsigned int bw, unsigned int bh,
+                      int *x, int *y, unsigned int *w, unsigned int *h);
+static Bool intersect_bb(int ax1, int ay1, unsigned int aw, unsigned int ah,
+                         int bx1, int by1, unsigned int bw, unsigned int bh,
+                         int bbx1, int bby1, int bbx2, int bby2,
+                         int *x, int *y, unsigned int *w, unsigned int *h);
+static void nxagentAdjustCustomMode(ScreenPtr pScreen);
+static void nxagentDropOutput(RROutputPtr o);
 
 /*
  * These variables are for shadowing feature.

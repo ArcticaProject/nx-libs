@@ -140,6 +140,6 @@ void nxagentSynchronizeShmPixmap(DrawablePtr pDrawable, int xPict, int yPict,
                                      int wPict, int hPict);
 
 Bool nxagentPixmapOnShadowDisplay(PixmapPtr pMap);
-Bool nxagentFbOnShadowDisplay();
+Bool nxagentFbOnShadowDisplay(void);
 
 #endif /* __Pixmap_H__ */

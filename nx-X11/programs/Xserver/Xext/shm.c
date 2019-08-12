@@ -50,8 +50,7 @@ in this Software without prior written authorization from The Open Group.
 #include "gcstruct.h"
 #include "extnsionst.h"
 #include "servermd.h"
-#define _XSHM_SERVER_
-#include <X11/extensions/shmstr.h>
+#include "shmint.h"
 #include <nx-X11/Xfuncproto.h>
 
 #include "protocol-versions.h"

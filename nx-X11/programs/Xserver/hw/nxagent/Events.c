@@ -293,6 +293,9 @@ int nxagentCheckWindowConfiguration(XConfigureEvent* X);
 
 void nxagentRemoveDuplicatedKeys(XEvent *X);
 
+void nxagentShadowSwitchResizeMode(ScreenPtr pScreen);
+int nxagentHandleRRScreenChangeNotify(XEvent *X);
+
 void ProcessInputEvents(void)
 {
   #ifdef NX_DEBUG_INPUT

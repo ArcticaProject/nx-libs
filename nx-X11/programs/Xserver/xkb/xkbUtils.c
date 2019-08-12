@@ -48,6 +48,8 @@ extern Bool noKME; /* defined in os/utils.c */
 
 int	XkbDisableLockActions = 0;
 
+void XkbComputeCompatState(XkbSrvInfoPtr xkbi);
+
 /***====================================================================***/
 
 #ifndef RETURN_SHOULD_REPEAT

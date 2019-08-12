@@ -83,6 +83,8 @@ const CARD8	glyphDepths[GlyphFormatNum] = { 1, 4, 8, 16, 32 };
 
 GlyphHashRec	globalGlyphs[GlyphFormatNum];
 
+void GlyphExtents(int nlist, GlyphListPtr list, GlyphPtr * glyphs, BoxPtr extents);
+
 GlyphHashSetPtr
 FindGlyphHashSet (CARD32 filled)
 {

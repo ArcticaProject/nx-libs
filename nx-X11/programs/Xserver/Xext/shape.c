@@ -61,6 +61,8 @@ typedef	RegionPtr (*CreateDftPtr)(
 	WindowPtr /* pWin */
 	);
 
+void ShapeExtensionInit(void);
+
 static int ShapeFreeClient(
 	void * /* data */,
 	XID /* id */

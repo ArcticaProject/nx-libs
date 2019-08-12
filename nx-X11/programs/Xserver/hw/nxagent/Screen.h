@@ -72,7 +72,7 @@ extern short nxagentShadowUid;
 void nxagentSetScreenInfo(ScreenInfo *screenInfo);
 void nxagentSetPixmapFormats(ScreenInfo *screenInfo);
 
-void nxagentPrintGeometry();
+void nxagentPrintGeometry(void);
 
 extern Window nxagentDefaultWindows[MAXSCREENS];
 extern Window nxagentInputWindows[MAXSCREENS];

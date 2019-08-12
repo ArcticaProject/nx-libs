@@ -86,6 +86,8 @@ extern void fbPutImage (DrawablePtr pDrawable, GCPtr pGC, int depth,
 
 extern int nxagentImageLength(int, int, int, int, int);
 
+void ShmExtensionInit(void);
+
 void
 ShmExtensionInit(void)
 {
@@ -167,12 +169,8 @@ ShmExtensionInit(void)
 }
 
 static void
-nxagent_miShmPutImage(dst, pGC, depth, format, w, h, sx, sy, sw, sh, dx, dy, data)
-    DrawablePtr dst;
-    GCPtr	pGC;
-    int		depth, w, h, sx, sy, sw, sh, dx, dy;
-    unsigned int format;
-    char 	*data;
+nxagent_miShmPutImage(DrawablePtr dst, GCPtr pGC, int depth, unsigned int format, int w, int h,
+	          int sx, int sy, int sw, int sh, int dx, int dy, char *data)
 {
     PixmapPtr pmap;
     GCPtr putGC;
@@ -203,12 +201,8 @@ nxagent_miShmPutImage(dst, pGC, depth, format, w, h, sx, sy, sw, sh, dx, dy, dat
 }
 
 static void
-miShmPutImage(dst, pGC, depth, format, w, h, sx, sy, sw, sh, dx, dy, data)
-    DrawablePtr dst;
-    GCPtr	pGC;
-    int		depth, w, h, sx, sy, sw, sh, dx, dy;
-    unsigned int format;
-    char 	*data;
+miShmPutImage(DrawablePtr dst, GCPtr pGC, int depth, unsigned int format, int w, int h,
+	          int sx, int sy, int sw, int sh, int dx, int dy, char *data)
 {
     /* Careful! This wrapper DEACTIVATES the trap! */
 
@@ -223,12 +217,8 @@ miShmPutImage(dst, pGC, depth, format, w, h, sx, sy, sw, sh, dx, dy, data)
 
 
 static void
-fbShmPutImage(dst, pGC, depth, format, w, h, sx, sy, sw, sh, dx, dy, data)
-    DrawablePtr dst;
-    GCPtr	pGC;
-    int		depth, w, h, sx, sy, sw, sh, dx, dy;
-    unsigned int format;
-    char 	*data;
+fbShmPutImage(DrawablePtr dst, GCPtr pGC, int depth, unsigned int format, int w, int h,
+	          int sx, int sy, int sw, int sh, int dx, int dy, char *data)
 {
 #ifdef NXAGENT_SERVER
     int length;
@@ -298,8 +288,7 @@ fbShmPutImage(dst, pGC, depth, format, w, h, sx, sy, sw, sh, dx, dy, data)
 }
 
 static int
-ProcShmPutImage(client)
-    register ClientPtr client;
+ProcShmPutImage(register ClientPtr client)
 {
     register GCPtr pGC;
     register DrawablePtr pDraw;
@@ -435,12 +424,7 @@ ProcShmPutImage(client)
 
 
 static PixmapPtr
-nxagent_fbShmCreatePixmap (pScreen, width, height, depth, addr)
-    ScreenPtr	pScreen;
-    int		width;
-    int		height;
-    int		depth;
-    char	*addr;
+nxagent_fbShmCreatePixmap (ScreenPtr pScreen, int width, int height, int depth, char *addr)
 {
     register PixmapPtr pPixmap;
 
@@ -471,12 +455,7 @@ nxagent_fbShmCreatePixmap (pScreen, width, height, depth, addr)
 }
 
 static PixmapPtr
-fbShmCreatePixmap (pScreen, width, height, depth, addr)
-    ScreenPtr	pScreen;
-    int		width;
-    int		height;
-    int		depth;
-    char	*addr;
+fbShmCreatePixmap (ScreenPtr pScreen, int width, int height, int depth, char *addr)
 {
     PixmapPtr result;
 
@@ -491,8 +470,7 @@ fbShmCreatePixmap (pScreen, width, height, depth, addr)
 
 
 static int
-nxagent_ProcShmDispatch (client)
-    register ClientPtr	client;
+nxagent_ProcShmDispatch (register ClientPtr client)
 {
     REQUEST(xReq);
 
@@ -567,8 +545,7 @@ ProcShmDispatch (register ClientPtr client)
 }
 
 static int
-SProcShmDispatch (client)
-    register ClientPtr	client;
+SProcShmDispatch (register ClientPtr client)
 {
     REQUEST(xReq);
 

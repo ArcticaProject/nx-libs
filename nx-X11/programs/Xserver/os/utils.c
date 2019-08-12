@@ -240,8 +240,8 @@ Bool noXvExtension = FALSE;
 
 #ifdef NX_TRANS_EXIT
 
-void (*OsVendorStartRedirectErrorFProc)() = NULL;
-void (*OsVendorEndRedirectErrorFProc)() = NULL;
+void (*OsVendorStartRedirectErrorFProc)(void) = NULL;
+void (*OsVendorEndRedirectErrorFProc)(void) = NULL;
 
 #endif
 
@@ -284,6 +284,10 @@ extern char dispatchExceptionAtReset;
 /* Extension enable/disable in miinitext.c */
 extern Bool EnableDisableExtension(char *name, Bool enable);
 extern void EnableDisableExtensionError(char *name, Bool enable);
+
+extern size_t strlcat(char *dst, const char *src, size_t siz);
+
+int SmartScheduleEnable (void);
 
 OsSigHandlerPtr
 OsSignal(sig, handler)

@@ -50,6 +50,8 @@
 extern Bool nxagentWMIsRunning;
 extern char *nxagentKeystrokeFile;
 
+static char *checkKeystrokeFile(char *filename);
+
 #ifdef NX_DEBUG_INPUT
 int nxagentDebugInputDevices = False;
 unsigned long nxagentLastInputDevicesDumpTime = 0;

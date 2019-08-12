@@ -135,7 +135,11 @@ int (*SwappedUntrustedProcVector[256])(
     ClientPtr /*client*/
 );
 
+void SecurityExtensionInit(void);
+
 #ifdef NXAGENT_SERVER
+
+char *_NXGetPolicyFilePath(const char *path);
 
 /*
  * This function returns the SecurityPolicy

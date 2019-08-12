@@ -59,6 +59,8 @@ typedef struct _CompositeClient {
     (pClient)->devPrivates[CompositeClientPrivIndex].ptr)
 #endif /* !edefined(NXAGENT_SERVER) */
 
+void CompositeExtensionInit (void);
+
 static void
 CompositeClientCallback (CallbackListPtr	*list,
 			 void		*closure,

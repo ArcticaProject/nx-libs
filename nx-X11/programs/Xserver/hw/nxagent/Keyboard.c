@@ -92,6 +92,9 @@ void nxagentKeycodeConversionSetup(void);
 static void nxagentWriteKeyboardDir(void);
 static void nxagentWriteKeyboardFile(char *rules, char *model, char *layout, char *variant, char *options);
 
+int ProcXkbInhibited(register ClientPtr client);
+static void nxagentXkbClearNames(void);
+
 #endif /* XKB */
 
 /*

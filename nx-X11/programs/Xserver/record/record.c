@@ -136,6 +136,8 @@ static int numEnabledRCAPs;
     } \
 }
 
+void RecordExtensionInit(void);
+
 static int RecordDeleteContext(
     void * /*value*/,
     XID /*id*/

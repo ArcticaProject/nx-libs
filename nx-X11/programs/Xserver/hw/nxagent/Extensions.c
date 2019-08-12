@@ -78,6 +78,9 @@ static Bool nxagentRandRCrtcSet (ScreenPtr pScreen, RRCrtcPtr crtc,
 				 RRModePtr mode, int x, int y,
 				 Rotation rotation, int numOutputs,
 				 RROutputPtr *outputs);
+
+static void nxagentRandRSetWindowsSize(int width, int height);
+
 #endif
 
 #ifdef __DARWIN__

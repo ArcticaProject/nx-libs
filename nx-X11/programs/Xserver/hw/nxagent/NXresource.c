@@ -141,9 +141,10 @@ Equipment Corporation.
 
 #ifdef NXAGENT_SERVER
 static int nxagentResChangedFlag = 0;
-#endif
 
-#ifdef NXAGENT_SERVER
+int nxagentFindClientResource(int client, RESTYPE type, void * value);
+int nxagentSwitchResourceType(int client, RESTYPE type, void * value);
+
 int nxagentFindClientResource(int client, RESTYPE type, void * value)
 {
   ResourcePtr pResource;

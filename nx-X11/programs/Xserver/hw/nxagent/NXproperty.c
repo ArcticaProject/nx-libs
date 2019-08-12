@@ -105,6 +105,12 @@ extern WindowPtr nxagentGetClipboardWindow(Atom, WindowPtr);
 extern Atom mcop_local_atom;
 #endif
 
+int
+GetWindowProperty(WindowPtr pWin, Atom property, long longOffset, long longLength,
+                      Bool delete, Atom type, Atom *actualType, int *format,
+                          unsigned long *nItems, unsigned long *bytesAfter,
+                              unsigned char **propData);
+
 int 
 ProcChangeProperty(ClientPtr client)
 {	      
@@ -560,19 +566,10 @@ ProcGetProperty(ClientPtr client)
 /* FIXME: should be moved to a different file, is not derived from
    dix */
 int
-GetWindowProperty(pWin, property, longOffset, longLength, delete,
-            type, actualType, format, nItems, bytesAfter, propData )
-    WindowPtr	        pWin;
-    Atom		property;
-    long		longOffset;
-    long		longLength;
-    Bool		delete;
-    Atom		type;
-    Atom		*actualType;
-    int			*format;
-    unsigned long	*nItems;
-    unsigned long	*bytesAfter;
-    unsigned char	**propData;
+GetWindowProperty(WindowPtr pWin, Atom property, long longOffset, long longLength,
+                      Bool delete, Atom type, Atom *actualType, int *format,
+                          unsigned long *nItems, unsigned long *bytesAfter,
+                              unsigned char **propData)
 {
     PropertyPtr pProp, prevProp;
     unsigned long n, len, ind;

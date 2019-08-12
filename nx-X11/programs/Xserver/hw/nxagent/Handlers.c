@@ -119,6 +119,9 @@ extern unsigned long nxagentLastInputDevicesDumpTime;
 extern void nxagentDumpInputDevicesState(void);
 #endif
 
+void nxagentHandleCollectInputFocusEvent(int resource);
+Bool nxagentCollectInputFocusPredicate(Display *display, XEvent *X, XPointer ptr);
+
 /*
  * Used in the handling of the X desktop
  * manager protocol.

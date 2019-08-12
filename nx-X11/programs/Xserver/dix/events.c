@@ -247,6 +247,8 @@ static WindowPtr XYToWindow(
 
 static Bool CheckMotion(xEvent *xE);
 
+void ReinitializeRootWindow(WindowPtr win, int xoff, int yoff);
+
 extern int lastEvent;
 
 static Mask lastEventMask;

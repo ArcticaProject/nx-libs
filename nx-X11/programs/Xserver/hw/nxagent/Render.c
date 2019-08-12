@@ -184,6 +184,32 @@ Bool nxagentReconnectAllPicture(void *);
 
 Bool nxagentDisconnectAllPicture(void);
 
+void nxagentCleanGlyphs(xGlyphInfo  *gi, int nglyphs, CARD8 *images,
+                            int depth, Display *dpy);
+
+Bool nxagentFillGlyphSet(GlyphSetPtr pGly);
+
+void nxagentRenderCreateSolidFill(PicturePtr pPicture, xRenderColor *color);
+
+void nxagentRenderCreateLinearGradient(PicturePtr pPicture, xPointFixed *p1,
+                                           xPointFixed *p2, int nStops,
+                                               xFixed *stops,
+				                   xRenderColor *colors);
+
+void nxagentRenderCreateRadialGradient(PicturePtr pPicture, xPointFixed *inner,
+                                           xPointFixed *outer,
+                                               xFixed innerRadius,
+                                                   xFixed outerRadius,
+                                                       int nStops,
+                                                           xFixed *stops,
+                                                               xRenderColor *colors);
+
+void nxagentRenderCreateConicalGradient(PicturePtr pPicture,
+                                            xPointFixed *center,
+                                                xFixed angle, int nStops,
+                                                    xFixed *stops,
+                                                        xRenderColor *colors);
+
 #ifdef NXAGENT_RENDER_CLEANUP
 
 #include <stdio.h>

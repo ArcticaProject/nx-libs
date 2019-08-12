@@ -72,6 +72,8 @@ static DISPATCH_PROC(ProcDPMSCapable);
 static DISPATCH_PROC(SProcDPMSCapable);
 static void DPMSResetProc(ExtensionEntry* extEntry);
 
+void DPMSExtensionInit(void);
+
 void
 DPMSExtensionInit(void)
 {

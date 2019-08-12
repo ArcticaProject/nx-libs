@@ -52,4 +52,6 @@ extern ServerGrabInfoRec nxagentGrabServerInfo;
 
 void nxagentNotifyConnection(int fd, int ready, void *data);
 
+void ddxBeforeReset(void);
+
 #endif /* __Init_H__ */

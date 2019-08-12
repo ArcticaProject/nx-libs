@@ -93,6 +93,8 @@ static SyncCounter **SysCounterList = NULL;
 #define XSyncCAAllTrigger \
     (XSyncCACounter | XSyncCAValueType | XSyncCAValue | XSyncCATestType)
 
+void SyncExtensionInit(void);
+
 static int
 FreeAlarm(
     void * /* addr */,

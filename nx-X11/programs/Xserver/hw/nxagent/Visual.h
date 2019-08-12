@@ -76,6 +76,6 @@ Colormap nxagentDefaultVisualColormap(Visual *visual);
 
 Visual nxagentAlphaVisual;
 
-void nxagentInitAlphaVisual();
+void nxagentInitAlphaVisual(void);
 
 #endif /* __Visual_H__ */

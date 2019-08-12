@@ -47,6 +47,11 @@
 #undef  TEST
 #undef  DEBUG
 
+void nxagentCompositeExtensionInit(void);
+void nxagentRedirectDefaultWindows(void);
+void nxagentRedirectWindow(WindowPtr pWin);
+void nxagentUnredirectWindow(WindowPtr pWin);
+
 /*
  * Set if the composite extension is supported
  * by the remote display.

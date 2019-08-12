@@ -56,6 +56,15 @@ extern bool_t xdr_opaque_auth(XDR *, struct opaque_auth *);
 #include <rpc/auth_des.h>
 #endif
 
+XID SecureRPCCheck (unsigned short data_length, char *data,
+                        ClientPtr client, char **reason);
+void SecureRPCInit (void);
+int SecureRPCAdd (unsigned short data_length, char *data, XID id);
+int SecureRPCReset (void);
+XID SecureRPCToID (unsigned short data_length, char *data);
+int  SecureRPCFromID (XID id, unsigned short *data_lenp, char **datap);
+int SecureRPCRemove (unsigned short data_length, char *data);
+
 static enum auth_stat why;
 
 static char * 

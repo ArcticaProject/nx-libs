@@ -79,6 +79,8 @@ static DISPATCH_PROC(SProcScreenSaverSetAttributes);
 static DISPATCH_PROC(SProcScreenSaverUnsetAttributes);
 static DISPATCH_PROC(SProcScreenSaverSuspend);
 
+void ScreenSaverExtensionInit(void);
+
 static Bool ScreenSaverHandle (
 	ScreenPtr /* pScreen */,
 	int /* xstate */,

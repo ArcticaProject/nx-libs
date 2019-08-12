@@ -346,6 +346,8 @@ extern int XkbProcessArguments(
 
 extern	void	XkbSetExtension(DeviceIntPtr device, ProcessInputProc proc);
 
+extern  void    XkbFreePrivates(DeviceIntPtr device);
+
 extern	void	XkbFreeCompatMap(
     XkbDescPtr			/* xkb */,
     unsigned int		/* which */,

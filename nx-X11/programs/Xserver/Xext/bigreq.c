@@ -43,6 +43,8 @@ from The Open Group.
 static unsigned char XBigReqCode;
 #endif
 
+void BigReqExtensionInit(void);
+
 static void BigReqResetProc(
     ExtensionEntry * /* extEntry */
 );

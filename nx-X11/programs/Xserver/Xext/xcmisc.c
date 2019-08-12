@@ -45,6 +45,8 @@ from The Open Group.
 static unsigned char XCMiscCode;
 #endif
 
+void XCMiscExtensionInit(void);
+
 static void XCMiscResetProc(
     ExtensionEntry * /* extEntry */
 );

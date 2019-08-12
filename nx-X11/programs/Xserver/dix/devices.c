@@ -73,8 +73,6 @@ SOFTWARE.
 #include "swaprep.h"
 #include "dixevents.h"
 
-extern void XkbFreePrivates(DeviceIntPtr device);
-
 DeviceIntPtr
 AddInputDevice(DeviceProc deviceProc, Bool autoStart)
 {

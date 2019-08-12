@@ -168,6 +168,10 @@ static void nxagentReconnectWindow(void *, XID, void *);
 static void nxagentReconfigureWindow(void *, XID, void *);
 static int nxagentForceExposure(WindowPtr pWin, void * ptr);
 
+void nxagentSetVersionProperty(WindowPtr pWin);
+void nxagentSetWMState(WindowPtr pWin, CARD32 desired);
+void nxagentEmptyBackingStoreRegion(void * param0, XID param1, void * data_buffer);
+
 /* by dimbor */
 typedef struct
 {

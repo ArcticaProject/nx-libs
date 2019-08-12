@@ -54,13 +54,13 @@ typedef UnpackResourceRec *UnpackResourcePtr;
 
 extern UnpackResourceRec nxagentUnpackResources[];
 
-void nxagentInitSplitResources();
-void nxagentInitUnpackResources();
+void nxagentInitSplitResources(void);
+void nxagentInitUnpackResources(void);
 
-SplitResourcePtr nxagentAllocSplitResource();
+SplitResourcePtr nxagentAllocSplitResource(void);
 void nxagentFreeSplitResource(SplitResourcePtr pResource);
 
-UnpackResourcePtr nxagentAllocUnpackResource();
+UnpackResourcePtr nxagentAllocUnpackResource(void);
 void nxagentFreeUnpackResource(UnpackResourcePtr pResource);
 
 #define nxagentSplitResource(pDrawable) \
@@ -88,5 +88,9 @@ void nxagentReleaseAllSplits(void);
 
 void nxagentSetCorruptedTimestamp(DrawablePtr pDrawable);
 void nxagentResetCorruptedTimestamp(DrawablePtr pDrawable);
+
+void nxagentFreeSplit(int resource);
+void nxagentWaitDrawable(DrawablePtr pDrawable);
+void nxagentWaitCommitEvent(int resource);
 
 #endif /* __Split_H__ */

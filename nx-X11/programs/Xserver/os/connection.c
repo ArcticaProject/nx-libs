@@ -152,6 +152,8 @@ static fd_set SavedAllSockets;
 static fd_set SavedClientsWithInput;
 int GrabInProgress = 0;
 
+void RejectWellKnownSockets(void);
+
 static void
 QueueNewConnections(int curconn, int ready, void *data);
 
@@ -506,7 +508,7 @@ CreateWellKnownSockets(void)
 extern void _XSERVTransSocketRejectConnection(XtransConnInfo);
 
 void
-RejectWellKnownSockets ()
+RejectWellKnownSockets (void)
 {
     int i;
 
@@ -521,7 +523,7 @@ RejectWellKnownSockets ()
 #else /* #ifdef NX_TRANS_SOCKET */
 
 void
-RejectWellKnownSockets ()
+RejectWellKnownSockets (void)
 {
 }
 

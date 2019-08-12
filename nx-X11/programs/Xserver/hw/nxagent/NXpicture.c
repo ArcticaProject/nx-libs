@@ -70,6 +70,7 @@ PicturePtr CreatePicture (Picture       pid,
                           int           *error);
 static PicturePtr createSourcePicture(void);
 int FreePicture (void *value, XID pid);
+Bool nxagentReconnectAllPictFormat(void *p);
 
 #include "../../render/picture.c"
 

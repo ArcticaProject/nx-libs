@@ -131,13 +131,13 @@ extern int OsVendorVErrorFFatal;
  * different file
  */
 
-extern void (*OsVendorStartRedirectErrorFProc)();
-extern void (*OsVendorEndRedirectErrorFProc)();
+extern void (*OsVendorStartRedirectErrorFProc)(void);
+extern void (*OsVendorEndRedirectErrorFProc)(void);
 
 extern void SetVendorRelease(int release);
 
-void OsVendorStartRedirectErrorFFunction();
-void OsVendorEndRedirectErrorFFunction();
+void OsVendorStartRedirectErrorFFunction(void);
+void OsVendorEndRedirectErrorFFunction(void);
 
 /*
  * Called by InitGlobals() in the

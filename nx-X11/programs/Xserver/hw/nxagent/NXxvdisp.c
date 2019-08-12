@@ -60,6 +60,9 @@ SOFTWARE.
 #undef  TEST
 #undef  DEBUG
 
+int nxagent_ProcXvDispatch(ClientPtr client);
+int nxagent_SProcXvDispatch(ClientPtr client);
+
 /*
 ** ProcXvDispatch
 **

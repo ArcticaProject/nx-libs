@@ -82,6 +82,7 @@ Equipment Corporation.
 
 static Bool doOpenFont(ClientPtr client, OFclosurePtr c);
 static Bool doListFontsAndAliases(ClientPtr client, LFclosurePtr c);
+int nxOpenFont(ClientPtr client, XID fid, Mask flags, unsigned lenfname, char *pfontname);
 
 #include "../../dix/dixfonts.c"
 
@@ -1377,12 +1378,7 @@ finish:
 }
 
 int
-nxOpenFont(client, fid, flags, lenfname, pfontname)
-    ClientPtr   client;
-    XID         fid;
-    Mask        flags;
-    unsigned    lenfname;
-    char       *pfontname;
+nxOpenFont(ClientPtr client, XID fid, Mask flags, unsigned lenfname, char *pfontname)
 {
     nxFsPtr      fss;
     LFclosurePtr c;

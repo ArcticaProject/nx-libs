@@ -65,6 +65,8 @@ extern VisualPtr glxMatchVisual(ScreenPtr pScreen,
 				ScreenPtr pMatchScreen);
 #endif
 
+extern Bool PanoramiXExtensionDisabledHack;
+
 #if 0
 static unsigned char PanoramiXReqCode = 0;
 #endif
@@ -96,6 +98,8 @@ _X_EXPORT unsigned long XRT_COLORMAP;
 /*
  *	Function prototypes
  */
+
+void PanoramiXExtensionInit(int argc, char *argv[]);
 
 static int panoramiXGeneration;
 static int ProcPanoramiXDispatch(ClientPtr client); 
@@ -1003,7 +1007,6 @@ ProcXineramaIsActive(ClientPtr client)
     {
 	/* The following hack fools clients into thinking that Xinerama
 	 * is disabled even though it is not. */
-	extern Bool PanoramiXExtensionDisabledHack;
 	rep.state = !noPanoramiXExtension && !PanoramiXExtensionDisabledHack;
     }
 #else

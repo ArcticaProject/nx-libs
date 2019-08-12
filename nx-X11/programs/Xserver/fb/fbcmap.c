@@ -43,6 +43,8 @@ THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #ifndef XFree86Server
 ColormapPtr FbInstalledMaps[MAXSCREENS];
 
+Bool fbHasVisualTypes (int depth);
+
 int
 fbListInstalledColormaps(ScreenPtr pScreen, Colormap *pmaps)
 {

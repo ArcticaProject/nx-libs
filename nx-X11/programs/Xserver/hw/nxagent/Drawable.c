@@ -126,6 +126,10 @@ unsigned long nxagentGetColor(DrawablePtr pDrawable, int xPixel, int yPixel);
 unsigned long nxagentGetDrawableColor(DrawablePtr pDrawable);
 unsigned long nxagentGetRegionColor(DrawablePtr pDrawable, RegionPtr pRegion);
 
+void nxagentPointsToDirtyRegion(DrawablePtr pDrawable, int mode, int nPoints, xPoint *pPoints);
+void nxagentSendBackgroundExpose(WindowPtr pWin, PixmapPtr pBackground, RegionPtr pExpose);
+int nxagentClipAndSendClearExpose(WindowPtr pWin, void * ptr);
+
 int nxagentSkipImage = 0;
 
 static int nxagentTooManyImageData(void)

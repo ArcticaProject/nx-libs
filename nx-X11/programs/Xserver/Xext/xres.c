@@ -22,6 +22,8 @@
 
 #include "protocol-versions.h"
 
+void ResExtensionInit(void);
+
 static int
 ProcXResQueryVersion (ClientPtr client)
 {

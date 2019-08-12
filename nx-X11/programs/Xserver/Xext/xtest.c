@@ -64,6 +64,8 @@ extern int DeviceValuator;
 #include "panoramiXsrv.h"
 #endif
 
+void XTestExtensionInit(void);
+
 static void XTestResetProc(
     ExtensionEntry * /* extEntry */
 );

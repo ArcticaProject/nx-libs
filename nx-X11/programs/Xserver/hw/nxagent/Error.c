@@ -107,6 +107,11 @@ void nxagentGetClientsPath(void);
 
 static int nxagentPrintError(Display *dpy, XErrorEvent *event, FILE *fp);
 
+static void nxagentOpenClientsLogFile(void);
+static void nxagentCloseClientsLogFile(void);
+static char *nxagentGetHomePath(void);
+static char *nxagentGetRootPath(void);
+
 /* declare an error handler that does not exit when an error
  * event is caught.
  */

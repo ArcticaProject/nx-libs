@@ -151,6 +151,37 @@ static char szAgentUTF8_STRING[] = "UTF8_STRING";
 static char szAgentNX_CUT_BUFFER_CLIENT[] = "NX_CUT_BUFFER_CLIENT";
 
 /*
+ * Save the values queried from X server.
+ */
+
+Bool nxagentValidServerTargets(Atom target);
+void nxagentSendSelectionNotify(Atom property);
+void nxagentTransferSelection(int resource);
+void nxagentCollectPropertyEvent(int resource);
+void nxagentResetSelectionOwner(void);
+void nxagentNotifyConvertFailure(ClientPtr client, Window requestor,
+                                     Atom selection, Atom target, Time time);
+int nxagentSendNotify(xEvent *event);
+
+void nxagentPrintClipboardStat(char *);
+const char * GetXErrorString(int code);
+void nxagentSetSelectionCallback(CallbackListPtr *callbacks, void *data, void *args);
+
+Status SendSelectionNotifyEventToServer(XSelectionEvent *event_to_send);
+int SendEventToClient(ClientPtr client, xEvent *pEvents);
+int SendSelectionNotifyEventToClient(ClientPtr client,
+                                     Time time,
+                                     Window requestor,
+                                     Atom selection,
+                                     Atom target,
+                                     Atom property);
+void nxagentClearSelectionOwner(SelectionOwner *owner);
+void nxagentStoreSelectionOwner(SelectionOwner *owner, Selection *sel);
+int nxagentFindLastSelectionOwnerIndex(Atom sel);
+void nxagentReplyRequestSelection(XEvent *X, Bool success);
+void nxagentInitSelectionOwner(SelectionOwner *owner, Atom selection);
+
+/*
  * some helpers for debugging output
  */
 

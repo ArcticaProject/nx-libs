@@ -118,6 +118,8 @@ Equipment Corporation.
 
 #include "../../dix/window.c"
 
+void nxagentClearSplash(WindowPtr pW);
+
 extern Bool nxagentWMIsRunning;
 extern Bool nxagentScreenTrap;
 

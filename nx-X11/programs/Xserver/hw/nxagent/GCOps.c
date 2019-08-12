@@ -105,6 +105,60 @@ RegionPtr nxagentBitBlitHelper(GC *pGC);
  */
 
 void nxagentFillSpans(DrawablePtr pDrawable, GCPtr pGC, int nSpans,
+                          xPoint *pPoints, int *pWidths, int fSorted);
+void nxagentSetSpans(DrawablePtr pDrawable, GCPtr pGC, char *pSrc,
+                         xPoint *pPoints, int *pWidths, int nSpans, int fSorted);
+void nxagentGetSpans(DrawablePtr pDrawable, int maxWidth, xPoint *pPoints,
+                         int *pWidths, int nSpans, char *pBuffer);
+void nxagentQueryBestSize(int class, unsigned short *pwidth,
+                              unsigned short *pheight, ScreenPtr pScreen);
+RegionPtr nxagentBitBlitHelper(GC *pGC);
+int nxagentWindowIsPopup(DrawablePtr pDrawable);
+int nxagentDeferCopyArea(DrawablePtr pSrcDrawable, DrawablePtr pDstDrawable,
+                            GCPtr pGC, int srcx, int srcy, int width,
+                                int height, int dstx, int dsty);
+RegionPtr nxagentCopyArea(DrawablePtr pSrcDrawable, DrawablePtr pDstDrawable,
+                               GCPtr pGC, int srcx, int srcy, int width,
+                                   int height, int dstx, int dsty);
+RegionPtr nxagentCopyPlane(DrawablePtr pSrcDrawable, DrawablePtr pDstDrawable,
+                               GCPtr pGC, int srcx, int srcy, int width, int height,
+                                   int dstx, int dsty, unsigned long plane);
+void nxagentPolyPoint(DrawablePtr pDrawable, GCPtr pGC, int mode,
+                          int nPoints, xPoint *pPoints);
+void nxagentPolyLines(DrawablePtr pDrawable, GCPtr pGC, int mode,
+                          int nPoints, xPoint *pPoints);
+void nxagentPolySegment(DrawablePtr pDrawable, GCPtr pGC,
+                            int nSegments, xSegment *pSegments);
+void nxagentPolyRectangle(DrawablePtr pDrawable, GCPtr pGC,
+                              int nRectangles, xRectangle *pRectangles);
+void nxagentPolyArc(DrawablePtr pDrawable, GCPtr pGC,
+                        int nArcs, xArc *pArcs);
+void nxagentFillPolygon(DrawablePtr pDrawable, GCPtr pGC, int shape,
+                            int mode, int nPoints, xPoint *pPoints);
+void nxagentPolyFillRect(DrawablePtr pDrawable, GCPtr pGC,
+                             int nRectangles, xRectangle *pRectangles);
+void nxagentPolyFillArc(DrawablePtr pDrawable, GCPtr pGC,
+                            int nArcs, xArc *pArcs);
+int nxagentPolyText8(DrawablePtr pDrawable, GCPtr pGC, int x,
+                         int y, int count, char *string);
+int nxagentPolyText16(DrawablePtr pDrawable, GCPtr pGC, int x,
+                          int y, int count, unsigned short *string);
+void nxagentImageText8(DrawablePtr pDrawable, GCPtr pGC, int x,
+                           int y, int count, char *string);
+void nxagentImageText16(DrawablePtr pDrawable, GCPtr pGC, int x,
+                            int y, int count, unsigned short *string);
+void nxagentImageGlyphBlt(DrawablePtr pDrawable, GCPtr pGC, int x, int y,
+                              unsigned int nGlyphs, CharInfoPtr *pCharInfo,
+                                  void * pGlyphBase);
+void nxagentPolyGlyphBlt(DrawablePtr pDrawable, GCPtr pGC, int x, int y,
+                             unsigned int nGlyphs, CharInfoPtr *pCharInfo,
+                                 void * pGlyphBase);
+void nxagentPushPixels(GCPtr pGC, PixmapPtr pBitmap, DrawablePtr pDrawable,
+                           int width, int height, int x, int y);
+
+
+
+void nxagentFillSpans(DrawablePtr pDrawable, GCPtr pGC, int nSpans,
                           xPoint *pPoints, int *pWidths, int fSorted)
 {
   if ((pDrawable)->type == DRAWABLE_PIXMAP)

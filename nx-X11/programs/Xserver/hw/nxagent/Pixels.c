@@ -50,6 +50,8 @@ void Put16(unsigned int value, char *buffer, int order);
 void Put24(unsigned int value, char *buffer, int order);
 void Put32(unsigned int value, char *buffer, int order);
 
+int nxagentUniquePixels(XImage *image);
+
 static int nxagentComparePixels(const void *p1, const void *p2)
 {
   int pixel1 = *((int *) p1);

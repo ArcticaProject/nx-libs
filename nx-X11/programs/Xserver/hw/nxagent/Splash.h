@@ -40,6 +40,6 @@ extern int nxagentXdmcpUp;
 extern Window nxagentSplashWindow;
 
 extern void nxagentShowSplashWindow(Window);
-extern void nxagentRemoveSplashWindow();
+extern void nxagentRemoveSplashWindow(void);
 
 #endif /* __Splash_H__ */
