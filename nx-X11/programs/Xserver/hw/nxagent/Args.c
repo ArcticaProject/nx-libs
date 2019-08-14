@@ -1041,6 +1041,21 @@ int ddxProcessArgument(int argc, char *argv[], int i)
     return 0;
   }
 
+  if (!strcmp(argv[i], "-autograb"))
+  {
+    nxagentChangeOption(AutoGrab, True);
+
+    return 1;
+  }
+
+  if (!strcmp(argv[i], "-inputlock"))
+  {
+    nxagentChangeOption(InputLock, True);
+
+    return 1;
+  }
+
+
   /*
    * Disable Xinerama (i.e. fake it in Screen.c) if somehow Xinerama support
    * has been disabled on the cmdline.
@@ -1537,6 +1552,32 @@ static void nxagentParseSingleOption(char *name, char *value)
     {
       fprintf(stderr, "Warning: Ignoring bad value '%s' for option 'keyconv'.\n",
               validateString(value));
+    }
+
+    return;
+  }
+  else if (!strcmp(name, "autograb"))
+  {
+    if (!strcmp(value, "0"))
+    {
+      nxagentChangeOption(AutoGrab, False);
+    }
+    else
+    {
+      nxagentChangeOption(AutoGrab, True);
+    }
+
+    return;
+  }
+  else if (!strcmp(name, "inputlock"))
+  {
+    if (!strcmp(value, "0"))
+    {
+      nxagentChangeOption(InputLock, False);
+    }
+    else
+    {
+      nxagentChangeOption(InputLock, True);
     }
 
     return;
@@ -2197,6 +2238,8 @@ void ddxUseMsg(void)
   ErrorF("-noignore              don't ignore pointer and keyboard configuration changes mandated by clients\n");
   ErrorF("-nokbreset             don't reset keyboard device if the session is resumed\n");
   ErrorF("-noxkblock             always allow applications to change layout through XKEYBOARD\n");
+  ErrorF("-autograb              enable autograb\n");
+  ErrorF("-inputlock             enable inputlock\n");
   ErrorF("-tile WxH              size of image tiles (minimum allowed: 32x32)\n");
   ErrorF("-keystrokefile file    file with keyboard shortcut definitions\n");
   ErrorF("-verbose               print more warning and error messages\n");

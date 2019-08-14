@@ -50,7 +50,9 @@ enum HandleEventResult
   doViewportRight,
   doViewportDown,
   doSwitchResizeMode,
-  doSwitchDeferMode
+  doSwitchDeferMode,
+  doAutoGrab,
+  doInputLock
 };
 
 extern CARD32 nxagentLastEventTime;

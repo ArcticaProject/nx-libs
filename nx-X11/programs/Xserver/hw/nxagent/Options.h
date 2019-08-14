@@ -450,6 +450,18 @@ typedef struct _AgentOptions
    * Convert evdev keycodes to pc105.
    */
   KeycodeConversionMode KeycodeConversion;
+
+  /*
+   * True if agent should grab the input in windowed mode whenever the
+   * agent window gets the focus
+   */
+  int AutoGrab;  /* Should be Bool but I do not want to include Xlib.h here */
+
+  /*
+   * True if the pointer is locked within the agent window (in windowed mode)
+   */
+  int InputLock;  /* Should be Bool but I do not want to include Xlib.h here */
+
 } AgentOptionsRec;
 
 typedef AgentOptionsRec *AgentOptionsPtr;
