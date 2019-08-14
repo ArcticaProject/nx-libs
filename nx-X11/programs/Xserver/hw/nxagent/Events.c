@@ -115,6 +115,15 @@
 #undef  TEST
 #undef  DEBUG
 
+/* debug individual subsystems */
+#undef DEBUG_AUTOGRAB
+
+/* aktivate subsystems if generic DEBUG is activated */
+#ifdef DEBUG
+#ifndef DEBUG_AUTOGRAB
+#define DEBUG_AUTOGRAB
+#endif
+#endif
 /*
  * Log begin and end of the important handlers.
  */
@@ -706,9 +715,9 @@ static void nxagentSwitchDeferMode(void)
 
 static void nxagentEnableAutoGrab(void)
 {
-#ifdef DEBUG
+  #ifdef DEBUG_AUTOGRAB
   fprintf(stderr, "enabling autograb\n");
-#endif
+  #endif
 
   nxagentGrabPointerAndKeyboard(NULL);
   nxagentChangeOption(AutoGrab, True);
@@ -717,9 +726,9 @@ static void nxagentEnableAutoGrab(void)
 
 static void nxagentDisableAutoGrab(void)
 {
-#ifdef DEBUG
+  #ifdef DEBUG_AUTOGRAB
   fprintf(stderr, "disabling autograb\n");
-#endif
+  #endif
 
   nxagentUngrabPointerAndKeyboard(NULL);
   nxagentChangeOption(AutoGrab, False);
@@ -1603,14 +1612,14 @@ FIXME: Don't enqueue the KeyRelease event if the key was
         {
           if (X.xfocus.window == nxagentDefaultWindows[0] && X.xfocus.mode == NotifyNormal)
           {
-            #ifdef DEBUG
+            #if defined(DEBUG) || defined(DEBUG_AUTOGRAB)
             fprintf(stderr, "%s: (FocusIn): grabbing\n", __func__);
 	    #endif
             nxagentGrabPointerAndKeyboard(NULL);
           }
 	  /*	  else
           {
-            #ifdef DEBUG
+            #if defined(DEBUG) || defined(DEBUG_AUTOGRAB)
             fprintf(stderr, "%s: (FocusIn): ungrabbing\n", __func__);
 	    #endif
             nxagentUngrabPointerAndKeyboard(NULL);
@@ -1706,7 +1715,7 @@ FIXME: Don't enqueue the KeyRelease event if the key was
           XGetInputFocus(nxagentDisplay, &w, &revert_to);
           if (w != nxagentDefaultWindows[0] && X.xfocus.mode == NotifyWhileGrabbed)
           {
-            #ifdef DEBUG
+            #if defined(DEBUG) || defined(DEBUG_AUTOGRAB)
             fprintf(stderr, "%s: (FocusOut): ungrabbing\n", __func__);
             #endif
             nxagentUngrabPointerAndKeyboard(NULL);
