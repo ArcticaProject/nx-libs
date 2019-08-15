@@ -1387,15 +1387,6 @@ FIXME: Use of nxagentParentWindow is strongly deprecated.
     nxagentChangeOption(BorderWidth, 1);
   }
 
-  nxagentLogoDepth = DefaultDepth(nxagentDisplay,
-                               DefaultScreen(nxagentDisplay)
-                              );
-
-  nxagentLogoBlack = 0x000000;
-  nxagentLogoRed   = 0xff0000;
-  nxagentLogoWhite = 0xffffff;
-  nxagentLogoGray  = 0x222222;
-
   #ifdef WATCH
 
   fprintf(stderr, "nxagentOpenDisplay: Watchpoint 5.1.\n");
@@ -2826,13 +2817,6 @@ Bool nxagentReconnectDisplay(void *p0)
   fprintf(stderr, "nxagentReconnectDisplay: Created agent's confine window with id [0x%x].\n",
               nxagentConfineWindow);
   #endif
-
-  nxagentLogoDepth = DefaultDepth(nxagentDisplay, DefaultScreen(nxagentDisplay));
-
-  nxagentLogoBlack = 0x000000;
-  nxagentLogoRed   = 0xff0000;
-  nxagentLogoWhite = 0xffffff;
-  nxagentLogoGray  = 0x222222;
 
   useXpmIcon = nxagentMakeIcon(nxagentDisplay, &nxagentIconPixmap, &nxagentIconShape);
 
