@@ -680,7 +680,7 @@ Bool nxagentReconnectSession(void)
   #endif
   saveAgentState("RUNNING");
 
-  nxagentRemoveSplashWindow(NULL);
+  nxagentRemoveSplashWindow();
 
   /*
    * We let the proxy flush the link on our behalf

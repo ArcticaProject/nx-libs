@@ -378,7 +378,7 @@ void nxagentPaintLogo(Window win, GC gc, int scale, int width, int height)
   #endif
 }
 
-void nxagentRemoveSplashWindow(WindowPtr pWin)
+void nxagentRemoveSplashWindow(void)
 {
   if (nxagentReconnectTrap)
     return;

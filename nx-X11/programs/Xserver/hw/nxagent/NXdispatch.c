@@ -380,7 +380,7 @@ Reply   Total	Cached	Bits In			Bits Out		Bits/Reply	  Ratio
 
         if (!nxagentWMPassed && (nxagentWMtimeout < currentDispatch))
         {
-          nxagentRemoveSplashWindow(NULL);
+          nxagentRemoveSplashWindow();
         }
 
         nxagentClients = nClients;
@@ -590,7 +590,7 @@ ProcReparentWindow(register ClientPtr client)
 
     if (!nxagentWMPassed)
     {
-      nxagentRemoveSplashWindow(pWin);
+      nxagentRemoveSplashWindow();
     }
 
     pParent = (WindowPtr)SecurityLookupWindow(stuff->parent, client,
