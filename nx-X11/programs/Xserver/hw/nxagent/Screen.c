@@ -3122,7 +3122,7 @@ int nxagentShadowPoll(PixmapPtr nxagentShadowPixmapPtr, GCPtr nxagentShadowGCPtr
   {
     if (!nxagentWMPassed)
     {
-      nxagentRemoveSplashWindow(NULL);
+      nxagentRemoveSplashWindow();
     }
 
     NXShadowExportChanges(&numRects, &ptBox);

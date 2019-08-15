@@ -48,7 +48,6 @@ extern Window nxagentSplashWindow;
 extern int nxagentWMPassed;
 
 extern void nxagentShowSplashWindow(Window);
-
-extern void nxagentRemoveSplashWindow(WindowPtr pWin);
+extern void nxagentRemoveSplashWindow();
 
 #endif /* __Splash_H__ */
