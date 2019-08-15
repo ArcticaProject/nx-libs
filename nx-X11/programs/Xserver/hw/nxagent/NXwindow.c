@@ -114,10 +114,6 @@ Equipment Corporation.
 #include "Drawable.h"
 #include "Colormap.h"
 
-/* prototypes (only MakeRootTile() required here) */
-
-static void MakeRootTile(WindowPtr pWin);
-
 #include "../../dix/window.c"
 
 extern Bool nxagentWMIsRunning;
@@ -132,71 +128,7 @@ extern Bool nxagentScreenTrap;
 #undef  TEST
 #undef  DEBUG
 
-WindowPtr nxagentRootTileWindow;
-
 extern void nxagentSetVersionProperty(WindowPtr pWin);
-
-void nxagentClearSplash(WindowPtr pW)
-{
-    if (!pW)
-        return;
-
-    ScreenPtr pScreen = pW->drawable.pScreen;
-
-    if (pW->backgroundState == BackgroundPixmap)
-    {
-        (*pScreen->DestroyPixmap)(pW->background.pixmap);
-    }
-
-    pW->backgroundState = BackgroundPixel;
-    pW->background.pixel = nxagentLogoBlack;
-
-    (*pScreen->ChangeWindowAttributes)(pW, CWBackPixmap|CWBackPixel);
-}
-
-static void
-MakeRootTile(WindowPtr pWin)
-{
-    ScreenPtr pScreen = pWin->drawable.pScreen;
-    GCPtr pGC;
-    unsigned char back[128];
-    int len = BitmapBytePad(sizeof(long));
-    register unsigned char *from, *to;
-    register int i, j;
-
-    pWin->background.pixmap = (*pScreen->CreatePixmap)(pScreen, 4, 4,
-						    pScreen->rootDepth, 0);
-
-    pWin->backgroundState = BackgroundPixmap;
-    pGC = GetScratchGC(pScreen->rootDepth, pScreen);
-    if (!pWin->background.pixmap || !pGC)
-	FatalError("could not create root tile");
-
-    {
-	CARD32 attributes[2];
-
-	attributes[0] = pScreen->whitePixel;
-	attributes[1] = pScreen->blackPixel;
-
-	(void)ChangeGC(pGC, GCForeground | GCBackground, attributes);
-    }
-
-   ValidateGC((DrawablePtr)pWin->background.pixmap, pGC);
-
-   from = (screenInfo.bitmapBitOrder == LSBFirst) ? _back_lsb : _back_msb;
-   to = back;
-
-   for (i = 4; i > 0; i--, from++)
-	for (j = len; j > 0; j--)
-	    *to++ = *from;
-
-   (*pGC->ops->PutImage)((DrawablePtr)pWin->background.pixmap, pGC, 1,
-		    0, 0, len, 4, 0, XYBitmap, (char *)back);
-
-   FreeScratchGC(pGC);
-
-   nxagentRootTileWindow = pWin;
-}
 
 void
 InitRootWindow(WindowPtr pWin)
@@ -252,21 +184,11 @@ InitRootWindow(WindowPtr pWin)
     pWin->optional->cursor = rootCursor;
     rootCursor->refcnt++;
 
-#ifndef NXAGENT_SPLASH
-    if (!blackRoot && !whiteRoot) {
-        MakeRootTile(pWin);
-        backFlag |= CWBackPixmap;
-    }
+    if (blackRoot)
+      pWin->background.pixel = pScreen->blackPixel;
     else
-#else
-    {
-        if (blackRoot)
-            pWin->background.pixel = pScreen->blackPixel;
-        else
-            pWin->background.pixel = pScreen->whitePixel;
-        backFlag |= CWBackPixel;
-    }
-#endif
+      pWin->background.pixel = pScreen->whitePixel;
+    backFlag |= CWBackPixel;
 
     pWin->backingStore = defaultBackingStore;
     pWin->forcedBS = (defaultBackingStore != NotUseful);
