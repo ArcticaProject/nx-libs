@@ -58,11 +58,10 @@
  * Colors used to paint the splash screen.
  */
 
-int nxagentLogoDepth;
-int nxagentLogoWhite;
-int nxagentLogoRed;
-int nxagentLogoBlack;
-int nxagentLogoGray;
+#define nxagentLogoWhite 0xffffff
+#define nxagentLogoRed   0xff0000
+#define nxagentLogoBlack 0x000000
+#define nxagentLogoGray  0x222222
 
 static void nxagentPaintLogo(Window win, GC gc, int scale, int width, int height);
 
@@ -176,6 +175,8 @@ void nxagentShowSplashWindow(Window parentWindow)
 
 void nxagentPaintLogo(Window win, GC gc, int scale, int width, int height)
 {
+  int depth = DefaultDepth(nxagentDisplay, DefaultScreen(nxagentDisplay));
+
   #ifdef DEBUG
   fprintf(stderr, "%s: Got called.\n", __func__);
   #endif
@@ -183,9 +184,8 @@ void nxagentPaintLogo(Window win, GC gc, int scale, int width, int height)
   #ifdef NXAGENT_LOGO_DEBUG
   fprintf(stderr, "%s: begin\n", __func__);
   fprintf(stderr, "%s: gen params are: w=%d h=%d d=%d r=%x w=%x b=%x\n", __func__,
-          width, height,
-          nxagentLogoDepth, nxagentLogoRed,
-          nxagentLogoWhite, nxagentLogoBlack);
+          width, height, depth,
+          nxagentLogoRed, nxagentLogoWhite, nxagentLogoBlack);
   #endif
 
   int w = width/scale;
