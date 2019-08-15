@@ -58,10 +58,10 @@
  * Colors used to paint the splash screen.
  */
 
-#define nxagentLogoWhite 0xffffff
-#define nxagentLogoRed   0xff0000
-#define nxagentLogoBlack 0x000000
-#define nxagentLogoGray  0x222222
+#define nxagentLogoWhite       0xffffff
+#define nxagentLogoBlack       0x000000
+#define nxagentLogoDarkGray    0x222222
+#define nxagentLogoLightGray   0xbbbbbb
 
 static void nxagentPaintLogo(Window win, GC gc, int scale, int width, int height);
 
@@ -183,9 +183,9 @@ void nxagentPaintLogo(Window win, GC gc, int scale, int width, int height)
 
   #ifdef NXAGENT_LOGO_DEBUG
   fprintf(stderr, "%s: begin\n", __func__);
-  fprintf(stderr, "%s: gen params are: w=%d h=%d d=%d r=%x w=%x b=%x\n", __func__,
+  fprintf(stderr, "%s: gen params are: w=%d h=%d d=%d w=%x b=%x g1=%x g2=%x \n", __func__,
           width, height, depth,
-          nxagentLogoRed, nxagentLogoWhite, nxagentLogoBlack);
+          nxagentLogoWhite, nxagentLogoBlack, nxagentLogoDarkGray, nxagentLogoLightGray);
   #endif
 
   int w = width/scale;
@@ -204,43 +204,52 @@ void nxagentPaintLogo(Window win, GC gc, int scale, int width, int height)
     c = w/48;
   }
 
-  XPoint rect[4];
-  rect[0].x = 0;               rect[0].y = 0;
-  rect[1].x = 0;               rect[1].y = h;
-  rect[2].x = w;               rect[2].y = h;
-  rect[3].x = w;               rect[3].y = 0;
-
   XSetFunction(nxagentDisplay, gc, GXcopy);
   XSetFillStyle(nxagentDisplay, gc, FillSolid);
-  XSetForeground(nxagentDisplay, gc, nxagentLogoBlack);
-  XSetBackground(nxagentDisplay, gc, nxagentLogoRed);
-
-  nxagentPixmapLogo = XCreatePixmap(nxagentDisplay, win, width, height, nxagentLogoDepth);
+  nxagentPixmapLogo = XCreatePixmap(nxagentDisplay, win, width, height, depth);
 
   if (!nxagentPixmapLogo)
   {
     return;
   }
 
+  if (blackRoot)
+  {
+    XSetForeground(nxagentDisplay, gc, nxagentLogoBlack);
+    XSetBackground(nxagentDisplay, gc, nxagentLogoWhite);
+  }
+  else
+  {
+    XSetForeground(nxagentDisplay, gc, nxagentLogoWhite);
+    XSetBackground(nxagentDisplay, gc, nxagentLogoBlack);
+  }
+
+  XPoint rect[4];
+  rect[0].x = 0;               rect[0].y = 0;
+  rect[1].x = 0;               rect[1].y = h;
+  rect[2].x = w;               rect[2].y = h;
+  rect[3].x = w;               rect[3].y = 0;
+
+  /* paint background */
   XFillPolygon(nxagentDisplay, nxagentPixmapLogo, gc, rect, 4, Convex, CoordModeOrigin);
 
   #ifdef NXAGENT_LOGO_DEBUG
   fprintf(stderr, "%s: filled first poly\n", __func__);
   #endif
 
-  XSetForeground(nxagentDisplay, gc, nxagentLogoRed);
-  XSetBackground(nxagentDisplay, gc, nxagentLogoWhite);
-
   /*
    * Draw X2GO Logo
    */
 
+  if (blackRoot)
+    XSetForeground(nxagentDisplay, gc, nxagentLogoDarkGray);
+  else
+    XSetForeground(nxagentDisplay, gc, nxagentLogoLightGray);
+
   /*
-   * Begin 'X'.
+   * Start 'X'.
    */
 
-  XSetForeground(nxagentDisplay, gc, nxagentLogoGray);
-  XSetBackground(nxagentDisplay, gc, nxagentLogoWhite);
   rect[0].x = w2-7*c;               rect[0].y = h2-5*c;
   rect[1].x = w2-8*c;               rect[1].y = h2-5*c;
   rect[2].x = w2-4*c;               rect[2].y = h2+3*c;
