@@ -119,12 +119,6 @@ extern WindowPtr nxagentRootTileWindow;
 
 extern Bool nxagentReportPrivateWindowIds;
 
-/*
- * Also referenced in Events.c.
- */
-
-int nxagentSplashCount = 0;
-
 #define RECTLIMIT 25
 #define BSPIXMAPLIMIT 128
 
@@ -155,12 +149,6 @@ Bool nxagentIsIconic(WindowPtr);
 
 int GetWindowProperty(WindowPtr, Atom, long, long, Bool, Atom, Atom*, int*,
                                  unsigned long*, unsigned long*, unsigned char**);
-
-/*
- * From NXwindow.c.
- */
-
-void nxagentClearSplash(WindowPtr pWin);
 
 /*
  * Other local functions.
@@ -268,16 +256,6 @@ Bool nxagentCreateWindow(WindowPtr pWin)
   {
     return True;
   }
-
-  nxagentSplashCount++;
-
-  if (nxagentSplashCount == 2)
-  {
-      nxagentClearSplash(nxagentRootTileWindow);
-  }
-  #ifdef NXAGENT_LOGO_DEBUG
-  fprintf(stderr, "nxagentCreateWindow: nxagentSplashCount [%d]\n", nxagentSplashCount);
-  #endif
 
   if (pWin->drawable.class == InputOnly)
   {
@@ -488,14 +466,6 @@ Bool nxagentCreateWindow(WindowPtr pWin)
   nxagentWindowPriv(pWin)->siblingAbove = None;
   nxagentWindowPriv(pWin)->pPicture = NULL;
 
-  if (nxagentRootTileWindow)
-  {
-    if (nxagentWindowPriv(pWin)->window != nxagentWindowPriv(nxagentRootTileWindow)->window)
-    {
-      XClearWindow(nxagentDisplay, nxagentWindowPriv(nxagentRootTileWindow)->window);
-    }
-  }
-
   if (pWin->nextSib)
   {
     nxagentWindowPriv(pWin->nextSib)->siblingAbove = nxagentWindow(pWin);
@@ -661,27 +631,6 @@ Bool nxagentDestroyWindow(WindowPtr pWin)
   if (nxagentOption(Rootless))
   {
     nxagentRootlessDelTopLevelWindow(pWin);
-  }
-
-  nxagentSplashCount--;
-
-  #ifdef DEBUG
-  fprintf(stderr, "nxagentDestroyWindow: The splash counter is now [%d].\n",
-              nxagentSplashCount);
-  #endif
-
-  if (nxagentRootTileWindow)
-  {
-    if (nxagentSplashCount == 1)
-    {
-      XClearWindow(nxagentDisplay, nxagentWindowPriv(nxagentRootTileWindow) -> window);
-    }
-
-    if (pWin == nxagentRootTileWindow)
-    {
-      nxagentWindowPriv(nxagentRootTileWindow)->window = None;
-      nxagentRootTileWindow = None;
-    }
   }
 
   pWindowPriv->window = None;
