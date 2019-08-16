@@ -63,6 +63,9 @@
 #define nxagentLogoDarkGray    0x222222
 #define nxagentLogoLightGray   0xbbbbbb
 
+Pixmap nxagentPixmapLogo;
+Window nxagentSplashWindow = None;
+
 static void nxagentPaintLogo(Window win, GC gc, int scale, int width, int height);
 
 /*
