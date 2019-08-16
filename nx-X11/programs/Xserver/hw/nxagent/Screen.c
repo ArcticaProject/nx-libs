@@ -147,8 +147,6 @@ Window nxagentScreenSaverWindows[MAXSCREENS];
 
 #ifdef NXAGENT_ONSTART
 Atom nxagentWMStart;
-Window nxagentSplashWindow = None;
-Pixmap nxagentPixmapLogo;
 #endif
 
 ScreenPtr nxagentDefaultScreen = NULL;
