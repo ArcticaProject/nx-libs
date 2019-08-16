@@ -72,7 +72,9 @@ static void nxagentPaintLogo(Window win, GC gc, int scale, int width, int height
  * From Screen.c.
  */
 
+#ifdef NXAGENT_ONSTART
 extern Atom nxagentReadyAtom;
+#endif
 
 /*
  * From Clipboard.c.
@@ -106,7 +108,9 @@ void nxagentShowSplashWindow(Window parentWindow)
   }
   #endif
 
+  #ifdef NXAGENT_ONSTART
   XSetSelectionOwner(nxagentDisplay, nxagentReadyAtom, None, CurrentTime);
+  #endif
 
   nxagentWMPassed = False;
 
@@ -401,8 +405,10 @@ void nxagentRemoveSplashWindow(void)
 
   if (!nxagentWMPassed)
   {
+    #ifdef NXAGENT_ONSTART
     XSetSelectionOwner(nxagentDisplay, nxagentReadyAtom,
                           nxagentDefaultWindows[0], CurrentTime);
+    #endif
 
     nxagentWMPassed = True;
   }
