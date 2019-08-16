@@ -146,7 +146,7 @@ Window nxagentInputWindows[MAXSCREENS];
 Window nxagentScreenSaverWindows[MAXSCREENS];
 
 #ifdef NXAGENT_ONSTART
-Atom nxagentWMStart;
+Atom nxagentReadyAtom;
 #endif
 
 ScreenPtr nxagentDefaultScreen = NULL;
@@ -932,7 +932,7 @@ Bool nxagentOpenScreen(ScreenPtr pScreen,
   nxagentQueryAtoms(pScreen);
 
   #ifdef NXAGENT_ONSTART
-  nxagentWMStart = nxagentAtoms[3];  /* WM_NX_READY */
+  nxagentReadyAtom = nxagentAtoms[3];  /* WM_NX_READY */
   #endif
 
   /*
