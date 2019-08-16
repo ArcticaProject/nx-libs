@@ -1436,7 +1436,6 @@ void nxagentConfigureWindow(WindowPtr pWin, unsigned int mask)
     #endif
   }
 
-  #ifdef NXAGENT_SPLASH
   /*
    * This should bring again the splash window
    * on top, so why the else clause? Is this
@@ -1462,7 +1461,6 @@ void nxagentConfigureWindow(WindowPtr pWin, unsigned int mask)
    *    }
    *  }
    */
-  #endif /* NXAGENT_SPLASH */
 
   if (mask & CW_RootlessRestack)
   {
