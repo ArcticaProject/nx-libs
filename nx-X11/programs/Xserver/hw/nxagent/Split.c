@@ -804,7 +804,7 @@ void nxagentWaitDrawable(DrawablePtr pDrawable)
     fprintf(stderr, "nxagentWaitDrawable: Yielding control to the NX transport.\n");
     #endif
 
-    nxagentWaitEvents(nxagentDisplay, NULL);
+    nxagentWaitEvents(nxagentDisplay, 0);
   }
 }
 
