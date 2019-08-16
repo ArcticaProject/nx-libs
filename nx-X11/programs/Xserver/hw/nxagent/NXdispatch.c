@@ -141,7 +141,9 @@ void nxagentWaitDisplay(void);
 
 void nxagentListRemoteFonts(const char *, int);
 
+#ifdef NXAGENT_ONSTART
 unsigned int nxagentWMtimeout = 0;
+#endif
 Bool         nxagentWMPassed  = False;
 
 /*
