@@ -141,10 +141,6 @@ void nxagentWaitDisplay(void);
 
 void nxagentListRemoteFonts(const char *, int);
 
-#ifdef NXAGENT_ONSTART
-unsigned int nxagentWMtimeout = 0;
-#endif
-
 /*
  * Timeouts based on screen saver time.
  */
@@ -264,12 +260,11 @@ Dispatch(void)
     #ifdef NXAGENT_ONSTART
 
     /*
-     * Set NX_WM property (used by NX client to identify
-     * the agent's window) three seconds since the first
-     * client connects.
+     * Set NX_WM property (used by NX client to identify the agent's
+     * window) three seconds since the first client connects.
      */
 
-    nxagentWMtimeout = GetTimeInMillis() + 3000;
+    unsigned int nxagentWMtimeout = GetTimeInMillis() + 3000;
 
     #endif
 
