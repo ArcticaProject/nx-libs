@@ -244,8 +244,6 @@ Dispatch(void)
     register HWEventQueuePtr* icheck = checkForInput;
     long			start_tick;
 
-    unsigned long currentDispatch = 0;
-
     nextFreeClientID = 1;
     InitSelections();
     nClients = 0;
@@ -371,18 +369,15 @@ Reply   Total	Cached	Bits In			Bits Out		Bits/Reply	  Ratio
         
         #ifdef NXAGENT_ONSTART
 
-        currentDispatch = GetTimeInMillis();
+	/*
+	 * If the timeout is expired set the selection informing the
+	 * NX client that the agent is ready.
+	 */
 
-        /*
-         * If the timeout is expired set the
-         * selection informing the NX client
-         * that the agent is ready.
-         */
-
-        if (nxagentWMtimeout < currentDispatch)
-        {
-	   nxagentRemoveSplashWindow();
-        }
+	if (nxagentWMtimeout < GetTimeInMillis())
+	{
+	  nxagentRemoveSplashWindow();
+	}
 
         nxagentClients = nClients;
 
