@@ -65,6 +65,7 @@
 
 Pixmap nxagentPixmapLogo;
 Window nxagentSplashWindow = None;
+Bool nxagentWMPassed = False;
 
 static void nxagentPaintLogo(Window win, GC gc, int scale, int width, int height);
 
@@ -396,6 +397,9 @@ void nxagentPaintLogo(Window win, GC gc, int scale, int width, int height)
 
 void nxagentRemoveSplashWindow(void)
 {
+  if (nxagentWMPassed)
+    return;
+
   if (nxagentReconnectTrap)
     return;
 

@@ -39,8 +39,6 @@ extern int nxagentXdmcpUp;
 
 extern Window nxagentSplashWindow;
 
-extern int nxagentWMPassed;
-
 extern void nxagentShowSplashWindow(Window);
 extern void nxagentRemoveSplashWindow();
 

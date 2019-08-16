@@ -144,7 +144,6 @@ void nxagentListRemoteFonts(const char *, int);
 #ifdef NXAGENT_ONSTART
 unsigned int nxagentWMtimeout = 0;
 #endif
-Bool         nxagentWMPassed  = False;
 
 /*
  * Timeouts based on screen saver time.
@@ -380,9 +379,9 @@ Reply   Total	Cached	Bits In			Bits Out		Bits/Reply	  Ratio
          * that the agent is ready.
          */
 
-        if (!nxagentWMPassed && (nxagentWMtimeout < currentDispatch))
+        if (nxagentWMtimeout < currentDispatch)
         {
-          nxagentRemoveSplashWindow();
+	   nxagentRemoveSplashWindow();
         }
 
         nxagentClients = nClients;
@@ -590,10 +589,7 @@ ProcReparentWindow(register ClientPtr client)
     if (!pWin)
         return(BadWindow);
 
-    if (!nxagentWMPassed)
-    {
-      nxagentRemoveSplashWindow();
-    }
+    nxagentRemoveSplashWindow();
 
     pParent = (WindowPtr)SecurityLookupWindow(stuff->parent, client,
 					      DixWriteAccess);
