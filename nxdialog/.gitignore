@@ -1,0 +1,8 @@
+/Makefile
+/Makefile.in
+/aclocal.m4
+bin/Makefile
+bin/Makefile.in
+build-aux
+man/Makefile
+man/Makefile.in

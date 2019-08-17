@@ -1,2 +1,7 @@
+dix-config.h
+do-not-use-config.h
 do-not-use-config.h.in
 osdep.h
+xkb-config.h
+xorg-config.h
+xorg-server.h
