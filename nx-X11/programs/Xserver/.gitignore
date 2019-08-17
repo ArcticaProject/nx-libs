@@ -1,2 +1,9 @@
-./nxagent
-./nxagent.bak
+compile
+config.guess
+config.sub
+depcomp
+install-sh
+libtool
+ltmain.sh
+Makefile.in
+missing

@@ -3,16 +3,28 @@ glx/glcontextmodes.c
 glx/glcontextmodes.h
 glx/indirect_size.c
 glx/indirect_size.h
+mesa/glapi/dispatch.h
+mesa/glapi/glapi.c
+mesa/glapi/glapi.h
+mesa/glapi/glapioffsets.h
+mesa/glapi/glapitable.h
+mesa/glapi/glapitemp.h
+mesa/glapi/glprocs.h
+mesa/glapi/glthread.c
+mesa/glapi/glthread.h
 mesa/X/DONE
 mesa/X/compsize.c
 mesa/X/driverfuncs.c
 mesa/X/driverfuncs.h
+mesa/X/drivers/
+mesa/X/glxheader.h
 mesa/X/xm_api.c
 mesa/X/xm_buffer.c
 mesa/X/xm_dd.c
 mesa/X/xm_line.c
 mesa/X/xm_span.c
 mesa/X/xm_tri.c
+mesa/X/xmesaP.h
 mesa/array_cache/DONE
 mesa/array_cache/ac_context.c
 mesa/array_cache/ac_context.h
@@ -140,6 +152,7 @@ mesa/main/texstore.h
 mesa/main/varray.c
 mesa/main/varray.h
 mesa/main/version.h
+mesa/main/vsnprintf.c
 mesa/main/vtxfmt.c
 mesa/main/vtxfmt.h
 mesa/main/vtxfmt_tmp.h
@@ -225,6 +238,7 @@ mesa/shader/slang/slang_compile.c
 mesa/shader/slang/slang_compile.h
 mesa/shader/slang/slang_execute.c
 mesa/shader/slang/slang_execute.h
+mesa/shader/slang/slang_mesa.h
 mesa/shader/slang/slang_preprocess.c
 mesa/shader/slang/slang_preprocess.h
 mesa/shader/slang/slang_storage.c
@@ -260,6 +274,7 @@ mesa/swrast/s_feedback.c
 mesa/swrast/s_feedback.h
 mesa/swrast/s_fog.c
 mesa/swrast/s_fog.h
+mesa/swrast/s_fragprog_to_c.c
 mesa/swrast/s_imaging.c
 mesa/swrast/s_lines.c
 mesa/swrast/s_lines.h
@@ -281,6 +296,7 @@ mesa/swrast/s_span.h
 mesa/swrast/s_spantemp.h
 mesa/swrast/s_stencil.c
 mesa/swrast/s_stencil.h
+mesa/swrast/s_tcc.c
 mesa/swrast/s_texstore.c
 mesa/swrast/s_texture.c
 mesa/swrast/s_texture.h
@@ -297,6 +313,7 @@ mesa/swrast_setup/ss_context.h
 mesa/swrast_setup/ss_triangle.c
 mesa/swrast_setup/ss_triangle.h
 mesa/swrast_setup/ss_tritmp.h
+mesa/swrast_setup/ss_vb.h
 mesa/swrast_setup/swrast_setup.h
 mesa/tnl/DONE
 mesa/tnl/t_array_api.c
@@ -338,4 +355,5 @@ mesa/tnl/t_vtx_api.h
 mesa/tnl/t_vtx_eval.c
 mesa/tnl/t_vtx_exec.c
 mesa/tnl/t_vtx_generic.c
+mesa/tnl/t_vtx_x86.c
 mesa/tnl/tnl.h
