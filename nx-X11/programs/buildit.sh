@@ -33,9 +33,4 @@ build() {
 	popd
 }
 
-export NXAGENTMODULES_LIBS="-L`pwd`/../exports/lib			  \
-                            -L`pwd`/../../nxcomp/src/.libs		  \
-                            -L`pwd`/../../nxcompshad/src/.libs		  \
-                            -lXcomp -lXcompshad -lNX_X11"
-
 build Xserver PKG_CONFIG_LIBDIR="$PKG_CONFIG_LIBDIR" || exit 1

@@ -920,6 +920,10 @@ if test "x$NXAGENT" != xno; then
 		AC_MSG_RESULT([$have_nxagent])
 	fi
 fi
+
+dnf FIXME: This should be handled better
+NXAGENTMODULES_LIBS="$NXAGENTMODULES_LIBS -L`pwd`/../../exports/lib -L`pwd`/../../../nxcomp/src/.libs -L`pwd`/../../../nxcompshad/src/.libs -lXcomp -lXcompshad -lNX_X11"
+
 # if the user explicitely requests nxagent then fail if it cannot be built
 if test "x$NXAGENT" = xyes; then
 	if test "x$have_nxagent" != xyes; then
