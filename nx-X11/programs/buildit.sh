@@ -2,8 +2,6 @@
 
 set -x
 
-NULL=
-
 PKG_CONFIG_DEFAULT_LIBDIR=$( pkg-config --variable pc_path pkg-config)
 export PKG_CONFIG_LIBDIR="../../../nxcomp:../../lib/:../../../nxcompshad:$PKG_CONFIG_DEFAULT_LIBDIR"
 
@@ -35,16 +33,9 @@ build() {
 	popd
 }
 
-export CONFFLAGS="--enable-unix-transport		\
-                  --enable-tcp-transport		\
-                  --enable-ipv6				\
-                  --enable-secure-rpc			\
-                  ${NULL}"
-
 export NXAGENTMODULES_LIBS="-L`pwd`/../exports/lib			  \
                             -L`pwd`/../../nxcomp/src/.libs		  \
                             -L`pwd`/../../nxcompshad/src/.libs		  \
-                            -lXcomp -lXcompshad -lNX_X11		  \
-                            ${NULL}"
+                            -lXcomp -lXcompshad -lNX_X11"
 
-build Xserver $CONFFLAGS PKG_CONFIG_LIBDIR="$PKG_CONFIG_LIBDIR" || exit 1
+build Xserver PKG_CONFIG_LIBDIR="$PKG_CONFIG_LIBDIR" || exit 1

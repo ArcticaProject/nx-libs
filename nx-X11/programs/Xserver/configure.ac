@@ -367,6 +367,7 @@ AC_ARG_ENABLE(install-libxf86config,
 				[INSTALL_LIBXF86CONFIG=$enableval],
 				[INSTALL_LIBXF86CONFIG=no])
 
+
 dnl Extensions.
 AC_ARG_ENABLE(composite,      AS_HELP_STRING([--disable-composite], [Build Composite extension (default: enabled)]), [COMPOSITE=$enableval], [COMPOSITE=yes])
 AC_ARG_ENABLE(mitshm,         AS_HELP_STRING([--disable-shm], [Build SHM extension (default: enabled)]), [MITSHM=$enableval], [MITSHM=yes])
@@ -1452,9 +1453,14 @@ hw/nxagent/Makefile
 ])
 
 dnl Resume configure status
-AC_MSG_NOTICE(resume:)
+echo ""
+echo "NX_X11 Xserver will be built with the following settings:"
 ACX_FEATURE([enable],[werror],$WERROR)
 ACX_FEATURE([enable],[debug],$DEBUGGING)
+ACX_FEATURE([enable],[ipv6],$IPV6CONN)
+ACX_FEATURE([enable],[secure-rpc],$SECURE_RPC)
+ACX_FEATURE([enable],[tcp-transport],$TCPCONN)
+ACX_FEATURE([enable],[unix-transport],$UNIXCONN)
 ACX_FEATURE([with],[int10],$INT10)
 ACX_FEATURE([with],[vendor-string],$VENDOR_STRING)
 ACX_FEATURE([with],[vendor-string-short],$VENDOR_STRING_SHORT)
@@ -1497,5 +1503,6 @@ ACX_FEATURE([enable],[nxagent],$NXAGENT)
 ACX_FEATURE([enable],[install-setuid],$SETUID)
 ACX_FEATURE([enable],[xorgcfg],$XORGCFG)
 ACX_FEATURE([enable],[kbd-mode],$BUILD_KBD_MODE)
+echo ""
 
 AC_OUTPUT
