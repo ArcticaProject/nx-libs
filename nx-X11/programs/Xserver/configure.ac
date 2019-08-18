@@ -47,17 +47,19 @@ AC_CONFIG_HEADERS(include/xorg-config.h)
 dnl xkb-config.h covers XKB for the Xorg and Xnest and nxagent DDXs.
 AC_CONFIG_HEADERS(include/xkb-config.h)
 
-# dnl Set default flags if not present.
+dnl Set default flags if not present.
+dnl Disable warnings for mesa code
+DISABLE_MESA_GCC_WARN="-Wno-missing-prototypes -Wno-strict-prototypes"
 if test -z $CFLAGS; then
-	CFLAGS="-O0 -g3"
+	CFLAGS="-O0 -g3 $DISABLE_MESA_GCC_WARN"
 fi
 
 if test -z $CPPFLAGS; then
-	CPPFLAGS="-O0 -g3"
+	CPPFLAGS="-O0 -g3 $DISABLE_MESA_GCC_WARN"
 fi
 
 if test -z $CXXFLAGS; then
-	CXXFLAGS="-O0 -g3"
+	CXXFLAGS="-O0 -g3 $DISABLE_MESA_GCC_WARN"
 fi
 
 AC_PROG_CC
