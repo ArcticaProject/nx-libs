@@ -386,9 +386,9 @@ Depends:
 Recommends:
  nxagent,
 Breaks:
- nxagent (<< 2:3.5.99.21-2~),
+ nxagent (<< 2:3.5.99.22-0~),
 Replaces:
- nxagent (<< 2:3.5.99.21-2~),
+ nxagent (<< 2:3.5.99.22-0~),
 Description: Dialogs for NX Agent
  NX is a software suite which implements very efficient
  compression of the X11 protocol. This increases performance when

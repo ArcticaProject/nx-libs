@@ -1,6 +1,352 @@
-2019-08-05 18:32:16 +0200 Mike Gabriel (0166fc3a3)
+2019-08-27 15:46:37 +0200 Mike Gabriel (885116a4b)
 
-	* release 3.5.99.21 (HEAD -> 3.6.x, tag: 3.5.99.21)
+	* release 3.5.99.22 (HEAD -> 3.6.x, tag: 3.5.99.22)
+
+2019-08-27 15:15:47 +0200 Mike Gabriel (7d07442d7)
+
+	* debian/copyright: Update copyright attributions.
+
+2019-08-27 15:14:49 +0200 Mike Gabriel (e428e39de)
+
+	* debian/{nxagent,nxdialog}.install: Move nxdialog files from
+          nxagent.install to nxdialog.install.
+
+2019-08-27 15:14:25 +0200 Mike Gabriel (1b967c701)
+
+	* debian/control: Split-out nxdialog bin:pkg.
+
+2019-08-27 14:11:53 +0200 Mike Gabriel (6bca289af)
+
+	* Merge branch 'uli42-gh-sunweaver/pr/autograb-without-inputlock'
+          into 3.6.x
+
+2019-08-14 20:59:49 +0200 Ulrich Sibiller (6181aa911)
+
+	* Events.c: introduce separate debug level for autograb debugging
+          only
+
+2019-06-27 23:43:44 +0200 Ulrich Sibiller (063813d35)
+
+	* Make AutoGrab work in more situations
+
+2017-07-24 14:48:29 +0200 Mike Gabriel (14d8e0a2a)
+
+	* Dialog.c: Add NXTransDialog() call for autograb toggling.
+
+2017-05-25 23:20:50 +0200 Ulrich Sibiller (03aa5d743)
+
+	* Events.c: Autograb only for windowed modes
+
+2017-05-18 15:09:29 +0200 Ulrich Sibiller (a4d7a04c4)
+
+	* Events.c: do not ungrab keyboard on LeaveNotify when in autograb
+          mode
+
+2017-05-18 15:08:29 +0200 Ulrich Sibiller (6dcdc578f)
+
+	* Events.c: improve debugging output for FocusIn/Out
+
+2017-04-20 14:19:27 +0200 Ulrich Sibiller (ebfd8742c)
+
+	* Args.c: make autograb available via options file, too.
+
+2017-03-16 13:12:01 +0100 Ulrich Sibiller (4eaedd002)
+
+	* Args.c: Add command line option -autograb.
+
+2017-03-16 13:00:48 +0100 Ulrich Sibiller (8bf3429bc)
+
+	* nxagent: Make autograb an nxagentOption.
+
+2017-03-05 23:51:24 +0100 Ulrich Sibiller (58183b7ce)
+
+	* nxagent: Add autograb mode.
+
+2019-08-27 08:33:22 +0200 Mike Gabriel (daa50fd80)
+
+	* Merge branch 'uli42-pr/fix_double_free' into 3.6.x
+
+2019-08-12 23:11:34 +0200 Ulrich Sibiller (a7abd45a8)
+
+	* Screen.c: initialize RandR only on startup...
+
+2019-08-27 08:27:42 +0200 Mike Gabriel (6f80a06fb)
+
+	* Merge branch 'uli42-pr/safe_free' into 3.6.x
+
+2019-08-16 13:11:38 +0200 Ulrich Sibiller (f39b81d31)
+
+	* NXdispatch.c: move nxagentWMtimeout into the function
+
+2019-08-16 13:08:42 +0200 Ulrich Sibiller (4202d5094)
+
+	* NXdispatch.c: drop currentDispatch variable
+
+2019-08-16 13:02:01 +0200 Ulrich Sibiller (60a3c9b0a)
+
+	* nxagent: move nxagentWMPassed to Splash.c
+
+2019-08-16 12:55:28 +0200 Ulrich Sibiller (db4c220b2)
+
+	* nxagent: add NXAGENT_ONSTART where missing
+
+2019-08-16 12:54:10 +0200 Ulrich Sibiller (0f5e873dc)
+
+	* nxagent: drop NXAGENT_SPLASH
+
+2019-08-16 12:46:21 +0200 Ulrich Sibiller (784846317)
+
+	* nxagent: rename nxagentWMStart to nxagentReadyAtom
+
+2019-08-16 12:38:53 +0200 Ulrich Sibiller (bd002ffc5)
+
+	* Splash.c: move some variables to Splash.c
+
+2019-08-15 22:33:35 +0200 Ulrich Sibiller (5bb5adc8a)
+
+	* Splash.c: make Splash logo work with white background (-wr) mode,
+          too
+
+2019-08-15 22:10:45 +0200 Ulrich Sibiller (41bfed975)
+
+	* Splash.c: remove global variables for colors
+
+2019-08-15 22:06:14 +0200 Ulrich Sibiller (e12983a67)
+
+	* nxagent: drop nxagentRootTileWindow
+
+2019-08-15 22:04:07 +0200 Ulrich Sibiller (bfb4e9ac9)
+
+	* Splash.c: nxagentRemoveSplashWindow: drop unused parameter
+
+2019-08-11 01:59:42 +0200 Ulrich Sibiller (48c43c837)
+
+	* Splash.c: code cleanup
+
+2019-08-11 01:51:37 +0200 Ulrich Sibiller (208e58fb7)
+
+	* Splash.c: drop return code of nxagentShowSplashWindow
+
+2019-08-11 01:47:16 +0200 Ulrich Sibiller (9cd602b27)
+
+	* Splash.c: do not wait in nxagent mode
+
+2019-08-11 00:21:44 +0200 Ulrich Sibiller (8eeaa40b1)
+
+	* dix: add whiteroot flag
+
+2019-08-10 23:56:22 +0200 Ulrich Sibiller (817c3c6fc)
+
+	* NXwindow.c: simplify window background code
+
+2019-08-10 23:42:45 +0200 Ulrich Sibiller (d3869aa53)
+
+	* nxagent: fix main window being garbled without inner windows
+
+2018-05-05 18:56:35 +0200 Ulrich Sibiller (17495dd6a)
+
+	* nxagent: simplify nxagentWaitEvents()
+
+2019-06-28 22:10:23 +0200 Ulrich Sibiller (1d32e5368)
+
+	* Keystroke.c: fix wrong return code
+
+2019-06-28 22:09:23 +0200 Ulrich Sibiller (bcbf25510)
+
+	* Events.c: add more comments and TEST output
+
+2019-06-28 22:07:00 +0200 Ulrich Sibiller (e7451477e)
+
+	* Events.c: refactor nxagentHandleKeypress
+
+2019-08-27 08:14:23 +0200 Mike Gabriel (8b15d574b)
+
+	* Merge branch 'uli42-pr/fix_background' into 3.6.x
+
+2019-08-16 13:11:38 +0200 Ulrich Sibiller (3563959c0)
+
+	* NXdispatch.c: move nxagentWMtimeout into the function
+
+2019-08-16 13:08:42 +0200 Ulrich Sibiller (c34d1b201)
+
+	* NXdispatch.c: drop currentDispatch variable
+
+2019-08-16 13:02:01 +0200 Ulrich Sibiller (ab8015237)
+
+	* nxagent: move nxagentWMPassed to Splash.c
+
+2019-08-16 12:55:28 +0200 Ulrich Sibiller (b04b58bad)
+
+	* nxagent: add NXAGENT_ONSTART where missing
+
+2019-08-16 12:54:10 +0200 Ulrich Sibiller (2228513a6)
+
+	* nxagent: drop NXAGENT_SPLASH
+
+2019-08-16 12:46:21 +0200 Ulrich Sibiller (24f392c4a)
+
+	* nxagent: rename nxagentWMStart to nxagentReadyAtom
+
+2019-08-16 12:38:53 +0200 Ulrich Sibiller (798a053b4)
+
+	* Splash.c: move some variables to Splash.c
+
+2019-08-15 22:33:35 +0200 Ulrich Sibiller (074821a84)
+
+	* Splash.c: make Splash logo work with white background (-wr) mode,
+          too
+
+2019-08-15 22:10:45 +0200 Ulrich Sibiller (afebb8211)
+
+	* Splash.c: remove global variables for colors
+
+2019-08-15 22:06:14 +0200 Ulrich Sibiller (8fcaafab4)
+
+	* nxagent: drop nxagentRootTileWindow
+
+2019-08-15 22:04:07 +0200 Ulrich Sibiller (be508a447)
+
+	* Splash.c: nxagentRemoveSplashWindow: drop unused parameter
+
+2019-08-11 01:59:42 +0200 Ulrich Sibiller (612cbcc43)
+
+	* Splash.c: code cleanup
+
+2019-08-11 01:51:37 +0200 Ulrich Sibiller (3c92d8897)
+
+	* Splash.c: drop return code of nxagentShowSplashWindow
+
+2019-08-11 01:47:16 +0200 Ulrich Sibiller (470e0bd4d)
+
+	* Splash.c: do not wait in nxagent mode
+
+2019-08-11 00:21:44 +0200 Ulrich Sibiller (a539aaa6a)
+
+	* dix: add whiteroot flag
+
+2019-08-10 23:56:22 +0200 Ulrich Sibiller (c610d706b)
+
+	* NXwindow.c: simplify window background code
+
+2019-08-10 23:42:45 +0200 Ulrich Sibiller (d7d205c0d)
+
+	* nxagent: fix main window being garbled without inner windows
+
+2019-08-16 11:52:35 +0200 Mike Gabriel (f24767b3c)
+
+	* Merge branch 'uli42-pr/improve_wait_events' into 3.6.x
+
+2018-05-05 18:56:35 +0200 Ulrich Sibiller (62573abf0)
+
+	* nxagent: simplify nxagentWaitEvents()
+
+2019-08-16 11:50:10 +0200 Mike Gabriel (7f4b50deb)
+
+	* Merge branch 'uli42-pr/no_keystroke_passthrough' into 3.6.x
+
+2019-06-28 22:10:23 +0200 Ulrich Sibiller (ceeb53f0c)
+
+	* Keystroke.c: fix wrong return code
+
+2019-06-28 22:09:23 +0200 Ulrich Sibiller (b3d41485d)
+
+	* Events.c: add more comments and TEST output
+
+2019-06-28 22:07:00 +0200 Ulrich Sibiller (c260ae425)
+
+	* Events.c: refactor nxagentHandleKeypress
+
+2019-07-23 20:12:31 +0200 Ulrich Sibiller (504b1400e)
+
+	* Clipboard.c: use SAFE_free
+
+2019-07-23 20:10:43 +0200 Ulrich Sibiller (4421f787d)
+
+	* Atoms.c: use SAFE_XFree and SAFE_free macros
+
+2019-07-22 22:26:46 +0200 Ulrich Sibiller (7d25771da)
+
+	* Keystroke.c: use SAFE_free
+
+2019-07-22 22:25:40 +0200 Ulrich Sibiller (8080ad26a)
+
+	* GCOps.c: use SAFE_free
+
+2019-07-22 22:24:37 +0200 Ulrich Sibiller (6378d5ade)
+
+	* GC.c: use SAFE_free
+
+2019-07-22 22:22:31 +0200 Ulrich Sibiller (a9819436d)
+
+	* Drawable.c: use SAFE_free
+
+2019-07-22 22:20:47 +0200 Ulrich Sibiller (43e300ecd)
+
+	* Colormap.c: use SAFE_free
+
+2019-07-22 22:19:15 +0200 Ulrich Sibiller (633d04097)
+
+	* Args.c: use SAFE_free
+
+2019-07-22 22:17:25 +0200 Ulrich Sibiller (122fbd3e1)
+
+	* Error.c: use SAFE_free
+
+2019-07-22 21:53:20 +0200 Ulrich Sibiller (dde4e7636)
+
+	* Image.c: use SAFE_free
+
+2019-07-22 21:50:19 +0200 Ulrich Sibiller (458538010)
+
+	* Render.c: use SAFE_free
+
+2019-07-22 21:45:25 +0200 Ulrich Sibiller (8b74ff1c1)
+
+	* Pixmap.c: use SAFE_free
+
+2019-07-22 21:44:25 +0200 Ulrich Sibiller (34bd0942b)
+
+	* Reconnect.c: use SAFE_free
+
+2019-07-22 21:34:42 +0200 Ulrich Sibiller (fd4fa4e96)
+
+	* Keyboard.c: use SAFE_XFree and SAFE_free
+
+2019-07-22 21:33:54 +0200 Ulrich Sibiller (156533439)
+
+	* Cursor.c: use SAFE_XFree
+
+2019-07-22 21:32:58 +0200 Ulrich Sibiller (d0a6c98cb)
+
+	* Window.c: use SAFE_free and SAFE_XFree
+
+2019-07-22 21:29:31 +0200 Ulrich Sibiller (4a826d30f)
+
+	* Rootless.c: use SAFE_free and SAFE_XFree
+
+2019-07-22 21:27:10 +0200 Ulrich Sibiller (a4700c9d0)
+
+	* Font.c: use SAFE_XFree and SAFE_free
+
+2019-07-22 18:11:59 +0200 Ulrich Sibiller (d8012d2a8)
+
+	* Screen.c: safe some lines by calling SAFE_XFree
+
+2019-07-22 18:10:12 +0200 Ulrich Sibiller (ebc2ea79f)
+
+	* Events.c: safe some lines by calling SAFE_XFree
+
+2019-07-22 18:16:20 +0200 Ulrich Sibiller (b8411180e)
+
+	* Display.c: safe some lines by calling SAFE_XFree and SAFE_free
+
+2019-07-23 20:08:16 +0200 Ulrich Sibiller (1330167fa)
+
+	* Utils.h: add SAFE_free macro
+
+2019-08-05 18:32:16 +0200 Mike Gabriel (360cb5dd9)
+
+	* release 3.5.99.21 (tag: 3.5.99.21)
 
 2019-06-27 22:48:09 +0200 Mike Gabriel (c2ca013fb)
 
