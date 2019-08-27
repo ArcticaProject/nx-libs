@@ -37,18 +37,9 @@ extern int XdmcpTimeOutRtx;
 extern int XdmcpStartTime;
 extern int nxagentXdmcpUp;
 
-extern int nxagentLogoDepth;
-extern int nxagentLogoWhite;
-extern int nxagentLogoRed;
-extern int nxagentLogoBlack;
-extern int nxagentLogoGray;
-
 extern Window nxagentSplashWindow;
 
-extern int nxagentWMPassed;
-
-extern int nxagentShowSplashWindow(Window);
-
-extern void nxagentRemoveSplashWindow(WindowPtr pWin);
+extern void nxagentShowSplashWindow(Window);
+extern void nxagentRemoveSplashWindow();
 
 #endif /* __Splash_H__ */

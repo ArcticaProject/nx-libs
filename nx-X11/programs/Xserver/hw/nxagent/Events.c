@@ -124,7 +124,6 @@
 extern Bool nxagentOnce;
 
 extern WindowPtr nxagentRootTileWindow;
-extern int nxagentSplashCount;
 
 extern int nxagentLastClipboardClient;
 
@@ -2450,20 +2449,6 @@ FIXME: This can be maybe optimized by consuming the
       else
       {
         nxagentExposeQueue.exposures[index].remoteRegionIsCompleted = False;
-      }
-    }
-
-    if (nxagentRootTileWindow != NULL)
-    {
-      if (nxagentWindowPriv(nxagentRootTileWindow) -> window == nxagentWindowPriv(pWin) -> window &&
-              nxagentSplashCount == 1 && X -> xexpose.count == 0)
-      {
-        #ifdef DEBUG
-        fprintf(stderr, "nxagentHandleExposeEvent: Clearing root tile window id [%u].\n",
-                    nxagentWindowPriv(nxagentRootTileWindow) -> window);
-        #endif
-
-        XClearWindow(nxagentDisplay, nxagentWindowPriv(nxagentRootTileWindow) -> window);
       }
     }
 

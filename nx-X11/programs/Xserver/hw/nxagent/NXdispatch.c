@@ -141,9 +141,6 @@ void nxagentWaitDisplay(void);
 
 void nxagentListRemoteFonts(const char *, int);
 
-unsigned int nxagentWMtimeout = 0;
-Bool         nxagentWMPassed  = False;
-
 /*
  * Timeouts based on screen saver time.
  */
@@ -243,8 +240,6 @@ Dispatch(void)
     register HWEventQueuePtr* icheck = checkForInput;
     long			start_tick;
 
-    unsigned long currentDispatch = 0;
-
     nextFreeClientID = 1;
     InitSelections();
     nClients = 0;
@@ -265,12 +260,11 @@ Dispatch(void)
     #ifdef NXAGENT_ONSTART
 
     /*
-     * Set NX_WM property (used by NX client to identify
-     * the agent's window) three seconds since the first
-     * client connects.
+     * Set NX_WM property (used by NX client to identify the agent's
+     * window) three seconds since the first client connects.
      */
 
-    nxagentWMtimeout = GetTimeInMillis() + 3000;
+    unsigned int nxagentWMtimeout = GetTimeInMillis() + 3000;
 
     #endif
 
@@ -370,18 +364,15 @@ Reply   Total	Cached	Bits In			Bits Out		Bits/Reply	  Ratio
         
         #ifdef NXAGENT_ONSTART
 
-        currentDispatch = GetTimeInMillis();
+	/*
+	 * If the timeout is expired set the selection informing the
+	 * NX client that the agent is ready.
+	 */
 
-        /*
-         * If the timeout is expired set the
-         * selection informing the NX client
-         * that the agent is ready.
-         */
-
-        if (!nxagentWMPassed && (nxagentWMtimeout < currentDispatch))
-        {
-          nxagentRemoveSplashWindow(NULL);
-        }
+	if (nxagentWMtimeout < GetTimeInMillis())
+	{
+	  nxagentRemoveSplashWindow();
+	}
 
         nxagentClients = nClients;
 
@@ -588,10 +579,7 @@ ProcReparentWindow(register ClientPtr client)
     if (!pWin)
         return(BadWindow);
 
-    if (!nxagentWMPassed)
-    {
-      nxagentRemoveSplashWindow(pWin);
-    }
+    nxagentRemoveSplashWindow();
 
     pParent = (WindowPtr)SecurityLookupWindow(stuff->parent, client,
 					      DixWriteAccess);

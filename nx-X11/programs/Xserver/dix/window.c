@@ -305,7 +305,6 @@ SetWindowToDefaults(register WindowPtr pWin)
 #endif
 }
 
-#ifndef NXAGENT_SERVER
 static void
 MakeRootTile(WindowPtr pWin)
 {
@@ -348,7 +347,6 @@ MakeRootTile(WindowPtr pWin)
    FreeScratchGC(pGC);
 
 }
-#endif /* NXAGENT_SERVER */
 
 WindowPtr
 AllocateWindow(ScreenPtr pScreen)

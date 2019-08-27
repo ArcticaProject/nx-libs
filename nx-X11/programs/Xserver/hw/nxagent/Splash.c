@@ -58,19 +58,24 @@
  * Colors used to paint the splash screen.
  */
 
-int nxagentLogoDepth;
-int nxagentLogoWhite;
-int nxagentLogoRed;
-int nxagentLogoBlack;
-int nxagentLogoGray;
+#define nxagentLogoWhite       0xffffff
+#define nxagentLogoBlack       0x000000
+#define nxagentLogoDarkGray    0x222222
+#define nxagentLogoLightGray   0xbbbbbb
 
-void nxagentPaintLogo(Window win, GC gc, int scale, int width, int height);
+Pixmap nxagentPixmapLogo;
+Window nxagentSplashWindow = None;
+Bool nxagentWMPassed = False;
+
+static void nxagentPaintLogo(Window win, GC gc, int scale, int width, int height);
 
 /*
  * From Screen.c.
  */
 
-extern Atom nxagentWMStart;
+#ifdef NXAGENT_ONSTART
+extern Atom nxagentReadyAtom;
+#endif
 
 /*
  * From Clipboard.c.
@@ -78,27 +83,35 @@ extern Atom nxagentWMStart;
 
 extern Atom serverCutProperty;
 
-int nxagentShowSplashWindow(Window parentWindow)
+void nxagentShowSplashWindow(Window parentWindow)
 {
   XWindowAttributes getAttributes;
   XWindowChanges    values;
   XSetWindowAttributes attributes;
   GC gc;
 
+  /*
+   * Show splash window only when running as X2Go Agent
+   */
+  if(!nxagentX2go)
+    return;
+
   #ifdef TEST
-  fprintf(stderr, "nxagentShowSplashWindow: Got called.\n");
+  fprintf(stderr, "%s: Got called.\n", __func__);
   #endif
 
   #ifdef NXAGENT_TIMESTAMP
   {
     extern unsigned long startTime;
 
-    fprintf(stderr, "nxagentShowSplashWindow: Initializing splash start at [%d] milliseconds.\n",
+    fprintf(stderr, "%s: Initializing splash start at [%d] milliseconds.\n", __func__,
             GetTimeInMillis() - startTime);
   }
   #endif
 
-  XSetSelectionOwner(nxagentDisplay, nxagentWMStart, None, CurrentTime);
+  #ifdef NXAGENT_ONSTART
+  XSetSelectionOwner(nxagentDisplay, nxagentReadyAtom, None, CurrentTime);
+  #endif
 
   nxagentWMPassed = False;
 
@@ -133,7 +146,7 @@ int nxagentShowSplashWindow(Window parentWindow)
   getAttributes.height = nxagentOption(RootHeight);
 
   #ifdef TEST
-  fprintf(stderr, "nxagentShowSplashWindow: Going to create new splash window.\n");
+  fprintf(stderr, "%s: Going to create new splash window.\n", __func__);
   #endif
 
   nxagentSplashWindow =
@@ -146,7 +159,7 @@ int nxagentShowSplashWindow(Window parentWindow)
                           BlackPixel (nxagentDisplay, 0));
 
   #ifdef TEST
-  fprintf(stderr, "nxagentShowSplashWindow: Created new splash window with id [%ld].\n",
+  fprintf(stderr, "%s: Created new splash window with id [%ld].\n", __func__,
               nxagentSplashWindow);
   #endif
 
@@ -162,45 +175,34 @@ int nxagentShowSplashWindow(Window parentWindow)
   #ifdef NXAGENT_TIMESTAMP
   {
     extern unsigned long startTime;
-    fprintf(stderr, "nxagentShowSplashWindow: Splash ends [%d] milliseconds.\n",
+    fprintf(stderr, "%s: Splash ends [%d] milliseconds.\n", __func__,
             GetTimeInMillis() - startTime);
   }
   #endif
-
-  return True;
 }
 
 void nxagentPaintLogo(Window win, GC gc, int scale, int width, int height)
 {
-  XPoint    rect[4];
-  int w, h, c, w2, h2;
-
-  /*
-   * Show only X2GO Logo when running as X2Go Agent
-   */
-   if(! nxagentX2go)
-   {
-     nxagentPixmapLogo = 0L;
-     return;
-   }
+  int depth = DefaultDepth(nxagentDisplay, DefaultScreen(nxagentDisplay));
 
   #ifdef DEBUG
-  fprintf(stderr, "nxagentPaintLogo: Got called.\n");
+  fprintf(stderr, "%s: Got called.\n", __func__);
   #endif
 
   #ifdef NXAGENT_LOGO_DEBUG
-  fprintf(stderr, "nxagentPaintLogo: begin\n");
-  fprintf(stderr, "nxagentPaintLogo: gen params are: w=%d h=%d d=%d r=%x w=%x b=%x\n",width, height,
-          nxagentLogoDepth, nxagentLogoRed,
-          nxagentLogoWhite, nxagentLogoBlack);
+  fprintf(stderr, "%s: begin\n", __func__);
+  fprintf(stderr, "%s: gen params are: w=%d h=%d d=%d w=%x b=%x g1=%x g2=%x \n", __func__,
+          width, height, depth,
+          nxagentLogoWhite, nxagentLogoBlack, nxagentLogoDarkGray, nxagentLogoLightGray);
   #endif
 
-  w = width/scale;
-  h = height/scale;
+  int w = width/scale;
+  int h = height/scale;
 
-  w2 = w/2;
-  h2 = h/2;
+  int w2 = w/2;
+  int h2 = h/2;
 
+  int c;
   if (height > width)
   {
     c = w/30;
@@ -210,42 +212,52 @@ void nxagentPaintLogo(Window win, GC gc, int scale, int width, int height)
     c = w/48;
   }
 
-  rect[0].x = 0;               rect[0].y = 0;
-  rect[1].x = 0;               rect[1].y = h;
-  rect[2].x = w;               rect[2].y = h;
-  rect[3].x = w;               rect[3].y = 0;
-
   XSetFunction(nxagentDisplay, gc, GXcopy);
   XSetFillStyle(nxagentDisplay, gc, FillSolid);
-  XSetForeground(nxagentDisplay, gc, nxagentLogoBlack);
-  XSetBackground(nxagentDisplay, gc, nxagentLogoRed);
-
-  nxagentPixmapLogo = XCreatePixmap(nxagentDisplay, win, width, height, nxagentLogoDepth);
+  nxagentPixmapLogo = XCreatePixmap(nxagentDisplay, win, width, height, depth);
 
   if (!nxagentPixmapLogo)
   {
     return;
   }
 
+  if (blackRoot)
+  {
+    XSetForeground(nxagentDisplay, gc, nxagentLogoBlack);
+    XSetBackground(nxagentDisplay, gc, nxagentLogoWhite);
+  }
+  else
+  {
+    XSetForeground(nxagentDisplay, gc, nxagentLogoWhite);
+    XSetBackground(nxagentDisplay, gc, nxagentLogoBlack);
+  }
+
+  XPoint rect[4];
+  rect[0].x = 0;               rect[0].y = 0;
+  rect[1].x = 0;               rect[1].y = h;
+  rect[2].x = w;               rect[2].y = h;
+  rect[3].x = w;               rect[3].y = 0;
+
+  /* paint background */
   XFillPolygon(nxagentDisplay, nxagentPixmapLogo, gc, rect, 4, Convex, CoordModeOrigin);
 
   #ifdef NXAGENT_LOGO_DEBUG
-  fprintf(stderr, "filled first poly\n");
+  fprintf(stderr, "%s: filled first poly\n", __func__);
   #endif
-
-  XSetForeground(nxagentDisplay, gc, nxagentLogoRed);
-  XSetBackground(nxagentDisplay, gc, nxagentLogoWhite);
 
   /*
    * Draw X2GO Logo
    */
 
+  if (blackRoot)
+    XSetForeground(nxagentDisplay, gc, nxagentLogoDarkGray);
+  else
+    XSetForeground(nxagentDisplay, gc, nxagentLogoLightGray);
+
   /*
-   * Begin 'X'.
+   * Start 'X'.
    */
 
-  XSetForeground(nxagentDisplay, gc, nxagentLogoGray);
-  XSetBackground(nxagentDisplay, gc, nxagentLogoWhite);
   rect[0].x = w2-7*c;               rect[0].y = h2-5*c;
   rect[1].x = w2-8*c;               rect[1].y = h2-5*c;
   rect[2].x = w2-4*c;               rect[2].y = h2+3*c;
@@ -379,22 +391,28 @@ void nxagentPaintLogo(Window win, GC gc, int scale, int width, int height)
   XSetWindowBackgroundPixmap(nxagentDisplay, win, nxagentPixmapLogo);
 
   #ifdef NXAGENT_LOGO_DEBUG
-  fprintf(stderr, "nxagentPaintLogo: end\n");
+  fprintf(stderr, "%s: end\n", __func__);
   #endif
 }
 
-void nxagentRemoveSplashWindow(WindowPtr pWin)
+void nxagentRemoveSplashWindow(void)
 {
-  if (nxagentReconnectTrap) return;
+  if (nxagentWMPassed)
+    return;
+
+  if (nxagentReconnectTrap)
+    return;
 
   #ifdef TEST
-  fprintf(stderr, "nxagentRemoveSplashWindow: Destroying the splash window.\n");
+  fprintf(stderr, "%s: Destroying the splash window.\n", __func__);
   #endif
 
   if (!nxagentWMPassed)
   {
-    XSetSelectionOwner(nxagentDisplay, nxagentWMStart,
+    #ifdef NXAGENT_ONSTART
+    XSetSelectionOwner(nxagentDisplay, nxagentReadyAtom,
                           nxagentDefaultWindows[0], CurrentTime);
+    #endif
 
     nxagentWMPassed = True;
   }
@@ -407,7 +425,7 @@ void nxagentRemoveSplashWindow(WindowPtr pWin)
     nxagentRefreshWindows(screenInfo.screens[0]->root);
 
     #ifdef TEST
-    fprintf(stderr, "nxagentRemoveSplashWindow: setting the ownership of %s (%d) on window 0x%lx\n",
+    fprintf(stderr, "%s: setting the ownership of %s (%d) on window 0x%lx\n", __func__
                 "NX_CUT_BUFFER_SERVER", (int)serverCutProperty, nxagentWindow(screenInfo.screens[0]->root));
     #endif
 
@@ -418,7 +436,6 @@ void nxagentRemoveSplashWindow(WindowPtr pWin)
   if (nxagentPixmapLogo)
   {
     XFreePixmap(nxagentDisplay, nxagentPixmapLogo);
-
     nxagentPixmapLogo = (Pixmap) 0;
   }
 }
