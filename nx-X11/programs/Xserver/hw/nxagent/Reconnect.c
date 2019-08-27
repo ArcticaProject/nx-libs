@@ -53,6 +53,7 @@
 #include "Splash.h"
 #include "Error.h"
 #include "Keystroke.h"
+#include "Utils.h"
 
 #ifdef XKB
 #include "XKBsrv.h"
@@ -448,8 +449,7 @@ Bool nxagentReconnectSession(void)
       return 0;
     }
 
-    free(nxagentKeyboard);
-    nxagentKeyboard = NULL;
+    SAFE_free(nxagentKeyboard);
   }
 
   nxagentSaveOptions();
@@ -464,7 +464,7 @@ Bool nxagentReconnectSession(void)
     fprintf(stderr, "nxagentReconnect: changing nxagentKeyboard from [null/null] to [clone].\n");
     #endif
 
-    free(nxagentKeyboard);
+    SAFE_free(nxagentKeyboard);
     nxagentKeyboard = strdup("clone");
   }
 
@@ -635,8 +635,7 @@ Bool nxagentReconnectSession(void)
 
   nxagentXkbState.Initialized = 0;
 
-  free(nxagentOldKeyboard);
-  nxagentOldKeyboard = NULL;
+  SAFE_free(nxagentOldKeyboard);
 
   nxagentInitPointerMap();
 
@@ -760,8 +759,7 @@ nxagentReconnectError:
     nxagentDisconnectDisplay();
   }
 
-  free(nxagentOldKeyboard);
-  nxagentOldKeyboard = NULL;
+  SAFE_free(nxagentOldKeyboard);
 
   return 0;
 }

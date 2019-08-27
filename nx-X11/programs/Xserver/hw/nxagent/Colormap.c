@@ -54,6 +54,7 @@ is" without express or implied warranty.
 #include "Visual.h"
 #include "Windows.h"
 #include "Args.h"
+#include "Utils.h"
 
 #define PANIC
 #define WARNING
@@ -120,7 +121,7 @@ Bool nxagentCreateColormap(ColormapPtr pCmap)
       pCmap->red[i].co.local.green = colors[i].red;
       pCmap->red[i].co.local.blue = colors[i].red;
     }
-    free(colors);
+    SAFE_free(colors);
     break;
 
   case StaticColor: /* read only */
@@ -133,7 +134,7 @@ Bool nxagentCreateColormap(ColormapPtr pCmap)
       pCmap->red[i].co.local.green = colors[i].green;
       pCmap->red[i].co.local.blue = colors[i].blue;
     }
-    free(colors);
+    SAFE_free(colors);
     break;
 
   case TrueColor: /* read only */
@@ -157,7 +158,7 @@ Bool nxagentCreateColormap(ColormapPtr pCmap)
       pCmap->green[i].co.local.green = colors[i].green;
       pCmap->blue[i].co.local.blue = colors[i].blue;
     }
-    free(colors);
+    SAFE_free(colors);
     break;
 
   case GrayScale: /* read and write */
@@ -176,7 +177,7 @@ Bool nxagentCreateColormap(ColormapPtr pCmap)
 void nxagentDestroyColormap(ColormapPtr pCmap)
 {
   XFreeColormap(nxagentDisplay, nxagentColormap(pCmap));
-  free(pCmap->devPriv);
+  SAFE_free(pCmap->devPriv);
 }
 
 #define SEARCH_PREDICATE \
@@ -254,10 +255,10 @@ void nxagentSetInstalledColormapWindows(ScreenPtr pScreen)
     numWindows = 0;
   }
 
-  free(icws.cmapIDs);
+  SAFE_free(icws.cmapIDs);
 
   if (!nxagentSameInstalledColormapWindows(icws.windows, icws.numWindows)) {
-    free(nxagentOldInstalledColormapWindows);
+    SAFE_free(nxagentOldInstalledColormapWindows);
 
 #ifdef _XSERVER64
     {
@@ -268,7 +269,7 @@ void nxagentSetInstalledColormapWindows(ScreenPtr pScreen)
 	  windows[i] = icws.windows[i];
       XSetWMColormapWindows(nxagentDisplay, nxagentDefaultWindows[pScreen->myNum],
 			    windows, numWindows);
-      free(windows);
+      SAFE_free(windows);
     }
 #else
     XSetWMColormapWindows(nxagentDisplay, nxagentDefaultWindows[pScreen->myNum],
@@ -317,12 +318,12 @@ void nxagentSetInstalledColormapWindows(ScreenPtr pScreen)
 #endif /* DUMB_WINDOW_MANAGERS */
   }
   else
-    free(icws.windows);
+    SAFE_free(icws.windows);
 }
 
 void nxagentSetScreenSaverColormapWindow(ScreenPtr pScreen)
 {
-  free(nxagentOldInstalledColormapWindows);
+  SAFE_free(nxagentOldInstalledColormapWindows);
 
 #ifdef _XSERVER64
   {
@@ -454,7 +455,7 @@ void nxagentStoreColors(ColormapPtr pCmap, int nColors, xColorItem *pColors)
       pColors64[i].flags = pColors[i].flags;
     }
     XStoreColors(nxagentDisplay, nxagentColormap(pCmap), pColors64, nColors);
-    free(pColors64);
+    SAFE_free(pColors64);
   }
 #else
     XStoreColors(nxagentDisplay, nxagentColormap(pCmap),

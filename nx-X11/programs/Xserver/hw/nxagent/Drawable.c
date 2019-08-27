@@ -42,6 +42,7 @@
 #include "Pixels.h"
 #include "Reconnect.h"
 #include "GCOps.h"
+#include "Utils.h"
 
 #include "compext/Compext.h"
 
@@ -365,7 +366,7 @@ int nxagentSynchronizeDrawableData(DrawablePtr pDrawable, unsigned int breakMask
   success = nxagentSynchronizeRegion(pDrawable, NullRegion, breakMask, owner);
 
 nxagentSynchronizeDrawableDataEnd:
-  free(data);
+  SAFE_free(data);
 
   return success;
 }
@@ -861,7 +862,7 @@ int nxagentSynchronizeRegion(DrawablePtr pDrawable, RegionPtr pRegion, unsigned 
               #endif
             }
 
-            free(cmpData);
+            SAFE_free(cmpData);
           }
         }
         else
@@ -1058,7 +1059,7 @@ nxagentSynchronizeRegionFree:
     nxagentFreeRegion(pDrawable, clipRegion);
   }
 
-  free(data);
+  SAFE_free(data);
 
   RegionUninit(&exposeRegion);
 
@@ -2158,7 +2159,7 @@ unsigned long nxagentGetColor(DrawablePtr pDrawable, int xPixel, int yPixel)
     fprintf(stderr, "nxagentGetColor: WARNING! Failed to create the XImage.\n");
     #endif
 
-    free(data);
+    SAFE_free(data);
 
     return -1;
   }
@@ -2384,7 +2385,7 @@ void nxagentFillRemoteRegion(DrawablePtr pDrawable, RegionPtr pRegion)
     XFillRectangles(nxagentDisplay, nxagentDrawable(pDrawable), nxagentGC(pGC),
                         pRects, nrects);
 
-    free(pRects);
+    SAFE_free(pRects);
   }
 }
 

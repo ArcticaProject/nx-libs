@@ -328,7 +328,7 @@ void nxagentRemoteWindowID(Window window, Bool newline)
     else if (winName)
     {
       fprintf(stderr, " \"%s\" ", winName);
-      XFree(winName);
+      SAFE_XFree(winName);
     }
 
 #else
@@ -476,10 +476,7 @@ void nxagentRemoteWindowsTree(Window window, int level)
     nxagentRemoteWindowsTree(childList[i], level + 1);
   }
 
-  if (childList)
-  {
-    XFree((char *) childList);
-  }
+  SAFE_XFree((char *) childList);
 }
 #endif
 
@@ -3133,10 +3130,7 @@ int nxagentCheckWindowConfiguration(XConfigureEvent* X)
     #endif
   }
 
-  if (children_return)
-  {
-    XFree(children_return);
-  }
+  SAFE_XFree(children_return);
 
   #if 0
   fprintf(stderr, "nxagentCheckWindowConfiguration: Trees match: %s\n",
@@ -3514,11 +3508,7 @@ int nxagentHandleReparentNotify(XEvent* X)
         result = XQueryTree(nxagentDisplay, w, &root_return,
                                 &parent_return, &children_return, &nchildren_return);
 
-        if (children_return)
-        {
-          XFree(children_return);
-          children_return = NULL;
-        }
+        SAFE_XFree(children_return);
 
         if (!result)
         {
@@ -3556,11 +3546,7 @@ int nxagentHandleReparentNotify(XEvent* X)
           #endif
         }
 
-        if (children_return)
-        {
-          XFree(children_return);
-          children_return = NULL;
-        }
+        SAFE_XFree(children_return);
       }
       else
       {
@@ -3624,11 +3610,7 @@ int nxagentHandleReparentNotify(XEvent* X)
         result = XQueryTree(nxagentDisplay, w, &rootReturn, &parentReturn,
                                 &childrenReturn, &nchildrenReturn);
 
-        if (childrenReturn)
-        {
-          XFree(childrenReturn);
-          childrenReturn = NULL;
-        }
+        SAFE_XFree(childrenReturn);
 
         if (parentReturn == rootReturn || parentReturn == 0 || result == 0)
         {
@@ -4025,10 +4007,7 @@ void nxagentHandleCollectPropertyEvent(XEvent *X)
       #endif
     }
 
-    if (pszReturnData != NULL)
-    {
-      XFree(pszReturnData);
-    }
+    SAFE_XFree(pszReturnData);
 
     return;
   }

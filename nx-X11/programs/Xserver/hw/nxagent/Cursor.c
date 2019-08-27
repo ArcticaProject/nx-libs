@@ -61,6 +61,7 @@ is" without express or implied warranty.
 #include "Events.h"
 #include "Render.h"
 #include "Client.h"
+#include "Utils.h"
 
 #include "windowstr.h"
 #include "resource.h"
@@ -211,7 +212,7 @@ Bool nxagentRealizeCursor(ScreenPtr pScreen, CursorPtr pCursor)
   XPutImage(nxagentDisplay, source, nxagentBitmapGC, image,
                 0, 0, 0, 0, pCursor->bits->width, pCursor->bits->height);
 
-  XFree(image);
+  SAFE_XFree(image);
 
   image = XCreateImage(nxagentDisplay,
                        nxagentDefaultVisual(pScreen),
@@ -229,7 +230,7 @@ Bool nxagentRealizeCursor(ScreenPtr pScreen, CursorPtr pCursor)
   XPutImage(nxagentDisplay, mask, nxagentBitmapGC, image,
             0, 0, 0, 0, pCursor->bits->width, pCursor->bits->height);
 
-  XFree(image);
+  SAFE_XFree(image);
 
   fg_color.red = pCursor->foreRed;
   fg_color.green = pCursor->foreGreen;
@@ -264,14 +265,12 @@ Bool nxagentUnrealizeCursor(ScreenPtr pScreen, CursorPtr pCursor)
   if (nxagentCursorUsesRender(pCursor, pScreen))
   {
     PicturePtr pPicture = nxagentCursorPicture(pCursor, pScreen);
-
     FreePicture(pPicture, pPicture -> id);
   }
 
   if (nxagentCursor(pCursor, pScreen) != None)
   {
     XFreeCursor(nxagentDisplay, nxagentCursor(pCursor, pScreen));
-
     nxagentCursor(pCursor, pScreen) = None;
   }
 

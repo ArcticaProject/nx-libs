@@ -302,8 +302,7 @@ Bool nxagentIsParentOf(Display *d, XlibWindow possible_parent, XlibWindow candid
 
   if (XQueryTree(d, candidate, &root, &parent, &children, &num_children))
   {
-    if (children)
-      XFree((char *)children);
+    SAFE_XFree(children);
 
     #ifdef TEST
     fprintf(stderr, "%s: parent of full screen window [%p] root [%p] possible_parent [%p] candidate [%p]\n", __func__, parent, root, possible_parent, candidate);
@@ -484,11 +483,8 @@ Window nxagentCreateIconWindow(void)
                       window_name, window_name,
                           NULL , 0 , sizeHints, wmHints, NULL);
 
-  if (sizeHints)
-    XFree(sizeHints);
-
-  if (wmHints)
-    XFree(wmHints);
+  SAFE_XFree(sizeHints);
+  SAFE_XFree(wmHints);
 
   /*
    * Enable events from the icon window.
@@ -889,10 +885,9 @@ void freeDepths(DepthPtr depths, int num)
     #ifdef DEBUG
     fprintf(stderr, "%s: freeing depth [%d] index [%d] vids [%p]\n", __func__, depths[i].depth, i, (void*) depths[i].vids);
     #endif
-    free(depths[i].vids);
-    depths[i].vids = NULL;
+    SAFE_free(depths[i].vids);
   }
-  free(depths);
+  SAFE_free(depths);
 }
 
 Bool nxagentOpenScreen(ScreenPtr pScreen,
@@ -1387,7 +1382,7 @@ Bool nxagentOpenScreen(ScreenPtr pScreen,
     if (!pFrameBufferBits)
     {
       freeDepths(depths, numDepths);
-      free(visuals);
+      SAFE_free(visuals);
       return FALSE;
     }
 
@@ -1410,7 +1405,7 @@ Bool nxagentOpenScreen(ScreenPtr pScreen,
           monitorResolution, monitorResolution, PixmapBytePad(nxagentOption(RootWidth), rootDepth), bitsPerPixel))
     {
       freeDepths(depths, numDepths);
-      free(visuals);
+      SAFE_free(visuals);
       return FALSE;
     }
 
@@ -1451,7 +1446,7 @@ Bool nxagentOpenScreen(ScreenPtr pScreen,
     pScreen -> numDepths = numDepths;
     pScreen -> rootDepth = rootDepth;
 
-    free(pScreen -> visuals);
+    SAFE_free(pScreen -> visuals);
     pScreen -> visuals = visuals;
     pScreen -> numVisuals = numVisuals;
     pScreen -> rootVisual = defaultVisual;
@@ -1892,8 +1887,8 @@ N/A
           hint.res_class = strdup("NXAgent");
         }
         XSetClassHint(nxagentDisplay, nxagentDefaultWindows[pScreen->myNum], &hint);
-        free(hint.res_name);
-        free(hint.res_class);
+        SAFE_free(hint.res_name);
+        SAFE_free(hint.res_class);
       }
 
       if (nxagentOption(Fullscreen))
@@ -1977,17 +1972,8 @@ N/A
                          nxagentWindowName,
                          argv , argc , sizeHints, wmHints, NULL);
 
-    if (sizeHints)
-    {
-        XFree(sizeHints);
-        sizeHints = NULL;
-    }
-
-    if (wmHints)
-    {
-        XFree(wmHints);
-        wmHints = NULL;
-    }
+    SAFE_XFree(sizeHints);
+    SAFE_XFree(wmHints);
 
     /*
      * Clear the window but let it unmapped. We'll map it
@@ -2199,9 +2185,9 @@ Bool nxagentCloseScreen(ScreenPtr pScreen)
    * Free the frame buffer.
    */
 
-  free(((PixmapPtr)pScreen -> devPrivate) -> devPrivate.ptr);
-  free(pScreen->devPrivate);pScreen->devPrivate = NULL;
-  free(pScreen->visuals); pScreen->visuals = NULL;
+  SAFE_free(((PixmapPtr)pScreen -> devPrivate) -> devPrivate.ptr);
+  SAFE_free(pScreen->devPrivate);
+  SAFE_free(pScreen->visuals);
 
   fbCloseScreen(pScreen);
 
@@ -3158,7 +3144,7 @@ int nxagentShadowPoll(PixmapPtr nxagentShadowPixmapPtr, GCPtr nxagentShadowGCPtr
 
       length = nxagentImageLength(width, height, ZPixmap, 0, nxagentMasterDepth);
 
-      free(tBuffer);
+      SAFE_free(tBuffer);
 
       tBuffer = malloc(length);
 
@@ -3215,7 +3201,7 @@ int nxagentShadowPoll(PixmapPtr nxagentShadowPixmapPtr, GCPtr nxagentShadowGCPtr
       RegionUnion(&nxagentShadowUpdateRegion, &nxagentShadowUpdateRegion, &updateRegion);
     }
 
-    free(tBuffer);
+    SAFE_free(tBuffer);
 
     RegionUninit(&updateRegion);
   }
@@ -3433,7 +3419,7 @@ void nxagentShadowAdaptDepth(unsigned int width, unsigned int height,
   cBuffer = (unsigned char *) *buffer;
   *buffer = (char *) icBuffer;
 
-  free(cBuffer);
+  SAFE_free(cBuffer);
 }
 
 #ifdef NXAGENT_ARTSD
@@ -3616,7 +3602,7 @@ FIXME: The port information is not used at the moment and produces a
                              strlen(local_buf), local_buf, 1);
       }
 
-      free(local_buf);
+      SAFE_free(local_buf);
     }
   }
 }
@@ -4040,7 +4026,7 @@ int nxagentAdjustRandRXinerama(ScreenPtr pScreen)
       #endif
       number = 1;
 
-      free(screeninfo);
+      SAFE_free(screeninfo);
 
       if (!(screeninfo = malloc(sizeof(XineramaScreenInfo)))) {
 	return FALSE;
@@ -4309,8 +4295,7 @@ int nxagentAdjustRandRXinerama(ScreenPtr pScreen)
     }
 
     /* release allocated memory */
-    free(screeninfo);
-    screeninfo = NULL;
+    SAFE_free(screeninfo);
 
 #ifdef DEBUG
     for (i = 0; i < pScrPriv->numCrtcs; i++) {
@@ -4425,7 +4410,7 @@ void nxagentSaveAreas(PixmapPtr pPixmap, RegionPtr prgnSave, int xorg, int yorg,
 
   XSetClipRectangles(nxagentDisplay, gc, 0, 0, pRects, nRects, Unsorted);
 
-  free((char *) pRects);
+  SAFE_free(pRects);
 
   extents = *RegionExtents(&cleanRegion);
 
@@ -4571,7 +4556,7 @@ void nxagentRestoreAreas(PixmapPtr pPixmap, RegionPtr prgnRestore, int xorg,
 
   XSetClipRectangles(nxagentDisplay, gc, 0, 0, pRects, nRects, Unsorted);
 
-  free(pRects);
+  SAFE_free(pRects);
 
   extents = *RegionExtents(clipRegion);
 
@@ -4651,7 +4636,7 @@ void nxagentSetWMNormalHints(int screen, int width, int height)
 
   XSetWMNormalHints(nxagentDisplay, nxagentDefaultWindows[screen], sizeHints);
 
-  XFree(sizeHints);
+  SAFE_XFree(sizeHints);
 }
 
 /*
@@ -4670,7 +4655,7 @@ void nxagentSetWMNormalHintsMaxsize(ScreenPtr pScreen, int maxwidth, int maxheig
     sizeHints->max_height = maxheight;
     XSetWMNormalHints(nxagentDisplay, nxagentDefaultWindows[pScreen->myNum],
                       sizeHints);
-    XFree(sizeHints);
+    SAFE_XFree(sizeHints);
   }
 }
 
@@ -4811,7 +4796,7 @@ FIXME
     fprintf(stderr, "nxagentShowPixmap: XGetImage failed.\n");
     #endif
 
-    free(data);
+    SAFE_free(data);
 
     return;
   }
@@ -4844,7 +4829,7 @@ FIXME
     XDestroyImage(image);
   }
 
-  free(data);
+  SAFE_free(data);
 
 /*
 FIXME
@@ -4896,7 +4881,7 @@ void nxagentFbRestoreArea(PixmapPtr pPixmap, WindowPtr pWin, int xSrc, int ySrc,
     fprintf(stderr, "nxagentFbRestoreArea: XGetImage failed.\n");
     #endif
 
-    free(data);
+    SAFE_free(data);
 
     return;
   }
@@ -4956,7 +4941,7 @@ FIXME
 
 /*
 FIXME
-  free(data);
+  SAFE_free(data);
 */
 }
 

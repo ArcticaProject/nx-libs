@@ -294,7 +294,7 @@ void nxagentInitKeystrokes(Bool force)
   if (force) {
     if (map != default_map)
     {
-      free(map);
+      SAFE_free(map);
       map = default_map;
     }
     fprintf(stderr, "Info: re-reading keystrokes configuration\n");
@@ -414,7 +414,7 @@ void nxagentInitKeystrokes(Bool force)
     #endif
     filename = NULL;
   }
-  free(homepath);
+  SAFE_free(homepath);
 
   if (map == default_map)
   {

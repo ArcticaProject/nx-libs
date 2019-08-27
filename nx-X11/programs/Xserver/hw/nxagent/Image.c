@@ -455,7 +455,7 @@ FIXME: Here the split trap is always set and so the caching of
 
     if (nxagentUnpackAlpha[resource] != NULL)
     {
-      free(nxagentUnpackAlpha[resource] -> data);
+      SAFE_free(nxagentUnpackAlpha[resource] -> data);
     }
     else if ((nxagentUnpackAlpha[resource] = malloc(sizeof(UnpackAlphaRec))) == NULL)
     {
@@ -463,7 +463,7 @@ FIXME: Here the split trap is always set and so the caching of
       fprintf(stderr, "nxagentSetUnpackAlpha: PANIC! Can't allocate data for the alpha structure.\n");
       #endif
 
-      free(data);
+      SAFE_free(data);
 
       return;
     }
@@ -483,7 +483,7 @@ FIXME: Here the split trap is always set and so the caching of
                 resource, size);
     #endif
 
-    free(data);
+    SAFE_free(data);
   }
 }
 
@@ -1567,20 +1567,20 @@ nxagentPutSubImageEnd:
               nxagentImageStatistics.totalEncoded, nxagentImageStatistics.totalAdded);
   #endif
 
-  free(packedChecksum);
+  SAFE_free(packedChecksum);
 
   if (packedImage != NULL)
   {
     if (packedImage -> data != NULL &&
             packedImage -> data != plainImage -> data)
     {
-      free(packedImage -> data);
+      SAFE_free(packedImage -> data);
     }
 
-    free(packedImage);
+    SAFE_free(packedImage);
   }
 
-  free(plainImage);
+  SAFE_free(plainImage);
 }
 
 void nxagentGetImage(DrawablePtr pDrawable, int x, int y, int w, int h,
@@ -1634,11 +1634,8 @@ void nxagentResetAlphaCache(void)
   {
     if (nxagentUnpackAlpha[i])
     {
-      free(nxagentUnpackAlpha[i] -> data);
-
-      free(nxagentUnpackAlpha[i]);
-
-      nxagentUnpackAlpha[i] = NULL;
+      SAFE_free(nxagentUnpackAlpha[i] -> data);
+      SAFE_free(nxagentUnpackAlpha[i]);
     }
   }
 }
@@ -1716,7 +1713,7 @@ int nxagentScaleImage(int x, int y, unsigned xRatio, unsigned yRatio,
 
   if (newImage -> data == NULL)
   {
-    free(newImage);
+    SAFE_free(newImage);
     
     #ifdef PANIC
     fprintf(stderr, "nxagentScaleImage: PANIC! Failed to create the target image data.\n");
@@ -1784,8 +1781,8 @@ int nxagentScaleImage(int x, int y, unsigned xRatio, unsigned yRatio,
     }
   }
 
-  free((char *) image -> obdata);
-  free((char *) image);
+  SAFE_free(image -> obdata);
+  SAFE_free(image);
 
   *pImage = newImage;
 

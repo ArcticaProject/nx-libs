@@ -49,6 +49,7 @@
 #include "Events.h"
 #include "Holder.h"
 #include "Args.h"
+#include "Utils.h"
 
 #include "compext/Compext.h"
 #include <nx/NXpack.h>
@@ -501,7 +502,7 @@ Bool nxagentDestroyPixmap(PixmapPtr pPixmap)
     FreeResource(pPixmapPriv -> mid, RT_NONE);
   }
 
-  free(pPixmap);
+  SAFE_free(pPixmap);
 
   return True;
 }
@@ -1092,7 +1093,7 @@ Bool nxagentCheckPixmapIntegrity(PixmapPtr pPixmap)
     {
       FatalError("XGetImage: Failed.\n");
 
-      free(data);
+      SAFE_free(data);
 
       return False;
     }
@@ -1168,7 +1169,7 @@ Bool nxagentCheckPixmapIntegrity(PixmapPtr pPixmap)
       XDestroyImage(image);
     }
 
-    free(data);
+    SAFE_free(data);
   }
   else
   {
@@ -1265,7 +1266,7 @@ void nxagentSynchronizeShmPixmap(DrawablePtr pDrawable, int xPict, int yPict,
       nxagentPutImage(pDrawable, pGC, depth, xPict, yPict,
                           width, height, 0, format, data);
 
-      free(data);
+      SAFE_free(data);
     }
     #ifdef WARNING
     else
@@ -1413,7 +1414,7 @@ FIXME: If the pixmap has a different depth from the window, the
     fprintf(stderr, "nxagentPixmapOnShadowDisplay: XCreateImage failed.\n");
     #endif
 
-    free(data);
+    SAFE_free(data);
 
     return False;
   }
@@ -1572,7 +1573,7 @@ Bool nxagentFbOnShadowDisplay(void)
     fprintf(stderr, "nxagentFbOnShadowDisplay: XCreateImage failed.\n");
     #endif
 
-    free(data);
+    SAFE_free(data);
 
     return False;
   }

@@ -188,11 +188,11 @@ void nxagentFreeFontCache(void)
       nxagentFreeFont(CACHE_FSTRUCT(i));
     }
 
-    free(CACHE_NAME(i));
-    free(CACHE_ENTRY(i));
+    SAFE_free(CACHE_NAME(i));
+    SAFE_free(CACHE_ENTRY(i));
   }
 
-  free(CACHE_ENTRY_PTR);
+  SAFE_free(CACHE_ENTRY_PTR);
   CACHE_ENTRY_PTR = NULL;
   CACHE_INDEX = 0;
   CACHE_SIZE = 0;
@@ -324,8 +324,7 @@ void nxagentListRemoteAddName(const char *name, int status)
     if (nxagentRemoteFontList.list[pos]->name == NULL)
     {
        fprintf(stderr, "Font: remote list name memory allocation failed!.\n");
-       free(nxagentRemoteFontList.list[pos]);
-       nxagentRemoteFontList.list[pos] = NULL;
+       SAFE_free(nxagentRemoteFontList.list[pos]);
        return;
     }
   }
@@ -351,18 +350,14 @@ static void nxagentFreeRemoteFontList(nxagentFontList *listRec)
   {
     if (listRec -> list[l])
     {
-      free(listRec -> list[l] -> name);
-      listRec -> list[l] -> name = NULL;
-
-      free(listRec -> list[l]);
-      listRec -> list[l] = NULL;
+      SAFE_free(listRec -> list[l] -> name);
+      SAFE_free(listRec -> list[l]);
     }
   }
 
   listRec -> length = listRec -> listSize = 0;
 
-  free(listRec -> list);
-  listRec -> list = NULL;
+  SAFE_free(listRec -> list);
 
   return;
 }
@@ -434,7 +429,7 @@ Bool nxagentFontLookUp(const char *name)
     {
       result = nxagentFontFind(scalable, &i);
 
-      free(scalable);
+      SAFE_free(scalable);
     }
   }
 
@@ -448,7 +443,7 @@ Bool nxagentFontLookUp(const char *name)
     {
       result = nxagentFontFind(scalable, &i);
 
-      free(scalable);
+      SAFE_free(scalable);
     }
   }
 
@@ -813,7 +808,7 @@ static XFontStruct *nxagentLoadBestQueryFont(Display* dpy, char *fontName, FontP
 
       for (j = 0; j < numSearchFields; j++)
       {
-        free(searchFields[j]);
+        SAFE_free(searchFields[j]);
       }
     }
   }
@@ -830,7 +825,7 @@ static XFontStruct *nxagentLoadBestQueryFont(Display* dpy, char *fontName, FontP
 
   for (j = 0; j < numFontFields; j++)
   {
-    free(fontNameFields[j]);
+    SAFE_free(fontNameFields[j]);
   }
 
   return fontStruct;
@@ -890,10 +885,8 @@ static void nxagentCollectFailedFont(FontPtr fpt, XID id)
 
     if (nxagentFailedToReconnectFonts.font == NULL || nxagentFailedToReconnectFonts.id == NULL)
     {
-      free(nxagentFailedToReconnectFonts.font);
-      nxagentFailedToReconnectFonts.font = NULL;
-      free(nxagentFailedToReconnectFonts.id);
-      nxagentFailedToReconnectFonts.id = NULL;
+      SAFE_free(nxagentFailedToReconnectFonts.font);
+      SAFE_free(nxagentFailedToReconnectFonts.id);
 
       FatalError("Font: font not reconnected memory allocation failed!.\n");
     }
@@ -1050,7 +1043,7 @@ static void nxagentCleanCacheAfterReconnect(void)
   {
     if(CACHE_FSTRUCT(i) == NULL)
     {
-      XFree(CACHE_NAME(i));
+      SAFE_XFree(CACHE_NAME(i));
       real_size--;
     }
   }
@@ -1223,11 +1216,8 @@ static void nxagentFailedFontReconnect(FontPtr pFont, XID param1, void * param2)
 
 static void nxagentFreeFailedToReconnectFonts(void)
 {
-  free(nxagentFailedToReconnectFonts.font);
-  nxagentFailedToReconnectFonts.font = NULL;
-
-  free(nxagentFailedToReconnectFonts.id);
-  nxagentFailedToReconnectFonts.id = NULL;
+  SAFE_free(nxagentFailedToReconnectFonts.font);
+  SAFE_free(nxagentFailedToReconnectFonts.id);
 
   nxagentFailedToReconnectFonts.size = 0;
   nxagentFailedToReconnectFonts.index = 0;
@@ -1321,7 +1311,7 @@ Bool nxagentReconnectFailedFonts(void *p0)
       nxagentListRemoteFonts("*", nxagentMaxFontNames);
 
       XFreeFontPath(fontPaths);
-      free(newFontPaths);
+      SAFE_free(newFontPaths);
 
       return False;
     }
@@ -1332,7 +1322,7 @@ Bool nxagentReconnectFailedFonts(void *p0)
   XSetFontPath(nxagentDisplay, fontPaths, nPaths);
 
   XFreeFontPath(fontPaths);
-  free(newFontPaths);
+  SAFE_free(newFontPaths);
 
   nxagentCleanCacheAfterReconnect();
 
@@ -1442,7 +1432,7 @@ void nxagentVerifySingleFontPath(char **dest, const char *fontDir)
     if (rc == -1)
       return;
 
-    free(*dest);
+    SAFE_free(*dest);
     *dest = tmppath;
     tmppath = NULL;
   }
@@ -1554,7 +1544,7 @@ XFontStruct* nxagentLoadQueryFont(register Display *dpy, char *name, FontPtr pFo
     fprintf(stderr, "nxagentLoadQueryFont: WARNING! Font not found '%s'.\n", name);
     #endif
 
-    free(fs);
+    SAFE_free(fs);
 
     return (XFontStruct *) NULL;
   }
@@ -1588,7 +1578,7 @@ XFontStruct* nxagentLoadQueryFont(register Display *dpy, char *name, FontPtr pFo
       fprintf(stderr, "nxagentLoadQueryFont: WARNING! Failed allocation of XFontProp.");
       #endif
 
-      free((char *) fs);
+      SAFE_free(fs);
       return (XFontStruct *) NULL;
     }
 
@@ -1622,18 +1612,17 @@ XFontStruct* nxagentLoadQueryFont(register Display *dpy, char *name, FontPtr pFo
 
 int nxagentFreeFont(XFontStruct *fs)
 {
-  if (fs -> per_char)
+  if (fs->per_char)
   {
     #ifdef USE_XF86BIGFONT
     _XF86BigfontFreeFontMetrics(fs);
     #else
-    free ((char *) fs->per_char);
+    SAFE_free(fs->per_char);
     #endif
   }
 
-  free (fs->properties);
-
-  XFree(fs);
+  SAFE_free(fs->properties);
+  SAFE_XFree(fs);
 
   return 1;
 }
@@ -1769,7 +1758,7 @@ char *nxagentMakeScalableFontName(const char *fontName, int scalableResolution)
 
 MakeScalableFontNameError:
 
-  free(scalableFontName);
+  SAFE_free(scalableFontName);
 
   #ifdef DEBUG
   fprintf(stderr, "nxagentMakeScalableFontName: Invalid font name.\n");

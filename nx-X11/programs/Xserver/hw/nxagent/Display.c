@@ -71,6 +71,7 @@ is" without express or implied warranty.
 #include "Init.h"
 #include "Args.h"
 #include "Image.h"
+#include "Utils.h"
 
 #define Pixmap XlibPixmap
 #include "Icons.h"
@@ -1534,7 +1535,7 @@ void nxagentInitVisuals(void)
                                                  nxagentNumVisuals * sizeof(XVisualInfo));
   }
 
-  XFree(viList);
+  SAFE_XFree(viList);
 
   if (nxagentNumVisuals == 0 || nxagentVisuals == NULL)
   {
@@ -1756,20 +1757,11 @@ void nxagentCloseDisplay(void)
    * traffic
    */
 
-  free(nxagentDefaultColormaps);
-  nxagentDefaultColormaps = NULL;
-
-  XFree(nxagentVisuals);
-  nxagentVisuals = NULL;
-
-  free(nxagentDepths);
-  nxagentDepths = NULL;
-
-  XFree(nxagentPixmapFormats);
-  nxagentPixmapFormats = NULL;
-
-  XFree(nxagentRemotePixmapFormats);
-  nxagentRemotePixmapFormats = NULL;
+  SAFE_free(nxagentDefaultColormaps);
+  SAFE_free(nxagentDepths);
+  SAFE_XFree(nxagentVisuals);
+  SAFE_XFree(nxagentPixmapFormats);
+  SAFE_XFree(nxagentRemotePixmapFormats);
 
   nxagentFreeFontCache();
 /*
@@ -2008,11 +2000,7 @@ void nxagentBackupDisplayInfo(void)
   nxagentNumDefaultColormapsRecBackup = nxagentNumDefaultColormaps;
   nxagentVisualsRecBackup = nxagentVisuals;
   nxagentNumVisualsRecBackup = nxagentNumVisuals;
-  if (nxagentVisualHasBeenIgnored)
-  {
-    free(nxagentVisualHasBeenIgnored);
-    nxagentVisualHasBeenIgnored = NULL;
-  }
+  SAFE_free(nxagentVisualHasBeenIgnored);
   nxagentVisualHasBeenIgnored = malloc(nxagentNumVisuals * sizeof(Bool));
   nxagentDefaultDepthRecBackup = DefaultDepth(nxagentDisplay, DefaultScreen(nxagentDisplay));
   nxagentDisplayWidthRecBackup = DisplayWidth(nxagentDisplay, DefaultScreen(nxagentDisplay));
@@ -2024,20 +2012,11 @@ void nxagentBackupDisplayInfo(void)
 
 void nxagentCleanupBackupDisplayInfo(void)
 {
-  free(nxagentDepthsRecBackup);
-  nxagentNumDepthsRecBackup = 0;
+  SAFE_free(nxagentDepthsRecBackup);
+  SAFE_free(nxagentVisualsRecBackup);
+  SAFE_free(nxagentVisualHasBeenIgnored);
 
   nxagentNumDefaultColormapsRecBackup = 0;
-
-  free(nxagentVisualsRecBackup);
-  nxagentNumVisualsRecBackup = 0;
-
-  if (nxagentVisualHasBeenIgnored)
-  {
-    free(nxagentVisualHasBeenIgnored);
-    nxagentVisualHasBeenIgnored = NULL;
-  }
-
   nxagentDefaultDepthRecBackup = 0;
   nxagentDisplayWidthRecBackup = 0;
   nxagentDisplayHeightRecBackup = 0;
@@ -2045,7 +2024,6 @@ void nxagentCleanupBackupDisplayInfo(void)
   if (nxagentDisplayBackup)
   {
     XCloseDisplay(nxagentDisplayBackup);
-
     nxagentDisplayBackup = NULL;
   }
 
@@ -2057,7 +2035,7 @@ void nxagentCleanupBackupDisplayInfo(void)
     }
     else
     {
-      free(nxagentBitmapGCBackup);
+      SAFE_free(nxagentBitmapGCBackup);
     }
 
     nxagentBitmapGCBackup = NULL;
@@ -2560,7 +2538,7 @@ FIXME: Should the visual be ignored in this case?
     }
   }
 
-  XFree(viList);
+  SAFE_XFree(viList);
 
   if (compatible)
   {
@@ -2576,7 +2554,7 @@ FIXME: Should the visual be ignored in this case?
     fprintf(stderr, "nxagentInitAndCheckVisuals: New visuals don't match with old visuals.\n");
     #endif
 
-    free(newVisuals);
+    SAFE_free(newVisuals);
   }
 
   return compatible;
@@ -2757,19 +2735,8 @@ Bool nxagentReconnectDisplay(void *p0)
    * will be reallocated in nxagentInitPixmapFormats().
    */
 
-  if (nxagentPixmapFormats != NULL)
-  {
-    XFree(nxagentPixmapFormats);
-
-    nxagentPixmapFormats = NULL;
-  }
-
-  if (nxagentRemotePixmapFormats != NULL)
-  {
-    XFree(nxagentRemotePixmapFormats);
-
-    nxagentRemotePixmapFormats = NULL;
-  }
+  SAFE_XFree(nxagentPixmapFormats);
+  SAFE_XFree(nxagentRemotePixmapFormats);
 
   /*
    * Check if all the required pixmap

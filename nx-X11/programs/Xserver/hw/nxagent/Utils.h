@@ -45,5 +45,6 @@ static inline const char * validateString(const char *str) {
 }
 
 #define SAFE_XFree(what) do {if (what) {XFree(what); what = NULL;}} while (0)
+#define SAFE_free(what) do {free(what); what = NULL;} while (0)
 
 #endif /* __Utils_H__ */

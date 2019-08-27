@@ -61,6 +61,7 @@ is" without express or implied warranty.
 #include "Trap.h"
 #include "Screen.h"
 #include "Pixels.h"
+#include "Utils.h"
 
 #include "../../fb/fb.h"
 
@@ -694,7 +695,7 @@ void nxagentChangeClip(GCPtr pGC, int type, void * pValue, int nRects)
 
         XSetClipRectangles(nxagentDisplay, nxagentGC(pGC), pGC -> clipOrg.x, pGC -> clipOrg.y,
                                pRects, nRects, Unsorted);
-        free((char *) pRects);
+        SAFE_free(pRects);
       }
 
       break;
@@ -778,7 +779,7 @@ void nxagentChangeClip(GCPtr pGC, int type, void * pValue, int nRects)
 
       pGC->clientClip = (void *) RegionFromRects(nRects,
                                                   (xRectangle *)pValue, type);
-      free(pValue);
+      SAFE_free(pValue);
 
       pValue = pGC->clientClip;
 
@@ -912,9 +913,8 @@ static void nxagentFreeGCRec(struct nxagentGCRec *t)
               (void *) t, (void *) t -> gc);
   #endif
 
-  free(t -> gc);
-
-  free(t);
+  SAFE_free(t -> gc);
+  SAFE_free(t);
 }
 
 static void nxagentRestoreGCRec(struct nxagentGCRec *t)
@@ -924,11 +924,11 @@ static void nxagentRestoreGCRec(struct nxagentGCRec *t)
               (void*)t, (void*)t -> gc);
   #endif
 
-  free(nxagentGC(t -> pGC));
+  SAFE_free(nxagentGC(t -> pGC));
 
   nxagentGC(t -> pGC) = t -> gc;
 
-  free(t);
+  SAFE_free(t);
 }
 
 static void nxagentAddGCToList(GCPtr pGC)
@@ -1303,7 +1303,7 @@ static void nxagentReconnectClip(GCPtr pGC, int type, void * pValue, int nRects)
 
         XSetClipRectangles(nxagentDisplay, nxagentGC(pGC), pGC -> clipOrg.x, pGC -> clipOrg.y,
                            pRects, nRects, Unsorted);
-        free((char *) pRects);
+        SAFE_free(pRects);
       }
       else
       {
@@ -1374,7 +1374,7 @@ static void nxagentReconnectClip(GCPtr pGC, int type, void * pValue, int nRects)
 
       pGC->clientClip = (void *) RegionFromRects(nRects,
                                                   (xRectangle *)pValue, type);
-      free(pValue);
+      SAFE_free(pValue);
       pValue = pGC->clientClip;
       type = CT_REGION;
 
