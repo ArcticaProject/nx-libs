@@ -1674,8 +1674,7 @@ Copyright: 1991-2000, Silicon Graphics, Inc
   1991-2004, Silicon Graphics, Inc
 License: SGI-1.1
 
-Files: nx-X11/programs/Xserver/Xext/xtest1dd.h
- nx-X11/programs/Xserver/Xi/allowev.h
+Files: nx-X11/programs/Xserver/Xi/allowev.h
  nx-X11/programs/Xserver/Xi/chgdctl.h
  nx-X11/programs/Xserver/Xi/chgfctl.h
  nx-X11/programs/Xserver/Xi/chgkbd.h
@@ -1790,7 +1789,6 @@ Files: nx-X11/programs/Xserver/hw/nxagent/Args.c
  nx-X11/programs/Xserver/hw/nxagent/Pointer.h
  nx-X11/programs/Xserver/hw/nxagent/Screen.c
  nx-X11/programs/Xserver/hw/nxagent/Screen.h
- nx-X11/programs/Xserver/hw/nxagent/TestExt.c
  nx-X11/programs/Xserver/hw/nxagent/Visual.c
  nx-X11/programs/Xserver/hw/nxagent/Visual.h
 Copyright: 1993, Davor Matic
@@ -1922,7 +1920,6 @@ Files: nx-X11/programs/Xserver/hw/nxagent/NXdispatch.c
  nx-X11/programs/Xserver/hw/nxagent/NXevents.c
  nx-X11/programs/Xserver/hw/nxagent/NXextension.c
  nx-X11/programs/Xserver/hw/nxagent/NXglyphcurs.c
- nx-X11/programs/Xserver/hw/nxagent/NXmiexpose.c
  nx-X11/programs/Xserver/hw/nxagent/NXproperty.c
  nx-X11/programs/Xserver/hw/nxagent/NXresource.c
  nx-X11/programs/Xserver/hw/nxagent/NXwindow.c
@@ -2972,6 +2969,7 @@ Files: .travis.yml
  nxproxy/man/Makefile.am
  nxproxy/src/Makefile.am
  run-static-analysis.sh
+ static-analysis-suppressions
 Copyright: 2001, 2011, NoMachine (http://www.nomachine.com)
   2008-2014, Oleksandr Shneyder <o.shneyder@phoca-gmbh.de>
   2011-2016, Mike Gabriel <mike.gabriel@das-netzwerkteam.de>*/
@@ -3049,7 +3047,8 @@ Copyright: 2008, Benjamin Kosnik <bkoz@redhat.com>
   2014, 2015,  Google Inc.; contributed by Alexey Sokolov <sokolov@google.com>
   2015, Paul Norman <penorman@mac.com>
   2015, Moritz Klammler <moritz@klammler.eu>
-  2016, Krzesimir Nowak <qdlacz@gmail.com>
+  2016, 2018, Krzesimir Nowak <qdlacz@gmail.com>
+  2019, Enji Cooper <yaneurabeya@gmail.com>
 License: permissive
 Comment:
  Make lintian happy by listing all symlinks.
@@ -3070,12 +3069,31 @@ Comment:
 
 Files: m4/ax_pthread.m4
  nxcomp/m4/ax_pthread.m4
- nxproxy/m4/ax_pthread.m4
 Copyright: 2008, Steven G. Johnson <stevenj@alum.mit.edu>
   2011, Daniel Richard G. <skunk@iSKUNK.ORG>
 License: GPL-3+
 Comment:
  Make lintian happy by listing all symlinks.
+
+Files: nxdialog/Makefile.am
+ nxdialog/README.md
+ nxdialog/VERSION
+ nxdialog/bin/Makefile.am
+ nxdialog/configure.ac
+ nxdialog/man/Makefile.am
+ nxdialog/man/nxdialog.1
+ nxdialog/m4/.keep
+Copyright: 2019, Mike Gabriel <mike.gabriel@das-netzwerkteam.de>
+License: GPL-2+
+Comment:
+ Using license as found in nxdialog/bin/nxdialog.
+ .
+ Using copyright holder as found in VCS information.
+
+Files: nxdialog/bin/nxdialog
+Copyright: 2008, Google Inc.
+  2019, Ulrich Sibiller <uli42@gmx.de>
+License: GPL-2+
 
 Files: debian/*
 Copyright: 2011-2016, Mike Gabriel <mike.gabriel@das-netzwerkteam.de>
