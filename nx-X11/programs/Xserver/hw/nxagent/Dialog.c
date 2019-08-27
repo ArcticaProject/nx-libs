@@ -63,6 +63,8 @@ int nxagentEnableRandRModeDialogPid = 0;
 int nxagentDisableRandRModeDialogPid = 0;
 int nxagentEnableDeferModePid = 0;
 int nxagentDisableDeferModePid = 0;
+int nxagentEnableAutograbModePid = 0;
+int nxagentDisableAutograbModePid = 0;
 
 static int nxagentFailedReconnectionDialogPid = 0;
 
@@ -157,6 +159,24 @@ void nxagentResetDialog(int pid)
     #endif
 
     nxagentDisableDeferModePid = 0;
+  }
+  else if (pid == nxagentEnableAutograbModePid)
+  {
+    #ifdef TEST
+    fprintf(stderr, "nxagentResetDialog: Resetting enable autograb mode dialog pid [%d].\n",
+                nxagentEnableAutograbModePid);
+    #endif
+
+    nxagentEnableAutograbModePid = 0;
+  }
+  else if (pid == nxagentDisableAutograbModePid)
+  {
+    #ifdef TEST
+    fprintf(stderr, "nxagentResetDialog: Resetting disable autograb mode dialog pid [%d].\n",
+                nxagentDisableAutograbModePid);
+    #endif
+
+    nxagentDisableAutograbModePid = 0;
   }
 }
 
@@ -260,6 +280,24 @@ void nxagentLaunchDialog(DialogType dialogType)
       type = DIALOG_DISABLE_DEFER_MODE_TYPE;
       local = DIALOG_DISABLE_DEFER_MODE_LOCAL;
       pid = &nxagentDisableDeferModePid;
+
+      break;
+    }
+    case DIALOG_ENABLE_AUTOGRAB_MODE:
+    {
+      message = DIALOG_ENABLE_AUTOGRAB_MODE_MESSAGE;
+      type = DIALOG_ENABLE_AUTOGRAB_MODE_TYPE;
+      local = DIALOG_ENABLE_AUTOGRAB_MODE_LOCAL;
+      pid = &nxagentEnableAutograbModePid;
+
+      break;
+    }
+    case DIALOG_DISABLE_AUTOGRAB_MODE:
+    {
+      message = DIALOG_DISABLE_AUTOGRAB_MODE_MESSAGE;
+      type = DIALOG_DISABLE_AUTOGRAB_MODE_TYPE;
+      local = DIALOG_DISABLE_AUTOGRAB_MODE_LOCAL;
+      pid = &nxagentDisableAutograbModePid;
 
       break;
     }
@@ -493,6 +531,18 @@ void nxagentTerminateDialog(DialogType type)
     case DIALOG_DISABLE_DEFER_MODE:
     {
       pid = nxagentDisableDeferModePid;
+
+      break;
+    }
+    case DIALOG_ENABLE_AUTOGRAB_MODE:
+    {
+      pid = nxagentEnableAutograbModePid;
+
+      break;
+    }
+    case DIALOG_DISABLE_AUTOGRAB_MODE:
+    {
+      pid = nxagentDisableAutograbModePid;
 
       break;
     }

@@ -457,6 +457,9 @@ The nx-X11 system adds the following command line arguments:
 .B \-forcenx
 force use of NX protocol messages assuming communication through \fBnxproxy\fR
 .TP 8
+.B \-autograb
+enable autograb mode on \fBnxagent\fR startup. The autograb feature can be toggled via nxagent keystrokes
+.TP 8
 .B \-nxrealwindowprop
 set property NX_REAL_WINDOW for each X11 client inside \fBnxagent\fR,
 providing the window XID of the corresponding window object on the X
@@ -752,6 +755,10 @@ format must be included in both. This is potentially unsafe.
 .I bypass
 means that all of these checks are essentially
 deactivated. This is a very bad idea.
+.RE
+.TP 8
+.B autograb=<int>
+enable or disable autograb (default: disabled)
 .RE
 
 If you want to use \fBnxagent\fR as a replacement for Xnest or Xephyr you

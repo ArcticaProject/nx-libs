@@ -754,7 +754,12 @@ void nxagentSwitchFullscreen(ScreenPtr pScreen, Bool switchOn)
   else
   {
     nxagentFullscreenWindow = None;
-    nxagentUngrabPointerAndKeyboard(NULL);
+
+    /* if we had AutoGrab before entering fullscreen reactivate it now */
+    if (nxagentOption(AutoGrab))
+      nxagentGrabPointerAndKeyboard(NULL);
+    else
+      nxagentUngrabPointerAndKeyboard(NULL);
   }
 }
 
@@ -1004,6 +1009,10 @@ void nxagentSwitchAllScreens(ScreenPtr pScreen, Bool switchOn)
 
   XMoveResizeWindow(nxagentDisplay, nxagentInputWindows[0], 0, 0,
                         nxagentOption(Width), nxagentOption(Height));
+
+  /* if we had AutoGrab before entering fullscreen reactivate it now */
+  if (nxagentOption(AutoGrab))
+    nxagentGrabPointerAndKeyboard(NULL);
 
   nxagentSetPrintGeometry(pScreen -> myNum);
 }

@@ -126,6 +126,9 @@ reread_keystrokes
   Forces nxagent to re-read the keystroke configuration. Useful to
   add/change keystrokes to a running session.
 
+autograb
+  Toggles autograb mode
+
 force_synchronization
   Forces immediate drawing of elements to be synchronized which can
   fix some visual bugs.
