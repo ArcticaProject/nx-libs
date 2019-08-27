@@ -330,9 +330,6 @@ Depends:
  libnx-x11-6 (= ${binary:Version}),
  libxcomp3 (= ${binary:Version}),
  libxcompshad3 (= ${binary:Version}),
- python3,
- python3-gi,
- gir1.2-gtk-3.0,
  x11-xkb-utils,
  ${misc:Depends},
  ${shlibs:Depends},
@@ -377,6 +374,28 @@ Description: NX agent (debug package)
  This package contains detached debug symbols that help generating more
  helpful backtraces. You can safely remove it if you do not intend to
  debug NX packages on this system.
+
+Package: nxdialog
+Architecture: all
+Depends:
+ python3,
+ python3-gi,
+ gir1.2-gtk-3.0,
+ x11-xkb-utils,
+ ${misc:Depends},
+Recommends:
+ nxagent,
+Breaks:
+ nxagent (<< 2:3.5.99.21-2~),
+Replaces:
+ nxagent (<< 2:3.5.99.21-2~),
+Description: Dialogs for NX Agent
+ NX is a software suite which implements very efficient
+ compression of the X11 protocol. This increases performance when
+ using X applications over a network, especially a slow one.
+ .
+ nxdialog adds dialog windows/menus to nxagent. They get triggered by
+ certain actions within the NX Agent Xserver.
 
 Package: nxproxy
 Architecture: any
