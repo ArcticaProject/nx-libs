@@ -1914,7 +1914,6 @@ ProcRenderAddTraps (ClientPtr client)
     return client->noClientException;
 }
 
-#ifndef NXAGENT_SERVER
 static int ProcRenderCreateSolidFill(ClientPtr client)
 {
     PicturePtr	    pPicture;
@@ -2022,7 +2021,6 @@ static int ProcRenderCreateConicalGradient (ClientPtr client)
 	return BadAlloc;
     return Success;
 }
-#endif /* NXAGENT_SERVER */
 
 
 static int
