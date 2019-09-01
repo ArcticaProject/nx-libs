@@ -1595,8 +1595,6 @@ static int xorg_ProcRenderDispatch (ClientPtr client);
 static int
 ProcRenderDispatch (ClientPtr client)
 {
-    int result;
-
     /*
      * Let the client fail if we are
      * hiding the RENDER extension.
@@ -1620,7 +1618,7 @@ ProcRenderDispatch (ClientPtr client)
 
     nxagentGCTrap = 1;
 
-    result = xorg_ProcRenderDispatch(client);
+    int result = xorg_ProcRenderDispatch(client);
 
     nxagentGCTrap = 0;
 
@@ -1632,8 +1630,6 @@ static int xorg_SProcRenderDispatch (ClientPtr client);
 static int
 SProcRenderDispatch (ClientPtr client)
 {
-    int result;
-
     /*
      * Let the client fail if we are
      * hiding the RENDER extension.
@@ -1652,7 +1648,7 @@ SProcRenderDispatch (ClientPtr client)
 
     nxagentGCTrap = 1;
 
-    result = xorg_SProcRenderDispatch(client);
+    int result = xorg_SProcRenderDispatch(client);
 
     nxagentGCTrap = 0;
 
