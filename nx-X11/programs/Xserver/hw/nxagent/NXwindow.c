@@ -132,24 +132,6 @@ extern void nxagentSetVersionProperty(WindowPtr pWin);
 void
 InitRootWindow(WindowPtr pWin)
 {
-    ScreenPtr pScreen = pWin->drawable.pScreen;
-    int backFlag = CWBorderPixel | CWCursor | CWBackingStore;
-
-    #ifdef TEST
-    fprintf(stderr, "InitRootWindow: Called for window at [%p][%ld] with parent [%p].\n",
-                (void *) pWin, nxagentWindowPriv(pWin)->window, (void *) pWin -> parent);
-    #endif
-
-    if (nxagentOption(Rootless))
-    {
-      #ifdef TEST
-      fprintf(stderr, "InitRootWindow: Assigned agent root to window at [%p][%ld] with parent [%p].\n",
-                  (void *) pWin, nxagentWindowPriv(pWin)->window, (void *) pWin -> parent);
-      #endif
-
-      nxagentRootlessWindow = pWin;
-    }
-
     /*
      * A root window is created for each screen by main
      * and the pointer is saved in screenInfo.screens as
@@ -164,36 +146,17 @@ InitRootWindow(WindowPtr pWin)
      * if you prefer) fits in the big picture.
      */
 
-    #ifdef TEST
-    fprintf(stderr, "InitRootWindow: Going to create window as root at [%p][%ld] with parent [%p].\n",
-                (void *) pWin, nxagentWindowPriv(pWin)->window, (void *) pWin -> parent);
-    #endif
+    if (nxagentOption(Rootless))
+    {
+      #ifdef TEST
+      fprintf(stderr, "InitRootWindow: Assigned agent root to window at [%p][%ld] with parent [%p].\n",
+                  (void *) pWin, nxagentWindowPriv(pWin)->window, (void *) pWin -> parent);
+      #endif
 
-    if (!(*pScreen->CreateWindow)(pWin))
-	return; /* XXX */
+      nxagentRootlessWindow = pWin;
+    }
 
-    #ifdef TEST
-    fprintf(stderr, "InitRootWindow: Created window as root at [%p][%ld] with parent [%p].\n",
-                (void *) pWin, nxagentWindowPriv(pWin)->window, (void *) pWin -> parent);
-    #endif
-
-    (*pScreen->PositionWindow)(pWin, 0, 0);
-
-    pWin->cursorIsNone = FALSE;
-    pWin->optional->cursor = rootCursor;
-    rootCursor->refcnt++;
-
-    if (blackRoot)
-      pWin->background.pixel = pScreen->blackPixel;
-    else
-      pWin->background.pixel = pScreen->whitePixel;
-    backFlag |= CWBackPixel;
-
-    pWin->backingStore = defaultBackingStore;
-    pWin->forcedBS = (defaultBackingStore != NotUseful);
-
-    /* We SHOULD check for an error value here XXX */
-    (*pScreen->ChangeWindowAttributes)(pWin, backFlag);
+    xorg_InitRootWindow(pWin);
 
     /*
      * Map both the root and the default agent window.
@@ -214,7 +177,7 @@ InitRootWindow(WindowPtr pWin)
       char artsd_port[10];
       short int nPort = atoi(display) + 7000;
       sprintf(artsd_port,"%d", nPort);
-      nxagentPropagateArtsdProperties(pScreen, artsd_port);
+      nxagentPropagateArtsdProperties(pWin->drawable.pScreen, artsd_port);
     }
     #endif
 
