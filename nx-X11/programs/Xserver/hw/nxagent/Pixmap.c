@@ -322,41 +322,6 @@ PixmapPtr nxagentCreatePixmap(ScreenPtr pScreen, int width, int height,
   pVirtualPriv -> pVirtualPixmap = NULL;
   pVirtualPriv -> pPicture = NULL;
 
-  /*
-   * Check that the virtual pixmap is created with
-   * the appropriate bits-per-plane, otherwise free
-   * everything and return.
-   */
-
-  if (pVirtual -> drawable.bitsPerPixel == 0)
-  {
-    #ifdef WARNING
-
-    fprintf(stderr, "nxagentCreatePixmap: WARNING! Virtual pixmap at [%p] has invalid "
-                "bits per pixel.\n", (void *) pVirtual);
-
-    fprintf(stderr, "nxagentCreatePixmap: WARNING! Real pixmap created with width [%d] "
-                "height [%d] depth [%d] bits per pixel [%d] and allocation hint [%d].\n",
-                pPixmap -> drawable.width,
-                    pPixmap -> drawable.height = height, pPixmap -> drawable.depth,
-                        pPixmap -> drawable.bitsPerPixel,
-                           usage_hint);
-    #endif
-
-    if (!nxagentRenderTrap)
-    {
-      #ifdef WARNING
-      fprintf(stderr, "Warning: Disabling render extension due to missing pixmap format.\n");
-      #endif
-
-      nxagentRenderTrap = 1;
-    }
-
-    nxagentDestroyPixmap(pPixmap);
-
-    return NullPixmap;
-  }
-
   #ifdef TEST
   fprintf(stderr, "nxagentCreatePixmap: Created pixmap at [%p] virtual at [%p] with width [%d] "
               "height [%d] depth [%d] and allocation hint [%d].\n",

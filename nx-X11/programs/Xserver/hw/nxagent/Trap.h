@@ -43,13 +43,6 @@ extern int nxagentGCTrap;
 extern int nxagentScreenTrap;
 
 /*
- * Set if we detected that our RENDER
- * implementation is faulty.
- */
-
-extern int nxagentRenderTrap;
-
-/*
  * Set if we are executing a GC operation
  * only on the X side. Used to avoid
  * reentrancy in FB layer.
