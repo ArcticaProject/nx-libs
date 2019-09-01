@@ -461,9 +461,9 @@ void nxagentRenderExtensionInit(void)
      * As the RENDER requests are passed directly to
      * the remote X server this can cause problems if 
      * our RENDER version is different from the version
-     * supported by the remote. For this reasos let's
+     * supported by the remote. For this reasons let's
      * advertise to our clients the lowest between the
-     + two versions.
+     * two versions.
      */
 
     if (major_version > SERVER_RENDER_MAJOR_VERSION ||
