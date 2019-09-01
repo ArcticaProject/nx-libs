@@ -152,8 +152,6 @@ int nxagentChangePictureClip(PicturePtr pPicture, int clipType, int nRects,
 
 void nxagentDestroyPictureClip(PicturePtr pPicture);
 
-void nxagentValidatePicture(PicturePtr pPicture, Mask mask);
-
 void nxagentComposite(CARD8 op, PicturePtr pSrc, PicturePtr pMask, PicturePtr pDst,
                           INT16 xSrc, INT16 ySrc, INT16 xMask, INT16 yMask, INT16 xDst,
                               INT16 yDst, CARD16 width, CARD16 height);
@@ -1230,13 +1228,6 @@ FIXME: Is this useful or just a waste of bandwidth?
 
   XSync(nxagentDisplay, 0);
 
-  #endif
-}
-
-void nxagentValidatePicture(PicturePtr pPicture, Mask mask)
-{
-  #ifdef DEBUG
-  fprintf(stderr, "nxagentValidatePicture: Nothing to do.\n");
   #endif
 }
 
