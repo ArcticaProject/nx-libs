@@ -792,9 +792,7 @@ int nxagentCreatePicture(PicturePtr pPicture, Mask mask)
 
 XRenderPictFormat *nxagentMatchingFormats(PictFormatPtr pFormat)
 {
-  int i;
-
-  for (i = 0; i < nxagentNumFormats; i++)
+  for (int i = 0; i < nxagentNumFormats; i++)
   {
     if (pFormat -> type == nxagentArrayFormats[i].type &&
         pFormat -> depth == nxagentArrayFormats[i].depth &&
