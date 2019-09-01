@@ -90,7 +90,7 @@ void miTrapezoidBounds (int ntrap, xTrapezoid *traps, BoxPtr box);
 
 extern int  nxagentCursorSaveRenderInfo(ScreenPtr, CursorPtr);
 extern void nxagentCursorPostSaveRenderInfo(CursorPtr, ScreenPtr, PicturePtr, int, int);
-extern int  nxagentRenderRealizeCursor(ScreenPtr, CursorPtr);
+extern void nxagentRenderRealizeCursor(ScreenPtr, CursorPtr);
 extern int  nxagentCreatePicture(PicturePtr, Mask);
 extern void nxagentChangePicture(PicturePtr, Mask);
 extern int  nxagentChangePictureClip(PicturePtr, int, int, xRectangle *, int, int);

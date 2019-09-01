@@ -539,7 +539,7 @@ void nxagentCursorPostSaveRenderInfo(CursorPtr pCursor, ScreenPtr pScreen,
   nxagentCursorYOffset(pCursor, pScreen) = y;
 }
 
-int nxagentRenderRealizeCursor(ScreenPtr pScreen, CursorPtr pCursor)
+void nxagentRenderRealizeCursor(ScreenPtr pScreen, CursorPtr pCursor)
 {
   int cid;
   int x, y;
@@ -579,8 +579,6 @@ int nxagentRenderRealizeCursor(ScreenPtr pScreen, CursorPtr pCursor)
   cid = XRenderCreateCursor(nxagentDisplay, nxagentPicture(pPicture), x, y);
 
   nxagentCursor(pCursor, pScreen) = cid;
-
-  return 1;
 }
 
 int nxagentCreatePicture(PicturePtr pPicture, Mask mask)
