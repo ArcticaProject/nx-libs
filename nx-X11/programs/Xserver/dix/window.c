@@ -497,9 +497,12 @@ CreateRootWindow(ScreenPtr pScreen)
     return TRUE;
 }
 
-#ifndef NXAGENT_SERVER
 void
+#ifdef NXAGENT_SERVER
+xorg_InitRootWindow(WindowPtr pWin)
+#else
 InitRootWindow(WindowPtr pWin)
+#endif
 {
     ScreenPtr pScreen = pWin->drawable.pScreen;
     int backFlag = CWBorderPixel | CWCursor | CWBackingStore;
@@ -531,7 +534,6 @@ InitRootWindow(WindowPtr pWin)
 
     MapWindow(pWin, serverClient);
 }
-#endif /* NXAGENT_SERVER */
 
 /* Set the region to the intersection of the rectangle and the
  * window's winSize.  The window is typically the parent of the

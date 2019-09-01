@@ -2539,6 +2539,10 @@ void nxagentMapDefaultWindows(void)
     WindowPtr pWin = screenInfo.screens[i]->root;
     ScreenPtr pScreen = pWin -> drawable.pScreen;
 
+    /*
+     * InitRootWindow does that already, but as MapWindow() is
+     * idempotent we keep it here, too
+     */
     MapWindow(pWin, serverClient);
 
     if (nxagentOption(Rootless) == 0)
