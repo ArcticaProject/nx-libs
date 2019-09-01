@@ -541,17 +541,12 @@ void nxagentCursorPostSaveRenderInfo(CursorPtr pCursor, ScreenPtr pScreen,
 
 void nxagentRenderRealizeCursor(ScreenPtr pScreen, CursorPtr pCursor)
 {
-  int cid;
-  int x, y;
-
-  PicturePtr pPicture;
-
-  pPicture = nxagentCursorPicture(pCursor, pScreen);
+  PicturePtr pPicture = nxagentCursorPicture(pCursor, pScreen);
 
   pPicture -> refcnt++;
 
-  x = nxagentCursorXOffset(pCursor, pScreen);
-  y = nxagentCursorYOffset(pCursor, pScreen);
+  int x = nxagentCursorXOffset(pCursor, pScreen);
+  int y = nxagentCursorYOffset(pCursor, pScreen);
 
   /*
    * Set the lossless trap so that the image functions
@@ -576,9 +571,7 @@ void nxagentRenderRealizeCursor(ScreenPtr pScreen, CursorPtr pCursor)
 
   nxagentLosslessTrap = 0;
 
-  cid = XRenderCreateCursor(nxagentDisplay, nxagentPicture(pPicture), x, y);
-
-  nxagentCursor(pCursor, pScreen) = cid;
+  nxagentCursor(pCursor, pScreen) = XRenderCreateCursor(nxagentDisplay, nxagentPicture(pPicture), x, y);
 }
 
 int nxagentCreatePicture(PicturePtr pPicture, Mask mask)
