@@ -245,17 +245,3 @@ MapWindow(register WindowPtr pWin, ClientPtr client)
       nxagentFlushConfigureWindow();
     return(Success);
 }
-
-int
-UnmapWindow(register WindowPtr pWin, Bool fromConfigure)
-{
-    #ifdef TEST
-    if (nxagentWindowTopLevel(pWin))
-    {
-      fprintf(stderr, "UnmapWindow: pWin [%p] fromConfigure [%d]\n", pWin,
-                  fromConfigure);
-    }
-    #endif
-
-    return xorg_UnmapWindow(pWin, fromConfigure);
-}
