@@ -784,8 +784,8 @@ ProcOpenFont(register ClientPtr client)
        err = nxOpenFont(client, stuff->fid, (Mask) 0,
 		stuff->nbytes, (char *)&stuff[1]);
     }
-#endif
     else
+#endif
     err = OpenFont(client, stuff->fid, (Mask) 0,
 		stuff->nbytes, (char *)&stuff[1]);
     if (err == Success)
