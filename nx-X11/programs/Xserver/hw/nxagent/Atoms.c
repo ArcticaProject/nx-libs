@@ -177,7 +177,7 @@ void nxagentWMDetect()
   finishWMDetection(verbose);
 }
 
-int nxagentInitAtoms()
+void nxagentInitAtoms()
 {
   /*
    * Value of nxagentAtoms[8] is "NX_AGENT_SIGNATURE".
@@ -195,8 +195,6 @@ int nxagentInitAtoms()
     fprintf(stderr, "%s: PANIC! Could not create [%s] atom.\n", __func__,
                 nxagentAtomNames[8]);
     #endif
-
-    return -1;
   }
   else
   {
@@ -204,7 +202,6 @@ int nxagentInitAtoms()
     fprintf(stderr, "nxagentInitAtoms: atom [%s] created with value [%d].\n",
                 nxagentAtomNames[8], atom);
     #endif
-    return 1;
   }
 }
 

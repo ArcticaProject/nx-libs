@@ -41,7 +41,7 @@ extern Bool nxagentWMIsRunning;
  * to the agent server.
  */
 
-int nxagentInitAtoms();
+void nxagentInitAtoms();
 
 /*
  * Query and create all the required atoms
