@@ -2044,14 +2044,6 @@ FIXME: Is this useful or just a waste of bandwidth?
   #endif
 }
 
-void nxagentRasterizeTrapezoid(PicturePtr pMask, xTrapezoid *trap,
-                                   int x_off, int y_off)
-{
-  #ifdef DEBUG
-  fprintf(stderr, "nxagentRasterizeTrapezoids: Nothing to do.\n");
-  #endif
-}
-
 void nxagentTriangles(CARD8 op, PicturePtr pSrc, PicturePtr pDst,
                           PictFormatPtr maskFormat, INT16 xSrc, INT16 ySrc,
                               int ntri, xTriangle *tris)
