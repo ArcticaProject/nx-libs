@@ -176,7 +176,7 @@ void nxagentWMDetect()
   finishWMDetection(verbose);
 }
 
-int nxagentInitAtoms(WindowPtr pWin)
+int nxagentInitAtoms(void)
 {
   Atom atom;
 
