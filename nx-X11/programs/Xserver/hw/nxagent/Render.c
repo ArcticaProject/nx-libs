@@ -167,9 +167,6 @@ void nxagentTrapezoids(CARD8 op, PicturePtr pSrc, PicturePtr pDst,
                            PictFormatPtr maskFormat, INT16 xSrc, INT16 ySrc,
                                int ntrap, xTrapezoid *traps);
 
-void nxagentRasterizeTrapezoid(PicturePtr pMask, xTrapezoid *trap,
-                                   int x_off, int y_off);
-
 void nxagentTriangles(CARD8 op, PicturePtr pSrc, PicturePtr pDst,
                           PictFormatPtr maskFormat, INT16 xSrc, INT16 ySrc,
                               int ntri, xTriangle *tris);
@@ -2050,14 +2047,6 @@ FIXME: Is this useful or just a waste of bandwidth?
 
   XSync(nxagentDisplay, 0);
 
-  #endif
-}
-
-void nxagentRasterizeTrapezoid(PicturePtr pMask, xTrapezoid *trap,
-                                   int x_off, int y_off)
-{
-  #ifdef DEBUG
-  fprintf(stderr, "nxagentRasterizeTrapezoids: Nothing to do.\n");
   #endif
 }
 
