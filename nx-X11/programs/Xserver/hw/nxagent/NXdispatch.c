@@ -1143,6 +1143,7 @@ InitClientPrivates(ClientPtr client)
 {
     int ret = xorg_InitClientPrivates(client);
 
+#ifdef NXAGENT_SERVER
     if (ret == 1)
     {
 
@@ -1152,6 +1153,7 @@ InitClientPrivates(ClientPtr client)
 
       nxagentInitClientPrivates(client);
     }
+#endif
 
     return ret;
 }
