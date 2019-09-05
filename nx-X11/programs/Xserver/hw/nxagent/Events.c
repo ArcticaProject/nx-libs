@@ -3746,18 +3746,29 @@ int nxagentHandleReparentNotify(XEvent* X)
   return 1;
 }
 
-void nxagentEnableKeyboardEvents(void)
+/*
+ * Helper for nxagent(Enable|Disable)(Keyboard|Pointer)Events
+ */
+static void nxagentSwitchEventsAllScreens(Mask mask, Bool enable)
 {
-  Mask mask = nxagentGetDefaultEventMask();
+  Mask newmask = nxagentGetDefaultEventMask();
 
-  mask |= NXAGENT_KEYBOARD_EVENT_MASK;
+  if (enable)
+    newmask |= mask;
+  else
+    newmask &= ~mask;
 
-  nxagentSetDefaultEventMask(mask);
+  nxagentSetDefaultEventMask(newmask);
 
   for (int i = 0; i < nxagentNumScreens; i++)
   {
-    XSelectInput(nxagentDisplay, nxagentDefaultWindows[i], mask);
+    XSelectInput(nxagentDisplay, nxagentDefaultWindows[i], newmask);
   }
+}
+
+void nxagentEnableKeyboardEvents(void)
+{
+  nxagentSwitchEventsAllScreens(NXAGENT_KEYBOARD_EVENT_MASK, True);
 
   XkbSelectEvents(nxagentDisplay, XkbUseCoreKbd,
                       NXAGENT_KEYBOARD_EXTENSION_EVENT_MASK,
@@ -3766,46 +3777,19 @@ void nxagentEnableKeyboardEvents(void)
 
 void nxagentDisableKeyboardEvents(void)
 {
-  Mask mask = nxagentGetDefaultEventMask();
-
-  mask &= ~NXAGENT_KEYBOARD_EVENT_MASK;
-
-  nxagentSetDefaultEventMask(mask);
-
-  for (int i = 0; i < nxagentNumScreens; i++)
-  {
-    XSelectInput(nxagentDisplay, nxagentDefaultWindows[i], mask);
-  }
+  nxagentSwitchEventsAllScreens(NXAGENT_KEYBOARD_EVENT_MASK, False);
 
   XkbSelectEvents(nxagentDisplay, XkbUseCoreKbd, 0x0, 0x0);
 }
 
 void nxagentEnablePointerEvents(void)
 {
-  Mask mask = nxagentGetDefaultEventMask();
-
-  mask |= NXAGENT_POINTER_EVENT_MASK;
-
-  nxagentSetDefaultEventMask(mask);
-
-  for (int i = 0; i < nxagentNumScreens; i++)
-  {
-    XSelectInput(nxagentDisplay, nxagentDefaultWindows[i], mask);
-  }
+  nxagentSwitchEventsAllScreens(NXAGENT_POINTER_EVENT_MASK, True);
 }
 
 void nxagentDisablePointerEvents(void)
 {
-  Mask mask = nxagentGetDefaultEventMask();
-
-  mask &= ~NXAGENT_POINTER_EVENT_MASK;
-
-  nxagentSetDefaultEventMask(mask);
-
-  for (int i = 0; i < nxagentNumScreens; i++)
-  {
-    XSelectInput(nxagentDisplay, nxagentDefaultWindows[i], mask);
-  }
+  nxagentSwitchEventsAllScreens(NXAGENT_POINTER_EVENT_MASK, False);
 }
 
 void nxagentSendFakeKey(int key)
