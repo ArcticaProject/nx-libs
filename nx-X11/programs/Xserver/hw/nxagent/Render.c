@@ -446,11 +446,10 @@ void nxagentRenderExtensionInit(void)
     XRenderQueryVersion(nxagentDisplay, &major_version, &minor_version);
 
     /*
-     * As the RENDER requests are passed directly to
-     * the remote X server this can cause problems if 
-     * our RENDER version is different from the version
-     * supported by the remote. For this reasons let's
-     * advertise to our clients the lowest between the
+     * As the RENDER requests are passed directly to the remote X
+     * server this can cause problems if our RENDER version is
+     * different from the version supported by the remote. For this
+     * reasons let's advertise to our clients the lowest between the
      * two versions.
      */
 
@@ -1070,11 +1069,9 @@ void nxagentChangePicture(PicturePtr pPicture, Mask mask)
   if (mask & CPClipMask)
   {
     /*
-     * The nxagent doesn't know the remote id of
-     * the picture's clip mask, so the clip_mask
-     * value is used as a boolean: it is set to 0
-     * when the clip_mask is None, otherwise it is
-     * 1.
+     * The nxagent doesn't know the remote id of the picture's clip
+     * mask, so the clip_mask value is used as a boolean: it is set to
+     * 0 when the clip_mask is None, otherwise it is 1.
      */
 
     attributes.clip_mask = None;
@@ -1237,11 +1234,10 @@ void nxagentComposite(CARD8 op, PicturePtr pSrc, PicturePtr pMask, PicturePtr pD
   }
 
   /*
-   * Synchronize the content of the shared memory pixmap
-   * but pay attention at not doing this more than once.
-   * We need to wait until the image data has been recom-
-   * posed at the X server side or the operation will use
-   * the wrong data.
+   * Synchronize the content of the shared memory pixmap but pay
+   * attention at not doing this more than once.  We need to wait
+   * until the image data has been recom- posed at the X server side
+   * or the operation will use the wrong data.
    */
 
   if (pSrc -> pDrawable != NULL)
@@ -1292,14 +1288,12 @@ void nxagentComposite(CARD8 op, PicturePtr pSrc, PicturePtr pMask, PicturePtr pD
   }
 
   /*
-   * The glyphs flag have to be propagated between
-   * drawables, in order to avoid to encode the
-   * text with lossy algorithms (like JPEG). Unlu-
-   * ckily we have verified that if the render com-
-   * posite propagates the flag, the deferring of
-   * render trapezoids doesn't work well. Moreover,
-   * by commenting out this code we have not noticed
-   * any visual problems.
+   * The glyphs flag have to be propagated between drawables, in order
+   * to avoid to encode the text with lossy algorithms (like
+   * JPEG). Unlu- ckily we have verified that if the render com-
+   * posite propagates the flag, the deferring of render trapezoids
+   * doesn't work well. Moreover, by commenting out this code we have
+   * not noticed any visual problems.
    *
    *  if (nxagentDrawableContainGlyphs(pSrc -> pDrawable) == 1)
    *  {
@@ -1369,10 +1363,8 @@ void nxagentGlyphs(CARD8 op, PicturePtr pSrc, PicturePtr pDst,
     glyphBox.y2 = nxagentGlyphsExtents -> y2;
 
     /*
-     * By extending the glyph extents the
-     * visual aspect looks nicer because
-     * the synchronized region is not glued
-     * to the fonts.
+     * By extending the glyph extents the visual aspect looks nicer
+     * because the synchronized region is not glued to the fonts.
      */
 
     if (glyphBox.x2 != glyphBox.x1)
@@ -1389,8 +1381,8 @@ void nxagentGlyphs(CARD8 op, PicturePtr pSrc, PicturePtr pDst,
   }
 
   /*
-   * If the destination window is hidden, the
-   * operation can be prevented.
+   * If the destination window is hidden, the operation can be
+   * prevented.
    */
 
   if (pDst -> pDrawable -> type == DRAWABLE_WINDOW)
@@ -1414,9 +1406,8 @@ void nxagentGlyphs(CARD8 op, PicturePtr pSrc, PicturePtr pDst,
   }
 
   /*
-   * Need to synchronize the pixmaps involved in
-   * the operation before rendering the glyphs
-   * on the real X server.
+   * Need to synchronize the pixmaps involved in the operation before
+   * rendering the glyphs on the real X server.
    */
 
   if (pSrc -> pDrawable != NULL &&
@@ -1431,11 +1422,9 @@ void nxagentGlyphs(CARD8 op, PicturePtr pSrc, PicturePtr pDst,
     #endif
 
     /*
-     * If the source drawable is going to be
-     * repeated over the destination drawable
-     * during the composite operation, we need
-     * to synchronize the whole drawable to
-     * avoid graphical problems.
+     * If the source drawable is going to be repeated over the
+     * destination drawable during the composite operation, we need to
+     * synchronize the whole drawable to avoid graphical problems.
      */
 
     if (pSrc -> repeat == 1 || nxagentGlyphsExtents == NullBox)
@@ -1537,12 +1526,10 @@ void nxagentGlyphs(CARD8 op, PicturePtr pSrc, PicturePtr pDst,
   GlyphPtr glyph;
 
   /*
-   * We split glyphs lists here and recalculate
-   * the offsets of each list to make them ab-
-   * solute and not relatives to the prior list.
-   * This way each time we call XRenderComposi-
-   * teText it has to deal only with a list of
-   * glyphs. This is done to further improve
+   * We split glyphs lists here and recalculate the offsets of each
+   * list to make them ab- solute and not relatives to the prior list.
+   * This way each time we call XRenderComposi- teText it has to deal
+   * only with a list of glyphs. This is done to further improve
    * caching.
    */
 
