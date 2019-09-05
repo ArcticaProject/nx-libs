@@ -434,7 +434,6 @@ char *nxagentGetRootPath(void)
        */
 
       struct stat dirStat;
-
       if ((stat(nxagentRootDir, &dirStat) == -1) && (errno == ENOENT))
       {
         if (mkdir(nxagentRootDir, 0777) < 0 && (errno != EEXIST))
@@ -530,7 +529,6 @@ char *nxagentGetSessionPath(void)
     SAFE_free(rootPath);
 
     struct stat dirStat;
-
     if ((stat(nxagentSessionDir, &dirStat) == -1) && (errno == ENOENT))
     {
       if (mkdir(nxagentSessionDir, 0777) < 0 && (errno != EEXIST))
@@ -567,7 +565,6 @@ char *nxagentGetSessionPath(void)
 
 void nxagentGetClientsPath(void)
 {
-
   if (*nxagentClientsLogName == '\0')
   {
     char *sessionPath = nxagentGetSessionPath();
