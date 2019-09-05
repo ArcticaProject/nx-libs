@@ -159,8 +159,7 @@ static struct _nxagentFailedToReconnectFonts
 } nxagentFailedToReconnectFonts = {NULL, NULL, 0, 0};
 
 /*
- * This is used if nxagentFullGeneration is true
- * in CloseDisplay().
+ * This is used if nxagentFullGeneration is true in CloseDisplay().
  */
 
 void nxagentFreeFontCache(void)
@@ -218,8 +217,7 @@ void nxagentListRemoteFonts(const char *searchPattern, const int maxNames)
   }
 
   /*
-   * Avoid querying again the remote
-   * fonts.
+   * Avoid querying again the remote fonts.
    */
 
   if (nxagentRemoteFontList.length > 0)
@@ -228,13 +226,11 @@ void nxagentListRemoteFonts(const char *searchPattern, const int maxNames)
   }
 
   /*
-   * We can't retrieve the full remote font
-   * list with a single query, because the
-   * number of dashes in the pattern acts as
-   * a rule to select how to search for the
-   * font names, so the pattern '*' is useful
-   * to retrieve the font aliases, while the
-   * other one will select the 'real' fonts.
+   * We can't retrieve the full remote font list with a single query,
+   * because the number of dashes in the pattern acts as a rule to
+   * select how to search for the font names, so the pattern '*' is
+   * useful to retrieve the font aliases, while the other one will
+   * select the 'real' fonts.
    */
 
   for (int p = 0; p < patternsQt; p++)
@@ -246,8 +242,8 @@ void nxagentListRemoteFonts(const char *searchPattern, const int maxNames)
     #endif
 
     /*
-     * Add the ListFont request pattern to the list with
-     * the last requested maxnames.
+     * Add the ListFont request pattern to the list with the last
+     * requested maxnames.
      */
 
     nxagentListRemoteAddName(searchPattern, maxNames);
@@ -686,11 +682,10 @@ int nxagentDestroyNewFontResourceType(void * p, XID id)
   #endif
 
 /*
-FIXME: It happens that this resource had been already
-       destroyed. We should verify if the same font is
-       assigned both to the server client and another
-       client. We had a crash when freeing server client
-       resources.
+FIXME: It happens that this resource had been already destroyed. We
+       should verify if the same font is assigned both to the server
+       client and another client. We had a crash when freeing server
+       client resources.
 */
   if (nxagentFontPriv((FontPtr) p) != NULL)
   {
@@ -706,8 +701,8 @@ static XFontStruct *nxagentLoadBestQueryFont(Display* dpy, char *fontName, FontP
 
   char substFontBuf[512];;
 
-  /*  X Logical Font Description Conventions
-   *  require 14 fields in the font names.
+  /*  X Logical Font Description Conventions require 14 fields in the
+   *  font names.
    *
    */
   char *searchFields[FIELDS+1];
@@ -1067,8 +1062,7 @@ static void nxagentCleanCacheAfterReconnect(void)
       for (j = CACHE_INDEX - 1; CACHE_FSTRUCT(j) == NULL; j--);
 
       /*
-       * Now we can swap the two entry
-       * and reduce the Cache index
+       * Now we can swap the two entry and reduce the Cache index
        */
       swapEntryPtr = CACHE_ENTRY(i);
       CACHE_ENTRY(i) = CACHE_ENTRY(j);
@@ -1109,9 +1103,8 @@ Bool nxagentReconnectAllFonts(void *p0)
   #endif
 
   /*
-   * The resource type RT_NX_FONT is created on the
-   * server client only, so we can avoid to loop
-   * through all the clients.
+   * The resource type RT_NX_FONT is created on the server client
+   * only, so we can avoid to loop through all the clients.
    */
 
   FindClientResourcesByType(clients[serverClient -> index], RT_NX_FONT,
@@ -1341,9 +1334,8 @@ Bool nxagentDisconnectAllFonts(void)
   nxagentFreeCacheBeforeReconnect();
 
   /*
-   * The resource type RT_NX_FONT is created on the
-   * server client only, so we can avoid to loop
-   * through all the clients.
+   * The resource type RT_NX_FONT is created on the server client
+   * only, so we can avoid to loop through all the clients.
    */
 
   FindClientResourcesByType(clients[serverClient -> index], RT_NX_FONT,
