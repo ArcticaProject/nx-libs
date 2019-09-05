@@ -152,8 +152,8 @@ Drawable nxagentDefaultDrawables[MAXDEPTH + 1];
 Pixmap nxagentScreenSaverPixmap;
 
 /*
- * Also used in Cursor.c. There are huge problems
- * using GC definition. This is to be reworked.
+ * Also used in Cursor.c. There are huge problems using GC
+ * definition. This is to be reworked.
  */
 
 XlibGC nxagentBitmapGC;
@@ -1188,9 +1188,8 @@ Reply   Total	Cached	Bits In			Bits Out		Bits/Reply	  Ratio
                                  DefaultScreenOfDisplay(nxagentDisplay));
 
   /*
-   * Processing the arguments all the timeouts
-   * have been set. Now we have to change the
-   * screen-saver timeout.
+   * Processing the arguments all the timeouts have been set. Now we
+   * have to change the screen-saver timeout.
    */
 
   nxagentSetScreenSaverTime();
@@ -1286,7 +1285,7 @@ FIXME: Use of nxagentParentWindow is strongly deprecated.  We need
   nxagentBitmapGC = XCreateGC(nxagentDisplay, nxagentDefaultDrawables[1], 0L, NULL);
 
   /*
-   * Note that this "confine windoqw" is useless at the moment as we
+   * Note that this "confine window" is useless at the moment as we
    * reimplement nxagentConstrainCursor() to skip the "constrain"
    * stuff.
    */
@@ -1918,14 +1917,13 @@ static int nxagentCheckForDefaultDepthCompatibility(void)
   /*
    * Depending on the (reconnect) tolerance checks value, this
    * function checks stricter or looser:
-   *   - Strict means that the old and new default depth values
-   *     must match exactly.
-   *   - Safe or Risky means that the default depth values might differ,
-   *     but the new default depth value must be at least as
-   *     high as the former default depth value. This is
-   *     recommended, because it allows clients with a
-   *     higher default depth value to still connect, but
-   *     not lose functionality.
+   *   - Strict means that the old and new default depth values must
+   *     match exactly.
+   *   - Safe or Risky means that the default depth values might
+   *     differ, but the new default depth value must be at least as
+   *     high as the former default depth value. This is recommended,
+   *     because it allows clients with a higher default depth value
+   *     to still connect, but not lose functionality.
    *   - Bypass means that all of these checks are essentially
    *     deactivated. This is probably a very bad idea.
    */
@@ -1982,18 +1980,16 @@ static int nxagentCheckForDepthsCompatibility(void)
   /*
    * Depending on the (reconnect) tolerance checks value, this
    * function checks stricter or looser:
-   *   - Strict means that the number of old and new depths must
-   *     match exactly and every old depth value must be
-   *     available in the new depth array.
-   *   - Safe means that the number of depths might diverge,
-   *     but all former depth must also be included in the
-   *     new depth array. This is recommended, because
-   *     it allows clients with more depths to still
-   *     connect, but not lose functionality.
+   *   - Strict means that the number of old and new depths must match
+   *     exactly and every old depth value must be available in the
+   *     new depth array.
+   *   - Safe means that the number of depths might diverge, but all
+   *     former depth must also be included in the new depth
+   *     array. This is recommended, because it allows clients with
+   *     more depths to still connect, but not lose functionality.
    *   - Risky means that the new depths array is allowed to be
-   *     smaller than the old depths array, but at least
-   *     one depth value must be included in both.
-   *     This is potentially unsafe.
+   *     smaller than the old depths array, but at least one depth
+   *     value must be included in both.  This is potentially unsafe.
    *   - Bypass or higher means that all of these checks are
    *     essentially deactivated. This is a very bad idea.
    */
@@ -2140,20 +2136,18 @@ static int nxagentCheckForPixmapFormatsCompatibility(void)
   /*
    * Depending on the (reconnect) tolerance checks value, this
    * function checks stricter or looser:
-   *   - Strict means that the number of internal and external
-   *     pixmap formats must match exactly and every
-   *     internal pixmap format must be available in the
-   *     external pixmap format array.
-   *   - Safe means that the number of pixmap formats might
-   *     diverge, but all internal pixmap formats must
-   *     also be included in the external pixmap formats
-   *     array. This is recommended, because it allows
-   *     clients with more pixmap formats to still connect,
+   *   - Strict means that the number of internal and external pixmap
+   *     formats must match exactly and every internal pixmap format
+   *     must be available in the external pixmap format array.
+   *   - Safe means that the number of pixmap formats might diverge,
+   *     but all internal pixmap formats must also be included in the
+   *     external pixmap formats array. This is recommended, because
+   *     it allows clients with more pixmap formats to still connect,
    *     but not lose functionality.
-   *   - Risky means that the internal pixmap formats array is
-   *     allowed to be smaller than the external pixmap
-   *     formats array, but at least one pixmap format must
-   *     be included in both. This is potentially unsafe.
+   *   - Risky means that the internal pixmap formats array is allowed
+   *     to be smaller than the external pixmap formats array, but at
+   *     least one pixmap format must be included in both. This is
+   *     potentially unsafe.
    *   - Bypass or higher means that all of these checks are
    *     essentially deactivated. This is a very bad idea.
    */
@@ -2709,11 +2703,10 @@ void nxagentWaitDisplay(void)
 }
 
 /*
- * This has not to do with the remote display but
- * with the X server that the agent is impersonating.
- * We have it here to be consistent with the other
- * cleanup procedures which have mainly to do with
- * the Xlib display connection.
+ * This has not to do with the remote display but with the X server
+ * that the agent is impersonating.  We have it here to be consistent
+ * with the other cleanup procedures which have mainly to do with the
+ * Xlib display connection.
  */
 
 void nxagentAbortDisplay(void)
