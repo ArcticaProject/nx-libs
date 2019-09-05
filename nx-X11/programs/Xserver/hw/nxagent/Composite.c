@@ -115,8 +115,6 @@ void nxagentCompositeExtensionInit(void)
 
 void nxagentRedirectDefaultWindows(void)
 {
-  int i;
-
   if (nxagentOption(Rootless) == 1 ||
           nxagentCompositeEnable == 0)
   {
@@ -129,7 +127,7 @@ void nxagentRedirectDefaultWindows(void)
     return;
   }
 
-  for (i = 0; i < screenInfo.numScreens; i++)
+  for (int i = 0; i < screenInfo.numScreens; i++)
   {
     WindowPtr pWin = screenInfo.screens[i]->root;
 
