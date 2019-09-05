@@ -114,11 +114,7 @@ XRenderPictFormat *nxagentMatchingFormats(PictFormatPtr pForm);
 BoxPtr nxagentGlyphsExtents;
 BoxPtr nxagentTrapezoidExtents;
 
-#ifdef DEBUG
-
 static void nxagentPrintFormat(XRenderPictFormat *pFormat);
-
-#endif
 
 /*
  * From NXglyph.c.
@@ -730,12 +726,7 @@ int nxagentCreatePicture(PicturePtr pPicture, Mask mask)
   if (pPicture -> pFormat != NULL)
   {
     pForm = nxagentMatchingFormats(pPicture -> pFormat);
-
-    #ifdef DEBUG
-
     nxagentPrintFormat(pForm);
-
-    #endif
   }
 
   if (pForm == NULL)
@@ -1402,12 +1393,7 @@ void nxagentGlyphs(CARD8 op, PicturePtr pSrc, PicturePtr pDst,
   if (maskFormat != NULL)
   {
     pForm = nxagentMatchingFormats(maskFormat);
-    
-    #ifdef DEBUG
-
     nxagentPrintFormat(pForm);
-
-    #endif
 
     if (pForm == NULL)
     {
@@ -1888,12 +1874,7 @@ void nxagentTrapezoids(CARD8 op, PicturePtr pSrc, PicturePtr pDst,
   if (maskFormat != NULL)
   {
     pForm = nxagentMatchingFormats(maskFormat);
-    
-    #ifdef DEBUG
-
     nxagentPrintFormat(pForm);
-
-    #endif
 
     if (pForm == NULL)
     {
@@ -2048,12 +2029,7 @@ void nxagentTriangles(CARD8 op, PicturePtr pSrc, PicturePtr pDst,
   if (maskFormat != NULL)
   {
     pForm = nxagentMatchingFormats(maskFormat);
-
-    #ifdef DEBUG
-
     nxagentPrintFormat(pForm);
-
-    #endif
 
     if (pForm == NULL)
     {
@@ -2126,12 +2102,7 @@ void nxagentTriStrip(CARD8 op, PicturePtr pSrc, PicturePtr pDst,
   if (maskFormat != NULL)
   {
     pForm = nxagentMatchingFormats(maskFormat);
-
-    #ifdef DEBUG
-
     nxagentPrintFormat(pForm);
-
-    #endif
 
     if (pForm == NULL)
     {
@@ -2204,12 +2175,7 @@ void nxagentTriFan(CARD8 op, PicturePtr pSrc, PicturePtr pDst,
   if (maskFormat != NULL)
   {
     pForm = nxagentMatchingFormats(maskFormat);
-
-    #ifdef DEBUG
-
     nxagentPrintFormat(pForm);
-
-    #endif
 
     if (pForm == NULL)
     {
@@ -2342,12 +2308,7 @@ void nxagentCreateGlyphSet(GlyphSetPtr pGly)
   if (pGly -> format != NULL)
   {
     pForm = nxagentMatchingFormats(pGly -> format);
-
-    #ifdef DEBUG
-
     nxagentPrintFormat(pForm);
-
-    #endif
 
     if (pForm == NULL)
     {
@@ -2622,14 +2583,12 @@ Bool nxagentPictureInit(ScreenPtr pScreen, PictFormatPtr formats, int nformats)
   return TRUE;
 }
 
-#ifdef DEBUG
-
 static void nxagentPrintFormat(XRenderPictFormat *pFormat)
 {
+#ifdef DEBUG
   if (pFormat == NULL)
   {
     fprintf(stderr, "nxagentPrintFormat: WARNING! null pointer passed to function.\n");
-
     return;
   }
 
@@ -2655,9 +2614,8 @@ static void nxagentPrintFormat(XRenderPictFormat *pFormat)
                    pFormat -> direct.blueMask,
                    pFormat -> direct.alpha,
                    pFormat -> direct.alphaMask);
-}
-
 #endif
+}
 
 Bool nxagentFillGlyphSet(GlyphSetPtr pGly)
 {
@@ -2848,12 +2806,7 @@ void nxagentReconnectPicture(void * p0, XID x1, void *p2)
   if (pPicture -> pFormat)
   {
     pForm = nxagentMatchingFormats(pPicture -> pFormat);
-
-    #ifdef DEBUG
-
     nxagentPrintFormat(pForm);
-
-    #endif
   }
 
   if (!pForm && pPicture->pSourcePict)
