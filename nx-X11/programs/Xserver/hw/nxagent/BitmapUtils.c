@@ -115,4 +115,3 @@ nxagentFourByteSwap(unsigned char *buf, int nbytes)
 	buf[2] = c;
     }
 }
-
