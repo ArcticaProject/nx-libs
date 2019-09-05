@@ -100,8 +100,8 @@ extern void nxagentTwoByteSwap(unsigned char *, register int);
 extern void nxagentFourByteSwap(register unsigned char *, register int);
 
 /*
- * Store the last visual used to unpack
- * the images for the given client.
+ * Store the last visual used to unpack the images for the given
+ * client.
  */
 
 static VisualID nxagentUnpackVisualId[MAX_CONNECTIONS];
@@ -114,7 +114,6 @@ typedef struct _UnpackAlpha
 {
   char *data;
   int size;
-
 } UnpackAlphaRec;
 
 typedef UnpackAlphaRec *UnpackAlphaPtr;
@@ -688,14 +687,12 @@ FIXME: Temporarily stream the GLX data.
   if (split == 1 && (nxagentSplitTrap == 1 || depth < 15))
   {
     #ifdef TEST
-
     if (nxagentSplitTrap == 1 ||
             nxagentReconnectTrap == 1)
     {
       fprintf(stderr, "nxagentPutImage: Not splitting with reconnection [%d] trap [%d] "
                   "depth [%d].\n", nxagentSplitTrap, nxagentReconnectTrap, depth);
     }
-
     #endif
 
     split = 0;
@@ -722,7 +719,6 @@ FIXME: Temporarily stream the GLX data.
                 "link [%d] GLX [%d] Xv [%d].\n", length, nxagentOption(LinkType),
                     nxagentGlxTrap, nxagentXvTrap);
   }
-
   #endif
 
   /*
@@ -831,9 +827,8 @@ FIXME: Should probably intersect the region with the region being
   }
 
   /*
-   * The split value could be changed by a
-   * no-split event in the block above, so
-   * here we have to check the value again.
+   * The split value could be changed by a no-split event in the block
+   * above, so here we have to check the value again.
    */
 
   if (split == 0)
@@ -910,8 +905,7 @@ void nxagentRealizeImage(DrawablePtr pDrawable, GCPtr pGC, int depth,
   }
 
   /*
-   * Get the visual according to the
-   * drawable and depth.
+   * Get the visual according to the drawable and depth.
    */
 
   pVisual = nxagentImageVisual(pDrawable, depth);
