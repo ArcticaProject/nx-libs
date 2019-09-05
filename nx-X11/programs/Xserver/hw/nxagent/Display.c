@@ -561,8 +561,6 @@ static void nxagentSigchldHandler(int signal)
 
 Display *nxagentInternalOpenDisplay(char *display)
 {
-  Display *newDisplay;
-
   struct sigaction oldAction;
   struct sigaction newAction;
 
@@ -606,7 +604,7 @@ FIXME: Should print a warning if the user tries to let the agent
               display);
   #endif
 
-  newDisplay = XOpenDisplay(display);
+  Display *newDisplay = XOpenDisplay(display);
 
   alarm(0);
 
@@ -1413,15 +1411,11 @@ N/A
 
 void nxagentSetDefaultVisual(void)
 {
-  XVisualInfo vi;
-
-  int i;
-
   if (nxagentUserDefaultClass || nxagentUserDefaultDepth)
   {
     nxagentDefaultVisualIndex = UNDEFINED;
 
-    for (i = 0; i < nxagentNumVisuals; i++)
+    for (int i = 0; i < nxagentNumVisuals; i++)
     {
       if ((!nxagentUserDefaultClass ||
            nxagentVisuals[i].class == nxagentDefaultClass)
@@ -1430,7 +1424,6 @@ void nxagentSetDefaultVisual(void)
            nxagentVisuals[i].depth == nxagentDefaultDepth))
       {
         nxagentDefaultVisualIndex = i;
-
         break;
       }
     }
@@ -1442,11 +1435,13 @@ void nxagentSetDefaultVisual(void)
   }
   else
   {
+    XVisualInfo vi = {0};
+
     vi.visualid = XVisualIDFromVisual(DefaultVisual(nxagentDisplay,
                                           DefaultScreen(nxagentDisplay)));
     nxagentDefaultVisualIndex = 0;
 
-    for (i = 0; i < nxagentNumVisuals; i++)
+    for (int i = 0; i < nxagentNumVisuals; i++)
     {
       if (vi.visualid == nxagentVisuals[i].visualid)
       {
@@ -1458,13 +1453,14 @@ void nxagentSetDefaultVisual(void)
 
 void nxagentInitVisuals(void)
 {
-  long mask = VisualScreenMask;
   XVisualInfo vi = {
     .screen = DefaultScreen(nxagentDisplay),
-    .depth = DefaultDepth(nxagentDisplay, DefaultScreen(nxagentDisplay))
+    .depth = DefaultDepth(nxagentDisplay, DefaultScreen(nxagentDisplay)),
   };
+  long mask = VisualScreenMask;
   int viNumList;
   XVisualInfo *viList = XGetVisualInfo(nxagentDisplay, mask, &vi, &viNumList);
+
   nxagentVisuals = (XVisualInfo *) malloc(viNumList * sizeof(XVisualInfo));
   nxagentNumVisuals = 0;
 
@@ -1612,7 +1608,7 @@ XXX: Some X server doesn't list 1 among available depths...
     fprintf(stderr, "nxagentInitPixmapFormats: Got [%d] available remote pixmap formats:\n",
                 nxagentRemoteNumPixmapFormats);
 
-    for (i = 0; i < nxagentRemoteNumPixmapFormats; i++)
+    for (int i = 0; i < nxagentRemoteNumPixmapFormats; i++)
     {
       fprintf(stderr, "nxagentInitPixmapFormats: Remote pixmap format [%d]: depth [%d] "
                   "bits_per_pixel [%d] scanline_pad [%d].\n", i, nxagentRemotePixmapFormats[i].depth,
@@ -1882,9 +1878,7 @@ void nxagentDisconnectDisplay(void)
     case ALLOC_DEF_COLORMAP:
       if (nxagentDefaultColormaps)
       {
-        int i;
-
-        for (i = 0; i < nxagentNumDefaultColormaps; i++)
+        for (int i = 0; i < nxagentNumDefaultColormaps; i++)
         {
           nxagentDefaultColormaps[i] = None;
         }
@@ -2044,7 +2038,6 @@ static int nxagentCheckForDepthsCompatibility(void)
 
   bool compatible = true;
   bool one_match = false;
-  bool matched = false;
   int total_matches = 0;
 
   /*
@@ -2066,7 +2059,7 @@ static int nxagentCheckForDepthsCompatibility(void)
    */
   for (int i = 0; i < nxagentNumDepths; ++i)
   {
-    matched = false;
+    bool matched = false;
 
     for (int j = 0; j < nxagentNumDepthsRecBackup; ++j)
     {
@@ -2200,12 +2193,11 @@ static int nxagentCheckForPixmapFormatsCompatibility(void)
    */
 
   bool compatible = true;
-  bool matched = false;
   int total_matches = 0;
 
   for (int i = 0; i < nxagentNumPixmapFormats; ++i)
   {
-    matched = false;
+    bool matched = false;
 
     for (int j = 0; j < nxagentRemoteNumPixmapFormats; ++j)
     {
@@ -2267,22 +2259,22 @@ static int nxagentCheckForPixmapFormatsCompatibility(void)
 static int nxagentInitAndCheckVisuals(int flexibility)
 {
   /* FIXME: does this also need work? */
-  bool matched;
-  bool compatible = true;
 
   long viMask = VisualScreenMask;
   XVisualInfo viTemplate = {
     .screen = DefaultScreen(nxagentDisplay),
-    .depth = DefaultDepth(nxagentDisplay, DefaultScreen(nxagentDisplay))
+    .depth = DefaultDepth(nxagentDisplay, DefaultScreen(nxagentDisplay)),
   };
   int viNumList;
   XVisualInfo *viList = XGetVisualInfo(nxagentDisplay, viMask, &viTemplate, &viNumList);
 
   XVisualInfo *newVisuals = malloc(sizeof(XVisualInfo) * nxagentNumVisuals);
 
+  bool compatible = true;
+
   for (int i = 0; i < nxagentNumVisuals; i++)
   {
-    matched = false;
+    bool matched = false;
 
     for (int n = 0; n < viNumList; n++)
     {
@@ -2386,7 +2378,6 @@ static int nxagentCheckForColormapsCompatibility(int flexibility)
                 "doesn't match with old colormaps [%d].\n", nxagentNumDefaultColormaps,
                     nxagentNumDefaultColormapsRecBackup);
     #endif
-
     return 0;
   }
 }
@@ -2633,9 +2624,7 @@ Bool nxagentReconnectDisplay(void *p0)
 
 void nxagentAddXConnection(void)
 {
-  int fd = XConnectionNumber(nxagentDisplay);
-
-  nxagentXConnectionNumber = fd;
+  nxagentXConnectionNumber = XConnectionNumber(nxagentDisplay);
 
   #ifdef TEST
   fprintf(stderr, "nxagentAddXConnection: Adding the X connection [%d] "
