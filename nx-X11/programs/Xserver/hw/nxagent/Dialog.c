@@ -376,10 +376,10 @@ void nxagentFailedReconnectionDialog(int alert, char *error)
     while (NXDisplayError(nxagentDisplay) == 0 &&
                NXTransRunning(NX_FD_ANY) == 1)
     {
-      struct timeval timeout;
-
-      timeout.tv_sec  = 30;
-      timeout.tv_usec = 0;
+      struct timeval timeout = {
+        .tv_sec  = 30,
+        .tv_usec = 0,
+      };
 
       NXTransContinue(&timeout);
     }
