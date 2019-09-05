@@ -104,7 +104,7 @@ while (0)
 void nxagentRenderExtensionInit(void);
 Bool nxagentPictureInit(ScreenPtr, PictFormatPtr, int);
 
-int nxagentRenderRealizeCursor(ScreenPtr pScreen, CursorPtr pCursor);
+void nxagentRenderRealizeCursor(ScreenPtr pScreen, CursorPtr pCursor);
 
 void nxagentAddGlyphs(GlyphSetPtr glyphSet, Glyph *gids, xGlyphInfo *gi,
                                   int nglyphs, CARD8 *images, int sizeImages);

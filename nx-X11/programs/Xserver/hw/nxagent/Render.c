@@ -532,36 +532,28 @@ void nxagentCursorPostSaveRenderInfo(CursorPtr pCursor, ScreenPtr pScreen,
   nxagentCursorYOffset(pCursor, pScreen) = y;
 }
 
-int nxagentRenderRealizeCursor(ScreenPtr pScreen, CursorPtr pCursor)
+void nxagentRenderRealizeCursor(ScreenPtr pScreen, CursorPtr pCursor)
 {
-  int cid;
-  int x, y;
-
-  PicturePtr pPicture;
-
-  pPicture = nxagentCursorPicture(pCursor, pScreen);
+  PicturePtr pPicture = nxagentCursorPicture(pCursor, pScreen);
 
   pPicture -> refcnt++;
 
-  x = nxagentCursorXOffset(pCursor, pScreen);
-  y = nxagentCursorYOffset(pCursor, pScreen);
-
-  /*
-   * Set the lossless trap so that the image functions
-   * will not try to encode the image using a lossy
-   * compression. Drawables should have a quality flag,
-   * telling if they were originally encoded with a
-   * lossy algorithm. This would allow us to skip the
-   * synchronization if the cursor was already encoded
-   * with the best quality.
-   */
+  int x = nxagentCursorXOffset(pCursor, pScreen);
+  int y = nxagentCursorYOffset(pCursor, pScreen);
 
   #ifdef TEST
-  fprintf(stderr, "nxagentRenderRealizeCursor: Forcing the synchronization "
-              "of the cursor.\n");
+  fprintf(stderr, "%s: Forcing the synchronization of the cursor.\n", __func__);
   #endif
 
   nxagentMarkCorruptedRegion(pPicture -> pDrawable, NULL);
+
+  /*
+   * Set the lossless trap so that the image functions will not try to
+   * encode the image using a lossy compression. Drawables should have
+   * a quality flag, telling if they were originally encoded with a
+   * lossy algorithm. This would allow us to skip the synchronization
+   * if the cursor was already encoded with the best quality.
+   */
 
   nxagentLosslessTrap = 1;
 
@@ -569,11 +561,7 @@ int nxagentRenderRealizeCursor(ScreenPtr pScreen, CursorPtr pCursor)
 
   nxagentLosslessTrap = 0;
 
-  cid = XRenderCreateCursor(nxagentDisplay, nxagentPicture(pPicture), x, y);
-
-  nxagentCursor(pCursor, pScreen) = cid;
-
-  return 1;
+  nxagentCursor(pCursor, pScreen) = XRenderCreateCursor(nxagentDisplay, nxagentPicture(pPicture), x, y);
 }
 
 int nxagentCreatePicture(PicturePtr pPicture, Mask mask)
