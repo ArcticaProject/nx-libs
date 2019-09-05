@@ -93,11 +93,8 @@ extern CursorPtr GetSpriteCursor(void);
 void nxagentConstrainCursor(ScreenPtr pScreen, BoxPtr pBox)
 {
   #ifdef TEST
-
-  int width, height;
-
-  width  = nxagentOption(RootWidth);
-  height = nxagentOption(RootHeight);
+  int width  = nxagentOption(RootWidth);
+  int height = nxagentOption(RootHeight);
 
   if (pBox->x1 <= 0 && pBox->y1 <= 0 &&
           pBox->x2 >= width && pBox->y2 >= height)
@@ -150,18 +147,14 @@ Bool nxagentRealizeCursor(ScreenPtr pScreen, CursorPtr pCursor)
   fprintf(stderr, "nxagentRealizeCursor: Called for cursor at [%p].\n", (void *) pCursor);
   #endif
 
-  unsigned long valuemask = GCFunction |
-                            GCPlaneMask |
-                            GCForeground |
-                            GCBackground |
-                            GCClipMask;
+  unsigned long valuemask = GCFunction | GCPlaneMask | GCForeground | GCBackground | GCClipMask;
 
   XGCValues values = {
-       .function = GXcopy,
-       .plane_mask = AllPlanes,
-       .foreground = 1L,
-       .background = 0L,
-       .clip_mask = None
+    .function = GXcopy,
+    .plane_mask = AllPlanes,
+    .foreground = 1L,
+    .background = 0L,
+    .clip_mask = None,
   };
 
   XChangeGC(nxagentDisplay, nxagentBitmapGC, valuemask, &values);
@@ -221,15 +214,15 @@ Bool nxagentRealizeCursor(ScreenPtr pScreen, CursorPtr pCursor)
   SAFE_XFree(image);
 
   XColor fg_color = {
-      .red = pCursor->foreRed,
-      .green = pCursor->foreGreen,
-      .blue = pCursor->foreBlue
+    .red = pCursor->foreRed,
+    .green = pCursor->foreGreen,
+    .blue = pCursor->foreBlue,
   };
 
   XColor bg_color = {
-      .red = pCursor->backRed,
-      .green = pCursor->backGreen,
-      .blue = pCursor->backBlue
+    .red = pCursor->backRed,
+    .green = pCursor->backGreen,
+    .blue = pCursor->backBlue,
   };
 
   pCursor->devPriv[pScreen->myNum] = (void *) malloc(sizeof(nxagentPrivCursor));
@@ -275,15 +268,15 @@ void nxagentRecolorCursor(ScreenPtr pScreen, CursorPtr pCursor,
                               Bool displayed)
 {
   XColor fg_color = {
-      .red = pCursor->foreRed,
-      .green = pCursor->foreGreen,
-      .blue = pCursor->foreBlue
+    .red = pCursor->foreRed,
+    .green = pCursor->foreGreen,
+    .blue = pCursor->foreBlue,
   };
 
   XColor bg_color = {
-      .red = pCursor->backRed,
-      .green = pCursor->backGreen,
-      .blue = pCursor->backBlue
+    .red = pCursor->backRed,
+    .green = pCursor->backGreen,
+    .blue = pCursor->backBlue,
   };
 
   XRecolorCursor(nxagentDisplay,
@@ -404,7 +397,7 @@ Bool nxagentReconnectAllCursor(void *p0)
   fprintf(stderr, "nxagentReconnectAllCursor\n");
   #endif
 
-  for (int i = 0, r = 1; i < MAXCLIENTS; r = 1, i++)
+  for (int i = 0; i < MAXCLIENTS; r = 1, i++)
   {
     if (clients[i])
     {
@@ -514,7 +507,7 @@ Bool nxagentDisconnectAllCursor(void)
   fprintf(stderr, "nxagentDisconnectAllCursor: Going to iterate through cursor resources.\n");
   #endif
 
-  for (int i = 0, r = 1; i < MAXCLIENTS; r = 1, i++)
+  for (int i = 0; i < MAXCLIENTS; r = 1, i++)
   {
     if (clients[i])
     {
@@ -558,9 +551,9 @@ void nxagentListCursor(void *p0, void *p1, void *p2)
 
 void nxagentListCursors(void)
 {
-  Bool r;
+  Bool r = True;
 
-  for (int i = 0, r = 1; i < MAXCLIENTS; r = 1, i++)
+  for (int i = 0; i < MAXCLIENTS; r = 1, i++)
   {
     if (clients[i])
     {
