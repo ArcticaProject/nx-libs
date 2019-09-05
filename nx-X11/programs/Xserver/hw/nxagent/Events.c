@@ -4596,11 +4596,6 @@ int nxagentWaitEvents(Display *dpy, useconds_t msec)
 
 #ifdef NX_DEBUG_INPUT
 
-void nxagentDumpInputInfo(void)
-{
-  fprintf(stderr, "Dumping input info ON.\n");
-}
-
 void nxagentGuessDumpInputInfo(ClientPtr client, Atom property, char *data)
 {
   if (strcmp(validateString(NameForAtom(property)), "NX_DEBUG_INPUT") == 0)
