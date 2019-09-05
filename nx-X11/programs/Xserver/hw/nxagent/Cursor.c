@@ -107,7 +107,6 @@ void nxagentConstrainCursor(ScreenPtr pScreen, BoxPtr pBox)
     fprintf(stderr, "nxagentConstrainCursor: WARNING! Called with box [%d,%d,%d,%d].\n",
                 pBox->x1, pBox->y1, pBox->x2, pBox->y2);
   }
-
   #endif
 }
 
@@ -300,7 +299,6 @@ Bool nxagentSetCursorPosition(ScreenPtr pScreen, int x, int y,
      * Calling miSetCursorPosition with generateEvent == 0 causes a
      * crash in miPoiterUpdate().
      */
-
     return 1;
   }
 }
@@ -404,13 +402,11 @@ Bool nxagentReconnectAllCursor(void *p0)
       FindClientResourcesByType(clients[i], RT_CURSOR, nxagentReconnectCursor, &r);
 
       #ifdef WARNING
-
       if (r == False)
       {
         fprintf(stderr, "nxagentReconnectAllCursor: WARNING! Failed to recreate "
                     "cursor for client [%d].\n", i);
       }
-
       #endif
     }
   }
@@ -514,13 +510,11 @@ Bool nxagentDisconnectAllCursor(void)
       FindClientResourcesByType(clients[i], RT_CURSOR, nxagentDisconnectCursor, &r);
 
       #ifdef WARNING
-
       if (r == False)
       {
         fprintf(stderr, "nxagentDisconnectAllCursor: WARNING! Failed to disconnect "
                     "cursor for client [%d].\n", i);
       }
-
       #endif
     }
   }
@@ -560,13 +554,11 @@ void nxagentListCursors(void)
       FindClientResourcesByType(clients[i], RT_CURSOR, nxagentListCursor, &r);
 
       #ifdef WARNING
-
       if (r == False)
       {
         fprintf(stderr, "nxagentListCursors: WARNING! Failed to list "
                     "cursor for client [%d].\n", i);
       }
-
       #endif
     }
   }
