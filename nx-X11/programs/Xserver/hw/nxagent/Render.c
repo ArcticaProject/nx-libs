@@ -150,8 +150,6 @@ int nxagentCreatePicture(PicturePtr pPicture, Mask mask);
 int nxagentChangePictureClip(PicturePtr pPicture, int clipType, int nRects,
                                  xRectangle *rects, int xOrigin, int yOrigin);
 
-void nxagentDestroyPictureClip(PicturePtr pPicture);
-
 void nxagentComposite(CARD8 op, PicturePtr pSrc, PicturePtr pMask, PicturePtr pDst,
                           INT16 xSrc, INT16 ySrc, INT16 xMask, INT16 yMask, INT16 xDst,
                               INT16 yDst, CARD16 width, CARD16 height);
@@ -996,13 +994,6 @@ FIXME: Is this useful or just a waste of bandwidth?
   }
 
   return 1;
-}
-
-void nxagentDestroyPictureClip(PicturePtr pPicture)
-{
-  #ifdef DEBUG
-  fprintf(stderr, "nxagentDestroyPictureClip: Nothing to do.\n");
-  #endif
 }
 
 void nxagentChangePicture(PicturePtr pPicture, Mask mask)
