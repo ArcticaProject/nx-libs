@@ -300,26 +300,10 @@ char * nxagentGetNotifyMode(int mode)
 {
   switch (mode)
   {
-    case NotifyNormal:
-    {
-      return "NotifyNormal";
-      break;
-    }
-    case NotifyGrab:
-    {
-      return "NotifyGrab";
-      break;
-    }
-    case NotifyUngrab:
-    {
-      return "NotifyUngrab";
-      break;
-    }
-    case NotifyWhileGrabbed:
-    {
-      return "NotifyWhileGrabbed";
-      break;
-    }
+    case NotifyNormal:       return "NotifyNormal";
+    case NotifyGrab:         return "NotifyGrab";
+    case NotifyUngrab:       return "NotifyUngrab";
+    case NotifyWhileGrabbed: return "NotifyWhileGrabbed";
   }
   return "Unknown";
 }
@@ -1013,67 +997,56 @@ void nxagentDispatchEvents(PredicateFuncPtr predicate)
           case doMinimize:
           {
             minimize = TRUE;
-
             break;
           }
           case doSwitchFullscreen:
           {
             switchFullscreen = TRUE;
-
             break;
           }
           case doSwitchAllScreens:
           {
             switchAllScreens = TRUE;
-
             break;
           }
           case doViewportMoveUp:
           {
             nxagentMoveViewport(pScreen, 0, -nxagentOption(Height));
-
             break;
           }
           case doViewportMoveDown:
           {
             nxagentMoveViewport(pScreen, 0, nxagentOption(Height));
-
             break;
           }
           case doViewportMoveLeft:
           {
             nxagentMoveViewport(pScreen, -nxagentOption(Width), 0);
-
             break;
           }
           case doViewportMoveRight:
           {
             nxagentMoveViewport(pScreen, nxagentOption(Width), 0);
-
             break;
           }
           case doViewportUp:
           {
             nxagentMoveViewport(pScreen, 0, -nextinc(viewportInc));
-
             break;
           }
           case doViewportDown:
           {
             nxagentMoveViewport(pScreen, 0, +nextinc(viewportInc));
-
             break;
           }
           case doViewportLeft:
           {
             nxagentMoveViewport(pScreen, -nextinc(viewportInc), 0);
-
             break;
           }
           case doViewportRight:
           {
             nxagentMoveViewport(pScreen, +nextinc(viewportInc), 0);
-
             break;
           }
           case doSwitchResizeMode:
@@ -1098,19 +1071,16 @@ void nxagentDispatchEvents(PredicateFuncPtr predicate)
             {
               nxagentSwitchDeferMode();
             }
-
             break;
           }
           case doAutoGrab:
           {
             nxagentToggleAutoGrab();
-
             break;
           }
           default:
           {
             FatalError("nxagentDispatchEvent: handleKeyPress returned unknown value\n");
-
             break;
           }
         }
@@ -2942,18 +2912,10 @@ int nxagentHandleXFixesSelectionNotify(XEvent *X)
 
       switch (xfixesEvent -> xfixesselection.subtype)
       {
-        case SelectionSetOwner:
-          fprintf(stderr, "SelectionSetOwner.\n");
-          break;
-        case SelectionWindowDestroy:
-          fprintf(stderr, "SelectionWindowDestroy.\n");
-          break;
-        case SelectionClientClose:
-          fprintf(stderr, "SelectionClientClose.\n");
-          break;
-        default:
-          fprintf(stderr, ".\n");
-          break;
+        case SelectionSetOwner:       fprintf(stderr, "SelectionSetOwner.\n");      break;
+        case SelectionWindowDestroy:  fprintf(stderr, "SelectionWindowDestroy.\n"); break;
+        case SelectionClientClose:    fprintf(stderr, "SelectionClientClose.\n");   break;
+        default:                      fprintf(stderr, ".\n");                       break;
       }
       #endif
 
@@ -4586,24 +4548,15 @@ static const char *nxagentGrabStateToString(int state)
 {
   switch (state)
   {
-    case 0:
-      return "NOT_GRABBED";
-    case 1:
-      return "THAWED";
-    case 2:
-      return "THAWED_BOTH";
-    case 3:
-      return "FREEZE_NEXT_EVENT";
-    case 4:
-      return "FREEZE_BOTH_NEXT_EVENT";
-    case 5:
-      return "FROZEN_NO_EVENT";
-    case 6:
-      return "FROZEN_WITH_EVENT";
-    case 7:
-      return "THAW_OTHERS";
-    default:
-      return "unknown state";
+    case 0:      return "NOT_GRABBED";
+    case 1:      return "THAWED";
+    case 2:      return "THAWED_BOTH";
+    case 3:      return "FREEZE_NEXT_EVENT";
+    case 4:      return "FREEZE_BOTH_NEXT_EVENT";
+    case 5:      return "FROZEN_NO_EVENT";
+    case 6:      return "FROZEN_WITH_EVENT";
+    case 7:      return "THAW_OTHERS";
+    default:     return "unknown state";
   }
 }
 
