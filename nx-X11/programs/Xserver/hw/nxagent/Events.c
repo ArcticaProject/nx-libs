@@ -431,7 +431,7 @@ void nxagentRemoteWindowInfo(Window win, int indent, Bool newLine)
   }
 
   fprintf(stderr, "%*sx=%d y=%d width=%d height=%d class=%s map_state=%s "
-	  "override_redirect=%s\n", indent, "", attributes.x, attributes.y,
+          "override_redirect=%s\n", indent, "", attributes.x, attributes.y,
                  attributes.width, attributes.height,
                      (attributes.class == 0) ? "CopyFromParent" :
                      ((attributes.class == 1) ? "InputOutput" : "InputOnly"),
@@ -525,7 +525,7 @@ void nxagentInternalWindowInfo(WindowPtr pWin, int indent, Bool newLine)
   unsigned char *pszReturnData = NULL;
 
   fprintf(stderr, "Window ID=[0x%x] %s Remote ID=[0x%x] ", pWin -> drawable.id,
-	  pWin->parent ? "" : "(the root window)", nxagentWindow(pWin));
+          pWin->parent ? "" : "(the root window)", nxagentWindow(pWin));
 
   result = GetWindowProperty(pWin, MakeAtom("WM_NAME", 7, False) , 0,
                                 sizeof(CARD32), False, AnyPropertyType,
@@ -545,7 +545,7 @@ void nxagentInternalWindowInfo(WindowPtr pWin, int indent, Bool newLine)
   }
 
   fprintf(stderr, "%*sx=%d y=%d width=%d height=%d class=%s map_state=%s "
-	  "override_redirect=%s", indent, "", pWin -> drawable.x, pWin -> drawable.y,
+          "override_redirect=%s", indent, "", pWin -> drawable.x, pWin -> drawable.y,
                  pWin -> drawable.width, pWin -> drawable.height,
                      (pWin -> drawable.class == 0) ? "CopyFromParent" :
                      ((pWin -> drawable.class == 1) ? "InputOutput" :
@@ -1206,9 +1206,9 @@ FIXME: Don't enqueue the KeyRelease event if the key was
           nxagentXkbNumTrap = 0;
         }
 
-	/* Calculate the time elapsed between this and the last event we
-	   received. Add this delta to time we recorded for the last
-	   KeyPress event we passed on to our clients.  */
+        /* Calculate the time elapsed between this and the last event we
+           received. Add this delta to time we recorded for the last
+           KeyPress event we passed on to our clients.  */
         memset(&x, 0, sizeof(xEvent));
         x.u.u.type = KeyRelease;
         x.u.u.detail = nxagentConvertKeycode(X.xkey.keycode);
@@ -1549,18 +1549,18 @@ FIXME: Don't enqueue the KeyRelease event if the key was
       {
         WindowPtr pWin;
 
-	#ifdef DEBUG
-	fprintf(stderr, "%s: Going to handle new FocusIn event [0x%x] mode: [%s]\n", __func__, X.xfocus.window, nxagentGetNotifyMode(X.xfocus.mode));
-	{
-	  XlibWindow w;
+        #ifdef DEBUG
+        fprintf(stderr, "%s: Going to handle new FocusIn event [0x%x] mode: [%s]\n", __func__, X.xfocus.window, nxagentGetNotifyMode(X.xfocus.mode));
+        {
+          XlibWindow w;
           int revert_to;
           XGetInputFocus(nxagentDisplay, &w, &revert_to);
-	  fprintf(stderr, "%s: (FocusIn): Event win [0x%x] Focus owner [0x%x] nxagentDefaultWindows[0] [0x%x]\n", __func__, X.xfocus.window, w, nxagentDefaultWindows[0]);
-	}
+          fprintf(stderr, "%s: (FocusIn): Event win [0x%x] Focus owner [0x%x] nxagentDefaultWindows[0] [0x%x]\n", __func__, X.xfocus.window, w, nxagentDefaultWindows[0]);
+        }
         #else
-	  #ifdef TEST
-	fprintf(stderr, "%s: Going to handle new FocusIn event\n", __func__);
-	  #endif
+          #ifdef TEST
+        fprintf(stderr, "%s: Going to handle new FocusIn event\n", __func__);
+          #endif
         #endif
 
         /*
@@ -1592,27 +1592,27 @@ FIXME: Don't enqueue the KeyRelease event if the key was
           {
             #if defined(DEBUG) || defined(DEBUG_AUTOGRAB)
             fprintf(stderr, "%s: (FocusIn): grabbing\n", __func__);
-	    #endif
+            #endif
             nxagentGrabPointerAndKeyboard(NULL);
           }
-	  /*	  else
+          /*      else
           {
             #if defined(DEBUG) || defined(DEBUG_AUTOGRAB)
             fprintf(stderr, "%s: (FocusIn): ungrabbing\n", __func__);
-	    #endif
+            #endif
             nxagentUngrabPointerAndKeyboard(NULL);
           }
-	  */
+          */
         }
         break;
       }
       case FocusOut:
       {
-	#ifdef DEBUG
-	fprintf(stderr, "%s: Going to handle new FocusOut event [0x%x] mode: [%s]\n", __func__, X.xfocus.window, nxagentGetNotifyMode(X.xfocus.mode));
-	#else
-	  #ifdef TEST
-	  fprintf(stderr, "%s: Going to handle new FocusOut event.\n", __func__);
+        #ifdef DEBUG
+        fprintf(stderr, "%s: Going to handle new FocusOut event [0x%x] mode: [%s]\n", __func__, X.xfocus.window, nxagentGetNotifyMode(X.xfocus.mode));
+        #else
+          #ifdef TEST
+          fprintf(stderr, "%s: Going to handle new FocusOut event.\n", __func__);
           #endif
         #endif
 
@@ -2214,7 +2214,7 @@ FIXME: Don't enqueue the KeyRelease event if the key was
   /*
    * Handle the agent window's changes.
    */
-  
+
   if (closeSession)
   {
     if (nxagentOption(Persistent))
@@ -3669,7 +3669,7 @@ int nxagentHandleReparentNotify(XEvent* X)
     int x, y;
 
     /*
-     * Calculate the absolute upper-left X e Y 
+     * Calculate the absolute upper-left X e Y
      */
 
     if ((XGetWindowAttributes(nxagentDisplay, X -> xreparent.window,
@@ -3735,7 +3735,7 @@ int nxagentHandleReparentNotify(XEvent* X)
 
       /*
        * Difference between Absolute X and Parent X gives thickness of side frame.
-       * Difference between Absolute Y and Parent Y gives thickness of title bar. 
+       * Difference between Absolute Y and Parent Y gives thickness of title bar.
        */
 
       nxagentChangeOption(WMBorderWidth, (x - xParent));
@@ -4201,7 +4201,7 @@ int nxagentLookupByWindow(WindowPtr pWin)
     if (nxagentExposeQueue.exposures[i].pWindow == pWin &&
             !nxagentExposeQueue.exposures[i].remoteRegionIsCompleted)
     {
-      return i; 
+      return i;
     }
   }
 
