@@ -71,6 +71,7 @@ is" without express or implied warranty.
 #include "Millis.h"
 #include "Error.h"
 #include "Keystroke.h"
+#include "Atoms.h"
 
 #include <nx/NX.h>
 #include "compext/Compext.h"
@@ -414,6 +415,8 @@ FIXME: These variables, if not removed at all because have probably
 #ifdef NXAGENT_CLIPBOARD
   AddCallback(&SelectionCallback, nxagentSetSelectionCallback, NULL);
 #endif
+
+  nxagentInitAtoms();
 }
 
 void

@@ -106,7 +106,6 @@ Equipment Corporation.
 
 #include "Screen.h"
 #include "Options.h"
-#include "Atoms.h"
 #include "Clipboard.h"
 #include "Splash.h"
 #include "Rootless.h"
@@ -203,8 +202,6 @@ InitRootWindow(WindowPtr pWin)
     #ifdef TEST
     fprintf(stderr, "InitRootWindow: Mapping default windows.\n");
     #endif
-
-    nxagentInitAtoms();
 
     nxagentInitClipboard(pWin);
 
