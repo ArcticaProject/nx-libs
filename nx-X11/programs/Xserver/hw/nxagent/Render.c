@@ -554,7 +554,6 @@ void nxagentRenderRealizeCursor(ScreenPtr pScreen, CursorPtr pCursor)
   nxagentSynchronizeDrawable(pPicture -> pDrawable, DO_WAIT, NEVER_BREAK, NULL);
 
   nxagentLosslessTrap = 0;
-
   nxagentCursor(pCursor, pScreen) = XRenderCreateCursor(nxagentDisplay, nxagentPicture(pPicture), x, y);
 }
 
@@ -602,117 +601,91 @@ int nxagentCreatePicture(PicturePtr pPicture, Mask mask)
   if (mask & CPRepeat)
   {
     attributes.repeat = (Bool)pPicture -> repeat;
-
     valuemask |= CPRepeat;
-
     nxagentSetPictureRemoteValue(pPicture, repeat, attributes.repeat);
   }
 
   if (mask & CPAlphaMap)
   {
     attributes.alpha_map = nxagentPicturePriv(pPicture -> alphaMap) -> picture;
-
     valuemask |= CPAlphaMap;
-
     nxagentSetPictureRemoteValue(pPicture, alpha_map, attributes.alpha_map);
   }
 
   if (mask & CPAlphaXOrigin)
   {
     attributes.alpha_x_origin = pPicture -> alphaOrigin.x;
-
     valuemask |= CPAlphaXOrigin;
-
     nxagentSetPictureRemoteValue(pPicture, alpha_x_origin, attributes.alpha_x_origin);
   }
 
   if (mask & CPAlphaYOrigin)
   {
     attributes.alpha_y_origin = pPicture -> alphaOrigin.y;
-
     valuemask |= CPAlphaYOrigin;
-
     nxagentSetPictureRemoteValue(pPicture, alpha_y_origin, attributes.alpha_y_origin);
   }
 
   if (mask & CPClipXOrigin)
   {
     attributes.clip_x_origin = pPicture -> clipOrigin.x;
-
     valuemask |= CPClipXOrigin;
-
     nxagentSetPictureRemoteValue(pPicture, clip_x_origin, attributes.clip_x_origin);
   }
 
   if (mask & CPClipYOrigin)
   {
     attributes.clip_y_origin = pPicture -> clipOrigin.y;
-
     valuemask |= CPClipYOrigin;
-
     nxagentSetPictureRemoteValue(pPicture, clip_y_origin, attributes.clip_y_origin);
   }
 
   if (mask & CPGraphicsExposure)
   {
     attributes.graphics_exposures = (Bool)pPicture -> graphicsExposures;
-
     valuemask |= CPGraphicsExposure;
-
     nxagentSetPictureRemoteValue(pPicture, graphics_exposures, attributes.graphics_exposures);
   }
 
   if (mask & CPSubwindowMode)
   {
     attributes.subwindow_mode = pPicture -> subWindowMode;
-
     valuemask |= CPSubwindowMode;
-
     nxagentSetPictureRemoteValue(pPicture, subwindow_mode, attributes.subwindow_mode);
   }
 
   if (mask & CPClipMask)
   {
     attributes.clip_mask = None;
-
     valuemask |= CPClipMask;
-
     nxagentSetPictureRemoteValue(pPicture, clip_mask, attributes.clip_mask);
   }
 
   if (mask & CPPolyEdge)
   {
     attributes.poly_edge = pPicture -> polyEdge;
-
     valuemask |= CPPolyEdge;
-
     nxagentSetPictureRemoteValue(pPicture, poly_edge, attributes.poly_edge);
   }
 
   if (mask & CPPolyMode)
   {
     attributes.poly_mode = pPicture -> polyMode;
-
     valuemask |= CPPolyMode;
-
     nxagentSetPictureRemoteValue(pPicture, poly_mode, attributes.poly_mode);
   }
 
   if (mask & CPDither)
   {
     attributes.dither = pPicture -> dither;
-
     valuemask |= CPDither;
-
     nxagentSetPictureRemoteValue(pPicture, dither, attributes.dither);
   }
 
   if (mask & CPComponentAlpha)
   {
     attributes.component_alpha = pPicture -> componentAlpha;
-
     valuemask |= CPComponentAlpha;
-
     nxagentSetPictureRemoteValue(pPicture, component_alpha, attributes.component_alpha);
   }
 
@@ -847,7 +820,6 @@ FIXME: Is this useful or just a waste of bandwidth?
        Apparently useless with QT.
 */
       #ifndef SKIP_LOUSY_RENDER_OPERATIONS
-
       XRenderSetPictureClipRectangles(nxagentDisplay,
                                       nxagentPicturePriv(pPicture) -> picture,
                                       xOrigin,
@@ -858,7 +830,6 @@ FIXME: Is this useful or just a waste of bandwidth?
       nxagentSetPictureRemoteValue(pPicture, clip_x_origin, xOrigin);
       nxagentSetPictureRemoteValue(pPicture, clip_y_origin, yOrigin);
       nxagentSetPictureRemoteValue(pPicture, clip_mask, 1);
-
       #endif
 
       #ifdef DEBUG
@@ -878,7 +849,6 @@ FIXME: Is this useful or just a waste of bandwidth?
        Apparently useless with QT.
 */
       #ifndef SKIP_LOUSY_RENDER_OPERATIONS
-
       XRenderSetPictureClipRectangles(nxagentDisplay,
                                       nxagentPicturePriv(pPicture) -> picture,
                                       xOrigin,
@@ -889,7 +859,6 @@ FIXME: Is this useful or just a waste of bandwidth?
       nxagentSetPictureRemoteValue(pPicture, clip_x_origin, xOrigin);
       nxagentSetPictureRemoteValue(pPicture, clip_y_origin, yOrigin);
       nxagentSetPictureRemoteValue(pPicture, clip_mask, 1);
-
       #endif
 
       #ifdef DEBUG
@@ -925,7 +894,6 @@ FIXME: Is this useful or just a waste of bandwidth?
        Apparently useless with QT.
 */
       #ifndef SKIP_LOUSY_RENDER_OPERATIONS
-
       XRenderSetPictureClipRegion(nxagentDisplay,
                                   nxagentPicturePriv(pPicture) -> picture,
                                   reg);
@@ -933,7 +901,6 @@ FIXME: Is this useful or just a waste of bandwidth?
       nxagentSetPictureRemoteValue(pPicture, clip_x_origin, xOrigin);
       nxagentSetPictureRemoteValue(pPicture, clip_y_origin, yOrigin);
       nxagentSetPictureRemoteValue(pPicture, clip_mask, 1);
-
       #endif
 
       #ifdef DEBUG
@@ -975,11 +942,9 @@ void nxagentChangePicture(PicturePtr pPicture, Mask mask)
   if (mask & CPRepeat)
   {
     attributes.repeat = (Bool)pPicture -> repeat;
-
     if (nxagentCheckPictureRemoteValue(pPicture, repeat, attributes.repeat) == 0)
     {
       valuemask |= CPRepeat;
-
       nxagentSetPictureRemoteValue(pPicture, repeat, attributes.repeat);
     }
   }
@@ -987,11 +952,9 @@ void nxagentChangePicture(PicturePtr pPicture, Mask mask)
   if (mask & CPAlphaMap)
   {
     attributes.alpha_map = nxagentPicturePriv(pPicture -> alphaMap) -> picture;
-
     if (nxagentCheckPictureRemoteValue(pPicture, alpha_map, attributes.alpha_map) == 0)
     {
       valuemask |= CPAlphaMap;
-
       nxagentSetPictureRemoteValue(pPicture, alpha_map, attributes.alpha_map);
     }
   }
@@ -999,11 +962,9 @@ void nxagentChangePicture(PicturePtr pPicture, Mask mask)
   if (mask & CPAlphaXOrigin)
   {
     attributes.alpha_x_origin = pPicture -> alphaOrigin.x;
-
     if (nxagentCheckPictureRemoteValue(pPicture, alpha_x_origin, attributes.alpha_x_origin) == 0)
     {
       valuemask |= CPAlphaXOrigin;
-
       nxagentSetPictureRemoteValue(pPicture, alpha_x_origin, attributes.alpha_x_origin);
     }
   }
@@ -1011,11 +972,9 @@ void nxagentChangePicture(PicturePtr pPicture, Mask mask)
   if (mask & CPAlphaYOrigin)
   {
     attributes.alpha_y_origin = pPicture -> alphaOrigin.y;
-
     if (nxagentCheckPictureRemoteValue(pPicture, alpha_y_origin, attributes.alpha_y_origin) == 0)
     {
       valuemask |= CPAlphaYOrigin;
-
       nxagentSetPictureRemoteValue(pPicture, alpha_y_origin, attributes.alpha_y_origin);
     }
   }
@@ -1023,11 +982,9 @@ void nxagentChangePicture(PicturePtr pPicture, Mask mask)
   if (mask & CPClipXOrigin)
   {
     attributes.clip_x_origin = pPicture -> clipOrigin.x;
-
     if (nxagentCheckPictureRemoteValue(pPicture, clip_x_origin, attributes.clip_x_origin) == 0)
     {
       valuemask |= CPClipXOrigin;
-
       nxagentSetPictureRemoteValue(pPicture, clip_x_origin, attributes.clip_x_origin);
     }
   }
@@ -1035,11 +992,9 @@ void nxagentChangePicture(PicturePtr pPicture, Mask mask)
   if (mask & CPClipYOrigin)
   {
     attributes.clip_y_origin = pPicture -> clipOrigin.y;
-
     if (nxagentCheckPictureRemoteValue(pPicture, clip_y_origin, attributes.clip_y_origin) == 0)
     {
       valuemask |= CPClipYOrigin;
-
       nxagentSetPictureRemoteValue(pPicture, clip_y_origin, attributes.clip_y_origin);
     }
   }
@@ -1047,11 +1002,9 @@ void nxagentChangePicture(PicturePtr pPicture, Mask mask)
   if (mask & CPGraphicsExposure)
   {
     attributes.graphics_exposures = (Bool)pPicture -> graphicsExposures;
-
     if (nxagentCheckPictureRemoteValue(pPicture, graphics_exposures, attributes.graphics_exposures) == 0)
     {
       valuemask |= CPGraphicsExposure;
-
       nxagentSetPictureRemoteValue(pPicture, graphics_exposures, attributes.graphics_exposures);
     }
   }
@@ -1085,11 +1038,9 @@ void nxagentChangePicture(PicturePtr pPicture, Mask mask)
   if (mask & CPPolyEdge)
   {
     attributes.poly_edge = pPicture -> polyEdge;
-
     if (nxagentCheckPictureRemoteValue(pPicture, poly_edge, attributes.poly_edge) == 0)
     {
       valuemask |= CPPolyEdge;
-
       nxagentSetPictureRemoteValue(pPicture, poly_edge, attributes.poly_edge);
     } 
   }
@@ -1097,11 +1048,9 @@ void nxagentChangePicture(PicturePtr pPicture, Mask mask)
   if (mask & CPPolyMode)
   {
     attributes.poly_mode = pPicture -> polyMode;
-
     if (nxagentCheckPictureRemoteValue(pPicture, poly_mode, attributes.poly_mode) == 0)
     {
       valuemask |= CPPolyMode;
-
       nxagentSetPictureRemoteValue(pPicture, poly_mode, attributes.poly_mode);
     }
   }
@@ -1109,11 +1058,9 @@ void nxagentChangePicture(PicturePtr pPicture, Mask mask)
   if (mask & CPDither)
   {
     attributes.dither = pPicture -> dither;
-
     if (nxagentCheckPictureRemoteValue(pPicture, dither, attributes.dither) == 0)
     {
       valuemask |= CPDither;
-
       nxagentSetPictureRemoteValue(pPicture, dither, attributes.dither);
     }
   }
@@ -1121,17 +1068,14 @@ void nxagentChangePicture(PicturePtr pPicture, Mask mask)
   if (mask & CPComponentAlpha)
   {
     attributes.component_alpha = pPicture -> componentAlpha;
-
     if (nxagentCheckPictureRemoteValue(pPicture, component_alpha, attributes.component_alpha) == 0)
     {
       valuemask |= CPComponentAlpha;
-
       nxagentSetPictureRemoteValue(pPicture, component_alpha, attributes.component_alpha);
     }
   }
 
   #ifdef TEST
-
   if (pPicture && pPicture->pDrawable && pPicture -> pDrawable -> type == DRAWABLE_PIXMAP)
   {
     fprintf(stderr, "nxagentChangePicture: %sPixmap [%p] Picture [%p][%p].\n",
@@ -1139,7 +1083,6 @@ void nxagentChangePicture(PicturePtr pPicture, Mask mask)
                     (void *) pPicture -> pDrawable, (void *) nxagentPicturePriv(pPicture) -> picture,
                         (void *) pPicture);
   }
-
   #endif
 /*
 FIXME: Is this useful or just a waste of bandwidth?
@@ -1149,7 +1092,6 @@ FIXME: Is this useful or just a waste of bandwidth?
        Without this the text is not rendered on GTK/Cairo.
 */
   #ifndef SKIP_REALLY_ALL_LOUSY_RENDER_OPERATIONS
-
   if (valuemask != 0)
   {
     XRenderChangePicture(nxagentDisplay,
@@ -1164,8 +1106,7 @@ FIXME: Is this useful or just a waste of bandwidth?
                 (void *) pPicture);
   }
   #endif
-
-  #endif
+  #endif /* SKIP_REALLY_ALL_LOUSY_RENDER_OPERATIONS */
 
   #ifdef DEBUG
   XSync(nxagentDisplay, 0);
@@ -1598,7 +1539,6 @@ void nxagentGlyphs(CARD8 op, PicturePtr pSrc, PicturePtr pDst,
 
         elements++;
       }
-
       break;
     }
     case 2:
@@ -1619,7 +1559,6 @@ void nxagentGlyphs(CARD8 op, PicturePtr pSrc, PicturePtr pDst,
 
         elements++;
       }
-
       break;
     }
     case 4:
@@ -1640,7 +1579,6 @@ void nxagentGlyphs(CARD8 op, PicturePtr pSrc, PicturePtr pDst,
 
         elements++;
       }
-
       break;
     }
     default:
@@ -1649,7 +1587,6 @@ void nxagentGlyphs(CARD8 op, PicturePtr pSrc, PicturePtr pDst,
       fprintf(stderr, "nxagentGlyphs: WARNING! Invalid size id [%d].\n",
                   sizeID);
       #endif
-
       break;
     }
   }
@@ -1673,7 +1610,6 @@ void nxagentGlyphs(CARD8 op, PicturePtr pSrc, PicturePtr pDst,
                             elements -> yOff,
                             (XGlyphElt8*) elements,
                             nlists);
-
       break;
     }
     case 2:
@@ -1689,7 +1625,6 @@ void nxagentGlyphs(CARD8 op, PicturePtr pSrc, PicturePtr pDst,
                              elements -> yOff,
                              (XGlyphElt16*) elements,
                              nlists);
-
       break;
     }
     case 4:
@@ -1705,7 +1640,6 @@ void nxagentGlyphs(CARD8 op, PicturePtr pSrc, PicturePtr pDst,
                              elements -> yOff,
                              (XGlyphElt32*) elements,
                              nlists);
-
       break;
     }
     default:
@@ -1828,7 +1762,6 @@ FIXME: Is this useful or just a waste of bandwidth?
   #ifndef SKIP_LOUSY_RENDER_OPERATIONS
 
   #ifdef TEST
-
   if (pSrc->pDrawable) {
     fprintf(stderr, "nxagentTrapezoids: Source is a [%s] of geometry [%d,%d].\n",
                 (pSrc -> pDrawable -> type == DRAWABLE_PIXMAP ? "pixmap" : "window"),
@@ -1840,7 +1773,6 @@ FIXME: Is this useful or just a waste of bandwidth?
                 (pDst -> pDrawable -> type == DRAWABLE_PIXMAP ? "pixmap" : "window"),
                     pDst -> pDrawable -> width, pDst -> pDrawable -> height);
   }
-
   #endif
 
   /*
@@ -2194,7 +2126,6 @@ void nxagentQueryFormats(void)
     }
 
     #ifdef DEBUG
-
     if (nxagentNumFormats == 0)
     {
       fprintf(stderr, "nxagentQueryFormats: Number of formats is [%d].\n",
@@ -2205,7 +2136,6 @@ void nxagentQueryFormats(void)
       fprintf(stderr, "nxagentQueryFormats: Old number of formats is [%d]. New number of formats is [%d].\n",
                   nxagentNumFormats, i);
     }
-
     #endif
 
     nxagentNumFormats = i;
@@ -2413,7 +2343,6 @@ FIXME: Is this useful or just a waste of bandwidth?
        Apparently useless with QT.
 */
   #ifndef SKIP_LOUSY_RENDER_OPERATIONS
-
   XRenderSetPictureTransform(nxagentDisplay,
                                  nxagentPicturePriv(pPicture) -> picture,
                                      (XTransform *) transform);
@@ -2448,7 +2377,6 @@ FIXME: Is this useful or just a waste of bandwidth?
        Apparently useless with QT.
 */
   #ifndef SKIP_LOUSY_RENDER_OPERATIONS
-
   XRenderSetPictureFilter(nxagentDisplay,
                           nxagentPicturePriv(pPicture) -> picture,
                           szFilter,
@@ -2463,7 +2391,6 @@ FIXME: Is this useful or just a waste of bandwidth?
 Bool nxagentPictureInit(ScreenPtr pScreen, PictFormatPtr formats, int nformats)
 {
   #ifdef RENDER
-
   #ifdef DEBUG
   fprintf(stderr, "nxagentPictureInit: Screen [%p].\n", (void *) pScreen);
   #endif
@@ -2478,7 +2405,6 @@ Bool nxagentPictureInit(ScreenPtr pScreen, PictFormatPtr formats, int nformats)
   nxagentPicturePrivateIndex = AllocatePicturePrivateIndex();
 
   AllocatePicturePrivate(pScreen, nxagentPicturePrivateIndex, sizeof(nxagentPrivPictureRec));
-
   #endif
 
   return TRUE;
@@ -2758,13 +2684,11 @@ Bool nxagentReconnectAllPicture(void *p)
       FindClientResourcesByType(clients[i], PictureType, nxagentReconnectPicture, &r);
 
       #ifdef WARNING
-
       if (!r)
       {
         fprintf(stderr, "nxagentReconnectAllPicture: WARNING! Failed to recreate "
                     "picture for client [%d].\n", i);
       }
-
       #endif
     }
   }
@@ -2813,13 +2737,11 @@ Bool nxagentDisconnectAllPicture(void)
       FindClientResourcesByType(clients[i], PictureType, nxagentDisconnectPicture, &r);
 
       #ifdef WARNING
-
       if (!r)
       {
         fprintf(stderr, "nxagentDisconnectAllPicture: WARNING! Failed to disconnect "
                     "picture for client [%d].\n", i);
       }
-
       #endif
     }
   }
@@ -2835,7 +2757,6 @@ void nxagentRenderCreateSolidFill(PicturePtr pPicture, xRenderColor *color)
   }
 
   #ifdef DEBUG
-
   fprintf(stderr, "nxagentRenderCreateSolidFill: Got called.\n");
 
   if (pPicture == NULL)
@@ -2847,7 +2768,6 @@ void nxagentRenderCreateSolidFill(PicturePtr pPicture, xRenderColor *color)
   {
     fprintf(stderr, "nxagentRenderCreateSolidFill: WARNING! color pointer is NULL.\n");
   }
-
   #endif /* #ifdef DEBUG */
 
   memset(&(nxagentPicturePriv(pPicture) -> lastServerValues), 0,
@@ -2877,7 +2797,6 @@ void nxagentRenderCreateLinearGradient(PicturePtr pPicture, xPointFixed *p1,
   }
 
   #ifdef DEBUG
-
   fprintf(stderr, "nxagentRenderCreateLinearGradient: Got called.\n");
 
   if (pPicture == NULL)
@@ -2904,7 +2823,6 @@ void nxagentRenderCreateLinearGradient(PicturePtr pPicture, xPointFixed *p1,
   {
     fprintf(stderr, "nxagentRenderCreateLinearGradient: WARNING! colors pointer is NULL.\n");
   }
-
   #endif /* #ifdef DEBUG */
 
   memset(&(nxagentPicturePriv(pPicture) -> lastServerValues), 0,
@@ -3059,4 +2977,3 @@ void nxagentRenderCreateConicalGradient(PicturePtr pPicture,
 
   nxagentPicturePriv(pPicture) -> picture = id;
 }
-
