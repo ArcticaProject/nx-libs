@@ -875,12 +875,6 @@ void nxagentRealizeImage(DrawablePtr pDrawable, GCPtr pGC, int depth,
                              int x, int y, int w, int h, int leftPad,
                                  int format, char *data)
 {
-  int length;
-
-  int bytesPerLine;
-  int numSubImages;
-  int totalHeight;
-
   /*
    * NXPutPackedImage is longer than PutPackedImage so that we
    * subtract the bigger one to be sure.
@@ -923,21 +917,21 @@ void nxagentRealizeImage(DrawablePtr pDrawable, GCPtr pGC, int depth,
    * Get bytes per line according to format.
    */
 
-  bytesPerLine = nxagentImagePad(w, format, leftPad, depth);
+  int bytesPerLine = nxagentImagePad(w, format, leftPad, depth);
 
   if (nxagentOption(Shadow) == 1 && format == ZPixmap &&
           (nxagentOption(XRatio) != DONT_SCALE ||
               nxagentOption(YRatio) != DONT_SCALE) &&
                   pDrawable == (DrawablePtr) nxagentShadowPixmapPtr)
   {
-    int scaledx;
-    int scaledy;
-
     image = XCreateImage(nxagentDisplay, pVisual, depth, ZPixmap,
                              0, data, w, h, BitmapPad(nxagentDisplay), bytesPerLine);
 
     if (image != NULL)
     {
+      int scaledx;
+      int scaledy;
+
       image -> byte_order = IMAGE_BYTE_ORDER;
 
       image -> bitmap_bit_order = BITMAP_BIT_ORDER;
@@ -972,13 +966,13 @@ void nxagentRealizeImage(DrawablePtr pDrawable, GCPtr pGC, int depth,
     goto nxagentRealizeImageEnd;
   }
 
-  totalHeight = h;
+  int totalHeight = h;
 
-  length = bytesPerLine * h;
+  int length = bytesPerLine * h;
 
   h = (subSize < length ? subSize : length) / bytesPerLine;
 
-  numSubImages = totalHeight / h + 1;
+  int numSubImages = totalHeight / h + 1;
 
   while (numSubImages > 0)
   {
@@ -1635,10 +1629,9 @@ int nxagentScaleImage(int x, int y, unsigned xRatio, unsigned yRatio,
 
       #else
 
-      char *srcPixel = &image -> data[(j * image -> bytes_per_line) +
-                                  ((i * image -> bits_per_pixel) >> 3)];
-
-      char *dstPixel = (char *) &val;
+      char * srcPixel = &image -> data[(j * image -> bytes_per_line) +
+                                         ((i * image -> bits_per_pixel) >> 3)];
+      char * dstPixel = (char *) &val;
 
       val = 0;
 
@@ -1691,15 +1684,12 @@ int nxagentScaleImage(int x, int y, unsigned xRatio, unsigned yRatio,
 
 char *nxagentAllocateImageData(int width, int height, int depth, int *length, int *format)
 {
-  int leftPad = 0;
-
   *format = (depth == 1) ? XYPixmap : ZPixmap;
 
-  *length = nxagentImageLength(width, height, *format, leftPad, depth);
+  *length = nxagentImageLength(width, height, *format, 0, depth);
 
-  char *data = NULL;
-
-  if ((data = malloc(*length)) == NULL)
+  char *data = malloc(*length);
+  if (data == NULL)
   {
     #ifdef WARNING
     fprintf(stderr, "nxagentAllocateImageData: WARNING! Failed to allocate [%d] bytes of memory.\n", *length);
