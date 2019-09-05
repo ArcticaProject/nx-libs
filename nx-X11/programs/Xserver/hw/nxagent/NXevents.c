@@ -151,28 +151,7 @@ void
 ActivatePointerGrab(register DeviceIntPtr mouse, register GrabPtr grab, 
                     TimeStamp time, Bool autoGrab)
 {
-    WindowPtr oldWin = (mouse->grab) ? mouse->grab->window
-				     : sprite.win;
-
-    if (grab->confineTo)
-    {
-	if (grab->confineTo->drawable.pScreen != sprite.hotPhys.pScreen)
-	    sprite.hotPhys.x = sprite.hotPhys.y = 0;
-	ConfineCursorToWindow(grab->confineTo, FALSE, TRUE);
-    }
-    DoEnterLeaveEvents(oldWin, grab->window, NotifyGrab);
-    mouse->valuator->motionHintWindow = NullWindow;
-    if (syncEvents.playingEvents)
-	mouse->grabTime = syncEvents.time;
-    else
-	mouse->grabTime = time;
-    if (grab->cursor)
-	grab->cursor->refcnt++;
-    mouse->activeGrab = *grab;
-    mouse->grab = &mouse->activeGrab;
-    mouse->fromPassiveGrab = autoGrab;
-    PostNewCursor();
-    CheckGrabForSyncs(mouse,(Bool)grab->pointerMode, (Bool)grab->keyboardMode);
+    xorg_ActivatePointerGrab(mouse, grab, time, autoGrab);
 
     #ifdef NXAGENT_SERVER
 
@@ -223,25 +202,7 @@ ActivatePointerGrab(register DeviceIntPtr mouse, register GrabPtr grab,
 void
 DeactivatePointerGrab(register DeviceIntPtr mouse)
 {
-    register GrabPtr grab = mouse->grab;
-    register DeviceIntPtr dev;
-
-    mouse->valuator->motionHintWindow = NullWindow;
-    mouse->grab = NullGrab;
-    mouse->sync.state = NOT_GRABBED;
-    mouse->fromPassiveGrab = FALSE;
-    for (dev = inputInfo.devices; dev; dev = dev->next)
-    {
-	if (dev->sync.other == grab)
-	    dev->sync.other = NullGrab;
-    }
-    DoEnterLeaveEvents(grab->window, sprite.win, NotifyUngrab);
-    if (grab->confineTo)
-	ConfineCursorToWindow(ROOT, FALSE, FALSE);
-    PostNewCursor();
-    if (grab->cursor)
-	FreeCursor(grab->cursor, (Cursor)0);
-    ComputeFreezes();
+    xorg_DeactivatePointerGrab(mouse);
 
     #ifdef NXAGENT_SERVER
 
@@ -260,59 +221,26 @@ DeactivatePointerGrab(register DeviceIntPtr mouse)
     #endif
 }
 
-// int
-// ProcAllowEvents(register ClientPtr client)
-// {
-//     TimeStamp		time;
-//     DeviceIntPtr	mouse = inputInfo.pointer;
-//     DeviceIntPtr	keybd = inputInfo.keyboard;
-//     REQUEST(xAllowEventsReq);
-// 
-//     REQUEST_SIZE_MATCH(xAllowEventsReq);
-//     time = ClientTimeToServerTime(stuff->time);
-//     switch (stuff->mode)
-//     {
-// 	case ReplayPointer:
-// 	    AllowSome(client, time, mouse, NOT_GRABBED);
-// 	    break;
-// 	case SyncPointer: 
-// 	    AllowSome(client, time, mouse, FREEZE_NEXT_EVENT);
-// 	    break;
-// 	case AsyncPointer: 
-// 	    AllowSome(client, time, mouse, THAWED);
-// 	    break;
-// 	case ReplayKeyboard: 
-// 	    AllowSome(client, time, keybd, NOT_GRABBED);
-// 	    break;
-// 	case SyncKeyboard: 
-// 	    AllowSome(client, time, keybd, FREEZE_NEXT_EVENT);
-// 	    break;
-// 	case AsyncKeyboard: 
-// 	    AllowSome(client, time, keybd, THAWED);
-// 	    break;
-// 	case SyncBoth:
-// 	    AllowSome(client, time, keybd, FREEZE_BOTH_NEXT_EVENT);
-// 	    break;
-// 	case AsyncBoth:
-// 	    AllowSome(client, time, keybd, THAWED_BOTH);
-// 	    break;
-// 	default: 
-// 	    client->errorValue = stuff->mode;
-// 	    return BadValue;
-//     }
-// 
-//     /*
-//      * This is not necessary if we export grab to X as asynchronous.
-//      *
-//      * if (nxagentOption(Rootless) && stuff -> mode != ReplayKeyboard &&
-//      *         stuff -> mode != SyncKeyboard && stuff -> mode != AsyncKeyboard)
-//      * {
-//      *   XAllowEvents(nxagentDisplay, stuff -> mode, CurrentTime);
-//      * }
-//      */
-// 
-//     return Success;
-// }
+int
+ProcAllowEvents(register ClientPtr client)
+{
+    int rc = xorg_ProcAllowEvents(client);
+
+    if (rc != Success)
+        return rc;
+
+    /*
+     * This is not necessary if we export grab to X as asynchronous.
+     *
+     * if (nxagentOption(Rootless) && stuff -> mode != ReplayKeyboard &&
+     *         stuff -> mode != SyncKeyboard && stuff -> mode != AsyncKeyboard)
+     * {
+     *   XAllowEvents(nxagentDisplay, stuff -> mode, CurrentTime);
+     * }
+     */
+
+    return Success;
+}
 
 static WindowPtr 
 XYToWindow(int x, int y)
@@ -322,6 +250,7 @@ XYToWindow(int x, int y)
 
     spriteTraceGood = 1;	/* root window still there */
 
+#ifdef NXAGENT_SERVER
     if (nxagentOption(Rootless))
     {
       if (nxagentLastEnteredWindow == NULL)
@@ -340,7 +269,9 @@ XYToWindow(int x, int y)
     {
       pWin = ROOT->firstChild;
     }
-
+#else
+    pWin = ROOT->firstChild;
+#endif
     while (pWin)
     {
 	if ((pWin->mapped) &&
@@ -462,50 +393,17 @@ CheckMotion(xEvent *xE)
     return TRUE;
 }
 
+extern int  nxagentShadowInit(ScreenPtr, WindowPtr);
+#ifdef VIEWPORT_FRAME
+extern void nxagentInitViewportFrame(ScreenPtr, WindowPtr);
+#endif
+
 void
 DefineInitialRootWindow(register WindowPtr win)
 {
     register ScreenPtr pScreen = win->drawable.pScreen;
-    #ifdef VIEWPORT_FRAME
-    extern void nxagentInitViewportFrame(ScreenPtr, WindowPtr);
-    #endif
-    extern int  nxagentShadowInit(ScreenPtr, WindowPtr);
 
-    sprite.hotPhys.pScreen = pScreen;
-    sprite.hotPhys.x = pScreen->width / 2;
-    sprite.hotPhys.y = pScreen->height / 2;
-    sprite.hot = sprite.hotPhys;
-    sprite.hotLimits.x2 = pScreen->width;
-    sprite.hotLimits.y2 = pScreen->height;
-    sprite.win = win;
-    sprite.current = wCursor (win);
-    sprite.current->refcnt++;
-    spriteTraceGood = 1;
-    ROOT = win;
-    (*pScreen->CursorLimits) (
-	pScreen, sprite.current, &sprite.hotLimits, &sprite.physLimits);
-    sprite.confined = FALSE;
-    (*pScreen->ConstrainCursor) (pScreen, &sprite.physLimits);
-    (*pScreen->SetCursorPosition) (pScreen, sprite.hot.x, sprite.hot.y, FALSE);
-    (*pScreen->DisplayCursor) (pScreen, sprite.current);
-
-#ifdef PANORAMIX
-    if(!noPanoramiXExtension) {
-	sprite.hotLimits.x1 = -panoramiXdataPtr[0].x;
-	sprite.hotLimits.y1 = -panoramiXdataPtr[0].y;
-	sprite.hotLimits.x2 = PanoramiXPixWidth  - panoramiXdataPtr[0].x;
-	sprite.hotLimits.y2 = PanoramiXPixHeight - panoramiXdataPtr[0].y;
-	sprite.physLimits = sprite.hotLimits;
-	sprite.confineWin = NullWindow;
-#ifdef SHAPE
-        sprite.hotShape = NullRegion;
-#endif
-	sprite.screen = pScreen;
-	/* gotta UNINIT these someplace */
-	RegionNull(&sprite.Reg1);
-	RegionNull(&sprite.Reg2);
-    }
-#endif
+    xorg_DefineInitialRootWindow(win);
 
     #ifdef VIEWPORT_FRAME
     nxagentInitViewportFrame(pScreen, win);
@@ -523,17 +421,11 @@ DefineInitialRootWindow(register WindowPtr win)
 int
 ProcSendEvent(ClientPtr client)
 {
-    WindowPtr pWin;
-    WindowPtr effectiveFocus = NullWindow; /* only set if dest==InputFocus */
+#ifdef NXAGENT_CLIPBOARD
+
     REQUEST(xSendEventReq);
 
     REQUEST_SIZE_MATCH(xSendEventReq);
-
-    /* The client's event type must be a core event type or one defined by an
-	extension. */
-
-
-#ifdef NXAGENT_CLIPBOARD
 
     if (stuff -> event.u.u.type == SelectionNotify)
     {
@@ -542,78 +434,5 @@ ProcSendEvent(ClientPtr client)
 	  return Success;
     }
 #endif
-
-    if ( ! ((stuff->event.u.u.type > X_Reply &&
-	     stuff->event.u.u.type < LASTEvent) || 
-	    (stuff->event.u.u.type >= EXTENSION_EVENT_BASE &&
-	     stuff->event.u.u.type < (unsigned)lastEvent)))
-    {
-	client->errorValue = stuff->event.u.u.type;
-	return BadValue;
-    }
-    if (stuff->event.u.u.type == ClientMessage &&
-	stuff->event.u.u.detail != 8 &&
-	stuff->event.u.u.detail != 16 &&
-	stuff->event.u.u.detail != 32)
-    {
-	client->errorValue = stuff->event.u.u.detail;
-	return BadValue;
-    }
-    if (stuff->eventMask & ~AllEventMasks)
-    {
-	client->errorValue = stuff->eventMask;
-	return BadValue;
-    }
-
-    if (stuff->destination == PointerWindow)
-	pWin = sprite.win;
-    else if (stuff->destination == InputFocus)
-    {
-	WindowPtr inputFocus = inputInfo.keyboard->focus->win;
-
-	if (inputFocus == NoneWin)
-	    return Success;
-
-	/* If the input focus is PointerRootWin, send the event to where
-	the pointer is if possible, then perhaps propagate up to root. */
-   	if (inputFocus == PointerRootWin)
-	    inputFocus = ROOT;
-
-	if (IsParent(inputFocus, sprite.win))
-	{
-	    effectiveFocus = inputFocus;
-	    pWin = sprite.win;
-	}
-	else
-	    effectiveFocus = pWin = inputFocus;
-    }
-    else
-	pWin = SecurityLookupWindow(stuff->destination, client,
-				    DixReadAccess);
-    if (!pWin)
-	return BadWindow;
-    if ((stuff->propagate != xFalse) && (stuff->propagate != xTrue))
-    {
-	client->errorValue = stuff->propagate;
-	return BadValue;
-    }
-    stuff->event.u.u.type |= 0x80;
-    if (stuff->propagate)
-    {
-	for (;pWin; pWin = pWin->parent)
-	{
-	    if (DeliverEventsToWindow(pWin, &stuff->event, 1, stuff->eventMask,
-				      NullGrab, 0))
-		return Success;
-	    if (pWin == effectiveFocus)
-		return Success;
-	    stuff->eventMask &= ~wDontPropagateMask(pWin);
-	    if (!stuff->eventMask)
-		break;
-	}
-    }
-    else
-	(void)DeliverEventsToWindow(pWin, &stuff->event, 1, stuff->eventMask,
-				    NullGrab, 0);
-    return Success;
+    return xorg_ProcSendEvent(client);
 }

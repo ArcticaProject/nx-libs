@@ -277,32 +277,19 @@ int ddxProcessArgument(int argc, char *argv[], int i)
     {
       if ((!strcmp(argv[j], "-options") || !strcmp(argv[j], "-option")) && j + 1 < argc)
       {
-        if (nxagentOptionsFilenameOrString)
-        {
-          nxagentOptionsFilenameOrString = (char *) realloc(nxagentOptionsFilenameOrString, strlen(argv[j + 1]) + 1);
-        }
-        else
-        {
-          nxagentOptionsFilenameOrString = (char *) malloc(strlen(argv[j + 1]) +1);
-        }
+        free(nxagentOptionsFilenameOrString);
+        nxagentOptionsFilenameOrString = NULL;
 
-        if (nxagentOptionsFilenameOrString != NULL)
+        if (-1 == asprintf(&nxagentOptionsFilenameOrString, "%s", argv[j + 1]))
         {
-          nxagentOptionsFilenameOrString = strcpy(nxagentOptionsFilenameOrString, argv[j + 1]);
+          FatalError("malloc failed");
         }
-        #ifdef WARNING
-        else
-        {
-          fprintf(stderr, "ddxProcessArgument: WARNING! failed string allocation.\n");
-        }
-        #endif
-
         break;
       }
     }
 
     nxagentProcessOptions(nxagentOptionsFilenameOrString);
-  }
+  }  /* if (resetOptions == True) */
 
   if (!strcmp(argv[i], "-B"))
   {
@@ -1000,7 +987,7 @@ int ddxProcessArgument(int argc, char *argv[], int i)
     {
       nxagentChangeOption(Clipboard, ClipboardServer);
     }
-    else if ((!strcmp(argv[i+1], "none")) || (!strcmp(argv[i+1], "1")))
+    else if ((!strcmp(argv[i+1], "none")) || (!strcmp(argv[i+1], "0")))
     {
       nxagentChangeOption(Clipboard, ClipboardNone);
     }
@@ -1390,29 +1377,6 @@ static void nxagentParseSingleOption(char *name, char *value)
     nxagentChangeOption(CopyBufferSize, atoi(value));
 
     return;
-  }
-  else if  (strcmp(name, "clipboard") == 0)
-  {
-    if ((strcmp(value, "both") == 0) || (strcmp(value, "1") == 0))
-    {
-      nxagentChangeOption(Clipboard, ClipboardBoth);
-    }
-    else if (strcmp(value, "client") == 0)
-    {
-      nxagentChangeOption(Clipboard, ClipboardClient);
-    }
-    else if (strcmp(value, "server") == 0)
-    {
-      nxagentChangeOption(Clipboard, ClipboardServer);
-    }
-    else if ((strcmp(value, "none") == 0) || (strcmp(value, "0") == 0))
-    {
-      nxagentChangeOption(Clipboard, ClipboardNone);
-    }
-    else
-    {
-      nxagentChangeOption(Clipboard, ClipboardBoth);
-    }
   }
   else if (!strcmp(name, "sleep"))
   {

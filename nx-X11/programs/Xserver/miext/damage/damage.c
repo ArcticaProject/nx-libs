@@ -1335,8 +1335,6 @@ damageDamageChars (DrawablePtr	pDrawable,
 #define TT_POLY16  2
 #define TT_IMAGE16 3
 
-#ifndef NXAGENT_SERVER
-
 static int 
 damageText (DrawablePtr	    pDrawable,
 	    GCPtr	    pGC,
@@ -1371,12 +1369,14 @@ damageText (DrawablePtr	    pDrawable,
     if (n != 0) {
 	damageDamageChars (pDrawable, pGC->font, x + pDrawable->x, y + pDrawable->y, n,
 			   charinfo, imageblt, pGC->subWindowMode);
+#ifndef NXAGENT_SERVER
 	if (imageblt)
 	    (*pGC->ops->ImageGlyphBlt)(pDrawable, pGC, x, y, n, charinfo,
 				       FONTGLYPHS(pGC->font));
 	else
 	    (*pGC->ops->PolyGlyphBlt)(pDrawable, pGC, x, y, n, charinfo,
 				      FONTGLYPHS(pGC->font));
+#endif
     }
     free(charinfo);
     return x + w;
@@ -1457,8 +1457,6 @@ damageImageText16(DrawablePtr	pDrawable,
 	(*pGC->ops->ImageText16)(pDrawable, pGC, x, y, count, chars);
     DAMAGE_GC_OP_EPILOGUE(pGC, pDrawable);
 }
-
-#endif /* NXAGENT_SERVER */
 
 static void
 damageImageGlyphBlt(DrawablePtr	    pDrawable,

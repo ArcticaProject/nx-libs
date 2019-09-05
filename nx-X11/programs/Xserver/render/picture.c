@@ -989,9 +989,14 @@ static PicturePtr createSourcePicture(void)
     SetPictureToDefaults(pPicture);
     return pPicture;
 }
+#endif
 
 PicturePtr
+#ifdef NXAGENT_SERVER
+xorg_CreateSolidPicture (Picture pid, xRenderColor *color, int *error)
+#else
 CreateSolidPicture (Picture pid, xRenderColor *color, int *error)
+#endif
 {
     PicturePtr pPicture;
     pPicture = createSourcePicture();
@@ -1011,11 +1016,15 @@ CreateSolidPicture (Picture pid, xRenderColor *color, int *error)
     pPicture->pSourcePict->solidFill.color = xRenderColorToCard32(*color);
     return pPicture;
 }
-#endif
 
 PicturePtr
+#ifdef NXAGENT_SERVER
+xorg_CreateLinearGradientPicture (Picture pid, xPointFixed *p1, xPointFixed *p2,
+                             int nStops, xFixed *stops, xRenderColor *colors, int *error)
+#else
 CreateLinearGradientPicture (Picture pid, xPointFixed *p1, xPointFixed *p2,
                              int nStops, xFixed *stops, xRenderColor *colors, int *error)
+#endif
 {
     PicturePtr pPicture;
 
@@ -1057,9 +1066,15 @@ CreateLinearGradientPicture (Picture pid, xPointFixed *p1, xPointFixed *p2,
 #define FixedToDouble(x) ((x)/65536.)
 
 PicturePtr
+#ifdef NXAGENT_SERVER
+xorg_CreateRadialGradientPicture (Picture pid, xPointFixed *inner, xPointFixed *outer,
+                             xFixed innerRadius, xFixed outerRadius,
+                             int nStops, xFixed *stops, xRenderColor *colors, int *error)
+#else
 CreateRadialGradientPicture (Picture pid, xPointFixed *inner, xPointFixed *outer,
                              xFixed innerRadius, xFixed outerRadius,
                              int nStops, xFixed *stops, xRenderColor *colors, int *error)
+#endif
 {
     PicturePtr pPicture;
     PictRadialGradient *radial;
@@ -1118,8 +1133,13 @@ CreateRadialGradientPicture (Picture pid, xPointFixed *inner, xPointFixed *outer
 }
 
 PicturePtr
+#ifdef NXAGENT_SERVER
+xorg_CreateConicalGradientPicture (Picture pid, xPointFixed *center, xFixed angle,
+                              int nStops, xFixed *stops, xRenderColor *colors, int *error)
+#else
 CreateConicalGradientPicture (Picture pid, xPointFixed *center, xFixed angle,
                               int nStops, xFixed *stops, xRenderColor *colors, int *error)
+#endif
 {
     PicturePtr pPicture;
 

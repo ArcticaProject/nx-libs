@@ -161,30 +161,35 @@ AddGlyph (GlyphSetPtr glyphSet, GlyphPtr glyph, Glyph id)
     CheckDuplicates (&globalGlyphs[glyphSet->fdepth], "AddGlyph bottom");
 }
 
-GlyphPtr FindGlyph (GlyphSetPtr glyphSet, Glyph id)
+GlyphPtr
+FindGlyph (GlyphSetPtr glyphSet, Glyph id)
 {
-  GlyphRefPtr gr;
-  GlyphPtr    glyph;
+    GlyphPtr    glyph;
 
-  gr = FindGlyphRef (&glyphSet->hash, id, FALSE, 0);
-  glyph = gr -> glyph;
-
-  if (glyph == DeletedGlyph)
-  {
-    glyph = 0;
-  }
-  else if (gr -> corruptedGlyph == 1)
-  {
-     #ifdef DEBUG
-     fprintf(stderr, "FindGlyphRef: Going to synchronize the glyph [%p] for glyphset [%p].\n",
+#ifdef NXAGENT_SERVER
+    GlyphRefPtr gr = FindGlyphRef (&glyphSet->hash, id, FALSE, 0);
+    glyph = gr -> glyph;
+#else
+    glyph = FindGlyphRef (&glyphSet->hash, id, FALSE, 0)->glyph;
+#endif
+    if (glyph == DeletedGlyph)
+    {
+        glyph = 0;
+    }
+#ifdef NXAGENT_SERVER
+    else if (gr -> corruptedGlyph == 1)
+    {
+        #ifdef DEBUG
+        fprintf(stderr, "FindGlyphRef: Going to synchronize the glyph [%p] for glyphset [%p].\n",
                  (void *) glyph, (void *) glyphSet);
-     #endif
+        #endif
 
-    nxagentAddGlyphs(glyphSet, &id, &(glyph -> info), 1,
+        nxagentAddGlyphs(glyphSet, &id, &(glyph -> info), 1,
                          (CARD8*)(glyph + 1), glyph -> size - sizeof(xGlyphInfo));
-  }
+    }
+#endif
 
-  return glyph;
+    return glyph;
 }
 
 Bool
@@ -269,18 +274,21 @@ miGlyphs (CARD8		op,
     BoxRec	extents;
     CARD32	component_alpha;
 
+#ifdef NXAGENT_SERVER
     /*
      * Get rid of the warning.
      */
 
     extents.x1 = 0;
     extents.y1 = 0;
+#endif
 
     if (maskFormat)
     {
 	GCPtr	    pGC;
 	xRectangle  rect;
 
+#ifdef NXAGENT_SERVER
         if (nxagentGlyphsExtents != NullBox)
         {
           memcpy(&extents, nxagentGlyphsExtents, sizeof(BoxRec));
@@ -293,6 +301,9 @@ miGlyphs (CARD8		op,
 
           memcpy(nxagentGlyphsExtents, &extents, sizeof(BoxRec));
         }
+#else
+	GlyphExtents (nlist, list, glyphs, &extents);
+#endif
 
 	if (extents.x2 <= extents.x1 || extents.y2 <= extents.y1)
 	    return;
@@ -364,6 +375,7 @@ miGlyphs (CARD8		op,
 					    glyph->info.width, glyph->info.height,
 					    0, 0, -1, (void *) (glyph + 1));
 
+#ifdef NXAGENT_SERVER
             /*
              * The following line fixes a problem with glyphs that appeared
              * as clipped. It was a side effect due the validate function
@@ -373,7 +385,7 @@ miGlyphs (CARD8		op,
              */
 
             pPicture->pDrawable->serialNumber = NEXT_SERIAL_NUMBER;
-
+#endif
 	    pPixmap->drawable.serialNumber = NEXT_SERIAL_NUMBER;
 	    if (maskFormat)
 	    {

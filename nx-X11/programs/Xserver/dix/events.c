@@ -1216,10 +1216,14 @@ CheckGrabForSyncs(register DeviceIntPtr thisDev, Bool thisMode, Bool otherMode)
     ComputeFreezes();
 }
 
-#ifndef NXAGENT_SERVER
 void
-ActivatePointerGrab(register DeviceIntPtr mouse, register GrabPtr grab, 
+#ifdef NXAGENT_SERVER
+xorg_ActivatePointerGrab(register DeviceIntPtr mouse, register GrabPtr grab,
                     TimeStamp time, Bool autoGrab)
+#else
+ActivatePointerGrab(register DeviceIntPtr mouse, register GrabPtr grab,
+                    TimeStamp time, Bool autoGrab)
+#endif
 {
     WindowPtr oldWin = (mouse->grab) ? mouse->grab->window
 				     : sprite.win;
@@ -1246,7 +1250,11 @@ ActivatePointerGrab(register DeviceIntPtr mouse, register GrabPtr grab,
 }
 
 void
+#ifdef NXAGENT_SERVER
+xorg_DeactivatePointerGrab(register DeviceIntPtr mouse)
+#else
 DeactivatePointerGrab(register DeviceIntPtr mouse)
+#endif
 {
     register GrabPtr grab = mouse->grab;
     register DeviceIntPtr dev;
@@ -1268,7 +1276,6 @@ DeactivatePointerGrab(register DeviceIntPtr mouse)
 	FreeCursor(grab->cursor, (Cursor)0);
     ComputeFreezes();
 }
-#endif /* NXAGENT_SERVER */
 
 void
 ActivateKeyboardGrab(register DeviceIntPtr keybd, GrabPtr grab, TimeStamp time, Bool passive)
@@ -1429,7 +1436,11 @@ AllowSome(ClientPtr client, TimeStamp time, DeviceIntPtr thisDev, int newState)
 }
 
 int
+#ifdef NXAGENT_SERVER
+xorg_ProcAllowEvents(register ClientPtr client)
+#else
 ProcAllowEvents(register ClientPtr client)
+#endif
 {
     TimeStamp		time;
     DeviceIntPtr	mouse = inputInfo.pointer;
@@ -2063,9 +2074,12 @@ void ReinitializeRootWindow(WindowPtr win, int xoff, int yoff)
 }
 #endif
 
-#ifndef NXAGENT_SERVER
 void
+#ifdef NXAGENT_SERVER
+xorg_DefineInitialRootWindow(register WindowPtr win)
+#else
 DefineInitialRootWindow(register WindowPtr win)
+#endif
 {
     register ScreenPtr pScreen = win->drawable.pScreen;
 
@@ -2105,7 +2119,6 @@ DefineInitialRootWindow(register WindowPtr win)
     }
 #endif
 }
-#endif /* NXAGENT_SERVER */
 
 /*
  * This does not take any shortcuts, and even ignores its argument, since
@@ -3940,9 +3953,12 @@ CloseDownEvents(void)
   spriteTraceSize = 0;
 }
 
-#ifndef NXAGENT_SERVER
 int
+#ifdef NXAGENT_SERVER
+xorg_ProcSendEvent(ClientPtr client)
+#else
 ProcSendEvent(ClientPtr client)
+#endif
 {
     WindowPtr pWin;
     WindowPtr effectiveFocus = NullWindow; /* only set if dest==InputFocus */
@@ -4027,7 +4043,6 @@ ProcSendEvent(ClientPtr client)
 				    NullGrab, 0);
     return Success;
 }
-#endif /* NXAGENT_SERVER */
 
 int
 ProcUngrabKey(ClientPtr client)

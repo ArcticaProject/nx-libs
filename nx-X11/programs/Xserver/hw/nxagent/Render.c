@@ -461,9 +461,9 @@ void nxagentRenderExtensionInit(void)
      * As the RENDER requests are passed directly to
      * the remote X server this can cause problems if 
      * our RENDER version is different from the version
-     * supported by the remote. For this reasos let's
+     * supported by the remote. For this reasons let's
      * advertise to our clients the lowest between the
-     + two versions.
+     * two versions.
      */
 
     if (major_version > SERVER_RENDER_MAJOR_VERSION ||
@@ -539,19 +539,14 @@ void nxagentCursorPostSaveRenderInfo(CursorPtr pCursor, ScreenPtr pScreen,
   nxagentCursorYOffset(pCursor, pScreen) = y;
 }
 
-int nxagentRenderRealizeCursor(ScreenPtr pScreen, CursorPtr pCursor)
+void nxagentRenderRealizeCursor(ScreenPtr pScreen, CursorPtr pCursor)
 {
-  int cid;
-  int x, y;
-
-  PicturePtr pPicture;
-
-  pPicture = nxagentCursorPicture(pCursor, pScreen);
+  PicturePtr pPicture = nxagentCursorPicture(pCursor, pScreen);
 
   pPicture -> refcnt++;
 
-  x = nxagentCursorXOffset(pCursor, pScreen);
-  y = nxagentCursorYOffset(pCursor, pScreen);
+  int x = nxagentCursorXOffset(pCursor, pScreen);
+  int y = nxagentCursorYOffset(pCursor, pScreen);
 
   /*
    * Set the lossless trap so that the image functions
@@ -576,11 +571,7 @@ int nxagentRenderRealizeCursor(ScreenPtr pScreen, CursorPtr pCursor)
 
   nxagentLosslessTrap = 0;
 
-  cid = XRenderCreateCursor(nxagentDisplay, nxagentPicture(pPicture), x, y);
-
-  nxagentCursor(pCursor, pScreen) = cid;
-
-  return 1;
+  nxagentCursor(pCursor, pScreen) = XRenderCreateCursor(nxagentDisplay, nxagentPicture(pPicture), x, y);
 }
 
 int nxagentCreatePicture(PicturePtr pPicture, Mask mask)
@@ -801,9 +792,7 @@ int nxagentCreatePicture(PicturePtr pPicture, Mask mask)
 
 XRenderPictFormat *nxagentMatchingFormats(PictFormatPtr pFormat)
 {
-  int i;
-
-  for (i = 0; i < nxagentNumFormats; i++)
+  for (int i = 0; i < nxagentNumFormats; i++)
   {
     if (pFormat -> type == nxagentArrayFormats[i].type &&
         pFormat -> depth == nxagentArrayFormats[i].depth &&
@@ -1230,13 +1219,6 @@ FIXME: Is this useful or just a waste of bandwidth?
 
   XSync(nxagentDisplay, 0);
 
-  #endif
-}
-
-void nxagentValidatePicture(PicturePtr pPicture, Mask mask)
-{
-  #ifdef DEBUG
-  fprintf(stderr, "nxagentValidatePicture: Nothing to do.\n");
   #endif
 }
 
@@ -2059,14 +2041,6 @@ FIXME: Is this useful or just a waste of bandwidth?
 
   XSync(nxagentDisplay, 0);
 
-  #endif
-}
-
-void nxagentRasterizeTrapezoid(PicturePtr pMask, xTrapezoid *trap,
-                                   int x_off, int y_off)
-{
-  #ifdef DEBUG
-  fprintf(stderr, "nxagentRasterizeTrapezoids: Nothing to do.\n");
   #endif
 }
 

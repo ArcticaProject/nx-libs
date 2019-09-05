@@ -213,16 +213,18 @@ UpdateCurrentTimeIf()
 	currentTime = systime;
 }
 
-#ifndef NXAGENT_SERVER
 void
-InitSelections()
+#ifdef NXAGENT_SERVER
+xorg_InitSelections(void)
+#else
+InitSelections(void)
+#endif
 {
     if (CurrentSelections)
 	free(CurrentSelections);
     CurrentSelections = (Selection *)NULL;
     NumCurrentSelections = 0;
 }
-#endif /* NXAGENT_SERVER */
 
 #undef SMART_DEBUG
 
@@ -3475,11 +3477,14 @@ InitProcVectors(void)
  *  then killed again, the client is really destroyed.
  *********************/
 
-#ifndef NXAGENT_SERVER
 char dispatchExceptionAtReset = DE_RESET;
 
 void
-CloseDownClient(register ClientPtr client)
+#ifdef NXAGENT_SERVER
+xorg_CloseDownClient(ClientPtr client)
+#else
+CloseDownClient(ClientPtr client)
+#endif
 {
     Bool really_close_down = client->clientGone ||
 			     client->closeDownMode == DestroyAll;
@@ -3564,7 +3569,6 @@ CloseDownClient(register ClientPtr client)
 	    currentMaxClients--;
     }
 }
-#endif /* NXAGENT_SERVER */
 
 static void
 KillAllClients()
@@ -3641,9 +3645,12 @@ void InitClient(ClientPtr client, int i, void * ospriv)
     client->clientIds = NULL;
 }
 
-#ifndef NXAGENT_SERVER
 int
+#ifdef NXAGENT_SERVER
+xorg_InitClientPrivates(ClientPtr client)
+#else
 InitClientPrivates(ClientPtr client)
+#endif
 {
     register char *ptr;
     DevUnion *ppriv;
@@ -3687,7 +3694,6 @@ InitClientPrivates(ClientPtr client)
     }
     return 1;
 }
-#endif /* NXAGENT_SERVER */
 
 /************************
  * int NextAvailableClient(ospriv)

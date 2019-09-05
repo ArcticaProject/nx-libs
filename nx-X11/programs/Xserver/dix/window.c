@@ -497,9 +497,12 @@ CreateRootWindow(ScreenPtr pScreen)
     return TRUE;
 }
 
-#ifndef NXAGENT_SERVER
 void
+#ifdef NXAGENT_SERVER
+xorg_InitRootWindow(WindowPtr pWin)
+#else
 InitRootWindow(WindowPtr pWin)
+#endif
 {
     ScreenPtr pScreen = pWin->drawable.pScreen;
     int backFlag = CWBorderPixel | CWCursor | CWBackingStore;
@@ -531,7 +534,6 @@ InitRootWindow(WindowPtr pWin)
 
     MapWindow(pWin, serverClient);
 }
-#endif /* NXAGENT_SERVER */
 
 /* Set the region to the intersection of the rectangle and the
  * window's winSize.  The window is typically the parent of the
@@ -913,7 +915,6 @@ CrushTree(WindowPtr pWin)
  *	 If wid is None, don't send any events
  *****/
 
-#ifndef NXAGENT_SERVER
 int
 DeleteWindow(void * value, XID wid)
  {
@@ -949,7 +950,6 @@ DeleteWindow(void * value, XID wid)
     free(pWin);
     return Success;
 }
-#endif /* NXAGENT_SERVER */
 
 void
 DestroySubwindows(register WindowPtr pWin, ClientPtr client)
@@ -1801,7 +1801,6 @@ GravityTranslate (register int x, register int y, int oldx, int oldy,
 }
 
 /* XXX need to retile border on each window with ParentRelative origin */
-#ifndef NXAGENT_SERVER
 void
 ResizeChildrenWinSize(register WindowPtr pWin, int dx, int dy, int dw, int dh)
 {
@@ -1838,7 +1837,23 @@ ResizeChildrenWinSize(register WindowPtr pWin, int dx, int dy, int dw, int dh)
 	pSib->drawable.y = pWin->drawable.y + pSib->origin.y;
 	SetWinSize (pSib);
 	SetBorderSize (pSib);
+
+#ifdef NXAGENT_SERVER
+        /*
+         * Don't force X to move children. It will position them
+         * according with gravity.
+         *
+         * (*pScreen->PositionWindow)(pSib, pSib->drawable.x, pSib->drawable.y);
+         */
+
+        /*
+         * Update pSib privates, as this window is moved by X.
+         */
+
+        nxagentAddConfiguredWindow(pSib, CW_Update);
+#else
 	(*pScreen->PositionWindow)(pSib, pSib->drawable.x, pSib->drawable.y);
+#endif
 
 	if ( (pChild = pSib->firstChild) )
 	{
@@ -1866,7 +1881,6 @@ ResizeChildrenWinSize(register WindowPtr pWin, int dx, int dy, int dw, int dh)
 	}
     }
 }
-#endif /* NXAGENT_SERVER */
 
 #define GET_INT16(m, f) \
 	if (m & mask) \
@@ -2210,7 +2224,6 @@ ReflectStackChange(
  * ConfigureWindow
  *****/
 
-#ifndef NXAGENT_SERVER
 int
 ConfigureWindow(register WindowPtr pWin, register Mask mask, XID *vlist, ClientPtr client)
 {
@@ -2228,7 +2241,7 @@ ConfigureWindow(register WindowPtr pWin, register Mask mask, XID *vlist, ClientP
 		   h = pWin->drawable.height,
 		   bw = pWin->borderWidth;
     int action, smode = Above;
-    xEvent event;
+    xEvent event = {0};
 
     if ((pWin->drawable.class == InputOnly) && (mask & IllegalInputOnlyConfigureMask))
 	return(BadMatch);
@@ -2316,6 +2329,32 @@ ConfigureWindow(register WindowPtr pWin, register Mask mask, XID *vlist, ClientP
 
 	/* Figure out if the window should be moved.  Doesnt
 	   make the changes to the window if event sent */
+
+#ifdef NXAGENT_SERVER
+    extern Bool nxagentScreenTrap;
+
+    #ifdef TEST
+    if (nxagentWindowTopLevel(pWin))
+    {
+
+      fprintf(stderr, "ConfigureWindow: pWin [%p] mask [%lu] client [%p]\n",
+                  pWin, mask, client);
+
+      fprintf(stderr, "ConfigureWindow: x [%d] y [%d] w [%d] h [%d] CWStackMode [%d] "
+                  "smode [%d] pSib [%p]\n",
+                      x, y, w, h, (mask & CWStackMode) ? 1 : 0, smode, pSib);
+    }
+    #endif
+
+    if (nxagentOption(Rootless) && nxagentWindowTopLevel(pWin) &&
+            pWin -> overrideRedirect == 0 &&
+                nxagentScreenTrap == 0)
+    {
+      nxagentConfigureRootlessWindow(pWin, x, y, w, h, bw, pSib, smode, mask);
+
+      return Success;
+    }
+#endif
 
     if (mask & CWStackMode)
 	pSib = WhereDoIGoInTheStack(pWin, pSib, pParent->drawable.x + x,
@@ -2458,13 +2497,17 @@ ActuallyDoSomething:
 
     if (action != RESTACK_WIN)
 	CheckCursorConfinement(pWin);
+
+#ifdef NXAGENT_SERVER
+    nxagentFlushConfigureWindow();
+#endif
+
     return(Success);
 #undef RESTACK_WIN
 #undef MOVE_WIN
 #undef RESIZE_WIN
 #undef REBORDER_WIN
 }
-#endif /* NXAGENT_SERVER */
 
 
 /******
@@ -2560,7 +2603,6 @@ CompareWIDs(
  *  ReparentWindow
  *****/
 
-#ifndef NXAGENT_SERVER
 int
 ReparentWindow(register WindowPtr pWin, register WindowPtr pParent,
                int x, int y, ClientPtr client)
@@ -2611,6 +2653,14 @@ ReparentWindow(register WindowPtr pWin, register WindowPtr pParent,
     /* insert at begining of pParent */
     pWin->parent = pParent;
     pPrev = RealChildHead(pParent);
+
+#ifdef NXAGENT_SERVER
+    if (pWin->parent == screenInfo.screens[0]->root)
+    {
+      nxagentSetTopLevelEventMask(pWin);
+    }
+#endif
+
     if (pPrev)
     {
 	pWin->nextSib = pPrev->nextSib;
@@ -2653,7 +2703,6 @@ ReparentWindow(register WindowPtr pWin, register WindowPtr pParent,
     RecalculateDeliverableEvents(pWin);
     return(Success);
 }
-#endif /* NXAGENT_SERVER */
 
 static void
 RealizeTree(WindowPtr pWin)
@@ -2696,9 +2745,12 @@ RealizeTree(WindowPtr pWin)
  *    MapNotify event is generated.
  *****/
 
-#ifndef NXAGENT_SERVER
 int
+#ifdef NXAGENT_SERVER
+xorg_MapWindow(register WindowPtr pWin, ClientPtr client)
+#else
 MapWindow(register WindowPtr pWin, ClientPtr client)
+#endif
 {
     register ScreenPtr pScreen;
 
@@ -2797,9 +2849,19 @@ MapWindow(register WindowPtr pWin, ClientPtr client)
 	RegionUninit(&temp);
     }
 
+#ifdef NXAGENT_SERVER
+    /*
+     * MapWindow() is always returning Success, no matter
+     * what. Therefore its returncode is never checked anywhere! We
+     * make use of that to inform the (parent) NX version of
+     * MapWindow() that it needs to call
+     * nxagentFlushConfigureWindow()
+     */
+    return(BadImplementation);
+#endif
+
     return(Success);
 }
-#endif /* NXAGENT_SERVER */
 
 /*****
  * MapSubwindows
@@ -2988,7 +3050,6 @@ UnrealizeTree(
  *    generated.  Cannot unmap a root window.
  *****/
 
-#ifndef NXAGENT_SERVER
 int
 UnmapWindow(register WindowPtr pWin, Bool fromConfigure)
 {
@@ -3042,7 +3103,6 @@ UnmapWindow(register WindowPtr pWin, Bool fromConfigure)
 	WindowsRestructured ();
     return(Success);
 }
-#endif /* NXAGENT_SERVER */
 
 /*****
  * UnmapSubwindows
@@ -3336,7 +3396,6 @@ static void DrawLogo(
 );
 #endif
 
-#ifndef NXAGENT_SERVER
 void
 SaveScreens(int on, int mode)
 {
@@ -3365,9 +3424,21 @@ SaveScreens(int on, int mode)
 	   (* screenInfo.screens[i]->SaveScreen) (screenInfo.screens[i], on);
 	if (savedScreenInfo[i].ExternalScreenSaver)
 	{
-	    if ((*savedScreenInfo[i].ExternalScreenSaver)
-		(screenInfo.screens[i], type, on == SCREEN_SAVER_FORCER))
-		continue;
+#ifdef NXAGENT_SERVER
+            if (nxagentOption(Timeout) != 0)
+            {
+                #ifdef TEST
+                fprintf(stderr, "SaveScreens: An external screen-saver handler is installed. "
+                            "Ignoring it to let the auto-disconnect feature work.\n");
+                #endif
+            }
+            else
+#endif
+	    {
+	        if ((*savedScreenInfo[i].ExternalScreenSaver)
+		    (screenInfo.screens[i], type, on == SCREEN_SAVER_FORCER))
+		    continue;
+	    }
 	}
 	if (type == screenIsSaved)
 	    continue;
@@ -3447,7 +3518,6 @@ SaveScreens(int on, int mode)
     if (mode == ScreenSaverReset)
        SetScreenSaverTimer();
 }
-#endif /* NXAGENT_SERVER */
 
 static Bool
 TileScreenSaver(int i, int kind)

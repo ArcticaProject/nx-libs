@@ -189,9 +189,12 @@ static Bool CheckForShmSyscall()
 
 #endif
 
-#ifndef NXAGENT_SERVER
 void
+#ifdef NXAGENT_SERVER
+xorg_ShmExtensionInit(void)
+#else
 ShmExtensionInit(void)
+#endif
 {
     ExtensionEntry *extEntry;
     int i;
@@ -253,7 +256,6 @@ ShmExtensionInit(void)
 	EventSwapVector[ShmCompletionCode] = (EventSwapPtr) SShmCompletionEvent;
     }
 }
-#endif /* NXAGENT_SERVER */
 
 /*ARGSUSED*/
 static void
@@ -490,9 +492,12 @@ ProcShmDetach(client)
     return(client->noClientException);
 }
 
-#ifndef NXAGENT_SERVER
 static void
+#ifdef NXAGENT_SERVER
+xorg_miShmPutImage(dst, pGC, depth, format, w, h, sx, sy, sw, sh, dx, dy, data)
+#else
 miShmPutImage(dst, pGC, depth, format, w, h, sx, sy, sw, sh, dx, dy, data)
+#endif
     DrawablePtr dst;
     GCPtr	pGC;
     int		depth, w, h, sx, sy, sw, sh, dx, dy;
@@ -525,6 +530,7 @@ miShmPutImage(dst, pGC, depth, format, w, h, sx, sy, sw, sh, dx, dy, data)
     (*pmap->drawable.pScreen->DestroyPixmap)(pmap);
 }
 
+#ifndef NXAGENT_SERVER
 static void
 fbShmPutImage(dst, pGC, depth, format, w, h, sx, sy, sw, sh, dx, dy, data)
     DrawablePtr dst;
@@ -1138,9 +1144,12 @@ CreatePmap:
     return (BadAlloc);
 }
 
-#ifndef NXAGENT_SERVER
 static int
+#ifdef NXAGENT_SERVER
+xorg_ProcShmDispatch (client)
+#else
 ProcShmDispatch (client)
+#endif
     register ClientPtr	client;
 {
     REQUEST(xReq);
@@ -1174,7 +1183,6 @@ ProcShmDispatch (client)
 	return BadRequest;
     }
 }
-#endif /* NXAGENT_SERVER */
 
 static void
 SShmCompletionEvent(from, to)
@@ -1278,9 +1286,12 @@ SProcShmCreatePixmap(client)
     return ProcShmCreatePixmap(client);
 }
 
-#ifndef NXAGENT_SERVER
 static int
+#ifdef NXAGENT_SERVER
+xorg_SProcShmDispatch (client)
+#else
 SProcShmDispatch (client)
+#endif
     register ClientPtr	client;
 {
     REQUEST(xReq);
@@ -1302,4 +1313,3 @@ SProcShmDispatch (client)
 	return BadRequest;
     }
 }
-#endif /* NXAGENT_SERVER */

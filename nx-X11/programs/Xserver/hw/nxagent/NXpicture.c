@@ -81,6 +81,26 @@ void *nxagentMatchingFormats(PictFormatPtr pForm);
 
 void nxagentPictureCreateDefaultFormats(ScreenPtr pScreen, FormatInitRec *formats, int *nformats);
 
+extern void nxagentRenderCreateSolidFill(PicturePtr pPicture, xRenderColor *color);
+
+extern void nxagentRenderCreateLinearGradient(PicturePtr pPicture, xPointFixed *p1,
+                                              xPointFixed *p2, int nStops,
+                                              xFixed *stops,
+                                              xRenderColor *colors);
+extern void nxagentRenderCreateRadialGradient(PicturePtr pPicture, xPointFixed *inner,
+                                              xPointFixed *outer,
+                                              xFixed innerRadius,
+                                              xFixed outerRadius,
+                                              int nStops,
+                                              xFixed *stops,
+                                              xRenderColor *colors);
+extern void nxagentRenderCreateConicalGradient(PicturePtr pPicture,
+                                               xPointFixed *center,
+                                               xFixed angle, int nStops,
+                                               xFixed *stops,
+                                               xRenderColor *colors);
+
+
 PictFormatPtr
 PictureCreateDefaultFormats (ScreenPtr pScreen, int *nformatp)
 {
@@ -213,7 +233,9 @@ AllocatePicture (ScreenPtr  pScreen)
 	    ppriv->ptr = (void *)NULL;
     }
 
+#ifdef NXAGENT_SERVER
     nxagentPicturePriv(pPicture) -> picture = 0;
+#endif
 
     return pPicture;
 }
@@ -243,13 +265,14 @@ CreatePicture (Picture		pid,
     pPicture->format = pFormat->format | (pDrawable->bitsPerPixel << 24);
     if (pDrawable->type == DRAWABLE_PIXMAP)
     {
+#ifdef NXAGENT_SERVER
         /*
          * Let picture always point to the virtual pixmap.
          * For sure this is not the best way to deal with
          * the virtual frame-buffer.
          */
         pPicture->pDrawable = nxagentVirtualDrawable(pDrawable);
-
+#endif
 	++((PixmapPtr)pDrawable)->refcnt;
 	pPicture->pNext = 0;
     }
@@ -272,32 +295,6 @@ CreatePicture (Picture		pid,
 	FreePicture (pPicture, (XID) 0);
 	pPicture = 0;
     }
-    return pPicture;
-}
-
-PicturePtr
-CreateSolidPicture (Picture pid, xRenderColor *color, int *error)
-{
-    PicturePtr pPicture;
-    pPicture = createSourcePicture();
-    if (!pPicture) {
-        *error = BadAlloc;
-        return 0;
-    }
-
-    pPicture->id = pid;
-    pPicture->pSourcePict = (SourcePictPtr) calloc(1, sizeof(PictSolidFill));
-    if (!pPicture->pSourcePict) {
-        *error = BadAlloc;
-        free(pPicture);
-        return 0;
-    }
-    pPicture->pSourcePict->type = SourcePictTypeSolidFill;
-    pPicture->pSourcePict->solidFill.color = xRenderColorToCard32(*color);
-    pPicture->pSourcePict->solidFill.fullColor.alpha=color->alpha;
-    pPicture->pSourcePict->solidFill.fullColor.red=color->red;
-    pPicture->pSourcePict->solidFill.fullColor.green=color->green;
-    pPicture->pSourcePict->solidFill.fullColor.blue=color->blue;
     return pPicture;
 }
 
@@ -644,3 +641,73 @@ void nxagentPictureCreateDefaultFormats(ScreenPtr pScreen, FormatInitRec *format
   }
 }
 
+PicturePtr CreateSolidPicture (Picture pid, xRenderColor *color, int *error)
+{
+  PicturePtr pPicture = xorg_CreateSolidPicture(pid, color, error);
+
+  if (pPicture)
+  {
+      pPicture->pSourcePict->solidFill.fullColor.alpha=color->alpha;
+      pPicture->pSourcePict->solidFill.fullColor.red=color->red;
+      pPicture->pSourcePict->solidFill.fullColor.green=color->green;
+      pPicture->pSourcePict->solidFill.fullColor.blue=color->blue;
+  }
+
+#ifdef NXAGENT_SERVER
+  if (pPicture)
+    nxagentRenderCreateSolidFill(pPicture, color);
+#endif
+
+  return pPicture;
+}
+
+PicturePtr CreateLinearGradientPicture (Picture pid, xPointFixed *p1, xPointFixed *p2,
+                             int nStops, xFixed *stops, xRenderColor *colors, int *error)
+{
+  PicturePtr pPicture = xorg_CreateLinearGradientPicture(pid, p1, p2,
+                                                         nStops, stops, colors,
+                                                         error);
+
+#ifdef NXAGENT_SERVER
+  if (pPicture)
+    nxagentRenderCreateLinearGradient(pPicture, p1, p2,
+                                      nStops, stops, colors);
+#endif
+
+  return pPicture;
+}
+
+PicturePtr CreateRadialGradientPicture (Picture pid, xPointFixed *inner, xPointFixed *outer,
+                             xFixed innerRadius, xFixed outerRadius,
+                             int nStops, xFixed *stops, xRenderColor *colors, int *error)
+{
+  PicturePtr pPicture = xorg_CreateRadialGradientPicture(pid, inner, outer,
+                                                         innerRadius, outerRadius,
+                                                         nStops, stops, colors,
+                                                         error);
+
+#ifdef NXAGENT_SERVER
+  if (pPicture)
+    nxagentRenderCreateRadialGradient(pPicture, inner, outer,
+                                      innerRadius, outerRadius,
+                                      nStops, stops, colors);
+#endif
+
+  return pPicture;
+}
+
+PicturePtr CreateConicalGradientPicture (Picture pid, xPointFixed *center, xFixed angle,
+                              int nStops, xFixed *stops, xRenderColor *colors, int *error)
+{
+  PicturePtr pPicture = xorg_CreateConicalGradientPicture(pid, center, angle,
+                                                          nStops, stops, colors,
+                                                          error);
+
+#ifdef NXAGENT_SERVER
+  if (pPicture)
+    nxagentRenderCreateConicalGradient(pPicture, center, angle,
+                                       nStops, stops, colors);
+#endif
+
+  return pPicture;
+}

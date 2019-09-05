@@ -128,8 +128,6 @@ Equipment Corporation.
 
 const int nxagentMaxFontNames = 10000;
 
-char dispatchExceptionAtReset = DE_RESET;
-
 /*
  * This allows the agent to exit if no
  * client is connected within a timeout.
@@ -196,12 +194,9 @@ extern int nxagentFindClientResource(int, RESTYPE, void *);
 
 
 void
-InitSelections()
+InitSelections(void)
 {
-    if (CurrentSelections)
-	free(CurrentSelections);
-    CurrentSelections = (Selection *)NULL;
-    NumCurrentSelections = 0;
+    xorg_InitSelections();
 
 #ifdef NXAGENT_CLIPBOARD
     {
@@ -225,7 +220,6 @@ InitSelections()
       CurrentSelections[1].client = NullClient;
     }
 #endif
-
 }
 
 #define MAJOROP ((xReq *)client->requestBuffer)->reqType
@@ -628,12 +622,17 @@ ProcQueryTree(register ClientPtr client)
         reply.parent = (Window)None;
     pHead = RealChildHead(pWin);
     for (pChild = pWin->lastChild; pChild != pHead; pChild = pChild->prevSib)
+#ifdef NXAGENT_SERVER
     {
-      if (!IsViewportFrame(pChild))
-      {
-	numChildren++;
-      }
+        if (!IsViewportFrame(pChild))
+        {
+            numChildren++;
+        }
+
     }
+#else
+        numChildren++;
+#endif
     if (numChildren)
     {
 	int curChild = 0;
@@ -642,12 +641,16 @@ ProcQueryTree(register ClientPtr client)
 	if (!childIDs)
 	    return BadAlloc;
 	for (pChild = pWin->lastChild; pChild != pHead; pChild = pChild->prevSib)
-        {
-          if (!IsViewportFrame(pChild))
-          {
-	    childIDs[curChild++] = pChild->drawable.id;
-          }
+#ifdef NXAGENT_SERVER
+	{
+            if (!IsViewportFrame(pChild))
+            {
+	        childIDs[curChild++] = pChild->drawable.id;
+            }
         }
+#else
+            childIDs[curChild++] = pChild->drawable.id;
+#endif
     }
     
     reply.nChildren = numChildren;
@@ -710,8 +713,12 @@ ProcConvertSelection(register ClientPtr client)
 	i = 0;
 	while ((i < NumCurrentSelections) && 
 	       CurrentSelections[i].selection != stuff->selection) i++;
-	if ((i < NumCurrentSelections) && 
+	if ((i < NumCurrentSelections) &&
+#ifdef NXAGENT_SERVER
 	    (CurrentSelections[i].window != None) && (CurrentSelections[i].client != NullClient)
+#else
+	    (CurrentSelections[i].window != None))
+#endif
 #ifdef XCSECURITY
 	    && (!client->CheckAccess ||
 		(* client->CheckAccess)(client, CurrentSelections[i].window,
@@ -719,7 +726,6 @@ ProcConvertSelection(register ClientPtr client)
 					CurrentSelections[i].pWin))
 #endif
 	    )
-
 	{        
 	    memset(&event, 0, sizeof(xEvent));
 	    event.u.u.type = SelectionRequest;
@@ -758,13 +764,14 @@ int
 ProcOpenFont(register ClientPtr client)
 {
     int	err;
-    char fontReq[256];
     REQUEST(xOpenFontReq);
 
     REQUEST_FIXED_SIZE(xOpenFontReq, stuff->nbytes);
     client->errorValue = stuff->fid;
     LEGAL_NEW_RESOURCE(stuff->fid, client);
 
+#ifdef NXAGENT_SERVER
+    char fontReq[256];
     memcpy(fontReq,(char *)&stuff[1],(stuff->nbytes<256)?stuff->nbytes:255);
     fontReq[stuff->nbytes]=0;
     if (strchr(fontReq,'*') || strchr(fontReq,'?'))
@@ -778,6 +785,7 @@ ProcOpenFont(register ClientPtr client)
 		stuff->nbytes, (char *)&stuff[1]);
     }
     else
+#endif
     err = OpenFont(client, stuff->fid, (Mask) 0,
 		stuff->nbytes, (char *)&stuff[1]);
     if (err == Success)
@@ -848,11 +856,12 @@ ProcCloseFont(register ClientPtr client)
 int
 ProcListFonts(register ClientPtr client)
 {
-    char tmp[256];
-
     REQUEST(xListFontsReq);
 
     REQUEST_FIXED_SIZE(xListFontsReq, stuff->nbytes);
+
+#ifdef NXAGENT_SERVER
+    char tmp[256];
     memcpy(tmp,(unsigned char *) &stuff[1],(stuff->nbytes<256)?stuff->nbytes:255);
     tmp[stuff->nbytes]=0;
 
@@ -860,6 +869,8 @@ ProcListFonts(register ClientPtr client)
     fprintf(stderr, "Dispatch: ListFont request with pattern %s max_names=%d\n",tmp,stuff->maxNames);
 #endif
     nxagentListRemoteFonts(tmp, stuff -> maxNames < nxagentMaxFontNames ? nxagentMaxFontNames : stuff->maxNames);
+#endif
+
     return ListFonts(client, (unsigned char *) &stuff[1], stuff->nbytes, 
 	stuff->maxNames);
 }
@@ -867,22 +878,23 @@ ProcListFonts(register ClientPtr client)
 int
 ProcListFontsWithInfo(register ClientPtr client)
 {
-    char tmp[256];
     REQUEST(xListFontsWithInfoReq);
 
     REQUEST_FIXED_SIZE(xListFontsWithInfoReq, stuff->nbytes);
 
+#ifdef NXAGENT_SERVER
+    char tmp[256];
     memcpy(tmp,(unsigned char *) &stuff[1],(stuff->nbytes<256)?stuff->nbytes:255);
     tmp[stuff->nbytes]=0;
 #ifdef NXAGENT_FONTMATCH_DEBUG
     fprintf(stderr, "Dispatch: ListFont with info request with pattern %s max_names=%d\n",tmp,stuff->maxNames);
 #endif
     nxagentListRemoteFonts(tmp, stuff -> maxNames < nxagentMaxFontNames ? nxagentMaxFontNames :stuff->maxNames);
+#endif
 
     return StartListFontsWithInfo(client, stuff->nbytes,
 				  (unsigned char *) &stuff[1], stuff->maxNames);
 }
-
 
 int
 ProcFreePixmap(register ClientPtr client)
@@ -975,6 +987,7 @@ ProcSetScreenSaver (register ClientPtr client)
         return BadValue;
     }
 
+#ifdef NXAGENT_SERVER
     /*
      * The NX agent uses the screen saver procedure
      * to monitor the user activities and launch its
@@ -989,6 +1002,7 @@ ProcSetScreenSaver (register ClientPtr client)
 
     if (nxagentOption(Timeout) == 0)
     {
+#endif
       if (blankingOption == DefaultBlanking)
       {
 	ScreenSaverBlanking = defaultScreenSaverBlanking;
@@ -1026,7 +1040,9 @@ ProcSetScreenSaver (register ClientPtr client)
       }
 
       SetScreenSaverTimer();
+#ifdef NXAGENT_SERVER
     }
+
     #ifdef TEST
 
     else
@@ -1036,7 +1052,7 @@ ProcSetScreenSaver (register ClientPtr client)
     }
 
     #endif
-
+#endif
     return (client->noClientException);
 }
 
@@ -1054,6 +1070,7 @@ int ProcForceScreenSaver(register ClientPtr client)
         return BadValue;
     }
 
+#ifdef NXAGENT_SERVER
     /*
      * The NX agent uses the screen saver procedure
      * to monitor the user activities and launch its
@@ -1064,7 +1081,9 @@ int ProcForceScreenSaver(register ClientPtr client)
 
     if (nxagentOption(Timeout) == 0)
     {
+#endif
       SaveScreens(SCREEN_SAVER_FORCER, (int)stuff->mode);
+#ifdef NXAGENT_SERVER
     }
 
     #ifdef TEST
@@ -1076,6 +1095,7 @@ int ProcForceScreenSaver(register ClientPtr client)
     }
 
     #endif
+#endif
 
     return client->noClientException;
 }
@@ -1091,9 +1111,7 @@ int ProcForceScreenSaver(register ClientPtr client)
 void
 CloseDownClient(register ClientPtr client)
 {
-    Bool really_close_down = client->clientGone ||
-			     client->closeDownMode == DestroyAll;
-
+#ifdef NXAGENT_SERVER
     /*
      * There must be a better way to hook a
      * call-back function to be called any
@@ -1115,126 +1133,27 @@ CloseDownClient(register ClientPtr client)
      */
 
     nxagentCheckIfShadowAgent(client);
+#endif
 
-    if (!client->clientGone)
-    {
-	/* ungrab server if grabbing client dies */
-	if (grabState != GrabNone && grabClient == client)
-	{
-	    UngrabServer(client);
-	}
-	BITCLEAR(grabWaiters, client->index);
-	DeleteClientFromAnySelections(client);
-	ReleaseActiveGrabs(client);
-	DeleteClientFontStuff(client);
-	if (!really_close_down)
-	{
-	    /*  This frees resources that should never be retained
-	     *  no matter what the close down mode is.  Actually we
-	     *  could do this unconditionally, but it's probably
-	     *  better not to traverse all the client's resources
-	     *  twice (once here, once a few lines down in
-	     *  FreeClientResources) in the common case of
-	     *  really_close_down == TRUE.
-	     */
-	    FreeClientNeverRetainResources(client);
-	    client->clientState = ClientStateRetained;
-  	    if (ClientStateCallback)
-            {
-		NewClientInfoRec clientinfo;
-
-		clientinfo.client = client; 
-		clientinfo.prefix = (xConnSetupPrefix *)NULL;  
-		clientinfo.setup = (xConnSetup *) NULL;
-		CallCallbacks((&ClientStateCallback), (void *)&clientinfo);
-            } 
-	}
-	client->clientGone = TRUE;  /* so events aren't sent to client */
-	if (ClientIsAsleep(client))
-	    ClientSignal (client);
-	ProcessWorkQueueZombies();
-	CloseDownConnection(client);
-
-	/* If the client made it to the Running stage, nClients has
-	 * been incremented on its behalf, so we need to decrement it
-	 * now.  If it hasn't gotten to Running, nClients has *not*
-	 * been incremented, so *don't* decrement it.
-	 */
-	if (client->clientState != ClientStateInitial &&
-	    client->clientState != ClientStateAuthenticating )
-	{
-	    --nClients;
-	}
-    }
-
-    if (really_close_down)
-    {
-	if (client->clientState == ClientStateRunning && nClients == 0)
-	    dispatchException |= dispatchExceptionAtReset;
-
-	client->clientState = ClientStateGone;
-	if (ClientStateCallback)
-	{
-	    NewClientInfoRec clientinfo;
-
-	    clientinfo.client = client; 
-	    clientinfo.prefix = (xConnSetupPrefix *)NULL;  
-	    clientinfo.setup = (xConnSetup *) NULL;
-	    CallCallbacks((&ClientStateCallback), (void *)&clientinfo);
-	} 	    
-	FreeClientResources(client);
-	/* Disable client ID tracking. This must be done after
-	 * ClientStateCallback. */
-	ReleaseClientIds(client);
-	if (client->index < nextFreeClientID)
-	    nextFreeClientID = client->index;
-	clients[client->index] = NullClient;
-	SmartLastClient = NullClient;
-	free(client);
-
-	while (!clients[currentMaxClients-1])
-	    currentMaxClients--;
-    }
+    xorg_CloseDownClient(client);
 }
 
 int
 InitClientPrivates(ClientPtr client)
 {
-    register char *ptr;
-    DevUnion *ppriv;
-    register unsigned *sizes;
-    register unsigned size;
-    register int i;
+    int ret = xorg_InitClientPrivates(client);
 
-    if (totalClientSize == sizeof(ClientRec))
-	ppriv = (DevUnion *)NULL;
-    else if (client->index)
-	ppriv = (DevUnion *)(client + 1);
-    else
+#ifdef NXAGENT_SERVER
+    if (ret == 1)
     {
-	ppriv = (DevUnion *)malloc(totalClientSize - sizeof(ClientRec));
-	if (!ppriv)
-	    return 0;
+
+      /*
+       * Initialize the private members.
+       */
+
+      nxagentInitClientPrivates(client);
     }
-    client->devPrivates = ppriv;
-    sizes = clientPrivateSizes;
-    ptr = (char *)(ppriv + clientPrivateLen);
-    for (i = clientPrivateLen; --i >= 0; ppriv++, sizes++)
-    {
-	if ( (size = *sizes) )
-	{
-	    ppriv->ptr = (void *)ptr;
-	    ptr += size;
-	}
-	else
-	    ppriv->ptr = (void *)NULL;
-    }
+#endif
 
-    /*
-     * Initialize the private members.
-     */
-
-    nxagentInitClientPrivates(client);
-
-    return 1;
+    return ret;
 }

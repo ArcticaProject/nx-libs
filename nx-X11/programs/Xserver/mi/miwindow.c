@@ -1037,6 +1037,7 @@ miSetShape(pWin)
 			     (pWin, 0, 0, pOldClip,
 			      pWin->drawable.x, pWin->drawable.y);
 
+#ifdef NXAGENT_SERVER
 	/*
 	 * Applies to NXAGENT_SERVER builds:
 	 *
@@ -1056,6 +1057,9 @@ miSetShape(pWin)
 	 */
 
 	if (WasViewable && pOldClip)
+#else
+	if (WasViewable)
+#endif
 	    RegionDestroy(pOldClip);
 	if (bsExposed)
 	{

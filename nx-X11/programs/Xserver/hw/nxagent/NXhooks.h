@@ -23,51 +23,9 @@
 /*                                                                        */
 /**************************************************************************/
 
-#ifndef __Atoms_H__
-#define __Atoms_H__
+#ifndef __NXhooks_H__
+#define __NXhooks_H__
 
-#include "X.h"
-#include "../../include/window.h"
-#include "screenint.h"
+Bool nxagentHook_IsFaultyRenderExtension(char *);
 
-#define NXAGENT_NUMBER_OF_ATOMS  16
-
-extern Atom nxagentAtoms[NXAGENT_NUMBER_OF_ATOMS];
-
-extern Bool nxagentWMIsRunning;
-
-/*
- * Create the required atoms internally
- * to the agent server.
- */
-
-int nxagentInitAtoms(void);
-
-/*
- * Query and create all the required atoms
- * on the remote X server using a single
- * round trip.
- */
-
-int nxagentQueryAtoms(ScreenPtr pScreen);
-
-/*
- * Create the atoms on the remote X server
- * and cache the couple local-remote atoms.
- */
-
-Atom nxagentMakeAtom(char *, unsigned, Bool);
-
-/*
- * Converts local atoms in remote atoms and
- * viceversa.
- */
-
-Atom nxagentRemoteToLocalAtom(Atom);
-Atom nxagentLocalToRemoteAtom(Atom);
-
-void nxagentResetAtomMap(void);
-
-void nxagentWMDetect(void);
-
-#endif /* __Atoms_H__ */
+#endif /* __NXhooks_H__ */

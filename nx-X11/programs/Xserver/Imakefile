@@ -247,7 +247,7 @@ NXAGENTOBJS = hw/nxagent/miinitext.o     \
               hw/nxagent/NXextension.o   \
               hw/nxagent/NXglxext.o      \
               hw/nxagent/NXresource.o    \
-              hw/nxagent/NXdamage.o      \
+              hw/nxagent/damage.o        \
               $(NULL)
 #elif !defined(Win32Architecture)
 NXAGENTOBJS = hw/nxagent/miinitext.o     \
@@ -264,7 +264,7 @@ NXAGENTOBJS = hw/nxagent/miinitext.o     \
               hw/nxagent/NXglxext.o      \
               hw/nxagent/NXxvdisp.o      \
               hw/nxagent/NXresource.o    \
-              hw/nxagent/NXdamage.o      \
+              hw/nxagent/damage.o        \
               $(NULL)
 #else
 NXAGENTOBJS = hw/nxagent/miinitext.o     \
@@ -281,7 +281,7 @@ NXAGENTOBJS = hw/nxagent/miinitext.o     \
               hw/nxagent/NXglxext.o      \
               hw/nxagent/NXxvdisp.o      \
               hw/nxagent/NXresource.o    \
-              hw/nxagent/NXdamage.o      \
+              hw/nxagent/damage.o        \
               dix/main.o                 \
               $(NULL)
 #endif
