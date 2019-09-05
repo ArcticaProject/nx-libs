@@ -44,8 +44,7 @@
 #undef  DEBUG
 
 /*
- * Set if the composite extension is supported
- * by the remote display.
+ * Set if the composite extension is supported by the remote display.
  */
 
 int nxagentCompositeEnable = UNDEFINED;
@@ -53,8 +52,7 @@ int nxagentCompositeEnable = UNDEFINED;
 void nxagentCompositeExtensionInit(void)
 {
   /*
-   * Set the flag only if the initialization
-   * completes.
+   * Set the flag only if the initialization completes.
    */
 
   nxagentCompositeEnable = 0;
@@ -70,8 +68,8 @@ void nxagentCompositeExtensionInit(void)
     if (XCompositeQueryExtension(nxagentDisplay, &eventBase, &errorBase) == 1)
     {
       /*
-       * At the moment we don't need to care
-       * the version of the extension.
+       * At the moment we don't need to care the version of the
+       * extension.
        */
 
       #ifdef TEST
@@ -143,13 +141,12 @@ void nxagentRedirectDefaultWindows(void)
     #endif
 
     /*
-     * When trying to redirect only the top level window,
-     * and not the subwindows, we incur in a strange be-
-     * haviour. The top level is unmapped, mapped, unmap-
-     * ped and then reparented. This at first makes the
-     * agent think that the window manager is gone, then
-     * the agent window disappears. To make thinks even
-     * more weird, this happens only at reconnection.
+     * When trying to redirect only the top level window, and not the
+     * subwindows, we incur in a strange be- haviour. The top level is
+     * unmapped, mapped, unmap- ped and then reparented. This at first
+     * makes the agent think that the window manager is gone, then the
+     * agent window disappears. To make thinks even more weird, this
+     * happens only at reconnection.
      */
  
     XCompositeRedirectSubwindows(nxagentDisplay, nxagentDefaultWindows[pScreen->myNum],
