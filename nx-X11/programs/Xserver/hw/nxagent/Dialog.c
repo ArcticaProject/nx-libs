@@ -294,7 +294,6 @@ void nxagentLaunchDialog(DialogType dialogType)
       #ifdef WARNING
       fprintf(stderr, "nxagentLaunchDialog: Unknown Dialog type [%d].\n", dialogType);
       #endif
-
       return;
     }
   }
@@ -524,7 +523,6 @@ void nxagentTerminateDialog(DialogType type)
       #ifdef WARNING
       fprintf(stderr, "nxagentTerminateDialog: Unknown dialog type [%d].\n", type);
       #endif
-
       return;
     }
   }
