@@ -748,9 +748,7 @@ int nxagentCreatePicture(PicturePtr pPicture, Mask mask)
   #endif
 
   #ifdef DEBUG
-
   XSync(nxagentDisplay, 0);
-
   #endif
 
   nxagentPicturePriv(pPicture) -> picture = id;
@@ -813,9 +811,7 @@ void nxagentDestroyPicture(PicturePtr pPicture)
                      nxagentPicturePriv(pPicture) -> picture);
   
   #ifdef DEBUG
-
   XSync(nxagentDisplay, 0);
-
   #endif
 }
 
@@ -872,9 +868,7 @@ FIXME: Is this useful or just a waste of bandwidth?
       #endif
 
       #ifdef DEBUG
-
       XSync(nxagentDisplay, 0);
-
       #endif
 
       break;
@@ -905,9 +899,7 @@ FIXME: Is this useful or just a waste of bandwidth?
       #endif
 
       #ifdef DEBUG
-
       XSync(nxagentDisplay, 0);
-
       #endif
 
       break;
@@ -951,9 +943,7 @@ FIXME: Is this useful or just a waste of bandwidth?
       #endif
 
       #ifdef DEBUG
-
       XSync(nxagentDisplay, 0);
-
       #endif
   
       XDestroyRegion(reg);
@@ -1190,9 +1180,7 @@ FIXME: Is this useful or just a waste of bandwidth?
   #endif
 
   #ifdef DEBUG
-
   XSync(nxagentDisplay, 0);
-
   #endif
 }
 
@@ -1347,9 +1335,7 @@ void nxagentComposite(CARD8 op, PicturePtr pSrc, PicturePtr pMask, PicturePtr pD
                    height);
 
   #ifdef DEBUG
-
   XSync(nxagentDisplay, 0);
-
   #endif
 }
 
@@ -1840,9 +1826,7 @@ void nxagentCompositeRects(CARD8 op, PicturePtr pDst, xRenderColor *color,
                         nRect);
 
   #ifdef DEBUG
-
   XSync(nxagentDisplay, 0);
-
   #endif
 }
 
@@ -2002,9 +1986,7 @@ FIXME: Is this useful or just a waste of bandwidth?
   #endif
 
   #ifdef DEBUG
-
   XSync(nxagentDisplay, 0);
-
   #endif
 }
 
@@ -2075,9 +2057,7 @@ void nxagentTriangles(CARD8 op, PicturePtr pSrc, PicturePtr pDst,
                             ntri);
 
   #ifdef DEBUG
-
   XSync(nxagentDisplay, 0);
-
   #endif
 }
 
@@ -2148,9 +2128,7 @@ void nxagentTriStrip(CARD8 op, PicturePtr pSrc, PicturePtr pDst,
                            npoint);
 
   #ifdef DEBUG
-
   XSync(nxagentDisplay, 0);
-
   #endif
 }
 
@@ -2221,9 +2199,7 @@ void nxagentTriFan(CARD8 op, PicturePtr pSrc, PicturePtr pDst,
                          npoint);
 
   #ifdef DEBUG
-
   XSync(nxagentDisplay, 0);
-
   #endif
 }
 
@@ -2242,17 +2218,13 @@ void nxagentQueryFormats(void)
   if (XRenderQueryFormats(nxagentDisplay))
   {
     #ifdef DEBUG
-
     XSync(nxagentDisplay, 0);
-
     #endif
 
     info = (XExtDisplayInfo *) XRenderFindDisplay(nxagentDisplay);
 
     #ifdef DEBUG
-
     XSync(nxagentDisplay, 0);
-
     #endif
 
     xri = (XRenderInfo *) info -> data;
@@ -2319,9 +2291,7 @@ void nxagentCreateGlyphSet(GlyphSetPtr pGly)
   pGly -> remoteID = XRenderCreateGlyphSet(nxagentDisplay, pForm);
 
   #ifdef DEBUG
-
   XSync(nxagentDisplay, 0);
-
   #endif
 }
 
@@ -2451,9 +2421,7 @@ void nxagentAddGlyphs(GlyphSetPtr glyphSet, Glyph *gids, xGlyphInfo *gi,
   }
 
   #ifdef DEBUG
-
   XSync(nxagentDisplay, 0);
-
   #endif
 }
 
@@ -2685,9 +2653,7 @@ void nxagentReconnectGlyphSet(void* p0, XID x1, void *p2)
     }
 
     #ifdef DEBUG
-
     XSync(nxagentDisplay, 0);
-
     #endif
 
     nxagentFillGlyphSet(pGly);
@@ -2837,9 +2803,7 @@ void nxagentReconnectPicture(void * p0, XID x1, void *p2)
                                                   &attributes);
 
   #ifdef TEST
-
   XSync(nxagentDisplay, 0);
-
   #endif
 
   #ifdef TEST
