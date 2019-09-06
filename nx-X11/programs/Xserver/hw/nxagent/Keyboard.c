@@ -312,10 +312,7 @@ void nxagentChangeKeyboardControl(DeviceIntPtr pDev, KeybdCtrl *ctrl)
     fprintf(stderr, "%s: WARNING! Propagating changes to keyboard settings.\n", __func__);
     #endif
 
-    unsigned long value_mask = KBKeyClickPercent |
-                               KBBellPercent |
-                               KBBellPitch |
-                               KBBellDuration;
+    unsigned long value_mask = KBKeyClickPercent |  KBBellPercent | KBBellPitch | KBBellDuration;
 
     XKeyboardControl values = {
       .key_click_percent = ctrl->click,
@@ -426,10 +423,9 @@ N/A
 #ifdef _XSERVER64
       {
         KeySym64 *keymap64 = XGetKeyboardMapping(nxagentDisplay,
-                                     min_keycode,
-                                     max_keycode - min_keycode + 1,
-                                     &mapWidth);
-
+                                                 min_keycode,
+                                                 max_keycode - min_keycode + 1,
+                                                 &mapWidth);
         if (keymap64 == NULL)
         {
           XFreeModifiermap(modifier_keymap);
@@ -867,7 +863,6 @@ void nxagentNotifyKeyboardChanges(int oldMinKeycode, int oldMaxKeycode)
   #endif
 
     xEvent event = {0};
-
     event.u.u.type = MappingNotify;
     event.u.mappingNotify.request = MappingKeyboard;
     event.u.mappingNotify.firstKeyCode = inputInfo.keyboard -> key -> curKeySyms.minKeyCode;
@@ -940,12 +935,11 @@ int nxagentResetKeyboard(void)
     }
     #endif
 
-    dev->key=NULL;
+    dev->key = NULL;
   }
 
-  dev->focus=NULL;
-
-  dev->kbdfeed=NULL;
+  dev->focus = NULL;
+  dev->kbdfeed = NULL;
 
   #ifdef XKB
   nxagentTuneXkbWrapper();
@@ -1091,37 +1085,37 @@ static int nxagentFreeKeyboardDeviceData(DeviceIntPtr dev)
 
   if (dev->key)
   {
-      #ifdef XKB
-      if (noXkbExtension == 0 && dev->key->xkbInfo)
-      {
-          XkbFreeInfo(dev->key->xkbInfo);
-          dev->key->xkbInfo = NULL;
-      }
-      #endif
+    #ifdef XKB
+    if (noXkbExtension == 0 && dev->key->xkbInfo)
+    {
+        XkbFreeInfo(dev->key->xkbInfo);
+        dev->key->xkbInfo = NULL;
+    }
+    #endif
 
-      SAFE_free(dev->key->curKeySyms.map);
-      SAFE_free(dev->key->modifierKeyMap);
-      SAFE_free(dev->key);
+    SAFE_free(dev->key->curKeySyms.map);
+    SAFE_free(dev->key->modifierKeyMap);
+    SAFE_free(dev->key);
   }
 
   if (dev->focus)
   {
-      SAFE_free(dev->focus->trace);
-      SAFE_free(dev->focus);
+    SAFE_free(dev->focus->trace);
+    SAFE_free(dev->focus);
   }
 
   if (dev->kbdfeed)
   {
-      for (KbdFeedbackPtr k = dev->kbdfeed, knext; k; k = knext)
-      {
-          knext = k->next;
-          #ifdef XKB
-          if (k->xkb_sli)
-              XkbFreeSrvLedInfo(k->xkb_sli);
-          #endif
-          SAFE_free(k);
-      }
-      dev->kbdfeed = NULL;
+    for (KbdFeedbackPtr k = dev->kbdfeed, knext; k; k = knext)
+    {
+      knext = k->next;
+      #ifdef XKB
+      if (k->xkb_sli)
+        XkbFreeSrvLedInfo(k->xkb_sli);
+      #endif
+      SAFE_free(k);
+    }
+    dev->kbdfeed = NULL;
   }
 
   #ifdef DEBUG
