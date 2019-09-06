@@ -66,6 +66,7 @@ is" without express or implied warranty.
 #include "../../fb/fb.h"
 
 RESTYPE RT_NX_GC;
+
 /*
  * Set here the required log level.
  */
