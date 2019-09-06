@@ -287,22 +287,19 @@ void nxagentBlockHandler(void * data, struct timeval **timeout, void * mask)
   /*
    * The synchronization function requires a mask as parameter:
    *
-   * EVENT_BREAK       Breaks if an user input, like
-   *                   a key press or a mouse move,
-   *                   is detected.
+   * EVENT_BREAK       Breaks if an user input, like a key press
+   *                   or a mouse move, is detected.
    *
-   * CONGESTION_BREAK  Breaks if the congestion beco-
-   *                   mes greater than 4.
+   * CONGESTION_BREAK  Breaks if the congestion becomes greater
+   *                   than 4.
    *
-   * BLOCKING_BREAK    Breaks if the display descript-
-   *                   or becomes blocked for write
-   *                   during the loop.
+   * BLOCKING_BREAK    Breaks if the display descriptor becomes
+   *                   blocked for write during the loop.
    *
-   * ALWAYS_BREAK      Any of the previous conditions
-   *                   is met.
+   * ALWAYS_BREAK      Any of the previous conditions is met.
    *
-   * NEVER_BREAK       The loop continues until all
-   *                   the drawables are synchronized.
+   * NEVER_BREAK       The loop continues until all the drawables
+   *                   are synchronized.
    */
 
   if (synchronize == 1)
