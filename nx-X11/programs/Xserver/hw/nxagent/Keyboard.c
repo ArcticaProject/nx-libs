@@ -104,10 +104,9 @@ static void nxagentWriteKeyboardFile(char *rules, char *model, char *layout, cha
 #endif
 
 /*
- * Unfortunately we cannot just include XKBlib.h.
- * It conflicts with the server side definitions
- * of the same symbols. This is more a X problem
- * than our.
+ * Unfortunately we cannot just include XKBlib.h.  It conflicts with
+ * the server side definitions of the same symbols. This is more a X
+ * problem than our.
  */
 
 #ifdef XKB
@@ -158,8 +157,7 @@ static char *nxagentRemoteOptions = NULL;
 XkbAgentInfoRec nxagentXkbInfo = { -1, -1, -1, -1, -1 };
 
 /*
- * Keyboard status, updated through XKB
- * events.
+ * Keyboard status, updated through XKB events.
  */
 
 XkbAgentStateRec nxagentXkbState = { 0, 0, 0, 0, 0 };
@@ -283,9 +281,8 @@ void nxagentChangeKeyboardControl(DeviceIntPtr pDev, KeybdCtrl *ctrl)
 
     /*
      * We want to prevent agent generating auto-repeated
-     * keystrokes. Let's intercept any attempt by appli-
-     * cations to change the default timeouts on the
-     * nxagent device.
+     * keystrokes. Let's intercept any attempt by appli- cations to
+     * change the default timeouts on the nxagent device.
      */
 
     #ifdef TEST
@@ -305,8 +302,8 @@ void nxagentChangeKeyboardControl(DeviceIntPtr pDev, KeybdCtrl *ctrl)
   #endif
 
   /*
-   * If enabled, propagate the changes to the
-   * devices attached to the real X server.
+   * If enabled, propagate the changes to the devices attached to the
+   * real X server.
    */
 
   if (nxagentOption(DeviceControl))
@@ -328,8 +325,8 @@ void nxagentChangeKeyboardControl(DeviceIntPtr pDev, KeybdCtrl *ctrl)
     };
 
     /*
-     * Don't propagate the auto repeat mode. It is forced to be
-     * off in the agent server.
+     * Don't propagate the auto repeat mode. It is forced to be off in
+     * the agent server.
      *
      * value_mask |= KBAutoRepeatMode;
      * values.auto_repeat_mode = ctrl->autoRepeat ?
@@ -339,9 +336,9 @@ void nxagentChangeKeyboardControl(DeviceIntPtr pDev, KeybdCtrl *ctrl)
     XChangeKeyboardControl(nxagentDisplay, value_mask, &values);
 
     /*
-     * At this point, we need to walk through the vector and
-     * compare it to the current server vector. If there are
-     * differences, report them.
+     * At this point, we need to walk through the vector and compare
+     * it to the current server vector. If there are differences,
+     * report them.
      */
 
     value_mask = KBLed | KBLedMode;
@@ -403,11 +400,11 @@ N/A
       #endif
 
       /*
-       * Prevent agent from generating auto-repeat keystroke.
-       * Note that this is working only if XKB is enabled.
-       * A better solution should account cases where XKB is
-       * not available. Check also the behaviour of the
-       * DeviceControl nxagent option.
+       * Prevent agent from generating auto-repeat keystroke.  Note
+       * that this is working only if XKB is enabled.  A better
+       * solution should account cases where XKB is not
+       * available. Check also the behaviour of the DeviceControl
+       * nxagent option.
        */
 
       XkbDfltRepeatDelay = ~ 0;
@@ -607,8 +604,8 @@ XkbError:
           }
 
           /*
-           * There is no description for pc105 on Solaris.
-           * Need to revert to the closest approximation.
+           * There is no description for pc105 on Solaris.  Need to
+           * revert to the closest approximation.
            */
 
           #ifdef TEST
