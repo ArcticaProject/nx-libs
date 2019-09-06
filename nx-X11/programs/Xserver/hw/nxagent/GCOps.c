@@ -296,7 +296,6 @@ FIXME: The popup could be synchronized with one single put image,
     #endif
 
     RegionRec corruptedRegion;
-
     RegionInit(&corruptedRegion, NullBox, 1);
 
     RegionIntersect(&corruptedRegion,
@@ -374,7 +373,6 @@ FIXME: The popup could be synchronized with one single put image,
     else
     {
       RegionRec tmpRegion;
-
       RegionInit(&tmpRegion, NullBox, 1);
 
       #ifdef DEBUG
@@ -540,14 +538,13 @@ FIXME: The popup could be synchronized with one single put image,
   {
     RegionPtr pSrcRegion = nxagentCreateRegion(pSrcDrawable, NULL, srcx, srcy, width, height);
 
-    RegionRec corruptedRegion;
-
     #ifdef DEBUG
     fprintf(stderr, "nxagentDeferCopyArea: Source region [%d,%d,%d,%d].\n",
                 pSrcRegion -> extents.x1, pSrcRegion -> extents.y1,
                     pSrcRegion -> extents.x2, pSrcRegion -> extents.y2);
     #endif
 
+    RegionRec corruptedRegion;
     RegionInit(&corruptedRegion, NullBox, 1);
 
     RegionIntersect(&corruptedRegion,
@@ -728,9 +725,7 @@ RegionPtr nxagentCopyArea(DrawablePtr pSrcDrawable, DrawablePtr pDstDrawable,
 
     unsigned int format = (depth == 1) ? XYPixmap : ZPixmap;
 
-    int leftPad = 0;
-
-    int length = nxagentImageLength(width, height, format, leftPad, depth);
+    int length = nxagentImageLength(width, height, format, 0, depth);
 
     if ((data = malloc(length)) == NULL)
     {
@@ -742,7 +737,6 @@ RegionPtr nxagentCopyArea(DrawablePtr pSrcDrawable, DrawablePtr pDstDrawable,
     }
 
     unsigned long planeMask = 0xffffffff;
-
     fbGetImage(nxagentVirtualDrawable(pSrcDrawable), srcx, srcy, width, height, format, planeMask, data);
 
     /*
@@ -751,7 +745,7 @@ RegionPtr nxagentCopyArea(DrawablePtr pSrcDrawable, DrawablePtr pDstDrawable,
      */
 
     nxagentPutImage(pDstDrawable, pGC, depth, dstx, dsty,
-                        width, height, leftPad, format, data);
+                        width, height, 0, format, data);
 
     #ifdef TEST
     fprintf(stderr,"nxagentCopyArea: Realize Pixmap %p virtual %p x %d y %d w %d h %d\n",
@@ -939,9 +933,7 @@ RegionPtr nxagentCopyPlane(DrawablePtr pSrcDrawable, DrawablePtr pDstDrawable,
 
     unsigned int format = (depth == 1) ? XYPixmap : ZPixmap;
 
-    int leftPad = 0;
-
-    int length = nxagentImageLength(width, height, format, leftPad, depth);
+    int length = nxagentImageLength(width, height, format, 0, depth);
 
     if ((data = malloc(length)) == NULL)
     {
@@ -953,7 +945,6 @@ RegionPtr nxagentCopyPlane(DrawablePtr pSrcDrawable, DrawablePtr pDstDrawable,
     }
 
     unsigned long planeMask = 0xffffffff;
-
     fbGetImage(nxagentVirtualDrawable(pSrcDrawable), srcx, srcy, width, height, format, planeMask, data);
 
     /*
@@ -962,7 +953,7 @@ RegionPtr nxagentCopyPlane(DrawablePtr pSrcDrawable, DrawablePtr pDstDrawable,
      */
 
     nxagentPutImage(pDstDrawable, pGC, depth, dstx, dsty,
-                        width, height, leftPad, format, data);
+                        width, height, 0, format, data);
 
     #ifdef TEST
     fprintf(stderr,"nxagentCopyPlane: Synchronize Pixmap %p virtual %p x %d y %d w %d h %d \n",
