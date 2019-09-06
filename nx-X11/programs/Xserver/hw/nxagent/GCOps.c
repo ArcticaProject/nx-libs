@@ -95,8 +95,7 @@ static int nxagentSaveGCTrap;
 RegionPtr nxagentBitBlitHelper(GC *pGC);
 
 /*
- * The NX agent implementation of the
- * X server's graphics functions.
+ * The NX agent implementation of the X server's graphics functions.
  */
 
 void nxagentFillSpans(DrawablePtr pDrawable, GCPtr pGC, int nSpans,
@@ -170,7 +169,7 @@ void nxagentQueryBestSize(int class, unsigned short *pwidth,
     case StippleShape:
       width = *pwidth;
       if (!width) break;
-      /* Return the closes power of two not less than what they gave me */
+      /* Return the closest power of two not less than what they gave me */
       test = 0x80000000;
       /* Find the highest 1 bit in the width given */
       while(!(test & width))
@@ -456,9 +455,8 @@ FIXME: The popup could be synchronized with one single put image,
       if (RegionNumRects(pClipRegion) == 1)
       {
         /*
-         * If the region to copy is formed by one
-         * rectangle, we change only the copy coor-
-         * dinates.
+         * If the region to copy is formed by one rectangle, we change
+         * only the copy coordinates.
          */
 
          srcx = srcx + pClipRegion -> extents.x1 - dstx;
