@@ -1112,10 +1112,9 @@ static void nxagentReconnectClip(GCPtr pGC, int type, void * pValue, int nRects)
     case CT_REGION:
       if (nxagentGCPriv(pGC)->pPixmap == NULL)
       {
-	XRectangle *pRects;
         nRects = RegionNumRects((RegionPtr)pValue);
-        int size = nRects * sizeof(*pRects);
-        pRects = (XRectangle *) malloc(size);
+        int size = nRects * sizeof(XRectangle *);
+        XRectangle *pRects = (XRectangle *) malloc(size);
         BoxPtr pBox = RegionRects((RegionPtr)pValue);
         for (int i = nRects; i-- > 0;) {
           pRects[i].x = pBox[i].x1;
@@ -1409,11 +1408,11 @@ GCPtr nxagentCreateGraphicContext(int depth)
     return NULL;
   }
 
-  XID attributes[2];
-
   /*
    * Color used in nxagentFillRemoteRegion().
    */
+
+  XID attributes[2];
 
   attributes[0] = 0xc1c1c1;
 
