@@ -89,44 +89,35 @@ is" without express or implied warranty.
 /*
  * ProcVector array defined in tables.c.
  */
-
 extern int (*ProcVector[256])(ClientPtr);
 
 /*
  * From the fb code.
  */
-
 extern int fbGCPrivateIndex;
 
+#ifdef DPMSExtension
 /*
  * Stubs for the DPMS extension.
  */
-
-#ifdef DPMSExtension
-
 void DPMSSet(int level);
 int DPMSGet(int *level);
 Bool DPMSSupported(void);
-
 #endif
 
 /*
  * Our error logging function.
  */
-
 void OsVendorVErrorFFunction(const char *f, va_list args);
 
 /*
  * True if this is a fatal error.
  */
-
 extern int OsVendorVErrorFFatal;
 
 /*
- * Redirect the error output to a
- * different file
+ * Redirect the error output to a different file
  */
-
 extern void (*OsVendorStartRedirectErrorFProc)();
 extern void (*OsVendorEndRedirectErrorFProc)();
 
@@ -136,11 +127,8 @@ void OsVendorStartRedirectErrorFFunction();
 void OsVendorEndRedirectErrorFFunction();
 
 /*
- * Called by InitGlobals() in the
- * new X server tree.
+ * Called by InitGlobals() in the new X server tree.
  */
-
-
 static void nxagentGrabServerCallback(CallbackListPtr *callbacks, void *data,
                                    void *args);
 
@@ -164,12 +152,11 @@ void ddxInitGlobals(void)
 }
 
 /*
- * Set if the remote display supports
- * backing store.
+ * Set if the remote display supports backing store.
  */
 /*
-FIXME: These, if not removed, should at least
-       be moved to Display.h and Display.c.
+FIXME: These, if not removed, should at least be moved to Display.h
+       and Display.c.
 */
 int nxagentBackingStore;
 int nxagentSaveUnder;
@@ -187,7 +174,6 @@ int nxagentSaveUnder;
  *         nxagentOpenScreen
  *   InitInput
  */
-
 int nxagentDoFullGeneration = 1;
 
  /*
@@ -197,9 +183,8 @@ int nxagentDoFullGeneration = 1;
 Bool nxagentX2go;
 
 /*
- * Check if agent is x2go agent
+ * Check if agent is X2goAgent
  */
-
 void checkX2goAgent(void)
 {
   #ifdef TEST
@@ -215,11 +200,9 @@ void checkX2goAgent(void)
     nxagentX2go = False;
 }
 
-
 /*
  * Called at X server's initialization.
  */
-
 void InitOutput(ScreenInfo *screenInfo, int argc, char *argv[])
 {
   /*
@@ -244,8 +227,8 @@ void InitOutput(ScreenInfo *screenInfo, int argc, char *argv[])
   }
 
   /*
-   * Avoid slowness due to buggy_repeat workaround
-   * in libcairo versions >= 1.10.
+   * Avoid slowness due to buggy_repeat workaround in libcairo
+   * versions >= 1.10.
    */
 
   SetVendorRelease(70000000);
@@ -260,9 +243,8 @@ void InitOutput(ScreenInfo *screenInfo, int argc, char *argv[])
   }
 
   /*
-   * Unset the LD_LIBRARY_PATH variable in
-   * Popen() before calling execl() in the
-   * child process.
+   * Unset the LD_LIBRARY_PATH variable in Popen() before calling
+   * execl() in the child process.
    */
 
   NXUnsetLibraryPath(1);
@@ -314,15 +296,13 @@ void InitOutput(ScreenInfo *screenInfo, int argc, char *argv[])
   nxagentInitBSPixmapList();
 
   /*
-   * Open the display. We are at the early startup and
-   * the information we'll get from the remote X server
-   * will mandate some of the characteristics of the
-   * session, like the screen depth. Note that this re-
-   * liance on the remote display at session startup
-   * should be removed. We should always operate at 32
-   * bpp, internally, and do the required translations
-   * as soon as the graphic operation needs to be real-
-   * ized on the remote display.
+   * Open the display. We are at the early startup and the information
+   * we'll get from the remote X server will mandate some of the
+   * characteristics of the session, like the screen depth. Note that
+   * this reliance on the remote display at session startup should be
+   * removed. We should always operate at 32 bpp, internally, and do
+   * the required translations as soon as the graphic operation needs
+   * to be realized on the remote display.
    */
 
   nxagentOpenDisplay(argc, argv);
@@ -393,9 +373,8 @@ FIXME: These variables, if not removed at all because have probably
   nxagentNumScreens = screenInfo->numScreens;
 
   /*
-   * Initialize the GCs used by the synchro-
-   * nization put images. We do it here beca-
-   * use we use the nxagentDefaultScreen.
+   * Initialize the GCs used by the synchronization put images. We do
+   * it here because we use the nxagentDefaultScreen.
    */
 
   nxagentAllocateGraphicContexts();
@@ -403,8 +382,7 @@ FIXME: These variables, if not removed at all because have probably
   nxagentDoFullGeneration = nxagentFullGeneration;
 
   /*
-   * Use a solid black root window
-   * background.
+   * Use a solid black root window background.
    */
 
   if (!whiteRoot)
@@ -440,9 +418,8 @@ void InitInput(argc, argv)
   mieqInit(kbd, ptr);
 
   /*
-   * Add the display descriptor to the
-   * set of descriptors awaited by the
-   * dispatcher.
+   * Add the display descriptor to the set of descriptors awaited by
+   * the dispatcher.
    */
 
   nxagentAddXConnection();
@@ -457,10 +434,9 @@ void InitInput(argc, argv)
   }
 
   /*
-   * We let the proxy flush the link on our behalf
-   * after having opened the display. We are now
-   * entering the dispatcher. From now on we'll
-   * flush the proxy link explicitly.
+   * We let the proxy flush the link on our behalf after having opened
+   * the display. We are now entering the dispatcher. From now on
+   * we'll flush the proxy link explicitly.
    */
 
   #ifdef TEST
@@ -471,11 +447,9 @@ void InitInput(argc, argv)
 }
 
 /*
- * DDX specific abort routine. This is called
- * by AbortServer() that, in turn, is called
- * by FatalError().
+ * DDX specific abort routine. This is called by AbortServer() that,
+ * in turn, is called by FatalError().
  */
-
 void AbortDDX(void)
 {
   nxagentDoFullGeneration = True;
@@ -483,9 +457,8 @@ void AbortDDX(void)
   nxagentCloseDisplay();
 
   /*
-   * Do the required finalization if we
-   * are not going through the normal
-   * X server shutdown.
+   * Do the required finalization if we are not going through the
+   * normal X server shutdown.
    */
 
   if ((dispatchException & DE_TERMINATE) == 0)
@@ -497,7 +470,6 @@ void AbortDDX(void)
 /*
  * Called by GiveUp().
  */
-
 void ddxGiveUp(void)
 {
   AbortDDX();
@@ -515,12 +487,10 @@ void OsVendorInit(void)
 void OsVendorFatalError(void)
 {
   /*
-   * Let the session terminate gracely
-   * from an user's standpoint.
+   * Let the session terminate gracely from an user's standpoint.
    */
 
   fprintf(stderr, "Session: Aborting session at '%s'.\n", GetTimeAsString());
-
   fprintf(stderr, "Session: Session aborted at '%s'.\n", GetTimeAsString());
 }
 
@@ -566,7 +536,6 @@ static void nxagentGrabServerCallback(CallbackListPtr *callbacks, void *data,
 }
 
 #ifdef DPMSExtension
-
 void DPMSSet(int level)
 {
 }
@@ -580,5 +549,4 @@ Bool DPMSSupported(void)
 {
   return 0;
 }
-
 #endif
