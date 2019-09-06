@@ -319,11 +319,11 @@ void nxagentChangeGC(GCPtr pGC, unsigned long mask)
               nxagentGCTrap == 0)
       {
         /*
-         * If the tile is corrupted and is not too much large, it can
-         * be synchronized imme- diately. In the other cases, the tile
-         * is cleared with a solid color to become usable. This
-         * approach should solve the high delay on slow links waiting
-         * for a background tile to be synchronized.
+         * If the tile is corrupted and is not too large, it can be
+         * synchronized immediately. In the other cases, the tile is
+         * cleared with a solid color to become usable. This approach
+         * should solve the high delay on slow links waiting for a
+         * background tile to be synchronized.
          */
 
         if (nxagentOption(DeferLevel) >= 2 &&
