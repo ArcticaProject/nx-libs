@@ -397,15 +397,12 @@ FIXME: These variables, if not removed at all because have probably
   nxagentInitAtoms();
 }
 
-void
-nxagentNotifyConnection(int fd, int ready, void *data)
+void nxagentNotifyConnection(int fd, int ready, void *data)
 {
     nxagentDispatchEvents(NULL);
 }
 
-void InitInput(argc, argv)
-     int argc;
-     char *argv[];
+void InitInput(int argc, char *argv[])
 {
   void *ptr, *kbd;
 
