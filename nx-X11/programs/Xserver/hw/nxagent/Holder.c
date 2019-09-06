@@ -185,8 +185,6 @@ void nxagentApplyPlaceholder(Drawable drawable, int x, int y,
   }
 
   XFreeGC(nxagentDisplay, gc);
-
-  return;
 }
 
 #ifdef DUMP
