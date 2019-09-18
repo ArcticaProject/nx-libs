@@ -2645,7 +2645,7 @@ int nxagentShadowInit(ScreenPtr pScreen, WindowPtr pWin)
   if (NXShadowCreate(nxagentDisplay, layout, nxagentShadowDisplayName,
                          (void *) &nxagentShadowDisplay) != 1)
   {
-    #ifdef PANIIC
+    #ifdef PANIC
     fprintf(stderr, "nxagentShadowInit: PANIC! Failed to initialize shadow "
                 "display [%s].\n", nxagentShadowDisplayName);
     #endif
