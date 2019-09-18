@@ -236,7 +236,7 @@ char *Poller::getRect(XRectangle r)
     else
     {
       image_ -> width  = r.width;
-      image_ -> height = r.height; 
+      image_ -> height = r.height;
 
       image_ -> bytes_per_line = ROUNDUP((image_ -> bits_per_pixel * image_ -> width), image_ -> bitmap_pad);
 
@@ -1155,11 +1155,11 @@ SendKeycode:
   if (XKeysymToKeycode(event -> xkey.display, XK_A) != keycode)
   {
     KeySym keysym = XKeycodeToKeysym(event -> xkey.display, event -> xkey.keycode, 0);
-  
+
     if (keysym == XK_Mode_switch || keysym == XK_ISO_Level3_Shift)
     {
       logUser("Poller::handleKeyboardEvent: keysym [%x].\n", (unsigned int)keysym);
-  
+
       if (XKeycodeToKeysym(display_, 113, 0) == XK_ISO_Level3_Shift ||
              (XKeycodeToKeysym(display_, 124, 0) == XK_ISO_Level3_Shift))
       {
@@ -1169,7 +1169,7 @@ SendKeycode:
       {
         event -> xkey.keycode = XKeysymToKeycode(display_, XK_Mode_switch);
       }
-  
+
       logUser("Poller::handleKeyboardEvent: keycode translated to [%x].\n", (unsigned int)event -> xkey.keycode);
     }
     else
@@ -1503,7 +1503,7 @@ void Poller::updateDamagedAreas(void)
 
   int i;
   int y;
-  
+
   for (i = 0; i < lastUpdatedRegion_ -> numRects; i++)
   {
     boxPtr = lastUpdatedRegion_ -> rects + i;
@@ -1515,7 +1515,7 @@ void Poller::updateDamagedAreas(void)
       image_ -> bytes_per_line =
           ROUNDUP((image_ -> bits_per_pixel * image_ -> width),
                       image_ -> bitmap_pad);
-      
+
       if (XShmGetImage(display_, DefaultRootWindow(display_), image_,
                            boxPtr -> x1, boxPtr -> y1, AllPlanes) == 0)
       {
@@ -1554,7 +1554,7 @@ void Poller::updateDamagedAreas(void)
     {
       update(image_ -> data + y * image_ -> bytes_per_line, rectangle);
 
-      rectangle.y++; 
+      rectangle.y++;
     }
 
     if (shmExtension_ != 1)
