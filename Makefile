@@ -26,14 +26,6 @@ USRLIBDIR       ?= $(NXLIBDIR)/X11
 INCLUDEDIR      ?= $(PREFIX)/include
 CONFIGURE       ?= ./configure --prefix="$(PREFIX)"
 
-# check if the xkbcomp devel pkg is available - we need it for the next step
-ifneq ($(shell pkg-config --exists xkbcomp && echo yes), yes)
-    $(warning xkbcomp devel package missing, using imake default values)
-endif
-ifneq ($(shell pkg-config --exists fontutil && echo yes), yes)
-    $(warning fontutil devel package missing, using imake default values)
-endif
-
 IMAKE_DEFINES	?=
 
 SHELL:=/bin/bash
