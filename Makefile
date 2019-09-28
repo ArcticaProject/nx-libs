@@ -163,7 +163,7 @@ NX_COMPSHAD_HEADERS =		\
 
 all: build
 
-clean: version
+clean:
 	test -f nxcomp/Makefile     && ${MAKE} -C nxcomp clean         || true
 	test -f nxproxy/Makefile    && ${MAKE} -C nxproxy clean        || true
 	test -f nx-X11/lib/Makefile && ${MAKE} -C nx-X11/lib clean     || true
@@ -172,7 +172,7 @@ clean: version
 	test -d nx-X11              && ${MAKE} clean-env               || true
 	test -f nxdialog/Makefile   && ${MAKE} -C nxdialog clean       || true
 
-distclean: clean version
+distclean: clean
 	test -f nxcomp/Makefile     && ${MAKE} -C nxcomp distclean     || true
 	test -f nxproxy/Makefile    && ${MAKE} -C nxproxy distclean    || true
 	test -f nx-X11/lib/Makefile && ${MAKE} -C nx-X11/lib distclean || true
@@ -182,22 +182,11 @@ distclean: clean version
 	test -f nxdialog/Makefile   && ${MAKE} -C nxdialog distclean   || true
 	test -x ./mesa-quilt        && ./mesa-quilt pop -a
 	$(RM_DIR_REC) nx-X11/extras/Mesa/.pc/
-	$(RM_FILE) nx-X11/config/cf/nxversion.def
 
 test:
 	echo "No testing for NX (redistributed)"
 
-version:
-	# prepare nx-X11/config/cf/nxversion.def
-	sed \
-	    -e 's/###NX_VERSION_MAJOR###/$(shell ./version.sh 1)/' \
-	    -e 's/###NX_VERSION_MINOR###/$(shell ./version.sh 2)/' \
-	    -e 's/###NX_VERSION_MICRO###/$(shell ./version.sh 3)/' \
-	    -e 's/###NX_VERSION_PATCH###/$(shell ./version.sh 4)/' \
-	    nx-X11/config/cf/nxversion.def.in \
-	    > nx-X11/config/cf/nxversion.def
-
-build-env: version
+build-env:
 	# set up environment for libNX_X11 build (libNX_X11 header files)
 	mkdir -p nx-X11/exports/include/nx-X11/
 	for header in $(NX_X11_HEADERS); do \
@@ -243,7 +232,7 @@ build-env: version
 	    ${SYMLINK_FILE} ../../../../nxcompshad/include/$${header} nx-X11/exports/include/nx/$${header}; \
 	done
 
-clean-env: version
+clean-env:
 	for header in $(NX_X11_HEADERS); do \
 	    ${RM_FILE} nx-X11/exports/include/nx-X11/$${header}; \
 	done
