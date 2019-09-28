@@ -29,11 +29,6 @@ BuildRequires:  gcc-c++
 BuildRequires:  libjpeg-devel
 BuildRequires:  libtool
 BuildRequires:  pkgconfig
-%if 0%{?suse_version} && 0%{?suse_version} < 1210
-BuildRequires:  xorg-x11-util-devel
-%else
-BuildRequires:  imake
-%endif
 # For xkbcomp.pc.
 %if 0%{?suse_version}
 # Earlier versions don't have xkbcomp.pc at all.
@@ -415,13 +410,7 @@ chmod a+x my_configure;
 SHLIBGLOBALSFLAGS="%{__global_ldflags}"
 LOCAL_LDFLAGS="%{__global_ldflags}"
 CDEBUGFLAGS="%{?__global_cppflags} %{?__global_cflags} %{?optflags}"
-IMAKE_DEFINES=''
-FORCE_TIRPC='NO'
-%if 0%{?fedora} > 27 || 0%{?suse_version} > 1500
-FORCE_TIRPC='YES'
-%endif
-IMAKE_DEFINES="-DUseTIRPC=${FORCE_TIRPC}"
-make CONFIGURE="$PWD/my_configure" PREFIX=%{_prefix} LIBDIR=%{_libdir} CDEBUGFLAGS="${CDEBUGFLAGS}" LOCAL_LDFLAGS="${LOCAL_LDFLAGS}" SHLIBGLOBALSFLAGS="${SHLIBGLOBALSFLAGS}" IMAKE_DEFINES="${IMAKE_DEFINES}"
+make CONFIGURE="$PWD/my_configure" PREFIX=%{_prefix} LIBDIR=%{_libdir} CDEBUGFLAGS="${CDEBUGFLAGS}" LOCAL_LDFLAGS="${LOCAL_LDFLAGS}" SHLIBGLOBALSFLAGS="${SHLIBGLOBALSFLAGS}"
 
 %install
 make install \

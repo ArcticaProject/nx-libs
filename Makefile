@@ -26,8 +26,6 @@ USRLIBDIR       ?= $(NXLIBDIR)/X11
 INCLUDEDIR      ?= $(PREFIX)/include
 CONFIGURE       ?= ./configure --prefix="$(PREFIX)"
 
-IMAKE_DEFINES	?=
-
 SHELL:=/bin/bash
 
 NX_X11_HEADERS =		\
