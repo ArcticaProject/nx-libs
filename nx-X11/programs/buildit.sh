@@ -7,19 +7,17 @@ NULL=
 PKG_CONFIG_DEFAULT_LIBDIR=$(pkg-config --variable pc_path pkg-config)
 export PKG_CONFIG_LIBDIR="../../../nxcomp:../../lib/:../../../nxcompshad:$PKG_CONFIG_DEFAULT_LIBDIR"
 
-SRC=.
+SRC=./Xserver
 
 export CONFIGURE
 
 build() {
-	PKG=$1
-	shift
-	[ -d ${SRC}/$PKG ] || return 0
+	[ -d ${SRC} ] || return 0
 
 	OPT="$@"
 
-	pushd "${SRC}/$PKG"
 	[ -e Makefile ] && make distclean
+	pushd "${SRC}"
 
 	[ -e configure ] && rm -f configure
 
@@ -44,12 +42,12 @@ export NXAGENTMODULES_LIBS="-L`pwd`/../exports/lib			  \
                             -lXcomp -lXcompshad -lNX_X11		  \
                             ${NULL}"
 
-build Xserver $CONFFLAGS PKG_CONFIG_LIBDIR="$PKG_CONFIG_LIBDIR" || exit 1
+build $CONFFLAGS PKG_CONFIG_LIBDIR="$PKG_CONFIG_LIBDIR" || exit 1
 
 (
 	# create the binaries at the same location imake did. Also create
 	# development binaries and links.
-	cd ${SRC}/Xserver
+	cd ${SRC}
 	if [ -e hw/nxagent/.libs/nxagent ]; then
 		ln -snf hw/nxagent/.libs/nxagent nxagent-relink
 		cp -f --suffix=.previous --backup=simple hw/nxagent/.libs/nxagent nxagent
