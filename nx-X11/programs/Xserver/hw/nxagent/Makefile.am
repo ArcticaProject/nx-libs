@@ -140,7 +140,7 @@ nxagent_LDADD = $(XORG_CORE_LIBS) \
 # don't warn during linking when a symbol is defined more than once.
 # This is a fundamental principle in nxagent: Replace upstream functions
 # with own functions.
-nxagent_LDFLAGS = -Wl,-zmuldefs
+nxagent_LDFLAGS = -Wl,-zmuldefs -rpath '$(libdir)/nx/X11'
 
 ### NXAGENT Defines:
 #
