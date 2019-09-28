@@ -46,3 +46,15 @@ export NXAGENTMODULES_LIBS="-L`pwd`/../exports/lib			  \
                             ${NULL}"
 
 build Xserver $CONFFLAGS PKG_CONFIG_LIBDIR="$PKG_CONFIG_LIBDIR" || exit 1
+
+(
+	# create the binaries at the same location imake did. Also create
+	# development binaries and links.
+	cd ${SRC}/Xserver
+	if [ -e hw/nxagent/.libs/nxagent ]; then
+		ln -snf hw/nxagent/.libs/nxagent nxagent-relink
+		cp -f --suffix=.previous --backup=simple hw/nxagent/.libs/nxagent nxagent
+		patchelf --set-rpath '$ORIGIN/../../exports/lib:$ORIGIN/../../../nxcomp/src/.libs:$ORIGIN/../../../nxcompshad/src/.libs' nxagent
+		ln -snf nxagent x2goagent
+	fi
+)
