@@ -304,7 +304,7 @@ build-full: build-env
 
 	# build nxagent fourth
 	./mesa-quilt push -a
-	cd nx-X11/programs/ && ./buildit.sh
+	cd nx-X11/programs/ && CONFIGURE="${CONFIGURE}" ./buildit.sh
 
 	# build nxproxy fifth
 	cd nxproxy && autoreconf -vfsi && (${CONFIGURE}) && ${MAKE}

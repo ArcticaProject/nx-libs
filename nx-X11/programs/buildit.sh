@@ -10,6 +10,8 @@ export PKG_CONFIG_LIBDIR="../../../nxcomp:../../lib/:../../../nxcompshad:$PKG_CO
 SRC=.
 PRJ="${SRC}/$@"
 
+export CONFIGURE
+
 build() {
 	PKG=$1
 	shift
