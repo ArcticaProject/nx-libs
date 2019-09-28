@@ -8,7 +8,6 @@ PKG_CONFIG_DEFAULT_LIBDIR=$(pkg-config --variable pc_path pkg-config)
 export PKG_CONFIG_LIBDIR="../../../nxcomp:../../lib/:../../../nxcompshad:$PKG_CONFIG_DEFAULT_LIBDIR"
 
 SRC=.
-PRJ="${SRC}/$@"
 
 export CONFIGURE
 
