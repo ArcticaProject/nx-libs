@@ -30,10 +30,8 @@ build() {
 	popd
 }
 
-export CONFFLAGS="--enable-unix-transport		\
-                  --enable-tcp-transport		\
-                  --enable-ipv6				\
-                  --enable-secure-rpc			\
+export CONFFLAGS="--enable-ipv6	      \
+                  --enable-secure-rpc \
                   ${NULL}"
 
 export NXAGENTMODULES_LIBS="-L`pwd`/../exports/lib			  \
