@@ -1665,16 +1665,6 @@ ProcRenderDispatch (ClientPtr client)
 
     REQUEST(xReq);
 
-    /*
-     * Let the client fail if we are
-     * hiding the RENDER extension.
-     */
-    
-    if (nxagentRenderTrap)
-    {
-        return BadRequest;
-    }
-
     if (stuff->data < RenderNumberRequests)
     {
         #ifdef TEST
@@ -1707,16 +1697,6 @@ SProcRenderDispatch (ClientPtr client)
 
     REQUEST(xReq);
     
-    /*
-     * Let the client fail if we are
-     * hiding the RENDER extension.
-     */
-    
-    if (nxagentRenderTrap)
-    {
-        return BadRequest;
-    }
-
     if (stuff->data < RenderNumberRequests)
     {
         /*
