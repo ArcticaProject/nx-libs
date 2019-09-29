@@ -434,7 +434,7 @@ void nxagentDumpKeystrokes(void)
   for (int i = 0; nxagentSpecialKeystrokeNames[i]; i++)
     maxlen = min(maxlen, strlen(nxagentSpecialKeystrokeNames[i]));
 
-  fprintf(stderr, "Current known keystrokes:\n");
+  fprintf(stderr, "Currently known keystrokes:\n");
 
   for (struct nxagentSpecialKeystrokeMap *cur = map; cur->stroke != KEYSTROKE_END_MARKER; cur++) {
     unsigned int mask = cur->modifierMask;
