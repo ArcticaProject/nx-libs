@@ -2803,11 +2803,11 @@ Bool nxagentReconnectDisplay(void *p0)
   #endif
 
   nxagentConfineWindow = XCreateWindow(nxagentDisplay,
-                                     DefaultRootWindow(nxagentDisplay),
-                                     0, 0, 1, 1, 0, 0,
-                                     InputOnly,
-                                     CopyFromParent,
-                                     0L, NULL);
+                                       DefaultRootWindow(nxagentDisplay),
+                                       0, 0, 1, 1, 0, 0,
+                                       InputOnly,
+                                       CopyFromParent,
+                                       0L, NULL);
 
   if (nxagentReportWindowIds) {
     fprintf(stderr, "NXAGENT_WINDOW_ID: CONFINEMENT_WINDOW,WID:[0x%x]\n",

@@ -47,4 +47,8 @@ static inline const char * validateString(const char *str) {
 #define SAFE_XFree(what) do {if (what) {XFree(what); what = NULL;}} while (0)
 #define SAFE_free(what) do {free(what); what = NULL;} while (0)
 
+/* some helper macros to produce a quoted string from other macros */
+#define QUOTEEXP(str) #str
+#define QUOTE(str) QUOTEEXP(str)
+
 #endif /* __Utils_H__ */

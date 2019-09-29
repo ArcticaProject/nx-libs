@@ -147,6 +147,16 @@ extern Display *nxagentDisplay;
 
 extern WindowPtr nxagentLastEnteredWindow;
 
+#ifdef VIEWPORT_FRAME
+extern void nxagentInitViewportFrame(ScreenPtr, WindowPtr);
+#endif
+extern int  nxagentShadowInit(ScreenPtr, WindowPtr);
+
+#ifdef NXAGENT_CLIPBOARD
+extern int nxagentSendNotify(xEvent*);
+#endif
+
+
 void
 ActivatePointerGrab(register DeviceIntPtr mouse, register GrabPtr grab, 
                     TimeStamp time, Bool autoGrab)
@@ -466,11 +476,6 @@ void
 DefineInitialRootWindow(register WindowPtr win)
 {
     register ScreenPtr pScreen = win->drawable.pScreen;
-    #ifdef VIEWPORT_FRAME
-    extern void nxagentInitViewportFrame(ScreenPtr, WindowPtr);
-    #endif
-    extern int  nxagentShadowInit(ScreenPtr, WindowPtr);
-
     sprite.hotPhys.pScreen = pScreen;
     sprite.hotPhys.x = pScreen->width / 2;
     sprite.hotPhys.y = pScreen->height / 2;
@@ -537,7 +542,6 @@ ProcSendEvent(ClientPtr client)
 
     if (stuff -> event.u.u.type == SelectionNotify)
     {
-    	extern int nxagentSendNotify(xEvent*);
 	if (nxagentSendNotify(&stuff->event) == 1)
 	  return Success;
     }

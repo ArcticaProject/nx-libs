@@ -106,7 +106,6 @@ Equipment Corporation.
 
 #include "Screen.h"
 #include "Options.h"
-#include "Atoms.h"
 #include "Clipboard.h"
 #include "Splash.h"
 #include "Rootless.h"
@@ -204,8 +203,6 @@ InitRootWindow(WindowPtr pWin)
     fprintf(stderr, "InitRootWindow: Mapping default windows.\n");
     #endif
 
-    nxagentInitAtoms(pWin);
-
     nxagentInitClipboard(pWin);
 
     nxagentMapDefaultWindows();
@@ -215,9 +212,7 @@ InitRootWindow(WindowPtr pWin)
     #ifdef NXAGENT_ARTSD
     {
       char artsd_port[10];
-      short int nPort;
-      extern void nxagentPropagateArtsdProperties(ScreenPtr pScreen, char *port);
-      nPort = atoi(display) + 7000;
+      short int nPort = atoi(display) + 7000;
       sprintf(artsd_port,"%d", nPort);
       nxagentPropagateArtsdProperties(pScreen, artsd_port);
     }

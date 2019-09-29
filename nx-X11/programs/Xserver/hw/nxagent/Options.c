@@ -133,7 +133,6 @@ void nxagentInitOptions(void)
 
   nxagentOptions.Xdmcp = 0;
 
-  nxagentOptions.DisplayLatency = 0;
   nxagentOptions.DisplayBuffer  = UNDEFINED;
   nxagentOptions.DisplayCoalescence = 0;
 

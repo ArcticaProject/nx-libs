@@ -71,6 +71,7 @@ is" without express or implied warranty.
 #include "Millis.h"
 #include "Error.h"
 #include "Keystroke.h"
+#include "Atoms.h"
 
 #include <nx/NX.h>
 #include "compext/Compext.h"
@@ -148,6 +149,8 @@ extern void nxagentSetSelectionCallback(CallbackListPtr *callbacks, void *data,
                                    void *args);
 #endif
 
+extern const char *nxagentProgName;
+
 void ddxInitGlobals(void)
 {
   /*
@@ -199,8 +202,6 @@ Bool nxagentX2go;
 
 void checkX2goAgent(void)
 {
-  extern const char *nxagentProgName;
-
   #ifdef TEST
   fprintf(stderr, "%s: nxagentProgName [%s]\n", __func__, nxagentProgName);
   #endif
@@ -221,15 +222,6 @@ void checkX2goAgent(void)
 
 void InitOutput(ScreenInfo *screenInfo, int argc, char *argv[])
 {
-  char *authority;
-  int i;
-
-  #ifdef __sun
-
-  char *environment;
-
-  #endif
-
   /*
    * Print our pid and version information.
    */
@@ -295,11 +287,13 @@ void InitOutput(ScreenInfo *screenInfo, int argc, char *argv[])
   }
   #endif
 
-  if ((authority = getenv("NX_XAUTHORITY")))
+  char *authority = getenv("NX_XAUTHORITY");
+
+  if (authority)
   {
     #ifdef __sun
 
-    environment = malloc(15 + strlen(authority));
+    char *environment = malloc(15 + strlen(authority));
 
     sprintf(environment, "XAUTHORITY=%s", authority);
 
@@ -391,7 +385,7 @@ FIXME: These variables, if not removed at all because have probably
     nxagentNumScreens = 1;
   }
 
-  for (i = 0; i < nxagentNumScreens; i++)
+  for (int i = 0; i < nxagentNumScreens; i++)
   {
     AddScreen(nxagentOpenScreen, argc, argv);
   }
@@ -421,6 +415,8 @@ FIXME: These variables, if not removed at all because have probably
 #ifdef NXAGENT_CLIPBOARD
   AddCallback(&SelectionCallback, nxagentSetSelectionCallback, NULL);
 #endif
+
+  nxagentInitAtoms();
 }
 
 void

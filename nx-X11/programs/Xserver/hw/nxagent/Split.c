@@ -792,11 +792,11 @@ void nxagentWaitDrawable(DrawablePtr pDrawable)
       else
       {
         fprintf(stderr, "nxagentWaitDrawable: Drawable at [%p] can now be restarted.\n",
-		(void *) pDrawable);
+                (void *) pDrawable);
       }
 
       #endif
- 
+
       return;
     }
 

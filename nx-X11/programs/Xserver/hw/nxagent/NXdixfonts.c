@@ -88,13 +88,7 @@ static Bool doListFontsAndAliases(ClientPtr client, LFclosurePtr c);
 #include "Agent.h"
 #include "Font.h"
 
-#ifndef NX_TRANS_SOCKET
-
-#define NX_TRANS_SOCKET
-
-#endif
-
-#ifdef NX_TRANS_SOCKET
+#ifdef NXAGENT_SERVER
 
 #define NXFONTPATHLENGTH 1024
 char _NXFontPath[NXFONTPATHLENGTH];
@@ -107,8 +101,6 @@ char _NXFontPath[NXFONTPATHLENGTH];
 
 static const char *_NXGetFontPath(const char *path)
 {
-  const char *fontEnv;
-
     /*
      * Check the environment only once.
      */
@@ -118,13 +110,13 @@ static const char *_NXGetFontPath(const char *path)
         return _NXFontPath;
     }
 
-    fontEnv = getenv("NX_FONT");
+    const char *fontEnv = getenv("NX_FONT");
 
     if (fontEnv != NULL && *fontEnv != '\0')
     {
         if (strlen(fontEnv) + 1 > NXFONTPATHLENGTH)
         {
-#ifdef NX_TRANS_TEST
+#ifdef TEST
             fprintf(stderr, "_NXGetFontPath: WARNING! Maximum length of font path exceeded.\n");
 #endif
             goto _NXGetFontPathError;
@@ -132,7 +124,7 @@ static const char *_NXGetFontPath(const char *path)
 
         snprintf(_NXFontPath, NXFONTPATHLENGTH, "%s", fontEnv);
 
-#ifdef NX_TRANS_TEST
+#ifdef TEST
         fprintf(stderr, "_NXGetFontPath: Using NX font path [%s].\n", _NXFontPath);
 #endif
 
@@ -143,7 +135,7 @@ _NXGetFontPathError:
 
     snprintf(_NXFontPath, NXFONTPATHLENGTH, "%s", path);
 
-#ifdef NX_TRANS_TEST
+#ifdef TEST
     fprintf(stderr, "_NXGetFontPath: Using default font path [%s].\n", _NXFontPath);
 #endif
 
@@ -1003,9 +995,9 @@ SetDefaultFontPath(char *path)
                 size = 0,
                 bad;
 
-#ifdef NX_TRANS_SOCKET
+#ifdef NXAGENT_SERVER
     path = (char *) _NXGetFontPath(path);
-#endif /* NX_TRANS_SOCKET */
+#endif /* NXAGENT_SERVER */
 
     start = path;
 

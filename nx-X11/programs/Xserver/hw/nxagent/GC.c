@@ -297,85 +297,27 @@ void nxagentValidateGC(GCPtr pGC, unsigned long changes, DrawablePtr pDrawable)
   pGC->stipple = lastStipple;
 }
 
+#define CHECKGCVAL(cmask, member, val) do {if (mask & cmask) { values.member = (val); changeFlag += nxagentTestGC(values.member, member); } } while (0)
+
 void nxagentChangeGC(GCPtr pGC, unsigned long mask)
 {
   #ifdef TEST
   static int nDiscarded;
   #endif
 
-  XGCValues values;
-
+  XGCValues values = {0};
   int changeFlag = 0;
 
-  if (mask & GCFunction)
-  {
-    values.function = pGC->alu;
-
-    changeFlag |= nxagentTestGC(values.function, function);
-  }
-
-  if (mask & GCPlaneMask)
-  {
-    values.plane_mask = pGC->planemask;
-
-    changeFlag += nxagentTestGC(values.plane_mask, plane_mask);
-  }
-
-  if (mask & GCForeground)
-  {
-    values.foreground = nxagentPixel(pGC->fgPixel);
-
-    changeFlag += nxagentTestGC(values.foreground, foreground);
-  }
-
-  if (mask & GCBackground)
-  {
-    values.background = nxagentPixel(pGC->bgPixel);
-
-    changeFlag += nxagentTestGC(values.background, background);
-  }
-
-  if (mask & GCLineWidth)
-  {
-    values.line_width = pGC->lineWidth;
-
-    changeFlag += nxagentTestGC(values.line_width, line_width);
-  }
-
-  if (mask & GCLineStyle)
-  {
-    values.line_style = pGC->lineStyle;
-
-    changeFlag += nxagentTestGC(values.line_style, line_style);
-  }
-
-  if (mask & GCCapStyle)
-  {
-    values.cap_style = pGC->capStyle;
-
-    changeFlag += nxagentTestGC(values.cap_style, cap_style);
-  }
-
-  if (mask & GCJoinStyle)
-  {
-    values.join_style = pGC->joinStyle;
-
-    changeFlag += nxagentTestGC(values.join_style, join_style);
-  }
-
-  if (mask & GCFillStyle)
-  {
-    values.fill_style = pGC->fillStyle;
-
-    changeFlag += nxagentTestGC(values.fill_style, fill_style);
-  }
-
-  if (mask & GCFillRule)
-  {
-    values.fill_rule = pGC->fillRule;
-
-    changeFlag += nxagentTestGC(values.fill_rule, fill_rule);
-  }
+  CHECKGCVAL(GCFunction, function, pGC->alu);
+  CHECKGCVAL(GCPlaneMask, plane_mask, pGC->planemask);
+  CHECKGCVAL(GCForeground, foreground, nxagentPixel(pGC->fgPixel));
+  CHECKGCVAL(GCBackground, background, nxagentPixel(pGC->bgPixel));
+  CHECKGCVAL(GCLineWidth, line_width, pGC->lineWidth);
+  CHECKGCVAL(GCLineStyle, line_style, pGC->lineStyle);
+  CHECKGCVAL(GCCapStyle, cap_style, pGC->capStyle);
+  CHECKGCVAL(GCJoinStyle, join_style, pGC->joinStyle);
+  CHECKGCVAL(GCFillStyle, fill_style, pGC->fillStyle);
+  CHECKGCVAL(GCFillRule, fill_rule, pGC->fillRule);
 
   if (mask & GCTile)
   {
@@ -460,19 +402,8 @@ void nxagentChangeGC(GCPtr pGC, unsigned long mask)
     changeFlag += nxagentTestGC(values.stipple, stipple);
   }
 
-  if (mask & GCTileStipXOrigin)
-  {
-    values.ts_x_origin = pGC->patOrg.x;
-
-    changeFlag += nxagentTestGC(values.ts_x_origin, ts_x_origin);
-  }
-
-  if (mask & GCTileStipYOrigin)
-  {
-    values.ts_y_origin = pGC->patOrg.y;
-
-    changeFlag += nxagentTestGC(values.ts_y_origin, ts_y_origin);
-  }
+  CHECKGCVAL(GCTileStipXOrigin, ts_x_origin, pGC->patOrg.x);
+  CHECKGCVAL(GCTileStipYOrigin, ts_y_origin, pGC->patOrg.y);
 
   if (mask & GCFont)
   {
@@ -483,38 +414,14 @@ void nxagentChangeGC(GCPtr pGC, unsigned long mask)
     else
     {
       values.font = nxagentFont(pGC->font);
-
       changeFlag += nxagentTestGC(values.font, font);
     }
   } 
 
-  if (mask & GCSubwindowMode)
-  {
-    values.subwindow_mode = pGC->subWindowMode;
-
-    changeFlag += nxagentTestGC(values.subwindow_mode, subwindow_mode);
-  }
-
-  if (mask & GCGraphicsExposures)
-  {
-    values.graphics_exposures = pGC->graphicsExposures;
-
-    changeFlag += nxagentTestGC(values.graphics_exposures, graphics_exposures);
-  }
-
-  if (mask & GCClipXOrigin)
-  {
-    values.clip_x_origin = pGC->clipOrg.x;
-
-    changeFlag += nxagentTestGC(values.clip_x_origin, clip_x_origin);
-  }
-
-  if (mask & GCClipYOrigin)
-  {
-    values.clip_y_origin = pGC->clipOrg.y;
-
-    changeFlag += nxagentTestGC(values.clip_y_origin, clip_y_origin);
-  }
+  CHECKGCVAL(GCSubwindowMode, subwindow_mode, pGC->subWindowMode);
+  CHECKGCVAL(GCGraphicsExposures, graphics_exposures, pGC->graphicsExposures);
+  CHECKGCVAL(GCClipXOrigin, clip_x_origin, pGC->clipOrg.x);
+  CHECKGCVAL(GCClipYOrigin, clip_y_origin, pGC->clipOrg.y);
 
   if (mask & GCClipMask)
   {
@@ -525,12 +432,7 @@ void nxagentChangeGC(GCPtr pGC, unsigned long mask)
     mask &= ~GCClipMask;
   }
 
-  if (mask & GCDashOffset)
-  {
-    values.dash_offset = pGC->dashOffset;
-
-    changeFlag += nxagentTestGC(values.dash_offset, dash_offset);
-  }
+  CHECKGCVAL(GCDashOffset, dash_offset, pGC->dashOffset);
 
   if (mask & GCDashList)
   {
@@ -543,12 +445,7 @@ void nxagentChangeGC(GCPtr pGC, unsigned long mask)
     }
   }
 
-  if (mask & GCArcMode)
-  {
-    values.arc_mode = pGC->arcMode;
-
-    changeFlag += nxagentTestGC(values.arc_mode, arc_mode);
-  }
+  CHECKGCVAL(GCArcMode, arc_mode, pGC->arcMode);
 
   if (nxagentGCTrap == 1)
   {
@@ -1008,10 +905,10 @@ int nxagentDestroyNewGCResourceType(void * p, XID id)
   return 1;
 }
 
+#define SETGCVAL(mask, member, val) valuemask |= mask; values.member = (val)
+
 static void nxagentReconnectGC(void *param0, XID param1, void * param2)
 {
-  XGCValues values;
-  unsigned long valuemask;
   GCPtr pGC = (GCPtr) param0;
   Bool *pBool = (Bool*)param2;
 
@@ -1035,42 +932,29 @@ static void nxagentReconnectGC(void *param0, XID param1, void * param2)
   fprintf(stderr, "nxagentReconnectGC: GC at [%p].\n", (void *) pGC);
   #endif
 
-  valuemask = 0;
-  memset(&values,0,sizeof(XGCValues));
-  values.function = pGC->alu;
-  valuemask |= GCFunction;
-  values.plane_mask = pGC->planemask;
-  valuemask |= GCPlaneMask;
-  values.foreground = nxagentPixel(pGC->fgPixel);
-  valuemask |= GCForeground;
-  values.background = nxagentPixel(pGC->bgPixel);
-  valuemask |= GCBackground;
+  XGCValues values = {0};
+  unsigned long valuemask = 0;
+  SETGCVAL(GCFunction, function, pGC->alu);
+  SETGCVAL(GCPlaneMask, plane_mask, pGC->planemask);
+  SETGCVAL(GCForeground, foreground, nxagentPixel(pGC->fgPixel));
+  SETGCVAL(GCBackground, background, nxagentPixel(pGC->bgPixel));
+  SETGCVAL(GCLineWidth, line_width, pGC->lineWidth);
+  SETGCVAL(GCLineStyle, line_style, pGC->lineStyle);
+  SETGCVAL(GCCapStyle, cap_style, pGC->capStyle);
+  SETGCVAL(GCJoinStyle, join_style, pGC->joinStyle);
+  SETGCVAL(GCFillStyle, fill_style, pGC->fillStyle);
+  SETGCVAL(GCFillRule, fill_rule, pGC->fillRule);
 
-  values.line_width = pGC->lineWidth;
-  valuemask |= GCLineWidth;
-  values.line_style = pGC->lineStyle;
-  valuemask |= GCLineStyle;
-  values.cap_style = pGC->capStyle;
-  valuemask |= GCCapStyle;
-  values.join_style = pGC->joinStyle;
-  valuemask |= GCJoinStyle;
-  values.fill_style = pGC->fillStyle;
-  valuemask |= GCFillStyle;
-  values.fill_rule = pGC->fillRule;
-  valuemask |= GCFillRule;
-
-  if (!pGC -> tileIsPixel  && (pGC -> tile.pixmap != NULL))
+  if (!pGC -> tileIsPixel && (pGC -> tile.pixmap != NULL))
   {
     if (nxagentPixmapIsVirtual(pGC -> tile.pixmap))
     {
-      values.tile = nxagentPixmap(nxagentRealPixmap(pGC -> tile.pixmap));
+      SETGCVAL(GCTile, tile, nxagentPixmap(nxagentRealPixmap(pGC -> tile.pixmap)));
     }
     else
     {
-      values.tile = nxagentPixmap(pGC -> tile.pixmap);
+      SETGCVAL(GCTile, tile, nxagentPixmap(pGC -> tile.pixmap));
     }
-
-    valuemask |= GCTile;
   }
 
   if (pGC->stipple != NULL)
@@ -1087,7 +971,7 @@ static void nxagentReconnectGC(void *param0, XID param1, void * param2)
         nxagentReconnectPixmap(nxagentRealPixmap(pGC -> stipple), 0, pBool);
       }
 
-      values.stipple = nxagentPixmap(nxagentRealPixmap(pGC -> stipple));
+      SETGCVAL(GCStipple, stipple, nxagentPixmap(nxagentRealPixmap(pGC -> stipple)));
     }
     else
     {
@@ -1101,42 +985,31 @@ static void nxagentReconnectGC(void *param0, XID param1, void * param2)
         nxagentReconnectPixmap(pGC -> stipple, 0, pBool);
       }
 
-      values.stipple = nxagentPixmap(pGC->stipple);
+      SETGCVAL(GCStipple, stipple, nxagentPixmap(pGC->stipple));
     }
-    valuemask |= GCStipple;
   }
 
-  values.ts_x_origin = pGC->patOrg.x;
-  valuemask |= GCTileStipXOrigin;
-  values.ts_y_origin = pGC->patOrg.y;
-  valuemask |= GCTileStipYOrigin;
+  SETGCVAL(GCTileStipXOrigin, ts_x_origin, pGC->patOrg.x);
+  SETGCVAL(GCTileStipYOrigin, ts_y_origin, pGC->patOrg.y);
 
   if (pGC->font != NULL)
   {
-    values.font = nxagentFont(pGC->font);
-    valuemask |= GCFont;
+    SETGCVAL(GCFont, font, nxagentFont(pGC->font));
   }
 
-  values.subwindow_mode = pGC->subWindowMode;
-  valuemask |= GCSubwindowMode;
-  values.graphics_exposures = pGC->graphicsExposures;
-  valuemask |= GCGraphicsExposures;
-  values.clip_x_origin = pGC->clipOrg.x;
-  valuemask |= GCClipXOrigin;
-  values.clip_y_origin = pGC->clipOrg.y;
-  valuemask |= GCClipYOrigin;
-  valuemask |= GCClipMask;
-  values.dash_offset = pGC->dashOffset;
-  valuemask |= GCDashOffset;
+  SETGCVAL(GCSubwindowMode, subwindow_mode, pGC->subWindowMode);
+  SETGCVAL(GCGraphicsExposures, graphics_exposures, pGC->graphicsExposures);
+  SETGCVAL(GCClipXOrigin, clip_x_origin, pGC->clipOrg.x);
+  SETGCVAL(GCClipYOrigin, clip_y_origin, pGC->clipOrg.y);
+  valuemask |= GCClipMask;  /* FIXME: where's the ClipMask pixmap?? */
+  SETGCVAL(GCDashOffset, dash_offset, pGC->dashOffset);
 
   if (pGC->dash != NULL)
   {
-    values.dashes = *pGC->dash;
-    valuemask |= GCDashList;
+    SETGCVAL(GCDashList, dashes, *pGC->dash);
   }
 
-  values.arc_mode = pGC->arcMode;
-  valuemask |= GCArcMode;
+  SETGCVAL(GCArcMode, arc_mode, pGC->arcMode);
 
   if ((nxagentGC(pGC) = XCreateGC(nxagentDisplay,
                                   nxagentDefaultDrawables[pGC->depth],
@@ -1440,22 +1313,17 @@ static int nxagentCompareRegions(RegionPtr r1, RegionPtr r2)
  */
 GCPtr nxagentGetScratchGC(unsigned depth, ScreenPtr pScreen)
 {
-  GCPtr pGC;
-  XGCValues values;
-  unsigned long mask;
-  int nxagentSaveGCTrap;
-
   /*
    * The GC trap is temporarily disabled in
    * order to allow the remote clipmask reset
    * requested by GetScratchGC().
    */
 
-  nxagentSaveGCTrap = nxagentGCTrap;
+  int nxagentSaveGCTrap = nxagentGCTrap;
 
   nxagentGCTrap = 0;
 
-  pGC = GetScratchGC(depth, pScreen);
+  GCPtr pGC = GetScratchGC(depth, pScreen);
 
   nxagentGCTrap = nxagentSaveGCTrap;
 
@@ -1468,65 +1336,31 @@ GCPtr nxagentGetScratchGC(unsigned depth, ScreenPtr pScreen)
     return NULL;
   }
 
-  mask = 0;
+  unsigned long valuemask = 0;
+  XGCValues values = {0};
+  SETGCVAL(GCFunction, function, pGC -> alu);
+  SETGCVAL(GCPlaneMask, plane_mask, pGC -> planemask);
+  SETGCVAL(GCForeground, foreground, nxagentPixel(pGC -> fgPixel));
+  SETGCVAL(GCBackground, background, nxagentPixel(pGC -> bgPixel));
+  SETGCVAL(GCLineWidth, line_width, pGC -> lineWidth);
+  SETGCVAL(GCLineStyle, line_style, pGC -> lineStyle);
+  SETGCVAL(GCCapStyle, cap_style, pGC -> capStyle);
+  SETGCVAL(GCJoinStyle, join_style, pGC -> joinStyle);
+  SETGCVAL(GCFillStyle, fill_style, pGC -> fillStyle);
+  SETGCVAL(GCFillRule, fill_rule, pGC -> fillRule);
+  SETGCVAL(GCArcMode, arc_mode, pGC -> arcMode);
+  SETGCVAL(GCTileStipXOrigin, ts_x_origin, pGC -> patOrg.x);
+  SETGCVAL(GCTileStipYOrigin, ts_y_origin, pGC -> patOrg.y);
+  SETGCVAL(GCSubwindowMode, subwindow_mode, pGC -> subWindowMode);
+  SETGCVAL(GCGraphicsExposures, graphics_exposures, pGC -> graphicsExposures);
+  SETGCVAL(GCClipXOrigin, clip_x_origin, pGC -> clipOrg.x);
+  SETGCVAL(GCClipYOrigin, clip_y_origin, pGC -> clipOrg.y);
 
-  values.function = pGC -> alu;
-  mask |= GCFunction;
+  /* The GCClipMask is set to none inside the GetScratchGC() function. */
 
-  values.plane_mask = pGC -> planemask;
-  mask |= GCPlaneMask;
+  /* FIXME: What about GCDashOffset? */
 
-  values.foreground = nxagentPixel(pGC -> fgPixel);
-  mask |= GCForeground;
-
-  values.background = nxagentPixel(pGC -> bgPixel);
-  mask |= GCBackground;
-
-  values.line_width = pGC -> lineWidth;
-  mask |= GCLineWidth;
-
-  values.line_style = pGC -> lineStyle;
-  mask |= GCLineStyle;
-
-  values.cap_style = pGC -> capStyle;
-  mask |= GCCapStyle;
-
-  values.join_style = pGC -> joinStyle;
-  mask |= GCJoinStyle;
-
-  values.fill_style = pGC -> fillStyle;
-  mask |= GCFillStyle;
-
-  values.fill_rule = pGC -> fillRule;
-  mask |= GCFillRule;
-
-  values.arc_mode = pGC -> arcMode;
-  mask |= GCArcMode;
-
-  values.ts_x_origin = pGC -> patOrg.x;
-  mask |= GCTileStipXOrigin;
-
-  values.ts_y_origin = pGC -> patOrg.y;
-  mask |= GCTileStipYOrigin;
-
-  values.subwindow_mode = pGC -> subWindowMode;
-  mask |= GCSubwindowMode;
-
-  values.graphics_exposures = pGC -> graphicsExposures;
-  mask |= GCGraphicsExposures;
-
-  /*
-   * The GCClipMask is set to none inside
-   * the GetScratchGC() function.
-   */
-
-  values.clip_x_origin = pGC -> clipOrg.x;
-  mask |= GCClipXOrigin;
-
-  values.clip_y_origin = pGC -> clipOrg.y;
-  mask |= GCClipYOrigin;
-
-  XChangeGC(nxagentDisplay, nxagentGC(pGC), mask, &values);
+  XChangeGC(nxagentDisplay, nxagentGC(pGC), valuemask, &values);
 
   memset(&(nxagentGCPriv(pGC) -> lastServerValues), 0, sizeof(XGCValues));
 

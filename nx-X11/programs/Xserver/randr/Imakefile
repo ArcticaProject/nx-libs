@@ -62,7 +62,7 @@
 		$(NULL)
 
    INCLUDES = -I../include -I../mi \
-		-I../fb -I../hw/kdrive -I$(EXTINCSRC) -I$(XINCLUDESRC) \
+		-I../fb -I$(EXTINCSRC) -I$(XINCLUDESRC) \
 		-I../render \
 		`pkg-config --cflags-only-I pixman-1`
 

@@ -216,7 +216,7 @@ int CorePoller::isChanged(int (*checkIfInputCallback)(void *), void *arg, int *s
   // In order to allow this function to
   // be suspended and resumed later, we
   // need to save these two status vars.
-  // 
+  //
 
   static int idxIlace = 0;
   static int curLine = 0;

@@ -161,6 +161,7 @@ static void finishWMDetection(Bool verbose)
 
 void nxagentWMDetect() 
 {
+  /* FIXME: verbose is always false, there's no code to set it to true */
   Bool verbose = False;
   Bool windowManagerWasRunning = nxagentWMIsRunning;
 
@@ -176,10 +177,8 @@ void nxagentWMDetect()
   finishWMDetection(verbose);
 }
 
-int nxagentInitAtoms(WindowPtr pWin)
+void nxagentInitAtoms()
 {
-  Atom atom;
-
   /*
    * Value of nxagentAtoms[8] is "NX_AGENT_SIGNATURE".
    *
@@ -188,43 +187,40 @@ int nxagentInitAtoms(WindowPtr pWin)
    * run nested.
    */
 
-  atom = MakeAtom(nxagentAtomNames[8], strlen(nxagentAtomNames[8]), 1);
+  Atom atom = MakeAtom(nxagentAtomNames[8], strlen(nxagentAtomNames[8]), 1);
 
   if (atom == None)
   {
     #ifdef PANIC
-    fprintf(stderr, "nxagentInitAtoms: PANIC! Could not create [%s] atom.\n",
+    fprintf(stderr, "%s: PANIC! Could not create [%s] atom.\n", __func__,
                 nxagentAtomNames[8]);
     #endif
-
-    return -1;
   }
-
-  return 1;
+  else
+  {
+    #ifdef TEST
+    fprintf(stderr, "nxagentInitAtoms: atom [%s] created with value [%d].\n",
+                nxagentAtomNames[8], atom);
+    #endif
+  }
 }
 
 int nxagentQueryAtoms(ScreenPtr pScreen)
 {
-  int i;
   static unsigned long atomGeneration = 1;
 
   int num_of_atoms = NXAGENT_NUMBER_OF_ATOMS;
   char *names[NXAGENT_NUMBER_OF_ATOMS];
 
-  unsigned long int startingTime = GetTimeInMillis();
-
   #ifdef TEST
-  fprintf(stderr, "nxagentQueryAtoms: Going to create the intern atoms on real display.\n");
-
-  fprintf(stderr, "nxagentQueryAtoms: Starting time is [%ld].\n", startingTime);
+  fprintf(stderr, "%s: Going to create the intern atoms on real display.\n", __func__);
   #endif
 
   nxagentPrintAtomMapInfo("nxagentQueryAtoms: Entering");
 
-  for (i = 0; i < num_of_atoms; i++)
+  for (int i = 0; i < num_of_atoms; i++)
   {
     names[i] = nxagentAtomNames[i];
-
     nxagentAtoms[i] = None;
   }
 
@@ -251,10 +247,10 @@ int nxagentQueryAtoms(ScreenPtr pScreen)
   if (atomGeneration != serverGeneration)
   {
     #ifdef WARNING
-    fprintf(stderr, "nxagentQueryAtoms: The nxagent has been reset with server %ld atom %ld.\n",
+    fprintf(stderr, "%s: The nxagent has been reset with server %ld atom %ld.\n", __func__,
                 serverGeneration, atomGeneration);
 
-    fprintf(stderr, "nxagentQueryAtoms: Forcing a sync to detect the window manager.\n");
+    fprintf(stderr, "%s: Forcing a sync to detect the window manager.\n", __func__);
     #endif
 
     atomGeneration = serverGeneration;
@@ -312,19 +308,11 @@ int nxagentQueryAtoms(ScreenPtr pScreen)
 
   #ifdef TEST
 
-  for (i = 0; i < num_of_atoms; i++)
+  for (int i = 0; i < num_of_atoms; i++)
   {
-    fprintf(stderr, "nxagentQueryAtoms: Created intern atom [%s] with id [%ld].\n",
+    fprintf(stderr, "%s: Created intern atom [%s] with id [%ld].\n", __func__,
                 names[i], nxagentAtoms[i]);
   }
-
-  #endif
-
-  nxagentChangeOption(DisplayLatency, GetTimeInMillis() - startingTime);
-
-  #ifdef TEST
-  fprintf(stderr, "nxagentQueryAtoms: Ending time is [%ld] reference latency is [%d] Ms.\n",
-              GetTimeInMillis(), nxagentOption(DisplayLatency));
   #endif
 
   nxagentPrintAtomMapInfo("nxagentQueryAtoms: Exiting");
@@ -364,9 +352,8 @@ static void nxagentExpandCache(void)
 }
 
 /*
- * Check if there is space left on the map
- * and manage the possible consequent allocation,
- * then cache the atom-couple.
+ * Check if there is space left on the map and manage the possible
+ * consequent allocation, then cache the atom-couple.
  */
 
 static void nxagentWriteAtom(Atom local, Atom remote, const char *string, Bool duplicate)
@@ -374,10 +361,9 @@ static void nxagentWriteAtom(Atom local, Atom remote, const char *string, Bool d
   const char *s;
 
   /*
-   * We could remove this string duplication if
-   * we know for sure that the server will not
-   * reset, since only at reset the dix layer
-   * free all the atom names.
+   * We could remove this string duplication if we knew for sure that
+   * the server will not reset, since only at reset the dix layer
+   * frees all the atom names.
    */
 
   if (duplicate)
@@ -410,19 +396,16 @@ static void nxagentWriteAtom(Atom local, Atom remote, const char *string, Bool d
 }
 
 /*
- * FIXME: We should clean up the atom map
- * at nxagent reset, in order to cancel
- * all the local atoms but still maintaining
- * the Xserver values and the atom names.
+ * FIXME: We should clean up the atom map at nxagent reset, in order
+ * to cancel all the local atoms but still maintaining the Xserver
+ * values and the atom names.
  */
 
 void nxagentResetAtomMap(void)
 {
-  unsigned i;
-
   nxagentPrintAtomMapInfo("nxagentResetAtomMap: Entering");
 
-  for (i = 0; i < privLastAtom; i++)
+  for (unsigned int i = 0; i < privLastAtom; i++)
   {
     privAtomMap[i].local = None;
   }
@@ -437,16 +420,13 @@ void nxagentResetAtomMap(void)
 
 static int nxagentInitAtomMap(char **atomNameList, int count, Atom *atomsRet)
 {
-  XlibAtom *atom_list;
-  char **name_list;
   unsigned int i;
-  int ret_value = 0;
   int list_size = count + privLastAtom;
 
   nxagentPrintAtomMapInfo("nxagentInitAtomMap: Entering");
 
-  atom_list = malloc((list_size) * sizeof(*atom_list));
-  name_list = malloc((list_size) * sizeof(char*));
+  XlibAtom *atom_list = malloc((list_size) * sizeof(*atom_list));
+  char **name_list = malloc((list_size) * sizeof(char*));
 
   if ((atom_list == NULL) || (name_list == NULL))
   {
@@ -470,7 +450,7 @@ static int nxagentInitAtomMap(char **atomNameList, int count, Atom *atomsRet)
    * ... if successful cache them too.
    */
 
-  ret_value = XInternAtoms(nxagentDisplay, name_list, list_size, False, atom_list);
+  int ret_value = XInternAtoms(nxagentDisplay, name_list, list_size, False, atom_list);
 
   if (ret_value == 0)
   {
@@ -528,22 +508,19 @@ static int nxagentInitAtomMap(char **atomNameList, int count, Atom *atomsRet)
 }
 
 /*
- * If the nxagent has been reset,
- * the local value of the atoms stored
- * in cache could have the value None, 
- * do not call this function with None.
+ * If the nxagent has been reset, the local value of the atoms stored
+ * in cache could have the value None, do not call this function with
+ * None.
  */
 
 static AtomMap* nxagentFindAtomByLocalValue(Atom local)
 {
-  unsigned i;
-
   if (!ValidAtom(local))
   {
     return NULL;
   }
 
-  for (i = 0; i < privLastAtom; i++)
+  for (unsigned int i = 0; i < privLastAtom; i++)
   {
     if (local == privAtomMap[i].local)
     {
@@ -556,14 +533,12 @@ static AtomMap* nxagentFindAtomByLocalValue(Atom local)
 
 static AtomMap* nxagentFindAtomByRemoteValue(Atom remote)
 {
-  unsigned i;
-
   if (remote == None || remote == BAD_RESOURCE)
   {
     return NULL;
   }
 
-  for (i = 0; i < privLastAtom; i++)
+  for (unsigned int i = 0; i < privLastAtom; i++)
   {
     if (remote == privAtomMap[i].remote)
     {
@@ -576,9 +551,7 @@ static AtomMap* nxagentFindAtomByRemoteValue(Atom remote)
 
 static AtomMap* nxagentFindAtomByName(char *string, unsigned int length)
 {
-  unsigned i;
-
-  for (i = 0; i < privLastAtom; i++)
+  for (unsigned int i = 0; i < privLastAtom; i++)
   {
     if ((length == privAtomMap[i].length) && 
             (strcmp(string, privAtomMap[i].string) == 0))
@@ -602,7 +575,6 @@ static AtomMap* nxagentFindAtomByName(char *string, unsigned int length)
 
 Atom nxagentMakeAtom(char *string, unsigned int length, Bool Makeit)
 {
-  Atom local;
   AtomMap *current;
 
   /*
@@ -610,7 +582,7 @@ Atom nxagentMakeAtom(char *string, unsigned int length, Bool Makeit)
    * our nxagentFindAtomByName.
    */
 
-  local = MakeAtom(string, length, Makeit);
+  Atom local = MakeAtom(string, length, Makeit);
 
   if (!ValidAtom(local))
   {
@@ -634,7 +606,7 @@ Atom nxagentMakeAtom(char *string, unsigned int length, Bool Makeit)
   if ((current = nxagentFindAtomByName(string, length)))
   {
     /*
-     * Found Cached by name.
+     * Found cached by name.
      * It means that nxagent has been reset,
      * but not the xserver so we still have cached its atoms.
      */
@@ -645,13 +617,11 @@ Atom nxagentMakeAtom(char *string, unsigned int length, Bool Makeit)
   }
 
   /*
-   * We really have to ask Xserver for it.
+   * We really have to ask the Xserver for it.
    */
 
   {
-    Atom remote;
-
-    remote = XInternAtom(nxagentDisplay, string, !Makeit);
+    Atom remote = XInternAtom(nxagentDisplay, string, !Makeit);
 
     if (remote == None)
     {
@@ -670,10 +640,6 @@ Atom nxagentMakeAtom(char *string, unsigned int length, Bool Makeit)
 
 Atom nxagentLocalToRemoteAtom(Atom local)
 {
-  AtomMap *current;
-  const char    *string;
-  Atom    remote;
-
   #ifdef TEST
   fprintf(stderr, "%s: entering\n", __func__);
   #endif
@@ -681,7 +647,7 @@ Atom nxagentLocalToRemoteAtom(Atom local)
   if (!ValidAtom(local))
   {
     #ifdef DEBUG
-    fprintf(stderr, "%s: local [%d] is no valid - returning None\n", __func__, remote);
+    fprintf(stderr, "%s: local [%d] is no valid - returning None\n", __func__, local);
     #endif
     return None;
   }
@@ -694,7 +660,9 @@ Atom nxagentLocalToRemoteAtom(Atom local)
     return local;
   }
 
-  if ((current = nxagentFindAtomByLocalValue(local)))
+  AtomMap *current = nxagentFindAtomByLocalValue(local);
+
+  if (current)
   {
     #ifdef TEST
     fprintf(stderr, "%s: local [%d] -> remote [%d]\n", __func__, local, current->remote);
@@ -702,9 +670,9 @@ Atom nxagentLocalToRemoteAtom(Atom local)
     return current->remote;
   }
 
-  string = NameForAtom(local);
+  const char *string = NameForAtom(local);
 
-  remote = XInternAtom(nxagentDisplay, string, False);
+  Atom remote = XInternAtom(nxagentDisplay, string, False);
 
   if (remote == None)
   {
@@ -726,10 +694,6 @@ Atom nxagentLocalToRemoteAtom(Atom local)
 
 Atom nxagentRemoteToLocalAtom(Atom remote)
 {
-  AtomMap *current;
-  char    *string;
-  Atom    local;
-
   if (remote == None || remote == BAD_RESOURCE)
   {
     #ifdef DEBUG
@@ -746,11 +710,13 @@ Atom nxagentRemoteToLocalAtom(Atom remote)
     return remote;
   }
 
-  if ((current = nxagentFindAtomByRemoteValue(remote)))
+  AtomMap *current = nxagentFindAtomByRemoteValue(remote);
+
+  if (current)
   {
     if (!ValidAtom(current->local))
     {
-      local = MakeAtom(current->string, current->length, True);
+      Atom local = MakeAtom(current->string, current->length, True);
 
       if (ValidAtom(local))
       {
@@ -772,14 +738,16 @@ Atom nxagentRemoteToLocalAtom(Atom remote)
     return current->local;
   }
 
-  if ((string = XGetAtomName(nxagentDisplay, remote)))
+  char *string = XGetAtomName(nxagentDisplay, remote);
+
+  if (string)
   {
-    local = MakeAtom(string, strlen(string), True);
+    Atom local = MakeAtom(string, strlen(string), True);
 
     if (!ValidAtom(local))
     {
       #ifdef WARNING
-      fprintf(stderr, "nxagentRemoteToLocalAtom: WARNING MakeAtom failed.\n");
+      fprintf(stderr, "%s: WARNING MakeAtom failed.\n", __func__);
       #endif
 
       local = None;
@@ -796,7 +764,7 @@ Atom nxagentRemoteToLocalAtom(Atom remote)
   }
 
   #ifdef WARNING
-  fprintf(stderr, "nxagentRemoteToLocalAtom: WARNING failed to get name from remote atom.\n");
+  fprintf(stderr, "%s: WARNING failed to get name from remote atom.\n", __func__);
   #endif
 
   return None;
@@ -806,15 +774,13 @@ Atom nxagentRemoteToLocalAtom(Atom remote)
 
 static void nxagentPrintAtomMapInfo(char *message)
 {
-  unsigned i;
-
   fprintf(stderr, "--------------- Atom map in context [%s] ----------------------\n", message);
   fprintf(stderr, "nxagentPrintAtomMapInfo: Map at [%p] size [%d] number of entry [%d] auto increment [%d].\n",
               (void*) privAtomMap, privLastAtom, privAtomMapSize, NXAGENT_ATOM_MAP_SIZE_INCREMENT);
 
-  for (i = 0; i < privLastAtom; i++)
+  for (unsigned int i = 0; i < privLastAtom; i++)
   {
-    fprintf(stderr, "[%5.1d] local: %6.1lu - remote: %6.1lu - [%p] %s\n", i,
+    fprintf(stderr, "[%5.1d] local: %6.1u - remote: %6.1u - [%p] %s\n", i,
                 privAtomMap[i].local,
                     privAtomMap[i].remote,
                         privAtomMap[i].string, validateString(privAtomMap[i].string));

@@ -2671,7 +2671,7 @@ void nxagentDisconnectWindow(void * p0, XID x1, void * p2)
          nxagentCursorPriv(pCursor, pScreen) &&
            nxagentCursor(pCursor, pScreen))
   {
-    #ifdef NXAGENT_RECONNECT_CURSOR_DEBUG_disabled
+    #ifdef NXAGENT_RECONNECT_CURSOR_DEBUG
     char msg[] = "nxagentDisconnectWindow:";
 
     nxagentPrintCursorInfo(pCursor, msg);

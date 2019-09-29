@@ -90,7 +90,7 @@ void miTrapezoidBounds (int ntrap, xTrapezoid *traps, BoxPtr box);
 
 extern int  nxagentCursorSaveRenderInfo(ScreenPtr, CursorPtr);
 extern void nxagentCursorPostSaveRenderInfo(CursorPtr, ScreenPtr, PicturePtr, int, int);
-extern int  nxagentRenderRealizeCursor(ScreenPtr, CursorPtr);
+extern void nxagentRenderRealizeCursor(ScreenPtr, CursorPtr);
 extern int  nxagentCreatePicture(PicturePtr, Mask);
 extern void nxagentChangePicture(PicturePtr, Mask);
 extern int  nxagentChangePictureClip(PicturePtr, int, int, xRectangle *, int, int);
@@ -123,6 +123,8 @@ extern void nxagentRenderCreateConicalGradient(PicturePtr pPicture,
                                                xFixed angle, int nStops, 
                                                xFixed *stops, 
                                                xRenderColor *colors);
+
+extern int nxagentAlphaEnabled;
 
 /*
  * The void pointer is actually a XGlyphElt8.
@@ -184,7 +186,6 @@ ProcRenderQueryPictFormats (ClientPtr client)
     int				    numScreens;
     int				    numSubpixel;
 
-    extern int                      nxagentAlphaEnabled;
 /*    REQUEST(xRenderQueryPictFormatsReq); */
 
     REQUEST_SIZE_MATCH(xRenderQueryPictFormatsReq);
@@ -715,6 +716,9 @@ ProcRenderTrapezoids (ClientPtr client)
     {
       if (pFormat != NULL)
       {
+        if (nxagentTrapezoidExtents && nxagentTrapezoidExtents != NullBox)
+          free(nxagentTrapezoidExtents);
+
         nxagentTrapezoidExtents = (BoxPtr) malloc(sizeof(BoxRec));
 
         miTrapezoidBounds (ntraps, (xTrapezoid *) &stuff[1], nxagentTrapezoidExtents);

@@ -63,10 +63,6 @@ int nxagentUniquePixels(XImage *image)
   int elements = PIXEL_ELEMENTS;
   int unique   = 0;
 
-  int total;
-  int ratio;
-  int step;
-
   int last = -1;
 
   const char *next = image -> data;
@@ -80,9 +76,9 @@ int nxagentUniquePixels(XImage *image)
    * Take at most 256 pixels from the image.
    */
 
-  total = image -> width * image -> height;
+  int total = image -> width * image -> height;
   
-  step = total / elements;
+  int step = total / elements;
 
   if (step < PIXEL_STEP)
   {
@@ -231,7 +227,7 @@ int nxagentUniquePixels(XImage *image)
     #endif
   }
 
-  ratio = unique * 100 / elements;
+  int ratio = unique * 100 / elements;
 
   #ifdef TEST
   fprintf(stderr, "nxagentUniquePixels: Found [%d] unique pixels out of [%d] with ratio [%d%%].\n",
@@ -267,13 +263,11 @@ unsigned int Get16(const char *buffer, int order)
 
 unsigned int Get24(const char *buffer, int order)
 {
-  int i;
-
   const char *next = (order == MSBFirst ? buffer : buffer + 2);
 
   unsigned int result = 0;
 
-  for (i = 0; i < 3; i++)
+  for (int i = 0; i < 3; i++)
   {
     result <<= 8;
 
@@ -294,13 +288,11 @@ unsigned int Get24(const char *buffer, int order)
 
 unsigned int Get32(const char *buffer, int order)
 {
-  int i;
-
   const char *next = (order == MSBFirst ? buffer : buffer + 3);
 
   unsigned int result = 0;
 
-  for (i = 0; i < 4; i++)
+  for (int i = 0; i < 4; i++)
   {
     result <<= 8;
 
@@ -341,13 +333,11 @@ void Put16(unsigned int value, char *buffer, int order)
 
 void Put24(unsigned int value, char *buffer, int order)
 {
-  int i;
-
   if (order == MSBFirst)
   {
     buffer += 2;
 
-    for (i = 3; i > 0; i--)
+    for (int i = 3; i > 0; i--)
     {
       *buffer-- = (unsigned char) (value & 0xff);
 
@@ -356,7 +346,7 @@ void Put24(unsigned int value, char *buffer, int order)
   }
   else
   {
-    for (i = 3; i > 0; i--)
+    for (int i = 3; i > 0; i--)
     {
       *buffer++ = (unsigned char) (value & 0xff);
 
@@ -367,13 +357,11 @@ void Put24(unsigned int value, char *buffer, int order)
 
 void Put32(unsigned int value, char *buffer, int order)
 {
-  int i;
-
   if (order == MSBFirst)
   {
     buffer += 3;
 
-    for (i = 4; i > 0; i--)
+    for (int i = 4; i > 0; i--)
     {
       *buffer-- = (unsigned char) (value & 0xff);
 
@@ -382,7 +370,7 @@ void Put32(unsigned int value, char *buffer, int order)
   }
   else
   {
-    for (i = 4; i > 0; i--)
+    for (int i = 4; i > 0; i--)
     {
       *buffer++ = (unsigned char) (value & 0xff);
 

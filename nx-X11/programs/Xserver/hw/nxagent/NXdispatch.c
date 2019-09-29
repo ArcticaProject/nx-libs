@@ -194,6 +194,13 @@ extern int nxagentMaxAllowedResets;
 
 extern int nxagentFindClientResource(int, RESTYPE, void *);
 
+#ifdef NXAGENT_CLIPBOARD
+extern int nxagentPrimarySelection;
+extern int nxagentClipboardSelection;
+extern int nxagentMaxSelections;
+#endif
+
+extern int nxOpenFont(ClientPtr, XID, Mask, unsigned, char*);
 
 void
 InitSelections()
@@ -206,23 +213,23 @@ InitSelections()
 #ifdef NXAGENT_CLIPBOARD
     {
       Selection *newsels;
-      newsels = (Selection *)malloc(2 * sizeof(Selection));
+      newsels = (Selection *)malloc(nxagentMaxSelections * sizeof(Selection));
       if (!newsels)
         return;
-      NumCurrentSelections += 2;
+      NumCurrentSelections += nxagentMaxSelections;
       CurrentSelections = newsels;
 
-      CurrentSelections[0].selection = XA_PRIMARY;
-      CurrentSelections[0].lastTimeChanged = ClientTimeToServerTime(0);
-      CurrentSelections[0].window = screenInfo.screens[0]->root->drawable.id;
-      CurrentSelections[0].pWin = NULL;
-      CurrentSelections[0].client = NullClient;
+      CurrentSelections[nxagentPrimarySelection].selection = XA_PRIMARY;
+      CurrentSelections[nxagentPrimarySelection].lastTimeChanged = ClientTimeToServerTime(0);
+      CurrentSelections[nxagentPrimarySelection].window = screenInfo.screens[0]->root->drawable.id;
+      CurrentSelections[nxagentPrimarySelection].pWin = NULL;
+      CurrentSelections[nxagentPrimarySelection].client = NullClient;
 
-      CurrentSelections[1].selection = MakeAtom("CLIPBOARD", 9, 1);
-      CurrentSelections[1].lastTimeChanged = ClientTimeToServerTime(0);
-      CurrentSelections[1].window = screenInfo.screens[0]->root->drawable.id;
-      CurrentSelections[1].pWin = NULL;
-      CurrentSelections[1].client = NullClient;
+      CurrentSelections[nxagentClipboardSelection].selection = MakeAtom("CLIPBOARD", 9, 1);
+      CurrentSelections[nxagentClipboardSelection].lastTimeChanged = ClientTimeToServerTime(0);
+      CurrentSelections[nxagentClipboardSelection].window = screenInfo.screens[0]->root->drawable.id;
+      CurrentSelections[nxagentClipboardSelection].pWin = NULL;
+      CurrentSelections[nxagentClipboardSelection].client = NullClient;
     }
 #endif
 
@@ -769,7 +776,6 @@ ProcOpenFont(register ClientPtr client)
     fontReq[stuff->nbytes]=0;
     if (strchr(fontReq,'*') || strchr(fontReq,'?'))
     {
-       extern int nxOpenFont(ClientPtr, XID, Mask, unsigned, char*);
 #ifdef NXAGENT_FONTMATCH_DEBUG
        fprintf(stderr, "Dispatch: ProcOpenFont try to find a common font with font pattern=%s\n",fontReq);
 #endif

@@ -1692,6 +1692,7 @@ char *nxagentMakeScalableFontName(const char *fontName, int scalableResolution)
   const char *s;
   int field;
 
+  /* FIXME: use str(n)dup()? */
   if ((scalableFontName = malloc(strlen(fontName) + 1)) == NULL)
   {
     #ifdef PANIC

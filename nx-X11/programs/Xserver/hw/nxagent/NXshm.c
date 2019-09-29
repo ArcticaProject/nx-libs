@@ -81,6 +81,8 @@ extern void fbPutImage (DrawablePtr pDrawable, GCPtr pGC, int depth,
                             int x, int y, int w, int h, int leftPad, int format,
                                 char *pImage);
 
+extern int nxagentImageLength(int, int, int, int, int);
+
 void
 ShmExtensionInit(void)
 {
@@ -228,7 +230,6 @@ fbShmPutImage(dst, pGC, depth, format, w, h, sx, sy, sw, sh, dx, dy, data)
 #ifdef NXAGENT_SERVER
     int length;
     char *newdata;
-    extern int nxagentImageLength(int, int, int, int, int);
 
     #ifdef TEST
     fprintf(stderr, "fbShmPutImage: Called with drawable at [%p] GC at [%p] data at [%p].\n",

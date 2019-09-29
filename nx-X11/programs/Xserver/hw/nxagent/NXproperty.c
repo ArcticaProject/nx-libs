@@ -93,6 +93,14 @@ nxagentWMStateRec;
 #undef  TEST
 #undef  DEBUG
 
+#ifdef NXAGENT_CLIPBOARD
+extern WindowPtr nxagentGetClipboardWindow(Atom, WindowPtr);
+#endif
+
+#ifdef NXAGENT_ARTSD
+extern Atom mcop_local_atom;
+#endif
+
 int 
 ProcChangeProperty(ClientPtr client)
 {	      
@@ -127,11 +135,7 @@ ProcChangeProperty(ClientPtr client)
     REQUEST_FIXED_SIZE(xChangePropertyReq, totalSize);
 
 #ifdef NXAGENT_CLIPBOARD
-    {
-       extern WindowPtr nxagentGetClipboardWindow(Atom, WindowPtr);
-
-       pWin = nxagentGetClipboardWindow(stuff->property, NULL);
-    }
+    pWin = nxagentGetClipboardWindow(stuff->property, NULL);
 
     if (pWin == NULL)
 #endif
@@ -168,7 +172,6 @@ ProcChangeProperty(ClientPtr client)
       they are already set reflecting the server side settings.
       Just return success.
     */
-      extern Atom mcop_local_atom;
       if (stuff->property == mcop_local_atom)
         return client->noClientException;
     }
@@ -549,14 +552,17 @@ ProcGetProperty(ClientPtr client)
 
 #ifdef NXAGENT_CLIPBOARD
 /* GetWindowProperty clipboard use only */
+/* FIXME: that's wrong, it is also called in Window.c and Events. */
+/* FIXME: should be moved to a different file, is not derived from
+   dix */
 int
 GetWindowProperty(pWin, property, longOffset, longLength, delete,
             type, actualType, format, nItems, bytesAfter, propData )
     WindowPtr	        pWin;
     Atom		property;
-    long			longOffset;
-    long			longLength;
-    Bool			delete;
+    long		longOffset;
+    long		longLength;
+    Bool		delete;
     Atom		type;
     Atom		*actualType;
     int			*format;
@@ -569,24 +575,24 @@ GetWindowProperty(pWin, property, longOffset, longLength, delete,
 
     if (!pWin)
     {
-#ifdef DEBUG
+        #ifdef DEBUG
 	fprintf(stderr, "%s: invalid window\n", __func__);
-#endif
+        #endif
 	return BadWindow;
     }
 
     if (!ValidAtom(property))
     {
-#ifdef DEBUG
+        #ifdef DEBUG
 	fprintf(stderr, "%s: invalid atom [%d]\n", __func__, property);
-#endif
+        #endif
 	return(BadAtom);
     }
     if ((type != AnyPropertyType) && !ValidAtom(type))
     {
-#ifdef DEBUG
+        #ifdef DEBUG
 	fprintf(stderr, "%s: invalid type [%d]\n", __func__, type);
-#endif
+        #endif
 	return(BadAtom);
     }
 
@@ -604,14 +610,14 @@ GetWindowProperty(pWin, property, longOffset, longLength, delete,
 
     if (!pProp)
     {
-#ifdef DEBUG
+        #ifdef DEBUG
 	fprintf(stderr, "%s: property not found [%d]\n", __func__, property);
-#endif
+        #endif
 	return (BadAtom);
     }
 
     /* If the request type and actual type don't match. Return the
-    property information, but not the data. */
+       property information, but not the data. */
 
     if (((type != pProp->type) &&
 	 (type != AnyPropertyType))
@@ -624,20 +630,20 @@ GetWindowProperty(pWin, property, longOffset, longLength, delete,
 	return(Success);
     }
 
-/*
- *  Return type, format, value to client
- */
+    /*
+     *  Return type, format, value to client
+     */
     n = (pProp->format/8) * pProp->size; /* size (bytes) of prop */
     ind = longOffset << 2;
 
-   /* If longOffset is invalid such that it causes "len" to
-	    be negative, it's a value error. */
+    /* If longOffset is invalid such that it causes "len" to
+       be negative, it's a value error. */
 
     if (n < ind)
     {
-#ifdef DEBUG
+        #ifdef DEBUG
 	fprintf(stderr, "%s: negative property len\n", __func__);
-#endif
+        #endif
 	return BadValue;
     }
 
@@ -650,9 +656,7 @@ GetWindowProperty(pWin, property, longOffset, longLength, delete,
 
     if (delete && (*bytesAfter == 0))
     { /* send the event */
-	xEvent event;
-
-	memset(&event, 0, sizeof(xEvent));
+	xEvent event = {0};
 	event.u.u.type = PropertyNotify;
 	event.u.property.window = pWin->drawable.id;
 	event.u.property.state = PropertyDelete;
@@ -663,7 +667,7 @@ GetWindowProperty(pWin, property, longOffset, longLength, delete,
 
     if (len)
     {
-	 *propData = (unsigned char *)(pProp->data) + ind;
+	*propData = (unsigned char *)(pProp->data) + ind;
     }
 
     if (delete && (*bytesAfter == 0))
@@ -681,3 +685,50 @@ GetWindowProperty(pWin, property, longOffset, longLength, delete,
     return(Success);
 }
 #endif
+
+int
+ProcDeleteProperty(register ClientPtr client)
+{
+    WindowPtr pWin;
+    REQUEST(xDeletePropertyReq);
+    int result;
+
+    REQUEST_SIZE_MATCH(xDeletePropertyReq);
+    UpdateCurrentTime();
+    pWin = (WindowPtr)SecurityLookupWindow(stuff->window, client,
+                                           DixWriteAccess);
+    if (!pWin)
+        return(BadWindow);
+    if (!ValidAtom(stuff->property))
+    {
+        client->errorValue = stuff->property;
+        return (BadAtom);
+    }
+
+#ifdef XCSECURITY
+    switch(SecurityCheckPropertyAccess(client, pWin, stuff->property,
+                                       DixDestroyAccess))
+    {
+        case SecurityErrorOperation:
+            client->errorValue = stuff->property;
+            return BadAtom;;
+        case SecurityIgnoreOperation:
+            return Success;
+    }
+#endif
+
+#ifdef NXAGENT_SERVER
+    /* prevent clients from deleting the NX_AGENT_VERSION property */
+    {
+      Atom prop = MakeAtom("NX_AGENT_VERSION", strlen("NX_AGENT_VERSION"), True);
+      if (stuff->property == prop)
+        return client->noClientException;
+    }
+#endif
+
+    result = DeleteProperty(pWin, stuff->property);
+    if (client->noClientException != Success)
+        return(client->noClientException);
+    else
+        return(result);
+}

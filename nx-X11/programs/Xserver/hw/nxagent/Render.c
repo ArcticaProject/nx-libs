@@ -114,11 +114,7 @@ XRenderPictFormat *nxagentMatchingFormats(PictFormatPtr pForm);
 BoxPtr nxagentGlyphsExtents;
 BoxPtr nxagentTrapezoidExtents;
 
-#ifdef DEBUG
-
 static void nxagentPrintFormat(XRenderPictFormat *pFormat);
-
-#endif
 
 /*
  * From NXglyph.c.
@@ -150,10 +146,6 @@ int nxagentCreatePicture(PicturePtr pPicture, Mask mask);
 int nxagentChangePictureClip(PicturePtr pPicture, int clipType, int nRects,
                                  xRectangle *rects, int xOrigin, int yOrigin);
 
-void nxagentDestroyPictureClip(PicturePtr pPicture);
-
-void nxagentValidatePicture(PicturePtr pPicture, Mask mask);
-
 void nxagentComposite(CARD8 op, PicturePtr pSrc, PicturePtr pMask, PicturePtr pDst,
                           INT16 xSrc, INT16 ySrc, INT16 xMask, INT16 yMask, INT16 xDst,
                               INT16 yDst, CARD16 width, CARD16 height);
@@ -169,22 +161,7 @@ void nxagentTrapezoids(CARD8 op, PicturePtr pSrc, PicturePtr pDst,
                            PictFormatPtr maskFormat, INT16 xSrc, INT16 ySrc,
                                int ntrap, xTrapezoid *traps);
 
-void nxagentRasterizeTrapezoid(PicturePtr pMask, xTrapezoid *trap,
-                                   int x_off, int y_off);
-
-void nxagentTriangles(CARD8 op, PicturePtr pSrc, PicturePtr pDst,
-                          PictFormatPtr maskFormat, INT16 xSrc, INT16 ySrc,
-                              int ntri, xTriangle *tris);
-
-void nxagentTriStrip(CARD8 op, PicturePtr pSrc, PicturePtr pDst,
-                         PictFormatPtr  maskFormat, INT16 xSrc, INT16 ySrc,
-                             int npoint, xPointFixed *points);
-
 void nxagentChangePicture(PicturePtr pPicture, Mask mask);
-
-void nxagentTriFan(CARD8 op, PicturePtr pSrc, PicturePtr pDst,
-                       PictFormatPtr maskFormat, INT16 xSrc, INT16 ySrc,
-                           int npoint, xPointFixed *points);
 
 void nxagentReferenceGlyphSet(GlyphSetPtr glyphSet);
 
@@ -222,8 +199,6 @@ nxagentCleanGlyphs(xGlyphInfo  *gi,
   int bitsToClean;
   int widthInBytes;
   int height = gi -> height;
-  register int i;
-  int j;
 
   #ifdef DEBUG
   fprintf(stderr, "nxagentCleanGlyphs: Found a Glyph with Depth %d, width %d, pad %d.\n",
@@ -248,14 +223,14 @@ nxagentCleanGlyphs(xGlyphInfo  *gi,
 
       if (ImageByteOrder(dpy) == LSBFirst)
       {
-        for (i = 3; i < bytesToClean; i += 4)
+        for (int i = 3; i < bytesToClean; i += 4)
         {
           images[i] = 0x00;
         }
       }
       else
       {
-        for (i = 0; i < bytesToClean; i += 4)
+        for (int i = 0; i < bytesToClean; i += 4)
         {
           images[i] = 0x00;
         }
@@ -263,7 +238,7 @@ nxagentCleanGlyphs(xGlyphInfo  *gi,
 
       #ifdef DUMP
       fprintf(stderr, "nxagentCleanGlyphs: depth %d, bytesToClean %d, scanline: ", depth, bytesToClean);
-      for (i = 0; i < bytesPerLine; i++)
+      for (int i = 0; i < bytesPerLine; i++)
       {
         fprintf(stderr, "[%d]", images[i]);
       }
@@ -299,8 +274,9 @@ nxagentCleanGlyphs(xGlyphInfo  *gi,
               ImageByteOrder(dpy), BitmapBitOrder(dpy));
       #endif
 
-      for (i = 1; i <= height; i++)
+      for (int i = 1; i <= height; i++)
       {
+        int j;
         if (ImageByteOrder(dpy) == BitmapBitOrder(dpy))
         {
           for (j = 1; j <= bytesToClean; j++)
@@ -350,7 +326,7 @@ nxagentCleanGlyphs(xGlyphInfo  *gi,
 
       #ifdef DUMP
       fprintf(stderr, "nxagentCleanGlyphs: depth %d, bytesToClean %d, scanline: ", depth, bytesToClean);
-      for (i = 0; i < bytesPerLine; i++)
+      for (int i = 0; i < bytesPerLine; i++)
       {
         fprintf(stderr, "[%d]", images[i]);
       }
@@ -386,22 +362,22 @@ nxagentCleanGlyphs(xGlyphInfo  *gi,
       {
         while (height > 0)
         {
-          i = bytesToClean;
+          int count = bytesToClean;
 
-          while (i > 0)
+          while (count > 0)
           {
-            *(images + (bytesPerLine - i)) = 0;
+            *(images + (bytesPerLine - count)) = 0;
 
             #ifdef DEBUG
             fprintf(stderr, "nxagentCleanGlyphs: cleaned a byte.\n");
             #endif
 
-            i--;
+            count--;
           }
 
           #ifdef DUMP
           fprintf(stderr, "nxagentCleanGlyphs: depth %d, bytesToClean %d, scanline: ", depth, bytesToClean);
-          for (i = 0; i < bytesPerLine; i++)
+          for (int i = 0; i < bytesPerLine; i++)
           {
             fprintf(stderr, "[%d]", images[i]);
           }
@@ -458,12 +434,11 @@ void nxagentRenderExtensionInit(void)
     XRenderQueryVersion(nxagentDisplay, &major_version, &minor_version);
 
     /*
-     * As the RENDER requests are passed directly to
-     * the remote X server this can cause problems if 
-     * our RENDER version is different from the version
-     * supported by the remote. For this reasos let's
-     * advertise to our clients the lowest between the
-     + two versions.
+     * As the RENDER requests are passed directly to the remote X
+     * server this can cause problems if our RENDER version is
+     * different from the version supported by the remote. For this
+     * reasons let's advertise to our clients the lowest between the
+     * two versions.
      */
 
     if (major_version > SERVER_RENDER_MAJOR_VERSION ||
@@ -539,57 +514,41 @@ void nxagentCursorPostSaveRenderInfo(CursorPtr pCursor, ScreenPtr pScreen,
   nxagentCursorYOffset(pCursor, pScreen) = y;
 }
 
-int nxagentRenderRealizeCursor(ScreenPtr pScreen, CursorPtr pCursor)
+void nxagentRenderRealizeCursor(ScreenPtr pScreen, CursorPtr pCursor)
 {
-  int cid;
-  int x, y;
-
-  PicturePtr pPicture;
-
-  pPicture = nxagentCursorPicture(pCursor, pScreen);
+  PicturePtr pPicture = nxagentCursorPicture(pCursor, pScreen);
 
   pPicture -> refcnt++;
 
-  x = nxagentCursorXOffset(pCursor, pScreen);
-  y = nxagentCursorYOffset(pCursor, pScreen);
-
-  /*
-   * Set the lossless trap so that the image functions
-   * will not try to encode the image using a lossy
-   * compression. Drawables should have a quality flag,
-   * telling if they were originally encoded with a
-   * lossy algorithm. This would allow us to skip the
-   * synchronization if the cursor was already encoded
-   * with the best quality.
-   */
+  int x = nxagentCursorXOffset(pCursor, pScreen);
+  int y = nxagentCursorYOffset(pCursor, pScreen);
 
   #ifdef TEST
-  fprintf(stderr, "nxagentRenderRealizeCursor: Forcing the synchronization "
-              "of the cursor.\n");
+  fprintf(stderr, "%s: Forcing the synchronization of the cursor.\n", __func__);
   #endif
 
   nxagentMarkCorruptedRegion(pPicture -> pDrawable, NULL);
+
+  /*
+   * Set the lossless trap so that the image functions will not try to
+   * encode the image using a lossy compression. Drawables should have
+   * a quality flag, telling if they were originally encoded with a
+   * lossy algorithm. This would allow us to skip the synchronization
+   * if the cursor was already encoded with the best quality.
+   */
 
   nxagentLosslessTrap = 1;
 
   nxagentSynchronizeDrawable(pPicture -> pDrawable, DO_WAIT, NEVER_BREAK, NULL);
 
   nxagentLosslessTrap = 0;
-
-  cid = XRenderCreateCursor(nxagentDisplay, nxagentPicture(pPicture), x, y);
-
-  nxagentCursor(pCursor, pScreen) = cid;
-
-  return 1;
+  nxagentCursor(pCursor, pScreen) = XRenderCreateCursor(nxagentDisplay, nxagentPicture(pPicture), x, y);
 }
 
 int nxagentCreatePicture(PicturePtr pPicture, Mask mask)
 {
   XRenderPictureAttributes attributes;
   unsigned long            valuemask=0;
-  XRenderPictFormat        *pForm;
-
-  Picture id;
 
   #ifdef DEBUG
   fprintf(stderr, "nxagentCreatePicture: Function called with picture at [%p] and mask [%ld].\n",
@@ -630,145 +589,113 @@ int nxagentCreatePicture(PicturePtr pPicture, Mask mask)
   if (mask & CPRepeat)
   {
     attributes.repeat = (Bool)pPicture -> repeat;
-
     valuemask |= CPRepeat;
-
     nxagentSetPictureRemoteValue(pPicture, repeat, attributes.repeat);
   }
 
   if (mask & CPAlphaMap)
   {
     attributes.alpha_map = nxagentPicturePriv(pPicture -> alphaMap) -> picture;
-
     valuemask |= CPAlphaMap;
-
     nxagentSetPictureRemoteValue(pPicture, alpha_map, attributes.alpha_map);
   }
 
   if (mask & CPAlphaXOrigin)
   {
     attributes.alpha_x_origin = pPicture -> alphaOrigin.x;
-
     valuemask |= CPAlphaXOrigin;
-
     nxagentSetPictureRemoteValue(pPicture, alpha_x_origin, attributes.alpha_x_origin);
   }
 
   if (mask & CPAlphaYOrigin)
   {
     attributes.alpha_y_origin = pPicture -> alphaOrigin.y;
-
     valuemask |= CPAlphaYOrigin;
-
     nxagentSetPictureRemoteValue(pPicture, alpha_y_origin, attributes.alpha_y_origin);
   }
 
   if (mask & CPClipXOrigin)
   {
     attributes.clip_x_origin = pPicture -> clipOrigin.x;
-
     valuemask |= CPClipXOrigin;
-
     nxagentSetPictureRemoteValue(pPicture, clip_x_origin, attributes.clip_x_origin);
   }
 
   if (mask & CPClipYOrigin)
   {
     attributes.clip_y_origin = pPicture -> clipOrigin.y;
-
     valuemask |= CPClipYOrigin;
-
     nxagentSetPictureRemoteValue(pPicture, clip_y_origin, attributes.clip_y_origin);
   }
 
   if (mask & CPGraphicsExposure)
   {
     attributes.graphics_exposures = (Bool)pPicture -> graphicsExposures;
-
     valuemask |= CPGraphicsExposure;
-
     nxagentSetPictureRemoteValue(pPicture, graphics_exposures, attributes.graphics_exposures);
   }
 
   if (mask & CPSubwindowMode)
   {
     attributes.subwindow_mode = pPicture -> subWindowMode;
-
     valuemask |= CPSubwindowMode;
-
     nxagentSetPictureRemoteValue(pPicture, subwindow_mode, attributes.subwindow_mode);
   }
 
   if (mask & CPClipMask)
   {
     attributes.clip_mask = None;
-
     valuemask |= CPClipMask;
-
     nxagentSetPictureRemoteValue(pPicture, clip_mask, attributes.clip_mask);
   }
 
   if (mask & CPPolyEdge)
   {
     attributes.poly_edge = pPicture -> polyEdge;
-
     valuemask |= CPPolyEdge;
-
     nxagentSetPictureRemoteValue(pPicture, poly_edge, attributes.poly_edge);
   }
 
   if (mask & CPPolyMode)
   {
     attributes.poly_mode = pPicture -> polyMode;
-
     valuemask |= CPPolyMode;
-
     nxagentSetPictureRemoteValue(pPicture, poly_mode, attributes.poly_mode);
   }
 
   if (mask & CPDither)
   {
     attributes.dither = pPicture -> dither;
-
     valuemask |= CPDither;
-
     nxagentSetPictureRemoteValue(pPicture, dither, attributes.dither);
   }
 
   if (mask & CPComponentAlpha)
   {
     attributes.component_alpha = pPicture -> componentAlpha;
-
     valuemask |= CPComponentAlpha;
-
     nxagentSetPictureRemoteValue(pPicture, component_alpha, attributes.component_alpha);
   }
 
-  pForm = NULL;
+  XRenderPictFormat *pForm = NULL;
 
   if (pPicture -> pFormat != NULL)
   {
     pForm = nxagentMatchingFormats(pPicture -> pFormat);
-
-    #ifdef DEBUG
-
     nxagentPrintFormat(pForm);
-
-    #endif
   }
 
   if (pForm == NULL)
   {
     fprintf(stderr, "nxagentCreatePicture: WARNING! The requested format was not found.\n");
-
     return 0;
   }
 
-  id = XRenderCreatePicture(nxagentDisplay,
-                            nxagentDrawable(pPicture -> pDrawable),
-                            pForm,
-                            valuemask,
-                            &attributes);
+  Picture id = XRenderCreatePicture(nxagentDisplay,
+                                    nxagentDrawable(pPicture -> pDrawable),
+                                    pForm,
+                                    valuemask,
+                                    &attributes);
 
   #ifdef TEST
   fprintf(stderr, "nxagentCreatePicture: Created picture at [%p] with drawable at [%p].\n",
@@ -776,9 +703,7 @@ int nxagentCreatePicture(PicturePtr pPicture, Mask mask)
   #endif
 
   #ifdef DEBUG
-
   XSync(nxagentDisplay, 0);
-
   #endif
 
   nxagentPicturePriv(pPicture) -> picture = id;
@@ -801,9 +726,7 @@ int nxagentCreatePicture(PicturePtr pPicture, Mask mask)
 
 XRenderPictFormat *nxagentMatchingFormats(PictFormatPtr pFormat)
 {
-  int i;
-
-  for (i = 0; i < nxagentNumFormats; i++)
+  for (int i = 0; i < nxagentNumFormats; i++)
   {
     if (pFormat -> type == nxagentArrayFormats[i].type &&
         pFormat -> depth == nxagentArrayFormats[i].depth &&
@@ -843,9 +766,7 @@ void nxagentDestroyPicture(PicturePtr pPicture)
                      nxagentPicturePriv(pPicture) -> picture);
   
   #ifdef DEBUG
-
   XSync(nxagentDisplay, 0);
-
   #endif
 }
 
@@ -887,7 +808,6 @@ FIXME: Is this useful or just a waste of bandwidth?
        Apparently useless with QT.
 */
       #ifndef SKIP_LOUSY_RENDER_OPERATIONS
-
       XRenderSetPictureClipRectangles(nxagentDisplay,
                                       nxagentPicturePriv(pPicture) -> picture,
                                       xOrigin,
@@ -898,13 +818,10 @@ FIXME: Is this useful or just a waste of bandwidth?
       nxagentSetPictureRemoteValue(pPicture, clip_x_origin, xOrigin);
       nxagentSetPictureRemoteValue(pPicture, clip_y_origin, yOrigin);
       nxagentSetPictureRemoteValue(pPicture, clip_mask, 1);
-
       #endif
 
       #ifdef DEBUG
-
       XSync(nxagentDisplay, 0);
-
       #endif
 
       break;
@@ -920,7 +837,6 @@ FIXME: Is this useful or just a waste of bandwidth?
        Apparently useless with QT.
 */
       #ifndef SKIP_LOUSY_RENDER_OPERATIONS
-
       XRenderSetPictureClipRectangles(nxagentDisplay,
                                       nxagentPicturePriv(pPicture) -> picture,
                                       xOrigin,
@@ -931,13 +847,10 @@ FIXME: Is this useful or just a waste of bandwidth?
       nxagentSetPictureRemoteValue(pPicture, clip_x_origin, xOrigin);
       nxagentSetPictureRemoteValue(pPicture, clip_y_origin, yOrigin);
       nxagentSetPictureRemoteValue(pPicture, clip_mask, 1);
-
       #endif
 
       #ifdef DEBUG
-
       XSync(nxagentDisplay, 0);
-
       #endif
 
       break;
@@ -969,7 +882,6 @@ FIXME: Is this useful or just a waste of bandwidth?
        Apparently useless with QT.
 */
       #ifndef SKIP_LOUSY_RENDER_OPERATIONS
-
       XRenderSetPictureClipRegion(nxagentDisplay,
                                   nxagentPicturePriv(pPicture) -> picture,
                                   reg);
@@ -977,13 +889,10 @@ FIXME: Is this useful or just a waste of bandwidth?
       nxagentSetPictureRemoteValue(pPicture, clip_x_origin, xOrigin);
       nxagentSetPictureRemoteValue(pPicture, clip_y_origin, yOrigin);
       nxagentSetPictureRemoteValue(pPicture, clip_mask, 1);
-
       #endif
 
       #ifdef DEBUG
-
       XSync(nxagentDisplay, 0);
-
       #endif
   
       XDestroyRegion(reg);
@@ -1001,13 +910,6 @@ FIXME: Is this useful or just a waste of bandwidth?
   }
 
   return 1;
-}
-
-void nxagentDestroyPictureClip(PicturePtr pPicture)
-{
-  #ifdef DEBUG
-  fprintf(stderr, "nxagentDestroyPictureClip: Nothing to do.\n");
-  #endif
 }
 
 void nxagentChangePicture(PicturePtr pPicture, Mask mask)
@@ -1028,11 +930,9 @@ void nxagentChangePicture(PicturePtr pPicture, Mask mask)
   if (mask & CPRepeat)
   {
     attributes.repeat = (Bool)pPicture -> repeat;
-
     if (nxagentCheckPictureRemoteValue(pPicture, repeat, attributes.repeat) == 0)
     {
       valuemask |= CPRepeat;
-
       nxagentSetPictureRemoteValue(pPicture, repeat, attributes.repeat);
     }
   }
@@ -1040,11 +940,9 @@ void nxagentChangePicture(PicturePtr pPicture, Mask mask)
   if (mask & CPAlphaMap)
   {
     attributes.alpha_map = nxagentPicturePriv(pPicture -> alphaMap) -> picture;
-
     if (nxagentCheckPictureRemoteValue(pPicture, alpha_map, attributes.alpha_map) == 0)
     {
       valuemask |= CPAlphaMap;
-
       nxagentSetPictureRemoteValue(pPicture, alpha_map, attributes.alpha_map);
     }
   }
@@ -1052,11 +950,9 @@ void nxagentChangePicture(PicturePtr pPicture, Mask mask)
   if (mask & CPAlphaXOrigin)
   {
     attributes.alpha_x_origin = pPicture -> alphaOrigin.x;
-
     if (nxagentCheckPictureRemoteValue(pPicture, alpha_x_origin, attributes.alpha_x_origin) == 0)
     {
       valuemask |= CPAlphaXOrigin;
-
       nxagentSetPictureRemoteValue(pPicture, alpha_x_origin, attributes.alpha_x_origin);
     }
   }
@@ -1064,11 +960,9 @@ void nxagentChangePicture(PicturePtr pPicture, Mask mask)
   if (mask & CPAlphaYOrigin)
   {
     attributes.alpha_y_origin = pPicture -> alphaOrigin.y;
-
     if (nxagentCheckPictureRemoteValue(pPicture, alpha_y_origin, attributes.alpha_y_origin) == 0)
     {
       valuemask |= CPAlphaYOrigin;
-
       nxagentSetPictureRemoteValue(pPicture, alpha_y_origin, attributes.alpha_y_origin);
     }
   }
@@ -1076,11 +970,9 @@ void nxagentChangePicture(PicturePtr pPicture, Mask mask)
   if (mask & CPClipXOrigin)
   {
     attributes.clip_x_origin = pPicture -> clipOrigin.x;
-
     if (nxagentCheckPictureRemoteValue(pPicture, clip_x_origin, attributes.clip_x_origin) == 0)
     {
       valuemask |= CPClipXOrigin;
-
       nxagentSetPictureRemoteValue(pPicture, clip_x_origin, attributes.clip_x_origin);
     }
   }
@@ -1088,11 +980,9 @@ void nxagentChangePicture(PicturePtr pPicture, Mask mask)
   if (mask & CPClipYOrigin)
   {
     attributes.clip_y_origin = pPicture -> clipOrigin.y;
-
     if (nxagentCheckPictureRemoteValue(pPicture, clip_y_origin, attributes.clip_y_origin) == 0)
     {
       valuemask |= CPClipYOrigin;
-
       nxagentSetPictureRemoteValue(pPicture, clip_y_origin, attributes.clip_y_origin);
     }
   }
@@ -1100,11 +990,9 @@ void nxagentChangePicture(PicturePtr pPicture, Mask mask)
   if (mask & CPGraphicsExposure)
   {
     attributes.graphics_exposures = (Bool)pPicture -> graphicsExposures;
-
     if (nxagentCheckPictureRemoteValue(pPicture, graphics_exposures, attributes.graphics_exposures) == 0)
     {
       valuemask |= CPGraphicsExposure;
-
       nxagentSetPictureRemoteValue(pPicture, graphics_exposures, attributes.graphics_exposures);
     }
   }
@@ -1112,31 +1000,25 @@ void nxagentChangePicture(PicturePtr pPicture, Mask mask)
   if (mask & CPSubwindowMode)
   {
     attributes.subwindow_mode = pPicture -> subWindowMode;
-
     if (nxagentCheckPictureRemoteValue(pPicture, subwindow_mode, attributes.subwindow_mode) == 0)
     {
       valuemask |= CPSubwindowMode;
-
       nxagentSetPictureRemoteValue(pPicture, subwindow_mode, attributes.subwindow_mode);
     }
   }
 
   if (mask & CPClipMask)
   {
-    attributes.clip_mask = None;
-
     /*
-     * The nxagent doesn't know the remote id of
-     * the picture's clip mask, so the clip_mask
-     * value is used as a boolean: it is set to 0
-     * when the clip_mask is None, otherwise it is
-     * 1.
+     * The nxagent doesn't know the remote id of the picture's clip
+     * mask, so the clip_mask value is used as a boolean: it is set to
+     * 0 when the clip_mask is None, otherwise it is 1.
      */
 
+    attributes.clip_mask = None;
     if (nxagentPicturePriv(pPicture) -> lastServerValues.clip_mask != 0)
     {
       valuemask |= CPClipMask;
-
       nxagentSetPictureRemoteValue(pPicture, clip_mask, 0);
     }
   }
@@ -1144,11 +1026,9 @@ void nxagentChangePicture(PicturePtr pPicture, Mask mask)
   if (mask & CPPolyEdge)
   {
     attributes.poly_edge = pPicture -> polyEdge;
-
     if (nxagentCheckPictureRemoteValue(pPicture, poly_edge, attributes.poly_edge) == 0)
     {
       valuemask |= CPPolyEdge;
-
       nxagentSetPictureRemoteValue(pPicture, poly_edge, attributes.poly_edge);
     } 
   }
@@ -1156,11 +1036,9 @@ void nxagentChangePicture(PicturePtr pPicture, Mask mask)
   if (mask & CPPolyMode)
   {
     attributes.poly_mode = pPicture -> polyMode;
-
     if (nxagentCheckPictureRemoteValue(pPicture, poly_mode, attributes.poly_mode) == 0)
     {
       valuemask |= CPPolyMode;
-
       nxagentSetPictureRemoteValue(pPicture, poly_mode, attributes.poly_mode);
     }
   }
@@ -1168,11 +1046,9 @@ void nxagentChangePicture(PicturePtr pPicture, Mask mask)
   if (mask & CPDither)
   {
     attributes.dither = pPicture -> dither;
-
     if (nxagentCheckPictureRemoteValue(pPicture, dither, attributes.dither) == 0)
     {
       valuemask |= CPDither;
-
       nxagentSetPictureRemoteValue(pPicture, dither, attributes.dither);
     }
   }
@@ -1180,17 +1056,14 @@ void nxagentChangePicture(PicturePtr pPicture, Mask mask)
   if (mask & CPComponentAlpha)
   {
     attributes.component_alpha = pPicture -> componentAlpha;
-
     if (nxagentCheckPictureRemoteValue(pPicture, component_alpha, attributes.component_alpha) == 0)
     {
       valuemask |= CPComponentAlpha;
-
       nxagentSetPictureRemoteValue(pPicture, component_alpha, attributes.component_alpha);
     }
   }
 
   #ifdef TEST
-
   if (pPicture && pPicture->pDrawable && pPicture -> pDrawable -> type == DRAWABLE_PIXMAP)
   {
     fprintf(stderr, "nxagentChangePicture: %sPixmap [%p] Picture [%p][%p].\n",
@@ -1198,7 +1071,6 @@ void nxagentChangePicture(PicturePtr pPicture, Mask mask)
                     (void *) pPicture -> pDrawable, (void *) nxagentPicturePriv(pPicture) -> picture,
                         (void *) pPicture);
   }
-
   #endif
 /*
 FIXME: Is this useful or just a waste of bandwidth?
@@ -1208,7 +1080,6 @@ FIXME: Is this useful or just a waste of bandwidth?
        Without this the text is not rendered on GTK/Cairo.
 */
   #ifndef SKIP_REALLY_ALL_LOUSY_RENDER_OPERATIONS
-
   if (valuemask != 0)
   {
     XRenderChangePicture(nxagentDisplay,
@@ -1223,20 +1094,10 @@ FIXME: Is this useful or just a waste of bandwidth?
                 (void *) pPicture);
   }
   #endif
-
-  #endif
+  #endif /* SKIP_REALLY_ALL_LOUSY_RENDER_OPERATIONS */
 
   #ifdef DEBUG
-
   XSync(nxagentDisplay, 0);
-
-  #endif
-}
-
-void nxagentValidatePicture(PicturePtr pPicture, Mask mask)
-{
-  #ifdef DEBUG
-  fprintf(stderr, "nxagentValidatePicture: Nothing to do.\n");
   #endif
 }
 
@@ -1244,15 +1105,12 @@ void nxagentComposite(CARD8 op, PicturePtr pSrc, PicturePtr pMask, PicturePtr pD
                           INT16 xSrc, INT16 ySrc, INT16 xMask, INT16 yMask, INT16 xDst,
                               INT16 yDst, CARD16 width, CARD16 height)
 {
-  RegionPtr pDstRegion;
-
   if (pSrc == NULL || pDst == NULL)
   {
     return;
   }
 
   #ifdef DEBUG
-
   if (pSrc && pSrc -> pDrawable != NULL)
   {
     fprintf(stderr, "nxagentComposite: Source Picture [%lu][%p] with drawable [%s%s][%p].\n",
@@ -1281,12 +1139,11 @@ void nxagentComposite(CARD8 op, PicturePtr pSrc, PicturePtr pMask, PicturePtr pD
                        pMask -> pDrawable -> type == DRAWABLE_PIXMAP ? "Pixmap" : "Window",
                            (void *) pMask -> pDrawable);
   }
-
   #endif
 
   if (NXAGENT_SHOULD_DEFER_COMPOSITE(pSrc, pMask, pDst))
   {
-    pDstRegion = nxagentCreateRegion(pDst -> pDrawable, NULL, xDst, yDst, width, height);
+    RegionPtr pDstRegion = nxagentCreateRegion(pDst -> pDrawable, NULL, xDst, yDst, width, height);
 
     #ifdef TEST
     if ((pDstRegion) && (pDst && pDst->pDrawable)) {
@@ -1306,11 +1163,10 @@ void nxagentComposite(CARD8 op, PicturePtr pSrc, PicturePtr pMask, PicturePtr pD
   }
 
   /*
-   * Synchronize the content of the shared memory pixmap
-   * but pay attention at not doing this more than once.
-   * We need to wait until the image data has been recom-
-   * posed at the X server side or the operation will use
-   * the wrong data.
+   * Synchronize the content of the shared memory pixmap but pay
+   * attention at not doing this more than once.  We need to wait
+   * until the image data has been recom- posed at the X server side
+   * or the operation will use the wrong data.
    */
 
   if (pSrc -> pDrawable != NULL)
@@ -1361,14 +1217,12 @@ void nxagentComposite(CARD8 op, PicturePtr pSrc, PicturePtr pMask, PicturePtr pD
   }
 
   /*
-   * The glyphs flag have to be propagated between
-   * drawables, in order to avoid to encode the
-   * text with lossy algorithms (like JPEG). Unlu-
-   * ckily we have verified that if the render com-
-   * posite propagates the flag, the deferring of
-   * render trapezoids doesn't work well. Moreover,
-   * by commenting out this code we have not noticed
-   * any visual problems.
+   * The glyphs flag have to be propagated between drawables, in order
+   * to avoid to encode the text with lossy algorithms (like
+   * JPEG). Unlu- ckily we have verified that if the render com-
+   * posite propagates the flag, the deferring of render trapezoids
+   * doesn't work well. Moreover, by commenting out this code we have
+   * not noticed any visual problems.
    *
    *  if (nxagentDrawableContainGlyphs(pSrc -> pDrawable) == 1)
    *  {
@@ -1391,9 +1245,7 @@ void nxagentComposite(CARD8 op, PicturePtr pSrc, PicturePtr pMask, PicturePtr pD
                    height);
 
   #ifdef DEBUG
-
   XSync(nxagentDisplay, 0);
-
   #endif
 }
 
@@ -1401,22 +1253,9 @@ void nxagentGlyphs(CARD8 op, PicturePtr pSrc, PicturePtr pDst,
                        PictFormatPtr maskFormat, INT16 xSrc, INT16 ySrc, int nlists,
                            XGlyphElt8 *elts, int sizeID, GlyphPtr *glyphsBase)
 {
-  XRenderPictFormat *pForm;
-
   BoxRec glyphBox;
 
   XGlyphElt8 *elements;
-
-  #ifdef SPLIT_GLYPH_LISTS
-
-  GlyphPtr glyph;
-
-  int x;
-  int y;
-  int i;
-  int j;
-
-  #endif /* #ifdef SPLIT_GLYPH_LISTS */
 
   if (pSrc == NULL || pDst == NULL)
   {
@@ -1432,17 +1271,12 @@ void nxagentGlyphs(CARD8 op, PicturePtr pSrc, PicturePtr pDst,
   }
   #endif
 
-  pForm = NULL;
+  XRenderPictFormat *pForm = NULL;
 
   if (maskFormat != NULL)
   {
     pForm = nxagentMatchingFormats(maskFormat);
-    
-    #ifdef DEBUG
-
     nxagentPrintFormat(pForm);
-
-    #endif
 
     if (pForm == NULL)
     {
@@ -1458,10 +1292,8 @@ void nxagentGlyphs(CARD8 op, PicturePtr pSrc, PicturePtr pDst,
     glyphBox.y2 = nxagentGlyphsExtents -> y2;
 
     /*
-     * By extending the glyph extents the
-     * visual aspect looks nicer because
-     * the synchronized region is not glued
-     * to the fonts.
+     * By extending the glyph extents the visual aspect looks nicer
+     * because the synchronized region is not glued to the fonts.
      */
 
     if (glyphBox.x2 != glyphBox.x1)
@@ -1478,16 +1310,14 @@ void nxagentGlyphs(CARD8 op, PicturePtr pSrc, PicturePtr pDst,
   }
 
   /*
-   * If the destination window is hidden, the
-   * operation can be prevented.
+   * If the destination window is hidden, the operation can be
+   * prevented.
    */
 
   if (pDst -> pDrawable -> type == DRAWABLE_WINDOW)
   {
-    RegionPtr pRegion;
-
-    pRegion = nxagentCreateRegion(pDst -> pDrawable, NULL, glyphBox.x1, glyphBox.y1,
-                                      glyphBox.x2 - glyphBox.x1, glyphBox.y2 - glyphBox.y1);
+    RegionPtr pRegion = nxagentCreateRegion(pDst -> pDrawable, NULL, glyphBox.x1, glyphBox.y1,
+					        glyphBox.x2 - glyphBox.x1, glyphBox.y2 - glyphBox.y1);
     
     if (RegionNil(pRegion) == 1)
     {
@@ -1505,9 +1335,8 @@ void nxagentGlyphs(CARD8 op, PicturePtr pSrc, PicturePtr pDst,
   }
 
   /*
-   * Need to synchronize the pixmaps involved in
-   * the operation before rendering the glyphs
-   * on the real X server.
+   * Need to synchronize the pixmaps involved in the operation before
+   * rendering the glyphs on the real X server.
    */
 
   if (pSrc -> pDrawable != NULL &&
@@ -1522,11 +1351,9 @@ void nxagentGlyphs(CARD8 op, PicturePtr pSrc, PicturePtr pDst,
     #endif
 
     /*
-     * If the source drawable is going to be
-     * repeated over the destination drawable
-     * during the composite operation, we need
-     * to synchronize the whole drawable to
-     * avoid graphical problems.
+     * If the source drawable is going to be repeated over the
+     * destination drawable during the composite operation, we need to
+     * synchronize the whole drawable to avoid graphical problems.
      */
 
     if (pSrc -> repeat == 1 || nxagentGlyphsExtents == NullBox)
@@ -1625,14 +1452,13 @@ void nxagentGlyphs(CARD8 op, PicturePtr pSrc, PicturePtr pDst,
   #endif
 
   #ifdef SPLIT_GLYPH_LISTS
+  GlyphPtr glyph;
 
   /*
-   * We split glyphs lists here and recalculate
-   * the offsets of each list to make them ab-
-   * solute and not relatives to the prior list.
-   * This way each time we call XRenderComposi-
-   * teText it has to deal only with a list of
-   * glyphs. This is done to further improve
+   * We split glyphs lists here and recalculate the offsets of each
+   * list to make them ab- solute and not relatives to the prior list.
+   * This way each time we call XRenderComposi- teText it has to deal
+   * only with a list of glyphs. This is done to further improve
    * caching.
    */
 
@@ -1640,7 +1466,10 @@ void nxagentGlyphs(CARD8 op, PicturePtr pSrc, PicturePtr pDst,
 
   if (nlists > 1)
   {
-    for (j = 1; j < nlists; j++)
+    int x;
+    int y;
+
+    for (int j = 1; j < nlists; j++)
     {
       x = elements -> xOff;
       y = elements -> yOff;
@@ -1650,7 +1479,7 @@ void nxagentGlyphs(CARD8 op, PicturePtr pSrc, PicturePtr pDst,
                   j, nlists, elements -> xOff, elements -> yOff);
       #endif
 
-      for (i = 0; i < elements -> nchars; i++)
+      for (int i = 0; i < elements -> nchars; i++)
       {
         glyph = *glyphsBase++;
 
@@ -1682,7 +1511,7 @@ void nxagentGlyphs(CARD8 op, PicturePtr pSrc, PicturePtr pDst,
   {
     case 1:
     {
-      for (j = 0; j < nlists; j++)
+      for (int j = 0; j < nlists; j++)
       {
         XRenderCompositeText8(nxagentDisplay,
                               op,
@@ -1698,12 +1527,11 @@ void nxagentGlyphs(CARD8 op, PicturePtr pSrc, PicturePtr pDst,
 
         elements++;
       }
-
       break;
     }
     case 2:
     {
-      for (j = 0; j < nlists; j++)
+      for (int j = 0; j < nlists; j++)
       {
         XRenderCompositeText16(nxagentDisplay,
                                op,
@@ -1719,12 +1547,11 @@ void nxagentGlyphs(CARD8 op, PicturePtr pSrc, PicturePtr pDst,
 
         elements++;
       }
-
       break;
     }
     case 4:
     {
-      for (j = 0; j < nlists; j++)
+      for (int j = 0; j < nlists; j++)
       {
         XRenderCompositeText32(nxagentDisplay,
                                op,
@@ -1740,7 +1567,6 @@ void nxagentGlyphs(CARD8 op, PicturePtr pSrc, PicturePtr pDst,
 
         elements++;
       }
-
       break;
     }
     default:
@@ -1749,7 +1575,6 @@ void nxagentGlyphs(CARD8 op, PicturePtr pSrc, PicturePtr pDst,
       fprintf(stderr, "nxagentGlyphs: WARNING! Invalid size id [%d].\n",
                   sizeID);
       #endif
-
       break;
     }
   }
@@ -1773,7 +1598,6 @@ void nxagentGlyphs(CARD8 op, PicturePtr pSrc, PicturePtr pDst,
                             elements -> yOff,
                             (XGlyphElt8*) elements,
                             nlists);
-
       break;
     }
     case 2:
@@ -1789,7 +1613,6 @@ void nxagentGlyphs(CARD8 op, PicturePtr pSrc, PicturePtr pDst,
                              elements -> yOff,
                              (XGlyphElt16*) elements,
                              nlists);
-
       break;
     }
     case 4:
@@ -1805,7 +1628,6 @@ void nxagentGlyphs(CARD8 op, PicturePtr pSrc, PicturePtr pDst,
                              elements -> yOff,
                              (XGlyphElt32*) elements,
                              nlists);
-
       break;
     }
     default:
@@ -1814,19 +1636,15 @@ void nxagentGlyphs(CARD8 op, PicturePtr pSrc, PicturePtr pDst,
       fprintf(stderr, "nxagentGlyphs: WARNING! Invalid size id [%d].\n",
                   sizeID);
       #endif
-
       break;
     }
   }
-
   #endif /* #ifdef SPLIT_GLYPH_LISTS */
 }
 
 void nxagentCompositeRects(CARD8 op, PicturePtr pDst, xRenderColor *color,
                                int nRect, xRectangle *rects)
 {
-  RegionPtr rectRegion;
-
   if (pDst == NULL)
   {
     return;
@@ -1851,7 +1669,7 @@ void nxagentCompositeRects(CARD8 op, PicturePtr pDst, xRenderColor *color,
           (op == PictOpSrc ||
                (op == PictOpOver && color -> alpha == 0xffff)))
   {
-    rectRegion = RegionFromRects(nRect, rects, CT_REGION);
+    RegionPtr rectRegion = RegionFromRects(nRect, rects, CT_REGION);
 
     if (pDst -> clientClipType != CT_NONE)
     {
@@ -1889,9 +1707,7 @@ void nxagentCompositeRects(CARD8 op, PicturePtr pDst, xRenderColor *color,
                         nRect);
 
   #ifdef DEBUG
-
   XSync(nxagentDisplay, 0);
-
   #endif
 }
 
@@ -1899,11 +1715,7 @@ void nxagentTrapezoids(CARD8 op, PicturePtr pSrc, PicturePtr pDst,
                            PictFormatPtr maskFormat, INT16 xSrc, INT16 ySrc,
                                int ntrap, xTrapezoid *traps)
 {
-  XRenderPictFormat *pForm;
-
   XTrapezoid *current = (XTrapezoid *) traps;
-
-  RegionPtr pDstRegion;
 
   int remaining = ntrap;
 
@@ -1918,17 +1730,12 @@ void nxagentTrapezoids(CARD8 op, PicturePtr pSrc, PicturePtr pDst,
     return;
   }
 
-  pForm = NULL;
+  XRenderPictFormat *pForm = NULL;
 
   if (maskFormat != NULL)
   {
     pForm = nxagentMatchingFormats(maskFormat);
-    
-    #ifdef DEBUG
-
     nxagentPrintFormat(pForm);
-
-    #endif
 
     if (pForm == NULL)
     {
@@ -1943,7 +1750,6 @@ FIXME: Is this useful or just a waste of bandwidth?
   #ifndef SKIP_LOUSY_RENDER_OPERATIONS
 
   #ifdef TEST
-
   if (pSrc->pDrawable) {
     fprintf(stderr, "nxagentTrapezoids: Source is a [%s] of geometry [%d,%d].\n",
                 (pSrc -> pDrawable -> type == DRAWABLE_PIXMAP ? "pixmap" : "window"),
@@ -1955,7 +1761,6 @@ FIXME: Is this useful or just a waste of bandwidth?
                 (pDst -> pDrawable -> type == DRAWABLE_PIXMAP ? "pixmap" : "window"),
                     pDst -> pDrawable -> width, pDst -> pDrawable -> height);
   }
-
   #endif
 
   /*
@@ -1994,11 +1799,11 @@ FIXME: Is this useful or just a waste of bandwidth?
 
   if (NXAGENT_SHOULD_DEFER_TRAPEZOIDS(pDst -> pDrawable))
   {
-    pDstRegion = nxagentCreateRegion(pDst -> pDrawable, NULL,
-                                     nxagentTrapezoidExtents -> x1,
-                                     nxagentTrapezoidExtents -> y1,
-                                     nxagentTrapezoidExtents -> x2 - nxagentTrapezoidExtents -> x1,
-                                     nxagentTrapezoidExtents -> y2 - nxagentTrapezoidExtents -> y1);
+    RegionPtr pDstRegion = nxagentCreateRegion(pDst -> pDrawable, NULL,
+                                               nxagentTrapezoidExtents -> x1,
+                                               nxagentTrapezoidExtents -> y1,
+                                               nxagentTrapezoidExtents -> x2 - nxagentTrapezoidExtents -> x1,
+                                               nxagentTrapezoidExtents -> y2 - nxagentTrapezoidExtents -> y1);
 
     #ifdef TEST
     if (pDst && pDst->pDrawable) {
@@ -2043,298 +1848,46 @@ FIXME: Is this useful or just a waste of bandwidth?
     nxagentSynchronizeBox(pDst -> pDrawable, nxagentTrapezoidExtents, NEVER_BREAK);
   }
 
-    XRenderCompositeTrapezoids(nxagentDisplay,
-                               op,
-                               nxagentPicturePriv(pSrc) -> picture,
-                               nxagentPicturePriv(pDst) -> picture,
-                               pForm,
-                               xSrc,
-                               ySrc,
-                               (XTrapezoid *) current,remaining);
+  XRenderCompositeTrapezoids(nxagentDisplay,
+                             op,
+                             nxagentPicturePriv(pSrc) -> picture,
+                             nxagentPicturePriv(pDst) -> picture,
+                             pForm,
+                             xSrc,
+                             ySrc,
+                             (XTrapezoid *) current,remaining);
 
 
   #endif
 
   #ifdef DEBUG
-
   XSync(nxagentDisplay, 0);
-
-  #endif
-}
-
-void nxagentRasterizeTrapezoid(PicturePtr pMask, xTrapezoid *trap,
-                                   int x_off, int y_off)
-{
-  #ifdef DEBUG
-  fprintf(stderr, "nxagentRasterizeTrapezoids: Nothing to do.\n");
-  #endif
-}
-
-void nxagentTriangles(CARD8 op, PicturePtr pSrc, PicturePtr pDst,
-                          PictFormatPtr maskFormat, INT16 xSrc, INT16 ySrc,
-                              int ntri, xTriangle *tris)
-{
-  XRenderPictFormat *pForm;
-
-  #ifdef DEBUG
-  fprintf(stderr, "nxagentTriangles: Source [%p] Destination [%p] Coordinates [%d,%d] Elements [%d].\n",
-              (void *) pSrc, (void *) pDst, xSrc, ySrc, ntri);
-  #endif
-
-  if (pSrc == NULL || pDst == NULL)
-  {
-    return;
-  }
-
-  pForm = NULL;
-
-  if (maskFormat != NULL)
-  {
-    pForm = nxagentMatchingFormats(maskFormat);
-
-    #ifdef DEBUG
-
-    nxagentPrintFormat(pForm);
-
-    #endif
-
-    if (pForm == NULL)
-    {
-      return;
-    }
-  }
-
-  /*
-   * If the X_RenderCompositeTriangles requests
-   * increment the traffic, we can defer the
-   * operation like nxagentTrapezoids() does.
-   */
-
-  if (pSrc -> pDrawable != NULL &&
-          nxagentDrawableStatus(pSrc -> pDrawable) == NotSynchronized)
-  {
-    #ifdef TEST
-    fprintf(stderr, "nxagentTriangles: Going to synchronize the source drawable at [%p].\n",
-                (void *) pSrc -> pDrawable);
-    #endif
-
-    nxagentSynchronizeDrawable(pSrc -> pDrawable, DO_WAIT, NEVER_BREAK, NULL);
-  }
-
-  if (nxagentDrawableStatus(pDst -> pDrawable) == NotSynchronized)
-  {
-    #ifdef TEST
-    fprintf(stderr, "nxagentTriangles: Going to synchronize the destination drawable at [%p].\n",
-                (void *) pDst -> pDrawable);
-    #endif
-
-    nxagentSynchronizeDrawable(pDst -> pDrawable, DO_WAIT, NEVER_BREAK, NULL);
-  }
-
-  XRenderCompositeTriangles(nxagentDisplay,
-                            op,
-                            nxagentPicturePriv(pSrc) -> picture,
-                            nxagentPicturePriv(pDst) -> picture,
-                            pForm,
-                            xSrc,
-                            ySrc,
-                            (XTriangle*)tris,
-                            ntri);
-
-  #ifdef DEBUG
-
-  XSync(nxagentDisplay, 0);
-
-  #endif
-}
-
-void nxagentTriStrip(CARD8 op, PicturePtr pSrc, PicturePtr pDst,
-                         PictFormatPtr  maskFormat, INT16 xSrc, INT16 ySrc,
-                             int npoint, xPointFixed *points)
-{
-  XRenderPictFormat *pForm;
-
-  #ifdef DEBUG
-  fprintf(stderr, "nxagentTriStrip: Source [%p] Destination [%p] Coordinates [%d,%d] Elements [%d].\n",
-              (void *) pSrc, (void *) pDst, xSrc, ySrc, npoint);
-  #endif
-
-  if (pSrc == NULL || pDst == NULL)
-  {
-    return;
-  }
-
-  pForm = NULL;
-
-  if (maskFormat != NULL)
-  {
-    pForm = nxagentMatchingFormats(maskFormat);
-
-    #ifdef DEBUG
-
-    nxagentPrintFormat(pForm);
-
-    #endif
-
-    if (pForm == NULL)
-    {
-      return;
-    }
-  }
-
-  /*
-   * If the X_RenderCompositeTriStrip requests
-   * increment the traffic, we can defer the
-   * operation like nxagentTrapezoids() does.
-   */
-
-  if (pSrc -> pDrawable != NULL &&
-          nxagentDrawableStatus(pSrc -> pDrawable) == NotSynchronized)
-  {
-    #ifdef TEST
-    fprintf(stderr, "nxagentTriStrip: Going to synchronize the source drawable at [%p].\n",
-                (void *) pSrc -> pDrawable);
-    #endif
-
-    nxagentSynchronizeDrawable(pSrc -> pDrawable, DO_WAIT, NEVER_BREAK, NULL);
-  }
-
-  if (nxagentDrawableStatus(pDst -> pDrawable) == NotSynchronized)
-  {
-    #ifdef TEST
-    fprintf(stderr, "nxagentTriStrip: Going to synchronize the destination drawable at [%p].\n",
-                (void *) pDst -> pDrawable);
-    #endif
-
-    nxagentSynchronizeDrawable(pDst -> pDrawable, DO_WAIT, NEVER_BREAK, NULL);
-  }
-
-  XRenderCompositeTriStrip(nxagentDisplay,
-                           op,
-                           nxagentPicturePriv(pSrc) -> picture,
-                           nxagentPicturePriv(pDst) -> picture,
-                           pForm,
-                           xSrc,
-                           ySrc,
-                           (XPointFixed*)points,
-                           npoint);
-
-  #ifdef DEBUG
-
-  XSync(nxagentDisplay, 0);
-
-  #endif
-}
-
-void nxagentTriFan(CARD8 op, PicturePtr pSrc, PicturePtr pDst,
-                       PictFormatPtr maskFormat, INT16 xSrc, INT16 ySrc,
-                           int npoint, xPointFixed *points)
-{
-  XRenderPictFormat *pForm;
-
-  #ifdef DEBUG
-  fprintf(stderr, "nxagentTriFan: Source [%p] Destination [%p] Coordinates [%d,%d] Elements [%d].\n",
-              (void *) pSrc, (void *) pDst, xSrc, ySrc, npoint);
-  #endif
-
-  if (pSrc == NULL || pDst == NULL)
-  {
-    return;
-  }
-
-  pForm = NULL;
-
-  if (maskFormat != NULL)
-  {
-    pForm = nxagentMatchingFormats(maskFormat);
-
-    #ifdef DEBUG
-
-    nxagentPrintFormat(pForm);
-
-    #endif
-
-    if (pForm == NULL)
-    {
-      return;
-    }
-  }
-
-  /*
-   * If the X_RenderCompositeTriFan requests
-   * increment the traffic, we can defer the
-   * operation like nxagentTrapezoids() does.
-   */
-
-  if (pSrc -> pDrawable != NULL &&
-          nxagentDrawableStatus(pSrc -> pDrawable) == NotSynchronized)
-  {
-    #ifdef TEST
-    fprintf(stderr, "nxagentTriFan: Going to synchronize the source drawable at [%p].\n",
-                (void *) pSrc -> pDrawable);
-    #endif
-
-    nxagentSynchronizeDrawable(pSrc -> pDrawable, DO_WAIT, NEVER_BREAK, NULL);
-  }
-
-  if (nxagentDrawableStatus(pDst -> pDrawable) == NotSynchronized)
-  {
-    #ifdef TEST
-    fprintf(stderr, "nxagentTriFan: Going to synchronize the destination drawable at [%p].\n",
-                (void *) pDst -> pDrawable);
-    #endif
-
-    nxagentSynchronizeDrawable(pDst -> pDrawable, DO_WAIT, NEVER_BREAK, NULL);
-  }
-
-  XRenderCompositeTriFan(nxagentDisplay,
-                         op,
-                         nxagentPicturePriv(pSrc) -> picture,
-                         nxagentPicturePriv(pDst) -> picture,
-                         pForm,
-                         xSrc,
-                         ySrc,
-                         (XPointFixed*)points,
-                         npoint);
-
-  #ifdef DEBUG
-
-  XSync(nxagentDisplay, 0);
-
   #endif
 }
 
 void nxagentQueryFormats(void)
 {
-  XRenderInfo *xri;
-  XExtDisplayInfo *info = NULL;
-  XRenderPictFormat *pformat=NULL;
-
-  int i;
-
   #ifdef DEBUG
   fprintf(stderr, "nxagentQueryFormats.\n");
   #endif
 
   if (XRenderQueryFormats(nxagentDisplay))
   {
-    #ifdef DEBUG
-
-    XSync(nxagentDisplay, 0);
-
-    #endif
-
-    info = (XExtDisplayInfo *) XRenderFindDisplay(nxagentDisplay);
+    int i;
 
     #ifdef DEBUG
-
     XSync(nxagentDisplay, 0);
-
     #endif
 
-    xri = (XRenderInfo *) info -> data;
+    XExtDisplayInfo *info = (XExtDisplayInfo *) XRenderFindDisplay(nxagentDisplay);
 
-    pformat = xri -> format;
+    #ifdef DEBUG
+    XSync(nxagentDisplay, 0);
+    #endif
+
+    XRenderInfo *xri = (XRenderInfo *) info -> data;
+
+    XRenderPictFormat *pformat = xri -> format;
 
     for (i = 0; i < xri -> nformat; i++)
     {
@@ -2354,7 +1907,6 @@ void nxagentQueryFormats(void)
     }
 
     #ifdef DEBUG
-
     if (nxagentNumFormats == 0)
     {
       fprintf(stderr, "nxagentQueryFormats: Number of formats is [%d].\n",
@@ -2365,7 +1917,6 @@ void nxagentQueryFormats(void)
       fprintf(stderr, "nxagentQueryFormats: Old number of formats is [%d]. New number of formats is [%d].\n",
                   nxagentNumFormats, i);
     }
-
     #endif
 
     nxagentNumFormats = i;
@@ -2374,23 +1925,16 @@ void nxagentQueryFormats(void)
 
 void nxagentCreateGlyphSet(GlyphSetPtr pGly)
 {
-  XRenderPictFormat *pForm;
-
   #ifdef DEBUG
   fprintf(stderr, "nxagentCreateGlyphSet: Glyphset at [%p].\n", (void *) pGly);
   #endif
 
-  pForm = NULL;
+  XRenderPictFormat *pForm = NULL;
 
   if (pGly -> format != NULL)
   {
     pForm = nxagentMatchingFormats(pGly -> format);
-
-    #ifdef DEBUG
-
     nxagentPrintFormat(pForm);
-
-    #endif
 
     if (pForm == NULL)
     {
@@ -2401,9 +1945,7 @@ void nxagentCreateGlyphSet(GlyphSetPtr pGly)
   pGly -> remoteID = XRenderCreateGlyphSet(nxagentDisplay, pForm);
 
   #ifdef DEBUG
-
   XSync(nxagentDisplay, 0);
-
   #endif
 }
 
@@ -2440,13 +1982,6 @@ void nxagentFreeGlyphSet(GlyphSetPtr glyphSet)
 void nxagentAddGlyphs(GlyphSetPtr glyphSet, Glyph *gids, xGlyphInfo *gi,
                           int nglyphs, CARD8 *images, int sizeImages)
 {
-  GlyphRefPtr gr;
-  Glyph *tempGids;
-
-  int i;
-
-  CARD8 *normalizedImages;
-
   #ifdef DEBUG
   fprintf(stderr, "nxagentAddGlyphs: Glyphset at [%p]. Number of glyphs [%d].\n",
               (void *) glyphSet, nglyphs);
@@ -2468,12 +2003,12 @@ void nxagentAddGlyphs(GlyphSetPtr glyphSet, Glyph *gids, xGlyphInfo *gi,
    * as synchronized.
    */
 
-  tempGids = gids;
-
-  for (i = 0; i < nglyphs; i++)
+  for (int i = 0; i < nglyphs; i++)
   {
-    if ((gr = FindGlyphRef(&glyphSet -> hash, *tempGids, 0, 0)) &&
-            gr -> glyph != DeletedGlyph)
+    Glyph *tempGids = gids;
+    GlyphRefPtr gr = FindGlyphRef(&glyphSet -> hash, *tempGids, 0, 0);
+
+    if (gr && gr -> glyph != DeletedGlyph)
     {
       #ifdef DEBUG
       fprintf(stderr, "nxagentAddGlyphs: Added Glyph [%p][%ld] to glyphset [%p].\n",
@@ -2486,7 +2021,7 @@ void nxagentAddGlyphs(GlyphSetPtr glyphSet, Glyph *gids, xGlyphInfo *gi,
     tempGids++;
   }
 
-  normalizedImages = NULL;
+  CARD8 *normalizedImages = NULL;
 
   if (sizeImages > 0)
   {
@@ -2533,19 +2068,14 @@ void nxagentAddGlyphs(GlyphSetPtr glyphSet, Glyph *gids, xGlyphInfo *gi,
   }
 
   #ifdef DEBUG
-
   XSync(nxagentDisplay, 0);
-
   #endif
 }
 
 void nxagentFreeGlyphs(GlyphSetPtr glyphSet, CARD32 *gids, int nglyph)
 {
   GlyphRefPtr gr;
-  CARD32 *tempGids;
   Glyph  gid;
-
-  int i;
 
   if (glyphSet -> remoteID == 0)
   {
@@ -2564,9 +2094,9 @@ void nxagentFreeGlyphs(GlyphSetPtr glyphSet, CARD32 *gids, int nglyph)
    * they can be freed.
    */
 
-  tempGids = gids;
+  CARD32 *tempGids = gids;
 
-  for (i = 0; i < nglyph; i++)
+  for (int i = 0; i < nglyph; i++)
   {
     gid = (Glyph)*tempGids;
 
@@ -2594,7 +2124,6 @@ FIXME: Is this useful or just a waste of bandwidth?
        Apparently useless with QT.
 */
   #ifndef SKIP_LOUSY_RENDER_OPERATIONS
-
   XRenderSetPictureTransform(nxagentDisplay,
                                  nxagentPicturePriv(pPicture) -> picture,
                                      (XTransform *) transform);
@@ -2629,7 +2158,6 @@ FIXME: Is this useful or just a waste of bandwidth?
        Apparently useless with QT.
 */
   #ifndef SKIP_LOUSY_RENDER_OPERATIONS
-
   XRenderSetPictureFilter(nxagentDisplay,
                           nxagentPicturePriv(pPicture) -> picture,
                           szFilter,
@@ -2644,7 +2172,6 @@ FIXME: Is this useful or just a waste of bandwidth?
 Bool nxagentPictureInit(ScreenPtr pScreen, PictFormatPtr formats, int nformats)
 {
   #ifdef RENDER
-
   #ifdef DEBUG
   fprintf(stderr, "nxagentPictureInit: Screen [%p].\n", (void *) pScreen);
   #endif
@@ -2659,20 +2186,17 @@ Bool nxagentPictureInit(ScreenPtr pScreen, PictFormatPtr formats, int nformats)
   nxagentPicturePrivateIndex = AllocatePicturePrivateIndex();
 
   AllocatePicturePrivate(pScreen, nxagentPicturePrivateIndex, sizeof(nxagentPrivPictureRec));
-
   #endif
 
   return TRUE;
 }
 
-#ifdef DEBUG
-
 static void nxagentPrintFormat(XRenderPictFormat *pFormat)
 {
+#ifdef DEBUG
   if (pFormat == NULL)
   {
     fprintf(stderr, "nxagentPrintFormat: WARNING! null pointer passed to function.\n");
-
     return;
   }
 
@@ -2698,16 +2222,11 @@ static void nxagentPrintFormat(XRenderPictFormat *pFormat)
                    pFormat -> direct.blueMask,
                    pFormat -> direct.alpha,
                    pFormat -> direct.alphaMask);
-}
-
 #endif
+}
 
 Bool nxagentFillGlyphSet(GlyphSetPtr pGly)
 {
-  GlyphPtr    glyph;
-
-  int i;
-
   #ifdef DEBUG
   fprintf(stderr, "nxagentFillGlyphSet: GlyphSet at [%p] Refcount [%ld] Glyphs [%ld] "
               "Format [%p] FDepth [%d] RemoteID [%ld].\n", (void *) pGly, pGly -> refcnt,
@@ -2721,9 +2240,9 @@ Bool nxagentFillGlyphSet(GlyphSetPtr pGly)
    * corrupted the glyphs for each glyphset.
    */
 
-  for (i = 0; i < pGly -> hash.hashSet -> size; i++)
+  for (int i = 0; i < pGly -> hash.hashSet -> size; i++)
   {
-    glyph = pGly -> hash.table[i].glyph;
+    GlyphPtr glyph = pGly -> hash.table[i].glyph;
 
     if (glyph && (glyph != DeletedGlyph))
     {
@@ -2738,12 +2257,11 @@ void nxagentReconnectGlyphSet(void* p0, XID x1, void *p2)
 {
   GlyphSetPtr pGly = (GlyphSetPtr) p0;
 
-  XRenderPictFormat *pForm = NULL;
-
-  int i;
-
   if (nxagentReconnectTrap == 0)
   {
+    int i;
+    XRenderPictFormat *pForm = NULL;
+
     #ifdef DEBUG
     fprintf(stderr, "nxagentReconnectGlyphSet: GlyphSet at [%p].\n", (void *) pGly);
     #endif
@@ -2770,9 +2288,7 @@ void nxagentReconnectGlyphSet(void* p0, XID x1, void *p2)
     }
 
     #ifdef DEBUG
-
     XSync(nxagentDisplay, 0);
-
     #endif
 
     nxagentFillGlyphSet(pGly);
@@ -2786,7 +2302,6 @@ void nxagentReconnectGlyphSet(void* p0, XID x1, void *p2)
 Bool nxagentReconnectAllGlyphSet(void *p)
 {
   Bool success = True;
-  int i;
 
   nxagentQueryFormats();
 
@@ -2794,7 +2309,7 @@ Bool nxagentReconnectAllGlyphSet(void *p)
   fprintf(stderr, "nxagentReconnectAllGlyphSet\n");
   #endif
 
-  for (i = 0; (i < MAXCLIENTS) && (success); i++)
+  for (int i = 0; (i < MAXCLIENTS) && (success); i++)
   {
     if (clients[i])
     {
@@ -2812,7 +2327,6 @@ void nxagentReconnectPicture(void * p0, XID x1, void *p2)
   unsigned long mask = 0;
 
   XRenderPictureAttributes attributes;
-  XRenderPictFormat        *pForm;
 
   #ifdef TEST
   fprintf(stderr, "nxagentReconnectPicture: Called with bool [%d] and picture at [%p].\n",
@@ -2835,9 +2349,8 @@ void nxagentReconnectPicture(void * p0, XID x1, void *p2)
 
   if (pPicture -> repeat)
   {
-    mask |= CPRepeat;
-
     attributes.repeat = (Bool) pPicture -> repeat;
+    mask |= CPRepeat;
   }
 
   if (pPicture -> alphaMap)
@@ -2855,48 +2368,36 @@ void nxagentReconnectPicture(void * p0, XID x1, void *p2)
     attributes.alpha_map = nxagentPicture(pPicture -> alphaMap);
     attributes.alpha_x_origin = pPicture -> alphaOrigin.x;
     attributes.alpha_y_origin = pPicture -> alphaOrigin.y;
-
     mask |= (CPAlphaMap | CPAlphaXOrigin | CPAlphaYOrigin);
   }
 
   if (pPicture -> graphicsExposures)
   {
     attributes.graphics_exposures = pPicture -> graphicsExposures;
-
     mask |= CPGraphicsExposure;
   }
 
   attributes.subwindow_mode = pPicture -> subWindowMode;
-
   mask |= CPSubwindowMode;
 
   attributes.poly_edge = pPicture -> polyEdge;
-
   mask |= CPPolyEdge;
 
   attributes.poly_mode = pPicture -> polyMode;
-
   mask |= CPPolyMode;
 
   attributes.dither = pPicture -> dither;
-
   mask |= CPDither;
 
   attributes.component_alpha = pPicture -> componentAlpha;
-
   mask |= CPComponentAlpha;
 
-  pForm = NULL;
+  XRenderPictFormat *pForm = NULL;
 
   if (pPicture -> pFormat)
   {
     pForm = nxagentMatchingFormats(pPicture -> pFormat);
-
-    #ifdef DEBUG
-
     nxagentPrintFormat(pForm);
-
-    #endif
   }
 
   if (!pForm && pPicture->pSourcePict)
@@ -2927,9 +2428,7 @@ void nxagentReconnectPicture(void * p0, XID x1, void *p2)
                                                   &attributes);
 
   #ifdef TEST
-
   XSync(nxagentDisplay, 0);
-
   #endif
 
   #ifdef TEST
@@ -2953,27 +2452,24 @@ void nxagentReconnectPicture(void * p0, XID x1, void *p2)
 
 Bool nxagentReconnectAllPicture(void *p)
 {
-  int i;
-  Bool r;
+  Bool r = True;
 
   #ifdef TEST
   fprintf(stderr, "nxagentReconnectAllPicture: Going to recreate all pictures.\n");
   #endif
 
-  for (i = 0, r = True; i < MAXCLIENTS; i++)
+  for (int i = 0; i < MAXCLIENTS; i++)
   {
     if (clients[i])
     {
       FindClientResourcesByType(clients[i], PictureType, nxagentReconnectPicture, &r);
 
       #ifdef WARNING
-
       if (!r)
       {
         fprintf(stderr, "nxagentReconnectAllPicture: WARNING! Failed to recreate "
                     "picture for client [%d].\n", i);
       }
-
       #endif
     }
   }
@@ -3009,27 +2505,24 @@ void nxagentDisconnectPicture(void * p0, XID x1, void* p2)
 
 Bool nxagentDisconnectAllPicture(void)
 {
-  int i;
-  Bool r;
+  Bool r = True;
 
   #ifdef DEBUG
   fprintf(stderr, "nxagentDisconnectAllPicture.\n");
   #endif
 
-  for (i = 0, r = True; i < MAXCLIENTS; i++)
+  for (int i = 0; i < MAXCLIENTS; i++)
   {
     if (clients[i])
     {
       FindClientResourcesByType(clients[i], PictureType, nxagentDisconnectPicture, &r);
 
       #ifdef WARNING
-
       if (!r)
       {
         fprintf(stderr, "nxagentDisconnectAllPicture: WARNING! Failed to disconnect "
                     "picture for client [%d].\n", i);
       }
-
       #endif
     }
   }
@@ -3039,15 +2532,12 @@ Bool nxagentDisconnectAllPicture(void)
 
 void nxagentRenderCreateSolidFill(PicturePtr pPicture, xRenderColor *color)
 {
-  Picture id;
-
   if (nxagentRenderEnable == False)
   {
     return;
   }
 
   #ifdef DEBUG
-
   fprintf(stderr, "nxagentRenderCreateSolidFill: Got called.\n");
 
   if (pPicture == NULL)
@@ -3059,13 +2549,12 @@ void nxagentRenderCreateSolidFill(PicturePtr pPicture, xRenderColor *color)
   {
     fprintf(stderr, "nxagentRenderCreateSolidFill: WARNING! color pointer is NULL.\n");
   }
-
   #endif /* #ifdef DEBUG */
 
   memset(&(nxagentPicturePriv(pPicture) -> lastServerValues), 0,
              sizeof(XRenderPictureAttributes_));
 
-  id = XRenderCreateSolidFill(nxagentDisplay, (XRenderColor *) color);
+  Picture id = XRenderCreateSolidFill(nxagentDisplay, (XRenderColor *) color);
 
   #ifdef DEBUG
   XSync(nxagentDisplay, 0);
@@ -3083,17 +2572,12 @@ void nxagentRenderCreateLinearGradient(PicturePtr pPicture, xPointFixed *p1,
                                                xFixed *stops,
                                                    xRenderColor *colors)
 {
-  Picture id;
-
-  XLinearGradient linearGradient;
-
   if (nxagentRenderEnable == False)
   {
     return;
   }
 
   #ifdef DEBUG
-
   fprintf(stderr, "nxagentRenderCreateLinearGradient: Got called.\n");
 
   if (pPicture == NULL)
@@ -3120,20 +2604,21 @@ void nxagentRenderCreateLinearGradient(PicturePtr pPicture, xPointFixed *p1,
   {
     fprintf(stderr, "nxagentRenderCreateLinearGradient: WARNING! colors pointer is NULL.\n");
   }
-
   #endif /* #ifdef DEBUG */
 
   memset(&(nxagentPicturePriv(pPicture) -> lastServerValues), 0,
              sizeof(XRenderPictureAttributes_));
+
+  XLinearGradient linearGradient;
 
   linearGradient.p1.x = (XFixed) p1 -> x;
   linearGradient.p1.y = (XFixed) p1 -> y;
   linearGradient.p2.x = (XFixed) p2 -> x;
   linearGradient.p2.y = (XFixed) p2 -> y;
 
-  id = XRenderCreateLinearGradient(nxagentDisplay, &linearGradient,
-                                      (XFixed *) stops,
-                                          (XRenderColor *) colors, nStops);
+  Picture id = XRenderCreateLinearGradient(nxagentDisplay, &linearGradient,
+                                              (XFixed *) stops,
+                                                  (XRenderColor *) colors, nStops);
 
   #ifdef DEBUG
   XSync(nxagentDisplay, 0);
@@ -3154,17 +2639,12 @@ void nxagentRenderCreateRadialGradient(PicturePtr pPicture, xPointFixed *inner,
                                                            xFixed *stops,
                                                                xRenderColor *colors)
 {
-  Picture id;
-
-  XRadialGradient radialGradient;
-
   if (nxagentRenderEnable == False)
   {
     return;
   }
 
   #ifdef DEBUG
-
   fprintf(stderr, "nxagentRenderCreateRadialGradient: Got called.\n");
 
   if (pPicture == NULL)
@@ -3191,11 +2671,12 @@ void nxagentRenderCreateRadialGradient(PicturePtr pPicture, xPointFixed *inner,
   {
     fprintf(stderr, "nxagentRenderCreateRadialGradient: WARNING! colors pointer is NULL.\n");
   }
-
   #endif /* #ifdef DEBUG */
 
   memset(&(nxagentPicturePriv(pPicture) -> lastServerValues), 0,
                sizeof(XRenderPictureAttributes_));
+
+  XRadialGradient radialGradient;
 
   radialGradient.inner.x = (XFixed) inner -> x;
   radialGradient.inner.y = (XFixed) inner -> y;
@@ -3204,7 +2685,7 @@ void nxagentRenderCreateRadialGradient(PicturePtr pPicture, xPointFixed *inner,
   radialGradient.outer.y = (XFixed) outer -> y;
   radialGradient.outer.radius = (XFixed) outerRadius;
 
-  id = XRenderCreateRadialGradient(nxagentDisplay, &radialGradient,
+  Picture id = XRenderCreateRadialGradient(nxagentDisplay, &radialGradient,
                                        (XFixed *) stops,
                                            (XRenderColor *) colors, nStops);
 
@@ -3225,17 +2706,12 @@ void nxagentRenderCreateConicalGradient(PicturePtr pPicture,
                                                     xFixed *stops, 
                                                         xRenderColor *colors)
 {
-  Picture id;
-
-  XConicalGradient conicalGradient;
-
   if (nxagentRenderEnable == False)
   {
     return;
   }
 
   #ifdef DEBUG
-
   fprintf(stderr, "nxagentRenderCreateConicalGradient: Got called.\n");
 
   if (pPicture == NULL)
@@ -3257,19 +2733,20 @@ void nxagentRenderCreateConicalGradient(PicturePtr pPicture,
   {
     fprintf(stderr, "nxagentRenderCreateConicalGradient: WARNING! colors pointer is NULL.\n");
   }
-
   #endif /* #ifdef DEBUG */
 
   memset(&(nxagentPicturePriv(pPicture) -> lastServerValues), 0,
              sizeof(XRenderPictureAttributes_));
 
+  XConicalGradient conicalGradient;
+
   conicalGradient.center.x = (XFixed) center -> x;
   conicalGradient.center.y = (XFixed) center -> y;
   conicalGradient.angle = (XFixed) angle;
 
-  id = XRenderCreateConicalGradient(nxagentDisplay, &conicalGradient,
-                                        (XFixed *) stops,
-                                            (XRenderColor *) colors, nStops);
+  Picture id = XRenderCreateConicalGradient(nxagentDisplay, &conicalGradient,
+                                                (XFixed *) stops,
+                                                    (XRenderColor *) colors, nStops);
 
   #ifdef DEBUG
   XSync(nxagentDisplay, 0);
@@ -3281,4 +2758,3 @@ void nxagentRenderCreateConicalGradient(PicturePtr pPicture,
 
   nxagentPicturePriv(pPicture) -> picture = id;
 }
-

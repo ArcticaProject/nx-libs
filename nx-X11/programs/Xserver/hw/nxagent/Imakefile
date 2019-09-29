@@ -203,18 +203,43 @@ INCLUDES = \
 
 ### NXAGENT Defines:
 #
-# NXAGENT_FONTCACHE_SIZE           Number of cache slots
-# NXAGENT_SHAPE	                   Old shape code
-# NXAGENT_GLYPHCACHE
-# NXAGENT_GLYPHCACHE_SIZE          Slots for glyph cache
-# NXAGENT_SHAPE2 	           New shape code
-# NXAGENT_FIXKEYS     	           Force the release of pressed key when losing focus
-# NXAGENT_EXPOSURES                Manage expose events
+# NXAGENT_SHAPE                    Old shape code
+# NXAGENT_SHAPE2                   New shape code
+# NXAGENT_FIXKEYS                  Force the release of pressed key when losing focus
 # NXAGENT_CLIPBOARD                Enables clipboard cut and paste function between X servers.
-# NXAGENT_FONTEXCLUDE              Exclude some specific font names (only "-ult1mo" at this moment).
-# NXAGENT FULLSCREEN               Fullscreen mode
-# NXAGENT_RANDR_MODE_PREFIX        Use prefixed (i.e., nx_<x>x<y>) RandR modes
+# NXAGENT_RANDR_MODE_PREFIX        Prefix for RandR modes (i.e., nx_<x>x<y>) (default: nx_)
 # NXAGENT_RANDR_XINERAMA_CLIPPING  cut off invisible window parts in xinerama mode (you probably do not want this)
+# NXAGENT_TIMESTAMP                print duration for some routines
+#
+### macros not investigated yet:
+#
+# NXAGENT_PICTURE_ALWAYS_POINTS_TO_VIRTUAL
+# NXAGENT_RENDER_CLEANUP
+# NXAGENT_WAKEUP=<milliseconds>
+# NXAGENT_ONSTART
+# NXAGENT_SPLASH
+# NXAGENT_ARTSD
+#
+### Debug macros:
+#
+# DEBUG_COLORMAP
+# DEBUG_TREE
+# NXAGENT_DEBUG
+# NXAGENT_FIXKEYS_DEBUG
+# NXAGENT_FONTCACHE_DEBUG
+# NXAGENT_FONTMATCH_DEBUG
+# NXAGENT_LOGO_DEBUG
+# NXAGENT_RECONNECT_COLORMAP_DEBUG
+# NXAGENT_RECONNECT_CURSOR_DEBUG
+# NXAGENT_RECONNECT_DEBUG
+# NXAGENT_RECONNECT_DISPLAY_DEBUG
+# NXAGENT_RECONNECT_FONT_DEBUG
+# NXAGENT_RECONNECT_PICTFORMAT_DEBUG
+# NXAGENT_RECONNECT_PICTURE_DEBUG
+# NXAGENT_RECONNECT_SCREEN_DEBUG
+# NXAGENT_RECONNECT_WINDOW_DEBUG
+# NXAGENT_XKBD_DEBUG
+# NX_DEBUG_INPUT
 
 #if nxVersion
 NX_DEFINES = \
@@ -224,34 +249,26 @@ NX_DEFINES = \
 #endif
 
 DEFINES = \
-	-g $(OS_DEFINES) $(EXT_DEFINES) $(NX_DEFINES) \
+        -g $(OS_DEFINES) $(EXT_DEFINES) $(NX_DEFINES) \
         -UXF86VIDMODE -UXFreeXDGA -UXF86MISC -UXF86DRI \
         -DNXAGENT_SERVER \
-        -DNXAGENT_CONSTRAINCURSOR \
-        -DNXAGENT_FONTCACHE_SIZE=50 \
-        -DNXAGENT_GLYPHCACHE -DNXAGENT_GLYPHCACHE_SIZE=50 \
         -DNXAGENT_RENDER_CLEANUP \
         -DNXAGENT_SHAPE2 \
         -DNXAGENT_FIXKEYS \
         -DNXAGENT_CLIPBOARD \
-        -DNXAGENT_EXPOSURES \
-        -DNXAGENT_FONTEXCLUDE \
-        -DNXAGENT_PACKEDIMAGES \
-        -DNXAGENT_VISIBILITY \
         -DNXAGENT_WAKEUP=1000 \
         -DNXAGENT_ONSTART \
         -DNXAGENT_ARTSD \
-        -DNXAGENT_RANDR_MODE_PREFIX \
         -UNX_DEBUG_INPUT \
-	-DRANDR_10_INTERFACE=1 \
-	-DRANDR_12_INTERFACE=1 \
-	-DRANDR_13_INTERFACE=1 \
-	-DRANDR_14_INTERFACE=1 \
-	-DRANDR_15_INTERFACE=1 \
+        -DRANDR_10_INTERFACE=1 \
+        -DRANDR_12_INTERFACE=1 \
+        -DRANDR_13_INTERFACE=1 \
+        -DRANDR_14_INTERFACE=1 \
+        -DRANDR_15_INTERFACE=1 \
         -DPANORAMIX \
         -UDEBUG_TREE \
         -DSYSTEMFONTDIR=\"$(SYSTEMFONTDIR)\" \
-	$(NULL)
+        $(NULL)
 
 all:: $(OBJS)
 

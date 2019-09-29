@@ -345,7 +345,7 @@ void nxagentRemoteWindowID(Window window, Bool newline)
     XTextProperty tp;
 #endif
 
-  fprintf(stderr, "0x%lx", window);
+  fprintf(stderr, "0x%x", window);
 
   if (!window)
   {
@@ -372,23 +372,21 @@ void nxagentRemoteWindowID(Window window, Bool newline)
 
 #else
 
-    if (XGetWMName(nxagentDisplay, window, &tp) != 0)
+    if (XGetWMName(nxagentDisplay, window, &tp) == 0)
     {
       fprintf(stderr, " (has no name) ");
     }
     else if (tp.nitems > 0)
     {
-      int count = 0;
-      int i, ret;
-      char **list = NULL;
-
       fprintf(stderr, " \"");
 
-      ret = XmbTextPropertyToTextList(nxagentDisplay, &tp, &list, &count);
+      int count = 0;
+      char **list = NULL;
+      int ret = XmbTextPropertyToTextList(nxagentDisplay, &tp, &list, &count);
 
       if ((ret == Success || ret > 0) && list != NULL)
       {
-        for (i = 0; i < count; i++)
+        for (int i = 0; i < count; i++)
         {
           fprintf(stderr, "%s", list[i]);
         }
@@ -426,20 +424,14 @@ void nxagentRemoteWindowID(Window window, Bool newline)
 void nxagentRemoteWindowInfo(Window win, int indent, Bool newLine)
 {
   XWindowAttributes attributes;
-  int i;
 
   if (XGetWindowAttributes(nxagentDisplay, win, &attributes) == 0)
   {
     return;
   }
 
-  for (i = 0; i < indent; i++)
-  {
-    fprintf(stderr, " ");
-  }
-
-  fprintf(stderr, "x=%d y=%d width=%d height=%d class=%s map_state=%s "
-             "override_redirect=%s\n", attributes.x, attributes.y,
+  fprintf(stderr, "%*sx=%d y=%d width=%d height=%d class=%s map_state=%s "
+          "override_redirect=%s\n", indent, "", attributes.x, attributes.y,
                  attributes.width, attributes.height,
                      (attributes.class == 0) ? "CopyFromParent" :
                      ((attributes.class == 1) ? "InputOutput" : "InputOnly"),
@@ -456,14 +448,25 @@ void nxagentRemoteWindowInfo(Window win, int indent, Bool newLine)
 }
 
 
-#ifdef DEBUG_TREE
 /*
  * Walk remote windows tree.
+ *
+ * FIXME:
+ * ========== nxagentRemoteWindowsTree ============
+ *
+ *   Root Window ID: 0x169 (the root window)  (has no name)
+ *   Parent window ID: 0x2a00063 "NX Agent"
+ *      0 children.
+ *
+ * ========== nxagentInternalWindowsTree ==========
+ * Window ID=[0x9d] Remote ID=[0x2a0007e] Name: ( has no name )
+ * x=0 y=0 width=1440 height=810 class=InputOutput map_state=IsViewable override_redirect=No
+ *
+ * -> Internal root window's remote id is not listed in RemoteWindowsTree.
  */
 
 void nxagentRemoteWindowsTree(Window window, int level)
 {
-  int i, j;
   unsigned long rootWin, parentWin;
   unsigned int numChildren;
   unsigned long *childList = NULL;
@@ -488,25 +491,15 @@ void nxagentRemoteWindowsTree(Window window, int level)
 
   if (level == 0 || numChildren > 0)
   {
-    fprintf(stderr, "     ");
-
-    for (j = 0; j < level; j++)
-    {
-      fprintf(stderr, "    ");
-    }
+    fprintf(stderr, "%*s", (level * 4) + 5, ""); /* 4 spaces per level */
 
     fprintf(stderr, "%d child%s%s\n", numChildren, (numChildren == 1) ? "" :
                "ren", (numChildren == 1) ? ":" : ".");
   }
 
-  for (i = (int) numChildren - 1; i >= 0; i--)
+  for (int i = (int) numChildren - 1; i >= 0; i--)
   {
-    fprintf(stderr, "      ");
-
-    for (j = 0; j < level; j++)
-    {
-      fprintf(stderr, "     ");
-    }
+    fprintf(stderr, "%*s", (level * 5) + 6, ""); /* 5 spaces per level */
 
     nxagentRemoteWindowID(childList[i], TRUE);
 
@@ -515,9 +508,8 @@ void nxagentRemoteWindowsTree(Window window, int level)
     nxagentRemoteWindowsTree(childList[i], level + 1);
   }
 
-  SAFE_XFree((char *) childList);
+  SAFE_XFree(childList);
 }
-#endif
 
 /*
  * Print info about internal window.
@@ -525,7 +517,6 @@ void nxagentRemoteWindowsTree(Window window, int level)
 
 void nxagentInternalWindowInfo(WindowPtr pWin, int indent, Bool newLine)
 {
-  int i;
   int result;
   unsigned long ulReturnItems;
   unsigned long ulReturnBytesLeft;
@@ -533,8 +524,8 @@ void nxagentInternalWindowInfo(WindowPtr pWin, int indent, Bool newLine)
   int           iReturnFormat;
   unsigned char *pszReturnData = NULL;
 
-  fprintf(stderr, "Window ID=[0x%lx] Remote ID=[0x%lx] ", pWin -> drawable.id,
-             nxagentWindow(pWin));
+  fprintf(stderr, "Window ID=[0x%x] %s Remote ID=[0x%x] ", pWin -> drawable.id,
+          pWin->parent ? "" : "(the root window)", nxagentWindow(pWin));
 
   result = GetWindowProperty(pWin, MakeAtom("WM_NAME", 7, False) , 0,
                                 sizeof(CARD32), False, AnyPropertyType,
@@ -546,22 +537,15 @@ void nxagentInternalWindowInfo(WindowPtr pWin, int indent, Bool newLine)
 
   if (result == Success && pszReturnData != NULL)
   {
-    pszReturnData[ulReturnItems] = '\0';
-
-    fprintf(stderr, "\"%s\"\n", (char *) pszReturnData);
+    fprintf(stderr, "\"%*.*s\"\n", (int)ulReturnItems, (int)ulReturnItems, (char *) pszReturnData);
   }
   else
   {
     fprintf(stderr, "%s\n", "( has no name )");
   }
 
-  for (i = 0; i < indent; i++)
-  {
-    fprintf(stderr, " ");
-  }
-
-  fprintf(stderr, "x=%d y=%d width=%d height=%d class=%s map_state=%s "
-             "override_redirect=%s", pWin -> drawable.x, pWin -> drawable.y,
+  fprintf(stderr, "%*sx=%d y=%d width=%d height=%d class=%s map_state=%s "
+          "override_redirect=%s", indent, "", pWin -> drawable.x, pWin -> drawable.y,
                  pWin -> drawable.width, pWin -> drawable.height,
                      (pWin -> drawable.class == 0) ? "CopyFromParent" :
                      ((pWin -> drawable.class == 1) ? "InputOutput" :
@@ -584,17 +568,11 @@ void nxagentInternalWindowInfo(WindowPtr pWin, int indent, Bool newLine)
 
 void nxagentInternalWindowsTree(WindowPtr pWin, int indent)
 {
-  WindowPtr pChild;
-  int i;
-
   while (pWin)
   {
-    pChild = pWin -> firstChild;
+    WindowPtr pChild = pWin -> firstChild;
 
-    for (i = 0; i < indent; i++)
-    {
-      fprintf(stderr, " ");
-    }
+    fprintf(stderr, "%*s", indent, "");
 
     nxagentInternalWindowInfo(pWin, indent, TRUE);
 
@@ -1025,7 +1003,7 @@ void nxagentDispatchEvents(PredicateFuncPtr predicate)
 
           case doDebugTree:
           {
-            fprintf(stderr, "\n ========== nxagentRemoteWindowsTree ==========\n");
+            fprintf(stderr, "\n========== nxagentRemoteWindowsTree ============\n");
             nxagentRemoteWindowsTree(nxagentWindow(screenInfo.screens[0]->root), 0);
 
             fprintf(stderr, "\n========== nxagentInternalWindowsTree ==========\n");
@@ -1228,9 +1206,9 @@ FIXME: Don't enqueue the KeyRelease event if the key was
           nxagentXkbNumTrap = 0;
         }
 
-	/* Calculate the time elapsed between this and the last event we
-	   received. Add this delta to time we recorded for the last
-	   KeyPress event we passed on to our clients.  */
+        /* Calculate the time elapsed between this and the last event we
+           received. Add this delta to time we recorded for the last
+           KeyPress event we passed on to our clients.  */
         memset(&x, 0, sizeof(xEvent));
         x.u.u.type = KeyRelease;
         x.u.u.detail = nxagentConvertKeycode(X.xkey.keycode);
@@ -1571,18 +1549,18 @@ FIXME: Don't enqueue the KeyRelease event if the key was
       {
         WindowPtr pWin;
 
-	#ifdef DEBUG
-	fprintf(stderr, "%s: Going to handle new FocusIn event [0x%x] mode: [%s]\n", __func__, X.xfocus.window, nxagentGetNotifyMode(X.xfocus.mode));
-	{
-	  XlibWindow w;
+        #ifdef DEBUG
+        fprintf(stderr, "%s: Going to handle new FocusIn event [0x%x] mode: [%s]\n", __func__, X.xfocus.window, nxagentGetNotifyMode(X.xfocus.mode));
+        {
+          XlibWindow w;
           int revert_to;
           XGetInputFocus(nxagentDisplay, &w, &revert_to);
-	  fprintf(stderr, "%s: (FocusIn): Event win [0x%x] Focus owner [0x%x] nxagentDefaultWindows[0] [0x%x]\n", __func__, X.xfocus.window, w, nxagentDefaultWindows[0]);
-	}
+          fprintf(stderr, "%s: (FocusIn): Event win [0x%x] Focus owner [0x%x] nxagentDefaultWindows[0] [0x%x]\n", __func__, X.xfocus.window, w, nxagentDefaultWindows[0]);
+        }
         #else
-	  #ifdef TEST
-	fprintf(stderr, "%s: Going to handle new FocusIn event\n", __func__);
-	  #endif
+          #ifdef TEST
+        fprintf(stderr, "%s: Going to handle new FocusIn event\n", __func__);
+          #endif
         #endif
 
         /*
@@ -1614,27 +1592,27 @@ FIXME: Don't enqueue the KeyRelease event if the key was
           {
             #if defined(DEBUG) || defined(DEBUG_AUTOGRAB)
             fprintf(stderr, "%s: (FocusIn): grabbing\n", __func__);
-	    #endif
+            #endif
             nxagentGrabPointerAndKeyboard(NULL);
           }
-	  /*	  else
+          /*      else
           {
             #if defined(DEBUG) || defined(DEBUG_AUTOGRAB)
             fprintf(stderr, "%s: (FocusIn): ungrabbing\n", __func__);
-	    #endif
+            #endif
             nxagentUngrabPointerAndKeyboard(NULL);
           }
-	  */
+          */
         }
         break;
       }
       case FocusOut:
       {
-	#ifdef DEBUG
-	fprintf(stderr, "%s: Going to handle new FocusOut event [0x%x] mode: [%s]\n", __func__, X.xfocus.window, nxagentGetNotifyMode(X.xfocus.mode));
-	#else
-	  #ifdef TEST
-	  fprintf(stderr, "%s: Going to handle new FocusOut event.\n", __func__);
+        #ifdef DEBUG
+        fprintf(stderr, "%s: Going to handle new FocusOut event [0x%x] mode: [%s]\n", __func__, X.xfocus.window, nxagentGetNotifyMode(X.xfocus.mode));
+        #else
+          #ifdef TEST
+          fprintf(stderr, "%s: Going to handle new FocusOut event.\n", __func__);
           #endif
         #endif
 
@@ -1655,22 +1633,14 @@ FIXME: Don't enqueue the KeyRelease event if the key was
            * Force the keys all up when focus is lost.
            */
 
-          int i, k;
-          int mask = 1;
-          CARD8 val;
-
-          XEvent xM;
-          memset(&xM, 0, sizeof(XEvent));
-
-          for (i = 0; i < DOWN_LENGTH; i++) /* input.h */
+          for (int i = 0; i < DOWN_LENGTH; i++) /* input.h */
           {
-            val = inputInfo.keyboard->key->down[i];
+            CARD8 val = inputInfo.keyboard->key->down[i];
 
             if (val != 0)
             {
-              for (k = 0; k < 8; k++)
+              for (int k = 0; k < 8; k++)
               {
-                if (val & (mask << k))
                 {
                   #ifdef NXAGENT_FIXKEYS_DEBUG
                   fprintf(stderr, "sending KeyRelease event for keycode: %x\n",
@@ -1687,6 +1657,9 @@ FIXME: Don't enqueue the KeyRelease event if the key was
 
                     if (nxagentOption(ViewOnly) == 0 && nxagentOption(Shadow))
                     {
+                      XEvent xM;
+
+                      memset(&xM, 0, sizeof(XEvent));
                       xM.type = KeyRelease;
                       xM.xkey.display = nxagentDisplay;
                       xM.xkey.type = KeyRelease;
@@ -2241,7 +2214,7 @@ FIXME: Don't enqueue the KeyRelease event if the key was
   /*
    * Handle the agent window's changes.
    */
-  
+
   if (closeSession)
   {
     if (nxagentOption(Persistent))
@@ -3230,12 +3203,10 @@ int nxagentCheckWindowConfiguration(XConfigureEvent* X)
 
   #ifdef TEST
   {
-    WindowPtr pSib;
-
     fprintf(stderr, "nxagentCheckWindowConfiguration: Before restacking top level window [%p]\n",
                 (void *) nxagentWindowPtr(X -> window));
 
-    for (pSib = screenInfo.screens[0]->root -> firstChild; pSib; pSib = pSib -> nextSib)
+    for (WindowPtr pSib = screenInfo.screens[0]->root -> firstChild; pSib; pSib = pSib -> nextSib)
     {
       fprintf(stderr, "nxagentCheckWindowConfiguration: Top level window: [%p].\n",
                   (void *) pSib);
@@ -3594,16 +3565,13 @@ int nxagentHandleReparentNotify(XEvent* X)
 
   if (nxagentOption(Rootless))
   {
-    WindowPtr pWin;
-
     XlibWindow w;
     XlibWindow root_return = 0;
     XlibWindow parent_return = 0;
     XlibWindow *children_return = NULL;
     unsigned int nchildren_return = 0;
     Status result;
-
-    pWin = nxagentWindowPtr(X -> xreparent.window);
+    WindowPtr pWin = nxagentWindowPtr(X -> xreparent.window);
 
     #ifdef TEST
 
@@ -3697,13 +3665,11 @@ int nxagentHandleReparentNotify(XEvent* X)
     XlibWindow junk;
     XlibWindow *childrenReturn = NULL;
     unsigned int nchildrenReturn = 0;
-    Status result;
     XWindowAttributes attributes;
     int x, y;
-    int xParent, yParent;
 
     /*
-     * Calculate the absolute upper-left X e Y 
+     * Calculate the absolute upper-left X e Y
      */
 
     if ((XGetWindowAttributes(nxagentDisplay, X -> xreparent.window,
@@ -3732,10 +3698,12 @@ int nxagentHandleReparentNotify(XEvent* X)
 
     if (w != DefaultRootWindow(nxagentDisplay))
     {
+      int xParent, yParent;
+
       do
       {
-        result = XQueryTree(nxagentDisplay, w, &rootReturn, &parentReturn,
-                                &childrenReturn, &nchildrenReturn);
+        Status result = XQueryTree(nxagentDisplay, w, &rootReturn, &parentReturn,
+                                       &childrenReturn, &nchildrenReturn);
 
         SAFE_XFree(childrenReturn);
 
@@ -3767,7 +3735,7 @@ int nxagentHandleReparentNotify(XEvent* X)
 
       /*
        * Difference between Absolute X and Parent X gives thickness of side frame.
-       * Difference between Absolute Y and Parent Y gives thickness of title bar. 
+       * Difference between Absolute Y and Parent Y gives thickness of title bar.
        */
 
       nxagentChangeOption(WMBorderWidth, (x - xParent));
@@ -3778,19 +3746,29 @@ int nxagentHandleReparentNotify(XEvent* X)
   return 1;
 }
 
+/*
+ * Helper for nxagent(Enable|Disable)(Keyboard|Pointer)Events
+ */
+static void nxagentSwitchEventsAllScreens(Mask mask, Bool enable)
+{
+  Mask newmask = nxagentGetDefaultEventMask();
+
+  if (enable)
+    newmask |= mask;
+  else
+    newmask &= ~mask;
+
+  nxagentSetDefaultEventMask(newmask);
+
+  for (int i = 0; i < nxagentNumScreens; i++)
+  {
+    XSelectInput(nxagentDisplay, nxagentDefaultWindows[i], newmask);
+  }
+}
+
 void nxagentEnableKeyboardEvents(void)
 {
-  int i;
-  Mask mask = nxagentGetDefaultEventMask();
-
-  mask |= NXAGENT_KEYBOARD_EVENT_MASK;
-
-  nxagentSetDefaultEventMask(mask);
-
-  for (i = 0; i < nxagentNumScreens; i++)
-  {
-    XSelectInput(nxagentDisplay, nxagentDefaultWindows[i], mask);
-  }
+  nxagentSwitchEventsAllScreens(NXAGENT_KEYBOARD_EVENT_MASK, True);
 
   XkbSelectEvents(nxagentDisplay, XkbUseCoreKbd,
                       NXAGENT_KEYBOARD_EXTENSION_EVENT_MASK,
@@ -3799,49 +3777,19 @@ void nxagentEnableKeyboardEvents(void)
 
 void nxagentDisableKeyboardEvents(void)
 {
-  int i;
-  Mask mask = nxagentGetDefaultEventMask();
-
-  mask &= ~NXAGENT_KEYBOARD_EVENT_MASK;
-
-  nxagentSetDefaultEventMask(mask);
-
-  for (i = 0; i < nxagentNumScreens; i++)
-  {
-    XSelectInput(nxagentDisplay, nxagentDefaultWindows[i], mask);
-  }
+  nxagentSwitchEventsAllScreens(NXAGENT_KEYBOARD_EVENT_MASK, False);
 
   XkbSelectEvents(nxagentDisplay, XkbUseCoreKbd, 0x0, 0x0);
 }
 
 void nxagentEnablePointerEvents(void)
 {
-  int i;
-  Mask mask = nxagentGetDefaultEventMask();
-
-  mask |= NXAGENT_POINTER_EVENT_MASK;
-
-  nxagentSetDefaultEventMask(mask);
-
-  for (i = 0; i < nxagentNumScreens; i++)
-  {
-    XSelectInput(nxagentDisplay, nxagentDefaultWindows[i], mask);
-  }
+  nxagentSwitchEventsAllScreens(NXAGENT_POINTER_EVENT_MASK, True);
 }
 
 void nxagentDisablePointerEvents(void)
 {
-  int i;
-  Mask mask = nxagentGetDefaultEventMask();
-
-  mask &= ~NXAGENT_POINTER_EVENT_MASK;
-
-  nxagentSetDefaultEventMask(mask);
-
-  for (i = 0; i < nxagentNumScreens; i++)
-  {
-    XSelectInput(nxagentDisplay, nxagentDefaultWindows[i], mask);
-  }
+  nxagentSwitchEventsAllScreens(NXAGENT_POINTER_EVENT_MASK, False);
 }
 
 void nxagentSendFakeKey(int key)
@@ -4104,9 +4052,7 @@ void nxagentHandleCollectPropertyEvent(XEvent *X)
   unsigned long ulReturnBytesLeft;
   unsigned char *pszReturnData = NULL;
   int result;
-  int resource;
-
-  resource = X -> xclient.data.l[1];
+  int resource = X -> xclient.data.l[1];
 
   if (X -> xclient.data.l[2] == False)
   {
@@ -4232,17 +4178,14 @@ void nxagentSynchronizeExpose(void)
 
 int nxagentLookupByWindow(WindowPtr pWin)
 {
-  int i;
-  int j;
-
-  for (j = 0; j < nxagentExposeQueue.length; j++)
+  for (int j = 0; j < nxagentExposeQueue.length; j++)
   {
-    i = (nxagentExposeQueue.start + j) % EXPOSED_SIZE;
+    int i = (nxagentExposeQueue.start + j) % EXPOSED_SIZE;
 
     if (nxagentExposeQueue.exposures[i].pWindow == pWin &&
             !nxagentExposeQueue.exposures[i].remoteRegionIsCompleted)
     {
-      return i; 
+      return i;
     }
   }
 
@@ -4251,28 +4194,18 @@ int nxagentLookupByWindow(WindowPtr pWin)
 
 void nxagentRemoveDuplicatedKeys(XEvent *X)
 {
-  _XQEvent *prev;
-  _XQEvent *qelt;
-
-  _XQEvent *qeltKeyRelease;
-  _XQEvent *prevKeyRelease;
+  _XQEvent *qelt = nxagentDisplay -> head;
 
   KeyCode lastKeycode = X -> xkey.keycode;
-
-  qelt = nxagentDisplay -> head;
 
   if (qelt == NULL)
   {
     #ifdef TEST
 
-    int more;
-
     fprintf(stderr, "nxagentRemoveDuplicatedKeys: Trying to read more events "
                 "from the X server.\n");
 
-    more = nxagentReadEvents(nxagentDisplay);
-
-    if (more > 0)
+    if (nxagentReadEvents(nxagentDisplay) > 0)
     {
       fprintf(stderr, "nxagentRemoveDuplicatedKeys: Successfully read more events "
                   "from the X server.\n");
@@ -4289,6 +4222,10 @@ void nxagentRemoveDuplicatedKeys(XEvent *X)
 
   if (qelt != NULL)
   {
+    _XQEvent *prev;
+    _XQEvent *qeltKeyRelease;
+    _XQEvent *prevKeyRelease;
+
     prev = qeltKeyRelease = prevKeyRelease = NULL;
 
     LockDisplay(nxagentDisplay);
@@ -4391,23 +4328,18 @@ void nxagentAddRectToRemoteExposeRegion(BoxPtr rect)
 
 int nxagentClipAndSendExpose(WindowPtr pWin, void * ptr)
 {
-  RegionPtr exposeRgn;
-  RegionPtr remoteExposeRgn;
+  RegionPtr remoteExposeRgn = (RegionRec *) ptr;
 
   #ifdef DEBUG
-  BoxRec box;
-
   fprintf(stderr, "nxagentClipAndSendExpose: Called.\n");
   #endif
 
-  remoteExposeRgn = (RegionRec *) ptr;
-
   if (pWin -> drawable.class != InputOnly)
   {
-    exposeRgn = RegionCreate(NULL, 1);
+    RegionPtr exposeRgn = RegionCreate(NULL, 1);
 
     #ifdef DEBUG
-    box = *RegionExtents(remoteExposeRgn);
+    BoxRec box = *RegionExtents(remoteExposeRgn);
 
     fprintf(stderr, "nxagentClipAndSendExpose: Root expose extents: [%d] [%d] [%d] [%d].\n",
                 box.x1, box.y1, box.x2, box.y2);
@@ -4526,13 +4458,11 @@ int nxagentUserInput(void *p)
 
 int nxagentHandleRRScreenChangeNotify(XEvent *X)
 {
-  XRRScreenChangeNotifyEvent *Xr;
+  XRRScreenChangeNotifyEvent *Xr = (XRRScreenChangeNotifyEvent *) X;
 
   #ifdef DEBUG
   fprintf(stderr, "nxagentHandleRRScreenChangeNotify called.\n");
   #endif
-
-  Xr = (XRRScreenChangeNotifyEvent *) X;
 
   nxagentResizeScreen(screenInfo.screens[DefaultScreen(nxagentDisplay)], Xr -> width, Xr -> height,
                           Xr -> mwidth, Xr -> mheight);
@@ -4576,12 +4506,9 @@ int nxagentPendingEvents(Display *dpy)
   }
   else
   {
-    int result;
     int readable;
 
-    result = NXTransReadable(dpy -> fd, &readable);
-
-    if (result == 0)
+    if (NXTransReadable(dpy -> fd, &readable) == 0)
     {
       if (readable > 0)
       {
@@ -4669,11 +4596,6 @@ int nxagentWaitEvents(Display *dpy, useconds_t msec)
 
 #ifdef NX_DEBUG_INPUT
 
-void nxagentDumpInputInfo(void)
-{
-  fprintf(stderr, "Dumping input info ON.\n");
-}
-
 void nxagentGuessDumpInputInfo(ClientPtr client, Atom property, char *data)
 {
   if (strcmp(validateString(NameForAtom(property)), "NX_DEBUG_INPUT") == 0)
@@ -4731,9 +4653,6 @@ static const char *nxagentGrabStateToString(int state)
 
 void nxagentDumpInputDevicesState(void)
 {
-  int i, k;
-  int mask = 1;
-  CARD8 val;
   DeviceIntPtr dev;
   GrabPtr grab;
   WindowPtr pWin = NULL;
@@ -4743,15 +4662,15 @@ void nxagentDumpInputDevicesState(void)
 
   dev = inputInfo.keyboard;
 
-  for (i = 0; i < DOWN_LENGTH; i++)
+  for (int i = 0; i < DOWN_LENGTH; i++)
   {
-    val = dev -> key -> down[i];
+    CARD8 val = dev -> key -> down[i];
 
     if (val != 0)
     {
-      for (k = 0; k < 8; k++)
+      for (int k = 0; k < 8; k++)
       {
-        if (val & (mask << k))
+        if (val & (1 << k))
         {
           fprintf(stderr, "\n\t[%d] [%s]", i * 8 + k,
                       XKeysymToString(XKeycodeToKeysym(nxagentDisplay, i * 8 + k, 0)));
@@ -4804,15 +4723,15 @@ void nxagentDumpInputDevicesState(void)
 
   dev = inputInfo.pointer;
 
-  for (i = 0; i < DOWN_LENGTH; i++)
+  for (int i = 0; i < DOWN_LENGTH; i++)
   {
-    val = dev -> button -> down[i];
+    CARD8 val = dev -> button -> down[i];
 
     if (val != 0)
     {
-      for (k = 0; k < 8; k++)
+      for (int k = 0; k < 8; k++)
       {
-        if (val & (mask << k))
+        if (val & (1 << k))
         {
           fprintf(stderr, "\n\t[%d]", i * 8 + k);
         }

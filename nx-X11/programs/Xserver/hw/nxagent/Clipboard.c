@@ -74,9 +74,9 @@ Atom serverCutProperty;
 Atom clientCutProperty;
 static Window serverWindow;
 
-static const int nxagentPrimarySelection = 0;
-static const int nxagentClipboardSelection = 1;
-static const int nxagentMaxSelections = 2;
+const int nxagentPrimarySelection = 0;
+const int nxagentClipboardSelection = 1;
+const int nxagentMaxSelections = 2;
 
 typedef struct _SelectionOwner
 {
@@ -217,7 +217,7 @@ void nxagentPrintSelectionStat(int sel)
 {
   SelectionOwner lOwner = lastSelectionOwner[sel];
   Selection curSel = CurrentSelections[sel];
-  char *s =NULL;
+  char *s = NULL;
 
 #ifdef CLIENTIDS
   fprintf(stderr, "  lastSelectionOwner[].client            [%p] index [%d] PID [%d] Cmd [%s]\n",
@@ -304,8 +304,8 @@ void nxagentPrintClipboardStat(char *header)
   fprintf(stderr, "  lastClientProperty              (Atom) [% 4d][%s]\n", lastClientProperty, NameForAtom(lastClientProperty));
   fprintf(stderr, "  lastClientSelection             (Atom) [% 4d][%s]\n", lastClientSelection, NameForAtom(lastClientSelection));
   fprintf(stderr, "  lastClientTarget                (Atom) [% 4d][%s]\n", lastClientTarget, NameForAtom(lastClientTarget));
-  fprintf(stderr, "  lastClientTime                  (Time) [%u]\n", lastServerTime);
-  fprintf(stderr, "  lastClientReqTime               (Time) [%u]\n", lastServerReqTime);
+  fprintf(stderr, "  lastClientTime                  (Time) [%u]\n", lastClientTime);
+  fprintf(stderr, "  lastClientReqTime               (Time) [%u]\n", lastClientReqTime);
   fprintf(stderr, "  lastClientPropertySize (unsigned long) [%lu]\n", lastClientPropertySize);
   fprintf(stderr, "  lastClientStage (ClientSelectionStage) [%d][%s]\n", lastClientStage, GetClientSelectionStageString(lastClientStage));
 
@@ -617,7 +617,7 @@ FIXME: Do we need this?
     }
     else
     {
-      if (lastSelectionOwner[i].client != NULL && 
+      if (lastSelectionOwner[i].client != NULL &&
              nxagentOption(Clipboard) != ClipboardClient)
       {
         xEvent x;
@@ -913,7 +913,7 @@ void nxagentCollectPropertyEvent(int resource)
     SAFE_XFree(pszReturnData);
     return;
   }
- 
+
   if (resultFormat != 8 && resultFormat != 16 && resultFormat != 32)
   {
     #ifdef DEBUG
@@ -1571,10 +1571,10 @@ int nxagentConvertSelection(ClientPtr client, WindowPtr pWin, Atom selection,
       x.u.selectionNotify.selection = selection;
       x.u.selectionNotify.target = target;
       x.u.selectionNotify.property = property;
-  
+
       (void) TryClientEvents(client, &x, 1, NoEventMask,
                              NoEventMask , NullGrab);
-  
+
       return 1;
 
     }
