@@ -420,8 +420,6 @@ Window nxagentCreateIconWindow(void)
 {
   XSetWindowAttributes attributes;
   unsigned long valuemask;
-  char* window_name;
-  XTextProperty windowName;
   XSizeHints* sizeHints;
   XWMHints* wmHints;
   Window w;
@@ -460,9 +458,6 @@ Window nxagentCreateIconWindow(void)
    *  Set hints to the window manager for the icon window.
    */
 
-  window_name = nxagentWindowName;
-  XStringListToTextProperty(&window_name, 1, &windowName);
-
   if ((sizeHints = XAllocSizeHints()))
   {
     sizeHints->flags = PMinSize | PMaxSize;
@@ -486,6 +481,8 @@ Window nxagentCreateIconWindow(void)
       wmHints->flags = StateHint | IconPixmapHint;
     }
   }
+
+  char *window_name = nxagentWindowName;
 
   Xutf8SetWMProperties(nxagentDisplay, w,
                       window_name, window_name,
