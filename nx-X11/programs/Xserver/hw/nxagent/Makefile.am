@@ -146,7 +146,7 @@ nxagent_LDFLAGS = -Wl,-zmuldefs -rpath '$(libdir)/nx/X11'
 #
 # NXAGENT_SHAPE                    Old shape code
 # NXAGENT_SHAPE2                   New shape code
-# NXAGENT_FIXKEYS                  Force the release of pressed key when loosing focus
+# NXAGENT_FIXKEYS                  Force the release of pressed key when losing focus
 # NXAGENT_CLIPBOARD                Enables clipboard cut and paste function between X servers.
 # NXAGENT_RANDR_MODE_PREFIX        Use prefix for RandR modes (i.e., nx_<x>x<y>)
 # NXAGENT_RANDR_XINERAMA_CLIPPING  cut off invisible window parts in xinerama mode (you probably do not want this)
