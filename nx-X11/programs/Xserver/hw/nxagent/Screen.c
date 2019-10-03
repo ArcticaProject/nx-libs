@@ -418,27 +418,23 @@ FIXME: We'll check for ReparentNotify and LeaveNotify events after
 
 Window nxagentCreateIconWindow(void)
 {
-  XSetWindowAttributes attributes;
-  unsigned long valuemask;
-  XSizeHints* sizeHints;
-  XWMHints* wmHints;
-  Window w;
-  Mask mask;
-
   /*
    * Create icon window.
    */
 
-  attributes.override_redirect = False;
-  attributes.colormap = DefaultColormap(nxagentDisplay, DefaultScreen(nxagentDisplay));
-  attributes.background_pixmap = nxagentScreenSaverPixmap;
-  valuemask = CWOverrideRedirect | CWBackPixmap | CWColormap;
+  XSetWindowAttributes attributes = {
+    .override_redirect = False,
+    .colormap = DefaultColormap(nxagentDisplay, DefaultScreen(nxagentDisplay)),
+    .background_pixmap = nxagentScreenSaverPixmap,
+  };
+
+  unsigned long valuemask = CWOverrideRedirect | CWBackPixmap | CWColormap;
 
   #ifdef TEST
   fprintf(stderr, "nxagentCreateIconWindow: Going to create new icon window.\n");
   #endif
 
-  w = XCreateWindow(nxagentDisplay, DefaultRootWindow(nxagentDisplay),
+  Window w = XCreateWindow(nxagentDisplay, DefaultRootWindow(nxagentDisplay),
                         0, 0, 1, 1, 0,
                             DefaultDepth(nxagentDisplay, DefaultScreen(nxagentDisplay)),
                                 InputOutput,
@@ -458,14 +454,17 @@ Window nxagentCreateIconWindow(void)
    *  Set hints to the window manager for the icon window.
    */
 
-  if ((sizeHints = XAllocSizeHints()))
+  XSizeHints* sizeHints = XAllocSizeHints();
+  XWMHints* wmHints = XAllocWMHints();;
+
+  if (sizeHints)
   {
     sizeHints->flags = PMinSize | PMaxSize;
     sizeHints->min_width = sizeHints->max_width = 1;
     sizeHints->min_height = sizeHints->max_height = 1;
   }
 
-  if ((wmHints = XAllocWMHints()))
+  if (wmHints)
   {
     wmHints->flags = IconPixmapHint | IconMaskHint;
     wmHints->initial_state = IconicState;
@@ -483,7 +482,6 @@ Window nxagentCreateIconWindow(void)
   }
 
   char *window_name = nxagentWindowName;
-
   Xutf8SetWMProperties(nxagentDisplay, w,
                       window_name, window_name,
                           NULL , 0 , sizeHints, wmHints, NULL);
@@ -495,7 +493,7 @@ Window nxagentCreateIconWindow(void)
    * Enable events from the icon window.
    */
 
-  mask = nxagentGetDefaultEventMask();
+  Mask mask = nxagentGetDefaultEventMask();
 
   XSelectInput(nxagentDisplay, w, (mask & ~(KeyPressMask |
                    KeyReleaseMask)) | StructureNotifyMask);
