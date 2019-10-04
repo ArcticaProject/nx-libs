@@ -68,16 +68,16 @@ static int
 read_counted_string (unsigned short *countp, char **stringp, FILE *file)
 {
     unsigned short  len;
-    char	    *data;
+    char            *data;
 
     if (read_short (&len, file) == 0)
-	return 0;
+        return 0;
     if (len == 0) {
-	data = 0;
+        data = 0;
     } else {
-    	data = malloc ((unsigned) len);
-    	if (!data)
-	    return 0;
+        data = malloc ((unsigned) len);
+        if (!data)
+            return 0;
 #ifdef NX_TRANS_SOCKET
         for (;;)
         {
@@ -89,10 +89,10 @@ read_counted_string (unsigned short *countp, char **stringp, FILE *file)
                     clearerr (file);
                     continue;
                 }
-	        bzero (data, len);
-	        free (data);
-	        return 0;
-    	    }
+                bzero (data, len);
+                free (data);
+                return 0;
+            }
             break;
         }
 #else
@@ -110,40 +110,40 @@ read_counted_string (unsigned short *countp, char **stringp, FILE *file)
 
 Xauth *
 XauReadAuth (auth_file)
-FILE	*auth_file;
+FILE    *auth_file;
 {
     Xauth   local;
     Xauth   *ret;
 
     if (read_short (&local.family, auth_file) == 0)
-	return 0;
+        return 0;
     if (read_counted_string (&local.address_length, &local.address, auth_file) == 0)
-	return 0;
+        return 0;
     if (read_counted_string (&local.number_length, &local.number, auth_file) == 0) {
-	if (local.address) free (local.address);
-	return 0;
+        if (local.address) free (local.address);
+        return 0;
     }
     if (read_counted_string (&local.name_length, &local.name, auth_file) == 0) {
-	if (local.address) free (local.address);
-	if (local.number) free (local.number);
-	return 0;
+        if (local.address) free (local.address);
+        if (local.number) free (local.number);
+        return 0;
     }
     if (read_counted_string (&local.data_length, &local.data, auth_file) == 0) {
-	if (local.address) free (local.address);
-	if (local.number) free (local.number);
-	if (local.name) free (local.name);
-	return 0;
+        if (local.address) free (local.address);
+        if (local.number) free (local.number);
+        if (local.name) free (local.name);
+        return 0;
     }
     ret = (Xauth *) malloc (sizeof (Xauth));
     if (!ret) {
-	if (local.address) free (local.address);
-	if (local.number) free (local.number);
-	if (local.name) free (local.name);
-	if (local.data) {
-	    bzero (local.data, local.data_length);
-	    free (local.data);
-	}
-	return 0;
+        if (local.address) free (local.address);
+        if (local.number) free (local.number);
+        if (local.name) free (local.name);
+        if (local.data) {
+            bzero (local.data, local.data_length);
+            free (local.data);
+        }
+        return 0;
     }
     *ret = local;
     return ret;
