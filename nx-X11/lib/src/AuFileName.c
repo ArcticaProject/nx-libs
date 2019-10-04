@@ -1,4 +1,3 @@
-
 /*
 
 Copyright 1988, 1998  The Open Group
@@ -30,44 +29,61 @@ in this Software without prior written authorization from The Open Group.
 #endif
 #include <nx-X11/Xauth.h>
 #include <nx-X11/Xos.h>
+#include <assert.h>
 #include <stdlib.h>
 
-char *
-XauFileName ()
+static char *buf = NULL;
+
+static void
+free_filename_buffer(void)
 {
-    char *slashDotXauthority = "/.Xauthority";
+    free(buf);
+    buf = NULL;
+}
+
+char *
+XauFileName (void)
+{
+    const char *slashDotXauthority = "/.Xauthority";
     char    *name;
-    static char	*buf;
-    static int	bsize;
+    static size_t	bsize;
+    static int atexit_registered = 0;
 #ifdef WIN32
     char    dir[128];
 #endif
-    int	    size;
+    size_t  size;
 
     if ((name = getenv ("XAUTHORITY")))
 	return name;
     name = getenv ("HOME");
     if (!name) {
 #ifdef WIN32
-	(void) strcpy (dir, "/users/");
 	if ((name = getenv("USERNAME"))) {
-	    (void) strcat (dir, name);
+	    snprintf(dir, sizeof(dir), "/users/%s", name);
 	    name = dir;
 	}
 	if (!name)
 #endif
-	return 0;
+	return NULL;
     }
     size = strlen (name) + strlen(&slashDotXauthority[1]) + 2;
-    if (size > bsize) {
-	if (buf)
-	    free (buf);
-	buf = malloc ((unsigned) size);
-	if (!buf)
-	    return 0;
+    if ((size > bsize) || (buf == NULL)) {
+	free (buf);
+        assert(size > 0);
+	buf = malloc (size);
+	if (!buf) {
+	    bsize = 0;
+	    return NULL;
+	}
+
+        if (!atexit_registered) {
+            atexit(free_filename_buffer);
+            atexit_registered = 1;
+        }
+
 	bsize = size;
     }
-    strcpy (buf, name);
-    strcat (buf, slashDotXauthority + (name[1] == '\0' ? 1 : 0));
+    snprintf (buf, bsize, "%s%s", name,
+              slashDotXauthority + (name[0] == '/' && name[1] == '\0' ? 1 : 0));
     return buf;
 }

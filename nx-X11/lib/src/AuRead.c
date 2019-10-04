@@ -46,7 +46,7 @@ read_short (unsigned short *shortp, FILE *file)
      */
 
     for (;;) {
-        if (fread ((char *) file_short, (int) sizeof (file_short), 1, file) != 1) {
+        if (fread ((char *) file_short, sizeof (file_short), 1, file) != 1) {
             if (errno == EINTR && ferror (file)) {
                 perror ("Reading from auth file");
                 clearerr (file);
@@ -57,7 +57,7 @@ read_short (unsigned short *shortp, FILE *file)
         break;
     }
 #else
-    if (fread ((char *) file_short, (int) sizeof (file_short), 1, file) != 1)
+    if (fread ((char *) file_short, sizeof (file_short), 1, file) != 1)
        return 0;
 #endif
     *shortp = file_short[0] * 256 + file_short[1];
@@ -73,7 +73,7 @@ read_counted_string (unsigned short *countp, char **stringp, FILE *file)
     if (read_short (&len, file) == 0)
         return 0;
     if (len == 0) {
-        data = 0;
+        data = NULL;
     } else {
         data = malloc ((unsigned) len);
         if (!data)
@@ -81,7 +81,7 @@ read_counted_string (unsigned short *countp, char **stringp, FILE *file)
 #ifdef NX_TRANS_SOCKET
         for (;;)
         {
-            if (fread (data, (int) sizeof (char), (int) len, file) != len)
+            if (fread (data, sizeof (char), len, file) != len)
             {
                 if (errno == EINTR && ferror (file))
                 {
@@ -96,7 +96,7 @@ read_counted_string (unsigned short *countp, char **stringp, FILE *file)
             break;
         }
 #else
-        if (fread (data, (int) sizeof (char), (int) len, file) != len) {
+        if (fread (data, sizeof (char), len, file) != len) {
             bzero (data, len);
             free (data);
             return 0;
@@ -109,30 +109,29 @@ read_counted_string (unsigned short *countp, char **stringp, FILE *file)
 }
 
 Xauth *
-XauReadAuth (auth_file)
-FILE    *auth_file;
+XauReadAuth (FILE *auth_file)
 {
     Xauth   local;
     Xauth   *ret;
 
     if (read_short (&local.family, auth_file) == 0)
-        return 0;
+        return NULL;
     if (read_counted_string (&local.address_length, &local.address, auth_file) == 0)
-        return 0;
+        return NULL;
     if (read_counted_string (&local.number_length, &local.number, auth_file) == 0) {
         free (local.address);
-        return 0;
+        return NULL;
     }
     if (read_counted_string (&local.name_length, &local.name, auth_file) == 0) {
         free (local.address);
         free (local.number);
-        return 0;
+        return NULL;
     }
     if (read_counted_string (&local.data_length, &local.data, auth_file) == 0) {
         free (local.address);
         free (local.number);
         free (local.name);
-        return 0;
+        return NULL;
     }
     ret = (Xauth *) malloc (sizeof (Xauth));
     if (!ret) {
@@ -143,7 +142,7 @@ FILE    *auth_file;
             bzero (local.data, local.data_length);
             free (local.data);
         }
-        return 0;
+        return NULL;
     }
     *ret = local;
     return ret;
