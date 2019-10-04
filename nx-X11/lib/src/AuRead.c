@@ -30,13 +30,16 @@ in this Software without prior written authorization from The Open Group.
 #endif
 #include <nx-X11/Xauth.h>
 #include <stdlib.h>
+#ifdef NX_TRANS_SOCKET
 #include <errno.h>
+#endif
 
 static int
 read_short (unsigned short *shortp, FILE *file)
 {
     unsigned char   file_short[2];
 
+#ifdef NX_TRANS_SOCKET
     /*
      * Added a check on EINTR to prevent the fread() call to be
      * interrupted by any signal not blocked by OsBlockSignals().
@@ -53,6 +56,10 @@ read_short (unsigned short *shortp, FILE *file)
         }
         break;
     }
+#else
+    if (fread ((char *) file_short, (int) sizeof (file_short), 1, file) != 1)
+       return 0;
+#endif
     *shortp = file_short[0] * 256 + file_short[1];
     return 1;
 }
@@ -71,6 +78,7 @@ read_counted_string (unsigned short *countp, char **stringp, FILE *file)
     	data = malloc ((unsigned) len);
     	if (!data)
 	    return 0;
+#ifdef NX_TRANS_SOCKET
         for (;;)
         {
             if (fread (data, (int) sizeof (char), (int) len, file) != len)
@@ -87,6 +95,13 @@ read_counted_string (unsigned short *countp, char **stringp, FILE *file)
     	    }
             break;
         }
+#else
+        if (fread (data, (int) sizeof (char), (int) len, file) != len) {
+            bzero (data, len);
+            free (data);
+            return 0;
+        }
+#endif
     }
     *stringp = data;
     *countp = len;
