@@ -120,25 +120,25 @@ FILE    *auth_file;
     if (read_counted_string (&local.address_length, &local.address, auth_file) == 0)
         return 0;
     if (read_counted_string (&local.number_length, &local.number, auth_file) == 0) {
-        if (local.address) free (local.address);
+        free (local.address);
         return 0;
     }
     if (read_counted_string (&local.name_length, &local.name, auth_file) == 0) {
-        if (local.address) free (local.address);
-        if (local.number) free (local.number);
+        free (local.address);
+        free (local.number);
         return 0;
     }
     if (read_counted_string (&local.data_length, &local.data, auth_file) == 0) {
-        if (local.address) free (local.address);
-        if (local.number) free (local.number);
-        if (local.name) free (local.name);
+        free (local.address);
+        free (local.number);
+        free (local.name);
         return 0;
     }
     ret = (Xauth *) malloc (sizeof (Xauth));
     if (!ret) {
-        if (local.address) free (local.address);
-        if (local.number) free (local.number);
-        if (local.name) free (local.name);
+        free (local.address);
+        free (local.number);
+        free (local.name);
         if (local.data) {
             bzero (local.data, local.data_length);
             free (local.data);
