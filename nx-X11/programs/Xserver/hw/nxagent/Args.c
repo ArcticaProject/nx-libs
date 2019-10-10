@@ -1103,6 +1103,9 @@ static void nxagentParseSingleOption(char *name, char *value)
 
   URLDecodeInPlace(value);
 
+  if (!value)
+    value = "";
+
   if (!strcmp(name, "kbtype") ||
           !strcmp(name, "keyboard") ||
               !strcmp(name, "id") ||
