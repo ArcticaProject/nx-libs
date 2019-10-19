@@ -34,8 +34,7 @@ export CONFFLAGS="--enable-ipv6	      \
                   --enable-secure-rpc \
                   ${NULL}"
 
-export NXAGENTMODULES_LIBS="-L`pwd`/../exports/lib			  \
-                            -L`pwd`/../../nxcomp/src/.libs		  \
+export NXAGENTMODULES_LIBS="-L`pwd`/../../nxcomp/src/.libs		  \
                             -L`pwd`/../../nxcompshad/src/.libs		  \
                             -lXcomp -lXcompshad -lNX_X11		  \
                             ${NULL}"

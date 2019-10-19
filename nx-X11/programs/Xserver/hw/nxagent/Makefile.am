@@ -1,5 +1,7 @@
 AUTOMAKE_OPTIONS = dist-bzip2 foreign subdir-objects
 
+AM_LIBTOOLFLAGS = --preserve-dup-deps
+
 bin_PROGRAMS = nxagent
 
 nxagent_SOURCES =  Agent.h \
@@ -133,14 +135,15 @@ nxagent_SOURCES =  Agent.h \
 	../../mi/miinitext.c \
 	../../fb/fbcmap.c
 
-nxagent_LDADD = $(XORG_CORE_LIBS) \
+nxagent_LDADD = -lX11 \
+		$(XORG_CORE_LIBS) \
 		$(NXAGENT_LIBS) \
 		$(NXAGENTMODULES_LIBS)
 
 # don't warn during linking when a symbol is defined more than once.
 # This is a fundamental principle in nxagent: Replace upstream functions
 # with own functions.
-nxagent_LDFLAGS = -Wl,-zmuldefs -rpath '$(libdir)/nx/X11'
+nxagent_LDFLAGS = -Wl,-zmuldefs -R '$(libdir)/nx/X11'
 
 ### NXAGENT Defines:
 #
