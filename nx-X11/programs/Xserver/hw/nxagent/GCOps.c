@@ -192,9 +192,8 @@ RegionPtr nxagentBitBlitHelper(GC *pGC)
   #endif
 
   /*
-   * Force NullRegion. We consider enough the graphics
-   * expose events generated internally by the nxagent
-   * server.
+   * Force NullRegion. We consider enough the graphics expose events
+   * generated internally by the nxagent server.
    */
 
   #ifdef TEST
@@ -205,13 +204,12 @@ RegionPtr nxagentBitBlitHelper(GC *pGC)
 }
 
 /*
- * The deferring of X_RenderCompositeTrapezoids caused
- * an ugly effect on pulldown menu: as the background
- * may be not synchronized, the text floats in an invi-
- * sible window. To avoid such effects, we use a system
- * to guess if the destination target of a copy area
- * is a popup, by assuming that those kind of windows
- * use the override redirect property.
+ * The deferring of X_RenderCompositeTrapezoids caused an ugly effect
+ * on pulldown menu: as the background may be not synchronized, the
+ * text floats in an invisible window. To avoid such effects, we use a
+ * system to guess if the destination target of a copy area is a
+ * popup, by assuming that those kind of windows use the override
+ * redirect property.
  */
 
 int nxagentWindowIsPopup(DrawablePtr pDrawable)
@@ -232,10 +230,8 @@ int nxagentWindowIsPopup(DrawablePtr pDrawable)
     WindowPtr parent = ((WindowPtr) pDrawable) -> parent;
 
     /*
-     * Go up on the tree until a parent
-     * exists or 4 windows has been che-
-     * cked. This seems a good limit to
-     * up children's popup.
+     * Go up on the tree until a parent exists or 4 windows has been
+     * checked. This seems a good limit to up children's popup.
      */
 
     int level = 0;
@@ -266,8 +262,7 @@ int nxagentWindowIsPopup(DrawablePtr pDrawable)
 }
 
 /*
- * This function returns 1 if the
- * XCopyArea request must be skipped.
+ * This function returns 1 if the XCopyArea request must be skipped.
  */
 
 int nxagentDeferCopyArea(DrawablePtr pSrcDrawable, DrawablePtr pDstDrawable,
@@ -275,20 +270,17 @@ int nxagentDeferCopyArea(DrawablePtr pSrcDrawable, DrawablePtr pDstDrawable,
                                 int height, int dstx, int dsty)
 {
   /*
-   * If the destination drawable is a popup
-   * window, we try to synchronize the source
-   * drawable to show a nice menu. Anyway if
-   * this synchronization breaks, the copy area
-   * is handled in the normal way.
+   * If the destination drawable is a popup window, we try to
+   * synchronize the source drawable to show a nice menu. Anyway if
+   * this synchronization breaks, the copy area is handled in the
+   * normal way.
    */
 
 /*
-FIXME: The popup could be synchronized with one
-       single put image, clipped to the corrup-
-       ted region. As an intermediate step, the
-       pixmap to synchronize could be copied on
-       a cleared scratch pixmap, in order to
-       have a solid color in the clipped regions.
+FIXME: The popup could be synchronized with one single put image,
+       clipped to the corrupted region. As an intermediate step, the
+       pixmap to synchronize could be copied on a cleared scratch
+       pixmap, in order to have a solid color in the clipped regions.
 */
 
   if (nxagentOption(DeferLevel) >= 2 &&
@@ -332,10 +324,9 @@ FIXME: The popup could be synchronized with one
   }
 
   /*
-   * We are going to decide if the source drawable
-   * must be synchronized before using it, or if
-   * the copy will be clipped to the synchronized
-   * source region.
+   * We are going to decide if the source drawable must be
+   * synchronized before using it, or if the copy will be clipped to
+   * the synchronized source region.
    */
 
   if ((pDstDrawable -> type == DRAWABLE_PIXMAP &&
@@ -345,11 +336,9 @@ FIXME: The popup could be synchronized with one
                                                     width, height);
 
     /*
-     * We called this variable pCorruptedRegion
-     * because in the worst case the corrupted
-     * region will be equal to the destination
-     * region. The GC's clip mask is used to
-     * narrow the destination.
+     * We called this variable pCorruptedRegion because in the worst
+     * case the corrupted region will be equal to the destination
+     * region. The GC's clip mask is used to narrow the destination.
      */
 
     RegionPtr pCorruptedRegion = nxagentCreateRegion(pDstDrawable, pGC, dstx, dsty,
@@ -413,9 +402,8 @@ FIXME: The popup could be synchronized with one
     }
 
     /*
-     * The corrupted region on the destination
-     * drawable is composed by the areas of the
-     * destination that we are not going to copy.
+     * The corrupted region on the destination drawable is composed by
+     * the areas of the destination that we are not going to copy.
      */
 
     RegionSubtract(pCorruptedRegion, pCorruptedRegion, pClipRegion);
@@ -433,8 +421,8 @@ FIXME: The popup could be synchronized with one
     #endif
 
     /*
-     * The destination drawable inherits both the
-     * synchronized and the corrupted region.
+     * The destination drawable inherits both the synchronized and the
+     * corrupted region.
      */
 
     if (RegionNil(pClipRegion) == 0)
@@ -452,9 +440,8 @@ FIXME: The popup could be synchronized with one
       Bool pClipRegionFree = True;
 
       /*
-       * As we want to copy only the synchronized
-       * areas of the source drawable, we create
-       * a new GC copying the original one and
+       * As we want to copy only the synchronized areas of the source
+       * drawable, we create a new GC copying the original one and
        * setting a new clip mask.
        */
 
@@ -488,10 +475,9 @@ FIXME: The popup could be synchronized with one
         CARD32 targetAttributes[2];
 
         /*
-         * Setting the clip mask origin. This
-         * operation must precede the clip chan-
-         * ge, because the origin information is
-         * used in the XSetClipRectangles().
+         * Setting the clip mask origin. This operation must precede
+         * the clip change, because the origin information is used in
+         * the XSetClipRectangles().
          */
 
         targetAttributes[0] = 0;
@@ -506,8 +492,8 @@ FIXME: The popup could be synchronized with one
         nxagentChangeClip(targetGC, CT_REGION, pClipRegion, 0);
 
         /*
-         * Next call to nxagentChangeClip() will destroy
-         * pClipRegion, so it has not to be freed.
+         * Next call to nxagentChangeClip() will destroy pClipRegion,
+         * so it has not to be freed.
          */
 
         pClipRegionFree = False;
@@ -541,9 +527,8 @@ FIXME: The popup could be synchronized with one
       #endif
 
       /*
-       * The pClipRegion is destroyed calling nxagentChangeClip(),
-       * so we deallocate it explicitly only if we don't change
-       * the clip.
+       * The pClipRegion is destroyed calling nxagentChangeClip(), so
+       * we deallocate it explicitly only if we don't change the clip.
        */
 
       nxagentFreeRegion(pSrcDrawable, pClipRegion);
@@ -602,9 +587,9 @@ RegionPtr nxagentCopyArea(DrawablePtr pSrcDrawable, DrawablePtr pDstDrawable,
   #endif
 
  /*
-  * Here, before using fbDoCopy() called by fbCopyArea(),
-  * it should be provided that the cast in fbDoCopy() from
-  * int to short int would not cut off significative bits.
+  * Here, before using fbDoCopy() called by fbCopyArea(), it should be
+  * provided that the cast in fbDoCopy() from int to short int would
+  * not cut off significative bits.
   */
 
   if (dstx + pDstDrawable->x + width > 32767)
@@ -713,9 +698,9 @@ RegionPtr nxagentCopyArea(DrawablePtr pSrcDrawable, DrawablePtr pDstDrawable,
   }
 
   /*
-   * Try to detect if the copy area is to a window
-   * that is unmapped or fully covered. Similarly
-   * to the check in Image.c, this is of little use.
+   * Try to detect if the copy area is to a window that is unmapped or
+   * fully covered. Similarly to the check in Image.c, this is of
+   * little use.
    */
 
   if (nxagentOption(IgnoreVisibility) == 0 && pDstDrawable -> type == DRAWABLE_WINDOW &&
@@ -731,11 +716,9 @@ RegionPtr nxagentCopyArea(DrawablePtr pSrcDrawable, DrawablePtr pDstDrawable,
   }
 
   /*
-   * If the pixmap is on shared memory, we can't
-   * know if the pixmap content is changed and
-   * so have to translate the operation in a put
-   * image operation. This can seriously affect
-   * the performance.
+   * If the pixmap is on shared memory, we can't know if the pixmap
+   * content is changed and so have to translate the operation in a
+   * put image operation. This can seriously affect the performance.
    */
 
   if (pSrcDrawable -> type == DRAWABLE_PIXMAP &&
@@ -765,8 +748,8 @@ RegionPtr nxagentCopyArea(DrawablePtr pSrcDrawable, DrawablePtr pDstDrawable,
     fbGetImage(nxagentVirtualDrawable(pSrcDrawable), srcx, srcy, width, height, format, planeMask, data);
 
     /*
-     * If the source is a shared memory pixmap,
-     * put the image directly to the destination.
+     * If the source is a shared memory pixmap, put the image directly
+     * to the destination.
      */
 
     nxagentPutImage(pDstDrawable, pGC, depth, dstx, dsty,
@@ -781,10 +764,9 @@ RegionPtr nxagentCopyArea(DrawablePtr pSrcDrawable, DrawablePtr pDstDrawable,
     SAFE_free(data);
 
     /*
-     * If the source is a shared memory pixmap, the
-     * content of the framebuffer has been placed
-     * directly on the destination so we can skip
-     * the copy area operation.
+     * If the source is a shared memory pixmap, the content of the
+     * framebuffer has been placed directly on the destination so we
+     * can skip the copy area operation.
      */
 
     skip = 1;
@@ -816,8 +798,8 @@ RegionPtr nxagentCopyArea(DrawablePtr pSrcDrawable, DrawablePtr pDstDrawable,
                   nxagentGC(pGC), srcx, srcy, width, height, dstx, dsty);
 
     /*
-     * The copy area restored the synchroni-
-     * zation status of destination drawable.
+     * The copy area restored the synchronization status of
+     * destination drawable.
      */
 
     if (nxagentDrawableStatus(pDstDrawable) == NotSynchronized)
@@ -867,8 +849,7 @@ RegionPtr nxagentCopyArea(DrawablePtr pSrcDrawable, DrawablePtr pDstDrawable,
   else if (pDstDrawable -> type == DRAWABLE_PIXMAP)
   {
     /*
-     * If we are here the source drawable
-     * must be a window.
+     * If we are here the source drawable must be a window.
      */
 
     if (((WindowPtr) pSrcDrawable) -> viewable)
@@ -885,8 +866,7 @@ RegionPtr nxagentCopyArea(DrawablePtr pSrcDrawable, DrawablePtr pDstDrawable,
   else
   {
     /*
-     * If we are here the source drawable
-     * must be a window.
+     * If we are here the source drawable must be a window.
      */
 
     if (((WindowPtr) pSrcDrawable) -> viewable)
@@ -947,11 +927,9 @@ RegionPtr nxagentCopyPlane(DrawablePtr pSrcDrawable, DrawablePtr pDstDrawable,
   }
 
   /*
-   * If the pixmap is on shared memory, we can't
-   * know if the pixmap content is changed and
-   * so have to translate the operation in a put
-   * image operation. This can seriously affect
-   * the performance.
+   * If the pixmap is on shared memory, we can't know if the pixmap
+   * content is changed and so have to translate the operation in a
+   * put image operation. This can seriously affect the performance.
    */
 
   if (pSrcDrawable -> type == DRAWABLE_PIXMAP &&
@@ -981,8 +959,8 @@ RegionPtr nxagentCopyPlane(DrawablePtr pSrcDrawable, DrawablePtr pDstDrawable,
     fbGetImage(nxagentVirtualDrawable(pSrcDrawable), srcx, srcy, width, height, format, planeMask, data);
 
     /*
-     * If the source is a shared memory pixmap,
-     * put the image directly to the destination.
+     * If the source is a shared memory pixmap, put the image directly
+     * to the destination.
      */
 
     nxagentPutImage(pDstDrawable, pGC, depth, dstx, dsty,
@@ -997,10 +975,9 @@ RegionPtr nxagentCopyPlane(DrawablePtr pSrcDrawable, DrawablePtr pDstDrawable,
     SAFE_free(data);
 
     /*
-     * If the source is a shared memory pixmap, the
-     * content of the framebuffer has been placed
-     * directly on the destination so we can skip
-     * the copy plane operation.
+     * If the source is a shared memory pixmap, the content of the
+     * framebuffer has been placed directly on the destination so we
+     * can skip the copy plane operation.
      */
 
     skip = 1;
@@ -1453,9 +1430,9 @@ void nxagentFillPolygon(DrawablePtr pDrawable, GCPtr pGC, int shape,
   }
 
   /*
-   * The coordinate-mode must be CoordModePrevious
-   * to make better use of differential encoding of
-   * X_FillPoly request by the side of proxy.
+   * The coordinate-mode must be CoordModePrevious to make better use
+   * of differential encoding of X_FillPoly request by the side of
+   * proxy.
    */
 
   if (mode == CoordModeOrigin)
@@ -1465,17 +1442,15 @@ void nxagentFillPolygon(DrawablePtr pDrawable, GCPtr pGC, int shape,
     newPoints = malloc(nPoints * sizeof(xPoint));
 
     /*
-     * The first point is always relative
-     * to the drawable's origin.
+     * The first point is always relative to the drawable's origin.
      */
 
     newPoints[0].x = pPoints[0].x;
     newPoints[0].y = pPoints[0].y;
 
     /*
-     * If coordinate-mode is CoordModePrevious,
-     * the points following the first are rela-
-     * tive to the previous point.
+     * If coordinate-mode is CoordModePrevious, the points following
+     * the first are relative to the previous point.
      */
 
     for (int i = 1; i < nPoints; i++)
@@ -1569,12 +1544,11 @@ void nxagentPolyFillRect(DrawablePtr pDrawable, GCPtr pGC,
   }
 
   /*
-   * The PolyFillRect acts in two ways: if the GC
-   * has a corrupted tile, the operation propagates
-   * the corrupted region on the destination. In
-   * other cases, because the PolyFillRect will
-   * cover the destination, any corrupted region
-   * intersecting the target will be cleared.
+   * The PolyFillRect acts in two ways: if the GC has a corrupted
+   * tile, the operation propagates the corrupted region on the
+   * destination. In other cases, because the PolyFillRect will cover
+   * the destination, any corrupted region intersecting the target
+   * will be cleared.
    */
 
   int inheritCorruptedRegion = 0;
@@ -1622,10 +1596,9 @@ void nxagentPolyFillRect(DrawablePtr pDrawable, GCPtr pGC,
     if (inheritCorruptedRegion == 1)
     {
       /*
-       * The fill style should affect the cor-
-       * rupted region propagation: if the tile
-       * is not completely corrupted the region
-       * should be 'tiled' over the destination.
+       * The fill style should affect the corrupted region
+       * propagation: if the tile is not completely corrupted the
+       * region should be 'tiled' over the destination.
        */
 
       nxagentMarkCorruptedRegion(pDrawable, rectRegion);
@@ -1639,11 +1612,10 @@ void nxagentPolyFillRect(DrawablePtr pDrawable, GCPtr pGC,
       else
       {
         /*
-         * The stipple mask computation could cause
-         * an high fragmentation of the destination
-         * region. An analysis should be done to exa-
-         * mine the better solution (e.g.rdesktop
-         * uses stipples to draw texts).
+         * The stipple mask computation could cause an high
+         * fragmentation of the destination region. An analysis should
+         * be done to examine the better solution (e.g.rdesktop uses
+         * stipples to draw texts).
          */
 
         #ifdef TEST
@@ -1768,8 +1740,7 @@ int nxagentPolyText8(DrawablePtr pDrawable, GCPtr pGC, int x,
                          int y, int count, char *string)
 {
   /*
-   * While the session is suspended
-   * the font structure is NULL.
+   * While the session is suspended the font structure is NULL.
    */
 
   if (nxagentFontStruct(pGC -> font) == NULL)
@@ -1839,8 +1810,7 @@ int nxagentPolyText16(DrawablePtr pDrawable, GCPtr pGC, int x,
                           int y, int count, unsigned short *string)
 {
   /*
-   * While the session is suspended
-   * the font structure is NULL.
+   * While the session is suspended the font structure is NULL.
    */
 
   if (nxagentFontStruct(pGC -> font) == NULL)
