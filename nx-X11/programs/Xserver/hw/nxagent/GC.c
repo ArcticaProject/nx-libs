@@ -183,24 +183,18 @@ Bool nxagentCreateGC(GCPtr pGC)
 
   pPriv->bpp = BitsPerPixel (pGC->depth);
 
-  nxagentGCPriv(pGC)->nClipRects = 0;
-
-  memset(&(nxagentGCPriv(pGC) -> lastServerValues), 0, sizeof(XGCValues));
-
   /*
    * Init to default GC values.
    */
 
+  memset(&(nxagentGCPriv(pGC) -> lastServerValues), 0, sizeof(XGCValues));
   nxagentGCPriv(pGC) -> lastServerValues.background = 1;
-
   nxagentGCPriv(pGC) -> lastServerValues.plane_mask = ~0;
-
   nxagentGCPriv(pGC) -> lastServerValues.graphics_exposures = 1;
-
   nxagentGCPriv(pGC) -> lastServerValues.dashes = 4;
 
+  nxagentGCPriv(pGC) -> nClipRects = 0;
   nxagentGCPriv(pGC) -> mid = FakeClientID(serverClient -> index);
-
   nxagentGCPriv(pGC) -> pPixmap = NULL;
 
   AddResource(nxagentGCPriv(pGC) -> mid, RT_NX_GC, (void *) pGC);
@@ -514,13 +508,11 @@ void nxagentChangeClip(GCPtr pGC, int type, void * pValue, int nRects)
     case CT_NONE:
     {
       clipsMatch = (pGC -> clientClipType == None);
-
       break;
     }
     case CT_REGION:
     {
       clipsMatch = nxagentCompareRegions(pGC -> clientClip, (RegionPtr) pValue);
-
       break;
     }
     case CT_UNSORTED:
@@ -529,17 +521,13 @@ void nxagentChangeClip(GCPtr pGC, int type, void * pValue, int nRects)
     case CT_YXBANDED:
     {
       RegionPtr pReg = RegionFromRects(nRects, (xRectangle *)pValue, type);
-
       clipsMatch = nxagentCompareRegions(pGC -> clientClip, pReg);
-
       RegionDestroy(pReg);
-
       break;
     }
     default:
     {
       clipsMatch = 0;
-
       break;
     }
   }
@@ -559,7 +547,6 @@ void nxagentChangeClip(GCPtr pGC, int type, void * pValue, int nRects)
       {
         XSetClipMask(nxagentDisplay, nxagentGC(pGC), None);
       }
-
       break;
     }
     case CT_REGION:
@@ -584,7 +571,6 @@ void nxagentChangeClip(GCPtr pGC, int type, void * pValue, int nRects)
                                pRects, nRects, Unsorted);
         SAFE_free(pRects);
       }
-
       break;
     }
     case CT_PIXMAP:
@@ -613,7 +599,6 @@ void nxagentChangeClip(GCPtr pGC, int type, void * pValue, int nRects)
                                pGC->clipOrg.x, pGC->clipOrg.y,
                                    (XRectangle *)pValue, nRects, Unsorted);
       }
-
       break;
     }
     case CT_YSORTED:
@@ -624,7 +609,6 @@ void nxagentChangeClip(GCPtr pGC, int type, void * pValue, int nRects)
                            pGC->clipOrg.x, pGC->clipOrg.y,
                            (XRectangle *)pValue, nRects, YSorted);
       }
-
       break;
     }
     case CT_YXSORTED:
@@ -635,7 +619,6 @@ void nxagentChangeClip(GCPtr pGC, int type, void * pValue, int nRects)
                            pGC->clipOrg.x, pGC->clipOrg.y,
                            (XRectangle *)pValue, nRects, YXSorted);
       }
-
       break;
     }
     case CT_YXBANDED:
@@ -646,7 +629,6 @@ void nxagentChangeClip(GCPtr pGC, int type, void * pValue, int nRects)
                          pGC->clipOrg.x, pGC->clipOrg.y,
                          (XRectangle *)pValue, nRects, YXBanded);
       }
-
       break;
     }
   }
@@ -764,11 +746,9 @@ void nxagentCopyClip(GCPtr pGCDst, GCPtr pGCSrc)
       nxagentChangeClip(pGCDst, CT_PIXMAP, pGCSrc->clientClip, 0);
 
       break;
-
     case CT_NONE:
       nxagentDestroyClip(pGCDst);
       break;
-
   }
 }
 
@@ -1061,14 +1041,12 @@ void nxagentDisconnectGC(void * p0, XID x1, void * p2)
       fprintf(stderr, "nxagentDisconnectGC: WARNING! pGC is NULL.\n");
       #endif
     }
-
     return;
   }
 
   if (pGC -> stipple)
   {
     PixmapPtr pMap = pGC -> stipple;
-
     nxagentDisconnectPixmap(nxagentRealPixmap(pMap), 0, pBool);
   }
 } 
@@ -1131,7 +1109,6 @@ static void nxagentReconnectClip(GCPtr pGC, int type, void * pValue, int nRects)
     case CT_NONE:
       XSetClipMask(nxagentDisplay, nxagentGC(pGC), None);
       break;
-
     case CT_REGION:
       if (nxagentGCPriv(pGC)->pPixmap == NULL)
       {
@@ -1164,11 +1141,8 @@ static void nxagentReconnectClip(GCPtr pGC, int type, void * pValue, int nRects)
 
         XSetClipOrigin(nxagentDisplay, nxagentGC(pGC), pGC -> clipOrg.x, pGC -> clipOrg.y);
       }
-
       break;
-
     case CT_PIXMAP:
-
       XSetClipMask(nxagentDisplay, nxagentGC(pGC),
                        nxagentPixmap((PixmapPtr)pValue));
 
@@ -1183,25 +1157,21 @@ static void nxagentReconnectClip(GCPtr pGC, int type, void * pValue, int nRects)
       type = CT_REGION;
 
       break;
-
     case CT_UNSORTED:
       XSetClipRectangles(nxagentDisplay, nxagentGC(pGC),
                          pGC->clipOrg.x, pGC->clipOrg.y,
                          (XRectangle *)pValue, nRects, Unsorted);
       break;
-
     case CT_YSORTED:
       XSetClipRectangles(nxagentDisplay, nxagentGC(pGC),
                          pGC->clipOrg.x, pGC->clipOrg.y,
                          (XRectangle *)pValue, nRects, YSorted);
       break;
-
     case CT_YXSORTED:
       XSetClipRectangles(nxagentDisplay, nxagentGC(pGC),
                          pGC->clipOrg.x, pGC->clipOrg.y,
                          (XRectangle *)pValue, nRects, YXSorted);
       break;
-
     case CT_YXBANDED:
       XSetClipRectangles(nxagentDisplay, nxagentGC(pGC),
                          pGC->clipOrg.x, pGC->clipOrg.y,
@@ -1277,7 +1247,6 @@ static int nxagentCompareRegions(RegionPtr r1, RegionPtr r2)
       else if (RegionRects(r1)[i].y2 !=  RegionRects(r2)[i].y2) return 0;
     }
   }
-
   return 1;
 }
 
@@ -1489,7 +1458,6 @@ void nxagentAllocateGraphicContexts(void)
   for (int i = 0; i < nxagentNumDepths; i++)
   {
     nxagentCreateGraphicContext(*depths);
-
     depths++;
   }
 }
