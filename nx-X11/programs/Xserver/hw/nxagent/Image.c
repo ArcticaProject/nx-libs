@@ -330,21 +330,13 @@ char *nxagentImageCopy(XImage *source, XImage *destination)
 
 char *nxagentImageAlpha(XImage *image)
 {
-  char *pData;
-
-  char *pSrcData;
-  char *pDstData;
-
-  int size;
-  int offset;
-
   /*
    * Use one byte per pixel.
    */
 
-  size = (image -> bytes_per_line * image -> height) >> 2;
+  int size = (image -> bytes_per_line * image -> height) >> 2;
 
-  pData = malloc(size);
+  char *pData = malloc(size);
 
   if (pData == NULL)
   {
@@ -356,10 +348,10 @@ char *nxagentImageAlpha(XImage *image)
    * server order.
    */
 
-  offset = (image -> byte_order == MSBFirst) ? 0 : 3;
+  int offset = (image -> byte_order == MSBFirst) ? 0 : 3;
 
-  pSrcData = image -> data;
-  pDstData = pData;
+  char *pSrcData = image -> data;
+  char *pDstData = pData;
 
   while (size-- > 0)
   {
@@ -496,8 +488,7 @@ void nxagentPutImage(DrawablePtr pDrawable, GCPtr pGC, int depth,
                          int dstX, int dstY, int dstWidth, int dstHeight,
                              int leftPad, int format, char *data)
 {
-  int length;
-
+  /* will be checked at nxagentPutImageEnd */
   RegionPtr pRegion = NullRegion;
 
   int resource = 0;
@@ -517,15 +508,13 @@ void nxagentPutImage(DrawablePtr pDrawable, GCPtr pGC, int depth,
    * to the framebuffer.
    */
 
-  length = nxagentImageLength(dstWidth, dstHeight, format, leftPad, depth);
+  int length = nxagentImageLength(dstWidth, dstHeight, format, leftPad, depth);
 
   if (nxagentShadowCounter == 0 &&
           NXDisplayError(nxagentDisplay) == 1 &&
               nxagentOption(SleepTime) > 0)
   {
-    int us;
-
-    us = nxagentOption(SleepTime) * 4 * (length / 1024);
+    int us = nxagentOption(SleepTime) * 4 * (length / 1024);
 
     us = (us < 10000 ? 10000 : (us > 1000000 ? 1000000 : us));
 
@@ -1408,19 +1397,16 @@ FIXME: There should be a callback registered by the agent that
         case PACK_BITMAP_16M_COLORS:
         {
           packedImage = NXEncodeBitmap(plainImage, packMethod, packQuality);
-
           break;
         }
         case PACK_RGB_16M_COLORS:
         {
           packedImage = NXEncodeRgb(plainImage, packMethod, packQuality);
-
           break;
         }
         default:
         {
           packedImage = NXEncodeRle(plainImage, packMethod, packQuality);
-
           break;
         }
       }
@@ -1618,9 +1604,7 @@ void nxagentGetImage(DrawablePtr pDrawable, int x, int y, int w, int h,
 
 void nxagentResetVisualCache(void)
 {
-  int i;
-
-  for (i = 0; i < MAX_CONNECTIONS; i++)
+  for (int i = 0; i < MAX_CONNECTIONS; i++)
   {
     nxagentUnpackVisualId[i] = None;
   }
@@ -1628,9 +1612,7 @@ void nxagentResetVisualCache(void)
 
 void nxagentResetAlphaCache(void)
 {
-  int i;
-
-  for (i = 0; i < MAX_CONNECTIONS; i++)
+  for (int i = 0; i < MAX_CONNECTIONS; i++)
   {
     if (nxagentUnpackAlpha[i])
     {
@@ -1643,55 +1625,25 @@ void nxagentResetAlphaCache(void)
 int nxagentScaleImage(int x, int y, unsigned xRatio, unsigned yRatio,
                           XImage **pImage, int *scaledx, int *scaledy)
 {
-  int x1;
-  int x2;
-  int y1;
-  int y2;
-
-  int xx1;
-  int xx2;
-  int yy1;
-  int yy2;
-
-  int newWidth;
-  int newHeight;
-
-  int i;
-  int j;
-  int k;
-  int l;
-
-  unsigned long val;
-
-  XImage *newImage;
   XImage *image = *pImage;
-
-  #ifdef FAST_GET_PUT_PIXEL
-
-  register char *srcPixel;
-  register char *dstPixel;
-
-  int i;
-
-  #endif
 
   if (image == NULL)
   {
     return 0;
   }
 
-  x1 = (xRatio * x) >> PRECISION;
-  x2 = (xRatio * (x + image -> width)) >> PRECISION;
+  int x1 = (xRatio * x) >> PRECISION;
+  int x2 = (xRatio * (x + image -> width)) >> PRECISION;
 
-  y1 = (yRatio * y) >> PRECISION;
-  y2 = (yRatio * (y + image -> height)) >> PRECISION;
+  int y1 = (yRatio * y) >> PRECISION;
+  int y2 = (yRatio * (y + image -> height)) >> PRECISION;
 
-  newWidth = x2 - x1;
-  newHeight = y2 - y1;
+  int newWidth = x2 - x1;
+  int newHeight = y2 - y1;
 
-  newImage = XCreateImage(nxagentDisplay, NULL, image -> depth, image -> format, 0, NULL,
-                              newWidth, newHeight, BitmapPad(nxagentDisplay),
-                                  PixmapBytePad(newWidth, image -> depth));
+  XImage *newImage = XCreateImage(nxagentDisplay, NULL, image -> depth, image -> format, 0, NULL,
+                                      newWidth, newHeight, BitmapPad(nxagentDisplay),
+                                          PixmapBytePad(newWidth, image -> depth));
 
   if (newImage == NULL)
   {
@@ -1725,39 +1677,41 @@ int nxagentScaleImage(int x, int y, unsigned xRatio, unsigned yRatio,
   newImage -> width  = newWidth;
   newImage -> height = newHeight;
 
-  for (j = y; j < y + image -> height; j++)
+  for (int j = y; j < y + image -> height; j++)
   {
-    yy1 = (yRatio * j) >> PRECISION;
-    yy2 = (yRatio * (j + 1)) >> PRECISION;
+    int yy1 = (yRatio * j) >> PRECISION;
+    int yy2 = (yRatio * (j + 1)) >> PRECISION;
 
-    for (i = x; i < x + image -> width; i++)
+    for (int i = x; i < x + image -> width; i++)
     {
+      unsigned long val;
+
       #ifndef FAST_GET_PUT_PIXEL
 
       val = XGetPixel(image, i - x, j - y);
 
       #else
 
-      srcPixel = &image -> data[(j * image -> bytes_per_line) +
+      char *srcPixel = &image -> data[(j * image -> bytes_per_line) +
                                   ((i * image -> bits_per_pixel) >> 3)];
 
-      dstPixel = (char *) &val;
+      char *dstPixel = (char *) &val;
 
       val = 0;
 
-      for (i = (image -> bits_per_pixel + 7) >> 3; --i >= 0; )
+      for (int m = (image -> bits_per_pixel + 7) >> 3; --m >= 0; )
       {
         *dstPixel++ = *srcPixel++;
       }
 
       #endif
 
-      xx1 = (xRatio * i) >> PRECISION;
-      xx2 = (xRatio * (i + 1)) >> PRECISION;
+      int xx1 = (xRatio * i) >> PRECISION;
+      int xx2 = (xRatio * (i + 1)) >> PRECISION;
 
-      for (l = yy1; l < yy2; l++)
+      for (int l = yy1; l < yy2; l++)
       {
-        for (k = xx1; k < xx2; k++)
+        for (int k = xx1; k < xx2; k++)
         {
           #ifndef FAST_GET_PUT_PIXEL
 
@@ -1765,12 +1719,12 @@ int nxagentScaleImage(int x, int y, unsigned xRatio, unsigned yRatio,
 
           #else
 
-          dstPixel = &newImage -> data[((l - y1) * newImage -> bytes_per_line) +
+          char *dstPixel = &newImage -> data[((l - y1) * newImage -> bytes_per_line) +
                                            (((k - x1) * newImage -> bits_per_pixel) >> 3)];
 
-          srcPixel = (char *) &val;
+          char *srcPixel = (char *) &val;
 
-          for (i = (newImage -> bits_per_pixel + 7) >> 3; --i >= 0; )
+          for (int m = (newImage -> bits_per_pixel + 7) >> 3; --m >= 0; )
           {
             *dstPixel++ = *srcPixel++;
           }
@@ -1794,17 +1748,13 @@ int nxagentScaleImage(int x, int y, unsigned xRatio, unsigned yRatio,
 
 char *nxagentAllocateImageData(int width, int height, int depth, int *length, int *format)
 {
-  char *data;
-
-  int leftPad;
-
-  leftPad = 0;
+  int leftPad = 0;
 
   *format = (depth == 1) ? XYPixmap : ZPixmap;
 
   *length = nxagentImageLength(width, height, *format, leftPad, depth);
 
-  data = NULL;
+  char *data = NULL;
 
   if ((data = malloc(*length)) == NULL)
   {
