@@ -59,9 +59,8 @@
 #undef  DUMP
 
 /*
- * Don't pack the images having a width, a
- * height or a data size smaller or equal
- * to these thresholds.
+ * Don't pack the images having a width, a height or a data size
+ * smaller or equal to these thresholds.
  */
 
 #define IMAGE_PACK_WIDTH     2
@@ -69,16 +68,14 @@
 #define IMAGE_PACK_LENGTH    512
 
 /*
- * Compress the image with a lossless encoder
- * if the percentage of discrete pixels in the
- * image is below this threshold.
+ * Compress the image with a lossless encoder if the percentage of
+ * discrete pixels in the image is below this threshold.
  */
 
 #define IMAGE_UNIQUE_RATIO   10
 
 /*
- * Preferred pack and split parameters we
- * got from the NX transport.
+ * Preferred pack and split parameters we got from the NX transport.
  */
 
 int nxagentPackLossless   = -1;
@@ -94,8 +91,8 @@ int nxagentAlphaEnabled = 0;
 int nxagentAlphaCompat  = 0;
 
 /*
- * Used to reformat image when connecting to
- * displays having different byte order.
+ * Used to reformat image when connecting to displays having different
+ * byte order.
  */
 
 extern void nxagentBitOrderInvert(unsigned char *, int);
@@ -110,8 +107,7 @@ extern void nxagentFourByteSwap(register unsigned char *, register int);
 static VisualID nxagentUnpackVisualId[MAX_CONNECTIONS];
 
 /*
- * Store the last alpha data set for the
- * client.
+ * Store the last alpha data set for the client.
  */
 
 typedef struct _UnpackAlpha
@@ -126,9 +122,8 @@ typedef UnpackAlphaRec *UnpackAlphaPtr;
 static UnpackAlphaPtr nxagentUnpackAlpha[MAX_CONNECTIONS];
 
 /*
- * Encode the imade alpha channel by using
- * a specific encoding, separating it from
- * the rest of the RGB data.
+ * Encode the imade alpha channel by using a specific encoding,
+ * separating it from the rest of the RGB data.
  */
 
 static char *nxagentImageAlpha(XImage *ximage);
@@ -141,10 +136,9 @@ static void nxagentSetUnpackAlpha(DrawablePtr pDrawable, XImage *pImage, ClientP
 static char *nxagentImageCopy(XImage *source, XImage *destination);
 
 /*
- * Return true if the image can be cached.
- * Don't cache the images packed with the
- * bitmap method as the encoding is little
- * more expensive than a copy.
+ * Return true if the image can be cached.  Don't cache the images
+ * packed with the bitmap method as the encoding is little more
+ * expensive than a copy.
  */
 
 #define nxagentNeedCache(image, method) \
@@ -152,10 +146,8 @@ static char *nxagentImageCopy(XImage *source, XImage *destination);
   ((method) != PACK_BITMAP_16M_COLORS)
 
 /*
- * With the bitmap encoding, if the image
- * is 32 bits-per-pixel the 4th byte is not
- * transmitted, so we don't need to clean
- * the image.
+ * With the bitmap encoding, if the image is 32 bits-per-pixel the 4th
+ * byte is not transmitted, so we don't need to clean the image.
  */
 
 #define nxagentNeedClean(image, method) \
@@ -188,11 +180,10 @@ ImageStatisticsRec nxagentImageStatistics;
 int nxagentImageReformat(char *base, int nbytes, int bpp, int order)
 {
   /*
-   * This is used whenever we need to swap the image data.
-   * If we got an image from an X server having a different
-   * endianness, we will need to reformat the image to match
-   * our own image-order so that ProcGetImage can return
-   * the expected format to the client.
+   * This is used whenever we need to swap the image data.  If we got
+   * an image from an X server having a different endianness, we will
+   * need to reformat the image to match our own image-order so that
+   * ProcGetImage can return the expected format to the client.
    */
 
   switch (bpp)
@@ -298,10 +289,9 @@ int nxagentImagePad(int width, int format, int leftPad, int depth)
 }
 
 /*
- * Only copy the data, not the structure.
- * The data pointed by the destination is
- * lost. Used to clone two images that
- * point to the same data.
+ * Only copy the data, not the structure.  The data pointed by the
+ * destination is lost. Used to clone two images that point to the
+ * same data.
  */
 
 char *nxagentImageCopy(XImage *source, XImage *destination)
@@ -344,8 +334,7 @@ char *nxagentImageAlpha(XImage *image)
   }
 
   /*
-   * The image is supposed to be in
-   * server order.
+   * The image is supposed to be in server order.
    */
 
   int offset = (image -> byte_order == MSBFirst) ? 0 : 3;
@@ -364,8 +353,7 @@ char *nxagentImageAlpha(XImage *image)
 }
 
 /*
- * Write down the image cache statistics
- * to the buffer.
+ * Write down the image cache statistics to the buffer.
  */
 
 void nxagentImageStatisticsHandler(char **buffer, int type)
@@ -381,9 +369,8 @@ FIXME: Agent cache statistics have to be implemented.
 }
 
 /*
- * This should be called only for drawables
- * having a depth of 32. In the other cases,
- * it would only generate useless traffic.
+ * This should be called only for drawables having a depth of 32. In
+ * the other cases, it would only generate useless traffic.
  */
 
 void nxagentSetUnpackAlpha(DrawablePtr pDrawable, XImage *pImage, ClientPtr pClient)
@@ -404,16 +391,15 @@ void nxagentSetUnpackAlpha(DrawablePtr pDrawable, XImage *pImage, ClientPtr pCli
   }
 
   /*
-   * If we are synchronizing the drawable, discard
-   * any unpack alpha stored for the client. The
-   * alpha data, in fact, may be still traveling
-   * and so we either wait until the end of the
-   * split or send a fresh copy.
+   * If we are synchronizing the drawable, discard any unpack alpha
+   * stored for the client. The alpha data, in fact, may be still
+   * traveling and so we either wait until the end of the split or
+   * send a fresh copy.
    */
 /*
-FIXME: Here the split trap is always set and so the caching of
-       the alpha channel is useless. I remember we set the trap
-       because of the cursor but why is it always set now?
+FIXME: Here the split trap is always set and so the caching of the
+       alpha channel is useless. I remember we set the trap because of
+       the cursor but why is it always set now?
 */
   #ifdef DEBUG
   fprintf(stderr, "nxagentSetUnpackAlpha: Checking alpha channel for client [%d] with trap [%d].\n",
@@ -431,9 +417,8 @@ FIXME: Here the split trap is always set and so the caching of
     #endif
 
     /*
-     * Check if we are connected to a newer proxy
-     * version and so can send the alpha data in
-     * compressed form.
+     * Check if we are connected to a newer proxy version and so can
+     * send the alpha data in compressed form.
      */
 
     if (nxagentAlphaCompat == 0)
@@ -480,8 +465,7 @@ FIXME: Here the split trap is always set and so the caching of
 }
 
 /*
- * The NX agent's implementation of the
- * X server's image functions.
+ * The NX agent's implementation of the X server's image functions.
  */
 
 void nxagentPutImage(DrawablePtr pDrawable, GCPtr pGC, int depth,
@@ -502,9 +486,8 @@ void nxagentPutImage(DrawablePtr pDrawable, GCPtr pGC, int depth,
   #endif
 
   /*
-   * If the display is down and there is not an
-   * nxagent attached, sleep for a while but
-   * still give a chance to the client to write
+   * If the display is down and there is not an nxagent attached,
+   * sleep for a while but still give a chance to the client to write
    * to the framebuffer.
    */
 
@@ -527,11 +510,11 @@ void nxagentPutImage(DrawablePtr pDrawable, GCPtr pGC, int depth,
   }
 
   /*
-   * This is of little use because clients usually write
-   * to windows only after an expose event, and, in the
-   * rare case they use a direct put image to the window
-   * (for a media player it should be a necessity), they
-   * are likely to monitor the visibility of the window.
+   * This is of little use because clients usually write to windows
+   * only after an expose event, and, in the rare case they use a
+   * direct put image to the window (for a media player it should be a
+   * necessity), they are likely to monitor the visibility of the
+   * window.
    */
 
   if (nxagentOption(IgnoreVisibility) == 0 && pDrawable -> type == DRAWABLE_WINDOW &&
@@ -548,9 +531,8 @@ void nxagentPutImage(DrawablePtr pDrawable, GCPtr pGC, int depth,
   }
 
   /*
-   * This is more interesting. Check if the operation
-   * will produce a visible result based on the clip
-   * list of the window and the GC.
+   * This is more interesting. Check if the operation will produce a
+   * visible result based on the clip list of the window and the GC.
    */
 
   pRegion = nxagentCreateRegion(pDrawable, pGC, dstX, dstY, dstWidth, dstHeight);
@@ -607,9 +589,8 @@ FIXME: Should use these.
   }
 
   /*
-   * We are going to realize the operation
-   * on the real display. Let's check if
-   * the link is down.
+   * We are going to realize the operation on the real display. Let's
+   * check if the link is down.
    */
 
   if (NXDisplayError(nxagentDisplay) == 1)
@@ -618,13 +599,11 @@ FIXME: Should use these.
   }
 
   /*
-   * Mark the region as corrupted and skip the operation
-   * if we went out of bandwidth. The drawable will be
-   * synchronized at later time. Don't do that if the
-   * image is likely to be a shape or a clip mask, if we
-   * are here because we are actually synchronizing the
-   * drawable or if the drawable's corrupted region is
-   * over-age.
+   * Mark the region as corrupted and skip the operation if we went
+   * out of bandwidth. The drawable will be synchronized at later
+   * time. Don't do that if the image is likely to be a shape or a
+   * clip mask, if we are here because we are actually synchronizing
+   * the drawable or if the drawable's corrupted region is over-age.
    */
 
   if (NXAGENT_SHOULD_DEFER_PUTIMAGE(pDrawable))
@@ -676,8 +655,7 @@ FIXME: Should use these.
   #endif
 
   /*
-   * Check whether we need to enclose the
-   * image in a split sequence.
+   * Check whether we need to enclose the image in a split sequence.
    */
 /*
 FIXME: Should we disable the split with link LAN?
@@ -689,12 +667,11 @@ FIXME: Should we disable the split with link LAN?
   split = (nxagentOption(Streaming) == 1 &&
                nxagentOption(LinkType) != LINK_TYPE_NONE
 /*
-FIXME: Do we stream the images from GLX or Xv? If we do that,
-       we should also write on the frame buffer, including the
-       images put on windows, to be able to reconstruct the
-       region that is out of sync. Surely we should not try to
-       cache the GLX and Xv images in memory or save them in
-       the image cache on disk.
+FIXME: Do we stream the images from GLX or Xv? If we do that, we
+       should also write on the frame buffer, including the images put
+       on windows, to be able to reconstruct the region that is out of
+       sync. Surely we should not try to cache the GLX and Xv images
+       in memory or save them in the image cache on disk.
 */
 /*
 FIXME: Temporarily stream the GLX data.
@@ -705,8 +682,7 @@ FIXME: Temporarily stream the GLX data.
 );
 
   /*
-   * Never split images whose depth
-   * is less than 15.
+   * Never split images whose depth is less than 15.
    */
 
   if (split == 1 && (nxagentSplitTrap == 1 || depth < 15))
@@ -750,9 +726,8 @@ FIXME: Temporarily stream the GLX data.
   #endif
 
   /*
-   * If the image was originated by a GLX
-   * or Xvideo request, temporarily disable
-   * the use of the cache.
+   * If the image was originated by a GLX or Xvideo request,
+   * temporarily disable the use of the cache.
    */
 
   if (nxagentOption(LinkType) != LINK_TYPE_NONE &&
@@ -768,17 +743,15 @@ FIXME: Temporarily stream the GLX data.
   }
 
   /*
-   * Enclose the next messages in a split
-   * sequence. The proxy will tell us if
-   * the split took place.
+   * Enclose the next messages in a split sequence. The proxy will
+   * tell us if the split took place.
    */
 
   if (split == 1)
   {
     /*
-     * If the drawable is already being split,
-     * expand the region. Currently drawables
-     * can't have more than a single split
+     * If the drawable is already being split, expand the
+     * region. Currently drawables can't have more than a single split
      * region.
      */
 
@@ -789,9 +762,8 @@ FIXME: Temporarily stream the GLX data.
                   (void *) pDrawable);
       #endif
 /*
-FIXME: Should probably intersect the region with
-       the region being split to also invalidate
-       the commits.
+FIXME: Should probably intersect the region with the region being
+       split to also invalidate the commits.
 */
       nxagentMarkCorruptedRegion(pDrawable, pRegion);
 
@@ -800,9 +772,8 @@ FIXME: Should probably intersect the region with
     else
     {
       /*
-       * Assign a new resource to the drawable.
-       * Will also assign the GC to use for the
-       * operation.
+       * Assign a new resource to the drawable.  Will also assign the
+       * GC to use for the operation.
        */
 
       resource = nxagentCreateSplit(pDrawable, &pGC);
@@ -824,12 +795,11 @@ FIXME: Should probably intersect the region with
     NXEndSplit(nxagentDisplay, resource);
 
     /*
-     * Now we need to check if all the messages went
-     * straight through the output stream or any of
-     * them required a split. If no split will take
-     * place, we will remove the association with the
-     * drawable and release the resource at the time
-     * we will handle the no-split event.
+     * Now we need to check if all the messages went straight through
+     * the output stream or any of them required a split. If no split
+     * will take place, we will remove the association with the
+     * drawable and release the resource at the time we will handle
+     * the no-split event.
      */
 
     split = nxagentWaitSplitEvent(resource);
@@ -843,10 +813,9 @@ FIXME: Should probably intersect the region with
       #endif
 
       /*
-       * Marking the corrupted region we will check
-       * if the region intersects the split region,
-       * therefore the split region must be added
-       * later.
+       * Marking the corrupted region we will check if the region
+       * intersects the split region, therefore the split region must
+       * be added later.
        */
 
       nxagentMarkCorruptedRegion(pDrawable, pRegion);
@@ -872,9 +841,8 @@ FIXME: Should probably intersect the region with
     if (nxagentDrawableStatus(pDrawable) == NotSynchronized)
     {
       /*
-       * We just covered the drawable with
-       * a solid image. We can consider the
-       * overlapping region as synchronized.
+       * We just covered the drawable with a solid image. We can
+       * consider the overlapping region as synchronized.
        */
 
       #ifdef TEST
@@ -919,8 +887,8 @@ void nxagentRealizeImage(DrawablePtr pDrawable, GCPtr pGC, int depth,
   int totalHeight;
 
   /*
-   * NXPutPackedImage is longer than PutPackedImage
-   * so that we subtract the bigger one to be sure.
+   * NXPutPackedImage is longer than PutPackedImage so that we
+   * subtract the bigger one to be sure.
    */
 
   const int subSize = (MAX_REQUEST_SIZE << 2) - sizeof(xNXPutPackedImageReq);
@@ -1085,13 +1053,13 @@ void nxagentPutSubImage(DrawablePtr pDrawable, GCPtr pGC, int depth,
 
   /*
    * XCreateImage is the place where the leftPad should be passed.
-   * The image data is received from our client unmodified. In
-   * theory what we would need to do is just creating an appropri-
-   * ate XImage structure based on the incoming data and let Xlib
-   * do the rest. Probably we don't have to pass leftPad again in
-   * the src_x of XPutImage otherwise the src_x would make Xlib
-   * to take into account the xoffset field twice. Unfortunately
-   * passing the leftPad doesn't work.
+   * The image data is received from our client unmodified. In theory
+   * what we would need to do is just creating an appropriate XImage
+   * structure based on the incoming data and let Xlib do the
+   * rest. Probably we don't have to pass leftPad again in the src_x
+   * of XPutImage otherwise the src_x would make Xlib to take into
+   * account the xoffset field twice. Unfortunately passing the
+   * leftPad doesn't work.
    *
    * plainImage = XCreateImage(nxagentDisplay, pVisual,
    *                           depth, format, leftPad, data,
@@ -1145,10 +1113,9 @@ FIXME: Should use an unpack resource here.
   #endif
 
   /*
-   * We got the image data from the X client or
-   * from the frame-buffer with our own endianness.
-   * Byte swap the image data if the display has
-   * a different endianness than our own.
+   * We got the image data from the X client or from the frame-buffer
+   * with our own endianness.  Byte swap the image data if the display
+   * has a different endianness than our own.
    */
 
   if (nxagentImageNormalize(plainImage) != 0)
@@ -1165,10 +1132,9 @@ FIXME: Should use an unpack resource here.
   #endif
 
   /*
-   * Check if the user requested to pack the
-   * image but don't pack it if we are not
-   * connected to a proxy or if the depth is
-   * less than 15 bpp.
+   * Check if the user requested to pack the image but don't pack it
+   * if we are not connected to a proxy or if the depth is less than
+   * 15 bpp.
    */
 
   pack = (nxagentOption(LinkType) != LINK_TYPE_NONE &&
@@ -1179,9 +1145,8 @@ FIXME: Should use an unpack resource here.
   if (pack == 1 && lossless == 0)
   {
     /*
-     * Force the image to be sent as a plain
-     * bitmap if we don't have any lossless
-     * encoder available.
+     * Force the image to be sent as a plain bitmap if we don't have
+     * any lossless encoder available.
      */
 
     if (w <= IMAGE_PACK_WIDTH || h <= IMAGE_PACK_HEIGHT ||
@@ -1220,8 +1185,8 @@ FIXME: Should use an unpack resource here.
   if (pack == 1)
   {
     /*
-     * Set the geometry and alpha channel
-     * to be used for the unpacked image.
+     * Set the geometry and alpha channel to be used for the unpacked
+     * image.
      */
 
     if (nxagentUnpackVisualId[client -> index] != pVisual -> visualid)
@@ -1237,9 +1202,8 @@ FIXME: Should use an unpack resource here.
     }
 
     /*
-     * Check if the image is supposed to carry
-     * the alpha data in the fourth byte and,
-     * if so, send the alpha channel using the
+     * Check if the image is supposed to carry the alpha data in the
+     * fourth byte and, if so, send the alpha channel using the
      * specific encoding.
      */
 
@@ -1249,46 +1213,43 @@ FIXME: Should use an unpack resource here.
     }
 
     /*
-     * If the image doesn't come from the XVideo or the
-     * GLX extension try to locate it in the cache. The
-     * case of the lossless trap is also special, as we
-     * want to eventually encode the image again using
-     * a lossless compression.
+     * If the image doesn't come from the XVideo or the GLX extension
+     * try to locate it in the cache. The case of the lossless trap is
+     * also special, as we want to eventually encode the image again
+     * using a lossless compression.
      */
 /*
-FIXME: Should try to locate the image anyway, if the lossless
-       trap is set, and if the image was encoded by a lossy
-       compressor, roll back the changes and encode the image
-       again using the preferred method.
+FIXME: Should try to locate the image anyway, if the lossless trap is
+       set, and if the image was encoded by a lossy compressor, roll
+       back the changes and encode the image again using the preferred
+       method.
 */
     if (nxagentNeedCache(plainImage, packMethod) &&
             nxagentGlxTrap == 0 && nxagentXvTrap == 0 &&
                 nxagentLosslessTrap == 0 && NXImageCacheSize > 0)
     {
       /*
-       * Be sure that the padding bits are
-       * cleaned before calculating the MD5
-       * checksum.
+       * Be sure that the padding bits are cleaned before calculating
+       * the MD5 checksum.
        */
 /*
 FIXME: There should be a callback registered by the agent that
-       provides a statistics report, in text format, telling
-       for example how many images were searched in the cache,
-       how many were found, how many drawables are to be synch-
-       ronized, etc. This statistics report would be included
-       by the proxy in its stat output.
+       provides a statistics report, in text format, telling for
+       example how many images were searched in the cache, how many
+       were found, how many drawables are to be synchronized,
+       etc. This statistics report would be included by the proxy in
+       its stat output.
 */
       clean = 1;
 
       NXCleanImage(plainImage);
 
       /*
-       * Will return a pointer to the image and checksum
-       * taken from the cache, if found. If the image is
-       * not found, the function returns a null image and
-       * a pointer to the calculated checksum. It is up
-       * to the application to free the memory. We will
-       * use the checksum to add the image in the cache.
+       * Will return a pointer to the image and checksum taken from
+       * the cache, if found. If the image is not found, the function
+       * returns a null image and a pointer to the calculated
+       * checksum. It is up to the application to free the memory. We
+       * will use the checksum to add the image in the cache.
        */
 
       packedImage = NXCacheFindImage(plainImage, &packMethod, &packedChecksum);
@@ -1325,9 +1286,8 @@ FIXME: There should be a callback registered by the agent that
     }
 
     /*
-     * If a specific encoder was not mandated,
-     * try to guess if a lossless encoder will
-     * compress better.
+     * If a specific encoder was not mandated, try to guess if a
+     * lossless encoder will compress better.
      */
 
     if (lossless == 0 && nxagentOption(Adaptive) == 1)
@@ -1355,8 +1315,7 @@ FIXME: There should be a callback registered by the agent that
     }
 
     /*
-     * Encode the image using the selected
-     * pack method.
+     * Encode the image using the selected pack method.
      */
 
     if (packMethod == PACK_RLE_16M_COLORS ||
@@ -1364,13 +1323,11 @@ FIXME: There should be a callback registered by the agent that
                 packMethod == PACK_BITMAP_16M_COLORS)
     {
       /*
-       * Cleanup the image if we didn't do that yet.
-       * We assume that the JPEG and PNG compression
-       * methods will actually ignore the padding
-       * bytes. In other words, bitmap images prod-
-       * ucing the same visual output should produce
-       * compressed images that are bitwise the same
-       * regardless the padding bits.
+       * Cleanup the image if we didn't do that yet.  We assume that
+       * the JPEG and PNG compression methods will actually ignore the
+       * padding bytes. In other words, bitmap images producing the
+       * same visual output should produce compressed images that are
+       * bitwise the same regardless the padding bits.
        */
 
       if (clean == 0)
@@ -1386,12 +1343,10 @@ FIXME: There should be a callback registered by the agent that
       switch (packMethod)
       {
         /*
-         * If nothing is done by the bitmap encoder,
-         * it saves an allocation and a memory copy
-         * by setting the data field of the packed
-         * image to the original data. We need to
-         * check this at the time we will free the
-         * packed image.
+         * If nothing is done by the bitmap encoder, it saves an
+         * allocation and a memory copy by setting the data field of
+         * the packed image to the original data. We need to check
+         * this at the time we will free the packed image.
          */
 
         case PACK_BITMAP_16M_COLORS:
@@ -1433,8 +1388,8 @@ FIXME: There should be a callback registered by the agent that
   }
 
   /*
-   * If we didn't produce a valid packed
-   * image, send the image as a X bitmap.
+   * If we didn't produce a valid packed image, send the image as a X
+   * bitmap.
    */
 
   if (packedImage != NULL)
@@ -1453,10 +1408,8 @@ FIXME: There should be a callback registered by the agent that
                              0, 0, x, y, w, h);
 
     /*
-     * Add the image only if we have a valid
-     * checksum. This is the case only if we
-     * originally tried to find the image in
-     * cache.
+     * Add the image only if we have a valid checksum. This is the
+     * case only if we originally tried to find the image in cache.
      */
       
     if (NXImageCacheSize > 0 && packedChecksum != NULL)
@@ -1467,9 +1420,8 @@ FIXME: There should be a callback registered by the agent that
       #endif
 
       /*
-       * Check if both the plain and the packed
-       * image point to the same data. In this
-       * case we need a copy.
+       * Check if both the plain and the packed image point to the
+       * same data. In this case we need a copy.
        */
 
       if (packedImage -> data == plainImage -> data &&
@@ -1490,19 +1442,17 @@ FIXME: There should be a callback registered by the agent that
   else
   {
     /*
-     * Clean the image to help the proxy to match
-     * the checksum in its cache. Do that only if
-     * the differential compression is enabled and
-     * if the image is not supposed to carry the
-     * alpha data in the fourth byte of the pixel.
+     * Clean the image to help the proxy to match the checksum in its
+     * cache. Do that only if the differential compression is enabled
+     * and if the image is not supposed to carry the alpha data in the
+     * fourth byte of the pixel.
      */
 /*
 FIXME: If we failed to encode the image by any of the available
-       methods, for example if we couldn't allocate memory, we
-       may need to ripristinate the alpha channel, that in the
-       meanwhile was sent in the unpack alpha message. This can
-       be done here, if the clean flag is true and we are going
-       to send a plain image.
+       methods, for example if we couldn't allocate memory, we may
+       need to ripristinate the alpha channel, that in the meanwhile
+       was sent in the unpack alpha message. This can be done here, if
+       the clean flag is true and we are going to send a plain image.
 */
     if (clean == 0)
     {
@@ -1596,10 +1546,9 @@ void nxagentGetImage(DrawablePtr pDrawable, int x, int y, int w, int h,
 }
 
 /*
- * We have to reset the visual cache before
- * connecting to another display, so that a
- * new unpack geometry can be communicated
- * to the new proxy.
+ * We have to reset the visual cache before connecting to another
+ * display, so that a new unpack geometry can be communicated to the
+ * new proxy.
  */
 
 void nxagentResetVisualCache(void)
