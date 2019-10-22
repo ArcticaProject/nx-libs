@@ -469,7 +469,7 @@ void nxagentCopyGC(GCPtr pGCSrc, unsigned long mask, GCPtr pGCDst)
 {
   #ifdef TEST
   fprintf(stderr, "nxagentCopyGC: Copying the GC with source at [%p] destination "
-              "at [%p] mask [%lu].\n", pGCSrc, pGCDst, mask);
+              "at [%p] mask [%lu].\n", (void *)pGCSrc, (void *)pGCDst, mask);
   #endif
 
   /*
@@ -888,7 +888,7 @@ int nxagentDestroyNewGCResourceType(void * p, XID id)
    */
 
   #ifdef TEST
-  fprintf(stderr, "nxagentDestroyNewGCResourceType: Destroying mirror id [%ld] for GC at [%p].\n",
+  fprintf(stderr, "nxagentDestroyNewGCResourceType: Destroying mirror id [%u] for GC at [%p].\n",
               nxagentGCPriv((GCPtr) p) -> mid, (void *) p);
   #endif
 
