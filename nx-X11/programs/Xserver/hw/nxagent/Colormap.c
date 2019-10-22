@@ -296,12 +296,10 @@ void nxagentSetInstalledColormapWindows(ScreenPtr pScreen)
       */
     if (icws.numWindows)
     {
-      WindowPtr pWin;
-      Visual *visual;
       ColormapPtr pCmap;
 
-      pWin = nxagentWindowPtr(icws.windows[0]);
-      visual = nxagentVisualFromID(pScreen, wVisual(pWin));
+      WindowPtr pWin = nxagentWindowPtr(icws.windows[0]);
+      Visual *visual = nxagentVisualFromID(pScreen, wVisual(pWin));
 
       if (visual == nxagentDefaultVisual(pScreen))
         pCmap = (ColormapPtr)LookupIDByType(wColormap(pWin),
@@ -380,9 +378,7 @@ void nxagentDirectUninstallColormaps(ScreenPtr pScreen)
   int n = (*pScreen->ListInstalledColormaps)(pScreen, pCmapIDs);
 
   for (int i = 0; i < n; i++) {
-    ColormapPtr pCmap;
-
-    pCmap = (ColormapPtr)LookupIDByType(pCmapIDs[i], RT_COLORMAP);
+    ColormapPtr pCmap = (ColormapPtr)LookupIDByType(pCmapIDs[i], RT_COLORMAP);
     if (pCmap)
       XUninstallColormap(nxagentDisplay, nxagentColormap(pCmap));
   }
