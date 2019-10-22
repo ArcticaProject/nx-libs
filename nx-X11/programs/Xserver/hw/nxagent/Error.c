@@ -397,9 +397,8 @@ char *nxagentGetRootPath(void)
       #endif
 
       /*
-       * We will determine the root NX directory
-       * based on the NX_HOME or HOME directory
-       * settings.
+       * We will determine the root NX directory based on the NX_HOME
+       * or HOME directory settings.
        */
 
       char *homeEnv = nxagentGetHomePath();
@@ -490,10 +489,9 @@ char *nxagentGetSessionPath(void)
   if (*nxagentSessionDir == '\0')
   {
     /*
-     * If nxagentSessionId does not exist we
-     * assume that the sessionPath cannot be
-     * realized and do not use the clients
-     * log file.
+     * If nxagentSessionId does not exist we assume that the
+     * sessionPath cannot be realized and do not use the clients log
+     * file.
      */
 
     if (*nxagentSessionId == '\0')
