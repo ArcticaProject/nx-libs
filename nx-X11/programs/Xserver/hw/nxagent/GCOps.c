@@ -409,12 +409,12 @@ FIXME: The popup could be synchronized with one single put image,
     RegionSubtract(pCorruptedRegion, pCorruptedRegion, pClipRegion);
 
     #ifdef DEBUG
-    fprintf(stderr, "nxagentDeferCopyArea: Recomputed clip region is [%d,%d,%d,%d][%ld].\n",
+    fprintf(stderr, "nxagentDeferCopyArea: Recomputed clip region is [%d,%d,%d,%d][%d].\n",
                 pClipRegion -> extents.x1, pClipRegion -> extents.y1,
                     pClipRegion -> extents.x2, pClipRegion -> extents.y2,
                         RegionNumRects(pClipRegion));
 
-    fprintf(stderr, "nxagentDeferCopyArea: Inherited corrupted region is [%d,%d,%d,%d][%ld].\n",
+    fprintf(stderr, "nxagentDeferCopyArea: Inherited corrupted region is [%d,%d,%d,%d][%d].\n",
                 pCorruptedRegion -> extents.x1, pCorruptedRegion -> extents.y1,
                     pCorruptedRegion -> extents.x2, pCorruptedRegion -> extents.y2,
                         RegionNumRects(pCorruptedRegion));
