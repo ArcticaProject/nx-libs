@@ -78,10 +78,8 @@ is" without express or implied warranty.
 #undef  DEBUG
 
 /*
- * Defined in Display.c. There are huge
- * problems mixing the GC definition in
- * Xlib with the server code. This must
- * be reworked.
+ * Defined in Display.c. There are huge problems mixing the GC
+ * definition in Xlib with the server code. This must be reworked.
  */
 
 extern XlibGC nxagentBitmapGC;
@@ -124,11 +122,9 @@ void nxagentCursorLimits(ScreenPtr pScreen, CursorPtr pCursor,
 
 Bool nxagentDisplayCursor(ScreenPtr pScreen, CursorPtr pCursor)
 {
-
   /*
-   * Don't define the root cursor
-   * so that nxagent root window
-   * inherits the parent's cursor.
+   * Don't define the root cursor so that nxagent root window inherits
+   * the parent's cursor.
    */
 
   Cursor cursor = (pCursor != rootCursor) ? nxagentCursor(pCursor, pScreen): None;
@@ -191,11 +187,9 @@ Bool nxagentRealizeCursor(ScreenPtr pScreen, CursorPtr pCursor)
                                BitmapPad(nxagentDisplay), 0);
 
   /*
-   * If we used nxagentImageNormalize() here,
-   * we'd swap our own cursor data in place.
-   * Change byte_order and bitmap_bit_order
-   * in the image struct to let Xlib do the
-   * swap for us.
+   * If we used nxagentImageNormalize() here, we'd swap our own cursor
+   * data in place.  Change byte_order and bitmap_bit_order in the
+   * image struct to let Xlib do the swap for us.
    */
 
   image -> byte_order = IMAGE_BYTE_ORDER;
@@ -310,8 +304,8 @@ Bool nxagentSetCursorPosition(ScreenPtr pScreen, int x, int y,
   else
   {
     /*
-     * Calling miSetCursorPosition with generateEvent == 0
-     * causes a crash in miPoiterUpdate().
+     * Calling miSetCursorPosition with generateEvent == 0 causes a
+     * crash in miPoiterUpdate().
      */
 
     return 1;
