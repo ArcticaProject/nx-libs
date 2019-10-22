@@ -46,19 +46,14 @@ int nxagentCheckBinder(int argc, char *argv[], int i)
 {
   if (++i < argc)
   {
-    char *display;
-    char *found;
-
-    int port;
-
-    display = argv[i];
+    char *display = argv[i];
 
     /*
      * Check if a display specification follows
      * the -B switch.
      */
 
-    found = rindex(display, ':');
+    char *found = rindex(display, ':');
 
     if (found == NULL || *(found + 1) == '\0' ||
             isdigit(*(found + 1)) == 0)
@@ -69,7 +64,7 @@ int nxagentCheckBinder(int argc, char *argv[], int i)
       return 0;
     }
 
-    port = atoi(found + 1);
+    int port = atoi(found + 1);
 
     #ifdef TEST
     fprintf(stderr, "nxagentCheckBinder: Identified agent display port [%d].\n",
