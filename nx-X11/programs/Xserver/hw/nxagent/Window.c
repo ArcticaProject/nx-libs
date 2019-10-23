@@ -59,7 +59,6 @@
 #include "Reconnect.h"
 #include "Dialog.h"
 #include "Splash.h"
-#include "Holder.h"
 #include "Init.h"
 #include "Composite.h"
 #include "Events.h"

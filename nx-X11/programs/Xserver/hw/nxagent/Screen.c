@@ -76,7 +76,6 @@ is" without express or implied warranty.
 #include "Client.h"
 #include "Options.h"
 #include "Splash.h"
-#include "Holder.h"
 #include "Render.h"
 #include "Trap.h"
 #include "Keyboard.h"
