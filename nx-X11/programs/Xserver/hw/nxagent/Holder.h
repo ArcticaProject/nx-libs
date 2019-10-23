@@ -26,10 +26,6 @@
 #ifndef __Holder_H__
 #define __Holder_H__
 
-void nxagentMarkPlaceholderNotLoaded(int depth);
-void nxagentInitPlaceholder(int depth);
-void nxagentApplyPlaceholder(Drawable drawable, int x, int y, int w, int h, int depth);
-
 const char *nxagentChecksum(char *data, int size);
 
 #endif /* __Holder_H__ */

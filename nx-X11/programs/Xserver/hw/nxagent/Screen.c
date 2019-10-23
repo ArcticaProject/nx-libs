@@ -1453,17 +1453,6 @@ Bool nxagentOpenScreen(ScreenPtr pScreen,
     nxagentInitSplitResources();
     nxagentInitUnpackResources();
 
-    /*
-     * Initializing the pixmaps that will serve as
-     * "placeholders" in lazy encoding. We need one 
-     * pixmap for each depth.
-     */
-
-    for (int i = 0; i < numDepths; i++)
-    {
-      nxagentMarkPlaceholderNotLoaded(i);
-    }
-
     #ifdef WATCH
 
     fprintf(stderr, "nxagentOpenScreen: Watchpoint 7.\n");
