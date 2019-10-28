@@ -216,8 +216,6 @@ int ddxProcessArgument(int argc, char *argv[], int i)
   if (resetOptions == True)
   {
     char *envOptions = NULL;
-    char *envDisplay = NULL;
-    int j;
 
     nxagentInitOptions();
 
@@ -230,14 +228,14 @@ int ddxProcessArgument(int argc, char *argv[], int i)
      * options.
      */
 
-    envDisplay = getenv("DISPLAY");
+    char *envDisplay = getenv("DISPLAY");
 
     if (envDisplay != NULL && strlen(envDisplay) == 0)
     {
       envDisplay = NULL;
     }
 
-    for (j = 0; j < argc; j++)
+    for (int j = 0; j < argc; j++)
     {
       if ((!strcmp(argv[j], "-display")) && (j + 1 < argc))
       {
@@ -273,7 +271,7 @@ int ddxProcessArgument(int argc, char *argv[], int i)
       SAFE_free(envOptions);
     }
 
-    for (j = 0; j < argc; j++)
+    for (int j = 0; j < argc; j++)
     {
       if ((!strcmp(argv[j], "-options") || !strcmp(argv[j], "-option")) && j + 1 < argc)
       {
@@ -557,8 +555,7 @@ int ddxProcessArgument(int argc, char *argv[], int i)
 
   if (!strcmp(argv[i], "-tile"))
   {
-    int width;
-    int height;
+    int width, height;
 
     if (++i < argc &&
             sscanf(argv[i], "%ix%i", &width, &height) == 2 &&
@@ -1078,7 +1075,7 @@ URLDecodeInPlace(char *str)
 
 static void nxagentParseSingleOption(char *name, char *value)
 {
-  int size, argc;
+  int argc;
 
   char *argv[2] = { NULL, NULL };
 
@@ -1382,10 +1379,8 @@ static void nxagentParseSingleOption(char *name, char *value)
   }
   else if (!strcmp(name, "sleep"))
   {
-    long sleep_parse = 0;
-
     errno = 0;
-    sleep_parse = strtol(value, NULL, 10);
+    long sleep_parse = strtol(value, NULL, 10);
 
     if ((errno) && (0 == sleep_parse))
     {
@@ -1441,10 +1436,9 @@ static void nxagentParseSingleOption(char *name, char *value)
       /*
        * Check for a matching integer. Or any integer, really.
        */
-      long tolerance_parse = 0;
 
       errno = 0;
-      tolerance_parse = strtol(value, NULL, 10);
+      long tolerance_parse = strtol(value, NULL, 10);
 
       if ((errno) && (0 == tolerance_parse))
       {
@@ -1542,7 +1536,9 @@ static void nxagentParseSingleOption(char *name, char *value)
    * as prefix.
    */
 
-  if ((size = strlen(name) + 1) > 1)
+  int size = strlen(name) + 1;
+
+  if (size > 1)
   {
     if ((argv[0] = malloc(size + 1)) == NULL)
     {
@@ -1566,13 +1562,12 @@ static void nxagentParseOptionString(char *string)
 {
   char *value     = NULL;
   char *option    = NULL;
-  char *delimiter = NULL;
 
   /*
    * Remove the port specification.
    */
 
-  delimiter = rindex(string, ':');
+  char *delimiter = rindex(string, ':');
 
   if (delimiter)
   {
@@ -1633,9 +1628,6 @@ void nxagentProcessOptionsFile(char * filename)
 {
   FILE *file = NULL;
   char *data = NULL;
-
-  int offset;
-  int size;
 
   int sizeOfFile;
   int maxFileSize = 1024;
@@ -1702,8 +1694,8 @@ void nxagentProcessOptionsFile(char * filename)
     goto nxagentProcessOptionsFileExit;
   }
 
-  offset = 0;
-  size = 0;
+  int offset = 0;
+  int size = 0;
 
   for (;;)
   {
@@ -1862,9 +1854,6 @@ N/A
       unsigned int saveCache    = 0;
       unsigned int startupCache = 0;
 
-      unsigned int enableClient = 0;
-      unsigned int enableServer = 0;
-
       unsigned int clientSegment = 0;
       unsigned int serverSegment = 0;
 
@@ -1941,8 +1930,8 @@ N/A
        * the remote.
        */
 
-      enableClient = 0;
-      enableServer = 1;
+      unsigned int enableClient = 0;
+      unsigned int enableServer = 1;
 
       if (NXGetShmemParameters(dpy, &enableClient, &enableServer, &clientSegment,
                                    &serverSegment, &clientSize, &serverSize) == 0)
@@ -2221,8 +2210,6 @@ void nxagentSetPackMethod(void)
   unsigned char supportedMethods[NXNumberOfPackMethods];
   unsigned int entries = NXNumberOfPackMethods;
 
-  int method;
-
   if (nxagentOption(LinkType) == LINK_TYPE_NONE)
   {
     nxagentChangeOption(Streaming, 0);
@@ -2241,7 +2228,7 @@ void nxagentSetPackMethod(void)
    * the link type.
    */
 
-  method = nxagentPackMethod;
+  int method = nxagentPackMethod;
 
   if (method == PACK_ADAPTIVE)
   {
