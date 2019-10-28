@@ -857,20 +857,6 @@ MapWindow(register WindowPtr pWin, ClientPtr client)
     return(Success);
 }
 
-int
-UnmapWindow(register WindowPtr pWin, Bool fromConfigure)
-{
-    #ifdef TEST
-    if (nxagentWindowTopLevel(pWin))
-    {
-      fprintf(stderr, "UnmapWindow: pWin [%p] fromConfigure [%d]\n", pWin,
-                  fromConfigure);
-    }
-    #endif
-
-    return xorg_UnmapWindow(pWin, fromConfigure);
-}
-
 void
 SaveScreens(int on, int mode)
 {

@@ -2989,11 +2989,7 @@ UnrealizeTree(
  *****/
 
 int
-#ifdef NXAGENT_SERVER
-xorg_UnmapWindow(register WindowPtr pWin, Bool fromConfigure)
-#else
 UnmapWindow(register WindowPtr pWin, Bool fromConfigure)
-#endif
 {
     register WindowPtr pParent;
     xEvent event;
