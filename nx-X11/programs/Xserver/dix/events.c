@@ -1914,7 +1914,17 @@ PointInBorderSize(WindowPtr pWin, int x, int y)
     return FALSE;
 }
 
-#ifndef NXAGENT_SERVER
+/* define XYWINDOWCALLBACK if your DDX provides this callback */
+
+static WindowPtr GetXYStartWindow(WindowPtr pWin);
+
+#ifndef XYWINDOWCALLBACK
+static WindowPtr GetXYStartWindow(WindowPtr pWin)
+{
+  return pWin;
+}
+#endif
+
 static WindowPtr 
 XYToWindow(int x, int y)
 {
@@ -1922,7 +1932,7 @@ XYToWindow(int x, int y)
     BoxRec		box;
 
     spriteTraceGood = 1;	/* root window still there */
-    pWin = ROOT->firstChild;
+    pWin = GetXYStartWindow(ROOT->firstChild);
     while (pWin)
     {
 	if ((pWin->mapped) &&
@@ -1960,7 +1970,6 @@ XYToWindow(int x, int y)
     }
     return spriteTrace[spriteTraceGood-1];
 }
-#endif /* NXAGENT_SERVER */
 
 #ifndef NXAGENT_SERVER
 static Bool

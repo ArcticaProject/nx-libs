@@ -135,6 +135,7 @@ of the copyright holder.
 
 #include <nx-X11/Xlib.h>
 
+#define XYWINDOWCALLBACK
 #include "../../dix/events.c"
 
 #include "compext/Compext.h"
@@ -251,15 +252,14 @@ ProcAllowEvents(register ClientPtr client)
     return Success;
 }
 
+/*
+ * called from XYToWindow to determine where XYToWindow() should start
+ * going through the list.
+ */
+
 static WindowPtr 
-XYToWindow(int x, int y)
+GetXYStartWindow(WindowPtr pWin)
 {
-    register WindowPtr  pWin;
-    BoxRec		box;
-
-    spriteTraceGood = 1;	/* root window still there */
-
-#ifdef NXAGENT_SERVER
     if (nxagentOption(Rootless))
     {
       if (nxagentLastEnteredWindow == NULL)
@@ -274,49 +274,7 @@ XYToWindow(int x, int y)
         pWin = pWin->prevSib;
       }
     }
-    else
-    {
-      pWin = ROOT->firstChild;
-    }
-#else
-    pWin = ROOT->firstChild;
-#endif
-    while (pWin)
-    {
-	if ((pWin->mapped) &&
-	    (x >= pWin->drawable.x - wBorderWidth (pWin)) &&
-	    (x < pWin->drawable.x + (int)pWin->drawable.width +
-	     wBorderWidth(pWin)) &&
-	    (y >= pWin->drawable.y - wBorderWidth (pWin)) &&
-	    (y < pWin->drawable.y + (int)pWin->drawable.height +
-	     wBorderWidth (pWin))
-#ifdef SHAPE
-	    /* When a window is shaped, a further check
-	     * is made to see if the point is inside
-	     * borderSize
-	     */
-	    && (!wBoundingShape(pWin) || PointInBorderSize(pWin, x, y))
-	    && (!wInputShape(pWin) ||
-		RegionContainsPoint(
-				wInputShape(pWin),
-				x - pWin->drawable.x,
-				y - pWin->drawable.y, &box))
-#endif
-	    )
-	{
-	    if (spriteTraceGood >= spriteTraceSize)
-	    {
-		spriteTraceSize += 10;
-		spriteTrace = realloc(
-		    spriteTrace, spriteTraceSize*sizeof(WindowPtr));
-	    }
-	    spriteTrace[spriteTraceGood++] = pWin;
-	    pWin = pWin->firstChild;
-	}
-	else
-	    pWin = pWin->nextSib;
-    }
-    return spriteTrace[spriteTraceGood-1];
+    return pWin;
 }
 
 static Bool
