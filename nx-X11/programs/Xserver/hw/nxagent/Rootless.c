@@ -198,8 +198,6 @@ void nxagentRootlessDelTopLevelWindow(WindowPtr pWin)
   }
 }
 
-Window nxagentRootlessWMTopLevelWindow(WindowPtr pWin);
-
 void nxagentConfigureRootlessWindow(WindowPtr pWin, int x, int y, int w, int h, int bw,
                                         WindowPtr pSib, int stack_mode, Mask mask)
 {
@@ -409,8 +407,7 @@ Window nxagentRootlessWindowParent(WindowPtr pWin)
   }
 }
 
-int nxagentExportAllProperty(pWin)
-  WindowPtr pWin;
+int nxagentExportAllProperty(WindowPtr pWin)
 {
   int total = 0;
 
@@ -428,12 +425,13 @@ int nxagentExportAllProperty(pWin)
   return total;
 }
 
-int nxagentExportProperty(pWin, property, type, format, mode, nUnits, value)
-    WindowPtr   pWin;
-    Atom        property, type;
-    int         format, mode;
-    unsigned long nUnits;
-    void        *value;
+int nxagentExportProperty(WindowPtr pWin,
+                          Atom property,
+                          Atom type,
+                          int format,
+                          int mode,
+                          unsigned long nUnits,
+                          void *value)
 {
   char *output = NULL;
   Bool export = False;
