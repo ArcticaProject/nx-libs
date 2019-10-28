@@ -207,24 +207,18 @@ Window nxagentRootlessWMTopLevelWindow(WindowPtr pWin);
 void nxagentConfigureRootlessWindow(WindowPtr pWin, int x, int y, int w, int h, int bw,
                                         WindowPtr pSib, int stack_mode, Mask mask)
 {
-  XWindowChanges changes;
-  Window sibw = 0;
-
-  changes.x = x;
-  changes.y = y;
-  changes.width = w;
-  changes.height = h;
-  changes.border_width = bw;
-  changes.stack_mode = stack_mode;
+  XWindowChanges changes = {
+    .x = x,
+    .y = y,
+    .width = w,
+    .height = h,
+    .border_width = bw,
+    .stack_mode = stack_mode
+  };
 
   if (pSib)
   {
-    sibw = nxagentWindow(pSib);
-  }
-
-  if (sibw)
-  {
-    changes.sibling = sibw;
+    changes.sibling = nxagentWindow(pSib);
   }
 
   XConfigureWindow(nxagentDisplay, nxagentWindow(pWin), mask, &changes);
