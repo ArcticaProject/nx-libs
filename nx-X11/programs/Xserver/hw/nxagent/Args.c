@@ -2270,10 +2270,11 @@ void nxagentSetPackMethod(void)
 
 void nxagentSetDeferLevel(void)
 {
-  int deferLevel;
-  int tileWidth;
-  int tileHeight;
-  int deferTimeout;
+  /* defaults */
+  int deferLevel = 0;
+  int tileWidth = 64;
+  int tileHeight = 64;
+  int deferTimeout = 200;
 
   /*
    * Streaming is only partly implemented and is not available in this
@@ -2287,76 +2288,18 @@ void nxagentSetDeferLevel(void)
     nxagentChangeOption(Streaming, 0);
   }
 
-  switch (nxagentOption(LinkType))
+ switch (nxagentOption(LinkType))
   {
     case LINK_TYPE_MODEM:
-    {
-      deferLevel = 2;
-
-      tileWidth  = 64;
-      tileHeight = 64;
-
-      deferTimeout = 200;
-
-      break;
-    }
-    case LINK_TYPE_ISDN:
-    {
-      deferLevel = 2;
-
-      tileWidth  = 64;
-      tileHeight = 64;
-
-      deferTimeout = 200;
-
-      break;
-    }
-    case LINK_TYPE_ADSL:
-    {
-      deferLevel = 2;
-
-      deferTimeout = 200;
-
-      tileWidth  = 4096;
-      tileHeight = 4096;
-
-      break;
-    }
-    case LINK_TYPE_WAN:
-    {
-      deferLevel = 1;
-
-      deferTimeout = 200;
-
-      tileWidth  = 4096;
-      tileHeight = 4096;
-
-      break;
-    }
+    case LINK_TYPE_ISDN:  { deferLevel = 2; tileWidth =   64; tileHeight =   64; break; }
+    case LINK_TYPE_ADSL:  { deferLevel = 2; tileWidth = 4096; tileHeight = 4096; break; }
+    case LINK_TYPE_WAN:   { deferLevel = 1; tileWidth = 4096; tileHeight = 4096; break; }
     case LINK_TYPE_NONE:
-    case LINK_TYPE_LAN:
-    {
-      deferLevel = 0;
-
-      deferTimeout = 200;
-
-      tileWidth  = 4096;
-      tileHeight = 4096;
-
-      break;
-    }
+    case LINK_TYPE_LAN:   { deferLevel = 0; tileWidth = 4096; tileHeight = 4096; break; }
     default:
     {
       fprintf(stderr, "Warning: Unknown link type [%d] processing the defer option.\n",
                   nxagentOption(LinkType));
-
-      deferLevel = 0;
-
-      tileWidth  = 64;
-      tileHeight = 64;
-
-      deferTimeout = 200;
-
       break;
     }
   }
@@ -2449,48 +2392,20 @@ void nxagentSetDeferLevel(void)
 
 void nxagentSetBufferSize(void)
 {
-  int size;
+  int size = 16384;
 
   switch (nxagentOption(LinkType))
   {
-    case LINK_TYPE_MODEM:
-    {
-      size = 4096;
-
-      break;
-    }
-    case LINK_TYPE_ISDN:
-    {
-      size = 4096;
-
-      break;
-    }
-    case LINK_TYPE_ADSL:
-    {
-      size = 8192;
-
-      break;
-    }
-    case LINK_TYPE_WAN:
-    {
-      size = 16384;
-
-      break;
-    }
+    case LINK_TYPE_MODEM: { size =  4096; break; }
+    case LINK_TYPE_ISDN:  { size =  4096; break; }
+    case LINK_TYPE_ADSL:  { size =  8192; break; }
+    case LINK_TYPE_WAN:   { size = 16384; break; }
     case LINK_TYPE_NONE:
-    case LINK_TYPE_LAN:
-    {
-      size = 16384;
-
-      break;
-    }
+    case LINK_TYPE_LAN:   { size = 16384; break; }
     default:
     {
       fprintf(stderr, "Warning: Unknown link type '%d' while setting the display buffer size.\n",
                   nxagentOption(LinkType));
-
-      size = 16384;
-
       break;
     }
   }
@@ -2524,48 +2439,20 @@ void nxagentSetScheduler(void)
 
 void nxagentSetCoalescence(void)
 {
-  int timeout;
+  int timeout = 0;
 
   switch (nxagentOption(LinkType))
   {
-    case LINK_TYPE_MODEM:
-    {
-      timeout = 50;
-
-      break;
-    }
-    case LINK_TYPE_ISDN:
-    {
-      timeout = 20;
-
-      break;
-    }
-    case LINK_TYPE_ADSL:
-    {
-      timeout = 10;
-
-      break;
-    }
-    case LINK_TYPE_WAN:
-    {
-      timeout = 5;
-
-      break;
-    }
+    case LINK_TYPE_MODEM: { timeout = 50; break; }
+    case LINK_TYPE_ISDN:  { timeout = 20; break; }
+    case LINK_TYPE_ADSL:  { timeout = 10; break; }
+    case LINK_TYPE_WAN:   { timeout = 5;  break; }
     case LINK_TYPE_NONE:
-    case LINK_TYPE_LAN:
-    {
-      timeout = 0;
-
-      break;
-    }
+    case LINK_TYPE_LAN:   { timeout = 0;  break; }
     default:
     {
       fprintf(stderr, "Warning: Unknown link type '%d' while setting the display coalescence.\n",
                   nxagentOption(LinkType));
-
-      timeout = 0;
-
       break;
     }
   }
