@@ -80,6 +80,7 @@ miTrapezoids (CARD8	    op,
 	xDst = traps[0].left.p1.x >> 16;
 	yDst = traps[0].left.p1.y >> 16;
 
+#ifdef NXAGENT_SERVER
         if (nxagentTrapezoidExtents != NullBox)
         {
           memcpy(&bounds, nxagentTrapezoidExtents, sizeof(BoxRec));
@@ -92,7 +93,9 @@ miTrapezoids (CARD8	    op,
 
           memcpy(nxagentTrapezoidExtents, &bounds, sizeof(BoxRec));
         }
-
+#else
+        miTrapezoidBounds (ntrap, traps, &bounds);
+#endif
 	if (bounds.y1 >= bounds.y2 || bounds.x1 >= bounds.x2)
 	    return;
 	pPicture = miCreateAlphaPicture (pScreen, pDst, maskFormat,
