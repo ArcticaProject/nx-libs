@@ -308,6 +308,7 @@ ResizeChildrenWinSize(register WindowPtr pWin, int dx, int dy, int dw, int dh)
 	SetWinSize (pSib);
 	SetBorderSize (pSib);
 
+#ifdef NXAGENT_SERVER
         /*
          * Don't force X to move children. It will position them
          * according with gravity.
@@ -320,6 +321,9 @@ ResizeChildrenWinSize(register WindowPtr pWin, int dx, int dy, int dw, int dh)
          */
 
         nxagentAddConfiguredWindow(pSib, CW_Update);
+#else
+        (*pScreen->PositionWindow)(pSib, pSib->drawable.x, pSib->drawable.y);
+#endif
 
 	if ( (pChild = pSib->firstChild) )
 	{
@@ -460,6 +464,7 @@ ConfigureWindow(register WindowPtr pWin, register Mask mask, XID *vlist, ClientP
 	/* Figure out if the window should be moved.  Doesn't
 	   make the changes to the window if event sent */
 
+#ifdef NXAGENT_SERVER
     #ifdef TEST
     if (nxagentWindowTopLevel(pWin))
     {
@@ -481,6 +486,7 @@ ConfigureWindow(register WindowPtr pWin, register Mask mask, XID *vlist, ClientP
 
       return Success;
     }
+#endif
 
     if (mask & CWStackMode)
 	pSib = WhereDoIGoInTheStack(pWin, pSib, pParent->drawable.x + x,
@@ -624,7 +630,9 @@ ActuallyDoSomething:
     if (action != RESTACK_WIN)
 	CheckCursorConfinement(pWin);
 
+#ifdef NXAGENT_SERVER
     nxagentFlushConfigureWindow();
+#endif
 
     return(Success);
 #undef RESTACK_WIN
@@ -687,10 +695,12 @@ ReparentWindow(register WindowPtr pWin, register WindowPtr pParent,
     pWin->parent = pParent;
     pPrev = RealChildHead(pParent);
 
+#ifdef NXAGENT_SERVER
     if (pWin->parent == screenInfo.screens[0]->root)
     {
       nxagentSetTopLevelEventMask(pWin);
     }
+#endif
  
     if (pPrev)
     {
@@ -756,12 +766,14 @@ MapWindow(register WindowPtr pWin, ClientPtr client)
 #endif
     WindowPtr  pLayerWin;
 
+#ifdef NXAGENT_SERVER
     #ifdef TEST
     if (nxagentWindowTopLevel(pWin))
     {
       fprintf(stderr, "MapWindow: pWin [%p] client [%p]\n", pWin, client);
     }
     #endif
+#endif
 
     if (pWin->mapped)
 	return(Success);
@@ -852,7 +864,9 @@ MapWindow(register WindowPtr pWin, ClientPtr client)
 	RegionUninit(&temp);
     }
 
+#ifdef NXAGENT_SERVER
     nxagentFlushConfigureWindow();
+#endif
 
     return(Success);
 }
@@ -885,6 +899,7 @@ SaveScreens(int on, int mode)
 	   (* screenInfo.screens[i]->SaveScreen) (screenInfo.screens[i], on);
 	if (savedScreenInfo[i].ExternalScreenSaver)
 	{
+#ifdef NXAGENT_SERVER
           if (nxagentOption(Timeout) != 0)
           {
             #ifdef TEST
@@ -893,6 +908,7 @@ SaveScreens(int on, int mode)
             #endif
           }
           else
+#endif
           {
 	      if ((*savedScreenInfo[i].ExternalScreenSaver)
 		  (screenInfo.screens[i], type, on == SCREEN_SAVER_FORCER))
