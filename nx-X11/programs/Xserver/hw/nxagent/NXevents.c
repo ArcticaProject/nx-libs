@@ -192,6 +192,15 @@ ActivatePointerGrab(register DeviceIntPtr mouse, register GrabPtr grab,
     if (nxagentOption(Rootless) == 1)
     {
       /*
+       * from nxagent-1.5.0-20 changelog:
+       * In rootless mode, grabs exported to X in
+       * ActivatePointerGrab() are always made asynchronous. The
+       * synchronous behaviour is implemented by the agent, so that
+       * requiring a further synchronous grab down to the real X
+       * server is of little use and potentially harmful.
+       */
+
+      /*
        * FIXME: We should use the correct value for the
        * cursor. Temporarily we set it to None.
        */
@@ -216,6 +225,15 @@ DeactivatePointerGrab(register DeviceIntPtr mouse)
 
     #ifdef NXAGENT_SERVER
 
+    /*
+     * excerpt from nxagent-1.5.0-20 changelog:
+     * In DeactivatePointerGrab() function, mouse button state is set
+     * to up if the window entered by the pointer is the root window
+     * and the agent is in rootless mode. This change is needed
+     * because the subsequent KeyRelease event could be not received
+     * by the agent (for example if the focus had left the window), so
+     * that agent could be unable to update the mouse button state.
+     */
     if (nxagentOption(Rootless) == 1)
     {
       XUngrabPointer(nxagentDisplay, CurrentTime);
@@ -260,13 +278,27 @@ ProcAllowEvents(register ClientPtr client)
 static WindowPtr 
 GetXYStartWindow(WindowPtr pWin)
 {
+
     if (nxagentOption(Rootless))
     {
+      /*
+       * explanation from the original changelog for nxagent-1.5.0-20:
+       * Modified function XYToWindow() in order to manage the case
+       * that mouse pointer is located on the title bar of a top level
+       * window in rootless mode.
+       */
+
       if (nxagentLastEnteredWindow == NULL)
       {
         return ROOT;
       }
 
+      /*
+       * explanation from the original changelog for nxagent-1.5.0-17:
+       * In rootless mode, now function XYToWindow() starts search from
+       * the last window originated an EnterNotify event. In this way, we
+       * can prevent shaded windows from getting mouse events.
+       */
       pWin = ROOT->lastChild;
 
       while (pWin && pWin != ROOT->firstChild && pWin != nxagentLastEnteredWindow)
