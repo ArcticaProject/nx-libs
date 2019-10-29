@@ -99,11 +99,6 @@ struct nxagentPixmapPair
 PixmapPtr nxagentCreatePixmap(ScreenPtr pScreen, int width, int height,
                               int depth, unsigned usage_hint)
 {
-  nxagentPrivPixmapPtr pPixmapPriv, pVirtualPriv;
-
-  PixmapPtr pPixmap;
-  PixmapPtr pVirtual;
-
   #ifdef DEBUG
   fprintf(stderr, "nxagentCreatePixmap: Creating pixmap with width [%d] "
               "height [%d] depth [%d] and allocation hint [%d].\n",
@@ -115,7 +110,7 @@ PixmapPtr nxagentCreatePixmap(ScreenPtr pScreen, int width, int height,
    * not allocate memory for the data.
    */
 
-  pPixmap = AllocatePixmap(pScreen, 0);
+  PixmapPtr pPixmap = AllocatePixmap(pScreen, 0);
 
   if (!pPixmap)
   {
@@ -152,7 +147,7 @@ PixmapPtr nxagentCreatePixmap(ScreenPtr pScreen, int width, int height,
    * Initialize the privates of the real picture.
    */
 
-  pPixmapPriv = nxagentPixmapPriv(pPixmap);
+  nxagentPrivPixmapPtr pPixmapPriv = nxagentPixmapPriv(pPixmap);
 
   pPixmapPriv -> isVirtual = False;
   pPixmapPriv -> isShared = nxagentShmPixmapTrap;
@@ -164,12 +159,7 @@ PixmapPtr nxagentCreatePixmap(ScreenPtr pScreen, int width, int height,
 
   if (pPixmapPriv -> isShared == 1)
   {
-    BoxRec box;
-
-    box.x1 = 0;
-    box.y1 = 0;
-    box.x2 = width;
-    box.y2 = height;
+    BoxRec box = { .x1 = 0, .y1 = 0, .x2 = width, .y2 = height };
 
     pPixmapPriv -> corruptedRegion = RegionCreate(&box, 1);
   }
@@ -245,7 +235,7 @@ PixmapPtr nxagentCreatePixmap(ScreenPtr pScreen, int width, int height,
    * Create the pixmap in the virtual framebuffer.
    */
 
-  pVirtual = fbCreatePixmap(pScreen, width, height, depth, usage_hint);
+  PixmapPtr pVirtual = fbCreatePixmap(pScreen, width, height, depth, usage_hint);
 
   if (pVirtual == NULL)
   {
@@ -277,7 +267,7 @@ PixmapPtr nxagentCreatePixmap(ScreenPtr pScreen, int width, int height,
    * removed in future.
    */
 
-  pVirtualPriv = nxagentPixmapPriv(pVirtual);
+  nxagentPrivPixmapPtr pVirtualPriv = nxagentPixmapPriv(pVirtual);
 
   pVirtualPriv -> isVirtual = True;
   pVirtualPriv -> isShared = nxagentShmPixmapTrap;
@@ -332,10 +322,6 @@ PixmapPtr nxagentCreatePixmap(ScreenPtr pScreen, int width, int height,
 
 Bool nxagentDestroyPixmap(PixmapPtr pPixmap)
 {
-  PixmapPtr pVirtual;
-
-  nxagentPrivPixmapPtr pPixmapPriv;
-
   if (!pPixmap)
   {
     #ifdef PANIC
@@ -346,9 +332,9 @@ Bool nxagentDestroyPixmap(PixmapPtr pPixmap)
     return False;
   }
 
-  pPixmapPriv = nxagentPixmapPriv(pPixmap);
+  nxagentPrivPixmapPtr pPixmapPriv = nxagentPixmapPriv(pPixmap);
 
-  pVirtual = pPixmapPriv -> pVirtualPixmap;
+  PixmapPtr pVirtual = pPixmapPriv -> pVirtualPixmap;
 
   #ifdef TEST
   fprintf(stderr, "nxagentDestroyPixmap: Destroying pixmap at [%p] with virtual at [%p].\n",
@@ -357,8 +343,6 @@ Bool nxagentDestroyPixmap(PixmapPtr pPixmap)
 
   if (pPixmapPriv -> isVirtual)
   {
-    int refcnt;
-
     /*
      * For some pixmaps we receive the destroy only for the
      * virtual. Infact to draw in the framebuffer we can use
@@ -375,11 +359,11 @@ Bool nxagentDestroyPixmap(PixmapPtr pPixmap)
     pPixmapPriv = nxagentPixmapPriv(pPixmap);
 
     /*
-     * Move the references accumulated by the virtual
-     * pixmap into the references of the real one.
+     * Move the references accumulated by the virtual pixmap into the
+     * references of the real one.
      */
 
-    refcnt = pVirtual -> refcnt - 1;
+    int refcnt = pVirtual -> refcnt - 1;
 
     #ifdef TEST
     fprintf(stderr, "nxagentDestroyPixmap: Adding [%d] references to pixmap at [%p].\n",
@@ -473,10 +457,7 @@ Bool nxagentDestroyPixmap(PixmapPtr pPixmap)
 
 Bool nxagentDestroyVirtualPixmap(PixmapPtr pPixmap)
 {
-  PixmapPtr pVirtual;
-  nxagentPrivPixmapPtr pVirtualPriv;
-
-  pVirtual = nxagentPixmapPriv(pPixmap) -> pVirtualPixmap;
+  PixmapPtr pVirtual = nxagentPixmapPriv(pPixmap) -> pVirtualPixmap;
 
   /*
    * Force the routine to get rid of the virtual
@@ -487,7 +468,7 @@ Bool nxagentDestroyVirtualPixmap(PixmapPtr pPixmap)
   {
     pVirtual -> refcnt = 1;
 
-    pVirtualPriv = nxagentPixmapPriv(pVirtual);
+    nxagentPrivPixmapPtr pVirtualPriv = nxagentPixmapPriv(pVirtual);
 
     if (pVirtualPriv -> corruptedRegion != NullRegion)
     {
@@ -515,8 +496,6 @@ RegionPtr nxagentPixmapToRegion(PixmapPtr pPixmap)
 Bool nxagentModifyPixmapHeader(PixmapPtr pPixmap, int width, int height, int depth,
                                    int bitsPerPixel, int devKind, void * pPixData)
 {
-  PixmapPtr pVirtualPixmap;
-
   /*
    * See miModifyPixmapHeader() in miscrinit.c. This
    * function is used to recycle the scratch pixmap
@@ -539,7 +518,7 @@ Bool nxagentModifyPixmapHeader(PixmapPtr pPixmap, int width, int height, int dep
     FatalError("nxagentModifyPixmapHeader: PANIC! Pixmap is virtual.");
   }
 
-  pVirtualPixmap = nxagentVirtualPixmap(pPixmap);
+  PixmapPtr pVirtualPixmap = nxagentVirtualPixmap(pPixmap);
 
   #ifdef TEST
   fprintf(stderr, "nxagentModifyPixmapHeader: Pixmap at [%p] Virtual at [%p].\n",
@@ -593,15 +572,15 @@ static void nxagentPixmapMatchID(void *p0, XID x1, void *p2)
 
 PixmapPtr nxagentPixmapPtr(Pixmap pixmap)
 {
-  struct nxagentPixmapPair pair;
-
   if (pixmap == None)
   {
     return NULL;
   }
 
-  pair.pixmap = pixmap;
-  pair.pMap = NULL;
+  struct nxagentPixmapPair pair = {
+    .pixmap = pixmap,
+    .pMap = NULL
+  };
 
   FindClientResourcesByType(clients[serverClient -> index], RT_NX_PIXMAP,
                                 nxagentPixmapMatchID, &pair);
@@ -659,9 +638,7 @@ void nxagentDisconnectPixmap(void *p0, XID x1, void *p2)
   PixmapPtr pPixmap = (PixmapPtr) p0;
 
   #ifdef TEST
-  Bool *pBool;
-
-  pBool = (Bool*) p2;
+  Bool *pBool = (Bool*) p2;
 
   fprintf(stderr, "nxagentDisconnectPixmap: Called with bool [%d] and pixmap at [%p].\n",
               *pBool, (void *) pPixmap);
@@ -682,7 +659,6 @@ void nxagentDisconnectPixmap(void *p0, XID x1, void *p2)
 
 Bool nxagentDisconnectAllPixmaps(void)
 {
-  int i;
   int r = 1;
 
   #ifdef TEST
@@ -708,7 +684,7 @@ Bool nxagentDisconnectAllPixmaps(void)
 
   #endif
 
-  for (i = 0, r = 1; i < MAXCLIENTS; r = 1, i++)
+  for (int i = 0, r = 1; i < MAXCLIENTS; r = 1, i++)
   {
     if (clients[i])
     {
@@ -742,7 +718,6 @@ void nxagentReconnectPixmap(void *p0, XID x1, void *p2)
 {
   PixmapPtr pPixmap = (PixmapPtr) p0;
   Bool *pBool = (Bool*) p2;
-  nxagentPrivPixmapPtr pPixmapPriv;
 
   if (!*pBool || pPixmap == NULL ||
           NXDisplayError(nxagentDisplay) == 1)
@@ -781,7 +756,7 @@ void nxagentReconnectPixmap(void *p0, XID x1, void *p2)
                   (void *) nxagentPixmapPriv(pPixmap) -> pPicture);
   #endif
 
-  pPixmapPriv = nxagentPixmapPriv(pPixmap);
+  nxagentPrivPixmapPtr pPixmapPriv = nxagentPixmapPriv(pPixmap);
 
   if (pPixmap -> drawable.width && pPixmap -> drawable.height)
   {
@@ -948,30 +923,26 @@ static void nxagentCheckOnePixmapIntegrity(void *p0, XID x1, void *p2)
 Bool nxagentCheckPixmapIntegrity(PixmapPtr pPixmap)
 {
   Bool integrity = True;
-  XImage *image;
-  char *data;
-  int format;
   unsigned long plane_mask = AllPlanes;
-  unsigned int width, height, length, depth;
   PixmapPtr pVirtual = nxagentVirtualPixmap(pPixmap);
 
-  width = pPixmap -> drawable.width;
-  height = pPixmap -> drawable.height;
-  depth = pPixmap -> drawable.depth;
-  format = (depth == 1) ? XYPixmap : ZPixmap;
+  unsigned int width = pPixmap -> drawable.width;
+  unsigned int height = pPixmap -> drawable.height;
+  unsigned int depth = pPixmap -> drawable.depth;
+  int format = (depth == 1) ? XYPixmap : ZPixmap;
 
   if (width && height)
   {
-    length = nxagentImageLength(width, height, format, 0, depth);
+    unsigned int length = nxagentImageLength(width, height, format, 0, depth);
 
-    data = malloc(length);
+    char *data = malloc(length);
 
     if (data == NULL)
     {
       FatalError("nxagentCheckPixmapIntegrity: Failed to allocate a buffer of size %d.\n", length);
     }
 
-    image = XGetImage(nxagentDisplay, nxagentPixmap(pPixmap), 0, 0,
+    XImage *image = XGetImage(nxagentDisplay, nxagentPixmap(pPixmap), 0, 0,
                           width, height, plane_mask, format);
     if (image == NULL)
     {
@@ -1019,10 +990,10 @@ Bool nxagentCheckPixmapIntegrity(PixmapPtr pPixmap)
 
     if (!integrity)
     {
+      char *p = image -> data;
+      char *q = data;
 
-      char *p, *q;
-
-      for (int i = 0, p = image -> data, q = data; i < length; i++)
+      for (int i = 0; i < length; i++)
       {
         if (p[i] != q[i])
         {
@@ -1099,14 +1070,6 @@ Bool nxagentCheckAllPixmapIntegrity(void)
 void nxagentSynchronizeShmPixmap(DrawablePtr pDrawable, int xPict, int yPict,
                                      int wPict, int hPict)
 {
-  GCPtr pGC;
-  char *data;
-  int width, height;
-  int depth, length, format;
-  CARD32 attributes[3];
-
-  int saveTrap;
-
   if (pDrawable -> type == DRAWABLE_PIXMAP &&
          nxagentIsShmPixmap((PixmapPtr) pDrawable) == 1)
   {
@@ -1115,7 +1078,9 @@ void nxagentSynchronizeShmPixmap(DrawablePtr pDrawable, int xPict, int yPict,
                 (void *) pDrawable);
     #endif
 
-    pGC = nxagentGetScratchGC(pDrawable -> depth, pDrawable -> pScreen);
+    GCPtr pGC = nxagentGetScratchGC(pDrawable -> depth, pDrawable -> pScreen);
+
+    CARD32 attributes[3];
 
     attributes[0] = 0x228b22;
     attributes[1] = 0xffffff;
@@ -1125,16 +1090,16 @@ void nxagentSynchronizeShmPixmap(DrawablePtr pDrawable, int xPict, int yPict,
 
     ValidateGC(pDrawable, pGC);
 
-    width  = (wPict != 0 && wPict <= pDrawable -> width) ? wPict : pDrawable -> width;
-    height = (hPict != 0 && hPict <= pDrawable -> height) ? hPict : pDrawable -> height;
+    int width  = (wPict != 0 && wPict <= pDrawable -> width) ? wPict : pDrawable -> width;
+    int height = (hPict != 0 && hPict <= pDrawable -> height) ? hPict : pDrawable -> height;
 
-    depth  = pDrawable -> depth;
+    int depth  = pDrawable -> depth;
 
-    format = (depth == 1) ? XYPixmap : ZPixmap;
+    int format = (depth == 1) ? XYPixmap : ZPixmap;
 
-    length = nxagentImageLength(width, height, format, 0, depth);
+    int length = nxagentImageLength(width, height, format, 0, depth);
 
-    saveTrap = nxagentGCTrap;
+    int saveTrap = nxagentGCTrap;
 
     nxagentGCTrap = 0;
 
@@ -1142,7 +1107,9 @@ void nxagentSynchronizeShmPixmap(DrawablePtr pDrawable, int xPict, int yPict,
 
     nxagentFBTrap = 1;
 
-    if ((data = malloc(length)) != NULL)
+    char *data = malloc(length);
+
+    if (data)
     {
       fbGetImage(nxagentVirtualDrawable(pDrawable), xPict, yPict,
                      width, height, format, 0xffffffff, data);
@@ -1189,13 +1156,6 @@ Bool nxagentPixmapOnShadowDisplay(PixmapPtr pMap)
   static int height;
   static int length;
   static unsigned int format;
-
-  XlibGC gc;
-  XGCValues value;
-  XImage *image;
-  Visual *pVisual;
-  char *data = NULL;
-
 
   if (init)
   {
@@ -1264,7 +1224,9 @@ FIXME: If the pixmap has a different depth from the window, the
 
   length = nxagentImageLength(width, height, format, 0, depth);
 
-  if ((data = malloc(length)) == NULL)
+  char * data = malloc(length);
+
+  if (data == NULL)
   {
     #ifdef WARNING
     fprintf(stderr, "nxagentPixmapOnShadowDisplay: WARNING! Failed to allocate memory for the operation.\n");
@@ -1276,7 +1238,7 @@ FIXME: If the pixmap has a different depth from the window, the
   fbGetImage((DrawablePtr) nxagentVirtualPixmap(pPixmap), 0, 0,
                  width, height, format, AllPlanes, data);
 
-  pVisual = nxagentImageVisual((DrawablePtr) pPixmap, depth);
+  Visual *pVisual = nxagentImageVisual((DrawablePtr) pPixmap, depth);
 
   if (pVisual == NULL)
   {
@@ -1287,10 +1249,10 @@ FIXME: If the pixmap has a different depth from the window, the
     pVisual = nxagentVisuals[nxagentDefaultVisualIndex].visual;
   } 
 
-  image = XCreateImage(nxagentDisplay, pVisual,
-                           depth, format, 0, (char *) data,
-                               width, height, BitmapPad(nxagentDisplay),
-                                   nxagentImagePad(width, format, 0, depth));
+  XImage *image = XCreateImage(nxagentDisplay, pVisual,
+                                  depth, format, 0, (char *) data,
+                                      width, height, BitmapPad(nxagentDisplay),
+                                          nxagentImagePad(width, format, 0, depth));
 
   if (image == NULL)
   {
@@ -1303,13 +1265,15 @@ FIXME: If the pixmap has a different depth from the window, the
     return False;
   }
 
-  value.foreground = 0xff0000;
-  value.background = 0x000000;
-  value.plane_mask = 0xffffff;
-  value.fill_style = FillSolid;
+  XGCValues value = {
+    .foreground = 0xff0000,
+    .background = 0x000000,
+    .plane_mask = 0xffffff,
+    .fill_style = FillSolid
+  };
 
-  gc = XCreateGC(shadow, win, GCBackground |
-                     GCForeground | GCFillStyle | GCPlaneMask, &value);
+  XlibGC gc = XCreateGC(shadow, win, GCBackground |
+                            GCForeground | GCFillStyle | GCPlaneMask, &value);
 
   NXCleanImage(image);
 
@@ -1333,15 +1297,7 @@ Bool nxagentFbOnShadowDisplay(void)
   static int showTime;
   static int prevWidth, prevHeight;
 
-  XlibGC gc;
-  XGCValues value;
-  XImage *image;
-  Visual *pVisual;
   WindowPtr pWin = screenInfo.screens[0]->root;
-  unsigned int format;
-  int depth, width, height, length;
-  char *data = NULL;
-
 
   if (pWin == NULL)
   {
@@ -1352,10 +1308,10 @@ Bool nxagentFbOnShadowDisplay(void)
     return False;
   }
 
-  depth = pWin -> drawable.depth;
-  width = pWin -> drawable.width;
-  height = pWin -> drawable.height;
-  format = (depth == 1) ? XYPixmap : ZPixmap;
+  int depth = pWin -> drawable.depth;
+  int width = pWin -> drawable.width;
+  int height = pWin -> drawable.height;
+  unsigned int format = (depth == 1) ? XYPixmap : ZPixmap;
 
   if (init)
   {
@@ -1411,19 +1367,22 @@ Bool nxagentFbOnShadowDisplay(void)
 
   if (prevWidth != width || prevHeight != height)
   {
-    XWindowChanges values;
-
     prevWidth = width;
     prevHeight = height;
 
-    values.width = width;
-    values.height = height;
+    XWindowChanges values = {
+      .width = width,
+      .height = height
+    };
+
     XConfigureWindow(shadow, win, CWWidth | CWHeight, &values);
   }
 
-  length = nxagentImageLength(width, height, format, 0, depth);
+  int length = nxagentImageLength(width, height, format, 0, depth);
 
-  if ((data = malloc(length)) == NULL)
+  char *data = malloc(length);
+
+  if (data == NULL)
   {
     #ifdef WARNING
     fprintf(stderr, "nxagentFbOnShadowDisplay: WARNING! Failed to allocate memory for the operation.\n");
@@ -1435,7 +1394,7 @@ Bool nxagentFbOnShadowDisplay(void)
   fbGetImage((DrawablePtr)pWin, 0, 0,
                  width, height, format, AllPlanes, data);
 
-  pVisual = nxagentImageVisual((DrawablePtr) pWin, depth);
+  Visual *pVisual = nxagentImageVisual((DrawablePtr) pWin, depth);
 
   if (pVisual == NULL)
   {
@@ -1446,10 +1405,10 @@ Bool nxagentFbOnShadowDisplay(void)
     pVisual = nxagentVisuals[nxagentDefaultVisualIndex].visual;
   } 
 
-  image = XCreateImage(nxagentDisplay, pVisual,
-                           depth, format, 0, (char *) data,
-                               width, height, BitmapPad(nxagentDisplay),
-                                   nxagentImagePad(width, format, 0, depth));
+  XImage *image = XCreateImage(nxagentDisplay, pVisual,
+                                  depth, format, 0, (char *) data,
+                                      width, height, BitmapPad(nxagentDisplay),
+                                          nxagentImagePad(width, format, 0, depth));
 
   if (image == NULL)
   {
@@ -1462,13 +1421,15 @@ Bool nxagentFbOnShadowDisplay(void)
     return False;
   }
 
-  value.foreground = 0xff0000;
-  value.background = 0x000000;
-  value.plane_mask = 0xffffff;
-  value.fill_style = FillSolid;
+  XGCValues value = {
+    .foreground = 0xff0000,
+    .background = 0x000000,
+    .plane_mask = 0xffffff,
+    .fill_style = FillSolid
+  };
 
-  gc = XCreateGC(shadow, win, GCBackground |
-                     GCForeground | GCFillStyle | GCPlaneMask, &value);
+  XlibGC gc = XCreateGC(shadow, win, GCBackground |
+                            GCForeground | GCFillStyle | GCPlaneMask, &value);
 
   NXCleanImage(image);
 
@@ -1509,14 +1470,14 @@ void nxagentPrintResourcePredicate(void *value, XID id, XID type, void *cdata)
 
 void nxagentPrintResources(void)
 {
-  Bool result;
-
   nxagentPrintResourceTypes();
 
   for (int i = 0; i < MAXCLIENTS; i++)
   {
     if (clients[i])
     {
+      Bool result;
+
       fprintf(stderr, "nxagentPrintResources: Printing resources for client [%d]:\n",
                   i);
 
