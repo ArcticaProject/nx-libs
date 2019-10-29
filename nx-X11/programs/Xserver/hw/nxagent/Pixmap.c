@@ -699,6 +699,7 @@ Bool nxagentDisconnectAllPixmaps(void)
 
   #ifdef WARNING
 
+  /* Note: nxagentDisconnectPixmap() does not modify r - so this check can never succeed */
   if (r == 0)
   {
     fprintf(stderr, "nxagentDisconnectAllPixmaps: WARNING! Failed to disconnect "
@@ -719,6 +720,7 @@ Bool nxagentDisconnectAllPixmaps(void)
 
       #ifdef WARNING
 
+      /* Note: nxagentDisconnectPixmap() does not modify r - so this check can never succeed */
       if (r == 0)
       {
         fprintf(stderr, "nxagentDisconnectAllPixmaps: WARNING! Failed to disconnect "
@@ -728,16 +730,6 @@ Bool nxagentDisconnectAllPixmaps(void)
       #endif
     }
   }
-
-  #ifdef WARNING
-
-  if (r == 0)
-  {
-    fprintf(stderr, "nxagentDisconnectAllPixmaps: WARNING! Failed to disconnect "
-                "pixmap for client [%d].\n", i);
-  }
-
-  #endif
 
   #ifdef TEST
   fprintf(stderr, "nxagentDisconnectAllPixmaps: Pixmaps disconnection completed.\n");
