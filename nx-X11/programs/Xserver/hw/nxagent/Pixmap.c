@@ -106,8 +106,8 @@ PixmapPtr nxagentCreatePixmap(ScreenPtr pScreen, int width, int height,
   #endif
 
   /*
-   * Create the pixmap structure but do
-   * not allocate memory for the data.
+   * Create the pixmap structure but do not allocate memory for the
+   * data.
    */
 
   PixmapPtr pPixmap = AllocatePixmap(pScreen, 0);
@@ -174,16 +174,13 @@ PixmapPtr nxagentCreatePixmap(ScreenPtr pScreen, int width, int height,
   pPixmapPriv -> containTrapezoids = 0;
 
   /*
-   * The lazy encoding policy generally does
-   * not send on remote X server the off-screen
-   * images, by preferring to synchronize the
-   * windows content. Anyway this behaviour may
-   * be inadvisable if a pixmap is used, for
-   * example, for multiple copy areas on screen.
-   * This counter serves the purpose, taking in-
-   * to account the number of times the pixmap
-   * has been used as source for a deferred
-   * operation. 
+   * The lazy encoding policy generally does not send on remote X
+   * server the off-screen images, by preferring to synchronize the
+   * windows content. Anyway this behaviour may be inadvisable if a
+   * pixmap is used, for example, for multiple copy areas on screen.
+   * This counter serves the purpose, taking into account the number
+   * of times the pixmap has been used as source for a deferred
+   * operation.
    */
 
   pPixmapPriv -> usageCounter = 0;
@@ -200,11 +197,10 @@ PixmapPtr nxagentCreatePixmap(ScreenPtr pScreen, int width, int height,
   pPixmapPriv -> isBackingPixmap = 0;
 
   /*
-   * Create the pixmap based on the default
-   * windows. The proxy knows this and uses
-   * this information to optimize encode the
-   * create pixmap message by including the
-   * id of the drawable in the checksum.
+   * Create the pixmap based on the default windows. The proxy knows
+   * this and uses this information to optimize encode the create
+   * pixmap message by including the id of the drawable in the
+   * checksum.
    */
 
   if (width != 0 && height != 0 && nxagentGCTrap == 0)
@@ -251,7 +247,7 @@ PixmapPtr nxagentCreatePixmap(ScreenPtr pScreen, int width, int height,
   }
 
   #ifdef TEST
-  fprintf(stderr,"nxagentCreatePixmap: Allocated memory for the Virtual %sPixmap %p of real Pixmap %p (%dx%d),",
+  fprintf(stderr, "nxagentCreatePixmap: Allocated memory for the Virtual %sPixmap %p of real Pixmap %p (%dx%d),",
               "allocation hint [%d].\n",
               nxagentShmPixmapTrap ? "Shm " : "", (void *) pVirtual, (void *) pPixmap, width, height, usage_hint);
   #endif
@@ -259,12 +255,11 @@ PixmapPtr nxagentCreatePixmap(ScreenPtr pScreen, int width, int height,
   pPixmapPriv -> pVirtualPixmap = pVirtual;
 
   /*
-   * Initialize the privates of the virtual picture. We
-   * could avoid to use a flag and just check the pointer
-   * to the virtual pixmap that, if the pixmap is actually
-   * virtual, will be NULL. Unfortunately the flag can be
-   * changed in nxagentValidateGC(). That code should be
-   * removed in future.
+   * Initialize the privates of the virtual picture. We could avoid to
+   * use a flag and just check the pointer to the virtual pixmap that,
+   * if the pixmap is actually virtual, will be NULL. Unfortunately
+   * the flag can be changed in nxagentValidateGC(). That code should
+   * be removed in future.
    */
 
   nxagentPrivPixmapPtr pVirtualPriv = nxagentPixmapPriv(pVirtual);
@@ -291,19 +286,17 @@ PixmapPtr nxagentCreatePixmap(ScreenPtr pScreen, int width, int height,
   pVirtualPriv -> splitResource = NULL;
 
   /*
-   * We might distinguish real and virtual pixmaps by
-   * checking the pointers to pVirtualPixmap. We should
-   * also remove the copy of id and use the one of the
-   * real pixmap.
+   * We might distinguish real and virtual pixmaps by checking the
+   * pointers to pVirtualPixmap. We should also remove the copy of id
+   * and use the one of the real pixmap.
    */
    
   pVirtualPriv -> id = pPixmapPriv -> id;
   pVirtualPriv -> mid = 0;
 
   /*
-   * Storing a pointer back to the real pixmap is
-   * silly. Unfortunately this is the way it has
-   * been originally implemented. See also the
+   * Storing a pointer back to the real pixmap is silly. Unfortunately
+   * this is the way it has been originally implemented. See also the
    * comment in destroy of the pixmap.
    */
 
@@ -345,12 +338,11 @@ Bool nxagentDestroyPixmap(PixmapPtr pPixmap)
   {
     /*
      * For some pixmaps we receive the destroy only for the
-     * virtual. Infact to draw in the framebuffer we can use
-     * the virtual pixmap instead of the pointer to the real
-     * one. As the virtual pixmap can collect references, we
-     * must transfer those references to the real pixmap so
-     * we can continue as the destroy had been requested for
-     * it.
+     * virtual. Infact to draw in the framebuffer we can use the
+     * virtual pixmap instead of the pointer to the real one. As the
+     * virtual pixmap can collect references, we must transfer those
+     * references to the real pixmap so we can continue as the destroy
+     * had been requested for it.
      */
 
     pVirtual = pPixmap;
@@ -396,7 +388,6 @@ Bool nxagentDestroyPixmap(PixmapPtr pPixmap)
   }
 
   #ifdef TEST
-
   fprintf(stderr, "nxagentDestroyPixmap: Managing to destroy the pixmap at [%p]\n",
               (void *) pPixmap);
   #endif
@@ -497,10 +488,9 @@ Bool nxagentModifyPixmapHeader(PixmapPtr pPixmap, int width, int height, int dep
                                    int bitsPerPixel, int devKind, void * pPixData)
 {
   /*
-   * See miModifyPixmapHeader() in miscrinit.c. This
-   * function is used to recycle the scratch pixmap
-   * for this screen. We let it refer to the virtual
-   * pixmap.
+   * See miModifyPixmapHeader() in miscrinit.c. This function is used
+   * to recycle the scratch pixmap for this screen. We let it refer to
+   * the virtual pixmap.
    */
 
   if (!pPixmap)
@@ -666,9 +656,9 @@ Bool nxagentDisconnectAllPixmaps(void)
   #endif
 
   /*
-   * The RT_NX_PIXMAP resource type is allocated
-   * only on the server client, so we don't need
-   * to find it through the other clients too.
+   * The RT_NX_PIXMAP resource type is allocated only on the server
+   * client, so we don't need to find it through the other clients
+   * too.
    */
 
   FindClientResourcesByType(clients[serverClient -> index], RT_NX_PIXMAP, nxagentDisconnectPixmap, &r);
@@ -734,9 +724,8 @@ void nxagentReconnectPixmap(void *p0, XID x1, void *p2)
   else if (pPixmap == nxagentDefaultScreen -> pScratchPixmap)
   {
     /*
-     * Every time the scratch pixmap is used its
-     * data is changed, so we don't need to recon-
-     * nect it.
+     * Every time the scratch pixmap is used its data is changed, so
+     * we don't need to reconnect it.
      */
 
     #ifdef TEST
@@ -831,9 +820,9 @@ Bool nxagentReconnectAllPixmaps(void *p0)
   nxagentResetAlphaCache();
 
   /*
-   * The RT_NX_PIXMAP resource type is allocated
-   * only on the server client, so we don't need
-   * to find it through the other clients too.
+   * The RT_NX_PIXMAP resource type is allocated only on the server
+   * client, so we don't need to find it through the other clients
+   * too.
    */
 
   FindClientResourcesByType(clients[serverClient -> index], RT_NX_PIXMAP, nxagentReconnectPixmap, &result);
@@ -857,11 +846,10 @@ Bool nxagentReconnectAllPixmaps(void *p0)
       #endif
 
       /*
-       * Let the pixmap be reconnected as it was an
-       * image request issued by the client owning
-       * the resource. The client index is used as
-       * a subscript by the image routines to cache
-       * the data per-client.
+       * Let the pixmap be reconnected as it was an image request
+       * issued by the client owning the resource. The client index is
+       * used as a subscript by the image routines to cache the data
+       * per-client.
        */
 
       FindClientResourcesByType(clients[i], RT_PIXMAP, nxagentReconnectPixmap, &result);
