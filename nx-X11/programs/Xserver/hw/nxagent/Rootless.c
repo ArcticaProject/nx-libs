@@ -229,9 +229,9 @@ void nxagentCirculateRootlessWindows(int direction)
 
 Bool nxagentRootlessTreesMatch(void)
 {
-  Window root_return;
-  Window parent_return;
-  Window *children_return = NULL;
+  XlibWindow root_return;
+  XlibWindow parent_return;
+  XlibWindow *children_return = NULL;
   unsigned int nChildrenReturn;
   WindowPtr pTestWin = screenInfo.screens[0]->root -> firstChild;
   Bool treesMatch = True;
@@ -244,14 +244,12 @@ Bool nxagentRootlessTreesMatch(void)
     #ifdef WARNING
     fprintf(stderr, "%s: WARNING! Failed QueryTree request.\n", __func__);
     #endif
-
     return False;
   }
 
   while (nChildrenReturn > 0)
   {
     WindowPtr pW = nxagentWindowPtr(children_return[--nChildrenReturn]);
-
     if (!pW)
     {
       pW = nxagentRootlessTopLevelWindow(children_return[nChildrenReturn]);
