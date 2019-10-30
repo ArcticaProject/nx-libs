@@ -281,8 +281,6 @@ void nxagentRootlessRestack(Window children[], unsigned int nchildren)
 void nxagentRootlessRestack(unsigned long children[], unsigned int nchildren)
 #endif
 {
-  int i;
-
   WindowPtr *toplevel = malloc(sizeof(WindowPtr) * nchildren);
 
   if (!toplevel)
@@ -293,7 +291,7 @@ void nxagentRootlessRestack(unsigned long children[], unsigned int nchildren)
 
   unsigned int ntoplevel = 0;
 
-  for(i = 0; i < nchildren; i++)
+  for(int i = 0; i < nchildren; i++)
   {
     WindowPtr pWin = nxagentWindowPtr(children[i]);
 
@@ -318,7 +316,7 @@ void nxagentRootlessRestack(unsigned long children[], unsigned int nchildren)
 
   fprintf(stderr, "%s: External top level windows before restack:\n", __func__);
 
-  for (i = 0; i < ntoplevel; i++)
+  for (int i = 0; i < ntoplevel; i++)
   {
     fprintf(stderr, "%s: [%p]\n", __func__, (void *)toplevel[i]);
   }
@@ -334,35 +332,30 @@ void nxagentRootlessRestack(unsigned long children[], unsigned int nchildren)
 
   WindowPtr pWin = screenInfo.screens[0]->root -> firstChild;
 
-  XID values[2];
-  values[1] = (XID) Above;
-
-  while(ntoplevel-- > 0 && pWin != NULL)
+  for (int i = ntoplevel; i-- && pWin; pWin = toplevel[i] -> nextSib)
   {
-    if (toplevel[ntoplevel] != pWin)
+    XID values[2] = {0, (XID) Above};
+
+    if (toplevel[i] != pWin)
     {
       Mask mask = CWSibling | CWStackMode;
       values[0] = pWin -> drawable.id;
-      ClientPtr pClient = wClient(toplevel[ntoplevel]);
+      ClientPtr pClient = wClient(toplevel[i]);
       nxagentScreenTrap = 1;
-      ConfigureWindow(toplevel[ntoplevel], mask, (XID *) values, pClient);
+      ConfigureWindow(toplevel[i], mask, (XID *) values, pClient);
       nxagentScreenTrap = 0;
 
       #ifdef TEST
-      fprintf(stderr, "%s: Restacked window [%p].\n", __func__, (void*) toplevel[ntoplevel]);
+      fprintf(stderr, "%s: Restacked window [%p].\n", __func__, (void*) toplevel[i]);
       #endif
     }
-
-    pWin = toplevel[ntoplevel] -> nextSib;
   }
 
   #ifdef DEBUG
 
-
-  ntoplevel = i; /* FIXME: is this correct? */
   fprintf(stderr, "%s: External top level windows after restack:\n", __func__);
 
-  for (i = 0; i < ntoplevel; i++)
+  for (int i = 0; i < ntoplevel; i++)
   {
     fprintf(stderr, "%s: [%p]\n", __func__, (void *)toplevel[i]);
   }
