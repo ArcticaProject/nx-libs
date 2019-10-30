@@ -134,9 +134,7 @@ INSTPGMFLAGS =
              OS = os/LibraryTargetName(os)
         BSDEMUL = $(DEPXBSDLIB)
              FB = fb/LibraryTargetName(fb)
-#if (!(defined(NXAgentServer) && NXAgentServer))
          DAMAGE = miext/damage/LibraryTargetName(damage)
-#endif
          SHADOW = miext/shadow/LibraryTargetName(shadow)
           LAYER = miext/layer/LibraryTargetName(layer) 
 #if !HasFfs && (defined(mingwArchitecture) || defined(cygwinArchitecture))
@@ -247,7 +245,6 @@ NXAGENTOBJS = hw/nxagent/miinitext.o     \
               hw/nxagent/NXextension.o   \
               hw/nxagent/NXglxext.o      \
               hw/nxagent/NXresource.o    \
-              hw/nxagent/NXdamage.o      \
               $(NULL)
 #elif !defined(Win32Architecture)
 NXAGENTOBJS = hw/nxagent/miinitext.o     \
@@ -264,7 +261,6 @@ NXAGENTOBJS = hw/nxagent/miinitext.o     \
               hw/nxagent/NXglxext.o      \
               hw/nxagent/NXxvdisp.o      \
               hw/nxagent/NXresource.o    \
-              hw/nxagent/NXdamage.o      \
               $(NULL)
 #else
 NXAGENTOBJS = hw/nxagent/miinitext.o     \
@@ -281,7 +277,6 @@ NXAGENTOBJS = hw/nxagent/miinitext.o     \
               hw/nxagent/NXglxext.o      \
               hw/nxagent/NXxvdisp.o      \
               hw/nxagent/NXresource.o    \
-              hw/nxagent/NXdamage.o      \
               dix/main.o                 \
               $(NULL)
 #endif
