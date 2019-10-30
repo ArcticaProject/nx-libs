@@ -99,12 +99,12 @@ void nxagentConstrainCursor(ScreenPtr pScreen, BoxPtr pBox)
   if (pBox->x1 <= 0 && pBox->y1 <= 0 &&
           pBox->x2 >= width && pBox->y2 >= height)
   {
-    fprintf(stderr, "nxagentConstrainCursor: Called with box [%d,%d,%d,%d]. "
-                "Skipping the operation.\n", pBox->x1, pBox->y1, pBox->x2, pBox->y2);
+    fprintf(stderr, "%s: Called with box [%d,%d,%d,%d]. Skipping the operation.\n",
+                __func__, pBox->x1, pBox->y1, pBox->x2, pBox->y2);
   }
   else
   {
-    fprintf(stderr, "nxagentConstrainCursor: WARNING! Called with box [%d,%d,%d,%d].\n",
+    fprintf(stderr, "%s: WARNING! Called with box [%d,%d,%d,%d].\n", __func__,
                 pBox->x1, pBox->y1, pBox->x2, pBox->y2);
   }
   #endif
@@ -132,7 +132,7 @@ Bool nxagentDisplayCursor(ScreenPtr pScreen, CursorPtr pCursor)
                           cursor);
 
     #ifdef TEST
-    fprintf(stderr, "nxagentDisplayCursor: Called for cursor at [%p] with private [%p].\n",
+    fprintf(stderr, "%s: Called for cursor at [%p] with private [%p].\n", __func__,
                 (void *) pCursor, pCursor->devPriv[pScreen->myNum]);
     #endif
   }
@@ -143,7 +143,7 @@ Bool nxagentDisplayCursor(ScreenPtr pScreen, CursorPtr pCursor)
 Bool nxagentRealizeCursor(ScreenPtr pScreen, CursorPtr pCursor)
 {
   #ifdef TEST
-  fprintf(stderr, "nxagentRealizeCursor: Called for cursor at [%p].\n", (void *) pCursor);
+  fprintf(stderr, "%s: Called for cursor at [%p].\n", __func__, (void *) pCursor);
   #endif
 
   unsigned long valuemask = GCFunction | GCPlaneMask | GCForeground | GCBackground | GCClipMask;
@@ -233,7 +233,7 @@ Bool nxagentRealizeCursor(ScreenPtr pScreen, CursorPtr pCursor)
   nxagentCursorUsesRender(pCursor, pScreen) = 0;
 
   #ifdef TEST
-  fprintf(stderr, "nxagentRealizeCursor: Set cursor private at [%p] cursor is [%ld].\n",
+  fprintf(stderr, "%s: Set cursor private at [%p] cursor is [%ld].\n", __func__,
               (void *) nxagentCursorPriv(pCursor, pScreen),
                   nxagentCursorPriv(pCursor, pScreen) -> cursor);
   #endif
@@ -308,12 +308,8 @@ void nxagentReconnectCursor(void * p0, XID x1, void * p2)
   Bool* pBool = (Bool*)p2;
   CursorPtr pCursor = (CursorPtr) p0;
 
-  #ifdef TEST
-  fprintf(stderr, "nxagentReconnectCursor:  pCursor at [%p]\n", pCursor);
-  #endif
-
-  #ifdef NXAGENT_RECONNECT_CURSOR_DEBUG
-  fprintf(stderr, "nxagentReconnectCursor:  pCursor at [%p]\n", pCursor);
+  #if defined( TEST) || defined(NXAGENT_RECONNECT_CURSOR_DEBUG)
+  fprintf(stderr, "%s:  pCursor at [%p]\n", __func__, pCursor);
   #endif
 
   if (!*pBool || !pCursor)
@@ -326,7 +322,7 @@ void nxagentReconnectCursor(void * p0, XID x1, void * p2)
     if (nxagentIsAnimCursor(pCursor))
     {
       #ifdef TEST
-      fprintf(stderr, "nxagentReconnectCursor: nxagentIsAnimCursor   pCursor at [%p]\n", pCursor);
+      fprintf(stderr, "%s: nxagentIsAnimCursor   pCursor at [%p]\n", __func__, pCursor);
       #endif
 
       AnimCurPtr ac = nxagentGetAnimCursor(pCursor);
@@ -336,12 +332,11 @@ void nxagentReconnectCursor(void * p0, XID x1, void * p2)
         nxagentReconnectCursor (ac->elts[j].pCursor, x1, p2);
 
         #ifdef TEST
-        fprintf(stderr, "nxagentReconnectCursor: Iteration [%d]   pCursor at [%p]\n", j, ac->elts[j].pCursor);
+        fprintf(stderr, "%s: Iteration [%d]   pCursor at [%p]\n", __func__, j, ac->elts[j].pCursor);
         #endif
       }
     }
   }
-
   else
   {
     if (nxagentCursorUsesRender(pCursor, nxagentDefaultScreen))
@@ -358,14 +353,14 @@ void nxagentReconnectCursor(void * p0, XID x1, void * p2)
       free(nxagentCursorPriv(pCursor, nxagentDefaultScreen));
       if (!nxagentRealizeCursor(nxagentDefaultScreen, pCursor))
       {
-        fprintf(stderr, "nxagentReconnectCursor: nxagentRealizeCursor failed\n");
+        fprintf(stderr, "%s: nxagentRealizeCursor failed\n", __func__);
         *pBool = False;
       }
     }
   }
 
   #ifdef NXAGENT_RECONNECT_CURSOR_DEBUG
-  fprintf(stderr, "nxagentReconnectCursor: %p - ID %lx\n", pCursor, nxagentCursor(pCursor, nxagentDefaultScreen));
+  fprintf(stderr, "%s: %p - ID %lx\n", __func__, pCursor, nxagentCursor(pCursor, nxagentDefaultScreen));
   #endif
 }
 
@@ -392,7 +387,7 @@ Bool nxagentReconnectAllCursor(void *p0)
   GrabPtr grab = inputInfo.pointer -> grab;
 
   #if defined(NXAGENT_RECONNECT_DEBUG) || defined(NXAGENT_RECONNECT_CURSOR_DEBUG)
-  fprintf(stderr, "nxagentReconnectAllCursor\n");
+  fprintf(stderr, "%s\n", __func__);
   #endif
 
   for (int i = 0; i < MAXCLIENTS; r = 1, i++)
@@ -404,8 +399,8 @@ Bool nxagentReconnectAllCursor(void *p0)
       #ifdef WARNING
       if (r == False)
       {
-        fprintf(stderr, "nxagentReconnectAllCursor: WARNING! Failed to recreate "
-                    "cursor for client [%d].\n", i);
+        fprintf(stderr, "%s: WARNING! Failed to recreate "
+                    "cursor for client [%d].\n", __func__, i);
       }
       #endif
     }
@@ -434,7 +429,7 @@ void nxagentDisconnectCursor(void * p0, XID x1, void * p2)
     if (nxagentIsAnimCursor(pCursor))
     {
       #ifdef TEST
-      fprintf(stderr, "nxagentDisconnectCursor: nxagentIsAnimCursor   pCursor at [%p]\n", pCursor);
+      fprintf(stderr, "%s: nxagentIsAnimCursor   pCursor at [%p]\n", __func__, pCursor);
       #endif
 
       AnimCurPtr ac = nxagentGetAnimCursor(pCursor);
@@ -444,7 +439,7 @@ void nxagentDisconnectCursor(void * p0, XID x1, void * p2)
         nxagentDisconnectCursor (ac->elts[j].pCursor, x1, p2);
 
         #ifdef TEST
-        fprintf(stderr, "nxagentDisconnectCursor: Iteration [%d]   pCursor at [%p]\n", j, ac->elts[j].pCursor);
+        fprintf(stderr, "%s: Iteration [%d]   pCursor at [%p]\n", __func__, j, ac->elts[j].pCursor);
         #endif
       }
     }
@@ -452,29 +447,28 @@ void nxagentDisconnectCursor(void * p0, XID x1, void * p2)
   }
 
   #ifdef NXAGENT_RECONNECT_CURSOR_DEBUG
-  fprintf(stderr, "nxagentDisconnectCursor: %p - ID %lx\n",
-          pCursor,
-          nxagentCursor(pCursor, nxagentDefaultScreen));
+  fprintf(stderr, "%s: %p - ID %lx\n", __func__, pCursor,
+              nxagentCursor(pCursor, nxagentDefaultScreen));
   #endif
 
   #ifdef TEST
-  fprintf(stderr, "nxagentDisconnectCursor: Called with bool [%d].\n", *pBool);
+  fprintf(stderr, "%s: Called with bool [%d].\n", __func__, *pBool);
 
-  fprintf(stderr, "nxagentDisconnectCursor: Pointer to cursor is [%p] with counter [%d].\n",
+  fprintf(stderr, "%s: Pointer to cursor is [%p] with counter [%d].\n", __func__,
               (void *) pCursor, pCursor -> refcnt);
 
-  fprintf(stderr, "nxagentDisconnectCursor: Dummy screen is at [%p].\n",
+  fprintf(stderr, "%s: Dummy screen is at [%p].\n", __func__,
               (void *) nxagentDefaultScreen);
 
-  fprintf(stderr, "nxagentDisconnectCursor: Cursor private is at [%p].\n",
+  fprintf(stderr, "%s: Cursor private is at [%p].\n", __func__,
               (void *) nxagentCursorPriv(pCursor, nxagentDefaultScreen));
   #endif
 
   #ifdef TEST
-  fprintf(stderr, "nxagentDisconnectCursor: Dummy screen number is [%d].\n",
+  fprintf(stderr, "%s: Dummy screen number is [%d].\n", __func__,
               nxagentDefaultScreen -> myNum);
 
-  fprintf(stderr, "nxagentDisconnectCursor: Cursor is [%ld].\n",
+  fprintf(stderr, "%s: Cursor is [%ld].\n", __func__,
               nxagentCursor(pCursor, nxagentDefaultScreen));
   #endif
 
@@ -486,7 +480,7 @@ void nxagentDisconnectCursor(void * p0, XID x1, void * p2)
     int        ret = 1;
 
     #if defined(NXAGENT_RECONNECT_CURSOR_DEBUG) || defined(NXAGENT_RECONNECT_PICTURE_DEBUG)
-    fprintf(stderr, "nxagentDisconnectCursor: disconnecting attached picture %p\n", pPicture);
+    fprintf(stderr, "%s: disconnecting attached picture %p\n", __func__, pPicture);
     #endif
 
     nxagentDisconnectPicture(pPicture, 0, &ret);
@@ -500,7 +494,7 @@ Bool nxagentDisconnectAllCursor(void)
   GrabPtr grab = inputInfo.pointer -> grab;
 
   #ifdef TEST
-  fprintf(stderr, "nxagentDisconnectAllCursor: Going to iterate through cursor resources.\n");
+  fprintf(stderr, "%s: Going to iterate through cursor resources.\n", __func__);
   #endif
 
   for (int i = 0; i < MAXCLIENTS; r = 1, i++)
@@ -512,8 +506,8 @@ Bool nxagentDisconnectAllCursor(void)
       #ifdef WARNING
       if (r == False)
       {
-        fprintf(stderr, "nxagentDisconnectAllCursor: WARNING! Failed to disconnect "
-                    "cursor for client [%d].\n", i);
+        fprintf(stderr, "%s: WARNING! Failed to disconnect "
+                    "cursor for client [%d].\n", __func__, i);
       }
       #endif
     }
@@ -556,8 +550,7 @@ void nxagentListCursors(void)
       #ifdef WARNING
       if (r == False)
       {
-        fprintf(stderr, "nxagentListCursors: WARNING! Failed to list "
-                    "cursor for client [%d].\n", i);
+        fprintf(stderr, "%s: WARNING! Failed to list cursor for client [%d].\n", __func__, i);
       }
       #endif
     }
