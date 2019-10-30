@@ -469,8 +469,12 @@ int nxagentExportProperty(WindowPtr pWin,
   #ifdef _XSERVER64
   else if (strcmp(typeS, "CARDINAL") == 0 || strcmp(typeS, "WM_SIZE_HINTS") == 0)
   {
-    /* FIXME: is it okay here to ignore malloc fails? */
     unsigned long *buffer = malloc(nUnits * sizeof(*buffer));
+    if (buffer == NULL)
+    {
+      FatalError("%s: malloc() failed.", __func__);
+    }
+
     int *input = value;
 
     if (buffer)
