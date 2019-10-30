@@ -288,7 +288,7 @@ void ProcessInputEvents(void)
   #ifdef NX_DEBUG_INPUT
   if (nxagentDebugInput == 1)
   {
-    fprintf(stderr, "ProcessInputEvents: Processing input.\n");
+    fprintf(stderr, "%s: Processing input.\n", __func__);
   }
   #endif
 
@@ -452,7 +452,7 @@ void nxagentRemoteWindowsTree(Window window, int level)
   if (!XQueryTree(nxagentDisplay, window, &rootWin, &parentWin, &childList,
                       &numChildren))
   {
-    fprintf(stderr, "nxagentRemoteWindowsTree - XQueryTree failed.\n");
+    fprintf(stderr, "%s - XQueryTree failed.\n", __func__);
     return;
   }
 
@@ -566,7 +566,7 @@ void nxagentInternalWindowsTree(WindowPtr pWin, int indent)
 void nxagentSwitchResizeMode(ScreenPtr pScreen)
 {
   #ifdef DEBUG
-  fprintf(stderr, "nxagentSwitchResizeMode called.\n");
+  fprintf(stderr, "%s: Called.\n", __func__);
   #endif
 
   int desktopResize = nxagentOption(DesktopResize);
@@ -842,8 +842,8 @@ void nxagentDispatchEvents(PredicateFuncPtr predicate)
   #endif
 
   #ifdef TEST
-  fprintf(stderr, "nxagentDispatchEvents: Going to handle new events with "
-              "predicate [%p].\n", *(void **)&predicate);
+  fprintf(stderr, "%s: Going to handle new events with predicate [%p].\n", __func__,
+              *(void **)&predicate);
   #endif
 
   if (nxagentRemoteExposeRegion == NULL)
@@ -863,7 +863,7 @@ void nxagentDispatchEvents(PredicateFuncPtr predicate)
 
   if (nxagentPendingEvents(nxagentDisplay) == 0)
   {
-    fprintf(stderr, "nxagentDispatchEvents: PANIC! No event needs to be dispatched.\n");
+    fprintf(stderr, "%s: PANIC! No event needs to be dispatched.\n", __func__);
   }
 
   #endif
@@ -879,7 +879,7 @@ void nxagentDispatchEvents(PredicateFuncPtr predicate)
                                 nxagentAnyEventPredicate, NULL) == 1)
   {
     #ifdef DEBUG
-    fprintf(stderr, "nxagentDispatchEvents: Going to handle new event type [%d].\n",
+    fprintf(stderr, "%s: Going to handle new event type [%d].\n", __func__,
                 X.type);
     #endif
 
@@ -894,7 +894,7 @@ void nxagentDispatchEvents(PredicateFuncPtr predicate)
       case SelectionClear:
       {
         #ifdef TEST
-        fprintf(stderr, "nxagentDispatchEvents: Going to handle new SelectionClear event.\n");
+        fprintf(stderr, "%s: Going to handle new SelectionClear event.\n", __func__);
         #endif
 
         nxagentClearSelection(&X);
@@ -904,7 +904,7 @@ void nxagentDispatchEvents(PredicateFuncPtr predicate)
       case SelectionRequest:
       {
         #ifdef TEST
-        fprintf(stderr, "nxagentDispatchEvents: Going to handle new SelectionRequest event.\n");
+        fprintf(stderr, "%s: Going to handle new SelectionRequest event.\n", __func__);
         #endif
 
         nxagentRequestSelection(&X);
@@ -914,7 +914,7 @@ void nxagentDispatchEvents(PredicateFuncPtr predicate)
       case SelectionNotify:
       {
         #ifdef TEST
-        fprintf(stderr, "nxagentDispatchEvents: Going to handle new SelectionNotify event.\n");
+        fprintf(stderr, "%s: Going to handle new SelectionNotify event.\n", __func__);
         #endif
 
         nxagentHandleSelectionNotifyFromXServer(&X);
@@ -927,8 +927,7 @@ void nxagentDispatchEvents(PredicateFuncPtr predicate)
       case PropertyNotify:
       {
         #ifdef TEST
-        fprintf(stderr, "nxagentDispatchEvents: PropertyNotify on "
-                    "prop %d[%s] window %lx state %d\n",
+        fprintf(stderr, "%s: PropertyNotify on prop %d[%s] window %lx state %d\n", __func__,
                         (int)X.xproperty.atom, validateString(XGetAtomName(nxagentDisplay, X.xproperty.atom)),
                             X.xproperty.window, X.xproperty.state);
         #endif
@@ -942,7 +941,7 @@ void nxagentDispatchEvents(PredicateFuncPtr predicate)
         enum HandleEventResult result;
 
         #ifdef TEST
-        fprintf(stderr, "nxagentDispatchEvents: Going to handle new KeyPress event.\n");
+        fprintf(stderr, "%s: Going to handle new KeyPress event.\n", __func__);
         #endif
 
         nxagentInputEvent = 1;
@@ -1131,7 +1130,7 @@ FIXME: Don't enqueue the KeyRelease event if the key was not already
         }
 
         #ifdef TEST
-        fprintf(stderr, "nxagentDispatchEvents: Going to handle new KeyRelease event.\n");
+        fprintf(stderr, "%s: Going to handle new KeyRelease event.\n", __func__);
         #endif
 
         nxagentInputEvent = 1;
@@ -1211,7 +1210,7 @@ FIXME: Don't enqueue the KeyRelease event if the key was not already
         #ifdef NX_DEBUG_INPUT
         if (nxagentDebugInput == 1)
         {
-          fprintf(stderr, "nxagentDispatchEvents: Going to handle new ButtonPress event.\n");
+          fprintf(stderr, "%s: Going to handle new ButtonPress event.\n", __func__);
         }
         #endif
 
@@ -1276,7 +1275,7 @@ FIXME: Don't enqueue the KeyRelease event if the key was not already
           #ifdef NX_DEBUG_INPUT
           if (nxagentDebugInput == 1)
           {
-            fprintf(stderr, "nxagentDispatchEvents: Adding ButtonPress event.\n");
+            fprintf(stderr, "%s: Adding ButtonPress event.\n", __func__);
           }
           #endif
 
@@ -1310,7 +1309,7 @@ FIXME: Don't enqueue the KeyRelease event if the key was not already
         #ifdef NX_DEBUG_INPUT
         if (nxagentDebugInput == 1)
         {
-          fprintf(stderr, "nxagentDispatchEvents: Going to handle new ButtonRelease event.\n");
+          fprintf(stderr, "%s: Going to handle new ButtonRelease event.\n", __func__);
         }
         #endif
 
@@ -1350,7 +1349,7 @@ FIXME: Don't enqueue the KeyRelease event if the key was not already
           #ifdef NX_DEBUG_INPUT
           if (nxagentDebugInput == 1)
           {
-            fprintf(stderr, "nxagentDispatchEvents: Adding ButtonRelease event.\n");
+            fprintf(stderr, "%s: Adding ButtonRelease event.\n", __func__);
           }
           #endif
 
@@ -1384,17 +1383,17 @@ FIXME: Don't enqueue the KeyRelease event if the key was not already
         ScreenPtr pScreen = nxagentScreen(X.xmotion.window);
 
         #ifdef TEST
-        fprintf(stderr, "nxagentDispatchEvents: Going to handle new MotionNotify event.\n");
+        fprintf(stderr, "%s: Going to handle new MotionNotify event.\n", __func__);
         #endif
 
         #ifdef NX_DEBUG_INPUT
         if (nxagentDebugInput == 1)
         {
-          fprintf(stderr, "nxagentDispatchEvents: Handling motion notify window [%ld] root [%ld] child [%ld].\n",
-                    X.xmotion.window, X.xmotion.root, X.xmotion.subwindow);
+          fprintf(stderr, "%s: Handling motion notify window [%ld] root [%ld] child [%ld].\n",
+                      __func__, X.xmotion.window, X.xmotion.root, X.xmotion.subwindow);
 
-          fprintf(stderr, "nxagentDispatchEvents: Pointer at [%d][%d] relative root [%d][%d].\n",
-                    X.xmotion.x, X.xmotion.y, X.xmotion.x_root, X.xmotion.y_root);
+          fprintf(stderr, "%s: Pointer at [%d][%d] relative root [%d][%d].\n", __func__,
+		      X.xmotion.x, X.xmotion.y, X.xmotion.x_root, X.xmotion.y_root);
         }
         #endif
 
@@ -1445,7 +1444,7 @@ FIXME: Don't enqueue the KeyRelease event if the key was not already
           #ifdef NX_DEBUG_INPUT
           if (nxagentDebugInput == 1)
           {
-            fprintf(stderr, "nxagentDispatchEvents: Adding motion event [%d, %d] to the queue.\n",
+            fprintf(stderr, "%s: Adding motion event [%d, %d] to the queue.\n", __func__,
                         x.u.keyButtonPointer.rootX, x.u.keyButtonPointer.rootY);
           }
           #endif
@@ -1513,7 +1512,7 @@ FIXME: Don't enqueue the KeyRelease event if the key was not already
         }
         #else
           #ifdef TEST
-        fprintf(stderr, "%s: Going to handle new FocusIn event\n", __func__);
+          fprintf(stderr, "%s: Going to handle new FocusIn event\n", __func__);
           #endif
         #endif
 
@@ -1650,7 +1649,7 @@ FIXME: Don't enqueue the KeyRelease event if the key was not already
       case KeymapNotify:
       {
         #ifdef TEST
-        fprintf(stderr, "nxagentDispatchEvents: Going to handle new KeymapNotify event.\n");
+        fprintf(stderr, "%s: Going to handle new KeymapNotify event.\n", __func__);
         #endif
 
         break;
@@ -1660,7 +1659,7 @@ FIXME: Don't enqueue the KeyRelease event if the key was not already
         WindowPtr pWin;
 
         #ifdef TEST
-        fprintf(stderr, "nxagentDispatchEvents: Going to handle new EnterNotify event.\n");
+        fprintf(stderr, "%s: Going to handle new EnterNotify event.\n", __func__);
         #endif
 
         if (nxagentOption(Rootless))
@@ -1682,7 +1681,7 @@ FIXME: Don't enqueue the KeyRelease event if the key was not already
           }
 
           #ifdef TEST
-          fprintf(stderr, "nxagentDispatchEvents: nxagentLastEnteredTopLevelWindow [%p].\n",
+          fprintf(stderr, "%s: nxagentLastEnteredTopLevelWindow [%p].\n", __func__,
                       (void *)nxagentLastEnteredTopLevelWindow);
           #endif
         }
@@ -1700,7 +1699,7 @@ FIXME: Don't enqueue the KeyRelease event if the key was not already
            */
 
           #ifdef TEST
-          fprintf(stderr, "nxagentDispatchEvents: pWin -> drawable.x [%d] pWin -> drawable.y [%d].\n",
+          fprintf(stderr, "%s: pWin -> drawable.x [%d] pWin -> drawable.y [%d].\n", __func__,
                       pWin -> drawable.x, pWin -> drawable.y);
           #endif
 
@@ -1768,7 +1767,7 @@ FIXME: Don't enqueue the KeyRelease event if the key was not already
       case LeaveNotify:
       {
         #ifdef TEST
-        fprintf(stderr, "nxagentDispatchEvents: Going to handle new LeaveNotify event.\n");
+        fprintf(stderr, "%s: Going to handle new LeaveNotify event.\n", __func__);
         #endif
 
         if (nxagentOption(Rootless) && X.xcrossing.mode == NotifyNormal &&
@@ -1804,7 +1803,7 @@ FIXME: Don't enqueue the KeyRelease event if the key was not already
       case DestroyNotify:
       {
         #ifdef TEST
-        fprintf(stderr, "nxagentDispatchEvents: Going to handle new DestroyNotify event.\n");
+        fprintf(stderr, "%s: Going to handle new DestroyNotify event.\n", __func__);
         #endif
 
         if (nxagentParentWindow != (Window) 0 &&
@@ -1820,7 +1819,7 @@ FIXME: Don't enqueue the KeyRelease event if the key was not already
         enum HandleEventResult result;
 
         #ifdef TEST
-        fprintf(stderr, "nxagentDispatchEvents: Going to handle new ClientMessage event.\n");
+        fprintf(stderr, "%s: Going to handle new ClientMessage event.\n", __func__);
         #endif
 
         nxagentHandleClientMessageEvent(&X, &result);
@@ -1835,7 +1834,7 @@ FIXME: Don't enqueue the KeyRelease event if the key was not already
       case VisibilityNotify:
       {
         #ifdef TEST
-        fprintf(stderr, "nxagentDispatchEvents: Going to handle new VisibilityNotify event.\n");
+        fprintf(stderr, "%s: Going to handle new VisibilityNotify event.\n", __func__);
         #endif
 
         if (X.xvisibility.window != nxagentDefaultWindows[0])
@@ -1862,7 +1861,7 @@ FIXME: Don't enqueue the KeyRelease event if the key was not already
           }
 
           #ifdef TEST
-          fprintf(stderr, "nxagentDispatchEvents: Suppressing visibility notify on window [%lx].\n",
+          fprintf(stderr, "%s: Suppressing visibility notify on window [%lx].\n", __func__,
                       X.xvisibility.window);
           #endif
 
@@ -1870,7 +1869,7 @@ FIXME: Don't enqueue the KeyRelease event if the key was not already
         }
 
         #ifdef TEST
-        fprintf(stderr, "nxagentDispatchEvents: Visibility notify state is [%d] with previous [%d].\n",
+        fprintf(stderr, "%s: Visibility notify state is [%d] with previous [%d].\n", __func__,
                     X.xvisibility.state, nxagentVisibility);
         #endif
 
@@ -1881,10 +1880,10 @@ FIXME: Don't enqueue the KeyRelease event if the key was not already
       case Expose:
       {
         #ifdef DEBUG
-        fprintf(stderr, "nxagentDispatchEvents: Going to handle new Expose event.\n");
+        fprintf(stderr, "%s: Going to handle new Expose event.\n", __func__);
 
-        fprintf(stderr, "nxagentDispatchEvents: WARNING! Received Expose event "
-                    "for drawable [%lx] geometry [%d, %d, %d, %d] count [%d].\n",
+        fprintf(stderr, "%s: WARNING! Received Expose event for drawable [%lx]"
+                    " geometry [%d, %d, %d, %d] count [%d].\n", __func__,
                         X.xexpose.window, X.xexpose.x, X.xexpose.y, X.xexpose.width,
                             X.xexpose.height, X.xexpose.count);
         #endif
@@ -1896,10 +1895,10 @@ FIXME: Don't enqueue the KeyRelease event if the key was not already
       case GraphicsExpose:
       {
         #ifdef DEBUG
-        fprintf(stderr, "nxagentDispatchEvents: Going to handle new GraphicsExpose event.\n");
+        fprintf(stderr, "%s: Going to handle new GraphicsExpose event.\n", __func__);
 
-        fprintf(stderr, "nxagentDispatchEvents: WARNING! Received GraphicsExpose event "
-                    "for drawable [%lx] geometry [%d, %d, %d, %d] count [%d].\n",
+        fprintf(stderr, "%s: WARNING! Received GraphicsExpose event "
+                    "for drawable [%lx] geometry [%d, %d, %d, %d] count [%d].\n", __func__,
                         X.xgraphicsexpose.drawable, X.xgraphicsexpose.x, X.xgraphicsexpose.y,
                             X.xgraphicsexpose.width, X.xgraphicsexpose.height,
                                 X.xgraphicsexpose.count);
@@ -1912,10 +1911,8 @@ FIXME: Don't enqueue the KeyRelease event if the key was not already
       case NoExpose:
       {
         #ifdef DEBUG
-        fprintf(stderr, "nxagentDispatchEvents: Going to handle new NoExpose event.\n");
-
-        fprintf(stderr, "nxagentDispatchEvents: WARNING! Received NoExpose event for "
-                    "drawable [%lx].\n", X.xnoexpose.drawable);
+        fprintf(stderr, "%s: Going to handle new NoExpose event.\n", __func__);
+        fprintf(stderr, "%s: WARNING! Received NoExpose event for drawable [%lx].\n", __func__, X.xnoexpose.drawable);
         #endif
 
         break;
@@ -1923,7 +1920,7 @@ FIXME: Don't enqueue the KeyRelease event if the key was not already
       case CirculateNotify:
       {
         #ifdef WARNING
-        fprintf(stderr, "nxagentDispatchEvents: Going to handle new CirculateNotify event.\n");
+        fprintf(stderr, "%s: Going to handle new CirculateNotify event.\n", __func__);
         #endif
 
         /*
@@ -1952,7 +1949,7 @@ FIXME: Don't enqueue the KeyRelease event if the key was not already
       case ConfigureNotify:
       {
         #ifdef TEST
-        fprintf(stderr, "nxagentDispatchEvents: Going to handle new ConfigureNotify event.\n");
+        fprintf(stderr, "%s: Going to handle new ConfigureNotify event.\n", __func__);
         #endif
 
         if (nxagentConfiguredSynchroWindow == X.xconfigure.window)
@@ -1962,14 +1959,13 @@ FIXME: Don't enqueue the KeyRelease event if the key was not already
             #ifdef WARNING
             if (nxagentVerbose == 1)
             {
-              fprintf(stderr, "nxagentDispatchEvents: Requested ConfigureNotify changes didn't take place.\n");
+              fprintf(stderr, "%s: Requested ConfigureNotify changes didn't take place.\n", __func__);
             }
             #endif
           }
 
           #ifdef TEST
-          fprintf(stderr, "nxagentDispatchEvents: Received ConfigureNotify and going to call "
-                      "nxagentSynchronizeExpose.\n");
+          fprintf(stderr, "%s: Received ConfigureNotify and going to call nxagentSynchronizeExpose.\n", __func__);
           #endif
 
           nxagentSynchronizeExpose();
@@ -1984,7 +1980,7 @@ FIXME: Don't enqueue the KeyRelease event if the key was not already
       case GravityNotify:
       {
         #ifdef TEST
-        fprintf(stderr, "nxagentDispatchEvents: Going to handle new GravityNotify event.\n");
+        fprintf(stderr, "%s: Going to handle new GravityNotify event.\n", __func__);
         #endif
 
         break;
@@ -1992,7 +1988,7 @@ FIXME: Don't enqueue the KeyRelease event if the key was not already
       case ReparentNotify:
       {
         #ifdef TEST
-        fprintf(stderr, "nxagentDispatchEvents: Going to handle new ReparentNotify event.\n");
+        fprintf(stderr, "%s: Going to handle new ReparentNotify event.\n", __func__);
         #endif
 
         nxagentHandleReparentNotify(&X);
@@ -2002,7 +1998,7 @@ FIXME: Don't enqueue the KeyRelease event if the key was not already
       case UnmapNotify:
       {
         #ifdef TEST
-        fprintf(stderr, "nxagentDispatchEvents: Going to handle new UnmapNotify event.\n");
+        fprintf(stderr, "%s: Going to handle new UnmapNotify event.\n", __func__);
         #endif
 
         if (nxagentOption(Rootless) == 1)
@@ -2033,7 +2029,7 @@ FIXME: Don't enqueue the KeyRelease event if the key was not already
       case MapNotify:
       {
         #ifdef TEST
-        fprintf(stderr, "nxagentDispatchEvents: Going to handle new MapNotify event.\n");
+        fprintf(stderr, "%s: Going to handle new MapNotify event.\n", __func__);
         #endif
 
         if (nxagentOption(Rootless) == 1)
@@ -2094,7 +2090,7 @@ FIXME: Don't enqueue the KeyRelease event if the key was not already
         XMappingEvent *mappingEvent = (XMappingEvent *) &X;
 
         #ifdef DEBUG
-        fprintf(stderr, "nxagentDispatchEvents: WARNING! Going to handle new MappingNotify event.\n");
+        fprintf(stderr, "%s: WARNING! Going to handle new MappingNotify event.\n", __func__);
         #endif
 
         if (mappingEvent -> request == MappingPointer)
@@ -2113,8 +2109,7 @@ FIXME: Don't enqueue the KeyRelease event if the key was not already
         if (nxagentHandleXkbKeyboardStateEvent(&X) == 0 && nxagentHandleXFixesSelectionNotify(&X) == 0)
         {
           #ifdef TEST
-          fprintf(stderr, "nxagentDispatchEvents: WARNING! Unhandled event code [%d].\n",
-                      X.type);
+          fprintf(stderr, "%s: WARNING! Unhandled event code [%d].\n", __func__, X.type);
           #endif
         }
 
@@ -2225,7 +2220,7 @@ FIXME: Don't enqueue the KeyRelease event if the key was not already
   ProcessInputEvents();
 
   #ifdef TEST
-  fprintf(stderr, "nxagentDispatchEvents: Output pending flag is [%d] critical [%d].\n",
+  fprintf(stderr, "%s: Output pending flag is [%d] critical [%d].\n", __func__,
               NewOutputPending, CriticalOutputPending);
   #endif
 
@@ -2242,19 +2237,17 @@ FIXME: Don't enqueue the KeyRelease event if the key was not already
   if (NewOutputPending == 1)
   {
     #ifdef TEST
-    fprintf(stderr, "nxagentDispatchEvents: Flushed the processed events to clients.\n");
+    fprintf(stderr, "%s: Flushed the processed events to clients.\n", __func__);
     #endif
 
     FlushAllOutput();
   }
 
   #ifdef TEST
-
   if (nxagentPendingEvents(nxagentDisplay) > 0)
   {
-    fprintf(stderr, "nxagentDispatchEvents: WARNING! More events need to be dispatched.\n");
+    fprintf(stderr, "%s: WARNING! More events need to be dispatched.\n", __func__);
   }
-
   #endif
 
   #ifdef BLOCKS
@@ -2327,7 +2320,7 @@ int nxagentHandlePropertyNotify(XEvent *X)
   if (nxagentOption(Rootless) && !nxagentNotifyMatchChangeProperty((XPropertyEvent *) X))
   {
     #ifdef TEST
-    fprintf(stderr, "nxagentHandlePropertyNotify: Property %ld on window %lx.\n",
+    fprintf(stderr, "%s: Property %ld on window %lx.\n", __func__,
                 X -> xproperty.atom, X -> xproperty.window);
     #endif
 
@@ -2338,7 +2331,7 @@ int nxagentHandlePropertyNotify(XEvent *X)
       if (resource == -1)
       {
         #ifdef WARNING
-        fprintf(stderr, "nxagentHandlePropertyNotify: WARNING! Asynchronous get property queue is full.\n");
+        fprintf(stderr, "%s: WARNING! Asynchronous get property queue is full.\n", __func__);
         #endif
 
         return 0;
@@ -2354,7 +2347,7 @@ int nxagentHandlePropertyNotify(XEvent *X)
     #ifdef TEST
     else
     {
-      fprintf(stderr, "nxagentHandlePropertyNotify: Failed to look up remote window property.\n");
+      fprintf(stderr, "%s: Failed to look up remote window property.\n", __func__);
     }
     #endif
   }
@@ -2367,10 +2360,8 @@ int nxagentHandleExposeEvent(XEvent *X)
   StaticResizedWindowStruct *resizedWinPtr = NULL;
 
   #ifdef DEBUG
-  fprintf(stderr, "nxagentHandleExposeEvent: Checking remote expose events.\n");
-
-  fprintf(stderr, "nxagentHandleExposeEvent: Looking for window id [%ld].\n",
-              X -> xexpose.window);
+  fprintf(stderr, "%s: Checking remote expose events.\n", __func__);
+  fprintf(stderr, "%s: Looking for window id [%ld].\n", __func__, X -> xexpose.window);
   #endif
 
   Window window = X -> xexpose.window;
@@ -2391,8 +2382,7 @@ FIXME: This can be maybe optimized by consuming the
     do
     {
       #ifdef DEBUG
-      fprintf(stderr, "nxagentHandleExposeEvent: Adding event for window id [%ld].\n",
-                  X -> xexpose.window);
+      fprintf(stderr, "%s: Adding event for window id [%ld].\n", __func__, X -> xexpose.window);
       #endif
 
       box.x1 = pWin -> drawable.x + wBorderWidth(pWin) + X -> xexpose.x;
@@ -2435,8 +2425,7 @@ FIXME: This can be maybe optimized by consuming the
                          &pWin->drawable.pScreen->root->winSize);
 
     #ifdef DEBUG
-    fprintf(stderr, "nxagentHandleExposeEvent: Sending events for window id [%ld].\n",
-                X -> xexpose.window);
+    fprintf(stderr, "%s: Sending events for window id [%ld].\n", __func__, X -> xexpose.window);
     #endif
 
     /*
@@ -2463,7 +2452,7 @@ FIXME: This can be maybe optimized by consuming the
                        nxagentExposeQueue.exposures[index].remoteRegion, &sum);
 
       #ifdef TEST
-      fprintf(stderr, "nxagentHandleExposeEvent: Added region for window [%u] to position [%d].\n",
+      fprintf(stderr, "%s: Added region for window [%u] to position [%d].\n", __func__,
                   nxagentWindow(pWin), index);
       #endif
 
@@ -2513,7 +2502,7 @@ int nxagentHandleGraphicsExposeEvent(XEvent *X)
     if (pStoringPixmapRec == NULL)
     {
       #ifdef TEST
-      fprintf(stderr, "nxagentHandleGraphicsExposeEvent: WARNING! Storing pixmap not found.\n");
+      fprintf(stderr, "%s: WARNING! Storing pixmap not found.\n", __func__);
       #endif
 
       return 1;
@@ -2524,7 +2513,7 @@ int nxagentHandleGraphicsExposeEvent(XEvent *X)
     if (pBSwindow == NULL)
     {
       #ifdef TEST
-      fprintf(stderr, "nxagentHandleGraphicsExposeEvent: WARNING! Back storage not found.\n");
+      fprintf(stderr, "%s: WARNING! Back storage not found.\n", __func__);
       #endif
 
       return 1;
@@ -2549,8 +2538,8 @@ int nxagentHandleGraphicsExposeEvent(XEvent *X)
   if (drawableType == DRAWABLE_PIXMAP)
   {
     #ifdef TEST
-    fprintf(stderr, "nxagentHandleGraphicsExposeEvent: Handling GraphicsExpose event on pixmap with id"
-                " [%lu].\n", X -> xgraphicsexpose.drawable);
+    fprintf(stderr, "%s: Handling GraphicsExpose event on pixmap with id [%lu].\n",
+                __func__, X -> xgraphicsexpose.drawable);
     #endif
 
     /*
@@ -2590,9 +2579,8 @@ int nxagentHandleClientMessageEvent(XEvent *X, enum HandleEventResult *result)
   *result = doNothing;
 
   #ifdef TEST
-  fprintf(stderr, "nxagentHandleClientMessageEvent: ClientMessage event window [%ld] with "
-              "type [%ld] format [%d].\n", X -> xclient.window, X -> xclient.message_type,
-                  X -> xclient.format);
+  fprintf(stderr, "%s: ClientMessage event window [%ld] with type [%ld] format [%d].\n",
+              __func__, X -> xclient.window, X -> xclient.message_type, X -> xclient.format);
   #endif
 
   /*
@@ -2616,7 +2604,7 @@ int nxagentHandleClientMessageEvent(XEvent *X, enum HandleEventResult *result)
     if (!ValidAtom(message_type))
     {
       #ifdef WARNING
-      fprintf(stderr, "nxagentHandleClientMessageEvent: WARNING Invalid type in client message.\n");
+      fprintf(stderr, "%s: WARNING Invalid type in client message.\n", __func__);
       #endif
 
       return 0;
@@ -2646,8 +2634,7 @@ int nxagentHandleClientMessageEvent(XEvent *X, enum HandleEventResult *result)
       if (!ValidAtom(x.u.clientMessage.u.l.longs0))
       {
         #ifdef WARNING
-        fprintf(stderr, "nxagentHandleClientMessageEvent: WARNING Invalid value in client message "
-                    "of type WM_PROTOCOLS.\n");
+        fprintf(stderr, "%s: WARNING Invalid value in client message of type WM_PROTOCOLS.\n", __func__);
         #endif
 
         return 0;
@@ -2655,8 +2642,8 @@ int nxagentHandleClientMessageEvent(XEvent *X, enum HandleEventResult *result)
       #ifdef TEST
       else
       {
-        fprintf(stderr, "nxagentHandleClientMessageEvent: Sent client message of type WM_PROTOCOLS "
-                "and value [%s].\n", validateString(NameForAtom(x.u.clientMessage.u.l.longs0)));
+        fprintf(stderr, "%s: Sent client message of type WM_PROTOCOLS and value [%s].\n", __func__,
+                    validateString(NameForAtom(x.u.clientMessage.u.l.longs0)));
       }
       #endif
 
@@ -2665,7 +2652,7 @@ int nxagentHandleClientMessageEvent(XEvent *X, enum HandleEventResult *result)
     else
     {
       #ifdef WARNING
-      fprintf(stderr, "nxagentHandleClientMessageEvent: Ignored message type %ld [%s].\n",
+      fprintf(stderr, "%s: Ignored message type %ld [%s].\n", __func__,
                   (long int) message_type, validateString(NameForAtom(message_type)));
       #endif
 
@@ -2689,7 +2676,7 @@ int nxagentHandleClientMessageEvent(XEvent *X, enum HandleEventResult *result)
       else
       {
         #ifdef TEST
-        fprintf(stderr, "Events: WM_DELETE_WINDOW arrived Atom = %u.\n", wmAtom);
+        fprintf(stderr, "%s: WM_DELETE_WINDOW arrived Atom = %u.\n", __func__, wmAtom);
         #endif
 
         if (X -> xclient.window == nxagentIconWindow)
@@ -2827,7 +2814,7 @@ int nxagentHandleXFixesSelectionNotify(XEvent *X)
   if (nxagentXFixesInfo.Initialized == 0)
   {
       #ifdef DEBUG
-      fprintf(stderr, "nxagentHandleXFixesSelectionNotify: XFixes not initialized - doing nothing.\n");
+      fprintf(stderr, "%s: XFixes not initialized - doing nothing.\n", __func__);
       #endif
       return 0;
   }
@@ -2835,13 +2822,13 @@ int nxagentHandleXFixesSelectionNotify(XEvent *X)
   if (xfixesEvent -> type != (nxagentXFixesInfo.EventBase + XFixesSelectionNotify))
   {
       #ifdef DEBUG
-      fprintf(stderr, "nxagentHandleXFixesSelectionNotify: event type is [%d] - doing nothing.\n", xfixesEvent->type);
+      fprintf(stderr, "%s: event type is [%d] - doing nothing.\n", __func__, xfixesEvent->type);
       #endif
       return 0;
   }
 
   #ifdef TEST
-  fprintf(stderr, "nxagentHandleXFixesSelectionNotify: Handling event.\n");
+  fprintf(stderr, "%s: Handling event.\n", __func__);
   #endif
 
   Atom local = nxagentRemoteToLocalAtom(xfixesEvent -> xfixesselection.selection);
@@ -2854,14 +2841,14 @@ int nxagentHandleXFixesSelectionNotify(XEvent *X)
       if (CurrentSelections[i].client != 0)
       {
         #ifdef TEST
-        fprintf(stderr, "nxagentHandleXFixesSelectionNotify: Do nothing.\n");
+        fprintf(stderr, "%s: Do nothing.\n", __func__);
         #endif
 
         return 1;
       }
 
       #ifdef TEST
-      fprintf(stderr, "nxagentHandleXFixesSelectionNotify: Calling callbacks for %d [%s] selection.\n",
+      fprintf(stderr, "%s: Calling callbacks for %d [%s] selection.\n", __func__,
                        CurrentSelections[i].selection, NameForAtom(CurrentSelections[i].selection));
       #endif
 
@@ -2873,7 +2860,7 @@ int nxagentHandleXFixesSelectionNotify(XEvent *X)
       fprintf(stderr, "%s: Event selection owner [0x%x]\n", __func__, xfixesEvent->xfixesselection.owner);
       fprintf(stderr, "%s: Event selection [%s]\n", __func__, NameForAtom(nxagentRemoteToLocalAtom(xfixesEvent->xfixesselection.selection)));
 
-      fprintf(stderr, "nxagentHandleXFixesSelectionNotify: Subtype ");
+      fprintf(stderr, "%s: Subtype ", __func__);
 
       switch (xfixesEvent -> xfixesselection.subtype)
       {
@@ -2924,13 +2911,11 @@ int nxagentHandleProxyEvent(XEvent *X)
 
       if (X -> xclient.data.l[0] == NXNoSplitNotify)
       {
-        fprintf(stderr, "nxagentHandleProxyEvent: PANIC! NXNoSplitNotify received "
-                    "with client [%d].\n", client);
+        fprintf(stderr, "%s: PANIC! NXNoSplitNotify received with client [%d].\n", __func__, client);
       }
       else
       {
-        fprintf(stderr, "nxagentHandleProxyEvent: PANIC! NXStartSplitNotify received "
-                    "with client [%d].\n", client);
+        fprintf(stderr, "%s: PANIC! NXStartSplitNotify received with client [%d].\n", __func__, client);
       }
 
       #endif
@@ -2951,8 +2936,8 @@ int nxagentHandleProxyEvent(XEvent *X)
       int position = (int) X -> xclient.data.l[3];
 
       #ifdef TEST
-      fprintf(stderr, "nxagentHandleProxyEvent: NXCommitSplitNotify received with "
-                  "client [%d] request [%d] and position [%d].\n",
+      fprintf(stderr, "%s: NXCommitSplitNotify received with client [%d]"
+                  " request [%d] and position [%d].\n", __func__,
                       client, request, position);
       #endif
 
@@ -2970,8 +2955,7 @@ int nxagentHandleProxyEvent(XEvent *X)
       int client = (int) X -> xclient.data.l[1];
 
       #ifdef TEST
-      fprintf(stderr, "nxagentHandleProxyEvent: NXEndSplitNotify received with "
-                  "client [%d].\n", client);
+      fprintf(stderr, "%s: NXEndSplitNotify received with client [%d].\n", __func__, client);
       #endif
 
       nxagentHandleEndSplitEvent(client);
@@ -2985,7 +2969,7 @@ int nxagentHandleProxyEvent(XEvent *X)
        */
 
       #ifdef TEST
-      fprintf(stderr, "nxagentHandleProxyEvent: NXEmptySplitNotify received.\n");
+      fprintf(stderr, "%s: NXEmptySplitNotify received.\n", __func__);
       #endif
 
       nxagentHandleEmptySplitEvent();
@@ -2997,8 +2981,7 @@ int nxagentHandleProxyEvent(XEvent *X)
       #ifdef TEST
       int resource = (int) X -> xclient.data.l[1];
 
-      fprintf(stderr, "nxagentHandleProxyEvent: NXCollectPropertyNotify received with resource [%d].\n",
-                  resource);
+      fprintf(stderr, "%s: NXCollectPropertyNotify received with resource [%d].\n", __func__, resource);
       #endif
 
       nxagentHandleCollectPropertyEvent(X);
@@ -3010,8 +2993,7 @@ int nxagentHandleProxyEvent(XEvent *X)
       int resource = (int) X -> xclient.data.l[1];
 
       #ifdef TEST
-      fprintf(stderr, "nxagentHandleProxyEvent: NXCollectGrabPointerNotify received with resource [%d].\n",
-                  resource);
+      fprintf(stderr, "%s: NXCollectGrabPointerNotify received with resource [%d].\n", __func__, resource);
       #endif
 
       nxagentHandleCollectGrabPointerEvent(resource);
@@ -3027,8 +3009,7 @@ int nxagentHandleProxyEvent(XEvent *X)
        */
 
       #ifdef TEST
-      fprintf(stderr, "nxagentHandleProxyEvent: NXCollectInputFocusNotify received with resource [%d].\n",
-                  resource);
+      fprintf(stderr, "%s: NXCollectInputFocusNotify received with resource [%d].\n", __func__, resource);
       #endif
 
       nxagentHandleCollectInputFocusEvent(resource);
@@ -3042,7 +3023,7 @@ int nxagentHandleProxyEvent(XEvent *X)
        */
 
       #ifdef WARNING
-      fprintf(stderr, "nxagentHandleProxyEvent: WARNING! Not a recognized ClientMessage proxy event [%d].\n",
+      fprintf(stderr, "%s: WARNING! Not a recognized ClientMessage proxy event [%d].\n", __func__,
                   (int) X -> xclient.data.l[0]);
       #endif
 
@@ -3093,7 +3074,7 @@ int nxagentCheckWindowConfiguration(XConfigureEvent* X)
   if (geometryChanged)
   {
     #ifdef TEST
-    fprintf(stderr, "nxagentCheckWindowConfiguration: Configure frame. No restack.\n");
+    fprintf(stderr, "%s: Configure frame. No restack.\n", __func__);
     #endif
 
     return 1;
@@ -3101,13 +3082,12 @@ int nxagentCheckWindowConfiguration(XConfigureEvent* X)
 
   #ifdef TEST
   {
-    fprintf(stderr, "nxagentCheckWindowConfiguration: Before restacking top level window [%p]\n",
+    fprintf(stderr, "%s: Before restacking top level window [%p]\n", __func__,
                 (void *) nxagentWindowPtr(X -> window));
 
     for (WindowPtr pSib = screenInfo.screens[0]->root -> firstChild; pSib; pSib = pSib -> nextSib)
     {
-      fprintf(stderr, "nxagentCheckWindowConfiguration: Top level window: [%p].\n",
-                  (void *) pSib);
+      fprintf(stderr, "%s: Top level window: [%p].\n", __func__, (void *) pSib);
     }
   }
   #endif
@@ -3122,15 +3102,14 @@ int nxagentCheckWindowConfiguration(XConfigureEvent* X)
   else
   {
     #ifdef WARNING
-    fprintf(stderr, "nxagentCheckWindowConfiguration: WARNING! Failed QueryTree request.\n");
+    fprintf(stderr, "%s: WARNING! Failed QueryTree request.\n", __func__);
     #endif
   }
 
   SAFE_XFree(children_return);
 
   #if 0
-  fprintf(stderr, "nxagentCheckWindowConfiguration: Trees match: %s\n",
-              nxagentRootlessTreesMatch() ? "Yes" : "No");
+  fprintf(stderr, "%s: Trees match: %s\n", __func__, nxagentRootlessTreesMatch() ? "Yes" : "No");
   #endif
 
   return 1;
@@ -3148,14 +3127,14 @@ int nxagentHandleConfigureNotify(XEvent* X)
     {
       WindowPtr pWinEvent  = nxagentWindowPtr(X -> xconfigure.event);
 
-      fprintf(stderr, "nxagentHandleConfigureNotify: Generating window is [%p][%ld] target [%p][%ld].\n",
+      fprintf(stderr, "%s: Generating window is [%p][%ld] target [%p][%ld].\n", __func__,
                   (void *) pWinEvent, X -> xconfigure.event, (void *) pWinWindow, X -> xconfigure.window);
     }
     #endif
 
     #ifdef TEST
-    fprintf(stderr, "nxagentHandleConfigureNotify: New configuration for window [%p][%ld] is [%d][%d][%d][%d] "
-                "send_event [%i].\n", (void *) pWinWindow, X -> xconfigure.window,
+    fprintf(stderr, "%s: New configuration for window [%p][%ld] is [%d][%d][%d][%d] send_event [%i].\n",
+                __func__, (void *) pWinWindow, X -> xconfigure.window,
                     X -> xconfigure.x, X -> xconfigure.y, X -> xconfigure.width,
                         X -> xconfigure.height, X -> xconfigure.send_event);
     #endif
@@ -3221,7 +3200,7 @@ int nxagentHandleConfigureNotify(XEvent* X)
       if (nxagentOption(ClientOs) == ClientOsWinnt)
       {
         #ifdef TEST
-        fprintf(stderr, "nxagentHandleConfigureNotify: Apply workaround for NXWin.\n");
+        fprintf(stderr, "%s: Apply workaround for NXWin.\n", __func__);
         #endif
 
         sendEventAnyway = 1;
@@ -3410,7 +3389,7 @@ int nxagentHandleConfigureNotify(XEvent* X)
         if (doRandR)
         {
           #ifdef TEST
-          fprintf(stderr,"nxagentHandleConfigureNotify: Width %d Height %d.\n",
+          fprintf(stderr,"%s: Width %d Height %d.\n", __func__,
                       nxagentOption(Width), nxagentOption(Height));
           #endif
 
@@ -3426,7 +3405,8 @@ int nxagentHandleConfigureNotify(XEvent* X)
       if ( (X -> xconfigure.window == DefaultRootWindow(nxagentDisplay)) || nxagentFullscreenWindow )
       {
         #ifdef TEST
-        fprintf(stderr, "nxagentHandleConfigureNotify: remote root window has changed: %d,%d %dx%d\n", X -> xconfigure.x, X -> xconfigure.y, X -> xconfigure.width, X -> xconfigure.height);
+        fprintf(stderr, "%s: remote root window has changed: %d,%d %dx%d\n", __func__,
+                    X -> xconfigure.x, X -> xconfigure.y, X -> xconfigure.width, X -> xconfigure.height);
         #endif
 
         nxagentChangeOption(RootX, X -> xconfigure.x);
@@ -3448,7 +3428,7 @@ int nxagentHandleConfigureNotify(XEvent* X)
 int nxagentHandleReparentNotify(XEvent* X)
 {
   #ifdef TEST
-  fprintf(stderr, "nxagentHandleReparentNotify: Going to handle a new reparent event.\n");
+  fprintf(stderr, "%s: Going to handle a new reparent event.\n", __func__);
   #endif
 
   if (nxagentOption(Rootless))
@@ -3461,7 +3441,7 @@ int nxagentHandleReparentNotify(XEvent* X)
       WindowPtr pParent = nxagentWindowPtr(X -> xreparent.parent);
       WindowPtr pEvent = nxagentWindowPtr(X -> xreparent.event);
 
-      fprintf(stderr, "nxagentHandleReparentNotify: event %p[%lx] window %p[%lx] parent %p[%lx] at (%d, %d)\n",
+      fprintf(stderr, "%s: event %p[%lx] window %p[%lx] parent %p[%lx] at (%d, %d)\n", __func__,
                   (void*)pEvent, X -> xreparent.event, (void*)pWin, X -> xreparent.window,
                           (void*)pParent, X -> xreparent.parent, X -> xreparent.x, X -> xreparent.y);
     }
@@ -3494,7 +3474,7 @@ int nxagentHandleReparentNotify(XEvent* X)
         if (!result)
         {
           #ifdef WARNING
-          fprintf(stderr, "nxagentHandleReparentNotify: WARNING! Failed QueryTree request.\n");
+          fprintf(stderr, "%s: WARNING! Failed QueryTree request.\n", __func__);
           #endif
 
           break;
@@ -3508,9 +3488,8 @@ int nxagentHandleReparentNotify(XEvent* X)
         nxagentRootlessAddTopLevelWindow(pWin, w);
 
         #ifdef TEST
-        fprintf(stderr, "nxagentHandleReparentNotify: new top level window [%ld].\n", w);
-        fprintf(stderr, "nxagentHandleReparentNotify: reparented window [%ld].\n",
-                    X -> xreparent.window);
+        fprintf(stderr, "%s: new top level window [%ld].\n", __func__, w);
+        fprintf(stderr, "%s: reparented window [%ld].\n", __func__, X -> xreparent.window);
         #endif
 
         result = XQueryTree(nxagentDisplay, DefaultRootWindow(nxagentDisplay),
@@ -3523,7 +3502,7 @@ int nxagentHandleReparentNotify(XEvent* X)
         else
         {
           #ifdef WARNING
-          fprintf(stderr, "nxagentHandleReparentNotify: WARNING! Failed QueryTree request.\n");
+          fprintf(stderr, "%s: WARNING! Failed QueryTree request.\n", __func__);
           #endif
         }
 
@@ -3532,8 +3511,8 @@ int nxagentHandleReparentNotify(XEvent* X)
       else
       {
         #ifdef TEST
-        fprintf(stderr, "nxagentHandleReparentNotify: Window at [%p] has been reparented to [%ld]"
-                    " top level parent [%ld].\n", (void *) pWin, X -> xreparent.parent, w);
+        fprintf(stderr, "%s: Window at [%p] has been reparented to [%ld] top level parent [%ld].\n",
+                    __func__, (void *) pWin, X -> xreparent.parent, w);
         #endif
 
         nxagentRootlessDelTopLevelWindow(pWin);
@@ -3554,8 +3533,7 @@ int nxagentHandleReparentNotify(XEvent* X)
                                   &attributes) == 0))
     {
       #ifdef WARNING
-      fprintf(stderr, "nxagentHandleReparentNotify: WARNING! "
-                  "XGetWindowAttributes failed.\n");
+      fprintf(stderr, "%s: WARNING! XGetWindowAttributes failed.\n", __func__);
       #endif
 
       return 1;
@@ -3605,8 +3583,7 @@ int nxagentHandleReparentNotify(XEvent* X)
       if (XGetWindowAttributes(nxagentDisplay, w, &attributes) == 0)
       {
         #ifdef WARNING
-        fprintf(stderr, "nxagentHandleReparentNotify: WARNING! "
-                    "XGetWindowAttributes failed for parent window.\n");
+        fprintf(stderr, "%s: WARNING! XGetWindowAttributes failed for parent window.\n", __func__);
         #endif
 
         return 1;
@@ -3752,7 +3729,7 @@ int nxagentWaitForResource(GetResourceFuncPtr pGetResource, PredicateFuncPtr pPr
 void nxagentGrabPointerAndKeyboard(XEvent *X)
 {
   #ifdef TEST
-  fprintf(stderr, "nxagentGrabPointerAndKeyboard: Grabbing pointer and keyboard with event at [%p].\n",
+  fprintf(stderr, "%s: Grabbing pointer and keyboard with event at [%p].\n", __func__,
               (void *) X);
   #endif
 
@@ -3768,7 +3745,7 @@ void nxagentGrabPointerAndKeyboard(XEvent *X)
   }
 
   #ifdef TEST
-  fprintf(stderr, "nxagentGrabPointerAndKeyboard: Going to grab the keyboard in context [B1].\n");
+  fprintf(stderr, "%s: Going to grab the keyboard in context [B1].\n", __func__);
   #endif
 
   int result = XGrabKeyboard(nxagentDisplay,
@@ -3799,7 +3776,7 @@ void nxagentGrabPointerAndKeyboard(XEvent *X)
   isItTimeToYield = 1;
 
   #ifdef TEST
-  fprintf(stderr, "nxagentGrabPointerAndKeyboard: Going to grab the pointer in context [B2].\n");
+  fprintf(stderr, "%s: Going to grab the pointer in context [B2].\n", __func__);
   #endif
 
   int resource = nxagentWaitForResource(NXGetCollectGrabPointerResource,
@@ -3820,7 +3797,7 @@ void nxagentGrabPointerAndKeyboard(XEvent *X)
   if (X != NULL)
   {
     #ifdef TEST
-    fprintf(stderr, "nxagentGrabPointerAndKeyboard: Going to force focus in context [B4].\n");
+    fprintf(stderr, "%s: Going to force focus in context [B4].\n", __func__);
     #endif
 
     XSetInputFocus(nxagentDisplay, nxagentFullscreenWindow,
@@ -3833,7 +3810,7 @@ void nxagentUngrabPointerAndKeyboard(XEvent *X)
   unsigned long now;
 
   #ifdef TEST
-  fprintf(stderr, "nxagentUngrabPointerAndKeyboard: Ungrabbing pointer and keyboard with event at [%p].\n",
+  fprintf(stderr, "%s: Ungrabbing pointer and keyboard with event at [%p].\n", __func__,
               (void *) X);
   #endif
 
@@ -3847,13 +3824,13 @@ void nxagentUngrabPointerAndKeyboard(XEvent *X)
   }
 
   #ifdef TEST
-  fprintf(stderr, "nxagentUngrabPointerAndKeyboard: Going to ungrab the keyboard in context [B5].\n");
+  fprintf(stderr, "%s: Going to ungrab the keyboard in context [B5].\n", __func__);
   #endif
 
   XUngrabKeyboard(nxagentDisplay, now);
 
   #ifdef TEST
-  fprintf(stderr, "nxagentUngrabPointerAndKeyboard: Going to ungrab the pointer in context [B6].\n");
+  fprintf(stderr, "%s: Going to ungrab the pointer in context [B6].\n", __func__);
   #endif
 
   XUngrabPointer(nxagentDisplay, now);
@@ -3902,8 +3879,7 @@ void nxagentHandleCollectGrabPointerEvent(int resource)
   if (NXGetCollectedGrabPointer(nxagentDisplay, resource, &status) == 0)
   {
     #ifdef PANIC
-    fprintf(stderr, "nxagentHandleCollectGrabPointerEvent: PANIC! Failed to get GrabPointer "
-                "reply for resource [%d].\n", resource);
+    fprintf(stderr, "%s: PANIC! Failed to get GrabPointer reply for resource [%d].\n", __func__, resource);
     #endif
   }
 }
@@ -3915,7 +3891,7 @@ void nxagentHandleCollectPropertyEvent(XEvent *X)
   if (X -> xclient.data.l[2] == False)
   {
     #ifdef DEBUG
-    fprintf (stderr, "nxagentHandleCollectPropertyEvent: Failed to get reply data for client [%d].\n",
+    fprintf (stderr, "%s: Failed to get reply data for client [%d].\n", __func__,
                  resource);
     #endif
 
@@ -3953,7 +3929,7 @@ void nxagentHandleCollectPropertyEvent(XEvent *X)
     else
     {
       #ifdef DEBUG
-      fprintf (stderr, "nxagentHandleCollectPropertyEvent: Failed to get reply data for client [%d].\n",
+      fprintf (stderr, "%s: Failed to get reply data for client [%d].\n", __func__,
                    resource);
       #endif
     }
@@ -3969,7 +3945,7 @@ void nxagentSynchronizeExpose(void)
   if (nxagentExposeQueue.length <= 0)
   {
     #ifdef TEST
-    fprintf(stderr, "nxagentSynchronizeExpose: PANIC! Called with nxagentExposeQueue.length [%d].\n",
+    fprintf(stderr, "%s: PANIC! Called with nxagentExposeQueue.length [%d].\n", __func__,
                 nxagentExposeQueue.length);
     #endif
 
@@ -4003,8 +3979,8 @@ void nxagentSynchronizeExpose(void)
              ((pWin -> eventMask|wOtherEventMasks(pWin)) & ExposureMask))
       {
         #ifdef TEST
-        fprintf(stderr, "nxagentSynchronizeExpose: Going to call miWindowExposures"
-                    " for window [%d] - rects [%d].\n", nxagentWindow(pWin),
+        fprintf(stderr, "%s: Going to call miWindowExposures for window [%d] - rects [%d].\n",
+                    __func__, nxagentWindow(pWin),
                         RegionNumRects(nxagentExposeQueueHead.remoteRegion));
         #endif
 
@@ -4061,13 +4037,11 @@ void nxagentRemoveDuplicatedKeys(XEvent *X)
   {
     #ifdef TEST
 
-    fprintf(stderr, "nxagentRemoveDuplicatedKeys: Trying to read more events "
-                "from the X server.\n");
+    fprintf(stderr, "%s: Trying to read more events from the X server.\n", __func__);
 
     if (nxagentReadEvents(nxagentDisplay) > 0)
     {
-      fprintf(stderr, "nxagentRemoveDuplicatedKeys: Successfully read more events "
-                  "from the X server.\n");
+      fprintf(stderr, "%s: Successfully read more events from the X server.\n", __func__);
     }
 
     #else
@@ -4144,7 +4118,7 @@ void nxagentInitRemoteExposeRegion(void)
     if (nxagentRemoteExposeRegion == NULL)
     {
       #ifdef PANIC
-      fprintf(stderr, "nxagentInitRemoteExposeRegion: PANIC! Failed to create expose region.\n");
+      fprintf(stderr, "%s: PANIC! Failed to create expose region.\n", __func__);
       #endif
     }
   }
@@ -4155,7 +4129,7 @@ void nxagentForwardRemoteExpose(void)
   if (RegionNotEmpty(nxagentRemoteExposeRegion))
   {
     #ifdef DEBUG
-    fprintf(stderr, "nxagentForwardRemoteExpose: Going to forward events.\n");
+    fprintf(stderr, "%s: Going to forward events.\n", __func__);
     #endif
 
     TraverseTree(screenInfo.screens[0]->root, nxagentClipAndSendExpose, (void *)nxagentRemoteExposeRegion);
@@ -4189,7 +4163,7 @@ int nxagentClipAndSendExpose(WindowPtr pWin, void * ptr)
   RegionPtr remoteExposeRgn = (RegionRec *) ptr;
 
   #ifdef DEBUG
-  fprintf(stderr, "nxagentClipAndSendExpose: Called.\n");
+  fprintf(stderr, "%s: Called.\n", __func__);
   #endif
 
   if (pWin -> drawable.class != InputOnly)
@@ -4199,12 +4173,12 @@ int nxagentClipAndSendExpose(WindowPtr pWin, void * ptr)
     #ifdef DEBUG
     BoxRec box = *RegionExtents(remoteExposeRgn);
 
-    fprintf(stderr, "nxagentClipAndSendExpose: Root expose extents: [%d] [%d] [%d] [%d].\n",
+    fprintf(stderr, "%s: Root expose extents: [%d] [%d] [%d] [%d].\n", __func__,
                 box.x1, box.y1, box.x2, box.y2);
 
     box = *RegionExtents(&pWin -> clipList);
 
-    fprintf(stderr, "nxagentClipAndSendExpose: Clip list extents for window at [%p]: [%d] [%d] [%d] [%d].\n",
+    fprintf(stderr, "%s: Clip list extents for window at [%p]: [%d] [%d] [%d] [%d].\n", __func__,
                 (void *)pWin, box.x1, box.y1, box.x2, box.y2);
     #endif
 
@@ -4213,7 +4187,7 @@ int nxagentClipAndSendExpose(WindowPtr pWin, void * ptr)
     if (RegionNotEmpty(exposeRgn))
     {
       #ifdef DEBUG
-      fprintf(stderr, "nxagentClipAndSendExpose: Forwarding expose to window at [%p] pWin.\n",
+      fprintf(stderr, "%s: Forwarding expose to window at [%p] pWin.\n", __func__,
                   (void *)pWin);
       #endif
 
@@ -4233,7 +4207,7 @@ int nxagentClipAndSendExpose(WindowPtr pWin, void * ptr)
   if (RegionNotEmpty(remoteExposeRgn))
   {
     #ifdef DEBUG
-    fprintf(stderr, "nxagentClipAndSendExpose: Region not empty. Walk children.\n");
+    fprintf(stderr, "%s: Region not empty. Walk children.\n", __func__);
     #endif
 
     return WT_WALKCHILDREN;
@@ -4241,7 +4215,7 @@ int nxagentClipAndSendExpose(WindowPtr pWin, void * ptr)
   else
   {
     #ifdef DEBUG
-    fprintf(stderr, "nxagentClipAndSendExpose: Region empty. Stop walking.\n");
+    fprintf(stderr, "%s: Region empty. Stop walking.\n", __func__);
     #endif
 
     return WT_STOPWALKING;
@@ -4296,7 +4270,7 @@ int nxagentUserInput(void *p)
                 nxagentKeyDown > 0))
     {
       #ifdef TEST
-      fprintf(stderr, "nxagentUserInput: Buttons [%d] Keys [%d].\n",
+      fprintf(stderr, "%s: Buttons [%d] Keys [%d].\n", __func__,
                   inputInfo.pointer -> button -> buttonsDown, nxagentKeyDown);
       #endif
 
@@ -4312,7 +4286,7 @@ int nxagentHandleRRScreenChangeNotify(XEvent *X)
   XRRScreenChangeNotifyEvent *Xr = (XRRScreenChangeNotifyEvent *) X;
 
   #ifdef DEBUG
-  fprintf(stderr, "nxagentHandleRRScreenChangeNotify called.\n");
+  fprintf(stderr, "%s: Called.\n", __func__);
   #endif
 
   nxagentResizeScreen(screenInfo.screens[DefaultScreen(nxagentDisplay)], Xr -> width, Xr -> height,
@@ -4339,7 +4313,7 @@ int nxagentPendingEvents(Display *dpy)
   if (_XGetIOError(dpy) != 0)
   {
     #ifdef DEBUG
-    fprintf(stderr, "nxagentPendingEvents: Returning error with display down.\n");
+    fprintf(stderr, "%s: Returning error with display down.\n", __func__);
     #endif
 
     return -1;
@@ -4347,7 +4321,7 @@ int nxagentPendingEvents(Display *dpy)
   else if (XQLength(dpy) > 0)
   {
     #ifdef DEBUG
-    fprintf(stderr, "nxagentPendingEvents: Returning true with [%d] events queued.\n",
+    fprintf(stderr, "%s: Returning true with [%d] events queued.\n", __func__,
                 XQLength(dpy));
     #endif
 
@@ -4362,7 +4336,7 @@ int nxagentPendingEvents(Display *dpy)
       if (readable > 0)
       {
         #ifdef DEBUG
-        fprintf(stderr, "nxagentPendingEvents: Returning true with [%d] bytes readable.\n",
+        fprintf(stderr, "%s: Returning true with [%d] bytes readable.\n", __func__,
                     readable);
         #endif
 
@@ -4370,7 +4344,7 @@ int nxagentPendingEvents(Display *dpy)
       }
 
       #ifdef DEBUG
-      fprintf(stderr, "nxagentPendingEvents: Returning false with [%d] bytes readable.\n",
+      fprintf(stderr, "%s: Returning false with [%d] bytes readable.\n", __func__,
                   readable);
       #endif
 
@@ -4378,7 +4352,7 @@ int nxagentPendingEvents(Display *dpy)
     }
 
     #ifdef TEST
-    fprintf(stderr, "nxagentPendingEvents: WARNING! Error detected on the X display.\n");
+    fprintf(stderr, "%s: WARNING! Error detected on the X display.\n", __func__);
     #endif
 
     NXForceDisplayError(dpy);
@@ -4394,7 +4368,7 @@ int nxagentPendingEvents(Display *dpy)
 int nxagentWaitEvents(Display *dpy, useconds_t msec)
 {
   #ifdef DEBUG
-  fprintf(stderr, "nxagentWaitEvents called.\n");
+  fprintf(stderr, "%s: Called.\n", __func__);
   #endif
 
   NXFlushDisplay(dpy, NXFlushLink);
