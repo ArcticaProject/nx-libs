@@ -156,8 +156,10 @@ damagePolyText8(DrawablePtr pDrawable,
     if (checkGCDamage (pDrawable, pGC))
 	x = damageText (pDrawable, pGC, x, y, (unsigned long) count, chars,
 		    Linear8Bit, TT_POLY8);
+#ifndef NXAGENT_SERVER
     else
-        x = (*pGC->ops->PolyText8)(pDrawable, pGC, x, y, count, chars);
+#endif
+	x = (*pGC->ops->PolyText8)(pDrawable, pGC, x, y, count, chars);
 
     DAMAGE_GC_OP_EPILOGUE(pGC, pDrawable);
     return x;
@@ -177,8 +179,10 @@ damagePolyText16(DrawablePtr	pDrawable,
 	x = damageText (pDrawable, pGC, x, y, (unsigned long) count, (char *) chars,
 		    FONTLASTROW(pGC->font) == 0 ? Linear16Bit : TwoD16Bit,
 		    TT_POLY16);
+#ifndef NXAGENT_SERVER
     else
-        x = (*pGC->ops->PolyText16)(pDrawable, pGC, x, y, count, chars);
+#endif
+	x = (*pGC->ops->PolyText16)(pDrawable, pGC, x, y, count, chars);
 
     DAMAGE_GC_OP_EPILOGUE(pGC, pDrawable);
     return x;
@@ -197,8 +201,10 @@ damageImageText8(DrawablePtr	pDrawable,
     if (checkGCDamage (pDrawable, pGC))
 	damageText (pDrawable, pGC, x, y, (unsigned long) count, chars,
 		    Linear8Bit, TT_IMAGE8);
+#ifndef NXAGENT_SERVER
     else
-        (*pGC->ops->ImageText8)(pDrawable, pGC, x, y, count, chars);
+#endif
+	(*pGC->ops->ImageText8)(pDrawable, pGC, x, y, count, chars);
 
     DAMAGE_GC_OP_EPILOGUE(pGC, pDrawable);
 }
@@ -217,8 +223,10 @@ damageImageText16(DrawablePtr	pDrawable,
 	damageText (pDrawable, pGC, x, y, (unsigned long) count, (char *) chars,
 		    FONTLASTROW(pGC->font) == 0 ? Linear16Bit : TwoD16Bit,
 		    TT_IMAGE16);
+#ifndef NXAGENT_SERVER
     else
-        (*pGC->ops->ImageText16)(pDrawable, pGC, x, y, count, chars);
+#endif
+	(*pGC->ops->ImageText16)(pDrawable, pGC, x, y, count, chars);
 
     DAMAGE_GC_OP_EPILOGUE(pGC, pDrawable);
 }
