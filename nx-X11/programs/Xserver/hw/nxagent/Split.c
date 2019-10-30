@@ -71,13 +71,11 @@ DrawablePtr nxagentSplitDrawable(DrawablePtr pDrawable)
 
 void nxagentInitSplitResources(void)
 {
-  int resource;
-
   #ifdef TEST
   fprintf(stderr, "nxagentInitSplitResources: Initializing the split resources.\n");
   #endif
 
-  for (resource = 0; resource < NXNumberOfResources; resource++)
+  for (int resource = 0; resource < NXNumberOfResources; resource++)
   {
     SplitResourcePtr pResource = &nxagentSplitResources[resource];
 
@@ -94,8 +92,6 @@ void nxagentInitSplitResources(void)
 SplitResourcePtr nxagentAllocSplitResource(void)
 {
   int resource;
-
-  SplitResourcePtr pResource;
 
   for (;;)
   {
@@ -122,7 +118,7 @@ FIXME: Must deal with the case all resources are exausted.
     }
   }
 
-  pResource = &nxagentSplitResources[resource];
+  SplitResourcePtr pResource = &nxagentSplitResources[resource];
 
   if (pResource -> pending != 0 || pResource -> split != NXNoResource ||
           pResource -> unpack != NXNoResource || pResource -> drawable != NULL ||
@@ -215,13 +211,11 @@ FIXME: This must be implemented.
 
 void nxagentReleaseAllSplits(void)
 {
-  int resource;
-
   #ifdef TEST
   fprintf(stderr, "nxagentReleaseAllSplits: Going to release all the split resources.\n");
   #endif
 
-  for (resource = 0; resource < NXNumberOfResources; resource++)
+  for (int resource = 0; resource < NXNumberOfResources; resource++)
   {
     SplitResourcePtr pResource = &nxagentSplitResources[resource];
 
@@ -327,11 +321,9 @@ static void nxagentCheckResource(SplitResourcePtr pResource, int resource)
 
 int nxagentCreateSplit(DrawablePtr pDrawable, GCPtr *pGC)
 {
-  SplitResourcePtr pResource;
-
   pDrawable = nxagentSplitDrawable(pDrawable);
 
-  pResource = nxagentAllocSplitResource();
+  SplitResourcePtr pResource = nxagentAllocSplitResource();
 
   if (pDrawable -> type == DRAWABLE_PIXMAP)
   {
@@ -402,11 +394,9 @@ FIXME: What do we do here?
 
 void nxagentRegionSplit(DrawablePtr pDrawable, RegionPtr pRegion)
 {
-  SplitResourcePtr pResource;
-
   pDrawable = nxagentSplitDrawable(pDrawable);
 
-  pResource = nxagentSplitResource(pDrawable);
+  SplitResourcePtr pResource = nxagentSplitResource(pDrawable);
 
   #ifdef TEST
 
@@ -445,11 +435,9 @@ void nxagentRegionSplit(DrawablePtr pDrawable, RegionPtr pRegion)
 
 void nxagentReleaseSplit(DrawablePtr pDrawable)
 {
-  SplitResourcePtr pResource;
-
   pDrawable = nxagentSplitDrawable(pDrawable);
 
-  pResource = nxagentSplitResource(pDrawable);
+  SplitResourcePtr pResource = nxagentSplitResource(pDrawable);
 
   if (pResource == NULL)
   {
@@ -551,11 +539,9 @@ void nxagentReleaseSplit(DrawablePtr pDrawable)
 
 void nxagentValidateSplit(DrawablePtr pDrawable, RegionPtr pRegion)
 {
-  SplitResourcePtr pResource;
-
   pDrawable = nxagentSplitDrawable(pDrawable);
 
-  pResource = nxagentSplitResource(pDrawable);
+  SplitResourcePtr pResource = nxagentSplitResource(pDrawable);
 
   if (pResource == NULL)
   {
