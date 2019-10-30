@@ -316,14 +316,14 @@ void nxagentRootlessRestack(unsigned long children[], unsigned int nchildren)
 
   #ifdef DEBUG
 
-  fprintf(stderr, "%s: External top level windows before restack:", __func__);
+  fprintf(stderr, "%s: External top level windows before restack:\n", __func__);
 
   for (i = 0; i < ntoplevel; i++)
   {
     fprintf(stderr, "%s: [%p]\n", __func__, (void *)toplevel[i]);
   }
 
-  fprintf(stderr, "%s: Internal top level windows before restack:", __func__);
+  fprintf(stderr, "%s: Internal top level windows before restack:\n", __func__);
 
   for (WindowPtr pWin = screenInfo.screens[0]->root -> firstChild; pWin != NULL; pWin = pWin -> nextSib)
   {
@@ -358,16 +358,16 @@ void nxagentRootlessRestack(unsigned long children[], unsigned int nchildren)
 
   #ifdef DEBUG
 
-  fprintf(stderr, "%s: External top level windows after restack:", __func__);
 
   ntoplevel = i; /* FIXME: is this correct? */
+  fprintf(stderr, "%s: External top level windows after restack:\n", __func__);
 
   for (i = 0; i < ntoplevel; i++)
   {
     fprintf(stderr, "%s: [%p]\n", __func__, (void *)toplevel[i]);
   }
 
-  fprintf(stderr, "%s: Internal top level windows after restack:", __func__);
+  fprintf(stderr, "%s: Internal top level windows after restack:\n", __func__);
 
   for (pWin = screenInfo.screens[0]->root -> firstChild; pWin != NULL; pWin = pWin -> nextSib)
   {
@@ -1133,7 +1133,7 @@ void nxagentRemovePropertyFromList(void)
   struct nxagentPropertyRec *tmp = nxagentPropertyList.first;
 
   #ifdef TEST
-  fprintf(stderr, "%s: Property [%d] on Window [0x%x] to list, list size is [%d].\n\n", __func__,
+  fprintf(stderr, "%s: Property [%d] on Window [0x%x] to list, list size is [%d].\n", __func__,
               nxagentPropertyList.first -> property, nxagentPropertyList.first -> window,
                  nxagentPropertyList.size);
   #endif
