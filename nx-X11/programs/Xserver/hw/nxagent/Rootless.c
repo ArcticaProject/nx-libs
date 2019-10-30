@@ -137,7 +137,7 @@ void nxagentRootlessAddTopLevelWindow(WindowPtr pWin, Window w)
     if (topLevelParentMap.elt[i].pWin == pWin)
     {
       #ifdef TEST
-      fprintf(stderr, "%s: WARNING! Trying to add duplicated entry window at [%p] xid [%ld].\n",
+      fprintf(stderr, "%s: WARNING! Trying to add duplicated entry window at [%p] xid [%d].\n",
                   __func__, (void *) pWin, w);
       #endif
 
@@ -320,14 +320,14 @@ void nxagentRootlessRestack(unsigned long children[], unsigned int nchildren)
 
   for (i = 0; i < ntoplevel; i++)
   {
-    fprintf(stderr, "%s: [%p]\n", __func__, toplevel[i]);
+    fprintf(stderr, "%s: [%p]\n", __func__, (void *)toplevel[i]);
   }
 
   fprintf(stderr, "%s: Internal top level windows before restack:", __func__);
 
   for (WindowPtr pWin = screenInfo.screens[0]->root -> firstChild; pWin != NULL; pWin = pWin -> nextSib)
   {
-    fprintf(stderr, "%s: [%p]\n", __func__, pWin);
+    fprintf(stderr, "%s: [%p]\n", __func__, (void *)pWin);
   }
 
   #endif
@@ -364,14 +364,14 @@ void nxagentRootlessRestack(unsigned long children[], unsigned int nchildren)
 
   for (i = 0; i < ntoplevel; i++)
   {
-    fprintf(stderr, "%s: [%p]\n", __func__, toplevel[i]);
+    fprintf(stderr, "%s: [%p]\n", __func__, (void *)toplevel[i]);
   }
 
   fprintf(stderr, "%s: Internal top level windows after restack:", __func__);
 
   for (pWin = screenInfo.screens[0]->root -> firstChild; pWin != NULL; pWin = pWin -> nextSib)
   {
-    fprintf(stderr, "%s: [%p]\n", __func__, pWin);
+    fprintf(stderr, "%s: [%p]\n", __func__, (void *)pWin);
   }
 
   #endif
@@ -388,7 +388,7 @@ void nxagentRootlessRestack(unsigned long children[], unsigned int nchildren)
 Window nxagentRootlessWindowParent(WindowPtr pWin)
 {
   #ifdef TEST
-  fprintf(stderr, "%s: Called for window at [%p][%ld] with parent [%p][%ld].\n", __func__,
+  fprintf(stderr, "%s: Called for window at [%p][%d] with parent [%p][%d].\n", __func__,
               (void *) pWin, nxagentWindowPriv(pWin)->window, (void *) pWin->parent,
                   (pWin->parent ? nxagentWindowPriv(pWin->parent)->window : 0));
   #endif
@@ -450,7 +450,7 @@ int nxagentExportProperty(WindowPtr pWin,
               strcmp(propertyS, "_KDE_NET_WM_SYSTEM_TRAY_WINDOW_FOR") != 0)
   {
     #ifdef TEST
-    fprintf(stderr, "%s: WARNING! Ignored ChangeProperty on %swindow [0x%lx] property [%s] "
+    fprintf(stderr, "%s: WARNING! Ignored ChangeProperty on %swindow [0x%x] property [%s] "
                 "type [%s] nUnits [%ld] format [%d]\n", __func__,
                     nxagentWindowTopLevel(pWin) ? "toplevel " : "", nxagentWindow(pWin),
                         validateString(propertyS), validateString(typeS), nUnits, format);
@@ -727,7 +727,7 @@ int nxagentExportProperty(WindowPtr pWin,
     else
     {
       #ifdef TEST
-      fprintf(stderr, "%s: Property [%lu] format [%i] units [%lu].\n", __func__,
+      fprintf(stderr, "%s: Property [%u] format [%i] units [%lu].\n", __func__,
                   propertyX, format, nUnits);
       #endif
 
@@ -824,7 +824,7 @@ void nxagentImportProperty(Window window,
   if (pWin == NULL)
   {
     #ifdef TEST
-    fprintf(stderr, "%s: Failed to look up remote window [0x%lx]  property [%ld] exiting.\n",
+    fprintf(stderr, "%s: Failed to look up remote window [0x%x]  property [%d] exiting.\n",
                 __func__, window, property);
     #endif
 
@@ -843,7 +843,7 @@ void nxagentImportProperty(Window window,
   }
 
   #ifdef TEST
-  fprintf(stderr, "%s: Window [0x%lx] property [%ld]: [%s]\n", __func__,
+  fprintf(stderr, "%s: Window [0x%x] property [%d]: [%s]\n", __func__,
               window, property, validateString(NameForAtom(propertyL)));
   #endif
 
@@ -1076,7 +1076,7 @@ void nxagentImportProperty(Window window,
   if (import)
   {
     #ifdef TEST
-    fprintf(stderr, "%s: ChangeProperty on window [0x%lx] property [%ld] type [%s]"
+    fprintf(stderr, "%s: ChangeProperty on window [0x%x] property [%d] type [%s]"
                 " nitems [%ld] format [%d]\n", __func__,
                     window, property, typeS, nitems, format);
     #endif
@@ -1087,7 +1087,7 @@ void nxagentImportProperty(Window window,
   else
   {
     #ifdef TEST
-    fprintf(stderr, "%s: WARNING! Ignored ChangeProperty on window [0x%lx] property [%ld] type [%s]"
+    fprintf(stderr, "%s: WARNING! Ignored ChangeProperty on window [0x%x] property [%d] type [%s]"
                 " ntems [%ld] format [%d]\n", __func__,
                        window, property, validateString(typeS), nitems, format);
     #endif
@@ -1133,7 +1133,7 @@ void nxagentRemovePropertyFromList(void)
   struct nxagentPropertyRec *tmp = nxagentPropertyList.first;
 
   #ifdef TEST
-  fprintf(stderr, "%s: Property [%ld] on Window [0x%lx] to list, list size is [%d].\n\n", __func__,
+  fprintf(stderr, "%s: Property [%d] on Window [0x%x] to list, list size is [%d].\n\n", __func__,
               nxagentPropertyList.first -> property, nxagentPropertyList.first -> window,
                  nxagentPropertyList.size);
   #endif
@@ -1169,7 +1169,7 @@ void nxagentAddPropertyToList(Atom property, WindowPtr pWin)
   }
 
   #ifdef TEST
-  fprintf(stderr, "%s: Adding record Property [%ld] - Window [0x%lx][%p] to list, list"
+  fprintf(stderr, "%s: Adding record Property [%d] - Window [0x%x][%p] to list, list"
               " size is [%d].\n", __func__, property, nxagentWindow(pWin), (void*) pWin,
                  nxagentPropertyList.size);
   #endif
@@ -1215,7 +1215,7 @@ Bool nxagentNotifyMatchChangeProperty(void *p)
 
   if (first)
   {
-    fprintf(stderr, "%s: First element on list is window [0x%lx] property [%ld] list size is [%d].\n", __func__,
+    fprintf(stderr, "%s: First element on list is window [0x%x] property [%d] list size is [%d].\n", __func__,
                 first -> window, first -> property, nxagentPropertyList.size);
   }
   else
