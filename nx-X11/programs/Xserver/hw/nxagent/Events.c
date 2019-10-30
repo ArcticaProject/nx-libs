@@ -1503,12 +1503,12 @@ FIXME: Don't enqueue the KeyRelease event if the key was not already
         WindowPtr pWin;
 
         #ifdef DEBUG
-        fprintf(stderr, "%s: Going to handle new FocusIn event [0x%x] mode: [%s]\n", __func__, X.xfocus.window, nxagentGetNotifyMode(X.xfocus.mode));
+        fprintf(stderr, "%s: Going to handle new FocusIn event [0x%lx] mode: [%s]\n", __func__, X.xfocus.window, nxagentGetNotifyMode(X.xfocus.mode));
         {
           XlibWindow w;
           int revert_to;
           XGetInputFocus(nxagentDisplay, &w, &revert_to);
-          fprintf(stderr, "%s: (FocusIn): Event win [0x%x] Focus owner [0x%x] nxagentDefaultWindows[0] [0x%x]\n", __func__, X.xfocus.window, w, nxagentDefaultWindows[0]);
+          fprintf(stderr, "%s: (FocusIn): Event win [0x%lx] Focus owner [0x%lx] nxagentDefaultWindows[0] [0x%x]\n", __func__, X.xfocus.window, w, nxagentDefaultWindows[0]);
         }
         #else
           #ifdef TEST
@@ -1561,7 +1561,7 @@ FIXME: Don't enqueue the KeyRelease event if the key was not already
       case FocusOut:
       {
         #ifdef DEBUG
-        fprintf(stderr, "%s: Going to handle new FocusOut event [0x%x] mode: [%s]\n", __func__, X.xfocus.window, nxagentGetNotifyMode(X.xfocus.mode));
+        fprintf(stderr, "%s: Going to handle new FocusOut event [0x%lx] mode: [%s]\n", __func__, X.xfocus.window, nxagentGetNotifyMode(X.xfocus.mode));
         #else
           #ifdef TEST
           fprintf(stderr, "%s: Going to handle new FocusOut event.\n", __func__);
@@ -2856,8 +2856,8 @@ int nxagentHandleXFixesSelectionNotify(XEvent *X)
       fprintf(stderr, "%s: CurrentSelections[i].lastTimeChanged [%d]\n", __func__, CurrentSelections[i].lastTimeChanged.milliseconds);
       fprintf(stderr, "%s: Event timestamp [%ld]\n", __func__, xfixesEvent->xfixesselection.timestamp);
       fprintf(stderr, "%s: Event selection timestamp [%ld]\n", __func__, xfixesEvent->xfixesselection.selection_timestamp);
-      fprintf(stderr, "%s: Event selection window [0x%x]\n", __func__, xfixesEvent->xfixesselection.window);
-      fprintf(stderr, "%s: Event selection owner [0x%x]\n", __func__, xfixesEvent->xfixesselection.owner);
+      fprintf(stderr, "%s: Event selection window [0x%lx]\n", __func__, xfixesEvent->xfixesselection.window);
+      fprintf(stderr, "%s: Event selection owner [0x%lx]\n", __func__, xfixesEvent->xfixesselection.owner);
       fprintf(stderr, "%s: Event selection [%s]\n", __func__, NameForAtom(nxagentRemoteToLocalAtom(xfixesEvent->xfixesselection.selection)));
 
       fprintf(stderr, "%s: Subtype ", __func__);
