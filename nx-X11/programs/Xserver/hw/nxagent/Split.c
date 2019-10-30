@@ -36,7 +36,6 @@
 
 #include "compext/Compext.h"
 
-
 /*
  * Set here the required log level.
  */
@@ -47,9 +46,8 @@
 #undef  DEBUG
 
 /*
- * This should be a macro but for now
- * we make it a real function to log
- * a warning in the logs.
+ * This should be a macro but for now we make it a real function to
+ * log a warning in the logs.
  */
 
 DrawablePtr nxagentSplitDrawable(DrawablePtr pDrawable)
@@ -348,8 +346,7 @@ int nxagentCreateSplit(DrawablePtr pDrawable, GCPtr *pGC)
   pResource -> commit   = 1;
 
   /*
-   * Make a copy of the GC so the client
-   * can safely remove it.
+   * Make a copy of the GC so the client can safely remove it.
    */
 
   pResource -> gc = CreateScratchGC(pDrawable -> pScreen, pDrawable -> depth);
@@ -400,8 +397,7 @@ FIXME: What do we do here?
 }
 
 /*
- * Set the region to be the current
- * streaming region.
+ * Set the region to be the current streaming region.
  */
 
 void nxagentRegionSplit(DrawablePtr pDrawable, RegionPtr pRegion)
@@ -442,9 +438,9 @@ void nxagentRegionSplit(DrawablePtr pDrawable, RegionPtr pRegion)
 }
 
 /*
- * Remove the association between the drawable
- * and the split resource. The resource is not
- * deallocated until the end of the split.
+ * Remove the association between the drawable and the split
+ * resource. The resource is not deallocated until the end of the
+ * split.
  */
 
 void nxagentReleaseSplit(DrawablePtr pDrawable)
@@ -477,10 +473,8 @@ void nxagentReleaseSplit(DrawablePtr pDrawable)
   if (pResource -> region != NullRegion)
   {
     /*
-     * If we have a region the commits
-     * had to be still valid. In this
-     * case tell the proxy to abort the
-     * data transfer.
+     * If we have a region the commits had to be still valid. In this
+     * case tell the proxy to abort the data transfer.
      */
 
     #ifdef TEST
@@ -528,8 +522,8 @@ void nxagentReleaseSplit(DrawablePtr pDrawable)
   }
 
   /*
-   * Remove the association between the
-   * drawable and the resource record.
+   * Remove the association between the drawable and the resource
+   * record.
    */
 
   #ifdef TEST
@@ -547,9 +541,8 @@ void nxagentReleaseSplit(DrawablePtr pDrawable)
   }
 
   /*
-   * Invalidate the commits and remove the
-   * association between the resource and
-   * the drawable.
+   * Invalidate the commits and remove the association between the
+   * resource and the drawable.
    */
 
   pResource -> drawable = NULL;
@@ -607,9 +600,8 @@ void nxagentValidateSplit(DrawablePtr pDrawable, RegionPtr pRegion)
   #endif
 
   /*
-   * If a null region is passed as parameter,
-   * we assume that all the commits have to
-   * be discarded.
+   * If a null region is passed as parameter, we assume that all the
+   * commits have to be discarded.
    */
 
   if (pRegion == NullRegion)
@@ -626,9 +618,8 @@ void nxagentValidateSplit(DrawablePtr pDrawable, RegionPtr pRegion)
     RegionRec tmpRegion;
 
     /*
-     * Check if the provided region overlaps
-     * the area covered by the image being
-     * streamed.
+     * Check if the provided region overlaps the area covered by the
+     * image being streamed.
      */
 
     RegionInit(&tmpRegion, NullBox, 1);
@@ -698,10 +689,9 @@ void nxagentFreeSplit(int resource)
   else
   {
     /*
-     * The end of the split has come after we have
-     * invalidated the operation and removed the
-     * association to the drawable. This happens,
-     * for example, if the drawable is destroyed.
+     * The end of the split has come after we have invalidated the
+     * operation and removed the association to the drawable. This
+     * happens, for example, if the drawable is destroyed.
      */
 
     fprintf(stderr, "nxagentFreeSplit: WARNING! Releasing invalidated resource [%d].\n",
@@ -718,8 +708,8 @@ void nxagentFreeSplit(int resource)
 }
 
 /*
-FIXME: This must be enabled when the vanilla
-       synchronization procedure is working.
+FIXME: This must be enabled when the vanilla synchronization procedure
+       is working.
 */
 #define USE_FINISH_SPLIT
 
@@ -747,8 +737,7 @@ void nxagentWaitDrawable(DrawablePtr pDrawable)
   #endif
 
   /*
-   * Be sure we intercept an I/O error
-   * as well as an interrupt.
+   * Be sure we intercept an I/O error as well as an interrupt.
    */
 
   #ifdef USE_FINISH_SPLIT
@@ -762,21 +751,18 @@ void nxagentWaitDrawable(DrawablePtr pDrawable)
   for (;;)
   {
     /*
-     * Handling all the possible events here
-     * preempts the queue and makes a better
-     * use of the link.
+     * Handling all the possible events here preempts the queue and
+     * makes a better use of the link.
      *
-     * We should better use XIfEvent() instead
-     * of looping again and again through the
-     * event queue.
+     * We should better use XIfEvent() instead of looping again and
+     * again through the event queue.
      */
 
     nxagentDispatchEvents(NULL);
 
     /*
-     * Wait indefinitely until the resource
-     * is released or the display is shut
-     * down.
+     * Wait indefinitely until the resource is released or the display
+     * is shut down.
      */
 
     if (nxagentSplitResource(pDrawable) == NULL ||
@@ -821,16 +807,14 @@ void nxagentWaitCommitEvent(int resource)
   XEvent event;
 
   /*
-   * Check if there is any commit pending. As
-   * we are at it, handle any commit, even those
-   * commits pertaining to other resources.
+   * Check if there is any commit pending. As we are at it, handle any
+   * commit, even those commits pertaining to other resources.
    *
-   * We can receive some commits even if we'll
-   * later receive a no-split event. The proxy,
-   * in fact, may have missed to find the image
-   * in the memory cache and could have loaded it
-   * from disk (so requiring a commit) before we
-   * marked the end of the split sequence.
+   * We can receive some commits even if we'll later receive a
+   * no-split event. The proxy, in fact, may have missed to find the
+   * image in the memory cache and could have loaded it from disk (so
+   * requiring a commit) before we marked the end of the split
+   * sequence.
    */
 
   while (nxagentCheckEvents(nxagentDisplay, &event,
@@ -866,9 +850,8 @@ int nxagentWaitSplitEvent(int resource)
   int split = 0;
 
   /*
-   * Don't flush the link. We only want to
-   * query the NX transport to check whether
-   * the operation caused a split.
+   * Don't flush the link. We only want to query the NX transport to
+   * check whether the operation caused a split.
    */
 
   NXFlushDisplay(nxagentDisplay, NXFlushBuffer);
@@ -1223,10 +1206,9 @@ void nxagentSetCorruptedTimestamp(DrawablePtr pDrawable)
 }
 
 /*
- * Reset the timestamp taken when the drawable
- * became initially corrupted. The timestamp is
- * reset only after the drawable has been fully
- * synchronized.
+ * Reset the timestamp taken when the drawable became initially
+ * corrupted. The timestamp is reset only after the drawable has been
+ * fully synchronized.
  */
 
 void nxagentResetCorruptedTimestamp(DrawablePtr pDrawable)
@@ -1253,4 +1235,3 @@ void nxagentResetCorruptedTimestamp(DrawablePtr pDrawable)
     }
   }
 }
-
