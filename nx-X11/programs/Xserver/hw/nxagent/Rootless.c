@@ -108,6 +108,7 @@ static TopLevelParentMap topLevelParentMap = { NULL, 0, 0 };
 
 static void nxagentRemovePropertyFromList(void);
 
+#if 0
 /*
  * This is currently unused.
  */
@@ -128,6 +129,7 @@ void nxagentPrintRootlessTopLevelWindowMap(void)
   }
 }
 
+#endif
 #endif
 
 void nxagentRootlessAddTopLevelWindow(WindowPtr pWin, Window w)
