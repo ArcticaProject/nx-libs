@@ -66,8 +66,8 @@ is" without express or implied warranty.
 #undef  DEBUG
 
 /*
- * The nxagentReversePointerMap array is used to
- * memorize remote display pointer map.
+ * The nxagentReversePointerMap array is used to memorize remote
+ * display pointer map.
  */
 
 unsigned char nxagentReversePointerMap[MAXBUTTONS];
@@ -76,13 +76,12 @@ void nxagentChangePointerControl(DeviceIntPtr pDev, PtrCtrl *ctrl)
 {
   /*
    * The original behaviour was to reset the pointer settings
-   * (acceleration and alas) to the default values. What the
-   * average user expects, on the contrary, is to have agent
-   * inheriting whatever value is set on the real X display.
-   * Having to reflect changes made inside the agent session,
-   * the correct behavior would be saving the original values
-   * and restoring them as soon as focus leaves the agent's
-   * window.
+   * (acceleration and alas) to the default values. What the average
+   * user expects, on the contrary, is to have agent inheriting
+   * whatever value is set on the real X display.  Having to reflect
+   * changes made inside the agent session, the correct behavior would
+   * be saving the original values and restoring them as soon as focus
+   * leaves the agent's window.
    */
 
   if (nxagentOption(DeviceControl) == True)
