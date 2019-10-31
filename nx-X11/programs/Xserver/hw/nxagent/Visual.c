@@ -64,19 +64,17 @@ Visual nxagentAlphaVisual;
 
 Visual *nxagentVisual(VisualPtr pVisual)
 {
-  XVisualInfo visual;
+  XVisualInfo visual = {
+    .class = pVisual->class,
+    .bits_per_rgb = pVisual->bitsPerRGBValue,
+    .colormap_size = pVisual->ColormapEntries,
+    .depth = pVisual->nplanes,
+    .red_mask = pVisual->redMask,
+    .green_mask = pVisual->greenMask,
+    .blue_mask = pVisual->blueMask
+  };
 
-  int i;
-
-  visual.class = pVisual->class;
-  visual.bits_per_rgb = pVisual->bitsPerRGBValue;
-  visual.colormap_size = pVisual->ColormapEntries;
-  visual.depth = pVisual->nplanes;
-  visual.red_mask = pVisual->redMask;
-  visual.green_mask = pVisual->greenMask;
-  visual.blue_mask = pVisual->blueMask;
-
-  for (i = 0; i < nxagentNumVisuals; i++)
+  for (int i = 0; i < nxagentNumVisuals; i++)
   {
     if (nxagentCompareVisuals(visual, nxagentVisuals[i]) == 1)
     {
@@ -89,9 +87,7 @@ Visual *nxagentVisual(VisualPtr pVisual)
 
 Visual *nxagentVisualFromID(ScreenPtr pScreen, VisualID visual)
 {
-  int i;
-
-  for (i = 0; i < pScreen->numVisuals; i++)
+  for (int i = 0; i < pScreen->numVisuals; i++)
   {
     if (pScreen->visuals[i].vid == visual)
     {
@@ -104,9 +100,7 @@ Visual *nxagentVisualFromID(ScreenPtr pScreen, VisualID visual)
 
 Colormap nxagentDefaultVisualColormap(Visual *visual)
 {
-  int i;
-
-  for (i = 0; i < nxagentNumVisuals; i++)
+  for (int i = 0; i < nxagentNumVisuals; i++)
   {
     if (nxagentVisuals[i].visual == visual)
     {
@@ -126,9 +120,7 @@ Colormap nxagentDefaultVisualColormap(Visual *visual)
 
 Visual *nxagentVisualFromDepth(ScreenPtr pScreen, int depth)
 {
-  int i;
-
-  for (i = 0; i < pScreen->numVisuals; i++)
+  for (int i = 0; i < pScreen->numVisuals; i++)
   {
     if (pScreen->visuals[i].nplanes == depth)
     {
