@@ -130,8 +130,7 @@ int nxagentUniquePixels(XImage *image)
   #endif
 
   /*
-   * Take one pixel every n from the image and
-   * add it to the array.
+   * Take one pixel every n from the image and add it to the array.
    */
 
   switch (image -> bits_per_pixel)
@@ -172,11 +171,9 @@ int nxagentUniquePixels(XImage *image)
     case 15:
     {
       /*
-       * Note that the padding bytes at the end
-       * of the scanline are included in the set.
-       * This is not a big problem. What we want
-       * to find out is just how compressible is
-       * the image data.
+       * Note that the padding bytes at the end of the scanline are
+       * included in the set.  This is not a big problem. What we want
+       * to find out is just how compressible is the image data.
        */
 
       for (int i = 0; i < elements; i++)
