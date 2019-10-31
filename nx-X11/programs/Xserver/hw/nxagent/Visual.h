@@ -42,7 +42,10 @@ is" without express or implied warranty.
 
 Visual *nxagentVisual(VisualPtr pVisual);
 Visual *nxagentVisualFromID(ScreenPtr pScreen, VisualID visual);
+
+#if 0
 Visual *nxagentVisualFromDepth(ScreenPtr pScreen, int depth);
+#endif
 
 Colormap nxagentDefaultVisualColormap(Visual *visual);
 

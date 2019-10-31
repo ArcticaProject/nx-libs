@@ -111,6 +111,7 @@ Colormap nxagentDefaultVisualColormap(Visual *visual)
   return None;
 }
 
+#if 0
 /*
  * This is currently unused. It should serve the scope of matching a
  * visual whenever a drawable has a different depth than the real
@@ -129,6 +130,7 @@ Visual *nxagentVisualFromDepth(ScreenPtr pScreen, int depth)
 
   return NULL;
 }
+#endif
 
 /*
  * Create a fake 32 bits depth visual and initialize it based on the
