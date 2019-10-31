@@ -112,10 +112,9 @@ Colormap nxagentDefaultVisualColormap(Visual *visual)
 }
 
 /*
- * This is currently unused. It should serve
- * the scope of matching a visual whenever
- * a drawable has a different depth than the
- * real display.
+ * This is currently unused. It should serve the scope of matching a
+ * visual whenever a drawable has a different depth than the real
+ * display.
  */
 
 Visual *nxagentVisualFromDepth(ScreenPtr pScreen, int depth)
@@ -132,9 +131,8 @@ Visual *nxagentVisualFromDepth(ScreenPtr pScreen, int depth)
 }
 
 /*
- * Create a fake 32 bits depth visual and
- * initialize it based on the endianness
- * of the remote display.
+ * Create a fake 32 bits depth visual and initialize it based on the
+ * endianness of the remote display.
  */
 
 void nxagentInitAlphaVisual(void)
@@ -142,9 +140,8 @@ void nxagentInitAlphaVisual(void)
   nxagentAlphaVisual.visualid = XAllocID(nxagentDisplay);
 
   /*
-   * Color masks are referred to bits inside
-   * the pixel. This is independent from the
-   * endianness.
+   * Color masks are referred to bits inside the pixel. This is
+   * independent from the endianness.
    */
 
   nxagentAlphaVisual.red_mask   = 0x00ff0000;
