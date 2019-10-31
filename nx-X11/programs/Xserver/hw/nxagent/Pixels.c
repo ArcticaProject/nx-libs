@@ -56,8 +56,6 @@ static int nxagentComparePixels(const void *p1, const void *p2)
 
 int nxagentUniquePixels(XImage *image)
 {
-  int i = 0;
-
   int pixels[PIXEL_ELEMENTS];
 
   int elements = PIXEL_ELEMENTS;
@@ -140,7 +138,7 @@ int nxagentUniquePixels(XImage *image)
   {
     case 32:
     {
-      for (i = 0; i < elements; i++)
+      for (int i = 0; i < elements; i++)
       {
         pixels[i] = Get32(next, image -> byte_order);
 
@@ -156,7 +154,7 @@ int nxagentUniquePixels(XImage *image)
     }
     case 24:
     {
-      for (i = 0; i < elements; i++)
+      for (int i = 0; i < elements; i++)
       {
         pixels[i] = Get24(next, image -> byte_order);
 
@@ -181,7 +179,7 @@ int nxagentUniquePixels(XImage *image)
        * the image data.
        */
 
-      for (i = 0; i < elements; i++)
+      for (int i = 0; i < elements; i++)
       {
         pixels[i] = Get16(next, image -> byte_order);
 
@@ -212,7 +210,7 @@ int nxagentUniquePixels(XImage *image)
 
   qsort(pixels, elements, sizeof(int), nxagentComparePixels);
 
-  for (i = 0; i < elements; i++)
+  for (int i = 0; i < elements; i++)
   {
     if (last != pixels[i])
     {
