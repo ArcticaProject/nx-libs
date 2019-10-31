@@ -103,10 +103,6 @@ void nxagentChangePointerControl(DeviceIntPtr pDev, PtrCtrl *ctrl)
 
 int nxagentPointerProc(DeviceIntPtr pDev, int onoff)
 {
-  CARD8 map[MAXBUTTONS];
-  int nmap;
-  int i;
-
   switch (onoff)
   {
     case DEVICE_INIT:
@@ -120,8 +116,10 @@ int nxagentPointerProc(DeviceIntPtr pDev, int onoff)
         return Success;
       }
 
-      nmap = XGetPointerMapping(nxagentDisplay, map, MAXBUTTONS);
-      for (i = 0; i <= nmap; i++)
+      CARD8 map[MAXBUTTONS];
+
+      int nmap = XGetPointerMapping(nxagentDisplay, map, MAXBUTTONS);
+      for (int i = 0; i <= nmap; i++)
 	map[i] = i; /* buttons are already mapped */
       InitPointerDeviceStruct((DevicePtr) pDev, map, nmap,
 			      miPointerGetMotionEvents,
@@ -173,10 +171,6 @@ int nxagentPointerProc(DeviceIntPtr pDev, int onoff)
 
 void nxagentInitPointerMap(void)
 {
-  int numButtons;
-
-  int i;
-
   unsigned char pointerMap[MAXBUTTONS];
 
   #ifdef DEBUG
@@ -184,13 +178,13 @@ void nxagentInitPointerMap(void)
               "pointer map from remote display.\n");
   #endif
 
-  numButtons = XGetPointerMapping(nxagentDisplay, pointerMap, MAXBUTTONS);
+  int numButtons = XGetPointerMapping(nxagentDisplay, pointerMap, MAXBUTTONS);
 
   /*
    * Computing revers pointer map.
    */
 
-  for (i = 1; i <= numButtons; i++)
+  for (int i = 1; i <= numButtons; i++)
   {
     nxagentReversePointerMap[pointerMap[i - 1]] = i;
   }
