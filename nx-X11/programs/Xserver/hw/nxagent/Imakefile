@@ -21,7 +21,6 @@ SRCS =  \
         NXglxext.c \
         NXxvdisp.c \
         NXresource.c \
-	NXdamage.c \
 	NXmitrap.c \
 	Args.c \
 	Binder.c \
@@ -81,7 +80,6 @@ OBJS =  \
         NXglxext.o \
         NXxvdisp.o \
         NXresource.o \
-	NXdamage.o \
 	NXmitrap.o \
 	Args.o \
 	Binder.o \
@@ -139,7 +137,6 @@ INCLUDES = \
 	-I../../mi \
 	-I../../include \
 	-I../../os \
-	-I../../miext/damage \
 	-I../../miext/cw \
 	-I../../GL/glx \
 	-I../../GL/include \
@@ -164,7 +161,6 @@ INCLUDES = \
 	-I../../GL/include \
 	-I../../../../lib/GL/include \
 	-I../../Xext \
-	-I../../miext/damage \
 	-I../../miext/cw \
 	-I../../../../lib/include/X11 \
 	-I$(EXTINCSRC) -I$(XINCLUDESRC) \
@@ -185,7 +181,6 @@ INCLUDES = \
 	-I../../GL/include \
 	-I../../../../lib/GL/include \
 	-I../../Xext \
-	-I../../miext/damage \
 	-I../../miext/cw \
 	-I../../../../../nxcomp \
 	-I../../../../../nxcompshad \
