@@ -1,4 +1,3 @@
-
 /*
 
 Copyright 1988, 1998  The Open Group
@@ -32,13 +31,12 @@ in this Software without prior written authorization from The Open Group.
 #include <stdlib.h>
 
 void
-XauDisposeAuth (auth)
-Xauth	*auth;
+XauDisposeAuth (Xauth *auth)
 {
     if (auth) {
-	if (auth->address) (void) free (auth->address);
-	if (auth->number) (void) free (auth->number);
-	if (auth->name) (void) free (auth->name);
+	free (auth->address);
+	free (auth->number);
+	free (auth->name);
 	if (auth->data) {
 	    (void) bzero (auth->data, auth->data_length);
 	    (void) free (auth->data);
