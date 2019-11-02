@@ -387,12 +387,15 @@ __GLXcontext *__glXForceCurrent(__GLXclientState *cl, GLXContextTag tag,
 
 /************************************************************************/
 
-#ifndef NXAGENT_SERVER
 
 /*
 ** Top level dispatcher; all commands are executed from here down.
 */
+#ifdef NXAGENT_SERVER
+static int xorg__glXDispatch(ClientPtr client)
+#else
 static int __glXDispatch(ClientPtr client)
+#endif
 {
     REQUEST(xGLXSingleReq);
     CARD8 opcode;
@@ -448,8 +451,6 @@ static int __glXDispatch(ClientPtr client)
 	proc = __glXSingleTable[opcode];
     return (*proc)(cl, (GLbyte *) stuff);
 }
-
-#endif /* NXAGENT_SERVER */
 
 
 int __glXNoSuchSingleOpcode(__GLXclientState *cl, GLbyte *pc)
