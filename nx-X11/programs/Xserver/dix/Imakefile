@@ -15,7 +15,6 @@ NXAGENT_SKIP_SRCS =                  \
                     dispatch.c       \
                     dixfonts.c       \
                     events.c         \
-                    extension.c      \
                     glyphcurs.c      \
                     property.c       \
                     resource.c       \
@@ -25,7 +24,6 @@ NXAGENT_SKIP_OBJS =                  \
                     dispatch.o       \
                     dixfonts.o       \
                     events.o         \
-                    extension.o      \
                     glyphcurs.o      \
                     property.o       \
                     resource.o       \
@@ -40,6 +38,7 @@ SRCS =                          \
        cursor.c                 \
        devices.c                \
        dixutils.c               \
+       extension.c              \
        gc.c                     \
        globals.c                \
        grabs.c                  \
@@ -61,6 +60,7 @@ OBJS =                          \
        cursor.o                 \
        devices.o                \
        dixutils.o               \
+       extension.o              \
        gc.o                     \
        globals.o                \
        grabs.o                  \
