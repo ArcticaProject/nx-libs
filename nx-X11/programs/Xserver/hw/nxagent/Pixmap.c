@@ -47,7 +47,6 @@
 #include "Visual.h"
 #include "Client.h"
 #include "Events.h"
-#include "Holder.h"
 #include "Args.h"
 #include "Utils.h"
 

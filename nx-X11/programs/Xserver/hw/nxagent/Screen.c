@@ -76,7 +76,6 @@ is" without express or implied warranty.
 #include "Client.h"
 #include "Options.h"
 #include "Splash.h"
-#include "Holder.h"
 #include "Render.h"
 #include "Trap.h"
 #include "Keyboard.h"
@@ -1452,17 +1451,6 @@ Bool nxagentOpenScreen(ScreenPtr pScreen,
 
     nxagentInitSplitResources();
     nxagentInitUnpackResources();
-
-    /*
-     * Initializing the pixmaps that will serve as
-     * "placeholders" in lazy encoding. We need one 
-     * pixmap for each depth.
-     */
-
-    for (int i = 0; i < numDepths; i++)
-    {
-      nxagentMarkPlaceholderNotLoaded(i);
-    }
 
     #ifdef WATCH
 

@@ -34,6 +34,4 @@
 
 #define X2GOAGENT_ICON_NAME  "x2goagent.xpm"
 
-#define NXAGENT_PLACEHOLDER_NAME  "nxmissing.xpm"
-
 #endif /* __Icons_H__ */

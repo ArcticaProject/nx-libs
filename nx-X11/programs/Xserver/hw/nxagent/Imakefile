@@ -52,8 +52,7 @@ SRCS =  \
 	Clipboard.c \
 	Splash.c \
 	Split.c \
-	Holder.c \
-        Reconnect.c \
+	Reconnect.c \
 	Error.c \
 	Atoms.c \
 	Trap.c \
@@ -111,7 +110,6 @@ OBJS =  \
 	Clipboard.o \
 	Splash.o \
 	Split.o \
-	Holder.o \
 	Reconnect.o \
 	Error.o \
 	Atoms.o \

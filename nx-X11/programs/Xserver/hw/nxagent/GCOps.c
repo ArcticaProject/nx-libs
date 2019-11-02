@@ -54,7 +54,6 @@ is" without express or implied warranty.
 #include "Events.h"
 #include "Client.h"
 #include "Trap.h"
-#include "Holder.h"
 #include "Args.h"
 #include "Screen.h"
 #include "Utils.h"
