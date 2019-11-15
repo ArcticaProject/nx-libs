@@ -725,7 +725,7 @@ void nxagentRequestSelection(XEvent *X)
        * FIXME: these must be external Atoms!
        */
 
-      Atom targets[] = {XA_STRING};
+      long targets[] = {XA_STRING};
       int numTargets = 1;
 
       #ifdef DEBUG
@@ -743,7 +743,7 @@ void nxagentRequestSelection(XEvent *X)
                       X->xselectionrequest.requestor,
                       X->xselectionrequest.property,
                       XInternAtom(nxagentDisplay, "ATOM", 0),
-                      sizeof(Atom)*8,
+                      32,
                       PropModeReplace,
                       (unsigned char*)&targets,
                       numTargets);
