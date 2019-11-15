@@ -716,23 +716,28 @@ void nxagentRequestSelection(XEvent *X)
        * The selection does not matter here, we will return this for
        * PRIMARY and CLIPBOARD.
        *
-       * FIXME: shouldn't we support UTF8_STRING, too?
        * FIXME: I am wondering if we should align this with
        * nxagentConvertSelection, where we report more formats.
        * FIXME: the perfect solution should not just answer with
        * XA_STRING but ask the real owner what format it supports. The
        * should then be sent to the original requestor.
-       * FIXME: these must be external Atoms!
+       * FIXME: add serverCOMPOUND_TEXT?
        */
 
-      Atom targets[] = {XA_STRING};
-      int numTargets = 1;
+      long targets[] = {XA_STRING, serverUTF8_STRING, serverTEXT, serverTARGETS, serverTIMESTAMP};
+      int numTargets = sizeof(targets) / sizeof(targets[0]);
 
       #ifdef DEBUG
-      fprintf(stderr, "%s: available targets:\n", __func__);
-      for (int i = 0; i < numTargets; i++)
-        fprintf(stderr, "%s:  %s\n", __func__, NameForAtom(targets[i]));
-      fprintf(stderr, "\n");
+      {
+	fprintf(stderr, "%s: Sending %d available targets:\n", __func__, numTargets);
+	for (int i = 0; i < numTargets; i++)
+	{
+	  char *s = XGetAtomName(nxagentDisplay, targets[i]);
+	  fprintf(stderr, "%s: %ld %s\n", __func__, targets[i], s);
+	  SAFE_XFree(s);
+	}
+	fprintf(stderr, "\n");
+      }
       #endif
 
       /*
@@ -743,7 +748,7 @@ void nxagentRequestSelection(XEvent *X)
                       X->xselectionrequest.requestor,
                       X->xselectionrequest.property,
                       XInternAtom(nxagentDisplay, "ATOM", 0),
-                      sizeof(Atom)*8,
+                      32,
                       PropModeReplace,
                       (unsigned char*)&targets,
                       numTargets);
@@ -1702,7 +1707,7 @@ int nxagentConvertSelection(ClientPtr client, WindowPtr pWin, Atom selection,
   {
     /* --- Order changed by dimbor (prevent sending COMPOUND_TEXT to client --- */
     Atom targets[] = {XA_STRING, clientUTF8_STRING, clientTEXT, clientCOMPOUND_TEXT};
-    int numTargets = 4;
+    int numTargets = sizeof(targets) / sizeof(targets[0]);
 
     #ifdef DEBUG
     fprintf(stderr, "%s: available targets:\n", __func__);
