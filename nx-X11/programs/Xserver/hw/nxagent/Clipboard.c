@@ -716,16 +716,15 @@ void nxagentRequestSelection(XEvent *X)
        * The selection does not matter here, we will return this for
        * PRIMARY and CLIPBOARD.
        *
-       * FIXME: shouldn't we support UTF8_STRING, too?
        * FIXME: I am wondering if we should align this with
        * nxagentConvertSelection, where we report more formats.
        * FIXME: the perfect solution should not just answer with
        * XA_STRING but ask the real owner what format it supports. The
        * should then be sent to the original requestor.
-       * FIXME: these must be external Atoms!
+       * FIXME: add serverCOMPOUND_TEXT?
        */
 
-      long targets[] = {XA_STRING};
+      long targets[] = {XA_STRING, serverUTF8_STRING, serverTEXT, serverTARGETS, serverTIMESTAMP};
       int numTargets = sizeof(targets) / sizeof(targets[0]);
 
       #ifdef DEBUG
