@@ -726,7 +726,7 @@ void nxagentRequestSelection(XEvent *X)
        */
 
       long targets[] = {XA_STRING};
-      int numTargets = 1;
+      int numTargets = sizeof(targets) / sizeof(targets[0]);
 
       #ifdef DEBUG
       fprintf(stderr, "%s: available targets:\n", __func__);
@@ -1702,7 +1702,7 @@ int nxagentConvertSelection(ClientPtr client, WindowPtr pWin, Atom selection,
   {
     /* --- Order changed by dimbor (prevent sending COMPOUND_TEXT to client --- */
     Atom targets[] = {XA_STRING, clientUTF8_STRING, clientTEXT, clientCOMPOUND_TEXT};
-    int numTargets = 4;
+    int numTargets = sizeof(targets) / sizeof(targets[0]);
 
     #ifdef DEBUG
     fprintf(stderr, "%s: available targets:\n", __func__);
