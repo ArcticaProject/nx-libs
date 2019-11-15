@@ -729,10 +729,16 @@ void nxagentRequestSelection(XEvent *X)
       int numTargets = sizeof(targets) / sizeof(targets[0]);
 
       #ifdef DEBUG
-      fprintf(stderr, "%s: available targets:\n", __func__);
-      for (int i = 0; i < numTargets; i++)
-        fprintf(stderr, "%s:  %s\n", __func__, NameForAtom(targets[i]));
-      fprintf(stderr, "\n");
+      {
+	fprintf(stderr, "%s: Sending %d available targets:\n", __func__, numTargets);
+	for (int i = 0; i < numTargets; i++)
+	{
+	  char *s = XGetAtomName(nxagentDisplay, targets[i]);
+	  fprintf(stderr, "%s: %ld %s\n", __func__, targets[i], s);
+	  SAFE_XFree(s);
+	}
+	fprintf(stderr, "\n");
+      }
       #endif
 
       /*
