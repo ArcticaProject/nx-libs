@@ -2136,7 +2136,6 @@ Bool nxagentInitClipboard(WindowPtr pWin)
     FatalError("nxagentInitClipboard: Failed to allocate memory for the clipboard selections.\n");
   }
 
-  serverTIMESTAMP = nxagentAtoms[11];   /* TIMESTAMP */
 
   nxagentInitSelectionOwner(nxagentPrimarySelection, XA_PRIMARY);
   nxagentInitSelectionOwner(nxagentClipboardSelection, nxagentAtoms[10]);   /* CLIPBOARD */
@@ -2151,17 +2150,18 @@ Bool nxagentInitClipboard(WindowPtr pWin)
   agentClipboardInitialized = False;
   serverWindow = nxagentWindow(pWin);
 
-  /*
-   * Local property to hold pasted data.
-   */
-
-  serverCutProperty = nxagentAtoms[5];  /* NX_CUT_BUFFER_SERVER */
   serverTARGETS = nxagentAtoms[6];  /* TARGETS */
   serverTEXT = nxagentAtoms[7];  /* TEXT */
-  serverUTF8_STRING = nxagentAtoms[12]; /* UTF8_STRING */
   serverCOMPOUND_TEXT = nxagentAtoms[16]; /* COMPOUND_TEXT */
-  /* see nxagentSendNotify for an explanation */
+  serverUTF8_STRING = nxagentAtoms[12]; /* UTF8_STRING */
+  serverTIMESTAMP = nxagentAtoms[11];   /* TIMESTAMP */
+
+  /*
+   * Local properties to hold pasted data.
+   * see nxagentSendNotify for an explanation
+   */
   serverClientCutProperty = nxagentAtoms[15]; /* NX_CUT_BUFFER_CLIENT */
+  serverCutProperty = nxagentAtoms[5];  /* NX_CUT_BUFFER_SERVER */
 
   if (serverCutProperty == None)
   {
@@ -2257,14 +2257,14 @@ Bool nxagentInitClipboard(WindowPtr pWin)
     SetClientSelectionStage(None);
     lastClientReqTime = GetTimeInMillis();
 
-    clientCutProperty = MakeAtom(szAgentNX_CUT_BUFFER_CLIENT,
-                                         strlen(szAgentNX_CUT_BUFFER_CLIENT), 1);
     clientTARGETS = MakeAtom(szAgentTARGETS, strlen(szAgentTARGETS), True);
     clientTEXT = MakeAtom(szAgentTEXT, strlen(szAgentTEXT), True);
     clientCOMPOUND_TEXT = MakeAtom(szAgentCOMPOUND_TEXT, strlen(szAgentCOMPOUND_TEXT), True);
     clientUTF8_STRING = MakeAtom(szAgentUTF8_STRING, strlen(szAgentUTF8_STRING), True);
     clientTIMESTAMP = MakeAtom(szAgentTIMESTAMP, strlen(szAgentTIMESTAMP), True);
 
+    clientCutProperty = MakeAtom(szAgentNX_CUT_BUFFER_CLIENT,
+                                    strlen(szAgentNX_CUT_BUFFER_CLIENT), True);
     if (clientCutProperty == None)
     {
       #ifdef PANIC
