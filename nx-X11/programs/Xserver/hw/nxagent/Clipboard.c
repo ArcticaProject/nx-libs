@@ -2033,6 +2033,11 @@ int nxagentSendNotify(xEvent *event)
   return 0;
 }
 
+/*
+ * This is called from NXproperty.c to determine if a client sets the
+ * property we are waiting for.
+ * FIXME: in addition we should check if the client is the one we expect
+ */
 WindowPtr nxagentGetClipboardWindow(Atom property)
 {
   int i = nxagentFindLastSelectionOwnerIndex(nxagentLastRequestedSelection);
