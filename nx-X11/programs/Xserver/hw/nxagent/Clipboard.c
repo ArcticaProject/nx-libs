@@ -795,6 +795,7 @@ void nxagentRequestSelection(XEvent *X)
        * used to obtain the selection.
        *
        * FIXME: ensure we are reporting an _external_ timestamp
+       * FIXME: for a 32 bit property list we need to pass a "long" array, not "char"!
        */
 
       int i = nxagentFindLastSelectionOwnerIndex(X->xselectionrequest.selection);
@@ -1816,6 +1817,8 @@ int nxagentConvertSelection(ClientPtr client, WindowPtr pWin, Atom selection,
     /*
      * The same client made consecutive requests of clipboard content
      * with less than 5 seconds time interval between them.
+     * FIXME: this does not take the selection into account, so a
+     * client requesting PRIMARY and CLIPBOARD would match here, too
      */
 
     fprintf(stderr, "%s: Consecutives request from client [%p] selection [%u] "
