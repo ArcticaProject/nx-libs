@@ -519,6 +519,12 @@ void nxagentStoreSelectionOwner(int index, Selection *sel)
   lastSelectionOwner[index].lastTimeChanged = GetTimeInMillis();
 }
 
+Bool nxagentMatchSelectionOwner(int index, ClientPtr pClient, WindowPtr pWindow)
+{
+  return ((pClient && lastSelectionOwner[index].client == pClient) ||
+	  (pWindow && lastSelectionOwner[index].windowPtr == pWindow));
+}
+
 void nxagentClearClipboard(ClientPtr pClient, WindowPtr pWindow)
 {
   #ifdef DEBUG
@@ -534,8 +540,7 @@ void nxagentClearClipboard(ClientPtr pClient, WindowPtr pWindow)
 
   for (int i = 0; i < nxagentMaxSelections; i++)
   {
-    if ((pClient != NULL && lastSelectionOwner[i].client == pClient) ||
-            (pWindow != NULL && lastSelectionOwner[i].windowPtr == pWindow))
+    if (nxagentMatchSelectionOwner(i, pClient, pWindow))
     {
       #ifdef TEST
       fprintf(stderr, "%s: Resetting state with client [%p] window [%p].\n", __func__,
