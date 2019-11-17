@@ -576,7 +576,7 @@ void nxagentClearClipboard(ClientPtr pClient, WindowPtr pWindow)
     }
   }
 
-  if (pWindow == lastClientWindowPtr)
+  if (pWindow && pWindow == lastClientWindowPtr)
   {
     lastClientWindowPtr = NULL;
     SetClientSelectionStage(None);
