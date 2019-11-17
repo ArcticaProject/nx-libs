@@ -47,7 +47,7 @@ extern XFixesAgentInfoRec nxagentXFixesInfo;
  * data with the X server.
  */
 
-extern int nxagentInitClipboard(WindowPtr pWindow);
+extern Bool nxagentInitClipboard(WindowPtr pWindow);
 
 /*
  * Called whenever a client or a window is

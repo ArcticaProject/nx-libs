@@ -2062,7 +2062,11 @@ WindowPtr nxagentGetClipboardWindow(Atom property)
   }
 }
 
-int nxagentInitClipboard(WindowPtr pWin)
+/*
+ * Initialize the clipboard
+ * Returns: True for success else False
+ */
+Bool nxagentInitClipboard(WindowPtr pWin)
 {
   Window iWindow = nxagentWindow(pWin);
 
@@ -2111,7 +2115,7 @@ int nxagentInitClipboard(WindowPtr pWin)
     fprintf(stderr, "%s: PANIC! Could not create NX_CUT_BUFFER_SERVER atom\n", __func__);
     #endif
 
-    return -1;
+    return False;
   }
 
   #ifdef TEST
@@ -2208,7 +2212,7 @@ int nxagentInitClipboard(WindowPtr pWin)
               "Could not create NX_CUT_BUFFER_CLIENT atom.\n", __func__);
       #endif
 
-      return -1;
+      return False;
     }
   }
 
@@ -2225,5 +2229,5 @@ int nxagentInitClipboard(WindowPtr pWin)
   }
   #endif
 
-  return 1;
+  return True;
 }
