@@ -2084,7 +2084,7 @@ int nxagentInitClipboard(WindowPtr pWin)
   {
     extern unsigned long startTime;
 
-    fprintf(stderr, "%s: Initializing start [%d] milliseconds.\n", __func__,
+    fprintf(stderr, "%s: Initializing start [%ld] milliseconds.\n", __func__,
             GetTimeInMillis() - startTime);
   }
   #endif
@@ -2220,7 +2220,7 @@ int nxagentInitClipboard(WindowPtr pWin)
   {
     extern unsigned long startTime;
 
-    fprintf(stderr, "%s: initializing ends [%d] milliseconds.\n", __func__,
+    fprintf(stderr, "%s: initializing ends [%ld] milliseconds.\n", __func__,
                 GetTimeInMillis() - startTime);
   }
   #endif
