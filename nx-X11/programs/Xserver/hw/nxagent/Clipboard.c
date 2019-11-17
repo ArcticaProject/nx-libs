@@ -2113,8 +2113,6 @@ WindowPtr nxagentGetClipboardWindow(Atom property)
  */
 Bool nxagentInitClipboard(WindowPtr pWin)
 {
-  Window iWindow = nxagentWindow(pWin);
-
   #ifdef DEBUG
   fprintf(stderr, "%s: Got called.\n", __func__);
   #endif
@@ -2141,7 +2139,7 @@ Bool nxagentInitClipboard(WindowPtr pWin)
   #endif
 
   agentClipboardInitialized = False;
-  serverWindow = iWindow;
+  serverWindow = nxagentWindow(pWin);
 
   /*
    * Local property to hold pasted data.
@@ -2165,10 +2163,10 @@ Bool nxagentInitClipboard(WindowPtr pWin)
 
   #ifdef TEST
   fprintf(stderr, "%s: Setting owner of selection [%s][%d] on window 0x%x\n", __func__,
-              "NX_CUT_BUFFER_SERVER", (int) serverCutProperty, iWindow);
+              "NX_CUT_BUFFER_SERVER", (int) serverCutProperty, serverWindow);
   #endif
 
-  XSetSelectionOwner(nxagentDisplay, serverCutProperty, iWindow, CurrentTime);
+  XSetSelectionOwner(nxagentDisplay, serverCutProperty, serverWindow, CurrentTime);
 
   if (XQueryExtension(nxagentDisplay,
                       "XFIXES",
@@ -2186,7 +2184,7 @@ Bool nxagentInitClipboard(WindowPtr pWin)
 
     for (int i = 0; i < nxagentMaxSelections; i++)
     {
-      XFixesSelectSelectionInput(nxagentDisplay, iWindow,
+      XFixesSelectSelectionInput(nxagentDisplay, serverWindow,
                                  lastSelectionOwner[i].selection,
                                  XFixesSetSelectionOwnerNotifyMask |
                                  XFixesSelectionWindowDestroyNotifyMask |
@@ -2209,10 +2207,10 @@ Bool nxagentInitClipboard(WindowPtr pWin)
     #ifdef TEST
     fprintf(stderr, "%s: setting the ownership of %s to %lx"
                 " and registering for PropertyChangeMask events\n", __func__,
-                    validateString(XGetAtomName(nxagentDisplay, nxagentAtoms[10])), iWindow);
+                    validateString(XGetAtomName(nxagentDisplay, nxagentAtoms[10])), serverWindow);
     #endif
 
-    XSetSelectionOwner(nxagentDisplay, nxagentAtoms[10], iWindow, CurrentTime);
+    XSetSelectionOwner(nxagentDisplay, nxagentAtoms[10], serverWindow, CurrentTime);
     pWin -> eventMask |= PropertyChangeMask;
     nxagentChangeWindowAttributes(pWin, CWEventMask);
   }
@@ -2233,7 +2231,7 @@ Bool nxagentInitClipboard(WindowPtr pWin)
        */
       if (lastSelectionOwner[i].client && lastSelectionOwner[i].window)
       {
-        XSetSelectionOwner(nxagentDisplay, lastSelectionOwner[i].selection, iWindow, CurrentTime);
+        XSetSelectionOwner(nxagentDisplay, lastSelectionOwner[i].selection, serverWindow, CurrentTime);
       }
     }
   }
