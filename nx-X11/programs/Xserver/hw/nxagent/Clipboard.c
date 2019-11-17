@@ -1579,10 +1579,8 @@ void nxagentSetSelectionOwner(Selection *pSelection)
     {
       #ifdef DEBUG
       fprintf(stderr, "%s: lastSelectionOwner.client [%p] index [%d] -> [%p] index [%d]\n", __func__,
-              (void *)lastSelectionOwner[i].client,
-              CLINDEX(lastSelectionOwner[i].client),
-              (void *)pSelection->client,
-              CLINDEX(pSelection->client));
+              (void *)lastSelectionOwner[i].client, CLINDEX(lastSelectionOwner[i].client),
+              (void *)pSelection->client, CLINDEX(pSelection->client));
       fprintf(stderr, "%s: lastSelectionOwner.window [0x%x] -> [0x%x]\n", __func__,
 	      lastSelectionOwner[i].window, pSelection->window);
       fprintf(stderr, "%s: lastSelectionOwner.windowPtr [%p] -> [%p] [0x%x] (serverWindow: [0x%x])\n", __func__,
@@ -1616,7 +1614,7 @@ void nxagentSetSelectionOwner(Selection *pSelection)
 /*
 FIXME
 
-   if (XGetSelectionOwner(nxagentDisplay,pSelection->selection)==serverWindow)
+   if (XGetSelectionOwner(nxagentDisplay,pSelection->selection) == serverWindow)
    {
       fprintf (stderr, "%s: SetSelectionOwner OK\n", __func__);
 
