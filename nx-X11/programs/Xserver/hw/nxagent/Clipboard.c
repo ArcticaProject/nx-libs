@@ -1698,7 +1698,7 @@ int nxagentConvertSelection(ClientPtr client, WindowPtr pWin, Atom selection,
     fprintf(stderr, "%s: lastClientWindowPtr != NULL.\n", __func__);
     #endif
 
-    if ((GetTimeInMillis() - lastClientReqTime) > 5000)
+    if ((GetTimeInMillis() - lastClientReqTime) >= 5000)
     {
       #ifdef DEBUG
       fprintf(stderr, "%s: timeout expired on last request, "
@@ -1858,7 +1858,7 @@ int nxagentConvertSelection(ClientPtr client, WindowPtr pWin, Atom selection,
     lastClientTarget = target;
 
     /* if the last client request time is more than 5s ago update it. Why? */
-    if ((GetTimeInMillis() - lastClientReqTime) > 5000)
+    if ((GetTimeInMillis() - lastClientReqTime) >= 5000)
       lastClientReqTime = GetTimeInMillis();
 
     if (selection == MakeAtom("CLIPBOARD", 9, 0))
