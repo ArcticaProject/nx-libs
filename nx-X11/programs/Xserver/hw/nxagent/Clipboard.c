@@ -67,7 +67,7 @@ extern Selection *CurrentSelections;
 
 int nxagentLastClipboardClient = -1;
 
-static int agentClipboardStatus;
+static int agentClipboardInitialized = False;
 #ifdef DEBUG
 static int clientAccum;
 #endif
@@ -285,14 +285,14 @@ void nxagentPrintClipboardStat(char *header)
   fprintf(stderr, "/----- Clipboard internal status - %s -----\n", header);
 
   fprintf(stderr, "  current time                    (Time) [%u]\n", GetTimeInMillis());
-  fprintf(stderr, "  agentClipboardStatus             (int) [%d]\n", agentClipboardStatus);
+  fprintf(stderr, "  agentClipboardInitialized       (Bool) [%s]\n", agentClipboardInitialized ? "True" : "False");
   fprintf(stderr, "  clientAccum                      (int) [%d]\n", clientAccum);
   fprintf(stderr, "  nxagentMaxSelections             (int) [%d]\n", nxagentMaxSelections);
   fprintf(stderr, "  NumCurrentSelections             (int) [%d]\n", NumCurrentSelections);
   fprintf(stderr, "  serverWindow                  (Window) [0x%x]\n", serverWindow);
   fprintf(stderr, "  nxagentLastClipboardClient       (int) [%d]\n", nxagentLastClipboardClient);
 
-  fprintf(stderr, "  ClipboardMode                          ");
+  fprintf(stderr, "  Clipboard mode                         ");
   switch(nxagentOption(Clipboard))
   {
     case ClipboardBoth:    fprintf(stderr, "[Both]"); break;;
@@ -597,9 +597,19 @@ void nxagentClearSelection(XEvent *X)
 
   nxagentPrintClipboardStat("before nxagentClearSelection");
 
-  if (agentClipboardStatus != 1 ||
-          nxagentOption(Clipboard) == ClipboardServer)
+  if (!agentClipboardInitialized)
   {
+    #ifdef DEBUG
+    fprintf(stderr, "%s: clipboard not initialized - doing nothing.\n", __func__);
+    #endif
+    return;
+  }
+
+  if (nxagentOption(Clipboard) == ClipboardServer)
+  {
+    #ifdef DEBUG
+    fprintf(stderr, "%s: clipboard mode 'server' - doing nothing.\n", __func__);
+    #endif
     return;
   }
 
@@ -696,8 +706,11 @@ void nxagentRequestSelection(XEvent *X)
 
   nxagentPrintClipboardStat("before nxagentRequestSelection");
 
-  if (agentClipboardStatus != 1)
+  if (!agentClipboardInitialized)
   {
+    #ifdef DEBUG
+    fprintf(stderr, "%s: clipboard not initialized - doing nothing.\n", __func__);
+    #endif
     return;
   }
 
@@ -1215,8 +1228,11 @@ void nxagentCollectPropertyEvent(int resource)
  */
 void nxagentHandleSelectionNotifyFromXServer(XEvent *X)
 {
-  if (agentClipboardStatus != 1)
+  if (!agentClipboardInitialized)
   {
+    #ifdef DEBUG
+    fprintf(stderr, "%s: clipboard not initialized - doing nothing.\n", __func__);
+    #endif
     return;
   }
 
@@ -1521,8 +1537,11 @@ void nxagentSetSelectionCallback(CallbackListPtr *callbacks, void *data,
  */
 void nxagentSetSelectionOwner(Selection *pSelection)
 {
-  if (agentClipboardStatus != 1)
+  if (!agentClipboardInitialized)
   {
+    #ifdef DEBUG
+    fprintf(stderr, "%s: clipboard not initialized - doing nothing.\n", __func__);
+    #endif
     return;
   }
 
@@ -1637,9 +1656,19 @@ void nxagentNotifyConvertFailure(ClientPtr client, Window requestor,
 int nxagentConvertSelection(ClientPtr client, WindowPtr pWin, Atom selection,
                                 Window requestor, Atom property, Atom target, Time time)
 {
-  if (agentClipboardStatus != 1 ||
-           nxagentOption(Clipboard) == ClipboardServer)
+  if (!agentClipboardInitialized)
   {
+    #ifdef DEBUG
+    fprintf(stderr, "%s: clipboard not initialized - doing nothing.\n", __func__);
+    #endif
+    return 0;
+  }
+
+  if (nxagentOption(Clipboard) == ClipboardServer)
+  {
+    #ifdef DEBUG
+    fprintf(stderr, "%s: clipboard mode 'server' - doing nothing.\n", __func__);
+    #endif
     return 0;
   }
 
@@ -1894,10 +1923,10 @@ int nxagentSendNotify(xEvent *event)
   fprintf(stderr, "%s: Got called.\n", __func__);
   #endif
 
-  if (agentClipboardStatus != 1)
+  if (!agentClipboardInitialized)
   {
     #ifdef DEBUG
-    fprintf(stderr, "%s: agentClipboardStatus != 1 - doing nothing.\n", __func__);
+    fprintf(stderr, "%s: clipboard not initialized - doing nothing.\n", __func__);
     #endif
     return 0;
   }
@@ -2049,7 +2078,7 @@ int nxagentInitClipboard(WindowPtr pWin)
   }
   #endif
 
-  agentClipboardStatus = 0;
+  agentClipboardInitialized = False;
   serverWindow = iWindow;
 
   /*
@@ -2170,7 +2199,7 @@ int nxagentInitClipboard(WindowPtr pWin)
     }
   }
 
-  agentClipboardStatus = 1;
+  agentClipboardInitialized = True;
 
   #ifdef DEBUG
   fprintf(stderr, "%s: Clipboard initialization completed.\n", __func__);
