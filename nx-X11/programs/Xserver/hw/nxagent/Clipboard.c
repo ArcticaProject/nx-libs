@@ -133,15 +133,18 @@ static Time          lastServerTime;
 static XlibAtom serverTARGETS;
 static XlibAtom serverTIMESTAMP;
 static XlibAtom serverTEXT;
+static XlibAtom serverCOMPOUND_TEXT;
 static XlibAtom serverUTF8_STRING;
 static XlibAtom serverClientCutProperty;
 static Atom clientTARGETS;
+static Atom clientTIMESTAMP;
 static Atom clientTEXT;
 static Atom clientCOMPOUND_TEXT;
 static Atom clientUTF8_STRING;
 
 static char szAgentTARGETS[] = "TARGETS";
 static char szAgentTEXT[] = "TEXT";
+static char szAgentTIMESTAMP[] = "TIMESTAMP";
 static char szAgentCOMPOUND_TEXT[] = "COMPOUND_TEXT";
 static char szAgentUTF8_STRING[] = "UTF8_STRING";
 static char szAgentNX_CUT_BUFFER_CLIENT[] = "NX_CUT_BUFFER_CLIENT";
@@ -354,6 +357,8 @@ void nxagentPrintClipboardStat(char *header)
   fprintf(stderr, "  serverTARGETS                          [% 4d][%s]\n", serverTARGETS, validateString(s));
   SAFE_XFree(s); s = XGetAtomName(nxagentDisplay, serverTEXT);
   fprintf(stderr, "  serverTEXT                             [% d][%s]\n", serverTEXT, s);
+  SAFE_XFree(s); s = XGetAtomName(nxagentDisplay, serverCOMPOUND_TEXT);
+  fprintf(stderr, "  serverCOMPOUND_TEXT                    [% d][%s]\n", serverCOMPOUND_TEXT, s);
   SAFE_XFree(s); s = XGetAtomName(nxagentDisplay, serverUTF8_STRING);
   fprintf(stderr, "  serverUTF8_STRING                      [% 4d][%s]\n", serverUTF8_STRING, s);
   SAFE_XFree(s); s = XGetAtomName(nxagentDisplay, serverCutProperty);
@@ -366,6 +371,7 @@ void nxagentPrintClipboardStat(char *header)
 
   fprintf(stderr, "Atoms (inside nxagent)\n");
   fprintf(stderr, "  clientTARGETS                          [% 4d][%s]\n", clientTARGETS, NameForAtom(clientTARGETS));
+  fprintf(stderr, "  clientTIMESTAMP                        [% 4d][%s]\n", clientTIMESTAMP, NameForAtom(clientTIMESTAMP));
   fprintf(stderr, "  clientTEXT                             [% 4d][%s]\n", clientTEXT, NameForAtom(clientTEXT));
   fprintf(stderr, "  clientCOMPOUND_TEXT                    [% 4d][%s]\n", clientCOMPOUND_TEXT, NameForAtom(clientCOMPOUND_TEXT));
   fprintf(stderr, "  clientUTF8_STRING                      [% 4d][%s]\n", clientUTF8_STRING, NameForAtom(clientUTF8_STRING));
@@ -487,6 +493,13 @@ Bool nxagentValidServerTargets(XlibAtom target)
   {
     #ifdef DEBUG
     fprintf(stderr, "%s: valid target [UTF8_STRING].\n", __func__);
+    #endif
+    return True;
+  }
+  else if (target == serverCOMPOUND_TEXT)
+  {
+    #ifdef DEBUG
+    fprintf(stderr, "%s: valid target [COMPOUND_TEXT].\n", __func__);
     #endif
     return True;
   }
@@ -771,15 +784,14 @@ void nxagentRequestSelection(XEvent *X)
        * The selection does not matter here, we will return this for
        * PRIMARY and CLIPBOARD.
        *
-       * FIXME: I am wondering if we should align this with
-       * nxagentConvertSelection, where we report more formats.
+       * The list is aligned with the one in nxagentConvertSelection.
+       *
        * FIXME: the perfect solution should not just answer with
        * XA_STRING but ask the real owner what format it supports. The
        * should then be sent to the original requestor.
-       * FIXME: add serverCOMPOUND_TEXT?
        */
 
-      long targets[] = {XA_STRING, serverUTF8_STRING, serverTEXT, serverTARGETS, serverTIMESTAMP};
+      long targets[] = {XA_STRING, serverUTF8_STRING, serverTEXT, serverCOMPOUND_TEXT, serverTARGETS, serverTIMESTAMP};
       int numTargets = sizeof(targets) / sizeof(targets[0]);
 
       #ifdef DEBUG
@@ -1785,15 +1797,13 @@ int nxagentConvertSelection(ClientPtr client, WindowPtr pWin, Atom selection,
 
   /*
    * The selection request target is TARGETS. The requestor is asking
-   * for a list of supported data formats. Currently there's 4 of them.
+   * for a list of supported data formats.
    *
-   * FIXME: I am wondering if we should align this with
-   * nxagentRequestSelection, where we use another target list.
+   * The list is aligned with the one in nxagentRequestSelection.
    */
   if (target == clientTARGETS)
   {
-    /* --- Order changed by dimbor (prevent sending COMPOUND_TEXT to client --- */
-    Atom targets[] = {XA_STRING, clientUTF8_STRING, clientTEXT, clientCOMPOUND_TEXT};
+    Atom targets[] = {XA_STRING, clientUTF8_STRING, clientTEXT, clientCOMPOUND_TEXT, clientTARGETS, clientTIMESTAMP};
     int numTargets = sizeof(targets) / sizeof(targets[0]);
 
     #ifdef DEBUG
@@ -1827,7 +1837,7 @@ int nxagentConvertSelection(ClientPtr client, WindowPtr pWin, Atom selection,
    * support conversion to TIMESTAMP, returning the timestamp they
    * used to obtain the selection."
    */
-  if (target == MakeAtom("TIMESTAMP", 9, 1))
+  if (target == clientTIMESTAMP)
   {
     int i = nxagentFindCurrentSelectionIndex(selection);
     if (i < NumCurrentSelections)
@@ -2051,10 +2061,10 @@ int nxagentSendNotify(xEvent *event)
     {
       eventSelection.target = serverTEXT;
     }
-    /*else if (event->u.selectionNotify.target == clientCOMPOUND_TEXT)
+    else if (event->u.selectionNotify.target == clientCOMPOUND_TEXT)
     {
       eventSelection.target = serverCOMPOUND_TEXT;
-    }*/
+    }
     else
     {
       eventSelection.target = XA_STRING;
@@ -2149,6 +2159,7 @@ Bool nxagentInitClipboard(WindowPtr pWin)
   serverTARGETS = nxagentAtoms[6];  /* TARGETS */
   serverTEXT = nxagentAtoms[7];  /* TEXT */
   serverUTF8_STRING = nxagentAtoms[12]; /* UTF8_STRING */
+  serverCOMPOUND_TEXT = nxagentAtoms[16]; /* COMPOUND_TEXT */
   /* see nxagentSendNotify for an explanation */
   serverClientCutProperty = nxagentAtoms[15]; /* NX_CUT_BUFFER_CLIENT */
 
@@ -2252,6 +2263,7 @@ Bool nxagentInitClipboard(WindowPtr pWin)
     clientTEXT = MakeAtom(szAgentTEXT, strlen(szAgentTEXT), True);
     clientCOMPOUND_TEXT = MakeAtom(szAgentCOMPOUND_TEXT, strlen(szAgentCOMPOUND_TEXT), True);
     clientUTF8_STRING = MakeAtom(szAgentUTF8_STRING, strlen(szAgentUTF8_STRING), True);
+    clientTIMESTAMP = MakeAtom(szAgentTIMESTAMP, strlen(szAgentTIMESTAMP), True);
 
     if (clientCutProperty == None)
     {

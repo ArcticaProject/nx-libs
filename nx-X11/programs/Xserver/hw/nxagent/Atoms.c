@@ -91,6 +91,7 @@ static char *nxagentAtomNames[NXAGENT_NUMBER_OF_ATOMS + 1] =
   "_NET_WM_STATE",               /* 13 */
   "_NET_WM_STATE_FULLSCREEN",    /* 14 */
   "NX_CUT_BUFFER_CLIENT",        /* 15 */
+  "COMPOUND_TEXT",               /* 16 */
   NULL,
   NULL
 };
