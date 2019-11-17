@@ -146,6 +146,17 @@ static char szAgentCOMPOUND_TEXT[] = "COMPOUND_TEXT";
 static char szAgentUTF8_STRING[] = "UTF8_STRING";
 static char szAgentNX_CUT_BUFFER_CLIENT[] = "NX_CUT_BUFFER_CLIENT";
 
+/* number of milliseconds to wait for a conversion from the real X server. */
+#define CONVERSION_TIMEOUT 5000
+
+#ifdef DEBUG
+/*
+ * Time window (milliseconds) within to detect multiple conversion
+ * calls of the same client.
+ */
+#define ACCUM_TIME 5000
+#endif
+
 /*
  * some helpers for debugging output
  */
@@ -1698,7 +1709,7 @@ int nxagentConvertSelection(ClientPtr client, WindowPtr pWin, Atom selection,
     fprintf(stderr, "%s: lastClientWindowPtr != NULL.\n", __func__);
     #endif
 
-    if ((GetTimeInMillis() - lastClientReqTime) >= 5000)
+    if ((GetTimeInMillis() - lastClientReqTime) >= CONVERSION_TIMEOUT)
     {
       #ifdef DEBUG
       fprintf(stderr, "%s: timeout expired on last request, "
@@ -1814,7 +1825,7 @@ int nxagentConvertSelection(ClientPtr client, WindowPtr pWin, Atom selection,
   }
 
   #ifdef DEBUG
-  if (lastClientClientPtr == client && (GetTimeInMillis() - lastClientReqTime < 5000))
+  if (lastClientClientPtr == client && (GetTimeInMillis() - lastClientReqTime < ACCUM_TIME))
   {
     /*
      * The same client made consecutive requests of clipboard content
@@ -1858,7 +1869,7 @@ int nxagentConvertSelection(ClientPtr client, WindowPtr pWin, Atom selection,
     lastClientTarget = target;
 
     /* if the last client request time is more than 5s ago update it. Why? */
-    if ((GetTimeInMillis() - lastClientReqTime) >= 5000)
+    if ((GetTimeInMillis() - lastClientReqTime) >= CONVERSION_TIMEOUT)
       lastClientReqTime = GetTimeInMillis();
 
     if (selection == MakeAtom("CLIPBOARD", 9, 0))
