@@ -736,19 +736,31 @@ void nxagentRequestSelection(XEvent *X)
     return;
   }
 
-  /*
-   * check if this request needs special treatment by checking
-   * if any of the following is true:
-   * - this is a special request like TARGETS or TIMESTAMP
-   * - lastServerRequestor in non-NULL (= we are currenty in the transfer phase)
-   * - the selection in this request is none we own.
-   * In all cases we'll send back a SelectionNotify event with an
-   * appropriate answer
-   */
-  if (!nxagentValidServerTargets(X->xselectionrequest.target) ||
-         (lastServerRequestor != None) ||
-             ((X->xselectionrequest.selection != lastSelectionOwner[nxagentPrimarySelection].selection) &&
-                 (X->xselectionrequest.selection != lastSelectionOwner[nxagentClipboardSelection].selection)))
+  /* lastServerRequestor in non-NULL (= we are currenty in the transfer phase) */
+  if (lastServerRequestor != None)
+  {
+    #ifdef DEBUG
+    fprintf(stderr, "%s: denying additional request during transfer phase.\n", __func__);
+    #endif
+
+    nxagentReplyRequestSelection(X, False);
+    return;
+  }
+
+  /* the selection in this request is none we own. */
+  if ((X->xselectionrequest.selection != lastSelectionOwner[nxagentPrimarySelection].selection) &&
+      (X->xselectionrequest.selection != lastSelectionOwner[nxagentClipboardSelection].selection))
+  {
+    #ifdef DEBUG
+    fprintf(stderr, "%s: not owning selection [%ld] - denying request.\n", __func__, X->xselectionrequest.selection);
+    #endif
+
+    nxagentReplyRequestSelection(X, False);
+    return;
+  }
+
+  /* this is a special request like TARGETS or TIMESTAMP */
+  if (!nxagentValidServerTargets(X->xselectionrequest.target))
   {
     if (X->xselectionrequest.target == serverTARGETS)
     {
@@ -830,15 +842,21 @@ void nxagentRequestSelection(XEvent *X)
     }
     else
     {
-      /* deny the request */
+      /*
+       * unknown special request - probably bug! Check if this code handles all cases
+       * that are handled in nxagentValidServerTargets!
+       */
+      #ifdef DEBUG
+      fprintf(stderr, "%s: unknown special target [%ld] - denying request.\n", __func__, X->xselectionrequest.target);
+      #endif
       nxagentReplyRequestSelection(X, False);
     }
     return;
   }
 
   /*
-   * reaching this means the request is neither a special request nor
-   * invalid. We can process it now.
+   * reaching this means the request is a normal, valid request. We
+   * can process it now.
    */
 
   /*
