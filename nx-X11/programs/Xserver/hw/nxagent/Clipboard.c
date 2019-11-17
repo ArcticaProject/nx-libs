@@ -223,6 +223,10 @@ int nxagentSendNotify(xEvent *event);
 
 void nxagentPrintClipboardStat(char *);
 
+#ifdef NXAGENT_TIMESTAMP
+extern unsigned long startTime;
+#endif
+
 #ifdef DEBUG
 void nxagentPrintSelectionStat(int sel)
 {
@@ -2082,8 +2086,6 @@ int nxagentInitClipboard(WindowPtr pWin)
 
   #ifdef NXAGENT_TIMESTAMP
   {
-    extern unsigned long startTime;
-
     fprintf(stderr, "%s: Initializing start [%ld] milliseconds.\n", __func__,
             GetTimeInMillis() - startTime);
   }
@@ -2218,8 +2220,6 @@ int nxagentInitClipboard(WindowPtr pWin)
 
   #ifdef NXAGENT_TIMESTAMP
   {
-    extern unsigned long startTime;
-
     fprintf(stderr, "%s: initializing ends [%ld] milliseconds.\n", __func__,
                 GetTimeInMillis() - startTime);
   }
