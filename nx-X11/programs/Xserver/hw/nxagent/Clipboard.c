@@ -1925,6 +1925,10 @@ int nxagentConvertSelection(ClientPtr client, WindowPtr pWin, Atom selection,
   else
   {
     /* deny request */
+    #ifdef DEBUG
+    fprintf(stderr, "%s: Unsupported target [%d][%s] - denying request\n", __func__, target,
+                validateString(NameForAtom(target)));
+    #endif
     SendSelectionNotifyEventToClient(client, time, requestor, selection, target, None);
 
     return 1;
