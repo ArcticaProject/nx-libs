@@ -280,7 +280,7 @@ void nxagentPrintSelectionStat(int sel)
 void nxagentPrintClipboardStat(char *header)
 {
   #ifdef DEBUG
-  char *s =NULL;
+  char *s = NULL;
 
   fprintf(stderr, "/----- Clipboard internal status - %s -----\n", header);
 
@@ -301,7 +301,7 @@ void nxagentPrintClipboardStat(char *header)
     case ClipboardNone:    fprintf(stderr, "[None]"); break;;
     default:               fprintf(stderr, "[UNKNOWN] (FAIL!)"); break;;
   }
-  fprintf(stderr,"\n");
+  fprintf(stderr, "\n");
 
   fprintf(stderr, "lastServer\n");
   fprintf(stderr, "  lastServerRequestor           (Window) [0x%x]\n", lastServerRequestor);
