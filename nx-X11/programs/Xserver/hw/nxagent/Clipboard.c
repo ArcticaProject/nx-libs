@@ -493,21 +493,30 @@ Bool nxagentValidServerTargets(XlibAtom target)
   return False;
 }
 
-void nxagentClearSelectionOwner(SelectionOwner *owner)
+void nxagentInitSelectionOwner(int index, Atom selection)
 {
-    /* there's no owner on nxagent side anymore */
-    owner->client = NULL;
-    owner->window = None;
-    owner->lastTimeChanged = GetTimeInMillis();
-    /* FIXME: why is windowPtr not cleared in the function? */
+  lastSelectionOwner[index].selection = selection;
+  lastSelectionOwner[index].client = NullClient;
+  lastSelectionOwner[index].window = screenInfo.screens[0]->root->drawable.id;
+  lastSelectionOwner[index].windowPtr = NULL;
+  lastSelectionOwner[index].lastTimeChanged = GetTimeInMillis();
 }
 
-void nxagentStoreSelectionOwner(SelectionOwner *owner, Selection *sel)
+/* there's no owner on nxagent side anymore */
+void nxagentClearSelectionOwner(int index)
 {
-  owner->client = sel->client;
-  owner->window = sel->window;
-  owner->windowPtr = sel->pWin;
-  owner->lastTimeChanged = GetTimeInMillis();
+  lastSelectionOwner[index].client = NULL;
+  lastSelectionOwner[index].window = None;
+  lastSelectionOwner[index].lastTimeChanged = GetTimeInMillis();
+  /* FIXME: why is windowPtr not cleared in the function? */
+}
+
+void nxagentStoreSelectionOwner(int index, Selection *sel)
+{
+  lastSelectionOwner[index].client = sel->client;
+  lastSelectionOwner[index].window = sel->window;
+  lastSelectionOwner[index].windowPtr = sel->pWin;
+  lastSelectionOwner[index].lastTimeChanged = GetTimeInMillis();
 }
 
 void nxagentClearClipboard(ClientPtr pClient, WindowPtr pWindow)
@@ -534,7 +543,7 @@ void nxagentClearClipboard(ClientPtr pClient, WindowPtr pWindow)
       #endif
 
       /* FIXME: why is windowPtr not cleared in the function? */
-      nxagentClearSelectionOwner(&lastSelectionOwner[i]);
+      nxagentClearSelectionOwner(i);
       lastSelectionOwner[i].windowPtr = NULL;
 
       lastClientWindowPtr = NULL;
@@ -618,7 +627,7 @@ void nxagentClearSelection(XEvent *X)
     CurrentSelections[i].window = screenInfo.screens[0]->root->drawable.id;
     CurrentSelections[i].client = NullClient;
 
-    nxagentClearSelectionOwner(&lastSelectionOwner[i]);
+    nxagentClearSelectionOwner(i);
   }
 
   lastClientWindowPtr = NULL;
@@ -1418,7 +1427,7 @@ void nxagentResetSelectionOwner(void)
     fprintf(stderr, "%s: Reset selection state for selection [%d].\n", __func__, i);
     #endif
 
-    nxagentClearSelectionOwner(&lastSelectionOwner[i]);
+    nxagentClearSelectionOwner(i);
     lastSelectionOwner[i].windowPtr = NULL;
   }
 
@@ -1570,7 +1579,7 @@ void nxagentSetSelectionOwner(Selection *pSelection)
        * points to the struct that contains all information about the
        * owner window.
        */
-      nxagentStoreSelectionOwner(&lastSelectionOwner[i], pSelection);
+      nxagentStoreSelectionOwner(i, pSelection);
     }
   }
 
@@ -2009,15 +2018,6 @@ WindowPtr nxagentGetClipboardWindow(Atom property)
   }
 }
 
-void nxagentInitSelectionOwner(SelectionOwner *owner, Atom selection)
-{
-  owner->selection = selection;
-  owner->client = NullClient;
-  owner->window = screenInfo.screens[0]->root->drawable.id;
-  owner->windowPtr = NULL;
-  owner->lastTimeChanged = GetTimeInMillis();
-}
-
 int nxagentInitClipboard(WindowPtr pWin)
 {
   Window iWindow = nxagentWindow(pWin);
@@ -2037,8 +2037,8 @@ int nxagentInitClipboard(WindowPtr pWin)
 
   serverTIMESTAMP = nxagentAtoms[11];   /* TIMESTAMP */
 
-  nxagentInitSelectionOwner(&lastSelectionOwner[nxagentPrimarySelection], XA_PRIMARY);
-  nxagentInitSelectionOwner(&lastSelectionOwner[nxagentClipboardSelection], nxagentAtoms[10]);   /* CLIPBOARD */
+  nxagentInitSelectionOwner(nxagentPrimarySelection, XA_PRIMARY);
+  nxagentInitSelectionOwner(nxagentClipboardSelection, nxagentAtoms[10]);   /* CLIPBOARD */
 
   #ifdef NXAGENT_TIMESTAMP
   {
@@ -2143,8 +2143,8 @@ int nxagentInitClipboard(WindowPtr pWin)
   }
   else
   {
-    lastSelectionOwner[nxagentPrimarySelection].client = NULL;
-    lastSelectionOwner[nxagentClipboardSelection].client = NULL;
+    nxagentClearSelectionOwner(nxagentPrimarySelection);
+    nxagentClearSelectionOwner(nxagentClipboardSelection);
 
     lastServerRequestor = None;
 
