@@ -185,6 +185,9 @@ const char * GetClientSelectionStageString(int stage)
 
 /*
  * see also nx-X11/lib/src/ErrDes.c
+ *
+ * We use our own version to avoid Xlib doing expensive calls.
+ * FIXME: Must check if XGetErrorText() is really causing traffic over the wire.
  */
 const char * GetXErrorString(int code)
 {
@@ -668,9 +671,8 @@ void nxagentClearSelection(XEvent *X)
 /*
  * Send a SelectionNotify event as reply to the RequestSelection
  * event X. If success is True take the property from the event, else
- * take None (which reports "failed/denied" to the requestor.
+ * take None (which reports "failed/denied" to the requestor).
  */
-
 void nxagentReplyRequestSelection(XEvent *X, Bool success)
 {
   XSelectionEvent eventSelection = {
@@ -752,8 +754,7 @@ void nxagentRequestSelection(XEvent *X)
     {
       /*
        * the selection request target is TARGETS. The requestor is
-       * asking for a list of supported data formats. Currently
-       * there's only one format we support: XA_STRING
+       * asking for a list of supported data formats.
        *
        * The selection does not matter here, we will return this for
        * PRIMARY and CLIPBOARD.
@@ -1703,6 +1704,12 @@ int nxagentConvertSelection(ClientPtr client, WindowPtr pWin, Atom selection,
     }
   }
 
+  /*
+   * if lastClientWindowPtr is set we are waiting for an answer from
+   * the real X server. If that answer takes more than 5 seconds we
+   * consider the conversion failed and tell our client about that.
+   * The new request that lead us here is then processed.
+   */
   if (lastClientWindowPtr != NULL)
   {
     #ifdef TEST
@@ -1724,6 +1731,11 @@ int nxagentConvertSelection(ClientPtr client, WindowPtr pWin, Atom selection,
     }
     else
     {
+      /*
+       * we got another convert request while already waiting for an
+       * answer from the real X server to a previous convert request,
+       * which we cannot handle (yet). So return an error.
+       */
       #ifdef DEBUG
       fprintf(stderr, "%s: got request "
                   "before timeout expired on last request, notifying failure to client\n", __func__);
@@ -1758,7 +1770,7 @@ int nxagentConvertSelection(ClientPtr client, WindowPtr pWin, Atom selection,
    * for a list of supported data formats. Currently there's 4 of them.
    *
    * FIXME: I am wondering if we should align this with
-   * nxagentRequestSelection, where we only report one format.
+   * nxagentRequestSelection, where we use another target list.
    */
   if (target == clientTARGETS)
   {
@@ -1976,9 +1988,9 @@ int nxagentSendNotify(xEvent *event)
      * .property must be a server-side Atom. As this property is only
      * set on our serverWindow and normally there are no other
      * properties except serverCutProperty, the only thing we need to
-     * ensure is that the internal Atom clientCutProperty must differ
+     * ensure is that the internal Atom clientCutProperty differs
      * from the server-side serverCutProperty Atom. The actual name is
-     * not important. To be clean here we use a seperate
+     * not important. To be clean here we use a separate
      * serverClientCutProperty.
      */
 
@@ -2192,6 +2204,11 @@ Bool nxagentInitClipboard(WindowPtr pWin)
 
     for (int i = 0; i < nxagentMaxSelections; i++)
     {
+      /*
+       * if we have a selection inform the (new) real Xserver and
+       * claim the ownership. Note that we report our serverWindow as
+       * owner, not the real window!
+       */
       if (lastSelectionOwner[i].client && lastSelectionOwner[i].window)
       {
         XSetSelectionOwner(nxagentDisplay, lastSelectionOwner[i].selection, iWindow, CurrentTime);
