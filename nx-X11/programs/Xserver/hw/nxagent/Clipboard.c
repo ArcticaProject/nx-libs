@@ -2127,18 +2127,25 @@ Bool nxagentInitClipboard(WindowPtr pWin)
   fprintf(stderr, "%s: Got called.\n", __func__);
   #endif
 
-  SAFE_free(lastSelectionOwner);
-
-  lastSelectionOwner = (SelectionOwner *) malloc(nxagentMaxSelections * sizeof(SelectionOwner));
-
-  if (lastSelectionOwner == NULL)
+  if (!nxagentReconnectTrap)
   {
-    FatalError("nxagentInitClipboard: Failed to allocate memory for the clipboard selections.\n");
+    SAFE_free(lastSelectionOwner);
+
+    lastSelectionOwner = (SelectionOwner *) malloc(nxagentMaxSelections * sizeof(SelectionOwner));
+
+    if (lastSelectionOwner == NULL)
+    {
+      FatalError("nxagentInitClipboard: Failed to allocate memory for the clipboard selections.\n");
+    }
+    nxagentInitSelectionOwner(nxagentPrimarySelection, XA_PRIMARY);
+    nxagentInitSelectionOwner(nxagentClipboardSelection, nxagentAtoms[10]);   /* CLIPBOARD */
   }
-
-
-  nxagentInitSelectionOwner(nxagentPrimarySelection, XA_PRIMARY);
-  nxagentInitSelectionOwner(nxagentClipboardSelection, nxagentAtoms[10]);   /* CLIPBOARD */
+  else
+  {
+    /* the clipboard selection atom might have changed on the new X
+       server. Primary is constant. */
+    lastSelectionOwner[nxagentClipboardSelection].selection = nxagentAtoms[10];   /* CLIPBOARD */
+  }
 
   #ifdef NXAGENT_TIMESTAMP
   {
@@ -2229,22 +2236,23 @@ Bool nxagentInitClipboard(WindowPtr pWin)
 
   if (nxagentReconnectTrap)
   {
-    /*
-     * Only for PRIMARY and CLIPBOARD selections.
-     */
-
-    for (int i = 0; i < nxagentMaxSelections; i++)
+    if (nxagentOption(Clipboard) == ClipboardServer ||
+	nxagentOption(Clipboard) == ClipboardBoth)
     {
-      /*
-       * if we have a selection inform the (new) real Xserver and
-       * claim the ownership. Note that we report our serverWindow as
-       * owner, not the real window!
-       */
-      if (lastSelectionOwner[i].client && lastSelectionOwner[i].window)
+      for (int i = 0; i < nxagentMaxSelections; i++)
       {
-        XSetSelectionOwner(nxagentDisplay, lastSelectionOwner[i].selection, serverWindow, CurrentTime);
+        /*
+         * if we have a selection inform the (new) real Xserver and
+         * claim the ownership. Note that we report our serverWindow as
+         * owner, not the real window!
+         */
+         if (lastSelectionOwner[i].client && lastSelectionOwner[i].window)
+         {
+           XSetSelectionOwner(nxagentDisplay, lastSelectionOwner[i].selection, serverWindow, CurrentTime);
+         }
       }
     }
+    /* FIXME: Shouldn't we reset lastServer* and lastClient* here? */
   }
   else
   {
