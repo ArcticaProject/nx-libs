@@ -2256,8 +2256,10 @@ Bool nxagentInitClipboard(WindowPtr pWin)
   }
   else
   {
-    nxagentClearSelectionOwner(nxagentPrimarySelection);
-    nxagentClearSelectionOwner(nxagentClipboardSelection);
+    for (int i = 0; i < nxagentMaxSelections; i++)
+    {
+      nxagentClearSelectionOwner(i);
+    }
 
     lastServerRequestor = None;
 
