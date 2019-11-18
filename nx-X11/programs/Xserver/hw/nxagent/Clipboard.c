@@ -2127,6 +2127,16 @@ Bool nxagentInitClipboard(WindowPtr pWin)
   fprintf(stderr, "%s: Got called.\n", __func__);
   #endif
 
+  #ifdef NXAGENT_TIMESTAMP
+  {
+    fprintf(stderr, "%s: Clipboard init starts at [%ld] ms.\n", __func__,
+            GetTimeInMillis() - startTime);
+  }
+  #endif
+
+  agentClipboardInitialized = False;
+  serverWindow = nxagentWindow(pWin);
+
   if (!nxagentReconnectTrap)
   {
     SAFE_free(lastSelectionOwner);
@@ -2147,15 +2157,6 @@ Bool nxagentInitClipboard(WindowPtr pWin)
     lastSelectionOwner[nxagentClipboardSelection].selection = nxagentAtoms[10];   /* CLIPBOARD */
   }
 
-  #ifdef NXAGENT_TIMESTAMP
-  {
-    fprintf(stderr, "%s: Initializing start [%ld] milliseconds.\n", __func__,
-            GetTimeInMillis() - startTime);
-  }
-  #endif
-
-  agentClipboardInitialized = False;
-  serverWindow = nxagentWindow(pWin);
 
   serverTARGETS = nxagentAtoms[6];  /* TARGETS */
   serverTEXT = nxagentAtoms[7];  /* TEXT */
@@ -2294,7 +2295,7 @@ Bool nxagentInitClipboard(WindowPtr pWin)
 
   #ifdef NXAGENT_TIMESTAMP
   {
-    fprintf(stderr, "%s: initializing ends [%ld] milliseconds.\n", __func__,
+    fprintf(stderr, "%s: Clipboard init ends at [%ld] ms.\n", __func__,
                 GetTimeInMillis() - startTime);
   }
   #endif
