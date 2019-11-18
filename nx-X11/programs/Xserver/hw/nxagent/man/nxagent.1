@@ -663,9 +663,21 @@ model. Using \fIoff\fR this conversion can be suppressed and with
 
 .BR both | client | server | none
 
-enable / disable (set to: \fInone\fR) clipboard support,
-uni-directional (\fIserver\fR or \fIclient\fR) or bi-directional
-(\fIboth\fR, default setting) support
+.RS 8
+.TP 8
+.I both
+Allow clipboard data exchange both from nxagent to real X server and vice-versa. This is the default.
+.TP 8
+.I client
+Limit clipboard data exchange to work only in one direction: from real X server to nxagent.
+Clipboard will still work inside nxagent. This setting effectively prevents data leakage from the nxagent session to the outside.
+.TP 8
+.I server
+Limit clipboard data exchange to work only in one direction: from nxagent to real X server.
+.TP 8
+.I none
+Disable any clipboard data exchange. Clipboard will still work inside the nxagent and on the real X server, but no data exchange will be possible.
+.RE
 .TP 8
 .B streaming=<int>
 streaming support for images, not fully implemented yet and thus non-functional
