@@ -98,6 +98,8 @@ typedef struct _SelectionOwner
 static SelectionOwner *lastSelectionOwner;
 static XlibAtom nxagentLastRequestedSelection;
 
+#define IS_INTERNAL_OWNER(lsoindex) (lastSelectionOwner[lsoindex].client != NULL)
+
 /*
  * Needed to handle the notify selection event to
  * be sent to client once the selection property
@@ -661,7 +663,7 @@ void nxagentClearSelection(XEvent *X)
 
   if (i < nxagentMaxSelections)
   {
-    if (lastSelectionOwner[i].client != NULL)
+    if (IS_INTERNAL_OWNER(i))
     {
       /* send a SelectionClear event to (our) previous owner */
       xEvent x = {0};
@@ -888,7 +890,7 @@ void nxagentRequestSelection(XEvent *X)
   int i = nxagentFindLastSelectionOwnerIndex(X->xselectionrequest.selection);
   if (i < nxagentMaxSelections)
   {
-    if ((lastClientWindowPtr != NULL) && (lastSelectionOwner[i].client != NULL))
+    if (lastClientWindowPtr != NULL && IS_INTERNAL_OWNER(i))
     {
       /*
        * Request the real X server to transfer the selection content
@@ -910,7 +912,7 @@ void nxagentRequestSelection(XEvent *X)
        * the selection to the clientCutProperty on nxagent's root
        * window
        */
-      if (lastSelectionOwner[i].client != NULL &&
+      if (IS_INTERNAL_OWNER(i) &&
              nxagentOption(Clipboard) != ClipboardClient)
       {
         /*
@@ -1361,9 +1363,9 @@ void nxagentHandleSelectionNotifyFromXServer(XEvent *X)
     if (i < nxagentMaxSelections)
     {
       /* if the last owner was an internal one */
-      if ((lastSelectionOwner[i].client != NULL) &&
-             (lastSelectionOwner[i].windowPtr != NULL) &&
-                 (X->xselection.property == serverClientCutProperty))
+      if (IS_INTERNAL_OWNER(i) &&
+             lastSelectionOwner[i].windowPtr != NULL &&
+                 X->xselection.property == serverClientCutProperty)
       {
         Atom            atomReturnType;
         int             resultFormat;
@@ -1725,8 +1727,8 @@ int nxagentConvertSelection(ClientPtr client, WindowPtr pWin, Atom selection,
 
   for (int i = 0; i < nxagentMaxSelections; i++)
   {
-    if ((selection == CurrentSelections[i].selection) &&
-           (lastSelectionOwner[i].client != NULL))
+    if (selection == CurrentSelections[i].selection &&
+           IS_INTERNAL_OWNER(i))
     {
       /*
        * There is a client owner on the agent side, let normal dix stuff happen.
@@ -2248,7 +2250,7 @@ Bool nxagentInitClipboard(WindowPtr pWin)
          * claim the ownership. Note that we report our serverWindow as
          * owner, not the real window!
          */
-         if (lastSelectionOwner[i].client && lastSelectionOwner[i].window)
+         if (IS_INTERNAL_OWNER(i) && lastSelectionOwner[i].window)
          {
            XSetSelectionOwner(nxagentDisplay, lastSelectionOwner[i].selection, serverWindow, CurrentTime);
          }
