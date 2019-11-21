@@ -1622,42 +1622,35 @@ void nxagentSetSelectionOwner(Selection *pSelection)
   }
   #endif
 
-  /*
-   * Only for PRIMARY and CLIPBOARD selections.
-   */
-
-  for (int i = 0; i < nxagentMaxSelections; i++)
+  int i = nxagentFindCurrentSelectionIndex(pSelection->selection);
+  if (i < NumCurrentSelections)
   {
-    /* FIXME: using CurrentSelections with the index limited my MaxSelections looks wrong */
-    if (pSelection->selection == CurrentSelections[i].selection)
-    {
-      #ifdef DEBUG
-      fprintf(stderr, "%s: lastSelectionOwner.client [%p] index [%d] -> [%p] index [%d]\n", __func__,
-              (void *)lastSelectionOwner[i].client, CLINDEX(lastSelectionOwner[i].client),
-              (void *)pSelection->client, CLINDEX(pSelection->client));
-      fprintf(stderr, "%s: lastSelectionOwner.window [0x%x] -> [0x%x]\n", __func__,
-	      lastSelectionOwner[i].window, pSelection->window);
-      fprintf(stderr, "%s: lastSelectionOwner.windowPtr [%p] -> [%p] [0x%x] (serverWindow: [0x%x])\n", __func__,
-	      (void *)lastSelectionOwner[i].windowPtr, (void *)pSelection->pWin,
-	      nxagentWindow(pSelection->pWin), serverWindow);
-      fprintf(stderr, "%s: lastSelectionOwner.lastTimeChanged [%d]\n", __func__,
-	      lastSelectionOwner[i].lastTimeChanged);
-      #endif
+    #ifdef DEBUG
+    fprintf(stderr, "%s: lastSelectionOwner.client [%p] index [%d] -> [%p] index [%d]\n", __func__,
+	    (void *)lastSelectionOwner[i].client, CLINDEX(lastSelectionOwner[i].client),
+	    (void *)pSelection->client, CLINDEX(pSelection->client));
+    fprintf(stderr, "%s: lastSelectionOwner.window [0x%x] -> [0x%x]\n", __func__,
+	    lastSelectionOwner[i].window, pSelection->window);
+    fprintf(stderr, "%s: lastSelectionOwner.windowPtr [%p] -> [%p] [0x%x] (serverWindow: [0x%x])\n", __func__,
+	    (void *)lastSelectionOwner[i].windowPtr, (void *)pSelection->pWin,
+	    nxagentWindow(pSelection->pWin), serverWindow);
+    fprintf(stderr, "%s: lastSelectionOwner.lastTimeChanged [%d]\n", __func__,
+	    lastSelectionOwner[i].lastTimeChanged);
+    #endif
 
-      /*
-       * inform the real X server that our serverWindow is the
-       * clipboard owner.
-       */
-      XSetSelectionOwner(nxagentDisplay, lastSelectionOwner[i].selection, serverWindow, CurrentTime);
+    /*
+     * inform the real X server that our serverWindow is the
+     * clipboard owner.
+     */
+    XSetSelectionOwner(nxagentDisplay, lastSelectionOwner[i].selection, serverWindow, CurrentTime);
 
-      /*
-       * The real owner window (inside nxagent) is stored in
-       * lastSelectionOwner.window.  lastSelectionOwner.windowPtr
-       * points to the struct that contains all information about the
-       * owner window.
-       */
-      nxagentStoreSelectionOwner(i, pSelection);
-    }
+    /*
+     * The real owner window (inside nxagent) is stored in
+     * lastSelectionOwner.window.  lastSelectionOwner.windowPtr
+     * points to the struct that contains all information about the
+     * owner window.
+     */
+    nxagentStoreSelectionOwner(i, pSelection);
   }
 
   lastClientWindowPtr = NULL;
