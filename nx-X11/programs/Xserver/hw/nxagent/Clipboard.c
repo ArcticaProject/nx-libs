@@ -598,6 +598,10 @@ void nxagentClearClipboard(ClientPtr pClient, WindowPtr pWindow)
   nxagentPrintClipboardStat("after nxagentClearClipboard");
 }
 
+/*
+ * Find the index of the lastSelectionOwner with the selection
+ * sel. sel is an atom on the real X server.
+ */
 int nxagentFindLastSelectionOwnerIndex(XlibAtom sel)
 {
   int i = 0;
@@ -609,6 +613,10 @@ int nxagentFindLastSelectionOwnerIndex(XlibAtom sel)
   return i;
 }
 
+/*
+ * Find the index of CurrentSelection with the selection
+ * sel. sel is an internal atom.
+ */
 int nxagentFindCurrentSelectionIndex(Atom sel)
 {
   int i = 0;
