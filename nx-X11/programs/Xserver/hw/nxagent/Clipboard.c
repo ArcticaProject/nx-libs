@@ -770,15 +770,17 @@ void nxagentRequestSelection(XEvent *X)
   }
 
   /* the selection in this request is none we own. */
-  if ((X->xselectionrequest.selection != lastSelectionOwner[nxagentPrimarySelection].selection) &&
-      (X->xselectionrequest.selection != lastSelectionOwner[nxagentClipboardSelection].selection))
   {
-    #ifdef DEBUG
-    fprintf(stderr, "%s: not owning selection [%ld] - denying request.\n", __func__, X->xselectionrequest.selection);
-    #endif
+    int i = nxagentFindLastSelectionOwnerIndex(X->xselectionrequest.selection);
+    if (i == nxagentMaxSelections)
+    {
+      #ifdef DEBUG
+      fprintf(stderr, "%s: not owning selection [%ld] - denying request.\n", __func__, X->xselectionrequest.selection);
+      #endif
 
-    nxagentReplyRequestSelection(X, False);
-    return;
+      nxagentReplyRequestSelection(X, False);
+      return;
+    }
   }
 
   /* this is a special request like TARGETS or TIMESTAMP */
@@ -1724,16 +1726,13 @@ int nxagentConvertSelection(ClientPtr client, WindowPtr pWin, Atom selection,
     return 0;
   }
 
-  for (int i = 0; i < nxagentMaxSelections; i++)
+  int i = nxagentFindCurrentSelectionIndex(selection);
+  if (i < NumCurrentSelections && IS_INTERNAL_OWNER(i))
   {
-    if (selection == CurrentSelections[i].selection &&
-           IS_INTERNAL_OWNER(i))
-    {
-      /*
-       * There is a client owner on the agent side, let normal dix stuff happen.
-       */
-      return 0;
-    }
+    /*
+     * There is a client owner on the agent side, let normal dix stuff happen.
+     */
+    return 0;
   }
 
   /*
