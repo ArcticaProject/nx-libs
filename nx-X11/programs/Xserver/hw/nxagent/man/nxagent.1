@@ -510,13 +510,13 @@ disable disconnection/reconnection to the X display on SIGHUP
 disable use of shared memory extension
 .TP 8
 .B \-shmem
-enable use of shared memory extension
+enable use of shared memory extension (default)
 .TP 8
 .B \-noshpix
 disable use of shared pixmaps
 .TP 8
 .B \-shpix
-enable use of shared pixmaps
+enable use of shared pixmaps (default)
 .TP 8
 .B \-noignore
 don't ignore pointer and keyboard configuration changes mandated by
@@ -594,17 +594,17 @@ line with comma-separated nx/nx options
 .TP 8
 .B rootless=<bool>
 start \fBnxagent\fR in rootless mode, matches \-R given on the command
-line, no-op when resuming (default: false)
+line, no-op when resuming (default: \fI0\fR, disabled)
 .TP 8
 .B geometry=<string>
 desktop geometry when starting or resuming a session, no-op in
 rootless mode (default 66% of the underlying X server geometry)
 .TP 8
 .B resize=<bool>
-set resizing support (default: true)
+set resizing support (default: \fI1\fR, enabled)
 .TP 8
 .B fullscreen=<bool>
-start or resume a session in fullscreen mode (default: off)
+start or resume a session in fullscreen mode (default: \fI0\fR, off)
 .TP 8
 .B keyboard=<string> or kbtype=<string>
 
@@ -663,40 +663,51 @@ model. Using \fIoff\fR this conversion can be suppressed and with
 
 .BR both | client | server | none
 
-enable / disable (set to: \fInone\fR) clipboard support,
-uni-directional (\fIserver\fR or \fIclient\fR) or bi-directional
-(\fIboth\fR, default setting) support
+.RS 8
 .TP 8
-.B streaming=<int>
-streaming support for images, not fully implemented yet and thus non-functional
+.I both
+Allow clipboard data exchange both from nxagent to real X server and vice-versa. This is the default.
 .TP 8
-.B backingstore=<int>
-disable or enforce backing store support (default: BackingStoreUndefined)
+.I client
+Limit clipboard data exchange to work only in one direction: from real X server to nxagent.
+Clipboard will still work inside nxagent. This setting effectively prevents data leakage from the nxagent session to the outside.
 .TP 8
-.B composite=<int>
-enable or disable Composite support in \fBnxagent\fR (default: enabled)
+.I server
+Limit clipboard data exchange to work only in one direction: from nxagent to real X server.
 .TP 8
-.B xinerama=<int>
-enable or disable XINERAMA support in \fBnxagent\fR (default: enabled)
+.I none
+Disable any clipboard data exchange. Clipboard will still work inside the nxagent and on the real X server, but no data exchange will be possible.
+.RE
+.TP 8
+.B streaming=<bool>
+enable (set to \fI1\fR) or disable (set to \fI0\fR) streaming support for images, not fully implemented yet and thus non-functional. (default: disabled)
+.TP 8
+.B backingstore=<bool>
+disable (set to \fI0\fR) or enforce (set to \fI1\fR) backing store support (default: enforced). In rootless mode backingstore is always disabled.
+.TP 8
+.B composite=<bool>
+enable (set to \fI1\fR) or disable (set to \fI0\fR) Composite support in \fBnxagent\fR (default: enabled)
+.TP 8
+.B xinerama=<bool>
+enable (set to \fI1\fR) or disable (set to \fI0\fR) XINERAMA support in \fBnxagent\fR (default: enabled)
 .TP 8
 .B shmem=<bool>
-enable using shared memory
+enable/disable using shared memory. Accepted values: \fI1\fR (enable, default), \fI0\fR (disable)
 .TP 8
 .B shpix=<bool>
-enable shared pixmaps support
+enable/disable shared pixmaps support. Accepted values: \fI1\fR (enable, default), \fI0\fR (disable)
 .TP 8
 .B client=<string>
 type of connecting operating system (supported: \fIlinux\fR,
 \fIwindows\fR, \fIsolaris\fR and \fImacosx\fR)
 .TP 8
-.B shadow=<int>
-start \fBnxagent\fR in shadow mode, matches \fB\-S\fR given on the
-command line, no-op when resuming (default: false)
+.B shadow=<string>
+define the display that should be shadowed
 .TP 8
 .B shadowuid=<int>
 unique identifier for the shadow session
 .TP 8
-.B shadowmode=<string>
+.B shadowmode=<bool>
 full access (set to \fI1\fR) or viewing-only (set to \fI0\fR, default)
 .TP 8
 .B defer=<int>
@@ -706,6 +717,24 @@ accepts values \fI0\fR, \fI1\fR and \fI2\fR
 The default value can be set via the command line (\-defer). The value
 provided as nx/nx option is set when resuming a session, thus it
 overrides the command line default.
+
+Each defer level adds the following rules to the previous ones:
+.RS 8
+.TP 8
+.I 0
+Eager encoding.
+.TP 8
+.I 1
+No data is put or copied on pixmaps, marking them always as corrupted
+and synchronizing them on demand, i.e. when a copy area to a window is
+requested, the source is syn- chronized before copying it.
+.TP 8
+.I 2
+The put images over the windows are skipped marking the destination as
+corrupted. The same happens for copy area and composite operations,
+spreading the corrupted regions of involved drawables.
+.RE
+
 .TP 8
 .B tile=<string>
 set the tile size in pixels (\fI<W>x<H>\fR) for bitmap data sent over the wire
@@ -714,16 +743,16 @@ The default value can be set via the command line (\-tile). The value
 provided as nx/nx option is set when resuming a session, thus it
 overrides the command line default.
 .TP 8
-.B menu=<int>
+.B menu=<bool>
 support pulldown menu in \fBnxagent\fR session (only available on
-proxy <-> agent remote sessions)
+proxy <-> agent remote sessions) (default: \fI1\fR, enabled)
 .TP 8
 .B magicpixel=<bool>
-enable/disable magic pixel support in fullscreen mode (default: 1, enabled)
+enable/disable magic pixel support in fullscreen mode (default: \fI1\fR, enabled)
 .TP 8
 .B autodpi=<bool>
 enable/disable deriving session DPI automatically from real server
-(default: 0, disabled); only takes effect on session startups, gets
+(default: \fI0\fR, disabled); only takes effect on session startups, gets
 ignored when reconnecting to a suspended session
 .TP 8
 .B sleep=<int>
@@ -757,8 +786,8 @@ means that all of these checks are essentially
 deactivated. This is a very bad idea.
 .RE
 .TP 8
-.B autograb=<int>
-enable or disable autograb (default: disabled)
+.B autograb=<bool>
+enable or disable autograb (default: \fI0\fR, disabled)
 .RE
 
 If you want to use \fBnxagent\fR as a replacement for Xnest or Xephyr you
