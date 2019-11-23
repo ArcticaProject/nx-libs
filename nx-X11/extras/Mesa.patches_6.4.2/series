@@ -4,3 +4,4 @@
 4004_define-USE_IEEE-macro-for-more-platforms.patch
 5001_nasty-typo-fixes.patch
 4005_adapt-all-libX11-include-paths-to-libNX_X11.patch
+5002_silence-uninitialized.diff

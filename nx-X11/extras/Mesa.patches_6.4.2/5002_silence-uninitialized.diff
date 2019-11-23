@@ -1,0 +1,105 @@
+Silence compiler warnings about variables being "maybe uninitialized".
+--- Mesa.orig/src/mesa/swrast/s_triangle.c
++++ Mesa/src/mesa/swrast/s_triangle.c
+@@ -534,7 +534,7 @@
+ #define T_SCALE theight
+ 
+ #define SETUP_CODE							\
+-   struct affine_info info;						\
++   struct affine_info info = {0};					\
+    struct gl_texture_unit *unit = ctx->Texture.Unit+0;			\
+    struct gl_texture_object *obj = unit->Current2D;			\
+    const GLint b = obj->BaseLevel;					\
+@@ -806,7 +806,7 @@
+ #define INTERP_TEX 1
+ 
+ #define SETUP_CODE							\
+-   struct persp_info info;						\
++   struct persp_info info = {0};					\
+    const struct gl_texture_unit *unit = ctx->Texture.Unit+0;		\
+    const struct gl_texture_object *obj = unit->Current2D;		\
+    const GLint b = obj->BaseLevel;					\
+--- Mesa.orig/src/mesa/swrast/s_tritemp.h
++++ Mesa/src/mesa/swrast/s_tritemp.h
+@@ -201,7 +201,7 @@
+ #endif
+    GLinterp vMin_fx, vMin_fy, vMid_fx, vMid_fy, vMax_fx, vMax_fy;
+ 
+-   struct sw_span span;
++   struct sw_span span = {0};
+ 
+    INIT_SPAN(span, GL_POLYGON, 0, 0, 0);
+ 
+@@ -741,14 +741,14 @@
+          GLfixed tLeft=0, dtOuter=0, dtInner;
+ #endif
+ #ifdef INTERP_TEX
+-         GLfloat sLeft[MAX_TEXTURE_COORD_UNITS];
+-         GLfloat tLeft[MAX_TEXTURE_COORD_UNITS];
+-         GLfloat uLeft[MAX_TEXTURE_COORD_UNITS];
+-         GLfloat vLeft[MAX_TEXTURE_COORD_UNITS];
+-         GLfloat dsOuter[MAX_TEXTURE_COORD_UNITS], dsInner[MAX_TEXTURE_COORD_UNITS];
+-         GLfloat dtOuter[MAX_TEXTURE_COORD_UNITS], dtInner[MAX_TEXTURE_COORD_UNITS];
+-         GLfloat duOuter[MAX_TEXTURE_COORD_UNITS], duInner[MAX_TEXTURE_COORD_UNITS];
+-         GLfloat dvOuter[MAX_TEXTURE_COORD_UNITS], dvInner[MAX_TEXTURE_COORD_UNITS];
++         GLfloat sLeft[MAX_TEXTURE_COORD_UNITS] = {0};
++         GLfloat tLeft[MAX_TEXTURE_COORD_UNITS] = {0};
++         GLfloat uLeft[MAX_TEXTURE_COORD_UNITS] = {0};
++         GLfloat vLeft[MAX_TEXTURE_COORD_UNITS] = {0};
++         GLfloat dsOuter[MAX_TEXTURE_COORD_UNITS] = {0}, dsInner[MAX_TEXTURE_COORD_UNITS] = {0};
++         GLfloat dtOuter[MAX_TEXTURE_COORD_UNITS] = {0}, dtInner[MAX_TEXTURE_COORD_UNITS] = {0};
++         GLfloat duOuter[MAX_TEXTURE_COORD_UNITS] = {0}, duInner[MAX_TEXTURE_COORD_UNITS] = {0};
++         GLfloat dvOuter[MAX_TEXTURE_COORD_UNITS] = {0}, dvInner[MAX_TEXTURE_COORD_UNITS] = {0};
+ #endif
+ 
+          for (subTriangle=0; subTriangle<=1; subTriangle++) {
+--- Mesa.orig/src/mesa/swrast_setup/ss_tritmp.h
++++ Mesa/src/mesa/swrast_setup/ss_tritmp.h
+@@ -30,14 +30,14 @@
+ {
+    struct vertex_buffer *VB = &TNL_CONTEXT(ctx)->vb;
+    SWvertex *verts = SWSETUP_CONTEXT(ctx)->verts;
+-   SWvertex *v[3];
+-   GLfloat z[3];
++   SWvertex *v[3] = {0};;
++   GLfloat z[3] = {0};;
+    GLfloat offset;
+    GLenum mode = GL_FILL;
+    GLuint facing = 0;
+-   GLchan saved_color[3][4];
+-   GLchan saved_spec[3][4];
+-   GLfloat saved_index[3];
++   GLchan saved_color[3][4] = {0};
++   GLchan saved_spec[3][4] = {0};
++   GLfloat saved_index[3] = {0};;
+ 
+    v[0] = &verts[e0];
+    v[1] = &verts[e1];
+--- Mesa.orig/src/mesa/swrast_setup/ss_triangle.c
++++ Mesa/src/mesa/swrast_setup/ss_triangle.c
+@@ -56,9 +56,9 @@
+    SWvertex *v0 = &verts[e0];
+    SWvertex *v1 = &verts[e1];
+    SWvertex *v2 = &verts[e2];
+-   GLchan c[2][4];
+-   GLchan s[2][4];
+-   GLfloat i[2];
++   GLchan c[2][4] = {0};
++   GLchan s[2][4] = {0};
++   GLfloat i[2] = {0};
+ 
+    /* cull testing */
+    if (ctx->Polygon.CullFlag) {
+@@ -115,9 +115,9 @@
+    SWvertex *v0 = &verts[e0];
+    SWvertex *v1 = &verts[e1];
+    SWvertex *v2 = &verts[e2];
+-   GLchan c[2][4];
+-   GLchan s[2][4];
+-   GLfloat i[2];
++   GLchan c[2][4] = {0};
++   GLchan s[2][4] = {0};
++   GLfloat i[2] = {0};
+ 
+    /* cull testing */
+    if (ctx->Polygon.CullFlag) {
