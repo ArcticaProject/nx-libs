@@ -389,7 +389,7 @@ ProcShmPutImage(client)
     return (client->noClientException);
 }
 
-
+/* derived from Xext/shm.c */
 static PixmapPtr
 nxagent_fbShmCreatePixmap (pScreen, width, height, depth, addr)
     ScreenPtr	pScreen;
@@ -400,29 +400,22 @@ nxagent_fbShmCreatePixmap (pScreen, width, height, depth, addr)
 {
     register PixmapPtr pPixmap;
 
+#ifdef NXAGENT_SERVER
     pPixmap = (*pScreen->CreatePixmap)(pScreen, width, height, depth, 0);
-
+#else
+    pPixmap = (*pScreen->CreatePixmap)(pScreen, 0, 0, pScreen->rootDepth, 0);
+#endif
     if (!pPixmap)
     {
-      return NullPixmap;
+        return NullPixmap;
     }
-
-    #if defined(NXAGENT_SERVER) && defined(TEST)
-    fprintf(stderr,"fbShmCreatePixmap: Width [%d] Height [%d] Depth [%d] Hint[%d]\n", width, height, depth, 0);
-    #endif
 
     if (!(*pScreen->ModifyPixmapHeader)(pPixmap, width, height, depth,
 	    BitsPerPixel(depth), PixmapBytePad(width, depth), (void *)addr)) 
     {
-      #if defined(NXAGENT_SERVER) && defined(WARNING)
-      fprintf(stderr,"fbShmCreatePixmap: Return Null Pixmap.\n");
-      #endif
-
-      (*pScreen->DestroyPixmap)(pPixmap);
-
-      return NullPixmap;
+        (*pScreen->DestroyPixmap)(pPixmap);
+        return NullPixmap;
     }
-
     return pPixmap;
 }
 
@@ -434,13 +427,23 @@ fbShmCreatePixmap (pScreen, width, height, depth, addr)
     int		depth;
     char	*addr;
 {
-    PixmapPtr result;
+    #ifdef TEST
+    fprintf(stderr, "%s: Width [%d] Height [%d] Depth [%d] Hint[%d]\n", __func__,
+	    width, height, depth, 0);
+    #endif
 
     nxagentShmPixmapTrap = True;
 
-    result = nxagent_fbShmCreatePixmap(pScreen, width, height, depth, addr);
+    PixmapPtr result = nxagent_fbShmCreatePixmap(pScreen, width, height, depth, addr);
 
     nxagentShmPixmapTrap = False;
+
+    #ifdef WARNING
+    if (result == NullPixmap)
+    {
+      fprintf(stderr, "%s: Return Null Pixmap.\n", __func__);
+    }
+    #endif
 
     return result;
 }
