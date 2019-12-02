@@ -448,26 +448,21 @@ fbShmCreatePixmap (pScreen, width, height, depth, addr)
     return result;
 }
 
-/* A wrapper that handles the trap. This construct is used
-   to keep the derived code closer to the original
-*/
 static int
 ProcShmDispatch (register ClientPtr client)
 {
-    int result;
-
     #ifdef TEST
     REQUEST(xReq);
     if (stuff->data <= X_ShmCreatePixmap)
     {
-      fprintf(stderr, "ProcShmDispatch: Request [%s] OPCODE [%d] for client [%d].\n",
+      fprintf(stderr, "%s: Request [%s] OPCODE [%d] for client [%d].\n", __func__,
                       nxagentShmRequestLiteral[stuff->data], stuff->data, client->index);
     }
     #endif
 
     nxagentShmTrap = True;
 
-    result = xorg_ProcShmDispatch(client);
+    int result = xorg_ProcShmDispatch(client);
 
     nxagentShmTrap = False;
 
@@ -477,20 +472,18 @@ ProcShmDispatch (register ClientPtr client)
 static int
 SProcShmDispatch (register ClientPtr client)
 {
-    int result;
-
     #ifdef TEST
     REQUEST(xReq);
     if (stuff->data <= X_ShmCreatePixmap)
     {
-      fprintf(stderr, "SProcShmDispatch: Request [%s] OPCODE [%d] for client [%d].\n",
+      fprintf(stderr, "%s: Request [%s] OPCODE [%d] for client [%d].\n", __func__,
                       nxagentShmRequestLiteral[stuff->data], stuff->data, client->index);
     }
     #endif
 
     nxagentShmTrap = True;
 
-    result = xorg_SProcShmDispatch(client);
+    int result = xorg_SProcShmDispatch(client);
 
     nxagentShmTrap = False;
 
