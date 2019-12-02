@@ -190,9 +190,6 @@ fbShmPutImage(dst, pGC, depth, format, w, h, sx, sy, sw, sh, dx, dy, data)
     char 	*data;
 {
 #ifdef NXAGENT_SERVER
-    int length;
-    char *newdata;
-
     #ifdef TEST
     fprintf(stderr, "fbShmPutImage: Called with drawable at [%p] GC at [%p] data at [%p].\n",
                 (void *) dst, (void *) pGC, (void *) data);
@@ -227,9 +224,9 @@ fbShmPutImage(dst, pGC, depth, format, w, h, sx, sy, sw, sh, dx, dy, data)
                             sx, sy, sw, sh, dx);
         #endif
 
-        length = nxagentImageLength(sw, sh, format, 0, depth);
+        char *newdata = calloc(1, nxagentImageLength(sw, sh, format, 0, depth));
 
-        if ((newdata = calloc(1, length)) != NULL)
+        if (newdata != NULL)
         {
           fbGetImage((DrawablePtr) pPixmap, sx, sy, sw, sh, format, AllPlanes, newdata);
           (*pGC->ops->PutImage)(dst, pGC, depth, dx, dy, sw, sh, 0, format, newdata);
