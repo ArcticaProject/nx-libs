@@ -245,6 +245,7 @@ Dispatch(void)
     InitSelections();
     nClients = 0;
 
+#ifdef NXAGENT_SERVER
     /*
      * The agent initialization was successfully
      * completed. We can now handle our clients.
@@ -269,10 +270,12 @@ Dispatch(void)
 
     #endif
 
+#endif /* NXAGENT_SERVER */
     clientReady = (int *) malloc(sizeof(int) * MaxClients);
     if (!clientReady)
 	return;
 
+#ifdef NXAGENT_SERVER
     #ifdef WATCH
 
     fprintf(stderr, "Dispatch: Watchpoint 12.\n");
@@ -303,6 +306,7 @@ Reply   Total	Cached	Bits In			Bits Out		Bits/Reply	  Ratio
 
     if (!(dispatchException & DE_TERMINATE))
         dispatchException = 0;
+#endif /* NXAGENT_SERVER */
 
     while (!dispatchException)
     {
@@ -312,6 +316,7 @@ Reply   Total	Cached	Bits In			Bits Out		Bits/Reply	  Ratio
 	    FlushIfCriticalOutputPending();
 	}
 
+#ifdef NXAGENT_SERVER
         /*
          * Ensure we remove the splash after the timeout.
          * Initializing clientReady[0] to -1 will tell
@@ -351,9 +356,11 @@ Reply   Total	Cached	Bits In			Bits Out		Bits/Reply	  Ratio
         #ifdef BLOCKS
         fprintf(stderr, "[End dispatch]\n");
         #endif
+#endif /* NXAGENT_SERVER */
 
 	nready = WaitForSomething(clientReady);
 
+#ifdef NXAGENT_SERVER
         #ifdef BLOCKS
         fprintf(stderr, "[Begin dispatch]\n");
         #endif
@@ -378,6 +385,7 @@ Reply   Total	Cached	Bits In			Bits Out		Bits/Reply	  Ratio
         nxagentClients = nClients;
 
         #endif
+#endif /* NXAGENT_SERVER */
 
 	if (nready)
 	{
@@ -423,10 +431,12 @@ Reply   Total	Cached	Bits In			Bits Out		Bits/Reply	  Ratio
 		}
 		/* now, finally, deal with client requests */
 
+#ifdef NXAGENT_SERVER
                 #ifdef TEST
                 fprintf(stderr, "******Dispatch: Reading request from client [%d].\n",
                             client->index);
                 #endif
+#endif /* NXAGENT_SERVER */
 
 	        result = ReadRequestFromClient(client);
 	        if (result <= 0) 
@@ -435,8 +445,8 @@ Reply   Total	Cached	Bits In			Bits Out		Bits/Reply	  Ratio
 			CloseDownClient(client);
 		    break;
 	        }
-#ifdef NXAGENT_SERVER
 
+#ifdef NXAGENT_SERVER
                 #ifdef TEST
 
                 else
@@ -463,10 +473,9 @@ Reply   Total	Cached	Bits In			Bits Out		Bits/Reply	  Ratio
 		if (result > (maxBigRequestSize << 2))
 		    result = BadLength;
 		else
-#ifdef NXAGENT_SERVER
                 {
                     result = (* client->requestVector[MAJOROP])(client);
-
+#ifdef NXAGENT_SERVER
                     #ifdef TEST
 
                     if (MAJOROP > 127)
@@ -492,11 +501,8 @@ Reply   Total	Cached	Bits In			Bits Out		Bits/Reply	  Ratio
                      */
 
                     nxagentDispatchHandler(client, client->req_len << 2, 0);
-                }
-#else
-		    result = (* client->requestVector[MAJOROP])(client);
 #endif
-
+                }
 
                 if (!SmartScheduleSignalEnable)
                     SmartScheduleTime = GetTimeInMillis();
@@ -526,6 +532,8 @@ Reply   Total	Cached	Bits In			Bits Out		Bits/Reply	  Ratio
 #if defined(DDXBEFORERESET)
     ddxBeforeReset ();
 #endif
+
+#ifdef NXAGENT_SERVER
     /* FIXME: maybe move the code up to the KillAllClients() call to ddxBeforeReset? */
     if ((dispatchException & DE_RESET) && 
             (serverGeneration > nxagentMaxAllowedResets))
@@ -559,6 +567,7 @@ Reply   Total	Cached	Bits In			Bits Out		Bits/Reply	  Ratio
       NXShadowDestroy();
     }
     saveAgentState("TERMINATED");
+#endif /* NXAGENT_SERVER */
 
     KillAllClients();
     free(clientReady);
@@ -580,7 +589,9 @@ ProcReparentWindow(register ClientPtr client)
     if (!pWin)
         return(BadWindow);
 
+#ifdef NXAGENT_SERVER
     nxagentRemoveSplashWindow();
+#endif
 
     pParent = (WindowPtr)SecurityLookupWindow(stuff->parent, client,
 					      DixWriteAccess);
