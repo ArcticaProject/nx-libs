@@ -87,7 +87,7 @@ void nxagentChangePointerControl(DeviceIntPtr pDev, PtrCtrl *ctrl)
   if (nxagentOption(DeviceControl) == True)
   {
     #ifdef TEST
-    fprintf(stderr, "nxagentChangePointerControl: WARNING! Propagating changes to pointer settings.\n");
+    fprintf(stderr, "%s: WARNING! Propagating changes to pointer settings.\n", __func__);
     #endif
 
     XChangePointerControl(nxagentDisplay, True, True, 
@@ -97,7 +97,7 @@ void nxagentChangePointerControl(DeviceIntPtr pDev, PtrCtrl *ctrl)
   }
 
   #ifdef TEST
-  fprintf(stderr, "nxagentChangePointerControl: WARNING! Not propagating changes to pointer settings.\n");
+  fprintf(stderr, "%s: WARNING! Not propagating changes to pointer settings.\n", __func__);
   #endif
 }
 
@@ -108,7 +108,7 @@ int nxagentPointerProc(DeviceIntPtr pDev, int onoff)
     case DEVICE_INIT:
 
       #ifdef TEST
-      fprintf(stderr, "nxagentPointerProc: Called for [DEVICE_INIT].\n");
+      fprintf(stderr, "%s: Called for [DEVICE_INIT].\n", __func__);
       #endif
 
       if (NXDisplayError(nxagentDisplay) == 1)
@@ -129,7 +129,7 @@ int nxagentPointerProc(DeviceIntPtr pDev, int onoff)
     case DEVICE_ON:
 
       #ifdef TEST
-      fprintf(stderr, "nxagentPointerProc: Called for [DEVICE_ON].\n");
+      fprintf(stderr, "%s: Called for [DEVICE_ON].\n", __func__);
       #endif
 
       if (NXDisplayError(nxagentDisplay) == 1)
@@ -146,7 +146,7 @@ int nxagentPointerProc(DeviceIntPtr pDev, int onoff)
     case DEVICE_OFF:
 
       #ifdef TEST
-      fprintf(stderr, "nxagentPointerProc: Called for [DEVICE_OFF].\n");
+      fprintf(stderr, "%s: Called for [DEVICE_OFF].\n", __func__);
       #endif
 
       if (NXDisplayError(nxagentDisplay) == 1)
@@ -160,7 +160,7 @@ int nxagentPointerProc(DeviceIntPtr pDev, int onoff)
 
     case DEVICE_CLOSE:
       #ifdef TEST
-      fprintf(stderr, "nxagentPointerProc: Called for [DEVICE_CLOSE].\n");
+      fprintf(stderr, "%s: Called for [DEVICE_CLOSE].\n", __func__);
       #endif
 
       break;
@@ -174,8 +174,8 @@ void nxagentInitPointerMap(void)
   unsigned char pointerMap[MAXBUTTONS];
 
   #ifdef DEBUG
-  fprintf(stderr, "nxagentInitPointerMap: Going to retrieve the "
-              "pointer map from remote display.\n");
+  fprintf(stderr, "%s: Going to retrieve the "
+	  "pointer map from remote display.\n", __func__);
   #endif
 
   int numButtons = XGetPointerMapping(nxagentDisplay, pointerMap, MAXBUTTONS);
