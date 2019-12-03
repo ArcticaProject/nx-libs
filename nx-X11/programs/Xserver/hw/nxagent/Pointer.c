@@ -181,7 +181,7 @@ void nxagentInitPointerMap(void)
   int numButtons = XGetPointerMapping(nxagentDisplay, pointerMap, MAXBUTTONS);
 
   /*
-   * Computing revers pointer map.
+   * Computing reverse pointer map.
    */
 
   for (int i = 1; i <= numButtons; i++)
