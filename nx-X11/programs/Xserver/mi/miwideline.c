@@ -1127,7 +1127,7 @@ miLineProjectingCap (pDrawable, pGC, pixel, spanData, face, isLeft, xorg, yorg, 
 {
     int	xorgi = 0, yorgi = 0;
     int	lw;
-    PolyEdgeRec	lefts[2], rights[2];
+    PolyEdgeRec	lefts[4], rights[4];
     int		lefty, righty, topy, bottomy;
     PolyEdgePtr left, right;
     PolyEdgePtr	top, bottom;
@@ -1311,7 +1311,7 @@ miWideSegment (
     PolyEdgePtr	top, bottom;
     int		lefty, righty, topy, bottomy;
     int		signdx;
-    PolyEdgeRec	lefts[2], rights[2];
+    PolyEdgeRec	lefts[4], rights[4];
     LineFacePtr	tface;
     int		lw = pGC->lineWidth;
 
@@ -1713,7 +1713,7 @@ miWideDashSegment (
     PolyVertexRec   vertices[4];
     PolyVertexRec   saveRight, saveBottom;
     PolySlopeRec    slopes[4];
-    PolyEdgeRec	    left[2], right[2];
+    PolyEdgeRec	    left[4], right[4];
     LineFaceRec	    lcapFace, rcapFace;
     int		    nleft, nright;
     int		    h;
