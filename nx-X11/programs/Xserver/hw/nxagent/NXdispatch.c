@@ -431,6 +431,9 @@ Reply   Total	Cached	Bits In			Bits Out		Bits/Reply	  Ratio
 		}
 		/* now, finally, deal with client requests */
 
+		/* Update currentTime so request time checks, such as for input
+		 * device grabs, are calculated correctly */
+		UpdateCurrentTimeIf();
 #ifdef NXAGENT_SERVER
                 #ifdef TEST
                 fprintf(stderr, "******Dispatch: Reading request from client [%d].\n",
