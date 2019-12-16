@@ -143,6 +143,7 @@ static Atom clientTIMESTAMP;
 static Atom clientTEXT;
 static Atom clientCOMPOUND_TEXT;
 static Atom clientUTF8_STRING;
+static Atom clientCLIPBOARD;
 
 static char szAgentTARGETS[] = "TARGETS";
 static char szAgentTEXT[] = "TEXT";
@@ -150,6 +151,7 @@ static char szAgentTIMESTAMP[] = "TIMESTAMP";
 static char szAgentCOMPOUND_TEXT[] = "COMPOUND_TEXT";
 static char szAgentUTF8_STRING[] = "UTF8_STRING";
 static char szAgentNX_CUT_BUFFER_CLIENT[] = "NX_CUT_BUFFER_CLIENT";
+static char szAgentCLIPBOARD[] = "CLIPBOARD";
 
 /* number of milliseconds to wait for a conversion from the real X server. */
 #define CONVERSION_TIMEOUT 5000
@@ -377,6 +379,7 @@ void nxagentPrintClipboardStat(char *header)
   fprintf(stderr, "  clientTEXT                             [% 4d][%s]\n", clientTEXT, NameForAtom(clientTEXT));
   fprintf(stderr, "  clientCOMPOUND_TEXT                    [% 4d][%s]\n", clientCOMPOUND_TEXT, NameForAtom(clientCOMPOUND_TEXT));
   fprintf(stderr, "  clientUTF8_STRING                      [% 4d][%s]\n", clientUTF8_STRING, NameForAtom(clientUTF8_STRING));
+  fprintf(stderr, "  clientCLIPBOARD                        [% 4d][%s]\n", clientCLIPBOARD, NameForAtom(clientCLIPBOARD));
   fprintf(stderr, "  clientCutProperty                      [% 4d][%s]\n", clientCutProperty, NameForAtom(clientCutProperty));
   fprintf(stderr, "  nxagentLastRequestedSelection          [% 4d][%s]\n", nxagentLastRequestedSelection, NameForAtom(nxagentLastRequestedSelection));
 
@@ -1564,7 +1567,7 @@ void nxagentSetSelectionCallback(CallbackListPtr *callbacks, void *data,
     if ((pCurSel->pWin != NULL) &&
         (nxagentOption(Clipboard) != ClipboardNone) && /* FIXME: shouldn't we also check for != ClipboardClient? */
         ((pCurSel->selection == XA_PRIMARY) ||
-         (pCurSel->selection == MakeAtom("CLIPBOARD", 9, 0))))
+         (pCurSel->selection == clientCLIPBOARD)))
     {
       #ifdef DEBUG
       fprintf(stderr, "%s: calling nxagentSetSelectionOwner\n", __func__);
@@ -1912,7 +1915,7 @@ int nxagentConvertSelection(ClientPtr client, WindowPtr pWin, Atom selection,
     if ((GetTimeInMillis() - lastClientReqTime) >= CONVERSION_TIMEOUT)
       lastClientReqTime = GetTimeInMillis();
 
-    if (selection == MakeAtom("CLIPBOARD", 9, 0))
+    if (selection == clientCLIPBOARD)
     {
       selection = lastSelectionOwner[nxagentClipboardSelection].selection;
     }
@@ -2048,7 +2051,7 @@ int nxagentSendNotify(xEvent *event)
      * X servers (defined in Xatom.h).
      */
 
-    if (event->u.selectionNotify.selection == MakeAtom("CLIPBOARD", 9, 0))
+    if (event->u.selectionNotify.selection == clientCLIPBOARD)
     {
       eventSelection.selection = lastSelectionOwner[nxagentClipboardSelection].selection;
     }
@@ -2274,6 +2277,7 @@ Bool nxagentInitClipboard(WindowPtr pWin)
     clientCOMPOUND_TEXT = MakeAtom(szAgentCOMPOUND_TEXT, strlen(szAgentCOMPOUND_TEXT), True);
     clientUTF8_STRING = MakeAtom(szAgentUTF8_STRING, strlen(szAgentUTF8_STRING), True);
     clientTIMESTAMP = MakeAtom(szAgentTIMESTAMP, strlen(szAgentTIMESTAMP), True);
+    clientCLIPBOARD = MakeAtom(szAgentCLIPBOARD, strlen(szAgentCLIPBOARD), True);
 
     clientCutProperty = MakeAtom(szAgentNX_CUT_BUFFER_CLIENT,
                                     strlen(szAgentNX_CUT_BUFFER_CLIENT), True);
