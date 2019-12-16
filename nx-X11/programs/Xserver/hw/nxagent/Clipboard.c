@@ -911,10 +911,11 @@ void nxagentRequestSelection(XEvent *X)
       /*
        * if one of our clients owns the selection we ask it to copy
        * the selection to the clientCutProperty on nxagent's root
-       * window
+       * window on the real X server.
        */
       if (IS_INTERNAL_OWNER(i) &&
-             nxagentOption(Clipboard) != ClipboardClient)
+	      (nxagentOption(Clipboard) == ClipboardServer ||
+	           nxagentOption(Clipboard) == ClipboardBoth))
       {
         /*
          * store who on the real X server requested the data and how
@@ -1563,7 +1564,7 @@ void nxagentSetSelectionCallback(CallbackListPtr *callbacks, void *data,
     #endif
 
     if ((pCurSel->pWin != NULL) &&
-        (nxagentOption(Clipboard) != ClipboardNone) &&
+        (nxagentOption(Clipboard) != ClipboardNone) && /* FIXME: shouldn't we also check for != ClipboardClient? */
         ((pCurSel->selection == XA_PRIMARY) ||
          (pCurSel->selection == MakeAtom("CLIPBOARD", 9, 0))))
     {
