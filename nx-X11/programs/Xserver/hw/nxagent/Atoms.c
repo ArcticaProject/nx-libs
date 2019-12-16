@@ -128,6 +128,8 @@ static char *nxagentAtomNames[NXAGENT_NUMBER_OF_ATOMS + 1] =
          X server. This property is used for passing clipboard content
          from nxagent's clients to clients on the real X server */
   "COMPOUND_TEXT",               /* 16 */
+      /* one of the supported data formats for selections. Standard
+         ICCCM Atom */
   NULL,
   NULL
 };
