@@ -2011,9 +2011,15 @@ int nxagentSendNotify(xEvent *event)
    * which can be nxagents themselves). In that case we return 0 (tell
    * dix to go on) and do nothing!
    */
-  if (event->u.selectionNotify.property == clientCutProperty && lastServerRequestor != None)
+  if (event->u.selectionNotify.property != clientCutProperty || lastServerRequestor == None)
   {
-
+    #ifdef DEBUG
+    fprintf(stderr, "%s: sent nothing.\n", __func__);
+    #endif
+    return 0;
+  }
+  else
+  {
     /*
      * Setup selection notify event to real server.
      *
@@ -2086,10 +2092,6 @@ int nxagentSendNotify(xEvent *event)
 
     return 1;
   }
-  #ifdef DEBUG
-  fprintf(stderr, "%s: sent nothing.\n", __func__);
-  #endif
-  return 0;
 }
 
 /*
