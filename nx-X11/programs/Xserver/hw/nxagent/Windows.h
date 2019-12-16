@@ -178,7 +178,7 @@ do\
 WindowPtr nxagentWindowPtr(Window window);
 
 #ifdef XlibAtom
-extern XlibAtom serverCutProperty;
+extern XlibAtom serverTransToAgentProperty;
 #endif
 
 /*

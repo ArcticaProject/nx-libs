@@ -72,7 +72,7 @@ static int agentClipboardInitialized = False;
 static int clientAccum;
 #endif
 
-XlibAtom serverCutProperty;
+XlibAtom serverTransToAgentProperty;
 Atom clientCutProperty;
 static Window serverWindow;
 
@@ -137,7 +137,7 @@ static XlibAtom serverTIMESTAMP;
 static XlibAtom serverTEXT;
 static XlibAtom serverCOMPOUND_TEXT;
 static XlibAtom serverUTF8_STRING;
-static XlibAtom serverClientCutProperty;
+static XlibAtom serverTransFromAgentProperty;
 static Atom clientTARGETS;
 static Atom clientTIMESTAMP;
 static Atom clientTEXT;
@@ -365,10 +365,10 @@ void nxagentPrintClipboardStat(char *header)
   fprintf(stderr, "  serverCOMPOUND_TEXT                    [% d][%s]\n", serverCOMPOUND_TEXT, s);
   SAFE_XFree(s); s = XGetAtomName(nxagentDisplay, serverUTF8_STRING);
   fprintf(stderr, "  serverUTF8_STRING                      [% 4d][%s]\n", serverUTF8_STRING, s);
-  SAFE_XFree(s); s = XGetAtomName(nxagentDisplay, serverCutProperty);
-  fprintf(stderr, "  serverCutProperty                      [% 4d][%s]\n", serverCutProperty, s);
-  SAFE_XFree(s); s = XGetAtomName(nxagentDisplay, serverClientCutProperty);
-  fprintf(stderr, "  serverClientCutProperty                [% 4d][%s]\n", serverClientCutProperty, s);
+  SAFE_XFree(s); s = XGetAtomName(nxagentDisplay, serverTransToAgentProperty);
+  fprintf(stderr, "  serverTransToAgentProperty             [% 4d][%s]\n", serverTransFromAgentProperty, s);
+  SAFE_XFree(s); s = XGetAtomName(nxagentDisplay, serverTransFromAgentProperty);
+  fprintf(stderr, "  serverTransFromAgentProperty           [% 4d][%s]\n", serverTransToAgentProperty, s);
 
   SAFE_XFree(s); s = XGetAtomName(nxagentDisplay, serverTIMESTAMP);
   fprintf(stderr, "  serverTIMESTAMP                        [% 4d][%s]\n", serverTIMESTAMP, s);
@@ -896,11 +896,11 @@ void nxagentRequestSelection(XEvent *X)
     {
       /*
        * Request the real X server to transfer the selection content
-       * to the NX_CUT_BUFFER_CLIENT property of the serverWindow.
+       * to the NX_CUT_BUFFER_SERVER property of the serverWindow.
        * FIXME: document how we can end up here
        */
       XConvertSelection(nxagentDisplay, CurrentSelections[i].selection,
-                            X->xselectionrequest.target, serverCutProperty,
+                            X->xselectionrequest.target, serverTransToAgentProperty,
                                 serverWindow, lastClientTime);
 
       #ifdef DEBUG
@@ -1057,7 +1057,7 @@ void nxagentTransferSelection(int resource)
         result = NXCollectProperty(nxagentDisplay,
                                    nxagentLastClipboardClient,
                                    serverWindow,
-                                   serverCutProperty,
+                                   serverTransToAgentProperty,
                                    0,
                                    0,
                                    False,
@@ -1111,7 +1111,7 @@ void nxagentTransferSelection(int resource)
         result = NXCollectProperty(nxagentDisplay,
                                    nxagentLastClipboardClient,
                                    serverWindow,
-                                   serverCutProperty,
+                                   serverTransToAgentProperty,
                                    0,
                                    lastClientPropertySize,
                                    False,
@@ -1323,11 +1323,11 @@ void nxagentHandleSelectionNotifyFromXServer(XEvent *X)
      * We reach here after a paste inside the nxagent, triggered by
      * the XConvertSelection call in nxagentConvertSelection(). This
      * means that data we need has been transferred to the
-     * serverCutProperty of the serverWindow (our window on the real X
+     * serverTransToAgentProperty of the serverWindow (our window on the real X
      * server). We now need to transfer it to the original requestor,
      * which is stored in the lastClient* variables.
      */
-    if ((lastClientStage == SelectionStageNone) && (X->xselection.property == serverCutProperty))
+    if ((lastClientStage == SelectionStageNone) && (X->xselection.property == serverTransToAgentProperty))
     {
       #ifdef DEBUG
       fprintf(stderr, "%s: Starting selection transferral for client [%d].\n", __func__,
@@ -1368,7 +1368,7 @@ void nxagentHandleSelectionNotifyFromXServer(XEvent *X)
       /* if the last owner was an internal one */
       if (IS_INTERNAL_OWNER(i) &&
              lastSelectionOwner[i].windowPtr != NULL &&
-                 X->xselection.property == serverClientCutProperty)
+                 X->xselection.property == serverTransFromAgentProperty)
       {
         Atom            atomReturnType;
         int             resultFormat;
@@ -1902,7 +1902,7 @@ int nxagentConvertSelection(ClientPtr client, WindowPtr pWin, Atom selection,
     SetClientSelectionStage(None);
     /*
      * store the original requestor, we need that later after
-     * serverCutProperty contains the desired selection content
+     * serverTransToAgentProperty contains the desired selection content
      */
     lastClientRequestor = requestor;
     lastClientClientPtr = client;
@@ -1927,20 +1927,20 @@ int nxagentConvertSelection(ClientPtr client, WindowPtr pWin, Atom selection,
     if (target == clientUTF8_STRING)
     {
       #ifdef DEBUG
-      fprintf(stderr, "%s: Sending XConvertSelection with target [%d][UTF8_STRING], property [%d][NX_CUT_BUFFER_SERVER]\n", __func__,
-              serverUTF8_STRING, serverCutProperty);
+      fprintf(stderr, "%s: Sending XConvertSelection with target [%d][%s], property [%d][%s]\n", __func__,
+              serverUTF8_STRING, szAgentUTF8_STRING, serverTransToAgentProperty, "NX_CUT_BUFFER_SERVER");
       #endif
-      XConvertSelection(nxagentDisplay, selection, serverUTF8_STRING, serverCutProperty,
+      XConvertSelection(nxagentDisplay, selection, serverUTF8_STRING, serverTransToAgentProperty,
                            serverWindow, CurrentTime);
     }
     else
     {
       #ifdef DEBUG
-      fprintf(stderr, "%s: Sending XConvertSelection with target [%d][%s], property [%d][NX_CUT_BUFFER_SERVER]\n", __func__,
-              XA_STRING, validateString(NameForAtom(XA_STRING)), serverCutProperty);
+      fprintf(stderr, "%s: Sending XConvertSelection with target [%d][%s], property [%d][%s]\n", __func__,
+              XA_STRING, validateString(NameForAtom(XA_STRING)), serverTransToAgentProperty, "NX_CUT_BUFFER_SERVER");
       #endif
 
-      XConvertSelection(nxagentDisplay, selection, XA_STRING, serverCutProperty,
+      XConvertSelection(nxagentDisplay, selection, XA_STRING, serverTransToAgentProperty,
                            serverWindow, CurrentTime);
     }
 
@@ -2028,18 +2028,18 @@ int nxagentSendNotify(xEvent *event)
      *
      * .property must be a server-side Atom. As this property is only
      * set on our serverWindow and normally there are few other
-     * properties except serverCutProperty, the only thing we need to
-     * ensure is that the internal Atom clientCutProperty differs
-     * from the server-side serverCutProperty Atom. The actual name is
-     * not important. To be clean here we use a separate
-     * serverClientCutProperty.
+     * properties except serverTransToAgentProperty, the only thing
+     * we need to ensure is that the internal Atom clientCutProperty
+     * differs from the server-side serverTransToAgentProperty
+     * Atom. The actual name is not important. To be clean here we use
+     * a separate serverTransFromAgentProperty.
      */
 
     XSelectionEvent eventSelection = {
       .requestor = serverWindow,
       .selection = event->u.selectionNotify.selection,
       .target    = event->u.selectionNotify.target,
-      .property  = serverClientCutProperty,
+      .property  = serverTransFromAgentProperty,
       .time      = CurrentTime,
     };
 
@@ -2172,24 +2172,24 @@ Bool nxagentInitClipboard(WindowPtr pWin)
    * Server side properties to hold pasted data.
    * see nxagentSendNotify for an explanation
    */
-  serverClientCutProperty = nxagentAtoms[15]; /* NX_CUT_BUFFER_CLIENT */
-  serverCutProperty = nxagentAtoms[5];  /* NX_CUT_BUFFER_SERVER */
+  serverTransFromAgentProperty = nxagentAtoms[15]; /* NX_SELTRANS_FROM_AGENT */
+  serverTransToAgentProperty = nxagentAtoms[5];  /* NX_CUT_BUFFER_SERVER */
 
-  if (serverCutProperty == None)
+  if (serverTransToAgentProperty == None)
   {
     #ifdef PANIC
-    fprintf(stderr, "%s: PANIC! Could not create NX_CUT_BUFFER_SERVER atom\n", __func__);
+    fprintf(stderr, "%s: PANIC! Could not create %s atom\n", __func__, "NX_CUT_BUFFER_SERVER");
     #endif
 
     return False;
   }
 
   #ifdef TEST
-  fprintf(stderr, "%s: Setting owner of selection [%s][%d] on window 0x%x\n", __func__,
-              "NX_CUT_BUFFER_SERVER", (int) serverCutProperty, serverWindow);
+  fprintf(stderr, "%s: Setting owner of selection [%d][%s] on window 0x%x\n", __func__,
+              (int) serverTransToAgentProperty, "NX_CUT_BUFFER_SERVER", serverWindow);
   #endif
 
-  XSetSelectionOwner(nxagentDisplay, serverCutProperty, serverWindow, CurrentTime);
+  XSetSelectionOwner(nxagentDisplay, serverTransToAgentProperty, serverWindow, CurrentTime);
 
   if (XQueryExtension(nxagentDisplay,
                       "XFIXES",
@@ -2285,7 +2285,7 @@ Bool nxagentInitClipboard(WindowPtr pWin)
     {
       #ifdef PANIC
       fprintf(stderr, "%s: PANIC! "
-              "Could not create NX_CUT_BUFFER_CLIENT atom.\n", __func__);
+              "Could not create %s atom.\n", __func__, szAgentNX_CUT_BUFFER_CLIENT);
       #endif
 
       return False;

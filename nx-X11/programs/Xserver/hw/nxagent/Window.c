@@ -2602,7 +2602,7 @@ void nxagentMapDefaultWindows(void)
      * to notify of the agent start.
      */
 
-    XSetSelectionOwner(nxagentDisplay, serverCutProperty,
+    XSetSelectionOwner(nxagentDisplay, serverTransToAgentProperty,
                            nxagentDefaultWindows[i], CurrentTime);
   }
 

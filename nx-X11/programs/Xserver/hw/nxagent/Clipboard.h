@@ -41,7 +41,7 @@ typedef struct _XFixesAgentInfo
 extern XFixesAgentInfoRec nxagentXFixesInfo;
 
 /*
- * Create the NX_CUT_BUFFER_CLIENT atom and
+ * Create the NX_SELTRANS_FROM_AGENT atom and
  * initialize the required property to exchange
  * data with the X server.
  */

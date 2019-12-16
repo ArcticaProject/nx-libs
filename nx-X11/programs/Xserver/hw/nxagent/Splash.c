@@ -412,10 +412,10 @@ void nxagentRemoveSplashWindow(void)
 
     #ifdef TEST
     fprintf(stderr, "%s: setting the ownership of %s (%d) on window 0x%lx\n", __func__
-                "NX_CUT_BUFFER_SERVER", (int)serverCutProperty, nxagentWindow(screenInfo.screens[0]->root));
+                "NX_CUT_BUFFER_SERVER", (int)serverTransToAgentProperty, nxagentWindow(screenInfo.screens[0]->root));
     #endif
 
-    XSetSelectionOwner(nxagentDisplay, serverCutProperty,
+    XSetSelectionOwner(nxagentDisplay, serverTransToAgentProperty,
                            nxagentWindow(screenInfo.screens[0]->root), CurrentTime);
   }
 
