@@ -432,7 +432,7 @@ Status SendSelectionNotifyEventToServer(XSelectionEvent *event_to_send)
   }
   #endif
 
-  //NXFlushDisplay(nxagentDisplay, NXFlushLink);
+  NXFlushDisplay(nxagentDisplay, NXFlushLink);
 
   return result;
 }
@@ -714,8 +714,6 @@ void nxagentReplyRequestSelection(XEvent *X, Bool success)
   }
 
   SendSelectionNotifyEventToServer(&eventSelection);
-
-  NXFlushDisplay(nxagentDisplay, NXFlushLink);
 }
 
 /*
