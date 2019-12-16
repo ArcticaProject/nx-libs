@@ -49,6 +49,24 @@ typedef enum _BackingStoreMode
 
 } BackingStoreMode;
 
+/* since nx 2.0.0-32 clipboard data exchange can be limited. Client
+   here means "nxclient":
+
+  Enable or disable copy and paste operations from the user's desktop
+  to the NX session or vice versa. This option can take four values:
+
+  client  The content copied on the client can be pasted inside the
+          NX session.
+
+  server  The content copied inside the NX session can be pasted
+          on the client.
+
+  both    The copy & paste operations are allowed both between the
+          client and the NX session and viceversa.
+
+  none    The copy&paste operations between the client and the NX
+          session are never allowed.
+*/
 typedef enum _ClipboardMode
 {
   ClipboardBoth,
