@@ -186,7 +186,6 @@ const char * GetClientSelectionStageString(int stage)
 #else
 #define SetClientSelectionStage(stage) do {lastClientStage = SelectionStage##stage;} while (0)
 #define PrintClientSelectionStage()
-#endif
 
 /*
  * see also nx-X11/lib/src/ErrDes.c
@@ -219,6 +218,7 @@ const char * GetXErrorString(int code)
     default:                return("UNKNOWN!"); break;;
   }
 }
+#endif
 
 /*
  * Save the values queried from X server.
@@ -1777,7 +1777,7 @@ int nxagentConvertSelection(ClientPtr client, WindowPtr pWin, Atom selection,
     }
   }
 
-  #if defined(TEST) || defined(DEBUG)
+  #ifdef DEBUG
   fprintf(stderr, "%s: client [%d] requests sel [%s] "
               "on window [%x] prop [%d][%s] target [%d][%s].\n", __func__,
                   CLINDEX(client), validateString(NameForAtom(selection)), requestor,
