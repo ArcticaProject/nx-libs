@@ -2578,11 +2578,6 @@ int nxagentHandleClientMessageEvent(XEvent *X, enum HandleEventResult *result)
 {
   *result = doNothing;
 
-  #ifdef TEST
-  fprintf(stderr, "%s: ClientMessage event window [%ld] with type [%ld] format [%d].\n",
-              __func__, X -> xclient.window, X -> xclient.message_type, X -> xclient.format);
-  #endif
-
   /*
    * If window is 0, message_type is 0 and format is 32 then we assume
    * event is coming from proxy.
@@ -2592,10 +2587,24 @@ int nxagentHandleClientMessageEvent(XEvent *X, enum HandleEventResult *result)
           X -> xclient.message_type == 0 &&
               X -> xclient.format == 32)
   {
+    #ifdef TEST
+    fprintf(stderr, "%s: got nxproxy event\n", __func__);
+    #endif
     nxagentHandleProxyEvent(X);
 
     return 1;
   }
+
+  #ifdef TEST
+  char * name = XGetAtomName(nxagentDisplay, X -> xclient.message_type);
+  fprintf(stderr, "nxagentHandleClientMessageEvent: ClientMessage event window [0x%lx] with "
+              "message_type [%ld][%s] format [%d] type [%d] source_indication [%ld][%s] timestamp [%ld] "
+                  "curwin [0x%lx].\n", X -> xclient.window, X -> xclient.message_type, name,
+                      X -> xclient.format, X -> xclient.type, X -> xclient.data.l[0],
+                          X -> xclient.data.l[0] == 1 ? "'application'" : X -> xclient.data.l[0] == 1 ? "'pager'" : "'none (old spec)'",
+                              X -> xclient.data.l[1], X -> xclient.data.l[2]);
+  SAFE_XFree(name);
+  #endif
 
   if (nxagentOption(Rootless))
   {
@@ -2611,11 +2620,20 @@ int nxagentHandleClientMessageEvent(XEvent *X, enum HandleEventResult *result)
     }
 
     WindowPtr pWin = nxagentWindowPtr(X -> xclient.window);
-
     if (pWin == NULL)
     {
+      /*
+       * If some window on the real X server sends a
+       * _NET_ACTIVE_WINDOW ClientMessage to indicate the active
+       * window that window will be one not belonging to nxagent so
+       * this situation is perfectly legal. For all other situations
+       * we print a warning.
+       */
       #ifdef WARNING
-      fprintf(stderr, "WARNING: Invalid window in ClientMessage.\n");
+      if (message_type != MakeAtom("_NET_ACTIVE_WINDOW", strlen("_NET_ACTIVE_WINDOW"), False))
+      {
+	fprintf(stderr, "WARNING: Invalid window in ClientMessage xclient.window [0x%lx].\n", X->xclient.window);
+      }
       #endif
 
       return 0;
