@@ -912,7 +912,8 @@ void nxagentRequestSelection(XEvent *X)
       /*
        * if one of our clients owns the selection we ask it to copy
        * the selection to the clientCutProperty on nxagent's root
-       * window on the real X server.
+       * window in the first step. We then later push that property's
+       * content to the real X server.
        */
       if (IS_INTERNAL_OWNER(i) &&
 	      (nxagentOption(Clipboard) == ClipboardServer ||
@@ -1036,10 +1037,10 @@ void nxagentTransferSelection(int resource)
       int result;
 
       PrintClientSelectionStage();
+
       /*
-       * Don't get data yet, just get size. We skip
-       * this stage in current implementation and
-       * go straight to the data.
+       * Don't get data yet, just get size. We skip this stage in
+       * current implementation and go straight to the data.
        */
 
       nxagentLastClipboardClient = NXGetCollectPropertyResource(nxagentDisplay);
@@ -1323,9 +1324,9 @@ void nxagentHandleSelectionNotifyFromXServer(XEvent *X)
      * We reach here after a paste inside the nxagent, triggered by
      * the XConvertSelection call in nxagentConvertSelection(). This
      * means that data we need has been transferred to the
-     * serverTransToAgentProperty of the serverWindow (our window on the real X
-     * server). We now need to transfer it to the original requestor,
-     * which is stored in the lastClient* variables.
+     * serverTransToAgentProperty of the serverWindow (our window on
+     * the real X server). We now need to transfer it to the original
+     * requestor, which is stored in the lastClient* variables.
      */
     if ((lastClientStage == SelectionStageNone) && (X->xselection.property == serverTransToAgentProperty))
     {
@@ -1365,7 +1366,10 @@ void nxagentHandleSelectionNotifyFromXServer(XEvent *X)
     int i = nxagentFindLastSelectionOwnerIndex(X->xselection.selection);
     if (i < nxagentMaxSelections)
     {
-      /* if the last owner was an internal one */
+      /* if the last owner was an internal one, read the
+       * clientCutProperty and push the contents to the
+       * lastServerRequestor on the real X server.
+       */
       if (IS_INTERNAL_OWNER(i) &&
              lastSelectionOwner[i].windowPtr != NULL &&
                  X->xselection.property == serverTransFromAgentProperty)
