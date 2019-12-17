@@ -215,16 +215,9 @@ ChangeWindowProperty(WindowPtr pWin, Atom property, Atom type, int format,
                      int mode, unsigned long len, void * value, 
                      Bool sendevent)
 {
-    PropertyPtr pProp;
-    int sizeInBytes;
-    int totalSize;
-    void * data;
-    int copySize;
-
-    sizeInBytes = format>>3;
-    totalSize = len * sizeInBytes;
-
-    copySize = nxagentOption(CopyBufferSize);
+    int sizeInBytes = format>>3;
+    int totalSize = len * sizeInBytes;
+    int copySize = nxagentOption(CopyBufferSize);
 
     if (copySize != COPY_UNLIMITED && property == clientCutProperty)
     {
@@ -236,105 +229,7 @@ ChangeWindowProperty(WindowPtr pWin, Atom property, Atom type, int format,
       }
     }
 
-    /* first see if property already exists */
-
-    pProp = wUserProps (pWin);
-    while (pProp)
-    {
-	if (pProp->propertyName == property)
-	    break;
-	pProp = pProp->next;
-    }
-    if (!pProp)   /* just add to list */
-    {
-	if (!pWin->optional && !MakeWindowOptional (pWin))
-	    return(BadAlloc);
-        pProp = (PropertyPtr)malloc(sizeof(PropertyRec));
-	if (!pProp)
-	    return(BadAlloc);
-        data = (void *)malloc(totalSize);
-	if (!data && len)
-	{
-	    free(pProp);
-	    return(BadAlloc);
-	}
-        pProp->propertyName = property;
-        pProp->type = type;
-        pProp->format = format;
-        pProp->data = data;
-	if (len)
-	    memmove((char *)data, (char *)value, totalSize);
-	pProp->size = len;
-        pProp->next = pWin->optional->userProps;
-        pWin->optional->userProps = pProp;
-    }
-    else
-    {
-	/* To append or prepend to a property the request format and type
-		must match those of the already defined property.  The
-		existing format and type are irrelevant when using the mode
-		"PropModeReplace" since they will be written over. */
-
-        if ((format != pProp->format) && (mode != PropModeReplace))
-	    return(BadMatch);
-        if ((pProp->type != type) && (mode != PropModeReplace))
-            return(BadMatch);
-        if (mode == PropModeReplace)
-        {
-	    if (totalSize != pProp->size * (pProp->format >> 3))
-	    {
-		data = (void *)realloc(pProp->data, totalSize);
-	    	if (!data && len)
-		    return(BadAlloc);
-            	pProp->data = data;
-	    }
-	    if (len)
-		memmove((char *)pProp->data, (char *)value, totalSize);
-	    pProp->size = len;
-    	    pProp->type = type;
-	    pProp->format = format;
-	}
-	else if (len == 0)
-	{
-	    /* do nothing */
-	}
-        else if (mode == PropModeAppend)
-        {
-	    data = (void *)realloc(pProp->data,
-				     sizeInBytes * (len + pProp->size));
-	    if (!data)
-		return(BadAlloc);
-            pProp->data = data;
-	    memmove(&((char *)data)[pProp->size * sizeInBytes], 
-		    (char *)value,
-		  totalSize);
-            pProp->size += len;
-	}
-        else if (mode == PropModePrepend)
-        {
-            data = (void *)malloc(sizeInBytes * (len + pProp->size));
-	    if (!data)
-		return(BadAlloc);
-	    memmove(&((char *)data)[totalSize], (char *)pProp->data, 
-		  (int)(pProp->size * sizeInBytes));
-            memmove((char *)data, (char *)value, totalSize);
-	    free(pProp->data);
-            pProp->data = data;
-            pProp->size += len;
-	}
-    }
-    if (sendevent)
-    {
-	xEvent event;
-	memset(&event, 0, sizeof(xEvent));
-	event.u.u.type = PropertyNotify;
-	event.u.property.window = pWin->drawable.id;
-	event.u.property.state = PropertyNewValue;
-	event.u.property.atom = pProp->propertyName;
-	event.u.property.time = currentTime.milliseconds;
-	DeliverEvents(pWin, &event, 1, (WindowPtr)NULL);
-    }
-    return(Success);
+    return Xorg_ChangeWindowProperty(pWin, property, type, format, mode, len, value, sendevent);
 }
 
 /*****************
