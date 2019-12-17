@@ -610,8 +610,8 @@ void nxagentClearClipboard(ClientPtr pClient, WindowPtr pWindow)
 int nxagentFindLastSelectionOwnerIndex(XlibAtom sel)
 {
   int i = 0;
-  while ((i < nxagentMaxSelections) &&
-            (lastSelectionOwner[i].selection != sel))
+  while (i < nxagentMaxSelections &&
+            lastSelectionOwner[i].selection != sel)
   {
     i++;
   }
@@ -625,8 +625,8 @@ int nxagentFindLastSelectionOwnerIndex(XlibAtom sel)
 int nxagentFindCurrentSelectionIndex(Atom sel)
 {
   int i = 0;
-  while ((i < NumCurrentSelections) &&
-            (CurrentSelections[i].selection != sel))
+  while (i < NumCurrentSelections &&
+            CurrentSelections[i].selection != sel)
   {
     i++;
   }
@@ -1328,7 +1328,8 @@ void nxagentHandleSelectionNotifyFromXServer(XEvent *X)
      * the real X server). We now need to transfer it to the original
      * requestor, which is stored in the lastClient* variables.
      */
-    if ((lastClientStage == SelectionStageNone) && (X->xselection.property == serverTransToAgentProperty))
+    if (lastClientStage == SelectionStageNone &&
+	     X->xselection.property == serverTransToAgentProperty)
     {
       #ifdef DEBUG
       fprintf(stderr, "%s: Starting selection transferral for client [%d].\n", __func__,
@@ -1568,10 +1569,10 @@ void nxagentSetSelectionCallback(CallbackListPtr *callbacks, void *data,
     fprintf(stderr, "%s: pCurSel->selection [%s]\n", __func__, NameForAtom(pCurSel->selection));
     #endif
 
-    if ((pCurSel->pWin != NULL) &&
-        (nxagentOption(Clipboard) != ClipboardNone) && /* FIXME: shouldn't we also check for != ClipboardClient? */
-        ((pCurSel->selection == XA_PRIMARY) ||
-         (pCurSel->selection == clientCLIPBOARD)))
+    if (pCurSel->pWin != NULL &&
+        nxagentOption(Clipboard) != ClipboardNone && /* FIXME: shouldn't we also check for != ClipboardClient? */
+        (pCurSel->selection == XA_PRIMARY ||
+         pCurSel->selection == clientCLIPBOARD))
     {
       #ifdef DEBUG
       fprintf(stderr, "%s: calling nxagentSetSelectionOwner\n", __func__);
@@ -1897,10 +1898,10 @@ int nxagentConvertSelection(ClientPtr client, WindowPtr pWin, Atom selection,
   }
   #endif
 
-  if ((target == clientTEXT) ||
-          (target == XA_STRING) ||
-              (target == clientCOMPOUND_TEXT) ||
-                  (target == clientUTF8_STRING))
+  if (target == clientTEXT ||
+          target == XA_STRING ||
+              target == clientCOMPOUND_TEXT ||
+                  target == clientUTF8_STRING)
   {
     lastClientWindowPtr = pWin;
     SetClientSelectionStage(None);
@@ -2109,8 +2110,9 @@ int nxagentSendNotify(xEvent *event)
 WindowPtr nxagentGetClipboardWindow(Atom property)
 {
   int i = nxagentFindLastSelectionOwnerIndex(nxagentLastRequestedSelection);
-  if ((i < nxagentMaxSelections) && (property == clientCutProperty) &&
-          (lastSelectionOwner[i].windowPtr != NULL))
+  if (i < nxagentMaxSelections &&
+          property == clientCutProperty &&
+              lastSelectionOwner[i].windowPtr != NULL)
   {
     #ifdef DEBUG
     fprintf(stderr, "%s: Returning last [%d] selection owner window [%p] (0x%x).\n", __func__,
