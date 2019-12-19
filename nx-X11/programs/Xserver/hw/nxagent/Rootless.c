@@ -285,7 +285,7 @@ void nxagentRootlessRestack(unsigned long children[], unsigned int nchildren)
 
   if (!toplevel)
   {
-    /* FIXME: Is this too much and we and simply return here? */
+    /* FIXME: Is this too much and we should simply return here? */
     FatalError("nxagentRootlessRestack: malloc() failed.");
   }
 
