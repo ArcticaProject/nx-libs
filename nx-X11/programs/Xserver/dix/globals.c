@@ -141,7 +141,6 @@ Bool loadableFonts = FALSE;
 CursorPtr rootCursor;
 Bool blackRoot=FALSE;
 Bool whiteRoot=FALSE;
-ClientPtr requestingClient;	/* XXX this should be obsolete now, remove? */
 
 TimeStamp currentTime;
 TimeStamp lastDeviceEventTime;

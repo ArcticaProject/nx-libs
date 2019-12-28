@@ -200,6 +200,12 @@ extern int nxagentMaxSelections;
 
 extern int nxOpenFont(ClientPtr, XID, Mask, unsigned, char*);
 
+
+/*
+ * This used to be a dix variable used only by XPRINT, so xorg dropped it.
+ */
+ClientPtr nxagentRequestingClient;
+
 void
 InitSelections(void)
 {
@@ -413,7 +419,9 @@ Reply   Total	Cached	Bits In			Bits Out		Bits/Reply	  Ratio
 	    }
 	    isItTimeToYield = FALSE;
  
-            requestingClient = client;
+#ifdef NXAGENT_SERVER
+            nxagentRequestingClient = client;
+#endif
 	    start_tick = SmartScheduleTime;
 	    while (!isItTimeToYield)
 	    {
@@ -528,7 +536,9 @@ Reply   Total	Cached	Bits In			Bits Out		Bits/Reply	  Ratio
 	    client = clients[clientReady[nready]];
 	    if (client)
 		client->smart_stop_tick = SmartScheduleTime;
-	    requestingClient = NULL;
+#ifdef NXAGENT_SERVER
+	    nxagentRequestingClient = NULL;
+#endif
 	}
 	dispatchException &= ~DE_PRIORITYCHANGE;
     }

@@ -57,7 +57,6 @@ implied warranty.
 #include "pixmapstr.h"
 #include <X11/fonts/fontstruct.h>
 #include "dixfontstr.h"
-#include "dixstruct.h"		/* For requestingClient */
 #include "mi.h"
 #include "mibstorest.h"
 

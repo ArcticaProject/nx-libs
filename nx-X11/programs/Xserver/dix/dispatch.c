@@ -391,7 +391,6 @@ Dispatch(void)
 	    }
 	    isItTimeToYield = FALSE;
  
-            requestingClient = client;
 	    start_tick = SmartScheduleTime;
 	    while (!isItTimeToYield)
 	    {
@@ -447,7 +446,6 @@ Dispatch(void)
 	    client = clients[clientReady[nready]];
 	    if (client)
 		client->smart_stop_tick = SmartScheduleTime;
-	    requestingClient = NULL;
 	}
 	dispatchException &= ~DE_PRIORITYCHANGE;
     }

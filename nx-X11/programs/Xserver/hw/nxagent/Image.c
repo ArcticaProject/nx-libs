@@ -99,6 +99,7 @@ extern void nxagentBitOrderInvert(unsigned char *, int);
 extern void nxagentTwoByteSwap(unsigned char *, register int);
 extern void nxagentFourByteSwap(register unsigned char *, register int);
 
+extern ClientPtr nxagentRequestingClient;
 /*
  * Store the last visual used to unpack the images for the given
  * client.
@@ -1073,7 +1074,7 @@ void nxagentPutSubImage(DrawablePtr pDrawable, GCPtr pGC, int depth,
 /*
 FIXME: Should use an unpack resource here.
 */
-  client = requestingClient;
+  client = nxagentRequestingClient;
 
   if (client == NULL)
   {
