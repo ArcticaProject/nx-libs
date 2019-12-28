@@ -1281,35 +1281,30 @@ void nxagentConfigureWindow(WindowPtr pWin, unsigned int mask)
   if (mask & CWX)
   {
     valuemask |= CWX;
-
     values.x = nxagentWindowPriv(pWin)->x = pWin->origin.x - wBorderWidth(pWin);
   }
 
   if (mask & CWY)
   {
     valuemask |= CWY;
-
     values.y = nxagentWindowPriv(pWin)->y = pWin->origin.y - wBorderWidth(pWin);
   }
 
   if (mask & CWWidth)
   {
     valuemask |= CWWidth;
-
     values.width = nxagentWindowPriv(pWin)->width = pWin->drawable.width;
   }
 
   if (mask & CWHeight)
   {
     valuemask |= CWHeight;
-
     values.height = nxagentWindowPriv(pWin)->height = pWin->drawable.height;
   }
 
   if (mask & CWBorderWidth)
   {
     valuemask |= CWBorderWidth;
-
     values.border_width = nxagentWindowPriv(pWin)->borderWidth =
         pWin->borderWidth;
   }
@@ -3447,10 +3442,7 @@ void nxagentSetTopLevelEventMask(WindowPtr pWin)
  */
 void nxagentFlushConfigureWindow(void)
 {
-  ConfiguredWindowStruct *index;
-  XWindowChanges changes;
-
-  index = nxagentConfiguredWindowList;
+  ConfiguredWindowStruct *index = nxagentConfiguredWindowList;
 
   while (index)
   {
@@ -3493,8 +3485,10 @@ void nxagentFlushConfigureWindow(void)
 
     if (nxagentExposeQueue.exposures[i].synchronize == 1)
     {
-      changes.x = nxagentExposeQueue.exposures[i].serial;
-      changes.y = -2;
+      XWindowChanges changes = {
+        .x = nxagentExposeQueue.exposures[i].serial,
+        .y = -2
+      };
 
       #ifdef DEBUG
       fprintf(stderr, "nxagentFlushConfigureWindow: Sending synch ConfigureWindow for "
