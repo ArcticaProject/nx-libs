@@ -1355,25 +1355,21 @@ static void nxagentXkbGetNames(void)
   if (nxagentRemoteRules)
     return;
 
-  Atom atom = XInternAtom(nxagentDisplay, "_XKB_RULES_NAMES", 1);
+  XlibAtom rulesprop = XInternAtom(nxagentDisplay, "_XKB_RULES_NAMES", 1);
 
-  if (atom == 0)
+  if (rulesprop == 0)
   {
     return;
   }
 
-  #ifdef _XSERVER64
-  Atom64 type;
-  #else
-  Atom type;
-  #endif
+  XlibAtom type;
   int format;
   unsigned long n;
   unsigned long after;
   char *data = NULL;
 
   Status result = XGetWindowProperty(nxagentDisplay, DefaultRootWindow(nxagentDisplay),
-                                         atom, 0, 256, 0, XA_STRING, &type, &format,
+                                         rulesprop, 0, 256, 0, XA_STRING, &type, &format,
                                              &n, &after, (unsigned char **)&data);
 
   if (result != Success || !data)

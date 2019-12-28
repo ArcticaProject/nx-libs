@@ -177,7 +177,9 @@ do\
 
 WindowPtr nxagentWindowPtr(Window window);
 
-extern Atom serverCutProperty;
+#ifdef XlibAtom
+extern XlibAtom serverCutProperty;
+#endif
 
 /*
  * If the rectangles in an exposed region exceed

@@ -69,20 +69,6 @@ Bool nxagentWMPassed = False;
 
 static void nxagentPaintLogo(Window win, GC gc, int scale, int width, int height);
 
-/*
- * From Screen.c.
- */
-
-#ifdef NXAGENT_ONSTART
-extern Atom nxagentReadyAtom;
-#endif
-
-/*
- * From Clipboard.c.
- */
-
-extern Atom serverCutProperty;
-
 void nxagentShowSplashWindow(Window parentWindow)
 {
   XWindowAttributes getAttributes;

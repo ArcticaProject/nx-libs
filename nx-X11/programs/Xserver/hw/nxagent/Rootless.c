@@ -706,8 +706,8 @@ int nxagentExportProperty(WindowPtr pWin,
 
   if (export)
   {
-    Atom propertyX = nxagentLocalToRemoteAtom(property);
-    Atom typeX = nxagentLocalToRemoteAtom(type);
+    XlibAtom propertyX = nxagentLocalToRemoteAtom(property);
+    XlibAtom typeX = nxagentLocalToRemoteAtom(type);
 
     if (propertyX == None || typeX == None)
     {
@@ -794,8 +794,8 @@ int nxagentExportProperty(WindowPtr pWin,
 }
 
 void nxagentImportProperty(Window window,
-                           Atom property,
-                           Atom type,
+                           XlibAtom property,
+                           XlibAtom type,
                            int format,
                            unsigned long nitems,
                            unsigned long bytes_after,
@@ -1001,7 +1001,7 @@ void nxagentImportProperty(Window window,
   else if (strcmp(typeS, "ATOM") == 0)
   {
     Atom *atoms = malloc(nitems * sizeof(Atom));
-    Atom *input = (Atom*) buffer;
+    XlibAtom *input = (XlibAtom*) buffer;
 
     if (atoms == NULL)
     {
@@ -1107,7 +1107,7 @@ void nxagentImportProperty(Window window,
 
 struct nxagentPropertyRec{
   Window window;
-  Atom property;
+  XlibAtom property;
   struct nxagentPropertyRec *next;
 };
 
@@ -1148,7 +1148,7 @@ void nxagentRemovePropertyFromList(void)
  * Add the record to the list.
  */
 
-void nxagentAddPropertyToList(Atom property, WindowPtr pWin)
+void nxagentAddPropertyToList(XlibAtom property, WindowPtr pWin)
 {
   if (NXDisplayError(nxagentDisplay) == 1)
   {

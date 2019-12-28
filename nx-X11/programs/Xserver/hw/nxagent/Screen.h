@@ -49,6 +49,12 @@ is" without express or implied warranty.
 #define nxagentSetPrintGeometry(screen) \
     nxagentPrintGeometryFlags = (1 << (screen));
 
+#ifdef NXAGENT_ONSTART
+#ifdef XlibAtom
+extern XlibAtom nxagentReadyAtom;
+#endif
+#endif
+
 extern int nxagentClients;
 
 extern int nxagentAutoDisconnectTimeout;

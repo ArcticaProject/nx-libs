@@ -46,13 +46,15 @@ extern WindowPtr nxagentRootlessWindow;
  * connected to the real X server.
  */
 
+#ifdef XlibAtom
 typedef struct
 {
   Window window;
-  Atom property;
+  XlibAtom property;
 } PropertyRequestRec;
 
 extern PropertyRequestRec nxagentPropertyRequests[256];
+#endif
 
 Window nxagentRootlessWindowParent(WindowPtr pWin);
 
@@ -75,14 +77,18 @@ int nxagentExportProperty(WindowPtr pWin, Atom property, Atom type, int format,
 
 #define MAX_RETRIEVED_PROPERTY_SIZE 256 * 1024
 
-void nxagentImportProperty(Window window, Atom property, Atom type, int format,
+#ifdef XlibAtom
+void nxagentImportProperty(Window window, XlibAtom property, XlibAtom type, int format,
                                unsigned long nitems, unsigned long bytes_after, unsigned char *buffer);
+#endif
 
 /*
  * Push last ChangeProperty to the list.
  */
 
-void nxagentAddPropertyToList(Atom property, WindowPtr pWin);
+#ifdef XlibAtom
+void nxagentAddPropertyToList(XlibAtom property, WindowPtr pWin);
+#endif
 
 /*
  * Check if a PropertyNotify match the top
