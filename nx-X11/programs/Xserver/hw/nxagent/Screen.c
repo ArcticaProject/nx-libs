@@ -2570,8 +2570,6 @@ int nxagentShadowInit(ScreenPtr pScreen, WindowPtr pWin)
 
   Atom nxagentShadowAtom;
 
-  int fd;
-
   #endif
 
   #ifdef TEST
@@ -2813,19 +2811,17 @@ int nxagentShadowInit(ScreenPtr pScreen, WindowPtr pWin)
     nxagentBppShadow = 1;
   }
 
-#if !defined(__CYGWIN__)
+#ifndef __CYGWIN__
 
   imageByteOrder = nxagentShadowDisplay -> byte_order;
 
-  fd = XConnectionNumber(nxagentShadowDisplay);
-
-  nxagentShadowXConnectionNumber = fd;
+  nxagentShadowXConnectionNumber = XConnectionNumber(nxagentShadowDisplay);
 
 #endif
 
   #ifdef TEST
   fprintf(stderr, "nxagentShadowInit: Adding the X connection [%d] "
-              "to the device set.\n", fd);
+              "to the device set.\n", nxagentShadowXConnectionNumber);
   #endif
 
   SetNotifyFd(nxagentShadowXConnectionNumber, nxagentNotifyConnection, X_NOTIFY_READ, NULL);
