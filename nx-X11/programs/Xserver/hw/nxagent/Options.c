@@ -107,15 +107,7 @@ void nxagentInitOptions(void)
   nxagentOptions.ViewportXSpan = 0;
   nxagentOptions.ViewportYSpan = 0;
 
-  #ifndef __CYGWIN32__
-
   nxagentOptions.DesktopResize = 1;
-
-  #else
-
-  nxagentOptions.DesktopResize = 0;
-
-  #endif
 
   nxagentOptions.Ratio  = DONT_SCALE;
   nxagentOptions.XRatio = DONT_SCALE;

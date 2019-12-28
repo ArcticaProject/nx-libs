@@ -1744,7 +1744,6 @@ FIXME: Is this needed?
   nxagentDisplay = NULL;
 }
 
-
 Bool nxagentMakeIcon(Display *display, Pixmap *nxIcon, Pixmap *nxMask)
 {
   char** agentIconData;

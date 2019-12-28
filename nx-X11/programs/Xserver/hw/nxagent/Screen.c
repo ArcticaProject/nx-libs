@@ -2572,8 +2572,6 @@ int nxagentShadowInit(ScreenPtr pScreen, WindowPtr pWin)
               nxagentShadowUid);
   #endif
 
-#if !defined (__CYGWIN32__) && !defined (WIN32)
-
   if (nxagentShadowUid != -1)
   {
     NXShadowSetDisplayUid(nxagentShadowUid);
@@ -2583,8 +2581,6 @@ int nxagentShadowInit(ScreenPtr pScreen, WindowPtr pWin)
   {
     NXShadowDisableDamage();
   }
-
-#endif
 
   if (NXShadowCreate(nxagentDisplay, layout, nxagentShadowDisplayName,
                          (void *) &nxagentShadowDisplay) != 1)
@@ -2602,13 +2598,10 @@ int nxagentShadowInit(ScreenPtr pScreen, WindowPtr pWin)
    * server root window in order to notify its presence.
    */
 
-  #ifndef __CYGWIN__
-
   XlibAtom nxagentShadowAtom = XInternAtom(nxagentShadowDisplay, "_NX_SHADOW", False);
 
   XChangeProperty(nxagentShadowDisplay, DefaultRootWindow(nxagentShadowDisplay),
                       nxagentShadowAtom, XA_STRING, 8, PropModeReplace, NULL, 0);
-  #endif
 
   if (NXShadowAddUpdaterDisplay(nxagentDisplay, &nxagentShadowWidth,
                                     &nxagentShadowHeight, &nxagentMasterDepth) == 0)
@@ -2620,8 +2613,6 @@ int nxagentShadowInit(ScreenPtr pScreen, WindowPtr pWin)
 
     return -1;
   }
-
-  #ifndef __CYGWIN32__
 
   if (nxagentOption(Fullscreen) == 1)
   {
@@ -2670,8 +2661,6 @@ int nxagentShadowInit(ScreenPtr pScreen, WindowPtr pWin)
 
     return -1;
   }
-
-  #endif
 
   nxagentShadowDepth = pScreen -> rootDepth;
 
@@ -2757,13 +2746,9 @@ int nxagentShadowInit(ScreenPtr pScreen, WindowPtr pWin)
     nxagentBppShadow = 1;
   }
 
-#ifndef __CYGWIN__
-
   imageByteOrder = nxagentShadowDisplay -> byte_order;
 
   nxagentShadowXConnectionNumber = XConnectionNumber(nxagentShadowDisplay);
-
-#endif
 
   #ifdef TEST
   fprintf(stderr, "nxagentShadowInit: Adding the X connection [%d] "
@@ -2985,18 +2970,6 @@ int nxagentShadowPoll(PixmapPtr nxagentShadowPixmapPtr, GCPtr nxagentShadowGCPtr
   RegionNull(&updateRegion);
   RegionNull(&tempRegion);
 
-#ifdef __CYGWIN32__
-
-  if (NXShadowCaptureCursor(nxagentWindow(nxagentShadowWindowPtr),
-          nxagentShadowWindowPtr -> drawable.pScreen -> visuals) == -1)
-  {
-    #ifdef WARNING
-    fprintf(stderr, "nxagentShadowPoll: Failed to capture cursor.\n");
-    #endif
-  }
-
-#endif
-
   int result = NXShadowHasChanged(nxagentUserInput, NULL, suspended);
 
   *changed = result;
@@ -3074,17 +3047,10 @@ int nxagentShadowPoll(PixmapPtr nxagentShadowPixmapPtr, GCPtr nxagentShadowGCPtr
 
       tBuffer = iBuffer;
 
-#ifdef __CYGWIN32__
-      if (nxagentBppMaster == 2)
-      {
-        NXShadowCorrectColor(length, tBuffer);
-      }
-#else
       if (nxagentCheckDepth == 1)
       {
         nxagentShadowAdaptDepth(width, height, line, &tBuffer);
       }
-#endif
 
       fbPutImage(nxagentVirtualDrawable((DrawablePtr)nxagentShadowPixmapPtr), nxagentShadowGCPtr,
                           nxagentShadowDepth, x, y, width, height, 0, ZPixmap, tBuffer);
