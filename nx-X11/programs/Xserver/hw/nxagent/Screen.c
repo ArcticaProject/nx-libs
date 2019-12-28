@@ -2566,12 +2566,6 @@ int nxagentShadowInit(ScreenPtr pScreen, WindowPtr pWin)
   XlibGC gc;
   XGCValues value;
 
-  #ifndef __CYGWIN32__
-
-  Atom nxagentShadowAtom;
-
-  #endif
-
   #ifdef TEST
   fprintf(stderr, "Info: Init shadow session. nxagentDisplayName [%s] "
               "nxagentDisplay [%p] nxagentShadowDisplayName [%s].\n",
@@ -2627,14 +2621,13 @@ int nxagentShadowInit(ScreenPtr pScreen, WindowPtr pWin)
   }
 
   /*
-   * The shadow nxagent sets the _NX_SHADOW
-   * property on the master X server root
-   * window in order to notify its presence.
+   * The shadow nxagent sets the _NX_SHADOW property on the master X
+   * server root window in order to notify its presence.
    */
 
   #ifndef __CYGWIN__
 
-  nxagentShadowAtom = XInternAtom(nxagentShadowDisplay, "_NX_SHADOW", False);
+  XlibAtom nxagentShadowAtom = XInternAtom(nxagentShadowDisplay, "_NX_SHADOW", False);
 
   XChangeProperty(nxagentShadowDisplay, DefaultRootWindow(nxagentShadowDisplay),
                       nxagentShadowAtom, XA_STRING, 8, PropModeReplace, NULL, 0);
