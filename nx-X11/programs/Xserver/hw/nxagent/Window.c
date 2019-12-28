@@ -1228,8 +1228,8 @@ void nxagentMoveViewport(ScreenPtr pScreen, int hShift, int vShift)
 
 /*
  * This will update the window on the real X server by calling
- * XConfigureWindow()/XMapWindow()/XLowerWindow()/XRaiseWindow()
- * mask definesthe values that need to be updated, see e.g
+ * XConfigureWindow()/XMapWindow()/XLowerWindow()/XRaiseWindow().
+ * mask defines the values that need to be updated, see e.g.
  * man XConfigureWindow.
  *
  * In addition to the bit flags known to Xorg it uses these
