@@ -2,9 +2,6 @@ NULL =
 
 #include <Server.tmpl>
 
-XPSRC = xpstubs.c
-XPOBJ = xpstubs.o
-
 #if !HasFfs
 FFS_SRC = ffs.c
 FFS_OBJ = ffs.o
@@ -129,15 +126,11 @@ VENDOR_DEFINES = $(VENDOR_STRING) $(VENDOR_RELEASE) $(QUARTZ_DEFINES)
 
 NormalLibraryObjectRule()
 NormalLibraryTarget(dix,$(OBJS))
-LintLibraryTarget(dix,$(SRCS) $(XPSRC))
-NormalLintTarget($(SRCS) $(XPSRC))
 
 SpecialCObjectRule(globals,$(ICONFIGFILES),$(SITE_DEFINES) $(EXT_DEFINES))
 SpecialCObjectRule(main,$(ICONFIGFILES),$(VENDOR_DEFINES))
 SpecialCObjectRule(pixmap,$(ICONFIGFILES),$(_NOOP_))
 SpecialCObjectRule(privates,$(ICONFIGFILES),$(_NOOP_))
 SpecialCObjectRule(window,$(ICONFIGFILES),$(QUARTZ_DEFINES))
-
-NormalLibraryTarget(xpstubs,$(XPOBJ))
 
 DependTarget()

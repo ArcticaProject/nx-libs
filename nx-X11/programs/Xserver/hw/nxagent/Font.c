@@ -469,9 +469,6 @@ Bool nxagentRealizeFont(ScreenPtr pScreen, FontPtr pFont)
   FontSetPrivate(pFont, nxagentFontPrivateIndex, NULL);
 #endif /* HAS_XFONT2 */
 
-  if (requestingClient && XpClientIsPrintClient(requestingClient, NULL))
-    return True;
-
   name_atom = MakeAtom("FONT", 4, True);
   value_atom = 0L;
 
