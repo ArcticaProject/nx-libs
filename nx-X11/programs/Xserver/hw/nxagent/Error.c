@@ -72,9 +72,6 @@ static int nxagentStderrBackup = -1;
 
 static int nxagentClientsLog = -1;
 
-#define DEFAULT_STRING_LENGTH 256
-
-
 /*
  * Clients log file name.
  */
