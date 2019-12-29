@@ -1466,7 +1466,7 @@ static void nxagentWriteKeyboardDir(void)
   if (keyboard_file_path)
   {
     /*
-     * special case: if rules is NULL create a directory insteas of
+     * special case: if rules is NULL create a directory instead of
      * a file. This is the defined method to disable x2gosetkeyboard.
      */
     if (mkdir(keyboard_file_path, 0555) < 0)
