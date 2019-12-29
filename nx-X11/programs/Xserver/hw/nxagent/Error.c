@@ -79,7 +79,7 @@ static int nxagentClientsLog = -1;
  * Clients log file name.
  */
 
-char nxagentClientsLogName[NXAGENTCLIENTSLOGNAMELENGTH] = { 0 };
+char *nxagentClientsLogName = NULL;
 
 /*
  * User's home.
@@ -250,12 +250,12 @@ int nxagentExitHandler(const char *message)
 
 void nxagentOpenClientsLogFile(void)
 {
-  if (*nxagentClientsLogName == '\0')
+  if (!nxagentClientsLogName)
   {
     nxagentGetClientsPath();
   }
 
-  if (nxagentClientsLogName != NULL && *nxagentClientsLogName != '\0')
+  if (nxagentClientsLogName && *nxagentClientsLogName != '\0')
   {
     nxagentClientsLog = open(nxagentClientsLogName, O_RDWR | O_CREAT | O_APPEND, 0600);
 
@@ -553,7 +553,7 @@ char *nxagentGetSessionPath(void)
 
 void nxagentGetClientsPath(void)
 {
-  if (*nxagentClientsLogName == '\0')
+  if (!nxagentClientsLogName)
   {
     char *sessionPath = nxagentGetSessionPath();
 
@@ -562,16 +562,17 @@ void nxagentGetClientsPath(void)
       return;
     }
 
-    if (strlen(sessionPath) + strlen("/clients") > NXAGENTCLIENTSLOGNAMELENGTH - 1)
+    /* FIXME: this is currently never freed as it is thought to last
+       over the complete runtime. We should add a free call at shutdown
+       eventually... */
+    int len = asprintf(&nxagentClientsLogName, "%s/clients", sessionPath);
+    if (len == -1)
     {
       #ifdef PANIC
-      fprintf(stderr, "nxagentGetClientsPath: PANIC! Invalid value for the NX clients Log File Path ''.\n");
+      fprintf(stderr, "%s: PANIC! Could not alloc NX clients Log File Path.\n", __func__);
       #endif
-
       return;
     }
-
-    snprintf(nxagentClientsLogName, NXAGENTCLIENTSLOGNAMELENGTH, "%s/clients", sessionPath);
   }
 
   return;
