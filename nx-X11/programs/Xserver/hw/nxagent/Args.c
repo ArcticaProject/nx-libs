@@ -1502,6 +1502,9 @@ static void nxagentParseOptionString(char *string)
 
   if (delimiter)
   {
+    #ifdef DEBUG
+    fprintf(stderr, "%s: stripping port specification [%s]\n", __func__, delimiter);
+    #endif
     *delimiter = '\0';
   }
   else
