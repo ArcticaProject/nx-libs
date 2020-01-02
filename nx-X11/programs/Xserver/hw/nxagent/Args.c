@@ -1528,6 +1528,30 @@ static void nxagentParseOptionString(char *string)
   SAFE_free(dup);
 }
 
+char *nxagentSkipNXMarker(char *string)
+{
+  if (strncasecmp(string, "nx/nx,", 6) == 0 ||
+      strncasecmp(string, "nx/nx:", 6) == 0)
+  {
+    #ifdef DEBUG
+    fprintf(stderr, "%s: skipping [%6.6s]\n", __func__, string);
+    #endif
+    return string + 6;
+  }
+  else if (strncasecmp(string, "nx,", 3) == 0 ||
+           strncasecmp(string, "nx:", 3) == 0)
+  {
+    #ifdef DEBUG
+    fprintf(stderr, "%s: skipping [%3.3s]\n", __func__, string);
+    #endif
+    return string + 3;
+  }
+  else
+  {
+    return string;
+  }
+}
+
 void nxagentProcessOptions(char * string)
 {
   if (!string)
@@ -1540,15 +1564,10 @@ void nxagentProcessOptions(char * string)
 
   /* if the "filename" starts with an nx marker treat it
      as an option _string_ instead of a filename */
-  if (strncasecmp(string, "nx/nx,", 6) == 0 ||
-      strncasecmp(string, "nx/nx:", 6) == 0)
+  char *skipped = nxagentSkipNXMarker(string);
+  if (skipped != string)
   {
-    nxagentParseOptionString(string + 6);
-  }
-  else if (strncasecmp(string, "nx,", 3) == 0 ||
-           strncasecmp(string, "nx:", 3) == 0)
-  {
-    nxagentParseOptionString(string + 3);
+    nxagentParseOptionString(skipped);
   }
   else
   {
@@ -1659,7 +1678,11 @@ void nxagentProcessOptionsFile(char * filename)
 
   data[offset] = '\0';
 
-  nxagentParseOptionString(data);
+  #ifdef DEBUG
+  fprintf(stderr, "%s: first line of options file [%s]\n", __func__, data);
+  #endif
+
+  nxagentParseOptionString(nxagentSkipNXMarker(data));
 
 nxagentProcessOptionsFileExit:
 
