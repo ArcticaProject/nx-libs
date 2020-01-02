@@ -250,7 +250,7 @@ CARD8 nxagentConvertKeycode(CARD8 k)
  {
    #ifdef DEBUG
    if (k != nxagentConvertedKeycodes[k])
-     fprintf(stderr, "nxagentConvertKeycode: converting keycode [%d] to [%d]\n", k, nxagentConvertedKeycodes[k]);
+     fprintf(stderr, "%s: converting keycode [%d] to [%d]\n", __func__, k, nxagentConvertedKeycodes[k]);
    #endif
 
    return nxagentConvertedKeycodes[k];
@@ -292,7 +292,7 @@ void nxagentChangeKeyboardControl(DeviceIntPtr pDev, KeybdCtrl *ctrl)
      */
 
     #ifdef TEST
-    fprintf(stderr, "nxagentChangeKeyboardControl: Repeat delay was [%d] interval was [%d].\n",
+    fprintf(stderr, "%s: Repeat delay was [%d] interval was [%d].\n", __func__,
                 xkbc -> repeat_delay, xkbc -> repeat_interval);
     #endif
 
@@ -300,7 +300,7 @@ void nxagentChangeKeyboardControl(DeviceIntPtr pDev, KeybdCtrl *ctrl)
     xkbc -> repeat_interval = ~ 0;
 
     #ifdef TEST
-    fprintf(stderr, "nxagentChangeKeyboardControl: Repeat delay is now [%d] interval is now [%d].\n",
+    fprintf(stderr, "%s: Repeat delay is now [%d] interval is now [%d].\n", __func__,
                 xkbc -> repeat_delay, xkbc -> repeat_interval);
     #endif
   }
@@ -318,7 +318,7 @@ void nxagentChangeKeyboardControl(DeviceIntPtr pDev, KeybdCtrl *ctrl)
     XKeyboardControl values;
 
     #ifdef TEST
-    fprintf(stderr, "nxagentChangeKeyboardControl: WARNING! Propagating changes to keyboard settings.\n");
+    fprintf(stderr, "%s: WARNING! Propagating changes to keyboard settings.\n", __func__);
     #endif
 
     value_mask = KBKeyClickPercent |
@@ -363,7 +363,7 @@ void nxagentChangeKeyboardControl(DeviceIntPtr pDev, KeybdCtrl *ctrl)
   }
 
   #ifdef TEST
-  fprintf(stderr, "nxagentChangeKeyboardControl: WARNING! Not propagating changes to keyboard settings.\n");
+  fprintf(stderr, "%s: WARNING! Not propagating changes to keyboard settings.\n", __func__);
   #endif
 }
 
@@ -387,7 +387,7 @@ int nxagentKeyboardProc(DeviceIntPtr pDev, int onoff)
     case DEVICE_INIT:
 
       #ifdef TEST
-      fprintf(stderr, "nxagentKeyboardProc: Called for [DEVICE_INIT].\n");
+      fprintf(stderr, "%s: Called for [DEVICE_INIT].\n", __func__);
       #endif
 
       if (NXDisplayError(nxagentDisplay) == 1)
@@ -397,7 +397,7 @@ int nxagentKeyboardProc(DeviceIntPtr pDev, int onoff)
 
       #ifdef WATCH
 
-      fprintf(stderr, "nxagentKeyboardProc: Watchpoint 9.\n");
+      fprintf(stderr, "%s: Watchpoint 9.\n", __func__);
 
 /*
 Reply   Total	Cached	Bits In			Bits Out		Bits/Reply	  Ratio
@@ -421,7 +421,7 @@ N/A
       XkbDfltRepeatInterval = ~ 0;
 
       #ifdef TEST
-      fprintf(stderr, "nxagentKeyboardProc: Set repeat delay to [%d] interval to [%d].\n",
+      fprintf(stderr, "%s: Set repeat delay to [%d] interval to [%d].\n", __func__,
                   XkbDfltRepeatDelay, XkbDfltRepeatInterval);
       #endif
 
@@ -517,13 +517,13 @@ N/A
 
       if (noXkbExtension) {
         #ifdef TEST
-        fprintf(stderr, "nxagentKeyboardProc: No XKB extension.\n");
+        fprintf(stderr, "%s: No XKB extension.\n", __func__);
         #endif
 
 XkbError:
 
         #ifdef TEST
-        fprintf(stderr, "nxagentKeyboardProc: XKB error.\n");
+        fprintf(stderr, "%s: XKB error.\n", __func__);
         #endif
 
 #endif
@@ -540,7 +540,7 @@ XkbError:
                                  nxagentBell, nxagentChangeKeyboardControl);
 
         #ifdef TEST
-          fprintf(stderr, "nxagentKeyboardProc: InitKeyboardDeviceStruct returns [%d].\n", ret);
+          fprintf(stderr, "%s: InitKeyboardDeviceStruct returns [%d].\n", __func__, ret);
         }
         #endif
 
@@ -556,8 +556,8 @@ XkbError:
 	}
 
         #ifdef TEST
-        fprintf(stderr, "nxagentKeyboardProc: Using XKB extension.\n");
-        fprintf(stderr, "nxagentKeyboardProc: nxagentKeyboard is [%s].\n", nxagentKeyboard ? nxagentKeyboard : "NULL");
+        fprintf(stderr, "%s: Using XKB extension.\n", __func__);
+        fprintf(stderr, "%s: nxagentKeyboard is [%s].\n", __func__, validateString(nxagentKeyboard));
         #endif
 
         if (nxagentX2go && nxagentKeyboard && (strcmp(nxagentKeyboard, "null/null") == 0))
@@ -635,8 +635,8 @@ XkbError:
           if (strcmp(model, "pc105") == 0)
           {
             #ifdef TEST
-            fprintf(stderr, "nxagentKeyboardProc: WARNING! Keyboard model 'pc105' unsupported on Solaris.\n");
-            fprintf(stderr, "nxagentKeyboardProc: WARNING! Forcing keyboard model to 'pc104'.\n");
+            fprintf(stderr, "%s: WARNING! Keyboard model 'pc105' unsupported on Solaris.\n", __func__);
+            fprintf(stderr, "%s: WARNING! Forcing keyboard model to 'pc104'.\n", __func__);
             #endif
 
             strcpy(model, "pc104");
@@ -647,13 +647,13 @@ XkbError:
         else
         {
           #ifdef TEST
-          fprintf(stderr, "nxagentKeyboardProc: Using default keyboard: model [%s] layout [%s].\n",
+          fprintf(stderr, "%s: Using default keyboard: model [%s] layout [%s].\n", __func__,
                       model?model:"(default)", layout?layout:"(default)");
           #endif
         }
 
         #ifdef TEST
-        fprintf(stderr, "nxagentKeyboardProc: Init XKB extension.\n");
+        fprintf(stderr, "%s: Init XKB extension.\n", __func__);
         #endif
 
         if (nxagentRemoteRules && nxagentRemoteModel)
@@ -720,13 +720,13 @@ XkbError:
 #ifdef TEST
         else
         {
-          fprintf(stderr, "nxagentKeyboardProc: No current keyboard.\n");
+          fprintf(stderr, "%s: No current keyboard.\n", __func__);
         }
 #endif
 
         #ifdef DEBUG
-        fprintf(stderr, "nxagentKeyboardProc: Going to set rules and init device: "
-                        "[rules='%s',model='%s',layout='%s',variant='%s',options='%s'].\n",
+        fprintf(stderr, "%s: Going to set rules and init device: "
+                        "[rules='%s',model='%s',layout='%s',variant='%s',options='%s'].\n", __func__,
                         rules?rules:"(default)", model?model:"(default)", layout?layout:"(default)",
                         variant?variant:"(default)", options?options:"(default)");
         #endif
@@ -767,7 +767,7 @@ XkbError:
 
       #ifdef WATCH
 
-      fprintf(stderr, "nxagentKeyboardProc: Watchpoint 10.\n");
+      fprintf(stderr, "%s: Watchpoint 10.\n", __func__);
 
 /*
 Reply   Total	Cached	Bits In			Bits Out		Bits/Reply	  Ratio
@@ -791,7 +791,7 @@ Reply   Total	Cached	Bits In			Bits Out		Bits/Reply	  Ratio
     case DEVICE_ON:
 
       #ifdef TEST
-      fprintf(stderr, "nxagentKeyboardProc: Called for [DEVICE_ON].\n");
+      fprintf(stderr, "%s: Called for [DEVICE_ON].\n", __func__);
       #endif
 
       if (NXDisplayError(nxagentDisplay) == 1)
@@ -801,7 +801,7 @@ Reply   Total	Cached	Bits In			Bits Out		Bits/Reply	  Ratio
 
       #ifdef WATCH
 
-      fprintf(stderr, "nxagentKeyboardProc: Watchpoint 11.\n");
+      fprintf(stderr, "%s: Watchpoint 11.\n", __func__);
 
 /*
 Reply   Total	Cached	Bits In			Bits Out		Bits/Reply	  Ratio
@@ -820,7 +820,7 @@ Reply   Total	Cached	Bits In			Bits Out		Bits/Reply	  Ratio
     case DEVICE_OFF:
 
       #ifdef TEST
-      fprintf(stderr, "nxagentKeyboardProc: Called for [DEVICE_OFF].\n");
+      fprintf(stderr, "%s: Called for [DEVICE_OFF].\n", __func__);
       #endif
 
       if (NXDisplayError(nxagentDisplay) == 1)
@@ -834,7 +834,7 @@ Reply   Total	Cached	Bits In			Bits Out		Bits/Reply	  Ratio
 
     case DEVICE_CLOSE:
       #ifdef TEST
-      fprintf(stderr, "nxagentKeyboardProc: Called for [DEVICE_CLOSE].\n");
+      fprintf(stderr, "%s: Called for [DEVICE_CLOSE].\n", __func__);
       #endif
 
       break;
@@ -934,14 +934,14 @@ int nxagentResetKeyboard(void)
   savedBellDuration = inputInfo.keyboard -> kbdfeed -> ctrl.bell_duration;
 
   #ifdef TEST
-  fprintf(stderr, "nxagentResetKeyboard: bellPercent [%d]  bellPitch [%d]  bellDuration [%d].\n",
+  fprintf(stderr, "%s: bellPercent [%d]  bellPitch [%d]  bellDuration [%d].\n", __func__,
               savedBellPercent, savedBellPitch, savedBellDuration);
   #endif
 
   if (!(devBackup = calloc(1, sizeof(DeviceIntRec))))
   {
     #ifdef PANIC
-    fprintf(stderr, "nxagentResetKeyboard: PANIC! Can't allocate backup structure.\n");
+    fprintf(stderr, "%s: PANIC! Can't allocate backup structure.\n", __func__);
     #endif
   }
 
@@ -992,7 +992,7 @@ int nxagentResetKeyboard(void)
   else
   {
     #ifdef WARNING
-    fprintf(stderr, "nxagentResetKeyboard: Can't initialize the keyboard device.\n");
+    fprintf(stderr, "%s: Can't initialize the keyboard device.\n", __func__);
     #endif
 
     nxagentRestoreKeyboardDeviceData(devBackup, dev);
@@ -1046,9 +1046,8 @@ void nxagentCheckRemoteKeycodes(void)
   nxagentNumLockKeycode  = XKeysymToKeycode(nxagentDisplay, XK_Num_Lock);
 
   #ifdef DEBUG
-  fprintf(stderr, "nxagentCheckRemoteKeycodes: Remote keycodes: CapsLock "
-                  "[%d] NumLock [%d].\n", nxagentCapsLockKeycode,
-                  nxagentNumLockKeycode);
+  fprintf(stderr, "%s: Remote keycodes: CapsLock [%d] NumLock [%d].\n", __func__,
+                  nxagentCapsLockKeycode,nxagentNumLockKeycode);
   #endif
 }
 
@@ -1057,7 +1056,7 @@ static int nxagentSaveKeyboardDeviceData(DeviceIntPtr dev, DeviceIntPtr devBacku
   if (!devBackup)
   {
     #ifdef PANIC
-    fprintf(stderr, "nxagentSaveKeyboardDeviceData: PANIC! Pointer to backup structure is null.\n");
+    fprintf(stderr, "%s: PANIC! Pointer to backup structure is null.\n", __func__);
     #endif
 
     return -1;
@@ -1068,7 +1067,7 @@ static int nxagentSaveKeyboardDeviceData(DeviceIntPtr dev, DeviceIntPtr devBacku
   devBackup -> kbdfeed = dev -> kbdfeed;
 
   #ifdef DEBUG
-  fprintf(stderr, "nxagentSaveKeyboardDeviceData: Saved device data.\n");
+  fprintf(stderr, "%s: Saved device data.\n", __func__);
   #endif
 
   return 1;
@@ -1079,7 +1078,7 @@ static int nxagentRestoreKeyboardDeviceData(DeviceIntPtr devBackup, DeviceIntPtr
   if (!devBackup)
   {
     #ifdef PANIC
-    fprintf(stderr, "nxagentRestoreKeyboardDeviceData: PANIC! Pointer to backup structure is null.\n");
+    fprintf(stderr, "%s: PANIC! Pointer to backup structure is null.\n", __func__);
     #endif
 
     return -1;
@@ -1090,7 +1089,7 @@ static int nxagentRestoreKeyboardDeviceData(DeviceIntPtr devBackup, DeviceIntPtr
   dev -> kbdfeed = devBackup -> kbdfeed;
 
   #ifdef DEBUG
-  fprintf(stderr, "nxagentRestoreKeyboardDeviceData: Restored device data.\n");
+  fprintf(stderr, "%s: Restored device data.\n", __func__);
   #endif
 
   return 1;
@@ -1102,7 +1101,7 @@ static int nxagentFreeKeyboardDeviceData(DeviceIntPtr dev)
   if (!dev)
   {
     #ifdef PANIC
-    fprintf(stderr, "nxagentFreeKeyboardDeviceData: PANIC! Pointer to device structure is null.\n");
+    fprintf(stderr, "%s: PANIC! Pointer to device structure is null.\n", __func__);
     #endif
 
     return -1;
@@ -1144,7 +1143,7 @@ static int nxagentFreeKeyboardDeviceData(DeviceIntPtr dev)
   }
 
   #ifdef DEBUG
-  fprintf(stderr, "nxagentFreeKeyboardDeviceData: Freed device data.\n");
+  fprintf(stderr, "%s: Freed device data.\n", __func__);
   #endif
 
   return 1;
@@ -1158,7 +1157,7 @@ int ProcXkbInhibited(register ClientPtr client)
   unsigned char minorop;
 
   #ifdef TEST
-  fprintf(stderr, "ProcXkbInhibited: Called.\n");
+  fprintf(stderr, "%s: Called.\n", __func__);
   #endif
 
   majorop = ((xReq *)client->requestBuffer)->reqType;
@@ -1166,7 +1165,7 @@ int ProcXkbInhibited(register ClientPtr client)
   #ifdef PANIC
   if (majorop != (unsigned char)nxagentXkbWrapper.base)
   {
-    fprintf(stderr, "ProcXkbInhibited: MAJOROP is [%d] but should be [%d].\n",
+    fprintf(stderr, "%s: MAJOROP is [%d] but should be [%d].\n", __func__,
             majorop, nxagentXkbWrapper.base);
   }
   #endif
@@ -1174,7 +1173,7 @@ int ProcXkbInhibited(register ClientPtr client)
   minorop = *((unsigned char *) client->requestBuffer + 1);
 
   #ifdef TEST
-  fprintf(stderr, "ProcXkbInhibited: MAJOROP is [%d] MINOROP is [%d].\n",
+  fprintf(stderr, "%s: MAJOROP is [%d] MINOROP is [%d].\n", __func__,
               majorop, minorop);
   #endif
 
@@ -1229,13 +1228,13 @@ void nxagentInitXkbWrapper(void)
   ExtensionEntry * extension;
 
   #ifdef TEST
-  fprintf(stderr, "nxagentInitXkbWrapper: Called.\n");
+  fprintf(stderr, "%s: Called.\n", __func__);
   #endif
 
   if (!nxagentOption(InhibitXkb))
   {
     #ifdef TEST
-    fprintf(stderr, "nxagentInitXkbWrapper: Nothing to do.\n");
+    fprintf(stderr, "%s: Nothing to do.\n", __func__);
     #endif
 
     return;
@@ -1252,7 +1251,7 @@ void nxagentInitXkbWrapper(void)
     nxagentXkbWrapper.SProcXkbDispatchBackup = NULL;
 
     #ifdef TEST
-    fprintf(stderr, "nxagentInitXkbWrapper: base [%d] eventBase [%d] errorBase [%d].\n",
+    fprintf(stderr, "%s: base [%d] eventBase [%d] errorBase [%d].\n", __func__,
                 extension -> base, extension -> eventBase, extension -> errorBase);
     #endif
   }
@@ -1261,7 +1260,7 @@ void nxagentInitXkbWrapper(void)
     nxagentXkbWrapper.base = -1;
 
     #ifdef TEST
-    fprintf(stderr, "nxagentInitXkbWrapper: XKEYBOARD extension not found.\n");
+    fprintf(stderr, "%s: XKEYBOARD extension not found.\n", __func__);
     #endif
   }
 }
@@ -1269,7 +1268,7 @@ void nxagentInitXkbWrapper(void)
 void nxagentDisableXkbExtension(void)
 {  
   #ifdef TEST
-  fprintf(stderr, "nxagentDisableXkbExtension: Called.\n");
+  fprintf(stderr, "%s: Called.\n", __func__);
   #endif
 
   if (nxagentXkbWrapper.base > 0)
@@ -1283,7 +1282,7 @@ void nxagentDisableXkbExtension(void)
     #ifdef TEST
     else
     {
-      fprintf(stderr, "nxagentDisableXkbExtension: Nothing to be done for ProcXkbDispatch.\n");
+      fprintf(stderr, "%s: Nothing to be done for ProcXkbDispatch.\n", __func__);
     }
     #endif
 
@@ -1296,7 +1295,7 @@ void nxagentDisableXkbExtension(void)
     #ifdef TEST
     else
     {
-      fprintf(stderr, "nxagentDisableXkbExtension: Nothing to be done for SProcXkbDispatch.\n");
+      fprintf(stderr, "%s: Nothing to be done for SProcXkbDispatch.\n", __func__);
     }
     #endif
   }
@@ -1305,7 +1304,7 @@ void nxagentDisableXkbExtension(void)
 void nxagentEnableXkbExtension(void)
 {
   #ifdef TEST
-  fprintf(stderr, "nxagentEnableXkbExtension: Called.\n");
+  fprintf(stderr, "%s: Called.\n", __func__);
   #endif
 
   if (nxagentXkbWrapper.base > 0)
@@ -1319,7 +1318,7 @@ void nxagentEnableXkbExtension(void)
     #ifdef TEST
     else
     {
-      fprintf(stderr, "nxagentEnableXkbExtension: Nothing to be done for ProcXkbDispatch.\n");
+      fprintf(stderr, "%s: Nothing to be done for ProcXkbDispatch.\n", __func__);
     }
     #endif
 
@@ -1332,7 +1331,7 @@ void nxagentEnableXkbExtension(void)
     #ifdef TEST
     else
     {
-      fprintf(stderr, "nxagentEnableXkbExtension: Nothing to be done for SProcXkbDispatch.\n");
+      fprintf(stderr, "%s: Nothing to be done for SProcXkbDispatch.\n", __func__);
     }
     #endif
   }
@@ -1353,7 +1352,7 @@ void nxagentTuneXkbWrapper(void)
   if (!nxagentOption(InhibitXkb))
   {
     #ifdef TEST
-    fprintf(stderr, "nxagentTuneXkbWrapper: Nothing to do.\n");
+    fprintf(stderr, "%s: Nothing to do.\n", __func__);
     #endif
 
     return;
