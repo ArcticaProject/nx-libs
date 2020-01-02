@@ -553,14 +553,6 @@ XkbError:
         fprintf(stderr, "%s: nxagentKeyboard is [%s].\n", __func__, validateString(nxagentKeyboard));
         #endif
 
-        if (nxagentX2go && nxagentKeyboard && (strcmp(nxagentKeyboard, "null/null") == 0))
-        {
-          #ifdef TEST
-          fprintf(stderr, "%s: changing nxagentKeyboard from [null/null] to [clone].\n", __func__);
-          #endif
-          SAFE_free(nxagentKeyboard);
-          nxagentKeyboard = strdup("clone");
-        }
 
         /*
           from nxagent changelog:

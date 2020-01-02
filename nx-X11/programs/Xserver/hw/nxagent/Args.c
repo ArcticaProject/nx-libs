@@ -687,7 +687,20 @@ int ddxProcessArgument(int argc, char *argv[], int i)
     {
       SAFE_free(nxagentKeyboard);
 
-      nxagentKeyboard = strdup(argv[i]);
+      if (nxagentX2go && strcmp(argv[i], "null/null") == 0)
+      {
+        #ifdef TEST
+        fprintf(stderr, "%s: changing nxagentKeyboard from [null/null] to [clone].\n", __func__);
+        #endif
+
+        SAFE_free(nxagentKeyboard);
+        nxagentKeyboard = strdup("clone");
+      }
+      else
+      {
+        nxagentKeyboard = strdup(argv[i]);
+      }
+
       if (nxagentKeyboard == NULL)
       {
         FatalError("malloc failed");
