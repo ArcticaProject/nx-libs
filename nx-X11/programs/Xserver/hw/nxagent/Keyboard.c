@@ -584,9 +584,9 @@ XkbError:
             (strcmp(nxagentKeyboard, "query") != 0) &&
             (strcmp(nxagentKeyboard, "clone") != 0))
         {
-          for (i = 0; nxagentKeyboard[i] != '/' && nxagentKeyboard[i] != 0; i++);
+          for (i = 0; nxagentKeyboard[i] != '/' && nxagentKeyboard[i] != '\0'; i++);
 
-          if (nxagentKeyboard[i] == 0 || nxagentKeyboard[i + 1] == 0 || i == 0)
+          if (nxagentKeyboard[i] == '\0' || nxagentKeyboard[i + 1] == '\0' || i == 0)
           {
             ErrorF("Warning: Wrong keyboard type: %s.\n", nxagentKeyboard);
             goto XkbError;

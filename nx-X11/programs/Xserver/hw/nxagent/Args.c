@@ -1496,7 +1496,7 @@ static void nxagentParseOptionString(char *string)
 
   if (delimiter)
   {
-    *delimiter = 0;
+    *delimiter = '\0';
   }
   else
   {
@@ -1509,7 +1509,7 @@ static void nxagentParseOptionString(char *string)
 
     if (delimiter)
     {
-      *delimiter = 0;
+      *delimiter = '\0';
       value = delimiter + 1;
     }
     else
@@ -1650,7 +1650,7 @@ void nxagentProcessOptionsFile(char * filename)
 
   for (offset = 0; (offset < sizeOfFile) && (data[offset] != '\n'); offset++);
 
-  data[offset] = 0;
+  data[offset] = '\0';
 
   nxagentParseOptionString(data);
 
