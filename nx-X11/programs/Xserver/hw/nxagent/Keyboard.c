@@ -276,13 +276,10 @@ void nxagentChangeKeyboardControl(DeviceIntPtr pDev, KeybdCtrl *ctrl)
 {
   #ifdef XKB
 
-  XkbSrvInfoPtr  xkbi;
-  XkbControlsPtr xkbc;
-
   if (!noXkbExtension)
   {
-    xkbi = pDev -> key -> xkbInfo;
-    xkbc = xkbi -> desc -> ctrls;
+    XkbSrvInfoPtr xkbi = pDev -> key -> xkbInfo;
+    XkbControlsPtr xkbc = xkbi -> desc -> ctrls;
 
     /*
      * We want to prevent agent generating auto-repeated
@@ -314,22 +311,21 @@ void nxagentChangeKeyboardControl(DeviceIntPtr pDev, KeybdCtrl *ctrl)
 
   if (nxagentOption(DeviceControl))
   {
-    unsigned long value_mask;
-    XKeyboardControl values;
-
     #ifdef TEST
     fprintf(stderr, "%s: WARNING! Propagating changes to keyboard settings.\n", __func__);
     #endif
 
-    value_mask = KBKeyClickPercent |
-                 KBBellPercent |
-                 KBBellPitch |
-                 KBBellDuration;
+    unsigned long value_mask = KBKeyClickPercent |
+                               KBBellPercent |
+                               KBBellPitch |
+                               KBBellDuration;
 
-    values.key_click_percent = ctrl->click;
-    values.bell_percent = ctrl->bell;
-    values.bell_pitch = ctrl->bell_pitch;
-    values.bell_duration = ctrl->bell_duration;
+    XKeyboardControl values = {
+      .key_click_percent = ctrl->click,
+      .bell_percent = ctrl->bell,
+      .bell_pitch = ctrl->bell_pitch,
+      .bell_duration = ctrl->bell_duration,
+    };
 
     /*
      * Don't propagate the auto repeat mode. It is forced to be
@@ -369,13 +365,10 @@ void nxagentChangeKeyboardControl(DeviceIntPtr pDev, KeybdCtrl *ctrl)
 
 int nxagentKeyboardProc(DeviceIntPtr pDev, int onoff)
 {
-  XModifierKeymap *modifier_keymap;
   KeySym *keymap;
   int mapWidth;
   int min_keycode, max_keycode;
-  KeySymsRec keySyms;
   CARD8 modmap[MAP_LENGTH];
-  int i, j;
   XKeyboardState values;
 #ifdef XKB
   char *model = NULL, *layout = NULL;
@@ -425,7 +418,7 @@ N/A
                   XkbDfltRepeatDelay, XkbDfltRepeatInterval);
       #endif
 
-      modifier_keymap = XGetModifierMapping(nxagentDisplay);
+      XModifierKeymap *modifier_keymap = XGetModifierMapping(nxagentDisplay);
 
       if (modifier_keymap == NULL)
       {
@@ -435,9 +428,7 @@ N/A
       XDisplayKeycodes(nxagentDisplay, &min_keycode, &max_keycode);
 #ifdef _XSERVER64
       {
-        KeySym64 *keymap64;
-        int len;
-        keymap64 = XGetKeyboardMapping(nxagentDisplay,
+        KeySym64 *keymap64 = XGetKeyboardMapping(nxagentDisplay,
                                      min_keycode,
                                      max_keycode - min_keycode + 1,
                                      &mapWidth);
@@ -448,9 +439,9 @@ N/A
           return -1;
         }
 
-        len = (max_keycode - min_keycode + 1) * mapWidth;
+        int len = (max_keycode - min_keycode + 1) * mapWidth;
         keymap = (KeySym *)malloc(len * sizeof(KeySym));
-        for(i = 0; i < len; ++i)
+        for(int i = 0; i < len; ++i)
         {
           keymap[i] = keymap64[i];
         }
@@ -479,9 +470,9 @@ N/A
       nxagentNumlockMask = 0;
 
       memset(modmap, 0, sizeof(modmap));
-      for (j = 0; j < 8; j++)
+      for (int j = 0; j < 8; j++)
       {
-        for(i = 0; i < modifier_keymap->max_keypermod; i++)
+        for(int i = 0; i < modifier_keymap->max_keypermod; i++)
         {
           CARD8 keycode;
           if ((keycode =
@@ -503,10 +494,12 @@ N/A
 
       nxagentCheckRemoteKeycodes();
 
-      keySyms.minKeyCode = min_keycode;
-      keySyms.maxKeyCode = max_keycode;
-      keySyms.mapWidth = mapWidth;
-      keySyms.map = keymap;
+      KeySymsRec keySyms = {
+        .minKeyCode = min_keycode,
+        .maxKeyCode = max_keycode,
+        .mapWidth = mapWidth,
+        .map = keymap,
+      };
 
 #ifdef XKB
       if (!nxagentGetRemoteXkbExtension())
@@ -584,6 +577,7 @@ XkbError:
             (strcmp(nxagentKeyboard, "query") != 0) &&
             (strcmp(nxagentKeyboard, "clone") != 0))
         {
+          int i;
           for (i = 0; nxagentKeyboard[i] != '/' && nxagentKeyboard[i] != '\0'; i++);
 
           if (nxagentKeyboard[i] == '\0' || nxagentKeyboard[i + 1] == '\0' || i == 0)
@@ -662,7 +656,6 @@ XkbError:
           fprintf(stderr, "%s: Remote: [rules='%s',model='%s',layout='%s',variant='%s',options='%s'].\n",
                   __func__, nxagentRemoteRules, nxagentRemoteModel, nxagentRemoteLayout, nxagentRemoteVariant, nxagentRemoteOptions);
           #endif
-
 
           /* Only setup keycode conversion if we are NOT in clone mode */
           if (nxagentKeyboard && (strcmp(nxagentKeyboard, "clone") == 0))
@@ -877,7 +870,6 @@ void nxagentNotifyKeyboardChanges(int oldMinKeycode, int oldMaxKeycode)
 
   #endif
 
-    int i;
     xEvent event = {0};
 
     event.u.u.type = MappingNotify;
@@ -890,7 +882,7 @@ void nxagentNotifyKeyboardChanges(int oldMinKeycode, int oldMaxKeycode)
      *  0 is the server client
      */
 
-    for (i = 1; i < currentMaxClients; i++)
+    for (int i = 1; i < currentMaxClients; i++)
     {
       if (clients[i] && clients[i] -> clientState == ClientStateRunning)
       {
@@ -912,13 +904,8 @@ int nxagentResetKeyboard(void)
   DeviceIntPtr dev = inputInfo.keyboard;
   DeviceIntPtr devBackup;
 
-  int result;
   int oldMinKeycode = 8;
   int oldMaxKeycode = 255;
-
-  int savedBellPercent;
-  int savedBellPitch;
-  int savedBellDuration;
 
   if (NXDisplayError(nxagentDisplay) == 1)
   {
@@ -929,9 +916,9 @@ int nxagentResetKeyboard(void)
    * Save bell settings.
    */
 
-  savedBellPercent = inputInfo.keyboard -> kbdfeed -> ctrl.bell;
-  savedBellPitch = inputInfo.keyboard -> kbdfeed -> ctrl.bell_pitch;
-  savedBellDuration = inputInfo.keyboard -> kbdfeed -> ctrl.bell_duration;
+  int savedBellPercent = inputInfo.keyboard -> kbdfeed -> ctrl.bell;
+  int savedBellPitch = inputInfo.keyboard -> kbdfeed -> ctrl.bell_pitch;
+  int savedBellDuration = inputInfo.keyboard -> kbdfeed -> ctrl.bell_duration;
 
   #ifdef TEST
   fprintf(stderr, "%s: bellPercent [%d]  bellPitch [%d]  bellDuration [%d].\n", __func__,
@@ -968,7 +955,7 @@ int nxagentResetKeyboard(void)
   nxagentTuneXkbWrapper();
   #endif
 
-  result = (*inputInfo.keyboard -> deviceProc)(inputInfo.keyboard, DEVICE_INIT);
+  int result = (*inputInfo.keyboard -> deviceProc)(inputInfo.keyboard, DEVICE_INIT);
 
   if (result == Success && inputInfo.keyboard -> key != NULL)
   {
@@ -1037,7 +1024,6 @@ void nxagentCheckModifierMasks(CARD8 keycode, int j)
   {
     nxagentCapsMask |= 1 << j;
   }
-
 }
 
 void nxagentCheckRemoteKeycodes(void)
@@ -1153,14 +1139,11 @@ static int nxagentFreeKeyboardDeviceData(DeviceIntPtr dev)
 
 int ProcXkbInhibited(register ClientPtr client)
 {
-  unsigned char majorop;
-  unsigned char minorop;
-
   #ifdef TEST
   fprintf(stderr, "%s: Called.\n", __func__);
   #endif
 
-  majorop = ((xReq *)client->requestBuffer)->reqType;
+  unsigned char majorop = ((xReq *)client->requestBuffer)->reqType;
 
   #ifdef PANIC
   if (majorop != (unsigned char)nxagentXkbWrapper.base)
@@ -1170,7 +1153,7 @@ int ProcXkbInhibited(register ClientPtr client)
   }
   #endif
 
-  minorop = *((unsigned char *) client->requestBuffer + 1);
+  unsigned char minorop = *((unsigned char *) client->requestBuffer + 1);
 
   #ifdef TEST
   fprintf(stderr, "%s: MAJOROP is [%d] MINOROP is [%d].\n", __func__,
@@ -1379,7 +1362,16 @@ void nxagentXkbClearNames(void)
 
 static void nxagentXkbGetNames(void)
 {
-  Atom atom;
+  if (nxagentRemoteRules)
+    return;
+
+  Atom atom = XInternAtom(nxagentDisplay, "_XKB_RULES_NAMES", 1);
+
+  if (atom == 0)
+  {
+    return;
+  }
+
   #ifdef _XSERVER64
   Atom64 type;
   #else
@@ -1388,25 +1380,11 @@ static void nxagentXkbGetNames(void)
   int format;
   unsigned long n;
   unsigned long after;
-  char *data;
-  char *name;
-  Status result;
+  char *data = NULL;
 
-  if (nxagentRemoteRules)
-    return;
-
-  atom = XInternAtom(nxagentDisplay, "_XKB_RULES_NAMES", 1);
-
-  if (atom == 0)
-  {
-    return;
-  }
-
-  data = name = NULL;
-
-  result = XGetWindowProperty(nxagentDisplay, DefaultRootWindow(nxagentDisplay),
-                                  atom, 0, 256, 0, XA_STRING, &type, &format,
-                                      &n, &after, (unsigned char **)&data);
+  Status result = XGetWindowProperty(nxagentDisplay, DefaultRootWindow(nxagentDisplay),
+                                         atom, 0, 256, 0, XA_STRING, &type, &format,
+                                             &n, &after, (unsigned char **)&data);
 
   if (result != Success || !data)
   {
@@ -1422,7 +1400,7 @@ static void nxagentXkbGetNames(void)
     }
   }
 
-  name = data;
+  char *name = data;
 
   if (name < data + n)
   {
@@ -1594,17 +1572,17 @@ void nxagentKeycodeConversionSetup(void)
 
 Bool nxagentGetRemoteXkbExtension(void)
 {
-  Bool result;
-
   nxagentXkbInfo.Opcode = nxagentXkbInfo.EventBase = nxagentXkbInfo.ErrorBase = nxagentXkbInfo.MajorVersion = nxagentXkbInfo.MinorVersion = -1;
   nxagentXkbClearNames();
 
-  if ((result = XkbQueryExtension(nxagentDisplay,
-                                 &nxagentXkbInfo.Opcode,
-                                 &nxagentXkbInfo.EventBase,
-                                 &nxagentXkbInfo.ErrorBase,
-                                 &nxagentXkbInfo.MajorVersion,
-                                 &nxagentXkbInfo.MinorVersion)))
+  Bool result = XkbQueryExtension(nxagentDisplay,
+                                  &nxagentXkbInfo.Opcode,
+                                  &nxagentXkbInfo.EventBase,
+                                  &nxagentXkbInfo.ErrorBase,
+                                  &nxagentXkbInfo.MajorVersion,
+                                  &nxagentXkbInfo.MinorVersion);
+
+  if (result)
   {
     nxagentXkbGetNames();
   }
