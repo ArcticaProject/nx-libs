@@ -1489,10 +1489,16 @@ static void nxagentParseOptionString(char *string)
   char *option    = NULL;
 
   /*
+   * we must not modify string, but strtok will insert \0. So let's
+   * work with a copy
+   */
+  char *dup = strdup(string);
+
+  /*
    * Remove the port specification.
    */
 
-  char *delimiter = rindex(string, ':');
+  char *delimiter = rindex(dup, ':');
 
   if (delimiter)
   {
@@ -1503,7 +1509,7 @@ static void nxagentParseOptionString(char *string)
     fprintf(stderr, "Warning: Option file doesn't contain a port specification.\n");
   }
 
-  while ((option = strtok(option ? NULL : string, ",")))
+  while ((option = strtok(option ? NULL : dup, ",")))
   {
     delimiter = rindex(option, '=');
 
@@ -1519,6 +1525,7 @@ static void nxagentParseOptionString(char *string)
 
     nxagentParseSingleOption(option, value);
   }
+  SAFE_free(dup);
 }
 
 void nxagentProcessOptions(char * string)
