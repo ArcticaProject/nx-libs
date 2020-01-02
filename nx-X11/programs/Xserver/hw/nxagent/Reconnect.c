@@ -666,7 +666,7 @@ Bool nxagentReconnectSession(void)
   }
 
   /* Re-read keystrokes definitions in case the keystrokes file has
-     changed while being supended */
+     changed while being suspended */
   nxagentInitKeystrokes(True);
 
   #ifdef NX_DEBUG_INPUT
