@@ -549,6 +549,12 @@ XkbError:
         XkbComponentNamesRec names = {0};
         char *rules = NULL, *variant = NULL, *options = NULL; /* use xkb default */
 
+	/* handle empty string like the NULL pointer */
+	if (nxagentKeyboard && nxagentKeyboard[0] == '\0')
+	{
+	  SAFE_free(nxagentKeyboard);
+	}
+
         #ifdef TEST
         fprintf(stderr, "nxagentKeyboardProc: Using XKB extension.\n");
         fprintf(stderr, "nxagentKeyboardProc: nxagentKeyboard is [%s].\n", nxagentKeyboard ? nxagentKeyboard : "NULL");
