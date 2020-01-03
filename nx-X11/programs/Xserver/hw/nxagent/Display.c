@@ -561,11 +561,6 @@ static void nxagentSigchldHandler(int signal)
 
 Display *nxagentInternalOpenDisplay(char *display)
 {
-  struct sigaction oldAction;
-  struct sigaction newAction;
-
-  int result;
-
   /*
    * Stop the smart schedule timer since it uses SIGALRM as we do.
    */
@@ -583,11 +578,16 @@ FIXME: Should print a warning if the user tries to let the agent
        explanation for the error to the user.
 */
 
-  newAction.sa_handler = nxagentRejectConnection;
+  struct sigaction newAction = {
+    .sa_handler = nxagentRejectConnection
+  };
 
   sigfillset(&newAction.sa_mask);
 
   newAction.sa_flags = 0;
+
+  int result;
+  struct sigaction oldAction;
 
   while (((result = sigaction(SIGALRM, &newAction,
              &oldAction)) == -1) && (errno == EINTR));
@@ -925,8 +925,6 @@ void nxagentInstallSignalHandlers(void)
 
   struct sigaction newAction;
 
-  int result;
-
   /*
    * By default nxcomp installs its signal handlers.  We need to
    * ensure that SIGUSR1 and SIGUSR2 are ignored if the NX transport
@@ -938,6 +936,8 @@ void nxagentInstallSignalHandlers(void)
   sigfillset(&newAction.sa_mask);
 
   newAction.sa_flags = 0;
+
+  int result;
 
   while (((result = sigaction(SIGUSR1, &newAction,
              NULL)) == -1) && (errno == EINTR));
@@ -1054,12 +1054,6 @@ void nxagentPostInstallSignalHandlers(void)
 
 void nxagentResetSignalHandlers(void)
 {
-  struct sigaction newAction;
-
-  int result;
-
-  memset(&newAction, 0, sizeof(newAction));
-
   /*
    * Reset the signal handlers to a well known state.
    */
@@ -1074,10 +1068,13 @@ void nxagentResetSignalHandlers(void)
 
   nxagentStopTimer();
 
-  newAction.sa_handler = SIG_DFL;
+  struct sigaction newAction = {
+    .sa_handler = SIG_DFL
+  };
 
   sigfillset(&newAction.sa_mask);
 
+  int result;
   while (((result = sigaction(SIGALRM, &newAction,
              NULL)) == -1) && (errno == EINTR));
 
@@ -1100,12 +1097,9 @@ void nxagentOpenDisplay(int argc, char *argv[])
     return;
 
   #ifdef NXAGENT_TIMESTAMP
-
   startTime = GetTimeInMillis();
-
   fprintf(stderr, "Display: Opening the display on real X server with time [%d] ms.\n",
           GetTimeInMillis() - startTime);
-
   #endif
 
   /*
@@ -1175,10 +1169,8 @@ Reply   Total	Cached	Bits In			Bits Out		Bits/Reply	  Ratio
   #endif
 
   #ifdef NXAGENT_TIMESTAMP
-
   fprintf(stderr, "Display: Display on real X server opened with time [%d] ms.\n",
           GetTimeInMillis() - startTime);
-
   #endif
 
   nxagentUseNXTrans =
@@ -1397,10 +1389,8 @@ N/A
   #endif
 
   #ifdef NXAGENT_TIMESTAMP
-
   fprintf(stderr, "Display: Open of the display finished with time [%d] ms.\n",
           GetTimeInMillis() - startTime);
-
   #endif
 
   if (nxagentOption(Persistent))
@@ -1435,10 +1425,11 @@ void nxagentSetDefaultVisual(void)
   }
   else
   {
-    XVisualInfo vi = {0};
+    XVisualInfo vi = {
+      .visualid = XVisualIDFromVisual(DefaultVisual(nxagentDisplay,
+                                          DefaultScreen(nxagentDisplay)))
+    };
 
-    vi.visualid = XVisualIDFromVisual(DefaultVisual(nxagentDisplay,
-                                          DefaultScreen(nxagentDisplay)));
     nxagentDefaultVisualIndex = 0;
 
     for (int i = 0; i < nxagentNumVisuals; i++)
@@ -1453,14 +1444,13 @@ void nxagentSetDefaultVisual(void)
 
 void nxagentInitVisuals(void)
 {
+  long mask = VisualScreenMask;
   XVisualInfo vi = {
     .screen = DefaultScreen(nxagentDisplay),
-    .depth = DefaultDepth(nxagentDisplay, DefaultScreen(nxagentDisplay)),
+    .depth = DefaultDepth(nxagentDisplay, DefaultScreen(nxagentDisplay))
   };
-  long mask = VisualScreenMask;
   int viNumList;
   XVisualInfo *viList = XGetVisualInfo(nxagentDisplay, mask, &vi, &viNumList);
-
   nxagentVisuals = (XVisualInfo *) malloc(viNumList * sizeof(XVisualInfo));
   nxagentNumVisuals = 0;
 
@@ -1566,7 +1556,6 @@ XXX: Some X server doesn't list 1 among available depths...
         if (nxagentDepths[j] == i)
         {
           depth = i;
-
           break;
         }
       }
@@ -1751,7 +1740,7 @@ Bool nxagentMakeIcon(Display *display, Pixmap *nxIcon, Pixmap *nxMask)
   /*
    * selecting x2go icon when running as X2Go agent
    */
-  if(nxagentX2go)
+  if (nxagentX2go)
   {
     agentIconData = x2goagentIconData;
   }
@@ -2249,6 +2238,9 @@ static int nxagentInitAndCheckVisuals(int flexibility)
 {
   /* FIXME: does this also need work? */
 
+  bool matched;
+  bool compatible = true;
+
   long viMask = VisualScreenMask;
   XVisualInfo viTemplate = {
     .screen = DefaultScreen(nxagentDisplay),
@@ -2258,8 +2250,6 @@ static int nxagentInitAndCheckVisuals(int flexibility)
   XVisualInfo *viList = XGetVisualInfo(nxagentDisplay, viMask, &viTemplate, &viNumList);
 
   XVisualInfo *newVisuals = malloc(sizeof(XVisualInfo) * nxagentNumVisuals);
-
-  bool compatible = true;
 
   for (int i = 0; i < nxagentNumVisuals; i++)
   {
@@ -2472,7 +2462,7 @@ Bool nxagentReconnectDisplay(void *p0)
   nxagentNumDefaultColormaps = nxagentNumVisuals;
 
   nxagentDefaultColormaps = (Colormap *) realloc(nxagentDefaultColormaps,
-                                nxagentNumDefaultColormaps * sizeof(Colormap));
+                                 nxagentNumDefaultColormaps * sizeof(Colormap));
 
   if (nxagentDefaultColormaps == NULL)
   {
