@@ -1088,7 +1088,6 @@ void nxagentResetSignalHandlers(void)
    */
 
   nxagentInitTimer();
-
 }
 
 void nxagentOpenDisplay(int argc, char *argv[])
@@ -1899,14 +1898,15 @@ static int nxagentCheckForDefaultDepthCompatibility(void)
   /*
    * Depending on the (reconnect) tolerance checks value, this
    * function checks stricter or looser:
-   *   - Strict means that the old and new default depth values must
-   *     match exactly.
-   *   - Safe or Risky means that the default depth values might
-   *     differ, but the new default depth value must be at least as
-   *     high as the former default depth value. This is recommended,
-   *     because it allows clients with a higher default depth value
-   *     to still connect, but not lose functionality.
-   *   - Bypass means that all of these checks are essentially
+   *   - "Strict" means that the old and new default depth values
+   *     must match exactly.
+   *   - "Safe" or "Risky" means that the default depth values might differ,
+   *     but the new default depth value must be at least as
+   *     high as the former default depth value. This is
+   *     recommended, because it allows clients with a
+   *     higher default depth value to still connect, but
+   *     not lose functionality.
+   *   - "Bypass" means that all of these checks are essentially
    *     deactivated. This is probably a very bad idea.
    */
 
@@ -1958,17 +1958,19 @@ static int nxagentCheckForDepthsCompatibility(void)
   /*
    * Depending on the (reconnect) tolerance checks value, this
    * function checks stricter or looser:
-   *   - Strict means that the number of old and new depths must match
-   *     exactly and every old depth value must be available in the
-   *     new depth array.
-   *   - Safe means that the number of depths might diverge, but all
-   *     former depth must also be included in the new depth
-   *     array. This is recommended, because it allows clients with
-   *     more depths to still connect, but not lose functionality.
-   *   - Risky means that the new depths array is allowed to be
-   *     smaller than the old depths array, but at least one depth
-   *     value must be included in both.  This is potentially unsafe.
-   *   - Bypass or higher means that all of these checks are
+   *   - "Strict" means that the number of old and new depths must
+   *     match exactly and every old depth value must be
+   *     available in the new depth array.
+   *   - "Safe" means that the number of depths might diverge,
+   *     but all former depth must also be included in the
+   *     new depth array. This is recommended, because
+   *     it allows clients with more depths to still
+   *     connect, but not lose functionality.
+   *   - "Risky" means that the new depths array is allowed to be
+   *     smaller than the old depths array, but at least
+   *     one depth value must be included in both.
+   *     This is potentially unsafe.
+   *   - "Bypass" or higher means that all of these checks are
    *     essentially deactivated. This is a very bad idea.
    */
 
@@ -2009,12 +2011,12 @@ static int nxagentCheckForDepthsCompatibility(void)
 
   /*
    * By now the tolerance is either:
-   *   - Strict and both depth numbers match
-   *   - Safe and:
+   *   - "Strict" and both depth numbers match
+   *   - "Safe" and:
    *     o the number of old and new depths matches exactly, or
    *     o the number of old depths is lower than the number
    *       of new depths
-   *   - Risky
+   *   - "Risky"
    */
 
   bool compatible = true;
@@ -2110,19 +2112,21 @@ static int nxagentCheckForPixmapFormatsCompatibility(void)
   /*
    * Depending on the (reconnect) tolerance checks value, this
    * function checks stricter or looser:
-   *   - Strict means that the number of internal and external pixmap
-   *     formats must match exactly and every internal pixmap format
-   *     must be available in the external pixmap format array.
-   *   - Safe means that the number of pixmap formats might diverge,
-   *     but all internal pixmap formats must also be included in the
-   *     external pixmap formats array. This is recommended, because
-   *     it allows clients with more pixmap formats to still connect,
+   *   - "Strict" means that the number of internal and external
+   *     pixmap formats must match exactly and every
+   *     internal pixmap format must be available in the
+   *     external pixmap format array.
+   *   - "Safe" means that the number of pixmap formats might
+   *     diverge, but all internal pixmap formats must
+   *     also be included in the external pixmap formats
+   *     array. This is recommended, because it allows
+   *     clients with more pixmap formats to still connect,
    *     but not lose functionality.
-   *   - Risky means that the internal pixmap formats array is allowed
-   *     to be smaller than the external pixmap formats array, but at
-   *     least one pixmap format must be included in both. This is
-   *     potentially unsafe.
-   *   - Bypass or higher means that all of these checks are
+   *   - "Risky" means that the internal pixmap formats array is
+   *     allowed to be smaller than the external pixmap
+   *     formats array, but at least one pixmap format must
+   *     be included in both. This is potentially unsafe.
+   *   - "Bypass" or higher means that all of these checks are
    *     essentially deactivated. This is a very bad idea.
    */
 
@@ -2161,13 +2165,13 @@ static int nxagentCheckForPixmapFormatsCompatibility(void)
 
   /*
    * By now the tolerance is either:
-   *   - Strict
-   *   - Safe and:
+   *   - "Strict"
+   *   - "Safe" and:
    *     o the number of internal and external pixmap formats
    *       matches exactly, or
    *     o the number of external pixmap formats is higher than
    *       the number of internal pixmap formats,
-   *   - Risky
+   *   - "Risky"
    */
 
   bool compatible = true;
@@ -2592,7 +2596,7 @@ Bool nxagentReconnectDisplay(void *p0)
   useXpmIcon = nxagentMakeIcon(nxagentDisplay, &nxagentIconPixmap, &nxagentIconShape);
 
   /*
-   * All went fine. We can continue handling our clients.
+   * Everything went fine. We can continue handling our clients.
    */
 
   reconnectDisplayState = EVERYTHING_DONE;
