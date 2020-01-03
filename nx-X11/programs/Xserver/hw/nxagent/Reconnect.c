@@ -599,29 +599,34 @@ Bool nxagentReconnectSession(void)
     nxagentOldKeyboard = NULL;
   }
 
-  if (nxagentOption(ResetKeyboardAtResume) == 1 &&
-         (nxagentKeyboard  == NULL || nxagentOldKeyboard == NULL ||
-             strcmp(nxagentKeyboard, nxagentOldKeyboard) != 0 ||
-                 strcmp(nxagentKeyboard, "query") == 0 ||
-                     strcmp(nxagentKeyboard, "clone") == 0))
+  /* Reset the keyboard only if we detect any changes. */
+  if (nxagentOption(ResetKeyboardAtResume) == 1)
   {
-    if (nxagentResetKeyboard() == 0)
+    if (nxagentKeyboard == NULL || nxagentOldKeyboard == NULL ||
+            strcmp(nxagentKeyboard, nxagentOldKeyboard) != 0 ||
+                strcmp(nxagentKeyboard, "query") == 0 ||
+                    strcmp(nxagentKeyboard, "clone") == 0)
     {
-      #ifdef WARNING
-      if (nxagentVerbose == 1)
+      if (nxagentResetKeyboard() == 0)
       {
-        fprintf(stderr, "nxagentReconnectSession: Failed to reset keyboard device.\n");
+        #ifdef WARNING
+        if (nxagentVerbose == 1)
+        {
+          fprintf(stderr, "%s: Failed to reset keyboard device.\n", __func__);
+        }
+        #endif
+
+        failedStep = WINDOW_STEP;
+
+        goto nxagentReconnectError;
       }
-      #endif
-
-      failedStep = WINDOW_STEP;
-
-      goto nxagentReconnectError;
     }
-  }
-  else
-  {
-    nxagentKeycodeConversionSetup();
+    else
+    {
+      #ifdef DEBUG
+      fprintf(stderr, "%s: keyboard unchanged - skipping keyboard reset.\n", __func__);
+      #endif
+    }
   }
 
   nxagentXkbState.Initialized = 0;
