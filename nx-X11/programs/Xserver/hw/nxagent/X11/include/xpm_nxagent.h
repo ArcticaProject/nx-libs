@@ -238,21 +238,13 @@ typedef struct {
 
 _XFUNCPROTOBEGIN
 
-/* Keep for hw/nxagent/Holder.c */
+/* Keep for hw/nxagent/Display.c */
 FUNC(XpmCreatePixmapFromData, int, (Display *display,
 				    Drawable d,
 				    char **data,
 				    Pixmap *pixmap_return,
 				    Pixmap *shapemask_return,
 				    XpmAttributes *attributes));
-/* Keep for hw/nxagent/Display.c */
-FUNC(XpmReadFileToPixmap, int, (Display *display,
-                                Drawable d,
-                                const char *filename,
-                                Pixmap *pixmap_return,
-                                Pixmap *shapemask_return,
-                                XpmAttributes *attributes));
-
 _XFUNCPROTOEND
 
 #endif /* XPM_NUMBERS */
