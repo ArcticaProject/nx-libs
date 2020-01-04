@@ -1093,7 +1093,7 @@ FIXME: Should use an unpack resource here.
 
   #ifdef TEST
   fprintf(stderr, "nxagentPutSubImage: Display image order is [%d] bitmap order is [%d].\n",
-              ImageByteOrder(nxagentDisplay), nxagentBitmapBitOrder(nxagentDisplay));
+              ImageByteOrder(nxagentDisplay), BitmapBitOrder(nxagentDisplay));
   #endif
 
   /*
