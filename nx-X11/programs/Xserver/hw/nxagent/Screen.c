@@ -454,8 +454,6 @@ Window nxagentCreateIconWindow(void)
    */
 
   XSizeHints* sizeHints = XAllocSizeHints();
-  XWMHints* wmHints = XAllocWMHints();;
-
   if (sizeHints)
   {
     sizeHints->flags = PMinSize | PMaxSize;
@@ -463,27 +461,23 @@ Window nxagentCreateIconWindow(void)
     sizeHints->min_height = sizeHints->max_height = 1;
   }
 
+  XWMHints* wmHints = XAllocWMHints();;
   if (wmHints)
   {
-    wmHints->flags = IconPixmapHint | IconMaskHint;
+    wmHints->flags = StateHint | IconPixmapHint;
     wmHints->initial_state = IconicState;
     wmHints->icon_pixmap = nxagentIconPixmap;
 
     if (useXpmIcon)
     {
+      wmHints->flags |= IconMaskHint;
       wmHints->icon_mask = nxagentIconShape;
-      wmHints->flags = IconPixmapHint | IconMaskHint;
-    }
-    else
-    {
-      wmHints->flags = StateHint | IconPixmapHint;
     }
   }
 
-  char *window_name = nxagentWindowName;
   Xutf8SetWMProperties(nxagentDisplay, w,
-                      window_name, window_name,
-                          NULL , 0 , sizeHints, wmHints, NULL);
+                           nxagentWindowName, nxagentWindowName,
+                               NULL , 0 , sizeHints, wmHints, NULL);
 
   SAFE_XFree(sizeHints);
   SAFE_XFree(wmHints);
@@ -1901,10 +1895,8 @@ N/A
       XSelectInput(nxagentDisplay, nxagentFullscreenWindow, mask);
     }
 
-    XSizeHints* sizeHints;
-    XWMHints* wmHints;
-
-    if ((sizeHints = XAllocSizeHints()))
+    XSizeHints* sizeHints = XAllocSizeHints();
+    if (sizeHints)
     {
       sizeHints->flags = PPosition | PMinSize | PMaxSize;
       sizeHints->x = nxagentOption(X) + POSITION_OFFSET;
@@ -1932,18 +1924,16 @@ N/A
         sizeHints->flags |= USSize;
     }
 
-    if ((wmHints = XAllocWMHints()))
+    XWMHints* wmHints = XAllocWMHints();
+    if (wmHints)
     {
+      wmHints->flags = IconPixmapHint;
       wmHints->icon_pixmap = nxagentIconPixmap;
 
       if (useXpmIcon)
       {
+        wmHints->flags |= IconMaskHint;
         wmHints->icon_mask = nxagentIconShape;
-        wmHints->flags = IconPixmapHint | IconMaskHint;
-      }
-      else
-      {
-        wmHints->flags = IconPixmapHint;
       }
     }
 
