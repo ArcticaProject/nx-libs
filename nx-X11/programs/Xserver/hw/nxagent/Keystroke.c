@@ -432,7 +432,7 @@ void nxagentDumpKeystrokes(void)
 {
   int maxlen = 0;
   for (int i = 0; nxagentSpecialKeystrokeNames[i]; i++)
-    maxlen = min(maxlen, strlen(nxagentSpecialKeystrokeNames[i]));
+    maxlen = max(maxlen, strlen(nxagentSpecialKeystrokeNames[i]));
 
   fprintf(stderr, "Currently known keystrokes:\n");
 
