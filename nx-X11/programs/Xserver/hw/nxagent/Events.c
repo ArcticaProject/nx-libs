@@ -2197,7 +2197,7 @@ FIXME: Don't enqueue the KeyRelease event if the key was not already
   {
     if (nxagentOption(AllScreens) == 0 && nxagentOption(Fullscreen) == 1)
     {
-      nxagentSwitchFullscreen(pScreen, 0);
+      nxagentSwitchFullscreen(pScreen, False);
     }
     else
     {
