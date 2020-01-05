@@ -30,9 +30,9 @@
 #include "windowstr.h"
 #include "scrnintstr.h"
 
+#include "Agent.h"
 #include "Windows.h"
 #include "Atoms.h"
-#include "Agent.h"
 #include "Args.h"
 #include "Trap.h"
 #include "Rootless.h"
@@ -72,7 +72,7 @@ static int agentClipboardStatus;
 static int clientAccum;
 #endif
 
-Atom serverCutProperty;
+XlibAtom serverCutProperty;
 Atom clientCutProperty;
 static Window serverWindow;
 
@@ -82,7 +82,7 @@ const int nxagentMaxSelections = 2;
 
 typedef struct _SelectionOwner
 {
-  Atom selection;       /* _external_ Atom */
+  XlibAtom selection;   /* _external_ Atom */
   ClientPtr client;     /* internal client */
   Window window;        /* internal window id */
   WindowPtr windowPtr;  /* internal window struct */
@@ -96,7 +96,7 @@ typedef struct _SelectionOwner
  * external atom of the selection
  */
 static SelectionOwner *lastSelectionOwner;
-static Atom nxagentLastRequestedSelection;
+static XlibAtom nxagentLastRequestedSelection;
 
 /*
  * Needed to handle the notify selection event to
@@ -125,16 +125,16 @@ static unsigned long lastClientPropertySize;
 
 static ClientSelectionStage lastClientStage;
 
-static Window lastServerRequestor;
-static Atom   lastServerProperty;
-static Atom   lastServerTarget;
-static Time   lastServerTime;
+static Window        lastServerRequestor;
+static XlibAtom      lastServerProperty;
+static XlibAtom      lastServerTarget;
+static Time          lastServerTime;
 
-static Atom serverTARGETS;
-static Atom serverTIMESTAMP;
-static Atom serverTEXT;
-static Atom serverUTF8_STRING;
-static Atom serverClientCutProperty;
+static XlibAtom serverTARGETS;
+static XlibAtom serverTIMESTAMP;
+static XlibAtom serverTEXT;
+static XlibAtom serverUTF8_STRING;
+static XlibAtom serverClientCutProperty;
 static Atom clientTARGETS;
 static Atom clientTEXT;
 static Atom clientCOMPOUND_TEXT;
@@ -209,7 +209,7 @@ XFixesAgentInfoRec nxagentXFixesInfo = { -1, -1, -1, 0 };
 
 extern Display *nxagentDisplay;
 
-Bool nxagentValidServerTargets(Atom target);
+Bool nxagentValidServerTargets(XlibAtom target);
 static void endTransfer(Bool success);
 #define SELECTION_SUCCESS True
 #define SELECTION_FAULT False
@@ -448,7 +448,7 @@ int SendSelectionNotifyEventToClient(ClientPtr client,
  * server, like .e.g XA_STRING or UTF8_STRING. Other, non content type
  * targets like "TARGETS" or "TIMESTAMP" will return false.
  */
-Bool nxagentValidServerTargets(Atom target)
+Bool nxagentValidServerTargets(XlibAtom target)
 {
   if (target == XA_STRING)
   {
@@ -553,7 +553,7 @@ void nxagentClearClipboard(ClientPtr pClient, WindowPtr pWindow)
   nxagentPrintClipboardStat("after nxagentClearClipboard");
 }
 
-int nxagentFindLastSelectionOwnerIndex(Atom sel)
+int nxagentFindLastSelectionOwnerIndex(XlibAtom sel)
 {
   int i = 0;
   while ((i < nxagentMaxSelections) &&
@@ -1992,7 +1992,6 @@ int nxagentSendNotify(xEvent *event)
 WindowPtr nxagentGetClipboardWindow(Atom property)
 {
   int i = nxagentFindLastSelectionOwnerIndex(nxagentLastRequestedSelection);
-
   if ((i < nxagentMaxSelections) && (property == clientCutProperty) &&
           (lastSelectionOwner[i].windowPtr != NULL))
   {

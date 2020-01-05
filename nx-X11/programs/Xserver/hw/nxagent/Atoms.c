@@ -325,7 +325,7 @@ int nxagentQueryAtoms(ScreenPtr pScreen)
 
 typedef struct {
     Atom local;
-    Atom remote;
+    XlibAtom remote;
     const char *string;
     int  length;
 } AtomMap;
@@ -335,8 +335,8 @@ static unsigned int privAtomMapSize = 0;
 static unsigned int privLastAtom = 0;
 
 static void nxagentExpandCache(void);
-static void nxagentWriteAtom(Atom, Atom, const char*, Bool);
-static AtomMap* nxagentFindAtomByRemoteValue(Atom);
+static void nxagentWriteAtom(Atom, XlibAtom, const char*, Bool);
+static AtomMap* nxagentFindAtomByRemoteValue(XlibAtom);
 static AtomMap* nxagentFindAtomByLocalValue(Atom);
 static AtomMap* nxagentFindAtomByName(char*, unsigned);
 
@@ -357,7 +357,7 @@ static void nxagentExpandCache(void)
  * consequent allocation, then cache the atom-couple.
  */
 
-static void nxagentWriteAtom(Atom local, Atom remote, const char *string, Bool duplicate)
+static void nxagentWriteAtom(Atom local, XlibAtom remote, const char *string, Bool duplicate)
 {
   const char *s;
 
@@ -532,7 +532,7 @@ static AtomMap* nxagentFindAtomByLocalValue(Atom local)
   return NULL;
 }
 
-static AtomMap* nxagentFindAtomByRemoteValue(Atom remote)
+static AtomMap* nxagentFindAtomByRemoteValue(XlibAtom remote)
 {
   if (remote == None || remote == BAD_RESOURCE)
   {
@@ -574,7 +574,7 @@ static AtomMap* nxagentFindAtomByName(char *string, unsigned int length)
  *        I think this and the 2 .*Find.* are the only functions to look for performances.
  */
 
-Atom nxagentMakeAtom(char *string, unsigned int length, Bool Makeit)
+XlibAtom nxagentMakeAtom(char *string, unsigned int length, Bool Makeit)
 {
   AtomMap *current;
 
@@ -622,7 +622,7 @@ Atom nxagentMakeAtom(char *string, unsigned int length, Bool Makeit)
    */
 
   {
-    Atom remote = XInternAtom(nxagentDisplay, string, !Makeit);
+    XlibAtom remote = XInternAtom(nxagentDisplay, string, !Makeit);
 
     if (remote == None)
     {
@@ -639,7 +639,7 @@ Atom nxagentMakeAtom(char *string, unsigned int length, Bool Makeit)
   }
 }
 
-Atom nxagentLocalToRemoteAtom(Atom local)
+XlibAtom nxagentLocalToRemoteAtom(Atom local)
 {
   #ifdef TEST
   fprintf(stderr, "%s: entering\n", __func__);
@@ -673,7 +673,7 @@ Atom nxagentLocalToRemoteAtom(Atom local)
 
   const char *string = NameForAtom(local);
 
-  Atom remote = XInternAtom(nxagentDisplay, string, False);
+  XlibAtom remote = XInternAtom(nxagentDisplay, string, False);
 
   if (remote == None)
   {
@@ -693,7 +693,7 @@ Atom nxagentLocalToRemoteAtom(Atom local)
   return remote;
 }
 
-Atom nxagentRemoteToLocalAtom(Atom remote)
+Atom nxagentRemoteToLocalAtom(XlibAtom remote)
 {
   if (remote == None || remote == BAD_RESOURCE)
   {

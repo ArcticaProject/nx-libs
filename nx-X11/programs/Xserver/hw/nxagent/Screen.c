@@ -149,7 +149,7 @@ Window nxagentInputWindows[MAXSCREENS];
 Window nxagentScreenSaverWindows[MAXSCREENS];
 
 #ifdef NXAGENT_ONSTART
-Atom nxagentReadyAtom;
+XlibAtom nxagentReadyAtom;
 #endif
 
 ScreenPtr nxagentDefaultScreen = NULL;

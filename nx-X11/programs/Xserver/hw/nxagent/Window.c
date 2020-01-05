@@ -422,7 +422,7 @@ Bool nxagentCreateWindow(WindowPtr pWin)
 
   if (nxagentOption(Rootless) && nxagentWindowTopLevel(pWin))
   {
-    Atom prop = nxagentMakeAtom("WM_PROTOCOLS", strlen("WM_PROTOCOLS"), True);
+    XlibAtom prop = nxagentMakeAtom("WM_PROTOCOLS", strlen("WM_PROTOCOLS"), True);
     XlibAtom atom = nxagentMakeAtom("WM_DELETE_WINDOW", strlen("WM_DELETE_WINDOW"), True);
 
     XSetWMProtocols(nxagentDisplay, nxagentWindowPriv(pWin)->window, &atom, 1);
@@ -3054,8 +3054,7 @@ static void nxagentReconnectWindow(void * param0, XID param1, void * data_buffer
   {
     if (nxagentWindowTopLevel(pWin))
     {
-      Atom prop = nxagentMakeAtom("WM_PROTOCOLS", strlen("WM_PROTOCOLS"), True);
-
+      XlibAtom prop = nxagentMakeAtom("WM_PROTOCOLS", strlen("WM_PROTOCOLS"), True);
       XlibAtom atom = nxagentMakeAtom("WM_DELETE_WINDOW", strlen("WM_DELETE_WINDOW"), True);
 
       XSetWMProtocols(nxagentDisplay, nxagentWindow(pWin), &atom, 1);
