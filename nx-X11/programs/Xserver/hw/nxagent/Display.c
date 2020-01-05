@@ -1779,8 +1779,7 @@ Bool nxagentMakeIcon(Display *display, Pixmap *nxIcon, Pixmap *nxMask)
   else
   {
     #ifdef TEST
-    fprintf(stderr, "%s: Xpm operation failed with error '%s'.\n", __func__,
-	        XpmGetErrorString(status));
+    fprintf(stderr, "%s: Xpm operation failed.\n", __func__);
     #endif
 
     return False;
