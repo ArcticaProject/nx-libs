@@ -126,6 +126,11 @@ static int SProcRenderCreateConicalGradient (ClientPtr pClient);
 
 static int SProcRenderDispatch (ClientPtr pClient);
 
+#ifdef NXAGENT_SERVER
+static int xorg_ProcRenderDispatch (ClientPtr pClient);
+static int xorg_SProcRenderDispatch (ClientPtr pClient);
+#endif
+
 int	(*ProcRenderVector[RenderNumberRequests])(ClientPtr) = {
     ProcRenderQueryVersion,
     ProcRenderQueryPictFormats,
@@ -1347,9 +1352,8 @@ ProcRenderCompositeGlyphs (ClientPtr client)
 	listsBase = (GlyphListPtr) malloc (nlist * sizeof (GlyphListRec));
 	if (!listsBase)
 	{
-	    free(glyphsBase);
-	    free(listsBase);
-
+	    if (glyphsBase != glyphsLocal)
+	        free(glyphsBase);
 	    return BadAlloc;
 	}
     }
@@ -1417,8 +1421,13 @@ ProcRenderCompositeGlyphs (ClientPtr client)
 	}
     }
     if (buffer > end)
+    {
+	if (glyphsBase != glyphsLocal)
+	    free(glyphsBase);
+	if (listsBase != listsLocal)
+	    free(listsBase);
 	return BadLength;
-
+    }
     CompositeGlyphs (stuff->op,
 		     pSrc,
 		     pDst,
@@ -2018,10 +2027,15 @@ static int ProcRenderCreateConicalGradient (ClientPtr client)
 	return BadAlloc;
     return Success;
 }
+#endif /* NXAGENT_SERVER */
 
 
 static int
+#ifdef NXAGENT_SERVER
+xorg_ProcRenderDispatch (ClientPtr client)
+#else
 ProcRenderDispatch (ClientPtr client)
+#endif
 {
     REQUEST(xReq);
     
@@ -2030,7 +2044,6 @@ ProcRenderDispatch (ClientPtr client)
     else
 	return BadRequest;
 }
-#endif /* NXAGENT_SERVER */
 
 static int
 SProcRenderQueryVersion (ClientPtr client)
@@ -2602,9 +2615,12 @@ SProcRenderCreateConicalGradient (ClientPtr client)
     return (*ProcRenderVector[stuff->renderReqType]) (client);
 }
 
-#ifndef NXAGENT_SERVER
+#ifdef NXAGENT_SERVER
 static int
+xorg_SProcRenderDispatch (ClientPtr client)
+#else
 SProcRenderDispatch (ClientPtr client)
+#endif
 {
     REQUEST(xReq);
     
@@ -2613,7 +2629,6 @@ SProcRenderDispatch (ClientPtr client)
     else
 	return BadRequest;
 }
-#endif /* NXAGENT_SERVER */
 
 #ifdef PANORAMIX
 #include "panoramiX.h"
