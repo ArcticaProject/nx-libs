@@ -19,6 +19,13 @@ AM_INIT_AUTOMAKE([foreign no-dist-gzip dist-bzip2])
 # Initialize libtool
 AC_PROG_LIBTOOL
 
+# enable this to add the variable to the Makefiles
+#AC_ARG_VAR(NX_VERSION_CUSTOM, [custom version string])
+
+if test "x$NX_VERSION_CUSTOM" != x; then
+    AC_DEFINE_UNQUOTED([NX_VERSION_CUSTOM], ["${NX_VERSION_CUSTOM}"], [user provided custom version string])
+fi
+
 COMPSHAD_VERSION=nxcompshad_version
 AC_SUBST([COMPSHAD_VERSION])
 
