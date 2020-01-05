@@ -40,6 +40,7 @@
 #include "Args.h"
 #include "Display.h"
 #include "Dialog.h"
+#include "Utils.h"
 
 #include <nx/NX.h>
 #include "compext/Compext.h"
@@ -182,7 +183,6 @@ void nxagentResetDialog(int pid)
 
 void nxagentLaunchDialog(DialogType dialogType)
 {
-  char dialogDisplay[256];
   sigset_t set, oldSet;
   int *pid;
   char *type;
@@ -302,13 +302,23 @@ void nxagentLaunchDialog(DialogType dialogType)
   fprintf(stderr, "nxagentLaunchDialog: Launching dialog type [%d] message [%s].\n", type, message);
   #endif
 
+  char *dialogDisplay = NULL;
+  int len = 0;
   if (dialogType == DIALOG_FAILED_RECONNECTION)
   {
-    snprintf(dialogDisplay, sizeof(dialogDisplay), "%s", nxagentDisplayName);
+    len = asprintf(&dialogDisplay, "%s", nxagentDisplayName);
   }
   else
   {
-    snprintf(dialogDisplay, sizeof(dialogDisplay), ":%s", display);
+    len = asprintf(&dialogDisplay, ":%s", display);
+  }
+
+  if (len == -1)
+  {
+    #ifdef DEBUG
+    fprintf(stderr, "%s: could not allocate display string.\n", __func__);
+    #endif
+    return;
   }
 
   /*
@@ -329,7 +339,7 @@ void nxagentLaunchDialog(DialogType dialogType)
               DECODE_DIALOG_TYPE(dialogType), *pid, dialogDisplay);
   #endif
 
-  dialogDisplay[0] = '\0';
+  SAFE_free(dialogDisplay);
 
   /*
    * Restore the previous set of blocked signal.

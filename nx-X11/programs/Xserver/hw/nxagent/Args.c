@@ -1296,7 +1296,17 @@ static void nxagentParseSingleOption(char *name, char *value)
   }
   else if (strcmp(name, "clients") == 0)
   {
-    snprintf(nxagentClientsLogName, NXAGENTCLIENTSLOGNAMELENGTH, "%s", value);
+    char *new = strdup(value);
+    if (new)
+    {
+      SAFE_free(nxagentClientsLogName);
+      nxagentClientsLogName = new;
+    }
+    else
+    {
+      fprintf(stderr, "Warning: Ignoring option [%s] because of memory problems\n",
+                      validateString(name));
+    }
     return;
   }
   else if (strcmp(name, "client") == 0)

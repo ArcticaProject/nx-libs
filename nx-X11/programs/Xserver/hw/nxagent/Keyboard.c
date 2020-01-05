@@ -1449,12 +1449,7 @@ static char* getKeyboardFilePath(void)
   {
     if ((asprintf(&keyboard_file_path, "%s/keyboard", sessionpath) == -1))
     {
-      SAFE_free(sessionpath);
       FatalError("malloc for keyboard file path failed.");
-    }
-    else
-    {
-      SAFE_free(sessionpath);
     }
   }
   else
