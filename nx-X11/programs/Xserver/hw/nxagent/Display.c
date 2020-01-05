@@ -1797,89 +1797,9 @@ FIXME: Is this needed?
   nxagentDisplay = NULL;
 }
 
-static FILE *nxagentLookForIconFile(char *iconName, const char *permission,
-                                        char *return_path, int return_path_size)
-{
-  char *path;
-  char singlePath[PATH_MAX];
-  FILE *fptr = NULL;
-
-  #ifdef WIN32
-  const char separator = ';';
-  const char *slash = "\\";
-  #else
-  const char separator = ':';
-  const char *slash = "/";
-  #endif
-
-  if ((path = getenv("PATH")) == NULL)
-  {
-    return NULL;
-  }
-
-  for (char *end = path; end != NULL && fptr == NULL; )
-  {
-    end = strchr(path, separator);
-
-    /* separator found */
-    if (end != NULL)
-    {
-      if ((end - path) > sizeof(singlePath) - 1)
-      {
-        fprintf(stderr, "Warning: PATH component too long - ignoring it.\n");
-        path = end + 1;
-        continue;
-      }
-
-      snprintf(singlePath, (unsigned long)(end - path + 1), "%s", path);
-      path = end + 1;
-    }
-    else
-    {
-      if (strlen(path) > sizeof(singlePath) - 1)
-      {
-        fprintf(stderr, "Warning: PATH component too long - ignoring it.\n");
-        return NULL;
-      }
-
-      snprintf(singlePath, sizeof(singlePath), "%s", path);
-    }
-
-    /* cut off trailing slashes, if any */
-    while (singlePath[strlen(singlePath) - 1] == slash[0])
-    {
-      singlePath[strlen(singlePath) - 1] = '\0';
-    }
-
-    /* append slash and icon name */
-    if (strlen(singlePath) + strlen(iconName) + 1 < sizeof(singlePath))
-    {
-      snprintf(singlePath + strlen(singlePath), sizeof(singlePath), "%s%s", slash, iconName);
-
-      if ((fptr = fopen(singlePath, permission)) != NULL)
-      {
-        snprintf(return_path, return_path_size, "%s", singlePath);
-      }
-    }
-    else
-    {
-      fprintf(stderr, "Warning: Icon path too long.\n");
-    }
-  }
-
-  return fptr;
-}
 
 Bool nxagentMakeIcon(Display *display, Pixmap *nxIcon, Pixmap *nxMask)
 {
-  char default_path [PATH_MAX];
-  char icon_path [PATH_MAX];
-  FILE *icon_fp;
-  int status;
-  Bool success = False;
-  XlibPixmap IconPixmap;
-  XlibPixmap IconShape;
-  char* agent_icon_name;
   char** agentIconData;
 
   /*
@@ -1887,84 +1807,36 @@ Bool nxagentMakeIcon(Display *display, Pixmap *nxIcon, Pixmap *nxMask)
    */
   if(nxagentX2go)
   {
-    agent_icon_name = X2GOAGENT_ICON_NAME;
     agentIconData = x2goagentIconData;
   }
   else
   {
-    agent_icon_name = NXAGENT_ICON_NAME;
     agentIconData = nxagentIconData;
   }
 
-  /* FIXME: use a compile time define here, /usr/NX is a nomachine path */
-  snprintf(default_path, sizeof(default_path), "/usr/NX/share/images/%s", agent_icon_name);
-
-  if ((icon_fp = fopen(default_path, "r")) == NULL)
+  XlibPixmap IconPixmap;
+  XlibPixmap IconShape;
+  if (XpmSuccess == XpmCreatePixmapFromData(display,
+                                            DefaultRootWindow(display),
+                                            agentIconData,
+                                            &IconPixmap,
+                                            &IconShape,
+                                            NULL))
   {
-    icon_fp = nxagentLookForIconFile(agent_icon_name, "r", icon_path, sizeof(icon_path));
+    *nxIcon = IconPixmap;
+    *nxMask = IconShape;
 
-    if (icon_fp != NULL)
-    {
-      fclose (icon_fp);
-      success = True;
-    }
+    return True;
   }
   else
   {
-    fclose (icon_fp);
-    success = True;
-    snprintf(icon_path, sizeof(icon_path), "%s", default_path);
+    #ifdef TEST
+    fprintf(stderr, "%s: Xpm operation failed with error '%s'.\n", __func__,
+	        XpmGetErrorString(status));
+    #endif
+
+    return False;
   }
-
-  if (success)
-  {
-     status = XpmReadFileToPixmap(display,
-                                 DefaultRootWindow(display),
-                               icon_path,
-                               &IconPixmap,
-                               &IconShape,
-                               NULL);
-
-     if (status != XpmSuccess)
-     {
-        #ifdef TEST
-        fprintf(stderr, "nxagentMakeIcon: Xpm operation failed with error '%s'.\n",
-                    XpmGetErrorString(status));
-        #endif
-
-        success = False;
-     }
-  }
-
-  if (!success)
-  {
-     status = XpmCreatePixmapFromData(display,
-                                        DefaultRootWindow(display),
-                                        agentIconData,
-                                        &IconPixmap,
-                                        &IconShape,
-                                        NULL);
-
-     if (status != XpmSuccess)
-     {
-        #ifdef TEST
-        fprintf(stderr, "nxagentMakeIcon: Xpm operation failed with error '%s'.\n",
-                    XpmGetErrorString(status));
-        #endif
-
-        success = False;
-     }
-     else
-     {
-        success = True;
-     }
-  }
-
-
-  *nxIcon = IconPixmap;
-  *nxMask = IconShape;
-
-  return success;
 }
 
 Bool nxagentXServerGeometryChanged(void)
