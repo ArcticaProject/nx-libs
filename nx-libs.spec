@@ -611,7 +611,6 @@ rm -f %{buildroot}%{_datadir}/man/man1/nxdialog.1*
 %{_libdir}/nx/bin/nxagent
 %dir %{_libdir}/nx/X11
 %{_libdir}/nx/X11/libX11.so*
-%{_datadir}/pixmaps/nxagent.xpm
 %dir %{_datadir}/nx
 %{_datadir}/nx/VERSION.nxagent
 %{_datadir}/man/man1/nxagent.1*
