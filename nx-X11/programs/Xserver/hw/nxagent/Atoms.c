@@ -75,26 +75,61 @@ Atom nxagentAtoms[NXAGENT_NUMBER_OF_ATOMS];
 
 static char *nxagentAtomNames[NXAGENT_NUMBER_OF_ATOMS + 1] =
 {
-  "NX_IDENTITY",                 /* 0  */
-  "WM_PROTOCOLS",                /* 1  */
-  "WM_DELETE_WINDOW",            /* 2  */
-  "WM_NX_READY",                 /* 3  */
-  "MCOPGLOBALS",                 /* 4  */
-  "NX_CUT_BUFFER_SERVER",        /* 5  */
-      /* Unfortunately we cannot rename this to NX_SELTRANS_TO_AGENT
+  "NX_IDENTITY",                 /*  0 */
+      /* NX_IDENTITY was used in earlier nx versions to communicate
+         the version to NXwin. Got dropped between nxagent 1.5.0-45
+         and 1.5.0-112. */
+  "WM_PROTOCOLS",                /*  1 */
+      /* standard ICCCM Atom */
+  "WM_DELETE_WINDOW",            /*  2 */
+      /* standard ICCCM Atom */
+  "WM_NX_READY",                 /*  3 */
+      /* nxagent takes the ownership of the selection with this name
+         to signal the nxclient (or any other watching program)
+         it is ready. */
+  "MCOPGLOBALS",                 /*  4 */
+      /* used for artsd support. */
+  "NX_CUT_BUFFER_SERVER",        /*  5 */
+      /* this is the name of a property on nxagent's window on the
+         real X server. This property is used for passing clipboard
+         content from clients of the real X server to nxagent's clients
+
+         Unfortunately we cannot rename this to NX_SELTRANS_TO_AGENT
 	 because nomachine's nxclient is depending on this
 	 selection */
-  "TARGETS",                     /* 6  */
-  "TEXT",                        /* 7  */
-  "NX_AGENT_SIGNATURE",          /* 8  */
-  "NXDARWIN",                    /* 9  */
+
+  "TARGETS",                     /*  6 */
+      /* used to request a list of supported data formats from the
+        selection owner. Standard ICCCM Atom */
+  "TEXT",                        /*  7 */
+      /* one of the supported data formats for selections. Standard
+         ICCCM Atom */
+  "NX_AGENT_SIGNATURE",          /*  8 */
+      /* this is used to set a property on nxagent's window if nxagent
+         is started with the fullscreen option set. Unsure, what this
+         is used for. */
+  "NXDARWIN",                    /*  9 */
+      /* this was an Atom in nxdarwin, nomachine's X server for MacOS. */
   "CLIPBOARD",                   /* 10 */
+      /* Atom for the clipboard selection. PRIMARY is fixed in X11 but
+         CLIPBOARD is not. Standard ICCCM Atom. */
   "TIMESTAMP",                   /* 11 */
+      /* used to request the time a selection has been owned. Standard
+         ICCCM Atom */
   "UTF8_STRING",                 /* 12 */
+      /* one of the supported data formats for selections. Standard
+         ICCCM Atom */
   "_NET_WM_STATE",               /* 13 */
+      /* standard ICCCM Atom */
   "_NET_WM_STATE_FULLSCREEN",    /* 14 */
+      /* standard ICCCM Atom */
   "NX_SELTRANS_FROM_AGENT",      /* 15 */
+      /* this is the name of a property on nxagent's window on the real
+         X server. This property is used for passing clipboard content
+         from nxagent's clients to clients on the real X server */
   "COMPOUND_TEXT",               /* 16 */
+      /* one of the supported data formats for selections. Standard
+         ICCCM Atom */
   NULL,
   NULL
 };

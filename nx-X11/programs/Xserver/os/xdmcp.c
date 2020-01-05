@@ -17,22 +17,13 @@
 #include <dix-config.h>
 #endif
 
-#ifdef WIN32
-#include <nx-X11/Xwinsock.h>
-#define XSERV_t
-#define TRANS_SERVER
-#define TRANS_REOPEN
-#include <nx-X11/Xtrans/Xtrans.h>
-#endif
 
 #include <nx-X11/Xos.h>
 
-#if !defined(WIN32)
 #include <sys/param.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <netdb.h>
-#endif
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -1506,9 +1497,6 @@ get_addr_by_name(
     struct hostent *hep;
 #ifdef XTHREADS_NEEDS_BYNAMEPARAMS
     _Xgethostbynameparams hparams;
-#endif
-#if defined(WIN32) && defined(TCPCONN)
-    _XSERVTransWSAStartup(); 
 #endif
     if (!(hep = _XGethostbyname(namestr, hparams)))
     {

@@ -726,8 +726,6 @@ void nxagentShadowBlockHandler(void * data, struct timeval **timeout, void * mas
   }
 #endif
 
-  #ifndef __CYGWIN32__
-
   if (nxagentReadEvents(nxagentDisplay) > 0 ||
           nxagentReadEvents(nxagentShadowDisplay) > 0)
   {
@@ -744,19 +742,6 @@ void nxagentShadowBlockHandler(void * data, struct timeval **timeout, void * mas
 
     nxagentShadowAdaptToRatio();
   }
-
-  #else
-
-  if (nxagentReadEvents(nxagentDisplay) > 0)
-  {
-    #ifdef TEST
-    fprintf(stderr, "nxagentShadowBlockHandler: Reading X events queued.\n");
-    #endif
-
-    nxagentDispatchEvents(NULL);
-  }
-
-  #endif
 
   changed = 0;
 
@@ -800,26 +785,6 @@ FIXME: Must queue multiple writes and handle the events by resembling
     *timeout = &zero;
   }
 
-  #ifdef __CYGWIN32__
-
-  if (nxagentOption(SleepTime) > 0) {
-#ifdef TEST
-    fprintf(stderr, "nxagentShadowBlockHandler: sleeping for %d milliseconds for slowdown.\n",
-                    nxagentOption(SleepTime));
-#endif
-    usleep(nxagentOption(SleepTime) * 1000);
-  }
-#ifdef TEST
-  else if (0 == nxagentOption(SleepTime)) {
-    fprintf(stderr, "nxagentShadowBlockHandler: not sleeping for slowdown.\n");
-  }
-#endif
-
-  (*timeout) -> tv_sec  = 0;
-  (*timeout) -> tv_usec = 50 * 1000;
-
-  #else
-
   if (changed == 0)
   {
     (*timeout) -> tv_sec  = 0;
@@ -830,8 +795,6 @@ FIXME: Must queue multiple writes and handle the events by resembling
     (*timeout) -> tv_sec  = 0;
     (*timeout) -> tv_usec = 0;
   }
-
-  #endif
 
   nxagentPrintGeometry();
 
@@ -857,7 +820,6 @@ void nxagentShadowWakeupHandler(void * data, int count, void * mask)
 
   if (!SmartScheduleSignalEnable)
   {
-
     #ifdef DEBUG
     fprintf(stderr, "nxagentShadowWakeupHandler: Resetting the dispatch state after wakeup.\n");
     #endif
@@ -866,7 +828,6 @@ void nxagentShadowWakeupHandler(void * data, int count, void * mask)
 
     nxagentDispatch.in  = nxagentBytesIn;
     nxagentDispatch.out = nxagentBytesOut;
-
   }
 
   /*

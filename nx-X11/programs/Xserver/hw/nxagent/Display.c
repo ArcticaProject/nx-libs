@@ -561,11 +561,6 @@ static void nxagentSigchldHandler(int signal)
 
 Display *nxagentInternalOpenDisplay(char *display)
 {
-  struct sigaction oldAction;
-  struct sigaction newAction;
-
-  int result;
-
   /*
    * Stop the smart schedule timer since it uses SIGALRM as we do.
    */
@@ -583,11 +578,16 @@ FIXME: Should print a warning if the user tries to let the agent
        explanation for the error to the user.
 */
 
-  newAction.sa_handler = nxagentRejectConnection;
+  struct sigaction newAction = {
+    .sa_handler = nxagentRejectConnection
+  };
 
   sigfillset(&newAction.sa_mask);
 
   newAction.sa_flags = 0;
+
+  int result;
+  struct sigaction oldAction;
 
   while (((result = sigaction(SIGALRM, &newAction,
              &oldAction)) == -1) && (errno == EINTR));
@@ -754,6 +754,20 @@ static void nxagentDisplayFlushHandler(Display *display, int length)
   }
 }
 
+/*
+ * From the changelog for nx-X11-3.0.0-4:
+ * "Added the _NXDisplayErrorPredicate function in XlibInt.c. It is
+ * actually a pointer to a function called whenever Xlib is going to
+ * perform a network operation. If the function returns true, the
+ * call will be aborted and Xlib will return the control to the ap-
+ * plication. It is up to the application to set the XlibDisplayIO-
+ * Error flag after the _NXDisplayErrorPredicate returns true. The
+ * function can be used to activate additional checks, besides the
+ * normal failures detected by Xlib on the display socket. For exam-
+ * ple, the application can set the funciton to verify if an inter-
+ * rupt was received or if any other event occurred mandating the
+ + end of the session."
+ */
 static int nxagentDisplayErrorPredicate(Display *display, int error)
 {
   #ifdef TEST
@@ -925,8 +939,6 @@ void nxagentInstallSignalHandlers(void)
 
   struct sigaction newAction;
 
-  int result;
-
   /*
    * By default nxcomp installs its signal handlers.  We need to
    * ensure that SIGUSR1 and SIGUSR2 are ignored if the NX transport
@@ -938,6 +950,8 @@ void nxagentInstallSignalHandlers(void)
   sigfillset(&newAction.sa_mask);
 
   newAction.sa_flags = 0;
+
+  int result;
 
   while (((result = sigaction(SIGUSR1, &newAction,
              NULL)) == -1) && (errno == EINTR));
@@ -1054,12 +1068,6 @@ void nxagentPostInstallSignalHandlers(void)
 
 void nxagentResetSignalHandlers(void)
 {
-  struct sigaction newAction;
-
-  int result;
-
-  memset(&newAction, 0, sizeof(newAction));
-
   /*
    * Reset the signal handlers to a well known state.
    */
@@ -1074,10 +1082,13 @@ void nxagentResetSignalHandlers(void)
 
   nxagentStopTimer();
 
-  newAction.sa_handler = SIG_DFL;
+  struct sigaction newAction = {
+    .sa_handler = SIG_DFL
+  };
 
   sigfillset(&newAction.sa_mask);
 
+  int result;
   while (((result = sigaction(SIGALRM, &newAction,
              NULL)) == -1) && (errno == EINTR));
 
@@ -1091,7 +1102,6 @@ void nxagentResetSignalHandlers(void)
    */
 
   nxagentInitTimer();
-
 }
 
 void nxagentOpenDisplay(int argc, char *argv[])
@@ -1100,12 +1110,9 @@ void nxagentOpenDisplay(int argc, char *argv[])
     return;
 
   #ifdef NXAGENT_TIMESTAMP
-
   startTime = GetTimeInMillis();
-
   fprintf(stderr, "Display: Opening the display on real X server with time [%d] ms.\n",
           GetTimeInMillis() - startTime);
-
   #endif
 
   /*
@@ -1175,10 +1182,8 @@ Reply   Total	Cached	Bits In			Bits Out		Bits/Reply	  Ratio
   #endif
 
   #ifdef NXAGENT_TIMESTAMP
-
   fprintf(stderr, "Display: Display on real X server opened with time [%d] ms.\n",
           GetTimeInMillis() - startTime);
-
   #endif
 
   nxagentUseNXTrans =
@@ -1397,10 +1402,8 @@ N/A
   #endif
 
   #ifdef NXAGENT_TIMESTAMP
-
   fprintf(stderr, "Display: Open of the display finished with time [%d] ms.\n",
           GetTimeInMillis() - startTime);
-
   #endif
 
   if (nxagentOption(Persistent))
@@ -1435,10 +1438,11 @@ void nxagentSetDefaultVisual(void)
   }
   else
   {
-    XVisualInfo vi = {0};
+    XVisualInfo vi = {
+      .visualid = XVisualIDFromVisual(DefaultVisual(nxagentDisplay,
+                                          DefaultScreen(nxagentDisplay)))
+    };
 
-    vi.visualid = XVisualIDFromVisual(DefaultVisual(nxagentDisplay,
-                                          DefaultScreen(nxagentDisplay)));
     nxagentDefaultVisualIndex = 0;
 
     for (int i = 0; i < nxagentNumVisuals; i++)
@@ -1453,14 +1457,13 @@ void nxagentSetDefaultVisual(void)
 
 void nxagentInitVisuals(void)
 {
+  long mask = VisualScreenMask;
   XVisualInfo vi = {
     .screen = DefaultScreen(nxagentDisplay),
-    .depth = DefaultDepth(nxagentDisplay, DefaultScreen(nxagentDisplay)),
+    .depth = DefaultDepth(nxagentDisplay, DefaultScreen(nxagentDisplay))
   };
-  long mask = VisualScreenMask;
   int viNumList;
   XVisualInfo *viList = XGetVisualInfo(nxagentDisplay, mask, &vi, &viNumList);
-
   nxagentVisuals = (XVisualInfo *) malloc(viNumList * sizeof(XVisualInfo));
   nxagentNumVisuals = 0;
 
@@ -1566,7 +1569,6 @@ XXX: Some X server doesn't list 1 among available depths...
         if (nxagentDepths[j] == i)
         {
           depth = i;
-
           break;
         }
       }
@@ -1744,7 +1746,6 @@ FIXME: Is this needed?
   nxagentDisplay = NULL;
 }
 
-
 Bool nxagentMakeIcon(Display *display, Pixmap *nxIcon, Pixmap *nxMask)
 {
   char** agentIconData;
@@ -1752,7 +1753,7 @@ Bool nxagentMakeIcon(Display *display, Pixmap *nxIcon, Pixmap *nxMask)
   /*
    * selecting x2go icon when running as X2Go agent
    */
-  if(nxagentX2go)
+  if (nxagentX2go)
   {
     agentIconData = x2goagentIconData;
   }
@@ -1778,8 +1779,7 @@ Bool nxagentMakeIcon(Display *display, Pixmap *nxIcon, Pixmap *nxMask)
   else
   {
     #ifdef TEST
-    fprintf(stderr, "%s: Xpm operation failed with error '%s'.\n", __func__,
-	        XpmGetErrorString(status));
+    fprintf(stderr, "%s: Xpm operation failed.\n", __func__);
     #endif
 
     return False;
@@ -1911,14 +1911,15 @@ static int nxagentCheckForDefaultDepthCompatibility(void)
   /*
    * Depending on the (reconnect) tolerance checks value, this
    * function checks stricter or looser:
-   *   - Strict means that the old and new default depth values must
-   *     match exactly.
-   *   - Safe or Risky means that the default depth values might
-   *     differ, but the new default depth value must be at least as
-   *     high as the former default depth value. This is recommended,
-   *     because it allows clients with a higher default depth value
-   *     to still connect, but not lose functionality.
-   *   - Bypass means that all of these checks are essentially
+   *   - "Strict" means that the old and new default depth values
+   *     must match exactly.
+   *   - "Safe" or "Risky" means that the default depth values might differ,
+   *     but the new default depth value must be at least as
+   *     high as the former default depth value. This is
+   *     recommended, because it allows clients with a
+   *     higher default depth value to still connect, but
+   *     not lose functionality.
+   *   - "Bypass" means that all of these checks are essentially
    *     deactivated. This is probably a very bad idea.
    */
 
@@ -1970,17 +1971,19 @@ static int nxagentCheckForDepthsCompatibility(void)
   /*
    * Depending on the (reconnect) tolerance checks value, this
    * function checks stricter or looser:
-   *   - Strict means that the number of old and new depths must match
-   *     exactly and every old depth value must be available in the
-   *     new depth array.
-   *   - Safe means that the number of depths might diverge, but all
-   *     former depth must also be included in the new depth
-   *     array. This is recommended, because it allows clients with
-   *     more depths to still connect, but not lose functionality.
-   *   - Risky means that the new depths array is allowed to be
-   *     smaller than the old depths array, but at least one depth
-   *     value must be included in both.  This is potentially unsafe.
-   *   - Bypass or higher means that all of these checks are
+   *   - "Strict" means that the number of old and new depths must
+   *     match exactly and every old depth value must be
+   *     available in the new depth array.
+   *   - "Safe" means that the number of depths might diverge,
+   *     but all former depth must also be included in the
+   *     new depth array. This is recommended, because
+   *     it allows clients with more depths to still
+   *     connect, but not lose functionality.
+   *   - "Risky" means that the new depths array is allowed to be
+   *     smaller than the old depths array, but at least
+   *     one depth value must be included in both.
+   *     This is potentially unsafe.
+   *   - "Bypass" or higher means that all of these checks are
    *     essentially deactivated. This is a very bad idea.
    */
 
@@ -2021,12 +2024,12 @@ static int nxagentCheckForDepthsCompatibility(void)
 
   /*
    * By now the tolerance is either:
-   *   - Strict and both depth numbers match
-   *   - Safe and:
+   *   - "Strict" and both depth numbers match
+   *   - "Safe" and:
    *     o the number of old and new depths matches exactly, or
    *     o the number of old depths is lower than the number
    *       of new depths
-   *   - Risky
+   *   - "Risky"
    */
 
   bool compatible = true;
@@ -2122,19 +2125,21 @@ static int nxagentCheckForPixmapFormatsCompatibility(void)
   /*
    * Depending on the (reconnect) tolerance checks value, this
    * function checks stricter or looser:
-   *   - Strict means that the number of internal and external pixmap
-   *     formats must match exactly and every internal pixmap format
-   *     must be available in the external pixmap format array.
-   *   - Safe means that the number of pixmap formats might diverge,
-   *     but all internal pixmap formats must also be included in the
-   *     external pixmap formats array. This is recommended, because
-   *     it allows clients with more pixmap formats to still connect,
+   *   - "Strict" means that the number of internal and external
+   *     pixmap formats must match exactly and every
+   *     internal pixmap format must be available in the
+   *     external pixmap format array.
+   *   - "Safe" means that the number of pixmap formats might
+   *     diverge, but all internal pixmap formats must
+   *     also be included in the external pixmap formats
+   *     array. This is recommended, because it allows
+   *     clients with more pixmap formats to still connect,
    *     but not lose functionality.
-   *   - Risky means that the internal pixmap formats array is allowed
-   *     to be smaller than the external pixmap formats array, but at
-   *     least one pixmap format must be included in both. This is
-   *     potentially unsafe.
-   *   - Bypass or higher means that all of these checks are
+   *   - "Risky" means that the internal pixmap formats array is
+   *     allowed to be smaller than the external pixmap
+   *     formats array, but at least one pixmap format must
+   *     be included in both. This is potentially unsafe.
+   *   - "Bypass" or higher means that all of these checks are
    *     essentially deactivated. This is a very bad idea.
    */
 
@@ -2173,13 +2178,13 @@ static int nxagentCheckForPixmapFormatsCompatibility(void)
 
   /*
    * By now the tolerance is either:
-   *   - Strict
-   *   - Safe and:
+   *   - "Strict"
+   *   - "Safe" and:
    *     o the number of internal and external pixmap formats
    *       matches exactly, or
    *     o the number of external pixmap formats is higher than
    *       the number of internal pixmap formats,
-   *   - Risky
+   *   - "Risky"
    */
 
   bool compatible = true;
@@ -2250,6 +2255,9 @@ static int nxagentInitAndCheckVisuals(int flexibility)
 {
   /* FIXME: does this also need work? */
 
+  bool matched;
+  bool compatible = true;
+
   long viMask = VisualScreenMask;
   XVisualInfo viTemplate = {
     .screen = DefaultScreen(nxagentDisplay),
@@ -2259,8 +2267,6 @@ static int nxagentInitAndCheckVisuals(int flexibility)
   XVisualInfo *viList = XGetVisualInfo(nxagentDisplay, viMask, &viTemplate, &viNumList);
 
   XVisualInfo *newVisuals = malloc(sizeof(XVisualInfo) * nxagentNumVisuals);
-
-  bool compatible = true;
 
   for (int i = 0; i < nxagentNumVisuals; i++)
   {
@@ -2473,7 +2479,7 @@ Bool nxagentReconnectDisplay(void *p0)
   nxagentNumDefaultColormaps = nxagentNumVisuals;
 
   nxagentDefaultColormaps = (Colormap *) realloc(nxagentDefaultColormaps,
-                                nxagentNumDefaultColormaps * sizeof(Colormap));
+                                 nxagentNumDefaultColormaps * sizeof(Colormap));
 
   if (nxagentDefaultColormaps == NULL)
   {
@@ -2603,7 +2609,7 @@ Bool nxagentReconnectDisplay(void *p0)
   useXpmIcon = nxagentMakeIcon(nxagentDisplay, &nxagentIconPixmap, &nxagentIconShape);
 
   /*
-   * All went fine. We can continue handling our clients.
+   * Everything went fine. We can continue handling our clients.
    */
 
   reconnectDisplayState = EVERYTHING_DONE;

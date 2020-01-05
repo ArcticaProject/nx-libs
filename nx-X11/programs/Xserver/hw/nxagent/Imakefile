@@ -59,7 +59,6 @@ SRCS =  \
 	Composite.c \
 	Pixels.c \
 	stubs.c \
-	xpstubs.c \
 	miinitext.c \
 	$(NULL)
 
@@ -116,7 +115,6 @@ OBJS =  \
 	Composite.o \
 	Pixels.o \
 	stubs.o \
-	xpstubs.o \
 	miinitext.o \
 	$(NULL)
 
@@ -264,7 +262,6 @@ DEFINES = \
 all:: $(OBJS)
 
 LinkSourceFile(stubs.c,$(SERVERSRC)/Xi)
-LinkSourceFile(xpstubs.c,$(SERVERSRC)/dix)
 LinkSourceFile(miinitext.c,$(SERVERSRC)/mi)
 SpecialCObjectRule(miinitext,$(ICONFIGFILES), $(_NOOP_))
 

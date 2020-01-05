@@ -58,9 +58,6 @@ SOFTWARE.
 #include <dix-config.h>
 #endif
 
-#ifdef WIN32
-#include <nx-X11/Xwinsock.h>
-#endif
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -75,14 +72,13 @@ SOFTWARE.
 #include "site.h"
 #include <errno.h>
 #include <sys/types.h>
-#ifndef WIN32
 #include <sys/socket.h>
 #include <sys/ioctl.h>
 #include <ctype.h>
 
-#if defined(TCPCONN) || defined(ISC) || defined(__SCO__)
+#if defined(TCPCONN)
 #include <netinet/in.h>
-#endif /* TCPCONN || ISC || __SCO__ */
+#endif /* TCPCONN */
 
 #ifdef HAS_GETPEERUCRED
 # include <ucred.h>
@@ -91,15 +87,11 @@ SOFTWARE.
 # endif
 #endif
 
-#if defined(SVR4) ||  (defined(SYSV) && defined(i386)) || defined(__GNU__)
+#if defined(SVR4) ||  (defined(SYSV) && defined(__i386__)) || defined(__GNU__)
 # include <sys/utsname.h>
 #endif
-#if defined(SYSV) &&  defined(i386)
+#if defined(SYSV) &&  defined(__i386__)
 # include <sys/stream.h>
-# ifdef ISC
-#  include <sys/stropts.h>
-#  include <sys/sioctl.h>
-# endif /* ISC */
 #endif
 #ifdef __GNU__
 #undef SIOCGIFCONF
@@ -145,7 +137,6 @@ SOFTWARE.
 /* #endif */
 #endif
 
-#endif /* WIN32 */
 
 #ifndef PATH_MAX
 #include <sys/param.h>
@@ -158,10 +149,6 @@ SOFTWARE.
 #endif
 #endif 
 
-#ifdef __SCO__
-/* The system defined value is wrong. MAXPATHLEN is set in sco5.cf. */
-#undef PATH_MAX
-#endif
 
 #define X_INCLUDE_NETDB_H
 #include <nx-X11/Xos_r.h>
@@ -282,7 +269,7 @@ AccessUsingXdmcp (void)
 }
 
 
-#if ((defined(SVR4) && !defined(SCO325) && !defined(sun) && !defined(NCR)) || defined(ISC)) && defined(SIOCGIFCONF) && !defined(USE_SIOCGLIFCONF)
+#if ((defined(SVR4) && !defined(SCO325) && !defined(sun) && !defined(NCR))) && defined(SIOCGIFCONF) && !defined(USE_SIOCGLIFCONF)
 
 /* Deal with different SIOCGIFCONF ioctl semantics on these OSs */
 
@@ -299,17 +286,6 @@ ifioctl (int fd, int cmd, char *arg)
     {
 	ioc.ic_len = ((struct ifconf *) arg)->ifc_len;
 	ioc.ic_dp = ((struct ifconf *) arg)->ifc_buf;
-#ifdef ISC
-	/* SIOCGIFCONF is somewhat brain damaged on ISC. The argument
-	 * buffer must contain the ifconf structure as header. Ifc_req
-	 * is also not a pointer but a one element array of ifreq
-	 * structures. On return this array is extended by enough
-	 * ifreq fields to hold all interfaces. The return buffer length
-	 * is placed in the buffer header.
-	 */
-        ((struct ifconf *) ioc.ic_dp)->ifc_len =
-                                         ioc.ic_len - sizeof(struct ifconf);
-#endif
     }
     else
     {
@@ -321,19 +297,11 @@ ifioctl (int fd, int cmd, char *arg)
 #ifdef SVR4
 	((struct ifconf *) arg)->ifc_len = ioc.ic_len;
 #endif
-#ifdef ISC
-    {
-	((struct ifconf *) arg)->ifc_len =
-				 ((struct ifconf *)ioc.ic_dp)->ifc_len;
-	((struct ifconf *) arg)->ifc_buf = 
-			(caddr_t)((struct ifconf *)ioc.ic_dp)->ifc_req;
-    }
-#endif
     return(ret);
 }
 #else /* Case sun, SCO325 NCR and others  */
 #define ifioctl ioctl
-#endif /* ((SVR4 && !sun !SCO325 !NCR) || ISC) && SIOCGIFCONF */
+#endif /* ((SVR4 && !sun !SCO325 !NCR)) && SIOCGIFCONF */
 
 /*
  * DefineSelf (fd):
@@ -501,13 +469,7 @@ DefineSelf (int fd)
     int		family;
     register HOST	*host;
 
-#ifndef WIN32
     struct utsname name;
-#else
-    struct {
-        char  nodename[512];	    
-    } name;
-#endif
 
     register struct hostent  *hp;
 
@@ -531,11 +493,7 @@ DefineSelf (int fd)
      * uname() lets me access to the whole string (it smashes release, you
      * see), whereas gethostname() kindly truncates it for me.
      */
-#ifndef WIN32
     uname(&name);
-#else
-    gethostname(name.nodename, sizeof(name.nodename));
-#endif
 
     hp = _XGethostbyname(name.nodename, hparams);
     if (hp != NULL)
@@ -723,11 +681,7 @@ DefineSelf (int fd)
     ifc.ifc_buf = bufptr;
 
 #define IFC_IOCTL_REQ SIOCGIFCONF
-#ifdef ISC
-#define IFC_IFC_REQ (struct ifreq *) ifc.ifc_buf
-#else
 #define IFC_IFC_REQ ifc.ifc_req
-#endif /* ISC */
 #define IFC_IFC_LEN ifc.ifc_len
 #define IFR_IFR_ADDR ifr->ifr_addr
 #define IFR_IFR_NAME ifr->ifr_name
@@ -1723,10 +1677,6 @@ ConvertAddr (
         return FamilyLocal;
 #if defined(TCPCONN)
     case AF_INET:
-#ifdef WIN32
-        if (16777343 == *(long*)&((struct sockaddr_in *) saddr)->sin_addr)
-            return FamilyLocal;
-#endif
         *len = sizeof (struct in_addr);
         *addr = (void *) &(((struct sockaddr_in *) saddr)->sin_addr);
         return FamilyInternet;

@@ -99,6 +99,7 @@ extern void nxagentBitOrderInvert(unsigned char *, int);
 extern void nxagentTwoByteSwap(unsigned char *, register int);
 extern void nxagentFourByteSwap(register unsigned char *, register int);
 
+extern ClientPtr nxagentRequestingClient;
 /*
  * Store the last visual used to unpack the images for the given
  * client.
@@ -140,9 +141,7 @@ static char *nxagentImageCopy(XImage *source, XImage *destination);
  * expensive than a copy.
  */
 
-#define nxagentNeedCache(image, method) \
-\
-  ((method) != PACK_BITMAP_16M_COLORS)
+#define nxagentNeedCache(image, method) ((method) != PACK_BITMAP_16M_COLORS)
 
 /*
  * With the bitmap encoding, if the image is 32 bits-per-pixel the 4th
@@ -276,6 +275,7 @@ int nxagentImagePad(int width, int format, int leftPad, int depth)
   else if (format == XYPixmap)
   {
     line = BitmapBytePad(width + leftPad);
+    /* FIXME: shouldn't we multiply by depth here like in nxagentImageLength? */
   }
   else if (format == ZPixmap)
   {
@@ -1074,7 +1074,7 @@ void nxagentPutSubImage(DrawablePtr pDrawable, GCPtr pGC, int depth,
 /*
 FIXME: Should use an unpack resource here.
 */
-  client = requestingClient;
+  client = nxagentRequestingClient;
 
   if (client == NULL)
   {
@@ -1093,7 +1093,7 @@ FIXME: Should use an unpack resource here.
 
   #ifdef TEST
   fprintf(stderr, "nxagentPutSubImage: Display image order is [%d] bitmap order is [%d].\n",
-              ImageByteOrder(nxagentDisplay), nxagentBitmapBitOrder(nxagentDisplay));
+              ImageByteOrder(nxagentDisplay), BitmapBitOrder(nxagentDisplay));
   #endif
 
   /*
@@ -1559,7 +1559,6 @@ int nxagentScaleImage(int x, int y, unsigned xRatio, unsigned yRatio,
                           XImage **pImage, int *scaledx, int *scaledy)
 {
   XImage *image = *pImage;
-
   if (image == NULL)
   {
     return 0;

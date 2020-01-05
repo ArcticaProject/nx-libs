@@ -743,7 +743,7 @@ typedef struct _ScreenInfo {
     int		arraySize;
     int		numScreens;
     ScreenPtr	screens[MAXSCREENS];
-    int		numVideoScreens;
+    int		unused;
 } ScreenInfo;
 
 extern ScreenInfo screenInfo;

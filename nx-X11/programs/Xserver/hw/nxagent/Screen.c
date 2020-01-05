@@ -454,8 +454,6 @@ Window nxagentCreateIconWindow(void)
    */
 
   XSizeHints* sizeHints = XAllocSizeHints();
-  XWMHints* wmHints = XAllocWMHints();;
-
   if (sizeHints)
   {
     sizeHints->flags = PMinSize | PMaxSize;
@@ -463,27 +461,23 @@ Window nxagentCreateIconWindow(void)
     sizeHints->min_height = sizeHints->max_height = 1;
   }
 
+  XWMHints* wmHints = XAllocWMHints();;
   if (wmHints)
   {
-    wmHints->flags = IconPixmapHint | IconMaskHint;
+    wmHints->flags = StateHint | IconPixmapHint;
     wmHints->initial_state = IconicState;
     wmHints->icon_pixmap = nxagentIconPixmap;
 
     if (useXpmIcon)
     {
+      wmHints->flags |= IconMaskHint;
       wmHints->icon_mask = nxagentIconShape;
-      wmHints->flags = IconPixmapHint | IconMaskHint;
-    }
-    else
-    {
-      wmHints->flags = StateHint | IconPixmapHint;
     }
   }
 
-  char *window_name = nxagentWindowName;
   Xutf8SetWMProperties(nxagentDisplay, w,
-                      window_name, window_name,
-                          NULL , 0 , sizeHints, wmHints, NULL);
+                           nxagentWindowName, nxagentWindowName,
+                               NULL , 0 , sizeHints, wmHints, NULL);
 
   SAFE_XFree(sizeHints);
   SAFE_XFree(wmHints);
@@ -1901,10 +1895,8 @@ N/A
       XSelectInput(nxagentDisplay, nxagentFullscreenWindow, mask);
     }
 
-    XSizeHints* sizeHints;
-    XWMHints* wmHints;
-
-    if ((sizeHints = XAllocSizeHints()))
+    XSizeHints* sizeHints = XAllocSizeHints();
+    if (sizeHints)
     {
       sizeHints->flags = PPosition | PMinSize | PMaxSize;
       sizeHints->x = nxagentOption(X) + POSITION_OFFSET;
@@ -1932,18 +1924,16 @@ N/A
         sizeHints->flags |= USSize;
     }
 
-    if ((wmHints = XAllocWMHints()))
+    XWMHints* wmHints = XAllocWMHints();
+    if (wmHints)
     {
+      wmHints->flags = IconPixmapHint;
       wmHints->icon_pixmap = nxagentIconPixmap;
 
       if (useXpmIcon)
       {
+        wmHints->flags |= IconMaskHint;
         wmHints->icon_mask = nxagentIconShape;
-        wmHints->flags = IconPixmapHint | IconMaskHint;
-      }
-      else
-      {
-        wmHints->flags = IconPixmapHint;
       }
     }
 
@@ -2192,19 +2182,17 @@ Bool nxagentCloseScreen(ScreenPtr pScreen)
 static void nxagentSetRootClip (ScreenPtr pScreen, Bool enable)
 {
     WindowPtr   pWin = pScreen->root;
-    WindowPtr   pChild;
     Bool        WasViewable = (Bool)(pWin->viewable);
     Bool        anyMarked = FALSE;
-    RegionPtr   pOldClip = NULL, bsExposed;
+    RegionPtr   pOldClip = NULL;
 #ifdef DO_SAVE_UNDERS
     Bool        dosave = FALSE;
 #endif
     WindowPtr   pLayerWin;
-    BoxRec      box;
 
     if (WasViewable)
     {
-        for (pChild = pWin->firstChild; pChild; pChild = pChild->nextSib)
+        for (WindowPtr pChild = pWin->firstChild; pChild; pChild = pChild->nextSib)
         {
             (void) (*pScreen->MarkOverlappedWindows)(pChild,
                                                      pChild,
@@ -2216,9 +2204,7 @@ static void nxagentSetRootClip (ScreenPtr pScreen, Bool enable)
         {
             if (HasBorder (pWin))
             {
-                RegionPtr       borderVisible;
-
-                borderVisible = RegionCreate(NullBox, 1);
+                RegionPtr borderVisible = RegionCreate(NullBox, 1);
                 RegionSubtract(borderVisible,
                                 &pWin->borderClip, &pWin->winSize);
                 pWin->valdata->before.borderVisible = borderVisible;
@@ -2229,15 +2215,12 @@ static void nxagentSetRootClip (ScreenPtr pScreen, Bool enable)
 
     /*
      * Use REGION_BREAK to avoid optimizations in ValidateTree
-     * that assume the root borderClip can't change well, normally
+     * that assume the root borderClip can't change. Well, normally
      * it doesn't...)
      */
     if (enable)
     {
-        box.x1 = 0;
-        box.y1 = 0;
-        box.x2 = pScreen->width;
-        box.y2 = pScreen->height;
+        BoxRec box = {.x1 = 0, .y1 = 0, .x2 = pScreen->width, .y2 = pScreen->height};
         RegionInit(&pWin->winSize, &box, 1);
         RegionInit(&pWin->borderSize, &box, 1);
         if (WasViewable)
@@ -2290,14 +2273,14 @@ static void nxagentSetRootClip (ScreenPtr pScreen, Bool enable)
     {
         if (!WasViewable)
             pOldClip = &pWin->clipList; /* a convenient empty region */
-        bsExposed = (*pScreen->TranslateBackingStore)
+        RegionPtr bsExposed = (*pScreen->TranslateBackingStore)
                              (pWin, 0, 0, pOldClip,
                               pWin->drawable.x, pWin->drawable.y);
         if (WasViewable)
             RegionDestroy(pOldClip);
         if (bsExposed)
         {
-            RegionPtr   valExposed = NullRegion;
+            RegionPtr valExposed = NullRegion;
 
             if (pWin->valdata)
                 valExposed = &pWin->valdata->after.exposed;
@@ -2326,15 +2309,6 @@ static void nxagentSetRootClip (ScreenPtr pScreen, Bool enable)
 Bool nxagentResizeScreen(ScreenPtr pScreen, int width, int height,
                              int mmWidth, int mmHeight)
 {
-  BoxRec box;
-  PixmapPtr pPixmap;
-  char *fbBits;
-  
-  int oldWidth;
-  int oldHeight;
-  int oldMmWidth;
-  int oldMmHeight;
-
   #ifdef TEST
   nxagentPrintAgentGeometry("Before Resize Screen", "nxagentResizeScreen:");
   #endif
@@ -2343,10 +2317,10 @@ Bool nxagentResizeScreen(ScreenPtr pScreen, int width, int height,
    * Change screen properties.
    */
 
-  oldWidth = pScreen -> width;
-  oldHeight = pScreen -> height;
-  oldMmWidth = pScreen -> mmWidth;
-  oldMmHeight = pScreen -> mmHeight;
+  int oldWidth = pScreen -> width;
+  int oldHeight = pScreen -> height;
+  int oldMmWidth = pScreen -> mmWidth;
+  int oldMmHeight = pScreen -> mmHeight;
 
   pScreen -> width = width;
   pScreen -> height = height;
@@ -2396,10 +2370,11 @@ Bool nxagentResizeScreen(ScreenPtr pScreen, int width, int height,
   pScreen -> mmWidth = mmWidth;
   pScreen -> mmHeight = mmHeight;
 
-  pPixmap = fbGetScreenPixmap(pScreen);
+  PixmapPtr pPixmap = fbGetScreenPixmap(pScreen);
 
-  if ((fbBits = realloc(pPixmap -> devPrivate.ptr, PixmapBytePad(width, pScreen->rootDepth) *
-                            height * BitsPerPixel(pScreen->rootDepth) / 8)) == NULL)
+  char *fbBits = realloc(pPixmap -> devPrivate.ptr, PixmapBytePad(width, pScreen->rootDepth) *
+			    height * BitsPerPixel(pScreen->rootDepth) / 8);
+  if (fbBits == NULL)
   {
     pScreen -> width = oldWidth;
     pScreen -> height = oldHeight;
@@ -2466,10 +2441,7 @@ FIXME: We should try to restore the previously
    * Set properties for the agent root window.
    */
 
-  box.x1 = 0;
-  box.y1 = 0;
-  box.x2 = width;
-  box.y2 = height;
+  BoxRec box = {.x1 = 0, .y1 = 0, .x2 = width, .y2 = height};
 
   pScreen->root -> drawable.width = width;
   pScreen->root -> drawable.height = height;
@@ -2511,9 +2483,6 @@ nxagentResizeScreenError:
 
 void nxagentShadowSetRatio(float floatXRatio, float floatYRatio)
 {
-  int intXRatio;
-  int intYRatio;
-
   if (floatXRatio == 0)
   {
     floatXRatio = 1.0;
@@ -2524,8 +2493,8 @@ void nxagentShadowSetRatio(float floatXRatio, float floatYRatio)
     floatYRatio = 1.0;
   }
 
-  intXRatio = floatXRatio * (1 << PRECISION);
-  intYRatio = floatYRatio * (1 << PRECISION);
+  int intXRatio = floatXRatio * (1 << PRECISION);
+  int intYRatio = floatYRatio * (1 << PRECISION);
 
   nxagentChangeOption(FloatXRatio, floatXRatio);
   nxagentChangeOption(FloatYRatio, floatYRatio);
@@ -2563,16 +2532,6 @@ void nxagentShadowSetWindowOptions(void)
 int nxagentShadowInit(ScreenPtr pScreen, WindowPtr pWin)
 {
   char *layout = NULL;
-  XlibGC gc;
-  XGCValues value;
-
-  #ifndef __CYGWIN32__
-
-  Atom nxagentShadowAtom;
-
-  int fd;
-
-  #endif
 
   #ifdef TEST
   fprintf(stderr, "Info: Init shadow session. nxagentDisplayName [%s] "
@@ -2603,8 +2562,6 @@ int nxagentShadowInit(ScreenPtr pScreen, WindowPtr pWin)
               nxagentShadowUid);
   #endif
 
-#if !defined (__CYGWIN32__) && !defined (WIN32)
-
   if (nxagentShadowUid != -1)
   {
     NXShadowSetDisplayUid(nxagentShadowUid);
@@ -2614,8 +2571,6 @@ int nxagentShadowInit(ScreenPtr pScreen, WindowPtr pWin)
   {
     NXShadowDisableDamage();
   }
-
-#endif
 
   if (NXShadowCreate(nxagentDisplay, layout, nxagentShadowDisplayName,
                          (void *) &nxagentShadowDisplay) != 1)
@@ -2629,18 +2584,14 @@ int nxagentShadowInit(ScreenPtr pScreen, WindowPtr pWin)
   }
 
   /*
-   * The shadow nxagent sets the _NX_SHADOW
-   * property on the master X server root
-   * window in order to notify its presence.
+   * The shadow nxagent sets the _NX_SHADOW property on the master X
+   * server root window in order to notify its presence.
    */
 
-  #ifndef __CYGWIN__
-
-  nxagentShadowAtom = XInternAtom(nxagentShadowDisplay, "_NX_SHADOW", False);
+  XlibAtom nxagentShadowAtom = XInternAtom(nxagentShadowDisplay, "_NX_SHADOW", False);
 
   XChangeProperty(nxagentShadowDisplay, DefaultRootWindow(nxagentShadowDisplay),
                       nxagentShadowAtom, XA_STRING, 8, PropModeReplace, NULL, 0);
-  #endif
 
   if (NXShadowAddUpdaterDisplay(nxagentDisplay, &nxagentShadowWidth,
                                     &nxagentShadowHeight, &nxagentMasterDepth) == 0)
@@ -2652,8 +2603,6 @@ int nxagentShadowInit(ScreenPtr pScreen, WindowPtr pWin)
 
     return -1;
   }
-
-  #ifndef __CYGWIN32__
 
   if (nxagentOption(Fullscreen) == 1)
   {
@@ -2686,36 +2635,12 @@ int nxagentShadowInit(ScreenPtr pScreen, WindowPtr pWin)
 
     switch (DefaultVisualOfScreen(DefaultScreenOfDisplay(nxagentShadowDisplay)) -> class)
     {
-      case StaticGray:
-      {
-        className = "StaticGray";
-        break;
-      }
-      case StaticColor:
-      {
-        className = "StaticColor";
-        break;
-      }
-      case PseudoColor:
-      {
-        className = "PseudoColor";
-        break;
-      }
-      case DirectColor:
-      {
-        className = "DirectColor";
-        break;
-      }
-      case GrayScale:
-      {
-        className = "GrayScale";
-        break;
-      }
-      default:
-      {
-        className = "";
-        break;
-      }
+      case StaticGray:  { className = "StaticGray";  break; }
+      case StaticColor: { className = "StaticColor"; break; }
+      case PseudoColor: { className = "PseudoColor"; break; }
+      case DirectColor: { className = "DirectColor"; break; }
+      case GrayScale:   { className = "GrayScale";   break; }
+      default:          { className = "";            break; }
     }
 
     fprintf(stderr, "nxagentShadowInit: PANIC! Cannot shadow the display. "
@@ -2726,8 +2651,6 @@ int nxagentShadowInit(ScreenPtr pScreen, WindowPtr pWin)
 
     return -1;
   }
-
-  #endif
 
   nxagentShadowDepth = pScreen -> rootDepth;
 
@@ -2813,19 +2736,13 @@ int nxagentShadowInit(ScreenPtr pScreen, WindowPtr pWin)
     nxagentBppShadow = 1;
   }
 
-#if !defined(__CYGWIN__)
-
   imageByteOrder = nxagentShadowDisplay -> byte_order;
 
-  fd = XConnectionNumber(nxagentShadowDisplay);
-
-  nxagentShadowXConnectionNumber = fd;
-
-#endif
+  nxagentShadowXConnectionNumber = XConnectionNumber(nxagentShadowDisplay);
 
   #ifdef TEST
   fprintf(stderr, "nxagentShadowInit: Adding the X connection [%d] "
-              "to the device set.\n", fd);
+              "to the device set.\n", nxagentShadowXConnectionNumber);
   #endif
 
   SetNotifyFd(nxagentShadowXConnectionNumber, nxagentNotifyConnection, X_NOTIFY_READ, NULL);
@@ -2855,13 +2772,15 @@ int nxagentShadowInit(ScreenPtr pScreen, WindowPtr pWin)
    * Clean up the main window.
    */
 
-  value.foreground = 0x00000000;
-  value.background = 0x00000000;
-  value.plane_mask = 0xffffffff;
-  value.fill_style = FillSolid;
+  XGCValues value = {
+    .foreground = 0x00000000,
+    .background = 0x00000000,
+    .plane_mask = 0xffffffff,
+    .fill_style = FillSolid,
+  };
 
-  gc = XCreateGC(nxagentDisplay, nxagentPixmap(nxagentShadowPixmapPtr), GCBackground |
-           GCForeground | GCFillStyle | GCPlaneMask, &value);
+  XlibGC gc = XCreateGC(nxagentDisplay, nxagentPixmap(nxagentShadowPixmapPtr), GCBackground |
+                            GCForeground | GCFillStyle | GCPlaneMask, &value);
 
   XFillRectangle(nxagentDisplay, nxagentPixmap(nxagentShadowPixmapPtr), gc, 0, 0,
                      nxagentShadowWidth, nxagentShadowHeight);
@@ -2875,12 +2794,6 @@ int nxagentShadowInit(ScreenPtr pScreen, WindowPtr pWin)
 
 int nxagentShadowCreateMainWindow(ScreenPtr pScreen, WindowPtr pWin, int width, int height)
 {
-  XWindowChanges changes;
-  Mask mask,maskb;
-  XID values[4], *vlist;
-  int error;
-  XID xid;
-
   nxagentShadowWidth = width;
   nxagentShadowHeight = height;
 
@@ -2926,9 +2839,9 @@ int nxagentShadowCreateMainWindow(ScreenPtr pScreen, WindowPtr pWin, int width, 
 
   XFreePixmap(nxagentDisplay, nxagentPixmap(nxagentVirtualPixmap(nxagentShadowPixmapPtr)));
 
-  xid = XCreatePixmap(nxagentDisplay, nxagentDefaultWindows[0],
-            nxagentScale(nxagentShadowWidth, nxagentOption(XRatio)),
-                nxagentScale(nxagentShadowHeight, nxagentOption(YRatio)), nxagentShadowDepth);
+  XID xid = XCreatePixmap(nxagentDisplay, nxagentDefaultWindows[0],
+                nxagentScale(nxagentShadowWidth, nxagentOption(XRatio)),
+                    nxagentScale(nxagentShadowHeight, nxagentOption(YRatio)), nxagentShadowDepth);
 
   nxagentPixmap(nxagentVirtualPixmap(nxagentShadowPixmapPtr)) = xid;
 
@@ -2957,24 +2870,27 @@ int nxagentShadowCreateMainWindow(ScreenPtr pScreen, WindowPtr pWin, int width, 
     #endif
   }
 
-  mask = CWBackPixmap | CWEventMask | CWCursor;
+  Mask mask = CWBackPixmap | CWEventMask | CWCursor;
+  Mask maskb = nxagentGetDefaultEventMask() | ResizeRedirectMask | ExposureMask;
 
-  maskb = nxagentGetDefaultEventMask();
-  maskb |= ResizeRedirectMask | ExposureMask;
-
-  vlist = values;
+  XID values[4];
+  XID *vlist = values;
   *vlist++ = (XID)nxagentShadowPixmapPtr -> drawable.id;
   *vlist++ = (XID)maskb;
 
   *vlist = (XID)None;
+
+  int error;
 
   nxagentShadowWindowPtr = CreateWindow(accessWindowID, pWin, 0, 0, nxagentShadowWidth,
                                             nxagentShadowHeight, 0, InputOutput, mask, (XID *)values,
                                                 nxagentShadowDepth, serverClient, CopyFromParent, &error);
 
   mask = CWWidth | CWHeight;
-  changes.width = nxagentScale(nxagentShadowWidth, nxagentOption(XRatio));
-  changes.height = nxagentScale(nxagentShadowHeight, nxagentOption(YRatio));
+  XWindowChanges changes = {
+    .width = nxagentScale(nxagentShadowWidth, nxagentOption(XRatio)),
+    .height = nxagentScale(nxagentShadowHeight, nxagentOption(YRatio))
+   };
 
   XConfigureWindow(nxagentDisplay, nxagentWindow(nxagentShadowWindowPtr), mask, &changes);
 
@@ -3038,51 +2954,33 @@ int nxagentShadowPoll(PixmapPtr nxagentShadowPixmapPtr, GCPtr nxagentShadowGCPtr
                             unsigned char nxagentShadowDepth, int nxagentShadowWidth,
                                  int nxagentShadowHeight, char *nxagentShadowBuffer, int *changed, int *suspended)
 {
-  int x, y, y2, n, c, line;
-  int result;
-  long numRects;
-  unsigned int width, height, length;
-  char *tBuffer = NULL;
-  char *iBuffer, *ptBox;
-  BoxRec *pBox;
   RegionRec updateRegion;
   RegionRec tempRegion;
-  BoxRec box;
-  int overlap;
-
 
   RegionNull(&updateRegion);
-
   RegionNull(&tempRegion);
 
-#ifdef __CYGWIN32__
-
-  if (NXShadowCaptureCursor(nxagentWindow(nxagentShadowWindowPtr),
-          nxagentShadowWindowPtr -> drawable.pScreen -> visuals) == -1)
-  {
-    #ifdef WARNING
-    fprintf(stderr, "nxagentShadowPoll: Failed to capture cursor.\n");
-    #endif
-  }
-
-#endif
-
-  result = NXShadowHasChanged(nxagentUserInput, NULL, suspended);
+  int result = NXShadowHasChanged(nxagentUserInput, NULL, suspended);
 
   *changed = result;
 
   if (result == 1)
   {
+    char *tBuffer = NULL;
+    char *iBuffer, *ptBox;
+
     nxagentRemoveSplashWindow();
 
+    long numRects;
     NXShadowExportChanges(&numRects, &ptBox);
-    pBox = (BoxRec *)ptBox;
+
+    BoxRec *pBox = (BoxRec *)ptBox;
 
     #ifdef TEST
     fprintf(stderr, "nxagentShadowPoll: nRects[%ld], pBox[%p] depth[%d].\n", numRects, (void *) pBox, nxagentShadowDepth);
     #endif
 
-    for (n = 0; n < numRects; n++)
+    for (int n = 0; n < numRects; n++)
     {
       /*
        * The BoxRec struct defined in the Xserver has a different
@@ -3090,11 +2988,11 @@ int nxagentShadowPoll(PixmapPtr nxagentShadowPixmapPtr, GCPtr nxagentShadowGCPtr
        * the second and third field are inverted.
        */
 
-      x = pBox[n].x1;
-      y = pBox[n].x2;
-      y2 = pBox[n].y2;
-      width = pBox[n].y1 - pBox[n].x1;/* y1 = x2 */
-      height = y2 - pBox[n].x2;   /* x2 = y1 */
+      int x = pBox[n].x1;
+      int y = pBox[n].x2;
+      int y2 = pBox[n].y2;
+      unsigned int width = pBox[n].y1 - pBox[n].x1;/* y1 = x2 */
+      unsigned int height = y2 - pBox[n].x2;   /* x2 = y1 */
 
       if((x + width) > nxagentShadowWidth || (y + height) > nxagentShadowHeight)
       {
@@ -3105,13 +3003,13 @@ int nxagentShadowPoll(PixmapPtr nxagentShadowPixmapPtr, GCPtr nxagentShadowGCPtr
         continue;
       }
 
-      line = PixmapBytePad(width, nxagentMasterDepth);
+      int line = PixmapBytePad(width, nxagentMasterDepth);
 
       #ifdef DEBUG
       fprintf(stderr, "nxagentShadowPoll: Rectangle Number[%d] - x[%d]y[%d]W[%u]H[%u].\n", n+1, x, y, width, height);
       #endif
 
-      length = nxagentImageLength(width, height, ZPixmap, 0, nxagentMasterDepth);
+      unsigned int length = nxagentImageLength(width, height, ZPixmap, 0, nxagentMasterDepth);
 
       SAFE_free(tBuffer);
 
@@ -3128,7 +3026,7 @@ int nxagentShadowPoll(PixmapPtr nxagentShadowPixmapPtr, GCPtr nxagentShadowGCPtr
 
       iBuffer = tBuffer;
 
-      for (c = 0; c + y < y2; c++)
+      for (int c = 0; c + y < y2; c++)
       {
         memcpy(tBuffer, nxagentShadowBuffer + x * nxagentBppMaster + 
                    (y + c) * nxagentShadowWidth * nxagentBppMaster, line);
@@ -3139,25 +3037,15 @@ int nxagentShadowPoll(PixmapPtr nxagentShadowPixmapPtr, GCPtr nxagentShadowGCPtr
 
       tBuffer = iBuffer;
 
-#ifdef __CYGWIN32__
-      if (nxagentBppMaster == 2)
-      {
-        NXShadowCorrectColor(length, tBuffer);
-      }
-#else
       if (nxagentCheckDepth == 1)
       {
         nxagentShadowAdaptDepth(width, height, line, &tBuffer);
       }
-#endif
 
       fbPutImage(nxagentVirtualDrawable((DrawablePtr)nxagentShadowPixmapPtr), nxagentShadowGCPtr,
                           nxagentShadowDepth, x, y, width, height, 0, ZPixmap, tBuffer);
 
-      box.x1 = x;
-      box.x2 = x + width;
-      box.y1 = y;
-      box.y2 = y + height;
+      BoxRec box = {.x1 = x, .x2 = x + width, .y1 = y, .y2 = y + height};
 
       RegionInit(&tempRegion, &box, 1);
 
@@ -3165,6 +3053,7 @@ int nxagentShadowPoll(PixmapPtr nxagentShadowPixmapPtr, GCPtr nxagentShadowGCPtr
 
       RegionUninit(&tempRegion);
 
+      int overlap;
       RegionValidate(&updateRegion, &overlap);
 
       RegionUnion(&nxagentShadowUpdateRegion, &nxagentShadowUpdateRegion, &updateRegion);
@@ -3398,43 +3287,40 @@ unsigned char fromHexNibble(char c)
 
 void nxagentPropagateArtsdProperties(ScreenPtr pScreen, char *port)
 {
-  Window                rootWin;
-  XlibAtom              atomReturnType;
-  XlibAtom              propAtom;
-  int                   iReturnFormat;
-  unsigned long         ulReturnItems;
-  unsigned long         ulReturnBytesLeft;
-  unsigned char         *pszReturnData = NULL;
-  int                   iReturn;
 
   char tchar[] = "    ";
 /*
 FIXME: The port information is not used at the moment and produces a
        warning on recent gcc versions. Do we need such information
-       to run the audio forawrding?
+       to run the audio forwarding?
 
   char *chport;
   char hex[] = "0123456789abcdef";
 */
-  rootWin = DefaultRootWindow(nxagentDisplay);
-  propAtom = nxagentAtoms[4];  /* MCOPGLOBALS */
+  Window         rootWin = DefaultRootWindow(nxagentDisplay);
+  XlibAtom       propAtom = nxagentAtoms[4];  /* MCOPGLOBALS */
+  XlibAtom       atomReturnType;
+  int            iReturnFormat;
+  unsigned long  ulReturnItems;
+  unsigned long  ulReturnBytesLeft;
+  unsigned char *pszReturnData = NULL;
 
   /*
    * Get at most 64KB of data.
    */
 
-  iReturn = XGetWindowProperty(nxagentDisplay,
-                               rootWin,
-                               propAtom,
-                               0,
-                               65536 / 4,
-                               False,
-                               XA_STRING,
-                               &atomReturnType,
-                               &iReturnFormat,
-                               &ulReturnItems,
-                               &ulReturnBytesLeft,
-                               &pszReturnData);
+  int iReturn = XGetWindowProperty(nxagentDisplay,
+                                   rootWin,
+                                   propAtom,
+                                   0,
+                                   65536 / 4,
+                                   False,
+                                   XA_STRING,
+                                   &atomReturnType,
+                                   &iReturnFormat,
+                                   &ulReturnItems,
+                                   &ulReturnBytesLeft,
+                                   &pszReturnData);
 
   if (iReturn == Success && atomReturnType != None &&
           ulReturnItems > 0 && pszReturnData != NULL)
@@ -3462,72 +3348,69 @@ FIXME: The port information is not used at the moment and produces a
       int i, in;
       for (i = 0, in = 0; pszReturnData[i] != '\0'; i++)
       {
-        local_buf[in]=pszReturnData[i];
+        local_buf[in] = pszReturnData[i];
 
-        if(pszReturnData[i]==':')
+        if(pszReturnData[i] == ':')
         {
           i++;
 
-          while(pszReturnData[i]!='\n')
+          while(pszReturnData[i] != '\n')
           {
-             unsigned char h;
-             unsigned char l;
-
-             h = fromHexNibble(pszReturnData[i]);
+             unsigned char h = fromHexNibble(pszReturnData[i]);
              i++;
-             if(pszReturnData[i]=='\0') continue;
-             l = fromHexNibble(pszReturnData[i]);
+             if (pszReturnData[i] == '\0')
+	       continue;
+             unsigned char l = fromHexNibble(pszReturnData[i]);
              i++;
 
              if(h >= 16 || l >= 16) continue;
 
              /*
-              * FIXME: The array tchar[] was used uninitialized.
-              * It's not clear to me the original purpose of the
-              * piece of code using it. To be removed in future
-              * versions.
+              * FIXME: The array tchar[] was used uninitialized.  It's
+              * not clear to me the original purpose of the piece of
+              * code using it. To be removed in future versions.
               */
 
-             tchar[0]=tchar[1];
-             tchar[1]=tchar[2];
-             tchar[2]=tchar[3];
+             tchar[0] = tchar[1];
+             tchar[1] = tchar[2];
+             tchar[2] = tchar[3];
              tchar[3] = (h << 4) + l;
-             tchar[4]='\0';
+             tchar[4] ='\0';
 
              if (strncmp(tchar, "tcp:", 4) == 0)
              {
-               local_buf[in-7]='1';
-               local_buf[in-6]=strlen(port)+47;
+               local_buf[in - 7] = '1';
+               local_buf[in - 6] = strlen(port) + 47;
 
                in++;
-               local_buf[in]=pszReturnData[i-2];
+               local_buf[in] = pszReturnData[i - 2];
                in++;
-               local_buf[in]=pszReturnData[i-1];
+               local_buf[in] = pszReturnData[i - 1];
 
                /* "localhost:" */
                strcat(local_buf,"6c6f63616c686f73743a");
-               in+=20;
+               in += 20;
 
 /*
 FIXME: The port information is not used at the moment and produces a
        warning on recent gcc versions. Do we need such information
        to run the audio forawrding?
 
-               chport=&port[0];
+               chport = &port[0];
 
-               while(*chport!='\0')
+               while(*chport != '\0')
                {
                  in++;
-                 local_buf[in]=hex[(*chport >> 4) & 0xf];
+                 local_buf[in] = hex[(*chport >> 4) & 0xf];
                  in++;
-                 local_buf[in]=hex[*chport & 0xf];
+                 local_buf[in] = hex[*chport & 0xf];
                  *chport++;
                }
 */
                strcat(local_buf,"00");
-               in+=2;
+               in += 2;
 
-               while(pszReturnData[i]!='\n')
+               while(pszReturnData[i] != '\n')
                {
                  i++;
                }
@@ -3535,20 +3418,20 @@ FIXME: The port information is not used at the moment and produces a
              else
              {
                in++;
-               local_buf[in]=pszReturnData[i-2];
+               local_buf[in] = pszReturnData[i - 2];
                in++;
-               local_buf[in]=pszReturnData[i-1];
+               local_buf[in] = pszReturnData[i - 1];
              }
            }
 
            in++;
-           local_buf[in]=pszReturnData[i];
+           local_buf[in] = pszReturnData[i];
         }
 
         in++;
       }
 
-      local_buf[in]=0;
+      local_buf[in] = 0;
 
       if (strlen(local_buf))
       {
@@ -3623,9 +3506,6 @@ Bool intersect(int ax1, int ay1, unsigned int aw, unsigned int ah,
                int bx1, int by1, unsigned int bw, unsigned int bh,
                int *x, int *y, unsigned int *w, unsigned int *h)
 {
-    int tx1, ty1, tx2, ty2, ix, iy;
-    unsigned int iw, ih;
-
     int ax2 = ax1 + aw;
     int ay2 = ay1 + ah;
     int bx2 = bx1 + bw;
@@ -3643,15 +3523,15 @@ Bool intersect(int ax1, int ay1, unsigned int aw, unsigned int ah,
         return FALSE;
     }
 
-    tx1 = max(ax1, bx1);
-    ty1 = max(ay1, by1);
-    tx2 = min(ax2, bx2);
-    ty2 = min(ay2, by2);
+    int tx1 = max(ax1, bx1);
+    int ty1 = max(ay1, by1);
+    int tx2 = min(ax2, bx2);
+    int ty2 = min(ay2, by2);
 
-    ix = tx1 - ax1;
-    iy = ty1 - ay1;
-    iw = tx2 - tx1;
-    ih = ty2 - ty1;
+    int ix = tx1 - ax1;
+    int iy = ty1 - ay1;
+    unsigned int iw = tx2 - tx1;
+    unsigned int ih = ty2 - ty1;
 
     /* check if the resulting rectangle is feasible */
     if (iw <= 0 || ih <= 0) {
@@ -3691,34 +3571,31 @@ Bool intersect_bb(int ax1, int ay1, unsigned int aw, unsigned int ah,
 
   Bool result = intersect(ax1, ay1, aw, ah, bx1, by1, bw, bh, x, y, w, h);
 
-  if (result == TRUE) {
-
+  if (result == TRUE)
+  {
     /*
      * ###### The X-Coordinate ######
      */
 
     /* check if outside-left of bounding box */
-    if (bx1 == bbx1 && ax1 < bbx1) {
-
+    if (bx1 == bbx1 && ax1 < bbx1)
+    {
         *w += bbx1 - ax1;
         *x  = 0;
 
         #ifdef DEBUG
         fprintf(stderr, "intersect_bb: session box is outside-left of the bounding box - width gets adapted to [%d]\n", *w);
         #endif
-
-
     }
 
      /* check if outside-right of bounding box */
-    if (bx1 + bw == bbx2 && ax1 + aw > bbx2) {
-
+    if (bx1 + bw == bbx2 && ax1 + aw > bbx2)
+    {
         *w += ax1 + aw - bbx2;
 
         #ifdef DEBUG
         fprintf(stderr, "intersect_bb: session box is outside-right of the bounding box - width gets adapted to [%d]\n", *w);
         #endif
-
     }
 
     /*
@@ -3726,34 +3603,31 @@ Bool intersect_bb(int ax1, int ay1, unsigned int aw, unsigned int ah,
      */
 
     /* check if outside-above of bounding box */
-    if (by1 == bby1 && ay1 < bby1) {
-
+    if (by1 == bby1 && ay1 < bby1)
+    {
         *h += bby1 - ay1;
         *y  = 0;
 
         #ifdef DEBUG
         fprintf(stderr, "intersect_bb: session box is outside-above of the bounding box - height gets adapted to [%d]\n", *h);
         #endif
-
     }
 
      /* check if outside-below of bounding box */
-    if (by1 + bh == bby2 && ay1 + ah > bby2) {
-
+    if (by1 + bh == bby2 && ay1 + ah > bby2)
+    {
         *h += ay1 + ah - bby2;
 
         #ifdef DEBUG
         fprintf(stderr, "intersect_bb: session box is outside-below of the bounding box - height gets adapted to [%d]\n", *h);
         #endif
-
     }
-
   }
   return result;
 }
 #endif
 
-RRModePtr    nxagentRRCustomMode = NULL;
+RRModePtr nxagentRRCustomMode = NULL;
 
 /*
    This is basically the code that was used on screen resize before
@@ -3763,38 +3637,36 @@ RRModePtr    nxagentRRCustomMode = NULL;
 void nxagentAdjustCustomMode(ScreenPtr pScreen)
 {
   rrScrPrivPtr pScrPriv = rrGetScrPriv(pScreen);
-  RROutputPtr  output;
 
   if (pScrPriv)
   {
-    output = RRFirstOutput(pScreen);
+    RROutputPtr output = RRFirstOutput(pScreen);
 
     if (output && output -> crtc)
     {
-      RRCrtcPtr crtc;
-      char         name[100];
-      xRRModeInfo  modeInfo;
       const int    refresh = 60;
       int          width = nxagentOption(Width);
       int          height = nxagentOption(Height);
 
-      crtc = output -> crtc;
+      RRCrtcPtr crtc = output -> crtc;
 
       for (int c = 0; c < pScrPriv -> numCrtcs; c++)
       {
         RRCrtcSet(pScrPriv -> crtcs[c], NULL, 0, 0, RR_Rotate_0, 0, NULL);
       }
 
-      memset(&modeInfo, '\0', sizeof(modeInfo));
+      char name[100];
       sprintf(name, "%dx%d", width, height);
 
-      modeInfo.width  = width;
-      modeInfo.height = height;
-      modeInfo.hTotal = width;
-      modeInfo.vTotal = height;
-      modeInfo.dotClock = ((CARD32) width * (CARD32) height *
-                           (CARD32) refresh);
-      modeInfo.nameLength = strlen(name);
+      xRRModeInfo modeInfo = {
+        .width  = width,
+        .height = height,
+        .hTotal = width,
+        .vTotal = height,
+        .dotClock = ((CARD32) width * (CARD32) height *
+                     (CARD32) refresh),
+        .nameLength = strlen(name)
+      };
 
       if (nxagentRRCustomMode != NULL)
       {
@@ -3936,19 +3808,13 @@ void nxagentDropOutput(RROutputPtr o)
 
 int nxagentAdjustRandRXinerama(ScreenPtr pScreen)
 {
-  rrScrPrivPtr pScrPriv;
-  RROutputPtr  output;
-  xRRModeInfo  modeInfo;
-  char         name[100];
-  int          refresh = 60;
-  int          width = nxagentOption(Width);
-  int          height = nxagentOption(Height);
+  int width = nxagentOption(Width);
+  int height = nxagentOption(Height);
 
-  pScrPriv = rrGetScrPriv(pScreen);
+  rrScrPrivPtr pScrPriv = rrGetScrPriv(pScreen);
 
   if (pScrPriv)
   {
-    int i;
     int number = 0;
 
     XineramaScreenInfo *screeninfo = XineramaQueryScreens(nxagentDisplay, &number);
@@ -3957,7 +3823,7 @@ int nxagentAdjustRandRXinerama(ScreenPtr pScreen)
     {
       #ifdef DEBUG
       fprintf(stderr, "nxagentAdjustRandRXinerama: XineramaQueryScreens() returned [%d] screens:\n", number);
-      for (int i=0; i < number; i++) {
+      for (int i = 0; i < number; i++) {
         fprintf(stderr, "nxagentAdjustRandRXinerama:   screen_number [%d] x_org [%d] y_org [%d] width [%d] height [%d]\n", screeninfo[i].screen_number, screeninfo[i].x_org, screeninfo[i].y_org, screeninfo[i].width, screeninfo[i].height);
       }
       #endif
@@ -4002,15 +3868,13 @@ int nxagentAdjustRandRXinerama(ScreenPtr pScreen)
 #ifdef DEBUG
     fprintf(stderr, "nxagentAdjustRandRXinerama: numCrtcs [%d], numOutputs [%d]\n", pScrPriv->numCrtcs, pScrPriv->numOutputs);
     {
-      Bool rrgetinfo;
-
       /*
        * Convert old RANDR 1.0 data (if any) to current structure. This
        * is needed once at the first run of this function. If we don't
        * do this here it will be done implicitly later and add mode(s) to
        * our crtc(s)!
        */
-      rrgetinfo = RRGetInfo(pScreen, FALSE);
+      Bool rrgetinfo = RRGetInfo(pScreen, FALSE);
 
       fprintf(stderr, "nxagentAdjustRandRXinerama: RRGetInfo returned [%d]\n", rrgetinfo);
     }
@@ -4025,7 +3889,7 @@ int nxagentAdjustRandRXinerama(ScreenPtr pScreen)
     bbx2 = bby2 = 0;
     bbx1 = bby1 = INT_MAX;
 
-    for (i = 0; i < number; i++)
+    for (int i = 0; i < number; i++)
     {
       bbx2 = max(bbx2, screeninfo[i].x_org + screeninfo[i].width);
       bby2 = max(bby2, screeninfo[i].y_org + screeninfo[i].height);
@@ -4070,7 +3934,7 @@ int nxagentAdjustRandRXinerama(ScreenPtr pScreen)
     /* set gamma. Currently the only reason for doing this is
        preventing the xrandr command from complaining about missing
        gamma. */
-    for (i = 0; i < pScrPriv->numCrtcs; i++)
+    for (int i = 0; i < pScrPriv->numCrtcs; i++)
     {
       if (pScrPriv->crtcs[i]->gammaSize == 0)
       {
@@ -4082,19 +3946,22 @@ int nxagentAdjustRandRXinerama(ScreenPtr pScreen)
     }
 
     /* delete superfluous non-NX outputs */
-    for (i = pScrPriv->numOutputs - 1; i >= 0; i--)
+    for (int i = pScrPriv->numOutputs - 1; i >= 0; i--)
       if (strncmp(pScrPriv->outputs[i]->name, "NX", 2))
         nxagentDropOutput(pScrPriv->outputs[i]);
 
     /* at this stage only NX outputs are left - we delete the superfluous ones */
-    for (i = pScrPriv->numOutputs - 1; i >= number; i--)
+    for (int i = pScrPriv->numOutputs - 1; i >= number; i--)
       nxagentDropOutput(pScrPriv->outputs[i]);
 
     /* add and init outputs */
-    for (i = 0; i < number; i++)
+    for (int i = 0; i < number; i++)
     {
+      RROutputPtr output;
+
       if (i >= pScrPriv->numOutputs)
       {
+        char name[100];
         sprintf(name, "NX%d", i+1);
         output = RROutputCreate(pScreen, name, strlen(name), NULL);
         /* will be done later
@@ -4120,10 +3987,8 @@ int nxagentAdjustRandRXinerama(ScreenPtr pScreen)
       RROutputSetPhysicalSize(output, 0, 0);
     }
 
-    for (i = 0; i < pScrPriv->numOutputs; i++)
+    for (int i = 0; i < pScrPriv->numOutputs; i++)
     {
-      Bool disable_output = FALSE;
-      RRModePtr mymode = NULL, prevmode = NULL;
       int new_x = 0;
       int new_y = 0;
       unsigned int new_w = 0;
@@ -4131,22 +3996,22 @@ int nxagentAdjustRandRXinerama(ScreenPtr pScreen)
 
       /* if there's no intersection disconnect the output */
 #ifdef NXAGENT_RANDR_XINERAMA_CLIPPING
-      disable_output = !intersect(nxagentOption(X), nxagentOption(Y),
-                                  width, height,
-                                  screeninfo[i].x_org, screeninfo[i].y_org,
-                                  screeninfo[i].width, screeninfo[i].height,
-                                  &new_x, &new_y, &new_w, &new_h);
+      Bool disable_output = !intersect(nxagentOption(X), nxagentOption(Y),
+                                       width, height,
+                                       screeninfo[i].x_org, screeninfo[i].y_org,
+                                       screeninfo[i].width, screeninfo[i].height,
+                                       &new_x, &new_y, &new_w, &new_h);
 #else
-      disable_output = !intersect_bb(nxagentOption(X), nxagentOption(Y),
-                                  width, height,
-                                  screeninfo[i].x_org, screeninfo[i].y_org,
-                                  screeninfo[i].width, screeninfo[i].height,
-                                  bbx1, bby1, bbx2, bby2,
-                                  &new_x, &new_y, &new_w, &new_h);
+      Bool disable_output = !intersect_bb(nxagentOption(X), nxagentOption(Y),
+                                          width, height,
+                                          screeninfo[i].x_org, screeninfo[i].y_org,
+                                          screeninfo[i].width, screeninfo[i].height,
+                                          bbx1, bby1, bbx2, bby2,
+                                          &new_x, &new_y, &new_w, &new_h);
 #endif
 
       /* save previous mode */
-      prevmode = pScrPriv->crtcs[i]->mode;
+      RRModePtr prevmode = pScrPriv->crtcs[i]->mode;
       #ifdef DEBUG
       if (prevmode)
       {
@@ -4197,22 +4062,25 @@ int nxagentAdjustRandRXinerama(ScreenPtr pScreen)
 
         RROutputSetConnection(pScrPriv->outputs[i], RR_Connected);
 
-        memset(&modeInfo, '\0', sizeof(modeInfo));
-
         /* avoid collisions with pre-existing default modes by using a
            separate namespace. If we'd simply use XxY we could not
            distinguish between pre-existing modes which should stay
            and our own modes that should be removed after use. */
+        char name[100];
 	sprintf(name, "%s%dx%d", QUOTE(NXAGENT_RANDR_MODE_PREFIX), new_w, new_h);
 
-        modeInfo.width  = new_w;
-        modeInfo.height = new_h;
-        modeInfo.hTotal = new_w;
-        modeInfo.vTotal = new_h;
-        modeInfo.dotClock = ((CARD32) new_w * (CARD32) new_h * (CARD32) refresh);
-        modeInfo.nameLength = strlen(name);
+	const int refresh = 60;
 
-        mymode = RRModeGet(&modeInfo, name);
+        xRRModeInfo modeInfo = {
+          .width  = new_w,
+          .height = new_h,
+          .hTotal = new_w,
+          .vTotal = new_h,
+          .dotClock = ((CARD32) new_w * (CARD32) new_h * (CARD32) refresh),
+          .nameLength = strlen(name)
+	};
+
+        RRModePtr mymode = RRModeGet(&modeInfo, name);
 
 #ifdef DEBUG
         if (mymode)
@@ -4310,8 +4178,6 @@ int nxagentAdjustRandRXinerama(ScreenPtr pScreen)
 
 void nxagentSaveAreas(PixmapPtr pPixmap, RegionPtr prgnSave, int xorg, int yorg, WindowPtr pWin)
 {
-  XGCValues values = {0};
-
   miBSWindowPtr pBackingStore = (miBSWindowPtr) pWin -> backStorage;
 
   PixmapPtr pVirtualPixmap = nxagentVirtualPixmap(pPixmap);
@@ -4323,7 +4189,7 @@ void nxagentSaveAreas(PixmapPtr pPixmap, RegionPtr prgnSave, int xorg, int yorg,
   fbCopyWindowProc(&pWin -> drawable, &pVirtualPixmap -> drawable, 0, RegionRects(prgnSave),
                        RegionNumRects(prgnSave), xorg, yorg, FALSE, FALSE, 0, 0);
 
-  values.subwindow_mode = IncludeInferiors;
+  XGCValues values = {.subwindow_mode = IncludeInferiors};
 
   XlibGC gc = XCreateGC(nxagentDisplay, nxagentWindow(screenInfo.screens[0]->root), GCSubwindowMode, &values);
 
@@ -4417,8 +4283,6 @@ void nxagentSaveAreas(PixmapPtr pPixmap, RegionPtr prgnSave, int xorg, int yorg,
 void nxagentRestoreAreas(PixmapPtr pPixmap, RegionPtr prgnRestore, int xorg,
                              int yorg, WindowPtr pWin)
 {
-  XGCValues values = {0};
-
   /*
    * Limit the area to restore to the
    * root window size.
@@ -4434,7 +4298,7 @@ void nxagentRestoreAreas(PixmapPtr pPixmap, RegionPtr prgnRestore, int xorg,
   fbCopyWindowProc(&pVirtualPixmap -> drawable, &pWin -> drawable, 0, RegionRects(prgnRestore),
                        RegionNumRects(prgnRestore), -xorg, -yorg, FALSE, FALSE, 0, 0);
 
-  values.subwindow_mode = ClipByChildren;
+  XGCValues values = {.subwindow_mode = ClipByChildren};
 
   XlibGC gc = XCreateGC(nxagentDisplay, nxagentWindow(screenInfo.screens[0]->root), GCSubwindowMode, &values);
 
@@ -4597,9 +4461,9 @@ void nxagentSetWMNormalHints(int screen, int width, int height)
 */
 void nxagentSetWMNormalHintsMaxsize(ScreenPtr pScreen, int maxwidth, int maxheight)
 {
-  XSizeHints* sizeHints;
+  XSizeHints* sizeHints = XAllocSizeHints();
 
-  if ((sizeHints = XAllocSizeHints()))
+  if (sizeHints)
   {
     sizeHints->flags = PMaxSize;
     sizeHints->max_width = maxwidth;

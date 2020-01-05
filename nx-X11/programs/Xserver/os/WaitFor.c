@@ -82,9 +82,6 @@ SOFTWARE.
 #include <dix-config.h>
 #endif
 
-#ifdef WIN32
-#include <nx-X11/Xwinsock.h>
-#endif
 #include <nx-X11/Xos.h>			/* for strings, fcntl, time */
 #include <errno.h>
 #include <stdio.h>
@@ -105,22 +102,9 @@ static unsigned long startTimeInMillis;
 
 #endif
 
-#ifdef WIN32
-/* Error codes from windows sockets differ from fileio error codes  */
-#undef EINTR
-#define EINTR WSAEINTR
-#undef EINVAL
-#define EINVAL WSAEINVAL
-#undef EBADF
-#define EBADF WSAENOTSOCK
-/* Windows select does not set errno. Use GetErrno as wrapper for 
-   WSAGetLastError */
-#define GetErrno WSAGetLastError
-#else
 /* This is just a fallback to errno to hide the differences between unix and
    Windows in the code */
 #define GetErrno() errno
-#endif
 
 /* modifications by raphael */
 int
@@ -484,30 +468,12 @@ WaitForSomething(int *pClientsReady)
 
 	    if (XFD_ANYSET (&clientsReadable))
 		break;
-#ifdef WIN32
-	    /* Windows keyboard and mouse events are added to the input queue
-	       in Block- and WakupHandlers. There is no device to check if  
-	       data is ready. So check here if new input is available */
-#if defined(NX_TRANS_SOCKET)
-            if (*checkForInput[0] != *checkForInput[1])
-            {
-#if defined(NX_TRANS_SOCKET) && defined(NX_TRANS_DEBUG)
-                fprintf(stderr, "WaitForSomething: Returning 0 because of (*checkForInput[0] != *checkForInput[1]).\n");
-#endif
-		return 0;
-            }
-#else
-	    if (*checkForInput[0] != *checkForInput[1])
-		return 0;
-#endif
-#endif
 	}
     }
 
     nready = 0;
     if (XFD_ANYSET (&clientsReadable))
     {
-#ifndef WIN32
 	for (i=0; i<howmany(XFD_SETSIZE, NFDBITS); i++)
 	{
 	    while (clientsReadable.fds_bits[i])
@@ -517,23 +483,9 @@ WaitForSomething(int *pClientsReady)
 		curclient = ffs (clientsReadable.fds_bits[i]) - 1;
 		client_index = /* raphael: modified */
 			ConnectionTranslation[curclient + (i * (sizeof(fd_mask) * 8))];
-#else
-	fd_set savedClientsReadable;
-	XFD_COPYSET(&clientsReadable, &savedClientsReadable);
-	for (i = 0; i < XFD_SETCOUNT(&savedClientsReadable); i++)
-	{
-	    int client_priority, client_index;
-
-	    curclient = XFD_FD(&savedClientsReadable, i);
-	    client_index = GetConnectionTranslation(curclient);
-#endif
 	    pClientsReady[nready++] = client_index;
-#ifndef WIN32
 	    clientsReadable.fds_bits[i] &= ~(((fd_mask)1L) << curclient);
 	}
-#else
-	    FD_CLR(curclient, &clientsReadable);
-#endif
 	}
     }
 #if defined(NX_TRANS_SOCKET) && defined(NX_TRANS_DEBUG)

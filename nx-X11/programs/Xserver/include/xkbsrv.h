@@ -56,11 +56,6 @@ THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #include "xkbstr.h"
 #include "inputstr.h"
 
-#ifdef NXAGENT_SERVER
-extern char *_NXGetXkbBasePath(const char *path);
-extern char *_NXGetXkbCompPath(const char *path);
-#endif
-
 typedef struct _XkbInterest {
 	DeviceIntPtr		dev;
 	ClientPtr		client;
@@ -253,6 +248,7 @@ typedef struct
 
 /***====================================================================***/
 
+extern void XkbFreePrivates(DeviceIntPtr);
 
 /***====================================================================***/
 

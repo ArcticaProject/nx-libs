@@ -69,11 +69,6 @@ SOFTWARE.
 #undef _POSIX_SOURCE
 #endif
 #else /* X_NOT_POSIX */
-#ifdef WIN32
-#define _POSIX_
-#include <limits.h>
-#undef _POSIX_
-#endif
 #endif /* X_NOT_POSIX */
 
 #ifndef OPEN_MAX
@@ -85,11 +80,7 @@ SOFTWARE.
 #if defined(NOFILE) && !defined(NOFILES_MAX)
 #define OPEN_MAX NOFILE
 #else
-#if !defined(WIN32)
 #define OPEN_MAX NOFILES_MAX
-#else
-#define OPEN_MAX 256
-#endif
 #endif
 #endif
 #endif
@@ -213,13 +204,7 @@ extern fd_set ClientsWriteBlocked;
 extern fd_set OutputPending;
 extern fd_set IgnoredClientsWithInput;
 
-#ifndef WIN32
 extern int *ConnectionTranslation;
-#else
-extern int GetConnectionTranslation(int conn);
-extern void SetConnectionTranslation(int conn, int client);
-extern void ClearConnectionTranslation();
-#endif
  
 extern Bool NewOutputPending;
 extern Bool AnyWritesPending;
@@ -234,9 +219,6 @@ extern OsCommPtr AvailableInput;
 extern WorkQueuePtr workQueue;
 
 /* added by raphael */
-#ifdef WIN32
-typedef long int fd_mask;
-#endif
 #define ffs mffs
 extern int mffs(fd_mask);
 

@@ -114,10 +114,11 @@ int nxagentErrorHandler(Display *dpy, XErrorEvent *event)
   return 0;
 }
 
-/* copied from XlibInt.c */
-/* extension stuff roughly commented out */
-/* FIXME: why? What's wrong with printing extension stuff?
-   We could drop this in favour of _XprintDefaultError then! */
+/* copied from XlibInt.c:_XprintDefaultError
+ * We cannot use the whole function because it requires XlibInt
+ * internals. And we cannot call _XPrintDefaultError because it
+ * is not exported.
+ */
 static int nxagentPrintError(dpy, event, fp)
     Display *dpy;
     XErrorEvent *event;
@@ -126,11 +127,11 @@ static int nxagentPrintError(dpy, event, fp)
     char buffer[BUFSIZ];
     char mesg[BUFSIZ];
     char number[32];
-    char *mtype = "XlibMessage";
-    /*
+    const char *mtype = "XlibMessage";
+#ifndef NXAGENT_SERVER
     register _XExtension *ext = (_XExtension *)NULL;
     _XExtension *bext = (_XExtension *)NULL;
-    */
+#endif
     XGetErrorText(dpy, event->error_code, buffer, BUFSIZ);
     XGetErrorDatabaseText(dpy, mtype, "XError", "X Error", mesg, BUFSIZ);
     (void) fprintf(fp, "%s:  %s\n  ", mesg, buffer);
@@ -141,14 +142,16 @@ static int nxagentPrintError(dpy, event, fp)
 	snprintf(number, sizeof(number), "%d", event->request_code);
 	XGetErrorDatabaseText(dpy, "XRequest", number, "", buffer, BUFSIZ);
     } else {
-      /*	for (ext = dpy->ext_procs;
+#ifndef NXAGENT_SERVER
+	for (ext = dpy->ext_procs;
 	     ext && (ext->codes.major_opcode != event->request_code);
 	     ext = ext->next)
 	  ;
-	if (ext)
+	if (ext) {
 	    strncpy(buffer, ext->name, BUFSIZ);
-	else
-      */
+	    buffer[BUFSIZ - 1] = '\0';
+        } else
+#endif
 	    buffer[0] = '\0';
     }
     (void) fprintf(fp, " (%s)\n", buffer);
@@ -157,19 +160,19 @@ static int nxagentPrintError(dpy, event, fp)
 			      mesg, BUFSIZ);
 	fputs("  ", fp);
 	(void) fprintf(fp, mesg, event->minor_code);
-	/*
+#ifndef NXAGENT_SERVER
 	if (ext) {
 	    snprintf(mesg, sizeof(mesg), "%s.%d", ext->name, event->minor_code);
 	    XGetErrorDatabaseText(dpy, "XRequest", mesg, "", buffer, BUFSIZ);
 	    (void) fprintf(fp, " (%s)", buffer);
 	}
-	*/
+#endif
 	fputs("\n", fp);
     }
     if (event->error_code >= 128) {
 	/* kludge, try to find the extension that caused it */
 	buffer[0] = '\0';
-	/*
+#ifndef NXAGENT_SERVER
 	for (ext = dpy->ext_procs; ext; ext = ext->next) {
 	    if (ext->error_string)
 		(*ext->error_string)(dpy, event->error_code, &ext->codes,
@@ -187,7 +190,7 @@ static int nxagentPrintError(dpy, event, fp)
 	    snprintf(buffer, sizeof(buffer), "%s.%d", bext->name,
 		    event->error_code - bext->codes.first_error);
 	else
-	*/
+#endif
 	    strcpy(buffer, "Value");
 	XGetErrorDatabaseText(dpy, mtype, buffer, "", mesg, BUFSIZ);
 	if (mesg[0]) {
@@ -196,12 +199,12 @@ static int nxagentPrintError(dpy, event, fp)
 	    fputs("\n", fp);
 	}
 	/* let extensions try to print the values */
-	/*
+#ifndef NXAGENT_SERVER
 	for (ext = dpy->ext_procs; ext; ext = ext->next) {
 	    if (ext->error_values)
 		(*ext->error_values)(dpy, event, fp);
 	}
-	*/
+#endif
     } else if ((event->error_code == BadWindow) ||
 	       (event->error_code == BadPixmap) ||
 	       (event->error_code == BadCursor) ||
@@ -229,10 +232,12 @@ static int nxagentPrintError(dpy, event, fp)
 			  mesg, BUFSIZ);
     fputs("  ", fp);
     (void) fprintf(fp, mesg, event->serial);
-    /*    XGetErrorDatabaseText(dpy, mtype, "CurrentSerial", "Current Serial #%d",
+#ifndef NXAGENT_SERVER
+    XGetErrorDatabaseText(dpy, mtype, "CurrentSerial", "Current Serial #%d",
 			  mesg, BUFSIZ);
     fputs("\n  ", fp);
-    (void) fprintf(fp, mesg, dpy->request); */
+    (void) fprintf(fp, mesg, (unsigned long long)(X_DPY_GET_REQUEST(dpy)));
+#endif
     fputs("\n", fp);
     if (event->error_code == BadImplementation) return 0;
     return 1;

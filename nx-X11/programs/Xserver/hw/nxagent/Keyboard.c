@@ -567,7 +567,7 @@ XkbError:
 
           if (nxagentKeyboard[i] == '\0' || nxagentKeyboard[i + 1] == '\0' || i == 0)
           {
-            ErrorF("Warning: Wrong keyboard type: %s.\n", nxagentKeyboard);
+            ErrorF("Warning: Wrong keyboard type: '%s'.\n", nxagentKeyboard);
             goto XkbError;
           }
 
@@ -1466,7 +1466,7 @@ static void nxagentWriteKeyboardDir(void)
   if (keyboard_file_path)
   {
     /*
-     * special case: if rules is NULL create a directory insteas of
+     * special case: if rules is NULL create a directory instead of
      * a file. This is the defined method to disable x2gosetkeyboard.
      */
     if (mkdir(keyboard_file_path, 0555) < 0)

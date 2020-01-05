@@ -84,7 +84,7 @@ XkbSetExtension(DeviceIntPtr device, ProcessInputProc proc)
 void
 XkbFreePrivates(DeviceIntPtr device)
 {
-  if (device &&
+    if (device &&
       device->devPrivates &&
       device->nPrivates > 0 &&
       xkbDevicePrivateIndex != -1 &&

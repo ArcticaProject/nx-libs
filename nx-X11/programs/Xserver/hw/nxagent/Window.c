@@ -407,7 +407,7 @@ Bool nxagentCreateWindow(WindowPtr pWin)
 
   if (nxagentReportPrivateWindowIds)
   {
-    fprintf (stderr, "NXAGENT_WINDOW_ID: PRIVATE_WINDOW,WID:[0x%x]\n", nxagentWindowPriv(pWin)->window);
+    fprintf(stderr, "NXAGENT_WINDOW_ID: PRIVATE_WINDOW,WID:[0x%x],INT:[0x%x]\n", nxagentWindowPriv(pWin)->window, pWin->drawable.id);
   }
   #ifdef TEST
   fprintf(stderr, "nxagentCreateWindow: Created new window with id [0x%x].\n",
@@ -1228,8 +1228,8 @@ void nxagentMoveViewport(ScreenPtr pScreen, int hShift, int vShift)
 
 /*
  * This will update the window on the real X server by calling
- * XConfigureWindow()/XMapWindow()/XLowerWindow()/XRaiseWindow()
- * mask definesthe values that need to be updated, see e.g
+ * XConfigureWindow()/XMapWindow()/XLowerWindow()/XRaiseWindow().
+ * mask defines the values that need to be updated, see e.g.
  * man XConfigureWindow.
  *
  * In addition to the bit flags known to Xorg it uses these
@@ -1281,35 +1281,30 @@ void nxagentConfigureWindow(WindowPtr pWin, unsigned int mask)
   if (mask & CWX)
   {
     valuemask |= CWX;
-
     values.x = nxagentWindowPriv(pWin)->x = pWin->origin.x - wBorderWidth(pWin);
   }
 
   if (mask & CWY)
   {
     valuemask |= CWY;
-
     values.y = nxagentWindowPriv(pWin)->y = pWin->origin.y - wBorderWidth(pWin);
   }
 
   if (mask & CWWidth)
   {
     valuemask |= CWWidth;
-
     values.width = nxagentWindowPriv(pWin)->width = pWin->drawable.width;
   }
 
   if (mask & CWHeight)
   {
     valuemask |= CWHeight;
-
     values.height = nxagentWindowPriv(pWin)->height = pWin->drawable.height;
   }
 
   if (mask & CWBorderWidth)
   {
     valuemask |= CWBorderWidth;
-
     values.border_width = nxagentWindowPriv(pWin)->borderWidth =
         pWin->borderWidth;
   }
@@ -3037,7 +3032,7 @@ static void nxagentReconnectWindow(void * param0, XID param1, void * data_buffer
 
   if (nxagentReportPrivateWindowIds)
   {
-    fprintf (stderr, "NXAGENT_WINDOW_ID: PRIVATE_WINDOW,WID:[0x%x]\n", nxagentWindowPriv(pWin)->window);
+    fprintf(stderr, "NXAGENT_WINDOW_ID: PRIVATE_WINDOW,WID:[0x%x],INT:[0x%x]\n", nxagentWindowPriv(pWin)->window, pWin->drawable.id);
   }
   #ifdef TEST
   fprintf(stderr, "nxagentReconnectWindow: Created new window with id [0x%x].\n",
@@ -3447,10 +3442,7 @@ void nxagentSetTopLevelEventMask(WindowPtr pWin)
  */
 void nxagentFlushConfigureWindow(void)
 {
-  ConfiguredWindowStruct *index;
-  XWindowChanges changes;
-
-  index = nxagentConfiguredWindowList;
+  ConfiguredWindowStruct *index = nxagentConfiguredWindowList;
 
   while (index)
   {
@@ -3493,8 +3485,10 @@ void nxagentFlushConfigureWindow(void)
 
     if (nxagentExposeQueue.exposures[i].synchronize == 1)
     {
-      changes.x = nxagentExposeQueue.exposures[i].serial;
-      changes.y = -2;
+      XWindowChanges changes = {
+        .x = nxagentExposeQueue.exposures[i].serial,
+        .y = -2
+      };
 
       #ifdef DEBUG
       fprintf(stderr, "nxagentFlushConfigureWindow: Sending synch ConfigureWindow for "
