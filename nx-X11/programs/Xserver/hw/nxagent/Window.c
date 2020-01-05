@@ -2602,7 +2602,7 @@ void nxagentMapDefaultWindows(void)
      * to notify of the agent start.
      */
 
-    XSetSelectionOwner(nxagentDisplay, serverCutProperty,
+    XSetSelectionOwner(nxagentDisplay, serverTransToAgentProperty,
                            nxagentDefaultWindows[i], CurrentTime);
   }
 
@@ -2802,7 +2802,7 @@ Bool nxagentReconnectAllWindows(void *p0)
   fprintf(stderr, "nxagentReconnectAllWindows: All windows reconfigured.\n");
   #endif
 
-  if (nxagentInitClipboard(screenInfo.screens[0]->root) == -1)
+  if (!nxagentInitClipboard(screenInfo.screens[0]->root))
   {
     #ifdef WARNING
     fprintf(stderr, "nxagentReconnectAllWindows: WARNING! Couldn't initialize the clipboard.\n");

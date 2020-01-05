@@ -94,7 +94,7 @@ nxagentWMStateRec;
 #undef  DEBUG
 
 #ifdef NXAGENT_CLIPBOARD
-extern WindowPtr nxagentGetClipboardWindow(Atom, WindowPtr);
+extern WindowPtr nxagentGetClipboardWindow(Atom);
 #endif
 
 #ifdef NXAGENT_ARTSD
@@ -135,7 +135,7 @@ ProcChangeProperty(ClientPtr client)
     REQUEST_FIXED_SIZE(xChangePropertyReq, totalSize);
 
 #ifdef NXAGENT_CLIPBOARD
-    pWin = nxagentGetClipboardWindow(stuff->property, NULL);
+    pWin = nxagentGetClipboardWindow(stuff->property);
 
     if (pWin == NULL)
 #endif

@@ -81,6 +81,9 @@ static char *nxagentAtomNames[NXAGENT_NUMBER_OF_ATOMS + 1] =
   "WM_NX_READY",                 /* 3  */
   "MCOPGLOBALS",                 /* 4  */
   "NX_CUT_BUFFER_SERVER",        /* 5  */
+      /* Unfortunately we cannot rename this to NX_SELTRANS_TO_AGENT
+	 because nomachine's nxclient is depending on this
+	 selection */
   "TARGETS",                     /* 6  */
   "TEXT",                        /* 7  */
   "NX_AGENT_SIGNATURE",          /* 8  */
@@ -90,7 +93,8 @@ static char *nxagentAtomNames[NXAGENT_NUMBER_OF_ATOMS + 1] =
   "UTF8_STRING",                 /* 12 */
   "_NET_WM_STATE",               /* 13 */
   "_NET_WM_STATE_FULLSCREEN",    /* 14 */
-  "NX_CUT_BUFFER_CLIENT",        /* 15 */
+  "NX_SELTRANS_FROM_AGENT",      /* 15 */
+  "COMPOUND_TEXT",               /* 16 */
   NULL,
   NULL
 };
