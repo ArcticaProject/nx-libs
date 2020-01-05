@@ -334,7 +334,7 @@ char *nxagentGetHomePath(void)
 
     char *homeEnv = getenv("NX_HOME");
 
-    if (homeEnv == NULL || *homeEnv == '\0')
+    if (!homeEnv || *homeEnv == '\0')
     {
       #ifdef TEST
       fprintf(stderr, "%s: No environment for NX_HOME.\n", __func__);
@@ -342,7 +342,7 @@ char *nxagentGetHomePath(void)
 
       homeEnv = getenv("HOME");
 
-      if (homeEnv == NULL || *homeEnv == '\0')
+      if (!homeEnv || *homeEnv == '\0')
       {
         #ifdef PANIC
         fprintf(stderr, "%s: PANIC! No environment for HOME.\n", __func__);
@@ -386,7 +386,7 @@ char *nxagentGetRootPath(void)
 
     char *rootEnv = getenv("NX_ROOT");
 
-    if (rootEnv == NULL || *rootEnv == '\0')
+    if (!rootEnv || *rootEnv == '\0')
     {
       #ifdef TEST
       fprintf(stderr, "%s: WARNING! No environment for NX_ROOT.\n", __func__);
@@ -399,7 +399,7 @@ char *nxagentGetRootPath(void)
 
       char *homeEnv = nxagentGetHomePath();
 
-      if (homeEnv == NULL)
+      if (!homeEnv)
       {
         return NULL;
       }
