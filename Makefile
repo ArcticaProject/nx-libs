@@ -211,9 +211,6 @@ install-full:
 	$(INSTALL_DIR) $(DESTDIR)$(BINDIR)/
 	$(INSTALL_PROGRAM) nx-X11/programs/Xserver/nxagent-relink $(DESTDIR)$(BINDIR)/nxagent
 
-	$(INSTALL_DIR) $(DESTDIR)$(PREFIX)/share/pixmaps
-	$(INSTALL_FILE) nx-X11/programs/Xserver/hw/nxagent/nxagent.xpm $(DESTDIR)$(PREFIX)/share/pixmaps
-
 	$(INSTALL_DIR) $(DESTDIR)$(PREFIX)/share/nx
 	$(INSTALL_FILE) nx-X11/programs/Xserver/Xext/SecurityPolicy $(DESTDIR)$(PREFIX)/share/nx
 
