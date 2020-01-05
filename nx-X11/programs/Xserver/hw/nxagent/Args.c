@@ -687,7 +687,20 @@ int ddxProcessArgument(int argc, char *argv[], int i)
     {
       SAFE_free(nxagentKeyboard);
 
-      nxagentKeyboard = strdup(argv[i]);
+      if (nxagentX2go && strcmp(argv[i], "null/null") == 0)
+      {
+        #ifdef TEST
+        fprintf(stderr, "%s: changing nxagentKeyboard from [null/null] to [clone].\n", __func__);
+        #endif
+
+        SAFE_free(nxagentKeyboard);
+        nxagentKeyboard = strdup("clone");
+      }
+      else
+      {
+        nxagentKeyboard = strdup(argv[i]);
+      }
+
       if (nxagentKeyboard == NULL)
       {
         FatalError("malloc failed");
@@ -1489,27 +1502,36 @@ static void nxagentParseOptionString(char *string)
   char *option    = NULL;
 
   /*
+   * we must not modify string, but strtok will insert \0. So let's
+   * work with a copy
+   */
+  char *dup = strdup(string);
+
+  /*
    * Remove the port specification.
    */
 
-  char *delimiter = rindex(string, ':');
+  char *delimiter = rindex(dup, ':');
 
   if (delimiter)
   {
-    *delimiter = 0;
+    #ifdef DEBUG
+    fprintf(stderr, "%s: stripping port specification [%s]\n", __func__, delimiter);
+    #endif
+    *delimiter = '\0';
   }
   else
   {
     fprintf(stderr, "Warning: Option file doesn't contain a port specification.\n");
   }
 
-  while ((option = strtok(option ? NULL : string, ",")))
+  while ((option = strtok(option ? NULL : dup, ",")))
   {
     delimiter = rindex(option, '=');
 
     if (delimiter)
     {
-      *delimiter = 0;
+      *delimiter = '\0';
       value = delimiter + 1;
     }
     else
@@ -1518,6 +1540,31 @@ static void nxagentParseOptionString(char *string)
     }
 
     nxagentParseSingleOption(option, value);
+  }
+  SAFE_free(dup);
+}
+
+char *nxagentSkipNXMarker(char *string)
+{
+  if (strncasecmp(string, "nx/nx,", 6) == 0 ||
+      strncasecmp(string, "nx/nx:", 6) == 0)
+  {
+    #ifdef DEBUG
+    fprintf(stderr, "%s: skipping [%6.6s]\n", __func__, string);
+    #endif
+    return string + 6;
+  }
+  else if (strncasecmp(string, "nx,", 3) == 0 ||
+           strncasecmp(string, "nx:", 3) == 0)
+  {
+    #ifdef DEBUG
+    fprintf(stderr, "%s: skipping [%3.3s]\n", __func__, string);
+    #endif
+    return string + 3;
+  }
+  else
+  {
+    return string;
   }
 }
 
@@ -1533,15 +1580,10 @@ void nxagentProcessOptions(char * string)
 
   /* if the "filename" starts with an nx marker treat it
      as an option _string_ instead of a filename */
-  if (strncasecmp(string, "nx/nx,", 6) == 0 ||
-      strncasecmp(string, "nx/nx:", 6) == 0)
+  char *skipped = nxagentSkipNXMarker(string);
+  if (skipped != string)
   {
-    nxagentParseOptionString(string + 6);
-  }
-  else if (strncasecmp(string, "nx,", 3) == 0 ||
-           strncasecmp(string, "nx:", 3) == 0)
-  {
-    nxagentParseOptionString(string + 3);
+    nxagentParseOptionString(skipped);
   }
   else
   {
@@ -1650,9 +1692,13 @@ void nxagentProcessOptionsFile(char * filename)
 
   for (offset = 0; (offset < sizeOfFile) && (data[offset] != '\n'); offset++);
 
-  data[offset] = 0;
+  data[offset] = '\0';
 
-  nxagentParseOptionString(data);
+  #ifdef DEBUG
+  fprintf(stderr, "%s: first line of options file [%s]\n", __func__, data);
+  #endif
+
+  nxagentParseOptionString(nxagentSkipNXMarker(data));
 
 nxagentProcessOptionsFileExit:
 
