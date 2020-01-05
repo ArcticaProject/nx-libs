@@ -34,10 +34,9 @@
 #include "Utils.h"
 
 /*
- * Instead of having a single options repository
- * data could be attached to the display or the
- * screen. The macro nxagentOption() should make
- * the transition simple.
+ * Instead of having a single options repository data could be
+ * attached to the display or the screen. The macro nxagentOption()
+ * should make the transition simple.
  */
 
 AgentOptionsRec nxagentOptions;
@@ -52,8 +51,8 @@ AgentOptionsPtr nxagentOptionsPtr = &nxagentOptions;
 
 unsigned int nxagentPrintGeometryFlags = 0;
 /*
- * This must be called at startup to initialize
- * the options repository to the default values.
+ * This must be called at startup to initialize the options repository
+ * to the default values.
  */
 
 void nxagentInitOptions(void)
@@ -176,12 +175,10 @@ void nxagentInitOptions(void)
 }
 
 /*
- * This is called at session reconnection
- * to reset some options to their default
- * values. The reason to avoid calling the
- * nxagentInitOptions() is that not all the
- * options can change value when reconnec-
- * ting.
+ * This is called at session reconnection to reset some options to
+ * their default values. The reason to avoid calling the
+ * nxagentInitOptions() is that not all the options can change value
+ * when reconnecting.
  */
 
 void nxagentResetOptions(void)

@@ -66,6 +66,7 @@ is" without express or implied warranty.
 #include "../../fb/fb.h"
 
 RESTYPE RT_NX_GC;
+
 /*
  * Set here the required log level.
  */
@@ -142,8 +143,6 @@ static GCOps nxagentOps =
 
 Bool nxagentCreateGC(GCPtr pGC)
 {
-  FbGCPrivPtr pPriv;
-
   pGC->clientClipType = CT_NONE;
   pGC->clientClip = NULL;
 
@@ -163,11 +162,9 @@ Bool nxagentCreateGC(GCPtr pGC)
   }
 
   /*
-   * We create the GC based on the default
-   * drawables. The proxy knows this and
-   * optimizes the encoding of the create
-   * GC message to include the id of the
-   * drawable in the checksum.
+   * We create the GC based on the default drawables. The proxy knows
+   * this and optimizes the encoding of the create GC message to
+   * include the id of the drawable in the checksum.
    */
 
   nxagentGCPriv(pGC)->gc = XCreateGC(nxagentDisplay,
@@ -178,7 +175,7 @@ Bool nxagentCreateGC(GCPtr pGC)
   fprintf(stderr, "nxagentCreateGC: GC [%p]\n", (void *) pGC);
   #endif
 
-  pPriv = (pGC)->devPrivates[fbGCPrivateIndex].ptr;
+  FbGCPrivPtr pPriv = (pGC)->devPrivates[fbGCPrivateIndex].ptr;
 
   fbGetRotatedPixmap(pGC) = 0;
   fbGetExpose(pGC) = 1;
@@ -187,24 +184,18 @@ Bool nxagentCreateGC(GCPtr pGC)
 
   pPriv->bpp = BitsPerPixel (pGC->depth);
 
-  nxagentGCPriv(pGC)->nClipRects = 0;
-
-  memset(&(nxagentGCPriv(pGC) -> lastServerValues), 0, sizeof(XGCValues));
-
   /*
    * Init to default GC values.
    */
 
+  memset(&(nxagentGCPriv(pGC) -> lastServerValues), 0, sizeof(XGCValues));
   nxagentGCPriv(pGC) -> lastServerValues.background = 1;
-
   nxagentGCPriv(pGC) -> lastServerValues.plane_mask = ~0;
-
   nxagentGCPriv(pGC) -> lastServerValues.graphics_exposures = 1;
-
   nxagentGCPriv(pGC) -> lastServerValues.dashes = 4;
 
+  nxagentGCPriv(pGC) -> nClipRects = 0;
   nxagentGCPriv(pGC) -> mid = FakeClientID(serverClient -> index);
-
   nxagentGCPriv(pGC) -> pPixmap = NULL;
 
   AddResource(nxagentGCPriv(pGC) -> mid, RT_NX_GC, (void *) pGC);
@@ -214,8 +205,6 @@ Bool nxagentCreateGC(GCPtr pGC)
 
 void nxagentValidateGC(GCPtr pGC, unsigned long changes, DrawablePtr pDrawable)
 {
-  PixmapPtr lastTile, lastStipple;
-
   DrawablePtr pVirtual = (pDrawable -> type == DRAWABLE_PIXMAP) ?
                           nxagentVirtualDrawable(pDrawable) :
                           pDrawable;
@@ -233,9 +222,9 @@ void nxagentValidateGC(GCPtr pGC, unsigned long changes, DrawablePtr pDrawable)
     pGC -> tile.pixmap = nxagentVirtualPixmap(pGC -> tile.pixmap); 
   }
 
-  lastTile = pGC -> tile.pixmap;
+  PixmapPtr lastTile = pGC -> tile.pixmap;
 
-  lastStipple = pGC->stipple;
+  PixmapPtr lastStipple = pGC->stipple;
   
   if (lastStipple)
   {
@@ -251,8 +240,8 @@ void nxagentValidateGC(GCPtr pGC, unsigned long changes, DrawablePtr pDrawable)
   if (pVirtual -> bitsPerPixel == 0)
   {
     /*
-     * Don't enter fbValidateGC() with 0 bpp
-     * or agent will block in a endless loop.
+     * Don't enter fbValidateGC() with 0 bpp or agent will block in a
+     * endless loop.
      */
 
     #ifdef WARNING
@@ -331,13 +320,11 @@ void nxagentChangeGC(GCPtr pGC, unsigned long mask)
               nxagentGCTrap == 0)
       {
         /*
-         * If the tile is corrupted and is not too
-         * much large, it can be synchronized imme-
-         * diately. In the other cases, the tile is
-         * cleared with a solid color to become usa-
-         * ble. This approach should solve the high
-         * delay on slow links waiting for a back-
-         * ground tile to be synchronized.
+         * If the tile is corrupted and is not too large, it can be
+         * synchronized immediately. In the other cases, the tile is
+         * cleared with a solid color to become usable. This approach
+         * should solve the high delay on slow links waiting for a
+         * background tile to be synchronized.
          */
 
         if (nxagentOption(DeferLevel) >= 2 &&
@@ -473,7 +460,7 @@ void nxagentCopyGC(GCPtr pGCSrc, unsigned long mask, GCPtr pGCDst)
 {
   #ifdef TEST
   fprintf(stderr, "nxagentCopyGC: Copying the GC with source at [%p] destination "
-              "at [%p] mask [%lu].\n", pGCSrc, pGCDst, mask);
+              "at [%p] mask [%lu].\n", (void *)pGCSrc, (void *)pGCDst, mask);
   #endif
 
   /*
@@ -485,8 +472,8 @@ void nxagentCopyGC(GCPtr pGCSrc, unsigned long mask, GCPtr pGCDst)
   XCopyGC(nxagentDisplay, nxagentGC(pGCSrc), mask, nxagentGC(pGCDst));
 
   /*
-   * Copy the private foreground field
-   * of the GC if GCForeground is set.
+   * Copy the private foreground field of the GC if GCForeground is
+   * set.
    */
 
   nxagentCopyGCPriv(GCForeground,foreground,pGCSrc,mask,pGCDst);
@@ -510,9 +497,6 @@ void nxagentDestroyGC(GCPtr pGC)
 
 void nxagentChangeClip(GCPtr pGC, int type, void * pValue, int nRects)
 {
-  int i, size;
-  BoxPtr pBox;
-  XRectangle *pRects;
   int clipsMatch = 0;
 
   #ifdef TEST
@@ -525,13 +509,11 @@ void nxagentChangeClip(GCPtr pGC, int type, void * pValue, int nRects)
     case CT_NONE:
     {
       clipsMatch = (pGC -> clientClipType == None);
-
       break;
     }
     case CT_REGION:
     {
       clipsMatch = nxagentCompareRegions(pGC -> clientClip, (RegionPtr) pValue);
-
       break;
     }
     case CT_UNSORTED:
@@ -540,17 +522,13 @@ void nxagentChangeClip(GCPtr pGC, int type, void * pValue, int nRects)
     case CT_YXBANDED:
     {
       RegionPtr pReg = RegionFromRects(nRects, (xRectangle *)pValue, type);
-
       clipsMatch = nxagentCompareRegions(pGC -> clientClip, pReg);
-
       RegionDestroy(pReg);
-
       break;
     }
     default:
     {
       clipsMatch = 0;
-
       break;
     }
   }
@@ -570,19 +548,19 @@ void nxagentChangeClip(GCPtr pGC, int type, void * pValue, int nRects)
       {
         XSetClipMask(nxagentDisplay, nxagentGC(pGC), None);
       }
-
       break;
     }
     case CT_REGION:
     {
       if (clipsMatch == 0 && nxagentGCTrap == 0)
       {
+        XRectangle *pRects;
         nRects = RegionNumRects((RegionPtr)pValue);
-        size = nRects * sizeof(*pRects);
+        int size = nRects * sizeof(*pRects);
         pRects = (XRectangle *) malloc(size);
-        pBox = RegionRects((RegionPtr)pValue);
+        BoxPtr pBox = RegionRects((RegionPtr)pValue);
 
-        for (i = nRects; i-- > 0;)
+        for (int i = nRects; i-- > 0;)
         {
           pRects[i].x = pBox[i].x1;
           pRects[i].y = pBox[i].y1;
@@ -594,7 +572,6 @@ void nxagentChangeClip(GCPtr pGC, int type, void * pValue, int nRects)
                                pRects, nRects, Unsorted);
         SAFE_free(pRects);
       }
-
       break;
     }
     case CT_PIXMAP:
@@ -623,7 +600,6 @@ void nxagentChangeClip(GCPtr pGC, int type, void * pValue, int nRects)
                                pGC->clipOrg.x, pGC->clipOrg.y,
                                    (XRectangle *)pValue, nRects, Unsorted);
       }
-
       break;
     }
     case CT_YSORTED:
@@ -634,7 +610,6 @@ void nxagentChangeClip(GCPtr pGC, int type, void * pValue, int nRects)
                            pGC->clipOrg.x, pGC->clipOrg.y,
                            (XRectangle *)pValue, nRects, YSorted);
       }
-
       break;
     }
     case CT_YXSORTED:
@@ -645,7 +620,6 @@ void nxagentChangeClip(GCPtr pGC, int type, void * pValue, int nRects)
                            pGC->clipOrg.x, pGC->clipOrg.y,
                            (XRectangle *)pValue, nRects, YXSorted);
       }
-
       break;
     }
     case CT_YXBANDED:
@@ -656,7 +630,6 @@ void nxagentChangeClip(GCPtr pGC, int type, void * pValue, int nRects)
                          pGC->clipOrg.x, pGC->clipOrg.y,
                          (XRectangle *)pValue, nRects, YXBanded);
       }
-
       break;
     }
   }
@@ -669,9 +642,8 @@ void nxagentChangeClip(GCPtr pGC, int type, void * pValue, int nRects)
     case CT_YXBANDED:
     {
       /*
-       * Other parts of the server can only
-       * deal with CT_NONE, CT_PIXMAP and
-       * CT_REGION client clips.
+       * Other parts of the server can only deal with CT_NONE,
+       * CT_PIXMAP and CT_REGION client clips.
        */
 
       pGC->clientClip = (void *) RegionFromRects(nRects,
@@ -742,8 +714,6 @@ void nxagentDestroyClipHelper(GCPtr pGC)
 
 void nxagentCopyClip(GCPtr pGCDst, GCPtr pGCSrc)
 {
-  RegionPtr pRgn;
-
   #ifdef TEST
   fprintf(stderr, "nxagentCopyClip: Going to copy clip from GC [%p] to GC [%p]\n",
               (void *) pGCDst, (void *) pGCSrc);
@@ -754,7 +724,7 @@ void nxagentCopyClip(GCPtr pGCDst, GCPtr pGCSrc)
     case CT_REGION:
       if (nxagentGCPriv(pGCSrc)->pPixmap == NULL)
       {
-        pRgn = RegionCreate(NULL, 1);
+        RegionPtr pRgn = RegionCreate(NULL, 1);
         RegionCopy(pRgn, pGCSrc->clientClip);
         nxagentChangeClip(pGCDst, CT_REGION, pRgn, 0);
       }
@@ -777,11 +747,9 @@ void nxagentCopyClip(GCPtr pGCDst, GCPtr pGCSrc)
       nxagentChangeClip(pGCDst, CT_PIXMAP, pGCSrc->clientClip, 0);
 
       break;
-
     case CT_NONE:
       nxagentDestroyClip(pGCDst);
       break;
-
   }
 }
 
@@ -896,7 +864,7 @@ int nxagentDestroyNewGCResourceType(void * p, XID id)
    */
 
   #ifdef TEST
-  fprintf(stderr, "nxagentDestroyNewGCResourceType: Destroying mirror id [%ld] for GC at [%p].\n",
+  fprintf(stderr, "nxagentDestroyNewGCResourceType: Destroying mirror id [%u] for GC at [%p].\n",
               nxagentGCPriv((GCPtr) p) -> mid, (void *) p);
   #endif
 
@@ -1029,7 +997,6 @@ static void nxagentReconnectGC(void *param0, XID param1, void * param2)
 
 Bool nxagentReconnectAllGCs(void *p0)
 {
-  int cid;
   Bool GCSuccess = True;
 
   #ifdef DEBUG
@@ -1037,14 +1004,13 @@ Bool nxagentReconnectAllGCs(void *p0)
   #endif
 
   /*
-   * The resource type RT_NX_GC is created on the
-   * server client only, so we can avoid to loop
-   * through all the clients.
+   * The resource type RT_NX_GC is created on the server client only,
+   * so we can avoid to loop through all the clients.
    */
 
   FindClientResourcesByType(clients[serverClient -> index], RT_NX_GC, nxagentReconnectGC, &GCSuccess);
 
-  for (cid = 0; (cid < MAXCLIENTS) && GCSuccess; cid++)
+  for (int cid = 0; (cid < MAXCLIENTS) && GCSuccess; cid++)
   {
     if (clients[cid])
     {
@@ -1076,21 +1042,18 @@ void nxagentDisconnectGC(void * p0, XID x1, void * p2)
       fprintf(stderr, "nxagentDisconnectGC: WARNING! pGC is NULL.\n");
       #endif
     }
-
     return;
   }
 
   if (pGC -> stipple)
   {
     PixmapPtr pMap = pGC -> stipple;
-
     nxagentDisconnectPixmap(nxagentRealPixmap(pMap), 0, pBool);
   }
 } 
 
 Bool nxagentDisconnectAllGCs(void)
 {
-  int cid;
   Bool success = True;
 
   #ifdef DEBUG
@@ -1098,15 +1061,14 @@ Bool nxagentDisconnectAllGCs(void)
   #endif
 
   /*
-   * The resource type RT_NX_GC is created on the
-   * server client only, so we can avoid to loop
-   * through all the clients.
+   * The resource type RT_NX_GC is created on the server client only,
+   * so we can avoid to loop through all the clients.
    */
 
   FindClientResourcesByType(clients[serverClient -> index], RT_NX_GC,
                                 (FindResType) nxagentDisconnectGC, &success);
 
-  for (cid = 0; (cid < MAXCLIENTS) && success; cid++)
+  for (int cid = 0; (cid < MAXCLIENTS) && success; cid++)
   {
     if (clients[cid])
     {
@@ -1132,10 +1094,6 @@ Bool nxagentDisconnectAllGCs(void)
 
 static void nxagentReconnectClip(GCPtr pGC, int type, void * pValue, int nRects)
 {
-  int i, size;
-  BoxPtr pBox;
-  XRectangle *pRects;
-
   #ifdef TEST
   fprintf(stderr, "nxagentReconnectClip: going to change clip on GC [%p]\n",
               (void *) pGC);
@@ -1152,15 +1110,14 @@ static void nxagentReconnectClip(GCPtr pGC, int type, void * pValue, int nRects)
     case CT_NONE:
       XSetClipMask(nxagentDisplay, nxagentGC(pGC), None);
       break;
-
     case CT_REGION:
       if (nxagentGCPriv(pGC)->pPixmap == NULL)
       {
         nRects = RegionNumRects((RegionPtr)pValue);
-        size = nRects * sizeof(*pRects);
-        pRects = (XRectangle *) malloc(size);
-        pBox = RegionRects((RegionPtr)pValue);
-        for (i = nRects; i-- > 0;) {
+        int size = nRects * sizeof(XRectangle *);
+        XRectangle *pRects = (XRectangle *) malloc(size);
+        BoxPtr pBox = RegionRects((RegionPtr)pValue);
+        for (int i = nRects; i-- > 0;) {
           pRects[i].x = pBox[i].x1;
           pRects[i].y = pBox[i].y1;
           pRects[i].width = pBox[i].x2 - pBox[i].x1;
@@ -1168,10 +1125,9 @@ static void nxagentReconnectClip(GCPtr pGC, int type, void * pValue, int nRects)
         }
 
         /*
-         * Originally, the clip origin area were 0,0 
-         * but it didn't work with kedit and family,
-         * because it got the clip mask of the pixmap
-         * all traslated.
+         * Originally, the clip origin area were 0,0 but it didn't
+         * work with kedit and family, because it got the clip mask of
+         * the pixmap all traslated.
          */
 
         XSetClipRectangles(nxagentDisplay, nxagentGC(pGC), pGC -> clipOrg.x, pGC -> clipOrg.y,
@@ -1185,11 +1141,8 @@ static void nxagentReconnectClip(GCPtr pGC, int type, void * pValue, int nRects)
 
         XSetClipOrigin(nxagentDisplay, nxagentGC(pGC), pGC -> clipOrg.x, pGC -> clipOrg.y);
       }
-
       break;
-
     case CT_PIXMAP:
-
       XSetClipMask(nxagentDisplay, nxagentGC(pGC),
                        nxagentPixmap((PixmapPtr)pValue));
 
@@ -1204,25 +1157,21 @@ static void nxagentReconnectClip(GCPtr pGC, int type, void * pValue, int nRects)
       type = CT_REGION;
 
       break;
-
     case CT_UNSORTED:
       XSetClipRectangles(nxagentDisplay, nxagentGC(pGC),
                          pGC->clipOrg.x, pGC->clipOrg.y,
                          (XRectangle *)pValue, nRects, Unsorted);
       break;
-
     case CT_YSORTED:
       XSetClipRectangles(nxagentDisplay, nxagentGC(pGC),
                          pGC->clipOrg.x, pGC->clipOrg.y,
                          (XRectangle *)pValue, nRects, YSorted);
       break;
-
     case CT_YXSORTED:
       XSetClipRectangles(nxagentDisplay, nxagentGC(pGC),
                          pGC->clipOrg.x, pGC->clipOrg.y,
                          (XRectangle *)pValue, nRects, YXSorted);
       break;
-
     case CT_YXBANDED:
       XSetClipRectangles(nxagentDisplay, nxagentGC(pGC),
                          pGC->clipOrg.x, pGC->clipOrg.y,
@@ -1241,8 +1190,8 @@ static void nxagentReconnectClip(GCPtr pGC, int type, void * pValue, int nRects)
     case CT_YXBANDED:
 
       /*
-       * other parts of server can only deal with CT_NONE,
-       * CT_PIXMAP and CT_REGION client clips.
+       * other parts of server can only deal with CT_NONE, CT_PIXMAP
+       * and CT_REGION client clips.
        */
 
       pGC->clientClip = (void *) RegionFromRects(nRects,
@@ -1262,8 +1211,6 @@ static void nxagentReconnectClip(GCPtr pGC, int type, void * pValue, int nRects)
 
 static int nxagentCompareRegions(RegionPtr r1, RegionPtr r2)
 {
-  int i;
-
  /*
   *  It returns 1 if regions are equal, 0 otherwise
   */
@@ -1292,7 +1239,7 @@ static int nxagentCompareRegions(RegionPtr r1, RegionPtr r2)
   else if ((*RegionExtents(r1)).y2 !=  (*RegionExtents(r2)).y2) return 0;
   else
   {
-    for (i = 0; i < RegionNumRects(r1); i++)
+    for (int i = 0; i < RegionNumRects(r1); i++)
     {
       if (RegionRects(r1)[i].x1 !=  RegionRects(r2)[i].x1) return 0;
       else if (RegionRects(r1)[i].x2 !=  RegionRects(r2)[i].x2) return 0;
@@ -1300,23 +1247,19 @@ static int nxagentCompareRegions(RegionPtr r1, RegionPtr r2)
       else if (RegionRects(r1)[i].y2 !=  RegionRects(r2)[i].y2) return 0;
     }
   }
-
   return 1;
 }
 
 /*
- * This function have to be called in the place
- * of GetScratchGC if the GC will be used to per-
- * form operations also on the remote X Server.
- * This is why we call the XChangeGC at the end of
- * the function.
+ * This function have to be called in the place of GetScratchGC if the
+ * GC will be used to perform operations also on the remote X Server.
+ * This is why we call the XChangeGC at the end of the function.
  */
 GCPtr nxagentGetScratchGC(unsigned depth, ScreenPtr pScreen)
 {
   /*
-   * The GC trap is temporarily disabled in
-   * order to allow the remote clipmask reset
-   * requested by GetScratchGC().
+   * The GC trap is temporarily disabled in order to allow the remote
+   * clipmask reset requested by GetScratchGC().
    */
 
   int nxagentSaveGCTrap = nxagentGCTrap;
@@ -1368,8 +1311,7 @@ GCPtr nxagentGetScratchGC(unsigned depth, ScreenPtr pScreen)
 }
 
 /*
- * This function is only a wrapper for
- * FreeScratchGC.
+ * This function is only a wrapper for FreeScratchGC.
  */
 void nxagentFreeScratchGC(GCPtr pGC)
 {
@@ -1386,18 +1328,14 @@ void nxagentFreeScratchGC(GCPtr pGC)
 }
 
 /*
- * The GCs belonging to this list are used
- * only in the synchronization put images,
- * to be sure they preserve the default va-
- * lues and to avoid XChangeGC() requests.
+ * The GCs belonging to this list are used only in the synchronization
+ * put images, to be sure they preserve the default values and to
+ * avoid XChangeGC() requests.
  */
 
 GCPtr nxagentGetGraphicContext(DrawablePtr pDrawable)
 {
-  int i;
-  int result;
-
-  for (i = 0; i < nxagentGraphicContextsSize; i++)
+  for (int i = 0; i < nxagentGraphicContextsSize; i++)
   {
     if (pDrawable -> depth == nxagentGraphicContexts[i].depth)
     {
@@ -1416,7 +1354,7 @@ GCPtr nxagentGetGraphicContext(DrawablePtr pDrawable)
         fprintf(stderr, "nxagentGetGraphicContext: Going to reconnect the GC.\n");
         #endif
 
-        result = 1;
+        int result = 1;
 
         nxagentReconnectGC(nxagentGraphicContexts[i].pGC, (XID) 0, &result);
 
@@ -1441,18 +1379,12 @@ GCPtr nxagentGetGraphicContext(DrawablePtr pDrawable)
 
 GCPtr nxagentCreateGraphicContext(int depth)
 {
-  GCPtr pGC;
-
-  nxagentGraphicContextsPtr nxagentGCs;
-
-  XID attributes[2];
-
   /*
-   * We have not found a GC, so we have
-   * to spread the list and add a new GC.
+   * We have not found a GC, so we have to spread the list and add a
+   * new GC.
    */
 
-  nxagentGCs = realloc(nxagentGraphicContexts, (nxagentGraphicContextsSize + 1) * sizeof(nxagentGraphicContextsRec));
+  nxagentGraphicContextsPtr nxagentGCs = realloc(nxagentGraphicContexts, (nxagentGraphicContextsSize + 1) * sizeof(nxagentGraphicContextsRec));
    
   if (nxagentGCs == NULL)
   {
@@ -1465,7 +1397,7 @@ GCPtr nxagentCreateGraphicContext(int depth)
 
   nxagentGraphicContexts = nxagentGCs;
 
-  pGC = CreateScratchGC(nxagentDefaultScreen, depth);
+  GCPtr pGC = CreateScratchGC(nxagentDefaultScreen, depth);
 
   if (pGC == NULL)
   {
@@ -1481,6 +1413,8 @@ GCPtr nxagentCreateGraphicContext(int depth)
    * Color used in nxagentFillRemoteRegion().
    */
 
+  XID attributes[2];
+
   attributes[0] = 0xc1c1c1;
 
   if (depth == 15 || depth == 16)
@@ -1489,9 +1423,8 @@ GCPtr nxagentCreateGraphicContext(int depth)
   }
 
   /*
-   * The IncludeInferiors property is useful to
-   * solve problems when synchronizing windows
-   * covered by an invisible child.
+   * The IncludeInferiors property is useful to solve problems when
+   * synchronizing windows covered by an invisible child.
    */
 
   attributes[1] = IncludeInferiors;
@@ -1513,32 +1446,25 @@ GCPtr nxagentCreateGraphicContext(int depth)
 }
 
 /*
- * This initialization is called in the InitOutput()
- * function immediately after opening the screen,
- * which is used to create the GCs. 
+ * This initialization is called in the InitOutput() function
+ * immediately after opening the screen, which is used to create the
+ * GCs.
  */
 
 void nxagentAllocateGraphicContexts(void)
 {
-  int *depths;
+  int *depths = nxagentDepths;
 
-  int i;
-
-  depths = nxagentDepths;
-
-  for (i = 0; i < nxagentNumDepths; i++)
+  for (int i = 0; i < nxagentNumDepths; i++)
   {
     nxagentCreateGraphicContext(*depths);
-
     depths++;
   }
 }
 
 void nxagentDisconnectGraphicContexts(void)
 {
-  int i;
-
-  for (i = 0; i < nxagentGraphicContextsSize; i++)
+  for (int i = 0; i < nxagentGraphicContextsSize; i++)
   {
     nxagentGraphicContexts[i].dirty = 1;
   }

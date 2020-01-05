@@ -78,10 +78,8 @@ is" without express or implied warranty.
 #undef  DEBUG
 
 /*
- * Defined in Display.c. There are huge
- * problems mixing the GC definition in
- * Xlib with the server code. This must
- * be reworked.
+ * Defined in Display.c. There are huge problems mixing the GC
+ * definition in Xlib with the server code. This must be reworked.
  */
 
 extern XlibGC nxagentBitmapGC;
@@ -95,24 +93,20 @@ extern CursorPtr GetSpriteCursor(void);
 void nxagentConstrainCursor(ScreenPtr pScreen, BoxPtr pBox)
 {
   #ifdef TEST
-
-  int width, height;
-
-  width  = nxagentOption(RootWidth);
-  height = nxagentOption(RootHeight);
+  int width  = nxagentOption(RootWidth);
+  int height = nxagentOption(RootHeight);
 
   if (pBox->x1 <= 0 && pBox->y1 <= 0 &&
           pBox->x2 >= width && pBox->y2 >= height)
   {
-    fprintf(stderr, "nxagentConstrainCursor: Called with box [%d,%d,%d,%d]. "
-                "Skipping the operation.\n", pBox->x1, pBox->y1, pBox->x2, pBox->y2);
+    fprintf(stderr, "%s: Called with box [%d,%d,%d,%d]. Skipping the operation.\n",
+                __func__, pBox->x1, pBox->y1, pBox->x2, pBox->y2);
   }
   else
   {
-    fprintf(stderr, "nxagentConstrainCursor: WARNING! Called with box [%d,%d,%d,%d].\n",
+    fprintf(stderr, "%s: WARNING! Called with box [%d,%d,%d,%d].\n", __func__,
                 pBox->x1, pBox->y1, pBox->x2, pBox->y2);
   }
-
   #endif
 }
 
@@ -124,16 +118,12 @@ void nxagentCursorLimits(ScreenPtr pScreen, CursorPtr pCursor,
 
 Bool nxagentDisplayCursor(ScreenPtr pScreen, CursorPtr pCursor)
 {
-
   /*
-   * Don't define the root cursor
-   * so that nxagent root window
-   * inherits the parent's cursor.
+   * Don't define the root cursor so that nxagent root window inherits
+   * the parent's cursor.
    */
 
-  Cursor cursor;
-
-  cursor = (pCursor != rootCursor) ? nxagentCursor(pCursor, pScreen): None;
+  Cursor cursor = (pCursor != rootCursor) ? nxagentCursor(pCursor, pScreen): None;
 
   if (nxagentOption(Rootless) == False)
   {
@@ -142,7 +132,7 @@ Bool nxagentDisplayCursor(ScreenPtr pScreen, CursorPtr pCursor)
                           cursor);
 
     #ifdef TEST
-    fprintf(stderr, "nxagentDisplayCursor: Called for cursor at [%p] with private [%p].\n",
+    fprintf(stderr, "%s: Called for cursor at [%p] with private [%p].\n", __func__,
                 (void *) pCursor, pCursor->devPriv[pScreen->myNum]);
     #endif
   }
@@ -152,56 +142,46 @@ Bool nxagentDisplayCursor(ScreenPtr pScreen, CursorPtr pCursor)
 
 Bool nxagentRealizeCursor(ScreenPtr pScreen, CursorPtr pCursor)
 {
-  XImage *image;
-  Pixmap source, mask;
-  XColor fg_color, bg_color;
-  unsigned long valuemask;
-  XGCValues values;
-
   #ifdef TEST
-  fprintf(stderr, "nxagentRealizeCursor: Called for cursor at [%p].\n", (void *) pCursor);
+  fprintf(stderr, "%s: Called for cursor at [%p].\n", __func__, (void *) pCursor);
   #endif
 
-  valuemask = GCFunction |
-              GCPlaneMask |
-              GCForeground |
-              GCBackground |
-              GCClipMask;
+  unsigned long valuemask = GCFunction | GCPlaneMask | GCForeground | GCBackground | GCClipMask;
 
-  values.function = GXcopy;
-  values.plane_mask = AllPlanes;
-  values.foreground = 1L;
-  values.background = 0L;
-  values.clip_mask = None;
+  XGCValues values = {
+    .function = GXcopy,
+    .plane_mask = AllPlanes,
+    .foreground = 1L,
+    .background = 0L,
+    .clip_mask = None,
+  };
 
   XChangeGC(nxagentDisplay, nxagentBitmapGC, valuemask, &values);
 
-  source = XCreatePixmap(nxagentDisplay,
-                         nxagentDefaultWindows[pScreen->myNum],
-                         pCursor->bits->width,
-                         pCursor->bits->height,
-                         1);
+  Pixmap source = XCreatePixmap(nxagentDisplay,
+                                nxagentDefaultWindows[pScreen->myNum],
+                                pCursor->bits->width,
+                                pCursor->bits->height,
+                                1);
 
-  mask = XCreatePixmap(nxagentDisplay,
-                       nxagentDefaultWindows[pScreen->myNum],
-                       pCursor->bits->width,
-                       pCursor->bits->height,
-                       1);
+  Pixmap mask = XCreatePixmap(nxagentDisplay,
+                              nxagentDefaultWindows[pScreen->myNum],
+                              pCursor->bits->width,
+                              pCursor->bits->height,
+                              1);
 
-  image = XCreateImage(nxagentDisplay,
-                       nxagentDefaultVisual(pScreen),
-                       1, XYBitmap, 0,
-                       (char *)pCursor->bits->source,
-                       pCursor->bits->width,
-                       pCursor->bits->height,
-                       BitmapPad(nxagentDisplay), 0);
+  XImage *image = XCreateImage(nxagentDisplay,
+                               nxagentDefaultVisual(pScreen),
+                               1, XYBitmap, 0,
+                               (char *)pCursor->bits->source,
+                               pCursor->bits->width,
+                               pCursor->bits->height,
+                               BitmapPad(nxagentDisplay), 0);
 
   /*
-   * If we used nxagentImageNormalize() here,
-   * we'd swap our own cursor data in place.
-   * Change byte_order and bitmap_bit_order
-   * in the image struct to let Xlib do the
-   * swap for us.
+   * If we used nxagentImageNormalize() here, we'd swap our own cursor
+   * data in place.  Change byte_order and bitmap_bit_order in the
+   * image struct to let Xlib do the swap for us.
    */
 
   image -> byte_order = IMAGE_BYTE_ORDER;
@@ -232,13 +212,17 @@ Bool nxagentRealizeCursor(ScreenPtr pScreen, CursorPtr pCursor)
 
   SAFE_XFree(image);
 
-  fg_color.red = pCursor->foreRed;
-  fg_color.green = pCursor->foreGreen;
-  fg_color.blue = pCursor->foreBlue;
+  XColor fg_color = {
+    .red = pCursor->foreRed,
+    .green = pCursor->foreGreen,
+    .blue = pCursor->foreBlue,
+  };
 
-  bg_color.red = pCursor->backRed;
-  bg_color.green = pCursor->backGreen;
-  bg_color.blue = pCursor->backBlue;
+  XColor bg_color = {
+    .red = pCursor->backRed,
+    .green = pCursor->backGreen,
+    .blue = pCursor->backBlue,
+  };
 
   pCursor->devPriv[pScreen->myNum] = (void *) malloc(sizeof(nxagentPrivCursor));
 
@@ -249,7 +233,7 @@ Bool nxagentRealizeCursor(ScreenPtr pScreen, CursorPtr pCursor)
   nxagentCursorUsesRender(pCursor, pScreen) = 0;
 
   #ifdef TEST
-  fprintf(stderr, "nxagentRealizeCursor: Set cursor private at [%p] cursor is [%ld].\n",
+  fprintf(stderr, "%s: Set cursor private at [%p] cursor is [%ld].\n", __func__,
               (void *) nxagentCursorPriv(pCursor, pScreen),
                   nxagentCursorPriv(pCursor, pScreen) -> cursor);
   #endif
@@ -282,15 +266,17 @@ Bool nxagentUnrealizeCursor(ScreenPtr pScreen, CursorPtr pCursor)
 void nxagentRecolorCursor(ScreenPtr pScreen, CursorPtr pCursor,
                               Bool displayed)
 {
-  XColor fg_color, bg_color;
+  XColor fg_color = {
+    .red = pCursor->foreRed,
+    .green = pCursor->foreGreen,
+    .blue = pCursor->foreBlue,
+  };
 
-  fg_color.red = pCursor->foreRed;
-  fg_color.green = pCursor->foreGreen;
-  fg_color.blue = pCursor->foreBlue;
-
-  bg_color.red = pCursor->backRed;
-  bg_color.green = pCursor->backGreen;
-  bg_color.blue = pCursor->backBlue;
+  XColor bg_color = {
+    .red = pCursor->backRed,
+    .green = pCursor->backGreen,
+    .blue = pCursor->backBlue,
+  };
 
   XRecolorCursor(nxagentDisplay,
                  nxagentCursor(pCursor, pScreen),
@@ -310,10 +296,9 @@ Bool nxagentSetCursorPosition(ScreenPtr pScreen, int x, int y,
   else
   {
     /*
-     * Calling miSetCursorPosition with generateEvent == 0
-     * causes a crash in miPoiterUpdate().
+     * Calling miSetCursorPosition with generateEvent == 0 causes a
+     * crash in miPoiterUpdate().
      */
-
     return 1;
   }
 }
@@ -323,15 +308,8 @@ void nxagentReconnectCursor(void * p0, XID x1, void * p2)
   Bool* pBool = (Bool*)p2;
   CursorPtr pCursor = (CursorPtr) p0;
 
-  AnimCurPtr ac;
-  int j;
-
-  #ifdef TEST
-  fprintf(stderr, "nxagentReconnectCursor:  pCursor at [%p]\n", pCursor);
-  #endif
-
-  #ifdef NXAGENT_RECONNECT_CURSOR_DEBUG
-  fprintf(stderr, "nxagentReconnectCursor:  pCursor at [%p]\n", pCursor);
+  #if defined( TEST) || defined(NXAGENT_RECONNECT_CURSOR_DEBUG)
+  fprintf(stderr, "%s:  pCursor at [%p]\n", __func__, pCursor);
   #endif
 
   if (!*pBool || !pCursor)
@@ -344,22 +322,21 @@ void nxagentReconnectCursor(void * p0, XID x1, void * p2)
     if (nxagentIsAnimCursor(pCursor))
     {
       #ifdef TEST
-      fprintf(stderr, "nxagentReconnectCursor: nxagentIsAnimCursor   pCursor at [%p]\n", pCursor);
+      fprintf(stderr, "%s: nxagentIsAnimCursor   pCursor at [%p]\n", __func__, pCursor);
       #endif
 
-      ac = nxagentGetAnimCursor(pCursor);
+      AnimCurPtr ac = nxagentGetAnimCursor(pCursor);
 
-      for (j = 0; j < ac->nelt; j++)
+      for (int j = 0; j < ac->nelt; j++)
       {
         nxagentReconnectCursor (ac->elts[j].pCursor, x1, p2);
 
         #ifdef TEST
-        fprintf(stderr, "nxagentReconnectCursor: Iteration [%d]   pCursor at [%p]\n", j, ac->elts[j].pCursor);
+        fprintf(stderr, "%s: Iteration [%d]   pCursor at [%p]\n", __func__, j, ac->elts[j].pCursor);
         #endif
       }
     }
   }
-
   else
   {
     if (nxagentCursorUsesRender(pCursor, nxagentDefaultScreen))
@@ -376,14 +353,14 @@ void nxagentReconnectCursor(void * p0, XID x1, void * p2)
       free(nxagentCursorPriv(pCursor, nxagentDefaultScreen));
       if (!nxagentRealizeCursor(nxagentDefaultScreen, pCursor))
       {
-        fprintf(stderr, "nxagentReconnectCursor: nxagentRealizeCursor failed\n");
+        fprintf(stderr, "%s: nxagentRealizeCursor failed\n", __func__);
         *pBool = False;
       }
     }
   }
 
   #ifdef NXAGENT_RECONNECT_CURSOR_DEBUG
-  fprintf(stderr, "nxagentReconnectCursor: %p - ID %lx\n", pCursor, nxagentCursor(pCursor, nxagentDefaultScreen));
+  fprintf(stderr, "%s: %p - ID %lx\n", __func__, pCursor, nxagentCursor(pCursor, nxagentDefaultScreen));
   #endif
 }
 
@@ -405,29 +382,26 @@ void nxagentReDisplayCurrentCursor(void)
 
 Bool nxagentReconnectAllCursor(void *p0)
 {
-  int i;
   Bool r = True;
 
   GrabPtr grab = inputInfo.pointer -> grab;
 
   #if defined(NXAGENT_RECONNECT_DEBUG) || defined(NXAGENT_RECONNECT_CURSOR_DEBUG)
-  fprintf(stderr, "nxagentReconnectAllCursor\n");
+  fprintf(stderr, "%s\n", __func__);
   #endif
 
-  for (i = 0, r = 1; i < MAXCLIENTS; r = 1, i++)
+  for (int i = 0; i < MAXCLIENTS; r = 1, i++)
   {
     if (clients[i])
     {
       FindClientResourcesByType(clients[i], RT_CURSOR, nxagentReconnectCursor, &r);
 
       #ifdef WARNING
-
       if (r == False)
       {
-        fprintf(stderr, "nxagentReconnectAllCursor: WARNING! Failed to recreate "
-                    "cursor for client [%d].\n", i);
+        fprintf(stderr, "%s: WARNING! Failed to recreate "
+                    "cursor for client [%d].\n", __func__, i);
       }
-
       #endif
     }
   }
@@ -445,9 +419,6 @@ void nxagentDisconnectCursor(void * p0, XID x1, void * p2)
   Bool* pBool = (Bool *) p2;
   CursorPtr pCursor = (CursorPtr) p0;
 
-  AnimCurPtr ac;
-  int j;
-
   if (!*pBool || !pCursor)
   {
     return;
@@ -458,17 +429,17 @@ void nxagentDisconnectCursor(void * p0, XID x1, void * p2)
     if (nxagentIsAnimCursor(pCursor))
     {
       #ifdef TEST
-      fprintf(stderr, "nxagentDisconnectCursor: nxagentIsAnimCursor   pCursor at [%p]\n", pCursor);
+      fprintf(stderr, "%s: nxagentIsAnimCursor   pCursor at [%p]\n", __func__, pCursor);
       #endif
 
-      ac = nxagentGetAnimCursor(pCursor);
+      AnimCurPtr ac = nxagentGetAnimCursor(pCursor);
 
-      for (j = 0; j < ac->nelt; j++)
+      for (int j = 0; j < ac->nelt; j++)
       {
         nxagentDisconnectCursor (ac->elts[j].pCursor, x1, p2);
 
         #ifdef TEST
-        fprintf(stderr, "nxagentDisconnectCursor: Iteration [%d]   pCursor at [%p]\n", j, ac->elts[j].pCursor);
+        fprintf(stderr, "%s: Iteration [%d]   pCursor at [%p]\n", __func__, j, ac->elts[j].pCursor);
         #endif
       }
     }
@@ -476,29 +447,28 @@ void nxagentDisconnectCursor(void * p0, XID x1, void * p2)
   }
 
   #ifdef NXAGENT_RECONNECT_CURSOR_DEBUG
-  fprintf(stderr, "nxagentDisconnectCursor: %p - ID %lx\n",
-          pCursor,
-          nxagentCursor(pCursor, nxagentDefaultScreen));
+  fprintf(stderr, "%s: %p - ID %lx\n", __func__, pCursor,
+              nxagentCursor(pCursor, nxagentDefaultScreen));
   #endif
 
   #ifdef TEST
-  fprintf(stderr, "nxagentDisconnectCursor: Called with bool [%d].\n", *pBool);
+  fprintf(stderr, "%s: Called with bool [%d].\n", __func__, *pBool);
 
-  fprintf(stderr, "nxagentDisconnectCursor: Pointer to cursor is [%p] with counter [%d].\n",
+  fprintf(stderr, "%s: Pointer to cursor is [%p] with counter [%d].\n", __func__,
               (void *) pCursor, pCursor -> refcnt);
 
-  fprintf(stderr, "nxagentDisconnectCursor: Dummy screen is at [%p].\n",
+  fprintf(stderr, "%s: Dummy screen is at [%p].\n", __func__,
               (void *) nxagentDefaultScreen);
 
-  fprintf(stderr, "nxagentDisconnectCursor: Cursor private is at [%p].\n",
+  fprintf(stderr, "%s: Cursor private is at [%p].\n", __func__,
               (void *) nxagentCursorPriv(pCursor, nxagentDefaultScreen));
   #endif
 
   #ifdef TEST
-  fprintf(stderr, "nxagentDisconnectCursor: Dummy screen number is [%d].\n",
+  fprintf(stderr, "%s: Dummy screen number is [%d].\n", __func__,
               nxagentDefaultScreen -> myNum);
 
-  fprintf(stderr, "nxagentDisconnectCursor: Cursor is [%ld].\n",
+  fprintf(stderr, "%s: Cursor is [%ld].\n", __func__,
               nxagentCursor(pCursor, nxagentDefaultScreen));
   #endif
 
@@ -510,7 +480,7 @@ void nxagentDisconnectCursor(void * p0, XID x1, void * p2)
     int        ret = 1;
 
     #if defined(NXAGENT_RECONNECT_CURSOR_DEBUG) || defined(NXAGENT_RECONNECT_PICTURE_DEBUG)
-    fprintf(stderr, "nxagentDisconnectCursor: disconnecting attached picture %p\n", pPicture);
+    fprintf(stderr, "%s: disconnecting attached picture %p\n", __func__, pPicture);
     #endif
 
     nxagentDisconnectPicture(pPicture, 0, &ret);
@@ -519,29 +489,26 @@ void nxagentDisconnectCursor(void * p0, XID x1, void * p2)
 
 Bool nxagentDisconnectAllCursor(void)
 {
-  int i;
   Bool r = True;
 
   GrabPtr grab = inputInfo.pointer -> grab;
 
   #ifdef TEST
-  fprintf(stderr, "nxagentDisconnectAllCursor: Going to iterate through cursor resources.\n");
+  fprintf(stderr, "%s: Going to iterate through cursor resources.\n", __func__);
   #endif
 
-  for (i = 0, r = 1; i < MAXCLIENTS; r = 1, i++)
+  for (int i = 0; i < MAXCLIENTS; r = 1, i++)
   {
     if (clients[i])
     {
       FindClientResourcesByType(clients[i], RT_CURSOR, nxagentDisconnectCursor, &r);
 
       #ifdef WARNING
-
       if (r == False)
       {
-        fprintf(stderr, "nxagentDisconnectAllCursor: WARNING! Failed to disconnect "
-                    "cursor for client [%d].\n", i);
+        fprintf(stderr, "%s: WARNING! Failed to disconnect "
+                    "cursor for client [%d].\n", __func__, i);
       }
-
       #endif
     }
   }
@@ -572,23 +539,19 @@ void nxagentListCursor(void *p0, void *p1, void *p2)
 
 void nxagentListCursors(void)
 {
-  int i;
-  Bool r;
+  Bool r = True;
 
-  for (i = 0, r = 1; i < MAXCLIENTS; r = 1, i++)
+  for (int i = 0; i < MAXCLIENTS; r = 1, i++)
   {
     if (clients[i])
     {
       FindClientResourcesByType(clients[i], RT_CURSOR, nxagentListCursor, &r);
 
       #ifdef WARNING
-
       if (r == False)
       {
-        fprintf(stderr, "nxagentListCursors: WARNING! Failed to list "
-                    "cursor for client [%d].\n", i);
+        fprintf(stderr, "%s: WARNING! Failed to list cursor for client [%d].\n", __func__, i);
       }
-
       #endif
     }
   }
