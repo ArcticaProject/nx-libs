@@ -26,13 +26,7 @@
 #include "windowstr.h"
 #include "scrnintstr.h"
 
-#ifdef _XSERVER64
-
 #include "Agent.h"
-
-#define GC XlibGC
-
-#endif /* _XSERVER64 */
 
 #include "Xlib.h"
 #include "Xutil.h"
@@ -67,14 +61,13 @@ Pixmap nxagentPixmapLogo;
 Window nxagentSplashWindow = None;
 Bool nxagentWMPassed = False;
 
-static void nxagentPaintLogo(Window win, GC gc, int scale, int width, int height);
+static void nxagentPaintLogo(Window win, XlibGC gc, int scale, int width, int height);
 
 void nxagentShowSplashWindow(Window parentWindow)
 {
   XWindowAttributes getAttributes;
   XWindowChanges    values;
   XSetWindowAttributes attributes;
-  GC gc;
 
   /*
    * Show splash window only when running as X2Go Agent
@@ -149,7 +142,7 @@ void nxagentShowSplashWindow(Window parentWindow)
               nxagentSplashWindow);
   #endif
 
-  gc = XCreateGC(nxagentDisplay, nxagentSplashWindow, 0, NULL);
+  XlibGC gc = XCreateGC(nxagentDisplay, nxagentSplashWindow, 0, NULL);
   nxagentPaintLogo(nxagentSplashWindow, gc, 1, getAttributes.width, getAttributes.height);
   XMapRaised (nxagentDisplay, nxagentSplashWindow);
   values.stack_mode = Above;
@@ -167,7 +160,7 @@ void nxagentShowSplashWindow(Window parentWindow)
   #endif
 }
 
-void nxagentPaintLogo(Window win, GC gc, int scale, int width, int height)
+void nxagentPaintLogo(Window win, XlibGC gc, int scale, int width, int height)
 {
   int depth = DefaultDepth(nxagentDisplay, DefaultScreen(nxagentDisplay));
 
