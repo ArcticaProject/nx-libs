@@ -594,8 +594,6 @@ Reply   Total	Cached	Bits In			Bits Out		Bits/Reply	  Ratio
     }
     saveAgentState("TERMINATED");
 #endif /* NXAGENT_SERVER */
-
-#endif /* NXAGENT_SERVER */
     KillAllClients();
     free(clientReady);
     dispatchException &= ~DE_RESET;
