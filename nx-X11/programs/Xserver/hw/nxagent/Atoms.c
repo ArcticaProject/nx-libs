@@ -610,17 +610,14 @@ static AtomMap* nxagentFindAtomByName(char *string, unsigned int length)
  * really asking to X-server and caching them.
  * FIXME: I don't really know if is better to allocate
  *        an automatic variable like ret_value and write it, instead of make all
- *        these return!, perhaps this way the code is a little bit easyer to read.
+ *        these return!, perhaps this way the code is a little bit easier to read.
  *        I think this and the 2 .*Find.* are the only functions to look for performances.
  */
 
 XlibAtom nxagentMakeAtom(char *string, unsigned int length, Bool Makeit)
 {
-  AtomMap *current;
-
   /*
-   * Surely MakeAtom is faster than
-   * our nxagentFindAtomByName.
+   * Surely MakeAtom is faster than our nxagentFindAtomByName.
    */
 
   Atom local = MakeAtom(string, length, Makeit);
@@ -635,6 +632,8 @@ XlibAtom nxagentMakeAtom(char *string, unsigned int length, Bool Makeit)
     return local;
   }
 
+  AtomMap *current;
+
   if ((current = nxagentFindAtomByLocalValue(local)))
   {
     /*
@@ -643,8 +642,7 @@ XlibAtom nxagentMakeAtom(char *string, unsigned int length, Bool Makeit)
 
     return current->remote;
   }
-
-  if ((current = nxagentFindAtomByName(string, length)))
+  else if ((current = nxagentFindAtomByName(string, length)))
   {
     /*
      * Found cached by name.
@@ -656,26 +654,29 @@ XlibAtom nxagentMakeAtom(char *string, unsigned int length, Bool Makeit)
 
     return current->remote;
   }
-
-  /*
-   * We really have to ask the Xserver for it.
-   */
-
+  else
   {
+    /*
+     * We really have to ask the Xserver for it.
+     */
+
+    /* FIXME: why is Makeit inverted here? */
     XlibAtom remote = XInternAtom(nxagentDisplay, string, !Makeit);
 
     if (remote == None)
     {
       #ifdef WARNING
-      fprintf(stderr, "nxagentMakeAtom: WARNING XInternAtom failed.\n");
+      fprintf(stderr, "nxagentMakeAtom: WARNING XInternAtom(.., %s, ..) failed.\n", string);
       #endif
 
       return None;
     }
+    else
+    {
+      nxagentWriteAtom(local, remote, string, True);
 
-    nxagentWriteAtom(local, remote, string, True);
-
-    return remote;
+      return remote;
+    }
   }
 }
 
@@ -693,6 +694,7 @@ XlibAtom nxagentLocalToRemoteAtom(Atom local)
     return None;
   }
 
+  /* no mapping required for built-in atoms */
   if (local <= XA_LAST_PREDEFINED)
   {
     #ifdef DEBUG
@@ -705,32 +707,39 @@ XlibAtom nxagentLocalToRemoteAtom(Atom local)
 
   if (current)
   {
-    #ifdef TEST
-    fprintf(stderr, "%s: local [%d] -> remote [%d]\n", __func__, local, current->remote);
+    #ifdef DEBUG
+    if (current->string)
+      fprintf(stderr, "%s: local [%d] -> remote [%d (%s)]\n", __func__, local, current->remote, current->string);
+    else
+      fprintf(stderr, "%s: local [%d] -> remote [%d]\n", __func__, local, current->remote);
     #endif
+
     return current->remote;
   }
-
-  const char *string = NameForAtom(local);
-
-  XlibAtom remote = XInternAtom(nxagentDisplay, string, False);
-
-  if (remote == None)
+  else
   {
-    #ifdef WARNING
-    fprintf(stderr, "nxagentLocalToRemoteAtom: WARNING XInternAtom failed.\n");
+    const char *string = NameForAtom(local);
+
+    /* FIXME: why False? */
+    XlibAtom remote = XInternAtom(nxagentDisplay, string, False);
+
+    if (remote == None)
+    {
+      #ifdef WARNING
+      fprintf(stderr, "nxagentLocalToRemoteAtom: WARNING XInternAtom failed.\n");
+      #endif
+
+      return None;
+    }
+
+    nxagentWriteAtom(local, remote, string, True);
+
+    #ifdef TEST
+    fprintf(stderr, "%s: local [%d (%s)] -> remote [%d]\n", __func__, local, string, remote);
     #endif
 
-    return None;
+    return remote;
   }
-
-  nxagentWriteAtom(local, remote, string, True);
-
-  #ifdef TEST
-  fprintf(stderr, "%s: local [%d] -> remote [%d (%s)]\n", __func__, local, remote, string);
-  #endif
-
-  return remote;
 }
 
 Atom nxagentRemoteToLocalAtom(XlibAtom remote)
@@ -743,6 +752,7 @@ Atom nxagentRemoteToLocalAtom(XlibAtom remote)
     return None;
   }
 
+  /* no mapping required for built-in atoms */
   if (remote <= XA_LAST_PREDEFINED)
   {
     #ifdef DEBUG
@@ -774,41 +784,47 @@ Atom nxagentRemoteToLocalAtom(XlibAtom remote)
     }
 
     #ifdef DEBUG
-    fprintf(stderr, "%s: remote [%d] -> local [%d]\n", __func__, remote, current->local);
+    if (current->string)
+      fprintf(stderr, "%s: remote [%d] -> local [%d (%s)]\n", __func__, remote, current->local, current->string);
+    else
+      fprintf(stderr, "%s: remote [%d] -> local [%d]\n", __func__, remote, current->local);
     #endif
+
     return current->local;
   }
-
-  char *string = XGetAtomName(nxagentDisplay, remote);
-
-  if (string)
+  else
   {
-    Atom local = MakeAtom(string, strlen(string), True);
+    char *string = XGetAtomName(nxagentDisplay, remote);
 
-    if (!ValidAtom(local))
+    if (string)
     {
-      #ifdef WARNING
-      fprintf(stderr, "%s: WARNING MakeAtom failed.\n", __func__);
-      #endif
+      Atom local = MakeAtom(string, strlen(string), True);
 
-      local = None;
+      if (!ValidAtom(local))
+      {
+        #ifdef WARNING
+        fprintf(stderr, "%s: WARNING MakeAtom failed.\n", __func__);
+        #endif
+
+        local = None;
+      }
+
+      nxagentWriteAtom(local, remote, string, True);
+
+      #ifdef TEST
+      fprintf(stderr, "%s: remote [%d (%s)] -> local [%d]\n", __func__, remote, string, local);
+      #endif
+      SAFE_XFree(string);
+
+      return local;
     }
 
-    nxagentWriteAtom(local, remote, string, True);
-
-    #ifdef TEST
-    fprintf(stderr, "%s: remote [%d (%s)] -> local [%d]\n", __func__, remote, string, local);
+    #ifdef WARNING
+    fprintf(stderr, "%s: WARNING failed to get name from remote atom.\n", __func__);
     #endif
-    SAFE_XFree(string);
 
-    return local;
+    return None;
   }
-
-  #ifdef WARNING
-  fprintf(stderr, "%s: WARNING failed to get name from remote atom.\n", __func__);
-  #endif
-
-  return None;
 }
 
 #ifdef DEBUG
