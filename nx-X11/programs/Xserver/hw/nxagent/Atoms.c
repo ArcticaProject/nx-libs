@@ -436,11 +436,10 @@ static void nxagentWriteAtom(Atom local, XlibAtom remote, const char *string, Bo
 }
 
 /*
- * FIXME: We should clean up the atom map at nxagent reset, in order
- * to cancel all the local atoms but still maintaining the Xserver
- * values and the atom names.
+ * Clean up the atom map at nxagent reset, in order to cancel all the
+ * local atoms but still maintaining the Xserver values and the atom
+ * names. This is called from Dispatch()
  */
-
 void nxagentResetAtomMap(void)
 {
   nxagentPrintAtomMapInfo("nxagentResetAtomMap: Entering");
