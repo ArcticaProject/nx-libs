@@ -374,7 +374,7 @@ static unsigned int privAtomMapSize = 0;
 static unsigned int privLastAtom = 0;
 
 static void nxagentExpandCache(void);
-static void nxagentWriteAtom(Atom, XlibAtom, const char*, Bool);
+static void nxagentWriteAtom(Atom, XlibAtom, const char*);
 static AtomMap* nxagentFindAtomByRemoteValue(XlibAtom);
 static AtomMap* nxagentFindAtomByLocalValue(Atom);
 static AtomMap* nxagentFindAtomByName(char*, unsigned);
@@ -396,31 +396,16 @@ static void nxagentExpandCache(void)
  * consequent allocation, then cache the atom-couple.
  */
 
-static void nxagentWriteAtom(Atom local, XlibAtom remote, const char *string, Bool duplicate)
+static void nxagentWriteAtom(Atom local, XlibAtom remote, const char *string)
 {
-  const char *s;
+  const char *s = strdup(string);
 
-  /*
-   * We could remove this string duplication if we knew for sure that
-   * the server will not reset, since only at reset the dix layer
-   * frees all the atom names.
-   */
-
-  if (duplicate)
+  #ifdef WARNING
+  if (s == NULL)
   {
-    s = strdup(string);
-
-    #ifdef WARNING
-    if (s == NULL)
-    {
-      fprintf(stderr, "nxagentWriteAtom: Malloc failed.\n");
-    }
-    #endif
+    fprintf(stderr, "nxagentWriteAtom: Malloc failed.\n");
   }
-  else
-  {
-    s = string;
-  }
+  #endif
 
   if (privLastAtom == privAtomMapSize)
   {
@@ -515,7 +500,7 @@ static int nxagentInitAtomMap(char **atomNameList, int count, Atom *atomsRet)
 
       if (ValidAtom(local))
       {
-        nxagentWriteAtom(local, atom_list[i], name_list[i], False);
+        nxagentWriteAtom(local, atom_list[i], name_list[i]);
       }
       else
       {
@@ -673,7 +658,7 @@ XlibAtom nxagentMakeAtom(char *string, unsigned int length, Bool Makeit)
     }
     else
     {
-      nxagentWriteAtom(local, remote, string, True);
+      nxagentWriteAtom(local, remote, string);
 
       return remote;
     }
@@ -732,7 +717,7 @@ XlibAtom nxagentLocalToRemoteAtom(Atom local)
       return None;
     }
 
-    nxagentWriteAtom(local, remote, string, True);
+    nxagentWriteAtom(local, remote, string);
 
     #ifdef TEST
     fprintf(stderr, "%s: local [%d (%s)] -> remote [%d]\n", __func__, local, string, remote);
@@ -809,7 +794,7 @@ Atom nxagentRemoteToLocalAtom(XlibAtom remote)
         local = None;
       }
 
-      nxagentWriteAtom(local, remote, string, True);
+      nxagentWriteAtom(local, remote, string);
 
       #ifdef TEST
       fprintf(stderr, "%s: remote [%d (%s)] -> local [%d]\n", __func__, remote, string, local);
