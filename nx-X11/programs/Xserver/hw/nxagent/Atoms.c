@@ -444,7 +444,6 @@ void nxagentResetAtomMap(void)
 
 static void nxagentInitAtomMap(char **atomNameList, int count, Atom *atomsRet)
 {
-  unsigned int i;
   int list_size = count + privLastAtom;
 
   nxagentPrintAtomMapInfo("nxagentInitAtomMap: Entering");
@@ -459,13 +458,13 @@ static void nxagentInitAtomMap(char **atomNameList, int count, Atom *atomsRet)
     FatalError("nxagentInitAtomMap: malloc failed\n");
   }
 
-  for (i = 0; i < count; i++)
+  for (unsigned int i = 0; i < count; i++)
   {
     name_list[i] = atomNameList[i];
     atom_list[i] = None;
   }
   
-  for (i = 0; i < privLastAtom; i++)
+  for (unsigned int i = 0; i < privLastAtom; i++)
   {
     name_list[count + i] = (char *)privAtomMap[i].string;
     atom_list[count + i] = None;
@@ -490,7 +489,7 @@ static void nxagentInitAtomMap(char **atomNameList, int count, Atom *atomsRet)
     return;
   }
 
-  for (i = 0; i < list_size; i++)
+  for (unsigned int i = 0; i < list_size; i++)
   {
     AtomMap *aMap = nxagentFindAtomByName(name_list[i], strlen(name_list[i]));
 
