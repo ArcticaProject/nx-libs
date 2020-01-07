@@ -63,7 +63,7 @@ Bool nxagentWMIsRunning;
 
 static void startWMDetection(void);
 
-static int nxagentInitAtomMap(char **atomNameList, int count, Atom *atomsRet);
+static void nxagentInitAtomMap(char **atomNameList, int count, Atom *atomsRet);
 
 #ifdef DEBUG
 static void nxagentPrintAtomMapInfo(char *message);
@@ -442,7 +442,7 @@ void nxagentResetAtomMap(void)
  * Initializing the atomNameList all in one.
  */
 
-static int nxagentInitAtomMap(char **atomNameList, int count, Atom *atomsRet)
+static void nxagentInitAtomMap(char **atomNameList, int count, Atom *atomsRet)
 {
   unsigned int i;
   int list_size = count + privLastAtom;
@@ -487,7 +487,7 @@ static int nxagentInitAtomMap(char **atomNameList, int count, Atom *atomsRet)
     SAFE_free(atom_list);
     SAFE_free(name_list);
 
-    return 0;
+    return;
   }
 
   for (i = 0; i < list_size; i++)
@@ -530,7 +530,7 @@ static int nxagentInitAtomMap(char **atomNameList, int count, Atom *atomsRet)
 
   nxagentPrintAtomMapInfo("nxagentInitAtomMap: Exiting");
 
-  return 1;
+  return;
 }
 
 /*
