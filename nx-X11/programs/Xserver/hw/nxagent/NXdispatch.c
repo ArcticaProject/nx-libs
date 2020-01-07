@@ -580,6 +580,8 @@ Reply   Total	Cached	Bits In			Bits Out		Bits/Reply	  Ratio
       NXShadowDestroy();
     }
     saveAgentState("TERMINATED");
+
+    nxagentFreeAtomMap();
 #endif /* NXAGENT_SERVER */
 
     KillAllClients();

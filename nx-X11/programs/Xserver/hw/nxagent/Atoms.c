@@ -364,7 +364,7 @@ int nxagentQueryAtoms(ScreenPtr pScreen)
 typedef struct {
     Atom local;
     XlibAtom remote;
-    const char *string;
+    char *string;
     int  length;
 } AtomMap;
 
@@ -397,7 +397,7 @@ static void nxagentExpandCache(void)
 
 static void nxagentWriteAtom(Atom local, XlibAtom remote, const char *string)
 {
-  const char *s = strdup(string);
+  char *s = strdup(string);
 
   #ifdef WARNING
   if (s == NULL)
@@ -434,6 +434,17 @@ void nxagentResetAtomMap(void)
   }
 
   nxagentPrintAtomMapInfo("nxagentResetAtomMap: Exiting");
+}
+
+void nxagentFreeAtomMap(void)
+{
+  for (unsigned int i = 0; i < privLastAtom; i++)
+  {
+    SAFE_free(privAtomMap[i].string);
+  }
+
+  SAFE_free(privAtomMap);
+  privLastAtom = privAtomMapSize = 0;
 }
 
 /*

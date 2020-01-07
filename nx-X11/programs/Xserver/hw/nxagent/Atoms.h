@@ -51,6 +51,8 @@ int nxagentQueryAtoms(ScreenPtr pScreen);
 
 void nxagentResetAtomMap(void);
 
+void nxagentFreeAtomMap(void);
+
 void nxagentWMDetect(void);
 
 #ifdef XlibAtom
