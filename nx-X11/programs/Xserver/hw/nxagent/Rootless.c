@@ -1001,7 +1001,7 @@ void nxagentImportProperty(Window window,
   else if (strcmp(typeS, "ATOM") == 0)
   {
     Atom *atoms = malloc(nitems * sizeof(Atom));
-    XlibAtom *input = (XlibAtom*) buffer;
+    CARD32 *input = (CARD32*) buffer;
 
     if (atoms == NULL)
     {
@@ -1017,7 +1017,7 @@ void nxagentImportProperty(Window window,
 
     for (int i = 0; i < nitems; i++)
     {
-      atoms[i] = nxagentRemoteToLocalAtom(input[i]);
+      atoms[i] = nxagentRemoteToLocalAtom((XlibAtom)input[i]);
 
       if (atoms[i] == None)
       {
