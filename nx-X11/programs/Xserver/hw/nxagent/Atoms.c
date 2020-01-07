@@ -469,6 +469,8 @@ static int nxagentInitAtomMap(char **atomNameList, int count, Atom *atomsRet)
 
   if ((atom_list == NULL) || (name_list == NULL))
   {
+    SAFE_free(atom_list);
+    SAFE_free(name_list);
     FatalError("nxagentInitAtomMap: malloc failed\n");
   }
 
