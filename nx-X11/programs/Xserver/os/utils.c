@@ -78,11 +78,6 @@ OR PERFORMANCE OF THIS SOFTWARE.
 #include <dix-config.h>
 #endif
 
-#ifdef __CYGWIN__
-#include <stdlib.h>
-#include <signal.h>
-#endif
-
 #include <nx-X11/Xos.h>
 #include <stdio.h>
 #include "misc.h"
@@ -903,11 +898,9 @@ ProcessCommandLine(int argc, char *argv[])
 #ifdef SERVER_LOCK
 	else if ( strcmp ( argv[i], "-nolock") == 0)
 	{
-#if  !defined(__CYGWIN__)
 	  if (getuid() != 0)
 	    ErrorF("Warning: the -nolock option can only be used by root\n");
 	  else
-#endif
 	    nolock = TRUE;
 	}
 #endif

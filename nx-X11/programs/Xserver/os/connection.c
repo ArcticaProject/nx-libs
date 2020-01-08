@@ -185,8 +185,6 @@ InitConnectionLimits(void)
 {
     lastfdesc = -1;
 
-#ifndef __CYGWIN__
-
 #if !defined(XNO_SYSCONF) && defined(_SC_OPEN_MAX)
     lastfdesc = sysconf(_SC_OPEN_MAX) - 1;
 #endif
@@ -200,8 +198,6 @@ InitConnectionLimits(void)
     if (lastfdesc < 0)
 	lastfdesc = _NFILE - 1;
 #endif
-
-#endif /* __CYGWIN__ */
 
     /* This is the fallback */
     if (lastfdesc < 0)
