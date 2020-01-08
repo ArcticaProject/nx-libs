@@ -417,7 +417,7 @@ Reply   Total	Cached	Bits In			Bits Out		Bits/Reply	  Ratio
 	    isItTimeToYield = FALSE;
  
 #ifdef NXAGENT_SERVER
-            nxagentRequestingClient = client;
+	    nxagentRequestingClient = client;
 #endif
 	    start_tick = SmartScheduleTime;
 	    while (!isItTimeToYield)
