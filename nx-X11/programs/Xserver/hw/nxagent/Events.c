@@ -545,19 +545,15 @@ void nxagentInternalWindowInfo(WindowPtr pWin, int indent, Bool newLine)
 
 void nxagentInternalWindowsTree(WindowPtr pWin, int indent)
 {
-  while (pWin)
+  for (; pWin; pWin = pWin -> nextSib)
   {
-    WindowPtr pChild = pWin -> firstChild;
-
     fprintf(stderr, "%*s", indent, "");
 
     nxagentInternalWindowInfo(pWin, indent, TRUE);
 
     fprintf(stderr, "\n");
 
-    nxagentInternalWindowsTree(pChild, indent + 4);
-
-    pWin = pWin -> nextSib;
+    nxagentInternalWindowsTree(pWin -> firstChild, indent + 4);
   }
 }
 
