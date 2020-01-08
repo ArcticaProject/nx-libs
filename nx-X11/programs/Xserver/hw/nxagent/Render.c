@@ -1157,7 +1157,7 @@ void nxagentComposite(CARD8 op, PicturePtr pSrc, PicturePtr pMask, PicturePtr pD
 
     nxagentMarkCorruptedRegion(pDst -> pDrawable, pDstRegion);
 
-    nxagentFreeRegion(pDst -> pDrawable, pDstRegion);
+    nxagentFreeRegion(pDstRegion);
 
     return;
   }
@@ -1326,12 +1326,12 @@ void nxagentGlyphs(CARD8 op, PicturePtr pSrc, PicturePtr pDst,
                   (void *) pDst -> pDrawable);
       #endif
 
-      nxagentFreeRegion(pDst -> pDrawable, pRegion);
+      nxagentFreeRegion(pRegion);
 
       return;
     }
 
-    nxagentFreeRegion(pDst -> pDrawable, pRegion);
+    nxagentFreeRegion(pRegion);
   }
 
   /*
@@ -1817,7 +1817,7 @@ FIXME: Is this useful or just a waste of bandwidth?
 
     nxagentMarkCorruptedRegion(pDst -> pDrawable, pDstRegion);
 
-    nxagentFreeRegion(pDst -> pDrawable, pDstRegion);
+    nxagentFreeRegion(pDstRegion);
 
     if (pDst -> pDrawable -> type == DRAWABLE_PIXMAP)
     {

@@ -313,7 +313,7 @@ FIXME: The popup could be synchronized with one single put image,
 
     RegionUninit(&corruptedRegion);
 
-    nxagentFreeRegion(pSrcDrawable, pSrcRegion);
+    nxagentFreeRegion(pSrcRegion);
 
     if (nxagentDrawableStatus(pSrcDrawable) == Synchronized)
     {
@@ -511,7 +511,7 @@ FIXME: The popup could be synchronized with one single put image,
 
       if (pClipRegionFree == True)
       {
-        nxagentFreeRegion(pSrcDrawable, pClipRegion);
+        nxagentFreeRegion(pClipRegion);
       }
 
       FreeScratchGC(targetGC);
@@ -527,10 +527,10 @@ FIXME: The popup could be synchronized with one single put image,
        * we deallocate it explicitly only if we don't change the clip.
        */
 
-      nxagentFreeRegion(pSrcDrawable, pClipRegion);
+      nxagentFreeRegion(pClipRegion);
     }
 
-    nxagentFreeRegion(pSrcDrawable, pCorruptedRegion);
+    nxagentFreeRegion(pCorruptedRegion);
 
     return 1;
   }
@@ -562,7 +562,7 @@ FIXME: The popup could be synchronized with one single put image,
 
     RegionUninit(&corruptedRegion);
 
-    nxagentFreeRegion(pSrcDrawable, pSrcRegion);
+    nxagentFreeRegion(pSrcRegion);
   }
 
   return 0;
@@ -800,7 +800,7 @@ RegionPtr nxagentCopyArea(DrawablePtr pSrcDrawable, DrawablePtr pDstDrawable,
 
       nxagentUnmarkCorruptedRegion(pDstDrawable, pDstRegion);
 
-      nxagentFreeRegion(pDstDrawable, pDstRegion);
+      nxagentFreeRegion(pDstRegion);
     }
   }
 
@@ -981,7 +981,7 @@ RegionPtr nxagentCopyPlane(DrawablePtr pSrcDrawable, DrawablePtr pDstDrawable,
 
       nxagentMarkCorruptedRegion(pDstDrawable, pDstRegion);
 
-      nxagentFreeRegion(pDstDrawable, pDstRegion);
+      nxagentFreeRegion(pDstRegion);
 
       skip = 1;
     }
@@ -1009,12 +1009,12 @@ RegionPtr nxagentCopyPlane(DrawablePtr pSrcDrawable, DrawablePtr pDstDrawable,
 
         nxagentUnmarkCorruptedRegion(pDstDrawable, pDstRegion);
 
-        nxagentFreeRegion(pDstDrawable, pDstRegion);
+        nxagentFreeRegion(pDstRegion);
       }
 
       RegionUninit(&corruptedRegion);
 
-      nxagentFreeRegion(pSrcDrawable, pSrcRegion);
+      nxagentFreeRegion(pSrcRegion);
     }
   }
   #ifdef TEST

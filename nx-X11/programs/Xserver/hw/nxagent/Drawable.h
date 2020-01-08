@@ -162,8 +162,7 @@ extern int nxagentForceSynchronization;
 extern RegionPtr nxagentCreateRegion(DrawablePtr pDrawable, GCPtr pGC, int x, int y,
                                   int width, int height);
 
-#define nxagentFreeRegion(pDrawable, pRegion) \
-    RegionDestroy(pRegion);
+#define nxagentFreeRegion(pRegion) RegionDestroy(pRegion);
 
 extern void nxagentMarkCorruptedRegion(DrawablePtr pDrawable, RegionPtr pRegion);
 extern void nxagentUnmarkCorruptedRegion(DrawablePtr pDrawable, RegionPtr pRegion);

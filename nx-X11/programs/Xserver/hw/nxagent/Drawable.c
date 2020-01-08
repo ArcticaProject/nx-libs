@@ -941,7 +941,7 @@ nxagentSynchronizeRegionFree:
 
   if (clipRegion != NullRegion)
   {
-    nxagentFreeRegion(pDrawable, clipRegion);
+    nxagentFreeRegion(clipRegion);
   }
 
   SAFE_free(data);
@@ -996,7 +996,7 @@ void nxagentSynchronizeBox(DrawablePtr pDrawable, BoxPtr pBox, unsigned int brea
                   pRegion -> extents.x1, pRegion -> extents.y1, pRegion -> extents.x2, pRegion -> extents.y2);
       #endif
 
-      nxagentFreeRegion(pDrawable, pRegion);
+      nxagentFreeRegion(pRegion);
 
       return;
     }
@@ -1009,7 +1009,7 @@ void nxagentSynchronizeBox(DrawablePtr pDrawable, BoxPtr pBox, unsigned int brea
 
     nxagentSynchronizeRegion(pDrawable, pRegion, breakMask, NULL);
 
-    nxagentFreeRegion(pDrawable, pRegion);
+    nxagentFreeRegion(pRegion);
   }
 }
 
@@ -1520,7 +1520,7 @@ void nxagentMarkCorruptedRegion(DrawablePtr pDrawable, RegionPtr pRegion)
     RegionUnion(nxagentCorruptedRegion(pDrawable),
                      nxagentCorruptedRegion(pDrawable), pRegion);
 
-    nxagentFreeRegion(pDrawable, pRegion);
+    nxagentFreeRegion(pRegion);
   }
   else
   {
@@ -2321,7 +2321,7 @@ void nxagentCorruptedRegionOnWindow(void *p0, XID x, void *p2)
 
   RegionIntersect(&visRegion, clipRegion, nxagentCorruptedRegion((DrawablePtr) pWin));
 
-  nxagentFreeRegion(pWin -> drawable.pScreen, clipRegion);
+  nxagentFreeRegion(clipRegion);
 
   if (RegionNil(&visRegion) == 1)
   {
@@ -2528,7 +2528,7 @@ nxagentCreateDrawableBitmapEnd:
 
   if (pClipRegion != NullRegion)
   {
-    nxagentFreeRegion(pDrawable, pClipRegion);
+    nxagentFreeRegion(pClipRegion);
   }
 
   if (pGC != NULL)
