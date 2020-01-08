@@ -191,45 +191,64 @@ int nxagentSynchronizeDrawable(DrawablePtr pDrawable, int wait, unsigned int bre
   return result;
 }
 
+static int reallySynchronizeDrawableData(DrawablePtr pDrawable)
+{
+  GCPtr pGC = nxagentGetGraphicContext(pDrawable);
+
+  if (pGC == NULL)
+  {
+    #ifdef WARNING
+    fprintf(stderr, "%s: WARNING! Failed to get the temporary GC.\n", __func__);
+    #endif
+
+    return 0;
+  }
+
+  DrawablePtr pSrcDrawable = (pDrawable -> type == DRAWABLE_PIXMAP ?
+                                 ((DrawablePtr) nxagentVirtualPixmap((PixmapPtr) pDrawable)) :
+                                     pDrawable);
+
+  int width  = pDrawable -> width;
+  int height = pDrawable -> height;
+  int depth  = pDrawable -> depth;
+
+  #ifdef TEST
+  fprintf(stderr, "%s: Synchronizing drawable (%s) with geometry [%d][%d][%d].\n",
+              __func__, nxagentDrawableType(pDrawable), width, height, depth);
+  #endif
+
+  unsigned int format = (depth == 1) ? XYPixmap : ZPixmap;
+
+  int length = nxagentImageLength(width, height, format, 0, depth);
+
+  char *data = malloc(length);
+  if (data  == NULL)
+  {
+    #ifdef WARNING
+    fprintf(stderr, "%s: WARNING! Failed to allocate memory for the operation.\n", __func__);
+    #endif
+
+    return 0;
+  }
+
+  ValidateGC(pDrawable, pGC);
+
+  fbGetImage(pSrcDrawable, 0, 0, width, height, format, AllPlanes, data);
+
+  nxagentPutImage(pDrawable, pGC, depth, 0, 0,
+                      width, height, 0, format, data);
+
+  SAFE_free(data);
+
+  return 1;
+}
+
 int nxagentSynchronizeDrawableData(DrawablePtr pDrawable, unsigned int breakMask, WindowPtr owner)
 {
-  char *data = NULL;
   int success;
 
   if (pDrawable -> type == DRAWABLE_PIXMAP)
   {
-    GCPtr pGC;
-
-    unsigned int leftPad = 0;
-
-    int width  = pDrawable -> width;
-    int height = pDrawable -> height;
-    int depth  = pDrawable -> depth;
-
-    #ifdef TEST
-    fprintf(stderr, "nxagentSynchronizeDrawableData: Synchronizing drawable (%s) with geometry [%d][%d][%d].\n",
-                nxagentDrawableType(pDrawable), width, height, depth);
-    #endif
-
-    unsigned int format = (depth == 1) ? XYPixmap : ZPixmap;
-
-    int length = nxagentImageLength(width, height, format, leftPad, depth);
-
-    if ((data = malloc(length)) == NULL)
-    {
-      #ifdef WARNING
-      fprintf(stderr, "nxagentSynchronizeDrawableData: WARNING! Failed to allocate memory for the operation.\n");
-      #endif
-
-      success = 0;
-
-      goto nxagentSynchronizeDrawableDataEnd;
-    }
-
-    DrawablePtr pSrcDrawable = (pDrawable -> type == DRAWABLE_PIXMAP ?
-                                   ((DrawablePtr) nxagentVirtualPixmap((PixmapPtr) pDrawable)) :
-                                       pDrawable);
-
     /*
      * Synchronize the whole pixmap if we need to download a fresh
      * copy with lossless compression turned off.
@@ -237,33 +256,12 @@ int nxagentSynchronizeDrawableData(DrawablePtr pDrawable, unsigned int breakMask
 
     if (nxagentLosslessTrap == 1)
     {
-      pGC = nxagentGetGraphicContext(pDrawable);
-
-      if (pGC == NULL)
-      {
-        #ifdef WARNING
-        fprintf(stderr, "nxagentSynchronizeDrawableData: WARNING! Failed to get the temporary GC.\n");
-        #endif
-
-        success = 0;
-
-        goto nxagentSynchronizeDrawableDataEnd;
-      }
-
-      ValidateGC(pDrawable, pGC);
-
-      fbGetImage(pSrcDrawable, 0, 0,
-                     width, height, format, AllPlanes, data);
-
       #ifdef TEST
-      fprintf(stderr, "nxagentSynchronizeDrawableData: Forcing synchronization of "
-                  "pixmap at [%p] with lossless compression.\n", (void *) pDrawable);
+      fprintf(stderr, "%s: Forcing synchronization of pixmap at [%p] with lossless compression.\n",
+                  __func__, (void *) pDrawable);
       #endif
 
-      nxagentPutImage(pDrawable, pGC, depth, 0, 0,
-                          width, height, leftPad, format, data);
-
-      success = 1;
+      success = reallySynchronizeDrawableData(pDrawable);
 
       goto nxagentSynchronizeDrawableDataEnd;
     }
@@ -278,7 +276,6 @@ int nxagentSynchronizeDrawableData(DrawablePtr pDrawable, unsigned int breakMask
       if (pDrawable -> depth == 1)
       {
         #ifdef TEST
-
         if (nxagentReconnectTrap == 1)
         {
           static int totalLength;
@@ -287,44 +284,22 @@ int nxagentSynchronizeDrawableData(DrawablePtr pDrawable, unsigned int breakMask
           totalLength += length;
           totalReconnectedPixmaps++;
 
-          fprintf(stderr, "nxagentSynchronizeDrawableData: Reconnecting pixmap at [%p] [%dx%d] "
+          fprintf(stderr, "%s: Reconnecting pixmap at [%p] [%dx%d] "
                       "Depth [%d] Size [%d]. Total size [%d]. Total reconnected pixmaps [%d].\n", 
-                          (void *) pDrawable, width, height, depth, length,
+                          __func__, (void *) pDrawable, width, height, depth, length,
                               totalLength, totalReconnectedPixmaps);
         }
-
         #endif
 
-        pGC = nxagentGetGraphicContext(pDrawable);
-
-        if (pGC == NULL)
-        {
-          #ifdef WARNING
-          fprintf(stderr, "nxagentSynchronizeDrawableData: WARNING! Failed to create the temporary GC.\n");
-          #endif
-
-          success = 0;
-
-          goto nxagentSynchronizeDrawableDataEnd;
-        }
-
-        ValidateGC(pDrawable, pGC);
-
-        fbGetImage(pSrcDrawable, 0, 0,
-                       width, height, format, AllPlanes, data);
-
-        nxagentPutImage(pDrawable, pGC, depth, 0, 0,
-                            width, height, leftPad, format, data);
-
-        success = 1;
+        success = reallySynchronizeDrawableData(pDrawable);
 
         goto nxagentSynchronizeDrawableDataEnd;
       }
       else
       {
         #ifdef TEST
-        fprintf(stderr, "nxagentSynchronizeDrawableData: Skipping synchronization of "
-                    "pixmap at [%p][%p] during reconnection.\n", (void *) pDrawable, (void*) nxagentVirtualPixmap((PixmapPtr)pDrawable));
+        fprintf(stderr, "%s: Skipping synchronization of pixmap at [%p][%p] during reconnection.\n",
+                    __func__, (void *) pDrawable, (void*) nxagentVirtualPixmap((PixmapPtr)pDrawable));
         #endif
 
         nxagentMarkCorruptedRegion(pDrawable, NullRegion);
@@ -345,7 +320,6 @@ int nxagentSynchronizeDrawableData(DrawablePtr pDrawable, unsigned int breakMask
   success = nxagentSynchronizeRegion(pDrawable, NullRegion, breakMask, owner);
 
 nxagentSynchronizeDrawableDataEnd:
-  SAFE_free(data);
 
   return success;
 }
