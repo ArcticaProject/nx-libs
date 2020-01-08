@@ -3289,11 +3289,11 @@ FIXME: The port information is not used at the moment and produces a
       {
         local_buf[in] = pszReturnData[i];
 
-        if(pszReturnData[i] == ':')
+        if (pszReturnData[i] == ':')
         {
           i++;
 
-          while(pszReturnData[i] != '\n')
+          while (pszReturnData[i] != '\n')
           {
              unsigned char h = fromHexNibble(pszReturnData[i]);
              i++;
@@ -3302,7 +3302,8 @@ FIXME: The port information is not used at the moment and produces a
              unsigned char l = fromHexNibble(pszReturnData[i]);
              i++;
 
-             if(h >= 16 || l >= 16) continue;
+             if (h >= 16 || l >= 16)
+               continue;
 
              /*
               * FIXME: The array tchar[] was used uninitialized.  It's
@@ -3349,7 +3350,7 @@ FIXME: The port information is not used at the moment and produces a
                strcat(local_buf,"00");
                in += 2;
 
-               while(pszReturnData[i] != '\n')
+               while (pszReturnData[i] != '\n')
                {
                  i++;
                }
@@ -4011,9 +4012,9 @@ int nxagentAdjustRandRXinerama(ScreenPtr pScreen)
            distinguish between pre-existing modes which should stay
            and our own modes that should be removed after use. */
         char name[100];
-	sprintf(name, "%s%dx%d", QUOTE(NXAGENT_RANDR_MODE_PREFIX), new_w, new_h);
+        sprintf(name, "%s%dx%d", QUOTE(NXAGENT_RANDR_MODE_PREFIX), new_w, new_h);
 
-	const int refresh = 60;
+        const int refresh = 60;
 
         xRRModeInfo modeInfo = {
           .width  = new_w,
@@ -4022,7 +4023,7 @@ int nxagentAdjustRandRXinerama(ScreenPtr pScreen)
           .vTotal = new_h,
           .dotClock = ((CARD32) new_w * (CARD32) new_h * (CARD32) refresh),
           .nameLength = strlen(name)
-	};
+        };
 
         RRModePtr mymode = RRModeGet(&modeInfo, name);
 
