@@ -2261,11 +2261,11 @@ void nxagentPointsToDirtyRegion(DrawablePtr pDrawable, int mode,
 {
   RegionPtr pRegion = RegionCreate(NullBox, 1);
 
-  int np = nPoints;
-  while (np--)
+  xPoint *xp = pPoints;
+
+  for (int np = nPoints; np--; xp++)
   {
     BoxRec box;
-    xPoint *xp = pPoints;
 
     if (CoordModePrevious)
     {
@@ -2294,8 +2294,6 @@ void nxagentPointsToDirtyRegion(DrawablePtr pDrawable, int mode,
     RegionUnion(pRegion, pRegion, &tmpRegion);
 
     RegionUninit(&tmpRegion);
-
-    xp++;
   }
 
   BoxRec extents = *RegionExtents(pRegion);
