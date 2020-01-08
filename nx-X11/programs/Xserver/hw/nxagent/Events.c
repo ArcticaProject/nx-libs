@@ -2633,7 +2633,7 @@ int nxagentHandleClientMessageEvent(XEvent *X, enum HandleEventResult *result)
       #ifdef WARNING
       if (message_type != MakeAtom("_NET_ACTIVE_WINDOW", strlen("_NET_ACTIVE_WINDOW"), False))
       {
-	fprintf(stderr, "WARNING: Invalid window in ClientMessage xclient.window [0x%lx].\n", X->xclient.window);
+        fprintf(stderr, "WARNING: Invalid window in ClientMessage xclient.window [0x%lx].\n", X->xclient.window);
       }
       #endif
 
