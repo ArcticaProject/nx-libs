@@ -3333,7 +3333,7 @@ FIXME: The port information is not used at the moment and produces a
 /*
 FIXME: The port information is not used at the moment and produces a
        warning on recent gcc versions. Do we need such information
-       to run the audio forawrding?
+       to run the audio forwarding?
 
                chport = &port[0];
 
