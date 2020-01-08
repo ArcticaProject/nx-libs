@@ -245,8 +245,6 @@ static int reallySynchronizeDrawableData(DrawablePtr pDrawable)
 
 int nxagentSynchronizeDrawableData(DrawablePtr pDrawable, unsigned int breakMask, WindowPtr owner)
 {
-  int success;
-
   if (pDrawable -> type == DRAWABLE_PIXMAP)
   {
     /*
@@ -261,9 +259,7 @@ int nxagentSynchronizeDrawableData(DrawablePtr pDrawable, unsigned int breakMask
                   __func__, (void *) pDrawable);
       #endif
 
-      success = reallySynchronizeDrawableData(pDrawable);
-
-      goto nxagentSynchronizeDrawableDataEnd;
+      return reallySynchronizeDrawableData(pDrawable);
     }
     else if (nxagentReconnectTrap == 1)
     {
@@ -291,9 +287,7 @@ int nxagentSynchronizeDrawableData(DrawablePtr pDrawable, unsigned int breakMask
         }
         #endif
 
-        success = reallySynchronizeDrawableData(pDrawable);
-
-        goto nxagentSynchronizeDrawableDataEnd;
+        return reallySynchronizeDrawableData(pDrawable);
       }
       else
       {
@@ -304,9 +298,7 @@ int nxagentSynchronizeDrawableData(DrawablePtr pDrawable, unsigned int breakMask
 
         nxagentMarkCorruptedRegion(pDrawable, NullRegion);
 
-        success = 1;
-
-        goto nxagentSynchronizeDrawableDataEnd;
+        return 1;
       }
     }
   }
@@ -317,11 +309,7 @@ int nxagentSynchronizeDrawableData(DrawablePtr pDrawable, unsigned int breakMask
    * the drawable.
    */
 
-  success = nxagentSynchronizeRegion(pDrawable, NullRegion, breakMask, owner);
-
-nxagentSynchronizeDrawableDataEnd:
-
-  return success;
+  return nxagentSynchronizeRegion(pDrawable, NullRegion, breakMask, owner);
 }
 
 /*
