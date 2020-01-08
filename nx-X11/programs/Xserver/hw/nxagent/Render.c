@@ -360,19 +360,15 @@ nxagentCleanGlyphs(xGlyphInfo  *gi,
 
       if (bytesToClean > 0)
       {
-        while (height > 0)
+        for (; height > 0; height--)
         {
-          int count = bytesToClean;
-
-          while (count > 0)
+          for (int i = bytesToClean; i > 0; i--)
           {
-            *(images + (bytesPerLine - count)) = 0;
+            *(images + (bytesPerLine - i)) = 0;
 
             #ifdef DEBUG
             fprintf(stderr, "nxagentCleanGlyphs: cleaned a byte.\n");
             #endif
-
-            count--;
           }
 
           #ifdef DUMP
@@ -385,8 +381,6 @@ nxagentCleanGlyphs(xGlyphInfo  *gi,
           #endif
 
           images += bytesPerLine;
-
-          height--;
         }
       }
 
