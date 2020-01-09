@@ -647,9 +647,9 @@ void nxagentDisconnectPixmap(void *p0, XID x1, void *p2)
   }
 }
 
-Bool nxagentDisconnectAllPixmaps(void)
+void nxagentDisconnectAllPixmaps(void)
 {
-  int r = 1;
+  int r;
 
   #ifdef TEST
   fprintf(stderr, "nxagentDisconnectAllPixmaps: Going to iterate through pixmap resources.\n");
@@ -661,6 +661,7 @@ Bool nxagentDisconnectAllPixmaps(void)
    * too.
    */
 
+  r = 1;
   FindClientResourcesByType(clients[serverClient -> index], RT_NX_PIXMAP, nxagentDisconnectPixmap, &r);
 
   #ifdef WARNING
@@ -674,14 +675,7 @@ Bool nxagentDisconnectAllPixmaps(void)
 
   #endif
 
-  /*
-   * FIXME: This is a bit cumbersome:
-   * - as stated below nxagentDisconnectPixmap will not modify r, so the result will stay at 1
-   * - at the end of each iteration r will be set to 1 anyway.
-   * So at the end of the loop r will always be 1. So the whole function will always return 1...
-   */
-  r = 1;
-  for (int i = 0; i < MAXCLIENTS; r = 1, i++)
+  for (int i = 0; i < MAXCLIENTS; i++)
   {
     if (clients[i])
     {
@@ -689,6 +683,7 @@ Bool nxagentDisconnectAllPixmaps(void)
       fprintf(stderr, "nxagentDisconnectAllPixmaps: Going to disconnect pixmaps of client [%d].\n", i);
       #endif
 
+      r = 1;
       FindClientResourcesByType(clients[i], RT_PIXMAP, nxagentDisconnectPixmap, &r);
 
       #ifdef WARNING
@@ -708,7 +703,7 @@ Bool nxagentDisconnectAllPixmaps(void)
   fprintf(stderr, "nxagentDisconnectAllPixmaps: Pixmaps disconnection completed.\n");
   #endif
 
-  return r;
+  return;
 }
 
 void nxagentReconnectPixmap(void *p0, XID x1, void *p2)
