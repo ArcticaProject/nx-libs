@@ -674,7 +674,14 @@ Bool nxagentDisconnectAllPixmaps(void)
 
   #endif
 
-  for (int i = 0, r = 1; i < MAXCLIENTS; r = 1, i++)
+  /*
+   * FIXME: This is a bit cumbersome:
+   * - as stated below nxagentDisconnectPixmap will not modify r, so the result will stay at 1
+   * - at the end of each iteration r will be set to 1 anyway.
+   * So at the end of the loop r will always be 1. So the whole function will always return 1...
+   */
+  r = 1;
+  for (int i = 0; i < MAXCLIENTS; r = 1, i++)
   {
     if (clients[i])
     {
@@ -837,7 +844,13 @@ Bool nxagentReconnectAllPixmaps(void *p0)
 
   #endif
 
-  for (int i = 0, result = 1; i < MAXCLIENTS; result = 1, i++)
+  /*
+   * FIXME: This is a bit cumbersome: at the end of each iteration
+   * result will be reset to 1. Therefore at loop exit result will
+   * always be 1 meaning the whole function will always return 1...
+   */
+  result = 1;
+  for (int i = 0; i < MAXCLIENTS; result = 1, i++)
   {
     if (clients[i] != NULL)
     {
