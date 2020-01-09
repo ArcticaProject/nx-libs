@@ -1733,13 +1733,15 @@ int nxagentConvertSelection(ClientPtr client, WindowPtr pWin, Atom selection,
     return 0;
   }
 
-  int i = nxagentFindCurrentSelectionIndex(selection);
-  if (i < NumCurrentSelections && IS_INTERNAL_OWNER(i))
   {
-    /*
-     * There is a client owner on the agent side, let normal dix stuff happen.
-     */
-    return 0;
+    int i = nxagentFindCurrentSelectionIndex(selection);
+    if (i < NumCurrentSelections && IS_INTERNAL_OWNER(i))
+    {
+      /*
+       * There is a client owner on the agent side, let normal dix stuff happen.
+       */
+      return 0;
+    }
   }
 
   /*
