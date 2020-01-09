@@ -1238,7 +1238,7 @@ FIXME: Don't enqueue the KeyRelease event if the key was not already
           int resource = nxagentWaitForResource(NXGetCollectGrabPointerResource,
                                                     nxagentCollectGrabPointerPredicate);
 
-          ScreenPtr pScreen = nxagentScreen(X.xbutton.window);
+          pScreen = nxagentScreen(X.xbutton.window);
           viewportCursor = XCreateFontCursor(nxagentDisplay, XC_fleur);
 
           NXCollectGrabPointer(nxagentDisplay, resource,
@@ -1380,7 +1380,7 @@ FIXME: Don't enqueue the KeyRelease event if the key was not already
       }
       case MotionNotify:
       {
-        ScreenPtr pScreen = nxagentScreen(X.xmotion.window);
+        pScreen = nxagentScreen(X.xmotion.window);
 
         #ifdef TEST
         fprintf(stderr, "%s: Going to handle new MotionNotify event.\n", __func__);
