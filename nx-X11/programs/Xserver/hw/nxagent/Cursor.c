@@ -487,7 +487,7 @@ void nxagentDisconnectCursor(void * p0, XID x1, void * p2)
   }
 }
 
-Bool nxagentDisconnectAllCursor(void)
+void nxagentDisconnectAllCursor(void)
 {
   Bool r = True;
 
@@ -518,7 +518,7 @@ Bool nxagentDisconnectAllCursor(void)
     nxagentDisconnectCursor(grab -> cursor, 0, &r);
   }
 
-  return r;
+  return;
 }
 
 

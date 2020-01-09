@@ -83,7 +83,7 @@ extern Bool nxagentReconnectAllPicture(void*);
 
 extern Bool nxagentDisconnectAllPicture(void);
 extern Bool nxagentDisconnectAllWindows(void);
-extern Bool nxagentDisconnectAllCursor(void);
+extern void nxagentDisconnectAllCursor(void);
 
 extern Bool nxagentReconnectFailedFonts(void*);
 extern Bool nxagentInstallFontServerPath(void);
