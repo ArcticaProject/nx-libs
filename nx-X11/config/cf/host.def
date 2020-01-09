@@ -230,7 +230,7 @@
  *
 #define GccWarningOptions -Wall -Wpedantic -Wpointer-arith -Wstrict-prototypes \
                           -Wmissing-prototypes -Wmissing-declarations \
-                          -Wredundant-decls -Wnested-externs
+                          -Wredundant-decls -Wnested-externs -Wshadow
  */
 
 /* 

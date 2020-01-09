@@ -720,9 +720,9 @@ XFREE86JAPANESEDOCDIR = $(DOCDIR)/Japanese
 #  if XFree86Devel
 #   define GccWarningOptions -Wall -Wpedantic -Wpointer-arith -Wstrict-prototypes \
 			  -Wmissing-prototypes -Wmissing-declarations \
-			  -Wredundant-decls -Wnested-externs Gcc28Warnings
+			  -Wredundant-decls -Wnested-externs -Wshadow Gcc28Warnings
 #  else
-#   define GccWarningOptions -Wall -Wpedantic -Wpointer-arith Gcc28Warnings
+#   define GccWarningOptions -Wall -Wpedantic -Wpointer-arith -Wshadow Gcc28Warnings
 #  endif
 # endif
 # ifndef DefaultCCOptions
