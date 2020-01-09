@@ -2255,7 +2255,6 @@ static int nxagentInitAndCheckVisuals(int flexibility)
 {
   /* FIXME: does this also need work? */
 
-  bool matched;
   bool compatible = true;
 
   long viMask = VisualScreenMask;
