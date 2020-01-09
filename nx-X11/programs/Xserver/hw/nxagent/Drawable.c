@@ -405,7 +405,7 @@ int nxagentSynchronizeRegion(DrawablePtr pDrawable, RegionPtr pRegion, unsigned 
                                         RegionNumRects(nxagentCorruptedRegion((DrawablePtr) nxagentDrawableBitmap(pDrawable))));
     #endif
 
-    RegionPtr clipRegion = nxagentCreateRegion(pDrawable, NULL, 0, 0, pDrawable -> width, pDrawable -> height);
+    clipRegion = nxagentCreateRegion(pDrawable, NULL, 0, 0, pDrawable -> width, pDrawable -> height);
 
     /*
      * Intersecting the viewable region of the drawable with the
