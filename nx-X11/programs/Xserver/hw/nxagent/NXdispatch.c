@@ -800,12 +800,12 @@ ProcOpenFont(register ClientPtr client)
 
 #ifdef NXAGENT_SERVER
     char fontReq[256];
-    memcpy(fontReq,(char *)&stuff[1],(stuff->nbytes<256)?stuff->nbytes:255);
-    fontReq[stuff->nbytes]=0;
-    if (strchr(fontReq,'*') || strchr(fontReq,'?'))
+    memcpy(fontReq,(char *)&stuff[1], (stuff->nbytes < 256) ? stuff->nbytes : 255);
+    fontReq[stuff->nbytes] = '\0';
+    if (strchr(fontReq, '*') || strchr(fontReq, '?'))
     {
 #ifdef NXAGENT_FONTMATCH_DEBUG
-       fprintf(stderr, "Dispatch: ProcOpenFont try to find a common font with font pattern=%s\n",fontReq);
+       fprintf(stderr, "%s: try to find a common font with font pattern [%s]\n", __func__, fontReq);
 #endif
        nxagentListRemoteFonts(fontReq, nxagentMaxFontNames);
        err = nxOpenFont(client, stuff->fid, (Mask) 0,
@@ -837,10 +837,9 @@ ProcCloseFont(register ClientPtr client)
         #ifdef NXAGENT_SERVER
 
         /*
-         * When a client closes a font the resource
-         * should not be lost if the reference counter
-         * is not 0, otherwise the server will not be
-         * able to find this font looping through the
+         * When a client closes a font the resource should not be lost
+         * if the reference counter is not 0, otherwise the server
+         * will not be able to find this font looping through the
          * resources.
          */
 
@@ -849,7 +848,7 @@ ProcCloseFont(register ClientPtr client)
           if (nxagentFindClientResource(serverClient -> index, RT_NX_FONT, pFont) == 0)
           {
             #ifdef TEST
-            fprintf(stderr, "ProcCloseFont: Switching resource for font at [%p].\n",
+            fprintf(stderr, "%s: Switching resource for font at [%p].\n", __func__,
                         (void *) pFont);
             #endif
 
@@ -861,8 +860,8 @@ ProcCloseFont(register ClientPtr client)
           #ifdef TEST
           else
           {
-            fprintf(stderr, "ProcCloseFont: Found duplicated font at [%p], "
-                        "resource switching skipped.\n", (void *) pFont);
+            fprintf(stderr, "%s: Found duplicated font at [%p], "
+                        "resource switching skipped.\n", __func__, (void *) pFont);
           }
           #endif
         }
@@ -889,11 +888,11 @@ ProcListFonts(register ClientPtr client)
 
 #ifdef NXAGENT_SERVER
     char tmp[256];
-    memcpy(tmp,(unsigned char *) &stuff[1],(stuff->nbytes<256)?stuff->nbytes:255);
-    tmp[stuff->nbytes]=0;
+    memcpy(tmp, (unsigned char *) &stuff[1], (stuff->nbytes < 256) ? stuff->nbytes : 255);
+    tmp[stuff->nbytes] = '\0';
 
 #ifdef NXAGENT_FONTMATCH_DEBUG
-    fprintf(stderr, "Dispatch: ListFont request with pattern %s max_names=%d\n",tmp,stuff->maxNames);
+    fprintf(stderr, "%s: ListFont request with pattern [%s] max_names [%d]\n", __func__, tmp, stuff->maxNames);
 #endif
     nxagentListRemoteFonts(tmp, stuff -> maxNames < nxagentMaxFontNames ? nxagentMaxFontNames : stuff->maxNames);
 #endif
@@ -911,12 +910,12 @@ ProcListFontsWithInfo(register ClientPtr client)
 
 #ifdef NXAGENT_SERVER
     char tmp[256];
-    memcpy(tmp,(unsigned char *) &stuff[1],(stuff->nbytes<256)?stuff->nbytes:255);
-    tmp[stuff->nbytes]=0;
+    memcpy(tmp, (unsigned char *) &stuff[1], (stuff->nbytes < 256) ? stuff->nbytes : 255);
+    tmp[stuff->nbytes] = '\0';
 #ifdef NXAGENT_FONTMATCH_DEBUG
-    fprintf(stderr, "Dispatch: ListFont with info request with pattern %s max_names=%d\n",tmp,stuff->maxNames);
+    fprintf(stderr, "%s: ListFont with info request with pattern [%s] max_names [%d]\n", __func__, tmp, stuff->maxNames);
 #endif
-    nxagentListRemoteFonts(tmp, stuff -> maxNames < nxagentMaxFontNames ? nxagentMaxFontNames :stuff->maxNames);
+    nxagentListRemoteFonts(tmp, stuff -> maxNames < nxagentMaxFontNames ? nxagentMaxFontNames : stuff->maxNames);
 #endif
 
     return StartListFontsWithInfo(client, stuff->nbytes,
@@ -938,11 +937,10 @@ ProcFreePixmap(register ClientPtr client)
         #ifdef NXAGENT_SERVER
 
         /*
-         * When a client releases a pixmap the resource
-         * should not be lost if the reference counter
-         * is not 0, otherwise the server will not be
-         * able to find this pixmap looping through the
-         * resources.
+         * When a client releases a pixmap the resource should not be
+         * lost if the reference counter is not 0, otherwise the
+         * server will not be able to find this pixmap looping through
+         * the resources.
          */
 
         if (pMap -> refcnt > 0)
@@ -961,8 +959,8 @@ ProcFreePixmap(register ClientPtr client)
           #ifdef TEST
           else
           {
-            fprintf(stderr, "ProcFreePixmap: Found duplicated pixmap at [%p], "
-                        "resource switching skipped.\n", (void *) pMap);
+            fprintf(stderr, "%s: Found duplicated pixmap at [%p], "
+                        "resource switching skipped.\n", __func__, (void *) pMap);
           }
           #endif
         }
