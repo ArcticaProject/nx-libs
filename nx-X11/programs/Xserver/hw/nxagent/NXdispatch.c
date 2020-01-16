@@ -125,6 +125,7 @@ Equipment Corporation.
 #include <nx/Shadow.h>
 #include "Handlers.h"
 #include "Keyboard.h"
+#include "Init.h"
 
 const int nxagentMaxFontNames = 10000;
 
@@ -138,12 +139,6 @@ int nxagentClients = 0;
 void nxagentWaitDisplay(void);
 
 void nxagentListRemoteFonts(const char *, int);
-
-/*
- * Timeouts based on screen saver time.
- */
-
-int nxagentAutoDisconnectTimeout = 0;
 
 #include "Xatom.h"
 
@@ -312,6 +307,9 @@ Reply   Total	Cached	Bits In			Bits Out		Bits/Reply	  Ratio
 
     if (!(dispatchException & DE_TERMINATE))
         dispatchException = 0;
+
+    /* Init TimeoutTimer if requested */
+    nxagentSetTimeoutTimer(0);
 #endif /* NXAGENT_SERVER */
 
     while (!dispatchException)
@@ -547,6 +545,8 @@ Reply   Total	Cached	Bits In			Bits Out		Bits/Reply	  Ratio
 #endif
 
 #ifdef NXAGENT_SERVER
+    nxagentFreeTimeoutTimer();
+
     /* FIXME: maybe move the code up to the KillAllClients() call to ddxBeforeReset? */
     if ((dispatchException & DE_RESET) && 
             (serverGeneration > nxagentMaxAllowedResets))

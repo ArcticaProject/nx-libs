@@ -2081,8 +2081,6 @@ FIXME: In rootless mode the backing-store support is not functional yet.
     {
       fprintf(stderr, "Info: Using auto-disconnect timeout of %d seconds.\n",
                   nxagentOption(Timeout));
-
-      nxagentAutoDisconnectTimeout = nxagentOption(Timeout) * MILLI_PER_SECOND;
     }
 
     #ifdef WATCH

@@ -57,8 +57,6 @@ extern XlibAtom nxagentReadyAtom;
 
 extern int nxagentClients;
 
-extern int nxagentAutoDisconnectTimeout;
-
 extern ScreenPtr nxagentDefaultScreen;
 
 extern Pixmap nxagentPixmapLogo;
