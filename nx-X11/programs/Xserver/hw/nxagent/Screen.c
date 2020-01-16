@@ -519,30 +519,47 @@ void nxagentSetScreenSaverTime(void)
   #endif
 }
 
+/*
+ * This is the called when the "hardware" should take care of the
+ * blanking.
+ *
+ * "what" can be one if these:
+ * SCREEN_SAVER_ON      Turns on the screen saver; disables video
+ * SCREEN_SAVER_OFF     Turns off the screen saver; enables video
+ * SCREEN_SAVER_FORCER  Updates time of last screen saver mode change
+ * SCREEN_SAVER_CYCLE   Cycle to new pattern
+ *
+ * Returns True if the 'what' action was successful and False otherwise.
+ *
+ * Returning False the SaveScreens() function (which calls this one)
+ * tries to build a screen-saver creating a new window. In some cases
+ * we do not want this so we return True. If we want the dix to take
+ * care fo blanking we return False.
+ */
 static Bool nxagentSaveScreen(ScreenPtr pScreen, int what)
 {
   #ifdef TEST
-  fprintf(stderr, "nxagentSaveScreen: Called for screen at [%p] with parameter [%d].\n",
-              (void *) pScreen, what);
-
-  fprintf(stderr, "nxagentSaveScreen: SCREEN_SAVER_ON is [%d] SCREEN_SAVER_OFF is [%d] "
-              "SCREEN_SAVER_FORCER is [%d] SCREEN_SAVER_CYCLE is [%d].\n",
-                  SCREEN_SAVER_ON, SCREEN_SAVER_OFF, SCREEN_SAVER_FORCER,
-                      SCREEN_SAVER_CYCLE);
+  fprintf(stderr, "%s: Called for screen at [%p] with parameter [%s]. ScreenSaverTime [%d]\n", __func__,
+              (void *) pScreen,
+                  what == SCREEN_SAVER_ON ? "SCREEN_SAVER_ON" :
+                  what == SCREEN_SAVER_OFF ? "SCREEN_SAVER_OFF" :
+                  what == SCREEN_SAVER_FORCER ? "SCREEN_SAVER_FORCER" :
+                  what == SCREEN_SAVER_CYCLE ? "SCREEN_SAVER_CYCLE" :
+                  "UNKNOWN",
+                      ScreenSaverTime);
   #endif
 
   if (what == SCREEN_SAVER_OFF)
   {
-    return 1;
+    return True;
   }
 
   /*
-   * The lastDeviceEventTime is updated every time
-   * a device event is received, and it is used by
-   * WaitForSomething() to know when the SaveScreens()
-   * function should be called. This solution doesn't
-   * take care of a pointer button not released, so
-   * we have to handle this case by ourselves.
+   * The lastDeviceEventTime is updated every time a device event is
+   * received, and it is used by WaitForSomething() to know when the
+   * SaveScreens() function should be called. This solution doesn't
+   * take care of a pointer button not released, so we have to handle
+   * this case by ourselves.
    */
 
 /*
@@ -552,21 +569,19 @@ FIXME: Do we need to check the key grab if the
   if (inputInfo.pointer -> button -> buttonsDown > 0)
   {
     #ifdef TEST
-    fprintf(stderr, "nxagentSaveScreen: Ignoring timeout, there is a pointer button down.\n");
+    fprintf(stderr, "%s: Ignoring timeout, there is a pointer button down.\n", __func__);
     #endif
 
     /*
-     * Returning 0 the SaveScreens() function
-     * (which calls this one) tries to build
-     * a screen-saver creating a new window.
-     * We don't want this, so we return 1 in
-     * any case.
+     * Returning False the SaveScreens() function (which calls this one)
+     * tries to build a screen-saver creating a new window.  We don't
+     * want this, so we return True here.
      */
 
-    return 1;
+    return True;
   }
 
-  return 1;
+  return True;
 }
 
 Bool nxagentCreateScreenResources(ScreenPtr pScreen)
