@@ -551,7 +551,7 @@ static Bool nxagentSaveScreen(ScreenPtr pScreen, int what)
 
   if (what == SCREEN_SAVER_OFF)
   {
-    return True;
+    return False;
   }
 
   /*
@@ -581,7 +581,7 @@ FIXME: Do we need to check the key grab if the
     return True;
   }
 
-  return True;
+  return False;
 }
 
 Bool nxagentCreateScreenResources(ScreenPtr pScreen)
