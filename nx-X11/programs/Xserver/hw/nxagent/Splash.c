@@ -404,7 +404,7 @@ void nxagentRemoveSplashWindow(void)
     nxagentRefreshWindows(screenInfo.screens[0]->root);
 
     #ifdef TEST
-    fprintf(stderr, "%s: setting the ownership of %s (%d) on window 0x%lx\n", __func__
+    fprintf(stderr, "%s: setting the ownership of %s (%d) on window 0x%lx\n", __func__,
                 "NX_CUT_BUFFER_SERVER", (int)serverTransToAgentProperty, nxagentWindow(screenInfo.screens[0]->root));
     #endif
 
