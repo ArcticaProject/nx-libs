@@ -65,10 +65,6 @@ static void nxagentPaintLogo(XlibWindow win, XlibGC gc, int scale, int width, in
 
 void nxagentShowSplashWindow(XlibWindow parentWindow)
 {
-  XWindowAttributes getAttributes;
-  XWindowChanges    values;
-  XSetWindowAttributes attributes;
-
   /*
    * Show splash window only when running as X2Go Agent
    */
@@ -94,19 +90,19 @@ void nxagentShowSplashWindow(XlibWindow parentWindow)
 
   nxagentWMPassed = False;
 
+  XWindowAttributes getAttributes;
+
   /*
-   * This would cause a GetWindowAttributes and a
-   * GetGeometry (asynchronous) reply. We use instead
-   * the geometry requested by the user for the agent
-   * window.
+   * This would cause a GetWindowAttributes and a GetGeometry
+   * (asynchronous) reply. We use instead the geometry requested by
+   * the user for the agent window.
    *
    * XGetWindowAttributes(nxagentDisplay, parentWindow, &getAttributes);
    */
 
   /*
-   * During reconnection we draw the splash over
-   * the default window and not over the root
-   * window because it would be hidden  by other
+   * During reconnection we draw the splash over the default window
+   * and not over the root window because it would be hidden by other
    * windows.
    */
 
@@ -145,9 +141,9 @@ void nxagentShowSplashWindow(XlibWindow parentWindow)
   XlibGC gc = XCreateGC(nxagentDisplay, nxagentSplashWindow, 0, NULL);
   nxagentPaintLogo(nxagentSplashWindow, gc, 1, getAttributes.width, getAttributes.height);
   XMapRaised (nxagentDisplay, nxagentSplashWindow);
-  values.stack_mode = Above;
+  XWindowChanges values = {.stack_mode = Above};
   XConfigureWindow(nxagentDisplay, nxagentSplashWindow, CWStackMode, &values);
-  attributes.override_redirect = True;
+  XSetWindowAttributes attributes = {.override_redirect = True};
   XChangeWindowAttributes(nxagentDisplay, nxagentSplashWindow, CWOverrideRedirect, &attributes);
   XFreeGC(nxagentDisplay, gc);
 
