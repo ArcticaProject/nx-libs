@@ -162,9 +162,7 @@ void nxagentListRemoteFonts(const char *, int);
 #include "unistd.h"
 #endif
 
-#ifdef TEST
 #include "Literals.h"
-#endif
 
 #ifdef VIEWPORT_FRAME
 

@@ -23,6 +23,7 @@
 /*                                                                        */
 /**************************************************************************/
 
+#ifdef TEST
 /*
  * Simple table used to translate a request
  * opcode to the name of the X request.
@@ -210,4 +211,4 @@ static char *nxagentShmRequestLiteral[] =
   "ShmGetImage",
   "ShmCreatePixmap"
 };
-
+#endif /* TEST */

@@ -65,9 +65,7 @@
 #undef  TEST
 #undef  DEBUG
 
-#ifdef TEST
 #include "Literals.h"
-#endif
 
 /*
  * From NXglyph.c.

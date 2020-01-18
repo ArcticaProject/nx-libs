@@ -70,9 +70,7 @@ in this Software without prior written authorization from The Open Group.
 #undef  TEST
 #undef  DEBUG
 
-#ifdef TEST
 #include "Literals.h"
-#endif
 
 extern void fbGetImage(DrawablePtr pDrw, int x, int y, int w, int h,
                            unsigned int format, unsigned long planeMask, char *d);
