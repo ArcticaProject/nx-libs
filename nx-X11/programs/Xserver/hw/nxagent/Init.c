@@ -98,15 +98,6 @@ extern int (*ProcVector[256])(ClientPtr);
  */
 extern int fbGCPrivateIndex;
 
-#ifdef DPMSExtension
-/*
- * Stubs for the DPMS extension.
- */
-void DPMSSet(int level);
-int DPMSGet(int *level);
-Bool DPMSSupported(void);
-#endif
-
 /*
  * Our error logging function.
  */
@@ -625,19 +616,3 @@ static void nxagentGrabServerCallback(CallbackListPtr *callbacks, void *data,
     nxagentGrabServerInfo.client = grab->client;
     nxagentGrabServerInfo.grabstate = grab->grabstate;
 }
-
-#ifdef DPMSExtension
-void DPMSSet(int level)
-{
-}
-
-int DPMSGet(int *level)
-{
-  return -1;
-}
-
-Bool DPMSSupported(void)
-{
-  return 0;
-}
-#endif

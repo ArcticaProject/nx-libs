@@ -65,8 +65,8 @@ XF86BIGFOBJS = xf86bigfont.o
     PNRXINCLUDES = -I../mi -I../render
 #endif
 #if BuildDPMS
-        DPMSSRCS = dpms.c
-        DPMSOBJS = dpms.o
+        DPMSSRCS = dpms.c dpmsstubs.c
+        DPMSOBJS = dpms.o dpmsstubs.o
 #endif
 
        SRCS = shape.c $(SHMSRCS) xcmisc.c\
