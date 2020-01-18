@@ -340,7 +340,7 @@ void nxagentInitializeRecLossyLevel(void)
 
 void nxagentInitReconnector(void)
 {
-  nxagentReconnectTrap = 0;
+  nxagentReconnectTrap = False;
 
   reconnectLossyLevel[DISPLAY_STEP]    = malloc(sizeof(int));
   reconnectLossyLevel[SCREEN_STEP]     = malloc(sizeof(int));

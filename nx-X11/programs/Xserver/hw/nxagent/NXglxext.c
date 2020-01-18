@@ -64,7 +64,7 @@ static int __glXDispatch(ClientPtr client)
      * dispatching a GLX operation.
      */
 
-    nxagentGlxTrap = 1;
+    nxagentGlxTrap = True;
 
     #ifdef TEST
     fprintf(stderr, "__glXDispatch: Going to dispatch GLX operation [%d] for client [%d].\n", 
@@ -73,7 +73,7 @@ static int __glXDispatch(ClientPtr client)
     
     retval = xorg__glXDispatch(client);
 
-    nxagentGlxTrap = 0;
+    nxagentGlxTrap = False;
 
     #ifdef TEST
     fprintf(stderr, "__glXDispatch: Dispatched GLX operation [%d] for client [%d].\n", 

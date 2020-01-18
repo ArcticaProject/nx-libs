@@ -1264,7 +1264,7 @@ GCPtr nxagentGetScratchGC(unsigned depth, ScreenPtr pScreen)
 
   int nxagentSaveGCTrap = nxagentGCTrap;
 
-  nxagentGCTrap = 0;
+  nxagentGCTrap = False;
 
   GCPtr pGC = GetScratchGC(depth, pScreen);
 

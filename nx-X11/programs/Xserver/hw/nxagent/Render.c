@@ -532,11 +532,11 @@ void nxagentRenderRealizeCursor(ScreenPtr pScreen, CursorPtr pCursor)
    * if the cursor was already encoded with the best quality.
    */
 
-  nxagentLosslessTrap = 1;
+  nxagentLosslessTrap = True;
 
   nxagentSynchronizeDrawable(pPicture -> pDrawable, DO_WAIT, NEVER_BREAK, NULL);
 
-  nxagentLosslessTrap = 0;
+  nxagentLosslessTrap = False;
   nxagentCursor(pCursor, pScreen) = XRenderCreateCursor(nxagentDisplay, nxagentPicture(pPicture), x, y);
 }
 

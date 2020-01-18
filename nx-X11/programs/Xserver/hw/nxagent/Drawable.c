@@ -160,15 +160,15 @@ int nxagentSynchronizeDrawable(DrawablePtr pDrawable, int wait, unsigned int bre
    * so that the image will be transferred in a single operation.
    */
 
-  nxagentFBTrap = 1;
+  nxagentFBTrap = True;
 
-  nxagentSplitTrap = 1;
+  nxagentSplitTrap = True;
 
   int result = nxagentSynchronizeDrawableData(pDrawable, breakMask, owner);
 
-  nxagentSplitTrap = 0;
+  nxagentSplitTrap = False;
 
-  nxagentFBTrap = 0;
+  nxagentFBTrap = False;
 
   if (wait == DO_WAIT && nxagentSplitResource(pDrawable) != NULL)
   {
@@ -495,11 +495,11 @@ int nxagentSynchronizeRegion(DrawablePtr pDrawable, RegionPtr pRegion, unsigned 
 
   int saveTrap = nxagentGCTrap;
 
-  nxagentGCTrap = 0;
+  nxagentGCTrap = False;
 
-  nxagentFBTrap = 1;
+  nxagentFBTrap = True;
 
-  nxagentSplitTrap = 1;
+  nxagentSplitTrap = True;
 
   pGC = nxagentGetGraphicContext(pDrawable);
 
@@ -839,9 +839,9 @@ int nxagentSynchronizeRegion(DrawablePtr pDrawable, RegionPtr pRegion, unsigned 
 
 nxagentSynchronizeRegionStop:
 
-  nxagentSplitTrap = 0;
+  nxagentSplitTrap = False;
 
-  nxagentFBTrap = 0;
+  nxagentFBTrap = False;
 
   nxagentGCTrap = saveTrap;
 
@@ -2412,7 +2412,7 @@ void nxagentCreateDrawableBitmap(DrawablePtr pDrawable)
 
   int saveTrap = nxagentGCTrap;
 
-  nxagentGCTrap = 1;
+  nxagentGCTrap = True;
 
   if (nxagentDrawableStatus(pDrawable) == Synchronized)
   {

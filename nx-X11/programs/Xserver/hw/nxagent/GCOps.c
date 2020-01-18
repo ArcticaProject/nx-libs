@@ -80,7 +80,7 @@ static int nxagentSaveGCTrap;
 { \
   nxagentSaveGCTrap = nxagentGCTrap;\
 \
-  nxagentGCTrap = 1; \
+  nxagentGCTrap = True; \
 }
 
 #define RESET_GC_TRAP() \
