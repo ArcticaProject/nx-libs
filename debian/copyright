@@ -1475,10 +1475,8 @@ License: MIT~X11
 
 Files: nx-X11/include/extensions/XKB.h
  nx-X11/include/extensions/XKBconfig.h
- nx-X11/include/extensions/XKBfile.h
  nx-X11/include/extensions/XKBgeom.h
  nx-X11/include/extensions/XKBproto.h
- nx-X11/include/extensions/XKBrules.h
  nx-X11/include/extensions/XKBsrv.h
  nx-X11/include/extensions/XKBstr.h
  nx-X11/include/extensions/XKM.h
