@@ -714,7 +714,6 @@ Copyright: 1999-2001, Brian Paul
 License: Expat
 
 Files: nx-X11/include/XWDFile.h
- nx-X11/include/Xalloca.h
  nx-X11/include/Xauth.h
  nx-X11/include/Xfuncproto.h
  nx-X11/include/Xfuncs.h

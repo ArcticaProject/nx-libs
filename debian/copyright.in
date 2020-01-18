@@ -8,7 +8,6 @@ Files: nx-X11/include/DECkeysym.h
  nx-X11/include/HPkeysym.h
  nx-X11/include/X.h
  nx-X11/include/XWDFile.h
- nx-X11/include/Xalloca.h
  nx-X11/include/Xauth.h
  nx-X11/include/Xfuncproto.h
  nx-X11/include/Xfuncs.h
