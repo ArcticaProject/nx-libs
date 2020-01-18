@@ -117,6 +117,7 @@ Equipment Corporation.
 
 #include "Atoms.h"
 #include "Splash.h"
+#include "Xdmcp.h"
 #include "Client.h"
 #include "Clipboard.h"
 #include "Reconnect.h"

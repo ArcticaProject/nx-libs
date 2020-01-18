@@ -36,7 +36,7 @@
 #include "Reconnect.h"
 #include "Dialog.h"
 #include "Drawable.h"
-#include "Splash.h"
+#include "Xdmcp.h"
 #include "Screen.h"
 #include "Millis.h"
 
