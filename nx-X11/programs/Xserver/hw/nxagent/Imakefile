@@ -202,8 +202,8 @@ INCLUDES = \
 # NXAGENT_ONSTART                  communicate about startup phase to the original nxclient by NoMachine via selections
 # NXAGENT_WAKEUP=<milliseconds>    Specifies a timeout that makes WaitForSomething() return earlier than normal which
 #                                  enables nxagent to close the splash window at the right time and/or improve connection
-#                                  handling for the xdmcp option. This value has no effect because the code uses
-#                                  NX_TRANS_WAKEUP in os/WaitFor.c instead.
+#                                  handling for the xdmcp option.
+#                                  This only has an effect if NX_TRANS_WAKEUP is also set for os/WaitFor.c
 # NXAGENT_ARTSD                    enable special handling of MCOPGLOBALS property used by artsd.
 # NXAGENT_RENDER_CLEANUP           cleanup padding bits/bytes of glyphs to possibly increase compression rate
 #

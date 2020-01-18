@@ -237,13 +237,15 @@ WaitForSomething(int *pClientsReady)
 
         /*
          * If caller has marked the first element of pClientsReady[],
-         * bail out of select after a short (NX_TRANS_WAKEUP)
-         * timeout. We need this to let the NX agent remove the splash
-         * screen when the timeout is expired. A better option would
-         * be to use the existing screen-saver timeout but it can be
-         * modified by clients, so we would need a special
-         * handling. This hack is trivial and keeps WaitForSomething()
-         * backward compatible with the existing servers.
+         * bail out of select after the timeout given in the second
+         * element. We need this to let the NX agent remove the splash
+         * screen when the timeout is expired even if there's no
+         * client. Otherwise WaitForSomething would block. A better
+         * option would be to use the existing screen-saver timeout
+         * but it can be modified by clients, so we would need a
+         * special handling. This hack is trivial and keeps
+         * WaitForSomething() backward compatible with the existing
+         * servers.
          */
 
         if (pClientsReady[0] == -1)
@@ -257,7 +259,7 @@ WaitForSomething(int *pClientsReady)
 
             timeoutInMillis = GetTimeInMillis();
 
-            if (timeoutInMillis - startTimeInMillis >= NX_TRANS_WAKEUP)
+            if (timeoutInMillis - startTimeInMillis >= pClientsReady[1])
             {
                 #ifdef NX_TRANS_DEBUG
                 fprintf(stderr, "WaitForSomething: Returning 0 because of wakeup timeout.\n");
@@ -265,7 +267,7 @@ WaitForSomething(int *pClientsReady)
 		return 0;
             }
 
-            timeoutInMillis = NX_TRANS_WAKEUP - (timeoutInMillis - startTimeInMillis);
+            timeoutInMillis = pClientsReady[1] - (timeoutInMillis - startTimeInMillis);
 
             #ifdef NX_TRANS_DEBUG
             fprintf(stderr, "WaitForSomething: Milliseconds to next wakeup are %ld.\n",
