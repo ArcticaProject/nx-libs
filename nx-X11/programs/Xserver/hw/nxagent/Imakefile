@@ -190,34 +190,36 @@ INCLUDES = \
 #endif
 #endif
 
-### NXAGENT Defines:
+### list of existing NXAGENT macros:
 #
 # NXAGENT_SHAPE                    Old shape code
 # NXAGENT_SHAPE2                   New shape code
 # NXAGENT_FIXKEYS                  Force the release of pressed key when losing focus
 # NXAGENT_CLIPBOARD                Enables clipboard cut and paste function between X servers.
-# NXAGENT_RANDR_MODE_PREFIX        Prefix for RandR modes (i.e., nx_<x>x<y>) (default: nx_)
+# NXAGENT_RANDR_MODE_PREFIX        Prefix for RandR display modes (i.e., nx_<x>x<y>) (default: nx_)
 # NXAGENT_RANDR_XINERAMA_CLIPPING  cut off invisible window parts in xinerama mode (you probably do not want this)
 # NXAGENT_TIMESTAMP                print duration for some routines
+# NXAGENT_ONSTART                  communicate about startup phase to the original nxclient by NoMachine via selections
+# NXAGENT_WAKEUP=<milliseconds>    Specifies a timeout that makes WaitForSomething() return earlier than normal which
+#                                  enables nxagent to close the splash window at the right time and/or improve connection
+#                                  handling for the xdmcp option. This value has no effect because the code uses
+#                                  NX_TRANS_WAKEUP in os/WaitFor.c instead.
+# NXAGENT_ARTSD                    enable special handling of MCOPGLOBALS property used by artsd.
+# NXAGENT_RENDER_CLEANUP           cleanup padding bits/bytes of glyphs to possibly increase compression rate
 #
 ### macros not investigated yet:
 #
 # NXAGENT_PICTURE_ALWAYS_POINTS_TO_VIRTUAL
-# NXAGENT_RENDER_CLEANUP
-# NXAGENT_WAKEUP=<milliseconds>
-# NXAGENT_ONSTART
-# NXAGENT_SPLASH
-# NXAGENT_ARTSD
 #
 ### Debug macros:
 #
 # DEBUG_COLORMAP
-# DEBUG_TREE
+# DEBUG_TREE                       Include code that activates the keystroke to print the current window tree
 # NXAGENT_DEBUG
 # NXAGENT_FIXKEYS_DEBUG
 # NXAGENT_FONTCACHE_DEBUG
 # NXAGENT_FONTMATCH_DEBUG
-# NXAGENT_LOGO_DEBUG
+# NXAGENT_LOGO_DEBUG               print details about splash logo creating and paint some helper lines
 # NXAGENT_RECONNECT_COLORMAP_DEBUG
 # NXAGENT_RECONNECT_CURSOR_DEBUG
 # NXAGENT_RECONNECT_DEBUG
@@ -228,7 +230,9 @@ INCLUDES = \
 # NXAGENT_RECONNECT_SCREEN_DEBUG
 # NXAGENT_RECONNECT_WINDOW_DEBUG
 # NXAGENT_XKBD_DEBUG
-# NX_DEBUG_INPUT
+# NX_DEBUG_INPUT                   include input debugging code. Can then by controlled at runtime by
+#                                  xprop -root -f NX_DEBUG_INPUT 8b -set NX_DEBUG_INPUT "True" or
+#                                  xprop -root -f NX_DEBUG_INPUT 8b -set NX_DEBUG_INPUT "False"
 
 #if nxVersion
 NX_DEFINES = \
