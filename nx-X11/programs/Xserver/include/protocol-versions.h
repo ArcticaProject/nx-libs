@@ -38,11 +38,7 @@
 
 /* Damage */
 #define SERVER_DAMAGE_MAJOR_VERSION		1
-#ifndef NXAGENT_SERVER
 #define SERVER_DAMAGE_MINOR_VERSION		1
-#else /* !defined(NXAGENT_SERVER) */
-#define SERVER_DAMAGE_MINOR_VERSION		0
-#endif /* !defined(NXAGENT_SERVER) */
 
 #ifndef NXAGENT_SERVER
 /* DRI3 */

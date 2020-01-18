@@ -75,7 +75,7 @@ SOFTWARE.
  */
 
 int
-SProcXGetSelectedExtensionEvents(register ClientPtr client)
+SProcXGetSelectedExtensionEvents(ClientPtr client)
 {
     REQUEST(xGetSelectedExtensionEventsReq);
     swaps(&stuff->length);
@@ -92,7 +92,7 @@ SProcXGetSelectedExtensionEvents(register ClientPtr client)
  */
 
 int
-ProcXGetSelectedExtensionEvents(register ClientPtr client)
+ProcXGetSelectedExtensionEvents(ClientPtr client)
 {
     int i;
     int total_length = 0;

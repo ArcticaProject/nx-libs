@@ -1,6 +1,4 @@
 /*
- * $Id: damage.h,v 1.4 2005/07/03 07:02:01 daniels Exp $
- *
  * Copyright © 2003 Keith Packard
  *
  * Permission to use, copy, modify, distribute, and sell this software and its
@@ -80,5 +78,8 @@ DamageRegion (DamagePtr		    pDamage);
 void
 DamageDamageRegion (DrawablePtr	    pDrawable,
 		    const RegionPtr pRegion);
+
+void
+DamageSetReportAfterOp (DamagePtr pDamage, Bool reportAfter);
 
 #endif /* _DAMAGE_H_ */

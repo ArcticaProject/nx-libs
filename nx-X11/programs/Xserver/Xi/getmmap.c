@@ -73,7 +73,7 @@ SOFTWARE.
  */
 
 int
-SProcXGetDeviceModifierMapping(register ClientPtr client)
+SProcXGetDeviceModifierMapping(ClientPtr client)
 {
     REQUEST(xGetDeviceModifierMappingReq);
     swaps(&stuff->length);

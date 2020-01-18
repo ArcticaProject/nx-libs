@@ -1,6 +1,4 @@
 /*
- * $Id: damageext.c,v 1.6 2005/07/03 07:37:35 daniels Exp $
- *
  * Copyright © 2002 Keith Packard
  *
  * Permission to use, copy, modify, distribute, and sell this software and its
@@ -29,12 +27,12 @@
 #include "damageextint.h"
 #include "protocol-versions.h"
 
-unsigned char	DamageReqCode;
-int		DamageEventBase;
-int		DamageErrorBase;
-int		DamageClientPrivateIndex;
-RESTYPE		DamageExtType;
-RESTYPE		DamageExtWinType;
+static unsigned char	DamageReqCode;
+static int		DamageEventBase;
+static int		DamageErrorBase;
+static int		DamageClientPrivateIndex;
+static RESTYPE		DamageExtType;
+static RESTYPE		DamageExtWinType;
 
 #define prScreen	screenInfo.screens[0]
 
@@ -273,20 +271,44 @@ ProcDamageSubtract (ClientPtr client)
     return (client->noClientException);
 }
 
+static int
+ProcDamageAdd (ClientPtr client)
+{
+    REQUEST(xDamageAddReq);
+    DrawablePtr	    pDrawable;
+    RegionPtr	    pRegion;
+
+    REQUEST_SIZE_MATCH(xDamageAddReq);
+    VERIFY_REGION(pRegion, stuff->region, client, DixWriteAccess);
+    SECURITY_VERIFY_DRAWABLE (pDrawable, stuff->drawable, client,
+                             DixReadAccess);
+
+    /* The region is relative to the drawable origin, so translate it out to
+     * screen coordinates like damage expects.
+     */
+    RegionTranslate(pRegion, pDrawable->x, pDrawable->y);
+    DamageDamageRegion(pDrawable, pRegion);
+    RegionTranslate(pRegion, -pDrawable->x, -pDrawable->y);
+
+    return (client->noClientException);
+}
+
 /* Major version controls available requests */
 static const int version_requests[] = {
     X_DamageQueryVersion,	/* before client sends QueryVersion */
-    X_DamageSubtract,		/* Version 1 */
+    X_DamageAdd,		/* Version 1 */
 };
 
 #define NUM_VERSION_REQUESTS	(sizeof (version_requests) / sizeof (version_requests[0]))
     
-int	(*ProcDamageVector[XDamageNumberRequests])(ClientPtr) = {
+static int (*ProcDamageVector[XDamageNumberRequests])(ClientPtr) = {
 /*************** Version 1 ******************/
     ProcDamageQueryVersion,
     ProcDamageCreate,
     ProcDamageDestroy,
     ProcDamageSubtract,
+/*************** Version 1.1 ****************/
+    ProcDamageAdd,
 };
 
 
@@ -351,12 +373,26 @@ SProcDamageSubtract (ClientPtr client)
     return (*ProcDamageVector[stuff->damageReqType]) (client);
 }
 
-int	(*SProcDamageVector[XDamageNumberRequests])(ClientPtr) = {
+static int
+SProcDamageAdd (ClientPtr client)
+{
+    REQUEST(xDamageAddReq);
+
+    swaps (&stuff->length);
+    REQUEST_SIZE_MATCH(xDamageSubtractReq);
+    swapl (&stuff->drawable);
+    swapl (&stuff->region);
+    return (*ProcDamageVector[stuff->damageReqType]) (client);
+}
+
+static int (*SProcDamageVector[XDamageNumberRequests])(ClientPtr) = {
 /*************** Version 1 ******************/
     SProcDamageQueryVersion,
     SProcDamageCreate,
     SProcDamageDestroy,
     SProcDamageSubtract,
+/*************** Version 1.1 ****************/
+    SProcDamageAdd,
 };
 
 static int
@@ -419,7 +455,7 @@ FreeDamageExtWin (void * value, XID wid)
     return Success;
 }
 
-void
+static void
 SDamageNotifyEvent (xDamageNotifyEvent *from,
 		    xDamageNotifyEvent *to)
 {

@@ -12,7 +12,6 @@
  * software for any purpose.  It is provided "as is" without
  * express or implied warranty.
  *
- *	"$Xorg: mibstore.h,v 1.3 2000/08/17 19:53:37 cpqbld Exp $
  */
 
 

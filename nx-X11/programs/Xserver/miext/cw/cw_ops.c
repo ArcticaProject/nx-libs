@@ -19,7 +19,6 @@
  * TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
-/* $Header: /cvs/xorg/xc/programs/Xserver/miext/cw/cw_ops.c,v 1.9 2005/07/03 07:02:01 daniels Exp $ */
 
 #ifdef HAVE_DIX_CONFIG_H
 #include <dix-config.h>
@@ -28,7 +27,9 @@
 #include <stdlib.h>
 
 #include "gcstruct.h"
+#include "pixmapstr.h"
 #include "cw.h"
+#include "mi.h"
 
 #define SETUP_BACKING_DST(_pDst, _pGC) \
     cwGCPtr pGCPrivate = getCwGC (_pGC); \
@@ -43,6 +44,9 @@
 	&src_off_y)
 
 #define PROLOGUE(pGC) do { \
+    if (pBackingGC->serialNumber != pBackingDst->serialNumber) { \
+	ValidateGC(pBackingDst, pBackingGC); \
+    } \
     pGC->funcs = pGCPrivate->wrapFuncs;\
     pGC->ops = pGCPrivate->wrapOps;\
 } while (0)
@@ -181,7 +185,7 @@ cwCopyArea(DrawablePtr pSrc, DrawablePtr pDst, GCPtr pGC, int srcx, int srcy,
 	   int w, int h, int dstx, int dsty)
 {
     int		odstx, odsty;
-    RegionPtr	exposed = NULL;
+    int		osrcx, osrcy;
     SETUP_BACKING_DST(pDst, pGC);
     SETUP_BACKING_SRC(pSrc, pGC);
 
@@ -189,19 +193,20 @@ cwCopyArea(DrawablePtr pSrc, DrawablePtr pDst, GCPtr pGC, int srcx, int srcy,
 
     odstx = dstx;
     odsty = dsty;
+    osrcx = srcx;
+    osrcy = srcy;
     CW_OFFSET_XY_DST(dstx, dsty);
     CW_OFFSET_XY_SRC(srcx, srcy);
 
-    exposed = (*pBackingGC->ops->CopyArea)(pBackingSrc, pBackingDst,
-					   pBackingGC, srcx, srcy, w, h,
-					   dstx, dsty);
-
-    if (exposed != NULL)
-	RegionTranslate(exposed, odstx - dstx, odsty - dsty);
-
+    (*pBackingGC->ops->CopyArea)(pBackingSrc, pBackingDst,
+				 pBackingGC, srcx, srcy, w, h,
+				 dstx, dsty);
+    
     EPILOGUE(pGC);
 
-    return exposed;
+    return miHandleExposures(pSrc, pDst, pGC,
+			     osrcx, osrcy, w, h,
+			     odstx, odsty, 0);
 }
 
 static RegionPtr
@@ -209,7 +214,7 @@ cwCopyPlane(DrawablePtr pSrc, DrawablePtr pDst, GCPtr pGC, int srcx, int srcy,
 	    int w, int h, int dstx, int dsty, unsigned long plane)
 {
     int		odstx, odsty;
-    RegionPtr	exposed = NULL;
+    int		osrcx, osrcy;
     SETUP_BACKING_DST(pDst, pGC);
     SETUP_BACKING_SRC(pSrc, pGC);
 
@@ -217,19 +222,20 @@ cwCopyPlane(DrawablePtr pSrc, DrawablePtr pDst, GCPtr pGC, int srcx, int srcy,
 
     odstx = dstx;
     odsty = dsty;
+    osrcx = srcx;
+    osrcy = srcy;
     CW_OFFSET_XY_DST(dstx, dsty);
     CW_OFFSET_XY_SRC(srcx, srcy);
 
-    exposed = (*pBackingGC->ops->CopyPlane)(pBackingSrc, pBackingDst,
-					    pBackingGC, srcx, srcy, w, h,
-					    dstx, dsty, plane);
-
-    if (exposed != NULL)
-	RegionTranslate(exposed, odstx - dstx, odsty - dsty);
+    (*pBackingGC->ops->CopyPlane)(pBackingSrc, pBackingDst,
+				  pBackingGC, srcx, srcy, w, h,
+				  dstx, dsty, plane);
 
     EPILOGUE(pGC);
 
-    return exposed;
+    return miHandleExposures(pSrc, pDst, pGC,
+			     osrcx, osrcy, w, h,
+			     odstx, odsty, plane);
 }
 
 static void

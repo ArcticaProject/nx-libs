@@ -53,6 +53,8 @@ is" without express or implied warranty.
 
 extern unsigned char nxagentReversePointerMap[MAXBUTTONS];
 
+extern DeviceIntPtr nxagentPointerDevice;
+
 void nxagentChangePointerControl(DeviceIntPtr pDev, PtrCtrl *ctrl);
 
 int nxagentPointerProc(DeviceIntPtr pDev, int onoff);

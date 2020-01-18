@@ -60,7 +60,7 @@ unsigned *extensionPrivateSizes;
 unsigned totalExtensionSize;
 
 void
-ResetExtensionPrivates()
+ResetExtensionPrivates(void)
 {
     extensionPrivateCount = 0;
     extensionPrivateLen = 0;
@@ -71,7 +71,7 @@ ResetExtensionPrivates()
 }
 
 int
-AllocateExtensionPrivateIndex()
+AllocateExtensionPrivateIndex(void)
 {
     return extensionPrivateCount++;
 }
@@ -117,7 +117,7 @@ unsigned *clientPrivateSizes;
 unsigned totalClientSize;
 
 void
-ResetClientPrivates()
+ResetClientPrivates(void)
 {
     clientPrivateCount = 0;
     clientPrivateLen = 0;
@@ -128,7 +128,7 @@ ResetClientPrivates()
 }
 
 int
-AllocateClientPrivateIndex()
+AllocateClientPrivateIndex(void)
 {
     return clientPrivateCount++;
 }
@@ -171,7 +171,7 @@ AllocateClientPrivate(int index2, unsigned amount)
 int  screenPrivateCount;
 
 void
-ResetScreenPrivates()
+ResetScreenPrivates(void)
 {
     screenPrivateCount = 0;
 }
@@ -180,7 +180,7 @@ ResetScreenPrivates()
  * so we have to worry about resizing existing devPrivates
  */
 int
-AllocateScreenPrivateIndex()
+AllocateScreenPrivateIndex(void)
 {
     int		idx;
     int		i;
@@ -213,19 +213,19 @@ AllocateScreenPrivateIndex()
 static int  windowPrivateCount;
 
 void
-ResetWindowPrivates()
+ResetWindowPrivates(void)
 {
     windowPrivateCount = 0;
 }
 
 int
-AllocateWindowPrivateIndex()
+AllocateWindowPrivateIndex(void)
 {
     return windowPrivateCount++;
 }
 
 Bool
-AllocateWindowPrivate(register ScreenPtr pScreen, int index2, unsigned amount)
+AllocateWindowPrivate(ScreenPtr pScreen, int index2, unsigned amount)
 {
     unsigned oldamount;
 
@@ -257,25 +257,25 @@ AllocateWindowPrivate(register ScreenPtr pScreen, int index2, unsigned amount)
 
 
 /*
- *  gc private machinery 
+ *  gc private machinery
  */
 
 static int  gcPrivateCount;
 
 void
-ResetGCPrivates()
+ResetGCPrivates(void)
 {
     gcPrivateCount = 0;
 }
 
 int
-AllocateGCPrivateIndex()
+AllocateGCPrivateIndex(void)
 {
     return gcPrivateCount++;
 }
 
 Bool
-AllocateGCPrivate(register ScreenPtr pScreen, int index2, unsigned amount)
+AllocateGCPrivate(ScreenPtr pScreen, int index2, unsigned amount)
 {
     unsigned oldamount;
 
@@ -313,19 +313,19 @@ AllocateGCPrivate(register ScreenPtr pScreen, int index2, unsigned amount)
 static int  pixmapPrivateCount;
 
 void
-ResetPixmapPrivates()
+ResetPixmapPrivates(void)
 {
     pixmapPrivateCount = 0;
 }
 
 int
-AllocatePixmapPrivateIndex()
+AllocatePixmapPrivateIndex(void)
 {
     return pixmapPrivateCount++;
 }
 
 Bool
-AllocatePixmapPrivate(register ScreenPtr pScreen, int index2, unsigned amount)
+AllocatePixmapPrivate(ScreenPtr pScreen, int index2, unsigned amount)
 {
     unsigned oldamount;
 
@@ -357,7 +357,6 @@ AllocatePixmapPrivate(register ScreenPtr pScreen, int index2, unsigned amount)
 }
 #endif
 
-
 /*
  *  colormap private machinery
  */
@@ -365,7 +364,7 @@ AllocatePixmapPrivate(register ScreenPtr pScreen, int index2, unsigned amount)
 int  colormapPrivateCount;
 
 void
-ResetColormapPrivates()
+ResetColormapPrivates(void)
 {
     colormapPrivateCount = 0;
 }
@@ -426,7 +425,7 @@ AllocateColormapPrivateIndex (InitCmapPrivFunc initPrivFunc)
 static int devicePrivateIndex = 0;
 
 int
-AllocateDevicePrivateIndex()
+AllocateDevicePrivateIndex(void)
 {
     return devicePrivateIndex++;
 }

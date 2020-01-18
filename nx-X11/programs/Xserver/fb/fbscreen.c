@@ -1,6 +1,4 @@
-/* $XdotOrg: xc/programs/Xserver/fb/fbscreen.c,v 1.6 2005/07/03 07:01:23 daniels Exp $
- * Id: fbscreen.c,v 1.1 1999/11/02 03:54:45 keithp Exp $
- *
+/*
  * Copyright © 1998 Keith Packard
  *
  * Permission to use, copy, modify, distribute, and sell this software and its
@@ -83,7 +81,6 @@ fbQueryBestSize (int class,
     }
 }
 
-#ifndef FB_OLD_SCREEN
 PixmapPtr
 _fbGetWindowPixmap (WindowPtr pWindow)
 {
@@ -99,7 +96,6 @@ _fbSetWindowPixmap (WindowPtr pWindow, PixmapPtr pPixmap)
     pWindow->devPrivates[fbWinPrivateIndex].ptr = (void *) pPixmap;
 #endif
 }
-#endif
 
 Bool
 fbSetupScreen(ScreenPtr	pScreen, 
@@ -143,7 +139,6 @@ fbSetupScreen(ScreenPtr	pScreen,
     pScreen->ResolveColor = fbResolveColor;
     pScreen->BitmapToRegion = fbPixmapToRegion;
     
-#ifndef FB_OLD_SCREEN
     pScreen->GetWindowPixmap = _fbGetWindowPixmap;
     pScreen->SetWindowPixmap = _fbSetWindowPixmap;
 
@@ -152,11 +147,23 @@ fbSetupScreen(ScreenPtr	pScreen,
     pScreen->BackingStoreFuncs.SetClipmaskRgn = 0;
     pScreen->BackingStoreFuncs.GetImagePixmap = 0;
     pScreen->BackingStoreFuncs.GetSpansPixmap = 0;
-#endif
     
     return TRUE;
 }
 
+#ifdef FB_ACCESS_WRAPPER
+Bool
+wfbFinishScreenInit(ScreenPtr		pScreen,
+		    void *		pbits,
+		    int			xsize,
+		    int			ysize,
+		    int			dpix,
+		    int			dpiy,
+		    int			width,
+		    int			bpp,
+		    SetupWrapProcPtr	setupWrap,
+		    FinishWrapProcPtr	finishWrap)
+#else
 Bool
 fbFinishScreenInit(ScreenPtr	pScreen,
 		   void *	pbits,
@@ -166,6 +173,7 @@ fbFinishScreenInit(ScreenPtr	pScreen,
 		   int		dpiy,
 		   int		width,
 		   int		bpp)
+#endif
 {
     VisualPtr	visuals;
     DepthPtr	depths;
@@ -224,6 +232,10 @@ fbFinishScreenInit(ScreenPtr	pScreen,
 	fbGetScreenPrivate(pScreen)->win32bpp = 32;
 	fbGetScreenPrivate(pScreen)->pix32bpp = 32;
     }
+#ifdef FB_ACCESS_WRAPPER
+    fbGetScreenPrivate(pScreen)->setupWrap = setupWrap;
+    fbGetScreenPrivate(pScreen)->finishWrap = finishWrap;
+#endif
 #endif
     rootdepth = 0;
     if (!fbInitVisuals (&visuals, &depths, &nvisuals, &ndepths, &rootdepth,
@@ -231,11 +243,7 @@ fbFinishScreenInit(ScreenPtr	pScreen,
 	return FALSE;
     if (! miScreenInit(pScreen, pbits, xsize, ysize, dpix, dpiy, width,
 			rootdepth, ndepths, depths,
-			defaultVisual, nvisuals, visuals
-#ifdef FB_OLD_MISCREENINIT
-		       , (miBSFuncPtr) 0
-#endif
-		       ))
+			defaultVisual, nvisuals, visuals))
 	return FALSE;
     /* overwrite miCloseScreen with our own */
     pScreen->CloseScreen = fbCloseScreen;
@@ -258,6 +266,27 @@ fbFinishScreenInit(ScreenPtr	pScreen,
 }
 
 /* dts * (inch/dot) * (25.4 mm / inch) = mm */
+#ifdef FB_ACCESS_WRAPPER
+Bool
+wfbScreenInit(ScreenPtr		pScreen,
+	      void *		pbits,
+	      int		xsize,
+	      int		ysize,
+	      int		dpix,
+	      int		dpiy,
+	      int		width,
+	      int		bpp,
+	      SetupWrapProcPtr	setupWrap,
+	      FinishWrapProcPtr	finishWrap)
+{
+    if (!fbSetupScreen(pScreen, pbits, xsize, ysize, dpix, dpiy, width, bpp))
+	return FALSE;
+    if (!wfbFinishScreenInit(pScreen, pbits, xsize, ysize, dpix, dpiy,
+			     width, bpp, setupWrap, finishWrap))
+	return FALSE;
+    return TRUE;
+}
+#else
 Bool
 fbScreenInit(ScreenPtr	pScreen,
 	     void *	pbits,
@@ -274,27 +303,5 @@ fbScreenInit(ScreenPtr	pScreen,
 			    width, bpp))
 	return FALSE;
     return TRUE;
-}
-
-
-#ifdef FB_OLD_SCREEN
-const miBSFuncRec fbBSFuncRec = {
-    fbSaveAreas,
-    fbRestoreAreas,
-    (void (*)(GCPtr, RegionPtr)) 0,
-    (PixmapPtr (*)(void)) 0,
-    (PixmapPtr (*)(void)) 0,
-};
-#endif
-
-#if 0
-void
-fbInitializeBackingStore (ScreenPtr pScreen)
-{
-#ifdef FB_OLD_SCREEN
-    miInitializeBackingStore (pScreen, (miBSFuncRec *) &fbBSFuncRec);
-#else
-    miInitializeBackingStore (pScreen);
-#endif
 }
 #endif

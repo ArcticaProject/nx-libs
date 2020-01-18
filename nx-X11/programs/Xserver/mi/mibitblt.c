@@ -76,12 +76,12 @@ extern int ffs(int);
 RegionPtr
 miCopyArea(pSrcDrawable, pDstDrawable,
 	    pGC, xIn, yIn, widthSrc, heightSrc, xOut, yOut)
-    register DrawablePtr 	pSrcDrawable;
-    register DrawablePtr 	pDstDrawable;
-    GCPtr 			pGC;
-    int 			xIn, yIn;
-    int 			widthSrc, heightSrc;
-    int 			xOut, yOut;
+    DrawablePtr 	pSrcDrawable;
+    DrawablePtr 	pDstDrawable;
+    GCPtr 		pGC;
+    int 		xIn, yIn;
+    int 		widthSrc, heightSrc;
+    int 		xOut, yOut;
 {
     DDXPointPtr		ppt, pptFirst;
     unsigned int	*pwidthFirst, *pwidth, *pbits;
@@ -358,7 +358,7 @@ miGetPlane(
 		 * Now get the bit and insert into a bitmap in XY format.
 		 */
 		bit = (pixel >> planeNum) & 1;
-#ifndef XFree86Server
+#if 0
 		/* XXX assuming bit order == byte order */
 #if BITMAP_BIT_ORDER == LSBFirst
 		bit <<= k;
@@ -400,13 +400,9 @@ miGetPlane(
  * Note how the clipped out bits of the bitmap are always the background
  * color so that the stipple never causes FillRect to draw them.
  */
-void
-miOpqStipDrawable(pDraw, pGC, prgnSrc, pbits, srcx, w, h, dstx, dsty)
-    DrawablePtr pDraw;
-    GCPtr	pGC;
-    RegionPtr	prgnSrc;
-    MiBits	*pbits;
-    int		srcx, w, h, dstx, dsty;
+static void
+miOpqStipDrawable(DrawablePtr pDraw, GCPtr pGC, RegionPtr prgnSrc,
+		  MiBits *pbits, int srcx, int w, int h, int dstx, int dsty)
 {
     int		oldfill, i;
     unsigned long oldfg;

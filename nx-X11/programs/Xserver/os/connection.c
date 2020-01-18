@@ -80,12 +80,11 @@ SOFTWARE.
 
 #include <sys/socket.h>
 
+/* FIXME: correct indentation levels after ancient platform support clean-up */
+
 #if defined(TCPCONN)
 # include <netinet/in.h>
 # include <arpa/inet.h>
-
-/* FIXME: correct indentation levels after ancient platform support clean-up */
-
 #  ifdef apollo
 #   ifndef NO_TCP_H
 #    include <netinet/tcp.h>
@@ -100,15 +99,14 @@ SOFTWARE.
 #endif
 
 #include <sys/uio.h>
-#include "misc.h"
+#include "misc.h"		/* for typedef of void * */
 #include "osdep.h"
 #include <nx-X11/Xpoll.h>
 #include "opaque.h"
 #include "dixstruct.h"
 #include "list.h"
 #ifdef XCSECURITY
-#define _SECURITY_SERVER
-#include <nx-X11/extensions/security.h>
+#include "securitysrv.h"
 #endif
 
 #ifdef X_NOT_POSIX
@@ -118,6 +116,11 @@ SOFTWARE.
 #endif
 
 int lastfdesc;			/* maximum file descriptor */
+#ifdef HAS_GETPEERUCRED
+# include <ucred.h>
+# include <zone.h>
+#endif
+
 
 fd_set NotifyReadFds;           /* mask for other file descriptors */
 fd_set NotifyWriteFds;          /* mask for other write file descriptors */
@@ -222,7 +225,8 @@ InitConnectionLimits(void)
     ErrorF("InitConnectionLimits: MaxClients = %d\n", MaxClients);
 #endif
 
-    ConnectionTranslation = (int *)xnfalloc(sizeof(int)*(lastfdesc + 1));
+    if (!ConnectionTranslation)
+        ConnectionTranslation = (int *)xnfalloc(sizeof(int)*(lastfdesc + 1));
 }
 
 /*
@@ -635,8 +639,7 @@ ClientAuthorized(ClientPtr client,
 	    _XSERVTransGetPeerAddr (trans_conn,
 	        &family, &fromlen, &from) != -1)
 	{
-	    if (
-		InvalidHost ((struct sockaddr *) from, fromlen, client))
+	    if (InvalidHost ((struct sockaddr *) from, fromlen, client))
 		AuthAudit(client, FALSE, (struct sockaddr *) from,
 			  fromlen, proto_n, auth_proto, auth_id);
 	    else
@@ -866,8 +869,6 @@ CloseDownFileDescriptor(OsCommPtr oc)
 	_XSERVTransDisconnect(oc->trans_conn);
 	_XSERVTransClose(oc->trans_conn);
     }
-    FreeOsBuffers(oc);
-    free(oc);
     ConnectionTranslation[connection] = 0;
     FD_CLR(connection, &AllSockets);
     FD_CLR(connection, &AllClients);
@@ -916,9 +917,12 @@ CheckConnections(void)
 	    curclient = curoff + (i * (sizeof(fd_mask)*8));
             FD_ZERO(&tmask);
             FD_SET(curclient, &tmask);
-            r = Select (curclient + 1, &tmask, NULL, NULL, &notime);
+            do {
+                r = Select (curclient + 1, &tmask, NULL, NULL, &notime);
+            } while (r < 0 && (errno == EINTR || errno == EAGAIN));
             if (r < 0)
-		CloseDownClient(clients[ConnectionTranslation[curclient]]);
+                if (ConnectionTranslation[curclient] > 0)
+                    CloseDownClient(clients[ConnectionTranslation[curclient]]);
 	    mask &= ~((fd_mask)1 << curoff);
 	}
     }	
@@ -944,6 +948,8 @@ CloseDownConnection(ClientPtr client)
     XdmcpCloseDisplay(oc->fd);
 #endif
     CloseDownFileDescriptor(oc);
+    FreeOsBuffers(oc);
+    free(client->osPrivate);
     client->osPrivate = (void *)NULL;
     if (auditTrailLevel > 1)
 	AuditF("client %d disconnected\n", client->index);

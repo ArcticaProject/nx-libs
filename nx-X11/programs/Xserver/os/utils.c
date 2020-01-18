@@ -85,6 +85,9 @@ OR PERFORMANCE OF THIS SOFTWARE.
 
 #include <nx-X11/Xos.h>
 #include <stdio.h>
+#include <time.h>
+#include <sys/time.h>
+#include <sys/resource.h>
 #include "misc.h"
 #include <nx-X11/X.h>
 #define XSERV_t
@@ -99,6 +102,7 @@ OR PERFORMANCE OF THIS SOFTWARE.
 # include <X11/fonts/fontutil.h>
 #endif /* HAS_XFONT2 */
 #include "osdep.h"
+#include "extension.h"
 #ifdef X_POSIX_C_SOURCE
 #define _POSIX_C_SOURCE X_POSIX_C_SOURCE
 #include <signal.h>
@@ -116,7 +120,6 @@ OR PERFORMANCE OF THIS SOFTWARE.
 #if !defined(SYSV)
 #include <sys/resource.h>
 #endif
-#include <time.h>
 #include <sys/stat.h>
 #include <ctype.h>    /* for isspace */
 #include <stdarg.h>
@@ -138,8 +141,7 @@ OR PERFORMANCE OF THIS SOFTWARE.
 #include "xkbsrv.h"
 #endif
 #ifdef XCSECURITY
-#define _SECURITY_SERVER
-#include <nx-X11/extensions/security.h>
+#include "securitysrv.h"
 #endif
 
 #ifdef RENDER
@@ -517,16 +519,20 @@ GiveUp(int sig)
     errno = olderrno;
 }
 
-#ifndef DDXTIME
 CARD32
 GetTimeInMillis(void)
 {
-    struct timeval  tp;
+    struct timeval tv;
 
-    X_GETTIMEOFDAY(&tp);
-    return(tp.tv_sec * 1000) + (tp.tv_usec / 1000);
-}
+#ifdef MONOTONIC_CLOCK
+    struct timespec tp;
+    if (clock_gettime(CLOCK_MONOTONIC, &tp) == 0)
+        return (tp.tv_sec * 1000) + (tp.tv_nsec / 1000000L);
 #endif
+
+    X_GETTIMEOFDAY(&tv);
+    return(tv.tv_sec * 1000) + (tv.tv_usec / 1000);
+}
 
 void
 AdjustWaitForDelay (void * waitTime, unsigned long newdelay)
@@ -566,7 +572,6 @@ void UseMsg(void)
 #endif
     ErrorF("-audit int             set audit trail level\n");	
     ErrorF("-auth file             select authorization file\n");	
-    ErrorF("bc                     enable bug compatibility\n");
     ErrorF("-br                    create root window with black background\n");
     ErrorF("+bs                    enable any backing store support\n");
     ErrorF("-bs                    disable any backing store support\n");
@@ -903,7 +908,7 @@ ProcessCommandLine(int argc, char *argv[])
 #ifdef SERVER_LOCK
 	else if ( strcmp ( argv[i], "-nolock") == 0)
 	{
-#if  !defined(__CYGWIN__)
+#if !defined(__CYGWIN__)
 	  if (getuid() != 0)
 	    ErrorF("Warning: the -nolock option can only be used by root\n");
 	  else
@@ -1223,7 +1228,7 @@ ExpandCommandLine(int *pargc, char ***pargv)
 {
     int i;
 
-#if  !defined(__CYGWIN__)
+#if !defined(__CYGWIN__)
     if (getuid() != geteuid())
 	return;
 #endif

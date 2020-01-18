@@ -62,6 +62,9 @@ XkbSrvLedInfoPtr	sli;
 
     sli= XkbFindSrvLedInfo(dev,XkbDfltXIClass,XkbDfltXIId,0);
 
+    if (!sli)
+        return update;
+
     if (state_changes&(XkbModifierStateMask|XkbGroupStateMask))
 	update|= sli->usesEffective;
     if (state_changes&(XkbModifierBaseMask|XkbGroupBaseMask))
@@ -81,7 +84,7 @@ XkbSrvLedInfoPtr	sli;
 
 	/*
 	 * Bool
-	 * XkbApplyLEDChangeToKeyboard(xkbi,map,on,change)
+	 *XkbApplyLEDChangeToKeyboard(xkbi,map,on,change)
 	 *
 	 * Some indicators "drive" the keyboard when their state is explicitly 
 	 * changed, as described in section 9.2.1 of the XKB protocol spec.
@@ -165,7 +168,7 @@ XkbStatePtr	state;
     }
     return (stateChange || ctrlChange);
 }
-
+	
 	/*
 	 * Bool
 	 * ComputeAutoState(map,state,ctrls)
@@ -214,6 +217,7 @@ CARD8 			mods,group;
 	on = on||(ctrls->enabled_ctrls&map->ctrls);
     return on;
 }
+
 
 static void
 XkbUpdateLedAutoState(	DeviceIntPtr			dev,
@@ -274,13 +278,13 @@ unsigned			oldState;
 	changes->indicators.state_changes|= affected;
     }
 
-    ed->reason|=	(XkbXI_IndicatorStateMask&(~XkbXI_KeyboardsMask));
+    ed->reason|=	XkbXI_IndicatorStateMask;
     ed->ledClass= 	sli->class;
     ed->ledID=		sli->id;
     ed->ledsDefined=	sli->namesPresent|sli->mapsPresent;
     ed->ledState=	sli->effectiveState;
-    ed->unsupported|=	XkbXI_KeyboardsMask&XkbXI_IndicatorStateMask;
-    ed->supported=	XkbXI_AllFeaturesMask&(~XkbXI_KeyboardsMask);
+    ed->unsupported|=	XkbXI_IndicatorStateMask;
+    ed->supported=	XkbXI_AllFeaturesMask;
 
     if (changes!=&my_changes)	changes= NULL;
     if (ed!=&my_ed)		ed= NULL;
@@ -304,6 +308,7 @@ XkbSrvLedInfoPtr	sli;
 		sli= kf->xkb_sli;
 		XkbUpdateLedAutoState(edev,sli,sli->mapsPresent,NULL,
 								changes,cause);
+			
 	    }
 	}
 	if (edev->leds) {
@@ -314,6 +319,7 @@ XkbSrvLedInfoPtr	sli;
 		sli= lf->xkb_sli;
 		XkbUpdateLedAutoState(edev,sli,sli->mapsPresent,NULL,
 								changes,cause);
+			
 	    }
 	}
     }
@@ -379,6 +385,8 @@ unsigned 			side_affected;
     XkbFlushLedEvents(dev,dev,sli,&ed,&changes,cause);
     return;
 }
+
+/***====================================================================***/
 
 /***====================================================================***/
 
@@ -745,13 +753,13 @@ xkbExtensionDeviceNotify	my_ed;
 	changes->names.changed_indicators|= changed_names;
     }
 
-    ed->reason|=	(XkbXI_IndicatorNamesMask&(~XkbXI_KeyboardsMask));
+    ed->reason|=	XkbXI_IndicatorNamesMask;
     ed->ledClass= 	sli->class;
     ed->ledID=		sli->id;
     ed->ledsDefined=	sli->namesPresent|sli->mapsPresent;
     ed->ledState=	sli->effectiveState;
-    ed->unsupported=	XkbXI_KeyboardsMask;
-    ed->supported=	XkbXI_AllFeaturesMask&(~XkbXI_KeyboardsMask);
+    ed->unsupported=	0;
+    ed->supported=	XkbXI_AllFeaturesMask;
 
     if (changes!=&my_changes)	changes= NULL;
     if (ed!=&my_ed)		ed= NULL;
@@ -823,13 +831,13 @@ xkbExtensionDeviceNotify	my_ed;
 
     XkbCheckIndicatorMaps(dev,sli,changed_maps);
 
-    ed->reason|=	(XkbXI_IndicatorMapsMask&(~XkbXI_KeyboardsMask));
+    ed->reason|=	XkbXI_IndicatorMapsMask;
     ed->ledClass= 	sli->class;
     ed->ledID=		sli->id;
     ed->ledsDefined=	sli->namesPresent|sli->mapsPresent;
     ed->ledState=	sli->effectiveState;
-    ed->unsupported|=	XkbXI_KeyboardsMask&XkbXI_IndicatorMapsMask;
-    ed->supported=	XkbXI_AllFeaturesMask&(~XkbXI_KeyboardsMask);
+    ed->unsupported|=	XkbXI_IndicatorMapsMask;
+    ed->supported=	XkbXI_AllFeaturesMask;
 
     XkbUpdateLedAutoState(dev,sli,changed_maps,ed,changes,cause);
 
@@ -904,13 +912,13 @@ Bool				kb_changed;
     if ((kbd==dev)&&(sli->flags&XkbSLI_IsDefault))
 	changes->indicators.state_changes|= affected;
     if (affected) {
-	ed->reason|=		(XkbXI_IndicatorStateMask&(~XkbXI_KeyboardsMask));
+	ed->reason|=		XkbXI_IndicatorStateMask;
 	ed->ledClass= 		sli->class;
 	ed->ledID=		sli->id;
 	ed->ledsDefined=	sli->namesPresent|sli->mapsPresent;
 	ed->ledState=		sli->effectiveState;
-	ed->unsupported|=	XkbXI_KeyboardsMask&XkbXI_IndicatorStateMask;
-	ed->supported=		XkbXI_AllFeaturesMask&(~XkbXI_KeyboardsMask);
+	ed->unsupported|=	XkbXI_IndicatorStateMask;
+	ed->supported=		XkbXI_AllFeaturesMask;
     }
 
     if (kb_changed) {
@@ -926,5 +934,3 @@ Bool				kb_changed;
 	XkbUpdateAllDeviceIndicators(NULL,cause);
     return;
 }
-
-/***====================================================================***/

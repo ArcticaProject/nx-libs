@@ -73,7 +73,7 @@ SOFTWARE.
  */
 
 int
-SProcXSetDeviceValuators(register ClientPtr client)
+SProcXSetDeviceValuators(ClientPtr client)
 {
     REQUEST(xSetDeviceValuatorsReq);
     swaps(&stuff->length);
@@ -87,7 +87,7 @@ SProcXSetDeviceValuators(register ClientPtr client)
  */
 
 int
-ProcXSetDeviceValuators(register ClientPtr client)
+ProcXSetDeviceValuators(ClientPtr client)
 {
     DeviceIntPtr dev;
     xSetDeviceValuatorsReply rep;

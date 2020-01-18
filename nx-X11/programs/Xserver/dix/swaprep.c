@@ -27,13 +27,13 @@ Copyright 1987 by Digital Equipment Corporation, Maynard, Massachusetts.
 
                         All Rights Reserved
 
-Permission to use, copy, modify, and distribute this software and its 
-documentation for any purpose and without fee is hereby granted, 
+Permission to use, copy, modify, and distribute this software and its
+documentation for any purpose and without fee is hereby granted,
 provided that the above copyright notice appear in all copies and that
-both that copyright notice and this permission notice appear in 
+both that copyright notice and this permission notice appear in
 supporting documentation, and that the name of Digital not be
 used in advertising or publicity pertaining to distribution of the
-software without specific, written prior permission.  
+software without specific, written prior permission.
 
 DIGITAL DISCLAIMS ALL WARRANTIES WITH REGARD TO THIS SOFTWARE, INCLUDING
 ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS, IN NO EVENT SHALL
@@ -71,15 +71,15 @@ static void SwapFont(xQueryFontReply *pr, Bool hasGlyphs);
  *  \param size size in bytes
  */
 void
-Swap32Write(ClientPtr pClient, int size, register CARD32 *pbuf)
+Swap32Write(ClientPtr pClient, int size, CARD32 *pbuf)
 {
-    register int i;
+    int i;
 
     size >>= 2;
     for(i = 0; i < size; i++)
     /* brackets are mandatory here, because "swapl" macro expands
        to several statements */
-    {   
+    {
 	swapl(&pbuf[i]);
     }
     WriteToClient(pClient, size << 2, pbuf);
@@ -94,9 +94,9 @@ CopySwap32Write(ClientPtr pClient, int size, CARD32 *pbuf)
 {
     int bufsize = size;
     CARD32 *pbufT;
-    register CARD32 *from, *to, *fromLast, *toLast;
+    CARD32 *from, *to, *fromLast, *toLast;
     CARD32 tmpbuf[1];
-    
+
     /* Allocate as big a buffer as we can... */
     while (!(pbufT = (CARD32 *) malloc(bufsize)))
     {
@@ -107,7 +107,7 @@ CopySwap32Write(ClientPtr pClient, int size, CARD32 *pbuf)
 	    break;
 	}
     }
-    
+
     /* convert lengths from # of bytes to # of longs */
     size >>= 2;
     bufsize >>= 2;
@@ -142,9 +142,9 @@ CopySwap16Write(ClientPtr pClient, int size, short *pbuf)
 {
     int bufsize = size;
     short *pbufT;
-    register short *from, *to, *fromLast, *toLast;
+    short *from, *to, *fromLast, *toLast;
     short tmpbuf[2];
-    
+
     /* Allocate as big a buffer as we can... */
     while (!(pbufT = (short *) malloc(bufsize)))
     {
@@ -155,7 +155,7 @@ CopySwap16Write(ClientPtr pClient, int size, short *pbuf)
 	    break;
 	}
     }
-    
+
     /* convert lengths from # of bytes to # of shorts */
     size >>= 1;
     bufsize >>= 1;
@@ -294,7 +294,7 @@ SQueryPointerReply(ClientPtr pClient, int size, xQueryPointerReply *pRep)
     WriteToClient(pClient, size, pRep);
 }
 
-void
+static void
 SwapTimecoord(xTimecoord* pCoord)
 {
     swapl(&pCoord->time);
@@ -528,7 +528,7 @@ SAllocColorPlanesReply(ClientPtr pClient, int size, xAllocColorPlanesReply *pRep
     WriteToClient(pClient, size, pRep);
 }
 
-void
+static void
 SwapRGB(xrgb *prgb)
 {
     swaps(&prgb->red);
@@ -708,7 +708,7 @@ SKeyButtonPtrEvent(xEvent *from, xEvent *to)
         to->u.keyButtonPointer.eventY);
     cpswaps(from->u.keyButtonPointer.state,
         to->u.keyButtonPointer.state);
-    to->u.keyButtonPointer.sameScreen = 
+    to->u.keyButtonPointer.sameScreen =
 	from->u.keyButtonPointer.sameScreen;
 }
 
@@ -761,19 +761,19 @@ SGraphicsExposureEvent(xEvent *from, xEvent *to)
     cpswaps(from->u.u.sequenceNumber, to->u.u.sequenceNumber);
     cpswapl(from->u.graphicsExposure.drawable,
         to->u.graphicsExposure.drawable);
-    cpswaps(from->u.graphicsExposure.x, 
+    cpswaps(from->u.graphicsExposure.x,
 	to->u.graphicsExposure.x);
-    cpswaps(from->u.graphicsExposure.y, 
+    cpswaps(from->u.graphicsExposure.y,
 	to->u.graphicsExposure.y);
-    cpswaps(from->u.graphicsExposure.width, 
+    cpswaps(from->u.graphicsExposure.width,
 	to->u.graphicsExposure.width);
-    cpswaps(from->u.graphicsExposure.height, 
+    cpswaps(from->u.graphicsExposure.height,
 	to->u.graphicsExposure.height);
     cpswaps(from->u.graphicsExposure.minorEvent,
         to->u.graphicsExposure.minorEvent);
     cpswaps(from->u.graphicsExposure.count,
 	to->u.graphicsExposure.count);
-    to->u.graphicsExposure.majorEvent = 
+    to->u.graphicsExposure.majorEvent =
     	from->u.graphicsExposure.majorEvent;
 }
 
@@ -1026,11 +1026,11 @@ SClientMessageEvent(xEvent *from, xEvent *to)
     to->u.u.detail = from->u.u.detail;  /* actually format */
     cpswaps(from->u.u.sequenceNumber, to->u.u.sequenceNumber);
     cpswapl(from->u.clientMessage.window, to->u.clientMessage.window);
-    cpswapl(from->u.clientMessage.u.l.type, 
+    cpswapl(from->u.clientMessage.u.l.type,
 	    to->u.clientMessage.u.l.type);
     switch (from->u.u.detail) {
        case 8:
-          memmove(to->u.clientMessage.u.b.bytes, 
+          memmove(to->u.clientMessage.u.b.bytes,
 		  from->u.clientMessage.u.b.bytes,20);
 	  break;
        case 16:
@@ -1076,6 +1076,58 @@ SKeymapNotifyEvent(xEvent *from, xEvent *to)
     /* Keymap notify events are special; they have no
        sequence number field, and contain entirely 8-bit data */
     *to = *from;
+}
+
+static void
+SwapConnSetup(xConnSetup *pConnSetup, xConnSetup *pConnSetupT)
+{
+    cpswapl(pConnSetup->release, pConnSetupT->release);
+    cpswapl(pConnSetup->ridBase, pConnSetupT->ridBase);
+    cpswapl(pConnSetup->ridMask, pConnSetupT->ridMask);
+    cpswapl(pConnSetup->motionBufferSize, pConnSetupT->motionBufferSize);
+    cpswaps(pConnSetup->nbytesVendor, pConnSetupT->nbytesVendor);
+    cpswaps(pConnSetup->maxRequestSize, pConnSetupT->maxRequestSize);
+    pConnSetupT->minKeyCode = pConnSetup->minKeyCode;
+    pConnSetupT->maxKeyCode = pConnSetup->maxKeyCode;
+    pConnSetupT->numRoots = pConnSetup->numRoots;
+    pConnSetupT->numFormats = pConnSetup->numFormats;
+    pConnSetupT->imageByteOrder = pConnSetup->imageByteOrder;
+    pConnSetupT->bitmapBitOrder = pConnSetup->bitmapBitOrder;
+    pConnSetupT->bitmapScanlineUnit = pConnSetup->bitmapScanlineUnit;
+    pConnSetupT->bitmapScanlinePad = pConnSetup->bitmapScanlinePad;
+}
+
+static void
+SwapWinRoot(xWindowRoot *pRoot, xWindowRoot *pRootT)
+{
+    cpswapl(pRoot->windowId, pRootT->windowId);
+    cpswapl(pRoot->defaultColormap, pRootT->defaultColormap);
+    cpswapl(pRoot->whitePixel, pRootT->whitePixel);
+    cpswapl(pRoot->blackPixel, pRootT->blackPixel);
+    cpswapl(pRoot->currentInputMask, pRootT->currentInputMask);
+    cpswaps(pRoot->pixWidth, pRootT->pixWidth);
+    cpswaps(pRoot->pixHeight, pRootT->pixHeight);
+    cpswaps(pRoot->mmWidth, pRootT->mmWidth);
+    cpswaps(pRoot->mmHeight, pRootT->mmHeight);
+    cpswaps(pRoot->minInstalledMaps, pRootT->minInstalledMaps);
+    cpswaps(pRoot->maxInstalledMaps, pRootT->maxInstalledMaps);
+    cpswapl(pRoot->rootVisualID, pRootT->rootVisualID);
+    pRootT->backingStore = pRoot->backingStore;
+    pRootT->saveUnders = pRoot->saveUnders;
+    pRootT->rootDepth = pRoot->rootDepth;
+    pRootT->nDepths = pRoot->nDepths;
+}
+
+static void
+SwapVisual(xVisualType *pVis, xVisualType *pVisT)
+{
+    cpswapl(pVis->visualID, pVisT->visualID);
+    pVisT->class = pVis->class;
+    pVisT->bitsPerRGB = pVis->bitsPerRGB;
+    cpswaps(pVis->colormapEntries, pVisT->colormapEntries);
+    cpswapl(pVis->redMask, pVisT->redMask);
+    cpswapl(pVis->greenMask, pVisT->greenMask);
+    cpswapl(pVis->blueMask, pVisT->blueMask);
 }
 
 void
@@ -1129,7 +1181,6 @@ SwapConnSetupInfo(
     }
 }
 
-
 void
 WriteSConnectionInfo(ClientPtr pClient, unsigned long size, char *pInfo)
 {
@@ -1144,58 +1195,6 @@ WriteSConnectionInfo(ClientPtr pClient, unsigned long size, char *pInfo)
     SwapConnSetupInfo(pInfo, pInfoTBase);
     WriteToClient(pClient, (int)size, pInfoTBase);
     free(pInfoTBase);
-}
-
-void
-SwapConnSetup(xConnSetup *pConnSetup, xConnSetup *pConnSetupT)
-{
-    cpswapl(pConnSetup->release, pConnSetupT->release);
-    cpswapl(pConnSetup->ridBase, pConnSetupT->ridBase);
-    cpswapl(pConnSetup->ridMask, pConnSetupT->ridMask);
-    cpswapl(pConnSetup->motionBufferSize, pConnSetupT->motionBufferSize);
-    cpswaps(pConnSetup->nbytesVendor, pConnSetupT->nbytesVendor);
-    cpswaps(pConnSetup->maxRequestSize, pConnSetupT->maxRequestSize);
-    pConnSetupT->minKeyCode = pConnSetup->minKeyCode;
-    pConnSetupT->maxKeyCode = pConnSetup->maxKeyCode;
-    pConnSetupT->numRoots = pConnSetup->numRoots;
-    pConnSetupT->numFormats = pConnSetup->numFormats;
-    pConnSetupT->imageByteOrder = pConnSetup->imageByteOrder;
-    pConnSetupT->bitmapBitOrder = pConnSetup->bitmapBitOrder;
-    pConnSetupT->bitmapScanlineUnit = pConnSetup->bitmapScanlineUnit;
-    pConnSetupT->bitmapScanlinePad = pConnSetup->bitmapScanlinePad;
-}
-
-void
-SwapWinRoot(xWindowRoot *pRoot, xWindowRoot *pRootT)
-{
-    cpswapl(pRoot->windowId, pRootT->windowId);
-    cpswapl(pRoot->defaultColormap, pRootT->defaultColormap);
-    cpswapl(pRoot->whitePixel, pRootT->whitePixel);
-    cpswapl(pRoot->blackPixel, pRootT->blackPixel);
-    cpswapl(pRoot->currentInputMask, pRootT->currentInputMask);
-    cpswaps(pRoot->pixWidth, pRootT->pixWidth);
-    cpswaps(pRoot->pixHeight, pRootT->pixHeight);
-    cpswaps(pRoot->mmWidth, pRootT->mmWidth);
-    cpswaps(pRoot->mmHeight, pRootT->mmHeight);
-    cpswaps(pRoot->minInstalledMaps, pRootT->minInstalledMaps);
-    cpswaps(pRoot->maxInstalledMaps, pRootT->maxInstalledMaps);
-    cpswapl(pRoot->rootVisualID, pRootT->rootVisualID);
-    pRootT->backingStore = pRoot->backingStore;
-    pRootT->saveUnders = pRoot->saveUnders;
-    pRootT->rootDepth = pRoot->rootDepth;
-    pRootT->nDepths = pRoot->nDepths;
-}
-
-void
-SwapVisual(xVisualType *pVis, xVisualType *pVisT)
-{
-    cpswapl(pVis->visualID, pVisT->visualID);
-    pVisT->class = pVis->class;
-    pVisT->bitsPerRGB = pVis->bitsPerRGB;
-    cpswaps(pVis->colormapEntries, pVisT->colormapEntries);
-    cpswapl(pVis->redMask, pVisT->redMask);
-    cpswapl(pVis->greenMask, pVisT->greenMask);
-    cpswapl(pVis->blueMask, pVisT->blueMask);
 }
 
 void

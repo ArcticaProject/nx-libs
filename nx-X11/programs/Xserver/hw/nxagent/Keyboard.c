@@ -87,6 +87,8 @@ void nxagentKeycodeConversionSetup(void);
 static void nxagentWriteKeyboardDir(void);
 static void nxagentWriteKeyboardFile(char *rules, char *model, char *layout, char *variant, char *options);
 
+extern void XkbFreePrivates(DeviceIntPtr device);
+
 #endif /* XKB */
 
 /*
@@ -149,6 +151,8 @@ static char *nxagentRemoteVariant = NULL;
 static char *nxagentRemoteOptions = NULL;
 
 #endif /* XKB */
+
+DeviceIntPtr nxagentKeyboardDevice = NULL;
 
 /*
  * Save the values queried from X server.
@@ -270,6 +274,11 @@ void nxagentBell(int volume, DeviceIntPtr pDev, void * ctrl, int cls)
   XBell(nxagentDisplay, volume);
 }
 
+void DDXRingBell(int volume, int pitch, int duration)
+{
+  XBell(nxagentDisplay, volume);
+}
+
 void nxagentChangeKeyboardControl(DeviceIntPtr pDev, KeybdCtrl *ctrl)
 {
   #ifdef XKB
@@ -372,6 +381,9 @@ int nxagentKeyboardProc(DeviceIntPtr pDev, int onoff)
   switch (onoff)
   {
     case DEVICE_INIT:
+
+      if (!pDev->name)
+	pDev->name = strdup("NX keyboard");
 
       #ifdef TEST
       fprintf(stderr, "%s: Called for [DEVICE_INIT].\n", __func__);
@@ -822,15 +834,15 @@ Reply   Total	Cached	Bits In			Bits Out		Bits/Reply	  Ratio
       fprintf(stderr, "%s: Called for [DEVICE_CLOSE].\n", __func__);
       #endif
 
+      XkbFreePrivates(pDev);
+
       break;
   }
 
   return Success;
 }
 
-Bool LegalModifier(key, pDev)
-     unsigned int key;
-     DevicePtr pDev;
+Bool LegalModifier(unsigned int key, DeviceIntPtr pDev)
 {
   return TRUE;
 }

@@ -21,20 +21,20 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 Except as contained in this notice, the name of The Open Group shall not be
 used in advertising or otherwise to promote the sale, use or other dealings
 in this Software without prior written authorization from The Open Group.
- 
 
-Copyright 1987, 1988, 1989 by 
-Digital Equipment Corporation, Maynard, Massachusetts. 
+
+Copyright 1987, 1988, 1989 by
+Digital Equipment Corporation, Maynard, Massachusetts.
 
                         All Rights Reserved
 
-Permission to use, copy, modify, and distribute this software and its 
-documentation for any purpose and without fee is hereby granted, 
+Permission to use, copy, modify, and distribute this software and its
+documentation for any purpose and without fee is hereby granted,
 provided that the above copyright notice appear in all copies and that
-both that copyright notice and this permission notice appear in 
+both that copyright notice and this permission notice appear in
 supporting documentation, and that the name of Digital not be
 used in advertising or publicity pertaining to distribution of the
-software without specific, written prior permission.  
+software without specific, written prior permission.
 
 DIGITAL DISCLAIMS ALL WARRANTIES WITH REGARD TO THIS SOFTWARE, INCLUDING
 ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS, IN NO EVENT SHALL
@@ -119,9 +119,9 @@ Equipment Corporation.
  * there is no separate list of band start pointers.
  *
  * The y-x band representation does not minimize rectangles.  In particular,
- * if a rectangle vertically crosses a band (the rectangle has scanlines in 
+ * if a rectangle vertically crosses a band (the rectangle has scanlines in
  * the y1 to y2 area spanned by the band), then the rectangle may be broken
- * down into two or more smaller rectangles stacked one atop the other. 
+ * down into two or more smaller rectangles stacked one atop the other.
  *
  *  -----------				    -----------
  *  |         |				    |         |		    band 0
@@ -223,13 +223,20 @@ RegDataRec RegionEmptyData = {0, 0};
 RegDataRec  RegionBrokenData = {0, 0};
 RegionRec   RegionBrokenRegion = { { 0, 0, 0, 0 }, &RegionBrokenData };
 
+void
+InitRegions(void)
+{
+  pixman_region_set_static_pointers(&RegionEmptyBox, &RegionEmptyData,
+				    &RegionBrokenData);
+}
+
 #ifdef DEBUG
 int
 RegionPrint(rgn)
     RegionPtr rgn;
 {
     int num, size;
-    register int i;
+    int i;
     BoxPtr rects;
 
     num = RegionNumRects(rgn);
@@ -251,7 +258,7 @@ Bool
 RegionIsValid(reg)
     RegionPtr reg;
 {
-    register int i, numRects;
+    int i, numRects;
 
     if ((reg->extents.x1 > reg->extents.x2) ||
 	(reg->extents.y1 > reg->extents.y2))
@@ -265,7 +272,7 @@ RegionIsValid(reg)
 	return (!reg->data);
     else
     {
-	register BoxPtr pboxP, pboxN;
+	BoxPtr pboxP, pboxN;
 	BoxRec box;
 
 	pboxP = RegionRects(reg);
@@ -307,7 +314,7 @@ RegionCreate(rect, size)
     BoxPtr rect;
     int size;
 {
-    register RegionPtr pReg;
+    RegionPtr pReg;
     size_t newSize;
     pReg = (RegionPtr)malloc(sizeof(RegionRec));
     if (!pReg)
@@ -355,12 +362,12 @@ RegionBreak (pReg)
 
 Bool
 RegionRectAlloc(
-    register RegionPtr pRgn,
+    RegionPtr pRgn,
     int n)
 {
     RegDataPtr	data;
     size_t rgnSize;
-    
+
     if (!pRgn->data)
     {
 	n++;
@@ -424,14 +431,14 @@ RegionRectAlloc(
  */
 INLINE static int
 RegionCoalesce (
-    register RegionPtr	pReg,	    	/* Region to coalesce		     */
+    RegionPtr	pReg,	    	/* Region to coalesce		     */
     int	    	  	prevStart,  	/* Index of start of previous band   */
     int	    	  	curStart)   	/* Index of start of current band    */
 {
-    register BoxPtr	pPrevBox;   	/* Current box in previous band	     */
-    register BoxPtr	pCurBox;    	/* Current box in current band       */
-    register int  	numRects;	/* Number rectangles in both bands   */
-    register int	y2;		/* Bottom of current band	     */
+    BoxPtr	pPrevBox;   	/* Current box in previous band	     */
+    BoxPtr	pCurBox;    	/* Current box in current band       */
+    int  	numRects;	/* Number rectangles in both bands   */
+    int	y2;		/* Bottom of current band	     */
     /*
      * Figure out how many rectangles are in the band.
      */
@@ -508,14 +515,14 @@ RegionCoalesce (
 
 INLINE static Bool
 RegionAppendNonO (
-    register RegionPtr	pReg,
-    register BoxPtr	r,
+    RegionPtr	pReg,
+    BoxPtr	r,
     BoxPtr  	  	rEnd,
-    register int  	y1,
-    register int  	y2)
+    int  	y1,
+    int  	y2)
 {
-    register BoxPtr	pNextRect;
-    register int	newRects;
+    BoxPtr	pNextRect;
+    int	newRects;
 
     newRects = rEnd - r;
 
@@ -607,8 +614,8 @@ RegionOp(
 					    /* in region 2 ? */
     Bool	    *pOverlap)
 {
-    register BoxPtr r1;			    /* Pointer into first region     */
-    register BoxPtr r2;			    /* Pointer into 2d region	     */
+    BoxPtr r1;			    /* Pointer into first region     */
+    BoxPtr r2;			    /* Pointer into 2d region	     */
     BoxPtr	    r1End;		    /* End of 1st region	     */
     BoxPtr	    r2End;		    /* End of 2d region		     */
     short	    ybot;		    /* Bottom of intersection	     */
@@ -618,12 +625,12 @@ RegionOp(
 					     * previous band in newReg       */
     int		    curBand;		    /* Index of start of current
 					     * band in newReg		     */
-    register BoxPtr r1BandEnd;		    /* End of current band in r1     */
-    register BoxPtr r2BandEnd;		    /* End of current band in r2     */
+    BoxPtr r1BandEnd;		    /* End of current band in r1     */
+    BoxPtr r2BandEnd;		    /* End of current band in r2     */
     short	    top;		    /* Top of non-overlapping band   */
     short	    bot;		    /* Bottom of non-overlapping band*/
-    register int    r1y1;		    /* Temps for r1->y1 and r2->y1   */
-    register int    r2y1;
+    int    r1y1;		    /* Temps for r1->y1 and r2->y1   */
+    int    r2y1;
     int		    newSize;
     int		    numRects;
 
@@ -632,7 +639,7 @@ RegionOp(
      */
     if (RegionNar (reg1) || RegionNar(reg2))
 	return RegionBreak (newReg);
-    
+
     /*
      * Initialization:
      *	set r1, r2, r1End and r2End appropriately, save the rectangles
@@ -684,7 +691,7 @@ RegionOp(
      */
 
     ybot = min(r1->y1, r2->y1);
-    
+
     /*
      * prevBand serves to mark the start of the previous band so rectangles
      * can be coalesced into larger rectangles. qv. RegionCoalesce, above.
@@ -695,7 +702,7 @@ RegionOp(
      * array of rectangles.
      */
     prevBand = 0;
-    
+
     do {
 	/*
 	 * This algorithm proceeds one source-band (as opposed to a
@@ -706,7 +713,7 @@ RegionOp(
 	 */
 	assert(r1 != r1End);
 	assert(r2 != r2End);
-    
+
 	FindBand(r1, r1BandEnd, r1End, r1y1);
 	FindBand(r2, r2BandEnd, r2End, r2y1);
 
@@ -831,9 +838,9 @@ RegionOp(
  */
 void
 RegionSetExtents (pReg)
-    register RegionPtr pReg;
+    RegionPtr pReg;
 {
-    register BoxPtr pBox, pBoxEnd;
+    BoxPtr pBox, pBoxEnd;
 
     if (!pReg->data)
 	return;
@@ -907,18 +914,18 @@ RegionSetExtents (pReg)
  */
 static Bool
 RegionUnionO (
-    register RegionPtr	pReg,
-    register BoxPtr	r1,
+    RegionPtr	pReg,
+    BoxPtr	r1,
 	     BoxPtr  	r1End,
-    register BoxPtr	r2,
+    BoxPtr	r2,
 	     BoxPtr  	r2End,
 	     short	y1,
 	     short	y2,
 	     Bool	*pOverlap)
 {
-    register BoxPtr     pNextRect;
-    register int        x1;     /* left and right side of current union */
-    register int        x2;
+    BoxPtr     pNextRect;
+    int        x1;     /* left and right side of current union */
+    int        x2;
 
     assert (y1 < y2);
     assert(r1 != r1End && r2 != r2End);
@@ -958,7 +965,7 @@ RegionUnionO (
 	    MERGERECT(r2);
 	} while (r2 != r2End);
     }
-    
+
     /* Add current rectangle */
     NEWRECT(pReg, pNextRect, x1, y1, x2, y2);
 
@@ -972,7 +979,7 @@ RegionUnionO (
 /*-
  *-----------------------------------------------------------------------
  * RegionAppend --
- * 
+ *
  *      "Append" the rgn rectangles onto the end of dstrgn, maintaining
  *      knowledge of YX-banding when it's easy.  Otherwise, dstrgn just
  *      becomes a non-y-x-banded random collection of rectangles, and not
@@ -988,8 +995,8 @@ RegionUnionO (
  */
 Bool
 RegionAppend(dstrgn, rgn)
-    register RegionPtr dstrgn;
-    register RegionPtr rgn;
+    RegionPtr dstrgn;
+    RegionPtr rgn;
 {
     int numRects, dnumRects, size;
     BoxPtr new, old;
@@ -997,7 +1004,7 @@ RegionAppend(dstrgn, rgn)
 
     if (RegionNar(rgn))
 	return RegionBreak (dstrgn);
-    
+
     if (!rgn->data && (dstrgn->data == &RegionEmptyData))
     {
 	dstrgn->extents = rgn->extents;
@@ -1019,7 +1026,7 @@ RegionAppend(dstrgn, rgn)
 	dstrgn->extents = rgn->extents;
     else if (dstrgn->extents.x2 > dstrgn->extents.x1)
     {
-	register BoxPtr first, last;
+	BoxPtr first, last;
 
 	first = old;
 	last = RegionBoxptr(dstrgn) + (dnumRects - 1);
@@ -1058,7 +1065,7 @@ RegionAppend(dstrgn, rgn)
 	if (dnumRects == 1)
 	    *new = *RegionBoxptr(dstrgn);
 	else
-	    memmove((char *)new,(char *)RegionBoxptr(dstrgn), 
+	    memmove((char *)new,(char *)RegionBoxptr(dstrgn),
 		  dnumRects * sizeof(BoxRec));
 	new = RegionBoxptr(dstrgn);
     }
@@ -1072,7 +1079,7 @@ RegionAppend(dstrgn, rgn)
     return TRUE;
 }
 
-   
+
 #define ExchangeRects(a, b) \
 {			    \
     BoxRec     t;	    \
@@ -1083,13 +1090,13 @@ RegionAppend(dstrgn, rgn)
 
 static void
 QuickSortRects(
-    register BoxRec     rects[],
-    register int        numRects)
+    BoxRec     rects[],
+    int        numRects)
 {
-    register int	y1;
-    register int	x1;
-    register int        i, j;
-    register BoxPtr     r;
+    int	y1;
+    int	x1;
+    int        i, j;
+    BoxPtr     r;
 
     /* Always called with numRects > 1 */
 
@@ -1143,7 +1150,7 @@ QuickSortRects(
 /*-
  *-----------------------------------------------------------------------
  * RegionValidate --
- * 
+ *
  *      Take a ``region'' which is a non-y-x-banded random collection of
  *      rectangles, and compute a nice region which is the union of all the
  *      rectangles.
@@ -1189,12 +1196,12 @@ RegionValidate(badreg, pOverlap)
     	     int	numRI;      /* Number of entries used in ri	    */
 	     int	sizeRI;	    /* Number of entries available in ri    */
 	     int	i;	    /* Index into rects			    */
-    register int	j;	    /* Index into ri			    */
-    register RegionInfo *rit;       /* &ri[j]				    */
-    register RegionPtr  reg;        /* ri[j].reg			    */
-    register BoxPtr	box;	    /* Current box in rects		    */
-    register BoxPtr	riBox;      /* Last box in ri[j].reg		    */
-    register RegionPtr  hreg;       /* ri[j_half].reg			    */
+    int	j;	    /* Index into ri			    */
+    RegionInfo *rit;       /* &ri[j]				    */
+    RegionPtr  reg;        /* ri[j].reg			    */
+    BoxPtr	box;	    /* Current box in rects		    */
+    BoxPtr	riBox;      /* Last box in ri[j].reg		    */
+    RegionPtr  hreg;       /* ri[j_half].reg			    */
     Bool		ret = TRUE;
 
     *pOverlap = FALSE;
@@ -1366,13 +1373,13 @@ bail:
 RegionPtr
 RegionFromRects(nrects, prect, ctype)
     int			nrects;
-    register xRectangle	*prect;
+    xRectangle	*prect;
     int			ctype;
 {
-    register RegionPtr	pRgn;
-    register RegDataPtr	pData;
-    register BoxPtr	pBox;
-    register int        i;
+    RegionPtr	pRgn;
+    RegDataPtr	pData;
+    BoxPtr	pBox;
+    int        i;
     int			x1, y1, x2, y2;
     size_t newSize;
 
@@ -1448,12 +1455,12 @@ RegionFromRects(nrects, prect, ctype)
 
 Bool
 miRegionDataCopy(
-    register RegionPtr dst,
-    register RegionPtr src)
+    RegionPtr dst,
+    RegionPtr src)
 {
     good(dst);
     good(src);
-    if (dst->data) 
+    if (dst->data)
 	return TRUE;
     if (dst == src)
 	return TRUE;
@@ -1479,7 +1486,7 @@ miRegionDataCopy(
 #define ExchangeSpans(a, b)				    \
 {							    \
     DDXPointRec     tpt;				    \
-    register int    tw;					    \
+    int    tw;					    \
 							    \
     tpt = spans[a]; spans[a] = spans[b]; spans[b] = tpt;    \
     tw = widths[a]; widths[a] = widths[b]; widths[b] = tw;  \
@@ -1491,13 +1498,13 @@ miRegionDataCopy(
 */
 
 static void QuickSortSpans(
-    register DDXPointRec    spans[],
-    register int	    widths[],
-    register int	    numSpans)
+    DDXPointRec    spans[],
+    int	    widths[],
+    int	    numSpans)
 {
-    register int	    y;
-    register int	    i, j, m;
-    register DDXPointPtr    r;
+    int	    y;
+    int	    i, j, m;
+    DDXPointPtr    r;
 
     /* Always called with numSpans > 1 */
     /* Sorts only by y, doesn't bother to sort by x */
@@ -1507,7 +1514,7 @@ static void QuickSortSpans(
 	if (numSpans < 9)
 	{
 	    /* Do insertion sort */
-	    register int yprev;
+	    int yprev;
 
 	    yprev = spans[0].y;
 	    i = 1;
@@ -1597,17 +1604,17 @@ static void QuickSortSpans(
 int
 RegionClipSpans(
     RegionPtr		    prgnDst,
-    register DDXPointPtr    ppt,
-    register int	    *pwidth,
+    DDXPointPtr    ppt,
+    int	    *pwidth,
     int			    nspans,
-    register DDXPointPtr    pptNew,
+    DDXPointPtr    pptNew,
     int			    *pwidthNew,
     int			    fSorted)
 {
-    register DDXPointPtr pptLast;
+    DDXPointPtr pptLast;
     int			*pwidthNewStart;	/* the vengeance of Xerox! */
-    register int	y, x1, x2;
-    register int	numRects;
+    int	y, x1, x2;
+    int	numRects;
 
     good(prgnDst);
     pptLast = ppt + nspans;
@@ -1615,17 +1622,17 @@ RegionClipSpans(
 
     if (!prgnDst->data)
     {
-	/* Do special fast code with clip boundaries in registers(?) */
-	/* It doesn't pay much to make use of fSorted in this case, 
+	/* Do special fast code with clip boundaries in s(?) */
+	/* It doesn't pay much to make use of fSorted in this case,
 	   so we lump everything together. */
 
-	register    int clipx1, clipx2, clipy1, clipy2;
+	int clipx1, clipx2, clipy1, clipy2;
 
 	clipx1 = prgnDst->extents.x1;
 	clipy1 = prgnDst->extents.y1;
 	clipx2 = prgnDst->extents.x2;
 	clipy2 = prgnDst->extents.y2;
-	    
+	
 	for (; ppt != pptLast; ppt++, pwidth++)
 	{
 	    y = ppt->y;
@@ -1652,9 +1659,9 @@ RegionClipSpans(
     {
 	/* Have to clip against many boxes */
 	BoxPtr		pboxBandStart, pboxBandEnd;
-	register BoxPtr pbox;
-	register BoxPtr pboxLast;
-	register int	clipy1, clipy2;
+	BoxPtr pbox;
+	BoxPtr pboxLast;
+	int	clipy1, clipy2;
 
 	/* In this case, taking advantage of sorted spans gains more than
 	   the sorting costs. */
@@ -1663,7 +1670,7 @@ RegionClipSpans(
 
 	pboxBandStart = RegionBoxptr(prgnDst);
 	pboxLast = pboxBandStart + numRects;
-    
+
 	NextBand();
 
 	for (; ppt != pptLast; )
@@ -1677,7 +1684,7 @@ RegionClipSpans(
 		x2 = x1 + *pwidth;
 		do
 		{ /* For each box in band */
-		    register int    newx1, newx2;
+		    int    newx1, newx2;
 
 		    newx1 = x1;
 		    newx2 = x2;
@@ -1715,10 +1722,10 @@ int
 miFindMaxBand(prgn)
     RegionPtr prgn;
 {
-    register int nbox;
-    register BoxPtr pbox;
-    register int nThisBand;
-    register int nMaxBand = 0;
+    int nbox;
+    BoxPtr pbox;
+    int nThisBand;
+    int nMaxBand = 0;
     short yThisBand;
 
     good(prgn);

@@ -92,6 +92,7 @@ extern XkbWrapperRec nxagentXkbWrapper;
 
 extern char *nxagentKeyboard;
 
+extern DeviceIntPtr nxagentKeyboardDevice;
 /*
  * Keyboard device procedure
  * and utility functions.

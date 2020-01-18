@@ -92,14 +92,6 @@ extern Bool CreateRootWindow(
 extern void InitRootWindow(
     WindowPtr /*pWin*/);
 
-extern void ClippedRegionFromBox(
-    WindowPtr /*pWin*/,
-    RegionPtr /*Rgn*/,
-    int /*x*/,
-    int /*y*/,
-    int /*w*/,
-    int /*h*/);
-
 typedef WindowPtr (* RealChildHeadProc) (WindowPtr pWin);
 
 void RegisterRealChildHeadProc (RealChildHeadProc proc);
@@ -204,12 +196,6 @@ extern void UnmapSubwindows(
 extern void HandleSaveSet(
     ClientPtr /*client*/);
 
-extern Bool VisibleBoundingBoxFromPoint(
-    WindowPtr /*pWin*/,
-    int /*x*/,
-    int /*y*/,
-    BoxPtr /*box*/);
-
 extern Bool PointInWindowIsVisible(
     WindowPtr /*pWin*/,
     int /*x*/,
@@ -234,9 +220,6 @@ extern void CheckWindowOptionalNeed(
 extern Bool MakeWindowOptional(
     WindowPtr /*pWin*/);
 
-extern void DisposeWindowOptional(
-    WindowPtr /*pWin*/);
-
 extern WindowPtr MoveWindowInStack(
     WindowPtr /*pWin*/,
     WindowPtr /*pNextSib*/);
@@ -254,6 +237,8 @@ void ResizeChildrenWinSize(
     int /*dw*/,
     int /*dh*/);
 
+extern void ShapeExtensionInit(void);
+
 extern void SendShapeNotify(
     WindowPtr /* pWin */,
     int /* which */ );
@@ -267,8 +252,6 @@ extern RegionPtr CreateClipShape(
 extern void DisableMapUnmapEvents(
     WindowPtr /* pWin */ );
 extern void EnableMapUnmapEvents(
-    WindowPtr /* pWin */ );
-extern Bool MapUnmapEventsEnabled(
     WindowPtr /* pWin */ );
 
 #endif /* WINDOW_H */

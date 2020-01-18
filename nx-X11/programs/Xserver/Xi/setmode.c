@@ -73,7 +73,7 @@ SOFTWARE.
  */
 
 int
-SProcXSetDeviceMode(register ClientPtr client)
+SProcXSetDeviceMode(ClientPtr client)
 {
     REQUEST(xSetDeviceModeReq);
     swaps(&stuff->length);
@@ -87,7 +87,7 @@ SProcXSetDeviceMode(register ClientPtr client)
  */
 
 int
-ProcXSetDeviceMode(register ClientPtr client)
+ProcXSetDeviceMode(ClientPtr client)
 {
     DeviceIntPtr dev;
     xSetDeviceModeReply rep;

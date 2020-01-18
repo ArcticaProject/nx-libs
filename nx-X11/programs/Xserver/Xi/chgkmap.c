@@ -74,7 +74,7 @@ SOFTWARE.
  */
 
 int
-SProcXChangeDeviceKeyMapping(register ClientPtr client)
+SProcXChangeDeviceKeyMapping(ClientPtr client)
 {
     unsigned int count;
 
@@ -94,7 +94,7 @@ SProcXChangeDeviceKeyMapping(register ClientPtr client)
  */
 
 int
-ProcXChangeDeviceKeyMapping(register ClientPtr client)
+ProcXChangeDeviceKeyMapping(ClientPtr client)
 {
     int ret;
     unsigned len;
@@ -106,7 +106,6 @@ ProcXChangeDeviceKeyMapping(register ClientPtr client)
 
     count = stuff->keyCodes * stuff->keySymsPerKeyCode;
     REQUEST_FIXED_SIZE(xChangeDeviceKeyMappingReq, count * sizeof(CARD32));
-
     dev = LookupDeviceIntRec(stuff->deviceid);
     if (dev == NULL) {
 	SendErrorToClient(client, IReqCode, X_ChangeDeviceKeyMapping, 0,

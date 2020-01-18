@@ -282,6 +282,8 @@ RegionEqual(RegionPtr reg1, RegionPtr reg2)
     return pixman_region_equal (reg1, reg2);
 }
 
+extern void InitRegions (void);
+
 extern RegionPtr RegionCreate(
     BoxPtr /*rect*/,
     int /*size*/);

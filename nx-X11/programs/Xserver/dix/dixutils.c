@@ -27,13 +27,13 @@ Copyright 1987 by Digital Equipment Corporation, Maynard, Massachusetts.
 
                         All Rights Reserved
 
-Permission to use, copy, modify, and distribute this software and its 
-documentation for any purpose and without fee is hereby granted, 
+Permission to use, copy, modify, and distribute this software and its
+documentation for any purpose and without fee is hereby granted,
 provided that the above copyright notice appear in all copies and that
-both that copyright notice and this permission notice appear in 
+both that copyright notice and this permission notice appear in
 supporting documentation, and that the name of Digital not be
 used in advertising or publicity pertaining to distribution of the
-software without specific, written prior permission.  
+software without specific, written prior permission.
 
 DIGITAL DISCLAIMS ALL WARRANTIES WITH REGARD TO THIS SOFTWARE, INCLUDING
 ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS, IN NO EVENT SHALL
@@ -171,7 +171,7 @@ ISOLatin1ToLower (unsigned char source)
 void
 CopyISOLatin1Lowered(char *dest, const char *source, int length)
 {
-    register int i;
+    int i;
 
     for (i = 0; i < length; i++, source++, dest++)
 	*dest = ISOLatin1ToLower (*source);
@@ -179,18 +179,18 @@ CopyISOLatin1Lowered(char *dest, const char *source, int length)
 }
 
 int
-CompareISOLatin1Lowered(unsigned char *s1, int s1len, 
+CompareISOLatin1Lowered(unsigned char *s1, int s1len,
 			unsigned char *s2, int s2len)
 {
     unsigned char   c1, c2;
-    
-    for (;;) 
+
+    for (;;)
     {
 	/* note -- compare against zero so that -1 ignores len */
 	c1 = s1len-- ? *s1++ : '\0';
 	c2 = s2len-- ? *s2++ : '\0';
-	if (!c1 || 
-	    (c1 != c2 && 
+	if (!c1 ||
+	    (c1 != c2 &&
 	     (c1 = ISOLatin1ToLower (c1)) != (c2 = ISOLatin1ToLower (c2))))
 	    break;
     }
@@ -220,7 +220,7 @@ SecurityLookupWindow(XID rid, ClientPtr client, Mask access_mode)
 void *
 SecurityLookupDrawable(XID rid, ClientPtr client, Mask access_mode)
 {
-    register DrawablePtr pDraw;
+    DrawablePtr pDraw;
 
     if(rid == INVALID)
 	return (void *) NULL;
@@ -264,7 +264,7 @@ LookupWindow(XID rid, ClientPtr client)
 void *
 LookupDrawable(XID rid, ClientPtr client)
 {
-    register DrawablePtr pDraw;
+    DrawablePtr pDraw;
 
     if(rid == INVALID)
 	return (void *) NULL;
@@ -350,11 +350,11 @@ AlterSaveSetForClient(ClientPtr client, WindowPtr pWin, unsigned mode,
 void
 DeleteWindowFromAnySaveSet(WindowPtr pWin)
 {
-    register int i;
-    register ClientPtr client;
-    
+    int i;
+    ClientPtr client;
+
     for (i = 0; i< currentMaxClients; i++)
-    {    
+    {
 	client = clients[i];
 	if (client && client->numSaved)
 	    (void)AlterSaveSetForClient(client, pWin, SetModeDelete, FALSE, TRUE);
@@ -364,7 +364,7 @@ DeleteWindowFromAnySaveSet(WindowPtr pWin)
 /* No-op Don't Do Anything : sometimes we need to be able to call a procedure
  * that doesn't do anything.  For example, on screen with only static
  * colormaps, if someone calls install colormap, it's easier to have a dummy
- * procedure to call than to check if there's a procedure 
+ * procedure to call than to check if there's a procedure
  */
 void
 NoopDDA(void)
@@ -385,18 +385,18 @@ static Bool		inHandler;
 static Bool		handlerDeleted;
 
 /**
- * 
+ *
  *  \param pTimeout   DIX doesn't want to know how OS represents time
  *  \param pReadMask  nor how it represents the det of descriptors
  */
 void
 BlockHandler(void * pTimeout, void * pReadmask)
 {
-    register int i, j;
-    
+    int i, j;
+
     ++inHandler;
     for (i = 0; i < screenInfo.numScreens; i++)
-	(* screenInfo.screens[i]->BlockHandler)(i, 
+	(* screenInfo.screens[i]->BlockHandler)(i,
 				screenInfo.screens[i]->blockData,
 				pTimeout, pReadmask);
     for (i = 0; i < numHandlers; i++)
@@ -426,14 +426,14 @@ BlockHandler(void * pTimeout, void * pReadmask)
 void
 WakeupHandler(int result, void * pReadmask)
 {
-    register int i, j;
+    int i, j;
 
     ++inHandler;
     for (i = numHandlers - 1; i >= 0; i--)
 	(*handlers[i].WakeupHandler) (handlers[i].blockData,
 				      result, pReadmask);
     for (i = 0; i < screenInfo.numScreens; i++)
-	(* screenInfo.screens[i]->WakeupHandler)(i, 
+	(* screenInfo.screens[i]->WakeupHandler)(i,
 				screenInfo.screens[i]->wakeupData,
 				result, pReadmask);
     if (handlerDeleted)
@@ -457,8 +457,8 @@ WakeupHandler(int result, void * pReadmask)
  * get called until next time
  */
 Bool
-RegisterBlockAndWakeupHandlers (BlockHandlerProcPtr blockHandler, 
-                                WakeupHandlerProcPtr wakeupHandler, 
+RegisterBlockAndWakeupHandlers (BlockHandlerProcPtr blockHandler,
+                                WakeupHandlerProcPtr wakeupHandler,
                                 void * blockData)
 {
     BlockHandlerPtr new;
@@ -481,8 +481,8 @@ RegisterBlockAndWakeupHandlers (BlockHandlerProcPtr blockHandler,
 }
 
 void
-RemoveBlockAndWakeupHandlers (BlockHandlerProcPtr blockHandler, 
-                              WakeupHandlerProcPtr wakeupHandler, 
+RemoveBlockAndWakeupHandlers (BlockHandlerProcPtr blockHandler,
+                              WakeupHandlerProcPtr wakeupHandler,
                               void * blockData)
 {
     int	    i;
@@ -508,7 +508,7 @@ RemoveBlockAndWakeupHandlers (BlockHandlerProcPtr blockHandler,
 }
 
 void
-InitBlockAndWakeupHandlers ()
+InitBlockAndWakeupHandlers (void)
 {
     free (handlers);
     handlers = (BlockHandlerPtr) 0;
@@ -688,7 +688,7 @@ ClientIsAsleep (ClientPtr client)
 static int numCallbackListsToCleanup = 0;
 static CallbackListPtr **listsToCleanup = NULL;
 
-static Bool 
+static Bool
 _AddCallback(
     CallbackListPtr *pcbl,
     CallbackProcPtr callback,
@@ -707,7 +707,7 @@ _AddCallback(
     return TRUE;
 }
 
-static Bool 
+static Bool
 _DeleteCallback(
     CallbackListPtr *pcbl,
     CallbackProcPtr callback,
@@ -743,7 +743,7 @@ _DeleteCallback(
     return FALSE;
 }
 
-static void 
+static void
 _CallCallbacks(
     CallbackListPtr    *pcbl,
     void	       *call_data)
@@ -864,7 +864,7 @@ CreateCallbackList(CallbackListPtr *pcbl, CallbackFuncsPtr cbfuncs)
 	{
 	    listsToCleanup[i] = pcbl;
 	    return TRUE;
-	}    
+	}
     }
 
     listsToCleanup = (CallbackListPtr **)xnfrealloc(listsToCleanup,
@@ -874,7 +874,7 @@ CreateCallbackList(CallbackListPtr *pcbl, CallbackFuncsPtr cbfuncs)
     return TRUE;
 }
 
-Bool 
+Bool
 AddCallback(CallbackListPtr *pcbl, CallbackProcPtr callback, void * data)
 {
     if (!pcbl) return FALSE;
@@ -886,14 +886,14 @@ AddCallback(CallbackListPtr *pcbl, CallbackProcPtr callback, void * data)
     return ((*(*pcbl)->funcs.AddCallback) (pcbl, callback, data));
 }
 
-Bool 
+Bool
 DeleteCallback(CallbackListPtr *pcbl, CallbackProcPtr callback, void * data)
 {
     if (!pcbl || !*pcbl) return FALSE;
     return ((*(*pcbl)->funcs.DeleteCallback) (pcbl, callback, data));
 }
 
-void 
+void
 CallCallbacks(CallbackListPtr *pcbl, void * call_data)
 {
     if (!pcbl || !*pcbl) return;
@@ -907,8 +907,8 @@ DeleteCallbackList(CallbackListPtr *pcbl)
     (*(*pcbl)->funcs.DeleteCallbackList) (pcbl);
 }
 
-void 
-InitCallbackManager()
+void
+InitCallbackManager(void)
 {
     int i;
 

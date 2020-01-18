@@ -76,7 +76,7 @@ SOFTWARE.
  */
 
 int
-SProcXSetDeviceButtonMapping(register ClientPtr client)
+SProcXSetDeviceButtonMapping(ClientPtr client)
 {
     REQUEST(xSetDeviceButtonMappingReq);
     swaps(&stuff->length);
@@ -90,7 +90,7 @@ SProcXSetDeviceButtonMapping(register ClientPtr client)
  */
 
 int
-ProcXSetDeviceButtonMapping(register ClientPtr client)
+ProcXSetDeviceButtonMapping(ClientPtr client)
 {
     int ret;
     xSetDeviceButtonMappingReply rep;
@@ -130,7 +130,7 @@ ProcXSetDeviceButtonMapping(register ClientPtr client)
     }
 
     if (ret != MappingBusy)
-	SendDeviceMappingNotify(MappingPointer, 0, 0, dev);
+	SendDeviceMappingNotify(client, MappingPointer, 0, 0, dev);
     return Success;
 }
 

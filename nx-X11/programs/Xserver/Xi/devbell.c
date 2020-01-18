@@ -73,7 +73,7 @@ SOFTWARE.
  */
 
 int
-SProcXDeviceBell(register ClientPtr client)
+SProcXDeviceBell(ClientPtr client)
 {
     REQUEST(xDeviceBellReq);
     swaps(&stuff->length);
@@ -87,7 +87,7 @@ SProcXDeviceBell(register ClientPtr client)
  */
 
 int
-ProcXDeviceBell(register ClientPtr client)
+ProcXDeviceBell(ClientPtr client)
 {
     DeviceIntPtr dev;
     KbdFeedbackPtr k;

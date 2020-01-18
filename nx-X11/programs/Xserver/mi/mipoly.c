@@ -69,14 +69,14 @@ SOFTWARE.
 void
 miFillPolygon(dst, pgc, shape, mode, count, pPts)
     DrawablePtr		dst;
-    register GCPtr	pgc;
+    GCPtr		pgc;
     int			shape, mode;
-    register int	count;
+    int			count;
     DDXPointPtr		pPts;
 {
     int			i;
-    register int	xorg, yorg;
-    register DDXPointPtr ppt;
+    int			xorg, yorg;
+    DDXPointPtr 	ppt;
 
     if (count == 0)
 	return;

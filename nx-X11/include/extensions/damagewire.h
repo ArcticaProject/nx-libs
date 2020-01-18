@@ -1,6 +1,4 @@
 /*
- * $Id: damagewire.h,v 1.2 2004/07/29 19:29:55 stukreit Exp $
- *
  * Copyright © 2003 Keith Packard
  *
  * Permission to use, copy, modify, distribute, and sell this software and its
@@ -27,7 +25,7 @@
 
 #define	DAMAGE_NAME	"DAMAGE"
 #define DAMAGE_MAJOR	1
-#define DAMAGE_MINOR	0
+#define DAMAGE_MINOR	1
 
 /************* Version 1 ****************/
 
@@ -42,8 +40,9 @@
 #define X_DamageCreate			1
 #define X_DamageDestroy			2
 #define X_DamageSubtract		3
+#define X_DamageAdd			4
 
-#define XDamageNumberRequests		(X_DamageSubtract + 1)
+#define XDamageNumberRequests		(X_DamageAdd + 1)
 
 /* Events */
 #define XDamageNotify			0

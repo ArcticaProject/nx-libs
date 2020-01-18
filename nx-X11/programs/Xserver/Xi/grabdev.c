@@ -77,7 +77,7 @@ extern int ExtEventIndex;
  */
 
 int
-SProcXGrabDevice(register ClientPtr client)
+SProcXGrabDevice(ClientPtr client)
 {
     REQUEST(xGrabDeviceReq);
     swaps(&stuff->length);

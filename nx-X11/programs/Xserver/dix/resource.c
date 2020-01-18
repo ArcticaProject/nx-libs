@@ -27,13 +27,13 @@ Copyright 1987 by Digital Equipment Corporation, Maynard, Massachusetts.
 
                         All Rights Reserved
 
-Permission to use, copy, modify, and distribute this software and its 
-documentation for any purpose and without fee is hereby granted, 
+Permission to use, copy, modify, and distribute this software and its
+documentation for any purpose and without fee is hereby granted,
 provided that the above copyright notice appear in all copies and that
-both that copyright notice and this permission notice appear in 
+both that copyright notice and this permission notice appear in
 supporting documentation, and that the name of Digital not be
 used in advertising or publicity pertaining to distribution of the
-software without specific, written prior permission.  
+software without specific, written prior permission.
 
 DIGITAL DISCLAIMS ALL WARRANTIES WITH REGARD TO THIS SOFTWARE, INCLUDING
 ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS, IN NO EVENT SHALL
@@ -72,8 +72,34 @@ dealings in this Software without prior written authorization from Digital
 Equipment Corporation.
 
 ******************************************************************/
-
-/* $TOG: resource.c /main/41 1998/02/09 14:20:31 kaleb $ */
+/* XSERVER_DTRACE additions:
+ * Copyright 2005-2006 Sun Microsystems, Inc.  All rights reserved.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a
+ * copy of this software and associated documentation files (the
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
+ * distribute, and/or sell copies of the Software, and to permit persons
+ * to whom the Software is furnished to do so, provided that the above
+ * copyright notice(s) and this permission notice appear in all copies of
+ * the Software and that both the above copyright notice(s) and this
+ * permission notice appear in supporting documentation.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+ * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT
+ * OF THIRD PARTY RIGHTS. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR
+ * HOLDERS INCLUDED IN THIS NOTICE BE LIABLE FOR ANY CLAIM, OR ANY SPECIAL
+ * INDIRECT OR CONSEQUENTIAL DAMAGES, OR ANY DAMAGES WHATSOEVER RESULTING
+ * FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT,
+ * NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION
+ * WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+ *
+ * Except as contained in this notice, the name of a copyright holder
+ * shall not be used in advertising or otherwise to promote the sale, use
+ * or other dealings in this Software without prior written authorization
+ * of the copyright holder.
+ */
 
 /*	Routines to manage various kinds of resources:
  *
@@ -82,7 +108,7 @@ Equipment Corporation.
  *	FreeAllResources, LookupIDByType, LookupIDByClass, GetXIDRange
  */
 
-/* 
+/*
  *      A resource ID is a 32 bit quantity, the upper 2 bits of which are
  *	off-limits for client-visible resources.  The next 8 bits are
  *      used as client ID, and the low 22 bits come from the client.
@@ -106,7 +132,7 @@ Equipment Corporation.
 #include "misc.h"
 #include "os.h"
 #include "resource.h"
-#include "dixstruct.h" 
+#include "dixstruct.h"
 #include "opaque.h"
 #include "windowstr.h"
 #include "dixfont.h"
@@ -120,6 +146,14 @@ Equipment Corporation.
 #include "panoramiXsrv.h"
 #endif
 #include <assert.h>
+
+#ifdef XSERVER_DTRACE
+#include <sys/types.h>
+typedef const char *string;
+#include "Xserver-dtrace.h"
+
+#define TypeNameString(t) NameForAtom(ResourceNames[t & TypeMask])
+#endif
 
 static void RebuildTable(
     int /*client*/
@@ -197,7 +231,7 @@ CreateNewResourceType(DeleteType deleteFunc)
 }
 
 RESTYPE
-CreateNewResourceClass()
+CreateNewResourceClass(void)
 {
     RESTYPE next = lastResourceClass >> 1;
 
@@ -208,7 +242,7 @@ CreateNewResourceClass()
     return next;
 }
 
-ClientResourceRec clientTable[MAXCLIENTS];
+static ClientResourceRec clientTable[MAXCLIENTS];
 
 /*****************
  * InitClientResources
@@ -219,8 +253,8 @@ ClientResourceRec clientTable[MAXCLIENTS];
 Bool
 InitClientResources(ClientPtr client)
 {
-    register int i, j;
- 
+    int i, j;
+
     if (client == serverClient)
     {
 	lastResourceType = RT_LASTPREDEF;
@@ -267,7 +301,7 @@ InitClientResources(ClientPtr client)
 			    (client->index ? SERVER_BIT : SERVER_MINID);
     clientTable[i].endFakeID = (clientTable[i].fakeID | RESOURCE_ID_MASK) + 1;
     clientTable[i].expectID = client->clientAsMask;
-    for (j=0; j<INITBUCKETS; j++) 
+    for (j=0; j<INITBUCKETS; j++)
     {
         clientTable[i].resources[j] = NullResource;
     }
@@ -276,7 +310,7 @@ InitClientResources(ClientPtr client)
 
 
 static int
-Hash(int client, register XID id)
+Hash(int client, XID id)
 {
     id &= RESOURCE_ID_MASK;
     switch (clientTable[client].hashsize)
@@ -299,12 +333,12 @@ Hash(int client, register XID id)
 
 static XID
 AvailableID(
-    register int client,
-    register XID id,
-    register XID maxid,
-    register XID goodid)
+    int client,
+    XID id,
+    XID maxid,
+    XID goodid)
 {
-    register ResourcePtr res;
+    ResourcePtr res;
 
     if ((goodid >= id) && (goodid <= maxid))
 	return goodid;
@@ -322,10 +356,10 @@ AvailableID(
 void
 GetXIDRange(int client, Bool server, XID *minp, XID *maxp)
 {
-    register XID id, maxid;
-    register ResourcePtr *resp;
-    register ResourcePtr res;
-    register int i;
+    XID id, maxid;
+    ResourcePtr *resp;
+    ResourcePtr res;
+    int i;
     XID goodid;
 
     id = (Mask)client << CLIENTOFFSET;
@@ -356,7 +390,7 @@ GetXIDRange(int client, Bool server, XID *minp, XID *maxp)
 
 /**
  *  GetXIDList is called by the XC-MISC extension's MiscGetXIDList function.
- *  This function tries to find count unused XIDs for the given client.  It 
+ *  This function tries to find count unused XIDs for the given client.  It
  *  puts the IDs in the array pids and returns the number found, which should
  *  almost always be the number requested.
  *
@@ -398,7 +432,7 @@ GetXIDList(ClientPtr pClient, unsigned count, XID *pids)
  */
 
 XID
-FakeClientID(register int client)
+FakeClientID(int client)
 {
     XID id, maxid;
 
@@ -423,9 +457,12 @@ Bool
 AddResource(XID id, RESTYPE type, void * value)
 {
     int client;
-    register ClientResourceRec *rrec;
-    register ResourcePtr res, *head;
+    ClientResourceRec *rrec;
+    ResourcePtr res, *head;
     	
+#ifdef XSERVER_DTRACE
+    XSERVER_RESOURCE_ALLOC(id, type, value, TypeNameString(type));
+#endif
     client = CLIENT_ID(id);
     rrec = &clientTable[client];
     if (!rrec->buckets)
@@ -459,10 +496,10 @@ AddResource(XID id, RESTYPE type, void * value)
 static void
 RebuildTable(int client)
 {
-    register int j;
-    register ResourcePtr res, next;
+    int j;
+    ResourcePtr res, next;
     ResourcePtr **tails, *resources;
-    register ResourcePtr **tptr, *rptr;
+    ResourcePtr **tptr, *rptr;
 
     /*
      * For now, preserve insertion order, since some ddx layers depend
@@ -510,9 +547,9 @@ void
 FreeResource(XID id, RESTYPE skipDeleteFuncType)
 {
     int		cid;
-    register    ResourcePtr res;
-    register	ResourcePtr *prev, *head;
-    register	int *eltptr;
+    ResourcePtr res;
+    ResourcePtr *prev, *head;
+    int *eltptr;
     int		elements;
     Bool	gotOne = FALSE;
 
@@ -527,6 +564,11 @@ FreeResource(XID id, RESTYPE skipDeleteFuncType)
 	    if (res->id == id)
 	    {
 		RESTYPE rtype = res->type;
+
+#ifdef XSERVER_DTRACE
+		XSERVER_RESOURCE_FREE(res->id, res->type,
+			      res->value, TypeNameString(res->type));
+#endif		
 		*prev = res->next;
 		elements = --*eltptr;
 		if (rtype != skipDeleteFuncType)
@@ -550,8 +592,8 @@ void
 FreeResourceByType(XID id, RESTYPE type, Bool skipFree)
 {
     int		cid;
-    register    ResourcePtr res;
-    register	ResourcePtr *prev, *head;
+    ResourcePtr res;
+    ResourcePtr *prev, *head;
     if (((cid = CLIENT_ID(id)) < MAXCLIENTS) && clientTable[cid].buckets)
     {
 	head = &clientTable[cid].resources[Hash(cid, id)];
@@ -561,6 +603,10 @@ FreeResourceByType(XID id, RESTYPE type, Bool skipFree)
 	{
 	    if (res->id == id && res->type == type)
 	    {
+#ifdef XSERVER_DTRACE
+		XSERVER_RESOURCE_FREE(res->id, res->type,
+			      res->value, TypeNameString(res->type));
+#endif		    		
 		*prev = res->next;
 		if (!skipFree)
 		    (*DeleteFuncs[type & TypeMask])(res->value, res->id);
@@ -584,7 +630,7 @@ Bool
 ChangeResourceValue (XID id, RESTYPE rtype, void * value)
 {
     int    cid;
-    register    ResourcePtr res;
+    ResourcePtr res;
 
     if (((cid = CLIENT_ID(id)) < MAXCLIENTS) && clientTable[cid].buckets)
     {
@@ -614,17 +660,17 @@ FindClientResourcesByType(
     FindResType func,
     void * cdata
 ){
-    register ResourcePtr *resources;
-    register ResourcePtr this, next;
+    ResourcePtr *resources;
+    ResourcePtr this, next;
     int i, elements;
-    register int *eltptr;
+    int *eltptr;
 
     if (!client)
 	client = serverClient;
 
     resources = clientTable[client->index].resources;
     eltptr = &clientTable[client->index].elements;
-    for (i = 0; i < clientTable[client->index].buckets; i++) 
+    for (i = 0; i < clientTable[client->index].buckets; i++)
     {
         for (this = resources[i]; this; this = next)
 	{
@@ -645,10 +691,10 @@ FindAllClientResources(
     FindAllRes func,
     void * cdata
 ){
-    register ResourcePtr *resources;
-    register ResourcePtr this, next;
+    ResourcePtr *resources;
+    ResourcePtr this, next;
     int i, elements;
-    register int *eltptr;
+    int *eltptr;
 
     if (!client)
         client = serverClient;
@@ -709,7 +755,7 @@ FreeClientNeverRetainResources(ClientPtr client)
 	return;
 
     resources = clientTable[client->index].resources;
-    for (j=0; j < clientTable[client->index].buckets; j++) 
+    for (j=0; j < clientTable[client->index].buckets; j++)
     {
 	prev = &resources[j];
         while ( (this = *prev) )
@@ -717,9 +763,13 @@ FreeClientNeverRetainResources(ClientPtr client)
 	    RESTYPE rtype = this->type;
 	    if (rtype & RC_NEVERRETAIN)
 	    {
+#ifdef XSERVER_DTRACE
+		XSERVER_RESOURCE_FREE(this->id, this->type,
+			      this->value, TypeNameString(this->type));
+#endif		
 		*prev = this->next;
 		(*DeleteFuncs[rtype & TypeMask])(this->value, this->id);
-		free(this);	    
+		free(this);	
 	    }
 	    else
 		prev = &this->next;
@@ -730,8 +780,8 @@ FreeClientNeverRetainResources(ClientPtr client)
 void
 FreeClientResources(ClientPtr client)
 {
-    register ResourcePtr *resources;
-    register ResourcePtr this;
+    ResourcePtr *resources;
+    ResourcePtr this;
     int j;
 
     /* This routine shouldn't be called with a null client, but just in
@@ -743,11 +793,11 @@ FreeClientResources(ClientPtr client)
     HandleSaveSet(client);
 
     resources = clientTable[client->index].resources;
-    for (j=0; j < clientTable[client->index].buckets; j++) 
+    for (j=0; j < clientTable[client->index].buckets; j++)
     {
         /* It may seem silly to update the head of this resource list as
-	we delete the members, since the entire list will be deleted any way, 
-	but there are some resource deletion functions "FreeClientPixels" for 
+	we delete the members, since the entire list will be deleted any way,
+	but there are some resource deletion functions "FreeClientPixels" for
 	one which do a LookupID on another resource id (a Colormap id in this
 	case), so the resource list must be kept valid up to the point that
 	it is deleted, so every time we delete a resource, we must update the
@@ -761,9 +811,13 @@ FreeClientResources(ClientPtr client)
         for (this = *head; this; this = *head)
 	{
 	    RESTYPE rtype = this->type;
+#ifdef XSERVER_DTRACE
+	    XSERVER_RESOURCE_FREE(this->id, this->type,
+			  this->value, TypeNameString(this->type));
+#endif		
 	    *head = this->next;
 	    (*DeleteFuncs[rtype & TypeMask])(this->value, this->id);
-	    free(this);	    
+	    free(this);	
 	}
     }
     free(clientTable[client->index].resources);
@@ -772,26 +826,26 @@ FreeClientResources(ClientPtr client)
 }
 
 void
-FreeAllResources()
+FreeAllResources(void)
 {
     int	i;
 
-    for (i = currentMaxClients; --i >= 0; ) 
+    for (i = currentMaxClients; --i >= 0; )
     {
-        if (clientTable[i].buckets) 
+        if (clientTable[i].buckets)
 	    FreeClientResources(clients[i]);
     }
 }
 
 Bool
-LegalNewID(XID id, register ClientPtr client)
+LegalNewID(XID id, ClientPtr client)
 {
 
 #ifdef PANORAMIX
     XID 	minid, maxid;
 
-	if (!noPanoramiXExtension) { 
-	    minid = client->clientAsMask | (client->index ? 
+	if (!noPanoramiXExtension) {
+	    minid = client->clientAsMask | (client->index ?
 			                    SERVER_BIT : SERVER_MINID);
 	    maxid = (clientTable[client->index].fakeID | RESOURCE_ID_MASK) + 1;
             if ((id >= minid) && (id <= maxid))
@@ -817,12 +871,8 @@ void *
 SecurityLookupIDByType(ClientPtr client, XID id, RESTYPE rtype, Mask mode)
 {
     int    cid;
-    register    ResourcePtr res;
+    ResourcePtr res;
     void * retval = NULL;
-
-    assert(client == NullClient ||
-     (client->index <= currentMaxClients && clients[client->index] == client));
-    assert( (rtype & TypeMask) <= lastResourceType);
 
     if (((cid = CLIENT_ID(id)) < MAXCLIENTS) &&
 	clientTable[cid].buckets)
@@ -846,12 +896,8 @@ void *
 SecurityLookupIDByClass(ClientPtr client, XID id, RESTYPE classes, Mask mode)
 {
     int    cid;
-    register ResourcePtr res = NULL;
+    ResourcePtr res = NULL;
     void * retval = NULL;
-
-    assert(client == NullClient ||
-     (client->index <= currentMaxClients && clients[client->index] == client));
-    assert (classes >= lastResourceClass);
 
     if (((cid = CLIENT_ID(id)) < MAXCLIENTS) &&
 	clientTable[cid].buckets)
@@ -892,12 +938,12 @@ LookupIDByClass(XID id, RESTYPE classes)
 
 /*
  *  LookupIDByType returns the object with the given id and type, else NULL.
- */ 
+ */
 void *
 LookupIDByType(XID id, RESTYPE rtype)
 {
     int    cid;
-    register    ResourcePtr res;
+    ResourcePtr res;
 
     if (((cid = CLIENT_ID(id)) < MAXCLIENTS) &&
 	clientTable[cid].buckets)
@@ -914,12 +960,12 @@ LookupIDByType(XID id, RESTYPE rtype)
 /*
  *  LookupIDByClass returns the object with the given id and any one of the
  *  given classes, else NULL.
- */ 
+ */
 void *
 LookupIDByClass(XID id, RESTYPE classes)
 {
     int    cid;
-    register    ResourcePtr res;
+    ResourcePtr res;
 
     if (((cid = CLIENT_ID(id)) < MAXCLIENTS) &&
 	clientTable[cid].buckets)

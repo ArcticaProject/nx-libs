@@ -268,6 +268,7 @@ typedef struct _WorkQueue	*WorkQueuePtr;
 extern ClientPtr *clients;
 extern ClientPtr serverClient;
 extern int currentMaxClients;
+extern char dispatchExceptionAtReset;
 
 typedef int HWEventQueueType;
 typedef HWEventQueueType* HWEventQueuePtr;
@@ -298,8 +299,6 @@ extern int dixDestroyPixmap(
     void * /*value*/,
     XID /*pid*/);
 
-extern void CloseDownRetainedResources(void);
-
 extern void InitClient(
     ClientPtr /*client*/,
     int /*i*/,
@@ -328,17 +327,6 @@ extern int GetGeometry(
 extern int SendConnSetup(
     ClientPtr /*client*/,
     char* /*reason*/);
-
-extern int DoGetImage(
-    ClientPtr	/*client*/,
-    int /*format*/,
-    Drawable /*drawable*/,
-    int /*x*/, 
-    int /*y*/, 
-    int /*width*/, 
-    int /*height*/,
-    Mask /*planemask*/,
-    xGetImageReply ** /*im_return*/);
 
 #if defined(DDXBEFORERESET)
 extern void ddxBeforeReset (void);
@@ -487,6 +475,12 @@ extern void AtomError(void);
 extern void FreeAllAtoms(void);
 
 extern void InitAtoms(void);
+
+/* main.c */
+
+extern void SetVendorRelease(int release);
+
+extern void SetVendorString(char *string);
 
 /* events.c */
 
@@ -660,6 +654,9 @@ extern int TryClientEvents(
 
 extern void WindowsRestructured(void);
 
+#ifdef PANORAMIX
+extern void ReinitializeRootWindow(WindowPtr win, int xoff, int yoff);
+#endif
 
 #ifdef RANDR
 void
@@ -673,6 +670,8 @@ extern int AllocateClientPrivateIndex(void);
 extern Bool AllocateClientPrivate(
     int /*index*/,
     unsigned /*amount*/);
+
+extern int ffs(int i);
 
 /*
  *  callback manager stuff

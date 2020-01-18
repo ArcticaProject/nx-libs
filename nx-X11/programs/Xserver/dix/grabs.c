@@ -29,13 +29,13 @@ Copyright 1987 by Digital Equipment Corporation, Maynard, Massachusetts,
 
                         All Rights Reserved
 
-Permission to use, copy, modify, and distribute this software and its 
-documentation for any purpose and without fee is hereby granted, 
+Permission to use, copy, modify, and distribute this software and its
+documentation for any purpose and without fee is hereby granted,
 provided that the above copyright notice appear in all copies and that
-both that copyright notice and this permission notice appear in 
+both that copyright notice and this permission notice appear in
 supporting documentation, and that the name of Digital not be
 used in advertising or publicity pertaining to distribution of the
-software without specific, written prior permission.  
+software without specific, written prior permission.
 DIGITAL DISCLAIMS ALL WARRANTIES WITH REGARD TO THIS SOFTWARE, INCLUDING
 ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS, IN NO EVENT SHALL
 DIGITAL BE LIABLE FOR ANY SPECIAL, INDIRECT OR CONSEQUENTIAL DAMAGES OR
@@ -127,7 +127,7 @@ FreeGrab(GrabPtr pGrab)
 int
 DeletePassiveGrab(void * value, XID id)
 {
-    register GrabPtr g, prev;
+    GrabPtr g, prev;
     GrabPtr pGrab = (GrabPtr)value;
 
     /* it is OK if the grab isn't found */
@@ -152,8 +152,8 @@ DeletePassiveGrab(void * value, XID id)
 static Mask *
 DeleteDetailFromMask(Mask *pDetailMask, unsigned short detail)
 {
-    register Mask *mask;
-    register int i;
+    Mask *mask;
+    int i;
 
     mask = (Mask *)malloc(sizeof(Mask) * MasksPerDetailMask);
     if (mask)
@@ -166,7 +166,7 @@ DeleteDetailFromMask(Mask *pDetailMask, unsigned short detail)
 		mask[i]= ~0L;
 	BITCLEAR(mask, detail);
     }
-    return mask; 
+    return mask;
 }
 
 static Bool
@@ -187,11 +187,11 @@ IsInGrabMask(
  	if (GETBIT(firstDetail.pMask, secondDetail.exact))
 	    return TRUE;
     }
-    
+
     return FALSE;
 }
 
-static Bool 
+static Bool
 IdenticalExactDetails(
     unsigned short firstExact,
     unsigned short secondExact,
@@ -199,14 +199,14 @@ IdenticalExactDetails(
 {
     if ((firstExact == exception) || (secondExact == exception))
 	return FALSE;
-   
+
     if (firstExact == secondExact)
 	return TRUE;
 
     return FALSE;
 }
 
-static Bool 
+static Bool
 DetailSupersedesSecond(
     DetailRec firstDetail,
     DetailRec secondDetail,
@@ -218,7 +218,7 @@ DetailSupersedesSecond(
     if (IdenticalExactDetails(firstDetail.exact, secondDetail.exact,
 			      exception))
 	return TRUE;
-  
+
     return FALSE;
 }
 
@@ -226,14 +226,14 @@ static Bool
 GrabSupersedesSecond(GrabPtr pFirstGrab, GrabPtr pSecondGrab)
 {
     if (!DetailSupersedesSecond(pFirstGrab->modifiersDetail,
-				pSecondGrab->modifiersDetail, 
+				pSecondGrab->modifiersDetail,
 				(unsigned short)AnyModifier))
 	return FALSE;
 
     if (DetailSupersedesSecond(pFirstGrab->detail,
 			       pSecondGrab->detail, (unsigned short)AnyKey))
 	return TRUE;
- 
+
     return FALSE;
 }
 
@@ -248,10 +248,10 @@ GrabMatchesSecond(GrabPtr pFirstGrab, GrabPtr pSecondGrab)
     if (GrabSupersedesSecond(pFirstGrab, pSecondGrab) ||
 	GrabSupersedesSecond(pSecondGrab, pFirstGrab))
 	return TRUE;
- 
+
     if (DetailSupersedesSecond(pSecondGrab->detail, pFirstGrab->detail,
-			       (unsigned short)AnyKey) 
-	&& 
+			       (unsigned short)AnyKey)
+	&&
 	DetailSupersedesSecond(pFirstGrab->modifiersDetail,
 			       pSecondGrab->modifiersDetail,
 			       (unsigned short)AnyModifier))
@@ -259,7 +259,7 @@ GrabMatchesSecond(GrabPtr pFirstGrab, GrabPtr pSecondGrab)
 
     if (DetailSupersedesSecond(pFirstGrab->detail, pSecondGrab->detail,
 			       (unsigned short)AnyKey)
-	&& 
+	&&
 	DetailSupersedesSecond(pSecondGrab->modifiersDetail,
 			       pFirstGrab->modifiersDetail,
 			       (unsigned short)AnyModifier))
@@ -268,6 +268,42 @@ GrabMatchesSecond(GrabPtr pFirstGrab, GrabPtr pSecondGrab)
     return FALSE;
 }
 
+static Bool
+GrabsAreIdentical(GrabPtr pFirstGrab, GrabPtr pSecondGrab)
+{
+    if (pFirstGrab->device != pSecondGrab->device ||
+	(pFirstGrab->modifierDevice != pSecondGrab->modifierDevice) ||
+	(pFirstGrab->type != pSecondGrab->type))
+	return FALSE;
+
+    if (!(DetailSupersedesSecond(pFirstGrab->detail,
+                               pSecondGrab->detail,
+                               (unsigned short)AnyKey) &&
+        DetailSupersedesSecond(pSecondGrab->detail,
+                               pFirstGrab->detail,
+                               (unsigned short)AnyKey)))
+        return FALSE;
+
+    if (!(DetailSupersedesSecond(pFirstGrab->modifiersDetail,
+                               pSecondGrab->modifiersDetail,
+                               (unsigned short)AnyModifier) &&
+        DetailSupersedesSecond(pSecondGrab->modifiersDetail,
+                               pFirstGrab->modifiersDetail,
+                               (unsigned short)AnyModifier)))
+        return FALSE;
+
+    return TRUE;
+}
+
+
+/**
+ * Prepend the new grab to the list of passive grabs on the window.
+ * Any previously existing grab that matches the new grab will be removed.
+ * Adding a new grab that would override another client's grab will result in
+ * a BadAccess.
+ *
+ * @return Success or X error code on failure.
+ */
 int
 AddPassiveGrabToList(GrabPtr pGrab)
 {
@@ -285,11 +321,22 @@ AddPassiveGrabToList(GrabPtr pGrab)
 	}
     }
 
+    /* Remove all grabs that match the new one exactly */
+    for (grab = wPassiveGrabs(pGrab->window); grab; grab = grab->next)
+    {
+	if (GrabsAreIdentical(pGrab, grab))
+	{
+            DeletePassiveGrabFromList(grab);
+            break;
+	}
+    }
+
     if (!pGrab->window->optional && !MakeWindowOptional (pGrab->window))
     {
 	FreeGrab(pGrab);
 	return BadAlloc;
     }
+
     pGrab->next = pGrab->window->optional->passiveGrabs;
     pGrab->window->optional->passiveGrabs = pGrab;
     if (AddResource(pGrab->resource, RT_PASSIVEGRAB, (void *)pGrab))
@@ -304,7 +351,7 @@ AddPassiveGrabToList(GrabPtr pGrab)
 Bool
 DeletePassiveGrabFromList(GrabPtr pMinuendGrab)
 {
-    register GrabPtr grab;
+    GrabPtr grab;
     GrabPtr *deletes, *adds;
     Mask ***updates, **details;
     int i, ndels, nadds, nups;
@@ -351,7 +398,7 @@ DeletePassiveGrabFromList(GrabPtr pMinuendGrab)
 	{
 	    UPDATE(grab->detail.pMask, pMinuendGrab->detail.exact);
 	}
-	else if ((grab->modifiersDetail.exact == AnyModifier) 
+	else if ((grab->modifiersDetail.exact == AnyModifier)
 		 && (grab->detail.exact != AnyKey))
 	{
 	    UPDATE(grab->modifiersDetail.pMask,
@@ -390,7 +437,7 @@ DeletePassiveGrabFromList(GrabPtr pMinuendGrab)
 		ok = FALSE;
 	    else
 		adds[nadds++] = pNewGrab;
-	}   
+	}
 	else if (pMinuendGrab->detail.exact == AnyKey)
 	{
 	    UPDATE(grab->modifiersDetail.pMask,

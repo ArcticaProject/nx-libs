@@ -68,8 +68,7 @@ from The Open Group.
 # include   <sys/types.h>
 # include   <sys/stat.h>
 #ifdef XCSECURITY
-#define _SECURITY_SERVER
-# include   <nx-X11/extensions/security.h>
+# include   "securitysrv.h"
 #endif
 
 struct protocol {

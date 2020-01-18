@@ -78,7 +78,7 @@ SOFTWARE.
  */
 
 int
-SProcXUngrabDeviceButton(register ClientPtr client)
+SProcXUngrabDeviceButton(ClientPtr client)
 {
     REQUEST(xUngrabDeviceButtonReq);
     swaps(&stuff->length);

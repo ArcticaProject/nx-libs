@@ -1,6 +1,4 @@
 /*
- * Id: fbpixmap.c,v 1.1 1999/11/02 03:54:45 keithp Exp $
- *
  * Copyright © 1998 Keith Packard
  *
  * Permission to use, copy, modify, distribute, and sell this software and its
@@ -163,6 +161,8 @@ fbPixmapToRegion(PixmapPtr pPix)
     FirstRect = RegionBoxptr(pReg);
     rects = FirstRect;
 
+    fbPrepareAccess(&pPix->drawable);
+
     pwLine = (FbBits *) pPix->devPrivate.ptr;
     nWidth = pPix->devKind >> (FB_SHIFT-3);
 
@@ -177,7 +177,7 @@ fbPixmapToRegion(PixmapPtr pPix)
 	irectLineStart = rects - FirstRect;
 	/* If the Screen left most bit of the word is set, we're starting in
 	 * a box */
-	if(*pw & mask0)
+	if(READ(pw) & mask0)
 	{
 	    fInBox = TRUE;
 	    rx1 = 0;
@@ -188,7 +188,7 @@ fbPixmapToRegion(PixmapPtr pPix)
 	pwLineEnd = pw + (width >> FB_SHIFT);
 	for (base = 0; pw < pwLineEnd; base += FB_UNIT)
 	{
-	    w = *pw++;
+	    w = READ(pw++);
 	    if (fInBox)
 	    {
 		if (!~w)
@@ -229,7 +229,7 @@ fbPixmapToRegion(PixmapPtr pPix)
 	if(width & FB_MASK)
 	{
 	    /* Process final partial word on line */
-	    w = *pw++;
+	    w = READ(pw++);
 	    for(ib = 0; ib < (width & FB_MASK); ib++)
 	    {
 	        /* If the Screen left most bit of the word is set, we're
@@ -314,6 +314,8 @@ fbPixmapToRegion(PixmapPtr pPix)
 	    pReg->data = (RegDataPtr)NULL;
 	}
     }
+
+    fbFinishAccess(&pPix->drawable);
 #ifdef DEBUG
     if (!RegionIsValid(pReg))
 	FatalError("Assertion failed file %s, line %d: expr\n", __FILE__, __LINE__);
@@ -323,11 +325,7 @@ fbPixmapToRegion(PixmapPtr pPix)
 
 #ifdef FB_DEBUG
 
-#ifndef WIN32
 #include <stdio.h>
-#else
-#include <dbg.h>
-#endif
 
 static Bool
 fbValidateBits (FbStip *bits, int stride, FbStip data)
@@ -336,12 +334,7 @@ fbValidateBits (FbStip *bits, int stride, FbStip data)
     {
 	if (*bits != data)
 	{
-#ifdef WIN32
-	    NCD_DEBUG ((DEBUG_FAILURE, "fdValidateBits failed at 0x%x (is 0x%x want 0x%x)",
-			bits, *bits, data));
-#else
 	    fprintf (stderr, "fbValidateBits failed\n");
-#endif
 	    return FALSE;
 	}
 	bits++;
@@ -365,6 +358,7 @@ fbValidateDrawable (DrawablePtr pDrawable)
     if (!fbValidateBits (first, stride, FB_HEAD_BITS) ||
 	!fbValidateBits (last, stride, FB_TAIL_BITS))
 	fbInitializeDrawable(pDrawable);
+    fbFinishAccess (pDrawable);
 }
 
 void
@@ -386,5 +380,6 @@ fbInitializeDrawable (DrawablePtr pDrawable)
     last = bits + stride * pDrawable->height;
     fbSetBits (first, stride, FB_HEAD_BITS);
     fbSetBits (last, stride, FB_TAIL_BITS);
+    fbFinishAccess (pDrawable);
 }
 #endif /* FB_DEBUG */

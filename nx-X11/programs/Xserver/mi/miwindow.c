@@ -160,12 +160,12 @@ miClearToBackground(pWin, x, y, w, h, generateExposures)
  */
 static Bool
 miCheckSubSaveUnder(
-    register WindowPtr	pParent,	/* Parent to check */
+    WindowPtr		pParent,	/* Parent to check */
     WindowPtr		pFirst,		/* first reconfigured window */
     RegionPtr		pRegion)	/* Initial area obscured by saveUnder */
 {
-    register WindowPtr	pChild;		/* Current child */
-    register ScreenPtr	pScreen;	/* Screen to use */
+    WindowPtr		pChild;		/* Current child */
+    ScreenPtr		pScreen;	/* Screen to use */
     RegionRec		SubRegion;	/* Area of children obscured */
     Bool		res = FALSE;	/* result */
     Bool		subInited=FALSE;/* SubRegion initialized */
@@ -268,7 +268,7 @@ miCheckSubSaveUnder(
  */
 Bool
 miChangeSaveUnder(pWin, first)
-    register WindowPtr	pWin;
+    WindowPtr		pWin;
     WindowPtr		first;		/* First window to check.
 					 * Used when pWin was restacked */
 {
@@ -307,7 +307,7 @@ miPostChangeSaveUnder(pWin, pFirst)
     WindowPtr		pWin;
     WindowPtr		pFirst;
 {
-    register WindowPtr pParent, pChild;
+    WindowPtr pParent, pChild;
     ChangeWindowAttributesProcPtr ChangeWindowAttributes;
 
     if (!(pParent = pWin->parent))
@@ -340,9 +340,9 @@ miPostChangeSaveUnder(pWin, pFirst)
 
 void
 miMarkWindow(pWin)
-    register WindowPtr pWin;
+    WindowPtr pWin;
 {
-    register ValidatePtr val;
+    ValidatePtr val;
 
     if (pWin->valdata)
 	return;
@@ -360,8 +360,8 @@ miMarkOverlappedWindows(pWin, pFirst, ppLayerWin)
     WindowPtr pFirst;
     WindowPtr *ppLayerWin;
 {
-    register BoxPtr box;
-    register WindowPtr pChild, pLast;
+    BoxPtr box;
+    WindowPtr pChild, pLast;
     Bool anyMarked = FALSE;
     MarkWindowProcPtr MarkWindow = pWin->drawable.pScreen->MarkWindow;
 
@@ -444,8 +444,8 @@ void
 miHandleValidateExposures(pWin)
     WindowPtr pWin;
 {
-    register WindowPtr pChild;
-    register ValidatePtr val;
+    WindowPtr pChild;
+    ValidatePtr val;
     WindowExposuresProcPtr WindowExposures;
 
     pChild = pWin;
@@ -479,7 +479,7 @@ miHandleValidateExposures(pWin)
 
 void
 miMoveWindow(pWin, x, y, pNextSib, kind)
-    register WindowPtr pWin;
+    WindowPtr pWin;
     int x,y;
     WindowPtr pNextSib;
     VTKind kind;
@@ -490,7 +490,7 @@ miMoveWindow(pWin, x, y, pNextSib, kind)
     RegionPtr oldRegion = NULL;
     DDXPointRec oldpt;
     Bool anyMarked = FALSE;
-    register ScreenPtr pScreen;
+    ScreenPtr pScreen;
     WindowPtr windowToValidate;
 #ifdef DO_SAVE_UNDERS
     Bool dosave = FALSE;
@@ -568,7 +568,7 @@ miMoveWindow(pWin, x, y, pNextSib, kind)
 
 static int
 miRecomputeExposures (
-    register WindowPtr	pWin,
+    WindowPtr	pWin,
     void *		value) /* must conform to VisitWindowProcPtr */
 {
     RegionPtr	pValid = (RegionPtr)value;
@@ -594,7 +594,7 @@ miRecomputeExposures (
 
 void
 miSlideAndSizeWindow(pWin, x, y, w, h, pSib)
-    register WindowPtr pWin;
+    WindowPtr pWin;
     int x,y;
     unsigned int w, h;
     WindowPtr pSib;
@@ -610,11 +610,11 @@ miSlideAndSizeWindow(pWin, x, y, w, h, pSib)
     DDXPointRec oldpt;
     RegionPtr oldRegion = NULL;
     Bool anyMarked = FALSE;
-    register ScreenPtr pScreen;
+    ScreenPtr pScreen;
     WindowPtr pFirstChange;
-    register WindowPtr pChild;
+    WindowPtr pChild;
     RegionPtr	gravitate[StaticGravity + 1];
-    register unsigned g;
+    unsigned g;
     int		nx, ny;		/* destination x,y */
     int		newx, newy;	/* new inner window position */
     RegionPtr	pRegion = NULL;
@@ -971,10 +971,10 @@ miGetLayerWindow(pWin)
 
 void
 miSetShape(pWin)
-    register WindowPtr	pWin;
+    WindowPtr	pWin;
 {
     Bool	WasViewable = (Bool)(pWin->viewable);
-    register ScreenPtr pScreen = pWin->drawable.pScreen;
+    ScreenPtr 	pScreen = pWin->drawable.pScreen;
     Bool	anyMarked = FALSE;
     RegionPtr	pOldClip = NULL, bsExposed;
 #ifdef DO_SAVE_UNDERS
@@ -1050,7 +1050,7 @@ miSetShape(pWin)
 	 * even if it was not created at the beginning of
 	 * this function as, at the time, the backing store
 	 * was off. miCheckSubSaveUnder() appear to get a
-	 * pointer to the parent, so maybe doesn't change
+	 * void * to the parent, so maybe doesn't change
 	 * the attribute of the window itself. This is to
 	 * be better investigated.
 	 * Update: Red Hat fixed this bug the same way (BZ 676270).
@@ -1064,7 +1064,7 @@ miSetShape(pWin)
 	if (bsExposed)
 	{
 	    RegionPtr	valExposed = NullRegion;
-    
+
 	    if (pWin->valdata)
 		valExposed = &pWin->valdata->after.exposed;
 	    (*pScreen->WindowExposures) (pWin, valExposed, bsExposed);
@@ -1094,12 +1094,12 @@ miSetShape(pWin)
 
 void
 miChangeBorderWidth(pWin, width)
-    register WindowPtr pWin;
+    WindowPtr pWin;
     unsigned int width;
 {
     int oldwidth;
     Bool anyMarked = FALSE;
-    register ScreenPtr pScreen;
+    ScreenPtr pScreen;
     Bool WasViewable = (Bool)(pWin->viewable);
     Bool HadBorder;
 #ifdef DO_SAVE_UNDERS

@@ -31,7 +31,6 @@ from The Open Group.
 #include <dix-config.h>
 #endif
 
-#include "regionstr.h"
 #include "scrnintstr.h"
 #include "gcstruct.h"
 #include "pixmapstr.h"
@@ -202,7 +201,7 @@ miComputeCompositeClip(pGC, pDrawable)
 
 	/*
 	 * if there is no client clip, we can get by with just keeping the
-	 * pointer we got, and remembering whether or not should destroy (or
+	 * void * we got, and remembering whether or not should destroy (or
 	 * maybe re-use) it later.  this way, we avoid unnecessary copying of
 	 * regions.  (this wins especially if many clients clip by children
 	 * and have no client clip.)

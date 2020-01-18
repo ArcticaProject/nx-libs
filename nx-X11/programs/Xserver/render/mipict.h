@@ -1,4 +1,5 @@
 /*
+ *
  * Copyright © 2000 SuSE, Inc.
  *
  * Permission to use, copy, modify, distribute, and sell this software and its
@@ -87,6 +88,12 @@ miClipPicture (RegionPtr    pRegion,
 	       INT16	    xPict,
 	       INT16	    yPict);
 
+void
+miCompositeSourceValidate (PicturePtr	pPicture,
+			   INT16	x,
+			   INT16	y,
+			   CARD16	width,
+			   CARD16	height);
 Bool
 miComputeCompositeRegion (RegionPtr	pRegion,
 			  PicturePtr	pSrc,
@@ -103,6 +110,20 @@ miComputeCompositeRegion (RegionPtr	pRegion,
 
 Bool
 miPictureInit (ScreenPtr pScreen, PictFormatPtr formats, int nformats);
+
+Bool
+miRealizeGlyph (ScreenPtr pScreen,
+		GlyphPtr  glyph);
+
+void
+miUnrealizeGlyph (ScreenPtr pScreen,
+		  GlyphPtr  glyph);
+
+void
+miGlyphExtents (int		nlist,
+		GlyphListPtr	list,
+		GlyphPtr	*glyphs,
+		BoxPtr		extents);
 
 void
 miGlyphs (CARD8		op,

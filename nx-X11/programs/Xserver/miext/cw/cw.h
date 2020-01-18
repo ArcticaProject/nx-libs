@@ -19,7 +19,6 @@
  * TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
-/* $Header: /cvs/xorg/xc/programs/Xserver/miext/cw/cw.h,v 1.14 2005/12/09 18:32:46 ajax Exp $ */
 
 #ifdef HAVE_DIX_CONFIG_H
 #include <dix-config.h>
@@ -60,7 +59,7 @@ typedef struct {
     unsigned long   stateChanges;
 } cwPictureRec, *cwPicturePtr;
 
-#define getCwPicture(pPicture) \
+#define getCwPicture(pPicture)	\
     (pPicture->pDrawable ? (cwPicturePtr)(pPicture)->devPrivates[cwPictureIndex].ptr : 0)
 #define setCwPicture(pPicture,p) ((pPicture)->devPrivates[cwPictureIndex].ptr = (void *) (p))
 
@@ -101,6 +100,7 @@ typedef struct {
     ValidatePictureProcPtr	ValidatePicture;
 
     CompositeProcPtr		Composite;
+    GlyphsProcPtr		Glyphs;
     CompositeRectsProcPtr	CompositeRects;
 
     TrapezoidsProcPtr		Trapezoids;
@@ -168,7 +168,3 @@ cwFiniRender (ScreenPtr pScreen);
 
 void
 miInitializeCompositeWrapper(ScreenPtr pScreen);
-
-/* Must be called before miInitializeCompositeWrapper */
-void
-miDisableCompositeWrapper(ScreenPtr pScreen);

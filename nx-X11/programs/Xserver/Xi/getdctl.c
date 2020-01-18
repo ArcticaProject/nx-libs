@@ -73,7 +73,7 @@ SOFTWARE.
  */
 
 int
-SProcXGetDeviceControl(register ClientPtr client)
+SProcXGetDeviceControl(ClientPtr client)
 {
     REQUEST(xGetDeviceControlReq);
     swaps(&stuff->length);
@@ -84,76 +84,11 @@ SProcXGetDeviceControl(register ClientPtr client)
 
 /***********************************************************************
  *
- * Get the state of the specified device control.
- *
- */
-
-int
-ProcXGetDeviceControl(ClientPtr client)
-{
-    int total_length = 0;
-    char *buf, *savbuf;
-    register DeviceIntPtr dev;
-    xGetDeviceControlReply rep;
-
-    REQUEST(xGetDeviceControlReq);
-    REQUEST_SIZE_MATCH(xGetDeviceControlReq);
-
-    dev = LookupDeviceIntRec(stuff->deviceid);
-    if (dev == NULL) {
-	SendErrorToClient(client, IReqCode, X_GetDeviceControl, 0, BadDevice);
-	return Success;
-    }
-
-    rep.repType = X_Reply;
-    rep.RepType = X_GetDeviceControl;
-    rep.length = 0;
-    rep.sequenceNumber = client->sequence;
-
-    switch (stuff->control) {
-    case DEVICE_RESOLUTION:
-	if (!dev->valuator) {
-	    SendErrorToClient(client, IReqCode, X_GetDeviceControl, 0,
-			      BadMatch);
-	    return Success;
-	}
-	total_length = sizeof(xDeviceResolutionState) +
-	    (3 * sizeof(int) * dev->valuator->numAxes);
-	break;
-    default:
-	SendErrorToClient(client, IReqCode, X_GetDeviceControl, 0, BadValue);
-	return Success;
-    }
-
-    buf = (char *)malloc(total_length);
-    if (!buf) {
-	SendErrorToClient(client, IReqCode, X_GetDeviceControl, 0, BadAlloc);
-	return Success;
-    }
-    savbuf = buf;
-
-    switch (stuff->control) {
-    case DEVICE_RESOLUTION:
-	CopySwapDeviceResolution(client, dev->valuator, buf, total_length);
-	break;
-    default:
-	break;
-    }
-
-    rep.length = (total_length + 3) >> 2;
-    WriteReplyToClient(client, sizeof(xGetDeviceControlReply), &rep);
-    WriteToClient(client, total_length, savbuf);
-    free(savbuf);
-    return Success;
-}
-
-/***********************************************************************
- *
  * This procedure copies DeviceResolution data, swapping if necessary.
  *
  */
 
-void
+static void
 CopySwapDeviceResolution(ClientPtr client, ValuatorClassPtr v, char *buf,
 			 int length)
 {
@@ -184,6 +119,91 @@ CopySwapDeviceResolution(ClientPtr client, ValuatorClassPtr v, char *buf,
     }
 }
 
+static void CopySwapDeviceAbsCalib (ClientPtr client, AbsoluteClassPtr dts,
+                                char *buf)
+{
+    xDeviceAbsCalibState *calib = (xDeviceAbsCalibState *) buf;
+
+    calib->control = DEVICE_ABS_CALIB;
+    calib->length = sizeof(calib);
+    calib->min_x = dts->min_x;
+    calib->max_x = dts->max_x;
+    calib->min_y = dts->min_y;
+    calib->max_y = dts->max_y;
+    calib->flip_x = dts->flip_x;
+    calib->flip_y = dts->flip_y;
+    calib->rotation = dts->rotation;
+    calib->button_threshold = dts->button_threshold;
+
+    if (client->swapped) {
+        swaps(&calib->control);
+        swaps(&calib->length);
+        swapl(&calib->min_x);
+        swapl(&calib->max_x);
+        swapl(&calib->min_y);
+        swapl(&calib->max_y);
+        swapl(&calib->flip_x);
+        swapl(&calib->flip_y);
+        swapl(&calib->rotation);
+        swapl(&calib->button_threshold);
+    }
+}
+
+static void CopySwapDeviceAbsArea (ClientPtr client, AbsoluteClassPtr dts,
+                                char *buf)
+{
+    xDeviceAbsAreaState *area = (xDeviceAbsAreaState *) buf;
+
+    area->control = DEVICE_ABS_AREA;
+    area->length = sizeof(area);
+    area->offset_x = dts->offset_x;
+    area->offset_y = dts->offset_y;
+    area->width = dts->width;
+    area->height = dts->height;
+    area->screen = dts->screen;
+    area->following = dts->following;
+
+    if (client->swapped) {
+        swaps(&area->control);
+        swaps(&area->length);
+        swapl(&area->offset_x);
+        swapl(&area->offset_y);
+        swapl(&area->width);
+        swapl(&area->height);
+        swapl(&area->screen);
+        swapl(&area->following);
+    }
+}
+
+static void CopySwapDeviceCore (ClientPtr client, DeviceIntPtr dev, char *buf)
+{
+    xDeviceCoreState *c = (xDeviceCoreState *) buf;
+
+    c->control = DEVICE_CORE;
+    c->length = sizeof(c);
+    c->status = dev->coreEvents;
+    c->iscore = (dev == inputInfo.keyboard || dev == inputInfo.pointer);
+
+    if (client->swapped) {
+        swaps(&c->control);
+        swaps(&c->length);
+    }
+}
+
+static void CopySwapDeviceEnable (ClientPtr client, DeviceIntPtr dev, char *buf)
+{
+    xDeviceEnableState *e = (xDeviceEnableState *) buf;
+
+    e->control = DEVICE_ENABLE;
+    e->length = sizeof(e);
+    e->enable = dev->enabled;
+
+    if (client->swapped) {
+        swaps(&e->control);
+        swaps(&e->length);
+    }
+}
+
 /***********************************************************************
  *
  * This procedure writes the reply for the xGetDeviceControl function,
@@ -197,4 +217,105 @@ SRepXGetDeviceControl(ClientPtr client, int size, xGetDeviceControlReply * rep)
     swaps(&rep->sequenceNumber);
     swapl(&rep->length);
     WriteToClient(client, size, rep);
+}
+
+/***********************************************************************
+ *
+ * Get the state of the specified device control.
+ *
+ */
+
+int
+ProcXGetDeviceControl(ClientPtr client)
+{
+    int total_length = 0;
+    char *buf, *savbuf;
+    DeviceIntPtr dev;
+    xGetDeviceControlReply rep;
+
+    REQUEST(xGetDeviceControlReq);
+    REQUEST_SIZE_MATCH(xGetDeviceControlReq);
+
+    dev = LookupDeviceIntRec(stuff->deviceid);
+    if (dev == NULL) {
+	SendErrorToClient(client, IReqCode, X_GetDeviceControl, 0, BadDevice);
+	return Success;
+    }
+
+    rep.repType = X_Reply;
+    rep.RepType = X_GetDeviceControl;
+    rep.length = 0;
+    rep.sequenceNumber = client->sequence;
+
+    switch (stuff->control) {
+    case DEVICE_RESOLUTION:
+	if (!dev->valuator) {
+	    SendErrorToClient(client, IReqCode, X_GetDeviceControl, 0,
+			      BadMatch);
+	    return Success;
+	}
+	total_length = sizeof(xDeviceResolutionState) +
+	    (3 * sizeof(int) * dev->valuator->numAxes);
+	break;
+    case DEVICE_ABS_CALIB:
+        if (!dev->absolute) {
+            SendErrorToClient(client, IReqCode, X_GetDeviceControl, 0,
+                              BadMatch);
+            return Success;
+        }
+
+        total_length = sizeof(xDeviceAbsCalibCtl);
+        break;
+    case DEVICE_ABS_AREA:
+        if (!dev->absolute) {
+            SendErrorToClient(client, IReqCode, X_GetDeviceControl, 0,
+                              BadMatch);
+            return Success;
+        }
+
+        total_length = sizeof(xDeviceAbsAreaCtl);
+        break;
+    case DEVICE_CORE:
+        total_length = sizeof(xDeviceCoreCtl);
+        break;
+    case DEVICE_ENABLE:
+        total_length = sizeof(xDeviceEnableCtl);
+        break;
+    default:
+	SendErrorToClient(client, IReqCode, X_GetDeviceControl, 0, BadValue);
+	return Success;
+    }
+
+    buf = (char *)malloc(total_length);
+    if (!buf) {
+	SendErrorToClient(client, IReqCode, X_GetDeviceControl, 0, BadAlloc);
+	return Success;
+    }
+    savbuf = buf;
+
+    switch (stuff->control) {
+    case DEVICE_RESOLUTION:
+	CopySwapDeviceResolution(client, dev->valuator, buf, total_length);
+	break;
+    case DEVICE_ABS_CALIB:
+        CopySwapDeviceAbsCalib(client, dev->absolute, buf);
+        break;
+    case DEVICE_ABS_AREA:
+        CopySwapDeviceAbsArea(client, dev->absolute, buf);
+        break;
+    case DEVICE_CORE:
+        CopySwapDeviceCore(client, dev, buf);
+        break;
+    case DEVICE_ENABLE:
+        CopySwapDeviceEnable(client, dev, buf);
+        break;
+    default:
+	break;
+    }
+
+    rep.length = (total_length + 3) >> 2;
+    WriteReplyToClient(client, sizeof(xGetDeviceControlReply), &rep);
+    WriteToClient(client, total_length, savbuf);
+    free(savbuf);
+    return Success;
 }

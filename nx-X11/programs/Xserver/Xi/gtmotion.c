@@ -73,7 +73,7 @@ SOFTWARE.
  */
 
 int
-SProcXGetDeviceMotionEvents(register ClientPtr client)
+SProcXGetDeviceMotionEvents(ClientPtr client)
 {
     REQUEST(xGetDeviceMotionEventsReq);
     swaps(&stuff->length);

@@ -53,6 +53,7 @@ is" without express or implied warranty.
 #include "Pointer.h"
 #include "Events.h"
 #include "Options.h"
+#include "xkbsrv.h"
 
 #include "compext/Compext.h"
 
@@ -71,6 +72,8 @@ is" without express or implied warranty.
  */
 
 unsigned char nxagentReversePointerMap[MAXBUTTONS];
+
+DeviceIntPtr nxagentPointerDevice = NULL;
 
 void nxagentChangePointerControl(DeviceIntPtr pDev, PtrCtrl *ctrl)
 {
@@ -107,6 +110,9 @@ int nxagentPointerProc(DeviceIntPtr pDev, int onoff)
   {
     case DEVICE_INIT:
 
+      if (!pDev->name)
+	pDev->name = strdup("NX pointer");
+
       #ifdef TEST
       fprintf(stderr, "%s: Called for [DEVICE_INIT].\n", __func__);
       #endif
@@ -122,9 +128,9 @@ int nxagentPointerProc(DeviceIntPtr pDev, int onoff)
       for (int i = 0; i <= nmap; i++)
 	map[i] = i; /* buttons are already mapped */
       InitPointerDeviceStruct((DevicePtr) pDev, map, nmap,
-			      miPointerGetMotionEvents,
+			      GetMotionHistory,
 			      nxagentChangePointerControl,
-			      miPointerGetMotionBufferSize());
+			      GetMotionHistorySize(), 2);
       break;
     case DEVICE_ON:
 
@@ -162,6 +168,8 @@ int nxagentPointerProc(DeviceIntPtr pDev, int onoff)
       #ifdef TEST
       fprintf(stderr, "%s: Called for [DEVICE_CLOSE].\n", __func__);
       #endif
+
+      XkbFreePrivates(pDev);
 
       break;
     }

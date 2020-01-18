@@ -27,13 +27,13 @@ Copyright 1987 by Digital Equipment Corporation, Maynard, Massachusetts.
 
                         All Rights Reserved
 
-Permission to use, copy, modify, and distribute this software and its 
-documentation for any purpose and without fee is hereby granted, 
+Permission to use, copy, modify, and distribute this software and its
+documentation for any purpose and without fee is hereby granted,
 provided that the above copyright notice appear in all copies and that
-both that copyright notice and this permission notice appear in 
+both that copyright notice and this permission notice appear in
 supporting documentation, and that the name of Digital not be
 used in advertising or publicity pertaining to distribution of the
-software without specific, written prior permission.  
+software without specific, written prior permission.
 
 DIGITAL DISCLAIMS ALL WARRANTIES WITH REGARD TO THIS SOFTWARE, INCLUDING
 ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS, IN NO EVENT SHALL
@@ -67,8 +67,6 @@ SOFTWARE.
 #define LAST_EVENT  128
 #define LAST_ERROR 255
 
-ScreenProcEntry AuxillaryScreenProcs[MAXSCREENS];
-
 static ExtensionEntry **extensions = (ExtensionEntry **)NULL;
 
 int lastEvent = EXTENSION_EVENT_BASE;
@@ -82,11 +80,11 @@ extern unsigned totalExtensionSize;
 static void
 InitExtensionPrivates(ExtensionEntry *ext)
 {
-    register char *ptr;
+    char *ptr;
     DevUnion *ppriv;
-    register unsigned *sizes;
-    register unsigned size;
-    register int i;
+    unsigned *sizes;
+    unsigned size;
+    int i;
 
     if (totalExtensionSize == sizeof(ExtensionEntry))
 	ppriv = (DevUnion *)NULL;
@@ -109,18 +107,18 @@ InitExtensionPrivates(ExtensionEntry *ext)
 }
 
 ExtensionEntry *
-AddExtension(char *name, int NumEvents, int NumErrors, 
-	     int (*MainProc)(ClientPtr c1), 
-	     int (*SwappedMainProc)(ClientPtr c2), 
-	     void (*CloseDownProc)(ExtensionEntry *e), 
+AddExtension(char *name, int NumEvents, int NumErrors,
+	     int (*MainProc)(ClientPtr c1),
+	     int (*SwappedMainProc)(ClientPtr c2),
+	     void (*CloseDownProc)(ExtensionEntry *e),
 	     unsigned short (*MinorOpcodeProc)(ClientPtr c3))
 {
     int i;
-    register ExtensionEntry *ext, **newexts;
+    ExtensionEntry *ext, **newexts;
 
     if (!MainProc || !SwappedMainProc || !MinorOpcodeProc)
         return((ExtensionEntry *) NULL);
-    if ((lastEvent + NumEvents > LAST_EVENT) || 
+    if ((lastEvent + NumEvents > LAST_EVENT) ||
 	        (unsigned)(lastError + NumErrors > LAST_ERROR))
         return((ExtensionEntry *) NULL);
 
@@ -301,7 +299,7 @@ MinorOpcodeOfRequest(ClientPtr client)
 void
 CloseDownExtensions()
 {
-    register int i,j;
+    int i,j;
 
     for (i = NumExtensions - 1; i >= 0; i--)
     {
@@ -318,18 +316,6 @@ CloseDownExtensions()
     extensions = (ExtensionEntry **)NULL;
     lastEvent = EXTENSION_EVENT_BASE;
     lastError = FirstExtensionError;
-    for (i=0; i<MAXSCREENS; i++)
-    {
-	register ScreenProcEntry *spentry = &AuxillaryScreenProcs[i];
-
-	while (spentry->num)
-	{
-	    spentry->num--;
-	    free(spentry->procList[spentry->num].name);
-	}
-	free(spentry->procList);
-	spentry->procList = (ProcEntryPtr)NULL;
-    }
 }
 
 int
@@ -340,7 +326,7 @@ ProcQueryExtension(ClientPtr client)
     REQUEST(xQueryExtensionReq);
 
     REQUEST_FIXED_SIZE(xQueryExtensionReq, stuff->nbytes);
-    
+
     memset(&reply, 0, sizeof(xQueryExtensionReply));
     reply.type = X_Reply;
     reply.length = 0;
@@ -361,7 +347,7 @@ ProcQueryExtension(ClientPtr client)
 	    )
             reply.present = xFalse;
         else
-        {            
+        {
             reply.present = xTrue;
 	    reply.major_opcode = extensions[i]->base;
 	    reply.first_event = extensions[i]->eventBase;
@@ -390,7 +376,7 @@ ProcListExtensions(ClientPtr client)
 
     if ( NumExtensions )
     {
-        register int i, j;
+        int i, j;
 
         for (i=0;  i<NumExtensions; i++)
 	{
@@ -437,67 +423,16 @@ ProcListExtensions(ClientPtr client)
     return(client->noClientException);
 }
 
-ExtensionLookupProc 
-LookupProc(char *name, GCPtr pGC)
-{
-    register int i;
-    register ScreenProcEntry *spentry;
-    spentry  = &AuxillaryScreenProcs[pGC->pScreen->myNum];
-    if (spentry->num)    
-    {
-        for (i = 0; i < spentry->num; i++)
-            if (strcmp(name, spentry->procList[i].name) == 0)
-                return(spentry->procList[i].proc);
-    }
-    return (ExtensionLookupProc)NULL;
-}
-
-Bool
-RegisterProc(char *name, GC *pGC, ExtensionLookupProc proc)
-{
-    return RegisterScreenProc(name, pGC->pScreen, proc);
-}
-
-Bool
-RegisterScreenProc(char *name, ScreenPtr pScreen, ExtensionLookupProc proc)
-{
-    register ScreenProcEntry *spentry;
-    register ProcEntryPtr procEntry = (ProcEntryPtr)NULL;
-    char *newname;
+#ifdef XSERVER_DTRACE
+void LoadExtensionNames(char **RequestNames) {
     int i;
 
-    spentry = &AuxillaryScreenProcs[pScreen->myNum];
-    /* first replace duplicates */
-    if (spentry->num)
-    {
-        for (i = 0; i < spentry->num; i++)
-            if (strcmp(name, spentry->procList[i].name) == 0)
-	    {
-                procEntry = &spentry->procList[i];
-		break;
-	    }
-    }
-    if (procEntry)
-        procEntry->proc = proc;
-    else
-    {
-	newname = (char *)malloc(strlen(name)+1);
-	if (!newname)
-	    return FALSE;
-	procEntry = (ProcEntryPtr)
-			    realloc(spentry->procList,
-				     sizeof(ProcEntryRec) * (spentry->num+1));
-	if (!procEntry)
-	{
-	    free(newname);
-	    return FALSE;
+    for (i=0; i<NumExtensions; i++) {
+	int r = extensions[i]->base;
+
+	if (RequestNames[r] == NULL) {
+	    RequestNames[r] = strdup(extensions[i]->name);
 	}
-	spentry->procList = procEntry;
-        procEntry += spentry->num;
-        procEntry->name = newname;
-        strcpy(newname, name);
-        procEntry->proc = proc;
-        spentry->num++;        
     }
-    return TRUE;
 }
+#endif
