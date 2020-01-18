@@ -41,6 +41,7 @@
 #include "Display.h"
 #include "Dialog.h"
 #include "Utils.h"
+#include "Keystroke.h"
 
 #include <nx/NX.h>
 #include "compext/Compext.h"
@@ -187,6 +188,7 @@ void nxagentLaunchDialog(DialogType dialogType)
   int *pid;
   char *type;
   char *message;
+  char *strings[2] = {NULL}; /* don't forget to add free() calls if you change the number */
   int local;
   const char *window = NULL;
 
@@ -247,6 +249,7 @@ void nxagentLaunchDialog(DialogType dialogType)
       type = DIALOG_ENABLE_DESKTOP_RESIZE_MODE_TYPE;
       local = DIALOG_ENABLE_DESKTOP_RESIZE_MODE_LOCAL;
       pid = &nxagentEnableRandRModeDialogPid;
+      strings[0] = nxagentFindFirstKeystroke("resize");
       break;
     }
     case DIALOG_DISABLE_DESKTOP_RESIZE_MODE:
@@ -255,6 +258,8 @@ void nxagentLaunchDialog(DialogType dialogType)
       type = DIALOG_DISABLE_DESKTOP_RESIZE_MODE_TYPE;
       local = DIALOG_DISABLE_DESKTOP_RESIZE_MODE_LOCAL;
       pid = &nxagentDisableRandRModeDialogPid;
+      strings[0] = nxagentFindFirstKeystroke("resize");
+      strings[1] = nxagentFindMatchingKeystrokes("viewport_");
       break;
     }
     case DIALOG_ENABLE_DEFER_MODE:
@@ -263,6 +268,7 @@ void nxagentLaunchDialog(DialogType dialogType)
       type = DIALOG_ENABLE_DEFER_MODE_TYPE;
       local = DIALOG_ENABLE_DEFER_MODE_LOCAL;
       pid = &nxagentEnableDeferModePid;
+      strings[0] = nxagentFindFirstKeystroke("defer");
       break;
     }
     case DIALOG_DISABLE_DEFER_MODE:
@@ -271,6 +277,7 @@ void nxagentLaunchDialog(DialogType dialogType)
       type = DIALOG_DISABLE_DEFER_MODE_TYPE;
       local = DIALOG_DISABLE_DEFER_MODE_LOCAL;
       pid = &nxagentDisableDeferModePid;
+      strings[0] = nxagentFindFirstKeystroke("defer");
       break;
     }
     case DIALOG_ENABLE_AUTOGRAB_MODE:
@@ -279,6 +286,7 @@ void nxagentLaunchDialog(DialogType dialogType)
       type = DIALOG_ENABLE_AUTOGRAB_MODE_TYPE;
       local = DIALOG_ENABLE_AUTOGRAB_MODE_LOCAL;
       pid = &nxagentEnableAutograbModePid;
+      strings[0] = nxagentFindFirstKeystroke("autograb");
       break;
     }
     case DIALOG_DISABLE_AUTOGRAB_MODE:
@@ -287,6 +295,7 @@ void nxagentLaunchDialog(DialogType dialogType)
       type = DIALOG_DISABLE_AUTOGRAB_MODE_TYPE;
       local = DIALOG_DISABLE_AUTOGRAB_MODE_LOCAL;
       pid = &nxagentDisableAutograbModePid;
+      strings[0] = nxagentFindFirstKeystroke("autograb");
       break;
     }
     default:
@@ -321,6 +330,17 @@ void nxagentLaunchDialog(DialogType dialogType)
     return;
   }
 
+  char *msg = NULL;
+  if (-1 == asprintf(&msg, message, strings[0], strings[1]))
+  {
+    #ifdef DEBUG
+    fprintf(stderr, "%s: could not allocate message string.\n", __func__);
+    #endif
+    SAFE_free(strings[0]);
+    SAFE_free(strings[1]);
+    return;
+  }
+
   /*
    * We don't want to receive SIGCHLD before we store the child pid.
    */
@@ -331,8 +351,12 @@ void nxagentLaunchDialog(DialogType dialogType)
 
   sigprocmask(SIG_BLOCK, &set, &oldSet);
 
-  *pid = NXTransDialog(nxagentDialogName, message, window,
+  *pid = NXTransDialog(nxagentDialogName, msg, window,
                            type, local, dialogDisplay);
+
+  SAFE_free(strings[0]);
+  SAFE_free(strings[1]);
+  SAFE_free(msg);
 
   #ifdef TEST
   fprintf(stderr, "nxagentLaunchDialog: Launched dialog %s with pid [%d] on display %s.\n",

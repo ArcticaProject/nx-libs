@@ -32,6 +32,9 @@ extern Bool nxagentCheckSpecialKeystroke(XKeyEvent*, enum HandleEventResult*);
 extern void nxagentDumpKeystrokes(void);
 extern void nxagentInitKeystrokes(Bool force);
 
+char *nxagentFindFirstKeystroke(char *name);
+char *nxagentFindMatchingKeystrokes(char *name);
+
 /* keep this sorted, do not rely on any numerical value in this enum, and be aware
  * that KEYSTROKE_MAX may be used in a malloc */
 
