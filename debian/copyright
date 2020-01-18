@@ -1336,7 +1336,6 @@ Files: nx-X11/include/DECkeysym.h
  nx-X11/programs/Xserver/include/region.h
  nx-X11/programs/Xserver/include/regionstr.h
  nx-X11/programs/Xserver/include/resource.h
- nx-X11/programs/Xserver/include/rgb.h
  nx-X11/programs/Xserver/include/screenint.h
  nx-X11/programs/Xserver/include/scrnintstr.h
  nx-X11/programs/Xserver/include/selection.h
