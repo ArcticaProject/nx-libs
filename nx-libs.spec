@@ -553,7 +553,6 @@ rm -f %{buildroot}%{_datadir}/man/man1/nxdialog.1*
 %{_includedir}/nx-X11/Sunkeysym.h
 %{_includedir}/nx-X11/X.h
 %{_includedir}/nx-X11/XF86keysym.h
-%{_includedir}/nx-X11/XWDFile.h
 %{_includedir}/nx-X11/Xarch.h
 %{_includedir}/nx-X11/Xatom.h
 %{_includedir}/nx-X11/Xdefs.h

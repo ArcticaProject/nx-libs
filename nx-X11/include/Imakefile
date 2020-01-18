@@ -23,7 +23,6 @@ HEADERS = \
 	Sunkeysym.h \
 	X.h \
 	XF86keysym.h \
-	XWDFile.h \
 	Xarch.h \
 	Xatom.h \
 	Xdefs.h \

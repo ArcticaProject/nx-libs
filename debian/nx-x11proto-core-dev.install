@@ -3,7 +3,6 @@ usr/include/*/nx-X11/HPkeysym.h
 usr/include/*/nx-X11/Sunkeysym.h
 usr/include/*/nx-X11/X.h
 usr/include/*/nx-X11/XF86keysym.h
-usr/include/*/nx-X11/XWDFile.h
 usr/include/*/nx-X11/Xarch.h
 usr/include/*/nx-X11/Xatom.h
 usr/include/*/nx-X11/Xdefs.h

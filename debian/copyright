@@ -713,8 +713,7 @@ Copyright: 1999-2001, Brian Paul
   2005, Brian Paul
 License: Expat
 
-Files: nx-X11/include/XWDFile.h
- nx-X11/include/Xauth.h
+Files: nx-X11/include/Xauth.h
  nx-X11/include/Xfuncproto.h
  nx-X11/include/Xfuncs.h
  nx-X11/include/Xos.h
