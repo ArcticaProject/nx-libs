@@ -52,10 +52,10 @@
  * Colors used to paint the splash screen.
  */
 
-#define nxagentLogoWhite       0xffffff
-#define nxagentLogoBlack       0x000000
-#define nxagentLogoDarkGray    0x222222
-#define nxagentLogoLightGray   0xbbbbbb
+#define LOGOWHITE       0xffffff
+#define LOGOBLACK       0x000000
+#define LOGODARKGRAY    0x222222
+#define LOGOLIGHTGRAY   0xbbbbbb
 
 XlibPixmap nxagentPixmapLogo;
 XlibWindow nxagentSplashWindow = None;
@@ -200,13 +200,13 @@ void nxagentPaintLogo(XlibWindow win, XlibGC gc, int scale, int width, int heigh
 
   if (blackRoot)
   {
-    XSetForeground(nxagentDisplay, gc, nxagentLogoBlack);
-    XSetBackground(nxagentDisplay, gc, nxagentLogoWhite);
+    XSetForeground(nxagentDisplay, gc, LOGOBLACK);
+    XSetBackground(nxagentDisplay, gc, LOGOWHITE);
   }
   else
   {
-    XSetForeground(nxagentDisplay, gc, nxagentLogoWhite);
-    XSetBackground(nxagentDisplay, gc, nxagentLogoBlack);
+    XSetForeground(nxagentDisplay, gc, LOGOWHITE);
+    XSetBackground(nxagentDisplay, gc, LOGOBLACK);
   }
 
   XPoint rect[4];
@@ -223,9 +223,9 @@ void nxagentPaintLogo(XlibWindow win, XlibGC gc, int scale, int width, int heigh
   #endif
 
   if (blackRoot)
-    XSetForeground(nxagentDisplay, gc, nxagentLogoDarkGray);
+    XSetForeground(nxagentDisplay, gc, LOGODARKGRAY);
   else
-    XSetForeground(nxagentDisplay, gc, nxagentLogoLightGray);
+    XSetForeground(nxagentDisplay, gc, LOGOLIGHTGRAY);
 
 
   #ifdef NXAGENT_LOGO_DEBUG
