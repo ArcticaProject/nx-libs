@@ -36,6 +36,7 @@ SRCS =                          \
        devices.c                \
        dixutils.c               \
        extension.c              \
+       ffs.c                    \
        gc.c                     \
        globals.c                \
        grabs.c                  \
@@ -58,6 +59,7 @@ OBJS =                          \
        devices.o                \
        dixutils.o               \
        extension.o              \
+       ffs.o                    \
        gc.o                     \
        globals.o                \
        grabs.o                  \
