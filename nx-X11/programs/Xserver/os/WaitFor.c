@@ -106,6 +106,8 @@ static unsigned long startTimeInMillis;
    Windows in the code */
 #define GetErrno() errno
 
+/* like ffs, but uses fd_mask instead of int as argument, so it works
+   when fd_mask is longer than an int, such as common 64-bit platforms */
 /* modifications by raphael */
 int
 mffs(fd_mask mask)
@@ -480,7 +482,7 @@ WaitForSomething(int *pClientsReady)
 	    {
 		int client_index;
 
-		curclient = ffs (clientsReadable.fds_bits[i]) - 1;
+		curclient = mffs (clientsReadable.fds_bits[i]) - 1;
 		client_index = /* raphael: modified */
 			ConnectionTranslation[curclient + (i * (sizeof(fd_mask) * 8))];
 	    pClientsReady[nready++] = client_index;

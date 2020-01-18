@@ -218,7 +218,7 @@ extern OsCommPtr AvailableInput;
 
 extern WorkQueuePtr workQueue;
 
-/* added by raphael */
+/* in WaitFor.c */
 #define ffs mffs
 extern int mffs(fd_mask);
 
