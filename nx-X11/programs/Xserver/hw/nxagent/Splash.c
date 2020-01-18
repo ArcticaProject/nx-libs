@@ -57,9 +57,9 @@
 #define LOGODARKGRAY    0x222222
 #define LOGOLIGHTGRAY   0xbbbbbb
 
-XlibPixmap nxagentPixmapLogo;
-XlibWindow nxagentSplashWindow = None;
-Bool nxagentWMPassed = False;
+static XlibPixmap nxagentPixmapLogo;
+static XlibWindow nxagentSplashWindow = None;
+static Bool nxagentWMPassed = False;
 
 static void nxagentPaintLogo(XlibWindow win, XlibGC gc, int scale, int width, int height);
 
