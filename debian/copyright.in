@@ -2113,7 +2113,6 @@ License: GENERATED FILE
 
 Files: nx-X11/include/extensions/saver.h
  nx-X11/include/extensions/saverproto.h
- nx-X11/include/extensions/scrnsaver.h
  nx-X11/programs/Xserver/Xext/saver.c
 Copyright: 1992, X Consortium
 License: MIT/X11 (BSD like)

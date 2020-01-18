@@ -1,7 +1,7 @@
 NULL =
 
 #if BuildScreenSaverExt
-SCREENSAVERHEADERS = saver.h saverproto.h scrnsaver.h
+SCREENSAVERHEADERS = saver.h saverproto.h
 #endif
 
 #if BuildXF86BigfontExt

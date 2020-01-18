@@ -584,7 +584,6 @@ rm -f %{buildroot}%{_datadir}/man/man1/nxdialog.1*
 %{_includedir}/nx-X11/extensions/renderproto.h
 %{_includedir}/nx-X11/extensions/saver.h
 %{_includedir}/nx-X11/extensions/saverproto.h
-%{_includedir}/nx-X11/extensions/scrnsaver.h
 %{_includedir}/nx-X11/extensions/security.h
 %{_includedir}/nx-X11/extensions/securstr.h
 %{_includedir}/nx-X11/extensions/shapeconst.h
