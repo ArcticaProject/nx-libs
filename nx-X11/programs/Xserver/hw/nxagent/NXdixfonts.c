@@ -81,14 +81,15 @@ static Bool doListFontsAndAliases(ClientPtr client, LFclosurePtr c);
 
 #include "../../dix/dixfonts.c"
 
-/*
-#define NXAGENT_DEBUG
-*/
-
 #include "Agent.h"
 #include "Font.h"
 
 #ifdef NXAGENT_SERVER
+
+#define PANIC
+#define WARNING
+#undef  TEST
+#undef  DEBUG
 
 #define NXFONTPATHLENGTH 1024
 char _NXFontPath[NXFONTPATHLENGTH];
@@ -116,17 +117,17 @@ static char *_NXGetFontPath(const char *path)
     {
         if (strlen(fontEnv) + 1 > NXFONTPATHLENGTH)
         {
-#ifdef TEST
+            #ifdef TEST
             fprintf(stderr, "_NXGetFontPath: WARNING! Maximum length of font path exceeded.\n");
-#endif
+            #endif
             goto _NXGetFontPathError;
         }
 
         snprintf(_NXFontPath, NXFONTPATHLENGTH, "%s", fontEnv);
 
-#ifdef TEST
+        #ifdef TEST
         fprintf(stderr, "_NXGetFontPath: Using NX font path [%s].\n", _NXFontPath);
-#endif
+        #endif
 
         return _NXFontPath;
     }
@@ -135,9 +136,9 @@ _NXGetFontPathError:
 
     snprintf(_NXFontPath, NXFONTPATHLENGTH, "%s", path);
 
-#ifdef TEST
+    #ifdef TEST
     fprintf(stderr, "_NXGetFontPath: Using default font path [%s].\n", _NXFontPath);
-#endif
+    #endif
 
     return _NXFontPath;
 }
@@ -253,8 +254,9 @@ doOpenFont(ClientPtr client, OFclosurePtr c)
 	    if (!c->slept) {
 		c->slept = TRUE;
 		ClientSleep(client, (ClientSleepProcPtr)doOpenFont, (void *) c);
-#ifdef NXAGENT_DEBUG
+                #ifdef DEBUG
                 fprintf(stderr, " NXdixfonts: doOpenFont: client [%lx] sleeping.\n", client);
+                #endif
 #endif
 	    }
 	    return TRUE;
@@ -328,9 +330,9 @@ bail:
     if (c->slept)
     {
 	ClientWakeup(c->client);
-#ifdef NXAGENT_DEBUG
+        #ifdef DEBUG
         fprintf(stderr, " NXdixfonts: doOpenFont: client [%lx] wakeup.\n", client);
-#endif
+        #endif
     }
     for (i = 0; i < c->num_fpes; i++) {
 	FreeFPE(c->fpe_list[i]);
@@ -403,9 +405,9 @@ doListFontsAndAliases(ClientPtr client, LFclosurePtr c)
 		    ClientSleep(client,
 			(ClientSleepProcPtr)doListFontsAndAliases,
 			(void *) c);
-#ifdef NXAGENT_DEBUG
+                    #ifdef DEBUG
                     fprintf(stderr, " NXdixfonts: doListFont (1): client [%lx] sleeping.\n", client);
-#endif
+                    #endif
 		}
 		return TRUE;
 	    }
@@ -460,12 +462,10 @@ doListFontsAndAliases(ClientPtr client, LFclosurePtr c)
 				    (ClientSleepProcPtr)doListFontsAndAliases,
 				    (void *) c);
 			c->slept = TRUE;
-#ifdef NXAGENT_DEBUG
+                        #ifdef DEBUG
                         fprintf(stderr, " NXdixfonts: doListFont (2): client [%lx] sleeping.\n", client);
-#endif
-#ifdef NXAGENT_DEBUG
                         fprintf(stderr, " NXdixfonts: doListFont (3): client [%lx] sleeping.\n", client);
-#endif
+                        #endif
 		    }
 		    return TRUE;
 		}
@@ -647,9 +647,9 @@ bail:
     if (c->slept)
     {
 	ClientWakeup(client);
-#ifdef NXAGENT_DEBUG
+        #ifdef DEBUG
         fprintf(stderr, " NXdixfonts: doListFont: client [%lx] wakeup.\n", client);
-#endif
+        #endif
     }
     for (i = 0; i < c->num_fpes; i++)
 	FreeFPE(c->fpe_list[i]);
@@ -772,9 +772,9 @@ doListFontsWithInfo(ClientPtr client, LFWIclosurePtr c)
  		{
 		    ClientSleep(client, (ClientSleepProcPtr)doListFontsWithInfo, c);
 		    c->slept = TRUE;
-#ifdef NXAGENT_DEBUG
+                    #ifdef DEBUG
                     fprintf(stderr, " NXdixfonts: doListFontWinfo (1): client [%lx] sleeping.\n", client);
-#endif
+                    #endif
 		}
 		return TRUE;
 	    }
@@ -800,9 +800,9 @@ doListFontsWithInfo(ClientPtr client, LFWIclosurePtr c)
 		    	     (ClientSleepProcPtr)doListFontsWithInfo,
 			     c);
 		    c->slept = TRUE;
-#ifdef NXAGENT_DEBUG
+                    #ifdef DEBUG
                     fprintf(stderr, " NXdixfonts: doListFontWinfo (2): client [%lx] sleeping.\n", client);
-#endif
+                    #endif
 		}
 		return TRUE;
 	    }
@@ -965,9 +965,9 @@ bail:
     if (c->slept)
     {
 	ClientWakeup(client);
-#ifdef NXAGENT_DEBUG
+        #ifdef DEBUG
         fprintf(stderr, " NXdixfonts: doListFontWinfo: client [%lx] wakeup.\n", client);
-#endif
+        #endif
     }
     for (i = 0; i < c->num_fpes; i++)
 	FreeFPE(c->fpe_list[i]);
@@ -1055,9 +1055,9 @@ nxdoListFontsAndAliases(client, fss)
 		    ClientSleep(client,
 			(ClientSleepProcPtr)nxdoListFontsAndAliases,
 			(void *) fss);
-#ifdef NXAGENT_DEBUG
+                    #ifdef DEBUG
                     fprintf(stderr, " NXdixfonts: nxdoListFont (1): client [%lx] sleeping.\n", client);
-#endif
+                    #endif
 		}
 		return TRUE;
 	    }
@@ -1090,9 +1090,9 @@ nxdoListFontsAndAliases(client, fss)
 				    (ClientSleepProcPtr)nxdoListFontsAndAliases,
 				    (void *) fss);
 			c->slept = TRUE;
-#ifdef NXAGENT_DEBUG
+                        #ifdef DEBUG
                         fprintf(stderr, " NXdixfonts: nxdoListFont (2): client [%lx] sleeping.\n", client);
-#endif
+                        #endif
 		    }
 		    return TRUE;
 		}
@@ -1115,9 +1115,9 @@ nxdoListFontsAndAliases(client, fss)
 				    (ClientSleepProcPtr)nxdoListFontsAndAliases,
 				    (void *) fss);
 			c->slept = TRUE;
-#ifdef NXAGENT_DEBUG
+                        #ifdef DEBUG
                         fprintf(stderr, " NXdixfonts: nxdoListFont (3): client [%lx] sleeping.\n", client);
-#endif
+                        #endif
 		    }
 		    return TRUE;
 		}
@@ -1283,9 +1283,9 @@ finish:
     if (c->slept)
     {
        ClientWakeup(client);
-#ifdef NXAGENT_DEBUG
+       #ifdef DEBUG
        fprintf(stderr, " NXdixfonts: nxdoListFont: client [%lx] wakeup.\n", client);
-#endif
+       #endif
     }
     for (i = 0; i < c->num_fpes; i++)
 	FreeFPE(c->fpe_list[i]);

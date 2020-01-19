@@ -215,7 +215,6 @@ INCLUDES = \
 #
 # DEBUG_COLORMAP
 # DEBUG_TREE                       Include code that activates the keystroke to print the current window tree
-# NXAGENT_DEBUG
 # NXAGENT_FIXKEYS_DEBUG
 # NXAGENT_FONTCACHE_DEBUG
 # NXAGENT_FONTMATCH_DEBUG
