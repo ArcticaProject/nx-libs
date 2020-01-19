@@ -61,7 +61,7 @@ static XlibPixmap nxagentPixmapLogo;
 static XlibWindow nxagentSplashWindow = None;
 static Bool nxagentWMPassed = False;
 
-static void nxagentPaintLogo(XlibWindow win, XlibGC gc, int scale, int width, int height);
+static void nxagentPaintLogo(XlibWindow win, int scale, int width, int height);
 
 void nxagentShowSplashWindow(XlibWindow parentWindow)
 {
@@ -138,14 +138,12 @@ void nxagentShowSplashWindow(XlibWindow parentWindow)
               nxagentSplashWindow);
   #endif
 
-  XlibGC gc = XCreateGC(nxagentDisplay, nxagentSplashWindow, 0, NULL);
-  nxagentPaintLogo(nxagentSplashWindow, gc, 1, getAttributes.width, getAttributes.height);
+  nxagentPaintLogo(nxagentSplashWindow, 1, getAttributes.width, getAttributes.height);
   XMapRaised (nxagentDisplay, nxagentSplashWindow);
   XWindowChanges values = {.stack_mode = Above};
   XConfigureWindow(nxagentDisplay, nxagentSplashWindow, CWStackMode, &values);
   XSetWindowAttributes attributes = {.override_redirect = True};
   XChangeWindowAttributes(nxagentDisplay, nxagentSplashWindow, CWOverrideRedirect, &attributes);
-  XFreeGC(nxagentDisplay, gc);
 
   #ifdef NXAGENT_TIMESTAMP
   {
@@ -161,8 +159,10 @@ Bool nxagentHaveSplashWindow(void)
   return (nxagentSplashWindow != None);
 }
 
-void nxagentPaintLogo(XlibWindow win, XlibGC gc, int scale, int width, int height)
+void nxagentPaintLogo(XlibWindow win, int scale, int width, int height)
 {
+  XlibGC gc = XCreateGC(nxagentDisplay, nxagentSplashWindow, 0, NULL);
+
   int depth = DefaultDepth(nxagentDisplay, DefaultScreen(nxagentDisplay));
 
   #ifdef DEBUG
@@ -395,6 +395,8 @@ void nxagentPaintLogo(XlibWindow win, XlibGC gc, int scale, int width, int heigh
    */
 
   XSetWindowBackgroundPixmap(nxagentDisplay, win, nxagentPixmapLogo);
+
+  XFreeGC(nxagentDisplay, gc);
 
   #ifdef NXAGENT_LOGO_DEBUG
   fprintf(stderr, "%s: end\n", __func__);
