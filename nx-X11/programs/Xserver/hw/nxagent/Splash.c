@@ -124,14 +124,21 @@ void nxagentShowSplashWindow(XlibWindow parentWindow)
   fprintf(stderr, "%s: Going to create new splash window.\n", __func__);
   #endif
 
+  XSetWindowAttributes attributes = {
+      .override_redirect = True,
+      .border_pixel = WhitePixel (nxagentDisplay, 0),
+      .background_pixel = BlackPixel (nxagentDisplay, 0)
+  };
+
   nxagentSplashWindow =
-      XCreateSimpleWindow(nxagentDisplay,
-                          parentWindow,
-                          getAttributes.x, getAttributes.y,
-                          getAttributes.width, getAttributes.height,
-                          0,
-                          WhitePixel (nxagentDisplay, 0),
-                          BlackPixel (nxagentDisplay, 0));
+      XCreateWindow(nxagentDisplay,
+                    parentWindow,
+                    getAttributes.x, getAttributes.y,
+                    getAttributes.width, getAttributes.height,
+                    0,
+                    CopyFromParent, CopyFromParent, CopyFromParent,
+                    CWOverrideRedirect | CWBorderPixel | CWBackPixel,
+                    &attributes);
 
   #ifdef TEST
   fprintf(stderr, "%s: Created new splash window with id [0x%lx].\n", __func__,
@@ -139,11 +146,18 @@ void nxagentShowSplashWindow(XlibWindow parentWindow)
   #endif
 
   nxagentPaintLogo(nxagentSplashWindow, 1, getAttributes.width, getAttributes.height);
-  XMapRaised (nxagentDisplay, nxagentSplashWindow);
+  XMapRaised(nxagentDisplay, nxagentSplashWindow);
+#if 0
+  /*
+   * should not be required since XMapRaised takes care of that:
+   * "The XMapRaised function essentially is similar to XMapWindow in
+   * that it maps the window and all of its subwindows that have had
+   * map requests.  However, it also raises the specified window to
+   * the top of the stack."
+   */
   XWindowChanges values = {.stack_mode = Above};
   XConfigureWindow(nxagentDisplay, nxagentSplashWindow, CWStackMode, &values);
-  XSetWindowAttributes attributes = {.override_redirect = True};
-  XChangeWindowAttributes(nxagentDisplay, nxagentSplashWindow, CWOverrideRedirect, &attributes);
+#endif
 
   #ifdef NXAGENT_TIMESTAMP
   {
