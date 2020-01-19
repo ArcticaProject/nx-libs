@@ -1958,9 +1958,12 @@ SetFontPath(ClientPtr client, int npaths, unsigned char *paths)
     return err;
 }
 
-#ifndef NXAGENT_SERVER
 int
+#ifdef NXAGENT_SERVER
+xorg_SetDefaultFontPath(char *path)
+#else
 SetDefaultFontPath(char *path)
+#endif
 {
     char       *temp_path,
                *start,
@@ -2027,7 +2030,6 @@ SetDefaultFontPath(char *path)
 
     return err;
 }
-#endif /* NXAGENT_SERVER */
 
 unsigned char *
 GetFontPath(int *count, int *length)

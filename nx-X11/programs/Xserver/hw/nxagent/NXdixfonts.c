@@ -99,7 +99,7 @@ char _NXFontPath[NXFONTPATHLENGTH];
  * the NX_FONT environment.
  */
 
-static const char *_NXGetFontPath(const char *path)
+static char *_NXGetFontPath(const char *path)
 {
     /*
      * Check the environment only once.
@@ -982,77 +982,8 @@ bail:
 int
 SetDefaultFontPath(char *path)
 {
-    char       *temp_path,
-               *start,
-               *end;
-    unsigned char *cp,
-               *pp,
-               *nump,
-               *newpath;
-    int         num = 1,
-                len,
-                err,
-                size = 0,
-                bad;
-
-#ifdef NXAGENT_SERVER
-    path = (char *) _NXGetFontPath(path);
-#endif /* NXAGENT_SERVER */
-
-    start = path;
-
-    /* ensure temp_path contains "built-ins" */
-    while (1) {
-	start = strstr(start, "built-ins");
-	if (start == NULL)
-	    break;
-	end = start + strlen("built-ins");
-	if ((start == path || start[-1] == ',') && (!*end || *end == ','))
-	    break;
-	start = end;
-    }
-    if (!start) {
-	if (asprintf(&temp_path, "%s%sbuilt-ins", path, *path ? "," : "")
-	    == -1)
-	    temp_path = NULL;
-	}
-    else {
-	temp_path = strdup(path);
-    }
-    if (!temp_path)
-	return BadAlloc;
-
-    /* get enough for string, plus values -- use up commas */
-    len = strlen(temp_path) + 1;
-    nump = cp = newpath = (unsigned char *) malloc(len);
-    if (!newpath) {
-	free(temp_path);
-	return BadAlloc;
-    }
-    pp = (unsigned char *) temp_path;
-    cp++;
-    while (*pp) {
-	if (*pp == ',') {
-	    *nump = (unsigned char) size;
-	    nump = cp++;
-	    pp++;
-	    num++;
-	    size = 0;
-	} else {
-	    *cp++ = *pp++;
-	    size++;
-	}
-    }
-    *nump = (unsigned char) size;
-
-    err = SetFontPathElements(num, newpath, &bad, TRUE);
-
-    free(newpath);
-    free(temp_path);
-
-    return err;
+    return xorg_SetDefaultFontPath(_NXGetFontPath(path));
 }
-
 
 typedef struct
 {
