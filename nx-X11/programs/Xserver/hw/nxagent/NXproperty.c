@@ -229,7 +229,7 @@ ChangeWindowProperty(WindowPtr pWin, Atom property, Atom type, int format,
       }
     }
 
-    return Xorg_ChangeWindowProperty(pWin, property, type, format, mode, len, value, sendevent);
+    return xorg_ChangeWindowProperty(pWin, property, type, format, mode, len, value, sendevent);
 }
 
 /*****************
