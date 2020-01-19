@@ -211,9 +211,9 @@ void nxagentPaintLogo(XlibWindow win, int scale, int width, int height)
 
   XPoint rect[4];
   rect[0].x = 0;               rect[0].y = 0;
-  rect[1].x = 0;               rect[1].y = h;
-  rect[2].x = w;               rect[2].y = h;
-  rect[3].x = w;               rect[3].y = 0;
+  rect[1].x = 0;               rect[1].y = height;
+  rect[2].x = width;           rect[2].y = height;
+  rect[3].x = width;           rect[3].y = 0;
 
   /* paint background */
   XFillPolygon(nxagentDisplay, nxagentPixmapLogo, gc, rect, 4, Convex, CoordModeOrigin);
