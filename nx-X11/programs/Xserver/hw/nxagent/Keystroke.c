@@ -647,7 +647,7 @@ Bool nxagentCheckSpecialKeystroke(XKeyEvent *X, enum HandleEventResult *result)
       break;
     case KEYSTROKE_DEACTIVATE_INPUT_DEVICES_GRAB:
       if (X->type == KeyPress) {
-        nxagentDeactivateInputDevicesGrab();
+        nxagentDeactivateInputDevicesGrabs();
       }
       return True;
       break;
