@@ -151,10 +151,9 @@ void nxagentRootlessAddTopLevelWindow(WindowPtr pWin, Window w)
 
   if (topLevelParentMap.next == topLevelParentMap.size)
   {
-    TopLevelParentRec *ptr = topLevelParentMap.elt;
     size_t size = (topLevelParentMap.size += TOP_LEVEL_TABLE_UNIT);
 
-    ptr = realloc(ptr, size * sizeof(TopLevelParentRec));
+    TopLevelParentRec *ptr = realloc(topLevelParentMap.elt, size * sizeof(TopLevelParentRec));
 
     if (ptr == NULL)
     {
