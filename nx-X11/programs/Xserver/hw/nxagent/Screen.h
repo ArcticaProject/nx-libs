@@ -138,7 +138,9 @@ void nxagentSetWMNormalHintsMaxsize(ScreenPtr, int, int);
 
 void nxagentShadowSetRatio(float, float);
 
+#ifdef NXAGENT_ARTSD
 void nxagentPropagateArtsdProperties(ScreenPtr pScreen, char *port);
+#endif
 
 /*
  * Change window settings to adapt to a ratio.

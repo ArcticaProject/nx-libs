@@ -151,12 +151,9 @@ int nxagentArgc = 0;
 char **nxagentArgv = NULL;
 
 #ifdef NXAGENT_ARTSD
-
 char mcop_atom[] = "MCOPGLOBALS";
 Atom mcop_local_atom = None;
 unsigned char fromHexNibble(char c);
-void nxagentPropagateArtsdProperties(ScreenPtr pScreen, char *port);
-
 #endif
 
 Window nxagentIconWindow = None;
