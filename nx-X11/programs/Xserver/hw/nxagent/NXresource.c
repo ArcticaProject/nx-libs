@@ -142,16 +142,11 @@ static int nxagentResChangedFlag = 0;
 #ifdef NXAGENT_SERVER
 int nxagentFindClientResource(int client, RESTYPE type, void * value)
 {
-  ResourcePtr pResource;
-  ResourcePtr *resources;
-
-  int i;
-
-  for (i = 0; i < clientTable[client].buckets; i++)
+  for (int i = 0; i < clientTable[client].buckets; i++)
   {
-    resources = clientTable[client].resources;
+    ResourcePtr *resources = clientTable[client].resources;
 
-    for (pResource = resources[i]; pResource; pResource = pResource -> next)
+    for (ResourcePtr pResource = resources[i]; pResource; pResource = pResource -> next)
     {
       if (pResource -> type == type && pResource -> value == value)
       {
@@ -171,12 +166,7 @@ int nxagentFindClientResource(int client, RESTYPE type, void * value)
 
 int nxagentSwitchResourceType(int client, RESTYPE type, void * value)
 {
-  ResourcePtr pResource;
-  ResourcePtr *resources;
-
   RESTYPE internalType = 0;
-
-  int i;
 
   if (type == RT_PIXMAP)
   {
@@ -205,11 +195,11 @@ int nxagentSwitchResourceType(int client, RESTYPE type, void * value)
     return 0;
   }
 
-  for (i = 0; i < clientTable[serverClient -> index].buckets; i++)
+  for (int i = 0; i < clientTable[serverClient -> index].buckets; i++)
   {
-    resources = clientTable[serverClient -> index].resources;
+    ResourcePtr *resources = clientTable[serverClient -> index].resources;
 
-    for (pResource = resources[i]; pResource; pResource = pResource -> next)
+    for (ResourcePtr pResource = resources[i]; pResource; pResource = pResource -> next)
     {
       if (pResource -> type == internalType &&
               pResource -> value == value)
