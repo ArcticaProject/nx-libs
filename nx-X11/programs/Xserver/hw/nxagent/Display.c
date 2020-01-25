@@ -86,6 +86,7 @@ is" without express or implied warranty.
 #include "Splash.h"
 #include "Screen.h"
 #include "Handlers.h"
+#include "Split.h"
 
 #include <nx/NX.h>
 #include "compext/Compext.h"
