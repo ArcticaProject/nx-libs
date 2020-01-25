@@ -248,14 +248,12 @@ AddResource(XID id, RESTYPE type, void * value)
     }
 
 #ifdef NXAGENT_SERVER
-
     nxagentSwitchResourceType(client, type, value);
 
     #ifdef TEST
     fprintf(stderr, "AddResource: Adding resource for client [%d] type [%lu] value [%p] id [%lu].\n",
                 client, (unsigned long) type, (void *) value, (unsigned long) id);
     #endif
-
 #endif
 
     if ((rrec->elements >= 4*rrec->buckets) &&
@@ -274,9 +272,9 @@ AddResource(XID id, RESTYPE type, void * value)
     res->value = value;
     *head = res;
     rrec->elements++;
-    #ifdef NXAGENT_SERVER
+#ifdef NXAGENT_SERVER
     nxagentResChangedFlag = 1;
-    #endif
+#endif
     if (!(id & SERVER_BIT) && (id >= rrec->expectID))
 	rrec->expectID = id + 1;
     return TRUE;
@@ -293,11 +291,9 @@ FreeResource(XID id, RESTYPE skipDeleteFuncType)
     Bool	gotOne = FALSE;
 
 #ifdef NXAGENT_SERVER
-
     #ifdef TEST
     fprintf(stderr, "FreeResource: Freeing resource id [%lu].\n", (unsigned long) id);
     #endif
-
 #endif
 
     if (((cid = CLIENT_ID(id)) < MAXCLIENTS) && clientTable[cid].buckets)
@@ -313,9 +309,9 @@ FreeResource(XID id, RESTYPE skipDeleteFuncType)
 		RESTYPE rtype = res->type;
 		*prev = res->next;
 		elements = --*eltptr;
-                #ifdef NXAGENT_SERVER
+#ifdef NXAGENT_SERVER
                 nxagentResChangedFlag = 1;
-                #endif
+#endif
 		if (rtype != skipDeleteFuncType)
 		    (*DeleteFuncs[rtype & TypeMask])(res->value, res->id);
 		free(res);
@@ -349,9 +345,9 @@ FreeResourceByType(XID id, RESTYPE type, Bool skipFree)
 	    if (res->id == id && res->type == type)
 	    {
 		*prev = res->next;
-                #ifdef NXAGENT_SERVER
+#ifdef NXAGENT_SERVER
                 nxagentResChangedFlag = 1;
-                #endif
+#endif
 		if (!skipFree)
 		    (*DeleteFuncs[type & TypeMask])(res->value, res->id);
 		free(res);
@@ -381,28 +377,21 @@ FindClientResourcesByType(
     int i, elements;
     register int *eltptr;
 
-    #ifdef NXAGENT_SERVER
-    register ResourcePtr **resptr;
-    #endif
-
     if (!client)
 	client = serverClient;
 
+#ifdef NXAGENT_SERVER
 /*
  * If func triggers a resource table
  * rebuild then restart the loop.
  */
+register ResourcePtr **resptr;
 
-#ifdef NXAGENT_SERVER
 RestartLoop:
+    resptr = &clientTable[client->index].resources;
 #endif
 
     resources = clientTable[client->index].resources;
-
-    #ifdef NXAGENT_SERVER
-    resptr = &clientTable[client->index].resources;
-    #endif
-
     eltptr = &clientTable[client->index].elements;
     for (i = 0; i < clientTable[client->index].buckets; i++) 
     {
@@ -412,17 +401,16 @@ RestartLoop:
 	    if (!type || this->type == type) {
 		elements = *eltptr;
 
+#ifdef NXAGENT_SERVER
                 /*
                  * FIXME:
                  * It is not safe to let a function change the resource
                  * table we are reading!
                  */
-
-                #ifdef NXAGENT_SERVER
                 nxagentResChangedFlag = 0;
-                #endif
+#endif
 		(*func)(this->value, this->id, cdata);
-
+#ifdef NXAGENT_SERVER
                 /*
                  * Avoid that a call to RebuildTable() could invalidate the
                  * pointer. This is safe enough, because in RebuildTable()
@@ -430,10 +418,8 @@ RestartLoop:
                  * freed, so it can't point to the same address.
                  */
 
-                #ifdef NXAGENT_SERVER
                 if (*resptr != resources)
                    goto RestartLoop;
-                #endif
 
                 /*
                  * It's not enough to check if the number of elements has
@@ -444,11 +430,10 @@ RestartLoop:
                  * added or freed.
                  */
 
-                #ifdef NXAGENT_SERVER
                 if (*eltptr != elements || nxagentResChangedFlag)
-                #else
+#else
 		if (*eltptr != elements)
-                #endif
+#endif
 		    next = resources[i]; /* start over */
 	    }
 	}
@@ -466,28 +451,21 @@ FindAllClientResources(
     int i, elements;
     register int *eltptr;
 
-    #ifdef NXAGENT_SERVER
-    register ResourcePtr **resptr;
-    #endif
-
     if (!client)
         client = serverClient;
 
+#ifdef NXAGENT_SERVER
 /*
  * If func triggers a resource table
  * rebuild then restart the loop.
  */
+register ResourcePtr **resptr;
 
-#ifdef NXAGENT_SERVER
 RestartLoop:
+    resptr = &clientTable[client->index].resources;
 #endif
 
     resources = clientTable[client->index].resources;
-
-    #ifdef NXAGENT_SERVER
-    resptr = &clientTable[client->index].resources;
-    #endif
-
     eltptr = &clientTable[client->index].elements;
     for (i = 0; i < clientTable[client->index].buckets; i++)
     {
@@ -496,17 +474,18 @@ RestartLoop:
             next = this->next;
             elements = *eltptr;
 
+#ifdef NXAGENT_SERVER
             /*
              * FIXME:
              * It is not safe to let a function change the resource
              * table we are reading!
              */
 
-            #ifdef NXAGENT_SERVER
             nxagentResChangedFlag = 0;
-            #endif
+#endif
             (*func)(this->value, this->id, this->type, cdata);
 
+#ifdef NXAGENT_SERVER
             /*
              * Avoid that a call to RebuildTable() could invalidate the
              * pointer. This is safe enough, because in RebuildTable()
@@ -514,10 +493,8 @@ RestartLoop:
              * freed, so it can't point to the same address.
              */
 
-            #ifdef NXAGENT_SERVER
             if (*resptr != resources)
                 goto RestartLoop;
-            #endif
 
             /*
              * It's not enough to check if the number of elements has
@@ -528,11 +505,10 @@ RestartLoop:
              * added or freed.
              */
 
-            #ifdef NXAGENT_SERVER
             if (*eltptr != elements || nxagentResChangedFlag)
-            #else
+#else
             if (*eltptr != elements)
-            #endif
+#endif
                 next = resources[i]; /* start over */
         }
     }
@@ -550,44 +526,36 @@ LookupClientResourceComplex(
     ResourcePtr this;
     int i;
 
-    #ifdef NXAGENT_SERVER
-    ResourcePtr **resptr;
-    Bool res;
-    #endif
-
     if (!client)
 	client = serverClient;
 
+#ifdef NXAGENT_SERVER
 /*
  * If func triggers a resource table
  * rebuild then restart the loop.
  */
+ResourcePtr **resptr;
 
-#ifdef NXAGENT_SERVER
 RestartLoop:
+    resptr = &clientTable[client->index].resources;
 #endif
 
     resources = clientTable[client->index].resources;
-
-    #ifdef NXAGENT_SERVER
-    resptr = &clientTable[client->index].resources;
-    #endif
-
     for (i = 0; i < clientTable[client->index].buckets; i++) {
         for (this = resources[i]; this; this = this->next) {
 	    if (!type || this->type == type) {
-                #ifdef NXAGENT_SERVER
-                res = (*func)(this->value, this->id, cdata);
+#ifdef NXAGENT_SERVER
+                Bool res = (*func)(this->value, this->id, cdata);
 
                 if (*resptr != resources)
                     goto RestartLoop;
 
                 if (res)
                     return this->value;
-                #else
+#else
 		if((*func)(this->value, this->id, cdata))
 		    return this->value;
-                #endif
+#endif
 	    }
 	}
     }
