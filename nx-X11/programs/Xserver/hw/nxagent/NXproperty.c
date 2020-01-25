@@ -101,6 +101,10 @@ extern WindowPtr nxagentGetClipboardWindow(Atom);
 extern Atom mcop_local_atom;
 #endif
 
+#ifdef NX_DEBUG_INPUT
+extern void nxagentGuessDumpInputInfo(ClientPtr client, Atom property, char *data);
+#endif
+
 int 
 ProcChangeProperty(ClientPtr client)
 {	      
