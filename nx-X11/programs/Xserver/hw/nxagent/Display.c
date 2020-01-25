@@ -1494,8 +1494,13 @@ void nxagentInitVisuals(void)
 
   if (nxagentVisuals != NULL)
   {
-    nxagentVisuals = (XVisualInfo *) realloc(nxagentVisuals,
-                                                 nxagentNumVisuals * sizeof(XVisualInfo));
+    XVisualInfo *new = (XVisualInfo *) realloc(nxagentVisuals,
+                                                   nxagentNumVisuals * sizeof(XVisualInfo));
+    /* nxagentVisuals being NULL is covered below */
+    if (new)
+      nxagentVisuals = new;
+    else
+      SAFE_free(nxagentVisuals);
   }
 
   SAFE_XFree(viList);
