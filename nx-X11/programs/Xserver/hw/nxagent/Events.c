@@ -1593,6 +1593,7 @@ FIXME: Don't enqueue the KeyRelease event if the key was not already
             {
               for (int k = 0; k < 8; k++)
               {
+                if (val & (1 << k))
                 {
                   #ifdef NXAGENT_FIXKEYS_DEBUG
                   fprintf(stderr, "sending KeyRelease event for keycode: %x\n",
