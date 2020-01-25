@@ -745,7 +745,7 @@ ProcConvertSelection(register ClientPtr client)
 #ifdef NXAGENT_SERVER
 	    (CurrentSelections[i].window != None) && (CurrentSelections[i].client != NullClient)
 #else
-	    (CurrentSelections[i].window != None))
+	    (CurrentSelections[i].window != None)
 #endif
 #ifdef XCSECURITY
 	    && (!client->CheckAccess ||
