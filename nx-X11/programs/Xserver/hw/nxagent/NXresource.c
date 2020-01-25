@@ -287,7 +287,7 @@ FreeResource(XID id, RESTYPE skipDeleteFuncType)
     register    ResourcePtr res;
     register	ResourcePtr *prev, *head;
     register	int *eltptr;
-    int		elements;
+    int		elements = 0;
     Bool	gotOne = FALSE;
 
 #ifdef NXAGENT_SERVER
