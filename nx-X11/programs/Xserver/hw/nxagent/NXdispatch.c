@@ -345,7 +345,7 @@ Reply   Total	Cached	Bits In			Bits Out		Bits/Reply	  Ratio
                     (nxagentOption(Xdmcp) == 0 || nxagentXdmcpUp == 1))
         {
           #ifdef NX_DEBUG_INPUT
-          fprintf(stderr, "Session: Session started at '%s' timestamp [%lu].\n",
+          fprintf(stderr, "Session: Session started at '%s' timestamp [%u].\n",
                       GetTimeAsString(), GetTimeInMillis());
           #else
           fprintf(stderr, "Session: Session started at '%s'.\n",

@@ -301,7 +301,7 @@ TODO: This should be reset only when
       if ((dispatchException & DE_TERMINATE) == 0)
       {
         #ifdef NX_DEBUG_INPUT
-        fprintf(stderr, "Session: Session suspended at '%s' timestamp [%lu].\n", GetTimeAsString(), GetTimeInMillis());
+        fprintf(stderr, "Session: Session suspended at '%s' timestamp [%u].\n", GetTimeAsString(), GetTimeInMillis());
         #else
         fprintf(stderr, "Session: Session suspended at '%s'.\n", GetTimeAsString());
         #endif
@@ -674,7 +674,7 @@ Bool nxagentReconnectSession(void)
   nxagentInitKeystrokes(True);
 
   #ifdef NX_DEBUG_INPUT
-  fprintf(stderr, "Session: Session resumed at '%s' timestamp [%lu].\n", GetTimeAsString(), GetTimeInMillis());
+  fprintf(stderr, "Session: Session resumed at '%s' timestamp [%u].\n", GetTimeAsString(), GetTimeInMillis());
   #else
   fprintf(stderr, "Session: Session resumed at '%s'.\n", GetTimeAsString());
   #endif
