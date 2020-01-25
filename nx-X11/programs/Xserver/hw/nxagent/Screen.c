@@ -236,7 +236,7 @@ int nxagentBitsPerPixel(int depth)
     else return 32;
 }
 
-void nxagentSetScreenInfo(ScreenInfo *screenInfo)
+void nxagentSetScreenInfo(ScreenInfo *scrInfo)
 {
   /*
    * Setup global screen info parameters. In the Xnest
@@ -248,34 +248,34 @@ void nxagentSetScreenInfo(ScreenInfo *screenInfo)
    *
    * From a standard implementation:
    *
-   * screenInfo->imageByteOrder = IMAGE_BYTE_ORDER;
-   * screenInfo->bitmapScanlinePad = BITMAP_SCANLINE_PAD;
-   * screenInfo->bitmapScanlineUnit = BITMAP_SCANLINE_UNIT;
-   * screenInfo->bitmapBitOrder = BITMAP_BIT_ORDER;
+   * scrInfo->imageByteOrder = IMAGE_BYTE_ORDER;
+   * scrInfo->bitmapScanlinePad = BITMAP_SCANLINE_PAD;
+   * scrInfo->bitmapScanlineUnit = BITMAP_SCANLINE_UNIT;
+   * scrInfo->bitmapBitOrder = BITMAP_BIT_ORDER;
    *
    * From Xnest implementation:
    *
-   * screenInfo -> imageByteOrder = ImageByteOrder(nxagentDisplay);
-   * screenInfo -> bitmapScanlineUnit = BitmapUnit(nxagentDisplay);
-   * screenInfo -> bitmapScanlinePad = BitmapPad(nxagentDisplay);
-   * screenInfo -> bitmapBitOrder = BitmapBitOrder(nxagentDisplay);
+   * scrInfo -> imageByteOrder = ImageByteOrder(nxagentDisplay);
+   * scrInfo -> bitmapScanlineUnit = BitmapUnit(nxagentDisplay);
+   * scrInfo -> bitmapScanlinePad = BitmapPad(nxagentDisplay);
+   * scrInfo -> bitmapBitOrder = BitmapBitOrder(nxagentDisplay);
    */
 
-  screenInfo -> imageByteOrder = IMAGE_BYTE_ORDER;
-  screenInfo -> bitmapScanlinePad = BITMAP_SCANLINE_PAD;
-  screenInfo -> bitmapScanlineUnit = BITMAP_SCANLINE_UNIT;
-  screenInfo -> bitmapBitOrder = BITMAP_BIT_ORDER;
+  scrInfo -> imageByteOrder = IMAGE_BYTE_ORDER;
+  scrInfo -> bitmapScanlinePad = BITMAP_SCANLINE_PAD;
+  scrInfo -> bitmapScanlineUnit = BITMAP_SCANLINE_UNIT;
+  scrInfo -> bitmapBitOrder = BITMAP_BIT_ORDER;
 
   #ifdef TEST
   fprintf(stderr, "nxagentSetScreenInfo: Server image order is [%d] bitmap order is [%d].\n",
-              screenInfo -> imageByteOrder, screenInfo -> bitmapBitOrder);
+              scrInfo -> imageByteOrder, scrInfo -> bitmapBitOrder);
 
   fprintf(stderr, "nxagentSetScreenInfo: Server scanline unit is [%d] scanline pad is [%d].\n",
-              screenInfo -> bitmapScanlineUnit, screenInfo -> bitmapScanlinePad);
+              scrInfo -> bitmapScanlineUnit, scrInfo -> bitmapScanlinePad);
   #endif
 }
 
-void nxagentSetPixmapFormats(ScreenInfo *screenInfo)
+void nxagentSetPixmapFormats(ScreenInfo *scrInfo)
 {
   /*
    * Formats are created with no care of which are supported
@@ -284,19 +284,19 @@ void nxagentSetPixmapFormats(ScreenInfo *screenInfo)
    * of session from a display to another.
    */
 
-  screenInfo -> numPixmapFormats = nxagentNumPixmapFormats;
+  scrInfo -> numPixmapFormats = nxagentNumPixmapFormats;
 
   for (int i = 0; i < nxagentNumPixmapFormats; i++)
   {
-    screenInfo -> formats[i].depth = nxagentPixmapFormats[i].depth;
-    screenInfo -> formats[i].bitsPerPixel = nxagentPixmapFormats[i].bits_per_pixel;
-    screenInfo -> formats[i].scanlinePad = nxagentPixmapFormats[i].scanline_pad;
+    scrInfo -> formats[i].depth = nxagentPixmapFormats[i].depth;
+    scrInfo -> formats[i].bitsPerPixel = nxagentPixmapFormats[i].bits_per_pixel;
+    scrInfo -> formats[i].scanlinePad = nxagentPixmapFormats[i].scanline_pad;
 
     #ifdef TEST
     fprintf(stderr, "nxagentSetPixmapFormats: Set format at index [%d] to depth [%d] "
                 "bits per pixel [%d] scanline pad [%d].\n", i,
-                    screenInfo -> formats[i].depth, screenInfo -> formats[i].bitsPerPixel,
-                        screenInfo -> formats[i].scanlinePad);
+                    scrInfo -> formats[i].depth, scrInfo -> formats[i].bitsPerPixel,
+                        scrInfo -> formats[i].scanlinePad);
     #endif
   }
 }
@@ -2950,9 +2950,9 @@ int nxagentShadowSendUpdates(int *suspended)
   return 1;
 }
 
-int nxagentShadowPoll(PixmapPtr nxagentShadowPixmapPtr, GCPtr nxagentShadowGCPtr,
-                            unsigned char nxagentShadowDepth, int nxagentShadowWidth,
-                                 int nxagentShadowHeight, char *nxagentShadowBuffer, int *changed, int *suspended)
+int nxagentShadowPoll(PixmapPtr shadowPixmapPtr, GCPtr shadowGCPtr,
+                            unsigned char shadowDepth, int shadowWidth,
+                                 int shadowHeight, char *shadowBuffer, int *changed, int *suspended)
 {
   RegionRec updateRegion;
   RegionRec tempRegion;
@@ -2977,7 +2977,7 @@ int nxagentShadowPoll(PixmapPtr nxagentShadowPixmapPtr, GCPtr nxagentShadowGCPtr
     BoxRec *pBox = (BoxRec *)ptBox;
 
     #ifdef TEST
-    fprintf(stderr, "nxagentShadowPoll: nRects[%ld], pBox[%p] depth[%d].\n", numRects, (void *) pBox, nxagentShadowDepth);
+    fprintf(stderr, "nxagentShadowPoll: nRects[%ld], pBox[%p] depth[%d].\n", numRects, (void *) pBox, shadowDepth);
     #endif
 
     for (int n = 0; n < numRects; n++)
@@ -2994,7 +2994,7 @@ int nxagentShadowPoll(PixmapPtr nxagentShadowPixmapPtr, GCPtr nxagentShadowGCPtr
       unsigned int width = pBox[n].y1 - pBox[n].x1;/* y1 = x2 */
       unsigned int height = y2 - pBox[n].x2;   /* x2 = y1 */
 
-      if((x + width) > nxagentShadowWidth || (y + height) > nxagentShadowHeight)
+      if((x + width) > shadowWidth || (y + height) > shadowHeight)
       {
         /*
          * Out of bounds. Maybe a resize of the master session is going on.
@@ -3028,8 +3028,8 @@ int nxagentShadowPoll(PixmapPtr nxagentShadowPixmapPtr, GCPtr nxagentShadowGCPtr
 
       for (int c = 0; c + y < y2; c++)
       {
-        memcpy(tBuffer, nxagentShadowBuffer + x * nxagentBppMaster + 
-                   (y + c) * nxagentShadowWidth * nxagentBppMaster, line);
+        memcpy(tBuffer, shadowBuffer + x * nxagentBppMaster +
+                   (y + c) * shadowWidth * nxagentBppMaster, line);
 
         tBuffer += line;
 
@@ -3042,8 +3042,8 @@ int nxagentShadowPoll(PixmapPtr nxagentShadowPixmapPtr, GCPtr nxagentShadowGCPtr
         nxagentShadowAdaptDepth(width, height, line, &tBuffer);
       }
 
-      fbPutImage(nxagentVirtualDrawable((DrawablePtr)nxagentShadowPixmapPtr), nxagentShadowGCPtr,
-                          nxagentShadowDepth, x, y, width, height, 0, ZPixmap, tBuffer);
+      fbPutImage(nxagentVirtualDrawable((DrawablePtr)shadowPixmapPtr), shadowGCPtr,
+                     shadowDepth, x, y, width, height, 0, ZPixmap, tBuffer);
 
       BoxRec box = {.x1 = x, .x2 = x + width, .y1 = y, .y2 = y + height};
 

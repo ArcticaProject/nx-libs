@@ -780,7 +780,7 @@ void nxagentWaitDrawable(DrawablePtr pDrawable)
   }
 }
 
-static Bool nxagentCommitSplitPredicate(Display *display, XEvent *event, XPointer ptr)
+static Bool nxagentCommitSplitPredicate(Display *disp, XEvent *event, XPointer ptr)
 {
   return (event -> type == ClientMessage &&
               event -> xclient.data.l[0] == NXCommitSplitNotify &&
@@ -820,7 +820,7 @@ void nxagentWaitCommitEvent(int resource)
   }
 }
 
-static Bool nxagentWaitSplitPredicate(Display *display, XEvent *event, XPointer ptr)
+static Bool nxagentWaitSplitPredicate(Display *disp, XEvent *event, XPointer ptr)
 {
   return (event -> type == ClientMessage &&
               (event -> xclient.data.l[0] == NXNoSplitNotify ||

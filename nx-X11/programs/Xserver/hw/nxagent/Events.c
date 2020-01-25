@@ -167,7 +167,7 @@ void nxagentHandleCollectPropertyEvent(XEvent*);
 
 void nxagentHandleCollectGrabPointerEvent(int resource);
 
-Bool nxagentCollectGrabPointerPredicate(Display *display, XEvent *X, XPointer ptr);
+Bool nxagentCollectGrabPointerPredicate(Display *disp, XEvent *X, XPointer ptr);
 
 /*
  * Used in Handlers.c to synchronize the agent with the remote X
@@ -702,7 +702,7 @@ static void nxagentToggleAutoGrab(void)
     nxagentDisableAutoGrab();
 }
 
-static Bool nxagentExposurePredicate(Display *display, XEvent *event, XPointer window)
+static Bool nxagentExposurePredicate(Display *disp, XEvent *event, XPointer window)
 {
   /*
    *  Handle both Expose and ProcessedExpose events.  The latters are
@@ -720,12 +720,12 @@ static Bool nxagentExposurePredicate(Display *display, XEvent *event, XPointer w
   }
 }
 
-static int nxagentAnyEventPredicate(Display *display, XEvent *event, XPointer parameter)
+static int nxagentAnyEventPredicate(Display *disp, XEvent *event, XPointer parameter)
 {
   return 1;
 }
 
-int nxagentInputEventPredicate(Display *display, XEvent *event, XPointer parameter)
+int nxagentInputEventPredicate(Display *disp, XEvent *event, XPointer parameter)
 {
   switch (event -> type)
   {
@@ -3883,7 +3883,7 @@ void nxagentDeactivatePointerGrab(void)
   }
 }
 
-Bool nxagentCollectGrabPointerPredicate(Display *display, XEvent *X, XPointer ptr)
+Bool nxagentCollectGrabPointerPredicate(Display *disp, XEvent *X, XPointer ptr)
 {
   return (X -> xclient.window == 0 &&
              X -> xclient.message_type == 0 &&

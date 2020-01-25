@@ -303,7 +303,7 @@ void nxagentWakeupByReset(ClientPtr client)
  
 #ifndef WAIT_ALL_EVENTS
 
-static Bool nxagentWaitWakeupBySplitPredicate(Display *display, XEvent *event, XPointer ptr)
+static Bool nxagentWaitWakeupBySplitPredicate(Display *disp, XEvent *event, XPointer ptr)
 {
   return (event -> type == ClientMessage &&
               (event -> xclient.data.l[0] == NXNoSplitNotify ||
