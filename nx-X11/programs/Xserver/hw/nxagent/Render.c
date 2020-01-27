@@ -186,6 +186,7 @@ Bool nxagentDisconnectAllPicture(void);
 
 #define ROUNDUP(nbits, pad) ((((nbits) + ((pad)-1)) / (pad)) * ((pad)>>3))
 
+/* Clean the padding bytes of data section of request.*/
 void
 nxagentCleanGlyphs(xGlyphInfo  *gi,
                    int         nglyphs,
