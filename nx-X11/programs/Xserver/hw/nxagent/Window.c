@@ -1447,7 +1447,7 @@ void nxagentConfigureWindow(WindowPtr pWin, unsigned int mask)
    *
    *  else if (mask & CWStackMode)
    *  {
-   *    if (nxagentSplashWindow)
+   *    if (nxagentHaveSplashWindow())
    *    {
    *      valuemask = CWStackMode;
    *

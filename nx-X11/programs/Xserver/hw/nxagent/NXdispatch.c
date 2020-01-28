@@ -330,7 +330,7 @@ Reply   Total	Cached	Bits In			Bits Out		Bits/Reply	  Ratio
 
         clientReady[0] = 0;
 
-        if (nxagentSplashWindow != None || (nxagentOption(Xdmcp) == 1 && nxagentXdmcpUp == 0))
+        if (nxagentHaveSplashWindow() || (nxagentOption(Xdmcp) == 1 && nxagentXdmcpUp == 0))
         {
           #ifdef TEST
           fprintf(stderr, "******Dispatch: Requesting a timeout of [%d] Ms.\n",

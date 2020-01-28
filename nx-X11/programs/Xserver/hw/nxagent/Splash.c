@@ -160,6 +160,11 @@ void nxagentShowSplashWindow(Window parentWindow)
   #endif
 }
 
+Bool nxagentHaveSplashWindow(void)
+{
+  return (nxagentSplashWindow != None);
+}
+
 void nxagentPaintLogo(Window win, XlibGC gc, int scale, int width, int height)
 {
   int depth = DefaultDepth(nxagentDisplay, DefaultScreen(nxagentDisplay));
