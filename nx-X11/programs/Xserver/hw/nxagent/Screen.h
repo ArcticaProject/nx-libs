@@ -59,8 +59,6 @@ extern int nxagentClients;
 
 extern ScreenPtr nxagentDefaultScreen;
 
-extern Pixmap nxagentPixmapLogo;
-
 extern Window nxagentIconWindow;
 
 extern Window nxagentFullscreenWindow;

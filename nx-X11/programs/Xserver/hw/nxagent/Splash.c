@@ -57,13 +57,13 @@
 #define nxagentLogoDarkGray    0x222222
 #define nxagentLogoLightGray   0xbbbbbb
 
-Pixmap nxagentPixmapLogo;
-Window nxagentSplashWindow = None;
+XlibPixmap nxagentPixmapLogo;
+XlibWindow nxagentSplashWindow = None;
 Bool nxagentWMPassed = False;
 
-static void nxagentPaintLogo(Window win, XlibGC gc, int scale, int width, int height);
+static void nxagentPaintLogo(XlibWindow win, XlibGC gc, int scale, int width, int height);
 
-void nxagentShowSplashWindow(Window parentWindow)
+void nxagentShowSplashWindow(XlibWindow parentWindow)
 {
   XWindowAttributes getAttributes;
   XWindowChanges    values;
@@ -138,7 +138,7 @@ void nxagentShowSplashWindow(Window parentWindow)
                           BlackPixel (nxagentDisplay, 0));
 
   #ifdef TEST
-  fprintf(stderr, "%s: Created new splash window with id [%ld].\n", __func__,
+  fprintf(stderr, "%s: Created new splash window with id [0x%lx].\n", __func__,
               nxagentSplashWindow);
   #endif
 
@@ -165,7 +165,7 @@ Bool nxagentHaveSplashWindow(void)
   return (nxagentSplashWindow != None);
 }
 
-void nxagentPaintLogo(Window win, XlibGC gc, int scale, int width, int height)
+void nxagentPaintLogo(XlibWindow win, XlibGC gc, int scale, int width, int height)
 {
   int depth = DefaultDepth(nxagentDisplay, DefaultScreen(nxagentDisplay));
 
@@ -435,7 +435,7 @@ void nxagentRemoveSplashWindow(void)
     nxagentRefreshWindows(screenInfo.screens[0]->root);
 
     #ifdef TEST
-    fprintf(stderr, "%s: setting the ownership of %s (%d) on window 0x%lx\n", __func__,
+    fprintf(stderr, "%s: setting the ownership of %s (%d) on window [0x%lx]\n", __func__,
                 "NX_CUT_BUFFER_SERVER", (int)serverTransToAgentProperty, nxagentWindow(screenInfo.screens[0]->root));
     #endif
 
@@ -446,6 +446,6 @@ void nxagentRemoveSplashWindow(void)
   if (nxagentPixmapLogo)
   {
     XFreePixmap(nxagentDisplay, nxagentPixmapLogo);
-    nxagentPixmapLogo = (Pixmap) 0;
+    nxagentPixmapLogo = (XlibPixmap) 0;
   }
 }

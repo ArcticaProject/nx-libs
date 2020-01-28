@@ -37,10 +37,9 @@ extern int XdmcpTimeOutRtx;
 extern int XdmcpStartTime;
 extern int nxagentXdmcpUp;
 
-extern Window nxagentSplashWindow;
-
-extern void nxagentShowSplashWindow(Window);
-extern void nxagentRemoveSplashWindow();
-
+#ifdef XlibWindow
+extern void nxagentShowSplashWindow(XlibWindow);
+#endif
+extern void nxagentRemoveSplashWindow(void);
 extern Bool nxagentHaveSplashWindow(void);
 #endif /* __Splash_H__ */
