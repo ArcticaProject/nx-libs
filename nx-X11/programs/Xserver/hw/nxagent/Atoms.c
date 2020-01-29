@@ -95,9 +95,8 @@ static char *nxagentAtomNames[NXAGENT_NUMBER_OF_ATOMS + 1] =
          content from clients of the real X server to nxagent's clients
 
          Unfortunately we cannot rename this to NX_SELTRANS_TO_AGENT
-	 because nomachine's nxclient is depending on this
-	 selection */
-
+         because nomachine's nxclient and nxwin are using this
+         Atom/selection for communication with the nxagent Atom. */
   "TARGETS",                     /*  6 */
       /* used to request a list of supported data formats from the
         selection owner. Standard ICCCM Atom */
