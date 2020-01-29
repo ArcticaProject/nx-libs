@@ -50,16 +50,14 @@ typedef struct
   void *pPicture;
 
   /*
-   * Set if the window is mapped
-   * on the remote server.
+   * Set if the window is mapped on the remote server.
    */
 
   int isMapped;
 
   /*
-   * Set if the window on the remote
-   * server is redirected by using
-   * the composite extension.
+   * Set if the window on the remote server is redirected by using the
+   * composite extension.
    */
 
   int isRedirected;
@@ -116,9 +114,8 @@ extern int nxagentWindowPrivateIndex;
 #define nxagentWindow(pWin) (nxagentWindowPriv(pWin)->window)
 
 /*
- * Window is either a child of our root
- * or a child of the root of the real X
- * server.
+ * Window is either a child of our root or a child of the root of the
+ * real X server.
  */
 
 #define nxagentWindowParent(pWin) \
@@ -165,8 +162,7 @@ extern int nxagentWindowPrivateIndex;
 #define CW_RootlessRestack  (1 << 18)
 
 /*
- * This force the agent to send exposures
- * for all windows.
+ * This force the agent to send exposures for all windows.
  */
 
 #define nxagentRefreshScreen() \
@@ -182,17 +178,16 @@ extern XlibAtom serverTransToAgentProperty;
 #endif
 
 /*
- * If the rectangles in an exposed region exceed
- * the number of 4, we let the function decide if
- * it is better to send the window extents rather
- * than the rectangles in the region.
+ * If the rectangles in an exposed region exceed the number of 4, we
+ * let the function decide if it is better to send the window extents
+ * rather than the rectangles in the region.
  */
 
 int nxagentExtentsPredicate(int total);
 
 /*
- * Agent's nested window procedures. Look also
- * at Rootless.h for the rootless counterparts.
+ * Agent's nested window procedures. Look also at Rootless.h for the
+ * rootless counterparts.
  */
 
 Bool nxagentCreateWindow(WindowPtr pWin);
@@ -250,8 +245,8 @@ void nxagentMapDefaultWindows(void);
 Bool nxagentSetWindowCursors(void *p0);
 
 /*
- * The ConfigureWindow procedure has not
- * a pointer in the screen structure.
+ * The ConfigureWindow procedure has not a pointer in the screen
+ * structure.
  */
 
 void nxagentConfigureWindow(WindowPtr pWin, unsigned int mask);
@@ -265,10 +260,9 @@ extern unsigned long nxagentVisibilityTimeout;
 extern Bool nxagentVisibilityStop;
 
 /*
- * Return the pointer to the window given the
- * remote id. It tries to match the id from
- * the last matched window before iterating
- * through the hierarchy.
+ * Return the pointer to the window given the remote id. It tries to
+ * match the id from the last matched window before iterating through
+ * the hierarchy.
  */
 
 WindowPtr nxagentGetWindowFromID(Window id);
