@@ -451,7 +451,7 @@ ProcGetProperty(ClientPtr client)
 
 #ifdef NXAGENT_CLIPBOARD
 /* GetWindowProperty clipboard use only */
-/* FIXME: that's wrong, it is also called in Window.c and Events. */
+/* FIXME: that's wrong, it is also called in Window.c and Events.c */
 /* FIXME: should be moved to a different file, is not derived from
    dix */
 int
@@ -505,7 +505,6 @@ GetWindowProperty(pWin, property, longOffset, longLength, delete,
 	prevProp = pProp;
 	pProp = pProp->next;
     }
-
 
     if (!pProp)
     {
