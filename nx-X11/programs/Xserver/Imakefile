@@ -184,13 +184,6 @@ XCOMM
 #if defined(NXAgentServer) && NXAgentServer
 NXAGENT = nxagent
 #endif
-#if defined(NXWinServer) && NXWinServer
-NXWIN = NXWin
-#endif
-#if (defined(NXAgentServer) && NXAgentServer) || \
-    (defined(NXWinServer) && NXWinServer)
-MakeMutex($(NXAGENT) $(NXWIN))
-#endif
 MakeMutex($(STDDIRS) fb)
 #endif
 
@@ -413,151 +406,12 @@ nxagent_static_nolibs:  nxagent
 	$(LDPRELIBS) $(SYSLIBS) -Wl,-Bdynamic -lNX_X11 -lXext $(EXTRA_INSTALL_LOAD_FLAGS)
 #endif /* NXAgentServer */
 
-#if defined(NXWinServer) && NXWinServer
-XCOMM
-XCOMM X Server for MS Windows
-XCOMM
-FBSUBDIR = fb
-MIDAMAGEDIR = miext/damage
-SHADOWDIR = miext/shadow
-#if BuildXWinLayer
-LAYERDIR = miext/layer
-XWINLAYERLIB = $(LAYER)
-#else
-LAYERDIR = 
-XWINLAYERLIB = 
-#endif
-#if BuildXWinMultiWindowExtWM
-ROOTLESSDIR = miext/rootless
-ROOTLESSLIB = $(ROOTLESSDIR)/LibraryTargetName(rootless) \
-	      $(ROOTLESSDIR)/safeAlpha/LibraryTargetName(safeAlpha) \
-	      $(ROOTLESSDIR)/accel/LibraryTargetName(rlAccel)
-#else
-ROOTLESSDIR = 
-ROOTLESSLIB = 
-#endif
-NXWINDDXDIR = hw/nxwin
-#if BuildXWinXF86Config
-XWINPARSERDIR = hw/xfree86/parser
-XWINPARSERLIB = $(XWINPARSERDIR)/LibraryTargetName(xf86config)
-#else
-XWINPARSERDIR = 
-XWINPARSERLIB = 
-#endif
-XWINOPENGLLIB = 
-
-NXWINLIB = $(NXWINDDXDIR)/LibraryTargetName(NXWin)
-NXWINDIRS = $(STDDIRS) $(FBDIR) $(SHADOWDIR) $(LAYERDIR) $(NXWINDDXDIR) \
-	   $(DEPDIRS) $(XWINPARSERDIR) $(ROOTLESSDIR) $(MIDAMAGEDIR)
-NXWINOBJS = $(NXWINDDXDIR)/stubs.o $(NXWINDDXDIR)/NXWin.res
-NXWINLIBS = PreFbLibs $(NXWINLIB) FbPostFbLibs $(NXWINLIB) $(XWINLAYERLIB) \
-           $(SHADOW) $(XWINPARSERLIB) $(ROOTLESSLIB) $(OS)
-#if BuildXWinMultiWindow || BuildXWinClipboard
-XWINX11  = $(XONLYLIB)	   
-# if defined(Win32Architecture)
-PTHREADLIB = -lpthreadGC  
-# endif
-#endif
-#if defined(Win32Architecture)
-XWINW32  = -lgdi32 -lwsock32 $(PTHREADLIB)
-#else
-XWINW32  = -lgdi32
-#endif
-NXWINSYSLIBS = $(LDPRELIBS) $(XWINX11) $(SYSLIBS) $(XWINW32)
-
-NXWINNXLIBS = -L../../../nxcomp -lXcomp
-
-/*
- * These flags cause NXWin.exe to be a Windows executable, which
- * prevents NXWin.exe from opening a Command Prompt window when it is
- * started.  However, the flags also prevent NXWin.exe from outputting
- * its status and error message to a Command Prompt; thus, one most
- * implement a method to redirect status and error messages to a file
- * before enabling these flags.
- */
-EXTRA_LDOPTIONS = -e _mainCRTStartup
-
-#if HasParallelMake
-MakeMutex($(NXWINDIRS) $(NXWINOBJS) $(NXWINLIB) $(NXWINLIBS) $(NXWINSYSLIBS) $(NXWINNXLIBS))
-#endif
-
-#if ForceServerRemake
-$(NXWINOBJS) $(NXWINLIB) $(NXWINLIBS):: $(NXWINDIRS)
-	@if [ -f $@ ]; then touch $@ >/dev/null 2>&1 || exit 0; fi
-#endif
-
-#ifdef mingwArchitecture
-NXWINSERVERNAME=NXming    
-#else
-NXWINSERVERNAME=NXWin    
-#endif
-ServerTarget($(NXWINSERVERNAME),$(NXWINDIRS),$(NXWINOBJS), \
-	     $(LIBCWRAPPER) $(NXWINLIBS) $(LOADABLEEXTS),$(NXWINSYSLIBS) $(NXWINNXLIBS))
-
-#ifndef ServerToInstall
-# define ServerToInstall $(NXWINSERVERNAME)
-#endif
-
-#endif /* NXWinServer */
-
-#if 0
-#if defined(NXWinServer) && NXWinServer
-XCOMM
-XCOMM X Server for MS Windows
-XCOMM
-FBDIR = fb
-SHADOWDIR = miext/shadow
-LAYERDIR = miext/layer
-NXWINDDXDIR = hw/nxwin
-XWINPARSERDIR = hw/xfree86/parser
-XWINPARSERLIB = $(XWINPARSERDIR)/LibraryTargetName(xf86config)
-NXWINLIB = $(NXWINDDXDIR)/LibraryTargetName(nxwin)
-NXWINDIRS = $(STDDIRS) $(FBDIR) $(SHADOWDIR) $(LAYERDIR) $(NXWINDDXDIR) \
-	   $(DEPDIRS) $(XWINPARSERDIR)
-#NXWINOBJS = $(NXWINDDXDIR)/stubs.o $(NXWINDDXDIR)/NX.res \
-	    $(NXWINDDXDIR)/NXwindow.o \
-	    $(NXWINDDXDIR)/NXdispatch.o $(NXWINDDXDIR)/NXproperty.o \
-	    $(NXWINDDXDIR)/NXevents.o
-NXWINOBJS = $(NXWINDDXDIR)/stubs.o $(NXWINDDXDIR)/NX.res
-NXWINLIBS = PreFbLibs $(NXWINLIB) FbPostFbLibs $(LAYER) $(SHADOW) \
-           $(XWINPARSERLIB)
-NXWINSYSLIBS = $(LDPRELIBS) $(XLIB) $(SYSLIBS) -lgdi32 -lddraw
-NXWINNXLIBS = -L../../../nxcomp -lXcomp
-
-/*
- * These flags cause NXWin.exe to be a Windows executable, which
- * prevents NXWin.exe from opening a Command Prompt window when it is
- * started.  However, the flags also prevent NXWin.exe from outputting
- * its status and error message to a Command Prompt; thus, one most
- * implement a method to redirect status and error messages to a file
- * before enabling these flags.
- */
-EXTRA_LDOPTIONS = -mwindows -e _mainCRTStartup
-
-#if HasParallelMake
-MakeMutex($(NXWINDIRS) $(NXWINOBJS) $(NXWINLIB) $(NXWINLIBS) $(NXWINSYSLIBS) $(NXWINNXLIBS))
-#endif
-
-#if ForceServerRemake
-$(NXWINOBJS) $(NXWINLIB) $(NXWINLIBS):: $(NXWINDIRS)
-	@if [ -f $@ ]; then touch $@ >/dev/null 2>&1 || exit 0; fi
-#endif
-
-ServerTarget(NXWin,$(NXWINDIRS),$(NXWINOBJS), \
-	     $(NXWINLIBS) $(LOADABLEEXTS) $(LIBCWRAPPER),$(NXWINSYSLIBS) $(NXWINNXLIBS)) 
-
-#ifndef ServerToInstall
-#define ServerToInstall NXWin
-#endif
-
-#endif /* NXWinServer */
-#endif
 
 MIEXTDIRS = $(SHADOWDIR) $(LAYERDIR) $(ROOTLESSDIR) $(MIDAMAGEDIR)
 IPLANDIRS = $(IPLAN2P2DIR) $(IPLAN2P4DIR) $(IPLAN2P8DIR)
 DDXDIRS = $(DECWSDDXDIR) $(SUNDDXDIR) \
 	  $(HPDDXDIR) $(XFREE86DDXDIR) \
-	  $(NXAGENTDDXDIR) $(NXWINDDXDIR)
+	  $(NXAGENTDDXDIR)
 SUBDIRS = $(STDDIRS) \
 	  $(IPLANDIRS) $(ILBMDIR) \
           $(DDXDIRS) $(FBSUBDIR) $(KDRIVEDIRS) $(MIEXTDIRS)

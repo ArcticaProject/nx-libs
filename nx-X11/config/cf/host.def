@@ -96,16 +96,6 @@
 #endif
 
 /*
- * Define this symbol to build the NX enhanced MS Windows
- * X server for Cygnus environment.
- *
-#define NXWinServer		YES
- */
-#if defined(cygwinArchitecture)
-#define NXWinServer             NO
-#endif
-
-/*
  * Set the default server (ie the one that gets the sym-link to "X")
  *
 #define ServerToInstall		Xorg
