@@ -1,6 +1,1683 @@
-2019-08-27 15:46:37 +0200 Mike Gabriel (885116a4b)
+2020-01-30 11:49:59 +0100 Mike Gabriel
 
-	* release 3.5.99.22 (HEAD -> 3.6.x, tag: 3.5.99.22)
+	* release 3.5.99.23 (HEAD -> 3.6.x, tag: 3.5.99.23)
+
+2020-01-30 11:49:42 +0100 Mike Gabriel (bd5b20192)
+
+	* debian/libnx-x11-6.symbols: Sync with .symbols file found in
+          official Debian package.
+
+2020-01-30 11:49:18 +0100 Mike Gabriel (deffba48d)
+
+	* debian/rules: Adopt changes from official Debian package.
+
+2020-01-30 10:59:17 +0100 Mike Gabriel (c8d69ebae)
+
+	* Merge branch 'uli42-pr/fix_shadowed_vars' into 3.6.x
+
+2020-01-25 21:23:55 +0100 Ulrich Sibiller (4821edfe0)
+
+	* nxagent: rename variables that shadow globals
+
+2020-01-25 15:50:04 +0100 Ulrich Sibiller (2adab2972)
+
+	* Events.c: fix capslock weirdness (re-add lost code)
+
+2020-01-09 23:44:33 +0100 Ulrich Sibiller (870746222)
+
+	* compext/Clean.c: fix shadow warnings / scope
+
+2020-01-09 23:18:17 +0100 Ulrich Sibiller (a94e8258f)
+
+	* os: Fix -Wshadow errors
+
+2020-01-09 23:06:08 +0100 Ulrich Sibiller (4b8194e1e)
+
+	* mi: fix shadow warnings
+
+2020-01-09 22:50:13 +0100 Ulrich Sibiller (1a1ace774)
+
+	* _XkbFilterDeviceBtn: move variable declarations to match usage
+          scope
+
+2020-01-09 22:44:55 +0100 Ulrich Sibiller (914f88a8a)
+
+	* XkbFindSrvLedInfo: remove extraneous name-clashing sli variable
+
+2020-01-09 22:41:53 +0100 Ulrich Sibiller (ae180b6b5)
+
+	* xkb: fix shadow warnings
+
+2020-01-09 22:35:01 +0100 Ulrich Sibiller (3c3e11cb0)
+
+	* CheckForEmptyMask does not need to declare int n twice
+
+2020-01-08 23:43:15 +0100 Ulrich Sibiller (fbfef7e62)
+
+	* Drawable.c: fix logic broken by scope cleanup
+
+2020-01-09 21:57:43 +0100 Ulrich Sibiller (32b64d7d7)
+
+	* Cursor.c: drop unused return code for nxagentDisconnectAllCursor
+
+2020-01-09 21:52:15 +0100 Ulrich Sibiller (33fbc6211)
+
+	* Pixmap.c: drop unused return code for nxagentDisconnectAllPixmaps
+
+2020-01-09 21:44:30 +0100 Ulrich Sibiller (7977b9f8f)
+
+	* Pixmap.c: fix variable shadowing
+
+2020-01-09 21:25:31 +0100 Ulrich Sibiller (a93e25077)
+
+	* Display.c: fix shadowed/unused variable
+
+2020-01-09 21:13:02 +0100 Ulrich Sibiller (7031219d9)
+
+	* Events.c: fix two shadowed variables
+
+2020-01-09 21:01:34 +0100 Ulrich Sibiller (c137c2a4d)
+
+	* Clipboard.c: fix shadowed variable
+
+2020-01-09 20:54:53 +0100 Ulrich Sibiller (4953c651d)
+
+	* nxagent: build with -Wshadow to detect shadowing variables
+
+2020-01-09 20:52:23 +0100 Ulrich Sibiller (21079cf31)
+
+	* Drawable.c: fix segfault
+
+2020-01-08 00:10:20 +0100 Ulrich Sibiller (105cd2be6)
+
+	* Rootless.c: fix wring datatype being used
+
+2020-01-06 07:35:29 +0100 Mike Gabriel (bb9ac3fd3)
+
+	* hw/nxagent/Splash.c Fix build on 32bit architecture.
+
+2020-01-06 00:53:06 +0100 Mike Gabriel (67599026d)
+
+	* Merge branch 'uli42-pr/various3' into 3.6.x
+
+2019-12-16 18:50:17 +0100 Ulrich Sibiller (cf8797c3c)
+
+	* Atoms.c: describe atoms usage
+
+2019-12-16 18:50:17 +0100 Ulrich Sibiller (d2ac4ce35)
+
+	* Atoms.c: describe atoms usage
+
+2020-01-05 23:49:12 +0100 Ulrich Sibiller (bf9b70d7b)
+
+	* Display.c: Fix broken code in TEST case
+
+2020-01-04 18:30:23 +0100 Ulrich Sibiller (bf958eced)
+
+	* Image.c: undo wrong string replacement nxagentBitmapBitOrder
+
+2020-01-04 17:10:01 +0100 Ulrich Sibiller (61619be52)
+
+	* Display.c: add a describing comment for
+          nxagentDisplayErrorPredicate
+
+2020-01-04 16:22:24 +0100 Ulrich Sibiller (209c8d8c5)
+
+	* Screen.c: harmonize size/wmhints code
+
+2020-01-04 15:41:25 +0100 Ulrich Sibiller (4b9466ff5)
+
+	* Events.c: pass a Boolean to nxagentSwitchFullscreen
+
+2020-01-04 15:33:27 +0100 Ulrich Sibiller (e276b23b3)
+
+	* Keystroke.c: fix formatting of keystrokes
+
+2020-01-04 15:17:26 +0100 Ulrich Sibiller (14aab54f4)
+
+	* Init.h: Fix superfluous space
+
+2020-01-03 14:06:31 +0100 Ulrich Sibiller (52cefdd7e)
+
+	* Display.c: reformat some comments
+
+2020-01-03 14:06:15 +0100 Ulrich Sibiller (141d6bea5)
+
+	* Display.c: scope improvements
+
+2020-01-02 23:55:37 +0100 Ulrich Sibiller (892804811)
+
+	* Reconnect.c: fix typos
+
+2020-01-02 21:12:16 +0100 Ulrich Sibiller (cdd381105)
+
+	* Keyboard.c: improve keyboard output
+
+2019-12-29 18:40:53 +0100 Ulrich Sibiller (cfa17ffac)
+
+	* Error.c: mark NX changes
+
+2019-12-29 12:45:20 +0100 Ulrich Sibiller (100b27892)
+
+	* Keyboard.c: fix typo
+
+2019-12-29 00:56:36 +0100 Ulrich Sibiller (b8b897e3f)
+
+	* Remove the numVideoScreens xprintism.
+
+2019-12-29 00:48:43 +0100 Ulrich Sibiller (12358d64a)
+
+	* nxagent: remove another xprint renmant
+
+2019-12-29 00:45:51 +0100 Ulrich Sibiller (662708b3d)
+
+	* drop xprint remnants: xpstubs
+
+2019-12-28 23:40:25 +0100 Ulrich Sibiller (2c03bd793)
+
+	* nxagent: drop CYGWIN and WIN32 defines
+
+2019-12-28 20:40:37 +0100 Ulrich Sibiller (f3aca240d)
+
+	* Image.c: code simplification/scope
+
+2019-12-28 20:04:33 +0100 Ulrich Sibiller (203891d11)
+
+	* Screen.c: code simplification/scope
+
+2019-12-28 20:00:59 +0100 Ulrich Sibiller (a6335cf3d)
+
+	* Screen.c: fix handling of NX_SHADOW atom
+
+2019-12-28 20:00:16 +0100 Ulrich Sibiller (c6a2fda07)
+
+	* Screen.c: drop variable
+
+2019-12-28 18:39:48 +0100 Ulrich Sibiller (576255425)
+
+	* Window.c: code simplifications/scope
+
+2019-12-28 18:39:31 +0100 Ulrich Sibiller (aa0662bbd)
+
+	* Window.c: fix comment
+
+2019-12-19 16:49:56 +0100 Ulrich Sibiller (d2f694360)
+
+	* Rootless.c: fix wording
+
+2019-12-18 00:32:26 +0100 Ulrich Sibiller (f5348bdc4)
+
+	* X.Org bug 4947/Sun bug 6646626: Xv extension not byte-swapping
+          properly
+
+2019-12-17 23:20:03 +0100 Ulrich Sibiller (a894fa8bd)
+
+	* NXproperty.c: simplify ChangeWindowProperty
+
+2019-12-17 21:49:57 +0100 Ulrich Sibiller (11d9b74b6)
+
+	* Events.c: improve debugging output
+
+2018-11-07 22:19:17 +0100 Ulrich Sibiller (d409b566b)
+
+	* os: unifdef WIN32
+
+2018-11-07 22:28:32 +0100 Ulrich Sibiller (74270d6b7)
+
+	* os: unifdef UNIXWARE
+
+2018-11-07 22:27:49 +0100 Ulrich Sibiller (38ab9ad85)
+
+	* os: unifdef __SCO__
+
+2018-11-07 22:24:59 +0100 Ulrich Sibiller (5fb7f53c6)
+
+	* os: unifdef ISC
+
+2019-12-03 22:54:14 +0100 Ulrich Sibiller (bccf81ea0)
+
+	* NXdispatch.c: port forgotten patch
+
+2019-12-03 22:42:24 +0100 Ulrich Sibiller (25677711b)
+
+	* NXDispatch.c: mark NX changes
+
+2019-05-03 22:46:33 +0200 Ulrich Sibiller (2b9a6ddc2)
+
+	* NXdispatch.c: cleanup ProcCloseFont()
+
+2019-05-03 23:50:45 +0200 Ulrich Sibiller (51e60ada3)
+
+	* NXdispatch.c: add FIXME
+
+2019-12-03 22:14:31 +0100 Ulrich Sibiller (e9ee4505a)
+
+	* xkbsrv.h: drop non-existing externs
+
+2019-05-25 17:29:17 +0200 Ulrich Sibiller (7c1bd6f52)
+
+	* NX{mitrap,picture}.c: mark NX changes
+
+2019-12-03 19:18:06 +0100 Ulrich Sibiller (66f0a85e9)
+
+	* Pointer.c: code simplification
+
+2019-12-03 19:17:47 +0100 Ulrich Sibiller (759f89aa2)
+
+	* Pointer.c: use __func__ in fprintf
+
+2019-12-03 19:02:42 +0100 Ulrich Sibiller (e9ee5a007)
+
+	* xkbsrv.h: move extern XkbFreePrivates to central include file
+
+2019-12-03 18:59:11 +0100 Ulrich Sibiller (3d77840c1)
+
+	* xkbActions.c: fix formatting
+
+2019-06-10 15:33:10 +0200 Ulrich Sibiller (047b7ff21)
+
+	* Window.c: print internal window id as well
+
+2019-12-03 18:42:17 +0100 Ulrich Sibiller (d3ae4a0ed)
+
+	* mi: Avoid stack smash when drawing dashed lines
+
+2020-01-06 00:07:19 +0100 Mike Gabriel (5a8f1e921)
+
+	* nx-libs.spec: Don't install nxagent.xpm to any package. Not there
+          anymore..
+
+2020-01-06 00:08:32 +0100 Mike Gabriel (fa2f21ec0)
+
+	* (main) Makefile: Don't install nxagent.xpm during install-full
+          target.
+
+2020-01-05 23:50:21 +0100 Mike Gabriel (e89fb895a)
+
+	* Merge branch 'uli42-pr/more_clipboard_improvements' into 3.6.x
+
+2019-12-17 22:56:44 +0100 Ulrich Sibiller (30fb45b2a)
+
+	* Clipboard.c: cleanup parentheses
+
+2019-12-17 22:56:25 +0100 Ulrich Sibiller (d634f26bb)
+
+	* Clipboard.c: extend/reformat some comments
+
+2019-12-16 23:11:13 +0100 Ulrich Sibiller (d210c584c)
+
+	* Clipboard.c: rename variables/atoms to better reflect their meaning
+
+2019-12-16 22:47:23 +0100 Ulrich Sibiller (40c243fd2)
+
+	* Clipboard.c: add clientCLIPBOARD variable
+
+2019-12-16 22:17:02 +0100 Ulrich Sibiller (ee5cf733f)
+
+	* Clipboard.c: change order of if clause to better match the comment
+          above it
+
+2019-12-16 18:42:04 +0100 Ulrich Sibiller (84382e916)
+
+	* Clipboard.c: CLINDEX and GetXErrorString are only used for
+          debugging
+
+2019-12-16 18:35:47 +0100 Ulrich Sibiller (7cda10124)
+
+	* Clipboard.c: flush more often to ensure a smooth clipboard
+          experience
+
+2019-12-16 18:32:39 +0100 Ulrich Sibiller (65877a199)
+
+	* Clipboard.c: fix handling of clipboard=none/client/server/both
+          option
+
+2019-12-16 18:31:49 +0100 Ulrich Sibiller (80ab8932d)
+
+	* Options.h: comment on the four clipboard options
+
+2019-11-22 21:15:54 +0100 Ulrich Sibiller (68125b06e)
+
+	* Clipboard.c: Use Find*Index helpers at more locations
+
+2019-11-22 20:41:31 +0100 Ulrich Sibiller (feedae86b)
+
+	* Clipboard.c: cosmetics/typo fix/untabify
+
+2019-11-22 00:24:35 +0100 Ulrich Sibiller (6c0536a20)
+
+	* Clipboard.c: introduce helper macro IS_INTERNAL_OWNER
+
+2019-11-21 23:58:17 +0100 Ulrich Sibiller (2b59a1993)
+
+	* Clipboard.c: simplify nxagentSetSelectionOwner
+
+2019-11-21 23:57:10 +0100 Ulrich Sibiller (15ef70874)
+
+	* Clipboard.c: describe nxagentFind*Index
+
+2019-11-18 07:38:16 +0100 Ulrich Sibiller (5d1577abe)
+
+	* Clipboard.c: reorder nxagentInitClipboard
+
+2019-11-18 01:35:50 +0100 Ulrich Sibiller (634d4fc81)
+
+	* Clipboard.c: clear all selections in nxagentInitClipboard
+
+2019-11-18 01:11:26 +0100 Ulrich Sibiller (20120205b)
+
+	* Clipboard.c: Fix: re-claim selection on reconnect
+
+2019-11-18 00:56:27 +0100 Ulrich Sibiller (8500b4bc0)
+
+	* Clipboard.c: reorder atom allocation code
+
+2019-11-18 00:45:17 +0100 Ulrich Sibiller (7d9c5ad4d)
+
+	* Clipboard: align reported targets
+
+2019-11-17 23:28:53 +0100 Ulrich Sibiller (509ae051b)
+
+	* Clipboard.c: check pointer before usage
+
+2019-11-17 23:14:17 +0100 Ulrich Sibiller (eb51bcb6d)
+
+	* Clipboard.c: drop superflous variable
+
+2019-11-17 21:58:16 +0100 Ulrich Sibiller (8574c233a)
+
+	* Clipboard.c: split combined check
+
+2019-11-17 19:07:19 +0100 Ulrich Sibiller (28f07b526)
+
+	* Clipboard.c: more debugging output
+
+2019-11-17 19:06:59 +0100 Ulrich Sibiller (1d0d54730)
+
+	* Clipboard.c: add more explaining comments
+
+2019-11-17 19:00:59 +0100 Ulrich Sibiller (166102e07)
+
+	* Clipboard.c: use macros instead of hardcoced values for timeouts
+
+2019-11-17 18:56:54 +0100 Ulrich Sibiller (f05a2eca5)
+
+	* Clipboard.c: fix timeout comparison
+
+2019-11-17 18:00:55 +0100 Ulrich Sibiller (b2af0c686)
+
+	* Clipboard: make nxagentInitClipboard return a Boolean
+
+2019-11-17 17:59:08 +0100 Ulrich Sibiller (fa7fb7499)
+
+	* Clipboard.c: avoid nested extern
+
+2019-11-17 17:43:58 +0100 Ulrich Sibiller (8c36f1dd2)
+
+	* Clipboard.c: fix string formatting directives
+
+2019-11-17 17:42:27 +0100 Ulrich Sibiller (3a935c674)
+
+	* Clipboard.c: Fix formatting
+
+2019-11-17 17:30:14 +0100 Ulrich Sibiller (cc01d4992)
+
+	* Clipboard.c, NXproperty.c: match prototypes
+
+2019-11-17 16:29:24 +0100 Ulrich Sibiller (ffce5337d)
+
+	* Clipboard.c: reformat some comments
+
+2019-11-17 16:29:02 +0100 Ulrich Sibiller (9226abf66)
+
+	* Clipboard.c: add FIXMEs
+
+2019-11-17 16:28:18 +0100 Ulrich Sibiller (5540a1492)
+
+	* Clipboard.c: add nxagentMatchSelectionOwner helper function
+
+2019-11-17 16:27:15 +0100 Ulrich Sibiller (1feb4985e)
+
+	* Clipboard.c: make agentClipboardStatus a Boolean
+
+2019-11-17 11:47:39 +0100 Ulrich Sibiller (fba367160)
+
+	* Clipboard.c: refactor nxagent*SelectionOwner
+
+2020-01-05 23:34:09 +0100 Mike Gabriel (057ce728f)
+
+	* Merge branch 'uli42-pr/strings_fixes' into 3.6.x
+
+2020-01-05 23:17:19 +0100 Ulrich Sibiller (80b6d6b9c)
+
+	* Error.c: simplify some NULL pointer checks
+
+2019-12-29 13:36:06 +0100 Ulrich Sibiller (1d50b2ab3)
+
+	* Error.c: drop now obsolete DEFAULT_STRING_LENGTH
+
+2019-12-29 13:35:09 +0100 Ulrich Sibiller (609b23f19)
+
+	* Error.c: make nxagentRootDir a pointer
+
+2019-12-29 13:26:34 +0100 Ulrich Sibiller (d6cc85e56)
+
+	* Error.c: make nxagentHomeDir a pointer
+
+2019-12-29 13:15:30 +0100 Ulrich Sibiller (03544b3ab)
+
+	* Error.c: make nxagentClientsLogName a pointer
+
+2019-12-29 12:54:07 +0100 Ulrich Sibiller (2a4af0c74)
+
+	* Error.c: fix format-truncation warning
+
+2019-12-29 12:40:29 +0100 Ulrich Sibiller (ce43e4346)
+
+	* Dialog.c: fix format-truncation warning
+
+2020-01-05 23:21:39 +0100 Mike Gabriel (46ef20bdb)
+
+	* Merge branch 'uli42-pr/custom_version_string' into 3.6.x
+
+2017-12-15 00:48:35 +0100 Ulrich Sibiller (ec1b3a44c)
+
+	* Add support for custom version string
+
+2020-01-05 22:59:43 +0100 Mike Gabriel (04962efa9)
+
+	* Merge branch 'uli42-pr/xlib_types' into 3.6.x
+
+2019-12-28 21:02:14 +0100 Ulrich Sibiller (427b7b977)
+
+	* nxagent: Use XlibAtom data type where appropriate
+
+2020-01-05 22:46:24 +0100 Mike Gabriel (a261b7243)
+
+	* Merge branch 'uli42-pr/code_cleanup' into 3.6.x
+
+2019-10-31 01:49:12 +0100 Ulrich Sibiller (adca0cc92)
+
+	* Pixels.c: reformat comments
+
+2019-10-31 01:48:18 +0100 Ulrich Sibiller (fc991b93a)
+
+	* Pixels.c: scope improvements
+
+2019-10-31 01:39:36 +0100 Ulrich Sibiller (6a02a6795)
+
+	* Options.h: reformat
+
+2019-10-31 01:33:54 +0100 Ulrich Sibiller (78bb80a84)
+
+	* Options.c: reformat comments
+
+2019-10-31 01:32:35 +0100 Ulrich Sibiller (024a2bc2e)
+
+	* Pointer.c: scope improvements
+
+2019-10-31 01:32:19 +0100 Ulrich Sibiller (c9549f3c9)
+
+	* Pointer.c: reformat comments
+
+2019-10-31 01:29:11 +0100 Ulrich Sibiller (22f01d23a)
+
+	* Visual.{ch}: disable unused code
+
+2019-10-31 01:28:51 +0100 Ulrich Sibiller (1bb0e999e)
+
+	* Visual.c: reformat comments
+
+2019-10-31 01:28:18 +0100 Ulrich Sibiller (5db6217cc)
+
+	* Visual.c: code improvements/desginated initializers
+
+2019-10-31 00:32:12 +0100 Ulrich Sibiller (bcca31996)
+
+	* Split.c: scope improvements/code simplification
+
+2019-10-31 00:31:28 +0100 Ulrich Sibiller (53b3d4df3)
+
+	* Split.c: reformat comments
+
+2019-09-06 14:56:46 +0200 Ulrich Sibiller (cb283d4aa)
+
+	* Keyboard.c: code simplification / scope improvements
+
+2019-09-06 14:40:10 +0200 Ulrich Sibiller (58415b560)
+
+	* Keyboard.c: reformat comments
+
+2019-09-06 14:37:29 +0200 Ulrich Sibiller (e3b440547)
+
+	* Init.c: rewrite two function prototypes
+
+2019-09-06 14:37:18 +0200 Ulrich Sibiller (c5c821482)
+
+	* Init.c: reformat comments
+
+2019-09-06 14:22:23 +0200 Ulrich Sibiller (d87988aa2)
+
+	* Handlers.c: reformat comments
+
+2019-09-06 04:08:21 +0200 Ulrich Sibiller (8e66435a5)
+
+	* GCOps.c: code simplification / scope improvements
+
+2019-09-06 04:05:37 +0200 Ulrich Sibiller (41bc1de98)
+
+	* GCOps.c: reformat comments
+
+2019-09-06 03:39:20 +0200 Ulrich Sibiller (193bda764)
+
+	* GC.c: blank line cleanup
+
+2019-09-06 03:38:37 +0200 Ulrich Sibiller (da60cb8ca)
+
+	* GC.c: code simplifications / scope improvements
+
+2019-09-06 03:37:53 +0200 Ulrich Sibiller (fb03e31e5)
+
+	* GC.c: reformat comments
+
+2019-09-06 01:44:19 +0200 Ulrich Sibiller (5b3af0182)
+
+	* Font.c: scope improvements
+
+2019-09-06 01:43:54 +0200 Ulrich Sibiller (7f636648c)
+
+	* Font.c: reformat comments
+
+2019-09-06 01:30:06 +0200 Ulrich Sibiller (6d783bac2)
+
+	* Error.c: Code simplification
+
+2019-09-06 01:23:29 +0200 Ulrich Sibiller (d94f47274)
+
+	* Drawable.c: code simplifications / scope improvements
+
+2019-09-06 01:20:36 +0200 Ulrich Sibiller (0133d4619)
+
+	* Drawable.c: reformat comments
+
+2019-09-06 00:30:05 +0200 Ulrich Sibiller (827defa14)
+
+	* Display.c: remove blank lines
+
+2019-09-06 00:29:14 +0200 Ulrich Sibiller (462ad036e)
+
+	* Display.c: code simplification, scope improvements
+
+2019-09-06 00:28:14 +0200 Ulrich Sibiller (88e3a37ad)
+
+	* Display.c: reformat comments
+
+2019-09-05 23:59:26 +0200 Ulrich Sibiller (7e8f638a9)
+
+	* Dialog.c: use designated initializer
+
+2019-09-05 23:58:44 +0200 Ulrich Sibiller (fab0e477e)
+
+	* Dialog.c: shorten switch blocks
+
+2019-09-05 23:54:57 +0200 Ulrich Sibiller (883654741)
+
+	* Composite.c: scope improvement
+
+2019-09-05 23:54:46 +0200 Ulrich Sibiller (dbe3cc1f7)
+
+	* Composite.c: reformat comments
+
+2019-09-05 23:53:31 +0200 Ulrich Sibiller (560b7c6c2)
+
+	* Client.c: remove tailing whitespace
+
+2019-09-05 23:48:04 +0200 Ulrich Sibiller (ab7113b79)
+
+	* BitmapUtils.c: remove tailing whitespace
+
+2019-10-30 23:53:03 +0100 Ulrich Sibiller (5275d2d03)
+
+	* Cursor.c: use __func__ in fprintf calls
+
+2019-09-05 23:40:45 +0200 Ulrich Sibiller (631092bb0)
+
+	* Cursor.c: remove some blank lines
+
+2019-09-05 23:40:03 +0200 Ulrich Sibiller (e72e2375f)
+
+	* Cursor.c: scope improvements
+
+2019-09-05 23:29:52 +0200 Ulrich Sibiller (129c8621f)
+
+	* Image.c: remove some blank lines
+
+2019-09-05 23:29:04 +0200 Ulrich Sibiller (5d3029a6c)
+
+	* Image.c: scope improvements
+
+2019-09-05 23:28:18 +0200 Ulrich Sibiller (f469ac534)
+
+	* Image.c: reformat comments
+
+2019-10-30 23:00:00 +0100 Ulrich Sibiller (e74eb7652)
+
+	* Events.c: fix format specifiers
+
+2019-10-30 21:58:47 +0100 Ulrich Sibiller (8dbfc1e45)
+
+	* Event.c: use __func__ in fprintf
+
+2019-09-05 22:57:13 +0200 Ulrich Sibiller (d501d48c3)
+
+	* Events.c: use designated initializers
+
+2019-09-05 22:56:12 +0200 Ulrich Sibiller (9358eaedc)
+
+	* Events.c: Scope improvements/code simplification
+
+2019-09-05 22:51:42 +0200 Ulrich Sibiller (ad89c7055)
+
+	* Events.c: reformat switch blocks
+
+2019-09-05 22:49:08 +0200 Ulrich Sibiller (36f679fb3)
+
+	* Events.c: reformat comments
+
+2019-05-26 11:58:01 +0200 Ulrich Sibiller (f48e2da3e)
+
+	* miwindow.c: mark NX changes
+
+2019-10-28 22:31:10 +0100 Ulrich Sibiller (1bd78de58)
+
+	* NXmitrap.c: mark NX changes
+
+2019-10-23 00:19:09 +0200 Ulrich Sibiller (8b796ee54)
+
+	* Binder.c: reformat comments
+
+2019-10-23 00:18:27 +0200 Ulrich Sibiller (19ba07472)
+
+	* Handlers.c: reformat comments
+
+2019-10-23 00:12:48 +0200 Ulrich Sibiller (9b1e29937)
+
+	* Image.c: reformat comments
+
+2019-10-22 23:45:23 +0200 Ulrich Sibiller (24cb46d24)
+
+	* Error.c: reformat comments
+
+2019-10-22 23:42:13 +0200 Ulrich Sibiller (b1d156888)
+
+	* Display.c: reformat comments
+
+2019-10-22 23:02:56 +0200 Ulrich Sibiller (838572f7b)
+
+	* Dialog.c: save some lines
+
+2019-10-22 22:56:08 +0200 Ulrich Sibiller (5067b1695)
+
+	* Cursor.c: reformat comments
+
+2019-10-22 22:40:49 +0200 Ulrich Sibiller (ace3d2d89)
+
+	* Colormap.c: save some lines
+
+2019-10-22 22:36:13 +0200 Ulrich Sibiller (fae611c91)
+
+	* Client.c: save some lines
+
+2019-10-22 22:25:11 +0200 Ulrich Sibiller (bbb23e586)
+
+	* GC.c: condense code
+
+2019-10-22 22:16:05 +0200 Ulrich Sibiller (c3a7e9b50)
+
+	* GC.c: reformat comments
+
+2019-10-22 22:01:16 +0200 Ulrich Sibiller (e0e602cf1)
+
+	* GC.c: fix format specifiers and parameters
+
+2019-10-22 21:56:11 +0200 Ulrich Sibiller (9d1a12134)
+
+	* GCOps.c: fix format length specifiers
+
+2019-10-22 21:55:08 +0200 Ulrich Sibiller (b9a4dea51)
+
+	* GCOps.c: reformat comments
+
+2019-10-22 23:42:44 +0200 Ulrich Sibiller (7860401b0)
+
+	* Display.c: shorten code
+
+2019-10-23 00:19:22 +0200 Ulrich Sibiller (44138137b)
+
+	* Binder.c: scope improvements
+
+2019-10-23 00:14:12 +0200 Ulrich Sibiller (d86cb00b6)
+
+	* Image.c: scope improvements
+
+2019-10-22 23:44:14 +0200 Ulrich Sibiller (d62155740)
+
+	* Error.c: scope improvements
+
+2019-10-22 22:57:18 +0200 Ulrich Sibiller (f0742c7fa)
+
+	* Cursor.c: scope improvements
+
+2019-10-22 22:15:42 +0200 Ulrich Sibiller (53f4386b9)
+
+	* GC.c: scope improvements
+
+2019-10-22 21:44:03 +0200 Ulrich Sibiller (95940104a)
+
+	* GCOps.c: scope improvements
+
+2020-01-05 22:10:31 +0100 Mike Gabriel (0e2b7479c)
+
+	* Merge branch 'uli42-pr/simplify_nxrender' into 3.6.x
+
+2019-05-31 00:34:49 +0200 Ulrich Sibiller (3bc01d1b8)
+
+	* NXrender.c: call upstream versions of (S)ProcRenderDispatch
+
+2019-05-25 17:51:47 +0200 Ulrich Sibiller (e5a93849b)
+
+	* NXrender.c: modify code to match upstream as close as possible
+
+2019-10-28 20:48:46 +0100 Ulrich Sibiller (5b6da1aa7)
+
+	* NXrender.c: mark NX changes
+
+2019-05-31 00:52:59 +0200 Ulrich Sibiller (730876f8f)
+
+	* NXrender.c, render.c: fix memory handling bugs
+
+2020-01-05 21:50:39 +0100 Mike Gabriel (60e0566d8)
+
+	* Merge branch 'uli42-pr/fix_keyconv_on_reconnect' into 3.6.x
+
+2020-01-03 01:01:24 +0100 Ulrich Sibiller (6f390f820)
+
+	* nxagent: remove additional keyboard handling from Reconnect.c
+
+2020-01-03 00:20:49 +0100 Ulrich Sibiller (a59020b1d)
+
+	* nxagent: central check for keyboard clone mode
+
+2020-01-02 23:37:24 +0100 Ulrich Sibiller (69443952b)
+
+	* Args.c: more debug output
+
+2020-01-02 23:17:04 +0100 Ulrich Sibiller (925f58992)
+
+	* Args.c: do not parse nx/nx marker as option
+
+2020-01-02 23:16:13 +0100 Ulrich Sibiller (ee3afe303)
+
+	* Args.c: fix: do not modify options string
+
+2020-01-02 22:15:06 +0100 Ulrich Sibiller (8fa4d842d)
+
+	* Keyboard.c: scope cleanups
+
+2020-01-02 21:23:11 +0100 Ulrich Sibiller (15bfec7a5)
+
+	* Keyboard.c: Use __func__ at fprintf calls
+
+2020-01-02 21:11:56 +0100 Ulrich Sibiller (4c8568caa)
+
+	* Keyboard.c: use "\0" instead of "0"
+
+2020-01-02 21:10:40 +0100 Ulrich Sibiller (bbe2c2ab9)
+
+	* Keyboard.c: fix: handle empty string
+
+2020-01-05 21:41:05 +0100 Mike Gabriel (cf24c658a)
+
+	* Merge branch 'uli42-pr/drop_icon_file_support' into 3.6.x
+
+2020-01-03 14:36:23 +0100 Ulrich Sibiller (3cd622cf4)
+
+	* Display.c: drop icon file support
+
+2020-01-05 16:01:26 +0100 Mike Gabriel (475961e65)
+
+	* Merge branch 'uli42-pr/fix_startup_slowness' into 3.6.x
+
+2020-01-05 00:22:37 +0100 Ulrich Sibiller (72af2d5e1)
+
+	* nxagent.xpm: reduce colours from 242 to 8
+
+2020-01-05 00:19:01 +0100 Ulrich Sibiller (86d2dcf09)
+
+	* x2goagent.xpm: move copyright to the end to make it a valid xpm
+          file
+
+2019-11-24 00:03:10 +0100 Mike Gabriel (226be98c8)
+
+	* Merge branch 'uli42-pr/manpages_updates' into 3.6.x
+
+2019-11-18 08:56:26 +0100 Ulrich Sibiller (16c18714b)
+
+	* nxagent manpage: improve descriptions and types
+
+2019-11-18 08:18:27 +0100 Ulrich Sibiller (408cfc390)
+
+	* nxagent manpage: extend clipboard documentation
+
+2019-11-23 23:59:51 +0100 Mike Gabriel (15647323c)
+
+	* Merge branch 'uli42-pr/silence_mesa' into 3.6.x
+
+2019-11-18 20:20:54 +0100 Ulrich Sibiller (585334183)
+
+	* Mesa: silence "maybe uninitialized" warnings
+
+2019-11-15 22:58:14 +0100 Mike Gabriel (a040e73ab)
+
+	* Merge branch 'uli42-pr/utf8_clipboard' into 3.6.x
+
+2019-11-15 22:04:11 +0100 Ulrich Sibiller (cfaf59728)
+
+	* Clipboard.c: report more supported targets
+
+2019-11-15 22:01:09 +0100 Ulrich Sibiller (9681d039c)
+
+	* Clipboard: fix debugging output
+
+2019-11-15 21:53:50 +0100 Ulrich Sibiller (a41e23c06)
+
+	* Clipboard.c: automatically calc the array size
+
+2019-11-15 21:48:43 +0100 Ulrich Sibiller (2161fa2bd)
+
+	* Clipboard.c: improve XChangeProperty code
+
+2019-11-15 12:18:07 +0100 Mike Gabriel (6f5e483cd)
+
+	* Merge branch 'uli42-pr/cleanup_rootless' into 3.6.x
+
+2019-10-30 20:08:20 +0100 Ulrich Sibiller (4579207e6)
+
+	* Rootless.c: rewrite loop to allow for scope improvements
+
+2019-10-30 20:07:33 +0100 Ulrich Sibiller (c75cdd100)
+
+	* Rootless.c: fix linefeeds when printing lists
+
+2019-10-30 19:45:53 +0100 Ulrich Sibiller (9e5d72c0e)
+
+	* Rootless.c: silence compiler warning about wrong parmeter sizes
+
+2019-10-30 19:45:28 +0100 Ulrich Sibiller (63f6c1e70)
+
+	* Rootless.c: disable unused function
+
+2019-10-30 19:45:00 +0100 Ulrich Sibiller (e319268ae)
+
+	* Rootless.c: silence compiler warnings about wrong fromat specifiers
+
+2019-10-30 19:30:02 +0100 Ulrich Sibiller (917d4b3c5)
+
+	* Rootless.c: Fatal error if malloc fails
+
+2019-10-28 16:45:06 +0100 Ulrich Sibiller (4ebd5fcd3)
+
+	* Rootless.c: cleanup function prototypes
+
+2019-10-28 16:44:43 +0100 Ulrich Sibiller (6d62b2c02)
+
+	* Rootless.c: reformat comments
+
+2019-10-28 16:44:13 +0100 Ulrich Sibiller (0f7c5e2a7)
+
+	* Rootless.c: scope improvements
+
+2019-10-28 16:42:00 +0100 Ulrich Sibiller (41f6f3eec)
+
+	* Rootless.c: use __func__ instead of hardcoded function name
+
+2019-10-28 16:04:03 +0100 Ulrich Sibiller (a43c50bb2)
+
+	* Rootless.c: use designated initializers
+
+2019-11-15 12:15:48 +0100 Mike Gabriel (1664e1051)
+
+	* Merge branch 'uli42-pr/simplify_pixmap' into 3.6.x
+
+2019-10-29 01:12:59 +0100 Ulrich Sibiller (bc42d11f9)
+
+	* Pixmap.c: reformat comments
+
+2019-10-29 01:12:01 +0100 Ulrich Sibiller (ec1aac45e)
+
+	* Pixmap.c: scope improvements
+
+2019-10-29 01:13:34 +0100 Ulrich Sibiller (6c44480de)
+
+	* Pixmap.c: drop code that does not make sense
+
+2019-06-11 23:46:20 +0200 Ulrich Sibiller (0535c49ca)
+
+	* Pixmap.c: call miModifyPixmapHeader twice instead of duplicating
+          code
+
+2019-11-15 12:11:22 +0100 Mike Gabriel (db74c07e6)
+
+	* Merge branch 'uli42-pr/args_fixes' into 3.6.x
+
+2019-10-28 12:31:04 +0100 Ulrich Sibiller (6ef35a94e)
+
+	* Args.c: reformat switch blocks
+
+2019-10-28 11:53:56 +0100 Ulrich Sibiller (1dd8276fb)
+
+	* Args.c: Unify formatting
+
+2019-10-28 11:53:03 +0100 Ulrich Sibiller (e9eb3bef2)
+
+	* Args.c: do not print function name in errors or warnings
+
+2019-10-28 11:52:40 +0100 Ulrich Sibiller (484691334)
+
+	* Args.c: scope improvements
+
+2019-06-22 22:11:34 +0200 Ulrich Sibiller (5bb948660)
+
+	* Args.c: simplify options string allocation
+
+2019-06-22 19:42:22 +0200 Ulrich Sibiller (0755f3d6c)
+
+	* Args.c: fix clipboard=0 or -clipboard 0
+
+2019-06-22 19:39:17 +0200 Ulrich Sibiller (500683ab5)
+
+	* Args.c: remove unreachable code
+
+2019-06-22 19:26:56 +0200 Ulrich Sibiller (773fdb6a8)
+
+	* Args.c: fix unitialized variable
+
+2019-11-02 11:49:57 +0100 Mike Gabriel (1ae0ceb7c)
+
+	* Merge branch 'uli42-pr/simplify_glxext' into 3.6.x
+
+2019-05-01 21:52:02 +0200 Ulrich Sibiller (f3bddad4c)
+
+	* NXglxext.c: use upstream versions of Dispatch functions
+
+2019-11-02 11:40:04 +0100 Mike Gabriel (eb8c16ef9)
+
+	* Merge branch 'uli42-pr/simplify_nxwindow' into 3.6.x
+
+2019-05-01 14:10:17 +0200 Ulrich Sibiller (7675af8e1)
+
+	* NXwindow.c: use upstream function DeleteWindow()
+
+2019-09-01 14:57:27 +0200 Ulrich Sibiller (cf0571bb4)
+
+	* NXwindow.c: call InitRootWindow from dix
+
+2019-10-28 14:30:07 +0100 Ulrich Sibiller (5327a85b7)
+
+	* NXwindow.c: mark NX changes
+
+2019-10-28 14:06:47 +0100 Ulrich Sibiller (aab723eab)
+
+	* NXwindow.c: drop own UnmapWindow()
+
+2019-05-01 11:59:12 +0200 Ulrich Sibiller (40a4fae66)
+
+	* NXwindow.c: call upstream version UnmapWindow()
+
+2019-11-02 11:37:00 +0100 Mike Gabriel (5f806ddfd)
+
+	* Merge branch 'uli42-pr/simplify_nxglyph' into 3.6.x
+
+2019-06-12 00:54:40 +0200 Ulrich Sibiller (fcbd27105)
+
+	* NXglyph.c: mark NX changes
+
+2019-05-22 23:58:15 +0200 Ulrich Sibiller (67b03f5d5)
+
+	* NXglyph.c: adapt FindGlyph() to better match render/glyph.c
+
+2019-05-22 23:35:12 +0200 Ulrich Sibiller (73f88998a)
+
+	* NXglyphcurs.c: use dixChangeCG()
+
+2019-11-02 11:34:00 +0100 Mike Gabriel (03d31d2ab)
+
+	* Merge branch 'uli42-pr/simplify_nxxvdisp' into 3.6.x
+
+2019-05-01 02:35:56 +0200 Ulrich Sibiller (280cf1264)
+
+	* Simplify (NX)xvdisp.c
+
+2019-11-02 11:31:26 +0100 Mike Gabriel (fdd1e538b)
+
+	* Merge branch 'uli42-pr/simplify_nxdispatch' into 3.6.x
+
+2019-10-28 22:30:54 +0100 Ulrich Sibiller (0fb6af25c)
+
+	* NXdispatch.c: mark NX changes
+
+2019-05-03 23:50:45 +0200 Ulrich Sibiller (c61ac23f2)
+
+	* NXdispatch.c: simplify InitClientPrivates()
+
+2019-05-03 23:15:02 +0200 Ulrich Sibiller (24c42813d)
+
+	* NXdispatch.c: call upstream CloseDownClient()
+
+2019-05-03 19:18:20 +0200 Ulrich Sibiller (c02ab70ef)
+
+	* NXdispatch.c: Simplify InitSelections()
+
+2019-11-02 11:21:39 +0100 Mike Gabriel (718a58fb1)
+
+	* Merge branch 'uli42-pr/simplify_nxextension' into 3.6.x
+
+2019-10-28 20:30:23 +0100 Ulrich Sibiller (e54d2a390)
+
+	* nxagent: drop NXextension.c
+
+2019-05-05 15:04:55 +0200 Ulrich Sibiller (9120d1b72)
+
+	* NXextension.c: use ProcListExtensions() from dix
+
+2019-05-05 15:01:00 +0200 Ulrich Sibiller (8e9e77665)
+
+	* NXextension.c: use ProcQueryExtension() from dix
+
+2019-11-02 11:18:39 +0100 Mike Gabriel (d6872d4e0)
+
+	* Merge branch 'uli42-pr/simplify_nxshm' into 3.6.x
+
+2019-05-30 23:24:16 +0200 Ulrich Sibiller (6fd0ffc99)
+
+	* NXshm.c: call upstream miShmPutImage
+
+2019-05-01 11:43:14 +0200 Ulrich Sibiller (a9bdfd217)
+
+	* NXshm.c: use upstream versions of Dispatch functions
+
+2019-05-01 11:07:21 +0200 Ulrich Sibiller (e755e6600)
+
+	* NXshm.c: rework code to be identical for ProcShmDispatch and
+          SProcShmDispatch
+
+2019-11-02 11:14:34 +0100 Mike Gabriel (7afe95535)
+
+	* Merge branch 'uli42-pr/drop_holders' into 3.6.x
+
+2019-10-23 21:20:39 +0200 Ulrich Sibiller (dbf36ece3)
+
+	* nxagent: drop Holder.[ch]
+
+2019-10-23 21:11:43 +0200 Ulrich Sibiller (cbc9f831c)
+
+	* Drop unused placeholder code
+
+2019-11-01 16:44:08 +0100 Mike Gabriel (7b63809ae)
+
+	* Merge branch 'uli42-pr/fix_broken_damage' into 3.6.x
+
+2019-10-30 18:34:05 +0100 Ulrich Sibiller (2a0994122)
+
+	* Drop NXdamage.c
+
+2019-10-30 18:26:31 +0100 Ulrich Sibiller (83d9cd4e9)
+
+	* damage: Don't rewrite Text ops to GlyphBlt ops
+
+2019-10-30 17:50:44 +0100 Ulrich Sibiller (ca7c1c861)
+
+	* NXdamage.x fix wrong backport
+
+2019-11-01 16:37:37 +0100 Mike Gabriel (753535e39)
+
+	* Merge branch 'uli42-pr/simplify_nxevents' into 3.6.x
+
+2019-10-28 19:58:38 +0100 Ulrich Sibiller (283e4523a)
+
+	* NXevents.c: add some explanations from the original changelog
+
+2019-10-28 17:45:49 +0100 Ulrich Sibiller (6ed435e44)
+
+	* NXevents.c: use XYToWindow from dix
+
+2019-05-22 21:56:39 +0200 Ulrich Sibiller (f887d428c)
+
+	* NXevents.c: call upstream ProcAllocEvents()
+
+2019-05-22 21:43:33 +0200 Ulrich Sibiller (582618af8)
+
+	* NXEvents.c: mark NX specific code
+
+2019-05-22 21:35:05 +0200 Ulrich Sibiller (4c5331afa)
+
+	* NXevents.c: call upstream DefineInitialRootWindow()
+
+2019-05-22 21:20:32 +0200 Ulrich Sibiller (b64e1f60b)
+
+	* NXevents.c: call upstream version of ProcSendEvent()
+
+2019-05-05 16:14:26 +0200 Ulrich Sibiller (a66037786)
+
+	* NXevents.c: call upstream versions of (De)ActivatePointerGrab()
+
+2019-11-01 16:21:13 +0100 Mike Gabriel (bdcb5a188)
+
+	* Merge branch 'uli42-pr/work_on_xau' into 3.6.x
+
+2019-10-04 21:13:35 +0200 Ulrich Sibiller (c590c6472)
+
+	* Xau files: adapt code to match upstream libXau 1.0.9
+
+2019-10-04 21:05:49 +0200 Ulrich Sibiller (5929dfdeb)
+
+	* AuRead.c: remove redundant null check on calling free()
+
+2019-10-04 21:03:47 +0200 Ulrich Sibiller (9deebfc8f)
+
+	* AuRead.c: whitespace cleanup
+
+2019-10-04 21:01:59 +0200 Ulrich Sibiller (a7355c5c8)
+
+	* Xau: mark NX changes
+
+2019-10-19 08:49:09 +0200 Mihai Moldovan (e721ba296)
+
+	* Merge branch 'uli42-pr/fix_rebuild' into 3.6.x
+
+2019-09-28 21:32:07 +0200 Ulrich Sibiller (b55c66e8a)
+
+	* nxagent/Imakefile: remove ../../exports/lib
+
+2019-10-10 11:37:04 +0200 Mihai Moldovan (c68a579eb)
+
+	* Merge branch 'uli42-pr/fix_fullscreen_memleak' into 3.6.x
+
+2019-10-03 23:39:01 +0200 Ulrich Sibiller (646e3ce24)
+
+	* Screen.c: cleanup code a bit
+
+2019-10-03 23:31:29 +0200 Ulrich Sibiller (8482abd31)
+
+	* Screen.c: fix a memleak
+
+2019-10-10 11:23:55 +0200 Mihai Moldovan (994305ff4)
+
+	* Merge branch 'uli42-pr/fix_segfault' into 3.6.x
+
+2019-10-03 23:05:20 +0200 Ulrich Sibiller (dc7a78b45)
+
+	* Fix segfault in argument parsing
+
+2019-09-29 17:58:09 +0200 Mike Gabriel (5405447e5)
+
+	* Merge branch 'uli42-pr/clipboard_overhaul' into 3.6.x
+
+2019-08-09 11:03:16 +0200 Ulrich Sibiller (72c022406)
+
+	* Clipboard.c: rename nxagentNotifySelection to
+          nxagentHandleSelectionNotifyFromXServer
+
+2019-08-08 22:55:52 +0200 Ulrich Sibiller (6663cbe68)
+
+	* Clipboard.c: fix nested clipboard handling
+
+2019-08-08 22:48:38 +0200 Ulrich Sibiller (ae44a8cd5)
+
+	* Clipboard.c: add some more FIXMEs
+
+2019-08-08 21:45:39 +0200 Ulrich Sibiller (899339f5a)
+
+	* Clipboard.c: drop old commented code
+
+2019-08-08 21:44:15 +0200 Ulrich Sibiller (21598c7e2)
+
+	* Clipboard.c: fix: translate target on transfer
+
+2019-08-08 21:33:48 +0200 Ulrich Sibiller (b5cac6722)
+
+	* Clipboard.c: flush the display during transfer phase
+
+2019-08-08 21:23:39 +0200 Ulrich Sibiller (4db1172ae)
+
+	* Clipboard.c: remove superflous return
+
+2019-08-08 21:17:37 +0200 Ulrich Sibiller (1c36e49ad)
+
+	* Clipboard.c: drop unneeded return code
+
+2019-08-08 21:17:12 +0200 Ulrich Sibiller (bf87f8bbe)
+
+	* Clipboard.c: add loads of comments
+
+2019-08-08 20:48:44 +0200 Ulrich Sibiller (e985f7111)
+
+	* Clipboard.c: rework debug prints
+
+2019-08-06 22:54:55 +0200 Ulrich Sibiller (92ad24a3b)
+
+	* Clipboard.c: translate internal to external atom
+
+2019-08-05 18:22:00 +0200 Ulrich Sibiller (9a144136d)
+
+	* Clipboard.c: remove unneccessary return
+
+2019-08-05 18:00:49 +0200 Ulrich Sibiller (1bf68e328)
+
+	* Clipboard.c: whitespace fixes
+
+2019-08-05 17:57:37 +0200 Ulrich Sibiller (a6c57d6ff)
+
+	* Clipboard.c: improve readability by using an if clause
+
+2019-08-05 17:54:55 +0200 Ulrich Sibiller (249e4321c)
+
+	* Clipboard.c: introduce nxagentInitSelectionOwner
+
+2019-08-05 17:52:34 +0200 Ulrich Sibiller (b393bca69)
+
+	* Clipboard.c: scope improvements
+
+2019-08-05 17:41:48 +0200 Ulrich Sibiller (cb3e44a17)
+
+	* Clipboard.c: Refactor nxagentCollectPropertyEvent
+
+2019-08-05 17:14:06 +0200 Ulrich Sibiller (9006e19aa)
+
+	* Clipboard.c: cleanup in nxagentRequestSelection
+
+2019-08-05 17:07:25 +0200 Ulrich Sibiller (6f071341b)
+
+	* Clipboard.c: use designated initializers where appropriate
+
+2019-08-05 16:56:57 +0200 Ulrich Sibiller (1af01db33)
+
+	* Clipboard.c: factor out nxagentReplyRequestSelection
+
+2019-08-05 16:48:01 +0200 Ulrich Sibiller (5e2487108)
+
+	* Clipboard.c: TIMESTAMP is a special server target
+
+2019-08-05 16:27:38 +0200 Ulrich Sibiller (f99f52772)
+
+	* Clipboard.c: introduce macros CLINDEX and WINDOWID
+
+2019-08-05 16:36:10 +0200 Ulrich Sibiller (63320437e)
+
+	* Clipboard.c: simplify nxagentGetClipboardWindow
+
+2019-08-05 16:18:51 +0200 Ulrich Sibiller (1d05784b4)
+
+	* Clipboard.c: drop serverCLIPBOARD
+
+2019-08-05 16:16:30 +0200 Ulrich Sibiller (e34f152c9)
+
+	* Clipboard.c: clientAccum is only used for debugging, add DEBUG
+          ifdefs
+
+2019-08-05 16:13:47 +0200 Ulrich Sibiller (98a0810ff)
+
+	* Clipboard.c: rename some variables
+
+2019-08-05 16:08:40 +0200 Ulrich Sibiller (5de8bac22)
+
+	* Clipboard.c: introduce nxagentFind*Index functions
+
+2019-08-05 15:51:42 +0200 Ulrich Sibiller (79867f4a0)
+
+	* Clipboard.c: introduce nxagent{Clear,Store}SelectionOwner
+
+2019-08-04 01:28:59 +0200 Ulrich Sibiller (6621c53c5)
+
+	* Clipboard.c: Fix: report timestamps as XA_INTEGER
+
+2019-08-04 01:09:06 +0200 Ulrich Sibiller (6d5cda478)
+
+	* Clipboard.c: improve TARGETS request handling
+
+2019-08-04 00:51:06 +0200 Ulrich Sibiller (25cbfd14f)
+
+	* Clipboard.c: merge endTransfer and nxagentSendSelectionNotify
+
+2019-08-04 00:17:01 +0200 Ulrich Sibiller (7d0683701)
+
+	* Clipboard.c: introduce SendSelectionNotifyEventToClient helper
+
+2019-08-03 23:58:29 +0200 Ulrich Sibiller (c233eec5f)
+
+	* Clipboard.c: introduce SendEventToClient helper
+
+2019-08-03 23:43:27 +0200 Ulrich Sibiller (2ee7626a6)
+
+	* Clipboard.c: introduce SendSelectionNotifyEventToServer
+
+2019-08-03 23:26:02 +0200 Ulrich Sibiller (bc997cf64)
+
+	* Clipboard.c: introduce central function to abort the transfer
+
+2019-08-03 23:20:42 +0200 Ulrich Sibiller (f14e80077)
+
+	* Clipboard.c: do not send notify when pointer is NULL
+
+2019-09-29 17:39:48 +0200 Mike Gabriel (3a3a3373c)
+
+	* Merge branch 'uli42-pr/various2' into 3.6.x
+
+2019-09-19 00:11:05 +0200 Ulrich Sibiller (085f8a4f6)
+
+	* nxcompshad: delete trailing whitespace
+
+2019-09-18 23:47:24 +0200 Ulrich Sibiller (506378cf2)
+
+	* nxcompshad: fix logging segfault
+
+2019-09-06 02:22:26 +0200 Ulrich Sibiller (df9d37da5)
+
+	* GC.c: introduce helper macros for GC management
+
+2019-09-05 22:57:57 +0200 Ulrich Sibiller (9693d8b98)
+
+	* Events.c: drop unused function
+
+2019-09-06 14:30:39 +0200 Ulrich Sibiller (9512e6451)
+
+	* Holder.c: remove superflous return
+
+2019-09-06 14:50:24 +0200 Ulrich Sibiller (bf700ec9e)
+
+	* Keyboard.c: condense keycode conversion table
+
+2019-09-06 00:30:16 +0200 Ulrich Sibiller (2682c9407)
+
+	* Display.c: fix format
+
+2019-09-06 01:44:33 +0200 Ulrich Sibiller (f6cdd0f92)
+
+	* Font.c: add FIXME
+
+2019-09-05 23:29:22 +0200 Ulrich Sibiller (0a8027135)
+
+	* Image.c: fix indentation
+
+2019-09-05 22:15:20 +0200 Ulrich Sibiller (602d4b82b)
+
+	* Events.c: add nxagentSwitchEventsAllScreens helper
+
+2019-09-05 21:43:23 +0200 Ulrich Sibiller (15ac7a809)
+
+	* Trap.h: shorten file
+
+2019-09-05 20:47:15 +0200 Ulrich Sibiller (f323ada3c)
+
+	* nxagent: move atom initiatialization to Init.c
+
+2019-09-05 20:32:24 +0200 Ulrich Sibiller (4fa0ea268)
+
+	* Events.c: whitespace fixes
+
+2019-09-05 20:13:03 +0200 Ulrich Sibiller (8fc7a8057)
+
+	* Render.c: remove some more unused functions
+
+2019-09-05 19:47:35 +0200 Ulrich Sibiller (fd274d058)
+
+	* Render.c: remove lots of superflous empty lines
+
+2019-09-05 19:44:39 +0200 Ulrich Sibiller (1a9d96e07)
+
+	* Render.c: reformat comments
+
+2019-09-05 19:17:53 +0200 Ulrich Sibiller (56aaea90b)
+
+	* Render.c: Code simplifications
+
+2019-09-05 19:07:14 +0200 Ulrich Sibiller (6275bbc6f)
+
+	* Render.c: remove empty lines around XSync calls
+
+2019-09-05 19:04:42 +0200 Ulrich Sibiller (45f6e41c4)
+
+	* Render.c: make nxagentPrintFormat a NOP in normal mode
+
+2019-09-05 17:58:55 +0200 Ulrich Sibiller (7d8323a4a)
+
+	* nxagent: simplify nxagentRenderRealizeCursor
+
+2019-09-01 23:03:11 +0200 Ulrich Sibiller (7ca51c529)
+
+	* Render.c. simplify nxagentMatchingFormats
+
+2019-09-01 23:04:59 +0200 Ulrich Sibiller (087b082c7)
+
+	* Render.c: fix broken comment
+
+2019-09-05 18:08:03 +0200 Ulrich Sibiller (1c019bd1f)
+
+	* Render.c: drop unused nxagentDestroyPictureClip
+
+2019-09-01 23:08:18 +0200 Ulrich Sibiller (59ea22458)
+
+	* Render.c: drop unused nxagentRasterizeTrapezoid
+
+2019-09-01 23:02:50 +0200 Ulrich Sibiller (8aac9b617)
+
+	* Render.c: drop unused nxagentValidatePicture
+
+2019-09-01 15:41:03 +0200 Ulrich Sibiller (2f2a8ee00)
+
+	* Init.c: some scope improvements
+
+2019-09-01 15:27:52 +0200 Ulrich Sibiller (c6498ddb7)
+
+	* Screen.h: add missing prototype for
+          nxagentPropagateArtsdProperties()
+
+2019-09-01 15:25:48 +0200 Ulrich Sibiller (82c096ee2)
+
+	* Atoms.[ch]: drop unused return code of nxagentInitAtoms()
+
+2019-07-04 07:47:19 +0200 Ulrich Sibiller (39866f5c1)
+
+	* Events.c: scope improvements
+
+2019-08-03 23:16:05 +0200 Ulrich Sibiller (1920599e1)
+
+	* Clipboard.c: whitespace fixes
+
+2019-08-01 23:37:56 +0200 Ulrich Sibiller (4d3bd06ce)
+
+	* NXdixfonts.c: use NXAGENT_SERVER instead of NX_TRANS_SOCK
+
+2019-08-01 23:18:03 +0200 Ulrich Sibiller (b1850beb9)
+
+	* nxagent: avoid nested externs
+
+2019-08-01 00:13:07 +0200 Ulrich Sibiller (7d2a222f2)
+
+	* xkb: replace NX_TRANS_SOCKET by NXAGENT_SERVER
+
+2019-08-01 00:02:42 +0200 Ulrich Sibiller (71fca41ff)
+
+	* Screen.c: fix wrong format character
+
+2019-07-31 23:43:21 +0200 Ulrich Sibiller (c54feb0bd)
+
+	* Window.c: reactivate disabled debug code
+
+2019-07-31 23:33:50 +0200 Ulrich Sibiller (84867ad0f)
+
+	* Screen.c: fix typo
+
+2019-07-31 23:20:07 +0200 Ulrich Sibiller (a514a7e29)
+
+	* Screen.c: improve readability
+
+2019-07-31 23:18:41 +0200 Ulrich Sibiller (a91e34a8a)
+
+	* Imakefile: make NXAGENT_RANDR_MODE_PREFIX configurable via macro
+
+2019-07-31 22:34:24 +0200 Ulrich Sibiller (3b94b9c64)
+
+	* Imakefile: Cleanup defines
+
+2019-07-29 16:07:37 +0200 Ulrich Sibiller (e2fa4f5c4)
+
+	* Colormap.c: Formatting and scope improvements
+
+2019-07-29 00:01:17 +0200 Ulrich Sibiller (19267ddf4)
+
+	* Screen.c: fix typo in TEST output
+
+2019-07-26 00:07:28 +0200 Ulrich Sibiller (c36efbd37)
+
+	* Screen.c: scope improvements
+
+2019-07-25 23:58:30 +0200 Ulrich Sibiller (fc7cb8657)
+
+	* Pixels.c: scope improvements
+
+2019-07-25 23:53:57 +0200 Ulrich Sibiller (f8a1f79b3)
+
+	* Colormap.c: scope improvements
+
+2019-07-24 00:02:51 +0200 Ulrich Sibiller (8f609404c)
+
+	* NXproperty.c: prevent deletion of NX_AGENT_VERSION property
+
+2018-05-05 18:58:27 +0200 Ulrich Sibiller (9dca2c598)
+
+	* Split.c: whitespace fixes
+
+2019-07-23 22:30:33 +0200 Ulrich Sibiller (cccb25fa7)
+
+	* Screen.c: code cleanup
+
+2019-07-23 21:31:40 +0200 Ulrich Sibiller (17e0265a4)
+
+	* Screen.c: fix: use bit operator, not logic operator
+
+2019-07-23 21:29:27 +0200 Ulrich Sibiller (b8751fca8)
+
+	* Atoms.c: remove unused parameter from nxagentInitAtoms
+
+2019-07-23 21:25:41 +0200 Ulrich Sibiller (1f71a75f5)
+
+	* Atoms.c: code cleanup
+
+2019-07-23 21:25:02 +0200 Ulrich Sibiller (a61102b62)
+
+	* Atoms.c: fix wrong variable reference
+
+2019-07-23 21:24:44 +0200 Ulrich Sibiller (6dd6e695a)
+
+	* Atoms.c: add FIXME
+
+2018-11-09 01:54:22 +0100 Ulrich Sibiller (2fbefa708)
+
+	* Events.c: code improvements (mainly scope)
+
+2018-11-09 00:23:20 +0100 Ulrich Sibiller (9da26af35)
+
+	* code-versions.txt: adapt os version information
+
+2018-11-07 19:50:21 +0100 Ulrich Sibiller (db0187b05)
+
+	* code-versions.txt: Update composite version
+
+2018-11-08 00:12:56 +0100 Ulrich Sibiller (3a581f165)
+
+	* {render,randr}/Imakefile: remove hw/kdrive from include path
+
+2019-06-21 15:17:04 +0200 Ulrich Sibiller (59f1d3737)
+
+	* NXrender.c: fix possible memory leak
+
+2019-06-24 21:30:11 +0200 Ulrich Sibiller (157c8c7f3)
+
+	* Clipboard.c: fix wrong variable being printed in debugging output
+
+2019-06-24 21:39:45 +0200 Ulrich Sibiller (084d9cb54)
+
+	* NXdispatch.c: replace hardcoded values by variables from
+          Clipboard.c
+
+2019-07-02 21:03:10 +0200 Ulrich Sibiller (7a2836f8d)
+
+	* Update currentTime in dispatch loop
+
+2019-07-02 19:55:20 +0200 Ulrich Sibiller (2589a1349)
+
+	* Events.c: fix wrong size in format specification
+
+2019-07-03 22:05:58 +0200 Ulrich Sibiller (41e1d4961)
+
+	* nxagent: drop unused DisplayLatency
+
+2019-06-30 15:55:26 +0200 Ulrich Sibiller (c539e0ca5)
+
+	* NXproperty.c: reformat GetWindowProperty to increase readability
+
+2019-06-30 17:56:09 +0200 Ulrich Sibiller (7fa6c8808)
+
+	* Events.c: identify internal root window in
+          nxagentInternalWindowInfo
+
+2019-06-30 17:55:51 +0200 Ulrich Sibiller (94c7091bc)
+
+	* Events.c: add FIXME
+
+2019-06-30 17:35:47 +0200 Ulrich Sibiller (7404d2178)
+
+	* Events.c: fix wrong returncode interpretation
+
+2019-06-30 17:16:08 +0200 Ulrich Sibiller (3d37db071)
+
+	* Events.c: shorten window tree debugging code
+
+2019-06-30 17:15:05 +0200 Ulrich Sibiller (022d64d2a)
+
+	* Events.c: fix write after buffer end
+
+2019-06-30 16:42:22 +0200 Ulrich Sibiller (061f7dc9f)
+
+	* Events.c: nxagentInternalWindowInfo is only called with DEBUG_TREE
+
+2019-07-05 19:41:04 +0200 Ulrich Sibiller (0153bf6b7)
+
+	* Atoms.c: fix wrong fprintf format
+
+2019-09-29 16:59:53 +0200 Mike Gabriel (796c8e421)
+
+	* Merge branch 'uli42-pr/drop_faulty_render_check' into 3.6.x
+
+2019-09-01 21:22:17 +0200 Ulrich Sibiller (5aee32e9d)
+
+	* nxagent: drop nxagentRenderTrap
+
+2019-09-29 16:54:08 +0200 Mike Gabriel (c577775f9)
+
+	* Merge branch
+          'sunweaver-pr/add-autograb-to-known-keystrokes-printout'
+          into 3.6.x
+
+2019-09-17 16:28:41 +0200 Mike Gabriel (4819712a9)
+
+	* Keystroke.c: Grammar fix in stdout message (Current known ->
+          Currently known).
+
+2019-08-27 15:46:37 +0200 Mike Gabriel (57d3a42c2)
+
+	* release 3.5.99.22 (tag: 3.5.99.22)
 
 2019-08-27 15:15:47 +0200 Mike Gabriel (7d07442d7)
 
