@@ -74,7 +74,7 @@ Colormap nxagentDefaultVisualColormap(Visual *visual);
       (v1).blue_mask     == (v2).red_mask) &&   \
      (v1).colormap_size == (v2).colormap_size)
 
-Visual nxagentAlphaVisual;
+extern Visual nxagentAlphaVisual;
 
 void nxagentInitAlphaVisual();
 

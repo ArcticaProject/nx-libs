@@ -288,7 +288,6 @@ typedef struct _ConfiguredWindow
   unsigned int valuemask;
 } ConfiguredWindowStruct;
 
-ConfiguredWindowStruct *nxagentConfiguredWindowList;
 
 typedef struct _StaticResizedWindow
 {
@@ -299,8 +298,6 @@ typedef struct _StaticResizedWindow
   int offX;
   int offY;
 } StaticResizedWindowStruct;
-
-StaticResizedWindowStruct *nxagentStaticResizedWindowList;
 
 void nxagentPostValidateTree(WindowPtr pParent, WindowPtr pChild, VTKind kind);
 

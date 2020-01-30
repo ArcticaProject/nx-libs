@@ -65,7 +65,7 @@ typedef struct _AnimCur {
     AnimCurElt  *elts;
 } AnimCurRec, *AnimCurPtr;
 
-CursorBitsPtr nxagentAnimCursorBits;
+extern CursorBitsPtr nxagentAnimCursorBits;
 
 #define nxagentIsAnimCursor(c)        ((c)->bits == nxagentAnimCursorBits)
 #define nxagentGetAnimCursor(c)       ((AnimCurPtr) ((c) + 1))
