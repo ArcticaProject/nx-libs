@@ -71,9 +71,6 @@ RESTYPE  RT_NX_PIXMAP;
 
 int nxagentPixmapPrivateIndex;
 
-int nxagentCorruptedPixmaps;
-int nxagentCorruptedBackgrounds;
-
 /*
  * Force deallocation of the virtual pixmap.
  */

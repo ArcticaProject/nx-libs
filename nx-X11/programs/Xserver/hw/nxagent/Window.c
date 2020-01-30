@@ -76,12 +76,6 @@
 int nxagentWindowPrivateIndex;
 
 /*
- * Number of windows which need synchronization.
- */
-
-int nxagentCorruptedWindows;
-
-/*
  * Used to track nxagent window's visibility.
  */
 

@@ -91,6 +91,11 @@ RESTYPE RT_NX_CORR_WINDOW;
 RESTYPE RT_NX_CORR_PIXMAP;
 
 int nxagentCorruptedPixmaps     = 0;
+
+/*
+ * Number of windows which need synchronization.
+ */
+
 int nxagentCorruptedWindows     = 0;
 int nxagentCorruptedBackgrounds = 0;
 
