@@ -23,7 +23,11 @@ export INCLUDEDIR = "/usr/include/$(DEB_HOST_MULTIARCH)"
 
 override_dh_auto_clean:
 	rm -Rf nx-X11/.build-exports
-	dh_auto_clean  --no-parallel || dh_auto_clean
+	dh_auto_clean --no-parallel || dh_auto_clean
+
+override_dh_clean:
+	dh_clean
+	rm -f nx-X11/config/cf/date.def
 
 override_dh_install:
 
@@ -44,7 +48,10 @@ override_dh_install:
 	rm -R debian/tmp/usr/include/$(DEB_HOST_MULTIARCH)/nx-X11/extensions/XI.h
 	rm -R debian/tmp/usr/include/$(DEB_HOST_MULTIARCH)/nx-X11/Xtrans/
 
-	dh_install --fail-missing
+	dh_install
+
+override_dh_missing:
+	dh_missing --fail-missing
 
 override_dh_auto_install:
 	PREFIX='/usr' dh_auto_install --no-parallel -Smakefile || \
