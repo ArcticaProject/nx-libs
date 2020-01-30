@@ -110,7 +110,7 @@ Bool nxagentTrue24 = False;
 int nxagentNumVisuals;
 int nxagentXConnectionNumber;
 
-int nxagentIOErrorHandler(Display *display);
+int nxagentIOErrorHandler(Display *disp);
 
 static Bool nxagentDisplayInfoSaved = False;
 static Display *nxagentDisplayBackup = NULL;
@@ -170,7 +170,7 @@ Pixmap nxagentIconPixmap;
 Pixmap nxagentIconShape;
 Bool useXpmIcon = False;
 
-Bool nxagentMakeIcon(Display *display, Pixmap *nxIcon, Pixmap *nxMask);
+Bool nxagentMakeIcon(Display *disp, Pixmap *nxIcon, Pixmap *nxMask);
 
 
 static void nxagentInitVisuals(void);
@@ -188,7 +188,7 @@ static int nxagentCheckForColormapsCompatibility(int flexibility);
  * Save Internal implementation Also called in Reconnect.c.
  */
 
-Display *nxagentInternalOpenDisplay(char *display);
+Display *nxagentInternalOpenDisplay(char *disp);
 
 #ifdef NXAGENT_TIMESTAMP
 unsigned long startTime;
@@ -226,7 +226,7 @@ int nxagentServerOrder(void)
  * be probably moved to Handlers.c.
  */
 
-int nxagentIOErrorHandler(Display *display)
+int nxagentIOErrorHandler(Display *disp)
 {
   #ifdef TEST
   fprintf(stderr, "nxagentIOErrorHandler: Got I/O error with nxagentException.ioError [%d].\n",
@@ -559,7 +559,7 @@ static void nxagentSigchldHandler(int signal)
   return;
 }
 
-Display *nxagentInternalOpenDisplay(char *display)
+Display *nxagentInternalOpenDisplay(char *disp)
 {
   /*
    * Stop the smart schedule timer since it uses SIGALRM as we do.
@@ -601,10 +601,10 @@ FIXME: Should print a warning if the user tries to let the agent
 
   #ifdef TEST
   fprintf(stderr, "nxagentInternalOpenDisplay: Going to open the display [%s].\n",
-              display);
+              disp);
   #endif
 
-  Display *newDisplay = XOpenDisplay(display);
+  Display *newDisplay = XOpenDisplay(disp);
 
   alarm(0);
 
@@ -630,7 +630,7 @@ FIXME: Should print a warning if the user tries to let the agent
   return newDisplay;
 }
 
-static void nxagentDisplayBlockHandler(Display *display, int reason)
+static void nxagentDisplayBlockHandler(Display *disp, int reason)
 {
   if (nxagentDisplay != NULL)
   {
@@ -686,7 +686,7 @@ static void nxagentDisplayBlockHandler(Display *display, int reason)
   }
 }
 
-static void nxagentDisplayWriteHandler(Display *display, int length)
+static void nxagentDisplayWriteHandler(Display *disp, int length)
 {
   if (nxagentDisplay != NULL)
   {
@@ -717,7 +717,7 @@ int nxagentGetDataRate(void)
   return nxagentRate;
 }
 
-static void nxagentDisplayFlushHandler(Display *display, int length)
+static void nxagentDisplayFlushHandler(Display *disp, int length)
 {
   if (nxagentDisplay != NULL)
   {
@@ -768,7 +768,7 @@ static void nxagentDisplayFlushHandler(Display *display, int length)
  * rupt was received or if any other event occurred mandating the
  + end of the session."
  */
-static int nxagentDisplayErrorPredicate(Display *display, int error)
+static int nxagentDisplayErrorPredicate(Display *disp, int error)
 {
   #ifdef TEST
   fprintf(stderr, "nxagentDisplayErrorPredicate: CHECK! Error is [%d] with [%d][%d][%d][%d][%d].\n",
@@ -789,7 +789,7 @@ static int nxagentDisplayErrorPredicate(Display *display, int error)
     else if (nxagentException.sigHup > 0 ||
                  nxagentException.ioError > 0)
     {
-      NXForceDisplayError(display);
+      NXForceDisplayError(disp);
 
       return 1;
     }
@@ -1746,7 +1746,7 @@ FIXME: Is this needed?
   nxagentDisplay = NULL;
 }
 
-Bool nxagentMakeIcon(Display *display, Pixmap *nxIcon, Pixmap *nxMask)
+Bool nxagentMakeIcon(Display *disp, Pixmap *nxIcon, Pixmap *nxMask)
 {
   char** agentIconData;
 
@@ -1764,8 +1764,8 @@ Bool nxagentMakeIcon(Display *display, Pixmap *nxIcon, Pixmap *nxMask)
 
   XlibPixmap IconPixmap;
   XlibPixmap IconShape;
-  if (XpmSuccess == XpmCreatePixmapFromData(display,
-                                            DefaultRootWindow(display),
+  if (XpmSuccess == XpmCreatePixmapFromData(disp,
+                                            DefaultRootWindow(disp),
                                             agentIconData,
                                             &IconPixmap,
                                             &IconShape,
@@ -2255,7 +2255,6 @@ static int nxagentInitAndCheckVisuals(int flexibility)
 {
   /* FIXME: does this also need work? */
 
-  bool matched;
   bool compatible = true;
 
   long viMask = VisualScreenMask;

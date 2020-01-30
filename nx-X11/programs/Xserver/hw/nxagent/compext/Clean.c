@@ -85,7 +85,6 @@ int CleanXYImage(XImage *image)
 int CleanZImage(XImage *image)
 {
   unsigned int bytesToClean;
-  unsigned int j;
   unsigned int imageLength;
 
   #ifdef TEST
@@ -105,8 +104,6 @@ int CleanZImage(XImage *image)
        * as fully transparent.
        */
 
-      register int i;
-
       bytesToClean = image -> bytes_per_line * image -> height;
 
       #ifdef DEBUG
@@ -118,14 +115,14 @@ int CleanZImage(XImage *image)
 
       if (image -> byte_order == LSBFirst)
       {
-        for (i = 3; i < bytesToClean; i += 4)
+        for (int i = 3; i < bytesToClean; i += 4)
         {
           ((unsigned char *) image -> data)[i] = 0x00;
         }
       }
       else
       {
-        for (i = 0; i < bytesToClean; i += 4)
+        for (int i = 0; i < bytesToClean; i += 4)
         {
           ((unsigned char *) image -> data)[i] = 0x00;
         }
@@ -138,14 +135,12 @@ int CleanZImage(XImage *image)
     case 16:
     case 8:
     {
-      register int i, j;
-
       bytesToClean = image -> bytes_per_line -
                            ((image -> width * image -> bits_per_pixel) >> 3);
 
-      for (i = 1; i <= image -> height; i++)
+      for (int i = 1; i <= image -> height; i++)
       {
-        for (j = bytesToClean; j > 0; j--)
+        for (int j = bytesToClean; j > 0; j--)
         {
           ((unsigned char *) image -> data)[(i * image -> bytes_per_line) - j] = 0x00;
         }
@@ -171,7 +166,7 @@ int CleanZImage(XImage *image)
 
   bytesToClean = imageLength % 4;
 
-  for (j = 0; j < bytesToClean; j++)
+  for (int j = 0; j < bytesToClean; j++)
   {
     ((unsigned char *)image -> data)[(imageLength + j)] = 0x00;
   }
@@ -189,7 +184,6 @@ int CleanZImage(XImage *image)
 int CopyAndCleanImage(XImage *src_image, XImage *dst_image)
 {
   register long data_size;
-  register int i;
 
   data_size = (src_image -> bytes_per_line * src_image -> height) >> 2;
 
@@ -212,7 +206,7 @@ int CopyAndCleanImage(XImage *src_image, XImage *dst_image)
       {
         mask = 0x00ffffff;
       }
-      for (i = 0; i < data_size; i++)
+      for (int i = 0; i < data_size; i++)
       {
         ((unsigned int *)dst_image -> data)[i] = ((unsigned int *)src_image -> data)[i] & mask;
       }
@@ -224,7 +218,7 @@ int CopyAndCleanImage(XImage *src_image, XImage *dst_image)
     {
       unsigned int bytes_to_clean;
 
-      for (i = 0; i < data_size; i++)
+      for (int i = 0; i < data_size; i++)
       {
         ((unsigned int *)dst_image -> data)[i] = ((unsigned int *)src_image -> data)[i];
       }
@@ -236,7 +230,6 @@ int CopyAndCleanImage(XImage *src_image, XImage *dst_image)
       {
         register unsigned int mask = 0xffffffff;
         register int line_size;
-        register int i;
 
         line_size = dst_image -> bytes_per_line >> 2;
 
@@ -249,7 +242,7 @@ int CopyAndCleanImage(XImage *src_image, XImage *dst_image)
           mask = mask >> (bytes_to_clean << 3);
         }
 
-        for (i = 0; i < dst_image -> height;)
+        for (int i = 0; i < dst_image -> height;)
         {
           ((unsigned char *)dst_image -> data)[(++i * line_size) -1] &= mask;
         }
@@ -261,7 +254,7 @@ int CopyAndCleanImage(XImage *src_image, XImage *dst_image)
     case 15:
     case 16:
     {
-      for (i = 0; i < data_size; i++)
+      for (int i = 0; i < data_size; i++)
       {
         ((unsigned int *) dst_image -> data)[i] = ((unsigned int *) src_image -> data)[i];
       }
@@ -270,7 +263,7 @@ int CopyAndCleanImage(XImage *src_image, XImage *dst_image)
       {
         int card32_per_line = dst_image -> bytes_per_line >> 2;
 
-        for (i = 0; i < dst_image -> height;)
+        for (int i = 0; i < dst_image -> height;)
         {
           ((unsigned int *) dst_image -> data)[(++i * card32_per_line) -1] &= 0x0000ffff;
         }
@@ -313,7 +306,7 @@ int CopyAndCleanImage(XImage *src_image, XImage *dst_image)
         }
       }
 
-      for (i = 0; i < data_size; i++)
+      for (int i = 0; i < data_size; i++)
       {
         ((unsigned int *) dst_image -> data)[i] = ((unsigned int *) src_image -> data)[i];
       }
@@ -321,11 +314,10 @@ int CopyAndCleanImage(XImage *src_image, XImage *dst_image)
       if (mask)
       {
         int card32_per_line;
-        int i;
 
         card32_per_line = dst_image -> bytes_per_line >> 2;
 
-        for (i = 0; i < dst_image -> height; i++)
+        for (int i = 0; i < dst_image -> height; i++)
         {
           ((unsigned int *) dst_image -> data)[(++i * card32_per_line) -1] &= mask;
         }

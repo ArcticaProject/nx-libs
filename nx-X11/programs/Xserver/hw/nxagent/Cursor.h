@@ -112,6 +112,6 @@ void nxagentDisconnectCursor(void * p0, XID x1, void * p2);
 void nxagentReconnectCursor(void * p0, XID x1, void * p2);
 void nxagentReDisplayCurrentCursor(void);
 Bool nxagentReconnectAllCursor(void *p0);
-Bool nxagentDisconnectAllCursor(void);
+void nxagentDisconnectAllCursor(void);
 
 #endif /* __Cursor_H__ */

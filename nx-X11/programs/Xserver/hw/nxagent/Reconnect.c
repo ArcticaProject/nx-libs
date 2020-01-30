@@ -83,7 +83,7 @@ extern Bool nxagentReconnectAllPicture(void*);
 
 extern Bool nxagentDisconnectAllPicture(void);
 extern Bool nxagentDisconnectAllWindows(void);
-extern Bool nxagentDisconnectAllCursor(void);
+extern void nxagentDisconnectAllCursor(void);
 
 extern Bool nxagentReconnectFailedFonts(void*);
 extern Bool nxagentInstallFontServerPath(void);
@@ -519,6 +519,7 @@ Bool nxagentReconnectSession(void)
 
   nxagentEmptyBSPixmapList();
 
+  /* FIXME: nxagentReconnectAllPixmaps will always return 1 */
   if (nxagentReconnectAllPixmaps(reconnectLossyLevel[PIXMAP_STEP]) == 0)
   {
     failedStep = PIXMAP_STEP;

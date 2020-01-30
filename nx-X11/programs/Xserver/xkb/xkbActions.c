@@ -1040,10 +1040,10 @@ _XkbFilterDeviceBtn(	XkbSrvInfoPtr	xkbi,
 			unsigned	keycode,
 			XkbAction *	pAction)
 {
-DeviceIntPtr	dev;
-int		button;
-
     if (filter->keycode==0) {		/* initial press */
+	DeviceIntPtr	dev;
+	int		button;
+
 	dev= _XkbLookupButtonDevice(pAction->devbtn.device,NULL);
 	if ((!dev)||(!dev->public.on)||(&dev->public==LookupPointerDevice()))
 	    return 1;
@@ -1081,7 +1081,8 @@ int		button;
 	}
     }
     else if (filter->keycode==keycode) {
-	int	button;
+	DeviceIntPtr	dev;
+	int		button;
 
 	filter->active= 0;
 	dev= _XkbLookupButtonDevice(filter->upAction.devbtn.device,NULL);

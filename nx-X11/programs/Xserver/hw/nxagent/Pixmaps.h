@@ -132,7 +132,7 @@ RegionPtr nxagentCreateRegion(DrawablePtr pDrawable, GCPtr pGC, int x, int y,
 void nxagentReconnectPixmap(void *p0, XID x1, void *p2);
 Bool nxagentReconnectAllPixmaps(void *p0);
 void nxagentDisconnectPixmap(void *p0, XID x1, void* p2);
-Bool nxagentDisconnectAllPixmaps(void);
+void nxagentDisconnectAllPixmaps(void);
 
 int nxagentDestroyNewPixmapResourceType(void * p, XID id);
 

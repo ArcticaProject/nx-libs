@@ -405,7 +405,7 @@ int nxagentSynchronizeRegion(DrawablePtr pDrawable, RegionPtr pRegion, unsigned 
                                         RegionNumRects(nxagentCorruptedRegion((DrawablePtr) nxagentDrawableBitmap(pDrawable))));
     #endif
 
-    RegionPtr clipRegion = nxagentCreateRegion(pDrawable, NULL, 0, 0, pDrawable -> width, pDrawable -> height);
+    clipRegion = nxagentCreateRegion(pDrawable, NULL, 0, 0, pDrawable -> width, pDrawable -> height);
 
     /*
      * Intersecting the viewable region of the drawable with the
@@ -2261,11 +2261,11 @@ void nxagentPointsToDirtyRegion(DrawablePtr pDrawable, int mode,
 {
   RegionPtr pRegion = RegionCreate(NullBox, 1);
 
-  int np = nPoints;
-  while (np--)
+  xPoint *xp = pPoints;
+
+  for (int np = nPoints; np--; xp++)
   {
     BoxRec box;
-    xPoint *xp = pPoints;
 
     if (CoordModePrevious)
     {
@@ -2294,8 +2294,6 @@ void nxagentPointsToDirtyRegion(DrawablePtr pDrawable, int mode,
     RegionUnion(pRegion, pRegion, &tmpRegion);
 
     RegionUninit(&tmpRegion);
-
-    xp++;
   }
 
   BoxRec extents = *RegionExtents(pRegion);

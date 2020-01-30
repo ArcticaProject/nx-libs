@@ -203,7 +203,7 @@ void checkX2goAgent(void)
 /*
  * Called at X server's initialization.
  */
-void InitOutput(ScreenInfo *screenInfo, int argc, char *argv[])
+void InitOutput(ScreenInfo *scrInfo, int argc, char *argv[])
 {
   /*
    * Print our pid and version information.
@@ -329,13 +329,13 @@ FIXME: These variables, if not removed at all because have probably
    * Initialize the basic screen info.
    */
 
-  nxagentSetScreenInfo(screenInfo);
+  nxagentSetScreenInfo(scrInfo);
 
   /*
    * Initialize pixmap formats for this screen.
    */
 
-  nxagentSetPixmapFormats(screenInfo);
+  nxagentSetPixmapFormats(scrInfo);
 
   /*
    * Get our own privates' index.
@@ -370,7 +370,7 @@ FIXME: These variables, if not removed at all because have probably
     AddScreen(nxagentOpenScreen, argc, argv);
   }
 
-  nxagentNumScreens = screenInfo->numScreens;
+  nxagentNumScreens = scrInfo->numScreens;
 
   /*
    * Initialize the GCs used by the synchronization put images. We do

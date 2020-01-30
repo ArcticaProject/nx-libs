@@ -636,7 +636,6 @@ XkbDescPtr		xkb;
 	bzero((char *)typeName,XkbNumKbdGroups*sizeof(Atom));
 	bzero((char *)type,XkbNumKbdGroups*sizeof(XkbKeyTypePtr));
 	if (wireMap.flags&XkmKeyHasTypes) {
-	    register int g;
 	    for (g=0;g<XkbNumKbdGroups;g++) {
 		if ((wireMap.flags&(1<<g))&&
 			((tmp=XkmGetCountedString(file,buf,100))>0)) {

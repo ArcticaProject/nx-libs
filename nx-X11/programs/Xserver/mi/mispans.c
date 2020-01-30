@@ -462,12 +462,12 @@ void miFillUniqueSpanGroup(pDraw, pGC, spanGroup)
 			    ysizes[index] * sizeof(int));
 			if (!newpoints || !newwidths)
 			{
-			    int	i;
+			    int	k;
 
-			    for (i = 0; i < ylength; i++)
+			    for (k = 0; k < ylength; k++)
 			    {
-				free (yspans[i].points);
-				free (yspans[i].widths);
+				free (yspans[k].points);
+				free (yspans[k].widths);
 			    }
 			    free (yspans);
 			    free (ysizes);
@@ -494,8 +494,6 @@ void miFillUniqueSpanGroup(pDraw, pGC, spanGroup)
 	widths = (int *)       malloc(count * sizeof(int));
 	if (!points || !widths)
 	{
-	    int	i;
-
 	    for (i = 0; i < ylength; i++)
 	    {
 		free (yspans[i].points);

@@ -941,7 +941,7 @@ void nxagentHandleCollectInputFocusEvent(int resource)
   #endif
 }
 
-Bool nxagentCollectInputFocusPredicate(Display *display, XEvent *X, XPointer ptr)
+Bool nxagentCollectInputFocusPredicate(Display *disp, XEvent *X, XPointer ptr)
 {
   return (X -> xclient.window == 0 &&
              X -> xclient.message_type == 0 &&
