@@ -128,14 +128,12 @@ xthread_t (*_Xthread_self_fn)(void) = NULL;
 static struct timeval retry;
 
 /*
- * From Xtranssock.c. Presently the congestion state
- * is reported by the proxy to the application, by
- * invoking the callback directly. The function will
- * be possibly used in the future, to be able to track
- * the bandwidth usage even when the NX transport is
- * not running. Note that in this sample implementation
- * the congestion state is checked very often and can
- * be surely optimized.
+ * From Xtranssock.c. Presently the congestion state is reported by
+ * the proxy to the application, by invoking the callback
+ * directly. The function will be possibly used in the future, to be
+ * able to track the bandwidth usage even when the NX transport is not
+ * running. Note that in this sample implementation the congestion
+ * state is checked very often and can be surely optimized.
  */
 
 #ifdef NX_TRANS_CHANGE
@@ -2207,9 +2205,8 @@ _XReply (
 
 #ifdef NX_TRANS_SOCKET
     /*
-     * We are going to block waiting for the remote
-     * X server. Be sure that the proxy has flushed
-     * all the data.
+     * We are going to block waiting for the remote X server. Be sure
+     * that the proxy has flushed all the data.
      */
 
 #ifdef NX_TRANS_TEST
@@ -2283,8 +2280,8 @@ _XReply (
 		UnlockNextReplyReader(dpy);
 #ifdef NX_TRANS_SOCKET
                 /*
-                 * The original code has provision
-                 * for returning already.
+                 * The original code has provision for returning
+                 * already.
                  */
 #endif
 		_XIOError (dpy);
@@ -2413,8 +2410,7 @@ _XAsyncReply(
 #ifdef NX_TRANS_SOCKET
 
         /*
-         * The original code has provision
-         * for returning already.
+         * The original code has provision for returning already.
          */
 
 #endif
@@ -3726,11 +3722,10 @@ _XIOError (
 	_XDefaultIOError(dpy);
 #ifdef NX_TRANS_SOCKET
     /*
-     * Check if we are supposed to return in the case
-     * of a display failure. The client which originated
-     * the X operation will have to check the value of
-     * the XlibDisplayIOError flag and handle appropria-
-     * tely the display disconnection.
+     * Check if we are supposed to return in the case of a display
+     * failure. The client which originated the X operation will have
+     * to check the value of the XlibDisplayIOError flag and handle
+     * appropriately the display disconnection.
      */
 
     if (_NXHandleDisplayError == 0)
