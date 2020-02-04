@@ -530,7 +530,6 @@ _XWaitForWritable(
 #ifdef NX_TRANS_SOCKET
             {
                 _XIOError(dpy);
-
                 return;
             }
 #else /* NX_TRANS_SOCKET */
@@ -996,7 +995,7 @@ static void _XFlushInt(
 	if (dpy->flags & XlibDisplayIOError)
 	{
 #ifdef NX_TRANS_DEBUG
-        fprintf(stderr, "_XFlushInt: Returning with I/O error detected.\n");
+	    fprintf(stderr, "_XFlushInt: Returning with I/O error detected.\n");
 #endif
 	    dpy->bufptr = dpy->buffer;
 	    dpy->last_req = (char *)&_dummy_request;
@@ -1186,7 +1185,6 @@ _XEventsQueued(
 #ifdef NX_TRANS_SOCKET
         {
             _XIOError(dpy);
-
             return (dpy->qlen);
         }
 #else
@@ -1229,7 +1227,6 @@ _XEventsQueued(
 #ifdef NX_TRANS_SOCKET
                     {
                         _XIOError(dpy);
-
                         return (dpy->qlen);
                     }
 #else
@@ -1591,12 +1588,10 @@ int _XRead(
 		else if (bytes_read == 0) {
 		    /* Read failed because of end of file! */
 		    ESET(EPIPE);
-#ifdef NX_TRANS_SOCKET
-                    _XIOError(dpy);
 
-                    return -1;
-#else
 		    _XIOError(dpy);
+#ifdef NX_TRANS_SOCKET
+		    return -1;
 #endif
 		    }
 
@@ -1797,8 +1792,8 @@ _XSend (
 
 #ifdef NX_TRANS_SOCKET
 #ifdef NX_TRANS_DEBUG
-    fprintf(stderr, "_XSend: Sending data with [%d] bytes to write.\n",
-                (dpy->bufptr - dpy->buffer));
+        fprintf(stderr, "_XSend: Sending data with [%d] bytes to write.\n",
+                    (dpy->bufptr - dpy->buffer));
 #endif
         if (!size || (dpy->flags & XlibDisplayIOError))
         {
