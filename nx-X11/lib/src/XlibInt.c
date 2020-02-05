@@ -263,28 +263,22 @@ int _XSelect(int maxfds, fd_set *readfds, fd_set *writefds,
         fd_set t_readfds, t_writefds;
         struct timeval t_timeout;
 
-        int n, r, e;
-
 #ifdef NX_TRANS_TEST
-
         if (exceptfds != NULL)
         {
             fprintf(stderr, "_XSelect: WARNING! Can't handle exception fds in select.\n");
         }
-
 #endif
 
         if (readfds == NULL)
         {
             FD_ZERO(&t_readfds);
-
             readfds = &t_readfds;
         }
 
         if (writefds == NULL)
         {
             FD_ZERO(&t_writefds);
-
             writefds = &t_writefds;
         }
 
@@ -292,11 +286,10 @@ int _XSelect(int maxfds, fd_set *readfds, fd_set *writefds,
         {
             t_timeout.tv_sec  = 10;
             t_timeout.tv_usec = 0;
-
             timeout = &t_timeout;
         }
 
-        n = maxfds;
+        int n = maxfds;
 
         /*
          * If the transport is gone avoid
@@ -305,17 +298,17 @@ int _XSelect(int maxfds, fd_set *readfds, fd_set *writefds,
 
         if (NXTransPrepare(&n, readfds, writefds, timeout) != 0)
         {
-          NXTransSelect(&r, &e, &n, readfds, writefds, timeout);
+            int r, e;
 
-          NXTransExecute(&r, &e, &n, readfds, writefds, timeout);
+            NXTransSelect(&r, &e, &n, readfds, writefds, timeout);
+            NXTransExecute(&r, &e, &n, readfds, writefds, timeout);
+            errno = e;
 
-          errno = e;
-
-          return r;
+            return r;
         }
         else
         {
-          return 0;
+            return 0;
         }
     }
     else
