@@ -41,18 +41,15 @@ typedef struct _XFixesAgentInfo
 extern XFixesAgentInfoRec nxagentXFixesInfo;
 
 /*
- * Create the NX_SELTRANS_FROM_AGENT atom and
- * initialize the required property to exchange
- * data with the X server.
+ * Create the NX_SELTRANS_FROM_AGENT atom and initialize the required
+ * property to exchange data with the X server.
  */
 
 extern Bool nxagentInitClipboard(WindowPtr pWindow);
 
 /*
- * Called whenever a client or a window is
- * destroyed to let the clipboard code to
- * release any pointer to the referenced
- * structures.
+ * Called whenever a client or a window is destroyed to let the
+ * clipboard code to release any pointer to the referenced structures.
  */
 
 extern void nxagentClearClipboard(ClientPtr pClient, WindowPtr pWindow);
