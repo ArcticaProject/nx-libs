@@ -76,6 +76,7 @@ SOFTWARE.
 #include "Rootless.h"
 #include "Client.h"
 #include "Windows.h"
+#include "Clipboard.h"
 
 extern Atom clientCutProperty;
 
@@ -92,10 +93,6 @@ nxagentWMStateRec;
 #define WARNING
 #undef  TEST
 #undef  DEBUG
-
-#ifdef NXAGENT_CLIPBOARD
-extern WindowPtr nxagentGetClipboardWindow(Atom);
-#endif
 
 #ifdef NXAGENT_ARTSD
 extern Atom mcop_local_atom;

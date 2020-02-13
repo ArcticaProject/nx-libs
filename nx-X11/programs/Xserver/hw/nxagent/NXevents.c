@@ -143,6 +143,7 @@ of the copyright holder.
 #include "Events.h"
 #include "Windows.h"
 #include "Args.h"
+#include "Clipboard.h"
 
 extern Display *nxagentDisplay;
 
@@ -152,11 +153,6 @@ extern WindowPtr nxagentLastEnteredWindow;
 extern void nxagentInitViewportFrame(ScreenPtr, WindowPtr);
 #endif
 extern int  nxagentShadowInit(ScreenPtr, WindowPtr);
-
-#ifdef NXAGENT_CLIPBOARD
-extern int nxagentSendNotify(xEvent*);
-#endif
-
 
 void
 ActivatePointerGrab(register DeviceIntPtr mouse, register GrabPtr grab, 

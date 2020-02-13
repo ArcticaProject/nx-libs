@@ -150,13 +150,6 @@ extern void nxagentUngrabPointerAndKeyboard(XEvent *X);
 extern void nxagentDeactivatePointerGrab(void);
 
 /*
- * Handle the selection property received
- * in the event loop.
- */
-
-void nxagentCollectPropertyEvent(int resource);
-
-/*
  * Synchronize expose events between agent and
  * the real X server.
  */

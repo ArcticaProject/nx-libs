@@ -232,19 +232,17 @@ XFixesAgentInfoRec nxagentXFixesInfo = { -1, -1, -1, 0 };
 
 extern Display *nxagentDisplay;
 
-Bool nxagentValidServerTargets(XlibAtom target);
+static Bool nxagentValidServerTargets(XlibAtom target);
 static void endTransfer(Bool success);
 #define SELECTION_SUCCESS True
 #define SELECTION_FAULT False
-void nxagentTransferSelection(int resource);
-void nxagentCollectPropertyEvent(int resource);
+static void nxagentTransferSelection(int resource);
 #if 0
 void nxagentResetSelectionOwner(void);
 #endif
-WindowPtr nxagentGetClipboardWindow(Atom property);
-void nxagentNotifyConvertFailure(ClientPtr client, Window requestor,
-                                     Atom selection, Atom target, Time time);
-int nxagentSendNotify(xEvent *event);
+static void nxagentNotifyConvertFailure(ClientPtr client, Window requestor,
+                                            Atom selection, Atom target, Time time);
+static void nxagentSetSelectionOwner(Selection *pSelection);
 
 void nxagentPrintClipboardStat(char *);
 
@@ -475,7 +473,7 @@ int SendSelectionNotifyEventToClient(ClientPtr client,
  * server, like .e.g XA_STRING or UTF8_STRING. Other, non content type
  * targets like "TARGETS" or "TIMESTAMP" will return false.
  */
-Bool nxagentValidServerTargets(XlibAtom target)
+static Bool nxagentValidServerTargets(XlibAtom target)
 {
   if (target == XA_STRING)
   {
@@ -1012,7 +1010,7 @@ static void endTransfer(Bool success)
   SetClientSelectionStage(None);
 }
 
-void nxagentTransferSelection(int resource)
+static void nxagentTransferSelection(int resource)
 {
   if (lastClientClientPtr -> index != resource)
   {
@@ -1603,7 +1601,7 @@ void nxagentSetSelectionCallback(CallbackListPtr *callbacks, void *data,
  * This is called from the nxagentSetSelectionCallback, so it is using
  * internal Atoms
  */
-void nxagentSetSelectionOwner(Selection *pSelection)
+static void nxagentSetSelectionOwner(Selection *pSelection)
 {
   if (!agentClipboardInitialized)
   {
@@ -1687,8 +1685,8 @@ FIXME
 */
 }
 
-void nxagentNotifyConvertFailure(ClientPtr client, Window requestor,
-                                     Atom selection, Atom target, Time time)
+static void nxagentNotifyConvertFailure(ClientPtr client, Window requestor,
+                                            Atom selection, Atom target, Time time)
 {
   /*
    * Check if the client is still valid.
