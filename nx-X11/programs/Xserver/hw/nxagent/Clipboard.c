@@ -188,7 +188,9 @@ const char * GetClientSelectionStageString(int stage)
 #else
 #define SetClientSelectionStage(stage) do {lastClientStage = SelectionStage##stage;} while (0)
 #define PrintClientSelectionStage()
+#endif
 
+#ifdef DEBUG
 /*
  * see also nx-X11/lib/src/ErrDes.c
  *
