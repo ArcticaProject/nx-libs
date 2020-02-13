@@ -539,8 +539,8 @@ void nxagentClearSelectionOwner(int index)
 {
   lastSelectionOwner[index].client = NULL;
   lastSelectionOwner[index].window = None;
+  lastSelectionOwner[index].windowPtr = NULL;
   lastSelectionOwner[index].lastTimeChanged = GetTimeInMillis();
-  /* FIXME: why is windowPtr not cleared in the function? */
 }
 
 void nxagentStoreSelectionOwner(int index, Selection *sel)
@@ -579,9 +579,7 @@ void nxagentClearClipboard(ClientPtr pClient, WindowPtr pWindow)
                   (void *) pClient, (void *) pWindow);
       #endif
 
-      /* FIXME: why is windowPtr not cleared in the function? */
       nxagentClearSelectionOwner(i);
-      lastSelectionOwner[i].windowPtr = NULL;
 
       lastClientWindowPtr = NULL;
       SetClientSelectionStage(None);
@@ -1510,7 +1508,6 @@ void nxagentResetSelectionOwner(void)
     #endif
 
     nxagentClearSelectionOwner(i);
-    lastSelectionOwner[i].windowPtr = NULL;
   }
 
   lastClientWindowPtr = NULL;
