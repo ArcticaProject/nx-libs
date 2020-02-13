@@ -331,9 +331,9 @@ void nxagentPrintClipboardStat(char *header)
   fprintf(stderr, "lastServer\n");
   fprintf(stderr, "  lastServerRequestor           (Window) [0x%x]\n", lastServerRequestor);
   SAFE_XFree(s); s = XGetAtomName(nxagentDisplay, lastServerProperty);
-  fprintf(stderr, "  lastServerProperty              (Atom) [% 4d][%s]\n", lastServerProperty, s);
+  fprintf(stderr, "  lastServerProperty              (Atom) [% 4d][%s]\n", lastServerProperty, validateString(s));
   SAFE_XFree(s); s = XGetAtomName(nxagentDisplay, lastServerTarget);
-  fprintf(stderr, "  lastServerTarget                (Atom) [% 4d][%s]\n", lastServerTarget, s);
+  fprintf(stderr, "  lastServerTarget                (Atom) [% 4d][%s]\n", lastServerTarget, validateString(s));
   fprintf(stderr, "  lastServerTime                  (Time) [%u]\n", lastServerTime);
 
   fprintf(stderr, "lastClient\n");
@@ -360,17 +360,17 @@ void nxagentPrintClipboardStat(char *header)
   SAFE_XFree(s); s = XGetAtomName(nxagentDisplay, serverTARGETS);
   fprintf(stderr, "  serverTARGETS                          [% 4d][%s]\n", serverTARGETS, validateString(s));
   SAFE_XFree(s); s = XGetAtomName(nxagentDisplay, serverTIMESTAMP);
-  fprintf(stderr, "  serverTIMESTAMP                        [% 4d][%s]\n", serverTIMESTAMP, s);
+  fprintf(stderr, "  serverTIMESTAMP                        [% 4d][%s]\n", serverTIMESTAMP, validateString(s));
   SAFE_XFree(s); s = XGetAtomName(nxagentDisplay, serverTEXT);
-  fprintf(stderr, "  serverTEXT                             [% d][%s]\n", serverTEXT, s);
+  fprintf(stderr, "  serverTEXT                             [% d][%s]\n", serverTEXT, validateString(s));
   SAFE_XFree(s); s = XGetAtomName(nxagentDisplay, serverCOMPOUND_TEXT);
-  fprintf(stderr, "  serverCOMPOUND_TEXT                    [% d][%s]\n", serverCOMPOUND_TEXT, s);
+  fprintf(stderr, "  serverCOMPOUND_TEXT                    [% d][%s]\n", serverCOMPOUND_TEXT, validateString(s));
   SAFE_XFree(s); s = XGetAtomName(nxagentDisplay, serverUTF8_STRING);
-  fprintf(stderr, "  serverUTF8_STRING                      [% 4d][%s]\n", serverUTF8_STRING, s);
+  fprintf(stderr, "  serverUTF8_STRING                      [% 4d][%s]\n", serverUTF8_STRING, validateString(s));
   SAFE_XFree(s); s = XGetAtomName(nxagentDisplay, serverTransToAgentProperty);
-  fprintf(stderr, "  serverTransToAgentProperty             [% 4d][%s]\n", serverTransFromAgentProperty, s);
+  fprintf(stderr, "  serverTransToAgentProperty             [% 4d][%s]\n", serverTransFromAgentProperty, validateString(s));
   SAFE_XFree(s); s = XGetAtomName(nxagentDisplay, serverTransFromAgentProperty);
-  fprintf(stderr, "  serverTransFromAgentProperty           [% 4d][%s]\n", serverTransToAgentProperty, s);
+  fprintf(stderr, "  serverTransFromAgentProperty           [% 4d][%s]\n", serverTransToAgentProperty, validateString(s));
 
   fprintf(stderr, "Atoms (inside nxagent)\n");
   fprintf(stderr, "  clientTARGETS                          [% 4d][%s]\n", clientTARGETS, NameForAtom(clientTARGETS));
