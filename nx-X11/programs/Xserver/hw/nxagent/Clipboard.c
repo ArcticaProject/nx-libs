@@ -96,7 +96,7 @@ typedef struct _SelectionOwner
  * external atom of the selection
  */
 static SelectionOwner *lastSelectionOwner;
-static XlibAtom nxagentLastRequestedSelection;
+static XlibAtom serverLastRequestedSelection;
 
 #define IS_INTERNAL_OWNER(lsoindex) (lastSelectionOwner[lsoindex].client != NULL)
 
@@ -373,6 +373,8 @@ void nxagentPrintClipboardStat(char *header)
   fprintf(stderr, "  serverTransToAgentProperty             [% 4d][%s]\n", serverTransFromAgentProperty, validateString(s));
   SAFE_XFree(s); s = XGetAtomName(nxagentDisplay, serverTransFromAgentProperty);
   fprintf(stderr, "  serverTransFromAgentProperty           [% 4d][%s]\n", serverTransToAgentProperty, validateString(s));
+  SAFE_XFree(s); s = XGetAtomName(nxagentDisplay, serverLastRequestedSelection);
+  fprintf(stderr, "  serverLastRequestedSelection           [% 4d][%s]\n", serverLastRequestedSelection, validateString(s));
 
   fprintf(stderr, "Atoms (inside nxagent)\n");
   fprintf(stderr, "  clientTARGETS                          [% 4d][%s]\n", clientTARGETS, NameForAtom(clientTARGETS));
@@ -382,7 +384,6 @@ void nxagentPrintClipboardStat(char *header)
   fprintf(stderr, "  clientUTF8_STRING                      [% 4d][%s]\n", clientUTF8_STRING, NameForAtom(clientUTF8_STRING));
   fprintf(stderr, "  clientCLIPBOARD                        [% 4d][%s]\n", clientCLIPBOARD, NameForAtom(clientCLIPBOARD));
   fprintf(stderr, "  clientCutProperty                      [% 4d][%s]\n", clientCutProperty, NameForAtom(clientCutProperty));
-  fprintf(stderr, "  nxagentLastRequestedSelection          [% 4d][%s]\n", nxagentLastRequestedSelection, NameForAtom(nxagentLastRequestedSelection));
 
   fprintf(stderr, "\\------------------------------------------------------------------------------\n");
 
@@ -887,7 +888,7 @@ void nxagentRequestSelection(XEvent *X)
   /*
    * This is required for nxagentGetClipboardWindow.
    */
-  nxagentLastRequestedSelection = X->xselectionrequest.selection;
+  serverLastRequestedSelection = X->xselectionrequest.selection;
 
   /* find the index of the requested selection */
   int i = nxagentFindLastSelectionOwnerIndex(X->xselectionrequest.selection);
@@ -2112,7 +2113,7 @@ int nxagentSendNotify(xEvent *event)
  */
 WindowPtr nxagentGetClipboardWindow(Atom property)
 {
-  int i = nxagentFindLastSelectionOwnerIndex(nxagentLastRequestedSelection);
+  int i = nxagentFindLastSelectionOwnerIndex(serverLastRequestedSelection);
   if (i < nxagentMaxSelections &&
           property == clientCutProperty &&
               lastSelectionOwner[i].windowPtr != NULL)
