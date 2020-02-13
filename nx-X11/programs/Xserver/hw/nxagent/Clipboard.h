@@ -61,9 +61,15 @@ extern void nxagentSetSelectionOwner(Selection *pSelection);
 extern int nxagentConvertSelection(ClientPtr client, WindowPtr pWin, Atom selection,
                                       Window requestor, Atom property, Atom target, Time time);
 
-void nxagentClearSelection();
-void nxagentRequestSelection();
-void nxagentHandleSelectionNotifyFromXServer();
+#ifdef XEvent
+extern void nxagentClearSelection(XEvent *X);
+extern void nxagentRequestSelection(XEvent *X);
+extern void nxagentHandleSelectionNotifyFromXServer(XEvent *X);
+#else
+extern void nxagentClearSelection();
+extern void nxagentRequestSelection();
+extern void nxagentHandleSelectionNotifyFromXServer();
+#endif
 
-int nxagentFindCurrentSelectionIndex(Atom sel);
+extern int nxagentFindCurrentSelectionIndex(Atom sel);
 #endif /* __Clipboard_H__ */
