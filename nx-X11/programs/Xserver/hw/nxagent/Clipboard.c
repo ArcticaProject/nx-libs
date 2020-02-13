@@ -359,6 +359,8 @@ void nxagentPrintClipboardStat(char *header)
   fprintf(stderr, "Atoms (server side)\n");
   SAFE_XFree(s); s = XGetAtomName(nxagentDisplay, serverTARGETS);
   fprintf(stderr, "  serverTARGETS                          [% 4d][%s]\n", serverTARGETS, validateString(s));
+  SAFE_XFree(s); s = XGetAtomName(nxagentDisplay, serverTIMESTAMP);
+  fprintf(stderr, "  serverTIMESTAMP                        [% 4d][%s]\n", serverTIMESTAMP, s);
   SAFE_XFree(s); s = XGetAtomName(nxagentDisplay, serverTEXT);
   fprintf(stderr, "  serverTEXT                             [% d][%s]\n", serverTEXT, s);
   SAFE_XFree(s); s = XGetAtomName(nxagentDisplay, serverCOMPOUND_TEXT);
@@ -369,9 +371,6 @@ void nxagentPrintClipboardStat(char *header)
   fprintf(stderr, "  serverTransToAgentProperty             [% 4d][%s]\n", serverTransFromAgentProperty, s);
   SAFE_XFree(s); s = XGetAtomName(nxagentDisplay, serverTransFromAgentProperty);
   fprintf(stderr, "  serverTransFromAgentProperty           [% 4d][%s]\n", serverTransToAgentProperty, s);
-
-  SAFE_XFree(s); s = XGetAtomName(nxagentDisplay, serverTIMESTAMP);
-  fprintf(stderr, "  serverTIMESTAMP                        [% 4d][%s]\n", serverTIMESTAMP, s);
 
   fprintf(stderr, "Atoms (inside nxagent)\n");
   fprintf(stderr, "  clientTARGETS                          [% 4d][%s]\n", clientTARGETS, NameForAtom(clientTARGETS));
