@@ -78,4 +78,6 @@ extern WindowPtr nxagentGetClipboardWindow(Atom property);
 
 extern int nxagentSendNotify(xEvent *event);
 
+extern void nxagentDumpClipboardStat(void);
+
 #endif /* __Clipboard_H__ */

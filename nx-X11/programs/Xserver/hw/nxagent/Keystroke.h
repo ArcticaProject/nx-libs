@@ -78,9 +78,11 @@ enum nxagentSpecialKeystroke {
 
        KEYSTROKE_AUTOGRAB,
 
-       KEYSTROKE_NOTHING,
+       KEYSTROKE_DUMP_CLIPBOARD,
 
        /* insert more here and in the string translation */
+
+       KEYSTROKE_NOTHING,
 
        KEYSTROKE_MAX,
 };

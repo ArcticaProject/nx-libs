@@ -68,9 +68,7 @@ extern Selection *CurrentSelections;
 int nxagentLastClipboardClient = -1;
 
 static int agentClipboardInitialized = False;
-#ifdef DEBUG
 static int clientAccum;
-#endif
 
 XlibAtom serverTransToAgentProperty;
 Atom clientCutProperty;
@@ -156,19 +154,16 @@ static char szAgentCLIPBOARD[] = "CLIPBOARD";
 /* number of milliseconds to wait for a conversion from the real X server. */
 #define CONVERSION_TIMEOUT 5000
 
-#ifdef DEBUG
 /*
  * Time window (milliseconds) within to detect multiple conversion
  * calls of the same client.
  */
 #define ACCUM_TIME 5000
-#endif
 
 /*
  * some helpers for debugging output
  */
 
-#ifdef DEBUG
 static const char * getClientSelectionStageString(int stage)
 {
   switch(stage)
@@ -181,14 +176,17 @@ static const char * getClientSelectionStageString(int stage)
     default:                      return("UNKNOWN!"); break;;
   }
 }
+
+#ifdef DEBUG
 #define setClientSelectionStage(stage) do {fprintf(stderr, "%s: Changing selection stage from [%s] to [%s]\n", __func__, getClientSelectionStageString(lastClientStage), getClientSelectionStageString(SelectionStage##stage)); lastClientStage = SelectionStage##stage;} while (0)
 #define printClientSelectionStage() do {fprintf(stderr, "%s: Current selection stage [%s]\n", __func__, getClientSelectionStageString(lastClientStage));} while (0)
-#define WINDOWID(ptr) (ptr) ? (ptr->drawable.id) : 0
-#define CLINDEX(clientptr) (clientptr) ? (clientptr->index) : -1
 #else
 #define setClientSelectionStage(stage) do {lastClientStage = SelectionStage##stage;} while (0)
 #define printClientSelectionStage()
 #endif
+
+#define WINDOWID(ptr) (ptr) ? (ptr->drawable.id) : 0
+#define CLINDEX(clientptr) (clientptr) ? (clientptr->index) : -1
 
 #ifdef DEBUG
 /*
@@ -267,7 +265,6 @@ void nxagentPrintClipboardStat(char *);
 extern unsigned long startTime;
 #endif
 
-#ifdef DEBUG
 static void printSelectionStat(int sel)
 {
   SelectionOwner lOwner = lastSelectionOwner[sel];
@@ -313,14 +310,12 @@ static void printSelectionStat(int sel)
   fprintf(stderr, "  CurrentSelections[].window             [0x%x]\n", curSel.window);
   return;
 }
-#endif
 
-void nxagentPrintClipboardStat(char *header)
+void nxagentDumpClipboardStat(void)
 {
-  #ifdef DEBUG
   char *s = NULL;
 
-  fprintf(stderr, "/----- Clipboard internal status - %s -----\n", header);
+  fprintf(stderr, "/----- Clipboard internal status -----\n");
 
   fprintf(stderr, "  current time                    (Time) [%u]\n", GetTimeInMillis());
   fprintf(stderr, "  agentClipboardInitialized       (Bool) [%s]\n", agentClipboardInitialized ? "True" : "False");
@@ -399,7 +394,6 @@ void nxagentPrintClipboardStat(char *header)
   fprintf(stderr, "\\------------------------------------------------------------------------------\n");
 
   SAFE_XFree(s);
-#endif
 }
 
 /*
@@ -581,8 +575,6 @@ void nxagentClearClipboard(ClientPtr pClient, WindowPtr pWindow)
               (void *) pClient, CLINDEX(pClient), (void *) pWindow, WINDOWID(pWindow));
   #endif
 
-  nxagentPrintClipboardStat("before nxagentClearClipboard");
-
   /*
    * Only for PRIMARY and CLIPBOARD selections.
    */
@@ -610,8 +602,6 @@ void nxagentClearClipboard(ClientPtr pClient, WindowPtr pWindow)
     lastClientWindowPtr = NULL;
     setClientSelectionStage(None);
   }
-
-  nxagentPrintClipboardStat("after nxagentClearClipboard");
 }
 
 /*
@@ -654,8 +644,6 @@ void nxagentHandleSelectionClearFromXServer(XEvent *X)
   #ifdef DEBUG
   fprintf(stderr, "%s: SelectionClear event for selection [%lu].\n", __func__, X->xselectionclear.selection);
   #endif
-
-  nxagentPrintClipboardStat("before nxagentHandleSelectionClearFromXServer");
 
   if (!agentClipboardInitialized)
   {
@@ -701,7 +689,6 @@ void nxagentHandleSelectionClearFromXServer(XEvent *X)
 
   lastClientWindowPtr = NULL;
   setClientSelectionStage(None);
-  nxagentPrintClipboardStat("after nxagentHandleSelectionClearFromXServer");
 }
 
 /*
@@ -759,8 +746,6 @@ void nxagentHandleSelectionRequestFromXServer(XEvent *X)
       SAFE_XFree(strProperty);
   }
   #endif
-
-  nxagentPrintClipboardStat("before nxagentHandleSelectionRequestFromXServer");
 
   if (!agentClipboardInitialized)
   {
@@ -984,7 +969,6 @@ void nxagentHandleSelectionRequestFromXServer(XEvent *X)
       }
     }
   }
-  nxagentPrintClipboardStat("after nxagentHandleSelectionRequestFromXServer");
 }
 
 /*
@@ -1887,7 +1871,6 @@ int nxagentConvertSelection(ClientPtr client, WindowPtr pWin, Atom selection,
     }
   }
 
-  #ifdef DEBUG
   if (lastClientClientPtr == client && (GetTimeInMillis() - lastClientReqTime < ACCUM_TIME))
   {
     /*
@@ -1897,9 +1880,11 @@ int nxagentConvertSelection(ClientPtr client, WindowPtr pWin, Atom selection,
      * client requesting PRIMARY and CLIPBOARD would match here, too
      */
 
+    #ifdef DEBUG
     fprintf(stderr, "%s: Consecutives request from client [%p] selection [%u] "
                 "elapsed time [%u] clientAccum [%d]\n", __func__, (void *) client, selection,
                     GetTimeInMillis() - lastClientReqTime, clientAccum);
+    #endif
 
     clientAccum++;
   }
@@ -1911,7 +1896,6 @@ int nxagentConvertSelection(ClientPtr client, WindowPtr pWin, Atom selection,
       clientAccum = 0;
     }
   }
-  #endif
 
   if (target == clientTEXT ||
           target == XA_STRING ||

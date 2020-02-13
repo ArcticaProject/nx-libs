@@ -129,6 +129,10 @@ reread_keystrokes
 autograb
   Toggles autograb mode
 
+dump_clipboard
+  print the current internal clipboard state (for debugging) to the
+  log.
+
 force_synchronization
   Forces immediate drawing of elements to be synchronized which can
   fix some visual bugs.
