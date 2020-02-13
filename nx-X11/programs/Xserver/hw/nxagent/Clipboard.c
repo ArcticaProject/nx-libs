@@ -238,7 +238,9 @@ static void endTransfer(Bool success);
 #define SELECTION_FAULT False
 void nxagentTransferSelection(int resource);
 void nxagentCollectPropertyEvent(int resource);
+#if 0
 void nxagentResetSelectionOwner(void);
+#endif
 WindowPtr nxagentGetClipboardWindow(Atom property);
 void nxagentNotifyConvertFailure(ClientPtr client, Window requestor,
                                      Atom selection, Atom target, Time time);
@@ -1473,6 +1475,8 @@ void nxagentHandleSelectionNotifyFromXServer(XEvent *X)
   }
 }
 
+#if 0
+/* FIXME: currently unused */
 /*
  * Let nxagent's serverWindow acquire the selection. All requests from
  * the real X server (or its clients) will be sent to this window. The
@@ -1516,6 +1520,7 @@ void nxagentResetSelectionOwner(void)
   /* Hmm, this is already None when reaching this */
   lastServerRequestor = None;
 }
+#endif
 
 #ifdef NXAGENT_CLIPBOARD
 
