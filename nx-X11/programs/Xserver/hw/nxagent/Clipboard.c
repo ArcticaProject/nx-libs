@@ -257,6 +257,7 @@ void nxagentPrintSelectionStat(int sel)
   Selection curSel = CurrentSelections[sel];
   char *s = NULL;
 
+  fprintf(stderr, "  owner is inside nxagent?               %s\n", IS_INTERNAL_OWNER(sel) ? "yes" : "no");
 #ifdef CLIENTIDS
   fprintf(stderr, "  lastSelectionOwner[].client            [%p] index [%d] PID [%d] Cmd [%s]\n",
           (void *)lOwner.client,
