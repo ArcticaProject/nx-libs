@@ -276,18 +276,11 @@ void nxagentPrintSelectionStat(int sel)
   fprintf(stderr, "  lastSelectionOwner[].lastTimeChanged   [%u]\n", lOwner.lastTimeChanged);
 
   /*
-    print the selection name.
+    print the selection name. selection is _always_ a a remote Atom!
   */
-  if (lOwner.client)
-  {
-    fprintf(stderr, "  lastSelectionOwner[].selection         [% 4d][%s] (local)\n", lOwner.selection, NameForAtom(lOwner.selection));
-  }
-  else
-  {
-    SAFE_XFree(s); s = XGetAtomName(nxagentDisplay, lOwner.selection);
-    fprintf(stderr, "  lastSelectionOwner[].selection         [% 4d][%s] (remote)\n", lOwner.selection, validateString(s));
-    SAFE_XFree(s);
-  }
+  SAFE_XFree(s); s = XGetAtomName(nxagentDisplay, lOwner.selection);
+  fprintf(stderr, "  lastSelectionOwner[].selection         [% 4d][%s] (%s)\n", lOwner.selection, validateString(s), lOwner.client ? "inside nxagent" : "remote X server");
+  SAFE_XFree(s);
 #ifdef CLIENTIDS
   fprintf(stderr, "  CurrentSelections[].client             [%p] index [%d] PID [%d] Cmd [%s]\n",
           (void *)curSel.client,
@@ -358,7 +351,7 @@ void nxagentPrintClipboardStat(char *header)
   fprintf(stderr, "CLIPBOARD\n");
   nxagentPrintSelectionStat(nxagentClipboardSelection);
 
-  fprintf(stderr, "Atoms (server side)\n");
+  fprintf(stderr, "Atoms (remote X server)\n");
   SAFE_XFree(s); s = XGetAtomName(nxagentDisplay, serverTARGETS);
   fprintf(stderr, "  serverTARGETS                          [% 4d][%s]\n", serverTARGETS, validateString(s));
   SAFE_XFree(s); s = XGetAtomName(nxagentDisplay, serverTIMESTAMP);
