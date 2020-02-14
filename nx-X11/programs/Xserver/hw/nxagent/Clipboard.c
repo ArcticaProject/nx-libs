@@ -246,12 +246,12 @@ static void notifyConvertFailure(ClientPtr client, Window requestor,
                                      Atom selection, Atom target, Time time);
 static void setSelectionOwner(Selection *pSelection);
 static int sendEventToClient(ClientPtr client, xEvent *pEvents);
-static int sendSelectionNotifyEventToClient(ClientPtr client,
-                                            Time time,
-                                            Window requestor,
-                                            Atom selection,
-                                            Atom target,
-                                            Atom property);
+static void sendSelectionNotifyEventToClient(ClientPtr client,
+                                             Time time,
+                                             Window requestor,
+                                             Atom selection,
+                                             Atom target,
+                                             Atom property);
 static Status sendSelectionNotifyEventToServer(XSelectionEvent *event_to_send);
 #ifdef DEBUG
 static void printSelectionStat(int sel);
@@ -486,7 +486,7 @@ static int sendEventToClient(ClientPtr client, xEvent *pEvents)
   return TryClientEvents(client, pEvents, 1, NoEventMask, NoEventMask, NullGrab);
 }
 
-static int sendSelectionNotifyEventToClient(ClientPtr client,
+static void sendSelectionNotifyEventToClient(ClientPtr client,
                                             Time time,
                                             Window requestor,
                                             Atom selection,
@@ -510,7 +510,7 @@ static int sendSelectionNotifyEventToClient(ClientPtr client,
                CLINDEX(client));
   #endif
 
-  return sendEventToClient(client, &x);
+  sendEventToClient(client, &x);
 }
 
 /*
