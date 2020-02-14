@@ -349,7 +349,17 @@ void nxagentDumpClipboardStat(void)
     fprintf(stderr, "  lastClientWindowPtr        (WindowPtr) [%p] ([0x%x])\n", (void *)lastClientWindowPtr, WINDOWID(lastClientWindowPtr));
   else
     fprintf(stderr, "  lastClientWindowPtr        (WindowPtr) -\n");
-  fprintf(stderr, "  lastClientClientPtr        (ClientPtr) [%p]\n", (void *)lastClientClientPtr);
+#ifdef CLIENTIDS
+  fprintf(stderr, "  lastClientClientPtr        (ClientPtr) [%p] index [%d] PID [%d] Cmd [%s]\n",
+          (void *)lastClientClientPtr,
+          CLINDEX(lastClientClientPtr),
+          GetClientPid(lastClientClientPtr),
+          GetClientCmdName(lastClientClientPtr));
+#else
+  fprintf(stderr, "  lastClientClientPtr        (ClientPtr) [%p] index [%d]\n",
+          (void *)lastClientClientPtr,
+          CLINDEX(lastClientClientPtr))
+#endif
   fprintf(stderr, "  lastClientRequestor           (Window) [0x%x]\n", lastClientRequestor);
   fprintf(stderr, "  lastClientProperty              (Atom) [% 4d][%s]\n", lastClientProperty, NameForAtom(lastClientProperty));
   fprintf(stderr, "  lastClientSelection             (Atom) [% 4d][%s]\n", lastClientSelection, NameForAtom(lastClientSelection));
