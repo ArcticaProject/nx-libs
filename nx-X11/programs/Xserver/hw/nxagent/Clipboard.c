@@ -241,9 +241,6 @@ static void initSelectionOwner(int index, Atom selection);
 static void clearSelectionOwner(int index);
 static void storeSelectionOwner(int index, Selection *sel);
 static Bool matchSelectionOwner(int index, ClientPtr pClient, WindowPtr pWindow);
-
-static void notifyConvertFailure(ClientPtr client, Window requestor,
-                                     Atom selection, Atom target, Time time);
 static void setSelectionOwner(Selection *pSelection);
 static int sendEventToClient(ClientPtr client, xEvent *pEvents);
 static void sendSelectionNotifyEventToClient(ClientPtr client,
@@ -493,6 +490,18 @@ static void sendSelectionNotifyEventToClient(ClientPtr client,
                                             Atom target,
                                             Atom property)
 {
+  /*
+   * Check if the client is still valid.
+   */
+  if (clients[client -> index] != client)
+  {
+    #ifdef WARNING
+    fprintf(stderr, "%s: WARNING! Invalid client pointer.", __func__);
+    #endif
+
+    return;
+  }
+
   xEvent x = {0};
   x.u.u.type = SelectionNotify;
   x.u.selectionNotify.time = time;
@@ -1714,24 +1723,6 @@ FIXME
 */
 }
 
-static void notifyConvertFailure(ClientPtr client, Window requestor,
-                                            Atom selection, Atom target, Time time)
-{
-  /*
-   * Check if the client is still valid.
-   */
-  if (clients[client -> index] != client)
-  {
-    #ifdef WARNING
-    fprintf(stderr, "%s: WARNING! Invalid client pointer.", __func__);
-    #endif
-
-    return;
-  }
-
-  sendSelectionNotifyEventToClient(client, time, requestor, selection, target, None);
-}
-
 /*
  * This is called from dix (ProcConvertSelection) if an nxagent client
  * issues a ConvertSelection request. So all the Atoms are internal
@@ -1788,8 +1779,8 @@ int nxagentConvertSelection(ClientPtr client, WindowPtr pWin, Atom selection,
                   "notifying failure to client\n", __func__);
       #endif
 
-      notifyConvertFailure(lastClientClientPtr, lastClientRequestor,
-                               lastClientSelection, lastClientTarget, lastClientTime);
+      sendSelectionNotifyEventToClient(lastClientClientPtr, lastClientTime, lastClientRequestor,
+                                           lastClientSelection, lastClientTarget, None);
 
       setClientSelectionStage(SelectionStageNone);
     }
@@ -1805,7 +1796,7 @@ int nxagentConvertSelection(ClientPtr client, WindowPtr pWin, Atom selection,
                   "before timeout expired on last request, notifying failure to client\n", __func__);
       #endif
 
-      notifyConvertFailure(client, requestor, selection, target, time);
+      sendSelectionNotifyEventToClient(client, time, requestor, selection, target, None);
 
       return 1;
     }
