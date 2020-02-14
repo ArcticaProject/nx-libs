@@ -58,12 +58,12 @@ extern int nxagentConvertSelection(ClientPtr client, WindowPtr pWin, Atom select
                                       Window requestor, Atom property, Atom target, Time time);
 
 #ifdef XEvent
-extern void nxagentClearSelection(XEvent *X);
-extern void nxagentRequestSelection(XEvent *X);
+extern void nxagentHandleSelectionClearFromXServer(XEvent *X);
+extern void nxagentHandleSelectionRequestFromXServer(XEvent *X);
 extern void nxagentHandleSelectionNotifyFromXServer(XEvent *X);
 #else
-extern void nxagentClearSelection();
-extern void nxagentRequestSelection();
+extern void nxagentHandleSelectionClearFromXServer();
+extern void nxagentHandleSelectionRequestFromXServer();
 extern void nxagentHandleSelectionNotifyFromXServer();
 #endif
 

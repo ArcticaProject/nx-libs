@@ -256,7 +256,9 @@ static int sendSelectionNotifyEventToClient(ClientPtr client,
                                             Atom target,
                                             Atom property);
 static Status sendSelectionNotifyEventToServer(XSelectionEvent *event_to_send);
+#ifdef DEBUG
 static void printSelectionStat(int sel);
+#endif
 static void replyRequestSelection(XEvent *X, Bool success);
 
 void nxagentPrintClipboardStat(char *);
@@ -647,13 +649,13 @@ int nxagentFindCurrentSelectionIndex(Atom sel)
  * SelectionClear event. We receive this event if someone on the real
  * X server claims the selection ownership.
  */
-void nxagentClearSelection(XEvent *X)
+void nxagentHandleSelectionClearFromXServer(XEvent *X)
 {
   #ifdef DEBUG
   fprintf(stderr, "%s: SelectionClear event for selection [%lu].\n", __func__, X->xselectionclear.selection);
   #endif
 
-  nxagentPrintClipboardStat("before nxagentClearSelection");
+  nxagentPrintClipboardStat("before nxagentHandleSelectionClearFromXServer");
 
   if (!agentClipboardInitialized)
   {
@@ -699,7 +701,7 @@ void nxagentClearSelection(XEvent *X)
 
   lastClientWindowPtr = NULL;
   setClientSelectionStage(None);
-  nxagentPrintClipboardStat("after nxagentClearSelection");
+  nxagentPrintClipboardStat("after nxagentHandleSelectionClearFromXServer");
 }
 
 /*
@@ -735,7 +737,7 @@ static void replyRequestSelection(XEvent *X, Bool success)
  * as selection owner. But in reality one of our windows is the owner,
  * so we must pass the request on to the real owner.
  */
-void nxagentRequestSelection(XEvent *X)
+void nxagentHandleSelectionRequestFromXServer(XEvent *X)
 {
   #ifdef DEBUG
   {
@@ -758,7 +760,7 @@ void nxagentRequestSelection(XEvent *X)
   }
   #endif
 
-  nxagentPrintClipboardStat("before nxagentRequestSelection");
+  nxagentPrintClipboardStat("before nxagentHandleSelectionRequestFromXServer");
 
   if (!agentClipboardInitialized)
   {
@@ -982,7 +984,7 @@ void nxagentRequestSelection(XEvent *X)
       }
     }
   }
-  nxagentPrintClipboardStat("after nxagentRequestSelection");
+  nxagentPrintClipboardStat("after nxagentHandleSelectionRequestFromXServer");
 }
 
 /*
@@ -1820,7 +1822,7 @@ int nxagentConvertSelection(ClientPtr client, WindowPtr pWin, Atom selection,
    * The selection request target is TARGETS. The requestor is asking
    * for a list of supported data formats.
    *
-   * The list is aligned with the one in nxagentRequestSelection.
+   * The list is aligned with the one in nxagentHandleSelectionRequestFromXServer.
    */
   if (target == clientTARGETS)
   {

@@ -893,7 +893,7 @@ void nxagentDispatchEvents(PredicateFuncPtr predicate)
         fprintf(stderr, "%s: Going to handle new SelectionClear event.\n", __func__);
         #endif
 
-        nxagentClearSelection(&X);
+        nxagentHandleSelectionClearFromXServer(&X);
 
         break;
       }
@@ -903,7 +903,7 @@ void nxagentDispatchEvents(PredicateFuncPtr predicate)
         fprintf(stderr, "%s: Going to handle new SelectionRequest event.\n", __func__);
         #endif
 
-        nxagentRequestSelection(&X);
+        nxagentHandleSelectionRequestFromXServer(&X);
 
         break;
       }
