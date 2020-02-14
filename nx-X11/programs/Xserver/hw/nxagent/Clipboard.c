@@ -178,10 +178,8 @@ static const char * getClientSelectionStageString(int stage)
 }
 
 #ifdef DEBUG
-#define setClientSelectionStage(stage) do {fprintf(stderr, "%s: Changing selection stage from [%s] to [%s]\n", __func__, getClientSelectionStageString(lastClientStage), getClientSelectionStageString(SelectionStage##stage)); lastClientStage = SelectionStage##stage;} while (0)
 #define printClientSelectionStage() do {fprintf(stderr, "%s: Current selection stage [%s]\n", __func__, getClientSelectionStageString(lastClientStage));} while (0)
 #else
-#define setClientSelectionStage(stage) do {lastClientStage = SelectionStage##stage;} while (0)
 #define printClientSelectionStage()
 #endif
 
@@ -231,6 +229,7 @@ XFixesAgentInfoRec nxagentXFixesInfo = { -1, -1, -1, 0 };
 extern Display *nxagentDisplay;
 
 static Bool validServerTargets(XlibAtom target);
+static void setClientSelectionStage(int stage);
 static void endTransfer(Bool success);
 #define SELECTION_SUCCESS True
 #define SELECTION_FAULT False
@@ -404,6 +403,31 @@ void nxagentDumpClipboardStat(void)
   fprintf(stderr, "\\------------------------------------------------------------------------------\n");
 
   SAFE_XFree(s);
+}
+
+/*
+ * Helper to handle data transfer
+ */
+static void setClientSelectionStage(int stage)
+{
+  #ifdef DEBUG
+  fprintf(stderr, "%s: Changing selection stage from [%s] to [%s]\n", __func__,
+	  getClientSelectionStageString(lastClientStage), getClientSelectionStageString(stage));
+  #endif
+
+  lastClientStage = stage;
+  if (stage == SelectionStageNone)
+  {
+    lastClientWindowPtr = NULL;
+    lastClientClientPtr = NULL;
+    lastClientRequestor = 0;
+    lastClientProperty = 0;
+    lastClientSelection = 0;
+    lastClientTarget = 0;
+    lastClientTime = 0;
+    lastClientReqTime = 0;
+    lastClientPropertySize = 0;
+  }
 }
 
 /*
@@ -600,8 +624,7 @@ void nxagentClearClipboard(ClientPtr pClient, WindowPtr pWindow)
 
       clearSelectionOwner(i);
 
-      lastClientWindowPtr = NULL;
-      setClientSelectionStage(None);
+      setClientSelectionStage(SelectionStageNone);
 
       lastServerRequestor = None;
     }
@@ -609,8 +632,7 @@ void nxagentClearClipboard(ClientPtr pClient, WindowPtr pWindow)
 
   if (pWindow && pWindow == lastClientWindowPtr)
   {
-    lastClientWindowPtr = NULL;
-    setClientSelectionStage(None);
+    setClientSelectionStage(SelectionStageNone);
   }
 }
 
@@ -697,8 +719,7 @@ void nxagentHandleSelectionClearFromXServer(XEvent *X)
     clearSelectionOwner(i);
   }
 
-  lastClientWindowPtr = NULL;
-  setClientSelectionStage(None);
+  setClientSelectionStage(SelectionStageNone);
 }
 
 /*
@@ -1017,8 +1038,7 @@ static void endTransfer(Bool success)
   /*
    * Enable further requests from clients.
    */
-  lastClientWindowPtr = NULL;
-  setClientSelectionStage(None);
+  setClientSelectionStage(SelectionStageNone);
 }
 
 static void transferSelection(int resource)
@@ -1082,7 +1102,7 @@ static void transferSelection(int resource)
         return;
       }
 
-      setClientSelectionStage(WaitSize);
+      setClientSelectionStage(SelectionStageWaitSize);
 
       NXFlushDisplay(nxagentDisplay, NXFlushLink);
 
@@ -1136,7 +1156,7 @@ static void transferSelection(int resource)
         return;
       }
 
-      setClientSelectionStage(WaitData);
+      setClientSelectionStage(SelectionStageWaitData);
 
       /* we've seen situations where you had to move the mouse or press a
          key to let the transfer complete. Flushing here fixed it */
@@ -1233,7 +1253,7 @@ void nxagentCollectPropertyEvent(int resource)
            * Request the selection data now.
            */
           lastClientPropertySize = ulReturnBytesLeft;
-          setClientSelectionStage(QueryData);
+          setClientSelectionStage(SelectionStageQueryData);
 
           transferSelection(resource);
         }
@@ -1352,7 +1372,7 @@ void nxagentHandleSelectionNotifyFromXServer(XEvent *X)
        * tions.
        */
 
-      setClientSelectionStage(QueryData);
+      setClientSelectionStage(SelectionStageQueryData);
       lastClientPropertySize = 262144;
 
       transferSelection(lastClientClientPtr -> index);
@@ -1523,8 +1543,7 @@ static void resetSelectionOwner(void)
     clearSelectionOwner(i);
   }
 
-  lastClientWindowPtr = NULL;
-  setClientSelectionStage(None);
+  setClientSelectionStage(SelectionStageNone);
 
   /* Hmm, this is already None when reaching this */
   lastServerRequestor = None;
@@ -1670,8 +1689,7 @@ static void setSelectionOwner(Selection *pSelection)
     storeSelectionOwner(i, pSelection);
   }
 
-  lastClientWindowPtr = NULL;
-  setClientSelectionStage(None);
+  setClientSelectionStage(SelectionStageNone);
 
   lastServerRequestor = None;
 
@@ -1687,8 +1705,7 @@ FIXME
       lastSelectionOwnerWindow = pSelection->window;
       lastSelectionOwnerWindowPtr = pSelection->pWin;
 
-      lastClientWindowPtr = NULL;
-      setClientSelectionStage(None);
+      setClientSelectionStage(SelectionStageNone);
 
       lastServerRequestor = None;
    }
@@ -1773,8 +1790,7 @@ int nxagentConvertSelection(ClientPtr client, WindowPtr pWin, Atom selection,
       notifyConvertFailure(lastClientClientPtr, lastClientRequestor,
                                lastClientSelection, lastClientTarget, lastClientTime);
 
-      lastClientWindowPtr = NULL;
-      setClientSelectionStage(None);
+      setClientSelectionStage(SelectionStageNone);
     }
     else
     {
@@ -1912,13 +1928,14 @@ int nxagentConvertSelection(ClientPtr client, WindowPtr pWin, Atom selection,
               target == clientCOMPOUND_TEXT ||
                   target == clientUTF8_STRING)
   {
-    lastClientWindowPtr = pWin;
-    setClientSelectionStage(None);
+    setClientSelectionStage(SelectionStageNone);
+
     /*
      * store the original requestor, we need that later after
      * serverTransToAgentProperty contains the desired selection content
      */
     lastClientRequestor = requestor;
+    lastClientWindowPtr = pWin;
     lastClientClientPtr = client;
     lastClientTime = time;
     lastClientProperty = property;
@@ -2283,8 +2300,7 @@ Bool nxagentInitClipboard(WindowPtr pWin)
 
     lastServerRequestor = None;
 
-    lastClientWindowPtr = NULL;
-    setClientSelectionStage(None);
+    setClientSelectionStage(SelectionStageNone);
     lastClientReqTime = GetTimeInMillis();
 
     clientTARGETS = MakeAtom(szAgentTARGETS, strlen(szAgentTARGETS), True);
