@@ -1779,10 +1779,7 @@ int nxagentConvertSelection(ClientPtr client, WindowPtr pWin, Atom selection,
                   "notifying failure to client\n", __func__);
       #endif
 
-      sendSelectionNotifyEventToClient(lastClientClientPtr, lastClientTime, lastClientRequestor,
-                                           lastClientSelection, lastClientTarget, None);
-
-      setClientSelectionStage(SelectionStageNone);
+      endTransfer(SELECTION_FAULT);
     }
     else
     {
