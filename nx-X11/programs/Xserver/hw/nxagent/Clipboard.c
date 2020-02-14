@@ -1016,24 +1016,25 @@ static void endTransfer(Bool success)
     #ifdef DEBUG
     fprintf(stderr, "%s: lastClientClientPtr is NULL - doing nothing.\n", __func__);
     #endif
-    return;
   }
-
-  #ifdef DEBUG
-  if (success == SELECTION_SUCCESS)
-    fprintf(stderr, "%s: sending notification to client [%d], property [%d][%s]\n", __func__,
-                CLINDEX(lastClientClientPtr), lastClientProperty, NameForAtom(lastClientProperty));
   else
-    fprintf(stderr, "%s: sending negative notification to client [%d]\n", __func__,
-                CLINDEX(lastClientClientPtr));
-  #endif
+  {
+    #ifdef DEBUG
+    if (success == SELECTION_SUCCESS)
+      fprintf(stderr, "%s: sending notification to client [%d], property [%d][%s]\n", __func__,
+                  CLINDEX(lastClientClientPtr), lastClientProperty, NameForAtom(lastClientProperty));
+    else
+      fprintf(stderr, "%s: sending negative notification to client [%d]\n", __func__,
+                  CLINDEX(lastClientClientPtr));
+    #endif
 
-  sendSelectionNotifyEventToClient(lastClientClientPtr,
-                                   lastClientTime,
-                                   lastClientRequestor,
-                                   lastClientSelection,
-                                   lastClientTarget,
-                                   success == SELECTION_SUCCESS ? lastClientProperty : None);
+    sendSelectionNotifyEventToClient(lastClientClientPtr,
+                                     lastClientTime,
+                                     lastClientRequestor,
+                                     lastClientSelection,
+                                     lastClientTarget,
+                                     success == SELECTION_SUCCESS ? lastClientProperty : None);
+  }
 
   /*
    * Enable further requests from clients.
