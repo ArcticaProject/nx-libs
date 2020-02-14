@@ -360,8 +360,14 @@ void nxagentDumpClipboardStat(void)
   fprintf(stderr, "  lastClientProperty              (Atom) [% 4d][%s]\n", lastClientProperty, NameForAtom(lastClientProperty));
   fprintf(stderr, "  lastClientSelection             (Atom) [% 4d][%s]\n", lastClientSelection, NameForAtom(lastClientSelection));
   fprintf(stderr, "  lastClientTarget                (Atom) [% 4d][%s]\n", lastClientTarget, NameForAtom(lastClientTarget));
-  fprintf(stderr, "  lastClientTime                  (Time) [%u]\n", lastClientTime);
-  fprintf(stderr, "  lastClientReqTime               (Time) [%u]\n", lastClientReqTime);
+  if (lastClientTime > 0)
+    fprintf(stderr, "  lastClientTime                  (Time) [%u] ([%u]ms ago)\n", lastClientTime, GetTimeInMillis() - lastClientTime);
+  else
+    fprintf(stderr, "  lastClientTime                  (Time) [%u]\n", lastClientTime);
+  if (lastClientReqTime > 0)
+    fprintf(stderr, "  lastClientReqTime               (Time) [%u] ([%u]ms ago)\n", lastClientReqTime, GetTimeInMillis() - lastClientReqTime);
+  else
+    fprintf(stderr, "  lastClientReqTime               (Time) [%u]\n", lastClientReqTime);
   fprintf(stderr, "  lastClientPropertySize (unsigned long) [%lu]\n", lastClientPropertySize);
   fprintf(stderr, "  lastClientStage (ClientSelectionStage) [%d][%s]\n", lastClientStage, getClientSelectionStageString(lastClientStage));
 
