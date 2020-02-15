@@ -1234,7 +1234,7 @@ void nxagentCollectPropertyEvent(int resource)
         if (ulReturnBytesLeft == 0)
         {
           #ifdef DEBUG
-          fprintf (stderr, "%s: Aborting selection notify procedure.\n", __func__);
+          fprintf (stderr, "%s: data size is [0] - aborting selection notify procedure.\n", __func__);
           #endif
 
           endTransfer(SELECTION_FAULT);
@@ -1242,7 +1242,7 @@ void nxagentCollectPropertyEvent(int resource)
         else
         {
           #ifdef DEBUG
-          fprintf(stderr, "%s: Got property size from remote server.\n", __func__);
+          fprintf(stderr, "%s: Got property size [%lu] from remote server.\n", __func__, ulReturnBytesLeft);
           #endif
 
           /*
@@ -1265,7 +1265,7 @@ void nxagentCollectPropertyEvent(int resource)
         if (ulReturnBytesLeft != 0)
         {
           #ifdef DEBUG
-          fprintf (stderr, "%s: Aborting selection notify procedure.\n", __func__);
+          fprintf (stderr, "%s: not all content could be retrieved - [%lu] bytes left - aborting selection notify procedure.\n", __func__, ulReturnBytesLeft);
           #endif
 
           endTransfer(SELECTION_FAULT);
@@ -1273,7 +1273,7 @@ void nxagentCollectPropertyEvent(int resource)
         else
         {
           #ifdef DEBUG
-          fprintf(stderr, "%s: Got property content from remote server.\n", __func__);
+          fprintf(stderr, "%s: Got property content from remote server. size [%lu] bytes.\n", __func__, (ulReturnItems * resultFormat / 8));
           #endif
 
           ChangeWindowProperty(lastClientWindowPtr,
@@ -1930,31 +1930,32 @@ int nxagentConvertSelection(ClientPtr client, WindowPtr pWin, Atom selection,
      * we only convert to either UTF8 or XA_STRING, despite accepting
      * TEXT and COMPOUND_TEXT.
      */
+    XlibAtom p = serverTransToAgentProperty;
+    XlibAtom t;
+    char * pstr = "NX_CUT_BUFFER_SERVER";
+    const char * tstr;
     if (target == clientUTF8_STRING)
     {
-      #ifdef DEBUG
-      fprintf(stderr, "%s: Sending XConvertSelection with target [%ld][%s], property [%ld][%s]\n", __func__,
-              serverUTF8_STRING, szAgentUTF8_STRING, serverTransToAgentProperty, "NX_CUT_BUFFER_SERVER");
-      #endif
-      XConvertSelection(nxagentDisplay, selection, serverUTF8_STRING, serverTransToAgentProperty,
-                           serverWindow, CurrentTime);
+      t = serverUTF8_STRING;
+      tstr = szAgentUTF8_STRING;
     }
     else
     {
-      #ifdef DEBUG
-      fprintf(stderr, "%s: Sending XConvertSelection with target [%d][%s], property [%ld][%s]\n", __func__,
-              XA_STRING, validateString(NameForAtom(XA_STRING)), serverTransToAgentProperty, "NX_CUT_BUFFER_SERVER");
-      #endif
-
-      XConvertSelection(nxagentDisplay, selection, XA_STRING, serverTransToAgentProperty,
-                           serverWindow, CurrentTime);
+      t = XA_STRING;
+      tstr = validateString(NameForAtom(XA_STRING));
     }
+
+    #ifdef DEBUG
+    fprintf(stderr, "%s: Sending XConvertSelection to real X server: requestor [0x%x] target [%ld][%s] property [%ld][%s] time [%ld]\n", __func__,
+            serverWindow, t, tstr, p, pstr, CurrentTime);
+    #endif
+
+    XConvertSelection(nxagentDisplay, selection, t, p, serverWindow, CurrentTime);
 
     /* FIXME: check returncode of XConvertSelection */
 
     #ifdef DEBUG
-    fprintf(stderr, "%s: Sent XConvertSelection with target [%s], property [%s]\n", __func__,
-                validateString(NameForAtom(target)), validateString(NameForAtom(property)));
+    fprintf(stderr, "%s: Sent XConvertSelection with target [%s], property [%s]\n", __func__, tstr, pstr);
     #endif
 
     return 1;
