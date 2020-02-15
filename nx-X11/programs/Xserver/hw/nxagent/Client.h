@@ -49,7 +49,7 @@ typedef struct _PrivClientRec
   int clientState;
   long clientBytes;
   enum ClientHint clientHint;
-
+  char *clientInfoString;
 } PrivClientRec;
 
 extern int nxagentClientPrivateIndex;
@@ -74,6 +74,9 @@ extern void nxagentClientStateCallback(CallbackListPtr *callbacks, void *data, v
 
 #define nxagentClientIsDialog(pClient) \
     (nxagentClientHint(pClient) == NXCLIENT_DIALOG)
+
+#define nxagentClientInfoString(pClient)	\
+    (nxagentClientPriv(pClient) -> clientInfoString)
 
 /*
  * The actual reason why the client is sleeping.

@@ -113,6 +113,14 @@ int nxagentClientPrivateIndex;
 int nxagentShadowCounter = 0;
 
 /*
+ * For the serverclient the ClientStateCallback will not be called on
+ * shutdown resulting in memory allocated during initClientPrivates can
+ * not be freed automatically. So instead of allocating some memory we
+ * create a static string for the serverclient.
+ */
+static char *serverclientInfoString = "[0] (serverclient)";
+
+/*
  * called whenever the client state changes. See dixstruct.h for a
  * list of known states.
  */
@@ -182,6 +190,42 @@ static void initClientPrivates(ClientPtr client)
     nxagentClientPriv(client) -> clientBytes = 0;
 #endif
     nxagentClientPriv(client) -> clientHint  = UNKNOWN;
+    nxagentClientPriv(client) -> clientInfoString = NULL;
+
+    char *s = NULL;
+    int size = 0;
+
+    if (client->index == 0)
+    {
+      s = serverclientInfoString;
+    }
+    else
+    {
+#ifdef CLIENTIDS
+      size = asprintf(&s, "[%d] (addr [%p] PID [%d] Cmd [%s])",
+                          client->index, (void *)client,
+                              GetClientPid(client),
+                                  GetClientCmdName(client));
+#else
+      size = asprintf(&s, "[%d] (addr [%p])",
+                          client->index, (void *)client);
+#endif
+    }
+
+    if (size != -1)
+    {
+      #ifdef DEBUG
+      fprintf(stderr, "%s: clientInfoString: \"%s\"\n", __func__, s);
+      #endif
+
+      nxagentClientPriv(client) -> clientInfoString = s;
+    }
+    else
+    {
+      #ifdef DEBUG
+      fprintf(stderr, "%s: could not alloc clientInfoString\n", __func__);
+      #endif
+    }
   }
 }
 
@@ -198,6 +242,9 @@ static void freeClientPrivates(ClientPtr client)
     nxagentClientPriv(client) -> clientBytes = 0;
 #endif
     nxagentClientPriv(client) -> clientHint  = UNKNOWN;
+
+    if (client->index != 0)
+      SAFE_free(nxagentClientPriv(client) -> clientInfoString);
   }
 }
 
