@@ -1009,29 +1009,8 @@ CloseDownClient(register ClientPtr client)
      */
 
     nxagentCheckIfShadowAgent(client);
+
 #endif
 
     xorg_CloseDownClient(client);
-}
-
-/* FIXME: Instead of having a own function use the provided Callback
-   mechanism */
-int
-InitClientPrivates(ClientPtr client)
-{
-    int ret = xorg_InitClientPrivates(client);
-
-#ifdef NXAGENT_SERVER
-    if (ret == 1)
-    {
-
-      /*
-       * Initialize the private members.
-       */
-
-      nxagentInitClientPrivates(client);
-    }
-#endif
-
-    return ret;
 }

@@ -54,6 +54,7 @@ is" without express or implied warranty.
 #include "mi.h"
 #include <X11/fonts/fontstruct.h>
 #include "dixfontstr.h"
+#include "dixstruct.h"
 
 #include "Agent.h"
 #include "Display.h"
@@ -74,6 +75,7 @@ is" without express or implied warranty.
 #include "Error.h"
 #include "Keystroke.h"
 #include "Atoms.h"
+#include "Client.h"
 
 #include <nx/NX.h>
 #include "compext/Compext.h"
@@ -386,8 +388,12 @@ FIXME: These variables, if not removed at all because have probably
   nxagentInitKeystrokes(False);
 
 #ifdef NXAGENT_CLIPBOARD
+  /* FIXME: we need to call DeleteCallback at shutdown, but where? */
   AddCallback(&SelectionCallback, nxagentSetSelectionCallback, NULL);
 #endif
+
+  /* FIXME: we need to call DeleteCallback at shutdown, but where? */
+  AddCallback(&ClientStateCallback, nxagentClientStateCallback, NULL);
 
   nxagentInitAtoms();
 }

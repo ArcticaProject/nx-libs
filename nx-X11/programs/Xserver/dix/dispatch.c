@@ -3642,11 +3642,7 @@ void InitClient(ClientPtr client, int i, void * ospriv)
 }
 
 int
-#ifdef NXAGENT_SERVER
-xorg_InitClientPrivates(ClientPtr client)
-#else
 InitClientPrivates(ClientPtr client)
-#endif
 {
     register char *ptr;
     DevUnion *ppriv;

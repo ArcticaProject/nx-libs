@@ -57,7 +57,7 @@ extern int nxagentClientPrivateIndex;
 #define nxagentClientPriv(pClient) \
   ((PrivClientRec *)((pClient)->devPrivates[nxagentClientPrivateIndex].ptr))
 
-void nxagentInitClientPrivates(ClientPtr);
+extern void nxagentClientStateCallback(CallbackListPtr *callbacks, void *data, void *args);
 
 #undef COUNT_CLIENT_BYTES
 

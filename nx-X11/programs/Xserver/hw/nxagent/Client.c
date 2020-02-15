@@ -68,6 +68,10 @@
 #undef  TEST
 #undef  DEBUG
 
+void nxagentClientStateCallback(CallbackListPtr *callbacks, void *data, void *args);
+static void initClientPrivates(ClientPtr client);
+static void freeClientPrivates(ClientPtr client);
+
 /*
  * Returns the last signal delivered to the process.
  */
@@ -106,8 +110,78 @@ int nxagentClientPrivateIndex;
 
 int nxagentShadowCounter = 0;
 
-void nxagentInitClientPrivates(ClientPtr client)
+/*
+ * called whenever the client state changes. See dixstruct.h for a
+ * list of known states.
+ */
+
+#ifdef DEBUG
+const char * getClientStateString(int state)
 {
+  switch (state)
+  {
+    case ClientStateInitial:          { return "Initial"; break; };
+    case ClientStateAuthenticating:   { return "Authenticating"; break; };
+    case ClientStateRunning:          { return "Running"; break; };
+    case ClientStateRetained:         { return "Retained"; break; };
+    case ClientStateGone:             { return "Gone"; break; };
+    case ClientStateCheckingSecurity: { return "CheckingSecurity"; break; };
+    case ClientStateCheckedSecurity:  { return "CheckedSecurity"; break; };
+    default:                          { return "UNKNOWN"; break; };
+  }
+}
+#endif
+
+void nxagentClientStateCallback(CallbackListPtr *callbacks, void *data, void *args)
+{
+  ClientPtr client = ((NewClientInfoRec *)args)->client;
+
+  #ifdef DEBUG
+  fprintf(stderr, "%s: client [%d] clientState [%s]\n", __func__, client->index,
+              getClientStateString(client->clientState));
+  #endif
+
+  switch(client->clientState)
+  {
+    case ClientStateInitial:
+    {
+      initClientPrivates(client);
+      break;
+    }
+    case ClientStateGone:
+    {
+      freeClientPrivates(client);
+      break;
+    }
+    default:
+    {
+      break;
+    }
+  }
+}
+
+static void initClientPrivates(ClientPtr client)
+{
+  #ifdef DEBUG
+  fprintf(stderr, "%s: called\n", __func__);
+  #endif
+
+  if (nxagentClientPriv(client))
+  {
+    nxagentClientPriv(client) -> clientState = 0;
+#ifdef COUNT_CLIENT_BYTES
+    nxagentClientPriv(client) -> clientBytes = 0;
+#endif
+    nxagentClientPriv(client) -> clientHint  = UNKNOWN;
+  }
+}
+
+static void freeClientPrivates(ClientPtr client)
+{
+  #ifdef DEBUG
+  fprintf(stderr, "%s: called\n", __func__);
+  #endif
+
   if (nxagentClientPriv(client))
   {
     nxagentClientPriv(client) -> clientState = 0;
