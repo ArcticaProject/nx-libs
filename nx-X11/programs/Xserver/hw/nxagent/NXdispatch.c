@@ -989,23 +989,14 @@ CloseDownClient(register ClientPtr client)
 {
 #ifdef NXAGENT_SERVER
     /*
-     * There must be a better way to hook a
-     * call-back function to be called any
-     * time a client is going to be closed.
-     */
-
-    nxagentClearClipboard(client, NULL);
-
-    /*
-     * Need to reset the karma counter and
-     * get rid of the pending sync replies.
+     * Need to reset the karma counter and get rid of the pending sync
+     * replies.
      */
 
     nxagentWakeupByReset(client);
 
     /*
-     * Check if the client
-     * is a shadow nxagent.
+     * Check if the client is a shadow nxagent.
      */
 
     nxagentCheckIfShadowAgent(client);

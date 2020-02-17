@@ -52,6 +52,7 @@
 #include "Events.h"
 #include "Drawable.h"
 #include "Utils.h"
+#include "Clipboard.h"
 
 /*
  * Need to include this after the stub definition of GC in Agent.h.
@@ -150,6 +151,7 @@ void nxagentClientStateCallback(CallbackListPtr *callbacks, void *data, void *ar
     }
     case ClientStateGone:
     {
+      nxagentClearClipboard(client, NULL);
       freeClientPrivates(client);
       break;
     }
