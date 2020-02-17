@@ -72,6 +72,7 @@
 void nxagentClientStateCallback(CallbackListPtr *callbacks, void *data, void *args);
 static void initClientPrivates(ClientPtr client);
 static void freeClientPrivates(ClientPtr client);
+static void checkIfShadowAgent(ClientPtr client);
 
 /*
  * Returns the last signal delivered to the process.
@@ -152,6 +153,12 @@ void nxagentClientStateCallback(CallbackListPtr *callbacks, void *data, void *ar
     case ClientStateGone:
     {
       nxagentClearClipboard(client, NULL);
+
+      /*
+       * Check if the client is a shadow nxagent.
+       */
+      checkIfShadowAgent(client);
+
       freeClientPrivates(client);
       break;
     }
@@ -283,7 +290,7 @@ void nxagentGuessShadowHint(ClientPtr client, Atom property)
   }
 }
 
-void nxagentCheckIfShadowAgent(ClientPtr client)
+static void checkIfShadowAgent(ClientPtr client)
 {
   if (nxagentClientHint(client) == NXAGENT_SHADOW)
   {

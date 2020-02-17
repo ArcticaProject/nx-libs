@@ -994,13 +994,6 @@ CloseDownClient(register ClientPtr client)
      */
 
     nxagentWakeupByReset(client);
-
-    /*
-     * Check if the client is a shadow nxagent.
-     */
-
-    nxagentCheckIfShadowAgent(client);
-
 #endif
 
     xorg_CloseDownClient(client);

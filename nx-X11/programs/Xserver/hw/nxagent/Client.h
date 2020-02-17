@@ -76,8 +76,7 @@ extern void nxagentClientStateCallback(CallbackListPtr *callbacks, void *data, v
     (nxagentClientHint(pClient) == NXCLIENT_DIALOG)
 
 /*
- * The actual reason why the client
- * is sleeping.
+ * The actual reason why the client is sleeping.
  */
 
 #define SleepingBySplit  1
@@ -94,19 +93,15 @@ void nxagentGuessClientHint(ClientPtr, Atom, char*);
 
 void nxagentGuessShadowHint(ClientPtr, Atom);
 
-void nxagentCheckIfShadowAgent(ClientPtr);
-
 /*
- * Suspend or restart the agent's
- * client.
+ * Suspend or restart the agent's client.
  */
 
 int nxagentSuspendBySplit(ClientPtr client);
 int nxagentWakeupBySplit(ClientPtr client);
 
 /*
- * Wait until the given client is
- * restarted.
+ * Wait until the given client is restarted.
  */
 
 void nxagentWaitWakeupBySplit(ClientPtr client);
@@ -123,8 +118,7 @@ void nxagentWaitDrawable(DrawablePtr pDrawable);
 void nxagentWakeupByReconnect(void);
 
 /*
- * Reset the client state before
- * closing it down.
+ * Reset the client state before closing it down.
  */
 
 void nxagentWakeupByReset(ClientPtr client);
