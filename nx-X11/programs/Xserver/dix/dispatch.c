@@ -3960,7 +3960,12 @@ DeleteClientFromAnySelections(ClientPtr client)
 	        SelectionInfoRec    info;
 
 		info.selection = &CurrentSelections[i];
+#ifdef NXAGENT_SERVER
+                /* bugfix missing in upstream before introduction of selection.c */
+		info.kind = SelectionClientClose;
+#else
 		info.kind = SelectionWindowDestroy;
+#endif
 		CallCallbacks(&SelectionCallback, &info);
 	    }
             CurrentSelections[i].pWin = (WindowPtr)NULL;
