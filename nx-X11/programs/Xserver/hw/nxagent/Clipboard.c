@@ -598,6 +598,12 @@ static Bool matchSelectionOwner(int index, ClientPtr pClient, WindowPtr pWindow)
           (pWindow && lastSelectionOwner[index].windowPtr == pWindow));
 }
 
+/*
+ * Clear relevant clipboard states if a client or window is closing.
+ * Attention: does not work properly when both client AND window
+ * are passed as setClientSelectionStage(None) will also clear
+ * the lastClientWindowPtr!
+ */
 void nxagentClearClipboard(ClientPtr pClient, WindowPtr pWindow)
 {
   #ifdef DEBUG
