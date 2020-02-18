@@ -130,7 +130,7 @@ void nxagentGuessClientHint(ClientPtr client, Atom property, char *data)
               client -> index, validateString(NameForAtom(property)), validateString(data));
   #endif
 
-  if (nxagentClientPriv(client) -> clientHint == UNKNOWN)
+  if (nxagentClientHint(client) == UNKNOWN)
   {
     if (property == XA_WM_CLASS)
     {
@@ -153,7 +153,7 @@ void nxagentGuessClientHint(ClientPtr client, Atom property, char *data)
     }
   }
 
-  if (nxagentClientPriv(client) -> clientHint == NXCLIENT_WINDOW)
+  if (nxagentClientHint(client) == NXCLIENT_WINDOW)
   {
     if (property == MakeAtom("WM_WINDOW_ROLE", 14, True) &&
             strncmp(data, "msgBox", 6) == 0)
@@ -175,7 +175,7 @@ void nxagentGuessShadowHint(ClientPtr client, Atom property)
                   validateString(NameForAtom(property)));
   #endif
 
-  if (nxagentClientPriv(client) -> clientHint == UNKNOWN)
+  if (nxagentClientHint(client) == UNKNOWN)
   {
     if (strcmp(validateString(NameForAtom(property)), "_NX_SHADOW") == 0)
     {
@@ -209,7 +209,7 @@ void nxagentGuessShadowHint(ClientPtr client, Atom property)
 
 void nxagentCheckIfShadowAgent(ClientPtr client)
 {
-  if (nxagentClientPriv(client) -> clientHint == NXAGENT_SHADOW)
+  if (nxagentClientHint(client) == NXAGENT_SHADOW)
   {
     #ifdef TEST
     fprintf(stderr, "nxagentCheckIfShadowAgent: nxagentShadowCounter [%d].\n",
