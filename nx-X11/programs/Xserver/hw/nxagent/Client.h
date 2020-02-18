@@ -59,11 +59,15 @@ extern int nxagentClientPrivateIndex;
 
 void nxagentInitClientPrivates(ClientPtr);
 
+#undef COUNT_CLIENT_BYTES
+
+#ifdef COUNT_CLIENT_BYTES
 #define nxagentClientAddBytes(pClient, size)	\
   (nxagentClientPriv(pClient) -> clientBytes += (size))
 
 #define nxagentClientBytes(pClient)	\
     (nxagentClientPriv(pClient) -> clientBytes)
+#endif
 
 #define nxagentClientHint(pClient) \
     (nxagentClientPriv(pClient) -> clientHint)

@@ -111,7 +111,9 @@ void nxagentInitClientPrivates(ClientPtr client)
   if (nxagentClientPriv(client))
   {
     nxagentClientPriv(client) -> clientState = 0;
+#ifdef COUNT_CLIENT_BYTES
     nxagentClientPriv(client) -> clientBytes = 0;
+#endif
     nxagentClientPriv(client) -> clientHint  = UNKNOWN;
   }
 }
@@ -284,6 +286,7 @@ void nxagentWakeupByReset(ClientPtr client)
     }
   }
 
+#ifdef COUNT_CLIENT_BYTES
   if (client -> index < MAX_CONNECTIONS)
   {
     #ifdef TEST
@@ -293,6 +296,7 @@ void nxagentWakeupByReset(ClientPtr client)
 
     nxagentClientBytes(client) = 0;
   }
+#endif
 }
 
 /*

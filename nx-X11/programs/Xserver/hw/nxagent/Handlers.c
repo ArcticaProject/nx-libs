@@ -1041,6 +1041,7 @@ void nxagentDispatchHandler(ClientPtr client, int in, int out)
                 in, client -> index);
     #endif
 
+#ifdef COUNT_CLIENT_BYTES
     /*
      * This is presently unused.
      *
@@ -1052,6 +1053,7 @@ void nxagentDispatchHandler(ClientPtr client, int in, int out)
      * #endif
      *
      */
+#endif
 
     nxagentBytesIn += in;
 
