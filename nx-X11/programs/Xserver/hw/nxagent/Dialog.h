@@ -78,7 +78,9 @@ extern void nxagentTerminateDialogs(void);
              nxagentEnableRandRModeDialogPid == 0 && \
                  nxagentDisableRandRModeDialogPid == 0 && \
                      nxagentEnableDeferModePid == 0 && \
-                         nxagentDisableDeferModePid == 0)
+                         nxagentDisableDeferModePid == 0 && \
+                             nxagentEnableAutograbModePid == 0 && \
+                                 nxagentDisableAutograbModePid == 0)
 
 #define DECODE_DIALOG_TYPE(type) \
             ((type) == DIALOG_KILL_SESSION ? "DIALOG_KILL_SESSION" : \
