@@ -98,10 +98,9 @@ extern void nxagentTerminateDialogs(void);
              "UNKNOWN_DIALOG")
 
 /*
- * Message to be showed to users when the close
- * button is pressed. The right message is chosen
- * according if session does or does not run in
- * persistent mode.
+ * Message to be shown to users when the close button is pressed. The
+ * right message is chosen according if session does or does not run
+ * in persistent mode.
  */
 
 #define DIALOG_KILL_SESSION_MESSAGE \
