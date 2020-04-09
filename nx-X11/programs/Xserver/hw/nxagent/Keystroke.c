@@ -576,10 +576,10 @@ Bool nxagentCheckSpecialKeystroke(XKeyEvent *X, enum HandleEventResult *result)
   #ifdef TEST
   if (stroke != KEYSTROKE_NOTHING && stroke != KEYSTROKE_END_MARKER)
     fprintf(stderr, "nxagentCheckSpecialKeystroke: got code %x - state %x - stroke %d (%s)\n",
-	    X -> keycode, X -> state, stroke, nxagentSpecialKeystrokeNames[stroke]);
+            X -> keycode, X -> state, stroke, nxagentSpecialKeystrokeNames[stroke]);
   else
     fprintf(stderr, "nxagentCheckSpecialKeystroke: got code %x - state %x - stroke %d (unused)\n",
-	    X -> keycode, X -> state, stroke);
+            X -> keycode, X -> state, stroke);
   #endif
 
   if (stroke == KEYSTROKE_NOTHING)
@@ -704,13 +704,13 @@ Bool nxagentCheckSpecialKeystroke(XKeyEvent *X, enum HandleEventResult *result)
       break;
     case KEYSTROKE_REREAD_KEYSTROKES:
       /* two reasons to check on KeyRelease:
-	 - this code is called for KeyPress and KeyRelease, so we
-	   would read the keystroke file twice
-	 - if the keystroke file changes settings for this key this
+         - this code is called for KeyPress and KeyRelease, so we
+           would read the keystroke file twice
+         - if the keystroke file changes settings for this key this
            might lead to unexpected behaviour
       */
       if (X->type == KeyRelease)
-	nxagentInitKeystrokes(True);
+        nxagentInitKeystrokes(True);
       break;
     case KEYSTROKE_AUTOGRAB:
       *result = doAutoGrab;
