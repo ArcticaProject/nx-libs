@@ -467,6 +467,11 @@ doListFontsAndAliases(ClientPtr client, LFclosurePtr c)
 				    (ClientSleepProcPtr)doListFontsAndAliases,
 				    (void *) c);
 			c->slept = TRUE;
+#ifdef NXAGENT_SERVER
+                        #ifdef DEBUG
+                        fprintf(stderr, " NXdixfonts: doListFont (2): client [%lx] sleeping.\n", client);
+                        #endif
+#endif
 		    }
 		    return TRUE;
 		}
@@ -491,7 +496,6 @@ doListFontsAndAliases(ClientPtr client, LFclosurePtr c)
 			c->slept = TRUE;
 #ifdef NXAGENT_SERVER
                         #ifdef DEBUG
-                        fprintf(stderr, " NXdixfonts: doListFont (2): client [%lx] sleeping.\n", client);
                         fprintf(stderr, " NXdixfonts: doListFont (3): client [%lx] sleeping.\n", client);
                         #endif
 #endif
