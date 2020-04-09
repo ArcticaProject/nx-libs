@@ -192,7 +192,6 @@ void nxagentFreeFontCache(void)
     }
 
     SAFE_free(CACHE_ENTRY_PTR);
-    CACHE_ENTRY_PTR = NULL;
     CACHE_INDEX = 0;
     CACHE_SIZE = 0;
 
@@ -289,16 +288,16 @@ void nxagentListRemoteAddName(const char *name, int status)
 
     if (nxagentRemoteFontList.length == nxagentRemoteFontList.listSize)
     {
-        /* FIXME: if realloc fails the pointer is lost! */
-        nxagentRemoteFontList.list = realloc(nxagentRemoteFontList.list, sizeof(nxagentFontRecPtr)
-                                                 * (nxagentRemoteFontList.listSize + 1000));
+        int num = nxagentRemoteFontList.listSize + 1000;
+        nxagentFontRecPtr *tmp1 = realloc(nxagentRemoteFontList.list, sizeof(nxagentFontRecPtr) * num);
 
-        if (nxagentRemoteFontList.list == NULL)
+        if (tmp1 == NULL)
         {
             FatalError("Font: remote list memory re-allocation failed!.\n");
         }
 
-        nxagentRemoteFontList.listSize += 1000;
+        nxagentRemoteFontList.list = tmp1;
+        nxagentRemoteFontList.listSize = num;
     }
 
     if (pos < nxagentRemoteFontList.length)
@@ -542,15 +541,18 @@ Bool nxagentRealizeFont(ScreenPtr pScreen, FontPtr pFont)
 
         if (CACHE_INDEX == CACHE_SIZE)
         {
-            /* FIXME: if realloc fails the pointer is lost */
-            CACHE_ENTRY_PTR = realloc(CACHE_ENTRY_PTR, sizeof(nxCacheFontEntryRecPtr) * (CACHE_SIZE + 100));
+            int num = CACHE_SIZE + 100;
 
-            if (CACHE_ENTRY_PTR == NULL)
+            nxCacheFontEntryRecPtr *tmp1 = realloc(CACHE_ENTRY_PTR,
+                                                       sizeof(nxCacheFontEntryRecPtr) * num);
+
+            if (tmp1 == NULL)
             {
                 FatalError("Font: Cache list memory re-allocation failed.\n");
             }
 
-            CACHE_SIZE += 100;
+            CACHE_ENTRY_PTR = tmp1;
+            CACHE_SIZE = num;
         }
 
         CACHE_ENTRY(CACHE_INDEX) = malloc(sizeof(nxCacheFontEntryRec));
@@ -888,21 +890,22 @@ static void nxagentCollectFailedFont(FontPtr fpt, XID id)
     }
     else if (nxagentFailedToReconnectFonts.index == nxagentFailedToReconnectFonts.size - 1)
     {
-        nxagentFailedToReconnectFonts.size *= 2;
+        int num = 2 * nxagentFailedToReconnectFonts.size;
 
-        /* FIXME: if realloc fails the pointer is lost */
-        nxagentFailedToReconnectFonts.font = realloc(nxagentFailedToReconnectFonts.font,
-                                                         nxagentFailedToReconnectFonts.size *
-                                                             sizeof(FontPtr));
+        FontPtr *tmp1 = realloc(nxagentFailedToReconnectFonts.font, num * sizeof(FontPtr));
+        XID *tmp2 = realloc(nxagentFailedToReconnectFonts.id, num * sizeof(XID));
 
-        nxagentFailedToReconnectFonts.id = realloc(nxagentFailedToReconnectFonts.id,
-                                                       nxagentFailedToReconnectFonts.size *
-                                                           sizeof(XID));
-
-        if (nxagentFailedToReconnectFonts.font == NULL || nxagentFailedToReconnectFonts.id == NULL)
+        if (tmp1 == NULL || tmp2 == NULL)
         {
+            SAFE_free(tmp1);
+            SAFE_free(tmp2);
+
             FatalError("Font: font not reconnected memory re-allocation failed!.\n");
         }
+
+        nxagentFailedToReconnectFonts.size = num;
+        nxagentFailedToReconnectFonts.font = tmp1;
+        nxagentFailedToReconnectFonts.id = tmp2;
 
         #ifdef NXAGENT_RECONNECT_FONT_DEBUG
         fprintf(stderr,"nxagentCollectFailedFont: reallocated memory.\n ");
