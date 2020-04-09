@@ -82,4 +82,5 @@ void nxagentVerifyDefaultFontPath(void);
 
 int nxagentSplitString(char *string, char *fields[], int nfields, char *sep);
 
+void nxagentFreeFontData(void);
 #endif /* __Font_H__ */

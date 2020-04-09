@@ -102,7 +102,6 @@ static XFontStruct *nxagentLoadBestQueryFont(Display* dpy, char *fontName, FontP
 static XFontStruct *nxagentLoadQueryFont(register Display *dpy , char *fontName , FontPtr pFont);
 int nxagentFreeFont(XFontStruct *fs);
 static Bool nxagentGetFontServerPath(char * fontServerPath, int size);
-
 static char * nxagentMakeScalableFontName(const char *fontName, int scalableResolution);
 
 RESTYPE RT_NX_FONT;
@@ -157,6 +156,14 @@ static struct _nxagentFailedToReconnectFonts
     int size;
     int index;
 } nxagentFailedToReconnectFonts = {NULL, NULL, 0, 0};
+
+static void nxagentFreeRemoteFontList(nxagentFontList *listRec);
+
+void nxagentFreeFontData(void)
+{
+    nxagentFreeFontCache();
+    nxagentFreeRemoteFontList(&nxagentRemoteFontList);
+}
 
 /*
  * This is used if nxagentFullGeneration is true in CloseDisplay().
