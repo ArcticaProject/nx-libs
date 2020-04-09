@@ -684,16 +684,14 @@ finish:
 
 bail:
     if (c->slept)
-#ifdef NXAGENT_SERVER
     {
         ClientWakeup(client);
+#ifdef NXAGENT_SERVER
         #ifdef DEBUG
         fprintf(stderr, " NXdixfonts: doListFont: client [%lx] wakeup.\n", client);
         #endif
-    }
-#else
-    ClientWakeup(client);
 #endif
+    }
     for (i = 0; i < c->num_fpes; i++)
 	FreeFPE(c->fpe_list[i]);
     free(c->fpe_list);
@@ -1059,7 +1057,7 @@ typedef struct
    OFclosurePtr oc;
 } nxFs,*nxFsPtr;
 
-/* this is derived from doListFontsAndAliases */
+/* this is derived from doListFontsAndAliases above */
 static Bool
 nxdoListFontsAndAliases(ClientPtr client, nxFsPtr fss)
 {
@@ -1201,20 +1199,20 @@ nxdoListFontsAndAliases(ClientPtr client, nxFsPtr fss)
 		{
 		    if (c->savedName)
 		    {
-		       memcpy(tmp,c->savedName,c->savedNameLen>255?255:c->savedNameLen);
-		       tmp[c->savedNameLen>255?255:c->savedNameLen]=0;
+		       memcpy(tmp, c->savedName, c->savedNameLen > 255 ? 255 : c->savedNameLen);
+		       tmp[c->savedNameLen >255 ? 255 : c->savedNameLen] = 0;
 		       if (nxagentFontLookUp(tmp))
 		          break;
-			else tmp[0]=0;
+			else tmp[0] = 0;
 		    }
 		}
 		else
 		{
-		   memcpy(tmp,name,namelen>255?255:namelen);
-		   tmp[namelen>255?255:namelen]=0;
+		   memcpy(tmp, name, namelen > 255 ? 255 : namelen);
+		   tmp[namelen > 255 ? 255 : namelen] = 0;
 		   if (nxagentFontLookUp(tmp))
 		      break;
-		   else tmp[0]=0;
+		   else tmp[0] = 0;
 		}
 	    }
 
@@ -1308,14 +1306,13 @@ finish:
     if (strlen(tmp))
     {
 #ifdef NXAGENT_FONTMATCH_DEBUG
-      fprintf(stderr, "nxListFont changed (0) font to %s\n",tmp);
+      fprintf(stderr, "nxListFont changed (0) font to %s\n", tmp);
 #endif
       memcpy(oc->fontname, tmp, strlen(tmp));
       oc->fnamelen = strlen(tmp);
 
       oc->origFontName = oc->fontname;
       oc->origFontNameLen = oc->fnamelen;
-
     }
     else
     {
@@ -1367,13 +1364,13 @@ finish:
 }
 
 
-/* this is derived from OpenFont() */
+/* this is derived from dix/dixfonts.c:OpenFont() */
 int
 nxOpenFont(ClientPtr client, XID fid, Mask flags, unsigned lenfname, char *pfontname)
 {
-    nxFsPtr      fss;
-    LFclosurePtr c;
-    OFclosurePtr oc;
+    nxFsPtr      fss;  /* NX Font Struct Ptr */
+    LFclosurePtr c;    /* ListFont closure Ptr */
+    OFclosurePtr oc;   /* OpenFont closure Ptr */
     int         i;
     FontPtr     cached = (FontPtr)0;
 
@@ -1428,7 +1425,8 @@ nxOpenFont(ClientPtr client, XID fid, Mask flags, unsigned lenfname, char *pfont
 	free(fss);
 	return BadAlloc;
     }
-        c->fpe_list = (FontPathElementPtr *)
+
+    c->fpe_list = (FontPathElementPtr *)
 	malloc(sizeof(FontPathElementPtr) * num_fpes);
     if (!c->fpe_list) {
 	free(c);
