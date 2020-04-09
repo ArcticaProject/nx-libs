@@ -452,6 +452,10 @@ Bool nxagentFontLookUp(const char *name)
     }
 }
 
+/*
+ * NXAGENT uses useless screen pointer to pass the original font name
+ * to realizeFont, could be a source of problems in the future.
+ */
 Bool nxagentRealizeFont(ScreenPtr pScreen, FontPtr pFont)
 {
 #ifdef HAS_XFONT2

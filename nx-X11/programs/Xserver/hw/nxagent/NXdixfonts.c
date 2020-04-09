@@ -290,9 +290,10 @@ doOpenFont(ClientPtr client, OFclosurePtr c)
 	    if (pScr->RealizeFont)
 	    {
 #ifdef NXAGENT_SERVER
-                /* NXAGENT uses useless screen pointer to pass the original font name
-                *  to realizeFont, could be a source of problems in the future.
-                */
+                /*
+                 * NXAGENT uses useless screen pointer to pass the original font name
+                 * to realizeFont, could be a source of problems in the future.
+                 */
 
 		if (!(*pScr->RealizeFont) ((ScreenPtr)nxagentOrigFontName, pfont))
 #else
