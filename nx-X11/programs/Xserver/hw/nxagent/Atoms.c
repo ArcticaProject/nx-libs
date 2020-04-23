@@ -73,6 +73,10 @@ static void nxagentPrintAtomMapInfo(char *message);
 
 Atom nxagentAtoms[NXAGENT_NUMBER_OF_ATOMS];
 
+/*
+ * Careful! Do not change indices here! Some of those are referenced
+ * at other places via nxagentAtoms[index].
+ */
 static char *nxagentAtomNames[NXAGENT_NUMBER_OF_ATOMS + 1] =
 {
   "NX_IDENTITY",                 /*  0 */

@@ -39,6 +39,7 @@
 #include "Atoms.h"
 #include "Trap.h"
 #include "Utils.h"
+#include "Atoms.h"
 
 #include "compext/Compext.h"
 
@@ -889,6 +890,41 @@ void nxagentImportProperty(Window window,
     #endif
 
     import = True;
+  }
+  else if (property == nxagentAtoms[0])  /* NX_IDENTITY */
+  {
+    #ifdef WARNING
+    fprintf(stderr, "%s: not importing private [%ld][NXDARWIN].\n", __func__,
+                (long int) property);
+    #endif
+  }
+  else if (property == nxagentAtoms[5])  /* NX_CUT_BUFFER_SERVER */
+  {
+    #ifdef WARNING
+    fprintf(stderr, "%s: not importing private [%ld][NX_CUT_BUFFER_SERVER].\n", __func__,
+                (long int) property);
+    #endif
+  }
+  else if (property == nxagentAtoms[8])  /* NX_AGENT_SIGNATURE */
+  {
+    #ifdef WARNING
+    fprintf(stderr, "%s: not importing private [%ld][NX_AGENT_SIGNATURE].\n", __func__,
+                (long int) property);
+    #endif
+  }
+  else if (property == nxagentAtoms[9])  /* NXDARWIN */
+  {
+    #ifdef TEST
+    fprintf(stderr, "%s: not importing private [%ld][NXDARWIN].\n", __func__,
+                (long int) property);
+    #endif
+  }
+  else if (property == nxagentAtoms[15])  /* NX_SELTRANS_FROM_AGENT */
+  {
+    #ifdef TEST
+    fprintf(stderr, "%s: not importing private [%ld][NX_SELTRANS_FROM_AGENT].\n", __func__,
+                (long int) property);
+    #endif
   }
   else if (strcmp(typeS, "STRING") == 0 ||
                strcmp(typeS, "UTF8_STRING") == 0 ||
