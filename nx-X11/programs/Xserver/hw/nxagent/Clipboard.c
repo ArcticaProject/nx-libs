@@ -811,7 +811,7 @@ void nxagentHandleSelectionRequestFromXServer(XEvent *X)
        *
        * FIXME: the perfect solution should not just answer with
        * XA_STRING but ask the real owner what format it supports. The
-       * should then be sent to the original requestor.
+       * result should then be sent to the original requestor.
        */
 
       long targets[] = {XA_STRING, serverUTF8_STRING, serverTEXT, serverCOMPOUND_TEXT, serverTARGETS, serverTIMESTAMP};
