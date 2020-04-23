@@ -417,6 +417,11 @@ int nxagentExportAllProperty(WindowPtr pWin)
   return total;
 }
 
+/*
+ * Export a property from an agent window to the corresponding window
+ * on the real X server This is e.g. called if a client changes a
+ * property.
+ */
 int nxagentExportProperty(WindowPtr pWin,
                           Atom property,
                           Atom type,
@@ -792,6 +797,11 @@ int nxagentExportProperty(WindowPtr pWin,
   return export;
 }
 
+/*
+ * Import a property from the proxy window on the real X server into
+ * the agent's corresponding window. This is e.g. called on reception
+ * of a property change event on the real X server.
+ */
 void nxagentImportProperty(Window window,
                            XlibAtom property,
                            XlibAtom type,
@@ -842,6 +852,7 @@ void nxagentImportProperty(Window window,
   /*
    * We settle a property size limit of 256K beyond which we simply
    * ignore them.
+   * FIXME: where's this checked/set/enforced/whatever?
    */
 
   Atom typeL = nxagentRemoteToLocalAtom(type);
