@@ -724,7 +724,7 @@ int nxagentExportProperty(WindowPtr pWin,
     else
     {
       #ifdef TEST
-      fprintf(stderr, "%s: Property [%u] format [%i] units [%lu].\n", __func__,
+      fprintf(stderr, "%s: Property [%lu] format [%i] units [%lu].\n", __func__,
                   propertyX, format, nUnits);
       #endif
 
@@ -826,7 +826,7 @@ void nxagentImportProperty(Window window,
   if (pWin == NULL)
   {
     #ifdef TEST
-    fprintf(stderr, "%s: Failed to look up remote window [0x%x]  property [%d] exiting.\n",
+    fprintf(stderr, "%s: Failed to look up remote window [0x%x]  property [%ld] exiting.\n",
                 __func__, window, property);
     #endif
 
@@ -838,15 +838,15 @@ void nxagentImportProperty(Window window,
   if (!ValidAtom(propertyL))
   {
     #ifdef TEST
-    fprintf(stderr, "%s: Failed to convert remote property atom.\n", __func__);
+    fprintf(stderr, "%s: Failed to convert remote property atom [%ld].\n", __func__, property);
     #endif
 
     return;
   }
 
   #ifdef TEST
-  fprintf(stderr, "%s: Window [0x%x] property [%d]: [%s]\n", __func__,
-              window, property, validateString(NameForAtom(propertyL)));
+  fprintf(stderr, "%s: Window [0x%x] property: remote [%ld][%s] local [%d]\n", __func__,
+              window, property, validateString(NameForAtom(propertyL)), propertyL);
   #endif
 
   /*
@@ -858,10 +858,14 @@ void nxagentImportProperty(Window window,
   Atom typeL = nxagentRemoteToLocalAtom(type);
   const char *typeS = NameForAtom(typeL);
 
+  #ifdef TEST
+  fprintf(stderr, "%s: type: remote [%ld] local [%d][%s].\n", __func__, type, typeL, validateString(typeS));
+  #endif
+
   if (buffer == NULL && (nitems > 0))
   {
     #ifdef WARNING
-    fprintf(stderr, "%s: Failed to retrieve remote property [%ld] [%s] on Window [%ld]\n", __func__,
+    fprintf(stderr, "%s: Failed to retrieve remote property [%ld] [%s] on window [%ld]\n", __func__,
                 (long int) property, validateString(NameForAtom(propertyL)), (long int) window);
     #endif
   }
@@ -874,7 +878,7 @@ void nxagentImportProperty(Window window,
   else if (!ValidAtom(typeL))
   {
     #ifdef WARNING
-    fprintf(stderr, "%s: Failed to convert remote atoms [%ld].\n", __func__,
+    fprintf(stderr, "%s: Failed to convert remote atom [%ld].\n", __func__,
                 (long int) type);
     #endif
   }
@@ -1079,7 +1083,7 @@ void nxagentImportProperty(Window window,
   if (import)
   {
     #ifdef TEST
-    fprintf(stderr, "%s: ChangeProperty on window [0x%x] property [%d] type [%s]"
+    fprintf(stderr, "%s: ChangeProperty on window [0x%x] property [%ld] type [%s]"
                 " nitems [%ld] format [%d]\n", __func__,
                     window, property, typeS, nitems, format);
     #endif
@@ -1090,7 +1094,7 @@ void nxagentImportProperty(Window window,
   else
   {
     #ifdef TEST
-    fprintf(stderr, "%s: WARNING! Ignored ChangeProperty on window [0x%x] property [%d] type [%s]"
+    fprintf(stderr, "%s: WARNING! Ignored ChangeProperty on window [0x%x] property [%ld] type [%s]"
                 " ntems [%ld] format [%d]\n", __func__,
                        window, property, validateString(typeS), nitems, format);
     #endif
@@ -1136,7 +1140,7 @@ void nxagentRemovePropertyFromList(void)
   struct nxagentPropertyRec *tmp = nxagentPropertyList.first;
 
   #ifdef TEST
-  fprintf(stderr, "%s: Property [%d] on Window [0x%x] to list, list size is [%d].\n", __func__,
+  fprintf(stderr, "%s: Property [%ld] on Window [0x%x] to list, list size is [%d].\n", __func__,
               nxagentPropertyList.first -> property, nxagentPropertyList.first -> window,
                  nxagentPropertyList.size);
   #endif
@@ -1172,7 +1176,7 @@ void nxagentAddPropertyToList(XlibAtom property, WindowPtr pWin)
   }
 
   #ifdef TEST
-  fprintf(stderr, "%s: Adding record Property [%d] - Window [0x%x][%p] to list, list"
+  fprintf(stderr, "%s: Adding record Property [%ld] - Window [0x%x][%p] to list, list"
               " size is [%d].\n", __func__, property, nxagentWindow(pWin), (void*) pWin,
                  nxagentPropertyList.size);
   #endif
@@ -1218,7 +1222,7 @@ Bool nxagentNotifyMatchChangeProperty(void *p)
 
   if (first)
   {
-    fprintf(stderr, "%s: First element on list is window [0x%x] property [%d] list size is [%d].\n", __func__,
+    fprintf(stderr, "%s: First element on list is window [0x%x] property [%ld] list size is [%d].\n", __func__,
                 first -> window, first -> property, nxagentPropertyList.size);
   }
   else
