@@ -4079,7 +4079,7 @@ int nxagentAdjustRandRXinerama(ScreenPtr pScreen)
     SAFE_free(screeninfo);
 
 #ifdef DEBUG
-    for (i = 0; i < pScrPriv->numCrtcs; i++)
+    for (int i = 0; i < pScrPriv->numCrtcs; i++)
     {
       RRModePtr mode = pScrPriv->crtcs[i]->mode;
       if (mode) {
@@ -4091,7 +4091,7 @@ int nxagentAdjustRandRXinerama(ScreenPtr pScreen)
       }
 
       if (pScrPriv->crtcs[i]->numOutputs > 0)
-        for (int j=0; j < pScrPriv->crtcs[i]->numOutputs; j++)
+        for (int j = 0; j < pScrPriv->crtcs[i]->numOutputs; j++)
           fprintf(stderr, "nxagentAdjustRandRXinerama:   output [%d] name [%s]->crtc=[%p]\n", j, pScrPriv->crtcs[i]->outputs[j]->name, (void *)pScrPriv->crtcs[i]->outputs[j]->crtc);
     }
 #endif
