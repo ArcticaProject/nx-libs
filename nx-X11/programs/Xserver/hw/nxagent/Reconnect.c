@@ -146,13 +146,12 @@ void setStatePath(char* path)
 
 void saveAgentState(char* state)
 {
-    FILE* fptr;
-    if(strlen(stateFile))
+    if (strlen(stateFile))
     {
-        fptr=fopen(stateFile, "w");
-        if(!fptr)
+        FILE* fptr = fopen(stateFile, "w");
+        if (!fptr)
             return;
-        fprintf(fptr,"%s", state);
+        fprintf(fptr, "%s", state);
         fclose(fptr);
     }
 }
