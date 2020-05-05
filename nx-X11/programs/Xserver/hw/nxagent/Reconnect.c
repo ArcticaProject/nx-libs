@@ -236,8 +236,7 @@ int nxagentHandleConnectionStates(void)
     fprintf(stderr, "nxagentHandleConnectionStates: Got I/O error in the exception flags.\n");
     #endif
 /*
-TODO: This should be reset only when
-      the state became SESSION_DOWN.
+TODO: This should be reset only when the state became SESSION_DOWN.
 */
     nxagentException.ioError = 0;
 
@@ -364,8 +363,7 @@ void nxagentDisconnectSession(void)
   nxagentFreeTimeoutTimer();
 
   /*
-   * Force an I/O error on the display
-   * and wait until the NX transport
+   * Force an I/O error on the display and wait until the NX transport
    * is gone.
    */
 
@@ -426,16 +424,15 @@ Bool nxagentReconnectSession(void)
   nxagentChangeOption(DeviceControl, nxagentOption(DeviceControlUserDefined));
 
   /*
-   * We need to zero out every new XID
-   * created by the disconnected display.
+   * We need to zero out every new XID created by the disconnected
+   * display.
    */
 
   nxagentDisconnectSession();
 
   /*
-   * Set this in order to let the screen
-   * function to behave differently at
-   * reconnection time.
+   * Set this in order to let the screen function to behave
+   * differently at reconnection time.
    */
 
   nxagentReconnectTrap = True;
@@ -503,16 +500,15 @@ Bool nxagentReconnectSession(void)
   }
 
   /*
-   * Map the main window and send a
-   * SetSelectionOwner request to
+   * Map the main window and send a SetSelectionOwner request to
    * notify of the agent start.
    */
 
   nxagentMapDefaultWindows();
 
   /*
-   * Ensure that the SetSelectionOwner
-   * request is sent through the link.
+   * Ensure that the SetSelectionOwner request is sent through the
+   * link.
    */
 
   XFlush(nxagentDisplay);
@@ -682,10 +678,9 @@ Bool nxagentReconnectSession(void)
   nxagentRemoveSplashWindow();
 
   /*
-   * We let the proxy flush the link on our behalf
-   * after having opened the display. We are now
-   * entering again the dispatcher so can flush
-   * the link explicitly.
+   * We let the proxy flush the link on our behalf after having opened
+   * the display. We are now entering again the dispatcher so can
+   * flush the link explicitly.
    */
 
   #ifdef TEST
@@ -798,9 +793,8 @@ void nxagentSetReconnectError(int id, char *format, ...)
     else
     {
       /*
-       * The vsnprintf() in glibc 2.0.6 would return
-       * -1 when the output was truncated. See section
-       * NOTES on printf(3).
+       * The vsnprintf() in glibc 2.0.6 would return -1 when the
+       * output was truncated. See section NOTES on printf(3).
        */
 
       size = (size ? size * 2 : NXAGENT_RECONNECT_DEFAULT_MESSAGE_SIZE);
