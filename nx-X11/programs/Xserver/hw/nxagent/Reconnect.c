@@ -460,19 +460,17 @@ Bool nxagentReconnectSession(void)
 
   if (nxagentReconnectDisplay(reconnectLossyLevel[DISPLAY_STEP]) == 0)
   {
-    failedStep = DISPLAY_STEP;
-
     #ifdef TEST
     fprintf(stderr, "nxagentReconnectSession: WARNING! Failed display reconnection.\n");
     #endif
 
+    failedStep = DISPLAY_STEP;
     goto nxagentReconnectError;
   }
 
   if (nxagentReconnectScreen(reconnectLossyLevel[SCREEN_STEP]) == 0)
   {
     failedStep = SCREEN_STEP;
-
     goto nxagentReconnectError;
   }
 
@@ -485,7 +483,6 @@ Bool nxagentReconnectSession(void)
     if (nxagentReconnectFailedFonts(reconnectLossyLevel[FONT_STEP]) == 0)
     {
       failedStep = FONT_STEP;
-
       goto nxagentReconnectError;
     }
     else
@@ -528,21 +525,18 @@ Bool nxagentReconnectSession(void)
   if (nxagentReconnectAllGCs(reconnectLossyLevel[GC_STEP]) == 0)
   {
     failedStep = GC_STEP;
-
     goto nxagentReconnectError;
   }
 
   if (nxagentReconnectAllColormap(reconnectLossyLevel[COLORMAP_STEP]) == 0)
   {
     failedStep = COLORMAP_STEP;
-
     goto nxagentReconnectError;
   }
 
   if (nxagentReconnectAllWindows(reconnectLossyLevel[WINDOW_STEP]) == 0)
   {
     failedStep = WINDOW_STEP;
-
     goto nxagentReconnectError;
   }
 
@@ -551,21 +545,18 @@ Bool nxagentReconnectSession(void)
     if (nxagentReconnectAllGlyphSet(reconnectLossyLevel[GLYPHSET_STEP]) == 0)
     {
       failedStep = GLYPHSET_STEP;
-
       goto nxagentReconnectError;
     }
 
     if (nxagentReconnectAllPictFormat(reconnectLossyLevel[PICTFORMAT_STEP]) == 0)
     {
       failedStep = PICTFORMAT_STEP;
-
       goto nxagentReconnectError;
     }
 
     if (nxagentReconnectAllPicture(reconnectLossyLevel[PICTURE_STEP]) == 0)
     {
       failedStep = PICTURE_STEP;
-
       goto nxagentReconnectError;
     }
   }
@@ -573,14 +564,12 @@ Bool nxagentReconnectSession(void)
   if (nxagentReconnectAllCursor(reconnectLossyLevel[CURSOR_STEP]) == 0)
   {
     failedStep = CURSOR_STEP;
-
     goto nxagentReconnectError;
   }
 
   if (nxagentSetWindowCursors(reconnectLossyLevel[WINDOW_STEP]) == 0)
   {
     failedStep = WINDOW_STEP;
-
     goto nxagentReconnectError;
   }
 
@@ -616,7 +605,6 @@ Bool nxagentReconnectSession(void)
         #endif
 
         failedStep = WINDOW_STEP;
-
         goto nxagentReconnectError;
       }
     }
@@ -856,4 +844,3 @@ void nxagentHandleConnectionChanges(void)
     }
   }
 }
-
