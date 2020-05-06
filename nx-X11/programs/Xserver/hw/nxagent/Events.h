@@ -73,8 +73,7 @@ Bool nxagentCollectGrabPointerPredicate(Display *disp, XEvent *X, XPointer ptr);
 int nxagentInputEventPredicate(Display *disp, XEvent *event, XPointer parameter);
 
 /*
- * Enable and disable notification of
- * remote X server events.
+ * Enable and disable notification of remote X server events.
  */
 
 extern void nxagentEnableKeyboardEvents(void);
@@ -93,33 +92,30 @@ extern void nxagentSetDefaultEventMask(Mask mask);
 extern Mask nxagentGetEventMask(WindowPtr pWin);
 
 /*
- * Bring keyboard device in known state. It needs
- * a round-trip so it only gets called if a pre-
- * vious XKB event did not implicitly initialized
- * the internal state. This is unlikely to happen.
+ * Bring keyboard device in known state. It needs a round-trip so it
+ * only gets called if a previous XKB event did not implicitly
+ * initialized the internal state. This is unlikely to happen.
  */
 
 extern int nxagentInitXkbKeyboardState(void);
 
 /*
- * Update the keyboard state according
- * to focus and XKB events received
- * from the remote X server.
+ * Update the keyboard state according to focus and XKB events
+ * received from the remote X server.
  */
 
 extern int nxagentHandleXkbKeyboardStateEvent(XEvent *X);
 
 /*
- * Handle sync and karma messages and
- * other notification event coming
+ * Handle sync and karma messages and other notification event coming
  * from proxy.
  */
 
 extern int nxagentHandleProxyEvent(XEvent *X);
 
 /*
- * Other functions providing the ad-hoc
- * handling of the remote X events.
+ * Other functions providing the ad-hoc handling of the remote X
+ * events.
  */
 
 extern int nxagentHandleExposeEvent(XEvent *X);
@@ -132,16 +128,14 @@ extern int nxagentHandleConfigureNotify(XEvent *X);
 extern int nxagentHandleXFixesSelectionNotify(XEvent *X);
 
 /*
- * Send a fake keystroke to the remote
- * X server.
+ * Send a fake keystroke to the remote X server.
  */
 
 extern void nxagentSendFakeKey(int key);
 
 /*
- * Called to manage grab of pointer and
- * keyboard when running in fullscreen
- * mode.
+ * Called to manage grab of pointer and keyboard when running in
+ * fullscreen mode.
  */
 
 extern void nxagentGrabPointerAndKeyboard(XEvent *X);
@@ -150,8 +144,7 @@ extern void nxagentUngrabPointerAndKeyboard(XEvent *X);
 extern void nxagentDeactivatePointerGrab(void);
 
 /*
- * Synchronize expose events between agent and
- * the real X server.
+ * Synchronize expose events between agent and the real X server.
  */
 
 typedef struct _ExposuresRec
@@ -198,8 +191,8 @@ void nxagentAddRectToRemoteExposeRegion(BoxPtr);
 extern int nxagentUserInput(void *p);
 
 /*
-* We have to check these before launching the terminate
- * dialog in rootless mode.
+ * We have to check these before launching the terminate dialog in
+ * rootless mode.
  */
 
 extern Bool nxagentLastWindowDestroyed;
