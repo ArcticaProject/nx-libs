@@ -127,6 +127,7 @@ Equipment Corporation.
 #include "Handlers.h"
 #include "Keyboard.h"
 #include "Init.h"
+#include "Utils.h"
 
 const int nxagentMaxFontNames = 10000;
 
@@ -990,6 +991,10 @@ ProcFreePixmap(register ClientPtr client)
 void
 CloseDownClient(register ClientPtr client)
 {
+    #ifdef DEBUG
+    fprintf(stderr, "%s: [%d]\n", __func__, client->clientState);
+    #endif
+
 #ifdef NXAGENT_SERVER
     /*
      * Need to reset the karma counter and get rid of the pending sync

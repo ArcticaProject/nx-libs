@@ -155,9 +155,13 @@ extern void nxagentInitViewportFrame(ScreenPtr, WindowPtr);
 extern int  nxagentShadowInit(ScreenPtr, WindowPtr);
 
 void
-ActivatePointerGrab(register DeviceIntPtr mouse, register GrabPtr grab, 
+ActivatePointerGrab(register DeviceIntPtr mouse, register GrabPtr grab,
                     TimeStamp time, Bool autoGrab)
 {
+    #ifdef DEBUG
+    fprintf(stderr, "%s: called\n", __func__);
+    #endif
+
     xorg_ActivatePointerGrab(mouse, grab, time, autoGrab);
 
     #ifdef NXAGENT_SERVER
@@ -166,7 +170,7 @@ ActivatePointerGrab(register DeviceIntPtr mouse, register GrabPtr grab,
      * If grab is synchronous, events are delivered to clients only if they send
      * an AllowEvent request. If mode field in AllowEvent request is SyncPointer, the 
      * delivered event is saved in a queue and replayed later, when grab is released.
-     * We should  export sync grab to X as async in order to avoid events to be 
+     * We should export sync grab to X as async in order to avoid events to be
      * queued twice, in the agent and in the X server. This solution have a drawback:
      * replayed events are not delivered to that application that are not clients of
      * the agent.
@@ -217,6 +221,10 @@ ActivatePointerGrab(register DeviceIntPtr mouse, register GrabPtr grab,
 void
 DeactivatePointerGrab(register DeviceIntPtr mouse)
 {
+    #ifdef DEBUG
+    fprintf(stderr, "%s: called\n", __func__);
+    #endif
+
     xorg_DeactivatePointerGrab(mouse);
 
     #ifdef NXAGENT_SERVER
