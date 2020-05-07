@@ -40,11 +40,13 @@ is" without express or implied warranty.
 #include <sys/types.h>
 #include <unistd.h>
 #include <stdarg.h>
+#include <signal.h>
 
 #include "X.h"
 #include "Xproto.h"
 #include "screenint.h"
 #include "input.h"
+#include "inputstr.h"
 #include "misc.h"
 #include "scrnintstr.h"
 #include "windowstr.h"
@@ -136,6 +138,8 @@ static void nxagentGrabServerCallback(CallbackListPtr *callbacks, void *data,
 extern void nxagentSetSelectionCallback(CallbackListPtr *callbacks, void *data,
                                    void *args);
 #endif
+
+OsTimerPtr nxagentTimeoutTimer = NULL;
 
 extern const char *nxagentProgName;
 
@@ -475,6 +479,96 @@ void ddxGiveUp(void)
 void ddxBeforeReset(void)
 {
 }
+
+CARD32 nxagentTimeoutCallback(OsTimerPtr timer, CARD32 now, void *arg)
+{
+  CARD32 idle = now - lastDeviceEventTime.milliseconds;
+
+  #ifdef TEST
+  fprintf(stderr, "%s: called, idle [%d] timeout [%d]\n", __func__, idle, nxagentOption(Timeout) * MILLI_PER_SECOND);
+  #endif
+
+  /* Set the time to exactly match the remaining time until timeout */
+  if (idle < nxagentOption(Timeout) * MILLI_PER_SECOND)
+  {
+    return nxagentOption(Timeout) * MILLI_PER_SECOND - idle;
+  }
+
+   /*
+   * The lastDeviceEventTime is updated every time a device event is
+   * received, and it is used by WaitForSomething() to know when the
+   * SaveScreens() function should be called. This solution doesn't
+   * take care of a pointer button not being released, so we have to
+   * handle this case by ourselves.
+   */
+
+/*
+FIXME: Do we need to check the key grab if the
+       autorepeat feature is disabled?
+*/
+  if (inputInfo.pointer -> button -> buttonsDown > 0)
+  {
+    #ifdef TEST
+    fprintf(stderr, "%s: Prolonging timeout - there is a pointer button down.\n", __func__);
+    #endif
+
+    /* wait 10s more */
+    return 10 * MILLI_PER_SECOND;
+  }
+
+  if (nxagentSessionState == SESSION_UP )
+  {
+    if (nxagentClients == 0)
+    {
+      fprintf(stderr, "Info: Auto-terminating session with no client running.\n");
+      raise(SIGTERM);
+    }
+    else if (nxagentOption(Persistent) == 0)
+    {
+      fprintf(stderr, "Info: Auto-terminating session with persistence not allowed.\n");
+      raise(SIGTERM);
+    }
+    else
+    {
+      fprintf(stderr, "Info: Auto-suspending session with %d clients running.\n",
+                  nxagentClients);
+      raise(SIGHUP);
+    }
+  }
+
+  /*
+   * we do not need the timer anymore, so do not set a new time. The
+   * signals above will either terminate or suspend the session. At
+   * resume we will re-init the timer.
+   */
+  return 0;
+}
+
+void nxagentSetTimeoutTimer(unsigned int millis)
+{
+  if (nxagentOption(Timeout) > 0)
+  {
+    if (millis == 0)
+    {
+      millis = nxagentOption(Timeout) * MILLI_PER_SECOND;
+    }
+
+    #ifdef TEST
+    fprintf(stderr, "%s: Setting auto-disconnect timeout to [%dms]\n", __func__, millis);
+    #endif
+    nxagentTimeoutTimer = TimerSet(nxagentTimeoutTimer, 0, millis, nxagentTimeoutCallback, NULL);
+  }
+}
+
+void nxagentFreeTimeoutTimer(void)
+{
+  #ifdef TEST
+  fprintf(stderr, "%s: freeing timeout timer\n", __func__);
+  #endif
+  TimerFree(nxagentTimeoutTimer);
+  nxagentTimeoutTimer = NULL;
+}
+
 
 void OsVendorInit(void)
 {

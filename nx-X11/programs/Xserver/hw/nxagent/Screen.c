@@ -37,12 +37,6 @@ is" without express or implied warranty.
 
 */
 
-/*
- * Used by the auto-disconnect feature.
- */
-
-#include <signal.h>
-
 #include "scrnintstr.h"
 #include "dix.h"
 #include "dixstruct.h"
@@ -517,19 +511,6 @@ void nxagentSetScreenSaverTime(void)
                   (long unsigned int)ScreenSaverTime, (long unsigned int)ScreenSaverInterval);
   #endif
 
-  /*
-   * More than one timeout could be used here,
-   * to make use of screen-saver handler not
-   * only for the timeout feature. In a case
-   * like this, the lower timeout have to be
-   * used as ScreenSaverTime.
-   */
-
-  if (nxagentAutoDisconnectTimeout > 0)
-  {
-    ScreenSaverTime = nxagentAutoDisconnectTimeout;
-  }
-
   ScreenSaverInterval = ScreenSaverTime;
 
   #ifdef TEST
@@ -538,37 +519,47 @@ void nxagentSetScreenSaverTime(void)
   #endif
 }
 
+/*
+ * This is the called when the "hardware" should take care of the
+ * blanking.
+ *
+ * "what" can be one if these:
+ * SCREEN_SAVER_ON      Turns on the screen saver; disables video
+ * SCREEN_SAVER_OFF     Turns off the screen saver; enables video
+ * SCREEN_SAVER_FORCER  Updates time of last screen saver mode change
+ * SCREEN_SAVER_CYCLE   Cycle to new pattern
+ *
+ * Returns True if the 'what' action was successful and False otherwise.
+ *
+ * Returning False the SaveScreens() function (which calls this one)
+ * tries to build a screen-saver creating a new window. In some cases
+ * we do not want this so we return True. If we want the dix to take
+ * care fo blanking we return False.
+ */
 static Bool nxagentSaveScreen(ScreenPtr pScreen, int what)
 {
   #ifdef TEST
-  fprintf(stderr, "nxagentSaveScreen: Called for screen at [%p] with parameter [%d].\n",
-              (void *) pScreen, what);
-
-  fprintf(stderr, "nxagentSaveScreen: SCREEN_SAVER_ON is [%d] SCREEN_SAVER_OFF is [%d] "
-              "SCREEN_SAVER_FORCER is [%d] SCREEN_SAVER_CYCLE is [%d].\n",
-                  SCREEN_SAVER_ON, SCREEN_SAVER_OFF, SCREEN_SAVER_FORCER,
-                      SCREEN_SAVER_CYCLE);
+  fprintf(stderr, "%s: Called for screen at [%p] with parameter [%s]. ScreenSaverTime [%d]\n", __func__,
+              (void *) pScreen,
+                  what == SCREEN_SAVER_ON ? "SCREEN_SAVER_ON" :
+                  what == SCREEN_SAVER_OFF ? "SCREEN_SAVER_OFF" :
+                  what == SCREEN_SAVER_FORCER ? "SCREEN_SAVER_FORCER" :
+                  what == SCREEN_SAVER_CYCLE ? "SCREEN_SAVER_CYCLE" :
+                  "UNKNOWN",
+                      ScreenSaverTime);
   #endif
-
-  /*
-   * We need only to reset the timeouts
-   * in this case.
-   */
 
   if (what == SCREEN_SAVER_OFF)
   {
-    nxagentAutoDisconnectTimeout = nxagentOption(Timeout) * MILLI_PER_SECOND;
-
-    return 1;
+    return False;
   }
 
   /*
-   * The lastDeviceEventTime is updated every time
-   * a device event is received, and it is used by
-   * WaitForSomething() to know when the SaveScreens()
-   * function should be called. This solution doesn't
-   * take care of a pointer button not released, so
-   * we have to handle this case by ourselves.
+   * The lastDeviceEventTime is updated every time a device event is
+   * received, and it is used by WaitForSomething() to know when the
+   * SaveScreens() function should be called. This solution doesn't
+   * take care of a pointer button not released, so we have to handle
+   * this case by ourselves.
    */
 
 /*
@@ -578,71 +569,19 @@ FIXME: Do we need to check the key grab if the
   if (inputInfo.pointer -> button -> buttonsDown > 0)
   {
     #ifdef TEST
-    fprintf(stderr, "nxagentSaveScreen: Ignoring timeout, there is a pointer button down.\n");
+    fprintf(stderr, "%s: Ignoring timeout, there is a pointer button down.\n", __func__);
     #endif
 
     /*
-     * Returning 0 the SaveScreens() function
-     * (which calls this one) tries to build
-     * a screen-saver creating a new window.
-     * We don't want this, so we return 1 in
-     * any case.
+     * Returning False the SaveScreens() function (which calls this one)
+     * tries to build a screen-saver creating a new window.  We don't
+     * want this, so we return True here.
      */
 
-    return 1;
+    return True;
   }
 
-  /*
-   * Handling the auto-disconnect feature.
-   * If there is any client attached and the persisten-
-   * ce is allowed then leave the session running, else
-   * terminate it. It should use something less brutal,
-   * though raising a signal should ensure that the code
-   * follows the usual execution path.
-   */
-
-  if (nxagentOption(Timeout) > 0)
-  {
-    #ifdef TEST
-    fprintf(stderr, "nxagentSaveScreen: Auto-disconnect timeout was [%d].\n",
-                nxagentAutoDisconnectTimeout);
-    #endif
-
-    nxagentAutoDisconnectTimeout  -= ScreenSaverTime;
-
-    #ifdef TEST
-    fprintf(stderr, "nxagentSaveScreen: Auto-disconnect timeout is [%d].\n",
-                nxagentAutoDisconnectTimeout);
-    #endif
-
-    if (nxagentSessionState == SESSION_UP &&
-            nxagentAutoDisconnectTimeout <= 0)
-    {
-      nxagentAutoDisconnectTimeout = nxagentOption(Timeout) * MILLI_PER_SECOND;
-
-      if (nxagentClients == 0)
-      {
-        fprintf(stderr, "Info: Terminating session with no client running.\n");
-
-        raise(SIGTERM);
-      }
-      else if (nxagentOption(Persistent) == 0)
-      {
-        fprintf(stderr, "Info: Terminating session with persistence not allowed.\n");
-
-        raise(SIGTERM);
-      }
-      else
-      {
-        fprintf(stderr, "Info: Suspending session with %d clients running.\n",
-                    nxagentClients);
-
-        raise(SIGHUP);
-      }
-    }
-  }
-
-  return 1;
+  return False;
 }
 
 Bool nxagentCreateScreenResources(ScreenPtr pScreen)
@@ -3490,13 +3429,18 @@ Bool nxagentReconnectScreen(void *p0)
   XSelectInput(nxagentDisplay, nxagentDefaultWindows[0], mask);
 
   /*
-   * Turn off the screen-saver and reset the
-   * time to the next auto-disconnection.
+   * Turn off the screen-saver
    */
 
   SaveScreens(SCREEN_SAVER_OFF, ScreenSaverActive);
 
+  /*
+   * reset the time to the next auto-disconnection.
+   */
+
   lastDeviceEventTime.milliseconds = GetTimeInMillis();
+
+  nxagentSetTimeoutTimer(0);
 
   return True;  
 }

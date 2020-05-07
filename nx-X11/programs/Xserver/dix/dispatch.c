@@ -3167,8 +3167,6 @@ ProcQueryBestSize (register ClientPtr client)
     return (client->noClientException);
 }
 
-
-#ifndef NXAGENT_SERVER
 int
 ProcSetScreenSaver (register ClientPtr client)
 {
@@ -3224,7 +3222,6 @@ ProcSetScreenSaver (register ClientPtr client)
     SetScreenSaverTimer();
     return (client->noClientException);
 }
-#endif /* NXAGENT_SERVER */
 
 int
 ProcGetScreenSaver(register ClientPtr client)
@@ -3425,7 +3422,6 @@ ProcChangeCloseDownMode(register ClientPtr client)
     }
 }
 
-#ifndef NXAGENT_SERVER
 int ProcForceScreenSaver(register ClientPtr client)
 {    
     REQUEST(xForceScreenSaverReq);
@@ -3441,7 +3437,6 @@ int ProcForceScreenSaver(register ClientPtr client)
     SaveScreens(SCREEN_SAVER_FORCER, (int)stuff->mode);
     return client->noClientException;
 }
-#endif /* NXAGENT_SERVER */
 
 int ProcNoOperation(register ClientPtr client)
 {

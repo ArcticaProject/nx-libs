@@ -52,4 +52,8 @@ extern ServerGrabInfoRec nxagentGrabServerInfo;
 
 void nxagentNotifyConnection(int fd, int ready, void *data);
 
+CARD32 nxagentTimeoutCallback(OsTimerPtr timer, CARD32 now, void *arg);
+void nxagentSetTimeoutTimer(unsigned int millis);
+void nxagentFreeTimeoutTimer(void);
+
 #endif /* __Init_H__ */

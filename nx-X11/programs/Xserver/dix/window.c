@@ -3334,7 +3334,6 @@ static void DrawLogo(
 );
 #endif
 
-#ifndef NXAGENT_SERVER
 void
 SaveScreens(int on, int mode)
 {
@@ -3445,7 +3444,6 @@ SaveScreens(int on, int mode)
     if (mode == ScreenSaverReset)
        SetScreenSaverTimer();
 }
-#endif /* NXAGENT_SERVER */
 
 static Bool
 TileScreenSaver(int i, int kind)

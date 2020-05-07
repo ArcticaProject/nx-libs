@@ -54,6 +54,7 @@
 #include "Error.h"
 #include "Keystroke.h"
 #include "Utils.h"
+#include "Init.h"
 
 #ifdef XKB
 #include "XKBsrv.h"
@@ -360,6 +361,8 @@ void nxagentDisconnectSession(void)
   fprintf(stderr, "nxagentDisconnectSession: Disconnecting session with state [%s].\n",
               DECODE_SESSION_STATE(nxagentSessionState));
   #endif
+
+  nxagentFreeTimeoutTimer();
 
   /*
    * Force an I/O error on the display
