@@ -9842,19 +9842,29 @@ char *GetClientPath()
       //
       // Try to guess the location of the client.
       //
-
-      clientEnv = "/usr/NX/bin/nxclient";
+      // FIXME: replace hardcoded paths by built-time variables if possible
 
       #ifdef __APPLE__
 
       clientEnv = "/Applications/NX Client for OSX.app/Contents/MacOS/nxclient";
 
-      #endif
-
-      #ifdef __CYGWIN32__
+      #else
+      #  if defined(__CYGWIN32__)
 
       clientEnv = "C:\\Program Files\\NX Client for Windows\\nxclient";
 
+      #  else
+
+      clientEnv = "/usr/NX/bin/nxclient";
+
+      struct stat fileStat;
+
+      if ((stat(clientEnv, &fileStat) == -1) && (EGET() == ENOENT))
+      {
+        clientEnv = "/usr/bin/nxdialog";
+      }
+
+      #  endif
       #endif
     }
 
