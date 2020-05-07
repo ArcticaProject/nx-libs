@@ -41,29 +41,41 @@ typedef struct _XFixesAgentInfo
 extern XFixesAgentInfoRec nxagentXFixesInfo;
 
 /*
- * Create the NX_SELTRANS_FROM_AGENT atom and
- * initialize the required property to exchange
- * data with the X server.
+ * Create the NX_SELTRANS_FROM_AGENT atom and initialize the required
+ * property to exchange data with the X server.
  */
 
 extern Bool nxagentInitClipboard(WindowPtr pWindow);
 
 /*
- * Called whenever a client or a window is
- * destroyed to let the clipboard code to
- * release any pointer to the referenced
- * structures.
+ * Called whenever a client or a window is destroyed to let the
+ * clipboard code to release any pointer to the referenced structures.
  */
 
 extern void nxagentClearClipboard(ClientPtr pClient, WindowPtr pWindow);
 
-extern void nxagentSetSelectionOwner(Selection *pSelection);
 extern int nxagentConvertSelection(ClientPtr client, WindowPtr pWin, Atom selection,
                                       Window requestor, Atom property, Atom target, Time time);
 
-void nxagentClearSelection();
-void nxagentRequestSelection();
-void nxagentHandleSelectionNotifyFromXServer();
+#ifdef XEvent
+extern void nxagentHandleSelectionClearFromXServer(XEvent *X);
+extern void nxagentHandleSelectionRequestFromXServer(XEvent *X);
+extern void nxagentHandleSelectionNotifyFromXServer(XEvent *X);
+#else
+extern void nxagentHandleSelectionClearFromXServer();
+extern void nxagentHandleSelectionRequestFromXServer();
+extern void nxagentHandleSelectionNotifyFromXServer();
+#endif
 
-int nxagentFindCurrentSelectionIndex(Atom sel);
+extern int nxagentFindCurrentSelectionIndex(Atom sel);
+/*
+ * Handle the selection property received in the event loop in
+ * Events.c.
+ */
+extern void nxagentCollectPropertyEvent(int resource);
+
+extern WindowPtr nxagentGetClipboardWindow(Atom property);
+
+extern int nxagentSendNotify(xEvent *event);
+
 #endif /* __Clipboard_H__ */

@@ -209,7 +209,7 @@ UpdateCurrentTimeIf()
     systime.milliseconds = GetTimeInMillis();
     if (systime.milliseconds < currentTime.milliseconds)
 	systime.months++;
-    if (*checkForInput[0] == *checkForInput[1])
+    if (CompareTimeStamps(systime, currentTime) == LATER)
 	currentTime = systime;
 }
 
@@ -3642,11 +3642,7 @@ void InitClient(ClientPtr client, int i, void * ospriv)
 }
 
 int
-#ifdef NXAGENT_SERVER
-xorg_InitClientPrivates(ClientPtr client)
-#else
 InitClientPrivates(ClientPtr client)
-#endif
 {
     register char *ptr;
     DevUnion *ppriv;
@@ -3960,7 +3956,12 @@ DeleteClientFromAnySelections(ClientPtr client)
 	        SelectionInfoRec    info;
 
 		info.selection = &CurrentSelections[i];
+#ifdef NXAGENT_SERVER
+                /* bugfix missing in upstream before introduction of selection.c */
+		info.kind = SelectionClientClose;
+#else
 		info.kind = SelectionWindowDestroy;
+#endif
 		CallCallbacks(&SelectionCallback, &info);
 	    }
             CurrentSelections[i].pWin = (WindowPtr)NULL;

@@ -257,7 +257,7 @@ ProcChangeProperty(ClientPtr client)
 
 int
 #ifdef NXAGENT_SERVER
-Xorg_ChangeWindowProperty(WindowPtr pWin, Atom property, Atom type, int format,
+xorg_ChangeWindowProperty(WindowPtr pWin, Atom property, Atom type, int format,
                      int mode, unsigned long len, void * value,
                      Bool sendevent)
 #else

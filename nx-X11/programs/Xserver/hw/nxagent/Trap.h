@@ -26,6 +26,14 @@
 #ifndef __Traps_H__
 #define __Traps_H__
 
+#ifndef False
+#define False 0
+#endif
+
+#ifndef True
+#define True 1
+#endif
+
 /*
  * Set if we are dispatching a render extension request. Used to avoid
  * reentrancy in GC operations.

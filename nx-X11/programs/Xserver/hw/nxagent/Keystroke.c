@@ -428,35 +428,117 @@ void nxagentInitKeystrokes(Bool force)
   nxagentDumpKeystrokes();
 }
 
-void nxagentDumpKeystrokes(void)
+static char *nxagentGetSingleKeystrokeString(struct nxagentSpecialKeystrokeMap *cur)
+{
+  if (!cur)
+    return strdup(""); /* caller is expected to free the returned string */
+
+  char *s1, *s2, *s3, *s4, *s5, *s6, *s7, *s8, *s9, *s10, *s11;
+  s1 = s2 = s3 = s4 = s5 = s6 = s7 = s8 = s9 = s10 = s11 = "";
+
+  unsigned int mask = cur->modifierMask;
+
+  if (mask & ControlMask)        {s1  = "Ctrl+";     mask &= ~ControlMask;}
+  if (mask & ShiftMask)          {s2  = "Shift+";    mask &= ~ShiftMask;}
+
+  /* these are only here for better readable modifier names. Normally
+     they are covered by the Mod<n> and Lock lines below */
+  if (cur->modifierAltMeta)      {s3  = "Alt+";      mask &= ~(cur->modifierAltMeta);}
+  if (mask & nxagentCapsMask)    {s4  = "CapsLock+"; mask &= ~nxagentCapsMask;}
+  if (mask & nxagentNumlockMask) {s5  = "NumLock+";  mask &= ~nxagentNumlockMask;}
+
+  if (mask & Mod1Mask)           {s6  = "Mod1+";     mask &= ~Mod1Mask;}
+  if (mask & Mod2Mask)           {s7  = "Mod2+";     mask &= ~Mod2Mask;}
+  if (mask & Mod3Mask)           {s8  = "Mod3+";     mask &= ~Mod3Mask;}
+  if (mask & Mod4Mask)           {s9  = "Mod4+";     mask &= ~Mod4Mask;}
+  if (mask & Mod5Mask)           {s10 = "Mod5+";     mask &= ~Mod5Mask;}
+  if (mask & LockMask)           {s11 = "Lock+";     mask &= ~LockMask;}
+
+  char *ret = NULL;
+  asprintf(&ret, "%s%s%s%s%s%s%s%s%s%s%s%s", s1, s2, s3, s4, s5, s6, s7, s8, s9, s10, s11, XKeysymToString(cur->keysym));
+  return ret;
+}
+
+/*
+ * return the _first_ keystroke for the passed keystroke name
+ *
+ * e.g. nxagentFindFirstKeystroke("resize") -> "Ctrl+Alt+r"
+ *
+ * result must be free()d after use.
+ */
+char *nxagentFindFirstKeystroke(char *name)
+{
+  for (struct nxagentSpecialKeystrokeMap *cur = map; cur->stroke != KEYSTROKE_END_MARKER; cur++)
+  {
+    if (nxagentSpecialKeystrokeNames[cur->stroke] &&
+            strcmp(nxagentSpecialKeystrokeNames[cur->stroke], name) == 0)
+    {
+      return nxagentGetSingleKeystrokeString(cur);
+    }
+  }
+  return NULL;
+}
+
+/*
+ * return a string with linefeeds of all keystrokes who's name starts
+ * with the the passed string,
+ *
+ * e.g. nxagentFindKeystrokeString("viewport_scroll_")
+ * ->
+ * "  viewport_scroll_left  : Ctrl+Alt+Left
+ *   viewport_scroll_left  : Ctrl+Alt+KP_Left
+ *   viewport_scroll_up    : Ctrl+Alt+Up
+ *   viewport_scroll_up    : Ctrl+Alt+KP_Up
+ *   viewport_scroll_right : Ctrl+Alt+Right
+ *   viewport_scroll_right : Ctrl+Alt+KP_Right
+ *   viewport_scroll_down  : Ctrl+Alt+Down
+ *   viewport_scroll_down  : Ctrl+Alt+KP_Down
+ * "
+ * result must be free()d after use.
+ */
+char *nxagentFindMatchingKeystrokes(char *name)
 {
   int maxlen = 0;
   for (int i = 0; nxagentSpecialKeystrokeNames[i]; i++)
     maxlen = max(maxlen, strlen(nxagentSpecialKeystrokeNames[i]));
 
-  fprintf(stderr, "Currently known keystrokes:\n");
-
-  for (struct nxagentSpecialKeystrokeMap *cur = map; cur->stroke != KEYSTROKE_END_MARKER; cur++) {
-    unsigned int mask = cur->modifierMask;
-    fprintf(stderr, "  %-*s ", maxlen, nxagentSpecialKeystrokeNames[cur->stroke]);
-    if (mask & ControlMask)        {fprintf(stderr, "Ctrl+");     mask &= ~ControlMask;}
-    if (mask & ShiftMask)          {fprintf(stderr, "Shift+");    mask &= ~ShiftMask;}
-
-    /* these are only here for better readable modifier
-       names. Normally they are covered by the Mod<n> and Lock lines
-       below */
-    if (cur->modifierAltMeta)      {fprintf(stderr, "Alt+");      mask &= ~(cur->modifierAltMeta);}
-    if (mask & nxagentCapsMask)    {fprintf(stderr, "CapsLock+"); mask &= ~nxagentCapsMask;}
-    if (mask & nxagentNumlockMask) {fprintf(stderr, "NumLock+");  mask &= ~nxagentNumlockMask;}
-
-    if (mask & Mod1Mask)           {fprintf(stderr, "Mod1+");     mask &= ~Mod1Mask;}
-    if (mask & Mod2Mask)           {fprintf(stderr, "Mod2+");     mask &= ~Mod2Mask;}
-    if (mask & Mod3Mask)           {fprintf(stderr, "Mod3+");     mask &= ~Mod3Mask;}
-    if (mask & Mod4Mask)           {fprintf(stderr, "Mod4+");     mask &= ~Mod4Mask;}
-    if (mask & Mod5Mask)           {fprintf(stderr, "Mod5+");     mask &= ~Mod5Mask;}
-    if (mask & LockMask)           {fprintf(stderr, "Lock+");     mask &= ~LockMask;}
-    fprintf(stderr, "%s\n", XKeysymToString(cur->keysym));
+  char * res = strdup(""); /* let the caller free the string */
+  for (struct nxagentSpecialKeystrokeMap *cur = map; cur->stroke != KEYSTROKE_END_MARKER; cur++)
+  {
+    if (nxagentSpecialKeystrokeNames[cur->stroke] &&
+        strncmp(nxagentSpecialKeystrokeNames[cur->stroke], name, strlen(name)) == 0)
+    {
+      char *tmp;
+      char *tmp1 = nxagentGetSingleKeystrokeString(cur);
+      if (-1 == asprintf(&tmp, "%s  %-*s : %s\n", res, maxlen,
+                         nxagentSpecialKeystrokeNames[cur->stroke],
+                         tmp1))
+      {
+        SAFE_free(tmp1);
+        #ifdef TEST
+        fprintf(stderr, "%s: returning incomplete result:\n%s", __func__, res);
+        #endif
+        return res;
+      }
+      else
+      {
+        SAFE_free(tmp1);
+        free(res);
+        res = tmp;
+      }
+    }
   }
+  #ifdef TEST
+  fprintf(stderr, "%s: returning result:\n%s", __func__, res);
+  #endif
+  return res;
+}
+
+void nxagentDumpKeystrokes(void)
+{
+  char *s = nxagentFindMatchingKeystrokes("");
+  fprintf(stderr, "Currently known keystrokes:\n%s", s);
+  SAFE_free(s);
 }
 
 static enum nxagentSpecialKeystroke find_keystroke(XKeyEvent *X)
@@ -464,7 +546,6 @@ static enum nxagentSpecialKeystroke find_keystroke(XKeyEvent *X)
   enum nxagentSpecialKeystroke ret = KEYSTROKE_NOTHING;
 
   KeySym keysym = XKeycodeToKeysym(nxagentDisplay, X->keycode, 0);
-
 
   #ifdef DEBUG
   fprintf(stderr, "%s: got keysym '%c' (%d)\n", __func__, keysym, keysym);
@@ -495,10 +576,10 @@ Bool nxagentCheckSpecialKeystroke(XKeyEvent *X, enum HandleEventResult *result)
   #ifdef TEST
   if (stroke != KEYSTROKE_NOTHING && stroke != KEYSTROKE_END_MARKER)
     fprintf(stderr, "nxagentCheckSpecialKeystroke: got code %x - state %x - stroke %d (%s)\n",
-	    X -> keycode, X -> state, stroke, nxagentSpecialKeystrokeNames[stroke]);
+            X -> keycode, X -> state, stroke, nxagentSpecialKeystrokeNames[stroke]);
   else
     fprintf(stderr, "nxagentCheckSpecialKeystroke: got code %x - state %x - stroke %d (unused)\n",
-	    X -> keycode, X -> state, stroke);
+            X -> keycode, X -> state, stroke);
   #endif
 
   if (stroke == KEYSTROKE_NOTHING)
@@ -566,7 +647,7 @@ Bool nxagentCheckSpecialKeystroke(XKeyEvent *X, enum HandleEventResult *result)
       break;
     case KEYSTROKE_DEACTIVATE_INPUT_DEVICES_GRAB:
       if (X->type == KeyPress) {
-        nxagentDeactivateInputDevicesGrab();
+        nxagentDeactivateInputDevicesGrabs();
       }
       return True;
       break;
@@ -623,13 +704,13 @@ Bool nxagentCheckSpecialKeystroke(XKeyEvent *X, enum HandleEventResult *result)
       break;
     case KEYSTROKE_REREAD_KEYSTROKES:
       /* two reasons to check on KeyRelease:
-	 - this code is called for KeyPress and KeyRelease, so we
-	   would read the keystroke file twice
-	 - if the keystroke file changes settings for this key this
+         - this code is called for KeyPress and KeyRelease, so we
+           would read the keystroke file twice
+         - if the keystroke file changes settings for this key this
            might lead to unexpected behaviour
       */
       if (X->type == KeyRelease)
-	nxagentInitKeystrokes(True);
+        nxagentInitKeystrokes(True);
       break;
     case KEYSTROKE_AUTOGRAB:
       *result = doAutoGrab;

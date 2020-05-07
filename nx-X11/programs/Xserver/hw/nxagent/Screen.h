@@ -59,8 +59,6 @@ extern int nxagentClients;
 
 extern ScreenPtr nxagentDefaultScreen;
 
-extern Pixmap nxagentPixmapLogo;
-
 extern Window nxagentIconWindow;
 
 extern Window nxagentFullscreenWindow;
@@ -140,7 +138,9 @@ void nxagentSetWMNormalHintsMaxsize(ScreenPtr, int, int);
 
 void nxagentShadowSetRatio(float, float);
 
+#ifdef NXAGENT_ARTSD
 void nxagentPropagateArtsdProperties(ScreenPtr pScreen, char *port);
+#endif
 
 /*
  * Change window settings to adapt to a ratio.

@@ -49,7 +49,7 @@ typedef struct _PrivClientRec
   int clientState;
   long clientBytes;
   enum ClientHint clientHint;
-
+  char *clientInfoString;
 } PrivClientRec;
 
 extern int nxagentClientPrivateIndex;
@@ -57,13 +57,17 @@ extern int nxagentClientPrivateIndex;
 #define nxagentClientPriv(pClient) \
   ((PrivClientRec *)((pClient)->devPrivates[nxagentClientPrivateIndex].ptr))
 
-void nxagentInitClientPrivates(ClientPtr);
+extern void nxagentClientStateCallback(CallbackListPtr *callbacks, void *data, void *args);
 
+#undef COUNT_CLIENT_BYTES
+
+#ifdef COUNT_CLIENT_BYTES
 #define nxagentClientAddBytes(pClient, size)	\
   (nxagentClientPriv(pClient) -> clientBytes += (size))
 
 #define nxagentClientBytes(pClient)	\
     (nxagentClientPriv(pClient) -> clientBytes)
+#endif
 
 #define nxagentClientHint(pClient) \
     (nxagentClientPriv(pClient) -> clientHint)
@@ -71,9 +75,11 @@ void nxagentInitClientPrivates(ClientPtr);
 #define nxagentClientIsDialog(pClient) \
     (nxagentClientHint(pClient) == NXCLIENT_DIALOG)
 
+#define nxagentClientInfoString(pClient)	\
+    (nxagentClientPriv(pClient) -> clientInfoString)
+
 /*
- * The actual reason why the client
- * is sleeping.
+ * The actual reason why the client is sleeping.
  */
 
 #define SleepingBySplit  1
@@ -90,19 +96,15 @@ void nxagentGuessClientHint(ClientPtr, Atom, char*);
 
 void nxagentGuessShadowHint(ClientPtr, Atom);
 
-void nxagentCheckIfShadowAgent(ClientPtr);
-
 /*
- * Suspend or restart the agent's
- * client.
+ * Suspend or restart the agent's client.
  */
 
 int nxagentSuspendBySplit(ClientPtr client);
 int nxagentWakeupBySplit(ClientPtr client);
 
 /*
- * Wait until the given client is
- * restarted.
+ * Wait until the given client is restarted.
  */
 
 void nxagentWaitWakeupBySplit(ClientPtr client);
@@ -119,8 +121,7 @@ void nxagentWaitDrawable(DrawablePtr pDrawable);
 void nxagentWakeupByReconnect(void);
 
 /*
- * Reset the client state before
- * closing it down.
+ * Reset the client state before closing it down.
  */
 
 void nxagentWakeupByReset(ClientPtr client);

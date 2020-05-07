@@ -36,7 +36,7 @@
 #include "Reconnect.h"
 #include "Dialog.h"
 #include "Drawable.h"
-#include "Splash.h"
+#include "Xdmcp.h"
 #include "Screen.h"
 #include "Millis.h"
 
@@ -573,7 +573,6 @@ void nxagentWakeupHandler(void * data, int count, void * mask)
 
   if (!SmartScheduleSignalEnable)
   {
-
     #ifdef DEBUG
     fprintf(stderr, "nxagentWakeupHandler: Resetting the dispatch state after wakeup.\n");
     #endif
@@ -582,7 +581,6 @@ void nxagentWakeupHandler(void * data, int count, void * mask)
 
     nxagentDispatch.in  = nxagentBytesIn;
     nxagentDispatch.out = nxagentBytesOut;
-
   }
 
   /*
@@ -638,12 +636,10 @@ void nxagentWakeupHandler(void * data, int count, void * mask)
   nxagentReady = count;
 
   #ifdef TEST
-
   if (nxagentReady == 0)
   {
     fprintf(stderr, "nxagentWakeupHandler: No X clients found to be processed.\n");
   }
-
   #endif
 
   /*
@@ -714,17 +710,17 @@ void nxagentShadowBlockHandler(void * data, struct timeval **timeout, void * mas
 
   if (nxagentSessionState == SESSION_DOWN && nxagentOption(SleepTime) > 0)
   {
-#ifdef TEST
+    #ifdef TEST
     fprintf(stderr, "nxagentShadowBlockHandler: sleeping for %d milliseconds for slowdown.\n",
                     nxagentOption(SleepTime));
-#endif
+    #endif
     usleep(nxagentOption(SleepTime) * 1000);
   }
-#ifdef TEST
+  #ifdef TEST
   else if (0 == nxagentOption(SleepTime)) {
     fprintf(stderr, "nxagentShadowBlockHandler: not sleeping for slowdown.\n");
   }
-#endif
+  #endif
 
   if (nxagentReadEvents(nxagentDisplay) > 0 ||
           nxagentReadEvents(nxagentShadowDisplay) > 0)
@@ -1003,7 +999,6 @@ void nxagentDispatchHandler(ClientPtr client, int in, int out)
 
     if (!SmartScheduleSignalEnable)
     {
-
       /*
        * Pay attention to the next client if this client produced
        * enough output.
@@ -1032,9 +1027,7 @@ void nxagentDispatchHandler(ClientPtr client, int in, int out)
                         nxagentBytesOut - nxagentDispatch.out, nxagentDispatch.client);
       }
       #endif
-
     }
-
     return;
   }
   else if (in > 0)
@@ -1048,6 +1041,7 @@ void nxagentDispatchHandler(ClientPtr client, int in, int out)
                 in, client -> index);
     #endif
 
+#ifdef COUNT_CLIENT_BYTES
     /*
      * This is presently unused.
      *
@@ -1059,6 +1053,7 @@ void nxagentDispatchHandler(ClientPtr client, int in, int out)
      * #endif
      *
      */
+#endif
 
     nxagentBytesIn += in;
 
@@ -1077,7 +1072,6 @@ void nxagentDispatchHandler(ClientPtr client, int in, int out)
 
     if (!SmartScheduleSignalEnable)
     {
-
       if  (client -> index != nxagentDispatch.client)
       {
         #ifdef DEBUG
@@ -1122,9 +1116,7 @@ void nxagentDispatchHandler(ClientPtr client, int in, int out)
         }
         #endif
       }
-
     }
-
   }
 
   /*
@@ -1168,12 +1160,10 @@ void nxagentDispatchHandler(ClientPtr client, int in, int out)
        */
 
       #ifdef TEST
-
       if (nxagentTokens.pending == TOKENS_PENDING_LIMIT)
       {
         fprintf(stderr, "nxagentDispatchHandler: WARNING! Waiting for the synchronization reply.\n");
       }
-
       #endif
 
       while (nxagentTokens.pending == TOKENS_PENDING_LIMIT)

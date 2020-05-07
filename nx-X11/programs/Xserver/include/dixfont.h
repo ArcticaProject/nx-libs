@@ -40,7 +40,7 @@ SOFTWARE.
 typedef struct _DIXFontProp *DIXFontPropPtr;
 
 #ifdef HAS_XFONT2
-xfont2_fpe_funcs_rec const **fpe_functions;
+extern xfont2_fpe_funcs_rec const **fpe_functions;
 #else
 extern FPEFunctions *fpe_functions;
 #endif /* HAS_XFONT2 */

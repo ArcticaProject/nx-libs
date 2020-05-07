@@ -676,7 +676,11 @@ unsigned	act;
 	}
 	else {
 #ifdef NXAGENT_SERVER
-	  /* we have seen division by zero here */
+	  /*
+           * we have seen division by zero here - see
+	   * https://github.com/ArcticaProject/nx-libs/issues/808 for
+	   * details and xorg upstream bug report
+           */
 	  if (ctrls->num_groups != 0)
 #endif
 	    group%= ctrls->num_groups;

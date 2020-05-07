@@ -78,7 +78,9 @@ extern void nxagentTerminateDialogs(void);
              nxagentEnableRandRModeDialogPid == 0 && \
                  nxagentDisableRandRModeDialogPid == 0 && \
                      nxagentEnableDeferModePid == 0 && \
-                         nxagentDisableDeferModePid == 0)
+                         nxagentDisableDeferModePid == 0 && \
+                             nxagentEnableAutograbModePid == 0 && \
+                                 nxagentDisableAutograbModePid == 0)
 
 #define DECODE_DIALOG_TYPE(type) \
             ((type) == DIALOG_KILL_SESSION ? "DIALOG_KILL_SESSION" : \
@@ -96,10 +98,9 @@ extern void nxagentTerminateDialogs(void);
              "UNKNOWN_DIALOG")
 
 /*
- * Message to be showed to users when the close
- * button is pressed. The right message is chosen
- * according if session does or does not run in
- * persistent mode.
+ * Message to be shown to users when the close button is pressed. The
+ * right message is chosen according if session does or does not run
+ * in persistent mode.
  */
 
 #define DIALOG_KILL_SESSION_MESSAGE \
@@ -174,7 +175,7 @@ nxagentFailedReconnectionMessage
 "\
 The session is now running in desktop resize mode.\n\
 You can resize the desktop by simply dragging the\n\
-desktop window's border. You can press Ctrl+Alt+R\n\
+desktop window's border. You can press %s\n\
 again to disable this option.\
 "
 
@@ -187,9 +188,12 @@ again to disable this option.\
 "\
 The session is now running in viewport mode. You can\n\
 navigate across different areas of the desktop window\n\
-by dragging the desktop with the mouse or by using the\n\
-arrows keys while pressing Ctrl+Alt. Press Ctrl+Alt+R\n\
-again to return to the desktop resize mode.\
+by dragging the desktop with the mouse while pressing\n\
+Ctrl+Alt or use the keystrokes listed below. Press\n\
+%s again to return to the desktop resize mode.\n\
+\n\
+Use these keystrokes to navigate:\n\
+%s\
 "
 
 #define DIALOG_DISABLE_DESKTOP_RESIZE_MODE_TYPE "ok"
@@ -201,7 +205,7 @@ again to return to the desktop resize mode.\
 \
 "\
 Deferred screen updates are now enabled. You can press\n\
-Ctrl+Alt+E again to disable this option.\
+%s again to disable this option.\
 "
 
 #define DIALOG_ENABLE_DEFER_MODE_TYPE "ok"
@@ -213,7 +217,7 @@ Ctrl+Alt+E again to disable this option.\
 \
 "\
 Deferred screen updates are now disabled. You can press\n\
-Ctrl+Alt+E to enable it again.\
+%s to enable it again.\
 "
 
 #define DIALOG_DISABLE_DEFER_MODE_TYPE "ok"
@@ -225,7 +229,7 @@ Ctrl+Alt+E to enable it again.\
 \
 "\
 Keyboard auto-grabbing mode is now enabled. You can press\n\
-Ctrl+Alt+G again to disable auto-grabbing.\
+%s again to disable auto-grabbing.\
 "
 
 #define DIALOG_ENABLE_AUTOGRAB_MODE_TYPE "ok"
@@ -237,7 +241,7 @@ Ctrl+Alt+G again to disable auto-grabbing.\
 \
 "\
 Keyboard auto-grabbing mode is now disabled. You can press\n\
-Ctrl+Alt+G again to re-enable auto-grabbing.\
+%s again to re-enable auto-grabbing.\
 "
 
 #define DIALOG_DISABLE_AUTOGRAB_MODE_TYPE "ok"

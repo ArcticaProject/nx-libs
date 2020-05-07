@@ -52,23 +52,19 @@
  * Colors used to paint the splash screen.
  */
 
-#define nxagentLogoWhite       0xffffff
-#define nxagentLogoBlack       0x000000
-#define nxagentLogoDarkGray    0x222222
-#define nxagentLogoLightGray   0xbbbbbb
+#define LOGOWHITE       0xffffff
+#define LOGOBLACK       0x000000
+#define LOGODARKGRAY    0x222222
+#define LOGOLIGHTGRAY   0xbbbbbb
 
-Pixmap nxagentPixmapLogo;
-Window nxagentSplashWindow = None;
-Bool nxagentWMPassed = False;
+static XlibPixmap nxagentPixmapLogo;
+static XlibWindow nxagentSplashWindow = None;
+static Bool nxagentWMPassed = False;
 
-static void nxagentPaintLogo(Window win, XlibGC gc, int scale, int width, int height);
+static void nxagentPaintLogo(XlibWindow win, int scale, int width, int height);
 
-void nxagentShowSplashWindow(Window parentWindow)
+void nxagentShowSplashWindow(XlibWindow parentWindow)
 {
-  XWindowAttributes getAttributes;
-  XWindowChanges    values;
-  XSetWindowAttributes attributes;
-
   /*
    * Show splash window only when running as X2Go Agent
    */
@@ -94,19 +90,19 @@ void nxagentShowSplashWindow(Window parentWindow)
 
   nxagentWMPassed = False;
 
+  XWindowAttributes getAttributes;
+
   /*
-   * This would cause a GetWindowAttributes and a
-   * GetGeometry (asynchronous) reply. We use instead
-   * the geometry requested by the user for the agent
-   * window.
+   * This would cause a GetWindowAttributes and a GetGeometry
+   * (asynchronous) reply. We use instead the geometry requested by
+   * the user for the agent window.
    *
    * XGetWindowAttributes(nxagentDisplay, parentWindow, &getAttributes);
    */
 
   /*
-   * During reconnection we draw the splash over
-   * the default window and not over the root
-   * window because it would be hidden  by other
+   * During reconnection we draw the splash over the default window
+   * and not over the root window because it would be hidden by other
    * windows.
    */
 
@@ -128,28 +124,40 @@ void nxagentShowSplashWindow(Window parentWindow)
   fprintf(stderr, "%s: Going to create new splash window.\n", __func__);
   #endif
 
+  XSetWindowAttributes attributes = {
+      .override_redirect = True,
+      .border_pixel = WhitePixel (nxagentDisplay, 0),
+      .background_pixel = BlackPixel (nxagentDisplay, 0)
+  };
+
   nxagentSplashWindow =
-      XCreateSimpleWindow(nxagentDisplay,
-                          parentWindow,
-                          getAttributes.x, getAttributes.y,
-                          getAttributes.width, getAttributes.height,
-                          0,
-                          WhitePixel (nxagentDisplay, 0),
-                          BlackPixel (nxagentDisplay, 0));
+      XCreateWindow(nxagentDisplay,
+                    parentWindow,
+                    getAttributes.x, getAttributes.y,
+                    getAttributes.width, getAttributes.height,
+                    0,
+                    CopyFromParent, CopyFromParent, CopyFromParent,
+                    CWOverrideRedirect | CWBorderPixel | CWBackPixel,
+                    &attributes);
 
   #ifdef TEST
-  fprintf(stderr, "%s: Created new splash window with id [%ld].\n", __func__,
+  fprintf(stderr, "%s: Created new splash window with id [0x%lx].\n", __func__,
               nxagentSplashWindow);
   #endif
 
-  XlibGC gc = XCreateGC(nxagentDisplay, nxagentSplashWindow, 0, NULL);
-  nxagentPaintLogo(nxagentSplashWindow, gc, 1, getAttributes.width, getAttributes.height);
-  XMapRaised (nxagentDisplay, nxagentSplashWindow);
-  values.stack_mode = Above;
+  nxagentPaintLogo(nxagentSplashWindow, 1, getAttributes.width, getAttributes.height);
+  XMapRaised(nxagentDisplay, nxagentSplashWindow);
+#if 0
+  /*
+   * should not be required since XMapRaised takes care of that:
+   * "The XMapRaised function essentially is similar to XMapWindow in
+   * that it maps the window and all of its subwindows that have had
+   * map requests.  However, it also raises the specified window to
+   * the top of the stack."
+   */
+  XWindowChanges values = {.stack_mode = Above};
   XConfigureWindow(nxagentDisplay, nxagentSplashWindow, CWStackMode, &values);
-  attributes.override_redirect = True;
-  XChangeWindowAttributes(nxagentDisplay, nxagentSplashWindow, CWOverrideRedirect, &attributes);
-  XFreeGC(nxagentDisplay, gc);
+#endif
 
   #ifdef NXAGENT_TIMESTAMP
   {
@@ -160,8 +168,15 @@ void nxagentShowSplashWindow(Window parentWindow)
   #endif
 }
 
-void nxagentPaintLogo(Window win, XlibGC gc, int scale, int width, int height)
+Bool nxagentHaveSplashWindow(void)
 {
+  return (nxagentSplashWindow != None);
+}
+
+void nxagentPaintLogo(XlibWindow win, int scale, int width, int height)
+{
+  XlibGC gc = XCreateGC(nxagentDisplay, nxagentSplashWindow, 0, NULL);
+
   int depth = DefaultDepth(nxagentDisplay, DefaultScreen(nxagentDisplay));
 
   #ifdef DEBUG
@@ -177,9 +192,6 @@ void nxagentPaintLogo(Window win, XlibGC gc, int scale, int width, int height)
 
   int w = width/scale;
   int h = height/scale;
-
-  int w2 = w/2;
-  int h2 = h/2;
 
   int c;
   if (height > width)
@@ -202,172 +214,106 @@ void nxagentPaintLogo(Window win, XlibGC gc, int scale, int width, int height)
 
   if (blackRoot)
   {
-    XSetForeground(nxagentDisplay, gc, nxagentLogoBlack);
-    XSetBackground(nxagentDisplay, gc, nxagentLogoWhite);
+    XSetForeground(nxagentDisplay, gc, LOGOBLACK);
+    XSetBackground(nxagentDisplay, gc, LOGOWHITE);
   }
   else
   {
-    XSetForeground(nxagentDisplay, gc, nxagentLogoWhite);
-    XSetBackground(nxagentDisplay, gc, nxagentLogoBlack);
+    XSetForeground(nxagentDisplay, gc, LOGOWHITE);
+    XSetBackground(nxagentDisplay, gc, LOGOBLACK);
   }
 
-  XPoint rect[4];
+  XPoint rect[15];
   rect[0].x = 0;               rect[0].y = 0;
-  rect[1].x = 0;               rect[1].y = h;
-  rect[2].x = w;               rect[2].y = h;
-  rect[3].x = w;               rect[3].y = 0;
+  rect[1].x = 0;               rect[1].y = height;
+  rect[2].x = width;           rect[2].y = height;
+  rect[3].x = width;           rect[3].y = 0;
 
   /* paint background */
   XFillPolygon(nxagentDisplay, nxagentPixmapLogo, gc, rect, 4, Convex, CoordModeOrigin);
 
   #ifdef NXAGENT_LOGO_DEBUG
-  fprintf(stderr, "%s: filled first poly\n", __func__);
+  fprintf(stderr, "%s: filled background\n", __func__);
+  #endif
+
+  if (blackRoot)
+    XSetForeground(nxagentDisplay, gc, LOGODARKGRAY);
+  else
+    XSetForeground(nxagentDisplay, gc, LOGOLIGHTGRAY);
+
+
+  #ifdef NXAGENT_LOGO_DEBUG
+  /* mark center */
+  XDrawLine(nxagentDisplay, nxagentPixmapLogo, gc, 0, h/2, w, h/2);
+  XDrawLine(nxagentDisplay, nxagentPixmapLogo, gc, w/2, 0, w/2, h);
   #endif
 
   /*
    * Draw X2GO Logo
    */
 
-  if (blackRoot)
-    XSetForeground(nxagentDisplay, gc, nxagentLogoDarkGray);
-  else
-    XSetForeground(nxagentDisplay, gc, nxagentLogoLightGray);
+#define WX 5 /* width of "X" */
+#define W2 4 /* width of "2" */
+#define WG 4 /* width of "G" */
+#define WO 4 /* width of "O" */
+#define SPC 1 /* width of space between letters */
+#define H 8 /* height of letters */
+
+#define TOTALW (WX + SPC + W2 + SPC + WG + SPC + WO) /* total width of logo */
+#define XSTART ((w - (TOTALW * c)) / 2) /* x position of whole logo */
+#define YSTART ((h - (H * c)) / 2) /* y position whole logo */
+
+#define X(offset) (XSTART + (offset) * c)
+#define Y(offset) (YSTART + (offset) * c)
+
+#define XY(xx,yy) {rect[cnt].x = X(xx); rect[cnt++].y = Y(yy);}
+
+  int cnt;
 
   /*
-   * Start 'X'.
+   * Paint 'X'.
    */
 
-  rect[0].x = w2-7*c;               rect[0].y = h2-5*c;
-  rect[1].x = w2-8*c;               rect[1].y = h2-5*c;
-  rect[2].x = w2-4*c;               rect[2].y = h2+3*c;
-  rect[3].x = w2-3*c;               rect[3].y = h2+3*c;
-  XFillPolygon(nxagentDisplay, nxagentPixmapLogo, gc, rect, 4, Convex, CoordModeOrigin);
+  cnt = 0; XY(1,0); XY(0,0); XY(4,8); XY(5,8);
+  XFillPolygon(nxagentDisplay, nxagentPixmapLogo, gc, rect, cnt, Convex, CoordModeOrigin);
 
-  rect[0].x = w2-4*c;               rect[0].y = h2-5*c;
-  rect[1].x = w2-3*c;               rect[1].y = h2-5*c;
-  rect[2].x = w2-7*c;               rect[2].y = h2+3*c;
-  rect[3].x = w2-8*c;               rect[3].y = h2+3*c;
-  XFillPolygon(nxagentDisplay, nxagentPixmapLogo, gc, rect, 4, Convex, CoordModeOrigin);
+  cnt = 0; XY(4,0); XY(5,0); XY(1,8); XY(0,8);
+  XFillPolygon(nxagentDisplay, nxagentPixmapLogo, gc, rect, cnt, Convex, CoordModeOrigin);
 
   /*
-   * End 'X'.
+   * Paint '2'.
    */
+
+#undef X
+#define X(offset) (XSTART + (SPC + WX + offset) * c)
+
+  cnt = 0; XY(0,0); XY(4,0); XY(4,3); XY(1,7); XY(4,7); XY(4,8); XY(0,8); XY(0,7); XY(3,3); XY(3,1); XY(1,1); XY(1,2); XY(0,2); XY(0,0);
+  XFillPolygon(nxagentDisplay, nxagentPixmapLogo, gc, rect, cnt, Nonconvex, CoordModeOrigin);
 
   /*
-   * Start '2'.
+   * Paint 'G'.
    */
 
-  rect[0].x = w2-2*c;               rect[0].y = h2-5*c;
-  rect[1].x = w2-1*c;               rect[1].y = h2-5*c;
-  rect[2].x = w2-1*c;               rect[2].y = h2-3*c;
-  rect[3].x = w2-2*c;               rect[3].y = h2-3*c;
-  XFillPolygon(nxagentDisplay, nxagentPixmapLogo, gc, rect, 4, Convex, CoordModeOrigin);
+#undef X
+#define X(offset) (XSTART + (SPC + WX + SPC + W2 + offset) * c)
 
-  rect[0].x = w2-2*c;               rect[0].y = h2-5*c;
-  rect[1].x = w2+2*c;               rect[1].y = h2-5*c;
-  rect[2].x = w2+2*c;               rect[2].y = h2-4*c;
-  rect[3].x = w2-2*c;               rect[3].y = h2-4*c;
-  XFillPolygon(nxagentDisplay, nxagentPixmapLogo, gc, rect, 4, Convex, CoordModeOrigin);
-
-  rect[0].x = w2+1*c;               rect[0].y = h2-5*c;
-  rect[1].x = w2+2*c;               rect[1].y = h2-5*c;
-  rect[2].x = w2+2*c;               rect[2].y = h2-2*c;
-  rect[3].x = w2+1*c;               rect[3].y = h2-2*c;
-  XFillPolygon(nxagentDisplay, nxagentPixmapLogo, gc, rect, 4, Convex, CoordModeOrigin);
-
-  rect[0].x = w2+2*c;               rect[0].y = h2-2*c;
-  rect[1].x = w2+1*c;               rect[1].y = h2-2*c;
-  rect[2].x = w2-2*c;               rect[2].y = h2+2*c;
-  rect[3].x = w2-1*c;               rect[3].y = h2+2*c;
-  XFillPolygon(nxagentDisplay, nxagentPixmapLogo, gc, rect, 4, Convex, CoordModeOrigin);
-
-
-  rect[0].x = w2-2*c;               rect[0].y = h2+2*c;
-  rect[1].x = w2+2*c;               rect[1].y = h2+2*c;
-  rect[2].x = w2+2*c;               rect[2].y = h2+3*c;
-  rect[3].x = w2-2*c;               rect[3].y = h2+3*c;
-  XFillPolygon(nxagentDisplay, nxagentPixmapLogo, gc, rect, 4, Convex, CoordModeOrigin);
-  /*
-   * End '2'.
-   */
+  cnt = 0; XY(0,0); XY(4,0); XY(4,2); XY(3,2); XY(3,1); XY(1,1);XY(1,7);
+  XY(3,7); XY(3,5); XY(2,5); XY(2,4); XY(4,4); XY(4,8); XY(0,8); XY(0,0);
+  XFillPolygon(nxagentDisplay, nxagentPixmapLogo, gc, rect, cnt, Nonconvex, CoordModeOrigin);
 
   /*
-   * Start 'G'.
+   * Paint 'O'.
    */
 
-  rect[0].x = w2+3*c;               rect[0].y = h2-5*c;
-  rect[1].x = w2+7*c;               rect[1].y = h2-5*c;
-  rect[2].x = w2+7*c;               rect[2].y = h2-4*c;
-  rect[3].x = w2+3*c;               rect[3].y = h2-4*c;
-  XFillPolygon(nxagentDisplay, nxagentPixmapLogo, gc, rect, 4, Convex, CoordModeOrigin);
+#undef X
+#define X(offset) (XSTART + (SPC + WX + SPC + W2 + SPC + WG + offset) * c)
 
-  rect[0].x = w2+3*c;               rect[0].y = h2-5*c;
-  rect[1].x = w2+4*c;               rect[1].y = h2-5*c;
-  rect[2].x = w2+4*c;               rect[2].y = h2+3*c;
-  rect[3].x = w2+3*c;               rect[3].y = h2+3*c;
-  XFillPolygon(nxagentDisplay, nxagentPixmapLogo, gc, rect, 4, Convex, CoordModeOrigin);
-
-  rect[0].x = w2+3*c;               rect[0].y = h2+2*c;
-  rect[1].x = w2+7*c;               rect[1].y = h2+2*c;
-  rect[2].x = w2+7*c;               rect[2].y = h2+3*c;
-  rect[3].x = w2+3*c;               rect[3].y = h2+3*c;
-  XFillPolygon(nxagentDisplay, nxagentPixmapLogo, gc, rect, 4, Convex, CoordModeOrigin);
-
-  rect[0].x = w2+6*c;               rect[0].y = h2-5*c;
-  rect[1].x = w2+7*c;               rect[1].y = h2-5*c;
-  rect[2].x = w2+7*c;               rect[2].y = h2-3*c;
-  rect[3].x = w2+6*c;               rect[3].y = h2-3*c;
-  XFillPolygon(nxagentDisplay, nxagentPixmapLogo, gc, rect, 4, Convex, CoordModeOrigin);
-
-  rect[0].x = w2+6*c;               rect[0].y = h2-0*c;
-  rect[1].x = w2+7*c;               rect[1].y = h2-0*c;
-  rect[2].x = w2+7*c;               rect[2].y = h2+3*c;
-  rect[3].x = w2+6*c;               rect[3].y = h2+3*c;
-  XFillPolygon(nxagentDisplay, nxagentPixmapLogo, gc, rect, 4, Convex, CoordModeOrigin);
-
-  rect[0].x = w2+5*c;               rect[0].y = h2-1*c;
-  rect[1].x = w2+7*c;               rect[1].y = h2-1*c;
-  rect[2].x = w2+7*c;               rect[2].y = h2+0*c;
-  rect[3].x = w2+5*c;               rect[3].y = h2+0*c;
-  XFillPolygon(nxagentDisplay, nxagentPixmapLogo, gc, rect, 4, Convex, CoordModeOrigin);
-  /*
-   * End 'G'.
-   */
-
-  /*
-   * Start 'O'.
-   */
-
-  rect[0].x = w2+8*c;               rect[0].y = h2-5*c;
-  rect[1].x = w2+12*c;              rect[1].y = h2-5*c;
-  rect[2].x = w2+12*c;              rect[2].y = h2-4*c;
-  rect[3].x = w2+8*c;               rect[3].y = h2-4*c;
-  XFillPolygon(nxagentDisplay, nxagentPixmapLogo, gc, rect, 4, Convex, CoordModeOrigin);
-
-  rect[0].x = w2+8*c;               rect[0].y = h2+3*c;
-  rect[1].x = w2+12*c;              rect[1].y = h2+3*c;
-  rect[2].x = w2+12*c;              rect[2].y = h2+2*c;
-  rect[3].x = w2+8*c;               rect[3].y = h2+2*c;
-  XFillPolygon(nxagentDisplay, nxagentPixmapLogo, gc, rect, 4, Convex, CoordModeOrigin);
-
-  rect[0].x = w2+8*c;               rect[0].y = h2-5*c;
-  rect[1].x = w2+9*c;               rect[1].y = h2-5*c;
-  rect[2].x = w2+9*c;               rect[2].y = h2+3*c;
-  rect[3].x = w2+8*c;               rect[3].y = h2+3*c;
-  XFillPolygon(nxagentDisplay, nxagentPixmapLogo, gc, rect, 4, Convex, CoordModeOrigin);
-
-  rect[0].x = w2+11*c;               rect[0].y = h2-5*c;
-  rect[1].x = w2+12*c;               rect[1].y = h2-5*c;
-  rect[2].x = w2+12*c;               rect[2].y = h2+3*c;
-  rect[3].x = w2+11*c;               rect[3].y = h2+3*c;
-  XFillPolygon(nxagentDisplay, nxagentPixmapLogo, gc, rect, 4, Convex, CoordModeOrigin);
-
-  /*
-   * End 'O'.
-   */
-
+  cnt = 0; XY(0,0); XY(4,0); XY(4,8); XY(0,8); XY(0,1); XY(1,1); XY(1,7); XY(3,7); XY(3,1); XY(0,1); XY(0,0);
+  XFillPolygon(nxagentDisplay, nxagentPixmapLogo, gc, rect, cnt, Nonconvex, CoordModeOrigin);
 
   XSetWindowBackgroundPixmap(nxagentDisplay, win, nxagentPixmapLogo);
+
+  XFreeGC(nxagentDisplay, gc);
 
   #ifdef NXAGENT_LOGO_DEBUG
   fprintf(stderr, "%s: end\n", __func__);
@@ -404,7 +350,7 @@ void nxagentRemoveSplashWindow(void)
     nxagentRefreshWindows(screenInfo.screens[0]->root);
 
     #ifdef TEST
-    fprintf(stderr, "%s: setting the ownership of %s (%d) on window 0x%lx\n", __func__
+    fprintf(stderr, "%s: setting the ownership of %s (%d) on window [0x%lx]\n", __func__,
                 "NX_CUT_BUFFER_SERVER", (int)serverTransToAgentProperty, nxagentWindow(screenInfo.screens[0]->root));
     #endif
 
@@ -415,6 +361,6 @@ void nxagentRemoveSplashWindow(void)
   if (nxagentPixmapLogo)
   {
     XFreePixmap(nxagentDisplay, nxagentPixmapLogo);
-    nxagentPixmapLogo = (Pixmap) 0;
+    nxagentPixmapLogo = (XlibPixmap) 0;
   }
 }

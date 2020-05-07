@@ -25,94 +25,84 @@
 
 #include "Trap.h"
 
+#include <nx-X11/Xdefs.h>
+
 /*
- * Set if we are dispatching a render
- * extension request. Used to avoid
+ * Set if we are dispatching a render extension request. Used to avoid
  * reentrancy in GC operations.
  */
 
-int nxagentGCTrap = 0;
+Bool nxagentGCTrap = False;
 
 /*
- * Set if we are enqueing an internal
- * operation, CreateWindow and Reparent-
- * Window. Used to remove any screen operation.
+ * Set if we are enqueing an internal operation, CreateWindow and
+ * Reparent- Window. Used to remove any screen operation.
  */
 
-int nxagentScreenTrap = 0;
+Bool nxagentScreenTrap = False;
 
 /*
- * Set if we are executing a GC operation
- * only on the X side. Used to avoid
- * reentrancy in FB layer.
+ * Set if we are executing a GC operation only on the X side. Used to
+ * avoid reentrancy in FB layer.
  */
 
-int nxagentFBTrap = 0;
+Bool nxagentFBTrap = False;
 
 /*
- * Set if we are dispatching a shared
- * memory extension request.
+ * Set if we are dispatching a shared memory extension request.
  */
 
-int nxagentShmTrap = 0;
+Bool nxagentShmTrap = False;
 
 /*
- * Set if a shared pixmap operation is
- * requested by the client.
+ * Set if a shared pixmap operation is requested by the client.
  */
 
-int nxagentShmPixmapTrap = 0;
+Bool nxagentShmPixmapTrap = False;
 
 /*
- * Set if we are dispatching a XVideo
- * extension request.
+ * Set if we are dispatching a XVideo extension request.
  */
 
-int nxagentXvTrap = 0;
+Bool nxagentXvTrap = False;
 
 /*
- * Set if we are dispatching a GLX
- * extension request.
+ * Set if we are dispatching a GLX extension request.
  */
 
-int nxagentGlxTrap = 0;
+Bool nxagentGlxTrap = False;
 
 /*
  * Set while we are resuming the session.
  */
 
-int nxagentReconnectTrap = 0;
+Bool nxagentReconnectTrap = False;
 
 /*
- * Set if we need to realize a drawable
- * by using a lossless encoding.
+ * Set if we need to realize a drawable by using a lossless encoding.
  */
 
-int nxagentLosslessTrap = 0;
+Bool nxagentLosslessTrap = False;
 
 /*
- * Set to force the synchronization of
- * a drawable.
+ * Set to force the synchronization of a drawable.
  */
 
-int nxagentSplitTrap = 0;
+Bool nxagentSplitTrap = False;
 
 /*
- * Set to avoid CapsLock synchronization
- * problems when CapsLock is the first
- * key to be pressed in the session.
+ * Set to avoid CapsLock synchronization problems when CapsLock is the
+ * first key to be pressed in the session.
  */
 
-int nxagentXkbCapsTrap = 0;
+Bool nxagentXkbCapsTrap = False;
 
 /*
- * Set to avoid NumLock synchronization
- * problems when NumLock is the first
- * key to be pressed in the session.
+ * Set to avoid NumLock synchronization problems when NumLock is the
+ * first key to be pressed in the session.
  */
 
-int nxagentXkbNumTrap = 0;
-
+Bool nxagentXkbNumTrap = False;
 
 /*
  * Set to indicate we are processing a clipboard event triggered by
@@ -120,4 +110,4 @@ int nxagentXkbNumTrap = 0;
  * would trigger another event by the real X server
  */
 
-int nxagentExternalClipboardEventTrap = 0;
+Bool nxagentExternalClipboardEventTrap = False;

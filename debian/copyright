@@ -713,9 +713,7 @@ Copyright: 1999-2001, Brian Paul
   2005, Brian Paul
 License: Expat
 
-Files: nx-X11/include/XWDFile.h
- nx-X11/include/Xalloca.h
- nx-X11/include/Xauth.h
+Files: nx-X11/include/Xauth.h
  nx-X11/include/Xfuncproto.h
  nx-X11/include/Xfuncs.h
  nx-X11/include/Xos.h
@@ -1337,7 +1335,6 @@ Files: nx-X11/include/DECkeysym.h
  nx-X11/programs/Xserver/include/region.h
  nx-X11/programs/Xserver/include/regionstr.h
  nx-X11/programs/Xserver/include/resource.h
- nx-X11/programs/Xserver/include/rgb.h
  nx-X11/programs/Xserver/include/screenint.h
  nx-X11/programs/Xserver/include/scrnintstr.h
  nx-X11/programs/Xserver/include/selection.h
@@ -1478,10 +1475,8 @@ License: MIT~X11
 
 Files: nx-X11/include/extensions/XKB.h
  nx-X11/include/extensions/XKBconfig.h
- nx-X11/include/extensions/XKBfile.h
  nx-X11/include/extensions/XKBgeom.h
  nx-X11/include/extensions/XKBproto.h
- nx-X11/include/extensions/XKBrules.h
  nx-X11/include/extensions/XKBsrv.h
  nx-X11/include/extensions/XKBstr.h
  nx-X11/include/extensions/XKM.h
@@ -2187,7 +2182,6 @@ License: Expat
 
 Files: nx-X11/include/extensions/saver.h
  nx-X11/include/extensions/saverproto.h
- nx-X11/include/extensions/scrnsaver.h
  nx-X11/programs/Xserver/Xext/saver.c
 Copyright: 1992, X Consortium
 License: Expat~NoAdvert

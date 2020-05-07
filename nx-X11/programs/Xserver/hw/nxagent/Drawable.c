@@ -91,6 +91,11 @@ RESTYPE RT_NX_CORR_WINDOW;
 RESTYPE RT_NX_CORR_PIXMAP;
 
 int nxagentCorruptedPixmaps     = 0;
+
+/*
+ * Number of windows which need synchronization.
+ */
+
 int nxagentCorruptedWindows     = 0;
 int nxagentCorruptedBackgrounds = 0;
 
@@ -160,15 +165,15 @@ int nxagentSynchronizeDrawable(DrawablePtr pDrawable, int wait, unsigned int bre
    * so that the image will be transferred in a single operation.
    */
 
-  nxagentFBTrap = 1;
+  nxagentFBTrap = True;
 
-  nxagentSplitTrap = 1;
+  nxagentSplitTrap = True;
 
   int result = nxagentSynchronizeDrawableData(pDrawable, breakMask, owner);
 
-  nxagentSplitTrap = 0;
+  nxagentSplitTrap = False;
 
-  nxagentFBTrap = 0;
+  nxagentFBTrap = False;
 
   if (wait == DO_WAIT && nxagentSplitResource(pDrawable) != NULL)
   {
@@ -191,45 +196,62 @@ int nxagentSynchronizeDrawable(DrawablePtr pDrawable, int wait, unsigned int bre
   return result;
 }
 
-int nxagentSynchronizeDrawableData(DrawablePtr pDrawable, unsigned int breakMask, WindowPtr owner)
+static int reallySynchronizeDrawableData(DrawablePtr pDrawable)
 {
-  char *data = NULL;
-  int success;
+  GCPtr pGC = nxagentGetGraphicContext(pDrawable);
 
-  if (pDrawable -> type == DRAWABLE_PIXMAP)
+  if (pGC == NULL)
   {
-    GCPtr pGC;
-
-    unsigned int leftPad = 0;
-
-    int width  = pDrawable -> width;
-    int height = pDrawable -> height;
-    int depth  = pDrawable -> depth;
-
-    #ifdef TEST
-    fprintf(stderr, "nxagentSynchronizeDrawableData: Synchronizing drawable (%s) with geometry [%d][%d][%d].\n",
-                nxagentDrawableType(pDrawable), width, height, depth);
+    #ifdef WARNING
+    fprintf(stderr, "%s: WARNING! Failed to get the temporary GC.\n", __func__);
     #endif
 
-    unsigned int format = (depth == 1) ? XYPixmap : ZPixmap;
+    return 0;
+  }
 
-    int length = nxagentImageLength(width, height, format, leftPad, depth);
+  DrawablePtr pSrcDrawable = (pDrawable -> type == DRAWABLE_PIXMAP ?
+                                 ((DrawablePtr) nxagentVirtualPixmap((PixmapPtr) pDrawable)) :
+                                     pDrawable);
 
-    if ((data = malloc(length)) == NULL)
-    {
-      #ifdef WARNING
-      fprintf(stderr, "nxagentSynchronizeDrawableData: WARNING! Failed to allocate memory for the operation.\n");
-      #endif
+  int width  = pDrawable -> width;
+  int height = pDrawable -> height;
+  int depth  = pDrawable -> depth;
 
-      success = 0;
+  #ifdef TEST
+  fprintf(stderr, "%s: Synchronizing drawable (%s) with geometry [%d][%d][%d].\n",
+              __func__, nxagentDrawableType(pDrawable), width, height, depth);
+  #endif
 
-      goto nxagentSynchronizeDrawableDataEnd;
-    }
+  unsigned int format = (depth == 1) ? XYPixmap : ZPixmap;
 
-    DrawablePtr pSrcDrawable = (pDrawable -> type == DRAWABLE_PIXMAP ?
-                                   ((DrawablePtr) nxagentVirtualPixmap((PixmapPtr) pDrawable)) :
-                                       pDrawable);
+  int length = nxagentImageLength(width, height, format, 0, depth);
 
+  char *data = malloc(length);
+  if (data  == NULL)
+  {
+    #ifdef WARNING
+    fprintf(stderr, "%s: WARNING! Failed to allocate memory for the operation.\n", __func__);
+    #endif
+
+    return 0;
+  }
+
+  ValidateGC(pDrawable, pGC);
+
+  fbGetImage(pSrcDrawable, 0, 0, width, height, format, AllPlanes, data);
+
+  nxagentPutImage(pDrawable, pGC, depth, 0, 0,
+                      width, height, 0, format, data);
+
+  SAFE_free(data);
+
+  return 1;
+}
+
+int nxagentSynchronizeDrawableData(DrawablePtr pDrawable, unsigned int breakMask, WindowPtr owner)
+{
+  if (pDrawable -> type == DRAWABLE_PIXMAP)
+  {
     /*
      * Synchronize the whole pixmap if we need to download a fresh
      * copy with lossless compression turned off.
@@ -237,35 +259,12 @@ int nxagentSynchronizeDrawableData(DrawablePtr pDrawable, unsigned int breakMask
 
     if (nxagentLosslessTrap == 1)
     {
-      pGC = nxagentGetGraphicContext(pDrawable);
-
-      if (pGC == NULL)
-      {
-        #ifdef WARNING
-        fprintf(stderr, "nxagentSynchronizeDrawableData: WARNING! Failed to get the temporary GC.\n");
-        #endif
-
-        success = 0;
-
-        goto nxagentSynchronizeDrawableDataEnd;
-      }
-
-      ValidateGC(pDrawable, pGC);
-
-      fbGetImage(pSrcDrawable, 0, 0,
-                     width, height, format, AllPlanes, data);
-
       #ifdef TEST
-      fprintf(stderr, "nxagentSynchronizeDrawableData: Forcing synchronization of "
-                  "pixmap at [%p] with lossless compression.\n", (void *) pDrawable);
+      fprintf(stderr, "%s: Forcing synchronization of pixmap at [%p] with lossless compression.\n",
+                  __func__, (void *) pDrawable);
       #endif
 
-      nxagentPutImage(pDrawable, pGC, depth, 0, 0,
-                          width, height, leftPad, format, data);
-
-      success = 1;
-
-      goto nxagentSynchronizeDrawableDataEnd;
+      return reallySynchronizeDrawableData(pDrawable);
     }
     else if (nxagentReconnectTrap == 1)
     {
@@ -278,7 +277,6 @@ int nxagentSynchronizeDrawableData(DrawablePtr pDrawable, unsigned int breakMask
       if (pDrawable -> depth == 1)
       {
         #ifdef TEST
-
         if (nxagentReconnectTrap == 1)
         {
           static int totalLength;
@@ -287,51 +285,25 @@ int nxagentSynchronizeDrawableData(DrawablePtr pDrawable, unsigned int breakMask
           totalLength += length;
           totalReconnectedPixmaps++;
 
-          fprintf(stderr, "nxagentSynchronizeDrawableData: Reconnecting pixmap at [%p] [%dx%d] "
+          fprintf(stderr, "%s: Reconnecting pixmap at [%p] [%dx%d] "
                       "Depth [%d] Size [%d]. Total size [%d]. Total reconnected pixmaps [%d].\n", 
-                          (void *) pDrawable, width, height, depth, length,
+                          __func__, (void *) pDrawable, width, height, depth, length,
                               totalLength, totalReconnectedPixmaps);
         }
-
         #endif
 
-        pGC = nxagentGetGraphicContext(pDrawable);
-
-        if (pGC == NULL)
-        {
-          #ifdef WARNING
-          fprintf(stderr, "nxagentSynchronizeDrawableData: WARNING! Failed to create the temporary GC.\n");
-          #endif
-
-          success = 0;
-
-          goto nxagentSynchronizeDrawableDataEnd;
-        }
-
-        ValidateGC(pDrawable, pGC);
-
-        fbGetImage(pSrcDrawable, 0, 0,
-                       width, height, format, AllPlanes, data);
-
-        nxagentPutImage(pDrawable, pGC, depth, 0, 0,
-                            width, height, leftPad, format, data);
-
-        success = 1;
-
-        goto nxagentSynchronizeDrawableDataEnd;
+        return reallySynchronizeDrawableData(pDrawable);
       }
       else
       {
         #ifdef TEST
-        fprintf(stderr, "nxagentSynchronizeDrawableData: Skipping synchronization of "
-                    "pixmap at [%p][%p] during reconnection.\n", (void *) pDrawable, (void*) nxagentVirtualPixmap((PixmapPtr)pDrawable));
+        fprintf(stderr, "%s: Skipping synchronization of pixmap at [%p][%p] during reconnection.\n",
+                    __func__, (void *) pDrawable, (void*) nxagentVirtualPixmap((PixmapPtr)pDrawable));
         #endif
 
         nxagentMarkCorruptedRegion(pDrawable, NullRegion);
 
-        success = 1;
-
-        goto nxagentSynchronizeDrawableDataEnd;
+        return 1;
       }
     }
   }
@@ -342,12 +314,7 @@ int nxagentSynchronizeDrawableData(DrawablePtr pDrawable, unsigned int breakMask
    * the drawable.
    */
 
-  success = nxagentSynchronizeRegion(pDrawable, NullRegion, breakMask, owner);
-
-nxagentSynchronizeDrawableDataEnd:
-  SAFE_free(data);
-
-  return success;
+  return nxagentSynchronizeRegion(pDrawable, NullRegion, breakMask, owner);
 }
 
 /*
@@ -533,11 +500,11 @@ int nxagentSynchronizeRegion(DrawablePtr pDrawable, RegionPtr pRegion, unsigned 
 
   int saveTrap = nxagentGCTrap;
 
-  nxagentGCTrap = 0;
+  nxagentGCTrap = False;
 
-  nxagentFBTrap = 1;
+  nxagentFBTrap = True;
 
-  nxagentSplitTrap = 1;
+  nxagentSplitTrap = True;
 
   pGC = nxagentGetGraphicContext(pDrawable);
 
@@ -877,9 +844,9 @@ int nxagentSynchronizeRegion(DrawablePtr pDrawable, RegionPtr pRegion, unsigned 
 
 nxagentSynchronizeRegionStop:
 
-  nxagentSplitTrap = 0;
+  nxagentSplitTrap = False;
 
-  nxagentFBTrap = 0;
+  nxagentFBTrap = False;
 
   nxagentGCTrap = saveTrap;
 
@@ -979,7 +946,7 @@ nxagentSynchronizeRegionFree:
 
   if (clipRegion != NullRegion)
   {
-    nxagentFreeRegion(pDrawable, clipRegion);
+    nxagentFreeRegion(clipRegion);
   }
 
   SAFE_free(data);
@@ -1034,7 +1001,7 @@ void nxagentSynchronizeBox(DrawablePtr pDrawable, BoxPtr pBox, unsigned int brea
                   pRegion -> extents.x1, pRegion -> extents.y1, pRegion -> extents.x2, pRegion -> extents.y2);
       #endif
 
-      nxagentFreeRegion(pDrawable, pRegion);
+      nxagentFreeRegion(pRegion);
 
       return;
     }
@@ -1047,7 +1014,7 @@ void nxagentSynchronizeBox(DrawablePtr pDrawable, BoxPtr pBox, unsigned int brea
 
     nxagentSynchronizeRegion(pDrawable, pRegion, breakMask, NULL);
 
-    nxagentFreeRegion(pDrawable, pRegion);
+    nxagentFreeRegion(pRegion);
   }
 }
 
@@ -1558,7 +1525,7 @@ void nxagentMarkCorruptedRegion(DrawablePtr pDrawable, RegionPtr pRegion)
     RegionUnion(nxagentCorruptedRegion(pDrawable),
                      nxagentCorruptedRegion(pDrawable), pRegion);
 
-    nxagentFreeRegion(pDrawable, pRegion);
+    nxagentFreeRegion(pRegion);
   }
   else
   {
@@ -2359,7 +2326,7 @@ void nxagentCorruptedRegionOnWindow(void *p0, XID x, void *p2)
 
   RegionIntersect(&visRegion, clipRegion, nxagentCorruptedRegion((DrawablePtr) pWin));
 
-  nxagentFreeRegion(pWin -> drawable.pScreen, clipRegion);
+  nxagentFreeRegion(clipRegion);
 
   if (RegionNil(&visRegion) == 1)
   {
@@ -2450,7 +2417,7 @@ void nxagentCreateDrawableBitmap(DrawablePtr pDrawable)
 
   int saveTrap = nxagentGCTrap;
 
-  nxagentGCTrap = 1;
+  nxagentGCTrap = True;
 
   if (nxagentDrawableStatus(pDrawable) == Synchronized)
   {
@@ -2566,7 +2533,7 @@ nxagentCreateDrawableBitmapEnd:
 
   if (pClipRegion != NullRegion)
   {
-    nxagentFreeRegion(pDrawable, pClipRegion);
+    nxagentFreeRegion(pClipRegion);
   }
 
   if (pGC != NULL)

@@ -80,7 +80,8 @@ is" without express or implied warranty.
 
 #include <errno.h>
 
-static void nxagentXkbGetNames(void);
+static void nxagentXkbGetRemoteNames(void);
+static void nxagentXkbClearRemoteNames(void);
 
 void nxagentKeycodeConversionSetup(void);
 
@@ -695,6 +696,9 @@ XkbError:
           fprintf(stderr, "%s: Failed to retrieve remote rules.\n", __func__);
         }
         #endif
+
+        /* we don't need the remote keyboard information anymore */
+        nxagentXkbClearRemoteNames();
 
         xkb = XkbGetKeyboard(nxagentDisplay, XkbGBN_AllComponentsMask, XkbUseCoreKbd);
 
@@ -1341,7 +1345,7 @@ void nxagentTuneXkbWrapper(void)
   }
 }
 
-void nxagentXkbClearNames(void)
+void nxagentXkbClearRemoteNames(void)
 {
   SAFE_free(nxagentRemoteRules);
   SAFE_free(nxagentRemoteModel);
@@ -1350,7 +1354,7 @@ void nxagentXkbClearNames(void)
   SAFE_free(nxagentRemoteOptions);
 }
 
-static void nxagentXkbGetNames(void)
+static void nxagentXkbGetRemoteNames(void)
 {
   if (nxagentRemoteRules)
     return;
@@ -1554,7 +1558,7 @@ void nxagentKeycodeConversionSetup(void)
 Bool nxagentGetRemoteXkbExtension(void)
 {
   nxagentXkbInfo.Opcode = nxagentXkbInfo.EventBase = nxagentXkbInfo.ErrorBase = nxagentXkbInfo.MajorVersion = nxagentXkbInfo.MinorVersion = -1;
-  nxagentXkbClearNames();
+  nxagentXkbClearRemoteNames();
 
   Bool result = XkbQueryExtension(nxagentDisplay,
                                   &nxagentXkbInfo.Opcode,
@@ -1565,7 +1569,7 @@ Bool nxagentGetRemoteXkbExtension(void)
 
   if (result)
   {
-    nxagentXkbGetNames();
+    nxagentXkbGetRemoteNames();
   }
   #ifdef WARNING
   else

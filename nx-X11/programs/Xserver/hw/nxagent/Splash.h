@@ -26,20 +26,9 @@
 #ifndef __Splash_H__
 #define __Splash_H__
 
-#include "Windows.h"
-#include "X11/Xdmcp.h"
-#include <nx/NXalert.h>
-
-#define XDM_TIMEOUT       20000
-
-extern xdmcp_states XdmcpState;
-extern int XdmcpTimeOutRtx;
-extern int XdmcpStartTime;
-extern int nxagentXdmcpUp;
-
-extern Window nxagentSplashWindow;
-
-extern void nxagentShowSplashWindow(Window);
-extern void nxagentRemoveSplashWindow();
-
+#ifdef XlibWindow
+extern void nxagentShowSplashWindow(XlibWindow);
+#endif
+extern void nxagentRemoveSplashWindow(void);
+extern Bool nxagentHaveSplashWindow(void);
 #endif /* __Splash_H__ */

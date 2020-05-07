@@ -185,8 +185,6 @@ InitConnectionLimits(void)
 {
     lastfdesc = -1;
 
-#ifndef __CYGWIN__
-
 #if !defined(XNO_SYSCONF) && defined(_SC_OPEN_MAX)
     lastfdesc = sysconf(_SC_OPEN_MAX) - 1;
 #endif
@@ -200,8 +198,6 @@ InitConnectionLimits(void)
     if (lastfdesc < 0)
 	lastfdesc = _NFILE - 1;
 #endif
-
-#endif /* __CYGWIN__ */
 
     /* This is the fallback */
     if (lastfdesc < 0)
@@ -912,7 +908,7 @@ CheckConnections(void)
 	mask = AllClients.fds_bits[i];
         while (mask)
     	{
-	    curoff = ffs (mask) - 1;
+	    curoff = mffs (mask) - 1;
 	    curclient = curoff + (i * (sizeof(fd_mask)*8));
             FD_ZERO(&tmask);
             FD_SET(curclient, &tmask);

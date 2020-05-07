@@ -341,6 +341,9 @@ extern int NXTransFlush(int fd);
  * NX_CHANNEL_FONT:  The channel will forward a X font server
  *                   connection.
  *
+ * NX_CHANNEL_SLAVE: The channel will forward data to a remote slave
+ *                   command (see NX_SLAVE_CMD envrionment variable)
+ *
  * Only a proxy running at the NX server/X client side will be able
  * to create a X, CUPS, SMB, MEDIA and HTTP channel. A proxy running
  * at the NX client/X server side can create font server connections.

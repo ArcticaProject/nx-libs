@@ -52,6 +52,7 @@
 #include "Events.h"
 #include "Drawable.h"
 #include "Utils.h"
+#include "Clipboard.h"
 
 /*
  * Need to include this after the stub definition of GC in Agent.h.
@@ -67,6 +68,11 @@
 #define WARNING
 #undef  TEST
 #undef  DEBUG
+
+void nxagentClientStateCallback(CallbackListPtr *callbacks, void *data, void *args);
+static void initClientPrivates(ClientPtr client);
+static void freeClientPrivates(ClientPtr client);
+static void checkIfShadowAgent(ClientPtr client);
 
 /*
  * Returns the last signal delivered to the process.
@@ -106,13 +112,139 @@ int nxagentClientPrivateIndex;
 
 int nxagentShadowCounter = 0;
 
-void nxagentInitClientPrivates(ClientPtr client)
+/*
+ * For the serverclient the ClientStateCallback will not be called on
+ * shutdown resulting in memory allocated during initClientPrivates can
+ * not be freed automatically. So instead of allocating some memory we
+ * create a static string for the serverclient.
+ */
+static char *serverclientInfoString = "[0] (serverclient)";
+
+/*
+ * called whenever the client state changes. See dixstruct.h for a
+ * list of known states.
+ */
+
+#ifdef DEBUG
+const char * getClientStateString(int state)
 {
+  switch (state)
+  {
+    case ClientStateInitial:          { return "Initial"; break; };
+    case ClientStateAuthenticating:   { return "Authenticating"; break; };
+    case ClientStateRunning:          { return "Running"; break; };
+    case ClientStateRetained:         { return "Retained"; break; };
+    case ClientStateGone:             { return "Gone"; break; };
+    case ClientStateCheckingSecurity: { return "CheckingSecurity"; break; };
+    case ClientStateCheckedSecurity:  { return "CheckedSecurity"; break; };
+    default:                          { return "UNKNOWN"; break; };
+  }
+}
+#endif
+
+void nxagentClientStateCallback(CallbackListPtr *callbacks, void *data, void *args)
+{
+  ClientPtr client = ((NewClientInfoRec *)args)->client;
+
+  #ifdef DEBUG
+  fprintf(stderr, "%s: client [%d] clientState [%s]\n", __func__, client->index,
+              getClientStateString(client->clientState));
+  #endif
+
+  switch(client->clientState)
+  {
+    case ClientStateInitial:
+    {
+      initClientPrivates(client);
+      break;
+    }
+    case ClientStateGone:
+    {
+      nxagentClearClipboard(client, NULL);
+
+      /*
+       * Check if the client is a shadow nxagent.
+       */
+      checkIfShadowAgent(client);
+
+      freeClientPrivates(client);
+      break;
+    }
+    default:
+    {
+      break;
+    }
+  }
+}
+
+static void initClientPrivates(ClientPtr client)
+{
+  #ifdef DEBUG
+  fprintf(stderr, "%s: called\n", __func__);
+  #endif
+
   if (nxagentClientPriv(client))
   {
     nxagentClientPriv(client) -> clientState = 0;
+#ifdef COUNT_CLIENT_BYTES
     nxagentClientPriv(client) -> clientBytes = 0;
+#endif
     nxagentClientPriv(client) -> clientHint  = UNKNOWN;
+    nxagentClientPriv(client) -> clientInfoString = NULL;
+
+    char *s = NULL;
+    int size = 0;
+
+    if (client->index == 0)
+    {
+      s = serverclientInfoString;
+    }
+    else
+    {
+#ifdef CLIENTIDS
+      size = asprintf(&s, "[%d] (addr [%p] PID [%d] Cmd [%s])",
+                          client->index, (void *)client,
+                              GetClientPid(client),
+                                  GetClientCmdName(client));
+#else
+      size = asprintf(&s, "[%d] (addr [%p])",
+                          client->index, (void *)client);
+#endif
+    }
+
+    if (size != -1)
+    {
+      #ifdef DEBUG
+      fprintf(stderr, "%s: clientInfoString: \"%s\"\n", __func__, s);
+      #endif
+
+      nxagentClientPriv(client) -> clientInfoString = s;
+    }
+    else
+    {
+      #ifdef DEBUG
+      fprintf(stderr, "%s: could not alloc clientInfoString\n", __func__);
+      #endif
+    }
+  }
+}
+
+static void freeClientPrivates(ClientPtr client)
+{
+  #ifdef DEBUG
+  fprintf(stderr, "%s: called\n", __func__);
+  #endif
+
+  if (nxagentClientPriv(client))
+  {
+    nxagentClientPriv(client) -> clientState = 0;
+#ifdef COUNT_CLIENT_BYTES
+    nxagentClientPriv(client) -> clientBytes = 0;
+#endif
+    nxagentClientPriv(client) -> clientHint  = UNKNOWN;
+
+    if (client->index != 0)
+      SAFE_free(nxagentClientPriv(client) -> clientInfoString);
   }
 }
 
@@ -128,7 +260,7 @@ void nxagentGuessClientHint(ClientPtr client, Atom property, char *data)
               client -> index, validateString(NameForAtom(property)), validateString(data));
   #endif
 
-  if (nxagentClientPriv(client) -> clientHint == UNKNOWN)
+  if (nxagentClientHint(client) == UNKNOWN)
   {
     if (property == XA_WM_CLASS)
     {
@@ -151,7 +283,7 @@ void nxagentGuessClientHint(ClientPtr client, Atom property, char *data)
     }
   }
 
-  if (nxagentClientPriv(client) -> clientHint == NXCLIENT_WINDOW)
+  if (nxagentClientHint(client) == NXCLIENT_WINDOW)
   {
     if (property == MakeAtom("WM_WINDOW_ROLE", 14, True) &&
             strncmp(data, "msgBox", 6) == 0)
@@ -173,7 +305,7 @@ void nxagentGuessShadowHint(ClientPtr client, Atom property)
                   validateString(NameForAtom(property)));
   #endif
 
-  if (nxagentClientPriv(client) -> clientHint == UNKNOWN)
+  if (nxagentClientHint(client) == UNKNOWN)
   {
     if (strcmp(validateString(NameForAtom(property)), "_NX_SHADOW") == 0)
     {
@@ -205,9 +337,9 @@ void nxagentGuessShadowHint(ClientPtr client, Atom property)
   }
 }
 
-void nxagentCheckIfShadowAgent(ClientPtr client)
+static void checkIfShadowAgent(ClientPtr client)
 {
-  if (nxagentClientPriv(client) -> clientHint == NXAGENT_SHADOW)
+  if (nxagentClientHint(client) == NXAGENT_SHADOW)
   {
     #ifdef TEST
     fprintf(stderr, "nxagentCheckIfShadowAgent: nxagentShadowCounter [%d].\n",
@@ -284,6 +416,7 @@ void nxagentWakeupByReset(ClientPtr client)
     }
   }
 
+#ifdef COUNT_CLIENT_BYTES
   if (client -> index < MAX_CONNECTIONS)
   {
     #ifdef TEST
@@ -293,6 +426,7 @@ void nxagentWakeupByReset(ClientPtr client)
 
     nxagentClientBytes(client) = 0;
   }
+#endif
 }
 
 /*

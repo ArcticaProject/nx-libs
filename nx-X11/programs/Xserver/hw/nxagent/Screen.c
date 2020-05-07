@@ -151,12 +151,9 @@ int nxagentArgc = 0;
 char **nxagentArgv = NULL;
 
 #ifdef NXAGENT_ARTSD
-
 char mcop_atom[] = "MCOPGLOBALS";
 Atom mcop_local_atom = None;
 unsigned char fromHexNibble(char c);
-void nxagentPropagateArtsdProperties(ScreenPtr pScreen, char *port);
-
 #endif
 
 Window nxagentIconWindow = None;
@@ -3289,11 +3286,11 @@ FIXME: The port information is not used at the moment and produces a
       {
         local_buf[in] = pszReturnData[i];
 
-        if(pszReturnData[i] == ':')
+        if (pszReturnData[i] == ':')
         {
           i++;
 
-          while(pszReturnData[i] != '\n')
+          while (pszReturnData[i] != '\n')
           {
              unsigned char h = fromHexNibble(pszReturnData[i]);
              i++;
@@ -3302,7 +3299,8 @@ FIXME: The port information is not used at the moment and produces a
              unsigned char l = fromHexNibble(pszReturnData[i]);
              i++;
 
-             if(h >= 16 || l >= 16) continue;
+             if (h >= 16 || l >= 16)
+               continue;
 
              /*
               * FIXME: The array tchar[] was used uninitialized.  It's
@@ -3333,7 +3331,7 @@ FIXME: The port information is not used at the moment and produces a
 /*
 FIXME: The port information is not used at the moment and produces a
        warning on recent gcc versions. Do we need such information
-       to run the audio forawrding?
+       to run the audio forwarding?
 
                chport = &port[0];
 
@@ -3349,7 +3347,7 @@ FIXME: The port information is not used at the moment and produces a
                strcat(local_buf,"00");
                in += 2;
 
-               while(pszReturnData[i] != '\n')
+               while (pszReturnData[i] != '\n')
                {
                  i++;
                }
@@ -3920,7 +3918,7 @@ int nxagentAdjustRandRXinerama(ScreenPtr pScreen)
         output = pScrPriv->outputs[i];
       }
       #ifdef DEBUG
-      fprintf(stderr, "nxagentAdjustRandRXinerama: adjusting output [%s]\n", pScrPriv->outputs[i]->name);
+      fprintf(stderr, "nxagentAdjustRandRXinerama: adjusting output [%s]\n", output->name);
       #endif
       RROutputSetCrtcs(output, &(pScrPriv->crtcs[i]), 1);
       /* FIXME: Isn't there a function for setting this? */
@@ -4011,9 +4009,9 @@ int nxagentAdjustRandRXinerama(ScreenPtr pScreen)
            distinguish between pre-existing modes which should stay
            and our own modes that should be removed after use. */
         char name[100];
-	sprintf(name, "%s%dx%d", QUOTE(NXAGENT_RANDR_MODE_PREFIX), new_w, new_h);
+        sprintf(name, "%s%dx%d", QUOTE(NXAGENT_RANDR_MODE_PREFIX), new_w, new_h);
 
-	const int refresh = 60;
+        const int refresh = 60;
 
         xRRModeInfo modeInfo = {
           .width  = new_w,
@@ -4022,7 +4020,7 @@ int nxagentAdjustRandRXinerama(ScreenPtr pScreen)
           .vTotal = new_h,
           .dotClock = ((CARD32) new_w * (CARD32) new_h * (CARD32) refresh),
           .nameLength = strlen(name)
-	};
+        };
 
         RRModePtr mymode = RRModeGet(&modeInfo, name);
 
@@ -4081,7 +4079,7 @@ int nxagentAdjustRandRXinerama(ScreenPtr pScreen)
     SAFE_free(screeninfo);
 
 #ifdef DEBUG
-    for (i = 0; i < pScrPriv->numCrtcs; i++)
+    for (int i = 0; i < pScrPriv->numCrtcs; i++)
     {
       RRModePtr mode = pScrPriv->crtcs[i]->mode;
       if (mode) {
@@ -4093,7 +4091,7 @@ int nxagentAdjustRandRXinerama(ScreenPtr pScreen)
       }
 
       if (pScrPriv->crtcs[i]->numOutputs > 0)
-        for (int j=0; j < pScrPriv->crtcs[i]->numOutputs; j++)
+        for (int j = 0; j < pScrPriv->crtcs[i]->numOutputs; j++)
           fprintf(stderr, "nxagentAdjustRandRXinerama:   output [%d] name [%s]->crtc=[%p]\n", j, pScrPriv->crtcs[i]->outputs[j]->name, (void *)pScrPriv->crtcs[i]->outputs[j]->crtc);
     }
 #endif

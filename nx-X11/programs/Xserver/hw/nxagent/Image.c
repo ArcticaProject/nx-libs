@@ -864,7 +864,7 @@ nxagentPutImageEnd:
 
   if (pRegion != NullRegion)
   {
-    nxagentFreeRegion(pDrawable, pRegion);
+    nxagentFreeRegion(pRegion);
   }
 }
 
@@ -992,7 +992,7 @@ void nxagentRealizeImage(DrawablePtr pDrawable, GCPtr pGC, int depth,
 
     if (clipRegion != NullRegion)
     {
-      nxagentFreeRegion(pDrawable, clipRegion);
+      nxagentFreeRegion(clipRegion);
     }
 
     y += h;

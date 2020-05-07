@@ -76,18 +76,15 @@
 int nxagentWindowPrivateIndex;
 
 /*
- * Number of windows which need synchronization.
- */
-
-int nxagentCorruptedWindows;
-
-/*
  * Used to track nxagent window's visibility.
  */
 
 int nxagentVisibility = VisibilityUnobscured;
 unsigned long nxagentVisibilityTimeout = 0;
 Bool nxagentVisibilityStop = False;
+
+ConfiguredWindowStruct *nxagentConfiguredWindowList;
+StaticResizedWindowStruct *nxagentStaticResizedWindowList;
 
 /*
  * Set here the required log level.
@@ -99,8 +96,7 @@ Bool nxagentVisibilityStop = False;
 #undef  DEBUG
 
 /*
- * Useful to test the window configuration
- * failures.
+ * Useful to test the window configuration failures.
  */
 
 #ifdef TEST
@@ -128,8 +124,7 @@ static int nxagentExposeSerial = 0;
 StoringPixmapPtr nxagentBSPixmapList[BSPIXMAPLIMIT];
 
 /*
- * Used to walk through the window hierarchy
- * to find a window
+ * Used to walk through the window hierarchy to find a window
  */
 
 typedef struct _WindowMatch
@@ -337,9 +332,8 @@ Bool nxagentCreateWindow(WindowPtr pWin)
   #endif
 
   /*
-   * Select the event mask if window is a top level
-   * window. This at least makes the keyboard barely
-   * work.
+   * Select the event mask if window is a top level window. This at
+   * least makes the keyboard barely work.
    */
 
   #ifdef TEST
@@ -415,9 +409,8 @@ Bool nxagentCreateWindow(WindowPtr pWin)
   #endif
 
   /*
-   * Set the WM_DELETE_WINDOW protocols on every
-   * top level window. Also redirect the window
-   * if it is a top level.
+   * Set the WM_DELETE_WINDOW protocols on every top level
+   * window. Also redirect the window if it is a top level.
    */
 
   if (nxagentOption(Rootless) && nxagentWindowTopLevel(pWin))
@@ -430,9 +423,8 @@ Bool nxagentCreateWindow(WindowPtr pWin)
     nxagentAddPropertyToList(prop, pWin);
 
     /*
-     * Redirect the window to the off-screen
-     * memory, if the composite extension is
-     * supported on the display.
+     * Redirect the window to the off-screen memory, if the composite
+     * extension is supported on the display.
      */
     /*
       FIXME: Do all the windows for which nxagentWindowTopLevel(pWin)
@@ -483,8 +475,7 @@ Bool nxagentCreateWindow(WindowPtr pWin)
   fbCreateWindow(pWin);
 
   /*
-   * Only the root window will have
-   * the right colormap.
+   * Only the root window will have the right colormap.
    */
 
   if (!pWin->parent)
@@ -707,10 +698,9 @@ void nxagentSwitchFullscreen(ScreenPtr pScreen, Bool switchOn)
     nxagentWMDetect();
 
     /*
-     * The smart scheduler could be stopped while
-     * waiting for the reply. In this case we need
-     * to yield explicitly to avoid to be stuck in
-     * the dispatch loop forever.
+     * The smart scheduler could be stopped while waiting for the
+     * reply. In this case we need to yield explicitly to avoid to be
+     * stuck in the dispatch loop forever.
      */
 
     isItTimeToYield = 1;
@@ -764,10 +754,6 @@ void nxagentSwitchFullscreen(ScreenPtr pScreen, Bool switchOn)
 
 void nxagentSwitchAllScreens(ScreenPtr pScreen, Bool switchOn)
 {
-  Window w;
-  XSetWindowAttributes attributes;
-  unsigned long valuemask;
-
   if (nxagentOption(Rootless))
   {
     return;
@@ -787,14 +773,16 @@ void nxagentSwitchAllScreens(ScreenPtr pScreen, Bool switchOn)
     }
   }
 
-  w = nxagentDefaultWindows[pScreen -> myNum];
+  Window w = nxagentDefaultWindows[pScreen -> myNum];
 
   /*
    * override_redirect makes the window manager ignore the window and
    * not add decorations, see ICCCM)
    */
-  attributes.override_redirect = switchOn;
-  valuemask = CWOverrideRedirect;
+  XSetWindowAttributes attributes = {
+    .override_redirect = switchOn
+  };
+  unsigned long valuemask = CWOverrideRedirect;
   XUnmapWindow(nxagentDisplay, w);
   XChangeWindowAttributes(nxagentDisplay, w, valuemask, &attributes);
 
@@ -836,8 +824,8 @@ void nxagentSwitchAllScreens(ScreenPtr pScreen, Bool switchOn)
     if (i < 100)
     {
       /*
-       * The window manager has done with the reparent
-       * operation. We can resize and map the window.
+       * The window manager has done with the reparent operation. We
+       * can resize and map the window.
        */
 
       nxagentChangeOption(Fullscreen, True);
@@ -881,8 +869,8 @@ void nxagentSwitchAllScreens(ScreenPtr pScreen, Bool switchOn)
                       nxagentOption(RootX), nxagentOption(RootY));
 
       /*
-       * We disable the screensaver when changing
-       * mode to fullscreen. Is it really needed?
+       * We disable the screensaver on the real Xserver when changing mode to
+       * fullscreen. Is it really needed?
        */
 
       XSetScreenSaver(nxagentDisplay, 0, 0, DefaultExposures, DefaultBlanking);
@@ -1167,11 +1155,10 @@ void nxagentMoveViewport(ScreenPtr pScreen, int hShift, int vShift)
     if (nxagentOption(ClientOs) == ClientOsWinnt)
     {
       /*
-       * If doMove is True we add exposed rectangles
-       * to the remote expose region. This is done to
-       * refresh the areas showed newly in the viewport.
-       * We create two rectangles, one for horizontal
-       * pan and one for vertical pan.
+       * If doMove is True we add exposed rectangles to the remote
+       * expose region. This is done to refresh the areas showed newly
+       * in the viewport.  We create two rectangles, one for
+       * horizontal pan and one for vertical pan.
        */
 
       BoxRec hRect = {.x1 = -newX, .y1 = -newY};
@@ -1411,10 +1398,9 @@ void nxagentConfigureWindow(WindowPtr pWin, unsigned int mask)
       Window parent_return;
       Window *children_return = NULL;
       unsigned int nchildren_return;
-      Status result;
 
-      result = XQueryTree(nxagentDisplay, DefaultRootWindow(nxagentDisplay),
-                              &root_return, &parent_return, &children_return, &nchildren_return);
+      Status result = XQueryTree(nxagentDisplay, DefaultRootWindow(nxagentDisplay),
+                                     &root_return, &parent_return, &children_return, &nchildren_return);
 
       if (result)
       {
@@ -1447,7 +1433,7 @@ void nxagentConfigureWindow(WindowPtr pWin, unsigned int mask)
    *
    *  else if (mask & CWStackMode)
    *  {
-   *    if (nxagentSplashWindow)
+   *    if (nxagentHaveSplashWindow())
    *    {
    *      valuemask = CWStackMode;
    *
@@ -1622,16 +1608,14 @@ Bool nxagentChangeWindowAttributes(WindowPtr pWin, unsigned long mask)
       case ParentRelative:
       {
         attributes.background_pixmap = ParentRelative;
-
         break;
       }
       case BackgroundPixmap:
       {
         /*
-         * If a window background is corrupted, we grant
-         * its usability by clearing it with a solid co-
-         * lor. When the pixmap will be fully synchroni-
-         * zed, an expose will be sent to the window's
+         * If a window background is corrupted, we grant its usability
+         * by clearing it with a solid color. When the pixmap will be
+         * fully synchronized, an expose will be sent to the window's
          * hierarchy.
          */
 
@@ -1649,8 +1633,7 @@ Bool nxagentChangeWindowAttributes(WindowPtr pWin, unsigned long mask)
             nxagentAllocateCorruptedResource((DrawablePtr) pWin -> background.pixmap, RT_NX_CORR_BACKGROUND);
 
             /*
-             * Clearing the remote background to
-             * make it usable.
+             * Clearing the remote background to make it usable.
              */
 
             nxagentFillRemoteRegion((DrawablePtr) pWin -> background.pixmap,
@@ -1665,7 +1648,6 @@ Bool nxagentChangeWindowAttributes(WindowPtr pWin, unsigned long mask)
       case BackgroundPixel:
       {
         mask &= ~CWBackPixmap;
-
         break;
       }
     }
@@ -1713,9 +1695,8 @@ Bool nxagentChangeWindowAttributes(WindowPtr pWin, unsigned long mask)
   }
 
   /*
-   * As we set this bit, we must change dix in
-   * order not to perform PositionWindow and let
-   * X move children windows for us.
+   * As we set this bit, we must change dix in order not to perform
+   * PositionWindow and let X move children windows for us.
    */
 
   if (mask & CWWinGravity)
@@ -1724,8 +1705,7 @@ Bool nxagentChangeWindowAttributes(WindowPtr pWin, unsigned long mask)
   }
 
   /*
-    FIXME: Do we need to set the attribute on the
-           remote display?
+    FIXME: Do we need to set the attribute on the remote display?
   */
   if (mask & CWBackingStore)
   {
@@ -1767,8 +1747,7 @@ Bool nxagentChangeWindowAttributes(WindowPtr pWin, unsigned long mask)
   }
 
   /*
-    FIXME: Do we need to set the attribute on the
-           remote display?
+    FIXME: Do we need to set the attribute on the remote display?
   */
   if (mask & CWSaveUnder)
   {
@@ -1794,9 +1773,8 @@ Bool nxagentChangeWindowAttributes(WindowPtr pWin, unsigned long mask)
     ColormapPtr pCmap = (ColormapPtr) LookupIDByType(wColormap(pWin), RT_COLORMAP);
 
     /*
-      FIXME: When the caller is nxagentReconfigureWindow
-             sometimes wColormap(pWin) is 0. Could a window
-             have no colormap?
+      FIXME: When the caller is nxagentReconfigureWindow sometimes
+             wColormap(pWin) is 0. Could a window have no colormap?
     */
     if (pCmap != NULL)
     {
@@ -1987,8 +1965,6 @@ void nxagentFrameBufferPaintWindow(WindowPtr pWin, RegionPtr pRegion, int what)
 
 void nxagentPaintWindowBackground(WindowPtr pWin, RegionPtr pRegion, int what)
 {
-  RegionRec temp;
-
   if (pWin -> realized)
   {
     BoxPtr pBox = RegionRects(pRegion);
@@ -2012,11 +1988,11 @@ void nxagentPaintWindowBackground(WindowPtr pWin, RegionPtr pRegion, int what)
   #endif
 
   /*
-   * The framebuffer operations don't take care of
-   * clipping to the actual area of the framebuffer
-   * so we need to clip ourselves.
+   * The framebuffer operations don't take care of clipping to the
+   * actual area of the framebuffer so we need to clip ourselves.
    */
 
+  RegionRec temp;
   RegionInit(&temp, NullBox, 1);
   RegionIntersect(&temp, pRegion, &pWin -> clipList);
   nxagentFrameBufferPaintWindow(pWin, &temp, what);
@@ -2025,14 +2001,12 @@ void nxagentPaintWindowBackground(WindowPtr pWin, RegionPtr pRegion, int what)
 
 void nxagentPaintWindowBorder(WindowPtr pWin, RegionPtr pRegion, int what)
 {
-  RegionRec temp;
-
   /*
-   * The framebuffer operations don't take care of
-   * clipping to the actual area of the framebuffer
-   * so we need to clip ourselves.
+   * The framebuffer operations don't take care of clipping to the
+   * actual area of the framebuffer so we need to clip ourselves.
    */
 
+  RegionRec temp;
   RegionInit(&temp, NullBox, 1);
   RegionIntersect(&temp, pRegion, &pWin -> borderClip);
   nxagentFrameBufferPaintWindow(pWin, &temp, what);
@@ -2148,8 +2122,6 @@ void nxagentWindowExposures(WindowPtr pWin, RegionPtr pRgn, RegionPtr other_expo
    * final region by referring to the first element of the vector.
    */
 
-  RegionRec temp;
-  BoxRec box;
 
   if (nxagentSessionState != SESSION_DOWN)
   {
@@ -2181,13 +2153,14 @@ void nxagentWindowExposures(WindowPtr pWin, RegionPtr pRgn, RegionPtr other_expo
       nxagentExposeArrayIsInitialized = 1;
     }
 
+    RegionRec temp;
     RegionInit(&temp, (BoxRec *) NULL, 1);
 
     if (pRgn != NULL)
     {
       if (RegionNumRects(pRgn) > RECTLIMIT)
       {
-        box = *RegionExtents(pRgn);
+        BoxRec box = *RegionExtents(pRgn);
 
         RegionEmpty(pRgn);
         RegionInit(pRgn, &box, 1);
@@ -2247,8 +2220,8 @@ void nxagentWindowExposures(WindowPtr pWin, RegionPtr pRgn, RegionPtr other_expo
         #endif
 
         /*
-         * Mark this region for sending a synchro,
-         * in nxagentFlushConfigureWindow().
+         * Mark this region for sending a synchro, in
+         * nxagentFlushConfigureWindow().
          */
 
         nxagentExposeQueue.exposures[index].synchronize = 1;
@@ -2300,9 +2273,6 @@ void nxagentWindowExposures(WindowPtr pWin, RegionPtr pRgn, RegionPtr other_expo
 #ifdef SHAPE
 static Bool nxagentRegionEqual(RegionPtr pReg1, RegionPtr pReg2)
 {
-  BoxPtr pBox1, pBox2;
-  unsigned int n1, n2;
-
   if (pReg1 == pReg2)
   {
     return True;
@@ -2313,11 +2283,11 @@ static Bool nxagentRegionEqual(RegionPtr pReg1, RegionPtr pReg2)
     return False;
   }
 
-  pBox1 = RegionRects(pReg1);
-  n1 = RegionNumRects(pReg1);
+  BoxPtr pBox1 = RegionRects(pReg1);
+  int n1 = RegionNumRects(pReg1);
 
-  pBox2 = RegionRects(pReg2);
-  n2 = RegionNumRects(pReg2);
+  BoxPtr pBox2 = RegionRects(pReg2);
+  int n2 = RegionNumRects(pReg2);
 
   if (n1 != n2)
   {
@@ -2339,9 +2309,6 @@ static Bool nxagentRegionEqual(RegionPtr pReg1, RegionPtr pReg2)
 
 void nxagentShapeWindow(WindowPtr pWin)
 {
-  Region reg;
-  BoxPtr pBox;
-
   if (NXDisplayError(nxagentDisplay) == 1)
   {
     return;
@@ -2379,8 +2346,8 @@ void nxagentShapeWindow(WindowPtr pWin)
 
       RegionCopy(nxagentWindowPriv(pWin)->boundingShape, wBoundingShape(pWin));
 
-      reg = XCreateRegion();
-      pBox = RegionRects(nxagentWindowPriv(pWin)->boundingShape);
+      Region reg = XCreateRegion();
+      BoxPtr pBox = RegionRects(nxagentWindowPriv(pWin)->boundingShape);
       for (int i = 0;
            i < RegionNumRects(nxagentWindowPriv(pWin)->boundingShape);
            i++)
@@ -2438,8 +2405,8 @@ void nxagentShapeWindow(WindowPtr pWin)
 
       RegionCopy(nxagentWindowPriv(pWin)->clipShape, wClipShape(pWin));
 
-      reg = XCreateRegion();
-      pBox = RegionRects(nxagentWindowPriv(pWin)->clipShape);
+      Region reg = XCreateRegion();
+      BoxPtr pBox = RegionRects(nxagentWindowPriv(pWin)->clipShape);
       for (int i = 0;
            i < RegionNumRects(nxagentWindowPriv(pWin)->clipShape);
            i++)
@@ -2581,9 +2548,8 @@ void nxagentMapDefaultWindows(void)
       XMapWindow(nxagentDisplay, nxagentInputWindows[pScreen->myNum]);
 
       /*
-       * At reconnection the Input Window is
-       * raised in nxagentReconnectAllWindows,
-       * after the Root Window is mapped.
+       * At reconnection the Input Window is raised in
+       * nxagentReconnectAllWindows, after the Root Window is mapped.
        */
 
       if (nxagentReconnectTrap == 0)
@@ -2593,8 +2559,7 @@ void nxagentMapDefaultWindows(void)
     }
 
     /*
-     * Send a SetSelectionOwner request
-     * to notify of the agent start.
+     * Send a SetSelectionOwner request to notify of the agent start.
      */
 
     XSetSelectionOwner(nxagentDisplay, serverTransToAgentProperty,
@@ -2640,8 +2605,7 @@ Bool nxagentDisconnectAllWindows(void)
 
   for (int i = 0; i < screenInfo.numScreens; i++)
   {
-    WindowPtr pWin = screenInfo.screens[i]->root;
-    nxagentTraverseWindow( pWin, nxagentDisconnectWindow, &succeeded);
+    nxagentTraverseWindow(screenInfo.screens[i]->root, nxagentDisconnectWindow, &succeeded);
     nxagentDefaultWindows[i] = None;
   }
 
@@ -2706,7 +2670,7 @@ void nxagentDisconnectWindow(void * p0, XID x1, void * p2)
 
     if (DeleteProperty(pWin, prop) != Success)
     {
-        fprintf(stderr, "nxagentDisconnectWindow: Deleting NX_REAL_WINDOW failed.\n");
+      fprintf(stderr, "nxagentDisconnectWindow: Deleting NX_REAL_WINDOW failed.\n");
     }
     #ifdef DEBUG
     else
@@ -2771,9 +2735,8 @@ Bool nxagentReconnectAllWindows(void *p0)
   }
 
   /*
-   * After the Root Window has
-   * been mapped, the Input
-   * Windows is raised.
+   * After the Root Window has been mapped, the Input Windows is
+   * raised.
    */
 
   if (nxagentOption(Rootless) == 0)
@@ -2990,14 +2953,12 @@ static void nxagentReconnectWindow(void * param0, XID param1, void * data_buffer
   #endif
 
   /*
-   * FIXME: This quick hack is intended to solve a
-   *        problem of NXWin X server for windows.
-   *        The NXWin minimize the windows moving them
-   *        out of the screen area, this behaviour
-   *        can cause problem when a rootless session
-   *        is disconnected and an apps is minimized.
-   *        It will be solved with new Xorg version of
-   *        the NXWin server.
+   * FIXME: This quick hack is intended to solve a problem of NXWin X
+   *        server for windows.  The NXWin minimize the windows moving
+   *        them out of the screen area, this behaviour can cause
+   *        problem when a rootless session is disconnected and an
+   *        apps is minimized.  It will be solved with new Xorg
+   *        version of the NXWin server.
    */
 
   if (nxagentOption(Rootless))
@@ -3040,9 +3001,8 @@ static void nxagentReconnectWindow(void * param0, XID param1, void * data_buffer
   #endif
 
   /*
-   * We have to set the WM_DELETE_WINDOW protocols
-   * on every top level window, because we don't know
-   * if a client handles this.
+   * We have to set the WM_DELETE_WINDOW protocols on every top level
+   * window, because we don't know if a client handles this.
    */
 
   if (nxagentOption(Rootless) && (pWin != screenInfo.screens[0]->root))
@@ -3061,7 +3021,6 @@ static void nxagentReconnectWindow(void * param0, XID param1, void * data_buffer
 
     if (nxagentWindowTopLevel(pWin))
     {
-      int ret;
       Atom type;
       int format;
       unsigned long nItems, bytesLeft;
@@ -3071,15 +3030,15 @@ static void nxagentReconnectWindow(void * param0, XID param1, void * data_buffer
       unsigned char *data64 = NULL;
       #endif
 
-      ret = GetWindowProperty(pWin,
-                                  XA_WM_NORMAL_HINTS,
-                                      0, sizeof(XSizeHints),
-                                          False, XA_WM_SIZE_HINTS,
-                                              &type, &format, &nItems, &bytesLeft, &data);
+      int ret = GetWindowProperty(pWin,
+                                      XA_WM_NORMAL_HINTS,
+                                          0, sizeof(XSizeHints),
+                                              False, XA_WM_SIZE_HINTS,
+                                                  &type, &format, &nItems, &bytesLeft, &data);
 
       /*
-       * 72 is the number of bytes returned by
-       * sizeof(XSizeHints) on 32 bit platforms.
+       * 72 is the number of bytes returned by sizeof(XSizeHints) on
+       * 32 bit platforms.
        */
 
       if (ret == Success &&
@@ -3087,7 +3046,6 @@ static void nxagentReconnectWindow(void * param0, XID param1, void * data_buffer
                   bytesLeft == 0 &&
                       type == XA_WM_SIZE_HINTS)
       {
-        XSizeHints *props;
         #ifdef TEST
         fprintf(stderr, "nxagentReconnectWindow: setting WMSizeHints on window %p [%lx - %lx].\n",
                     (void*)pWin, pWin -> drawable.id, nxagentWindow(pWin));
@@ -3108,9 +3066,9 @@ static void nxagentReconnectWindow(void * param0, XID param1, void * data_buffer
           *(data64 + i) = *(data + i - 4);
         }
 
-        props = (XSizeHints *) data64;
+        XSizeHints *props = (XSizeHints *) data64;
         #else
-        props = (XSizeHints *) data;
+        XSizeHints *props = (XSizeHints *) data;
         #endif   /* _XSERVER64 */
 
         hints = *props;
@@ -3164,15 +3122,14 @@ static void nxagentReconfigureWindowCursor(void * param0, XID param1, void * dat
 {
   WindowPtr pWin = (WindowPtr)param0;
   Bool *pBool = (Bool*)data_buffer;
-  CursorPtr   pCursor;
-  ScreenPtr   pScreen;
+  CursorPtr pCursor;
 
   if (!pWin || !*pBool || !(pCursor = wCursor(pWin)))
   {
     return;
   }
 
-  pScreen = pWin -> drawable.pScreen;
+  ScreenPtr pScreen = pWin -> drawable.pScreen;
 
   if (!(nxagentCursorPriv(pCursor, pScreen)))
   {
@@ -3308,27 +3265,23 @@ Bool nxagentCheckIllegalRootMonitoring(WindowPtr pWin, Mask mask)
 Bool nxagentCheckWindowIntegrity(WindowPtr pWin)
 {
   Bool integrity = True;
-  XImage *image;
-  char *data;
-  int format;
-  unsigned long plane_mask = AllPlanes;
-  unsigned int width, height, length, depth;
 
-  width = pWin -> drawable.width;
-  height = pWin -> drawable.height;
-  depth = pWin -> drawable.depth;
-  format = (depth == 1) ? XYPixmap : ZPixmap;
+  unsigned int width = pWin -> drawable.width;
+  unsigned int height = pWin -> drawable.height;
+  unsigned int depth = pWin -> drawable.depth;
+  int format = (depth == 1) ? XYPixmap : ZPixmap;
 
   if (width && height)
   {
-     length = nxagentImageLength(width, height, format, 0, depth);
-     data = calloc(1, length);
+     unsigned int length = nxagentImageLength(width, height, format, 0, depth);
+     char *data = calloc(1, length);
      if (data == NULL)
      {
        FatalError("nxagentCheckWindowIntegrity: Failed to allocate a buffer of size %d.\n", length);
      }
 
-     image = XGetImage(nxagentDisplay, nxagentWindow(pWin), 0, 0,
+     unsigned long plane_mask = AllPlanes;
+     XImage *image = XGetImage(nxagentDisplay, nxagentWindow(pWin), 0, 0,
                                    width, height, plane_mask, format);
      if (image == NULL)
      {
@@ -3396,7 +3349,6 @@ Bool nxagentCheckWindowIntegrity(WindowPtr pWin)
 
 Bool nxagentIsIconic(WindowPtr pWin)
 {
-  int           iReturn;
   unsigned long ulReturnItems;
   unsigned long ulReturnBytesLeft;
   Atom          atomReturnType;
@@ -3408,9 +3360,9 @@ Bool nxagentIsIconic(WindowPtr pWin)
     return 0;
   }
 
-  iReturn = GetWindowProperty(pWin, MakeAtom("WM_STATE", 8, False), 0, sizeof(CARD32), False,
-                              AnyPropertyType, &atomReturnType, &iReturnFormat,
-                              &ulReturnItems, &ulReturnBytesLeft, &pszReturnData);
+  int iReturn = GetWindowProperty(pWin, MakeAtom("WM_STATE", 8, False), 0, sizeof(CARD32), False,
+                                  AnyPropertyType, &atomReturnType, &iReturnFormat,
+                                  &ulReturnItems, &ulReturnBytesLeft, &pszReturnData);
 
   if (iReturn == Success)
   {
@@ -3734,7 +3686,6 @@ void nxagentDeleteStaticResizedWindow(unsigned long sequence)
 
 StaticResizedWindowStruct *nxagentFindStaticResizedWindow(unsigned long sequence)
 {
-  StaticResizedWindowStruct *index;
   StaticResizedWindowStruct *ret = NULL;
 
   if (nxagentStaticResizedWindowList == NULL)
@@ -3742,7 +3693,7 @@ StaticResizedWindowStruct *nxagentFindStaticResizedWindow(unsigned long sequence
     return NULL;
   }
 
-  index = nxagentStaticResizedWindowList;
+  StaticResizedWindowStruct *index = nxagentStaticResizedWindowList;
 
   while (index && index -> sequence > sequence)
   {

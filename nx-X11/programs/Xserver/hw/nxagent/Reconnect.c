@@ -146,13 +146,12 @@ void setStatePath(char* path)
 
 void saveAgentState(char* state)
 {
-    FILE* fptr;
-    if(strlen(stateFile))
+    if (strlen(stateFile))
     {
-        fptr=fopen(stateFile, "w");
-        if(!fptr)
+        FILE* fptr = fopen(stateFile, "w");
+        if (!fptr)
             return;
-        fprintf(fptr,"%s", state);
+        fprintf(fptr, "%s", state);
         fclose(fptr);
     }
 }
@@ -237,8 +236,7 @@ int nxagentHandleConnectionStates(void)
     fprintf(stderr, "nxagentHandleConnectionStates: Got I/O error in the exception flags.\n");
     #endif
 /*
-TODO: This should be reset only when
-      the state became SESSION_DOWN.
+TODO: This should be reset only when the state became SESSION_DOWN.
 */
     nxagentException.ioError = 0;
 
@@ -301,7 +299,7 @@ TODO: This should be reset only when
       if ((dispatchException & DE_TERMINATE) == 0)
       {
         #ifdef NX_DEBUG_INPUT
-        fprintf(stderr, "Session: Session suspended at '%s' timestamp [%lu].\n", GetTimeAsString(), GetTimeInMillis());
+        fprintf(stderr, "Session: Session suspended at '%s' timestamp [%u].\n", GetTimeAsString(), GetTimeInMillis());
         #else
         fprintf(stderr, "Session: Session suspended at '%s'.\n", GetTimeAsString());
         #endif
@@ -340,7 +338,7 @@ void nxagentInitializeRecLossyLevel(void)
 
 void nxagentInitReconnector(void)
 {
-  nxagentReconnectTrap = 0;
+  nxagentReconnectTrap = False;
 
   reconnectLossyLevel[DISPLAY_STEP]    = malloc(sizeof(int));
   reconnectLossyLevel[SCREEN_STEP]     = malloc(sizeof(int));
@@ -365,8 +363,7 @@ void nxagentDisconnectSession(void)
   nxagentFreeTimeoutTimer();
 
   /*
-   * Force an I/O error on the display
-   * and wait until the NX transport
+   * Force an I/O error on the display and wait until the NX transport
    * is gone.
    */
 
@@ -427,16 +424,15 @@ Bool nxagentReconnectSession(void)
   nxagentChangeOption(DeviceControl, nxagentOption(DeviceControlUserDefined));
 
   /*
-   * We need to zero out every new XID
-   * created by the disconnected display.
+   * We need to zero out every new XID created by the disconnected
+   * display.
    */
 
   nxagentDisconnectSession();
 
   /*
-   * Set this in order to let the screen
-   * function to behave differently at
-   * reconnection time.
+   * Set this in order to let the screen function to behave
+   * differently at reconnection time.
    */
 
   nxagentReconnectTrap = True;
@@ -464,19 +460,17 @@ Bool nxagentReconnectSession(void)
 
   if (nxagentReconnectDisplay(reconnectLossyLevel[DISPLAY_STEP]) == 0)
   {
-    failedStep = DISPLAY_STEP;
-
     #ifdef TEST
     fprintf(stderr, "nxagentReconnectSession: WARNING! Failed display reconnection.\n");
     #endif
 
+    failedStep = DISPLAY_STEP;
     goto nxagentReconnectError;
   }
 
   if (nxagentReconnectScreen(reconnectLossyLevel[SCREEN_STEP]) == 0)
   {
     failedStep = SCREEN_STEP;
-
     goto nxagentReconnectError;
   }
 
@@ -489,7 +483,6 @@ Bool nxagentReconnectSession(void)
     if (nxagentReconnectFailedFonts(reconnectLossyLevel[FONT_STEP]) == 0)
     {
       failedStep = FONT_STEP;
-
       goto nxagentReconnectError;
     }
     else
@@ -504,16 +497,15 @@ Bool nxagentReconnectSession(void)
   }
 
   /*
-   * Map the main window and send a
-   * SetSelectionOwner request to
+   * Map the main window and send a SetSelectionOwner request to
    * notify of the agent start.
    */
 
   nxagentMapDefaultWindows();
 
   /*
-   * Ensure that the SetSelectionOwner
-   * request is sent through the link.
+   * Ensure that the SetSelectionOwner request is sent through the
+   * link.
    */
 
   XFlush(nxagentDisplay);
@@ -533,21 +525,18 @@ Bool nxagentReconnectSession(void)
   if (nxagentReconnectAllGCs(reconnectLossyLevel[GC_STEP]) == 0)
   {
     failedStep = GC_STEP;
-
     goto nxagentReconnectError;
   }
 
   if (nxagentReconnectAllColormap(reconnectLossyLevel[COLORMAP_STEP]) == 0)
   {
     failedStep = COLORMAP_STEP;
-
     goto nxagentReconnectError;
   }
 
   if (nxagentReconnectAllWindows(reconnectLossyLevel[WINDOW_STEP]) == 0)
   {
     failedStep = WINDOW_STEP;
-
     goto nxagentReconnectError;
   }
 
@@ -556,21 +545,18 @@ Bool nxagentReconnectSession(void)
     if (nxagentReconnectAllGlyphSet(reconnectLossyLevel[GLYPHSET_STEP]) == 0)
     {
       failedStep = GLYPHSET_STEP;
-
       goto nxagentReconnectError;
     }
 
     if (nxagentReconnectAllPictFormat(reconnectLossyLevel[PICTFORMAT_STEP]) == 0)
     {
       failedStep = PICTFORMAT_STEP;
-
       goto nxagentReconnectError;
     }
 
     if (nxagentReconnectAllPicture(reconnectLossyLevel[PICTURE_STEP]) == 0)
     {
       failedStep = PICTURE_STEP;
-
       goto nxagentReconnectError;
     }
   }
@@ -578,14 +564,12 @@ Bool nxagentReconnectSession(void)
   if (nxagentReconnectAllCursor(reconnectLossyLevel[CURSOR_STEP]) == 0)
   {
     failedStep = CURSOR_STEP;
-
     goto nxagentReconnectError;
   }
 
   if (nxagentSetWindowCursors(reconnectLossyLevel[WINDOW_STEP]) == 0)
   {
     failedStep = WINDOW_STEP;
-
     goto nxagentReconnectError;
   }
 
@@ -621,7 +605,6 @@ Bool nxagentReconnectSession(void)
         #endif
 
         failedStep = WINDOW_STEP;
-
         goto nxagentReconnectError;
       }
     }
@@ -674,7 +657,7 @@ Bool nxagentReconnectSession(void)
   nxagentInitKeystrokes(True);
 
   #ifdef NX_DEBUG_INPUT
-  fprintf(stderr, "Session: Session resumed at '%s' timestamp [%lu].\n", GetTimeAsString(), GetTimeInMillis());
+  fprintf(stderr, "Session: Session resumed at '%s' timestamp [%u].\n", GetTimeAsString(), GetTimeInMillis());
   #else
   fprintf(stderr, "Session: Session resumed at '%s'.\n", GetTimeAsString());
   #endif
@@ -683,10 +666,9 @@ Bool nxagentReconnectSession(void)
   nxagentRemoveSplashWindow();
 
   /*
-   * We let the proxy flush the link on our behalf
-   * after having opened the display. We are now
-   * entering again the dispatcher so can flush
-   * the link explicitly.
+   * We let the proxy flush the link on our behalf after having opened
+   * the display. We are now entering again the dispatcher so can
+   * flush the link explicitly.
    */
 
   #ifdef TEST
@@ -799,9 +781,8 @@ void nxagentSetReconnectError(int id, char *format, ...)
     else
     {
       /*
-       * The vsnprintf() in glibc 2.0.6 would return
-       * -1 when the output was truncated. See section
-       * NOTES on printf(3).
+       * The vsnprintf() in glibc 2.0.6 would return -1 when the
+       * output was truncated. See section NOTES on printf(3).
        */
 
       size = (size ? size * 2 : NXAGENT_RECONNECT_DEFAULT_MESSAGE_SIZE);
@@ -863,4 +844,3 @@ void nxagentHandleConnectionChanges(void)
     }
   }
 }
-

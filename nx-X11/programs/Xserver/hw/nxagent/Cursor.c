@@ -77,6 +77,8 @@ is" without express or implied warranty.
 #undef  TEST
 #undef  DEBUG
 
+CursorBitsPtr nxagentAnimCursorBits;
+
 /*
  * Defined in Display.c. There are huge problems mixing the GC
  * definition in Xlib with the server code. This must be reworked.

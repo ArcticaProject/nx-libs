@@ -37,21 +37,21 @@ extern Atom nxagentAtoms[NXAGENT_NUMBER_OF_ATOMS];
 extern Bool nxagentWMIsRunning;
 
 /*
- * Create the required atoms internally
- * to the agent server.
+ * Create the required atoms internally to the agent server.
  */
 
 void nxagentInitAtoms();
 
 /*
- * Query and create all the required atoms
- * on the remote X server using a single
- * round trip.
+ * Query and create all the required atoms on the remote X server
+ * using a single round trip.
  */
 
 int nxagentQueryAtoms(ScreenPtr pScreen);
 
 void nxagentResetAtomMap(void);
+
+void nxagentFreeAtomMap(void);
 
 void nxagentWMDetect(void);
 
@@ -71,8 +71,7 @@ void nxagentWMDetect(void);
 XlibAtom nxagentMakeAtom(char *, unsigned, Bool);
 
 /*
- * Converts local atoms in remote atoms and
- * viceversa.
+ * Converts local atoms in remote atoms and viceversa.
  */
 
 Atom nxagentRemoteToLocalAtom(XlibAtom);

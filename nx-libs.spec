@@ -553,8 +553,6 @@ rm -f %{buildroot}%{_datadir}/man/man1/nxdialog.1*
 %{_includedir}/nx-X11/Sunkeysym.h
 %{_includedir}/nx-X11/X.h
 %{_includedir}/nx-X11/XF86keysym.h
-%{_includedir}/nx-X11/XWDFile.h
-%{_includedir}/nx-X11/Xalloca.h
 %{_includedir}/nx-X11/Xarch.h
 %{_includedir}/nx-X11/Xatom.h
 %{_includedir}/nx-X11/Xdefs.h
@@ -586,7 +584,6 @@ rm -f %{buildroot}%{_datadir}/man/man1/nxdialog.1*
 %{_includedir}/nx-X11/extensions/renderproto.h
 %{_includedir}/nx-X11/extensions/saver.h
 %{_includedir}/nx-X11/extensions/saverproto.h
-%{_includedir}/nx-X11/extensions/scrnsaver.h
 %{_includedir}/nx-X11/extensions/security.h
 %{_includedir}/nx-X11/extensions/securstr.h
 %{_includedir}/nx-X11/extensions/shapeconst.h

@@ -70,9 +70,7 @@ in this Software without prior written authorization from The Open Group.
 #undef  TEST
 #undef  DEBUG
 
-#ifdef TEST
 #include "Literals.h"
-#endif
 
 extern void fbGetImage(DrawablePtr pDrw, int x, int y, int w, int h,
                            unsigned int format, unsigned long planeMask, char *d);
@@ -173,11 +171,11 @@ miShmPutImage(dst, pGC, depth, format, w, h, sx, sy, sw, sh, dx, dy, data)
 {
     /* Careful! This wrapper DEACTIVATES the trap! */
 
-    nxagentShmTrap = 0;
+    nxagentShmTrap = False;
 
     xorg_miShmPutImage(dst, pGC, depth, format, w, h, sx, sy, sw, sh, dx, dy, data);
 
-    nxagentShmTrap = 1;
+    nxagentShmTrap = True;
 
     return;
 }
@@ -192,9 +190,6 @@ fbShmPutImage(dst, pGC, depth, format, w, h, sx, sy, sw, sh, dx, dy, data)
     char 	*data;
 {
 #ifdef NXAGENT_SERVER
-    int length;
-    char *newdata;
-
     #ifdef TEST
     fprintf(stderr, "fbShmPutImage: Called with drawable at [%p] GC at [%p] data at [%p].\n",
                 (void *) dst, (void *) pGC, (void *) data);
@@ -229,9 +224,9 @@ fbShmPutImage(dst, pGC, depth, format, w, h, sx, sy, sw, sh, dx, dy, data)
                             sx, sy, sw, sh, dx);
         #endif
 
-        length = nxagentImageLength(sw, sh, format, 0, depth);
+        char *newdata = calloc(1, nxagentImageLength(sw, sh, format, 0, depth));
 
-        if ((newdata = calloc(1, length)) != NULL)
+        if (newdata != NULL)
         {
           fbGetImage((DrawablePtr) pPixmap, sx, sy, sw, sh, format, AllPlanes, newdata);
           (*pGC->ops->PutImage)(dst, pGC, depth, dx, dy, sw, sh, 0, format, newdata);
@@ -394,7 +389,7 @@ ProcShmPutImage(client)
     return (client->noClientException);
 }
 
-
+/* derived from Xext/shm.c */
 static PixmapPtr
 nxagent_fbShmCreatePixmap (pScreen, width, height, depth, addr)
     ScreenPtr	pScreen;
@@ -405,29 +400,22 @@ nxagent_fbShmCreatePixmap (pScreen, width, height, depth, addr)
 {
     register PixmapPtr pPixmap;
 
+#ifdef NXAGENT_SERVER
     pPixmap = (*pScreen->CreatePixmap)(pScreen, width, height, depth, 0);
-
+#else
+    pPixmap = (*pScreen->CreatePixmap)(pScreen, 0, 0, pScreen->rootDepth, 0);
+#endif
     if (!pPixmap)
     {
-      return NullPixmap;
+        return NullPixmap;
     }
-
-    #if defined(NXAGENT_SERVER) && defined(TEST)
-    fprintf(stderr,"fbShmCreatePixmap: Width [%d] Height [%d] Depth [%d] Hint[%d]\n", width, height, depth, 0);
-    #endif
 
     if (!(*pScreen->ModifyPixmapHeader)(pPixmap, width, height, depth,
 	    BitsPerPixel(depth), PixmapBytePad(width, depth), (void *)addr)) 
     {
-      #if defined(NXAGENT_SERVER) && defined(WARNING)
-      fprintf(stderr,"fbShmCreatePixmap: Return Null Pixmap.\n");
-      #endif
-
-      (*pScreen->DestroyPixmap)(pPixmap);
-
-      return NullPixmap;
+        (*pScreen->DestroyPixmap)(pPixmap);
+        return NullPixmap;
     }
-
     return pPixmap;
 }
 
@@ -439,39 +427,44 @@ fbShmCreatePixmap (pScreen, width, height, depth, addr)
     int		depth;
     char	*addr;
 {
-    PixmapPtr result;
+    #ifdef TEST
+    fprintf(stderr, "%s: Width [%d] Height [%d] Depth [%d] Hint[%d]\n", __func__,
+	    width, height, depth, 0);
+    #endif
 
-    nxagentShmPixmapTrap = 1;
+    nxagentShmPixmapTrap = True;
 
-    result = nxagent_fbShmCreatePixmap(pScreen, width, height, depth, addr);
+    PixmapPtr result = nxagent_fbShmCreatePixmap(pScreen, width, height, depth, addr);
 
-    nxagentShmPixmapTrap = 0;
+    nxagentShmPixmapTrap = False;
+
+    #ifdef WARNING
+    if (result == NullPixmap)
+    {
+      fprintf(stderr, "%s: Return Null Pixmap.\n", __func__);
+    }
+    #endif
 
     return result;
 }
 
-/* A wrapper that handles the trap. This construct is used
-   to keep the derived code closer to the original
-*/
 static int
 ProcShmDispatch (register ClientPtr client)
 {
-    int result;
-
     #ifdef TEST
     REQUEST(xReq);
     if (stuff->data <= X_ShmCreatePixmap)
     {
-      fprintf(stderr, "ProcShmDispatch: Request [%s] OPCODE [%d] for client [%d].\n",
+      fprintf(stderr, "%s: Request [%s] OPCODE [%d] for client [%d].\n", __func__,
                       nxagentShmRequestLiteral[stuff->data], stuff->data, client->index);
     }
     #endif
 
-    nxagentShmTrap = 1;
+    nxagentShmTrap = True;
 
-    result = xorg_ProcShmDispatch(client);
+    int result = xorg_ProcShmDispatch(client);
 
-    nxagentShmTrap = 0;
+    nxagentShmTrap = False;
 
     return result;
 }
@@ -479,22 +472,20 @@ ProcShmDispatch (register ClientPtr client)
 static int
 SProcShmDispatch (register ClientPtr client)
 {
-    int result;
-
     #ifdef TEST
     REQUEST(xReq);
     if (stuff->data <= X_ShmCreatePixmap)
     {
-      fprintf(stderr, "SProcShmDispatch: Request [%s] OPCODE [%d] for client [%d].\n",
+      fprintf(stderr, "%s: Request [%s] OPCODE [%d] for client [%d].\n", __func__,
                       nxagentShmRequestLiteral[stuff->data], stuff->data, client->index);
     }
     #endif
 
-    nxagentShmTrap = 1;
+    nxagentShmTrap = True;
 
-    result = xorg_SProcShmDispatch(client);
+    int result = xorg_SProcShmDispatch(client);
 
-    nxagentShmTrap = 0;
+    nxagentShmTrap = False;
 
     return result;
 }

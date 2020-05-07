@@ -54,6 +54,7 @@ is" without express or implied warranty.
 #include "mi.h"
 #include <X11/fonts/fontstruct.h>
 #include "dixfontstr.h"
+#include "dixstruct.h"
 
 #include "Agent.h"
 #include "Display.h"
@@ -74,6 +75,7 @@ is" without express or implied warranty.
 #include "Error.h"
 #include "Keystroke.h"
 #include "Atoms.h"
+#include "Client.h"
 
 #include <nx/NX.h>
 #include "compext/Compext.h"
@@ -97,15 +99,6 @@ extern int (*ProcVector[256])(ClientPtr);
  * From the fb code.
  */
 extern int fbGCPrivateIndex;
-
-#ifdef DPMSExtension
-/*
- * Stubs for the DPMS extension.
- */
-void DPMSSet(int level);
-int DPMSGet(int *level);
-Bool DPMSSupported(void);
-#endif
 
 /*
  * Our error logging function.
@@ -395,8 +388,12 @@ FIXME: These variables, if not removed at all because have probably
   nxagentInitKeystrokes(False);
 
 #ifdef NXAGENT_CLIPBOARD
+  /* FIXME: we need to call DeleteCallback at shutdown, but where? */
   AddCallback(&SelectionCallback, nxagentSetSelectionCallback, NULL);
 #endif
+
+  /* FIXME: we need to call DeleteCallback at shutdown, but where? */
+  AddCallback(&ClientStateCallback, nxagentClientStateCallback, NULL);
 
   nxagentInitAtoms();
 }
@@ -625,19 +622,3 @@ static void nxagentGrabServerCallback(CallbackListPtr *callbacks, void *data,
     nxagentGrabServerInfo.client = grab->client;
     nxagentGrabServerInfo.grabstate = grab->grabstate;
 }
-
-#ifdef DPMSExtension
-void DPMSSet(int level)
-{
-}
-
-int DPMSGet(int *level)
-{
-  return -1;
-}
-
-Bool DPMSSupported(void)
-{
-  return 0;
-}
-#endif

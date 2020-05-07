@@ -28,11 +28,9 @@ This source tree is maintained on Github:
   https://github.com/ArcticaProject/nx-libs (3.6.x branch)
 
 For the the post-NoMachine era of nx-libs, we will focus on two release
-phases for the upcoming two years (06/2015 - 06/2017).
+phases for the upcoming two years.
 
 ## Release series 3.6.0.x
-
-Scheduled for end of Q2/2016.
 
 Release goals (phase 1) for nx-libs release series 3.6.0.x:
 
@@ -55,8 +53,6 @@ Release goals (phase 1) for nx-libs release series 3.6.0.x:
 
 
 ## Release series 3.7.0.x
-
-Scheduled for end of Q2/2017.
 
 Release goals (phase 2) for nx-libs release series 3.7.0.x (not branched-off, yet):
 

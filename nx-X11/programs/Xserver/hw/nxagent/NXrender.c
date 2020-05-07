@@ -65,9 +65,7 @@
 #undef  TEST
 #undef  DEBUG
 
-#ifdef TEST
 #include "Literals.h"
-#endif
 
 /*
  * From NXglyph.c.
@@ -1768,11 +1766,11 @@ ProcRenderDispatch (ClientPtr client)
      * operation to avoid reentrancy in GCOps.c.
      */
 
-    nxagentGCTrap = 1;
+    nxagentGCTrap = True;
 
     int result = xorg_ProcRenderDispatch(client);
 
-    nxagentGCTrap = 0;
+    nxagentGCTrap = False;
 
     return result;
 }
@@ -1795,11 +1793,11 @@ SProcRenderDispatch (ClientPtr client)
      * operation to avoid reentrancy in GCOps.c.
      */
 
-    nxagentGCTrap = 1;
+    nxagentGCTrap = True;
 
     int result = xorg_SProcRenderDispatch(client);
 
-    nxagentGCTrap = 0;
+    nxagentGCTrap = False;
 
     return result;
 }

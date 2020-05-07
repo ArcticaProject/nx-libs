@@ -71,9 +71,6 @@ RESTYPE  RT_NX_PIXMAP;
 
 int nxagentPixmapPrivateIndex;
 
-int nxagentCorruptedPixmaps;
-int nxagentCorruptedBackgrounds;
-
 /*
  * Force deallocation of the virtual pixmap.
  */
@@ -157,7 +154,7 @@ PixmapPtr nxagentCreatePixmap(ScreenPtr pScreen, int width, int height,
    * synchronized with the remote X Server.
    */
 
-  if (pPixmapPriv -> isShared == 1)
+  if (pPixmapPriv -> isShared)
   {
     BoxRec box = { .x1 = 0, .y1 = 0, .x2 = width, .y2 = height };
 
@@ -773,11 +770,11 @@ void nxagentReconnectPixmap(void *p0, XID x1, void *p2)
       return;
     }
 
-    nxagentSplitTrap = 1;
+    nxagentSplitTrap = True;
 
     *pBool = nxagentSynchronizeDrawableData((DrawablePtr) pPixmap, NEVER_BREAK, NULL);
 
-    nxagentSplitTrap = 0;
+    nxagentSplitTrap = False;
 
     if (!*pBool)
     {
@@ -1095,13 +1092,13 @@ void nxagentSynchronizeShmPixmap(DrawablePtr pDrawable, int xPict, int yPict,
 
     int length = nxagentImageLength(width, height, format, 0, depth);
 
-    int saveTrap = nxagentGCTrap;
+    Bool saveTrap = nxagentGCTrap;
 
-    nxagentGCTrap = 0;
+    nxagentGCTrap = False;
 
-    nxagentSplitTrap = 1;
+    nxagentSplitTrap = True;
 
-    nxagentFBTrap = 1;
+    nxagentFBTrap = True;
 
     char *data = malloc(length);
 
@@ -1124,9 +1121,9 @@ void nxagentSynchronizeShmPixmap(DrawablePtr pDrawable, int xPict, int yPict,
 
     nxagentGCTrap = saveTrap;
 
-    nxagentSplitTrap = 0;
+    nxagentSplitTrap = False;
 
-    nxagentFBTrap = 0;
+    nxagentFBTrap = False;
 
     nxagentFreeScratchGC(pGC);
   }

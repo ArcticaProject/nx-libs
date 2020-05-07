@@ -86,6 +86,7 @@ is" without express or implied warranty.
 #include "Splash.h"
 #include "Screen.h"
 #include "Handlers.h"
+#include "Split.h"
 
 #include <nx/NX.h>
 #include "compext/Compext.h"
@@ -1494,8 +1495,13 @@ void nxagentInitVisuals(void)
 
   if (nxagentVisuals != NULL)
   {
-    nxagentVisuals = (XVisualInfo *) realloc(nxagentVisuals,
-                                                 nxagentNumVisuals * sizeof(XVisualInfo));
+    XVisualInfo *new = (XVisualInfo *) realloc(nxagentVisuals,
+                                                   nxagentNumVisuals * sizeof(XVisualInfo));
+    /* nxagentVisuals being NULL is covered below */
+    if (new)
+      nxagentVisuals = new;
+    else
+      SAFE_free(nxagentVisuals);
   }
 
   SAFE_XFree(viList);
@@ -1547,6 +1553,7 @@ void nxagentInitPixmapFormats(void)
    */
 
   nxagentNumPixmapFormats = 0;
+  nxagentRemoteNumPixmapFormats = 0;
 
 /*
 XXX: Some X server doesn't list 1 among available depths...
@@ -1596,28 +1603,97 @@ XXX: Some X server doesn't list 1 among available depths...
     }
   }
 
-  nxagentRemotePixmapFormats = XListPixmapFormats(nxagentDisplay, &nxagentRemoteNumPixmapFormats);
+  /*
+   * we need to filter the list of remote pixmap formats by our
+   * supported depths, just like above. If we do not perform this step
+   * nxagentCheckForPixmapFormatsCompatibility will fail when
+   * tolerance is "strict" (the default). This becomes evident when
+   * Xephyr or Xnest are used as the real X server. They normally show
+   * only two supported depths but 7 supported pixmap formats (which
+   * could be a bug there).
+   */
 
-  if (nxagentRemotePixmapFormats == NULL)
+  int tmpnum = 0;
+  XPixmapFormatValues *tmp = XListPixmapFormats(nxagentDisplay, &tmpnum);
+
+  if (tmp == NULL)
   {
     #ifdef WARNING
     fprintf(stderr, "nxagentInitPixmapFormats: WARNING! Failed to get available remote pixmap formats.\n");
     #endif
+
+    nxagentRemotePixmapFormats = NULL;
   }
-  #ifdef TEST
   else
   {
+    #ifdef TEST
     fprintf(stderr, "nxagentInitPixmapFormats: Got [%d] available remote pixmap formats:\n",
-                nxagentRemoteNumPixmapFormats);
+                tmpnum);
 
+    for (int i = 0; i < tmpnum; i++)
+    {
+      fprintf(stderr, "nxagentInitPixmapFormats: Found remote pixmap format [%d]: depth [%d] "
+                  "bits_per_pixel [%d] scanline_pad [%d].\n", i, tmp[i].depth,
+                      tmp[i].bits_per_pixel, tmp[i].scanline_pad);
+
+    }
+    #endif
+
+    SAFE_XFree(tmp);
+
+    nxagentRemotePixmapFormats = malloc((nxagentNumDepths + 1) * sizeof(XPixmapFormatValues));
+
+    for (int i = 1; i <= MAXDEPTH; i++)
+    {
+      int depth = 0;
+
+      if (i == 1)
+      {
+        depth = 1;
+      }
+      else
+      {
+        for (int j = 0; j < nxagentNumDepths; j++)
+        {
+          if (nxagentDepths[j] == i)
+          {
+            depth = i;
+            break;
+          }
+        }
+      }
+
+      if (depth != 0)
+      {
+        if (nxagentRemoteNumPixmapFormats >= MAXFORMATS)
+        {
+          FatalError("nxagentInitPixmapFormats: MAXFORMATS is too small for this remote server.\n");
+        }
+
+        nxagentRemotePixmapFormats[nxagentRemoteNumPixmapFormats].depth = depth;
+        nxagentRemotePixmapFormats[nxagentRemoteNumPixmapFormats].bits_per_pixel = nxagentBitsPerPixel(depth);
+        nxagentRemotePixmapFormats[nxagentRemoteNumPixmapFormats].scanline_pad = BITMAP_SCANLINE_PAD;
+
+        #ifdef TEST
+        fprintf(stderr, "nxagentInitPixmapFormats: Suitable remote format [%d] to depth [%d] "
+                    "bits per pixel [%d] scanline pad [%d].\n", nxagentRemoteNumPixmapFormats,
+                        depth, nxagentRemotePixmapFormats[nxagentRemoteNumPixmapFormats].bits_per_pixel,
+                            BITMAP_SCANLINE_PAD);
+        #endif
+
+        nxagentRemoteNumPixmapFormats++;
+      }
+    }
+
+    #ifdef TEST
     for (int i = 0; i < nxagentRemoteNumPixmapFormats; i++)
     {
       fprintf(stderr, "nxagentInitPixmapFormats: Remote pixmap format [%d]: depth [%d] "
                   "bits_per_pixel [%d] scanline_pad [%d].\n", i, nxagentRemotePixmapFormats[i].depth,
                       nxagentRemotePixmapFormats[i].bits_per_pixel, nxagentRemotePixmapFormats[i].scanline_pad);
     }
+    #endif
   }
-  #endif
 }
 
 void nxagentSetDefaultDrawables(void)

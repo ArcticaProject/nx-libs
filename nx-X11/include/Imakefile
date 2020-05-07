@@ -23,8 +23,6 @@ HEADERS = \
 	Sunkeysym.h \
 	X.h \
 	XF86keysym.h \
-	XWDFile.h \
-	Xalloca.h \
 	Xarch.h \
 	Xatom.h \
 	Xdefs.h \
@@ -59,7 +57,6 @@ MakeSubdirs($(SUBDIRS))
 DependSubdirs($(SUBDIRS))
 
 InstallDriverSDKNonExecFile(X.h,$(DRIVERSDKINCLUDEDIR))
-InstallDriverSDKNonExecFile(Xalloca.h,$(DRIVERSDKINCLUDEDIR))
 InstallDriverSDKNonExecFile(Xarch.h,$(DRIVERSDKINCLUDEDIR))
 InstallDriverSDKNonExecFile(Xdefs.h,$(DRIVERSDKINCLUDEDIR))
 InstallDriverSDKNonExecFile(Xdefs.h,$(DRIVERSDKINCLUDEDIR)/X11)

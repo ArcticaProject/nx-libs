@@ -101,11 +101,8 @@ OsInit(void)
 
 	InitNotifyFds();
 
-#if !defined(__CYGWIN__)
 	fclose(stdin);
 	fclose(stdout);
-#endif
-
 
 	/* 
 	 * If a write of zero bytes to stderr returns non-zero, i.e. -1, 
@@ -131,7 +128,7 @@ OsInit(void)
 		dup2 (fileno (err), 2);
 		fclose (err);
 	    }
-#if defined(SYSV) || defined(SVR4) || defined(__CYGWIN__)
+#if defined(SYSV) || defined(SVR4)
 	    {
 	    static char buf[BUFSIZ];
 	    setvbuf (stderr, buf, _IOLBF, BUFSIZ);

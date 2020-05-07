@@ -545,19 +545,15 @@ void nxagentInternalWindowInfo(WindowPtr pWin, int indent, Bool newLine)
 
 void nxagentInternalWindowsTree(WindowPtr pWin, int indent)
 {
-  while (pWin)
+  for (; pWin; pWin = pWin -> nextSib)
   {
-    WindowPtr pChild = pWin -> firstChild;
-
     fprintf(stderr, "%*s", indent, "");
 
     nxagentInternalWindowInfo(pWin, indent, TRUE);
 
     fprintf(stderr, "\n");
 
-    nxagentInternalWindowsTree(pChild, indent + 4);
-
-    pWin = pWin -> nextSib;
+    nxagentInternalWindowsTree(pWin -> firstChild, indent + 4);
   }
 }
 
@@ -897,7 +893,7 @@ void nxagentDispatchEvents(PredicateFuncPtr predicate)
         fprintf(stderr, "%s: Going to handle new SelectionClear event.\n", __func__);
         #endif
 
-        nxagentClearSelection(&X);
+        nxagentHandleSelectionClearFromXServer(&X);
 
         break;
       }
@@ -907,7 +903,7 @@ void nxagentDispatchEvents(PredicateFuncPtr predicate)
         fprintf(stderr, "%s: Going to handle new SelectionRequest event.\n", __func__);
         #endif
 
-        nxagentRequestSelection(&X);
+        nxagentHandleSelectionRequestFromXServer(&X);
 
         break;
       }
@@ -1146,17 +1142,17 @@ FIXME: Don't enqueue the KeyRelease event if the key was not already
         {
           if (X.xkey.keycode == nxagentCapsLockKeycode)
           {
-            nxagentXkbCapsTrap = 1;
+            nxagentXkbCapsTrap = True;
           }
           else if (X.xkey.keycode == nxagentNumLockKeycode)
           {
-            nxagentXkbNumTrap = 1;
+            nxagentXkbNumTrap = True;
           }
 
           nxagentInitXkbKeyboardState();
 
-          nxagentXkbCapsTrap = 0;
-          nxagentXkbNumTrap = 0;
+          nxagentXkbCapsTrap = False;
+          nxagentXkbNumTrap = False;
         }
 
         /* Calculate the time elapsed between this and the last event
@@ -1716,11 +1712,11 @@ FIXME: Don't enqueue the KeyRelease event if the key was not already
 
           Mask mask = CWX | CWY;
 
-          nxagentScreenTrap = 1;
+          nxagentScreenTrap = True;
 
           ConfigureWindow(pWin, mask, (XID *) values, wClient(pWin));
 
-          nxagentScreenTrap = 0;
+          nxagentScreenTrap = False;
         }
 
         if (nxagentOption(Fullscreen) == 1 &&
@@ -2010,11 +2006,11 @@ FIXME: Don't enqueue the KeyRelease event if the key was not already
                   ((pWin = nxagentWindowPtr(X.xunmap.window)) != NULL &&
                       nxagentWindowTopLevel(pWin) == 1))
           {
-            nxagentScreenTrap = 1;
+            nxagentScreenTrap = True;
 
             UnmapWindow(pWin, False);
 
-            nxagentScreenTrap = 0;
+            nxagentScreenTrap = False;
           }
         }
 
@@ -2041,11 +2037,11 @@ FIXME: Don't enqueue the KeyRelease event if the key was not already
                   ((pWin = nxagentWindowPtr(X.xmap.window)) != NULL &&
                       nxagentWindowTopLevel(pWin) == 1))
           {
-            nxagentScreenTrap = 1;
+            nxagentScreenTrap = True;
 
             MapWindow(pWin, wClient(pWin));
 
-            nxagentScreenTrap = 0;
+            nxagentScreenTrap = False;
           }
 
           if (pWin != NULL)
@@ -2266,17 +2262,17 @@ int nxagentHandleKeyPress(XEvent *X, enum HandleEventResult *result)
   {
     if (X -> xkey.keycode == nxagentCapsLockKeycode)
     {
-      nxagentXkbCapsTrap = 1;
+      nxagentXkbCapsTrap = True;
     }
     else if (X -> xkey.keycode == nxagentNumLockKeycode)
     {
-      nxagentXkbNumTrap = 1;
+      nxagentXkbNumTrap = True;
     }
 
     nxagentInitXkbKeyboardState();
 
-    nxagentXkbCapsTrap = 0;
-    nxagentXkbNumTrap = 0;
+    nxagentXkbCapsTrap = False;
+    nxagentXkbNumTrap = False;
   }
 
   if (nxagentCheckSpecialKeystroke(&X -> xkey, result))
@@ -2633,7 +2629,7 @@ int nxagentHandleClientMessageEvent(XEvent *X, enum HandleEventResult *result)
       #ifdef WARNING
       if (message_type != MakeAtom("_NET_ACTIVE_WINDOW", strlen("_NET_ACTIVE_WINDOW"), False))
       {
-	fprintf(stderr, "WARNING: Invalid window in ClientMessage xclient.window [0x%lx].\n", X->xclient.window);
+        fprintf(stderr, "WARNING: Invalid window in ClientMessage xclient.window [0x%lx].\n", X->xclient.window);
       }
       #endif
 
@@ -2872,7 +2868,7 @@ int nxagentHandleXFixesSelectionNotify(XEvent *X)
       #endif
 
       #ifdef DEBUG
-      fprintf(stderr, "%s: CurrentSelections[i].lastTimeChanged [%d]\n", __func__, CurrentSelections[i].lastTimeChanged.milliseconds);
+      fprintf(stderr, "%s: CurrentSelections[%d].lastTimeChanged [%u]\n", __func__, i, CurrentSelections[i].lastTimeChanged.milliseconds);
       fprintf(stderr, "%s: Event timestamp [%ld]\n", __func__, xfixesEvent->xfixesselection.timestamp);
       fprintf(stderr, "%s: Event selection timestamp [%ld]\n", __func__, xfixesEvent->xfixesselection.selection_timestamp);
       fprintf(stderr, "%s: Event selection window [0x%lx]\n", __func__, xfixesEvent->xfixesselection.window);
@@ -2904,9 +2900,9 @@ int nxagentHandleXFixesSelectionNotify(XEvent *X)
        * identify that situation during Callback processing we could
        * get rid of the Trap...
        */
-      nxagentExternalClipboardEventTrap = 1;
+      nxagentExternalClipboardEventTrap = True;
       CallCallbacks(&SelectionCallback, &info);
-      nxagentExternalClipboardEventTrap = 0;
+      nxagentExternalClipboardEventTrap = False;
     }
   }
   return 1;
@@ -3203,11 +3199,11 @@ int nxagentHandleConfigureNotify(XEvent* X)
        * nxagentWindowPriv(pWinWindow)->height = X -> xconfigure.height;
        */
 
-      nxagentScreenTrap = 1;
+      nxagentScreenTrap = True;
 
       ConfigureWindow(pWinWindow, mask, (XID *) values, wClient(pWinWindow));
 
-      nxagentScreenTrap = 0;
+      nxagentScreenTrap = False;
 
       nxagentCheckWindowConfiguration((XConfigureEvent*)X);
 

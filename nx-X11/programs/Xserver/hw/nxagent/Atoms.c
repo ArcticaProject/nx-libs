@@ -63,7 +63,7 @@ Bool nxagentWMIsRunning;
 
 static void startWMDetection(void);
 
-static int nxagentInitAtomMap(char **atomNameList, int count, Atom *atomsRet);
+static void nxagentInitAtomMap(char **atomNameList, int count, Atom *atomsRet);
 
 #ifdef DEBUG
 static void nxagentPrintAtomMapInfo(char *message);
@@ -73,6 +73,10 @@ static void nxagentPrintAtomMapInfo(char *message);
 
 Atom nxagentAtoms[NXAGENT_NUMBER_OF_ATOMS];
 
+/*
+ * Careful! Do not change indices here! Some of those are referenced
+ * at other places via nxagentAtoms[index].
+ */
 static char *nxagentAtomNames[NXAGENT_NUMBER_OF_ATOMS + 1] =
 {
   "NX_IDENTITY",                 /*  0 */
@@ -95,9 +99,8 @@ static char *nxagentAtomNames[NXAGENT_NUMBER_OF_ATOMS + 1] =
          content from clients of the real X server to nxagent's clients
 
          Unfortunately we cannot rename this to NX_SELTRANS_TO_AGENT
-	 because nomachine's nxclient is depending on this
-	 selection */
-
+         because nomachine's nxclient and nxwin are using this
+         Atom/selection for communication with the nxagent Atom. */
   "TARGETS",                     /*  6 */
       /* used to request a list of supported data formats from the
         selection owner. Standard ICCCM Atom */
@@ -365,7 +368,7 @@ int nxagentQueryAtoms(ScreenPtr pScreen)
 typedef struct {
     Atom local;
     XlibAtom remote;
-    const char *string;
+    char *string;
     int  length;
 } AtomMap;
 
@@ -374,7 +377,7 @@ static unsigned int privAtomMapSize = 0;
 static unsigned int privLastAtom = 0;
 
 static void nxagentExpandCache(void);
-static void nxagentWriteAtom(Atom, XlibAtom, const char*, Bool);
+static void nxagentWriteAtom(Atom, XlibAtom, const char*);
 static AtomMap* nxagentFindAtomByRemoteValue(XlibAtom);
 static AtomMap* nxagentFindAtomByLocalValue(Atom);
 static AtomMap* nxagentFindAtomByName(char*, unsigned);
@@ -396,31 +399,16 @@ static void nxagentExpandCache(void)
  * consequent allocation, then cache the atom-couple.
  */
 
-static void nxagentWriteAtom(Atom local, XlibAtom remote, const char *string, Bool duplicate)
+static void nxagentWriteAtom(Atom local, XlibAtom remote, const char *string)
 {
-  const char *s;
+  char *s = strdup(string);
 
-  /*
-   * We could remove this string duplication if we knew for sure that
-   * the server will not reset, since only at reset the dix layer
-   * frees all the atom names.
-   */
-
-  if (duplicate)
+  #ifdef WARNING
+  if (s == NULL)
   {
-    s = strdup(string);
-
-    #ifdef WARNING
-    if (s == NULL)
-    {
-      fprintf(stderr, "nxagentWriteAtom: Malloc failed.\n");
-    }
-    #endif
+    fprintf(stderr, "nxagentWriteAtom: Malloc failed.\n");
   }
-  else
-  {
-    s = string;
-  }
+  #endif
 
   if (privLastAtom == privAtomMapSize)
   {
@@ -436,11 +424,10 @@ static void nxagentWriteAtom(Atom local, XlibAtom remote, const char *string, Bo
 }
 
 /*
- * FIXME: We should clean up the atom map at nxagent reset, in order
- * to cancel all the local atoms but still maintaining the Xserver
- * values and the atom names.
+ * Clean up the atom map at nxagent reset, in order to cancel all the
+ * local atoms but still maintaining the Xserver values and the atom
+ * names. This is called from Dispatch()
  */
-
 void nxagentResetAtomMap(void)
 {
   nxagentPrintAtomMapInfo("nxagentResetAtomMap: Entering");
@@ -453,14 +440,24 @@ void nxagentResetAtomMap(void)
   nxagentPrintAtomMapInfo("nxagentResetAtomMap: Exiting");
 }
 
+void nxagentFreeAtomMap(void)
+{
+  for (unsigned int i = 0; i < privLastAtom; i++)
+  {
+    SAFE_free(privAtomMap[i].string);
+  }
+
+  SAFE_free(privAtomMap);
+  privLastAtom = privAtomMapSize = 0;
+}
+
 /*
  * Init map.
  * Initializing the atomNameList all in one.
  */
 
-static int nxagentInitAtomMap(char **atomNameList, int count, Atom *atomsRet)
+static void nxagentInitAtomMap(char **atomNameList, int count, Atom *atomsRet)
 {
-  unsigned int i;
   int list_size = count + privLastAtom;
 
   nxagentPrintAtomMapInfo("nxagentInitAtomMap: Entering");
@@ -470,16 +467,18 @@ static int nxagentInitAtomMap(char **atomNameList, int count, Atom *atomsRet)
 
   if ((atom_list == NULL) || (name_list == NULL))
   {
+    SAFE_free(atom_list);
+    SAFE_free(name_list);
     FatalError("nxagentInitAtomMap: malloc failed\n");
   }
 
-  for (i = 0; i < count; i++)
+  for (unsigned int i = 0; i < count; i++)
   {
     name_list[i] = atomNameList[i];
     atom_list[i] = None;
   }
   
-  for (i = 0; i < privLastAtom; i++)
+  for (unsigned int i = 0; i < privLastAtom; i++)
   {
     name_list[count + i] = (char *)privAtomMap[i].string;
     atom_list[count + i] = None;
@@ -501,10 +500,10 @@ static int nxagentInitAtomMap(char **atomNameList, int count, Atom *atomsRet)
     SAFE_free(atom_list);
     SAFE_free(name_list);
 
-    return 0;
+    return;
   }
 
-  for (i = 0; i < list_size; i++)
+  for (unsigned int i = 0; i < list_size; i++)
   {
     AtomMap *aMap = nxagentFindAtomByName(name_list[i], strlen(name_list[i]));
 
@@ -514,7 +513,7 @@ static int nxagentInitAtomMap(char **atomNameList, int count, Atom *atomsRet)
 
       if (ValidAtom(local))
       {
-        nxagentWriteAtom(local, atom_list[i], name_list[i], False);
+        nxagentWriteAtom(local, atom_list[i], name_list[i]);
       }
       else
       {
@@ -544,7 +543,7 @@ static int nxagentInitAtomMap(char **atomNameList, int count, Atom *atomsRet)
 
   nxagentPrintAtomMapInfo("nxagentInitAtomMap: Exiting");
 
-  return 1;
+  return;
 }
 
 /*
@@ -609,17 +608,14 @@ static AtomMap* nxagentFindAtomByName(char *string, unsigned int length)
  * really asking to X-server and caching them.
  * FIXME: I don't really know if is better to allocate
  *        an automatic variable like ret_value and write it, instead of make all
- *        these return!, perhaps this way the code is a little bit easyer to read.
+ *        these return!, perhaps this way the code is a little bit easier to read.
  *        I think this and the 2 .*Find.* are the only functions to look for performances.
  */
 
 XlibAtom nxagentMakeAtom(char *string, unsigned int length, Bool Makeit)
 {
-  AtomMap *current;
-
   /*
-   * Surely MakeAtom is faster than
-   * our nxagentFindAtomByName.
+   * Surely MakeAtom is faster than our nxagentFindAtomByName.
    */
 
   Atom local = MakeAtom(string, length, Makeit);
@@ -634,6 +630,8 @@ XlibAtom nxagentMakeAtom(char *string, unsigned int length, Bool Makeit)
     return local;
   }
 
+  AtomMap *current;
+
   if ((current = nxagentFindAtomByLocalValue(local)))
   {
     /*
@@ -642,8 +640,7 @@ XlibAtom nxagentMakeAtom(char *string, unsigned int length, Bool Makeit)
 
     return current->remote;
   }
-
-  if ((current = nxagentFindAtomByName(string, length)))
+  else if ((current = nxagentFindAtomByName(string, length)))
   {
     /*
      * Found cached by name.
@@ -655,26 +652,29 @@ XlibAtom nxagentMakeAtom(char *string, unsigned int length, Bool Makeit)
 
     return current->remote;
   }
-
-  /*
-   * We really have to ask the Xserver for it.
-   */
-
+  else
   {
+    /*
+     * We really have to ask the Xserver for it.
+     */
+
+    /* FIXME: why is Makeit inverted here? */
     XlibAtom remote = XInternAtom(nxagentDisplay, string, !Makeit);
 
     if (remote == None)
     {
       #ifdef WARNING
-      fprintf(stderr, "nxagentMakeAtom: WARNING XInternAtom failed.\n");
+      fprintf(stderr, "nxagentMakeAtom: WARNING XInternAtom(.., %s, ..) failed.\n", string);
       #endif
 
       return None;
     }
+    else
+    {
+      nxagentWriteAtom(local, remote, string);
 
-    nxagentWriteAtom(local, remote, string, True);
-
-    return remote;
+      return remote;
+    }
   }
 }
 
@@ -692,6 +692,7 @@ XlibAtom nxagentLocalToRemoteAtom(Atom local)
     return None;
   }
 
+  /* no mapping required for built-in atoms */
   if (local <= XA_LAST_PREDEFINED)
   {
     #ifdef DEBUG
@@ -704,32 +705,39 @@ XlibAtom nxagentLocalToRemoteAtom(Atom local)
 
   if (current)
   {
-    #ifdef TEST
-    fprintf(stderr, "%s: local [%d] -> remote [%d]\n", __func__, local, current->remote);
+    #ifdef DEBUG
+    if (current->string)
+      fprintf(stderr, "%s: local [%d] -> remote [%d (%s)]\n", __func__, local, current->remote, current->string);
+    else
+      fprintf(stderr, "%s: local [%d] -> remote [%d]\n", __func__, local, current->remote);
     #endif
+
     return current->remote;
   }
-
-  const char *string = NameForAtom(local);
-
-  XlibAtom remote = XInternAtom(nxagentDisplay, string, False);
-
-  if (remote == None)
+  else
   {
-    #ifdef WARNING
-    fprintf(stderr, "nxagentLocalToRemoteAtom: WARNING XInternAtom failed.\n");
+    const char *string = NameForAtom(local);
+
+    /* FIXME: why False? */
+    XlibAtom remote = XInternAtom(nxagentDisplay, string, False);
+
+    if (remote == None)
+    {
+      #ifdef WARNING
+      fprintf(stderr, "nxagentLocalToRemoteAtom: WARNING XInternAtom failed.\n");
+      #endif
+
+      return None;
+    }
+
+    nxagentWriteAtom(local, remote, string);
+
+    #ifdef TEST
+    fprintf(stderr, "%s: local [%d (%s)] -> remote [%d]\n", __func__, local, string, remote);
     #endif
 
-    return None;
+    return remote;
   }
-
-  nxagentWriteAtom(local, remote, string, True);
-
-  #ifdef TEST
-  fprintf(stderr, "%s: local [%d] -> remote [%d (%s)]\n", __func__, local, remote, string);
-  #endif
-
-  return remote;
 }
 
 Atom nxagentRemoteToLocalAtom(XlibAtom remote)
@@ -742,6 +750,7 @@ Atom nxagentRemoteToLocalAtom(XlibAtom remote)
     return None;
   }
 
+  /* no mapping required for built-in atoms */
   if (remote <= XA_LAST_PREDEFINED)
   {
     #ifdef DEBUG
@@ -773,41 +782,47 @@ Atom nxagentRemoteToLocalAtom(XlibAtom remote)
     }
 
     #ifdef DEBUG
-    fprintf(stderr, "%s: remote [%d] -> local [%d]\n", __func__, remote, current->local);
+    if (current->string)
+      fprintf(stderr, "%s: remote [%d] -> local [%d (%s)]\n", __func__, remote, current->local, current->string);
+    else
+      fprintf(stderr, "%s: remote [%d] -> local [%d]\n", __func__, remote, current->local);
     #endif
+
     return current->local;
   }
-
-  char *string = XGetAtomName(nxagentDisplay, remote);
-
-  if (string)
+  else
   {
-    Atom local = MakeAtom(string, strlen(string), True);
+    char *string = XGetAtomName(nxagentDisplay, remote);
 
-    if (!ValidAtom(local))
+    if (string)
     {
-      #ifdef WARNING
-      fprintf(stderr, "%s: WARNING MakeAtom failed.\n", __func__);
-      #endif
+      Atom local = MakeAtom(string, strlen(string), True);
 
-      local = None;
+      if (!ValidAtom(local))
+      {
+        #ifdef WARNING
+        fprintf(stderr, "%s: WARNING MakeAtom failed.\n", __func__);
+        #endif
+
+        local = None;
+      }
+
+      nxagentWriteAtom(local, remote, string);
+
+      #ifdef TEST
+      fprintf(stderr, "%s: remote [%d (%s)] -> local [%d]\n", __func__, remote, string, local);
+      #endif
+      SAFE_XFree(string);
+
+      return local;
     }
 
-    nxagentWriteAtom(local, remote, string, True);
-
-    #ifdef TEST
-    fprintf(stderr, "%s: remote [%d (%s)] -> local [%d]\n", __func__, remote, string, local);
+    #ifdef WARNING
+    fprintf(stderr, "%s: WARNING failed to get name from remote atom.\n", __func__);
     #endif
-    SAFE_XFree(string);
 
-    return local;
+    return None;
   }
-
-  #ifdef WARNING
-  fprintf(stderr, "%s: WARNING failed to get name from remote atom.\n", __func__);
-  #endif
-
-  return None;
 }
 
 #ifdef DEBUG

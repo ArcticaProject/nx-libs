@@ -76,6 +76,7 @@ SOFTWARE.
 #include "Rootless.h"
 #include "Client.h"
 #include "Windows.h"
+#include "Clipboard.h"
 
 extern Atom clientCutProperty;
 
@@ -93,12 +94,12 @@ nxagentWMStateRec;
 #undef  TEST
 #undef  DEBUG
 
-#ifdef NXAGENT_CLIPBOARD
-extern WindowPtr nxagentGetClipboardWindow(Atom);
-#endif
-
 #ifdef NXAGENT_ARTSD
 extern Atom mcop_local_atom;
+#endif
+
+#ifdef NX_DEBUG_INPUT
+extern void nxagentGuessDumpInputInfo(ClientPtr client, Atom property, char *data);
 #endif
 
 int 
@@ -229,7 +230,7 @@ ChangeWindowProperty(WindowPtr pWin, Atom property, Atom type, int format,
       }
     }
 
-    return Xorg_ChangeWindowProperty(pWin, property, type, format, mode, len, value, sendevent);
+    return xorg_ChangeWindowProperty(pWin, property, type, format, mode, len, value, sendevent);
 }
 
 /*****************
@@ -447,7 +448,7 @@ ProcGetProperty(ClientPtr client)
 
 #ifdef NXAGENT_CLIPBOARD
 /* GetWindowProperty clipboard use only */
-/* FIXME: that's wrong, it is also called in Window.c and Events. */
+/* FIXME: that's wrong, it is also called in Window.c and Events.c */
 /* FIXME: should be moved to a different file, is not derived from
    dix */
 int
@@ -501,7 +502,6 @@ GetWindowProperty(pWin, property, longOffset, longLength, delete,
 	prevProp = pProp;
 	pProp = pProp->next;
     }
-
 
     if (!pProp)
     {

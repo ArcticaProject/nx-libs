@@ -39,6 +39,7 @@
 #include "Atoms.h"
 #include "Trap.h"
 #include "Utils.h"
+#include "Atoms.h"
 
 #include "compext/Compext.h"
 
@@ -151,10 +152,9 @@ void nxagentRootlessAddTopLevelWindow(WindowPtr pWin, Window w)
 
   if (topLevelParentMap.next == topLevelParentMap.size)
   {
-    TopLevelParentRec *ptr = topLevelParentMap.elt;
     size_t size = (topLevelParentMap.size += TOP_LEVEL_TABLE_UNIT);
 
-    ptr = realloc(ptr, size * sizeof(TopLevelParentRec));
+    TopLevelParentRec *ptr = realloc(topLevelParentMap.elt, size * sizeof(TopLevelParentRec));
 
     if (ptr == NULL)
     {
@@ -332,18 +332,18 @@ void nxagentRootlessRestack(unsigned long children[], unsigned int nchildren)
 
   WindowPtr pWin = screenInfo.screens[0]->root -> firstChild;
 
+  XID values[2] = {0, (XID) Above};
+
   for (int i = ntoplevel; i-- && pWin; pWin = toplevel[i] -> nextSib)
   {
-    XID values[2] = {0, (XID) Above};
-
     if (toplevel[i] != pWin)
     {
       Mask mask = CWSibling | CWStackMode;
       values[0] = pWin -> drawable.id;
       ClientPtr pClient = wClient(toplevel[i]);
-      nxagentScreenTrap = 1;
-      ConfigureWindow(toplevel[i], mask, (XID *) values, pClient);
-      nxagentScreenTrap = 0;
+      nxagentScreenTrap = True;
+      ConfigureWindow(toplevel[i], mask, values, pClient);
+      nxagentScreenTrap = False;
 
       #ifdef TEST
       fprintf(stderr, "%s: Restacked window [%p].\n", __func__, (void*) toplevel[i]);
@@ -418,6 +418,11 @@ int nxagentExportAllProperty(WindowPtr pWin)
   return total;
 }
 
+/*
+ * Export a property from an agent window to the corresponding window
+ * on the real X server This is e.g. called if a client changes a
+ * property.
+ */
 int nxagentExportProperty(WindowPtr pWin,
                           Atom property,
                           Atom type,
@@ -720,7 +725,7 @@ int nxagentExportProperty(WindowPtr pWin,
     else
     {
       #ifdef TEST
-      fprintf(stderr, "%s: Property [%u] format [%i] units [%lu].\n", __func__,
+      fprintf(stderr, "%s: Property [%lu] format [%i] units [%lu].\n", __func__,
                   propertyX, format, nUnits);
       #endif
 
@@ -793,6 +798,11 @@ int nxagentExportProperty(WindowPtr pWin,
   return export;
 }
 
+/*
+ * Import a property from the proxy window on the real X server into
+ * the agent's corresponding window. This is e.g. called on reception
+ * of a property change event on the real X server.
+ */
 void nxagentImportProperty(Window window,
                            XlibAtom property,
                            XlibAtom type,
@@ -817,7 +827,7 @@ void nxagentImportProperty(Window window,
   if (pWin == NULL)
   {
     #ifdef TEST
-    fprintf(stderr, "%s: Failed to look up remote window [0x%x]  property [%d] exiting.\n",
+    fprintf(stderr, "%s: Failed to look up remote window [0x%x]  property [%ld] exiting.\n",
                 __func__, window, property);
     #endif
 
@@ -829,29 +839,34 @@ void nxagentImportProperty(Window window,
   if (!ValidAtom(propertyL))
   {
     #ifdef TEST
-    fprintf(stderr, "%s: Failed to convert remote property atom.\n", __func__);
+    fprintf(stderr, "%s: Failed to convert remote property atom [%ld].\n", __func__, property);
     #endif
 
     return;
   }
 
   #ifdef TEST
-  fprintf(stderr, "%s: Window [0x%x] property [%d]: [%s]\n", __func__,
-              window, property, validateString(NameForAtom(propertyL)));
+  fprintf(stderr, "%s: Window [0x%x] property: remote [%ld][%s] local [%d]\n", __func__,
+              window, property, validateString(NameForAtom(propertyL)), propertyL);
   #endif
 
   /*
    * We settle a property size limit of 256K beyond which we simply
    * ignore them.
+   * FIXME: where's this checked/set/enforced/whatever?
    */
 
   Atom typeL = nxagentRemoteToLocalAtom(type);
   const char *typeS = NameForAtom(typeL);
 
+  #ifdef TEST
+  fprintf(stderr, "%s: type: remote [%ld] local [%d][%s].\n", __func__, type, typeL, validateString(typeS));
+  #endif
+
   if (buffer == NULL && (nitems > 0))
   {
     #ifdef WARNING
-    fprintf(stderr, "%s: Failed to retrieve remote property [%ld] [%s] on Window [%ld]\n", __func__,
+    fprintf(stderr, "%s: Failed to retrieve remote property [%ld] [%s] on window [%ld]\n", __func__,
                 (long int) property, validateString(NameForAtom(propertyL)), (long int) window);
     #endif
   }
@@ -864,7 +879,7 @@ void nxagentImportProperty(Window window,
   else if (!ValidAtom(typeL))
   {
     #ifdef WARNING
-    fprintf(stderr, "%s: Failed to convert remote atoms [%ld].\n", __func__,
+    fprintf(stderr, "%s: Failed to convert remote atom [%ld].\n", __func__,
                 (long int) type);
     #endif
   }
@@ -875,6 +890,41 @@ void nxagentImportProperty(Window window,
     #endif
 
     import = True;
+  }
+  else if (property == nxagentAtoms[0])  /* NX_IDENTITY */
+  {
+    #ifdef WARNING
+    fprintf(stderr, "%s: not importing private [%ld][NXDARWIN].\n", __func__,
+                (long int) property);
+    #endif
+  }
+  else if (property == nxagentAtoms[5])  /* NX_CUT_BUFFER_SERVER */
+  {
+    #ifdef WARNING
+    fprintf(stderr, "%s: not importing private [%ld][NX_CUT_BUFFER_SERVER].\n", __func__,
+                (long int) property);
+    #endif
+  }
+  else if (property == nxagentAtoms[8])  /* NX_AGENT_SIGNATURE */
+  {
+    #ifdef WARNING
+    fprintf(stderr, "%s: not importing private [%ld][NX_AGENT_SIGNATURE].\n", __func__,
+                (long int) property);
+    #endif
+  }
+  else if (property == nxagentAtoms[9])  /* NXDARWIN */
+  {
+    #ifdef TEST
+    fprintf(stderr, "%s: not importing private [%ld][NXDARWIN].\n", __func__,
+                (long int) property);
+    #endif
+  }
+  else if (property == nxagentAtoms[15])  /* NX_SELTRANS_FROM_AGENT */
+  {
+    #ifdef TEST
+    fprintf(stderr, "%s: not importing private [%ld][NX_SELTRANS_FROM_AGENT].\n", __func__,
+                (long int) property);
+    #endif
   }
   else if (strcmp(typeS, "STRING") == 0 ||
                strcmp(typeS, "UTF8_STRING") == 0 ||
@@ -1069,7 +1119,7 @@ void nxagentImportProperty(Window window,
   if (import)
   {
     #ifdef TEST
-    fprintf(stderr, "%s: ChangeProperty on window [0x%x] property [%d] type [%s]"
+    fprintf(stderr, "%s: ChangeProperty on window [0x%x] property [%ld] type [%s]"
                 " nitems [%ld] format [%d]\n", __func__,
                     window, property, typeS, nitems, format);
     #endif
@@ -1080,7 +1130,7 @@ void nxagentImportProperty(Window window,
   else
   {
     #ifdef TEST
-    fprintf(stderr, "%s: WARNING! Ignored ChangeProperty on window [0x%x] property [%d] type [%s]"
+    fprintf(stderr, "%s: WARNING! Ignored ChangeProperty on window [0x%x] property [%ld] type [%s]"
                 " ntems [%ld] format [%d]\n", __func__,
                        window, property, validateString(typeS), nitems, format);
     #endif
@@ -1126,7 +1176,7 @@ void nxagentRemovePropertyFromList(void)
   struct nxagentPropertyRec *tmp = nxagentPropertyList.first;
 
   #ifdef TEST
-  fprintf(stderr, "%s: Property [%d] on Window [0x%x] to list, list size is [%d].\n", __func__,
+  fprintf(stderr, "%s: Property [%ld] on Window [0x%x] to list, list size is [%d].\n", __func__,
               nxagentPropertyList.first -> property, nxagentPropertyList.first -> window,
                  nxagentPropertyList.size);
   #endif
@@ -1162,7 +1212,7 @@ void nxagentAddPropertyToList(XlibAtom property, WindowPtr pWin)
   }
 
   #ifdef TEST
-  fprintf(stderr, "%s: Adding record Property [%d] - Window [0x%x][%p] to list, list"
+  fprintf(stderr, "%s: Adding record Property [%ld] - Window [0x%x][%p] to list, list"
               " size is [%d].\n", __func__, property, nxagentWindow(pWin), (void*) pWin,
                  nxagentPropertyList.size);
   #endif
@@ -1208,7 +1258,7 @@ Bool nxagentNotifyMatchChangeProperty(void *p)
 
   if (first)
   {
-    fprintf(stderr, "%s: First element on list is window [0x%x] property [%d] list size is [%d].\n", __func__,
+    fprintf(stderr, "%s: First element on list is window [0x%x] property [%ld] list size is [%d].\n", __func__,
                 first -> window, first -> property, nxagentPropertyList.size);
   }
   else
