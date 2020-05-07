@@ -1193,20 +1193,19 @@ void nxagentCollectPropertyEvent(int resource)
   unsigned long         ulReturnItems;
   unsigned long         ulReturnBytesLeft;
   unsigned char         *pszReturnData = NULL;
-  int                   result;
 
   /*
    * We have received the notification so we can safely retrieve data
    * from the client structure.
    */
 
-  result = NXGetCollectedProperty(nxagentDisplay,
-                                  resource,
-                                  &atomReturnType,
-                                  &resultFormat,
-                                  &ulReturnItems,
-                                  &ulReturnBytesLeft,
-                                  &pszReturnData);
+  int result = NXGetCollectedProperty(nxagentDisplay,
+                                      resource,
+                                      &atomReturnType,
+                                      &resultFormat,
+                                      &ulReturnItems,
+                                      &ulReturnBytesLeft,
+                                      &pszReturnData);
 
   nxagentLastClipboardClient = -1;
 
