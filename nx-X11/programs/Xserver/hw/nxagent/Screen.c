@@ -3675,7 +3675,7 @@ int nxagentChangeScreenConfig(int screen, int width, int height)
     fprintf(stderr, "nxagentChangeScreenConfig: grabstate [UNKNOWN], client [%p]\n", (void *) nxagentGrabServerInfo.client);
   #endif
 
-  if (nxagentGrabServerInfo.grabstate == SERVER_GRABBED && nxagentGrabServerInfo.client != NULL)
+  if (nxagentGrabServerInfo.grabstate == SERVER_GRABBED)
   {
     /*
      * If any client grabbed the server it won't expect screen
