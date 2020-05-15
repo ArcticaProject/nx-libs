@@ -1105,6 +1105,28 @@ void nxagentResetSignalHandlers(void)
   nxagentInitTimer();
 }
 
+/*
+ * currently unused it seems
+ */
+void nxagentOpenConfineWindow(void)
+{
+  nxagentConfineWindow = XCreateWindow(nxagentDisplay,
+                                       DefaultRootWindow(nxagentDisplay),
+                                       0, 0, 1, 1, 0, 0,
+                                       InputOnly,
+                                       CopyFromParent,
+                                       0L, NULL);
+
+  if (nxagentReportWindowIds) {
+    fprintf(stderr, "NXAGENT_WINDOW_ID: CONFINEMENT_WINDOW,WID:[0x%x]\n",
+              nxagentConfineWindow);
+  }
+
+  #ifdef TEST
+  fprintf(stderr, "%s: Created agent's confine window with id [0x%x].\n", __func__, nxagentConfineWindow);
+  #endif
+}
+
 void nxagentOpenDisplay(int argc, char *argv[])
 {
   if (!nxagentDoFullGeneration)
@@ -1298,21 +1320,7 @@ FIXME: Use of nxagentParentWindow is strongly deprecated.  We need
   fprintf(stderr, "nxagentOpenDisplay: Going to create agent's confine window.\n");
   #endif
 
-  nxagentConfineWindow = XCreateWindow(nxagentDisplay,
-                                       DefaultRootWindow(nxagentDisplay),
-                                       0, 0, 1, 1, 0, 0,
-                                       InputOnly,
-                                       CopyFromParent,
-                                       0L, NULL);
-
-  if (nxagentReportWindowIds) {
-    fprintf(stderr, "NXAGENT_WINDOW_ID: CONFINEMENT_WINDOW,WID:[0x%x]\n",
-              nxagentConfineWindow);
-  }
-  #ifdef TEST
-  fprintf(stderr, "nxagentOpenDisplay: Created agent's confine window with id [0x%x].\n",
-              nxagentConfineWindow);
-  #endif
+  nxagentOpenConfineWindow();
 
   if (!(nxagentUserGeometry.flag & XValue))
   {
@@ -2665,21 +2673,7 @@ Bool nxagentReconnectDisplay(void *p0)
   fprintf(stderr, "nxagentReconnectDisplay: Going to create agent's confine window.\n");
   #endif
 
-  nxagentConfineWindow = XCreateWindow(nxagentDisplay,
-                                       DefaultRootWindow(nxagentDisplay),
-                                       0, 0, 1, 1, 0, 0,
-                                       InputOnly,
-                                       CopyFromParent,
-                                       0L, NULL);
-
-  if (nxagentReportWindowIds) {
-    fprintf(stderr, "NXAGENT_WINDOW_ID: CONFINEMENT_WINDOW,WID:[0x%x]\n",
-              nxagentConfineWindow);
-  }
-  #ifdef TEST
-  fprintf(stderr, "nxagentReconnectDisplay: Created agent's confine window with id [0x%x].\n",
-              nxagentConfineWindow);
-  #endif
+  nxagentOpenConfineWindow();
 
   useXpmIcon = nxagentMakeIcon(nxagentDisplay, &nxagentIconPixmap, &nxagentIconShape);
 
