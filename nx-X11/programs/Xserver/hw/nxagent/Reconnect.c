@@ -633,7 +633,7 @@ Bool nxagentReconnectSession(void)
   if (nxagentResizeDesktopAtStartup || nxagentOption(Rootless) == True || nxagentOption(Xinerama) == True)
   {
     nxagentChangeScreenConfig(0, nxagentOption(RootWidth),
-                                  nxagentOption(RootHeight));
+                                  nxagentOption(RootHeight), True);
 
     nxagentResizeDesktopAtStartup = False;
   }

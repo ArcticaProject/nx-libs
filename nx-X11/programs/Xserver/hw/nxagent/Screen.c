@@ -2243,7 +2243,7 @@ static void nxagentSetRootClip (ScreenPtr pScreen, Bool enable)
 }
 
 Bool nxagentResizeScreen(ScreenPtr pScreen, int width, int height,
-                             int mmWidth, int mmHeight)
+                             int mmWidth, int mmHeight, Bool doresize)
 {
   #ifdef TEST
   nxagentPrintAgentGeometry("Before Resize Screen", "nxagentResizeScreen:");
@@ -2365,10 +2365,19 @@ FIXME: We should try to restore the previously
   {
     nxagentSetWMNormalHints(pScreen->myNum, width, height);
 
-    XResizeWindow(nxagentDisplay, nxagentDefaultWindows[pScreen->myNum], width, height);
+    if (doresize)
+    {
+      #ifdef DEBUG
+      fprintf(stderr, "%s: resizing DefaultWindow to [%d]x[%d]\n", __func__, width, height);
+      #endif
+      XResizeWindow(nxagentDisplay, nxagentDefaultWindows[pScreen->myNum], width, height);
+    }
 
     if (nxagentOption(Rootless) == 0)
     {
+      #ifdef DEBUG
+      fprintf(stderr, "%s: resizing InputWindow to [%d]x[%d]\n", __func__, width, height);
+      #endif
       XResizeWindow(nxagentDisplay, nxagentInputWindows[pScreen -> myNum], width, height);
     }
   }
@@ -2691,7 +2700,7 @@ int nxagentShadowInit(ScreenPtr pScreen, WindowPtr pWin)
 
   AddResource(accessWindowID, RT_WINDOW, (void *)nxagentShadowWindowPtr);
 
-  nxagentResizeScreen(pScreen, nxagentShadowWidth, nxagentShadowHeight, pScreen -> mmWidth, pScreen -> mmHeight);
+  nxagentResizeScreen(pScreen, nxagentShadowWidth, nxagentShadowHeight, pScreen -> mmWidth, pScreen -> mmHeight, True);
 
   nxagentShadowCreateMainWindow(pScreen, pWin, nxagentShadowWidth, nxagentShadowHeight);
 
@@ -3646,10 +3655,10 @@ void nxagentAdjustCustomMode(ScreenPtr pScreen)
   RRScreenSizeNotify(pScreen);
 }
 
-int nxagentChangeScreenConfig(int screen, int width, int height)
+int nxagentChangeScreenConfig(int screen, int width, int height, Bool doresize)
 {
   #ifdef DEBUG
-  fprintf(stderr, "nxagentChangeScreenConfig: called for screen [%d], width [%d] height [%d]\n", screen, width, height);
+  fprintf(stderr, "nxagentChangeScreenConfig: called for screen [%d], width [%d] height [%d] doresize [%d]\n", screen, width, height, doresize);
   #endif
 
   #ifdef TEST
@@ -3697,7 +3706,7 @@ int nxagentChangeScreenConfig(int screen, int width, int height)
   fprintf(stderr, "nxagentChangeScreenConfig: Changing config to %d x %d\n", width, height);
   #endif
 
-  int r = nxagentResizeScreen(pScreen, width, height, 0, 0);
+  int r = nxagentResizeScreen(pScreen, width, height, 0, 0, doresize);
 
   if (r != 0)
   {

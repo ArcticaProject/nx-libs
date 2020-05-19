@@ -588,7 +588,7 @@ void nxagentSwitchResizeMode(ScreenPtr pScreen)
 
     nxagentLaunchDialog(DIALOG_ENABLE_DESKTOP_RESIZE_MODE);
 
-    nxagentChangeScreenConfig(0, nxagentOption(Width), nxagentOption(Height));
+    nxagentChangeScreenConfig(0, nxagentOption(Width), nxagentOption(Height), True);
 
     if (nxagentOption(ClientOs) == ClientOsWinnt)
     {
@@ -2082,7 +2082,7 @@ FIXME: Don't enqueue the KeyRelease event if the key was not already
             X.xmap.window == nxagentDefaultWindows[nxagentScreen(X.xmap.window)->myNum])
         {
           nxagentChangeScreenConfig(nxagentScreen(X.xmap.window)->myNum, nxagentOption(Width),
-                                    nxagentOption(Height));
+                                    nxagentOption(Height), True);
         }
 
         break;
@@ -3412,9 +3412,16 @@ int nxagentHandleConfigureNotify(XEvent* X)
           fprintf(stderr,"%s: Width %d Height %d.\n", __func__,
                       nxagentOption(Width), nxagentOption(Height));
           #endif
-
+          /*
+           * we are processing a ConfigureNotifyEvent that brought us
+           * the current window size. If we issue a XResizeWindow()
+           * again with these values we might end up in loop if the
+           * window manager adjusts the size, which is perfectly
+           * legal for it to do. So we prevent the XResizeWindow call
+           * from happening.
+           */
           nxagentChangeScreenConfig(0, nxagentOption(Width),
-                                       nxagentOption(Height));
+                                       nxagentOption(Height), False);
         }
       }
 
@@ -3435,7 +3442,7 @@ int nxagentHandleConfigureNotify(XEvent* X)
         nxagentChangeOption(RootHeight, X -> xconfigure.height);
 
         nxagentChangeScreenConfig(0, nxagentOption(Width),
-                                     nxagentOption(Height));
+                                     nxagentOption(Height), True);
 
         return 1;
       }
@@ -4310,7 +4317,7 @@ int nxagentHandleRRScreenChangeNotify(XEvent *X)
   #endif
 
   nxagentResizeScreen(screenInfo.screens[DefaultScreen(nxagentDisplay)], Xr -> width, Xr -> height,
-                          Xr -> mwidth, Xr -> mheight);
+                          Xr -> mwidth, Xr -> mheight, True);
 
   nxagentShadowCreateMainWindow(screenInfo.screens[DefaultScreen(nxagentDisplay)], screenInfo.screens[0]->root,
                                 Xr -> width, Xr -> height);
