@@ -403,6 +403,19 @@ Bool nxagentCreateWindow(WindowPtr pWin)
   {
     fprintf(stderr, "NXAGENT_WINDOW_ID: PRIVATE_WINDOW,WID:[0x%x],INT:[0x%x]\n", nxagentWindowPriv(pWin)->window, pWin->drawable.id);
   }
+
+  #ifdef DEBUG
+  {
+    char *winname = NULL;
+    if (-1 != asprintf(&winname, "%s Private[0x%lx]", nxagentWindowName, pWin->drawable.id))
+    {
+      Xutf8SetWMProperties(nxagentDisplay, nxagentWindowPriv(pWin)->window,
+                               winname, winname, NULL , 0 , NULL, NULL, NULL);
+      SAFE_free(winname);
+    }
+  }
+  #endif
+
   #ifdef TEST
   fprintf(stderr, "nxagentCreateWindow: Created new window with id [0x%x].\n",
               nxagentWindowPriv(pWin)->window);
@@ -2995,6 +3008,19 @@ static void nxagentReconnectWindow(void * param0, XID param1, void * data_buffer
   {
     fprintf(stderr, "NXAGENT_WINDOW_ID: PRIVATE_WINDOW,WID:[0x%x],INT:[0x%x]\n", nxagentWindowPriv(pWin)->window, pWin->drawable.id);
   }
+
+  #ifdef DEBUG
+  {
+    char *winname = NULL;
+    if (-1 != asprintf(&winname, "%s Private[0x%lx]", nxagentWindowName, pWin->drawable.id))
+    {
+      Xutf8SetWMProperties(nxagentDisplay, nxagentWindowPriv(pWin)->window,
+                               winname, winname, NULL , 0 , NULL, NULL, NULL);
+      SAFE_free(winname);
+    }
+  }
+  #endif
+
   #ifdef TEST
   fprintf(stderr, "nxagentReconnectWindow: Created new window with id [0x%x].\n",
               nxagentWindowPriv(pWin)->window);

@@ -1125,6 +1125,18 @@ void nxagentOpenConfineWindow(void)
               nxagentConfineWindow);
   }
 
+  #ifdef DEBUG
+  {
+    char *winname = NULL;
+    if (-1 != asprintf(&winname, "%s Confine", nxagentWindowName))
+    {
+      Xutf8SetWMProperties(nxagentDisplay, nxagentConfineWindow,
+                               winname, winname, NULL , 0 , NULL, NULL, NULL);
+      SAFE_free(winname);
+    }
+  }
+  #endif
+
   #ifdef TEST
   fprintf(stderr, "%s: Created agent's confine window with id [0x%x].\n", __func__, nxagentConfineWindow);
   #endif

@@ -466,9 +466,23 @@ Window nxagentCreateIconWindow(void)
     }
   }
 
+  char *winname = NULL;
+  #ifdef DEBUG
+  if (-1 == asprintf(&winname, "%s Icon", nxagentWindowName))
+  {
+    /* If memory allocation wasn't possible, or some other error
+       occurs, these functions will return -1, and the contents of
+       winname are undefined. */
+    winname = NULL;
+  }
+  #endif
+
   Xutf8SetWMProperties(nxagentDisplay, w,
-                           nxagentWindowName, nxagentWindowName,
-                               NULL , 0 , sizeHints, wmHints, NULL);
+                           winname ? winname : nxagentWindowName,
+                               winname ? winname : nxagentWindowName,
+                                   NULL , 0 , sizeHints, wmHints, NULL);
+
+  SAFE_free(winname);
 
   SAFE_XFree(sizeHints);
   SAFE_XFree(wmHints);
@@ -1768,6 +1782,18 @@ N/A
           fprintf(stderr, "NXAGENT_WINDOW_ID: INPUT_WINDOW:[%d],WID:[0x%x]\n", pScreen->myNum, nxagentInputWindows[pScreen->myNum]);
         }
 
+        #ifdef DEBUG
+        {
+          char *winname = NULL;
+          if (-1 != asprintf(&winname, "%s Input", nxagentWindowName))
+          {
+            Xutf8SetWMProperties(nxagentDisplay, nxagentInputWindows[pScreen->myNum],
+                                     winname, winname, NULL , 0 , NULL, NULL, NULL);
+            SAFE_free(winname);
+          }
+        }
+        #endif
+
         #ifdef TEST
         fprintf(stderr, "nxagentOpenScreen: Created new input window for screen [%d] with id [0x%x].\n",
                 pScreen->myNum, nxagentInputWindows[pScreen->myNum]);
@@ -1873,11 +1899,24 @@ N/A
       }
     }
 
+    char *winname = NULL;
+    #ifdef DEBUG
+    if (-1 == asprintf(&winname, "%s Default[%d]", nxagentWindowName, pScreen->myNum))
+    {
+      /* If memory allocation wasn't possible, or some other error
+         occurs, these functions will return -1, and the contents of
+         winname are undefined. */
+      winname = NULL;
+    }
+    #endif
+
     Xutf8SetWMProperties(nxagentDisplay,
-                         nxagentDefaultWindows[pScreen->myNum],
-                         nxagentWindowName,
-                         nxagentWindowName,
-                         argv , argc , sizeHints, wmHints, NULL);
+                             nxagentDefaultWindows[pScreen->myNum],
+                                 winname ? winname : nxagentWindowName,
+                                     winname ? winname : nxagentWindowName,
+                                         argv , argc , sizeHints, wmHints, NULL);
+
+    SAFE_free(winname);
 
     SAFE_XFree(sizeHints);
     SAFE_XFree(wmHints);
