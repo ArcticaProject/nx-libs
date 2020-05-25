@@ -2310,26 +2310,25 @@ Bool nxagentResizeScreen(ScreenPtr pScreen, int width, int height,
   pScreen -> height = height;
 
   /*
-   * Compute screen dimensions if they aren't given.
+   * Compute screen dimensions if they aren't provided.
    */
 
   if (mmWidth == 0)
   {
     if (monitorResolution < 0)
     {
-      mmWidth  = width * DisplayWidthMM(nxagentDisplay, DefaultScreen(nxagentDisplay)) /
-                     DisplayWidth(nxagentDisplay, DefaultScreen(nxagentDisplay));
+      mmWidth = width * DisplayWidthMM(nxagentDisplay, DefaultScreen(nxagentDisplay)) /
+                    DisplayWidth(nxagentDisplay, DefaultScreen(nxagentDisplay));
     }
     else
     {
-      mmWidth  = (width * 254 + monitorResolution * 5) / (monitorResolution * 10);
+      mmWidth = (width * 254 + monitorResolution * 5) / (monitorResolution * 10);
     }
 
     if (mmWidth < 1)
     {
       mmWidth = 1;
     }
-
   }
 
   if (mmHeight == 0)
@@ -2348,7 +2347,6 @@ Bool nxagentResizeScreen(ScreenPtr pScreen, int width, int height,
     {
       mmHeight = 1;
     }
-
   }
 
   pScreen -> mmWidth = mmWidth;
@@ -2362,14 +2360,9 @@ Bool nxagentResizeScreen(ScreenPtr pScreen, int width, int height,
   PixmapPtr pPixmap = fbGetScreenPixmap(pScreen);
 
   char *fbBits = realloc(pPixmap -> devPrivate.ptr, PixmapBytePad(width, pScreen->rootDepth) *
-			    height * BitsPerPixel(pScreen->rootDepth) / 8);
+                             height * BitsPerPixel(pScreen->rootDepth) / 8);
   if (fbBits == NULL)
   {
-    pScreen -> width = oldWidth;
-    pScreen -> height = oldHeight;
-    pScreen -> mmWidth = oldMmWidth;
-    pScreen -> mmHeight = oldMmHeight;
-
     goto nxagentResizeScreenError;
   }
 
@@ -2481,6 +2474,14 @@ FIXME: We should try to restore the previously
   return 1;
 
 nxagentResizeScreenError:
+  #ifdef DEBUG
+  fprintf(stderr, "%s: nxagentResizeScreenError\n", __func__);
+  #endif
+
+  pScreen -> width = oldWidth;
+  pScreen -> height = oldHeight;
+  pScreen -> mmWidth = oldMmWidth;
+  pScreen -> mmHeight = oldMmHeight;
 
   return 0;
 }
