@@ -177,7 +177,7 @@ void nxagentPrintAgentGeometry(char *hdrMessage, char *prefix);
  */
 
 int nxagentShadowResize = 0;
- 
+
 WindowPtr nxagentShadowWindowPtr = NULL;
 
 static XID           accessPixmapID;
@@ -971,7 +971,6 @@ Bool nxagentOpenScreen(ScreenPtr pScreen, int argc, char *argv[])
     #endif
 
     nxagentChangeOption(Fullscreen, False);
-
     nxagentChangeOption(AllScreens, False);
 
     nxagentFullscreenWindow = 0;
@@ -1162,7 +1161,7 @@ Bool nxagentOpenScreen(ScreenPtr pScreen, int argc, char *argv[])
 
     #if defined(DEBUG) || defined(DEBUG_COLORMAP)
     fprintf(stderr, "Debug: Setting up visuals. Original array has size "
-                "[%d].\n", nxagentNumVisuals); 
+                "[%d].\n", nxagentNumVisuals);
     #endif
 
     int numVisuals = 0;
@@ -1196,7 +1195,7 @@ Bool nxagentOpenScreen(ScreenPtr pScreen, int argc, char *argv[])
 
         #if defined(DEBUG) || defined(DEBUG_COLORMAP)
         fprintf(stderr, "Debug: Set default visual index [%d].\n" ,
-                    defaultVisualIndex); 
+                    defaultVisualIndex);
         #endif
       }
       else
@@ -1216,7 +1215,7 @@ Bool nxagentOpenScreen(ScreenPtr pScreen, int argc, char *argv[])
               visuals[numVisuals].offsetBlue      == visuals[j].offsetBlue)
             break;
         }
- 
+
         if (j < numVisuals)
             continue;
       }
@@ -1225,7 +1224,7 @@ Bool nxagentOpenScreen(ScreenPtr pScreen, int argc, char *argv[])
 
       #if defined(DEBUG) || defined(DEBUG_COLORMAP)
       fprintf(stderr, "Debug: Added visual [%lu].\n" ,
-                  (long unsigned int)visuals[numVisuals].vid); 
+                  (long unsigned int)visuals[numVisuals].vid);
       #endif
 
       for (int j = 0; j < numDepths; j++)
@@ -1265,7 +1264,7 @@ Bool nxagentOpenScreen(ScreenPtr pScreen, int argc, char *argv[])
       #if defined(DEBUG) || defined(DEBUG_COLORMAP)
       fprintf(stderr, "Debug: Registered visual [%lu] for depth [%d (%d)].\n" ,
                   (long unsigned int)visuals[numVisuals].vid, depthIndex,
-                      depths[depthIndex].depth); 
+                      depths[depthIndex].depth);
       #endif
 
       numVisuals++;
@@ -1276,7 +1275,7 @@ Bool nxagentOpenScreen(ScreenPtr pScreen, int argc, char *argv[])
                 defaultVisualIndex, (long unsigned int)visuals[defaultVisualIndex].vid);
 
     fprintf(stderr, "Debug: Setting root depth [%d].\n",
-                visuals[defaultVisualIndex].nplanes); 
+                visuals[defaultVisualIndex].nplanes);
     #endif
 
     VisualID defaultVisual = visuals[defaultVisualIndex].vid;
@@ -1343,9 +1342,8 @@ Bool nxagentOpenScreen(ScreenPtr pScreen, int argc, char *argv[])
     #endif
 
     /*
-     * Complete the initialization of the GLX
-     * extension. This will add the GLX visuals
-     * and will modify numVisuals and numDepths.
+     * Complete the initialization of the GLX extension. This will add
+     * the GLX visuals and will modify numVisuals and numDepths.
      */
 
     #if defined(DEBUG) || defined(DEBUG_COLORMAP)
@@ -1364,8 +1362,8 @@ Bool nxagentOpenScreen(ScreenPtr pScreen, int argc, char *argv[])
     #endif
 
     /*
-     * Replace the visuals and depths initialized
-     * by fbScreenInit with our own.
+     * Replace the visuals and depths initialized by fbScreenInit with
+     * our own.
      */
 
     freeDepths(pScreen->allowedDepths, pScreen->numDepths);
@@ -1379,9 +1377,8 @@ Bool nxagentOpenScreen(ScreenPtr pScreen, int argc, char *argv[])
     pScreen -> rootVisual = defaultVisual;
 
     /*
-     * Set up the internal structures used for
-     * tracking the proxy resources associated
-     * to the unpack and split operations.
+     * Set up the internal structures used for tracking the proxy
+     * resources associated to the unpack and split operations.
      */
 
     nxagentInitSplitResources();
@@ -1419,9 +1416,9 @@ N/A
     if (nxagentOption(Fullscreen))
     {
       /*
-       * We need to disable the host's screensaver or
-       * it will otherwise grab the screen even if it
-       *  is under agent's control.
+       * We need to disable the host's screensaver or it will
+       * otherwise grab the screen even if it is under agent's
+       * control.
        */
 
       XSetScreenSaver(nxagentDisplay, 0, 0, DefaultExposures, DefaultBlanking);
@@ -1444,7 +1441,7 @@ N/A
      *
      * if (!miScreenInit(pScreen, NULL, nxagentOption(RootWidth),
      *              nxagentOption(RootHeight), 1, 1, nxagentOption(RootWidth),
-     *              visuals[nxagentDefaultVisualIndex].nplanes, / * Root depth. * / 
+     *              visuals[nxagentDefaultVisualIndex].nplanes, / * Root depth. * /
      *              numDepths, depths,
      *              visuals[nxagentDefaultVisualIndex].vid,* Root visual. * /
      *              numVisuals, visuals))
@@ -1494,7 +1491,7 @@ N/A
 
     /*
      * Window Procedures.
-     * 
+     *
      * Note that the following functions are not
      * replaced with nxagent counterparts:
      *
@@ -1528,9 +1525,8 @@ N/A
     pScreen->DestroyPixmap = nxagentDestroyPixmap;
 
     /*
-     * This is originally miModifyPixmapHeader()
-     * from miscrinit.c. It is used to recycle
-     * the scratch pixmap for this screen.
+     * This is originally miModifyPixmapHeader() from miscrinit.c. It
+     * is used to recycle the scratch pixmap for this screen.
      */
 
     pScreen->ModifyPixmapHeader = nxagentModifyPixmapHeader;
@@ -1599,18 +1595,16 @@ N/A
     #ifdef RENDER
 
     /*
-     * Initialize picture support. This have to be
-     * placed here because miDCInitialize calls
-     * DamageSetup, that should wrap the picture
-     * screen functions. So PictureInit has to be
-     * called before.
+     * Initialize picture support. This have to be placed here because
+     * miDCInitialize calls DamageSetup, that should wrap the picture
+     * screen functions. So PictureInit has to be called before.
      */
 
     if (nxagentRenderEnable && !nxagentReconnectTrap)
     {
       if (!nxagentPictureInit(pScreen, 0, 0))
       {
-        nxagentRenderEnable = False;              
+        nxagentRenderEnable = False;
 
         return FALSE;
       }
@@ -1650,8 +1644,7 @@ N/A
                                nxagentOption(Height)) / 32)
 
     /*
-     * Complete the initialization of the RANDR
-     * extension.
+     * Complete the initialization of the RANDR extension.
      */
 
     nxagentInitRandRExtension(pScreen);
@@ -1686,7 +1679,6 @@ N/A
          * it will otherwise grab the screen even if it
          * is under agent's control.
          */
-                                                                                                   
         XSetScreenSaver(nxagentDisplay, 0, 0, DefaultExposures, DefaultBlanking);
       }
     }
@@ -1705,10 +1697,9 @@ N/A
     else
     {
       /*
-       * Create any top-level window as a child of the
-       * real root of the remote display. See also the
-       * InitRootWindow() procedure and the function
-       * handling the splash screen.
+       * Create any top-level window as a child of the real root of
+       * the remote display. See also the InitRootWindow() procedure
+       * and the function handling the splash screen.
        */
 
       #ifdef TEST
@@ -1943,10 +1934,9 @@ N/A
   }
 
   /*
-   * The purpose of this check is to verify if there
-   * is a window manager running. Unfortunately due
-   * to the way we manage the intern atoms call, the
-   * atom will always exist.
+   * The purpose of this check is to verify if there is a window
+   * manager running. Unfortunately due to the way we manage the
+   * intern atoms call, the atom will always exist.
    */
 
   if (nxagentWMIsRunning)
@@ -1988,9 +1978,9 @@ N/A
   else
   {
     /*
-     * We should always enable the configuration of the
-     * remote X server's devices if we are running full-
-     * screen and there is no WM running.
+     * We should always enable the configuration of the remote X
+     * server's devices if we are running fullscreen and there is no
+     * WM running.
      */
 
     if (nxagentOption(Fullscreen))
@@ -2004,9 +1994,8 @@ N/A
   }
 
   /*
-   * Inform the user whether the agent's clients will
-   * be able to change the real X server's keyboard
-   * and pointer settings.
+   * Inform the user whether the agent's clients will be able to
+   * change the real X server's keyboard and pointer settings.
    */
 
   if (nxagentOption(DeviceControl) == False)
@@ -2040,9 +2029,8 @@ N/A
   #endif /* RENDER */
 
   /*
-   * Check if the composite extension is
-   * supported on the remote display and
-   * prepare the agent for its use.
+   * Check if the composite extension is supported on the remote
+   * display and prepare the agent for its use.
    */
 
   nxagentCompositeExtensionInit();
@@ -2265,7 +2253,7 @@ Bool nxagentResizeScreen(ScreenPtr pScreen, int width, int height,
   #ifdef TEST
   nxagentPrintAgentGeometry("Before Resize Screen", "nxagentResizeScreen:");
   #endif
-  
+
   /*
    * Change screen properties.
    */
@@ -2487,7 +2475,7 @@ void nxagentShadowSetWindowsSize(void)
   XResizeWindow(nxagentDisplay, nxagentDefaultWindows[0],
                     nxagentOption(Width), nxagentOption(Height));
 
-  XMoveResizeWindow(nxagentDisplay, nxagentInputWindows[0], 0, 0, 
+  XMoveResizeWindow(nxagentDisplay, nxagentInputWindows[0], 0, 0,
                         nxagentOption(Width), nxagentOption(Height));
 }
 
@@ -3439,7 +3427,7 @@ Bool nxagentReconnectScreen(void *p0)
     return False;
   }
 
-  nxagentPixmap(pPixmap) = XCreatePixmap(nxagentDisplay, 
+  nxagentPixmap(pPixmap) = XCreatePixmap(nxagentDisplay,
                                          nxagentDefaultWindows[nxagentDefaultScreen->myNum],
                                          pPixmap -> drawable.width,
                                          pPixmap -> drawable.height,
@@ -3453,10 +3441,10 @@ Bool nxagentReconnectScreen(void *p0)
   CARD16 h = 16;
   (*nxagentDefaultScreen->QueryBestSize)(StippleShape, &w, &h, nxagentDefaultScreen);
   if (!(nxagentPixmap(nxagentDefaultScreen->PixmapPerDepth[0]) =
-       XCreatePixmap(nxagentDisplay, 
+       XCreatePixmap(nxagentDisplay,
                      nxagentDefaultDrawables[1],
-                     w, 
-                     h, 
+                     w,
+                     h,
                      1)));
 
   Mask mask = nxagentGetDefaultEventMask();
@@ -3478,7 +3466,7 @@ Bool nxagentReconnectScreen(void *p0)
 
   nxagentSetTimeoutTimer(0);
 
-  return True;  
+  return True;
 }
 
 /* intersect two rectangles */
@@ -3945,7 +3933,7 @@ int nxagentAdjustRandRXinerama(ScreenPtr pScreen)
         sprintf(name, "NX%d", i+1);
         output = RROutputCreate(pScreen, name, strlen(name), NULL);
         /* will be done later
-        RROutputSetConnection(output, RR_Disconnected); 
+        RROutputSetConnection(output, RR_Disconnected);
         */
         #ifdef DEBUG
         fprintf(stderr, "nxagentAdjustRandRXinerama: created new output [%s]\n", name);
@@ -4658,7 +4646,7 @@ void nxagentFbRestoreArea(PixmapPtr pPixmap, WindowPtr pWin, int xSrc, int ySrc,
   XImage *image = XGetImage(nxagentDisplay, nxagentPixmap(pPixmap), xSrc, ySrc,
                                 width, height, AllPlanes, format);
 */
-  
+
   if (image == NULL)
   {
     #ifdef WARNING
@@ -4683,9 +4671,9 @@ FIXME
     #ifdef WARNING
     fprintf(stderr, "nxagentFbRestoreArea: WARNING! Visual not found. Using default visual.\n");
     #endif
-    
+
     pVisual = nxagentVisuals[nxagentDefaultVisualIndex].visual;
-  } 
+  }
 
   image = XCreateImage(nxagentDisplay, pVisual,
                                   depth, format, 0, (char *) data,
