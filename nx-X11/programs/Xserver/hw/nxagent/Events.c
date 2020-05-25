@@ -3275,7 +3275,7 @@ int nxagentHandleConfigureNotify(XEvent* X)
       return 1;
     }
   }
-  else
+  else /* (nxagentOption(Rootless) == True) */
   {
     /*
      * Save the position of the agent default window. Don't save the
@@ -3298,7 +3298,7 @@ int nxagentHandleConfigureNotify(XEvent* X)
       {
         /*
          * - WITHOUT window manager any position change is relevant
-         * - WITH window manager only synthetic position changes send
+         * - WITH window manager only synthetic position changes sent
          *   by the window manager are relevant, see ICCCM Chapter 4,
          *   "Configuring the Window"
          */
@@ -3414,6 +3414,7 @@ int nxagentHandleConfigureNotify(XEvent* X)
 
         if (nxagentOption(Fullscreen) == 0)
         {
+	  /* FIXME: has already been done some lines above */
           nxagentMoveViewport(pScreen, 0, 0);
         }
         else
