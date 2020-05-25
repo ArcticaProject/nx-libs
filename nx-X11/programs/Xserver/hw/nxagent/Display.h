@@ -59,6 +59,7 @@ extern Pixel nxagentWhitePixel;
 extern Drawable nxagentDefaultDrawables[MAXDEPTH + 1];
 extern Pixmap nxagentScreenSaverPixmap;
 
+#ifdef NX_CONFINE_WINDOW
 /*
  * The "confine" window is used in nxagentConstrainCursor().
  * We are currently overriding the original Xnest behaviour
@@ -66,6 +67,7 @@ extern Pixmap nxagentScreenSaverPixmap;
  */
 
 extern Window nxagentConfineWindow;
+#endif
 
 /*
  * Keyboard and pointer are handled as they were hardware

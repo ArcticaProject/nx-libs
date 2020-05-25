@@ -159,6 +159,7 @@ Pixmap nxagentScreenSaverPixmap;
 
 XlibGC nxagentBitmapGC;
 
+#ifdef NX_CONFINE_WINDOW
 /*
  * The "confine" window is used in the nxagentConstrainCursor
  * procedure. We are currently overriding the original Xnest
@@ -166,6 +167,7 @@ XlibGC nxagentBitmapGC;
  */
 
 Window nxagentConfineWindow;
+#endif
 
 Pixmap nxagentIconPixmap;
 Pixmap nxagentIconShape;
@@ -1110,6 +1112,7 @@ void nxagentResetSignalHandlers(void)
  */
 void nxagentOpenConfineWindow(void)
 {
+#ifdef NX_CONFINE_WINDOW
   nxagentConfineWindow = XCreateWindow(nxagentDisplay,
                                        DefaultRootWindow(nxagentDisplay),
                                        0, 0, 1, 1, 0, 0,
@@ -1125,6 +1128,7 @@ void nxagentOpenConfineWindow(void)
   #ifdef TEST
   fprintf(stderr, "%s: Created agent's confine window with id [0x%x].\n", __func__, nxagentConfineWindow);
   #endif
+#endif
 }
 
 void nxagentOpenDisplay(int argc, char *argv[])
