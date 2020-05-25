@@ -417,7 +417,7 @@ Bool nxagentCreateWindow(WindowPtr pWin)
   #endif
 
   #ifdef TEST
-  fprintf(stderr, "nxagentCreateWindow: Created new window with id [0x%x].\n",
+  fprintf(stderr, "%s: Created new window with id [0x%x].\n", __func__,
               nxagentWindowPriv(pWin)->window);
   #endif
 
@@ -817,7 +817,7 @@ void nxagentSwitchAllScreens(ScreenPtr pScreen, Bool switchOn)
     for (i = 0; i < 100 && nxagentWMIsRunning; i++)
     {
       #ifdef TEST
-      fprintf(stderr, "nxagentSwitchAllScreens: WARNING! Going to wait for the ReparentNotify event.\n");
+      fprintf(stderr, "%s: WARNING! Going to wait for the ReparentNotify event.\n", __func__);
       #endif
 
       if (XCheckTypedWindowEvent(nxagentDisplay, w, ReparentNotify, &e))
@@ -920,7 +920,7 @@ void nxagentSwitchAllScreens(ScreenPtr pScreen, Bool switchOn)
        */
 
       #ifdef WARNING
-      fprintf(stderr, "nxagentSwitchAllScreens: WARNING! Expected ReparentNotify event missing.\n");
+      fprintf(stderr, "%s: WARNING! Expected ReparentNotify event missing.\n", __func__);
       #endif
 
       nxagentWMIsRunning = False;

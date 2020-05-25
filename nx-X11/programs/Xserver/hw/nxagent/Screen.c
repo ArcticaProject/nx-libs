@@ -780,32 +780,36 @@ void nxagentPrintAgentGeometry(char *hdrMessage, char *prefix)
 
   if (hdrMessage)
   {
-    fprintf(stderr, "--------------- %s -----------------.\n", hdrMessage);
+    fprintf(stderr, "%s /--------------- %s -----------------.\n", prefix, hdrMessage);
   }
 
-  fprintf(stderr, "%s Root window at offset (%d,%d) size (%d,%d).\n", prefix,
+  fprintf(stderr, "%s | Root window at offset (%d,%d) size (%d,%d).\n", prefix,
               nxagentOption(RootX), nxagentOption(RootY),
                   nxagentOption(RootWidth), nxagentOption(RootHeight));
 
-  fprintf(stderr, "%s Default window at offset (%d,%d) size (%d,%d) border size %d.\n", prefix,
+  fprintf(stderr, "%s | Default window at offset (%d,%d) size (%d,%d) border size %d.\n", prefix,
               nxagentOption(X), nxagentOption(Y), nxagentOption(Width), nxagentOption(Height),
                   nxagentOption(BorderWidth));
 
-  fprintf(stderr, "%s Span between root window and default window is (%d,%d).\n", prefix,
+  fprintf(stderr, "%s | Span between root window and default window is (%d,%d).\n", prefix,
               nxagentOption(ViewportXSpan), nxagentOption(ViewportYSpan));
 
-  fprintf(stderr, "%s Default window in window mode has offset (%d,%d) and size (%d,%d).\n", prefix,
+  fprintf(stderr, "%s | Default window in window mode has offset (%d,%d) and size (%d,%d).\n", prefix,
               nxagentOption(SavedX), nxagentOption(SavedY), nxagentOption(SavedWidth), nxagentOption(SavedHeight));
 
-  fprintf(stderr, "%s Fullscreen is %s.\n", prefix,
+  fprintf(stderr, "%s | Fullscreen is %s.\n", prefix,
               nxagentOption(Fullscreen) ? "ON" : "OFF");
 
-  fprintf(stderr, "%s Desktop resize mode is %s.\n", prefix,
+  fprintf(stderr, "%s | Desktop resize mode is %s.\n", prefix,
               nxagentOption(DesktopResize) ? "ON" : "OFF");
 
-  fprintf(stderr, "%s Resize desktop at startup is %s.\n", prefix,
+  fprintf(stderr, "%s | Resize desktop at startup is %s.\n", prefix,
               nxagentResizeDesktopAtStartup ? "ON" : "OFF");
 
+  if (hdrMessage)
+  {
+    fprintf(stderr, "%s \\--------------- %s -----------------.\n", prefix, hdrMessage);
+  }
   #endif
 }
 
