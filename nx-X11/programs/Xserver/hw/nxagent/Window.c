@@ -821,6 +821,9 @@ void nxagentSwitchAllScreens(ScreenPtr pScreen, Bool switchOn)
 
       if (XCheckTypedWindowEvent(nxagentDisplay, w, ReparentNotify, &e))
       {
+        #ifdef TEST
+        fprintf(stderr, "%s: found ReparentNotify event in iteration [%d].\n", __func__, i);
+        #endif
         break;
       }
 
@@ -970,6 +973,9 @@ void nxagentSwitchAllScreens(ScreenPtr pScreen, Bool switchOn)
 
     if (nxagentOption(WMBorderWidth) > 0)
     {
+      #ifdef DEBUG
+      fprintf(stderr, "%s: WMBorderWidth [%d]\n", __func__, nxagentOption(WMBorderWidth));
+      #endif
       nxagentChangeOption(X, nxagentOption(SavedX) - nxagentOption(WMBorderWidth));
     }
     else
@@ -979,6 +985,9 @@ void nxagentSwitchAllScreens(ScreenPtr pScreen, Bool switchOn)
 
     if (nxagentOption(WMTitleHeight) > 0)
     {
+      #ifdef DEBUG
+      fprintf(stderr, "%s: WMTitleHeight [%d]\n", __func__, nxagentOption(WMTitleHeight));
+      #endif
       nxagentChangeOption(Y, nxagentOption(SavedY) - nxagentOption(WMTitleHeight));
     }
     else
