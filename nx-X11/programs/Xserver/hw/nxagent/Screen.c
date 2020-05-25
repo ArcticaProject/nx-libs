@@ -1727,16 +1727,6 @@ N/A
        * handling the splash screen.
        */
 
-      if (nxagentOption(Rootless) == True)
-      {
-        nxagentDefaultWindows[pScreen->myNum] = DefaultRootWindow(nxagentDisplay);
-
-        #ifdef TEST
-        fprintf(stderr, "nxagentOpenScreen: Using root window id [%ld].\n",
-                    (long int)nxagentDefaultWindows[pScreen->myNum]);
-        #endif
-      }
-
       #ifdef TEST
       fprintf(stderr, "nxagentOpenScreen: Going to create new default window.\n");
       #endif
