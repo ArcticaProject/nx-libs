@@ -846,7 +846,6 @@ Bool nxagentOpenScreen(ScreenPtr pScreen,
   int depthIndex;
   unsigned long valuemask;
   XSetWindowAttributes attributes;
-  Mask mask;
   Bool resetAgentPosition = False;
 
   VisualID defaultVisual;
@@ -1714,9 +1713,7 @@ N/A
     {
       nxagentDefaultWindows[pScreen->myNum] = nxagentParentWindow;
 
-      mask = nxagentGetDefaultEventMask();
-
-      XSelectInput(nxagentDisplay, nxagentDefaultWindows[pScreen->myNum], mask);
+      XSelectInput(nxagentDisplay, nxagentDefaultWindows[pScreen->myNum], nxagentGetDefaultEventMask());
     }
     else
     {
@@ -1757,8 +1754,7 @@ N/A
       if (nxagentOption(Rootless) == 0)
       {
         valuemask = CWEventMask;
-        mask = PointerMotionMask;
-        attributes.event_mask = mask;
+        attributes.event_mask = PointerMotionMask;
 
         nxagentInputWindows[pScreen->myNum] =
             XCreateWindow(nxagentDisplay,
@@ -1845,9 +1841,7 @@ N/A
                         strlen("X-AGENT"));
       }
 
-      mask = nxagentGetDefaultEventMask();
-
-      XSelectInput(nxagentDisplay, nxagentFullscreenWindow, mask);
+      XSelectInput(nxagentDisplay, nxagentFullscreenWindow, nxagentGetDefaultEventMask());
     }
 
     XSizeHints* sizeHints = XAllocSizeHints();
