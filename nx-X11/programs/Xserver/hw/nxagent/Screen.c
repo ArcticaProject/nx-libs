@@ -846,7 +846,6 @@ Bool nxagentOpenScreen(ScreenPtr pScreen,
   int depthIndex;
   unsigned long valuemask;
   XSetWindowAttributes attributes;
-  XWindowAttributes gattributes;
   Mask mask;
   Bool resetAgentPosition = False;
 
@@ -1423,6 +1422,8 @@ N/A
        * This would cause a GetWindowAttributes
        * and a GetGeometry (asynchronous) reply.
        */
+
+      XWindowAttributes gattributes;
 
       XGetWindowAttributes(nxagentDisplay, nxagentParentWindow, &gattributes);
 
