@@ -1757,7 +1757,7 @@ N/A
       }
 
       #ifdef TEST
-      fprintf(stderr, "nxagentOpenScreen: Created new default window for screen [%d] with id [0x%x].\n",
+      fprintf(stderr, "%s: Created new default window for screen [%d] with id [0x%x].\n", __func__,
               pScreen->myNum, nxagentDefaultWindows[pScreen->myNum]);
       #endif
 
@@ -1795,7 +1795,7 @@ N/A
         #endif
 
         #ifdef TEST
-        fprintf(stderr, "nxagentOpenScreen: Created new input window for screen [%d] with id [0x%x].\n",
+        fprintf(stderr, "%s: Created new input window for screen [%d] with id [0x%x].\n", __func__,
                 pScreen->myNum, nxagentInputWindows[pScreen->myNum]);
         #endif
       }
@@ -2284,6 +2284,11 @@ static void nxagentSetRootClip (ScreenPtr pScreen, Bool enable)
 Bool nxagentResizeScreen(ScreenPtr pScreen, int width, int height,
                              int mmWidth, int mmHeight, Bool doresize)
 {
+  #ifdef DEBUG
+  fprintf(stderr, "%s: called with w [%d] (%dmm) h [%d] (%dmm) doresize [%d]\n",
+              __func__, width, mmWidth, height, mmHeight, doresize);
+  #endif
+
   #ifdef TEST
   nxagentPrintAgentGeometry("Before Resize Screen", "nxagentResizeScreen:");
   #endif
@@ -2345,6 +2350,11 @@ Bool nxagentResizeScreen(ScreenPtr pScreen, int width, int height,
   pScreen -> mmWidth = mmWidth;
   pScreen -> mmHeight = mmHeight;
 
+  #ifdef DEBUG
+  fprintf(stderr, "%s: old w [%d] (%dmm) h [%d] (%dmm)   new w [%d] (%dmm) h [%d] (%dmm)\n",
+              __func__, oldWidth, oldMmWidth, oldHeight, oldMmHeight, width, mmWidth, height, mmHeight);
+  #endif
+
   PixmapPtr pPixmap = fbGetScreenPixmap(pScreen);
 
   char *fbBits = realloc(pPixmap -> devPrivate.ptr, PixmapBytePad(width, pScreen->rootDepth) *
@@ -2368,14 +2378,12 @@ Bool nxagentResizeScreen(ScreenPtr pScreen, int width, int height,
 FIXME: We should try to restore the previously
        reallocated frame buffer pixmap.
 */
-
-    pScreen -> width = oldWidth;
-    pScreen -> height = oldHeight;
-    pScreen -> mmWidth = oldMmWidth;
-    pScreen -> mmHeight = oldMmHeight;
-
     goto nxagentResizeScreenError;
   }
+
+  #ifdef DEBUG
+  fprintf(stderr, "%s: setting RootWidth/Height to [%d]x[%d]\n", __func__, width, height);
+  #endif
 
   nxagentChangeOption(RootWidth, width);
   nxagentChangeOption(RootHeight, height);
@@ -2437,9 +2445,17 @@ FIXME: We should try to restore the previously
   RegionInit(&pScreen->root -> clipList, &box, 1);
   RegionInit(&pScreen->root -> borderClip, &box, 1);
 
+  #ifdef DEBUG
+  fprintf(stderr, "%s: calling PositionWindow() [0,0] for root Window\n", __func__);
+  #endif
+
   (*pScreen -> PositionWindow)(pScreen->root, 0, 0);
 
   nxagentSetRootClip(pScreen, 1);
+
+  #ifdef DEBUG
+  fprintf(stderr, "%s: moving root window to [%d,%d]\n", __func__, nxagentOption(RootX), nxagentOption(RootY));
+  #endif
 
   XMoveWindow(nxagentDisplay, nxagentWindow(screenInfo.screens[0]->root),
                   nxagentOption(RootX), nxagentOption(RootY));
@@ -2807,7 +2823,7 @@ int nxagentShadowCreateMainWindow(ScreenPtr pScreen, WindowPtr pWin, int width, 
     nxagentShadowPixmapPtr -> drawable.id = accessPixmapID;
 
     #ifdef TEST
-    fprintf(stderr, "nxagentShadowCreateMainWindow: nxagentShadowPixmapPtr [%p] PixmapM -> drawable.id [%lu].\n",
+    fprintf(stderr, "nxagentShadowCreateMainWindow: nxagentShadowPixmapPtr [%p] PixmapM -> drawable.id [%u].\n",
                 (void *)nxagentShadowPixmapPtr, nxagentShadowPixmapPtr -> drawable.id);
     fprintf(stderr, "nxagentShadowCreateMainWindow: Create pixmap with width [%d] height [%d] depth [%d].\n",
                 nxagentShadowWidth, nxagentShadowHeight, (int)nxagentShadowDepth);
@@ -2884,10 +2900,10 @@ int nxagentShadowCreateMainWindow(ScreenPtr pScreen, WindowPtr pWin, int width, 
   {
     #ifdef TEST
     fprintf(stderr, "nxagentShadowCreateMainWindow: Create window with nxagentShadowWindowPtr [%p]"
-                "nxagentShadowWindowPtr -> drawable.id [%lu].\n", (void *) nxagentShadowWindowPtr,
+                "nxagentShadowWindowPtr -> drawable.id [%u].\n", (void *) nxagentShadowWindowPtr,
                      nxagentShadowWindowPtr -> drawable.id);
 
-    fprintf(stderr, "nxagentShadowCreateMainWindow: parent nxagentShadowWindowPtr [%p] parent -> drawable.id [%lu].\n",
+    fprintf(stderr, "nxagentShadowCreateMainWindow: parent nxagentShadowWindowPtr [%p] parent -> drawable.id [%u].\n",
                 (void *)nxagentShadowWindowPtr->parent, nxagentShadowWindowPtr -> parent -> drawable.id);
 
     #endif
@@ -3669,8 +3685,8 @@ void nxagentAdjustCustomMode(ScreenPtr pScreen)
         }
 
         #ifdef TEST
-        fprintf(stderr, "%s: Going to destroy mode %p with refcnt %d.\n",
-                __func__, nxagentRRCustomMode, nxagentRRCustomMode->refcnt);
+        fprintf(stderr, "%s: Going to destroy mode [%p] with refcnt [%d].\n",
+                    __func__, (void *)nxagentRRCustomMode, nxagentRRCustomMode->refcnt);
         #endif
 
         RRModeDestroy(nxagentRRCustomMode);
