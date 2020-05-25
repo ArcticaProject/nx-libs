@@ -844,8 +844,6 @@ Bool nxagentOpenScreen(ScreenPtr pScreen,
   DepthPtr depths;
   int numVisuals, numDepths;
   int depthIndex;
-  unsigned long valuemask;
-  XSetWindowAttributes attributes;
   Bool resetAgentPosition = False;
 
   VisualID defaultVisual;
@@ -1678,15 +1676,16 @@ N/A
   if (nxagentDoFullGeneration == 1 ||
           nxagentReconnectTrap == 1)
   {
-    valuemask = CWBackPixel | CWEventMask | CWColormap |
-                    (nxagentOption(AllScreens) == 1 ? CWOverrideRedirect : 0);
-
-    attributes.background_pixel = nxagentBlackPixel;
-    attributes.event_mask = nxagentGetDefaultEventMask();
-    attributes.colormap = nxagentDefaultVisualColormap(nxagentDefaultVisual(pScreen));
+    unsigned long valuemask = CWBackPixel | CWEventMask | CWColormap;
+    XSetWindowAttributes attributes = {
+        .background_pixel = nxagentBlackPixel,
+        .event_mask = nxagentGetDefaultEventMask(),
+        .colormap = nxagentDefaultVisualColormap(nxagentDefaultVisual(pScreen))
+    };
 
     if (nxagentOption(AllScreens) == 1)
     {
+      valuemask |= CWOverrideRedirect;
       attributes.override_redirect = True;
     }
 
@@ -1753,8 +1752,7 @@ N/A
 
       if (nxagentOption(Rootless) == 0)
       {
-        valuemask = CWEventMask;
-        attributes.event_mask = PointerMotionMask;
+        XSetWindowAttributes inpattributes = {.event_mask = PointerMotionMask};
 
         nxagentInputWindows[pScreen->myNum] =
             XCreateWindow(nxagentDisplay,
@@ -1764,7 +1762,7 @@ N/A
                           nxagentOption(Height),
                           0, 0, InputOnly,
                           nxagentDefaultVisual(pScreen),
-                          valuemask , &attributes);
+                          CWEventMask, &inpattributes);
 
         if (nxagentReportWindowIds)
         {
