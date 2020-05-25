@@ -405,10 +405,8 @@ void nxagentNotifyConnection(int fd, int ready, void *data)
 
 void InitInput(int argc, char *argv[])
 {
-  void *ptr, *kbd;
-
-  ptr = AddInputDevice(nxagentPointerProc, True);
-  kbd = AddInputDevice(nxagentKeyboardProc, True);
+  void *ptr = AddInputDevice(nxagentPointerProc, True);
+  void *kbd = AddInputDevice(nxagentKeyboardProc, True);
 
   RegisterPointerDevice(ptr);
   RegisterKeyboardDevice(kbd);
