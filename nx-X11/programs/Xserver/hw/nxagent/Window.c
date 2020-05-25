@@ -401,13 +401,18 @@ Bool nxagentCreateWindow(WindowPtr pWin)
 
   if (nxagentReportPrivateWindowIds)
   {
-    fprintf(stderr, "NXAGENT_WINDOW_ID: PRIVATE_WINDOW,WID:[0x%x],INT:[0x%x]\n", nxagentWindowPriv(pWin)->window, pWin->drawable.id);
+    fprintf(stderr, "NXAGENT_WINDOW_ID: %s_WINDOW,WID:[0x%x],INT:[0x%x]\n",
+                (pWin->drawable.id == pWin->drawable.pScreen->root->drawable.id) ? "ROOT" : "PRIVATE",
+                    nxagentWindowPriv(pWin)->window, pWin->drawable.id);
   }
 
   #ifdef DEBUG
   {
     char *winname = NULL;
-    if (-1 != asprintf(&winname, "%s Private[0x%lx]", nxagentWindowName, pWin->drawable.id))
+
+    if (-1 != asprintf(&winname, "%s %s[0x%lx]", nxagentWindowName,
+                           (pWin->drawable.id == pWin->drawable.pScreen->root->drawable.id) ? "Root" : "Private",
+                               pWin->drawable.id))
     {
       Xutf8SetWMProperties(nxagentDisplay, nxagentWindowPriv(pWin)->window,
                                winname, winname, NULL , 0 , NULL, NULL, NULL);
@@ -3006,13 +3011,18 @@ static void nxagentReconnectWindow(void * param0, XID param1, void * data_buffer
 
   if (nxagentReportPrivateWindowIds)
   {
-    fprintf(stderr, "NXAGENT_WINDOW_ID: PRIVATE_WINDOW,WID:[0x%x],INT:[0x%x]\n", nxagentWindowPriv(pWin)->window, pWin->drawable.id);
+    fprintf(stderr, "NXAGENT_WINDOW_ID: %s_WINDOW,WID:[0x%x],INT:[0x%x]\n",
+                (pWin->drawable.id == pWin->drawable.pScreen->root->drawable.id) ? "ROOT" : "PRIVATE",
+                    nxagentWindowPriv(pWin)->window, pWin->drawable.id);
   }
 
   #ifdef DEBUG
   {
     char *winname = NULL;
-    if (-1 != asprintf(&winname, "%s Private[0x%lx]", nxagentWindowName, pWin->drawable.id))
+
+    if (-1 != asprintf(&winname, "%s %s[0x%lx]", nxagentWindowName,
+                           (pWin->drawable.id == pWin->drawable.pScreen->root->drawable.id) ? "Root" : "Private",
+                               pWin->drawable.id))
     {
       Xutf8SetWMProperties(nxagentDisplay, nxagentWindowPriv(pWin)->window,
                                winname, winname, NULL , 0 , NULL, NULL, NULL);
