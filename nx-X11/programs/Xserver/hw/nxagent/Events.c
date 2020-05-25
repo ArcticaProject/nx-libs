@@ -3602,9 +3602,9 @@ int nxagentHandleReparentNotify(XEvent* X)
      * Calculate the absolute upper-left X e Y
      */
 
+    XlibWindow parent = X -> xreparent.parent;
     XWindowAttributes attributes;
-    if ((XGetWindowAttributes(nxagentDisplay, X -> xreparent.window,
-                                  &attributes) == 0))
+    if ((XGetWindowAttributes(nxagentDisplay, parent, &attributes) == 0))
     {
       #ifdef WARNING
       fprintf(stderr, "%s: WARNING! XGetWindowAttributes for parent window failed.\n", __func__);
@@ -3622,7 +3622,7 @@ int nxagentHandleReparentNotify(XEvent* X)
     int before_y = y;
     #endif
 
-    XTranslateCoordinates(nxagentDisplay, X -> xreparent.window,
+    XTranslateCoordinates(nxagentDisplay, parent,
                               attributes.root, -attributes.border_width,
                                   -attributes.border_width, &x, &y, &junk);
 
@@ -3634,9 +3634,7 @@ int nxagentHandleReparentNotify(XEvent* X)
     * Calculate the parent X and parent Y.
     */
 
-    XlibWindow w = X -> xreparent.parent;
-
-    if (w != DefaultRootWindow(nxagentDisplay))
+    if (parent != DefaultRootWindow(nxagentDisplay))
     {
       XlibWindow rootReturn = 0;
       XlibWindow parentReturn = 0;
@@ -3645,7 +3643,7 @@ int nxagentHandleReparentNotify(XEvent* X)
 
       do
       {
-        Status result = XQueryTree(nxagentDisplay, w, &rootReturn, &parentReturn,
+        Status result = XQueryTree(nxagentDisplay, parent, &rootReturn, &parentReturn,
                                        &childrenReturn, &nchildrenReturn);
 
         SAFE_XFree(childrenReturn);
@@ -3655,7 +3653,7 @@ int nxagentHandleReparentNotify(XEvent* X)
           break;
         }
 
-        w = parentReturn;
+        parent = parentReturn;
       }
       while (True);
 
@@ -3663,7 +3661,7 @@ int nxagentHandleReparentNotify(XEvent* X)
        * WM reparented. Find edge of the frame.
        */
 
-      if (XGetWindowAttributes(nxagentDisplay, w, &attributes) == 0)
+      if (XGetWindowAttributes(nxagentDisplay, parent, &attributes) == 0)
       {
         #ifdef WARNING
         fprintf(stderr, "%s: WARNING! XGetWindowAttributes failed for parent window.\n", __func__);
