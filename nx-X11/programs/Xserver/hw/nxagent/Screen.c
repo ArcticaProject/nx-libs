@@ -1431,11 +1431,6 @@ N/A
       nxagentChangeOption(Height, gattributes.height);
     }
 
-    if (nxagentOption(AllScreens))
-    {
-      attributes.override_redirect = True; 
-    }
-
     if (nxagentOption(Fullscreen))
     {
       /*
