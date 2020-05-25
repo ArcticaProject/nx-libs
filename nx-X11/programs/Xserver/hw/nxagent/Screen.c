@@ -837,23 +837,9 @@ void freeDepths(DepthPtr depths, int num)
   SAFE_free(depths);
 }
 
-Bool nxagentOpenScreen(ScreenPtr pScreen,
-                           int argc, char *argv[])
+Bool nxagentOpenScreen(ScreenPtr pScreen, int argc, char *argv[])
 {
-  VisualPtr visuals;
-  DepthPtr depths;
-  int numVisuals, numDepths;
-  int depthIndex;
   Bool resetAgentPosition = False;
-
-  VisualID defaultVisual;
-  int rootDepth;
-
-  void * pFrameBufferBits;
-  int bitsPerPixel;
-  int sizeInBytes;
-
-  int defaultVisualIndex = 0;
 
   #ifdef TEST
   fprintf(stderr, "nxagentOpenScreen: Called for screen index [%d].\n",
@@ -1161,7 +1147,7 @@ Bool nxagentOpenScreen(ScreenPtr pScreen,
      * Initialize the depths.
      */
 
-    depths = (DepthPtr) malloc(nxagentNumDepths * sizeof(DepthRec));
+    DepthPtr depths = (DepthPtr) malloc(nxagentNumDepths * sizeof(DepthRec));
 
     for (int i = 0; i < nxagentNumDepths; i++)
     {
@@ -1179,10 +1165,12 @@ Bool nxagentOpenScreen(ScreenPtr pScreen,
                 "[%d].\n", nxagentNumVisuals); 
     #endif
 
-    numVisuals = 0;
-    numDepths = nxagentNumDepths;
+    int numVisuals = 0;
+    int numDepths = nxagentNumDepths;
 
-    visuals = (VisualPtr) malloc(nxagentNumVisuals * sizeof(VisualRec));
+    VisualPtr visuals = (VisualPtr) malloc(nxagentNumVisuals * sizeof(VisualRec));
+
+    int defaultVisualIndex = 0;
 
     for (int i = 0; i < nxagentNumVisuals; i++)
     {
@@ -1231,10 +1219,9 @@ Bool nxagentOpenScreen(ScreenPtr pScreen,
  
         if (j < numVisuals)
             continue;
-
       }
 
-      depthIndex = UNDEFINED;
+      int depthIndex = UNDEFINED;
 
       #if defined(DEBUG) || defined(DEBUG_COLORMAP)
       fprintf(stderr, "Debug: Added visual [%lu].\n" ,
@@ -1292,12 +1279,13 @@ Bool nxagentOpenScreen(ScreenPtr pScreen,
                 visuals[defaultVisualIndex].nplanes); 
     #endif
 
-    defaultVisual = visuals[defaultVisualIndex].vid;
-    rootDepth = visuals[defaultVisualIndex].nplanes;
+    VisualID defaultVisual = visuals[defaultVisualIndex].vid;
+    int rootDepth = visuals[defaultVisualIndex].nplanes;
 
     nxagentInitAlphaVisual();
 
-    bitsPerPixel = nxagentBitsPerPixel(rootDepth);
+    int bitsPerPixel = nxagentBitsPerPixel(rootDepth);
+    int sizeInBytes;
 
     if (bitsPerPixel == 1)
     {
@@ -1313,7 +1301,7 @@ Bool nxagentOpenScreen(ScreenPtr pScreen,
                 "[%d] bitsPerPixel [%d] sizeInBytes [%d]\n", rootDepth, bitsPerPixel, sizeInBytes);
     #endif
 
-    pFrameBufferBits = (char *) malloc(sizeInBytes);
+    void * pFrameBufferBits = (char *) malloc(sizeInBytes);
 
     if (!pFrameBufferBits)
     {
