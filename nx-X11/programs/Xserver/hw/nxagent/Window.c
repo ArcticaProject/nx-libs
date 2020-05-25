@@ -380,6 +380,8 @@ Bool nxagentCreateWindow(WindowPtr pWin)
 
   if (nxagentOption(Rootless) == 1)
   {
+    nxagentWindowPriv(pWin) -> isMapped = 0;
+
     if (pWin != nxagentRootlessWindow)
     {
       WindowPtr pParent = pWin -> parent;
@@ -388,14 +390,6 @@ Bool nxagentCreateWindow(WindowPtr pWin)
       {
         nxagentWindowPriv(pWin) -> isMapped = 1;
       }
-      else
-      {
-        nxagentWindowPriv(pWin) -> isMapped = 0;
-      }
-    }
-    else
-    {
-      nxagentWindowPriv(pWin) -> isMapped = 0;
     }
   }
 
