@@ -1332,13 +1332,16 @@ Bool nxagentOpenScreen(ScreenPtr pScreen,
                   rootDepth, (long unsigned int)defaultVisual);
     #endif
 
-    if ((monitorResolution < 1) && (nxagentAutoDPI == False))
+    if (monitorResolution < 1)
     {
-      monitorResolution = NXAGENT_DEFAULT_DPI;
-    }
-    else if ((monitorResolution < 1) && (nxagentAutoDPI == True))
-    {
-      monitorResolution = NXAGENT_AUTO_DPI;
+      if (nxagentAutoDPI)
+      {
+        monitorResolution = NXAGENT_AUTO_DPI;
+      }
+      else
+      {
+        monitorResolution = NXAGENT_DEFAULT_DPI;
+      }
     }
 
     if (!fbScreenInit(pScreen, pFrameBufferBits, nxagentOption(RootWidth), nxagentOption(RootHeight),
