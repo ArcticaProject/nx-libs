@@ -123,6 +123,9 @@ OBJS =  $(CBRT_OBJ)             \
 
 #if NXLibraries
 
+NX_DEFINES = -DNXAGENT_SERVER  \
+             $(NULL)
+
 /*
  * To build the NX agent we need the XINPUT symbol
  * in order to build the XInputExtension, since we
@@ -155,7 +158,7 @@ LINTLIBS =                      \
            ../os/llib-los.ln    \
            $(NULL)
 
-DEFINES  = $(FFS_DEFINES)
+DEFINES  = $(FFS_DEFINES) $(NX_DEFINES)
 
 NormalLibraryObjectRule()
 NormalLibraryTarget(mi,$(OBJS))
