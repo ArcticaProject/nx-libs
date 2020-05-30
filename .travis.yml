@@ -1,19 +1,19 @@
-# Use new xenial images, should yield newer compilers and packages
-sudo: true
-dist: xenial
+# Use new bionic images, should yield newer compilers and packages
 language: cpp
+os: linux
 
-matrix:
+jobs:
   include:
-    - os: linux
+    - name: "GCC 5.4"
+      dist: xenial
       addons:
         apt:
           sources:
-            - sourceline: 'deb http://archive.ubuntu.com/ubuntu main restricted universe multiverse'
             - ubuntu-toolchain-r-test
           packages:
-            - cppcheck
             # imake
+            - libxkbfile-dev
+            - xfonts-utils
             - xutils-dev
             # X11 libaries
             - libxcomposite-dev
@@ -30,17 +30,20 @@ matrix:
 
       env:
         - MATRIX_EVAL="CC=gcc && CXX=g++"
-        - STATIC_ANALYSIS="yes"
-      fail_fast: true
+        - STATIC_ANALYSIS="no"
 
-    - os: linux
+    - name: "cppcheck 1.82 + GCC 10.x"
+      dist: bionic
       addons:
         apt:
           sources:
             - ubuntu-toolchain-r-test
           packages:
-            - g++-9
+            - cppcheck
+            - g++-10
             # imake
+            - libxkbfile-dev
+            - xfonts-utils
             - xutils-dev
             # X11 libaries
             - libxcomposite-dev
@@ -56,10 +59,11 @@ matrix:
             - x11-xkb-utils
 
       env:
-        - MATRIX_EVAL="CC=gcc-9 && CXX=g++-9"
-        - STATIC_ANALYSIS="no"
+        - MATRIX_EVAL="CC=gcc-10 && CXX=g++-10"
+        - STATIC_ANALYSIS="yes"
 
-    - os: linux
+    - name: "Clang 3.9"
+      dist: xenial
       addons:
         apt:
           sources:
@@ -67,6 +71,8 @@ matrix:
           packages:
             - clang-3.9
             # imake
+            - libxkbfile-dev
+            - xfonts-utils
             - xutils-dev
             # X11 libaries
             - libxcomposite-dev
@@ -85,15 +91,18 @@ matrix:
         - MATRIX_EVAL="CC=clang-3.9 && CXX=clang++-3.9"
         - STATIC_ANALYSIS="no"
 
-    - os: linux
+    - name: "Clang 9.x"
+      dist: bionic
       addons:
         apt:
           sources:
-            - llvm-toolchain-xenial-8
+            - llvm-toolchain-bionic-9
             - ubuntu-toolchain-r-test
           packages:
-            - clang-8
+            - clang-9
             # imake
+            - libxkbfile-dev
+            - xfonts-utils
             - xutils-dev
             # X11 libaries
             - libxcomposite-dev
@@ -109,7 +118,7 @@ matrix:
             - x11-xkb-utils
 
       env:
-        - MATRIX_EVAL="CC=clang-8 && CXX=clang++-8"
+        - MATRIX_EVAL="CC=clang-9 && CXX=clang++-9"
         - STATIC_ANALYSIS="no"
 
 before_install:
