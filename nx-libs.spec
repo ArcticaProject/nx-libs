@@ -10,7 +10,7 @@
 %endif
 
 Name:           nx-libs
-Version:        3.5.99.23
+Version:        3.5.99.24
 Release:        0.0build1%{?dist}
 Summary:        NX X11 protocol compression libraries
 
@@ -623,5 +623,5 @@ rm -f %{buildroot}%{_datadir}/man/man1/nxdialog.1*
 
 
 %changelog
-* Thu Jan 30 2020 Mike Gabriel <mike.gabriel@das-netzwerkteam.de> 3.5.99.23
+* Sun May 31 2020 Mike Gabriel <mike.gabriel@das-netzwerkteam.de> 3.5.99.24
 - See upstream ChangeLog and debian/changelog for details.
