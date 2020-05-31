@@ -75,8 +75,8 @@ extern void nxagentClientStateCallback(CallbackListPtr *callbacks, void *data, v
 #define nxagentClientIsDialog(pClient) \
     (nxagentClientHint(pClient) == NXCLIENT_DIALOG)
 
-#define nxagentClientInfoString(pClient)	\
-    (nxagentClientPriv(pClient) -> clientInfoString)
+#define nxagentClientInfoString(pClient) \
+    ((pClient) ? nxagentClientPriv(pClient) -> clientInfoString : NULL)
 
 /*
  * The actual reason why the client is sleeping.

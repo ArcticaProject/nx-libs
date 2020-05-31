@@ -1070,6 +1070,11 @@ void nxagentDispatchEvents(PredicateFuncPtr predicate)
             nxagentToggleAutoGrab();
             break;
           }
+          case doDumpClipboard:
+          {
+            nxagentDumpClipboardStat();
+            break;
+          }
           default:
           {
             FatalError("nxagentDispatchEvent: handleKeyPress returned unknown value\n");
