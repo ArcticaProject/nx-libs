@@ -292,7 +292,7 @@ static void printSelectionStat(int sel)
 #else
   fprintf(stderr, "  CurrentSelections[].client             [%p] index [%d]\n",
           (void *)curSel.client,
-          CLINDEX(curSel.client);
+          CLINDEX(curSel.client));
 #endif
   fprintf(stderr, "  CurrentSelections[].window             [0x%x]\n", curSel.window);
   return;
