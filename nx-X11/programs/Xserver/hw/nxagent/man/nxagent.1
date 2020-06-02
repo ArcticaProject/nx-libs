@@ -788,9 +788,11 @@ enable/disable deriving session DPI automatically from real server
 ignored when reconnecting to a suspended session
 .TP 8
 .B sleep=<int>
-delay X server operations when suspended (provided in msec), set to
-\fI0\fR to keep \fBnxagent\fR session fully functional when suspended
-(e.g. useful when mirroring an \fBnxagent\fR session via VNC)
+delay X server operations when suspended (provided in milliseconds),
+set to \fI0\fR to keep \fBnxagent\fR session fully functional when
+suspended (e.g. useful when mirroring an \fBnxagent\fR session via
+VNC). Graphic intensive applications will be affected by this more
+than others. The default is 50ms.
 .TP 8
 .B tolerancechecks=<string>
 
