@@ -2353,7 +2353,7 @@ void nxagentSetDeferLevel(void)
     case LINK_TYPE_LAN:   { deferLevel = 0; tileWidth = 4096; tileHeight = 4096; break; }
     default:
     {
-      fprintf(stderr, "Warning: Unknown link type [%d] processing the defer option.\n",
+      fprintf(stderr, "Warning: Unknown link type '%d' processing the defer option.\n",
                   nxagentOption(LinkType));
       break;
     }
