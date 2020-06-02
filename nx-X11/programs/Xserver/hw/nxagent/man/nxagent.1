@@ -477,7 +477,8 @@ so that external parsers can obtain that information from there; this
 creates a lot of output and may affect performance
 .TP 8
 .B \-timeout \fIint\fP
-auto-disconnect timeout in seconds (minimum allowed: 60)
+auto-disconnect timeout in seconds (minimum allowed: 60). Default is 0
+(no timeout).
 .TP 8
 .B \-norootlessexit
 don't exit if there are no clients in rootless mode
@@ -504,7 +505,8 @@ disable the use of the render extension
 disable the use of the composite extension
 .TP 8
 .B \-nopersistent
-disable disconnection/reconnection to the X display on SIGHUP
+disable disconnection/reconnection to the X display on
+SIGHUP. Non-persistent sessions will terminate on SIGHUP.
 .TP 8
 .B \-noshmem
 disable use of shared memory extension
@@ -534,7 +536,8 @@ XKEYBOARD. With \-noxkblock the lock is not applied and clients are
 allowed to change the keyboard settings through XKEYBOARD.
 .TP 8
 .B \-tile WxH
-size of image tiles (minimum allowed: 32x32)
+maximum size of the tile used when sending an image to the remote
+display (minimum allowed: 32x32; no default)
 .TP 8
 .B \-D
 enable desktop mode (default)
@@ -548,15 +551,37 @@ enable shadow mode
 .B \-B
 enable proxy binding mode
 .TP 8
+.B \-keystrokefile
+define path to a keyboard shortcut definitions file. Default is
+.IR ~/.nx/keystrokes.cfg
+and
+.IR /etc/nxagent/keystroke.cfg
+(first existing
+file is taken). If \fBnxagent\fR is run as \fBx2goagent\fR the defaults are
+.IR ~/.x2go/keystrokes.cfg
+and
+.IR /etc/x2go/keystrokes.cfg
+. Any keystrokes
+\fBnxagent\fR knows about that are not defined in this file are
+ignored. (Only) if no file is found built-in defaults are used. The
+keystroke file can be re-read by a keystroke (ctrl-alt-k by default).
+See
+.IR README.keystrokes
+and
+.IR README.keystrokes.debug
+for all keystrokes \fBnxagent\fR knows. At startup the active keystrokes are printed to the session output.
+.TP 8
 .B \-version
 show version information and exit
 .TP 8
-.B \-options \fIfilename\fP
-path to an options file containing nx/nx options (see below).
+.B \-options \fIfilepath|string\fP
+path to an options file containing nx/nx options (see below). Instead of a path the options can be specified diretly on the commandline by prefixing the options strings with
+.IR nx/nx,
+which is mostly useful for testing/debugging.
 .PP
-Other than the command line options, \fBnxagent\fR can be configured at
+In addition to the command line options, \fBnxagent\fR can be configured at
 session startup and at runtime (i.e. when resuming a suspended session)
-by so-called nx/nx options.
+by so-called nx/nx options. The options file is read on startup. It can be modified during runtime (but it must stay at the same path). On re-connect the modified file is then read and the changed options are applied.
 .PP
 As nx/nx options all options supported by nxcomp (see \fBnxproxy\fR man
 page) and all \fBnxagent\fR nx/nx options (see below) can be used.
@@ -652,8 +677,8 @@ set keycode conversion mode
 .BR auto | on | off
 
 by default (\fIauto\fR) \fBnxagent\fR will activate keycode conversion
-if it detects an evdev XKEYBOARD setup on the client side (the
-standard on linux systems nowadays). Keycode conversion means that
+if it detects an evdev XKEYBOARD setup on the \fBnxproxy\fR side (the
+standard on Linux systems nowadays). Keycode conversion means that
 certain keycodes are mapped to make the keyboard appear as an pc105
 model. Using \fIoff\fR this conversion can be suppressed and with
 \fIon\fR it will be forced.
@@ -727,7 +752,7 @@ Eager encoding.
 .I 1
 No data is put or copied on pixmaps, marking them always as corrupted
 and synchronizing them on demand, i.e. when a copy area to a window is
-requested, the source is syn- chronized before copying it.
+requested, the source is synchronized before copying it.
 .TP 8
 .I 2
 The put images over the windows are skipped marking the destination as
@@ -737,7 +762,7 @@ spreading the corrupted regions of involved drawables.
 
 .TP 8
 .B tile=<string>
-set the tile size in pixels (\fI<W>x<H>\fR) for bitmap data sent over the wire
+set the maximum tile size in pixels (\fI<W>x<H>\fR) for bitmap data sent over the wire
 
 The default value can be set via the command line (\-tile). The value
 provided as nx/nx option is set when resuming a session, thus it
@@ -787,7 +812,7 @@ deactivated. This is a very bad idea.
 .RE
 .TP 8
 .B autograb=<bool>
-enable or disable autograb (default: \fI0\fR, disabled)
+enable or disable autograb (default: \fI0\fR, disabled). Can be toggled during session via keystroke.
 .RE
 
 If you want to use \fBnxagent\fR as a replacement for Xnest or Xephyr you
