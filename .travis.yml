@@ -1,13 +1,14 @@
 # Use new bionic images, should yield newer compilers and packages
 language: cpp
 os: linux
+dist: xenial
 
 jobs:
   include:
     - name: "GCC 5.4"
-      dist: xenial
       addons:
         apt:
+          update: true
           sources:
             - ubuntu-toolchain-r-test
           packages:
@@ -31,11 +32,13 @@ jobs:
       env:
         - MATRIX_EVAL="CC=gcc && CXX=g++"
         - STATIC_ANALYSIS="no"
+        - PVS_ANALYZE="no"
 
     - name: "cppcheck 1.82 + GCC 10.x"
       dist: bionic
       addons:
         apt:
+          update: true
           sources:
             - ubuntu-toolchain-r-test
           packages:
@@ -61,11 +64,43 @@ jobs:
       env:
         - MATRIX_EVAL="CC=gcc-10 && CXX=g++-10"
         - STATIC_ANALYSIS="yes"
+        - PVS_ANALYZE="no"
 
-    - name: "Clang 3.9"
-      dist: xenial
+    - name: "GCC 10.x + PVS-Studio"
+      dist: bionic
       addons:
         apt:
+          update: true
+          sources:
+            - ubuntu-toolchain-r-test
+          packages:
+            - g++-10
+            # imake
+            - libxkbfile-dev
+            - xfonts-utils
+            - xutils-dev
+            # X11 libaries
+            - libxcomposite-dev
+            - libxdamage-dev
+            - libxfont-dev
+            - libxinerama-dev
+            - libxpm-dev
+            - libxrandr-dev
+            - libxtst-dev
+            - x11proto-fonts-dev
+            # soft requirements
+            - quilt
+            - x11-xkb-utils
+
+      env:
+        - MATRIX_EVAL="CC=gcc-10 && CXX=g++-10"
+        - STATIC_ANALYSIS="no"
+        - PVS_ANALYZE="yes"
+
+    - name: "Clang 3.9"
+      addons:
+        apt:
+          update: true
           sources:
             - llvm-toolchain-xenial-3.9
           packages:
@@ -90,11 +125,13 @@ jobs:
       env:
         - MATRIX_EVAL="CC=clang-3.9 && CXX=clang++-3.9"
         - STATIC_ANALYSIS="no"
+        - PVS_ANALYZE="no"
 
     - name: "Clang 9.x"
       dist: bionic
       addons:
         apt:
+          update: true
           sources:
             - llvm-toolchain-bionic-9
             - ubuntu-toolchain-r-test
@@ -120,13 +157,16 @@ jobs:
       env:
         - MATRIX_EVAL="CC=clang-9 && CXX=clang++-9"
         - STATIC_ANALYSIS="no"
+        - PVS_ANALYZE="no"
 
 before_install:
    - eval "${MATRIX_EVAL}"
+   - travis_retry bash .pvs-studio.sh before_install
+
 script:
    # run static analysis tools
    - ./run-static-analysis.sh
    # print compiler version
    - ${CC} --version
    # build all packages
-   - make
+   - travis_retry bash .pvs-studio.sh build_script
