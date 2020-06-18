@@ -155,3 +155,30 @@ The only components that can be built on Windows at the time of writing are `nxc
 
 Since this project makes use of UNIX-style symlinks, it is imperative to clone the repository using Cygwin's git binary. MSYS(2) git is not able to handle UNIX-style symlinks.
 Make sure that all build utilities are Cygwin-based. Non-Cygwin binaries will bail out with errors during the build process or insert garbage.
+
+
+## Binary Builds
+
+Most major Linux distribution come with nx. However, their packages
+are often not the most current releases so we encourage you to update
+to the newest release.
+
+### Debian/Ubuntu
+You can obtain binary builds of nx-libs for Debian and Ubuntu via these apt-URLs:
+
+Debian: deb http://packages.arctica-project.org/debian {YOUR DIST VERSION} main
+Ubuntu: deb http://packages.arctica-project.org/ubuntu {YOUR DIST VERSION} main
+
+Our package server's archive key is: 0x98DE3101 (fingerprint: 7A49
+CD37 EBAE 2501 B9B4 F7EA A868 0F55 98DE 3101). Use this command to
+make APT trust our package server:
+
+  wget -qO - http://packages.arctica-project.org/archive.key | sudo apt-key add -
+
+### RedHat based
+
+For RedHat based distributions current packages can be found at
+
+https://bodhi.fedoraproject.org/updates/?packages=nx-libs
+
+Please note that these are not always current as the builds are done manually.
