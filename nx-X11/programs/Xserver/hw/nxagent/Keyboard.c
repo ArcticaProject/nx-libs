@@ -706,12 +706,12 @@ XkbError:
         {
           XkbGetControls(nxagentDisplay, XkbAllControlsMask, xkb);
         }
-#ifdef TEST
+        #ifdef TEST
         else
         {
           fprintf(stderr, "%s: No current keyboard.\n", __func__);
         }
-#endif
+        #endif
 
         #ifdef DEBUG
         fprintf(stderr, "%s: Going to set rules and init device: "
