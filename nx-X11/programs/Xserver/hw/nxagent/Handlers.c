@@ -235,18 +235,18 @@ void nxagentBlockHandler(void * data, struct timeval **timeout, void * mask)
    * display.
    */
 
-  if (NXDisplayError(nxagentDisplay) == 1 && nxagentShadowCounter == 0 && nxagentOption(SleepTime) > 0)
+  if (NXDisplayError(nxagentDisplay) == 1 && nxagentShadowCounter == 0 && nxagentOption(SleepTimeMillis) > 0)
   {
 #ifdef TEST
     fprintf(stderr, "nxagentBlockHandler: sleeping for %d milliseconds for slowdown.\n",
-                    nxagentOption(SleepTime));
+                    nxagentOption(SleepTimeMillis));
 #endif
-    usleep(nxagentOption(SleepTime) * 1000);
+    usleep(nxagentOption(SleepTimeMillis) * 1000);
 
     now = GetTimeInMillis();
   }
 #ifdef TEST
-  else if (0 == nxagentOption(SleepTime)) {
+  else if (0 == nxagentOption(SleepTimeMillis)) {
     fprintf(stderr, "nxagentBlockHandler: not sleeping for slowdown.\n");
   }
 #endif
@@ -708,16 +708,16 @@ void nxagentShadowBlockHandler(void * data, struct timeval **timeout, void * mas
     nxagentHandleConnectionChanges();
   }
 
-  if (nxagentSessionState == SESSION_DOWN && nxagentOption(SleepTime) > 0)
+  if (nxagentSessionState == SESSION_DOWN && nxagentOption(SleepTimeMillis) > 0)
   {
     #ifdef TEST
     fprintf(stderr, "nxagentShadowBlockHandler: sleeping for %d milliseconds for slowdown.\n",
-                    nxagentOption(SleepTime));
+                    nxagentOption(SleepTimeMillis));
     #endif
-    usleep(nxagentOption(SleepTime) * 1000);
+    usleep(nxagentOption(SleepTimeMillis) * 1000);
   }
   #ifdef TEST
-  else if (0 == nxagentOption(SleepTime)) {
+  else if (0 == nxagentOption(SleepTimeMillis)) {
     fprintf(stderr, "nxagentShadowBlockHandler: not sleeping for slowdown.\n");
   }
   #endif

@@ -1365,7 +1365,7 @@ static void nxagentParseSingleOption(char *name, char *value)
                       validateString(value), validateString(name), sleep_parse);
     }
 
-    nxagentChangeOption(SleepTime, sleep_parse);
+    nxagentChangeOption(SleepTimeMillis, sleep_parse);
     return;
   }
   else if (!strcmp(name, "tolerancechecks"))

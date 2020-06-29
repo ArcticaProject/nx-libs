@@ -36,7 +36,9 @@
 
 #define UNDEFINED -1
 #define COPY_UNLIMITED -1
-#define DEFAULT_SLEEP_TIME 50
+
+/* in milliseconds */
+#define DEFAULT_SLEEP_TIME_MILLIS 50
 
 extern unsigned int nxagentPrintGeometryFlags;
 
@@ -366,9 +368,9 @@ typedef struct _AgentOptions
   int Xinerama;
 
   /*
-   * Sleep delay in microseconds.
+   * Sleep delay in milliseconds.
    */
-  unsigned int SleepTime;
+  unsigned int SleepTimeMillis;
 
   /*
    * Tolerance - tightens or loosens reconnect checks.

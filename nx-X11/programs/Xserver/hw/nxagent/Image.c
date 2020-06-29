@@ -492,9 +492,19 @@ void nxagentPutImage(DrawablePtr pDrawable, GCPtr pGC, int depth,
 
   if (nxagentShadowCounter == 0 &&
           NXDisplayError(nxagentDisplay) == 1 &&
-              nxagentOption(SleepTime) > 0)
+              nxagentOption(SleepTimeMillis) > 0)
   {
-    int us = nxagentOption(SleepTime) * 4 * (length / 1024);
+    /*
+     * The original NX code had 250us (microseconds) * length/1024
+     * here and 50ms (milliseconds) elsewhere. Later ONE combined
+     * configurable sleep parameter was introduced, having a default
+     * of 50ms (that's milliseconds, not microseconds!), which is
+     * factor 200. For unknown reasons the factor was changed to 250
+     * at the same time.  Ensure the value is somewhere between 10ms
+     * and 1s.
+     */
+
+    int us = nxagentOption(SleepTimeMillis) * 1000 * (length / 1024) / 250;
 
     us = (us < 10000 ? 10000 : (us > 1000000 ? 1000000 : us));
 
