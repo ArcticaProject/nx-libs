@@ -2135,7 +2135,8 @@ void ddxUseMsg(void)
   ErrorF("-nokbreset             don't reset keyboard device if the session is resumed\n");
   ErrorF("-noxkblock             always allow applications to change layout through XKEYBOARD\n");
   ErrorF("-autograb              enable autograb\n");
-  ErrorF("-tile WxH              size of image tiles (minimum allowed: 32x32)\n");
+  ErrorF("-irlimit               maximum image data rate to the encoder input in kB/s.\n");
+  ErrorF("-tile WxH              maximum size of image tiles (minimum allowed: 32x32)\n");
   ErrorF("-keystrokefile file    file with keyboard shortcut definitions\n");
   ErrorF("-verbose               print more warning and error messages\n");
   ErrorF("-D                     enable desktop mode\n");
@@ -2352,7 +2353,7 @@ void nxagentSetDeferLevel(void)
     case LINK_TYPE_LAN:   { deferLevel = 0; tileWidth = 4096; tileHeight = 4096; break; }
     default:
     {
-      fprintf(stderr, "Warning: Unknown link type [%d] processing the defer option.\n",
+      fprintf(stderr, "Warning: Unknown link type '%d' processing the defer option.\n",
                   nxagentOption(LinkType));
       break;
     }
