@@ -13,11 +13,19 @@ before_install() {
 
 build_script() {
   if [ "$PVS_ANALYZE" = "yes" ]; then
-    pvs-studio-analyzer credentials "${PVS_USERNAME}" "${PVS_KEY}" -o PVS-Studio.lic
-    pvs-studio-analyzer trace -- make -j2
-    pvs-studio-analyzer analyze --quiet -j2 -l PVS-Studio.lic -o "PVS-Studio-${CC}.log"
-    plog-converter -a "GA:1,2" -t tasklist -o "PVS-Studio-${CC}.tasks" "PVS-Studio-${CC}.log"
-    cat "PVS-Studio-${CC}.tasks"
+    if [[ -z "${PVS_USERNAME}" ]]; then
+      echo '"PVS_USERNAME" environment variable not set'
+      exit 0
+    elif [[ -z "${PVS_KEY}" ]]; then
+      echo '"PVS_KEY" environment variable not set'
+      exit 0
+    else
+      pvs-studio-analyzer credentials -o "PVS-Studio.lic" "${PVS_USERNAME}" "${PVS_KEY}"
+      pvs-studio-analyzer trace -- make -j2
+      pvs-studio-analyzer analyze --quiet -j2 --lic-file "PVS-Studio.lic" --output-file "PVS-Studio-${CC}.log"
+      plog-converter -a "GA:1,2" -t tasklist -o "PVS-Studio-${CC}.tasks" "PVS-Studio-${CC}.log"
+      cat "PVS-Studio-${CC}.tasks"
+    fi
   else
     make -j2
   fi
