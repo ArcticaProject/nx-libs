@@ -380,6 +380,20 @@ applications over a network, especially a slow one.
 This package provides the NX proxy (client) binary.
 
 
+%package -n nxdialog
+Group:          Applications/System
+Summary:        NX Dialog
+Provides:       nxdialog = %{version}-%{release}
+Provides:       nxdialog%{?_isa} = %{version}-%{release}
+
+%description -n nxdialog
+NX is a software suite which implements very efficient compression of
+the X11 protocol. This increases performance when using X
+applications over a network, especially a slow one.
+
+This package provides the nxdialog helper script.
+
+
 %prep
 %setup -q
 # remove build cruft that is in Git (also taken from roll-tarball.sh)
@@ -458,10 +472,6 @@ rm -r %{buildroot}%{_includedir}/nx-X11/Xtrans
 
 #Remove our shared libraries' .la files before wrapping up the packages
 rm %{buildroot}%{_libdir}/*.la
-
-#FIXME: leaving nxdialog integration to Ionic
-rm -f %{buildroot}%{_bindir}/nxdialog
-rm -f %{buildroot}%{_datadir}/man/man1/nxdialog.1*
 
 %if 0%{?fdupes:1}
 %fdupes %{buildroot}%{_prefix}
@@ -621,6 +631,11 @@ rm -f %{buildroot}%{_datadir}/man/man1/nxdialog.1*
 %dir %{_datadir}/nx
 %{_datadir}/nx/VERSION.nxproxy
 
+%files -n nxdialog
+%defattr(-,root,root)
+%doc doc/nxdialog/README.md
+%{_bindir}/nxdialog
+%{_datadir}/man/man1/nxdialog.1*
 
 %changelog
 * Sun May 31 2020 Mike Gabriel <mike.gabriel@das-netzwerkteam.de> 3.5.99.24
