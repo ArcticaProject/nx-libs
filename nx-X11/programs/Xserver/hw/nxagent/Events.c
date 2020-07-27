@@ -3402,9 +3402,9 @@ int nxagentHandleConfigureNotify(XEvent* X)
         /* FIXME: Comment makes no sense */
         if (nxagentOption(Shadow) == 1 ||
                 (nxagentOption(Width) == nxagentOption(RootWidth) &&
-		 nxagentOption(Height) == nxagentOption(RootHeight) &&
-		 nxagentOption(X) == nxagentOption(RootX) &&
-		 nxagentOption(Y) == nxagentOption(RootY)))
+                 nxagentOption(Height) == nxagentOption(RootHeight) &&
+                 nxagentOption(X) == nxagentOption(RootX) &&
+                 nxagentOption(Y) == nxagentOption(RootY)))
         {
           doRandR = False;
         }
@@ -4382,11 +4382,13 @@ int nxagentHandleRRScreenChangeNotify(XEvent *X)
   fprintf(stderr, "%s: Called.\n", __func__);
   #endif
 
-  nxagentResizeScreen(screenInfo.screens[DefaultScreen(nxagentDisplay)], Xr -> width, Xr -> height,
-                          Xr -> mwidth, Xr -> mheight, True);
+  nxagentResizeScreen(screenInfo.screens[DefaultScreen(nxagentDisplay)],
+                          Xr -> width, Xr -> height,
+                              Xr -> mwidth, Xr -> mheight, True);
 
-  nxagentShadowCreateMainWindow(screenInfo.screens[DefaultScreen(nxagentDisplay)], screenInfo.screens[0]->root,
-                                Xr -> width, Xr -> height);
+  nxagentShadowCreateMainWindow(screenInfo.screens[DefaultScreen(nxagentDisplay)],
+                                    screenInfo.screens[0]->root,
+                                        Xr -> width, Xr -> height);
 
   nxagentShadowSetWindowsSize();
 
