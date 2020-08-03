@@ -320,27 +320,24 @@ static PicturePtr createSourcePicture(void)
     if (!pPicture)
       return 0;
 
-    if (pPicture != NULL)
+    DevUnion *ppriv = (DevUnion *) (pPicture + 1);
+
+    for (int i = 0; i < picturePrivateCount; ++i)
     {
-      DevUnion *ppriv = (DevUnion *) (pPicture + 1);
+      /*
+       * Other privates are inaccessible.
+       */
 
-      for (int i = 0; i < picturePrivateCount; ++i)
-      {
-        /*
-         * Other privates are inaccessible.
-         */
-
-        ppriv[i].ptr = NULL;
-      }
-
-      char *privPictureRecAddr = (char *) &ppriv[picturePrivateCount];
-
-      ppriv[nxagentPicturePrivateIndex].ptr = (void *) privPictureRecAddr;
-
-      pPicture -> devPrivates = ppriv;
-
-      nxagentPicturePriv(pPicture) -> picture = 0;
+      ppriv[i].ptr = NULL;
     }
+
+    char *privPictureRecAddr = (char *) &ppriv[picturePrivateCount];
+
+    ppriv[nxagentPicturePrivateIndex].ptr = (void *) privPictureRecAddr;
+
+    pPicture -> devPrivates = ppriv;
+
+    nxagentPicturePriv(pPicture) -> picture = 0;
 
     pPicture->pDrawable = 0;
     pPicture->pFormat = 0;
