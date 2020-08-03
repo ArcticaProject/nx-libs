@@ -1425,11 +1425,9 @@ static void nxagentXkbGetRemoteNames(void)
 
   if ((after > 0) || (type != XA_STRING) || (format != 8))
   {
-    if (data)
-    {
-      SAFE_XFree(data);
-      return;
-    }
+    /* data non-null - has been checked above */
+    SAFE_XFree(data);
+    return;
   }
 
   char *name = data;
