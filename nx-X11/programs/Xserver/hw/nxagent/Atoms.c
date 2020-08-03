@@ -405,12 +405,13 @@ static void nxagentWriteAtom(Atom local, XlibAtom remote, const char *string)
   #ifdef WARNING
   if (s == NULL)
   {
-    fprintf(stderr, "nxagentWriteAtom: Malloc failed.\n");
+    fprintf(stderr, "%s: Malloc failed.\n", __func__);
   }
   #endif
 
   if (privLastAtom == privAtomMapSize)
   {
+    /* will issue a fatal error, therefore no further check here */
     nxagentExpandCache();
   }
 
