@@ -417,7 +417,7 @@ static void nxagentWriteAtom(Atom local, XlibAtom remote, const char *string)
   privAtomMap[privLastAtom].local = local;
   privAtomMap[privLastAtom].remote = remote;
   privAtomMap[privLastAtom].string = s;
-  privAtomMap[privLastAtom].length = strlen(s);
+  privAtomMap[privLastAtom].length = s ? strlen(s) : 0;
 
   privLastAtom++;
 }
