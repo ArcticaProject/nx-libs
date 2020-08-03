@@ -482,7 +482,7 @@ void nxagentResolveColor(unsigned short *pRed, unsigned short *pGreen,
     unsigned int limg = pVisual->ColormapEntries - 1;
     /* rescale to gray then [0..limg] then [0..65535] then rgb bits */
     *pRed = (30L * *pRed + 59L * *pGreen + 11L * *pBlue) / 100;
-    *pRed = ((((*pRed * (limg + 1))) >> 16) * 65535) / limg;
+    *pRed = (((*pRed * (limg + 1)) >> 16) * 65535) / limg;
     *pBlue = *pGreen = *pRed = ((*pRed >> shift) * 65535) / lim;
   }
   else
