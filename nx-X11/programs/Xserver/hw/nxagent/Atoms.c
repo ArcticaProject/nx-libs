@@ -385,11 +385,15 @@ static void nxagentExpandCache(void)
 {
   privAtomMapSize += NXAGENT_ATOM_MAP_SIZE_INCREMENT;
 
-  privAtomMap = realloc(privAtomMap, privAtomMapSize * sizeof(AtomMap));
+  AtomMap * newmap = realloc(privAtomMap, privAtomMapSize * sizeof(AtomMap));
 
-  if (privAtomMap == NULL)
+  if (newmap == NULL)
   {
     FatalError("nxagentExpandCache: realloc failed\n");
+  }
+  else
+  {
+    privAtomMap = newmap;
   }
 }
 
