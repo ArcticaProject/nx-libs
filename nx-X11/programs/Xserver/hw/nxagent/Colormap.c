@@ -573,7 +573,7 @@ Bool nxagentReconnectAllColormap(void *p0)
 
   for (int cid = 0; (cid < MAXCLIENTS) && success; cid++)
   {
-    if (clients[cid] && success)
+    if (clients[cid])
     {
       FindClientResourcesByType(clients[cid], RT_COLORMAP, nxagentReconnectColormap, &success);
     }
