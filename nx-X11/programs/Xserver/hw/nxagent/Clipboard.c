@@ -1335,7 +1335,7 @@ void nxagentHandleSelectionNotifyFromXServer(XEvent *X)
     char * s = XGetAtomName(nxagentDisplay, e->property);
     char * t = XGetAtomName(nxagentDisplay, e->target);
     fprintf(stderr, "%s: SelectionNotify event from real X server, property "\
-            "[%ld][%s] requestor [0x%lx] target [%ld][%s] time [%ld] send_event [%d].\n",
+            "[%ld][%s] requestor [0x%lx] target [%ld][%s] time [%lu] send_event [%d].\n",
             __func__, e->property, validateString(s), e->requestor, e->target,
             validateString(t), e->time, e->send_event);
     SAFE_XFree(s);
@@ -1686,7 +1686,7 @@ static void setSelectionOwner(Selection *pSelection)
     fprintf(stderr, "%s: lastSelectionOwner.windowPtr [%p] -> [%p] [0x%x] (serverWindow: [0x%x])\n", __func__,
             (void *)lastSelectionOwner[i].windowPtr, (void *)pSelection->pWin,
             nxagentWindow(pSelection->pWin), serverWindow);
-    fprintf(stderr, "%s: lastSelectionOwner.lastTimeChanged [%d]\n", __func__,
+    fprintf(stderr, "%s: lastSelectionOwner.lastTimeChanged [%u]\n", __func__,
             lastSelectionOwner[i].lastTimeChanged);
     #endif
 
@@ -1967,7 +1967,7 @@ int nxagentConvertSelection(ClientPtr client, WindowPtr pWin, Atom selection,
     }
 
     #ifdef DEBUG
-    fprintf(stderr, "%s: Sending XConvertSelection to real X server: requestor [0x%x] target [%ld][%s] property [%ld][%s] time [%ld]\n", __func__,
+    fprintf(stderr, "%s: Sending XConvertSelection to real X server: requestor [0x%x] target [%ld][%s] property [%ld][%s] time [%lu]\n", __func__,
             serverWindow, t, tstr, p, pstr, CurrentTime);
     #endif
 
@@ -2163,7 +2163,7 @@ Bool nxagentInitClipboard(WindowPtr pWin)
 
   #ifdef NXAGENT_TIMESTAMP
   {
-    fprintf(stderr, "%s: Clipboard init starts at [%ld] ms.\n", __func__,
+    fprintf(stderr, "%s: Clipboard init starts at [%lu] ms.\n", __func__,
             GetTimeInMillis() - startTime);
   }
   #endif
@@ -2328,7 +2328,7 @@ Bool nxagentInitClipboard(WindowPtr pWin)
 
   #ifdef NXAGENT_TIMESTAMP
   {
-    fprintf(stderr, "%s: Clipboard init ends at [%ld] ms.\n", __func__,
+    fprintf(stderr, "%s: Clipboard init ends at [%lu] ms.\n", __func__,
                 GetTimeInMillis() - startTime);
   }
   #endif
