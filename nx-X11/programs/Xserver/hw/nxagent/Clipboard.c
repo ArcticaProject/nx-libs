@@ -766,7 +766,7 @@ void nxagentHandleSelectionRequestFromXServer(XEvent *X)
       char *strProperty = XGetAtomName(nxagentDisplay, X->xselectionrequest.property);
 
       fprintf(stderr, "%s: Received SelectionRequest from real server: selection [%ld][%s] " \
-              "target [%ld][%s] requestor [%s/0x%lx] destination [%ld][%s] lastServerRequestor [0x%x]\n",
+              "target [%ld][%s] requestor [display[%s]/0x%lx] destination [%ld][%s] lastServerRequestor [0x%x]\n",
               __func__,
               X->xselectionrequest.selection, validateString(strSelection),
               X->xselectionrequest.target,    validateString(strTarget),
@@ -827,9 +827,10 @@ void nxagentHandleSelectionRequestFromXServer(XEvent *X)
        *
        * The list is aligned with the one in nxagentConvertSelection.
        *
-       * FIXME: the perfect solution should not just answer with
-       * XA_STRING but ask the real owner what format it supports. The
-       * result should then be sent to the original requestor.
+       * FIXME: the perfect solution should not just answer with a
+       * hardcoded list but ask the real owner what format it
+       * supports. The result should then be sent to the original
+       * requestor.
        */
 
       long targets[] = {XA_STRING, serverUTF8_STRING, serverTEXT, serverCOMPOUND_TEXT, serverTARGETS, serverTIMESTAMP};
@@ -877,6 +878,7 @@ void nxagentHandleSelectionRequestFromXServer(XEvent *X)
        *
        * FIXME: ensure we are reporting an _external_ timestamp
        * FIXME: for a 32 bit property list we need to pass a "long" array, not "char"!
+       * FIXME: selection has already been checked above, so we do not need to check again here
        */
 
       int i = nxagentFindLastSelectionOwnerIndex(X->xselectionrequest.selection);
@@ -1328,8 +1330,8 @@ void nxagentHandleSelectionNotifyFromXServer(XEvent *X)
   }
 
   #ifdef DEBUG
+  XSelectionEvent * e = (XSelectionEvent *)X;
   {
-    XSelectionEvent * e = (XSelectionEvent *)X;
     char * s = XGetAtomName(nxagentDisplay, e->property);
     char * t = XGetAtomName(nxagentDisplay, e->target);
     fprintf(stderr, "%s: SelectionNotify event from real X server, property "\
@@ -1353,35 +1355,49 @@ void nxagentHandleSelectionNotifyFromXServer(XEvent *X)
      * the real X server). We now need to transfer it to the original
      * requestor, which is stored in the lastClient* variables.
      */
-    if (lastClientStage == SelectionStageNone &&
-	     X->xselection.property == serverTransToAgentProperty)
+
+    #ifdef DEBUG
+    fprintf(stderr, "%s: event selection is [%s]\n", __func__, XGetAtomName(nxagentDisplay, e->selection));
+    nxagentDumpClipboardStat();
+    #endif
+    if (lastClientStage == SelectionStageNone)
     {
-      #ifdef DEBUG
-      fprintf(stderr, "%s: Starting selection transferral for client %s.\n", __func__,
-                  nxagentClientInfoString(lastClientClientPtr));
-      #endif
+      if (X->xselection.property == serverTransToAgentProperty)
+      {
+        #ifdef DEBUG
+        fprintf(stderr, "%s: Starting selection transferral for client %s.\n", __func__,
+                nxagentClientInfoString(lastClientClientPtr));
+        #endif
 
-      /*
-       * The state machine is able to work in two phases. In the first
-       * phase we get the size of property data, in the second we get
-       * the actual data. We save a round-trip by requesting a prede-
-       * termined amount of data in a single GetProperty and by discar-
-       * ding the remaining part. This is not the optimal solution (we
-       * could get the remaining part if it doesn't fit in a single
-       * reply) but, at least with text, it should work in most situa-
-       * tions.
-       */
+        /*
+         * The state machine is able to work in two phases. In the first
+         * phase we get the size of property data, in the second we get
+         * the actual data. We save a round-trip by requesting a prede-
+         * termined amount of data in a single GetProperty and by discar-
+         * ding the remaining part. This is not the optimal solution (we
+         * could get the remaining part if it doesn't fit in a single
+         * reply) but, at least with text, it should work in most situa-
+         * tions.
+         */
 
-      setClientSelectionStage(SelectionStageQueryData);
-      lastClientPropertySize = 262144;
+        setClientSelectionStage(SelectionStageQueryData);
+        lastClientPropertySize = 262144;
 
-      transferSelection(lastClientClientPtr -> index);
+        transferSelection(lastClientClientPtr -> index);
+      }
+      else
+      {
+        #ifdef DEBUG
+        fprintf(stderr, "%s: SelectionNotify event reporting failed conversion.\n", __func__);
+        #endif
+	  //        endTransfer(SELECTION_FAULT);
+      }
     }
     else
     {
       #ifdef DEBUG
-      fprintf(stderr, "%s: WARNING! Resetting selection transferral for client [%d].\n", __func__,
-                  CLINDEX(lastClientClientPtr));
+      fprintf(stderr, "%s: WARNING! Resetting selection transferral for client [%d] because of unexpected stage.\n", __func__,
+	      CLINDEX(lastClientClientPtr));
       #endif
 
       endTransfer(SELECTION_FAULT);
