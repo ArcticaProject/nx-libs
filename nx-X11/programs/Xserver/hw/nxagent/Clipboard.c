@@ -1353,7 +1353,7 @@ void nxagentHandleSelectionNotifyFromXServer(XEvent *X)
     char * t = XGetAtomName(nxagentDisplay, e->target);
     char * s = XGetAtomName(nxagentDisplay, e->selection);
     fprintf(stderr, "%s: SelectionNotify event from real X server, property " \
-            "[%ld][%s] requestor [0x%lx] selection [%s] target [%ld][%s] time [%ld] send_event [%d].\n",
+            "[%ld][%s] requestor [0x%lx] selection [%s] target [%ld][%s] time [%lu] send_event [%d].\n",
             __func__, e->property, validateString(p), e->requestor,
             validateString(s), e->target,
             validateString(t), e->time, e->send_event);
@@ -1709,7 +1709,7 @@ static void setSelectionOwner(Selection *pSelection)
     fprintf(stderr, "%s: lastSelectionOwner.windowPtr [%p] -> [%p] [0x%x] (serverWindow: [0x%x])\n", __func__,
             (void *)lastSelectionOwner[i].windowPtr, (void *)pSelection->pWin,
             nxagentWindow(pSelection->pWin), serverWindow);
-    fprintf(stderr, "%s: lastSelectionOwner.lastTimeChanged [%d]\n", __func__,
+    fprintf(stderr, "%s: lastSelectionOwner.lastTimeChanged [%u]\n", __func__,
             lastSelectionOwner[i].lastTimeChanged);
     #endif
 
@@ -2199,7 +2199,7 @@ Bool nxagentInitClipboard(WindowPtr pWin)
 
   #ifdef NXAGENT_TIMESTAMP
   {
-    fprintf(stderr, "%s: Clipboard init starts at [%ld] ms.\n", __func__,
+    fprintf(stderr, "%s: Clipboard init starts at [%lu] ms.\n", __func__,
             GetTimeInMillis() - startTime);
   }
   #endif
@@ -2367,7 +2367,7 @@ Bool nxagentInitClipboard(WindowPtr pWin)
 
   #ifdef NXAGENT_TIMESTAMP
   {
-    fprintf(stderr, "%s: Clipboard init ends at [%ld] ms.\n", __func__,
+    fprintf(stderr, "%s: Clipboard init ends at [%lu] ms.\n", __func__,
                 GetTimeInMillis() - startTime);
   }
   #endif
