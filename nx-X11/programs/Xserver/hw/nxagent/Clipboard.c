@@ -394,6 +394,15 @@ void nxagentDumpClipboardStat(void)
  */
 static void setClientSelectionStage(int stage)
 {
+  if (lastClientStage == stage)
+  {
+    #ifdef DEBUG
+    fprintf(stderr, "%s: selection stage already set to [%s] - doing nothing\n", __func__,
+	    getClientSelectionStageString(lastClientStage));
+    #endif
+    return;
+  }
+
   #ifdef DEBUG
   fprintf(stderr, "%s: Changing selection stage from [%s] to [%s]\n", __func__,
 	  getClientSelectionStageString(lastClientStage), getClientSelectionStageString(stage));
