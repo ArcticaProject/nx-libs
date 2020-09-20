@@ -932,12 +932,18 @@ void nxagentHandleSelectionRequestFromXServer(XEvent *X)
   int i = nxagentFindLastSelectionOwnerIndex(X->xselectionrequest.selection);
   if (i < nxagentMaxSelections)
   {
+#if 0
     if (lastClientWindowPtr != NULL && IS_INTERNAL_OWNER(i))
     {
       /*
        * Request the real X server to transfer the selection content
        * to the NX_CUT_BUFFER_SERVER property of the serverWindow.
        * FIXME: document how we can end up here
+       *
+       * It looks like this is only reached when the real X server is
+       * on Windows. I suspect that this is connected to the windows X
+       * server (VcXSrv in my test) pushing PRIMARY or CLIPBOARD
+       * content to the Windows clipboard whenever they change.
        */
       XConvertSelection(nxagentDisplay, CurrentSelections[i].selection,
                             X->xselectionrequest.target, serverTransToAgentProperty,
@@ -1684,6 +1690,7 @@ static void setSelectionOwner(Selection *pSelection)
     /*
      * we are in the process of communicating back and forth between
      * real X server and nxagent's clients - let's not disturb
+     * FIXME: by continuing after the warning were ARE disturbing!
      */
     fprintf (stderr, "%s: WARNING! Requestor window [0x%x] already set.\n", __func__,
                  lastServerRequestor);
@@ -1801,6 +1808,7 @@ int nxagentConvertSelection(ClientPtr client, WindowPtr pWin, Atom selection,
                   "notifying failure to client %s\n", __func__, nxagentClientInfoString(client));
       #endif
 
+      /* notify the waiting client of failure */
       endTransfer(SELECTION_FAULT);
     }
     else
@@ -1993,9 +2001,10 @@ int nxagentConvertSelection(ClientPtr client, WindowPtr pWin, Atom selection,
             serverWindow, t, tstr, p, pstr);
     #endif
 
+    UpdateCurrentTime();
     XConvertSelection(nxagentDisplay, selection, t, p, serverWindow, CurrentTime);
 
-    /* FIXME: check returncode of XConvertSelection */
+    /* FIXME: check result of XConvertSelection? */
 
     #ifdef DEBUG
     fprintf(stderr, "%s: Sent XConvertSelection with target [%s], property [%s]\n", __func__, tstr, pstr);
