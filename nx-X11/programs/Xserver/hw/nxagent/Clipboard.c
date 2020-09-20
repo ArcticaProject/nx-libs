@@ -973,6 +973,7 @@ void nxagentHandleSelectionRequestFromXServer(XEvent *X)
       #endif
     }
     else
+#endif
     {
       /*
        * if one of our clients owns the selection we ask it to copy
