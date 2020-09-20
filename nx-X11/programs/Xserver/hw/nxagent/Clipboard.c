@@ -800,11 +800,23 @@ void nxagentHandleSelectionRequestFromXServer(XEvent *X)
   /* lastServerRequestor in non-NULL (= we are currently in the transfer phase) */
   if (lastServerRequestor != None)
   {
+#if 1
     #ifdef DEBUG
     fprintf(stderr, "%s: denying additional request during transfer phase.\n", __func__);
     #endif
 
     replyRequestSelection(X, False);
+#else
+    /*
+     * does not work because event get put back to head of list
+     * and will be next one - endless loop
+     */
+    #ifdef DEBUG
+    fprintf(stderr, "%s: delaying event.\n", __func__);
+    #endif
+
+    XPutBackEvent(nxagentDisplay, X);
+#endif
     return;
   }
 
