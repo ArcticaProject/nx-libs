@@ -56,8 +56,8 @@
 
 #define PANIC
 #define WARNING
-#undef  TEST
-#undef  DEBUG
+#define  TEST
+#define  DEBUG
 
 /*
  * These are defined in the dispatcher.
@@ -1015,6 +1015,8 @@ void nxagentHandleSelectionRequestFromXServer(XEvent *X)
          * x.u.selectionRequest.requestor = lastSelectionOwnerWindow;
          */
 
+        x.u.selectionRequest.requestor = lastSelectionOwner[i].window;
+
         /* by dimbor (idea from zahvatov) */
         if (X->xselectionrequest.target != XA_STRING)
           x.u.selectionRequest.target = clientUTF8_STRING;
@@ -1420,10 +1422,18 @@ void nxagentHandleSelectionNotifyFromXServer(XEvent *X)
 
         transferSelection(lastClientClientPtr -> index);
       }
+      else if (X->xselection.property == 0)
+      {
+        #ifdef DEBUG
+        fprintf(stderr, "%s: WARNING! Resetting selection transferral for client [%d] because of unexpected stage.\n", __func__,
+	        CLINDEX(lastClientClientPtr));
+        #endif
+	// endTransfer(SELECTION_FAULT);
+      }
       else
       {
         #ifdef DEBUG
-        fprintf(stderr, "%s: SelectionNotify event reporting failed conversion.\n", __func__);
+        fprintf(stderr, "%s: unexpected property [%ld][%s].\n", __func__, X->xselection.property, XGetAtomName(nxagentDisplay, X->xselection.property));
         #endif
 	  //        endTransfer(SELECTION_FAULT);
       }
@@ -1814,6 +1824,10 @@ int nxagentConvertSelection(ClientPtr client, WindowPtr pWin, Atom selection,
     fprintf(stderr, "%s: lastClientWindowPtr != NULL.\n", __func__);
     #endif
 
+    #ifdef DEBUG
+    fprintf(stderr, "%s: lastClientSelection [%d] - selection [%d]\n", __func__, lastClientSelection, selection);
+    #endif
+
     if ((GetTimeInMillis() - lastClientReqTime) >= CONVERSION_TIMEOUT)
     {
       #ifdef DEBUG
@@ -1837,7 +1851,8 @@ int nxagentConvertSelection(ClientPtr client, WindowPtr pWin, Atom selection,
                       __func__, nxagentClientInfoString(client));
       #endif
 
-      sendSelectionNotifyEventToClient(client, time, requestor, selection, target, None);
+      /* notify the sender of the new request of failure */
+      //      sendSelectionNotifyEventToClient(client, time, requestor, selection, target, None);
 
       return 1;
     }
