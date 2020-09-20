@@ -72,7 +72,7 @@ extern int nxagentFindCurrentSelectionIndex(Atom sel);
  * Handle the selection property received in the event loop in
  * Events.c.
  */
-extern void nxagentCollectPropertyEvent(int resource);
+extern Bool nxagentCollectPropertyEvent(int resource);
 
 extern WindowPtr nxagentGetClipboardWindow(Atom property);
 

@@ -131,8 +131,6 @@
 
 extern Bool nxagentOnce;
 
-extern int nxagentLastClipboardClient;
-
 #ifdef NX_DEBUG_INPUT
 int nxagentDebugInput = 0;
 #endif
@@ -3984,11 +3982,7 @@ void nxagentHandleCollectPropertyEvent(XEvent *X)
     return;
   }
 
-  if (resource == nxagentLastClipboardClient)
-  {
-    nxagentCollectPropertyEvent(resource);
-  }
-  else
+  if (!nxagentCollectPropertyEvent(resource))
   {
     XlibAtom atomReturnType;
     int resultFormat;
