@@ -3920,7 +3920,7 @@ void nxagentHandleCollectPropertyEvent(XEvent *X)
     return;
   }
 
-  if (!nxagentCollectPropertyEvent(resource))
+  if (!nxagentCollectPropertyEventFromXServer(resource))
   {
     Atom atomReturnType;
     int resultFormat;
