@@ -133,8 +133,6 @@ extern Bool nxagentOnce;
 
 extern WindowPtr nxagentRootTileWindow;
 
-extern int nxagentLastClipboardClient;
-
 #ifdef NX_DEBUG_INPUT
 int nxagentDebugInput = 0;
 #endif
@@ -2356,6 +2354,8 @@ int nxagentHandlePropertyNotify(XEvent *X)
 
   return 1;
 }
+#undef TEST
+#undef DEBUG
 
 int nxagentHandleExposeEvent(XEvent *X)
 {
@@ -3904,6 +3904,8 @@ void nxagentHandleCollectGrabPointerEvent(int resource)
   }
 }
 
+#define DEBUG
+#define TEST
 void nxagentHandleCollectPropertyEvent(XEvent *X)
 {
   int resource = X -> xclient.data.l[1];
@@ -3918,11 +3920,7 @@ void nxagentHandleCollectPropertyEvent(XEvent *X)
     return;
   }
 
-  if (resource == nxagentLastClipboardClient)
-  {
-    nxagentCollectPropertyEvent(resource);
-  }
-  else
+  if (!nxagentCollectPropertyEvent(resource))
   {
     Atom atomReturnType;
     int resultFormat;
@@ -3959,6 +3957,8 @@ void nxagentHandleCollectPropertyEvent(XEvent *X)
     return;
   }
 }
+#undef TEST
+#undef DEBUG
 
 void nxagentSynchronizeExpose(void)
 {
