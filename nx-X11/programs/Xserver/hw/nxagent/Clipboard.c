@@ -262,6 +262,9 @@ static void replyRequestSelectionToXServer(XEvent *X, Bool success);
 
 void nxagentPrintClipboardStat(char *);
 
+XlibAtom translateLocalToRemoteSelection(Atom local);
+XlibAtom translateLocalToRemoteTarget(Atom local);
+
 #ifdef NXAGENT_TIMESTAMP
 extern unsigned long startTime;
 #endif
@@ -2101,64 +2104,24 @@ int nxagentConvertSelection(ClientPtr client, WindowPtr pWin, Atom selection,
     if ((GetTimeInMillis() - lastClients[index].reqTime) >= CONVERSION_TIMEOUT)
       lastClients[index].reqTime = GetTimeInMillis();
 
-    XlibAtom remSelection = 0;
-
-    /* FIXME: we should use/have a function for stuff like that */
-    if (selection == XA_PRIMARY)
-    {
-      remSelection = XA_PRIMARY;
-    }
-    else if (selection == clientCLIPBOARD)
-    {
-      remSelection = lastSelectionOwner[nxagentClipboardSelection].remSelection;
-    }
-    else
-    {
-      remSelection = nxagentLocalToRemoteAtom(selection);
-    }
-
-    /*
-     * we only convert to either UTF8 or XA_STRING, despite accepting
-     * TEXT and COMPOUND_TEXT.
-     */
+    XlibAtom remSelection = translateLocalToRemoteSelection(selection);
+    XlibAtom remTarget = translateLocalToRemoteTarget(target);
     XlibAtom remProperty = serverTransToAgentProperty;
-    XlibAtom remTarget;
-    #ifdef DEBUG
-    char * pstr = "NX_CUT_BUFFER_SERVER";
-    const char * tstr;
-    #endif
-    if (target == clientUTF8_STRING)
-    {
-      remTarget = serverUTF8_STRING;
-      #ifdef DEBUG
-      tstr = szAgentUTF8_STRING;
-      #endif
-    }
-    else
-    {
-      remTarget = XA_STRING;
-      #ifdef DEBUG
-      tstr = validateString(NameForAtom(XA_STRING));
-      #endif
-    }
 
     #ifdef DEBUG
-    /* FIXME: check Atoms.c for alternative to XGetAtomName */
-    fprintf(stderr, "%s: mapping local to remote Atom: [%d][%s] -> [%ld][%s]\n",
-                __func__, selection, NameForAtom(selection), remSelection,
-                    XGetAtomName(nxagentDisplay, remSelection));
-    fprintf(stderr, "%s: mapping local to remote Atom: [%d][%s] -> [%ld][%s]\n",
-                __func__, target, NameForAtom(target), remTarget, tstr);
-    fprintf(stderr, "%s: mapping local to remote Atom: [%d][%s] -> [%ld][%s]\n",
-                __func__, property, NameForAtom(property), remProperty, pstr);
+    fprintf(stderr, "%s: replacing local by remote property: [%d][%s] -> [%ld][%s]\n",
+                __func__, property, NameForAtom(property),
+                    remProperty, "NX_CUT_BUFFER_SERVER");
     #endif
 
 /* FIXME: check why using CurrentTime will not replace the value
      * by a real time. The reply also contains time "0" which is
      * unexpected (for me) */
     #ifdef DEBUG
-    fprintf(stderr, "%s: Sending XConvertSelection to real X server: requestor [0x%x] target [%ld][%s] property [%ld][%s] selection [%ld] time [0][CurrentTime]\n", __func__,
-            serverWindow, remTarget, tstr, remProperty, pstr, remSelection);
+    fprintf(stderr, "%s: Sending XConvertSelection to real X server: requestor [0x%x] target [%ld][%s] property [%ld][%s] selection [%ld][%s] time [0][CurrentTime]\n", __func__,
+            serverWindow, remTarget, XGetAtomName(nxagentDisplay, remTarget),
+                remProperty, XGetAtomName(nxagentDisplay, remProperty),
+                    remSelection, XGetAtomName(nxagentDisplay, remSelection));
     #endif
 
     UpdateCurrentTime();
@@ -2167,7 +2130,7 @@ int nxagentConvertSelection(ClientPtr client, WindowPtr pWin, Atom selection,
     /* XConvertSelection will always return (check the source!), so no need to check */
 
     #ifdef DEBUG
-    fprintf(stderr, "%s: Sent XConvertSelection with target [%s], property [%s]\n", __func__, tstr, pstr);
+    fprintf(stderr, "%s: Sent XConvertSelection\n", __func__);
     #endif
 
     return 1;
@@ -2185,6 +2148,81 @@ int nxagentConvertSelection(ClientPtr client, WindowPtr pWin, Atom selection,
   }
 
   return 0;
+}
+
+XlibAtom translateLocalToRemoteSelection(Atom local)
+{
+  /*
+   * On the real server, the right CLIPBOARD atom is
+   * XInternAtom(nxagentDisplay, "CLIPBOARD", 1), which is stored in
+   * lastSelectionOwner[nxagentClipboardSelection].remSelection. For
+   * PRIMARY there's nothing to map because that is identical on all
+   * X servers (defined in Xatom.h).
+   */
+
+  XlibAtom remote;
+
+  if (local == XA_PRIMARY)
+  {
+    remote = XA_PRIMARY;
+  }
+  else if (local == clientCLIPBOARD)
+  {
+    remote = lastSelectionOwner[nxagentClipboardSelection].remSelection;
+  }
+  else
+  {
+    remote = nxagentLocalToRemoteAtom(local);
+  }
+
+  #ifdef DEBUG
+  fprintf(stderr, "%s: mapping local to remote selection: [%d][%s] -> [%ld] [%s]\n", __func__,
+          local, NameForAtom(local), remote, XGetAtomName(nxagentDisplay, remote));
+  #endif
+
+  return remote;
+}
+
+XlibAtom translateLocalToRemoteTarget(Atom local)
+{
+  /*
+   * .target must be translated, too, as a client on the real
+   * server is requested to fill our property and it needs to know
+   * the format.
+   */
+
+  XlibAtom remote;
+
+  /*
+   * we only convert to either UTF8 or XA_STRING, despite accepting
+   * TEXT and COMPOUND_TEXT.
+   */
+
+  if (local == clientUTF8_STRING)
+  {
+    remote = serverUTF8_STRING;
+  }
+#if 0
+  else if (local == clientTEXT)
+  {
+    remote = serverTEXT;
+  }
+  else if (local == clientCOMPOUND_TEXT)
+  {
+    remote = serverCOMPOUND_TEXT;
+  }
+#endif
+  else
+  {
+    remote = XA_STRING;
+  }
+
+  #ifdef DEBUG
+  fprintf(stderr, "%s: mapping local to remote target: [%d][%s] -> [%ld] [%s]\n", __func__,
+          local, NameForAtom(local), remote, XGetAtomName(nxagentDisplay, remote));
+  #endif
+
+  return remote;
 }
 
 /*
@@ -2257,67 +2295,11 @@ int nxagentSendNotify(xEvent *event)
 
     XSelectionEvent eventSelection = {
       .requestor = serverWindow,
-      .selection = event->u.selectionNotify.selection,
-      .target    = event->u.selectionNotify.target,
+      .selection = translateLocalToRemoteSelection(event->u.selectionNotify.selection),
+      .target    = translateLocalToRemoteTarget(event->u.selectionNotify.target),
       .property  = serverTransFromAgentProperty,
       .time      = CurrentTime,
     };
-
-    /*
-     * On the real server, the right CLIPBOARD atom is
-     * XInternAtom(nxagentDisplay, "CLIPBOARD", 1), which is stored in
-     * lastSelectionOwner[nxagentClipboardSelection].selection. For
-     * PRIMARY there's nothing to map because that is identical on all
-     * X servers (defined in Xatom.h).
-     */
-
-    if (event->u.selectionNotify.selection == XA_PRIMARY)
-    {
-      eventSelection.selection = XA_PRIMARY;
-    }
-    else if (event->u.selectionNotify.selection == clientCLIPBOARD)
-    {
-      eventSelection.selection = lastSelectionOwner[nxagentClipboardSelection].remSelection;
-    }
-    else
-    {
-      eventSelection.selection = nxagentLocalToRemoteAtom(event->u.selectionNotify.selection);
-    }
-
-    /*
-     * .target must be translated, too, as a client on the real
-     * server is requested to fill our property and it needs to know
-     * the format.
-     */
-
-    if (event->u.selectionNotify.target == clientUTF8_STRING)
-    {
-      eventSelection.target = serverUTF8_STRING;
-    }
-    else if (event->u.selectionNotify.target == clientTEXT)
-    {
-      eventSelection.target = serverTEXT;
-    }
-    else if (event->u.selectionNotify.target == clientCOMPOUND_TEXT)
-    {
-      eventSelection.target = serverCOMPOUND_TEXT;
-    }
-    else
-    {
-      eventSelection.target = XA_STRING;
-    }
-
-    #ifdef DEBUG
-    fprintf(stderr, "%s: mapping local to remote Atom: [%d] -> [%ld] [%s]\n", __func__,
-            event->u.selectionNotify.selection, eventSelection.selection,
-            NameForAtom(event->u.selectionNotify.selection));
-    fprintf(stderr, "%s: mapping local to remote Atom: [%d] -> [%ld] [%s]\n", __func__,
-            event->u.selectionNotify.target, eventSelection.target,
-            NameForAtom(event->u.selectionNotify.target));
-    fprintf(stderr, "%s: mapping local to remote Atom: [%d] -> [%ld] [%s]\n", __func__,
-            event->u.selectionNotify.property, eventSelection.property,
-            NameForAtom(event->u.selectionNotify.property));
-    #endif
 
     sendSelectionNotifyEventToXServer(&eventSelection);
 
