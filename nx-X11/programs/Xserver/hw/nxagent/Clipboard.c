@@ -850,17 +850,15 @@ void nxagentHandleSelectionRequestFromXServer(XEvent *X)
   }
 
   /* the selection in this request is none we own. */
+  int index = nxagentFindLastSelectionOwnerIndex(X->xselectionrequest.selection);
+  if (index == nxagentMaxSelections)
   {
-    int i = nxagentFindLastSelectionOwnerIndex(X->xselectionrequest.selection);
-    if (i == nxagentMaxSelections)
-    {
-      #ifdef DEBUG
-      fprintf(stderr, "%s: not owning selection [%ld] - denying request.\n", __func__, X->xselectionrequest.selection);
-      #endif
+    #ifdef DEBUG
+    fprintf(stderr, "%s: not owning selection [%ld] - denying request.\n", __func__, X->xselectionrequest.selection);
+    #endif
 
-      replyRequestSelectionToXServer(X, False);
-      return;
-    }
+    replyRequestSelectionToXServer(X, False);
+    return;
   }
 
   /* this is a special request like TARGETS or TIMESTAMP */
@@ -887,16 +885,14 @@ void nxagentHandleSelectionRequestFromXServer(XEvent *X)
       int numTargets = sizeof(targets) / sizeof(targets[0]);
 
       #ifdef DEBUG
+      fprintf(stderr, "%s: Sending %d available targets:\n", __func__, numTargets);
+      for (int i = 0; i < numTargets; i++)
       {
-        fprintf(stderr, "%s: Sending %d available targets:\n", __func__, numTargets);
-        for (int i = 0; i < numTargets; i++)
-        {
-          char *s = XGetAtomName(nxagentDisplay, targets[i]);
-          fprintf(stderr, "%s: %ld %s\n", __func__, targets[i], s);
-          SAFE_XFree(s);
-        }
-        fprintf(stderr, "\n");
+        char *s = XGetAtomName(nxagentDisplay, targets[i]);
+        fprintf(stderr, "%s: %ld %s\n", __func__, targets[i], s);
+        SAFE_XFree(s);
       }
+      fprintf(stderr, "\n");
       #endif
 
       /*
@@ -931,19 +927,15 @@ void nxagentHandleSelectionRequestFromXServer(XEvent *X)
        * FIXME: selection has already been checked above, so we do not need to check again here
        */
 
-      int i = nxagentFindLastSelectionOwnerIndex(X->xselectionrequest.selection);
-      if (i < nxagentMaxSelections)
-      {
-        XChangeProperty(nxagentDisplay,
-                        X->xselectionrequest.requestor,
-                        X->xselectionrequest.property,
-                        XA_INTEGER,
-                        32,
-                        PropModeReplace,
-                        (unsigned char *) &lastSelectionOwner[i].lastTimeChanged,
-                        1);
-        replyRequestSelectionToXServer(X, True);
-      }
+      XChangeProperty(nxagentDisplay,
+                      X->xselectionrequest.requestor,
+                      X->xselectionrequest.property,
+                      XA_INTEGER,
+                      32,
+                      PropModeReplace,
+                      (unsigned char *) &lastSelectionOwner[index].lastTimeChanged,
+                      1);
+      replyRequestSelectionToXServer(X, True);
     }
     else
     {
@@ -970,108 +962,104 @@ void nxagentHandleSelectionRequestFromXServer(XEvent *X)
   serverLastRequestedSelection = X->xselectionrequest.selection;
 
   /* find the index of the requested selection */
-  int i = nxagentFindLastSelectionOwnerIndex(X->xselectionrequest.selection);
-  if (i < nxagentMaxSelections)
-  {
 #if 0
-    if (lastClients[i].windowPtr != NULL && IS_INTERNAL_OWNER(i))
+  if (lastClients[index].windowPtr != NULL && IS_INTERNAL_OWNER(i))
+  {
+    /*
+     * Request the real X server to transfer the selection content
+     * to the NX_CUT_BUFFER_SERVER property of the serverWindow.
+     * FIXME: document how we can end up here
+     * -> nxagent claims ownership of PRIMARY on real X server
+     * -> at the same time paste clipboard to client owning primary
+     * -> vcxsrv asks for primary contexts to store them into window clipboard
+     * vcxsrv request is for primary and takes this path as the clipboard transfer has set        * lastClientWindowPtr
+     *
+     * It looks like this is only reached when the real X server is
+     * on Windows. I suspect that this is connected to the windows X
+     * server (VcXSrv in my test) pushing PRIMARY or CLIPBOARD
+     * content to the Windows clipboard whenever they change.
+     */
+    XConvertSelection(nxagentDisplay, CurrentSelections[index].selection,
+                          X->xselectionrequest.target, serverTransToAgentProperty,
+                              serverWindow, lastClients[index].time);
+
+    #ifdef DEBUG
+    char *strTarget = XGetAtomName(nxagentDisplay, X->xselectionrequest.target);
+    char *strSelection = XGetAtomName(nxagentDisplay, CurrentSelections[index].selection);
+    char *strProperty = XGetAtomName(nxagentDisplay, serverTransToAgentProperty);
+    fprintf(stderr, "%s: Sent XConvertSelection: selection [%d][%s] target [%ld][%s] property [%ld][%s] window [0x%x] time [%u] .\n", __func__,
+                CurrentSelections[index].selection, strSelection,
+                    X->xselectionrequest.target, strTarget,
+                        serverTransToAgentProperty, strProperty,
+                            serverWindow, lastClients[index].time);
+    #endif
+  }
+  else
+#endif
+  {
+    /*
+     * if one of our clients owns the selection we ask it to copy
+     * the selection to the clientCutProperty on nxagent's root
+     * window in the first step. We then later push that property's
+     * content to the real X server.
+     */
+    if (IS_INTERNAL_OWNER(index) &&
+            (nxagentOption(Clipboard) == ClipboardServer ||
+                 nxagentOption(Clipboard) == ClipboardBoth))
     {
       /*
-       * Request the real X server to transfer the selection content
-       * to the NX_CUT_BUFFER_SERVER property of the serverWindow.
-       * FIXME: document how we can end up here
-       * -> nxagent claims ownership of PRIMARY on real X server
-       * -> at the same time paste clipboard to client owning primary
-       * -> vcxsrv asks for primary contexts to store them into window clipboard
-       * vcxsrv request is for primary and takes this path as the clipboard transfer has set        * lastClientWindowPtr
-       *
-       * It looks like this is only reached when the real X server is
-       * on Windows. I suspect that this is connected to the windows X
-       * server (VcXSrv in my test) pushing PRIMARY or CLIPBOARD
-       * content to the Windows clipboard whenever they change.
+       * store who on the real X server requested the data and how
+       * and where it wants to have it
        */
-      XConvertSelection(nxagentDisplay, CurrentSelections[i].selection,
-                            X->xselectionrequest.target, serverTransToAgentProperty,
-                                serverWindow, lastClients[i].time);
+      lastServerProperty = X->xselectionrequest.property;
+      lastServerRequestor = X->xselectionrequest.requestor;
+      lastServerTarget = X->xselectionrequest.target;
+      lastServerTime = X->xselectionrequest.time;
+
+      /* by dimbor */
+      if (lastServerTarget != XA_STRING)
+          lastServerTarget = serverUTF8_STRING;
+
+      /* prepare the request (like XConvertSelection, but internally) */
+      xEvent x = {0};
+      x.u.u.type = SelectionRequest;
+      x.u.selectionRequest.time = GetTimeInMillis();
+      x.u.selectionRequest.owner = lastSelectionOwner[index].window;
+      x.u.selectionRequest.selection = CurrentSelections[index].selection;
+      x.u.selectionRequest.property = clientCutProperty;
+      x.u.selectionRequest.requestor = screenInfo.screens[0]->root->drawable.id; /* Fictitious window.*/
+
+      /*
+       * Don't send the same window, some programs are clever and
+       * verify cut and paste operations inside the same window and
+       * don't Notify at all.
+       *
+       * x.u.selectionRequest.requestor = lastSelectionOwnerWindow;
+       */
+
+      x.u.selectionRequest.requestor = lastSelectionOwner[index].window;
+
+      /* by dimbor (idea from zahvatov) */
+      if (X->xselectionrequest.target != XA_STRING)
+        x.u.selectionRequest.target = clientUTF8_STRING;
+      else
+        x.u.selectionRequest.target = XA_STRING;
+
+      sendEventToClient(lastSelectionOwner[index].client, &x);
 
       #ifdef DEBUG
-      char *strTarget = XGetAtomName(nxagentDisplay, X->xselectionrequest.target);
-      char *strSelection = XGetAtomName(nxagentDisplay, CurrentSelections[i].selection);
-      char *strProperty = XGetAtomName(nxagentDisplay, serverTransToAgentProperty);
-      fprintf(stderr, "%s: Sent XConvertSelection: selection [%d][%s] target [%ld][%s] property [%ld][%s] window [0x%x] time [%u] .\n", __func__,
-                  CurrentSelections[i].selection, strSelection,
-                      X->xselectionrequest.target, strTarget,
-                          serverTransToAgentProperty, strProperty,
-                              serverWindow, lastClients[i].time);
+      fprintf(stderr, "%s: sent SelectionRequest event to client %s property [%d][%s]" \
+              "target [%d][%s] requestor [0x%x].\n", __func__,
+              nxagentClientInfoString(lastSelectionOwner[index].client),
+              x.u.selectionRequest.property, NameForAtom(x.u.selectionRequest.property),
+              x.u.selectionRequest.target, NameForAtom(x.u.selectionRequest.target),
+              x.u.selectionRequest.requestor);
       #endif
     }
     else
-#endif
     {
-      /*
-       * if one of our clients owns the selection we ask it to copy
-       * the selection to the clientCutProperty on nxagent's root
-       * window in the first step. We then later push that property's
-       * content to the real X server.
-       */
-      if (IS_INTERNAL_OWNER(i) &&
-              (nxagentOption(Clipboard) == ClipboardServer ||
-                   nxagentOption(Clipboard) == ClipboardBoth))
-      {
-        /*
-         * store who on the real X server requested the data and how
-         * and where it wants to have it
-         */
-        lastServerProperty = X->xselectionrequest.property;
-        lastServerRequestor = X->xselectionrequest.requestor;
-        lastServerTarget = X->xselectionrequest.target;
-        lastServerTime = X->xselectionrequest.time;
-
-        /* by dimbor */
-        if (lastServerTarget != XA_STRING)
-            lastServerTarget = serverUTF8_STRING;
-
-        /* prepare the request (like XConvertSelection, but internally) */
-        xEvent x = {0};
-        x.u.u.type = SelectionRequest;
-        x.u.selectionRequest.time = GetTimeInMillis();
-        x.u.selectionRequest.owner = lastSelectionOwner[i].window;
-        x.u.selectionRequest.selection = CurrentSelections[i].selection;
-        x.u.selectionRequest.property = clientCutProperty;
-        x.u.selectionRequest.requestor = screenInfo.screens[0]->root->drawable.id; /* Fictitious window.*/
-
-        /*
-         * Don't send the same window, some programs are clever and
-         * verify cut and paste operations inside the same window and
-         * don't Notify at all.
-         *
-         * x.u.selectionRequest.requestor = lastSelectionOwnerWindow;
-         */
-
-        x.u.selectionRequest.requestor = lastSelectionOwner[i].window;
-
-        /* by dimbor (idea from zahvatov) */
-        if (X->xselectionrequest.target != XA_STRING)
-          x.u.selectionRequest.target = clientUTF8_STRING;
-        else
-          x.u.selectionRequest.target = XA_STRING;
-
-        sendEventToClient(lastSelectionOwner[i].client, &x);
-
-        #ifdef DEBUG
-        fprintf(stderr, "%s: sent SelectionRequest event to client %s property [%d][%s]" \
-                "target [%d][%s] requestor [0x%x].\n", __func__,
-                nxagentClientInfoString(lastSelectionOwner[i].client),
-                x.u.selectionRequest.property, NameForAtom(x.u.selectionRequest.property),
-                x.u.selectionRequest.target, NameForAtom(x.u.selectionRequest.target),
-                x.u.selectionRequest.requestor);
-        #endif
-      }
-      else
-      {
-        /* deny the request */
-        replyRequestSelectionToXServer(X, False);
-      }
+      /* deny the request */
+      replyRequestSelectionToXServer(X, False);
     }
   }
 }
