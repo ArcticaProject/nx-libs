@@ -1897,6 +1897,14 @@ int nxagentConvertSelection(ClientPtr client, WindowPtr pWin, Atom selection,
                           target, validateString(strTarget));
   #endif
 
+  if (strTarget == NULL)
+  {
+    #ifdef DEBUG
+    fprintf(stderr, "%s: cannot find name for target Atom [%d] - returning\n", __func__, target);
+    #endif
+    return 1;
+  }
+
   if (!agentClipboardInitialized)
   {
     #ifdef DEBUG
@@ -1977,24 +1985,6 @@ int nxagentConvertSelection(ClientPtr client, WindowPtr pWin, Atom selection,
 
       return 1;
     }
-  }
-
-  const char *strTarget = NameForAtom(target);
-
-  #ifdef DEBUG
-  fprintf(stderr, "%s: client %s requests sel [%s] "
-              "on window [0x%x] prop [%d][%s] target [%d][%s].\n", __func__,
-                  nxagentClientInfoString(client), validateString(NameForAtom(selection)), requestor,
-                      property, validateString(NameForAtom(property)),
-                          target, validateString(strTarget));
-  #endif
-
-  if (strTarget == NULL)
-  {
-    #ifdef DEBUG
-    fprintf(stderr, "%s: cannot find name for target Atom [%d] - returning\n", __func__, target);
-    #endif
-    return 1;
   }
 
   /*
