@@ -1956,9 +1956,7 @@ int nxagentConvertSelection(ClientPtr client, WindowPtr pWin, Atom selection,
       /* notify the waiting client of failure */
       endTransfer(SELECTION_FAULT, index);
 
-      /* FIXME: the current request is neither processed not cancelled! */
-
-      return 1;
+      /* do NOT return here but process the new request instead! */
     }
     else
     {
