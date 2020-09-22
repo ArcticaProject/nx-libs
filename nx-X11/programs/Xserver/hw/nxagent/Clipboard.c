@@ -1048,12 +1048,13 @@ void nxagentHandleSelectionRequestFromXServer(XEvent *X)
       sendEventToClient(lastSelectionOwner[index].client, &x);
 
       #ifdef DEBUG
-      fprintf(stderr, "%s: sent SelectionRequest event to client %s property [%d][%s]" \
-              "target [%d][%s] requestor [0x%x].\n", __func__,
+      fprintf(stderr, "%s: sent SelectionRequest event to client %s property [%d][%s] " \
+              "target [%d][%s] requestor [0x%x] selection [%d][%s].\n", __func__,
               nxagentClientInfoString(lastSelectionOwner[index].client),
               x.u.selectionRequest.property, NameForAtom(x.u.selectionRequest.property),
               x.u.selectionRequest.target, NameForAtom(x.u.selectionRequest.target),
-              x.u.selectionRequest.requestor);
+              x.u.selectionRequest.requestor,
+              x.u.selectionRequest.selection, NameForAtom(x.u.selectionRequest.selection));
       #endif
     }
     else
@@ -2401,7 +2402,7 @@ Bool nxagentInitClipboard(WindowPtr pWin)
   }
 
   #ifdef TEST
-  fprintf(stderr, "%s: Setting owner of selection [%d][%s] on window 0x%x\n", __func__,
+  fprintf(stderr, "%s: Setting owner of selection [%d][%s] to serverwindow [0x%x]\n", __func__,
               (int) serverTransToAgentProperty, "NX_CUT_BUFFER_SERVER", serverWindow);
   #endif
 
