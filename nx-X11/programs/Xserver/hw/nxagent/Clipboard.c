@@ -1256,7 +1256,7 @@ static void transferSelectionFromXServer(int resource, int index)
     default:
     {
       #ifdef DEBUG
-      fprintf (stderr, "%s: WARNING! Inconsistent state [%s] for selection [%d] for client %s.\n", __func__, 
+      fprintf (stderr, "%s: WARNING! Inconsistent state [%s] for selection [%d] for client %s.\n", __func__,
 	       getClientSelectionStageString(lastClients[index].stage), index,
                        nxagentClientInfoString(lastClients[index].clientPtr));
       #endif
