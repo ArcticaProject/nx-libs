@@ -1887,6 +1887,16 @@ FIXME
 int nxagentConvertSelection(ClientPtr client, WindowPtr pWin, Atom selection,
                                 Window requestor, Atom property, Atom target, Time time)
 {
+  const char *strTarget = NameForAtom(target);
+
+  #ifdef DEBUG
+  fprintf(stderr, "%s: client %s requests sel [%s] "
+              "on window [0x%x] prop [%d][%s] target [%d][%s].\n", __func__,
+                  nxagentClientInfoString(client), validateString(NameForAtom(selection)), requestor,
+                      property, validateString(NameForAtom(property)),
+                          target, validateString(strTarget));
+  #endif
+
   if (!agentClipboardInitialized)
   {
     #ifdef DEBUG
@@ -1939,20 +1949,24 @@ int nxagentConvertSelection(ClientPtr client, WindowPtr pWin, Atom selection,
     if ((GetTimeInMillis() - lastClients[index].reqTime) >= CONVERSION_TIMEOUT)
     {
       #ifdef DEBUG
-      fprintf(stderr, "%s: timeout expired on last request, "
+      fprintf(stderr, "%s: timeout expired on previous request, "
                   "notifying failure to client %s\n", __func__, nxagentClientInfoString(client));
       #endif
 
       /* notify the waiting client of failure */
       endTransfer(SELECTION_FAULT, index);
+
+      /* FIXME: the current request is neither processed not cancelled! */
+
       return 1;
     }
     else
     {
       /*
        * we got another convert request while already waiting for an
-       * answer from the real X server to a previous convert request,
-       * which we cannot handle (yet). So return an error.
+       * answer from the real X server to a previous convert request
+       * for this selection, which we cannot handle (yet). So return
+       * an error for the new request.
        */
       #ifdef DEBUG
       fprintf(stderr, "%s: got new request "
@@ -1961,7 +1975,7 @@ int nxagentConvertSelection(ClientPtr client, WindowPtr pWin, Atom selection,
       #endif
 
       /* notify the sender of the new request of failure */
-      //      sendSelectionNotifyEventToClient(client, time, requestor, selection, target, None);
+      sendSelectionNotifyEventToClient(client, time, requestor, selection, target, None);
 
       return 1;
     }
