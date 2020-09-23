@@ -427,8 +427,8 @@ ProcSendEvent(ClientPtr client)
 
     if (stuff -> event.u.u.type == SelectionNotify)
     {
-	if (nxagentSendNotify(&stuff->event) == 1)
-	  return Success;
+        if (nxagentSendNotificationToSelfViaXServer(&stuff->event) == 1)
+            return Success;
     }
 #endif
     return xorg_ProcSendEvent(client);

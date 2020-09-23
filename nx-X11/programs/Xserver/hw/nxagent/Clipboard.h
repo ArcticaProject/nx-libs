@@ -76,7 +76,7 @@ extern Bool nxagentCollectPropertyEventFromXServer(int resource);
 
 extern WindowPtr nxagentGetClipboardWindow(Atom property);
 
-extern int nxagentSendNotify(xEvent *event);
+extern int nxagentSendNotificationToSelfViaXServer(xEvent *event);
 
 extern void nxagentDumpClipboardStat(void);
 
