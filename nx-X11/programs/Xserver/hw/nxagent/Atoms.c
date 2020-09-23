@@ -76,7 +76,7 @@ Atom nxagentAtoms[NXAGENT_NUMBER_OF_ATOMS];
  * Careful! Do not change indices here! Some of those are referenced
  * at other places via nxagentAtoms[index].
  */
-static char *nxagentAtomNames[NXAGENT_NUMBER_OF_ATOMS + 1] =
+static char *nxagentAtomNames[NXAGENT_NUMBER_OF_ATOMS + 2] =
 {
   "NX_IDENTITY",                 /*  0 */
       /* NX_IDENTITY was used in earlier nx versions to communicate
@@ -135,6 +135,21 @@ static char *nxagentAtomNames[NXAGENT_NUMBER_OF_ATOMS + 1] =
   "COMPOUND_TEXT",               /* 16 */
       /* one of the supported data formats for selections. Standard
          ICCCM Atom */
+  "INCR",                        /* 17 */
+      /* incremental clipboard transfers. Standard
+         ICCCM Atom */
+  "MULTIPLE",                    /* 18 */
+      /* request selection in multiple formats at once. Standard
+         ICCCM Atom */
+  "DELETE",                      /* 19 */
+      /* request to delete selection. Standard ICCCM Atom */
+  "INSERT_SELECTION",            /* 20 */
+      /* request to insert other selection. Standard ICCCM Atom */
+  "INSERT_PROPERTY",             /* 21 */
+      /* request to insert content of property into selection. Standard
+         ICCCM Atom */
+  "SAVE_TARGETS",                /* 22 */
+      /* request tp save clipboard content to clipboard manager on exit */
   NULL,
   NULL
 };

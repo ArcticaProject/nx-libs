@@ -142,25 +142,47 @@ typedef struct _lastServer {
 
 static lastServer *lastServers;
 
+/*
+ * FIXME: use (additional) Atoms.c helpers to get rid of all these
+ * Atoms and strings
+ */
 static XlibAtom serverTARGETS;
 static XlibAtom serverTIMESTAMP;
+static XlibAtom serverINCR;
+static XlibAtom serverMULTIPLE;
+static XlibAtom serverDELETE;
+static XlibAtom serverINSERT_SELECTION;
+static XlibAtom serverINSERT_PROPERTY;
+static XlibAtom serverSAVE_TARGETS;
 static XlibAtom serverTEXT;
 static XlibAtom serverCOMPOUND_TEXT;
 static XlibAtom serverUTF8_STRING;
 static XlibAtom serverTransFromAgentProperty;
-static Atom     clientTARGETS;
-static Atom     clientTIMESTAMP;
-static Atom     clientTEXT;
-static Atom     clientCOMPOUND_TEXT;
-static Atom     clientUTF8_STRING;
+static Atom clientTARGETS;
+static Atom clientTIMESTAMP;
+static Atom clientINCR;
+static Atom clientMULTIPLE;
+static Atom clientDELETE;
+static Atom clientINSERT_SELECTION;
+static Atom clientINSERT_PROPERTY;
+static Atom clientSAVE_TARGETS;
+static Atom clientTEXT;
+static Atom clientCOMPOUND_TEXT;
+static Atom clientUTF8_STRING;
 
-static char     szAgentTARGETS[] = "TARGETS";
-static char     szAgentTEXT[] = "TEXT";
-static char     szAgentTIMESTAMP[] = "TIMESTAMP";
-static char     szAgentCOMPOUND_TEXT[] = "COMPOUND_TEXT";
-static char     szAgentUTF8_STRING[] = "UTF8_STRING";
-static char     szAgentNX_CUT_BUFFER_CLIENT[] = "NX_CUT_BUFFER_CLIENT";
-static char     szAgentCLIPBOARD[] = "CLIPBOARD";
+static char szAgentTARGETS[] = "TARGETS";
+static char szAgentTEXT[] = "TEXT";
+static char szAgentTIMESTAMP[] = "TIMESTAMP";
+static char szAgentINCR[] = "INCR";
+static char szAgentMULTIPLE[] = "MULTIPLE";
+static char szAgentDELETE[] = "DELETE";
+static char szAgentINSERT_SELECTION[] = "INSERT_SELECTION";
+static char szAgentINSERT_PROPERTY[] = "INSERT_PROPERTY";
+static char szAgentSAVE_TARGETS[] = "SAVE_TARGETS";
+static char szAgentCOMPOUND_TEXT[] = "COMPOUND_TEXT";
+static char szAgentUTF8_STRING[] = "UTF8_STRING";
+static char szAgentNX_CUT_BUFFER_CLIENT[] = "NX_CUT_BUFFER_CLIENT";
+static char szAgentCLIPBOARD[] = "CLIPBOARD";
 
 /* number of milliseconds to wait for a conversion from the real X server. */
 #define CONVERSION_TIMEOUT 5000
@@ -807,6 +829,46 @@ void nxagentHandleSelectionRequestFromXServer(XEvent *X)
                     (unsigned char *) &lastSelectionOwner[index].lastTimeChanged,
                     1);
     replyRequestSelectionToXServer(X, True);
+    return;
+  }
+  else if (X->xselectionrequest.target == serverMULTIPLE)
+  {
+    #ifdef DEBUG
+    fprintf(stderr, "%s: (currently) unsupported target [MULTIPLE] - denying request.\n", __func__);
+    #endif
+    replyRequestSelectionToXServer(X, False);
+    return;
+  }
+  else if (X->xselectionrequest.target == serverDELETE)
+  {
+    #ifdef DEBUG
+    fprintf(stderr, "%s: (currently) unsupported target [DELETE] - denying request.\n", __func__);
+    #endif
+    replyRequestSelectionToXServer(X, False);
+    return;
+  }
+  else if (X->xselectionrequest.target == serverINSERT_SELECTION)
+  {
+    #ifdef DEBUG
+    fprintf(stderr, "%s: (currently) unsupported target [INSERT_SELECTION] - denying request.\n", __func__);
+    #endif
+    replyRequestSelectionToXServer(X, False);
+    return;
+  }
+  else if (X->xselectionrequest.target == serverINSERT_PROPERTY)
+  {
+    #ifdef DEBUG
+    fprintf(stderr, "%s: (currently) unsupported target [INSERT_PROPERTY] - denying request.\n", __func__);
+    #endif
+    replyRequestSelectionToXServer(X, False);
+    return;
+  }
+  else if (X->xselectionrequest.target == serverSAVE_TARGETS)
+  {
+    #ifdef DEBUG
+    fprintf(stderr, "%s: (currently) unsupported target [SAVE_TARGETS] - denying request.\n", __func__);
+    #endif
+    replyRequestSelectionToXServer(X, False);
     return;
   }
   else
@@ -1960,6 +2022,46 @@ int nxagentConvertSelection(ClientPtr client, WindowPtr pWin, Atom selection,
     sendSelectionNotifyEventToClient(client, time, requestor, selection, target, property);
     return 1;
   }
+  else if (target == clientMULTIPLE)
+  {
+    #ifdef DEBUG
+    fprintf(stderr, "%s: (currently) unsupported target [MULTIPLE] - denying request.\n", __func__);
+    #endif
+    sendSelectionNotifyEventToClient(client, time, requestor, selection, target, None);
+    return 1;
+  }
+  else if (target == clientDELETE)
+  {
+    #ifdef DEBUG
+    fprintf(stderr, "%s: (currently) unsupported target [DELETE] - denying request.\n", __func__);
+    #endif
+    sendSelectionNotifyEventToClient(client, time, requestor, selection, target, None);
+    return 1;
+  }
+  else if (target == clientINSERT_SELECTION)
+  {
+    #ifdef DEBUG
+    fprintf(stderr, "%s: (currently) unsupported target [INSERT_SELECTION] - denying request.\n", __func__);
+    #endif
+    sendSelectionNotifyEventToClient(client, time, requestor, selection, target, None);
+    return 1;
+  }
+  else if (target == clientINSERT_PROPERTY)
+  {
+    #ifdef DEBUG
+    fprintf(stderr, "%s: (currently) unsupported target [INSERT_PROPERTY] - denying request.\n", __func__);
+    #endif
+    sendSelectionNotifyEventToClient(client, time, requestor, selection, target, None);
+    return 1;
+  }
+  else if (target == clientSAVE_TARGETS)
+  {
+    #ifdef DEBUG
+    fprintf(stderr, "%s: (currently) unsupported target [SAVE_TARGETS] - denying request.\n", __func__);
+    #endif
+    sendSelectionNotifyEventToClient(client, time, requestor, selection, target, None);
+    return 1;
+  }
 
   if (lastClients[index].clientPtr == client)
   {
@@ -2260,11 +2362,18 @@ Bool nxagentInitClipboard(WindowPtr pWin)
   {
     /* cannot move that down to others - we need it for
      * initSelectionOwnerData ! */
+    /* FIXME: it is probably better to re-use the strings from Atoms.c here */
     clientTARGETS = MakeAtom(szAgentTARGETS, strlen(szAgentTARGETS), True);
     clientTEXT = MakeAtom(szAgentTEXT, strlen(szAgentTEXT), True);
     clientCOMPOUND_TEXT = MakeAtom(szAgentCOMPOUND_TEXT, strlen(szAgentCOMPOUND_TEXT), True);
     clientUTF8_STRING = MakeAtom(szAgentUTF8_STRING, strlen(szAgentUTF8_STRING), True);
     clientTIMESTAMP = MakeAtom(szAgentTIMESTAMP, strlen(szAgentTIMESTAMP), True);
+    clientINCR = MakeAtom(szAgentINCR, strlen(szAgentINCR), True);
+    clientMULTIPLE = MakeAtom(szAgentMULTIPLE, strlen(szAgentMULTIPLE), True);
+    clientDELETE = MakeAtom(szAgentDELETE, strlen(szAgentDELETE), True);
+    clientINSERT_SELECTION = MakeAtom(szAgentINSERT_SELECTION, strlen(szAgentINSERT_SELECTION), True);
+    clientINSERT_PROPERTY = MakeAtom(szAgentINSERT_PROPERTY, strlen(szAgentINSERT_PROPERTY), True);
+    clientSAVE_TARGETS = MakeAtom(szAgentSAVE_TARGETS, strlen(szAgentSAVE_TARGETS), True);
 
     SAFE_free(lastSelectionOwner);
     lastSelectionOwner = (SelectionOwner *) malloc(nxagentMaxSelections * sizeof(SelectionOwner));
@@ -2319,6 +2428,12 @@ Bool nxagentInitClipboard(WindowPtr pWin)
   serverCOMPOUND_TEXT = nxagentAtoms[16]; /* COMPOUND_TEXT */
   serverUTF8_STRING = nxagentAtoms[12]; /* UTF8_STRING */
   serverTIMESTAMP = nxagentAtoms[11];   /* TIMESTAMP */
+  serverINCR = nxagentAtoms[17];   /* INCR */
+  serverMULTIPLE = nxagentAtoms[18];   /* MULTIPLE */
+  serverDELETE = nxagentAtoms[19];   /* DELETE */
+  serverINSERT_SELECTION = nxagentAtoms[20];   /* INSERT_SELECTION */
+  serverINSERT_PROPERTY = nxagentAtoms[21];   /* INSERT_PROPERTY */
+  serverSAVE_TARGETS = nxagentAtoms[22];   /* SAVE_TARGETS */
 
   /*
    * Server side properties to hold pasted data.
