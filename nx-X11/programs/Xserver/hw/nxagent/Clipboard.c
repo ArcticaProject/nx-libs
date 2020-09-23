@@ -815,6 +815,10 @@ void nxagentHandleSelectionRequestFromXServer(XEvent *X)
       char *strSelection = XGetAtomName(nxagentDisplay, X->xselectionrequest.selection);
       char *strProperty = XGetAtomName(nxagentDisplay, X->xselectionrequest.property);
 
+      if (X->xselectionrequest.requestor == serverWindow)
+      {
+        fprintf(stderr, "%s: this event has been sent by nxagent!\n", __func__);;
+      }
       fprintf(stderr, "%s: Received SelectionRequestEvent from real server: selection [%ld][%s] " \
               "target [%ld][%s] requestor [display[%s]/0x%lx] destination [%ld][%s]\n",
               __func__,
@@ -1732,6 +1736,28 @@ void nxagentSetSelectionCallback(CallbackListPtr *callbacks, void *data,
    * way to identify that situation during callback processing we
    * could get rid of the Trap...
   */
+
+  SelectionInfoRec *info = (SelectionInfoRec *)args;
+
+  #ifdef DEBUG
+  if (info->kind == SelectionSetOwner)
+  {
+    fprintf(stderr, "%s: SelectionCallbackKind [SelectionSetOwner]\n", __func__);
+  }
+  else if (info->kind == SelectionWindowDestroy)
+  {
+    fprintf(stderr, "%s: SelectionCallbackKind [SelectionWindowDestroy]\n", __func__);
+  }
+  else if (info->kind == SelectionClientClose)
+  {
+    fprintf(stderr, "%s: SelectionCallbackKind [SelectionClientClose]\n", __func__);
+  }
+  else
+  {
+    fprintf(stderr, "%s: SelectionCallbackKind [unknown]\n", __func__);
+  }
+  #endif
+
   if (nxagentExternalClipboardEventTrap)
   {
     #ifdef DEBUG
@@ -1739,8 +1765,6 @@ void nxagentSetSelectionCallback(CallbackListPtr *callbacks, void *data,
     #endif
     return;
   }
-
-  SelectionInfoRec *info = (SelectionInfoRec *)args;
 
   Selection * pCurSel = (Selection *)info->selection;
 
@@ -1751,7 +1775,6 @@ void nxagentSetSelectionCallback(CallbackListPtr *callbacks, void *data,
   if (info->kind == SelectionSetOwner)
   {
     #ifdef DEBUG
-    fprintf(stderr, "%s: called with SelectionCallbackKind SelectionSetOwner\n", __func__);
     fprintf(stderr, "%s: pCurSel->pWin [0x%x]\n", __func__, WINDOWID(pCurSel->pWin));
     fprintf(stderr, "%s: pCurSel->selection [%s]\n", __func__, NameForAtom(pCurSel->selection));
     #endif
@@ -1769,21 +1792,12 @@ void nxagentSetSelectionCallback(CallbackListPtr *callbacks, void *data,
   }
   else if (info->kind == SelectionWindowDestroy)
   {
-    #ifdef DEBUG
-    fprintf(stderr, "%s: called with SelectionCallbackKind SelectionWindowDestroy\n", __func__);
-    #endif
   }
   else if (info->kind == SelectionClientClose)
   {
-    #ifdef DEBUG
-    fprintf(stderr, "%s: called with SelectionCallbackKind SelectionClientClose\n", __func__);
-    #endif
   }
   else
   {
-    #ifdef DEBUG
-    fprintf(stderr, "%s: called with unknown SelectionCallbackKind\n", __func__);
-    #endif
   }
 }
 #endif
