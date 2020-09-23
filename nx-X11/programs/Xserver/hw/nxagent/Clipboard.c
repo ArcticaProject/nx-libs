@@ -1037,7 +1037,7 @@ void nxagentHandleSelectionRequestFromXServer(XEvent *X)
        * x.u.selectionRequest.requestor = lastSelectionOwnerWindow;
        */
 
-      x.u.selectionRequest.requestor = lastSelectionOwner[index].window;
+      //x.u.selectionRequest.requestor = lastSelectionOwner[index].window;
 
       /* by dimbor (idea from zahvatov) */
       if (X->xselectionrequest.target != XA_STRING)
