@@ -2262,11 +2262,12 @@ int nxagentSendNotify(xEvent *event)
    * communication happens completely between our own clients (some of
    * which can be nxagents themselves). In that case we return 0 (tell
    * dix to go on) and do nothing!
+   * Be sure to not let this trigger for the clear request (property 0)
    */
-  if (event->u.selectionNotify.property != clientCutProperty || lastServerRequestor == None)
+  if (!(event->u.selectionNotify.property == clientCutProperty || event->u.selectionNotify.property == 0) || lastServerRequestor == None)
   {
     #ifdef DEBUG
-    fprintf(stderr, "%s: sent nothing.\n", __func__);
+    fprintf(stderr, "%s: sent nothing - message to real X server is not required.\n", __func__);
     #endif
     return 0;
   }
