@@ -1575,7 +1575,7 @@ void nxagentHandleSelectionNotifyFromXServer(XEvent *X)
 
                 #ifdef DEBUG
                 char *s = XGetAtomName(nxagentDisplay, remote);
-                fprintf(stderr, "%s: converting atom [%d][%s] -> [%ld][%s]\n", __func__,local, NameForAtom(local), remote, s);
+                fprintf(stderr, "%s: converting atom: local [%d][%s] -> remote [%ld][%s]\n", __func__,local, NameForAtom(local), remote, s);
                 SAFE_XFree(s);
                 #endif
               }
