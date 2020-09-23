@@ -1281,22 +1281,65 @@ Bool nxagentCollectPropertyEventFromXServer(int resource)
           fprintf(stderr, "%s: Got property content from remote server. size [%lu] bytes.\n", __func__, (ulReturnItems * resultFormat / 8));
           #endif
 
-          ChangeWindowProperty(lastClients[index].windowPtr,
-                               lastClients[index].property,
-                               lastClients[index].target,
-                               resultFormat, PropModeReplace,
-                               ulReturnItems, pszReturnData, 1);
+          if (lastClients[index].target == clientTARGETS)
+          {
+            Atom * targets = calloc(sizeof(Atom), ulReturnItems);
+            if (targets == NULL)
+            {
+              #ifdef WARNING
+              fprintf(stderr, "%s: WARNING! Could not alloc memory for clipboard targets transmission.\n", __func__);
+              #endif
 
-          #ifdef DEBUG
-          fprintf(stderr, "%s: Selection property [%d][%s] changed to [\"%*.*s\"...]\n", __func__,
-                      lastClients[index].property,
-                          validateString(NameForAtom(lastClients[index].property)),
-                              (int)(min(20, ulReturnItems * resultFormat / 8)),
-                                  (int)(min(20, ulReturnItems * resultFormat / 8)),
-                                      pszReturnData);
-          #endif
+              /* operation failed */
+              endTransfer(SELECTION_FAULT, index);
+            }
+            else
+            {
+              /* fprintf(stderr, "sizeof(Atom) [%lu], sizeof(XlibAtom) [%lu], sizeof(long) [%lu], sizeof(CARD32) [%lu] sizeof(INT32) [%lu]\n", sizeof(Atom), sizeof(XlibAtom), sizeof(long), sizeof(CARD32), sizeof(INT32)); */
 
-          endTransfer(SELECTION_SUCCESS, index);
+              Atom *addr = targets;
+              unsigned int numTargets = ulReturnItems;
+
+              for (int i = 0; i < numTargets; i++)
+              {
+                XlibAtom remote = *((XlibAtom*)(pszReturnData + i*resultFormat/8));
+                Atom local = nxagentRemoteToLocalAtom(remote);
+                *(addr++) = local;
+
+                #ifdef DEBUG
+                char *s = XGetAtomName(nxagentDisplay, remote);
+                fprintf(stderr, "%s: converting atom: remote [%u][%s] -> local [%u][%s]\n", __func__, (unsigned int)remote, s, local, NameForAtom(local));
+                SAFE_XFree(s);
+                #endif
+              }
+              ChangeWindowProperty(lastClients[index].windowPtr,
+                                   lastClients[index].property,
+                                   MakeAtom("ATOM", 4, 1),
+                                   32, PropModeReplace,
+                                   ulReturnItems, (unsigned char*)targets, 1);
+
+              endTransfer(SELECTION_SUCCESS, index);
+            }
+          }
+          else
+          {
+            ChangeWindowProperty(lastClients[index].windowPtr,
+                                 lastClients[index].property,
+                                 lastClients[index].target,
+                                 resultFormat, PropModeReplace,
+                                 ulReturnItems, pszReturnData, 1);
+
+            #ifdef DEBUG
+            fprintf(stderr, "%s: Selection property [%d][%s] changed to [\"%*.*s\"...]\n", __func__,
+                        lastClients[index].property,
+                            validateString(NameForAtom(lastClients[index].property)),
+                                (int)(min(20, ulReturnItems * resultFormat / 8)),
+                                    (int)(min(20, ulReturnItems * resultFormat / 8)),
+                                        pszReturnData);
+            #endif
+
+            endTransfer(SELECTION_SUCCESS, index);
+          }
         }
         break;
       }
@@ -1949,38 +1992,6 @@ int nxagentConvertSelection(ClientPtr client, WindowPtr pWin, Atom selection,
   }
 
   /*
-   * The selection request target is TARGETS. The requestor is asking
-   * for a list of supported data formats.
-   *
-   * The list is aligned with the one in nxagentHandleSelectionRequestFromXServer.
-   */
-  if (target == clientTARGETS)
-  {
-    Atom targets[] = {XA_STRING, clientUTF8_STRING, clientTEXT, clientCOMPOUND_TEXT, clientTARGETS, clientTIMESTAMP};
-    int numTargets = sizeof(targets) / sizeof(targets[0]);
-
-    #ifdef DEBUG
-    fprintf(stderr, "%s: available targets [%d]:\n", __func__, numTargets);
-    for (int j = 0; j < numTargets; j++)
-        fprintf(stderr, "%s:  %s\n", __func__, NameForAtom(targets[j]));
-    fprintf(stderr, "\n");
-    #endif
-
-    ChangeWindowProperty(pWin,
-                         property,
-                         MakeAtom("ATOM", 4, 1),
-                         sizeof(Atom)*8,
-                         PropModeReplace,
-                         numTargets,
-                         &targets,
-                         1);
-
-    sendSelectionNotifyEventToClient(client, time, requestor, selection, target, property);
-
-    return 1;
-  }
-
-  /*
    * Section 2.6.2 of the ICCCM states:
    * "TIMESTAMP - To avoid some race conditions, it is important
    * that requestors be able to discover the timestamp the owner
@@ -2034,72 +2045,53 @@ int nxagentConvertSelection(ClientPtr client, WindowPtr pWin, Atom selection,
     }
   }
 
-  if (target == clientTEXT ||
-          target == XA_STRING ||
-              target == clientCOMPOUND_TEXT ||
-                  target == clientUTF8_STRING)
-  {
-    setClientSelectionStage(SelectionStageNone, index);
+  setClientSelectionStage(SelectionStageNone, index);
 
-    /*
-     * store the original requestor, we need that later after
-     * serverTransToAgentProperty contains the desired selection content
-     */
-    lastClients[index].requestor = requestor;
-    lastClients[index].windowPtr = pWin;
-    lastClients[index].clientPtr = client;
-    lastClients[index].time = time;
-    lastClients[index].property = property;
-    lastClients[index].intSelection = selection;
-    lastClients[index].target = target;
-    /* if the last client request time is more than 5s ago update it. Why? */
-    if ((GetTimeInMillis() - lastClients[index].reqTime) >= CONVERSION_TIMEOUT)
-      lastClients[index].reqTime = GetTimeInMillis();
+  /*
+   * store the original requestor, we need that later after
+   * serverTransToAgentProperty contains the desired selection content
+   */
+  lastClients[index].requestor = requestor;
+  lastClients[index].windowPtr = pWin;
+  lastClients[index].clientPtr = client;
+  lastClients[index].time = time;
+  lastClients[index].property = property;
+  lastClients[index].intSelection = selection;
+  lastClients[index].target = target;
+  /* if the last client request time is more than 5s ago update it. Why? */
+  if ((GetTimeInMillis() - lastClients[index].reqTime) >= CONVERSION_TIMEOUT)
+    lastClients[index].reqTime = GetTimeInMillis();
 
-    XlibAtom remSelection = translateLocalToRemoteSelection(selection);
-    XlibAtom remTarget = translateLocalToRemoteTarget(target);
-    XlibAtom remProperty = serverTransToAgentProperty;
+  XlibAtom remSelection = translateLocalToRemoteSelection(selection);
+  XlibAtom remTarget = translateLocalToRemoteTarget(target);
+  XlibAtom remProperty = serverTransToAgentProperty;
 
-    #ifdef DEBUG
-    fprintf(stderr, "%s: replacing local by remote property: [%d][%s] -> [%ld][%s]\n",
-                __func__, property, NameForAtom(property),
-                    remProperty, "NX_CUT_BUFFER_SERVER");
-    #endif
+  #ifdef DEBUG
+  fprintf(stderr, "%s: replacing local by remote property: [%d][%s] -> [%ld][%s]\n",
+              __func__, property, NameForAtom(property),
+                  remProperty, "NX_CUT_BUFFER_SERVER");
+  #endif
 
-/* FIXME: check why using CurrentTime will not replace the value
-     * by a real time. The reply also contains time "0" which is
-     * unexpected (for me) */
-    #ifdef DEBUG
-    fprintf(stderr, "%s: Sending XConvertSelection to real X server: requestor [0x%x] target [%ld][%s] property [%ld][%s] selection [%ld][%s] time [0][CurrentTime]\n", __func__,
-            serverWindow, remTarget, XGetAtomName(nxagentDisplay, remTarget),
-                remProperty, XGetAtomName(nxagentDisplay, remProperty),
-                    remSelection, XGetAtomName(nxagentDisplay, remSelection));
-    #endif
+  /* FIXME: check why using CurrentTime will not replace the value
+   * by a real time. The reply also contains time "0" which is
+   * unexpected (for me) */
+  #ifdef DEBUG
+  fprintf(stderr, "%s: Sending XConvertSelection to real X server: requestor [0x%x] target [%ld][%s] property [%ld][%s] selection [%ld][%s] time [0][CurrentTime]\n", __func__,
+          serverWindow, remTarget, XGetAtomName(nxagentDisplay, remTarget),
+              remProperty, XGetAtomName(nxagentDisplay, remProperty),
+                  remSelection, XGetAtomName(nxagentDisplay, remSelection));
+  #endif
 
-    UpdateCurrentTime();
-    XConvertSelection(nxagentDisplay, remSelection, remTarget, remProperty, serverWindow, CurrentTime);
+  UpdateCurrentTime();
+  XConvertSelection(nxagentDisplay, remSelection, remTarget, remProperty, serverWindow, CurrentTime);
 
-    /* XConvertSelection will always return (check the source!), so no need to check */
+  /* XConvertSelection will always return (check the source!), so no need to check */
 
-    #ifdef DEBUG
-    fprintf(stderr, "%s: Sent XConvertSelection\n", __func__);
-    #endif
+  #ifdef DEBUG
+  fprintf(stderr, "%s: Sent XConvertSelection\n", __func__);
+  #endif
 
-    return 1;
-  }
-  else
-  {
-    /* deny request */
-    #ifdef DEBUG
-    fprintf(stderr, "%s: Unsupported target [%d][%s] - denying request\n", __func__, target,
-                validateString(NameForAtom(target)));
-    #endif
-    sendSelectionNotifyEventToClient(client, time, requestor, selection, target, None);
-
-    return 1;
-  }
-
-  return 0;
+  return 1;
 }
 
 XlibAtom translateLocalToRemoteSelection(Atom local)
