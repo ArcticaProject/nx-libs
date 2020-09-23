@@ -1455,7 +1455,12 @@ void nxagentHandleSelectionNotifyFromXServer(XEvent *X)
   {
     char *s = XGetAtomName(nxagentDisplay, e->property);
     char *t = XGetAtomName(nxagentDisplay, e->target);
-    fprintf(stderr, "%s: SelectionNotify event from real X server, property "\
+    if (e->requestor == serverWindow)
+    {
+      fprintf(stderr, "%s: this event has been sent by nxagent!\n", __func__);;
+    }
+
+    fprintf(stderr, "%s: SelectionNotify event from real X server, property " \
                 "[%ld][%s] requestor [0x%lx] selection [%s] target [%ld][%s] time [%lu] send_event [%d].\n",
                     __func__, e->property, validateString(s), e->requestor,
                         XGetAtomName(nxagentDisplay, e->selection), e->target,
