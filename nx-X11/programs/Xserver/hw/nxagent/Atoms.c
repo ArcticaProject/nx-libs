@@ -133,6 +133,19 @@ static char *nxagentAtomNames[NXAGENT_NUMBER_OF_ATOMS + 1] =
   "COMPOUND_TEXT",               /* 16 */
       /* one of the supported data formats for selections. Standard
          ICCCM Atom */
+  "INCR",                        /* 17 */
+      /* incremental clipboard transfers. Standard
+         ICCCM Atom */
+  "MULTIPLE",                    /* 18 */
+      /* request selection in multiple formats at once. Standard
+         ICCCM Atom */
+  "DELETE",                      /* 19 */
+      /* request to delete selection. Standard ICCCM Atom */
+  "INSERT_SELECTION",            /* 20 */
+      /* request to insert other selection. Standard ICCCM Atom */
+  "INSERT_PROPERTY",             /* 21 */
+      /* request to insert content of property into selection. Standard
+         ICCCM Atom */
   NULL,
   NULL
 };

@@ -143,12 +143,22 @@ static lastServer *lastServers;
 
 static XlibAtom serverTARGETS;
 static XlibAtom serverTIMESTAMP;
+static XlibAtom serverINCR;
+static XlibAtom serverMULTIPLE;
+static XlibAtom serverDELETE;
+static XlibAtom serverINSERT_SELECTION;
+static XlibAtom serverINSERT_PROPERTY;
 static XlibAtom serverTEXT;
 static XlibAtom serverCOMPOUND_TEXT;
 static XlibAtom serverUTF8_STRING;
 static XlibAtom serverTransFromAgentProperty;
 static Atom clientTARGETS;
 static Atom clientTIMESTAMP;
+static Atom clientINCR;
+static Atom clientMULTIPLE;
+static Atom clientDELETE;
+static Atom clientINSERT_SELECTION;
+static Atom clientINSERT_PROPERTY;
 static Atom clientTEXT;
 static Atom clientCOMPOUND_TEXT;
 static Atom clientUTF8_STRING;
@@ -157,6 +167,11 @@ static Atom clientCLIPBOARD;
 static char szAgentTARGETS[] = "TARGETS";
 static char szAgentTEXT[] = "TEXT";
 static char szAgentTIMESTAMP[] = "TIMESTAMP";
+static char szAgentINCR[] = "INCR";
+static char szAgentMULTIPLE[] = "MULTIPLE";
+static char szAgentDELETE[] = "DELETE";
+static char szAgentINSERT_SELECTION[] = "INSERT_SELECTION";
+static char szAgentINSERT_PROPERTY[] = "INSERT_PROPERTY";
 static char szAgentCOMPOUND_TEXT[] = "COMPOUND_TEXT";
 static char szAgentUTF8_STRING[] = "UTF8_STRING";
 static char szAgentNX_CUT_BUFFER_CLIENT[] = "NX_CUT_BUFFER_CLIENT";
@@ -386,6 +401,16 @@ void nxagentDumpClipboardStat(void)
   fprintf(stderr, "  serverTARGETS                          [% 4ld][%s]\n", serverTARGETS, validateString(s));
   SAFE_XFree(s); s = XGetAtomName(nxagentDisplay, serverTIMESTAMP);
   fprintf(stderr, "  serverTIMESTAMP                        [% 4ld][%s]\n", serverTIMESTAMP, validateString(s));
+  SAFE_XFree(s); s = XGetAtomName(nxagentDisplay, serverINCR);
+  fprintf(stderr, "  serverINCR                             [% 4ld][%s]\n", serverINCR, validateString(s));
+  SAFE_XFree(s); s = XGetAtomName(nxagentDisplay, serverMULTIPLE);
+  fprintf(stderr, "  serverMULTIPLE                         [% 4ld][%s]\n", serverMULTIPLE, validateString(s));
+  SAFE_XFree(s); s = XGetAtomName(nxagentDisplay, serverDELETE);
+  fprintf(stderr, "  serverDELETE                           [% 4ld][%s]\n", serverDELETE, validateString(s));
+  SAFE_XFree(s); s = XGetAtomName(nxagentDisplay, serverINSERT_SELECTION);
+  fprintf(stderr, "  serverINSERT_SELECTION                 [% 4ld][%s]\n", serverINSERT_SELECTION, validateString(s));
+  SAFE_XFree(s); s = XGetAtomName(nxagentDisplay, serverINSERT_PROPERTY);
+  fprintf(stderr, "  serverINSERT_PROPERTY                  [% 4ld][%s]\n", serverINSERT_PROPERTY, validateString(s));
   SAFE_XFree(s); s = XGetAtomName(nxagentDisplay, serverTEXT);
   fprintf(stderr, "  serverTEXT                             [% 4ld][%s]\n", serverTEXT, validateString(s));
   SAFE_XFree(s); s = XGetAtomName(nxagentDisplay, serverCOMPOUND_TEXT);
@@ -402,6 +427,11 @@ void nxagentDumpClipboardStat(void)
   fprintf(stderr, "Atoms (inside nxagent)\n");
   fprintf(stderr, "  clientTARGETS                          [% 4d][%s]\n", clientTARGETS, NameForAtom(clientTARGETS));
   fprintf(stderr, "  clientTIMESTAMP                        [% 4d][%s]\n", clientTIMESTAMP, NameForAtom(clientTIMESTAMP));
+  fprintf(stderr, "  clientINCR                             [% 4d][%s]\n", clientINCR, NameForAtom(clientINCR));
+  fprintf(stderr, "  clientMULTIPLE                         [% 4d][%s]\n", clientMULTIPLE, NameForAtom(clientMULTIPLE));
+  fprintf(stderr, "  clientDELETE                           [% 4d][%s]\n", clientDELETE, NameForAtom(clientDELETE));
+  fprintf(stderr, "  clientINSERT_SELECTION                 [% 4d][%s]\n", clientINSERT_SELECTION, NameForAtom(clientINSERT_SELECTION));
+  fprintf(stderr, "  clientINSERT_PROPERTE                  [% 4d][%s]\n", clientINSERT_PROPERTY, NameForAtom(clientINSERT_PROPERTY));
   fprintf(stderr, "  clientTEXT                             [% 4d][%s]\n", clientTEXT, NameForAtom(clientTEXT));
   fprintf(stderr, "  clientCOMPOUND_TEXT                    [% 4d][%s]\n", clientCOMPOUND_TEXT, NameForAtom(clientCOMPOUND_TEXT));
   fprintf(stderr, "  clientUTF8_STRING                      [% 4d][%s]\n", clientUTF8_STRING, NameForAtom(clientUTF8_STRING));
@@ -851,6 +881,38 @@ void nxagentHandleSelectionRequestFromXServer(XEvent *X)
                     (unsigned char *) &lastSelectionOwner[index].lastTimeChanged,
                     1);
     replyRequestSelectionToXServer(X, True);
+    return;
+  }
+  else if (X->xselectionrequest.target == serverMULTIPLE)
+  {
+    #ifdef DEBUG
+    fprintf(stderr, "%s: (currently) unsupported target [MULTIPLE] - denying request.\n", __func__);
+    #endif
+    replyRequestSelectionToXServer(X, False);
+    return;
+  }
+  else if (X->xselectionrequest.target == serverDELETE)
+  {
+    #ifdef DEBUG
+    fprintf(stderr, "%s: (currently) unsupported target [DELETE] - denying request.\n", __func__);
+    #endif
+    replyRequestSelectionToXServer(X, False);
+    return;
+  }
+  else if (X->xselectionrequest.target == serverINSERT_SELECTION)
+  {
+    #ifdef DEBUG
+    fprintf(stderr, "%s: (currently) unsupported target [INSERT_SELECTION] - denying request.\n", __func__);
+    #endif
+    replyRequestSelectionToXServer(X, False);
+    return;
+  }
+  else if (X->xselectionrequest.target == serverINSERT_PROPERTY)
+  {
+    #ifdef DEBUG
+    fprintf(stderr, "%s: (currently) unsupported target [INSERT_PROPERTY] - denying request.\n", __func__);
+    #endif
+    replyRequestSelectionToXServer(X, False);
     return;
   }
   else
@@ -2021,6 +2083,38 @@ int nxagentConvertSelection(ClientPtr client, WindowPtr pWin, Atom selection,
     sendSelectionNotifyEventToClient(client, time, requestor, selection, target, property);
     return 1;
   }
+  else if (target == clientMULTIPLE)
+  {
+    #ifdef DEBUG
+    fprintf(stderr, "%s: (currently) unsupported target [MULTIPLE] - denying request.\n", __func__);
+    #endif
+    sendSelectionNotifyEventToClient(client, time, requestor, selection, target, None);
+    return 1;
+  }
+  else if (target == clientDELETE)
+  {
+    #ifdef DEBUG
+    fprintf(stderr, "%s: (currently) unsupported target [DELETE] - denying request.\n", __func__);
+    #endif
+    sendSelectionNotifyEventToClient(client, time, requestor, selection, target, None);
+    return 1;
+  }
+  else if (target == clientINSERT_SELECTION)
+  {
+    #ifdef DEBUG
+    fprintf(stderr, "%s: (currently) unsupported target [INSERT_SELECTION] - denying request.\n", __func__);
+    #endif
+    sendSelectionNotifyEventToClient(client, time, requestor, selection, target, None);
+    return 1;
+  }
+  else if (target == clientINSERT_PROPERTY)
+  {
+    #ifdef DEBUG
+    fprintf(stderr, "%s: (currently) unsupported target [INSERT_PROPERTY] - denying request.\n", __func__);
+    #endif
+    sendSelectionNotifyEventToClient(client, time, requestor, selection, target, None);
+    return 1;
+  }
 
   if (lastClients[index].clientPtr == client && (GetTimeInMillis() - lastClients[index].reqTime < ACCUM_TIME))
   {
@@ -2322,6 +2416,11 @@ Bool nxagentInitClipboard(WindowPtr pWin)
     clientCOMPOUND_TEXT = MakeAtom(szAgentCOMPOUND_TEXT, strlen(szAgentCOMPOUND_TEXT), True);
     clientUTF8_STRING = MakeAtom(szAgentUTF8_STRING, strlen(szAgentUTF8_STRING), True);
     clientTIMESTAMP = MakeAtom(szAgentTIMESTAMP, strlen(szAgentTIMESTAMP), True);
+    clientINCR = MakeAtom(szAgentINCR, strlen(szAgentINCR), True);
+    clientMULTIPLE = MakeAtom(szAgentMULTIPLE, strlen(szAgentMULTIPLE), True);
+    clientDELETE = MakeAtom(szAgentDELETE, strlen(szAgentDELETE), True);
+    clientINSERT_SELECTION = MakeAtom(szAgentINSERT_SELECTION, strlen(szAgentINSERT_SELECTION), True);
+    clientINSERT_PROPERTY = MakeAtom(szAgentINSERT_PROPERTY, strlen(szAgentINSERT_PROPERTY), True);
 
     SAFE_free(lastSelectionOwner);
 
@@ -2360,6 +2459,11 @@ Bool nxagentInitClipboard(WindowPtr pWin)
   serverCOMPOUND_TEXT = nxagentAtoms[16]; /* COMPOUND_TEXT */
   serverUTF8_STRING = nxagentAtoms[12]; /* UTF8_STRING */
   serverTIMESTAMP = nxagentAtoms[11];   /* TIMESTAMP */
+  serverINCR = nxagentAtoms[17];   /* INCR */
+  serverMULTIPLE = nxagentAtoms[18];   /* MULTIPLE */
+  serverDELETE = nxagentAtoms[19];   /* DELETE */
+  serverINSERT_SELECTION = nxagentAtoms[20];   /* INSERT_SELECTION */
+  serverINSERT_PROPERTY = nxagentAtoms[21];   /* INSERT_PROPERTY */
 
   /*
    * Server side properties to hold pasted data.
