@@ -1554,32 +1554,46 @@ void nxagentHandleSelectionNotifyFromXServer(XEvent *X)
   }
   else
   {
-    int index = nxagentFindLastSelectionOwnerIndex(X->xselection.selection);
-    if (index < nxagentMaxSelections)
+    /* if the last owner was an internal one, read the
+     * clientCutProperty and push the contents to the
+     * lastServers[index].requestor on the real X server.
+     */
+    if (IS_INTERNAL_OWNER(index) &&
+           lastSelectionOwner[index].windowPtr != NULL &&
+               X->xselection.property == serverTransFromAgentProperty)
     {
-      /* if the last owner was an internal one, read the
-       * clientCutProperty and push the contents to the
-       * lastServers[index].requestor on the real X server.
-       */
-      if (IS_INTERNAL_OWNER(index) &&
-             lastSelectionOwner[index].windowPtr != NULL &&
-                 X->xselection.property == serverTransFromAgentProperty)
+      Atom            atomReturnType;
+      int             resultFormat;
+      unsigned long   ulReturnItems;
+      unsigned long   ulReturnBytesLeft;
+      unsigned char   *pszReturnData = NULL;
+
+      /* first get size values ... */
+      int result = GetWindowProperty(lastSelectionOwner[index].windowPtr, clientCutProperty, 0, 0, False,
+                                         AnyPropertyType, &atomReturnType, &resultFormat,
+                                             &ulReturnItems, &ulReturnBytesLeft, &pszReturnData);
+
+      #ifdef DEBUG
+      fprintf(stderr, "%s: GetWindowProperty() window [0x%x] property [%d] returned [%s]\n", __func__,
+                  lastSelectionOwner[index].window, clientCutProperty, getXErrorString(result));
+      #endif
+      if (result == BadAlloc || result == BadAtom ||
+              result == BadWindow || result == BadValue)
       {
-        Atom            atomReturnType;
-        int             resultFormat;
-        unsigned long   ulReturnItems;
-        unsigned long   ulReturnBytesLeft;
-        unsigned char   *pszReturnData = NULL;
-
-        /* first get size values ... */
-        int result = GetWindowProperty(lastSelectionOwner[index].windowPtr, clientCutProperty, 0, 0, False,
-                                           AnyPropertyType, &atomReturnType, &resultFormat,
-                                               &ulReturnItems, &ulReturnBytesLeft, &pszReturnData);
-
+        lastServers[index].property = None;
+      }
+      else
+      {
+        /* ... then use the size values for the actual request */
+        result = GetWindowProperty(lastSelectionOwner[index].windowPtr, clientCutProperty, 0,
+                                       ulReturnBytesLeft, False, AnyPropertyType, &atomReturnType,
+                                           &resultFormat, &ulReturnItems, &ulReturnBytesLeft,
+                                               &pszReturnData);
         #ifdef DEBUG
         fprintf(stderr, "%s: GetWindowProperty() window [0x%x] property [%d] returned [%s]\n", __func__,
                     lastSelectionOwner[index].window, clientCutProperty, getXErrorString(result));
         #endif
+
         if (result == BadAlloc || result == BadAtom ||
                 result == BadWindow || result == BadValue)
         {
@@ -1587,84 +1601,66 @@ void nxagentHandleSelectionNotifyFromXServer(XEvent *X)
         }
         else
         {
-          /* ... then use the size values for the actual request */
-          result = GetWindowProperty(lastSelectionOwner[index].windowPtr, clientCutProperty, 0,
-                                         ulReturnBytesLeft, False, AnyPropertyType, &atomReturnType,
-                                             &resultFormat, &ulReturnItems, &ulReturnBytesLeft,
-                                                 &pszReturnData);
+          /* Fill the property on the initial requestor with the requested data */
+          /* The XChangeProperty source code reveals it will always
+             return 1, no matter what, so no need to check the result */
+          /* FIXME: better use the format returned by above request */
+          XChangeProperty(nxagentDisplay,
+                          lastServers[index].requestor,
+                          lastServers[index].property,
+                          lastServers[index].target,
+                          8,
+                          PropModeReplace,
+                          pszReturnData,
+                          ulReturnItems);
+
           #ifdef DEBUG
-          fprintf(stderr, "%s: GetWindowProperty() window [0x%x] property [%d] returned [%s]\n", __func__,
-                      lastSelectionOwner[index].window, clientCutProperty, getXErrorString(result));
+          {
+            char *s = XGetAtomName(nxagentDisplay, lastServers[index].property);
+            fprintf(stderr, "%s: XChangeProperty sent to window [0x%x] for property [%ld][%s] value [\"%*.*s\"...]\n",
+                    __func__,
+                    lastServers[index].requestor,
+                    lastServers[index].property,
+                    s,
+                    (int)(min(20, ulReturnItems * 8 / 8)),
+                    (int)(min(20, ulReturnItems * 8 / 8)),
+                    pszReturnData);
+            SAFE_XFree(s);
+          }
           #endif
-
-          if (result == BadAlloc || result == BadAtom ||
-                  result == BadWindow || result == BadValue)
-          {
-            lastServers[index].property = None;
-          }
-          else
-          {
-            /* Fill the property on the initial requestor with the requested data */
-            /* The XChangeProperty source code reveals it will always
-               return 1, no matter what, so no need to check the result */
-            /* FIXME: better use the format returned by above request */
-            XChangeProperty(nxagentDisplay,
-                            lastServers[index].requestor,
-                            lastServers[index].property,
-                            lastServers[index].target,
-                            8,
-                            PropModeReplace,
-                            pszReturnData,
-                            ulReturnItems);
-
-            #ifdef DEBUG
-            {
-              char *s = XGetAtomName(nxagentDisplay, lastServers[index].property);
-              fprintf(stderr, "%s: XChangeProperty sent to window [0x%x] for property [%ld][%s] value [\"%*.*s\"...]\n",
-                      __func__,
-                      lastServers[index].requestor,
-                      lastServers[index].property,
-                      s,
-                      (int)(min(20, ulReturnItems * 8 / 8)),
-                      (int)(min(20, ulReturnItems * 8 / 8)),
-                      pszReturnData);
-              SAFE_XFree(s);
-            }
-            #endif
-          }
-
-          /* FIXME: free it or not? */
-          /*
-           * SAFE_XFree(pszReturnData);
-           */
         }
 
+        /* FIXME: free it or not? */
         /*
-         * inform the initial requestor that the requested data has
-         * arrived in the desired property. If we have been unable to
-         * get the data from the owner XChangeProperty will not have
-         * been called and lastServers[index].property will be None which
-         * effectively will send a "Request denied" to the initial
-         * requestor.
+         * SAFE_XFree(pszReturnData);
          */
-        XSelectionEvent eventSelection = {
-          .requestor = lastServers[index].requestor,
-          .selection = X->xselection.selection,
-          /* .target = X->xselection.target, */
-          .target    = lastServers[index].target,
-          .property  = lastServers[index].property,
-          .time      = lastServers[index].time,
-          /* .time   = CurrentTime */
-        };
-        #ifdef DEBUG
-        fprintf(stderr, "%s: Sending SelectionNotify event to requestor [%p].\n", __func__,
-                (void *)eventSelection.requestor);
-        #endif
-
-        sendSelectionNotifyEventToXServer(&eventSelection);
-
-        lastServers[index].requestor = None; /* allow further request */
       }
+
+      /*
+       * inform the initial requestor that the requested data has
+       * arrived in the desired property. If we have been unable to
+       * get the data from the owner XChangeProperty will not have
+       * been called and lastServers[index].property will be None which
+       * effectively will send a "Request denied" to the initial
+       * requestor.
+       */
+      XSelectionEvent eventSelection = {
+        .requestor = lastServers[index].requestor,
+        .selection = X->xselection.selection,
+        /* .target = X->xselection.target, */
+        .target    = lastServers[index].target,
+        .property  = lastServers[index].property,
+        .time      = lastServers[index].time,
+        /* .time   = CurrentTime */
+      };
+      #ifdef DEBUG
+      fprintf(stderr, "%s: Sending SelectionNotify event to requestor [%p].\n", __func__,
+              (void *)eventSelection.requestor);
+      #endif
+
+      sendSelectionNotifyEventToXServer(&eventSelection);
+
+      lastServers[index].requestor = None; /* allow further request */
     }
   }
 }
