@@ -239,7 +239,6 @@ XFixesAgentInfoRec nxagentXFixesInfo = { -1, -1, -1, 0 };
 
 extern Display *nxagentDisplay;
 
-static Bool validServerTargets(XlibAtom target);
 static void setClientSelectionStage(int stage, int index);
 static void endTransfer(Bool success, int index);
 #define SELECTION_SUCCESS True
@@ -559,63 +558,6 @@ static void sendSelectionNotifyEventToClient(ClientPtr client,
   sendEventToClient(client, &x);
 }
 
-/*
- * Check if target is a valid content type target sent by the real X
- * server, like .e.g XA_STRING or UTF8_STRING. Other, non content type
- * targets like "TARGETS" or "TIMESTAMP" will return false.
- */
-static Bool validServerTargets(XlibAtom target)
-{
-  if (target == XA_STRING)
-  {
-    #ifdef DEBUG
-    fprintf(stderr, "%s: valid target [XA_STRING].\n", __func__);
-    #endif
-    return True;
-  }
-  else if (target == serverTEXT)
-  {
-    #ifdef DEBUG
-    fprintf(stderr, "%s: valid target [TEXT].\n", __func__);
-    #endif
-    return True;
-  }
-  /* by dimbor */
-  else if (target == serverUTF8_STRING)
-  {
-    #ifdef DEBUG
-    fprintf(stderr, "%s: valid target [UTF8_STRING].\n", __func__);
-    #endif
-    return True;
-  }
-  else if (target == serverCOMPOUND_TEXT)
-  {
-    #ifdef DEBUG
-    fprintf(stderr, "%s: valid target [COMPOUND_TEXT].\n", __func__);
-    #endif
-    return True;
-  }
-  else if (target == serverTARGETS)
-  {
-    #ifdef DEBUG
-    fprintf(stderr, "%s: special target [TARGETS].\n", __func__);
-    #endif
-    return False;
-  }
-  else if (target == serverTIMESTAMP)
-  {
-    #ifdef DEBUG
-    fprintf(stderr, "%s: special target [TIMESTAMP].\n", __func__);
-    #endif
-    return False;
-  }
-
-  #ifdef DEBUG
-  fprintf(stderr, "%s: invalid target [%lu].\n", __func__, target);
-  #endif
-  return False;
-}
-
 static void initSelectionOwnerData(int index, Atom intSelection, XlibAtom remSelection)
 {
   lastSelectionOwner[index].intSelection = intSelection;
@@ -883,94 +825,38 @@ void nxagentHandleSelectionRequestFromXServer(XEvent *X)
     return;
   }
 
-  /* this is a special request like TARGETS or TIMESTAMP */
-  if (!validServerTargets(X->xselectionrequest.target))
+  if (X->xselectionrequest.target == serverTIMESTAMP)
   {
-    if (X->xselectionrequest.target == serverTARGETS)
-    {
-      /*
-       * the selection request target is TARGETS. The requestor is
-       * asking for a list of supported data formats.
-       *
-       * The selection does not matter here, we will return this for
-       * PRIMARY and CLIPBOARD.
-       *
-       * The list is aligned with the one in nxagentConvertSelection.
-       *
-       * FIXME: the perfect solution should not just answer with a
-       * hardcoded list but ask the real owner what format it
-       * supports. The result should then be sent to the original
-       * requestor.
-       */
+    /*
+     * Section 2.6.2 of the ICCCM states:
+     * TIMESTAMP - To avoid some race conditions, it is important
+     * that requestors be able to discover the timestamp the owner
+     * used to acquire ownership. Until and unless the protocol is
+     * changed so that a GetSelectionOwner request returns the
+     * timestamp used to acquire ownership, selection owners must
+     * support conversion to TIMESTAMP, returning the timestamp they
+     * used to obtain the selection.
+     *
+     * FIXME: ensure we are reporting an _external_ timestamp
+     * FIXME: for a 32 bit property list we need to pass a "long" array, not "char"!
+     * FIXME: selection has already been checked above, so we do not need to check again here
+     */
 
-      long targets[] = {XA_STRING, serverUTF8_STRING, serverTEXT, serverCOMPOUND_TEXT, serverTARGETS, serverTIMESTAMP};
-      int numTargets = sizeof(targets) / sizeof(targets[0]);
-
-      #ifdef DEBUG
-      fprintf(stderr, "%s: Sending %d available targets:\n", __func__, numTargets);
-      for (int i = 0; i < numTargets; i++)
-      {
-        char *s = XGetAtomName(nxagentDisplay, targets[i]);
-        fprintf(stderr, "%s: %ld %s\n", __func__, targets[i], s);
-        SAFE_XFree(s);
-      }
-      fprintf(stderr, "\n");
-      #endif
-
-      /*
-       * pass on the requested list by setting the property provided
-       * by the requestor accordingly.
-       */
-      XChangeProperty(nxagentDisplay,
-                      X->xselectionrequest.requestor,
-                      X->xselectionrequest.property,
-                      XInternAtom(nxagentDisplay, "ATOM", 0),
-                      32,
-                      PropModeReplace,
-                      (unsigned char*)&targets,
-                      numTargets);
-
-      replyRequestSelectionToXServer(X, True);
-    }
-    else if (X->xselectionrequest.target == serverTIMESTAMP)
-    {
-      /*
-       * Section 2.6.2 of the ICCCM states:
-       * TIMESTAMP - To avoid some race conditions, it is important
-       * that requestors be able to discover the timestamp the owner
-       * used to acquire ownership. Until and unless the protocol is
-       * changed so that a GetSelectionOwner request returns the
-       * timestamp used to acquire ownership, selection owners must
-       * support conversion to TIMESTAMP, returning the timestamp they
-       * used to obtain the selection.
-       *
-       * FIXME: ensure we are reporting an _external_ timestamp
-       * FIXME: for a 32 bit property list we need to pass a "long" array, not "char"!
-       * FIXME: selection has already been checked above, so we do not need to check again here
-       */
-
-      XChangeProperty(nxagentDisplay,
-                      X->xselectionrequest.requestor,
-                      X->xselectionrequest.property,
-                      XA_INTEGER,
-                      32,
-                      PropModeReplace,
-                      (unsigned char *) &lastSelectionOwner[index].lastTimeChanged,
-                      1);
-      replyRequestSelectionToXServer(X, True);
-    }
-    else
-    {
-      /*
-       * unknown special request - probably bug! Check if this code handles all cases
-       * that are handled in validServerTargets!
-       */
-      #ifdef DEBUG
-      fprintf(stderr, "%s: unknown special target [%ld] - denying request.\n", __func__, X->xselectionrequest.target);
-      #endif
-      replyRequestSelectionToXServer(X, False);
-    }
+    XChangeProperty(nxagentDisplay,
+                    X->xselectionrequest.requestor,
+                    X->xselectionrequest.property,
+                    XA_INTEGER,
+                    32,
+                    PropModeReplace,
+                    (unsigned char *) &lastSelectionOwner[index].lastTimeChanged,
+                    1);
+    replyRequestSelectionToXServer(X, True);
     return;
+  }
+  else
+  {
+    fprintf(stderr, "%s: target [%ld][%s].\n", __func__, X->xselectionrequest.target,
+                XGetAtomName(nxagentDisplay, X->xselectionrequest.target));
   }
 
   /*
@@ -1038,10 +924,6 @@ void nxagentHandleSelectionRequestFromXServer(XEvent *X)
       lastServers[index].target = X->xselectionrequest.target;
       lastServers[index].time = X->xselectionrequest.time;
 
-      /* by dimbor */
-      if (lastServers[index].target != XA_STRING)
-          lastServers[index].target = serverUTF8_STRING;
-
       /* prepare the request (like XConvertSelection, but internally) */
       xEvent x = {0};
       x.u.u.type = SelectionRequest;
@@ -1058,12 +940,6 @@ void nxagentHandleSelectionRequestFromXServer(XEvent *X)
        *
        * x.u.selectionRequest.requestor = lastSelectionOwnerWindow;
        */
-
-      /* by dimbor (idea from zahvatov) */
-      if (X->xselectionrequest.target != XA_STRING)
-        x.u.selectionRequest.target = clientUTF8_STRING;
-      else
-        x.u.selectionRequest.target = XA_STRING;
 
       x.u.selectionRequest.target = nxagentRemoteToLocalAtom(X->xselectionrequest.target);
       sendEventToClient(lastSelectionOwner[index].client, &x);
@@ -1625,39 +1501,90 @@ void nxagentHandleSelectionNotifyFromXServer(XEvent *X)
         }
         else
         {
-          /* Fill the property on the initial requestor with the requested data */
-          /* The XChangeProperty source code reveals it will always
-             return 1, no matter what, so no need to check the result */
-          /* FIXME: better use the format returned by above request */
-          XChangeProperty(nxagentDisplay,
-                          lastServers[index].requestor,
-                          lastServers[index].property,
-                          lastServers[index].target,
-                          8,
-                          PropModeReplace,
-                          pszReturnData,
-                          ulReturnItems);
-
-          #ifdef DEBUG
+          if (lastServers[index].target == serverTARGETS)
           {
-            char *s = XGetAtomName(nxagentDisplay, lastServers[index].property);
-            fprintf(stderr, "%s: XChangeProperty sent to window [0x%x] for property [%ld][%s] value [\"%*.*s\"...]\n",
-                    __func__,
-                    lastServers[index].requestor,
-                    lastServers[index].property,
-                    s,
-                    (int)(min(20, ulReturnItems * 8 / 8)),
-                    (int)(min(20, ulReturnItems * 8 / 8)),
-                    pszReturnData);
-            SAFE_XFree(s);
-          }
-          #endif
-        }
+            #ifdef DEBUG
+            fprintf(stderr, "%s: ulReturnItems [%ld]\n", __func__, ulReturnItems);
+            fprintf(stderr, "%s: resultformat [%d]\n", __func__, resultFormat);
+            #endif
 
-        /* FIXME: free it or not? */
-        /*
+            XlibAtom * targets = calloc(sizeof(XlibAtom), ulReturnItems);
+            if (targets == NULL)
+            {
+              #ifdef WARNING
+              fprintf(stderr, "%s: WARNING! Could not alloc memory for clipboard targets transmission.\n", __func__);
+              #endif
+              /* this will effectively lead to the request being answered as failed */
+              lastServers[index].property = None;
+            }
+            else
+            {
+              /* fprintf(stderr, "sizeof(Atom) [%lu], sizeof(XlibAtom) [%lu], sizeof(long) [%lu], sizeof(CARD32) [%lu] sizeof(INT32) [%lu]\n", sizeof(Atom), sizeof(XlibAtom), sizeof(long), sizeof(CARD32), sizeof(INT32)); */
+
+              XlibAtom *addr = targets;
+              unsigned int numTargets = ulReturnItems;
+
+              for (int i = 0; i < numTargets; i++)
+              {
+                Atom local = *((Atom*)(pszReturnData + i*resultFormat/8));
+                XlibAtom remote = nxagentLocalToRemoteAtom(local);
+                *(addr++) = remote;
+
+                #ifdef DEBUG
+                char *s = XGetAtomName(nxagentDisplay, remote);
+                fprintf(stderr, "%s: converting atom [%d][%s] -> [%ld][%s]\n", __func__,local, NameForAtom(local), remote, s);
+                SAFE_XFree(s);
+                #endif
+              }
+
+              /* FIXME: do we need to take care of swapping byte order here? */
+              XChangeProperty(nxagentDisplay,
+                              lastServers[index].requestor,
+                              lastServers[index].property,
+                              XInternAtom(nxagentDisplay, "ATOM", 0),
+                              32,
+                              PropModeReplace,
+                              (unsigned char*)targets,
+                              numTargets);
+
+              SAFE_free(targets);
+            }
+          }
+          else
+          {
+            /* Fill the property on the initial requestor with the requested data */
+            /* The XChangeProperty source code reveals it will always
+               return 1, no matter what, so no need to check the result */
+            /* FIXME: better use the format returned by above request */
+            XChangeProperty(nxagentDisplay,
+                            lastServers[index].requestor,
+                            lastServers[index].property,
+                            lastServers[index].target,
+                            8,
+                            PropModeReplace,
+                            pszReturnData,
+                            ulReturnItems);
+            #ifdef DEBUG
+            {
+              char *s = XGetAtomName(nxagentDisplay, lastServers[index].property);
+              fprintf(stderr, "%s: XChangeProperty sent to window [0x%x] for property [%ld][%s] value [\"%*.*s\"...]\n",
+                      __func__,
+                      lastServers[index].requestor,
+                      lastServers[index].property,
+                      s,
+                      (int)(min(20, ulReturnItems * 8 / 8)),
+                      (int)(min(20, ulReturnItems * 8 / 8)),
+                      pszReturnData);
+              SAFE_XFree(s);
+            }
+            #endif
+          }
+
+          /* FIXME: free it or not? */
+          /*
          * SAFE_XFree(pszReturnData);
          */
+        }
       }
 
       /*
@@ -1717,6 +1644,7 @@ static void resetSelectionOwnerOnXServer(void)
    * Only for PRIMARY and CLIPBOARD selections.
    */
 
+  /* FIXME: replace i by index */
   for (int i = 0; i < nxagentMaxSelections; i++)
   {
     XSetSelectionOwner(nxagentDisplay, lastSelectionOwner[i].remSelection, serverWindow, CurrentTime);
@@ -2236,9 +2164,13 @@ XlibAtom translateLocalToRemoteTarget(Atom local)
     remote = serverCOMPOUND_TEXT;
   }
 #endif
+  else if (local == clientTARGETS)
+  {
+    remote = serverTARGETS;
+  }
   else
   {
-    remote = XA_STRING;
+    remote = nxagentLocalToRemoteAtom(local);
   }
 
   #ifdef DEBUG
@@ -2355,8 +2287,8 @@ WindowPtr nxagentGetClipboardWindow(Atom property)
               lastSelectionOwner[i].windowPtr != NULL)
   {
     #ifdef DEBUG
-    fprintf(stderr, "%s: Returning last [%d] selection owner window [%p] (0x%x).\n", __func__,
-            lastSelectionOwner[i].intSelection,
+    fprintf(stderr, "%s: Returning lastSelectionOwner[%d] ([%d][%s]) windowPtr [%p] (0x%x).\n", __func__, i,
+            lastSelectionOwner[i].intSelection, NameForAtom(lastSelectionOwner[i].intSelection),
             (void *)lastSelectionOwner[i].windowPtr, WINDOWID(lastSelectionOwner[i].windowPtr));
     #endif
 
@@ -2453,6 +2385,7 @@ Bool nxagentInitClipboard(WindowPtr pWin)
     return False;
   }
 
+  /* this is probably to communicate with nomachine nxclient */
   #ifdef TEST
   fprintf(stderr, "%s: Setting owner of selection [%d][%s] to serverwindow [0x%x]\n", __func__,
               (int) serverTransToAgentProperty, "NX_CUT_BUFFER_SERVER", serverWindow);
