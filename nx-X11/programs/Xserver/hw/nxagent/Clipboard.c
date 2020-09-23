@@ -2296,7 +2296,7 @@ int nxagentSendNotify(xEvent *event)
    * communication happens completely between our own clients (some of
    * which can be nxagents themselves). In that case we return 0 (tell
    * dix to go on) and do nothing!
-   * Be sure to not let this trigger for the clear request (property 0)
+   * Be sure to not let this trigger for the failure answer (property 0)
    */
   if (!(event->u.selectionNotify.property == clientCutProperty || event->u.selectionNotify.property == 0) || lastServers[index].requestor == None)
   {
