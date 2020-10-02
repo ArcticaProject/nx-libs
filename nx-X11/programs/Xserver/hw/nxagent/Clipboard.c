@@ -1413,6 +1413,14 @@ void nxagentHandleSelectionNotifyFromXServer(XEvent *X)
 
         transferSelection(lastClientClientPtr -> index);
       }
+      else if (X->xselection.property == 0)
+      {
+        #ifdef DEBUG
+        fprintf(stderr, "%s: WARNING! Resetting selection transferral for client [%d] because of failure notification from real X server.\n", __func__,
+                    CLINDEX(lastClientClientPtr));
+        #endif
+        endTransfer(SELECTION_FAULT);
+      }
       else
       {
         #ifdef DEBUG
