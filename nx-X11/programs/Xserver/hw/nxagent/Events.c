@@ -3924,7 +3924,7 @@ void nxagentHandleCollectPropertyEvent(XEvent *X)
   }
   else
   {
-    Atom atomReturnType;
+    XlibAtom atomReturnType;
     int resultFormat;
     unsigned long ulReturnItems;
     unsigned long ulReturnBytesLeft;
@@ -3940,8 +3940,8 @@ void nxagentHandleCollectPropertyEvent(XEvent *X)
 
     if (result == True)
     {
-      Window window = nxagentPropertyRequests[resource].window;
-      Atom property = nxagentPropertyRequests[resource].property;
+      XlibWindow window = nxagentPropertyRequests[resource].window;
+      XlibAtom property = nxagentPropertyRequests[resource].property;
 
       nxagentImportProperty(window, property, atomReturnType, resultFormat,
                                 ulReturnItems, ulReturnBytesLeft, pszReturnData);

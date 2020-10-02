@@ -1188,7 +1188,7 @@ static void transferSelection(int resource)
 
 void nxagentCollectPropertyEvent(int resource)
 {
-  Atom                  atomReturnType;
+  XlibAtom              atomReturnType;
   int                   resultFormat;
   unsigned long         ulReturnItems;
   unsigned long         ulReturnBytesLeft;

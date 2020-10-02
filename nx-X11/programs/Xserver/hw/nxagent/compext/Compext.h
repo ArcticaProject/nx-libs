@@ -827,11 +827,19 @@ extern int NXCollectProperty(
     Display*            /* display */,
     unsigned int        /* resource */,
     Window              /* window */,
+#ifdef XlibAtom
+    XlibAtom            /* property */,
+#else
     Atom                /* property */,
+#endif
     long                /* long_offset */,
     long                /* long_length */,
     Bool                /* delete */,
+#ifdef XlibAtom
+    XlibAtom            /* req_type */
+#else
     Atom                /* req_type */
+#endif
 #endif
 );
 
@@ -839,7 +847,11 @@ extern int NXGetCollectedProperty(
 #if NeedFunctionPrototypes
     Display*            /* display */,
     unsigned int        /* resource */,
+#ifdef XlibAtom
+    XlibAtom*           /* actual_type_return */,
+#else
     Atom*               /* actual_type_return */,
+#endif
     int*                /* actual_format_return */,
     unsigned long*      /* nitems_return */,
     unsigned long*      /* bytes_after_return */,
