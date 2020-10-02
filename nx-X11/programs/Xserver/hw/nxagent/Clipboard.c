@@ -129,10 +129,10 @@ typedef struct _lastClient
 
 static lastClient *lastClients;
 
-static Window        lastServerRequestor;
-static XlibAtom      lastServerProperty;
-static XlibAtom      lastServerTarget;
-static Time          lastServerTime;
+static Window   lastServerRequestor;
+static XlibAtom lastServerProperty;
+static XlibAtom lastServerTarget;
+static Time     lastServerTime;
 
 static XlibAtom serverTARGETS;
 static XlibAtom serverTIMESTAMP;
@@ -140,20 +140,20 @@ static XlibAtom serverTEXT;
 static XlibAtom serverCOMPOUND_TEXT;
 static XlibAtom serverUTF8_STRING;
 static XlibAtom serverTransFromAgentProperty;
-static Atom clientTARGETS;
-static Atom clientTIMESTAMP;
-static Atom clientTEXT;
-static Atom clientCOMPOUND_TEXT;
-static Atom clientUTF8_STRING;
-static Atom clientCLIPBOARD;
+static Atom     clientTARGETS;
+static Atom     clientTIMESTAMP;
+static Atom     clientTEXT;
+static Atom     clientCOMPOUND_TEXT;
+static Atom     clientUTF8_STRING;
+static Atom     clientCLIPBOARD;
 
-static char szAgentTARGETS[] = "TARGETS";
-static char szAgentTEXT[] = "TEXT";
-static char szAgentTIMESTAMP[] = "TIMESTAMP";
-static char szAgentCOMPOUND_TEXT[] = "COMPOUND_TEXT";
-static char szAgentUTF8_STRING[] = "UTF8_STRING";
-static char szAgentNX_CUT_BUFFER_CLIENT[] = "NX_CUT_BUFFER_CLIENT";
-static char szAgentCLIPBOARD[] = "CLIPBOARD";
+static char     szAgentTARGETS[] = "TARGETS";
+static char     szAgentTEXT[] = "TEXT";
+static char     szAgentTIMESTAMP[] = "TIMESTAMP";
+static char     szAgentCOMPOUND_TEXT[] = "COMPOUND_TEXT";
+static char     szAgentUTF8_STRING[] = "UTF8_STRING";
+static char     szAgentNX_CUT_BUFFER_CLIENT[] = "NX_CUT_BUFFER_CLIENT";
+static char     szAgentCLIPBOARD[] = "CLIPBOARD";
 
 /* number of milliseconds to wait for a conversion from the real X server. */
 #define CONVERSION_TIMEOUT 5000
@@ -505,11 +505,11 @@ static int sendEventToClient(ClientPtr client, xEvent *pEvents)
 }
 
 static void sendSelectionNotifyEventToClient(ClientPtr client,
-                                            Time time,
-                                            Window requestor,
-                                            Atom selection,
-                                            Atom target,
-                                            Atom property)
+                                             Time time,
+                                             Window requestor,
+                                             Atom selection,
+                                             Atom target,
+                                             Atom property)
 {
   /*
    * Check if the client is still valid.
