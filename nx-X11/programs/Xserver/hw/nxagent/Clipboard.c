@@ -269,14 +269,13 @@ XlibAtom translateLocalToRemoteTarget(Atom local);
 extern unsigned long startTime;
 #endif
 
-// FIXME: change sel to index
-static void printSelectionStat(int sel)
+static void printSelectionStat(int index)
 {
-  SelectionOwner lOwner = lastSelectionOwner[sel];
-  Selection curSel = CurrentSelections[sel];
+  SelectionOwner lOwner = lastSelectionOwner[index];
+  Selection curSel = CurrentSelections[index];
   char *s = NULL;
 
-  fprintf(stderr, "  owner is inside nxagent?               %s\n", IS_INTERNAL_OWNER(sel) ? "yes" : "no");
+  fprintf(stderr, "  owner is inside nxagent?               %s\n", IS_INTERNAL_OWNER(index) ? "yes" : "no");
   fprintf(stderr, "  lastSelectionOwner[].client            %s\n", nxagentClientInfoString(lOwner.client));
   fprintf(stderr, "  lastSelectionOwner[].window            [0x%x]\n", lOwner.window);
   if (lOwner.windowPtr)
@@ -653,25 +652,25 @@ void nxagentClearClipboard(ClientPtr pClient, WindowPtr pWindow)
    * Only for PRIMARY and CLIPBOARD selections.
    */
 
-  for (int i = 0; i < nxagentMaxSelections; i++)
+  for (int index = 0; index < nxagentMaxSelections; index++)
   {
-    if (matchSelectionOwner(i, pClient, pWindow))
+    if (matchSelectionOwner(index, pClient, pWindow))
     {
       #ifdef TEST
       fprintf(stderr, "%s: Resetting state [%d] with client [%p] window [%p].\n", __func__,
-                  i, (void *) pClient, (void *) pWindow);
+                  index, (void *) pClient, (void *) pWindow);
       #endif
 
-      clearSelectionOwnerData(i);
+      clearSelectionOwnerData(index);
 
-      setClientSelectionStage(SelectionStageNone, i);
+      setClientSelectionStage(SelectionStageNone, index);
 
       lastServerRequestor = None;
     }
 
-    if (pWindow && pWindow == lastClients[i].windowPtr)
+    if (pWindow && pWindow == lastClients[index].windowPtr)
     {
-      setClientSelectionStage(SelectionStageNone, i);
+      setClientSelectionStage(SelectionStageNone, index);
     }
   }
 }
@@ -682,13 +681,13 @@ void nxagentClearClipboard(ClientPtr pClient, WindowPtr pWindow)
  */
 int nxagentFindLastSelectionOwnerIndex(XlibAtom sel)
 {
-  int i = 0;
-  while (i < nxagentMaxSelections &&
-            lastSelectionOwner[i].remSelection != sel)
+  int index = 0;
+  while (index < nxagentMaxSelections &&
+            lastSelectionOwner[index].remSelection != sel)
   {
-    i++;
+    index++;
   }
-  return i;
+  return index;
 }
 
 /*
@@ -697,13 +696,13 @@ int nxagentFindLastSelectionOwnerIndex(XlibAtom sel)
  */
 int nxagentFindCurrentSelectionIndex(Atom sel)
 {
-  int i = 0;
-  while (i < NumCurrentSelections &&
-            CurrentSelections[i].selection != sel)
+  int index = 0;
+  while (index < NumCurrentSelections &&
+            CurrentSelections[index].selection != sel)
   {
-    i++;
+    index++;
   }
-  return i;
+  return index;
 }
 
 /*
@@ -733,19 +732,19 @@ void nxagentHandleSelectionClearFromXServer(XEvent *X)
     return;
   }
 
-  int i = nxagentFindLastSelectionOwnerIndex(X->xselectionclear.selection);
-  if (i < nxagentMaxSelections)
+  int index = nxagentFindLastSelectionOwnerIndex(X->xselectionclear.selection);
+  if (index < nxagentMaxSelections)
   {
-    if (IS_INTERNAL_OWNER(i))
+    if (IS_INTERNAL_OWNER(index))
     {
       /* send a SelectionClear event to (our) previous owner */
       xEvent x = {0};
       x.u.u.type = SelectionClear;
       x.u.selectionClear.time = GetTimeInMillis();
-      x.u.selectionClear.window = lastSelectionOwner[i].window;
-      x.u.selectionClear.atom = CurrentSelections[i].selection;
+      x.u.selectionClear.window = lastSelectionOwner[index].window;
+      x.u.selectionClear.atom = CurrentSelections[index].selection;
 
-      sendEventToClient(lastSelectionOwner[i].client, &x);
+      sendEventToClient(lastSelectionOwner[index].client, &x);
     }
 
     /*
@@ -753,12 +752,12 @@ void nxagentHandleSelectionClearFromXServer(XEvent *X)
      * clients asking for the owner via XGetSelectionOwner() will get
      * these for an answer
      */
-    CurrentSelections[i].window = screenInfo.screens[0]->root->drawable.id;
-    CurrentSelections[i].client = NullClient;
+    CurrentSelections[index].window = screenInfo.screens[0]->root->drawable.id;
+    CurrentSelections[index].client = NullClient;
 
-    clearSelectionOwnerData(i);
+    clearSelectionOwnerData(index);
 
-    setClientSelectionStage(SelectionStageNone, i);
+    setClientSelectionStage(SelectionStageNone, index);
   }
 }
 
@@ -839,8 +838,8 @@ void nxagentHandleSelectionRequestFromXServer(XEvent *X)
 
   /* the selection in this request is none we own. */
   {
-    int i = nxagentFindLastSelectionOwnerIndex(X->xselectionrequest.selection);
-    if (i == nxagentMaxSelections)
+    int index = nxagentFindLastSelectionOwnerIndex(X->xselectionrequest.selection);
+    if (index == nxagentMaxSelections)
     {
       #ifdef DEBUG
       fprintf(stderr, "%s: not owning selection [%ld] - denying request.\n", __func__, X->xselectionrequest.selection);
@@ -919,8 +918,8 @@ void nxagentHandleSelectionRequestFromXServer(XEvent *X)
        * FIXME: selection has already been checked above, so we do not need to check again here
        */
 
-      int i = nxagentFindLastSelectionOwnerIndex(X->xselectionrequest.selection);
-      if (i < nxagentMaxSelections)
+      int index = nxagentFindLastSelectionOwnerIndex(X->xselectionrequest.selection);
+      if (index < nxagentMaxSelections)
       {
         XChangeProperty(nxagentDisplay,
                         X->xselectionrequest.requestor,
@@ -928,7 +927,7 @@ void nxagentHandleSelectionRequestFromXServer(XEvent *X)
                         XA_INTEGER,
                         32,
                         PropModeReplace,
-                        (unsigned char *) &lastSelectionOwner[i].lastTimeChanged,
+                        (unsigned char *) &lastSelectionOwner[index].lastTimeChanged,
                         1);
         replyRequestSelectionToXServer(X, True);
       }
@@ -958,11 +957,11 @@ void nxagentHandleSelectionRequestFromXServer(XEvent *X)
   serverLastRequestedSelection = X->xselectionrequest.selection;
 
   /* find the index of the requested selection */
-  int i = nxagentFindLastSelectionOwnerIndex(X->xselectionrequest.selection);
-  if (i < nxagentMaxSelections)
+  int index = nxagentFindLastSelectionOwnerIndex(X->xselectionrequest.selection);
+  if (index < nxagentMaxSelections)
   {
 #if 0
-    if (lastClients[i].windowPtr != NULL && IS_INTERNAL_OWNER(i))
+    if (lastClients[index].windowPtr != NULL && IS_INTERNAL_OWNER(index))
     {
       /*
        * Request the real X server to transfer the selection content
@@ -973,21 +972,21 @@ void nxagentHandleSelectionRequestFromXServer(XEvent *X)
        * - at the same time paste _clipboard_ to the client (now) owning primary
        *   ->vcxsrv will ask for primary contents to store them to Windows clipboard
        * - vcxsrv request is for _primary_ and takes this path as the _clipboard_ transfer
-       * has set lastClients[i].windowPtr
+       * has set lastClients[index].windowPtr
        */
-      XConvertSelection(nxagentDisplay, CurrentSelections[i].selection,
+      XConvertSelection(nxagentDisplay, CurrentSelections[index].selection,
                             X->xselectionrequest.target, serverTransToAgentProperty,
-                                serverWindow, lastClients[i].time);
+                                serverWindow, lastClients[index].time);
 
       #ifdef DEBUG
       char *strTarget = XGetAtomName(nxagentDisplay, X->xselectionrequest.target);
-      char *strSelection = XGetAtomName(nxagentDisplay, CurrentSelections[i].selection);
+      char *strSelection = XGetAtomName(nxagentDisplay, CurrentSelections[index].selection);
       char *strProperty = XGetAtomName(nxagentDisplay, serverTransToAgentProperty);
       fprintf(stderr, "%s: Sent XConvertSelection: selection [%d][%s] target [%ld][%s] property [%ld][%s] window [0x%x] time [%u] .\n", __func__,
-                  CurrentSelections[i].selection, strSelection,
+                  CurrentSelections[index].selection, strSelection,
                       X->xselectionrequest.target, strTarget,
                           serverTransToAgentProperty, strProperty,
-                              serverWindow, lastClients[i].time);
+                              serverWindow, lastClients[index].time);
       #endif
       SAFE_XFree(strTarget);
       SAFE_XFree(strSelection);
@@ -1002,7 +1001,7 @@ void nxagentHandleSelectionRequestFromXServer(XEvent *X)
        * window in the first step. We then later push that property's
        * content to the real X server.
        */
-      if (IS_INTERNAL_OWNER(i) &&
+      if (IS_INTERNAL_OWNER(index) &&
               (nxagentOption(Clipboard) == ClipboardServer ||
                    nxagentOption(Clipboard) == ClipboardBoth))
       {
@@ -1023,8 +1022,8 @@ void nxagentHandleSelectionRequestFromXServer(XEvent *X)
         xEvent x = {0};
         x.u.u.type = SelectionRequest;
         x.u.selectionRequest.time = GetTimeInMillis();
-        x.u.selectionRequest.owner = lastSelectionOwner[i].window;
-        x.u.selectionRequest.selection = CurrentSelections[i].selection;
+        x.u.selectionRequest.owner = lastSelectionOwner[index].window;
+        x.u.selectionRequest.selection = CurrentSelections[index].selection;
         x.u.selectionRequest.property = clientCutProperty;
         x.u.selectionRequest.requestor = screenInfo.screens[0]->root->drawable.id; /* Fictitious window.*/
 
@@ -1042,12 +1041,12 @@ void nxagentHandleSelectionRequestFromXServer(XEvent *X)
         else
           x.u.selectionRequest.target = XA_STRING;
 
-        sendEventToClient(lastSelectionOwner[i].client, &x);
+        sendEventToClient(lastSelectionOwner[index].client, &x);
 
         #ifdef DEBUG
         fprintf(stderr, "%s: sent SelectionRequest event to client %s property [%d][%s]" \
                 "target [%d][%s] requestor [0x%x].\n", __func__,
-                nxagentClientInfoString(lastSelectionOwner[i].client),
+                nxagentClientInfoString(lastSelectionOwner[index].client),
                 x.u.selectionRequest.property, NameForAtom(x.u.selectionRequest.property),
                 x.u.selectionRequest.target, NameForAtom(x.u.selectionRequest.target),
                 x.u.selectionRequest.requestor);
@@ -1541,15 +1540,15 @@ void nxagentHandleSelectionNotifyFromXServer(XEvent *X)
   }
   else
   {
-    int i = nxagentFindLastSelectionOwnerIndex(X->xselection.selection);
-    if (i < nxagentMaxSelections)
+    int index = nxagentFindLastSelectionOwnerIndex(X->xselection.selection);
+    if (index < nxagentMaxSelections)
     {
       /* if the last owner was an internal one, read the
        * clientCutProperty and push the contents to the
        * lastServerRequestor on the real X server.
        */
-      if (IS_INTERNAL_OWNER(i) &&
-             lastSelectionOwner[i].windowPtr != NULL &&
+      if (IS_INTERNAL_OWNER(index) &&
+             lastSelectionOwner[index].windowPtr != NULL &&
                  X->xselection.property == serverTransFromAgentProperty)
       {
         Atom            atomReturnType;
@@ -1559,13 +1558,13 @@ void nxagentHandleSelectionNotifyFromXServer(XEvent *X)
         unsigned char   *pszReturnData = NULL;
 
         /* first get size values ... */
-        int result = GetWindowProperty(lastSelectionOwner[i].windowPtr, clientCutProperty, 0, 0, False,
+        int result = GetWindowProperty(lastSelectionOwner[index].windowPtr, clientCutProperty, 0, 0, False,
                                            AnyPropertyType, &atomReturnType, &resultFormat,
                                                &ulReturnItems, &ulReturnBytesLeft, &pszReturnData);
 
         #ifdef DEBUG
         fprintf(stderr, "%s: GetWindowProperty() window [0x%x] property [%d] returned [%s]\n", __func__,
-                    lastSelectionOwner[i].window, clientCutProperty, getXErrorString(result));
+                    lastSelectionOwner[index].window, clientCutProperty, getXErrorString(result));
         #endif
         if (result == BadAlloc || result == BadAtom ||
                 result == BadWindow || result == BadValue)
@@ -1575,13 +1574,13 @@ void nxagentHandleSelectionNotifyFromXServer(XEvent *X)
         else
         {
           /* ... then use the size values for the actual request */
-          result = GetWindowProperty(lastSelectionOwner[i].windowPtr, clientCutProperty, 0,
+          result = GetWindowProperty(lastSelectionOwner[index].windowPtr, clientCutProperty, 0,
                                          ulReturnBytesLeft, False, AnyPropertyType, &atomReturnType,
                                              &resultFormat, &ulReturnItems, &ulReturnBytesLeft,
                                                  &pszReturnData);
           #ifdef DEBUG
           fprintf(stderr, "%s: GetWindowProperty() window [0x%x] property [%d] returned [%s]\n", __func__,
-                      lastSelectionOwner[i].window, clientCutProperty, getXErrorString(result));
+                      lastSelectionOwner[index].window, clientCutProperty, getXErrorString(result));
           #endif
 
           if (result == BadAlloc || result == BadAtom ||
@@ -1684,17 +1683,17 @@ static void resetSelectionOwnerOnXServer(void)
    * Only for PRIMARY and CLIPBOARD selections.
    */
 
-  for (int i = 0; i < nxagentMaxSelections; i++)
+  for (int index = 0; index < nxagentMaxSelections; index++)
   {
-    XSetSelectionOwner(nxagentDisplay, lastSelectionOwner[i].remSelection, serverWindow, CurrentTime);
+    XSetSelectionOwner(nxagentDisplay, lastSelectionOwner[index].remSelection, serverWindow, CurrentTime);
 
     #ifdef DEBUG
-    fprintf(stderr, "%s: Reset selection state for selection [%d].\n", __func__, i);
+    fprintf(stderr, "%s: Reset selection state for selection [%d].\n", __func__, index);
     #endif
 
-    clearSelectionOwnerData(i);
+    clearSelectionOwnerData(index);
 
-    setClientSelectionStage(SelectionStageNone, i);
+    setClientSelectionStage(SelectionStageNone, index);
   }
 
   /* Hmm, this is already None when reaching this */
@@ -1811,27 +1810,27 @@ static void setSelectionOwnerOnXServer(Selection *pSelection)
   }
   #endif
 
-  int i = nxagentFindCurrentSelectionIndex(pSelection->selection);
-  if (i < NumCurrentSelections)
+  int index = nxagentFindCurrentSelectionIndex(pSelection->selection);
+  if (index < NumCurrentSelections)
   {
     #ifdef DEBUG
     fprintf(stderr, "%s: lastSelectionOwner.client %s -> %s\n", __func__,
-                nxagentClientInfoString(lastSelectionOwner[i].client),
+                nxagentClientInfoString(lastSelectionOwner[index].client),
                     nxagentClientInfoString(pSelection->client));
     fprintf(stderr, "%s: lastSelectionOwner.window [0x%x] -> [0x%x]\n", __func__,
-            lastSelectionOwner[i].window, pSelection->window);
+            lastSelectionOwner[index].window, pSelection->window);
     fprintf(stderr, "%s: lastSelectionOwner.windowPtr [%p] -> [%p] [0x%x] (serverWindow: [0x%x])\n", __func__,
-            (void *)lastSelectionOwner[i].windowPtr, (void *)pSelection->pWin,
+            (void *)lastSelectionOwner[index].windowPtr, (void *)pSelection->pWin,
             nxagentWindow(pSelection->pWin), serverWindow);
     fprintf(stderr, "%s: lastSelectionOwner.lastTimeChanged [%u]\n", __func__,
-            lastSelectionOwner[i].lastTimeChanged);
+            lastSelectionOwner[index].lastTimeChanged);
     #endif
 
     /*
      * inform the real X server that our serverWindow is the
      * clipboard owner.
      */
-    XSetSelectionOwner(nxagentDisplay, lastSelectionOwner[i].remSelection, serverWindow, CurrentTime);
+    XSetSelectionOwner(nxagentDisplay, lastSelectionOwner[index].remSelection, serverWindow, CurrentTime);
 
     /*
      * The real owner window (inside nxagent) is stored in
@@ -1839,9 +1838,9 @@ static void setSelectionOwnerOnXServer(Selection *pSelection)
      * points to the struct that contains all information about the
      * owner window.
      */
-    storeSelectionOwnerData(i, pSelection);
+    storeSelectionOwnerData(index, pSelection);
 
-    setClientSelectionStage(SelectionStageNone, i);
+    setClientSelectionStage(SelectionStageNone, index);
   }
 
   lastServerRequestor = None;
@@ -2292,18 +2291,18 @@ int nxagentSendNotify(xEvent *event)
  */
 WindowPtr nxagentGetClipboardWindow(Atom property)
 {
-  int i = nxagentFindLastSelectionOwnerIndex(serverLastRequestedSelection);
-  if (i < nxagentMaxSelections &&
+  int index = nxagentFindLastSelectionOwnerIndex(serverLastRequestedSelection);
+  if (index < nxagentMaxSelections &&
           property == clientCutProperty &&
-              lastSelectionOwner[i].windowPtr != NULL)
+              lastSelectionOwner[index].windowPtr != NULL)
   {
     #ifdef DEBUG
     fprintf(stderr, "%s: Returning last [%d] selection owner window [%p] (0x%x).\n", __func__,
-            lastSelectionOwner[i].intSelection,
-            (void *)lastSelectionOwner[i].windowPtr, WINDOWID(lastSelectionOwner[i].windowPtr));
+            lastSelectionOwner[index].intSelection,
+            (void *)lastSelectionOwner[index].windowPtr, WINDOWID(lastSelectionOwner[index].windowPtr));
     #endif
 
-    return lastSelectionOwner[i].windowPtr;
+    return lastSelectionOwner[index].windowPtr;
   }
   else
   {
@@ -2411,10 +2410,10 @@ Bool nxagentInitClipboard(WindowPtr pWin)
     fprintf(stderr, "%s: Registering for XFixesSelectionNotify events.\n", __func__);
     #endif
 
-    for (int i = 0; i < nxagentMaxSelections; i++)
+    for (int index = 0; index < nxagentMaxSelections; index++)
     {
       XFixesSelectSelectionInput(nxagentDisplay, serverWindow,
-                                 lastSelectionOwner[i].remSelection,
+                                 lastSelectionOwner[index].remSelection,
                                  XFixesSetSelectionOwnerNotifyMask |
                                  XFixesSelectionWindowDestroyNotifyMask |
                                  XFixesSelectionClientCloseNotifyMask);
@@ -2453,16 +2452,16 @@ Bool nxagentInitClipboard(WindowPtr pWin)
     if (nxagentOption(Clipboard) == ClipboardServer ||
         nxagentOption(Clipboard) == ClipboardBoth)
     {
-      for (int i = 0; i < nxagentMaxSelections; i++)
+      for (int index = 0; index < nxagentMaxSelections; index++)
       {
         /*
          * if we have a selection inform the (new) real Xserver and
          * claim the ownership. Note that we report our serverWindow as
          * owner, not the real window!
          */
-         if (IS_INTERNAL_OWNER(i) && lastSelectionOwner[i].window)
+         if (IS_INTERNAL_OWNER(index) && lastSelectionOwner[index].window)
          {
-           XSetSelectionOwner(nxagentDisplay, lastSelectionOwner[i].remSelection, serverWindow, CurrentTime);
+           XSetSelectionOwner(nxagentDisplay, lastSelectionOwner[index].remSelection, serverWindow, CurrentTime);
          }
       }
     }
@@ -2470,12 +2469,12 @@ Bool nxagentInitClipboard(WindowPtr pWin)
   }
   else
   {
-    for (int i = 0; i < nxagentMaxSelections; i++)
+    for (int index = 0; index < nxagentMaxSelections; index++)
     {
-      clearSelectionOwnerData(i);
-      resetClientSelectionStage(i);
+      clearSelectionOwnerData(index);
+      resetClientSelectionStage(index);
       /* FIXME: required? move to setSelctionStage? */
-      lastClients[i].reqTime = GetTimeInMillis();
+      lastClients[index].reqTime = GetTimeInMillis();
     }
 
     lastServerRequestor = None;
