@@ -33,6 +33,8 @@
 
 #include "Z.h"
 
+#include "../Utils.h"
+
 #define PANIC
 #define WARNING
 #undef  TEST
@@ -129,7 +131,7 @@ char *ZCompressData(const char *plainData, unsigned int plainSize, int threshold
                   plainSize, zError(result));
       #endif
 
-      free(compressedData);
+      SAFE_free(compressedData);
 
       *compressedSize = 0;
 
@@ -300,7 +302,7 @@ int ZResetEncoder(void)
       #endif
     }
 
-    free(zStream);
+    SAFE_free(zStream);
   }
 
   zInitialized = 0;
