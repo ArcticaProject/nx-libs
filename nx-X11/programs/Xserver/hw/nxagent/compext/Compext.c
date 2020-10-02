@@ -3194,7 +3194,7 @@ XImage *NXCacheFindImage(NXPackedImage *src_image, unsigned int *method, unsigne
 {
   md5_state_t  new_state;
   md5_byte_t   *new_md5;
-  unsigned int data_size, i;
+  unsigned int data_size;
 
   if (NXImageCache == NULL)
   {
@@ -3228,7 +3228,7 @@ XImage *NXCacheFindImage(NXPackedImage *src_image, unsigned int *method, unsigne
 
   md5_finish(&new_state, new_md5);
 
-  for (i = 0; i < NXImageCacheSize; i++)
+  for (unsigned int i = 0; i < NXImageCacheSize; i++)
   {
     if (NXImageCache[i].image != NULL)
     {
@@ -3984,9 +3984,7 @@ static Bool _NXCollectPropertyHandler(Display *dpy, xReply *rep, char *buf,
 
 int NXGetCollectPropertyResource(Display *dpy)
 {
-  int i;
-
-  for (i = 0; i < NXNumberOfResources; i++)
+  for (int i = 0; i < NXNumberOfResources; i++)
   {
     if (_NXCollectedProperties[i] == NULL)
     {
@@ -4276,9 +4274,7 @@ static Bool _NXCollectGrabPointerHandler(Display *dpy, xReply *rep, char *buf,
 
 int NXGetCollectGrabPointerResource(Display *dpy)
 {
-  int i;
-
-  for (i = 0; i < NXNumberOfResources; i++)
+  for (int i = 0; i < NXNumberOfResources; i++)
   {
     if (_NXCollectedGrabPointers[i] == NULL)
     {
@@ -4554,9 +4550,7 @@ static Bool _NXCollectInputFocusHandler(Display *dpy, xReply *rep, char *buf,
 
 int NXGetCollectInputFocusResource(Display *dpy)
 {
-  int i;
-
-  for (i = 0; i < NXNumberOfResources; i++)
+  for (int i = 0; i < NXNumberOfResources; i++)
   {
     if (_NXCollectedInputFocuses[i] == NULL)
     {
@@ -4696,13 +4690,11 @@ void _NXDumpData(const unsigned char *buffer, unsigned int size)
   {
     unsigned int i = 0;
 
-    unsigned int ii;
-
     while (i < size)
     {
       fprintf(stderr, "[%d]\t", i);
 
-      for (ii = 0; i < size && ii < 8; i++, ii++)
+      for (unsinged int ii = 0; i < size && ii < 8; i++, ii++)
       {
         fprintf(stderr, "%d\t", (unsigned int) (buffer[i]));
       }
