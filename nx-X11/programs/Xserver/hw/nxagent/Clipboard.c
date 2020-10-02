@@ -1003,15 +1003,24 @@ void nxagentHandleSelectionRequestFromXServer(XEvent *X)
   else
 #endif
   {
+    if (!(nxagentOption(Clipboard) == ClipboardServer ||
+	  nxagentOption(Clipboard) == ClipboardBoth))
+    {
+      #ifdef DEBUG
+      fprintf (stderr, "%s: clipboard (partly) disabled - denying request.\n", __func__);
+      #endif
+
+      /* deny the request */
+      replyRequestSelectionToXServer(X, False);
+    }
+
     /*
      * if one of our clients owns the selection we ask it to copy
      * the selection to the clientCutProperty on nxagent's root
      * window in the first step. We then later push that property's
      * content to the real X server.
      */
-    if (IS_INTERNAL_OWNER(index) &&
-            (nxagentOption(Clipboard) == ClipboardServer ||
-                 nxagentOption(Clipboard) == ClipboardBoth))
+    if (IS_INTERNAL_OWNER(index))
     {
       /*
        * store who on the real X server requested the data and how
@@ -1061,9 +1070,18 @@ void nxagentHandleSelectionRequestFromXServer(XEvent *X)
               x.u.selectionRequest.requestor,
               x.u.selectionRequest.selection, NameForAtom(x.u.selectionRequest.selection));
       #endif
+      /* no reply to Xserver yet - we will do that once the answer of
+	 the above sendEventToClient arrives */
     }
     else
     {
+      #ifdef DEBUG
+      char *s = XGetAtomName(nxagentDisplay, X->xselectionrequest.selection);
+      fprintf (stderr, "%s: no internal owner for selection [%ld][%s] - denying request.\n", __func__,
+                   X->xselectionrequest.selection, s);
+      SAFE_XFree(s);
+      #endif
+
       /* deny the request */
       replyRequestSelectionToXServer(X, False);
     }
