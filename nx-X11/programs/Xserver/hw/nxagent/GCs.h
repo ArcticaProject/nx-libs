@@ -42,7 +42,7 @@ is" without express or implied warranty.
 
 extern RESTYPE RT_NX_GC;
 
-/* This file uses the GC definition form Xlib.h as XlibGC. */
+/* This file uses the GC definition from Xlib.h as XlibGC. */
 
 typedef struct {
   XlibGC gc;
