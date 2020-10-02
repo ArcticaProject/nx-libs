@@ -827,9 +827,10 @@ void nxagentHandleSelectionRequestFromXServer(XEvent *X)
        *
        * The list is aligned with the one in nxagentConvertSelection.
        *
-       * FIXME: the perfect solution should not just answer with
-       * XA_STRING but ask the real owner what format it supports. The
-       * result should then be sent to the original requestor.
+       * FIXME: the perfect solution should not just answer with a
+       * hardcoded list but ask the real owner what format it
+       * supports. The result should then be sent to the original
+       * requestor.
        */
 
       long targets[] = {XA_STRING, serverUTF8_STRING, serverTEXT, serverCOMPOUND_TEXT, serverTARGETS, serverTIMESTAMP};
@@ -877,6 +878,7 @@ void nxagentHandleSelectionRequestFromXServer(XEvent *X)
        *
        * FIXME: ensure we are reporting an _external_ timestamp
        * FIXME: for a 32 bit property list we need to pass a "long" array, not "char"!
+       * FIXME: selection has already been checked above, so we do not need to check again here
        */
 
       int i = nxagentFindLastSelectionOwnerIndex(X->xselectionrequest.selection);
@@ -1784,6 +1786,7 @@ int nxagentConvertSelection(ClientPtr client, WindowPtr pWin, Atom selection,
                       __func__, nxagentClientInfoString(client));
       #endif
 
+      /* notify the sender of the new request of failure */
       sendSelectionNotifyEventToClient(client, time, requestor, selection, target, None);
 
       return 1;
