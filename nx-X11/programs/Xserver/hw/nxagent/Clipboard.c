@@ -1937,17 +1937,23 @@ int nxagentConvertSelection(ClientPtr client, WindowPtr pWin, Atom selection,
      */
     XlibAtom p = serverTransToAgentProperty;
     XlibAtom t;
+    #ifdef DEBUG
     char * pstr = "NX_CUT_BUFFER_SERVER";
     const char * tstr;
+    #endif
     if (target == clientUTF8_STRING)
     {
       t = serverUTF8_STRING;
+      #ifdef DEBUG
       tstr = szAgentUTF8_STRING;
+      #endif
     }
     else
     {
       t = XA_STRING;
+      #ifdef DEBUG
       tstr = validateString(NameForAtom(XA_STRING));
+      #endif
     }
 
     #ifdef DEBUG
