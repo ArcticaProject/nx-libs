@@ -1330,8 +1330,8 @@ void nxagentHandleSelectionNotifyFromXServer(XEvent *X)
   }
 
   #ifdef DEBUG
+  XSelectionEvent * e = (XSelectionEvent *)X;
   {
-    XSelectionEvent * e = (XSelectionEvent *)X;
     char * s = XGetAtomName(nxagentDisplay, e->property);
     char * t = XGetAtomName(nxagentDisplay, e->target);
     fprintf(stderr, "%s: SelectionNotify event from real X server, property "\
@@ -1355,29 +1355,46 @@ void nxagentHandleSelectionNotifyFromXServer(XEvent *X)
      * the real X server). We now need to transfer it to the original
      * requestor, which is stored in the lastClient* variables.
      */
-    if (lastClientStage == SelectionStageNone &&
-	     X->xselection.property == serverTransToAgentProperty)
+
+    #ifdef DEBUG
+    fprintf(stderr, "%s: event selection is [%s]\n", __func__, XGetAtomName(nxagentDisplay, e->selection));
+    nxagentDumpClipboardStat();
+    #endif
+    if (lastClientStage == SelectionStageNone)
     {
-      #ifdef DEBUG
-      fprintf(stderr, "%s: Starting selection transferral for client %s.\n", __func__,
-                  nxagentClientInfoString(lastClientClientPtr));
-      #endif
+      if (X->xselection.property == serverTransToAgentProperty)
+      {
+        #ifdef DEBUG
+        fprintf(stderr, "%s: Starting selection transferral for client %s.\n", __func__,
+                nxagentClientInfoString(lastClientClientPtr));
+        #endif
 
-      /*
-       * The state machine is able to work in two phases. In the first
-       * phase we get the size of property data, in the second we get
-       * the actual data. We save a round-trip by requesting a prede-
-       * termined amount of data in a single GetProperty and by discar-
-       * ding the remaining part. This is not the optimal solution (we
-       * could get the remaining part if it doesn't fit in a single
-       * reply) but, at least with text, it should work in most situa-
-       * tions.
-       */
+        /*
+         * The state machine is able to work in two phases. In the first
+         * phase we get the size of property data, in the second we get
+         * the actual data. We save a round-trip by requesting a prede-
+         * termined amount of data in a single GetProperty and by discar-
+         * ding the remaining part. This is not the optimal solution (we
+         * could get the remaining part if it doesn't fit in a single
+         * reply) but, at least with text, it should work in most situa-
+         * tions.
+         */
 
-      setClientSelectionStage(SelectionStageQueryData);
-      lastClientPropertySize = 262144;
+        setClientSelectionStage(SelectionStageQueryData);
+        lastClientPropertySize = 262144;
 
-      transferSelection(lastClientClientPtr -> index);
+        transferSelection(lastClientClientPtr -> index);
+      }
+      else
+      {
+        #ifdef DEBUG
+        char *s = XGetAtomName(nxagentDisplay, X->xselection.property);
+        fprintf(stderr, "%s: Unexpected property [%ld][%s] - reporting conversion failure.\n",
+                    __func__, X->xselection.property, s);
+        SAFE_XFree(s);
+        #endif
+        endTransfer(SELECTION_FAULT);
+      }
     }
     else
     {
