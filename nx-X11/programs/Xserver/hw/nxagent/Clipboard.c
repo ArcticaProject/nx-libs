@@ -2136,10 +2136,16 @@ int nxagentConvertSelection(ClientPtr client, WindowPtr pWin, Atom selection,
      * by a real time. The reply also contains time "0" which is
      * unexpected (for me) */
     #ifdef DEBUG
+    char *t = XGetAtomName(nxagentDisplay, remTarget);
+    char *p = XGetAtomName(nxagentDisplay, remProperty);
+    char *s = XGetAtomName(nxagentDisplay, remSelection);
     fprintf(stderr, "%s: Sending XConvertSelection to real X server: requestor [0x%x] target [%ld][%s] property [%ld][%s] selection [%ld][%s] time [0][CurrentTime]\n", __func__,
-            serverWindow, remTarget, XGetAtomName(nxagentDisplay, remTarget),
-                remProperty, XGetAtomName(nxagentDisplay, remProperty),
-                    remSelection, XGetAtomName(nxagentDisplay, remSelection));
+                serverWindow, remTarget, validateString(t),
+	            remProperty, validateString(p),
+	                remSelection, validateString(s));
+    SAFE_XFree(t);
+    SAFE_XFree(p);
+    SAFE_XFree(s);
     #endif
 
     XConvertSelection(nxagentDisplay, remSelection, remTarget, remProperty, serverWindow, CurrentTime);
@@ -2193,8 +2199,10 @@ XlibAtom translateLocalToRemoteSelection(Atom local)
   }
 
   #ifdef DEBUG
+  char *r = XGetAtomName(nxagentDisplay, remote);
   fprintf(stderr, "%s: mapping local to remote selection: [%d][%s] -> [%ld] [%s]\n", __func__,
-          local, NameForAtom(local), remote, XGetAtomName(nxagentDisplay, remote));
+              local, NameForAtom(local), remote, validateString(r));
+  SAFE_XFree(r);
   #endif
 
   return remote;
@@ -2235,8 +2243,10 @@ XlibAtom translateLocalToRemoteTarget(Atom local)
   }
 
   #ifdef DEBUG
+  char *r = XGetAtomName(nxagentDisplay, remote);
   fprintf(stderr, "%s: mapping local to remote target: [%d][%s] -> [%ld] [%s]\n", __func__,
-          local, NameForAtom(local), remote, XGetAtomName(nxagentDisplay, remote));
+              local, NameForAtom(local), remote, validateString(r));
+  SAFE_XFree(r);
   #endif
 
   return remote;
