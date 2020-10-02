@@ -765,8 +765,8 @@ void nxagentHandleSelectionRequestFromXServer(XEvent *X)
       char *strSelection = XGetAtomName(nxagentDisplay, X->xselectionrequest.selection);
       char *strProperty = XGetAtomName(nxagentDisplay, X->xselectionrequest.property);
 
-      fprintf(stderr, "%s: Received SelectionRequest from real server: selection [%ld][%s] " \
-              "target [%ld][%s] requestor [%s/0x%lx] destination [%ld][%s] lastServerRequestor [0x%x]\n",
+      fprintf(stderr, "%s: Received SelectionRequestEvent from real server: selection [%ld][%s] " \
+              "target [%ld][%s] requestor [display[%s]/0x%lx] destination [%ld][%s] lastServerRequestor [0x%x]\n",
               __func__,
               X->xselectionrequest.selection, validateString(strSelection),
               X->xselectionrequest.target,    validateString(strTarget),
@@ -935,8 +935,18 @@ void nxagentHandleSelectionRequestFromXServer(XEvent *X)
                                 serverWindow, lastClientTime);
 
       #ifdef DEBUG
-      fprintf(stderr, "%s: Sent XConvertSelection.\n", __func__);
+      char *strTarget = XGetAtomName(nxagentDisplay, X->xselectionrequest.target);
+      char *strSelection = XGetAtomName(nxagentDisplay, CurrentSelections[i].selection);
+      char *strProperty = XGetAtomName(nxagentDisplay, serverTransToAgentProperty);
+      fprintf(stderr, "%s: Sent XConvertSelection: selection [%d][%s] target [%ld][%s] property [%ld][%s] window [0x%x] time [%u] .\n", __func__,
+	      CurrentSelections[i].selection, strSelection,
+	      X->xselectionrequest.target, strTarget,
+	      serverTransToAgentProperty, strProperty,
+	      serverWindow, lastClientTime);
       #endif
+      SAFE_XFree(strTarget);
+      SAFE_XFree(strSelection);
+      SAFE_XFree(strProperty);
     }
     else
     {
@@ -1305,7 +1315,7 @@ void nxagentCollectPropertyEvent(int resource)
       {
         #ifdef DEBUG
         fprintf (stderr, "%s: WARNING! Inconsistent state [%s] for client %s.\n", __func__,
-		 getClientSelectionStageString(lastClientStage), nxagentClientInfoString(lastClientClientPtr));
+                 getClientSelectionStageString(lastClientStage), nxagentClientInfoString(lastClientClientPtr));
         #endif
         break;
       }
@@ -1332,14 +1342,17 @@ void nxagentHandleSelectionNotifyFromXServer(XEvent *X)
   #ifdef DEBUG
   XSelectionEvent * e = (XSelectionEvent *)X;
   {
-    char * s = XGetAtomName(nxagentDisplay, e->property);
+    char * p = XGetAtomName(nxagentDisplay, e->property);
     char * t = XGetAtomName(nxagentDisplay, e->target);
-    fprintf(stderr, "%s: SelectionNotify event from real X server, property "\
-            "[%ld][%s] requestor [0x%lx] target [%ld][%s] time [%ld] send_event [%d].\n",
-            __func__, e->property, validateString(s), e->requestor, e->target,
+    char * s = XGetAtomName(nxagentDisplay, e->selection);
+    fprintf(stderr, "%s: SelectionNotify event from real X server, property " \
+            "[%ld][%s] requestor [0x%lx] selection [%s] target [%ld][%s] time [%ld] send_event [%d].\n",
+            __func__, e->property, validateString(p), e->requestor,
+            validateString(s), e->target,
             validateString(t), e->time, e->send_event);
-    SAFE_XFree(s);
+    SAFE_XFree(p);
     SAFE_XFree(t);
+    SAFE_XFree(s);
   }
   #endif
 
@@ -1357,7 +1370,6 @@ void nxagentHandleSelectionNotifyFromXServer(XEvent *X)
      */
 
     #ifdef DEBUG
-    fprintf(stderr, "%s: event selection is [%s]\n", __func__, XGetAtomName(nxagentDisplay, e->selection));
     nxagentDumpClipboardStat();
     #endif
     if (lastClientStage == SelectionStageNone)
@@ -1399,7 +1411,7 @@ void nxagentHandleSelectionNotifyFromXServer(XEvent *X)
     else
     {
       #ifdef DEBUG
-      fprintf(stderr, "%s: WARNING! Resetting selection transferral for client [%d].\n", __func__,
+      fprintf(stderr, "%s: WARNING! Resetting selection transferral for client [%d] because of unexpected stage.\n", __func__,
                   CLINDEX(lastClientClientPtr));
       #endif
 
@@ -1781,6 +1793,10 @@ int nxagentConvertSelection(ClientPtr client, WindowPtr pWin, Atom selection,
     fprintf(stderr, "%s: lastClientWindowPtr != NULL.\n", __func__);
     #endif
 
+    #ifdef DEBUG
+    fprintf(stderr, "%s: lastClientSelection [%d] - selection [%d]\n", __func__, lastClientSelection, selection);
+    #endif
+
     if ((GetTimeInMillis() - lastClientReqTime) >= CONVERSION_TIMEOUT)
     {
       #ifdef DEBUG
@@ -1798,8 +1814,8 @@ int nxagentConvertSelection(ClientPtr client, WindowPtr pWin, Atom selection,
        * which we cannot handle (yet). So return an error.
        */
       #ifdef DEBUG
-      fprintf(stderr, "%s: got request "
-                  "before timeout expired on last request, notifying failure to client %s\n",
+      fprintf(stderr, "%s: got new request "
+                  "before timeout expired on previous request, notifying failure to client %s\n",
                       __func__, nxagentClientInfoString(client));
       #endif
 
@@ -1810,15 +1826,15 @@ int nxagentConvertSelection(ClientPtr client, WindowPtr pWin, Atom selection,
     }
   }
 
+  const char *strTarget = NameForAtom(target);
+
   #ifdef DEBUG
   fprintf(stderr, "%s: client %s requests sel [%s] "
-              "on window [%x] prop [%d][%s] target [%d][%s].\n", __func__,
+              "on window [0x%x] prop [%d][%s] target [%d][%s].\n", __func__,
                   nxagentClientInfoString(client), validateString(NameForAtom(selection)), requestor,
                       property, validateString(NameForAtom(property)),
-                          target, validateString(NameForAtom(target)));
+                          target, validateString(strTarget));
   #endif
-
-  const char *strTarget = NameForAtom(target);
 
   if (strTarget == NULL)
   {
@@ -1840,7 +1856,7 @@ int nxagentConvertSelection(ClientPtr client, WindowPtr pWin, Atom selection,
     int numTargets = sizeof(targets) / sizeof(targets[0]);
 
     #ifdef DEBUG
-    fprintf(stderr, "%s: available targets:\n", __func__);
+    fprintf(stderr, "%s: available targets [%d]:\n", __func__, numTargets);
     for (int i = 0; i < numTargets; i++)
         fprintf(stderr, "%s:  %s\n", __func__, NameForAtom(targets[i]));
     fprintf(stderr, "\n");
@@ -1977,8 +1993,8 @@ int nxagentConvertSelection(ClientPtr client, WindowPtr pWin, Atom selection,
     }
 
     #ifdef DEBUG
-    fprintf(stderr, "%s: Sending XConvertSelection to real X server: requestor [0x%x] target [%ld][%s] property [%ld][%s] time [%ld]\n", __func__,
-            serverWindow, t, tstr, p, pstr, CurrentTime);
+    fprintf(stderr, "%s: Sending XConvertSelection to real X server: requestor [0x%x] target [%ld][%s] property [%ld][%s] time [0][CurrentTime]\n", __func__,
+            serverWindow, t, tstr, p, pstr);
     #endif
 
     XConvertSelection(nxagentDisplay, selection, t, p, serverWindow, CurrentTime);
