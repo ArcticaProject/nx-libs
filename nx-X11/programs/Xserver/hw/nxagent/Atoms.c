@@ -42,7 +42,6 @@
 #include "Display.h"
 #include "Screen.h"
 #include "Options.h"
-#include "Agent.h"
 #include "Utils.h"
 
 /*
