@@ -665,6 +665,7 @@ void nxagentClearClipboard(ClientPtr pClient, WindowPtr pWindow)
    * Only for PRIMARY and CLIPBOARD selections.
    */
 
+  /* FIXME: there's almost identical code in nxagentClipboardInit */
   for (int index = 0; index < nxagentMaxSelections; index++)
   {
     if (matchSelectionOwner(index, pClient, pWindow))
@@ -694,13 +695,14 @@ void nxagentClearClipboard(ClientPtr pClient, WindowPtr pWindow)
  */
 int nxagentFindLastSelectionOwnerIndex(XlibAtom sel)
 {
-  int index = 0;
-  while (index < nxagentMaxSelections &&
-            lastSelectionOwner[index].remSelection != sel)
+  for (int index = 0; index < nxagentMaxSelections; index++)
   {
-    index++;
+    if (lastSelectionOwner[index].remSelection == sel)
+    {
+      return index;
+    }
   }
-  return index;
+  return nxagentMaxSelections;
 }
 
 /*
@@ -709,13 +711,14 @@ int nxagentFindLastSelectionOwnerIndex(XlibAtom sel)
  */
 int nxagentFindCurrentSelectionIndex(Atom sel)
 {
-  int index = 0;
-  while (index < NumCurrentSelections &&
-            CurrentSelections[index].selection != sel)
+  for (int index = 0; index < NumCurrentSelections; index++)
   {
-    index++;
+    if (CurrentSelections[index].selection == sel)
+    {
+      return index;
+    }
   }
-  return index;
+  return NumCurrentSelections;
 }
 
 /*
