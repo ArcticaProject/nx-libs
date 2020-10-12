@@ -281,29 +281,21 @@ static void printSelectionStat(int index)
   Selection curSel = CurrentSelections[index];
   char *s = NULL;
 
-  fprintf(stderr, "  owner is inside nxagent?               %s\n", IS_INTERNAL_OWNER(index) ? "yes" : "no");
+  fprintf(stderr, "selection [%d]:\n", index);
+
   SAFE_XFree(s); s = XGetAtomName(nxagentDisplay, remSelAtoms[index]);
   fprintf(stderr, "  selection Atom                         internal [%d][%s]  remote [%ld][%s]\n", intSelAtoms[index], NameForAtom(intSelAtoms[index]), remSelAtoms[index], s);
+  fprintf(stderr, "  owner side                             %s\n", IS_INTERNAL_OWNER(index) ? "nxagent" : "real X server/none");
   fprintf(stderr, "  lastSelectionOwner[].client            %s\n", nxagentClientInfoString(lOwner.client));
   fprintf(stderr, "  lastSelectionOwner[].window            [0x%x]\n", lOwner.window);
   if (lOwner.windowPtr)
-    fprintf(stderr, "  lastSelectionOwner[].windowPtr         [%p] ([0x%x]\n", (void *)lOwner.windowPtr, WINDOWID(lOwner.windowPtr));
+    fprintf(stderr, "  lastSelectionOwner[].windowPtr         [%p] (-> [0x%x]\n", (void *)lOwner.windowPtr, WINDOWID(lOwner.windowPtr));
   else
     fprintf(stderr, "  lastSelectionOwner[].windowPtr         -\n");
   fprintf(stderr, "  lastSelectionOwner[].lastTimeChanged   [%u]\n", lOwner.lastTimeChanged);
 
   SAFE_XFree(s);
-#ifdef CLIENTIDS
-  fprintf(stderr, "  CurrentSelections[].client             [%p] index [%d] PID [%d] Cmd [%s]\n",
-          (void *)curSel.client,
-          CLINDEX(curSel.client),
-          GetClientPid(curSel.client),
-          GetClientCmdName(curSel.client));
-#else
-  fprintf(stderr, "  CurrentSelections[].client             [%p] index [%d]\n",
-          (void *)curSel.client,
-          CLINDEX(curSel.client));
-#endif
+  fprintf(stderr, "  CurrentSelections[].client             %s\n", nxagentClientInfoString(curSel.client));
   fprintf(stderr, "  CurrentSelections[].window             [0x%x]\n", curSel.window);
   return;
 }
@@ -370,41 +362,52 @@ void nxagentDumpClipboardStat(void)
   }
   fprintf(stderr, "\n");
 
-  fprintf(stderr, "PRIMARY\n");
-  printSelectionStat(nxagentPrimarySelection);
-  printLastClientStat(nxagentPrimarySelection);
-  printLastServerStat(nxagentPrimarySelection);
-  fprintf(stderr, "CLIPBOARD\n");
-  printSelectionStat(nxagentClipboardSelection);
-  printLastClientStat(nxagentClipboardSelection);
-  printLastServerStat(nxagentClipboardSelection);
-
-  fprintf(stderr, "Atoms (remote X server)\n");
-  SAFE_XFree(s); s = XGetAtomName(nxagentDisplay, serverTARGETS);
-  fprintf(stderr, "  serverTARGETS                          [% 4ld][%s]\n", serverTARGETS, validateString(s));
-  SAFE_XFree(s); s = XGetAtomName(nxagentDisplay, serverTIMESTAMP);
-  fprintf(stderr, "  serverTIMESTAMP                        [% 4ld][%s]\n", serverTIMESTAMP, validateString(s));
-  SAFE_XFree(s); s = XGetAtomName(nxagentDisplay, serverTEXT);
-  fprintf(stderr, "  serverTEXT                             [% 4ld][%s]\n", serverTEXT, validateString(s));
-  SAFE_XFree(s); s = XGetAtomName(nxagentDisplay, serverCOMPOUND_TEXT);
-  fprintf(stderr, "  serverCOMPOUND_TEXT                    [% 4ld][%s]\n", serverCOMPOUND_TEXT, validateString(s));
-  SAFE_XFree(s); s = XGetAtomName(nxagentDisplay, serverUTF8_STRING);
-  fprintf(stderr, "  serverUTF8_STRING                      [% 4ld][%s]\n", serverUTF8_STRING, validateString(s));
-  SAFE_XFree(s); s = XGetAtomName(nxagentDisplay, serverTransToAgentProperty);
-  fprintf(stderr, "  serverTransToAgentProperty             [% 4ld][%s]\n", serverTransFromAgentProperty, validateString(s));
-  SAFE_XFree(s); s = XGetAtomName(nxagentDisplay, serverTransFromAgentProperty);
-  fprintf(stderr, "  serverTransFromAgentProperty           [% 4ld][%s]\n", serverTransToAgentProperty, validateString(s));
   SAFE_XFree(s); s = XGetAtomName(nxagentDisplay, serverLastRequestedSelection);
   fprintf(stderr, "  serverLastRequestedSelection           [% 4ld][%s]\n", serverLastRequestedSelection, validateString(s));
 
-  fprintf(stderr, "Atoms (inside nxagent)\n");
-  fprintf(stderr, "  clientTARGETS                          [% 4d][%s]\n", clientTARGETS, NameForAtom(clientTARGETS));
-  fprintf(stderr, "  clientTIMESTAMP                        [% 4d][%s]\n", clientTIMESTAMP, NameForAtom(clientTIMESTAMP));
-  fprintf(stderr, "  clientTEXT                             [% 4d][%s]\n", clientTEXT, NameForAtom(clientTEXT));
-  fprintf(stderr, "  clientCOMPOUND_TEXT                    [% 4d][%s]\n", clientCOMPOUND_TEXT, NameForAtom(clientCOMPOUND_TEXT));
-  fprintf(stderr, "  clientUTF8_STRING                      [% 4d][%s]\n", clientUTF8_STRING, NameForAtom(clientUTF8_STRING));
-  fprintf(stderr, "  clientCLIPBOARD                        [% 4d][%s]\n", clientCLIPBOARD, NameForAtom(clientCLIPBOARD));
-  fprintf(stderr, "  clientCutProperty                      [% 4d][%s]\n", clientCutProperty, NameForAtom(clientCutProperty));
+#define WIDTH 32
+  Atom cl = 0;
+  XlibAtom sv = 0;
+  int len = WIDTH;
+
+  fprintf(stderr, "Atoms                                    internal%*sremote\n", WIDTH - 8, "");
+  cl = clientTARGETS; sv = serverTARGETS; len = (int)(WIDTH - 9 - strlen(NameForAtom(cl)));
+  SAFE_XFree(s); s = XGetAtomName(nxagentDisplay, sv);
+  fprintf(stderr, "  TARGETS                                [% 4d][%s]%*s [% 4ld][%s]\n", cl, NameForAtom(cl), len, "", sv, validateString(s));
+
+  cl = clientTIMESTAMP; sv = serverTIMESTAMP; len = (int)(WIDTH - 9 - strlen(NameForAtom(cl)));
+  SAFE_XFree(s); s = XGetAtomName(nxagentDisplay, sv);
+  fprintf(stderr, "  TIMESTAMP                              [% 4d][%s]%*s [% 4ld][%s]\n", cl, NameForAtom(cl), len, "", sv, validateString(s));
+
+  cl = clientTEXT; sv = serverTEXT; len = (int)(WIDTH - 9 - strlen(NameForAtom(cl)));
+  SAFE_XFree(s); s = XGetAtomName(nxagentDisplay, sv);
+  fprintf(stderr, "  TEXT                                   [% 4d][%s]%*s [% 4ld][%s]\n", cl, NameForAtom(cl), len, "", sv, validateString(s));
+
+  cl = clientCOMPOUND_TEXT; sv = serverCOMPOUND_TEXT; len = (int)(WIDTH - 9 - strlen(NameForAtom(cl)));
+  SAFE_XFree(s); s = XGetAtomName(nxagentDisplay, sv);
+  fprintf(stderr, "  COMPOUND_TEXT                          [% 4d][%s]%*s [% 4ld][%s]\n", cl, NameForAtom(cl), len, "", sv, validateString(s));
+
+  cl = clientUTF8_STRING; sv = serverUTF8_STRING; len = (int)(WIDTH - 9 - strlen(NameForAtom(cl)));
+  SAFE_XFree(s); s = XGetAtomName(nxagentDisplay, sv);
+  fprintf(stderr, "  UTF8_STRING                            [% 4d][%s]%*s [% 4ld][%s]\n", cl, NameForAtom(cl), len, "", sv, validateString(s));
+
+  sv = serverTransToAgentProperty;
+  SAFE_XFree(s); s = XGetAtomName(nxagentDisplay, sv);
+  fprintf(stderr, "  serverTransToAgentProperty             - %*s[% 4ld][%s]\n", WIDTH - 2, "", sv, validateString(s));
+
+  sv = serverTransFromAgentProperty;
+  SAFE_XFree(s); s = XGetAtomName(nxagentDisplay, sv);
+  fprintf(stderr, "  serverTransFromAgentProperty           - %*s[% 4ld][%s]\n", WIDTH - 2, "", sv, validateString(s));
+
+  cl = clientCutProperty; len = (int)(WIDTH - 9 - strlen(NameForAtom(cl)));
+  fprintf(stderr, "  clientCutProperty                      [% 4d][%s]%*s\n", cl, NameForAtom(cl), len + 2, "-" );
+
+  for (int index = 0; index < nxagentMaxSelections; index++)
+  {
+    printSelectionStat(index);
+    printLastClientStat(index);
+    printLastServerStat(index);
+  }
 
   fprintf(stderr, "\\------------------------------------------------------------------------------\n");
 
