@@ -95,8 +95,9 @@ typedef struct _SelectionOwner
  * owner is outside nxagent.
  */
 
-/* FIXME: these should also be stored per selection */
-static SelectionOwner *lastSelectionOwner;
+static SelectionOwner *lastSelectionOwner = NULL;
+
+/* FIXME: can this also be stored per selection? */
 static XlibAtom serverLastRequestedSelection;
 
 #define IS_INTERNAL_OWNER(lsoindex) (lastSelectionOwner[lsoindex].client != NULL)
