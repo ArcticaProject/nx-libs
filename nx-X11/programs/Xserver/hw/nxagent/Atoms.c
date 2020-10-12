@@ -750,6 +750,54 @@ XlibAtom nxagentLocalToRemoteAtom(Atom local)
   }
 }
 
+/*
+ * This is mainly used to simplify debug prints. It returns
+ * the string for a remote atom or NULL if atom is unknown/invalid
+ *
+ * The string must NOT be freed by the caller.
+ */
+const char *nxagentRemoteAtomToString(XlibAtom remote)
+{
+  if (remote == None || remote == BAD_RESOURCE)
+  {
+    #ifdef DEBUG
+    fprintf(stderr, "%s: remote [%d] is None or BAD_RESOURCE\n", __func__, remote);
+    #endif
+    return NULL;
+  }
+
+  /* no mapping required for built-in atoms */
+  if (remote <= XA_LAST_PREDEFINED)
+  {
+    #ifdef DEBUG
+    fprintf(stderr, "%s: remote [%d] is <= XA_LAST_PREDEFINED [%d]\n", __func__, remote, XA_LAST_PREDEFINED);
+    #endif
+
+    /* simply use the builtin string that is the same on every X server */
+    return NameForAtom(remote);
+  }
+
+  AtomMap *current = nxagentFindAtomByRemoteValue(remote);
+  if (current)
+  {
+    return current->string;
+  }
+  else
+  {
+    /* fill up the cache */
+    Atom local = nxagentRemoteToLocalAtom(remote);
+    if (local != None)
+    {
+      current = nxagentFindAtomByRemoteValue(remote);
+      if (current)
+      {
+        return current->string;
+      }
+    }
+  }
+  return NULL;
+}
+
 Atom nxagentRemoteToLocalAtom(XlibAtom remote)
 {
   if (remote == None || remote == BAD_RESOURCE)

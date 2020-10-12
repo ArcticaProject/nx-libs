@@ -71,12 +71,24 @@ void nxagentWMDetect(void);
 XlibAtom nxagentMakeAtom(char *, unsigned, Bool);
 
 /*
- * Converts local atoms in remote atoms and viceversa.
+ * Converts local atoms to remote atoms and viceversa.
  */
 
 Atom nxagentRemoteToLocalAtom(XlibAtom);
 XlibAtom nxagentLocalToRemoteAtom(Atom);
 
-#endif
+/*
+ * return the string belonging to an atom. String MUST NOT
+ * be freed by the caller!
+ */
+const char *nxagentRemoteAtomToString(XlibAtom remote);
+
+/*
+ * As nxagentRemoteAtomToString() is similar to NameForAtom() we
+ * supply a macro for calling it.
+ */
+#define NameForRemAtom(arg) nxagentRemoteAtomToString(arg)
+
+#endif /* XlibAtom */
 
 #endif /* __Atoms_H__ */
