@@ -717,7 +717,7 @@ XlibAtom nxagentLocalToRemoteAtom(Atom local)
   {
     const char *string = NameForAtom(local);
 
-    /* FIXME: why False? */
+    /* False means "create Atom if it does not exist yet" */
     XlibAtom remote = XInternAtom(nxagentDisplay, string, False);
 
     if (remote == None)
