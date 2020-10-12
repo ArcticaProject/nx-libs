@@ -708,7 +708,7 @@ XlibAtom nxagentLocalToRemoteAtom(Atom local)
     if (current->string)
       fprintf(stderr, "%s: local [%d] -> remote [%d (%s)]\n", __func__, local, current->remote, current->string);
     else
-      fprintf(stderr, "%s: local [%d] -> remote [%d]\n", __func__, local, current->remote);
+      fprintf(stderr, "%s: local [%d] -> remote [%d] (no string cached)\n", __func__, local, current->remote);
     #endif
 
     return current->remote;
