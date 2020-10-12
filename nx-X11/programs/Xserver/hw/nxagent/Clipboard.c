@@ -152,7 +152,6 @@ static Atom     clientTIMESTAMP;
 static Atom     clientTEXT;
 static Atom     clientCOMPOUND_TEXT;
 static Atom     clientUTF8_STRING;
-static Atom     clientCLIPBOARD;
 
 static char     szAgentTARGETS[] = "TARGETS";
 static char     szAgentTEXT[] = "TEXT";
@@ -1792,8 +1791,8 @@ void nxagentSetSelectionCallback(CallbackListPtr *callbacks, void *data,
 
     if (pCurSel->pWin != NULL &&
         nxagentOption(Clipboard) != ClipboardNone && /* FIXME: shouldn't we also check for != ClipboardClient? */
-        (pCurSel->selection == XA_PRIMARY ||
-         pCurSel->selection == clientCLIPBOARD))
+        (pCurSel->selection == intSelAtoms[nxagentPrimarySelection] ||
+         pCurSel->selection == intSelAtoms[nxagentClipboardSelection]))
     {
       #ifdef DEBUG
       fprintf(stderr, "%s: calling setSelectionOwnerOnXServer\n", __func__);
@@ -2181,20 +2180,22 @@ XlibAtom translateLocalToRemoteSelection(Atom local)
    * XInternAtom(nxagentDisplay, "CLIPBOARD", 1), which is stored in
    * remSelAtoms[nxagentClipboardSelection]. For
    * PRIMARY there's nothing to map because that is identical on all
-   * X servers (defined in Xatom.h).
+   * X servers (defined in Xatom.h). We do it anyway so we do not
+   * require a special treatment.
    */
 
-  XlibAtom remote;
+  XlibAtom remote = -1;
 
-  if (local == XA_PRIMARY)
+  for (int index = 0; index < nxagentMaxSelections; index++)
   {
-    remote = XA_PRIMARY;
+    if (local == intSelAtoms[index])
+    {
+      remote = remSelAtoms[index];
+      break;
+    }
   }
-  else if (local == clientCLIPBOARD)
-  {
-    remote = remSelAtoms[nxagentClipboardSelection];
-  }
-  else
+
+  if (remote == -1)
   {
     remote = nxagentLocalToRemoteAtom(local);
   }
@@ -2396,7 +2397,6 @@ Bool nxagentInitClipboard(WindowPtr pWin)
   {
     /* cannot move that down to others - we need it for
      * initSelectionOwnerData ! */
-    clientCLIPBOARD = MakeAtom(szAgentCLIPBOARD, strlen(szAgentCLIPBOARD), True);
     clientTARGETS = MakeAtom(szAgentTARGETS, strlen(szAgentTARGETS), True);
     clientTEXT = MakeAtom(szAgentTEXT, strlen(szAgentTEXT), True);
     clientCOMPOUND_TEXT = MakeAtom(szAgentCOMPOUND_TEXT, strlen(szAgentCOMPOUND_TEXT), True);
@@ -2434,7 +2434,7 @@ Bool nxagentInitClipboard(WindowPtr pWin)
       FatalError("nxagentInitClipboard: Failed to allocate memory for the internal selection Atoms array.\n");
     }
     intSelAtoms[nxagentPrimarySelection] = XA_PRIMARY;
-    intSelAtoms[nxagentClipboardSelection] = clientCLIPBOARD;
+    intSelAtoms[nxagentClipboardSelection] = MakeAtom(szAgentCLIPBOARD, strlen(szAgentCLIPBOARD), True);
 
     SAFE_free(remSelAtoms);
     remSelAtoms = (XlibAtom *) calloc(nxagentMaxSelections, sizeof(XlibAtom));
