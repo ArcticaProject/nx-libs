@@ -2080,27 +2080,32 @@ int nxagentConvertSelection(ClientPtr client, WindowPtr pWin, Atom selection,
     return 1;
   }
 
-  if (lastClients[index].clientPtr == client && (GetTimeInMillis() - lastClients[index].reqTime < ACCUM_TIME))
+  if (lastClients[index].clientPtr == client)
   {
-    /*
-     * The same client made consecutive requests of clipboard content
-     * with less than 5 seconds time interval between them.
-     */
-     #ifdef DEBUG
-     fprintf(stderr, "%s: Consecutives request from client %s selection [%u] "
-                "elapsed time [%u] clientAccum [%d]\n", __func__, nxagentClientInfoString(client),
-                    selection, GetTimeInMillis() - lastClients[index].reqTime, clientAccum);
-     #endif
+    if (GetTimeInMillis() - lastClients[index].reqTime < ACCUM_TIME)
+    {
+      /*
+       * The same client made consecutive requests of clipboard content
+       * with less than 5 seconds time interval between them.
+       */
+       #ifdef DEBUG
+       fprintf(stderr, "%s: Consecutives request from client %s selection [%u] "
+                  "elapsed time [%u] clientAccum [%d]\n", __func__,
+                      nxagentClientInfoString(client),
+                          selection, GetTimeInMillis() - lastClients[index].reqTime,
+                              clientAccum);
+       #endif
 
-     clientAccum++;
+       clientAccum++;
+    }
   }
   else
   {
-    /* reset clientAccum as now another client requested the clipboard content */
-    if (lastClients[index].clientPtr != client)
-    {
-      clientAccum = 0;
-    }
+    /*
+     * reset clientAccum as now another client requested the clipboard
+     * content
+     */
+    clientAccum = 0;
   }
 
   if (target == clientTEXT ||
