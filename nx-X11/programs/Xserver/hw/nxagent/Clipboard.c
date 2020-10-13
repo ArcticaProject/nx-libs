@@ -327,8 +327,8 @@ static void printLastServerStat(int index)
 {
   lastServer ls = lastServers[index];
   fprintf(stderr, "  lastServer[].requestor        (Window) [0x%x]\n", ls.requestor);
-  fprintf(stderr, "  lastServer[].property           (Atom) [% 4ld][%s]\n", ls.property, NameForRemAtom(ls.property));
-  fprintf(stderr, "  lastServer[].target             (Atom) [% 4ld][%s]\n", ls.target, NameForRemAtom(ls.target));
+  fprintf(stderr, "  lastServer[].property       (XlibAtom) [% 4ld][%s]\n", ls.property, NameForRemAtom(ls.property));
+  fprintf(stderr, "  lastServer[].target         (XlibAtom) [% 4ld][%s]\n", ls.target, NameForRemAtom(ls.target));
   fprintf(stderr, "  lastServer[].time               (Time) [%u]\n", ls.time);
 }
 
