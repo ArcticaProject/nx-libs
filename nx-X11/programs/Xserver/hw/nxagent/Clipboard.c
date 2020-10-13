@@ -283,7 +283,7 @@ static void printSelectionStat(int index)
   fprintf(stderr, "selection [%d]:\n", index);
 
   fprintf(stderr, "  selection Atom                         internal [%d][%s]  remote [%ld][%s]\n",
-              intSelAtoms[index], NameForAtom(intSelAtoms[index]),
+              intSelAtoms[index], NameForIntAtom(intSelAtoms[index]),
                   remSelAtoms[index], NameForRemAtom(remSelAtoms[index]));
   fprintf(stderr, "  owner side                             %s\n", IS_INTERNAL_OWNER(index) ? "nxagent" : "real X server/none");
   fprintf(stderr, "  lastSelectionOwner[].client            %s\n", nxagentClientInfoString(lOwner.client));
@@ -308,8 +308,8 @@ static void printLastClientStat(int index)
     fprintf(stderr, "  lastClients[].windowPtr    (WindowPtr) -\n");
   fprintf(stderr, "  lastClients[].clientPtr    (ClientPtr) %s\n", nxagentClientInfoString(lc.clientPtr));
   fprintf(stderr, "  lastClients[].requestor       (Window) [0x%x]\n", lc.requestor);
-  fprintf(stderr, "  lastClients[].property          (Atom) [% 4d][%s]\n", lc.property, NameForAtom(lc.property));
-  fprintf(stderr, "  lastClients[].target            (Atom) [% 4d][%s]\n", lc.target, NameForAtom(lc.target));
+  fprintf(stderr, "  lastClients[].property          (Atom) [% 4d][%s]\n", lc.property, NameForIntAtom(lc.property));
+  fprintf(stderr, "  lastClients[].target            (Atom) [% 4d][%s]\n", lc.target, NameForIntAtom(lc.target));
   if (lc.time > 0)
     fprintf(stderr, "  lastClients[].time              (Time) [%u] ([%u]ms ago)\n", lc.time, GetTimeInMillis() - lc.time);
   else
@@ -327,8 +327,8 @@ static void printLastServerStat(int index)
 {
   lastServer ls = lastServers[index];
   fprintf(stderr, "  lastServer[].requestor        (Window) [0x%x]\n", ls.requestor);
-  fprintf(stderr, "  lastServer[].property           (Atom) [% 4ld][%s]\n", ls.property, validateString(NameForRemAtom(ls.property)));
-  fprintf(stderr, "  lastServer[].target             (Atom) [% 4ld][%s]\n", ls.target, validateString(NameForRemAtom(ls.target)));
+  fprintf(stderr, "  lastServer[].property           (Atom) [% 4ld][%s]\n", ls.property, NameForRemAtom(ls.property));
+  fprintf(stderr, "  lastServer[].target             (Atom) [% 4ld][%s]\n", ls.target, NameForRemAtom(ls.target));
   fprintf(stderr, "  lastServer[].time               (Time) [%u]\n", ls.time);
 }
 
@@ -354,7 +354,7 @@ void nxagentDumpClipboardStat(void)
   }
   fprintf(stderr, "\n");
 
-  fprintf(stderr, "  serverLastRequestedSelection           [% 4ld][%s]\n", serverLastRequestedSelection, validateString(NameForRemAtom(serverLastRequestedSelection)));
+  fprintf(stderr, "  serverLastRequestedSelection           [% 4ld][%s]\n", serverLastRequestedSelection, NameForRemAtom(serverLastRequestedSelection));
 
 #define WIDTH 32
   Atom cl = 0;
@@ -362,29 +362,29 @@ void nxagentDumpClipboardStat(void)
   int len = WIDTH;
 
   fprintf(stderr, "Atoms                                    internal%*sremote\n", WIDTH - 8, "");
-  cl = clientTARGETS; sv = serverTARGETS; len = (int)(WIDTH - 9 - strlen(NameForAtom(cl)));
-  fprintf(stderr, "  TARGETS                                [% 4d][%s]%*s [% 4ld][%s]\n", cl, NameForAtom(cl), len, "", sv, validateString(NameForRemAtom(sv)));
+  cl = clientTARGETS; sv = serverTARGETS; len = (int)(WIDTH - 9 - strlen(NameForIntAtom(cl)));
+  fprintf(stderr, "  TARGETS                                [% 4d][%s]%*s [% 4ld][%s]\n", cl, NameForIntAtom(cl), len, "", sv, NameForRemAtom(sv));
 
-  cl = clientTIMESTAMP; sv = serverTIMESTAMP; len = (int)(WIDTH - 9 - strlen(NameForAtom(cl)));
-  fprintf(stderr, "  TIMESTAMP                              [% 4d][%s]%*s [% 4ld][%s]\n", cl, NameForAtom(cl), len, "", sv, validateString(NameForRemAtom(sv)));
+  cl = clientTIMESTAMP; sv = serverTIMESTAMP; len = (int)(WIDTH - 9 - strlen(NameForIntAtom(cl)));
+  fprintf(stderr, "  TIMESTAMP                              [% 4d][%s]%*s [% 4ld][%s]\n", cl, NameForIntAtom(cl), len, "", sv, NameForRemAtom(sv));
 
-  cl = clientTEXT; sv = serverTEXT; len = (int)(WIDTH - 9 - strlen(NameForAtom(cl)));
-  fprintf(stderr, "  TEXT                                   [% 4d][%s]%*s [% 4ld][%s]\n", cl, NameForAtom(cl), len, "", sv, validateString(NameForRemAtom(sv)));
+  cl = clientTEXT; sv = serverTEXT; len = (int)(WIDTH - 9 - strlen(NameForIntAtom(cl)));
+  fprintf(stderr, "  TEXT                                   [% 4d][%s]%*s [% 4ld][%s]\n", cl, NameForIntAtom(cl), len, "", sv, NameForRemAtom(sv));
 
-  cl = clientCOMPOUND_TEXT; sv = serverCOMPOUND_TEXT; len = (int)(WIDTH - 9 - strlen(NameForAtom(cl)));
-  fprintf(stderr, "  COMPOUND_TEXT                          [% 4d][%s]%*s [% 4ld][%s]\n", cl, NameForAtom(cl), len, "", sv, validateString(NameForRemAtom(sv)));
+  cl = clientCOMPOUND_TEXT; sv = serverCOMPOUND_TEXT; len = (int)(WIDTH - 9 - strlen(NameForIntAtom(cl)));
+  fprintf(stderr, "  COMPOUND_TEXT                          [% 4d][%s]%*s [% 4ld][%s]\n", cl, NameForIntAtom(cl), len, "", sv, NameForRemAtom(sv));
 
-  cl = clientUTF8_STRING; sv = serverUTF8_STRING; len = (int)(WIDTH - 9 - strlen(NameForAtom(cl)));
-  fprintf(stderr, "  UTF8_STRING                            [% 4d][%s]%*s [% 4ld][%s]\n", cl, NameForAtom(cl), len, "", sv, validateString(NameForRemAtom(sv)));
+  cl = clientUTF8_STRING; sv = serverUTF8_STRING; len = (int)(WIDTH - 9 - strlen(NameForIntAtom(cl)));
+  fprintf(stderr, "  UTF8_STRING                            [% 4d][%s]%*s [% 4ld][%s]\n", cl, NameForIntAtom(cl), len, "", sv, NameForRemAtom(sv));
 
   sv = serverTransToAgentProperty;
-  fprintf(stderr, "  serverTransToAgentProperty             - %*s[% 4ld][%s]\n", WIDTH - 2, "", sv, validateString(NameForRemAtom(sv)));
+  fprintf(stderr, "  serverTransToAgentProperty             - %*s[% 4ld][%s]\n", WIDTH - 2, "", sv, NameForRemAtom(sv));
 
   sv = serverTransFromAgentProperty;
-  fprintf(stderr, "  serverTransFromAgentProperty           - %*s[% 4ld][%s]\n", WIDTH - 2, "", sv, validateString(NameForRemAtom(sv)));
+  fprintf(stderr, "  serverTransFromAgentProperty           - %*s[% 4ld][%s]\n", WIDTH - 2, "", sv, NameForRemAtom(sv));
 
-  cl = clientCutProperty; len = (int)(WIDTH - 9 - strlen(NameForAtom(cl)));
-  fprintf(stderr, "  clientCutProperty                      [% 4d][%s]%*s\n", cl, NameForAtom(cl), len + 2, "-" );
+  cl = clientCutProperty; len = (int)(WIDTH - 9 - strlen(NameForIntAtom(cl)));
+  fprintf(stderr, "  clientCutProperty                      [% 4d][%s]%*s\n", cl, NameForIntAtom(cl), len + 2, "-" );
 
   for (int index = 0; index < nxagentMaxSelections; index++)
   {
@@ -798,10 +798,10 @@ void nxagentHandleSelectionRequestFromXServer(XEvent *X)
   fprintf(stderr, "%s: Received SelectionRequestEvent from real server: selection [%ld][%s] " \
           "target [%ld][%s] requestor [display[%s]/0x%lx] destination [%ld][%s]\n",
           __func__,
-          X->xselectionrequest.selection, validateString(NameForRemAtom(X->xselectionrequest.selection)),
-          X->xselectionrequest.target,    validateString(NameForRemAtom(X->xselectionrequest.target)),
+          X->xselectionrequest.selection, NameForRemAtom(X->xselectionrequest.selection),
+          X->xselectionrequest.target,    NameForRemAtom(X->xselectionrequest.target),
           DisplayString(nxagentDisplay), X->xselectionrequest.requestor,
-          X->xselectionrequest.property,  validateString(NameForRemAtom(X->xselectionrequest.property)));;
+          X->xselectionrequest.property,  NameForRemAtom(X->xselectionrequest.property));
   #endif
 
   if (!agentClipboardInitialized)
@@ -1028,10 +1028,10 @@ void nxagentHandleSelectionRequestFromXServer(XEvent *X)
       fprintf(stderr, "%s: sent SelectionRequest event to client %s property [%d][%s] " \
               "target [%d][%s] requestor [0x%x] selection [%d][%s].\n", __func__,
               nxagentClientInfoString(lastSelectionOwner[index].client),
-              x.u.selectionRequest.property, NameForAtom(x.u.selectionRequest.property),
-              x.u.selectionRequest.target, NameForAtom(x.u.selectionRequest.target),
+              x.u.selectionRequest.property, NameForIntAtom(x.u.selectionRequest.property),
+              x.u.selectionRequest.target, NameForIntAtom(x.u.selectionRequest.target),
               x.u.selectionRequest.requestor,
-              x.u.selectionRequest.selection, NameForAtom(x.u.selectionRequest.selection));
+              x.u.selectionRequest.selection, NameForIntAtom(x.u.selectionRequest.selection));
       #endif
       /* no reply to Xserver yet - we will do that once the answer of
 	 the above sendEventToClient arrives */
@@ -1069,7 +1069,7 @@ static void endTransfer(Bool success, int index)
     #ifdef DEBUG
     if (success == SELECTION_SUCCESS)
       fprintf(stderr, "%s: sending notification to client %s, property [%d][%s]\n", __func__,
-                  nxagentClientInfoString(lastClients[index].clientPtr), lastClients[index].property, NameForAtom(lastClients[index].property));
+                  nxagentClientInfoString(lastClients[index].clientPtr), lastClients[index].property, NameForIntAtom(lastClients[index].property));
     else
       fprintf(stderr, "%s: sending negative notification to client %s\n", __func__,
                   nxagentClientInfoString(lastClients[index].clientPtr));
@@ -1375,7 +1375,7 @@ Bool nxagentCollectPropertyEventFromXServer(int resource)
           #ifdef DEBUG
           fprintf(stderr, "%s: Selection property [%d][%s] changed to [\"%*.*s\"...]\n", __func__,
                       lastClients[index].property,
-                          validateString(NameForAtom(lastClients[index].property)),
+                          NameForIntAtom(lastClients[index].property),
                               (int)(min(20, ulReturnItems * resultFormat / 8)),
                                   (int)(min(20, ulReturnItems * resultFormat / 8)),
                                       pszReturnData);
@@ -1424,9 +1424,9 @@ void nxagentHandleSelectionNotifyFromXServer(XEvent *X)
   }
   fprintf(stderr, "%s: SelectionNotify event from real X server, property " \
               "[%ld][%s] requestor [0x%lx] selection [%s] target [%ld][%s] time [%lu] send_event [%d].\n",
-                  __func__, e->property, validateString(NameForRemAtom(e->property)), e->requestor,
-                      validateString(NameForRemAtom(e->selection)), e->target,
-                          validateString(NameForRemAtom(e->target)), e->time, e->send_event);
+                  __func__, e->property, NameForRemAtom(e->property), e->requestor,
+                      NameForRemAtom(e->selection), e->target,
+                          NameForRemAtom(e->target), e->time, e->send_event);
   #endif
 
   /* determine the selection we are talking about here */
@@ -1506,7 +1506,7 @@ void nxagentHandleSelectionNotifyFromXServer(XEvent *X)
       {
         #ifdef DEBUG
         fprintf(stderr, "%s: Unexpected property [%ld][%s] - reporting conversion failure.\n",
-                    __func__, X->xselection.property, validateString(NameForRemAtom(X->xselection.property)));
+                    __func__, X->xselection.property, NameForRemAtom(X->xselection.property));
         #endif
         endTransfer(SELECTION_FAULT, index);
       }
@@ -1737,7 +1737,7 @@ void nxagentSetSelectionCallback(CallbackListPtr *callbacks, void *data,
   {
     #ifdef DEBUG
     fprintf(stderr, "%s: pCurSel->pWin [0x%x]\n", __func__, WINDOWID(pCurSel->pWin));
-    fprintf(stderr, "%s: pCurSel->selection [%s]\n", __func__, NameForAtom(pCurSel->selection));
+    fprintf(stderr, "%s: pCurSel->selection [%s]\n", __func__, NameForIntAtom(pCurSel->selection));
     #endif
 
     if (pCurSel->pWin != NULL &&
@@ -1861,17 +1861,16 @@ FIXME
 int nxagentConvertSelection(ClientPtr client, WindowPtr pWin, Atom selection,
                                 Window requestor, Atom property, Atom target, Time time)
 {
-  const char *strTarget = NameForAtom(target);
-
   #ifdef DEBUG
   fprintf(stderr, "%s: client %s requests sel [%s] "
               "on window [0x%x] prop [%d][%s] target [%d][%s].\n", __func__,
-                  nxagentClientInfoString(client), validateString(NameForAtom(selection)), requestor,
-                      property, validateString(NameForAtom(property)),
-                          target, validateString(strTarget));
+                  nxagentClientInfoString(client), NameForIntAtom(selection), requestor,
+                      property, NameForIntAtom(property),
+                          target, NameForIntAtom(target));
   #endif
 
-  if (strTarget == NULL)
+  /* cannot use NameForIntAtom() here! */
+  if (NameForAtom(target) == NULL)
   {
     #ifdef DEBUG
     fprintf(stderr, "%s: cannot find name for target Atom [%d] - returning\n", __func__, target);
@@ -1975,7 +1974,7 @@ int nxagentConvertSelection(ClientPtr client, WindowPtr pWin, Atom selection,
     #ifdef DEBUG
     fprintf(stderr, "%s: available targets [%d]:\n", __func__, numTargets);
     for (int j = 0; j < numTargets; j++)
-        fprintf(stderr, "%s:  %s\n", __func__, NameForAtom(targets[j]));
+        fprintf(stderr, "%s:  %s\n", __func__, NameForIntAtom(targets[j]));
     fprintf(stderr, "\n");
     #endif
 
@@ -2079,7 +2078,7 @@ int nxagentConvertSelection(ClientPtr client, WindowPtr pWin, Atom selection,
 
     #ifdef DEBUG
     fprintf(stderr, "%s: replacing local by remote property: [%d][%s] -> [%ld][%s]\n",
-                __func__, property, NameForAtom(property),
+                __func__, property, NameForIntAtom(property),
                     remProperty, "NX_CUT_BUFFER_SERVER");
     #endif
 
@@ -2088,9 +2087,9 @@ int nxagentConvertSelection(ClientPtr client, WindowPtr pWin, Atom selection,
      * unexpected (for me) */
     #ifdef DEBUG
     fprintf(stderr, "%s: Sending XConvertSelection to real X server: requestor [0x%x] target [%ld][%s] property [%ld][%s] selection [%ld][%s] time [0][CurrentTime]\n", __func__,
-                serverWindow, remTarget, validateString(NameForRemAtom(remTarget)),
-                    remProperty, validateString(NameForRemAtom(remProperty)),
-                        remSelection, validateString(NameForRemAtom(remSelection)));
+                serverWindow, remTarget, NameForRemAtom(remTarget),
+                    remProperty, NameForRemAtom(remProperty),
+                        remSelection, NameForRemAtom(remSelection));
     #endif
 
     XConvertSelection(nxagentDisplay, remSelection, remTarget, remProperty, serverWindow, CurrentTime);
@@ -2108,7 +2107,7 @@ int nxagentConvertSelection(ClientPtr client, WindowPtr pWin, Atom selection,
     /* deny request */
     #ifdef DEBUG
     fprintf(stderr, "%s: Unsupported target [%d][%s] - denying request\n", __func__, target,
-                validateString(NameForAtom(target)));
+                NameForIntAtom(target));
     #endif
     sendSelectionNotifyEventToClient(client, time, requestor, selection, target, None);
 
@@ -2147,7 +2146,7 @@ XlibAtom translateLocalToRemoteSelection(Atom local)
 
   #ifdef DEBUG
   fprintf(stderr, "%s: mapping local to remote selection: [%d][%s] -> [%ld] [%s]\n", __func__,
-              local, NameForAtom(local), remote, validateString(NameForRemAtom(remote)));
+              local, NameForIntAtom(local), remote, NameForRemAtom(remote));
   #endif
 
   return remote;
@@ -2189,7 +2188,7 @@ XlibAtom translateLocalToRemoteTarget(Atom local)
 
   #ifdef DEBUG
   fprintf(stderr, "%s: mapping local to remote target: [%d][%s] -> [%ld] [%s]\n", __func__,
-              local, NameForAtom(local), remote, validateString(NameForRemAtom(remote)));
+              local, NameForIntAtom(local), remote, NameForRemAtom(remote));
   #endif
 
   return remote;
@@ -2225,9 +2224,9 @@ int nxagentSendNotificationToSelfViaXServer(xEvent *event)
 
   #ifdef DEBUG
   fprintf(stderr, "%s: Received SendNotify by client: property [%d][%s] target [%d][%s] selection [%d][%s] requestor [0x%x] time [%u].\n", __func__,
-          event->u.selectionNotify.property, NameForAtom(event->u.selectionNotify.property),
-          event->u.selectionNotify.target, NameForAtom(event->u.selectionNotify.target),
-          event->u.selectionNotify.selection, NameForAtom(event->u.selectionNotify.selection),
+          event->u.selectionNotify.property, NameForIntAtom(event->u.selectionNotify.property),
+          event->u.selectionNotify.target, NameForIntAtom(event->u.selectionNotify.target),
+          event->u.selectionNotify.selection, NameForIntAtom(event->u.selectionNotify.selection),
           event->u.selectionNotify.requestor, event->u.selectionNotify.time);
   #endif
 
