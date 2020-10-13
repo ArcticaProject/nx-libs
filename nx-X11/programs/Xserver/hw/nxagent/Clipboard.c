@@ -279,12 +279,12 @@ static void printSelectionStat(int index)
 {
   SelectionOwner lOwner = lastSelectionOwner[index];
   Selection curSel = CurrentSelections[index];
-  char *s = NULL;
 
   fprintf(stderr, "selection [%d]:\n", index);
 
-  SAFE_XFree(s); s = XGetAtomName(nxagentDisplay, remSelAtoms[index]);
-  fprintf(stderr, "  selection Atom                         internal [%d][%s]  remote [%ld][%s]\n", intSelAtoms[index], NameForAtom(intSelAtoms[index]), remSelAtoms[index], s);
+  fprintf(stderr, "  selection Atom                         internal [%d][%s]  remote [%ld][%s]\n",
+              intSelAtoms[index], NameForAtom(intSelAtoms[index]),
+                  remSelAtoms[index], NameForRemAtom(remSelAtoms[index]));
   fprintf(stderr, "  owner side                             %s\n", IS_INTERNAL_OWNER(index) ? "nxagent" : "real X server/none");
   fprintf(stderr, "  lastSelectionOwner[].client            %s\n", nxagentClientInfoString(lOwner.client));
   fprintf(stderr, "  lastSelectionOwner[].window            [0x%x]\n", lOwner.window);
@@ -294,7 +294,6 @@ static void printSelectionStat(int index)
     fprintf(stderr, "  lastSelectionOwner[].windowPtr         -\n");
   fprintf(stderr, "  lastSelectionOwner[].lastTimeChanged   [%u]\n", lOwner.lastTimeChanged);
 
-  SAFE_XFree(s);
   fprintf(stderr, "  CurrentSelections[].client             %s\n", nxagentClientInfoString(curSel.client));
   fprintf(stderr, "  CurrentSelections[].window             [0x%x]\n", curSel.window);
   return;
@@ -327,21 +326,14 @@ static void printLastClientStat(int index)
 static void printLastServerStat(int index)
 {
   lastServer ls = lastServers[index];
-  char *s = NULL;
-
   fprintf(stderr, "  lastServer[].requestor        (Window) [0x%x]\n", ls.requestor);
-  SAFE_XFree(s); s = XGetAtomName(nxagentDisplay, ls.property);
-  fprintf(stderr, "  lastServer[].property           (Atom) [% 4ld][%s]\n", ls.property, validateString(s));
-  SAFE_XFree(s); s = XGetAtomName(nxagentDisplay, ls.target);
-  fprintf(stderr, "  lastServer[].target             (Atom) [% 4ld][%s]\n", ls.target, validateString(s));
+  fprintf(stderr, "  lastServer[].property           (Atom) [% 4ld][%s]\n", ls.property, validateString(NameForRemAtom(ls.property)));
+  fprintf(stderr, "  lastServer[].target             (Atom) [% 4ld][%s]\n", ls.target, validateString(NameForRemAtom(ls.target)));
   fprintf(stderr, "  lastServer[].time               (Time) [%u]\n", ls.time);
-  SAFE_XFree(s);
 }
 
 void nxagentDumpClipboardStat(void)
 {
-  char *s = NULL;
-
   fprintf(stderr, "/----- Clipboard internal status -----\n");
 
   fprintf(stderr, "  current time                    (Time) [%u]\n", GetTimeInMillis());
@@ -362,8 +354,7 @@ void nxagentDumpClipboardStat(void)
   }
   fprintf(stderr, "\n");
 
-  SAFE_XFree(s); s = XGetAtomName(nxagentDisplay, serverLastRequestedSelection);
-  fprintf(stderr, "  serverLastRequestedSelection           [% 4ld][%s]\n", serverLastRequestedSelection, validateString(s));
+  fprintf(stderr, "  serverLastRequestedSelection           [% 4ld][%s]\n", serverLastRequestedSelection, validateString(NameForRemAtom(serverLastRequestedSelection)));
 
 #define WIDTH 32
   Atom cl = 0;
@@ -372,32 +363,25 @@ void nxagentDumpClipboardStat(void)
 
   fprintf(stderr, "Atoms                                    internal%*sremote\n", WIDTH - 8, "");
   cl = clientTARGETS; sv = serverTARGETS; len = (int)(WIDTH - 9 - strlen(NameForAtom(cl)));
-  SAFE_XFree(s); s = XGetAtomName(nxagentDisplay, sv);
-  fprintf(stderr, "  TARGETS                                [% 4d][%s]%*s [% 4ld][%s]\n", cl, NameForAtom(cl), len, "", sv, validateString(s));
+  fprintf(stderr, "  TARGETS                                [% 4d][%s]%*s [% 4ld][%s]\n", cl, NameForAtom(cl), len, "", sv, validateString(NameForRemAtom(sv)));
 
   cl = clientTIMESTAMP; sv = serverTIMESTAMP; len = (int)(WIDTH - 9 - strlen(NameForAtom(cl)));
-  SAFE_XFree(s); s = XGetAtomName(nxagentDisplay, sv);
-  fprintf(stderr, "  TIMESTAMP                              [% 4d][%s]%*s [% 4ld][%s]\n", cl, NameForAtom(cl), len, "", sv, validateString(s));
+  fprintf(stderr, "  TIMESTAMP                              [% 4d][%s]%*s [% 4ld][%s]\n", cl, NameForAtom(cl), len, "", sv, validateString(NameForRemAtom(sv)));
 
   cl = clientTEXT; sv = serverTEXT; len = (int)(WIDTH - 9 - strlen(NameForAtom(cl)));
-  SAFE_XFree(s); s = XGetAtomName(nxagentDisplay, sv);
-  fprintf(stderr, "  TEXT                                   [% 4d][%s]%*s [% 4ld][%s]\n", cl, NameForAtom(cl), len, "", sv, validateString(s));
+  fprintf(stderr, "  TEXT                                   [% 4d][%s]%*s [% 4ld][%s]\n", cl, NameForAtom(cl), len, "", sv, validateString(NameForRemAtom(sv)));
 
   cl = clientCOMPOUND_TEXT; sv = serverCOMPOUND_TEXT; len = (int)(WIDTH - 9 - strlen(NameForAtom(cl)));
-  SAFE_XFree(s); s = XGetAtomName(nxagentDisplay, sv);
-  fprintf(stderr, "  COMPOUND_TEXT                          [% 4d][%s]%*s [% 4ld][%s]\n", cl, NameForAtom(cl), len, "", sv, validateString(s));
+  fprintf(stderr, "  COMPOUND_TEXT                          [% 4d][%s]%*s [% 4ld][%s]\n", cl, NameForAtom(cl), len, "", sv, validateString(NameForRemAtom(sv)));
 
   cl = clientUTF8_STRING; sv = serverUTF8_STRING; len = (int)(WIDTH - 9 - strlen(NameForAtom(cl)));
-  SAFE_XFree(s); s = XGetAtomName(nxagentDisplay, sv);
-  fprintf(stderr, "  UTF8_STRING                            [% 4d][%s]%*s [% 4ld][%s]\n", cl, NameForAtom(cl), len, "", sv, validateString(s));
+  fprintf(stderr, "  UTF8_STRING                            [% 4d][%s]%*s [% 4ld][%s]\n", cl, NameForAtom(cl), len, "", sv, validateString(NameForRemAtom(sv)));
 
   sv = serverTransToAgentProperty;
-  SAFE_XFree(s); s = XGetAtomName(nxagentDisplay, sv);
-  fprintf(stderr, "  serverTransToAgentProperty             - %*s[% 4ld][%s]\n", WIDTH - 2, "", sv, validateString(s));
+  fprintf(stderr, "  serverTransToAgentProperty             - %*s[% 4ld][%s]\n", WIDTH - 2, "", sv, validateString(NameForRemAtom(sv)));
 
   sv = serverTransFromAgentProperty;
-  SAFE_XFree(s); s = XGetAtomName(nxagentDisplay, sv);
-  fprintf(stderr, "  serverTransFromAgentProperty           - %*s[% 4ld][%s]\n", WIDTH - 2, "", sv, validateString(s));
+  fprintf(stderr, "  serverTransFromAgentProperty           - %*s[% 4ld][%s]\n", WIDTH - 2, "", sv, validateString(NameForRemAtom(sv)));
 
   cl = clientCutProperty; len = (int)(WIDTH - 9 - strlen(NameForAtom(cl)));
   fprintf(stderr, "  clientCutProperty                      [% 4d][%s]%*s\n", cl, NameForAtom(cl), len + 2, "-" );
@@ -410,8 +394,6 @@ void nxagentDumpClipboardStat(void)
   }
 
   fprintf(stderr, "\\------------------------------------------------------------------------------\n");
-
-  SAFE_XFree(s);
 }
 
 /*
@@ -809,27 +791,17 @@ static void replyRequestSelectionToXServer(XEvent *X, Bool success)
 void nxagentHandleSelectionRequestFromXServer(XEvent *X)
 {
   #ifdef DEBUG
+  if (X->xselectionrequest.requestor == serverWindow)
   {
-      char *strTarget = XGetAtomName(nxagentDisplay, X->xselectionrequest.target);
-      char *strSelection = XGetAtomName(nxagentDisplay, X->xselectionrequest.selection);
-      char *strProperty = XGetAtomName(nxagentDisplay, X->xselectionrequest.property);
-
-      if (X->xselectionrequest.requestor == serverWindow)
-      {
-        fprintf(stderr, "%s: this event has been sent by nxagent!\n", __func__);;
-      }
-      fprintf(stderr, "%s: Received SelectionRequestEvent from real server: selection [%ld][%s] " \
-              "target [%ld][%s] requestor [display[%s]/0x%lx] destination [%ld][%s]\n",
-              __func__,
-              X->xselectionrequest.selection, validateString(strSelection),
-              X->xselectionrequest.target,    validateString(strTarget),
-              DisplayString(nxagentDisplay), X->xselectionrequest.requestor,
-              X->xselectionrequest.property,  validateString(strProperty));
-
-      SAFE_XFree(strTarget);
-      SAFE_XFree(strSelection);
-      SAFE_XFree(strProperty);
+    fprintf(stderr, "%s: this event has been sent by nxagent!\n", __func__);;
   }
+  fprintf(stderr, "%s: Received SelectionRequestEvent from real server: selection [%ld][%s] " \
+          "target [%ld][%s] requestor [display[%s]/0x%lx] destination [%ld][%s]\n",
+          __func__,
+          X->xselectionrequest.selection, validateString(NameForRemAtom(X->xselectionrequest.selection)),
+          X->xselectionrequest.target,    validateString(NameForRemAtom(X->xselectionrequest.target)),
+          DisplayString(nxagentDisplay), X->xselectionrequest.requestor,
+          X->xselectionrequest.property,  validateString(NameForRemAtom(X->xselectionrequest.property)));;
   #endif
 
   if (!agentClipboardInitialized)
@@ -894,9 +866,7 @@ void nxagentHandleSelectionRequestFromXServer(XEvent *X)
       fprintf(stderr, "%s: Sending %d available targets:\n", __func__, numTargets);
       for (int i = 0; i < numTargets; i++)
       {
-        char *s = XGetAtomName(nxagentDisplay, targets[i]);
-        fprintf(stderr, "%s: %ld %s\n", __func__, targets[i], s);
-        SAFE_XFree(s);
+        fprintf(stderr, "%s: %ld %s\n", __func__, targets[i], NameForRemAtom(targets[i]));
       }
       fprintf(stderr, "\n");
       #endif
@@ -986,17 +956,11 @@ void nxagentHandleSelectionRequestFromXServer(XEvent *X)
                               serverWindow, lastClients[index].time);
 
     #ifdef DEBUG
-    char *strTarget = XGetAtomName(nxagentDisplay, X->xselectionrequest.target);
-    char *strSelection = XGetAtomName(nxagentDisplay, CurrentSelections[index].selection);
-    char *strProperty = XGetAtomName(nxagentDisplay, serverTransToAgentProperty);
     fprintf(stderr, "%s: Sent XConvertSelection: selection [%d][%s] target [%ld][%s] property [%ld][%s] window [0x%x] time [%u] .\n", __func__,
-                CurrentSelections[index].selection, strSelection,
-                    X->xselectionrequest.target, strTarget,
-                        serverTransToAgentProperty, strProperty,
+                CurrentSelections[index].selection, NameForRemAtom(CurrentSelections[index].selection)),
+                    X->xselectionrequest.target, NameForRemAtom(X->xselectionrequest.target),
+                        serverTransToAgentProperty, NameForRemAtom(serverTransToAgentProperty),
                             serverWindow, lastClients[index].time);
-    SAFE_XFree(strTarget);
-    SAFE_XFree(strSelection);
-    SAFE_XFree(strProperty);
     #endif
   }
   else
@@ -1075,10 +1039,8 @@ void nxagentHandleSelectionRequestFromXServer(XEvent *X)
     else
     {
       #ifdef DEBUG
-      char *s = XGetAtomName(nxagentDisplay, X->xselectionrequest.selection);
-      fprintf (stderr, "%s: no internal owner for selection [%ld][%s] - denying request.\n", __func__,
-                   X->xselectionrequest.selection, s);
-      SAFE_XFree(s);
+      fprintf(stderr, "%s: no internal owner for selection [%ld][%s] - denying request.\n", __func__,
+                  X->xselectionrequest.selection, NameForRemAtom(X->xselectionrequest.selection));
       #endif
 
       /* deny the request */
@@ -1456,24 +1418,15 @@ void nxagentHandleSelectionNotifyFromXServer(XEvent *X)
 
   #ifdef DEBUG
   XSelectionEvent * e = (XSelectionEvent *)X;
+  if (e->requestor == serverWindow)
   {
-    char * p = XGetAtomName(nxagentDisplay, e->property);
-    char * t = XGetAtomName(nxagentDisplay, e->target);
-    char * s = XGetAtomName(nxagentDisplay, e->selection);
-    if (e->requestor == serverWindow)
-    {
-      fprintf(stderr, "%s: this event has been sent by nxagent!\n", __func__);;
-    }
-
-    fprintf(stderr, "%s: SelectionNotify event from real X server, property " \
-                "[%ld][%s] requestor [0x%lx] selection [%s] target [%ld][%s] time [%lu] send_event [%d].\n",
-                    __func__, e->property, validateString(p), e->requestor,
-                        validateString(s), e->target,
-                            validateString(t), e->time, e->send_event);
-    SAFE_XFree(p);
-    SAFE_XFree(t);
-    SAFE_XFree(s);
+    fprintf(stderr, "%s: this event has been sent by nxagent!\n", __func__);;
   }
+  fprintf(stderr, "%s: SelectionNotify event from real X server, property " \
+              "[%ld][%s] requestor [0x%lx] selection [%s] target [%ld][%s] time [%lu] send_event [%d].\n",
+                  __func__, e->property, validateString(NameForRemAtom(e->property)), e->requestor,
+                      validateString(NameForRemAtom(e->selection)), e->target,
+                          validateString(NameForRemAtom(e->target)), e->time, e->send_event);
   #endif
 
   /* determine the selection we are talking about here */
@@ -1552,10 +1505,8 @@ void nxagentHandleSelectionNotifyFromXServer(XEvent *X)
       else
       {
         #ifdef DEBUG
-        char *s = XGetAtomName(nxagentDisplay, X->xselection.property);
         fprintf(stderr, "%s: Unexpected property [%ld][%s] - reporting conversion failure.\n",
-                    __func__, X->xselection.property, s);
-        SAFE_XFree(s);
+                    __func__, X->xselection.property, validateString(NameForRemAtom(X->xselection.property)));
         #endif
         endTransfer(SELECTION_FAULT, index);
       }
@@ -1633,18 +1584,14 @@ void nxagentHandleSelectionNotifyFromXServer(XEvent *X)
                           ulReturnItems);
 
           #ifdef DEBUG
-          {
-            char *s = XGetAtomName(nxagentDisplay, lastServers[index].property);
-            fprintf(stderr, "%s: XChangeProperty sent to window [0x%x] for property [%ld][%s] value [\"%*.*s\"...]\n",
-                    __func__,
-                    lastServers[index].requestor,
-                    lastServers[index].property,
-                    s,
-                    (int)(min(20, ulReturnItems * 8 / 8)),
-                    (int)(min(20, ulReturnItems * 8 / 8)),
-                    pszReturnData);
-            SAFE_XFree(s);
-          }
+          fprintf(stderr, "%s: XChangeProperty sent to window [0x%x] for property [%ld][%s] value [\"%*.*s\"...]\n",
+                  __func__,
+                  lastServers[index].requestor,
+                  lastServers[index].property,
+                  NameForRemAtom(lastServers[index].property),
+                  (int)(min(20, ulReturnItems * 8 / 8)),
+                  (int)(min(20, ulReturnItems * 8 / 8)),
+                  pszReturnData);
           #endif
         }
 
@@ -2140,16 +2087,10 @@ int nxagentConvertSelection(ClientPtr client, WindowPtr pWin, Atom selection,
      * by a real time. The reply also contains time "0" which is
      * unexpected (for me) */
     #ifdef DEBUG
-    char *t = XGetAtomName(nxagentDisplay, remTarget);
-    char *p = XGetAtomName(nxagentDisplay, remProperty);
-    char *s = XGetAtomName(nxagentDisplay, remSelection);
     fprintf(stderr, "%s: Sending XConvertSelection to real X server: requestor [0x%x] target [%ld][%s] property [%ld][%s] selection [%ld][%s] time [0][CurrentTime]\n", __func__,
-                serverWindow, remTarget, validateString(t),
-	            remProperty, validateString(p),
-	                remSelection, validateString(s));
-    SAFE_XFree(t);
-    SAFE_XFree(p);
-    SAFE_XFree(s);
+                serverWindow, remTarget, validateString(NameForRemAtom(remTarget)),
+                    remProperty, validateString(NameForRemAtom(remProperty)),
+                        remSelection, validateString(NameForRemAtom(remSelection)));
     #endif
 
     XConvertSelection(nxagentDisplay, remSelection, remTarget, remProperty, serverWindow, CurrentTime);
@@ -2205,10 +2146,8 @@ XlibAtom translateLocalToRemoteSelection(Atom local)
   }
 
   #ifdef DEBUG
-  char *r = XGetAtomName(nxagentDisplay, remote);
   fprintf(stderr, "%s: mapping local to remote selection: [%d][%s] -> [%ld] [%s]\n", __func__,
-              local, NameForAtom(local), remote, validateString(r));
-  SAFE_XFree(r);
+              local, NameForAtom(local), remote, validateString(NameForRemAtom(remote)));
   #endif
 
   return remote;
@@ -2249,10 +2188,8 @@ XlibAtom translateLocalToRemoteTarget(Atom local)
   }
 
   #ifdef DEBUG
-  char *r = XGetAtomName(nxagentDisplay, remote);
   fprintf(stderr, "%s: mapping local to remote target: [%d][%s] -> [%ld] [%s]\n", __func__,
-              local, NameForAtom(local), remote, validateString(r));
-  SAFE_XFree(r);
+              local, NameForAtom(local), remote, validateString(NameForRemAtom(remote)));
   #endif
 
   return remote;
@@ -2525,7 +2462,7 @@ Bool nxagentInitClipboard(WindowPtr pWin)
     #ifdef TEST
     fprintf(stderr, "%s: setting the ownership of %s to %lx"
                 " and registering for PropertyChangeMask events\n", __func__,
-                    validateString(XGetAtomName(nxagentDisplay, nxagentAtoms[10])), serverWindow);
+                    validateString(NameForRemAtom(nxagentAtoms[10])), serverWindow);
     #endif
 
     XSetSelectionOwner(nxagentDisplay, nxagentAtoms[10], serverWindow, CurrentTime);
