@@ -1416,8 +1416,8 @@ void nxagentHandleSelectionNotifyFromXServer(XEvent *X)
     return;
   }
 
-  #ifdef DEBUG
   XSelectionEvent * e = (XSelectionEvent *)X;
+  #ifdef DEBUG
   if (e->requestor == serverWindow)
   {
     fprintf(stderr, "%s: this event has been sent by nxagent!\n", __func__);;
@@ -1434,12 +1434,10 @@ void nxagentHandleSelectionNotifyFromXServer(XEvent *X)
   for (index = 0; index < nxagentMaxSelections; index++)
   {
     #ifdef DEBUG
-    fprintf (stderr, "%s: lastClients[%d].intSelection [%d] selection [%d] .\n",
-                 __func__, index, intSelAtoms[index],
-	             nxagentRemoteToLocalAtom(e->selection));
+    fprintf (stderr, "%s: index [%d] selAtom [%ld] remselection [%ld] .\n",
+                 __func__, index, remSelAtoms[index], e->selection);
     #endif
-    /* FIXME: take remSelAtoms[index]? */
-    if (intSelAtoms[index] == nxagentRemoteToLocalAtom(e->selection))
+    if (remSelAtoms[index] == e->selection)
     {
       break;
     }
