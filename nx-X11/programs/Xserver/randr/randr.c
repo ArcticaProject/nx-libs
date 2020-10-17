@@ -69,12 +69,12 @@
 static int RRNScreens;
 
 #define wrap(priv,real,mem,func) {\
-    ((ScreenPtr)priv)->mem = ((ScreenPtr)real)->mem; \
-    ((ScreenPtr)real)->mem = func; \
+    priv->mem = real->mem; \
+    real->mem = func; \
 }
 
 #define unwrap(priv,real,mem) {\
-    ((ScreenPtr)real)->mem = ((ScreenPtr)priv)->mem; \
+    real->mem = priv->mem; \
 }
 
 static int ProcRRDispatch(ClientPtr pClient);
