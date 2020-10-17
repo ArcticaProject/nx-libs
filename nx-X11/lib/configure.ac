@@ -42,6 +42,19 @@ PKG_PROG_PKG_CONFIG
 X11_REQUIRES='nx-xproto nx-xextproto nx-xtrans'
 X11_EXTRA_DEPS=""
 
+X11_REQUIRES="${X11_REQUIRES} xau xcmiscproto bigreqsproto"
+X11_EXTRA_DEPS="xau"
+PKG_CHECK_MODULES(XDMCP, xdmcp,
+	AC_CHECK_LIB(Xdmcp, XdmcpWrap,
+		[
+		AC_CHECK_LIB(Xdmcp, XdmcpWrap, [xdmauth="yes"], [xdmauth="no"], [$XDMCP_LIBS])
+		X11_EXTRA_DEPS="$X11_EXTRA_DEPS xdmcp"
+		],
+		[
+		XDMCP_CFLAGS=
+		XDMCP_LIBS=
+		], [$XDMCP_LIBS]),
+	[AC_MSG_RESULT(no)])
 AC_SUBST(X11_EXTRA_DEPS)
 
 # Silence warning: ar: 'u' modifier ignored since 'D' is the default
@@ -53,6 +66,25 @@ m4_pattern_forbid([^NX_XTRANS_CONNECTION_FLAGS$])
 
 # Transport selection macro from nx-xtrans.m4
 NX_XTRANS_CONNECTION_FLAGS
+
+
+# Secure RPC detection macro from xtrans.m4
+NX_XTRANS_SECURE_RPC_FLAGS
+
+# Original comments regarding FAIL_HARD from libxtrans:
+# "fail hard if socket directories cannot be chowned to root or
+# chmod'ed to the requested mode if 'sticky' bit is requested for this
+# directory instead of just print a warning that will remain unnoticed
+# most of the times.
+# Set the define XtransFailSoft to restore the old
+# behavior to fail softly when socket directory cannot chowned/chmod
+# to correct user/group."
+#
+# -> we want to always fail in that scenario.
+AC_DEFINE(FAIL_HARD,1,[Fail if the xtrans socket directory cannot be chowned/chmod'ed])
+
+# Actually disable all of the FD passing code, NX does not support it.
+AC_DEFINE(XTRANS_SEND_FDS,0,[Disable xtrans FD passing code.])
 
 # Check for dlopen
 AC_MSG_CHECKING([if run-time linking is supported])
@@ -155,6 +187,17 @@ if test x$xthreads = xyes ; then
 fi
 AC_SUBST(XTHREADLIB)
 AC_SUBST(XTHREAD_CFLAGS)
+
+case x$xdmauth in
+xyes)
+	XDMCP_CFLAGS="$XDMCP_CFLAGS -DHASXDMAUTH"
+	;;
+xno)
+	XDMCP_LIBS=""
+	;;
+esac
+AC_SUBST(XDMCP_CFLAGS)
+AC_SUBST(XDMCP_LIBS)
 
 AC_CHECK_FUNC(poll, [has_poll="yes"], [has_poll="no"])
 

@@ -28,6 +28,7 @@ AM_CPPFLAGS=						\
 AM_CFLAGS=						\
 	$(X11_CFLAGS)					\
 	$(BIGFONT_CFLAGS)				\
+	$(XDMCP_CFLAGS)					\
 	$(XMALLOC_ZERO_CFLAGS)				\
 	$(CWARNFLAGS)					\
 	$(NULL)
@@ -364,6 +365,7 @@ libNX_X11_la_LIBADD =					\
 	$(USE_XCMS_LIBS)				\
 	$(USE_XKB_LIBS)					\
 	$(X11_LIBS)					\
+	$(XDMCP_LIBS)					\
 	-L$(top_srcdir)/../../nxcomp/src/.libs -lXcomp	\
 	$(NULL)
 
