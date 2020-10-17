@@ -706,12 +706,54 @@ XkbError:
         {
           XkbGetControls(nxagentDisplay, XkbAllControlsMask, xkb);
         }
-#ifdef TEST
+        #ifdef TEST
         else
         {
           fprintf(stderr, "%s: No current keyboard.\n", __func__);
         }
-#endif
+        #endif
+
+        #ifdef TEST
+        if (nxagentCapsLockKeycode != 0)
+        {
+          fprintf(stderr, "%s: Modifiers for CapsLock (%d): 0x%x\n", __func__, nxagentCapsLockKeycode, xkb->map->modmap[nxagentCapsLockKeycode]);
+        }
+        if (nxagentNumLockKeycode != 0)
+        {
+          fprintf(stderr, "%s: Modifiers for NumLock (%d): 0x%x\n", __func__, nxagentNumLockKeycode, xkb->map->modmap[nxagentNumLockKeycode]);
+        }
+        #endif
+
+        /* Users can add options to their xkb setup. E.g. setxkbmap
+         * -option caps:ctrl_modifier makes CapsLock behave like the
+         * Ctrl key. As we have special treatment for CapsLock and
+         * NumLock to keep them in sync with the real X server we
+         * check if they are assigned to another modifier. In that
+         * case we disable the sync treatment by setting the according
+         * keycode to 0.
+         */
+        if (xkb && xkb->map && xkb->map->modmap)
+        {
+          if (nxagentCapsLockKeycode != 0 && xkb->map->modmap[nxagentCapsLockKeycode] != LockMask)
+          {
+            nxagentCapsLockKeycode = 0;
+            #ifdef TEST
+            fprintf(stderr, "%s: CapsLock key is mapped to some other modifier - disabling special treatment\n", __func__);
+            #endif
+          }
+
+          /* I have not found an xkb option definition for remapping
+           * NumLock. But users can still do that manually so let's be
+           * safe here.
+           */
+          if (xkb->map->modmap[nxagentNumLockKeycode] != Mod2Mask)
+          {
+            nxagentNumLockKeycode = 0;
+            #ifdef TEST
+            fprintf(stderr, "%s: Numock key is mapped to some other modifier - disabling special treatment\n", __func__);
+            #endif
+          }
+        }
 
         #ifdef DEBUG
         fprintf(stderr, "%s: Going to set rules and init device: "
