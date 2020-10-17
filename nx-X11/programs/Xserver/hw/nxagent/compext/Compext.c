@@ -23,6 +23,12 @@
 /*                                                                        */
 /**************************************************************************/
 
+/*
+ * let the types be the Xlib types by undefining _XSERVER64. This
+ * means, when calling the functions of this file from nxagent (where
+ * Agent.h has been included) you need to use/provide XlibAtom and
+ * XlibWindow instead of Atom and Window
+ */
 #undef _XSERVER64
 
 #include <sys/socket.h>
