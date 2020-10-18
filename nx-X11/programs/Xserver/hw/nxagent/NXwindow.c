@@ -149,7 +149,7 @@ InitRootWindow(WindowPtr pWin)
     if (nxagentOption(Rootless))
     {
       #ifdef TEST
-      fprintf(stderr, "InitRootWindow: Assigned agent root to window at [%p][%ld] with parent [%p].\n",
+      fprintf(stderr, "InitRootWindow: Assigned agent root to window at [%p][%d] with parent [%p].\n",
                   (void *) pWin, nxagentWindowPriv(pWin)->window, (void *) pWin -> parent);
       #endif
 
@@ -381,13 +381,12 @@ ConfigureWindow(register WindowPtr pWin, register Mask mask, XID *vlist, ClientP
     #ifdef TEST
     if (nxagentWindowTopLevel(pWin))
     {
-
-      fprintf(stderr, "ConfigureWindow: pWin [%p] mask [%lu] client [%p]\n",
-                  pWin, mask, client);
+      fprintf(stderr, "ConfigureWindow: pWin [%p] mask [%u] client [%p]\n",
+                  (void *)pWin, mask, (void *)client);
 
       fprintf(stderr, "ConfigureWindow: x [%d] y [%d] w [%d] h [%d] CWStackMode [%d] "
                   "smode [%d] pSib [%p]\n",
-                      x, y, w, h, (mask & CWStackMode) ? 1 : 0, smode, pSib);
+                      x, y, w, h, (mask & CWStackMode) ? 1 : 0, smode, (void *)pSib);
     }
     #endif
 
@@ -683,7 +682,7 @@ MapWindow(register WindowPtr pWin, ClientPtr client)
     #ifdef TEST
     if (nxagentWindowTopLevel(pWin))
     {
-      fprintf(stderr, "MapWindow: pWin [%p] client [%p]\n", pWin, client);
+      fprintf(stderr, "MapWindow: pWin [%p] client [%p]\n", (void *)pWin, (void *)client);
     }
     #endif
 #endif

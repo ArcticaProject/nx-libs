@@ -588,7 +588,7 @@ void nxagentSwitchResizeMode(ScreenPtr pScreen)
 
     nxagentLaunchDialog(DIALOG_ENABLE_DESKTOP_RESIZE_MODE);
 
-    nxagentChangeScreenConfig(0, nxagentOption(Width), nxagentOption(Height));
+    nxagentChangeScreenConfig(0, nxagentOption(Width), nxagentOption(Height), True);
 
     if (nxagentOption(ClientOs) == ClientOsWinnt)
     {
@@ -2082,7 +2082,7 @@ FIXME: Don't enqueue the KeyRelease event if the key was not already
             X.xmap.window == nxagentDefaultWindows[nxagentScreen(X.xmap.window)->myNum])
         {
           nxagentChangeScreenConfig(nxagentScreen(X.xmap.window)->myNum, nxagentOption(Width),
-                                    nxagentOption(Height));
+                                    nxagentOption(Height), True);
         }
 
         break;
@@ -3135,8 +3135,26 @@ int nxagentCheckWindowConfiguration(XConfigureEvent* X)
   return 1;
 }
 
+#define DEBUG
+#define TEST
+
 int nxagentHandleConfigureNotify(XEvent* X)
 {
+  #ifdef DEBUG
+  fprintf(stderr, "%s: Event info:\n", __func__);
+  fprintf(stderr, "%s:   X->serial [%ld]\n", __func__, X->xconfigure.serial);
+  fprintf(stderr, "%s:   X->override_redirect [%d]\n", __func__, X->xconfigure.override_redirect);
+  fprintf(stderr, "%s:   X->border_width [%d]\n", __func__, X->xconfigure.border_width);
+  fprintf(stderr, "%s:   X->send_event [%d]\n", __func__, X->xconfigure.send_event);
+  fprintf(stderr, "%s:   X->window [0x%lx]\n", __func__, X->xconfigure.window);
+  fprintf(stderr, "%s:   X->event [0x%lx]\n", __func__, X->xconfigure.event);
+  fprintf(stderr, "%s:   X->x, X->y [%d][%d]\n", __func__, X->xconfigure.x, X->xconfigure.y);
+  fprintf(stderr, "%s:   X->width, X->height [%d][%d]\n", __func__, X->xconfigure.width, X->xconfigure.height);
+  fprintf(stderr, "%s: References:\n", __func__);
+  fprintf(stderr, "%s:   DefaultWindow[0]: [0x%x]\n", __func__, nxagentDefaultWindows[0]);
+  fprintf(stderr, "%s:   DefaultRootWindow(DISPLAY) [0x%lx]\n", __func__, DefaultRootWindow(nxagentDisplay));
+#endif
+
   if (nxagentOption(Rootless) == True)
   {
     int sendEventAnyway = 0;
@@ -3257,7 +3275,7 @@ int nxagentHandleConfigureNotify(XEvent* X)
       return 1;
     }
   }
-  else
+  else /* (nxagentOption(Rootless) == True) */
   {
     /*
      * Save the position of the agent default window. Don't save the
@@ -3280,7 +3298,7 @@ int nxagentHandleConfigureNotify(XEvent* X)
       {
         /*
          * - WITHOUT window manager any position change is relevant
-         * - WITH window manager only synthetic position changes send
+         * - WITH window manager only synthetic position changes sent
          *   by the window manager are relevant, see ICCCM Chapter 4,
          *   "Configuring the Window"
          */
@@ -3326,6 +3344,10 @@ int nxagentHandleConfigureNotify(XEvent* X)
                 if (!nxagentWMIsRunning || X -> xconfigure.send_event)
                 {
                   updatePos = True;
+                  #ifdef DEBUG
+                  fprintf(stderr, "%s: Accumulating event %d: x [%d] y [%d] width [%d] height [%d]\n", __func__, count,
+                          X -> xconfigure.x, X -> xconfigure.y, X -> xconfigure.width, X -> xconfigure.height);
+                  #endif
                   newX = X -> xconfigure.x;
                   newY = X -> xconfigure.y;
                 }
@@ -3340,10 +3362,11 @@ int nxagentHandleConfigureNotify(XEvent* X)
           }
         }
 
-        if (updatePos)
+        if (updatePos && (nxagentOption(X) != newX || nxagentOption(Y) != newY))
         {
           #ifdef DEBUG
-          fprintf(stderr, "%s: Updating nxagent window position [%d,%d]\n", __func__, newX, newY);
+          fprintf(stderr, "%s: Updating nxagent window position [%d,%d] -> [%d,%d]\n", __func__,
+                      nxagentOption(X), nxagentOption(Y), newX, newY);
           #endif
           nxagentChangeOption(X, newX);
           nxagentChangeOption(Y, newY);
@@ -3356,8 +3379,16 @@ int nxagentHandleConfigureNotify(XEvent* X)
           nxagentShadowResize = 1;
         }
 
-        nxagentChangeOption(Width, X -> xconfigure.width);
-        nxagentChangeOption(Height, X -> xconfigure.height);
+        if (nxagentOption(Width) != X->xconfigure.width || nxagentOption(Height) != X->xconfigure.height)
+        {
+          #ifdef DEBUG
+          fprintf(stderr, "%s: Updating width and height [%d,%d] -> [%d,%d]\n", __func__,
+                      nxagentOption(Width), nxagentOption(Height),
+                          X->xconfigure.width, X->xconfigure.height);
+          #endif
+          nxagentChangeOption(Width, X -> xconfigure.width);
+          nxagentChangeOption(Height, X -> xconfigure.height);
+        }
 
         nxagentChangeOption(ViewportXSpan, (int) X -> xconfigure.width -
                                 (int) nxagentOption(RootWidth));
@@ -3371,21 +3402,19 @@ int nxagentHandleConfigureNotify(XEvent* X)
         /* FIXME: Comment makes no sense */
         if (nxagentOption(Shadow) == 1 ||
                 (nxagentOption(Width) == nxagentOption(RootWidth) &&
-		 nxagentOption(Height) == nxagentOption(RootHeight) &&
-		 nxagentOption(X) == nxagentOption(RootX) &&
-		 nxagentOption(Y) == nxagentOption(RootY)))
+                 nxagentOption(Height) == nxagentOption(RootHeight) &&
+                 nxagentOption(X) == nxagentOption(RootX) &&
+                 nxagentOption(Y) == nxagentOption(RootY)))
         {
           doRandR = False;
         }
-
-        nxagentChangeOption(Width, X -> xconfigure.width);
-        nxagentChangeOption(Height, X -> xconfigure.height);
 
         XMoveResizeWindow(nxagentDisplay, nxagentInputWindows[0], 0, 0,
                               X -> xconfigure.width, X -> xconfigure.height);
 
         if (nxagentOption(Fullscreen) == 0)
         {
+	  /* FIXME: has already been done some lines above */
           nxagentMoveViewport(pScreen, 0, 0);
         }
         else
@@ -3412,9 +3441,16 @@ int nxagentHandleConfigureNotify(XEvent* X)
           fprintf(stderr,"%s: Width %d Height %d.\n", __func__,
                       nxagentOption(Width), nxagentOption(Height));
           #endif
-
+          /*
+           * we are processing a ConfigureNotifyEvent that brought us
+           * the current window size. If we issue a XResizeWindow()
+           * again with these values we might end up in loop if the
+           * window manager adjusts the size, which is perfectly
+           * legal for it to do. So we prevent the XResizeWindow call
+           * from happening.
+           */
           nxagentChangeScreenConfig(0, nxagentOption(Width),
-                                       nxagentOption(Height));
+                                       nxagentOption(Height), False);
         }
       }
 
@@ -3435,12 +3471,16 @@ int nxagentHandleConfigureNotify(XEvent* X)
         nxagentChangeOption(RootHeight, X -> xconfigure.height);
 
         nxagentChangeScreenConfig(0, nxagentOption(Width),
-                                     nxagentOption(Height));
+                                     nxagentOption(Height), True);
 
         return 1;
       }
     }
   }
+
+  #ifdef TEST
+  fprintf(stderr, "%s: received for unexpected window [%ld]\n", __func__, X -> xconfigure.window);
+  #endif
 
   return 0;
 }
@@ -3448,7 +3488,21 @@ int nxagentHandleConfigureNotify(XEvent* X)
 int nxagentHandleReparentNotify(XEvent* X)
 {
   #ifdef TEST
-  fprintf(stderr, "%s: Going to handle a new reparent event.\n", __func__);
+  fprintf(stderr, "%s: Going to handle a new reparent event (serial [%ld].\n", __func__, X->xreparent.serial);
+  #endif
+
+  #ifdef DEBUG
+  fprintf(stderr, "%s: Event info:\n", __func__);
+  fprintf(stderr, "%s:   X->send_event [%d]\n", __func__, X->xreparent.send_event);
+  fprintf(stderr, "%s:   X->event [0x%lx]\n", __func__, X->xreparent.event);
+  fprintf(stderr, "%s:   X->window [0x%lx]\n", __func__, X->xreparent.window);
+  fprintf(stderr, "%s:   X->parent [0x%lx]\n", __func__, X->xreparent.parent);
+  fprintf(stderr, "%s:   X->x, X->y [%d][%d]\n", __func__, X->xreparent.x, X->xreparent.y);
+  fprintf(stderr, "%s:   X->override_redirect [%d]\n", __func__, X->xreparent.override_redirect);
+  fprintf(stderr, "%s: References:\n", __func__);
+  fprintf(stderr, "%s:   DefaultWindow[0]: [0x%x]\n", __func__, nxagentDefaultWindows[0]);
+  fprintf(stderr, "%s:   RootWindow(DISPLAY, 0): [0x%lx]\n", __func__, RootWindow(nxagentDisplay, 0));
+  fprintf(stderr, "%s:   DefaultRootWindow(DISPLAY): [0x%lx]\n", __func__, DefaultRootWindow(nxagentDisplay));
   #endif
 
   if (nxagentOption(Rootless))
@@ -3548,32 +3602,39 @@ int nxagentHandleReparentNotify(XEvent* X)
      * Calculate the absolute upper-left X e Y
      */
 
+    XlibWindow parent = X -> xreparent.parent;
     XWindowAttributes attributes;
-    if ((XGetWindowAttributes(nxagentDisplay, X -> xreparent.window,
-                                  &attributes) == 0))
+    if ((XGetWindowAttributes(nxagentDisplay, parent, &attributes) == 0))
     {
       #ifdef WARNING
-      fprintf(stderr, "%s: WARNING! XGetWindowAttributes failed.\n", __func__);
+      fprintf(stderr, "%s: WARNING! XGetWindowAttributes for parent window failed.\n", __func__);
       #endif
 
       return 1;
     }
 
+    XlibWindow junk;
     int x = attributes.x;
     int y = attributes.y;
 
-    XlibWindow junk;
-    XTranslateCoordinates(nxagentDisplay, X -> xreparent.window,
+    #ifdef DEBUG
+    int before_x = x;
+    int before_y = y;
+    #endif
+
+    XTranslateCoordinates(nxagentDisplay, parent,
                               attributes.root, -attributes.border_width,
                                   -attributes.border_width, &x, &y, &junk);
 
-   /*
+    #ifdef DEBUG
+    fprintf(stderr, "%s: translated coordinates x,y [%d,%d] -> [%d,%d].\n", __func__, before_x, before_y, x, y);
+    #endif
+
+    /*
     * Calculate the parent X and parent Y.
     */
 
-    XlibWindow w = X -> xreparent.parent;
-
-    if (w != DefaultRootWindow(nxagentDisplay))
+    if (parent != DefaultRootWindow(nxagentDisplay))
     {
       XlibWindow rootReturn = 0;
       XlibWindow parentReturn = 0;
@@ -3582,7 +3643,7 @@ int nxagentHandleReparentNotify(XEvent* X)
 
       do
       {
-        Status result = XQueryTree(nxagentDisplay, w, &rootReturn, &parentReturn,
+        Status result = XQueryTree(nxagentDisplay, parent, &rootReturn, &parentReturn,
                                        &childrenReturn, &nchildrenReturn);
 
         SAFE_XFree(childrenReturn);
@@ -3592,7 +3653,7 @@ int nxagentHandleReparentNotify(XEvent* X)
           break;
         }
 
-        w = parentReturn;
+        parent = parentReturn;
       }
       while (True);
 
@@ -3600,7 +3661,7 @@ int nxagentHandleReparentNotify(XEvent* X)
        * WM reparented. Find edge of the frame.
        */
 
-      if (XGetWindowAttributes(nxagentDisplay, w, &attributes) == 0)
+      if (XGetWindowAttributes(nxagentDisplay, parent, &attributes) == 0)
       {
         #ifdef WARNING
         fprintf(stderr, "%s: WARNING! XGetWindowAttributes failed for parent window.\n", __func__);
@@ -3616,6 +3677,18 @@ int nxagentHandleReparentNotify(XEvent* X)
 
       nxagentChangeOption(WMBorderWidth, (x - attributes.x));
       nxagentChangeOption(WMTitleHeight, (y - attributes.y));
+
+      #ifdef DEBUG
+      fprintf(stderr, "%s: WMBorderWidth [%d]\n", __func__, nxagentOption(WMBorderWidth));
+      fprintf(stderr, "%s: WMTitleHeight [%d]\n", __func__, nxagentOption(WMTitleHeight));
+      fprintf(stderr, "%s: win_gravity [%d]\n", __func__, attributes.win_gravity);
+      fprintf(stderr, "%s: bit_gravity [%d]\n", __func__, attributes.bit_gravity);
+      fprintf(stderr, "%s: border_width [%d]\n", __func__, attributes.border_width);
+      fprintf(stderr, "%s: height [%d]\n", __func__, attributes.height);
+      fprintf(stderr, "%s: width [%d]\n", __func__, attributes.width);
+      fprintf(stderr, "%s: x [%d]\n", __func__, attributes.x);
+      fprintf(stderr, "%s: y [%d]\n", __func__, attributes.y);
+      #endif
     }
   }
 
@@ -4309,11 +4382,13 @@ int nxagentHandleRRScreenChangeNotify(XEvent *X)
   fprintf(stderr, "%s: Called.\n", __func__);
   #endif
 
-  nxagentResizeScreen(screenInfo.screens[DefaultScreen(nxagentDisplay)], Xr -> width, Xr -> height,
-                          Xr -> mwidth, Xr -> mheight);
+  nxagentResizeScreen(screenInfo.screens[DefaultScreen(nxagentDisplay)],
+                          Xr -> width, Xr -> height,
+                              Xr -> mwidth, Xr -> mheight, True);
 
-  nxagentShadowCreateMainWindow(screenInfo.screens[DefaultScreen(nxagentDisplay)], screenInfo.screens[0]->root,
-                                Xr -> width, Xr -> height);
+  nxagentShadowCreateMainWindow(screenInfo.screens[DefaultScreen(nxagentDisplay)],
+                                    screenInfo.screens[0]->root,
+                                        Xr -> width, Xr -> height);
 
   nxagentShadowSetWindowsSize();
 

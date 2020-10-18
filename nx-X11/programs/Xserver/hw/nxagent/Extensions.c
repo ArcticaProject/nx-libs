@@ -378,7 +378,7 @@ int nxagentRandRSetConfig(ScreenPtr pScreen, Rotation rotation,
    */
 
   int r = nxagentResizeScreen(pScreen, pSize -> width, pSize -> height,
-                                 pSize -> mmWidth, pSize -> mmHeight);
+                                 pSize -> mmWidth, pSize -> mmHeight, True);
 
   nxagentMoveViewport(pScreen, 0, 0);
 
@@ -448,7 +448,7 @@ int nxagentRandRScreenSetSize(ScreenPtr pScreen, CARD16 width, CARD16 height,
     nxagentChangeOption(Height, height);
   }
 
-  int result = nxagentResizeScreen(pScreen, width, height, mmWidth, mmHeight);
+  int result = nxagentResizeScreen(pScreen, width, height, mmWidth, mmHeight, True);
 
   if (result == 1 && nxagentOption(DesktopResize) == 1 &&
           nxagentOption(Fullscreen) == 0 && nxagentOption(AllScreens) == 0)

@@ -380,6 +380,8 @@ Bool nxagentCreateWindow(WindowPtr pWin)
 
   if (nxagentOption(Rootless) == 1)
   {
+    nxagentWindowPriv(pWin) -> isMapped = 0;
+
     if (pWin != nxagentRootlessWindow)
     {
       WindowPtr pParent = pWin -> parent;
@@ -388,23 +390,33 @@ Bool nxagentCreateWindow(WindowPtr pWin)
       {
         nxagentWindowPriv(pWin) -> isMapped = 1;
       }
-      else
-      {
-        nxagentWindowPriv(pWin) -> isMapped = 0;
-      }
-    }
-    else
-    {
-      nxagentWindowPriv(pWin) -> isMapped = 0;
     }
   }
 
   if (nxagentReportPrivateWindowIds)
   {
-    fprintf(stderr, "NXAGENT_WINDOW_ID: PRIVATE_WINDOW,WID:[0x%x],INT:[0x%x]\n", nxagentWindowPriv(pWin)->window, pWin->drawable.id);
+    fprintf(stderr, "NXAGENT_WINDOW_ID: %s_WINDOW,WID:[0x%x],INT:[0x%x]\n",
+                (pWin->drawable.id == pWin->drawable.pScreen->root->drawable.id) ? "ROOT" : "PRIVATE",
+                    nxagentWindowPriv(pWin)->window, pWin->drawable.id);
   }
+
+  #ifdef DEBUG
+  {
+    char *winname = NULL;
+
+    if (-1 != asprintf(&winname, "%s %s[0x%lx]", nxagentWindowName,
+                           (pWin->drawable.id == pWin->drawable.pScreen->root->drawable.id) ? "Root" : "Private",
+                               pWin->drawable.id))
+    {
+      Xutf8SetWMProperties(nxagentDisplay, nxagentWindowPriv(pWin)->window,
+                               winname, winname, NULL , 0 , NULL, NULL, NULL);
+      SAFE_free(winname);
+    }
+  }
+  #endif
+
   #ifdef TEST
-  fprintf(stderr, "nxagentCreateWindow: Created new window with id [0x%x].\n",
+  fprintf(stderr, "%s: Created new window with id [0x%x].\n", __func__,
               nxagentWindowPriv(pWin)->window);
   #endif
 
@@ -804,11 +816,14 @@ void nxagentSwitchAllScreens(ScreenPtr pScreen, Bool switchOn)
     for (i = 0; i < 100 && nxagentWMIsRunning; i++)
     {
       #ifdef TEST
-      fprintf(stderr, "nxagentSwitchAllScreens: WARNING! Going to wait for the ReparentNotify event.\n");
+      fprintf(stderr, "%s: WARNING! Going to wait for the ReparentNotify event.\n", __func__);
       #endif
 
       if (XCheckTypedWindowEvent(nxagentDisplay, w, ReparentNotify, &e))
       {
+        #ifdef TEST
+        fprintf(stderr, "%s: found ReparentNotify event in iteration [%d].\n", __func__, i);
+        #endif
         break;
       }
 
@@ -891,7 +906,7 @@ void nxagentSwitchAllScreens(ScreenPtr pScreen, Bool switchOn)
         if (nxagentOption(Shadow) == 0)
         {
           nxagentChangeScreenConfig(0, WidthOfScreen(DefaultScreenOfDisplay(nxagentDisplay)),
-                                        HeightOfScreen(DefaultScreenOfDisplay(nxagentDisplay)));
+                                        HeightOfScreen(DefaultScreenOfDisplay(nxagentDisplay)), True);
         }
         else
         {
@@ -907,7 +922,7 @@ void nxagentSwitchAllScreens(ScreenPtr pScreen, Bool switchOn)
        */
 
       #ifdef WARNING
-      fprintf(stderr, "nxagentSwitchAllScreens: WARNING! Expected ReparentNotify event missing.\n");
+      fprintf(stderr, "%s: WARNING! Expected ReparentNotify event missing.\n", __func__);
       #endif
 
       nxagentWMIsRunning = False;
@@ -945,7 +960,7 @@ void nxagentSwitchAllScreens(ScreenPtr pScreen, Bool switchOn)
       if (nxagentOption(Shadow) == 0)
       {
         nxagentChangeScreenConfig(0, nxagentOption(RootWidth),
-                                      nxagentOption(RootHeight));
+                                      nxagentOption(RootHeight), True);
       }
     }
 
@@ -958,6 +973,9 @@ void nxagentSwitchAllScreens(ScreenPtr pScreen, Bool switchOn)
 
     if (nxagentOption(WMBorderWidth) > 0)
     {
+      #ifdef DEBUG
+      fprintf(stderr, "%s: WMBorderWidth [%d]\n", __func__, nxagentOption(WMBorderWidth));
+      #endif
       nxagentChangeOption(X, nxagentOption(SavedX) - nxagentOption(WMBorderWidth));
     }
     else
@@ -967,6 +985,9 @@ void nxagentSwitchAllScreens(ScreenPtr pScreen, Bool switchOn)
 
     if (nxagentOption(WMTitleHeight) > 0)
     {
+      #ifdef DEBUG
+      fprintf(stderr, "%s: WMTitleHeight [%d]\n", __func__, nxagentOption(WMTitleHeight));
+      #endif
       nxagentChangeOption(Y, nxagentOption(SavedY) - nxagentOption(WMTitleHeight));
     }
     else
@@ -2993,8 +3014,26 @@ static void nxagentReconnectWindow(void * param0, XID param1, void * data_buffer
 
   if (nxagentReportPrivateWindowIds)
   {
-    fprintf(stderr, "NXAGENT_WINDOW_ID: PRIVATE_WINDOW,WID:[0x%x],INT:[0x%x]\n", nxagentWindowPriv(pWin)->window, pWin->drawable.id);
+    fprintf(stderr, "NXAGENT_WINDOW_ID: %s_WINDOW,WID:[0x%x],INT:[0x%x]\n",
+                (pWin->drawable.id == pWin->drawable.pScreen->root->drawable.id) ? "ROOT" : "PRIVATE",
+                    nxagentWindowPriv(pWin)->window, pWin->drawable.id);
   }
+
+  #ifdef DEBUG
+  {
+    char *winname = NULL;
+
+    if (-1 != asprintf(&winname, "%s %s[0x%lx]", nxagentWindowName,
+                           (pWin->drawable.id == pWin->drawable.pScreen->root->drawable.id) ? "Root" : "Private",
+                               pWin->drawable.id))
+    {
+      Xutf8SetWMProperties(nxagentDisplay, nxagentWindowPriv(pWin)->window,
+                               winname, winname, NULL , 0 , NULL, NULL, NULL);
+      SAFE_free(winname);
+    }
+  }
+  #endif
+
   #ifdef TEST
   fprintf(stderr, "nxagentReconnectWindow: Created new window with id [0x%x].\n",
               nxagentWindowPriv(pWin)->window);
