@@ -149,7 +149,13 @@ static char *nxagentAtomNames[NXAGENT_NUMBER_OF_ATOMS + 2] =
       /* request to insert content of property into selection. Standard
          ICCCM Atom */
   "SAVE_TARGETS",                /* 22 */
-      /* request tp save clipboard content to clipboard manager on exit */
+      /* request to save clipboard content to clipboard manager on
+	 exit, see
+	 https://www.freedesktop.org/wiki/ClipboardManager */
+  "TARGET_SIZES",                /* 23 */
+      /* request to retrieve the sizes of the clipboard content in
+	 various formats, see
+	 https://www.freedesktop.org/wiki/ClipboardManager */
   NULL,
   NULL
 };

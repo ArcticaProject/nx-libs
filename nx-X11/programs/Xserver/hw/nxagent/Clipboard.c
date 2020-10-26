@@ -154,6 +154,7 @@ static XlibAtom serverDELETE;
 static XlibAtom serverINSERT_SELECTION;
 static XlibAtom serverINSERT_PROPERTY;
 static XlibAtom serverSAVE_TARGETS;
+static XlibAtom serverTARGET_SIZES;
 static XlibAtom serverTEXT;
 static XlibAtom serverCOMPOUND_TEXT;
 static XlibAtom serverUTF8_STRING;
@@ -166,6 +167,7 @@ static Atom clientDELETE;
 static Atom clientINSERT_SELECTION;
 static Atom clientINSERT_PROPERTY;
 static Atom clientSAVE_TARGETS;
+static Atom clientTARGET_SIZES;
 static Atom clientTEXT;
 static Atom clientCOMPOUND_TEXT;
 static Atom clientUTF8_STRING;
@@ -179,6 +181,7 @@ static char szAgentDELETE[] = "DELETE";
 static char szAgentINSERT_SELECTION[] = "INSERT_SELECTION";
 static char szAgentINSERT_PROPERTY[] = "INSERT_PROPERTY";
 static char szAgentSAVE_TARGETS[] = "SAVE_TARGETS";
+static char szAgentTARGET_SIZES[] = "TARGET_SIZES";
 static char szAgentCOMPOUND_TEXT[] = "COMPOUND_TEXT";
 static char szAgentUTF8_STRING[] = "UTF8_STRING";
 static char szAgentNX_CUT_BUFFER_CLIENT[] = "NX_CUT_BUFFER_CLIENT";
@@ -867,6 +870,14 @@ void nxagentHandleSelectionRequestFromXServer(XEvent *X)
   {
     #ifdef DEBUG
     fprintf(stderr, "%s: (currently) unsupported target [SAVE_TARGETS] - denying request.\n", __func__);
+    #endif
+    replyRequestSelectionToXServer(X, False);
+    return;
+  }
+  else if (X->xselectionrequest.target == serverTARGET_SIZES)
+  {
+    #ifdef DEBUG
+    fprintf(stderr, "%s: (currently) unsupported target [TARGET_SIZES] - denying request.\n", __func__);
     #endif
     replyRequestSelectionToXServer(X, False);
     return;
@@ -2062,6 +2073,14 @@ int nxagentConvertSelection(ClientPtr client, WindowPtr pWin, Atom selection,
     sendSelectionNotifyEventToClient(client, time, requestor, selection, target, None);
     return 1;
   }
+  else if (target == clientTARGET_SIZES)
+  {
+    #ifdef DEBUG
+    fprintf(stderr, "%s: (currently) unsupported target [TARGET_SIZES] - denying request.\n", __func__);
+    #endif
+    sendSelectionNotifyEventToClient(client, time, requestor, selection, target, None);
+    return 1;
+  }
 
   if (lastClients[index].clientPtr == client)
   {
@@ -2378,6 +2397,7 @@ Bool nxagentInitClipboard(WindowPtr pWin)
     clientINSERT_SELECTION = MakeAtom(szAgentINSERT_SELECTION, strlen(szAgentINSERT_SELECTION), True);
     clientINSERT_PROPERTY = MakeAtom(szAgentINSERT_PROPERTY, strlen(szAgentINSERT_PROPERTY), True);
     clientSAVE_TARGETS = MakeAtom(szAgentSAVE_TARGETS, strlen(szAgentSAVE_TARGETS), True);
+    clientTARGET_SIZES = MakeAtom(szAgentTARGET_SIZES, strlen(szAgentTARGET_SIZES), True);
 
     SAFE_free(lastSelectionOwner);
     lastSelectionOwner = (SelectionOwner *) malloc(nxagentMaxSelections * sizeof(SelectionOwner));
@@ -2438,6 +2458,7 @@ Bool nxagentInitClipboard(WindowPtr pWin)
   serverINSERT_SELECTION = nxagentAtoms[20];   /* INSERT_SELECTION */
   serverINSERT_PROPERTY = nxagentAtoms[21];   /* INSERT_PROPERTY */
   serverSAVE_TARGETS = nxagentAtoms[22];   /* SAVE_TARGETS */
+  serverTARGET_SIZES = nxagentAtoms[23];   /* TARGET_SIZES */
 
   /*
    * Server side properties to hold pasted data.
