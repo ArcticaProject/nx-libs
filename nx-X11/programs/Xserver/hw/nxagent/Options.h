@@ -195,6 +195,13 @@ typedef struct _AgentOptions
   ClipboardMode Clipboard;
 
   /*
+   * transfer TARGETS to remote side or answer with a limited
+   * hardcoded text target list
+   * Should be Bool but we'd have to include Xlib.h for that
+   */
+  int TextClipboard;
+
+  /*
    * Enable agent to use the MITSHM extension in path from remote
    * proxy to the real X server.
    */

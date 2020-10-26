@@ -264,6 +264,7 @@ XFixesAgentInfoRec nxagentXFixesInfo = { -1, -1, -1, False };
 
 extern Display *nxagentDisplay;
 
+static Bool isTextTarget(XlibAtom target);
 static void setClientSelectionStage(int stage, int index);
 static void endTransfer(Bool success, int index);
 #define SELECTION_SUCCESS True
@@ -562,6 +563,48 @@ static void sendSelectionNotifyEventToClient(ClientPtr client,
   sendEventToClient(client, &x);
 }
 
+/*
+ * Check if target is a valid text content type target sent by the real X
+ * server, like .e.g XA_STRING or UTF8_STRING.
+ */
+static Bool isTextTarget(XlibAtom target)
+{
+  if (target == XA_STRING)
+  {
+    #ifdef DEBUG
+    fprintf(stderr, "%s: valid target [XA_STRING].\n", __func__);
+    #endif
+    return True;
+  }
+  else if (target == serverTEXT)
+  {
+    #ifdef DEBUG
+    fprintf(stderr, "%s: valid target [TEXT].\n", __func__);
+    #endif
+    return True;
+  }
+  else if (target == serverUTF8_STRING)
+  {
+    #ifdef DEBUG
+    fprintf(stderr, "%s: valid target [UTF8_STRING].\n", __func__);
+    #endif
+    return True;
+  }
+  else if (target == serverCOMPOUND_TEXT)
+  {
+    #ifdef DEBUG
+    fprintf(stderr, "%s: valid target [COMPOUND_TEXT].\n", __func__);
+    #endif
+    return True;
+  }
+  /* FIXME: add text/plain */
+
+  #ifdef DEBUG
+  fprintf(stderr, "%s: not a text target [%lu].\n", __func__, target);
+  #endif
+  return False;
+}
+
 static void initSelectionOwnerData(int index)
 {
   lastSelectionOwner[index].client = NullClient;
@@ -806,7 +849,61 @@ void nxagentHandleSelectionRequestFromXServer(XEvent *X)
     return;
   }
 
-  if (X->xselectionrequest.target == serverTIMESTAMP)
+  if (X->xselectionrequest.target == serverTARGETS)
+  {
+    /*
+     * In TextClipboard mode answer with a predefined list of
+     * targets. This is just the previous implementation of handling
+     * the clipboard.
+     */
+    if (nxagentOption(TextClipboard))
+    {
+      /*
+       * the selection request target is TARGETS. The requestor is
+       * asking for a list of supported data formats.
+       *
+       * The selection does not matter here, we will return this for
+       * PRIMARY and CLIPBOARD.
+       *
+       * The list is aligned with the one in nxagentConvertSelection()
+       * and in isTextTarget().
+       */
+
+      XlibAtom targets[] = {XA_STRING, serverUTF8_STRING, serverTEXT, serverCOMPOUND_TEXT,
+                            serverTARGETS, serverTIMESTAMP};
+      int numTargets = sizeof(targets) / sizeof(targets[0]);
+
+      #ifdef DEBUG
+      fprintf(stderr, "%s: Sending %d available targets:\n", __func__, numTargets);
+      for (int i = 0; i < numTargets; i++)
+      {
+        fprintf(stderr, "%s: %ld %s\n", __func__, targets[i], NameForRemAtom(targets[i]));
+      }
+      fprintf(stderr, "\n");
+      #endif
+
+      /*
+       * pass on the requested list by setting the property provided
+       * by the requestor accordingly.
+       */
+      XChangeProperty(nxagentDisplay,
+                      X->xselectionrequest.requestor,
+                      X->xselectionrequest.property,
+                      XInternAtom(nxagentDisplay, "ATOM", 0),
+                      32,
+                      PropModeReplace,
+                      (unsigned char*)targets,
+                      numTargets);
+
+      replyRequestSelectionToXServer(X, True);
+      return;
+    }
+    else
+    {
+      /* do nothing, let TARGETS be passed on to the owner later */
+    }
+  }
+  else if (X->xselectionrequest.target == serverTIMESTAMP)
   {
     /*
      * Section 2.6.2 of the ICCCM states:
@@ -882,11 +979,27 @@ void nxagentHandleSelectionRequestFromXServer(XEvent *X)
     replyRequestSelectionToXServer(X, False);
     return;
   }
-  else
+
+  if (nxagentOption(TextClipboard))
   {
-    fprintf(stderr, "%s: target [%ld][%s].\n", __func__, X->xselectionrequest.target,
-                NameForRemAtom(X->xselectionrequest.target));
+    if (!isTextTarget(X->xselectionrequest.target))
+    {
+      #ifdef DEBUG
+      fprintf(stderr, "%s: denying request for non-text target [%ld][%s].\n", __func__,
+                  X->xselectionrequest.target, NameForRemAtom(X->xselectionrequest.target));
+      #endif
+
+      replyRequestSelectionToXServer(X, False);
+
+      return;
+    }
+    /* go on, target is acceptable */
   }
+
+  #ifdef DEBUG
+  fprintf(stderr, "%s: target [%ld][%s].\n", __func__, X->xselectionrequest.target,
+              NameForRemAtom(X->xselectionrequest.target));
+  #endif
 
   /*
    * reaching this means the request is a normal, valid request. We
@@ -967,12 +1080,34 @@ void nxagentHandleSelectionRequestFromXServer(XEvent *X)
       /*
        * Don't send the same window, some programs are clever and
        * verify cut and paste operations inside the same window and
-       * don't Notify at all.
+       * don't notify at all.
        *
        * x.u.selectionRequest.requestor = lastSelectionOwner[index].window;
        */
 
-      x.u.selectionRequest.target = nxagentRemoteToLocalAtom(X->xselectionrequest.target);
+      /*
+       * if textclipboard is requested simply use the previous clipboard
+       * handling code
+       */
+      if (nxagentOption(TextClipboard))
+      {
+        /* by dimbor */
+        if (X->xselectionrequest.target != XA_STRING)
+        {
+          lastServers[index].target = serverUTF8_STRING;
+          /* by dimbor (idea from zahvatov) */
+          x.u.selectionRequest.target = clientUTF8_STRING;
+        }
+        else
+        {
+          x.u.selectionRequest.target = XA_STRING;
+        }
+      }
+      else
+      {
+	x.u.selectionRequest.target = nxagentRemoteToLocalAtom(X->xselectionrequest.target);
+      }
+
       sendEventToClient(lastSelectionOwner[index].client, &x);
 
       #ifdef DEBUG
@@ -2009,6 +2144,64 @@ int nxagentConvertSelection(ClientPtr client, WindowPtr pWin, Atom selection,
   }
 
   /*
+   * The selection request target is TARGETS. The requestor is asking
+   * for a list of supported data formats.
+   */
+
+  if (target == clientTARGETS)
+  {
+    /*
+     * In TextClipboard mode answer with a predefined list that was used
+     * in in previous versions.
+     */
+    if (nxagentOption(TextClipboard))
+    {
+      /*
+       * The list is aligned with the one in
+       * nxagentHandleSelectionRequestFromXServer.
+       */
+      Atom targets[] = {XA_STRING,
+                        clientUTF8_STRING,
+#if 0
+                        clientTEXT,
+                        clientCOMPOUND_TEXT,
+#endif
+                        clientTARGETS,
+                        clientTIMESTAMP};
+      int numTargets = sizeof(targets) / sizeof(targets[0]);
+
+      #ifdef DEBUG
+      fprintf(stderr, "%s: Sending %d available targets:\n", __func__, numTargets);
+      for (int i = 0; i < numTargets; i++)
+      {
+        fprintf(stderr, "%s: %d %s\n", __func__, targets[i], NameForIntAtom(targets[i]));
+      }
+      #endif
+
+      ChangeWindowProperty(pWin,
+                           property,
+                           MakeAtom("ATOM", 4, 1),
+                           sizeof(Atom)*8,
+                           PropModeReplace,
+                           numTargets,
+                           targets,
+                           1);
+
+      sendSelectionNotifyEventToClient(client, time, requestor, selection,
+                                           target, property);
+
+      return 1;
+    }
+    else
+    {
+      /*
+       * do nothing - TARGETS will be handled like any other target
+       * and passed on to the owner on the remote side.
+       */
+    }
+  }
+
+  /*
    * Section 2.6.2 of the ICCCM states:
    * "TIMESTAMP - To avoid some race conditions, it is important
    * that requestors be able to discover the timestamp the owner
@@ -2018,7 +2211,7 @@ int nxagentConvertSelection(ClientPtr client, WindowPtr pWin, Atom selection,
    * support conversion to TIMESTAMP, returning the timestamp they
    * used to obtain the selection."
    */
-  if (target == clientTIMESTAMP)
+  else if (target == clientTIMESTAMP)
   {
     /*
      * "If the specified property is not None, the owner should place
@@ -2086,6 +2279,27 @@ int nxagentConvertSelection(ClientPtr client, WindowPtr pWin, Atom selection,
     sendSelectionNotifyEventToClient(client, time, requestor, selection, target, None);
     return 1;
   }
+
+  /* in TextClipboard mode reject all non-text targets */
+  if (nxagentOption(TextClipboard))
+  {
+    if (!isTextTarget(translateLocalToRemoteTarget(target)))
+    {
+      #ifdef DEBUG
+      fprintf(stderr, "%s: denying request for non-text target [%d][%s].\n", __func__,
+                  target, NameForIntAtom(target));
+      #endif
+
+      sendSelectionNotifyEventToClient(client, time, requestor, selection, target, None);
+      return 1;
+    }
+    /* go on, target is acceptable */
+  }
+
+  #ifdef DEBUG
+  fprintf(stderr, "%s: target [%d][%s].\n", __func__, target,
+              NameForIntAtom(target));
+  #endif
 
   if (lastClients[index].clientPtr == client)
   {
