@@ -1857,14 +1857,19 @@ static void setSelectionOwnerOnXServer(Selection *pSelection)
     /*
      * inform the real X server that our serverWindow is the
      * clipboard owner.
+     * https://www.freedesktop.org/wiki/ClipboardManager/ states
+     * "In order to support peers who use the XFIXES extension to
+     * watch clipboard ownership changes, clipboard owners should
+     * reacquire the clipboard whenever the content or metadata (e.g
+     * the list of supported targets) changes."
      */
     XSetSelectionOwner(nxagentDisplay, remSelAtoms[index], serverWindow, CurrentTime);
 
     /*
      * The real owner window (inside nxagent) is stored in
-     * lastSelectionOwner.window.  lastSelectionOwner.windowPtr
-     * points to the struct that contains all information about the
-     * owner window.
+     * lastSelectionOwner[index].window.
+     * lastSelectionOwner[index].windowPtr points to the struct that
+     * contains all information about the owner window.
      */
     storeSelectionOwnerData(index, pSelection);
 
