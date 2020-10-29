@@ -769,7 +769,7 @@ int nxagentFindCurrentSelectionIndex(Atom sel)
 void nxagentHandleSelectionClearFromXServer(XEvent *X)
 {
   #ifdef DEBUG
-  fprintf(stderr, "%s: SelectionClear event for selection [%lu].\n", __func__, X->xselectionclear.selection);
+  fprintf(stderr, "---------\n%s: SelectionClear event for selection [%lu].\n", __func__, X->xselectionclear.selection);
   #endif
 
   if (!agentClipboardInitialized)
@@ -853,7 +853,7 @@ static void replyRequestSelectionToXServer(XEvent *X, Bool success)
 void nxagentHandleSelectionRequestFromXServer(XEvent *X)
 {
   #ifdef DEBUG
-  fprintf(stderr, "%s: Received SelectionRequestEvent from real server: selection [%ld][%s] " \
+  fprintf(stderr, "---------\n%s: Received SelectionRequestEvent from real server: selection [%ld][%s] " \
           "target [%ld][%s] requestor [display[%s]/0x%lx] destination [%ld][%s]\n",
           __func__,
           X->xselectionrequest.selection, NameForRemAtom(X->xselectionrequest.selection),
@@ -1605,7 +1605,7 @@ void nxagentHandleSelectionNotifyFromXServer(XEvent *X)
 
   XSelectionEvent * e = (XSelectionEvent *)X;
   #ifdef DEBUG
-  fprintf(stderr, "%s: SelectionNotify event from real X server, property " \
+  fprintf(stderr, "---------\n%s: Received SelectionNotify event from real X server, property " \
               "[%ld][%s] requestor [0x%lx] selection [%s] target [%ld][%s] time [%lu] send_event [%d].\n",
                   __func__, e->property, NameForRemAtom(e->property), e->requestor,
                       NameForRemAtom(e->selection), e->target,
@@ -2095,7 +2095,7 @@ int nxagentConvertSelection(ClientPtr client, WindowPtr pWin, Atom selection,
                                 Window requestor, Atom property, Atom target, Time time)
 {
   #ifdef DEBUG
-  fprintf(stderr, "%s: client %s requests sel [%s] "
+  fprintf(stderr, "---------\n%s: client %s requests sel [%s] "
               "on window [0x%x] prop [%d][%s] target [%d][%s].\n", __func__,
                   nxagentClientInfoString(client), NameForIntAtom(selection), requestor,
                       property, NameForIntAtom(property),
@@ -2549,7 +2549,7 @@ int nxagentSendNotificationToSelfViaXServer(xEvent *event)
   }
 
   #ifdef DEBUG
-  fprintf(stderr, "%s: Received SendNotify by client: property [%d][%s] target [%d][%s] selection [%d][%s] requestor [0x%x] time [%u].\n", __func__,
+  fprintf(stderr, "---------\n%s: Received SendNotify by client: property [%d][%s] target [%d][%s] selection [%d][%s] requestor [0x%x] time [%u].\n", __func__,
           event->u.selectionNotify.property, NameForIntAtom(event->u.selectionNotify.property),
           event->u.selectionNotify.target, NameForIntAtom(event->u.selectionNotify.target),
           event->u.selectionNotify.selection, NameForIntAtom(event->u.selectionNotify.selection),
