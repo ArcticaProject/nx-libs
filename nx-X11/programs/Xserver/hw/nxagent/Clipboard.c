@@ -1606,19 +1606,7 @@ void nxagentHandleSelectionNotifyFromXServer(XEvent *X)
   #endif
 
   /* determine the selection we are talking about here */
-  int index = 0;
-  for (index = 0; index < nxagentMaxSelections; index++)
-  {
-    #ifdef DEBUG
-    fprintf (stderr, "%s: index [%d] selAtom [%ld] remselection [%ld] .\n",
-                 __func__, index, remSelAtoms[index], e->selection);
-    #endif
-    if (remSelAtoms[index] == e->selection)
-    {
-      break;
-    }
-  }
-
+  int index = nxagentFindLastSelectionOwnerIndex(e->selection);
   if (index == nxagentMaxSelections)
   {
     #ifdef DEBUG
