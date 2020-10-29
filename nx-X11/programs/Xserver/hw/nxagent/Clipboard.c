@@ -107,7 +107,7 @@ typedef struct _SelectionOwner
 static SelectionOwner *lastSelectionOwner = NULL;
 
 /* FIXME: can this also be stored per selection? */
-static XlibAtom serverLastRequestedSelection;
+static XlibAtom serverLastRequestedSelection = -1;
 
 #define IS_INTERNAL_OWNER(lsoindex) (lastSelectionOwner[lsoindex].client != NULL)
 
@@ -2620,6 +2620,11 @@ int nxagentSendNotificationToSelfViaXServer(xEvent *event)
  */
 WindowPtr nxagentGetClipboardWindow(Atom property)
 {
+  if (serverLastRequestedSelection == -1)
+  {
+    return NULL;
+  }
+
   int index = nxagentFindLastSelectionOwnerIndex(serverLastRequestedSelection);
   if (index < nxagentMaxSelections &&
           property == clientCutProperty &&
