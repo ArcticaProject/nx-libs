@@ -1629,7 +1629,12 @@ void nxagentHandleSelectionNotifyFromXServer(XEvent *X)
 
   printClientSelectionStage(index);
 
-  if (lastClients[index].windowPtr != NULL)
+  /*
+   * if the property is serverTransFromAgentProperty this means we are
+   * transferring data FROM the agent TO the server.
+   */
+
+  if (X->xselection.property != serverTransFromAgentProperty && lastClients[index].windowPtr != NULL)
   {
     /*
      * We reach here after a paste inside the nxagent, triggered by
