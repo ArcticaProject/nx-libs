@@ -2849,13 +2849,13 @@ int nxagentHandleXFixesSelectionNotify(XEvent *X)
   {
     Atom local = nxagentRemoteToLocalAtom(xfixesEvent -> xfixesselection.selection);
 
-    int i = nxagentFindCurrentSelectionIndex(local);
-    if (i < NumCurrentSelections)
+    int index = nxagentFindCurrentSelectionIndex(local);
+    if (index < NumCurrentSelections)
     {
-      if (CurrentSelections[i].client != 0)
+      if (CurrentSelections[index].client != 0)
       {
         #ifdef TEST
-        fprintf(stderr, "%s: Do nothing.\n", __func__);
+        fprintf(stderr, "%s: Doing nothing.\n", __func__);
         #endif
 
         return 1;
@@ -2863,11 +2863,11 @@ int nxagentHandleXFixesSelectionNotify(XEvent *X)
 
       #ifdef TEST
       fprintf(stderr, "%s: Calling callbacks for %d [%s] selection.\n", __func__,
-                       CurrentSelections[i].selection, NameForAtom(CurrentSelections[i].selection));
+                       CurrentSelections[index].selection, NameForAtom(CurrentSelections[index].selection));
       #endif
 
       #ifdef DEBUG
-      fprintf(stderr, "%s: CurrentSelections[%d].lastTimeChanged [%u]\n", __func__, i, CurrentSelections[i].lastTimeChanged.milliseconds);
+      fprintf(stderr, "%s: CurrentSelections[%d].lastTimeChanged [%u]\n", __func__, index, CurrentSelections[index].lastTimeChanged.milliseconds);
       fprintf(stderr, "%s: Event timestamp [%ld]\n", __func__, xfixesEvent->xfixesselection.timestamp);
       fprintf(stderr, "%s: Event selection timestamp [%ld]\n", __func__, xfixesEvent->xfixesselection.selection_timestamp);
       fprintf(stderr, "%s: Event selection window [0x%lx]\n", __func__, xfixesEvent->xfixesselection.window);
@@ -2886,7 +2886,7 @@ int nxagentHandleXFixesSelectionNotify(XEvent *X)
       #endif
 
       SelectionInfoRec info = {
-        .selection = &CurrentSelections[i],
+        .selection = &CurrentSelections[index],
         .kind = xfixesEvent->xfixesselection.subtype
       };
 
