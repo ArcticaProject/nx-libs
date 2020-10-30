@@ -2851,10 +2851,10 @@ int nxagentHandleXFixesSelectionNotify(XEvent *X)
   fprintf(stderr, "%s: Handling event.\n", __func__);
   #endif
 
-  Atom local = nxagentRemoteToLocalAtom(xfixesEvent -> xfixesselection.selection);
-
   if (SelectionCallback)
   {
+    Atom local = nxagentRemoteToLocalAtom(xfixesEvent -> xfixesselection.selection);
+
     int i = nxagentFindCurrentSelectionIndex(local);
     if (i < NumCurrentSelections)
     {
