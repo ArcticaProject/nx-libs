@@ -633,7 +633,7 @@ rm %{buildroot}%{_libdir}/*.la
 
 %files -n nxdialog
 %defattr(-,root,root)
-%doc doc/nxdialog/README.md
+%doc nxdialog/README.md
 %{_bindir}/nxdialog
 %{_datadir}/man/man1/nxdialog.1*
 
