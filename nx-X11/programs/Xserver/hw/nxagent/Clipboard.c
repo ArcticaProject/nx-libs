@@ -109,7 +109,7 @@ static SelectionOwner *lastSelectionOwner = NULL;
 /* FIXME: can this also be stored per selection? */
 static XlibAtom serverLastRequestedSelection = -1;
 
-#define IS_INTERNAL_OWNER(lsoindex) (lastSelectionOwner[lsoindex].client != NULL)
+#define IS_INTERNAL_OWNER(lsoindex) (lastSelectionOwner[lsoindex].client != NullClient)
 
 /*
  * Needed to handle the notify selection event to
@@ -656,7 +656,7 @@ static void initSelectionOwnerData(int index)
 /* there's no owner on nxagent side anymore */
 static void clearSelectionOwnerData(int index)
 {
-  lastSelectionOwner[index].client = NULL;
+  lastSelectionOwner[index].client = NullClient;
   lastSelectionOwner[index].window = None;
   lastSelectionOwner[index].windowPtr = NULL;
   lastSelectionOwner[index].lastTimeChanged = GetTimeInMillis();
