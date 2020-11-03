@@ -1199,7 +1199,7 @@ nxdoListFontsAndAliases(ClientPtr client, nxFsPtr fss)
 
 	    if (err == Successful)
 	    {
-#ifndef BREAK_XFONT_LOOP
+#ifndef NXAGENT_DANGEROUS_XFONT_LOOP_EXIT
 	        if (tmp[0] != 0)
 	        {
 		  continue;
@@ -1214,7 +1214,7 @@ nxdoListFontsAndAliases(ClientPtr client, nxFsPtr fss)
 		       tmp[c->savedNameLen >255 ? 255 : c->savedNameLen] = 0;
 		       if (nxagentFontLookUp(tmp))
 		       {
-#ifdef BREAK_XFONT_LOOP
+#ifdef NXAGENT_DANGEROUS_XFONT_LOOP_EXIT
 			 break;
 #else
 			 continue;
@@ -1229,7 +1229,7 @@ nxdoListFontsAndAliases(ClientPtr client, nxFsPtr fss)
 		   tmp[namelen > 255 ? 255 : namelen] = 0;
 		   if (nxagentFontLookUp(tmp))
 		   {
-#ifdef BREAK_XFONT_LOOP
+#ifdef NXAGENT_DANGEROUS_XFONT_LOOP_EXIT
 		     break;
 #else
 		     continue;
@@ -1327,7 +1327,7 @@ nxdoListFontsAndAliases(ClientPtr client, nxFsPtr fss)
 
 bail:
 finish:
-#ifdef BREAK_XFONT_LOOP
+#ifdef NXAGENT_DANGEROUS_XFONT_LOOP_EXIT
     /* if we allow above loop to be exited via break
        we need to free the private xfont data somehow. */
     if (c->current.list_started)
