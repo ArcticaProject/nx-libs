@@ -365,18 +365,18 @@ class Channel
 
   int handleEncodeIdentity(EncodeBuffer &encodeBuffer, ChannelCache *channelCache,
                                MessageStore *store, const unsigned char *buffer,
-                                   const unsigned int size, int bigEndian)
+                                   const unsigned int size, int _bigEndian)
   {
     return (store -> encodeIdentity(encodeBuffer, buffer, size,
-                                        bigEndian, channelCache));
+                                        _bigEndian, channelCache));
   }
 
   int handleDecodeIdentity(DecodeBuffer &decodeBuffer, ChannelCache *channelCache,
                                MessageStore *store, unsigned char *&buffer,
-                                   unsigned int &size, int bigEndian,
+                                   unsigned int &size, int _bigEndian,
                                        WriteBuffer *writeBuffer)
   {
-    return (store -> decodeIdentity(decodeBuffer, buffer, size, bigEndian,
+    return (store -> decodeIdentity(decodeBuffer, buffer, size, _bigEndian,
                                         writeBuffer, channelCache));
   }
 
