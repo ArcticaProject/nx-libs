@@ -91,6 +91,13 @@ static Bool doListFontsAndAliases(ClientPtr client, LFclosurePtr c);
 #undef  TEST
 #undef  DEBUG
 
+/* This enables code that contains copies of code from libXfont.
+ * We copy+pasted the private _LFWIData type struct into this
+ * file. If this gets ever changed in libXfont, we must follow-up
+ * on that change here, too.
+ */
+#define NXAGENT_DANGEROUS_XFONT_LOOP_EXIT
+
 #define NXFONTPATHLENGTH 1024
 char _NXFontPath[NXFONTPATHLENGTH];
 
