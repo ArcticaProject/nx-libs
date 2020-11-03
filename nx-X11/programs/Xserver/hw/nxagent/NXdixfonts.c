@@ -924,6 +924,9 @@ doListFontsWithInfo(ClientPtr client, LFWIclosurePtr c)
 	  ContBadFontName: ;
 	    c->current.list_started = FALSE;
 	    c->current.current_fpe++;
+#ifdef NXAGENT_SERVER
+	    c->current.private = 0;   /* BadFontName -> private has been freed */
+#endif
 	    err = Successful;
 	    if (c->haveSaved)
  	    {
@@ -1070,6 +1073,7 @@ nxdoListFontsAndAliases(ClientPtr client, nxFsPtr fss)
     int         i;
     int		aliascount = 0;
     char        tmp[256];
+
     tmp[0] = 0;
     if (client->clientGone)
     {
@@ -1195,6 +1199,13 @@ nxdoListFontsAndAliases(ClientPtr client, nxFsPtr fss)
 
 	    if (err == Successful)
 	    {
+#ifndef BREAK_XFONT_LOOP
+	        if (tmp[0] != 0)
+	        {
+		  continue;
+	        }
+#endif
+
 		if (c->haveSaved)
 		{
 		    if (c->savedName)
@@ -1202,8 +1213,14 @@ nxdoListFontsAndAliases(ClientPtr client, nxFsPtr fss)
 		       memcpy(tmp, c->savedName, c->savedNameLen > 255 ? 255 : c->savedNameLen);
 		       tmp[c->savedNameLen >255 ? 255 : c->savedNameLen] = 0;
 		       if (nxagentFontLookUp(tmp))
-		          break;
-			else tmp[0] = 0;
+		       {
+#ifdef BREAK_XFONT_LOOP
+			 break;
+#else
+			 continue;
+#endif
+		       }
+		       else tmp[0] = 0;
 		    }
 		}
 		else
@@ -1211,7 +1228,13 @@ nxdoListFontsAndAliases(ClientPtr client, nxFsPtr fss)
 		   memcpy(tmp, name, namelen > 255 ? 255 : namelen);
 		   tmp[namelen > 255 ? 255 : namelen] = 0;
 		   if (nxagentFontLookUp(tmp))
-		      break;
+		   {
+#ifdef BREAK_XFONT_LOOP
+		     break;
+#else
+		     continue;
+#endif
+		   }
 		   else tmp[0] = 0;
 		}
 	    }
@@ -1282,6 +1305,10 @@ nxdoListFontsAndAliases(ClientPtr client, nxFsPtr fss)
 	  ContBadFontName: ;
 	    c->current.list_started = FALSE;
 	    c->current.current_fpe++;
+#ifdef NXAGENT_SERVER
+	    /* clearing a freed pointer helps for debugging */
+	    c->current.private = 0;  /* BadFontName means private has been freed */
+#endif
 	    err = Successful;
 	    if (c->haveSaved)
 	    {
@@ -1298,11 +1325,34 @@ nxdoListFontsAndAliases(ClientPtr client, nxFsPtr fss)
 	}
     }
 
-    /*
-     * send the reply
-     */
 bail:
 finish:
+#ifdef BREAK_XFONT_LOOP
+    /* if we allow above loop to be exited via break
+       we need to free the private xfont data somehow. */
+    if (c->current.list_started)
+    {
+      /* WARNING: this codes makes assumptions about an internal
+	 private structure of libXfont and can therefore break with
+	 ANY libXfont update! */
+      typedef struct _LFWIData {
+	FontNamesPtr    names;
+	int                   current;
+      } LFWIDataRec, *LFWIDataPtr;
+
+      LFWIDataPtr data = c->current.private;
+      if (data)
+      {
+#ifdef HAS_XFONT2
+        xfont2_free_font_names(data->names);
+#else
+        FreeFontName(data->names);
+#endif
+        free(data);
+      }
+    }
+#endif
+
     if (strlen(tmp))
     {
 #ifdef NXAGENT_FONTMATCH_DEBUG
