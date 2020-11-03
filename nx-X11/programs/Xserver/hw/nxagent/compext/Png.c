@@ -602,14 +602,14 @@ char *PngCompressData(XImage *image, int *compressed_size)
   }
 }
 
-static void PngWriteData(png_structp png_ptr, png_bytep data, png_size_t length)
+static void PngWriteData(png_structp _png_ptr, png_bytep data, png_size_t length)
 {
-  memcpy(((char *) png_get_io_ptr(png_ptr) + pngDataLen), data, length);
+  memcpy(((char *) png_get_io_ptr(_png_ptr) + pngDataLen), data, length);
 
   pngDataLen += length;
 }
 
-static void PngFlushData(png_structp png_ptr)
+static void PngFlushData(png_structp _png_ptr)
 {
 }
 
