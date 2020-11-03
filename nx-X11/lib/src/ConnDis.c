@@ -226,6 +226,7 @@ _X11TransConnectDisplay (
           p += 3;
         }
 
+        if (pprotocol) XFree(pprotocol);
         pprotocol = copystring ("nx", 2);
 
         if (!pprotocol) goto bad;
@@ -233,7 +234,6 @@ _X11TransConnectDisplay (
 #ifdef NX_TRANS_TEST
         fprintf(stderr, "_X11TransConnectDisplay: Forced protocol to [%s].\n", pprotocol);
 #endif
-
     }
     else
     {
@@ -245,9 +245,14 @@ _X11TransConnectDisplay (
      * slash ('/').
      */
     for (lastp = p; *p && *p != ':' && *p != '/'; p++) ;
-    if (!*p) return NULL;		/* must have a colon */
+    if (!*p)				/* must have a colon */
+    {
+      if (pprotocol) XFree(pprotocol);
+      return NULL;
+    }
 
     if (p != lastp && *p != ':') {	/* protocol given? */
+	if (pprotocol) XFree(pprotocol);
 	pprotocol = copystring (lastp, p - lastp);
 	if (!pprotocol) goto bad;	/* no memory */
 	p++;				/* skip the '/' */
@@ -288,12 +293,14 @@ _X11TransConnectDisplay (
 
         if (lastc)
         {
+            if (phostname) XFree(phostname);
             phostname = copystring (lastp, lastc - lastp);
 
             p = lastc;
         }
         else
         {
+            if (phostname) XFree(phostname);
             phostname = copystring (lastp, strlen(lastp));
         }
 
@@ -323,7 +330,11 @@ _X11TransConnectDisplay (
 	if (*p == ':')
 	    lastc = p;
 
-    if (!lastc) return NULL;		/* must have a colon */
+    if (!lastc)			/* must have a colon */
+    {
+      if (pprotocol) XFree(pprotocol);
+      return NULL;
+    }
 
     if ((lastp != lastc) && (*(lastc - 1) == ':')
 #if defined(IPv6) && defined(AF_INET6)
@@ -338,6 +349,7 @@ _X11TransConnectDisplay (
 	hostlen = lastc - lastp;
 
     if (hostlen > 0) {		/* hostname given? */
+	if (phostname) XFree(phostname);
 	phostname = copystring (lastp, hostlen);
 	if (!phostname) goto bad;	/* no memory */
     }
@@ -417,7 +429,7 @@ _X11TransConnectDisplay (
             if (value == NULL || strstr(value, "=") != NULL ||
                     strstr(name, ",") != NULL || strlen(value) >= 128)
             {
-                Xfree(host);
+                if (host) Xfree(host);
 
                 goto bad;
             }
@@ -425,17 +437,21 @@ _X11TransConnectDisplay (
             {
                 idisplay = atoi(value);
 
+                if (pdpynum) XFree(pdpynum);
                 pdpynum = copystring(value, strlen(value));
 
-                if (!pdpynum) goto bad;
-
+                if (!pdpynum)
+                {
+                    if (host) Xfree(host);
+                    goto bad;
+                }
                 break;
             }
 
             name = strtok(NULL, "=");
         }
 
-        Xfree(host);
+        if (host) Xfree(host);
 
         if (idisplay == -1)
         {
@@ -486,6 +502,7 @@ _X11TransConnectDisplay (
 
     if (pprotocol && !strcasecmp(pprotocol, "nx"))
     {
+        Xfree(pprotocol);
         pprotocol = copystring ("local", 5);
 
         if (!pprotocol) goto bad;
@@ -502,18 +519,18 @@ _X11TransConnectDisplay (
     if (!pprotocol) {
 #if defined(UNIXCONN)
 	if (phostname && (strcmp (phostname, "unix") == 0)) {
-	    Xfree(pprotocol);
 	    pprotocol = copystring ("unix", 4);
 	} else
 #endif
 #ifdef HAVE_LAUNCHD
 	if (phostname && phostname[0]=='/') {
-		pprotocol = copystring ("local", 5);
+	    pprotocol = copystring ("local", 5);
 	}
 #endif
 	if (!phostname)
 	{
 	    if (local_transport[0] != NULL) {
+		if (pprotocol) Xfree(pprotocol);
 		pprotocol = Xstrdup(local_transport[0]);
 		local_transport_index = 0;
 	    }
@@ -611,7 +628,7 @@ _X11TransConnectDisplay (
     }
 
 #if defined(NX_TRANS_SOCKET) && defined(NX_TRANS_TEST)
-        fprintf(stderr, "_X11TransConnectDisplay: Out of connection loop.\n");
+    fprintf(stderr, "_X11TransConnectDisplay: Out of connection loop.\n");
 #endif
     if (address != addrbuf) Xfree (address);
     address = addrbuf;
@@ -636,7 +653,7 @@ _X11TransConnectDisplay (
      *  XDisplayString() and XDisplayName() agree.
      */
     if (reset_hostname && (phostname != original_hostname)) {
-	Xfree (phostname);
+	if (phostname) Xfree (phostname);
 	phostname = original_hostname;
 	original_hostname = NULL;
     }
@@ -668,7 +685,6 @@ _X11TransConnectDisplay (
 #if defined(LOCALCONN) || defined(UNIXCONN) || defined(TCPCONN)
     if (original_hostname) Xfree (original_hostname);
 #endif
-
     GetAuthorization(trans_conn, family, (char *) saddr, saddrlen, idisplay,
 		     auth_namep, auth_namelenp, auth_datap, auth_datalenp);
     return trans_conn;
