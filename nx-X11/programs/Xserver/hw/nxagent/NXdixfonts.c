@@ -91,6 +91,13 @@ static Bool doListFontsAndAliases(ClientPtr client, LFclosurePtr c);
 #undef  TEST
 #undef  DEBUG
 
+/* This enables code that contains copies of code from libXfont.
+ * We copy+pasted the private _LFWIData type struct into this
+ * file. If this gets ever changed in libXfont, we must follow-up
+ * on that change here, too.
+ */
+#define NXAGENT_DANGEROUS_XFONT_LOOP_EXIT
+
 #define NXFONTPATHLENGTH 1024
 char _NXFontPath[NXFONTPATHLENGTH];
 
@@ -1199,7 +1206,7 @@ nxdoListFontsAndAliases(ClientPtr client, nxFsPtr fss)
 
 	    if (err == Successful)
 	    {
-#ifndef BREAK_XFONT_LOOP
+#ifndef NXAGENT_DANGEROUS_XFONT_LOOP_EXIT
 	        if (tmp[0] != 0)
 	        {
 		  continue;
@@ -1214,7 +1221,7 @@ nxdoListFontsAndAliases(ClientPtr client, nxFsPtr fss)
 		       tmp[c->savedNameLen >255 ? 255 : c->savedNameLen] = 0;
 		       if (nxagentFontLookUp(tmp))
 		       {
-#ifdef BREAK_XFONT_LOOP
+#ifdef NXAGENT_DANGEROUS_XFONT_LOOP_EXIT
 			 break;
 #else
 			 continue;
@@ -1229,7 +1236,7 @@ nxdoListFontsAndAliases(ClientPtr client, nxFsPtr fss)
 		   tmp[namelen > 255 ? 255 : namelen] = 0;
 		   if (nxagentFontLookUp(tmp))
 		   {
-#ifdef BREAK_XFONT_LOOP
+#ifdef NXAGENT_DANGEROUS_XFONT_LOOP_EXIT
 		     break;
 #else
 		     continue;
@@ -1327,7 +1334,7 @@ nxdoListFontsAndAliases(ClientPtr client, nxFsPtr fss)
 
 bail:
 finish:
-#ifdef BREAK_XFONT_LOOP
+#ifdef NXAGENT_DANGEROUS_XFONT_LOOP_EXIT
     /* if we allow above loop to be exited via break
        we need to free the private xfont data somehow. */
     if (c->current.list_started)
