@@ -1,6 +1,360 @@
-2020-05-31 12:59:09 +0200 Mike Gabriel
+2020-11-04 13:43:58 +0100 Mike Gabriel
 
-	* release 3.5.99.24 (HEAD -> 3.6.x, tag: 3.5.99.24)
+	* release 3.5.99.25 (HEAD -> 3.6.x, tag: 3.5.99.25)
+
+2020-11-04 13:38:30 +0100 Mike Gabriel (48b914810)
+
+	* Merge branch 'uli42-pr/various5' into 3.6.x
+
+2020-11-03 17:05:52 +0100 Mike Gabriel (252b86ee2)
+
+	* NXdixfonts.c: Hard-code the enablement of
+          NXAGENT_DANGEROUS_XFONT_LOOP_EXIT.
+
+2020-11-03 17:05:28 +0100 Mike Gabriel (1af077648)
+
+	* NXdixfonts.c: Rename BREAK_XFONT_LOOP to
+          NXAGENT_DANGEROUS_XFONT_LOOP_EXIT (better macro name).
+
+2020-11-04 13:03:31 +0100 Mike Gabriel (6cd4f1232)
+
+	* Merge branch
+          'sunweaver-pr/default-to-NXAGENT_DANGEROUS_XFONT_LOOP_EXIT'
+          into 3.6.x
+
+2020-09-23 12:17:18 +0200 Ulrich Sibiller (b07b6c537)
+
+	* Clipboard.c: fix bug in special optimization for nested settings
+
+2020-11-03 22:50:13 +0100 Ulrich Sibiller (522eea6f2)
+
+	* compext/Png.c: fix shadowing
+
+2020-06-03 00:09:40 +0200 Ulrich Sibiller (b1efdd94d)
+
+	* Screen.c: fix indentation in nxagentMaximizeToFullScreen
+
+2020-10-12 23:58:07 +0200 Ulrich Sibiller (f1e543b09)
+
+	* Atoms.c: fix FIXME comment
+
+2020-10-12 23:57:54 +0200 Ulrich Sibiller (4460183a6)
+
+	* Atoms.c: improve debug output
+
+2020-10-30 19:47:12 +0100 Ulrich Sibiller (8b0bb28eb)
+
+	* Events.c: scope improvement
+
+2020-11-03 20:41:16 +0100 Ulrich Sibiller (e66d2c86b)
+
+	* Log.h: fix some shadow warnings
+
+2020-11-03 20:31:11 +0100 Ulrich Sibiller (2c66355c2)
+
+	* Channel.h: rename variable to prevent shadowing
+
+2020-11-03 19:55:07 +0100 Ulrich Sibiller (5bd72aec3)
+
+	* nx-libs.spec: Set python shebang to python3 on fedora and rhel8
+
+2020-10-02 22:19:07 +0200 Ulrich Sibiller (1701a4a44)
+
+	* Xext/panoramiX.c: rename shadowing variables
+
+2020-10-02 22:04:59 +0200 Ulrich Sibiller (ebee6af05)
+
+	* Clipboard.c: add missing ifdefs
+
+2020-10-02 21:54:31 +0200 Ulrich Sibiller (06173efd3)
+
+	* Compext.c: scope improvements
+
+2020-10-02 21:53:52 +0200 Ulrich Sibiller (ee379d3a7)
+
+	* GCs.h: fix typo
+
+2020-10-02 21:53:28 +0200 Ulrich Sibiller (8bfe760d5)
+
+	* Atoms.c: drop double include
+
+2020-10-02 21:31:58 +0200 Ulrich Sibiller (447ee1570)
+
+	* Compext.c: use SAFE_free macro
+
+2020-06-03 00:38:09 +0200 Ulrich Sibiller (edb5a918a)
+
+	* Clipboard.c: fix missing )
+
+2020-11-03 17:05:52 +0100 Mike Gabriel (7da2ee0bd)
+
+	* NXdixfonts.c: Hard-code the enablement of
+          NXAGENT_DANGEROUS_XFONT_LOOP_EXIT.
+
+2020-11-03 17:05:28 +0100 Mike Gabriel (fbde6d285)
+
+	* NXdixfonts.c: Rename BREAK_XFONT_LOOP to
+          NXAGENT_DANGEROUS_XFONT_LOOP_EXIT (better macro name).
+
+2020-11-03 14:00:40 +0100 Mike Gabriel (ced973e36)
+
+	* Merge branch 'uli42-pr/font_memleak' into 3.6.x
+
+2020-10-18 01:48:34 +0200 Ulrich Sibiller (db45683a6)
+
+	* NXdixfonts.c: fix memory leak
+
+2020-11-03 13:43:57 +0100 Mike Gabriel (14df32cdb)
+
+	* Merge branch 'uli42-pr/xlib_memleak' into 3.6.x
+
+2020-10-18 16:24:32 +0200 Ulrich Sibiller (12b22e97e)
+
+	* yConnDis.c: fix memory leak
+
+2020-11-02 14:05:24 +0100 Ulrich Sibiller (ca7b33103)
+
+	* Merge pull request #960 from uli42/pr/fix_specfile
+
+2020-11-02 14:00:02 +0100 Ulrich Sibiller (dee4a560a)
+
+	* fix spec file
+
+2020-10-18 12:30:54 +0200 Mike Gabriel (13211ec6a)
+
+	* Merge branch 'uli42-pr/window_resize_bug' into 3.6.x
+
+2020-07-27 18:29:40 +0200 Ulrich Sibiller (2d99cdd1c)
+
+	* Events.c: More cosmetics
+
+2020-05-26 01:08:50 +0200 Ulrich Sibiller (4c6940cdd)
+
+	* Window.c: some more TEST and DEBUG output
+
+2020-05-26 00:54:02 +0200 Ulrich Sibiller (199c32eaf)
+
+	* Screen.c: some more (cosmetic) changes
+
+2020-05-26 00:53:32 +0200 Ulrich Sibiller (42fb68331)
+
+	* Screen.c: scope improvements
+
+2020-05-26 00:51:58 +0200 Ulrich Sibiller (f534a4860)
+
+	* Screen.c: move attributes/valuemask to inner scopes
+
+2020-05-26 00:46:18 +0200 Ulrich Sibiller (d7a091a64)
+
+	* Screen.c: drop unneccessary mask variable
+
+2020-05-26 00:43:44 +0200 Ulrich Sibiller (d07c78881)
+
+	* Screen.c: remove another pointless code block
+
+2020-05-26 00:37:58 +0200 Ulrich Sibiller (2c6b9117f)
+
+	* Screen.c: remove code that will have no effect
+
+2020-05-26 00:08:03 +0200 Ulrich Sibiller (ed4cbaeda)
+
+	* Screen.c: scope improvement
+
+2020-05-26 00:06:40 +0200 Ulrich Sibiller (00d60a82e)
+
+	* Screen.c: cleanup auto dpi handling
+
+2020-05-26 00:05:51 +0200 Ulrich Sibiller (3a7c37593)
+
+	* Init.c: small simplification
+
+2020-05-25 23:58:50 +0200 Ulrich Sibiller (832e02811)
+
+	* NXwindow.c: fix some format specifiers
+
+2020-05-25 23:49:25 +0200 Ulrich Sibiller (601a57849)
+
+	* Window.c: simplify setting of isMapped private var
+
+2020-05-25 23:48:04 +0200 Ulrich Sibiller (2a92ed0f5)
+
+	* Window.c: -reportprivatewids reports root window as such
+
+2020-05-25 22:20:43 +0200 Ulrich Sibiller (2ada71fba)
+
+	* Screen.c: simplify nxagentResizeScreen
+
+2020-05-25 21:55:03 +0200 Ulrich Sibiller (1af470a23)
+
+	* Screen.c: improve output of nxagentPrintAgentGeometry
+
+2020-05-25 20:19:26 +0200 Ulrich Sibiller (e48ceedcc)
+
+	* Screen.c: improve debug output
+
+2020-05-25 19:54:15 +0200 Ulrich Sibiller (ce649c027)
+
+	* nxagent: add names to some windows in DEBUG mode
+
+2020-05-25 19:31:29 +0200 Ulrich Sibiller (210db3163)
+
+	* Display.c: disable confine window
+
+2020-05-25 18:52:36 +0200 Ulrich Sibiller (a4dd6a462)
+
+	* Events.c: store parent window from event to meaningful variable
+
+2020-05-25 18:49:53 +0200 Ulrich Sibiller (ffbc63f91)
+
+	* Events.c: add some comments/FIXMEs
+
+2020-05-25 18:36:21 +0200 Ulrich Sibiller (337afd839)
+
+	* Events.c: add more DEBUG output
+
+2020-05-19 20:59:02 +0200 Ulrich Sibiller (8deda7bd4)
+
+	* nxagent: Prevent resize loop
+
+2020-05-15 18:25:07 +0200 Ulrich Sibiller (abe5e8479)
+
+	* Display.c: factor out confinement window creation
+
+2020-05-11 18:33:01 +0200 Ulrich Sibiller (0f8ed4d10)
+
+	* Screen.c: fix resizing bug with mutter window manager
+
+2020-10-17 22:37:22 +0200 Mike Gabriel (7a02b4aba)
+
+	* Merge branch 'uli42-pr/fix_stack_smashing' into 3.6.x
+
+2020-10-02 22:11:04 +0200 Ulrich Sibiller (ae037701f)
+
+	* nxagent: fix stack smashing
+
+2020-10-17 22:21:02 +0200 Mike Gabriel (2b0976e93)
+
+	* Merge branch 'uli42-pr/fix_caps_handling' into 3.6.x
+
+2020-06-19 00:18:34 +0200 Ulrich Sibiller (ffc2c3840)
+
+	* Keyboard.c: improve capslock and numlock handling
+
+2020-06-19 00:17:43 +0200 Ulrich Sibiller (e74b99117)
+
+	* Keyboard.c: fix indentation of ifdef
+
+2020-10-17 22:02:41 +0200 Mike Gabriel (05cb09a5f)
+
+	* Merge branch 'uli42-pr/libNX_X11_defines' into 3.6.x
+
+2019-03-01 00:08:43 +0100 Ulrich Sibiller (1215c36f7)
+
+	* libNX_X11: set XTRANS_SEND_FDS=0
+
+2019-02-28 23:57:36 +0100 Ulrich Sibiller (94fcba361)
+
+	* libNX_X11: set FAIL_HARD
+
+2019-02-26 23:20:46 +0100 Ulrich Sibiller (b4124219a)
+
+	* nx-xtrans.m4: reintroduce HAS_STICKY_DIR_BIT
+
+2019-02-26 22:35:58 +0100 Ulrich Sibiller (3335f2503)
+
+	* libNX_X11: reintroduce SECURE_RPC
+
+2019-02-26 20:57:21 +0100 Ulrich Sibiller (475d6c1f2)
+
+	* libNX_X11: reintroduce HASXDMAUTH
+
+2020-10-17 21:57:24 +0200 Mike Gabriel (d121f2a9c)
+
+	* Merge branch 'uli42-pr/nxdialog_rpm' into 3.6.x
+
+2020-07-12 13:14:12 +0200 Ulrich Sibiller (2ef652d35)
+
+	* nx-libs.spec: create nxdialog rpm
+
+2020-10-17 21:54:03 +0200 Mike Gabriel (6857e26b4)
+
+	* Merge branch 'mjtrangoni-fix-pvs-ci' into 3.6.x
+
+2020-07-07 18:53:51 +0200 Mario Trangoni (870a9491c)
+
+	* travisci: Fix PVS job
+
+2020-10-17 21:49:35 +0200 Mike Gabriel (bc68b4aad)
+
+	* Merge branch 'uli42-pr/fix_wrap_macros' into 3.6.x
+
+2020-10-16 18:57:47 +0200 Ulrich Sibiller (d1a967f3a)
+
+	* randr: fix broken macros / memory corruption
+
+2020-10-01 21:00:17 +0200 Mike Gabriel (67330d9ea)
+
+	* Update SECURITY.md
+
+2020-10-01 21:00:05 +0200 Mike Gabriel (ee77e9706)
+
+	* Update SECURITY.md
+
+2020-10-01 20:59:25 +0200 Mike Gabriel (53ace2743)
+
+	* Create SECURITY.md
+
+2020-06-29 22:10:09 +0200 Mike Gabriel (e10302404)
+
+	* Merge branch 'mjtrangoni-add-pvs-studio' into 3.6.x
+
+2020-06-06 16:01:31 +0200 Mario Trangoni (61859da35)
+
+	* travis-ci: add PVS Studio
+
+2020-06-29 22:07:14 +0200 Mike Gabriel (a3d493a60)
+
+	* Merge branch 'uli42-pr/clarify_sleep' into 3.6.x
+
+2020-06-02 21:50:31 +0200 Ulrich Sibiller (ede842c21)
+
+	* Extend sleep documentation
+
+2020-06-02 21:48:41 +0200 Ulrich Sibiller (bf0861aa0)
+
+	* nxagent: clarify sleep time units
+
+2020-06-29 21:59:32 +0200 Mike Gabriel (4213bf46c)
+
+	* Merge branch 'uli42-pr/extend_manpage' into 3.6.x
+
+2020-06-02 23:18:34 +0200 Ulrich Sibiller (470228698)
+
+	* Args.c: adapt message to use same format as similar messages
+
+2020-06-02 23:18:07 +0200 Ulrich Sibiller (23f18a825)
+
+	* manpage: document copysize parameter
+
+2020-06-02 23:17:07 +0200 Ulrich Sibiller (536c849fa)
+
+	* manpage and usage output: add -irlimit
+
+2020-06-02 22:51:12 +0200 Ulrich Sibiller (70d4f9117)
+
+	* Extend some manpage entries
+
+2020-06-29 21:54:02 +0200 Mike Gabriel (16cfb8d33)
+
+	* Merge branch 'uli42-pr/hint_on_current_builds' into 3.6.x
+
+2020-06-18 18:17:00 +0200 Ulrich Sibiller (a2549e27c)
+
+	* README.md: Add a "Binary Builds" section
+
+2020-05-31 12:59:09 +0200 Mike Gabriel (a593481b3)
+
+	* release 3.5.99.24 (tag: 3.5.99.24)
 
 2020-05-31 12:53:30 +0200 Mike Gabriel (3f7bb584e)
 
