@@ -1353,7 +1353,7 @@ finish:
 #ifdef HAS_XFONT2
         xfont2_free_font_names(data->names);
 #else
-        FreeFontName(data->names);
+        FreeFontNames(data->names);
 #endif
         free(data);
       }
