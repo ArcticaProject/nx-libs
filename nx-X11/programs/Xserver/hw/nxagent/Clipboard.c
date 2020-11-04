@@ -292,7 +292,7 @@ static void printSelectionStat(int sel)
 #else
   fprintf(stderr, "  CurrentSelections[].client             [%p] index [%d]\n",
           (void *)curSel.client,
-          CLINDEX(curSel.client);
+          CLINDEX(curSel.client));
 #endif
   fprintf(stderr, "  CurrentSelections[].window             [0x%x]\n", curSel.window);
   return;
@@ -1937,17 +1937,23 @@ int nxagentConvertSelection(ClientPtr client, WindowPtr pWin, Atom selection,
      */
     XlibAtom p = serverTransToAgentProperty;
     XlibAtom t;
+    #ifdef DEBUG
     char * pstr = "NX_CUT_BUFFER_SERVER";
     const char * tstr;
+    #endif
     if (target == clientUTF8_STRING)
     {
       t = serverUTF8_STRING;
+      #ifdef DEBUG
       tstr = szAgentUTF8_STRING;
+      #endif
     }
     else
     {
       t = XA_STRING;
+      #ifdef DEBUG
       tstr = validateString(NameForAtom(XA_STRING));
+      #endif
     }
 
     #ifdef DEBUG
@@ -2025,11 +2031,12 @@ int nxagentSendNotify(xEvent *event)
    * communication happens completely between our own clients (some of
    * which can be nxagents themselves). In that case we return 0 (tell
    * dix to go on) and do nothing!
+   * Be sure to not let this trigger for the failure answer (property 0)
    */
-  if (event->u.selectionNotify.property != clientCutProperty || lastServerRequestor == None)
+  if (!(event->u.selectionNotify.property == clientCutProperty || event->u.selectionNotify.property == 0) || lastServerRequestor == None)
   {
     #ifdef DEBUG
-    fprintf(stderr, "%s: sent nothing.\n", __func__);
+    fprintf(stderr, "%s: sent nothing - message to real X server is not required.\n", __func__);
     #endif
     return 0;
   }

@@ -341,7 +341,7 @@ void nxagentMaximizeToFullScreen(ScreenPtr pScreen)
   XUnmapWindow(nxagentDisplay, nxagentIconWindow);
 */
 
-    Window root = RootWindow(nxagentDisplay, DefaultScreen(nxagentDisplay));
+  Window root = RootWindow(nxagentDisplay, DefaultScreen(nxagentDisplay));
 
 /*
 FIXME: We'll check for ReparentNotify and LeaveNotify events after
@@ -351,55 +351,55 @@ FIXME: We'll check for ReparentNotify and LeaveNotify events after
        unnecessary.
 */
 
-    /* only reparent if necessary. FIXME: also check if the desired coordinates match */
+  /* only reparent if necessary. FIXME: also check if the desired coordinates match */
 
-    if (!nxagentIsParentOf(nxagentDisplay, root, nxagentFullscreenWindow))
+  if (!nxagentIsParentOf(nxagentDisplay, root, nxagentFullscreenWindow))
+  {
+    XReparentWindow(nxagentDisplay, nxagentFullscreenWindow,
+                        root, 0, 0);
+
+    for (int i = 0; i < 100 && nxagentWMIsRunning; i++)
     {
-      XReparentWindow(nxagentDisplay, nxagentFullscreenWindow,
-                      root, 0, 0);
+      XEvent e;
 
-      for (int i = 0; i < 100 && nxagentWMIsRunning; i++)
-      {
-        XEvent e;
-
-        #ifdef TEST
-        fprintf(stderr, "nxagentMaximizeToFullscreen: WARNING! Going to wait for the ReparentNotify event [%d].\n", i);
-        #endif
-
-        if (XCheckTypedWindowEvent(nxagentDisplay, nxagentFullscreenWindow, ReparentNotify, &e))
-        {
-          break;
-        }
-
-        XSync(nxagentDisplay, 0);
-
-        nxagentWaitEvents(nxagentDisplay, 50);
-      }
-    }
-    else
-    {
       #ifdef TEST
-      fprintf(stderr, "%s: FullscreenWindow already is child of root window - skipping reparenting,\n", __func__);
+      fprintf(stderr, "nxagentMaximizeToFullscreen: WARNING! Going to wait for the ReparentNotify event [%d].\n", i);
       #endif
+
+      if (XCheckTypedWindowEvent(nxagentDisplay, nxagentFullscreenWindow, ReparentNotify, &e))
+      {
+        break;
+      }
+
+      XSync(nxagentDisplay, 0);
+
+      nxagentWaitEvents(nxagentDisplay, 50);
     }
+  }
+  else
+  {
+    #ifdef TEST
+    fprintf(stderr, "%s: FullscreenWindow already is child of root window - skipping reparenting,\n", __func__);
+    #endif
+  }
 
   XMapRaised(nxagentDisplay, nxagentFullscreenWindow);
 
   XIconifyWindow(nxagentDisplay, nxagentIconWindow,
                      DefaultScreen(nxagentDisplay));
 
-    /* swallow all LeaveNotify events for the FullscreenWindow;
-       Normally this does not swallow anything these days, but when
-       using fvwm you see one of these events here. */
-    while (1)
-    {
-      XEvent e;
-      if (!XCheckTypedWindowEvent(nxagentDisplay, nxagentFullscreenWindow, LeaveNotify, &e))
-        break;
-      #ifdef TEST
-      fprintf(stderr, "%s: swallowing LeaveNotify event\n", __func__);
-      #endif
-    }
+  /* swallow all LeaveNotify events for the FullscreenWindow;
+     Normally this does not swallow anything these days, but when
+     using fvwm you see one of these events here. */
+  while (1)
+  {
+    XEvent e;
+    if (!XCheckTypedWindowEvent(nxagentDisplay, nxagentFullscreenWindow, LeaveNotify, &e))
+      break;
+    #ifdef TEST
+    fprintf(stderr, "%s: swallowing LeaveNotify event\n", __func__);
+    #endif
+  }
 
 /*
   XMapWindow(nxagentDisplay, nxagentIconWindow);

@@ -34,6 +34,8 @@
 #include "Mask.h"
 #include "Png.h"
 
+#include "../Utils.h"
+
 #define PANIC
 #define WARNING
 #undef  TEST
@@ -361,7 +363,7 @@ char *PngCompressData(XImage *image, int *compressed_size)
     #endif
 
     png_destroy_write_struct(&png_ptr, &info_ptr);
-    free(pngCompBuf);
+    SAFE_free(pngCompBuf);
 
     return NULL;
   }
@@ -373,7 +375,7 @@ char *PngCompressData(XImage *image, int *compressed_size)
     fprintf(stderr, "******PngCompressData: PANIC! Could not alloc image_index.\n");
     #endif
 
-    free(pngCompBuf);
+    SAFE_free(pngCompBuf);
     return NULL;
   }
 
@@ -475,8 +477,8 @@ char *PngCompressData(XImage *image, int *compressed_size)
 
     png_destroy_write_struct(&png_ptr, &info_ptr);
 
-    free(pngCompBuf);
-    free(image_index);
+    SAFE_free(pngCompBuf);
+    SAFE_free(image_index);
 
     return NULL;
   }
@@ -500,8 +502,8 @@ char *PngCompressData(XImage *image, int *compressed_size)
                   (int) (count * sizeof(CARD8)));
     #endif
 
-    free(pngCompBuf);
-    free(image_index);
+    SAFE_free(pngCompBuf);
+    SAFE_free(image_index);
 
     return NULL;
   }
@@ -532,8 +534,8 @@ char *PngCompressData(XImage *image, int *compressed_size)
               dy, h);
   #endif
 
-  free(srcBuf); srcBuf = NULL;
-  free(image_index); image_index = NULL;
+  SAFE_free(srcBuf);
+  SAFE_free(image_index);
 
   if (setjmp(png_jmpbuf(png_ptr)))
   {
@@ -543,7 +545,7 @@ char *PngCompressData(XImage *image, int *compressed_size)
 
     png_destroy_write_struct(&png_ptr, &info_ptr);
 
-    free(pngCompBuf);
+    SAFE_free(pngCompBuf);
 
     return NULL;
   }
@@ -594,20 +596,20 @@ char *PngCompressData(XImage *image, int *compressed_size)
                 pngDataLen);
     #endif
 
-    free(pngCompBuf);
+    SAFE_free(pngCompBuf);
 
     return NULL;
   }
 }
 
-static void PngWriteData(png_structp png_ptr, png_bytep data, png_size_t length)
+static void PngWriteData(png_structp _png_ptr, png_bytep data, png_size_t length)
 {
-  memcpy(((char *) png_get_io_ptr(png_ptr) + pngDataLen), data, length);
+  memcpy(((char *) png_get_io_ptr(_png_ptr) + pngDataLen), data, length);
 
   pngDataLen += length;
 }
 
-static void PngFlushData(png_structp png_ptr)
+static void PngFlushData(png_structp _png_ptr)
 {
 }
 

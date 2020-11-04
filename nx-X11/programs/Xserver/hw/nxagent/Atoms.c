@@ -42,7 +42,6 @@
 #include "Display.h"
 #include "Screen.h"
 #include "Options.h"
-#include "Agent.h"
 #include "Utils.h"
 
 /*
@@ -709,7 +708,7 @@ XlibAtom nxagentLocalToRemoteAtom(Atom local)
     if (current->string)
       fprintf(stderr, "%s: local [%d] -> remote [%d (%s)]\n", __func__, local, current->remote, current->string);
     else
-      fprintf(stderr, "%s: local [%d] -> remote [%d]\n", __func__, local, current->remote);
+      fprintf(stderr, "%s: local [%d] -> remote [%d] (no string cached)\n", __func__, local, current->remote);
     #endif
 
     return current->remote;
@@ -718,7 +717,7 @@ XlibAtom nxagentLocalToRemoteAtom(Atom local)
   {
     const char *string = NameForAtom(local);
 
-    /* FIXME: why False? */
+    /* False means "create Atom if it does not exist yet" */
     XlibAtom remote = XInternAtom(nxagentDisplay, string, False);
 
     if (remote == None)

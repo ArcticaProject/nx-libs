@@ -38,6 +38,8 @@
 #include "Mask.h"
 #include "Jpeg.h"
 
+#include "../Utils.h"
+
 #define PANIC
 #define WARNING
 #undef  TEST
@@ -277,7 +279,7 @@ char *JpegCompressData(XImage *image, int level, int *compressed_size)
                 jpegError);
     #endif
 
-    free(jpegCompBuf);
+    SAFE_free(jpegCompBuf);
 
     return NULL;
   }
@@ -326,7 +328,7 @@ char *JpegCompressData(XImage *image, int level, int *compressed_size)
                 jpegDstDataLen);
     #endif
 
-    free(jpegCompBuf);
+    SAFE_free(jpegCompBuf);
 
     return NULL;
   }

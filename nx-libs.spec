@@ -473,6 +473,11 @@ rm -r %{buildroot}%{_includedir}/nx-X11/Xtrans
 #Remove our shared libraries' .la files before wrapping up the packages
 rm %{buildroot}%{_libdir}/*.la
 
+# Fix python scripts
+%if 0%{?fedora} >= 23 || 0%{?rhel} >= 8 || 0%{?py_ver} == 3
+sed -i '1 s/python/python3/' %{buildroot}%{_bindir}/nxdialog
+%endif
+
 %if 0%{?fdupes:1}
 %fdupes %{buildroot}%{_prefix}
 %endif

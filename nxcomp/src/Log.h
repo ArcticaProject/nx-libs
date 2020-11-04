@@ -105,7 +105,7 @@ class NXLogStamp
     }
 
 
-    NXLogStamp(NXLogLevel level, const char *file = "", const char *function = "", size_t line = 0) : file_(file), function_(function), line_(line), level_(level)
+    NXLogStamp(NXLogLevel _level, const char *_file = "", const char *_function = "", size_t _line = 0) : file_(_file), function_(_function), line_(_line), level_(_level)
     {
         gettimeofday(&timestamp_, NULL);
     }
@@ -300,9 +300,9 @@ class NXLog
         return level_;
     }
 
-    void level(NXLogLevel level)
+    void level(NXLogLevel _level)
     {
-        level_ = level;
+        level_ = _level;
     }
 
 
@@ -312,9 +312,9 @@ class NXLog
         return get_data()->current_level;
     }
 
-    void current_level(NXLogLevel level)
+    void current_level(NXLogLevel _level)
     {
-        get_data()->current_level = level;
+        get_data()->current_level = _level;
     }
 
     /** Source file from which messages are currently originating */
@@ -333,10 +333,10 @@ class NXLog
         return stream_;
     }
 
-    void stream(std::ostream *stream)
+    void stream(std::ostream *_stream)
     {
         flush();
-        stream_ = stream;
+        stream_ = _stream;
     }
 
     bool synchronized() const {
