@@ -1017,7 +1017,7 @@ void nxagentDispatchHandler(ClientPtr client, int in, int out)
         nxagentDispatch.in  = nxagentBytesIn;
         nxagentDispatch.out = nxagentBytesOut;
 
-        isItTimeToYield = 1;
+        isItTimeToYield = TRUE;
       }
       #ifdef DEBUG
       else
@@ -1126,7 +1126,7 @@ void nxagentDispatchHandler(ClientPtr client, int in, int out)
           nxagentDispatch.in  = nxagentBytesIn;
           nxagentDispatch.out = nxagentBytesOut;
 
-          isItTimeToYield = 1;
+          isItTimeToYield = TRUE;
         }
         #ifdef DEBUG
         else
