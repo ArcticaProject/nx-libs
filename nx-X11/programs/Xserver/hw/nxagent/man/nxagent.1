@@ -539,7 +539,9 @@ allowed to change the keyboard settings through XKEYBOARD.
 .TP 8
 .B \-tile WxH
 maximum size of the tile used when sending an image to the remote
-display (minimum allowed: 32x32; no default)
+display (minimum allowed: 32x32). The default depends on the link
+type: 64x64 for \fImodem\fR and \fIisdn\fR, 4096x4096 for all other
+link types)
 .TP 8
 .B \-irlimit
 maximum image data rate to the encoder input in kB/s. The default is no limit.
@@ -755,21 +757,29 @@ The default value can be set via the command line (\-defer). The value
 provided as nx/nx option is set when resuming a session, thus it
 overrides the command line default.
 
+The default depends on the link type (see man nxproxy).
+
 Each defer level adds the following rules to the previous ones:
 .RS 8
 .TP 8
 .I 0
 Eager encoding.
+
+Default for link speed \fIlan\fR and \fIlocal\fR.
 .TP 8
 .I 1
 No data is put or copied on pixmaps, marking them always as corrupted
 and synchronizing them on demand, i.e. when a copy area to a window is
 requested, the source is synchronized before copying it.
+
+Default for link speed \fIwan\fR.
 .TP 8
 .I 2
 The put images over the windows are skipped marking the destination as
 corrupted. The same happens for copy area and composite operations,
 spreading the corrupted regions of involved drawables.
+
+Default for link speed \fIadsl\fR, \fIisdn\fR and \fImodem\fR.
 .RE
 
 .TP 8
