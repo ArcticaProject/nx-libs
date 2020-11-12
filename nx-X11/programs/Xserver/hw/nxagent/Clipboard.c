@@ -480,26 +480,16 @@ static void resetClientSelectionStage(int index)
 
 static void setClientSelectionStage(int stage, int index)
 {
-  if (lastClients[index].stage == stage)
-  {
-    #ifdef DEBUG
-    fprintf(stderr, "%s: lastClient [%d] selection stage already set to [%s] - doing nothing\n", __func__,
-                index, getClientSelectionStageString(lastClients[index].stage));
-    #endif
-    return;
-  }
-
-  #ifdef DEBUG
-  fprintf(stderr, "%s: Changing selection stage for [%d] from [%s] to [%s]\n", __func__, index,
-              getClientSelectionStageString(lastClients[index].stage), getClientSelectionStageString(stage));
-  #endif
-
   if (stage == SelectionStageNone)
   {
     resetClientSelectionStage(index);
   }
   else
   {
+    #ifdef DEBUG
+    fprintf(stderr, "%s: Changing selection stage for [%d] from [%s] to [%s]\n", __func__, index,
+                getClientSelectionStageString(lastClients[index].stage), getClientSelectionStageString(stage));
+    #endif
     lastClients[index].stage = stage;
   }
 }
