@@ -718,13 +718,13 @@ int nxagentFindLastSelectionOwnerIndex(XlibAtom sel)
     if (remSelAtoms[index] == sel)
     {
       #ifdef DEBUG
-      fprintf(stderr, "%s: selection [%ld] belongs to index [%d]\n", __func__, sel, index);
+      fprintf(stderr, "%s: remote selection [%ld][%s] belongs to index [%d]\n", __func__, sel, NameForRemAtom(sel), index);
       #endif
       return index;
     }
   }
   #ifdef DEBUG
-  fprintf(stderr, "%s: selection [%ld] does not belong to any index!\n", __func__, sel);
+  fprintf(stderr, "%s: remote selection [%ld][%s] does not belong to any index!\n", __func__, sel, NameForRemAtom(sel));
   #endif
   return nxagentMaxSelections;
 }
@@ -740,13 +740,13 @@ int nxagentFindCurrentSelectionIndex(Atom sel)
     if (CurrentSelections[index].selection == sel)
     {
       #ifdef DEBUG
-      fprintf(stderr, "%s: selection [%d] belongs to index [%d]\n", __func__, sel, index);
+      fprintf(stderr, "%s: selection [%d][%s] belongs to index [%d]\n", __func__, sel, NameForIntAtom(sel), index);
       #endif
       return index;
     }
   }
   #ifdef DEBUG
-  fprintf(stderr, "%s: selection [%d] does not belong to any index!\n", __func__, sel);
+  fprintf(stderr, "%s: selection [%d][%s] does not belong to any index!\n", __func__, sel, NameForIntAtom(sel));
   #endif
   return NumCurrentSelections;
 }
@@ -759,7 +759,9 @@ int nxagentFindCurrentSelectionIndex(Atom sel)
 void nxagentHandleSelectionClearFromXServer(XEvent *X)
 {
   #ifdef DEBUG
-  fprintf(stderr, "---------\n%s: SelectionClear event for selection [%lu].\n", __func__, X->xselectionclear.selection);
+  fprintf(stderr, "---------\n%s: SelectionClear event for selection [%lu][%s] window [0x%lx] time [%lu].\n",
+              __func__, X->xselectionclear.selection, NameForRemAtom(X->xselectionclear.selection),
+                  X->xselectionclear.window, X->xselectionclear.time);
   #endif
 
   if (!agentClipboardInitialized)
@@ -844,12 +846,13 @@ void nxagentHandleSelectionRequestFromXServer(XEvent *X)
 {
   #ifdef DEBUG
   fprintf(stderr, "---------\n%s: Received SelectionRequestEvent from real server: selection [%ld][%s] " \
-          "target [%ld][%s] requestor [display[%s]/0x%lx] destination [%ld][%s]\n",
+          "target [%ld][%s] requestor [display[%s]/0x%lx] destination [%ld][%s] time [%lu]\n",
           __func__,
           X->xselectionrequest.selection, NameForRemAtom(X->xselectionrequest.selection),
           X->xselectionrequest.target,    NameForRemAtom(X->xselectionrequest.target),
           DisplayString(nxagentDisplay), X->xselectionrequest.requestor,
-          X->xselectionrequest.property,  NameForRemAtom(X->xselectionrequest.property));
+          X->xselectionrequest.property,  NameForRemAtom(X->xselectionrequest.property),
+          X->xselectionrequest.time);
   if (X->xselectionrequest.requestor == serverWindow)
   {
     fprintf(stderr, "%s: this event has been sent by nxagent!\n", __func__);;
@@ -1395,20 +1398,27 @@ Bool nxagentCollectPropertyEventFromXServer(int resource)
   /* determine the selection we are talking about here */
   for (index = 0; index < nxagentMaxSelections; index++)
   {
+    /*
     #ifdef DEBUG
     fprintf(stderr, "%s: lastClients[%d].resource [%d] resource [%d]\n", __func__, index, lastClients[index].resource, resource);
     #endif
+    */
     if (lastClients[index].resource == resource)
     {
+      #ifdef DEBUG
+      fprintf (stderr, "%s: resource [%d] belongs to selection [%d].\n", __func__, resource, index);
+      #endif
       break;
     }
   }
 
   if (index == nxagentMaxSelections)
   {
+    /*
     #ifdef DEBUG
-    fprintf (stderr, "%s: resource does not belong to any selection we handle.\n", __func__);
+    fprintf (stderr, "%s: resource [%d] does not belong to any selection we handle.\n", __func__, resource);
     #endif
+    */
     return False;
   }
 
@@ -1601,9 +1611,10 @@ void nxagentHandleSelectionNotifyFromXServer(XEvent *X)
                       NameForRemAtom(e->selection), e->target,
                           NameForRemAtom(e->target), e->time, e->send_event);
 
+  /* this has not been SENT by nxagent but is the answer to a request of nxagent */
   if (e->requestor == serverWindow)
   {
-    fprintf(stderr, "%s: this event has been sent by nxagent!\n", __func__);;
+    fprintf(stderr, "%s: requestor is nxagent's serverWindow!\n", __func__);;
   }
   #endif
 
@@ -1804,11 +1815,12 @@ void nxagentHandleSelectionNotifyFromXServer(XEvent *X)
                             ulReturnItems);
             #ifdef DEBUG
             {
-              fprintf(stderr, "%s: XChangeProperty sent to window [0x%lx] for property [%ld][%s] value [\"%*.*s\"...]\n",
+              fprintf(stderr, "%s: XChangeProperty sent to window [0x%lx] for property [%ld][%s] len [%d] value [\"%*.*s\"...]\n",
                       __func__,
                       lastServers[index].requestor,
                       lastServers[index].property,
                       NameForRemAtom(lastServers[index].property),
+                      (int)ulReturnItems * 8 / 8,
                       (int)(min(20, ulReturnItems * 8 / 8)),
                       (int)(min(20, ulReturnItems * 8 / 8)),
                       pszReturnData);
@@ -1924,6 +1936,7 @@ void nxagentSetSelectionCallback(CallbackListPtr *callbacks, void *data,
   SelectionInfoRec *info = (SelectionInfoRec *)args;
 
   #ifdef DEBUG
+  fprintf(stderr, "---------\n");
   if (info->kind == SelectionSetOwner)
   {
     fprintf(stderr, "%s: SelectionCallbackKind [SelectionSetOwner]\n", __func__);
@@ -2091,10 +2104,10 @@ int nxagentConvertSelection(ClientPtr client, WindowPtr pWin, Atom selection,
 {
   #ifdef DEBUG
   fprintf(stderr, "---------\n%s: client %s requests sel [%s] "
-              "on window [0x%x] prop [%d][%s] target [%d][%s].\n", __func__,
+              "on window [0x%x] prop [%d][%s] target [%d][%s] time [%u].\n", __func__,
                   nxagentClientInfoString(client), NameForIntAtom(selection), requestor,
                       property, NameForIntAtom(property),
-                          target, NameForIntAtom(target));
+                          target, NameForIntAtom(target), time);
   #endif
 
   /* cannot use NameForIntAtom() here! */
@@ -2136,6 +2149,9 @@ int nxagentConvertSelection(ClientPtr client, WindowPtr pWin, Atom selection,
     /*
      * There is a client owner on the agent side, let normal dix stuff happen.
      */
+    #ifdef DEBUG
+    fprintf(stderr, "%s: clipboard is owned by internal client - let dix process the request\n", __func__);
+    #endif
     return 0;
   }
 
@@ -2543,7 +2559,7 @@ int nxagentSendNotificationToSelfViaXServer(xEvent *event)
   }
 
   #ifdef DEBUG
-  fprintf(stderr, "---------\n%s: Received SendNotify by client: property [%d][%s] target [%d][%s] selection [%d][%s] requestor [0x%x] time [%u].\n", __func__,
+  fprintf(stderr, "---------\n%s: Received SendNotify from client: property [%d][%s] target [%d][%s] selection [%d][%s] requestor [0x%x] time [%u].\n", __func__,
           event->u.selectionNotify.property, NameForIntAtom(event->u.selectionNotify.property),
           event->u.selectionNotify.target, NameForIntAtom(event->u.selectionNotify.target),
           event->u.selectionNotify.selection, NameForIntAtom(event->u.selectionNotify.selection),
@@ -2600,6 +2616,11 @@ int nxagentSendNotificationToSelfViaXServer(xEvent *event)
       .property  = serverTransFromAgentProperty,
       .time      = CurrentTime,
     };
+
+    #ifdef DEBUG
+    fprintf(stderr, "%s: remote property [%ld][%s].\n", __func__,
+                serverTransFromAgentProperty, NameForRemAtom(serverTransFromAgentProperty));
+    #endif
 
     sendSelectionNotifyEventToXServer(&eventSelection);
 
