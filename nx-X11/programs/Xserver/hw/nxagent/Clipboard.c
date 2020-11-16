@@ -679,10 +679,6 @@ void nxagentClearClipboard(ClientPtr pClient, WindowPtr pWindow)
               (void *) pClient, CLINDEX(pClient), (void *) pWindow, WINDOWID(pWindow));
   #endif
 
-  /*
-   * Only for PRIMARY and CLIPBOARD selections.
-   */
-
   /* FIXME: there's almost identical code in nxagentClipboardInit */
   for (int index = 0; index < nxagentMaxSelections; index++)
   {
@@ -969,7 +965,6 @@ void nxagentHandleSelectionRequestFromXServer(XEvent *X)
      *
      * FIXME: ensure we are reporting an _external_ timestamp
      * FIXME: for a 32 bit property list we need to pass a "long" array, not "char"!
-     * FIXME: selection has already been checked above, so we do not need to check again here
      */
 
     XChangeProperty(nxagentDisplay,
