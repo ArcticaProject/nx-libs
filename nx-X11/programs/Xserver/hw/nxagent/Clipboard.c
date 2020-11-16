@@ -1096,6 +1096,7 @@ void nxagentHandleSelectionRequestFromXServer(XEvent *X)
 
       /* deny the request */
       replyRequestSelectionToXServer(X, False);
+      return;
     }
 
     /*
