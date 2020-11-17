@@ -2594,33 +2594,57 @@ int nxagentSendNotificationToSelfViaXServer(xEvent *event)
   else
   {
     /*
-     * Setup selection notify event to real server.
-     *
-     * .property must be a server-side Atom. As this property is only
-     * set on our serverWindow and normally there are few other
-     * properties except serverTransToAgentProperty, the only thing
-     * we need to ensure is that the internal Atom clientCutProperty
-     * differs from the server-side serverTransToAgentProperty
-     * Atom. The actual name is not important. To be clean here we use
-     * a separate serverTransFromAgentProperty.
+     * if the property is 0 (reporting failure) we can directly
+     * answer to the lastServer about the failure!
      */
+    if (lastServers[index].requestor != None && event->u.selectionNotify.property == 0)
+    {
+      #ifdef DEBUG
+      fprintf(stderr, "%s: passing on failure to lastServers[%d].requestor [%ld].\n", __func__,
+                  index, lastServers[index].requestor);
+      #endif
 
-    XSelectionEvent eventSelection = {
-      .requestor = serverWindow,
-      .selection = translateLocalToRemoteSelection(event->u.selectionNotify.selection),
-      .target    = translateLocalToRemoteTarget(event->u.selectionNotify.target),
-      .property  = serverTransFromAgentProperty,
-      .time      = CurrentTime,
-    };
+      XSelectionEvent eventSelection = {
+        .requestor = lastServers[index].requestor,
+        .selection = remSelAtoms[index],
+        .target    = lastServers[index].target,
+        .property  = 0,
+        .time      = lastServers[index].time,
+      };
+      sendSelectionNotifyEventToXServer(&eventSelection);
 
-    #ifdef DEBUG
-    fprintf(stderr, "%s: remote property [%ld][%s].\n", __func__,
-                serverTransFromAgentProperty, NameForRemAtom(serverTransFromAgentProperty));
-    #endif
+      lastServers[index].requestor = None;
+      return 1;
+    }
+    else
+    {
+      /*
+       * Setup selection notify event to real server.
+       *
+       * .property must be a server-side Atom. As this property is only
+       * set on our serverWindow and normally there are few other
+       * properties except serverTransToAgentProperty, the only thing
+       * we need to ensure is that the internal Atom clientCutProperty
+       * differs from the server-side serverTransToAgentProperty
+       * Atom. The actual name is not important. To be clean here we use
+       * a separate serverTransFromAgentProperty.
+       */
 
-    sendSelectionNotifyEventToXServer(&eventSelection);
+      XSelectionEvent eventSelection = {
+        .requestor = serverWindow,
+        .selection = translateLocalToRemoteSelection(event->u.selectionNotify.selection),
+        .target    = translateLocalToRemoteTarget(event->u.selectionNotify.target),
+        .property  = serverTransFromAgentProperty,
+        .time      = CurrentTime,
+      };
 
-    return 1;
+      #ifdef DEBUG
+      fprintf(stderr, "%s: remote property [%ld][%s].\n", __func__,
+                  serverTransFromAgentProperty, NameForRemAtom(serverTransFromAgentProperty));
+      #endif
+      sendSelectionNotifyEventToXServer(&eventSelection);
+      return 1;
+    }
   }
 }
 
