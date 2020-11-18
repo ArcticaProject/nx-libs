@@ -2022,12 +2022,12 @@ static void setSelectionOwnerOnXServer(Selection *pSelection)
                 nxagentClientInfoString(lastSelectionOwner[index].client),
                     nxagentClientInfoString(pSelection->client));
     fprintf(stderr, "%s: lastSelectionOwner.window [0x%x] -> [0x%x]\n", __func__,
-            lastSelectionOwner[index].window, pSelection->window);
+                lastSelectionOwner[index].window, pSelection->window);
     fprintf(stderr, "%s: lastSelectionOwner.windowPtr [%p] -> [%p] [0x%x] (serverWindow: [0x%lx])\n", __func__,
-            (void *)lastSelectionOwner[index].windowPtr, (void *)pSelection->pWin,
-            nxagentWindow(pSelection->pWin), serverWindow);
+                (void *)lastSelectionOwner[index].windowPtr, (void *)pSelection->pWin,
+                    nxagentWindow(pSelection->pWin), serverWindow);
     fprintf(stderr, "%s: lastSelectionOwner.lastTimeChanged [%u]\n", __func__,
-            lastSelectionOwner[index].lastTimeChanged);
+                lastSelectionOwner[index].lastTimeChanged);
     #endif
 
     #if defined(TEST) || defined(DEBUG)
