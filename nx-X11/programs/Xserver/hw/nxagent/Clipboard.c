@@ -714,7 +714,7 @@ void nxagentClearClipboard(ClientPtr pClient, WindowPtr pWindow)
 
       setClientSelectionStage(SelectionStageNone, index);
 
-      lastServers[index].requestor = None;
+      replyPendingRequestSelectionToXServer(index, False);
     }
 
     if (pWindow && pWindow == lastClients[index].windowPtr)
@@ -2116,13 +2116,16 @@ static void setSelectionOwnerOnXServer(Selection *pSelection)
     if (lastServers[index].requestor != None)
     {
       /*
-       * we are in the process of communicating back and forth between
-       * real X server and nxagent's clients - let's not disturb
-       * FIXME: by continuing after the warning were ARE disturbing!
-       * We should cancel that communication here.
+       * There's an X client on the real X server waiting for a
+       * reply. That reply will never come because now we are the
+       * owner so let's be fair and cancel that request.
        */
-      fprintf (stderr, "%s: WARNING! lastServers[%d].requestor window [0x%lx] already set.\n",
+      fprintf(stderr, "%s: WARNING! lastServers[%d].requestor window [0x%lx] already set. Cancelling pending request.\n",
                    __func__, index, lastServers[index].requestor);
+
+      replyPendingRequestSelectionToXServer(index, False);
+
+      /* now we can go on */
     }
     #endif
 
