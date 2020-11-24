@@ -2131,10 +2131,9 @@ static void setSelectionOwnerOnXServer(Selection *pSelection)
      * already so better do it here, too
      */
     invalidateTargetCache(index);
-  }
 
-  /* FIXME: commented because index is invalid here! */
-  /* lastServers[index].requestor = None; */
+    /* FIXME: commented because index is invalid here! */
+    /* lastServers[index].requestor = None; */
 
 /*
 FIXME
@@ -2154,6 +2153,7 @@ FIXME
    }
    else fprintf (stderr, "%s: SetSelectionOwner failed\n", __func__);
 */
+  }
 }
 
 /*
