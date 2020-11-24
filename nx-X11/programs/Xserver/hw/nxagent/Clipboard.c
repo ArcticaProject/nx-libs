@@ -320,6 +320,7 @@ static void sendSelectionNotifyEventToClient(ClientPtr client,
                                              Atom target,
                                              Atom property);
 static Status sendSelectionNotifyEventToXServer(XSelectionEvent *event_to_send);
+static void replyPendingRequestSelectionToXServer(int index, Bool success);
 #ifdef DEBUG
 static void printSelectionStat(int sel);
 #endif
@@ -1898,24 +1899,45 @@ void nxagentHandleSelectionNotifyFromXServer(XEvent *X)
        * effectively will send a "Request denied" to the initial
        * requestor.
        */
-      XSelectionEvent eventSelection = {
-        .requestor = lastServers[index].requestor,
-        .selection = X->xselection.selection,
-        /* .target = X->xselection.target, */
-        .target    = lastServers[index].target,
-        .property  = lastServers[index].property,
-        .time      = lastServers[index].time,
-        /* .time   = CurrentTime */
-      };
-      #ifdef DEBUG
-      fprintf(stderr, "%s: Sending SelectionNotify event to requestor [%p].\n", __func__,
-              (void *)eventSelection.requestor);
-      #endif
-
-      sendSelectionNotifyEventToXServer(&eventSelection);
-
-      lastServers[index].requestor = None; /* allow further request */
+      replyPendingRequestSelectionToXServer(index, True);
     }
+  }
+}
+
+/*
+ * This is similar to replyRequestSelectionToXServer(), but gets the
+ * required values from a stored request instead of an XEvent
+ * structure.
+ */
+void replyPendingRequestSelectionToXServer(int index, Bool success)
+{
+  if (lastServers[index].requestor == None)
+  {
+    #ifdef DEBUG
+    fprintf(stderr, "%s: no pending request for index [%d] - doing nothing\n", __func__, index);
+    #endif
+  }
+  else
+  {
+    XSelectionEvent eventSelection = {
+      .requestor = lastServers[index].requestor,
+      .selection = remSelAtoms[index],
+      .target    = lastServers[index].target,
+      .time      = lastServers[index].time,
+      .property  = success ? lastServers[index].property : None,
+    };
+
+    #ifdef DEBUG
+    fprintf(stderr, "%s: Sending %s SelectionNotify event to requestor [%p].\n", __func__,
+                success ? "positive" : "negative", (void *)eventSelection.requestor);
+    #endif
+
+    sendSelectionNotifyEventToXServer(&eventSelection);
+
+    lastServers[index].requestor = None; /* allow further request */
+    lastServers[index].property = 0;
+    lastServers[index].target = 0;
+    lastServers[index].time = 0;
   }
 }
 
@@ -2703,21 +2725,7 @@ int nxagentSendNotificationToSelfViaXServer(xEvent *event)
      */
     if (lastServers[index].requestor != None && event->u.selectionNotify.property == 0)
     {
-      #ifdef DEBUG
-      fprintf(stderr, "%s: passing on failure to lastServers[%d].requestor [%ld].\n", __func__,
-                  index, lastServers[index].requestor);
-      #endif
-
-      XSelectionEvent eventSelection = {
-        .requestor = lastServers[index].requestor,
-        .selection = remSelAtoms[index],
-        .target    = lastServers[index].target,
-        .property  = 0,
-        .time      = lastServers[index].time,
-      };
-      sendSelectionNotifyEventToXServer(&eventSelection);
-
-      lastServers[index].requestor = None;
+      replyPendingRequestSelectionToXServer(index, False);
       return 1;
     }
     else
