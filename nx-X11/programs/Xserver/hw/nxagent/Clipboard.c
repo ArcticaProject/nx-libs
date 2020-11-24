@@ -2989,11 +2989,17 @@ Bool nxagentInitClipboard(WindowPtr pWin)
           /* remSelAtoms have already been adjusted above */
           XSetSelectionOwner(nxagentDisplay, remSelAtoms[index], serverWindow, CurrentTime);
         }
+
         /*
-         * FIXME: Shouldn't we reset lastServers[index].* and
-         * lastClients[index].* here? Problem is that (internal)
-         * clients might still be waiting for answers. Should reply
-         * with failure then
+         * On reconnect there cannot be any external requestor
+         * waiting for a reply so clean this
+         */
+        lastServers[index].requestor = None;
+
+        /*
+         * FIXME: We should reset lastClients[index].* here! Problem
+         * is that internal clients might still be waiting for
+         * answers. Should reply with failure then.
          */
 
         invalidateTargetCache(index);
