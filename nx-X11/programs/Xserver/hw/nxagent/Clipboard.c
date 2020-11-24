@@ -2163,7 +2163,11 @@ static void setSelectionOwnerOnXServer(Selection *pSelection)
 /*
 FIXME
 
-   if (XGetSelectionOwner(nxagentDisplay,pSelection->selection) == serverWindow)
+FIXME2: instead of XGetSelectionOwner we could check if the Xfixes
+        SetSelectionOwner event has arrived in the event queue;
+        possibly saving one roundtrip.
+
+   if (XGetSelectionOwner(nxagentDisplay, pSelection->selection) == serverWindow)
    {
       fprintf (stderr, "%s: SetSelectionOwner OK\n", __func__);
 
