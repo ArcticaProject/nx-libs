@@ -2872,7 +2872,7 @@ int nxagentHandleXFixesSelectionNotify(XEvent *X)
       fprintf(stderr, "%s: Event selection timestamp [%ld]\n", __func__, xfixesEvent->xfixesselection.selection_timestamp);
       fprintf(stderr, "%s: Event selection window [0x%lx]\n", __func__, xfixesEvent->xfixesselection.window);
       fprintf(stderr, "%s: Event selection owner [0x%lx]\n", __func__, xfixesEvent->xfixesselection.owner);
-      fprintf(stderr, "%s: Event selection [%s]\n", __func__, NameForAtom(nxagentRemoteToLocalAtom(xfixesEvent->xfixesselection.selection)));
+      fprintf(stderr, "%s: Event selection [%s]\n", __func__, NameForAtom(local));
 
       fprintf(stderr, "%s: Subtype ", __func__);
 
