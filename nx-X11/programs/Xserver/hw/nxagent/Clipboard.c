@@ -108,14 +108,20 @@ static SelectionOwner *lastSelectionOwner = NULL;
 
 /*
  * cache for targets the current selection owner
- * on the real X server has to offer. We are storing the targets
- * after they have been converted from XlibAtom to Atom.
+ * has to offer. We are storing the targets
+ * after they have been converted
 */
 typedef struct _Targets
 {
-  Atom  *targets;
-  int   numTargets;
+  Bool          type;     /* EMPTY, FORINT, FORREM */
+  unsigned int  numTargets;
+  Atom         *forInt;   /* Atoms converted for internal -> type Atom, not XlibAtom */
+  XlibAtom     *forRem;   /* Atoms converted for remote   -> type XlibAtom, not Atom */
 } Targets;
+
+#define EMPTY 0
+#define FORREM 1
+#define FORINT 2
 
 static Targets *targetCache = NULL;
 
@@ -394,7 +400,9 @@ static void printLastServerStat(int index)
 
 static void printTargetCacheStat(int index)
 {
-  fprintf(stderr, "  targetCache[].targets         (Atom *) [%p]\n", (void *)targetCache[index].targets);
+  fprintf(stderr, "  targetCache[].type               (int) [%d]\n", targetCache[index].type);
+  fprintf(stderr, "  targetCache[].forInt          (Atom *) [%p]\n", (void *)targetCache[index].forInt);
+  fprintf(stderr, "  targetCache[].forRem      (XlibAtom *) [%p]\n", (void *)targetCache[index].forRem);
   fprintf(stderr, "  targetCache[].numTargets         (int) [%d]\n", targetCache[index].numTargets);
 }
 
@@ -768,14 +776,29 @@ int nxagentFindCurrentSelectionIndex(Atom sel)
   return NumCurrentSelections;
 }
 
-void cacheTargets(int index, Atom* targets, int numTargets)
+void cacheTargetsForInt(int index, Atom* targets, int numTargets)
 {
   #ifdef DEBUG
-  fprintf(stderr, "%s: caching [%d] targets\n", __func__, numTargets);
+  fprintf(stderr, "%s: caching [%d] targets for internal requests\n", __func__, numTargets);
   #endif
 
-  SAFE_free(targetCache[index].targets);
-  targetCache[index].targets = targets;
+  SAFE_free(targetCache[index].forInt);
+  SAFE_free(targetCache[index].forRem);
+  targetCache[index].type = FORINT;
+  targetCache[index].forInt = targets;
+  targetCache[index].numTargets = numTargets;
+}
+
+void cacheTargetsForRem(int index, XlibAtom* targets, int numTargets)
+{
+  #ifdef DEBUG
+  fprintf(stderr, "%s: caching [%d] targets for remote requests\n", __func__, numTargets);
+  #endif
+
+  SAFE_free(targetCache[index].forInt);
+  SAFE_free(targetCache[index].forRem);
+  targetCache[index].type = FORREM;
+  targetCache[index].forRem = targets;
   targetCache[index].numTargets = numTargets;
 }
 
@@ -786,7 +809,9 @@ void invalidateTargetCache(int index)
   fprintf(stderr, "%s: invalidating target cache [%d]\n", __func__, index);
   #endif
 
-  SAFE_free(targetCache[index].targets);
+  SAFE_free(targetCache[index].forInt);
+  SAFE_free(targetCache[index].forRem);
+  targetCache[index].type = EMPTY;
   targetCache[index].numTargets = 0;
 }
 
@@ -798,7 +823,9 @@ void invalidateTargetCaches(void)
 
   for (int index = 0; index < nxagentMaxSelections; index++)
   {
-    SAFE_free(targetCache[index].targets);
+    SAFE_free(targetCache[index].forInt);
+    SAFE_free(targetCache[index].forRem);
+    targetCache[index].type = EMPTY;
     targetCache[index].numTargets = 0;
   }
 }
@@ -1006,7 +1033,39 @@ void nxagentHandleSelectionRequestFromXServer(XEvent *X)
     }
     else
     {
-      /* do nothing, let TARGETS be passed on to the owner later */
+      /*
+       * Shortcut: Some applications tend to post multiple
+       * SelectionRequests. Further it can happen that multiple
+       * clients are interested in clipboard content. If we already
+       * know the answer and no intermediate SelectionOwner event
+       * occured we can answer with the cached list of targets.
+       */
+
+      if (targetCache[index].type == FORREM && targetCache[index].forRem)
+      {
+        XlibAtom *targets = targetCache[index].forRem;
+        unsigned int numTargets = targetCache[index].numTargets;
+
+        #ifdef DEBUG
+        fprintf(stderr, "%s: Sending %d cached targets to remote requestor:\n", __func__, numTargets);
+        for (int i = 0; i < numTargets; i++)
+        {
+          fprintf(stderr, "%s: %ld %s\n", __func__, targets[i], NameForRemAtom(targets[i]));
+        }
+        #endif
+
+        XChangeProperty(nxagentDisplay,
+                        X->xselectionrequest.requestor,
+                        X->xselectionrequest.property,
+                        XInternAtom(nxagentDisplay, "ATOM", 0),
+                        32,
+                        PropModeReplace,
+                        (unsigned char *)targets,
+                        numTargets);
+
+        replyRequestSelectionToXServer(X, True);
+        return;
+      }
     }
   }
   else if (X->xselectionrequest.target == serverTIMESTAMP)
@@ -1601,7 +1660,7 @@ Bool nxagentCollectPropertyEventFromXServer(int resource)
                                    32, PropModeReplace,
                                    ulReturnItems, (unsigned char*)targets, 1);
 
-              cacheTargets(index, targets, numTargets);
+              cacheTargetsForInt(index, targets, numTargets);
 
               endTransfer(SELECTION_SUCCESS, index);
             }
@@ -1852,7 +1911,7 @@ void nxagentHandleSelectionNotifyFromXServer(XEvent *X)
                               (unsigned char*)targets,
                               numTargets);
 
-              SAFE_free(targets);
+              cacheTargetsForRem(index, targets, numTargets);
             }
           }
           else
@@ -2358,13 +2417,13 @@ int nxagentConvertSelection(ClientPtr client, WindowPtr pWin, Atom selection,
        * occured we can answer with the cached list of targets.
        */
 
-      if (targetCache[index].targets)
+      if (targetCache[index].type == FORINT && targetCache[index].forInt)
       {
-        Atom *targets = targetCache[index].targets;
+        Atom *targets = targetCache[index].forInt;
         int numTargets = targetCache[index].numTargets;
 
         #ifdef DEBUG
-        fprintf(stderr, "%s: Sending %d cached targets:\n", __func__, numTargets);
+        fprintf(stderr, "%s: Sending %d cached targets to internal client:\n", __func__, numTargets);
         for (int i = 0; i < numTargets; i++)
         {
           fprintf(stderr, "%s: %d %s\n", __func__, targets[i], NameForIntAtom(targets[i]));
