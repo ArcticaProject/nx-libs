@@ -3135,9 +3135,6 @@ int nxagentCheckWindowConfiguration(XConfigureEvent* X)
   return 1;
 }
 
-#define DEBUG
-#define TEST
-
 int nxagentHandleConfigureNotify(XEvent* X)
 {
   #ifdef DEBUG
@@ -3153,7 +3150,7 @@ int nxagentHandleConfigureNotify(XEvent* X)
   fprintf(stderr, "%s: References:\n", __func__);
   fprintf(stderr, "%s:   DefaultWindow[0]: [0x%x]\n", __func__, nxagentDefaultWindows[0]);
   fprintf(stderr, "%s:   DefaultRootWindow(DISPLAY) [0x%lx]\n", __func__, DefaultRootWindow(nxagentDisplay));
-#endif
+  #endif
 
   if (nxagentOption(Rootless) == True)
   {
