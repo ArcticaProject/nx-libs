@@ -331,6 +331,7 @@ static void replyPendingRequestSelectionToXServer(int index, Bool success);
 static void printSelectionStat(int sel);
 #endif
 static void replyRequestSelectionToXServer(XEvent *X, Bool success);
+void handlePropertyTransferFromAgentToXserver(int index, XlibAtom property);
 
 void nxagentPrintClipboardStat(char *);
 
@@ -1818,30 +1819,54 @@ void nxagentHandleSelectionNotifyFromXServer(XEvent *X)
   }
   else
   {
-    /* if the last owner was an internal one, read the
-     * clientCutProperty and push the contents to the
-     * lastServers[index].requestor on the real X server.
-     */
-    if (IS_INTERNAL_OWNER(index) &&
-           lastSelectionOwner[index].windowPtr != NULL &&
-               X->xselection.property == serverTransFromAgentProperty)
+    handlePropertyTransferFromAgentToXserver(index, X->xselection.property);
+  }
+}
+
+void handlePropertyTransferFromAgentToXserver(int index, XlibAtom property)
+{
+  /* if the last owner was an internal one, read the
+   * clientCutProperty and push the contents to the
+   * lastServers[index].requestor on the real X server.
+   */
+  if (IS_INTERNAL_OWNER(index) &&
+         lastSelectionOwner[index].windowPtr != NULL &&
+             property == serverTransFromAgentProperty)
+  {
+    Atom            atomReturnType;
+    int             resultFormat;
+    unsigned long   ulReturnItems;
+    unsigned long   ulReturnBytesLeft;
+    unsigned char   *pszReturnData = NULL;
+
+    /* first get size values ... */
+    int result = GetWindowProperty(lastSelectionOwner[index].windowPtr, clientCutProperty, 0, 0, False,
+                                       AnyPropertyType, &atomReturnType, &resultFormat,
+                                           &ulReturnItems, &ulReturnBytesLeft, &pszReturnData);
+
+    #ifdef DEBUG
+    fprintf(stderr, "%s: GetWindowProperty() window [0x%x] property [%d][%s] returned [%s]\n", __func__,
+                lastSelectionOwner[index].window, clientCutProperty, NameForIntAtom(clientCutProperty),
+                    getXErrorString(result));
+    #endif
+    if (result == BadAlloc || result == BadAtom ||
+            result == BadWindow || result == BadValue)
     {
-      Atom            atomReturnType;
-      int             resultFormat;
-      unsigned long   ulReturnItems;
-      unsigned long   ulReturnBytesLeft;
-      unsigned char   *pszReturnData = NULL;
-
-      /* first get size values ... */
-      int result = GetWindowProperty(lastSelectionOwner[index].windowPtr, clientCutProperty, 0, 0, False,
-                                         AnyPropertyType, &atomReturnType, &resultFormat,
-                                             &ulReturnItems, &ulReturnBytesLeft, &pszReturnData);
-
+      lastServers[index].property = None;
+    }
+    else
+    {
+      /* ... then use the size values for the actual request */
+      result = GetWindowProperty(lastSelectionOwner[index].windowPtr, clientCutProperty, 0,
+                                     ulReturnBytesLeft, False, AnyPropertyType, &atomReturnType,
+                                         &resultFormat, &ulReturnItems, &ulReturnBytesLeft,
+                                             &pszReturnData);
       #ifdef DEBUG
       fprintf(stderr, "%s: GetWindowProperty() window [0x%x] property [%d][%s] returned [%s]\n", __func__,
                   lastSelectionOwner[index].window, clientCutProperty, NameForIntAtom(clientCutProperty),
                       getXErrorString(result));
       #endif
+
       if (result == BadAlloc || result == BadAtom ||
               result == BadWindow || result == BadValue)
       {
@@ -1849,117 +1874,98 @@ void nxagentHandleSelectionNotifyFromXServer(XEvent *X)
       }
       else
       {
-        /* ... then use the size values for the actual request */
-        result = GetWindowProperty(lastSelectionOwner[index].windowPtr, clientCutProperty, 0,
-                                       ulReturnBytesLeft, False, AnyPropertyType, &atomReturnType,
-                                           &resultFormat, &ulReturnItems, &ulReturnBytesLeft,
-                                               &pszReturnData);
-        #ifdef DEBUG
-        fprintf(stderr, "%s: GetWindowProperty() window [0x%x] property [%d][%s] returned [%s]\n", __func__,
-                    lastSelectionOwner[index].window, clientCutProperty, NameForIntAtom(clientCutProperty),
-                        getXErrorString(result));
-        #endif
+        if (lastServers[index].target == serverTARGETS)
+        {
+          #ifdef DEBUG
+          fprintf(stderr, "%s: ulReturnItems [%ld]\n", __func__, ulReturnItems);
+          fprintf(stderr, "%s: resultformat [%d]\n", __func__, resultFormat);
+          #endif
 
-        if (result == BadAlloc || result == BadAtom ||
-                result == BadWindow || result == BadValue)
-        {
-          lastServers[index].property = None;
-        }
-        else
-        {
-          if (lastServers[index].target == serverTARGETS)
+          XlibAtom * targets = calloc(sizeof(XlibAtom), ulReturnItems);
+          if (targets == NULL)
           {
-            #ifdef DEBUG
-            fprintf(stderr, "%s: ulReturnItems [%ld]\n", __func__, ulReturnItems);
-            fprintf(stderr, "%s: resultformat [%d]\n", __func__, resultFormat);
+            #ifdef WARNING
+            fprintf(stderr, "%s: WARNING! Could not alloc memory for clipboard targets transmission.\n", __func__);
             #endif
-
-            XlibAtom * targets = calloc(sizeof(XlibAtom), ulReturnItems);
-            if (targets == NULL)
-            {
-              #ifdef WARNING
-              fprintf(stderr, "%s: WARNING! Could not alloc memory for clipboard targets transmission.\n", __func__);
-              #endif
-              /* this will effectively lead to the request being answered as failed */
-              lastServers[index].property = None;
-            }
-            else
-            {
-	      /* Convert the targets to remote atoms */
-              XlibAtom *addr = targets;
-              unsigned int numTargets = ulReturnItems;
-
-              for (int i = 0; i < numTargets; i++)
-              {
-                Atom local = *((Atom*)(pszReturnData + i*resultFormat/8));
-                XlibAtom remote = nxagentLocalToRemoteAtom(local);
-                *(addr++) = remote;
-
-                #ifdef DEBUG
-                fprintf(stderr, "%s: converting atom: local [%d][%s] -> remote [%ld][%s]\n", __func__,
-                            local, NameForIntAtom(local), remote, NameForRemAtom(remote));
-                #endif
-              }
-
-              /* FIXME: do we need to take care of swapping byte order here? */
-              XChangeProperty(nxagentDisplay,
-                              lastServers[index].requestor,
-                              lastServers[index].property,
-                              XInternAtom(nxagentDisplay, "ATOM", 0),
-                              32,
-                              PropModeReplace,
-                              (unsigned char*)targets,
-                              numTargets);
-
-              cacheTargetsForRem(index, targets, numTargets);
-            }
+            /* this will effectively lead to the request being answered as failed */
+            lastServers[index].property = None;
           }
           else
           {
-            /* Fill the property on the initial requestor with the requested data */
-            /* The XChangeProperty source code reveals it will always
-               return 1, no matter what, so no need to check the result */
-            /* FIXME: better use the format returned by above request */
+            /* Convert the targets to remote atoms */
+            XlibAtom *addr = targets;
+            unsigned int numTargets = ulReturnItems;
+
+            for (int i = 0; i < numTargets; i++)
+            {
+              Atom local = *((Atom*)(pszReturnData + i*resultFormat/8));
+              XlibAtom remote = nxagentLocalToRemoteAtom(local);
+              *(addr++) = remote;
+
+              #ifdef DEBUG
+              fprintf(stderr, "%s: converting atom: local [%d][%s] -> remote [%ld][%s]\n", __func__,
+                          local, NameForIntAtom(local), remote, NameForRemAtom(remote));
+              #endif
+            }
+
+            /* FIXME: do we need to take care of swapping byte order here? */
             XChangeProperty(nxagentDisplay,
                             lastServers[index].requestor,
                             lastServers[index].property,
-                            lastServers[index].target,
-                            8,
+                            XInternAtom(nxagentDisplay, "ATOM", 0),
+                            32,
                             PropModeReplace,
-                            pszReturnData,
-                            ulReturnItems);
-            #ifdef DEBUG
-            {
-              fprintf(stderr, "%s: XChangeProperty sent to window [0x%lx] for property [%ld][%s] len [%d] value [\"%*.*s\"...]\n",
-                      __func__,
-                      lastServers[index].requestor,
-                      lastServers[index].property,
-                      NameForRemAtom(lastServers[index].property),
-                      (int)ulReturnItems * 8 / 8,
-                      (int)(min(20, ulReturnItems * 8 / 8)),
-                      (int)(min(20, ulReturnItems * 8 / 8)),
-                      pszReturnData);
-            }
-            #endif
+                            (unsigned char*)targets,
+                            numTargets);
+
+            cacheTargetsForRem(index, targets, numTargets);
           }
-
-          /* FIXME: free it or not? */
-          /*
-           * SAFE_XFree(pszReturnData);
-           */
         }
-      }
+        else
+        {
+          /* Fill the property on the requestor with the requested data */
+          /* The XChangeProperty source code reveals it will always
+             return 1, no matter what, so no need to check the result */
+          /* FIXME: better use the format returned by above request */
+          XChangeProperty(nxagentDisplay,
+                          lastServers[index].requestor,
+                          lastServers[index].property,
+                          lastServers[index].target,
+                          8,
+                          PropModeReplace,
+                          pszReturnData,
+                          ulReturnItems);
+          #ifdef DEBUG
+          {
+            fprintf(stderr, "%s: XChangeProperty sent to window [0x%lx] for property [%ld][%s] len [%d] value [\"%*.*s\"...]\n",
+                    __func__,
+                    lastServers[index].requestor,
+                    lastServers[index].property,
+                    NameForRemAtom(lastServers[index].property),
+                    (int)ulReturnItems * 8 / 8,
+                    (int)(min(20, ulReturnItems * 8 / 8)),
+                    (int)(min(20, ulReturnItems * 8 / 8)),
+                    pszReturnData);
+          }
+          #endif
+        }
 
-      /*
-       * inform the initial requestor that the requested data has
-       * arrived in the desired property. If we have been unable to
-       * get the data from the owner XChangeProperty will not have
-       * been called and lastServers[index].property will be None which
-       * effectively will send a "Request denied" to the initial
-       * requestor.
-       */
-      replyPendingRequestSelectionToXServer(index, True);
+        /* FIXME: free it or not? */
+        /*
+         * SAFE_XFree(pszReturnData);
+         */
+      }
     }
+
+    /*
+     * inform the initial requestor that the requested data has
+     * arrived in the desired property. If we have been unable to
+     * get the data from the owner XChangeProperty will not have
+     * been called and lastServers[index].property will be None which
+     * effectively will send a "Request denied" to the initial
+     * requestor.
+     */
+    replyPendingRequestSelectionToXServer(index, True);
   }
 }
 
