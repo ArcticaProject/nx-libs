@@ -62,7 +62,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-#if defined(__linux__) && defined(__i386__)
+#if defined(__GLIBC__) && defined(__i386__)
 #include <fpu_control.h>
 #endif
 #endif
