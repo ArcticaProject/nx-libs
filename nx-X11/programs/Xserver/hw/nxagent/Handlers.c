@@ -179,7 +179,7 @@ void nxagentBlockHandler(void * data, struct timeval **timeout, void * mask)
    * Set if we need to synchronize any drawable.
    */
 
-  static int synchronize;
+  static Bool synchronize;
 
   #ifdef BLOCKS
   fprintf(stderr, "[Begin block]\n");
@@ -302,7 +302,7 @@ void nxagentBlockHandler(void * data, struct timeval **timeout, void * mask)
    *                   are synchronized.
    */
 
-  if (synchronize == 1)
+  if (synchronize)
   {
     /*
      * We should not enter the synchronization loop if there is any
@@ -350,7 +350,7 @@ void nxagentBlockHandler(void * data, struct timeval **timeout, void * mask)
                            nxagentCorruptedBackgrounds > 0 ||
                                nxagentCorruptedPixmaps > 0));
 
-    if (!nxagentSkipImage && synchronize == 1)
+    if (!nxagentSkipImage && synchronize)
     {
       #ifdef TEST
       fprintf(stderr, "nxagentBlockHandler: Setting a zero timeout with [%d][%d][%d] and "
