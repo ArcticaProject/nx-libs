@@ -901,7 +901,7 @@ void nxagentSwitchAllScreens(ScreenPtr pScreen, Bool switchOn)
       XCheckTypedWindowEvent(nxagentDisplay, w, LeaveNotify, &e);
       nxagentFullscreenWindow = w;
 
-      if (nxagentOption(DesktopResize) == 1)
+      if (nxagentOption(DesktopResize))
       {
         if (nxagentOption(Shadow) == 0)
         {
@@ -952,7 +952,7 @@ void nxagentSwitchAllScreens(ScreenPtr pScreen, Bool switchOn)
 
     nxagentIconWindow = nxagentFullscreenWindow = None;
 
-    if (nxagentOption(DesktopResize) == 1)
+    if (nxagentOption(DesktopResize))
     {
       nxagentChangeOption(RootWidth, nxagentOption(SavedRootWidth));
       nxagentChangeOption(RootHeight, nxagentOption(SavedRootHeight));
@@ -998,7 +998,7 @@ void nxagentSwitchAllScreens(ScreenPtr pScreen, Bool switchOn)
     nxagentChangeOption(Width, nxagentOption(SavedWidth));
     nxagentChangeOption(Height, nxagentOption(SavedHeight));
 
-    if (nxagentOption(Shadow) == 1 && nxagentOption(DesktopResize) == 1)
+    if (nxagentOption(Shadow) == 1 && nxagentOption(DesktopResize))
     {
       nxagentShadowAdaptToRatio();
     }
