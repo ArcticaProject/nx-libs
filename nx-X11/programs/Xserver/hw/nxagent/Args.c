@@ -801,14 +801,9 @@ int ddxProcessArgument(int argc, char *argv[], int i)
 
   if (!strcmp(argv[i], "-R"))
   {
-    if (nxagentOption(Binder) == UNDEFINED ||
-            nxagentOption(Desktop) == UNDEFINED ||
-                nxagentOption(Rootless) == UNDEFINED)
-    {
-      nxagentChangeOption(Binder, False);
-      nxagentChangeOption(Desktop, False);
-      nxagentChangeOption(Rootless, True);
-    }
+    nxagentChangeOption(Binder, False);
+    nxagentChangeOption(Desktop, False);
+    nxagentChangeOption(Rootless, True);
     return 1;
   }
 
@@ -1749,13 +1744,14 @@ N/A
 
     #endif
 
-    if ((nxagentOption(Rootless) == True) && nxagentOption(Fullscreen))
+    if (nxagentOption(Rootless) && nxagentOption(Fullscreen))
     {
       #ifdef TEST
       fprintf(stderr, "WARNING: Ignoring fullscreen option for rootless session.\n");
       #endif
 
       nxagentChangeOption(Fullscreen, False);
+      nxagentChangeOption(AllScreens, False);
     }
 
     /*
@@ -1971,25 +1967,6 @@ N/A
     nxagentSetCoalescence();
 
     /*
-     * Set the other defaults.
-     */
-
-    if (nxagentOption(Binder) == UNDEFINED)
-    {
-      nxagentChangeOption(Binder, False);
-    }
-
-    if (nxagentOption(Rootless) == UNDEFINED)
-    {
-      nxagentChangeOption(Rootless, False);
-    }
-
-    if (nxagentOption(Desktop) == UNDEFINED)
-    {
-      nxagentChangeOption(Desktop, True);
-    }
-
-    /*
      * The enableBackingStore flag is defined
      * in window.c in the dix.
      */
@@ -2029,7 +2006,7 @@ FIXME: In rootless mode the backing-store support is not functional yet.
       nxagentAlphaEnabled = False;
     }
 
-    if ((nxagentOption(Rootless) == True) && nxagentOption(Xdmcp))
+    if (nxagentOption(Rootless) && nxagentOption(Xdmcp))
     {
       FatalError("PANIC! Cannot start a XDMCP session in rootless mode.\n");
     }

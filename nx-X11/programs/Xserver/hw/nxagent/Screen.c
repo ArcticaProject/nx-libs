@@ -948,7 +948,7 @@ Bool nxagentOpenScreen(ScreenPtr pScreen, int argc, char *argv[])
    * the screen if we are either in rootless or in fullscreen mode.
    */
 
-  if (nxagentOption(Rootless) == False && !nxagentWMIsRunning)
+  if (!nxagentOption(Rootless) && !nxagentWMIsRunning)
   {
     #ifdef TEST
     fprintf(stderr, "nxagentOpenScreen: Forcing fullscreen mode with no window manager running.\n");
@@ -1732,7 +1732,7 @@ N/A
               pScreen->myNum, nxagentDefaultWindows[pScreen->myNum]);
       #endif
 
-      if (nxagentOption(Rootless) == 0)
+      if (!nxagentOption(Rootless))
       {
         XSetWindowAttributes inpattributes = {.event_mask = PointerMotionMask};
 
@@ -1953,7 +1953,7 @@ N/A
 
     /* FIXME: This doing the same thing in both cases. The
        comments do not seem accurate (anymore?) */
-    if (nxagentOption(Rootless) == False)
+    if (!nxagentOption(Rootless))
     {
       /*
        * Set the WM_DELETE_WINDOW protocol for the main agent
@@ -2377,7 +2377,7 @@ FIXME: We should try to restore the previously
       XResizeWindow(nxagentDisplay, nxagentDefaultWindows[pScreen->myNum], width, height);
     }
 
-    if (nxagentOption(Rootless) == 0)
+    if (!nxagentOption(Rootless))
     {
       #ifdef DEBUG
       fprintf(stderr, "%s: resizing InputWindow to [%d]x[%d]\n", __func__, width, height);

@@ -378,7 +378,7 @@ Bool nxagentCreateWindow(WindowPtr pWin)
   nxagentWindowPriv(pWin) -> corruptedTimestamp = 0;
   nxagentWindowPriv(pWin) -> splitResource = NULL;
 
-  if (nxagentOption(Rootless) == 1)
+  if (nxagentOption(Rootless))
   {
     nxagentWindowPriv(pWin) -> isMapped = 0;
 
@@ -700,7 +700,7 @@ void nxagentRestackWindow(WindowPtr pWin, WindowPtr pOldNextSib)
 
 void nxagentSwitchFullscreen(ScreenPtr pScreen, Bool switchOn)
 {
-  if (nxagentOption(Rootless) == 1)
+  if (nxagentOption(Rootless))
   {
     return;
   }
@@ -1259,7 +1259,7 @@ void nxagentConfigureWindow(WindowPtr pWin, unsigned int mask)
     return;
   }
 
-  if (nxagentOption(Rootless) == 1 &&
+  if (nxagentOption(Rootless) &&
           nxagentWindowTopLevel(pWin) == 1)
   {
     mask &= ~(CWSibling | CWStackMode);
@@ -2527,7 +2527,7 @@ void nxagentMapDefaultWindows(void)
      */
     MapWindow(pWin, serverClient);
 
-    if (nxagentOption(Rootless) == 0)
+    if (!nxagentOption(Rootless))
     {
       /*
        * Show the NX splash screen.
@@ -2760,7 +2760,7 @@ Bool nxagentReconnectAllWindows(void *p0)
    * raised.
    */
 
-  if (nxagentOption(Rootless) == 0)
+  if (!nxagentOption(Rootless))
   {
     for (int i = 0; i < screenInfo.numScreens; i++)
     {
@@ -3274,7 +3274,7 @@ XXX: This would break Motif menus.
       XIconifyWindow(nxagentDisplay, nxagentWindow(pWin), pWin -> drawable.pScreen -> myNum);
     }
   }
-  else if (nxagentOption(Rootless) == 0)
+  else if (!nxagentOption(Rootless))
   {
     /*
      * Map the root window.

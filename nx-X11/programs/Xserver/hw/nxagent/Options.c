@@ -59,9 +59,9 @@ void nxagentInitOptions(void)
 {
   nxagentOptions.LinkType = UNDEFINED;
 
-  nxagentOptions.Desktop    = UNDEFINED;
+  nxagentOptions.Desktop    = True;
   nxagentOptions.Persistent = True;
-  nxagentOptions.Rootless   = UNDEFINED;
+  nxagentOptions.Rootless   = False;
   nxagentOptions.Shadow     = False;
   nxagentOptions.Fullscreen = False;
   nxagentOptions.AllScreens = False;
@@ -121,7 +121,7 @@ void nxagentInitOptions(void)
 
   nxagentOptions.UseDamage = True;
 
-  nxagentOptions.Binder = UNDEFINED;
+  nxagentOptions.Binder = False;
   nxagentOptions.BinderOptions = NULL;
 
   nxagentOptions.Xdmcp = False;

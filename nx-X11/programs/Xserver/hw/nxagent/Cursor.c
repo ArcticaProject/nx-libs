@@ -127,7 +127,7 @@ Bool nxagentDisplayCursor(ScreenPtr pScreen, CursorPtr pCursor)
 
   Cursor cursor = (pCursor != rootCursor) ? nxagentCursor(pCursor, pScreen): None;
 
-  if (nxagentOption(Rootless) == False)
+  if (!nxagentOption(Rootless))
   {
     XDefineCursor(nxagentDisplay,
                       nxagentInputWindows[pScreen -> myNum],

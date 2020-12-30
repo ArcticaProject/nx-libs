@@ -630,7 +630,7 @@ Bool nxagentReconnectSession(void)
 
   nxagentRedirectDefaultWindows();
 
-  if (nxagentResizeDesktopAtStartup || nxagentOption(Rootless) == True || nxagentOption(Xinerama))
+  if (nxagentResizeDesktopAtStartup || nxagentOption(Rootless) || nxagentOption(Xinerama))
   {
     nxagentChangeScreenConfig(0, nxagentOption(RootWidth),
                                   nxagentOption(RootHeight), True);

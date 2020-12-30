@@ -1851,7 +1851,7 @@ FIXME: Don't enqueue the KeyRelease event if the key was not already
             {
               int value = X.xvisibility.state;
 
-              if (nxagentOption(Rootless) == 1)
+              if (nxagentOption(Rootless))
               {
                 TraverseTree(pWin, nxagentChangeVisibilityPrivate, &value);
               }
@@ -2003,7 +2003,7 @@ FIXME: Don't enqueue the KeyRelease event if the key was not already
         fprintf(stderr, "%s: Going to handle new UnmapNotify event.\n", __func__);
         #endif
 
-        if (nxagentOption(Rootless) == 1)
+        if (nxagentOption(Rootless))
         {
           WindowPtr pWin;
 
@@ -2019,7 +2019,7 @@ FIXME: Don't enqueue the KeyRelease event if the key was not already
           }
         }
 
-        if (nxagentUseNXTrans == 1 && nxagentOption(Rootless) == 0 &&
+        if (nxagentUseNXTrans == 1 && !nxagentOption(Rootless) &&
                 !nxagentOption(Nested) &&
                     X.xmap.window != nxagentIconWindow)
         {
@@ -2034,7 +2034,7 @@ FIXME: Don't enqueue the KeyRelease event if the key was not already
         fprintf(stderr, "%s: Going to handle new MapNotify event.\n", __func__);
         #endif
 
-        if (nxagentOption(Rootless) == 1)
+        if (nxagentOption(Rootless))
         {
           WindowPtr pWin;
 
@@ -3152,7 +3152,7 @@ int nxagentHandleConfigureNotify(XEvent* X)
   fprintf(stderr, "%s:   DefaultRootWindow(DISPLAY) [0x%lx]\n", __func__, DefaultRootWindow(nxagentDisplay));
   #endif
 
-  if (nxagentOption(Rootless) == True)
+  if (nxagentOption(Rootless))
   {
     int sendEventAnyway = 0;
 
@@ -3272,7 +3272,7 @@ int nxagentHandleConfigureNotify(XEvent* X)
       return 1;
     }
   }
-  else /* (nxagentOption(Rootless) == True) */
+  else /* (nxagentOption(Rootless)) */
   {
     /*
      * Save the position of the agent default window. Don't save the
