@@ -211,18 +211,18 @@ RegionPtr nxagentBitBlitHelper(GC *pGC)
  * redirect property.
  */
 
-int nxagentWindowIsPopup(DrawablePtr pDrawable)
+Bool nxagentWindowIsPopup(DrawablePtr pDrawable)
 {
   if (pDrawable -> type != DRAWABLE_WINDOW)
   {
     return 0;
   }
 
-  int windowIsPopup = 0;
+  Bool windowIsPopup = False;
 
   if (((WindowPtr) pDrawable) -> overrideRedirect == 1)
   {
-    windowIsPopup = 1;
+    windowIsPopup = True;
   }
   else
   {
@@ -244,7 +244,7 @@ int nxagentWindowIsPopup(DrawablePtr pDrawable)
 
       if (parent -> overrideRedirect == 1)
       {
-        windowIsPopup = 1;
+        windowIsPopup = True;
         break;
       }
 
@@ -254,7 +254,7 @@ int nxagentWindowIsPopup(DrawablePtr pDrawable)
 
   #ifdef TEST
   fprintf(stderr, "nxagentWindowIsPopup: Window [%p] %s to be a popup.\n", (void *) pDrawable,
-              windowIsPopup == 1 ? "seems" : "does not seem");
+              windowIsPopup ? "seems" : "does not seem");
   #endif
 
   return windowIsPopup;
@@ -285,7 +285,7 @@ FIXME: The popup could be synchronized with one single put image,
   if (nxagentOption(DeferLevel) >= 2 &&
           pSrcDrawable -> type == DRAWABLE_PIXMAP &&
               nxagentPixmapContainTrapezoids((PixmapPtr) pSrcDrawable) == 1 &&
-                  nxagentWindowIsPopup(pDstDrawable) == 1)
+                  nxagentWindowIsPopup(pDstDrawable))
   {
     RegionPtr pSrcRegion = nxagentCreateRegion(pSrcDrawable, NULL, srcx, srcy, width, height);
 
