@@ -829,11 +829,11 @@ static Bool nxagentWaitSplitPredicate(Display *disp, XEvent *event, XPointer ptr
                           event -> xclient.format == 32);
 }
 
-int nxagentWaitSplitEvent(int resource)
+Bool nxagentWaitSplitEvent(int resource)
 {
   XEvent event;
 
-  int split = 0;
+  Bool split = 0;
 
   /*
    * Don't flush the link. We only want to query the NX transport to
@@ -890,7 +890,7 @@ int nxagentWaitSplitEvent(int resource)
     {
       nxagentHandleStartSplitEvent(resource);
 
-      split = 1;
+      split = True;
 
       break;
     }
