@@ -1241,7 +1241,7 @@ FIXME: All drawables should be set as synchronized and never marked as
    * round-robin and if the bitmaps are all synchronized.
    */
 
-  int doRoundRobin = (nxagentSynchronization.pDrawable != NULL);
+  Bool doRoundRobin = (nxagentSynchronization.pDrawable != NULL);
 
   nxagentSynchronization.abort = False;
 
@@ -1262,7 +1262,7 @@ FIXME: All drawables should be set as synchronized and never marked as
 
     if (!nxagentSynchronization.abort &&
             nxagentSynchronization.windowBitmaps == 0 &&
-                doRoundRobin == 0)
+                !doRoundRobin)
     {
       if (nxagentCorruptedWindows > 0)
       {
@@ -1294,7 +1294,7 @@ FIXME: All drawables should be set as synchronized and never marked as
 
     if (!nxagentSynchronization.abort &&
             nxagentSynchronization.backgroundBitmaps == 0 &&
-                doRoundRobin == 0)
+                !doRoundRobin)
     {
       if (nxagentCorruptedBackgrounds > 0)
       {
@@ -1328,7 +1328,7 @@ FIXME: All drawables should be set as synchronized and never marked as
 
     if (!nxagentSynchronization.abort &&
             nxagentSynchronization.pixmapBitmaps == 0 &&
-                doRoundRobin == 0)
+                !doRoundRobin)
     {
       #ifdef TEST
 
