@@ -301,7 +301,7 @@ FIXME: The popup could be synchronized with one single put image,
     RegionIntersect(&corruptedRegion,
                          pSrcRegion, nxagentCorruptedRegion(pSrcDrawable));
 
-    if (RegionNil(&corruptedRegion) == 0)
+    if (!RegionNil(&corruptedRegion))
     {
       #ifdef TEST
       fprintf(stderr, "nxagentDeferCopyArea: Forcing the synchronization of source drawable at [%p].\n",
@@ -422,17 +422,17 @@ FIXME: The popup could be synchronized with one single put image,
      * corrupted region.
      */
 
-    if (RegionNil(pClipRegion) == 0)
+    if (!RegionNil(pClipRegion))
     {
       nxagentUnmarkCorruptedRegion(pDstDrawable, pClipRegion);
     }
 
-    if (RegionNil(pCorruptedRegion) == 0)
+    if (!RegionNil(pCorruptedRegion))
     {
       nxagentMarkCorruptedRegion(pDstDrawable, pCorruptedRegion);
     }
 
-    if (RegionNil(pClipRegion) == 0)
+    if (!RegionNil(pClipRegion))
     {
       Bool pClipRegionFree = True;
 
@@ -550,7 +550,7 @@ FIXME: The popup could be synchronized with one single put image,
     RegionIntersect(&corruptedRegion,
                          pSrcRegion, nxagentCorruptedRegion(pSrcDrawable));
 
-    if (RegionNil(&corruptedRegion) == 0)
+    if (!RegionNil(&corruptedRegion))
     {
       #ifdef TEST
       fprintf(stderr, "nxagentDeferCopyArea: Forcing the synchronization of source drawable at [%p].\n",
@@ -996,7 +996,7 @@ RegionPtr nxagentCopyPlane(DrawablePtr pSrcDrawable, DrawablePtr pDstDrawable,
       RegionIntersect(&corruptedRegion,
                            pSrcRegion, nxagentCorruptedRegion(pSrcDrawable));
 
-      if (RegionNil(&corruptedRegion) == 0)
+      if (!RegionNil(&corruptedRegion))
       {
         #ifdef TEST
         fprintf(stderr, "nxagentCopyPlane: Forcing the synchronization of source drawable at [%p].\n",

@@ -1314,7 +1314,7 @@ void nxagentGlyphs(CARD8 op, PicturePtr pSrc, PicturePtr pDst,
     RegionPtr pRegion = nxagentCreateRegion(pDst -> pDrawable, NULL, glyphBox.x1, glyphBox.y1,
 					        glyphBox.x2 - glyphBox.x1, glyphBox.y2 - glyphBox.y1);
     
-    if (RegionNil(pRegion) == 1)
+    if (RegionNil(pRegion))
     {
       #ifdef TEST
       fprintf(stderr, "nxagentGlyphs: WARNING! Glyphs prevented on hidden window at [%p].\n",

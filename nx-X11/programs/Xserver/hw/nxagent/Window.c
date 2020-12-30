@@ -2195,7 +2195,7 @@ void nxagentWindowExposures(WindowPtr pWin, RegionPtr pRgn, RegionPtr other_expo
       RegionUnion(&temp, &temp, other_exposed);
     }
 
-    if (RegionNil(&temp) == 0)
+    if (!RegionNil(&temp))
     {
       RegionTranslate(&temp,
                            -(pWin -> drawable.x), -(pWin -> drawable.y));

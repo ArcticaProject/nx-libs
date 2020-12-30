@@ -4065,7 +4065,7 @@ void nxagentSynchronizeExpose(void)
                           (nxagentExposeQueueHead.remoteRegion),
                               (nxagentExposeQueueHead.localRegion));
 
-      if (RegionNil(nxagentExposeQueueHead.remoteRegion) == 0 &&
+      if (!RegionNil(nxagentExposeQueueHead.remoteRegion) &&
              ((pWin -> eventMask|wOtherEventMasks(pWin)) & ExposureMask))
       {
         #ifdef TEST
