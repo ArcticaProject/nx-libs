@@ -1064,7 +1064,7 @@ void nxagentSynchronizeShmPixmap(DrawablePtr pDrawable, int xPict, int yPict,
                                      int wPict, int hPict)
 {
   if (pDrawable -> type == DRAWABLE_PIXMAP &&
-         nxagentIsShmPixmap((PixmapPtr) pDrawable) == 1)
+         nxagentIsShmPixmap((PixmapPtr) pDrawable))
   {
     #ifdef TEST
     fprintf(stderr, "nxagentSynchronizeShmPixmap: WARNING! Synchronizing shared pixmap at [%p].\n",

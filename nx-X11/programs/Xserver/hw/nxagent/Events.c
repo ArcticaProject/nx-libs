@@ -2009,7 +2009,7 @@ FIXME: Don't enqueue the KeyRelease event if the key was not already
 
           if ((pWin = nxagentRootlessTopLevelWindow(X.xunmap.window)) != NULL ||
                   ((pWin = nxagentWindowPtr(X.xunmap.window)) != NULL &&
-                      nxagentWindowTopLevel(pWin) == 1))
+                      nxagentWindowTopLevel(pWin)))
           {
             nxagentScreenTrap = True;
 
@@ -2040,7 +2040,7 @@ FIXME: Don't enqueue the KeyRelease event if the key was not already
 
           if ((pWin = nxagentRootlessTopLevelWindow(X.xmap.window)) != NULL ||
                   ((pWin = nxagentWindowPtr(X.xmap.window)) != NULL &&
-                      nxagentWindowTopLevel(pWin) == 1))
+                      nxagentWindowTopLevel(pWin)))
           {
             nxagentScreenTrap = True;
 

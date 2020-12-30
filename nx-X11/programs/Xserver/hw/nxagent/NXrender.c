@@ -551,8 +551,8 @@ int nxagentCompositePredicate(PicturePtr pSrc, PicturePtr pDst)
     fprintf(stderr, "nxagentCompositePredicate: Case 1.\n");
     #endif
 
-    if (nxagentPixmapIsVirtual(pPixmap1) == 1 &&
-            nxagentPixmapIsVirtual(pPixmap2) == 1)
+    if (nxagentPixmapIsVirtual(pPixmap1) &&
+            nxagentPixmapIsVirtual(pPixmap2))
     {
       #ifdef TEST
       fprintf(stderr, "nxagentCompositePredicate: Case 2.\n");

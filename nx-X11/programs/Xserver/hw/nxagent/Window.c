@@ -1260,7 +1260,7 @@ void nxagentConfigureWindow(WindowPtr pWin, unsigned int mask)
   }
 
   if (nxagentOption(Rootless) &&
-          nxagentWindowTopLevel(pWin) == 1)
+          nxagentWindowTopLevel(pWin))
   {
     mask &= ~(CWSibling | CWStackMode);
   }
