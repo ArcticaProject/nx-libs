@@ -3373,7 +3373,7 @@ int nxagentHandleConfigureNotify(XEvent* X)
                 (nxagentOption(Width) != X -> xconfigure.width ||
                     nxagentOption(Height) != X -> xconfigure.height))
         {
-          nxagentShadowResize = 1;
+          nxagentShadowResize = True;
         }
 
         if (nxagentOption(Width) != X->xconfigure.width || nxagentOption(Height) != X->xconfigure.height)

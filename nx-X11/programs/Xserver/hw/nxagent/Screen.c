@@ -176,7 +176,7 @@ void nxagentPrintAgentGeometry(char *hdrMessage, char *prefix);
  * These variables are for shadowing feature.
  */
 
-int nxagentShadowResize = 0;
+Bool nxagentShadowResize = False;
 
 WindowPtr nxagentShadowWindowPtr = NULL;
 
