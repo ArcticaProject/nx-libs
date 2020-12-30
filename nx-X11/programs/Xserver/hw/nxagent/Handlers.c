@@ -114,8 +114,8 @@ extern void nxagentDumpInputDevicesState(void);
  * Used in the handling of the X desktop manager protocol.
  */
 
-int nxagentXdmcpUp = 0;
-int nxagentXdmcpAlertUp = 0;
+Bool nxagentXdmcpUp = False;
+Bool nxagentXdmcpAlertUp = False;
 
 /*
  * Also used in the block, wakeup and sync handlers.
@@ -648,7 +648,7 @@ void nxagentWakeupHandler(void * data, int count, void * mask)
    * the session.
    */
 
-  if (nxagentOption(Xdmcp) && nxagentXdmcpUp == 0)
+  if (nxagentOption(Xdmcp) && !nxagentXdmcpUp)
   {
     #ifdef DEBUG
     fprintf(stderr, "nxagentWakeupHandler: XdmcpState [%d].\n", XdmcpState);
@@ -656,10 +656,10 @@ void nxagentWakeupHandler(void * data, int count, void * mask)
 
     if (XdmcpState == XDM_RUN_SESSION)
     {
-      nxagentXdmcpUp = 1;
+      nxagentXdmcpUp = True;
     }
 
-    if (nxagentXdmcpUp == 0)
+    if (!nxagentXdmcpUp)
     {
       #ifdef DEBUG
       fprintf(stderr, "nxagentWakeupHandler: XdmcpTime [%lu].\n",
@@ -671,7 +671,7 @@ void nxagentWakeupHandler(void * data, int count, void * mask)
                   XdmcpTimeOutRtx);
       #endif
 
-      if (nxagentXdmcpAlertUp == 0 &&
+      if (!nxagentXdmcpAlertUp &&
               GetTimeInMillis() - XdmcpStartTime >= XDM_TIMEOUT)
       {
         #ifdef WARNING
@@ -681,7 +681,7 @@ void nxagentWakeupHandler(void * data, int count, void * mask)
 
         NXTransAlert(FAILED_XDMCP_CONNECTION_ALERT, NX_ALERT_REMOTE);
 
-        nxagentXdmcpAlertUp = 1;
+        nxagentXdmcpAlertUp = True;
       }
     }
   }
