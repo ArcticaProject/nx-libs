@@ -2500,7 +2500,7 @@ void nxagentRefreshWindows(WindowPtr pWin)
 
 void nxagentUnmapWindows(void)
 {
-  if (nxagentOption(Fullscreen) == 1)
+  if (nxagentOption(Fullscreen))
   {
     for (int i = 0; i < screenInfo.numScreens; i++)
     {
@@ -2556,7 +2556,7 @@ void nxagentMapDefaultWindows(void)
 
         XMapWindow(nxagentDisplay, nxagentDefaultWindows[pScreen->myNum]);
 
-        if (nxagentOption(Fullscreen) == 1 && nxagentWMIsRunning)
+        if (nxagentOption(Fullscreen) && nxagentWMIsRunning)
         {
           nxagentMaximizeToFullScreen(pScreen);
         }

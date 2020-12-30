@@ -800,6 +800,9 @@ void nxagentPrintAgentGeometry(char *hdrMessage, char *prefix)
   fprintf(stderr, "%s | Fullscreen is %s.\n", prefix,
               nxagentOption(Fullscreen) ? "ON" : "OFF");
 
+  fprintf(stderr, "%s | AllScreens is %s.\n", prefix,
+              nxagentOption(AllScreens) ? "ON" : "OFF");
+
   fprintf(stderr, "%s | Desktop resize mode is %s.\n", prefix,
               nxagentOption(DesktopResize) ? "ON" : "OFF");
 
@@ -1664,13 +1667,13 @@ N/A
         .colormap = nxagentDefaultVisualColormap(nxagentDefaultVisual(pScreen))
     };
 
-    if (nxagentOption(AllScreens) == 1)
+    if (nxagentOption(AllScreens))
     {
       valuemask |= CWOverrideRedirect;
       attributes.override_redirect = True;
     }
 
-    if (nxagentOption(Fullscreen) == 1)
+    if (nxagentOption(Fullscreen))
     {
       if (nxagentReconnectTrap)
       {
@@ -1833,7 +1836,7 @@ N/A
       sizeHints->width = nxagentOption(RootWidth);
       sizeHints->height = nxagentOption(RootHeight);
 
-      if (nxagentOption(DesktopResize) == 1 || nxagentOption(Fullscreen) == 1)
+      if (nxagentOption(DesktopResize) == 1 || nxagentOption(Fullscreen))
       {
         sizeHints->max_width = WidthOfScreen(DefaultScreenOfDisplay(nxagentDisplay));
         sizeHints->max_height = HeightOfScreen(DefaultScreenOfDisplay(nxagentDisplay));
@@ -2362,7 +2365,7 @@ FIXME: We should try to restore the previously
    * Change agent window size and size hints.
    */
 
-  if ((nxagentOption(Fullscreen) == 0 && nxagentOption(AllScreens) == 0))
+  if (!(nxagentOption(Fullscreen) || nxagentOption(AllScreens)))
   {
     nxagentSetWMNormalHints(pScreen->myNum, width, height);
 
@@ -2566,7 +2569,7 @@ int nxagentShadowInit(ScreenPtr pScreen, WindowPtr pWin)
     return -1;
   }
 
-  if (nxagentOption(Fullscreen) == 1)
+  if (nxagentOption(Fullscreen))
   {
     nxagentShadowSetRatio(WidthOfScreen(DefaultScreenOfDisplay(nxagentDisplay)) * 1.0 / nxagentShadowWidth,
                               HeightOfScreen(DefaultScreenOfDisplay(nxagentDisplay)) * 1.0 / nxagentShadowHeight);
