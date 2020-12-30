@@ -251,7 +251,7 @@ void InitOutput(ScreenInfo *scrInfo, int argc, char *argv[])
     AddCallback(&ServerGrabCallback, nxagentGrabServerCallback, NULL);
   }
 
-  if (nxagentUserDefinedFontPath == 0)
+  if (!nxagentUserDefinedFontPath)
   {
     #ifdef TEST
     fprintf(stderr, "InitOutput: Calling nxagentVerifyDefaultFontPath.\n");

@@ -116,7 +116,7 @@ is" without express or implied warranty.
 
 #undef DISABLE_SMART_SCHEDULE
 
-int nxagentUserDefinedFontPath = 0;
+Bool nxagentUserDefinedFontPath = False;
 
 /*
  * From X11/ImUtil.c.
@@ -558,7 +558,7 @@ int ddxProcessArgument(int argc, char *argv[], int i)
       fprintf(stderr, "ddxProcessArgument: User defined font path [%s].\n", argv[i]);
       #endif
 
-      nxagentUserDefinedFontPath = 1;
+      nxagentUserDefinedFontPath = True;
       defaultFontPath = argv[i];
     }
     else
