@@ -509,7 +509,7 @@ FIXME: The popup could be synchronized with one single put image,
 
       nxagentChangeClip(targetGC, CT_NONE, NullRegion, 0);
 
-      if (pClipRegionFree == True)
+      if (pClipRegionFree)
       {
         nxagentFreeRegion(pClipRegion);
       }
@@ -1540,7 +1540,7 @@ void nxagentPolyFillRect(DrawablePtr pDrawable, GCPtr pGC,
    * will be cleared.
    */
 
-  int inheritCorruptedRegion = 0;
+  Bool inheritCorruptedRegion = False;
 
   if (pGC -> fillStyle == FillTiled &&
           pGC -> tileIsPixel == 0 && pGC -> tile.pixmap != NULL)
@@ -1556,11 +1556,11 @@ void nxagentPolyFillRect(DrawablePtr pDrawable, GCPtr pGC,
 
       #endif
 
-      inheritCorruptedRegion = 1;
+      inheritCorruptedRegion = True;
     }
   }
 
-  if (inheritCorruptedRegion == 1 || nxagentDrawableStatus(pDrawable) == NotSynchronized)
+  if (inheritCorruptedRegion || nxagentDrawableStatus(pDrawable) == NotSynchronized)
   {
     RegionPtr rectRegion = RegionFromRects(nRectangles, pRectangles, CT_REGION);
 
@@ -1582,7 +1582,7 @@ void nxagentPolyFillRect(DrawablePtr pDrawable, GCPtr pGC,
       RegionUninit(&tmpRegion);
     }
 
-    if (inheritCorruptedRegion == 1)
+    if (inheritCorruptedRegion)
     {
       /*
        * The fill style should affect the corrupted region
