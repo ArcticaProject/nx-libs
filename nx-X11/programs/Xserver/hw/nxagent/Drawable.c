@@ -357,9 +357,9 @@ int nxagentSynchronizeRegion(DrawablePtr pDrawable, RegionPtr pRegion, unsigned 
    * full drawable.
    */
 
-  int useStoredBitmap = (nxagentDrawableBitmap(pDrawable) != NullPixmap && pRegion == NullRegion);
+  Bool useStoredBitmap = (nxagentDrawableBitmap(pDrawable) != NullPixmap && pRegion == NullRegion);
 
-  if (useStoredBitmap != 0)
+  if (useStoredBitmap)
   {
     #ifdef TEST
     fprintf(stderr, "nxagentSynchronizeRegion: Drawable [%s] at [%p] has a synchronization bitmap at [%p] "
@@ -1023,7 +1023,7 @@ void nxagentSynchronizeDrawablePredicate(void *p0, XID x1, void *p2)
   DrawablePtr pDrawable = (DrawablePtr) p0;
   unsigned int *breakMask = (unsigned int *) p2;
 
-  int shouldClearHiddenRegion = 1;
+  Bool shouldClearHiddenRegion = True;
 
   /*
    * The nxagentSynchronization.abort propagates a break condition
@@ -1104,7 +1104,7 @@ void nxagentSynchronizeDrawablePredicate(void *p0, XID x1, void *p2)
                 (void *) pDrawable);
     #endif
 
-    if (shouldClearHiddenRegion == 1)
+    if (shouldClearHiddenRegion)
     {
       #ifdef TEST
       fprintf(stderr, "nxagentSynchronizeDrawablePredicate: Clearing out the not visible window "
@@ -1180,7 +1180,7 @@ FIXME: This condition sounds only as a complication, as the break
      */
 
     if (nxagentSynchronization.abort == 0 &&
-            shouldClearHiddenRegion == 1)
+            shouldClearHiddenRegion)
     {
       #ifdef TEST
       fprintf(stderr, "nxagentSynchronizeDrawablePredicate: Clearing out the remaining corrupted "
