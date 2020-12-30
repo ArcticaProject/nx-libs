@@ -261,10 +261,10 @@ Bool nxagentWindowIsPopup(DrawablePtr pDrawable)
 }
 
 /*
- * This function returns 1 if the XCopyArea request must be skipped.
+ * This function returns True if the XCopyArea request must be skipped.
  */
 
-int nxagentDeferCopyArea(DrawablePtr pSrcDrawable, DrawablePtr pDstDrawable,
+Bool nxagentDeferCopyArea(DrawablePtr pSrcDrawable, DrawablePtr pDstDrawable,
                             GCPtr pGC, int srcx, int srcy, int width,
                                 int height, int dstx, int dsty)
 {
@@ -317,7 +317,7 @@ FIXME: The popup could be synchronized with one single put image,
 
     if (nxagentDrawableStatus(pSrcDrawable) == Synchronized)
     {
-      return 0;
+      return False;
     }
   }
 
@@ -532,7 +532,7 @@ FIXME: The popup could be synchronized with one single put image,
 
     nxagentFreeRegion(pCorruptedRegion);
 
-    return 1;
+    return True;
   }
   else
   {
@@ -565,14 +565,14 @@ FIXME: The popup could be synchronized with one single put image,
     nxagentFreeRegion(pSrcRegion);
   }
 
-  return 0;
+  return False;
 }
 
 RegionPtr nxagentCopyArea(DrawablePtr pSrcDrawable, DrawablePtr pDstDrawable,
                                GCPtr pGC, int srcx, int srcy, int width,
                                    int height, int dstx, int dsty)
 {
-  int skip = 0;
+  Bool skip = False;
 
   #ifdef TEST
   fprintf(stderr, "nxagentCopyArea: Image src [%s:%p], dst [%s:%p] (%d,%d) -> (%d,%d) size (%d,%d)\n",
@@ -761,7 +761,7 @@ RegionPtr nxagentCopyArea(DrawablePtr pSrcDrawable, DrawablePtr pDstDrawable,
      * can skip the copy area operation.
      */
 
-    skip = 1;
+    skip = True;
   }
 
   #ifdef TEST
@@ -771,7 +771,7 @@ RegionPtr nxagentCopyArea(DrawablePtr pSrcDrawable, DrawablePtr pDstDrawable,
                        (void *) pDstDrawable, srcx, srcy, dstx, dsty, width, height);
   #endif
 
-  if (skip == 0 && nxagentDrawableStatus(pSrcDrawable) == NotSynchronized)
+  if (!skip && nxagentDrawableStatus(pSrcDrawable) == NotSynchronized)
   {
     skip = nxagentDeferCopyArea(pSrcDrawable, pDstDrawable, pGC, srcx, srcy,
                                    width, height, dstx, dsty);
@@ -784,7 +784,7 @@ RegionPtr nxagentCopyArea(DrawablePtr pSrcDrawable, DrawablePtr pDstDrawable,
   }
   #endif
 
-  if (skip == 0)
+  if (!skip)
   {
     XCopyArea(nxagentDisplay, nxagentDrawable(pSrcDrawable), nxagentDrawable(pDstDrawable),
                   nxagentGC(pGC), srcx, srcy, width, height, dstx, dsty);
@@ -881,7 +881,7 @@ RegionPtr nxagentCopyPlane(DrawablePtr pSrcDrawable, DrawablePtr pDstDrawable,
                                GCPtr pGC, int srcx, int srcy, int width, int height,
                                    int dstx, int dsty, unsigned long plane)
 {
-  int skip = 0;
+  Bool skip = False;
 
   #ifdef TEST
   fprintf(stderr, "nxagentCopyPlane: Image src [%s:%p], dst [%s:%p] (%d,%d) -> (%d,%d) size (%d,%d)\n",
@@ -969,10 +969,10 @@ RegionPtr nxagentCopyPlane(DrawablePtr pSrcDrawable, DrawablePtr pDstDrawable,
      * can skip the copy plane operation.
      */
 
-    skip = 1;
+    skip = True;
   }
 
-  if (skip == 0 && nxagentDrawableStatus(pSrcDrawable) == NotSynchronized)
+  if (!skip && nxagentDrawableStatus(pSrcDrawable) == NotSynchronized)
   {
     if (pDstDrawable -> type == DRAWABLE_PIXMAP &&
             nxagentOption(DeferLevel) > 0)
@@ -983,7 +983,7 @@ RegionPtr nxagentCopyPlane(DrawablePtr pSrcDrawable, DrawablePtr pDstDrawable,
 
       nxagentFreeRegion(pDstRegion);
 
-      skip = 1;
+      skip = True;
     }
     else
     {
@@ -1025,7 +1025,7 @@ RegionPtr nxagentCopyPlane(DrawablePtr pSrcDrawable, DrawablePtr pDstDrawable,
   }
   #endif
 
-  if (skip == 0)
+  if (!skip)
   {
     XCopyPlane(nxagentDisplay,
                    nxagentDrawable(pSrcDrawable), nxagentDrawable(pDstDrawable),
