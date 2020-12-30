@@ -458,7 +458,7 @@ Bool nxagentReconnectSession(void)
   nxagentProcessOptions(nxagentOptionsFilenameOrString);
 
 
-  if (nxagentReconnectDisplay(reconnectLossyLevel[DISPLAY_STEP]) == 0)
+  if (!nxagentReconnectDisplay(reconnectLossyLevel[DISPLAY_STEP]))
   {
     #ifdef TEST
     fprintf(stderr, "nxagentReconnectSession: WARNING! Failed display reconnection.\n");
@@ -468,7 +468,7 @@ Bool nxagentReconnectSession(void)
     goto nxagentReconnectError;
   }
 
-  if (nxagentReconnectScreen(reconnectLossyLevel[SCREEN_STEP]) == 0)
+  if (!nxagentReconnectScreen(reconnectLossyLevel[SCREEN_STEP]))
   {
     failedStep = SCREEN_STEP;
     goto nxagentReconnectError;
@@ -478,9 +478,9 @@ Bool nxagentReconnectSession(void)
 
   nxagentListRemoteFonts("*", nxagentMaxFontNames);
 
-  if (nxagentReconnectAllFonts(reconnectLossyLevel[FONT_STEP]) == 0)
+  if (!nxagentReconnectAllFonts(reconnectLossyLevel[FONT_STEP]))
   {
-    if (nxagentReconnectFailedFonts(reconnectLossyLevel[FONT_STEP]) == 0)
+    if (!nxagentReconnectFailedFonts(reconnectLossyLevel[FONT_STEP]))
     {
       failedStep = FONT_STEP;
       goto nxagentReconnectError;
@@ -515,26 +515,26 @@ Bool nxagentReconnectSession(void)
   nxagentEmptyBSPixmapList();
 
   /* FIXME: nxagentReconnectAllPixmaps will always return 1 */
-  if (nxagentReconnectAllPixmaps(reconnectLossyLevel[PIXMAP_STEP]) == 0)
+  if (!nxagentReconnectAllPixmaps(reconnectLossyLevel[PIXMAP_STEP]))
   {
     failedStep = PIXMAP_STEP;
 
     goto nxagentReconnectError;
   }
 
-  if (nxagentReconnectAllGCs(reconnectLossyLevel[GC_STEP]) == 0)
+  if (!nxagentReconnectAllGCs(reconnectLossyLevel[GC_STEP]))
   {
     failedStep = GC_STEP;
     goto nxagentReconnectError;
   }
 
-  if (nxagentReconnectAllColormap(reconnectLossyLevel[COLORMAP_STEP]) == 0)
+  if (!nxagentReconnectAllColormap(reconnectLossyLevel[COLORMAP_STEP]))
   {
     failedStep = COLORMAP_STEP;
     goto nxagentReconnectError;
   }
 
-  if (nxagentReconnectAllWindows(reconnectLossyLevel[WINDOW_STEP]) == 0)
+  if (!nxagentReconnectAllWindows(reconnectLossyLevel[WINDOW_STEP]))
   {
     failedStep = WINDOW_STEP;
     goto nxagentReconnectError;
@@ -542,32 +542,32 @@ Bool nxagentReconnectSession(void)
 
   if (nxagentRenderEnable)
   {
-    if (nxagentReconnectAllGlyphSet(reconnectLossyLevel[GLYPHSET_STEP]) == 0)
+    if (!nxagentReconnectAllGlyphSet(reconnectLossyLevel[GLYPHSET_STEP]))
     {
       failedStep = GLYPHSET_STEP;
       goto nxagentReconnectError;
     }
 
-    if (nxagentReconnectAllPictFormat(reconnectLossyLevel[PICTFORMAT_STEP]) == 0)
+    if (!nxagentReconnectAllPictFormat(reconnectLossyLevel[PICTFORMAT_STEP]))
     {
       failedStep = PICTFORMAT_STEP;
       goto nxagentReconnectError;
     }
 
-    if (nxagentReconnectAllPicture(reconnectLossyLevel[PICTURE_STEP]) == 0)
+    if (!nxagentReconnectAllPicture(reconnectLossyLevel[PICTURE_STEP]))
     {
       failedStep = PICTURE_STEP;
       goto nxagentReconnectError;
     }
   }
 
-  if (nxagentReconnectAllCursor(reconnectLossyLevel[CURSOR_STEP]) == 0)
+  if (!nxagentReconnectAllCursor(reconnectLossyLevel[CURSOR_STEP]))
   {
     failedStep = CURSOR_STEP;
     goto nxagentReconnectError;
   }
 
-  if (nxagentSetWindowCursors(reconnectLossyLevel[WINDOW_STEP]) == 0)
+  if (!nxagentSetWindowCursors(reconnectLossyLevel[WINDOW_STEP]))
   {
     failedStep = WINDOW_STEP;
     goto nxagentReconnectError;
