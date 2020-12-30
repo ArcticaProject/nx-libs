@@ -1959,7 +1959,7 @@ FIXME: Don't enqueue the KeyRelease event if the key was not already
           if (nxagentExposeQueue.exposures[nxagentExposeQueue.start].serial != X.xconfigure.x)
           {
             #ifdef WARNING
-            if (nxagentVerbose == 1)
+            if (nxagentVerbose)
             {
               fprintf(stderr, "%s: Requested ConfigureNotify changes didn't take place.\n", __func__);
             }
