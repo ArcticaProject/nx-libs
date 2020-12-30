@@ -575,7 +575,7 @@ void nxagentSwitchResizeMode(ScreenPtr pScreen)
 
     nxagentLaunchDialog(DIALOG_DISABLE_DESKTOP_RESIZE_MODE);
 
-    if (nxagentOption(Fullscreen) == 0)
+    if (!nxagentOption(Fullscreen))
     {
       nxagentSetWMNormalHintsMaxsize(pScreen,
                                      nxagentOption(RootWidth),
@@ -1724,7 +1724,7 @@ FIXME: Don't enqueue the KeyRelease event if the key was not already
           nxagentScreenTrap = False;
         }
 
-        if (nxagentOption(Fullscreen) == 1 &&
+        if (nxagentOption(Fullscreen) &&
                 X.xcrossing.window == nxagentFullscreenWindow &&
                     X.xcrossing.detail != NotifyInferior)
         {
@@ -2057,7 +2057,7 @@ FIXME: Don't enqueue the KeyRelease event if the key was not already
           }
         }
 
-        if (nxagentOption(AllScreens) == 1)
+        if (nxagentOption(AllScreens))
         {
           if (X.xmap.window == nxagentIconWindow)
           {
@@ -2066,7 +2066,7 @@ FIXME: Don't enqueue the KeyRelease event if the key was not already
           }
         }
 
-        if (nxagentOption(Fullscreen) == 1)
+        if (nxagentOption(Fullscreen))
         {
           nxagentVisibility = VisibilityUnobscured;
           nxagentVisibilityStop = False;
@@ -2185,7 +2185,7 @@ FIXME: Don't enqueue the KeyRelease event if the key was not already
 
   if (switchFullscreen)
   {
-    if (nxagentOption(AllScreens) == 1 && nxagentOption(Fullscreen) == 1)
+    if (nxagentOption(AllScreens) && nxagentOption(Fullscreen))
     {
       nxagentSwitchAllScreens(pScreen, 0);
     }
@@ -2197,7 +2197,7 @@ FIXME: Don't enqueue the KeyRelease event if the key was not already
 
   if (switchAllScreens)
   {
-    if (nxagentOption(AllScreens) == 0 && nxagentOption(Fullscreen) == 1)
+    if (!nxagentOption(AllScreens) && nxagentOption(Fullscreen))
     {
       nxagentSwitchFullscreen(pScreen, False);
     }
@@ -3291,7 +3291,7 @@ int nxagentHandleConfigureNotify(XEvent* X)
 
     if (X -> xconfigure.window == nxagentDefaultWindows[pScreen -> myNum])
     {
-      if (nxagentOption(AllScreens) == 0)
+      if (!nxagentOption(AllScreens))
       {
         /*
          * - WITHOUT window manager any position change is relevant
@@ -3409,7 +3409,7 @@ int nxagentHandleConfigureNotify(XEvent* X)
         XMoveResizeWindow(nxagentDisplay, nxagentInputWindows[0], 0, 0,
                               X -> xconfigure.width, X -> xconfigure.height);
 
-        if (nxagentOption(Fullscreen) == 0)
+        if (!nxagentOption(Fullscreen))
         {
 	  /* FIXME: has already been done some lines above */
           nxagentMoveViewport(pScreen, 0, 0);
@@ -3592,7 +3592,7 @@ int nxagentHandleReparentNotify(XEvent* X)
 
     return 1;
   }
-  else if (nxagentWMIsRunning && nxagentOption(Fullscreen) == 0 &&
+  else if (nxagentWMIsRunning && !nxagentOption(Fullscreen) &&
                nxagentOption(WMBorderWidth) == -1)
   {
     /*

@@ -589,7 +589,7 @@ int ddxProcessArgument(int argc, char *argv[], int i)
         }
       }
 
-      if (nxagentUserGeometry.flag || (nxagentOption(Fullscreen) == 1))
+      if (nxagentUserGeometry.flag || (nxagentOption(Fullscreen)))
       {
 	return 2;
       }
@@ -1749,7 +1749,7 @@ N/A
 
     #endif
 
-    if ((nxagentOption(Rootless) == 1) && nxagentOption(Fullscreen) == 1)
+    if ((nxagentOption(Rootless) == 1) && nxagentOption(Fullscreen))
     {
       #ifdef TEST
       fprintf(stderr, "WARNING: Ignoring fullscreen option for rootless session.\n");
@@ -1973,16 +1973,6 @@ N/A
     /*
      * Set the other defaults.
      */
-
-    if (nxagentOption(Fullscreen) == UNDEFINED)
-    {
-      nxagentChangeOption(Fullscreen, False);
-    }
-
-    if (nxagentOption(AllScreens) == UNDEFINED)
-    {
-      nxagentChangeOption(AllScreens, False);
-    }
 
     if (nxagentOption(Binder) == UNDEFINED)
     {
