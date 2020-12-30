@@ -660,7 +660,7 @@ static void nxagentSwitchDeferMode(void)
   {
     nxagentLaunchDialog(DIALOG_DISABLE_DEFER_MODE);
 
-    nxagentForceSynchronization = 1;
+    nxagentForceSynchronization = True;
   }
 }
 

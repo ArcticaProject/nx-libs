@@ -310,7 +310,7 @@ void nxagentBlockHandler(void * data, struct timeval **timeout, void * mask)
      * operation.
      */
 
-    if (nxagentForceSynchronization == 1)
+    if (nxagentForceSynchronization)
     {
       #ifdef TEST
       fprintf(stderr, "nxagentBlockHandler: Going to force a synchronization at %s.\n",
@@ -319,7 +319,7 @@ void nxagentBlockHandler(void * data, struct timeval **timeout, void * mask)
 
       nxagentSynchronizationLoop(NEVER_BREAK);
 
-      nxagentForceSynchronization = 0;
+      nxagentForceSynchronization = False;
     }
     else if (nxagentUserInput(NULL) == 0 &&
                  !nxagentBlocking &&
