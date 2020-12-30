@@ -417,7 +417,7 @@ void nxagentRandRSetWindowsSize(int width, int height)
 
   XResizeWindow(nxagentDisplay, nxagentDefaultWindows[0], width, height);
 
-  if (nxagentOption(Rootless) == 0)
+  if (!nxagentOption(Rootless))
   {
     XMoveResizeWindow(nxagentDisplay, nxagentInputWindows[0], 0, 0, width,
                           height);
