@@ -2146,7 +2146,7 @@ void nxagentWindowExposures(WindowPtr pWin, RegionPtr pRgn, RegionPtr other_expo
 
   if (nxagentSessionState != SESSION_DOWN)
   {
-    if (nxagentExposeArrayIsInitialized == 0)
+    if (!nxagentExposeArrayIsInitialized)
     {
       #ifdef TEST
       fprintf(stderr, "nxagentWindowExposures: Initializing expose queue.\n");
@@ -2171,7 +2171,7 @@ void nxagentWindowExposures(WindowPtr pWin, RegionPtr pRgn, RegionPtr other_expo
 
       nxagentInitRemoteExposeRegion();
 
-      nxagentExposeArrayIsInitialized = 1;
+      nxagentExposeArrayIsInitialized = True;
     }
 
     RegionRec temp;
