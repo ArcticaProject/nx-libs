@@ -123,7 +123,7 @@ unsigned long nxagentGetColor(DrawablePtr pDrawable, int xPixel, int yPixel);
 unsigned long nxagentGetDrawableColor(DrawablePtr pDrawable);
 unsigned long nxagentGetRegionColor(DrawablePtr pDrawable, RegionPtr pRegion);
 
-int nxagentSkipImage = 0;
+Bool nxagentSkipImage = False;
 
 static int nxagentTooManyImageData(void)
 {
