@@ -457,7 +457,7 @@ void nxagentWaitWakeupBySplit(ClientPtr client)
 {
   #ifdef TEST
 
-  if (nxagentNeedWakeupBySplit(client) == 0)
+  if (!nxagentNeedWakeupBySplit(client))
   {
     fprintf(stderr, "++++++nxagentWaitWakeupBySplit: WARNING! The client [%d] is already awake.\n",
                 client -> index);
@@ -497,12 +497,12 @@ void nxagentWaitWakeupBySplit(ClientPtr client)
 
     #endif
 
-    if (nxagentNeedWakeupBySplit(client) == 0 ||
+    if (!nxagentNeedWakeupBySplit(client) ||
             NXDisplayError(nxagentDisplay) == 1)
     {
       #ifdef TEST
 
-      if (nxagentNeedWakeupBySplit(client) == 0)
+      if (!nxagentNeedWakeupBySplit(client))
       {
         fprintf(stderr, "++++++nxagentWaitWakeupBySplit: Client [%d] can now run.\n",
                     client -> index);
@@ -535,7 +535,7 @@ FIXME: Should record a serial number for the client, so that the
 */
   if (client -> index < MAX_CONNECTIONS)
   {
-    if (nxagentNeedWakeup(client) == 0)
+    if (!nxagentNeedWakeup(client))
     {
       #ifdef TEST
       fprintf(stderr, "++++++nxagentSuspendBySplit: Suspending client [%d] with agent sequence [%ld].\n",
@@ -583,7 +583,7 @@ FIXME: Should record a serial number for the client, so that the
   {
     nxagentClientPriv(client) -> clientState &= ~SleepingBySplit;
 
-    if (nxagentNeedWakeup(client) == 0)
+    if (!nxagentNeedWakeup(client))
     {
       #ifdef TEST
       fprintf(stderr, "++++++nxagentWakeupBySplit: Resuming client [%d] with agent sequence [%ld].\n",
@@ -629,7 +629,7 @@ void nxagentCheckRestartedClients(struct timeval **timeout)
   for (int i = 1; i < currentMaxClients; i++)
   {
     if (clients[i] != NULL && clients[i] -> osPrivate != NULL &&
-           nxagentNeedWakeup(clients[i]) == 0)
+           !nxagentNeedWakeup(clients[i]))
     {
       int fd = ((OsCommPtr) clients[i] -> osPrivate) -> fd;
 
