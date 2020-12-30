@@ -157,7 +157,7 @@ extern int nxagentCorruptedPixmaps;
 extern int nxagentCorruptedWindows;
 extern int nxagentCorruptedBackgrounds;
 
-extern int nxagentForceSynchronization;
+extern Bool nxagentForceSynchronization;
 
 extern RegionPtr nxagentCreateRegion(DrawablePtr pDrawable, GCPtr pGC, int x, int y,
                                   int width, int height);

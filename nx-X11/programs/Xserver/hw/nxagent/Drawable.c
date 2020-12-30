@@ -99,7 +99,7 @@ int nxagentCorruptedPixmaps     = 0;
 int nxagentCorruptedWindows     = 0;
 int nxagentCorruptedBackgrounds = 0;
 
-int nxagentForceSynchronization = 0;
+Bool nxagentForceSynchronization = False;
 
 _nxagentSynchronizationRec nxagentSynchronization = { (DrawablePtr) NULL, 0, 0, 0, 0, 0 };
 

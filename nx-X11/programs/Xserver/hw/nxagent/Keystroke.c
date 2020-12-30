@@ -624,7 +624,7 @@ Bool nxagentCheckSpecialKeystroke(XKeyEvent *X, enum HandleEventResult *result)
       return True;
       break;
     case KEYSTROKE_FORCE_SYNCHRONIZATION:
-      nxagentForceSynchronization = 1;
+      nxagentForceSynchronization = True;
       break;
 #ifdef DUMP
     case KEYSTROKE_REGIONS_ON_SCREEN:
