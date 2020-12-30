@@ -1220,13 +1220,13 @@ static void nxagentParseSingleOption(char *name, char *value)
   }
   else if (!strcmp(name, "resize"))
   {
-    if (nxagentOption(DesktopResize) == 0 || strcmp(value, "0") == 0)
+    if (!nxagentOption(DesktopResize) || strcmp(value, "0") == 0)
     {
-      nxagentResizeDesktopAtStartup = 0;
+      nxagentResizeDesktopAtStartup = False;
     }
     else if (strcmp(value, "1") == 0)
     {
-      nxagentResizeDesktopAtStartup = 1;
+      nxagentResizeDesktopAtStartup = True;
     }
     else
     {

@@ -569,7 +569,7 @@ void nxagentSwitchResizeMode(ScreenPtr pScreen)
 
   nxagentChangeOption(DesktopResize, !desktopResize);
 
-  if (nxagentOption(DesktopResize) == 0)
+  if (!nxagentOption(DesktopResize))
   {
     fprintf(stderr,"Info: Disabled desktop resize mode in agent.\n");
 
@@ -607,7 +607,7 @@ void nxagentShadowSwitchResizeMode(ScreenPtr pScreen)
 
   nxagentChangeOption(DesktopResize, !desktopResize);
 
-  if (nxagentOption(DesktopResize) == 0)
+  if (!nxagentOption(DesktopResize))
   {
     nxagentShadowSetRatio(1.0, 1.0);
 
@@ -1229,7 +1229,7 @@ FIXME: Don't enqueue the KeyRelease event if the key was not already
           }
         }
 
-        if (nxagentOption(DesktopResize) == False &&
+        if (!nxagentOption(DesktopResize) &&
                 (X.xbutton.state & (ControlMask | Mod1Mask)) == (ControlMask | Mod1Mask))
         {
           /*
@@ -3303,7 +3303,7 @@ int nxagentHandleConfigureNotify(XEvent* X)
         int newX = X -> xconfigure.x;
         int newY = X -> xconfigure.y;
 
-        if (nxagentOption(DesktopResize) == 1)
+        if (nxagentOption(DesktopResize))
         {
           if (nxagentOption(Width) != X -> xconfigure.width ||
                 nxagentOption(Height) != X -> xconfigure.height ||
@@ -3369,7 +3369,7 @@ int nxagentHandleConfigureNotify(XEvent* X)
           nxagentChangeOption(Y, newY);
         }
 
-        if (nxagentOption(Shadow) == 1 && nxagentOption(DesktopResize) == 1 &&
+        if (nxagentOption(Shadow) == 1 && nxagentOption(DesktopResize) &&
                 (nxagentOption(Width) != X -> xconfigure.width ||
                     nxagentOption(Height) != X -> xconfigure.height))
         {

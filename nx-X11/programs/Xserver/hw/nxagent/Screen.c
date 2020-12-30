@@ -966,7 +966,7 @@ Bool nxagentOpenScreen(ScreenPtr pScreen, int argc, char *argv[])
   if (nxagentOption(Fullscreen) &&
           nxagentWMIsRunning &&
               nxagentReconnectTrap &&
-                  nxagentResizeDesktopAtStartup == False &&
+                  !nxagentResizeDesktopAtStartup &&
                       nxagentXServerGeometryChanged())
   {
     #ifdef TEST
@@ -1836,7 +1836,7 @@ N/A
       sizeHints->width = nxagentOption(RootWidth);
       sizeHints->height = nxagentOption(RootHeight);
 
-      if (nxagentOption(DesktopResize) == 1 || nxagentOption(Fullscreen))
+      if (nxagentOption(DesktopResize) || nxagentOption(Fullscreen))
       {
         sizeHints->max_width = WidthOfScreen(DefaultScreenOfDisplay(nxagentDisplay));
         sizeHints->max_height = HeightOfScreen(DefaultScreenOfDisplay(nxagentDisplay));
@@ -4399,7 +4399,7 @@ void nxagentSetWMNormalHints(int screen, int width, int height)
   sizeHints->width = width;
   sizeHints->height = height;
 
-  if (nxagentOption(DesktopResize) == 1)
+  if (nxagentOption(DesktopResize))
   {
     sizeHints->max_width = WidthOfScreen(DefaultScreenOfDisplay(nxagentDisplay));
     sizeHints->max_height = HeightOfScreen(DefaultScreenOfDisplay(nxagentDisplay));

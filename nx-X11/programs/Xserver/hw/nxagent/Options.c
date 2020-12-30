@@ -108,7 +108,7 @@ void nxagentInitOptions(void)
   nxagentOptions.ViewportXSpan = 0;
   nxagentOptions.ViewportYSpan = 0;
 
-  nxagentOptions.DesktopResize = 1;
+  nxagentOptions.DesktopResize = True;
 
   nxagentOptions.Ratio  = DONT_SCALE;
   nxagentOptions.XRatio = DONT_SCALE;
