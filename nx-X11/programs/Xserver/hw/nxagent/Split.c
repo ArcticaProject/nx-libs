@@ -612,7 +612,7 @@ void nxagentValidateSplit(DrawablePtr pDrawable, RegionPtr pRegion)
 
     RegionIntersect(&tmpRegion, pResource -> region, pRegion);
 
-    if (RegionNil(&tmpRegion) == 0)
+    if (!RegionNil(&tmpRegion))
     {
       #ifdef TEST
       fprintf(stderr, "nxagentValidateSplit: Marking the overlapping commits as invalid "
@@ -1074,7 +1074,7 @@ void nxagentHandleEndSplitEvent(int resource)
       if (pResource -> drawable != NULL &&
               pResource -> region != NullRegion)
       {
-        if (RegionNil(pResource -> region) == 0)
+        if (!RegionNil(pResource -> region))
         {
           RegionSubtract(
                               nxagentCorruptedRegion(pResource -> drawable),

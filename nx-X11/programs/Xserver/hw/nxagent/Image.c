@@ -544,7 +544,7 @@ void nxagentPutImage(DrawablePtr pDrawable, GCPtr pGC, int depth,
 
   pRegion = nxagentCreateRegion(pDrawable, pGC, dstX, dstY, dstWidth, dstHeight);
 
-  if (RegionNil(pRegion) == 1)
+  if (RegionNil(pRegion))
   {
     #ifdef TEST
     fprintf(stderr, "nxagentPutImage: WARNING! Prevented operation on fully clipped "
@@ -987,7 +987,7 @@ void nxagentRealizeImage(DrawablePtr pDrawable, GCPtr pGC, int depth,
       clipRegion = nxagentCreateRegion(pDrawable, pGC, x, y, w, h);
     }
 
-    if (clipRegion == NullRegion || RegionNil(clipRegion) == 0)
+    if (clipRegion == NullRegion || !RegionNil(clipRegion))
     {
       nxagentPutSubImage(pDrawable, pGC, depth, x, y, w, h,
                              leftPad, format, data, pVisual);

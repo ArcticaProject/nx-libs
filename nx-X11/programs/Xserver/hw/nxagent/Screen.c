@@ -2903,7 +2903,7 @@ int nxagentShadowSendUpdates(int *suspended)
 {
   *suspended = 0;
 
-  if (RegionNil(&nxagentShadowUpdateRegion) == 1)
+  if (RegionNil(&nxagentShadowUpdateRegion))
   {
     return 0;
   }
