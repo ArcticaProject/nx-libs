@@ -643,7 +643,7 @@ Bool nxagentDestroyWindow(WindowPtr pWin)
   }
 
   if (nxagentOption(Rootless) && nxagentRootlessDialogPid == 0 &&
-          nxagentLastWindowDestroyed == False && nxagentSomeWindowsAreMapped() == False)
+          !nxagentLastWindowDestroyed && nxagentSomeWindowsAreMapped() == False)
   {
     #ifdef TEST
     fprintf(stderr, "nxagentDestroyWindow: Last mapped window as been destroyed.\n");

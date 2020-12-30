@@ -222,7 +222,7 @@ void nxagentBlockHandler(void * data, struct timeval **timeout, void * mask)
 
   #ifdef TEST
 
-  if (nxagentLastWindowDestroyed == 1)
+  if (nxagentLastWindowDestroyed)
   {
     fprintf(stderr, "nxagentBlockHandler: Elapsed time [%lu].\n",
                 now - nxagentLastWindowDestroyedTime);
