@@ -63,7 +63,7 @@
 
 /*
  * The rectangles composing a region are de- fragmented to reduce the
- * number of synch- ronizing PutImage's.
+ * number of synchronizing PutImage()s.
  */
 
 #define ADVANCED_BOXES_DEFRAG
@@ -588,7 +588,7 @@ int nxagentSynchronizeRegion(DrawablePtr pDrawable, RegionPtr pRegion, unsigned 
 
   unsigned long now = GetTimeInMillis();
 
-  nxagentSynchronization.abort = 0;
+  nxagentSynchronization.abort = False;
 
   /*
    * Going to split the updated region into small blocks.
@@ -652,7 +652,7 @@ int nxagentSynchronizeRegion(DrawablePtr pDrawable, RegionPtr pRegion, unsigned 
                         "[%lu] ms elapsed.\n", elapsedTime);
             #endif
 
-            nxagentSynchronization.abort = 1;
+            nxagentSynchronization.abort = True;
 
             goto nxagentSynchronizeRegionStop;
           }
@@ -670,7 +670,7 @@ int nxagentSynchronizeRegion(DrawablePtr pDrawable, RegionPtr pRegion, unsigned 
                           nxagentBlocking);
           #endif
 
-          nxagentSynchronization.abort = 1;
+          nxagentSynchronization.abort = True;
 
           goto nxagentSynchronizeRegionStop;
         }
@@ -687,7 +687,7 @@ int nxagentSynchronizeRegion(DrawablePtr pDrawable, RegionPtr pRegion, unsigned 
                           nxagentCongestion);
           #endif
 
-          nxagentSynchronization.abort = 1;
+          nxagentSynchronization.abort = True;
 
           goto nxagentSynchronizeRegionStop;
         }
@@ -834,7 +834,7 @@ int nxagentSynchronizeRegion(DrawablePtr pDrawable, RegionPtr pRegion, unsigned 
                       "new input events.\n");
           #endif
 
-          nxagentSynchronization.abort = 1;
+          nxagentSynchronization.abort = True;
 
           goto nxagentSynchronizeRegionStop;
         }
@@ -854,7 +854,7 @@ nxagentSynchronizeRegionStop:
 
   if (!nxagentOption(Shadow))
   {
-    if (nxagentSynchronization.abort == 1)
+    if (nxagentSynchronization.abort)
     {
       /*
        * Storing the pointer to the drawable we were synchronizing
@@ -1031,7 +1031,7 @@ void nxagentSynchronizeDrawablePredicate(void *p0, XID x1, void *p2)
    * synchronizations.
    */
 
-  if (nxagentSynchronization.abort == 1 ||
+  if (nxagentSynchronization.abort ||
           nxagentDrawableStatus(pDrawable) == Synchronized)
   {
     return;
@@ -1138,7 +1138,7 @@ FIXME: This condition sounds only as a complication, as the break
                     nxagentCongestion, nxagentBlocking);
     #endif
 
-    nxagentSynchronization.abort = 1;
+    nxagentSynchronization.abort = True;
 
     return;
   }
@@ -1179,7 +1179,7 @@ FIXME: This condition sounds only as a complication, as the break
      * clear it.
      */
 
-    if (nxagentSynchronization.abort == 0 &&
+    if (!nxagentSynchronization.abort &&
             shouldClearHiddenRegion)
     {
       #ifdef TEST
@@ -1243,7 +1243,7 @@ FIXME: All drawables should be set as synchronized and never marked as
 
   int doRoundRobin = (nxagentSynchronization.pDrawable != NULL);
 
-  nxagentSynchronization.abort = 0;
+  nxagentSynchronization.abort = False;
 
   /*
    * Synchronize the windows.
@@ -1260,7 +1260,7 @@ FIXME: All drawables should be set as synchronized and never marked as
 
     #ifdef TEST
 
-    if (nxagentSynchronization.abort == 0 &&
+    if (!nxagentSynchronization.abort &&
             nxagentSynchronization.windowBitmaps == 0 &&
                 doRoundRobin == 0)
     {
@@ -1280,7 +1280,7 @@ FIXME: All drawables should be set as synchronized and never marked as
    * Synchronize the backgrounds.
    */
 
-  if (nxagentSynchronization.abort == 0 &&
+  if (!nxagentSynchronization.abort &&
           NXAGENT_SHOULD_SYNCHRONIZE_CORRUPTED_BACKGROUNDS(mask))
   {
     #ifdef TEST
@@ -1292,7 +1292,7 @@ FIXME: All drawables should be set as synchronized and never marked as
 
     #ifdef TEST
 
-    if (nxagentSynchronization.abort == 0 &&
+    if (!nxagentSynchronization.abort &&
             nxagentSynchronization.backgroundBitmaps == 0 &&
                 doRoundRobin == 0)
     {
@@ -1315,7 +1315,7 @@ FIXME: All drawables should be set as synchronized and never marked as
    * the pixmap in a copy or in a composite operation.
    */
 
-  if (nxagentSynchronization.abort == 0 &&
+  if (!nxagentSynchronization.abort &&
           NXAGENT_SHOULD_SYNCHRONIZE_CORRUPTED_PIXMAPS(mask))
   {
     #ifdef TEST
@@ -1326,7 +1326,7 @@ FIXME: All drawables should be set as synchronized and never marked as
                                   nxagentSynchronizeDrawablePredicate, &breakMask);
 
 
-    if (nxagentSynchronization.abort == 0 &&
+    if (!nxagentSynchronization.abort &&
             nxagentSynchronization.pixmapBitmaps == 0 &&
                 doRoundRobin == 0)
     {

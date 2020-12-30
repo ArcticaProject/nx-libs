@@ -38,7 +38,7 @@ typedef struct
 {
   DrawablePtr pDrawable;
   int         drawableType;
-  int         abort;
+  Bool        abort;
   int         windowBitmaps;
   int         pixmapBitmaps;
   int         backgroundBitmaps;
