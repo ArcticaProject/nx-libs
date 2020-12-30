@@ -178,7 +178,7 @@ static void nxagentParseOptionString(char*);
 
 static int nxagentGetDialogName(void);
 
-char nxagentVerbose = 0;
+Bool nxagentVerbose = False;
 
 char *nxagentKeystrokeFile = NULL;
 
@@ -964,7 +964,7 @@ int ddxProcessArgument(int argc, char *argv[], int i)
 
   if (!strcmp(argv[i], "-verbose"))
   {
-    nxagentVerbose = 1;
+    nxagentVerbose = True;
     return 1;
   }
 
