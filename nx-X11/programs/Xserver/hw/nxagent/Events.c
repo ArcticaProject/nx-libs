@@ -1097,7 +1097,7 @@ void nxagentDispatchEvents(PredicateFuncPtr predicate)
           nxagentRemoveDuplicatedKeys(&X);
         }
 
-        if (nxagentOption(ViewOnly) == 0 && nxagentOption(Shadow) == 1 && result == doNothing)
+        if (!nxagentOption(ViewOnly) && nxagentOption(Shadow) == 1 && result == doNothing)
         {
           X.xkey.keycode = nxagentConvertKeycode(X.xkey.keycode);
 
@@ -1190,7 +1190,7 @@ FIXME: Don't enqueue the KeyRelease event if the key was not already
 
           CriticalOutputPending = 1;
 
-          if (nxagentOption(ViewOnly) == 0 && nxagentOption(Shadow))
+          if (!nxagentOption(ViewOnly) && nxagentOption(Shadow))
           {
             X.xkey.keycode = nxagentConvertKeycode(X.xkey.keycode);
 
@@ -1219,7 +1219,7 @@ FIXME: Don't enqueue the KeyRelease event if the key was not already
 
         if (nxagentOption(Fullscreen))
         {
-          if ( (nxagentOption(MagicPixel) == 1) && (nxagentMagicPixelZone(X.xbutton.x, X.xbutton.y)) )
+          if ( nxagentOption(MagicPixel) && nxagentMagicPixelZone(X.xbutton.x, X.xbutton.y) )
           {
             pScreen = nxagentScreen(X.xbutton.window);
 
@@ -1285,7 +1285,7 @@ FIXME: Don't enqueue the KeyRelease event if the key was not already
           CriticalOutputPending = 1;
         }
 
-        if (nxagentOption(ViewOnly) == 0 && nxagentOption(Shadow))
+        if (!nxagentOption(ViewOnly) && nxagentOption(Shadow))
         {
           X.xbutton.x -= nxagentOption(RootX);
           X.xbutton.y -= nxagentOption(RootY);
@@ -1359,7 +1359,7 @@ FIXME: Don't enqueue the KeyRelease event if the key was not already
           CriticalOutputPending = 1;
         }
 
-        if (nxagentOption(ViewOnly) == 0 && nxagentOption(Shadow))
+        if (!nxagentOption(ViewOnly) && nxagentOption(Shadow))
         {
           X.xbutton.x -= nxagentOption(RootX);
           X.xbutton.y -= nxagentOption(RootY);
@@ -1420,7 +1420,7 @@ FIXME: Don't enqueue the KeyRelease event if the key was not already
                                 (nxagentLastEnteredTopLevelWindow -> drawable.width >> 1) - 50) &&
                                     X.xmotion.x_root < (nxagentLastEnteredTopLevelWindow -> drawable.x +
                                         (nxagentLastEnteredTopLevelWindow -> drawable.width >> 1) + 50) &&
-                                            nxagentOption(Menu) == 1)
+                                            nxagentOption(Menu))
             {
               nxagentPulldownDialog(nxagentLastEnteredTopLevelWindow -> drawable.id);
             }
@@ -1474,7 +1474,7 @@ FIXME: Don't enqueue the KeyRelease event if the key was not already
           viewportLastY = X.xmotion.y;
         }
 
-        if (nxagentOption(ViewOnly) == 0 && nxagentOption(Shadow) && !viewportCursor)
+        if (!nxagentOption(ViewOnly) && nxagentOption(Shadow) && !viewportCursor)
         {
           X.xmotion.x -= nxagentOption(RootX);
           X.xmotion.y -= nxagentOption(RootY);
@@ -1609,7 +1609,7 @@ FIXME: Don't enqueue the KeyRelease event if the key was not already
                     x.u.u.detail = i * 8 + k;
                     x.u.keyButtonPointer.time = nxagentLastEventTime = GetTimeInMillis();
 
-                    if (nxagentOption(ViewOnly) == 0 && nxagentOption(Shadow))
+                    if (!nxagentOption(ViewOnly) && nxagentOption(Shadow))
                     {
                       XEvent xM = {0};
                       xM.type = KeyRelease;
@@ -2020,7 +2020,7 @@ FIXME: Don't enqueue the KeyRelease event if the key was not already
         }
 
         if (nxagentUseNXTrans == 1 && nxagentOption(Rootless) == 0 &&
-                nxagentOption(Nested) == 0 &&
+                !nxagentOption(Nested) &&
                     X.xmap.window != nxagentIconWindow)
         {
           nxagentVisibility = VisibilityFullyObscured;

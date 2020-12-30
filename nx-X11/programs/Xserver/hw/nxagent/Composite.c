@@ -57,7 +57,7 @@ void nxagentCompositeExtensionInit(void)
 
   nxagentCompositeEnable = 0;
 
-  if (nxagentOption(Composite) == 1)
+  if (nxagentOption(Composite))
   {
     int eventBase, errorBase;
 

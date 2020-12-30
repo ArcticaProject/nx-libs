@@ -488,11 +488,11 @@ int ddxProcessArgument(int argc, char *argv[], int i)
     {
       if (!strcmp(argv[i], "0"))
       {
-        nxagentChangeOption(Streaming, 0);
+        nxagentChangeOption(Streaming, False);
       }
       else
       {
-        nxagentChangeOption(Streaming, 1);
+        nxagentChangeOption(Streaming, True);
       }
       return 2;
     }
@@ -670,7 +670,7 @@ int ddxProcessArgument(int argc, char *argv[], int i)
 
   if (!strcmp(argv[i], "-nomagicpixel"))
   {
-    nxagentChangeOption(MagicPixel, 0);
+    nxagentChangeOption(MagicPixel, False);
     return 1;
   }
 
@@ -725,13 +725,13 @@ int ddxProcessArgument(int argc, char *argv[], int i)
 
   if (!strcmp(argv[i], "-nocomposite"))
   {
-    nxagentChangeOption(Composite, 0);
+    nxagentChangeOption(Composite, False);
     return 1;
   }
 
   if (!strcmp(argv[i], "-nodamage"))
   {
-    nxagentChangeOption(UseDamage, 0);
+    nxagentChangeOption(UseDamage, False);
     return 1;
   }
 
@@ -779,7 +779,7 @@ int ddxProcessArgument(int argc, char *argv[], int i)
   if (!strcmp(argv[i], "-noignore"))
   {
     nxagentChangeOption(DeviceControl, True);
-    nxagentChangeOption(DeviceControlUserDefined , True);
+    nxagentChangeOption(DeviceControlUserDefined, True);
     return 1;
   }
 
@@ -791,7 +791,7 @@ int ddxProcessArgument(int argc, char *argv[], int i)
 
   if (!strcmp(argv[i], "-noxkblock"))
   {
-    nxagentChangeOption(InhibitXkb, 0);
+    nxagentChangeOption(InhibitXkb, False);
     return 1;
   }
 
@@ -832,7 +832,7 @@ int ddxProcessArgument(int argc, char *argv[], int i)
   {
     nxagentChangeOption(Shadow, 1);
     nxagentChangeOption(DeferLevel, 0);
-    nxagentChangeOption(Persistent, 0);
+    nxagentChangeOption(Persistent, False);
     return 1;
   }
 
@@ -858,11 +858,11 @@ int ddxProcessArgument(int argc, char *argv[], int i)
     {
       if (!strcmp(argv[i], "0"))
       {
-        nxagentChangeOption(ViewOnly, 1);
+        nxagentChangeOption(ViewOnly, True);
       }
       else
       {
-        nxagentChangeOption(ViewOnly, 0);
+        nxagentChangeOption(ViewOnly, False);
       }
       return 2;
     }
@@ -998,7 +998,7 @@ int ddxProcessArgument(int argc, char *argv[], int i)
    * has been disabled on the cmdline.
    */
   if (PANORAMIX_DISABLED_COND && RRXINERAMA_DISABLED_COND)
-    nxagentChangeOption(Xinerama, 0);
+    nxagentChangeOption(Xinerama, False);
 
   return 0;
 }
@@ -1174,11 +1174,11 @@ static void nxagentParseSingleOption(char *name, char *value)
   {
     if (!strcmp(value, "1"))
     {
-      nxagentChangeOption(Composite, 1);
+      nxagentChangeOption(Composite, True);
     }
     else if (!strcmp(value, "0"))
     {
-      nxagentChangeOption(Composite, 0);
+      nxagentChangeOption(Composite, False);
     }
     else
     {
@@ -1190,25 +1190,25 @@ static void nxagentParseSingleOption(char *name, char *value)
   else if (!strcmp(name, "xinerama"))
   {
 #if !defined(PANORAMIX) && !defined(RANDR)
-    nxagentChangeOption(Xinerama, 0);
+    nxagentChangeOption(Xinerama, False);
     fprintf(stderr, "Warning: No Xinerama support compiled into %s.\n", nxagentProgName);
     return;
 #else
     if (PANORAMIX_DISABLED_COND && RRXINERAMA_DISABLED_COND)
     {
-      nxagentChangeOption(Xinerama, 0);
+      nxagentChangeOption(Xinerama, False);
       fprintf(stderr, "Warning: XINERAMA extension has been disabled on %s startup.\n", nxagentProgName);
       return;
     }
 
     if (!strcmp(value, "1"))
     {
-      nxagentChangeOption(Xinerama, 1);
+      nxagentChangeOption(Xinerama, True);
       return;
     }
     else if (!strcmp(value, "0"))
     {
-      nxagentChangeOption(Xinerama, 0);
+      nxagentChangeOption(Xinerama, False);
     }
     else
     {
@@ -1251,11 +1251,11 @@ static void nxagentParseSingleOption(char *name, char *value)
   {
     if (!strcmp(value, "0"))
     {
-      nxagentChangeOption(Menu, 0);
+      nxagentChangeOption(Menu, False);
     }
     else
     {
-      nxagentChangeOption(Menu, 1);
+      nxagentChangeOption(Menu, True);
     }
     return;
   }
@@ -1263,11 +1263,11 @@ static void nxagentParseSingleOption(char *name, char *value)
   {
     if (!strcmp(value, "0"))
     {
-      nxagentChangeOption(MagicPixel, 0);
+      nxagentChangeOption(MagicPixel, False);
     }
     else
     {
-      nxagentChangeOption(MagicPixel, 1);
+      nxagentChangeOption(MagicPixel, True);
     }
     return;
   }
@@ -2038,7 +2038,7 @@ FIXME: In rootless mode the backing-store support is not functional yet.
      * We enable server reset only for indirect XDMCP sessions.
      */
 
-    if (nxagentOption(Reset) == True && nxagentMaxAllowedResets == 0)
+    if (nxagentOption(Reset) && nxagentMaxAllowedResets == 0)
     {
       #ifdef WARNING
       fprintf(stderr, "nxagentPostProcessArgs: Disabling the server reset.\n");
@@ -2054,7 +2054,7 @@ FIXME: In rootless mode the backing-store support is not functional yet.
      * passing the -noreset option to a standard XFree86 server.
      */
 
-    if (nxagentOption(Reset) == False)
+    if (!nxagentOption(Reset))
     {
       #ifdef TEST
       fprintf(stderr, "nxagentPostProcessArgs: Disabling dispatch of exception at server reset.\n");
@@ -2166,7 +2166,7 @@ void nxagentSetPackMethod(void)
 
   if (nxagentOption(LinkType) == LINK_TYPE_NONE)
   {
-    nxagentChangeOption(Streaming, 0);
+    nxagentChangeOption(Streaming, False);
 
     nxagentPackMethod   = PACK_NONE;
     nxagentPackLossless = PACK_NONE;
@@ -2189,7 +2189,7 @@ void nxagentSetPackMethod(void)
     fprintf(stderr, "nxagentSetPackMethod: Using adaptive mode for image compression.\n");
     #endif
 
-    nxagentChangeOption(Adaptive, 1);
+    nxagentChangeOption(Adaptive, True);
   }
   else
   {
@@ -2197,7 +2197,7 @@ void nxagentSetPackMethod(void)
     fprintf(stderr, "nxagentSetPackMethod: Not using adaptive mode for image compression.\n");
     #endif
 
-    nxagentChangeOption(Adaptive, 0);
+    nxagentChangeOption(Adaptive, False);
   }
   
   if (method == PACK_LOSSY || method == PACK_ADAPTIVE)
@@ -2326,11 +2326,11 @@ void nxagentSetDeferLevel(void)
    * version of the agent.
    */
 
-  if (nxagentOption(Streaming) == 1)
+  if (nxagentOption(Streaming))
   {
     fprintf(stderr, "Warning: Streaming of images not available in this agent.\n");
 
-    nxagentChangeOption(Streaming, 0);
+    nxagentChangeOption(Streaming, False);
   }
 
  switch (nxagentOption(LinkType))

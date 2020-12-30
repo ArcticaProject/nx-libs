@@ -60,7 +60,7 @@ void nxagentInitOptions(void)
   nxagentOptions.LinkType = UNDEFINED;
 
   nxagentOptions.Desktop    = UNDEFINED;
-  nxagentOptions.Persistent = 1;
+  nxagentOptions.Persistent = True;
   nxagentOptions.Rootless   = UNDEFINED;
   nxagentOptions.Fullscreen = False;
   nxagentOptions.AllScreens = False;
@@ -82,23 +82,23 @@ void nxagentInitOptions(void)
 
   nxagentOptions.Timeout = 0;
 
-  nxagentOptions.Nested = 0;
+  nxagentOptions.Nested = False;
 
   nxagentOptions.BackingStore = BackingStoreUndefined;
 
   nxagentOptions.Clipboard = ClipboardBoth;
 
-  nxagentOptions.SharedMemory = 1;
+  nxagentOptions.SharedMemory = True;
 
-  nxagentOptions.SharedPixmaps = 1;
+  nxagentOptions.SharedPixmaps = True;
 
-  nxagentOptions.DeviceControl = 0;
+  nxagentOptions.DeviceControl = False;
 
-  nxagentOptions.DeviceControlUserDefined = 0;
+  nxagentOptions.DeviceControlUserDefined = False;
 
-  nxagentOptions.ResetKeyboardAtResume = 1;
+  nxagentOptions.ResetKeyboardAtResume = True;
 
-  nxagentOptions.Reset = 0;
+  nxagentOptions.Reset = False;
 
   nxagentOptions.RootX = 0;
   nxagentOptions.RootY = 0;
@@ -118,25 +118,25 @@ void nxagentInitOptions(void)
   nxagentOptions.FloatXRatio = 1.0;
   nxagentOptions.FloatYRatio = 1.0;
 
-  nxagentOptions.UseDamage = 1;
+  nxagentOptions.UseDamage = True;
 
   nxagentOptions.Binder = UNDEFINED;
   nxagentOptions.BinderOptions = NULL;
 
-  nxagentOptions.Xdmcp = 0;
+  nxagentOptions.Xdmcp = False;
 
   nxagentOptions.DisplayBuffer  = UNDEFINED;
   nxagentOptions.DisplayCoalescence = 0;
 
-  nxagentOptions.Composite = 1;
+  nxagentOptions.Composite = True;
 
-  nxagentOptions.IgnoreVisibility = 0;
+  nxagentOptions.IgnoreVisibility = False;
 
-  nxagentOptions.ViewOnly = 0;
+  nxagentOptions.ViewOnly = False;
 
-  nxagentOptions.Adaptive = 0;
+  nxagentOptions.Adaptive = False;
 
-  nxagentOptions.Streaming = 0;
+  nxagentOptions.Streaming = False;
 
   nxagentOptions.DeferLevel   = UNDEFINED;
   nxagentOptions.DeferTimeout = 200;
@@ -144,19 +144,19 @@ void nxagentInitOptions(void)
   nxagentOptions.TileWidth  = UNDEFINED;
   nxagentOptions.TileHeight = UNDEFINED;
 
-  nxagentOptions.Menu = 1;
+  nxagentOptions.Menu = True;
 
-  nxagentOptions.MagicPixel = 1;
+  nxagentOptions.MagicPixel = True;
 
   nxagentOptions.ClientOs = UNDEFINED;
 
-  nxagentOptions.InhibitXkb = 1;
+  nxagentOptions.InhibitXkb = True;
 
   nxagentOptions.CopyBufferSize = COPY_UNLIMITED;
 
   nxagentOptions.ImageRateLimit = 0;
 
-  nxagentOptions.Xinerama = 1;
+  nxagentOptions.Xinerama = True;
 
   nxagentOptions.SleepTimeMillis = DEFAULT_SLEEP_TIME_MILLIS;
 

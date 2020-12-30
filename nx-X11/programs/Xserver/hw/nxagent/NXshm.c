@@ -96,7 +96,7 @@ ShmExtensionInit(void)
 #endif
 
 #ifdef NXAGENT_SERVER
-    if (nxagentOption(SharedMemory) == False)
+    if (!nxagentOption(SharedMemory))
     {
       return;
     }

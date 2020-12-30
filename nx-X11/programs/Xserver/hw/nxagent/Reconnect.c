@@ -240,7 +240,7 @@ TODO: This should be reset only when the state became SESSION_DOWN.
 */
     nxagentException.ioError = 0;
 
-    if (nxagentOption(Persistent) == 1 && nxagentSessionState != SESSION_STARTING)
+    if (nxagentOption(Persistent) && nxagentSessionState != SESSION_STARTING)
     {
       if (nxagentSessionState == SESSION_UP)
       {
@@ -588,7 +588,7 @@ Bool nxagentReconnectSession(void)
   }
 
   /* Reset the keyboard only if we detect any changes. */
-  if (nxagentOption(ResetKeyboardAtResume) == 1)
+  if (nxagentOption(ResetKeyboardAtResume))
   {
     if (nxagentKeyboard == NULL || nxagentOldKeyboard == NULL ||
             strcmp(nxagentKeyboard, nxagentOldKeyboard) != 0 ||
@@ -630,7 +630,7 @@ Bool nxagentReconnectSession(void)
 
   nxagentRedirectDefaultWindows();
 
-  if (nxagentResizeDesktopAtStartup || nxagentOption(Rootless) == True || nxagentOption(Xinerama) == True)
+  if (nxagentResizeDesktopAtStartup || nxagentOption(Rootless) == True || nxagentOption(Xinerama))
   {
     nxagentChangeScreenConfig(0, nxagentOption(RootWidth),
                                   nxagentOption(RootHeight), True);

@@ -332,7 +332,7 @@ void nxagentGuessShadowHint(ClientPtr client, Atom property)
        * the windows updated.
        */
 
-      nxagentChangeOption(IgnoreVisibility, 1);
+      nxagentChangeOption(IgnoreVisibility, True);
     }
   }
 }
@@ -373,7 +373,7 @@ static void checkIfShadowAgent(ClientPtr client)
        fprintf(stderr, "nxagentCheckIfShadowAgent: The last shadow nxagent has been detached.\n");
        #endif
 
-      nxagentChangeOption(IgnoreVisibility, 0);
+      nxagentChangeOption(IgnoreVisibility, False);
     }
   }
 }

@@ -698,7 +698,7 @@ RegionPtr nxagentCopyArea(DrawablePtr pSrcDrawable, DrawablePtr pDstDrawable,
    * little use.
    */
 
-  if (nxagentOption(IgnoreVisibility) == 0 && pDstDrawable -> type == DRAWABLE_WINDOW &&
+  if (!nxagentOption(IgnoreVisibility) && pDstDrawable -> type == DRAWABLE_WINDOW &&
           (nxagentWindowIsVisible((WindowPtr) pDstDrawable) == 0 ||
               (nxagentDefaultWindowIsVisible() == 0 && nxagentCompositeEnable == 0)))
   {

@@ -2001,7 +2001,7 @@ N/A
    * change the real X server's keyboard and pointer settings.
    */
 
-  if (nxagentOption(DeviceControl) == False)
+  if (!nxagentOption(DeviceControl))
   {
     fprintf(stderr, "Info: Not using local device configuration changes.\n");
   }
@@ -2532,7 +2532,7 @@ int nxagentShadowInit(ScreenPtr pScreen, WindowPtr pWin)
     NXShadowSetDisplayUid(nxagentShadowUid);
   }
 
-  if (nxagentOption(UseDamage) == 0)
+  if (nxagentOption(UseDamage))
   {
     NXShadowDisableDamage();
   }

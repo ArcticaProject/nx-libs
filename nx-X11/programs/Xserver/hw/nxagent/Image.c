@@ -524,7 +524,7 @@ void nxagentPutImage(DrawablePtr pDrawable, GCPtr pGC, int depth,
    * window.
    */
 
-  if (nxagentOption(IgnoreVisibility) == 0 && pDrawable -> type == DRAWABLE_WINDOW &&
+  if (!nxagentOption(IgnoreVisibility) && pDrawable -> type == DRAWABLE_WINDOW &&
           (nxagentWindowIsVisible((WindowPtr) pDrawable) == 0 ||
               (nxagentDefaultWindowIsVisible() == 0 && nxagentCompositeEnable == 0)))
   {
@@ -667,11 +667,11 @@ FIXME: Should use these.
 /*
 FIXME: Should we disable the split with link LAN?
 
-  split = (nxagentOption(Streaming) == 1 &&
+  split = (nxagentOption(Streaming) &&
                nxagentOption(LinkType) != LINK_TYPE_NONE &&
                    nxagentOption(LinkType) != LINK_TYPE_LAN
 */
-  split = (nxagentOption(Streaming) == 1 &&
+  split = (nxagentOption(Streaming) &&
                nxagentOption(LinkType) != LINK_TYPE_NONE
 /*
 FIXME: Do we stream the images from GLX or Xv? If we do that, we
@@ -1284,7 +1284,7 @@ FIXME: There should be a callback registered by the agent that
      * lossless encoder will compress better.
      */
 
-    if (lossless == 0 && nxagentOption(Adaptive) == 1)
+    if (lossless == 0 && nxagentOption(Adaptive))
     {
       int ratio = nxagentUniquePixels(plainImage);
 
