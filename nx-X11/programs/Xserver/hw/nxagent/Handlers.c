@@ -1070,7 +1070,28 @@ void nxagentDispatchHandler(ClientPtr client, int in, int out)
      * into the inner dispatch loop forever.
      */
 
-    if (!SmartScheduleSignalEnable)
+    /*
+     * The behaviour described in the comment above also happens with the
+     * smart scheduler if all of the following conditions are met:
+     * - the agent is suspended
+     * - SleepTimeMillis is set (the default is sufficient to trigger this)
+     * - a client is doing a lot of image operations
+     * - nxagentShadowCounter is 0
+     * In that case the agent will slow down the image operations by calling
+     * an intermediate sleep resulting in the client's request queue never
+     * being empty. Which in turn leads to the drain loop described above.
+     * isItTimeToYield will then never be set. The (dramatic) result of this
+     * is that nxagent will not process any signals and therefore cannot be
+     * resumed anymore!
+     * For this reason we do not limit below code to the dumb scheduler but also
+     * run it if above conditions are met - ensuring regular yields.
+     * See issue #903
+     */
+
+    if (!SmartScheduleSignalEnable ||
+	    (nxagentShadowCounter == 0 &&
+	         NXDisplayError(nxagentDisplay) == 1 &&
+	             nxagentOption(SleepTimeMillis) > 0))
     {
       if  (client -> index != nxagentDispatch.client)
       {
