@@ -732,9 +732,9 @@ void nxagentShadowBlockHandler(void * data, struct timeval **timeout, void * mas
     nxagentDispatchEvents(NULL);
   }
 
-  if (nxagentShadowResize == 1)
+  if (nxagentShadowResize)
   {
-    nxagentShadowResize = 0;
+    nxagentShadowResize = False;
 
     nxagentShadowAdaptToRatio();
   }

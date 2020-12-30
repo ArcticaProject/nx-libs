@@ -67,7 +67,7 @@ extern RegionRec nxagentShadowUpdateRegion;
 
 extern WindowPtr nxagentShadowWindowPtr;
 
-extern int nxagentShadowResize;
+extern Bool nxagentShadowResize;
 
 extern short nxagentShadowUid;
 
