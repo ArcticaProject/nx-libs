@@ -97,7 +97,7 @@ while (0)
         nxagentUserInput(NULL) == 1)
 
 #define canBreakOnTimeout(mask) \
-    (((mask) != NEVER_BREAK) && nxagentOption(Shadow) == 0)
+    (((mask) != NEVER_BREAK) && !nxagentOption(Shadow))
 
 /*
  * Macros defining the conditions to

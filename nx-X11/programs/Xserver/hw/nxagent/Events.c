@@ -1043,7 +1043,7 @@ void nxagentDispatchEvents(PredicateFuncPtr predicate)
           }
           case doSwitchResizeMode:
           {
-            if (nxagentOption(Shadow) == 0)
+            if (!nxagentOption(Shadow))
             {
               if (nxagentNoDialogIsRunning)
               {
@@ -1097,7 +1097,7 @@ void nxagentDispatchEvents(PredicateFuncPtr predicate)
           nxagentRemoveDuplicatedKeys(&X);
         }
 
-        if (!nxagentOption(ViewOnly) && nxagentOption(Shadow) == 1 && result == doNothing)
+        if (!nxagentOption(ViewOnly) && nxagentOption(Shadow) && result == doNothing)
         {
           X.xkey.keycode = nxagentConvertKeycode(X.xkey.keycode);
 
@@ -1492,7 +1492,7 @@ FIXME: Don't enqueue the KeyRelease event if the key was not already
           NXShadowEvent(nxagentDisplay, X);
         }
 
-        if (nxagentOption(Shadow) == 0)
+        if (!nxagentOption(Shadow))
         {
           nxagentInputEvent = 1;
         }
@@ -3369,7 +3369,7 @@ int nxagentHandleConfigureNotify(XEvent* X)
           nxagentChangeOption(Y, newY);
         }
 
-        if (nxagentOption(Shadow) == 1 && nxagentOption(DesktopResize) &&
+        if (nxagentOption(Shadow) && nxagentOption(DesktopResize) &&
                 (nxagentOption(Width) != X -> xconfigure.width ||
                     nxagentOption(Height) != X -> xconfigure.height))
         {
@@ -3397,7 +3397,7 @@ int nxagentHandleConfigureNotify(XEvent* X)
         /* if in shadowing mode or if neither size nor position have
            changed we do not need to adjust RandR */
         /* FIXME: Comment makes no sense */
-        if (nxagentOption(Shadow) == 1 ||
+        if (nxagentOption(Shadow) ||
                 (nxagentOption(Width) == nxagentOption(RootWidth) &&
                  nxagentOption(Height) == nxagentOption(RootHeight) &&
                  nxagentOption(X) == nxagentOption(RootX) &&
@@ -4323,7 +4323,7 @@ int nxagentUserInput(void *p)
    * eventually change the nxagentInputEvent status.
    */
 
-  if (nxagentOption(Shadow) == 1 &&
+  if (nxagentOption(Shadow) &&
           nxagentPendingEvents(nxagentDisplay) > 0)
   {
     nxagentDispatchEvents(NULL);
@@ -4342,7 +4342,7 @@ int nxagentUserInput(void *p)
    * browser's page), in order to update the screen smoothly.
    */
 
-  if (nxagentOption(Shadow) == 1)
+  if (nxagentOption(Shadow))
   {
     return result;
   }

@@ -925,7 +925,7 @@ void nxagentRealizeImage(DrawablePtr pDrawable, GCPtr pGC, int depth,
 
   int bytesPerLine = nxagentImagePad(w, format, leftPad, depth);
 
-  if (nxagentOption(Shadow) == 1 && format == ZPixmap &&
+  if (nxagentOption(Shadow) && format == ZPixmap &&
           (nxagentOption(XRatio) != DONT_SCALE ||
               nxagentOption(YRatio) != DONT_SCALE) &&
                   pDrawable == (DrawablePtr) nxagentShadowPixmapPtr)

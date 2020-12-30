@@ -62,6 +62,7 @@ void nxagentInitOptions(void)
   nxagentOptions.Desktop    = UNDEFINED;
   nxagentOptions.Persistent = True;
   nxagentOptions.Rootless   = UNDEFINED;
+  nxagentOptions.Shadow     = False;
   nxagentOptions.Fullscreen = False;
   nxagentOptions.AllScreens = False;
   nxagentOptions.NoRootlessExit = False;

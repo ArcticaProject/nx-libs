@@ -903,7 +903,7 @@ void nxagentSwitchAllScreens(ScreenPtr pScreen, Bool switchOn)
 
       if (nxagentOption(DesktopResize))
       {
-        if (nxagentOption(Shadow) == 0)
+        if (!nxagentOption(Shadow))
         {
           nxagentChangeScreenConfig(0, WidthOfScreen(DefaultScreenOfDisplay(nxagentDisplay)),
                                         HeightOfScreen(DefaultScreenOfDisplay(nxagentDisplay)), True);
@@ -957,7 +957,7 @@ void nxagentSwitchAllScreens(ScreenPtr pScreen, Bool switchOn)
       nxagentChangeOption(RootWidth, nxagentOption(SavedRootWidth));
       nxagentChangeOption(RootHeight, nxagentOption(SavedRootHeight));
 
-      if (nxagentOption(Shadow) == 0)
+      if (!nxagentOption(Shadow))
       {
         nxagentChangeScreenConfig(0, nxagentOption(RootWidth),
                                       nxagentOption(RootHeight), True);
@@ -998,7 +998,7 @@ void nxagentSwitchAllScreens(ScreenPtr pScreen, Bool switchOn)
     nxagentChangeOption(Width, nxagentOption(SavedWidth));
     nxagentChangeOption(Height, nxagentOption(SavedHeight));
 
-    if (nxagentOption(Shadow) == 1 && nxagentOption(DesktopResize))
+    if (nxagentOption(Shadow) && nxagentOption(DesktopResize))
     {
       nxagentShadowAdaptToRatio();
     }
@@ -2547,7 +2547,7 @@ void nxagentMapDefaultWindows(void)
        * Windows client.
        */
 
-      if (nxagentOption(Shadow) == 0 || !nxagentWMIsRunning)
+      if (!nxagentOption(Shadow) || !nxagentWMIsRunning)
       {
         #ifdef TEST
         fprintf(stderr, "nxagentMapDefaultWindows: Mapping default window id [%ld].\n",
