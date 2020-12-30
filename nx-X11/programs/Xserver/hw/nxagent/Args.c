@@ -1075,7 +1075,7 @@ static void nxagentParseSingleOption(char *name, char *value)
   }
   else if (!strcmp(name, "render"))
   {
-    if (nxagentReconnectTrap == True)
+    if (nxagentReconnectTrap)
     {
       #ifdef DEBUG
       fprintf(stderr, "nxagentParseSingleOption: Ignoring option 'render' at reconnection.\n");
@@ -1106,7 +1106,7 @@ static void nxagentParseSingleOption(char *name, char *value)
   }
   else if (!strcmp(name, "fullscreen"))
   {
-    if (nxagentReconnectTrap == True)
+    if (nxagentReconnectTrap)
     {
       #ifdef DEBUG
       fprintf(stderr, "nxagentParseSingleOption: Ignoring option 'fullscreen' at reconnection.\n");
@@ -1268,7 +1268,7 @@ static void nxagentParseSingleOption(char *name, char *value)
   }
   else if (!strcmp(name, "autodpi"))
   {
-    if (nxagentReconnectTrap == True)
+    if (nxagentReconnectTrap)
     {
       #ifdef DEBUG
       fprintf(stderr, "nxagentParseSingleOption: Ignoring option 'autodpi' at reconnection.\n");

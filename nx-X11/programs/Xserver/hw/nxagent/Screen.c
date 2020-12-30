@@ -849,7 +849,7 @@ Bool nxagentOpenScreen(ScreenPtr pScreen, int argc, char *argv[])
               pScreen->myNum);
   #endif
 
-  if (nxagentRenderEnable && nxagentReconnectTrap == False)
+  if (nxagentRenderEnable && !nxagentReconnectTrap)
   {
     PictureScreenPrivateIndex = -1;
   }
@@ -904,7 +904,7 @@ Bool nxagentOpenScreen(ScreenPtr pScreen, int argc, char *argv[])
    * user geometry then.
    */
 
-  if (nxagentReconnectTrap == False && !nxagentOption(Rootless))
+  if (!nxagentReconnectTrap && !nxagentOption(Rootless))
   {
     if (nxagentUserGeometry.flag & XValue)
     {
@@ -957,7 +957,7 @@ Bool nxagentOpenScreen(ScreenPtr pScreen, int argc, char *argv[])
     nxagentChangeOption(Fullscreen, True);
 
     if (nxagentOption(ClientOs) == ClientOsWinnt &&
-            (nxagentReconnectTrap == False || nxagentResizeDesktopAtStartup))
+            (!nxagentReconnectTrap || nxagentResizeDesktopAtStartup))
     {
       NXSetExposeParameters(nxagentDisplay, 0, 0, 0);
     }
@@ -996,7 +996,7 @@ Bool nxagentOpenScreen(ScreenPtr pScreen, int argc, char *argv[])
     nxagentChangeOption(Height, h);
 
     /* first time screen initialization or resize during reconnect */
-    if (nxagentReconnectTrap == False || nxagentResizeDesktopAtStartup)
+    if (!nxagentReconnectTrap || nxagentResizeDesktopAtStartup)
     {
       if (nxagentOption(RootWidth) >= w)
       {
@@ -1049,7 +1049,7 @@ Bool nxagentOpenScreen(ScreenPtr pScreen, int argc, char *argv[])
      * screen is initialized for the first time.
      */
 
-    if (nxagentReconnectTrap == False)
+    if (!nxagentReconnectTrap)
     {
       nxagentChangeOption(RootX, 0);
       nxagentChangeOption(RootY, 0);
@@ -1088,7 +1088,7 @@ Bool nxagentOpenScreen(ScreenPtr pScreen, int argc, char *argv[])
      * the root window isn't bigger than the X server root window..
      */
 
-    if (nxagentReconnectTrap == False)
+    if (!nxagentReconnectTrap)
     {
       if ((nxagentOption(RootWidth) < w) &&
               !(nxagentUserGeometry.flag & WidthValue))
@@ -1120,7 +1120,7 @@ Bool nxagentOpenScreen(ScreenPtr pScreen, int argc, char *argv[])
   nxagentChangeOption(ViewportXSpan, nxagentOption(Width) - nxagentOption(RootWidth));
   nxagentChangeOption(ViewportYSpan, nxagentOption(Height) - nxagentOption(RootHeight));
 
-  if (nxagentReconnectTrap == 0)
+  if (!nxagentReconnectTrap)
   {
     if (nxagentOption(Persistent))
     {
@@ -1658,7 +1658,7 @@ N/A
   #endif
 
   if (nxagentDoFullGeneration == 1 ||
-          nxagentReconnectTrap == 1)
+          nxagentReconnectTrap)
   {
     unsigned long valuemask = CWBackPixel | CWEventMask | CWColormap;
     XSetWindowAttributes attributes = {

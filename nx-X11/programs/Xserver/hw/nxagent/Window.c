@@ -548,7 +548,7 @@ Bool nxagentDestroyWindow(WindowPtr pWin)
 {
   nxagentPrivWindowPtr pWindowPriv;
 
-  if (nxagentScreenTrap == 1)
+  if (nxagentScreenTrap)
   {
     return 1;
   }
@@ -672,7 +672,7 @@ Bool nxagentDestroyWindow(WindowPtr pWin)
  */
 Bool nxagentPositionWindow(WindowPtr pWin, int x, int y)
 {
-  if (nxagentScreenTrap == 1)
+  if (nxagentScreenTrap)
   {
     return True;
   }
@@ -690,7 +690,7 @@ Bool nxagentPositionWindow(WindowPtr pWin, int x, int y)
 
 void nxagentRestackWindow(WindowPtr pWin, WindowPtr pOldNextSib)
 {
-  if (nxagentScreenTrap == 1)
+  if (nxagentScreenTrap)
   {
     return;
   }
@@ -1250,7 +1250,7 @@ void nxagentConfigureWindow(WindowPtr pWin, unsigned int mask)
   int offX = nxagentWindowPriv(pWin)->x - pWin->origin.x;
   int offY = nxagentWindowPriv(pWin)->y - pWin->origin.y;
 
-  if (nxagentScreenTrap == 1)
+  if (nxagentScreenTrap)
   {
     #ifdef TEST
     fprintf(stderr, "nxagentConfigureWindow: WARNING: Called with the screen trap set.\n");
@@ -1877,7 +1877,7 @@ void nxagentSetWMState(WindowPtr pWin, CARD32 desired)
 -+ */
 Bool nxagentRealizeWindow(WindowPtr pWin)
 {
-  if (nxagentScreenTrap == 1)
+  if (nxagentScreenTrap)
   {
     return True;
   }
@@ -2573,7 +2573,7 @@ void nxagentMapDefaultWindows(void)
        * nxagentReconnectAllWindows, after the Root Window is mapped.
        */
 
-      if (nxagentReconnectTrap == 0)
+      if (!nxagentReconnectTrap)
       {
         XRaiseWindow(nxagentDisplay, nxagentInputWindows[pScreen->myNum]);
       }

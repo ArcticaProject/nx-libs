@@ -2252,7 +2252,7 @@ void nxagentReconnectGlyphSet(void* p0, XID x1, void *p2)
 {
   GlyphSetPtr pGly = (GlyphSetPtr) p0;
 
-  if (nxagentReconnectTrap == 0)
+  if (!nxagentReconnectTrap)
   {
     int i;
     XRenderPictFormat *pForm = NULL;

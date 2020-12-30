@@ -392,7 +392,7 @@ ConfigureWindow(register WindowPtr pWin, register Mask mask, XID *vlist, ClientP
 
     if (nxagentOption(Rootless) && nxagentWindowTopLevel(pWin) &&
             pWin -> overrideRedirect == 0 &&
-                nxagentScreenTrap == 0)
+                !nxagentScreenTrap)
     {
       nxagentConfigureRootlessWindow(pWin, x, y, w, h, bw, pSib, smode, mask);
 
