@@ -575,7 +575,7 @@ Reply   Total	Cached	Bits In			Bits Out		Bits/Reply	  Ratio
       fprintf(stderr, "Session: Session terminated at '%s'.\n", GetTimeAsString());
     }
 
-    if (nxagentOption(Shadow) == 1)
+    if (nxagentOption(Shadow))
     {
       NXShadowDestroy();
     }

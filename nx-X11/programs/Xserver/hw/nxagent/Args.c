@@ -507,7 +507,7 @@ int ddxProcessArgument(int argc, char *argv[], int i)
             sscanf(argv[i], "%i", &level) == 1 &&
                 level >= 0 && level <= 2)
     {
-      if (nxagentOption(Shadow) == 0)
+      if (!nxagentOption(Shadow))
       {
         nxagentChangeOption(DeferLevel, level);
 
@@ -830,7 +830,7 @@ int ddxProcessArgument(int argc, char *argv[], int i)
 
   if (!strcmp(argv[i], "-S"))
   {
-    nxagentChangeOption(Shadow, 1);
+    nxagentChangeOption(Shadow, True);
     nxagentChangeOption(DeferLevel, 0);
     nxagentChangeOption(Persistent, False);
     return 1;
@@ -1749,7 +1749,7 @@ N/A
 
     #endif
 
-    if ((nxagentOption(Rootless) == 1) && nxagentOption(Fullscreen))
+    if ((nxagentOption(Rootless) == True) && nxagentOption(Fullscreen))
     {
       #ifdef TEST
       fprintf(stderr, "WARNING: Ignoring fullscreen option for rootless session.\n");
@@ -2029,7 +2029,7 @@ FIXME: In rootless mode the backing-store support is not functional yet.
       nxagentAlphaEnabled = False;
     }
 
-    if ((nxagentOption(Rootless) == 1) && nxagentOption(Xdmcp))
+    if ((nxagentOption(Rootless) == True) && nxagentOption(Xdmcp))
     {
       FatalError("PANIC! Cannot start a XDMCP session in rootless mode.\n");
     }
@@ -2353,7 +2353,7 @@ void nxagentSetDeferLevel(void)
    * Set the defer timeout.
    */
 
-  if (nxagentOption(Shadow) == 1)
+  if (nxagentOption(Shadow))
   {
     #ifdef TEST
     fprintf(stderr, "nxagentSetDeferLevel: Ignoring defer timeout parameter in shadow mode.\n");
@@ -2368,7 +2368,7 @@ void nxagentSetDeferLevel(void)
    * Set the defer level.
    */
 
-  if (nxagentOption(Shadow) == 1)
+  if (nxagentOption(Shadow))
   {
     #ifdef TEST
     fprintf(stderr, "nxagentSetDeferLevel: Ignoring defer parameter in shadow mode.\n");
@@ -2472,7 +2472,7 @@ void nxagentSetScheduler(void)
    * The smart scheduler is the default.
    */
 
-  if (nxagentOption(Shadow) == 1)
+  if (nxagentOption(Shadow))
   {
     #ifdef TEST
     fprintf(stderr, "nxagentSetScheduler: Using the dumb scheduler in shadow mode.\n");

@@ -776,7 +776,7 @@ XkbError:
           XkbDDXChangeControls(pDev, xkb->ctrls, xkb->ctrls);
         }
 
-        if (nxagentOption(Shadow) == 1 && pDev && pDev->key)
+        if (nxagentOption(Shadow) && pDev && pDev->key)
         {
           NXShadowInitKeymap(&(pDev->key->curKeySyms));
         }

@@ -799,7 +799,7 @@ int nxagentSynchronizeRegion(DrawablePtr pDrawable, RegionPtr pRegion, unsigned 
 
         if (owner != NULL)
         {
-          if (nxagentOption(Shadow) == 1 &&
+          if (nxagentOption(Shadow) &&
                   (nxagentOption(XRatio) != DONT_SCALE ||
                       nxagentOption(YRatio) != DONT_SCALE))
           {
@@ -852,7 +852,7 @@ nxagentSynchronizeRegionStop:
 
   success = 1;
 
-  if (nxagentOption(Shadow) == 0)
+  if (!nxagentOption(Shadow))
   {
     if (nxagentSynchronization.abort == 1)
     {
@@ -921,7 +921,7 @@ nxagentSynchronizeRegionStop:
         int w = RegionRects(&collectedUpdates)[i].x2 - RegionRects(&collectedUpdates)[i].x1;
         int h = RegionRects(&collectedUpdates)[i].y2 - RegionRects(&collectedUpdates)[i].y1;
        
-        if (nxagentOption(Shadow) == 1 &&
+        if (nxagentOption(Shadow) &&
                 (nxagentOption(XRatio) != DONT_SCALE ||
                     nxagentOption(YRatio) != DONT_SCALE))
         {
