@@ -200,7 +200,7 @@ PixmapPtr nxagentCreatePixmap(ScreenPtr pScreen, int width, int height,
    * checksum.
    */
 
-  if (width != 0 && height != 0 && nxagentGCTrap == 0)
+  if (width != 0 && height != 0 && !nxagentGCTrap)
   {
     pPixmapPriv -> id = XCreatePixmap(nxagentDisplay,
                                       nxagentDefaultWindows[pScreen -> myNum],

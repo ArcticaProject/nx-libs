@@ -1571,7 +1571,7 @@ void nxagentSetSelectionCallback(CallbackListPtr *callbacks, void *data,
    * way to identify that situation during callback processing we
    * could get rid of the Trap...
   */
-  if (nxagentExternalClipboardEventTrap != 0)
+  if (nxagentExternalClipboardEventTrap)
   {
     #ifdef DEBUG
     fprintf(stderr, "%s: Trap is set, doing nothing\n", __func__);

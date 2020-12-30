@@ -664,7 +664,7 @@ RegionPtr nxagentCopyArea(DrawablePtr pSrcDrawable, DrawablePtr pDstDrawable,
   }
 
 
-  if (nxagentGCTrap == 1 || nxagentShmTrap == 1)
+  if (nxagentGCTrap || nxagentShmTrap)
   {
     if (pSrcDrawable -> type == DRAWABLE_PIXMAP &&
             pDstDrawable -> type == DRAWABLE_PIXMAP)
@@ -890,7 +890,7 @@ RegionPtr nxagentCopyPlane(DrawablePtr pSrcDrawable, DrawablePtr pDstDrawable,
                           (void *) pDstDrawable, srcx, srcy, dstx, dsty, width, height);
   #endif
 
-  if (nxagentGCTrap == 1 || nxagentShmTrap == 1)
+  if (nxagentGCTrap || nxagentShmTrap)
   {
     if (pSrcDrawable -> type == DRAWABLE_PIXMAP &&
             pDstDrawable -> type == DRAWABLE_PIXMAP)
@@ -1073,7 +1073,7 @@ void nxagentPolyPoint(DrawablePtr pDrawable, GCPtr pGC, int mode,
               (void *) pDrawable, (void *) pGC, nPoints);
   #endif
 
-  if (nxagentGCTrap == 1)
+  if (nxagentGCTrap)
   {
     if ((pDrawable)->type == DRAWABLE_PIXMAP)
     {
@@ -1130,7 +1130,7 @@ void nxagentPolyPoint(DrawablePtr pDrawable, GCPtr pGC, int mode,
 void nxagentPolyLines(DrawablePtr pDrawable, GCPtr pGC, int mode,
                           int nPoints, xPoint *pPoints)
 {
-  if (nxagentGCTrap == 1)
+  if (nxagentGCTrap)
   {
     if ((pDrawable)->type == DRAWABLE_PIXMAP)
     {
@@ -1203,7 +1203,7 @@ void nxagentPolySegment(DrawablePtr pDrawable, GCPtr pGC,
 
   #endif
 
-  if (nxagentGCTrap == 1)
+  if (nxagentGCTrap)
   {
     if ((pDrawable)->type == DRAWABLE_PIXMAP)
     {
@@ -1280,7 +1280,7 @@ void nxagentPolyRectangle(DrawablePtr pDrawable, GCPtr pGC,
 
   #endif
 
-  if (nxagentGCTrap == 1)
+  if (nxagentGCTrap)
   {
     if ((pDrawable)->type == DRAWABLE_PIXMAP)
     {
@@ -1345,7 +1345,7 @@ void nxagentPolyRectangle(DrawablePtr pDrawable, GCPtr pGC,
 void nxagentPolyArc(DrawablePtr pDrawable, GCPtr pGC,
                         int nArcs, xArc *pArcs)
 {
-  if (nxagentGCTrap == 1)
+  if (nxagentGCTrap)
   {
     if ((pDrawable)->type == DRAWABLE_PIXMAP)
     {
@@ -1404,7 +1404,7 @@ void nxagentFillPolygon(DrawablePtr pDrawable, GCPtr pGC, int shape,
 {
   xPoint *newPoints = NULL;
 
-  if (nxagentGCTrap == 1)
+  if (nxagentGCTrap)
   {
     if ((pDrawable)->type == DRAWABLE_PIXMAP)
     {
@@ -1518,7 +1518,7 @@ void nxagentPolyFillRect(DrawablePtr pDrawable, GCPtr pGC,
 
   #endif
 
-  if (nxagentGCTrap == 1)
+  if (nxagentGCTrap)
   {
     if ((pDrawable)->type == DRAWABLE_PIXMAP)
     {
@@ -1663,7 +1663,7 @@ void nxagentPolyFillRect(DrawablePtr pDrawable, GCPtr pGC,
 void nxagentPolyFillArc(DrawablePtr pDrawable, GCPtr pGC,
                             int nArcs, xArc *pArcs)
 {
-  if (nxagentGCTrap == 1)
+  if (nxagentGCTrap)
   {
     if ((pDrawable)->type == DRAWABLE_PIXMAP)
     {
@@ -1739,7 +1739,7 @@ int nxagentPolyText8(DrawablePtr pDrawable, GCPtr pGC, int x,
 
   int width = XTextWidth(nxagentFontStruct(pGC->font), string, count);
 
-  if (nxagentGCTrap == 1)
+  if (nxagentGCTrap)
   {
     if ((pDrawable)->type == DRAWABLE_PIXMAP)
     {
@@ -1809,7 +1809,7 @@ int nxagentPolyText16(DrawablePtr pDrawable, GCPtr pGC, int x,
 
   int width = XTextWidth16(nxagentFontStruct(pGC->font), (XChar2b *)string, count);
 
-  if (nxagentGCTrap == 1)
+  if (nxagentGCTrap)
   {
     if ((pDrawable)->type == DRAWABLE_PIXMAP)
     {
@@ -1868,7 +1868,7 @@ int nxagentPolyText16(DrawablePtr pDrawable, GCPtr pGC, int x,
 void nxagentImageText8(DrawablePtr pDrawable, GCPtr pGC, int x,
                            int y, int count, char *string)
 {
-  if (nxagentGCTrap == 1)
+  if (nxagentGCTrap)
   {
     if ((pDrawable)->type == DRAWABLE_PIXMAP)
     {
@@ -1925,7 +1925,7 @@ void nxagentImageText8(DrawablePtr pDrawable, GCPtr pGC, int x,
 void nxagentImageText16(DrawablePtr pDrawable, GCPtr pGC, int x,
                             int y, int count, unsigned short *string)
 {
-  if (nxagentGCTrap == 1)
+  if (nxagentGCTrap)
   {
     if ((pDrawable)->type == DRAWABLE_PIXMAP)
     {

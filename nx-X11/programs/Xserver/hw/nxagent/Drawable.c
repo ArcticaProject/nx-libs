@@ -144,7 +144,7 @@ int nxagentSynchronizeDrawable(DrawablePtr pDrawable, int wait, unsigned int bre
 {
   pDrawable = nxagentSplitDrawable(pDrawable);
 
-  if (nxagentLosslessTrap == 0)
+  if (!nxagentLosslessTrap)
   {
     if (nxagentDrawableStatus(pDrawable) == Synchronized)
     {
@@ -257,7 +257,7 @@ int nxagentSynchronizeDrawableData(DrawablePtr pDrawable, unsigned int breakMask
      * copy with lossless compression turned off.
      */
 
-    if (nxagentLosslessTrap == 1)
+    if (nxagentLosslessTrap)
     {
       #ifdef TEST
       fprintf(stderr, "%s: Forcing synchronization of pixmap at [%p] with lossless compression.\n",
@@ -266,7 +266,7 @@ int nxagentSynchronizeDrawableData(DrawablePtr pDrawable, unsigned int breakMask
 
       return reallySynchronizeDrawableData(pDrawable);
     }
-    else if (nxagentReconnectTrap == 1)
+    else if (nxagentReconnectTrap)
     {
       /*
        * The pixmap data is not synchronized unless we need it. We
@@ -277,7 +277,7 @@ int nxagentSynchronizeDrawableData(DrawablePtr pDrawable, unsigned int breakMask
       if (pDrawable -> depth == 1)
       {
         #ifdef TEST
-        if (nxagentReconnectTrap == 1)
+        if (nxagentReconnectTrap)
         {
           static int totalLength;
           static int totalReconnectedPixmaps;
