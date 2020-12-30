@@ -1796,7 +1796,7 @@ void nxagentCloseDisplay(void)
               nxagentDoFullGeneration, (void *) nxagentDisplay);
   #endif
 
-  if (nxagentDoFullGeneration == 0 ||
+  if (!nxagentDoFullGeneration ||
           nxagentDisplay == NULL)
   {
     return;

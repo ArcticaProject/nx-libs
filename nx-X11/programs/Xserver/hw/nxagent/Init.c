@@ -171,7 +171,7 @@ int nxagentSaveUnder;
  *         nxagentOpenScreen
  *   InitInput
  */
-int nxagentDoFullGeneration = 1;
+Bool nxagentDoFullGeneration = True;
 
  /*
  * True if agent is running as X2goAgent
