@@ -35,7 +35,7 @@ typedef struct _XFixesAgentInfo
   int Opcode;
   int EventBase;
   int ErrorBase;
-  int Initialized;
+  Bool Initialized;
 } XFixesAgentInfoRec;
 
 extern XFixesAgentInfoRec nxagentXFixesInfo;

@@ -2831,7 +2831,7 @@ int nxagentHandleXFixesSelectionNotify(XEvent *X)
 {
   XFixesSelectionEvent *xfixesEvent = (XFixesSelectionEvent *) X;
 
-  if (nxagentXFixesInfo.Initialized == 0)
+  if (!nxagentXFixesInfo.Initialized)
   {
       #ifdef DEBUG
       fprintf(stderr, "%s: XFixes not initialized - doing nothing.\n", __func__);

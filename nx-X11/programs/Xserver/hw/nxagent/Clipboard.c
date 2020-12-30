@@ -225,7 +225,7 @@ const char * getXErrorString(int code)
  * Save the values queried from X server.
  */
 
-XFixesAgentInfoRec nxagentXFixesInfo = { -1, -1, -1, 0 };
+XFixesAgentInfoRec nxagentXFixesInfo = { -1, -1, -1, False };
 
 extern Display *nxagentDisplay;
 
@@ -2234,7 +2234,7 @@ Bool nxagentInitClipboard(WindowPtr pWin)
                                  XFixesSelectionClientCloseNotifyMask);
     }
 
-    nxagentXFixesInfo.Initialized = 1;
+    nxagentXFixesInfo.Initialized = True;
   }
 
   /*
