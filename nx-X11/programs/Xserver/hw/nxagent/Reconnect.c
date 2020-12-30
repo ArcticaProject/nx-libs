@@ -220,7 +220,7 @@ int nxagentHandleConnectionStates(void)
     }
   }
 
-  if (nxagentNeedConnectionChange() == 1)
+  if (nxagentNeedConnectionChange())
   {
     #ifdef TEST
     fprintf(stderr, "nxagentHandleConnectionStates: Calling nxagentHandleConnectionChanges "

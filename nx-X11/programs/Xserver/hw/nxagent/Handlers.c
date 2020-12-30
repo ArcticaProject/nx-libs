@@ -199,7 +199,7 @@ void nxagentBlockHandler(void * data, struct timeval **timeout, void * mask)
 
   #endif
 
-  if (nxagentNeedConnectionChange() == 1)
+  if (nxagentNeedConnectionChange())
   {
     #ifdef TEST
     fprintf(stderr, "nxagentBlockHandler: Calling nxagentHandleConnectionChanges "
@@ -703,7 +703,7 @@ void nxagentShadowBlockHandler(void * data, struct timeval **timeout, void * mas
   fprintf(stderr, "[Begin block]\n");
   #endif
 
-  if (nxagentNeedConnectionChange() == 1)
+  if (nxagentNeedConnectionChange())
   {
     nxagentHandleConnectionChanges();
   }

@@ -2658,7 +2658,7 @@ void nxagentAllocateCorruptedResource(DrawablePtr pDrawable, RESTYPE type)
      */
 
     if (nxagentPixmapUsageCounter((PixmapPtr) pDrawable) >= MINIMUM_PIXMAP_USAGE_COUNTER &&
-            nxagentIsShmPixmap((PixmapPtr) pDrawable) == 0)
+            !nxagentIsShmPixmap((PixmapPtr) pDrawable))
     {
       pRealPixmap = nxagentRealPixmap((PixmapPtr) pDrawable);
 
