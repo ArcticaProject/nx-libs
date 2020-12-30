@@ -36,6 +36,6 @@
 extern xdmcp_states XdmcpState;
 extern int XdmcpTimeOutRtx;
 extern int XdmcpStartTime;
-extern int nxagentXdmcpUp;
+extern Bool nxagentXdmcpUp;
 
 #endif /* __Xdmcp_H__ */
