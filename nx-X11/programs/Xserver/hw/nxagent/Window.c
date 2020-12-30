@@ -729,7 +729,7 @@ void nxagentSwitchFullscreen(ScreenPtr pScreen, Bool switchOn)
   }
 
   #ifdef TEST
-  fprintf(stderr, "nxagentSwitchFullscreen: Switching to %s mode.\n",
+  fprintf(stderr, "%s: Switching to %s mode.\n", __func__,
               switchOn ? "fullscreen" : "windowed");
   #endif
 

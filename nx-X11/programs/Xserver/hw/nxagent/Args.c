@@ -571,11 +571,15 @@ int ddxProcessArgument(int argc, char *argv[], int i)
   {
     if (++i < argc)
     {
-      if (!strcmp(argv[i],"fullscreen"))
+      if (!strcmp(argv[i],"fullscreen") || !strcmp(argv[i],"allscreens"))
       {
         nxagentChangeOption(Fullscreen, True);
-
         nxagentChangeOption(AllScreens, True);
+      }
+      else if (!strcmp(argv[i],"onescreen"))
+      {
+        nxagentChangeOption(Fullscreen, True);
+        nxagentChangeOption(AllScreens, False);
       }
       else
       { 
@@ -1111,6 +1115,11 @@ static void nxagentParseSingleOption(char *name, char *value)
       #ifdef DEBUG
       fprintf(stderr, "nxagentParseSingleOption: Ignoring option 'fullscreen' at reconnection.\n");
       #endif
+    }
+    else if (!strcmp(value, "2"))
+    {
+      nxagentChangeOption(Fullscreen, True);
+      nxagentChangeOption(AllScreens, False);
     }
     else if (!strcmp(value, "1"))
     {

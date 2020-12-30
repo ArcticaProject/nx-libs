@@ -281,7 +281,9 @@ not specified, \fBnxagent\fR will choose
 .I W
 and
 .I H
-to be 3/4ths the dimensions of the root window of the real server.
+to be 3/4ths the dimensions of the root window of the real server. For
+further values accepted see the documentation of
+\fBgeometry=<string>\fR below.
 .TP 8
 .B \-dpi \fIresolution\fP
 sets the resolution for all screens, in dots per inch. If this option
@@ -626,13 +628,20 @@ line, no-op when resuming (default: \fI0\fR, disabled)
 .TP 8
 .B geometry=<string>
 desktop geometry when starting or resuming a session, no-op in
-rootless mode (default 66% of the underlying X server geometry)
+rootless mode (default 66% of the underlying X server geometry). You
+can either specify a standard X geometry string
+(WxH+X+Y) or \fIallscreens\fR for a window covering
+all available screens or \fRonescreen\fR for a window covering only
+one screen. For historical reasons \fIfullscreen\fR (as a synonym to
+\fIallscreens\fR) is also accepted.
+.TP 8
+.B fullscreen=<int>
+start or resume a session in fullscreen mode (default: \fI0\fR, off). Specify \fI1\fR for
+a fullscreen window covering all available screens or \fI2\fR for a fullscreen window
+covering only the first screen.
 .TP 8
 .B resize=<bool>
 set resizing support (default: \fI1\fR, enabled)
-.TP 8
-.B fullscreen=<bool>
-start or resume a session in fullscreen mode (default: \fI0\fR, off)
 .TP 8
 .B keyboard=<string> or kbtype=<string>
 
