@@ -336,7 +336,7 @@ int nxagentQueryAtoms(ScreenPtr pScreen)
      * server.
      */
 
-    nxagentChangeOption(Nested, 1);
+    nxagentChangeOption(Nested, True);
 
     /*
      * Avoid the image degradation caused by

@@ -312,7 +312,7 @@ static void nxagentSighupHandler(int signal)
   }
   else if (nxagentSessionState == SESSION_UP)
   {
-    if (nxagentOption(Persistent) == 1)
+    if (nxagentOption(Persistent))
     {
       #ifdef TEST
       fprintf(stderr, "nxagentSighupHandler: Handling the signal by disconnecting the agent.\n");

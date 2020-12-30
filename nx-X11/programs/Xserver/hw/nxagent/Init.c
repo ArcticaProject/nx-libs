@@ -518,7 +518,7 @@ FIXME: Do we need to check the key grab if the
       fprintf(stderr, "Info: Auto-terminating session with no client running.\n");
       raise(SIGTERM);
     }
-    else if (nxagentOption(Persistent) == 0)
+    else if (!nxagentOption(Persistent))
     {
       fprintf(stderr, "Info: Auto-terminating session with persistence not allowed.\n");
       raise(SIGTERM);

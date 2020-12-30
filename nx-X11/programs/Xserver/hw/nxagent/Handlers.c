@@ -648,7 +648,7 @@ void nxagentWakeupHandler(void * data, int count, void * mask)
    * the session.
    */
 
-  if (nxagentOption(Xdmcp) == 1 && nxagentXdmcpUp == 0)
+  if (nxagentOption(Xdmcp) && nxagentXdmcpUp == 0)
   {
     #ifdef DEBUG
     fprintf(stderr, "nxagentWakeupHandler: XdmcpState [%d].\n", XdmcpState);
