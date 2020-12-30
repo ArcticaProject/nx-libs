@@ -1657,7 +1657,7 @@ N/A
   nxagentPrintAgentGeometry(NULL, "nxagentOpenScreen:");
   #endif
 
-  if (nxagentDoFullGeneration == 1 ||
+  if (nxagentDoFullGeneration ||
           nxagentReconnectTrap)
   {
     unsigned long valuemask = CWBackPixel | CWEventMask | CWColormap;
