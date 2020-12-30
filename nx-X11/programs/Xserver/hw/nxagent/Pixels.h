@@ -77,7 +77,7 @@ while (0)
 
 #define breakOnBlocking(mask)                                \
     (((mask) != NEVER_BREAK) && ((mask) & BLOCKING_BREAK) && \
-        nxagentBlocking == 1)
+        nxagentBlocking)
 
 #define breakOnCongestion(mask)                                \
     (((mask) != NEVER_BREAK) && ((mask) & CONGESTION_BREAK) && \
@@ -164,7 +164,7 @@ FIXME: Changed macro: NXAGENT_SHOULD_DEFER_COMPOSITE
 
 #define NXAGENT_SHOULD_SYNCHRONIZE_CORRUPTED_PIXMAPS(mask)           \
     ((nxagentCorruptedWindows == 0 && nxagentCorruptedPixmaps > 0 && \
-         nxagentCongestion == 0 && nxagentBlocking == 0) ||          \
+         nxagentCongestion == 0 && !nxagentBlocking) ||              \
              mask == NEVER_BREAK)
 
 /*

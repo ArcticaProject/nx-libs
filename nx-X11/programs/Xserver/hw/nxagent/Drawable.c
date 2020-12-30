@@ -2815,7 +2815,7 @@ int nxagentSynchronizationPredicate(void)
     return NotNeeded;
   }
 
-  if (nxagentBlocking == 0 &&
+  if (!nxagentBlocking &&
           nxagentCongestion <= 4 &&
               nxagentReady == 0 &&
                   nxagentUserInput(NULL) == 0)

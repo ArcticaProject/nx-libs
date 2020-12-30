@@ -660,7 +660,7 @@ static void nxagentDisplayBlockHandler(Display *disp, int reason)
       fprintf(stderr, "nxagentDisplayBlockHandler: BLOCK! Display is blocking for [write].\n");
       #endif
 
-      nxagentBlocking = 1;
+      nxagentBlocking = True;
 
       if (!SmartScheduleSignalEnable)
       {
@@ -908,7 +908,7 @@ void nxagentResetDisplayHandlers(void)
    */
 
   nxagentBuffer     = 0;
-  nxagentBlocking   = 0;
+  nxagentBlocking   = False;
   nxagentCongestion = 0;
 
   /*

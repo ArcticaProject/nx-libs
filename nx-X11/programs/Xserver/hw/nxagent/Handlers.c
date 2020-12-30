@@ -122,7 +122,7 @@ Bool nxagentXdmcpAlertUp = False;
  */
 
 int nxagentBuffer;
-int nxagentBlocking;
+Bool nxagentBlocking;
 int nxagentCongestion;
 
 double nxagentBytesIn;
@@ -322,7 +322,7 @@ void nxagentBlockHandler(void * data, struct timeval **timeout, void * mask)
       nxagentForceSynchronization = 0;
     }
     else if (nxagentUserInput(NULL) == 0 &&
-                 nxagentBlocking == 0 &&
+                 !nxagentBlocking &&
                      nxagentCongestion <= 4)
     {
       #ifdef TEST
@@ -391,7 +391,7 @@ void nxagentBlockHandler(void * data, struct timeval **timeout, void * mask)
 
   #ifdef DYNAMIC_DISPLAY_BUFFER
 
-  if (nxagentBlocking == 1 &&
+  if (nxagentBlocking &&
           nxagentBuffer > MINIMUM_DISPLAY_BUFFER)
   {
     nxagentBuffer >>= 1;
@@ -587,7 +587,7 @@ void nxagentWakeupHandler(void * data, int count, void * mask)
    * Can become true during the dispatch loop.
    */
 
-  nxagentBlocking = 0;
+  nxagentBlocking = False;
 
   /*
    * Check if we got new events.
@@ -759,7 +759,7 @@ void nxagentShadowBlockHandler(void * data, struct timeval **timeout, void * mas
 
   nxagentShadowSendUpdates(&suspended);
 
-  if (nxagentBlocking == 0)
+  if (!nxagentBlocking)
   {
     nxagentSynchronizeDrawable((DrawablePtr) nxagentShadowPixmapPtr, DONT_WAIT,
                                    ALWAYS_BREAK, nxagentShadowWindowPtr);
@@ -830,7 +830,7 @@ void nxagentShadowWakeupHandler(void * data, int count, void * mask)
    * Can become true during the dispatch loop.
    */
 
-  nxagentBlocking = 0;
+  nxagentBlocking = False;
 
   /*
    * Check if we got new events.
@@ -1200,7 +1200,7 @@ void nxagentDispatchHandler(ClientPtr client, int in, int out)
 
         nxagentDispatchEvents(NULL);
 
-        nxagentBlocking = 1;
+        nxagentBlocking = True;
       }
 
       /*

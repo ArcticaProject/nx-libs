@@ -37,7 +37,7 @@ extern int nxagentBuffer;
  * the display to become writable.
  */
 
-extern int nxagentBlocking;
+extern Bool nxagentBlocking;
 
 /*
  * Current congestion level based on
