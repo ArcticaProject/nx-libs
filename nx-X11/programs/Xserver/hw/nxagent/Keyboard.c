@@ -974,7 +974,7 @@ int nxagentResetKeyboard(void)
   if (dev->key)
   {
     #ifdef XKB
-    if (noXkbExtension == 0 && dev->key->xkbInfo)
+    if (!noXkbExtension && dev->key->xkbInfo)
     {
       oldMinKeycode = dev->key->xkbInfo -> desc -> min_key_code;
       oldMaxKeycode = dev->key->xkbInfo -> desc -> max_key_code;
@@ -1132,7 +1132,7 @@ static int nxagentFreeKeyboardDeviceData(DeviceIntPtr dev)
   if (dev->key)
   {
     #ifdef XKB
-    if (noXkbExtension == 0 && dev->key->xkbInfo)
+    if (!noXkbExtension && dev->key->xkbInfo)
     {
         XkbFreeInfo(dev->key->xkbInfo);
         dev->key->xkbInfo = NULL;
