@@ -123,6 +123,9 @@ Bool nxagentXdmcpAlertUp = False;
 
 int nxagentBuffer;
 Bool nxagentBlocking;
+
+/* FIXME: nxagentCongestion is checked as a Boolean and as an Integer
+   (>= 4) at the same time which is weird at least */
 int nxagentCongestion;
 
 double nxagentBytesIn;
