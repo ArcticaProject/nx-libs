@@ -102,7 +102,7 @@ static XFontStruct *nxagentLoadBestQueryFont(Display* dpy, char *fontName, FontP
 static XFontStruct *nxagentLoadQueryFont(register Display *dpy , char *fontName , FontPtr pFont);
 int nxagentFreeFont(XFontStruct *fs);
 static Bool nxagentGetFontServerPath(char * fontServerPath, int size);
-static char * nxagentMakeScalableFontName(const char *fontName, int scalableResolution);
+static char * nxagentMakeScalableFontName(const char *fontName, Bool scalableResolution);
 
 RESTYPE RT_NX_FONT;
 
@@ -414,10 +414,10 @@ Bool nxagentFontLookUp(const char *name)
 
     if (name && strlen(name) == 0)
     {
-        return 0;
+        return False;
     }
 
-    int result = nxagentFontFind(name, &i);
+    Bool result = nxagentFontFind(name, &i);
 
     char *scalable = NULL;
 
@@ -425,9 +425,9 @@ Bool nxagentFontLookUp(const char *name)
      * Let's try with the scalable font description.
      */
 
-    if (result == 0)
+    if (!result)
     {
-        if ((scalable = nxagentMakeScalableFontName(name, 0)) != NULL)
+        if ((scalable = nxagentMakeScalableFontName(name, False)) != NULL)
         {
             result = nxagentFontFind(scalable, &i);
 
@@ -439,9 +439,9 @@ Bool nxagentFontLookUp(const char *name)
      * Let's try again after replacing zero to xdpi and ydpi in the pattern.
      */
 
-    if (result == 0)
+    if (!result)
     {
-        if ((scalable = nxagentMakeScalableFontName(name, 1)) != NULL)
+        if ((scalable = nxagentMakeScalableFontName(name, True)) != NULL)
         {
             result = nxagentFontFind(scalable, &i);
 
@@ -449,9 +449,9 @@ Bool nxagentFontLookUp(const char *name)
         }
     }
 
-    if (result == 0)
+    if (!result)
     {
-        return 0;
+        return False;
     }
     else
     {
@@ -612,7 +612,7 @@ Bool nxagentRealizeFont(ScreenPtr pScreen, FontPtr pFont)
 
     if (nxagentFontPriv(pFont)->font_struct == NULL)
     {
-        if (nxagentFontLookUp(name) == False)
+        if (!nxagentFontLookUp(name))
         {
             fprintf(stderr, "Font: nxagentRealizeFont failed with font Font=%s, not in our remote list\n",
                         validateString(name));
@@ -1532,7 +1532,7 @@ XFontStruct* nxagentLoadQueryFont(register Display *dpy, char *name, FontPtr pFo
     fprintf(stderr, "nxagentLoadQueryFont: Looking for font '%s'.\n", name);
     #endif
 
-    if (nxagentFontLookUp(name) == 0)
+    if (!nxagentFontLookUp(name))
     {
         #ifdef DEBUG
         fprintf(stderr, "nxagentLoadQueryFont: WARNING! Font not found '%s'.\n", name);
@@ -1630,7 +1630,7 @@ int nxagentSplitString(char *string, char *fields[], int nfields, char *sep)
     char *current = string;
 
     int i = 0;
-    int last = 0;
+    Bool last = False;
 
     for (;;)
     {
@@ -1644,7 +1644,7 @@ int nxagentSplitString(char *string, char *fields[], int nfields, char *sep)
         if (next == NULL)
         {
             next = string + len;
-            last = 1;
+            last = True;
         }
 
         int fieldlen = next - current;
@@ -1662,7 +1662,7 @@ int nxagentSplitString(char *string, char *fields[], int nfields, char *sep)
 
         i++;
 
-        if (last == 1)
+        if (last)
         {
             break;
         }
@@ -1671,7 +1671,7 @@ int nxagentSplitString(char *string, char *fields[], int nfields, char *sep)
     return i;
 }
 
-char *nxagentMakeScalableFontName(const char *fontName, int scalableResolution)
+char *nxagentMakeScalableFontName(const char *fontName, Bool scalableResolution)
 {
     char *scalableFontName;
 
@@ -1710,7 +1710,7 @@ char *nxagentMakeScalableFontName(const char *fontName, int scalableResolution)
 
                 strcat(scalableFontName, "-0");
             }
-            else if (scalableResolution == 1 && (field == 8 || field == 9))
+            else if (scalableResolution && (field == 8 || field == 9))
             {
                 /*
                  * RESOLUTION_X || RESOLUTION_Y
