@@ -1143,7 +1143,7 @@ FIXME: Don't enqueue the KeyRelease event if the key was not already
           nxagentKeyDown = 0;
         }
 
-        if (nxagentXkbState.Initialized == 0)
+        if (!nxagentXkbState.Initialized)
         {
           if (X.xkey.keycode == nxagentCapsLockKeycode)
           {
@@ -2263,7 +2263,7 @@ FIXME: Don't enqueue the KeyRelease event if the key was not already
 
 int nxagentHandleKeyPress(XEvent *X, enum HandleEventResult *result)
 {
-  if (nxagentXkbState.Initialized == 0)
+  if (!nxagentXkbState.Initialized)
   {
     if (X -> xkey.keycode == nxagentCapsLockKeycode)
     {
@@ -2741,7 +2741,7 @@ int nxagentHandleXkbKeyboardStateEvent(XEvent *X)
                 nxagentXkbState.Locked);
     #endif
 
-    nxagentXkbState.Initialized = 1;
+    nxagentXkbState.Initialized = True;
 
     if (nxagentXkbState.Caps == 0 &&
             (nxagentXkbState.Locked & CAPSFLAG_IN_EVENT))

@@ -161,7 +161,7 @@ XkbAgentInfoRec nxagentXkbInfo = { -1, -1, -1, -1, -1 };
  * Keyboard status, updated through XKB events.
  */
 
-XkbAgentStateRec nxagentXkbState = { 0, 0, 0, 0, 0 };
+XkbAgentStateRec nxagentXkbState = { 0, 0, 0, 0, False };
 
 /*
  * Info for disabling/enabling Xkb extension.

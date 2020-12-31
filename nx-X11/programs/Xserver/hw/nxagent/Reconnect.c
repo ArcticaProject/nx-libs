@@ -616,7 +616,7 @@ Bool nxagentReconnectSession(void)
     }
   }
 
-  nxagentXkbState.Initialized = 0;
+  nxagentXkbState.Initialized = False;
 
   SAFE_free(nxagentOldKeyboard);
 
