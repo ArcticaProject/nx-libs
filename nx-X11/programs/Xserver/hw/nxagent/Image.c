@@ -525,8 +525,8 @@ void nxagentPutImage(DrawablePtr pDrawable, GCPtr pGC, int depth,
    */
 
   if (!nxagentOption(IgnoreVisibility) && pDrawable -> type == DRAWABLE_WINDOW &&
-          (nxagentWindowIsVisible((WindowPtr) pDrawable) == 0 ||
-              (nxagentDefaultWindowIsVisible() == 0 && nxagentCompositeEnable == 0)))
+          (!nxagentWindowIsVisible((WindowPtr) pDrawable) ||
+              (!nxagentDefaultWindowIsVisible() && nxagentCompositeEnable == 0)))
   {
 
     #ifdef TEST

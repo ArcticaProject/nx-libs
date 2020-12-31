@@ -173,8 +173,8 @@ FIXME: Changed macro: NXAGENT_SHOULD_DEFER_COMPOSITE
  */
 
 #define NXAGENT_SHOULD_SYNCHRONIZE_WINDOW(pDrawable)  \
-    (nxagentWindowIsVisible((WindowPtr) pDrawable) == 1 && \
-        (nxagentDefaultWindowIsVisible() == 1 || nxagentCompositeEnable == 1))
+    (nxagentWindowIsVisible((WindowPtr) pDrawable) && \
+        (nxagentDefaultWindowIsVisible() || nxagentCompositeEnable == 1))
 
 #define MINIMUM_PIXMAP_USAGE_COUNTER 2
 

@@ -2309,7 +2309,7 @@ void nxagentCorruptedRegionOnWindow(void *p0, XID x, void *p2)
    * The window is not visible.
    */
 
-  if (nxagentWindowIsVisible(pWin) == 0)
+  if (!nxagentWindowIsVisible(pWin))
   {
     return;
   }
