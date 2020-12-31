@@ -209,7 +209,7 @@ extern int nxagentInputEvent;
  * Event-handling utilities.
  */
 
-Bool nxagentPendingEvents(Display *dpy);
+int nxagentPendingEvents(Display *dpy);
 
 #define nxagentQueuedEvents(display) \
     XQLength((display))
