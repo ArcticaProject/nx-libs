@@ -767,7 +767,7 @@ static void nxagentDisplayFlushHandler(Display *disp, int length)
  * Error flag after the _NXDisplayErrorPredicate returns true. The
  * function can be used to activate additional checks, besides the
  * normal failures detected by Xlib on the display socket. For exam-
- * ple, the application can set the funciton to verify if an inter-
+ * ple, the application can set the function to verify if an inter-
  * rupt was received or if any other event occurred mandating the
  + end of the session."
  */

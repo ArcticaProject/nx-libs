@@ -528,13 +528,12 @@ void nxagentReconnectPictFormat(void *p0, XID x1, void *p2)
 }
 
 /*
- * The set of picture formats may change considerably
- * between different X servers. This poses a problem
- * while migrating NX sessions, because a requisite to
- * successfully reconnect the session is that all pic-
- * ture formats have to be available on the new X server.
- * To reduce such problems, we use a limited set of
- * pictures available on the most X servers.
+ * The set of picture formats may change considerably between
+ * different X servers. This poses a problem while migrating NX
+ * sessions, because a requisite to successfully reconnect the session
+ * is that all picture formats have to be available on the new X
+ * server.  To reduce such problems, we use a limited set of pictures
+ * available on the most X servers.
  */
 
 void nxagentPictureCreateDefaultFormats(ScreenPtr pScreen, FormatInitRec *formats, int *nformats)

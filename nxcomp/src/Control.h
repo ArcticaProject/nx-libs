@@ -144,7 +144,7 @@ class Control
   T_session_mode SessionMode;
 
   //
-  // Either immediate or defferred flushes.
+  // Either immediate or deferred flushes.
   //
 
   T_flush_policy FlushPolicy;

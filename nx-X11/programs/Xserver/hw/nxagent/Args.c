@@ -2319,7 +2319,7 @@ void nxagentSetDeferLevel(void)
     nxagentChangeOption(Streaming, False);
   }
 
- switch (nxagentOption(LinkType))
+  switch (nxagentOption(LinkType))
   {
     case LINK_TYPE_MODEM:
     case LINK_TYPE_ISDN:  { deferLevel = 2; tileWidth =   64; tileHeight =   64; break; }
