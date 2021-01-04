@@ -342,7 +342,7 @@ extern int NXTransFlush(int fd);
  *                   connection.
  *
  * NX_CHANNEL_SLAVE: The channel will forward data to a remote slave
- *                   command (see NX_SLAVE_CMD envrionment variable)
+ *                   command (see NX_SLAVE_CMD environment variable)
  *
  * Only a proxy running at the NX server/X client side will be able
  * to create a X, CUPS, SMB, MEDIA and HTTP channel. A proxy running

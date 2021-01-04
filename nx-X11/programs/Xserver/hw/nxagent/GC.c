@@ -1127,7 +1127,7 @@ static void nxagentReconnectClip(GCPtr pGC, int type, void * pValue, int nRects)
         /*
          * Originally, the clip origin area were 0,0 but it didn't
          * work with kedit and family, because it got the clip mask of
-         * the pixmap all traslated.
+         * the pixmap all translated.
          */
 
         XSetClipRectangles(nxagentDisplay, nxagentGC(pGC), pGC -> clipOrg.x, pGC -> clipOrg.y,

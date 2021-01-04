@@ -112,7 +112,7 @@ SplitResourcePtr nxagentAllocSplitResource(void)
       fprintf(stderr, "nxagentAllocSplitResource: PANIC! No more resources for the next split.\n");
       #endif
 /*
-FIXME: Must deal with the case all resources are exausted.
+FIXME: Must deal with the case all resources are exhausted.
 */
       FatalError("nxagentAllocSplitResource: PANIC! No more resources for the next split.\n");
     }
