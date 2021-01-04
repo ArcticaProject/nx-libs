@@ -435,6 +435,11 @@ N/A
 
         int len = (max_keycode - min_keycode + 1) * mapWidth;
         keymap = (KeySym *)malloc(len * sizeof(KeySym));
+        if (keymap == NULL)
+        {
+          XFreeModifiermap(modifier_keymap);
+          return -1;
+        }
         for(int i = 0; i < len; ++i)
         {
           keymap[i] = keymap64[i];
