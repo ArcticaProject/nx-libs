@@ -3090,27 +3090,36 @@ static void nxagentReconnectWindow(void * param0, XID param1, void * data_buffer
                     (void*)pWin, pWin -> drawable.id, nxagentWindow(pWin));
         #endif
 
+        /* FIXME: use XAllocSizeHints() */
         #ifdef _XSERVER64
         data64 = (unsigned char *) malloc(sizeof(XSizeHints) + 4);
+	if (data64)
+	{
+          for (int i = 0; i < 4; i++)
+          {
+            *(data64 + i) = *(data + i);
+          }
 
-        for (int i = 0; i < 4; i++)
-        {
-          *(data64 + i) = *(data + i);
-        }
+          *(((int *) data64) + 1) = 0;
 
-        *(((int *) data64) + 1) = 0;
+          for (int i = 8; i < sizeof(XSizeHints) + 4; i++)
+          {
+            *(data64 + i) = *(data + i - 4);
+          }
 
-        for (int i = 8; i < sizeof(XSizeHints) + 4; i++)
-        {
-          *(data64 + i) = *(data + i - 4);
-        }
-
-        XSizeHints *props = (XSizeHints *) data64;
+          XSizeHints *props = (XSizeHints *) data64;
         #else
-        XSizeHints *props = (XSizeHints *) data;
+          XSizeHints *props = (XSizeHints *) data;
         #endif   /* _XSERVER64 */
 
-        hints = *props;
+          hints = *props;
+	}
+	else
+	{
+          #ifdef WARNING
+          fprintf(stderr, "%s: Failed to alloc memory for XSizeHints\n", __func__);
+          #endif
+	}
       }
       else
       {
