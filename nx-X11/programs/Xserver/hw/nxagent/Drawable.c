@@ -1605,9 +1605,11 @@ void nxagentUnmarkCorruptedRegion(DrawablePtr pDrawable, RegionPtr pRegion)
    * If the drawable becomes synchronized, the counter reporting the
    * number of corrupted drawables must be decreased. Moreover the
    * corrupted timestamp must be reset.
+   * Note: oldstatus has been checked above and is always
+   * "NotSynchronized" here.
    */
 
-  if (oldStatus == NotSynchronized &&
+  if (/*oldStatus == NotSynchronized &&*/
           nxagentDrawableStatus(pDrawable) == Synchronized)
   {
     if (pDrawable -> type == DRAWABLE_PIXMAP)
