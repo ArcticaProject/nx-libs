@@ -502,7 +502,8 @@ int nxagentExportProperty(WindowPtr pWin,
 
     nxagentPropWMHints propHints = {
       .flags = wmHints.flags,
-      .input = (wmHints.input == True ? 1 : 0),
+      /*.input = (wmHints.input == True ? 1 : 0), is always True*/
+      .input = 1,
       .initialState = wmHints.initial_state,
       .iconPixmap = wmHints.icon_pixmap,
       .iconWindow = wmHints.icon_window,
