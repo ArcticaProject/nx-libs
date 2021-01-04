@@ -46,6 +46,7 @@
    Linux 2.0.x and 2.2.x define SHMLBA as PAGE_SIZE, but forget to define
    PAGE_SIZE. It is defined in <asm/page.h>. */
 #include <asm/page.h>
+#include <limits.h>
 #endif
 #ifdef SVR4
 #include <sys/sysmacros.h>
