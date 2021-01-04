@@ -1248,7 +1248,7 @@ void nxagentGlyphs(CARD8 op, PicturePtr pSrc, PicturePtr pDst,
                        PictFormatPtr maskFormat, INT16 xSrc, INT16 ySrc, int nlists,
                            XGlyphElt8 *elts, int sizeID, GlyphPtr *glyphsBase)
 {
-  BoxRec glyphBox;
+  BoxRec glyphBox = {0};
 
   XGlyphElt8 *elements;
 
