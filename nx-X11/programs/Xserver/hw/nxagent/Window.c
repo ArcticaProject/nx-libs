@@ -3922,7 +3922,7 @@ StoringPixmapPtr nxagentFindItemBSPixmapList(unsigned long pixmapId)
     }
   }
 
-  #ifdef WARNING
+  #ifdef TEST
   fprintf(stderr, "%s: WARNING! Item not found.\n", __func__);
   #endif
 
