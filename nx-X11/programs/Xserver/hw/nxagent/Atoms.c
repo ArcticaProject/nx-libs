@@ -409,6 +409,9 @@ static void nxagentWriteAtom(Atom local, XlibAtom remote, const char *string)
   #ifdef WARNING
   if (s == NULL)
   {
+    /* we only warn here, because s being NULL ist not problem, it
+       will only result in NULL being stored in the privAtomMap, which
+       is perfectly legal. */
     fprintf(stderr, "%s: Malloc failed.\n", __func__);
   }
   #endif
