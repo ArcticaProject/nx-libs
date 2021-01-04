@@ -788,11 +788,15 @@ void nxagentSetReconnectError(int id, char *format, ...)
       size = (size ? size * 2 : NXAGENT_RECONNECT_DEFAULT_MESSAGE_SIZE);
     }
 
-    nxagentReconnectErrorMessage = realloc(nxagentReconnectErrorMessage, size);
+    char *tmp = realloc(nxagentReconnectErrorMessage, size);
 
-    if (nxagentReconnectErrorMessage == NULL)
+    if (tmp == NULL)
     {
       FatalError("realloc failed");
+    }
+    else
+    {
+      nxagentReconnectErrorMessage = tmp;
     }
   }
 
