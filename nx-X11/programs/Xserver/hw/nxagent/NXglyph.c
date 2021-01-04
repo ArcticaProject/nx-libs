@@ -296,6 +296,13 @@ miGlyphs (CARD8		op,
         else
         {
           nxagentGlyphsExtents = (BoxPtr) malloc(sizeof(BoxRec));
+          if (!nxagentGlyphsExtents)
+          {
+            #ifdef WARNING
+            fprintf(stderr, "WARNING! Cannot allocate GlyphExtents\n");
+            #endif
+            return;
+          }
 
           GlyphExtents (nlist, list, glyphs, &extents);
 
