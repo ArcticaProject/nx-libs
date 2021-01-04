@@ -2577,12 +2577,18 @@ Bool nxagentReconnectDisplay(void *p0)
 
   nxagentNumDefaultColormaps = nxagentNumVisuals;
 
-  nxagentDefaultColormaps = (Colormap *) realloc(nxagentDefaultColormaps,
-                                 nxagentNumDefaultColormaps * sizeof(Colormap));
-
-  if (nxagentDefaultColormaps == NULL)
   {
-    FatalError("Can't allocate memory for the default colormaps\n");
+    Colormap * tmp = (Colormap *) realloc(nxagentDefaultColormaps,
+                                              nxagentNumDefaultColormaps * sizeof(Colormap));
+    if (tmp == NULL)
+    {
+      SAFE_free(nxagentDefaultColormaps);
+      FatalError("Can't allocate memory for the default colormaps\n");
+    }
+    else
+    {
+      nxagentDefaultColormaps = tmp;
+    }
   }
 
   reconnectDisplayState = ALLOC_DEF_COLORMAP;
