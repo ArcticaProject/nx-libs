@@ -110,8 +110,6 @@ extern WindowPtr nxagentViewportFrameRight;
 extern WindowPtr nxagentViewportFrameAbove;
 extern WindowPtr nxagentViewportFrameBelow;
 
-extern WindowPtr nxagentRootTileWindow;
-
 extern Bool nxagentReportPrivateWindowIds;
 
 #define RECTLIMIT 25

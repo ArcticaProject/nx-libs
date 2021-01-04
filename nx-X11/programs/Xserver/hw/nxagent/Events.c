@@ -131,8 +131,6 @@
 
 extern Bool nxagentOnce;
 
-extern WindowPtr nxagentRootTileWindow;
-
 extern int nxagentLastClipboardClient;
 
 #ifdef NX_DEBUG_INPUT
