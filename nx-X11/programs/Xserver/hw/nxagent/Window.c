@@ -3659,6 +3659,14 @@ void nxagentAddStaticResizedWindow(WindowPtr pWin, unsigned long sequence, int o
   StaticResizedWindowStruct *tmp = nxagentStaticResizedWindowList;
 
   nxagentStaticResizedWindowList = malloc(sizeof(StaticResizedWindowStruct));
+  if (!nxagentStaticResizedWindowList)
+  {
+    #ifdef WARNING
+    fprintf(stderr, "WARNING: could not allocate memory for nxagentStaticResizedWindowList\n");
+    #endif
+    nxagentStaticResizedWindowList = tmp;
+    return;
+  }
   nxagentStaticResizedWindowList -> next = tmp;
   nxagentStaticResizedWindowList -> prev = NULL;
 
