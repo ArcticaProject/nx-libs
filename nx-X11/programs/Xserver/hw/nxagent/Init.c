@@ -610,7 +610,14 @@ void OsVendorEndRedirectErrorFFunction(void)
   nxagentEndRedirectToClientsLog();
 }
 
-ServerGrabInfoRec nxagentGrabServerInfo;
+
+/*
+ * In an uninialized nxagentGrabServerInfo .grabstate is 0 which is the
+ * value of SERVER_GRABBED. Therefore we need to initialize .grabstate
+ * with SERVER_UNGRABBED. A check in Screen.c would go wrong
+ * otherwise.
+ */
+ServerGrabInfoRec nxagentGrabServerInfo = {.grabstate = SERVER_UNGRABBED, .client = NULL};
 
 static void nxagentGrabServerCallback(CallbackListPtr *callbacks, void *data,
                                    void *args)
