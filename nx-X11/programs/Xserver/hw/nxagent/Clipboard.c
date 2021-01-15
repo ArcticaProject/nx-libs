@@ -225,7 +225,7 @@ const char * getXErrorString(int code)
  * Save the values queried from X server.
  */
 
-XFixesAgentInfoRec nxagentXFixesInfo = { -1, -1, -1, 0 };
+XFixesAgentInfoRec nxagentXFixesInfo = { -1, -1, -1, False };
 
 extern Display *nxagentDisplay;
 
@@ -1571,7 +1571,7 @@ void nxagentSetSelectionCallback(CallbackListPtr *callbacks, void *data,
    * way to identify that situation during callback processing we
    * could get rid of the Trap...
   */
-  if (nxagentExternalClipboardEventTrap != 0)
+  if (nxagentExternalClipboardEventTrap)
   {
     #ifdef DEBUG
     fprintf(stderr, "%s: Trap is set, doing nothing\n", __func__);
@@ -2234,7 +2234,7 @@ Bool nxagentInitClipboard(WindowPtr pWin)
                                  XFixesSelectionClientCloseNotifyMask);
     }
 
-    nxagentXFixesInfo.Initialized = 1;
+    nxagentXFixesInfo.Initialized = True;
   }
 
   /*

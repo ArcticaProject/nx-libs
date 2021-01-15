@@ -161,7 +161,7 @@ XkbAgentInfoRec nxagentXkbInfo = { -1, -1, -1, -1, -1 };
  * Keyboard status, updated through XKB events.
  */
 
-XkbAgentStateRec nxagentXkbState = { 0, 0, 0, 0, 0 };
+XkbAgentStateRec nxagentXkbState = { 0, 0, 0, 0, False };
 
 /*
  * Info for disabling/enabling Xkb extension.
@@ -776,7 +776,7 @@ XkbError:
           XkbDDXChangeControls(pDev, xkb->ctrls, xkb->ctrls);
         }
 
-        if (nxagentOption(Shadow) == 1 && pDev && pDev->key)
+        if (nxagentOption(Shadow) && pDev && pDev->key)
         {
           NXShadowInitKeymap(&(pDev->key->curKeySyms));
         }
@@ -974,7 +974,7 @@ int nxagentResetKeyboard(void)
   if (dev->key)
   {
     #ifdef XKB
-    if (noXkbExtension == 0 && dev->key->xkbInfo)
+    if (!noXkbExtension && dev->key->xkbInfo)
     {
       oldMinKeycode = dev->key->xkbInfo -> desc -> min_key_code;
       oldMaxKeycode = dev->key->xkbInfo -> desc -> max_key_code;
@@ -1132,7 +1132,7 @@ static int nxagentFreeKeyboardDeviceData(DeviceIntPtr dev)
   if (dev->key)
   {
     #ifdef XKB
-    if (noXkbExtension == 0 && dev->key->xkbInfo)
+    if (!noXkbExtension && dev->key->xkbInfo)
     {
         XkbFreeInfo(dev->key->xkbInfo);
         dev->key->xkbInfo = NULL;

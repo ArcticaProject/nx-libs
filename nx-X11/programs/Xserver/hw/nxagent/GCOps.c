@@ -211,18 +211,18 @@ RegionPtr nxagentBitBlitHelper(GC *pGC)
  * redirect property.
  */
 
-int nxagentWindowIsPopup(DrawablePtr pDrawable)
+Bool nxagentWindowIsPopup(DrawablePtr pDrawable)
 {
   if (pDrawable -> type != DRAWABLE_WINDOW)
   {
     return 0;
   }
 
-  int windowIsPopup = 0;
+  Bool windowIsPopup = False;
 
   if (((WindowPtr) pDrawable) -> overrideRedirect == 1)
   {
-    windowIsPopup = 1;
+    windowIsPopup = True;
   }
   else
   {
@@ -244,7 +244,7 @@ int nxagentWindowIsPopup(DrawablePtr pDrawable)
 
       if (parent -> overrideRedirect == 1)
       {
-        windowIsPopup = 1;
+        windowIsPopup = True;
         break;
       }
 
@@ -254,17 +254,17 @@ int nxagentWindowIsPopup(DrawablePtr pDrawable)
 
   #ifdef TEST
   fprintf(stderr, "nxagentWindowIsPopup: Window [%p] %s to be a popup.\n", (void *) pDrawable,
-              windowIsPopup == 1 ? "seems" : "does not seem");
+              windowIsPopup ? "seems" : "does not seem");
   #endif
 
   return windowIsPopup;
 }
 
 /*
- * This function returns 1 if the XCopyArea request must be skipped.
+ * This function returns True if the XCopyArea request must be skipped.
  */
 
-int nxagentDeferCopyArea(DrawablePtr pSrcDrawable, DrawablePtr pDstDrawable,
+Bool nxagentDeferCopyArea(DrawablePtr pSrcDrawable, DrawablePtr pDstDrawable,
                             GCPtr pGC, int srcx, int srcy, int width,
                                 int height, int dstx, int dsty)
 {
@@ -285,7 +285,7 @@ FIXME: The popup could be synchronized with one single put image,
   if (nxagentOption(DeferLevel) >= 2 &&
           pSrcDrawable -> type == DRAWABLE_PIXMAP &&
               nxagentPixmapContainTrapezoids((PixmapPtr) pSrcDrawable) == 1 &&
-                  nxagentWindowIsPopup(pDstDrawable) == 1)
+                  nxagentWindowIsPopup(pDstDrawable))
   {
     RegionPtr pSrcRegion = nxagentCreateRegion(pSrcDrawable, NULL, srcx, srcy, width, height);
 
@@ -301,7 +301,7 @@ FIXME: The popup could be synchronized with one single put image,
     RegionIntersect(&corruptedRegion,
                          pSrcRegion, nxagentCorruptedRegion(pSrcDrawable));
 
-    if (RegionNil(&corruptedRegion) == 0)
+    if (!RegionNil(&corruptedRegion))
     {
       #ifdef TEST
       fprintf(stderr, "nxagentDeferCopyArea: Forcing the synchronization of source drawable at [%p].\n",
@@ -317,7 +317,7 @@ FIXME: The popup could be synchronized with one single put image,
 
     if (nxagentDrawableStatus(pSrcDrawable) == Synchronized)
     {
-      return 0;
+      return False;
     }
   }
 
@@ -422,17 +422,17 @@ FIXME: The popup could be synchronized with one single put image,
      * corrupted region.
      */
 
-    if (RegionNil(pClipRegion) == 0)
+    if (!RegionNil(pClipRegion))
     {
       nxagentUnmarkCorruptedRegion(pDstDrawable, pClipRegion);
     }
 
-    if (RegionNil(pCorruptedRegion) == 0)
+    if (!RegionNil(pCorruptedRegion))
     {
       nxagentMarkCorruptedRegion(pDstDrawable, pCorruptedRegion);
     }
 
-    if (RegionNil(pClipRegion) == 0)
+    if (!RegionNil(pClipRegion))
     {
       Bool pClipRegionFree = True;
 
@@ -509,7 +509,7 @@ FIXME: The popup could be synchronized with one single put image,
 
       nxagentChangeClip(targetGC, CT_NONE, NullRegion, 0);
 
-      if (pClipRegionFree == True)
+      if (pClipRegionFree)
       {
         nxagentFreeRegion(pClipRegion);
       }
@@ -532,7 +532,7 @@ FIXME: The popup could be synchronized with one single put image,
 
     nxagentFreeRegion(pCorruptedRegion);
 
-    return 1;
+    return True;
   }
   else
   {
@@ -550,7 +550,7 @@ FIXME: The popup could be synchronized with one single put image,
     RegionIntersect(&corruptedRegion,
                          pSrcRegion, nxagentCorruptedRegion(pSrcDrawable));
 
-    if (RegionNil(&corruptedRegion) == 0)
+    if (!RegionNil(&corruptedRegion))
     {
       #ifdef TEST
       fprintf(stderr, "nxagentDeferCopyArea: Forcing the synchronization of source drawable at [%p].\n",
@@ -565,14 +565,14 @@ FIXME: The popup could be synchronized with one single put image,
     nxagentFreeRegion(pSrcRegion);
   }
 
-  return 0;
+  return False;
 }
 
 RegionPtr nxagentCopyArea(DrawablePtr pSrcDrawable, DrawablePtr pDstDrawable,
                                GCPtr pGC, int srcx, int srcy, int width,
                                    int height, int dstx, int dsty)
 {
-  int skip = 0;
+  Bool skip = False;
 
   #ifdef TEST
   fprintf(stderr, "nxagentCopyArea: Image src [%s:%p], dst [%s:%p] (%d,%d) -> (%d,%d) size (%d,%d)\n",
@@ -664,7 +664,7 @@ RegionPtr nxagentCopyArea(DrawablePtr pSrcDrawable, DrawablePtr pDstDrawable,
   }
 
 
-  if (nxagentGCTrap == 1 || nxagentShmTrap == 1)
+  if (nxagentGCTrap || nxagentShmTrap)
   {
     if (pSrcDrawable -> type == DRAWABLE_PIXMAP &&
             pDstDrawable -> type == DRAWABLE_PIXMAP)
@@ -698,9 +698,9 @@ RegionPtr nxagentCopyArea(DrawablePtr pSrcDrawable, DrawablePtr pDstDrawable,
    * little use.
    */
 
-  if (nxagentOption(IgnoreVisibility) == 0 && pDstDrawable -> type == DRAWABLE_WINDOW &&
-          (nxagentWindowIsVisible((WindowPtr) pDstDrawable) == 0 ||
-              (nxagentDefaultWindowIsVisible() == 0 && nxagentCompositeEnable == 0)))
+  if (!nxagentOption(IgnoreVisibility) && pDstDrawable -> type == DRAWABLE_WINDOW &&
+          (!nxagentWindowIsVisible((WindowPtr) pDstDrawable) ||
+              (!nxagentDefaultWindowIsVisible() && nxagentCompositeEnable == 0)))
   {
     #ifdef TEST
     fprintf(stderr, "nxagentCopyArea: Prevented operation on fully obscured window at [%p].\n",
@@ -761,7 +761,7 @@ RegionPtr nxagentCopyArea(DrawablePtr pSrcDrawable, DrawablePtr pDstDrawable,
      * can skip the copy area operation.
      */
 
-    skip = 1;
+    skip = True;
   }
 
   #ifdef TEST
@@ -771,7 +771,7 @@ RegionPtr nxagentCopyArea(DrawablePtr pSrcDrawable, DrawablePtr pDstDrawable,
                        (void *) pDstDrawable, srcx, srcy, dstx, dsty, width, height);
   #endif
 
-  if (skip == 0 && nxagentDrawableStatus(pSrcDrawable) == NotSynchronized)
+  if (!skip && nxagentDrawableStatus(pSrcDrawable) == NotSynchronized)
   {
     skip = nxagentDeferCopyArea(pSrcDrawable, pDstDrawable, pGC, srcx, srcy,
                                    width, height, dstx, dsty);
@@ -784,7 +784,7 @@ RegionPtr nxagentCopyArea(DrawablePtr pSrcDrawable, DrawablePtr pDstDrawable,
   }
   #endif
 
-  if (skip == 0)
+  if (!skip)
   {
     XCopyArea(nxagentDisplay, nxagentDrawable(pSrcDrawable), nxagentDrawable(pDstDrawable),
                   nxagentGC(pGC), srcx, srcy, width, height, dstx, dsty);
@@ -881,7 +881,7 @@ RegionPtr nxagentCopyPlane(DrawablePtr pSrcDrawable, DrawablePtr pDstDrawable,
                                GCPtr pGC, int srcx, int srcy, int width, int height,
                                    int dstx, int dsty, unsigned long plane)
 {
-  int skip = 0;
+  Bool skip = False;
 
   #ifdef TEST
   fprintf(stderr, "nxagentCopyPlane: Image src [%s:%p], dst [%s:%p] (%d,%d) -> (%d,%d) size (%d,%d)\n",
@@ -890,7 +890,7 @@ RegionPtr nxagentCopyPlane(DrawablePtr pSrcDrawable, DrawablePtr pDstDrawable,
                           (void *) pDstDrawable, srcx, srcy, dstx, dsty, width, height);
   #endif
 
-  if (nxagentGCTrap == 1 || nxagentShmTrap == 1)
+  if (nxagentGCTrap || nxagentShmTrap)
   {
     if (pSrcDrawable -> type == DRAWABLE_PIXMAP &&
             pDstDrawable -> type == DRAWABLE_PIXMAP)
@@ -969,10 +969,10 @@ RegionPtr nxagentCopyPlane(DrawablePtr pSrcDrawable, DrawablePtr pDstDrawable,
      * can skip the copy plane operation.
      */
 
-    skip = 1;
+    skip = True;
   }
 
-  if (skip == 0 && nxagentDrawableStatus(pSrcDrawable) == NotSynchronized)
+  if (!skip && nxagentDrawableStatus(pSrcDrawable) == NotSynchronized)
   {
     if (pDstDrawable -> type == DRAWABLE_PIXMAP &&
             nxagentOption(DeferLevel) > 0)
@@ -983,7 +983,7 @@ RegionPtr nxagentCopyPlane(DrawablePtr pSrcDrawable, DrawablePtr pDstDrawable,
 
       nxagentFreeRegion(pDstRegion);
 
-      skip = 1;
+      skip = True;
     }
     else
     {
@@ -996,7 +996,7 @@ RegionPtr nxagentCopyPlane(DrawablePtr pSrcDrawable, DrawablePtr pDstDrawable,
       RegionIntersect(&corruptedRegion,
                            pSrcRegion, nxagentCorruptedRegion(pSrcDrawable));
 
-      if (RegionNil(&corruptedRegion) == 0)
+      if (!RegionNil(&corruptedRegion))
       {
         #ifdef TEST
         fprintf(stderr, "nxagentCopyPlane: Forcing the synchronization of source drawable at [%p].\n",
@@ -1025,7 +1025,7 @@ RegionPtr nxagentCopyPlane(DrawablePtr pSrcDrawable, DrawablePtr pDstDrawable,
   }
   #endif
 
-  if (skip == 0)
+  if (!skip)
   {
     XCopyPlane(nxagentDisplay,
                    nxagentDrawable(pSrcDrawable), nxagentDrawable(pDstDrawable),
@@ -1073,7 +1073,7 @@ void nxagentPolyPoint(DrawablePtr pDrawable, GCPtr pGC, int mode,
               (void *) pDrawable, (void *) pGC, nPoints);
   #endif
 
-  if (nxagentGCTrap == 1)
+  if (nxagentGCTrap)
   {
     if ((pDrawable)->type == DRAWABLE_PIXMAP)
     {
@@ -1130,7 +1130,7 @@ void nxagentPolyPoint(DrawablePtr pDrawable, GCPtr pGC, int mode,
 void nxagentPolyLines(DrawablePtr pDrawable, GCPtr pGC, int mode,
                           int nPoints, xPoint *pPoints)
 {
-  if (nxagentGCTrap == 1)
+  if (nxagentGCTrap)
   {
     if ((pDrawable)->type == DRAWABLE_PIXMAP)
     {
@@ -1203,7 +1203,7 @@ void nxagentPolySegment(DrawablePtr pDrawable, GCPtr pGC,
 
   #endif
 
-  if (nxagentGCTrap == 1)
+  if (nxagentGCTrap)
   {
     if ((pDrawable)->type == DRAWABLE_PIXMAP)
     {
@@ -1280,7 +1280,7 @@ void nxagentPolyRectangle(DrawablePtr pDrawable, GCPtr pGC,
 
   #endif
 
-  if (nxagentGCTrap == 1)
+  if (nxagentGCTrap)
   {
     if ((pDrawable)->type == DRAWABLE_PIXMAP)
     {
@@ -1345,7 +1345,7 @@ void nxagentPolyRectangle(DrawablePtr pDrawable, GCPtr pGC,
 void nxagentPolyArc(DrawablePtr pDrawable, GCPtr pGC,
                         int nArcs, xArc *pArcs)
 {
-  if (nxagentGCTrap == 1)
+  if (nxagentGCTrap)
   {
     if ((pDrawable)->type == DRAWABLE_PIXMAP)
     {
@@ -1404,7 +1404,7 @@ void nxagentFillPolygon(DrawablePtr pDrawable, GCPtr pGC, int shape,
 {
   xPoint *newPoints = NULL;
 
-  if (nxagentGCTrap == 1)
+  if (nxagentGCTrap)
   {
     if ((pDrawable)->type == DRAWABLE_PIXMAP)
     {
@@ -1518,7 +1518,7 @@ void nxagentPolyFillRect(DrawablePtr pDrawable, GCPtr pGC,
 
   #endif
 
-  if (nxagentGCTrap == 1)
+  if (nxagentGCTrap)
   {
     if ((pDrawable)->type == DRAWABLE_PIXMAP)
     {
@@ -1540,7 +1540,7 @@ void nxagentPolyFillRect(DrawablePtr pDrawable, GCPtr pGC,
    * will be cleared.
    */
 
-  int inheritCorruptedRegion = 0;
+  Bool inheritCorruptedRegion = False;
 
   if (pGC -> fillStyle == FillTiled &&
           pGC -> tileIsPixel == 0 && pGC -> tile.pixmap != NULL)
@@ -1556,11 +1556,11 @@ void nxagentPolyFillRect(DrawablePtr pDrawable, GCPtr pGC,
 
       #endif
 
-      inheritCorruptedRegion = 1;
+      inheritCorruptedRegion = True;
     }
   }
 
-  if (inheritCorruptedRegion == 1 || nxagentDrawableStatus(pDrawable) == NotSynchronized)
+  if (inheritCorruptedRegion || nxagentDrawableStatus(pDrawable) == NotSynchronized)
   {
     RegionPtr rectRegion = RegionFromRects(nRectangles, pRectangles, CT_REGION);
 
@@ -1582,7 +1582,7 @@ void nxagentPolyFillRect(DrawablePtr pDrawable, GCPtr pGC,
       RegionUninit(&tmpRegion);
     }
 
-    if (inheritCorruptedRegion == 1)
+    if (inheritCorruptedRegion)
     {
       /*
        * The fill style should affect the corrupted region
@@ -1663,7 +1663,7 @@ void nxagentPolyFillRect(DrawablePtr pDrawable, GCPtr pGC,
 void nxagentPolyFillArc(DrawablePtr pDrawable, GCPtr pGC,
                             int nArcs, xArc *pArcs)
 {
-  if (nxagentGCTrap == 1)
+  if (nxagentGCTrap)
   {
     if ((pDrawable)->type == DRAWABLE_PIXMAP)
     {
@@ -1739,7 +1739,7 @@ int nxagentPolyText8(DrawablePtr pDrawable, GCPtr pGC, int x,
 
   int width = XTextWidth(nxagentFontStruct(pGC->font), string, count);
 
-  if (nxagentGCTrap == 1)
+  if (nxagentGCTrap)
   {
     if ((pDrawable)->type == DRAWABLE_PIXMAP)
     {
@@ -1809,7 +1809,7 @@ int nxagentPolyText16(DrawablePtr pDrawable, GCPtr pGC, int x,
 
   int width = XTextWidth16(nxagentFontStruct(pGC->font), (XChar2b *)string, count);
 
-  if (nxagentGCTrap == 1)
+  if (nxagentGCTrap)
   {
     if ((pDrawable)->type == DRAWABLE_PIXMAP)
     {
@@ -1868,7 +1868,7 @@ int nxagentPolyText16(DrawablePtr pDrawable, GCPtr pGC, int x,
 void nxagentImageText8(DrawablePtr pDrawable, GCPtr pGC, int x,
                            int y, int count, char *string)
 {
-  if (nxagentGCTrap == 1)
+  if (nxagentGCTrap)
   {
     if ((pDrawable)->type == DRAWABLE_PIXMAP)
     {
@@ -1925,7 +1925,7 @@ void nxagentImageText8(DrawablePtr pDrawable, GCPtr pGC, int x,
 void nxagentImageText16(DrawablePtr pDrawable, GCPtr pGC, int x,
                             int y, int count, unsigned short *string)
 {
-  if (nxagentGCTrap == 1)
+  if (nxagentGCTrap)
   {
     if ((pDrawable)->type == DRAWABLE_PIXMAP)
     {

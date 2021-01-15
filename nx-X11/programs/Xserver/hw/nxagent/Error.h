@@ -32,7 +32,7 @@
 
 extern char *nxagentClientsLogName;
 
-extern char nxagentVerbose;
+extern Bool nxagentVerbose;
 
 int nxagentErrorHandler(Display *dpy, XErrorEvent *event);
 

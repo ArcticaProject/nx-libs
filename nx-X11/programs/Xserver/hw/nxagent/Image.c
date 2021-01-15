@@ -403,7 +403,7 @@ FIXME: Here the split trap is always set and so the caching of the
               resource, nxagentSplitTrap);
   #endif
 
-  if (nxagentSplitTrap == 1 || nxagentUnpackAlpha[resource] == NULL ||
+  if (nxagentSplitTrap || nxagentUnpackAlpha[resource] == NULL ||
           nxagentUnpackAlpha[resource] -> size != size ||
               memcmp(nxagentUnpackAlpha[resource] -> data, data, size) != 0)
   {
@@ -473,8 +473,8 @@ void nxagentPutImage(DrawablePtr pDrawable, GCPtr pGC, int depth,
   RegionPtr pRegion = NullRegion;
 
   int resource = 0;
-  int split    = 0;
-  int cache    = 1;
+  Bool split   = False;
+  Bool cache   = True;
 
   #ifdef TEST
   fprintf(stderr, "nxagentPutImage: Image data at [%p] drawable [%s][%p] geometry [%d,%d,%d,%d].\n",
@@ -524,9 +524,9 @@ void nxagentPutImage(DrawablePtr pDrawable, GCPtr pGC, int depth,
    * window.
    */
 
-  if (nxagentOption(IgnoreVisibility) == 0 && pDrawable -> type == DRAWABLE_WINDOW &&
-          (nxagentWindowIsVisible((WindowPtr) pDrawable) == 0 ||
-              (nxagentDefaultWindowIsVisible() == 0 && nxagentCompositeEnable == 0)))
+  if (!nxagentOption(IgnoreVisibility) && pDrawable -> type == DRAWABLE_WINDOW &&
+          (!nxagentWindowIsVisible((WindowPtr) pDrawable) ||
+              (!nxagentDefaultWindowIsVisible() && nxagentCompositeEnable == 0)))
   {
 
     #ifdef TEST
@@ -544,7 +544,7 @@ void nxagentPutImage(DrawablePtr pDrawable, GCPtr pGC, int depth,
 
   pRegion = nxagentCreateRegion(pDrawable, pGC, dstX, dstY, dstWidth, dstHeight);
 
-  if (RegionNil(pRegion) == 1)
+  if (RegionNil(pRegion))
   {
     #ifdef TEST
     fprintf(stderr, "nxagentPutImage: WARNING! Prevented operation on fully clipped "
@@ -562,8 +562,8 @@ FIXME: Should use these.
   int framebuffer = 1;
   int realize     = 1;
 */
-  if (nxagentGCTrap == 1 && nxagentReconnectTrap == 0 &&
-          nxagentFBTrap == 0 && nxagentShmTrap == 0)
+  if (nxagentGCTrap && !nxagentReconnectTrap &&
+          !nxagentFBTrap && !nxagentShmTrap)
   {
     if (pDrawable -> type == DRAWABLE_PIXMAP)
     {
@@ -579,11 +579,11 @@ FIXME: Should use these.
     goto nxagentPutImageEnd;
   }
 
-  if (nxagentReconnectTrap == 0 &&
-          nxagentSplitTrap == 0)
+  if (!nxagentReconnectTrap &&
+          !nxagentSplitTrap)
   {
     if (pDrawable -> type == DRAWABLE_PIXMAP &&
-            nxagentFBTrap == 0 && nxagentShmTrap == 0)
+            !nxagentFBTrap && !nxagentShmTrap)
     {
       fbPutImage(nxagentVirtualDrawable(pDrawable), pGC, depth,
                      dstX, dstY, dstWidth, dstHeight, leftPad, format, data);
@@ -667,11 +667,11 @@ FIXME: Should use these.
 /*
 FIXME: Should we disable the split with link LAN?
 
-  split = (nxagentOption(Streaming) == 1 &&
+  split = (nxagentOption(Streaming) &&
                nxagentOption(LinkType) != LINK_TYPE_NONE &&
                    nxagentOption(LinkType) != LINK_TYPE_LAN
 */
-  split = (nxagentOption(Streaming) == 1 &&
+  split = (nxagentOption(Streaming) &&
                nxagentOption(LinkType) != LINK_TYPE_NONE
 /*
 FIXME: Do we stream the images from GLX or Xv? If we do that, we
@@ -683,8 +683,8 @@ FIXME: Do we stream the images from GLX or Xv? If we do that, we
 /*
 FIXME: Temporarily stream the GLX data.
 
-                           && nxagentGlxTrap == 0
-                               && nxagentXvTrap == 0
+                           && !nxagentGlxTrap
+                               && !nxagentXvTrap
 */
 );
 
@@ -692,21 +692,21 @@ FIXME: Temporarily stream the GLX data.
    * Never split images whose depth is less than 15.
    */
 
-  if (split == 1 && (nxagentSplitTrap == 1 || depth < 15))
+  if (split && (nxagentSplitTrap || depth < 15))
   {
     #ifdef TEST
-    if (nxagentSplitTrap == 1 ||
-            nxagentReconnectTrap == 1)
+    if (nxagentSplitTrap ||
+            nxagentReconnectTrap)
     {
       fprintf(stderr, "nxagentPutImage: Not splitting with reconnection [%d] trap [%d] "
                   "depth [%d].\n", nxagentSplitTrap, nxagentReconnectTrap, depth);
     }
     #endif
 
-    split = 0;
+    split = False;
   }
   #ifdef TEST
-  else if (split == 1)
+  else if (split)
   {
     fprintf(stderr, "nxagentPutImage: Splitting with reconnection [%d] trap [%d] "
                 "depth [%d].\n", nxagentSplitTrap, nxagentReconnectTrap, depth);
@@ -714,7 +714,7 @@ FIXME: Temporarily stream the GLX data.
   #endif
 
   #ifdef TEST
-  if (split == 1)
+  if (split)
   {
     fprintf(stderr, "nxagentPutImage: Splitting the image with size [%d] "
                 "link [%d] GLX [%d] Xv [%d].\n", length, nxagentOption(LinkType),
@@ -734,7 +734,7 @@ FIXME: Temporarily stream the GLX data.
    */
 
   if (nxagentOption(LinkType) != LINK_TYPE_NONE &&
-          (nxagentGlxTrap == 1 || nxagentXvTrap == 1))
+          (nxagentGlxTrap || nxagentXvTrap))
   {
     #ifdef TEST
     fprintf(stderr, "nxagentPutImage: Disabling the use of the cache with GLX or Xvideo.\n");
@@ -742,7 +742,7 @@ FIXME: Temporarily stream the GLX data.
 
     NXSetCacheParameters(nxagentDisplay, 0, 1, 0, 0);
 
-    cache = 0;
+    cache = False;
   }
 
   /*
@@ -750,7 +750,7 @@ FIXME: Temporarily stream the GLX data.
    * tell us if the split took place.
    */
 
-  if (split == 1)
+  if (split)
   {
     /*
      * If the drawable is already being split, expand the
@@ -793,7 +793,7 @@ FIXME: Should probably intersect the region with the region being
   nxagentRealizeImage(pDrawable, pGC, depth, dstX, dstY,
                           dstWidth, dstHeight, leftPad, format, data);
 
-  if (split == 1)
+  if (split)
   {
     NXEndSplit(nxagentDisplay, resource);
 
@@ -807,7 +807,7 @@ FIXME: Should probably intersect the region with the region being
 
     split = nxagentWaitSplitEvent(resource);
 
-    if (split == 1)
+    if (split)
     {
       #ifdef TEST
       fprintf(stderr, "nxagentPutImage: Marking corrupted region [%d,%d,%d,%d] for drawable at [%p].\n",
@@ -838,7 +838,7 @@ FIXME: Should probably intersect the region with the region being
    * above, so here we have to check the value again.
    */
 
-  if (split == 0)
+  if (!split)
   {
     if (nxagentDrawableStatus(pDrawable) == NotSynchronized)
     {
@@ -863,7 +863,7 @@ nxagentPutImageEnd:
    * Check if we disabled caching.
    */
 
-  if (cache == 0)
+  if (!cache)
   {
     #ifdef TEST
     fprintf(stderr, "nxagentPutImage: Reenabling the use of the cache.\n");
@@ -925,7 +925,7 @@ void nxagentRealizeImage(DrawablePtr pDrawable, GCPtr pGC, int depth,
 
   int bytesPerLine = nxagentImagePad(w, format, leftPad, depth);
 
-  if (nxagentOption(Shadow) == 1 && format == ZPixmap &&
+  if (nxagentOption(Shadow) && format == ZPixmap &&
           (nxagentOption(XRatio) != DONT_SCALE ||
               nxagentOption(YRatio) != DONT_SCALE) &&
                   pDrawable == (DrawablePtr) nxagentShadowPixmapPtr)
@@ -987,7 +987,7 @@ void nxagentRealizeImage(DrawablePtr pDrawable, GCPtr pGC, int depth,
       clipRegion = nxagentCreateRegion(pDrawable, pGC, x, y, w, h);
     }
 
-    if (clipRegion == NullRegion || RegionNil(clipRegion) == 0)
+    if (clipRegion == NullRegion || !RegionNil(clipRegion))
     {
       nxagentPutSubImage(pDrawable, pGC, depth, x, y, w, h,
                              leftPad, format, data, pVisual);
@@ -1041,9 +1041,9 @@ void nxagentPutSubImage(DrawablePtr pDrawable, GCPtr pGC, int depth,
 
   ClientPtr client;
 
-  int lossless = 0;
-  int clean    = 0;
-  int pack     = 0;
+  Bool lossless = False;
+  Bool clean    = False;
+  Bool pack     = False;
 
   /*
    * XCreateImage is the place where the leftPad should be passed.
@@ -1136,7 +1136,7 @@ FIXME: Should use an unpack resource here.
 
   lossless = (packMethod == nxagentPackLossless);
 
-  if (pack == 1 && lossless == 0)
+  if (pack && !lossless)
   {
     /*
      * Force the image to be sent as a plain bitmap if we don't have
@@ -1145,7 +1145,7 @@ FIXME: Should use an unpack resource here.
 
     if (w <= IMAGE_PACK_WIDTH || h <= IMAGE_PACK_HEIGHT ||
             nxagentImageLength(w, h, format, leftPad, depth) <=
-                IMAGE_PACK_LENGTH || nxagentLosslessTrap == 1)
+                IMAGE_PACK_LENGTH || nxagentLosslessTrap)
     {
       if (nxagentPackLossless == PACK_NONE)
       {
@@ -1155,7 +1155,7 @@ FIXME: Should use an unpack resource here.
                         nxagentImageLength(w, h, format, leftPad, depth));
         #endif
 
-        pack = 0;
+        pack = False;
       }
       else
       {
@@ -1167,7 +1167,7 @@ FIXME: Should use an unpack resource here.
 
         packMethod = nxagentPackLossless;
 
-        lossless = 1;
+        lossless = True;
       }
     }
   }
@@ -1176,7 +1176,7 @@ FIXME: Should use an unpack resource here.
    * Do we still want to pack the image?
    */
 
-  if (pack == 1)
+  if (pack)
   {
     /*
      * Set the geometry and alpha channel to be used for the unpacked
@@ -1219,8 +1219,8 @@ FIXME: Should try to locate the image anyway, if the lossless trap is
        method.
 */
     if (nxagentNeedCache(plainImage, packMethod) &&
-            nxagentGlxTrap == 0 && nxagentXvTrap == 0 &&
-                nxagentLosslessTrap == 0 && NXImageCacheSize > 0)
+            !nxagentGlxTrap && !nxagentXvTrap &&
+                !nxagentLosslessTrap && NXImageCacheSize > 0)
     {
       /*
        * Be sure that the padding bits are cleaned before calculating
@@ -1234,7 +1234,7 @@ FIXME: There should be a callback registered by the agent that
        etc. This statistics report would be included by the proxy in
        its stat output.
 */
-      clean = 1;
+      clean = True;
 
       NXCleanImage(plainImage);
 
@@ -1284,7 +1284,7 @@ FIXME: There should be a callback registered by the agent that
      * lossless encoder will compress better.
      */
 
-    if (lossless == 0 && nxagentOption(Adaptive) == 1)
+    if (!lossless && nxagentOption(Adaptive))
     {
       int ratio = nxagentUniquePixels(plainImage);
 
@@ -1297,7 +1297,7 @@ FIXME: There should be a callback registered by the agent that
 
         packMethod = nxagentPackLossless;
 
-        lossless = 1;
+        lossless = True;
       }
       #ifdef TEST
       else
@@ -1324,11 +1324,11 @@ FIXME: There should be a callback registered by the agent that
        * bitwise the same regardless the padding bits.
        */
 
-      if (clean == 0)
+      if (!clean)
       {
         if (nxagentNeedClean(plainImage, packMethod) == 1)
         {
-          clean = 1;
+          clean = True;
 
           NXCleanImage(plainImage);
         }
@@ -1448,12 +1448,12 @@ FIXME: If we failed to encode the image by any of the available
        was sent in the unpack alpha message. This can be done here, if
        the clean flag is true and we are going to send a plain image.
 */
-    if (clean == 0)
+    if (!clean)
     {
       clean = (nxagentOption(LinkType) != LINK_TYPE_NONE &&
                    nxagentOption(LinkType) != LINK_TYPE_LAN && depth != 32);
 
-      if (clean == 1)
+      if (clean)
       {
         #ifdef DEBUG
         fprintf(stderr, "nxagentPutSubImage: Cleaning the image with link type [%d] and depth [%d].\n",

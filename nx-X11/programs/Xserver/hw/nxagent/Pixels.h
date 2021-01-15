@@ -77,7 +77,7 @@ while (0)
 
 #define breakOnBlocking(mask)                                \
     (((mask) != NEVER_BREAK) && ((mask) & BLOCKING_BREAK) && \
-        nxagentBlocking == 1)
+        nxagentBlocking)
 
 #define breakOnCongestion(mask)                                \
     (((mask) != NEVER_BREAK) && ((mask) & CONGESTION_BREAK) && \
@@ -97,7 +97,7 @@ while (0)
         nxagentUserInput(NULL) == 1)
 
 #define canBreakOnTimeout(mask) \
-    (((mask) != NEVER_BREAK) && nxagentOption(Shadow) == 0)
+    (((mask) != NEVER_BREAK) && !nxagentOption(Shadow))
 
 /*
  * Macros defining the conditions to
@@ -145,7 +145,7 @@ FIXME: Changed macro: NXAGENT_SHOULD_DEFER_COMPOSITE
 
 
 #define NXAGENT_SHOULD_DEFER_PUTIMAGE(pDrawable) \
-    (nxagentSplitTrap == 0 &&                    \
+    (!nxagentSplitTrap &&                    \
          nxagentOption(DeferLevel) > 0)
 
 /*
@@ -164,7 +164,7 @@ FIXME: Changed macro: NXAGENT_SHOULD_DEFER_COMPOSITE
 
 #define NXAGENT_SHOULD_SYNCHRONIZE_CORRUPTED_PIXMAPS(mask)           \
     ((nxagentCorruptedWindows == 0 && nxagentCorruptedPixmaps > 0 && \
-         nxagentCongestion == 0 && nxagentBlocking == 0) ||          \
+         nxagentCongestion == 0 && !nxagentBlocking) ||              \
              mask == NEVER_BREAK)
 
 /*
@@ -173,8 +173,8 @@ FIXME: Changed macro: NXAGENT_SHOULD_DEFER_COMPOSITE
  */
 
 #define NXAGENT_SHOULD_SYNCHRONIZE_WINDOW(pDrawable)  \
-    (nxagentWindowIsVisible((WindowPtr) pDrawable) == 1 && \
-        (nxagentDefaultWindowIsVisible() == 1 || nxagentCompositeEnable == 1))
+    (nxagentWindowIsVisible((WindowPtr) pDrawable) && \
+        (nxagentDefaultWindowIsVisible() || nxagentCompositeEnable == 1))
 
 #define MINIMUM_PIXMAP_USAGE_COUNTER 2
 

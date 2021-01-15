@@ -114,15 +114,15 @@ extern void nxagentDumpInputDevicesState(void);
  * Used in the handling of the X desktop manager protocol.
  */
 
-int nxagentXdmcpUp = 0;
-int nxagentXdmcpAlertUp = 0;
+Bool nxagentXdmcpUp = False;
+Bool nxagentXdmcpAlertUp = False;
 
 /*
  * Also used in the block, wakeup and sync handlers.
  */
 
 int nxagentBuffer;
-int nxagentBlocking;
+Bool nxagentBlocking;
 int nxagentCongestion;
 
 double nxagentBytesIn;
@@ -153,7 +153,7 @@ struct _DispatchRec nxagentDispatch = { UNDEFINED, 0, 0, 0 };
  * server.
  */
 
-extern int nxagentSkipImage;
+extern Bool nxagentSkipImage;
 
 void nxagentBlockHandler(void * data, struct timeval **timeout, void * mask)
 {
@@ -179,7 +179,7 @@ void nxagentBlockHandler(void * data, struct timeval **timeout, void * mask)
    * Set if we need to synchronize any drawable.
    */
 
-  static int synchronize;
+  static Bool synchronize;
 
   #ifdef BLOCKS
   fprintf(stderr, "[Begin block]\n");
@@ -199,7 +199,7 @@ void nxagentBlockHandler(void * data, struct timeval **timeout, void * mask)
 
   #endif
 
-  if (nxagentNeedConnectionChange() == 1)
+  if (nxagentNeedConnectionChange())
   {
     #ifdef TEST
     fprintf(stderr, "nxagentBlockHandler: Calling nxagentHandleConnectionChanges "
@@ -222,7 +222,7 @@ void nxagentBlockHandler(void * data, struct timeval **timeout, void * mask)
 
   #ifdef TEST
 
-  if (nxagentLastWindowDestroyed == 1)
+  if (nxagentLastWindowDestroyed)
   {
     fprintf(stderr, "nxagentBlockHandler: Elapsed time [%lu].\n",
                 now - nxagentLastWindowDestroyedTime);
@@ -302,7 +302,7 @@ void nxagentBlockHandler(void * data, struct timeval **timeout, void * mask)
    *                   are synchronized.
    */
 
-  if (synchronize == 1)
+  if (synchronize)
   {
     /*
      * We should not enter the synchronization loop if there is any
@@ -310,7 +310,7 @@ void nxagentBlockHandler(void * data, struct timeval **timeout, void * mask)
      * operation.
      */
 
-    if (nxagentForceSynchronization == 1)
+    if (nxagentForceSynchronization)
     {
       #ifdef TEST
       fprintf(stderr, "nxagentBlockHandler: Going to force a synchronization at %s.\n",
@@ -319,10 +319,10 @@ void nxagentBlockHandler(void * data, struct timeval **timeout, void * mask)
 
       nxagentSynchronizationLoop(NEVER_BREAK);
 
-      nxagentForceSynchronization = 0;
+      nxagentForceSynchronization = False;
     }
     else if (nxagentUserInput(NULL) == 0 &&
-                 nxagentBlocking == 0 &&
+                 !nxagentBlocking &&
                      nxagentCongestion <= 4)
     {
       #ifdef TEST
@@ -350,7 +350,7 @@ void nxagentBlockHandler(void * data, struct timeval **timeout, void * mask)
                            nxagentCorruptedBackgrounds > 0 ||
                                nxagentCorruptedPixmaps > 0));
 
-    if (nxagentSkipImage == 0 && synchronize == 1)
+    if (!nxagentSkipImage && synchronize)
     {
       #ifdef TEST
       fprintf(stderr, "nxagentBlockHandler: Setting a zero timeout with [%d][%d][%d] and "
@@ -391,7 +391,7 @@ void nxagentBlockHandler(void * data, struct timeval **timeout, void * mask)
 
   #ifdef DYNAMIC_DISPLAY_BUFFER
 
-  if (nxagentBlocking == 1 &&
+  if (nxagentBlocking &&
           nxagentBuffer > MINIMUM_DISPLAY_BUFFER)
   {
     nxagentBuffer >>= 1;
@@ -587,7 +587,7 @@ void nxagentWakeupHandler(void * data, int count, void * mask)
    * Can become true during the dispatch loop.
    */
 
-  nxagentBlocking = 0;
+  nxagentBlocking = False;
 
   /*
    * Check if we got new events.
@@ -648,7 +648,7 @@ void nxagentWakeupHandler(void * data, int count, void * mask)
    * the session.
    */
 
-  if (nxagentOption(Xdmcp) == 1 && nxagentXdmcpUp == 0)
+  if (nxagentOption(Xdmcp) && !nxagentXdmcpUp)
   {
     #ifdef DEBUG
     fprintf(stderr, "nxagentWakeupHandler: XdmcpState [%d].\n", XdmcpState);
@@ -656,10 +656,10 @@ void nxagentWakeupHandler(void * data, int count, void * mask)
 
     if (XdmcpState == XDM_RUN_SESSION)
     {
-      nxagentXdmcpUp = 1;
+      nxagentXdmcpUp = True;
     }
 
-    if (nxagentXdmcpUp == 0)
+    if (!nxagentXdmcpUp)
     {
       #ifdef DEBUG
       fprintf(stderr, "nxagentWakeupHandler: XdmcpTime [%lu].\n",
@@ -671,7 +671,7 @@ void nxagentWakeupHandler(void * data, int count, void * mask)
                   XdmcpTimeOutRtx);
       #endif
 
-      if (nxagentXdmcpAlertUp == 0 &&
+      if (!nxagentXdmcpAlertUp &&
               GetTimeInMillis() - XdmcpStartTime >= XDM_TIMEOUT)
       {
         #ifdef WARNING
@@ -681,7 +681,7 @@ void nxagentWakeupHandler(void * data, int count, void * mask)
 
         NXTransAlert(FAILED_XDMCP_CONNECTION_ALERT, NX_ALERT_REMOTE);
 
-        nxagentXdmcpAlertUp = 1;
+        nxagentXdmcpAlertUp = True;
       }
     }
   }
@@ -703,7 +703,7 @@ void nxagentShadowBlockHandler(void * data, struct timeval **timeout, void * mas
   fprintf(stderr, "[Begin block]\n");
   #endif
 
-  if (nxagentNeedConnectionChange() == 1)
+  if (nxagentNeedConnectionChange())
   {
     nxagentHandleConnectionChanges();
   }
@@ -732,9 +732,9 @@ void nxagentShadowBlockHandler(void * data, struct timeval **timeout, void * mas
     nxagentDispatchEvents(NULL);
   }
 
-  if (nxagentShadowResize == 1)
+  if (nxagentShadowResize)
   {
-    nxagentShadowResize = 0;
+    nxagentShadowResize = False;
 
     nxagentShadowAdaptToRatio();
   }
@@ -759,7 +759,7 @@ void nxagentShadowBlockHandler(void * data, struct timeval **timeout, void * mas
 
   nxagentShadowSendUpdates(&suspended);
 
-  if (nxagentBlocking == 0)
+  if (!nxagentBlocking)
   {
     nxagentSynchronizeDrawable((DrawablePtr) nxagentShadowPixmapPtr, DONT_WAIT,
                                    ALWAYS_BREAK, nxagentShadowWindowPtr);
@@ -830,7 +830,7 @@ void nxagentShadowWakeupHandler(void * data, int count, void * mask)
    * Can become true during the dispatch loop.
    */
 
-  nxagentBlocking = 0;
+  nxagentBlocking = False;
 
   /*
    * Check if we got new events.
@@ -1200,7 +1200,7 @@ void nxagentDispatchHandler(ClientPtr client, int in, int out)
 
         nxagentDispatchEvents(NULL);
 
-        nxagentBlocking = 1;
+        nxagentBlocking = True;
       }
 
       /*

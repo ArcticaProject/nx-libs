@@ -200,7 +200,7 @@ PixmapPtr nxagentCreatePixmap(ScreenPtr pScreen, int width, int height,
    * checksum.
    */
 
-  if (width != 0 && height != 0 && nxagentGCTrap == 0)
+  if (width != 0 && height != 0 && !nxagentGCTrap)
   {
     pPixmapPriv -> id = XCreatePixmap(nxagentDisplay,
                                       nxagentDefaultWindows[pScreen -> myNum],
@@ -1064,7 +1064,7 @@ void nxagentSynchronizeShmPixmap(DrawablePtr pDrawable, int xPict, int yPict,
                                      int wPict, int hPict)
 {
   if (pDrawable -> type == DRAWABLE_PIXMAP &&
-         nxagentIsShmPixmap((PixmapPtr) pDrawable) == 1)
+         nxagentIsShmPixmap((PixmapPtr) pDrawable))
   {
     #ifdef TEST
     fprintf(stderr, "nxagentSynchronizeShmPixmap: WARNING! Synchronizing shared pixmap at [%p].\n",

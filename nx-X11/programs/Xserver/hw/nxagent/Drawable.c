@@ -63,7 +63,7 @@
 
 /*
  * The rectangles composing a region are de- fragmented to reduce the
- * number of synch- ronizing PutImage's.
+ * number of synchronizing PutImage()s.
  */
 
 #define ADVANCED_BOXES_DEFRAG
@@ -99,7 +99,7 @@ int nxagentCorruptedPixmaps     = 0;
 int nxagentCorruptedWindows     = 0;
 int nxagentCorruptedBackgrounds = 0;
 
-int nxagentForceSynchronization = 0;
+Bool nxagentForceSynchronization = False;
 
 _nxagentSynchronizationRec nxagentSynchronization = { (DrawablePtr) NULL, 0, 0, 0, 0, 0 };
 
@@ -123,7 +123,7 @@ unsigned long nxagentGetColor(DrawablePtr pDrawable, int xPixel, int yPixel);
 unsigned long nxagentGetDrawableColor(DrawablePtr pDrawable);
 unsigned long nxagentGetRegionColor(DrawablePtr pDrawable, RegionPtr pRegion);
 
-int nxagentSkipImage = 0;
+Bool nxagentSkipImage = False;
 
 static int nxagentTooManyImageData(void)
 {
@@ -144,7 +144,7 @@ int nxagentSynchronizeDrawable(DrawablePtr pDrawable, int wait, unsigned int bre
 {
   pDrawable = nxagentSplitDrawable(pDrawable);
 
-  if (nxagentLosslessTrap == 0)
+  if (!nxagentLosslessTrap)
   {
     if (nxagentDrawableStatus(pDrawable) == Synchronized)
     {
@@ -257,7 +257,7 @@ int nxagentSynchronizeDrawableData(DrawablePtr pDrawable, unsigned int breakMask
      * copy with lossless compression turned off.
      */
 
-    if (nxagentLosslessTrap == 1)
+    if (nxagentLosslessTrap)
     {
       #ifdef TEST
       fprintf(stderr, "%s: Forcing synchronization of pixmap at [%p] with lossless compression.\n",
@@ -266,7 +266,7 @@ int nxagentSynchronizeDrawableData(DrawablePtr pDrawable, unsigned int breakMask
 
       return reallySynchronizeDrawableData(pDrawable);
     }
-    else if (nxagentReconnectTrap == 1)
+    else if (nxagentReconnectTrap)
     {
       /*
        * The pixmap data is not synchronized unless we need it. We
@@ -277,7 +277,7 @@ int nxagentSynchronizeDrawableData(DrawablePtr pDrawable, unsigned int breakMask
       if (pDrawable -> depth == 1)
       {
         #ifdef TEST
-        if (nxagentReconnectTrap == 1)
+        if (nxagentReconnectTrap)
         {
           static int totalLength;
           static int totalReconnectedPixmaps;
@@ -357,9 +357,9 @@ int nxagentSynchronizeRegion(DrawablePtr pDrawable, RegionPtr pRegion, unsigned 
    * full drawable.
    */
 
-  int useStoredBitmap = (nxagentDrawableBitmap(pDrawable) != NullPixmap && pRegion == NullRegion);
+  Bool useStoredBitmap = (nxagentDrawableBitmap(pDrawable) != NullPixmap && pRegion == NullRegion);
 
-  if (useStoredBitmap != 0)
+  if (useStoredBitmap)
   {
     #ifdef TEST
     fprintf(stderr, "nxagentSynchronizeRegion: Drawable [%s] at [%p] has a synchronization bitmap at [%p] "
@@ -396,7 +396,7 @@ int nxagentSynchronizeRegion(DrawablePtr pDrawable, RegionPtr pRegion, unsigned 
      * The bitmap to synchronize is clipped.
      */
 
-    if (RegionNil(clipRegion) == 1)
+    if (RegionNil(clipRegion))
     {
       #ifdef TEST
       fprintf(stderr, "nxagentSynchronizeRegion: The bitmap region [%d,%d,%d,%d] is not viewable. "
@@ -418,7 +418,7 @@ int nxagentSynchronizeRegion(DrawablePtr pDrawable, RegionPtr pRegion, unsigned 
   }
   else
   {
-    if (pRegion != NullRegion && RegionNil(pRegion) == 1)
+    if (pRegion != NullRegion && RegionNil(pRegion))
     {
       #ifdef TEST
       fprintf(stderr, "nxagentSynchronizeRegion: Region [%d,%d,%d,%d] is nil. Skipping synchronization.\n",
@@ -451,7 +451,7 @@ int nxagentSynchronizeRegion(DrawablePtr pDrawable, RegionPtr pRegion, unsigned 
 
     RegionIntersect(clipRegion, clipRegion, nxagentCorruptedRegion(pDrawable));
 
-    if (RegionNil(clipRegion) == 1)
+    if (RegionNil(clipRegion))
     {
       #ifdef TEST
       fprintf(stderr, "nxagentSynchronizeRegion: The corrupted region [%d,%d,%d,%d] is not viewable "
@@ -473,7 +473,7 @@ int nxagentSynchronizeRegion(DrawablePtr pDrawable, RegionPtr pRegion, unsigned 
     {
       RegionIntersect(clipRegion, clipRegion, pRegion);
 
-      if (RegionNil(clipRegion) == 1)
+      if (RegionNil(clipRegion))
       {
         #ifdef TEST
         fprintf(stderr, "nxagentSynchronizeRegion: Region requested [%d,%d,%d,%d] already "
@@ -588,7 +588,7 @@ int nxagentSynchronizeRegion(DrawablePtr pDrawable, RegionPtr pRegion, unsigned 
 
   unsigned long now = GetTimeInMillis();
 
-  nxagentSynchronization.abort = 0;
+  nxagentSynchronization.abort = False;
 
   /*
    * Going to split the updated region into small blocks.
@@ -652,7 +652,7 @@ int nxagentSynchronizeRegion(DrawablePtr pDrawable, RegionPtr pRegion, unsigned 
                         "[%lu] ms elapsed.\n", elapsedTime);
             #endif
 
-            nxagentSynchronization.abort = 1;
+            nxagentSynchronization.abort = True;
 
             goto nxagentSynchronizeRegionStop;
           }
@@ -670,7 +670,7 @@ int nxagentSynchronizeRegion(DrawablePtr pDrawable, RegionPtr pRegion, unsigned 
                           nxagentBlocking);
           #endif
 
-          nxagentSynchronization.abort = 1;
+          nxagentSynchronization.abort = True;
 
           goto nxagentSynchronizeRegionStop;
         }
@@ -687,7 +687,7 @@ int nxagentSynchronizeRegion(DrawablePtr pDrawable, RegionPtr pRegion, unsigned 
                           nxagentCongestion);
           #endif
 
-          nxagentSynchronization.abort = 1;
+          nxagentSynchronization.abort = True;
 
           goto nxagentSynchronizeRegionStop;
         }
@@ -799,7 +799,7 @@ int nxagentSynchronizeRegion(DrawablePtr pDrawable, RegionPtr pRegion, unsigned 
 
         if (owner != NULL)
         {
-          if (nxagentOption(Shadow) == 1 &&
+          if (nxagentOption(Shadow) &&
                   (nxagentOption(XRatio) != DONT_SCALE ||
                       nxagentOption(YRatio) != DONT_SCALE))
           {
@@ -834,7 +834,7 @@ int nxagentSynchronizeRegion(DrawablePtr pDrawable, RegionPtr pRegion, unsigned 
                       "new input events.\n");
           #endif
 
-          nxagentSynchronization.abort = 1;
+          nxagentSynchronization.abort = True;
 
           goto nxagentSynchronizeRegionStop;
         }
@@ -852,9 +852,9 @@ nxagentSynchronizeRegionStop:
 
   success = 1;
 
-  if (nxagentOption(Shadow) == 0)
+  if (!nxagentOption(Shadow))
   {
-    if (nxagentSynchronization.abort == 1)
+    if (nxagentSynchronization.abort)
     {
       /*
        * Storing the pointer to the drawable we were synchronizing
@@ -888,7 +888,7 @@ nxagentSynchronizeRegionStop:
 
     if (pDrawable -> type == DRAWABLE_PIXMAP &&
             nxagentIsCorruptedBackground((PixmapPtr) pDrawable) == 1 &&
-                RegionNil(&exposeRegion) == 0)
+                !RegionNil(&exposeRegion))
     {
       struct nxagentExposeBackground eb = {
         .pBackground = (PixmapPtr) pDrawable,
@@ -921,7 +921,7 @@ nxagentSynchronizeRegionStop:
         int w = RegionRects(&collectedUpdates)[i].x2 - RegionRects(&collectedUpdates)[i].x1;
         int h = RegionRects(&collectedUpdates)[i].y2 - RegionRects(&collectedUpdates)[i].y1;
        
-        if (nxagentOption(Shadow) == 1 &&
+        if (nxagentOption(Shadow) &&
                 (nxagentOption(XRatio) != DONT_SCALE ||
                     nxagentOption(YRatio) != DONT_SCALE))
         {
@@ -994,7 +994,7 @@ void nxagentSynchronizeBox(DrawablePtr pDrawable, BoxPtr pBox, unsigned int brea
                                       pBox -> x2 - pBox -> x1, pBox -> y2 - pBox -> y1);
 
 
-    if (RegionNil(pRegion) == 1)
+    if (RegionNil(pRegion))
     {
       #ifdef TEST
       fprintf(stderr, "nxagentSynchronizeBox: Resulting region [%d,%d,%d,%d] is nil. Skipping synchronization.\n",
@@ -1023,7 +1023,7 @@ void nxagentSynchronizeDrawablePredicate(void *p0, XID x1, void *p2)
   DrawablePtr pDrawable = (DrawablePtr) p0;
   unsigned int *breakMask = (unsigned int *) p2;
 
-  int shouldClearHiddenRegion = 1;
+  Bool shouldClearHiddenRegion = True;
 
   /*
    * The nxagentSynchronization.abort propagates a break condition
@@ -1031,7 +1031,7 @@ void nxagentSynchronizeDrawablePredicate(void *p0, XID x1, void *p2)
    * synchronizations.
    */
 
-  if (nxagentSynchronization.abort == 1 ||
+  if (nxagentSynchronization.abort ||
           nxagentDrawableStatus(pDrawable) == Synchronized)
   {
     return;
@@ -1104,7 +1104,7 @@ void nxagentSynchronizeDrawablePredicate(void *p0, XID x1, void *p2)
                 (void *) pDrawable);
     #endif
 
-    if (shouldClearHiddenRegion == 1)
+    if (shouldClearHiddenRegion)
     {
       #ifdef TEST
       fprintf(stderr, "nxagentSynchronizeDrawablePredicate: Clearing out the not visible window "
@@ -1138,7 +1138,7 @@ FIXME: This condition sounds only as a complication, as the break
                     nxagentCongestion, nxagentBlocking);
     #endif
 
-    nxagentSynchronization.abort = 1;
+    nxagentSynchronization.abort = True;
 
     return;
   }
@@ -1179,8 +1179,8 @@ FIXME: This condition sounds only as a complication, as the break
      * clear it.
      */
 
-    if (nxagentSynchronization.abort == 0 &&
-            shouldClearHiddenRegion == 1)
+    if (!nxagentSynchronization.abort &&
+            shouldClearHiddenRegion)
     {
       #ifdef TEST
       fprintf(stderr, "nxagentSynchronizeDrawablePredicate: Clearing out the remaining corrupted "
@@ -1241,9 +1241,9 @@ FIXME: All drawables should be set as synchronized and never marked as
    * round-robin and if the bitmaps are all synchronized.
    */
 
-  int doRoundRobin = (nxagentSynchronization.pDrawable != NULL);
+  Bool doRoundRobin = (nxagentSynchronization.pDrawable != NULL);
 
-  nxagentSynchronization.abort = 0;
+  nxagentSynchronization.abort = False;
 
   /*
    * Synchronize the windows.
@@ -1260,9 +1260,9 @@ FIXME: All drawables should be set as synchronized and never marked as
 
     #ifdef TEST
 
-    if (nxagentSynchronization.abort == 0 &&
+    if (!nxagentSynchronization.abort &&
             nxagentSynchronization.windowBitmaps == 0 &&
-                doRoundRobin == 0)
+                !doRoundRobin)
     {
       if (nxagentCorruptedWindows > 0)
       {
@@ -1280,7 +1280,7 @@ FIXME: All drawables should be set as synchronized and never marked as
    * Synchronize the backgrounds.
    */
 
-  if (nxagentSynchronization.abort == 0 &&
+  if (!nxagentSynchronization.abort &&
           NXAGENT_SHOULD_SYNCHRONIZE_CORRUPTED_BACKGROUNDS(mask))
   {
     #ifdef TEST
@@ -1292,9 +1292,9 @@ FIXME: All drawables should be set as synchronized and never marked as
 
     #ifdef TEST
 
-    if (nxagentSynchronization.abort == 0 &&
+    if (!nxagentSynchronization.abort &&
             nxagentSynchronization.backgroundBitmaps == 0 &&
-                doRoundRobin == 0)
+                !doRoundRobin)
     {
       if (nxagentCorruptedBackgrounds > 0)
       {
@@ -1315,7 +1315,7 @@ FIXME: All drawables should be set as synchronized and never marked as
    * the pixmap in a copy or in a composite operation.
    */
 
-  if (nxagentSynchronization.abort == 0 &&
+  if (!nxagentSynchronization.abort &&
           NXAGENT_SHOULD_SYNCHRONIZE_CORRUPTED_PIXMAPS(mask))
   {
     #ifdef TEST
@@ -1326,9 +1326,9 @@ FIXME: All drawables should be set as synchronized and never marked as
                                   nxagentSynchronizeDrawablePredicate, &breakMask);
 
 
-    if (nxagentSynchronization.abort == 0 &&
+    if (!nxagentSynchronization.abort &&
             nxagentSynchronization.pixmapBitmaps == 0 &&
-                doRoundRobin == 0)
+                !doRoundRobin)
     {
       #ifdef TEST
 
@@ -1441,7 +1441,7 @@ RegionPtr nxagentCreateRegion(DrawablePtr pDrawable, GCPtr pGC, int x, int y,
    * clipmask.
    */
 
-  if (RegionNil(pRegion) == 0 &&
+  if (!RegionNil(pRegion) &&
           pGC != NULL && pGC -> clientClip != NULL &&
               pGC -> clientClipType == CT_REGION)
   {
@@ -1478,7 +1478,7 @@ RegionPtr nxagentCreateRegion(DrawablePtr pDrawable, GCPtr pGC, int x, int y,
 
 void nxagentMarkCorruptedRegion(DrawablePtr pDrawable, RegionPtr pRegion)
 {
-  if (pRegion != NullRegion && RegionNil(pRegion) == 1)
+  if (pRegion != NullRegion && RegionNil(pRegion))
   {
     #ifdef TEST
     fprintf(stderr, "nxagentMarkCorruptedRegion: Region [%d,%d,%d,%d] is nil. Skipping operation.\n",
@@ -1552,7 +1552,7 @@ void nxagentMarkCorruptedRegion(DrawablePtr pDrawable, RegionPtr pRegion)
 
 void nxagentUnmarkCorruptedRegion(DrawablePtr pDrawable, RegionPtr pRegion)
 {
-  if (pRegion != NullRegion && RegionNil(pRegion) == 1)
+  if (pRegion != NullRegion && RegionNil(pRegion))
   {
     #ifdef TEST
     fprintf(stderr, "nxagentUnmarkCorruptedRegion: Region [%d,%d,%d,%d] is nil. Skipping operation.\n",
@@ -2001,7 +2001,7 @@ unsigned long nxagentGetColor(DrawablePtr pDrawable, int xPixel, int yPixel)
 
 unsigned long nxagentGetRegionColor(DrawablePtr pDrawable, RegionPtr pRegion)
 {
-  if (RegionNil(pRegion) == 1)
+  if (RegionNil(pRegion))
   {
     return nxagentGetDrawableColor(pDrawable);
   }
@@ -2055,7 +2055,7 @@ void nxagentClearRegion(DrawablePtr pDrawable, RegionPtr pRegion)
     return;
   }
 
-  if (pRegion == NullRegion || RegionNil(pRegion) == 1)
+  if (pRegion == NullRegion || RegionNil(pRegion))
   {
     #ifdef TEST
     fprintf(stderr, "nxagentClearRegion: The region is empty. Exiting.\n");
@@ -2145,7 +2145,7 @@ void nxagentClearRegion(DrawablePtr pDrawable, RegionPtr pRegion)
 
 void nxagentFillRemoteRegion(DrawablePtr pDrawable, RegionPtr pRegion)
 {
-  if (RegionNil(pRegion) == 1)
+  if (RegionNil(pRegion))
   {
     return;
   }
@@ -2309,7 +2309,7 @@ void nxagentCorruptedRegionOnWindow(void *p0, XID x, void *p2)
    * The window is not visible.
    */
 
-  if (nxagentWindowIsVisible(pWin) == 0)
+  if (!nxagentWindowIsVisible(pWin))
   {
     return;
   }
@@ -2328,7 +2328,7 @@ void nxagentCorruptedRegionOnWindow(void *p0, XID x, void *p2)
 
   nxagentFreeRegion(clipRegion);
 
-  if (RegionNil(&visRegion) == 1)
+  if (RegionNil(&visRegion))
   {
     #ifdef TEST
     fprintf(stderr, "nxagentCorruptedRegionOnWindow: The corrupted region of window at [%p] is hidden.\n",
@@ -2455,7 +2455,7 @@ void nxagentCreateDrawableBitmap(DrawablePtr pDrawable)
 
   RegionIntersect(pClipRegion, pClipRegion, nxagentCorruptedRegion(pDrawable));
 
-  if (RegionNil(pClipRegion) == 1)
+  if (RegionNil(pClipRegion))
   {
     #ifdef TEST
     fprintf(stderr, "nxagentCreateDrawableBitmap: The corrupted region is not visible. Skipping bitmap creation.\n");
@@ -2658,7 +2658,7 @@ void nxagentAllocateCorruptedResource(DrawablePtr pDrawable, RESTYPE type)
      */
 
     if (nxagentPixmapUsageCounter((PixmapPtr) pDrawable) >= MINIMUM_PIXMAP_USAGE_COUNTER &&
-            nxagentIsShmPixmap((PixmapPtr) pDrawable) == 0)
+            !nxagentIsShmPixmap((PixmapPtr) pDrawable))
     {
       pRealPixmap = nxagentRealPixmap((PixmapPtr) pDrawable);
 
@@ -2780,14 +2780,14 @@ void nxagentUnmarkExposedRegion(WindowPtr pWin, RegionPtr pRegion, RegionPtr pOt
 {
   RegionRec clipRegion;
 
-  if (pRegion != NullRegion && RegionNil(pRegion) == 0 &&
+  if (pRegion != NullRegion && !RegionNil(pRegion) &&
           nxagentDrawableStatus((DrawablePtr) pWin) == NotSynchronized)
   {
     RegionInit(&clipRegion, NullBox, 1);
 
     RegionCopy(&clipRegion, pRegion);
     
-    if (pOther != NullRegion && RegionNil(pOther) == 0)
+    if (pOther != NullRegion && !RegionNil(pOther))
     {
       RegionUnion(&clipRegion, &clipRegion, pOther);
     }
@@ -2815,7 +2815,7 @@ int nxagentSynchronizationPredicate(void)
     return NotNeeded;
   }
 
-  if (nxagentBlocking == 0 &&
+  if (!nxagentBlocking &&
           nxagentCongestion <= 4 &&
               nxagentReady == 0 &&
                   nxagentUserInput(NULL) == 0)
@@ -2871,7 +2871,7 @@ void nxagentSendBackgroundExpose(WindowPtr pWin, PixmapPtr pBackground, RegionPt
 
   RegionSubtract(&expose, &expose, nxagentCorruptedRegion((DrawablePtr) pWin));
 
-  if (RegionNil(&pWin -> clipList) != 0)
+  if (RegionNil(&pWin -> clipList))
   {
     #ifdef TEST
     fprintf(stderr, "nxagentSendBackgroundExpose: Exposures deferred because the window "
@@ -2897,7 +2897,7 @@ void nxagentSendBackgroundExpose(WindowPtr pWin, PixmapPtr pBackground, RegionPt
 
   pBackingStore = (miBSWindowPtr)pWin->backStorage;
 
-  if ((pBackingStore != NULL) && (RegionNil(&pBackingStore->SavedRegion) == 0))
+  if ((pBackingStore != NULL) && !RegionNil(&pBackingStore->SavedRegion))
   {
     RegionTranslate(&expose, -pWin -> drawable.x, -pWin -> drawable.y);
 
@@ -2931,7 +2931,7 @@ void nxagentExposeBackgroundPredicate(void *p0, XID x1, void *p2)
 
   struct nxagentExposeBackground *pPair = p2;
 
-  if (RegionNil(pPair -> pExpose) != 0)
+  if (RegionNil(pPair -> pExpose))
   {
     return;
   }

@@ -393,7 +393,7 @@ void nxagentRandRSetWindowsSize(int width, int height)
 {
   if (width == 0)
   {
-    if (nxagentOption(Fullscreen) == 1)
+    if (nxagentOption(Fullscreen))
     {
       width = WidthOfScreen(DefaultScreenOfDisplay(nxagentDisplay));
     }
@@ -405,7 +405,7 @@ void nxagentRandRSetWindowsSize(int width, int height)
 
   if (height == 0)
   {
-    if (nxagentOption(Fullscreen) == 1)
+    if (nxagentOption(Fullscreen))
     {
       height = HeightOfScreen(DefaultScreenOfDisplay(nxagentDisplay));
     }
@@ -417,7 +417,7 @@ void nxagentRandRSetWindowsSize(int width, int height)
 
   XResizeWindow(nxagentDisplay, nxagentDefaultWindows[0], width, height);
 
-  if (nxagentOption(Rootless) == 0)
+  if (!nxagentOption(Rootless))
   {
     XMoveResizeWindow(nxagentDisplay, nxagentInputWindows[0], 0, 0, width,
                           height);
@@ -429,20 +429,20 @@ int nxagentRandRScreenSetSize(ScreenPtr pScreen, CARD16 width, CARD16 height,
 {
   UpdateCurrentTime();
 
-  if (nxagentOption(DesktopResize) == 1 &&
-          (nxagentOption(Fullscreen) == 1 ||
+  if (nxagentOption(DesktopResize) &&
+          (nxagentOption(Fullscreen) ||
                width > WidthOfScreen(DefaultScreenOfDisplay(nxagentDisplay)) ||
                    height > HeightOfScreen(DefaultScreenOfDisplay(nxagentDisplay))))
   {
     if (nxagentOption(ClientOs) != ClientOsWinnt
             /*&& nxagentOption(ClientOs) != ClientNXPlayer*/)
     {
-      nxagentChangeOption(DesktopResize, 0);
+      nxagentChangeOption(DesktopResize, False);
     }
   }
 
-  if (nxagentOption(DesktopResize) == 1 && nxagentOption(Fullscreen) == 0 &&
-          nxagentOption(AllScreens) == 0)
+  if (nxagentOption(DesktopResize) && !nxagentOption(Fullscreen) &&
+          !nxagentOption(AllScreens))
   {
     nxagentChangeOption(Width, width);
     nxagentChangeOption(Height, height);
@@ -450,8 +450,8 @@ int nxagentRandRScreenSetSize(ScreenPtr pScreen, CARD16 width, CARD16 height,
 
   int result = nxagentResizeScreen(pScreen, width, height, mmWidth, mmHeight, True);
 
-  if (result == 1 && nxagentOption(DesktopResize) == 1 &&
-          nxagentOption(Fullscreen) == 0 && nxagentOption(AllScreens) == 0)
+  if (result == 1 && nxagentOption(DesktopResize) &&
+          !nxagentOption(Fullscreen) && !nxagentOption(AllScreens))
   {
     nxagentRandRSetWindowsSize(width, height);
     nxagentSetWMNormalHints(pScreen -> myNum, nxagentOption(Width), nxagentOption(Height));

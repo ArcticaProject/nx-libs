@@ -38,7 +38,7 @@ typedef struct
 {
   DrawablePtr pDrawable;
   int         drawableType;
-  int         abort;
+  Bool        abort;
   int         windowBitmaps;
   int         pixmapBitmaps;
   int         backgroundBitmaps;
@@ -157,7 +157,7 @@ extern int nxagentCorruptedPixmaps;
 extern int nxagentCorruptedWindows;
 extern int nxagentCorruptedBackgrounds;
 
-extern int nxagentForceSynchronization;
+extern Bool nxagentForceSynchronization;
 
 extern RegionPtr nxagentCreateRegion(DrawablePtr pDrawable, GCPtr pGC, int x, int y,
                                   int width, int height);

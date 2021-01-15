@@ -116,7 +116,7 @@ is" without express or implied warranty.
 
 #undef DISABLE_SMART_SCHEDULE
 
-int nxagentUserDefinedFontPath = 0;
+Bool nxagentUserDefinedFontPath = False;
 
 /*
  * From X11/ImUtil.c.
@@ -178,7 +178,7 @@ static void nxagentParseOptionString(char*);
 
 static int nxagentGetDialogName(void);
 
-char nxagentVerbose = 0;
+Bool nxagentVerbose = False;
 
 char *nxagentKeystrokeFile = NULL;
 
@@ -488,11 +488,11 @@ int ddxProcessArgument(int argc, char *argv[], int i)
     {
       if (!strcmp(argv[i], "0"))
       {
-        nxagentChangeOption(Streaming, 0);
+        nxagentChangeOption(Streaming, False);
       }
       else
       {
-        nxagentChangeOption(Streaming, 1);
+        nxagentChangeOption(Streaming, True);
       }
       return 2;
     }
@@ -507,7 +507,7 @@ int ddxProcessArgument(int argc, char *argv[], int i)
             sscanf(argv[i], "%i", &level) == 1 &&
                 level >= 0 && level <= 2)
     {
-      if (nxagentOption(Shadow) == 0)
+      if (!nxagentOption(Shadow))
       {
         nxagentChangeOption(DeferLevel, level);
 
@@ -558,7 +558,7 @@ int ddxProcessArgument(int argc, char *argv[], int i)
       fprintf(stderr, "ddxProcessArgument: User defined font path [%s].\n", argv[i]);
       #endif
 
-      nxagentUserDefinedFontPath = 1;
+      nxagentUserDefinedFontPath = True;
       defaultFontPath = argv[i];
     }
     else
@@ -589,7 +589,7 @@ int ddxProcessArgument(int argc, char *argv[], int i)
         }
       }
 
-      if (nxagentUserGeometry.flag || (nxagentOption(Fullscreen) == 1))
+      if (nxagentUserGeometry.flag || (nxagentOption(Fullscreen)))
       {
 	return 2;
       }
@@ -670,7 +670,7 @@ int ddxProcessArgument(int argc, char *argv[], int i)
 
   if (!strcmp(argv[i], "-nomagicpixel"))
   {
-    nxagentChangeOption(MagicPixel, 0);
+    nxagentChangeOption(MagicPixel, False);
     return 1;
   }
 
@@ -725,13 +725,13 @@ int ddxProcessArgument(int argc, char *argv[], int i)
 
   if (!strcmp(argv[i], "-nocomposite"))
   {
-    nxagentChangeOption(Composite, 0);
+    nxagentChangeOption(Composite, False);
     return 1;
   }
 
   if (!strcmp(argv[i], "-nodamage"))
   {
-    nxagentChangeOption(UseDamage, 0);
+    nxagentChangeOption(UseDamage, False);
     return 1;
   }
 
@@ -779,7 +779,7 @@ int ddxProcessArgument(int argc, char *argv[], int i)
   if (!strcmp(argv[i], "-noignore"))
   {
     nxagentChangeOption(DeviceControl, True);
-    nxagentChangeOption(DeviceControlUserDefined , True);
+    nxagentChangeOption(DeviceControlUserDefined, True);
     return 1;
   }
 
@@ -791,7 +791,7 @@ int ddxProcessArgument(int argc, char *argv[], int i)
 
   if (!strcmp(argv[i], "-noxkblock"))
   {
-    nxagentChangeOption(InhibitXkb, 0);
+    nxagentChangeOption(InhibitXkb, False);
     return 1;
   }
 
@@ -801,14 +801,9 @@ int ddxProcessArgument(int argc, char *argv[], int i)
 
   if (!strcmp(argv[i], "-R"))
   {
-    if (nxagentOption(Binder) == UNDEFINED ||
-            nxagentOption(Desktop) == UNDEFINED ||
-                nxagentOption(Rootless) == UNDEFINED)
-    {
-      nxagentChangeOption(Binder, False);
-      nxagentChangeOption(Desktop, False);
-      nxagentChangeOption(Rootless, True);
-    }
+    nxagentChangeOption(Binder, False);
+    nxagentChangeOption(Desktop, False);
+    nxagentChangeOption(Rootless, True);
     return 1;
   }
 
@@ -830,9 +825,9 @@ int ddxProcessArgument(int argc, char *argv[], int i)
 
   if (!strcmp(argv[i], "-S"))
   {
-    nxagentChangeOption(Shadow, 1);
+    nxagentChangeOption(Shadow, True);
     nxagentChangeOption(DeferLevel, 0);
-    nxagentChangeOption(Persistent, 0);
+    nxagentChangeOption(Persistent, False);
     return 1;
   }
 
@@ -858,11 +853,11 @@ int ddxProcessArgument(int argc, char *argv[], int i)
     {
       if (!strcmp(argv[i], "0"))
       {
-        nxagentChangeOption(ViewOnly, 1);
+        nxagentChangeOption(ViewOnly, True);
       }
       else
       {
-        nxagentChangeOption(ViewOnly, 0);
+        nxagentChangeOption(ViewOnly, False);
       }
       return 2;
     }
@@ -969,7 +964,7 @@ int ddxProcessArgument(int argc, char *argv[], int i)
 
   if (!strcmp(argv[i], "-verbose"))
   {
-    nxagentVerbose = 1;
+    nxagentVerbose = True;
     return 1;
   }
 
@@ -998,7 +993,7 @@ int ddxProcessArgument(int argc, char *argv[], int i)
    * has been disabled on the cmdline.
    */
   if (PANORAMIX_DISABLED_COND && RRXINERAMA_DISABLED_COND)
-    nxagentChangeOption(Xinerama, 0);
+    nxagentChangeOption(Xinerama, False);
 
   return 0;
 }
@@ -1080,7 +1075,7 @@ static void nxagentParseSingleOption(char *name, char *value)
   }
   else if (!strcmp(name, "render"))
   {
-    if (nxagentReconnectTrap == True)
+    if (nxagentReconnectTrap)
     {
       #ifdef DEBUG
       fprintf(stderr, "nxagentParseSingleOption: Ignoring option 'render' at reconnection.\n");
@@ -1111,7 +1106,7 @@ static void nxagentParseSingleOption(char *name, char *value)
   }
   else if (!strcmp(name, "fullscreen"))
   {
-    if (nxagentReconnectTrap == True)
+    if (nxagentReconnectTrap)
     {
       #ifdef DEBUG
       fprintf(stderr, "nxagentParseSingleOption: Ignoring option 'fullscreen' at reconnection.\n");
@@ -1174,11 +1169,11 @@ static void nxagentParseSingleOption(char *name, char *value)
   {
     if (!strcmp(value, "1"))
     {
-      nxagentChangeOption(Composite, 1);
+      nxagentChangeOption(Composite, True);
     }
     else if (!strcmp(value, "0"))
     {
-      nxagentChangeOption(Composite, 0);
+      nxagentChangeOption(Composite, False);
     }
     else
     {
@@ -1190,25 +1185,25 @@ static void nxagentParseSingleOption(char *name, char *value)
   else if (!strcmp(name, "xinerama"))
   {
 #if !defined(PANORAMIX) && !defined(RANDR)
-    nxagentChangeOption(Xinerama, 0);
+    nxagentChangeOption(Xinerama, False);
     fprintf(stderr, "Warning: No Xinerama support compiled into %s.\n", nxagentProgName);
     return;
 #else
     if (PANORAMIX_DISABLED_COND && RRXINERAMA_DISABLED_COND)
     {
-      nxagentChangeOption(Xinerama, 0);
+      nxagentChangeOption(Xinerama, False);
       fprintf(stderr, "Warning: XINERAMA extension has been disabled on %s startup.\n", nxagentProgName);
       return;
     }
 
     if (!strcmp(value, "1"))
     {
-      nxagentChangeOption(Xinerama, 1);
+      nxagentChangeOption(Xinerama, True);
       return;
     }
     else if (!strcmp(value, "0"))
     {
-      nxagentChangeOption(Xinerama, 0);
+      nxagentChangeOption(Xinerama, False);
     }
     else
     {
@@ -1220,13 +1215,13 @@ static void nxagentParseSingleOption(char *name, char *value)
   }
   else if (!strcmp(name, "resize"))
   {
-    if (nxagentOption(DesktopResize) == 0 || strcmp(value, "0") == 0)
+    if (!nxagentOption(DesktopResize) || strcmp(value, "0") == 0)
     {
-      nxagentResizeDesktopAtStartup = 0;
+      nxagentResizeDesktopAtStartup = False;
     }
     else if (strcmp(value, "1") == 0)
     {
-      nxagentResizeDesktopAtStartup = 1;
+      nxagentResizeDesktopAtStartup = True;
     }
     else
     {
@@ -1251,11 +1246,11 @@ static void nxagentParseSingleOption(char *name, char *value)
   {
     if (!strcmp(value, "0"))
     {
-      nxagentChangeOption(Menu, 0);
+      nxagentChangeOption(Menu, False);
     }
     else
     {
-      nxagentChangeOption(Menu, 1);
+      nxagentChangeOption(Menu, True);
     }
     return;
   }
@@ -1263,17 +1258,17 @@ static void nxagentParseSingleOption(char *name, char *value)
   {
     if (!strcmp(value, "0"))
     {
-      nxagentChangeOption(MagicPixel, 0);
+      nxagentChangeOption(MagicPixel, False);
     }
     else
     {
-      nxagentChangeOption(MagicPixel, 1);
+      nxagentChangeOption(MagicPixel, True);
     }
     return;
   }
   else if (!strcmp(name, "autodpi"))
   {
-    if (nxagentReconnectTrap == True)
+    if (nxagentReconnectTrap)
     {
       #ifdef DEBUG
       fprintf(stderr, "nxagentParseSingleOption: Ignoring option 'autodpi' at reconnection.\n");
@@ -1749,13 +1744,14 @@ N/A
 
     #endif
 
-    if ((nxagentOption(Rootless) == 1) && nxagentOption(Fullscreen) == 1)
+    if (nxagentOption(Rootless) && nxagentOption(Fullscreen))
     {
       #ifdef TEST
       fprintf(stderr, "WARNING: Ignoring fullscreen option for rootless session.\n");
       #endif
 
       nxagentChangeOption(Fullscreen, False);
+      nxagentChangeOption(AllScreens, False);
     }
 
     /*
@@ -1971,35 +1967,6 @@ N/A
     nxagentSetCoalescence();
 
     /*
-     * Set the other defaults.
-     */
-
-    if (nxagentOption(Fullscreen) == UNDEFINED)
-    {
-      nxagentChangeOption(Fullscreen, False);
-    }
-
-    if (nxagentOption(AllScreens) == UNDEFINED)
-    {
-      nxagentChangeOption(AllScreens, False);
-    }
-
-    if (nxagentOption(Binder) == UNDEFINED)
-    {
-      nxagentChangeOption(Binder, False);
-    }
-
-    if (nxagentOption(Rootless) == UNDEFINED)
-    {
-      nxagentChangeOption(Rootless, False);
-    }
-
-    if (nxagentOption(Desktop) == UNDEFINED)
-    {
-      nxagentChangeOption(Desktop, True);
-    }
-
-    /*
      * The enableBackingStore flag is defined
      * in window.c in the dix.
      */
@@ -2039,7 +2006,7 @@ FIXME: In rootless mode the backing-store support is not functional yet.
       nxagentAlphaEnabled = False;
     }
 
-    if ((nxagentOption(Rootless) == 1) && nxagentOption(Xdmcp))
+    if (nxagentOption(Rootless) && nxagentOption(Xdmcp))
     {
       FatalError("PANIC! Cannot start a XDMCP session in rootless mode.\n");
     }
@@ -2048,7 +2015,7 @@ FIXME: In rootless mode the backing-store support is not functional yet.
      * We enable server reset only for indirect XDMCP sessions.
      */
 
-    if (nxagentOption(Reset) == True && nxagentMaxAllowedResets == 0)
+    if (nxagentOption(Reset) && nxagentMaxAllowedResets == 0)
     {
       #ifdef WARNING
       fprintf(stderr, "nxagentPostProcessArgs: Disabling the server reset.\n");
@@ -2064,7 +2031,7 @@ FIXME: In rootless mode the backing-store support is not functional yet.
      * passing the -noreset option to a standard XFree86 server.
      */
 
-    if (nxagentOption(Reset) == False)
+    if (!nxagentOption(Reset))
     {
       #ifdef TEST
       fprintf(stderr, "nxagentPostProcessArgs: Disabling dispatch of exception at server reset.\n");
@@ -2176,7 +2143,7 @@ void nxagentSetPackMethod(void)
 
   if (nxagentOption(LinkType) == LINK_TYPE_NONE)
   {
-    nxagentChangeOption(Streaming, 0);
+    nxagentChangeOption(Streaming, False);
 
     nxagentPackMethod   = PACK_NONE;
     nxagentPackLossless = PACK_NONE;
@@ -2199,7 +2166,7 @@ void nxagentSetPackMethod(void)
     fprintf(stderr, "nxagentSetPackMethod: Using adaptive mode for image compression.\n");
     #endif
 
-    nxagentChangeOption(Adaptive, 1);
+    nxagentChangeOption(Adaptive, True);
   }
   else
   {
@@ -2207,7 +2174,7 @@ void nxagentSetPackMethod(void)
     fprintf(stderr, "nxagentSetPackMethod: Not using adaptive mode for image compression.\n");
     #endif
 
-    nxagentChangeOption(Adaptive, 0);
+    nxagentChangeOption(Adaptive, False);
   }
   
   if (method == PACK_LOSSY || method == PACK_ADAPTIVE)
@@ -2336,11 +2303,11 @@ void nxagentSetDeferLevel(void)
    * version of the agent.
    */
 
-  if (nxagentOption(Streaming) == 1)
+  if (nxagentOption(Streaming))
   {
     fprintf(stderr, "Warning: Streaming of images not available in this agent.\n");
 
-    nxagentChangeOption(Streaming, 0);
+    nxagentChangeOption(Streaming, False);
   }
 
  switch (nxagentOption(LinkType))
@@ -2363,7 +2330,7 @@ void nxagentSetDeferLevel(void)
    * Set the defer timeout.
    */
 
-  if (nxagentOption(Shadow) == 1)
+  if (nxagentOption(Shadow))
   {
     #ifdef TEST
     fprintf(stderr, "nxagentSetDeferLevel: Ignoring defer timeout parameter in shadow mode.\n");
@@ -2378,7 +2345,7 @@ void nxagentSetDeferLevel(void)
    * Set the defer level.
    */
 
-  if (nxagentOption(Shadow) == 1)
+  if (nxagentOption(Shadow))
   {
     #ifdef TEST
     fprintf(stderr, "nxagentSetDeferLevel: Ignoring defer parameter in shadow mode.\n");
@@ -2482,7 +2449,7 @@ void nxagentSetScheduler(void)
    * The smart scheduler is the default.
    */
 
-  if (nxagentOption(Shadow) == 1)
+  if (nxagentOption(Shadow))
   {
     #ifdef TEST
     fprintf(stderr, "nxagentSetScheduler: Using the dumb scheduler in shadow mode.\n");

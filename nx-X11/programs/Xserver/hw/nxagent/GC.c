@@ -86,7 +86,7 @@ GCPtr nxagentCreateGraphicContext(int depth);
 
 static void nxagentReconnectGC(void*, XID, void*);
 static void nxagentReconnectClip(GCPtr, int, void *, int);
-static int  nxagentCompareRegions(RegionPtr, RegionPtr);
+static Bool nxagentCompareRegions(RegionPtr, RegionPtr);
 
 struct nxagentGCRec
 {
@@ -317,7 +317,7 @@ void nxagentChangeGC(GCPtr pGC, unsigned long mask)
     else
     {
       if (nxagentDrawableStatus((DrawablePtr) pGC -> tile.pixmap) == NotSynchronized &&
-              nxagentGCTrap == 0)
+              !nxagentGCTrap)
       {
         /*
          * If the tile is corrupted and is not too large, it can be
@@ -367,7 +367,7 @@ void nxagentChangeGC(GCPtr pGC, unsigned long mask)
   if (mask & GCStipple)
   {
     if (nxagentDrawableStatus((DrawablePtr) pGC -> stipple) == NotSynchronized &&
-            nxagentGCTrap == 0)
+            !nxagentGCTrap)
     {
       #ifdef TEST
       fprintf(stderr, "nxagentChangeGC: WARNING! Synchronizing GC at [%p] due the stipple at [%p].\n",
@@ -425,7 +425,7 @@ void nxagentChangeGC(GCPtr pGC, unsigned long mask)
   {
     mask &= ~GCDashList;
 
-    if (nxagentGCTrap == 0)
+    if (!nxagentGCTrap)
     {
       XSetDashes(nxagentDisplay, nxagentGC(pGC),
                      pGC->dashOffset, (char *)pGC->dash, pGC->numInDashList);
@@ -434,7 +434,7 @@ void nxagentChangeGC(GCPtr pGC, unsigned long mask)
 
   CHECKGCVAL(GCArcMode, arc_mode, pGC->arcMode);
 
-  if (nxagentGCTrap == 1)
+  if (nxagentGCTrap)
   {
     #ifdef TEST
     fprintf(stderr, "nxagentChangeGC: Skipping change of GC at [%p] on the real X server.\n",
@@ -497,7 +497,7 @@ void nxagentDestroyGC(GCPtr pGC)
 
 void nxagentChangeClip(GCPtr pGC, int type, void * pValue, int nRects)
 {
-  int clipsMatch = 0;
+  Bool clipsMatch = False;
 
   #ifdef TEST
   fprintf(stderr, "nxagentChangeClip: Going to change clip on GC [%p]\n",
@@ -528,7 +528,7 @@ void nxagentChangeClip(GCPtr pGC, int type, void * pValue, int nRects)
     }
     default:
     {
-      clipsMatch = 0;
+      clipsMatch = False;
       break;
     }
   }
@@ -544,7 +544,7 @@ void nxagentChangeClip(GCPtr pGC, int type, void * pValue, int nRects)
   {
     case CT_NONE:
     {
-      if (clipsMatch == 0 && nxagentGCTrap == 0)
+      if (!clipsMatch && !nxagentGCTrap)
       {
         XSetClipMask(nxagentDisplay, nxagentGC(pGC), None);
       }
@@ -552,7 +552,7 @@ void nxagentChangeClip(GCPtr pGC, int type, void * pValue, int nRects)
     }
     case CT_REGION:
     {
-      if (clipsMatch == 0 && nxagentGCTrap == 0)
+      if (!clipsMatch && !nxagentGCTrap)
       {
         XRectangle *pRects;
         nRects = RegionNumRects((RegionPtr)pValue);
@@ -576,7 +576,7 @@ void nxagentChangeClip(GCPtr pGC, int type, void * pValue, int nRects)
     }
     case CT_PIXMAP:
     {
-      if (nxagentGCTrap == 0)
+      if (!nxagentGCTrap)
       {
         XSetClipMask(nxagentDisplay, nxagentGC(pGC),
                          nxagentPixmap((PixmapPtr)pValue));
@@ -594,7 +594,7 @@ void nxagentChangeClip(GCPtr pGC, int type, void * pValue, int nRects)
     }
     case CT_UNSORTED:
     {
-      if (clipsMatch == 0 && nxagentGCTrap == 0)
+      if (!clipsMatch && !nxagentGCTrap)
       {    
         XSetClipRectangles(nxagentDisplay, nxagentGC(pGC),
                                pGC->clipOrg.x, pGC->clipOrg.y,
@@ -604,7 +604,7 @@ void nxagentChangeClip(GCPtr pGC, int type, void * pValue, int nRects)
     }
     case CT_YSORTED:
     {
-      if (clipsMatch == 0 && nxagentGCTrap == 0)
+      if (!clipsMatch && !nxagentGCTrap)
       {
         XSetClipRectangles(nxagentDisplay, nxagentGC(pGC),
                            pGC->clipOrg.x, pGC->clipOrg.y,
@@ -614,7 +614,7 @@ void nxagentChangeClip(GCPtr pGC, int type, void * pValue, int nRects)
     }
     case CT_YXSORTED:
     {
-      if (clipsMatch == 0 && nxagentGCTrap == 0)
+      if (!clipsMatch && !nxagentGCTrap)
       {
         XSetClipRectangles(nxagentDisplay, nxagentGC(pGC),
                            pGC->clipOrg.x, pGC->clipOrg.y,
@@ -624,7 +624,7 @@ void nxagentChangeClip(GCPtr pGC, int type, void * pValue, int nRects)
     }
     case CT_YXBANDED:
     {
-      if (clipsMatch == 0 && nxagentGCTrap == 0)
+      if (!clipsMatch && !nxagentGCTrap)
       {
         XSetClipRectangles(nxagentDisplay, nxagentGC(pGC),
                          pGC->clipOrg.x, pGC->clipOrg.y,
@@ -679,7 +679,7 @@ void nxagentDestroyClip(GCPtr pGC)
 
   nxagentDestroyClipHelper(pGC);
 
-  if (nxagentGCTrap == 0)
+  if (!nxagentGCTrap)
   {
     XSetClipMask(nxagentDisplay, nxagentGC(pGC), None);
   }
@@ -1209,29 +1209,29 @@ static void nxagentReconnectClip(GCPtr pGC, int type, void * pValue, int nRects)
  nxagentGCPriv(pGC)->nClipRects = nRects;
 }
 
-static int nxagentCompareRegions(RegionPtr r1, RegionPtr r2)
+static Bool nxagentCompareRegions(RegionPtr r1, RegionPtr r2)
 {
  /*
-  *  It returns 1 if regions are equal, 0 otherwise
+  *  It returns True if regions are equal, False otherwise
   */
 
   if (r1 == NULL && r2 == NULL)
   {
-    return 1;
+    return True;
   }
 
   if ((r1 == NULL) || (r2 == NULL))
   {
-    return 0;
+    return False;
   }
 
   if (RegionNumRects(r1) !=  RegionNumRects(r2))
   {
-    return 0;
+    return False;
   }
   else if (RegionNumRects(r1) == 0)
   {
-    return 1;
+    return True;
   }
   else if ((*RegionExtents(r1)).x1 !=  (*RegionExtents(r2)).x1) return 0;
   else if ((*RegionExtents(r1)).x2 !=  (*RegionExtents(r2)).x2) return 0;
@@ -1247,7 +1247,7 @@ static int nxagentCompareRegions(RegionPtr r1, RegionPtr r2)
       else if (RegionRects(r1)[i].y2 !=  RegionRects(r2)[i].y2) return 0;
     }
   }
-  return 1;
+  return True;
 }
 
 /*

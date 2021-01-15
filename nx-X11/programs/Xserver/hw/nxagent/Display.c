@@ -312,7 +312,7 @@ static void nxagentSighupHandler(int signal)
   }
   else if (nxagentSessionState == SESSION_UP)
   {
-    if (nxagentOption(Persistent) == 1)
+    if (nxagentOption(Persistent))
     {
       #ifdef TEST
       fprintf(stderr, "nxagentSighupHandler: Handling the signal by disconnecting the agent.\n");
@@ -660,7 +660,7 @@ static void nxagentDisplayBlockHandler(Display *disp, int reason)
       fprintf(stderr, "nxagentDisplayBlockHandler: BLOCK! Display is blocking for [write].\n");
       #endif
 
-      nxagentBlocking = 1;
+      nxagentBlocking = True;
 
       if (!SmartScheduleSignalEnable)
       {
@@ -908,7 +908,7 @@ void nxagentResetDisplayHandlers(void)
    */
 
   nxagentBuffer     = 0;
-  nxagentBlocking   = 0;
+  nxagentBlocking   = False;
   nxagentCongestion = 0;
 
   /*
@@ -1796,7 +1796,7 @@ void nxagentCloseDisplay(void)
               nxagentDoFullGeneration, (void *) nxagentDisplay);
   #endif
 
-  if (nxagentDoFullGeneration == 0 ||
+  if (!nxagentDoFullGeneration ||
           nxagentDisplay == NULL)
   {
     return;
@@ -2517,7 +2517,7 @@ Bool nxagentReconnectDisplay(void *p0)
     nxagentSetReconnectError(FAILED_RESUME_DISPLAY_ALERT,
                                  "Couldn't open the display.");
 
-    return FALSE;
+    return False;
   }
 
   nxagentAddXConnection();
@@ -2535,12 +2535,12 @@ Bool nxagentReconnectDisplay(void *p0)
 
   #endif
 
-  if (nxagentCheckForDefaultDepthCompatibility() == 0)
+  if (!nxagentCheckForDefaultDepthCompatibility())
   {
     nxagentSetReconnectError(FAILED_RESUME_DISPLAY_ALERT,
                                  "Default display depth doesn't match.");
 
-    return FALSE;
+    return False;
   }
 
   nxagentUseNXTrans = nxagentPostProcessArgs(nxagentDisplayName, nxagentDisplay,
@@ -2557,12 +2557,12 @@ Bool nxagentReconnectDisplay(void *p0)
    * Init and compare the visuals.
    */
 
-  if (nxagentInitAndCheckVisuals(flexibility) == FALSE)
+  if (!nxagentInitAndCheckVisuals(flexibility))
   {
     nxagentSetReconnectError(FAILED_RESUME_VISUALS_ALERT,
                                  "Couldn't restore the required visuals.");
 
-    return FALSE;
+    return False;
   }
 
   reconnectDisplayState = GOT_VISUAL_INFO;
@@ -2612,7 +2612,7 @@ Bool nxagentReconnectDisplay(void *p0)
 
   reconnectDisplayState = GOT_DEPTH_LIST;
 
-  if (nxagentCheckForDepthsCompatibility() == 0)
+  if (!nxagentCheckForDepthsCompatibility())
   {
     nxagentSetReconnectError(FAILED_RESUME_DEPTHS_ALERT,
                                  "Couldn't restore all the required depths.");
@@ -2634,7 +2634,7 @@ Bool nxagentReconnectDisplay(void *p0)
 
   nxagentInitPixmapFormats();
 
-  if (nxagentCheckForPixmapFormatsCompatibility() == 0)
+  if (!nxagentCheckForPixmapFormatsCompatibility())
   {
     nxagentSetReconnectError(FAILED_RESUME_PIXMAPS_ALERT,
                                  "Couldn't restore all the required pixmap formats.");

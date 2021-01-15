@@ -189,7 +189,7 @@ ActivatePointerGrab(register DeviceIntPtr mouse, register GrabPtr grab,
      * }
      */
 
-    if (nxagentOption(Rootless) == 1)
+    if (nxagentOption(Rootless))
     {
       /*
        * from nxagent-1.5.0-20 changelog:
@@ -238,7 +238,7 @@ DeactivatePointerGrab(register DeviceIntPtr mouse)
      * by the agent (for example if the focus had left the window), so
      * that agent could be unable to update the mouse button state.
      */
-    if (nxagentOption(Rootless) == 1)
+    if (nxagentOption(Rootless))
     {
       XUngrabPointer(nxagentDisplay, CurrentTime);
 

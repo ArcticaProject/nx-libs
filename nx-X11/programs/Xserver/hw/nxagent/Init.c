@@ -171,7 +171,7 @@ int nxagentSaveUnder;
  *         nxagentOpenScreen
  *   InitInput
  */
-int nxagentDoFullGeneration = 1;
+Bool nxagentDoFullGeneration = True;
 
  /*
  * True if agent is running as X2goAgent
@@ -251,7 +251,7 @@ void InitOutput(ScreenInfo *scrInfo, int argc, char *argv[])
     AddCallback(&ServerGrabCallback, nxagentGrabServerCallback, NULL);
   }
 
-  if (nxagentUserDefinedFontPath == 0)
+  if (!nxagentUserDefinedFontPath)
   {
     #ifdef TEST
     fprintf(stderr, "InitOutput: Calling nxagentVerifyDefaultFontPath.\n");
@@ -518,7 +518,7 @@ FIXME: Do we need to check the key grab if the
       fprintf(stderr, "Info: Auto-terminating session with no client running.\n");
       raise(SIGTERM);
     }
-    else if (nxagentOption(Persistent) == 0)
+    else if (!nxagentOption(Persistent))
     {
       fprintf(stderr, "Info: Auto-terminating session with persistence not allowed.\n");
       raise(SIGTERM);

@@ -68,8 +68,7 @@ typedef struct _XkbAgentState
   int Caps;
   int Num;
   int Focus;
-  int Initialized;
-
+  Bool Initialized;
 } XkbAgentStateRec;
 
 extern XkbAgentStateRec nxagentXkbState;

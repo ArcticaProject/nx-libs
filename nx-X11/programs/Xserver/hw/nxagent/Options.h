@@ -26,6 +26,12 @@
 #ifndef __Options_H__
 #define __Options_H__
 
+/* Bool is defined in Xlib.h but we do not want to include that here, so let's
+   clone the definition */
+#ifndef Bool
+#define Bool int
+#endif
+
 #ifndef True
 #define True   1
 #endif
@@ -122,33 +128,33 @@ typedef struct _AgentOptions
   /*
    * Is agent running in desktop mode? This is presently the default.
    */
-  int Desktop;
+  Bool Desktop;
 
   /*
    * True if user activated rootless mode.
    */
-  int Rootless;
+  Bool Rootless;
 
   /*
    * True for shadow mode.
    */
-  int Shadow;
+  Bool Shadow;
 
   /*
    * True if user activated persistent mode.
    */
-  int Persistent;
+  Bool Persistent;
 
   /*
    * True if user activated fullscreen mode.
    */
-  int Fullscreen;
+  Bool Fullscreen;
 
   /*
    * True if the fullscreen NX session will extend on all available
    * screens.
    */
-  int AllScreens;
+  Bool AllScreens;
 
   /*
    * Set to the auto-disconnect timeout, if the user activated this
@@ -176,7 +182,7 @@ typedef struct _AgentOptions
   /*
    * Set if agent is running nested in another agent X server.
    */
-  int Nested;
+  Bool Nested;
 
   /*
    * Selected backing-store mode.
@@ -192,12 +198,12 @@ typedef struct _AgentOptions
    * Enable agent to use the MITSHM extension in path from remote
    * proxy to the real X server.
    */
-  int SharedMemory;
+  Bool SharedMemory;
 
   /*
    * Enable agent to use shared Pixmaps
    */
-  int SharedPixmaps;
+  Bool SharedPixmaps;
 
   /*
    * Enable agent to propagate keyboard and pointer device
@@ -214,12 +220,12 @@ typedef struct _AgentOptions
    * Resuming keyboard device corrects keymap if session migrates
    * across platforms with different keycode layout.
    */
-  int ResetKeyboardAtResume;
+  Bool ResetKeyboardAtResume;
 
   /*
    * Reset server when the last client disconnects.
    */
-  int Reset;
+  Bool Reset;
 
   /* 
    * Geometry of the agent root window, relative to the agent default
@@ -236,7 +242,7 @@ typedef struct _AgentOptions
    * True if the user can resize the desktop by dragging the window
    * border.
    */
-  int DesktopResize;
+  Bool DesktopResize;
 
   /*
    * The scaling ratio of the shadow agent.
@@ -248,19 +254,19 @@ typedef struct _AgentOptions
   /*
    * The shadow agent uses the Damage extension.
    */
-  int UseDamage;
+  Bool UseDamage;
 
   /*
    * Was the agent run with the -B option?
    */
-  int Binder;
+  Bool Binder;
   char *BinderOptions;
 
   /*
    * Set if the agent has to connect to a desktop manager to start the
    * session.
    */
-  int Xdmcp;
+  Bool Xdmcp;
 
   /*
    * Size of the Xlib display buffer. The default is set according to
@@ -276,31 +282,31 @@ typedef struct _AgentOptions
   /*
    * Use the composite extension when available on the remote display.
    */
-  int Composite;
+  Bool Composite;
 
   /*
    * If set, don't skip internal operations when the agent window is
    * not fully visible.
    */
-  int IgnoreVisibility;
+  Bool IgnoreVisibility;
 
   /*
    * If set, prevent the shadow session to interact with master
    * display.
    */
-  int ViewOnly;
+  Bool ViewOnly;
 
   /*
    * If true select a lossy or lossless compression method based on
    * the characteristics of the image.
    */
-  int Adaptive;
+  Bool Adaptive;
 
   /*
    * Stream the images and update the display when the image has been
    * completely transerred.
    */
-  int Streaming;
+  Bool Streaming;
 
   /*
    * Use a lazy approach in updating the remote display. This means
@@ -323,12 +329,12 @@ typedef struct _AgentOptions
   /*
    * Enabling/disabling the pulldown menu.
    */
-  int Menu;
+  Bool Menu;
 
   /*
    * Enabling/disabling the magic pixel.
    */
-  int MagicPixel;
+  Bool MagicPixel;
 
   /*
    * Specify the Operative System of the client.
@@ -338,7 +344,7 @@ typedef struct _AgentOptions
   /*
    * Inhibit some XKEYBOARD requests.
    */
-  int InhibitXkb;
+  Bool InhibitXkb;
 
   /*
    * Maximum number of bytes that can be pasted from an NX session
@@ -355,7 +361,7 @@ typedef struct _AgentOptions
   * True if agent should not exit if there are no clients in rootless
   * mode
   */
-  int NoRootlessExit;
+  Bool NoRootlessExit;
 
  /*
   * Store if the user wants Xinerama. There are variables called
@@ -365,7 +371,7 @@ typedef struct _AgentOptions
   * the user preference provided by the -/+(rr)xinerama parameter(s)
   * before initializing those extensions.
   */
-  int Xinerama;
+  Bool Xinerama;
 
   /*
    * Sleep delay in milliseconds.
@@ -386,7 +392,7 @@ typedef struct _AgentOptions
    * True if agent should grab the input in windowed mode whenever the
    * agent window gets the focus
    */
-  int AutoGrab;  /* Should be Bool but I do not want to include Xlib.h here */
+  Bool AutoGrab;
 
 } AgentOptionsRec;
 

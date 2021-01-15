@@ -106,7 +106,7 @@ static int nxagentPrintError(Display *dpy, XErrorEvent *event, FILE *fp);
 
 int nxagentErrorHandler(Display *dpy, XErrorEvent *event)
 {
-  if (nxagentVerbose == 1)
+  if (nxagentVerbose)
   {
     nxagentPrintError(dpy, event, stderr);
   }
