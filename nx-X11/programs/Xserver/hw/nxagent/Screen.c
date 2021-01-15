@@ -1156,6 +1156,14 @@ Bool nxagentOpenScreen(ScreenPtr pScreen, int argc, char *argv[])
      */
 
     DepthPtr depths = (DepthPtr) malloc(nxagentNumDepths * sizeof(DepthRec));
+    if (!depths)
+    {
+      #ifdef WARNING
+      fprintf(stderr, "WARNING: Could not allocate depths array\n");
+      #endif
+      /* FIXME: free data allocated above */
+      return False;
+    }
 
     for (int i = 0; i < nxagentNumDepths; i++)
     {
@@ -1177,6 +1185,14 @@ Bool nxagentOpenScreen(ScreenPtr pScreen, int argc, char *argv[])
     int numDepths = nxagentNumDepths;
 
     VisualPtr visuals = (VisualPtr) malloc(nxagentNumVisuals * sizeof(VisualRec));
+    if (!visuals)
+    {
+      #ifdef WARNING
+      fprintf(stderr, "WARNING: Could not allocate visual array\n");
+      #endif
+      /* FIXME: free data allocated above */
+      return False;
+    }
 
     int defaultVisualIndex = 0;
 
@@ -3058,6 +3074,14 @@ void nxagentShadowAdaptDepth(unsigned int width, unsigned int height,
   unsigned char *cBuffer = malloc(length);
   unsigned char *icBuffer = cBuffer;
 
+  if (!cBuffer)
+  {
+    #ifdef WARNING
+    fprintf(stderr, "WARNING: could not allocate cBuffer\n");
+    #endif
+    return;
+  }
+
   Visual *pVisual = nxagentImageVisual((DrawablePtr) nxagentShadowPixmapPtr, nxagentShadowDepth);
 
   if (pVisual == NULL)
@@ -4203,6 +4227,13 @@ void nxagentSaveAreas(PixmapPtr pPixmap, RegionPtr prgnSave, int xorg, int yorg,
   int nRects = RegionNumRects(&cleanRegion);
   int size = nRects * sizeof(XRectangle);
   XRectangle *pRects = (XRectangle *) malloc(size);
+  if (!pRects)
+  {
+    #ifdef WARNING
+    fprintf(stderr, "Could not allocate pRects\n");
+    #endif
+    return;
+  }
   BoxPtr pBox = RegionRects(&cleanRegion);
 
   for (int i = nRects; i-- > 0;)
@@ -4336,6 +4367,14 @@ void nxagentRestoreAreas(PixmapPtr pPixmap, RegionPtr prgnRestore, int xorg,
   int nRects = RegionNumRects(clipRegion);
   int size = nRects * sizeof(XRectangle);
   XRectangle *pRects = (XRectangle *) malloc(size);
+  if (!pRects)
+  {
+    #ifdef WARNING
+    fprintf(stderr, "Could not allocate pRects\n");
+    #endif
+    return;
+  }
+
   BoxPtr pBox = RegionRects(clipRegion);
 
   for (int i = nRects; i-- > 0;)

@@ -435,6 +435,11 @@ N/A
 
         int len = (max_keycode - min_keycode + 1) * mapWidth;
         keymap = (KeySym *)malloc(len * sizeof(KeySym));
+        if (keymap == NULL)
+        {
+          XFreeModifiermap(modifier_keymap);
+          return -1;
+        }
         for(int i = 0; i < len; ++i)
         {
           keymap[i] = keymap64[i];
@@ -1425,11 +1430,9 @@ static void nxagentXkbGetRemoteNames(void)
 
   if ((after > 0) || (type != XA_STRING) || (format != 8))
   {
-    if (data)
-    {
-      SAFE_XFree(data);
-      return;
-    }
+    /* data non-null - has been checked above */
+    SAFE_XFree(data);
+    return;
   }
 
   char *name = data;

@@ -385,11 +385,15 @@ static void nxagentExpandCache(void)
 {
   privAtomMapSize += NXAGENT_ATOM_MAP_SIZE_INCREMENT;
 
-  privAtomMap = realloc(privAtomMap, privAtomMapSize * sizeof(AtomMap));
+  AtomMap * newmap = realloc(privAtomMap, privAtomMapSize * sizeof(AtomMap));
 
-  if (privAtomMap == NULL)
+  if (newmap == NULL)
   {
     FatalError("nxagentExpandCache: realloc failed\n");
+  }
+  else
+  {
+    privAtomMap = newmap;
   }
 }
 
@@ -405,19 +409,23 @@ static void nxagentWriteAtom(Atom local, XlibAtom remote, const char *string)
   #ifdef WARNING
   if (s == NULL)
   {
-    fprintf(stderr, "nxagentWriteAtom: Malloc failed.\n");
+    /* we only warn here, because s being NULL ist not problem, it
+       will only result in NULL being stored in the privAtomMap, which
+       is perfectly legal. */
+    fprintf(stderr, "%s: Malloc failed.\n", __func__);
   }
   #endif
 
   if (privLastAtom == privAtomMapSize)
   {
+    /* will issue a fatal error, therefore no further check here */
     nxagentExpandCache();
   }
 
   privAtomMap[privLastAtom].local = local;
   privAtomMap[privLastAtom].remote = remote;
   privAtomMap[privLastAtom].string = s;
-  privAtomMap[privLastAtom].length = strlen(s);
+  privAtomMap[privLastAtom].length = s ? strlen(s) : 0;
 
   privLastAtom++;
 }

@@ -332,15 +332,10 @@ void nxagentRemoveSplashWindow(void)
   fprintf(stderr, "%s: Destroying the splash window.\n", __func__);
   #endif
 
-  if (!nxagentWMPassed)
-  {
-    #ifdef NXAGENT_ONSTART
-    XSetSelectionOwner(nxagentDisplay, nxagentReadyAtom,
-                          nxagentDefaultWindows[0], CurrentTime);
-    #endif
-
-    nxagentWMPassed = True;
-  }
+  #ifdef NXAGENT_ONSTART
+  XSetSelectionOwner(nxagentDisplay, nxagentReadyAtom,
+                         nxagentDefaultWindows[0], CurrentTime);
+  #endif
 
   if (nxagentSplashWindow != None)
   {
