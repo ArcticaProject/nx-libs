@@ -110,8 +110,6 @@ extern WindowPtr nxagentViewportFrameRight;
 extern WindowPtr nxagentViewportFrameAbove;
 extern WindowPtr nxagentViewportFrameBelow;
 
-extern WindowPtr nxagentRootTileWindow;
-
 extern Bool nxagentReportPrivateWindowIds;
 
 #define RECTLIMIT 25
@@ -1532,7 +1530,7 @@ void nxagentConfigureWindow(WindowPtr pWin, unsigned int mask)
  * position in the window tree, and pPriorParent is its previous
  * parent. This function can be NULL.
  *
- * We simply pass this pver to the real X server.
+ * We simply pass this over to the real X server.
  */
 void nxagentReparentWindow(WindowPtr pWin, WindowPtr pOldParent)
 {
@@ -3907,7 +3905,7 @@ StoringPixmapPtr nxagentFindItemBSPixmapList(unsigned long pixmapId)
     }
   }
 
-  #ifdef WARNING
+  #ifdef TEST
   fprintf(stderr, "%s: WARNING! Item not found.\n", __func__);
   #endif
 

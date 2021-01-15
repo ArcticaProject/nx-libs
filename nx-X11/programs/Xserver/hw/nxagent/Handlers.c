@@ -123,6 +123,9 @@ Bool nxagentXdmcpAlertUp = False;
 
 int nxagentBuffer;
 Bool nxagentBlocking;
+
+/* FIXME: nxagentCongestion is checked as a Boolean and as an Integer
+   (>= 4) at the same time which is weird at least */
 int nxagentCongestion;
 
 double nxagentBytesIn;
@@ -1017,7 +1020,7 @@ void nxagentDispatchHandler(ClientPtr client, int in, int out)
         nxagentDispatch.in  = nxagentBytesIn;
         nxagentDispatch.out = nxagentBytesOut;
 
-        isItTimeToYield = 1;
+        isItTimeToYield = TRUE;
       }
       #ifdef DEBUG
       else
@@ -1126,7 +1129,7 @@ void nxagentDispatchHandler(ClientPtr client, int in, int out)
           nxagentDispatch.in  = nxagentBytesIn;
           nxagentDispatch.out = nxagentBytesOut;
 
-          isItTimeToYield = 1;
+          isItTimeToYield = TRUE;
         }
         #ifdef DEBUG
         else

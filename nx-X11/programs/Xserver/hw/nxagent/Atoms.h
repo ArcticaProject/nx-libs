@@ -58,7 +58,7 @@ void nxagentWMDetect(void);
 #ifdef XlibAtom
 
 /*
- * only provide these protoypes if the including file knows about Xlib
+ * only provide these prototypes if the including file knows about Xlib
  * types. This allows us including Atoms.h without having to use the
  * Xlib type magic of Agent.h
  */

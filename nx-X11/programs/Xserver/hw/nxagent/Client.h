@@ -44,10 +44,15 @@ enum ClientHint
   JAVA_WINDOW
 };
 
+/* client byte counting is currently unused */
+#undef COUNT_CLIENT_BYTES
+
 typedef struct _PrivClientRec
 {
   int clientState;
+#ifdef COUNT_CLIENT_BYTES
   long clientBytes;
+#endif
   enum ClientHint clientHint;
   char *clientInfoString;
 } PrivClientRec;
@@ -58,8 +63,6 @@ extern int nxagentClientPrivateIndex;
   ((PrivClientRec *)((pClient)->devPrivates[nxagentClientPrivateIndex].ptr))
 
 extern void nxagentClientStateCallback(CallbackListPtr *callbacks, void *data, void *args);
-
-#undef COUNT_CLIENT_BYTES
 
 #ifdef COUNT_CLIENT_BYTES
 #define nxagentClientAddBytes(pClient, size)	\

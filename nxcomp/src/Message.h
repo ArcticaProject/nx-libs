@@ -566,7 +566,7 @@ class MessageStore
       // it can contain valid data that must be
       // explicitly deallocated if not needed.
       // Note also that you cannot count on the
-      // initialization made in costructor.
+      // initialization made in constructor.
       //
 
       temporary_ = message;
