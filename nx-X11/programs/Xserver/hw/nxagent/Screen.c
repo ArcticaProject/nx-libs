@@ -337,6 +337,12 @@ void nxagentMinimizeFromFullScreen(ScreenPtr pScreen)
  */
 void nxagentMaximizeToFullScreen(ScreenPtr pScreen)
 {
+  if (nxagentOption(AllScreens))
+    nxagentSwitchAllScreens(pScreen, True);
+  else
+    nxagentSwitchFullscreen(pScreen, True);
+  return;
+
 /*
   XUnmapWindow(nxagentDisplay, nxagentIconWindow);
 */
@@ -363,7 +369,7 @@ FIXME: We'll check for ReparentNotify and LeaveNotify events after
       XEvent e;
 
       #ifdef TEST
-      fprintf(stderr, "nxagentMaximizeToFullscreen: WARNING! Going to wait for the ReparentNotify event [%d].\n", i);
+      fprintf(stderr, "%d: WARNING! Going to wait for the ReparentNotify event [%d].\n", __func__, i);
       #endif
 
       if (XCheckTypedWindowEvent(nxagentDisplay, nxagentFullscreenWindow, ReparentNotify, &e))
