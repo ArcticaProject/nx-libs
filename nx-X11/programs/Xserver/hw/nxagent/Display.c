@@ -758,18 +758,17 @@ static void nxagentDisplayFlushHandler(Display *disp, int length)
 }
 
 /*
- * From the changelog for nx-X11-3.0.0-4:
- * "Added the _NXDisplayErrorPredicate function in XlibInt.c. It is
- * actually a pointer to a function called whenever Xlib is going to
- * perform a network operation. If the function returns true, the
- * call will be aborted and Xlib will return the control to the ap-
- * plication. It is up to the application to set the XlibDisplayIO-
- * Error flag after the _NXDisplayErrorPredicate returns true. The
- * function can be used to activate additional checks, besides the
- * normal failures detected by Xlib on the display socket. For exam-
- * ple, the application can set the function to verify if an inter-
- * rupt was received or if any other event occurred mandating the
- + end of the session."
+ * From the changelog for nx-X11-3.0.0-4: "Added the
+ * _NXDisplayErrorPredicate function in XlibInt.c. It is actually a
+ * pointer to a function called whenever Xlib is going to perform a
+ * network operation. If the function returns true, the call will be
+ * aborted and Xlib will return the control to the application. It is
+ * up to the application to set the XlibDisplayIO- Error flag after
+ * the _NXDisplayErrorPredicate returns true. The function can be used
+ * to activate additional checks, besides the normal failures detected
+ * by Xlib on the display socket. For example, the application can set
+ * the function to verify if an interrupt was received or if any other
+ * event occurred mandating the end of the session."
  */
 static int nxagentDisplayErrorPredicate(Display *disp, int error)
 {
