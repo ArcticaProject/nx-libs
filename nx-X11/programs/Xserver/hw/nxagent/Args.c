@@ -2083,7 +2083,7 @@ void ddxUseMsg(void)
   ErrorF("-full                  utilize full regeneration\n");
   ErrorF("-class string          default visual class\n");
   ErrorF("-depth int             default depth\n");
-  ErrorF("-geometry WxH+X+Y      window size and position\n");
+  ErrorF("-geometry string       window size and position (WXH+X+Y) or 'allscreens' / 'onescreen'\n");
   ErrorF("-bw int                window border width\n");
   ErrorF("-name string           window name\n");
   ErrorF("-scrns int             number of screens to generate\n");
