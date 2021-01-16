@@ -56,8 +56,7 @@ XF86BIGFOBJS = xf86bigfont.o
 #if BuildXCSecurity
     SECURITYSRCS = security.c
     SECURITYOBJS = security.o
- SERVERCONFIGDIR = ServerConfigDir
-   POLICYFILEDEF = -DDEFAULTPOLICYFILE=\"$(SERVERCONFIGDIR)/SecurityPolicy\"
+   POLICYFILEDEF = -DDEFAULTPOLICYFILE=\"$(USRDATADIR)/SecurityPolicy\"
 #endif
 #if BuildXinerama
         PNRXSRCS = panoramiX.c panoramiXSwap.c panoramiXprocs.c
@@ -125,7 +124,7 @@ SpecialCObjectRule(security,$(ICONFIGFILES),$(POLICYFILEDEF))
 LinkConfDirectory(xserver,.,xserver,.)
 
 #if BuildXCSecurity && InstallSecurityConfig
-InstallNonExecFile(SecurityPolicy,$(SERVERCONFIGDIR))
+InstallNonExecFile(SecurityPolicy,$(USRDATADIR))
 #endif
 
 DependTarget()
