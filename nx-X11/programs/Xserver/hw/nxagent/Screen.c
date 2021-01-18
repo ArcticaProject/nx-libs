@@ -337,12 +337,6 @@ void nxagentMinimizeFromFullScreen(ScreenPtr pScreen)
  */
 void nxagentMaximizeToFullScreen(ScreenPtr pScreen)
 {
-  if (nxagentOption(AllScreens))
-    nxagentSwitchAllScreens(pScreen, True);
-  else
-    nxagentSwitchFullscreen(pScreen, True);
-  return;
-
 /*
   XUnmapWindow(nxagentDisplay, nxagentIconWindow);
 */
