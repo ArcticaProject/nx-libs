@@ -661,9 +661,12 @@ ProcListProperties(ClientPtr client)
     return(client->noClientException);
 }
 
-#ifndef NXAGENT_SERVER
 int 
+#ifdef NXAGENT_SERVER
+xorg_ProcDeleteProperty(register ClientPtr client)
+#else
 ProcDeleteProperty(register ClientPtr client)
+#endif
 {
     WindowPtr pWin;
     REQUEST(xDeletePropertyReq);
@@ -699,4 +702,3 @@ ProcDeleteProperty(register ClientPtr client)
     else
 	return(result);
 }
-#endif
