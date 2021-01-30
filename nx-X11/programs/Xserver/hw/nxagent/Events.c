@@ -2067,8 +2067,6 @@ FIXME: Don't enqueue the KeyRelease event if the key was not already
         if (nxagentOption(Fullscreen))
         {
           nxagentVisibility = VisibilityUnobscured;
-          nxagentVisibilityStop = False;
-          nxagentVisibilityTimeout = GetTimeInMillis() + 2000;
         }
 
         /*

@@ -80,8 +80,6 @@ int nxagentWindowPrivateIndex;
  */
 
 int nxagentVisibility = VisibilityUnobscured;
-unsigned long nxagentVisibilityTimeout = 0;
-Bool nxagentVisibilityStop = False;
 
 ConfiguredWindowStruct *nxagentConfiguredWindowList;
 StaticResizedWindowStruct *nxagentStaticResizedWindowList;
