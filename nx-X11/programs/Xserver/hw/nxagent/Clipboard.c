@@ -2108,11 +2108,23 @@ void nxagentSetSelectionCallback(CallbackListPtr *callbacks, void *data,
   }
   #endif
 
+  Selection * pCurSel = (Selection *)info->selection;
+
+  int index = nxagentFindCurrentSelectionIndex(pCurSel->selection);
+  if (index == -1)
+  {
+    #ifdef DEBUG
+    fprintf(stderr, "%s: selection [%s] will not be handled by the clipboard code\n", __func__, NameForIntAtom(pCurSel->selection));
+    #endif
+    return;
+  }
+
   /*
-   * We do not know index here so for now let's invalidate the
-   * complete cache on every owner change regardless of the selection.
+   * always invalidate the target cache for the relevant selection,
+   * even if the trap is set. This ensures not having invalid data in
+   * the cache.
    */
-  invalidateTargetCaches();
+  invalidateTargetCache(index);
 
   if (nxagentExternalClipboardEventTrap)
   {
@@ -2122,7 +2134,6 @@ void nxagentSetSelectionCallback(CallbackListPtr *callbacks, void *data,
     return;
   }
 
-  Selection * pCurSel = (Selection *)info->selection;
 
   #ifdef DEBUG
   fprintf(stderr, "%s: pCurSel->lastTimeChanged [%u]\n", __func__, pCurSel->lastTimeChanged.milliseconds);
