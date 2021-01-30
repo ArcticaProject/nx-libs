@@ -466,9 +466,6 @@ GetWindowProperty(pWin, property, longOffset, longLength, delete,
     unsigned long	*bytesAfter;
     unsigned char	**propData;
 {
-    PropertyPtr pProp, prevProp;
-    unsigned long n, len, ind;
-
     if (!pWin)
     {
         #ifdef DEBUG
@@ -484,6 +481,7 @@ GetWindowProperty(pWin, property, longOffset, longLength, delete,
         #endif
 	return BadAtom;
     }
+
     if ((type != AnyPropertyType) && !ValidAtom(type))
     {
         #ifdef DEBUG
@@ -492,8 +490,8 @@ GetWindowProperty(pWin, property, longOffset, longLength, delete,
 	return BadAtom;
     }
 
-    pProp = wUserProps (pWin);
-    prevProp = (PropertyPtr)NULL;
+    PropertyPtr pProp = wUserProps (pWin);
+    PropertyPtr prevProp = (PropertyPtr)NULL;
 
     while (pProp)
     {
@@ -522,14 +520,14 @@ GetWindowProperty(pWin, property, longOffset, longLength, delete,
 	*format = pProp->format;
 	*nItems = 0;
 	*actualType = pProp->type;
-	return(Success);
+	return Success;
     }
 
     /*
      *  Return type, format, value to client
      */
-    n = (pProp->format/8) * pProp->size; /* size (bytes) of prop */
-    ind = longOffset << 2;
+    unsigned long n = (pProp->format/8) * pProp->size; /* size (bytes) of prop */
+    unsigned long ind = longOffset << 2;
 
     /* If longOffset is invalid such that it causes "len" to
        be negative, it's a value error. */
@@ -542,7 +540,7 @@ GetWindowProperty(pWin, property, longOffset, longLength, delete,
 	return BadValue;
     }
 
-    len = min(n - ind, 4 * longLength);
+    unsigned long len = min(n - ind, 4 * longLength);
 
     *bytesAfter = n - (ind + len);
     *format = pProp->format;
@@ -566,7 +564,7 @@ GetWindowProperty(pWin, property, longOffset, longLength, delete,
     }
 
     if (delete && (*bytesAfter == 0))
-    { /* delete the Property */
+    { /* delete the property */
 	if (prevProp == (PropertyPtr)NULL) /* takes care of head */
 	{
 	    if (!(pWin->optional->userProps = pProp->next))
