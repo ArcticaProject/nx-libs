@@ -763,7 +763,21 @@ int nxagentFindLastSelectionOwnerIndex(XlibAtom sel)
  */
 int nxagentFindCurrentSelectionIndex(Atom sel)
 {
-  for (int index = 0; index < NumCurrentSelections; index++)
+  /*
+   * Normally you'd expect the loop going up to
+   * NumCurrentSelections. But the dix code will increase that number
+   * (but not nxagentMaxSelections) when drag and drop comes into
+   * play. In that case this helper will report a match for other
+   * selections than the ones the clipboard code knows about. The
+   * subsequent code will then use a higher index which will be used
+   * by the clipboard code and will lead to out of range data reads
+   * (and writes!). Therefore we take nxagentMaxSelections here. The
+   * startup code ensures that both arrays will refer to the same
+   * selection for the first nxagentMaxSelections selection atoms.
+   */
+
+  //  for (int index = 0; index < NumCurrentSelections; index++)
+  for (int index = 0; index < nxagentMaxSelections; index++)
   {
     if (CurrentSelections[index].selection == sel)
     {
