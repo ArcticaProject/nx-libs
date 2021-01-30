@@ -483,8 +483,8 @@ Window nxagentCreateIconWindow(void)
   if (-1 == asprintf(&winname, "%s Icon", nxagentWindowName))
   {
     /* If memory allocation wasn't possible, or some other error
-       occurs, these functions will return -1, and the contents of
-       winname are undefined. */
+       occurs, asprintf() will return -1, and the content of
+       winname is undefined. */
     winname = NULL;
   }
   #endif
