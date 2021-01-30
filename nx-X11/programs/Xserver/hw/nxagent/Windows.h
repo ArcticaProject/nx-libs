@@ -256,8 +256,6 @@ void nxagentConfigureWindow(WindowPtr pWin, unsigned int mask);
  */
 
 extern int nxagentVisibility;
-extern unsigned long nxagentVisibilityTimeout;
-extern Bool nxagentVisibilityStop;
 
 /*
  * Return the pointer to the window given the remote id. It tries to
