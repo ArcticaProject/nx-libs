@@ -322,6 +322,12 @@ Bool nxagentIsParentOf(Display *d, XlibWindow possible_parent, XlibWindow candid
  */
 void nxagentMinimizeFromFullScreen(ScreenPtr pScreen)
 {
+  if (nxagentOption(Fullscreen) && !nxagentOption(AllScreens))
+  {
+    nxagentSwitchFullscreen(pScreen, False);
+    return;
+  }
+
   XUnmapWindow(nxagentDisplay, nxagentFullscreenWindow);
   XIconifyWindow(nxagentDisplay, nxagentIconWindow,
                        DefaultScreen(nxagentDisplay));
@@ -337,6 +343,12 @@ void nxagentMinimizeFromFullScreen(ScreenPtr pScreen)
  */
 void nxagentMaximizeToFullScreen(ScreenPtr pScreen)
 {
+  if (nxagentOption(Fullscreen) && !nxagentOption(AllScreens))
+  {
+    nxagentSwitchFullscreen(pScreen, True);
+    return;
+  }
+
 /*
   XUnmapWindow(nxagentDisplay, nxagentIconWindow);
 */
@@ -992,8 +1004,25 @@ Bool nxagentOpenScreen(ScreenPtr pScreen, int argc, char *argv[])
     nxagentChangeOption(X, 0);
     nxagentChangeOption(Y, 0);
 
-    nxagentChangeOption(Width, w);
-    nxagentChangeOption(Height, h);
+    /*
+     * Fullscreen will use the window manager on the remote X
+     * server. We need to size the window appropriately because the
+     * window manager stores the size and restores it when fullscreen
+     * mode is left. In AllScreens mode the window manager is
+     * instructed to not draw any window decorations. Here we need the
+     * full width to cover the whole screen.
+     */
+
+    if (nxagentOption(AllScreens))
+    {
+      nxagentChangeOption(Width, w);
+      nxagentChangeOption(Height, h);
+    }
+    else
+    {
+      nxagentChangeOption(Width, w * 3 / 4);
+      nxagentChangeOption(Height, h * 3 / 4);
+    }
 
     /* first time screen initialization or resize during reconnect */
     if (!nxagentReconnectTrap || nxagentResizeDesktopAtStartup)
