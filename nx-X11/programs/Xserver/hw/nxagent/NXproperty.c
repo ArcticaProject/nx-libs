@@ -446,25 +446,20 @@ ProcGetProperty(ClientPtr client)
     return(client->noClientException);
 }
 
-#ifdef NXAGENT_CLIPBOARD
-/* GetWindowProperty clipboard use only */
-/* FIXME: that's wrong, it is also called in Window.c and Events.c */
-/* FIXME: should be moved to a different file, is not derived from
-   dix */
+/*
+ * GetWindowProperty is the internal implementation of the
+ * XGetWindowProperty() Xlib call. It is called from
+ * Clipboard.c, Window.c and Events.c
+ *
+ * FIXME: should be moved to a different file, is not derived from
+ * dix
+ */
 int
-GetWindowProperty(pWin, property, longOffset, longLength, delete,
-            type, actualType, format, nItems, bytesAfter, propData )
-    WindowPtr	        pWin;
-    Atom		property;
-    long		longOffset;
-    long		longLength;
-    Bool		delete;
-    Atom		type;
-    Atom		*actualType;
-    int			*format;
-    unsigned long	*nItems;
-    unsigned long	*bytesAfter;
-    unsigned char	**propData;
+GetWindowProperty(WindowPtr pWin, Atom property, long longOffset,
+                      long longLength, Bool delete, Atom type,
+                          Atom *actualType, int *format, unsigned
+                              long *nItems, unsigned long *bytesAfter,
+                                  unsigned char **propData)
 {
     if (!pWin)
     {
@@ -527,7 +522,7 @@ GetWindowProperty(pWin, property, longOffset, longLength, delete,
      *  Return type, format, value to client
      */
     unsigned long n = (pProp->format/8) * pProp->size; /* size (bytes) of prop */
-    unsigned long ind = longOffset << 2;
+    unsigned long ind = longOffset << 2;               /* byte offset */
 
     /* If longOffset is invalid such that it causes "len" to
        be negative, it's a value error. */
@@ -540,6 +535,7 @@ GetWindowProperty(pWin, property, longOffset, longLength, delete,
 	return BadValue;
     }
 
+    /* minimum of prop size and requested size */
     unsigned long len = min(n - ind, 4 * longLength);
 
     *bytesAfter = n - (ind + len);
@@ -577,7 +573,6 @@ GetWindowProperty(pWin, property, longOffset, longLength, delete,
     }
     return Success;
 }
-#endif
 
 int
 ProcDeleteProperty(register ClientPtr client)
