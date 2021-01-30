@@ -482,14 +482,14 @@ GetWindowProperty(pWin, property, longOffset, longLength, delete,
         #ifdef DEBUG
 	fprintf(stderr, "%s: invalid atom [%d]\n", __func__, property);
         #endif
-	return(BadAtom);
+	return BadAtom;
     }
     if ((type != AnyPropertyType) && !ValidAtom(type))
     {
         #ifdef DEBUG
 	fprintf(stderr, "%s: invalid type [%d]\n", __func__, type);
         #endif
-	return(BadAtom);
+	return BadAtom;
     }
 
     pProp = wUserProps (pWin);
@@ -508,7 +508,7 @@ GetWindowProperty(pWin, property, longOffset, longLength, delete,
         #ifdef DEBUG
 	fprintf(stderr, "%s: property not found [%d]\n", __func__, property);
         #endif
-	return (BadAtom);
+	return BadAtom;
     }
 
     /* If the request type and actual type don't match. Return the
@@ -577,7 +577,7 @@ GetWindowProperty(pWin, property, longOffset, longLength, delete,
 	free(pProp->data);
 	free(pProp);
     }
-    return(Success);
+    return Success;
 }
 #endif
 
