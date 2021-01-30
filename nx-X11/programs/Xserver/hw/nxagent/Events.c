@@ -2850,7 +2850,7 @@ int nxagentHandleXFixesSelectionNotify(XEvent *X)
     Atom local = nxagentRemoteToLocalAtom(xfixesEvent -> xfixesselection.selection);
 
     int index = nxagentFindCurrentSelectionIndex(local);
-    if (index < NumCurrentSelections)
+    if (index != -1)
     {
       if (CurrentSelections[index].client != 0)
       {
