@@ -161,7 +161,7 @@ if [ "x$MODE" = "xfull" ]; then
     find nx-X11/extras/Mesa/ -name descrip.mms | while read -r file; do rm "$file"; done
 
     # this is for 3.5.0.x only...
-    cat "debian/patches/series" | sort | grep -v '^#' | egrep "([0-9]+(_|-).*\.(full|full\+lite)\.patch)" | while read -r file
+    sort "debian/patches/series" | grep -v '^#' | egrep "([0-9]+(_|-).*\.(full|full\+lite)\.patch)" | while read -r file
     do
         cp -v "debian/patches/$file" "doc/applied-patches/"
         echo "${file##*/}" >> "doc/applied-patches/series"
@@ -198,7 +198,7 @@ else
     mv LICENSE.nxcomp LICENSE
 
     # this is for 3.5.0.x only...
-    cat "debian/patches/series" | sort | grep -v '^#' | egrep "([0-9]+(_|-).*\.full\+lite\.patch)" | while read -r file
+    sort "debian/patches/series" | grep -v '^#' | egrep "([0-9]+(_|-).*\.full\+lite\.patch)" | while read -r file
     do
         cp -v "debian/patches/$file" "doc/applied-patches/"
         echo "${file##*/}" >> "doc/applied-patches/series"
