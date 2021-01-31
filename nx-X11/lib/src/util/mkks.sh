@@ -7,4 +7,4 @@ awk 'BEGIN { \
 /^#define/ { \
 	len = length($2)-3; \
 	printf("{ \"%s\", %s },\n", substr($2,4,len), $3); \
-}' $*
+}' "$@"
