@@ -81,7 +81,7 @@ cd "${TEMP_DIR}/${PROJECT}-${RELEASE}/"
 
 # Replace symlinks by copies of the linked target files
 # Note: We don't have symlinked directories!!!
-find . -type "l" | while read link; do
+find . -type "l" | while read -r link; do
 	TARGET="$(readlink "${link}")"
 	pushd "$(dirname "${link}")" >/dev/null
 	if [ -f "${TARGET}" ]; then
@@ -156,12 +156,12 @@ if [ "x$MODE" = "xfull" ]; then
     rm -f  "nx-X11/extras/Mesa/src/mesa/main/"*.py
     rm -f  "nx-X11/extras/Mesa/src/mesa/main/"{mesa.def,Imakefile,vsnprintf.c}
 
-    find nx-X11/extras/Mesa/ -name Makefile | while read file; do rm "$file"; done
-    find nx-X11/extras/Mesa/ -name Makefile.* | while read file; do rm "$file"; done
-    find nx-X11/extras/Mesa/ -name descrip.mms | while read file; do rm "$file"; done
+    find nx-X11/extras/Mesa/ -name Makefile | while read -r file; do rm "$file"; done
+    find nx-X11/extras/Mesa/ -name Makefile.* | while read -r file; do rm "$file"; done
+    find nx-X11/extras/Mesa/ -name descrip.mms | while read -r file; do rm "$file"; done
 
     # this is for 3.5.0.x only...
-    cat "debian/patches/series" | sort | grep -v '^#' | egrep "([0-9]+(_|-).*\.(full|full\+lite)\.patch)" | while read file
+    cat "debian/patches/series" | sort | grep -v '^#' | egrep "([0-9]+(_|-).*\.(full|full\+lite)\.patch)" | while read -r file
     do
         cp -v "debian/patches/$file" "doc/applied-patches/"
         echo "${file##*/}" >> "doc/applied-patches/series"
@@ -198,7 +198,7 @@ else
     mv LICENSE.nxcomp LICENSE
 
     # this is for 3.5.0.x only...
-    cat "debian/patches/series" | sort | grep -v '^#' | egrep "([0-9]+(_|-).*\.full\+lite\.patch)" | while read file
+    cat "debian/patches/series" | sort | grep -v '^#' | egrep "([0-9]+(_|-).*\.full\+lite\.patch)" | while read -r file
     do
         cp -v "debian/patches/$file" "doc/applied-patches/"
         echo "${file##*/}" >> "doc/applied-patches/series"
