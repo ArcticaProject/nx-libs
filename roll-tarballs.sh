@@ -31,7 +31,6 @@ usage() {
 }
 
 PROJECT="nx-libs"
-NULL=""
 
 test -d ".git" || usage
 RELEASE="$1"
