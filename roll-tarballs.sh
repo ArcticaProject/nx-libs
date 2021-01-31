@@ -59,7 +59,7 @@ fi
 if ! git rev-parse --verify -q "$CHECKOUT" >/dev/null; then
     echo "   '${RELEASE}' is not a valid release number because there is no git tag named ${CHECKOUT}."
     echo "   Please specify one of the following releases:"
-    echo "HEAD (on branch `git rev-parse --abbrev-ref HEAD`)"
+    echo "HEAD (on branch $(git rev-parse --abbrev-ref HEAD))"
     git tag -l | grep "^redist" | cut -f2 -d"/" | sort -u
     exit 1
 fi

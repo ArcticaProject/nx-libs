@@ -2,7 +2,7 @@
 
 # We want GNU indent, so first search for gindent to avoid /usr/bin/indent
 # on the BSDs, which won't work for us
-INDENT=`which gnuindent || which gindent || which indent`
+INDENT=$(which gnuindent || which gindent || which indent)
 
 if [ -z "${INDENT}" ] ; then
     echo "Could not find indent, sorry..." >&2
