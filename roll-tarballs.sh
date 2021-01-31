@@ -217,8 +217,9 @@ rm -Rf "debian/"
 rm -Rf "nx-libs.spec"
 
 # very old release did not add any README
-for f in $(ls README* 2>/dev/null); do
-    mv -v "$f" "doc/";
+for f in README*; do
+    [[ -e "$f" ]] || break # handle the case of no README* files
+    mv -v "$f" "doc/"
 done
 
 # remove files, that we do not want in the tarballs (build cruft)
