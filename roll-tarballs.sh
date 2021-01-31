@@ -156,7 +156,7 @@ if [ "x$MODE" = "xfull" ]; then
     rm -f  "nx-X11/extras/Mesa/src/mesa/main/"{mesa.def,Imakefile,vsnprintf.c}
 
     find nx-X11/extras/Mesa/ -name Makefile | while read -r file; do rm "$file"; done
-    find nx-X11/extras/Mesa/ -name Makefile.* | while read -r file; do rm "$file"; done
+    find nx-X11/extras/Mesa/ -name 'Makefile.*' | while read -r file; do rm "$file"; done
     find nx-X11/extras/Mesa/ -name descrip.mms | while read -r file; do rm "$file"; done
 
     # this is for 3.5.0.x only...
