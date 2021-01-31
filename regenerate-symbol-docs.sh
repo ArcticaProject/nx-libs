@@ -28,7 +28,7 @@ cat "../../../$SYMBOLS_FILE"  | grep -v -E "^#" | while read -r symbol; do
 
 	echo
 	echo "#### $symbol ####"
-	grep -n $symbol *.{c,h} 2>/dev/null
+	grep -n "$symbol" *.{c,h} 2>/dev/null
 
 done > "../../../$DOC_FILE"
 cd - 1>/dev/null
@@ -40,7 +40,7 @@ cat "../../../../../$SYMBOLS_FILE"  | grep -v -E "^#" | while read -r symbol; do
 
 	echo
 	echo "#### $symbol ####"
-	grep -n $symbol *.{c,h} 2>/dev/null
+	grep -n "$symbol" *.{c,h} 2>/dev/null
 
 done > "../../../../../$DOC_FILE"
 cd - 1>/dev/null
@@ -52,7 +52,7 @@ cat "../../../../../../$SYMBOLS_FILE" | grep -v -E "^#" | while read -r symbol; 
 
 	echo
 	echo "#### $symbol ####"
-	grep -n $symbol *.{c,h} 2>/dev/null
+	grep -n "$symbol" *.{c,h} 2>/dev/null
 
 done > "../../../../../../$DOC_FILE"
 cd - 1>/dev/null
@@ -69,7 +69,7 @@ cat "../../../../../../$SYMBOLS_FILE" | grep -v -E "^#" | while read -r symbol; 
 
 	echo
 	echo "#### $symbol ####"
-	grep -n $symbol *.{c,h} 2>/dev/null
+	grep -n "$symbol" *.{c,h} 2>/dev/null
 
 done > "../../../../../../$DOC_FILE"
 cd - 1>/dev/null
@@ -81,7 +81,7 @@ cat ../../../../../$SYMBOLS_FILE  | grep -v -E "^#" | while read -r symbol; do
 
 	echo
 	echo "#### $symbol ####"
-	grep -n $symbol *.{c,h} 2>/dev/null
+	grep -n "$symbol" *.{c,h} 2>/dev/null
 
 done > "../../../../../$DOC_FILE"
 cd - 1>/dev/null
