@@ -208,28 +208,6 @@ ProcChangeProperty(ClientPtr client)
     }
 }
 
-int
-ChangeWindowProperty(WindowPtr pWin, Atom property, Atom type, int format, 
-                     int mode, unsigned long len, void * value, 
-                     Bool sendevent)
-{
-    int sizeInBytes = format>>3;
-    int totalSize = len * sizeInBytes;
-    int copySize = nxagentOption(CopyBufferSize);
-
-    if (copySize != COPY_UNLIMITED && property == clientCutProperty)
-    {
-      if (totalSize > copySize)
-      {
-        totalSize = copySize;
-        totalSize = totalSize - (totalSize % sizeInBytes);
-        len = totalSize / sizeInBytes;
-      }
-    }
-
-    return xorg_ChangeWindowProperty(pWin, property, type, format, mode, len, value, sendevent);
-}
-
 /*****************
  * GetProperty
  *    If type Any is specified, returns the property from the specified
@@ -443,6 +421,20 @@ ProcGetProperty(ClientPtr client)
     return(client->noClientException);
 }
 
+int
+ProcDeleteProperty(register ClientPtr client)
+{
+    REQUEST(xDeletePropertyReq);
+    REQUEST_SIZE_MATCH(xDeletePropertyReq);
+    /* prevent clients from deleting the NX_AGENT_VERSION property */
+    if (stuff->property == MakeAtom("NX_AGENT_VERSION", strlen("NX_AGENT_VERSION"), True))
+      return client->noClientException;
+
+    return xorg_ProcDeleteProperty(client);
+}
+
+/* ---------------------------------------------------------------------- */
+
 /*
  * GetWindowProperty is the internal implementation of the
  * XGetWindowProperty() Xlib call. It is called from
@@ -572,13 +564,23 @@ GetWindowProperty(WindowPtr pWin, Atom property, long longOffset,
 }
 
 int
-ProcDeleteProperty(register ClientPtr client)
+ChangeWindowProperty(WindowPtr pWin, Atom property, Atom type, int format,
+                     int mode, unsigned long len, void * value,
+                     Bool sendevent)
 {
-    REQUEST(xDeletePropertyReq);
-    REQUEST_SIZE_MATCH(xDeletePropertyReq);
-    /* prevent clients from deleting the NX_AGENT_VERSION property */
-    if (stuff->property == MakeAtom("NX_AGENT_VERSION", strlen("NX_AGENT_VERSION"), True))
-      return client->noClientException;
+    int sizeInBytes = format>>3;
+    int totalSize = len * sizeInBytes;
+    int copySize = nxagentOption(CopyBufferSize);
 
-    return xorg_ProcDeleteProperty(client);
+    if (copySize != COPY_UNLIMITED && property == clientCutProperty)
+    {
+      if (totalSize > copySize)
+      {
+        totalSize = copySize;
+        totalSize = totalSize - (totalSize % sizeInBytes);
+        len = totalSize / sizeInBytes;
+      }
+    }
+
+    return xorg_ChangeWindowProperty(pWin, property, type, format, mode, len, value, sendevent);
 }
