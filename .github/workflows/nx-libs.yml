@@ -9,7 +9,7 @@ on:
 jobs:
   build:
     name: Build on ${{ matrix.cfg.container }} - ${{ matrix.cfg.cc-version }}
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     container: ${{ matrix.cfg.container }}
     strategy:
       fail-fast: false

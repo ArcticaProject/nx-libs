@@ -8,14 +8,14 @@ on:
 
 jobs:
   shellcheck:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
 
       - name: Install linters on ubuntu
         run: |
-          sudo apt-get update
+          sudo apt-get update -q -y
           sudo apt-get install shellcheck
 
       - name: run Shellcheck
@@ -23,14 +23,14 @@ jobs:
           find . -name "*.sh" | xargs shellcheck || true
 
   cppcheck:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
 
       - name: Install linters on ubuntu
         run: |
-          sudo apt-get update
+          sudo apt-get update -q -y
           sudo apt-get install cppcheck
 
       - name: run cppcheck
@@ -45,3 +45,57 @@ jobs:
           CPPCHECK_EXCLUDES='-i ./nx-X11/extras/ -i nx-X11/programs/Xserver/GL/mesa* -i ./.pc -i ./nx-X11/.build-exports -i ./nx-X11/exports -i ./doc'
           echo "$(cppcheck --version):";
           cppcheck $CPPCHECK_OPTS $CPPCHECK_EXCLUDES .;
+  pvs:
+    environment: pvs
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Install linters on ubuntu
+        env:
+          DEBIAN_FRONTEND: noninteractive
+        run: |
+          sudo apt-get update -qq -y
+          # compiler
+          sudo apt-get install -qq -y gcc g++
+          # basic packages
+          sudo apt-get install -qq -y \
+            autoconf libtool make pkg-config
+          # imake deps
+          sudo apt-get install -qq -y \
+            libxkbfile-dev xfonts-utils xutils-dev
+          # X11 libraries deps
+          sudo apt-get install -qq -y \
+            libpixman-1-dev libjpeg-dev libxcomposite-dev libxdamage-dev \
+            libxml2-dev libxfont-dev libxinerama-dev libxpm-dev libxrandr-dev \
+            libxtst-dev x11proto-fonts-dev
+          # soft requirements
+          sudo apt-get install -qq -y \
+            quilt x11-xkb-utils
+          # PVS
+          sudo wget -q -O - https://files.viva64.com/etc/pubkey.txt | sudo apt-key add -
+          sudo wget -O /etc/apt/sources.list.d/viva64.list https://files.viva64.com/etc/viva64.list
+          sudo apt-get update -qq
+          sudo apt-get install -qq pvs-studio
+
+      - name: Run PVS-Studio Analyzer
+        shell: bash
+        env:
+          PVS_USERNAME: ${{ secrets.PVS_USERNAME }}
+          PVS_KEY: ${{ secrets.PVS_KEY }}
+        run: |
+          # check environment variables
+          if [[ -z "${PVS_USERNAME}" ]]; then
+            echo '"PVS_USERNAME" environment variable not set'
+            exit 0
+          elif [[ -z "${PVS_KEY}" ]]; then
+            echo '"PVS_KEY" environment variable not set'
+            exit 0
+          else
+            pvs-studio-analyzer credentials -o "PVS-Studio.lic" "${PVS_USERNAME}" "${PVS_KEY}"
+            pvs-studio-analyzer trace -- make
+            pvs-studio-analyzer analyze --quiet --lic-file "PVS-Studio.lic" --output-file "PVS-Studio-${CC}.log"
+            plog-converter -a "GA:1,2" -t tasklist -o "PVS-Studio-${CC}.tasks" "PVS-Studio-${CC}.log"
+            cat "PVS-Studio-${CC}.tasks"
+          fi
