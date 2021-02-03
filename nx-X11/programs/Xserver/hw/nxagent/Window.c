@@ -80,8 +80,6 @@ int nxagentWindowPrivateIndex;
  */
 
 int nxagentVisibility = VisibilityUnobscured;
-unsigned long nxagentVisibilityTimeout = 0;
-Bool nxagentVisibilityStop = False;
 
 ConfiguredWindowStruct *nxagentConfiguredWindowList;
 StaticResizedWindowStruct *nxagentStaticResizedWindowList;
@@ -3089,10 +3087,15 @@ static void nxagentReconnectWindow(void * param0, XID param1, void * data_buffer
         #endif
 
         /* FIXME: use XAllocSizeHints() */
+        /* FIXME: all this copying is only done because the first
+           element of the XSizeHints struct is a long which is of
+           different size on 32bit vs. 64bit platforms. We should
+           rewrite this to better readable and probably more robust
+           code */
         #ifdef _XSERVER64
         data64 = (unsigned char *) malloc(sizeof(XSizeHints) + 4);
-	if (data64)
-	{
+        if (data64)
+        {
           for (int i = 0; i < 4; i++)
           {
             *(data64 + i) = *(data + i);
@@ -3106,18 +3109,18 @@ static void nxagentReconnectWindow(void * param0, XID param1, void * data_buffer
           }
 
           XSizeHints *props = (XSizeHints *) data64;
-        #else
-          XSizeHints *props = (XSizeHints *) data;
-        #endif   /* _XSERVER64 */
-
           hints = *props;
-	}
-	else
-	{
+        }
+        else
+        {
           #ifdef WARNING
           fprintf(stderr, "%s: Failed to alloc memory for XSizeHints\n", __func__);
           #endif
-	}
+        }
+        #else
+        XSizeHints *props = (XSizeHints *) data;
+        hints = *props;
+        #endif /* _XSERVER64 */
       }
       else
       {

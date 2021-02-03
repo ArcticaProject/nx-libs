@@ -180,11 +180,8 @@ ProcChangeProperty(ClientPtr client)
 
 #ifdef NXAGENT_SERVER
     /* prevent clients from changing the NX_AGENT_VERSION property */
-    {
-      Atom prop = MakeAtom("NX_AGENT_VERSION", strlen("NX_AGENT_VERSION"), True);
-      if (stuff->property == prop)
-        return client->noClientException;
-    }
+    if (stuff->property == MakeAtom("NX_AGENT_VERSION", strlen("NX_AGENT_VERSION"), True))
+      return client->noClientException;
 #endif
 
     err = ChangeWindowProperty(pWin, stuff->property, stuff->type, (int)format,
@@ -209,28 +206,6 @@ ProcChangeProperty(ClientPtr client)
 
       return client->noClientException;
     }
-}
-
-int
-ChangeWindowProperty(WindowPtr pWin, Atom property, Atom type, int format, 
-                     int mode, unsigned long len, void * value, 
-                     Bool sendevent)
-{
-    int sizeInBytes = format>>3;
-    int totalSize = len * sizeInBytes;
-    int copySize = nxagentOption(CopyBufferSize);
-
-    if (copySize != COPY_UNLIMITED && property == clientCutProperty)
-    {
-      if (totalSize > copySize)
-      {
-        totalSize = copySize;
-        totalSize = totalSize - (totalSize % sizeInBytes);
-        len = totalSize / sizeInBytes;
-      }
-    }
-
-    return xorg_ChangeWindowProperty(pWin, property, type, format, mode, len, value, sendevent);
 }
 
 /*****************
@@ -446,29 +421,35 @@ ProcGetProperty(ClientPtr client)
     return(client->noClientException);
 }
 
-#ifdef NXAGENT_CLIPBOARD
-/* GetWindowProperty clipboard use only */
-/* FIXME: that's wrong, it is also called in Window.c and Events.c */
-/* FIXME: should be moved to a different file, is not derived from
-   dix */
 int
-GetWindowProperty(pWin, property, longOffset, longLength, delete,
-            type, actualType, format, nItems, bytesAfter, propData )
-    WindowPtr	        pWin;
-    Atom		property;
-    long		longOffset;
-    long		longLength;
-    Bool		delete;
-    Atom		type;
-    Atom		*actualType;
-    int			*format;
-    unsigned long	*nItems;
-    unsigned long	*bytesAfter;
-    unsigned char	**propData;
+ProcDeleteProperty(register ClientPtr client)
 {
-    PropertyPtr pProp, prevProp;
-    unsigned long n, len, ind;
+    REQUEST(xDeletePropertyReq);
+    REQUEST_SIZE_MATCH(xDeletePropertyReq);
+    /* prevent clients from deleting the NX_AGENT_VERSION property */
+    if (stuff->property == MakeAtom("NX_AGENT_VERSION", strlen("NX_AGENT_VERSION"), True))
+      return client->noClientException;
 
+    return xorg_ProcDeleteProperty(client);
+}
+
+/* ---------------------------------------------------------------------- */
+
+/*
+ * GetWindowProperty is the internal implementation of the
+ * XGetWindowProperty() Xlib call. It is called from
+ * Clipboard.c, Window.c and Events.c
+ *
+ * FIXME: should be moved to a different file, is not derived from
+ * dix
+ */
+int
+GetWindowProperty(WindowPtr pWin, Atom property, long longOffset,
+                      long longLength, Bool delete, Atom type,
+                          Atom *actualType, int *format, unsigned
+                              long *nItems, unsigned long *bytesAfter,
+                                  unsigned char **propData)
+{
     if (!pWin)
     {
         #ifdef DEBUG
@@ -482,18 +463,19 @@ GetWindowProperty(pWin, property, longOffset, longLength, delete,
         #ifdef DEBUG
 	fprintf(stderr, "%s: invalid atom [%d]\n", __func__, property);
         #endif
-	return(BadAtom);
+	return BadAtom;
     }
+
     if ((type != AnyPropertyType) && !ValidAtom(type))
     {
         #ifdef DEBUG
 	fprintf(stderr, "%s: invalid type [%d]\n", __func__, type);
         #endif
-	return(BadAtom);
+	return BadAtom;
     }
 
-    pProp = wUserProps (pWin);
-    prevProp = (PropertyPtr)NULL;
+    PropertyPtr pProp = wUserProps (pWin);
+    PropertyPtr prevProp = (PropertyPtr)NULL;
 
     while (pProp)
     {
@@ -508,7 +490,7 @@ GetWindowProperty(pWin, property, longOffset, longLength, delete,
         #ifdef DEBUG
 	fprintf(stderr, "%s: property not found [%d]\n", __func__, property);
         #endif
-	return (BadAtom);
+	return BadAtom;
     }
 
     /* If the request type and actual type don't match. Return the
@@ -522,14 +504,14 @@ GetWindowProperty(pWin, property, longOffset, longLength, delete,
 	*format = pProp->format;
 	*nItems = 0;
 	*actualType = pProp->type;
-	return(Success);
+	return Success;
     }
 
     /*
      *  Return type, format, value to client
      */
-    n = (pProp->format/8) * pProp->size; /* size (bytes) of prop */
-    ind = longOffset << 2;
+    unsigned long n = (pProp->format/8) * pProp->size; /* size (bytes) of prop */
+    unsigned long ind = longOffset << 2;               /* byte offset */
 
     /* If longOffset is invalid such that it causes "len" to
        be negative, it's a value error. */
@@ -542,7 +524,8 @@ GetWindowProperty(pWin, property, longOffset, longLength, delete,
 	return BadValue;
     }
 
-    len = min(n - ind, 4 * longLength);
+    /* minimum of prop size and requested size */
+    unsigned long len = min(n - ind, 4 * longLength);
 
     *bytesAfter = n - (ind + len);
     *format = pProp->format;
@@ -566,7 +549,7 @@ GetWindowProperty(pWin, property, longOffset, longLength, delete,
     }
 
     if (delete && (*bytesAfter == 0))
-    { /* delete the Property */
+    { /* delete the property */
 	if (prevProp == (PropertyPtr)NULL) /* takes care of head */
 	{
 	    if (!(pWin->optional->userProps = pProp->next))
@@ -577,53 +560,27 @@ GetWindowProperty(pWin, property, longOffset, longLength, delete,
 	free(pProp->data);
 	free(pProp);
     }
-    return(Success);
+    return Success;
 }
-#endif
 
 int
-ProcDeleteProperty(register ClientPtr client)
+ChangeWindowProperty(WindowPtr pWin, Atom property, Atom type, int format,
+                     int mode, unsigned long len, void * value,
+                     Bool sendevent)
 {
-    WindowPtr pWin;
-    REQUEST(xDeletePropertyReq);
-    int result;
+    int sizeInBytes = format>>3;
+    int totalSize = len * sizeInBytes;
+    int copySize = nxagentOption(CopyBufferSize);
 
-    REQUEST_SIZE_MATCH(xDeletePropertyReq);
-    UpdateCurrentTime();
-    pWin = (WindowPtr)SecurityLookupWindow(stuff->window, client,
-                                           DixWriteAccess);
-    if (!pWin)
-        return(BadWindow);
-    if (!ValidAtom(stuff->property))
+    if (copySize != COPY_UNLIMITED && property == clientCutProperty)
     {
-        client->errorValue = stuff->property;
-        return (BadAtom);
+      if (totalSize > copySize)
+      {
+        totalSize = copySize;
+        totalSize = totalSize - (totalSize % sizeInBytes);
+        len = totalSize / sizeInBytes;
+      }
     }
 
-#ifdef XCSECURITY
-    switch(SecurityCheckPropertyAccess(client, pWin, stuff->property,
-                                       DixDestroyAccess))
-    {
-        case SecurityErrorOperation:
-            client->errorValue = stuff->property;
-            return BadAtom;;
-        case SecurityIgnoreOperation:
-            return Success;
-    }
-#endif
-
-#ifdef NXAGENT_SERVER
-    /* prevent clients from deleting the NX_AGENT_VERSION property */
-    {
-      Atom prop = MakeAtom("NX_AGENT_VERSION", strlen("NX_AGENT_VERSION"), True);
-      if (stuff->property == prop)
-        return client->noClientException;
-    }
-#endif
-
-    result = DeleteProperty(pWin, stuff->property);
-    if (client->noClientException != Success)
-        return(client->noClientException);
-    else
-        return(result);
+    return xorg_ChangeWindowProperty(pWin, property, type, format, mode, len, value, sendevent);
 }
