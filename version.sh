@@ -31,4 +31,4 @@ VER="$(head -n "1" "${VERSION_FILE}" | cut -d"." -f"${COMPONENT}")"
 
 [ "x${VER}" = "x" ] && VER="0"
 
-printf "${VER}"
+printf "%s" "${VER}"
