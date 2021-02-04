@@ -1,6 +1,708 @@
-2020-11-04 13:43:58 +0100 Mike Gabriel
+2021-02-04 14:34:56 +0100 Mike Gabriel
 
-	* release 3.5.99.25 (HEAD -> 3.6.x, tag: 3.5.99.25)
+	* release 3.5.99.26 (HEAD -> 3.6.x, tag: 3.5.99.26)
+
+2021-02-03 14:53:40 +0100 Mike Gabriel (3e02494cb)
+
+	* Merge branch 'mjtrangoni-fix-shellcheck-issues' into 3.6.x
+
+2021-01-30 17:23:49 +0100 Ulrich Sibiller (9d0364198)
+
+	* Screen.c: rephrase comment
+
+2021-01-30 16:19:21 +0100 Ulrich Sibiller (b09f5e03e)
+
+	* Screen.c: Fix fullscreen (onescreen) at startup
+
+2021-02-03 13:38:59 +0100 Ulrich Sibiller (6d8ccec75)
+
+	* Window.c: add another FIXME
+
+2021-01-31 19:20:25 +0100 Ulrich Sibiller (82028465c)
+
+	* NXproperty.c: reorder functions
+
+2021-01-30 16:10:23 +0100 Ulrich Sibiller (da9ac92e9)
+
+	* NXproperty.c, dix.c: simplify ProcDeleteProperty()
+
+2021-01-30 16:10:21 +0100 Ulrich Sibiller (969d9af23)
+
+	* NXproperty.c: GetWindowProperty(): add more comments, restruct
+          prototype
+
+2021-01-30 16:10:19 +0100 Ulrich Sibiller (3cabdfa2a)
+
+	* NXproperty.c: simplify and reformat GetWindowProperty()
+
+2021-01-30 16:10:17 +0100 Ulrich Sibiller (513418ace)
+
+	* NXproperty.c: clean returns
+
+2021-01-30 16:10:14 +0100 Ulrich Sibiller (19b639b91)
+
+	* Window.c: Fix 32bit code path
+
+2021-01-30 16:10:08 +0100 Ulrich Sibiller (150e9bda9)
+
+	* nxagent: drop unused nxagentVisibility variables
+
+2021-02-03 14:49:32 +0100 Mike Gabriel (f696a57f8)
+
+	* Merge branch 'uli42-pr/fix_onescreen' into 3.6.x
+
+2021-01-30 17:23:49 +0100 Ulrich Sibiller (06724dfe0)
+
+	* Screen.c: rephrase comment
+
+2021-01-30 16:19:21 +0100 Ulrich Sibiller (f92e1a5a2)
+
+	* Screen.c: Fix fullscreen (onescreen) at startup
+
+2021-02-03 14:46:20 +0100 Mike Gabriel (770f468cd)
+
+	* Merge branch 'uli42-pr/windowfixes' into 3.6.x
+
+2021-02-03 13:38:59 +0100 Ulrich Sibiller (cbd9875e5)
+
+	* Window.c: add another FIXME
+
+2021-01-31 19:20:25 +0100 Ulrich Sibiller (5121188f0)
+
+	* NXproperty.c: reorder functions
+
+2021-01-31 15:07:18 +0100 Mario Trangoni (8ce12d613)
+
+	* shellcheck: Fix SC2061 issue
+
+2021-01-31 15:03:17 +0100 Mario Trangoni (407651b39)
+
+	* shellcheck: Fix SC2048 issue
+
+2021-01-31 14:59:40 +0100 Mario Trangoni (afe0c1473)
+
+	* shellcheck: Fix SC2196 issues
+
+2021-01-31 14:57:29 +0100 Mario Trangoni (930fbe08b)
+
+	* shellcheck: Fix SC2034 issue
+
+2021-01-31 14:53:37 +0100 Mario Trangoni (22b40e690)
+
+	* shellcheck: Fix SC2002 issue
+
+2021-01-31 14:43:47 +0100 Mario Trangoni (2168bc689)
+
+	* shellcheck: Fix SC2045 issue
+
+2021-01-31 14:38:08 +0100 Mario Trangoni (747a33744)
+
+	* shellcheck: Fix some SC2086 issues
+
+2021-01-31 14:31:41 +0100 Mario Trangoni (18aca1f69)
+
+	* shellcheck: Fix SC2059 issue
+
+2021-01-31 14:27:45 +0100 Mario Trangoni (cb6e3b7d3)
+
+	* shellcheck: Fix SC2148 issues
+
+2021-01-31 14:23:06 +0100 Mario Trangoni (daeb82e33)
+
+	* shellcheck: Fix SC2162 issue
+
+2021-01-31 14:17:39 +0100 Mario Trangoni (5b628e2d7)
+
+	* shellcheck: Fix SC2006 issue
+
+2021-01-30 16:10:23 +0100 Ulrich Sibiller (d627e948f)
+
+	* NXproperty.c, dix.c: simplify ProcDeleteProperty()
+
+2021-01-30 16:10:21 +0100 Ulrich Sibiller (b8b1edb2b)
+
+	* NXproperty.c: GetWindowProperty(): add more comments, restruct
+          prototype
+
+2021-01-30 16:10:19 +0100 Ulrich Sibiller (8b2b41113)
+
+	* NXproperty.c: simplify and reformat GetWindowProperty()
+
+2021-01-30 16:10:17 +0100 Ulrich Sibiller (5a00da5ec)
+
+	* NXproperty.c: clean returns
+
+2021-01-30 16:10:14 +0100 Ulrich Sibiller (ee60cc50c)
+
+	* Window.c: Fix 32bit code path
+
+2021-01-30 16:10:08 +0100 Ulrich Sibiller (57e662b83)
+
+	* nxagent: drop unused nxagentVisibility variables
+
+2021-01-18 11:44:24 +0100 Mike Gabriel (e5746df80)
+
+	* debian/patches: Drop
+          2002_xserver-xext_set-securitypolicy-path.debian.patch.
+          Not required anymore since 689f811b.
+
+2021-01-18 11:41:47 +0100 Mike Gabriel (24b903be5)
+
+	* Merge branch 'uli42-pr/drop_alternative_securitypolicy' into 3.6.x
+
+2021-01-16 23:31:12 +0100 Ulrich Sibiller (a26011503)
+
+	* Xext: drop NX_ALTERNATIVEPOLICYFILE
+
+2021-01-16 23:29:04 +0100 Ulrich Sibiller (689f811ba)
+
+	* Xext: use $USRDATADIR/SecurityPolicy
+
+2021-01-18 11:37:25 +0100 Mike Gabriel (f4782bbd2)
+
+	* Merge branch 'uli42-pr/fix_fullscreen' into 3.6.x
+
+2021-01-16 22:31:44 +0100 Ulrich Sibiller (e156bdc03)
+
+	* Args.c: improve usage string for -geometry
+
+2021-01-16 22:13:05 +0100 Ulrich Sibiller (a83ec33d5)
+
+	* Screen.c: remove superflous code that produces a crash
+
+2021-01-16 00:28:13 +0100 Mike Gabriel (f60ac5777)
+
+	* Merge branch 'uli42-pr/musl_fixes' into 3.6.x
+
+2021-01-04 20:44:24 +0100 Ulrich Sibiller (46c9c493f)
+
+	* Xext: include limits.h
+
+2021-01-04 20:41:32 +0100 Ulrich Sibiller (8b6d454cf)
+
+	* Mesa: make compilation with work with musl
+
+2021-01-16 00:24:10 +0100 Mike Gabriel (8c3bb2715)
+
+	* Merge branch 'uli42-pr/pvs_findings' into 3.6.x
+
+2021-01-15 18:24:26 +0100 Ulrich Sibiller (1b80750f6)
+
+	* Display.c: fix and reformat broken comment
+
+2021-01-04 14:57:32 +0100 Ulrich Sibiller (669299de3)
+
+	* Window.c: suppress warning
+
+2021-01-04 14:12:05 +0100 Ulrich Sibiller (12b96fd9a)
+
+	* fix formatting and spelling in various files
+
+2021-01-04 14:11:31 +0100 Ulrich Sibiller (0a06ee77a)
+
+	* nxagent: Drop unused nxagentRootTileWindow
+
+2020-12-31 01:45:36 +0100 Ulrich Sibiller (7aec57a40)
+
+	* Handlers.c: add FIXME
+
+2020-12-31 00:07:15 +0100 Ulrich Sibiller (cc781ae2e)
+
+	* Screen.c: clarify that characters are compared
+
+2020-12-30 13:22:05 +0100 Ulrich Sibiller (d1136ea2f)
+
+	* Client.h: conditionally add unused field
+
+2020-11-09 21:17:45 +0100 Ulrich Sibiller (f64fac47e)
+
+	* Handlers.c: use the same boolean values as in NXdispatch.c
+
+2020-11-09 22:54:49 +0100 Ulrich Sibiller (eef306c2d)
+
+	* manpage: document defaults for options -defer and -tile
+
+2020-11-08 17:01:57 +0100 Ulrich Sibiller (35556cac9)
+
+	* NXDispatch.c: remove double nxagentFreeAtomMap()
+
+2021-01-16 00:19:38 +0100 Mike Gabriel (b66699555)
+
+	* Merge branch 'uli42-pr/various6' into 3.6.x
+
+2021-01-04 19:50:31 +0100 Ulrich Sibiller (4d95e29b8)
+
+	* Window.c: check for malloc failure
+
+2021-01-04 19:44:37 +0100 Ulrich Sibiller (5ad0b4dde)
+
+	* Window.c: check for malloc failure
+
+2021-01-04 19:07:06 +0100 Ulrich Sibiller (6214c71b3)
+
+	* Screen.c: check for malloc failures
+
+2021-01-04 19:01:55 +0100 Ulrich Sibiller (a57097ad0)
+
+	* Splash.c: remove unneccessary check
+
+2021-01-04 18:58:55 +0100 Ulrich Sibiller (1251e8347)
+
+	* Rootless.c: prevent PVS error
+
+2021-01-04 18:13:49 +0100 Ulrich Sibiller (c1cae3c66)
+
+	* Render.c: Init BoxRec
+
+2021-01-04 18:04:29 +0100 Ulrich Sibiller (8bb77997f)
+
+	* Reconnect.c: fix possible realloc() memory loss
+
+2021-01-04 17:28:53 +0100 Ulrich Sibiller (948bbe50a)
+
+	* NXglyph.c: check for malloc error
+
+2021-01-04 17:18:43 +0100 Ulrich Sibiller (7443fea69)
+
+	* Keyboard.c: fix possible NULL pointer dereference
+
+2021-01-04 16:35:07 +0100 Ulrich Sibiller (e664d8201)
+
+	* Drawable.c: Prevent PVS Studio warning
+
+2021-01-04 16:28:27 +0100 Ulrich Sibiller (67c7513bf)
+
+	* Display.c: prevent PVS Studio realloc warning
+
+2021-01-04 16:17:36 +0100 Ulrich Sibiller (db134de3b)
+
+	* Atoms.c: add explanation for PVS Studio warning
+
+2020-08-03 17:08:30 +0200 Ulrich Sibiller (5871100dd)
+
+	* NXpicture.c: remove unneccessary check
+
+2020-08-03 17:02:29 +0200 Ulrich Sibiller (41bf83979)
+
+	* Keyboard.c: simplify code
+
+2020-08-03 16:40:49 +0200 Ulrich Sibiller (5735e164e)
+
+	* Colormap.c: remove unneccessary check
+
+2020-08-03 16:38:19 +0200 Ulrich Sibiller (28fef3bc0)
+
+	* Colormap.c: fix parentheses
+
+2020-08-03 16:27:41 +0200 Ulrich Sibiller (36d7e152f)
+
+	* Atoms.c: silence PVS Studio warning
+
+2020-08-03 16:26:12 +0200 Ulrich Sibiller (e991dbae9)
+
+	* Atoms.c: cosmetics in nxagentWriteAtom()
+
+2020-08-03 16:25:00 +0200 Ulrich Sibiller (1529b3217)
+
+	* Atoms.c: fix strlen(NULL)
+
+2021-01-15 18:24:26 +0100 Ulrich Sibiller (97a69b95a)
+
+	* Display.c: fix and reformat broken comment
+
+2021-01-04 14:57:32 +0100 Ulrich Sibiller (21c631f4d)
+
+	* Window.c: suppress warning
+
+2021-01-04 14:12:05 +0100 Ulrich Sibiller (6aff5bfdf)
+
+	* fix formatting and spelling in various files
+
+2021-01-04 14:11:31 +0100 Ulrich Sibiller (c7f9ff0b6)
+
+	* nxagent: Drop unused nxagentRootTileWindow
+
+2020-12-31 01:45:36 +0100 Ulrich Sibiller (63a39619c)
+
+	* Handlers.c: add FIXME
+
+2020-12-31 00:07:15 +0100 Ulrich Sibiller (599334aff)
+
+	* Screen.c: clarify that characters are compared
+
+2020-12-30 13:22:05 +0100 Ulrich Sibiller (dd5d8bc89)
+
+	* Client.h: conditionally add unused field
+
+2020-11-09 21:17:45 +0100 Ulrich Sibiller (c1843ef88)
+
+	* Handlers.c: use the same boolean values as in NXdispatch.c
+
+2020-11-09 22:54:49 +0100 Ulrich Sibiller (432cc0ca4)
+
+	* manpage: document defaults for options -defer and -tile
+
+2020-11-08 17:01:57 +0100 Ulrich Sibiller (7c22dbfda)
+
+	* NXDispatch.c: remove double nxagentFreeAtomMap()
+
+2021-01-15 17:09:21 +0100 Mike Gabriel (3523d15e2)
+
+	* Merge branch 'uli42-pr/fullscreen_select' into 3.6.x
+
+2020-12-30 19:00:48 +0100 Ulrich Sibiller (e7b4440f2)
+
+	* nxagent: make full screen mode selectable at startup
+
+2021-01-15 17:00:42 +0100 Mike Gabriel (125756157)
+
+	* Revert "CVE-2020-14360: Check SetMap request length carefully."
+
+2021-01-15 16:38:23 +0100 Mike Gabriel (013a6ba3c)
+
+	* Merge branch 'uli42-pr/fix_unusable_mouse_in_fullscreen' into 3.6.x
+
+2020-12-31 01:28:49 +0100 Ulrich Sibiller (f8b759263)
+
+	* nxagent: nxagent(Default)WindowIsVisible() are Booleans
+
+2020-12-31 01:22:11 +0100 Ulrich Sibiller (108ed9d92)
+
+	* Keyboard.c: noXkbExtension is a Boolean
+
+2020-12-31 01:20:00 +0100 Ulrich Sibiller (f4dd9d76a)
+
+	* Font.c: Use Booleans where appropriate
+
+2020-12-31 01:10:33 +0100 Ulrich Sibiller (d2ba4ddb8)
+
+	* nxagent: make nxagentXkbState.Initialized a Boolean
+
+2020-12-31 01:01:48 +0100 Ulrich Sibiller (f10e9d9ac)
+
+	* Events.h: fix wrong prototype
+
+2020-12-31 00:58:04 +0100 Ulrich Sibiller (af7d8e3fa)
+
+	* nxagent: make nxagentXFixesInfo.Initialized a Boolean
+
+2020-12-31 00:53:11 +0100 Ulrich Sibiller (b9c2db67b)
+
+	* Drawable.c: make doRoundRobin a Boolean
+
+2020-12-31 00:49:57 +0100 Ulrich Sibiller (9aa339176)
+
+	* Handlers.c: make synchronize a Boolean variable
+
+2020-12-31 00:49:38 +0100 Ulrich Sibiller (90178b548)
+
+	* nxagent: make nxagentSkipImage a Boolean
+
+2020-12-31 00:46:18 +0100 Ulrich Sibiller (48279ae79)
+
+	* nxagent: make nxagentForceSynchronization a Boolean
+
+2020-12-31 00:43:49 +0100 Ulrich Sibiller (1ed28c85b)
+
+	* Drawable.c: make abort flag a Boolean
+
+2020-12-31 00:38:07 +0100 Ulrich Sibiller (ab83e4688)
+
+	* Client.c: cleanup Boolean handling for nxagentNeedWakeup*() macros
+
+2020-12-31 00:36:20 +0100 Ulrich Sibiller (15cf1eee0)
+
+	* GC.c: make internal variable and function Boolean
+
+2020-12-31 00:32:35 +0100 Ulrich Sibiller (e8a5e3287)
+
+	* GCOps.c: make internal variable an function Booleans
+
+2020-12-31 00:24:41 +0100 Ulrich Sibiller (db3efd45c)
+
+	* nxagent: make nxagentBlocking an Boolean
+
+2020-12-31 00:17:53 +0100 Ulrich Sibiller (af2964c7e)
+
+	* Render.c: improve Boolean handling of
+          nxagentCheckPictureRemoteValue
+
+2020-12-31 00:14:35 +0100 Ulrich Sibiller (99ca67c2f)
+
+	* nxagent: improve Boolean handling for Reconnect functions
+
+2020-12-31 00:03:44 +0100 Ulrich Sibiller (6c09c0b7e)
+
+	* nxagent: make XDMCP variables Booleans
+
+2020-12-30 23:58:40 +0100 Ulrich Sibiller (1b91c8ac1)
+
+	* GCOps.c: make internal function Boolean
+
+2020-12-30 23:57:00 +0100 Ulrich Sibiller (4303b1131)
+
+	* GCOps.c: handle some internal variables as Booleans
+
+2020-12-30 23:54:50 +0100 Ulrich Sibiller (acf3e21f1)
+
+	* Drawable.c: make some variables Booleans
+
+2020-12-30 23:52:32 +0100 Ulrich Sibiller (f6b386e65)
+
+	* nxagent: handle RegionNil macro as Boolean
+
+2020-12-30 23:21:43 +0100 Ulrich Sibiller (059a37205)
+
+	* Split.c, Image.c: make some internal variables Booleans
+
+2020-12-30 23:07:23 +0100 Ulrich Sibiller (5920e36e1)
+
+	* nxagent: rework some Boolean checks
+
+2020-12-30 22:54:48 +0100 Ulrich Sibiller (6f4dbefbf)
+
+	* nxagent: make nxagentUserDefinedFontPath a Boolean
+
+2020-12-30 22:50:51 +0100 Ulrich Sibiller (1b7f37a80)
+
+	* nxagent: make nxagentShadowResize a Boolean
+
+2020-12-30 22:48:33 +0100 Ulrich Sibiller (3e093f9eb)
+
+	* nxagent: make nxagentDoFullgeneration a Boolean
+
+2020-12-30 22:43:07 +0100 Ulrich Sibiller (090742b3b)
+
+	* nxagent: some more Boolean improvements
+
+2020-12-30 22:34:03 +0100 Ulrich Sibiller (92c8325f3)
+
+	* nxagent: treat nxagentLastWindowDestroyed as Boolean
+
+2020-12-30 22:31:01 +0100 Ulrich Sibiller (616d8619f)
+
+	* nxagent: treat all Traps as Booleans everywhere
+
+2020-12-30 22:25:22 +0100 Ulrich Sibiller (c3b6dfe2e)
+
+	* nxagent: make nxagentVerbose a Boolean
+
+2020-12-30 22:19:50 +0100 Ulrich Sibiller (8bb7d2cd1)
+
+	* nxagent: make Desktop, Rootless and Binder options Booleans (again)
+
+2020-12-30 21:22:40 +0100 Ulrich Sibiller (1e4d8e32b)
+
+	* Options.h: mark Booleans
+
+2020-12-30 21:21:19 +0100 Ulrich Sibiller (acb861df4)
+
+	* nxagent: make nxagentOption Shadow a Boolean
+
+2020-12-30 20:07:57 +0100 Ulrich Sibiller (2565484f5)
+
+	* nxagent: treat several nxagentOptions as real Booleans
+
+2020-12-30 19:27:15 +0100 Ulrich Sibiller (ca5a14743)
+
+	* nxagent: treat DesktopResize and nxagentResizeDesktopAtStartup as
+          Booleans
+
+2020-12-30 19:20:56 +0100 Ulrich Sibiller (6e9b3a7f8)
+
+	* nxagent: make Fullscreen and AllScreens Booleans
+
+2020-12-30 14:36:23 +0100 Ulrich Sibiller (262fe771c)
+
+	* Handlers.c: ensure regular yields if suspended
+
+2020-12-10 10:24:29 +0100 Mike Gabriel (4eba4f53a)
+
+	* CVE-2020-14360: Check SetMap request length carefully.
+
+2021-01-15 16:27:32 +0100 Mike Gabriel (faae65fb3)
+
+	* Merge branch 'uli42-pr/rework_booleans_v2' into 3.6.x
+
+2020-12-31 01:28:49 +0100 Ulrich Sibiller (b44ecc0f8)
+
+	* nxagent: nxagent(Default)WindowIsVisible() are Booleans
+
+2020-12-31 01:22:11 +0100 Ulrich Sibiller (d78837ec3)
+
+	* Keyboard.c: noXkbExtension is a Boolean
+
+2020-12-31 01:20:00 +0100 Ulrich Sibiller (91cef61a0)
+
+	* Font.c: Use Booleans where appropriate
+
+2020-12-31 01:10:33 +0100 Ulrich Sibiller (0bca321fb)
+
+	* nxagent: make nxagentXkbState.Initialized a Boolean
+
+2020-12-31 01:01:48 +0100 Ulrich Sibiller (9e9568028)
+
+	* Events.h: fix wrong prototype
+
+2020-12-31 00:58:04 +0100 Ulrich Sibiller (feb7b9773)
+
+	* nxagent: make nxagentXFixesInfo.Initialized a Boolean
+
+2020-12-31 00:53:11 +0100 Ulrich Sibiller (b76dddcdc)
+
+	* Drawable.c: make doRoundRobin a Boolean
+
+2020-12-31 00:49:57 +0100 Ulrich Sibiller (b814aef39)
+
+	* Handlers.c: make synchronize a Boolean variable
+
+2020-12-31 00:49:38 +0100 Ulrich Sibiller (a9d3050c5)
+
+	* nxagent: make nxagentSkipImage a Boolean
+
+2020-12-31 00:46:18 +0100 Ulrich Sibiller (c035ddead)
+
+	* nxagent: make nxagentForceSynchronization a Boolean
+
+2020-12-31 00:43:49 +0100 Ulrich Sibiller (5d7b6db0c)
+
+	* Drawable.c: make abort flag a Boolean
+
+2020-12-31 00:38:07 +0100 Ulrich Sibiller (54dd29cc6)
+
+	* Client.c: cleanup Boolean handling for nxagentNeedWakeup*() macros
+
+2020-12-31 00:36:20 +0100 Ulrich Sibiller (2ce0fa8f0)
+
+	* GC.c: make internal variable and function Boolean
+
+2020-12-31 00:32:35 +0100 Ulrich Sibiller (3151736d3)
+
+	* GCOps.c: make internal variable an function Booleans
+
+2020-12-31 00:24:41 +0100 Ulrich Sibiller (e2ff39e04)
+
+	* nxagent: make nxagentBlocking an Boolean
+
+2020-12-31 00:17:53 +0100 Ulrich Sibiller (94fd6d234)
+
+	* Render.c: improve Boolean handling of
+          nxagentCheckPictureRemoteValue
+
+2020-12-31 00:14:35 +0100 Ulrich Sibiller (41d75f6b2)
+
+	* nxagent: improve Boolean handling for Reconnect functions
+
+2020-12-31 00:03:44 +0100 Ulrich Sibiller (3cb0a134d)
+
+	* nxagent: make XDMCP variables Booleans
+
+2020-12-30 23:58:40 +0100 Ulrich Sibiller (714a212fd)
+
+	* GCOps.c: make internal function Boolean
+
+2020-12-30 23:57:00 +0100 Ulrich Sibiller (1239dffec)
+
+	* GCOps.c: handle some internal variables as Booleans
+
+2020-12-30 23:54:50 +0100 Ulrich Sibiller (f98114c95)
+
+	* Drawable.c: make some variables Booleans
+
+2020-12-30 23:52:32 +0100 Ulrich Sibiller (b8017065d)
+
+	* nxagent: handle RegionNil macro as Boolean
+
+2020-12-30 23:21:43 +0100 Ulrich Sibiller (06833b964)
+
+	* Split.c, Image.c: make some internal variables Booleans
+
+2020-12-30 23:07:23 +0100 Ulrich Sibiller (84bad7324)
+
+	* nxagent: rework some Boolean checks
+
+2020-12-30 22:54:48 +0100 Ulrich Sibiller (f4adcbc59)
+
+	* nxagent: make nxagentUserDefinedFontPath a Boolean
+
+2020-12-30 22:50:51 +0100 Ulrich Sibiller (fbc4a9158)
+
+	* nxagent: make nxagentShadowResize a Boolean
+
+2020-12-30 22:48:33 +0100 Ulrich Sibiller (41f7a8b4a)
+
+	* nxagent: make nxagentDoFullgeneration a Boolean
+
+2020-12-30 22:43:07 +0100 Ulrich Sibiller (73bdca0f8)
+
+	* nxagent: some more Boolean improvements
+
+2020-12-30 22:34:03 +0100 Ulrich Sibiller (a72f77fc9)
+
+	* nxagent: treat nxagentLastWindowDestroyed as Boolean
+
+2020-12-30 22:31:01 +0100 Ulrich Sibiller (fec462906)
+
+	* nxagent: treat all Traps as Booleans everywhere
+
+2020-12-30 22:25:22 +0100 Ulrich Sibiller (42f76ddee)
+
+	* nxagent: make nxagentVerbose a Boolean
+
+2020-12-30 22:19:50 +0100 Ulrich Sibiller (bd336c92b)
+
+	* nxagent: make Desktop, Rootless and Binder options Booleans (again)
+
+2020-12-30 21:22:40 +0100 Ulrich Sibiller (7b299a4ce)
+
+	* Options.h: mark Booleans
+
+2020-12-30 21:21:19 +0100 Ulrich Sibiller (f6cebfd85)
+
+	* nxagent: make nxagentOption Shadow a Boolean
+
+2020-12-30 20:07:57 +0100 Ulrich Sibiller (2b4ccc30a)
+
+	* nxagent: treat several nxagentOptions as real Booleans
+
+2020-12-30 19:27:15 +0100 Ulrich Sibiller (a85adf5ea)
+
+	* nxagent: treat DesktopResize and nxagentResizeDesktopAtStartup as
+          Booleans
+
+2020-12-30 19:20:56 +0100 Ulrich Sibiller (de5eb54c6)
+
+	* nxagent: make Fullscreen and AllScreens Booleans
+
+2021-01-15 15:48:49 +0100 Mike Gabriel (d545afdf3)
+
+	* Merge branch 'uli42-pr/fix_resume' into 3.6.x
+
+2021-01-12 22:11:49 +0100 Ulrich Sibiller (89b37de7c)
+
+	* Init.c: Initialize nxagentGrabServerInfo
+
+2020-12-30 14:36:23 +0100 Ulrich Sibiller (e7d5ba4e5)
+
+	* Handlers.c: ensure regular yields if suspended
+
+2020-12-10 10:24:29 +0100 Mike Gabriel (d5a3b4401)
+
+	* CVE-2020-14360: Check SetMap request length carefully.
+
+2020-12-03 01:00:59 +0100 Ulrich Sibiller (ad275d507)
+
+	* Events.c: fix leftover DEBUG and TEST definitions
+
+2020-11-04 13:51:16 +0100 Mike Gabriel (5ca9a6b1e)
+
+	* NXdixfonts.c: Regression fix for db45683a. Fix typo in libXfont1
+          function call (FreeFontName -> FreeFontNames). Fixes FTBFS
+          on Ubuntu 14.04 and 16.04.
+
+2020-11-04 13:43:58 +0100 Mike Gabriel (f2973029d)
+
+	* release 3.5.99.25 (tag: 3.5.99.25)
 
 2020-11-04 13:38:30 +0100 Mike Gabriel (48b914810)
 
