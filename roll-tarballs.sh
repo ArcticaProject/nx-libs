@@ -117,7 +117,7 @@ if [ "x$MODE" = "xfull" ]; then
     # nx-X11/extras/Mesa. Deal with the Mesa.patches symlink/folder accordingly
     cp -Lr "nx-X11/extras/Mesa" "nx-X11/extras/tmpMesa"
     cp -Lr "nx-X11/extras/Mesa.patches" "nx-X11/extras/tmpMesa.patches"
-    ls -d nx-X11/extras/* | grep -v "nx-X11/extras/tmpMesa*" | xargs rm -r
+    ls -d nx-X11/extras/* | grep -v "^nx-X11/extras/tmpMesa*" | xargs rm -r
     mv "nx-X11/extras/tmpMesa" "nx-X11/extras/Mesa"
     mv "nx-X11/extras/tmpMesa.patches" "nx-X11/extras/Mesa.patches"
 
