@@ -20,7 +20,7 @@ jobs:
 
       - name: run Shellcheck
         run: |
-          find . -name "*.sh" | xargs shellcheck || true
+          find . -name "*.sh" | xargs shellcheck -e SC1004,SC2010,SC2035,SC2086
 
   cppcheck:
     runs-on: ubuntu-20.04
