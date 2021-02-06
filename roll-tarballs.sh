@@ -68,7 +68,7 @@ TARGETDIR="../.."
 MANIFEST="$(mktemp)"
 TEMP_DIR="$(mktemp -d)"
 
-trap "rm -f \"${MANIFEST}\"; rm -rf \"${TEMP_DIR}\"" 0
+trap 'rm -f "${MANIFEST}"; rm -rf "${TEMP_DIR}"' 0
 
 # create local copy of Git project at temp location
 git archive --format=tar "${CHECKOUT}" --prefix="${PROJECT}-${RELEASE}/" | ( cd "$TEMP_DIR"; tar xf - )
