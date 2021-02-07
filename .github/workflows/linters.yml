@@ -7,6 +7,7 @@ on:
     branches: [ 3.6.x ]
 
 jobs:
+  # see https://github.com/koalaman/shellcheck
   shellcheck:
     runs-on: ubuntu-20.04
     steps:
@@ -22,6 +23,7 @@ jobs:
         run: |
           find . -name "*.sh" | xargs shellcheck -e SC1004,SC2010,SC2035,SC2086
 
+  # see https://github.com/danmar/cppcheck
   cppcheck:
     runs-on: ubuntu-20.04
     steps:
@@ -45,6 +47,8 @@ jobs:
           CPPCHECK_EXCLUDES='-i ./nx-X11/extras/ -i nx-X11/programs/Xserver/GL/mesa* -i ./.pc -i ./nx-X11/.build-exports -i ./nx-X11/exports -i ./doc'
           echo "$(cppcheck --version):";
           cppcheck $CPPCHECK_OPTS $CPPCHECK_EXCLUDES .;
+
+  # see https://www.viva64.com/en/pvs-studio/
   pvs:
     environment: pvs
     runs-on: ubuntu-20.04
