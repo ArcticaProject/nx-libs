@@ -133,7 +133,9 @@ jobs:
               quilt xorg-x11-xkb-utils-devel
             ;;
           centos:7)
-             # basic packages
+            # enable epel repository for quilt
+            yum -y install epel-release
+            # basic packages
             yum -y install \
               autoconf automake gcc-c++ libtool make imake pkgconfig which
             # imake deps
@@ -147,7 +149,7 @@ jobs:
               libXrandr-devel libXfixes-devel libXtst-devel libXinerama-devel \
               xorg-x11-font-utils libtirpc-devel xkeyboard-config
             # soft requirements
-            yum -y install \
+            yum -y --enablerepo=epel install \
               quilt xorg-x11-xkb-utils-devel
             ;;
           esac
