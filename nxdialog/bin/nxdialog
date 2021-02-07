@@ -38,7 +38,7 @@
 # - removed neatx entry from the pulldoww menu
 # - use PyGObject instead of PyGtk and thus Gtk3
 # - replace optparse by argparse
-# - make code compatible to python2 and python3. 
+# - make code compatible to python2 and python3.
 
 """nxdialog program for handling dialog display."""
 
@@ -47,7 +47,10 @@
 #
 # Examples:
 # nxdialog --dialog yesno --message "message text" --caption "message title" --parent 0
-# nxdialog --dialog pulldown --message "message text" --caption "message title" --window 0x123456 --parent 0
+# nxdialog --dialog pulldown --message "message text" --caption "message title" \
+#          --window 0x123456 --parent 0
+#
+# pylint: disable=fixme, broad-except
 
 from __future__ import print_function
 
@@ -155,6 +158,7 @@ class PullDownMenu(object):
         Gtk.main_quit()
 
     @staticmethod
+    # pylint: disable=unused-argument
     def pos_menu(menu, _xpos, _ypos, *data):
         """ Positions menu at the top center of the parent window. """
         parent = data[0]
@@ -330,6 +334,34 @@ class NxDialogProgram(object):
 
         return parser.parse_args()
 
+    def show_dialog(self, message_caption, message_text):
+        """ Show the dialog or exit with failure if not implemented. """
+        dlgtype = self.options.dialog_type
+        if dlgtype == DLG_TYPE_OK:
+            show_simple_message_box(
+                Gtk.MessageType.INFO, message_caption, message_text)
+
+        elif dlgtype in (DLG_TYPE_ERROR, DLG_TYPE_PANIC):
+            show_simple_message_box(
+                Gtk.MessageType.ERROR, message_caption, message_text)
+
+        elif dlgtype == DLG_TYPE_PULLDOWN:
+            handle_session_action(self.options.agentpid,
+                                  PullDownMenu(self.options.window).show())
+
+        elif dlgtype == DLG_TYPE_YESNOSUSPEND:
+            handle_session_action(self.options.agentpid,
+                                  show_yes_no_suspend_box(message_caption, message_text))
+
+        elif dlgtype == DLG_TYPE_YESNO:
+            handle_session_action(self.options.agentpid,
+                                  show_yes_no_box(message_caption, message_text))
+
+        else:
+            # TODO: Implement all dialog types
+            sys.stderr.write("Dialog type '%s' not implemented" % (dlgtype))
+            sys.exit(EXIT_FAILURE)
+
     def run(self):
         """ Disconnect/terminate NX session upon user's request. """
 
@@ -366,30 +398,7 @@ class NxDialogProgram(object):
         if self.options.display:
             os.environ["DISPLAY"] = self.options.display
 
-        if dlgtype == DLG_TYPE_OK:
-            show_simple_message_box(
-                Gtk.MessageType.INFO, message_caption, message_text)
-
-        elif dlgtype in (DLG_TYPE_ERROR, DLG_TYPE_PANIC):
-            show_simple_message_box(
-                Gtk.MessageType.ERROR, message_caption, message_text)
-
-        elif dlgtype == DLG_TYPE_PULLDOWN:
-            handle_session_action(self.options.agentpid,
-                                  PullDownMenu(self.options.window).show())
-
-        elif dlgtype == DLG_TYPE_YESNOSUSPEND:
-            handle_session_action(self.options.agentpid,
-                                  show_yes_no_suspend_box(message_caption, message_text))
-
-        elif dlgtype == DLG_TYPE_YESNO:
-            handle_session_action(self.options.agentpid,
-                                  show_yes_no_box(message_caption, message_text))
-
-        else:
-            # TODO: Implement all dialog types
-            sys.stderr.write("Dialog type '%s' not implemented" % (dlgtype))
-            sys.exit(EXIT_FAILURE)
+        self.show_dialog(message_caption, message_text)
 
 
 NxDialogProgram().main()
