@@ -46,6 +46,8 @@ jobs:
               gcc)
                 apt-get install -q -y g++
                 ;;
+              clang)
+                apt-get install -q -y build-essential
             esac
             ;;
           fedora*)
@@ -135,6 +137,7 @@ jobs:
           centos:7)
             # enable epel repository for quilt
             yum -y install epel-release
+            rpm --import /etc/pki/rpm-gpg/RPM-GPG-KEY-EPEL-7
             # basic packages
             yum -y install \
               autoconf automake gcc-c++ libtool make imake pkgconfig which
