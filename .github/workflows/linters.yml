@@ -21,7 +21,28 @@ jobs:
 
       - name: run Shellcheck
         run: |
+          shellcheck --version
           find . -name "*.sh" | xargs shellcheck -e SC1004,SC2010,SC2035,SC2086
+
+  # see https://pylint.org/
+  pylint:
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Install linters on ubuntu
+        run: |
+          sudo apt-get update -q -y
+          sudo apt-get install pylint
+          # dependencies
+          sudo apt-get install --reinstall python-gi
+          sudo apt-get install python-dbus python-gobject
+
+      - name: run Pylint
+        run: |
+          pylint --version
+          cd nxdialog/; find . -name "nxdialog" -type f | xargs pylint --exit-zero
 
   # see https://github.com/danmar/cppcheck
   cppcheck:
