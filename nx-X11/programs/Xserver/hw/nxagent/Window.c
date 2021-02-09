@@ -471,13 +471,8 @@ Bool nxagentCreateWindow(WindowPtr pWin)
   }
 
   #ifdef SHAPE
-    #ifdef NXAGENT_SHAPE2
-      nxagentWindowPriv(pWin)->boundingShape = NULL;
-      nxagentWindowPriv(pWin)->clipShape = NULL;
-    #else
-      nxagentWindowPriv(pWin)->boundingShape = RegionCreate(NULL, 1);
-      nxagentWindowPriv(pWin)->clipShape = RegionCreate(NULL, 1);
-    #endif
+  nxagentWindowPriv(pWin)->boundingShape = NULL;
+  nxagentWindowPriv(pWin)->clipShape = NULL;
   #endif /* SHAPE */
 
   fbCreateWindow(pWin);
@@ -583,21 +578,16 @@ Bool nxagentDestroyWindow(WindowPtr pWin)
            pWindowPriv->siblingAbove;
   }
 
-  #ifdef NXAGENT_SHAPE2
-    #ifdef SHAPE
-    if (pWindowPriv->boundingShape)
-    {
-      RegionDestroy(pWindowPriv->boundingShape);
-    }
-
-    if (pWindowPriv->clipShape)
-    {
-      RegionDestroy(pWindowPriv->clipShape);
-    }
-    #endif
-  #else
+  #ifdef SHAPE
+  if (pWindowPriv->boundingShape)
+  {
     RegionDestroy(pWindowPriv->boundingShape);
+  }
+
+  if (pWindowPriv->clipShape)
+  {
     RegionDestroy(pWindowPriv->clipShape);
+  }
   #endif
 
   if (pWindowPriv -> corruptedRegion)
@@ -2352,12 +2342,10 @@ void nxagentShapeWindow(WindowPtr pWin)
                   RegionNumRects(wBoundingShape(pWin)));
       #endif
 
-      #ifdef NXAGENT_SHAPE2
       if (!nxagentWindowPriv(pWin)->boundingShape)
       {
         nxagentWindowPriv(pWin)->boundingShape = RegionCreate(NULL, 1);
       }
-      #endif
 
       RegionCopy(nxagentWindowPriv(pWin)->boundingShape, wBoundingShape(pWin));
 
@@ -2407,12 +2395,10 @@ void nxagentShapeWindow(WindowPtr pWin)
                   RegionNumRects(wClipShape(pWin)));
       #endif
 
-      #ifdef NXAGENT_SHAPE2
       if (!nxagentWindowPriv(pWin)->clipShape)
       {
         nxagentWindowPriv(pWin)->clipShape = RegionCreate(NULL, 1);
       }
-      #endif
 
       RegionCopy(nxagentWindowPriv(pWin)->clipShape, wClipShape(pWin));
 
