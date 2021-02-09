@@ -503,12 +503,14 @@ Bool nxagentReconnectSession(void)
 
   nxagentMapDefaultWindows();
 
+#ifdef NXAGENT_ONSTART
   /*
    * Ensure that the SetSelectionOwner request is sent through the
    * link.
    */
 
   XFlush(nxagentDisplay);
+#endif
 
   NXTransContinue(NULL);
 

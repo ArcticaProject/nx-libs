@@ -89,9 +89,12 @@ static char *nxagentAtomNames[NXAGENT_NUMBER_OF_ATOMS + 1] =
   "WM_NX_READY",                 /*  3 */
       /* nxagent takes the ownership of the selection with this name
          to signal the nxclient (or any other watching program)
-         it is ready. */
+         it is ready. This is only used if NXAGENT_ONSTART is defined.
+         We cannot enclose it in #ifdef here because we use the numeric
+         indices to this structure at multiple places. */
   "MCOPGLOBALS",                 /*  4 */
-      /* used for artsd support. */
+      /* used for artsd support. Only used if compiled with
+         NXAGENT_ARTSD */
   "NX_CUT_BUFFER_SERVER",        /*  5 */
       /* this is the name of a property on nxagent's window on the
          real X server. This property is used for passing clipboard

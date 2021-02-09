@@ -2575,12 +2575,14 @@ void nxagentMapDefaultWindows(void)
       }
     }
 
+#ifdef NXAGENT_ONSTART
     /*
      * Send a SetSelectionOwner request to notify of the agent start.
      */
 
     XSetSelectionOwner(nxagentDisplay, serverTransToAgentProperty,
                            nxagentDefaultWindows[i], CurrentTime);
+#endif
   }
 
   /*

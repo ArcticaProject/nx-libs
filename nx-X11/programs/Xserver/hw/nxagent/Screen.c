@@ -1865,6 +1865,7 @@ N/A
                         (unsigned char*) "X-AGENT",
                         strlen("X-AGENT"));
       }
+#endif
 
       XSelectInput(nxagentDisplay, nxagentFullscreenWindow, nxagentGetDefaultEventMask());
     }
