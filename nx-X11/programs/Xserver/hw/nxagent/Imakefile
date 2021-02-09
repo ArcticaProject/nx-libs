@@ -192,7 +192,6 @@ INCLUDES = \
 
 ### list of existing NXAGENT macros:
 #
-# NXAGENT_SHAPE                    Old shape code
 # NXAGENT_SHAPE2                   New shape code
 # NXAGENT_FIXKEYS                  Force the release of pressed key when losing focus
 # NXAGENT_CLIPBOARD                Enables clipboard cut and paste function between X servers.
