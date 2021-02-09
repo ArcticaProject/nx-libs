@@ -92,7 +92,9 @@ is" without express or implied warranty.
 #include "compext/Compext.h"
 
 #include NXAGENT_ICON_NAME
+#ifdef X2GO
 #include X2GOAGENT_ICON_NAME
+#endif
 
 /*
  * Set here the required log level.
@@ -1849,6 +1851,7 @@ Bool nxagentMakeIcon(Display *disp, Pixmap *nxIcon, Pixmap *nxMask)
 {
   char** agentIconData;
 
+#ifdef X2GO
   /*
    * selecting x2go icon when running as X2Go agent
    */
@@ -1857,6 +1860,7 @@ Bool nxagentMakeIcon(Display *disp, Pixmap *nxIcon, Pixmap *nxMask)
     agentIconData = x2goagentIconData;
   }
   else
+#endif
   {
     agentIconData = nxagentIconData;
   }

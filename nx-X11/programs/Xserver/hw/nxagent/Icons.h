@@ -32,6 +32,8 @@
 
 #define NXAGENT_ICON_NAME  "nxagent.xpm"
 
+#ifdef X2GO
 #define X2GOAGENT_ICON_NAME  "x2goagent.xpm"
+#endif
 
 #endif /* __Icons_H__ */

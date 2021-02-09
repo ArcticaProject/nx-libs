@@ -48,6 +48,12 @@
 #undef  TEST
 #undef  DEBUG
 
+#ifndef X2GO
+void nxagentShowSplashWindow(XlibWindow parentWindow) {}
+void nxagentPaintLogo(XlibWindow win, int scale, int width, int height) {}
+void nxagentRemoveSplashWindow(void) {}
+Bool nxagentHaveSplashWindow(void) {return False;}
+#else
 /*
  * Colors used to paint the splash screen.
  */
@@ -361,3 +367,4 @@ void nxagentRemoveSplashWindow(void)
     nxagentPixmapLogo = (XlibPixmap) 0;
   }
 }
+#endif /* ifdef X2GO */

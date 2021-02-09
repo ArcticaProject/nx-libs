@@ -197,10 +197,12 @@ int ddxProcessArgument(int argc, char *argv[], int i)
     nxagentProgName = strdup(basename(basec));
     SAFE_free(basec);
 
+#ifdef X2GO
     /*
      * Check if we are running as X2Go Agent
      */
     checkX2goAgent();
+#endif
   }
 
   #ifdef TEST
@@ -691,6 +693,7 @@ int ddxProcessArgument(int argc, char *argv[], int i)
     {
       SAFE_free(nxagentKeyboard);
 
+#ifdef X2GO
       if (nxagentX2go && strcmp(argv[i], "null/null") == 0)
       {
         #ifdef TEST
@@ -701,6 +704,7 @@ int ddxProcessArgument(int argc, char *argv[], int i)
         nxagentKeyboard = strdup("clone");
       }
       else
+#endif
       {
         nxagentKeyboard = strdup(argv[i]);
       }
@@ -1775,11 +1779,13 @@ N/A
 
     if (*nxagentWindowName == '\0')
     {
+#ifdef X2GO
       if(nxagentX2go)
       {
         snprintf(nxagentWindowName, NXAGENTWINDOWNAMELENGTH, "X2Go Agent");
       }
       else
+#endif
       {
         snprintf(nxagentWindowName, NXAGENTWINDOWNAMELENGTH, "NX Agent");
       }

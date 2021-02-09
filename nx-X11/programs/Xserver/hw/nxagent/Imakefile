@@ -206,6 +206,7 @@ INCLUDES = \
 #                                  This only has an effect if NX_TRANS_WAKEUP is also set for os/WaitFor.c
 # NXAGENT_ARTSD                    enable special handling of MCOPGLOBALS property used by artsd.
 # NXAGENT_RENDER_CLEANUP           cleanup padding bits/bytes of glyphs to possibly increase compression rate
+# X2GO                             include code to support running as x2goagent
 #
 ### macros not investigated yet:
 #
@@ -259,6 +260,7 @@ DEFINES = \
         -DRANDR_15_INTERFACE=1 \
         -DPANORAMIX \
         -UDEBUG_TREE \
+        -DX2GO \
         -DSYSTEMFONTDIR=\"$(SYSTEMFONTDIR)\" \
         $(NULL)
 

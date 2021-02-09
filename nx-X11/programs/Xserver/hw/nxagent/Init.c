@@ -173,7 +173,8 @@ int nxagentSaveUnder;
  */
 Bool nxagentDoFullGeneration = True;
 
- /*
+#ifdef X2GO
+/*
  * True if agent is running as X2goAgent
  * False if agent is running as NXAgent
  */
@@ -196,6 +197,7 @@ void checkX2goAgent(void)
   else
     nxagentX2go = False;
 }
+#endif
 
 /*
  * Called at X server's initialization.

@@ -1814,11 +1814,13 @@ N/A
         #endif
       }
 
+#ifdef X2GO
       /*
        * Setting WM_CLASS to "X2GoAgent" when running in X2Go Agent mode
        * we need it to properly display all window parameters by some WMs
        * (for example on Maemo)
        */
+#endif
       {
         #ifdef TEST
         fprintf(stderr, "nxagentOpenScreen: Setting WM_CLASS and WM_NAME for window with id [%ld].\n",
@@ -1827,12 +1829,14 @@ N/A
 
         XClassHint hint;
 
+#ifdef X2GO
         if(nxagentX2go)
         {
           hint.res_name = strdup("X2GoAgent");
           hint.res_class = strdup("X2GoAgent");
         }
         else
+#endif
         {
           hint.res_name = strdup("NXAgent");
           hint.res_class = strdup("NXAgent");
@@ -1850,6 +1854,7 @@ N/A
 
     if (nxagentOption(Fullscreen))
     {
+#ifdef NXAGENT_ONSTART
       /*
        * FIXME: Do we still need to set this property?
        */

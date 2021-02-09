@@ -45,8 +45,10 @@ extern int nxagentDoFullGeneration;
 extern int nxagentBackingStore;
 extern int nxagentSaveUnder;
 
+#ifdef X2GO
 extern int nxagentX2go;
 void checkX2goAgent(void);
+#endif
 
 extern ServerGrabInfoRec nxagentGrabServerInfo;
 
