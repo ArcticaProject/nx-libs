@@ -130,12 +130,6 @@ static XlibAtom serverLastRequestedSelection = -1;
 
 #define IS_INTERNAL_OWNER(lsoindex) (lastSelectionOwner[lsoindex].client != NullClient)
 
-/*
- * Needed to handle the notify selection event to
- * be sent to client once the selection property
- * has been retrieved from the real X server.
- */
-
 typedef enum
 {
   SelectionStageNone,
@@ -144,6 +138,12 @@ typedef enum
   SelectionStageQueryData,
   SelectionStageWaitData
 } ClientSelectionStage;
+
+/*
+ * Needed to handle the notify selection event to be sent to the
+ * waiting client once the selection property has been retrieved from
+ * the real X server.
+ */
 
 typedef struct _lastClient
 {
