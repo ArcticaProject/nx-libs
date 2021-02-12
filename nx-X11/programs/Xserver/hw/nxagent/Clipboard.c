@@ -1521,7 +1521,6 @@ static void transferSelectionFromXServer(int index, int resource)
    True: processed
    False: not processed, resource is not ours
 */
-
 Bool nxagentCollectPropertyEventFromXServer(int resource)
 {
   XlibAtom              atomReturnType;
@@ -2378,6 +2377,10 @@ int nxagentConvertSelection(ClientPtr client, WindowPtr pWin, Atom selection,
    * consider the conversion failed and tell our client about that.
    * The new request that lead us here is then processed.
    */
+  #ifdef TEST
+  fprintf(stderr, "%s: lastClients[%d].windowPtr [0x%lx].\n", __func__, index, (unsigned long)lastClients[index].windowPtr);
+  #endif
+
   if (lastClients[index].windowPtr != NULL)
   {
     #ifdef TEST
@@ -2692,6 +2695,13 @@ int nxagentConvertSelection(ClientPtr client, WindowPtr pWin, Atom selection,
    */
 
   XDeleteProperty(nxagentDisplay, serverWindow, remProperty);
+
+  /*
+   * FIXME: ICCCM states: "Clients should not use CurrentTime for the
+   * time argument of a ConvertSelection request. Instead, they should
+   * use the timestamp of the event that caused the request to be
+   * made."
+   */
 
   UpdateCurrentTime();
 
