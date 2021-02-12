@@ -1187,6 +1187,55 @@ void nxagentHandleSelectionRequestFromXServer(XEvent *X)
    * can process it now.
    */
 
+  if (!nxagentOption(TextClipboard))
+  {
+    /* Optimization: if we have a current target cache check if the
+     * requested target is supported by the owner. If not we can take
+     * a shortcut and deny the request immediately without doing any
+     * further communication */
+    if (targetCache[index].type == FORREM && targetCache[index].forRem)
+    {
+      XlibAtom *targets = targetCache[index].forRem;
+
+      #ifdef DEBUG
+      fprintf(stderr, "%s: Checking target validity\n", __func__);
+      #endif
+      Bool match = False;
+      for (int i = 0; i < targetCache[index].numTargets; i++)
+      {
+        if (targets[i] == X->xselectionrequest.target)
+        {
+          match = True;
+          break;
+        }
+      }
+      if (!match)
+      {
+        #ifdef DEBUG
+        fprintf(stderr, "%s: target [%ld][%s] is not supported by the owner - denying request.\n",
+                    __func__, X->xselectionrequest.target, NameForRemAtom(X->xselectionrequest.target));
+        #endif
+        replyRequestSelectionToXServer(X, False);
+        return;
+      }
+    }
+    else
+    {
+      /*
+       * at this stage we know a remote client has asked for a selection
+       * target without having retrieved the list of supported targets
+       * first.
+       */
+      #ifdef DEBUG
+      if (X->xselectionrequest.target != serverTARGETS)
+      {
+         fprintf(stderr, "%s: WARNING: remote client has not retrieved TARGETS before asking for selection!\n",
+                   __func__);
+      }
+      #endif
+    }
+  }
+
   /*
    * This is required for nxagentGetClipboardWindow.
    */
@@ -2619,6 +2668,55 @@ int nxagentConvertSelection(ClientPtr client, WindowPtr pWin, Atom selection,
   fprintf(stderr, "%s: target [%d][%s].\n", __func__, target,
               NameForIntAtom(target));
   #endif
+
+  if (!nxagentOption(TextClipboard))
+  {
+    /* Optimization: if we have a current target cache check if the
+     * requested target is supported by the owner. If not we can take
+     * a shortcut and deny the request immediately without doing any
+     * further communication */
+    if (targetCache[index].type == FORINT && targetCache[index].forInt)
+    {
+      Atom *targets = targetCache[index].forInt;
+
+      #ifdef DEBUG
+      fprintf(stderr, "%s: Checking target validity\n", __func__);
+      #endif
+      Bool match = False;
+      for (int i = 0; i < targetCache[index].numTargets; i++)
+      {
+        if (targets[i] == target)
+        {
+          match = True;
+          break;
+        }
+      }
+      if (!match)
+      {
+        #ifdef DEBUG
+        fprintf(stderr, "%s: target [%d][%s] is not supported by the owner - denying request.\n",
+                    __func__, target, NameForIntAtom(target));
+        #endif
+        sendSelectionNotifyEventToClient(client, time, requestor, selection, target, None);
+        return 1;
+      }
+    }
+    else
+    {
+      /*
+       * at this stage we know a client has asked for a selection
+       * target without having retrieved the list of supported targets
+       * first.
+       */
+      #ifdef DEBUG
+      if (target != clientTARGETS)
+      {
+         fprintf(stderr, "%s: WARNING: client has not retrieved TARGETS before asking for selection!\n",
+                   __func__);
+      }
+      #endif
+    }
+  }
 
   if (lastClients[index].clientPtr == client)
   {
