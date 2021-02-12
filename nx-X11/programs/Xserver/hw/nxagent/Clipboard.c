@@ -1206,6 +1206,7 @@ void nxagentHandleSelectionRequestFromXServer(XEvent *X)
      * - vcxsrv request is for _primary_ and takes this path as the _clipboard_ transfer
      * has set lastClients[index].windowPtr
      */
+    XDeleteProperty(nxagentDisplay, serverWindow, serverTransToAgentProperty);
     XConvertSelection(nxagentDisplay, CurrentSelections[index].selection,
                           X->xselectionrequest.target, serverTransToAgentProperty,
                               serverWindow, lastClients[index].time);
@@ -1289,6 +1290,12 @@ void nxagentHandleSelectionRequestFromXServer(XEvent *X)
       {
         x.u.selectionRequest.target = nxagentRemoteToLocalAtom(X->xselectionrequest.target);
       }
+
+      /*
+       * delete property before sending the request to the client -
+       * required by ICCCM
+       */
+      DeleteProperty(lastSelectionOwner[index].windowPtr, clientCutProperty);
 
       sendEventToClient(lastSelectionOwner[index].client, &x);
 
@@ -1574,6 +1581,23 @@ Bool nxagentCollectPropertyEventFromXServer(int resource)
   #endif
 
   lastClients[index].resource = -1;
+
+  /*
+   * ICCCM states: "The requestor must delete the property named in
+   * the SelectionNotify once all the data has been retrieved. The
+   * requestor should invoke either DeleteProperty or GetProperty
+   * (delete==True) after it has successfully retrieved all the data
+   * in the selection."
+   * FIXME: this uses serverTransToAgentProperty which is shared between
+   * all the selections. Could be a problem with simultaneous transfers.
+   */
+  if (result != 0 && ulReturnBytesLeft == 0)
+  {
+    #ifdef DEBUG
+    fprintf (stderr, "%s: Retrieved property data - deleting it for ICCCM conformity.\n", __func__);
+    #endif
+    XDeleteProperty(nxagentDisplay, serverWindow, serverTransToAgentProperty);
+  }
 
   if (result == 0)
   {
@@ -2658,7 +2682,19 @@ int nxagentConvertSelection(ClientPtr client, WindowPtr pWin, Atom selection,
                   remSelection, NameForRemAtom(remSelection));
   #endif
 
+  /*
+   * ICCCM: "It is necessary for requestors to delete the property
+   * before issuing the request so that the target can later be
+   * extended to take parameters without introducing an
+   * incompatibility. Also note that the requestor of a selection need
+   * not know the client that owns the selection nor the window on
+   * which the selection was acquired."
+   */
+
+  XDeleteProperty(nxagentDisplay, serverWindow, remProperty);
+
   UpdateCurrentTime();
+
   XConvertSelection(nxagentDisplay, remSelection, remTarget, remProperty,
                         serverWindow, CurrentTime);
   /* XConvertSelection will always return 1 (check the source!), so no
