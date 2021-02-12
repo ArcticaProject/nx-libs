@@ -1565,6 +1565,14 @@ Bool nxagentCollectPropertyEventFromXServer(int resource)
                                       &ulReturnBytesLeft,
                                       &pszReturnData);
 
+  #ifdef DEBUG
+  fprintf(stderr, "%s: NXGetCollectedProperty: result [%d]\n", __func__, result);
+  fprintf(stderr, "%s:   atomReturnType [%ld]\n", __func__, atomReturnType);
+  fprintf(stderr, "%s:   resultFormat [%d]\n", __func__, resultFormat);
+  fprintf(stderr, "%s:   ulReturnItems [%lu]\n", __func__, ulReturnItems);
+  fprintf(stderr, "%s:   ulReturnBytesLeft [%lu]\n", __func__, ulReturnBytesLeft);
+  #endif
+
   lastClients[index].resource = -1;
 
   if (result == 0)
@@ -1578,7 +1586,7 @@ Bool nxagentCollectPropertyEventFromXServer(int resource)
   else if (resultFormat != 8 && resultFormat != 16 && resultFormat != 32)
   {
     #ifdef DEBUG
-    fprintf(stderr, "%s: WARNING! Invalid property format.\n", __func__);
+    fprintf(stderr, "%s: WARNING! Invalid property format [%d].\n", __func__, resultFormat);
     #endif
 
     endTransfer(index, SELECTION_FAULT);
@@ -1638,7 +1646,7 @@ Bool nxagentCollectPropertyEventFromXServer(int resource)
         else
         {
           #ifdef DEBUG
-          fprintf(stderr, "%s: Got property content from remote server. size [%lu] bytes.\n", __func__, (ulReturnItems * resultFormat / 8));
+          fprintf(stderr, "%s: Got property content from remote server. [%lu] items with format [%d] = [%lu] bytes.\n", __func__, ulReturnItems, resultFormat, (ulReturnItems * resultFormat/8));
           #endif
 
           if (lastClients[index].target == clientTARGETS)
@@ -2587,6 +2595,10 @@ int nxagentConvertSelection(ClientPtr client, WindowPtr pWin, Atom selection,
 
   if (lastClients[index].clientPtr == client)
   {
+    #ifdef DEBUG
+    fprintf(stderr, "%s: same client as previous request\n", __func__);
+    #endif
+
     if (GetTimeInMillis() - lastClients[index].reqTime < ACCUM_TIME)
     {
       /*
