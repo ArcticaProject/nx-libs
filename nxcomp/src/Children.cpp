@@ -291,21 +291,16 @@ int NXTransDialog(const char *caption, const char *message,
       strcpy(newPath, "/usr/NX/bin:/opt/NX/bin:/usr/local/NX/bin:");
 
       #ifdef __APPLE__
-
       // FIXME: missing length limitation!
       strcat(newPath, "/Applications/NX Client for OSX.app/Contents/MacOS:");
-
       #endif
 
       #ifdef __CYGWIN32__
-
       // FIXME: missing length limitation!
       strcat(newPath, ".:");
-
       #endif
 
       int newLength = strlen(newPath);
-
       char *oldPath = getenv("PATH");
 
       // FIXME: check if strncat would be better here
@@ -327,17 +322,11 @@ int NXTransDialog(const char *caption, const char *message,
       //
 
       #ifdef __sun
-
       char newEnv[DEFAULT_STRING_LIMIT + 5];
-
       sprintf(newEnv,"PATH=%s", newPath);
-
       putenv(newEnv);
-
       #else
-
       setenv("PATH", newPath, 1);
-
       #endif
     }
     else
