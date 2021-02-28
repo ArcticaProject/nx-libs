@@ -343,6 +343,15 @@ int NXTransDialog(const char *caption, const char *message,
     }
   }
 
+  #ifdef TEST
+  *logofs << "NXTransDialog: WARNING! Could not display dialog.\n"
+          << logofs_flush;
+  #endif
+
+  #ifdef WARNING
+  cerr << "Warning" << ": Could not display dialog.\n";
+  #endif
+
   //
   // Hopefully useless.
   //
