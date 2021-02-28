@@ -257,15 +257,17 @@ int NXTransDialog(const char *caption, const char *message,
       }
     }
 
-    #ifdef WARNING
+    #ifdef TEST
     *logofs << "NXTransDialog: WARNING! Couldn't start '"
             << command << "'. " << "Error is " << EGET()
             << " '" << ESTR() << "'.\n" << logofs_flush;
     #endif
 
+    #ifdef WARNING
     cerr << "Warning" << ": Couldn't start '" << command
          << "'. Error is " << EGET() << " '" << ESTR()
          << "'.\n";
+    #endif
 
     //
     // Retry by looking for the default name
@@ -302,13 +304,15 @@ int NXTransDialog(const char *caption, const char *message,
       // FIXME: check if strncat would be better here
       snprintf(newPath + newLength, DEFAULT_STRING_LIMIT - newLength, "%s", oldPath);
 
-      #ifdef WARNING
+      #ifdef TEST
       *logofs << "NXTransDialog: WARNING! Trying with path '"
               << newPath << "'.\n" << logofs_flush;
       #endif
 
+      #ifdef WARNING
       cerr << "Warning" << ": Trying with path '" << newPath
            << "'.\n";
+      #endif
 
       //
       // Solaris doesn't seem to have
