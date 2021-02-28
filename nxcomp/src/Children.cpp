@@ -225,6 +225,7 @@ int NXTransDialog(const char *caption, const char *message,
          << "\\-----------------------------------------------------------\n";
   }
 
+  for (int i = 0; i < 4; i++)
   {
     if (local != 0)
     {
@@ -274,11 +275,17 @@ int NXTransDialog(const char *caption, const char *message,
     // in the default NX path.
     //
 
-    if (i == 0)
+    if (i == 0 || i == 2)
     {
-
       strcpy(command, "nxclient");
+    }
+    else if (i == 1 || i == 3)
+    {
+      strcpy(command, "nxdialog");
+    }
 
+    if (i == 2)
+    {
       char newPath[DEFAULT_STRING_LIMIT];
 
       strcpy(newPath, "/usr/NX/bin:/opt/NX/bin:/usr/local/NX/bin:");
@@ -332,7 +339,18 @@ int NXTransDialog(const char *caption, const char *message,
       setenv("PATH", newPath, 1);
 
       #endif
+    }
+    else
+    {
+      #ifdef TEST
+      *logofs << "NXTransDialog: WARNING! Trying with command '"
+              << command << "'.\n" << logofs_flush;
+      #endif
 
+      #ifdef WARNING
+      cerr << "Warning" << ": Trying with command '" << command
+           << "'.\n";
+      #endif
     }
   }
 
