@@ -216,7 +216,15 @@ int NXTransDialog(const char *caption, const char *message,
 
   UnsetEnv("LD_LIBRARY_PATH");
 
-  for (int i = 0; i < 2; i++)
+  if (!pulldown)
+  {
+    cerr << "Info: Upcoming dialog:\n"
+         << "/-----------------------------------------------------------\n"
+         << caption << ":\n"
+         << message << "\n"
+         << "\\-----------------------------------------------------------\n";
+  }
+
   {
     if (local != 0)
     {
