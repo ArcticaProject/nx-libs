@@ -192,9 +192,7 @@ by dragging the desktop with the mouse while pressing\n\
 Ctrl+Alt or use the keystrokes listed below. Press\n\
 %s again to return to the desktop resize mode.\n\
 \n\
-Use these keystrokes to navigate:\n\
-%s\
-"
+Use these keystrokes to navigate:%s"
 
 #define DIALOG_DISABLE_DESKTOP_RESIZE_MODE_TYPE "ok"
 
