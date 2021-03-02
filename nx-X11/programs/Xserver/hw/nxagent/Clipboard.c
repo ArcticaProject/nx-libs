@@ -1592,6 +1592,14 @@ Bool nxagentCollectPropertyEventFromXServer(int resource)
 
   int index = 0;
 
+  if (resource < 0)
+  {
+    #ifdef DEBUG
+    fprintf (stderr, "%s: resource [%d] is invalid.\n", __func__, resource);
+    #endif
+    return False;
+  }
+
   /* determine the selection we are talking about here */
   for (index = 0; index < nxagentMaxSelections; index++)
   {
