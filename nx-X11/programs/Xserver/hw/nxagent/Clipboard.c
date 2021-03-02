@@ -1272,6 +1272,8 @@ void nxagentHandleSelectionRequestFromXServer(XEvent *X)
                           X->xselectionrequest.target, serverTransToAgentProperty,
                               serverWindow, lastClients[index].time);
 
+    NXFlushDisplay(nxagentDisplay, NXFlushLink);
+
     #ifdef DEBUG
     fprintf(stderr, "%s: Sent XConvertSelection: selection [%d][%s] target [%ld][%s] property [%ld][%s] window [0x%lx] time [%u] .\n", __func__,
                 CurrentSelections[index].selection, NameForRemAtom(CurrentSelections[index].selection)),
@@ -2839,6 +2841,9 @@ int nxagentConvertSelection(ClientPtr client, WindowPtr pWin, Atom selection,
 
   XConvertSelection(nxagentDisplay, remSelection, remTarget, remProperty,
                         serverWindow, CurrentTime);
+
+  NXFlushDisplay(nxagentDisplay, NXFlushLink);
+
   /* XConvertSelection will always return 1 (check the source!), so no
      need to check the return code. */
 
