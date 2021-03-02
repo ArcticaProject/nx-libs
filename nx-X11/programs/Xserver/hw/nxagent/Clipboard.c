@@ -2443,8 +2443,8 @@ int nxagentConvertSelection(ClientPtr client, WindowPtr pWin, Atom selection,
     if ((GetTimeInMillis() - lastClients[index].reqTime) >= CONVERSION_TIMEOUT)
     {
       #ifdef DEBUG
-      fprintf(stderr, "%s: timeout expired on previous request, "
-                  "notifying failure to client %s\n", __func__, nxagentClientInfoString(client));
+      fprintf(stderr, "%s: timeout expired on previous request - "
+                  "notifying failure to waiting client\n", __func__);
       #endif
 
       /* notify the waiting client of failure */
