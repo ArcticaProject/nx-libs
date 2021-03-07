@@ -74,7 +74,23 @@
 #define PANIC
 #define WARNING
 #undef  TEST
+#undef  TEST_DISPLAY
+#undef  TEST_IMAGE
+#undef  TEST_INPUT
+#undef  TEST_PARAMS
+#undef  TEST_POINTER
+#undef  TEST_PROPERTY
+#undef  TEST_SPLIT
+#undef  TEST_UNPACK
 #undef  DEBUG
+#undef  DEBUG_DISPLAY
+#undef  DEBUG_IMAGE
+#undef  DEBUG_INPUT
+#undef  DEBUG_PARAMS
+#undef  DEBUG_POINTER
+#undef  DEBUG_PROPERTY
+#undef  DEBUG_SPLIT
+#undef  DEBUG_UNPACK
 #undef  DUMP
 
 /*
@@ -271,7 +287,7 @@ extern int _NXInternalResetEncoders(Display *dpy);
 
 int NXInitDisplay(Display *dpy)
 {
-  #ifdef TEST
+  #ifdef TEST_DISPLAY
   fprintf(stderr, "******NXInitDisplay: Called for display at [%p].\n", (void *) dpy);
   #endif
 
@@ -286,7 +302,7 @@ int NXInitDisplay(Display *dpy)
     return 1;
   }
 
-  #ifdef TEST
+  #ifdef TEST_DISPLAY
   fprintf(stderr, "******NXInitDisplay: WARNING! Internal structures already initialized.\n");
   #endif
 
@@ -295,7 +311,7 @@ int NXInitDisplay(Display *dpy)
 
 int NXResetDisplay(Display *dpy)
 {
-  #ifdef TEST
+  #ifdef TEST_DISPLAY
   fprintf(stderr, "******NXResetDisplay: Called for display at [%p].\n", (void *) dpy);
   #endif
 
@@ -310,7 +326,7 @@ int NXResetDisplay(Display *dpy)
     return 1;
   }
 
-  #ifdef TEST
+  #ifdef TEST_DISPLAY
   fprintf(stderr, "******NXResetDisplay: WARNING! Internal structures already reset.\n");
   #endif
 
@@ -324,7 +340,7 @@ int _NXInternalInitResources(Display *dpy)
 
 int _NXInternalResetResources(Display *dpy)
 {
-  #ifdef TEST
+  #if defined(TEST_IMAGE) || defined(TEST_PROPERTY) || defined(TEST_POINTER) || defined(TEST_INPUT)
   fprintf(stderr, "******_NXInternalResetResources: Clearing all the internal structures.\n");
   #endif
 
@@ -335,7 +351,7 @@ int _NXInternalResetResources(Display *dpy)
 
     if (_NXCollectedImages[i] != NULL)
     {
-      #ifdef TEST
+      #ifdef TEST_IMAGE
       fprintf(stderr, "******_NXInternalResetResources: WARNING! Clearing collect image data "
                   "for resource [%d].\n", i);
       #endif
@@ -357,7 +373,7 @@ int _NXInternalResetResources(Display *dpy)
 
     if (_NXCollectedProperties[i] != NULL)
     {
-      #ifdef TEST
+      #ifdef TEST_PROPERTY
       fprintf(stderr, "******_NXInternalResetResources: WARNING! Clearing collect property data "
                   "for resource [%d].\n", i);
       #endif
@@ -376,7 +392,7 @@ int _NXInternalResetResources(Display *dpy)
 
     if (_NXCollectedGrabPointers[i] != NULL)
     {
-      #ifdef TEST
+      #ifdef TEST_POINTER
       fprintf(stderr, "******_NXInternalResetResources: WARNING! Clearing grab pointer data "
                   "for resource [%d].\n", i);
       #endif
@@ -393,7 +409,7 @@ int _NXInternalResetResources(Display *dpy)
 
     if (_NXCollectedInputFocuses[i] != NULL)
     {
-      #ifdef TEST
+      #ifdef TEST_INPUT
       fprintf(stderr, "******_NXInternalResetResources: WARNING! Clearing collect input focus data "
                   "for resource [%d].\n", i);
       #endif
@@ -452,7 +468,7 @@ int NXSetDisplayBuffer(Display *dpy, int size)
 
   if (dpy -> bufmax - size == dpy -> buffer)
   {
-    #ifdef TEST
+    #ifdef TEST_DISPLAY
     fprintf(stderr, "******NXSetDisplayBuffer: Nothing to do with buffer size matching.\n");
     #endif
 
@@ -482,7 +498,7 @@ int NXSetDisplayBuffer(Display *dpy, int size)
   dpy -> bufptr = dpy -> buffer;
   dpy -> bufmax = dpy -> bufptr + size;
 
-  #ifdef TEST
+  #ifdef TEST_DISPLAY
   fprintf(stderr, "******NXSetDisplayBuffer: Set the display output buffer size to [%d].\n",
               size);
   #endif
@@ -525,7 +541,7 @@ int NXHandleDisplayError(int value)
 
   _NXHandleDisplayError = value;
 
-  #ifdef TEST
+  #ifdef TEST_DISPLAY
   fprintf(stderr, "******NXHandleDisplayError: Set the flag to [%d] with previous value [%d].\n",
               value, previous);
   #endif
@@ -594,7 +610,7 @@ int NXDisplayReadable(Display *dpy)
 
   if (result == 0)
   {
-    #ifdef DEBUG
+    #ifdef DEBUG_DISPLAY
     fprintf(stderr, "******NXDisplayReadable: Returning [%d] bytes readable from fd [%d].\n",
                 readable, dpy -> fd);
     #endif
@@ -602,7 +618,7 @@ int NXDisplayReadable(Display *dpy)
     return readable;
   }
 
-  #ifdef DEBUG
+  #ifdef DEBUG_DISPLAY
   fprintf(stderr, "******NXDisplayReadable: WARNING! Error detected on display fd [%d].\n",
               dpy -> fd);
   #endif
@@ -612,7 +628,7 @@ int NXDisplayReadable(Display *dpy)
 
 int NXDisplayFlushable(Display *dpy)
 {
-  #ifdef DEBUG
+  #ifdef DEBUG_DISPLAY
 
   int flushable;
 
@@ -635,7 +651,7 @@ int NXDisplayFlushable(Display *dpy)
 
 int NXDisplayCongestion(Display *dpy)
 {
-  #ifdef DEBUG
+  #ifdef DEBUG_DISPLAY
 
   int congestion = NXTransCongestion(dpy -> fd);
 
@@ -656,7 +672,7 @@ int NXFlushDisplay(Display *dpy, int what)
   if (!(dpy -> flags & XlibDisplayWriting) &&
           dpy -> bufptr - dpy -> buffer > 0)
   {
-    #ifdef DEBUG
+    #ifdef DEBUG_DISPLAY
     fprintf(stderr, "******NXFlushDisplay: Writing with [%d] bytes in the buffer.\n",
             (int) (dpy -> bufptr - dpy -> buffer));
     #endif
@@ -669,7 +685,7 @@ int NXFlushDisplay(Display *dpy, int what)
     return 0;
   }
 
-  #ifdef DEBUG
+  #ifdef DEBUG_DISPLAY
   fprintf(stderr, "******NXFlushDisplay: Flushing with [%d] bytes in the NX transport.\n",
               NXDisplayFlushable(dpy));
   #endif
@@ -683,7 +699,7 @@ NXDisplayErrorPredicate NXSetDisplayErrorPredicate(NXDisplayErrorPredicate predi
 
   _NXDisplayErrorFunction = predicate;
 
-  #ifdef TEST
+  #ifdef TEST_DISPLAY
   fprintf(stderr, "******NXSetDisplayErrorPredicate: Set the predicate to [%p] with previous value [%p].\n",
               predicate, previous);
   #endif
@@ -697,7 +713,7 @@ NXDisplayBlockHandler NXSetDisplayBlockHandler(NXDisplayBlockHandler handler)
 
   _NXDisplayBlockFunction = handler;
 
-  #ifdef TEST
+  #ifdef TEST_DISPLAY
   fprintf(stderr, "******NXSetDisplayBlockHandler: Set the handler to [%p] with previous value [%p].\n",
               handler, previous);
   #endif
@@ -711,7 +727,7 @@ NXDisplayWriteHandler NXSetDisplayWriteHandler(NXDisplayWriteHandler handler)
 
   _NXDisplayWriteFunction = handler;
 
-  #ifdef TEST
+  #ifdef TEST_DISPLAY
   fprintf(stderr, "******NXSetDisplayWriteHandler: Set the handler to [%p] with previous value [%p].\n",
               handler, previous);
   #endif
@@ -728,7 +744,7 @@ NXDisplayFlushHandler NXSetDisplayFlushHandler(NXDisplayFlushHandler handler, Di
   NXTransHandler(NX_FD_ANY, NX_HANDLER_FLUSH,
                      (void (*)(void *, int)) handler, (void *) display);
 
-  #ifdef TEST
+  #ifdef TEST_DISPLAY
   fprintf(stderr, "******NXSetDisplayFlushHandler: Set the handler to [%p] with display [%p] "
               "and previous value [%p].\n", handler, display, previous);
   #endif
@@ -749,7 +765,7 @@ NXDisplayStatisticsHandler NXSetDisplayStatisticsHandler(NXDisplayStatisticsHand
   NXTransHandler(NX_FD_ANY, NX_HANDLER_STATISTICS,
                      (void (*)(void *, int)) handler, (void *) buffer);
 
-  #ifdef TEST
+  #ifdef TEST_DISPLAY
   fprintf(stderr, "******NXSetDisplayStatisticsHandler: Set the handler to [%p] with buffer pointer [%p] "
               "and previous value [%p].\n", handler, buffer, previous);
   #endif
@@ -818,14 +834,14 @@ Status NXGetControlParameters(Display *dpy, unsigned int *link_type, unsigned in
 
   GetEmptyReq(NXGetControlParameters, req);
 
-  #ifdef TEST
+  #ifdef TEST_PARAMS
   fprintf(stderr, "******NXGetControlParameters: Sending message opcode [%d].\n",
               X_NXGetControlParameters);
   #endif
 
   if (_XReply(dpy, (xReply *) &rep, 0, xTrue) == xFalse)
   {
-    #ifdef TEST
+    #ifdef TEST_PARAMS
     fprintf(stderr, "******NXGetControlParameters: Error receiving reply.\n");
     #endif
 
@@ -836,7 +852,7 @@ Status NXGetControlParameters(Display *dpy, unsigned int *link_type, unsigned in
     return 0;
   }
 
-  #ifdef TEST
+  #ifdef TEST_PARAMS
   fprintf(stderr, "******NXGetControlParameters: Got reply with link type [%u].\n", rep.linkType);
 
   fprintf(stderr, "******NXGetControlParameters: Local protocol major [%u] minor [%u] patch [%u].\n",
@@ -913,7 +929,7 @@ Status NXGetUnpackParameters(Display *dpy, unsigned int *entries, unsigned char 
 
   if (*entries < NXNumberOfPackMethods)
   {
-    #ifdef TEST
+    #ifdef TEST_PARAMS
     fprintf(stderr, "******NXGetUnpackParameters: Requested only [%d] entries while they should be [%d].\n",
                 *entries, NXNumberOfPackMethods);
     #endif
@@ -927,14 +943,14 @@ Status NXGetUnpackParameters(Display *dpy, unsigned int *entries, unsigned char 
 
   req -> entries = *entries;
 
-  #ifdef TEST
+  #ifdef TEST_PARAMS
   fprintf(stderr, "******NXGetUnpackParameters: Sending message opcode [%d] with [%d] requested entries.\n",
               X_NXGetUnpackParameters, *entries);
   #endif
 
   if (_XReply(dpy, (xReply *) &rep, 0, xFalse) == xFalse || rep.length == 0)
   {
-    #ifdef TEST
+    #ifdef TEST_PARAMS
     fprintf(stderr, "******NXGetUnpackParameters: Error receiving reply.\n");
     #endif
 
@@ -947,7 +963,7 @@ Status NXGetUnpackParameters(Display *dpy, unsigned int *entries, unsigned char 
 
   if ((n = rep.length << 2) > *entries)
   {
-    #ifdef TEST
+    #ifdef TEST_PARAMS
     fprintf(stderr, "******NXGetUnpackParameters: Got [%d] bytes of reply data while they should be [%d].\n",
                 n, *entries);
     #endif
@@ -963,13 +979,13 @@ Status NXGetUnpackParameters(Display *dpy, unsigned int *entries, unsigned char 
 
   *entries = n;
 
-  #ifdef TEST
+  #ifdef TEST_PARAMS
   fprintf(stderr, "******NXGetUnpackParameters: Reading [%d] bytes of reply data.\n", n);
   #endif
 
   _XReadPad(dpy, (char *) supported_methods, n);
 
-  #ifdef TEST
+  #ifdef TEST_PARAMS
 
   fprintf(stderr, "******NXGetUnpackParameters: Got reply with methods: ");
 
@@ -1051,12 +1067,12 @@ Status NXGetShmemParameters(Display *dpy, unsigned int *enable_client,
     req -> clientSegment = *client_segment;
     req -> serverSegment = *server_segment;
 
-    #ifdef TEST
+    #ifdef TEST_PARAMS
     fprintf(stderr, "******NXGetShmemParameters: Sending message opcode [%d] at stage [%d].\n",
                 X_NXGetShmemParameters, stage);
     #endif
 
-    #ifdef TEST
+    #ifdef TEST_PARAMS
 
     if (stage == 0)
     {
@@ -1095,7 +1111,7 @@ Status NXGetShmemParameters(Display *dpy, unsigned int *enable_client,
 
       if (_XReply(dpy, (xReply *) &rep, 0, xTrue) == xFalse)
       {
-        #ifdef TEST
+        #ifdef TEST_PARAMS
         fprintf(stderr, "******NXGetShmemParameters: Error receiving reply.\n");
         #endif
 
@@ -1120,7 +1136,7 @@ Status NXGetShmemParameters(Display *dpy, unsigned int *enable_client,
   *client_size = rep.clientSize;
   *server_size = rep.serverSize;
 
-  #ifdef TEST
+  #ifdef TEST_PARAMS
   fprintf(stderr, "******NXGetShmemParameters: Got final reply with enabled client [%u] and server [%u].\n",
               *enable_client, *enable_server);
 
@@ -1162,13 +1178,13 @@ Status NXGetFontParameters(Display *dpy, unsigned int path_length, char path_dat
 
   register unsigned n;
 
-  #ifdef TEST
+  #ifdef TEST_PARAMS
   register unsigned i;
   #endif
 
   if (path_length < 1)
   {
-    #ifdef TEST
+    #ifdef TEST_PARAMS
     fprintf(stderr, "******NXGetFontParameters: No room to store the reply.\n");
     #endif
 
@@ -1181,14 +1197,14 @@ Status NXGetFontParameters(Display *dpy, unsigned int path_length, char path_dat
 
   GetReq(NXGetFontParameters, req);
 
-  #ifdef TEST
+  #ifdef TEST_PARAMS
   fprintf(stderr, "******NXGetFontParameters: Sending message opcode [%d].\n",
               X_NXGetFontParameters);
   #endif
 
   if (_XReply(dpy, (xReply *) &rep, 0, xFalse) == xFalse || rep.length == 0)
   {
-    #ifdef TEST
+    #ifdef TEST_PARAMS
     fprintf(stderr, "******NXGetFontParameters: Error receiving reply.\n");
     #endif
 
@@ -1201,7 +1217,7 @@ Status NXGetFontParameters(Display *dpy, unsigned int path_length, char path_dat
 
   if ((n = rep.length << 2) > path_length)
   {
-    #ifdef TEST
+    #ifdef TEST_PARAMS
     fprintf(stderr, "******NXGetFontParameters: Got [%d] bytes of reply data with only room for [%d].\n",
                 n, path_length);
     #endif
@@ -1215,7 +1231,7 @@ Status NXGetFontParameters(Display *dpy, unsigned int path_length, char path_dat
     return 0;
   }
 
-  #ifdef TEST
+  #ifdef TEST_PARAMS
   fprintf(stderr, "******NXGetFontParameters: Reading [%d] bytes of reply data.\n", n);
   #endif
 
@@ -1228,7 +1244,7 @@ Status NXGetFontParameters(Display *dpy, unsigned int path_length, char path_dat
 
   if (*path_data > path_length - 1)
   {
-    #ifdef TEST
+    #ifdef TEST_PARAMS
     fprintf(stderr, "******NXGetFontParameters: Inconsistent length in the returned string.\n");
     #endif
 
@@ -1239,7 +1255,7 @@ Status NXGetFontParameters(Display *dpy, unsigned int path_length, char path_dat
     return 0;
   }
 
-  #ifdef TEST
+  #ifdef TEST_PARAMS
 
   fprintf(stderr, "******NXGetFontParameters: Got font path of [%d] bytes and value [",
               (int) *path_data);
@@ -1270,7 +1286,7 @@ unsigned int NXAllocSplit(Display *dpy, unsigned int resource)
       {
         _NXSplitResources[resource] = 1;
 
-        #ifdef TEST
+        #ifdef TEST_SPLIT
         fprintf(stderr, "******NXAllocSplit: Reserved resource [%u].\n",
                     resource);
         #endif
@@ -1279,7 +1295,7 @@ unsigned int NXAllocSplit(Display *dpy, unsigned int resource)
       }
     }
 
-    #ifdef TEST
+    #ifdef TEST_SPLIT
     fprintf(stderr, "******NXAllocSplit: WARNING! Resource limit exausted.\n");
     #endif
 
@@ -1287,7 +1303,7 @@ unsigned int NXAllocSplit(Display *dpy, unsigned int resource)
   }
   else if (resource >= 0 && resource < NXNumberOfResources)
   {
-    #ifdef TEST
+    #ifdef TEST_SPLIT
 
     if (_NXSplitResources[resource] == 0)
     {
@@ -1328,7 +1344,7 @@ int NXStartSplit(Display *dpy, unsigned int resource, unsigned int mode)
   req -> resource = resource;
   req -> mode     = mode;
 
-  #ifdef TEST
+  #ifdef TEST_SPLIT
   fprintf(stderr, "******NXStartSplit: Sending opcode [%d] with resource [%d] mode [%d].\n",
               X_NXStartSplit, resource, mode);
   #endif
@@ -1355,7 +1371,7 @@ int NXEndSplit(Display *dpy, unsigned int resource)
 
   req -> resource = resource;
 
-  #ifdef TEST
+  #ifdef TEST_SPLIT
   fprintf(stderr, "******NXEndSplit: Sending opcode [%d] with resource [%d].\n",
               X_NXStartSplit, resource);
   #endif
@@ -1389,7 +1405,7 @@ int NXCommitSplit(Display *dpy, unsigned int resource, unsigned int propagate,
   req -> request   = request;
   req -> position  = position;
 
-  #ifdef TEST
+  #ifdef TEST_SPLIT
   fprintf(stderr, "******NXCommitSplit: Sending opcode [%d] with resource [%d] propagate [%d] "
               "request [%d] position [%d].\n", X_NXCommitSplit, resource,
                   propagate, request, position);
@@ -1410,7 +1426,7 @@ int NXAbortSplit(Display *dpy, unsigned int resource)
 
   GetReq(NXAbortSplit, req);
 
-  #ifdef TEST
+  #ifdef TEST_SPLIT
   fprintf(stderr, "******NXAbortSplit: Sending message opcode [%d] with resource [%u].\n",
               X_NXAbortSplit, resource);
   #endif
@@ -1432,7 +1448,7 @@ int NXFinishSplit(Display *dpy, unsigned int resource)
 
   GetReq(NXFinishSplit, req);
 
-  #ifdef TEST
+  #ifdef TEST_SPLIT
   fprintf(stderr, "******NXFinishSplit: Sending message opcode [%d] with resource [%u].\n",
               X_NXFinishSplit, resource);
   #endif
@@ -1456,7 +1472,7 @@ int NXFreeSplit(Display *dpy, unsigned int resource)
 
     GetReq(NXFreeSplit, req);
 
-    #ifdef TEST
+    #ifdef TEST_SPLIT
     fprintf(stderr, "******NXFreeSplit: Sending message opcode [%d] with resource [%u].\n",
                 X_NXFreeSplit, resource);
     #endif
@@ -1467,14 +1483,14 @@ int NXFreeSplit(Display *dpy, unsigned int resource)
 
     SyncHandle();
 
-    #ifdef TEST
+    #ifdef TEST_SPLIT
     fprintf(stderr, "******NXFreeSplit: Making the resource [%u] newly available.\n",
                 resource);
     #endif
 
     _NXSplitResources[resource] = 0;
   }
-  #ifdef TEST
+  #ifdef TEST_SPLIT
   else
   {
     fprintf(stderr, "******NXFreeSplit: Nothing to do for resource [%u].\n",
@@ -1502,7 +1518,7 @@ int NXSetExposeParameters(Display *dpy, int expose, int graphics_expose, int no_
   req -> graphicsExpose = graphics_expose;
   req -> noExpose       = no_expose;
 
-  #ifdef TEST
+  #ifdef TEST_PARAMS
   fprintf(stderr, "******NXSetExposeParameters: Sending message opcode [%d] with flags [%d][%d][%d].\n",
               X_NXSetExposeParameters, req -> expose, req -> graphicsExpose, req -> noExpose);
   #endif
@@ -1532,7 +1548,7 @@ int NXSetCacheParameters(Display *dpy, int enable_cache, int enable_split,
   req -> enableSave  = enable_save;
   req -> enableLoad  = enable_load;
 
-  #ifdef TEST
+  #ifdef TEST_PARAMS
   fprintf(stderr, "******NXSetCacheParameters: Sending message opcode [%d] with "
               "flags [%d][%d][%d][%d].\n", X_NXSetCacheParameters, req -> enableCache,
                   req -> enableSplit, req -> enableSave, req -> enableLoad);
@@ -1555,7 +1571,7 @@ unsigned int NXAllocUnpack(Display *dpy, unsigned int resource)
       {
         _NXUnpackResources[resource] = 1;
 
-        #ifdef TEST
+        #ifdef TEST_UNPACK
         fprintf(stderr, "******NXAllocUnpack: Reserved resource [%u].\n",
                     resource);
         #endif
@@ -1564,7 +1580,7 @@ unsigned int NXAllocUnpack(Display *dpy, unsigned int resource)
       }
     }
 
-    #ifdef TEST
+    #ifdef TEST_UNPACK
     fprintf(stderr, "******NXAllocUnpack: WARNING! Resource limit exausted.\n");
     #endif
 
@@ -1572,7 +1588,7 @@ unsigned int NXAllocUnpack(Display *dpy, unsigned int resource)
   }
   else if (resource >= 0 && resource < NXNumberOfResources)
   {
-    #ifdef TEST
+    #ifdef TEST_UNPACK
 
     if (_NXUnpackResources[resource] == 0)
     {
@@ -1634,7 +1650,7 @@ int NXSetUnpackGeometry(Display *dpy, unsigned int resource, Visual *visual)
     return -1;
   }
 
-  #ifdef TEST
+  #ifdef TEST_UNPACK
   fprintf(stderr, "******NXSetUnpackGeometry: Resource [%u] Depth/Bpp [1/%d][4/%d][8/%d]"
               "[16/%d][24/%d][32/%d].\n", resource, req -> depth1Bpp, req -> depth4Bpp,
                   req -> depth8Bpp, req -> depth16Bpp, req -> depth24Bpp, req -> depth32Bpp);
@@ -1677,7 +1693,7 @@ int NXSetUnpackColormap(Display *dpy, unsigned int resource, unsigned int method
 
   req -> length += (dst_data_length >> 2);
 
-  #ifdef TEST
+  #ifdef TEST_UNPACK
   fprintf(stderr, "******NXSetUnpackColormap: Resource [%u] data size [%u] destination "
               "data size [%u].\n", resource, data_length, dst_data_length);
   #endif
@@ -1740,7 +1756,7 @@ int NXSetUnpackAlpha(Display *dpy, unsigned int resource, unsigned int method,
 
   req -> length += (dst_data_length >> 2);
 
-  #ifdef TEST
+  #ifdef TEST_UNPACK
   fprintf(stderr, "******NXSetUnpackAlpha: Resource [%u] data size [%u] destination data size [%u].\n",
               resource, data_length, dst_data_length);
   #endif
@@ -1817,7 +1833,7 @@ int NXSetUnpackColormapCompat(Display *dpy, unsigned int resource,
 
   req -> length += (dst_data_length >> 2);
 
-  #ifdef TEST
+  #ifdef TEST_UNPACK
   fprintf(stderr, "******NXSetUnpackColormapCompat: Resource [%u] number of entries [%u] "
               "destination data size [%u].\n", resource, entries, dst_data_length);
   #endif
@@ -1906,7 +1922,7 @@ int NXSetUnpackAlphaCompat(Display *dpy, unsigned int resource,
 
   req -> length += (dst_data_length >> 2);
 
-  #ifdef TEST
+  #ifdef TEST_UNPACK
   fprintf(stderr, "******NXSetUnpackAlphaCompat: Resource [%u] number of entries [%u] "
               "destination data size [%u].\n", resource, entries, dst_data_length);
   #endif
@@ -1986,7 +2002,7 @@ int NXFreeUnpack(Display *dpy, unsigned int resource)
 
     GetReq(NXFreeUnpack, req);
 
-    #ifdef TEST
+    #ifdef TEST_UNPACK
     fprintf(stderr, "******NXFreeUnpack: Sending message opcode [%d] with resource [%u].\n",
                 X_NXFreeUnpack, resource);
     #endif
@@ -1997,14 +2013,14 @@ int NXFreeUnpack(Display *dpy, unsigned int resource)
 
     SyncHandle();
 
-    #ifdef TEST
+    #ifdef TEST_UNPACK
     fprintf(stderr, "******NXFreeUnpack: Making the resource [%u] newly available.\n",
                 resource);
     #endif
 
     _NXUnpackResources[resource] = 0;
   }
-  #ifdef TEST
+  #ifdef TEST_UNPACK
   else
   {
     fprintf(stderr, "******NXFreeUnpack: Nothing to do for resource [%u].\n",
@@ -2056,7 +2072,7 @@ int NXDestroyPackedImage(NXPackedImage *image)
 
 int NXCleanImage(XImage *image)
 {
-  #ifdef TEST
+  #ifdef TEST_IMAGE
   fprintf(stderr, "******NXCleanImage: Cleaning image with format [%d] depth [%d] "
               "bits per pixel [%d].\n", image -> format, image -> depth,
                   image -> bits_per_pixel);
@@ -2091,7 +2107,7 @@ NXPackedImage *NXPackImage(Display *dpy, XImage *src_image, unsigned int method)
   unsigned int dst_bits_per_pixel;
   unsigned int dst_packed_bits_per_pixel;
 
-  #ifdef TEST
+  #ifdef TEST_IMAGE
   fprintf(stderr, "******NXPackImage: Going to pack a new image with method [%d].\n",
               method);
   #endif
@@ -2143,7 +2159,7 @@ NXPackedImage *NXPackImage(Display *dpy, XImage *src_image, unsigned int method)
 
   *dst_image = *src_image;
 
-  #ifdef TEST
+  #ifdef TEST_IMAGE
   fprintf(stderr, "******NXPackImage: Source width [%d], bytes per line [%d] with depth [%d].\n",
               src_image -> width, src_image -> bytes_per_line, src_image -> depth);
   #endif
@@ -2174,7 +2190,7 @@ NXPackedImage *NXPackImage(Display *dpy, XImage *src_image, unsigned int method)
   dst_bits_per_pixel = dst_image -> bits_per_pixel;
   dst_packed_bits_per_pixel = MethodBitsPerPixel(method);
 
-  #ifdef TEST
+  #ifdef TEST_IMAGE
   fprintf(stderr, "******NXPackImage: Destination depth [%d], bits per pixel [%d], packed bits per pixel [%d].\n",
              dst_image -> depth, dst_bits_per_pixel, dst_packed_bits_per_pixel);
   #endif
@@ -2221,7 +2237,7 @@ NXPackedImage *NXPackImage(Display *dpy, XImage *src_image, unsigned int method)
    * be able to handle ovelapping areas.
    */
 
-  #ifdef TEST
+  #ifdef TEST_IMAGE
   fprintf(stderr, "******NXPackImage: Plain bits per pixel [%d], data size [%d].\n",
               dst_bits_per_pixel, dst_data_size);
   #endif
@@ -2229,7 +2245,7 @@ NXPackedImage *NXPackImage(Display *dpy, XImage *src_image, unsigned int method)
   dst_packed_data_size = dst_data_size * dst_packed_bits_per_pixel /
                               dst_bits_per_pixel;
 
-  #ifdef TEST
+  #ifdef TEST_IMAGE
   fprintf(stderr, "******NXPackImage: Packed bits per pixel [%d], data size [%d].\n",
               dst_packed_bits_per_pixel, dst_packed_data_size);
   #endif
@@ -2278,7 +2294,7 @@ XImage *NXInPlacePackImage(Display *dpy, XImage *src_image, unsigned int method)
   unsigned int dst_bits_per_pixel;
   unsigned int dst_packed_bits_per_pixel;
 
-  #ifdef TEST
+  #ifdef TEST_IMAGE
   fprintf(stderr, "******NXInPlacePackImage: Going to pack a new image with method [%d].\n",
               method);
   #endif
@@ -2329,7 +2345,7 @@ XImage *NXInPlacePackImage(Display *dpy, XImage *src_image, unsigned int method)
 
   *dst_image = *src_image;
 
-  #ifdef TEST
+  #ifdef TEST_IMAGE
   fprintf(stderr, "******NXInPlacePackImage: Source width [%d], bytes per line [%d] with depth [%d].\n",
               src_image -> width, src_image -> bytes_per_line, src_image -> depth);
   #endif
@@ -2347,7 +2363,7 @@ XImage *NXInPlacePackImage(Display *dpy, XImage *src_image, unsigned int method)
   dst_bits_per_pixel = dst_image -> bits_per_pixel;
   dst_packed_bits_per_pixel = MethodBitsPerPixel(method);
 
-  #ifdef TEST
+  #ifdef TEST_IMAGE
   fprintf(stderr, "******NXInPlacePackImage: Destination depth [%d], bits per pixel [%d], packed bits per pixel [%d].\n",
               dst_image -> depth, dst_bits_per_pixel, dst_packed_bits_per_pixel);
   #endif
@@ -2355,7 +2371,7 @@ XImage *NXInPlacePackImage(Display *dpy, XImage *src_image, unsigned int method)
   if (dst_packed_bits_per_pixel > dst_bits_per_pixel ||
           ShouldMaskImage(src_image, mask) == 0)
   {
-    #ifdef TEST
+    #ifdef TEST_IMAGE
     fprintf(stderr, "******NXInPlacePackImage: Just clean image packed_bits_per_pixel[%d], bits_per_pixel[%d].\n",
                 dst_packed_bits_per_pixel, dst_bits_per_pixel);
     #endif
@@ -2390,7 +2406,7 @@ XImage *NXInPlacePackImage(Display *dpy, XImage *src_image, unsigned int method)
    * be able to handle ovelapping areas.
    */
 
-  #ifdef TEST
+  #ifdef TEST_IMAGE
   fprintf(stderr, "******NXInPlacePackImage: Plain bits per pixel [%d], data size [%d].\n",
              dst_bits_per_pixel, dst_data_size);
   #endif
@@ -2398,7 +2414,7 @@ XImage *NXInPlacePackImage(Display *dpy, XImage *src_image, unsigned int method)
   dst_packed_data_size = dst_data_size * dst_packed_bits_per_pixel /
     dst_bits_per_pixel;
 
-  #ifdef TEST
+  #ifdef TEST_IMAGE
   fprintf(stderr, "******NXInPlacePackImage: Packed bits per pixel [%d], data size [%d].\n",
              dst_packed_bits_per_pixel, dst_packed_data_size);
   #endif
@@ -2433,7 +2449,7 @@ int NXPutPackedImage(Display *dpy, unsigned int resource, Drawable drawable,
   req -> drawable = drawable;
   req -> gc = ((GC) gc) -> gid;
 
-  #ifdef TEST
+  #ifdef TEST_IMAGE
   fprintf(stderr, "******NXPutPackedImage: Image resource [%d] drawable [%d] gc [%d].\n",
               req -> resource, (int) req -> drawable, (int) req -> gc);
   #endif
@@ -2474,7 +2490,7 @@ int NXPutPackedImage(Display *dpy, unsigned int resource, Drawable drawable,
 
   req -> method = method;
 
-  #ifdef TEST
+  #ifdef TEST_IMAGE
   fprintf(stderr, "******NXPutPackedImage: Source image depth [%d] destination depth [%d] "
               "method [%d].\n", req -> srcDepth, req -> dstDepth, req -> method);
   #endif
@@ -2508,7 +2524,7 @@ int NXPutPackedImage(Display *dpy, unsigned int resource, Drawable drawable,
 
   dst_data_length = ROUNDUP(src_data_length, 4);
 
-  #ifdef TEST
+  #ifdef TEST_IMAGE
   fprintf(stderr, "******NXPutPackedImage: Source data length [%d] request data length [%d].\n",
               src_data_length, dst_data_length);
   #endif
@@ -2921,7 +2937,7 @@ void NXMaskImage(XImage *image, unsigned int method)
     {
       maskMethod = MASK_8_COLORS;
 
-      #ifdef DEBUG
+      #ifdef DEBUG_IMAGE
       fprintf(stderr, "******NXMaskImage: Method is MASK_8_COLORS\n");
       #endif
 
@@ -2932,7 +2948,7 @@ void NXMaskImage(XImage *image, unsigned int method)
     {
       maskMethod = MASK_64_COLORS;
 
-      #ifdef DEBUG
+      #ifdef DEBUG_IMAGE
       fprintf(stderr, "******NXMaskImage: Method is MASK_64K_COLORS\n");
       #endif
 
@@ -2943,7 +2959,7 @@ void NXMaskImage(XImage *image, unsigned int method)
     {
       maskMethod = MASK_256_COLORS;
 
-      #ifdef DEBUG
+      #ifdef DEBUG_IMAGE
       fprintf(stderr, "******NXMaskImage: Method is MASK_256_COLORS\n");
       #endif
 
@@ -2954,7 +2970,7 @@ void NXMaskImage(XImage *image, unsigned int method)
     {
       maskMethod = MASK_512_COLORS;
 
-      #ifdef DEBUG
+      #ifdef DEBUG_IMAGE
       fprintf(stderr, "******NXMaskImage: Method is MASK_512K_COLORS\n");
       #endif
 
@@ -2965,7 +2981,7 @@ void NXMaskImage(XImage *image, unsigned int method)
     {
       maskMethod = MASK_4K_COLORS;
 
-      #ifdef DEBUG
+      #ifdef DEBUG_IMAGE
       fprintf(stderr, "******NXMaskImage: Method is MASK_4K_COLORS\n");
       #endif
 
@@ -2976,7 +2992,7 @@ void NXMaskImage(XImage *image, unsigned int method)
     {
       maskMethod = MASK_32K_COLORS;
 
-      #ifdef DEBUG
+      #ifdef DEBUG_IMAGE
       fprintf(stderr, "******NXMaskImage: Method is MASK_32K_COLORS\n");
       #endif
 
@@ -2987,7 +3003,7 @@ void NXMaskImage(XImage *image, unsigned int method)
     {
       maskMethod = MASK_64K_COLORS;
 
-      #ifdef DEBUG
+      #ifdef DEBUG_IMAGE
       fprintf(stderr, "******NXMaskImage: Method is MASK_64K_COLORS\n");
       #endif
 
@@ -2998,7 +3014,7 @@ void NXMaskImage(XImage *image, unsigned int method)
     {
       maskMethod = MASK_256K_COLORS;
 
-      #ifdef DEBUG
+      #ifdef DEBUG_IMAGE
       fprintf(stderr, "******NXMaskImage: Method is MASK_256K_COLORS\n");
       #endif
 
@@ -3009,7 +3025,7 @@ void NXMaskImage(XImage *image, unsigned int method)
     {
       maskMethod = MASK_2M_COLORS;
 
-      #ifdef DEBUG
+      #ifdef DEBUG_IMAGE
       fprintf(stderr, "******NXMaskImage: Method is MASK_2M_COLORS\n");
       #endif
 
@@ -3020,7 +3036,7 @@ void NXMaskImage(XImage *image, unsigned int method)
     {
       maskMethod = MASK_16M_COLORS;
 
-      #ifdef DEBUG
+      #ifdef DEBUG_IMAGE
       fprintf(stderr, "******NXMaskImage: Method is MASK_16M_COLORS\n");
       #endif
 
@@ -3037,7 +3053,7 @@ void NXMaskImage(XImage *image, unsigned int method)
     }
   }
 
-  #ifdef TEST
+  #ifdef TEST_IMAGE
   fprintf(stderr, "******NXMaskImage: packMethod[%d] => maskMethod[%d]\n",
               method, maskMethod);
   #endif
@@ -3080,7 +3096,7 @@ void NXMaskImage(XImage *image, unsigned int method)
 
   if (ShouldMaskImage(image, mask) == 0)
   {
-    #ifdef TEST
+    #ifdef TEST_IMAGE
     fprintf(stderr, "******NXMaskImage: the image will not be masked\n");
     #endif
   }
@@ -3103,7 +3119,7 @@ void NXInitCache(Display *dpy, int entries)
 {
   if (NXImageCache != NULL && NXImageCacheSize == entries)
   {
-    #ifdef DEBUG
+    #ifdef DEBUG_IMAGE
     fprintf(stderr, "******NXInitCache: Nothing to do with image cache at [%p] and [%d] entries.\n",
                 NXImageCache,  NXImageCacheSize);
     #endif
@@ -3111,7 +3127,7 @@ void NXInitCache(Display *dpy, int entries)
     return;
   }
 
-  #ifdef DEBUG
+  #ifdef DEBUG_IMAGE
   fprintf(stderr, "******NXInitCache: Initializing the cache with [%d] entries.\n",
               entries);
   #endif
@@ -3130,7 +3146,7 @@ void NXInitCache(Display *dpy, int entries)
 
       NXImageCacheSize = entries;
 
-      #ifdef DEBUG
+      #ifdef DEBUG_IMAGE
       fprintf(stderr, "******NXInitCache: Image cache initialized with [%d] entries.\n", entries);
       #endif
     }
@@ -3143,7 +3159,7 @@ void _NXCacheDump(const char *label)
 {
   char s[MD5_LENGTH * 2 + 1];
 
-  #ifdef DEBUG
+  #ifdef DEBUG_IMAGE
   fprintf(stderr, "%s: Dumping the content of image cache:\n", label);
   #endif
 
@@ -3159,7 +3175,7 @@ void _NXCacheDump(const char *label)
       sprintf(s + (j * 2), "%02X", ((unsigned char *) NXImageCache[i].md5)[j]);
     }
 
-    #ifdef DEBUG
+    #ifdef DEBUG_IMAGE
     fprintf(stderr, "%s: [%d][%s].\n", label, i, s);
     #endif
   }
@@ -3221,7 +3237,7 @@ XImage *NXCacheFindImage(NXPackedImage *src_image, unsigned int *method, unsigne
 
         NXImageCacheHits++;
 
-        #ifdef DEBUG
+        #ifdef DEBUG_IMAGE
         fprintf(stderr, "******NXCacheFindImage: Found at position [%d] with hits [%d] and [%d] packs.\n",
                     i, NXImageCacheHits, NXImageCacheOps);
         #endif
@@ -3236,7 +3252,7 @@ XImage *NXCacheFindImage(NXPackedImage *src_image, unsigned int *method, unsigne
 
         if (i > 16)
         {
-          #ifdef DEBUG
+          #ifdef DEBUG_IMAGE
           fprintf(stderr, "******NXCacheFindImage: Moving the image at the head of the list.\n");
           #endif
 
@@ -3297,7 +3313,7 @@ int NXCacheAddImage(NXPackedImage *image, unsigned int method, unsigned char *md
 
   if (NXImageCacheOps >= NXImageCacheSize)
   {
-    #ifdef DEBUG
+    #ifdef DEBUG_IMAGE
     fprintf(stderr, "******NXCacheAddImage: Freeing up the oldest entry.\n");
     #endif
 
@@ -3315,7 +3331,7 @@ int NXCacheAddImage(NXPackedImage *image, unsigned int method, unsigned char *md
 
   NXImageCacheOps++;
 
-  #ifdef DEBUG
+  #ifdef DEBUG_IMAGE
   fprintf(stderr, "******NXCacheAddImage: Going to add new image with data size [%d].\n",
               image -> xoffset);
   #endif
@@ -3341,14 +3357,14 @@ void NXFreeCache(Display *dpy)
 {
   if (NXImageCache == NULL)
   {
-    #ifdef DEBUG
+    #ifdef DEBUG_IMAGE
     fprintf(stderr, "******NXFreeCache: Nothing to do with a null image cache.\n");
     #endif
 
     return;
   }
 
-  #ifdef DEBUG
+  #ifdef DEBUG_IMAGE
   fprintf(stderr, "******NXFreeCache: Freeing the cache with [%d] entries.\n",
               NXImageCacheSize);
   #endif
@@ -3412,7 +3428,7 @@ static Bool _NXCollectImageHandler(Display *dpy, xReply *rep, char *buf,
   if ((rep -> generic.sequenceNumber % 65536) !=
           ((CARD16)(state -> sequence) % 65536))
   {
-    #ifdef TEST
+    #ifdef TEST_IMAGE
     fprintf(stderr, "******_NXCollectImageHandler: Unmatched sequence [%d] for opcode [%d] "
                 "with length [%d].\n", rep -> generic.sequenceNumber, rep -> generic.type,
                     (int) rep -> generic.length << 2);
@@ -3421,7 +3437,7 @@ static Bool _NXCollectImageHandler(Display *dpy, xReply *rep, char *buf,
     return False;
   }
 
-  #ifdef TEST
+  #ifdef TEST_IMAGE
   fprintf(stderr, "******_NXCollectImageHandler: Going to handle asynchronous GetImage reply.\n");
   #endif
 
@@ -3438,7 +3454,7 @@ static Bool _NXCollectImageHandler(Display *dpy, xReply *rep, char *buf,
 
   if (rep -> generic.type == X_Error)
   {
-    #ifdef TEST
+    #ifdef TEST_IMAGE
     fprintf(stderr, "******_NXCollectImageHandler: Error received from X server for resource [%d].\n",
                 state -> resource);
     #endif
@@ -3452,7 +3468,7 @@ static Bool _NXCollectImageHandler(Display *dpy, xReply *rep, char *buf,
     return False;
   }
 
-  #ifdef TEST
+  #ifdef TEST_IMAGE
   fprintf(stderr, "******_NXCollectImageHandler: Matched request with sequence [%ld].\n",
               state -> sequence);
   #endif
@@ -3477,7 +3493,7 @@ static Bool _NXCollectImageHandler(Display *dpy, xReply *rep, char *buf,
     return False;
   }
 
-  #ifdef TEST
+  #ifdef TEST_IMAGE
   fprintf(stderr, "******_NXCollectImageHandler: Going to get reply with size [%d].\n",
               (int) rep -> generic.length << 2);
   #endif
@@ -3502,7 +3518,7 @@ static Bool _NXCollectImageHandler(Display *dpy, xReply *rep, char *buf,
     return False;
   }
 
-  #ifdef TEST
+  #ifdef TEST_IMAGE
   fprintf(stderr, "******_NXCollectImageHandler: Got reply with depth [%d] visual [%d] size [%d].\n",
               async_rep -> depth, (int) async_rep -> visual, (int) async_rep -> length << 2);
   #endif
@@ -3531,7 +3547,7 @@ static Bool _NXCollectImageHandler(Display *dpy, xReply *rep, char *buf,
       return False;
     }
 
-    #ifdef TEST
+    #ifdef TEST_IMAGE
     fprintf(stderr, "******_NXCollectImageHandler: Going to get data with size [%d].\n",
                 async_size);
     #endif
@@ -3578,7 +3594,7 @@ static Bool _NXCollectImageHandler(Display *dpy, xReply *rep, char *buf,
       return True;
     }
 
-    #ifdef TEST
+    #ifdef TEST_IMAGE
     fprintf(stderr, "******_NXCollectImageHandler: Successfully stored image data for resource [%d].\n",
                 state -> resource);
     #endif
@@ -3668,7 +3684,7 @@ int NXCollectImage(Display *dpy, unsigned int resource, Drawable drawable,
   req -> height    = height;
   req -> planeMask = plane_mask;
 
-  #ifdef TEST
+  #ifdef TEST_IMAGE
   fprintf(stderr, "******NXCollectImage: Sending message opcode [%d] sequence [%ld] for resource [%d].\n",
               X_GetImage, dpy -> request, resource);
 
@@ -3745,7 +3761,7 @@ int NXGetCollectedImage(Display *dpy, unsigned int resource, XImage **image)
 
   SAFE_free(state);
 
-  #ifdef TEST
+  #ifdef TEST_IMAGE
   fprintf(stderr, "******NXGetCollectedImage: Returning GetImage data for resource [%u].\n",
               resource);
   #endif
@@ -3794,7 +3810,7 @@ static Bool _NXCollectPropertyHandler(Display *dpy, xReply *rep, char *buf,
   if ((rep -> generic.sequenceNumber % 65536) !=
           ((CARD16)(state -> sequence) % 65536))
   {
-    #ifdef TEST
+    #ifdef TEST_PROPERTY
     fprintf(stderr, "******_NXCollectPropertyHandler: Unmatched sequence [%d] for opcode [%d] "
                 "with length [%d].\n", rep -> generic.sequenceNumber, rep -> generic.type,
                     (int) rep -> generic.length << 2);
@@ -3803,7 +3819,7 @@ static Bool _NXCollectPropertyHandler(Display *dpy, xReply *rep, char *buf,
     return False;
   }
 
-  #ifdef TEST
+  #ifdef TEST_PROPERTY
   fprintf(stderr, "******_NXCollectPropertyHandler: Going to handle asynchronous GetProperty reply.\n");
   #endif
 
@@ -3820,7 +3836,7 @@ static Bool _NXCollectPropertyHandler(Display *dpy, xReply *rep, char *buf,
 
   if (rep -> generic.type == X_Error)
   {
-    #ifdef TEST
+    #ifdef TEST_PROPERTY
     fprintf(stderr, "******_NXCollectPropertyHandler: Error received from X server for resource [%d].\n",
                 state -> resource);
     #endif
@@ -3834,7 +3850,7 @@ static Bool _NXCollectPropertyHandler(Display *dpy, xReply *rep, char *buf,
     return False;
   }
 
-  #ifdef TEST
+  #ifdef TEST_PROPERTY
   fprintf(stderr, "******_NXCollectPropertyHandler: Matched request with sequence [%ld].\n",
               state -> sequence);
   #endif
@@ -3859,7 +3875,7 @@ static Bool _NXCollectPropertyHandler(Display *dpy, xReply *rep, char *buf,
     return False;
   }
 
-  #ifdef TEST
+  #ifdef TEST_PROPERTY
   fprintf(stderr, "******_NXCollectPropertyHandler: Going to get reply with size [%d].\n",
               (int) rep -> generic.length << 2);
   #endif
@@ -3884,7 +3900,7 @@ static Bool _NXCollectPropertyHandler(Display *dpy, xReply *rep, char *buf,
     return False;
   }
 
-  #ifdef TEST
+  #ifdef TEST_PROPERTY
   fprintf(stderr, "******_NXCollectPropertyHandler: Got reply with format [%d] type [%d] size [%d].\n",
               async_rep -> format, (int) async_rep -> propertyType, (int) async_rep -> length << 2);
 
@@ -3921,7 +3937,7 @@ static Bool _NXCollectPropertyHandler(Display *dpy, xReply *rep, char *buf,
       return False;
     }
 
-    #ifdef TEST
+    #ifdef TEST_PROPERTY
     fprintf(stderr, "******_NXCollectPropertyHandler: Going to get data with size [%d].\n",
                 async_size);
     #endif
@@ -3935,12 +3951,12 @@ static Bool _NXCollectPropertyHandler(Display *dpy, xReply *rep, char *buf,
 
     state -> data = async_data;
 
-    #ifdef TEST
+    #ifdef TEST_PROPERTY
     fprintf(stderr, "******_NXCollectPropertyHandler: Successfully stored property data for resource [%d].\n",
                 state -> resource);
     #endif
   }
-  #ifdef TEST
+  #ifdef TEST_PROPERTY
   else
   {
     fprintf(stderr, "******_NXCollectPropertyHandler: WARNING! Null property data stored for resource [%d].\n",
@@ -4019,7 +4035,7 @@ int NXCollectProperty(Display *dpy, unsigned int resource, Window window, Atom p
   req -> longOffset = long_offset;
   req -> longLength = long_length;
 
-  #ifdef TEST
+  #ifdef TEST_PROPERTY
   fprintf(stderr, "******NXCollectProperty: Sending message opcode [%d] sequence [%ld] for resource [%d].\n",
               X_GetProperty, dpy -> request, resource);
 
@@ -4105,7 +4121,7 @@ int NXGetCollectedProperty(Display *dpy, unsigned int resource, Atom *actual_typ
 
   _NXCollectedProperties[resource] = NULL;
 
-  #ifdef TEST
+  #ifdef TEST_PROPERTY
   fprintf(stderr, "******NXGetCollectedProperty: Returning GetProperty data for resource [%u].\n",
               resource);
   #endif
@@ -4148,7 +4164,7 @@ static Bool _NXCollectGrabPointerHandler(Display *dpy, xReply *rep, char *buf,
   if ((rep -> generic.sequenceNumber % 65536) !=
           ((CARD16)(state -> sequence) % 65536))
   {
-    #ifdef TEST
+    #ifdef TEST_POINTER
     fprintf(stderr, "******_NXCollectGrabPointerHandler: Unmatched sequence [%d] for opcode [%d] "
                 "with length [%d].\n", rep -> generic.sequenceNumber, rep -> generic.type,
                     (int) rep -> generic.length << 2);
@@ -4157,7 +4173,7 @@ static Bool _NXCollectGrabPointerHandler(Display *dpy, xReply *rep, char *buf,
     return False;
   }
 
-  #ifdef TEST
+  #ifdef TEST_POINTER
   fprintf(stderr, "******_NXCollectGrabPointerHandler: Going to handle asynchronous GrabPointer reply.\n");
   #endif
 
@@ -4167,7 +4183,7 @@ static Bool _NXCollectGrabPointerHandler(Display *dpy, xReply *rep, char *buf,
 
   if (rep -> generic.type == X_Error)
   {
-    #ifdef TEST
+    #ifdef TEST_POINTER
     fprintf(stderr, "******_NXCollectGrabPointerHandler: Error received from X server for resource [%d].\n",
                 state -> resource);
     #endif
@@ -4181,7 +4197,7 @@ static Bool _NXCollectGrabPointerHandler(Display *dpy, xReply *rep, char *buf,
     return False;
   }
 
-  #ifdef TEST
+  #ifdef TEST_POINTER
   fprintf(stderr, "******_NXCollectGrabPointerHandler: Matched request with sequence [%ld].\n",
               state -> sequence);
   #endif
@@ -4206,7 +4222,7 @@ static Bool _NXCollectGrabPointerHandler(Display *dpy, xReply *rep, char *buf,
     return False;
   }
 
-  #ifdef TEST
+  #ifdef TEST_POINTER
   fprintf(stderr, "******_NXCollectGrabPointerHandler: Going to get reply with size [%d].\n",
               (int) rep -> generic.length << 2);
   #endif
@@ -4231,7 +4247,7 @@ static Bool _NXCollectGrabPointerHandler(Display *dpy, xReply *rep, char *buf,
     return False;
   }
 
-  #ifdef TEST
+  #ifdef TEST_POINTER
   fprintf(stderr, "******_NXCollectGrabPointerHandler: Got reply with status [%d] size [%d].\n",
               async_rep -> status, (int) async_rep -> length << 2);
   #endif
@@ -4311,7 +4327,7 @@ int NXCollectGrabPointer(Display *dpy, unsigned int resource, Window grab_window
   req -> cursor       = cursor;
   req -> time         = time;
 
-  #ifdef TEST
+  #ifdef TEST_POINTER
   fprintf(stderr, "******NXCollectGrabPointer: Sending message opcode [%d] sequence [%ld] "
               "for resource [%d].\n", X_GrabPointer, dpy -> request, resource);
   #endif
@@ -4379,7 +4395,7 @@ int NXGetCollectedGrabPointer(Display *dpy, unsigned int resource, int *status)
 
   _NXCollectedGrabPointers[resource] = NULL;
 
-  #ifdef TEST
+  #ifdef TEST_POINTER
   fprintf(stderr, "******NXGetCollectedGrabPointer: Returning GrabPointer data for resource [%u].\n",
               resource);
   #endif
@@ -4422,7 +4438,7 @@ static Bool _NXCollectInputFocusHandler(Display *dpy, xReply *rep, char *buf,
   if ((rep -> generic.sequenceNumber % 65536) !=
           ((CARD16)(state -> sequence) % 65536))
   {
-    #ifdef TEST
+    #ifdef TEST_INPUT
     fprintf(stderr, "******_NXCollectInputFocusHandler: Unmatched sequence [%d] for opcode [%d] "
                 "with length [%d].\n", rep -> generic.sequenceNumber, rep -> generic.type,
                     (int) rep -> generic.length << 2);
@@ -4431,7 +4447,7 @@ static Bool _NXCollectInputFocusHandler(Display *dpy, xReply *rep, char *buf,
     return False;
   }
 
-  #ifdef TEST
+  #ifdef TEST_INPUT
   fprintf(stderr, "******_NXCollectInputFocusHandler: Going to handle asynchronous GetInputFocus reply.\n");
   #endif
 
@@ -4441,7 +4457,7 @@ static Bool _NXCollectInputFocusHandler(Display *dpy, xReply *rep, char *buf,
 
   if (rep -> generic.type == X_Error)
   {
-    #ifdef TEST
+    #ifdef TEST_INPUT
     fprintf(stderr, "******_NXCollectInputFocusHandler: Error received from X server for resource [%d].\n",
                 state -> resource);
     #endif
@@ -4455,7 +4471,7 @@ static Bool _NXCollectInputFocusHandler(Display *dpy, xReply *rep, char *buf,
     return False;
   }
 
-  #ifdef TEST
+  #ifdef TEST_INPUT
   fprintf(stderr, "******_NXCollectInputFocusHandler: Matched request with sequence [%ld].\n",
               state -> sequence);
   #endif
@@ -4480,7 +4496,7 @@ static Bool _NXCollectInputFocusHandler(Display *dpy, xReply *rep, char *buf,
     return False;
   }
 
-  #ifdef TEST
+  #ifdef TEST_INPUT
   fprintf(stderr, "******_NXCollectInputFocusHandler: Going to get reply with size [%d].\n",
               (int) rep -> generic.length << 2);
   #endif
@@ -4505,7 +4521,7 @@ static Bool _NXCollectInputFocusHandler(Display *dpy, xReply *rep, char *buf,
     return False;
   }
 
-  #ifdef TEST
+  #ifdef TEST_INPUT
   fprintf(stderr, "******_NXCollectInputFocusHandler: Got reply with focus [%d] revert to [%d] "
               "size [%d].\n", (int) async_rep -> focus, (int) async_rep -> revertTo,
                   (int) async_rep -> length << 2);
@@ -4576,7 +4592,7 @@ int NXCollectInputFocus(Display *dpy, unsigned int resource)
 
   GetEmptyReq(GetInputFocus, req);
 
-  #ifdef TEST
+  #ifdef TEST_INPUT
   fprintf(stderr, "******NXCollectInputFocus: Sending message opcode [%d] sequence [%ld] for resource [%d].\n",
               X_GetInputFocus, dpy -> request, resource);
   #endif
@@ -4647,7 +4663,7 @@ int NXGetCollectedInputFocus(Display *dpy, unsigned int resource,
 
   _NXCollectedInputFocuses[resource] = NULL;
 
-  #ifdef TEST
+  #ifdef TEST_INPUT
   fprintf(stderr, "******NXGetCollectedInputFocus: Returning GetInputFocus data for resource [%u].\n",
               resource);
   #endif
