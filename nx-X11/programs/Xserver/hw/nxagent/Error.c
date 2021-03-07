@@ -136,105 +136,105 @@ static int nxagentPrintError(dpy, event, fp)
     XGetErrorDatabaseText(dpy, mtype, "XError", "X Error", mesg, BUFSIZ);
     (void) fprintf(fp, "%s:  %s\n  ", mesg, buffer);
     XGetErrorDatabaseText(dpy, mtype, "MajorCode", "Request Major code %d",
-	mesg, BUFSIZ);
+        mesg, BUFSIZ);
     (void) fprintf(fp, mesg, event->request_code);
     if (event->request_code < 128) {
-	snprintf(number, sizeof(number), "%d", event->request_code);
-	XGetErrorDatabaseText(dpy, "XRequest", number, "", buffer, BUFSIZ);
+        snprintf(number, sizeof(number), "%d", event->request_code);
+        XGetErrorDatabaseText(dpy, "XRequest", number, "", buffer, BUFSIZ);
     } else {
 #ifndef NXAGENT_SERVER
-	for (ext = dpy->ext_procs;
-	     ext && (ext->codes.major_opcode != event->request_code);
-	     ext = ext->next)
-	  ;
-	if (ext) {
-	    strncpy(buffer, ext->name, BUFSIZ);
-	    buffer[BUFSIZ - 1] = '\0';
+        for (ext = dpy->ext_procs;
+             ext && (ext->codes.major_opcode != event->request_code);
+             ext = ext->next)
+          ;
+        if (ext) {
+            strncpy(buffer, ext->name, BUFSIZ);
+            buffer[BUFSIZ - 1] = '\0';
         } else
 #endif
-	    buffer[0] = '\0';
+            buffer[0] = '\0';
     }
     (void) fprintf(fp, " (%s)\n", buffer);
     if (event->request_code >= 128) {
-	XGetErrorDatabaseText(dpy, mtype, "MinorCode", "Request Minor code %d",
-			      mesg, BUFSIZ);
-	fputs("  ", fp);
-	(void) fprintf(fp, mesg, event->minor_code);
+        XGetErrorDatabaseText(dpy, mtype, "MinorCode", "Request Minor code %d",
+                              mesg, BUFSIZ);
+        fputs("  ", fp);
+        (void) fprintf(fp, mesg, event->minor_code);
 #ifndef NXAGENT_SERVER
-	if (ext) {
-	    snprintf(mesg, sizeof(mesg), "%s.%d", ext->name, event->minor_code);
-	    XGetErrorDatabaseText(dpy, "XRequest", mesg, "", buffer, BUFSIZ);
-	    (void) fprintf(fp, " (%s)", buffer);
-	}
+        if (ext) {
+            snprintf(mesg, sizeof(mesg), "%s.%d", ext->name, event->minor_code);
+            XGetErrorDatabaseText(dpy, "XRequest", mesg, "", buffer, BUFSIZ);
+            (void) fprintf(fp, " (%s)", buffer);
+        }
 #endif
-	fputs("\n", fp);
+        fputs("\n", fp);
     }
     if (event->error_code >= 128) {
-	/* kludge, try to find the extension that caused it */
-	buffer[0] = '\0';
+        /* kludge, try to find the extension that caused it */
+        buffer[0] = '\0';
 #ifndef NXAGENT_SERVER
-	for (ext = dpy->ext_procs; ext; ext = ext->next) {
-	    if (ext->error_string)
-		(*ext->error_string)(dpy, event->error_code, &ext->codes,
-				     buffer, BUFSIZ);
-	    if (buffer[0]) {
-		bext = ext;
-		break;
-	    }
-	    if (ext->codes.first_error &&
-		ext->codes.first_error < (int)event->error_code &&
-		(!bext || ext->codes.first_error > bext->codes.first_error))
-		bext = ext;
-	}
-	if (bext)
-	    snprintf(buffer, sizeof(buffer), "%s.%d", bext->name,
-		    event->error_code - bext->codes.first_error);
-	else
+        for (ext = dpy->ext_procs; ext; ext = ext->next) {
+            if (ext->error_string)
+                (*ext->error_string)(dpy, event->error_code, &ext->codes,
+                                     buffer, BUFSIZ);
+            if (buffer[0]) {
+                bext = ext;
+                break;
+            }
+            if (ext->codes.first_error &&
+                ext->codes.first_error < (int)event->error_code &&
+                (!bext || ext->codes.first_error > bext->codes.first_error))
+                bext = ext;
+        }
+        if (bext)
+            snprintf(buffer, sizeof(buffer), "%s.%d", bext->name,
+                    event->error_code - bext->codes.first_error);
+        else
 #endif
-	    strcpy(buffer, "Value");
-	XGetErrorDatabaseText(dpy, mtype, buffer, "", mesg, BUFSIZ);
-	if (mesg[0]) {
-	    fputs("  ", fp);
-	    (void) fprintf(fp, mesg, event->resourceid);
-	    fputs("\n", fp);
-	}
-	/* let extensions try to print the values */
+            strcpy(buffer, "Value");
+        XGetErrorDatabaseText(dpy, mtype, buffer, "", mesg, BUFSIZ);
+        if (mesg[0]) {
+            fputs("  ", fp);
+            (void) fprintf(fp, mesg, event->resourceid);
+            fputs("\n", fp);
+        }
+        /* let extensions try to print the values */
 #ifndef NXAGENT_SERVER
-	for (ext = dpy->ext_procs; ext; ext = ext->next) {
-	    if (ext->error_values)
-		(*ext->error_values)(dpy, event, fp);
-	}
+        for (ext = dpy->ext_procs; ext; ext = ext->next) {
+            if (ext->error_values)
+                (*ext->error_values)(dpy, event, fp);
+        }
 #endif
     } else if ((event->error_code == BadWindow) ||
-	       (event->error_code == BadPixmap) ||
-	       (event->error_code == BadCursor) ||
-	       (event->error_code == BadFont) ||
-	       (event->error_code == BadDrawable) ||
-	       (event->error_code == BadColor) ||
-	       (event->error_code == BadGC) ||
-	       (event->error_code == BadIDChoice) ||
-	       (event->error_code == BadValue) ||
-	       (event->error_code == BadAtom)) {
-	if (event->error_code == BadValue)
-	    XGetErrorDatabaseText(dpy, mtype, "Value", "Value 0x%x",
-				  mesg, BUFSIZ);
-	else if (event->error_code == BadAtom)
-	    XGetErrorDatabaseText(dpy, mtype, "AtomID", "AtomID 0x%x",
-				  mesg, BUFSIZ);
-	else
-	    XGetErrorDatabaseText(dpy, mtype, "ResourceID", "ResourceID 0x%x",
-				  mesg, BUFSIZ);
-	fputs("  ", fp);
-	(void) fprintf(fp, mesg, event->resourceid);
-	fputs("\n", fp);
+               (event->error_code == BadPixmap) ||
+               (event->error_code == BadCursor) ||
+               (event->error_code == BadFont) ||
+               (event->error_code == BadDrawable) ||
+               (event->error_code == BadColor) ||
+               (event->error_code == BadGC) ||
+               (event->error_code == BadIDChoice) ||
+               (event->error_code == BadValue) ||
+               (event->error_code == BadAtom)) {
+        if (event->error_code == BadValue)
+            XGetErrorDatabaseText(dpy, mtype, "Value", "Value 0x%x",
+                                  mesg, BUFSIZ);
+        else if (event->error_code == BadAtom)
+            XGetErrorDatabaseText(dpy, mtype, "AtomID", "AtomID 0x%x",
+                                  mesg, BUFSIZ);
+        else
+            XGetErrorDatabaseText(dpy, mtype, "ResourceID", "ResourceID 0x%x",
+                                  mesg, BUFSIZ);
+        fputs("  ", fp);
+        (void) fprintf(fp, mesg, event->resourceid);
+        fputs("\n", fp);
     }
     XGetErrorDatabaseText(dpy, mtype, "ErrorSerial", "Error Serial #%d",
-			  mesg, BUFSIZ);
+                          mesg, BUFSIZ);
     fputs("  ", fp);
     (void) fprintf(fp, mesg, event->serial);
 #ifndef NXAGENT_SERVER
     XGetErrorDatabaseText(dpy, mtype, "CurrentSerial", "Current Serial #%d",
-			  mesg, BUFSIZ);
+                          mesg, BUFSIZ);
     fputs("\n  ", fp);
     (void) fprintf(fp, mesg, (unsigned long long)(X_DPY_GET_REQUEST(dpy)));
 #endif
