@@ -459,6 +459,9 @@ The nx-X11 system adds the following command line arguments:
 .B \-forcenx
 force use of NX protocol messages assuming communication through \fBnxproxy\fR
 .TP 8
+.B \-id \fIstring\fP
+The session id.
+.TP 8
 .B \-autograb
 enable autograb mode on \fBnxagent\fR startup. The autograb feature can be toggled via nxagent keystrokes
 .TP 8
@@ -740,6 +743,9 @@ enable/disable shared pixmaps support. Accepted values: \fI1\fR (enable, default
 type of connecting operating system (supported: \fIlinux\fR,
 \fIwindows\fR, \fIsolaris\fR and \fImacosx\fR)
 .TP 8
+.B clients=<string>
+filename where to log output of the nxagent's clients. This is ignored if no session id has been provided. It then points to stderr. Default: <sessiondir>/clients.
+.TP 8
 .B shadow=<string>
 define the display that should be shadowed
 .TP 8
@@ -748,6 +754,9 @@ unique identifier for the shadow session
 .TP 8
 .B shadowmode=<bool>
 full access (set to \fI1\fR) or viewing-only (set to \fI0\fR, default)
+.TP 8
+.B state=<string>
+filename where to store the state of the nxagent (for easier interoperation with software like x2go. Default: sessiondir/state.
 .TP 8
 .B defer=<int>
 defer image updates (enabled for all connection types except LAN),
