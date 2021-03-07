@@ -324,13 +324,11 @@ int _NXInternalInitResources(Display *dpy)
 
 int _NXInternalResetResources(Display *dpy)
 {
-  int i;
-
   #ifdef TEST
   fprintf(stderr, "******_NXInternalResetResources: Clearing all the internal structures.\n");
   #endif
 
-  for (i = 0; i < NXNumberOfResources; i++)
+  for (int i = 0; i < NXNumberOfResources; i++)
   {
     _NXSplitResources[i]  = 0;
     _NXUnpackResources[i] = 0;
@@ -913,10 +911,6 @@ Status NXGetUnpackParameters(Display *dpy, unsigned int *entries, unsigned char 
 
   register unsigned n;
 
-  #ifdef TEST
-  register unsigned i;
-  #endif
-
   if (*entries < NXNumberOfPackMethods)
   {
     #ifdef TEST
@@ -979,7 +973,7 @@ Status NXGetUnpackParameters(Display *dpy, unsigned int *entries, unsigned char 
 
   fprintf(stderr, "******NXGetUnpackParameters: Got reply with methods: ");
 
-  for (i = 0; i < n; i++)
+  for (unsigned int i = 0; i < n; i++)
   {
     if (supported_methods[i] != 0)
     {
@@ -1812,12 +1806,6 @@ int NXSetUnpackColormapCompat(Display *dpy, unsigned int resource,
 
   register int dst_data_length;
 
-  #ifdef DUMP
-
-  int i;
-
-  #endif
-
   LockDisplay(dpy);
 
   GetReq(NXSetUnpackColormapCompat, req);
@@ -1862,7 +1850,7 @@ int NXSetUnpackColormapCompat(Display *dpy, unsigned int resource,
 
     fprintf(stderr, "******NXSetUnpackColormapCompat: Dumping colormap entries:\n");
 
-    for (i = 0; i < entries; i++)
+    for (int i = 0; i < entries; i++)
     {
       fprintf(stderr, "******NXSetUnpackColormapCompat: [%d] -> [0x%x].\n",
                   i, *((int *) (dst_data + (i * 4))));
@@ -1906,12 +1894,6 @@ int NXSetUnpackAlphaCompat(Display *dpy, unsigned int resource,
   register char *dst_data;
 
   register unsigned int dst_data_length;
-
-  #ifdef DUMP
-
-  int i;
-
-  #endif
 
   LockDisplay(dpy);
 
@@ -1962,7 +1944,7 @@ int NXSetUnpackAlphaCompat(Display *dpy, unsigned int resource,
 
     fprintf(stderr, "******NXSetUnpackAlphaCompat: Dumping alpha channel data:\n");
 
-    for (i = 0; i < dst_data_length; i++)
+    for (int i = 0; i < dst_data_length; i++)
     {
       fprintf(stderr, "******NXSetUnpackAlphaCompat: [%d] -> [0x%02x].\n",
                   i, ((unsigned int) *(dst_data + i)) & 0xff);
@@ -2573,11 +2555,9 @@ int NXAllocColors(Display *dpy, Colormap colormap, unsigned int entries,
 
   Bool alloc_error = False;
 
-  register unsigned int i;
-
   LockDisplay(dpy);
 
-  for (i = 0; i < entries; i++)
+  for (unsigned int i = 0; i < entries; i++)
   {
     GetReq(AllocColor, req);
 
@@ -2588,7 +2568,7 @@ int NXAllocColors(Display *dpy, Colormap colormap, unsigned int entries,
     req -> blue  = screens_in_out[i].blue;
   }
 
-  for (i = 0; i < entries; i++)
+  for (unsigned int i = 0; i < entries; i++)
   {
     result = _XReply(dpy, (xReply *) &rep, 0, xTrue);
 
@@ -3163,21 +3143,18 @@ void _NXCacheDump(const char *label)
 {
   char s[MD5_LENGTH * 2 + 1];
 
-  int i;
-  int j;
-
   #ifdef DEBUG
   fprintf(stderr, "%s: Dumping the content of image cache:\n", label);
   #endif
 
-  for (i = 0; i < NXImageCacheSize; i++)
+  for (int i = 0; i < NXImageCacheSize; i++)
   {
     if (NXImageCache[i].image == NULL)
     {
       break;
     }
 
-    for (j = 0; j < MD5_LENGTH; j++)
+    for (int j = 0; j < MD5_LENGTH; j++)
     {
       sprintf(s + (j * 2), "%02X", ((unsigned char *) NXImageCache[i].md5)[j]);
     }
@@ -3362,8 +3339,6 @@ int NXCacheAddImage(NXPackedImage *image, unsigned int method, unsigned char *md
 
 void NXFreeCache(Display *dpy)
 {
-  int i;
-
   if (NXImageCache == NULL)
   {
     #ifdef DEBUG
@@ -3378,7 +3353,7 @@ void NXFreeCache(Display *dpy)
               NXImageCacheSize);
   #endif
 
-  for (i = 0; i < NXImageCacheSize; i++)
+  for (int i = 0; i < NXImageCacheSize; i++)
   {
     if (NXImageCache[i].image != NULL)
     {
@@ -3625,9 +3600,7 @@ static Bool _NXCollectImageHandler(Display *dpy, xReply *rep, char *buf,
 
 int NXGetCollectImageResource(Display *dpy)
 {
-  int i;
-
-  for (i = 0; i < NXNumberOfResources; i++)
+  for (int i = 0; i < NXNumberOfResources; i++)
   {
     if (_NXCollectedImages[i] == NULL)
     {
