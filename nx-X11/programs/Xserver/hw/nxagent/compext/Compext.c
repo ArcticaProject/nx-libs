@@ -454,6 +454,11 @@ int NXSetDisplayPolicy(Display *dpy, int policy)
   }
 }
 
+/*
+ * return codes:
+ * -1  something went wrong
+ * 1   success
+ */
 int NXSetDisplayBuffer(Display *dpy, int size)
 {
   /*
@@ -817,6 +822,11 @@ void _NXInternalLostSequenceFunction(Display *dpy, unsigned long newseq,
   #endif
 }
 
+/*
+ * return codes:
+ * 0  error receiving reply
+ * 1  success
+ */
 Status NXGetControlParameters(Display *dpy, unsigned int *link_type, unsigned int *local_major,
                                   unsigned int *local_minor, unsigned int *local_patch,
                                       unsigned int *remote_major, unsigned int *remote_minor,
@@ -919,6 +929,11 @@ Status NXGetControlParameters(Display *dpy, unsigned int *link_type, unsigned in
  * remote proxy?
  */
 
+/*
+ * return codes:
+ * 0  something went wrong
+ * 1  success
+ */
 Status NXGetUnpackParameters(Display *dpy, unsigned int *entries, unsigned char supported_methods[])
 {
   register xNXGetUnpackParametersReq *req;
@@ -1021,6 +1036,11 @@ Status NXGetUnpackParameters(Display *dpy, unsigned int *entries, unsigned char 
  * reserve the XID that will be used by the remote.
  */
 
+/*
+ * return codes:
+ * 0  something went wrong
+ * 1  success
+ */
 Status NXGetShmemParameters(Display *dpy, unsigned int *enable_client,
                                 unsigned int *enable_server, unsigned int *client_segment,
                                     unsigned int *server_segment, unsigned int *client_size,
@@ -1170,6 +1190,11 @@ Status NXGetShmemParameters(Display *dpy, unsigned int *enable_client,
  * advertise only the fonts that can be opened at both sides.
  */
 
+/*
+ * return codes:
+ * 0  something went wrong
+ * 1  success
+ */
 Status NXGetFontParameters(Display *dpy, unsigned int path_length, char path_data[])
 {
   _X_UNUSED register xNXGetFontParametersReq *req;
@@ -3627,6 +3652,12 @@ int NXGetCollectImageResource(Display *dpy)
   return -1;
 }
 
+/*
+ * return codes:
+ * 0          no data found for resource (currently unused)
+ * -1         Failed
+ * True (1)   Handler has been installed, will generate NXCollectImageNotify event when answer arrives
+ */
 int NXCollectImage(Display *dpy, unsigned int resource, Drawable drawable,
                        int src_x, int src_y, unsigned int width, unsigned int height,
                            unsigned long plane_mask, int format)
@@ -3984,6 +4015,12 @@ int NXGetCollectPropertyResource(Display *dpy)
   return -1;
 }
 
+/*
+ * return codes:
+ * 0      no data found for resource (currently unused)
+ * -1     Failed
+ * True   Handler has been installed, will generate NXCollectPropertyNotify event when answer arrives
+ */
 int NXCollectProperty(Display *dpy, unsigned int resource, Window window, Atom property,
                           long long_offset, long long_length, Bool delete, Atom req_type)
 {
@@ -4092,6 +4129,11 @@ int NXCollectProperty(Display *dpy, unsigned int resource, Window window, Atom p
   return True;
 }
 
+/*
+ * return codes:
+ * 0     not data available
+ * True  success
+ */
 int NXGetCollectedProperty(Display *dpy, unsigned int resource, Atom *actual_type_return,
                                int *actual_format_return, unsigned long *nitems_return,
                                    unsigned long *bytes_after_return, unsigned char **data)
@@ -4274,6 +4316,12 @@ int NXGetCollectGrabPointerResource(Display *dpy)
   return -1;
 }
 
+/*
+ * return codes:
+ * 0      no data found for resource
+ * -1     Failed
+ * True   Handler has been installed, will generate NXCollectGrabPointerNotify event when answer arrives
+ */
 int NXCollectGrabPointer(Display *dpy, unsigned int resource, Window grab_window, Bool owner_events,
                              unsigned int event_mask, int pointer_mode, int keyboard_mode,
                                  Window confine_to, Cursor cursor, Time time)
@@ -4373,6 +4421,11 @@ int NXCollectGrabPointer(Display *dpy, unsigned int resource, Window grab_window
   return True;
 }
 
+/*
+ * return codes:
+ * 0     not data available
+ * True  success
+ */
 int NXGetCollectedGrabPointer(Display *dpy, unsigned int resource, int *status)
 {
   register _NXCollectGrabPointerState *state;
@@ -4550,6 +4603,12 @@ int NXGetCollectInputFocusResource(Display *dpy)
   return -1;
 }
 
+/*
+ * return codes:
+ * 0          no data found for resource (currently unused)
+ * -1         Failed
+ * True (1)   Handler has been installed, will generate NXCollectInputFocusNotify event when answer arrives
+ */
 int NXCollectInputFocus(Display *dpy, unsigned int resource)
 {
   _X_UNUSED register xReq *req;
@@ -4639,6 +4698,11 @@ int NXCollectInputFocus(Display *dpy, unsigned int resource)
   return True;
 }
 
+/*
+ * return codes:
+ * 0     not data available
+ * True  success
+ */
 int NXGetCollectedInputFocus(Display *dpy, unsigned int resource,
                                  Window *focus_return, int *revert_to_return)
 {
