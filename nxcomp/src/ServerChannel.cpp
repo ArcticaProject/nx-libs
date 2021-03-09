@@ -6972,7 +6972,7 @@ int ServerChannel::handleShmemRequest(DecodeBuffer &decodeBuffer, unsigned char 
         // 0600 mask doesn't seem to work).
         //
 
-        #if defined(__CYGWIN32__) || defined(__APPLE__)
+        #if defined(__CYGWIN__) || defined(__CYGWIN32__) || defined(__APPLE__)
 
         int permissions = 0777;
 
@@ -7047,7 +7047,7 @@ int ServerChannel::handleShmemRequest(DecodeBuffer &decodeBuffer, unsigned char 
         }
         else
         {
-          #ifndef __CYGWIN32__
+          #if !(defined(__CYGWIN__) || defined(__CYGWIN32__))
 
           #ifdef WARNING
           *logofs << "handleShmemRequest: WARNING! Can't create the shared "

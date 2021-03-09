@@ -30,7 +30,7 @@
 #include <sys/types.h>
 #include <sys/utsname.h>
 
-#if defined(__CYGWIN32__) || defined(__APPLE__) || defined(__FreeBSD__) || defined(__sun)
+#if defined(__CYGWIN__) || defined(__CYGWIN32__) || defined(__APPLE__) || defined(__FreeBSD__) || defined(__sun)
 #include <netinet/in_systm.h>
 #endif
 
@@ -65,7 +65,7 @@
 // disabled when running on MacOS/X.
 //
 
-#ifdef __CYGWIN32__
+#if defined(__CYGWIN__) || defined(__CYGWIN32__)
 #define TIOCOUTQ  ((unsigned int) -1)
 #endif
 
@@ -101,7 +101,7 @@ int GetKernelStep()
     // in the relevant OS dependent functions.
     //
 
-    #if defined(__CYGWIN32__) || defined(__APPLE__)
+    #if defined(__CYGWIN__) || defined(__CYGWIN32__) || defined(__APPLE__)
 
     _kernelStep = 0;
 
@@ -183,7 +183,7 @@ int GetKernelStep()
       }
     }
 
-    #endif /* #if defined(__CYGWIN32__) || defined(__APPLE__) */
+    #endif /* #if defined(__CYGWIN__) || defined(__CYGWIN32__) || defined(__APPLE__) */
   }
 
   return _kernelStep;

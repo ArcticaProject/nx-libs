@@ -238,7 +238,7 @@ int Auth::getCookie()
 
   char command[DEFAULT_STRING_LIMIT];
 
-  #if defined(__CYGWIN32__)
+  #if defined(__CYGWIN__) || defined(__CYGWIN32__)
 
   snprintf(command, DEFAULT_STRING_LIMIT,
                "%s/bin/nxauth", control -> SystemPath);

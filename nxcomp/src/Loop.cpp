@@ -79,7 +79,7 @@ typedef int socklen_t;
 #include <sys/select.h>
 #endif
 
-#ifndef __CYGWIN32__
+#if !(defined(__CYGWIN__) || defined(__CYGWIN32__))
 #include <netinet/tcp.h>
 #endif
 
@@ -4702,7 +4702,7 @@ void CleanupStreams()
   // at the time the proxy is being shut down.
   //
 
-  #ifndef __CYGWIN32__
+  #if !(defined(__CYGWIN__) || defined(__CYGWIN32__))
 
   nxinfo << "Loop: Freeing up streams in process "
          << "with pid '" << getpid() << "'.\n"
@@ -4753,7 +4753,7 @@ void CleanupStreams()
     errofs = NULL;
   }
 
-  #endif /* #ifndef __CYGWIN32__ */
+  #endif /* #if !(defined(__CYGWIN__) || defined(__CYGWIN32__)) */
 
   //
   // Reset these as they can't be reset
@@ -5705,7 +5705,7 @@ void HandleSignal(int signal)
       break;
     }
 
-    #ifdef __CYGWIN32__
+    #if defined(__CYGWIN__) || defined(__CYGWIN32__)
 
     case 12:
     {
@@ -6753,7 +6753,7 @@ int ConnectToRemote(ChannelEndPoint &socketAddress)
               // on Windows.
               //
 
-              #ifdef __CYGWIN32__
+              #if defined(__CYGWIN__) || defined(__CYGWIN32__)
 
               KillProcess(lastDialog, "dialog", SIGKILL, 1);
 
@@ -9849,7 +9849,7 @@ char *GetClientPath()
       clientEnv = "/Applications/NX Client for OSX.app/Contents/MacOS/nxclient";
 
       #else
-      #  if defined(__CYGWIN32__)
+      #  if defined(__CYGWIN__) || defined(__CYGWIN32__)
 
       clientEnv = "C:\\Program Files\\NX Client for Windows\\nxclient";
 
@@ -13633,7 +13633,7 @@ int CheckSignal(int signal)
     }
     default:
     {
-      #ifdef __CYGWIN32__
+      #if defined(__CYGWIN__) || defined(__CYGWIN32__)
 
       //
       // This signal can be raised by the Cygwin
@@ -14968,7 +14968,7 @@ static void handleAlertInLoop()
         // on Windows.
         //
 
-        #ifdef __CYGWIN32__
+        #if defined(__CYGWIN__) || defined(__CYGWIN32__)
 
         KillProcess(lastDialog, "dialog", SIGKILL, 0);
 

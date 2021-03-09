@@ -53,7 +53,7 @@
 
 int Fork()
 {
-  #ifdef __CYGWIN32__
+  #if defined(__CYGWIN__) || defined(__CYGWIN32__)
 
   int limit   = RETRY_LIMIT;
   int timeout = RETRY_TIMEOUT;
