@@ -3450,6 +3450,13 @@ static Bool _NXCollectImageHandler(Display *dpy, xReply *rep, char *buf,
 
   state = (_NXCollectImageState *) data;
 
+  #ifdef DEBUG_IMAGE
+  fprintf(stderr, "******%s: sequence: received [%ld] expected [%ld]  16bit received [%d] expected [%d]\n",
+          __func__,
+          (long) rep -> generic.sequenceNumber, (long)state -> sequence,
+          rep -> generic.sequenceNumber % 65536, (int)(state -> sequence) % 65536);
+  #endif
+
   if ((rep -> generic.sequenceNumber % 65536) !=
           ((CARD16)(state -> sequence) % 65536))
   {
@@ -3838,6 +3845,13 @@ static Bool _NXCollectPropertyHandler(Display *dpy, xReply *rep, char *buf,
 
   state = (_NXCollectPropertyState *) data;
 
+  #ifdef DEBUG_PROPERTY
+  fprintf(stderr, "******%s: sequence: received [%ld] expected [%ld]  16bit received [%d] expected [%d]\n",
+          __func__,
+          (long) rep -> generic.sequenceNumber, (long)state -> sequence,
+          rep -> generic.sequenceNumber % 65536, (int)(state -> sequence) % 65536);
+  #endif
+
   if ((rep -> generic.sequenceNumber % 65536) !=
           ((CARD16)(state -> sequence) % 65536))
   {
@@ -4203,6 +4217,13 @@ static Bool _NXCollectGrabPointerHandler(Display *dpy, xReply *rep, char *buf,
 
   state = (_NXCollectGrabPointerState *) data;
 
+  #ifdef DEBUG_POINTER
+  fprintf(stderr, "******%s: sequence: received [%ld] expected [%ld]  16bit received [%d] expected [%d]\n",
+          __func__,
+          (long) rep -> generic.sequenceNumber, (long)state -> sequence,
+          rep -> generic.sequenceNumber % 65536, (int)(state -> sequence) % 65536);
+  #endif
+
   if ((rep -> generic.sequenceNumber % 65536) !=
           ((CARD16)(state -> sequence) % 65536))
   {
@@ -4487,6 +4508,13 @@ static Bool _NXCollectInputFocusHandler(Display *dpy, xReply *rep, char *buf,
   int async_size;
 
   state = (_NXCollectInputFocusState *) data;
+
+  #ifdef DEBUG_INPUT
+  fprintf(stderr, "******%s: sequence: received [%ld] expected [%ld]  16bit received [%d] expected [%d]\n",
+          __func__,
+          (long) rep -> generic.sequenceNumber, (long)state -> sequence,
+          rep -> generic.sequenceNumber % 65536, (int)(state -> sequence) % 65536);
+  #endif
 
   if ((rep -> generic.sequenceNumber % 65536) !=
           ((CARD16)(state -> sequence) % 65536))
