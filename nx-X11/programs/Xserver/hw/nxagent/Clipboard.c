@@ -1670,11 +1670,16 @@ Bool nxagentCollectPropertyEventFromXServer(int resource)
    * in the selection."
    * FIXME: this uses serverTransToAgentProperty which is shared between
    * all the selections. Could be a problem with simultaneous transfers.
+   * FIXME: NXGetCollectedProperty can return 0 and True. Some other
+   * functions in this field return False as well. Clean up that
+   * mess...
    */
-  if (result != 0 && ulReturnBytesLeft == 0)
+  if (result == True && ulReturnBytesLeft == 0)
   {
     #ifdef DEBUG
-    fprintf (stderr, "%s: Retrieved property data - deleting it for ICCCM conformity.\n", __func__);
+    fprintf (stderr, "%s: Retrieved property data - deleting property [%ld][%s] "
+             "for ICCCM conformity.\n", __func__, serverTransToAgentProperty,
+             NameForRemAtom(serverTransToAgentProperty));
     #endif
     XDeleteProperty(nxagentDisplay, serverWindow, serverTransToAgentProperty);
   }
