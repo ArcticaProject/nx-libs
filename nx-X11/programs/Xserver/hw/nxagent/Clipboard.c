@@ -436,7 +436,10 @@ void nxagentDumpClipboardStat(void)
   }
   fprintf(stderr, "\n");
 
-  fprintf(stderr, "  serverLastRequestedSelection           [% 4ld][%s]\n", serverLastRequestedSelection, NameForRemAtom(serverLastRequestedSelection));
+  if (serverLastRequestedSelection == -1)
+      fprintf(stderr, "  serverLastRequestedSelection           [-1](uninitialized)\n");
+  else
+      fprintf(stderr, "  serverLastRequestedSelection           [% 4ld][%s]\n", serverLastRequestedSelection, NameForRemAtom(serverLastRequestedSelection));
 
   fprintf(stderr, "Compile time settings\n");
 #ifdef PRINT_CLIPBOARD_CONTENT_ON_DEBUG
