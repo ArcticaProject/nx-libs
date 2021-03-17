@@ -433,6 +433,9 @@ ProcSendEvent(ClientPtr client)
 
     if (stuff -> event.u.u.type == SelectionNotify)
     {
+        #ifdef DEBUG
+        fprintf(stderr, "%s: sending SelectionNotify to ourselves"\n, __func__);
+        #endif
         if (nxagentSendNotificationToSelfViaXServer(&stuff->event) == 1)
             return Success;
     }
