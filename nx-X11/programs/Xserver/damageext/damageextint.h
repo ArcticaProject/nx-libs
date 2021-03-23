@@ -64,6 +64,7 @@ typedef struct _DamageExt {
     DamageReportLevel	level;
     ClientPtr		pClient;
     XID			id;
+    XID			drawable;
 } DamageExtRec, *DamageExtPtr;
 
 extern int	(*ProcDamageVector[/*XDamageNumberRequests*/])(ClientPtr);
