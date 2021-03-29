@@ -140,10 +140,10 @@ void nxagentRedirectDefaultWindows(void)
 
     /*
      * When trying to redirect only the top level window, and not the
-     * subwindows, we incur in a strange be- haviour. The top level is
-     * unmapped, mapped, unmap- ped and then reparented. This at first
+     * subwindows, we incur in a strange behaviour. The top level is
+     * unmapped, mapped, unmapped and then reparented. This at first
      * makes the agent think that the window manager is gone, then the
-     * agent window disappears. To make thinks even more weird, this
+     * agent window disappears. To make things even more weird, this
      * happens only at reconnection.
      */
  
