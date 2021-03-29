@@ -1998,16 +1998,16 @@ FIXME: In rootless mode the backing-store support is not functional yet.
 */
     if (nxagentOption(Rootless))
     {
-      enableBackingStore = 0;
+      enableBackingStore = FALSE;
     }
     else if (nxagentOption(BackingStore) == BackingStoreUndefined ||
                  nxagentOption(BackingStore) == BackingStoreForce)
     {
-      enableBackingStore = 1;
+      enableBackingStore = TRUE;
     }
     else if (nxagentOption(BackingStore) == BackingStoreNever)
     {
-      enableBackingStore = 0;
+      enableBackingStore = FALSE;
     }
 
     /*

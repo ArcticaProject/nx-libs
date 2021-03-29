@@ -1616,7 +1616,7 @@ N/A
     pScreen->ClearBackingStore = (RegionPtr (*)()) 0;
     pScreen->DrawGuarantee = (void (*)()) 0;
 
-    if (enableBackingStore == 1)
+    if (enableBackingStore)
     {
       #ifdef TEST
       fprintf(stderr, "nxagentOpenScreen: Going to initialize backing store.\n");
