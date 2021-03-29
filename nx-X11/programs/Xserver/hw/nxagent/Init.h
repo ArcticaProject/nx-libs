@@ -40,10 +40,10 @@ is" without express or implied warranty.
 #ifndef __Init_H__
 #define __Init_H__
 
-extern int nxagentDoFullGeneration;
+extern Bool nxagentDoFullGeneration;
 
 extern int nxagentBackingStore;
-extern int nxagentSaveUnder;
+extern Bool nxagentSaveUnder;
 
 #ifdef X2GO
 extern Bool nxagentX2go;

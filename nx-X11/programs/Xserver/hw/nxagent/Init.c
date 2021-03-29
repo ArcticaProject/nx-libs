@@ -156,7 +156,7 @@ FIXME: These, if not removed, should at least be moved to Display.h
        and Display.c.
 */
 int nxagentBackingStore;
-int nxagentSaveUnder;
+Bool nxagentSaveUnder;
 
 /*
  * This is true at startup and set to the value of
