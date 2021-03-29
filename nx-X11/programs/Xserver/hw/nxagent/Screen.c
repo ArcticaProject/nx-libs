@@ -1830,7 +1830,7 @@ N/A
         XClassHint hint;
 
 #ifdef X2GO
-        if(nxagentX2go)
+        if (nxagentX2go)
         {
           hint.res_name = strdup("X2GoAgent");
           hint.res_class = strdup("X2GoAgent");

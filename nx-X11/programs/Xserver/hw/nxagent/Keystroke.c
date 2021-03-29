@@ -35,7 +35,7 @@
 #include "Options.h"
 #include "Keyboard.h"
 #include "Drawable.h"
-#include "Init.h" /* extern int nxagentX2go */
+#include "Init.h" /* extern Bool nxagentX2go */
 #include "Utils.h"
 
 #include <unistd.h>

@@ -74,7 +74,7 @@ void nxagentShowSplashWindow(XlibWindow parentWindow)
   /*
    * Show splash window only when running as X2Go Agent
    */
-  if(!nxagentX2go)
+  if (!nxagentX2go)
     return;
 
   #ifdef TEST

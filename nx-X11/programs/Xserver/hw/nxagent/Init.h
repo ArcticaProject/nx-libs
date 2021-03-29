@@ -46,7 +46,7 @@ extern int nxagentBackingStore;
 extern int nxagentSaveUnder;
 
 #ifdef X2GO
-extern int nxagentX2go;
+extern Bool nxagentX2go;
 void checkX2goAgent(void);
 #endif
 

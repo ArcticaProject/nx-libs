@@ -1788,7 +1788,7 @@ N/A
     if (*nxagentWindowName == '\0')
     {
 #ifdef X2GO
-      if(nxagentX2go)
+      if (nxagentX2go)
       {
         snprintf(nxagentWindowName, NXAGENTWINDOWNAMELENGTH, "X2Go Agent");
       }
