@@ -123,7 +123,7 @@ extern void nxagentRenderCreateConicalGradient(PicturePtr pPicture,
                                                xRenderColor *colors);
 
 #ifdef NXAGENT_SERVER
-extern int nxagentAlphaEnabled;
+extern Bool nxagentAlphaEnabled;
 #endif
 
 /*

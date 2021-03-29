@@ -1884,11 +1884,11 @@ N/A
         fprintf(stderr, "nxagentPostProcessArgs: WARNING! Using backward compatible alpha encoding.\n");
         #endif
 
-        nxagentAlphaCompat = 1;
+        nxagentAlphaCompat = True;
       }
       else
       {
-        nxagentAlphaCompat = 0;
+        nxagentAlphaCompat = False;
       }
 
       nxagentRemoteMajor = remoteMajor;

@@ -61,8 +61,8 @@ extern int nxagentSplitThreshold;
  * can be sent in compressed form.
  */
 
-extern int nxagentAlphaEnabled;
-extern int nxagentAlphaCompat;
+extern Bool nxagentAlphaEnabled;
+extern Bool nxagentAlphaCompat;
 
 /*
  * Reset the visual and alpha cache

@@ -87,8 +87,8 @@ int nxagentSplitThreshold = -1;
  * Set if images can use the alpha channel.
  */
 
-int nxagentAlphaEnabled = 0;
-int nxagentAlphaCompat  = 0;
+Bool nxagentAlphaEnabled = False;
+Bool nxagentAlphaCompat = False;
 
 /*
  * Used to reformat image when connecting to displays having different
@@ -418,7 +418,7 @@ FIXME: Here the split trap is always set and so the caching of the
      * send the alpha data in compressed form.
      */
 
-    if (nxagentAlphaCompat == 0)
+    if (!nxagentAlphaCompat)
     {
       NXSetUnpackAlpha(nxagentDisplay, resource, PACK_NONE, size, data, size);
     }
