@@ -737,6 +737,14 @@ int ddxProcessArgument(int argc, char *argv[], int i)
     return 1;
   }
 
+  /* the composite extension is disabled by default so we provide a
+     way to enable it */
+  if (!strcmp(argv[i], "-composite"))
+  {
+    nxagentChangeOption(Composite, True);
+    return 1;
+  }
+
   if (!strcmp(argv[i], "-nodamage"))
   {
     nxagentChangeOption(UseDamage, False);
@@ -2106,7 +2114,8 @@ void ddxUseMsg(void)
   ErrorF("-sync                  synchronize with the real server\n");
 #ifdef RENDER
   ErrorF("-norender              disable the use of the render extension\n");
-  ErrorF("-nocomposite           disable the use of the composite extension\n");
+  ErrorF("-nocomposite           disable the use of the composite extension (default)\n");
+  ErrorF("-composite             enable the use of the composite extension\n");
 #endif
   ErrorF("-nopersistent          disable disconnection/reconnection to the X display on SIGHUP\n");
   ErrorF("-noshmem               disable use of shared memory extension\n");
