@@ -1015,25 +1015,13 @@ TCLIBDIR = TclLibDir
 #define ArCmdBase ar
 #endif
 #ifndef ArCmd
-#if HasLargeTmp || SystemV4
 #define ArCmd ArCmdBase cq
-#else
-#define ArCmd ArCmdBase clq
-#endif
 #endif
 #ifndef ArAddCmd
-#if HasLargeTmp || SystemV4
 #define ArAddCmd ArCmdBase ru
-#else
-#define ArAddCmd ArCmdBase rul
-#endif
 #endif
 #ifndef ArExtCmd
-#if HasLargeTmp || SystemV4
 #define ArExtCmd ArCmdBase x
-#else
-#define ArExtCmd ArCmdBase xl
-#endif
 #endif
 #ifndef BootstrapCFlags
 #define BootstrapCFlags /**/
