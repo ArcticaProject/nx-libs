@@ -2112,6 +2112,9 @@ void ddxUseMsg(void)
   ErrorF("-autodpi               detect real server's DPI and use that in the session\n");
   ErrorF("-display string        display name of the real server\n");
   ErrorF("-sync                  synchronize with the real server\n");
+  ErrorF("-nxrealwindowprop      set property NX_REAL_WINDOW for each X11 window inside nxagent\n");
+  ErrorF("-reportwids            report externally exposed X11 window IDs to the session log\n");
+  ErrorF("-reportprivatewids     report internal X11 window ID to the session log\n");
 #ifdef RENDER
   ErrorF("-norender              disable the use of the render extension\n");
   ErrorF("-nocomposite           disable the use of the composite extension (default)\n");
@@ -2129,6 +2132,7 @@ void ddxUseMsg(void)
   ErrorF("-irlimit               maximum image data rate to the encoder input in kB/s.\n");
   ErrorF("-tile WxH              maximum size of image tiles (minimum allowed: 32x32)\n");
   ErrorF("-keystrokefile file    file with keyboard shortcut definitions\n");
+  ErrorF("-options file|string   path to an options file or an option string (for testing/debugging)\n");
   ErrorF("-verbose               print more warning and error messages\n");
   ErrorF("-D                     enable desktop mode\n");
   ErrorF("-R                     enable rootless mode\n");
