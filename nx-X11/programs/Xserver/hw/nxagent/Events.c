@@ -4505,6 +4505,70 @@ int nxagentWaitEvents(Display *dpy, useconds_t msec)
   return 1;
 }
 
+void ForwardClientMessage(ClientPtr client, xSendEventReq *stuff)
+{
+    Atom netwmstate = MakeAtom("_NET_WM_STATE", strlen("_NET_WM_STATE"), False);
+    Atom wmchangestate = MakeAtom("WM_CHANGE_STATE", strlen("WM_CHANGE_STATE"), False);
+    WindowPtr pWin = (WindowPtr)SecurityLookupWindow(stuff->destination, client,
+                                                     DixReadAccess);
+
+    if (stuff->event.u.clientMessage.u.l.type == netwmstate || stuff->event.u.clientMessage.u.l.type == wmchangestate)
+    {
+        if (pWin->drawable.id == pWin->drawable.pScreen->root->drawable.id)
+        {
+            #ifdef DEBUG
+            fprintf(stderr, "%s: dest [0x%x] window [0x%x] clmsg.type [%d]->[%d]\n", __func__, stuff->destination, stuff->event.u.clientMessage.window, stuff->event.u.clientMessage.u.l.type, nxagentLocalToRemoteAtom(stuff->event.u.clientMessage.u.l.type));
+            #endif
+
+            XEvent X = {0};
+            X.xany.type = ClientMessage;
+
+            WindowPtr pWin2 = (WindowPtr)SecurityLookupWindow(stuff->event.u.clientMessage.window, client,
+                                                              DixReadAccess);
+            X.xclient.window = nxagentWindowPriv(pWin2)->window;
+            X.xclient.format = stuff->event.u.u.detail;
+            X.xclient.send_event = True;
+            X.xclient.serial = 0;
+
+            if (X.xclient.format == 32)
+            {
+                X.xclient.message_type = nxagentLocalToRemoteAtom(stuff->event.u.clientMessage.u.l.type);
+                X.xclient.data.l[0] = stuff->event.u.clientMessage.u.l.longs0;
+                X.xclient.data.l[1] = nxagentLocalToRemoteAtom(stuff->event.u.clientMessage.u.l.longs1);
+                X.xclient.data.l[2] = nxagentLocalToRemoteAtom(stuff->event.u.clientMessage.u.l.longs2);
+                X.xclient.data.l[3] = nxagentLocalToRemoteAtom(stuff->event.u.clientMessage.u.l.longs3);
+                X.xclient.data.l[4] = nxagentLocalToRemoteAtom(stuff->event.u.clientMessage.u.l.longs4);
+                //X.xclient.data.l[3] = stuff->event.u.clientMessage.u.l.longs3;
+                //X.xclient.data.l[4] = stuff->event.u.clientMessage.u.l.longs4;
+                #ifdef DEBUG
+                for (int i = 0; i < 5; i++)
+                {
+                    fprintf(stderr, "%s: data[%d] [%ld]\n", __func__, i, X.xclient.data.l[i]);
+                }
+                #endif
+            }
+            else
+                return; // ERROR!
+
+            #ifdef DEBUG
+            fprintf(stderr, "%s: window [0x%lx]\n", __func__, X.xclient.window);
+            fprintf(stderr, "%s: message_type [%ld]\n", __func__, X.xclient.message_type);
+            fprintf(stderr, "%s: format [%d]\n", __func__, X.xclient.format);
+            #endif
+
+            XlibWindow dest;
+            dest = DefaultRootWindow(nxagentDisplay);
+
+            Status stat = XSendEvent(nxagentDisplay, dest, stuff->propagate, stuff->eventMask, &X);
+            XFlush(nxagentDisplay);
+            #ifdef DEBUG
+            fprintf(stderr, "%s: send to window [0x%lx]\n", __func__, dest);
+            fprintf(stderr, "%s: return Status [%d]\n", __func__, stat);
+            #endif
+        }
+    }
+}
+
 #ifdef NX_DEBUG_INPUT
 
 void nxagentGuessDumpInputInfo(ClientPtr client, Atom property, char *data)

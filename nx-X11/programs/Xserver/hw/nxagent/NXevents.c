@@ -425,6 +425,12 @@ ProcSendEvent(ClientPtr client)
 
     REQUEST_SIZE_MATCH(xSendEventReq);
 
+    if (nxagentOption(Rootless) && stuff->event.u.u.type == ClientMessage)
+    {
+        ForwardClientMessage(client, stuff);
+        return Success;
+    }
+
     if (stuff -> event.u.u.type == SelectionNotify)
     {
 	if (nxagentSendNotify(&stuff->event) == 1)
