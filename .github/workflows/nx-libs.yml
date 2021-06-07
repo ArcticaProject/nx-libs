@@ -110,7 +110,7 @@ jobs:
               xorg-x11-font-utils libtirpc-devel xkeyboard-config
             # soft requirements
             dnf -y install \
-              quilt xorg-x11-xkb-utils-devel
+              quilt xkbcomp-devel
             ;;
           centos:8)
             # Enable powertools repository for imake
