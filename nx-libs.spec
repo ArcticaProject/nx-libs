@@ -41,7 +41,11 @@ BuildRequires:  imake
 BuildRequires:  xkbcomp-devel
 %endif
 %else
+%if 0%{?fedora} >= 34
+BuildRequires:  xkbcomp-devel
+%else
 BuildRequires:  xorg-x11-xkb-utils-devel
+%endif
 %endif
 
 # ideally we build with quilt (for mesa-quilt patch appliance script),
