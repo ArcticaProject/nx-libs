@@ -23,7 +23,7 @@ SYMBOLS_FILE="doc/libNX_X11/symbols/libNX_X11::symbols.txt"
 
 DOC_FILE="doc/libNX_X11/symbols/libNX_X11::symbol-usage_internally.txt"
 echo "Scanning for libNX_X11 symbols: in libNX_X11 internally: $DOC_FILE"
-cd nx-X11/lib/X11/
+cd nx-X11/lib/X11/ || exit
 grep -v -E "^#" "../../../$SYMBOLS_FILE" | while read -r symbol; do
 
 	echo
@@ -31,11 +31,11 @@ grep -v -E "^#" "../../../$SYMBOLS_FILE" | while read -r symbol; do
 	grep -n "$symbol" *.{c,h} 2>/dev/null
 
 done > "../../../$DOC_FILE"
-cd - 1>/dev/null
+cd - 1>/dev/null || exit
 
 DOC_FILE="doc/libNX_X11/symbols/libNX_X11::symbol-usage_nxagent.txt"
 echo "Scanning for libNX_X11 symbols: in hw/nxagent: $DOC_FILE"
-cd nx-X11/programs/Xserver/hw/nxagent/
+cd nx-X11/programs/Xserver/hw/nxagent/ || exit
 grep -v -E "^#" "../../../../../$SYMBOLS_FILE" | while read -r symbol; do
 
 	echo
@@ -43,11 +43,11 @@ grep -v -E "^#" "../../../../../$SYMBOLS_FILE" | while read -r symbol; do
 	grep -n "$symbol" *.{c,h} 2>/dev/null
 
 done > "../../../../../$DOC_FILE"
-cd - 1>/dev/null
+cd - 1>/dev/null || exit
 
 DOC_FILE="doc/libNX_X11/symbols/libNX_X11::symbol-usage_nxcompext.txt"
 echo "Scanning for libNX_X11 symbols: in hw/nxagent/compext: $DOC_FILE"
-cd nx-X11/programs/Xserver/hw/nxagent/compext/
+cd nx-X11/programs/Xserver/hw/nxagent/compext/ || exit
 grep -v -E "^#" "../../../../../../$SYMBOLS_FILE" | while read -r symbol; do
 
 	echo
@@ -55,7 +55,7 @@ grep -v -E "^#" "../../../../../../$SYMBOLS_FILE" | while read -r symbol; do
 	grep -n "$symbol" *.{c,h} 2>/dev/null
 
 done > "../../../../../../$DOC_FILE"
-cd - 1>/dev/null
+cd - 1>/dev/null || exit
 
 
 # nxcompext
@@ -64,7 +64,7 @@ SYMBOLS_FILE="doc/nxcompext/symbols/nxcompext::symbols.txt"
 
 DOC_FILE="doc/nxcompext/symbols/nxcompext::symbol-usage_internally.txt"
 echo "Scanning for nxcompext symbols: in hw/nxagent/compext internally: $DOC_FILE"
-cd nx-X11/programs/Xserver/hw/nxagent/compext/
+cd nx-X11/programs/Xserver/hw/nxagent/compext/ || exit
 grep -v -E "^#" "../../../../../../$SYMBOLS_FILE" | while read -r symbol; do
 
 	echo
@@ -72,11 +72,11 @@ grep -v -E "^#" "../../../../../../$SYMBOLS_FILE" | while read -r symbol; do
 	grep -n "$symbol" *.{c,h} 2>/dev/null
 
 done > "../../../../../../$DOC_FILE"
-cd - 1>/dev/null
+cd - 1>/dev/null || exit
 
 DOC_FILE="doc/nxcompext/symbols/nxcompext::symbol-usage_nxagent.txt"
 echo "Scanning for nxcompext symbols: in hw/nxagent: $DOC_FILE"
-cd nx-X11/programs/Xserver/hw/nxagent/
+cd nx-X11/programs/Xserver/hw/nxagent/ || exit
 grep -v -E "^#" "../../../../../$SYMBOLS_FILE" | while read -r symbol; do
 
 	echo
@@ -84,4 +84,4 @@ grep -v -E "^#" "../../../../../$SYMBOLS_FILE" | while read -r symbol; do
 	grep -n "$symbol" *.{c,h} 2>/dev/null
 
 done > "../../../../../$DOC_FILE"
-cd - 1>/dev/null
+cd - 1>/dev/null || exit

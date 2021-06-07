@@ -68,7 +68,7 @@ TARGETDIR="../.."
 MANIFEST="$(mktemp)"
 TEMP_DIR="$(mktemp -d)"
 
-trap "rm -f \"${MANIFEST}\"; rm -rf \"${TEMP_DIR}\"" 0
+trap 'rm -f "${MANIFEST}"; rm -rf "${TEMP_DIR}"' 0
 
 # create local copy of Git project at temp location
 git archive --format=tar "${CHECKOUT}" --prefix="${PROJECT}-${RELEASE}/" | ( cd "$TEMP_DIR"; tar xf - )
@@ -117,7 +117,7 @@ if [ "x$MODE" = "xfull" ]; then
     # nx-X11/extras/Mesa. Deal with the Mesa.patches symlink/folder accordingly
     cp -Lr "nx-X11/extras/Mesa" "nx-X11/extras/tmpMesa"
     cp -Lr "nx-X11/extras/Mesa.patches" "nx-X11/extras/tmpMesa.patches"
-    ls -d nx-X11/extras/* | grep -v "nx-X11/extras/tmpMesa*" | xargs rm -r
+    ls -d nx-X11/extras/* | grep -v "^nx-X11/extras/tmpMesa*" | xargs rm -r
     mv "nx-X11/extras/tmpMesa" "nx-X11/extras/Mesa"
     mv "nx-X11/extras/tmpMesa.patches" "nx-X11/extras/Mesa.patches"
 
