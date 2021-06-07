@@ -1,0 +1,186 @@
+name: nx-libs CI
+
+on:
+  push:
+    branches: [ 3.6.x ]
+  pull_request:
+    branches: [ 3.6.x ]
+
+jobs:
+  build:
+    name: Build on ${{ matrix.cfg.container }} - ${{ matrix.cfg.cc-version }}
+    runs-on: ubuntu-20.04
+    container: ${{ matrix.cfg.container }}
+    strategy:
+      fail-fast: false
+      matrix:
+        cfg:
+          - { container: 'ubuntu:16.04', cc-version: gcc }
+          - { container: 'ubuntu:16.04', cc-version: clang }
+          - { container: 'ubuntu:20.04', cc-version: gcc }
+          - { container: 'ubuntu:20.04', cc-version: clang }
+          - { container: 'debian:stable', cc-version: gcc }
+          - { container: 'debian:stable', cc-version: clang }
+          - { container: 'debian:sid', cc-version: gcc }
+          - { container: 'debian:sid', cc-version: clang }
+          - { container: 'centos:7', cc-version: gcc }
+          - { container: 'centos:7', cc-version: clang }
+          - { container: 'centos:8', cc-version: gcc }
+          - { container: 'centos:8', cc-version: clang }
+          - { container: 'fedora:latest', cc-version: gcc }
+          - { container: 'fedora:latest', cc-version: clang }
+
+    steps:
+    - name: Install compiler ${{ matrix.cfg.cc-version }}
+      shell: sh
+      env:
+        DEBIAN_FRONTEND: noninteractive
+      run: |
+        case "${{ matrix.cfg.container }}" in
+          ubuntu*|debian*)
+            cat /etc/debian_version
+            apt-get update -q -y
+            apt-get install -q -y ${{ matrix.cfg.cc-version }}
+            ${{ matrix.cfg.cc-version }} --version
+            case "${{ matrix.cfg.cc-version }}" in
+              gcc)
+                apt-get install -q -y g++
+                ;;
+              clang)
+                apt-get install -q -y build-essential
+            esac
+            ;;
+          fedora*)
+            cat /etc/fedora-release
+            dnf -y update
+            dnf -y install ${{ matrix.cfg.cc-version }}
+            ${{ matrix.cfg.cc-version }} --version
+            ;;
+          centos:8)
+            cat /etc/centos-release
+            rpm --import /etc/pki/rpm-gpg/RPM-GPG-KEY-centosofficial
+            dnf -y update
+            dnf -y install ${{ matrix.cfg.cc-version }}
+            ${{ matrix.cfg.cc-version }} --version
+            ;;
+          centos:7)
+            cat /etc/centos-release
+            rpm --import /etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-7
+            yum -y update
+            yum -y install ${{ matrix.cfg.cc-version }}
+            ${{ matrix.cfg.cc-version }} --version
+            ;;
+        esac
+
+    - name: Install nx-libs dependencies ${{ matrix.cfg.cc-version }}
+      shell: sh
+      env:
+        DEBIAN_FRONTEND: noninteractive
+      run: |
+        case "${{ matrix.cfg.container }}" in
+          ubuntu*|debian*)
+            # basic packages
+            apt-get install -q -y \
+              autoconf libtool make pkg-config
+            # imake deps
+            apt-get install -q -y \
+              libxkbfile-dev xfonts-utils xutils-dev
+            # X11 libraries deps
+            apt-get install -q -y \
+              libpixman-1-dev libjpeg-dev libxcomposite-dev libxdamage-dev \
+              libxml2-dev libxfont-dev libxinerama-dev libxpm-dev libxrandr-dev \
+              libxtst-dev x11proto-fonts-dev
+            # soft requirements
+            apt-get install -q -y \
+              quilt x11-xkb-utils
+            ;;
+          fedora*)
+            # basic packages
+            dnf -y install \
+              autoconf automake gcc-c++ libtool make imake pkgconfig which
+            # imake deps
+            dnf -y install \
+              xorg-x11-proto-devel zlib-devel
+            # X11 libraries deps
+            dnf -y install \
+              libjpeg-devel expat-devel libpng-devel libxml2-devel pixman-devel \
+              libX11-devel libXext-devel libXpm-devel libXfont2-devel \
+              libXdmcp-devel libXdamage-devel libXcomposite-devel \
+              libXrandr-devel libXfixes-devel libXtst-devel libXinerama-devel \
+              xorg-x11-font-utils libtirpc-devel xkeyboard-config
+            # soft requirements
+            dnf -y install \
+              quilt xorg-x11-xkb-utils-devel
+            ;;
+          centos:8)
+            # Enable powertools repository for imake
+            dnf -y install dnf-plugins-core epel-release
+            rpm --import /etc/pki/rpm-gpg/RPM-GPG-KEY-EPEL-8
+            dnf config-manager --set-enabled powertools
+            # basic packages
+            dnf -y install \
+              autoconf automake gcc-c++ libtool make imake pkgconfig which
+            # imake deps
+            dnf -y install \
+              xorg-x11-proto-devel zlib-devel
+            # X11 libraries deps
+            dnf -y install \
+              libjpeg-devel expat-devel libpng-devel libxml2-devel pixman-devel \
+              libX11-devel libXext-devel libXpm-devel libXfont2-devel \
+              libXdmcp-devel libXdamage-devel libXcomposite-devel \
+              libXrandr-devel libXfixes-devel libXtst-devel libXinerama-devel \
+              xorg-x11-font-utils libtirpc-devel xkeyboard-config
+            # soft requirements
+            dnf --enablerepo="epel" -y install \
+              quilt xorg-x11-xkb-utils-devel
+            ;;
+          centos:7)
+            # enable epel repository for quilt
+            yum -y install epel-release
+            rpm --import /etc/pki/rpm-gpg/RPM-GPG-KEY-EPEL-7
+            # basic packages
+            yum -y install \
+              autoconf automake gcc-c++ libtool make imake pkgconfig which
+            # imake deps
+            yum -y install \
+              xorg-x11-proto-devel zlib-devel
+            # X11 libraries deps
+            yum -y install \
+              libjpeg-devel expat-devel libpng-devel libxml2-devel pixman-devel \
+              libX11-devel libXext-devel libXpm-devel libXfont-devel \
+              libXdmcp-devel libXdamage-devel libXcomposite-devel \
+              libXrandr-devel libXfixes-devel libXtst-devel libXinerama-devel \
+              xorg-x11-font-utils libtirpc-devel xkeyboard-config
+            # soft requirements
+            yum -y --enablerepo=epel install \
+              quilt xorg-x11-xkb-utils-devel
+            ;;
+          esac
+
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Build nx-libs with ${{ matrix.cfg.cc-version }}
+      shell: sh
+      env:
+        DEBIAN_FRONTEND: noninteractive
+      run: |
+        case "${{ matrix.cfg.cc-version }}" in
+          gcc)
+            export CC=gcc
+            export CXX=g++
+            ;;
+          clang)
+            export CC=clang
+            export CXX=clang++
+            ;;
+        esac
+        case "${{ matrix.cfg.container }}" in
+          ubuntu*|debian*)
+            make
+            ;;
+          fedora*|centos*)
+            export IMAKE_DEFINES="-DUseTIRPC=YES"
+            make IMAKE_DEFINES="${IMAKE_DEFINES}"
+            ;;
+        esac

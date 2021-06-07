@@ -1,0 +1,81 @@
+name: nx-libs CI diff archs
+
+on:
+  push:
+    branches: [ 3.6.x ]
+  pull_request:
+    branches: [ 3.6.x ]
+
+jobs:
+  build:
+    runs-on: ubuntu-20.04
+    name: Build on ${{ matrix.distro }} ${{ matrix.arch }} with gcc
+
+    # Run steps on a matrix of 4 arch/distro combinations
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - arch: aarch64
+            distro: ubuntu20.04
+          - arch: ppc64le
+            distro: ubuntu20.04
+          - arch: s390x
+            distro: ubuntu20.04
+          - arch: armv7
+            distro: ubuntu20.04
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+      - uses: uraimo/run-on-arch-action@v2.0.8
+        name: Build artifact
+        id: build
+        with:
+          arch: ${{ matrix.arch }}
+          distro: ${{ matrix.distro }}
+
+          # Not required, but speeds up builds
+          githubToken: ${{ github.token }}
+
+          # Pass some environment variables to the container
+          env: |
+            CC: gcc
+            CXX: g++
+            DEBIAN_FRONTEND: noninteractive
+
+          # The shell to run commands with in the container
+          shell: /bin/sh
+
+          # Install some dependencies in the container. This speeds up builds if
+          # you are also using githubToken. Any dependencies installed here will
+          # be part of the container image that gets cached, so subsequent
+          # builds don't have to re-install them. The image layer is cached
+          # publicly in your project's package repository, so it is vital that
+          # no secrets are present in the container state or logs.
+          install: |
+            case "${{ matrix.distro }}" in
+              ubuntu*)
+                cat /etc/debian_version
+                apt-get update -q -y
+                apt-get install -q -y gcc g++
+                gcc --version
+                # basic packages
+                apt-get install -q -y \
+                  autoconf libtool make pkg-config
+                # imake deps
+                apt-get install -q -y \
+                  libxkbfile-dev xfonts-utils xutils-dev
+                # X11 libraries deps
+                apt-get install -q -y \
+                  libpixman-1-dev libjpeg-dev libxcomposite-dev libxdamage-dev \
+                  libxml2-dev libxfont-dev libxinerama-dev libxpm-dev libxrandr-dev \
+                  libxtst-dev x11proto-fonts-dev
+                # soft requirements
+                apt-get install -q -y \
+                  quilt x11-xkb-utils
+                ;;
+            esac
+
+          run: |
+            make
