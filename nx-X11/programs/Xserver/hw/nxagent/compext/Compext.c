@@ -3435,7 +3435,7 @@ static Bool _NXCollectImageHandler(Display *dpy, xReply *rep, char *buf,
   state = (_NXCollectImageState *) data;
 
   if ((rep -> generic.sequenceNumber % 65536) !=
-          ((int)(state -> sequence) % 65536))
+          ((CARD16)(state -> sequence) % 65536))
   {
     #ifdef TEST
     fprintf(stderr, "******_NXCollectImageHandler: Unmatched sequence [%d] for opcode [%d] "
@@ -3819,7 +3819,7 @@ static Bool _NXCollectPropertyHandler(Display *dpy, xReply *rep, char *buf,
   state = (_NXCollectPropertyState *) data;
 
   if ((rep -> generic.sequenceNumber % 65536) !=
-          ((int)(state -> sequence) % 65536))
+          ((CARD16)(state -> sequence) % 65536))
   {
     #ifdef TEST
     fprintf(stderr, "******_NXCollectPropertyHandler: Unmatched sequence [%d] for opcode [%d] "
@@ -4173,7 +4173,7 @@ static Bool _NXCollectGrabPointerHandler(Display *dpy, xReply *rep, char *buf,
   state = (_NXCollectGrabPointerState *) data;
 
   if ((rep -> generic.sequenceNumber % 65536) !=
-          ((int)(state -> sequence) % 65536))
+          ((CARD16)(state -> sequence) % 65536))
   {
     #ifdef TEST
     fprintf(stderr, "******_NXCollectGrabPointerHandler: Unmatched sequence [%d] for opcode [%d] "
@@ -4447,7 +4447,7 @@ static Bool _NXCollectInputFocusHandler(Display *dpy, xReply *rep, char *buf,
   state = (_NXCollectInputFocusState *) data;
 
   if ((rep -> generic.sequenceNumber % 65536) !=
-          ((int)(state -> sequence) % 65536))
+          ((CARD16)(state -> sequence) % 65536))
   {
     #ifdef TEST
     fprintf(stderr, "******_NXCollectInputFocusHandler: Unmatched sequence [%d] for opcode [%d] "
