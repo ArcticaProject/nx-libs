@@ -290,7 +290,7 @@ class NxDialogProgram(object):
             raise
 
         except Exception as expt:
-            sys.stderr.write("Caught exception: %s\n" % (expt))
+            sys.stderr.write("Caught exception: %s" % (expt) + os.linesep)
             sys.exit(EXIT_FAILURE)
 
     @staticmethod
@@ -363,23 +363,23 @@ class NxDialogProgram(object):
         """ Disconnect/terminate NX session upon user's request. """
 
         if not self.options.dialog_type:
-            sys.stderr.write("Dialog type not supplied via --dialog\n")
+            sys.stderr.write("Dialog type not supplied via --dialog" + os.linesep)
             sys.exit(EXIT_FAILURE)
 
         dlgtype = self.options.dialog_type
 
         if dlgtype not in VALID_DLG_TYPES:
-            sys.stderr.write("Invalid dialog type '%s'\n" % (dlgtype))
+            sys.stderr.write("Invalid dialog type '%s'" % (dlgtype) + os.linesep)
             sys.exit(EXIT_FAILURE)
 
         if dlgtype in (DLG_TYPE_PULLDOWN,
                        DLG_TYPE_YESNOSUSPEND,
                        DLG_TYPE_YESNO) and self.options.agentpid is None:
-            sys.stderr.write("Agent pid not supplied via --parent\n")
+            sys.stderr.write("Agent pid not supplied via --parent" + os.linesep)
             sys.exit(EXIT_FAILURE)
 
         if dlgtype == DLG_TYPE_PULLDOWN and not self.options.window:
-            sys.stderr.write("Window id not supplied via --window\n")
+            sys.stderr.write("Window id not supplied via --window" + os.linesep)
             sys.exit(EXIT_FAILURE)
 
         if self.options.caption:
@@ -396,6 +396,5 @@ class NxDialogProgram(object):
             os.environ["DISPLAY"] = self.options.display
 
         self.show_dialog(message_caption, message_text)
-
 
 NxDialogProgram().main()
