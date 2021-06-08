@@ -57,7 +57,7 @@ BlockCacheSet::~BlockCacheSet()
     delete caches_[i];
   delete[]caches_;
 
-  #endif /* if defined(__CYGWIN__) || defined(__CYGWIN32__) */
+  #endif /* if !(defined(__CYGWIN__) || defined(__CYGWIN32__)) */
 }
 
 
