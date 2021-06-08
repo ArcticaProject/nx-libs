@@ -222,4 +222,6 @@ int nxagentPendingEvents(Display *dpy);
 
 int nxagentWaitEvents(Display *, useconds_t msec);
 
+void ForwardClientMessage(ClientPtr client, xSendEventReq *stuff);
+
 #endif /* __Events_H__ */
