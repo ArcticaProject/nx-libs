@@ -295,7 +295,7 @@ int NXTransDialog(const char *caption, const char *message,
       strcat(newPath, "/Applications/NX Client for OSX.app/Contents/MacOS:");
       #endif
 
-      #ifdef __CYGWIN32__
+      #if defined(__CYGWIN__) || defined(__CYGWIN32__)
       // FIXME: missing length limitation!
       strcat(newPath, ".:");
       #endif
@@ -505,7 +505,7 @@ int NXTransClient(const char* display)
 
       #endif
 
-      #ifdef __CYGWIN32__
+      #if defined(__CYGWIN__) || defined(__CYGWIN32__)
 
       strcat(newPath, ".:");
 

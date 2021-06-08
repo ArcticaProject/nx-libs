@@ -44,7 +44,7 @@
 
 #include "Misc.h"
 
-#if defined(__CYGWIN32__) || defined(__APPLE__) || defined(__FreeBSD__) || defined(__sun)
+#if defined(__CYGWIN__) || defined(__CYGWIN32__) || defined(__APPLE__) || defined(__FreeBSD__) || defined(__sun)
 #include <netinet/in_systm.h>
 #endif
 
@@ -788,7 +788,7 @@ const char *Proxy::getComputerName()
 
   const char *hostname = NULL;
 
-  #ifdef __CYGWIN32__
+  #if defined(__CYGWIN__) || defined(__CYGWIN32__)
 
   hostname = getenv("COMPUTERNAME");
 

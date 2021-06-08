@@ -64,7 +64,7 @@
  * at compile time.
  */
 
-#if defined(__linux) || defined(__CYGWIN32__)
+#if defined(__linux) || defined(__CYGWIN__) || defined(__CYGWIN32__)
 
 #include <endian.h>
 
@@ -74,7 +74,7 @@
 #define ARCH_IS_BIG_ENDIAN 1
 #endif
 
-#endif /* #if defined(__linux) || defined(__CYGWIN32__) */
+#endif /* #if defined(__linux) || defined(__CYGWIN__) || defined(__CYGWIN32__) */
 
 #undef BYTE_ORDER	/* 1 = big-endian, -1 = little-endian, 0 = unknown */
 #ifdef ARCH_IS_BIG_ENDIAN

@@ -51,13 +51,13 @@ BlockCacheSet::~BlockCacheSet()
   // failure happens in this destructor.
   //
 
-  #ifndef __CYGWIN32__
+  #if !(defined(__CYGWIN__) || defined(__CYGWIN32__))
 
   for (unsigned int i = 0; i < size_; i++)
     delete caches_[i];
   delete[]caches_;
 
-  #endif /* ifdef __CYGWIN32__ */
+  #endif /* if !(defined(__CYGWIN__) || defined(__CYGWIN32__)) */
 }
 
 

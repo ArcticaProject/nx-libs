@@ -253,7 +253,7 @@ getComputerName() {
 
   const char *hostname = NULL;
 
-  #ifdef __CYGWIN32__
+  #if defined(__CYGWIN__) || defined(__CYGWIN32__)
 
   hostname = getenv("COMPUTERNAME");
 
