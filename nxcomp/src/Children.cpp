@@ -216,7 +216,16 @@ int NXTransDialog(const char *caption, const char *message,
 
   UnsetEnv("LD_LIBRARY_PATH");
 
-  for (int i = 0; i < 2; i++)
+  if (!pulldown)
+  {
+    cerr << "Info: Upcoming dialog:\n"
+         << "/-----------------------------------------------------------\n"
+         << caption << ":\n"
+         << message << "\n"
+         << "\\-----------------------------------------------------------\n";
+  }
+
+  for (int i = 0; i < 4; i++)
   {
     if (local != 0)
     {
@@ -249,58 +258,63 @@ int NXTransDialog(const char *caption, const char *message,
       }
     }
 
-    #ifdef WARNING
+    #ifdef TEST
     *logofs << "NXTransDialog: WARNING! Couldn't start '"
             << command << "'. " << "Error is " << EGET()
             << " '" << ESTR() << "'.\n" << logofs_flush;
     #endif
 
+    #ifdef WARNING
     cerr << "Warning" << ": Couldn't start '" << command
          << "'. Error is " << EGET() << " '" << ESTR()
          << "'.\n";
+    #endif
 
     //
     // Retry by looking for the default name
     // in the default NX path.
     //
 
-    if (i == 0)
+    if (i == 0 || i == 2)
     {
-
       strcpy(command, "nxclient");
+    }
+    else if (i == 1 || i == 3)
+    {
+      strcpy(command, "nxdialog");
+    }
 
+    if (i == 2)
+    {
       char newPath[DEFAULT_STRING_LIMIT];
 
       strcpy(newPath, "/usr/NX/bin:/opt/NX/bin:/usr/local/NX/bin:");
 
       #ifdef __APPLE__
-
       // FIXME: missing length limitation!
       strcat(newPath, "/Applications/NX Client for OSX.app/Contents/MacOS:");
-
       #endif
 
       #ifdef __CYGWIN32__
-
       // FIXME: missing length limitation!
       strcat(newPath, ".:");
-
       #endif
 
       int newLength = strlen(newPath);
-
       char *oldPath = getenv("PATH");
 
       // FIXME: check if strncat would be better here
       snprintf(newPath + newLength, DEFAULT_STRING_LIMIT - newLength, "%s", oldPath);
 
-      #ifdef WARNING
+      #ifdef TEST
       *logofs << "NXTransDialog: WARNING! Trying with path '"
               << newPath << "'.\n" << logofs_flush;
       #endif
 
+      #ifdef WARNING
       cerr << "Warning" << ": Trying with path '" << newPath
            << "'.\n";
+      #endif
 
       //
       // Solaris doesn't seem to have
@@ -308,21 +322,35 @@ int NXTransDialog(const char *caption, const char *message,
       //
 
       #ifdef __sun
-
       char newEnv[DEFAULT_STRING_LIMIT + 5];
-
       sprintf(newEnv,"PATH=%s", newPath);
-
       putenv(newEnv);
-
       #else
-
       setenv("PATH", newPath, 1);
-
+      #endif
+    }
+    else
+    {
+      #ifdef TEST
+      *logofs << "NXTransDialog: WARNING! Trying with command '"
+              << command << "'.\n" << logofs_flush;
       #endif
 
+      #ifdef WARNING
+      cerr << "Warning" << ": Trying with command '" << command
+           << "'.\n";
+      #endif
     }
   }
+
+  #ifdef TEST
+  *logofs << "NXTransDialog: WARNING! Could not display dialog.\n"
+          << logofs_flush;
+  #endif
+
+  #ifdef WARNING
+  cerr << "Warning" << ": Could not display dialog.\n";
+  #endif
 
   //
   // Hopefully useless.

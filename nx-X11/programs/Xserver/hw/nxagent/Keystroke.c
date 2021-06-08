@@ -513,13 +513,13 @@ char *nxagentFindMatchingKeystrokes(char *name)
     {
       char *tmp;
       char *tmp1 = nxagentGetSingleKeystrokeString(cur);
-      if (-1 == asprintf(&tmp, "%s  %-*s : %s\n", res, maxlen,
+      if (-1 == asprintf(&tmp, "%s\n  %-*s : %s", res, maxlen,
                          nxagentSpecialKeystrokeNames[cur->stroke],
                          tmp1))
       {
         SAFE_free(tmp1);
         #ifdef TEST
-        fprintf(stderr, "%s: returning incomplete result:\n%s", __func__, res);
+        fprintf(stderr, "%s: returning incomplete result:%s\n", __func__, res);
         #endif
         return res;
       }
