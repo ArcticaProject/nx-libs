@@ -47,7 +47,7 @@
  * Set if the composite extension is supported by the remote display.
  */
 
-int nxagentCompositeEnable = UNDEFINED;
+Bool nxagentCompositeEnable = False;
 
 void nxagentCompositeExtensionInit(void)
 {
@@ -55,7 +55,7 @@ void nxagentCompositeExtensionInit(void)
    * Set the flag only if the initialization completes.
    */
 
-  nxagentCompositeEnable = 0;
+  nxagentCompositeEnable = False;
 
   if (nxagentOption(Composite))
   {
@@ -96,7 +96,7 @@ void nxagentCompositeExtensionInit(void)
       fprintf(stderr, "nxagentCompositeExtensionInit: Enabling the use of the composite extension.\n");
       #endif
 
-      nxagentCompositeEnable = 1;
+      nxagentCompositeEnable = True;
     }
     #ifdef TEST
     else
@@ -115,8 +115,7 @@ void nxagentCompositeExtensionInit(void)
 
 void nxagentRedirectDefaultWindows(void)
 {
-  if (nxagentOption(Rootless) ||
-          nxagentCompositeEnable == 0)
+  if (nxagentOption(Rootless) || !nxagentCompositeEnable)
   {
     #ifdef TEST
     fprintf(stderr, "nxagentRedirectDefaultWindows: Not redirecting default "
@@ -140,10 +139,10 @@ void nxagentRedirectDefaultWindows(void)
 
     /*
      * When trying to redirect only the top level window, and not the
-     * subwindows, we incur in a strange be- haviour. The top level is
-     * unmapped, mapped, unmap- ped and then reparented. This at first
+     * subwindows, we incur in a strange behaviour. The top level is
+     * unmapped, mapped, unmapped and then reparented. This at first
      * makes the agent think that the window manager is gone, then the
-     * agent window disappears. To make thinks even more weird, this
+     * agent window disappears. To make things even more weird, this
      * happens only at reconnection.
      */
  
@@ -154,8 +153,7 @@ void nxagentRedirectDefaultWindows(void)
 
 void nxagentRedirectWindow(WindowPtr pWin)
 {
-  if (!nxagentOption(Rootless) ||
-          nxagentCompositeEnable == 0)
+  if (!nxagentOption(Rootless) || !nxagentCompositeEnable)
   {
     #ifdef TEST
     fprintf(stderr, "nxagentRedirectWindow: Not redirecting window id [%ld] "

@@ -197,10 +197,12 @@ int ddxProcessArgument(int argc, char *argv[], int i)
     nxagentProgName = strdup(basename(basec));
     SAFE_free(basec);
 
+#ifdef X2GO
     /*
      * Check if we are running as X2Go Agent
      */
     checkX2goAgent();
+#endif
   }
 
   #ifdef TEST
@@ -691,6 +693,7 @@ int ddxProcessArgument(int argc, char *argv[], int i)
     {
       SAFE_free(nxagentKeyboard);
 
+#ifdef X2GO
       if (nxagentX2go && strcmp(argv[i], "null/null") == 0)
       {
         #ifdef TEST
@@ -701,6 +704,7 @@ int ddxProcessArgument(int argc, char *argv[], int i)
         nxagentKeyboard = strdup("clone");
       }
       else
+#endif
       {
         nxagentKeyboard = strdup(argv[i]);
       }
@@ -730,6 +734,14 @@ int ddxProcessArgument(int argc, char *argv[], int i)
   if (!strcmp(argv[i], "-nocomposite"))
   {
     nxagentChangeOption(Composite, False);
+    return 1;
+  }
+
+  /* the composite extension is disabled by default so we provide a
+     way to enable it */
+  if (!strcmp(argv[i], "-composite"))
+  {
+    nxagentChangeOption(Composite, True);
     return 1;
   }
 
@@ -1775,11 +1787,13 @@ N/A
 
     if (*nxagentWindowName == '\0')
     {
-      if(nxagentX2go)
+#ifdef X2GO
+      if (nxagentX2go)
       {
         snprintf(nxagentWindowName, NXAGENTWINDOWNAMELENGTH, "X2Go Agent");
       }
       else
+#endif
       {
         snprintf(nxagentWindowName, NXAGENTWINDOWNAMELENGTH, "NX Agent");
       }
@@ -1870,11 +1884,11 @@ N/A
         fprintf(stderr, "nxagentPostProcessArgs: WARNING! Using backward compatible alpha encoding.\n");
         #endif
 
-        nxagentAlphaCompat = 1;
+        nxagentAlphaCompat = True;
       }
       else
       {
-        nxagentAlphaCompat = 0;
+        nxagentAlphaCompat = False;
       }
 
       nxagentRemoteMajor = remoteMajor;
@@ -1984,16 +1998,16 @@ FIXME: In rootless mode the backing-store support is not functional yet.
 */
     if (nxagentOption(Rootless))
     {
-      enableBackingStore = 0;
+      enableBackingStore = FALSE;
     }
     else if (nxagentOption(BackingStore) == BackingStoreUndefined ||
                  nxagentOption(BackingStore) == BackingStoreForce)
     {
-      enableBackingStore = 1;
+      enableBackingStore = TRUE;
     }
     else if (nxagentOption(BackingStore) == BackingStoreNever)
     {
-      enableBackingStore = 0;
+      enableBackingStore = FALSE;
     }
 
     /*
@@ -2098,9 +2112,13 @@ void ddxUseMsg(void)
   ErrorF("-autodpi               detect real server's DPI and use that in the session\n");
   ErrorF("-display string        display name of the real server\n");
   ErrorF("-sync                  synchronize with the real server\n");
+  ErrorF("-nxrealwindowprop      set property NX_REAL_WINDOW for each X11 window inside nxagent\n");
+  ErrorF("-reportwids            report externally exposed X11 window IDs to the session log\n");
+  ErrorF("-reportprivatewids     report internal X11 window ID to the session log\n");
 #ifdef RENDER
   ErrorF("-norender              disable the use of the render extension\n");
-  ErrorF("-nocomposite           disable the use of the composite extension\n");
+  ErrorF("-nocomposite           disable the use of the composite extension (default)\n");
+  ErrorF("-composite             enable the use of the composite extension\n");
 #endif
   ErrorF("-nopersistent          disable disconnection/reconnection to the X display on SIGHUP\n");
   ErrorF("-noshmem               disable use of shared memory extension\n");
@@ -2114,6 +2132,7 @@ void ddxUseMsg(void)
   ErrorF("-irlimit               maximum image data rate to the encoder input in kB/s.\n");
   ErrorF("-tile WxH              maximum size of image tiles (minimum allowed: 32x32)\n");
   ErrorF("-keystrokefile file    file with keyboard shortcut definitions\n");
+  ErrorF("-options file|string   path to an options file or an option string (for testing/debugging)\n");
   ErrorF("-verbose               print more warning and error messages\n");
   ErrorF("-D                     enable desktop mode\n");
   ErrorF("-R                     enable rootless mode\n");

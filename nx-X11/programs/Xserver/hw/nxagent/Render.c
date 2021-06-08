@@ -703,7 +703,7 @@ int nxagentCreatePicture(PicturePtr pPicture, Mask mask)
 
   nxagentPicturePriv(pPicture) -> picture = id;
 
-  if (nxagentAlphaEnabled == 1 && pPicture -> pDrawable->depth == 32 &&
+  if (nxagentAlphaEnabled && pPicture -> pDrawable -> depth == 32 &&
           pPicture -> pFormat -> direct.alpha != 0)
   {
     if (pPicture -> pDrawable -> type == DRAWABLE_PIXMAP)
@@ -2431,7 +2431,7 @@ void nxagentReconnectPicture(void * p0, XID x1, void *p2)
               (void *) pPicture, nxagentPicture(pPicture));
   #endif
 
-  if (nxagentAlphaEnabled == 1 && pPicture -> pDrawable -> depth == 32 &&
+  if (nxagentAlphaEnabled && pPicture -> pDrawable -> depth == 32 &&
           pPicture -> pFormat -> direct.alpha != 0)
   {
     if (pPicture -> pDrawable -> type == DRAWABLE_PIXMAP)

@@ -129,7 +129,7 @@ void nxagentInitOptions(void)
   nxagentOptions.DisplayBuffer  = UNDEFINED;
   nxagentOptions.DisplayCoalescence = 0;
 
-  nxagentOptions.Composite = True;
+  nxagentOptions.Composite = False;
 
   nxagentOptions.IgnoreVisibility = False;
 

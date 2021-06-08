@@ -35,7 +35,7 @@
 #include "Options.h"
 #include "Keyboard.h"
 #include "Drawable.h"
-#include "Init.h" /* extern int nxagentX2go */
+#include "Init.h" /* extern Bool nxagentX2go */
 #include "Utils.h"
 
 #include <unistd.h>
@@ -314,11 +314,15 @@ void nxagentInitKeystrokes(Bool force)
 
   done = True;
 
+#ifdef X2GO
   if (nxagentX2go) {
     homefile = "/.x2go/config/keystrokes.cfg";
     etcfile = "/etc/x2go/keystrokes.cfg";
     envvar = "X2GO_KEYSTROKEFILE";
-  } else {
+  }
+  else
+#endif
+  {
     homefile = "/.nx/config/keystrokes.cfg";
     etcfile = "/etc/nxagent/keystrokes.cfg";
     envvar = "NXAGENT_KEYSTROKEFILE";

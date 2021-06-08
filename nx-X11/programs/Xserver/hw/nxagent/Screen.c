@@ -1616,7 +1616,7 @@ N/A
     pScreen->ClearBackingStore = (RegionPtr (*)()) 0;
     pScreen->DrawGuarantee = (void (*)()) 0;
 
-    if (enableBackingStore == 1)
+    if (enableBackingStore)
     {
       #ifdef TEST
       fprintf(stderr, "nxagentOpenScreen: Going to initialize backing store.\n");
@@ -1814,11 +1814,13 @@ N/A
         #endif
       }
 
+#ifdef X2GO
       /*
        * Setting WM_CLASS to "X2GoAgent" when running in X2Go Agent mode
        * we need it to properly display all window parameters by some WMs
        * (for example on Maemo)
        */
+#endif
       {
         #ifdef TEST
         fprintf(stderr, "nxagentOpenScreen: Setting WM_CLASS and WM_NAME for window with id [%ld].\n",
@@ -1827,12 +1829,14 @@ N/A
 
         XClassHint hint;
 
-        if(nxagentX2go)
+#ifdef X2GO
+        if (nxagentX2go)
         {
           hint.res_name = strdup("X2GoAgent");
           hint.res_class = strdup("X2GoAgent");
         }
         else
+#endif
         {
           hint.res_name = strdup("NXAgent");
           hint.res_class = strdup("NXAgent");
@@ -1850,6 +1854,7 @@ N/A
 
     if (nxagentOption(Fullscreen))
     {
+#ifdef NXAGENT_ONSTART
       /*
        * FIXME: Do we still need to set this property?
        */
@@ -1865,6 +1870,7 @@ N/A
                         (unsigned char*) "X-AGENT",
                         strlen("X-AGENT"));
       }
+#endif
 
       XSelectInput(nxagentDisplay, nxagentFullscreenWindow, nxagentGetDefaultEventMask());
     }

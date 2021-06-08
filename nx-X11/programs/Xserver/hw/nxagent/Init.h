@@ -40,13 +40,15 @@ is" without express or implied warranty.
 #ifndef __Init_H__
 #define __Init_H__
 
-extern int nxagentDoFullGeneration;
+extern Bool nxagentDoFullGeneration;
 
 extern int nxagentBackingStore;
-extern int nxagentSaveUnder;
+extern Bool nxagentSaveUnder;
 
-extern int nxagentX2go;
+#ifdef X2GO
+extern Bool nxagentX2go;
 void checkX2goAgent(void);
+#endif
 
 extern ServerGrabInfoRec nxagentGrabServerInfo;
 

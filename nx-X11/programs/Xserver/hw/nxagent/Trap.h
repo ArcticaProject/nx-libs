@@ -26,6 +26,8 @@
 #ifndef __Traps_H__
 #define __Traps_H__
 
+#include <nx-X11/Xdefs.h>
+
 #ifndef False
 #define False 0
 #endif
@@ -38,72 +40,72 @@
  * Set if we are dispatching a render extension request. Used to avoid
  * reentrancy in GC operations.
  */
-extern int nxagentGCTrap;
+extern Bool nxagentGCTrap;
 
 /*
  * Set if we are enqueing an internal operation, CreateWindow and
  * Reparent- Window. Used to remove any screen operation.
  */
-extern int nxagentScreenTrap;
+extern Bool nxagentScreenTrap;
 
 /*
  * Set if we are executing a GC operation only on the X side. Used to
  * avoid reentrancy in FB layer.
  */
-extern int nxagentFBTrap;
+extern Bool nxagentFBTrap;
 
 /*
  * Set if we are dispatching a shared memory extension request.
  */
-extern int nxagentShmTrap;
+extern Bool nxagentShmTrap;
 
 /*
  * Set if a shared pixmap operation is requested by the client.
  */
-extern int nxagentShmPixmapTrap;
+extern Bool nxagentShmPixmapTrap;
 
 /*
  * Set if we are dispatching a XVideo extension request.
  */
-extern int nxagentXvTrap;
+extern Bool nxagentXvTrap;
 
 /*
  * Set if we are dispatching a GLX extension request.
  */
-extern int nxagentGlxTrap;
+extern Bool nxagentGlxTrap;
 
 /*
  * Set while we are resuming the session.
  */
-extern int nxagentReconnectTrap;
+extern Bool nxagentReconnectTrap;
 
 /*
  * Set if we need to realize a drawable by using a lossless encoding.
  */
-extern int nxagentLosslessTrap;
+extern Bool nxagentLosslessTrap;
 
 /*
  * Set to force the synchronization of a drawable.
  */
-extern int nxagentSplitTrap;
+extern Bool nxagentSplitTrap;
 
 /*
  * Set to avoid CapsLock synchronization problems when CapsLock is the
  * first key to be pressed in the session.
  */
-extern int nxagentXkbCapsTrap;
+extern Bool nxagentXkbCapsTrap;
 
 /*
  * Set to avoid NumLock synchronization problems when NumLock is the
  * first key to be pressed in the session.
  */
-extern int nxagentXkbNumTrap;
+extern Bool nxagentXkbNumTrap;
 
 /*
  * Set to indicate we are processing a clipboard event triggered by
  * the real X server. This is used to avoid endless loops if callbacks
  * would trigger another event by the real X server
  */
-extern int nxagentExternalClipboardEventTrap;
+extern Bool nxagentExternalClipboardEventTrap;
 
 #endif /* __Trap_H__ */

@@ -471,13 +471,8 @@ Bool nxagentCreateWindow(WindowPtr pWin)
   }
 
   #ifdef SHAPE
-    #ifdef NXAGENT_SHAPE2
-      nxagentWindowPriv(pWin)->boundingShape = NULL;
-      nxagentWindowPriv(pWin)->clipShape = NULL;
-    #else
-      nxagentWindowPriv(pWin)->boundingShape = RegionCreate(NULL, 1);
-      nxagentWindowPriv(pWin)->clipShape = RegionCreate(NULL, 1);
-    #endif
+  nxagentWindowPriv(pWin)->boundingShape = NULL;
+  nxagentWindowPriv(pWin)->clipShape = NULL;
   #endif /* SHAPE */
 
   fbCreateWindow(pWin);
@@ -583,21 +578,16 @@ Bool nxagentDestroyWindow(WindowPtr pWin)
            pWindowPriv->siblingAbove;
   }
 
-  #ifdef NXAGENT_SHAPE2
-    #ifdef SHAPE
-    if (pWindowPriv->boundingShape)
-    {
-      RegionDestroy(pWindowPriv->boundingShape);
-    }
-
-    if (pWindowPriv->clipShape)
-    {
-      RegionDestroy(pWindowPriv->clipShape);
-    }
-    #endif
-  #else
+  #ifdef SHAPE
+  if (pWindowPriv->boundingShape)
+  {
     RegionDestroy(pWindowPriv->boundingShape);
+  }
+
+  if (pWindowPriv->clipShape)
+  {
     RegionDestroy(pWindowPriv->clipShape);
+  }
   #endif
 
   if (pWindowPriv -> corruptedRegion)
@@ -2079,13 +2069,11 @@ void nxagentClipNotify(WindowPtr pWin, int dx, int dy)
   nxagentAddConfiguredWindow(pWin, CWStackMode);
   nxagentAddConfiguredWindow(pWin, CW_Shape);
 
-  #ifndef NXAGENT_SHAPE
-    #ifdef SHAPE
-    /*
-     * nxagentShapeWindow(pWin);
-     */
-    #endif /* SHAPE */
-  #endif /* NXAGENT_SHAPE */
+  #ifdef SHAPE
+  /*
+   * nxagentShapeWindow(pWin);
+   */
+  #endif /* SHAPE */
 }
 
 /*
@@ -2354,12 +2342,10 @@ void nxagentShapeWindow(WindowPtr pWin)
                   RegionNumRects(wBoundingShape(pWin)));
       #endif
 
-      #ifdef NXAGENT_SHAPE2
       if (!nxagentWindowPriv(pWin)->boundingShape)
       {
         nxagentWindowPriv(pWin)->boundingShape = RegionCreate(NULL, 1);
       }
-      #endif
 
       RegionCopy(nxagentWindowPriv(pWin)->boundingShape, wBoundingShape(pWin));
 
@@ -2378,10 +2364,8 @@ void nxagentShapeWindow(WindowPtr pWin)
         XUnionRectWithRegion(&rect, reg, reg);
       }
 
-      #ifndef NXAGENT_SHAPE
       XShapeCombineRegion(nxagentDisplay, nxagentWindow(pWin),
                               ShapeBounding, 0, 0, reg, ShapeSet);
-      #endif
 
       XDestroyRegion(reg);
     }
@@ -2393,10 +2377,8 @@ void nxagentShapeWindow(WindowPtr pWin)
 
       RegionEmpty(nxagentWindowPriv(pWin)->boundingShape);
 
-      #ifndef NXAGENT_SHAPE
       XShapeCombineMask(nxagentDisplay, nxagentWindow(pWin),
                             ShapeBounding, 0, 0, None, ShapeSet);
-      #endif
     }
   }
 
@@ -2413,12 +2395,10 @@ void nxagentShapeWindow(WindowPtr pWin)
                   RegionNumRects(wClipShape(pWin)));
       #endif
 
-      #ifdef NXAGENT_SHAPE2
       if (!nxagentWindowPriv(pWin)->clipShape)
       {
         nxagentWindowPriv(pWin)->clipShape = RegionCreate(NULL, 1);
       }
-      #endif
 
       RegionCopy(nxagentWindowPriv(pWin)->clipShape, wClipShape(pWin));
 
@@ -2437,10 +2417,8 @@ void nxagentShapeWindow(WindowPtr pWin)
         XUnionRectWithRegion(&rect, reg, reg);
       }
 
-      #ifndef NXAGENT_SHAPE
       XShapeCombineRegion(nxagentDisplay, nxagentWindow(pWin),
                               ShapeClip, 0, 0, reg, ShapeSet);
-      #endif
 
       XDestroyRegion(reg);
     }
@@ -2452,10 +2430,8 @@ void nxagentShapeWindow(WindowPtr pWin)
 
       RegionEmpty(nxagentWindowPriv(pWin)->clipShape);
 
-      #ifndef NXAGENT_SHAPE
       XShapeCombineMask(nxagentDisplay, nxagentWindow(pWin),
                             ShapeClip, 0, 0, None, ShapeSet);
-      #endif
     }
   }
 }
@@ -2575,12 +2551,14 @@ void nxagentMapDefaultWindows(void)
       }
     }
 
+#ifdef NXAGENT_ONSTART
     /*
      * Send a SetSelectionOwner request to notify of the agent start.
      */
 
     XSetSelectionOwner(nxagentDisplay, serverTransToAgentProperty,
                            nxagentDefaultWindows[i], CurrentTime);
+#endif
   }
 
   /*

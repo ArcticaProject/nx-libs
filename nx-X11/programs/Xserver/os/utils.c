@@ -146,9 +146,7 @@ Bool noTestExtensions;
 Bool noBigReqExtension = FALSE;
 #endif
 #ifdef COMPOSITE
-/* COMPOSITE is disabled by default for now until the
- * interface is stable */
-Bool noCompositeExtension = TRUE;
+Bool noCompositeExtension = FALSE;
 #endif
 #ifdef DAMAGE
 Bool noDamageExtension = FALSE;

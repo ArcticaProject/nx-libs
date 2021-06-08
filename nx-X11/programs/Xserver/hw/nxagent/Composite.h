@@ -31,7 +31,7 @@
  * its use is enabled.
  */
 
-extern int nxagentCompositeEnable;
+extern Bool nxagentCompositeEnable;
 
 /*
  * Query the composite extension on the

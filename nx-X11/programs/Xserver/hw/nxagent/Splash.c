@@ -48,6 +48,12 @@
 #undef  TEST
 #undef  DEBUG
 
+#ifndef X2GO
+void nxagentShowSplashWindow(XlibWindow parentWindow) {}
+void nxagentPaintLogo(XlibWindow win, int scale, int width, int height) {}
+void nxagentRemoveSplashWindow(void) {}
+Bool nxagentHaveSplashWindow(void) {return False;}
+#else
 /*
  * Colors used to paint the splash screen.
  */
@@ -68,7 +74,7 @@ void nxagentShowSplashWindow(XlibWindow parentWindow)
   /*
    * Show splash window only when running as X2Go Agent
    */
-  if(!nxagentX2go)
+  if (!nxagentX2go)
     return;
 
   #ifdef TEST
@@ -344,6 +350,7 @@ void nxagentRemoveSplashWindow(void)
     nxagentSplashWindow = None;
     nxagentRefreshWindows(screenInfo.screens[0]->root);
 
+#ifdef NXAGENT_ONSTART
     #ifdef TEST
     fprintf(stderr, "%s: setting the ownership of %s (%d) on window [0x%lx]\n", __func__,
                 "NX_CUT_BUFFER_SERVER", (int)serverTransToAgentProperty, nxagentWindow(screenInfo.screens[0]->root));
@@ -351,6 +358,7 @@ void nxagentRemoveSplashWindow(void)
 
     XSetSelectionOwner(nxagentDisplay, serverTransToAgentProperty,
                            nxagentWindow(screenInfo.screens[0]->root), CurrentTime);
+#endif
   }
 
   if (nxagentPixmapLogo)
@@ -359,3 +367,4 @@ void nxagentRemoveSplashWindow(void)
     nxagentPixmapLogo = (XlibPixmap) 0;
   }
 }
+#endif /* ifdef X2GO */

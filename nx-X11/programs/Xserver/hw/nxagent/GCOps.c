@@ -700,7 +700,7 @@ RegionPtr nxagentCopyArea(DrawablePtr pSrcDrawable, DrawablePtr pDstDrawable,
 
   if (!nxagentOption(IgnoreVisibility) && pDstDrawable -> type == DRAWABLE_WINDOW &&
           (!nxagentWindowIsVisible((WindowPtr) pDstDrawable) ||
-              (!nxagentDefaultWindowIsVisible() && nxagentCompositeEnable == 0)))
+              (!nxagentDefaultWindowIsVisible() && !nxagentCompositeEnable)))
   {
     #ifdef TEST
     fprintf(stderr, "nxagentCopyArea: Prevented operation on fully obscured window at [%p].\n",

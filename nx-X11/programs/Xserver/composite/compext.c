@@ -39,6 +39,7 @@ static DevPrivateKeyRec CompositeClientPrivateKeyRec;
 
 #define CompositeClientPrivateKey (&CompositeClientPrivateKeyRec)
 #else /* !defined(NXAGENT_SERVER) */
+#include "../hw/nxagent/Options.h"
 static int CompositeClientPrivIndex = -1;
 #endif /* !defined(NXAGENT_SERVER) */
 
@@ -622,6 +623,11 @@ CompositeExtensionInit (void)
 
     /* Assume initialization is going to fail */
     noCompositeExtension = TRUE;
+
+#ifdef NXAGENT_SERVER
+    if (!nxagentOption(Composite))
+      return;
+#endif
 
     fprintf(stderr, "COMPOSITE: trying to initialize extension.\n");
 

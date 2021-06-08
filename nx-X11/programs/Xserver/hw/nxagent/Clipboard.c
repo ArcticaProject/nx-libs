@@ -2237,6 +2237,7 @@ Bool nxagentInitClipboard(WindowPtr pWin)
     nxagentXFixesInfo.Initialized = True;
   }
 
+#ifdef NXAGENT_ONSTART
   /*
      The first paste from CLIPBOARD did not work directly after
      session start. Removing this code makes it work. It is unsure why
@@ -2247,6 +2248,7 @@ Bool nxagentInitClipboard(WindowPtr pWin)
 
   if (nxagentSessionId[0])
   {
+    // nxagentAtoms[10] is the CLIPBOARD atom
     #ifdef TEST
     fprintf(stderr, "%s: setting the ownership of %s to %lx"
                 " and registering for PropertyChangeMask events\n", __func__,
@@ -2258,6 +2260,7 @@ Bool nxagentInitClipboard(WindowPtr pWin)
     nxagentChangeWindowAttributes(pWin, CWEventMask);
   }
   */
+#endif
 
   if (nxagentReconnectTrap)
   {

@@ -192,8 +192,6 @@ INCLUDES = \
 
 ### list of existing NXAGENT macros:
 #
-# NXAGENT_SHAPE                    Old shape code
-# NXAGENT_SHAPE2                   New shape code
 # NXAGENT_FIXKEYS                  Force the release of pressed key when losing focus
 # NXAGENT_CLIPBOARD                Enables clipboard cut and paste function between X servers.
 # NXAGENT_RANDR_MODE_PREFIX        Prefix for RandR display modes (i.e., nx_<x>x<y>) (default: nx_)
@@ -206,6 +204,7 @@ INCLUDES = \
 #                                  This only has an effect if NX_TRANS_WAKEUP is also set for os/WaitFor.c
 # NXAGENT_ARTSD                    enable special handling of MCOPGLOBALS property used by artsd.
 # NXAGENT_RENDER_CLEANUP           cleanup padding bits/bytes of glyphs to possibly increase compression rate
+# X2GO                             include code to support running as x2goagent
 #
 ### macros not investigated yet:
 #
@@ -245,7 +244,6 @@ DEFINES = \
         -UXF86VIDMODE -UXFreeXDGA -UXF86MISC -UXF86DRI \
         -DNXAGENT_SERVER \
         -DNXAGENT_RENDER_CLEANUP \
-        -DNXAGENT_SHAPE2 \
         -DNXAGENT_FIXKEYS \
         -DNXAGENT_CLIPBOARD \
         -DNXAGENT_WAKEUP=1000 \
@@ -259,6 +257,7 @@ DEFINES = \
         -DRANDR_15_INTERFACE=1 \
         -DPANORAMIX \
         -UDEBUG_TREE \
+        -DX2GO \
         -DSYSTEMFONTDIR=\"$(SYSTEMFONTDIR)\" \
         $(NULL)
 
