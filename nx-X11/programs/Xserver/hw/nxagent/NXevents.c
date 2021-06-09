@@ -416,6 +416,37 @@ DefineInitialRootWindow(register WindowPtr win)
     }
 }
 
+#ifdef NXAGENT_SERVER
+extern Bool nxagentWMIsRunning;
+
+int
+EventSelectForWindow(register WindowPtr pWin, register ClientPtr client, Mask mask)
+{
+    int res = Xorg_EventSelectForWindow(pWin, client, mask);
+
+    /*
+     * intercept SelectInput calls for SubStructureRedirect.  The
+     * standard way of checking for a Window Manager is trying to
+     * SelectInput on SubStructureRedirect. If it fails it can be
+     * deduced there's a Window Manager running since
+     * SubStructureRedirect is only allowed for ONE client. In a
+     * rootless session there is (and should be) no Window Manager so
+     * we report the WM state we found on the real X server. This
+     * also helps for nesting rootless nxagents.
+     */
+
+    if ((mask & SubstructureRedirectMask) && (nxagentOption(Rootless) == 1))
+    {
+        #ifdef DEBUG
+        fprintf(stderr, "%s: WM check detected\n", __func__);
+        #endif
+        if (nxagentWMIsRunning)
+            return BadAccess;
+    }
+    return res;
+}
+#endif
+
 int
 ProcSendEvent(ClientPtr client)
 {
