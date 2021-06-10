@@ -1257,106 +1257,104 @@ void nxagentHandleSelectionRequestFromXServer(XEvent *X)
    */
   serverLastRequestedSelection = X->xselectionrequest.selection;
 
+  if (!(nxagentOption(Clipboard) == ClipboardServer ||
+        nxagentOption(Clipboard) == ClipboardBoth))
   {
-    if (!(nxagentOption(Clipboard) == ClipboardServer ||
-          nxagentOption(Clipboard) == ClipboardBoth))
-    {
-      #ifdef DEBUG
-      fprintf (stderr, "%s: clipboard (partly) disabled - denying request.\n", __func__);
-      #endif
+    #ifdef DEBUG
+    fprintf (stderr, "%s: clipboard (partly) disabled - denying request.\n", __func__);
+    #endif
 
-      /* deny the request */
-      replyRequestSelectionToXServer(X, False);
-      return;
-    }
+    /* deny the request */
+    replyRequestSelectionToXServer(X, False);
+    return;
+  }
+
+  /*
+   * If one of our clients owns the selection we ask it to copy
+   * the selection to the clientCutProperty on nxagent's root
+   * window in the first step. We then later push that property's
+   * content to the real X server.
+   */
+  if (IS_LOCAL_OWNER(index))
+  {
+    /*
+     * Store who on the real X server requested the data and how
+     * and where it wants to have it.
+     */
+    lastServers[index].property = X->xselectionrequest.property;
+    lastServers[index].requestor = X->xselectionrequest.requestor;
+    lastServers[index].target = X->xselectionrequest.target;
+    lastServers[index].time = X->xselectionrequest.time;
+
+    /* Prepare the request (like XConvertSelection, but locally). */
+    xEvent x = {0};
+    x.u.u.type = SelectionRequest;
+    x.u.selectionRequest.time = GetTimeInMillis();
+    x.u.selectionRequest.owner = lastSelectionOwner[index].window;
+    x.u.selectionRequest.selection = CurrentSelections[index].selection;
+    x.u.selectionRequest.property = clientCutProperty;
+    x.u.selectionRequest.requestor = screenInfo.screens[0]->root->drawable.id; /* Fictitious window.*/
 
     /*
-     * If one of our clients owns the selection we ask it to copy
-     * the selection to the clientCutProperty on nxagent's root
-     * window in the first step. We then later push that property's
-     * content to the real X server.
+     * Don't send the same window, some programs are clever and
+     * verify cut and paste operations inside the same window and
+     * don't notify at all.
+     *
+     * x.u.selectionRequest.requestor = lastSelectionOwner[index].window;
      */
-    if (IS_LOCAL_OWNER(index))
+
+    /*
+     * In TextClipboard mode simply use the previous clipboard
+     * handling code.
+     */
+    if (nxagentOption(TextClipboard))
     {
-      /*
-       * Store who on the real X server requested the data and how
-       * and where it wants to have it.
-       */
-      lastServers[index].property = X->xselectionrequest.property;
-      lastServers[index].requestor = X->xselectionrequest.requestor;
-      lastServers[index].target = X->xselectionrequest.target;
-      lastServers[index].time = X->xselectionrequest.time;
-
-      /* Prepare the request (like XConvertSelection, but locally). */
-      xEvent x = {0};
-      x.u.u.type = SelectionRequest;
-      x.u.selectionRequest.time = GetTimeInMillis();
-      x.u.selectionRequest.owner = lastSelectionOwner[index].window;
-      x.u.selectionRequest.selection = CurrentSelections[index].selection;
-      x.u.selectionRequest.property = clientCutProperty;
-      x.u.selectionRequest.requestor = screenInfo.screens[0]->root->drawable.id; /* Fictitious window.*/
-
-      /*
-       * Don't send the same window, some programs are clever and
-       * verify cut and paste operations inside the same window and
-       * don't notify at all.
-       *
-       * x.u.selectionRequest.requestor = lastSelectionOwner[index].window;
-       */
-
-      /*
-       * In TextClipboard mode simply use the previous clipboard
-       * handling code.
-       */
-      if (nxagentOption(TextClipboard))
+      /* by dimbor */
+      if (X->xselectionrequest.target != XA_STRING)
       {
-        /* by dimbor */
-        if (X->xselectionrequest.target != XA_STRING)
-        {
-          lastServers[index].target = serverUTF8_STRING;
-          /* by dimbor (idea from zahvatov) */
-          x.u.selectionRequest.target = clientUTF8_STRING;
-        }
-        else
-        {
-          x.u.selectionRequest.target = XA_STRING;
-        }
+        lastServers[index].target = serverUTF8_STRING;
+        /* by dimbor (idea from zahvatov) */
+        x.u.selectionRequest.target = clientUTF8_STRING;
       }
       else
       {
-        x.u.selectionRequest.target = nxagentRemoteToLocalAtom(X->xselectionrequest.target);
+        x.u.selectionRequest.target = XA_STRING;
       }
-
-      /*
-       * Selete property before sending the request to the client as
-       * required by ICCCM.
-       */
-      DeleteProperty(lastSelectionOwner[index].windowPtr, clientCutProperty);
-
-      sendEventToClient(lastSelectionOwner[index].client, &x);
-
-      #ifdef DEBUG
-      fprintf(stderr, "%s: sent SelectionRequest event to client %s property [%d][%s] " \
-              "target [%d][%s] requestor [0x%x] selection [%d][%s].\n", __func__,
-              nxagentClientInfoString(lastSelectionOwner[index].client),
-              x.u.selectionRequest.property, NameForLocalAtom(x.u.selectionRequest.property),
-              x.u.selectionRequest.target, NameForLocalAtom(x.u.selectionRequest.target),
-              x.u.selectionRequest.requestor,
-              x.u.selectionRequest.selection, NameForLocalAtom(x.u.selectionRequest.selection));
-      #endif
-      /* No reply to the Xserver yet - we will do that once the answer
-         of the above sendEventToClient arrives. */
     }
     else
     {
-      #ifdef DEBUG
-      fprintf(stderr, "%s: no local owner for selection [%ld][%s] - denying request.\n", __func__,
-                  X->xselectionrequest.selection, NameForRemoteAtom(X->xselectionrequest.selection));
-      #endif
-
-      /* deny the request */
-      replyRequestSelectionToXServer(X, False);
+      x.u.selectionRequest.target = nxagentRemoteToLocalAtom(X->xselectionrequest.target);
     }
+
+    /*
+     * Selete property before sending the request to the client as
+     * required by ICCCM.
+     */
+    DeleteProperty(lastSelectionOwner[index].windowPtr, clientCutProperty);
+
+    sendEventToClient(lastSelectionOwner[index].client, &x);
+
+    #ifdef DEBUG
+    fprintf(stderr, "%s: sent SelectionRequest event to client %s property [%d][%s] " \
+            "target [%d][%s] requestor [0x%x] selection [%d][%s].\n", __func__,
+            nxagentClientInfoString(lastSelectionOwner[index].client),
+            x.u.selectionRequest.property, NameForLocalAtom(x.u.selectionRequest.property),
+            x.u.selectionRequest.target, NameForLocalAtom(x.u.selectionRequest.target),
+            x.u.selectionRequest.requestor,
+            x.u.selectionRequest.selection, NameForLocalAtom(x.u.selectionRequest.selection));
+    #endif
+    /* No reply to the Xserver yet - we will do that once the answer
+       of the above sendEventToClient arrives. */
+  }
+  else
+  {
+    #ifdef DEBUG
+    fprintf(stderr, "%s: no local owner for selection [%ld][%s] - denying request.\n", __func__,
+                X->xselectionrequest.selection, NameForRemoteAtom(X->xselectionrequest.selection));
+    #endif
+
+    /* deny the request */
+    replyRequestSelectionToXServer(X, False);
   }
 }
 
