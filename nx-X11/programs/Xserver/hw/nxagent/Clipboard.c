@@ -1257,37 +1257,6 @@ void nxagentHandleSelectionRequestFromXServer(XEvent *X)
    */
   serverLastRequestedSelection = X->xselectionrequest.selection;
 
-#if 0
-  if (lastClients[index].windowPtr != NULL && IS_LOCAL_OWNER(index))
-  {
-    /*
-     * Request the real X server to transfer the selection content
-     * to the NX_CUT_BUFFER_SERVER property of the serverWindow.
-     * We reach here as follows:
-     * - mark someting in the nx session
-     *   -> nxagent claims ownership of PRIMARY on real X server
-     * - at the same time paste _clipboard_ to the client (now) owning primary
-     *   ->vcxsrv will ask for primary contents to store them to Windows clipboard
-     * - vcxsrv request is for _primary_ and takes this path as the _clipboard_ transfer
-     * has set lastClients[index].windowPtr
-     */
-    XDeleteProperty(nxagentDisplay, serverWindow, serverTransToAgentProperty);
-    XConvertSelection(nxagentDisplay, CurrentSelections[index].selection,
-                          X->xselectionrequest.target, serverTransToAgentProperty,
-                              serverWindow, lastClients[index].time);
-
-    NXFlushDisplay(nxagentDisplay, NXFlushLink);
-
-    #ifdef DEBUG
-    fprintf(stderr, "%s: Sent XConvertSelection: selection [%d][%s] target [%ld][%s] property [%ld][%s] window [0x%lx] time [%u] .\n", __func__,
-                CurrentSelections[index].selection, NameForRemoteAtom(CurrentSelections[index].selection)),
-                    X->xselectionrequest.target, NameForRemoteAtom(X->xselectionrequest.target),
-                        serverTransToAgentProperty, NameForRemoteAtom(serverTransToAgentProperty),
-                            serverWindow, lastClients[index].time);
-    #endif
-  }
-  else
-#endif
   {
     if (!(nxagentOption(Clipboard) == ClipboardServer ||
           nxagentOption(Clipboard) == ClipboardBoth))
