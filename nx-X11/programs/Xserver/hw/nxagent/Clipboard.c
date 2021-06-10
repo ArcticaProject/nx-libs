@@ -60,7 +60,7 @@
 #undef  DEBUG
 
 /*
- * define this to see the clipboard content in the debug output. As
+ * Define this to see the clipboard content in the debug output. As
  * this can lead to information leaking it must be activated
  * explicitly!
  */
@@ -106,7 +106,7 @@ typedef struct _SelectionOwner
 } SelectionOwner;
 
 /*
- * this contains the last selection owner in nxagent. The
+ * This contains the last selection owner in nxagent. The
  * lastTimeChanged is always an internal time. If .client is NULL the
  * owner is outside nxagent.
  */
@@ -114,9 +114,9 @@ typedef struct _SelectionOwner
 static SelectionOwner *lastSelectionOwner = NULL;
 
 /*
- * cache for targets the current selection owner
+ * Cache for targets the current selection owner
  * has to offer. We are storing the targets
- * after they have been converted
+ * after they have been converted.
 */
 typedef struct _Targets
 {
@@ -234,7 +234,7 @@ static char szAgentUTF8_STRING[] = "UTF8_STRING";
 static char szAgentNX_CUT_BUFFER_CLIENT[] = "NX_CUT_BUFFER_CLIENT";
 static char szAgentCLIPBOARD[] = "CLIPBOARD";
 
-/* number of milliseconds to wait for a conversion from the real X server. */
+/* Number of milliseconds to wait for a conversion from the real X server. */
 #define CONVERSION_TIMEOUT 5000
 
 /*
@@ -244,7 +244,7 @@ static char szAgentCLIPBOARD[] = "CLIPBOARD";
 #define ACCUM_TIME 5000
 
 /*
- * some helpers for debugging output
+ * Some helpers for debugging output
  */
 
 static const char * getClientSelectionStageString(int stage)
@@ -271,10 +271,11 @@ static const char * getClientSelectionStageString(int stage)
 
 #ifdef DEBUG
 /*
- * see also nx-X11/lib/src/ErrDes.c
+ * See also nx-X11/lib/src/ErrDes.c
  *
  * We use our own version to avoid Xlib doing expensive calls.
  * FIXME: Must check if XGetErrorText() is really causing traffic over the wire.
+ * FIXME: move this to a Utils.c or similar
  */
 const char * getXErrorString(int code)
 {
@@ -550,7 +551,7 @@ int GetWindowProperty(WindowPtr pWin, Atom property, long longOffset, long longL
 
 /*
  * Send a SelectionNotify event to the real X server and do some error
- * handling (in DEBUG mode)
+ * handling (in DEBUG mode).
  */
 static Status sendSelectionNotifyEventToXServer(XSelectionEvent *event_to_send)
 {
@@ -791,7 +792,7 @@ int nxagentFindCurrentSelectionIndex(Atom sel)
    * selection for the first nxagentMaxSelections selection atoms.
    */
 
-  //  for (int index = 0; index < NumCurrentSelections; index++)
+  /*  for (int index = 0; index < NumCurrentSelections; index++) */
   for (int index = 0; index < nxagentMaxSelections; index++)
   {
     if (CurrentSelections[index].selection == sel)
@@ -834,7 +835,7 @@ void cacheTargetsForRem(int index, XlibAtom* targets, int numTargets)
   targetCache[index].numTargets = numTargets;
 }
 
-/* this is called on init, reconnect and SelectionClear */
+/* This is called on init, reconnect and SelectionClear. */
 void invalidateTargetCache(int index)
 {
   #ifdef DEBUG
@@ -896,7 +897,7 @@ void nxagentHandleSelectionClearFromXServer(XEvent *X)
   {
     if (IS_INTERNAL_OWNER(index))
     {
-      /* send a SelectionClear event to (our) previous owner */
+      /* Send a SelectionClear event to (our) previous owner. */
       xEvent x = {0};
       x.u.u.type = SelectionClear;
       x.u.selectionClear.time = GetTimeInMillis();
@@ -907,9 +908,9 @@ void nxagentHandleSelectionClearFromXServer(XEvent *X)
     }
 
     /*
-     * set the root window with the NullClient as selection owner. Our
+     * Set the root window with the NullClient as selection owner. Our
      * clients asking for the owner via XGetSelectionOwner() will get
-     * these for an answer
+     * these for an answer.
      */
     CurrentSelections[index].window = screenInfo.screens[0]->root->drawable.id;
     CurrentSelections[index].client = NullClient;
@@ -980,7 +981,7 @@ void nxagentHandleSelectionRequestFromXServer(XEvent *X)
     return;
   }
 
-  /* the selection in this request is none we own. */
+  /* The selection in this request is none we own. */
   int index = nxagentFindLastSelectionOwnerIndex(X->xselectionrequest.selection);
   if (index == -1)
   {
@@ -996,7 +997,7 @@ void nxagentHandleSelectionRequestFromXServer(XEvent *X)
   fprintf(stderr, "%s: lastServers[%d].requestor [0x%lx].\n", __func__, index, lastServers[index].requestor);
   #endif
 
-  /* lastServers[index].requestor in non-NULL (= we are currently in the transfer phase) */
+  /* lastServers[index].requestor is non-NULL (= we are currently in the transfer phase) */
   if (lastServers[index].requestor != None)
   {
     #ifdef DEBUG
@@ -1017,7 +1018,7 @@ void nxagentHandleSelectionRequestFromXServer(XEvent *X)
     if (nxagentOption(TextClipboard))
     {
       /*
-       * the selection request target is TARGETS. The requestor is
+       * The selection request target is TARGETS. The requestor is
        * asking for a list of supported data formats.
        *
        * The selection does not matter here, we will return this for
@@ -1048,7 +1049,7 @@ void nxagentHandleSelectionRequestFromXServer(XEvent *X)
       #endif
 
       /*
-       * pass on the requested list by setting the property provided
+       * Pass on the requested list by setting the property provided
        * by the requestor accordingly.
        */
       XChangeProperty(nxagentDisplay,
@@ -1198,8 +1199,8 @@ void nxagentHandleSelectionRequestFromXServer(XEvent *X)
   #endif
 
   /*
-   * reaching this means the request is a normal, valid request. We
-   * can process it now.
+   * Reaching this line means the request is a normal, valid
+   * request. We can process it now.
    */
 
   if (!nxagentOption(TextClipboard))
@@ -1207,7 +1208,7 @@ void nxagentHandleSelectionRequestFromXServer(XEvent *X)
     /* Optimization: if we have a current target cache check if the
      * requested target is supported by the owner. If not we can take
      * a shortcut and deny the request immediately without doing any
-     * further communication */
+     * further communication. */
     if (targetCache[index].type == FORREM && targetCache[index].forRem)
     {
       XlibAtom *targets = targetCache[index].forRem;
@@ -1237,9 +1238,9 @@ void nxagentHandleSelectionRequestFromXServer(XEvent *X)
     else
     {
       /*
-       * at this stage we know a remote client has asked for a selection
-       * target without having retrieved the list of supported targets
-       * first.
+       * At this stage we know a remote client has requested a
+       * selection target without having retrieved the list of
+       * supported targets first.
        */
       #ifdef DEBUG
       if (X->xselectionrequest.target != serverTARGETS)
@@ -1301,7 +1302,7 @@ void nxagentHandleSelectionRequestFromXServer(XEvent *X)
     }
 
     /*
-     * if one of our clients owns the selection we ask it to copy
+     * If one of our clients owns the selection we ask it to copy
      * the selection to the clientCutProperty on nxagent's root
      * window in the first step. We then later push that property's
      * content to the real X server.
@@ -1309,15 +1310,15 @@ void nxagentHandleSelectionRequestFromXServer(XEvent *X)
     if (IS_INTERNAL_OWNER(index))
     {
       /*
-       * store who on the real X server requested the data and how
-       * and where it wants to have it
+       * Store who on the real X server requested the data and how
+       * and where it wants to have it.
        */
       lastServers[index].property = X->xselectionrequest.property;
       lastServers[index].requestor = X->xselectionrequest.requestor;
       lastServers[index].target = X->xselectionrequest.target;
       lastServers[index].time = X->xselectionrequest.time;
 
-      /* prepare the request (like XConvertSelection, but internally) */
+      /* Prepare the request (like XConvertSelection, but internally). */
       xEvent x = {0};
       x.u.u.type = SelectionRequest;
       x.u.selectionRequest.time = GetTimeInMillis();
@@ -1335,8 +1336,8 @@ void nxagentHandleSelectionRequestFromXServer(XEvent *X)
        */
 
       /*
-       * if textclipboard is requested simply use the previous clipboard
-       * handling code
+       * In TextClipboard mode simply use the previous clipboard
+       * handling code.
        */
       if (nxagentOption(TextClipboard))
       {
@@ -1358,8 +1359,8 @@ void nxagentHandleSelectionRequestFromXServer(XEvent *X)
       }
 
       /*
-       * delete property before sending the request to the client -
-       * required by ICCCM
+       * Selete property before sending the request to the client as
+       * required by ICCCM.
        */
       DeleteProperty(lastSelectionOwner[index].windowPtr, clientCutProperty);
 
@@ -1374,8 +1375,8 @@ void nxagentHandleSelectionRequestFromXServer(XEvent *X)
               x.u.selectionRequest.requestor,
               x.u.selectionRequest.selection, NameForIntAtom(x.u.selectionRequest.selection));
       #endif
-      /* no reply to Xserver yet - we will do that once the answer of
-         the above sendEventToClient arrives */
+      /* No reply to the Xserver yet - we will do that once the answer
+         of the above sendEventToClient arrives. */
     }
     else
     {
@@ -1391,11 +1392,12 @@ void nxagentHandleSelectionRequestFromXServer(XEvent *X)
 }
 
 /*
- * end current selection transfer by sending a notification to the
+ * End the current selection transfer by sending a notification to the
  * client and resetting the corresponding variables and the state
  * machine. If success is False send a None reply, meaning "request
- * denied/failed"
- * Use SELECTION_SUCCESS and SELECTION_FAULT macros for success.
+ * denied/failed".
+ * Use SELECTION_SUCCESS and SELECTION_FAULT macros for the success
+ * value.
  */
 static void endTransfer(int index, Bool success)
 {
@@ -1462,7 +1464,7 @@ static void transferSelectionFromXServer(int index, int resource)
        * current implementation and go straight to the data.
        */
 
-      /* get next free resource index */
+      /* Get next free resource slot. */
       int free_resource = NXGetCollectPropertyResource(nxagentDisplay);
 
       lastClients[index].resource = free_resource;
@@ -1477,7 +1479,7 @@ static void transferSelectionFromXServer(int index, int resource)
       }
       else
       {
-        /* collect property and store with index "resource"  */
+        /* Collect the property and store ist with index "resource" d */
         result = NXCollectProperty(nxagentDisplay,
                                    free_resource,
                                    serverWindow,
@@ -1520,7 +1522,7 @@ static void transferSelectionFromXServer(int index, int resource)
       fprintf(stderr, "%s: Getting property content from remote server.\n", __func__);
       #endif
 
-      /* get next free resource slot */
+      /* Get next free resource slot. */
       resource = NXGetCollectPropertyResource(nxagentDisplay);
 
       lastClients[index].resource = resource;
@@ -1536,7 +1538,7 @@ static void transferSelectionFromXServer(int index, int resource)
       else
       {
         /*
-         * now initiate kind of an asynchronuos GetProperty()
+         * Now initiate kind of an asynchronuos GetProperty()
          * call. Once the property has been retrieved we will
          * receive an NXCollectPropertyNotify event which will then
          * be handled in
@@ -1566,7 +1568,7 @@ static void transferSelectionFromXServer(int index, int resource)
 
       setClientSelectionStage(index, SelectionStageWaitData);
 
-      /* we've seen situations where you had to move the mouse or press a
+      /* We've seen situations where you had to move the mouse or press a
          key to let the transfer complete. Flushing here fixed it */
       NXFlushDisplay(nxagentDisplay, NXFlushLink);
 
@@ -1588,7 +1590,7 @@ static void transferSelectionFromXServer(int index, int resource)
 /*
    Called from Events.c/nxagentHandleCollectPropertyEvent
    This event is generated after XChangeProperty(), XDeleteProperty() or
-   XGetWindowProperty(delete=True)
+   XGetWindowProperty(delete=True).
 
    Returncode:
    True: processed
@@ -1612,7 +1614,7 @@ Bool nxagentCollectPropertyEventFromXServer(int resource)
     return False;
   }
 
-  /* determine the selection we are talking about here */
+  /* Determine the selection we are talking about here. */
   for (index = 0; index < nxagentMaxSelections; index++)
   {
     /*
@@ -1887,7 +1889,7 @@ void nxagentHandleSelectionNotifyFromXServer(XEvent *X)
   printClientSelectionStage(index);
 
   /*
-   * if the property is serverTransFromAgentProperty this means we are
+   * If the property is serverTransFromAgentProperty this means we are
    * transferring data FROM the agent TO the server.
    */
 
@@ -1965,7 +1967,8 @@ void nxagentHandleSelectionNotifyFromXServer(XEvent *X)
 
 void handlePropertyTransferFromAgentToXserver(int index, XlibAtom property)
 {
-  /* if the last owner was an internal one, read the
+  /*
+   * If the last owner was an internal one, read the
    * clientCutProperty and push the contents to the
    * lastServers[index].requestor on the real X server.
    */
@@ -1979,7 +1982,7 @@ void handlePropertyTransferFromAgentToXserver(int index, XlibAtom property)
     unsigned long   ulReturnBytesLeft;
     unsigned char   *pszReturnData = NULL;
 
-    /* first get size values ... */
+    /* First get size values ... */
     int result = GetWindowProperty(lastSelectionOwner[index].windowPtr, clientCutProperty, 0, 0, False,
                                        AnyPropertyType, &atomReturnType, &resultFormat,
                                            &ulReturnItems, &ulReturnBytesLeft, &pszReturnData);
@@ -1996,7 +1999,7 @@ void handlePropertyTransferFromAgentToXserver(int index, XlibAtom property)
     }
     else
     {
-      /* ... then use the size values for the actual request */
+      /* ... then use the size values for the actual request data. */
       result = GetWindowProperty(lastSelectionOwner[index].windowPtr, clientCutProperty, 0,
                                      ulReturnBytesLeft, False, AnyPropertyType, &atomReturnType,
                                          &resultFormat, &ulReturnItems, &ulReturnBytesLeft,
@@ -2027,12 +2030,12 @@ void handlePropertyTransferFromAgentToXserver(int index, XlibAtom property)
             #ifdef WARNING
             fprintf(stderr, "%s: WARNING! Could not alloc memory for clipboard targets transmission.\n", __func__);
             #endif
-            /* this will effectively lead to the request being answered as failed */
+            /* This will effectively lead to the request being answered as failed. */
             lastServers[index].property = None;
           }
           else
           {
-            /* Convert the targets to remote atoms */
+            /* Convert the targets to remote atoms. */
             XlibAtom *addr = targets;
             unsigned int numTargets = ulReturnItems;
 
@@ -2063,10 +2066,10 @@ void handlePropertyTransferFromAgentToXserver(int index, XlibAtom property)
         }
         else
         {
-          /* Fill the property on the requestor with the requested data */
+          /* Fill the property on the requestor with the requested data. */
           /* The XChangeProperty source code reveals it will always
              return 1, no matter what, so no need to check the result */
-          /* FIXME: better use the format returned by above request */
+          /* FIXME: better use the format returned by above request. */
           XChangeProperty(nxagentDisplay,
                           lastServers[index].requestor,
                           lastServers[index].property,
@@ -2105,7 +2108,7 @@ void handlePropertyTransferFromAgentToXserver(int index, XlibAtom property)
     }
 
     /*
-     * inform the initial requestor that the requested data has
+     * Inform the initial requestor that the requested data has
      * arrived in the desired property. If we have been unable to
      * get the data from the owner XChangeProperty will not have
      * been called and lastServers[index].property will be None which
@@ -2165,7 +2168,7 @@ static void resetSelectionOwnerOnXServer(void)
   if (lastServers[index].requestor != None)
   {
     /*
-     * we are in the process of communicating back and forth between
+     * We are in the process of communicating back and forth between
      * real X server and nxagent's clients - let's not disturb.
      */
     #if defined(TEST) || defined(DEBUG)
@@ -2189,7 +2192,7 @@ static void resetSelectionOwnerOnXServer(void)
 
     setClientSelectionStage(index, SelectionStageNone);
 
-    /* Hmm, this is already None when reaching here */
+    /* Hmm, this is already None when reaching here. */
     lastServers[index].requestor = None;
   }
 }
@@ -2251,7 +2254,7 @@ void nxagentSetSelectionCallback(CallbackListPtr *callbacks, void *data,
   }
 
   /*
-   * always invalidate the target cache for the relevant selection,
+   * Always invalidate the target cache for the relevant selection,
    * even if the trap is set. This ensures not having invalid data in
    * the cache.
    */
@@ -2302,7 +2305,7 @@ void nxagentSetSelectionCallback(CallbackListPtr *callbacks, void *data,
 
 /*
  * This is called from the nxagentSetSelectionCallback, so it is using
- * internal Atoms
+ * internal Atoms.
  */
 static void setSelectionOwnerOnXServer(Selection *pSelection)
 {
@@ -2348,12 +2351,12 @@ static void setSelectionOwnerOnXServer(Selection *pSelection)
 
       replyPendingRequestSelectionToXServer(index, False);
 
-      /* now we can go on */
+      /* Now we can go on. */
     }
     #endif
 
     /*
-     * inform the real X server that our serverWindow is the
+     * Inform the real X server that our serverWindow is the
      * clipboard owner.
      * https://www.freedesktop.org/wiki/ClipboardManager/ states
      * "In order to support peers who use the XFIXES extension to
@@ -2374,9 +2377,9 @@ static void setSelectionOwnerOnXServer(Selection *pSelection)
     setClientSelectionStage(index, SelectionStageNone);
 
     /*
-     * this will be repeated on reception of the SelectionOwner callback
-     * but we cannot be sure if there are any intermediate requests in the queue
-     * already so better do it here, too
+     * This will be repeated on reception of the SelectionOwner
+     * callback but we cannot be sure if there are any intermediate
+     * requests in the queue already so better do it here, too.
      */
     invalidateTargetCache(index);
 
@@ -2472,10 +2475,10 @@ int nxagentConvertSelection(ClientPtr client, WindowPtr pWin, Atom selection,
   }
 
   /*
-   * if lastClients[index].windowPtr is set we are waiting for an answer from
-   * the real X server. If that answer takes more than 5 seconds we
-   * consider the conversion failed and tell our client about that.
-   * The new request that lead us here is then processed.
+   * If lastClients[index].windowPtr is set we are waiting for an
+   * answer from the real X server. If that answer takes more than 5
+   * seconds we consider the conversion failed and tell our client
+   * about that. The new request that lead us here is then processed.
    */
   #ifdef TEST
   fprintf(stderr, "%s: lastClients[%d].windowPtr [0x%lx].\n", __func__, index, (unsigned long)lastClients[index].windowPtr);
@@ -2498,15 +2501,15 @@ int nxagentConvertSelection(ClientPtr client, WindowPtr pWin, Atom selection,
                   "notifying failure to waiting client\n", __func__);
       #endif
 
-      /* notify the waiting client of failure */
+      /* Notify the waiting client of the failure. */
       endTransfer(index, SELECTION_FAULT);
 
-      /* do NOT return here but process the new request instead! */
+      /* Do NOT return here but process the new request instead! */
     }
     else
     {
       /*
-       * we got another convert request while already waiting for an
+       * We got another convert request while already waiting for an
        * answer from the real X server to a previous convert request
        * for this selection, which we cannot handle (yet). So return
        * an error for the new request.
@@ -2517,7 +2520,7 @@ int nxagentConvertSelection(ClientPtr client, WindowPtr pWin, Atom selection,
                       __func__, nxagentClientInfoString(client));
       #endif
 
-      /* notify the sender of the new request of failure */
+      /* Notify the sender of the new request of the failure. */
       sendSelectionNotifyEventToClient(client, time, requestor, selection, target, None);
 
       return 1;
@@ -2614,7 +2617,7 @@ int nxagentConvertSelection(ClientPtr client, WindowPtr pWin, Atom selection,
       }
 
       /*
-       * do nothing - TARGETS will be handled like any other target
+       * Do nothing - TARGETS will be handled like any other target
        * and passed on to the owner on the remote side.
        */
     }
@@ -2633,6 +2636,7 @@ int nxagentConvertSelection(ClientPtr client, WindowPtr pWin, Atom selection,
   else if (target == clientTIMESTAMP)
   {
     /*
+     * From ICCCM:
      * "If the specified property is not None, the owner should place
      * the data resulting from converting the selection into the
      * specified property on the requestor window and should set the
@@ -2699,7 +2703,7 @@ int nxagentConvertSelection(ClientPtr client, WindowPtr pWin, Atom selection,
     return 1;
   }
 
-  /* in TextClipboard mode reject all non-text targets */
+  /* In TextClipboard mode we reject all non-text targets. */
   if (nxagentOption(TextClipboard))
   {
     if (!isTextTarget(translateLocalToRemoteTarget(target)))
@@ -2712,7 +2716,7 @@ int nxagentConvertSelection(ClientPtr client, WindowPtr pWin, Atom selection,
       sendSelectionNotifyEventToClient(client, time, requestor, selection, target, None);
       return 1;
     }
-    /* go on, target is acceptable */
+    /* Go on, target is acceptable! */
   }
 
   #ifdef DEBUG
@@ -2722,10 +2726,12 @@ int nxagentConvertSelection(ClientPtr client, WindowPtr pWin, Atom selection,
 
   if (!nxagentOption(TextClipboard))
   {
-    /* Optimization: if we have a current target cache check if the
+    /*
+     * Optimization: if we have a current target cache check if the
      * requested target is supported by the owner. If not we can take
      * a shortcut and deny the request immediately without doing any
-     * further communication */
+     * further communication
+     */
     if (targetCache[index].type == FORINT && targetCache[index].forInt)
     {
       Atom *targets = targetCache[index].forInt;
@@ -2755,7 +2761,7 @@ int nxagentConvertSelection(ClientPtr client, WindowPtr pWin, Atom selection,
     else
     {
       /*
-       * at this stage we know a client has asked for a selection
+       * At this stage we know a client has asked for a selection
        * target without having retrieved the list of supported targets
        * first.
        */
@@ -2795,8 +2801,8 @@ int nxagentConvertSelection(ClientPtr client, WindowPtr pWin, Atom selection,
   else
   {
     /*
-     * reset clientAccum as now another client requested the clipboard
-     * content
+     * Reset clientAccum as now another client requested the clipboard
+     * content.
      */
     clientAccum = 0;
   }
@@ -2804,8 +2810,9 @@ int nxagentConvertSelection(ClientPtr client, WindowPtr pWin, Atom selection,
   setClientSelectionStage(index, SelectionStageNone);
 
   /*
-   * store the original requestor, we need that later after
-   * serverTransToAgentProperty contains the desired selection content
+   * Store the original requestor, we need that later after
+   * serverTransToAgentProperty has been filled with the desired
+   * selection content.
    */
   lastClients[index].requestor = requestor;
   lastClients[index].windowPtr = pWin;
@@ -2813,7 +2820,7 @@ int nxagentConvertSelection(ClientPtr client, WindowPtr pWin, Atom selection,
   lastClients[index].time = time;
   lastClients[index].property = property;
   lastClients[index].target = target;
-  /* if the last client request time is more than 5s ago update it. Why? */
+  /* If the last client request time is more than 5s ago update it. Why? */
   if ((GetTimeInMillis() - lastClients[index].reqTime) >= CONVERSION_TIMEOUT)
     lastClients[index].reqTime = GetTimeInMillis();
 
@@ -2869,8 +2876,10 @@ int nxagentConvertSelection(ClientPtr client, WindowPtr pWin, Atom selection,
   return 1;
 }
 
-/* FIXME: do we still need this special treatment? Can't we just
-   call nxagentLocalToRemoteAtom() everywhere? */
+/*
+ * FIXME: do we still need this special treatment? Can't we just
+ * call nxagentLocalToRemoteAtom() everywhere?
+ */
 XlibAtom translateLocalToRemoteSelection(Atom local)
 {
   /*
@@ -3017,7 +3026,7 @@ int nxagentSendNotificationToSelfViaXServer(xEvent *event)
    * communication happens completely between our own clients (some of
    * which can be nxagents themselves). In that case we return 0 (tell
    * dix to go on) and do nothing!
-   * Be sure to not let this trigger for the failure answer (property 0)
+   * Be sure to not let this trigger for the failure answer (property 0).
    */
   if (!(event->u.selectionNotify.property == clientCutProperty || event->u.selectionNotify.property == 0) || lastServers[index].requestor == None)
   {
@@ -3029,7 +3038,7 @@ int nxagentSendNotificationToSelfViaXServer(xEvent *event)
   else
   {
     /*
-     * if the property is 0 (reporting failure) we can directly
+     * If the property is 0 (reporting failure) we can directly
      * answer to the lastServer about the failure!
      */
     if (lastServers[index].requestor != None && event->u.selectionNotify.property == 0)
@@ -3072,7 +3081,7 @@ int nxagentSendNotificationToSelfViaXServer(xEvent *event)
 /*
  * This is called from NXproperty.c to determine if a client sets the
  * property we are waiting for.
- * FIXME: in addition we should check if the client is the one we expect
+ * FIXME: in addition we should check if the client is the one we expect.
  */
 WindowPtr nxagentGetClipboardWindow(Atom property)
 {
@@ -3101,7 +3110,7 @@ WindowPtr nxagentGetClipboardWindow(Atom property)
 }
 
 /*
- * Initialize the clipboard
+ * Initialize the clipboard.
  * Returns: True for success else False
  */
 Bool nxagentInitClipboard(WindowPtr pWin)
@@ -3122,8 +3131,8 @@ Bool nxagentInitClipboard(WindowPtr pWin)
 
   if (!nxagentReconnectTrap)
   {
-    /* cannot move that down to others - we need it for
-     * initSelectionOwnerData ! */
+    /* Cannot move that down to others - we need it for
+     * initSelectionOwnerData! */
     /* FIXME: it is probably better to re-use the strings from Atoms.c here */
     clientTARGETS = MakeAtom(szAgentTARGETS, strlen(szAgentTARGETS), True);
 #ifdef SUPPORT_TEXT_TARGET
@@ -3191,8 +3200,8 @@ Bool nxagentInitClipboard(WindowPtr pWin)
   }
 
   /*
-   * the clipboard selection atom might have changed on a new X
-   * server. Primary is constant.
+   * The clipboard selection atom can change with a new X
+   * server while Primary is constant.
    */
   remSelAtoms[nxagentPrimarySelection] = XA_PRIMARY;
   remSelAtoms[nxagentClipboardSelection] = nxagentAtoms[10];   /* CLIPBOARD */
@@ -3216,7 +3225,7 @@ Bool nxagentInitClipboard(WindowPtr pWin)
 
   /*
    * Server side properties to hold pasted data.
-   * see nxagentSendNotificationToSelfViaXServer for an explanation
+   * See nxagentSendNotificationToSelfViaXServer for an explanation
    */
   serverTransFromAgentProperty = nxagentAtoms[15]; /* NX_SELTRANS_FROM_AGENT */
   serverTransToAgentProperty = nxagentAtoms[5];  /* NX_CUT_BUFFER_SERVER */
@@ -3230,7 +3239,7 @@ Bool nxagentInitClipboard(WindowPtr pWin)
     return False;
   }
 
-  /* this is probably to communicate with nomachine nxclient */
+  /* This is probably to communicate with nomachine nxclient. */
   #ifdef TEST
   fprintf(stderr, "%s: Setting owner of selection [%d][%s] to serverWindow [0x%lx]\n", __func__,
               (int) serverTransToAgentProperty, "NX_CUT_BUFFER_SERVER", serverWindow);
@@ -3275,14 +3284,13 @@ Bool nxagentInitClipboard(WindowPtr pWin)
 
   if (nxagentSessionId[0])
   {
-    // nxagentAtoms[10] is the CLIPBOARD atom
     #ifdef TEST
     fprintf(stderr, "%s: setting the ownership of %s to %lx"
                 " and registering for PropertyChangeMask events\n", __func__,
                     validateString(NameForRemAtom(nxagentAtoms[10])), serverWindow);
     #endif
 
-    XSetSelectionOwner(nxagentDisplay, nxagentAtoms[10], serverWindow, CurrentTime);
+    XSetSelectionOwner(nxagentDisplay, nxagentAtoms[10], serverWindow, CurrentTime);    // nxagentAtoms[10] is the CLIPBOARD atom
     pWin -> eventMask |= PropertyChangeMask;
     nxagentChangeWindowAttributes(pWin, CWEventMask);
   }
@@ -3297,7 +3305,7 @@ Bool nxagentInitClipboard(WindowPtr pWin)
       for (int index = 0; index < nxagentMaxSelections; index++)
       {
         /*
-         * if we have a selection inform the (new) real Xserver and
+         * If we have a selection inform the (new) real Xserver and
          * claim the ownership. Note that we report our serverWindow as
          * owner, not the real window!
          */
@@ -3309,7 +3317,7 @@ Bool nxagentInitClipboard(WindowPtr pWin)
 
         /*
          * On reconnect there cannot be any external requestor
-         * waiting for a reply so clean this
+         * waiting for a reply so clean this.
          */
         lastServers[index].requestor = None;
 
