@@ -3239,6 +3239,7 @@ Bool nxagentInitClipboard(WindowPtr pWin)
     return False;
   }
 
+#ifdef NXAGENT_ONSTART
   /* This is probably to communicate with nomachine nxclient. */
   #ifdef TEST
   fprintf(stderr, "%s: Setting owner of selection [%d][%s] to serverWindow [0x%lx]\n", __func__,
@@ -3246,6 +3247,7 @@ Bool nxagentInitClipboard(WindowPtr pWin)
   #endif
 
   XSetSelectionOwner(nxagentDisplay, serverTransToAgentProperty, serverWindow, CurrentTime);
+#endif
 
   if (XQueryExtension(nxagentDisplay,
                       "XFIXES",
