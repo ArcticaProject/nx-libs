@@ -94,20 +94,20 @@ const int nxagentClipboardSelection = 1;
 const int nxagentMaxSelections = 2;
 
 /* store the remote atom for all selections */
-static XlibAtom *remSelAtoms = NULL;
-static Atom *intSelAtoms = NULL;
+static XlibAtom *remoteSelectionAtoms = NULL;
+static Atom *localSelelectionAtoms = NULL;
 
 typedef struct _SelectionOwner
 {
-  ClientPtr  client;           /* internal client */
-  Window     window;           /* internal window id */
-  WindowPtr  windowPtr;        /* internal window struct */
-  Time       lastTimeChanged;  /* internal time */
+  ClientPtr  client;           /* local client */
+  Window     window;           /* local window id */
+  WindowPtr  windowPtr;        /* local window struct */
+  Time       lastTimeChanged;  /* local time (server time) */
 } SelectionOwner;
 
 /*
  * This contains the last selection owner in nxagent. The
- * lastTimeChanged is always an internal time. If .client is NULL the
+ * lastTimeChanged is always a local time. If .client is NULL the
  * owner is outside nxagent.
  */
 
@@ -120,22 +120,22 @@ static SelectionOwner *lastSelectionOwner = NULL;
 */
 typedef struct _Targets
 {
-  Bool          type;     /* EMPTY, FORINT, FORREM */
+  Bool          type;        /* EMPTY, FOR_LOCAL, FOR_REMOTE */
   unsigned int  numTargets;
-  Atom         *forInt;   /* Atoms converted for internal -> type Atom, not XlibAtom */
-  XlibAtom     *forRem;   /* Atoms converted for remote   -> type XlibAtom, not Atom */
+  Atom         *forLocal;    /* Atoms converted for local  -> type Atom, not XlibAtom */
+  XlibAtom     *forRemote;   /* Atoms converted for remote -> type XlibAtom, not Atom */
 } Targets;
 
 #define EMPTY 0
-#define FORREM 1
-#define FORINT 2
+#define FOR_REMOTE 1
+#define FOR_LOCAL 2
 
 static Targets *targetCache = NULL;
 
 /* FIXME: can this also be stored per selection? */
 static XlibAtom serverLastRequestedSelection = -1;
 
-#define IS_INTERNAL_OWNER(lsoindex) (lastSelectionOwner[lsoindex].client != NullClient)
+#define IS_LOCAL_OWNER(lsoindex) (lastSelectionOwner[lsoindex].client != NullClient)
 
 typedef enum
 {
@@ -357,10 +357,10 @@ static void printSelectionStat(int index)
 
   fprintf(stderr, "selection [%d]:\n", index);
 
-  fprintf(stderr, "  selection Atom                         internal [%d][%s]  remote [%ld][%s]\n",
-              intSelAtoms[index], NameForIntAtom(intSelAtoms[index]),
-                  remSelAtoms[index], NameForRemAtom(remSelAtoms[index]));
-  fprintf(stderr, "  owner side                             %s\n", IS_INTERNAL_OWNER(index) ? "nxagent" : "real X server/none");
+  fprintf(stderr, "  selection Atom                         local [%d][%s]  remote [%ld][%s]\n",
+              localSelelectionAtoms[index], NameForLocalAtom(localSelelectionAtoms[index]),
+                  remoteSelectionAtoms[index], NameForRemoteAtom(remoteSelectionAtoms[index]));
+  fprintf(stderr, "  owner side                             %s\n", IS_LOCAL_OWNER(index) ? "nxagent" : "real X server/none");
   fprintf(stderr, "  lastSelectionOwner[].client            %s\n", nxagentClientInfoString(lOwner.client));
   fprintf(stderr, "  lastSelectionOwner[].window            [0x%x]\n", lOwner.window);
   if (lOwner.windowPtr)
@@ -383,8 +383,8 @@ static void printLastClientStat(int index)
     fprintf(stderr, "  lastClients[].windowPtr    (WindowPtr) -\n");
   fprintf(stderr, "  lastClients[].clientPtr    (ClientPtr) %s\n", nxagentClientInfoString(lc.clientPtr));
   fprintf(stderr, "  lastClients[].requestor       (Window) [0x%x]\n", lc.requestor);
-  fprintf(stderr, "  lastClients[].property          (Atom) [% 4d][%s]\n", lc.property, NameForIntAtom(lc.property));
-  fprintf(stderr, "  lastClients[].target            (Atom) [% 4d][%s]\n", lc.target, NameForIntAtom(lc.target));
+  fprintf(stderr, "  lastClients[].property          (Atom) [% 4d][%s]\n", lc.property, NameForLocalAtom(lc.property));
+  fprintf(stderr, "  lastClients[].target            (Atom) [% 4d][%s]\n", lc.target, NameForLocalAtom(lc.target));
   if (lc.time > 0)
     fprintf(stderr, "  lastClients[].time              (Time) [%u] ([%u]ms ago)\n", lc.time, GetTimeInMillis() - lc.time);
   else
@@ -402,16 +402,16 @@ static void printLastServerStat(int index)
 {
   lastServer ls = lastServers[index];
   fprintf(stderr, "  lastServer[].requestor    (XlibWindow) [0x%lx]\n", ls.requestor);
-  fprintf(stderr, "  lastServer[].property       (XlibAtom) [% 4ld][%s]\n", ls.property, NameForRemAtom(ls.property));
-  fprintf(stderr, "  lastServer[].target         (XlibAtom) [% 4ld][%s]\n", ls.target, NameForRemAtom(ls.target));
+  fprintf(stderr, "  lastServer[].property       (XlibAtom) [% 4ld][%s]\n", ls.property, NameForRemoteAtom(ls.property));
+  fprintf(stderr, "  lastServer[].target         (XlibAtom) [% 4ld][%s]\n", ls.target, NameForRemoteAtom(ls.target));
   fprintf(stderr, "  lastServer[].time               (Time) [%u]\n", ls.time);
 }
 
 static void printTargetCacheStat(int index)
 {
   fprintf(stderr, "  targetCache[].type               (int) [%d]\n", targetCache[index].type);
-  fprintf(stderr, "  targetCache[].forInt          (Atom *) [%p]\n", (void *)targetCache[index].forInt);
-  fprintf(stderr, "  targetCache[].forRem      (XlibAtom *) [%p]\n", (void *)targetCache[index].forRem);
+  fprintf(stderr, "  targetCache[].forLocal        (Atom *) [%p]\n", (void *)targetCache[index].forLocal);
+  fprintf(stderr, "  targetCache[].forRemote   (XlibAtom *) [%p]\n", (void *)targetCache[index].forRemote);
   fprintf(stderr, "  targetCache[].numTargets         (int) [%d]\n", targetCache[index].numTargets);
 }
 
@@ -440,7 +440,7 @@ void nxagentDumpClipboardStat(void)
   if (serverLastRequestedSelection == -1)
       fprintf(stderr, "  serverLastRequestedSelection           [-1](uninitialized)\n");
   else
-      fprintf(stderr, "  serverLastRequestedSelection           [% 4ld][%s]\n", serverLastRequestedSelection, NameForRemAtom(serverLastRequestedSelection));
+      fprintf(stderr, "  serverLastRequestedSelection           [% 4ld][%s]\n", serverLastRequestedSelection, NameForRemoteAtom(serverLastRequestedSelection));
 
   fprintf(stderr, "Compile time settings\n");
 #ifdef PRINT_CLIPBOARD_CONTENT_ON_DEBUG
@@ -464,33 +464,33 @@ void nxagentDumpClipboardStat(void)
   XlibAtom sv = 0;
   int len = WIDTH;
 
-  fprintf(stderr, "Atoms                                    internal%*sremote\n", WIDTH - 8, "");
-  cl = clientTARGETS; sv = serverTARGETS; len = (int)(WIDTH - 9 - strlen(NameForIntAtom(cl)));
-  fprintf(stderr, "  TARGETS                                [% 4d][%s]%*s [% 4ld][%s]\n", cl, NameForIntAtom(cl), len, "", sv, NameForRemAtom(sv));
+  fprintf(stderr, "Atoms                                    local%*sremote\n", WIDTH - 5, "");
+  cl = clientTARGETS; sv = serverTARGETS; len = (int)(WIDTH - 9 - strlen(NameForLocalAtom(cl)));
+  fprintf(stderr, "  TARGETS                                [% 4d][%s]%*s [% 4ld][%s]\n", cl, NameForLocalAtom(cl), len, "", sv, NameForRemoteAtom(sv));
 
-  cl = clientTIMESTAMP; sv = serverTIMESTAMP; len = (int)(WIDTH - 9 - strlen(NameForIntAtom(cl)));
-  fprintf(stderr, "  TIMESTAMP                              [% 4d][%s]%*s [% 4ld][%s]\n", cl, NameForIntAtom(cl), len, "", sv, NameForRemAtom(sv));
+  cl = clientTIMESTAMP; sv = serverTIMESTAMP; len = (int)(WIDTH - 9 - strlen(NameForLocalAtom(cl)));
+  fprintf(stderr, "  TIMESTAMP                              [% 4d][%s]%*s [% 4ld][%s]\n", cl, NameForLocalAtom(cl), len, "", sv, NameForRemoteAtom(sv));
 
 #ifdef SUPPORT_TEXT_TARGET
-  cl = clientTEXT; sv = serverTEXT; len = (int)(WIDTH - 9 - strlen(NameForIntAtom(cl)));
-  fprintf(stderr, "  TEXT                                   [% 4d][%s]%*s [% 4ld][%s]\n", cl, NameForIntAtom(cl), len, "", sv, NameForRemAtom(sv));
+  cl = clientTEXT; sv = serverTEXT; len = (int)(WIDTH - 9 - strlen(NameForLocalAtom(cl)));
+  fprintf(stderr, "  TEXT                                   [% 4d][%s]%*s [% 4ld][%s]\n", cl, NameForLocalAtom(cl), len, "", sv, NameForRemoteAtom(sv));
 #endif
 #ifdef SUPPORT_COMPOUND_TEXT_TARGET
-  cl = clientCOMPOUND_TEXT; sv = serverCOMPOUND_TEXT; len = (int)(WIDTH - 9 - strlen(NameForIntAtom(cl)));
-  fprintf(stderr, "  COMPOUND_TEXT                          [% 4d][%s]%*s [% 4ld][%s]\n", cl, NameForIntAtom(cl), len, "", sv, NameForRemAtom(sv));
+  cl = clientCOMPOUND_TEXT; sv = serverCOMPOUND_TEXT; len = (int)(WIDTH - 9 - strlen(NameForLocalAtom(cl)));
+  fprintf(stderr, "  COMPOUND_TEXT                          [% 4d][%s]%*s [% 4ld][%s]\n", cl, NameForLocalAtom(cl), len, "", sv, NameForRemoteAtom(sv));
 #endif
 
-  cl = clientUTF8_STRING; sv = serverUTF8_STRING; len = (int)(WIDTH - 9 - strlen(NameForIntAtom(cl)));
-  fprintf(stderr, "  UTF8_STRING                            [% 4d][%s]%*s [% 4ld][%s]\n", cl, NameForIntAtom(cl), len, "", sv, NameForRemAtom(sv));
+  cl = clientUTF8_STRING; sv = serverUTF8_STRING; len = (int)(WIDTH - 9 - strlen(NameForLocalAtom(cl)));
+  fprintf(stderr, "  UTF8_STRING                            [% 4d][%s]%*s [% 4ld][%s]\n", cl, NameForLocalAtom(cl), len, "", sv, NameForRemoteAtom(sv));
 
   sv = serverTransToAgentProperty;
-  fprintf(stderr, "  serverTransToAgentProperty             - %*s[% 4ld][%s]\n", WIDTH - 2, "", sv, NameForRemAtom(sv));
+  fprintf(stderr, "  serverTransToAgentProperty             - %*s[% 4ld][%s]\n", WIDTH - 2, "", sv, NameForRemoteAtom(sv));
 
   sv = serverTransFromAgentProperty;
-  fprintf(stderr, "  serverTransFromAgentProperty           - %*s[% 4ld][%s]\n", WIDTH - 2, "", sv, NameForRemAtom(sv));
+  fprintf(stderr, "  serverTransFromAgentProperty           - %*s[% 4ld][%s]\n", WIDTH - 2, "", sv, NameForRemoteAtom(sv));
 
-  cl = clientCutProperty; len = (int)(WIDTH - 9 - strlen(NameForIntAtom(cl)));
-  fprintf(stderr, "  clientCutProperty                      [% 4d][%s]%*s\n", cl, NameForIntAtom(cl), len + 2, "-" );
+  cl = clientCutProperty; len = (int)(WIDTH - 9 - strlen(NameForLocalAtom(cl)));
+  fprintf(stderr, "  clientCutProperty                      [% 4d][%s]%*s\n", cl, NameForLocalAtom(cl), len + 2, "-" );
 
   for (int index = 0; index < nxagentMaxSelections; index++)
   {
@@ -758,23 +758,23 @@ int nxagentFindLastSelectionOwnerIndex(XlibAtom sel)
 {
   for (int index = 0; index < nxagentMaxSelections; index++)
   {
-    if (remSelAtoms[index] == sel)
+    if (remoteSelectionAtoms[index] == sel)
     {
       #ifdef DEBUG
-      fprintf(stderr, "%s: remote selection [%ld][%s] belongs to index [%d]\n", __func__, sel, NameForRemAtom(sel), index);
+      fprintf(stderr, "%s: remote selection [%ld][%s] belongs to index [%d]\n", __func__, sel, NameForRemoteAtom(sel), index);
       #endif
       return index;
     }
   }
   #ifdef DEBUG
-  fprintf(stderr, "%s: remote selection [%ld][%s] does not belong to any index!\n", __func__, sel, NameForRemAtom(sel));
+  fprintf(stderr, "%s: remote selection [%ld][%s] does not belong to any index!\n", __func__, sel, NameForRemoteAtom(sel));
   #endif
   return -1;
 }
 
 /*
  * Find the index of CurrentSelection with the selection
- * sel. sel is an internal atom. If the index cannot be
+ * sel. sel is a local atom. If the index cannot be
  * determined it will return -1.
  */
 int nxagentFindCurrentSelectionIndex(Atom sel)
@@ -798,40 +798,40 @@ int nxagentFindCurrentSelectionIndex(Atom sel)
     if (CurrentSelections[index].selection == sel)
     {
       #ifdef DEBUG
-      fprintf(stderr, "%s: selection [%d][%s] belongs to index [%d]\n", __func__, sel, NameForIntAtom(sel), index);
+      fprintf(stderr, "%s: selection [%d][%s] belongs to index [%d]\n", __func__, sel, NameForLocalAtom(sel), index);
       #endif
       return index;
     }
   }
   #ifdef DEBUG
-  fprintf(stderr, "%s: selection [%d][%s] does not belong to any index!\n", __func__, sel, NameForIntAtom(sel));
+  fprintf(stderr, "%s: selection [%d][%s] does not belong to any index!\n", __func__, sel, NameForLocalAtom(sel));
   #endif
   return -1;
 }
 
-void cacheTargetsForInt(int index, Atom* targets, int numTargets)
+void cacheTargetsForLocal(int index, Atom* targets, int numTargets)
 {
   #ifdef DEBUG
-  fprintf(stderr, "%s: caching [%d] targets for internal requests\n", __func__, numTargets);
+  fprintf(stderr, "%s: caching [%d] targets for local requests\n", __func__, numTargets);
   #endif
 
-  SAFE_free(targetCache[index].forInt);
-  SAFE_free(targetCache[index].forRem);
-  targetCache[index].type = FORINT;
-  targetCache[index].forInt = targets;
+  SAFE_free(targetCache[index].forLocal);
+  SAFE_free(targetCache[index].forRemote);
+  targetCache[index].type = FOR_LOCAL;
+  targetCache[index].forLocal = targets;
   targetCache[index].numTargets = numTargets;
 }
 
-void cacheTargetsForRem(int index, XlibAtom* targets, int numTargets)
+void cacheTargetsForRemote(int index, XlibAtom* targets, int numTargets)
 {
   #ifdef DEBUG
   fprintf(stderr, "%s: caching [%d] targets for remote requests\n", __func__, numTargets);
   #endif
 
-  SAFE_free(targetCache[index].forInt);
-  SAFE_free(targetCache[index].forRem);
-  targetCache[index].type = FORREM;
-  targetCache[index].forRem = targets;
+  SAFE_free(targetCache[index].forLocal);
+  SAFE_free(targetCache[index].forRemote);
+  targetCache[index].type = FOR_REMOTE;
+  targetCache[index].forRemote = targets;
   targetCache[index].numTargets = numTargets;
 }
 
@@ -842,8 +842,8 @@ void invalidateTargetCache(int index)
   fprintf(stderr, "%s: invalidating target cache [%d]\n", __func__, index);
   #endif
 
-  SAFE_free(targetCache[index].forInt);
-  SAFE_free(targetCache[index].forRem);
+  SAFE_free(targetCache[index].forLocal);
+  SAFE_free(targetCache[index].forRemote);
   targetCache[index].type = EMPTY;
   targetCache[index].numTargets = 0;
 }
@@ -856,8 +856,8 @@ void invalidateTargetCaches(void)
 
   for (int index = 0; index < nxagentMaxSelections; index++)
   {
-    SAFE_free(targetCache[index].forInt);
-    SAFE_free(targetCache[index].forRem);
+    SAFE_free(targetCache[index].forLocal);
+    SAFE_free(targetCache[index].forRemote);
     targetCache[index].type = EMPTY;
     targetCache[index].numTargets = 0;
   }
@@ -872,7 +872,7 @@ void nxagentHandleSelectionClearFromXServer(XEvent *X)
 {
   #ifdef DEBUG
   fprintf(stderr, "---------\n%s: SelectionClear event for selection [%lu][%s] window [0x%lx] time [%lu].\n",
-              __func__, X->xselectionclear.selection, NameForRemAtom(X->xselectionclear.selection),
+              __func__, X->xselectionclear.selection, NameForRemoteAtom(X->xselectionclear.selection),
                   X->xselectionclear.window, X->xselectionclear.time);
   #endif
 
@@ -895,7 +895,7 @@ void nxagentHandleSelectionClearFromXServer(XEvent *X)
   int index = nxagentFindLastSelectionOwnerIndex(X->xselectionclear.selection);
   if (index != -1)
   {
-    if (IS_INTERNAL_OWNER(index))
+    if (IS_LOCAL_OWNER(index))
     {
       /* Send a SelectionClear event to (our) previous owner. */
       xEvent x = {0};
@@ -962,10 +962,10 @@ void nxagentHandleSelectionRequestFromXServer(XEvent *X)
   fprintf(stderr, "---------\n%s: Received SelectionRequestEvent from real server: selection [%ld][%s] " \
           "target [%ld][%s] requestor [display[%s]/0x%lx] destination [%ld][%s] time [%lu]\n",
           __func__,
-          X->xselectionrequest.selection, NameForRemAtom(X->xselectionrequest.selection),
-          X->xselectionrequest.target,    NameForRemAtom(X->xselectionrequest.target),
+          X->xselectionrequest.selection, NameForRemoteAtom(X->xselectionrequest.selection),
+          X->xselectionrequest.target,    NameForRemoteAtom(X->xselectionrequest.target),
           DisplayString(nxagentDisplay), X->xselectionrequest.requestor,
-          X->xselectionrequest.property,  NameForRemAtom(X->xselectionrequest.property),
+          X->xselectionrequest.property,  NameForRemoteAtom(X->xselectionrequest.property),
           X->xselectionrequest.time);
   if (X->xselectionrequest.requestor == serverWindow)
   {
@@ -1044,7 +1044,7 @@ void nxagentHandleSelectionRequestFromXServer(XEvent *X)
       fprintf(stderr, "%s: Sending %d available targets:\n", __func__, numTargets);
       for (int i = 0; i < numTargets; i++)
       {
-        fprintf(stderr, "%s: %ld %s\n", __func__, targets[i], NameForRemAtom(targets[i]));
+        fprintf(stderr, "%s: %ld %s\n", __func__, targets[i], NameForRemoteAtom(targets[i]));
       }
       #endif
 
@@ -1074,16 +1074,16 @@ void nxagentHandleSelectionRequestFromXServer(XEvent *X)
        * occured we can answer with the cached list of targets.
        */
 
-      if (targetCache[index].type == FORREM && targetCache[index].forRem)
+      if (targetCache[index].type == FOR_REMOTE && targetCache[index].forRemote)
       {
-        XlibAtom *targets = targetCache[index].forRem;
+        XlibAtom *targets = targetCache[index].forRemote;
         unsigned int numTargets = targetCache[index].numTargets;
 
         #ifdef DEBUG
         fprintf(stderr, "%s: Sending %d cached targets to remote requestor:\n", __func__, numTargets);
         for (int i = 0; i < numTargets; i++)
         {
-          fprintf(stderr, "%s: %ld %s\n", __func__, targets[i], NameForRemAtom(targets[i]));
+          fprintf(stderr, "%s: %ld %s\n", __func__, targets[i], NameForRemoteAtom(targets[i]));
         }
         #endif
 
@@ -1183,7 +1183,7 @@ void nxagentHandleSelectionRequestFromXServer(XEvent *X)
     {
       #ifdef DEBUG
       fprintf(stderr, "%s: denying request for non-text target [%ld][%s].\n", __func__,
-                  X->xselectionrequest.target, NameForRemAtom(X->xselectionrequest.target));
+                  X->xselectionrequest.target, NameForRemoteAtom(X->xselectionrequest.target));
       #endif
 
       replyRequestSelectionToXServer(X, False);
@@ -1195,7 +1195,7 @@ void nxagentHandleSelectionRequestFromXServer(XEvent *X)
 
   #ifdef DEBUG
   fprintf(stderr, "%s: target [%ld][%s].\n", __func__, X->xselectionrequest.target,
-              NameForRemAtom(X->xselectionrequest.target));
+              NameForRemoteAtom(X->xselectionrequest.target));
   #endif
 
   /*
@@ -1209,9 +1209,9 @@ void nxagentHandleSelectionRequestFromXServer(XEvent *X)
      * requested target is supported by the owner. If not we can take
      * a shortcut and deny the request immediately without doing any
      * further communication. */
-    if (targetCache[index].type == FORREM && targetCache[index].forRem)
+    if (targetCache[index].type == FOR_REMOTE && targetCache[index].forRemote)
     {
-      XlibAtom *targets = targetCache[index].forRem;
+      XlibAtom *targets = targetCache[index].forRemote;
 
       #ifdef DEBUG
       fprintf(stderr, "%s: Checking target validity\n", __func__);
@@ -1229,7 +1229,7 @@ void nxagentHandleSelectionRequestFromXServer(XEvent *X)
       {
         #ifdef DEBUG
         fprintf(stderr, "%s: target [%ld][%s] is not supported by the owner - denying request.\n",
-                    __func__, X->xselectionrequest.target, NameForRemAtom(X->xselectionrequest.target));
+                    __func__, X->xselectionrequest.target, NameForRemoteAtom(X->xselectionrequest.target));
         #endif
         replyRequestSelectionToXServer(X, False);
         return;
@@ -1258,7 +1258,7 @@ void nxagentHandleSelectionRequestFromXServer(XEvent *X)
   serverLastRequestedSelection = X->xselectionrequest.selection;
 
 #if 0
-  if (lastClients[index].windowPtr != NULL && IS_INTERNAL_OWNER(index))
+  if (lastClients[index].windowPtr != NULL && IS_LOCAL_OWNER(index))
   {
     /*
      * Request the real X server to transfer the selection content
@@ -1280,9 +1280,9 @@ void nxagentHandleSelectionRequestFromXServer(XEvent *X)
 
     #ifdef DEBUG
     fprintf(stderr, "%s: Sent XConvertSelection: selection [%d][%s] target [%ld][%s] property [%ld][%s] window [0x%lx] time [%u] .\n", __func__,
-                CurrentSelections[index].selection, NameForRemAtom(CurrentSelections[index].selection)),
-                    X->xselectionrequest.target, NameForRemAtom(X->xselectionrequest.target),
-                        serverTransToAgentProperty, NameForRemAtom(serverTransToAgentProperty),
+                CurrentSelections[index].selection, NameForRemoteAtom(CurrentSelections[index].selection)),
+                    X->xselectionrequest.target, NameForRemoteAtom(X->xselectionrequest.target),
+                        serverTransToAgentProperty, NameForRemoteAtom(serverTransToAgentProperty),
                             serverWindow, lastClients[index].time);
     #endif
   }
@@ -1307,7 +1307,7 @@ void nxagentHandleSelectionRequestFromXServer(XEvent *X)
      * window in the first step. We then later push that property's
      * content to the real X server.
      */
-    if (IS_INTERNAL_OWNER(index))
+    if (IS_LOCAL_OWNER(index))
     {
       /*
        * Store who on the real X server requested the data and how
@@ -1318,7 +1318,7 @@ void nxagentHandleSelectionRequestFromXServer(XEvent *X)
       lastServers[index].target = X->xselectionrequest.target;
       lastServers[index].time = X->xselectionrequest.time;
 
-      /* Prepare the request (like XConvertSelection, but internally). */
+      /* Prepare the request (like XConvertSelection, but locally). */
       xEvent x = {0};
       x.u.u.type = SelectionRequest;
       x.u.selectionRequest.time = GetTimeInMillis();
@@ -1370,10 +1370,10 @@ void nxagentHandleSelectionRequestFromXServer(XEvent *X)
       fprintf(stderr, "%s: sent SelectionRequest event to client %s property [%d][%s] " \
               "target [%d][%s] requestor [0x%x] selection [%d][%s].\n", __func__,
               nxagentClientInfoString(lastSelectionOwner[index].client),
-              x.u.selectionRequest.property, NameForIntAtom(x.u.selectionRequest.property),
-              x.u.selectionRequest.target, NameForIntAtom(x.u.selectionRequest.target),
+              x.u.selectionRequest.property, NameForLocalAtom(x.u.selectionRequest.property),
+              x.u.selectionRequest.target, NameForLocalAtom(x.u.selectionRequest.target),
               x.u.selectionRequest.requestor,
-              x.u.selectionRequest.selection, NameForIntAtom(x.u.selectionRequest.selection));
+              x.u.selectionRequest.selection, NameForLocalAtom(x.u.selectionRequest.selection));
       #endif
       /* No reply to the Xserver yet - we will do that once the answer
          of the above sendEventToClient arrives. */
@@ -1381,8 +1381,8 @@ void nxagentHandleSelectionRequestFromXServer(XEvent *X)
     else
     {
       #ifdef DEBUG
-      fprintf(stderr, "%s: no internal owner for selection [%ld][%s] - denying request.\n", __func__,
-                  X->xselectionrequest.selection, NameForRemAtom(X->xselectionrequest.selection));
+      fprintf(stderr, "%s: no local owner for selection [%ld][%s] - denying request.\n", __func__,
+                  X->xselectionrequest.selection, NameForRemoteAtom(X->xselectionrequest.selection));
       #endif
 
       /* deny the request */
@@ -1412,7 +1412,7 @@ static void endTransfer(int index, Bool success)
     #ifdef DEBUG
     if (success == SELECTION_SUCCESS)
       fprintf(stderr, "%s: sending notification to client %s, property [%d][%s]\n", __func__,
-                  nxagentClientInfoString(lastClients[index].clientPtr), lastClients[index].property, NameForIntAtom(lastClients[index].property));
+                  nxagentClientInfoString(lastClients[index].clientPtr), lastClients[index].property, NameForLocalAtom(lastClients[index].property));
     else
       fprintf(stderr, "%s: sending negative notification to client %s\n", __func__,
                   nxagentClientInfoString(lastClients[index].clientPtr));
@@ -1421,7 +1421,7 @@ static void endTransfer(int index, Bool success)
     sendSelectionNotifyEventToClient(lastClients[index].clientPtr,
                                      lastClients[index].time,
                                      lastClients[index].requestor,
-                                     intSelAtoms[index],
+                                     localSelelectionAtoms[index],
                                      lastClients[index].target,
                                      success == SELECTION_SUCCESS ? lastClients[index].property : None);
   }
@@ -1681,7 +1681,7 @@ Bool nxagentCollectPropertyEventFromXServer(int resource)
     #ifdef DEBUG
     fprintf (stderr, "%s: Retrieved property data - deleting property [%ld][%s] "
              "for ICCCM conformity.\n", __func__, serverTransToAgentProperty,
-             NameForRemAtom(serverTransToAgentProperty));
+             NameForRemoteAtom(serverTransToAgentProperty));
     #endif
     XDeleteProperty(nxagentDisplay, serverWindow, serverTransToAgentProperty);
   }
@@ -1787,7 +1787,7 @@ Bool nxagentCollectPropertyEventFromXServer(int resource)
 
                 #ifdef DEBUG
                 fprintf(stderr, "%s: converting atom: remote [%u][%s] -> local [%u][%s]\n", __func__,
-                            (unsigned int)remote, NameForRemAtom(remote), local, NameForIntAtom(local));
+                            (unsigned int)remote, NameForRemoteAtom(remote), local, NameForLocalAtom(local));
                 #endif
               }
               ChangeWindowProperty(lastClients[index].windowPtr,
@@ -1796,7 +1796,7 @@ Bool nxagentCollectPropertyEventFromXServer(int resource)
                                    32, PropModeReplace,
                                    ulReturnItems, (unsigned char*)targets, 1);
 
-              cacheTargetsForInt(index, targets, numTargets);
+              cacheTargetsForLocal(index, targets, numTargets);
 
               endTransfer(index, SELECTION_SUCCESS);
             }
@@ -1816,7 +1816,7 @@ Bool nxagentCollectPropertyEventFromXServer(int resource)
                     #endif
                     "\n", __func__,
                     lastClients[index].property,
-                    validateString(NameForIntAtom(lastClients[index].property))
+                    validateString(NameForLocalAtom(lastClients[index].property))
                     #ifdef PRINT_CLIPBOARD_CONTENT_ON_DEBUG
                     ,(int)(min(20, ulReturnItems * resultFormat / 8)),
                     (int)(min(20, ulReturnItems * resultFormat / 8)),
@@ -1865,9 +1865,9 @@ void nxagentHandleSelectionNotifyFromXServer(XEvent *X)
   #ifdef DEBUG
   fprintf(stderr, "---------\n%s: Received SelectionNotify event from real X server, property " \
               "[%ld][%s] requestor [0x%lx] selection [%s] target [%ld][%s] time [%lu] send_event [%d].\n",
-                  __func__, e->property, NameForRemAtom(e->property), e->requestor,
-                      NameForRemAtom(e->selection), e->target,
-                          NameForRemAtom(e->target), e->time, e->send_event);
+                  __func__, e->property, NameForRemoteAtom(e->property), e->requestor,
+                      NameForRemoteAtom(e->selection), e->target,
+                          NameForRemoteAtom(e->target), e->time, e->send_event);
 
   /* this has not been SENT by nxagent but is the answer to a request of nxagent */
   if (e->requestor == serverWindow)
@@ -1944,7 +1944,7 @@ void nxagentHandleSelectionNotifyFromXServer(XEvent *X)
       {
         #ifdef DEBUG
         fprintf(stderr, "%s: Unexpected property [%ld][%s] - reporting conversion failure.\n",
-                    __func__, X->xselection.property, NameForRemAtom(X->xselection.property));
+                    __func__, X->xselection.property, NameForRemoteAtom(X->xselection.property));
         #endif
         endTransfer(index, SELECTION_FAULT);
       }
@@ -1968,11 +1968,11 @@ void nxagentHandleSelectionNotifyFromXServer(XEvent *X)
 void handlePropertyTransferFromAgentToXserver(int index, XlibAtom property)
 {
   /*
-   * If the last owner was an internal one, read the
+   * If the last owner was a local one, read the
    * clientCutProperty and push the contents to the
    * lastServers[index].requestor on the real X server.
    */
-  if (IS_INTERNAL_OWNER(index) &&
+  if (IS_LOCAL_OWNER(index) &&
          lastSelectionOwner[index].windowPtr != NULL &&
              property == serverTransFromAgentProperty)
   {
@@ -1989,7 +1989,7 @@ void handlePropertyTransferFromAgentToXserver(int index, XlibAtom property)
 
     #ifdef DEBUG
     fprintf(stderr, "%s: GetWindowProperty() window [0x%x] property [%d][%s] returned [%s]\n", __func__,
-                lastSelectionOwner[index].window, clientCutProperty, NameForIntAtom(clientCutProperty),
+                lastSelectionOwner[index].window, clientCutProperty, NameForLocalAtom(clientCutProperty),
                     getXErrorString(result));
     #endif
     if (result == BadAlloc || result == BadAtom ||
@@ -2006,7 +2006,7 @@ void handlePropertyTransferFromAgentToXserver(int index, XlibAtom property)
                                              &pszReturnData);
       #ifdef DEBUG
       fprintf(stderr, "%s: GetWindowProperty() window [0x%x] property [%d][%s] returned [%s]\n", __func__,
-                  lastSelectionOwner[index].window, clientCutProperty, NameForIntAtom(clientCutProperty),
+                  lastSelectionOwner[index].window, clientCutProperty, NameForLocalAtom(clientCutProperty),
                       getXErrorString(result));
       #endif
 
@@ -2047,7 +2047,7 @@ void handlePropertyTransferFromAgentToXserver(int index, XlibAtom property)
 
               #ifdef DEBUG
               fprintf(stderr, "%s: converting atom: local [%d][%s] -> remote [%ld][%s]\n", __func__,
-                          local, NameForIntAtom(local), remote, NameForRemAtom(remote));
+                          local, NameForLocalAtom(local), remote, NameForRemoteAtom(remote));
               #endif
             }
 
@@ -2061,7 +2061,7 @@ void handlePropertyTransferFromAgentToXserver(int index, XlibAtom property)
                             (unsigned char*)targets,
                             numTargets);
 
-            cacheTargetsForRem(index, targets, numTargets);
+            cacheTargetsForRemote(index, targets, numTargets);
           }
         }
         else
@@ -2088,7 +2088,7 @@ void handlePropertyTransferFromAgentToXserver(int index, XlibAtom property)
                     __func__,
                     lastServers[index].requestor,
                     lastServers[index].property,
-                    NameForRemAtom(lastServers[index].property),
+                    NameForRemoteAtom(lastServers[index].property),
                     (int)ulReturnItems * 8 / 8
                     #ifdef PRINT_CLIPBOARD_CONTENT_ON_DEBUG
                     ,(int)(min(20, ulReturnItems * 8 / 8)),
@@ -2136,7 +2136,7 @@ void replyPendingRequestSelectionToXServer(int index, Bool success)
   {
     XSelectionEvent eventSelection = {
       .requestor = lastServers[index].requestor,
-      .selection = remSelAtoms[index],
+      .selection = remoteSelectionAtoms[index],
       .target    = lastServers[index].target,
       .time      = lastServers[index].time,
       .property  = success ? lastServers[index].property : None,
@@ -2182,7 +2182,7 @@ static void resetSelectionOwnerOnXServer(void)
 
   for (int index = 0; index < nxagentMaxSelections; index++)
   {
-    XSetSelectionOwner(nxagentDisplay, remSelAtoms[index], serverWindow, CurrentTime);
+    XSetSelectionOwner(nxagentDisplay, remoteSelectionAtoms[index], serverWindow, CurrentTime);
 
     #ifdef DEBUG
     fprintf(stderr, "%s: Reset selection state for selection [%d].\n", __func__, index);
@@ -2248,7 +2248,7 @@ void nxagentSetSelectionCallback(CallbackListPtr *callbacks, void *data,
   if (index == -1)
   {
     #ifdef DEBUG
-    fprintf(stderr, "%s: selection [%s] will not be handled by the clipboard code\n", __func__, NameForIntAtom(pCurSel->selection));
+    fprintf(stderr, "%s: selection [%s] will not be handled by the clipboard code\n", __func__, NameForLocalAtom(pCurSel->selection));
     #endif
     return;
   }
@@ -2277,13 +2277,13 @@ void nxagentSetSelectionCallback(CallbackListPtr *callbacks, void *data,
   {
     #ifdef DEBUG
     fprintf(stderr, "%s: pCurSel->pWin [0x%x]\n", __func__, WINDOWID(pCurSel->pWin));
-    fprintf(stderr, "%s: pCurSel->selection [%s]\n", __func__, NameForIntAtom(pCurSel->selection));
+    fprintf(stderr, "%s: pCurSel->selection [%s]\n", __func__, NameForLocalAtom(pCurSel->selection));
     #endif
 
     if (pCurSel->pWin != NULL &&
         nxagentOption(Clipboard) != ClipboardNone && /* FIXME: shouldn't we also check for != ClipboardClient? */
-        (pCurSel->selection == intSelAtoms[nxagentPrimarySelection] ||
-         pCurSel->selection == intSelAtoms[nxagentClipboardSelection]))
+        (pCurSel->selection == localSelelectionAtoms[nxagentPrimarySelection] ||
+         pCurSel->selection == localSelelectionAtoms[nxagentClipboardSelection]))
     {
       #ifdef DEBUG
       fprintf(stderr, "%s: calling setSelectionOwnerOnXServer\n", __func__);
@@ -2305,7 +2305,7 @@ void nxagentSetSelectionCallback(CallbackListPtr *callbacks, void *data,
 
 /*
  * This is called from the nxagentSetSelectionCallback, so it is using
- * internal Atoms.
+ * local Atoms.
  */
 static void setSelectionOwnerOnXServer(Selection *pSelection)
 {
@@ -2364,7 +2364,7 @@ static void setSelectionOwnerOnXServer(Selection *pSelection)
      * reacquire the clipboard whenever the content or metadata (e.g
      * the list of supported targets) changes."
      */
-    XSetSelectionOwner(nxagentDisplay, remSelAtoms[index], serverWindow, CurrentTime);
+    XSetSelectionOwner(nxagentDisplay, remoteSelectionAtoms[index], serverWindow, CurrentTime);
 
     /*
      * The real owner window (inside nxagent) is stored in
@@ -2413,7 +2413,7 @@ FIXME2: instead of XGetSelectionOwner we could check if the Xfixes
 
 /*
  * This is called from dix (ProcConvertSelection) if an nxagent client
- * issues a ConvertSelection request. So all the Atoms are internal.
+ * issues a ConvertSelection request. So all the Atoms are local.
  * return codes:
  * 0: let dix process the request
  * 1: don't let dix process the request
@@ -2424,12 +2424,12 @@ int nxagentConvertSelection(ClientPtr client, WindowPtr pWin, Atom selection,
   #ifdef DEBUG
   fprintf(stderr, "---------\n%s: client %s requests sel [%s] "
               "on window [0x%x] prop [%d][%s] target [%d][%s] time [%u].\n", __func__,
-                  nxagentClientInfoString(client), NameForIntAtom(selection), requestor,
-                      property, NameForIntAtom(property),
-                          target, NameForIntAtom(target), time);
+                  nxagentClientInfoString(client), NameForLocalAtom(selection), requestor,
+                      property, NameForLocalAtom(property),
+                          target, NameForLocalAtom(target), time);
   #endif
 
-  /* We cannot use NameForIntAtom() here! FIXME: Why not? */
+  /* We cannot use NameForLocalAtom() here! FIXME: Why not? */
   if (NameForAtom(target) == NULL)
   {
     #ifdef DEBUG
@@ -2463,13 +2463,13 @@ int nxagentConvertSelection(ClientPtr client, WindowPtr pWin, Atom selection,
     return 0;
   }
 
-  if (IS_INTERNAL_OWNER(index))
+  if (IS_LOCAL_OWNER(index))
   {
     /*
      * There is a client owner on the agent side, let normal dix stuff happen.
      */
     #ifdef DEBUG
-    fprintf(stderr, "%s: clipboard is owned by internal client - let dix process the request\n", __func__);
+    fprintf(stderr, "%s: clipboard is owned by local client - let dix process the request\n", __func__);
     #endif
     return 0;
   }
@@ -2491,7 +2491,7 @@ int nxagentConvertSelection(ClientPtr client, WindowPtr pWin, Atom selection,
     #endif
 
     #ifdef DEBUG
-    fprintf(stderr, "%s: intSelAtoms[%d] [%d] - selection [%d]\n", __func__, index, intSelAtoms[index], selection);
+    fprintf(stderr, "%s: localSelelectionAtoms[%d] [%d] - selection [%d]\n", __func__, index, localSelelectionAtoms[index], selection);
     #endif
 
     if ((GetTimeInMillis() - lastClients[index].reqTime) >= CONVERSION_TIMEOUT)
@@ -2560,7 +2560,7 @@ int nxagentConvertSelection(ClientPtr client, WindowPtr pWin, Atom selection,
       fprintf(stderr, "%s: Sending %d available targets:\n", __func__, numTargets);
       for (int i = 0; i < numTargets; i++)
       {
-        fprintf(stderr, "%s: %d %s\n", __func__, targets[i], NameForIntAtom(targets[i]));
+        fprintf(stderr, "%s: %d %s\n", __func__, targets[i], NameForLocalAtom(targets[i]));
       }
       #endif
 
@@ -2588,16 +2588,16 @@ int nxagentConvertSelection(ClientPtr client, WindowPtr pWin, Atom selection,
        * occured we can answer with the cached list of targets.
        */
 
-      if (targetCache[index].type == FORINT && targetCache[index].forInt)
+      if (targetCache[index].type == FOR_LOCAL && targetCache[index].forLocal)
       {
-        Atom *targets = targetCache[index].forInt;
+        Atom *targets = targetCache[index].forLocal;
         int numTargets = targetCache[index].numTargets;
 
         #ifdef DEBUG
-        fprintf(stderr, "%s: Sending %d cached targets to internal client:\n", __func__, numTargets);
+        fprintf(stderr, "%s: Sending %d cached targets to local client:\n", __func__, numTargets);
         for (int i = 0; i < numTargets; i++)
         {
-          fprintf(stderr, "%s: %d %s\n", __func__, targets[i], NameForIntAtom(targets[i]));
+          fprintf(stderr, "%s: %d %s\n", __func__, targets[i], NameForLocalAtom(targets[i]));
         }
         #endif
 
@@ -2710,7 +2710,7 @@ int nxagentConvertSelection(ClientPtr client, WindowPtr pWin, Atom selection,
     {
       #ifdef DEBUG
       fprintf(stderr, "%s: denying request for non-text target [%d][%s].\n", __func__,
-                  target, NameForIntAtom(target));
+                  target, NameForLocalAtom(target));
       #endif
 
       sendSelectionNotifyEventToClient(client, time, requestor, selection, target, None);
@@ -2721,7 +2721,7 @@ int nxagentConvertSelection(ClientPtr client, WindowPtr pWin, Atom selection,
 
   #ifdef DEBUG
   fprintf(stderr, "%s: target [%d][%s].\n", __func__, target,
-              NameForIntAtom(target));
+              NameForLocalAtom(target));
   #endif
 
   if (!nxagentOption(TextClipboard))
@@ -2732,9 +2732,9 @@ int nxagentConvertSelection(ClientPtr client, WindowPtr pWin, Atom selection,
      * a shortcut and deny the request immediately without doing any
      * further communication
      */
-    if (targetCache[index].type == FORINT && targetCache[index].forInt)
+    if (targetCache[index].type == FOR_LOCAL && targetCache[index].forLocal)
     {
-      Atom *targets = targetCache[index].forInt;
+      Atom *targets = targetCache[index].forLocal;
 
       #ifdef DEBUG
       fprintf(stderr, "%s: Checking target validity\n", __func__);
@@ -2752,7 +2752,7 @@ int nxagentConvertSelection(ClientPtr client, WindowPtr pWin, Atom selection,
       {
         #ifdef DEBUG
         fprintf(stderr, "%s: target [%d][%s] is not supported by the owner - denying request.\n",
-                    __func__, target, NameForIntAtom(target));
+                    __func__, target, NameForLocalAtom(target));
         #endif
         sendSelectionNotifyEventToClient(client, time, requestor, selection, target, None);
         return 1;
@@ -2830,15 +2830,15 @@ int nxagentConvertSelection(ClientPtr client, WindowPtr pWin, Atom selection,
 
   #ifdef DEBUG
   fprintf(stderr, "%s: replacing local by remote property: [%d][%s] -> [%ld][%s]\n",
-              __func__, property, NameForIntAtom(property),
+              __func__, property, NameForLocalAtom(property),
                   remProperty, "NX_CUT_BUFFER_SERVER");
   #endif
 
   #ifdef DEBUG
   fprintf(stderr, "%s: Sending XConvertSelection to real X server: requestor [0x%lx] target [%ld][%s] property [%ld][%s] selection [%ld][%s] time [0][CurrentTime]\n", __func__,
-          serverWindow, remTarget, NameForRemAtom(remTarget),
-              remProperty, NameForRemAtom(remProperty),
-                  remSelection, NameForRemAtom(remSelection));
+          serverWindow, remTarget, NameForRemoteAtom(remTarget),
+              remProperty, NameForRemoteAtom(remProperty),
+                  remSelection, NameForRemoteAtom(remSelection));
   #endif
 
   /*
@@ -2885,7 +2885,7 @@ XlibAtom translateLocalToRemoteSelection(Atom local)
   /*
    * On the real server, the right CLIPBOARD atom is
    * XInternAtom(nxagentDisplay, "CLIPBOARD", 1), which is stored in
-   * remSelAtoms[nxagentClipboardSelection]. For
+   * remoteSelectionAtoms[nxagentClipboardSelection]. For
    * PRIMARY there's nothing to map because that is identical on all
    * X servers (defined in Xatom.h). We do it anyway so we do not
    * require a special treatment.
@@ -2895,9 +2895,9 @@ XlibAtom translateLocalToRemoteSelection(Atom local)
 
   for (int index = 0; index < nxagentMaxSelections; index++)
   {
-    if (local == intSelAtoms[index])
+    if (local == localSelelectionAtoms[index])
     {
-      remote = remSelAtoms[index];
+      remote = remoteSelectionAtoms[index];
       break;
     }
   }
@@ -2909,7 +2909,7 @@ XlibAtom translateLocalToRemoteSelection(Atom local)
 
   #ifdef DEBUG
   fprintf(stderr, "%s: mapping local to remote selection: [%d][%s] -> [%ld][%s]\n", __func__,
-              local, NameForIntAtom(local), remote, NameForRemAtom(remote));
+              local, NameForLocalAtom(local), remote, NameForRemoteAtom(remote));
   #endif
 
   return remote;
@@ -2964,7 +2964,7 @@ XlibAtom translateLocalToRemoteTarget(Atom local)
 
   #ifdef DEBUG
   fprintf(stderr, "%s: mapping local to remote target: [%d][%s] -> [%ld][%s]\n", __func__,
-              local, NameForIntAtom(local), remote, NameForRemAtom(remote));
+              local, NameForLocalAtom(local), remote, NameForRemoteAtom(remote));
   #endif
 
   return remote;
@@ -3000,9 +3000,9 @@ int nxagentSendNotificationToSelfViaXServer(xEvent *event)
 
   #ifdef DEBUG
   fprintf(stderr, "---------\n%s: Received SendNotify from client: property [%d][%s] target [%d][%s] selection [%d][%s] requestor [0x%x] time [%u].\n", __func__,
-          event->u.selectionNotify.property, NameForIntAtom(event->u.selectionNotify.property),
-          event->u.selectionNotify.target, NameForIntAtom(event->u.selectionNotify.target),
-          event->u.selectionNotify.selection, NameForIntAtom(event->u.selectionNotify.selection),
+          event->u.selectionNotify.property, NameForLocalAtom(event->u.selectionNotify.property),
+          event->u.selectionNotify.target, NameForLocalAtom(event->u.selectionNotify.target),
+          event->u.selectionNotify.selection, NameForLocalAtom(event->u.selectionNotify.selection),
           event->u.selectionNotify.requestor, event->u.selectionNotify.time);
   #endif
 
@@ -3054,7 +3054,7 @@ int nxagentSendNotificationToSelfViaXServer(xEvent *event)
        * .property must be a server-side Atom. As this property is only
        * set on our serverWindow and normally there are few other
        * properties except serverTransToAgentProperty, the only thing
-       * we need to ensure is that the internal Atom clientCutProperty
+       * we need to ensure is that the local Atom clientCutProperty
        * differs from the server-side serverTransToAgentProperty
        * Atom. The actual name is not important. To be clean here we use
        * a separate serverTransFromAgentProperty.
@@ -3070,7 +3070,7 @@ int nxagentSendNotificationToSelfViaXServer(xEvent *event)
 
       #ifdef DEBUG
       fprintf(stderr, "%s: remote property [%ld][%s].\n", __func__,
-                  serverTransFromAgentProperty, NameForRemAtom(serverTransFromAgentProperty));
+                  serverTransFromAgentProperty, NameForRemoteAtom(serverTransFromAgentProperty));
       #endif
       sendSelectionNotifyEventToXServer(&eventSelection);
       return 1;
@@ -3097,7 +3097,7 @@ WindowPtr nxagentGetClipboardWindow(Atom property)
   {
     #ifdef DEBUG
     fprintf(stderr, "%s: Returning last [%d] selection owner window [%p] (0x%x).\n", __func__,
-            intSelAtoms[index],
+            localSelelectionAtoms[index],
             (void *)lastSelectionOwner[index].windowPtr, WINDOWID(lastSelectionOwner[index].windowPtr));
     #endif
 
@@ -3175,18 +3175,18 @@ Bool nxagentInitClipboard(WindowPtr pWin)
       FatalError("nxagentInitClipboard: Failed to allocate memory for the last servers array.\n");
     }
 
-    SAFE_free(intSelAtoms);
-    intSelAtoms = (Atom *) calloc(nxagentMaxSelections, sizeof(Atom));
-    if (intSelAtoms == NULL)
+    SAFE_free(localSelelectionAtoms);
+    localSelelectionAtoms = (Atom *) calloc(nxagentMaxSelections, sizeof(Atom));
+    if (localSelelectionAtoms == NULL)
     {
-      FatalError("nxagentInitClipboard: Failed to allocate memory for the internal selection Atoms array.\n");
+      FatalError("nxagentInitClipboard: Failed to allocate memory for the local selection Atoms array.\n");
     }
-    intSelAtoms[nxagentPrimarySelection] = XA_PRIMARY;
-    intSelAtoms[nxagentClipboardSelection] = MakeAtom(szAgentCLIPBOARD, strlen(szAgentCLIPBOARD), True);
+    localSelelectionAtoms[nxagentPrimarySelection] = XA_PRIMARY;
+    localSelelectionAtoms[nxagentClipboardSelection] = MakeAtom(szAgentCLIPBOARD, strlen(szAgentCLIPBOARD), True);
 
-    SAFE_free(remSelAtoms);
-    remSelAtoms = (XlibAtom *) calloc(nxagentMaxSelections, sizeof(XlibAtom));
-    if (remSelAtoms == NULL)
+    SAFE_free(remoteSelectionAtoms);
+    remoteSelectionAtoms = (XlibAtom *) calloc(nxagentMaxSelections, sizeof(XlibAtom));
+    if (remoteSelectionAtoms == NULL)
     {
       FatalError("nxagentInitClipboard: Failed to allocate memory for the remote selection Atoms array.\n");
     }
@@ -3203,8 +3203,8 @@ Bool nxagentInitClipboard(WindowPtr pWin)
    * The clipboard selection atom can change with a new X
    * server while Primary is constant.
    */
-  remSelAtoms[nxagentPrimarySelection] = XA_PRIMARY;
-  remSelAtoms[nxagentClipboardSelection] = nxagentAtoms[10];   /* CLIPBOARD */
+  remoteSelectionAtoms[nxagentPrimarySelection] = XA_PRIMARY;
+  remoteSelectionAtoms[nxagentClipboardSelection] = nxagentAtoms[10];   /* CLIPBOARD */
 
   serverTARGETS = nxagentAtoms[6];  /* TARGETS */
 #ifdef SUPPORT_TEXT_TARGET
@@ -3266,7 +3266,7 @@ Bool nxagentInitClipboard(WindowPtr pWin)
     for (int index = 0; index < nxagentMaxSelections; index++)
     {
       XFixesSelectSelectionInput(nxagentDisplay, serverWindow,
-                                 remSelAtoms[index],
+                                 remoteSelectionAtoms[index],
                                  XFixesSetSelectionOwnerNotifyMask |
                                  XFixesSelectionWindowDestroyNotifyMask |
                                  XFixesSelectionClientCloseNotifyMask);
@@ -3289,7 +3289,7 @@ Bool nxagentInitClipboard(WindowPtr pWin)
     #ifdef TEST
     fprintf(stderr, "%s: setting the ownership of %s to %lx"
                 " and registering for PropertyChangeMask events\n", __func__,
-                    validateString(NameForRemAtom(nxagentAtoms[10])), serverWindow);
+                    validateString(NameForRemoteAtom(nxagentAtoms[10])), serverWindow);
     #endif
 
     XSetSelectionOwner(nxagentDisplay, nxagentAtoms[10], serverWindow, CurrentTime);    // nxagentAtoms[10] is the CLIPBOARD atom
@@ -3311,10 +3311,10 @@ Bool nxagentInitClipboard(WindowPtr pWin)
          * claim the ownership. Note that we report our serverWindow as
          * owner, not the real window!
          */
-        if (IS_INTERNAL_OWNER(index) && lastSelectionOwner[index].window)
+        if (IS_LOCAL_OWNER(index) && lastSelectionOwner[index].window)
         {
-          /* remSelAtoms have already been adjusted above */
-          XSetSelectionOwner(nxagentDisplay, remSelAtoms[index], serverWindow, CurrentTime);
+          /* remoteSelectionAtoms have already been adjusted above */
+          XSetSelectionOwner(nxagentDisplay, remoteSelectionAtoms[index], serverWindow, CurrentTime);
         }
 
         /*
@@ -3325,7 +3325,7 @@ Bool nxagentInitClipboard(WindowPtr pWin)
 
         /*
          * FIXME: We should reset lastClients[index].* here! Problem
-         * is that internal clients might still be waiting for
+         * is that local clients might still be waiting for
          * answers. Should reply with failure then.
          */
 

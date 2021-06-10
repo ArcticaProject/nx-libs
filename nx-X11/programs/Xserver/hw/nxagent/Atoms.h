@@ -86,8 +86,8 @@ const char *nxagentRemoteAtomToString(XlibAtom remote);
 /*
  * supply two macros that also validate the output.
  */
-#define NameForIntAtom(_atom) validateString(NameForAtom(_atom))
-#define NameForRemAtom(_xlibatom) validateString(nxagentRemoteAtomToString(_xlibatom))
+#define NameForLocalAtom(_atom) validateString(NameForAtom(_atom))
+#define NameForRemoteAtom(_xlibatom) validateString(nxagentRemoteAtomToString(_xlibatom))
 
 #endif /* XlibAtom */
 
