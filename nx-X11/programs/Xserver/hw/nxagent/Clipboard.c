@@ -1774,7 +1774,7 @@ Bool nxagentCollectPropertyEventFromXServer(int resource)
           {
             ChangeWindowProperty(lastClients[index].windowPtr,
                                  lastClients[index].property,
-                                 lastClients[index].target,
+                                 nxagentRemoteToLocalAtom(atomReturnType),
                                  resultFormat, PropModeReplace,
                                  ulReturnItems, pszReturnData, 1);
 
@@ -2043,12 +2043,11 @@ void handlePropertyTransferFromAgentToXserver(int index, XlibAtom property)
           /* Fill the property on the requestor with the requested data. */
           /* The XChangeProperty source code reveals it will always
              return 1, no matter what, so no need to check the result */
-          /* FIXME: better use the format returned by above request. */
           XChangeProperty(nxagentDisplay,
                           lastServers[index].requestor,
                           lastServers[index].property,
-                          lastServers[index].target,
-                          8,
+                          nxagentLocalToRemoteAtom(atomReturnType),
+                          resultFormat,
                           PropModeReplace,
                           pszReturnData,
                           ulReturnItems);
