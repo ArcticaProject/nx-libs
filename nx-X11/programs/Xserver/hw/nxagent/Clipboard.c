@@ -2825,7 +2825,10 @@ int nxagentConvertSelection(ClientPtr client, WindowPtr pWin, Atom selection,
    * FIXME: ICCCM states: "Clients should not use CurrentTime for the
    * time argument of a ConvertSelection request. Instead, they should
    * use the timestamp of the event that caused the request to be
-   * made."
+   * made."  Well, the event that that caused this came from an
+   * nxagent _client_ but we are a client to the real X server, which
+   * has an own time., we cannot use its time there. So what time
+   * would be correct here?
    */
 
   UpdateCurrentTime();
