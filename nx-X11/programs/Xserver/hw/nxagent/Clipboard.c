@@ -1779,17 +1779,22 @@ Bool nxagentCollectPropertyEventFromXServer(int resource)
                                  ulReturnItems, pszReturnData, 1);
 
             #ifdef DEBUG
-            fprintf(stderr, "%s: Selection property [%d][%s] changed to"
+            fprintf(stderr, "%s: Selection property [%d][%s] changed to resultFormat [%d] returnType [%d][%s] len [%d]"
                     #ifdef PRINT_CLIPBOARD_CONTENT_ON_DEBUG
-                    "[\"%*.*s\"...]"
+                    /* FIXME: only print the string if the resultFormat is 8 */
+                    " value [\"%*.*s\"...] hex [0x%2.2x%2.2x%2.2x%2.2x]"
                     #endif
                     "\n", __func__,
                     lastClients[index].property,
-                    validateString(NameForLocalAtom(lastClients[index].property))
+                    validateString(NameForLocalAtom(lastClients[index].property)),
+                    resultFormat,
+                    atomReturnType, NameForRemoteAtom(atomReturnType),
+                    (int)ulReturnItems * resultFormat / 8
                     #ifdef PRINT_CLIPBOARD_CONTENT_ON_DEBUG
                     ,(int)(min(20, ulReturnItems * resultFormat / 8)),
                     (int)(min(20, ulReturnItems * resultFormat / 8)),
-                    pszReturnData
+                    pszReturnData,
+                    pszReturnData[0], pszReturnData[1], pszReturnData[2], pszReturnData[3]
                     #endif
                    );
             #endif
@@ -2049,22 +2054,26 @@ void handlePropertyTransferFromAgentToXserver(int index, XlibAtom property)
                           ulReturnItems);
           #ifdef DEBUG
           {
-            fprintf(stderr, "%s: XChangeProperty sent to window [0x%lx] for property [%ld][%s] len [%d]"
+            fprintf(stderr, "%s: XChangeProperty sent to window [0x%lx] for property [%ld][%s] resultFormat [%d] returnType [%ld][%s] len [%d]"
                     #ifdef PRINT_CLIPBOARD_CONTENT_ON_DEBUG
-		    "value [\"%*.*s\"...]"
+                    /* FIXME: only print the string if the resultFormat is 8 */
+                    " value [\"%*.*s\"...] hex [0x%2.2x%2.2x%2.2x%2.2x]"
                     #endif
-		    "\n",
+                    "\n",
                     __func__,
                     lastServers[index].requestor,
                     lastServers[index].property,
                     NameForRemoteAtom(lastServers[index].property),
-                    (int)ulReturnItems * 8 / 8
+                    resultFormat,
+                    nxagentLocalToRemoteAtom(atomReturnType), NameForLocalAtom(atomReturnType),
+                    (int)ulReturnItems * resultFormat / 8
                     #ifdef PRINT_CLIPBOARD_CONTENT_ON_DEBUG
                     ,(int)(min(20, ulReturnItems * 8 / 8)),
                     (int)(min(20, ulReturnItems * 8 / 8)),
-                    pszReturnData
+                    pszReturnData,
+                    pszReturnData[0], pszReturnData[1], pszReturnData[2], pszReturnData[3]
                     #endif
-		    );
+                    );
           }
           #endif
         }
