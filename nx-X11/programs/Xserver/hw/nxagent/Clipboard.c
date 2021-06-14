@@ -958,12 +958,14 @@ static void replyRequestSelectionToXServer(XEvent *X, Bool success)
  */
 void nxagentHandleSelectionRequestFromXServer(XEvent *X)
 {
+  XlibAtom target = X->xselectionrequest.target;
+
   #ifdef DEBUG
   fprintf(stderr, "---------\n%s: Received SelectionRequestEvent from real server: selection [%ld][%s] " \
           "target [%ld][%s] requestor [display[%s]/0x%lx] destination [%ld][%s] time [%lu]\n",
           __func__,
           X->xselectionrequest.selection, NameForRemoteAtom(X->xselectionrequest.selection),
-          X->xselectionrequest.target,    NameForRemoteAtom(X->xselectionrequest.target),
+          target, NameForRemoteAtom(target),
           DisplayString(nxagentDisplay), X->xselectionrequest.requestor,
           X->xselectionrequest.property,  NameForRemoteAtom(X->xselectionrequest.property),
           X->xselectionrequest.time);
@@ -1008,7 +1010,7 @@ void nxagentHandleSelectionRequestFromXServer(XEvent *X)
     return;
   }
 
-  if (X->xselectionrequest.target == serverTARGETS)
+  if (target == serverTARGETS)
   {
     /*
      * In TextClipboard mode answer with a predefined list of
@@ -1101,7 +1103,7 @@ void nxagentHandleSelectionRequestFromXServer(XEvent *X)
       }
     }
   }
-  else if (X->xselectionrequest.target == serverTIMESTAMP)
+  else if (target == serverTIMESTAMP)
   {
     /*
      * Section 2.6.2 of the ICCCM states:
@@ -1128,7 +1130,7 @@ void nxagentHandleSelectionRequestFromXServer(XEvent *X)
     replyRequestSelectionToXServer(X, True);
     return;
   }
-  else if (X->xselectionrequest.target == serverMULTIPLE)
+  else if (target == serverMULTIPLE)
   {
     #ifdef DEBUG
     fprintf(stderr, "%s: (currently) unsupported target [MULTIPLE] - denying request.\n", __func__);
@@ -1136,7 +1138,7 @@ void nxagentHandleSelectionRequestFromXServer(XEvent *X)
     replyRequestSelectionToXServer(X, False);
     return;
   }
-  else if (X->xselectionrequest.target == serverDELETE)
+  else if (target == serverDELETE)
   {
     #ifdef DEBUG
     fprintf(stderr, "%s: (currently) unsupported target [DELETE] - denying request.\n", __func__);
@@ -1144,7 +1146,7 @@ void nxagentHandleSelectionRequestFromXServer(XEvent *X)
     replyRequestSelectionToXServer(X, False);
     return;
   }
-  else if (X->xselectionrequest.target == serverINSERT_SELECTION)
+  else if (target == serverINSERT_SELECTION)
   {
     #ifdef DEBUG
     fprintf(stderr, "%s: (currently) unsupported target [INSERT_SELECTION] - denying request.\n", __func__);
@@ -1152,7 +1154,7 @@ void nxagentHandleSelectionRequestFromXServer(XEvent *X)
     replyRequestSelectionToXServer(X, False);
     return;
   }
-  else if (X->xselectionrequest.target == serverINSERT_PROPERTY)
+  else if (target == serverINSERT_PROPERTY)
   {
     #ifdef DEBUG
     fprintf(stderr, "%s: (currently) unsupported target [INSERT_PROPERTY] - denying request.\n", __func__);
@@ -1160,7 +1162,7 @@ void nxagentHandleSelectionRequestFromXServer(XEvent *X)
     replyRequestSelectionToXServer(X, False);
     return;
   }
-  else if (X->xselectionrequest.target == serverSAVE_TARGETS)
+  else if (target == serverSAVE_TARGETS)
   {
     #ifdef DEBUG
     fprintf(stderr, "%s: (currently) unsupported target [SAVE_TARGETS] - denying request.\n", __func__);
@@ -1168,7 +1170,7 @@ void nxagentHandleSelectionRequestFromXServer(XEvent *X)
     replyRequestSelectionToXServer(X, False);
     return;
   }
-  else if (X->xselectionrequest.target == serverTARGET_SIZES)
+  else if (target == serverTARGET_SIZES)
   {
     #ifdef DEBUG
     fprintf(stderr, "%s: (currently) unsupported target [TARGET_SIZES] - denying request.\n", __func__);
@@ -1179,11 +1181,11 @@ void nxagentHandleSelectionRequestFromXServer(XEvent *X)
 
   if (nxagentOption(TextClipboard))
   {
-    if (!isTextTarget(X->xselectionrequest.target))
+    if (!isTextTarget(target))
     {
       #ifdef DEBUG
       fprintf(stderr, "%s: denying request for non-text target [%ld][%s].\n", __func__,
-                  X->xselectionrequest.target, NameForRemoteAtom(X->xselectionrequest.target));
+                  target, NameForRemoteAtom(target));
       #endif
 
       replyRequestSelectionToXServer(X, False);
@@ -1194,8 +1196,8 @@ void nxagentHandleSelectionRequestFromXServer(XEvent *X)
   }
 
   #ifdef DEBUG
-  fprintf(stderr, "%s: target [%ld][%s].\n", __func__, X->xselectionrequest.target,
-              NameForRemoteAtom(X->xselectionrequest.target));
+  fprintf(stderr, "%s: target [%ld][%s].\n", __func__, target,
+              NameForRemoteAtom(target));
   #endif
 
   /*
@@ -1219,7 +1221,7 @@ void nxagentHandleSelectionRequestFromXServer(XEvent *X)
       Bool match = False;
       for (int i = 0; i < targetCache[index].numTargets; i++)
       {
-        if (targets[i] == X->xselectionrequest.target)
+        if (targets[i] == target)
         {
           match = True;
           break;
@@ -1243,7 +1245,7 @@ void nxagentHandleSelectionRequestFromXServer(XEvent *X)
        * supported targets first.
        */
       #ifdef DEBUG
-      if (X->xselectionrequest.target != serverTARGETS)
+      if (target != serverTARGETS)
       {
          fprintf(stderr, "%s: WARNING: remote client has not retrieved TARGETS before asking for selection!\n",
                    __func__);
@@ -1283,7 +1285,7 @@ void nxagentHandleSelectionRequestFromXServer(XEvent *X)
      */
     lastServers[index].property = X->xselectionrequest.property;
     lastServers[index].requestor = X->xselectionrequest.requestor;
-    lastServers[index].target = X->xselectionrequest.target;
+    lastServers[index].target = target;
     lastServers[index].time = X->xselectionrequest.time;
 
     /* Prepare the request (like XConvertSelection, but locally). */
@@ -1310,7 +1312,7 @@ void nxagentHandleSelectionRequestFromXServer(XEvent *X)
     if (nxagentOption(TextClipboard))
     {
       /* by dimbor */
-      if (X->xselectionrequest.target != XA_STRING)
+      if (target != XA_STRING)
       {
         lastServers[index].target = serverUTF8_STRING;
         /* by dimbor (idea from zahvatov) */
@@ -1323,7 +1325,7 @@ void nxagentHandleSelectionRequestFromXServer(XEvent *X)
     }
     else
     {
-      x.u.selectionRequest.target = nxagentRemoteToLocalAtom(X->xselectionrequest.target);
+      x.u.selectionRequest.target = nxagentRemoteToLocalAtom(target);
     }
 
     /*
