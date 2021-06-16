@@ -2362,9 +2362,6 @@ static void setSelectionOwnerOnXServer(Selection *pSelection)
      */
     invalidateTargetCache(index);
 
-    /* FIXME: commented because index is invalid here! */
-    /* lastServers[index].requestor = None; */
-
 /*
 FIXME
 
