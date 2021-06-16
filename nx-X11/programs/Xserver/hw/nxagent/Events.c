@@ -4553,7 +4553,10 @@ void ForwardClientMessage(ClientPtr client, xSendEventReq *stuff)
             XlibWindow dest;
             dest = DefaultRootWindow(nxagentDisplay);
 
-            Status stat = XSendEvent(nxagentDisplay, dest, stuff->propagate, stuff->eventMask, &X);
+            #ifdef DEBUG
+            Status stat =
+            #endif
+            XSendEvent(nxagentDisplay, dest, stuff->propagate, stuff->eventMask, &X);
             XFlush(nxagentDisplay);
             #ifdef DEBUG
             fprintf(stderr, "%s: send to window [0x%lx]\n", __func__, dest);
