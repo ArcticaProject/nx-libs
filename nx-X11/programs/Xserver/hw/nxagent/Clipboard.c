@@ -2296,11 +2296,6 @@ static void setSelectionOwnerOnXServer(Selection *pSelection)
     return;
   }
 
-  #ifdef DEBUG
-  fprintf(stderr, "%s: Setting selection owner to serverwindow ([0x%lx]).\n", __func__,
-              serverWindow);
-  #endif
-
   int index = nxagentFindCurrentSelectionIndex(pSelection->selection);
   if (index != -1)
   {
@@ -2312,7 +2307,7 @@ static void setSelectionOwnerOnXServer(Selection *pSelection)
                 lastSelectionOwner[index].window, pSelection->window);
     fprintf(stderr, "%s: lastSelectionOwner.windowPtr [%p] -> [%p] [0x%x] (serverWindow: [0x%lx])\n", __func__,
                 (void *)lastSelectionOwner[index].windowPtr, (void *)pSelection->pWin,
-                    nxagentWindow(pSelection->pWin), serverWindow);
+                    pSelection->pWin ? nxagentWindow(pSelection->pWin) : 0, serverWindow);
     fprintf(stderr, "%s: lastSelectionOwner.lastTimeChanged [%u]\n", __func__,
                 lastSelectionOwner[index].lastTimeChanged);
     #endif
@@ -2342,8 +2337,16 @@ static void setSelectionOwnerOnXServer(Selection *pSelection)
      * watch clipboard ownership changes, clipboard owners should
      * reacquire the clipboard whenever the content or metadata (e.g
      * the list of supported targets) changes."
+     * If pWin is NULL this is a SelectionClear.
      */
-    XSetSelectionOwner(nxagentDisplay, remoteSelectionAtoms[index], serverWindow, CurrentTime);
+    #ifdef DEBUG
+    if (pSelection->pWin)
+    {
+      fprintf(stderr, "%s: Setting selection owner to serverwindow ([0x%lx]).\n", __func__,
+                  serverWindow);
+    }
+    #endif
+    XSetSelectionOwner(nxagentDisplay, remoteSelectionAtoms[index], pSelection->pWin ? serverWindow : 0, CurrentTime);
 
     /*
      * The real owner window (inside nxagent) is stored in
