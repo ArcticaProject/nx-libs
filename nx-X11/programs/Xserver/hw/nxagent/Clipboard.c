@@ -873,14 +873,13 @@ void invalidateTargetCaches(void)
 /*
  * This is called from Events.c dispatch loop on reception of a
  * SelectionClear event. We receive this event if someone on the real
- * X server claims the selection ownership.
+ * X server claims the selection ownership we have/had.
+ * Three versions of this routine with different parameter types.
  */
-void nxagentHandleSelectionClearFromXServer(XEvent *X)
+void nxagentHandleSelectionClearFromXServerByIndex(int index)
 {
   #ifdef DEBUG
-  fprintf(stderr, "---------\n%s: SelectionClear event for selection [%lu][%s] window [0x%lx] time [%lu].\n",
-              __func__, X->xselectionclear.selection, NameForRemoteAtom(X->xselectionclear.selection),
-                  X->xselectionclear.window, X->xselectionclear.time);
+  fprintf(stderr, "%s: SelectionClear event for selection index [%u].\n", __func__, index);
   #endif
 
   if (!agentClipboardInitialized)
@@ -899,41 +898,54 @@ void nxagentHandleSelectionClearFromXServer(XEvent *X)
     return;
   }
 
-  int index = nxagentFindRemoteSelectionIndex(X->xselectionclear.selection);
+  if (IS_LOCAL_OWNER(index))
+  {
+    /* Send a SelectionClear event to (our) previous owner. */
+    xEvent x = {0};
+    x.u.u.type = SelectionClear;
+    x.u.selectionClear.time = GetTimeInMillis();
+    x.u.selectionClear.window = lastSelectionOwner[index].window;
+    x.u.selectionClear.atom = CurrentSelections[index].selection;
+
+    sendEventToClient(lastSelectionOwner[index].client, &x);
+
+    /*
+     * Set the root window with the NullClient as selection owner. Our
+     * clients asking for the owner via XGetSelectionOwner() will get
+     * this for an answer.
+     */
+    CurrentSelections[index].window = screenInfo.screens[0]->root->drawable.id;
+    CurrentSelections[index].client = NullClient;
+
+    clearSelectionOwnerData(index);
+
+    setClientSelectionStage(index, SelectionStageNone);
+
+    invalidateTargetCache(index);
+  }
+}
+
+void nxagentHandleSelectionClearFromXServerByAtom(XlibAtom sel)
+{
+  #ifdef DEBUG
+  fprintf(stderr, "---------\n%s: SelectionClear event for remote selection atom [%lu][%s].\n", __func__, sel, NameForRemoteAtom(sel));
+  #endif
+
+  int index = nxagentFindRemoteSelectionIndex(sel);
   if (index != -1)
   {
-    if (IS_LOCAL_OWNER(index))
-    {
-      /* Send a SelectionClear event to (our) previous owner. */
-      xEvent x = {0};
-      x.u.u.type = SelectionClear;
-      x.u.selectionClear.time = GetTimeInMillis();
-      x.u.selectionClear.window = lastSelectionOwner[index].window;
-      x.u.selectionClear.atom = CurrentSelections[index].selection;
-
-      sendEventToClient(lastSelectionOwner[index].client, &x);
-
-      /*
-       * Set the root window with the NullClient as selection owner. Our
-       * clients asking for the owner via XGetSelectionOwner() will get
-       * this for an answer.
-       */
-      CurrentSelections[index].window = screenInfo.screens[0]->root->drawable.id;
-      CurrentSelections[index].client = NullClient;
-
-      clearSelectionOwnerData(index);
-
-      setClientSelectionStage(index, SelectionStageNone);
-
-      invalidateTargetCache(index);
-    }
-    #ifdef DEBUG
-    else
-    {
-      fprintf(stderr, "%s: selection already cleared - doing nothing.\n", __func__);
-    }
-    #endif
+   nxagentHandleSelectionClearFromXServerByIndex(index);
   }
+}
+
+void nxagentHandleSelectionClearFromXServer(XEvent *X)
+{
+  #ifdef DEBUG
+  fprintf(stderr, "---------\n%s: SelectionClear event for selection [%lu][%s] window [0x%lx] time [%lu].\n",
+              __func__, X->xselectionclear.selection, NameForRemoteAtom(X->xselectionclear.selection),
+                  X->xselectionclear.window, X->xselectionclear.time);
+  #endif
+  nxagentHandleSelectionClearFromXServerByAtom(X->xselectionclear.selection);
 }
 
 /*
@@ -2202,25 +2214,11 @@ static void resetSelectionOwnerOnXServer(void)
 #ifdef NXAGENT_CLIPBOARD
 
 /*
- * The callback is called from dix. This is the normal operation
- * mode. The callback is also called when nxagent gets XFixes events
- * from the real X server. In that case the Trap is set and the
- * callback will do nothing.
+ * The callback is called from dix.
  */
-
 void nxagentSetSelectionCallback(CallbackListPtr *callbacks, void *data,
                                    void *args)
 {
-  /*
-   * Only act if the trap is unset. The trap indicates that we are
-   * triggered by an XFixes clipboard event originating from the real
-   * X server. In that case we do not want to propagate back changes
-   * to the real X server, because it already knows about them and we
-   * would end up in an infinite loop of events. If there was a better
-   * way to identify that situation during callback processing we
-   * could get rid of the Trap...
-  */
-
   SelectionInfoRec *info = (SelectionInfoRec *)args;
 
   #ifdef DEBUG
@@ -2249,57 +2247,65 @@ void nxagentSetSelectionCallback(CallbackListPtr *callbacks, void *data,
   if (index == -1)
   {
     #ifdef DEBUG
-    fprintf(stderr, "%s: selection [%s] will not be handled by the clipboard code\n", __func__, NameForLocalAtom(pCurSel->selection));
+    fprintf(stderr, "%s: selection [%s] can/will not be handled by the clipboard code\n", __func__, NameForLocalAtom(pCurSel->selection));
     #endif
     return;
   }
 
   /*
-   * Always invalidate the target cache for the relevant selection,
-   * even if the trap is set. This ensures not having invalid data in
-   * the cache.
+   * Always invalidate the target cache for the relevant selection.
+   * This ensures not having invalid data in the cache.
    */
   invalidateTargetCache(index);
 
-  if (nxagentExternalClipboardEventTrap)
-  {
-    #ifdef DEBUG
-    fprintf(stderr, "%s: Trap is set, doing nothing\n", __func__);
-    #endif
-    return;
-  }
-
-
   #ifdef DEBUG
+  fprintf(stderr, "%s: pCurSel->window [0x%x]\n", __func__, pCurSel->window);
+  fprintf(stderr, "%s: pCurSel->pWin [0x%x]\n", __func__, WINDOWID(pCurSel->pWin));
+  fprintf(stderr, "%s: pCurSel->selection [%s]\n", __func__, NameForLocalAtom(pCurSel->selection));
   fprintf(stderr, "%s: pCurSel->lastTimeChanged [%u]\n", __func__, pCurSel->lastTimeChanged.milliseconds);
+  fprintf(stderr, "%s: pCurSel->client [%s]\n", __func__, nxagentClientInfoString(pCurSel->client));
   #endif
 
-  if (info->kind == SelectionSetOwner)
+  if (nxagentOption(Clipboard) != ClipboardNone) /* FIXME: shouldn't we also check for != ClipboardClient? */
   {
-    #ifdef DEBUG
-    fprintf(stderr, "%s: pCurSel->pWin [0x%x]\n", __func__, WINDOWID(pCurSel->pWin));
-    fprintf(stderr, "%s: pCurSel->selection [%s]\n", __func__, NameForLocalAtom(pCurSel->selection));
-    #endif
+    Selection *pSel = NULL;
+    Selection nullSel = {
+                         .client = NullClient,
+                         .window = None,
+                         .pWin = NULL,
+                         .selection = pCurSel->selection,
+                         .lastTimeChanged = pCurSel->lastTimeChanged
+    };
 
-    if (pCurSel->pWin != NULL &&
-        nxagentOption(Clipboard) != ClipboardNone && /* FIXME: shouldn't we also check for != ClipboardClient? */
-        (pCurSel->selection == localSelelectionAtoms[nxagentPrimarySelection] ||
-         pCurSel->selection == localSelelectionAtoms[nxagentClipboardSelection]))
+    if (info->kind == SelectionSetOwner)
+    {
+      pSel = pCurSel;
+    }
+    else if (info->kind == SelectionWindowDestroy)
+    {
+      if (pCurSel->window == lastSelectionOwner[index].window)
+      {
+        pSel = &nullSel;
+      }
+    }
+    else if (info->kind == SelectionClientClose)
+    {
+      if (pCurSel->client == lastSelectionOwner[index].client)
+      {
+        pSel = &nullSel;
+      }
+    }
+    else
+    {
+    }
+
+    if (pSel)
     {
       #ifdef DEBUG
       fprintf(stderr, "%s: calling setSelectionOwnerOnXServer\n", __func__);
       #endif
-      setSelectionOwnerOnXServer(pCurSel);
+      setSelectionOwnerOnXServer(pSel);
     }
-  }
-  else if (info->kind == SelectionWindowDestroy)
-  {
-  }
-  else if (info->kind == SelectionClientClose)
-  {
-  }
-  else
-  {
   }
 }
 #endif

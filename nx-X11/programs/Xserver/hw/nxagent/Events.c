@@ -2841,69 +2841,64 @@ int nxagentHandleXFixesSelectionNotify(XEvent *X)
       return 0;
   }
 
+  #ifdef DEBUG
+  fprintf(stderr, "---------\n");
+  #endif
+
   #ifdef TEST
   fprintf(stderr, "%s: Handling event.\n", __func__);
   #endif
 
-  if (SelectionCallback)
+  #ifdef DEBUG
+  fprintf(stderr, "%s: Event timestamp [%ld]\n", __func__, xfixesEvent->xfixesselection.timestamp);
+  fprintf(stderr, "%s: Event selection timestamp [%ld]\n", __func__, xfixesEvent->xfixesselection.selection_timestamp);
+  fprintf(stderr, "%s: Event selection window [0x%lx]\n", __func__, xfixesEvent->xfixesselection.window);
+  fprintf(stderr, "%s: Event selection owner [0x%lx]\n", __func__, xfixesEvent->xfixesselection.owner);
+  fprintf(stderr, "%s: Event selection [%s]\n", __func__, NameForAtom(nxagentRemoteToLocalAtom(xfixesEvent->xfixesselection.selection)));
+
+  fprintf(stderr, "%s: Subtype ", __func__);
+
+  switch (xfixesEvent -> xfixesselection.subtype)
   {
-    Atom local = nxagentRemoteToLocalAtom(xfixesEvent -> xfixesselection.selection);
-
-    int index = nxagentFindCurrentSelectionIndex(local);
-    if (index != -1)
-    {
-      if (CurrentSelections[index].client != 0)
-      {
-        #ifdef TEST
-        fprintf(stderr, "%s: Doing nothing.\n", __func__);
-        #endif
-
-        return 1;
-      }
-
-      #ifdef TEST
-      fprintf(stderr, "%s: Calling callbacks for %d [%s] selection.\n", __func__,
-                       CurrentSelections[index].selection, NameForAtom(CurrentSelections[index].selection));
-      #endif
-
-      #ifdef DEBUG
-      fprintf(stderr, "%s: CurrentSelections[%d].lastTimeChanged [%u]\n", __func__, index, CurrentSelections[index].lastTimeChanged.milliseconds);
-      fprintf(stderr, "%s: Event timestamp [%ld]\n", __func__, xfixesEvent->xfixesselection.timestamp);
-      fprintf(stderr, "%s: Event selection timestamp [%ld]\n", __func__, xfixesEvent->xfixesselection.selection_timestamp);
-      fprintf(stderr, "%s: Event selection window [0x%lx]\n", __func__, xfixesEvent->xfixesselection.window);
-      fprintf(stderr, "%s: Event selection owner [0x%lx]\n", __func__, xfixesEvent->xfixesselection.owner);
-      fprintf(stderr, "%s: Event selection [%s]\n", __func__, NameForAtom(local));
-
-      fprintf(stderr, "%s: Subtype ", __func__);
-
-      switch (xfixesEvent -> xfixesselection.subtype)
-      {
-        case SelectionSetOwner:       fprintf(stderr, "SelectionSetOwner.\n");      break;
-        case SelectionWindowDestroy:  fprintf(stderr, "SelectionWindowDestroy.\n"); break;
-        case SelectionClientClose:    fprintf(stderr, "SelectionClientClose.\n");   break;
-        default:                      fprintf(stderr, ".\n");                       break;
-      }
-      #endif
-
-      SelectionInfoRec info = {
-        .selection = &CurrentSelections[index],
-        .kind = xfixesEvent->xfixesselection.subtype
-      };
-
-      /*
-       * The trap indicates that we are triggered by a clipboard event
-       * originating from the real X server. In that case we do not
-       * want to propagate back changes to the real X server, because
-       * it already knows about them and we would end up in an
-       * infinite loop of events. If there was a better way to
-       * identify that situation during Callback processing we could
-       * get rid of the Trap...
-       */
-      nxagentExternalClipboardEventTrap = True;
-      CallCallbacks(&SelectionCallback, &info);
-      nxagentExternalClipboardEventTrap = False;
-    }
+    case SelectionSetOwner:       fprintf(stderr, "SelectionSetOwner.\n");      break;
+    case SelectionWindowDestroy:  fprintf(stderr, "SelectionWindowDestroy.\n"); break;
+    case SelectionClientClose:    fprintf(stderr, "SelectionClientClose.\n");   break;
+    default:                      fprintf(stderr, ".\n");                       break;
   }
+  #endif
+
+  if (xfixesEvent->xfixesselection.owner && xfixesEvent->xfixesselection.owner == nxagentWindow(screenInfo.screens[0]->root))
+  {
+    /*
+     * This is an event that must have been triggered by nxagent itself
+     * - by calling XSetSelectionOwner(). As this is no news for us we
+     * can ignore the event.
+     */
+
+    #ifdef DEBUG
+    fprintf(stderr, "%s: (new) owner is nxagent (window is [0x%lx]) - ignoring it.\n", __func__, xfixesEvent->xfixesselection.window);
+    #endif
+    return 0;
+  }
+
+  if (xfixesEvent -> xfixesselection.subtype == SelectionSetOwner||
+      xfixesEvent -> xfixesselection.subtype == SelectionWindowDestroy ||
+      xfixesEvent -> xfixesselection.subtype == SelectionClientClose)
+  {
+    /*
+     * Reception of an owner change on the real X server is - for nxagent - the same as
+     * receiving a SelectionClear event. We just need to tell a (possible) internal
+     * owner that is no longer owning the selection.
+     */
+    nxagentHandleSelectionClearFromXServerByAtom(xfixesEvent -> xfixesselection.selection);
+  }
+  else
+  {
+    #ifdef DEBUG
+    fprintf(stderr, "%s: WARNING unexpected xfixesselection subtype [%d]\n", __func__, xfixesEvent -> xfixesselection.subtype);
+    #endif
+  }
+
   return 1;
 }
 
