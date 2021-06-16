@@ -2169,6 +2169,8 @@ static void resetSelectionOwnerOnXServer(void)
 
     setClientSelectionStage(index, SelectionStageNone);
 
+    invalidateTargetCache(index);
+
     /* Hmm, this is already None when reaching here. */
     lastServers[index].requestor = None;
   }
