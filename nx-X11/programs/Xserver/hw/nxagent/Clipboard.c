@@ -1779,7 +1779,7 @@ Bool nxagentCollectPropertyEventFromXServer(int resource)
                                  ulReturnItems, pszReturnData, 1);
 
             #ifdef DEBUG
-            fprintf(stderr, "%s: Selection property [%d][%s] changed to resultFormat [%d] returnType [%d][%s] len [%d]"
+            fprintf(stderr, "%s: Selection property [%d][%s] changed to resultFormat [%d] returnType [%ld][%s] len [%d]"
                     #ifdef PRINT_CLIPBOARD_CONTENT_ON_DEBUG
                     /* FIXME: only print the string if the resultFormat is 8 */
                     " value [\"%*.*s\"...] hex [0x%2.2x%2.2x%2.2x%2.2x]"
