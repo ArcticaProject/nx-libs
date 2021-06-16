@@ -754,7 +754,7 @@ void nxagentClearClipboard(ClientPtr pClient, WindowPtr pWindow)
  * sel. sel is an atom on the real X server. If the index cannot be
  * determined it will return -1.
  */
-int nxagentFindLastSelectionOwnerIndex(XlibAtom sel)
+int nxagentFindRemoteSelectionIndex(XlibAtom sel)
 {
   for (int index = 0; index < nxagentMaxSelections; index++)
   {
@@ -892,7 +892,7 @@ void nxagentHandleSelectionClearFromXServer(XEvent *X)
     return;
   }
 
-  int index = nxagentFindLastSelectionOwnerIndex(X->xselectionclear.selection);
+  int index = nxagentFindRemoteSelectionIndex(X->xselectionclear.selection);
   if (index != -1)
   {
     if (IS_LOCAL_OWNER(index))
@@ -984,7 +984,7 @@ void nxagentHandleSelectionRequestFromXServer(XEvent *X)
   }
 
   /* The selection in this request is none we own. */
-  int index = nxagentFindLastSelectionOwnerIndex(X->xselectionrequest.selection);
+  int index = nxagentFindRemoteSelectionIndex(X->xselectionrequest.selection);
   if (index == -1)
   {
     #ifdef DEBUG
@@ -1851,7 +1851,7 @@ void nxagentHandleSelectionNotifyFromXServer(XEvent *X)
   #endif
 
   /* determine the selection we are talking about here */
-  int index = nxagentFindLastSelectionOwnerIndex(E->selection);
+  int index = nxagentFindRemoteSelectionIndex(E->selection);
   if (index == -1)
   {
     #ifdef DEBUG
@@ -3070,7 +3070,7 @@ WindowPtr nxagentGetClipboardWindow(Atom property)
     return NULL;
   }
 
-  int index = nxagentFindLastSelectionOwnerIndex(serverLastRequestedSelection);
+  int index = nxagentFindRemoteSelectionIndex(serverLastRequestedSelection);
   if (index != -1 &&
           property == clientCutProperty &&
               lastSelectionOwner[index].windowPtr != NULL)
