@@ -1448,7 +1448,7 @@ static void transferSelectionFromXServer(int index, int resource)
       }
       else
       {
-        /* Collect the property and store ist with index "resource" d */
+        /* Collect the property and store it with index "resource" */
         result = NXCollectProperty(nxagentDisplay,
                                    free_resource,
                                    serverWindow,
