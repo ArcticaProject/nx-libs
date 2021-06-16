@@ -1835,27 +1835,27 @@ void nxagentHandleSelectionNotifyFromXServer(XEvent *X)
     return;
   }
 
-  XSelectionEvent * e = (XSelectionEvent *)X;
+  XSelectionEvent *E = (XSelectionEvent *)X;
   #ifdef DEBUG
   fprintf(stderr, "---------\n%s: Received SelectionNotify event from real X server, property " \
               "[%ld][%s] requestor [0x%lx] selection [%s] target [%ld][%s] time [%lu] send_event [%d].\n",
-                  __func__, e->property, NameForRemoteAtom(e->property), e->requestor,
-                      NameForRemoteAtom(e->selection), e->target,
-                          NameForRemoteAtom(e->target), e->time, e->send_event);
+                  __func__, E->property, NameForRemoteAtom(E->property), E->requestor,
+                      NameForRemoteAtom(E->selection), E->target,
+                          NameForRemoteAtom(E->target), E->time, E->send_event);
 
   /* this has not been SENT by nxagent but is the answer to a request of nxagent */
-  if (e->requestor == serverWindow)
+  if (E->requestor == serverWindow)
   {
     fprintf(stderr, "%s: requestor is nxagent's serverWindow!\n", __func__);;
   }
   #endif
 
   /* determine the selection we are talking about here */
-  int index = nxagentFindLastSelectionOwnerIndex(e->selection);
+  int index = nxagentFindLastSelectionOwnerIndex(E->selection);
   if (index == -1)
   {
     #ifdef DEBUG
-    fprintf (stderr, "%s: unknown selection [%ld] .\n", __func__, e->selection);
+    fprintf (stderr, "%s: unknown selection [%ld] .\n", __func__, E->selection);
     #endif
     return;
   }
