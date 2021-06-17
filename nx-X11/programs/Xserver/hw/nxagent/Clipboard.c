@@ -995,6 +995,15 @@ void nxagentHandleSelectionRequestFromXServer(XEvent *X)
     return;
   }
 
+  if (!IS_LOCAL_OWNER(index))
+  {
+    #ifdef DEBUG
+    fprintf(stderr, "%s: no local owner for selection [%ld] - denying request.\n", __func__, X->xselectionrequest.selection);
+    #endif
+    replyRequestSelectionToXServer(X, False);
+    return;
+  }
+
   #ifdef DEBUG
   fprintf(stderr, "%s: lastServers[%d].requestor [0x%lx].\n", __func__, index, lastServers[index].requestor);
   #endif
