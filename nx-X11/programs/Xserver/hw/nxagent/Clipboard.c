@@ -2327,21 +2327,13 @@ static void setSelectionOwnerOnXServer(Selection *pSelection)
               lastSelectionOwner[index].lastTimeChanged);
   #endif
 
-  #if defined(TEST) || defined(DEBUG)
-  if (lastServers[index].requestor != None)
-  {
-    /*
-     * There's an X client on the real X server waiting for a
-     * reply. That reply will never come because now we are the
-     * owner so let's be fair and cancel that request.
-     */
-    fprintf(stderr, "%s: WARNING! lastServers[%d].requestor window [0x%lx] already set. Cancelling pending request.\n",
-                 __func__, index, lastServers[index].requestor);
-    replyPendingRequestSelectionToXServer(index, False);
 
-    /* Now we can go on. */
-  }
-  #endif
+  /*
+   * There's an X client on the real X server waiting for a
+   * reply. That reply will never come because now we are the
+   * owner so let's be fair and cancel that request.
+   */
+  replyPendingRequestSelectionToXServer(index, False);
 
   /*
    * Inform the real X server that our serverWindow is the
