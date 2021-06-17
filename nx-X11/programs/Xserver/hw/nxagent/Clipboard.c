@@ -2306,73 +2306,78 @@ static void setSelectionOwnerOnXServer(Selection *pSelection)
   }
 
   int index = nxagentFindCurrentSelectionIndex(pSelection->selection);
-  if (index != -1)
+  if (index == -1)
   {
     #ifdef DEBUG
-    fprintf(stderr, "%s: lastSelectionOwner.client %s -> %s\n", __func__,
-                nxagentClientInfoString(lastSelectionOwner[index].client),
-                    nxagentClientInfoString(pSelection->client));
-    fprintf(stderr, "%s: lastSelectionOwner.window [0x%x] -> [0x%x]\n", __func__,
-                lastSelectionOwner[index].window, pSelection->window);
-    fprintf(stderr, "%s: lastSelectionOwner.windowPtr [%p] -> [%p] [0x%x] (serverWindow: [0x%lx])\n", __func__,
-                (void *)lastSelectionOwner[index].windowPtr, (void *)pSelection->pWin,
-                    pSelection->pWin ? nxagentWindow(pSelection->pWin) : 0, serverWindow);
-    fprintf(stderr, "%s: lastSelectionOwner.lastTimeChanged [%u]\n", __func__,
-                lastSelectionOwner[index].lastTimeChanged);
+    fprintf(stderr, "%s: selection [%s] can/will not be handled by the clipboard code\n", __func__, NameForLocalAtom(pSelection->selection));
     #endif
+    return;
+  }
 
-    #if defined(TEST) || defined(DEBUG)
-    if (lastServers[index].requestor != None)
-    {
-      /*
-       * There's an X client on the real X server waiting for a
-       * reply. That reply will never come because now we are the
-       * owner so let's be fair and cancel that request.
-       */
-      fprintf(stderr, "%s: WARNING! lastServers[%d].requestor window [0x%lx] already set. Cancelling pending request.\n",
-                   __func__, index, lastServers[index].requestor);
+  #ifdef DEBUG
+  fprintf(stderr, "%s: lastSelectionOwner.client %s -> %s\n", __func__,
+              nxagentClientInfoString(lastSelectionOwner[index].client),
+                  nxagentClientInfoString(pSelection->client));
+  fprintf(stderr, "%s: lastSelectionOwner.window [0x%x] -> [0x%x]\n", __func__,
+              lastSelectionOwner[index].window, pSelection->window);
+  fprintf(stderr, "%s: lastSelectionOwner.windowPtr [%p] -> [%p] [0x%x] (serverWindow: [0x%lx])\n", __func__,
+              (void *)lastSelectionOwner[index].windowPtr, (void *)pSelection->pWin,
+                  pSelection->pWin ? nxagentWindow(pSelection->pWin) : 0, serverWindow);
+  fprintf(stderr, "%s: lastSelectionOwner.lastTimeChanged [%u]\n", __func__,
+              lastSelectionOwner[index].lastTimeChanged);
+  #endif
 
-      replyPendingRequestSelectionToXServer(index, False);
-
-      /* Now we can go on. */
-    }
-    #endif
-
+  #if defined(TEST) || defined(DEBUG)
+  if (lastServers[index].requestor != None)
+  {
     /*
-     * Inform the real X server that our serverWindow is the
-     * clipboard owner.
-     * https://www.freedesktop.org/wiki/ClipboardManager/ states
-     * "In order to support peers who use the XFIXES extension to
-     * watch clipboard ownership changes, clipboard owners should
-     * reacquire the clipboard whenever the content or metadata (e.g
-     * the list of supported targets) changes."
-     * If pWin is NULL this is a SelectionClear.
+     * There's an X client on the real X server waiting for a
+     * reply. That reply will never come because now we are the
+     * owner so let's be fair and cancel that request.
      */
-    #ifdef DEBUG
-    if (pSelection->pWin)
-    {
-      fprintf(stderr, "%s: Setting selection owner to serverwindow ([0x%lx]).\n", __func__,
-                  serverWindow);
-    }
-    #endif
-    XSetSelectionOwner(nxagentDisplay, remoteSelectionAtoms[index], pSelection->pWin ? serverWindow : 0, CurrentTime);
+    fprintf(stderr, "%s: WARNING! lastServers[%d].requestor window [0x%lx] already set. Cancelling pending request.\n",
+                 __func__, index, lastServers[index].requestor);
+    replyPendingRequestSelectionToXServer(index, False);
 
-    /*
-     * The real owner window (inside nxagent) is stored in
-     * lastSelectionOwner[index].window.
-     * lastSelectionOwner[index].windowPtr points to the struct that
-     * contains all information about the owner window.
-     */
-    storeSelectionOwnerData(index, pSelection);
+    /* Now we can go on. */
+  }
+  #endif
 
-    setClientSelectionStage(index, SelectionStageNone);
+  /*
+   * Inform the real X server that our serverWindow is the
+   * clipboard owner.
+   * https://www.freedesktop.org/wiki/ClipboardManager/ states
+   * "In order to support peers who use the XFIXES extension to
+   * watch clipboard ownership changes, clipboard owners should
+   * reacquire the clipboard whenever the content or metadata (e.g
+   * the list of supported targets) changes."
+   * If pWin is NULL this is a SelectionClear.
+   */
+  #ifdef DEBUG
+  if (pSelection->pWin)
+  {
+    fprintf(stderr, "%s: Setting selection owner to serverwindow ([0x%lx]).\n", __func__,
+                serverWindow);
+  }
+  #endif
+  XSetSelectionOwner(nxagentDisplay, remoteSelectionAtoms[index], pSelection->pWin ? serverWindow : 0, CurrentTime);
 
-    /*
-     * This will be repeated on reception of the SelectionOwner
-     * callback but we cannot be sure if there are any intermediate
-     * requests in the queue already so better do it here, too.
-     */
-    invalidateTargetCache(index);
+  /*
+   * The real owner window (inside nxagent) is stored in
+   * lastSelectionOwner[index].window.
+   * lastSelectionOwner[index].windowPtr points to the struct that
+   * contains all information about the owner window.
+   */
+  storeSelectionOwnerData(index, pSelection);
+
+  setClientSelectionStage(index, SelectionStageNone);
+
+  /*
+   * This will be repeated on reception of the SelectionOwner
+   * callback but we cannot be sure if there are any intermediate
+   * requests in the queue already so better do it here, too.
+   */
+  invalidateTargetCache(index);
 
 /*
 FIXME
@@ -2381,22 +2386,24 @@ FIXME2: instead of XGetSelectionOwner we could check if the Xfixes
         SetSelectionOwner event has arrived in the event queue;
         possibly saving one roundtrip.
 
-   if (XGetSelectionOwner(nxagentDisplay, pSelection->selection) == serverWindow)
-   {
-      fprintf (stderr, "%s: SetSelectionOwner OK\n", __func__);
+  if (XGetSelectionOwner(nxagentDisplay, pSelection->selection) == serverWindow)
+  {
+    fprintf (stderr, "%s: SetSelectionOwner OK\n", __func__);
 
-      lastSelectionOwnerSelection = pSelection;
-      lastSelectionOwnerClient = pSelection->client;
-      lastSelectionOwnerWindow = pSelection->window;
-      lastSelectionOwnerWindowPtr = pSelection->pWin;
+    lastSelectionOwnerSelection = pSelection;
+    lastSelectionOwnerClient = pSelection->client;
+    lastSelectionOwnerWindow = pSelection->window;
+    lastSelectionOwnerWindowPtr = pSelection->pWin;
 
-      setClientSelectionStage(index, SelectionStageNone);
+    setClientSelectionStage(index, SelectionStageNone);
 
-      lastServers[index].requestor = None;
-   }
-   else fprintf (stderr, "%s: SetSelectionOwner failed\n", __func__);
-*/
+    lastServers[index].requestor = None;
   }
+  else
+  {
+     fprintf (stderr, "%s: SetSelectionOwner failed\n", __func__);
+  }
+*/
 }
 
 /*
