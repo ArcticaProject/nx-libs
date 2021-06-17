@@ -97,6 +97,13 @@ const int nxagentMaxSelections = 2;
 static XlibAtom *remoteSelectionAtoms = NULL;
 static Atom *localSelelectionAtoms = NULL;
 
+/*
+ * The real owner window (inside nxagent) is stored in
+ * lastSelectionOwner[index].window.
+ * lastSelectionOwner[index].windowPtr points to the struct that
+ * contains all information about the owner window.
+ * lastTimeChanged is always a local time.
+ */
 typedef struct _SelectionOwner
 {
   ClientPtr  client;           /* local client */
@@ -106,9 +113,8 @@ typedef struct _SelectionOwner
 } SelectionOwner;
 
 /*
- * This contains the last selection owner in nxagent. The
- * lastTimeChanged is always a local time. If .client is NULL the
- * owner is outside nxagent.
+ * This contains the last selection owner for each selection. If
+ * .client is NULL the owner is outside nxagent or there is no owner.
  */
 
 static SelectionOwner *lastSelectionOwner = NULL;
@@ -717,6 +723,7 @@ static Bool matchSelectionOwner(int index, ClientPtr pClient, WindowPtr pWindow)
  * Attention: does not work properly when both client AND window
  * are passed as setClientSelectionStage(None) will also clear
  * the lastClientWindowPtr!
+ * This is only called from Client.c and Window.c
  */
 void nxagentClearClipboard(ClientPtr pClient, WindowPtr pWindow)
 {
