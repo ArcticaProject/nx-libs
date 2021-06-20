@@ -2881,6 +2881,11 @@ int nxagentHandleXFixesSelectionNotify(XEvent *X)
     return 0;
   }
 
+  /*
+   * Realistically the only situation where we can receive
+   * WindowDestroy or ClientClose will also end nxagent, so we do not
+   * need to handle them. But the code is here, so let's keep it.
+   */
   if (xfixesEvent -> xfixesselection.subtype == SelectionSetOwner||
       xfixesEvent -> xfixesselection.subtype == SelectionWindowDestroy ||
       xfixesEvent -> xfixesselection.subtype == SelectionClientClose)
