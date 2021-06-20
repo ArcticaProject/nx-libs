@@ -882,6 +882,14 @@ void nxagentHandleSelectionClearFromXServerByIndex(int index)
   fprintf(stderr, "%s: SelectionClear event for selection index [%u].\n", __func__, index);
   #endif
 
+  if (index == -1)
+  {
+    #ifdef DEBUG
+    fprintf(stderr, "%s: ignoring index -1 - doing nothing.\n", __func__);
+    #endif
+    return;
+  }
+
   if (!agentClipboardInitialized)
   {
     #ifdef DEBUG
@@ -931,11 +939,7 @@ void nxagentHandleSelectionClearFromXServerByAtom(XlibAtom sel)
   fprintf(stderr, "---------\n%s: SelectionClear event for remote selection atom [%lu][%s].\n", __func__, sel, NameForRemoteAtom(sel));
   #endif
 
-  int index = nxagentFindRemoteSelectionIndex(sel);
-  if (index != -1)
-  {
-   nxagentHandleSelectionClearFromXServerByIndex(index);
-  }
+  nxagentHandleSelectionClearFromXServerByIndex(nxagentFindRemoteSelectionIndex(sel));
 }
 
 void nxagentHandleSelectionClearFromXServer(XEvent *X)
