@@ -912,21 +912,21 @@ void nxagentHandleSelectionClearFromXServer(XEvent *X)
       x.u.selectionClear.atom = CurrentSelections[index].selection;
 
       sendEventToClient(lastSelectionOwner[index].client, &x);
+
+      /*
+       * Set the root window with the NullClient as selection owner. Our
+       * clients asking for the owner via XGetSelectionOwner() will get
+       * this for an answer.
+       */
+      CurrentSelections[index].window = screenInfo.screens[0]->root->drawable.id;
+      CurrentSelections[index].client = NullClient;
+
+      clearSelectionOwnerData(index);
+
+      setClientSelectionStage(index, SelectionStageNone);
+
+      invalidateTargetCache(index);
     }
-
-    /*
-     * Set the root window with the NullClient as selection owner. Our
-     * clients asking for the owner via XGetSelectionOwner() will get
-     * these for an answer.
-     */
-    CurrentSelections[index].window = screenInfo.screens[0]->root->drawable.id;
-    CurrentSelections[index].client = NullClient;
-
-    clearSelectionOwnerData(index);
-
-    setClientSelectionStage(index, SelectionStageNone);
-
-    invalidateTargetCache(index);
   }
 }
 
