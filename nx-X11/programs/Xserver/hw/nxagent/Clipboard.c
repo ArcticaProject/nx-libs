@@ -931,6 +931,12 @@ void nxagentHandleSelectionClearFromXServerByIndex(int index)
 
     invalidateTargetCache(index);
   }
+  else
+  {
+    #ifdef DEBUG
+    fprintf(stderr, "%s: selection already cleared - doing nothing.\n", __func__);
+    #endif
+  }
 }
 
 void nxagentHandleSelectionClearFromXServerByAtom(XlibAtom sel)
