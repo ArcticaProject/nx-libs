@@ -927,6 +927,12 @@ void nxagentHandleSelectionClearFromXServer(XEvent *X)
 
       invalidateTargetCache(index);
     }
+    #ifdef DEBUG
+    else
+    {
+      fprintf(stderr, "%s: selection already cleared - doing nothing.\n", __func__);
+    }
+    #endif
   }
 }
 
