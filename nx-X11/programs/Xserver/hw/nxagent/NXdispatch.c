@@ -745,10 +745,15 @@ ProcConvertSelection(register ClientPtr client)
 	while ((i < NumCurrentSelections) && 
 	       CurrentSelections[i].selection != stuff->selection) i++;
 	if ((i < NumCurrentSelections) &&
-#ifdef NXAGENT_SERVER
-	    (CurrentSelections[i].window != None) && (CurrentSelections[i].client != NullClient)
-#else
 	    (CurrentSelections[i].window != None)
+#ifdef NXAGENT_SERVER
+            /*
+             * .window can be set and pointing to our server window to
+             * signal the clipboard owner being on the real X
+             * server. Therefore we need to check .client in addition
+             * to ensure having a local owner.
+             */
+	    && (CurrentSelections[i].client != NullClient)
 #endif
 #ifdef XCSECURITY
 	    && (!client->CheckAccess ||
