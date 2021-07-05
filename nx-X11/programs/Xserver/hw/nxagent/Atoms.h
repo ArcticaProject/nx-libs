@@ -30,7 +30,7 @@
 #include "../../include/window.h"
 #include "screenint.h"
 
-#define NXAGENT_NUMBER_OF_ATOMS  18
+#define NXAGENT_NUMBER_OF_ATOMS 24
 
 extern Atom nxagentAtoms[NXAGENT_NUMBER_OF_ATOMS];
 
@@ -71,12 +71,24 @@ void nxagentWMDetect(void);
 XlibAtom nxagentMakeAtom(char *, unsigned, Bool);
 
 /*
- * Converts local atoms in remote atoms and viceversa.
+ * Converts local atoms to remote atoms and viceversa.
  */
 
 Atom nxagentRemoteToLocalAtom(XlibAtom);
 XlibAtom nxagentLocalToRemoteAtom(Atom);
 
-#endif
+/*
+ * return the string belonging to an atom. String MUST NOT
+ * be freed by the caller!
+ */
+const char *nxagentRemoteAtomToString(XlibAtom remote);
+
+/*
+ * supply two macros that also validate the output.
+ */
+#define NameForLocalAtom(_atom) validateString(NameForAtom(_atom))
+#define NameForRemoteAtom(_xlibatom) validateString(nxagentRemoteAtomToString(_xlibatom))
+
+#endif /* XlibAtom */
 
 #endif /* __Atoms_H__ */

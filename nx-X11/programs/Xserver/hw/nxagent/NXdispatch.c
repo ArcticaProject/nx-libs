@@ -722,8 +722,8 @@ ProcConvertSelection(register ClientPtr client)
            (stuff->selection == MakeAtom("CLIPBOARD", 9, 0))) &&
                nxagentOption(Clipboard) != ClipboardNone)
     {
-      int i = nxagentFindCurrentSelectionIndex(stuff->selection);
-      if ((i < NumCurrentSelections) && (CurrentSelections[i].window != None))
+      int index = nxagentFindCurrentSelectionIndex(stuff->selection);
+      if ((index != -1) && (CurrentSelections[index].window != None))
       {
         if (nxagentConvertSelection(client, pWin, stuff->selection, stuff->requestor,
                                        stuff->property, stuff->target, stuff->time))
@@ -745,10 +745,15 @@ ProcConvertSelection(register ClientPtr client)
 	while ((i < NumCurrentSelections) && 
 	       CurrentSelections[i].selection != stuff->selection) i++;
 	if ((i < NumCurrentSelections) &&
-#ifdef NXAGENT_SERVER
-	    (CurrentSelections[i].window != None) && (CurrentSelections[i].client != NullClient)
-#else
 	    (CurrentSelections[i].window != None)
+#ifdef NXAGENT_SERVER
+            /*
+             * .window can be set and pointing to our server window to
+             * signal the clipboard owner being on the real X
+             * server. Therefore we need to check .client in addition
+             * to ensure having a local owner.
+             */
+	    && (CurrentSelections[i].client != NullClient)
 #endif
 #ifdef XCSECURITY
 	    && (!client->CheckAccess ||

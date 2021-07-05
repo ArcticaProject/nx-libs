@@ -465,6 +465,10 @@ The session id.
 .B \-autograb
 enable autograb mode on \fBnxagent\fR startup. The autograb feature can be toggled via nxagent keystrokes
 .TP 8
+.B \-textclipboard
+force text-only clipboard \fBnxagent\fR startup. See option file
+option \fBtextclipboard=<bool>\fR for an explanation.
+.TP 8
 .B \-nxrealwindowprop
 set property NX_REAL_WINDOW for each X11 client inside \fBnxagent\fR,
 providing the window XID of the corresponding window object on the X
@@ -720,6 +724,15 @@ Limit clipboard data exchange to work only in one direction: from nxagent to rea
 .I none
 Disable any clipboard data exchange. Clipboard will still work inside the nxagent and on the real X server, but no data exchange will be possible.
 .RE
+.TP 8
+.B textclipboard=<bool>
+enable (set to \fI1\fR) or disable (set to \fI0\fR) text-only
+clipboard. Text-only clipboard is the old (<= 3.5.99.26) clipboard
+behaviour where you could only copy and paste text strings (no
+graphics, no rich text, ...). Using this mode been seen as a security feature
+as it effectively prevents transferring dangerous binary data,
+e.g. manipulated graphics by accident. On the other hand it's also
+less comfortable.  (default: disabled)
 .TP 8
 .B streaming=<bool>
 enable (set to \fI1\fR) or disable (set to \fI0\fR) streaming support for images, not fully implemented yet and thus non-functional. (default: disabled)

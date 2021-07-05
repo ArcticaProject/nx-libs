@@ -972,6 +972,12 @@ int ddxProcessArgument(int argc, char *argv[], int i)
     return 2;
   }
 
+  if (!strcmp(argv[i], "-textclipboard"))
+  {
+    nxagentChangeOption(TextClipboard, True);
+    return 1;
+  }
+
   if (!strcmp(argv[i], "-bs"))
   {
     nxagentChangeOption(BackingStore, BackingStoreNever);
@@ -1484,6 +1490,18 @@ static void nxagentParseSingleOption(char *name, char *value)
     else
     {
       nxagentChangeOption(AutoGrab, True);
+    }
+    return;
+  }
+  else if (!strcmp(name, "textclipboard"))
+  {
+    if (!strcmp(value, "0"))
+    {
+      nxagentChangeOption(TextClipboard, False);
+    }
+    else
+    {
+      nxagentChangeOption(TextClipboard, True);
     }
     return;
   }
@@ -2129,6 +2147,7 @@ void ddxUseMsg(void)
   ErrorF("-nokbreset             don't reset keyboard device if the session is resumed\n");
   ErrorF("-noxkblock             always allow applications to change layout through XKEYBOARD\n");
   ErrorF("-autograb              enable autograb\n");
+  ErrorF("-textclipboard         limit clipboard data to text only\n");
   ErrorF("-irlimit               maximum image data rate to the encoder input in kB/s.\n");
   ErrorF("-tile WxH              maximum size of image tiles (minimum allowed: 32x32)\n");
   ErrorF("-keystrokefile file    file with keyboard shortcut definitions\n");

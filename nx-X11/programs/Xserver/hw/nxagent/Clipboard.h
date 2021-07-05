@@ -57,11 +57,14 @@ extern void nxagentClearClipboard(ClientPtr pClient, WindowPtr pWindow);
 extern int nxagentConvertSelection(ClientPtr client, WindowPtr pWin, Atom selection,
                                       Window requestor, Atom property, Atom target, Time time);
 
+extern void nxagentHandleSelectionClearFromXServerByIndex(int index);
 #ifdef XEvent
+extern void nxagentHandleSelectionClearFromXServerByAtom(XlibAtom sel);
 extern void nxagentHandleSelectionClearFromXServer(XEvent *X);
 extern void nxagentHandleSelectionRequestFromXServer(XEvent *X);
 extern void nxagentHandleSelectionNotifyFromXServer(XEvent *X);
 #else
+extern void nxagentHandleSelectionClearFromXServerByAtom();
 extern void nxagentHandleSelectionClearFromXServer();
 extern void nxagentHandleSelectionRequestFromXServer();
 extern void nxagentHandleSelectionNotifyFromXServer();
@@ -72,11 +75,11 @@ extern int nxagentFindCurrentSelectionIndex(Atom sel);
  * Handle the selection property received in the event loop in
  * Events.c.
  */
-extern void nxagentCollectPropertyEvent(int resource);
+extern Bool nxagentCollectPropertyEventFromXServer(int resource);
 
 extern WindowPtr nxagentGetClipboardWindow(Atom property);
 
-extern int nxagentSendNotify(xEvent *event);
+extern int nxagentSendNotificationToSelfViaXServer(xEvent *event);
 
 extern void nxagentDumpClipboardStat(void);
 

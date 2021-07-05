@@ -76,7 +76,7 @@ Atom nxagentAtoms[NXAGENT_NUMBER_OF_ATOMS];
  * Careful! Do not change indices here! Some of those are referenced
  * at other places via nxagentAtoms[index].
  */
-static char *nxagentAtomNames[NXAGENT_NUMBER_OF_ATOMS + 1] =
+static char *nxagentAtomNames[NXAGENT_NUMBER_OF_ATOMS + 2] =
 {
   "NX_IDENTITY",                 /*  0 */
       /* NX_IDENTITY was used in earlier nx versions to communicate
@@ -135,6 +135,27 @@ static char *nxagentAtomNames[NXAGENT_NUMBER_OF_ATOMS + 1] =
   "COMPOUND_TEXT",               /* 16 */
       /* one of the supported data formats for selections. Standard
          ICCCM Atom */
+  "INCR",                        /* 17 */
+      /* incremental clipboard transfers. Standard
+         ICCCM Atom */
+  "MULTIPLE",                    /* 18 */
+      /* request selection in multiple formats at once. Standard
+         ICCCM Atom */
+  "DELETE",                      /* 19 */
+      /* request to delete selection. Standard ICCCM Atom */
+  "INSERT_SELECTION",            /* 20 */
+      /* request to insert other selection. Standard ICCCM Atom */
+  "INSERT_PROPERTY",             /* 21 */
+      /* request to insert content of property into selection. Standard
+         ICCCM Atom */
+  "SAVE_TARGETS",                /* 22 */
+      /* request to save clipboard content to clipboard manager on
+	 exit, see
+	 https://www.freedesktop.org/wiki/ClipboardManager */
+  "TARGET_SIZES",                /* 23 */
+      /* request to retrieve the sizes of the clipboard content in
+	 various formats, see
+	 https://www.freedesktop.org/wiki/ClipboardManager */
   NULL,
   NULL
 };
@@ -748,6 +769,54 @@ XlibAtom nxagentLocalToRemoteAtom(Atom local)
 
     return remote;
   }
+}
+
+/*
+ * This is mainly used to simplify debug prints. It returns
+ * the string for a remote atom or NULL if atom is unknown/invalid
+ *
+ * The string must NOT be freed by the caller.
+ */
+const char *nxagentRemoteAtomToString(XlibAtom remote)
+{
+  if (remote == None || remote == BAD_RESOURCE)
+  {
+    #ifdef DEBUG
+    fprintf(stderr, "%s: remote [%d] is None or BAD_RESOURCE\n", __func__, remote);
+    #endif
+    return NULL;
+  }
+
+  /* no mapping required for built-in atoms */
+  if (remote <= XA_LAST_PREDEFINED)
+  {
+    #ifdef DEBUG
+    fprintf(stderr, "%s: remote [%d] is <= XA_LAST_PREDEFINED [%d]\n", __func__, remote, XA_LAST_PREDEFINED);
+    #endif
+
+    /* simply use the builtin string that is the same on every X server */
+    return NameForAtom(remote);
+  }
+
+  AtomMap *current = nxagentFindAtomByRemoteValue(remote);
+  if (current)
+  {
+    return current->string;
+  }
+  else
+  {
+    /* fill up the cache */
+    Atom local = nxagentRemoteToLocalAtom(remote);
+    if (local != None)
+    {
+      current = nxagentFindAtomByRemoteValue(remote);
+      if (current)
+      {
+        return current->string;
+      }
+    }
+  }
+  return NULL;
 }
 
 Atom nxagentRemoteToLocalAtom(XlibAtom remote)
