@@ -783,6 +783,15 @@ XCOMM binutils:	(LinuxBinUtilsMajorVersion)
 # define ServerExtraDefines	-DGCCUSESGAS XFree86ServerDefines
 #endif /* PpcArchitecture */
 
+#ifdef Riscv64Architecture
+# ifndef OptimizedCDebugFlags
+#  define OptimizedCDebugFlags	-O3
+# endif
+# define LinuxMachineDefines	-D__riscv64__
+# define ServerOSDefines	XFree86ServerOSDefines
+# define ServerExtraDefines	-DGCCUSESGAS XFree86ServerDefines -D_XSERVER64
+#endif /* Riscv64Achitecture */
+
 #ifdef s390Architecture
 # ifndef OptimizedCDebugFlags
 #  define OptimizedCDebugFlags	-O2 -fomit-frame-pointer GccAliasingArgs
