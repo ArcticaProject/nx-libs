@@ -12,6 +12,44 @@ export LIBDIR = "/usr/lib/$(DEB_HOST_MULTIARCH)"
 export LIBEXECDIR = "$(LIBDIR)/nx/bin"
 export INCLUDEDIR = "/usr/include/$(DEB_HOST_MULTIARCH)"
 
+VENDOR_DEBIAN := 0
+RELEASE_VER := 0
+
+# detect VENDOR_* variables and RELEASE_VER{,_MAJOR,_MINOR}
+VENDOR_DEBIAN := $(shell { dpkg-vendor --is 'Debian' && echo 'yes'; } || { dpkg-vendor --is 'Raspbian' && echo 'yes'; })
+
+ifeq ($(VENDOR_DEBIAN),yes)
+  RELEASE_VER := $(shell /usr/bin/lsb_release -r |  cut -d ':' -f'2' |  sed -e 's/\s*//g' | cut -d '.' -f'1')
+  # Let's fake testing's and unstable's "release version"...
+  ifeq ($(RELEASE_VER),testing)
+    RELEASE_VER := 999
+  endif
+  ifeq ($(RELEASE_VER),unstable)
+    RELEASE_VER := 9999
+  endif
+else
+  VENDOR_UBUNTU := $(shell dpkg-vendor --is 'Ubuntu' && echo 'yes')
+
+  ifeq ($(VENDOR_UBUNTU),yes)
+    RELEASE_VER_MAJOR := $(shell lsb_release -r | cut -d ':' -f '2' | sed -e 's/\s*//g' | cut -d '.' -f '1')
+    RELEASE_VER_MINOR := $(shell lsb_release -r | cut -d ':' -f '2' | sed -e 's/\s*//g' | cut -d '.' -f '2')
+  endif
+endif
+
+# detect when to use libtirpc and when glibc still provides rpc/rpc.h
+IMAKE_EXTRA_DEFINES := ""
+ifeq ($(VENDOR_DEBIAN),yes)
+  ifeq ($(shell /bin/bash -c '(( $(RELEASE_VER) >= 10 )) && echo '"'"'yes'"'"),yes)
+    IMAKE_EXTRA_DEFINES+="-DUseTIRPC=1"
+  endif
+else
+  ifeq ($(VENDOR_UBUNTU),yes)
+    ifeq ($(shell /bin/bash -c '(( $(RELEASE_VER_MAJOR) >= 18 )) && echo '"'"'yes'"'"),yes)
+      IMAKE_EXTRA_DEFINES+="-DUseTIRPC=1"
+    endif
+  endif
+endif
+
 %:
 	CONFIGURE="./configure --disable-silent-rules \
 	                       --prefix=/usr \
@@ -59,8 +97,8 @@ override_dh_auto_install:
 
 override_dh_auto_build:
 	debian/compat.sh
-	PREFIX='/usr' dh_auto_build --no-parallel -- CDEBUGFLAGS="$(CPPFLAGS) $(CFLAGS)" LOCAL_LDFLAGS="$(LDFLAGS)" SHLIBGLOBALSFLAGS='$(filter-out -pie,$(LDFLAGS))' || \
-	PREFIX='/usr' dh_auto_build -- CDEBUGFLAGS="$(CPPFLAGS) $(CFLAGS)" LOCAL_LDFLAGS="$(LDFLAGS)" SHLIBGLOBALSFLAGS='$(filter-out -pie,$(LDFLAGS))'
+	PREFIX='/usr' dh_auto_build --no-parallel -- CDEBUGFLAGS="$(CPPFLAGS) $(CFLAGS)" LOCAL_LDFLAGS="$(LDFLAGS)" SHLIBGLOBALSFLAGS='$(filter-out -pie,$(LDFLAGS))' IMAKE_DEFINES="$(IMAKE_EXTRA_DEFINES)" || \
+	PREFIX='/usr' dh_auto_build -- CDEBUGFLAGS="$(CPPFLAGS) $(CFLAGS)" LOCAL_LDFLAGS="$(LDFLAGS)" SHLIBGLOBALSFLAGS='$(filter-out -pie,$(LDFLAGS))' IMAKE_DEFINES="$(IMAKE_EXTRA_DEFINES)"
 
 override_dh_strip:
 	dh_strip -plibnx-x11-6 --dbg-package=libnx-x11-6-dbg
