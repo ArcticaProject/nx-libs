@@ -187,9 +187,8 @@ int ddxProcessArgument(int argc, char *argv[], int i)
   /*
    * The flavour can never change, so only set it once.
    *
-   * FIXME: ddxProcessArgument() is called once for every command line
-   * argument, with argv[0] being the argument and not the program
-   * name! We should move this check somewhere else.
+   * ddxProcessArgument() is called once for every command line
+   * argument, with argv[i] being the argument, i > 0. argv[0] is the program name.
    */
   if (nxagentProgName == NULL)
   {
