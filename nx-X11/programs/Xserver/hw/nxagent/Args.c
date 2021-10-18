@@ -697,8 +697,6 @@ int ddxProcessArgument(int argc, char *argv[], int i)
         #ifdef TEST
         fprintf(stderr, "%s: changing nxagentKeyboard from [null/null] to [clone].\n", __func__);
         #endif
-
-        SAFE_free(nxagentKeyboard);
         nxagentKeyboard = strdup("clone");
       }
       else
