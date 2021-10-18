@@ -201,7 +201,7 @@ int ddxProcessArgument(int argc, char *argv[], int i)
     /*
      * Check if we are running as X2Go Agent
      */
-    checkX2goAgent();
+    checkX2goAgent(argc, argv);
 #endif
   }
 
