@@ -88,6 +88,7 @@ void nxagentInitOptions(void)
   nxagentOptions.BackingStore = BackingStoreUndefined;
 
   nxagentOptions.Clipboard = ClipboardBoth;
+  nxagentOptions.TextClipboard = False;
 
   nxagentOptions.SharedMemory = True;
 
