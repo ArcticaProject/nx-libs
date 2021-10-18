@@ -268,7 +268,6 @@ int ddxProcessArgument(int argc, char *argv[], int i)
     if (envOptions != NULL)
     {
       nxagentParseOptionString(envOptions);
-
       SAFE_free(envOptions);
     }
 
@@ -1154,7 +1153,6 @@ static void nxagentParseSingleOption(char *name, char *value)
       fprintf(stderr, "Warning: Ignoring bad value '%s' for option 'fullscreen'.\n",
                   validateString(value));
     }
-
     return;
   }
   else if (!strcmp(name, "shpix"))
@@ -1189,7 +1187,6 @@ static void nxagentParseSingleOption(char *name, char *value)
       fprintf(stderr, "Warning: Ignoring bad value '%s' for option 'shmem'.\n",
                   validateString(value));
     }
-
     return;
   }
   else if (!strcmp(name, "composite"))
@@ -1531,7 +1528,6 @@ static void nxagentParseSingleOption(char *name, char *value)
     }
 
     *argv[0] = '-';
-
     memcpy(argv[0] + 1, name, size);
   }
 
