@@ -31,10 +31,10 @@ NULL =
 
 #include <Server.tmpl>
 
-/* On most systems the linker requires the libraries in dependency order. 
+/* On most systems the linker requires the libraries in dependency order.
    But we have no real order because there are cycles. We fix this by adding
-   some libraries twice on the commandline. dependLib will add the 
-   dependency library to the commandline if the link order is important */ 
+   some libraries twice on the commandline. dependLib will add the
+   dependency library to the commandline if the link order is important */
 #if 1 /* This is currently enabled for all systems */
 #define dependLib(x) x
 #else
@@ -43,7 +43,7 @@ NULL =
 
 #if defined(XorgVersion)
 /* Do not strip server binaries */
-INSTPGMFLAGS = 
+INSTPGMFLAGS =
 #endif
 
 #define PreFbLibs $(DIX) $(OS) $(XPDDX)
@@ -136,7 +136,7 @@ INSTPGMFLAGS =
              FB = fb/LibraryTargetName(fb)
          DAMAGE = miext/damage/LibraryTargetName(damage)
          SHADOW = miext/shadow/LibraryTargetName(shadow)
-          LAYER = miext/layer/LibraryTargetName(layer) 
+          LAYER = miext/layer/LibraryTargetName(layer)
 #if !HasFfs && (defined(mingwArchitecture) || defined(cygwinArchitecture))
              /* Order of libraries is important when linking in mingw or
               * cygwin. libmi.a requires ffs from libdix.a. So it is added
@@ -147,7 +147,7 @@ INSTPGMFLAGS =
 #endif
    MIINITEXTOBJ = mi/miinitext.o
             DIX = dix/LibraryTargetName(dix)
-#if UsbMouseSupport 
+#if UsbMouseSupport
 #if !HasLibUsb
             USB = $(XF86OSSRC)/bsd/libusb/LibraryTargetName(usb)
 #else

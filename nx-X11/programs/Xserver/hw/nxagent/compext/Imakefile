@@ -30,16 +30,16 @@ OBJS =	\
 	Z.o \
 	$(NULL)
 
-   INCLUDES = -I$(SERVERSRC)/include \
-              -I$(XBUILDINCDIR) \
-              -I../../../../../lib/include/X11 \
-              `pkg-config --cflags-only-I pixman-1` \
-              $$(pkg-config --exists 'zlib' >/dev/null 2>&1 && pkg-config --cflags-only-I 'zlib') \
-              `pkg-config --cflags-only-I libpng` \
-              $(NULL)
+INCLUDES = -I$(SERVERSRC)/include \
+	   -I$(XBUILDINCDIR) \
+	   -I../../../../../lib/include/X11 \
+	   `pkg-config --cflags-only-I pixman-1` \
+	   $$(pkg-config --exists 'zlib' >/dev/null 2>&1 && pkg-config --cflags-only-I 'zlib') \
+	   `pkg-config --cflags-only-I libpng` \
+	   $(NULL)
 
-   LINTLIBS = $(SERVERSRC)/dix/llib-ldix.ln \
-              $(NULL)
+LINTLIBS = $(SERVERSRC)/dix/llib-ldix.ln \
+	   $(NULL)
 
 NormalLibraryObjectRule()
 NormalLibraryTarget(compext,$(OBJS))
