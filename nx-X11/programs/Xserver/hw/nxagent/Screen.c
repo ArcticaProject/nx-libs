@@ -988,7 +988,7 @@ Bool nxagentOpenScreen(ScreenPtr pScreen, int argc, char *argv[])
     nxagentChangeOption(Fullscreen, False);
     nxagentChangeOption(AllScreens, False);
 
-    nxagentFullscreenWindow = 0;
+    nxagentFullscreenWindow = None;
 
     resetAgentPosition = True;
   }
