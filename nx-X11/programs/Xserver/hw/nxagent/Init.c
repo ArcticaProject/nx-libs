@@ -183,20 +183,52 @@ Bool nxagentX2go;
 /*
  * Check if agent is X2goAgent
  */
-void checkX2goAgent(void)
+void checkX2goAgent(int argc, char * argv[])
 {
   #ifdef TEST
   fprintf(stderr, "%s: nxagentProgName [%s]\n", __func__, nxagentProgName);
   #endif
 
+  nxagentX2go = False;
+
   if (strcasecmp(nxagentProgName,"x2goagent") == 0)
   {
-    fprintf(stderr, "\nrunning as X2Go Agent\n");
     nxagentX2go = True;
   }
   else
-    nxagentX2go = False;
+  {
+    char *envDisplay = getenv("DISPLAY");
+
+    /* x2go DISPLAY variable contains ".x2go" */
+    if (envDisplay && strstr(envDisplay, ".x2go-"))
+    {
+      nxagentX2go = True;
+    }
+    else
+    {
+      for (int i = 1; i < argc; i++)
+      {
+        /* x2go session names are passed with -name and start with "X2GO-" */
+        if (argv[i] && strncmp(argv[i], "-name", 5)  == 0)
+        {
+          if (i < argc - 1)
+          {
+            if (strstr(argv[i+1], "X2GO-"))
+            {
+              nxagentX2go = True;
+              break;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  if (nxagentX2go)
+    fprintf(stderr, "\nrunning as X2Go Agent\n");
 }
+
+
 #endif
 
 /*

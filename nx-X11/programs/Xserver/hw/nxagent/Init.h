@@ -47,7 +47,7 @@ extern Bool nxagentSaveUnder;
 
 #ifdef X2GO
 extern Bool nxagentX2go;
-void checkX2goAgent(void);
+void checkX2goAgent(int argc, char *argv[]);
 #endif
 
 extern ServerGrabInfoRec nxagentGrabServerInfo;
