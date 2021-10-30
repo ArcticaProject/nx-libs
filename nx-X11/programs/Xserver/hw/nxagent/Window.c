@@ -2579,7 +2579,7 @@ void nxagentMapDefaultWindows(void)
    * Ensure that the fullscreen window gets the focus.
    */
 
-  if (nxagentFullscreenWindow != 0)
+  if (nxagentFullscreenWindow != None)
   {
     XSetInputFocus(nxagentDisplay, nxagentFullscreenWindow,
                        RevertToParent, CurrentTime);

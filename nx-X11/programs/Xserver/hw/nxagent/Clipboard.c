@@ -1251,10 +1251,12 @@ void nxagentHandleSelectionRequestFromXServer(XEvent *X)
 
   if (!nxagentOption(TextClipboard))
   {
-    /* Optimization: if we have a current target cache check if the
+    /*
+     * Optimization: if we have a current target cache check if the
      * requested target is supported by the owner. If not we can take
      * a shortcut and deny the request immediately without doing any
-     * further communication. */
+     * further communication.
+     */
     if (targetCache[index].type == FOR_REMOTE && targetCache[index].forRemote)
     {
       XlibAtom *targets = targetCache[index].forRemote;
@@ -1373,7 +1375,7 @@ void nxagentHandleSelectionRequestFromXServer(XEvent *X)
     }
 
     /*
-     * Selete property before sending the request to the client as
+     * Delete property before sending the request to the client as
      * required by ICCCM.
      */
     DeleteProperty(lastSelectionOwner[index].windowPtr, clientCutProperty);
@@ -1389,8 +1391,10 @@ void nxagentHandleSelectionRequestFromXServer(XEvent *X)
             x.u.selectionRequest.requestor,
             x.u.selectionRequest.selection, NameForLocalAtom(x.u.selectionRequest.selection));
     #endif
-    /* No reply to the Xserver yet - we will do that once the answer
-       of the above sendEventToClient arrives. */
+    /*
+     * No reply to the Xserver yet - we will do that once the answer
+     * of the above sendEventToClient arrives.
+     */
   }
   else
   {
@@ -1492,7 +1496,7 @@ static void transferSelectionFromXServer(int index, int resource)
       }
       else
       {
-        /* Collect the property and store it with index "resource" */
+        /* Collect the property and store it with index "free_resource" */
         result = NXCollectProperty(nxagentDisplay,
                                    free_resource,
                                    serverWindow,
@@ -1581,8 +1585,10 @@ static void transferSelectionFromXServer(int index, int resource)
 
       setClientSelectionStage(index, SelectionStageWaitData);
 
-      /* We've seen situations where you had to move the mouse or press a
-         key to let the transfer complete. Flushing here fixed it */
+      /*
+       * We've seen situations where you had to move the mouse or press a
+       * key to let the transfer complete. Flushing here fixed it
+       */
       NXFlushDisplay(nxagentDisplay, NXFlushLink);
 
       break;

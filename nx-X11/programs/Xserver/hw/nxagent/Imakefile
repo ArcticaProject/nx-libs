@@ -1,10 +1,9 @@
 #include <Server.tmpl>
 
-
 NULL =
 
 SUBDIRS = compext \
-          $(NULL)
+	  $(NULL)
 
 SRCS =  \
 	NXwindow.c \
@@ -17,9 +16,9 @@ SRCS =  \
 	NXglyph.c \
 	NXpicture.c \
 	NXshm.c \
-        NXglxext.c \
-        NXxvdisp.c \
-        NXresource.c \
+	NXglxext.c \
+	NXxvdisp.c \
+	NXresource.c \
 	NXmitrap.c \
 	Args.c \
 	Binder.c \
@@ -73,9 +72,9 @@ OBJS =  \
 	NXglyph.o \
 	NXpicture.o \
 	NXshm.o \
-        NXglxext.o \
-        NXxvdisp.o \
-        NXresource.o \
+	NXglxext.o \
+	NXxvdisp.o \
+	NXresource.o \
 	NXmitrap.o \
 	Args.o \
 	Binder.o \
@@ -240,26 +239,26 @@ NX_DEFINES = \
 #endif
 
 DEFINES = \
-        -g $(OS_DEFINES) $(EXT_DEFINES) $(NX_DEFINES) \
-        -UXF86VIDMODE -UXFreeXDGA -UXF86MISC -UXF86DRI \
-        -DNXAGENT_SERVER \
-        -DNXAGENT_RENDER_CLEANUP \
-        -DNXAGENT_FIXKEYS \
-        -DNXAGENT_CLIPBOARD \
-        -DNXAGENT_WAKEUP=1000 \
-        -DNXAGENT_ONSTART \
-        -DNXAGENT_ARTSD \
-        -UNX_DEBUG_INPUT \
-        -DRANDR_10_INTERFACE=1 \
-        -DRANDR_12_INTERFACE=1 \
-        -DRANDR_13_INTERFACE=1 \
-        -DRANDR_14_INTERFACE=1 \
-        -DRANDR_15_INTERFACE=1 \
-        -DPANORAMIX \
-        -UDEBUG_TREE \
-        -DX2GO \
-        -DSYSTEMFONTDIR=\"$(SYSTEMFONTDIR)\" \
-        $(NULL)
+	-g $(OS_DEFINES) $(EXT_DEFINES) $(NX_DEFINES) \
+	-UXF86VIDMODE -UXFreeXDGA -UXF86MISC -UXF86DRI \
+	-DNXAGENT_SERVER \
+	-DNXAGENT_RENDER_CLEANUP \
+	-DNXAGENT_FIXKEYS \
+	-DNXAGENT_CLIPBOARD \
+	-DNXAGENT_WAKEUP=1000 \
+	-DNXAGENT_ONSTART \
+	-DNXAGENT_ARTSD \
+	-UNX_DEBUG_INPUT \
+	-DRANDR_10_INTERFACE=1 \
+	-DRANDR_12_INTERFACE=1 \
+	-DRANDR_13_INTERFACE=1 \
+	-DRANDR_14_INTERFACE=1 \
+	-DRANDR_15_INTERFACE=1 \
+	-DPANORAMIX \
+	-UDEBUG_TREE \
+	-DX2GO \
+	-DSYSTEMFONTDIR=\"$(SYSTEMFONTDIR)\" \
+	$(NULL)
 
 all:: $(OBJS)
 

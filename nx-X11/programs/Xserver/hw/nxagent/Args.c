@@ -187,9 +187,8 @@ int ddxProcessArgument(int argc, char *argv[], int i)
   /*
    * The flavour can never change, so only set it once.
    *
-   * FIXME: ddxProcessArgument() is called once for every command line
-   * argument, with argv[0] being the argument and not the program
-   * name! We should move this check somewhere else.
+   * ddxProcessArgument() is called once for every command line
+   * argument, with argv[i] being the argument, i > 0. argv[0] is the program name.
    */
   if (nxagentProgName == NULL)
   {
@@ -268,7 +267,6 @@ int ddxProcessArgument(int argc, char *argv[], int i)
     if (envOptions != NULL)
     {
       nxagentParseOptionString(envOptions);
-
       SAFE_free(envOptions);
     }
 
@@ -699,8 +697,6 @@ int ddxProcessArgument(int argc, char *argv[], int i)
         #ifdef TEST
         fprintf(stderr, "%s: changing nxagentKeyboard from [null/null] to [clone].\n", __func__);
         #endif
-
-        SAFE_free(nxagentKeyboard);
         nxagentKeyboard = strdup("clone");
       }
       else
@@ -1154,7 +1150,6 @@ static void nxagentParseSingleOption(char *name, char *value)
       fprintf(stderr, "Warning: Ignoring bad value '%s' for option 'fullscreen'.\n",
                   validateString(value));
     }
-
     return;
   }
   else if (!strcmp(name, "shpix"))
@@ -1189,7 +1184,6 @@ static void nxagentParseSingleOption(char *name, char *value)
       fprintf(stderr, "Warning: Ignoring bad value '%s' for option 'shmem'.\n",
                   validateString(value));
     }
-
     return;
   }
   else if (!strcmp(name, "composite"))
@@ -1531,7 +1525,6 @@ static void nxagentParseSingleOption(char *name, char *value)
     }
 
     *argv[0] = '-';
-
     memcpy(argv[0] + 1, name, size);
   }
 

@@ -375,7 +375,7 @@ FIXME: We'll check for ReparentNotify and LeaveNotify events after
       XEvent e;
 
       #ifdef TEST
-      fprintf(stderr, "%d: WARNING! Going to wait for the ReparentNotify event [%d].\n", __func__, i);
+      fprintf(stderr, "%s: WARNING! Going to wait for the ReparentNotify event [%d].\n", __func__, i);
       #endif
 
       if (XCheckTypedWindowEvent(nxagentDisplay, nxagentFullscreenWindow, ReparentNotify, &e))
@@ -988,7 +988,7 @@ Bool nxagentOpenScreen(ScreenPtr pScreen, int argc, char *argv[])
     nxagentChangeOption(Fullscreen, False);
     nxagentChangeOption(AllScreens, False);
 
-    nxagentFullscreenWindow = 0;
+    nxagentFullscreenWindow = None;
 
     resetAgentPosition = True;
   }
