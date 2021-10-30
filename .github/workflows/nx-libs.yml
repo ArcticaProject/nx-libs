@@ -176,11 +176,8 @@ jobs:
             ;;
         esac
         case "${{ matrix.cfg.container }}" in
-          fedora*|centos*|debian:sid)
+          fedora*|centos*|debian*|ubuntu*)
             export IMAKE_DEFINES="-DUseTIRPC=YES"
             make IMAKE_DEFINES="${IMAKE_DEFINES}"
-            ;;
-          ubuntu*|debian*)
-            make
             ;;
         esac
