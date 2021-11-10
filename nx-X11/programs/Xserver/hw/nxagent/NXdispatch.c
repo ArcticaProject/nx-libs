@@ -215,14 +215,16 @@ InitSelections(void)
       NumCurrentSelections += nxagentMaxSelections;
       CurrentSelections = newsels;
 
+      /* Note: these are the same values that will be set on a SelectionClear event */
+
       CurrentSelections[nxagentPrimarySelection].selection = XA_PRIMARY;
-      CurrentSelections[nxagentPrimarySelection].lastTimeChanged = ClientTimeToServerTime(0);
+      CurrentSelections[nxagentPrimarySelection].lastTimeChanged = ClientTimeToServerTime(CurrentTime);
       CurrentSelections[nxagentPrimarySelection].window = screenInfo.screens[0]->root->drawable.id;
       CurrentSelections[nxagentPrimarySelection].pWin = NULL;
       CurrentSelections[nxagentPrimarySelection].client = NullClient;
 
       CurrentSelections[nxagentClipboardSelection].selection = MakeAtom("CLIPBOARD", 9, 1);
-      CurrentSelections[nxagentClipboardSelection].lastTimeChanged = ClientTimeToServerTime(0);
+      CurrentSelections[nxagentClipboardSelection].lastTimeChanged = ClientTimeToServerTime(CurrentTime);
       CurrentSelections[nxagentClipboardSelection].window = screenInfo.screens[0]->root->drawable.id;
       CurrentSelections[nxagentClipboardSelection].pWin = NULL;
       CurrentSelections[nxagentClipboardSelection].client = NullClient;
