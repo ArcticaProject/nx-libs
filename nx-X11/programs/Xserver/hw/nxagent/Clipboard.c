@@ -109,7 +109,7 @@ typedef struct _SelectionOwner
   ClientPtr  client;           /* local client */
   Window     window;           /* local window id */
   WindowPtr  windowPtr;        /* local window struct */
-  Time       lastTimeChanged;  /* local time (server time) */
+  TimeStamp  lastTimeChanged;  /* local time (server time) */
 } SelectionOwner;
 
 /*
@@ -373,7 +373,7 @@ static void printSelectionStat(int index)
     fprintf(stderr, "  lastSelectionOwner[].windowPtr         [%p] (-> [0x%x])\n", (void *)lOwner.windowPtr, WINDOWID(lOwner.windowPtr));
   else
     fprintf(stderr, "  lastSelectionOwner[].windowPtr         -\n");
-  fprintf(stderr, "  lastSelectionOwner[].lastTimeChanged   [%u]\n", lOwner.lastTimeChanged);
+  fprintf(stderr, "  lastSelectionOwner[].lastTimeChanged   [%u]\n", lOwner.lastTimeChanged.milliseconds);
 
   fprintf(stderr, "  CurrentSelections[].client             %s\n", nxagentClientInfoString(curSel.client));
   fprintf(stderr, "  CurrentSelections[].window             [0x%x]\n", curSel.window);
@@ -697,7 +697,7 @@ static void initSelectionOwnerData(int index)
   lastSelectionOwner[index].client = NullClient;
   lastSelectionOwner[index].window = screenInfo.screens[0]->root->drawable.id;
   lastSelectionOwner[index].windowPtr = NULL;
-  lastSelectionOwner[index].lastTimeChanged = GetTimeInMillis();
+  lastSelectionOwner[index].lastTimeChanged = ClientTimeToServerTime(CurrentTime);
 }
 
 /* there's no owner on nxagent side anymore */
@@ -706,7 +706,7 @@ static void clearSelectionOwnerData(int index)
   lastSelectionOwner[index].client = NullClient;
   lastSelectionOwner[index].window = None;
   lastSelectionOwner[index].windowPtr = NULL;
-  lastSelectionOwner[index].lastTimeChanged = GetTimeInMillis();
+  lastSelectionOwner[index].lastTimeChanged = ClientTimeToServerTime(CurrentTime);
 }
 
 static void storeSelectionOwnerData(int index, Selection *sel)
@@ -714,7 +714,7 @@ static void storeSelectionOwnerData(int index, Selection *sel)
   lastSelectionOwner[index].client = sel->client;
   lastSelectionOwner[index].window = sel->window;
   lastSelectionOwner[index].windowPtr = sel->pWin;
-  lastSelectionOwner[index].lastTimeChanged = GetTimeInMillis();
+  lastSelectionOwner[index].lastTimeChanged = ClientTimeToServerTime(CurrentTime);
 }
 
 static Bool matchSelectionOwner(int index, ClientPtr pClient, WindowPtr pWindow)
@@ -2394,16 +2394,7 @@ static void setSelectionOwnerOnXServer(Selection *pSelection)
   }
 
   #ifdef DEBUG
-  fprintf(stderr, "%s: lastSelectionOwner.client %s -> %s\n", __func__,
-              nxagentClientInfoString(lastSelectionOwner[index].client),
-                  nxagentClientInfoString(pSelection->client));
-  fprintf(stderr, "%s: lastSelectionOwner.window [0x%x] -> [0x%x]\n", __func__,
-              lastSelectionOwner[index].window, pSelection->window);
-  fprintf(stderr, "%s: lastSelectionOwner.windowPtr [%p] -> [%p] [0x%x] (serverWindow: [0x%lx])\n", __func__,
-              (void *)lastSelectionOwner[index].windowPtr, (void *)pSelection->pWin,
-                  pSelection->pWin ? nxagentWindow(pSelection->pWin) : 0, serverWindow);
-  fprintf(stderr, "%s: lastSelectionOwner.lastTimeChanged [%u]\n", __func__,
-              lastSelectionOwner[index].lastTimeChanged);
+  printSelectionStat(index);
   #endif
 
 
