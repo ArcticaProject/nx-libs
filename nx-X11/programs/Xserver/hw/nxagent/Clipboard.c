@@ -95,7 +95,7 @@ const int nxagentMaxSelections = 2;
 
 /* store the remote atom for all selections */
 static XlibAtom *remoteSelectionAtoms = NULL;
-static Atom *localSelelectionAtoms = NULL;
+static Atom *localSelectionAtoms = NULL;
 
 /*
  * The real owner window (inside nxagent) is stored in
@@ -364,7 +364,7 @@ static void printSelectionStat(int index)
   fprintf(stderr, "selection [%d]:\n", index);
 
   fprintf(stderr, "  selection Atom                         local [%d][%s]  remote [%ld][%s]\n",
-              localSelelectionAtoms[index], NameForLocalAtom(localSelelectionAtoms[index]),
+              localSelectionAtoms[index], NameForLocalAtom(localSelectionAtoms[index]),
                   remoteSelectionAtoms[index], NameForRemoteAtom(remoteSelectionAtoms[index]));
   fprintf(stderr, "  owner side                             %s\n", IS_LOCAL_OWNER(index) ? "nxagent" : "real X server/none");
   fprintf(stderr, "  lastSelectionOwner[].client            %s\n", nxagentClientInfoString(lOwner.client));
@@ -1465,7 +1465,7 @@ static void endTransfer(int index, Bool success)
     sendSelectionNotifyEventToClient(lastClients[index].clientPtr,
                                      lastClients[index].time,
                                      lastClients[index].requestor,
-                                     localSelelectionAtoms[index],
+                                     localSelectionAtoms[index],
                                      lastClients[index].target,
                                      success == SELECTION_SUCCESS ? lastClients[index].property : None);
   }
@@ -2557,7 +2557,7 @@ int nxagentConvertSelection(ClientPtr client, WindowPtr pWin, Atom selection,
     #endif
 
     #ifdef DEBUG
-    fprintf(stderr, "%s: localSelelectionAtoms[%d] [%d] - selection [%d]\n", __func__, index, localSelelectionAtoms[index], selection);
+    fprintf(stderr, "%s: localSelectionAtoms[%d] [%d] - selection [%d]\n", __func__, index, localSelectionAtoms[index], selection);
     #endif
 
     if ((GetTimeInMillis() - lastClients[index].reqTime) >= CONVERSION_TIMEOUT)
@@ -2964,7 +2964,7 @@ XlibAtom translateLocalToRemoteSelection(Atom local)
 
   for (int index = 0; index < nxagentMaxSelections; index++)
   {
-    if (local == localSelelectionAtoms[index])
+    if (local == localSelectionAtoms[index])
     {
       remote = remoteSelectionAtoms[index];
       break;
@@ -3166,7 +3166,7 @@ WindowPtr nxagentGetClipboardWindow(Atom property)
   {
     #ifdef DEBUG
     fprintf(stderr, "%s: Returning last [%d] selection owner window [%p] (0x%x).\n", __func__,
-            localSelelectionAtoms[index],
+            localSelectionAtoms[index],
             (void *)lastSelectionOwner[index].windowPtr, WINDOWID(lastSelectionOwner[index].windowPtr));
     #endif
 
@@ -3244,14 +3244,14 @@ Bool nxagentInitClipboard(WindowPtr pWin)
       FatalError("nxagentInitClipboard: Failed to allocate memory for the last servers array.\n");
     }
 
-    SAFE_free(localSelelectionAtoms);
-    localSelelectionAtoms = (Atom *) calloc(nxagentMaxSelections, sizeof(Atom));
-    if (localSelelectionAtoms == NULL)
+    SAFE_free(localSelectionAtoms);
+    localSelectionAtoms = (Atom *) calloc(nxagentMaxSelections, sizeof(Atom));
+    if (localSelectionAtoms == NULL)
     {
       FatalError("nxagentInitClipboard: Failed to allocate memory for the local selection Atoms array.\n");
     }
-    localSelelectionAtoms[nxagentPrimarySelection] = XA_PRIMARY;
-    localSelelectionAtoms[nxagentClipboardSelection] = MakeAtom(szAgentCLIPBOARD, strlen(szAgentCLIPBOARD), True);
+    localSelectionAtoms[nxagentPrimarySelection] = XA_PRIMARY;
+    localSelectionAtoms[nxagentClipboardSelection] = MakeAtom(szAgentCLIPBOARD, strlen(szAgentCLIPBOARD), True);
 
     SAFE_free(remoteSelectionAtoms);
     remoteSelectionAtoms = (XlibAtom *) calloc(nxagentMaxSelections, sizeof(XlibAtom));
