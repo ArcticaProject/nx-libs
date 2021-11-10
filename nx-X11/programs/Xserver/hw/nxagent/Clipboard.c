@@ -377,6 +377,11 @@ static void printSelectionStat(int index)
 
   fprintf(stderr, "  CurrentSelections[].client             %s\n", nxagentClientInfoString(curSel.client));
   fprintf(stderr, "  CurrentSelections[].window             [0x%x]\n", curSel.window);
+  if (curSel.pWin)
+    fprintf(stderr, "  CurrentSelections[].pWin               [%p] (-> [0x%x])\n", (void *)curSel.pWin, WINDOWID(curSel.pWin));
+  else
+    fprintf(stderr, "  CurrentSelections[].pWin               -\n");
+  fprintf(stderr, "  CurrentSelections[].lastTimeChanged    [%u]\n", curSel.lastTimeChanged.milliseconds);
   return;
 }
 
@@ -906,12 +911,15 @@ void nxagentHandleSelectionClearFromXServerByIndex(int index)
     return;
   }
 
+  UpdateCurrentTime();
+  TimeStamp time = ClientTimeToServerTime(CurrentTime);
+
   if (IS_LOCAL_OWNER(index))
   {
     /* Send a SelectionClear event to (our) previous owner. */
     xEvent x = {0};
     x.u.u.type = SelectionClear;
-    x.u.selectionClear.time = GetTimeInMillis();
+    x.u.selectionClear.time = time.milliseconds;
     x.u.selectionClear.window = lastSelectionOwner[index].window;
     x.u.selectionClear.atom = CurrentSelections[index].selection;
 
@@ -921,8 +929,11 @@ void nxagentHandleSelectionClearFromXServerByIndex(int index)
      * Set the root window with the NullClient as selection owner. Our
      * clients asking for the owner via XGetSelectionOwner() will get
      * this for an answer.
+     * Set the CurrentSelection data just as ProcSetSelectionOwner does.
      */
+    CurrentSelections[index].lastTimeChanged = time;
     CurrentSelections[index].window = screenInfo.screens[0]->root->drawable.id;
+    CurrentSelections[index].pWin = NULL;
     CurrentSelections[index].client = NullClient;
 
     clearSelectionOwnerData(index);
@@ -930,6 +941,22 @@ void nxagentHandleSelectionClearFromXServerByIndex(int index)
     setClientSelectionStage(index, SelectionStageNone);
 
     invalidateTargetCache(index);
+
+    /*
+     * Now call the callbacks. This is important, especially for
+     * XFixes events to work properly. Keep in mind that this will
+     * also call our own callback so we must be prepared there to not
+     * communicate back to the real X server about this SelectionClear
+     * event. It already knows about that...
+     */
+    if (SelectionCallback)
+    {
+        SelectionInfoRec info = {0};
+
+        info.selection = &CurrentSelections[index];
+        info.kind = SelectionSetOwner;
+        CallCallbacks(&SelectionCallback, &info);
+    }
   }
   else
   {
@@ -2268,19 +2295,33 @@ void nxagentSetSelectionCallback(CallbackListPtr *callbacks, void *data,
     return;
   }
 
+  #ifdef DEBUG
+  printSelectionStat(index);
+  #endif
+
+  if (CurrentSelections[index].client == NullClient &&
+      CurrentSelections[index].pWin == (WindowPtr)None &&
+      CurrentSelections[index].window == screenInfo.screens[0]->root->drawable.id &&
+      lastSelectionOwner[index].client == NullClient &&
+      lastSelectionOwner[index].window == None &&
+      lastSelectionOwner[index].windowPtr == NULL)
+  {
+    /*
+     * No need to propagate anything to the real X server because this
+     * callback was triggered by a SelectionClear from the real X
+     * server. See nxagentHandleSelectionClearFromXServer
+     */
+    #ifdef DEBUG
+    fprintf(stderr, "%s: aborting callback because it was triggered by nxagent\n", __func__);
+    #endif
+    return;
+  }
+
   /*
    * Always invalidate the target cache for the relevant selection.
    * This ensures not having invalid data in the cache.
    */
   invalidateTargetCache(index);
-
-  #ifdef DEBUG
-  fprintf(stderr, "%s: pCurSel->window [0x%x]\n", __func__, pCurSel->window);
-  fprintf(stderr, "%s: pCurSel->pWin [0x%x]\n", __func__, WINDOWID(pCurSel->pWin));
-  fprintf(stderr, "%s: pCurSel->selection [%s]\n", __func__, NameForLocalAtom(pCurSel->selection));
-  fprintf(stderr, "%s: pCurSel->lastTimeChanged [%u]\n", __func__, pCurSel->lastTimeChanged.milliseconds);
-  fprintf(stderr, "%s: pCurSel->client [%s]\n", __func__, nxagentClientInfoString(pCurSel->client));
-  #endif
 
   if (nxagentOption(Clipboard) != ClipboardNone) /* FIXME: shouldn't we also check for != ClipboardClient? */
   {
@@ -2313,6 +2354,9 @@ void nxagentSetSelectionCallback(CallbackListPtr *callbacks, void *data,
     }
     else
     {
+      #ifdef WARNING
+      fprintf(stderr, "%s: WARNING: unknown kind [%d] - data corruption?\n", __func__, info->kind);
+      #endif
     }
 
     if (pSel)
