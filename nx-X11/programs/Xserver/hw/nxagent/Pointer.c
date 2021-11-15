@@ -90,7 +90,7 @@ void nxagentChangePointerControl(DeviceIntPtr pDev, PtrCtrl *ctrl)
     fprintf(stderr, "%s: WARNING! Propagating changes to pointer settings.\n", __func__);
     #endif
 
-    XChangePointerControl(nxagentDisplay, True, True, 
+    XChangePointerControl(nxagentDisplay, True, True,
                               ctrl->num, ctrl->den, ctrl->threshold);
 
     return;
