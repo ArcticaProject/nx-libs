@@ -877,8 +877,9 @@ void invalidateTargetCaches(void)
 
 /*
  * This is called from Events.c dispatch loop on reception of a
- * SelectionClear event. We receive this event if someone on the real
- * X server claims the selection ownership we have/had.
+ * SelectionClear or XFixes selection event from the real X
+ * server. We receive this event if someone on the real X server
+ * claims the selection ownership we have/had.
  * Three versions of this routine with different parameter types.
  */
 void nxagentHandleSelectionClearFromXServerByIndex(int index)
@@ -1144,7 +1145,7 @@ void nxagentHandleSelectionRequestFromXServer(XEvent *X)
        * SelectionRequests. Further it can happen that multiple
        * clients are interested in clipboard content. If we already
        * know the answer and no intermediate SelectionOwner event
-       * occured we can answer with the cached list of targets.
+       * occurred we can answer with the cached list of targets.
        */
 
       if (targetCache[index].type == FOR_REMOTE && targetCache[index].forRemote)
@@ -2642,7 +2643,7 @@ int nxagentConvertSelection(ClientPtr client, WindowPtr pWin, Atom selection,
        * SelectionRequests. Further it can happen that multiple
        * clients are interested in clipboard content. If we already
        * know the answer and no intermediate SelectionOwner event
-       * occured we can answer with the cached list of targets.
+       * occurred we can answer with the cached list of targets.
        */
 
       if (targetCache[index].type == FOR_LOCAL && targetCache[index].forLocal)
