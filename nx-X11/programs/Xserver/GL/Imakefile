@@ -27,7 +27,7 @@ DEFINES = $(GLX_DEFINES)
 MakeMutex($(SUBDIRS) $(OBJS) $(DONES))
 #endif
 
-#if HasGnuMake || HasBsdMake 
+#if HasGnuMake || HasBsdMake
 $(DONES): $(SUBDIRS)
 #endif
 

@@ -116,9 +116,9 @@ OBJS =  $(CBRT_OBJ)             \
         $(NULL)
 
 #if defined(XorgVersion)
-/* 
- * Make sure XINPUT, XF86VidTune, etc aren't defined for the miinitext.o 
- * used by Xnest, Xvfb 
+/*
+ * Make sure XINPUT, XF86VidTune, etc aren't defined for the miinitext.o
+ * used by Xnest, Xvfb
  */
 
 #if NXLibraries
