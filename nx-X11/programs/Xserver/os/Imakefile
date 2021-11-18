@@ -70,7 +70,7 @@ XDMAUTHDEFS = -DHASXDMAUTH
 XDMAUTHOBJS = xdmauth.o
 XDMAUTHSRCS = xdmauth.c
 #else
-XDMAUTHDEFS = 
+XDMAUTHDEFS =
 XDMAUTHOBJS =
 XDMAUTHSCRS =
 #endif
@@ -133,7 +133,7 @@ TMEMCMP_SRCS = timingsafe_memcmp.c
 TMEMCMP_OBJS = timingsafe_memcmp.o
 #endif
 
-BOOTSTRAPCFLAGS = 
+BOOTSTRAPCFLAGS =
            SRCS = WaitFor.c		\
                   access.c		\
                   client.c		\

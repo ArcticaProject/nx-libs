@@ -25,7 +25,7 @@
         XSSRCDIR = Xserver
 #endif
 
-SUBDIRS = $(XSSRCDIR) 
+SUBDIRS = $(XSSRCDIR)
 
 MakeSubdirs($(SUBDIRS))
 DependSubdirs($(SUBDIRS))

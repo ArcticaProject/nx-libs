@@ -37,7 +37,7 @@
 		stubs.c \
 		ungrdev.c \
 		ungrdevb.c \
-		ungrdevk.c 
+		ungrdevk.c
 
        OBJS =   allowev.o \
 		chgkbd.o \
@@ -75,7 +75,7 @@
 		setmmap.o \
 		ungrdev.o \
 		ungrdevb.o \
-		ungrdevk.o 
+		ungrdevk.o
    INCLUDES = -I../include -I$(EXTINCSRC) -I$(XINCLUDESRC) `pkg-config --cflags-only-I pixman-1`
    LINTLIBS = ../dix/llib-ldix.ln ../os/llib-los.ln
 

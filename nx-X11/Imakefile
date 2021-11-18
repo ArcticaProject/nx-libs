@@ -144,7 +144,7 @@ install::
 
 #endif /* not Win32Architecture else */
 
-XCOMM special target to determine if the xmakefile exists. 
+XCOMM special target to determine if the xmakefile exists.
 XCOMM Works on both Unix and NMAKE.EXE
 xmakefile-exists::
 
