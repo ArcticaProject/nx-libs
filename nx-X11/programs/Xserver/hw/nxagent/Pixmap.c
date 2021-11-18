@@ -287,7 +287,7 @@ PixmapPtr nxagentCreatePixmap(ScreenPtr pScreen, int width, int height,
    * pointers to pVirtualPixmap. We should also remove the copy of id
    * and use the one of the real pixmap.
    */
-   
+
   pVirtualPriv -> id = pPixmapPriv -> id;
   pVirtualPriv -> mid = 0;
 
@@ -783,7 +783,7 @@ void nxagentReconnectPixmap(void *p0, XID x1, void *p2)
       #endif
     }
 
-     
+
     if (nxagentDrawableStatus((DrawablePtr) pPixmap) == NotSynchronized)
     {
       if (nxagentIsCorruptedBackground(pPixmap) == 1)
@@ -1238,9 +1238,9 @@ FIXME: If the pixmap has a different depth from the window, the
     #ifdef WARNING
     fprintf(stderr, "nxagentPixmapOnShadowDisplay: WARNING! Visual not found. Using default visual.\n");
     #endif
-    
+
     pVisual = nxagentVisuals[nxagentDefaultVisualIndex].visual;
-  } 
+  }
 
   XImage *image = XCreateImage(nxagentDisplay, pVisual,
                                   depth, format, 0, (char *) data,
@@ -1394,9 +1394,9 @@ Bool nxagentFbOnShadowDisplay(void)
     #ifdef WARNING
     fprintf(stderr, "nxagentFbOnShadowDisplay: WARNING! Visual not found. Using default visual.\n");
     #endif
-    
+
     pVisual = nxagentVisuals[nxagentDefaultVisualIndex].visual;
-  } 
+  }
 
   XImage *image = XCreateImage(nxagentDisplay, pVisual,
                                   depth, format, 0, (char *) data,
@@ -1480,5 +1480,3 @@ void nxagentPrintResources(void)
 }
 
 #endif
-
-

@@ -480,7 +480,7 @@ int ddxProcessArgument(int argc, char *argv[], int i)
       return 2;
     }
     return 0;
-  } 
+  }
 
   if (!strcmp(argv[i], "-streaming"))
   {
@@ -542,7 +542,7 @@ int ddxProcessArgument(int argc, char *argv[], int i)
     if (++i < argc &&
             sscanf(argv[i], "%ix%i", &width, &height) == 2 &&
                 width >= 32 && height >= 32)
-    { 
+    {
       nxagentChangeOption(TileWidth,  width);
       nxagentChangeOption(TileHeight, height);
       return 2;
@@ -582,13 +582,13 @@ int ddxProcessArgument(int argc, char *argv[], int i)
         nxagentChangeOption(AllScreens, False);
       }
       else
-      { 
-        if (nxagentUserGeometry.flag == 0) 
+      {
+        if (nxagentUserGeometry.flag == 0)
         {
-          nxagentUserGeometry.flag = XParseGeometry(argv[i], 
-                                                        &nxagentUserGeometry.X, 
-                                                            &nxagentUserGeometry.Y, 
-                                                                &nxagentUserGeometry.Width, 
+          nxagentUserGeometry.flag = XParseGeometry(argv[i],
+                                                        &nxagentUserGeometry.X,
+                                                            &nxagentUserGeometry.Y,
+                                                                &nxagentUserGeometry.Width,
                                                                     &nxagentUserGeometry.Height);
         }
       }
@@ -2025,12 +2025,12 @@ FIXME: In rootless mode the backing-store support is not functional yet.
      * need to check if this was set on the command line as this has
      * the priority over the option file.
      */
- 
+
     if (nxagentRenderEnable == UNDEFINED)
     {
       nxagentRenderEnable = True;
     }
-    
+
     if (nxagentRenderEnable == True)
     {
       nxagentAlphaEnabled = True;
@@ -2216,7 +2216,7 @@ void nxagentSetPackMethod(void)
 
     nxagentChangeOption(Adaptive, False);
   }
-  
+
   if (method == PACK_LOSSY || method == PACK_ADAPTIVE)
   {
     nxagentPackMethod = PACK_JPEG_16M_COLORS;
@@ -2433,7 +2433,7 @@ void nxagentSetDeferLevel(void)
   /*
    * Set the tile height.
    */
-  
+
   if (nxagentOption(TileHeight) != UNDEFINED)
   {
     #ifdef TEST

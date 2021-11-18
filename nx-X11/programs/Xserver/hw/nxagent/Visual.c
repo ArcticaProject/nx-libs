@@ -94,7 +94,7 @@ Visual *nxagentVisualFromID(ScreenPtr pScreen, VisualID visual)
       return nxagentVisual(&pScreen->visuals[i]);
     }
   }
-  
+
   return NULL;
 }
 

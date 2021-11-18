@@ -115,7 +115,7 @@ int nxagentCheckBinder(int argc, char *argv[], int i)
      * getenv(). It is to be decided how to handle the values of type
      * string in the Options repository.
      */
-     
+
     nxagentChangeOption(BinderOptions, display);
 
     return 2;

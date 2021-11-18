@@ -75,7 +75,7 @@ int nxagentUniquePixels(XImage *image)
    */
 
   int total = image -> width * image -> height;
-  
+
   int step = total / elements;
 
   if (step < PIXEL_STEP)
@@ -91,7 +91,7 @@ int nxagentUniquePixels(XImage *image)
   /*
    * Shift at the left after each scanline.
    */
-   
+
   if (image -> bytes_per_line % step == 0)
   {
     step++;

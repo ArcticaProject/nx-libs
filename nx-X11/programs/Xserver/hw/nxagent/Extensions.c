@@ -312,7 +312,7 @@ static int nxagentRandRInitSizes(ScreenPtr pScreen)
 
   for (int i = 2; i < nSizes - 1; i++)
   {
-    if ((w[i] <= maxWidth * 3 / 4) && 
+    if ((w[i] <= maxWidth * 3 / 4) &&
             (h[i] <= maxHeight * 3 / 4) &&
                 (w[i] >= w[0]) &&
                     (h[i] >= h[0]))

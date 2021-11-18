@@ -157,7 +157,7 @@ int CleanZImage(XImage *image)
     }
   }
 
-  /* 
+  /*
    * Clean the padding bytes at the real
    * end of the buffer.
    */
