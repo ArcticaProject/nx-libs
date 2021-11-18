@@ -74,7 +74,7 @@ Options:
   -d, --dump          Dump benchmark data in tab separated format, for
                       graphing.
   -e, --delay=FLOAT   Delay between blocks or pings. None by default.
-  -H, --host=HOST     Host to connect to. 'localhost' by default. 
+  -H, --host=HOST     Host to connect to. 'localhost' by default.
   -P, --port=PORT     Port to connect to. Mandatory.
 
 Benchmarks:
@@ -84,7 +84,7 @@ Benchmarks:
   --fastreadbench     Benchmark reading a single repeated character.
   --fastwritebench    Benchmark writing a single repeated character.
   --pingbench         Benchmark ping time.
-  --randechobench     Benchmark sending random data, and receiving it 
+  --randechobench     Benchmark sending random data, and receiving it
                       back
   --randreadbench     Benchmark reading random, incompressible data.
   --randwritebench    Benchmark writing random, incompressible data.
@@ -100,7 +100,7 @@ Example:
 
    Connect to port 42000 and run all the benchmarks:
        $0 --port 42000 -a
-   
+
 HELP
 exit(0);
 }
@@ -111,7 +111,7 @@ if (!$opt_port) {
 }
 
 
-my $socket = IO::Socket::INET->new(PeerAddr => $opt_host, PeerPort => $opt_port, Proto => 'tcp'); 
+my $socket = IO::Socket::INET->new(PeerAddr => $opt_host, PeerPort => $opt_port, Proto => 'tcp');
 if (!$socket) {
 	die "Can't connect to $opt_host:$opt_port: $!";
 }
@@ -142,7 +142,7 @@ if ( $cmd_pingbench ) {
 	for(my $i=0;$i<$opt_count;$i++) {
 		send_cmd("echo $i");
 		read_until_prompt();
-	
+
 		my $elapsed  = tv_interval($t0, [gettimeofday()]);
 		if ( $opt_dump ) {
 			print "$elapsed\t$i\n";
@@ -413,4 +413,3 @@ sub show_last {
 	undef $self->{prev_time};
 	$self->set( $self->{last_str} ) if ( $self->{last_str} );
 }
-
