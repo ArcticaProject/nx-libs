@@ -234,7 +234,7 @@ typedef struct _AgentOptions
    */
   Bool Reset;
 
-  /* 
+  /*
    * Geometry of the agent root window, relative to the agent default
    * window.
    */

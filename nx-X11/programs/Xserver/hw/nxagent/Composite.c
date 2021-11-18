@@ -145,7 +145,7 @@ void nxagentRedirectDefaultWindows(void)
      * agent window disappears. To make things even more weird, this
      * happens only at reconnection.
      */
- 
+
     XCompositeRedirectSubwindows(nxagentDisplay, nxagentDefaultWindows[pScreen->myNum],
                                      CompositeRedirectAutomatic);
   }

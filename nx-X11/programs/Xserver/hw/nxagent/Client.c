@@ -434,7 +434,7 @@ void nxagentWakeupByReset(ClientPtr client)
  */
 
 #define WAIT_ALL_EVENTS
- 
+
 #ifndef WAIT_ALL_EVENTS
 
 static Bool nxagentWaitWakeupBySplitPredicate(Display *disp, XEvent *event, XPointer ptr)
@@ -514,7 +514,7 @@ void nxagentWaitWakeupBySplit(ClientPtr client)
       }
 
       #endif
- 
+
       return;
     }
 

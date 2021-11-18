@@ -759,7 +759,7 @@ void nxagentDestroyPicture(PicturePtr pPicture)
 
   XRenderFreePicture(nxagentDisplay,
                      nxagentPicturePriv(pPicture) -> picture);
-  
+
   #ifdef DEBUG
   XSync(nxagentDisplay, 0);
   #endif
@@ -789,8 +789,8 @@ int nxagentChangePictureClip(PicturePtr pPicture, int clipType, int nRects,
     {
       #ifdef DEBUG
       fprintf(stderr, "nxagentChangePictureClip: Clip type is [CT_PIXMAP].\n");
-      #endif      
-  
+      #endif
+
       /*
        * if(!nRects)
        * {
@@ -820,7 +820,7 @@ FIXME: Is this useful or just a waste of bandwidth?
       #endif
 
       break;
-    }   
+    }
     case CT_NONE:
     {
       #ifdef DEBUG
@@ -859,7 +859,7 @@ FIXME: Is this useful or just a waste of bandwidth?
       #ifdef DEBUG
       fprintf(stderr, "nxagentChangePictureClip: Clip type is [CT_REGION].\n");
       #endif
-    
+
       reg = XCreateRegion();
 
       for (index = 0; index <= nRects; index++, rects++)
@@ -889,7 +889,7 @@ FIXME: Is this useful or just a waste of bandwidth?
       #ifdef DEBUG
       XSync(nxagentDisplay, 0);
       #endif
-  
+
       XDestroyRegion(reg);
 
       break;
@@ -1025,7 +1025,7 @@ void nxagentChangePicture(PicturePtr pPicture, Mask mask)
     {
       valuemask |= CPPolyEdge;
       nxagentSetPictureRemoteValue(pPicture, poly_edge, attributes.poly_edge);
-    } 
+    }
   }
 
   if (mask & CPPolyMode)
@@ -1260,8 +1260,8 @@ void nxagentGlyphs(CARD8 op, PicturePtr pSrc, PicturePtr pDst,
   #ifdef TEST
   if ((pSrc && pSrc->pDrawable) && (pDst && pDst->pDrawable)) {
       fprintf(stderr, "nxagentGlyphs: Called with source [%s][%p] destination [%s][%p] and size id [%d].\n",
-                  (pSrc -> pDrawable -> type == DRAWABLE_PIXMAP ? "pixmap" : "window"), (void *) pSrc, 
-                      (pDst -> pDrawable -> type == DRAWABLE_PIXMAP ? "pixmap" : "window"), (void *) pDst, 
+                  (pSrc -> pDrawable -> type == DRAWABLE_PIXMAP ? "pixmap" : "window"), (void *) pSrc,
+                      (pDst -> pDrawable -> type == DRAWABLE_PIXMAP ? "pixmap" : "window"), (void *) pDst,
                           sizeID);
   }
   #endif
@@ -1313,7 +1313,7 @@ void nxagentGlyphs(CARD8 op, PicturePtr pSrc, PicturePtr pDst,
   {
     RegionPtr pRegion = nxagentCreateRegion(pDst -> pDrawable, NULL, glyphBox.x1, glyphBox.y1,
 					        glyphBox.x2 - glyphBox.x1, glyphBox.y2 - glyphBox.y1);
-    
+
     if (RegionNil(pRegion))
     {
       #ifdef TEST
@@ -1356,7 +1356,7 @@ void nxagentGlyphs(CARD8 op, PicturePtr pSrc, PicturePtr pDst,
       #ifdef DEBUG
       if (pSrc && pSrc->pDrawable) {
         fprintf(stderr, "nxagentGlyphs: Synchronizing source [%s] at [%p] "
-                    "with geometry [%d,%d,%d,%d].\n", 
+                    "with geometry [%d,%d,%d,%d].\n",
                         (pSrc -> pDrawable -> type == DRAWABLE_PIXMAP ? "pixmap" : "window"),
                             (void *) pSrc -> pDrawable, pSrc -> pDrawable -> x, pSrc -> pDrawable -> y,
                                 pSrc -> pDrawable -> x + pSrc -> pDrawable -> width,
@@ -1404,7 +1404,7 @@ void nxagentGlyphs(CARD8 op, PicturePtr pSrc, PicturePtr pDst,
       #ifdef DEBUG
       if (pDst && pDst->pDrawable) {
         fprintf(stderr, "nxagentGlyphs: Synchronizing destination [%s] at [%p] "
-                    "with geometry [%d,%d,%d,%d].\n", 
+                    "with geometry [%d,%d,%d,%d].\n",
                         (pDst -> pDrawable -> type == DRAWABLE_PIXMAP ? "pixmap" : "window"),
                             (void *) pDst -> pDrawable, pDst -> pDrawable -> x, pDst -> pDrawable -> y,
                                 pDst -> pDrawable -> x + pDst -> pDrawable -> width,
@@ -1480,7 +1480,7 @@ void nxagentGlyphs(CARD8 op, PicturePtr pSrc, PicturePtr pDst,
 
         x += glyph -> info.xOff;
         y += glyph -> info.yOff;
-        
+
         #ifdef TEST
         fprintf(stderr, "nxagentGlyphs: Glyph at index [%d] has offset [%d,%d] and "
                     "position [%d,%d].\n", i, elements -> nchars, glyph -> info.xOff,
@@ -2697,8 +2697,8 @@ void nxagentRenderCreateRadialGradient(PicturePtr pPicture, xPointFixed *inner,
 
 void nxagentRenderCreateConicalGradient(PicturePtr pPicture,
                                             xPointFixed *center,
-                                                xFixed angle, int nStops, 
-                                                    xFixed *stops, 
+                                                xFixed angle, int nStops,
+                                                    xFixed *stops,
                                                         xRenderColor *colors)
 {
   if (nxagentRenderEnable == False)

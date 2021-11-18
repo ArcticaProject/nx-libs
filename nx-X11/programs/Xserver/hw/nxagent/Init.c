@@ -269,7 +269,7 @@ void InitOutput(ScreenInfo *scrInfo, int argc, char *argv[])
    */
 
   if (nxagentOption(ImageRateLimit) != 0)
-  { 
+  {
     fprintf(stderr, "Info: Image rate limit set to %u kB/s.\n", nxagentOption(ImageRateLimit));
   }
 
@@ -380,10 +380,10 @@ FIXME: These variables, if not removed at all because have probably
 #else
   nxagentFontPrivateIndex = AllocateFontPrivateIndex();
 #endif /* HAS_XFONT2 */
-  RT_NX_FONT = CreateNewResourceType(nxagentDestroyNewFontResourceType); 
+  RT_NX_FONT = CreateNewResourceType(nxagentDestroyNewFontResourceType);
   nxagentClientPrivateIndex = AllocateClientPrivateIndex();
   nxagentPixmapPrivateIndex = AllocatePixmapPrivateIndex();
-  RT_NX_PIXMAP = CreateNewResourceType(nxagentDestroyNewPixmapResourceType); 
+  RT_NX_PIXMAP = CreateNewResourceType(nxagentDestroyNewPixmapResourceType);
 
   RT_NX_CORR_BACKGROUND = CreateNewResourceType(nxagentDestroyCorruptedBackgroundResource);
   RT_NX_CORR_WINDOW = CreateNewResourceType(nxagentDestroyCorruptedWindowResource);

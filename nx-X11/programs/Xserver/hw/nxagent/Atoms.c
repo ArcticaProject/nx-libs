@@ -225,7 +225,7 @@ static void finishWMDetection(Bool verbose)
   }
 }
 
-void nxagentWMDetect() 
+void nxagentWMDetect()
 {
   /* FIXME: verbose is always false, there's no code to set it to true */
   Bool verbose = False;
@@ -508,7 +508,7 @@ static void nxagentInitAtomMap(char **atomNameList, int count, Atom *atomsRet)
     name_list[i] = atomNameList[i];
     atom_list[i] = None;
   }
-  
+
   for (unsigned int i = 0; i < privLastAtom; i++)
   {
     name_list[count + i] = (char *)privAtomMap[i].string;
@@ -623,7 +623,7 @@ static AtomMap* nxagentFindAtomByName(char *string, unsigned int length)
 {
   for (unsigned int i = 0; i < privLastAtom; i++)
   {
-    if ((length == privAtomMap[i].length) && 
+    if ((length == privAtomMap[i].length) &&
             (strcmp(string, privAtomMap[i].string) == 0))
     {
       return (privAtomMap + i);

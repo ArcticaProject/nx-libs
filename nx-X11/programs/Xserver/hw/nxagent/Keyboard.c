@@ -1292,7 +1292,7 @@ void nxagentInitXkbWrapper(void)
 }
 
 void nxagentDisableXkbExtension(void)
-{  
+{
   #ifdef TEST
   fprintf(stderr, "%s: Called.\n", __func__);
   #endif

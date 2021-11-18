@@ -406,7 +406,7 @@ void nxagentRegionSplit(DrawablePtr pDrawable, RegionPtr pRegion)
   nxagentCheckSplit(pDrawable, pResource);
 
   #endif
-  
+
   if (pResource == NULL)
   {
     #ifdef PANIC
@@ -579,7 +579,7 @@ void nxagentValidateSplit(DrawablePtr pDrawable, RegionPtr pRegion)
   nxagentCheckSplit(pDrawable, pResource);
 
   #endif
-  
+
   #ifdef TEST
   fprintf(stderr, "nxagentValidateSplit: Checking the region for resource [%d] "
               "and drawable at [%p].\n", pResource -> split, (void *) pDrawable);
