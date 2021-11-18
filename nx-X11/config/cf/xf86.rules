@@ -25,7 +25,7 @@ clean::									@@\
 #ifndef Depend
 # define Depend depend
 #endif
- 
+
 #ifndef ConfigTargetLong
 #define ConfigTargetLong(target,dep,script,args,extra)			@@\
 all:: Configure								@@\
