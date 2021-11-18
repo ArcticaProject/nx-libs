@@ -16,7 +16,7 @@
 				-D_DEFAULT_SOURCE -D_GNU_SOURCE -DX_LOCALE
 #undef CcCmd
 #define StdIncDir /opt/Embedix/tools/arm-linux/include
-#define PreIncDir 
+#define PreIncDir
 #undef PostIncDir
 #define PostIncDir /opt/Embedix/tools/lib/gcc-lib/arm-linux/2.95.2/include
 #define CcCmd /opt/Embedix/tools/bin/arm-linux-gcc

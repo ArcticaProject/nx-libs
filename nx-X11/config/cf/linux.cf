@@ -282,7 +282,7 @@ XCOMM binutils:	(LinuxBinUtilsMajorVersion)
 # endif
 #endif
 
-/* 
+/*
  * Let the OS restore console fonts instead of the generic VGA
  * layer. This exists for Linux only at the moment so put it
  * here.
@@ -832,7 +832,7 @@ XCOMM binutils:	(LinuxBinUtilsMajorVersion)
 #  else
 #   define SuperHArchOptFlags	-m3
 #  endif
-# endif 
+# endif
 # ifndef SuperHebArchitecture
 #  ifdef SuperHebArchitecture
 #   define SuperHEndianFlags	-mb

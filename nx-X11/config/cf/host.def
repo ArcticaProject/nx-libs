@@ -223,8 +223,8 @@
                           -Wredundant-decls -Wnested-externs -Wshadow
  */
 
-/* 
- * Sun Compiler stuff.. 
+/*
+ * Sun Compiler stuff..
  *
 #define HasSunC                         YES
 #define HasSunCplusplus                 YES
@@ -241,8 +241,8 @@
 #define OptimizedCDebugFlags            -xO4 -xtarget=pentium_pro
  */
 
-/* 
- * Debuggable Sun Compiler Build. 
+/*
+ * Debuggable Sun Compiler Build.
  * Note: This builds _EVERYTHING_ as debuggable
  *
 #define DefaultCDebugFlags              -g -xs
@@ -350,7 +350,7 @@
  */
 #define BuildScreenSaverExt	YES
 
-/* 
+/*
  * If you don't want to build Xinerama support, uncomment this.
  *
 #define BuildXinerama		NO
@@ -424,13 +424,13 @@
 /*
  * For a POSIXized build on Interactive uncomment this
  * Could be used with gcc 'till Version 2.6.3
- * Should be used with gcc 2.7.2. 
+ * Should be used with gcc 2.7.2.
  *
 #define UsePosix		YES
  */
 
 /*
- * If you don't want XDMAUTH support (if you don't have Wraphelp.c), 
+ * If you don't want XDMAUTH support (if you don't have Wraphelp.c),
  *  comment this out.
  *
  */
@@ -540,4 +540,4 @@
  * libx86emu set library path here
  *
 #define X86EMU_LIBPATH /usr/local/lib
- */ 
+ */

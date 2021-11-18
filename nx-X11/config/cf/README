@@ -276,9 +276,9 @@ An <os>Lib.rules file provides defaults for the following variables:
 	PositionIndependentCFlags 		PIC compiler flags for C
 	PositionIndependentCplusplusFlags	PIC compiler flags for C++
 
-	  Note: PositionIndependentCplusplusFlags is only required if the 
+	  Note: PositionIndependentCplusplusFlags is only required if the
 	  C and C++ compilers use different flags to build PIC code.  The
-	  default configuration will try to use PositionIndependentCFlags 
+	  default configuration will try to use PositionIndependentCFlags
 	  for both C and C++ compiles.
 
 An <os>Lib.tmpl file provides defaults for the following variables:
@@ -361,7 +361,7 @@ SUBDIRS			for an Imakefile in a directory containing
 			and call MakeSubdirs() and DependSubdirs().
 MANSUFFIX		suffix used by InstallManPage* rules.
 			May be set to $(LIBMANSUFFIX), $(FILEMANSUFFIX), or
-			$(MISCMANSUFFIX) in directories for libraries or data 
+			$(MISCMANSUFFIX) in directories for libraries or data
 			files.
 
 

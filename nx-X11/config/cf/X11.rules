@@ -6,9 +6,9 @@
 # define X11IsTopLevelProject	NO
 #endif
 
-/* 
+/*
  * If no clues are given assume X11 is in the tree, otherwise
- * UseInstalled overrides UseImports.  Do not do both. 
+ * UseInstalled overrides UseImports.  Do not do both.
  */
 #ifndef UseInstalledX11
 # define UseInstalledX11	NO
@@ -32,7 +32,7 @@
 
 #if defined(X11ProjectRoot)
 # define XBinDir	$(XPROJECTROOT)/lib/nx/bin
-#elif defined(ProjectRoot) 
+#elif defined(ProjectRoot)
 # define XBinDir	$(PROJECTROOT)/lib/nx/bin
 #else
 # define XBinDir	$(BINDIR)
@@ -75,7 +75,7 @@
 #define LdPostLibs	LdPostLib XLdPostLibs
 
 #ifndef TopXInclude
-# if ImportX11 
+# if ImportX11
 #  define TopXInclude	-I$(TOP)/imports/x11/include
 # elif !UseInstalledX11
 #  define TopXInclude	-I$(TOP)/exports/include
@@ -126,6 +126,6 @@
 
 #if  XtransFailSoft
 # define XtransFailDefine /**/
-#else 
+#else
 # define XtransFailDefine -DFAIL_HARD
 #endif
