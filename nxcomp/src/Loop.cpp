@@ -703,7 +703,7 @@ static void handleNegotiationInLoop(int &setFDs, fd_set &readSet,
 // Print the 'terminating' messages in the
 // session log.
 //
- 
+
 static inline void handleTerminatingInLoop();
 static inline void handleTerminatedInLoop();
 
@@ -1025,25 +1025,25 @@ T_timestamp nowTs;
 
 //
 // This is set to the main proxy process id.
-// 
+//
 
 int lastProxy = 0;
 
 //
 // Set to last dialog process launched by proxy.
-// 
+//
 
 int lastDialog = 0;
 
 //
 // Set to watchdog process launched by proxy.
-// 
+//
 
 int lastWatchdog = 0;
 
 //
 // Set if a cache house-keeper process is running.
-// 
+//
 
 int lastKeeper = 0;
 
@@ -1076,7 +1076,7 @@ static int lastDestroy = 0;
 //
 // This is set to the code and local flag of the
 // last requested alert.
-// 
+//
 
 static struct
 {
@@ -4602,7 +4602,7 @@ void HandleCleanup(int code)
     //
 
     CleanupChildren();
-  
+
     //
     // Close all listeners.
     //
@@ -7607,12 +7607,12 @@ int ReadRemoteData(int fd, char *buffer, int size, char stop)
   *(remoteData + remotePosition) = '\0';
 
   nxfatal << "Loop: PANIC! Stop character missing "
-          << "from FD#" << fd << " after " << remotePosition 
+          << "from FD#" << fd << " after " << remotePosition
           << " characters read in string '" << remoteData
           << "'.\n" << std::flush;
 
   cerr << "Error" << ": Stop character missing "
-       << "from FD#" << fd << " after " << remotePosition 
+       << "from FD#" << fd << " after " << remotePosition
        << " characters read in string '" << remoteData
        << "'.\n";
 
@@ -8233,7 +8233,7 @@ int ParseEnvironmentOptions(const char *env, int force)
       // if the use of the shared memory extension should
       // not be enabled on the real X server.
       //
- 
+
       if (control -> ProxyMode == proxy_server)
       {
         PrintOptionIgnored("local", name, value);
@@ -8958,7 +8958,7 @@ int ParseFileOptions(const char *file)
   //
 
   char *next = options;
-  
+
   while (*next != '\0')
   {
     if (isprint(*next) == 0)
@@ -11472,7 +11472,7 @@ int SetStorage()
     sprintf(cacheSizeName, "%dk", size / 1024);
   }
   else
-  { 
+  {
     sprintf(cacheSizeName, "%d", size);
   }
 
@@ -11976,7 +11976,7 @@ int SetLink()
   {
     strcpy(linkSpeedName, "lan");
   }
-  
+
   nxinfo << "Loop: Link speed is " << linkSpeedName
          << ".\n" << std::flush;
 
@@ -13584,7 +13584,7 @@ int ValidateArg(const char *type, const char *name, const char *value)
   }
 
   return number;
-} 
+}
 
 int LowercaseArg(const char *type, const char *name, char *value)
 {
@@ -13740,7 +13740,7 @@ static void handleCheckSessionInLoop()
   // channel is gone. This is the normal shutdown
   // procedure in the case of an internal connect-
   // ion to the agent.
-  // 
+  //
 
   int cleanup = 0;
 
@@ -14588,7 +14588,7 @@ static void handleNegotiationInLoop(int &setFDs, fd_set &readSet,
   // Check if the user requested the end of
   // the session.
   //
-  
+
   if (CheckAbort() != 0)
   {
     HandleCleanup();
@@ -14752,7 +14752,7 @@ static void handleAlertInLoop()
       //
       // Use the display to which we are forwarding
       // the remote X connections.
-      // 
+      //
 
       char *display = displayHost;
 
@@ -15068,7 +15068,7 @@ static inline void handleAgentInLoop(int &resultFDs, int &errorFDs, int &setFDs,
   // Check if I/O is possible on the local
   // agent or the proxy descriptor.
   //
-  
+
   if (resultFDs >= 0)
   {
     //
@@ -15129,7 +15129,7 @@ static inline void handleAgentLateInLoop(int &resultFDs, int &errorFDs, int &set
   // descriptors may have become readable or writ-
   // able in the meanwhile.
   //
-  
+
   if (resultFDs >= 0)
   {
     //

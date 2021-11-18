@@ -457,11 +457,11 @@ class RenderMinorExtensionStore : public MinorMessageStore
   void encodeLongData(EncodeBuffer &encodeBuffer, const unsigned char *buffer,
                           unsigned int offset, unsigned int size, int bigEndian,
                               ChannelCache *channelCache) const;
- 
+
   void encodeIntData(EncodeBuffer &encodeBuffer, const unsigned char *buffer,
                          unsigned int offset, unsigned int size, int bigEndian,
                              ChannelCache *channelCache) const;
- 
+
   void encodeCharData(EncodeBuffer &encodeBuffer, const unsigned char *buffer,
                           unsigned int offset, unsigned int size, int bigEndian,
                               ChannelCache *channelCache) const;

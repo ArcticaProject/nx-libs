@@ -182,7 +182,7 @@ int GenericRequestStore::parseIdentity(Message *message, const unsigned char *bu
   {
     if ((i * 2 + 4) < size)
     {
-      genericRequest -> data[i] = GetUINT(buffer + i * 2 + 4, bigEndian); 
+      genericRequest -> data[i] = GetUINT(buffer + i * 2 + 4, bigEndian);
 
       #ifdef DEBUG
       *logofs << name() << ": Parsed data[" << i << "] "

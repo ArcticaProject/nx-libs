@@ -75,7 +75,7 @@ class SetUnpackColormapMessage : public Message
   }
 
   //
-  // Put here the fields which constitute 
+  // Put here the fields which constitute
   // the 'identity' part of the message.
   //
 

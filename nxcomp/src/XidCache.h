@@ -32,7 +32,7 @@ class XidCache
 {
   friend class EncodeBuffer;
   friend class DecodeBuffer;
-  
+
   public:
 
   XidCache();

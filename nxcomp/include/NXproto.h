@@ -37,7 +37,7 @@ extern "C" {
 /*
  * Force the size to match the wire protocol.
  */
- 
+
 #define Drawable CARD32
 #define GContext CARD32
 

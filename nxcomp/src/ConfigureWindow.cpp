@@ -57,12 +57,12 @@ int ConfigureWindowStore::parseIdentity(Message *message, const unsigned char *b
   // Here is the fingerprint.
   //
 
-  configureWindow -> window = GetULONG(buffer + 4, bigEndian); 
+  configureWindow -> window = GetULONG(buffer + 4, bigEndian);
 
   configureWindow -> value_mask = GetUINT(buffer + 8, bigEndian);
 
   //
-  // To increase effectiveness of the caching algorithm 
+  // To increase effectiveness of the caching algorithm
   // we remove the unused bytes carried in the data part.
   //
 
@@ -127,7 +127,7 @@ void ConfigureWindowStore::dumpIdentity(const Message *message) const
 
   ConfigureWindowMessage *configureWindow = (ConfigureWindowMessage *) message;
 
-  *logofs << "ConfigureWindow: window " << configureWindow -> window  
+  *logofs << "ConfigureWindow: window " << configureWindow -> window
           << ", value_mask " << configureWindow -> value_mask
           << ", size " << configureWindow -> size_ << ".\n";
 

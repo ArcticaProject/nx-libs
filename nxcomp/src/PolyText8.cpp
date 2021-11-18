@@ -57,7 +57,7 @@ int PolyText8Store::parseIdentity(Message *message, const unsigned char *buffer,
   // Here is the fingerprint.
   //
 
-  polyText8 -> drawable = GetULONG(buffer + 4, bigEndian); 
+  polyText8 -> drawable = GetULONG(buffer + 4, bigEndian);
   polyText8 -> gcontext = GetULONG(buffer + 8, bigEndian);
 
   polyText8 -> x = GetUINT(buffer + 12, bigEndian);
@@ -76,7 +76,7 @@ int PolyText8Store::parseIdentity(Message *message, const unsigned char *buffer,
   #endif
 
   if ((int) size > dataOffset)
-  { 
+  {
     int length;
     int current;
     int delta;
@@ -90,7 +90,7 @@ int PolyText8Store::parseIdentity(Message *message, const unsigned char *buffer,
     delta = 1;
     nitem = 0;
 
-    #ifdef DUMP 
+    #ifdef DUMP
     *logofs << name() << " Size " << size << ".\n" << logofs_flush;
     #endif
 
@@ -109,38 +109,38 @@ int PolyText8Store::parseIdentity(Message *message, const unsigned char *buffer,
       #endif
 
       item = GetUINT(buffer + length , bigEndian);
-      
+
       if (item < 255)
       {
         //
         // Text element. Number represents
         // the 'Length of string' field.
         //
-        
+
         length += (item + delta + 1);
 
 	nitem++;
-      }	
+      }
       else if (item == 255)
       {
         //
         // Element is a font shift.
         //
-        
+
         length += 5;
 
         nitem++;
       }
 
-      #ifdef DUMP 
+      #ifdef DUMP
       *logofs << name() << " Item " << item << ".\n" << logofs_flush;
       #endif
 
       current += length;
     }
     while(current < (int) size && item != 0);
-     
-     
+
+
     #ifdef DUMP
     *logofs << name() << " Final length " << length << ".\n" << logofs_flush;
     #endif
@@ -194,9 +194,9 @@ void PolyText8Store::dumpIdentity(const Message *message) const
 
   PolyText8Message *polyText8 = (PolyText8Message *) message;
 
-  *logofs << name() << ": Identity drawable " << polyText8 -> drawable 
-          << ", gcontext " << polyText8 -> gcontext << ", x " << polyText8 -> x 
-          << ", y " << polyText8 -> y << ", size " << polyText8 -> size_ 
+  *logofs << name() << ": Identity drawable " << polyText8 -> drawable
+          << ", gcontext " << polyText8 -> gcontext << ", x " << polyText8 -> x
+          << ", y " << polyText8 -> y << ", size " << polyText8 -> size_
           << ".\n";
 
   #endif

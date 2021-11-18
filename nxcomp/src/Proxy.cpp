@@ -2522,7 +2522,7 @@ int Proxy::handleDrain()
   // Keep draining the proxy socket while
   // reading the incoming messages until
   // the timeout is expired.
-  // 
+  //
 
   for (;;)
   {
@@ -2718,7 +2718,7 @@ int Proxy::handleStatistics(int type, ostream *stream)
     // Need to update the stream pointer as the
     // previous one could have been destroyed.
     //
- 
+
     #ifdef WARNING
     *logofs << "Proxy: WARNING! Replacing stream while producing "
             << "statistics in stream at " << currentStatistics_
@@ -2765,7 +2765,7 @@ int Proxy::handleStatisticsFromProxy(int type)
     //
 
     char *buffer = new char[STATISTICS_LENGTH];
- 
+
     *buffer = '\0';
 
     if (control -> ProxyMode == proxy_client)
@@ -3414,7 +3414,7 @@ int Proxy::handleDrop(int channelId)
   {
     outputChannel_ = -1;
   }
-  
+
   return 1;
 }
 
@@ -4388,7 +4388,7 @@ int Proxy::handleLoadStores()
       }
 
       control -> PersistentCacheName = NULL;
- 
+
       return -1;
     }
 
@@ -4474,7 +4474,7 @@ int Proxy::handleControl(T_proxy_code code, int data)
     //
     // Append the first data read from the opened
     // channel to the control code.
-    // 
+    //
 
     case code_new_x_connection:
     case code_new_cups_connection:
@@ -4943,7 +4943,7 @@ int Proxy::handleLoadVersion(const unsigned char *buffer, int &major,
   //
   // Force the proxy to discard the
   // incompatible caches.
-  // 
+  //
 
   // Since ProtoStep8 (#issue 108)
   if (major < 3)
@@ -6467,7 +6467,7 @@ int Proxy::handlePostConnectionFromProxy(int channelId, int serverFd,
   assignChannelMap(channelId, serverFd);
 
   #ifdef TEST
-  *logofs << "Proxy: Descriptor FD#" << serverFd 
+  *logofs << "Proxy: Descriptor FD#" << serverFd
           << " mapped to channel ID#" << channelId << ".\n"
           << logofs_flush;
   #endif

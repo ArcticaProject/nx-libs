@@ -101,9 +101,9 @@ void SetClipRectanglesStore::dumpIdentity(const Message *message) const
   SetClipRectanglesMessage *setClipRectangles = (SetClipRectanglesMessage *) message;
 
   *logofs << name() << ": Identity ordering " << (unsigned int) setClipRectangles -> ordering
-                    << ", gcontext " << setClipRectangles -> gcontext << ", x_origin " 
-                    << setClipRectangles -> x_origin << ", y_origin " 
-                    << setClipRectangles -> y_origin << ", size " 
+                    << ", gcontext " << setClipRectangles -> gcontext << ", x_origin "
+                    << setClipRectangles -> x_origin << ", y_origin "
+                    << setClipRectangles -> y_origin << ", size "
                     << setClipRectangles -> size_ << ".\n" << logofs_flush;
   #endif
 }

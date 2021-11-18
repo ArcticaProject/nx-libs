@@ -48,7 +48,7 @@
 //
 // Store the provided cookie as our 'fake' cookie, then
 // read the 'real' cookie from the current X authority
-// file. 
+// file.
 //
 
 Auth::Auth(char *display, char *cookie)
@@ -271,7 +271,7 @@ int Auth::getCookie()
   // ferent cookie than the one for the Unix connections, both SSH and
   // NX will match the wrong cookie and session will fail.
   //
-  
+
   char line[DEFAULT_STRING_LIMIT];
   FILE *data = NULL;
   int result = -1;
@@ -377,7 +377,7 @@ int Auth::getCookie()
             << "'.\n" << logofs_flush;
     #endif
 
-    // 
+    //
     // Skip the hostname in the authority entry
     // just in case it includes some white spaces.
     //

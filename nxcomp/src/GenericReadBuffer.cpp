@@ -43,7 +43,7 @@ unsigned int GenericReadBuffer::suggestedLength(unsigned int pendingLength)
   //
 
   return 0;
-}  
+}
 
 int GenericReadBuffer::locateMessage(const unsigned char *start,
                                          const unsigned char *end,

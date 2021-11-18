@@ -240,7 +240,7 @@ extern int NXTransDestroy(int fd);
  * just after the XOpenDisplay() or any other function used to init-
  * ialize the NX transport.
  */
- 
+
 extern int NXTransSignal(int signal, int action);
 
 /*

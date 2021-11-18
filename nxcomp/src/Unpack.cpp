@@ -216,7 +216,7 @@ int Unpack8To16(const T_colormask *colormask, const unsigned char *data,
 
   unsigned short *out16 = (unsigned short *) out;
   unsigned short *end16 = (unsigned short *) end;
-  
+
   while (out16 < end16)
   {
     if (*data == 0)
@@ -602,7 +602,7 @@ int Unpack16(T_geometry *geometry, const T_colormask *colormask, int src_depth, 
 
     (*unpack)(colormask, src_data, dst_data, dst_end);
   }
-  
+
   return 1;
 }
 
@@ -948,7 +948,7 @@ int Unpack15To16(const unsigned char *data, unsigned char *out, unsigned char *e
           << " bytes of colormapped data.\n"
           << logofs_flush;
   #endif
-  
+
   unsigned short *data16 = (unsigned short *) data;
   unsigned short *out16 = (unsigned short *) out;
   unsigned short *end16 = (unsigned short *) end;
@@ -969,7 +969,7 @@ int Unpack15To16(const unsigned char *data, unsigned char *out, unsigned char *e
       *logofs << "Unpack15To16: Pixel [" << *data16 << "]\n"
               << logofs_flush;
       #endif
-      
+
      *out16 = ((*data16 & 0x7ff0) << 1) |
                (*data16 & 0x001f);
     }
@@ -977,7 +977,7 @@ int Unpack15To16(const unsigned char *data, unsigned char *out, unsigned char *e
     out16  += 1;
     data16 += 1;
   }
-  
+
   return 1;
 }
 
@@ -1048,8 +1048,8 @@ int Unpack15To32(const unsigned char *data, unsigned char *out, unsigned char *e
     }
     else
     {
-        *out32 = ((((*data16 >> 7) & 0xf8) | ((*data16 >> 12) & 0x07)) << 16) | 
-                 ((((*data16 >> 2) & 0xf8) | ((*data16 >> 8) & 0x07)) << 8) | 
+        *out32 = ((((*data16 >> 7) & 0xf8) | ((*data16 >> 12) & 0x07)) << 16) |
+                 ((((*data16 >> 2) & 0xf8) | ((*data16 >> 8) & 0x07)) << 8) |
                   (((*data16 << 3) & 0xf8) | ((*data16 >> 2) & 0x07));
     }
 
@@ -1154,13 +1154,13 @@ int Unpack16To16(const unsigned char *data, unsigned char *out,
           << " bytes of colormapped data.\n"
           << logofs_flush;
   #endif
-  
+
   memcpy((unsigned char *) out, (unsigned char *) data, end - out);
 
   return 1;
 }
 
-int Unpack16To24(const unsigned char *data, unsigned char *out, 
+int Unpack16To24(const unsigned char *data, unsigned char *out,
                     unsigned char *end, int imageByteOrder)
 
 {
@@ -1205,7 +1205,7 @@ int Unpack16To24(const unsigned char *data, unsigned char *out,
 }
 
 
-int Unpack16To32(const unsigned char *data, unsigned char *out, 
+int Unpack16To32(const unsigned char *data, unsigned char *out,
                     unsigned char *end, int imageByteOrder)
 {
   #ifdef TEST
@@ -1228,7 +1228,7 @@ int Unpack16To32(const unsigned char *data, unsigned char *out,
 
     if (pixel16 == 0x0)
     {
-      PutULONG(0x0, (unsigned char *) out32, imageByteOrder); 
+      PutULONG(0x0, (unsigned char *) out32, imageByteOrder);
     }
     else if (pixel16 == 0xffff)
     {
@@ -1236,11 +1236,11 @@ int Unpack16To32(const unsigned char *data, unsigned char *out,
     }
     else
     {
-      pixel32 = ((((pixel16 >> 8) & 0xf8) | ((pixel16 >> 13) & 0x07)) << 16) | 
-               ((((pixel16 >> 3) & 0xfc) | ((pixel16 >> 9) & 0x03)) << 8) | 
+      pixel32 = ((((pixel16 >> 8) & 0xf8) | ((pixel16 >> 13) & 0x07)) << 16) |
+               ((((pixel16 >> 3) & 0xfc) | ((pixel16 >> 9) & 0x03)) << 8) |
                (((pixel16 << 3) & 0xf8) | ((pixel16 >> 2) & 0x07));
- 
-      PutULONG(pixel32, (unsigned char *) out32, imageByteOrder); 
+
+      PutULONG(pixel32, (unsigned char *) out32, imageByteOrder);
     }
 
     out32++;
@@ -1265,11 +1265,11 @@ int Unpack16(T_geometry *geometry, int src_depth, int src_width, int src_height,
     return -1;
   }
 
-  int (*unpack)(const unsigned char *data, unsigned char *out, 
+  int (*unpack)(const unsigned char *data, unsigned char *out,
                     unsigned char *end, int imageByteOrder);
 
   int dst_bpp = UnpackBitsPerPixel(geometry, dst_depth);
-  
+
   switch (dst_bpp)
   {
     case 16:
@@ -1378,7 +1378,7 @@ int Unpack24To32(const unsigned char *data, unsigned char *out, unsigned char *e
     }
     else
     {
-      *out32 = (data[2] << 16) | (data[1] << 8) | data[0];  
+      *out32 = (data[2] << 16) | (data[1] << 8) | data[0];
     }
 
     out32 += 1;
@@ -1391,7 +1391,7 @@ int Unpack24To32(const unsigned char *data, unsigned char *out, unsigned char *e
 int Unpack24(T_geometry *geometry, int src_depth, int src_width, int src_height,
                  unsigned char *src_data, int src_size, int dst_depth, int dst_width,
                      int dst_height, unsigned char *dst_data, int dst_size)
-                     
+
 {
   if (src_depth != 24)
   {

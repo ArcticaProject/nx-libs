@@ -52,7 +52,7 @@ class SequenceQueue
                unsigned int &data1, unsigned int &data2,
                    unsigned int &data3);
 
-  int pop(unsigned short int &sequence, unsigned char &opcode, 
+  int pop(unsigned short int &sequence, unsigned char &opcode,
               unsigned int &data1, unsigned int &data2,
                   unsigned int &data3);
 

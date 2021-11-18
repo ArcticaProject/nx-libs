@@ -454,7 +454,7 @@ Control::Control()
 
   //
   // Transport buffers' allocation parameters.
-  // 
+  //
 
   TransportXBufferSize            = TRANSPORT_X_BUFFER_SIZE;
   TransportProxyBufferSize        = TRANSPORT_PROXY_BUFFER_SIZE;

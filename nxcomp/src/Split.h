@@ -139,7 +139,7 @@ class Split
   {
     return store_;
   }
-  
+
   T_split_state getState()
   {
     return state_;
@@ -241,7 +241,7 @@ class Split
   //
 
   int r_size_;
-  
+
   //
   // Position in the data buffer that will be
   // the target of the next send or receive

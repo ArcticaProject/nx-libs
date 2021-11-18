@@ -130,7 +130,7 @@ void ChangeGCStore::dumpIdentity(const Message *message) const
 
   ChangeGCMessage *changeGC = (ChangeGCMessage *) message;
 
-  *logofs << name() << ": Identity gcontext " << changeGC -> gcontext 
+  *logofs << name() << ": Identity gcontext " << changeGC -> gcontext
                     << ", mask " << changeGC -> value_mask << ", size "
                     << changeGC -> size_ << ".\n" << logofs_flush;
   #endif

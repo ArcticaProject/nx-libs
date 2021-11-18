@@ -126,7 +126,7 @@ Channel::Channel(Transport *transport, StaticCompressor *compressor)
   //
 
   opcodeStore_ = NULL;
- 
+
   clientStore_ = NULL;
   serverStore_ = NULL;
 
@@ -134,8 +134,8 @@ Channel::Channel(Transport *transport, StaticCompressor *compressor)
   serverCache_ = NULL;
 
   #ifdef REFERENCES
-  *logofs << "Channel: Created new Channel at " 
-          << this << " out of " << ++references_ 
+  *logofs << "Channel: Created new Channel at "
+          << this << " out of " << ++references_
           << " allocated references.\n" << logofs_flush;
   #endif
 }
@@ -148,8 +148,8 @@ Channel::~Channel()
   }
 
   #ifdef REFERENCES
-  *logofs << "Channel: Deleted Channel at " 
-          << this << " out of " << --references_ 
+  *logofs << "Channel: Deleted Channel at "
+          << this << " out of " << --references_
           << " allocated references.\n" << logofs_flush;
   #endif
 }
@@ -174,7 +174,7 @@ int Channel::handleEncode(EncodeBuffer &encodeBuffer, ChannelCache *channelCache
   // Check if message can be differentially
   // encoded using a similar message in the
   // message store.
-  // 
+  //
 
   #ifdef COUNT
 
@@ -440,11 +440,11 @@ int Channel::handleDecode(DecodeBuffer &decodeBuffer, ChannelCache *channelCache
     if (store -> enableSplit)
     {
       #ifdef DEBUG
-      *logofs << "handleDecode: " << store -> name() 
-              << ": Checking if the message was split.\n" 
+      *logofs << "handleDecode: " << store -> name()
+              << ": Checking if the message was split.\n"
               << logofs_flush;
       #endif
-      
+
       decodeBuffer.decodeBoolValue(split);
 
       if (split == 1)
@@ -557,8 +557,8 @@ int Channel::handleEncodeCached(EncodeBuffer &encodeBuffer, ChannelCache *channe
   }
 
   #ifdef DEBUG
-  *logofs << "handleEncodeCached: " << store -> name() 
-          << ": Going to handle a new message of this class.\n" 
+  *logofs << "handleEncodeCached: " << store -> name()
+          << ": Going to handle a new message of this class.\n"
           << logofs_flush;
   #endif
 
@@ -573,7 +573,7 @@ int Channel::handleEncodeCached(EncodeBuffer &encodeBuffer, ChannelCache *channe
   while (mustCleanStore(store) == 1 && canCleanStore(store) == 1)
   {
     #ifdef DEBUG
-    *logofs << "handleEncodeCached: " << store -> name() 
+    *logofs << "handleEncodeCached: " << store -> name()
             << ": Trying to reduce size of message store.\n"
             << logofs_flush;
     #endif
@@ -583,7 +583,7 @@ int Channel::handleEncodeCached(EncodeBuffer &encodeBuffer, ChannelCache *channe
     if (position == nothing)
     {
       #ifdef TEST
-      *logofs << "handleEncodeCached: " << store -> name() 
+      *logofs << "handleEncodeCached: " << store -> name()
               << ": WARNING! No message found to be "
               << "actually removed.\n" << logofs_flush;
       #endif
@@ -592,7 +592,7 @@ int Channel::handleEncodeCached(EncodeBuffer &encodeBuffer, ChannelCache *channe
     }
 
     #ifdef DEBUG
-    *logofs << "handleEncodeCached: " << store -> name() 
+    *logofs << "handleEncodeCached: " << store -> name()
             << ": Message at position " << position
             << " will be removed.\n" << logofs_flush;
     #endif
@@ -610,23 +610,23 @@ int Channel::handleEncodeCached(EncodeBuffer &encodeBuffer, ChannelCache *channe
 
     #ifdef DEBUG
     *logofs << "handleEncodeCached: " << store -> name() << ": Going to "
-            << "clean up message at position " << position << ".\n" 
+            << "clean up message at position " << position << ".\n"
             << logofs_flush;
     #endif
 
     store -> remove(position, use_checksum, discard_data);
 
     #ifdef DEBUG
-    *logofs << "handleEncodeCached: " << store -> name() << ": There are " 
-            << store -> getSize() << " messages in the store out of " 
+    *logofs << "handleEncodeCached: " << store -> name() << ": There are "
+            << store -> getSize() << " messages in the store out of "
             << store -> cacheSlots << " slots.\n" << logofs_flush;
 
-    *logofs << "handleEncodeCached: " << store -> name() 
-            << ": Size of store is " << store -> getLocalStorageSize() 
-            << " bytes locally and " << store -> getRemoteStorageSize() 
+    *logofs << "handleEncodeCached: " << store -> name()
+            << ": Size of store is " << store -> getLocalStorageSize()
+            << " bytes locally and " << store -> getRemoteStorageSize()
             << " bytes remotely.\n" << logofs_flush;
 
-    *logofs << "handleEncodeCached: " << store -> name() 
+    *logofs << "handleEncodeCached: " << store -> name()
             << ": Size of total cache is " << store -> getLocalTotalStorageSize()
             << " bytes locally and " << store -> getRemoteTotalStorageSize()
             << " bytes remotely.\n" << logofs_flush;
@@ -637,20 +637,20 @@ int Channel::handleEncodeCached(EncodeBuffer &encodeBuffer, ChannelCache *channe
 
   if (mustCleanStore(store) == 1 && canCleanStore(store) == 0)
   {
-    *logofs << "handleEncodeCached: " << store -> name() 
-            << ": Store would need a clean but operation will be delayed.\n" 
+    *logofs << "handleEncodeCached: " << store -> name()
+            << ": Store would need a clean but operation will be delayed.\n"
             << logofs_flush;
 
-    *logofs << "handleEncodeCached: " << store -> name() << ": There are " 
-            << store -> getSize() << " messages in the store out of " 
+    *logofs << "handleEncodeCached: " << store -> name() << ": There are "
+            << store -> getSize() << " messages in the store out of "
             << store -> cacheSlots << " slots.\n"  << logofs_flush;
 
-    *logofs << "handleEncodeCached: " << store -> name() 
-            << ": Size of store is " << store -> getLocalStorageSize() 
-            << " bytes locally and " << store -> getRemoteStorageSize() 
+    *logofs << "handleEncodeCached: " << store -> name()
+            << ": Size of store is " << store -> getLocalStorageSize()
+            << " bytes locally and " << store -> getRemoteStorageSize()
             << " bytes remotely.\n" << logofs_flush;
 
-    *logofs << "handleEncodeCached: " << store -> name() 
+    *logofs << "handleEncodeCached: " << store -> name()
             << ": Size of total cache is " << store -> getLocalTotalStorageSize()
             << " bytes locally and " << store -> getRemoteTotalStorageSize()
             << " bytes remotely.\n" << logofs_flush;
@@ -667,8 +667,8 @@ int Channel::handleEncodeCached(EncodeBuffer &encodeBuffer, ChannelCache *channe
   if (store -> validateMessage(buffer, size) == 0)
   {
     #ifdef TEST
-    *logofs << "handleEncodeCached: " << store -> name() 
-            << ": Message with size " << size << " ignored.\n" 
+    *logofs << "handleEncodeCached: " << store -> name()
+            << ": Message with size " << size << " ignored.\n"
             << logofs_flush;
     #endif
 
@@ -726,7 +726,7 @@ int Channel::handleEncodeCached(EncodeBuffer &encodeBuffer, ChannelCache *channe
   //
 
   #ifdef DEBUG
-  *logofs << "handleEncodeCached: " << store -> name() 
+  *logofs << "handleEncodeCached: " << store -> name()
           << ": Searching object of size " << size
           << " in the cache.\n" << logofs_flush;
   #endif
@@ -740,7 +740,7 @@ int Channel::handleEncodeCached(EncodeBuffer &encodeBuffer, ChannelCache *channe
   if (position == nothing)
   {
     #ifdef WARNING
-    *logofs << "handleEncodeCached: " << store -> name() 
+    *logofs << "handleEncodeCached: " << store -> name()
             << ": WARNING! Can't store object in the cache.\n"
             << logofs_flush;
     #endif
@@ -763,7 +763,7 @@ int Channel::handleEncodeCached(EncodeBuffer &encodeBuffer, ChannelCache *channe
     //
 
     #ifdef WARNING
-    *logofs << "handleEncodeCached: " << store -> name() 
+    *logofs << "handleEncodeCached: " << store -> name()
             << ": WARNING! Message of size " << store -> plainSize(position)
             << " at position " << position << " is locked.\n"
             << logofs_flush;
@@ -789,23 +789,23 @@ int Channel::handleEncodeCached(EncodeBuffer &encodeBuffer, ChannelCache *channe
             << store -> plainSize(position) << " has been stored at position "
             << position << ".\n" << logofs_flush;
 
-    *logofs << "handleEncodeCached: " << store -> name() << ": There are " 
-            << store -> getSize() << " messages in the store out of " 
+    *logofs << "handleEncodeCached: " << store -> name() << ": There are "
+            << store -> getSize() << " messages in the store out of "
             << store -> cacheSlots << " slots.\n" << logofs_flush;
 
-    *logofs << "handleEncodeCached: " << store -> name() 
-            << ": Size of store is " << store -> getLocalStorageSize() 
-            << " bytes locally and " << store -> getRemoteStorageSize() 
+    *logofs << "handleEncodeCached: " << store -> name()
+            << ": Size of store is " << store -> getLocalStorageSize()
+            << " bytes locally and " << store -> getRemoteStorageSize()
             << " bytes remotely.\n" << logofs_flush;
 
-    *logofs << "handleEncodeCached: " << store -> name() 
+    *logofs << "handleEncodeCached: " << store -> name()
             << ": Size of total cache is " << store -> getLocalTotalStorageSize()
             << " bytes locally and " << store -> getRemoteTotalStorageSize()
             << " bytes remotely.\n" << logofs_flush;
     #endif
 
     //
-    // Inform the decoding side that message 
+    // Inform the decoding side that message
     // must be inserted in cache and encode
     // the position where the insertion took
     // place.
@@ -825,7 +825,7 @@ int Channel::handleEncodeCached(EncodeBuffer &encodeBuffer, ChannelCache *channe
   {
     #ifdef DEBUG
     *logofs << "handleEncodeCached: " << store -> name()
-            << ": Cache hit. Found object at position " 
+            << ": Cache hit. Found object at position "
             << position << ".\n" << logofs_flush;
     #endif
 
@@ -845,7 +845,7 @@ int Channel::handleEncodeCached(EncodeBuffer &encodeBuffer, ChannelCache *channe
 
     #ifdef DEBUG
     *logofs << "handleEncodeCached: " << store -> name() << ": Hits for "
-            << "object at position " << position << " are now " 
+            << "object at position " << position << " are now "
             << store -> getTouches(position) << ".\n"
             << logofs_flush;
     #endif
@@ -909,16 +909,16 @@ void Channel::handleUpdateAdded(MessageStore *store, unsigned int dataSize,
   store -> updateData(store -> lastAdded, dataSize, compressedDataSize);
 
   #ifdef DEBUG
-  *logofs << "handleUpdateAdded: " << store -> name() << ": There are " 
-          << store -> getSize() << " messages in the store out of " 
+  *logofs << "handleUpdateAdded: " << store -> name() << ": There are "
+          << store -> getSize() << " messages in the store out of "
           << store -> cacheSlots << " slots.\n" << logofs_flush;
 
-  *logofs << "handleUpdateAdded: " << store -> name() 
-          << ": Size of store is " << store -> getLocalStorageSize() 
-          << " bytes locally and " << store -> getRemoteStorageSize() 
+  *logofs << "handleUpdateAdded: " << store -> name()
+          << ": Size of store is " << store -> getLocalStorageSize()
+          << " bytes locally and " << store -> getRemoteStorageSize()
           << " bytes remotely.\n" << logofs_flush;
 
-  *logofs << "handleUpdateAdded: " << store -> name() 
+  *logofs << "handleUpdateAdded: " << store -> name()
           << ": Size of total cache is " << store -> getLocalTotalStorageSize()
           << " bytes locally and " << store -> getRemoteTotalStorageSize()
           << " bytes remotely.\n" << logofs_flush;
@@ -930,13 +930,13 @@ int Channel::handleDecodeCached(DecodeBuffer &decodeBuffer, ChannelCache *channe
                                         unsigned int &size)
 {
   //
-  // Create a new message object and 
+  // Create a new message object and
   // fill it with received data.
   //
 
   #ifdef DEBUG
-  *logofs << "handleDecodeCached: " << store -> name() 
-          << ": Going to handle a new message of this class.\n" 
+  *logofs << "handleDecodeCached: " << store -> name()
+          << ": Going to handle a new message of this class.\n"
           << logofs_flush;
   #endif
 
@@ -953,7 +953,7 @@ int Channel::handleDecodeCached(DecodeBuffer &decodeBuffer, ChannelCache *channe
                      store -> lastActionCache);
 
   //
-  // Clean operations must always come 
+  // Clean operations must always come
   // before any operation on message.
   //
 
@@ -1032,8 +1032,8 @@ int Channel::handleDecodeCached(DecodeBuffer &decodeBuffer, ChannelCache *channe
     buffer = writeBuffer_.addMessage(size);
 
     #ifdef DEBUG
-    *logofs << "handleDecodeCached: " << store -> name() 
-            << ": Prepared an outgoing buffer of " 
+    *logofs << "handleDecodeCached: " << store -> name()
+            << ": Prepared an outgoing buffer of "
             << size << " bytes.\n" << logofs_flush;
     #endif
 
@@ -1066,7 +1066,7 @@ int Channel::handleDecodeCached(DecodeBuffer &decodeBuffer, ChannelCache *channe
     store -> lastAdded = position;
 
     #ifdef DEBUG
-    *logofs << "handleDecodeCached: " << store -> name() 
+    *logofs << "handleDecodeCached: " << store -> name()
             << ": Message will be later stored at position "
              << store -> lastAdded << ".\n" << logofs_flush;
     #endif
@@ -1078,7 +1078,7 @@ int Channel::handleDecodeCached(DecodeBuffer &decodeBuffer, ChannelCache *channe
   else
   {
     #ifdef DEBUG
-    *logofs << "handleDecodeCached: " << store -> name() 
+    *logofs << "handleDecodeCached: " << store -> name()
             << ": Message will be later discarded.\n"
             << logofs_flush;
     #endif
@@ -1144,7 +1144,7 @@ void Channel::handleSaveAdded(MessageStore *store, int split, unsigned char *buf
   }
   else
   {
-    store -> parse(message, buffer, size, compressedData, 
+    store -> parse(message, buffer, size, compressedData,
                        compressedDataSize, discard_checksum,
                            use_data, bigEndian_);
   }

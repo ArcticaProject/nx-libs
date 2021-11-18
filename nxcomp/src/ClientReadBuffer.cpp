@@ -53,7 +53,7 @@ unsigned int ClientReadBuffer::suggestedLength(unsigned int pendingLength)
   }
 
   return readLength;
-}  
+}
 
 int ClientReadBuffer::locateMessage(const unsigned char *start,
                                         const unsigned char *end,

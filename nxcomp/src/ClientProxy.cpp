@@ -362,7 +362,7 @@ int ClientProxy::handleLoad(T_load_type type)
       {
         return -1;
       }
- 
+
       priority_ = 1;
     }
     else if (result < 0)

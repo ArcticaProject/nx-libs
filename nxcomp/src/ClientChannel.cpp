@@ -220,8 +220,8 @@ ClientChannel::ClientChannel(Transport *transport, StaticCompressor *compressor)
   #endif
 
   #ifdef REFERENCES
-  *logofs << "ClientChannel: Created new object at " 
-          << this << " for FD#" << fd_ << " out of " 
+  *logofs << "ClientChannel: Created new object at "
+          << this << " for FD#" << fd_ << " out of "
           << ++references_ << " allocated channels.\n"
           << logofs_flush;
   #endif
@@ -230,7 +230,7 @@ ClientChannel::ClientChannel(Transport *transport, StaticCompressor *compressor)
 ClientChannel::~ClientChannel()
 {
   #ifdef REFERENCES
-  *logofs << "ClientChannel: Deleted object at " 
+  *logofs << "ClientChannel: Deleted object at "
           << this << " for FD#" << fd_ << " out of "
           << --references_ << " allocated channels.\n"
           << logofs_flush;
@@ -326,7 +326,7 @@ int ClientChannel::handleRead(EncodeBuffer &encodeBuffer, const unsigned char *m
   #endif
 
   //
-  // Extract any complete message which 
+  // Extract any complete message which
   // is available in the buffer.
   //
 
@@ -338,7 +338,7 @@ int ClientChannel::handleRead(EncodeBuffer &encodeBuffer, const unsigned char *m
   while ((inputMessage = readBuffer_.getMessage(inputLength)) != NULL)
   {
     hit = 0;
- 
+
     if (firstRequest_)
     {
       //
@@ -412,7 +412,7 @@ int ClientChannel::handleRead(EncodeBuffer &encodeBuffer, const unsigned char *m
       clientSequence_ &= 0xffff;
 
       #ifdef DEBUG
-      *logofs << "handleRead: Last client sequence number for FD#" 
+      *logofs << "handleRead: Last client sequence number for FD#"
               << fd_ << " is " << clientSequence_ << ".\n"
               << logofs_flush;
       #endif
@@ -558,9 +558,9 @@ int ClientChannel::handleRead(EncodeBuffer &encodeBuffer, const unsigned char *m
 
           encodeBuffer.encodeCachedValue(GetULONG(inputMessage + 8, bigEndian_), 32,
                              clientCache_ -> sendEventMaskCache, 9);
-          encodeBuffer.encodeCachedValue(*(inputMessage + 12), 8, 
+          encodeBuffer.encodeCachedValue(*(inputMessage + 12), 8,
                              clientCache_ -> sendEventCodeCache);
-          encodeBuffer.encodeCachedValue(*(inputMessage + 13), 8, 
+          encodeBuffer.encodeCachedValue(*(inputMessage + 13), 8,
                              clientCache_ -> sendEventByteDataCache);
 
           unsigned int newSeq = GetUINT(inputMessage + 14, bigEndian_);
@@ -778,8 +778,8 @@ int ClientChannel::handleRead(EncodeBuffer &encodeBuffer, const unsigned char *m
           unsigned int s_g_id = GetULONG(inputMessage + 4, bigEndian_);
           unsigned int d_g_id = GetULONG(inputMessage + 8, bigEndian_);
 
-          *logofs << "handleRead: X_CopyGC source gcontext id is " << s_g_id  
-                  << " destination gcontext id is " << d_g_id << ".\n" 
+          *logofs << "handleRead: X_CopyGC source gcontext id is " << s_g_id
+                  << " destination gcontext id is " << d_g_id << ".\n"
                   << logofs_flush;
 
           #endif
@@ -902,26 +902,26 @@ int ClientChannel::handleRead(EncodeBuffer &encodeBuffer, const unsigned char *m
 
             if (pixmaps.find(t_id) != pixmaps.end())
             {
-              *logofs << "handleRead: X_ChangeGC gcontext id is " << g_id  
-                      << " target id is pixmap " << t_id << ".\n" 
+              *logofs << "handleRead: X_ChangeGC gcontext id is " << g_id
+                      << " target id is pixmap " << t_id << ".\n"
                       << logofs_flush;
             }
             else if (windows.find(t_id) != windows.end())
             {
-              *logofs << "handleRead: X_ChangeGC gcontext id is " << g_id  
-                      << " target id is window " << t_id << ".\n" 
+              *logofs << "handleRead: X_ChangeGC gcontext id is " << g_id
+                      << " target id is window " << t_id << ".\n"
                       << logofs_flush;
             }
             else
             {
-              *logofs << "handleRead: X_ChangeGC gcontext is " << g_id  
-                      << " target id is unrecognized.\n" 
+              *logofs << "handleRead: X_ChangeGC gcontext is " << g_id
+                      << " target id is unrecognized.\n"
                       << logofs_flush;
             }
           }
           else
           {
-            *logofs << "handleRead: X_ChangeGC gcontext id " << g_id  
+            *logofs << "handleRead: X_ChangeGC gcontext id " << g_id
                     << " is unrecognized.\n" << logofs_flush;
           }
 
@@ -985,20 +985,20 @@ int ClientChannel::handleRead(EncodeBuffer &encodeBuffer, const unsigned char *m
           unsigned short p_sx = GetUINT(inputMessage + 12, bigEndian_);
           unsigned short p_sy = GetUINT(inputMessage + 14, bigEndian_);
 
-          *logofs << "handleRead: X_CreatePixmap id is " << p_id 
-                  << " width is " << p_sx << " height is " << p_sy 
+          *logofs << "handleRead: X_CreatePixmap id is " << p_id
+                  << " width is " << p_sx << " height is " << p_sy
                   << ".\n" << logofs_flush;
 
           if (p_sx * p_sy <= 64 * 64)
           {
             *logofs << "handleRead: X_CreatePixmap id " << p_id << " of size "
-                    << p_sx << "x" << p_sy << "=" << p_sx * p_sy 
+                    << p_sx << "x" << p_sy << "=" << p_sx * p_sy
                     << " will be painted at client side.\n" << logofs_flush;
           }
           else
           {
             *logofs << "handleRead: X_CreatePixmap id " << p_id << " of size "
-                    << p_sx << "x" << p_sy << "=" << p_sx * p_sy 
+                    << p_sx << "x" << p_sy << "=" << p_sx * p_sy
                     << " will be painted at server side.\n" << logofs_flush;
           }
 
@@ -1203,26 +1203,26 @@ int ClientChannel::handleRead(EncodeBuffer &encodeBuffer, const unsigned char *m
 
             if (pixmaps.find(t_id) != pixmaps.end())
             {
-              *logofs << "handleRead: X_FreeGC gcontext id is " << g_id  
-                      << " target id is pixmap " << t_id << ".\n" 
+              *logofs << "handleRead: X_FreeGC gcontext id is " << g_id
+                      << " target id is pixmap " << t_id << ".\n"
                       << logofs_flush;
             }
             else if (windows.find(t_id) != windows.end())
             {
-              *logofs << "handleRead: X_FreeGC gcontext id is " << g_id  
-                      << " target id is window " << t_id << ".\n" 
+              *logofs << "handleRead: X_FreeGC gcontext id is " << g_id
+                      << " target id is window " << t_id << ".\n"
                       << logofs_flush;
             }
             else
             {
-              *logofs << "handleRead: X_FreeGC gcontext id is " << g_id  
-                      << " target id is unrecognized.\n" 
+              *logofs << "handleRead: X_FreeGC gcontext id is " << g_id
+                      << " target id is unrecognized.\n"
                       << logofs_flush;
             }
           }
           else
           {
-            *logofs << "handleRead: X_FreeGC gcontext id " << g_id  
+            *logofs << "handleRead: X_FreeGC gcontext id " << g_id
                     << " is unrecognized.\n" << logofs_flush;
           }
 
@@ -3035,7 +3035,7 @@ int ClientChannel::handleRead(EncodeBuffer &encodeBuffer, const unsigned char *m
 
       const char *cacheString = (hit ? "cached " : "");
 
-      *logofs << "handleRead: Handled " << cacheString << "request OPCODE#" 
+      *logofs << "handleRead: Handled " << cacheString << "request OPCODE#"
               << (unsigned int) inputOpcode << " (" << DumpOpcode(inputOpcode)
               << ")" << " for FD#" << fd_ << " sequence " << clientSequence_
               << ". " << inputLength  << " bytes in, " << bits << " bits ("
@@ -3147,7 +3147,7 @@ int ClientChannel::handleWrite(const unsigned char *message, unsigned int length
   #endif
 
   //
-  // Create the buffer from which to 
+  // Create the buffer from which to
   // decode messages.
   //
 
@@ -3254,7 +3254,7 @@ int ClientChannel::handleWrite(const unsigned char *message, unsigned int length
       unsigned int outputLength    = 0;
 
       //
-      // General-purpose temp variables 
+      // General-purpose temp variables
       // for decoding ints and chars.
       //
 
@@ -3296,7 +3296,7 @@ int ClientChannel::handleWrite(const unsigned char *message, unsigned int length
         serverSequence_ = sequenceNum;
 
         #ifdef DEBUG
-        *logofs << "handleWrite: Last server sequence number for FD#" 
+        *logofs << "handleWrite: Last server sequence number for FD#"
                 << fd_ << " is " << serverSequence_ << " with "
                 << "difference " << sequenceDiff << ".\n"
                 << logofs_flush;
@@ -4072,7 +4072,7 @@ int ClientChannel::handleWrite(const unsigned char *message, unsigned int length
               outputMessage[1] = (unsigned char) cValue;
               // Visual.
               unsigned int visual;
-              decodeBuffer.decodeCachedValue(visual, 29, 
+              decodeBuffer.decodeCachedValue(visual, 29,
                                  serverCache_ -> visualCache);
               PutULONG(visual, outputMessage + 8, bigEndian_);
 
@@ -4275,7 +4275,7 @@ int ClientChannel::handleWrite(const unsigned char *message, unsigned int length
         serverSequence_ = sequenceNum;
 
         #ifdef DEBUG
-        *logofs << "handleWrite: Last server sequence number for FD#" 
+        *logofs << "handleWrite: Last server sequence number for FD#"
                 << fd_ << " is " << serverSequence_ << " with "
                 << "difference " << sequenceDiff << ".\n"
                 << logofs_flush;
@@ -5328,7 +5328,7 @@ int ClientChannel::handleSplit(EncodeBuffer &encodeBuffer)
 int ClientChannel::handleSplitSend(EncodeBuffer &encodeBuffer, int resource,
                                        int &splits, int &bytes)
 {
-  #if defined(TEST) || defined(SPLIT) 
+  #if defined(TEST) || defined(SPLIT)
 
   SplitStore *splitStore = clientStore_ -> getSplitStore(resource);
 
@@ -6044,7 +6044,7 @@ int ClientChannel::handleRestart(T_sequence_mode mode, int resource)
     // store is either empty or that we did not add any split
     // for this resource. This is because when connected to
     // an old proxy version we only have a single store for
-    // all the resources.   
+    // all the resources.
     //
     // It can happen that all the split messages that were
     // originally appended to the list were completely sent
@@ -6155,7 +6155,7 @@ int ClientChannel::handleRestart(T_sequence_mode mode, int resource)
 
       if (split -> getState() != split_notified)
       {
-        #if defined(TEST) || defined(SPLIT) 
+        #if defined(TEST) || defined(SPLIT)
 
         if (split -> getResource() != resource)
         {
@@ -7197,7 +7197,7 @@ int ClientChannel::handleFastReadRequest(EncodeBuffer &encodeBuffer, const unsig
 
   #if defined(TEST) || defined(OPCODES)
 
-  *logofs << "handleFastReadRequest: Handled raw request OPCODE#" 
+  *logofs << "handleFastReadRequest: Handled raw request OPCODE#"
           << (unsigned int) opcode << " (" << DumpOpcode(opcode) << ")"
           << " for FD#" << fd_ << " sequence " << clientSequence_
           << ". " << size << " bytes in, " << bits << " bits ("

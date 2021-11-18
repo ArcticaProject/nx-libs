@@ -65,7 +65,7 @@ typedef struct
 // Colormap is used to remap colors
 // from source to destination depth.
 //
- 
+
 typedef struct
 {
   unsigned int entries;
@@ -78,7 +78,7 @@ typedef struct
 // bits images at the time they are
 // unpacked.
 //
- 
+
 typedef struct
 {
   unsigned int entries;

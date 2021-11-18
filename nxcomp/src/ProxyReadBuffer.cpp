@@ -72,7 +72,7 @@ unsigned int ProxyReadBuffer::suggestedLength(unsigned int pendingLength)
   }
 
   return readLength;
-}  
+}
 
 int ProxyReadBuffer::locateMessage(const unsigned char *start,
                                        const unsigned char *end,
@@ -185,8 +185,8 @@ int ProxyReadBuffer::locateMessage(const unsigned char *start,
     #endif
 
     #if defined(TEST) || defined(INFO)
-    *logofs << "ProxyReadBuffer: Produced plain input for " << dataLength 
-            << "+" << trailerLength << "+" << controlLength << " bytes out of " 
+    *logofs << "ProxyReadBuffer: Produced plain input for " << dataLength
+            << "+" << trailerLength << "+" << controlLength << " bytes out of "
             << totalLength << " bytes.\n" << logofs_flush;
     #endif
 

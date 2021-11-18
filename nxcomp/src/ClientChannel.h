@@ -327,7 +327,7 @@ class ClientChannel : public Channel
   // the pending split operations and
   // restart a resource.
   //
-  
+
   int handleFinishSplitRequest(EncodeBuffer &encodeBuffer, const unsigned char opcode,
                                    const unsigned char *buffer, const unsigned int size);
 
@@ -420,7 +420,7 @@ class ClientChannel : public Channel
   private:
 
   //
-  // Keep track of object 
+  // Keep track of object
   // creation and deletion.
   //
 

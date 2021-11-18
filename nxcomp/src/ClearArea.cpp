@@ -57,9 +57,9 @@ int ClearAreaStore::parseIdentity(Message *message, const unsigned char *buffer,
   // Here is the fingerprint.
   //
 
-  clearArea -> exposures = *(buffer + 1); 
+  clearArea -> exposures = *(buffer + 1);
 
-  clearArea -> window = GetULONG(buffer + 4, bigEndian); 
+  clearArea -> window = GetULONG(buffer + 4, bigEndian);
 
   clearArea -> x      = GetUINT(buffer + 8, bigEndian);
   clearArea -> y      = GetUINT(buffer + 10, bigEndian);
@@ -104,10 +104,10 @@ void ClearAreaStore::dumpIdentity(const Message *message) const
 
   ClearAreaMessage *clearArea = (ClearAreaMessage *) message;
 
-  *logofs << name() << ": Identity exposures " << (unsigned int) clearArea -> exposures 
-          << ", window " << clearArea -> window  << ", x " << clearArea -> x 
-          << ", y " << clearArea -> y << ", width  " << clearArea -> width 
-          << ", height " << clearArea -> height << ", size " << clearArea -> size_ 
+  *logofs << name() << ": Identity exposures " << (unsigned int) clearArea -> exposures
+          << ", window " << clearArea -> window  << ", x " << clearArea -> x
+          << ", y " << clearArea -> y << ", width  " << clearArea -> width
+          << ", height " << clearArea -> height << ", size " << clearArea -> size_
           << ".\n";
 
   #endif

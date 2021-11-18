@@ -32,7 +32,7 @@ class OpcodeCache
 {
   friend class EncodeBuffer;
   friend class DecodeBuffer;
-  
+
   public:
 
   OpcodeCache()

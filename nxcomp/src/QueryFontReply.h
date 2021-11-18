@@ -121,13 +121,13 @@ class QueryFontReplyStore : public MessageStore
     delete (QueryFontReplyMessage *) message;
   }
 
-  virtual int parseIdentity(Message *message, const unsigned char *buffer, 
+  virtual int parseIdentity(Message *message, const unsigned char *buffer,
                                 unsigned int size, int bigEndian) const;
 
-  virtual int unparseIdentity(const Message *message, unsigned char *buffer, 
+  virtual int unparseIdentity(const Message *message, unsigned char *buffer,
                                   unsigned int size, int bigEndian) const;
 
-  virtual void identityChecksum(const Message *message, const unsigned char *buffer, 
+  virtual void identityChecksum(const Message *message, const unsigned char *buffer,
                                     unsigned int size, int bigEndian) const;
 
   virtual void dumpIdentity(const Message *message) const;
