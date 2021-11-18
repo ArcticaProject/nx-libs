@@ -2762,7 +2762,7 @@ int NXTransSelect(int *resultFDs, int *errorFDs, int *setFDs, fd_set *readSet,
   handleCheckResultInLoop(*resultFDs, *errorFDs, *setFDs, *readSet, *writeSet, *selectTs, startTs);
 
   //
-  // Get time spent in select. The accouting is done
+  // Get time spent in select. The accounting is done
   // in milliseconds. This is a real problem on fast
   // machines where each loop is unlikely to take
   // more than 500 us, so consider that the results
