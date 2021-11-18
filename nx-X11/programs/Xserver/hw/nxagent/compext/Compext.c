@@ -4776,7 +4776,7 @@ void _NXDumpData(const unsigned char *buffer, unsigned int size)
     {
       fprintf(stderr, "[%d]\t", i);
 
-      for (unsinged int ii = 0; i < size && ii < 8; i++, ii++)
+      for (unsigned int ii = 0; i < size && ii < 8; i++, ii++)
       {
         fprintf(stderr, "%d\t", (unsigned int) (buffer[i]));
       }
