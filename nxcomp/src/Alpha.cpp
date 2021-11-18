@@ -126,7 +126,7 @@ int UnpackAlpha(T_alpha *alpha, unsigned char *dst_data,
   }
 
   shift = (big_endian == 1 ? 0 : 3);
-  
+
   for (i = 0; i < count; i++)
   {
     *(dst_data + shift) = *(alpha -> data + i);

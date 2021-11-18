@@ -183,7 +183,7 @@ class Message
   }
 
   //
-  // This is the original message size 
+  // This is the original message size
   // including the data part regardless
   // data is still stored in the object.
   //
@@ -198,7 +198,7 @@ class Message
 
   //
   // This is the size, including identity,
-  // after message has been 'updated' to 
+  // after message has been 'updated' to
   // reflect storage of data in compressed
   // format.
   //
@@ -220,7 +220,7 @@ class Message
   time_t last_;
 
   //
-  // This is the number of cache hits 
+  // This is the number of cache hits
   // registered for the object.
   //
 
@@ -228,7 +228,7 @@ class Message
 
   //
   // This is used to mark messages
-  // that have been split. 
+  // that have been split.
   //
 
   short int locks_;
@@ -835,7 +835,7 @@ class MessageStore
     }
 
     #ifdef DEBUG
-    *logofs << name() << ": Got checksum for object at " 
+    *logofs << name() << ": Got checksum for object at "
             << message << ".\n" << logofs_flush;
     #endif
 
@@ -998,7 +998,7 @@ class MessageStore
   StaticCompressor *compressor_;
 
   //
-  // Keep track of how many bytes 
+  // Keep track of how many bytes
   // are taken by cache.
   //
 

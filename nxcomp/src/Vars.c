@@ -35,7 +35,7 @@ extern "C" {
  * Allocate here instances of variables and
  * pointers declared in NXvars.h.
  */
- 
+
 int _NXHandleDisplayError = 0;
 
 NXDisplayErrorPredicate _NXDisplayErrorFunction = NULL;

@@ -62,7 +62,7 @@ int GetImageStore::parseIdentity(Message *message, const unsigned char *buffer,
   #ifdef TEST
   if (getImage -> format != 1 && getImage -> format != 2)
   {
-    *logofs << name() << ": WARNING! Dirty value " << getImage -> format 
+    *logofs << name() << ": WARNING! Dirty value " << getImage -> format
             << " for field format.\n" << logofs_flush;
   }
   #endif
@@ -116,10 +116,10 @@ void GetImageStore::dumpIdentity(const Message *message) const
 
   GetImageMessage *getImage = (GetImageMessage *) message;
 
-  *logofs << name() << ": Identity format " << (unsigned) getImage -> format 
-          << ", drawable " << getImage -> drawable << ", x " << getImage -> x 
-          << ", y " << getImage -> y << ", width " << getImage -> width 
-          << ", height " << getImage -> height << ", plane_mask " 
+  *logofs << name() << ": Identity format " << (unsigned) getImage -> format
+          << ", drawable " << getImage -> drawable << ", x " << getImage -> x
+          << ", y " << getImage -> y << ", width " << getImage -> width
+          << ", height " << getImage -> height << ", plane_mask "
           << getImage -> plane_mask << ", size " << getImage -> size_
           << ".\n" << logofs_flush;
 

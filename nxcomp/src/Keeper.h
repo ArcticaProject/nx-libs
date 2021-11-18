@@ -123,7 +123,7 @@ class Keeper
   //
   // Get a list of files in directory.
   //
-  
+
   int collect(const char *path);
 
   //

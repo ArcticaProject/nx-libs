@@ -114,11 +114,11 @@ void SendEventStore::dumpIdentity(const Message *message) const
 
   SendEventMessage *sendEvent = (SendEventMessage *) message;
 
-  *logofs << name() << ": Identity propagate " << (unsigned int) sendEvent -> propagate 
+  *logofs << name() << ": Identity propagate " << (unsigned int) sendEvent -> propagate
           << ", window " << sendEvent -> window << ", mask " << sendEvent -> mask
           << ", code " << (unsigned int) sendEvent -> code << ", byte_data "
           << (unsigned int) sendEvent -> byte_data << ", sequence "
-          << sendEvent -> sequence << ", int_data " << sendEvent -> int_data 
+          << sendEvent -> sequence << ", int_data " << sendEvent -> int_data
           << ", size " << sendEvent -> size_ << ".\n" << logofs_flush;
 
   #endif
@@ -182,7 +182,7 @@ void SendEventStore::updateIdentity(EncodeBuffer &encodeBuffer, const Message *m
           << " as code field.\n" << logofs_flush;
   #endif
 
-  encodeBuffer.encodeCachedValue(sendEvent -> code, 8, 
+  encodeBuffer.encodeCachedValue(sendEvent -> code, 8,
                      clientCache -> sendEventCodeCache);
 
   cachedSendEvent -> code = sendEvent -> code;
@@ -192,7 +192,7 @@ void SendEventStore::updateIdentity(EncodeBuffer &encodeBuffer, const Message *m
           << " as byte_data field.\n" << logofs_flush;
   #endif
 
-  encodeBuffer.encodeCachedValue(sendEvent -> byte_data, 8, 
+  encodeBuffer.encodeCachedValue(sendEvent -> byte_data, 8,
                      clientCache -> sendEventByteDataCache);
 
   cachedSendEvent -> byte_data = sendEvent -> byte_data;

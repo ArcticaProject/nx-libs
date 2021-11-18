@@ -182,7 +182,7 @@ int ShapeExtensionStore::parseIdentity(Message *message, const unsigned char *bu
   {
     if ((i * 2 + 4) < size)
     {
-      shapeExtension -> data[i] = GetUINT(buffer + i * 2 + 4, bigEndian); 
+      shapeExtension -> data[i] = GetUINT(buffer + i * 2 + 4, bigEndian);
 
       #ifdef DEBUG
       *logofs << name() << ": Parsed data[" << i << "].\n"

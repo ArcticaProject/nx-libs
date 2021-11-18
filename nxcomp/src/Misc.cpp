@@ -68,7 +68,7 @@ const int DEFAULT_LOOPBACK_BIND = 0;
 const int DEFAULT_NX_PROXY_PORT_OFFSET = 4000;
 
 //
-// Default TCP port used by client proxy to listen to  
+// Default TCP port used by client proxy to listen to
 // X clients and by server proxy to connect to remote.
 //
 
@@ -1907,11 +1907,11 @@ void DumpHexData(const unsigned char *buffer, unsigned int size)
 
   *logofs << message << logofs_flush;
 
-  // 
+  //
   // "Index    0  1  2  3  4  5  6  7  8  9  a  b  c  d  e  f  Ascii           "
   // "-----   -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --  ----------------"
   // "00000 : 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................"
-  // 
+  //
 
   sprintf (message,"Index   0  1  2  3  4  5  6  7  8  9  a  b  c  d  e  f  Ascii           \n");
   *logofs << message << logofs_flush;
@@ -1929,7 +1929,7 @@ void DumpHexData(const unsigned char *buffer, unsigned int size)
     sprintf  (message,"%.5d  ", index);
 
     for (index_ascii = 0, linescan = index;
-             ((index < (linescan + 16)) && (index < size)); 
+             ((index < (linescan + 16)) && (index < size));
                   index++, index_ascii++)
     {
       if (isprint(buffer [index]))
@@ -1952,7 +1952,7 @@ void DumpHexData(const unsigned char *buffer, unsigned int size)
     sprintf  (&message [strlen (message)]," %s\n", ascii);
 
     *logofs << message << logofs_flush;
-  } 
+  }
 
   sprintf  (message,"\n####  End Dump Buffer ####\n\n");
 

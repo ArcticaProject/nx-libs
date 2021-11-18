@@ -107,7 +107,7 @@ int ListFontsReplyStore::parseIdentity(Message *message, const unsigned char *bu
   {
     unsigned int current;
     unsigned int length;
-    unsigned int nstringInNames; 
+    unsigned int nstringInNames;
 
     unsigned char *end = NULL;
     unsigned char *pad = NULL;
@@ -128,7 +128,7 @@ int ListFontsReplyStore::parseIdentity(Message *message, const unsigned char *bu
 
     length = LISTFONTSREPLY_DATA_OFFSET;
 
-    for (nstringInNames = 0; 
+    for (nstringInNames = 0;
              nstringInNames < listFontsReply -> number_of_names &&
                  listFontsReply -> number_of_names > 0;
                      nstringInNames++)
@@ -146,7 +146,7 @@ int ListFontsReplyStore::parseIdentity(Message *message, const unsigned char *bu
               << current << "\n" << logofs_flush;
       #endif
     }
-    
+
     #ifdef DUMP
     *logofs << "\nFinal length " << length << "\n" << logofs_flush;
     #endif

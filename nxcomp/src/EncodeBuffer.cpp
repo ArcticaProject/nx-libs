@@ -436,7 +436,7 @@ void EncodeBuffer::encodeMemory(const unsigned char *buffer, unsigned int numByt
     HandleAbort();
   }
 
-  *nextDest_ = 0; 
+  *nextDest_ = 0;
 }
 
 unsigned int EncodeBuffer::getLength() const
@@ -551,7 +551,7 @@ void EncodeBuffer::alignBuffer()
     {
       growBuffer();
     }
-    
+
     *nextDest_ = 0;
   }
 }

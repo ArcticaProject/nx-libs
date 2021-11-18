@@ -68,7 +68,7 @@ unsigned int ServerReadBuffer::suggestedLength(unsigned int pendingLength)
   }
 
   return readLength;
-}  
+}
 
 int ServerReadBuffer::locateMessage(const unsigned char *start,
                                         const unsigned char *end,

@@ -57,8 +57,8 @@ List::List()
 
   references_++;
 
-  *logofs << "List: Created new List at " 
-          << this << " out of " << references_ 
+  *logofs << "List: Created new List at "
+          << this << " out of " << references_
           << " allocated references.\n" << logofs_flush;
   #endif
 }
@@ -69,8 +69,8 @@ List::~List()
 
   references_--;
 
-  *logofs << "List: Deleted List at " 
-          << this << " out of " << references_ 
+  *logofs << "List: Deleted List at "
+          << this << " out of " << references_
           << " allocated references.\n" << logofs_flush;
   #endif
 }

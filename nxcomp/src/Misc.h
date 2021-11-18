@@ -268,7 +268,7 @@ inline void CleanData(unsigned char *buffer, int size)
     *buffer++ = 0x00;
   }
 }
-  
+
 int CheckData(istream *fs);
 int CheckData(ostream *fs);
 int PutData(ostream *fs, const unsigned char *buffer, int size);

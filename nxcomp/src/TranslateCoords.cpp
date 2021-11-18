@@ -98,8 +98,8 @@ void TranslateCoordsStore::dumpIdentity(const Message *message) const
 
   TranslateCoordsMessage *translateCoords = (TranslateCoordsMessage *) message;
 
-  *logofs << name() << ": Identity src_window " << translateCoords -> src_window << ", dst_window " 
-          << translateCoords -> dst_window << ", src_x " << translateCoords -> src_x << ", src_y " 
+  *logofs << name() << ": Identity src_window " << translateCoords -> src_window << ", dst_window "
+          << translateCoords -> dst_window << ", src_x " << translateCoords -> src_x << ", src_y "
           << translateCoords -> src_y << ", size " << translateCoords -> size_ << ".\n" << logofs_flush;
 
   #endif

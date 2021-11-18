@@ -112,7 +112,7 @@ T_flush_policy;
 #define link_undefined  -1;
 
 //
-// This class collects functioning parameters, 
+// This class collects functioning parameters,
 // to be configurable at run-time. They are for
 // the most part regarding timeouts, transport
 // and message stores handling.
@@ -307,7 +307,7 @@ class Control
   // Version number of local and remote proxy.
   //
 
-  /* 
+  /*
    * LocalVersionMaintenancePatch, RemoteVersionMaintenancePatch
    * CompatVersionMaintenancePatch
    *
@@ -448,7 +448,7 @@ class Control
   //
   // Calculate current bitrate on proxy link
   // using these observation periods. Value
-  // is in milliseconds.  
+  // is in milliseconds.
   //
 
   int ShortBitrateTimeFrame;
@@ -463,7 +463,7 @@ class Control
 
   int ClientBitrateLimit;
   int ServerBitrateLimit;
-  
+
   //
   // This is the limit imposed by user on
   // total cache size.

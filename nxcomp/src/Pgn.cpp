@@ -475,7 +475,7 @@ int DecompressPng16(unsigned char *compressedData, int compressedLen,
       //
       // Follow the server byte order when arranging data.
       //
- 
+
       if (byteOrder == LSBFirst)
       {
         data[0] = (unsigned char) (pixel & 0xff);
@@ -486,8 +486,8 @@ int DecompressPng16(unsigned char *compressedData, int compressedLen,
         data[1] = (unsigned char) (pixel & 0xff);
         data[0] = (unsigned char) ((pixel >> 8) & 0xff);
       }
- 
-      data += 2; 
+
+      data += 2;
     }
 
     //
@@ -594,7 +594,7 @@ int DecompressPng24(unsigned char *compressedData, int compressedLen,
   pixelPtr = (CARD8 *) dstBuf;
 
   rowPointers = (png_byte *)tmpBuf;
-  
+
   if (setjmp(png_jmpbuf(pngPtr)))
   {
     #ifdef PANIC
@@ -668,7 +668,7 @@ int DecompressPng32(unsigned char *compressedData, int compressedLen,
   pngPtr = png_create_read_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
 
   if (!pngPtr)
-  { 
+  {
     #ifdef PANIC
     *logofs << "DecompressPng32: PANIC! "
             << "Failed png_create_read_struct operation"
@@ -681,13 +681,13 @@ int DecompressPng32(unsigned char *compressedData, int compressedLen,
   infoPtr = png_create_info_struct(pngPtr);
 
   if (!infoPtr)
-  { 
+  {
     #ifdef PANIC
     *logofs << "DecompressPng32: PANIC! "
             << "Failed png_create_info_struct operation."
             << ".\n" << logofs_flush;
     #endif
-    
+
     png_destroy_read_struct(&pngPtr, NULL, NULL);
 
     return -1;
@@ -707,7 +707,7 @@ int DecompressPng32(unsigned char *compressedData, int compressedLen,
   }
 
   png_set_read_fn(pngPtr, (void *)compressedData, PngReadData);
- 
+
   if (setjmp(png_jmpbuf(pngPtr)))
   {
     #ifdef PANIC
@@ -738,7 +738,7 @@ int DecompressPng32(unsigned char *compressedData, int compressedLen,
   data = dstBuf;
 
   rowPointers = (png_byte *) tmpBuf;
-  
+
   if (setjmp(png_jmpbuf(pngPtr)))
   {
     #ifdef PANIC

@@ -42,8 +42,8 @@ using namespace std;
 #define MD5_LENGTH          16
 
 //
-// Types of repositories. Replace the original 
-// clear() methods from STL in order to actually 
+// Types of repositories. Replace the original
+// clear() methods from STL in order to actually
 // free the unused memory.
 //
 

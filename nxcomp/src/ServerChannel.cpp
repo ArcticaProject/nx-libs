@@ -219,7 +219,7 @@ ServerChannel::ServerChannel(Transport *transport, StaticCompressor *compressor)
   fontPort_ = -1;
 
   #ifdef REFERENCES
-  *logofs << "ServerChannel: Created new object at " 
+  *logofs << "ServerChannel: Created new object at "
           << this << " for FD#" << fd_ << " out of "
           << ++references_ << " allocated channels.\n"
           << logofs_flush;
@@ -258,7 +258,7 @@ ServerChannel::~ServerChannel()
   #endif
 
   #ifdef REFERENCES
-  *logofs << "ServerChannel: Deleted object at " 
+  *logofs << "ServerChannel: Deleted object at "
           << this << " for FD#" << fd_ << " out of "
           << --references_ << " allocated channels.\n"
           << logofs_flush;
@@ -341,7 +341,7 @@ int ServerChannel::handleRead(EncodeBuffer &encodeBuffer, const unsigned char *m
   #endif
 
   //
-  // Extract any complete message which 
+  // Extract any complete message which
   // is available in the buffer.
   //
 
@@ -469,7 +469,7 @@ int ServerChannel::handleRead(EncodeBuffer &encodeBuffer, const unsigned char *m
         serverSequence_ = sequenceNum;
 
         #ifdef DEBUG
-        *logofs << "handleRead: Last server sequence number for FD#" 
+        *logofs << "handleRead: Last server sequence number for FD#"
                 << fd_ << " is " << serverSequence_ << " with "
                 << "difference " << sequenceDiff << ".\n"
                 << logofs_flush;
@@ -1506,7 +1506,7 @@ int ServerChannel::handleRead(EncodeBuffer &encodeBuffer, const unsigned char *m
         serverSequence_ = inputSequence;
 
         #ifdef DEBUG
-        *logofs << "handleRead: Last server sequence number for FD#" 
+        *logofs << "handleRead: Last server sequence number for FD#"
                 << fd_ << " is " << serverSequence_ << " with "
                 << "difference " << sequenceDiff << ".\n"
                 << logofs_flush;
@@ -1997,7 +1997,7 @@ int ServerChannel::handleWrite(const unsigned char *message, unsigned int length
   #endif
 
   //
-  // Create the buffer from which to 
+  // Create the buffer from which to
   // decode messages.
   //
 
@@ -2098,7 +2098,7 @@ int ServerChannel::handleWrite(const unsigned char *message, unsigned int length
         clientSequence_ &= 0xffff;
 
         #ifdef DEBUG
-        *logofs << "handleWrite: Last client sequence number for FD#" 
+        *logofs << "handleWrite: Last client sequence number for FD#"
                 << fd_ << " is " << clientSequence_ << ".\n"
                 << logofs_flush;
         #endif
@@ -2961,7 +2961,7 @@ int ServerChannel::handleWrite(const unsigned char *message, unsigned int length
       case X_NoOperation:
         {
           #ifdef DEBUG
-          *logofs << "handleWrite: Managing (probably tainted) X_NoOperation request for FD#" 
+          *logofs << "handleWrite: Managing (probably tainted) X_NoOperation request for FD#"
                   << fd_ << ".\n" << logofs_flush;
           #endif
 
@@ -4331,7 +4331,7 @@ int ServerChannel::handleWrite(const unsigned char *message, unsigned int length
             //
 
             #ifdef TEST
-            *logofs << "handleWrite: Sending X_GetInputFocus request for FD#" 
+            *logofs << "handleWrite: Sending X_GetInputFocus request for FD#"
                     << fd_ << " due to OPCODE#" << (unsigned int) outputOpcode
                     << ".\n" << logofs_flush;
             #endif
@@ -5602,7 +5602,7 @@ int ServerChannel::handleMotion(EncodeBuffer &encodeBuffer)
   serverSequence_ = sequenceNum;
 
   #ifdef DEBUG
-  *logofs << "handleMotion: Last server sequence number for FD#" 
+  *logofs << "handleMotion: Last server sequence number for FD#"
           << fd_ << " is " << serverSequence_ << " with "
           << "difference " << sequenceDiff << ".\n"
           << logofs_flush;
@@ -6253,7 +6253,7 @@ int ServerChannel::handleAuthorization(unsigned char *buffer)
   //
   // Use the following code to simulate authentication
   // failures on a LSB machine:
-  // 
+  //
   // memcpy(buffer + 12 + (((buffer[6] + 256 *
   //            buffer[7]) + 3) & ~3), "1234567890123456", 16);
   //
@@ -6765,7 +6765,7 @@ int ServerChannel::checkKeyboardEvent(unsigned char event, unsigned short sequen
 //
 // Handle the MIT-SHM initialization
 // messages exchanged with the remote
-// proxy. 
+// proxy.
 //
 
 int ServerChannel::handleShmemReply(EncodeBuffer &encodeBuffer, const unsigned char opcode,
