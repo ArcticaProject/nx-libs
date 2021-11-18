@@ -1321,7 +1321,7 @@ unsigned int NXAllocSplit(Display *dpy, unsigned int resource)
     }
 
     #ifdef TEST_SPLIT
-    fprintf(stderr, "******NXAllocSplit: WARNING! Resource limit exausted.\n");
+    fprintf(stderr, "******NXAllocSplit: WARNING! Resource limit exhausted.\n");
     #endif
 
     return NXNoResource;
@@ -1606,7 +1606,7 @@ unsigned int NXAllocUnpack(Display *dpy, unsigned int resource)
     }
 
     #ifdef TEST_UNPACK
-    fprintf(stderr, "******NXAllocUnpack: WARNING! Resource limit exausted.\n");
+    fprintf(stderr, "******NXAllocUnpack: WARNING! Resource limit exhausted.\n");
     #endif
 
     return NXNoResource;
