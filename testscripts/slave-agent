@@ -32,14 +32,14 @@
 # Run:
 # nxproxy [...] slave=12000
 # nxagent -display nx/nx,options=nxagent.conf # slave=22000 in nxagent.conf
-# 
+#
 # Where 12000 and 22000 are example TCP ports the program will listen on.
-# 
+#
 # For ease of debugging and running both sides on a single machine, the script
 # reacts to its own name and changes the prompt to "Proxy" if $0 contains
 # "proxy", or "Agent" if it contains "agent". This has no other effect.
 #
-# 
+#
 
 use strict;
 use POSIX ":sys_wait_h";
@@ -99,7 +99,7 @@ while(!$EXIT) {
 		if (!defined $ret) {
 			die "Read failed: $!";
 		}
-	
+
 		if (!$ret) {
 			last;
 		}
@@ -156,7 +156,7 @@ sub cmd_blkecho {
 			if ( !defined $ret ) {
 				die "Error reading from socket: $!";
 			}
-			
+
 			last if ( $ret == 0 );
 			$buf .= $tmp;
 		}
@@ -226,7 +226,7 @@ sub cmd_fastgen {
 	}
 }
 
-# Output RFC 864 chargen. 
+# Output RFC 864 chargen.
 # Used to test bandwidth
 sub cmd_chargen {
 	my $text = "";
