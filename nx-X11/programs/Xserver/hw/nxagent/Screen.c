@@ -258,10 +258,10 @@ void nxagentSetScreenInfo(ScreenInfo *scrInfo)
   scrInfo -> bitmapBitOrder = BITMAP_BIT_ORDER;
 
   #ifdef TEST
-  fprintf(stderr, "nxagentSetScreenInfo: Server image order is [%d] bitmap order is [%d].\n",
+  fprintf(stderr, "%s: Server image order is [%d] bitmap order is [%d].\n", __func__,
               scrInfo -> imageByteOrder, scrInfo -> bitmapBitOrder);
 
-  fprintf(stderr, "nxagentSetScreenInfo: Server scanline unit is [%d] scanline pad is [%d].\n",
+  fprintf(stderr, "%s: Server scanline unit is [%d] scanline pad is [%d].\n", __func__,
               scrInfo -> bitmapScanlineUnit, scrInfo -> bitmapScanlinePad);
   #endif
 }
@@ -284,8 +284,8 @@ void nxagentSetPixmapFormats(ScreenInfo *scrInfo)
     scrInfo -> formats[i].scanlinePad = nxagentPixmapFormats[i].scanline_pad;
 
     #ifdef TEST
-    fprintf(stderr, "nxagentSetPixmapFormats: Set format at index [%d] to depth [%d] "
-                "bits per pixel [%d] scanline pad [%d].\n", i,
+    fprintf(stderr, "%s: Set format at index [%d] to depth [%d] "
+                "bits per pixel [%d] scanline pad [%d].\n", __func__, i,
                     scrInfo -> formats[i].depth, scrInfo -> formats[i].bitsPerPixel,
                         scrInfo -> formats[i].scanlinePad);
     #endif
@@ -433,7 +433,7 @@ Window nxagentCreateIconWindow(void)
   unsigned long valuemask = CWOverrideRedirect | CWBackPixmap | CWColormap;
 
   #ifdef TEST
-  fprintf(stderr, "nxagentCreateIconWindow: Going to create new icon window.\n");
+  fprintf(stderr, "%s: Going to create new icon window.\n", __func__);
   #endif
 
   Window w = XCreateWindow(nxagentDisplay, DefaultRootWindow(nxagentDisplay),
@@ -448,7 +448,7 @@ Window nxagentCreateIconWindow(void)
     fprintf(stderr, "NXAGENT_WINDOW_ID: ICON_WINDOW,WID:[0x%x]\n", w);
   }
   #ifdef TEST
-  fprintf(stderr, "nxagentCreateIconWindow: Created new icon window with id [0x%x].\n",
+  fprintf(stderr, "%s: Created new icon window with id [0x%x].\n", __func__,
               w);
   #endif
 
@@ -530,14 +530,14 @@ Bool nxagentMagicPixelZone(int x, int y)
 void nxagentSetScreenSaverTime(void)
 {
   #ifdef TEST
-  fprintf(stderr, "nxagentSetScreenSaverTime: ScreenSaverTime was [%lu], ScreenSaverInterval was [%lu].\n",
+  fprintf(stderr, "%s: ScreenSaverTime was [%lu], ScreenSaverInterval was [%lu].\n", __func__,
                   (long unsigned int)ScreenSaverTime, (long unsigned int)ScreenSaverInterval);
   #endif
 
   ScreenSaverInterval = ScreenSaverTime;
 
   #ifdef TEST
-  fprintf(stderr, "nxagentSetScreenSaverTime: ScreenSaverTime now is [%lu], ScreenSaverInterval now is [%lu].\n",
+  fprintf(stderr, "%s: ScreenSaverTime now is [%lu], ScreenSaverInterval now is [%lu].\n", __func__,
                   (long unsigned int)ScreenSaverTime, (long unsigned int)ScreenSaverInterval);
   #endif
 }
@@ -671,7 +671,7 @@ void nxagentInitViewportFrame(ScreenPtr pScreen, WindowPtr pRootWin)
   xid = FakeClientID(serverClient -> index);
 
   #ifdef TEST
-  fprintf(stderr, "nxagentInitViewportFrame: XID = [%lx]\n", xid);
+  fprintf(stderr, "%s: XID = [%lx]\n", __func__, xid);
   #endif
 
   nxagentViewportFrameLeft = CreateWindow(xid, pRootWin, -NXAGENT_FRAME_WIDTH, 0, NXAGENT_FRAME_WIDTH,
@@ -685,7 +685,7 @@ void nxagentInitViewportFrame(ScreenPtr pScreen, WindowPtr pRootWin)
   if (error != Success)
   {
     #ifdef WARNING
-    fprintf(stderr, "nxagentInitViewportFrame: Error creating nxagentViewportFrameLeft.\n");
+    fprintf(stderr, "%s: Error creating nxagentViewportFrameLeft.\n", __func__);
     #endif
 
     error = Success;
@@ -694,7 +694,7 @@ void nxagentInitViewportFrame(ScreenPtr pScreen, WindowPtr pRootWin)
   xid = FakeClientID(serverClient -> index);
 
   #ifdef TEST
-  fprintf(stderr, "nxagentInitViewportFrame: XID = [%lx]\n", xid);
+  fprintf(stderr, "%s: XID = [%lx]\n", __func__, xid);
   #endif
 
   nxagentViewportFrameRight = CreateWindow(xid, pRootWin, pRootWin -> drawable.width, 0,
@@ -710,7 +710,7 @@ void nxagentInitViewportFrame(ScreenPtr pScreen, WindowPtr pRootWin)
   if (error != Success)
   {
     #ifdef WARNING
-    fprintf(stderr, "nxagentInitViewportFrame: Error creating nxagentViewportFrameRight.\n");
+    fprintf(stderr, "%s: Error creating nxagentViewportFrameRight.\n", __func__);
     #endif
 
     error = Success;
@@ -719,7 +719,7 @@ void nxagentInitViewportFrame(ScreenPtr pScreen, WindowPtr pRootWin)
   xid = FakeClientID(serverClient -> index);
 
   #ifdef TEST
-  fprintf(stderr, "nxagentInitViewportFrame: XID = [%lx]\n", xid);
+  fprintf(stderr, "%s: XID = [%lx]\n", __func__, xid);
   #endif
 
   nxagentViewportFrameAbove = CreateWindow(xid, pRootWin, 0, -NXAGENT_FRAME_WIDTH,
@@ -735,7 +735,7 @@ void nxagentInitViewportFrame(ScreenPtr pScreen, WindowPtr pRootWin)
   if (error != Success)
   {
     #ifdef WARNING
-    fprintf(stderr, "nxagentInitViewportFrame: Error creating nxagentViewportFrameAbove.\n");
+    fprintf(stderr, "%s: Error creating nxagentViewportFrameAbove.\n", __func__);
     #endif
 
     error = Success;
@@ -744,7 +744,7 @@ void nxagentInitViewportFrame(ScreenPtr pScreen, WindowPtr pRootWin)
   xid = FakeClientID(serverClient -> index);
 
   #ifdef TEST
-  fprintf(stderr, "nxagentInitViewportFrame: XID = [%lx]\n", xid);
+  fprintf(stderr, "%s: XID = [%lx]\n", __func__, xid);
   #endif
 
   nxagentViewportFrameBelow = CreateWindow(xid, pRootWin, 0,
@@ -760,7 +760,7 @@ void nxagentInitViewportFrame(ScreenPtr pScreen, WindowPtr pRootWin)
   if (error != Success)
   {
     #ifdef WARNING
-    fprintf(stderr, "nxagentInitViewportFrame: Error creating nxagentViewportFrameBelow.\n");
+    fprintf(stderr, "%s: Error creating nxagentViewportFrameBelow.\n", __func__);
     #endif
   }
 
@@ -857,7 +857,7 @@ Bool nxagentOpenScreen(ScreenPtr pScreen, int argc, char *argv[])
   Bool resetAgentPosition = False;
 
   #ifdef TEST
-  fprintf(stderr, "nxagentOpenScreen: Called for screen index [%d].\n",
+  fprintf(stderr, "%s: Called for screen index [%d].\n", __func__,
               pScreen->myNum);
   #endif
 
@@ -963,7 +963,7 @@ Bool nxagentOpenScreen(ScreenPtr pScreen, int argc, char *argv[])
   if (!nxagentOption(Rootless) && !nxagentWMIsRunning)
   {
     #ifdef TEST
-    fprintf(stderr, "nxagentOpenScreen: Forcing fullscreen mode with no window manager running.\n");
+    fprintf(stderr, "%s: Forcing fullscreen mode with no window manager running.\n", __func__);
     #endif
 
     nxagentChangeOption(Fullscreen, True);
@@ -983,7 +983,7 @@ Bool nxagentOpenScreen(ScreenPtr pScreen, int argc, char *argv[])
                       nxagentXServerGeometryChanged())
   {
     #ifdef TEST
-    fprintf(stderr, "nxagentOpenScreen: Forcing window mode with server geometry changed.\n");
+    fprintf(stderr, "%s: Forcing window mode with server geometry changed.\n", __func__);
     #endif
 
     nxagentChangeOption(Fullscreen, False);
@@ -1288,7 +1288,7 @@ Bool nxagentOpenScreen(ScreenPtr pScreen, int argc, char *argv[])
       if (depthIndex == UNDEFINED)
       {
         #ifdef WARNING
-        fprintf(stderr, "nxagentOpenScreen: WARNING! Can't find a matching depth for visual depth [%d].\n",
+        fprintf(stderr, "%s: WARNING! Can't find a matching depth for visual depth [%d].\n", __func__,
                 nxagentVisuals[i].depth);
         #endif
 
@@ -1345,8 +1345,8 @@ Bool nxagentOpenScreen(ScreenPtr pScreen, int argc, char *argv[])
     }
 
     #ifdef TEST
-    fprintf(stderr, "nxagentOpenScreen: Frame buffer allocated. rootDepth "
-                "[%d] bitsPerPixel [%d] sizeInBytes [%d]\n", rootDepth, bitsPerPixel, sizeInBytes);
+    fprintf(stderr, "%s: Frame buffer allocated. rootDepth "
+                "[%d] bitsPerPixel [%d] sizeInBytes [%d]\n", __func__, rootDepth, bitsPerPixel, sizeInBytes);
     #endif
 
     void * pFrameBufferBits = (char *) malloc(sizeInBytes);
@@ -1359,8 +1359,8 @@ Bool nxagentOpenScreen(ScreenPtr pScreen, int argc, char *argv[])
     }
 
     #if defined(DEBUG) || defined(DEBUG_COLORMAP)
-    fprintf(stderr, "nxagentOpenScreen: Before fbScreenInit numVisuals [%d] numDepths [%d] "
-              "rootDepth [%d] defaultVisual [%lu].\n", numVisuals, numDepths,
+    fprintf(stderr, "%s: Before fbScreenInit numVisuals [%d] numDepths [%d] "
+              "rootDepth [%d] defaultVisual [%lu].\n", __func__, numVisuals, numDepths,
                   rootDepth, (long unsigned int)defaultVisual);
     #endif
 
@@ -1385,8 +1385,8 @@ Bool nxagentOpenScreen(ScreenPtr pScreen, int argc, char *argv[])
     }
 
     #if defined(DEBUG) || defined(DEBUG_COLORMAP)
-    fprintf(stderr, "nxagentOpenScreen: After fbScreenInit numVisuals [%d] numDepths [%d] "
-              "rootDepth [%d] defaultVisual [%lu].\n", numVisuals, numDepths,
+    fprintf(stderr, "%s: After fbScreenInit numVisuals [%d] numDepths [%d] "
+              "rootDepth [%d] defaultVisual [%lu].\n", __func__, numVisuals, numDepths,
                   rootDepth, (long unsigned int)defaultVisual);
     #endif
 
@@ -1396,8 +1396,8 @@ Bool nxagentOpenScreen(ScreenPtr pScreen, int argc, char *argv[])
      */
 
     #if defined(DEBUG) || defined(DEBUG_COLORMAP)
-    fprintf(stderr, "nxagentOpenScreen: Before GLX numVisuals [%d] numDepths [%d] "
-              "rootDepth [%d] defaultVisual [%lu].\n", numVisuals, numDepths,
+    fprintf(stderr, "%s: Before GLX numVisuals [%d] numDepths [%d] "
+              "rootDepth [%d] defaultVisual [%lu].\n", __func__, numVisuals, numDepths,
                   rootDepth, (long unsigned int)defaultVisual);
     #endif
 
@@ -1405,8 +1405,8 @@ Bool nxagentOpenScreen(ScreenPtr pScreen, int argc, char *argv[])
                                 &rootDepth, &defaultVisual);
 
     #if defined(DEBUG) || defined(DEBUG_COLORMAP)
-    fprintf(stderr, "nxagentOpenScreen: After GLX numVisuals [%d] numDepths [%d] "
-              "rootDepth [%d] defaultVisual [%lu].\n", numVisuals, numDepths,
+    fprintf(stderr, "%s: After GLX numVisuals [%d] numDepths [%d] "
+              "rootDepth [%d] defaultVisual [%lu].\n", __func__, numVisuals, numDepths,
                   rootDepth, (long unsigned int)defaultVisual);
     #endif
 
@@ -1435,7 +1435,7 @@ Bool nxagentOpenScreen(ScreenPtr pScreen, int argc, char *argv[])
 
     #ifdef WATCH
 
-    fprintf(stderr, "nxagentOpenScreen: Watchpoint 7.\n");
+    fprintf(stderr, "%s: Watchpoint 7.\n", __func__);
 
 /*
 Reply   Total	Cached	Bits In			Bits Out		Bits/Reply	  Ratio
@@ -1620,7 +1620,7 @@ N/A
     if (enableBackingStore)
     {
       #ifdef TEST
-      fprintf(stderr, "nxagentOpenScreen: Going to initialize backing store.\n");
+      fprintf(stderr, "%s: Going to initialize backing store.\n", __func__);
       #endif
 
       pScreen -> BackingStoreFuncs.SaveAreas = nxagentSaveAreas;
@@ -1752,7 +1752,7 @@ N/A
        */
 
       #ifdef TEST
-      fprintf(stderr, "nxagentOpenScreen: Going to create new default window.\n");
+      fprintf(stderr, "%s: Going to create new default window.\n", __func__);
       #endif
 
       nxagentDefaultWindows[pScreen->myNum] =
@@ -1824,7 +1824,7 @@ N/A
 #endif
       {
         #ifdef TEST
-        fprintf(stderr, "nxagentOpenScreen: Setting WM_CLASS and WM_NAME for window with id [%ld].\n",
+        fprintf(stderr, "%s: Setting WM_CLASS and WM_NAME for window with id [%ld].\n", __func__,
                 (long int)nxagentDefaultWindows[pScreen->myNum]);
         #endif
 
@@ -1971,7 +1971,7 @@ N/A
     if (!nxagentWMIsRunning && !nxagentOption(Fullscreen))
     {
       #ifdef TEST
-      fprintf(stderr, "nxagentOpenScreen: No window manager, we call XGrabKeyboard.\n");
+      fprintf(stderr, "%s: No window manager, we call XGrabKeyboard.\n", __func__);
       #endif
 
       XGrabKeyboard(nxagentDisplay, RootWindow (nxagentDisplay, 0), True, GrabModeAsync,
@@ -1982,7 +1982,7 @@ N/A
   if (!nxagentCreateDefaultColormap(pScreen))
   {
     #ifdef PANIC
-    fprintf(stderr, "nxagentOpenScreen: Failed to create default colormap for screen.\n");
+    fprintf(stderr, "%s: Failed to create default colormap for screen.\n", __func__);
     #endif
 
     return False;
@@ -1999,7 +1999,7 @@ N/A
     XlibAtom deleteWMatom = nxagentAtoms[2];  /* WM_DELETE_WINDOW */
 
     #ifdef TEST
-    fprintf(stderr, "nxagentOpenScreen: Found WM, delete window atom [%ld].\n",
+    fprintf(stderr, "%s: Found WM, delete window atom [%ld].\n", __func__,
                 deleteWMatom);
     #endif
 
@@ -2041,7 +2041,7 @@ N/A
     if (nxagentOption(Fullscreen))
     {
       #ifdef TEST
-      fprintf(stderr, "nxagentOpenScreen: WARNING! Forcing propagation of device control changes.\n");
+      fprintf(stderr, "%s: WARNING! Forcing propagation of device control changes.\n", __func__);
       #endif
 
       nxagentChangeOption(DeviceControl, True);
@@ -2102,7 +2102,7 @@ N/A
 
   #ifdef WATCH
 
-  fprintf(stderr, "nxagentOpenScreen: Watchpoint 8.\n");
+  fprintf(stderr, "%s: Watchpoint 8.\n", __func__);
 
 /*
 Reply   Total	Cached	Bits In			Bits Out		Bits/Reply	  Ratio
@@ -2123,7 +2123,7 @@ Reply   Total	Cached	Bits In			Bits Out		Bits/Reply	  Ratio
 Bool nxagentCloseScreen(ScreenPtr pScreen)
 {
   #ifdef DEBUG
-  fprintf(stderr, "running nxagentCloseScreen()\n");
+  fprintf(stderr, "running %s()\n", __func__);
   #endif
 
   /*
@@ -2575,7 +2575,7 @@ int nxagentShadowInit(ScreenPtr pScreen, WindowPtr pWin)
   }
 
   #ifdef DEBUG
-  fprintf(stderr, "nxagentShadowInit: Setting the master uid [%d].\n",
+  fprintf(stderr, "%s: Setting the master uid [%d].\n", __func__,
               nxagentShadowUid);
   #endif
 
@@ -2593,8 +2593,8 @@ int nxagentShadowInit(ScreenPtr pScreen, WindowPtr pWin)
                          (void *) &nxagentShadowDisplay) != 1)
   {
     #ifdef PANIC
-    fprintf(stderr, "nxagentShadowInit: PANIC! Failed to initialize shadow "
-                "display [%s].\n", nxagentShadowDisplayName);
+    fprintf(stderr, "%s: PANIC! Failed to initialize shadow "
+                "display [%s].\n", __func__, nxagentShadowDisplayName);
     #endif
 
     return -1;
@@ -2614,7 +2614,7 @@ int nxagentShadowInit(ScreenPtr pScreen, WindowPtr pWin)
                                     &nxagentShadowHeight, &nxagentMasterDepth) == 0)
   {
     #ifdef PANIC
-    fprintf(stderr, "nxagentShadowInit: PANIC! Failed to add display [%s].\n",
+    fprintf(stderr, "%s: PANIC! Failed to add display [%s].\n", __func__,
                 nxagentDisplayName);
     #endif
 
@@ -2636,8 +2636,8 @@ int nxagentShadowInit(ScreenPtr pScreen, WindowPtr pWin)
           class != TrueColor)
   {
     #ifdef PANIC
-    fprintf(stderr, "nxagentShadowInit: PANIC! The visual class of the remote "
-                "X server is not TrueColor.\n");
+    fprintf(stderr, "%s: PANIC! The visual class of the remote "
+                "X server is not TrueColor.\n", __func__);
     #endif
 
     return -1;
@@ -2660,9 +2660,9 @@ int nxagentShadowInit(ScreenPtr pScreen, WindowPtr pWin)
       default:          { className = "";            break; }
     }
 
-    fprintf(stderr, "nxagentShadowInit: PANIC! Cannot shadow the display. "
+    fprintf(stderr, "%s: PANIC! Cannot shadow the display. "
                 "%s visual class is not supported. Only TrueColor visuals "
-                    "are supported.\n", className);
+                    "are supported.\n", __func__, className);
 
     #endif /* #endif PANIC */
 
@@ -2683,8 +2683,8 @@ int nxagentShadowInit(ScreenPtr pScreen, WindowPtr pWin)
       else if (nxagentShadowDepth == 8)
       {
         #ifdef PANIC
-        fprintf(stderr, "nxagentShadowInit: PANIC! Unable to shadow a %d bit "
-                    "display with a 8 bit screen depth.\n", nxagentMasterDepth);
+        fprintf(stderr, "%s: PANIC! Unable to shadow a %d bit "
+                    "display with a 8 bit screen depth.\n", __func__, nxagentMasterDepth);
         #endif
 
         return -1;
@@ -2703,8 +2703,8 @@ int nxagentShadowInit(ScreenPtr pScreen, WindowPtr pWin)
       else if (nxagentShadowDepth == 8)
       {
         #ifdef PANIC
-        fprintf(stderr, "nxagentShadowInit: PANIC! Unable to shadow a 16 bit "
-                    "display with a 8 bit screen depth.\n");
+        fprintf(stderr, "%s: PANIC! Unable to shadow a 16 bit "
+                    "display with a 8 bit screen depth.\n", __func__);
         #endif
 
         return -1;
@@ -2719,8 +2719,8 @@ int nxagentShadowInit(ScreenPtr pScreen, WindowPtr pWin)
       if (nxagentShadowDepth != 8)
       {
         #ifdef PANIC
-        fprintf(stderr, "nxagentShadowInit: PANIC! Unable to shadow a 8 bit "
-                    "display with a %d bit screen depth.\n", nxagentShadowDepth);
+        fprintf(stderr, "%s: PANIC! Unable to shadow a 8 bit "
+                    "display with a %d bit screen depth.\n", __func__, nxagentShadowDepth);
         #endif
 
         return -1;
@@ -2733,7 +2733,7 @@ int nxagentShadowInit(ScreenPtr pScreen, WindowPtr pWin)
     default:
     {
       #ifdef PANIC
-      fprintf(stderr, "nxagentShadowInit: PANIC! The depth is not 32, 24, 16 or 8 bit.\n");
+      fprintf(stderr, "%s: PANIC! The depth is not 32, 24, 16 or 8 bit.\n", __func__);
       #endif
 
       return -1;
@@ -2758,8 +2758,8 @@ int nxagentShadowInit(ScreenPtr pScreen, WindowPtr pWin)
   nxagentShadowXConnectionNumber = XConnectionNumber(nxagentShadowDisplay);
 
   #ifdef TEST
-  fprintf(stderr, "nxagentShadowInit: Adding the X connection [%d] "
-              "to the device set.\n", nxagentShadowXConnectionNumber);
+  fprintf(stderr, "%s: Adding the X connection [%d] "
+              "to the device set.\n", __func__, nxagentShadowXConnectionNumber);
   #endif
 
   SetNotifyFd(nxagentShadowXConnectionNumber, nxagentNotifyConnection, X_NOTIFY_READ, NULL);
@@ -2817,7 +2817,7 @@ int nxagentShadowCreateMainWindow(ScreenPtr pScreen, WindowPtr pWin, int width, 
   NXShadowUpdateBuffer((void *)&nxagentShadowBuffer);
 
   #ifdef TEST
-  fprintf(stderr, "nxagentShadowCreateMainWindow: Update frame buffer [%p].\n", nxagentShadowBuffer);
+  fprintf(stderr, "%s: Update frame buffer [%p].\n", __func__, nxagentShadowBuffer);
   #endif
 
   nxagentShadowSetWindowOptions();
@@ -2840,16 +2840,16 @@ int nxagentShadowCreateMainWindow(ScreenPtr pScreen, WindowPtr pWin, int width, 
     nxagentShadowPixmapPtr -> drawable.id = accessPixmapID;
 
     #ifdef TEST
-    fprintf(stderr, "nxagentShadowCreateMainWindow: nxagentShadowPixmapPtr [%p] PixmapM -> drawable.id [%u].\n",
+    fprintf(stderr, "%s: nxagentShadowPixmapPtr [%p] PixmapM -> drawable.id [%u].\n", __func__,
                 (void *)nxagentShadowPixmapPtr, nxagentShadowPixmapPtr -> drawable.id);
-    fprintf(stderr, "nxagentShadowCreateMainWindow: Create pixmap with width [%d] height [%d] depth [%d].\n",
+    fprintf(stderr, "%s: Create pixmap with width [%d] height [%d] depth [%d].\n", __func__,
                 nxagentShadowWidth, nxagentShadowHeight, (int)nxagentShadowDepth);
     #endif
   }
   else
   {
     #ifdef PANIC
-    fprintf(stderr, "nxagentShadowCreateMainWindow: PANIC! Failed to create pixmap with width [%d] height [%d] depth [%d].\n",
+    fprintf(stderr, "%s: PANIC! Failed to create pixmap with width [%d] height [%d] depth [%d].\n", __func__,
                 nxagentShadowWidth, nxagentShadowHeight, (int)nxagentShadowDepth);
     #endif
   }
@@ -2876,14 +2876,14 @@ int nxagentShadowCreateMainWindow(ScreenPtr pScreen, WindowPtr pWin, int width, 
   if (nxagentShadowGCPtr)
   {
     #ifdef TEST
-    fprintf(stderr, "nxagentShadowCreateMainWindow: Created GC with pGC[%p]\n", (void *) nxagentShadowGCPtr);
+    fprintf(stderr, "%s: Created GC with pGC[%p]\n", __func__, (void *) nxagentShadowGCPtr);
     #endif
     ValidateGC((DrawablePtr)nxagentShadowPixmapPtr, nxagentShadowGCPtr);
   }
   else
   {
     #ifdef PANIC
-    fprintf(stderr, "nxagentShadowCreateMainWindow: PANIC! Failed to create GC.");
+    fprintf(stderr, "%s: PANIC! Failed to create GC.", __func__);
     #endif
   }
 
@@ -2916,11 +2916,11 @@ int nxagentShadowCreateMainWindow(ScreenPtr pScreen, WindowPtr pWin, int width, 
   if (nxagentShadowWindowPtr && !error)
   {
     #ifdef TEST
-    fprintf(stderr, "nxagentShadowCreateMainWindow: Create window with nxagentShadowWindowPtr [%p]"
-                "nxagentShadowWindowPtr -> drawable.id [%u].\n", (void *) nxagentShadowWindowPtr,
+    fprintf(stderr, "%s: Create window with nxagentShadowWindowPtr [%p]"
+                "nxagentShadowWindowPtr -> drawable.id [%u].\n", __func__, (void *) nxagentShadowWindowPtr,
                      nxagentShadowWindowPtr -> drawable.id);
 
-    fprintf(stderr, "nxagentShadowCreateMainWindow: parent nxagentShadowWindowPtr [%p] parent -> drawable.id [%u].\n",
+    fprintf(stderr, "%s: parent nxagentShadowWindowPtr [%p] parent -> drawable.id [%u].\n", __func__,
                 (void *)nxagentShadowWindowPtr->parent, nxagentShadowWindowPtr -> parent -> drawable.id);
 
     #endif
@@ -2930,7 +2930,7 @@ int nxagentShadowCreateMainWindow(ScreenPtr pScreen, WindowPtr pWin, int width, 
   else
   {
     #ifdef PANIC
-    fprintf(stderr, "nxagentShadowCreateMainWindow: PANIC! Failed to create window.\n");
+    fprintf(stderr, "%s: PANIC! Failed to create window.\n", __func__);
     #endif
   }
 
@@ -2945,7 +2945,7 @@ int nxagentShadowCreateMainWindow(ScreenPtr pScreen, WindowPtr pWin, int width, 
   XConfigureWindow(nxagentDisplay, nxagentWindow(pWin), mask, &changes);
 
   #ifdef TEST
-  fprintf(stderr, "nxagentShadowCreateMainWindow: Completed mapping of Access window.\n");
+  fprintf(stderr, "%s: Completed mapping of Access window.\n", __func__);
   #endif
 
   return 0;
@@ -2994,7 +2994,7 @@ int nxagentShadowPoll(PixmapPtr shadowPixmapPtr, GCPtr shadowGCPtr,
     BoxRec *pBox = (BoxRec *)ptBox;
 
     #ifdef TEST
-    fprintf(stderr, "nxagentShadowPoll: nRects[%ld], pBox[%p] depth[%d].\n", numRects, (void *) pBox, shadowDepth);
+    fprintf(stderr, "%s: nRects[%ld], pBox[%p] depth[%d].\n", __func__, numRects, (void *) pBox, shadowDepth);
     #endif
 
     for (int n = 0; n < numRects; n++)
@@ -3023,7 +3023,7 @@ int nxagentShadowPoll(PixmapPtr shadowPixmapPtr, GCPtr shadowGCPtr,
       int line = PixmapBytePad(width, nxagentMasterDepth);
 
       #ifdef DEBUG
-      fprintf(stderr, "nxagentShadowPoll: Rectangle Number[%d] - x[%d]y[%d]W[%u]H[%u].\n", n+1, x, y, width, height);
+      fprintf(stderr, "%s: Rectangle Number[%d] - x[%d]y[%d]W[%u]H[%u].\n", __func__, n+1, x, y, width, height);
       #endif
 
       unsigned int length = nxagentImageLength(width, height, ZPixmap, 0, nxagentMasterDepth);
@@ -3035,7 +3035,7 @@ int nxagentShadowPoll(PixmapPtr shadowPixmapPtr, GCPtr shadowGCPtr,
       if (tBuffer == NULL)
       {
         #ifdef PANIC
-        fprintf(stderr, "nxagentShadowPoll: malloc failed.\n");
+        fprintf(stderr, "%s: malloc failed.\n", __func__);
         #endif
 
         return -1;
@@ -3083,7 +3083,7 @@ int nxagentShadowPoll(PixmapPtr shadowPixmapPtr, GCPtr shadowGCPtr,
   else if (result == -1)
   {
     #ifdef TEST
-    fprintf(stderr, "nxagentShadowPoll: polling failed!\n");
+    fprintf(stderr, "%s: polling failed!\n", __func__);
     #endif
 
     usleep(50 * 1000);
@@ -3117,14 +3117,14 @@ void nxagentShadowAdaptDepth(unsigned int width, unsigned int height,
   if (pVisual == NULL)
   {
     #ifdef WARNING
-    fprintf(stderr, "nxagentCorrectDepthShadow: WARNING! Visual not found. Using default visual.\n");
+    fprintf(stderr, "%s: WARNING! Visual not found. Using default visual.\n", __func__);
     #endif
 
     pVisual = nxagentVisuals[nxagentDefaultVisualIndex].visual;
   }
 
   #ifdef TEST
-  fprintf(stderr, "nxagentCorrectDepthShadow: Shadow redMask [%lu] greenMask[%lu] blueMask[%lu].\n",
+  fprintf(stderr, "%s: Shadow redMask [%lu] greenMask[%lu] blueMask[%lu].\n", __func__,
              pVisual -> red_mask, pVisual -> green_mask, pVisual -> blue_mask);
   #endif
 
@@ -3133,7 +3133,7 @@ void nxagentShadowAdaptDepth(unsigned int width, unsigned int height,
   unsigned long blueMask = nxagentShadowDisplay -> screens[0].root_visual[0].blue_mask;
 
   #ifdef TEST
-  fprintf(stderr, "nxagentCorrectDepthShadow: Master redMask [%lu] greenMask[%lu] blueMask[%lu].\n",
+  fprintf(stderr, "%s: Master redMask [%lu] greenMask[%lu] blueMask[%lu].\n", __func__,
               redMask, greenMask, blueMask);
   #endif
 
@@ -3147,7 +3147,7 @@ void nxagentShadowAdaptDepth(unsigned int width, unsigned int height,
       unsigned int pad = lineMaster - nxagentBppMaster * width;
 
       #ifdef TEST
-      fprintf(stderr, "nxagentCorrectDepthShadow: line [%d] width[%d] pad[%d].\n", lineMaster, width, pad);
+      fprintf(stderr, "%s: line [%d] width[%d] pad[%d].\n", __func__, lineMaster, width, pad);
       #endif
 
       while (height > 0)
@@ -3230,7 +3230,7 @@ void nxagentShadowAdaptDepth(unsigned int width, unsigned int height,
       unsigned int pad = lineShadow - nxagentBppShadow * width;
 
       #ifdef TEST
-      fprintf(stderr, "nxagentCorrectDepthShadow: line [%d] width[%d] pad[%d].\n", lineShadow, width, pad);
+      fprintf(stderr, "%s: line [%d] width[%d] pad[%d].\n", __func__, lineShadow, width, pad);
       #endif
 
       while (height > 0)
@@ -3351,7 +3351,7 @@ FIXME: The port information is not used at the moment and produces a
           ulReturnItems > 0 && pszReturnData != NULL)
   {
     #ifdef TEST
-    fprintf(stderr, "nxagentPropagateArtsdProperties: Got [%ld] elements of format [%d] with [%ld] bytes left.\n",
+    fprintf(stderr, "%s: Got [%ld] elements of format [%d] with [%ld] bytes left.\n", __func__,
                 ulReturnItems, iReturnFormat, ulReturnBytesLeft);
     #endif
 
@@ -3359,7 +3359,7 @@ FIXME: The port information is not used at the moment and produces a
 
     if (ulReturnBytesLeft > 0)
     {
-      fprintf(stderr, "nxagentPropagateArtsdProperties: WARNING! Could not get the whole ARTSD property data.\n");
+      fprintf(stderr, "%s: WARNING! Could not get the whole ARTSD property data.\n", __func__);
     }
 
     #endif
@@ -3482,7 +3482,7 @@ Bool nxagentReconnectScreen(void *p0)
   PixmapPtr pPixmap = (PixmapPtr)nxagentDefaultScreen->devPrivate;
 
 #if defined(NXAGENT_RECONNECT_DEBUG) || defined(NXAGENT_RECONNECT_SCREEN_DEBUG)
-  fprintf(stderr, "nxagentReconnectScreen\n");
+  fprintf(stderr, "%s\n", __func__);
 #endif
 
   if (!nxagentOpenScreen(nxagentDefaultScreen, nxagentArgc, nxagentArgv))
@@ -3496,7 +3496,7 @@ Bool nxagentReconnectScreen(void *p0)
                                          pPixmap -> drawable.height,
                                          pPixmap -> drawable.depth);
 #ifdef NXAGENT_RECONNECT_SCREEN_DEBUG
-  fprintf(stderr, "nxagentReconnectScreen: recreated %p - ID %lx\n",
+  fprintf(stderr, "%s: recreated %p - ID %lx\n", __func__,
                    pPixmap,
                    nxagentPixmap( pPixmap ));
 #endif
@@ -3548,7 +3548,7 @@ Bool intersect(int ax1, int ay1, unsigned int aw, unsigned int ah,
     if (ax2 < bx1 || bx2 < ax1 || ay2 < by1 || by2 < ay1) {
 
         #ifdef DEBUG
-        fprintf(stderr, "intersect: the given rectangles do not intersect at all\n");
+        fprintf(stderr, "%s: the given rectangles do not intersect at all\n", __func__);
         #endif
 
         return FALSE;
@@ -3568,7 +3568,7 @@ Bool intersect(int ax1, int ay1, unsigned int aw, unsigned int ah,
     if (iw <= 0 || ih <= 0) {
 
         #ifdef DEBUG
-        fprintf(stderr, "intersect: intersection rectangle not feasible\n");
+        fprintf(stderr, "%s: intersection rectangle not feasible\n", __func__);
         #endif
 
         return FALSE;
@@ -3579,7 +3579,7 @@ Bool intersect(int ax1, int ay1, unsigned int aw, unsigned int ah,
     *h = ih;
 
     #ifdef DEBUG
-    fprintf(stderr, "intersect: intersection is: ([%d],[%d]) [ %d x %d ]\n", *x, *y, *w, *h);
+    fprintf(stderr, "%s: intersection is: ([%d],[%d]) [ %d x %d ]\n", __func__, *x, *y, *w, *h);
     #endif
 
     return TRUE;
@@ -3595,9 +3595,9 @@ Bool intersect_bb(int ax1, int ay1, unsigned int aw, unsigned int ah,
 {
 
   #ifdef DEBUG
-  fprintf(stderr, "intersect_bb: session window: ([%d],[%d]) [ %d x %d ]\n", ax1, ay1, aw, ah);
-  fprintf(stderr, "intersect_bb: crtc: ([%d],[%d]) [ %d x %d ]\n", bx1, by1, bw, bh);
-  fprintf(stderr, "intersect_bb: bounding box: ([%d],[%d]) [ %d x %d ]\n", bbx1, bby1, bbx2-bbx1, bby2-bby1);
+  fprintf(stderr, "%s: session window: ([%d],[%d]) [ %d x %d ]\n", __func__, ax1, ay1, aw, ah);
+  fprintf(stderr, "%s: crtc: ([%d],[%d]) [ %d x %d ]\n", __func__, bx1, by1, bw, bh);
+  fprintf(stderr, "%s: bounding box: ([%d],[%d]) [ %d x %d ]\n", __func__, bbx1, bby1, bbx2-bbx1, bby2-bby1);
   #endif
 
   Bool result = intersect(ax1, ay1, aw, ah, bx1, by1, bw, bh, x, y, w, h);
@@ -3615,7 +3615,7 @@ Bool intersect_bb(int ax1, int ay1, unsigned int aw, unsigned int ah,
         *x  = 0;
 
         #ifdef DEBUG
-        fprintf(stderr, "intersect_bb: session box is outside-left of the bounding box - width gets adapted to [%d]\n", *w);
+        fprintf(stderr, "%s: session box is outside-left of the bounding box - width gets adapted to [%d]\n", __func__, *w);
         #endif
     }
 
@@ -3625,7 +3625,7 @@ Bool intersect_bb(int ax1, int ay1, unsigned int aw, unsigned int ah,
         *w += ax1 + aw - bbx2;
 
         #ifdef DEBUG
-        fprintf(stderr, "intersect_bb: session box is outside-right of the bounding box - width gets adapted to [%d]\n", *w);
+        fprintf(stderr, "%s: session box is outside-right of the bounding box - width gets adapted to [%d]\n", __func__, *w);
         #endif
     }
 
@@ -3640,7 +3640,7 @@ Bool intersect_bb(int ax1, int ay1, unsigned int aw, unsigned int ah,
         *y  = 0;
 
         #ifdef DEBUG
-        fprintf(stderr, "intersect_bb: session box is outside-above of the bounding box - height gets adapted to [%d]\n", *h);
+        fprintf(stderr, "%s: session box is outside-above of the bounding box - height gets adapted to [%d]\n", __func__, *h);
         #endif
     }
 
@@ -3650,7 +3650,7 @@ Bool intersect_bb(int ax1, int ay1, unsigned int aw, unsigned int ah,
         *h += ay1 + ah - bby2;
 
         #ifdef DEBUG
-        fprintf(stderr, "intersect_bb: session box is outside-below of the bounding box - height gets adapted to [%d]\n", *h);
+        fprintf(stderr, "%s: session box is outside-below of the bounding box - height gets adapted to [%d]\n", __func__, *h);
         #endif
     }
   }
@@ -3738,11 +3738,11 @@ void nxagentAdjustCustomMode(ScreenPtr pScreen)
 int nxagentChangeScreenConfig(int screen, int width, int height, Bool doresize)
 {
   #ifdef DEBUG
-  fprintf(stderr, "nxagentChangeScreenConfig: called for screen [%d], width [%d] height [%d] doresize [%d]\n", screen, width, height, doresize);
+  fprintf(stderr, "%s: called for screen [%d], width [%d] height [%d] doresize [%d]\n", __func__, screen, width, height, doresize);
   #endif
 
   #ifdef TEST
-  fprintf(stderr, "nxagentChangeScreenConfig: screenInfo.screens[%d]->root [%p]\n", screen, (void *) screenInfo.screens[screen]);
+  fprintf(stderr, "%s: screenInfo.screens[%d]->root [%p]\n", __func__, screen, (void *) screenInfo.screens[screen]);
   #endif
   if (screenInfo.screens[screen]->root == NULL)
   {
@@ -3753,15 +3753,15 @@ int nxagentChangeScreenConfig(int screen, int width, int height, Bool doresize)
 
   #ifdef DEBUG
   if (nxagentGrabServerInfo.grabstate == SERVER_GRABBED)
-    fprintf(stderr, "nxagentChangeScreenConfig: grabstate [SERVER_GRABBED], client [%p]\n", (void *) nxagentGrabServerInfo.client);
+    fprintf(stderr, "%s: grabstate [SERVER_GRABBED], client [%p]\n", __func__, (void *) nxagentGrabServerInfo.client);
   else if (nxagentGrabServerInfo.grabstate == SERVER_UNGRABBED)
-    fprintf(stderr, "nxagentChangeScreenConfig: grabstate [SERVER_UNGRABBED], client [%p]\n", (void *) nxagentGrabServerInfo.client);
+    fprintf(stderr, "%s: grabstate [SERVER_UNGRABBED], client [%p]\n", __func__, (void *) nxagentGrabServerInfo.client);
   else if (nxagentGrabServerInfo.grabstate == CLIENT_PERVIOUS)
-    fprintf(stderr, "nxagentChangeScreenConfig: grabstate [CLIENT_PERVIOUS], client [%p]\n", (void *) nxagentGrabServerInfo.client);
+    fprintf(stderr, "%s: grabstate [CLIENT_PERVIOUS], client [%p]\n", __func__, (void *) nxagentGrabServerInfo.client);
   else if (nxagentGrabServerInfo.grabstate == CLIENT_IMPERVIOUS)
-    fprintf(stderr, "nxagentChangeScreenConfig: grabstate [CLIENT_IMPERVIOUS], client [%p]\n", (void *) nxagentGrabServerInfo.client);
+    fprintf(stderr, "%s: grabstate [CLIENT_IMPERVIOUS], client [%p]\n", __func__, (void *) nxagentGrabServerInfo.client);
   else
-    fprintf(stderr, "nxagentChangeScreenConfig: grabstate [UNKNOWN], client [%p]\n", (void *) nxagentGrabServerInfo.client);
+    fprintf(stderr, "%s: grabstate [UNKNOWN], client [%p]\n", __func__, (void *) nxagentGrabServerInfo.client);
   #endif
 
   if (nxagentGrabServerInfo.grabstate == SERVER_GRABBED)
@@ -3774,7 +3774,7 @@ int nxagentChangeScreenConfig(int screen, int width, int height, Bool doresize)
      */
 
     #ifdef TEST
-    fprintf(stderr, "nxagentChangeScreenConfig: Cancel with grabbed server (grab held by [%p]).\n", (void *) nxagentGrabServerInfo.client);
+    fprintf(stderr, "%s: Cancel with grabbed server (grab held by [%p]).\n", __func__, (void *) nxagentGrabServerInfo.client);
     #endif
 
     return 0;
@@ -3783,7 +3783,7 @@ int nxagentChangeScreenConfig(int screen, int width, int height, Bool doresize)
   ScreenPtr pScreen = screenInfo.screens[screen] -> root -> drawable.pScreen;
 
   #ifdef TEST
-  fprintf(stderr, "nxagentChangeScreenConfig: Changing config to %d x %d\n", width, height);
+  fprintf(stderr, "%s: Changing config to %d x %d\n", __func__, width, height);
   #endif
 
   int r = nxagentResizeScreen(pScreen, width, height, 0, 0, doresize);
@@ -3805,8 +3805,8 @@ int nxagentChangeScreenConfig(int screen, int width, int height, Bool doresize)
   }
 
   #ifdef DEBUG
-  fprintf(stderr, "nxagentChangeScreenConfig: current geometry: %d,%d %dx%d\n", nxagentOption(X), nxagentOption(Y), nxagentOption(Width), nxagentOption(Height));
-  fprintf(stderr, "nxagentChangeScreenConfig: returning [%d]\n", r);
+  fprintf(stderr, "%s: current geometry: %d,%d %dx%d\n", __func__, nxagentOption(X), nxagentOption(Y), nxagentOption(Width), nxagentOption(Height));
+  fprintf(stderr, "%s: returning [%d]\n", __func__, r);
   #endif
 
   return r;
@@ -3825,14 +3825,14 @@ void nxagentDropOutput(RROutputPtr o)
       if (c->outputs[i] == o)
       {
         #ifdef DEBUG
-        fprintf(stderr, "nxagentDropOutput: output [%s] is in use by crtc [%p], removing it from there\n", o->name, c);
+        fprintf(stderr, "%s: output [%s] is in use by crtc [%p], removing it from there\n", __func__, o->name, c);
         #endif
         RRCrtcSet(c, NULL, 0, 0, RR_Rotate_0, 0, NULL);
       }
     }
   }
   #ifdef DEBUG
-  fprintf(stderr, "nxagentDropOutput: destroying output [%s]\n", o->name);
+  fprintf(stderr, "%s: destroying output [%s]\n", __func__, o->name);
   #endif
   RROutputDestroy(o);
 }
@@ -3853,16 +3853,16 @@ int nxagentAdjustRandRXinerama(ScreenPtr pScreen)
     if (number)
     {
       #ifdef DEBUG
-      fprintf(stderr, "nxagentAdjustRandRXinerama: XineramaQueryScreens() returned [%d] screens:\n", number);
+      fprintf(stderr, "%s: XineramaQueryScreens() returned [%d] screens:\n", __func__, number);
       for (int i = 0; i < number; i++) {
-        fprintf(stderr, "nxagentAdjustRandRXinerama:   screen_number [%d] x_org [%d] y_org [%d] width [%d] height [%d]\n", screeninfo[i].screen_number, screeninfo[i].x_org, screeninfo[i].y_org, screeninfo[i].width, screeninfo[i].height);
+        fprintf(stderr, "%s:   screen_number [%d] x_org [%d] y_org [%d] width [%d] height [%d]\n", __func__, screeninfo[i].screen_number, screeninfo[i].x_org, screeninfo[i].y_org, screeninfo[i].width, screeninfo[i].height);
       }
       #endif
     }
     else
     {
       #ifdef DEBUG
-      fprintf(stderr, "nxagentAdjustRandRXinerama: XineramaQueryScreens() failed - continuing without Xinerama\n");
+      fprintf(stderr, "%s: XineramaQueryScreens() failed - continuing without Xinerama\n", __func__);
       #endif
     }
 
@@ -3877,7 +3877,7 @@ int nxagentAdjustRandRXinerama(ScreenPtr pScreen)
     if (number == 0)
     {
       #ifdef DEBUG
-      fprintf(stderr, "nxagentAdjustRandRXinerama: faking xinerama\n");
+      fprintf(stderr, "%s: faking xinerama\n", __func__);
       #endif
       number = 1;
 
@@ -3897,7 +3897,7 @@ int nxagentAdjustRandRXinerama(ScreenPtr pScreen)
     }
 
 #ifdef DEBUG
-    fprintf(stderr, "nxagentAdjustRandRXinerama: numCrtcs [%d], numOutputs [%d]\n", pScrPriv->numCrtcs, pScrPriv->numOutputs);
+    fprintf(stderr, "%s: numCrtcs [%d], numOutputs [%d]\n", __func__, pScrPriv->numCrtcs, pScrPriv->numOutputs);
     {
       /*
        * Convert old RANDR 1.0 data (if any) to current structure. This
@@ -3907,7 +3907,7 @@ int nxagentAdjustRandRXinerama(ScreenPtr pScreen)
        */
       Bool rrgetinfo = RRGetInfo(pScreen, FALSE);
 
-      fprintf(stderr, "nxagentAdjustRandRXinerama: RRGetInfo returned [%d]\n", rrgetinfo);
+      fprintf(stderr, "%s: RRGetInfo returned [%d]\n", __func__, rrgetinfo);
     }
 #else
     /* we are not interested in the return code */
@@ -3928,12 +3928,12 @@ int nxagentAdjustRandRXinerama(ScreenPtr pScreen)
       bby1 = min(bby1, screeninfo[i].y_org);
     }
     #ifdef DEBUG
-    fprintf(stderr, "nxagentAdjustRandRXinerama: bounding box: left [%d] right [%d] top [%d] bottom [%d]\n", bbx1, bbx2, bby1, bby2);
+    fprintf(stderr, "%s: bounding box: left [%d] right [%d] top [%d] bottom [%d]\n", __func__, bbx1, bbx2, bby1, bby2);
     #endif
 #endif
 
     #ifdef DEBUG
-    fprintf(stderr, "nxagentAdjustRandRXinerama: numCrtcs [%d], numOutputs [%d]\n", pScrPriv->numCrtcs, pScrPriv->numOutputs);
+    fprintf(stderr, "%s: numCrtcs [%d], numOutputs [%d]\n", __func__, pScrPriv->numCrtcs, pScrPriv->numOutputs);
     #endif
 
     /* adjust the number of CRTCs to match the number of reported
@@ -3943,7 +3943,7 @@ int nxagentAdjustRandRXinerama(ScreenPtr pScreen)
       if (number < pScrPriv->numCrtcs)
       {
         #ifdef DEBUG
-        fprintf(stderr, "nxagentAdjustRandRXinerama: destroying crtc\n");
+        fprintf(stderr, "%s: destroying crtc\n", __func__);
         #endif
         /* first reset the crtc to free possible outputs, then destroy the crtc */
         RRCrtcSet(pScrPriv->crtcs[pScrPriv->numCrtcs - 1], NULL, 0, 0, RR_Rotate_0, 0, NULL);
@@ -3952,14 +3952,14 @@ int nxagentAdjustRandRXinerama(ScreenPtr pScreen)
       else
       {
         #ifdef DEBUG
-        fprintf(stderr, "nxagentAdjustRandRXinerama: adding crtc\n");
+        fprintf(stderr, "%s: adding crtc\n", __func__);
         #endif
         RRCrtcCreate(pScreen, NULL);
       }
     }
 
     #ifdef DEBUG
-    fprintf(stderr, "nxagentAdjustRandRXinerama: numCrtcs [%d], numOutputs [%d]\n", pScrPriv->numCrtcs, pScrPriv->numOutputs);
+    fprintf(stderr, "%s: numCrtcs [%d], numOutputs [%d]\n", __func__, pScrPriv->numCrtcs, pScrPriv->numOutputs);
     #endif
 
     /* set gamma. Currently the only reason for doing this is
@@ -3999,7 +3999,7 @@ int nxagentAdjustRandRXinerama(ScreenPtr pScreen)
         RROutputSetConnection(output, RR_Disconnected);
         */
         #ifdef DEBUG
-        fprintf(stderr, "nxagentAdjustRandRXinerama: created new output [%s]\n", name);
+        fprintf(stderr, "%s: created new output [%s]\n", __func__, name);
         #endif
       }
       else
@@ -4007,7 +4007,7 @@ int nxagentAdjustRandRXinerama(ScreenPtr pScreen)
         output = pScrPriv->outputs[i];
       }
       #ifdef DEBUG
-      fprintf(stderr, "nxagentAdjustRandRXinerama: adjusting output [%s]\n", output->name);
+      fprintf(stderr, "%s: adjusting output [%s]\n", __func__, output->name);
       #endif
       RROutputSetCrtcs(output, &(pScrPriv->crtcs[i]), 1);
       /* FIXME: Isn't there a function for setting this? */
@@ -4046,11 +4046,11 @@ int nxagentAdjustRandRXinerama(ScreenPtr pScreen)
       #ifdef DEBUG
       if (prevmode)
       {
-        fprintf(stderr, "nxagentAdjustRandRXinerama: output [%d] name [%s]: prevmode [%s] ([%p]) refcnt [%d]\n", i, pScrPriv->outputs[i]->name, prevmode->name, (void *)prevmode, prevmode->refcnt);
+        fprintf(stderr, "%s: output [%d] name [%s]: prevmode [%s] ([%p]) refcnt [%d]\n", __func__, i, pScrPriv->outputs[i]->name, prevmode->name, (void *)prevmode, prevmode->refcnt);
       }
       else
       {
-        fprintf(stderr, "nxagentAdjustRandRXinerama: output [%d] name [%s]: no prevmode\n", i, pScrPriv->outputs[i]->name);
+        fprintf(stderr, "%s: output [%d] name [%s]: no prevmode\n", __func__, i, pScrPriv->outputs[i]->name);
       }
       #endif
 
@@ -4059,7 +4059,7 @@ int nxagentAdjustRandRXinerama(ScreenPtr pScreen)
       if (disable_output)
       {
         #ifdef DEBUG
-        fprintf(stderr, "nxagentAdjustRandRXinerama: output [%d] name [%s]: no (valid) intersection - disconnecting\n", i, pScrPriv->outputs[i]->name);
+        fprintf(stderr, "%s: output [%d] name [%s]: no (valid) intersection - disconnecting\n", __func__, i, pScrPriv->outputs[i]->name);
         #endif
         RROutputSetConnection(pScrPriv->outputs[i], RR_Disconnected);
 
@@ -4075,12 +4075,12 @@ int nxagentAdjustRandRXinerama(ScreenPtr pScreen)
         if (prevmode)
         {
           #ifdef DEBUG
-          fprintf(stderr, "nxagentAdjustRandRXinerama: removing mode from output [%d] name [%s]\n", i, pScrPriv->outputs[i]->name);
+          fprintf(stderr, "%s: removing mode from output [%d] name [%s]\n", __func__, i, pScrPriv->outputs[i]->name);
           #endif
           RROutputSetModes(pScrPriv->outputs[i], NULL, 0, 0);
 
           #ifdef DEBUG
-          fprintf(stderr, "nxagentAdjustRandRXinerama: removing mode from ctrc [%d]\n", i);
+          fprintf(stderr, "%s: removing mode from ctrc [%d]\n", __func__, i);
           #endif
           RRCrtcSet(pScrPriv->crtcs[i], NULL, 0, 0, RR_Rotate_0, 1, &(pScrPriv->outputs[i]));
         }
@@ -4088,7 +4088,7 @@ int nxagentAdjustRandRXinerama(ScreenPtr pScreen)
       else
       {
         #ifdef DEBUG
-        fprintf(stderr, "nxagentAdjustRandRXinerama: output [%d] name [%s]: intersection is x [%d] y [%d] width [%d] height [%d]\n", i, pScrPriv->outputs[i]->name, new_x, new_y, new_w, new_h);
+        fprintf(stderr, "%s: output [%d] name [%s]: intersection is x [%d] y [%d] width [%d] height [%d]\n", __func__, i, pScrPriv->outputs[i]->name, new_x, new_y, new_w, new_h);
         #endif
 
         RROutputSetConnection(pScrPriv->outputs[i], RR_Connected);
@@ -4116,18 +4116,18 @@ int nxagentAdjustRandRXinerama(ScreenPtr pScreen)
 #ifdef DEBUG
         if (mymode)
         {
-          fprintf(stderr, "nxagentAdjustRandRXinerama: output [%d] name [%s]: mode [%s] ([%p]) created/received, refcnt [%d]\n", i, pScrPriv->outputs[i]->name, name, (void *) mymode, mymode->refcnt);
+          fprintf(stderr, "%s: output [%d] name [%s]: mode [%s] ([%p]) created/received, refcnt [%d]\n", __func__, i, pScrPriv->outputs[i]->name, name, (void *) mymode, mymode->refcnt);
         }
         else
         {
           /* FIXME: what is the correct behaviour in this case? */
-          fprintf(stderr, "nxagentAdjustRandRXinerama: output [%d] name [%s]: mode [%s] creation failed!\n", i, pScrPriv->outputs[i]->name, name);
+          fprintf(stderr, "%s: output [%d] name [%s]: mode [%s] creation failed!\n", __func__, i, pScrPriv->outputs[i]->name, name);
         }
 #endif
         if (prevmode && mymode == prevmode)
         {
           #ifdef DEBUG
-          fprintf(stderr, "nxagentAdjustRandRXinerama: mymode [%s] ([%p]) == prevmode [%s] ([%p])\n", mymode->name, (void *) mymode, prevmode->name, (void *)prevmode);
+          fprintf(stderr, "%s: mymode [%s] ([%p]) == prevmode [%s] ([%p])\n", __func__, mymode->name, (void *) mymode, prevmode->name, (void *)prevmode);
           #endif
 
           /* if they are the same RRModeGet() has increased the
@@ -4138,13 +4138,13 @@ int nxagentAdjustRandRXinerama(ScreenPtr pScreen)
         else
         {
           #ifdef DEBUG
-          fprintf(stderr, "nxagentAdjustRandRXinerama: setting mode [%s] ([%p]) refcnt [%d] for output %d [%s]\n", mymode->name, (void *) mymode, mymode->refcnt, i, pScrPriv->outputs[i]->name);
+          fprintf(stderr, "%s: setting mode [%s] ([%p]) refcnt [%d] for output %d [%s]\n", __func__, mymode->name, (void *) mymode, mymode->refcnt, i, pScrPriv->outputs[i]->name);
           #endif
           RROutputSetModes(pScrPriv->outputs[i], &mymode, 1, 0);
         }
 
         #ifdef DEBUG
-        fprintf(stderr, "nxagentAdjustRandRXinerama: setting mode [%s] ([%p]) refcnt [%d] for crtc %d\n", mymode->name, (void *) mymode, mymode->refcnt, i);
+        fprintf(stderr, "%s: setting mode [%s] ([%p]) refcnt [%d] for crtc %d\n", __func__, mymode->name, (void *) mymode, mymode->refcnt, i);
         #endif
         RRCrtcSet(pScrPriv->crtcs[i], mymode, new_x, new_y, RR_Rotate_0, 1, &(pScrPriv->outputs[i]));
       } /* if disable_output */
@@ -4155,7 +4155,7 @@ int nxagentAdjustRandRXinerama(ScreenPtr pScreen)
       if (prevmode && prevmode->refcnt == 1)
       {
         #ifdef DEBUG
-        fprintf(stderr, "nxagentAdjustRandRXinerama: destroying prevmode [%s]\n", prevmode->name);
+        fprintf(stderr, "%s: destroying prevmode [%s]\n", __func__, prevmode->name);
         #endif
         FreeResource(prevmode->mode.id, 0);
       }
@@ -4172,16 +4172,16 @@ int nxagentAdjustRandRXinerama(ScreenPtr pScreen)
     {
       RRModePtr mode = pScrPriv->crtcs[i]->mode;
       if (mode) {
-        fprintf(stderr, "nxagentAdjustRandRXinerama: crtc [%d] ([%p]) has mode [%s] ([%p]), refcnt [%d] and [%d] outputs:\n", i, (void *) pScrPriv->crtcs[i], pScrPriv->crtcs[i]->mode->name, (void *)pScrPriv->crtcs[i]->mode, pScrPriv->crtcs[i]->mode->refcnt, pScrPriv->crtcs[i]->numOutputs);
+        fprintf(stderr, "%s: crtc [%d] ([%p]) has mode [%s] ([%p]), refcnt [%d] and [%d] outputs:\n", __func__, i, (void *) pScrPriv->crtcs[i], pScrPriv->crtcs[i]->mode->name, (void *)pScrPriv->crtcs[i]->mode, pScrPriv->crtcs[i]->mode->refcnt, pScrPriv->crtcs[i]->numOutputs);
       }
       else
       {
-        fprintf(stderr, "nxagentAdjustRandRXinerama: crtc [%d] ([%p]) has no mode and [%d] outputs:\n", i, (void *) pScrPriv->crtcs[i], pScrPriv->crtcs[i]->numOutputs);
+        fprintf(stderr, "%s: crtc [%d] ([%p]) has no mode and [%d] outputs:\n", __func__, i, (void *) pScrPriv->crtcs[i], pScrPriv->crtcs[i]->numOutputs);
       }
 
       if (pScrPriv->crtcs[i]->numOutputs > 0)
         for (int j = 0; j < pScrPriv->crtcs[i]->numOutputs; j++)
-          fprintf(stderr, "nxagentAdjustRandRXinerama:   output [%d] name [%s]->crtc=[%p]\n", j, pScrPriv->crtcs[i]->outputs[j]->name, (void *)pScrPriv->crtcs[i]->outputs[j]->crtc);
+          fprintf(stderr, "%s:   output [%d] name [%s]->crtc=[%p]\n", __func__, j, pScrPriv->crtcs[i]->outputs[j]->name, (void *)pScrPriv->crtcs[i]->outputs[j]->crtc);
     }
 #endif
 
@@ -4201,7 +4201,7 @@ int nxagentAdjustRandRXinerama(ScreenPtr pScreen)
   /* FIXME: adjust maximum screen size according to remote randr/xinerama setup */
 
   #ifdef DEBUG
-  fprintf(stderr, "nxagentAdjustRandRXinerama: Min %dx%d, Max %dx%d \n", pScrPriv->minWidth, pScrPriv->minHeight, pScrPriv->maxWidth, pScrPriv->maxHeight);
+  fprintf(stderr, "%s: Min %dx%d, Max %dx%d \n", __func__, pScrPriv->minWidth, pScrPriv->minHeight, pScrPriv->maxWidth, pScrPriv->maxHeight);
   #endif
 
   return TRUE;
@@ -4309,7 +4309,7 @@ void nxagentSaveAreas(PixmapPtr pPixmap, RegionPtr prgnSave, int xorg, int yorg,
                                  pBackingStore -> x, pBackingStore -> y);
 
   #ifdef TEST
-  fprintf(stderr,"nxagentSaveAreas: Added pixmap [%p] with id [%d] on window [%p] to BSPixmapList.\n",
+  fprintf(stderr,"%s: Added pixmap [%p] with id [%d] on window [%p] to BSPixmapList.\n", __func__,
                  (void *) pPixmap, nxagentPixmap(pPixmap), (void *) pWin);
   #endif
 
@@ -4587,7 +4587,7 @@ void nxagentShowPixmap(PixmapPtr pPixmap, int x, int y, int width, int height)
     if (shadow == NULL)
     {
       #ifdef WARNING
-      fprintf(stderr, "nxagentShowPixmap: WARNING! Shadow display not opened.\n");
+      fprintf(stderr, "%s: WARNING! Shadow display not opened.\n", __func__);
       #endif
 
       return;
@@ -4628,7 +4628,7 @@ void nxagentShowPixmap(PixmapPtr pPixmap, int x, int y, int width, int height)
   if (data == NULL)
   {
     #ifdef WARNING
-    fprintf(stderr, "nxagentShowPixmap: malloc failed.\n");
+    fprintf(stderr, "%s: malloc failed.\n", __func__);
     #endif
 
     return;
@@ -4646,7 +4646,7 @@ FIXME
   if (image == NULL)
   {
     #ifdef WARNING
-    fprintf(stderr, "nxagentShowPixmap: XGetImage failed.\n");
+    fprintf(stderr, "%s: XGetImage failed.\n", __func__);
     #endif
 
     SAFE_free(data);
@@ -4713,7 +4713,7 @@ void nxagentFbRestoreArea(PixmapPtr pPixmap, WindowPtr pWin, int xSrc, int ySrc,
   if (data == NULL)
   {
     #ifdef WARNING
-    fprintf(stderr, "nxagentFbRestoreArea: malloc failed.\n");
+    fprintf(stderr, "%s: malloc failed.\n", __func__);
     #endif
 
     return;
@@ -4728,7 +4728,7 @@ void nxagentFbRestoreArea(PixmapPtr pPixmap, WindowPtr pWin, int xSrc, int ySrc,
   if (image == NULL)
   {
     #ifdef WARNING
-    fprintf(stderr, "nxagentFbRestoreArea: XGetImage failed.\n");
+    fprintf(stderr, "%s: XGetImage failed.\n", __func__);
     #endif
 
     SAFE_free(data);
@@ -4747,7 +4747,7 @@ FIXME
   if (pVisual == NULL)
   {
     #ifdef WARNING
-    fprintf(stderr, "nxagentFbRestoreArea: WARNING! Visual not found. Using default visual.\n");
+    fprintf(stderr, "%s: WARNING! Visual not found. Using default visual.\n", __func__);
     #endif
 
     pVisual = nxagentVisuals[nxagentDefaultVisualIndex].visual;
@@ -4762,7 +4762,7 @@ FIXME
   memcpy(image -> data, data, length);
 */
 
-  fprintf(stderr, "nxagentFbRestoreArea: Cleaning %d bytes of image.\n", length);
+  fprintf(stderr, "%s: Cleaning %d bytes of image.\n", __func__, length);
 
   XGCValues value = {
                      .foreground = 0xffffff,
