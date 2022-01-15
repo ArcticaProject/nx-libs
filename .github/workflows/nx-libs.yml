@@ -19,6 +19,8 @@ jobs:
           - { container: 'ubuntu:16.04', cc-version: clang }
           - { container: 'ubuntu:20.04', cc-version: gcc }
           - { container: 'ubuntu:20.04', cc-version: clang }
+          - { container: 'ubuntu:22.04', cc-version: gcc }
+          - { container: 'ubuntu:22.04', cc-version: clang }
           - { container: 'debian:stable', cc-version: gcc }
           - { container: 'debian:stable', cc-version: clang }
           - { container: 'debian:sid', cc-version: gcc }
