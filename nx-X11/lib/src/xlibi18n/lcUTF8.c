@@ -163,6 +163,9 @@ typedef struct _Utf8ConvRec {
 
 #include "lcUniConv/utf8.h"
 #include "lcUniConv/ucs2be.h"
+#ifdef notused
+#include "lcUniConv/ascii.h"
+#endif
 #include "lcUniConv/iso8859_1.h"
 #include "lcUniConv/iso8859_2.h"
 #include "lcUniConv/iso8859_3.h"
@@ -739,20 +742,14 @@ utf8tocs1(
 	    continue;
 	}
 
+	last_charset = _XlcGetCharSetWithSide(chosen_charset->name, chosen_side);
+
 	if (last_charset == NULL) {
-	    last_charset =
-	        _XlcGetCharSetWithSide(chosen_charset->name, chosen_side);
-	    if (last_charset == NULL) {
-		src += consumed;
-		unconv_num++;
-		continue;
-	    }
-	} else {
-	    if (!(last_charset->xrm_encoding_name == chosen_charset->xrm_name
-	          && (last_charset->side == XlcGLGR
-	              || last_charset->side == chosen_side)))
-		break;
+	    src += consumed;
+	    unconv_num++;
+	    continue;
 	}
+
 	src += consumed;
 	dst += count;
 	break;
@@ -1612,20 +1609,14 @@ wcstocs1(
 	    continue;
 	}
 
+	last_charset = _XlcGetCharSetWithSide(chosen_charset->name, chosen_side);
+
 	if (last_charset == NULL) {
-	    last_charset =
-	        _XlcGetCharSetWithSide(chosen_charset->name, chosen_side);
-	    if (last_charset == NULL) {
-		src++;
-		unconv_num++;
-		continue;
-	    }
-	} else {
-	    if (!(last_charset->xrm_encoding_name == chosen_charset->xrm_name
-	          && (last_charset->side == XlcGLGR
-	              || last_charset->side == chosen_side)))
-		break;
+	    src++;
+	    unconv_num++;
+	    continue;
 	}
+
 	src++;
 	dst += count;
 	break;
@@ -1724,7 +1715,7 @@ create_tofontcs_conv(
 {
     XlcConv conv;
     int i, num, k, count;
-    char **value, buf[20];
+    char **value, buf[32];
     Utf8Conv *preferred;
 
     lazy_init_all_charsets();
@@ -1931,7 +1922,7 @@ iconv_mbstocs(XlcConv conv, XPointer *from, int *from_left,
 
     /* Uses stdc iconv to convert multibyte -> widechar */
 
-	consumed = mbtowc(&wc, (const char *)src, srcend-src);
+	consumed = mbtowc(&wc, (const char *)src, (size_t) (srcend - src));
 	if (consumed == 0)
 	    break;
 	if (consumed == -1) {
@@ -2027,7 +2018,7 @@ iconv_mbtocs(XlcConv conv, XPointer *from, int *from_left,
 
     /* Uses stdc iconv to convert multibyte -> widechar */
 
-	consumed = mbtowc(&wc, (const char *)src, srcend-src);
+	consumed = mbtowc(&wc, (const char *)src, (size_t) (srcend - src));
 	if (consumed == 0)
 	    break;
 	if (consumed == -1) {
@@ -2117,7 +2108,7 @@ iconv_mbstostr(XlcConv conv, XPointer *from, int *from_left,
 
     /* Uses stdc iconv to convert multibyte -> widechar */
 
-	consumed = mbtowc(&wc, (const char *)src, srcend-src);
+	consumed = mbtowc(&wc, (const char *)src, (size_t) (srcend - src));
 	if (consumed == 0)
 	    break;
 	if (dst == dstend)
@@ -2221,7 +2212,7 @@ iconv_mbstowcs(XlcConv conv, XPointer *from, int *from_left,
     int length, unconv_num = 0;
 
     while (src_left > 0 && dst_left > 0) {
-	length = mbtowc(dst, src, src_left);
+	length = mbtowc(dst, src, (size_t) src_left);
 
 	if (length > 0) {
 	    src += length;
@@ -2355,6 +2346,7 @@ _XlcAddUtf8LocaleConverters(
     /* Register converters for XlcNFontCharSet */
     _XlcSetConverter(lcd, XlcNMultiByte, lcd, XlcNFontCharSet, open_utf8tofcs);
     _XlcSetConverter(lcd, XlcNWideChar, lcd, XlcNFontCharSet, open_wcstofcs);
+    _XlcSetConverter(lcd, XlcNUtf8String, lcd, XlcNFontCharSet, open_utf8tofcs);
 }
 
 void

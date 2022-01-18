@@ -180,37 +180,21 @@ XOpenDisplay (
 		return(NULL);
 	}
 
+	if ((dpy->display_name = strdup(display_name)) == NULL) {
+		OutOfMemory(dpy, setup);
+		return(NULL);
+	}
+
 /*
  * Call the Connect routine to get the transport connection object.
- * If NULL is returned, the connection failed. The connect routine
- * will set fullname to point to the expanded name.
+ * If NULL is returned, the connection failed.
  */
 
 #if USE_XCB
-	if(!_XConnectXCB(dpy, display, &fullname, &iscreen)) {
-		/* Try falling back on other transports if no transport specified */
-		const char *slash = strrchr(display_name, '/');
-		if(slash == NULL) {
-			const char *protocols[] = {"local", "unix", "tcp", "inet6", "inet", NULL};
-			const char **s;
-			size_t buf_size = strlen(display_name) + 7; // max strlen + 2 (null + /)
-			char *buf = Xmalloc(buf_size * sizeof(char));
-
-			if(buf) {
-				for(s = protocols; buf && *s; s++) {
-					snprintf(buf, buf_size, "%s/%s", *s, display_name);
-					if(_XConnectXCB(dpy, buf, &fullname, &iscreen))
-						goto fallback_success;
-				}
-				Xfree(buf);
-			}
-		}
-
-		dpy->display_name = fullname;
-		OutOfMemory(dpy, NULL);
+	if(!_XConnectXCB(dpy, display, &iscreen)) {
+		OutOfMemory(dpy, setup);
 		return NULL;
 	}
-fallback_success:
 #else /* !USE_XCB */
 	if ((dpy->trans_conn = _X11TransConnectDisplay (
 					 display_name, &fullname, &idisplay,
@@ -224,7 +208,7 @@ fallback_success:
 	dpy->fd = _X11TransGetConnectionNumber (dpy->trans_conn);
 #endif /* USE_XCB */
 
-#if defined(NX_TRANS_SOCKET) && defined(NX_TRANS_TEST) 
+#if defined(NX_TRANS_SOCKET) && defined(NX_TRANS_TEST)
         fprintf(stderr, "\nXOpenDisplay: Connected display with dpy->fd = [%d].\n", dpy->fd);
 #endif
 	/* Initialize as much of the display structure as we can.
@@ -285,6 +269,7 @@ fallback_success:
 	dpy->flushes		= NULL;
 	dpy->xcmisc_opcode	= 0;
 	dpy->xkb_info		= NULL;
+	dpy->exit_handler_data	= NULL;
 
 /*
  * Setup other information in this display structure.
@@ -294,10 +279,12 @@ fallback_success:
 	dpy->idlist_alloc = _XAllocIDs;
 	dpy->synchandler = NULL;
 	dpy->savedsynchandler = NULL;
-	dpy->request = 0;
-	dpy->last_request_read = 0;
+	X_DPY_SET_REQUEST(dpy, 0);
+	X_DPY_SET_LAST_REQUEST_READ(dpy, 0);
 	dpy->default_screen = iscreen;  /* Value returned by ConnectDisplay */
 	dpy->last_req = (char *)&_dummy_request;
+	dpy->error_threads = NULL;
+	dpy->exit_handler = _XDefaultIOErrorExit;
 
 	/* Initialize the display lock */
 	if (InitDisplayLock(dpy) != 0) {
@@ -330,7 +317,7 @@ fallback_success:
 	    conn_buf_size = 1024 * strtol(xlib_buffer_size, NULL, 10);
 	if (conn_buf_size < XLIBMINBUFSIZE)
 	    conn_buf_size = XLIBMINBUFSIZE;
-#if defined(NX_TRANS_SOCKET) && defined(NX_TRANS_TEST) 
+#if defined(NX_TRANS_SOCKET) && defined(NX_TRANS_TEST)
     fprintf (stderr, "Xlib: Running with XLIBBUFFERSIZE [%d] XLIBMINBUFSIZE [%d] "
                  "buffer size [%ld].\n", XLIBDEFAULTBUFSIZE, XLIBMINBUFSIZE, conn_buf_size);
 #endif
@@ -533,7 +520,7 @@ fallback_success:
 	}
 
  	u.setup = (xConnSetup *) (((char *) u.setup) + sz_xConnSetup);
-  	(void) strncpy(dpy->vendor, u.vendor, vendorlen);
+  	(void) strncpy(dpy->vendor, u.vendor, (size_t) vendorlen);
 	dpy->vendor[vendorlen] = '\0';
  	vendorlen = (vendorlen + 3) & ~3;	/* round up */
 	u.vendor += vendorlen;

@@ -34,6 +34,7 @@
 #include <stdio.h>
 #include "Xlibint.h"
 #include "XlcGeneric.h"
+#include "reallocarray.h"
 
 static XLCd create (const char *name, XLCdMethods methods);
 static Bool initialize (XLCd lcd);
@@ -157,8 +158,8 @@ add_charset(
     int num;
 
     if ((num = codeset->num_charsets))
-        new_list = Xrealloc(codeset->charset_list,
-                                        (num + 1) * sizeof(XlcCharSet));
+        new_list = Xreallocarray(codeset->charset_list,
+                                 num + 1, sizeof(XlcCharSet));
     else
         new_list = Xmalloc(sizeof(XlcCharSet));
 
@@ -184,8 +185,8 @@ add_codeset(
         return NULL;
 
     if ((num = gen->codeset_num))
-        new_list = Xrealloc(gen->codeset_list,
-                                        (num + 1) * sizeof(CodeSet));
+        new_list = Xreallocarray(gen->codeset_list,
+                                 num + 1, sizeof(CodeSet));
     else
         new_list = Xmalloc(sizeof(CodeSet));
 
@@ -231,8 +232,8 @@ add_parse_list(
     }
 
     if ((num = gen->mb_parse_list_num))
-        new_list = Xrealloc(gen->mb_parse_list,
-                                          (num + 2) * sizeof(ParseInfo));
+        new_list = Xreallocarray(gen->mb_parse_list,
+                                 num + 2, sizeof(ParseInfo));
     else {
         new_list = Xmalloc(2 * sizeof(ParseInfo));
     }
@@ -275,16 +276,22 @@ free_charset(
     int num;
 
     Xfree(gen->mb_parse_table);
+    gen->mb_parse_table = NULL;
     if ((num = gen->mb_parse_list_num) > 0) {
         for (parse_info = gen->mb_parse_list; num-- > 0; parse_info++) {
             Xfree((*parse_info)->encoding);
             Xfree(*parse_info);
         }
         Xfree(gen->mb_parse_list);
+        gen->mb_parse_list = NULL;
+        gen->mb_parse_list_num = 0;
     }
 
-    if ((num = gen->codeset_num) > 0)
+    if ((num = gen->codeset_num) > 0) {
         Xfree(gen->codeset_list);
+        gen->codeset_list = NULL;
+        gen->codeset_num = 0;
+    }
 }
 
 /* For VW/UDC */
@@ -350,7 +357,7 @@ _XlcParse_scopemaps(
     const char *str_sc;
 
     num = count_scopemap(str);
-    scope = Xmalloc(num * sizeof(FontScopeRec));
+    scope = Xmallocarray(num, sizeof(FontScopeRec));
     if (scope == NULL)
 	return NULL;
 
@@ -535,8 +542,8 @@ add_conversion(
     int num;
 
     if ((num = gen->segment_conv_num) > 0) {
-        new_list = Xrealloc(gen->segment_conv,
-                                        (num + 1) * sizeof(SegConvRec));
+        new_list = Xreallocarray(gen->segment_conv,
+                                 num + 1, sizeof(SegConvRec));
     } else {
         new_list = Xmalloc(sizeof(SegConvRec));
     }
@@ -667,7 +674,7 @@ create_ctextseg(
         ret->side =  XlcGLGR;
         strcpy(cset_name,ret->name);
     }
-    ret->area = Xmalloc((num - 1)*sizeof(FontScopeRec));
+    ret->area = Xmallocarray(num - 1, sizeof(FontScopeRec));
     if (ret->area == NULL) {
 	Xfree (cset_name);
 	Xfree (ret->name);
@@ -795,7 +802,7 @@ load_generic(
 		EncodingType type = E_SS;    /* for BC */
 		for (j = 0; shifts[j].str; j++) {
 		    if (!_XlcNCompareISOLatin1(tmp, shifts[j].str,
-					       strlen(shifts[j].str))) {
+					       (int) strlen(shifts[j].str))) {
 			type = shifts[j].type;
 			tmp += strlen(shifts[j].str);
 			break;
@@ -870,8 +877,8 @@ load_generic(
                     codeset->byteM = NULL;
                     break ;
                 }
-                codeset->byteM = Xmalloc(
-                         (codeset->length)*sizeof(ByteInfoListRec));
+                codeset->byteM = Xmallocarray(codeset->length,
+                                              sizeof(ByteInfoListRec));
                 if (codeset->byteM == NULL) {
                     goto err;
                 }
@@ -882,7 +889,7 @@ load_generic(
                 (codeset->byteM)[M-1].M = M;
                 (codeset->byteM)[M-1].byteinfo_num = num;
                 (codeset->byteM)[M-1].byteinfo =
-		    Xmalloc(num * sizeof(ByteInfoRec));
+		    Xmallocarray(num, sizeof(ByteInfoRec));
                 for (ii = 0 ; ii < num ; ii++) {
                     tmpb = (codeset->byteM)[M-1].byteinfo ;
                     /* default 0x00 - 0xff */

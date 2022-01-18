@@ -27,6 +27,8 @@ in this Software without prior written authorization from The Open Group.
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
+#include <limits.h>
+#include <stdbool.h>
 #include "Xlibint.h"
 
 Bool
@@ -40,9 +42,12 @@ XQueryExtension(
     xQueryExtensionReply rep;
     register xQueryExtensionReq *req;
 
+    if (name != NULL && strlen(name) >= USHRT_MAX)
+        return false;
+
     LockDisplay(dpy);
     GetReq(QueryExtension, req);
-    req->nbytes = name ? strlen(name) : 0;
+    req->nbytes = name ? (CARD16) strlen(name) : 0;
     req->length += (req->nbytes+(unsigned)3)>>2;
     _XSend(dpy, name, (long)req->nbytes);
     (void) _XReply (dpy, (xReply *)&rep, 0, xTrue);

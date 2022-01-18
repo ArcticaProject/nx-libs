@@ -53,12 +53,17 @@ Colormap XCopyColormapAndFree(
     mid = req->mid = XAllocID(dpy);
     req->srcCmap = src_cmap;
 
+    /* re-lock the display to keep XID handling in sync */
     UnlockDisplay(dpy);
     SyncHandle();
+    LockDisplay(dpy);
 
 #if XCMS
     _XcmsCopyCmapRecAndFree(dpy, src_cmap, mid);
 #endif
+
+    UnlockDisplay(dpy);
+    SyncHandle();
 
     return(mid);
 }

@@ -1,22 +1,20 @@
 # Initialize Autoconf
 AC_PREREQ([2.60])
-AC_INIT([libNX_X11], [1.6.7],
+AC_INIT([libNX_X11], [1.7.3.1],
         [https://github.com/ArcticaProject/nx-libs/issues], [libNX_X11])
 AC_CONFIG_AUX_DIR([build-aux])
 AC_CONFIG_SRCDIR([Makefile.am])
 AC_CONFIG_HEADERS([src/config.h include/X11/XlibConf.h])
 AC_CONFIG_MACRO_DIR([m4])
-
 AC_CANONICAL_BUILD
 AC_CANONICAL_HOST
-
 # Set common system defines for POSIX extensions, such as _GNU_SOURCE
 # Must be called before any macros that run the compiler (like AC_PROG_LIBTOOL)
 # to avoid autoconf errors.
 AC_USE_SYSTEM_EXTENSIONS
 
 # Initialize Automake
-AM_INIT_AUTOMAKE([foreign dist-bzip2])
+AM_INIT_AUTOMAKE([foreign dist-xz])
 
 # Initialize libtool
 AC_PROG_LIBTOOL
@@ -37,8 +35,47 @@ NX_DEFAULT_OPTIONS
 # Required when PKG_CHECK_MODULES called within an if statement
 PKG_PROG_PKG_CONFIG
 
+if test x"$CC_FOR_BUILD" = x; then
+	if test x"$cross_compiling" = xyes; then
+	       AC_CHECK_PROGS(CC_FOR_BUILD, gcc cc)
+	else
+	       CC_FOR_BUILD="$CC"
+	fi
+fi
+AC_SUBST([CC_FOR_BUILD])
+
+if test x"$CPPFLAGS_FOR_BUILD" = x; then
+	if test ! x"$cross_compiling" = xyes; then
+		CPPFLAGS_FOR_BUILD=${CPPFLAGS}
+	fi
+fi
+AC_SUBST(CPPFLAGS_FOR_BUILD)
+
+if test x"$CFLAGS_FOR_BUILD" = x; then
+	if test ! x"$cross_compiling" = xyes; then
+		CFLAGS_FOR_BUILD=${CFLAGS}
+	fi
+fi
+AC_SUBST(CFLAGS_FOR_BUILD)
+
+if test x"$LDFLAGS_FOR_BUILD" = x; then
+	if test ! x"$cross_compiling" = xyes; then
+		LDFLAGS_FOR_BUILD=${LDFLAGS}
+	fi
+fi
+AC_SUBST(LDFLAGS_FOR_BUILD)
+
+if test x"$EXEEXT_FOR_BUILD" = x; then
+	if test x"$cross_compiling" = xno; then
+		EXEEXT_FOR_BUILD=${EXEEXT}
+	fi
+	# If cross-compiling and not provided, assume EXEEXT_FOR_BUILD is empty
+fi
+AC_SUBST([EXEEXT_FOR_BUILD])
+
 # Checks for pkg-config packages
 
+# Always required
 X11_REQUIRES='nx-xproto nx-xextproto nx-xtrans'
 X11_EXTRA_DEPS=""
 
@@ -62,11 +99,15 @@ AC_SUBST(AR_FLAGS, [cr])
 
 # Issue an error if nx-xtrans.m4 was not found and NX_XTRANS_CONNECTION_FLAGS macro
 # was not expanded, since libNX_X11 with no transport types is rather useless.
+#
+# If you're seeing an error here, be sure you installed the nx-xtrans module
+# first and if it's not in the default location, that you set the ACLOCAL
+# environment variable to find it, such as:
+#	ACLOCAL="aclocal -I ${PREFIX}/share/aclocal"
 m4_pattern_forbid([^NX_XTRANS_CONNECTION_FLAGS$])
 
 # Transport selection macro from nx-xtrans.m4
 NX_XTRANS_CONNECTION_FLAGS
-
 
 # Secure RPC detection macro from xtrans.m4
 NX_XTRANS_SECURE_RPC_FLAGS
@@ -93,7 +134,7 @@ if test "x$ac_cv_search_dlopen" = xno; then
 	AC_SEARCH_LIBS(shl_load,[dld])
 	if test "x$ac_cv_search_shl_load" != xno; then
 		AC_DEFINE(HAVE_SHL_LOAD,1,
-		          [Use shl_load to load shared libraries])
+			  [Use shl_load to load shared libraries])
 		AC_CHECK_HEADERS([dl.h])
 	fi
 else
@@ -109,27 +150,27 @@ AC_MSG_RESULT($HAVE_LOADABLE_MODULES)
 
 AC_MSG_CHECKING([if loadable Xcursor library support should be enabled])
 AC_ARG_ENABLE(loadable-xcursor,
-              AS_HELP_STRING([--disable-loadable-xcursor],
-               [Controls loadable xcursor library support]),
-               [XLIB_LOADABLE_XCURSOR=$enableval],
-               [XLIB_LOADABLE_XCURSOR=$HAVE_LOADABLE_MODULES])
+	      AS_HELP_STRING([--disable-loadable-xcursor],
+	       [Controls loadable xcursor library support]),
+	       [XLIB_LOADABLE_XCURSOR=$enableval],
+	       [XLIB_LOADABLE_XCURSOR=$HAVE_LOADABLE_MODULES])
 if test x$XLIB_LOADABLE_XCURSOR = xyes; then
 	AC_DEFINE(USE_DYNAMIC_XCURSOR,1,
-	          [Use the X cursor library to load cursors])
+		  [Use the X cursor library to load cursors])
 fi
 AC_MSG_RESULT($XLIB_LOADABLE_XCURSOR)
 
 # Checks for header files.
-AC_CHECK_HEADERS([sys/select.h])
+AC_CHECK_HEADERS([sys/filio.h sys/select.h sys/ioctl.h sys/socket.h])
 
 # Checks for typedefs, structures, and compiler characteristics.
+AX_GCC_BUILTIN([__builtin_popcountl])
 
 # Checks for library functions.
 AC_CHECK_FUNCS([strtol seteuid])
-
+AC_REPLACE_FUNCS([reallocarray])
 # Used in lcFile.c (see also --enable-xlocaledir settings below)
 XLOCALEDIR_IS_SAFE="no"
-
 AC_CHECK_DECL([issetugid])
 AC_CHECK_FUNC([issetugid])
 if test "$ac_cv_have_decl_issetugid" = yes && test "$ac_cv_func_issetugid" = yes; then
@@ -137,7 +178,7 @@ if test "$ac_cv_have_decl_issetugid" = yes && test "$ac_cv_func_issetugid" = yes
     AC_DEFINE(HASSETUGID,1,[Has issetugid() function])
 fi
 AC_CHECK_FUNC([getresuid], [XLOCALEDIR_IS_SAFE="yes"]
-        AC_DEFINE(HASGETRESUID,1,[Has getresuid() & getresgid() functions]))
+	AC_DEFINE(HASGETRESUID,1,[Has getresuid() & getresgid() functions]))
 # Used in Font.c
 AC_CHECK_FUNC([shmat], AC_DEFINE(HAS_SHM,1,[Has shm*() functions]))
 
@@ -156,13 +197,13 @@ AC_CHECK_LIB(c, getpwuid_r, [mtsafeapi="yes"], [mtsafeapi="no"])
 case x$xthreads in
 xyes)
         AC_DEFINE(XTHREADS,1,[Whether libNX_X11 is compiled with thread support])
-        if test x$mtsafeapi = xyes
-        then
+	if test x$mtsafeapi = xyes
+	then
         AC_DEFINE(XUSE_MTSAFE_API,1,[Whether libNX_X11 needs to use MT safe API's])
-        fi
-        ;;
+	fi
+	;;
 *)
-        ;;
+	;;
 esac
 
 AC_CHECK_LIB(c, pthread_self, [thrstubs="no"], [thrstubs="yes"])
@@ -174,15 +215,15 @@ if test x$xthreads = xyes ; then
     linux*|gnu*|k*bsd*-gnu)
         XTHREADLIB=-lpthread ;;
     netbsd*)
-        XTHREAD_CFLAGS="-D_POSIX_THREAD_SAFE_FUNCTIONS"
-        XTHREADLIB="-lpthread" ;;
+	XTHREAD_CFLAGS="-D_POSIX_THREAD_SAFE_FUNCTIONS"
+	XTHREADLIB="-lpthread" ;;
     freebsd*)
         XTHREAD_CFLAGS="-D_THREAD_SAFE"
         XTHREADLIB="-pthread" ;;
     dragonfly*|openbsd*)
         XTHREADLIB="-pthread" ;;
     solaris*)
-        XTHREAD_CFLAGS="-D_REENTRANT -D_POSIX_PTHREAD_SEMANTICS" ;;
+	XTHREAD_CFLAGS="-D_REENTRANT -D_POSIX_PTHREAD_SEMANTICS" ;;
     esac
 fi
 AC_SUBST(XTHREADLIB)
@@ -225,7 +266,7 @@ AC_ARG_WITH([keysymdefdir],
         [KEYSYMDEFDIR=`pwd`/../include])
 
 if test ! -d "$KEYSYMDEFDIR"; then
-        AC_MSG_ERROR([$KEYSYMDEFDIR doesn't exist or isn't a directory])
+	AC_MSG_ERROR([$KEYSYMDEFDIR doesn't exist or isn't a directory])
 fi
 
 FILES="keysymdef.h XF86keysym.h Sunkeysym.h DECkeysym.h HPkeysym.h"
@@ -233,7 +274,7 @@ for i in $FILES; do
     if test -f "$KEYSYMDEFDIR/$i"; then
             KEYSYMDEFS="$KEYSYMDEFS $KEYSYMDEFDIR/$i"
     elif test "x$i" = "xkeysymdef.h"; then
-            AC_MSG_ERROR([Cannot find keysymdef.h])
+	    AC_MSG_ERROR([Cannot find keysymdef.h])
     fi
 done
 AC_MSG_RESULT([$KEYSYMDEFS])
@@ -245,7 +286,7 @@ AC_ARG_ENABLE(xcms,
               [XCMS=$enableval],[XCMS=yes])
 AM_CONDITIONAL(XCMS, [test x$XCMS = xyes ])
 if test x"$XCMS" = "xyes"; then
-        AC_DEFINE(XCMS,1,[Include support for XCMS])
+	AC_DEFINE(XCMS,1,[Include support for XCMS])
 fi
 
 AC_ARG_ENABLE(xlocale,
@@ -255,27 +296,26 @@ AC_ARG_ENABLE(xlocale,
 
 AM_CONDITIONAL(XLOCALE, [ test x$XLOCALE = xyes ])
 if test x"$XLOCALE" = "xyes"; then
-        AC_DEFINE(XLOCALE,1,[support for X Locales])
+	AC_DEFINE(XLOCALE,1,[support for X Locales])
 fi
-
 
 # This disables XLOCALEDIR.  Set it if you're using BuildLoadableXlibI18n,
 # don't have either issetugid() or getresuid(), and you need to protect
 # clients that are setgid or setuid to an id other than 0.
 AC_MSG_CHECKING([if XLOCALEDIR support should be enabled])
 AC_ARG_ENABLE(xlocaledir,
-              AS_HELP_STRING([--enable-xlocaledir],
-                [Enable XLOCALEDIR environment variable support]),
-              [ENABLE_XLOCALEDIR=$enableval],[ENABLE_XLOCALEDIR=$XLOCALEDIR_IS_SAFE])
+	      AS_HELP_STRING([--enable-xlocaledir],
+		[Enable XLOCALEDIR environment variable support]),
+	      [ENABLE_XLOCALEDIR=$enableval],[ENABLE_XLOCALEDIR=$XLOCALEDIR_IS_SAFE])
 if test "x$ENABLE_XLOCALEDIR" = "xno"; then
-        AC_DEFINE(NO_XLOCALEDIR,1,[Disable XLOCALEDIR environment variable])
+	AC_DEFINE(NO_XLOCALEDIR,1,[Disable XLOCALEDIR environment variable])
 fi
 AC_MSG_RESULT($ENABLE_XLOCALEDIR)
 
 AC_ARG_ENABLE(xf86bigfont,
-              AS_HELP_STRING([--disable-xf86bigfont],
-                [Disable XF86BigFont extension support]),
-              [XF86BIGFONT=$enableval],[XF86BIGFONT="yes"])
+	      AS_HELP_STRING([--disable-xf86bigfont],
+		[Disable XF86BigFont extension support]),
+	      [XF86BIGFONT=$enableval],[XF86BIGFONT="yes"])
 if test "x$XF86BIGFONT" = "xyes"; then
 # FIXME: Skip check for proto headers for now... Requires .pc files for all the proto
 # header packages we have. Keeping that in mind for later...
@@ -307,7 +347,7 @@ AC_ARG_ENABLE(composecache,
                 [Disable compose table cache support]),
               [COMPOSECACHE=$enableval],[COMPOSECACHE=$composecache_default])
 if test x"$COMPOSECACHE" = "xyes"; then
-        AC_DEFINE(COMPOSECACHE,1,[Include compose table cache support])
+	AC_DEFINE(COMPOSECACHE,1,[Include compose table cache support])
 fi
 
 X11_DATADIR="${datadir}/nx/X11"

@@ -210,6 +210,8 @@ _XcmsParseColorString(
      */
     if ((len = strlen(color_string)) >= sizeof(string_buf)) {
 	string_lowered = Xmalloc(len+1);
+	if (string_lowered == NULL)
+	    return(XcmsFailure);
     } else {
 	string_lowered = string_buf;
     }
@@ -417,8 +419,10 @@ _XcmsLookupColorName(
     tmpName = *name;
 
 Retry:
-    if ((len = strlen(tmpName)) > 63) {
+    if ((len = (int)strlen(tmpName)) > 63) {
 	name_lowered = Xmalloc(len+1);
+	if (name_lowered == NULL)
+	    return(XcmsFailure);
     } else {
 	name_lowered = name_lowered_64;
     }
@@ -505,7 +509,7 @@ RemoveSpaces(
 
     /* REMOVE SPACES */
     cptr = pString;
-    for (i = strlen(pString); i; i--, cptr++) {
+    for (i = (int)strlen(pString); i; i--, cptr++) {
 	if (!isspace(*cptr)) {
 	    *pString++ = *cptr;
 	    count++;
@@ -731,7 +735,7 @@ LoadColornameDB(void)
 	pathname = XCMSDB;
     }
 
-    length = strlen(pathname);
+    length = (int)strlen(pathname);
     if ((length == 0) || (length >= (BUFSIZ - 5))){
 	XcmsColorDbState = XcmsDbInitFailure;
 	return(XcmsFailure);
@@ -759,6 +763,13 @@ LoadColornameDB(void)
 
     strings = Xmalloc(size);
     pairs = Xcalloc(nEntries, sizeof(XcmsPair));
+    if (strings == NULL || pairs == NULL) {
+	free(strings);
+	free(pairs);
+	(void) fclose(stream);
+	XcmsColorDbState = XcmsDbInitFailure;
+	return(XcmsFailure);
+    }
 
     ReadColornameDB(stream, pairs, strings);
     (void) fclose(stream);

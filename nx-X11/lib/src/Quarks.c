@@ -55,6 +55,7 @@ from The Open Group.
 #include "Xlibint.h"
 #include <nx-X11/Xresource.h>
 #include "Xresinternal.h"
+#include "reallocarray.h"
 
 /* Not cost effective, at least for vanilla MIT clients */
 /* #define PERMQ */
@@ -62,7 +63,7 @@ from The Open Group.
 #ifdef PERMQ
 typedef unsigned char Bits;
 #endif
-typedef unsigned long Entry; /* dont confuse with EntryRec from Xintatom.h */
+typedef unsigned long Entry; /* don't confuse with EntryRec from Xintatom.h */
 
 static XrmQuark nextQuark = 1;	/* next available quark number */
 static unsigned long quarkMask = 0;
@@ -88,7 +89,7 @@ static XrmQuark nextUniq = -1;	/* next quark from XrmUniqueQuark */
 #define STRQUANTSIZE	(sizeof(XrmString) * (QUANTUMMASK + 1))
 #ifdef PERMQ
 #define QUANTSIZE	(STRQUANTSIZE + \
-			 (sizeof(Bits) * ((QUANTUMMASK + 1) >> 3)))
+			 (sizeof(Bits) * ((QUANTUMMASK + 1) >> 3))
 #else
 #define QUANTSIZE	STRQUANTSIZE
 #endif
@@ -242,7 +243,6 @@ _XrmInternalStringToQuark(
     register XrmQuark q;
     register Entry entry;
     register int idx, rehash;
-    register int i;
     register char *s1, *s2;
     char *new;
 
@@ -257,10 +257,11 @@ _XrmInternalStringToQuark(
 		goto nomatch;
 	    q = (entry >> QUARKSHIFT) & QUARKMASK;
 	}
-	for (i = len, s1 = (char *)name, s2 = NAME(q); --i >= 0; ) {
-	    if (*s1++ != *s2++)
+	s2 = NAME(q);
+	if(memcmp((char *)name, s2, len) != 0) {
 		goto nomatch;
 	}
+	s2 += len;
 	if (*s2) {
 nomatch:    if (!rehash)
 		rehash = REHASHVAL(sig);
@@ -288,15 +289,15 @@ nomatch:    if (!rehash)
     q = nextQuark;
     if (!(q & QUANTUMMASK)) {
 	if (!(q & CHUNKMASK)) {
-	    if (!(new = Xrealloc(stringTable,
-				 sizeof(XrmString *) *
-				 ((q >> QUANTUMSHIFT) + CHUNKPER))))
+	    if (!(new = Xreallocarray(stringTable,
+                                      (q >> QUANTUMSHIFT) + CHUNKPER,
+                                      sizeof(XrmString *))))
 		goto fail;
 	    stringTable = (XrmString **)new;
 #ifdef PERMQ
-	    if (!(new = Xrealloc(permTable,
-				 sizeof(Bits *) *
-				 ((q >> QUANTUMSHIFT) + CHUNKPER))))
+	    if (!(new = Xreallocarray(permTable,
+                                      (q >> QUANTUMSHIFT) + CHUNKPER,
+                                      sizeof(Bits *))))
 		goto fail;
 	    permTable = (Bits **)new;
 #endif
@@ -318,9 +319,9 @@ nomatch:    if (!rehash)
 #endif
 	if (!name)
 	    goto fail;
-	for (i = len, s1 = (char *)name; --i >= 0; )
-	    *s1++ = *s2++;
-	*s1++ = '\0';
+	s1 = (char*)name;
+	memcpy(s1, s2, (size_t)len);
+	s1[len] = '\0';
 #ifdef PERMQ
 	CLEARPERM(q);
     }
@@ -397,7 +398,7 @@ XrmString XrmQuarkToString(register XrmQuark quark)
     else {
 #ifdef PERMQ
 	/* We have to mark the quark as permanent, since the caller might hold
-	 * onto the string pointer forver.
+	 * onto the string pointer forever.
 	 */
 	SETPERM(quark);
 #endif

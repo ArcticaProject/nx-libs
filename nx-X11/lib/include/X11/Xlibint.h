@@ -236,6 +236,11 @@ struct _XDisplay
 	unsigned long last_request_read_upper32bit;
 	unsigned long request_upper32bit;
 #endif
+
+	struct _XErrorThreadInfo *error_threads;
+
+	XIOErrorExitHandler exit_handler;
+	void *exit_handler_data;
 };
 
 #define XAllocIDs(dpy,ids,n) (*(dpy)->idlist_alloc)(dpy,ids,n)
@@ -475,15 +480,15 @@ extern LockInfoPtr _Xglobal_lock;
  */
 #if defined(MALLOC_0_RETURNS_NULL) || defined(__clang_analyzer__)
 
-# define Xmalloc(size) malloc(((size) == 0 ? 1 : (size)))
-# define Xrealloc(ptr, size) realloc((ptr), ((size) == 0 ? 1 : (size)))
-# define Xcalloc(nelem, elsize) calloc(((nelem) == 0 ? 1 : (nelem)), (elsize))
+# define Xmalloc(size) malloc((size_t)((size) == 0 ? 1 : (size)))
+# define Xrealloc(ptr, size) realloc((ptr), (size_t)((size) == 0 ? 1 : (size)))
+# define Xcalloc(nelem, elsize) calloc((size_t)((nelem) == 0 ? 1 : (nelem)), (size_t)(elsize))
 
 #else
 
-# define Xmalloc(size) malloc((size))
-# define Xrealloc(ptr, size) realloc((ptr), (size))
-# define Xcalloc(nelem, elsize) calloc((nelem), (elsize))
+# define Xmalloc(size) malloc((size_t)(size))
+# define Xrealloc(ptr, size) realloc((ptr), (size_t)(size))
+# define Xcalloc(nelem, elsize) calloc((size_t)(nelem), (size_t)(elsize))
 
 #endif
 
@@ -581,7 +586,7 @@ extern void *_XGetRequest(Display *dpy, CARD8 type, size_t len);
    bytes after the request. "n" must be a multiple of 4!  */
 
 #define GetReqExtra(name, n, req) \
-	GetReqSized(name, SIZEOF(x##name##Req) + n, req)
+        GetReqSized(name, SIZEOF(x##name##Req) + n, req)
 
 /*
  * GetResReq is for those requests that have a resource ID
@@ -591,7 +596,7 @@ extern void *_XGetRequest(Display *dpy, CARD8 type, size_t len);
 
 #define GetResReq(name, rid, req) \
 	req = (xResourceReq *) _XGetRequest(dpy, X_##name, SIZEOF(xResourceReq)); \
-	req->id = (rid)
+	if (req) req->id = (rid)
 
 /*
  * GetEmptyReq is for those requests that have no arguments
@@ -673,7 +678,7 @@ extern void _XFlushGCCache(Display *dpy, GC gc);
 #ifndef DataRoutineIsProcedure
 #define Data(dpy, data, len) {\
 	if (dpy->bufptr + (len) <= dpy->bufmax) {\
-		memcpy(dpy->bufptr, data, (int)len);\
+		memcpy(dpy->bufptr, data, (int)(len));\
 		dpy->bufptr += ((len) + 3) & ~3;\
 	} else\
 		_XSend(dpy, data, len);\
@@ -709,7 +714,7 @@ extern void _XFlushGCCache(Display *dpy, GC gc);
 #define Data32(dpy, data, len) _XData32(dpy, (_Xconst long *)data, len)
 extern int _XData32(
 	     Display *dpy,
-             _Xconst long *data,
+	     _Xconst long *data,
 	     unsigned len
 );
 extern void _XRead32(
@@ -1426,6 +1431,10 @@ extern int _XDefaultError(
 
 extern int _XDefaultIOError(
         Display *dpy);
+
+extern void _XDefaultIOErrorExit(
+    Display *dpy,
+    void *user_data);
 
 extern void _XSetClipRectangles (
     Display *dpy,

@@ -28,16 +28,23 @@ from The Open Group.
 
 /* Constructs hash tables for XStringToKeysym and XKeysymToString. */
 
-#include <nx-X11/X.h>
-#include <nx-X11/Xos.h>
-#include <nx-X11/Xresource.h>
-#include <nx-X11/keysymdef.h>
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+#include <inttypes.h>
 
-#include "../Xresinternal.h"
+typedef uint32_t Signature;
 
 #define KTNUM 4000
+
+#define XK_VoidSymbol                  0xffffff  /* Void symbol */
+
+typedef unsigned long KeySym;
 
 static struct info {
     char	*name;
@@ -61,13 +68,25 @@ parse_line(const char *buf, char *key, KeySym *val, char *prefix)
     char *tmp, *tmpa;
 
     /* See if we can catch a straight XK_foo 0x1234-style definition first;
-     * the trickery around tmp is to account for prefices. */
+     * the trickery around tmp is to account for prefixes. */
     i = sscanf(buf, "#define %127s 0x%lx", key, val);
     if (i == 2 && (tmp = strstr(key, "XK_"))) {
-        memcpy(prefix, key, tmp - key);
+        memcpy(prefix, key, (size_t)(tmp - key));
         prefix[tmp - key] = '\0';
         tmp += 3;
         memmove(key, tmp, strlen(tmp) + 1);
+        return 1;
+    }
+
+    /* See if we can parse one of the _EVDEVK symbols */
+    i = sscanf(buf, "#define %127s _EVDEVK(0x%lx)", key, val);
+    if (i == 2 && (tmp = strstr(key, "XK_"))) {
+        memcpy(prefix, key, (size_t)(tmp - key));
+        prefix[tmp - key] = '\0';
+        tmp += 3;
+        memmove(key, tmp, strlen(tmp) + 1);
+
+        *val += 0x10081000;
         return 1;
     }
 
@@ -76,7 +95,7 @@ parse_line(const char *buf, char *key, KeySym *val, char *prefix)
      * canonicalise this to XF86foo before we do the lookup. */
     i = sscanf(buf, "#define %127s %127s", key, alias);
     if (i == 2 && (tmp = strstr(key, "XK_")) && (tmpa = strstr(alias, "XK_"))) {
-        memcpy(prefix, key, tmp - key);
+        memcpy(prefix, key, (size_t)(tmp - key));
         prefix[tmp - key] = '\0';
         tmp += 3;
         memmove(key, tmp, strlen(tmp) + 1);
