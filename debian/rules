@@ -71,13 +71,13 @@ else
 endif
 
 %:
-	CONFIGURE="./configure --disable-silent-rules \
-	                       --prefix=/usr \
-	                       --libdir=$(LIBDIR) \
-	                       --includedir=$(INCLUDEDIR) \
-	                       --libexecdir=$(LIBEXECDIR) \
-	                       --build=$(DEB_BUILD_GNU_TYPE) \
-	                       --host=$(DEB_HOST_GNU_TYPE)"  dh $@ --no-parallel --with quilt
+	VERBOSE=1 CONFIGURE="./configure --disable-silent-rules \
+	                                 --prefix=/usr \
+	                                 --libdir=$(LIBDIR) \
+	                                 --includedir=$(INCLUDEDIR) \
+	                                 --libexecdir=$(LIBEXECDIR) \
+	                                 --build=$(DEB_BUILD_GNU_TYPE) \
+	                                 --host=$(DEB_HOST_GNU_TYPE)"  dh $@ --no-parallel --with quilt
 
 override_dh_auto_clean:
 	rm -Rf nx-X11/.build-exports

@@ -1486,28 +1486,28 @@ file.ps: src								@@\
 #define InstallDoc(name,deps)						@@\
 install:: deps								@@\
 	MakeDir($(DESTDIR)$(DOCPSDIR))					@@\
-	@if [ -f name.ps -a X$(NOPS) = X ]; then set -x; \		@@\
+	@if [ -f name.ps -a X$(NOPS) = X ]; then test -n "${VERBOSE}" && set -x; \		@@\
 	  $(INSTALL) $(INSTALLFLAGS) $(INSTDATFLAGS) name.ps \		@@\
 		$(DESTDIR)$(DOCPSDIR); \				@@\
 	fi ; RemoveOldFile(name.ps,name.PS,$(DOCPSDIR))			@@\
 	MakeDir($(DESTDIR)$(DOCDIR))					@@\
-	@if [ -f name.txt -a X$(NOTXT) = X ]; then set -x; \		@@\
+	@if [ -f name.txt -a X$(NOTXT) = X ]; then test -n "${VERBOSE}" && set -x; \		@@\
 	  $(INSTALL) $(INSTALLFLAGS) $(INSTDATFLAGS) name.txt \		@@\
 		$(DESTDIR)$(DOCDIR); \					@@\
 	fi ; RemoveOldFile(name.txt,name.TXT,$(DOCDIR))			@@\
 	MakeDir($(DESTDIR)$(DOCHTMLDIR))				@@\
-	@if [ -f name.html -a X$(NOHTML) = X ]; then (set -x; \		@@\
+	@if [ -f name.html -a X$(NOHTML) = X ]; then (test -n "${VERBOSE}" && set -x; \		@@\
 	  $(INSTALL) $(INSTALLFLAGS) $(INSTDATFLAGS) name.html \	@@\
 		$(DESTDIR)$(DOCHTMLDIR)); \				@@\
 	  for i in name*.png; do \					@@\
-	    if [ -f $$i ]; then (set -x; \				@@\
+	    if [ -f $$i ]; then (test -n "${VERBOSE}" && test -n "${VERBOSE}" && set -x; \				@@\
 	      $(INSTALL) $(INSTALLFLAGS) $(INSTDATFLAGS) $$i \		@@\
 		$(DESTDIR)$(DOCHTMLDIR)); \				@@\
 	    fi; \							@@\
 	  done; \							@@\
 	fi								@@\
 	MakeDir($(DESTDIR)$(DOCPDFDIR))					@@\
-	@if [ -f name.pdf -a X$(NOPDF) = X ]; then set -x; \		@@\
+	@if [ -f name.pdf -a X$(NOPDF) = X ]; then test -n "${VERBOSE}" && set -x; \		@@\
 	  $(INSTALL) $(INSTALLFLAGS) $(INSTDATFLAGS) name.pdf \		@@\
 		$(DESTDIR)$(DOCPDFDIR); \				@@\
 	fi
@@ -1528,7 +1528,7 @@ install:: deps								@@\
 #ifndef LinkHardcopyPS
 # if CaseSensitiveFileSystem
 #  define LinkHardcopyPS(name)						  \
-	@if [ -f name.PS ]; then set -x; \				@@\
+	@if [ -f name.PS ]; then test -n "${VERBOSE}" && set -x; \				@@\
 	  RemoveFile(name.ps); \					@@\
 	  $(LN) name.PS name.ps; \					@@\
 	fi
@@ -1543,7 +1543,7 @@ install:: deps								@@\
 all:: name.ps PdfTarget(name)						@@\
 									@@\
 name.ps: deps								@@\
-	@if [ -f name.PS.gz ]; then set -x; \				@@\
+	@if [ -f name.PS.gz ]; then test -n "${VERBOSE}" && set -x; \				@@\
 	  RemoveFile(name.ps); \					@@\
 	  gzip -d < name.PS.gz > name.ps; \				@@\
 	fi								@@\

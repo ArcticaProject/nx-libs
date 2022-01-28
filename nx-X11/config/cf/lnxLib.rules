@@ -118,8 +118,8 @@ install:: Concat(lib,libname.so.rev) 					@@\
 	MakeDir($(DESTDIR)dest)						@@\
 	$(INSTALL) $(INSTALLFLAGS) $(INSTBINFLAGS) Concat(lib,libname.so.rev) $(DESTDIR)dest @@\
 	@T=`echo Concat($(DESTDIR)dest/lib,libname.so.rev) | sed 's/\(lib[^\.]*\.so\.[0-9]*\)\(\.[0-9]*\)\{1,2\}/\1/'`;\
-	  set -x; $(RM) $$T && $(LN) Concat(lib,libname.so.rev) $$T	@@\
-	@if $(SOSYMLINK); then (set -x; \
+	  test -n "${VERBOSE}" && set -x; $(RM) $$T && $(LN) Concat(lib,libname.so.rev) $$T	@@\
+	@if $(SOSYMLINK); then (test -n "${VERBOSE}" && set -x; \
 	  $(RM) Concat($(DESTDIR)dest/lib,libname.so); \		@@\
 	  $(LN) Concat(lib,libname.so.rev) Concat($(DESTDIR)dest/lib,libname.so)); fi
 # endif /* InstallSharedLibrary */
@@ -136,7 +136,7 @@ install:: Concat(lib,libname.so.rev) 					@@\
 install:: Concat(lib,libname.so) 					@@\
 	MakeDir($(DESTDIR)dest)						@@\
 	@set +e; SetRevisions(rev); \					@@\
-		set -xe; \						@@\
+		test -n "${VERBOSE}" && set -xe; \						@@\
 		$(INSTALL) $(INSTALLFLAGS) $(INSTBINFLAGS) Concat(lib,libname.so.$$MAJ.$$MIN) $(DESTDIR)dest; \ @@\
 		$(RM) Concat($(DESTDIR)dest/lib,libname.so.$$MAJ); \	@@\
 		$(LN) Concat(lib,libname.so.$$MAJ.$$MIN) Concat($(DESTDIR)dest/lib,libname.so.$$MAJ); \ @@\
@@ -163,13 +163,13 @@ AllTarget(Concat(lib,libname.so.rev))					@@\
 									@@\
 Concat(lib,libname.so.rev):  solist $(EXTRALIBRARYDEPS)			@@\
 	$(RM) $@~							@@\
-	@SONAME=`echo $@ | sed 's/\(lib[^\.]*\.so\.[0-9]*\)\(\.[0-9]*\)\{1,2\}/\1/'`; (set -x; \	@@\
+	@SONAME=`echo $@ | sed 's/\(lib[^\.]*\.so\.[0-9]*\)\(\.[0-9]*\)\{1,2\}/\1/'`; (test -n "${VERBOSE}" && set -x; \	@@\
 		cd down; $(CC) -o up/$@~ $(SHLIBLDFLAGS) -Wl,-soname,$$SONAME solist $(REQUIREDLIBS) BaseShLibReqs) || exit 1; \ @@\
-		(set -x; $(RM) $$SONAME; $(LN) $@ $$SONAME); \		@@\
+		(test -n "${VERBOSE}" && set -x; $(RM) $$SONAME; $(LN) $@ $$SONAME); \		@@\
 		LinkBuildSonameLibrary($$SONAME)			@@\
 	$(RM) $@ 							@@\
 	$(MV) $@~ $@							@@\
-	@if $(SOSYMLINK); then (set -x; \				@@\
+	@if $(SOSYMLINK); then (test -n "${VERBOSE}" && set -x; \				@@\
 	  $(RM) Concat(lib,libname.so); \				@@\
 	  $(LN) $@ Concat(lib,libname.so)); fi				@@\
 	LinkBuildLibrary($@)						@@\
@@ -177,7 +177,7 @@ Concat(lib,libname.so.rev):  solist $(EXTRALIBRARYDEPS)			@@\
 									@@\
 clean::									@@\
 	@MAJREV=`echo rev | sed 's/\([0-9]*\)\(\.[0-9]*\)\{1,2\}/\1/'`; \	@@\
-	set -x; $(RM) Concat(lib,libname.so.$$MAJREV)			@@\
+	test -n "${VERBOSE}" && set -x; $(RM) Concat(lib,libname.so.$$MAJREV)			@@\
 	$(RM) Concat(lib,libname.so.rev) Concat(lib,libname.so)
 
 # endif /* SharedLibraryTarget */
@@ -191,13 +191,13 @@ Concat(lib,libname.so):  solist $(EXTRALIBRARYDEPS)			@@\
 	$(RM) $@~							@@\
 	@set +e; SetRevisions(rev); set -e; \				@@\
 		SONAME=$@.$$MAJ; \					@@\
-		(set -x; \						@@\
+		(test -n "${VERBOSE}" && set -x; \						@@\
 		$(RM) $@.$$MAJ.$$MIN~; \				@@\
 		cd down; $(CC) -o up/$@.$$MAJ.$$MIN~ $(SHLIBLDFLAGS) -Wl,-soname,$$SONAME solist $(REQUIREDLIBS) BaseShLibReqs) || exit 1; \ @@\
-		(set -x; \						@@\
+		(test -n "${VERBOSE}" && set -x; \						@@\
 		$(RM) $$SONAME; $(LN) $@.$$MAJ.$$MIN $$SONAME); \	@@\
 		LinkBuildSonameLibrary($$SONAME); \			@@\
-		(set -x; \						@@\
+		(test -n "${VERBOSE}" && set -x; \						@@\
 		$(RM) $@.$$MAJ.$$MIN; \					@@\
 		$(MV) $@.$$MAJ.$$MIN~ $@.$$MAJ.$$MIN; \			@@\
 	  	$(RM) $@; \						@@\
@@ -207,7 +207,7 @@ Concat(lib,libname.so):  solist $(EXTRALIBRARYDEPS)			@@\
 									@@\
 clean::									@@\
 	@set +e; SetRevisions(rev); \					@@\
-		set -xe; \						@@\
+		test -n "${VERBOSE}" && set -xe; \						@@\
 		$(RM) Concat(lib,libname.so.$$MAJ); \			@@\
 		$(RM) Concat(lib,libname.so.$$MAJ.$$MIN)		@@\
 	$(RM) Concat(lib,libname.so)
@@ -223,13 +223,13 @@ AllTarget(Concat(lib,libname.so.rev))					@@\
 									@@\
 Concat(lib,libname.so.rev):  deplist $(EXTRALIBRARYDEPS)		@@\
 	$(RM) $@~							@@\
-	@SONAME=`echo $@ | sed 's/\(lib[^\.]*\.so\.[0-9]*\)\(\.[0-9]*\)\{1,2\}/\1/'`; set -x; \		@@\
+	@SONAME=`echo $@ | sed 's/\(lib[^\.]*\.so\.[0-9]*\)\(\.[0-9]*\)\{1,2\}/\1/'`; test -n "${VERBOSE}" && set -x; \		@@\
 		(cd down; $(CC) -o up/$@~ $(SHLIBLDFLAGS) -Wl,-soname,$$SONAME solist $(REQUIREDLIBS) BaseShLibReqs); \ @@\
 		$(RM) $$SONAME; $(LN) $@ $$SONAME; \			@@\
 		LinkBuildSonameLibrary($$SONAME)			@@\
 	$(RM) $@ 							@@\
 	$(MV) $@~ $@							@@\
-	@if $(SOSYMLINK); then (set -x; \				@@\
+	@if $(SOSYMLINK); then (test -n "${VERBOSE}" && set -x; \				@@\
 	  $(RM) Concat(lib,libname.so); \				@@\
 	  $(LN) $@ Concat(lib,libname.so)); fi				@@\
 	LinkBuildLibrary($@)						@@\
@@ -237,7 +237,7 @@ Concat(lib,libname.so.rev):  deplist $(EXTRALIBRARYDEPS)		@@\
 									@@\
 clean::									@@\
 	@MAJREV=`echo rev | sed 's/\([0-9]*\)\(\.[0-9]*\)\{1,2\}/\1/'`; \	@@\
-	set -x; $(RM) Concat(lib,libname.so.$$MAJREV)			@@\
+	test -n "${VERBOSE}" && set -x; $(RM) Concat(lib,libname.so.$$MAJREV)			@@\
 	$(RM) Concat(lib,libname.so.rev) Concat(lib,libname.so)
 
 #endif /* SharedDepLibraryTarget */
@@ -251,13 +251,13 @@ AllTarget(Concat(lib,libname.so.rev))					@@\
 									@@\
 Concat(lib,libname.so.rev):  deplist $(EXTRALIBRARYDEPS)		@@\
 	$(RM) $@~							@@\
-	@SONAME=`echo $@ | sed 's/\(lib[^\.]*\.so\.[0-9]*\)\(\.[0-9]*\)\{1,2\}/\1/'`; set -x; \		@@\
+	@SONAME=`echo $@ | sed 's/\(lib[^\.]*\.so\.[0-9]*\)\(\.[0-9]*\)\{1,2\}/\1/'`; test -n "${VERBOSE}" && set -x; \		@@\
 		(cd down; $(CXX) -o up/$@~ $(SHLIBLDFLAGS) -Wl,-soname,$$SONAME solist $(REQUIREDLIBS) BaseShLibReqs); \ @@\
 		$(RM) $$SONAME; $(LN) $@ $$SONAME; \			@@\
 		LinkBuildSonameLibrary($$SONAME)			@@\
 	$(RM) $@ 							@@\
 	$(MV) $@~ $@							@@\
-	@if $(SOSYMLINK); then (set -x; \				@@\
+	@if $(SOSYMLINK); then (test -n "${VERBOSE}" && set -x; \				@@\
 	  $(RM) Concat(lib,libname.so); \				@@\
 	  $(LN) $@ Concat(lib,libname.so)); fi				@@\
 	LinkBuildLibrary($@)						@@\
@@ -265,7 +265,7 @@ Concat(lib,libname.so.rev):  deplist $(EXTRALIBRARYDEPS)		@@\
 									@@\
 clean::									@@\
 	@MAJREV=`echo rev | sed 's/\([0-9]*\)\(\.[0-9]*\)\{1,2\}/\1/'`; \	@@\
-	set -x; $(RM) Concat(lib,libname.so.$$MAJREV)			@@\
+	test -n "${VERBOSE}" && set -x; $(RM) Concat(lib,libname.so.$$MAJREV)			@@\
 	$(RM) Concat(lib,libname.so.rev) Concat(lib,libname.so)
 
 #endif /* SharedDepCplusplusLibraryTarget */
@@ -594,7 +594,7 @@ install:: $(JUMP_SA) $(JUMP_SO)						@@\
 	MakeDir($(DESTDIR)dest)						@@\
 	@if [ "$(JUMP_IS_HOST)" = YES ]; then \
 		(T=$(DESTDIR)dest/`echo $(JUMP_SO)|sed '/\(lib[^\.]*\.so\.[0-9]*\)\(\.[0-9]*\)\{1,2\}/\1/`;\
-		set -x; \
+		test -n "${VERBOSE}" && set -x; \
 		$(INSTALL) -s -c $(INSTSOLIBFLAGS) $(JUMP_SO) $(DESTDIR)dest; \
 		$(RM) $$T && $(LN) $(JUMP_SO) $$T); fi			@@\
 	$(INSTALL) -c $(INSTLIBFLAGS) $(JUMP_SA) $(DESTDIR)dest

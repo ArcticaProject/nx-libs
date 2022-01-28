@@ -346,7 +346,7 @@ XCOMM special target for clearmake					@@\
 
 #if RemoveObsoleteFiles
 #define RemoveOldFile(new,old,dir)					@@\
-	@if [ -f new ]; then set -x; \					@@\
+	@if [ -f new ]; then test -n "${VERBOSE}" && set -x; \					@@\
 		RemoveFile($(DESTDIR)dir/old); \			@@\
 	fi
 #else
@@ -536,9 +536,9 @@ clean cleantc::								@@\
 		set +x; \						@@\
 	else \								@@\
 		if [ -h dir ]; then \					@@\
-			(set -x; rm -f dir); \				@@\
+			(test -n "${VERBOSE}" && set -x; rm -f dir); \				@@\
 		fi; \							@@\
-		(set -x; $(MKDIRHIER) dir); \				@@\
+		(test -n "${VERBOSE}" && set -x; $(MKDIRHIER) dir); \				@@\
 	fi
 #endif /* MakeDir */
 
@@ -547,9 +547,9 @@ clean cleantc::								@@\
 		:; \							@@\
 	else \								@@\
 		if [ -h dir ]; then \					@@\
-			(set -x; rm -f dir); \				@@\
+			(test -n "${VERBOSE}" && test -n "${VERBOSE}" && set -x; rm -f dir); \				@@\
 		fi; \							@@\
-		(set -x; $(MKDIRHIER) dir); \				@@\
+		(test -n "${VERBOSE}" && set -x; $(MKDIRHIER) dir); \				@@\
 	fi
 #endif /* MakeDirInline */
 
@@ -570,7 +570,7 @@ install::								@@\
 #define BuildIncludesTop(srclist)					@@\
 includes:: srclist							@@\
 	MakeDir($(BUILDINCDIR))						@@\
-	@(set -x; cd $(BUILDINCDIR) && for i in srclist; do \		@@\
+	@(test -n "${VERBOSE}" && set -x; cd $(BUILDINCDIR) && for i in srclist; do \		@@\
 		RemoveFile(`basename $$i`); \				@@\
 		$(LN) $(BUILDINCTOP)/$(CURRENT_DIR)/$$i .; \		@@\
 	done)
@@ -580,7 +580,7 @@ includes:: srclist							@@\
 #define BuildIncludes(srclist,dstsubdir,dstupdir)			@@\
 includes:: srclist							@@\
 	MakeDir($(BUILDINCDIR)/dstsubdir)				@@\
-	@(set -x; cd $(BUILDINCDIR)/dstsubdir && for i in srclist; do \	@@\
+	@(test -n "${VERBOSE}" && set -x; cd $(BUILDINCDIR)/dstsubdir && for i in srclist; do \	@@\
 		RemoveFile(`basename $$i`); \				@@\
 		$(LN) $(BUILDINCTOP)/dstupdir/$(CURRENT_DIR)/$$i .; \	@@\
 	done)
@@ -603,7 +603,7 @@ $(BUILDBINDIR)/binary: binary						@@\
 #define BuildInterfaces(srclist,dstsubdir,dstupdir)			@@\
 interfaces::								@@\
 	MakeDir($(BUILDINCDIR)/dstsubdir)				@@\
-	@(set -x; cd $(BUILDINCDIR)/dstsubdir && for i in srclist; do \	@@\
+	@(test -n "${VERBOSE}" && set -x; cd $(BUILDINCDIR)/dstsubdir && for i in srclist; do \	@@\
 		RemoveFile($$i); \					@@\
 		$(LN) $(BUILDINCTOP)/dstupdir/$(CURRENT_DIR)/$$i .; \	@@\
 	done)
@@ -1101,13 +1101,13 @@ CplusplusProgramTargetHelper(program,SRCS10,OBJS10,DEPLIBS10,locallib,syslib)
 #endif /* ComplexCplusplusProgramTarget_10 */
 
 #ifndef MoveToBakFile
-#define MoveToBakFile(file) -@if [ -f file ]; then set -x; \		@@\
-	$(MV) file file.bak; else exit 0; fi
+#define MoveToBakFile(file) -@if [ -f file ]; then test -n "${VERBOSE}" && set -x; \		@@\
+	@$(MV) file file.bak; else exit 0; fi
 #endif /* MoveToBakFile */
 
 #ifndef RMoveToBakFile
-#define RMoveToBakFile(file) -@if [ -f file ]; then set -x; \		@@\
-	RemoveFile(file.bak); $(MV) file file.bak; \			@@\
+#define RMoveToBakFile(file) -@if [ -f file ]; then test -n "${VERBOSE}" && set -x; \		@@\
+	RemoveFile(file.bak); @$(MV) file file.bak; \			@@\
 	else exit 0; fi
 #endif /* RMoveToBakFile */
 
@@ -1218,7 +1218,7 @@ step:: srcname								@@\
 	MakeDir($(DESTDIR)dest)						@@\
 	@if [ -f $(DESTDIR)dest/dstname ]; then \			@@\
 	 echo "Not overwriting existing" $(DESTDIR)dest/dstname; \	@@\
-	else set -x; \							@@\
+	else test -n "${VERBOSE}" && set -x; \							@@\
 	 $(INSTALL) $(INSTALLFLAGS) flags srcname $(DESTDIR)dest/dstname; fi
 #endif /* InstallNamedTargetNoClobber */
 
@@ -1336,7 +1336,7 @@ install.man::								@@\
 	@(TMP="#tmp.$$$$"; \						@@\
 	RemoveFile($${TMP}); \						@@\
 	echo .so `basename destdir`/file.$(MANSUFFIX) > $${TMP}; \	@@\
-	for i in aliases; do (set -x; \					@@\
+	for i in aliases; do (test -n "${VERBOSE}" && set -x; \					@@\
 	$(INSTALL) $(INSTALLFLAGS) $(INSTMANFLAGS) $${TMP} $(DESTDIR)destdir/$$i.$(MANSUFFIX)); \ @@\
 	done; \								@@\
 	RemoveFile($${TMP}))
@@ -1371,7 +1371,7 @@ install.man::								@@\
 	@(TMP="#tmp.$$$$"; \						@@\
 	RemoveFile($${TMP}); \						@@\
 	echo .so `basename destdir`/file.suffix > $${TMP}; \		@@\
-	for i in aliases; do (set -x; \					@@\
+	for i in aliases; do (test -n "${VERBOSE}" && set -x; \					@@\
 	$(INSTALL) $(INSTALLFLAGS) $(INSTMANFLAGS) $${TMP} $(DESTDIR)destdir/$$i.suffix); \ @@\
 	done; \								@@\
 	RemoveFile($${TMP}))
@@ -1414,7 +1414,7 @@ install.man:: list							@@\
 	@case '${MFLAGS}' in *[i]*) set +e;; esac; \			@@\
 	for i in list; do \						@@\
 		(MNAME=`echo $$i | cut -f1 -d.`; \			@@\
-		set -x;	\						@@\
+		test -n "${VERBOSE}" && set -x;	\						@@\
 		$(RM) $(DESTDIR)dest/$${MNAME}*; \			@@\
 		$(INSTALL) -c $(INSTMANFLAGS) $$i \			@@\
 		  $(DESTDIR)dest/$${MNAME}.$(MANSUFFIX); \		@@\
@@ -1429,7 +1429,7 @@ install.man:: list							@@\
 #define InstallManPageAliasesBase(file,destdir,aliases)			@@\
 install.man::								@@\
 	@(SUFFIX=`echo $(DESTDIR)destdir/file.* | sed -e 's,.*/[^\.]*.,,'`; \ @@\
-	for i in aliases; do (set -x; \					@@\
+	for i in aliases; do (test -n "${VERBOSE}" && set -x; \					@@\
 	$(RM) $(DESTDIR)destdir/$$i.*; \				@@\
 	(cd $(DESTDIR)destdir; $(LN) file.$${SUFFIX} \			@@\
 	$$i.$${SUFFIX})); \						@@\
@@ -1515,7 +1515,7 @@ dest.suffix.html: file.$(MANNEWSUFFIX) RmanCmdDependency		@@\
 install.man:: dest.suffix.html						@@\
 	MakeDir($(DESTDIR)$(DOCHTMLDIR))				@@\
 	@(SUF=`expr suffix \: '\(.\)'`; \				@@\
-	 set -x; \							@@\
+	 test -n "${VERBOSE}" && set -x; \							@@\
 	 $(INSTALL) $(INSTALLFLAGS) $(INSTMANFLAGS) dest.suffix.html $(DESTDIR)$(DOCHTMLDIR)/dest.$$SUF.html)	@@\
 									@@\
 clean::									@@\
@@ -1531,7 +1531,7 @@ clean::									@@\
 install.man:: file.suffix.html						@@\
 	MakeDir($(DESTDIR)$(DOCHTMLDIR))				@@\
 	@SUF=`expr suffix \: '\(.\)'`; \				@@\
-	for i in aliases; do (set -x; \					@@\
+	for i in aliases; do (test -n "${VERBOSE}" && set -x; \					@@\
 	  RemoveFile($(DESTDIR)$(DOCHTMLDIR)/$$i.$$SUF.html); \		@@\
 	  (cd $(DESTDIR)$(DOCHTMLDIR); \				@@\
 	    $(LN) file.$$SUF.html $$i.$$SUF.html)); \			@@\
@@ -1738,7 +1738,7 @@ InstallNamedTargetNoClobber(install,srcname,$(INSTBINFLAGS),dest,dstname)
 step::									@@\
 	@MakeFlagsToShellFlags(i,set +e); \				@@\
 	echo "	cd" dir; cd dir && \					@@\
-	for i in list; do (set -x; $(LN) -f sub/$$i .); done
+	for i in list; do (test -n "${VERBOSE}" && set -x; $(LN) -f sub/$$i .); done
 #endif
 
 
@@ -1855,7 +1855,7 @@ step:: list								@@\
 	MakeDir($(DESTDIR)dest)						@@\
 	@MakeFlagsToShellFlags(i,set +e); \				@@\
 	for i in list; do \						@@\
-		(set -x; $(INSTALL) $(INSTALLFLAGS) flags $$i $(DESTDIR)dest); \	@@\
+		(test -n "${VERBOSE}" && set -x; $(INSTALL) $(INSTALLFLAGS) flags $$i $(DESTDIR)dest); \	@@\
 	done
 #endif /* InstallMultipleDestFlags */
 
@@ -1922,7 +1922,7 @@ install.man::								@@\
 	MakeDir($(DESTDIR)dest)						@@\
 	@MakeFlagsToShellFlags(i,set +e); \				@@\
 	for i in list; do \						@@\
-	  (set -x; $(INSTALL) $(INSTALLFLAGS) $(INSTMANFLAGS) $$i.suffix $(DESTDIR)dest/$$i.$(MANSUFFIX)); \	@@\
+	  (test -n "${VERBOSE}" && set -x; $(INSTALL) $(INSTALLFLAGS) $(INSTMANFLAGS) $$i.suffix $(DESTDIR)dest/$$i.$(MANSUFFIX)); \	@@\
 	done
 #endif /* InstallMultipleManSuffix */
 
@@ -2105,7 +2105,7 @@ BuildMakefileTarget(Imakefile,NullParameter)
  * LibMkdir - helper for creating library object subdirectories
  */
 #ifndef LibMkdir
-#define LibMkdir(dir) DirFailPrefix@if [ -d dir ]; then exit 0; else set -x; mkdir dir; fi
+#define LibMkdir(dir) DirFailPrefix@if [ -d dir ]; then exit 0; else test -n "${VERBOSE}" && set -x; mkdir dir; fi
 #endif
 
 #ifndef LibMkdirLinkSubdirs
@@ -2129,7 +2129,7 @@ BuildMakefileTarget(Imakefile,NullParameter)
  */
 #ifndef LibCleanDir
 #define LibCleanDir(dir) -@if [ -d dir ]; then \			@@\
-		set -x; $(RM) -r dir; else exit 0; fi
+		test -n "${VERBOSE}" && set -x; $(RM) -r dir; else exit 0; fi
 #endif
 
 /*
@@ -2532,7 +2532,7 @@ file.c: file.y								@@\
 	ClearmakeOSName \
 	$(YACC) flags file.y						@@\
 	SwitchYYPrefix(y.tab.c,file.c,prefix)				@@\
-	@if [ -f y.tab.h ]; then set -x; SwitchYYPrefix(y.tab.h,file.h,prefix); \@@\
+	@if [ -f y.tab.h ]; then test -n "${VERBOSE}" && set -x; SwitchYYPrefix(y.tab.h,file.h,prefix); \@@\
 	else exit 0; fi							@@\
 									@@\
 clean::									@@\
@@ -2545,7 +2545,7 @@ file.h file.c: file.y							@@\
 	ClearmakeOSName \
 	$(YACC) flags file.y						@@\
 	SwitchYYPrefix(y.tab.c,file.c,prefix)				@@\
-	@if [ -f y.tab.h ]; then set -x; SwitchYYPrefix(y.tab.h,file.h,prefix); \	@@\
+	@if [ -f y.tab.h ]; then test -n "${VERBOSE}" && set -x; SwitchYYPrefix(y.tab.h,file.h,prefix); \	@@\
 	else exit 0; fi							@@\
 									@@\
 clean::									@@\
@@ -2564,7 +2564,7 @@ file.c: file.y								@@\
 	ClearmakeOSName \
 	$(YACC) flags file.y						@@\
 	$(MV) y.tab.c file.c						@@\
-	@if [ -f y.tab.h ]; then set -x; $(MV) y.tab.h file.h; \	@@\
+	@if [ -f y.tab.h ]; then test -n "${VERBOSE}" && set -x; $(MV) y.tab.h file.h; \	@@\
 	else exit 0; fi							@@\
 									@@\
 clean::									@@\
@@ -2577,7 +2577,7 @@ file.h file.c: file.y							@@\
 	ClearmakeOSName \
 	$(YACC) flags file.y						@@\
 	$(MV) y.tab.c file.c						@@\
-	@if [ -f y.tab.h ]; then set -x; $(MV) y.tab.h file.h; \	@@\
+	@if [ -f y.tab.h ]; then test -n "${VERBOSE}" && set -x; $(MV) y.tab.h file.h; \	@@\
 	else exit 0; fi							@@\
 									@@\
 clean::									@@\
@@ -2618,7 +2618,7 @@ clean::									@@\
 #define LinkBuildLibraryMaybe(lib,doit) $(_NULLCMD_)
 #else
 #define LinkBuildLibraryMaybe(lib,doit) MakeDir($(BUILDLIBDIR))		@@\
-	@if doit; then (set -x; \					@@\
+	@if doit; then (test -n "${VERBOSE}" && set -x; \					@@\
 	  RemoveFile($(BUILDLIBDIR)/lib); \				@@\
 	  cd $(BUILDLIBDIR) && $(LN) $(BUILDLIBTOP)/$(CURRENT_DIR)/lib .); fi
 #endif
@@ -2633,7 +2633,7 @@ clean::									@@\
 #define LinkBuildSonameLibrary(lib) true
 #else
 #define LinkBuildSonameLibrary(lib) MakeDirInline($(BUILDLIBDIR));\	@@\
-	(set -x; RemoveFile($(BUILDLIBDIR)/lib);\			@@\
+	(test -n "${VERBOSE}" && set -x; RemoveFile($(BUILDLIBDIR)/lib);\			@@\
 	(cd $(BUILDLIBDIR) && $(LN) $(BUILDLIBTOP)/$(CURRENT_DIR)/lib .))
 #endif
 #endif /* LinkBuildSonameLibrary */
@@ -2716,7 +2716,7 @@ AllTarget(LibraryTargetName(libname))					@@\
 									@@\
 LibraryTargetName(libname): objlist $(EXTRALIBRARYDEPS)			@@\
 	RemoveFile($@)							@@\
-	@(set -x; cd down && MakeLibrary(up/$@,objlist)) || exit 1;	@@\
+	@(test -n "${VERBOSE}" && set -x; cd down && MakeLibrary(up/$@,objlist)) || exit 1;	@@\
 	RanLibrary($@)							@@\
 	_LinkBuildLibrary($@)
 #endif /* UnsharedLibraryTarget */
@@ -2969,9 +2969,9 @@ clean::									@@\
 #define MakeSubincludesForBuild(step,dir,srclist)			@@\
 step::  dir srclist							@@\
 	@-(list=`echo srclist | sed -e 's/[^ ]*\///g'`; \		@@\
-		set -x; cd dir && RemoveFiles($$list))			@@\
+		test -n "${VERBOSE}" && set -x; cd dir && RemoveFiles($$list))			@@\
 	@for i in srclist; do \						@@\
-		(set -x; cd dir && $(LN) ../$$i .); \			@@\
+		(test -n "${VERBOSE}" && set -x; cd dir && $(LN) ../$$i .); \			@@\
 	done								@@\
 									@@\
 dir::									@@\
@@ -2980,7 +2980,7 @@ dir::									@@\
 clean::									@@\
 	@-(if [ -d dir ]; then \					@@\
 		list=`echo srclist | sed -e 's/[^ ]*\///g'`; \		@@\
-		set -x; cd dir && RemoveFile($$list); else exit 0; fi)
+		test -n "${VERBOSE}" && set -x; cd dir && RemoveFile($$list); else exit 0; fi)
 #endif
 
 
@@ -3251,7 +3251,7 @@ target::								@@\
 		esac; \							@@\
 		RemoveFile($$i/Makefile.bak); \				@@\
 		if [ -f $$i/Makefile ]; then \				@@\
-			echo "	$(MV) Makefile Makefile.bak"; \		@@\
+			#echo "	$(MV) Makefile Makefile.bak"; \		@@\
 			if [ "$$executeit" != "no" ]; then \		@@\
 				$(MV) $$i/Makefile $$i/Makefile.bak; \	@@\
 			fi; \						@@\
@@ -3399,7 +3399,7 @@ clean::									@@\
 step::									@@\
 	DirFailPrefix@MakeFlagsToShellFlags(i,set +e); \		@@\
 	for i in dirs; do if [ -d $(DESTDIR)$$i ]; then \		@@\
-		set +x; else (set -x; $(MKDIRHIER) $(DESTDIR)$$i); fi; \ @@\
+		set +x; else (test -n "${VERBOSE}" && set -x; $(MKDIRHIER) $(DESTDIR)$$i); fi; \ @@\
 	done
 #endif /* MakeDirectories */
 
@@ -3441,7 +3441,7 @@ MutexDirective:	targets
 #define LinkBuildModule(module,subdir)\
 	MakeDir($(BUILDMODULEDIR)/subdir)				@@\
 	RemoveFile($(BUILDMODULEDIR)/subdir/module)			@@\
-	@(UP="`$(REVPATH) subdir`"; set -x; \				@@\
+	@(UP="`$(REVPATH) subdir`"; test -n "${VERBOSE}" && set -x; \				@@\
 	  cd $(BUILDMODULEDIR)/subdir && \				@@\
 		$(LN) $(BUILDMODULETOP)/$${UP}$(CURRENT_DIR)/module .)
 #endif
@@ -3454,7 +3454,7 @@ MutexDirective:	targets
 #define LinkBuildNamedModule(module,name,subdir)\
 	MakeDir($(BUILDMODULEDIR)/subdir)				@@\
 	RemoveFile($(BUILDMODULEDIR)/subdir/name)			@@\
-	@(UP="`$(REVPATH) subdir`"; set -x; \				@@\
+	@(UP="`$(REVPATH) subdir`"; test -n "${VERBOSE}" && set -x; \				@@\
 	  cd $(BUILDMODULEDIR)/subdir && \				@@\
 		$(LN) $(BUILDMODULETOP)/$${UP}$(CURRENT_DIR)/module name)
 #endif
@@ -3586,7 +3586,7 @@ AllTarget(objname.Osuf)							@@\
 objname.Osuf: Concat3(libpath,/lib,libname.a)				@@\
 	@$(MKDIRHIER) tmp						@@\
 	@$(CP) Concat3(libpath,/lib,libname.a) tmp			@@\
-	@(cd tmp; set -x; ArExtCmd Concat(lib,libname.a); \		@@\
+	@(cd tmp; test -n "${VERBOSE}" && set -x; ArExtCmd Concat(lib,libname.a); \		@@\
 	  $(LD) $(LDCOMBINEFLAGS) *.Osuf -o ../$@; \			@@\
 	  RemoveFiles(*.Osuf))						@@\
 	@$(RM) -r tmp							@@\
