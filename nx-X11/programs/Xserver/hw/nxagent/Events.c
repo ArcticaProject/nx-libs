@@ -2893,7 +2893,7 @@ int nxagentHandleXFixesSelectionNotify(XEvent *X)
     /*
      * Reception of an owner change on the real X server is - for nxagent - the same as
      * receiving a SelectionClear event. We just need to tell a (possible) internal
-     * owner that is no longer owning the selection.
+     * owner that it is no longer owning the selection.
      */
     nxagentHandleSelectionClearFromXServerByAtom(xfixesEvent -> xfixesselection.selection);
   }
