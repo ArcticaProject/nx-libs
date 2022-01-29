@@ -967,6 +967,7 @@ Bool nxagentOpenScreen(ScreenPtr pScreen, int argc, char *argv[])
     #endif
 
     nxagentChangeOption(Fullscreen, True);
+    nxagentChangeOption(AllScreens, True);
 
     if (nxagentOption(ClientOs) == ClientOsWinnt &&
             (!nxagentReconnectTrap || nxagentResizeDesktopAtStartup))
