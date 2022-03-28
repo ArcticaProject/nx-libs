@@ -25,10 +25,12 @@ jobs:
           - { container: 'debian:stable', cc-version: clang }
           - { container: 'debian:sid', cc-version: gcc }
           - { container: 'debian:sid', cc-version: clang }
-          - { container: 'centos:7', cc-version: gcc }
-          - { container: 'centos:7', cc-version: clang }
-          - { container: 'centos:8', cc-version: gcc }
-          - { container: 'centos:8', cc-version: clang }
+          - { container: 'quay.io/centos/centos:7', cc-version: gcc }
+          - { container: 'quay.io/centos/centos:7', cc-version: clang }
+          - { container: 'quay.io/centos/centos:stream8', cc-version: gcc }
+          - { container: 'quay.io/centos/centos:stream8', cc-version: clang }
+          - { container: 'quay.io/centos/centos:stream9', cc-version: gcc }
+          - { container: 'quay.io/centos/centos:stream9', cc-version: clang }
           - { container: 'fedora:latest', cc-version: gcc }
           - { container: 'fedora:latest', cc-version: clang }
 
@@ -58,21 +60,28 @@ jobs:
             dnf -y install ${{ matrix.cfg.cc-version }}
             ${{ matrix.cfg.cc-version }} --version
             ;;
-          centos:8)
-            cat /etc/centos-release
-            rpm --import /etc/pki/rpm-gpg/RPM-GPG-KEY-centosofficial
-            dnf -y update
-            dnf -y install ${{ matrix.cfg.cc-version }}
-            ${{ matrix.cfg.cc-version }} --version
-            ;;
-          centos:7)
+          */centos:7)
             cat /etc/centos-release
             rpm --import /etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-7
             yum -y update
             yum -y install ${{ matrix.cfg.cc-version }}
             ${{ matrix.cfg.cc-version }} --version
             ;;
-        esac
+          */centos:stream8)
+            cat /etc/centos-release
+            rpm --import /etc/pki/rpm-gpg/RPM-GPG-KEY-centosofficial
+            dnf -y update --nobest --allowerasing
+            dnf -y install ${{ matrix.cfg.cc-version }}
+            ${{ matrix.cfg.cc-version }} --version
+            ;;
+          */centos:stream9)
+            cat /etc/centos-release
+            rpm --import /etc/pki/rpm-gpg/RPM-GPG-KEY-centosofficial
+            dnf -y update
+            dnf -y install ${{ matrix.cfg.cc-version }}
+            ${{ matrix.cfg.cc-version }} --version
+            ;;
+          esac
 
     - name: Install nx-libs dependencies ${{ matrix.cfg.cc-version }}
       shell: sh
@@ -114,7 +123,28 @@ jobs:
             dnf -y install \
               quilt xkbcomp-devel
             ;;
-          centos:8)
+          */centos:7)
+            # enable epel repository for quilt
+            yum -y install epel-release
+            rpm --import /etc/pki/rpm-gpg/RPM-GPG-KEY-EPEL-7
+            # basic packages
+            yum -y install \
+              autoconf automake gcc-c++ libtool make imake pkgconfig which
+            # imake deps
+            yum -y install \
+              xorg-x11-proto-devel zlib-devel
+            # X11 libraries deps
+            yum -y install \
+              libjpeg-devel expat-devel libpng-devel libxml2-devel pixman-devel \
+              libX11-devel libXext-devel libXpm-devel libXfont-devel \
+              libXdmcp-devel libXdamage-devel libXcomposite-devel \
+              libXrandr-devel libXfixes-devel libXtst-devel libXinerama-devel \
+              xorg-x11-font-utils libtirpc-devel xkeyboard-config
+            # soft requirements
+            yum -y --enablerepo=epel install \
+              quilt xorg-x11-xkb-utils-devel
+            ;;
+          */centos:stream8)
             # Enable powertools repository for imake
             dnf -y install dnf-plugins-core epel-release
             rpm --import /etc/pki/rpm-gpg/RPM-GPG-KEY-EPEL-8
@@ -136,26 +166,27 @@ jobs:
             dnf --enablerepo="epel" -y install \
               quilt xorg-x11-xkb-utils-devel
             ;;
-          centos:7)
-            # enable epel repository for quilt
-            yum -y install epel-release
-            rpm --import /etc/pki/rpm-gpg/RPM-GPG-KEY-EPEL-7
+          */centos:stream9)
+            dnf -y install dnf-plugins-core epel-release
+            rpm --import /etc/pki/rpm-gpg/RPM-GPG-KEY-EPEL-9
+            # CodeReady Linux Builder, replacement for PowerTools
+            dnf config-manager --set-enabled crb
             # basic packages
-            yum -y install \
+            dnf -y install \
               autoconf automake gcc-c++ libtool make imake pkgconfig which
             # imake deps
-            yum -y install \
+            dnf -y install \
               xorg-x11-proto-devel zlib-devel
             # X11 libraries deps
-            yum -y install \
+            dnf -y install \
               libjpeg-devel expat-devel libpng-devel libxml2-devel pixman-devel \
-              libX11-devel libXext-devel libXpm-devel libXfont-devel \
+              libX11-devel libXext-devel libXpm-devel libXfont2-devel \
               libXdmcp-devel libXdamage-devel libXcomposite-devel \
               libXrandr-devel libXfixes-devel libXtst-devel libXinerama-devel \
-              xorg-x11-font-utils libtirpc-devel xkeyboard-config
+              libtirpc-devel mkfontscale xkeyboard-config
             # soft requirements
-            yum -y --enablerepo=epel install \
-              quilt xorg-x11-xkb-utils-devel
+            dnf -y install \
+              quilt setxkbmap xkbcomp
             ;;
           esac
 
@@ -178,7 +209,7 @@ jobs:
             ;;
         esac
         case "${{ matrix.cfg.container }}" in
-          fedora*|centos*|debian*|ubuntu*)
+          fedora*|*/centos*|debian*|ubuntu*)
             export IMAKE_DEFINES="-DUseTIRPC=YES"
             make IMAKE_DEFINES="${IMAKE_DEFINES}"
             ;;
