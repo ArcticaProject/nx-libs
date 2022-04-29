@@ -1,10 +1,10 @@
 /**************************************************************************/
 /*                                                                        */
 /* Copyright (c) 2001, 2011 NoMachine (http://www.nomachine.com)          */
-/* Copyright (c) 2008-2014 Oleksandr Shneyder <o.shneyder@phoca-gmbh.de>  */
-/* Copyright (c) 2011-2016 Mike Gabriel <mike.gabriel@das-netzwerkteam.de>*/
-/* Copyright (c) 2014-2016 Mihai Moldovan <ionic@ionic.de>                */
-/* Copyright (c) 2014-2016 Ulrich Sibiller <uli42@gmx.de>                 */
+/* Copyright (c) 2008-2017 Oleksandr Shneyder <o.shneyder@phoca-gmbh.de>  */
+/* Copyright (c) 2011-2022 Mike Gabriel <mike.gabriel@das-netzwerkteam.de>*/
+/* Copyright (c) 2014-2019 Mihai Moldovan <ionic@ionic.de>                */
+/* Copyright (c) 2014-2022 Ulrich Sibiller <uli42@gmx.de>                 */
 /* Copyright (c) 2015-2016 Qindel Group (http://www.qindel.com)           */
 /*                                                                        */
 /* NXAGENT, NX protocol compression and NX extensions to this software    */
@@ -244,10 +244,10 @@ void InitOutput(ScreenInfo *scrInfo, int argc, char *argv[])
   {
     fprintf(stderr, "\nNXAGENT - Version " NX_VERSION_CURRENT_STRING "\n\n");
     fprintf(stderr, "Copyright (c) 2001, 2011 NoMachine (http://www.nomachine.com)\n");
-    fprintf(stderr, "Copyright (c) 2008-2014 Oleksandr Shneyder <o.shneyder@phoca-gmbh.de>\n");
-    fprintf(stderr, "Copyright (c) 2011-2016 Mike Gabriel <mike.gabriel@das-netzwerkteam.de>\n");
-    fprintf(stderr, "Copyright (c) 2014-2016 Ulrich Sibiller <uli42@gmx.de>\n");
-    fprintf(stderr, "Copyright (c) 2014-2016 Mihai Moldovan <ionic@ionic.de>\n");
+    fprintf(stderr, "Copyright (c) 2008-2017 Oleksandr Shneyder <o.shneyder@phoca-gmbh.de>\n");
+    fprintf(stderr, "Copyright (c) 2011-2022 Mike Gabriel <mike.gabriel@das-netzwerkteam.de>\n");
+    fprintf(stderr, "Copyright (c) 2014-2022 Ulrich Sibiller <uli42@gmx.de>\n");
+    fprintf(stderr, "Copyright (c) 2014-2019 Mihai Moldovan <ionic@ionic.de>\n");
     fprintf(stderr, "Copyright (c) 2015-2016 Qindel Group (http://www.qindel.com)\n");
     fprintf(stderr, "See https://github.com/ArcticaProject/nx-libs for more information.\n\n");
 

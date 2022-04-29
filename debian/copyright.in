@@ -842,10 +842,10 @@ Files: nx-X11/Imakefile
  nxcompshad/src/X11.cpp
  nxcompshad/src/X11.h
 Copyright: 2001, 2011, NoMachine (http:www.nomachine.com)
-  2008-2014, Oleksandr Shneyder <o.shneyder@phoca-gmbh.de>
-  2011-2016, Mike Gabriel <mike.gabriel@das-netzwerkteam.de>
-  2014-2016, Mihai Moldovan <ionic@ionic.de>
-  2014-2016, Ulrich Sibiller <uli42@gmx.de>
+  2008-2017, Oleksandr Shneyder <o.shneyder@phoca-gmbh.de>
+  2011-2022, Mike Gabriel <mike.gabriel@das-netzwerkteam.de>
+  2014-2019, Mihai Moldovan <ionic@ionic.de>
+  2014-2022, Ulrich Sibiller <uli42@gmx.de>
   2015-2016, Qindel Group (http:www.qindel.com)
   of the aforementioned persons and companies.
 License: UNKNOWN
@@ -1810,10 +1810,10 @@ Files: nx-X11/include/Xpoll.h.in
  nx-X11/programs/Xserver/hw/nxagent/TestExt.c
  nx-X11/programs/Xserver/hw/nxagent/Visual.c
 Copyright: 2001, 2011, NoMachine (http:www.nomachine.com)
-  2008-2014, Oleksandr Shneyder <o.shneyder@phoca-gmbh.de>
-  2011-2016, Mike Gabriel <mike.gabriel@das-netzwerkteam.de>
-  2014-2016, Mihai Moldovan <ionic@ionic.de>
-  2014-2016, Ulrich Sibiller <uli42@gmx.de>
+  2008-2017, Oleksandr Shneyder <o.shneyder@phoca-gmbh.de>
+  2011-2022, Mike Gabriel <mike.gabriel@das-netzwerkteam.de>
+  2014-2019, Mihai Moldovan <ionic@ionic.de>
+  2014-2022, Ulrich Sibiller <uli42@gmx.de>
   2015-2016, Qindel Group (http:www.qindel.com)
   of the aforementioned persons and companies.
 License: NTP
@@ -1894,10 +1894,10 @@ Files: nx-X11/programs/Xserver/hw/nxagent/NXdamage.c
  nx-X11/programs/Xserver/randr/rrscreen.c
  nx-X11/programs/Xserver/randr/rrxinerama.c
 Copyright: 2001, 2011, NoMachine (http:www.nomachine.com)
-  2008-2014, Oleksandr Shneyder <o.shneyder@phoca-gmbh.de>
-  2011-2016, Mike Gabriel <mike.gabriel@das-netzwerkteam.de>
-  2014-2016, Mihai Moldovan <ionic@ionic.de>
-  2014-2016, Ulrich Sibiller <uli42@gmx.de>
+  2008-2017, Oleksandr Shneyder <o.shneyder@phoca-gmbh.de>
+  2011-2022, Mike Gabriel <mike.gabriel@das-netzwerkteam.de>
+  2014-2019, Mihai Moldovan <ionic@ionic.de>
+  2014-2022, Ulrich Sibiller <uli42@gmx.de>
   2015-2016, Qindel Group (http:www.qindel.com)
   of the aforementioned persons and companies.
 License: NTP (legal disclaimer)
@@ -2191,10 +2191,10 @@ License: UNKNOWN
 Files: nx-X11/programs/Xserver/hw/nxagent/Rootless.h
  nx-X11/programs/Xserver/os/Imakefile
 Copyright: 2001, 2011, NoMachine (http:www.nomachine.com)
-  2008-2014, Oleksandr Shneyder <o.shneyder@phoca-gmbh.de>
-  2011-2016, Mike Gabriel <mike.gabriel@das-netzwerkteam.de>
-  2014-2016, Mihai Moldovan <ionic@ionic.de>
-  2014-2016, Ulrich Sibiller <uli42@gmx.de>
+  2008-2017, Oleksandr Shneyder <o.shneyder@phoca-gmbh.de>
+  2011-2022, Mike Gabriel <mike.gabriel@das-netzwerkteam.de>
+  2014-2019, Mihai Moldovan <ionic@ionic.de>
+  2014-2022, Ulrich Sibiller <uli42@gmx.de>
   2015-2016, Qindel Group (http:www.qindel.com)
   of the aforementioned persons and companies.
 License: GENERATED FILE
@@ -2415,10 +2415,10 @@ License: GPL (v2 or later)
 Files: LICENSE.nxcomp
 Copyright: 2000, 2003, Gian Filippo Pinzari
   2001, 2010, NoMachine (http:www.nomachine.com)
-  2008-2014, Oleksandr Shneyder <o.shneyder@phoca-gmbh.de>
-  2011-2016, Mike Gabriel <mike.gabriel@das-netzwerkteam.de>
-  2014-2016, Mihai Moldovan <ionic@ionic.de>
-  2014-2016, Ulrich Sibiller <uli42@gmx.de>
+  2008-2017, Oleksandr Shneyder <o.shneyder@phoca-gmbh.de>
+  2011-2022, Mike Gabriel <mike.gabriel@das-netzwerkteam.de>
+  2014-2019, Mihai Moldovan <ionic@ionic.de>
+  2014-2022, Ulrich Sibiller <uli42@gmx.de>
   2015-2016, Qindel Group (http:www.qindel.com)
   of the aforementioned
 License: GPL (v2)
@@ -2426,10 +2426,10 @@ License: GPL (v2)
 
 Files: LICENSE
 Copyright: 2001, 2011, NoMachine (http:www.nomachine.com)
-  2008-2014, Oleksandr Shneyder <o.shneyder@phoca-gmbh.de>
-  2011-2016, Mike Gabriel <mike.gabriel@das-netzwerkteam.de>
-  2014-2016, Mihai Moldovan <ionic@ionic.de>
-  2014-2016, Ulrich Sibiller <uli42@gmx.de>
+  2008-2017, Oleksandr Shneyder <o.shneyder@phoca-gmbh.de>
+  2011-2022, Mike Gabriel <mike.gabriel@das-netzwerkteam.de>
+  2014-2019, Mihai Moldovan <ionic@ionic.de>
+  2014-2022, Ulrich Sibiller <uli42@gmx.de>
   2015-2016, Qindel Group (http:www.qindel.com)
   of the aforementioned copyright holders.
 License: GPL (v2)
@@ -2446,7 +2446,7 @@ License: GPL (v3 or later)
  FIXME
 
 Files: roll-tarballs.sh
-Copyright: 2011-2016, Mike Gabriel <mike.gabriel@das-netzwerkteam.de>
+Copyright: 2011-2022, Mike Gabriel <mike.gabriel@das-netzwerkteam.de>
   2012, Reinhard Tartler <siretart@tauware.de>
 License: GPL (v3 or later)
  FIXME
@@ -2484,10 +2484,10 @@ License: MIT/X11 (BSD like)
 
 Files: nx-X11/programs/Xserver/hw/nxagent/Agent.h
 Copyright: 2001, 2011, NoMachine (http:www.nomachine.com)
-  2008-2014, Oleksandr Shneyder <o.shneyder@phoca-gmbh.de>
-  2011-2016, Mike Gabriel <mike.gabriel@das-netzwerkteam.de>
-  2014-2016, Mihai Moldovan <ionic@ionic.de>
-  2014-2016, Ulrich Sibiller <uli42@gmx.de>
+  2008-2017, Oleksandr Shneyder <o.shneyder@phoca-gmbh.de>
+  2011-2022, Mike Gabriel <mike.gabriel@das-netzwerkteam.de>
+  2014-2019, Mihai Moldovan <ionic@ionic.de>
+  2014-2022, Ulrich Sibiller <uli42@gmx.de>
   2015-2016, Qindel Group (http:www.qindel.com)
   of the aforementioned persons and companies.
 License: MIT/X11 (BSD like)
@@ -2586,10 +2586,10 @@ License: NTP (legal disclaimer)
 
 Files: nx-X11/programs/Xserver/hw/nxagent/Visual.h
 Copyright: 2001, 2011, NoMachine (http:www.nomachine.com)
-  2008-2014, Oleksandr Shneyder <o.shneyder@phoca-gmbh.de>
-  2011-2016, Mike Gabriel <mike.gabriel@das-netzwerkteam.de>
-  2014-2016, Mihai Moldovan <ionic@ionic.de>
-  2014-2016, Ulrich Sibiller <uli42@gmx.de>
+  2008-2017, Oleksandr Shneyder <o.shneyder@phoca-gmbh.de>
+  2011-2022, Mike Gabriel <mike.gabriel@das-netzwerkteam.de>
+  2014-2019, Mihai Moldovan <ionic@ionic.de>
+  2014-2022, Ulrich Sibiller <uli42@gmx.de>
   2015-2016, Qindel Group (http:www.qindel.com)
   of the aforementioned persons and companies.
 License: NTP GENERATED FILE
@@ -2642,7 +2642,7 @@ License: UNKNOWN
 
 Files: nx-X11/programs/Xserver/hw/nxagent/man/nxagent.1
 Copyright: 1984-1991, 1993-1994, 1998, The Open Group
-  2011-2016, Mike Gabriel <mike.gabriel@das-netzwerkteam.de>
+  2011-2022, Mike Gabriel <mike.gabriel@das-netzwerkteam.de>
 License: UNKNOWN
  FIXME
 
