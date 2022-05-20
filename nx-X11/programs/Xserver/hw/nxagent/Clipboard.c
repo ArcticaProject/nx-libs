@@ -519,6 +519,16 @@ void nxagentDumpClipboardStat(void)
   fprintf(stderr, "\\------------------------------------------------------------------------------\n");
 }
 
+void nxagentSwitchClipboardMode(int new_mode) {
+  int old_mode = nxagentOption(Clipboard);
+  if (old_mode == new_mode)
+    return;
+  nxagentChangeOption(Clipboard, new_mode);
+  fprintf(stderr, "Switched clipboard mode from %s to %s.\n",
+          getClipboardModeString(old_mode),
+          getClipboardModeString(new_mode));
+}
+
 /*
  * Helper to handle data transfer
  */
