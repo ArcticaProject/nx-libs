@@ -253,6 +253,18 @@ static char szAgentCLIPBOARD[] = "CLIPBOARD";
  * Some helpers for debugging output
  */
 
+static const char * getClipboardModeString(int mode)
+{
+  switch(mode)
+  {
+    case ClipboardBoth:    return("[Both]"); break;;
+    case ClipboardClient:  return("[Client]"); break;;
+    case ClipboardServer:  return("[Server]"); break;;
+    case ClipboardNone:    return("[None]"); break;;
+    default:               return("[UNKNOWN] (FAIL!)"); break;;
+  }
+}
+
 static const char * getClientSelectionStageString(int stage)
 {
   switch(stage)
@@ -438,14 +450,7 @@ void nxagentDumpClipboardStat(void)
   fprintf(stderr, "  serverWindow              (XlibWindow) [0x%lx]\n", serverWindow);
 
   fprintf(stderr, "  Clipboard mode                         ");
-  switch(nxagentOption(Clipboard))
-  {
-    case ClipboardBoth:    fprintf(stderr, "[Both]"); break;;
-    case ClipboardClient:  fprintf(stderr, "[Client]"); break;;
-    case ClipboardServer:  fprintf(stderr, "[Server]"); break;;
-    case ClipboardNone:    fprintf(stderr, "[None]"); break;;
-    default:               fprintf(stderr, "[UNKNOWN] (FAIL!)"); break;;
-  }
+  fprintf(stderr, getClipboardModeString(nxagentOption(Clipboard)));
   fprintf(stderr, "\n");
 
   if (serverLastRequestedSelection == -1)
