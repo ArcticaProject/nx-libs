@@ -79,6 +79,10 @@ enum nxagentSpecialKeystroke {
        KEYSTROKE_AUTOGRAB,
 
        KEYSTROKE_DUMP_CLIPBOARD,
+       KEYSTROKE_SET_CLIPBOARD_BOTH,
+       KEYSTROKE_SET_CLIPBOARD_CLIENT,
+       KEYSTROKE_SET_CLIPBOARD_SERVER,
+       KEYSTROKE_SET_CLIPBOARD_NONE,
 
        /* insert more here and in the string translation */
 
