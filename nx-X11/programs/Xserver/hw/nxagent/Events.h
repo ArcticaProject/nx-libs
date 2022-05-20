@@ -52,7 +52,11 @@ enum HandleEventResult
   doSwitchResizeMode,
   doSwitchDeferMode,
   doAutoGrab,
-  doDumpClipboard
+  doDumpClipboard,
+  doClipboardBoth,
+  doClipboardClient,
+  doClipboardServer,
+  doClipboardNone
 };
 
 extern CARD32 nxagentLastEventTime;

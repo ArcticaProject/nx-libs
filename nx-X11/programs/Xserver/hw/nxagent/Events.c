@@ -1071,6 +1071,14 @@ void nxagentDispatchEvents(PredicateFuncPtr predicate)
             nxagentDumpClipboardStat();
             break;
           }
+          case doClipboardBoth:
+          case doClipboardClient:
+          case doClipboardServer:
+          case doClipboardNone:
+          {
+            nxagentSwitchClipboardMode(ClipboardBoth + result - doClipboardBoth);
+            break;
+          }
           default:
           {
             FatalError("nxagentDispatchEvent: handleKeyPress returned unknown value\n");
