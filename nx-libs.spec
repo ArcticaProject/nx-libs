@@ -134,6 +134,10 @@ BuildRequires:  zlib-devel
 BuildRequires:  libtirpc-devel
 %endif
 
+%if 0%{?fedora} || 0%{?rhel}
+BuildRequires:  /usr/bin/pathfix.py
+%endif
+
 Obsoletes:      nx < 3.5.0-19
 Provides:       nx = %{version}-%{release}
 Provides:       nx%{?_isa} = %{version}-%{release}
