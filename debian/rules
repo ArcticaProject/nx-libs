@@ -20,6 +20,26 @@ VENDOR_DEBIAN := $(shell { dpkg-vendor --is 'Debian' && echo 'yes'; } || { dpkg-
 
 ifeq ($(VENDOR_DEBIAN),yes)
   RELEASE_VER := $(shell /usr/bin/lsb_release -r |  cut -d ':' -f'2' |  sed -e 's/\s*//g' | cut -d '.' -f'1')
+
+  # Newer Debian versions might report "n/a" for testing and unstable.
+  ifeq ($(RELEASE_VER),n/a)
+    # On these platforms, the best way to determine the system version is by
+    # going through "apt-cache policy".
+    # Note that this should only be the case for either testing or unstable.
+    # Other systems should have a proper version number.
+    # This is also why we can just drop any suites/archive names (this is
+    # what a= means) containing a dash character (e.g., "stable-updates")
+    # and only pick the first match.
+    RELEASE_VER := $(shell /usr/bin/apt-cache policy | grep -E 'o=(De|Rasp)bian,' | grep -E 'l=(De|Rasp)bian,' | grep -F 'c=main,' | grep -Eo 'a=[^, ]*' | sed -e 's/^a=//' | grep -v -- '-' | head -n '1')
+
+    # Do error checking.
+    ifneq ($(RELEASE_VER),testing)
+      ifneq ($(RELEASE_VER),unstable)
+        $(error Release version could not be determined, sorry. Extracted value: $(RELEASE_VER))
+      endif
+    endif
+  endif
+
   # Let's fake testing's and unstable's "release version"...
   ifeq ($(RELEASE_VER),testing)
     RELEASE_VER := 999
