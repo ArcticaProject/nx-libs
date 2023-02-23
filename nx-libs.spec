@@ -130,7 +130,7 @@ BuildRequires:  xorg-x11-proto-devel
 BuildRequires:  zlib-devel
 
 # RPC headers. Fedora 28+ and OpenSuSE Tumbleweed phased them out of glibc, like upstream did.
-%if 0%{?fedora} > 27 || 0%{?suse_version} > 1500
+%if 0%{?fedora} > 27 || ( 0%{?suse_version} && ( 0%{?suse_version} > 1500 || 0%{?sle_version} > 150200 ) )
 BuildRequires:  libtirpc-devel
 %endif
 
@@ -439,7 +439,7 @@ LOCAL_LDFLAGS="%{__global_ldflags}"
 CDEBUGFLAGS="%{?__global_cppflags} %{?__global_cflags} %{?optflags}"
 IMAKE_DEFINES=''
 FORCE_TIRPC='NO'
-%if 0%{?fedora} > 27 || 0%{?suse_version} > 1500
+%if 0%{?fedora} > 27 || ( 0%{?suse_version} && ( 0%{?suse_version} > 1500 || 0%{?sle_version} > 150200 ) )
 FORCE_TIRPC='YES'
 %endif
 IMAKE_DEFINES="-DUseTIRPC=${FORCE_TIRPC}"
