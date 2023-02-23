@@ -134,7 +134,7 @@ BuildRequires:  zlib-devel
 BuildRequires:  libtirpc-devel
 %endif
 
-%if 0%{?fedora} || 0%{?rhel}
+%if 0%{?fedora} > 26 || 0%{?rhel} > 6
 BuildRequires:  /usr/bin/pathfix.py
 %endif
 
@@ -491,10 +491,22 @@ sed -i -e '1c\
 %{_bindir}/python2' '%{buildroot}%{_bindir}/nxdialog'
 %endif
 %else
-%if 0%{?fedora} >= 23 || 0%{?rhel} >= 8
+# Unfortunately, pathfix.py is not available everywhere, so where it is not,
+# we replace it in a less sophisticated way.
+%if 0%{?fedora} > 22 || 0%{?rhel} > 7
+%if 0%{?fedora} > 26 || 0%{?rhel} > 7
 pathfix.py -pni "%{__python3} %{py3_shbang_opts}" '%{buildroot}%{_bindir}/nxdialog'
 %else
+sed -i -e '1c\
+%{__python3}' '%{buildroot}%{_bindir}/nxdialog'
+%endif
+%else
+%if 0%{?rhel} > 6
 pathfix.py -pni "%{__python2} %{py2_shbang_opts}" '%{buildroot}%{_bindir}/nxdialog'
+%else
+sed -i -e '1c\
+/usr/bin/python2' '%{buildroot}%{_bindir}/nxdialog'
+%endif
 %endif
 %endif
 
