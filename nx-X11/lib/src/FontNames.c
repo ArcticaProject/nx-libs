@@ -29,6 +29,7 @@ in this Software without prior written authorization from The Open Group.
 #include <config.h>
 #endif
 #include "Xlibint.h"
+#include "reallocarray.h"
 #include <limits.h>
 
 char **
@@ -50,10 +51,13 @@ int *actualCount)	/* RETURN */
     register xListFontsReq *req;
     unsigned long rlen = 0;
 
+    if (pattern != NULL && strlen(pattern) >= USHRT_MAX)
+        return NULL;
+
     LockDisplay(dpy);
     GetReq(ListFonts, req);
     req->maxNames = maxNames;
-    nbytes = req->nbytes = pattern ? strlen (pattern) : 0;
+    nbytes = req->nbytes = pattern ? (CARD16) strlen (pattern) : 0;
     req->length += (nbytes + 3) >> 2;
     _XSend (dpy, pattern, nbytes);
     /* use _XSend instead of Data, since following _XReply will flush buffer */
@@ -66,7 +70,7 @@ int *actualCount)	/* RETURN */
     }
 
     if (rep.nFonts) {
-	flist = Xmalloc (rep.nFonts * sizeof(char *));
+	flist = Xmallocarray (rep.nFonts, sizeof(char *));
 	if (rep.length > 0 && rep.length < (INT_MAX >> 2)) {
 	    rlen = rep.length << 2;
 	    ch = Xmalloc(rlen + 1);

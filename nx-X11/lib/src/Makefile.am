@@ -250,6 +250,7 @@ libNX_X11_la_SOURCES =					\
 		QuTree.c				\
 		RaiseWin.c				\
 		RdBitF.c				\
+		reallocarray.c				\
 		RecolorC.c				\
 		ReconfWin.c				\
 		ReconfWM.c				\

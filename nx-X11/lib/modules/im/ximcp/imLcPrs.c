@@ -501,7 +501,7 @@ parseline(
             if ((filename = TransFileName(im, tokenbuf)) == NULL)
                 goto error;
             infp = _XFopenFile(filename, "r");
-                Xfree(filename);
+            Xfree(filename);
             if (infp == NULL)
                 goto error;
             parsestringfile(infp, im, depth);
@@ -676,8 +676,10 @@ parseline(
 		    goto error;
 		b->tree = new;
 		b->treesize = newsize;
+		/* Re-derive top after realloc() to avoid undefined behaviour
+		   (and crashes on architectures that track pointer bounds). */
 		if (top >= (DTIndex *) old && top < (DTIndex *) &old[oldsize])
-		    top = (DTIndex *) (((char *) top) + (((char *)b->tree)-(char *)old));
+		    top = (DTIndex *) (((char *)new) + (((char *)top)-(char *)old));
 	    }
 	    p = &b->tree[b->treeused];
 	    p->keysym        = buf[i].keysym;
