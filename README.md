@@ -21,7 +21,8 @@ Our intentions for nx-libs are:
 * provide _one_ tarball for distribution packagers
 * provide support for security issues
 * provide support for latest X11 extensions
-* improve NX where possible
+* improve NX where possible while still staying compatible to FreeNX and NoMachine 3.x
+
 
 This source tree is maintained on Github:
 
@@ -182,3 +183,24 @@ For RedHat based distributions current packages can be found at
 https://bodhi.fedoraproject.org/updates/?packages=nx-libs
 
 Please note that these are not always current as the builds are done manually.
+
+
+## Compatibility with other NX based software
+
+FreeNX is a free replacement of the original nxserver by
+nomachine. OpenNX-CE is OSS GUI client replacing the original
+nomachine nxclient. nx-libs is developed with those projects in mind
+and tries to stay compatible with FreeNX and nomachine NX.  While
+looking abandoned for many years some people are still using and
+improving these packages. For current repos see
+
+* https://github.com/dimbor-ru/freenx-server
+* https://github.com/dimbor-ru/opennx
+
+Thanks to dimbor for providing/maintaining these.
+
+Etersoft is offering a commercial software called RX. Their OSS client
+called rxclient also aims to be compatible to FreeNX and nomachine and
+is based on opennx. You can find repos for their software here:
+* https://github.com/Etersoft/rxclient
+* https://github.com/Etersoft/rx-etersoft
