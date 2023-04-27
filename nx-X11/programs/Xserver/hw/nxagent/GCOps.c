@@ -87,7 +87,7 @@ static int nxagentSaveGCTrap;
 { \
   nxagentGCTrap = nxagentSaveGCTrap; \
 }
- 
+
 /*
  * This is currently unused.
  */
@@ -131,7 +131,7 @@ void nxagentSetSpans(DrawablePtr pDrawable, GCPtr pGC, char *pSrc,
   else
   {
     fbSetSpans(pDrawable, pGC, pSrc, pPoints, pWidths, nSpans, fSorted);
-  } 
+  }
 }
 
 void nxagentGetSpans(DrawablePtr pDrawable, int maxWidth, xPoint *pPoints,
@@ -577,7 +577,7 @@ RegionPtr nxagentCopyArea(DrawablePtr pSrcDrawable, DrawablePtr pDstDrawable,
   #ifdef TEST
   fprintf(stderr, "nxagentCopyArea: Image src [%s:%p], dst [%s:%p] (%d,%d) -> (%d,%d) size (%d,%d)\n",
               (pSrcDrawable -> type == DRAWABLE_PIXMAP) ? "PIXMAP" : "WINDOW", (void *) pSrcDrawable,
-                      (pDstDrawable -> type == DRAWABLE_PIXMAP) ? "PIXMAP" : "WINDOW", 
+                      (pDstDrawable -> type == DRAWABLE_PIXMAP) ? "PIXMAP" : "WINDOW",
                           (void *) pDstDrawable, srcx, srcy, dstx, dsty, width, height);
   #endif
 
@@ -669,7 +669,7 @@ RegionPtr nxagentCopyArea(DrawablePtr pSrcDrawable, DrawablePtr pDstDrawable,
     if (pSrcDrawable -> type == DRAWABLE_PIXMAP &&
             pDstDrawable -> type == DRAWABLE_PIXMAP)
     {
-      return fbCopyArea(nxagentVirtualDrawable(pSrcDrawable), 
+      return fbCopyArea(nxagentVirtualDrawable(pSrcDrawable),
                           nxagentVirtualDrawable(pDstDrawable),
                             pGC, srcx, srcy, width, height, dstx, dsty);
     }
@@ -823,7 +823,7 @@ RegionPtr nxagentCopyArea(DrawablePtr pSrcDrawable, DrawablePtr pDstDrawable,
                     (void *) nxagentVirtualDrawable(pDstDrawable));
     #endif
 
-    return fbCopyArea(nxagentVirtualDrawable(pSrcDrawable), 
+    return fbCopyArea(nxagentVirtualDrawable(pSrcDrawable),
                           nxagentVirtualDrawable(pDstDrawable),
                               pGC, srcx, srcy, width, height, dstx, dsty);
   }
@@ -873,7 +873,7 @@ RegionPtr nxagentCopyArea(DrawablePtr pSrcDrawable, DrawablePtr pDstDrawable,
     }
   }
 
-  return miHandleExposures(pSrcDrawable, pDstDrawable, pGC, 
+  return miHandleExposures(pSrcDrawable, pDstDrawable, pGC,
                                srcx, srcy, width, height, dstx, dsty, 0);
 }
 
@@ -895,7 +895,7 @@ RegionPtr nxagentCopyPlane(DrawablePtr pSrcDrawable, DrawablePtr pDstDrawable,
     if (pSrcDrawable -> type == DRAWABLE_PIXMAP &&
             pDstDrawable -> type == DRAWABLE_PIXMAP)
     {
-      return fbCopyPlane(nxagentVirtualDrawable(pSrcDrawable), 
+      return fbCopyPlane(nxagentVirtualDrawable(pSrcDrawable),
                            nxagentVirtualDrawable(pDstDrawable),
                              pGC, srcx, srcy, width, height, dstx, dsty, plane);
     }
@@ -1041,7 +1041,7 @@ RegionPtr nxagentCopyPlane(DrawablePtr pSrcDrawable, DrawablePtr pDstDrawable,
                     (void *) nxagentVirtualDrawable(pDstDrawable));
     #endif
 
-    return fbCopyPlane(nxagentVirtualDrawable(pSrcDrawable), 
+    return fbCopyPlane(nxagentVirtualDrawable(pSrcDrawable),
                          nxagentVirtualDrawable(pDstDrawable),
                            pGC, srcx, srcy, width, height, dstx, dsty, plane);
   }
@@ -1061,7 +1061,7 @@ RegionPtr nxagentCopyPlane(DrawablePtr pSrcDrawable, DrawablePtr pDstDrawable,
                             srcx, srcy, width, height, dstx, dsty, plane);
   }
 
-  return miHandleExposures(pSrcDrawable, pDstDrawable, pGC, 
+  return miHandleExposures(pSrcDrawable, pDstDrawable, pGC,
                                srcx, srcy, width, height, dstx, dsty, plane);
 }
 
@@ -1507,7 +1507,7 @@ void nxagentPolyFillRect(DrawablePtr pDrawable, GCPtr pGC,
   if (nRectangles == 1)
   {
     fprintf(stderr, "nxagentPolyFillRect: Drawable at [%p] GC at [%p] FillStyle [%d] Rectangle [%d,%d][%d,%d].\n",
-                (void *) pDrawable, (void *) pGC, pGC -> fillStyle, 
+                (void *) pDrawable, (void *) pGC, pGC -> fillStyle,
                     pRectangles -> x, pRectangles -> y, pRectangles -> width, pRectangles -> height);
   }
   else

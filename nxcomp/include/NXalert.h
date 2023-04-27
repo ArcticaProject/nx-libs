@@ -267,7 +267,7 @@ server configuration.\n\
 
 /*
  * Used to handle the backward compatibility.
- * Update the numbers if you add a new alert. 
+ * Update the numbers if you add a new alert.
  */
 
 #define LAST_PROTO_STEP_6_ALERT  63

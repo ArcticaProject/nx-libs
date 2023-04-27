@@ -629,7 +629,7 @@ FIXME: Should use these.
                         pRegion -> extents.y1, pRegion -> extents.x2, pRegion -> extents.y2,
                             (void *) pDrawable);
         #endif
-  
+
         nxagentMarkCorruptedRegion(pDrawable, pRegion);
 
         goto nxagentPutImageEnd;
@@ -647,7 +647,7 @@ FIXME: Should use these.
                       pRegion -> extents.y1, pRegion -> extents.x2, pRegion -> extents.y2,
                           (void *) pDrawable);
       #endif
-  
+
       nxagentMarkCorruptedRegion(pDrawable, pRegion);
 
       goto nxagentPutImageEnd;
@@ -915,9 +915,9 @@ void nxagentRealizeImage(DrawablePtr pDrawable, GCPtr pGC, int depth,
     #ifdef WARNING
     fprintf(stderr, "nxagentRealizeImage: WARNING! Visual not found. Using default visual.\n");
     #endif
-    
+
     pVisual = nxagentVisuals[nxagentDefaultVisualIndex].visual;
-  } 
+  }
 
   /*
    * Get bytes per line according to format.
@@ -1089,7 +1089,7 @@ FIXME: Should use an unpack resource here.
   if (client == NULL)
   {
     client = serverClient;
- 
+
     #ifdef TEST
     fprintf(stderr, "nxagentPutSubImage: WARNING! Using the server client with index [%d].\n",
                 client -> index);
@@ -1405,7 +1405,7 @@ FIXME: There should be a callback registered by the agent that
      * Add the image only if we have a valid checksum. This is the
      * case only if we originally tried to find the image in cache.
      */
-      
+
     if (NXImageCacheSize > 0 && packedChecksum != NULL)
     {
       #ifdef DEBUG
@@ -1608,7 +1608,7 @@ int nxagentScaleImage(int x, int y, unsigned xRatio, unsigned yRatio,
   if (newImage -> data == NULL)
   {
     SAFE_free(newImage);
-    
+
     #ifdef PANIC
     fprintf(stderr, "nxagentScaleImage: PANIC! Failed to create the target image data.\n");
     #endif
@@ -1703,4 +1703,3 @@ char *nxagentAllocateImageData(int width, int height, int depth, int *length, in
 
   return data;
 }
-

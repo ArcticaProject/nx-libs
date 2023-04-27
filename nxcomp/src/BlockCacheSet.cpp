@@ -32,7 +32,7 @@
 
 
 BlockCacheSet::BlockCacheSet(unsigned int numCaches):
-  caches_(new BlockCache *[numCaches]), size_(numCaches), 
+  caches_(new BlockCache *[numCaches]), size_(numCaches),
   length_(0)
 {
   for (unsigned int i = 0; i < numCaches; i++)

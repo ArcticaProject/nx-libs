@@ -123,8 +123,8 @@ Transport::Transport(int fd) : fd_(fd)
   finish_  = 0;
 
   #ifdef REFERENCES
-  *logofs << "Transport: Created new object at " 
-          << this << " out of " << ++references_ 
+  *logofs << "Transport: Created new object at "
+          << this << " out of " << ++references_
           << " allocated references.\n" << logofs_flush;
   #endif
 }
@@ -139,8 +139,8 @@ Transport::~Transport()
   ::close(fd_);
 
   #ifdef REFERENCES
-  *logofs << "Transport: Deleted object at " 
-          << this << " out of " << --references_ 
+  *logofs << "Transport: Deleted object at "
+          << this << " out of " << --references_
           << " allocated references.\n" << logofs_flush;
   #endif
 }
@@ -152,7 +152,7 @@ Transport::~Transport()
 int Transport::read(unsigned char *data, unsigned int size)
 {
   #ifdef DEBUG
-  *logofs << "Transport: Going to read " << size << " bytes from " 
+  *logofs << "Transport: Going to read " << size << " bytes from "
           << "FD#" << fd_ << ".\n" << logofs_flush;
   #endif
 
@@ -193,7 +193,7 @@ int Transport::read(unsigned char *data, unsigned int size)
     else
     {
       #ifdef TEST
-      *logofs << "Transport: Error reading from " 
+      *logofs << "Transport: Error reading from "
               << "FD#" << fd_ << ".\n" << logofs_flush;
       #endif
 
@@ -205,7 +205,7 @@ int Transport::read(unsigned char *data, unsigned int size)
   else if (result == 0)
   {
     #ifdef TEST
-    *logofs << "Transport: No data read from " 
+    *logofs << "Transport: No data read from "
             << "FD#" << fd_ << ".\n" << logofs_flush;
     #endif
 
@@ -232,8 +232,8 @@ int Transport::read(unsigned char *data, unsigned int size)
 }
 
 //
-// Write as many bytes as possible to socket. 
-// Append the remaining data bytes to the end 
+// Write as many bytes as possible to socket.
+// Append the remaining data bytes to the end
 // of the buffer and update length to reflect
 // changes.
 //
@@ -343,7 +343,7 @@ int Transport::write(T_write type, const unsigned char *data, const unsigned int
         else
         {
           #ifdef TEST
-          *logofs << "Transport: Write to " << "FD#" 
+          *logofs << "Transport: Write to " << "FD#"
                   << fd_ << " failed.\n" << logofs_flush;
           #endif
 
@@ -407,7 +407,7 @@ int Transport::write(T_write type, const unsigned char *data, const unsigned int
           << " has data for " << w_buffer_.length_ << " bytes.\n"
           << logofs_flush;
 
-  *logofs << "Transport: Start is " << w_buffer_.start_ 
+  *logofs << "Transport: Start is " << w_buffer_.start_
           << " length is " << w_buffer_.length_ << " size is "
           << w_buffer_.data_.size() << " capacity is "
           << w_buffer_.data_.capacity() << ".\n"
@@ -449,8 +449,8 @@ int Transport::flush()
   }
 
   //
-  // It's time to move data from the 
-  // write buffer to the real link. 
+  // It's time to move data from the
+  // write buffer to the real link.
   //
 
   int written = 0;
@@ -513,7 +513,7 @@ int Transport::flush()
       else
       {
         #ifdef TEST
-        *logofs << "Transport: Write to " << "FD#" 
+        *logofs << "Transport: Write to " << "FD#"
                 << fd_ << " failed.\n" << logofs_flush;
         #endif
 
@@ -525,7 +525,7 @@ int Transport::flush()
     else
     {
       #ifdef TEST
-      *logofs << "Transport: Flushed " << result << " bytes on " 
+      *logofs << "Transport: Flushed " << result << " bytes on "
               << "FD#" << fd_ << ".\n" << logofs_flush;
       #endif
 
@@ -568,8 +568,8 @@ int Transport::flush()
   if (w_buffer_.length_ > 0)
   {
     #ifdef TEST
-    *logofs << "Transport: There are still " << w_buffer_.length_ 
-            << " bytes in write buffer for " << "FD#" 
+    *logofs << "Transport: There are still " << w_buffer_.length_
+            << " bytes in write buffer for " << "FD#"
             << fd_ << ".\n" << logofs_flush;
     #endif
 
@@ -581,7 +581,7 @@ int Transport::flush()
           << " has data for " << w_buffer_.length_ << " bytes.\n"
           << logofs_flush;
 
-  *logofs << "Transport: Start is " << w_buffer_.start_ 
+  *logofs << "Transport: Start is " << w_buffer_.start_
           << " length is " << w_buffer_.length_ << " size is "
           << w_buffer_.data_.size() << " capacity is "
           << w_buffer_.data_.capacity() << ".\n"
@@ -805,8 +805,8 @@ int Transport::drain(int limit, int timeout)
       w_buffer_.start_ += written;
 
       #ifdef TEST
-      *logofs << "Transport: There are still " << w_buffer_.length_ 
-              << " bytes in write buffer for " << "FD#" 
+      *logofs << "Transport: There are still " << w_buffer_.length_
+              << " bytes in write buffer for " << "FD#"
               << fd_ << ".\n" << logofs_flush;
       #endif
 
@@ -827,7 +827,7 @@ int Transport::drain(int limit, int timeout)
           << " has data for " << w_buffer_.length_ << " bytes.\n"
           << logofs_flush;
 
-  *logofs << "Transport: Start is " << w_buffer_.start_ 
+  *logofs << "Transport: Start is " << w_buffer_.start_
           << " length is " << w_buffer_.length_ << " size is "
           << w_buffer_.data_.size() << " capacity is "
           << w_buffer_.data_.capacity() << ".\n"
@@ -876,7 +876,7 @@ int Transport::wait(int timeout) const
     else if (available == 0 && result > 0)
     {
       #ifdef TEST
-      *logofs << "Transport: Read on " << "FD#" 
+      *logofs << "Transport: Read on " << "FD#"
               << fd_ << " failed.\n" << logofs_flush;
       #endif
 
@@ -921,7 +921,7 @@ int Transport::wait(int timeout) const
       else
       {
         #ifdef TEST
-        *logofs << "Transport: Select on " << "FD#" 
+        *logofs << "Transport: Select on " << "FD#"
                 << fd_ << " failed.\n" << logofs_flush;
         #endif
 
@@ -994,9 +994,9 @@ int Transport::resize(T_buffer &buffer, const int &size)
     buffer.start_ = 0;
 
     #ifdef DEBUG
-    *logofs << "Transport: Made room for " 
+    *logofs << "Transport: Made room for "
             << buffer.data_.size() - buffer.start_
-            << " bytes in buffer for " << "FD#" 
+            << " bytes in buffer for " << "FD#"
             << fd_ << ".\n" << logofs_flush;
     #endif
   }
@@ -1053,8 +1053,8 @@ int Transport::resize(T_buffer &buffer, const int &size)
     #endif
 
     #ifdef TEST
-    *logofs << "Transport: Data buffer for " << "FD#" 
-            << fd_ << " has now size " << buffer.data_.size() 
+    *logofs << "Transport: Data buffer for " << "FD#"
+            << fd_ << " has now size " << buffer.data_.size()
             << " and capacity " << buffer.data_.capacity()
             << ".\n" << logofs_flush;
     #endif
@@ -1174,8 +1174,8 @@ ProxyTransport::ProxyTransport(int fd) : Transport(fd)
   flush_ = 0;
 
   #ifdef REFERENCES
-  *logofs << "ProxyTransport: Created new object at " 
-          << this << " out of " << ++references_ 
+  *logofs << "ProxyTransport: Created new object at "
+          << this << " out of " << ++references_
           << " allocated references.\n" << logofs_flush;
   #endif
 }
@@ -1199,8 +1199,8 @@ ProxyTransport::~ProxyTransport()
   }
 
   #ifdef REFERENCES
-  *logofs << "ProxyTransport: Deleted object at " 
-          << this << " out of " << --references_ 
+  *logofs << "ProxyTransport: Deleted object at "
+          << this << " out of " << --references_
           << " allocated references.\n" << logofs_flush;
   #endif
 }
@@ -1283,8 +1283,8 @@ int ProxyTransport::read(unsigned char *data, unsigned int size)
       r_buffer_.start_ += copied;
 
       #ifdef TEST
-      *logofs << "ProxyTransport: There are still " << r_buffer_.length_ 
-              << " bytes in read buffer for proxy " << "FD#" 
+      *logofs << "ProxyTransport: There are still " << r_buffer_.length_
+              << " bytes in read buffer for proxy " << "FD#"
               << fd_ << ".\n" << logofs_flush;
         #endif
     }
@@ -1311,7 +1311,7 @@ int ProxyTransport::read(unsigned char *data, unsigned int size)
   //
 
   #ifdef DEBUG
-  *logofs << "ProxyTransport: Going to decompress data for " 
+  *logofs << "ProxyTransport: Going to decompress data for "
           << "proxy FD#" << fd_ << ".\n" << logofs_flush;
   #endif
 
@@ -1585,7 +1585,7 @@ int ProxyTransport::read(unsigned char *data, unsigned int size)
     r_buffer_.start_ += copied;
 
     #ifdef TEST
-    *logofs << "ProxyTransport: There are still " << r_buffer_.length_ 
+    *logofs << "ProxyTransport: There are still " << r_buffer_.length_
             << " bytes in read buffer for proxy FD#" << fd_
             << ".\n" << logofs_flush;
     #endif
@@ -1603,7 +1603,7 @@ int ProxyTransport::write(T_write type, const unsigned char *data, const unsigne
   #ifdef TEST
   if (size == 0)
   {
-    *logofs << "ProxyTransport: WARNING! Write called for FD#" 
+    *logofs << "ProxyTransport: WARNING! Write called for FD#"
             << fd_ << " without any data to write.\n"
             << logofs_flush;
 
@@ -1635,7 +1635,7 @@ int ProxyTransport::write(T_write type, const unsigned char *data, const unsigne
   }
 
   #ifdef DEBUG
-  *logofs << "ProxyTransport: Going to compress " << size 
+  *logofs << "ProxyTransport: Going to compress " << size
           << " bytes to write buffer for proxy FD#" << fd_
           << ".\n" << logofs_flush;
   #endif
@@ -1897,7 +1897,7 @@ int ProxyTransport::write(T_write type, const unsigned char *data, const unsigne
             << " has data for " << w_buffer_.length_ << " bytes.\n"
             << logofs_flush;
 
-    *logofs << "ProxyTransport: Start is " << w_buffer_.start_ 
+    *logofs << "ProxyTransport: Start is " << w_buffer_.start_
             << " length is " << w_buffer_.length_ << " flush is "
             << flush_ << " size is " << w_buffer_.data_.size()
             << " capacity is " << w_buffer_.data_.capacity()
@@ -1962,7 +1962,7 @@ int ProxyTransport::write(T_write type, const unsigned char *data, const unsigne
           << " has data for " << w_buffer_.length_ << " bytes.\n"
           << logofs_flush;
 
-  *logofs << "ProxyTransport: Start is " << w_buffer_.start_ 
+  *logofs << "ProxyTransport: Start is " << w_buffer_.start_
           << " length is " << w_buffer_.length_ << " flush is "
           << flush_ << " size is " << w_buffer_.data_.size()
           << " capacity is " << w_buffer_.data_.capacity()
@@ -2234,7 +2234,7 @@ int ProxyTransport::flush()
 
   //
   // Time to move data from the write
-  // buffer to the real link. 
+  // buffer to the real link.
   //
 
   #ifdef DEBUG
@@ -2249,7 +2249,7 @@ int ProxyTransport::flush()
           << " has data for " << w_buffer_.length_ << " bytes.\n"
           << logofs_flush;
 
-  *logofs << "ProxyTransport: Start is " << w_buffer_.start_ 
+  *logofs << "ProxyTransport: Start is " << w_buffer_.start_
           << " length is " << w_buffer_.length_ << " flush is "
           << flush_ << " size is " << w_buffer_.data_.size()
           << " capacity is " << w_buffer_.data_.capacity()
@@ -2382,7 +2382,7 @@ AgentTransport::AgentTransport(int fd) : Transport(fd)
 
   //
   // Interfaces in pthread to handle mutex
-  // type do not work in current version. 
+  // type do not work in current version.
   //
 
   m_attributes.__mutexkind = PTHREAD_MUTEX_ERRORCHECK_NP;
@@ -2408,8 +2408,8 @@ AgentTransport::AgentTransport(int fd) : Transport(fd)
   #endif
 
   #ifdef REFERENCES
-  *logofs << "AgentTransport: Child: Created new object at " 
-          << this << " out of " << ++references_ 
+  *logofs << "AgentTransport: Child: Created new object at "
+          << this << " out of " << ++references_
           << " allocated references.\n" << logofs_flush;
   #endif
 }
@@ -2436,8 +2436,8 @@ AgentTransport::~AgentTransport()
   #endif
 
   #ifdef REFERENCES
-  *logofs << "AgentTransport: Child: Deleted object at " 
-          << this << " out of " << --references_ 
+  *logofs << "AgentTransport: Child: Deleted object at "
+          << this << " out of " << --references_
           << " allocated references.\n" << logofs_flush;
   #endif
 }
@@ -2593,7 +2593,7 @@ int AgentTransport::write(T_write type, const unsigned char *data, const unsigne
             << " has data for " << w_buffer_.length_ << " bytes.\n"
             << logofs_flush;
 
-    *logofs << "AgentTransport: Child: Start is " << w_buffer_.start_ 
+    *logofs << "AgentTransport: Child: Start is " << w_buffer_.start_
             << " length is " << w_buffer_.length_ << " size is "
             << w_buffer_.data_.size() << " capacity is "
             << w_buffer_.data_.capacity() << ".\n"
@@ -2809,7 +2809,7 @@ int AgentTransport::enqueue(const char *data, const int size)
           << " has now data for " << r_buffer_.length_
           << " bytes.\n" << logofs_flush;
 
-  *logofs << "AgentTransport: Parent: Start is " << r_buffer_.start_ 
+  *logofs << "AgentTransport: Parent: Start is " << r_buffer_.start_
           << " length is " << r_buffer_.length_ << " size is "
           << r_buffer_.data_.size() << " capacity is "
           << r_buffer_.data_.capacity() << ".\n"
@@ -2894,7 +2894,7 @@ int AgentTransport::dequeue(char *data, int size)
           << " has now data for " << length() << " bytes.\n"
           << logofs_flush;
 
-  *logofs << "AgentTransport: Parent: Start is " << w_buffer_.start_ 
+  *logofs << "AgentTransport: Parent: Start is " << w_buffer_.start_
           << " length is " << w_buffer_.length_ << " size is "
           << w_buffer_.data_.size() << " capacity is "
           << w_buffer_.data_.capacity() << ".\n"

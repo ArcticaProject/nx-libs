@@ -231,7 +231,7 @@ int PutImageStore::parseIdentity(Message *message, const unsigned char *buffer,
   putImage -> pos_x  = GetUINT(buffer + 16, bigEndian);
   putImage -> pos_y  = GetUINT(buffer + 18, bigEndian);
 
-  putImage -> drawable = GetULONG(buffer + 4, bigEndian); 
+  putImage -> drawable = GetULONG(buffer + 4, bigEndian);
   putImage -> gcontext = GetULONG(buffer + 8, bigEndian);
 
   #ifdef DEBUG
@@ -277,11 +277,11 @@ void PutImageStore::dumpIdentity(const Message *message) const
 
   PutImageMessage *putImage = (PutImageMessage *) message;
 
-  *logofs << name() << ": Identity format " << (unsigned) putImage -> format 
-          << ", depth " << (unsigned) putImage -> depth << ", left_pad " 
-          << (unsigned) putImage -> left_pad << ", width " << putImage -> width  
-          << ", height " << putImage -> height << ", pos_x " << putImage -> pos_x 
-          << ", pos_y " << putImage -> pos_y << ", drawable " << putImage -> drawable 
+  *logofs << name() << ": Identity format " << (unsigned) putImage -> format
+          << ", depth " << (unsigned) putImage -> depth << ", left_pad "
+          << (unsigned) putImage -> left_pad << ", width " << putImage -> width
+          << ", height " << putImage -> height << ", pos_x " << putImage -> pos_x
+          << ", pos_y " << putImage -> pos_y << ", drawable " << putImage -> drawable
           << ", gcontext " << putImage -> gcontext  << ", size " << putImage -> size_
           << ".\n" << logofs_flush;
 

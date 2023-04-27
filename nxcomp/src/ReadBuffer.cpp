@@ -302,7 +302,7 @@ int ReadBuffer::readMessage()
     #ifdef TEST
     *logofs << "ReadBuffer: Moving " << length_
             << " bytes of data " << "at beginning of "
-            << "the buffer for FD#" << transport_ -> fd() 
+            << "the buffer for FD#" << transport_ -> fd()
             << ".\n" << logofs_flush;
     #endif
 
@@ -312,15 +312,15 @@ int ReadBuffer::readMessage()
   start_ = 0;
 
   #ifdef DEBUG
-  *logofs << "ReadBuffer: Buffer size is now " << size_ 
-          << " length is " << length_ << " and start is " 
+  *logofs << "ReadBuffer: Buffer size is now " << size_
+          << " length is " << length_ << " and start is "
           << start_ << ".\n" << logofs_flush;
   #endif
 
   unsigned char *readData = buffer_ + length_;
 
   #ifdef DEBUG
-  *logofs << "ReadBuffer: Going to read " << readLength 
+  *logofs << "ReadBuffer: Going to read " << readLength
           << " bytes from FD#" << transport_ -> fd() << ".\n"
           << logofs_flush;
   #endif
@@ -454,7 +454,7 @@ const unsigned char *ReadBuffer::getMessage(unsigned int &controlLength,
 
       convertBuffer();
     }
-  
+
     return NULL;
   }
   else

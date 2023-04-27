@@ -143,7 +143,7 @@ int SequenceQueue::peek(unsigned short int &sequence, unsigned char &opcode,
   }
 }
 
-int SequenceQueue::pop(unsigned short int &sequence, unsigned char &opcode, 
+int SequenceQueue::pop(unsigned short int &sequence, unsigned char &opcode,
                            unsigned int &data1, unsigned int &data2,
                                unsigned int &data3)
 {

@@ -150,7 +150,7 @@ int StaticCompressor::compressBuffer(const unsigned char *plainBuffer,
                                                      EncodeBuffer &encodeBuffer)
 {
   if (control -> LocalDataCompression == 0 ||
-          compressBuffer(plainBuffer, plainSize, 
+          compressBuffer(plainBuffer, plainSize,
                              compressedBuffer, compressedSize) <= 0)
   {
     encodeBuffer.encodeBoolValue(0);
@@ -204,7 +204,7 @@ int StaticCompressor::compressBuffer(const unsigned char *plainBuffer,
 
   //
   // Determine the size of the temporary
-  // buffer. 
+  // buffer.
   //
 
   unsigned int newSize = plainSize + (plainSize / 1000) + 12;
@@ -241,7 +241,7 @@ int StaticCompressor::compressBuffer(const unsigned char *plainBuffer,
     bufferSize_ = newSize;
   }
 
-  unsigned int resultingSize = newSize; 
+  unsigned int resultingSize = newSize;
 
   int result = ZCompress(&compressionStream_, buffer_, &resultingSize,
                              plainBuffer, plainSize);
@@ -360,7 +360,7 @@ int StaticCompressor::decompressBuffer(unsigned char *plainBuffer,
   {
     #ifdef PANIC
     *logofs << "StaticCompressor: PANIC! Expected decompressed size was "
-            << plainSize << " while it is " << checkSize 
+            << plainSize << " while it is " << checkSize
             << ".\n" << logofs_flush;
     #endif
 
@@ -411,7 +411,7 @@ int StaticCompressor::decompressBuffer(unsigned char *plainBuffer,
   {
     #ifdef PANIC
     *logofs << "StaticCompressor: PANIC! Expected decompressed size was "
-            << plainSize << " while it is " << checkSize 
+            << plainSize << " while it is " << checkSize
             << ".\n" << logofs_flush;
     #endif
 

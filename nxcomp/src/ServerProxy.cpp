@@ -327,7 +327,7 @@ int ServerProxy::handleNewXConnectionFromProxy(int channelId)
   assignChannelMap(channelId, xServerFd);
 
   #ifdef TEST
-  *logofs << "ServerProxy: X server descriptor FD#" << xServerFd 
+  *logofs << "ServerProxy: X server descriptor FD#" << xServerFd
           << " mapped to channel ID#" << channelId << ".\n"
           << logofs_flush;
   #endif
@@ -523,7 +523,7 @@ int ServerProxy::handleLoadFromProxy()
          << "in command load from proxy.\n";
 
     return -1;
-  } 
+  }
   else if (handleLoadStores() < 0)
   {
     #ifdef WARNING

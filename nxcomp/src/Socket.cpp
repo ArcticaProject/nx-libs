@@ -188,7 +188,7 @@ int GetKernelStep()
 
   return _kernelStep;
 }
-  
+
 int SetReuseAddress(int fd)
 {
   int flag = 1;

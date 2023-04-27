@@ -32,7 +32,7 @@ class ActionCache
 {
   friend class EncodeBuffer;
   friend class DecodeBuffer;
-  
+
   public:
 
   ActionCache();

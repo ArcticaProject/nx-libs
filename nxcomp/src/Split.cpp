@@ -106,8 +106,8 @@ Split::Split()
 
   references_++;
 
-  *logofs << "Split: Created new Split at " 
-          << this << " out of " << references_ 
+  *logofs << "Split: Created new Split at "
+          << this << " out of " << references_
           << " allocated references.\n" << logofs_flush;
   #endif
 }
@@ -120,8 +120,8 @@ Split::~Split()
 
   references_--;
 
-  *logofs << "Split: Deleted Split at " 
-          << this << " out of " << references_ 
+  *logofs << "Split: Deleted Split at "
+          << this << " out of " << references_
           << " allocated references.\n" << logofs_flush;
   #endif
 }
@@ -147,7 +147,7 @@ SplitStore::SplitStore(StaticCompressor *compressor, CommitStore *commits, int r
   {
     *logofs << "commit";
   }
-  
+
   *logofs << "].\n" << logofs_flush;
 
   *logofs << "SplitStore: Total messages in stores are "
@@ -182,7 +182,7 @@ SplitStore::~SplitStore()
   {
     *logofs << "commit";
   }
-  
+
   *logofs << "] with storage size " << splitStorageSize_
           << ".\n" << logofs_flush;
 
@@ -504,7 +504,7 @@ int SplitStore::send(EncodeBuffer &encodeBuffer, int packetSize)
   if (splits_ -> size() == 0)
   {
     #ifdef PANIC
-    *logofs << "SplitStore: PANIC! Function send called with no splits available.\n" 
+    *logofs << "SplitStore: PANIC! Function send called with no splits available.\n"
             << logofs_flush;
     #endif
 
@@ -517,7 +517,7 @@ int SplitStore::send(EncodeBuffer &encodeBuffer, int packetSize)
   // A start operation must always be executed on
   // the split, even in the case the split will be
   // later aborted.
-  // 
+  //
 
   if (current_ == splits_ -> end())
   {
@@ -669,7 +669,7 @@ int SplitStore::start(EncodeBuffer &encodeBuffer)
 
         #ifdef TEST
         *logofs << "SplitStore: Split data of size " << split -> d_size_
-                << " has been compressed to " << compressedSize 
+                << " has been compressed to " << compressedSize
                 << " bytes.\n" << logofs_flush;
         #endif
 
@@ -833,7 +833,7 @@ int SplitStore::receive(DecodeBuffer &decodeBuffer)
   if (splits_ -> size() == 0)
   {
     #ifdef PANIC
-    *logofs << "SplitStore: PANIC! Function receive called with no splits available.\n" 
+    *logofs << "SplitStore: PANIC! Function receive called with no splits available.\n"
             << logofs_flush;
     #endif
 
@@ -949,7 +949,7 @@ int SplitStore::receive(DecodeBuffer &decodeBuffer)
 
       #endif
 
-      memcpy(split -> data_.begin() + split -> next_, 
+      memcpy(split -> data_.begin() + split -> next_,
                  decodeBuffer.decodeMemory(count), count);
     }
     else
@@ -1027,7 +1027,7 @@ Split *SplitStore::pop()
   // Move the pointer at the end of the list.
   // The next send operation will eventually
   // start a new split.
-  // 
+  //
 
   current_ = splits_ -> end();
 
@@ -1123,7 +1123,7 @@ void SplitStore::remove(Split *split)
     {
       #ifdef PANIC
       *logofs << "SplitStore: PANIC! Internal error calculating "
-              << "split data size. It is " << splitStorageSize_ 
+              << "split data size. It is " << splitStorageSize_
               << " while should be 0.\n" << logofs_flush;
       #endif
 
@@ -1773,7 +1773,7 @@ int CommitStore::update(Split *split)
                c_size_ << ".\n" << logofs_flush;
     #endif
 
-    split -> store_ -> updateData(split -> position_, split -> data_.begin(), 
+    split -> store_ -> updateData(split -> position_, split -> data_.begin(),
                                       split -> d_size_, split -> c_size_);
   }
 

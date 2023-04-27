@@ -308,7 +308,7 @@ int PutPackedImageStore::parseIdentity(Message *message, const unsigned char *bu
 
   putPackedImage -> client = *(buffer + 1);
 
-  putPackedImage -> drawable = GetULONG(buffer + 4,  bigEndian); 
+  putPackedImage -> drawable = GetULONG(buffer + 4,  bigEndian);
   putPackedImage -> gcontext = GetULONG(buffer + 8,  bigEndian);
 
   putPackedImage -> method = *(buffer + 12);

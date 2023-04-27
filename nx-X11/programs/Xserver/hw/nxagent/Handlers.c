@@ -425,7 +425,7 @@ void nxagentBlockHandler(void * data, struct timeval **timeout, void * mask)
   }
 
   #endif /* #ifdef DYNAMIC_DISPLAY_BUFFER */
-  
+
   /*
    * Dispatch to the clients the events that may have become
    * available.

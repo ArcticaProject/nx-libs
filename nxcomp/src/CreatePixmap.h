@@ -73,7 +73,7 @@ class CreatePixmapMessage : public Message
   }
 
   //
-  // Put here the fields which constitute 
+  // Put here the fields which constitute
   // the 'identity' part of the message.
   //
 
@@ -140,10 +140,10 @@ class CreatePixmapStore : public MessageStore
                                  unsigned int &size, int bigEndian, WriteBuffer *writeBuffer,
                                      ChannelCache *channelCache) const;
 
-  virtual int parseIdentity(Message *message, const unsigned char *buffer, 
+  virtual int parseIdentity(Message *message, const unsigned char *buffer,
                                 unsigned int size, int bigEndian) const;
 
-  virtual int unparseIdentity(const Message *message, unsigned char *buffer, 
+  virtual int unparseIdentity(const Message *message, unsigned char *buffer,
                                   unsigned int size, int bigEndian) const;
 
   virtual void updateIdentity(EncodeBuffer &encodeBuffer, const Message *message,
@@ -153,7 +153,7 @@ class CreatePixmapStore : public MessageStore
   virtual void updateIdentity(DecodeBuffer &decodeBuffer, const Message *message,
                                   ChannelCache *channelCache) const;
 
-  virtual void identityChecksum(const Message *message, const unsigned char *buffer, 
+  virtual void identityChecksum(const Message *message, const unsigned char *buffer,
                                     unsigned int size, int bigEndian) const;
 
   virtual void dumpIdentity(const Message *message) const;

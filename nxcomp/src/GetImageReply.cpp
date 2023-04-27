@@ -174,7 +174,7 @@ void GetImageReplyStore::updateIdentity(EncodeBuffer &encodeBuffer, const Messag
           << " as visual field.\n" << logofs_flush;
   #endif
 
-  encodeBuffer.encodeCachedValue(getImageReply -> visual, 29, 
+  encodeBuffer.encodeCachedValue(getImageReply -> visual, 29,
                      serverCache -> visualCache);
 }
 
@@ -189,6 +189,6 @@ void GetImageReplyStore::updateIdentity(DecodeBuffer &decodeBuffer, const Messag
 
   ServerCache *serverCache = (ServerCache *) channelCache;
 
-  decodeBuffer.decodeCachedValue(getImageReply -> visual, 29, 
+  decodeBuffer.decodeCachedValue(getImageReply -> visual, 29,
                      serverCache -> visualCache);
 }

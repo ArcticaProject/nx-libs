@@ -114,7 +114,7 @@ MessageStore::MessageStore(StaticCompressor *compressor)
   md5_state_ = new md5_state_t();
 
   #ifdef DEBUG
-  *logofs << "MessageStore: Created MD5 state for object at " 
+  *logofs << "MessageStore: Created MD5 state for object at "
           << this << ".\n" << logofs_flush;
   #endif
 
@@ -132,9 +132,9 @@ MessageStore::MessageStore(StaticCompressor *compressor)
   remoteStorageSize_ = 0;
 
   #ifdef TEST
-  *logofs << "MessageStore: Size of total cache is " 
-          << totalLocalStorageSize_ << " bytes at local side and " 
-          << totalRemoteStorageSize_ << " bytes at remote side.\n" 
+  *logofs << "MessageStore: Size of total cache is "
+          << totalLocalStorageSize_ << " bytes at local side and "
+          << totalRemoteStorageSize_ << " bytes at remote side.\n"
           << logofs_flush;
   #endif
 
@@ -147,7 +147,7 @@ MessageStore::MessageStore(StaticCompressor *compressor)
 
   references_++;
 
-  *logofs << "MessageStore: Created new store at " 
+  *logofs << "MessageStore: Created new store at "
           << this << "out of " << references_
           << " allocated stores.\n" << logofs_flush;
 
@@ -182,9 +182,9 @@ MessageStore::~MessageStore()
   totalRemoteStorageSize_ -= remoteStorageSize_;
 
   #ifdef TEST
-  *logofs << "MessageStore: Size of total cache is " 
-          << totalLocalStorageSize_ << " bytes at local side and " 
-          << totalRemoteStorageSize_ << " bytes at remote side.\n" 
+  *logofs << "MessageStore: Size of total cache is "
+          << totalLocalStorageSize_ << " bytes at local side and "
+          << totalRemoteStorageSize_ << " bytes at remote side.\n"
           << logofs_flush;
   #endif
 
@@ -192,7 +192,7 @@ MessageStore::~MessageStore()
 
   references_--;
 
-  *logofs << "MessageStore: Deleted store at " 
+  *logofs << "MessageStore: Deleted store at "
           << this << " out of " << references_
           << " allocated stores.\n" << logofs_flush;
 
@@ -509,7 +509,7 @@ void MessageStore::dumpData(const Message *message) const
 {
   #ifdef DUMP
 
-  *logofs << name() << ": Dumping enumerated data:\n" << logofs_flush; 
+  *logofs << name() << ": Dumping enumerated data:\n" << logofs_flush;
 
   DumpData(message -> data_.begin(), message -> data_.size());
 
@@ -517,7 +517,7 @@ void MessageStore::dumpData(const Message *message) const
 
   #ifdef DUMP
 
-  *logofs << name() << ": Dumping checksum data:\n" << logofs_flush; 
+  *logofs << name() << ": Dumping checksum data:\n" << logofs_flush;
 
   DumpData(message -> md5_digest_, MD5_LENGTH);
 
@@ -648,10 +648,10 @@ int MessageStore::clean(T_checksum_action checksumAction)
 }
 
 //
-// This is the insertion method used at local side 
+// This is the insertion method used at local side
 // side. Cache at remote side side will be kept in
-// sync by telling the to other party where to 
-// store the message. 
+// sync by telling the to other party where to
+// store the message.
 //
 
 int MessageStore::findOrAdd(Message *message, T_checksum_action checksumAction,
@@ -985,7 +985,7 @@ int MessageStore::findOrAdd(Message *message, T_checksum_action checksumAction,
   message -> locks_ = 0;
 
   #ifdef DEBUG
-  *logofs << name() << ": Set last hit of object at " 
+  *logofs << name() << ": Set last hit of object at "
           << strMsTimestamp() << " with a bonus of "
           << message -> hits_ << ".\n" << logofs_flush;
   #endif
@@ -1054,7 +1054,7 @@ int MessageStore::add(Message *message, const int position,
 
   #ifdef DEBUG
   *logofs << name() << ": Stored message object of size "
-          << plainSize(position) << " (" << message -> size_ 
+          << plainSize(position) << " (" << message -> size_
           << "/" << message -> c_size_ << ") at position "
           << position << ".\n" << logofs_flush;
   #endif
@@ -1086,7 +1086,7 @@ int MessageStore::add(Message *message, const int position,
   message -> locks_ = 0;
 
   #ifdef DEBUG
-  *logofs << name() << ": Set last hit of object at " 
+  *logofs << name() << ": Set last hit of object at "
           << strMsTimestamp() << " with a bonus of "
           << message -> hits_ << ".\n" << logofs_flush;
   #endif
@@ -1551,7 +1551,7 @@ int MessageStore::untouch(Message *message) const
   }
 
   #ifdef TEST
-  *logofs << name() << ": Decreased hits of object to " 
+  *logofs << name() << ": Decreased hits of object to "
           << message -> hits_ << ".\n"
           << logofs_flush;
   #endif
@@ -1575,7 +1575,7 @@ int MessageStore::lock(const int position) const
   }
 
   #ifdef DEBUG
-  *logofs << name() << ": Increasing locks of object to " 
+  *logofs << name() << ": Increasing locks of object to "
           << (int) message -> locks_ + 1 << ".\n"
           << logofs_flush;
   #endif
@@ -1599,7 +1599,7 @@ int MessageStore::unlock(const int position) const
   }
 
   #ifdef DEBUG
-  *logofs << name() << ": Decreasing locks of object to " 
+  *logofs << name() << ": Decreasing locks of object to "
           << (int) message -> locks_ - 1 << ".\n"
           << logofs_flush;
   #endif
@@ -1658,7 +1658,7 @@ int MessageStore::saveStore(ostream *cachefs, md5_state_t *md5StateStream,
       {
         offset = message -> size_;
       }
-        
+
       #ifdef TEST
       *logofs << name() << ": Going to save message at position "
               << position << ".\n" << logofs_flush;
@@ -2060,7 +2060,7 @@ int MessageStore::loadStore(istream *cachefs, md5_state_t *md5StateStream,
                   << (unsigned int) opcode() << ".\n"
                   << logofs_flush;
           #endif
-          
+
           continue;
         }
       }
@@ -2216,7 +2216,7 @@ int MessageStore::loadStore(istream *cachefs, md5_state_t *md5StateStream,
         message -> hits_ = control -> StoreHitsLoadBonus;
 
         #ifdef DEBUG
-        *logofs << name() << ": Updated last hit of object at " 
+        *logofs << name() << ": Updated last hit of object at "
                 << strMsTimestamp() << " with a bonus of "
                 << message -> hits_ << ".\n" << logofs_flush;
         #endif

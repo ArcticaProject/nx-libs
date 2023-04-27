@@ -219,13 +219,13 @@ void nxagentValidateGC(GCPtr pGC, unsigned long changes, DrawablePtr pDrawable)
 
   if (!pGC -> tileIsPixel && !nxagentPixmapIsVirtual(pGC -> tile.pixmap))
   {
-    pGC -> tile.pixmap = nxagentVirtualPixmap(pGC -> tile.pixmap); 
+    pGC -> tile.pixmap = nxagentVirtualPixmap(pGC -> tile.pixmap);
   }
 
   PixmapPtr lastTile = pGC -> tile.pixmap;
 
   PixmapPtr lastStipple = pGC->stipple;
-  
+
   if (lastStipple)
   {
     pGC->stipple = nxagentVirtualPixmap(pGC->stipple);
@@ -403,7 +403,7 @@ void nxagentChangeGC(GCPtr pGC, unsigned long mask)
       values.font = nxagentFont(pGC->font);
       changeFlag += nxagentTestGC(values.font, font);
     }
-  } 
+  }
 
   CHECKGCVAL(GCSubwindowMode, subwindow_mode, pGC->subWindowMode);
   CHECKGCVAL(GCGraphicsExposures, graphics_exposures, pGC->graphicsExposures);
@@ -595,7 +595,7 @@ void nxagentChangeClip(GCPtr pGC, int type, void * pValue, int nRects)
     case CT_UNSORTED:
     {
       if (!clipsMatch && !nxagentGCTrap)
-      {    
+      {
         XSetClipRectangles(nxagentDisplay, nxagentGC(pGC),
                                pGC->clipOrg.x, pGC->clipOrg.y,
                                    (XRectangle *)pValue, nRects, Unsorted);
@@ -896,7 +896,7 @@ static void nxagentReconnectGC(void *param0, XID param1, void * param2)
     #endif
   }
 
-  #ifdef DEBUG 
+  #ifdef DEBUG
   fprintf(stderr, "nxagentReconnectGC: GC at [%p].\n", (void *) pGC);
   #endif
 
@@ -1036,7 +1036,7 @@ void nxagentDisconnectGC(void * p0, XID x1, void * p2)
 
   if (!*pBool || !pGC)
   {
-    if (!pGC) 
+    if (!pGC)
     {
       #ifdef WARNING
       fprintf(stderr, "nxagentDisconnectGC: WARNING! pGC is NULL.\n");
@@ -1050,7 +1050,7 @@ void nxagentDisconnectGC(void * p0, XID x1, void * p2)
     PixmapPtr pMap = pGC -> stipple;
     nxagentDisconnectPixmap(nxagentRealPixmap(pMap), 0, pBool);
   }
-} 
+}
 
 Bool nxagentDisconnectAllGCs(void)
 {
@@ -1385,7 +1385,7 @@ GCPtr nxagentCreateGraphicContext(int depth)
    */
 
   nxagentGraphicContextsPtr nxagentGCs = realloc(nxagentGraphicContexts, (nxagentGraphicContextsSize + 1) * sizeof(nxagentGraphicContextsRec));
-   
+
   if (nxagentGCs == NULL)
   {
     #ifdef WARNING
@@ -1471,4 +1471,3 @@ void nxagentDisconnectGraphicContexts(void)
 
   return;
 }
-

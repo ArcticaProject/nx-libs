@@ -29,7 +29,7 @@
  * opcode to the name of the X request.
  */
 
-static char *nxagentRequestLiteral[] = 
+static char *nxagentRequestLiteral[] =
 {
   "None",
   "CreateWindow",

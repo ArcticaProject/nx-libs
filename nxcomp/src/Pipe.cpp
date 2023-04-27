@@ -74,7 +74,7 @@ static struct pid
 // split each parameter in distinct strings. This is not going
 // to work when dealing with parameters containing spaces, even
 // if they are enclosed in quotes.
-// 
+//
 
 int Psplit(const char *command, char *parameters[], int limit)
 {

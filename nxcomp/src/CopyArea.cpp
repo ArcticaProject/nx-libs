@@ -53,8 +53,8 @@ int CopyAreaStore::parseIdentity(Message *message, const unsigned char *buffer,
   // Here is the fingerprint.
   //
 
-  copyArea -> src_drawable = GetULONG(buffer + 4, bigEndian); 
-  copyArea -> dst_drawable = GetULONG(buffer + 8, bigEndian); 
+  copyArea -> src_drawable = GetULONG(buffer + 4, bigEndian);
+  copyArea -> dst_drawable = GetULONG(buffer + 8, bigEndian);
   copyArea -> gcontext     = GetULONG(buffer + 12, bigEndian);
 
   copyArea -> src_x  = GetUINT(buffer + 16, bigEndian);
@@ -106,7 +106,7 @@ void CopyAreaStore::dumpIdentity(const Message *message) const
 
   CopyAreaMessage *copyArea = (CopyAreaMessage *) message;
 
-  *logofs << name() << ": Identity src_drawable " << copyArea -> src_drawable 
+  *logofs << name() << ": Identity src_drawable " << copyArea -> src_drawable
           << ", dst_drawable " << copyArea -> dst_drawable << ", gcontext " << copyArea -> gcontext
           << ", src_x " << copyArea -> src_x << ", src_y " << copyArea -> src_y
           << ", dst_x " << copyArea -> dst_x << ", dst_y " << copyArea -> dst_y

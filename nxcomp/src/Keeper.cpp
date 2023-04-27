@@ -119,8 +119,8 @@ File::~File()
 
   #ifdef REFERENCES
 
-  *logofs << "Keeper: Deleted File at " 
-          << this << " out of " << references_ 
+  *logofs << "Keeper: Deleted File at "
+          << this << " out of " << references_
           << " allocated references.\n"
           << logofs_flush;
 
@@ -410,7 +410,7 @@ int Keeper::collect(const char *path)
               strcmp(dirEntry -> d_name, "..") == 0)
       {
         continue;
-      }      
+      }
 
       n++;
 

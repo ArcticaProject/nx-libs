@@ -80,8 +80,8 @@ GenericChannel::GenericChannel(Transport *transport, StaticCompressor *compresso
   : Channel(transport, compressor), readBuffer_(transport_, this)
 {
   #ifdef REFERENCES
-  *logofs << "GenericChannel: Created new object at " 
-          << this << " for FD#" << fd_ << " out of " 
+  *logofs << "GenericChannel: Created new object at "
+          << this << " for FD#" << fd_ << " out of "
           << ++references_ << " allocated channels.\n"
           << logofs_flush;
   #endif
@@ -90,7 +90,7 @@ GenericChannel::GenericChannel(Transport *transport, StaticCompressor *compresso
 GenericChannel::~GenericChannel()
 {
   #ifdef REFERENCES
-  *logofs << "GenericChannel: Deleted object at " 
+  *logofs << "GenericChannel: Deleted object at "
           << this << " for FD#" << fd_ << " out of "
           << --references_ << " allocated channels.\n"
           << logofs_flush;
@@ -303,7 +303,7 @@ int GenericChannel::handleWrite(const unsigned char *message, unsigned int lengt
   #endif
 
   //
-  // Create the buffer from which to 
+  // Create the buffer from which to
   // decode messages.
   //
 

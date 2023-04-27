@@ -279,7 +279,7 @@ class Transport
 };
 
 //
-// This class handles buffered I/O and 
+// This class handles buffered I/O and
 // compression of the proxy stream.
 //
 

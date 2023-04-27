@@ -72,7 +72,7 @@ int InternAtomStore::parseIdentity(Message *message, const unsigned char *buffer
   {
     unsigned char *end = ((unsigned char *) buffer) + size;
 
-    for (unsigned char *pad = ((unsigned char *) buffer) + 8 + 
+    for (unsigned char *pad = ((unsigned char *) buffer) + 8 +
                                   internAtom -> name_length; pad < end; pad++)
     {
       *pad = 0;
@@ -108,7 +108,7 @@ void InternAtomStore::dumpIdentity(const Message *message) const
 
   InternAtomMessage *internAtom = (InternAtomMessage *) message;
 
-  *logofs << name() << ": Identity only_if_exists " 
+  *logofs << name() << ": Identity only_if_exists "
           << (unsigned int) internAtom -> only_if_exists
           << ", name_length " << internAtom -> name_length
           << ", name '";

@@ -471,7 +471,7 @@ const unsigned char *DecodeBuffer::decodeMemory(unsigned int numBytes)
           << " bytes in buffer.\n" << logofs_flush;
   #endif
 
-  const unsigned char *result;     
+  const unsigned char *result;
 
   //
   // Force ourselves to a byte boundary.

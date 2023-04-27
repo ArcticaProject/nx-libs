@@ -43,7 +43,7 @@ XCOMM ----------------------------------------------------------------------
 # define XOrgWebSupportAddress http://wiki.X.Org
 #endif
 
-XORGRELSTRING = XorgManVersionString 	 
+XORGRELSTRING = XorgManVersionString
   XORGMANNAME = XOrgManNameString
 
 #ifndef XOrgManDefs
@@ -98,11 +98,11 @@ XORGRELSTRING = XorgManVersionString
 #ifndef HasXServer
 #define HasXServer		YES
 #endif
-/* xorg.cf sets XorgServer to YES - to build Xorg you must include xorg.cf 
+/* xorg.cf sets XorgServer to YES - to build Xorg you must include xorg.cf
  * from the .cf file for your platform.
  */
 #ifndef XorgServer
-#define XorgServer		NO  
+#define XorgServer		NO
 #endif
 #ifndef BuildServer
 #define BuildServer		HasXServer
@@ -130,7 +130,7 @@ XORGRELSTRING = XorgManVersionString
 #define InstallXcmsTxt		YES
 #endif
 /*
- * This disables XLOCALEDIR. 
+ * This disables XLOCALEDIR.
  */
 #ifndef DisableXLocaleDirEnv
 #define DisableXLocaleDirEnv	NO
@@ -1072,7 +1072,7 @@ XCOMM X Window System make variables; these need to be coordinated with rules
      TRANSCOMMSRC = $(LIBSRC)/xtrans
    TRANS_INCLUDES = -I$(TRANSCOMMSRC)
  CONNECTION_FLAGS = ConnectionFlags ExtraConnectionDefs
-XTRANS_FAILDEFINES = XtransFailDefine 
+XTRANS_FAILDEFINES = XtransFailDefine
 #ifdef X11ProjectRoot
      XPROJECTROOT = X11ProjectRoot
 #endif
@@ -1090,7 +1090,7 @@ VENDORSUPPORTDEFS = VendorSupportDefines
 
       XKBDEFRULES = XkbDefaultRulesFile
   XKBDEFRULESDEFS = XkbDefRulesDefines
-  
+
      XCONFIGFILE = XConfigFile
       XCONFIGDIR = XConfigDir
         XLOGFILE = XLogFile
@@ -1200,7 +1200,7 @@ MOTIFLIB = -L$(MOTIFLIBDIR) LinkerRuntimeLibraryPathFlag($(MOTIFLIBDIR)) -lXm
 #endif
 
 #if MotifIncDirStandard
-MOTIFINCLUDES = 
+MOTIFINCLUDES =
 #else
 MOTIFINCLUDES = -I$(MOTIFINCDIR)
 #endif

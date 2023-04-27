@@ -550,7 +550,7 @@ Reply   Total	Cached	Bits In			Bits Out		Bits/Reply	  Ratio
     nxagentFreeTimeoutTimer();
 
     /* FIXME: maybe move the code up to the KillAllClients() call to ddxBeforeReset? */
-    if ((dispatchException & DE_RESET) && 
+    if ((dispatchException & DE_RESET) &&
             (serverGeneration > nxagentMaxAllowedResets))
     {
         dispatchException &= ~DE_RESET;
@@ -568,7 +568,7 @@ Reply   Total	Cached	Bits In			Bits Out		Bits/Reply	  Ratio
        * error on the display and wait until the
        * NX transport is gone.
        */
-  
+
       fprintf(stderr, "Session: Terminating session at '%s'.\n", GetTimeAsString());
       saveAgentState("TERMINATING");
 

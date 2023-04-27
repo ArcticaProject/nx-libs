@@ -766,7 +766,7 @@ int DecompressJpeg32(unsigned char *compressedData, int compressedLen,
   data = dstBuf;
 
   rowPointer[0] = (JSAMPROW) tmpBuf;
-  
+
   unsigned long pixel;
 
   int i;

@@ -838,13 +838,13 @@ int NXTransKeeper(int caches, int images, const char *root)
   // must be copied in keeper's constructor
   // before control is deleted.
   //
-  
+
   MemoryCleanup("NXTransKeeper");
 
   //
   // Decrease the priority of this process.
   //
-  // The following applies to Cygwin: "Cygwin processes can be 
+  // The following applies to Cygwin: "Cygwin processes can be
   // set to IDLE_PRIORITY_CLASS, NORMAL_PRIORITY_CLASS, HIGH_-
   // PRIORITY_CLASS, or REALTIME_PRIORITY_CLASS with the nice
   // call. If you pass a positive number to nice(), then the

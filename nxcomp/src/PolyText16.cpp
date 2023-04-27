@@ -57,7 +57,7 @@ int PolyText16Store::parseIdentity(Message *message, const unsigned char *buffer
   // Here is the fingerprint.
   //
 
-  polyText16 -> drawable = GetULONG(buffer + 4, bigEndian); 
+  polyText16 -> drawable = GetULONG(buffer + 4, bigEndian);
   polyText16 -> gcontext = GetULONG(buffer + 8, bigEndian);
 
   polyText16 -> x = GetUINT(buffer + 12, bigEndian);
@@ -81,10 +81,10 @@ int PolyText16Store::parseIdentity(Message *message, const unsigned char *buffer
     int length;
     int delta;
     int item;
-    
+
     unsigned int nitem;
 
-    unsigned char *pad = NULL; 
+    unsigned char *pad = NULL;
     unsigned char *end = NULL;
 
     delta = 1;
@@ -194,9 +194,9 @@ void PolyText16Store::dumpIdentity(const Message *message) const
 
   PolyText16Message *polyText16 = (PolyText16Message *) message;
 
-  *logofs << name() << ": Identity drawable " << polyText16 -> drawable 
-          << ", gcontext " << polyText16 -> gcontext << ", x " << polyText16 -> x 
-          << ", y " << polyText16 -> y << ", size " << polyText16 -> size_ 
+  *logofs << name() << ": Identity drawable " << polyText16 -> drawable
+          << ", gcontext " << polyText16 -> gcontext << ", x " << polyText16 -> x
+          << ", y " << polyText16 -> y << ", size " << polyText16 -> size_
           << ".\n";
 
   #endif

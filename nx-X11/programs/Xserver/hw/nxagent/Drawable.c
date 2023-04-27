@@ -286,7 +286,7 @@ int nxagentSynchronizeDrawableData(DrawablePtr pDrawable, unsigned int breakMask
           totalReconnectedPixmaps++;
 
           fprintf(stderr, "%s: Reconnecting pixmap at [%p] [%dx%d] "
-                      "Depth [%d] Size [%d]. Total size [%d]. Total reconnected pixmaps [%d].\n", 
+                      "Depth [%d] Size [%d]. Total size [%d]. Total reconnected pixmaps [%d].\n",
                           __func__, (void *) pDrawable, width, height, depth, length,
                               totalLength, totalReconnectedPixmaps);
         }
@@ -460,7 +460,7 @@ int nxagentSynchronizeRegion(DrawablePtr pDrawable, RegionPtr pRegion, unsigned 
                           nxagentDrawableType(pDrawable), (void *) pDrawable);
       #endif
 
-     goto nxagentSynchronizeRegionFree; 
+     goto nxagentSynchronizeRegionFree;
     }
 
     /*
@@ -724,7 +724,7 @@ int nxagentSynchronizeRegion(DrawablePtr pDrawable, RegionPtr pRegion, unsigned 
            */
 
           RegionSubtract(nxagentPixmapCorruptedRegion(nxagentDrawableBitmap(pDrawable)),
-                              nxagentPixmapCorruptedRegion(nxagentDrawableBitmap(pDrawable)), &tileRegion); 
+                              nxagentPixmapCorruptedRegion(nxagentDrawableBitmap(pDrawable)), &tileRegion);
 
           /*
            * The drawable's corrupted region can be cleared if the
@@ -920,7 +920,7 @@ nxagentSynchronizeRegionStop:
         int y = RegionRects(&collectedUpdates)[i].y1;
         int w = RegionRects(&collectedUpdates)[i].x2 - RegionRects(&collectedUpdates)[i].x1;
         int h = RegionRects(&collectedUpdates)[i].y2 - RegionRects(&collectedUpdates)[i].y1;
-       
+
         if (nxagentOption(Shadow) &&
                 (nxagentOption(XRatio) != DONT_SCALE ||
                     nxagentOption(YRatio) != DONT_SCALE))
@@ -2788,7 +2788,7 @@ void nxagentUnmarkExposedRegion(WindowPtr pWin, RegionPtr pRegion, RegionPtr pOt
     RegionInit(&clipRegion, NullBox, 1);
 
     RegionCopy(&clipRegion, pRegion);
-    
+
     if (pOther != NullRegion && !RegionNil(pOther))
     {
       RegionUnion(&clipRegion, &clipRegion, pOther);
@@ -2858,7 +2858,7 @@ void nxagentSendBackgroundExpose(WindowPtr pWin, PixmapPtr pBackground, RegionPt
     #ifdef TEST
     fprintf(stderr, "nxagentSendBackgroundExpose: Pixmap background [%dx%d] is "
                 "smaller than window [%dx%d]. Going to expose the winSize.\n",
-                    pBackground -> drawable.width, pBackground -> drawable.height, 
+                    pBackground -> drawable.width, pBackground -> drawable.height,
                         pWin -> drawable.width, pWin -> drawable.height);
     #endif
 
@@ -2913,11 +2913,11 @@ void nxagentSendBackgroundExpose(WindowPtr pWin, PixmapPtr pBackground, RegionPt
   /*
    * Reduce the overall region to expose.
    */
-  
+
   RegionTranslate(&expose, -pWin -> drawable.x, -pWin -> drawable.y);
-  
+
   RegionSubtract(pExpose, pExpose, &expose);
-  
+
   RegionTranslate(&expose, pWin -> drawable.x, pWin -> drawable.y);
 
   miWindowExposures(pWin, &expose, &expose);

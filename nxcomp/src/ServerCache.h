@@ -137,7 +137,7 @@ class ServerCache : public ChannelCache
   IntCache mapNotifyWindowCache;
 
   //
-  // MotionNotify event (also used for KeyPress, 
+  // MotionNotify event (also used for KeyPress,
   // KeyRelease, ButtonPress, ButtonRelease,
   // EnterNotify, and LeaveNotify events and
   // QueryPointer reply).

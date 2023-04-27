@@ -82,7 +82,7 @@ int ChangePropertyStore::parseIdentity(Message *message, const unsigned char *bu
 
     if (uiFormat == 16)
     {
-      uiLengthInBytes <<= 1; 
+      uiLengthInBytes <<= 1;
     }
     else if (uiFormat == 32)
     {
@@ -130,7 +130,7 @@ void ChangePropertyStore::dumpIdentity(const Message *message) const
 
   ChangePropertyMessage *changeProperty = (ChangePropertyMessage *) message;
 
-  *logofs << name() << ": Identity mode " << (unsigned int) changeProperty -> mode << ", format " 
+  *logofs << name() << ": Identity mode " << (unsigned int) changeProperty -> mode << ", format "
           << (unsigned int) changeProperty -> format << ", window " << changeProperty -> window
           << ", property " << changeProperty -> property << ", type " << changeProperty -> type
           << ", length " << changeProperty -> length << ", size " << changeProperty -> size_

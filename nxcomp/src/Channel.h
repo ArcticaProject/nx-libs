@@ -253,7 +253,7 @@ class Channel
   }
 
   //
-  // Check if there are pending split 
+  // Check if there are pending split
   // to send to the remote side.
   //
 
@@ -589,7 +589,7 @@ class Channel
   //
 
   OpcodeStore *opcodeStore_;
- 
+
   //
   // Also stores are shared between channels.
   //

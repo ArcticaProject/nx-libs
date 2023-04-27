@@ -57,9 +57,9 @@ int ImageText16Store::parseIdentity(Message *message, const unsigned char *buffe
   // Here is the fingerprint.
   //
 
-  imageText16 -> len = *(buffer + 1); 
+  imageText16 -> len = *(buffer + 1);
 
-  imageText16 -> drawable = GetULONG(buffer + 4, bigEndian); 
+  imageText16 -> drawable = GetULONG(buffer + 4, bigEndian);
   imageText16 -> gcontext = GetULONG(buffer + 8, bigEndian);
 
   imageText16 -> x  = GetUINT(buffer + 12, bigEndian);
@@ -68,7 +68,7 @@ int ImageText16Store::parseIdentity(Message *message, const unsigned char *buffe
   if ((int) size > dataOffset)
   {
     int pad = (size - dataOffset) - (imageText16 -> len * 2);
- 
+
     if (pad > 0)
     {
       CleanData((unsigned char *) buffer + size - pad, pad);
@@ -113,8 +113,8 @@ void ImageText16Store::dumpIdentity(const Message *message) const
   ImageText16Message *imageText16 = (ImageText16Message *) message;
 
   *logofs << name() << ": Identity len " << (unsigned int) imageText16 -> len
-          << " drawable " << imageText16 -> drawable << ", gcontext " 
-          << imageText16 -> gcontext << ", x " << imageText16 -> x << ", y " 
+          << " drawable " << imageText16 -> drawable << ", gcontext "
+          << imageText16 -> gcontext << ", x " << imageText16 -> x << ", y "
           << imageText16 -> y << ", size " << imageText16 -> size_ << ".\n";
 
   #endif
