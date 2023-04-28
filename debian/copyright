@@ -100,10 +100,10 @@ Files: nx-X11/programs/Xserver/GL/mesa/main/WSDrawBuffer.h
  nxcompshad/src/X11.cpp
  nxcompshad/src/X11.h
 Copyright: 2001, 2011, NoMachine (http://www.nomachine.com)
-  2008-2014, Oleksandr Shneyder <o.shneyder@phoca-gmbh.de>
-  2011-2016, Mike Gabriel <mike.gabriel@das-netzwerkteam.de>*/
-  2014-2016, Mihai Moldovan <ionic@ionic.de>
-  2014-2016, Ulrich Sibiller <uli42@gmx.de>
+  2008-2017, Oleksandr Shneyder <o.shneyder@phoca-gmbh.de>
+  2011-2022, Mike Gabriel <mike.gabriel@das-netzwerkteam.de>*/
+  2014-2019, Mihai Moldovan <ionic@ionic.de>
+  2014-2022, Ulrich Sibiller <uli42@gmx.de>
   2015-2016, Qindel Group (http://www.qindel.com)
 License: GPL-2
 
@@ -364,10 +364,10 @@ Files:
  nxcomp/src/Z.cpp
  nxcomp/src/Z.h
 Copyright: 2001, 2011, NoMachine (http://www.nomachine.com)
-  2008-2014, Oleksandr Shneyder <o.shneyder@phoca-gmbh.de>
-  2011-2016, Mike Gabriel <mike.gabriel@das-netzwerkteam.de>*/
-  2014-2016, Mihai Moldovan <ionic@ionic.de>
-  2014-2016, Ulrich Sibiller <uli42@gmx.de>
+  2008-2017, Oleksandr Shneyder <o.shneyder@phoca-gmbh.de>
+  2011-2022, Mike Gabriel <mike.gabriel@das-netzwerkteam.de>*/
+  2014-2019, Mihai Moldovan <ionic@ionic.de>
+  2014-2022, Ulrich Sibiller <uli42@gmx.de>
   2015-2016, Qindel Group (http://www.qindel.com)
 License: GPL-2
 Comment:
@@ -1788,10 +1788,10 @@ Files: nx-X11/programs/Xserver/hw/nxagent/Args.c
  nx-X11/programs/Xserver/hw/nxagent/Visual.h
 Copyright: 1993, Davor Matic
   2001, 2011, NoMachine (http://www.nomachine.com)
-  2008-2014, Oleksandr Shneyder <o.shneyder@phoca-gmbh.de>
-  2011-2016, Mike Gabriel <mike.gabriel@das-netzwerkteam.de>*/
-  2014-2016, Mihai Moldovan <ionic@ionic.de>
-  2014-2016, Ulrich Sibiller <uli42@gmx.de>
+  2008-2017, Oleksandr Shneyder <o.shneyder@phoca-gmbh.de>
+  2011-2022, Mike Gabriel <mike.gabriel@das-netzwerkteam.de>*/
+  2014-2019, Mihai Moldovan <ionic@ionic.de>
+  2014-2022, Ulrich Sibiller <uli42@gmx.de>
   2015-2016, Qindel Group (http://www.qindel.com)
 License: GPL-2
 Comment:
@@ -1924,10 +1924,10 @@ Copyright: 1987, 1989, Digital Equipment Corporation, Maynard, Massachusetts
   1987, 1998, The Open Group
   1987, Digital Equipment Corporation, Maynard, Massachusetts
   2001, 2011, NoMachine (http://www.nomachine.com)
-  2008-2014, Oleksandr Shneyder <o.shneyder@phoca-gmbh.de>
-  2011-2016, Mike Gabriel <mike.gabriel@das-netzwerkteam.de>*/
-  2014-2016, Mihai Moldovan <ionic@ionic.de>
-  2014-2016, Ulrich Sibiller <uli42@gmx.de>
+  2008-2017, Oleksandr Shneyder <o.shneyder@phoca-gmbh.de>
+  2011-2022, Mike Gabriel <mike.gabriel@das-netzwerkteam.de>*/
+  2014-2019, Mihai Moldovan <ionic@ionic.de>
+  2014-2022, Ulrich Sibiller <uli42@gmx.de>
   2015-2016, Qindel Group (http://www.qindel.com)
 License: MIT~OpenGroup
 Comment:
@@ -1980,10 +1980,10 @@ Copyright: 1984-1985, 1987, 1989, 1998, The Open Group
   1992, 1998, The Open Group
   1996, 1998, The Open Group
   2001, 2011, NoMachine (http://www.nomachine.com)
-  2008-2014, Oleksandr Shneyder <o.shneyder@phoca-gmbh.de>
-  2011-2016, Mike Gabriel <mike.gabriel@das-netzwerkteam.de>*/
-  2014-2016, Mihai Moldovan <ionic@ionic.de>
-  2014-2016, Ulrich Sibiller <uli42@gmx.de>
+  2008-2017, Oleksandr Shneyder <o.shneyder@phoca-gmbh.de>
+  2011-2022, Mike Gabriel <mike.gabriel@das-netzwerkteam.de>*/
+  2014-2019, Mihai Moldovan <ionic@ionic.de>
+  2014-2022, Ulrich Sibiller <uli42@gmx.de>
   2015-2016, Qindel Group (http://www.qindel.com)
 License: MIT~OpenGroup
 Comment:
@@ -2019,10 +2019,10 @@ Files: nx-X11/programs/Xserver/hw/nxagent/NXglyph.c
  nx-X11/programs/Xserver/hw/nxagent/NXrender.c
 Copyright: 2000, SuSE, Inc
   2001, 2011, NoMachine (http://www.nomachine.com)
-  2008-2014, Oleksandr Shneyder <o.shneyder@phoca-gmbh.de>
-  2011-2016, Mike Gabriel <mike.gabriel@das-netzwerkteam.de>*/
-  2014-2016, Mihai Moldovan <ionic@ionic.de>
-  2014-2016, Ulrich Sibiller <uli42@gmx.de>
+  2008-2017, Oleksandr Shneyder <o.shneyder@phoca-gmbh.de>
+  2011-2022, Mike Gabriel <mike.gabriel@das-netzwerkteam.de>*/
+  2014-2019, Mihai Moldovan <ionic@ionic.de>
+  2014-2022, Ulrich Sibiller <uli42@gmx.de>
   2015-2016, Qindel Group (http://www.qindel.com)
 License: MIT~X11
 Comment:
@@ -2243,10 +2243,10 @@ Files: nx-X11/programs/Xserver/hw/nxagent/NXdamage.c
 Copyright: 2001, 2011, NoMachine (http://www.nomachine.com)
   2003, Keith Packard
   2006, Keith Packard
-  2008-2014, Oleksandr Shneyder <o.shneyder@phoca-gmbh.de>
-  2011-2016, Mike Gabriel <mike.gabriel@das-netzwerkteam.de>*/
-  2014-2016, Mihai Moldovan <ionic@ionic.de>
-  2014-2016, Ulrich Sibiller <uli42@gmx.de>
+  2008-2017, Oleksandr Shneyder <o.shneyder@phoca-gmbh.de>
+  2011-2022, Mike Gabriel <mike.gabriel@das-netzwerkteam.de>*/
+  2014-2019, Mihai Moldovan <ionic@ionic.de>
+  2014-2022, Ulrich Sibiller <uli42@gmx.de>
   2015-2016, Qindel Group (http://www.qindel.com)
 License: MIT~X11
 Comment:
@@ -2343,10 +2343,10 @@ Copyright: 1987, 1998, The Open Group
   1987, Digital Equipment Corporation, Maynard, Massachusetts
   1994, Quarterdeck Office Systems
   2001, 2011, NoMachine (http://www.nomachine.com)
-  2008-2014, Oleksandr Shneyder <o.shneyder@phoca-gmbh.de>
-  2011-2016, Mike Gabriel <mike.gabriel@das-netzwerkteam.de>*/
-  2014-2016, Mihai Moldovan <ionic@ionic.de>
-  2014-2016, Ulrich Sibiller <uli42@gmx.de>
+  2008-2017, Oleksandr Shneyder <o.shneyder@phoca-gmbh.de>
+  2011-2022, Mike Gabriel <mike.gabriel@das-netzwerkteam.de>*/
+  2014-2019, Mihai Moldovan <ionic@ionic.de>
+  2014-2022, Ulrich Sibiller <uli42@gmx.de>
   2015-2016, Qindel Group (http://www.qindel.com)
 License: MIT~OpenGroup
 Comment:
@@ -2486,10 +2486,10 @@ Files: nx-X11/programs/Xserver/hw/nxagent/NXdixfonts.c
 Copyright: 1987, Digital Equipment Corporation, Maynard, Massachusetts
   1991, 1997, Digital Equipment Corporation, Maynard, Massachusetts
   2001, 2011, NoMachine (http://www.nomachine.com)
-  2008-2014, Oleksandr Shneyder <o.shneyder@phoca-gmbh.de>
-  2011-2016, Mike Gabriel <mike.gabriel@das-netzwerkteam.de>*/
-  2014-2016, Mihai Moldovan <ionic@ionic.de>
-  2014-2016, Ulrich Sibiller <uli42@gmx.de>
+  2008-2017, Oleksandr Shneyder <o.shneyder@phoca-gmbh.de>
+  2011-2022, Mike Gabriel <mike.gabriel@das-netzwerkteam.de>*/
+  2014-2019, Mihai Moldovan <ionic@ionic.de>
+  2014-2022, Ulrich Sibiller <uli42@gmx.de>
   2015-2016, Qindel Group (http://www.qindel.com)
 License: Expat~NoAdvert
 Comment:
@@ -2536,10 +2536,10 @@ Files: nx-X11/lib/include/xtrans/Xtranssock.c
 Copyright: 1993-1994, 1998, The Open Group
   2001, 2011, NoMachine (http://www.nomachine.com)
   2002, Oracle and/or its affiliates.
-  2008-2014, Oleksandr Shneyder <o.shneyder@phoca-gmbh.de>
-  2011-2016, Mike Gabriel <mike.gabriel@das-netzwerkteam.de>*/
-  2014-2016, Mihai Moldovan <ionic@ionic.de>
-  2014-2016, Ulrich Sibiller <uli42@gmx.de>
+  2008-2017, Oleksandr Shneyder <o.shneyder@phoca-gmbh.de>
+  2011-2022, Mike Gabriel <mike.gabriel@das-netzwerkteam.de>*/
+  2014-2019, Mihai Moldovan <ionic@ionic.de>
+  2014-2022, Ulrich Sibiller <uli42@gmx.de>
   2015-2016, Qindel Group (http://www.qindel.com)
 License: MIT~OpenGroup
 Comment:
@@ -2559,10 +2559,10 @@ Comment:
 Files: nx-X11/programs/Xserver/hw/nxagent/Agent.h
 Copyright: 1995, X Consortium
   2001, 2011, NoMachine (http://www.nomachine.com)
-  2008-2014, Oleksandr Shneyder <o.shneyder@phoca-gmbh.de>
-  2011-2016, Mike Gabriel <mike.gabriel@das-netzwerkteam.de>*/
-  2014-2016, Mihai Moldovan <ionic@ionic.de>
-  2014-2016, Ulrich Sibiller <uli42@gmx.de>
+  2008-2017, Oleksandr Shneyder <o.shneyder@phoca-gmbh.de>
+  2011-2022, Mike Gabriel <mike.gabriel@das-netzwerkteam.de>*/
+  2014-2019, Mihai Moldovan <ionic@ionic.de>
+  2014-2022, Ulrich Sibiller <uli42@gmx.de>
   2015-2016, Qindel Group (http://www.qindel.com)
 License: Expat~NoAdvert
 Comment:
@@ -2591,7 +2591,7 @@ Copyright: 2015, Mihai Moldovan <ionic@ionic.de>
 License: GPL-2+
 
 Files: roll-tarballs.sh
-Copyright: 2011-2016, Mike Gabriel <mike.gabriel@das-netzwerkteam.de>
+Copyright: 2011-2022, Mike Gabriel <mike.gabriel@das-netzwerkteam.de>
   2012, Reinhard Tartler <siretart@tauware.de>
 License: GPL-3+
 
@@ -2635,10 +2635,10 @@ Copyright: 2000, Compaq Computer Corporation
   2001, 2011, NoMachine (http://www.nomachine.com)
   2002, Hewlett-Packard Company
   2006, Intel Corporation
-  2008-2014, Oleksandr Shneyder <o.shneyder@phoca-gmbh.de>
-  2011-2016, Mike Gabriel <mike.gabriel@das-netzwerkteam.de>*/
-  2014-2016, Mihai Moldovan <ionic@ionic.de>
-  2014-2016, Ulrich Sibiller <uli42@gmx.de>
+  2008-2017, Oleksandr Shneyder <o.shneyder@phoca-gmbh.de>
+  2011-2022, Mike Gabriel <mike.gabriel@das-netzwerkteam.de>*/
+  2014-2019, Mihai Moldovan <ionic@ionic.de>
+  2014-2022, Ulrich Sibiller <uli42@gmx.de>
   2015-2016, Qindel Group (http://www.qindel.com)
 License: MIT~X11
 Comment:
@@ -2676,10 +2676,10 @@ License: MIT~OldStyle
 Files: nx-X11/programs/Xserver/hw/nxagent/NXxvdisp.c
 Copyright: 1991, Digital Equipment Corporation, Maynard, Massachusetts
   2001, 2011, NoMachine (http://www.nomachine.com)
-  2008-2014, Oleksandr Shneyder <o.shneyder@phoca-gmbh.de>
-  2011-2016, Mike Gabriel <mike.gabriel@das-netzwerkteam.de>*/
-  2014-2016, Mihai Moldovan <ionic@ionic.de>
-  2014-2016, Ulrich Sibiller <uli42@gmx.de>
+  2008-2017, Oleksandr Shneyder <o.shneyder@phoca-gmbh.de>
+  2011-2022, Mike Gabriel <mike.gabriel@das-netzwerkteam.de>*/
+  2014-2019, Mihai Moldovan <ionic@ionic.de>
+  2014-2022, Ulrich Sibiller <uli42@gmx.de>
   2015-2016, Qindel Group (http://www.qindel.com)
 License: MIT~OldStyle
 Comment:
@@ -2719,11 +2719,11 @@ Comment:
 Files: nx-X11/programs/Xserver/randr/rrcrtc.c
 Copyright: 2001, 2011, NoMachine (http://www.nomachine.com)
   2006, Keith Packard
-  2008-2014, Oleksandr Shneyder <o.shneyder@phoca-gmbh.de>
+  2008-2017, Oleksandr Shneyder <o.shneyder@phoca-gmbh.de>
   2010, Red Hat, Inc
-  2011-2016, Mike Gabriel <mike.gabriel@das-netzwerkteam.de>*/
-  2014-2016, Mihai Moldovan <ionic@ionic.de>
-  2014-2016, Ulrich Sibiller <uli42@gmx.de>
+  2011-2022, Mike Gabriel <mike.gabriel@das-netzwerkteam.de>*/
+  2014-2019, Mihai Moldovan <ionic@ionic.de>
+  2014-2022, Ulrich Sibiller <uli42@gmx.de>
   2015-2016, Qindel Group (http://www.qindel.com)
 License: MIT~X11
 Comment:
@@ -2734,10 +2734,10 @@ Files: nx-X11/programs/Xserver/randr/rrxinerama.c
 Copyright: 2001, 2011, NoMachine (http://www.nomachine.com)
   2001-2005, Thomas Winischhofer, Vienna, Austria
   2006, Keith Packard
-  2008-2014, Oleksandr Shneyder <o.shneyder@phoca-gmbh.de>
-  2011-2016, Mike Gabriel <mike.gabriel@das-netzwerkteam.de>*/
-  2014-2016, Mihai Moldovan <ionic@ionic.de>
-  2014-2016, Ulrich Sibiller <uli42@gmx.de>
+  2008-2017, Oleksandr Shneyder <o.shneyder@phoca-gmbh.de>
+  2011-2022, Mike Gabriel <mike.gabriel@das-netzwerkteam.de>*/
+  2014-2019, Mihai Moldovan <ionic@ionic.de>
+  2014-2022, Ulrich Sibiller <uli42@gmx.de>
   2015-2016, Qindel Group (http://www.qindel.com)
 License: MIT~X11
 Comment:
@@ -2755,10 +2755,10 @@ Comment:
 Files: nx-X11/programs/Xserver/hw/nxagent/NXmitrap.c
 Copyright: 2001, 2011, NoMachine (http://www.nomachine.com)
   2002, Keith Packard, member of The XFree86 Project, Inc
-  2008-2014, Oleksandr Shneyder <o.shneyder@phoca-gmbh.de>
-  2011-2016, Mike Gabriel <mike.gabriel@das-netzwerkteam.de>*/
-  2014-2016, Mihai Moldovan <ionic@ionic.de>
-  2014-2016, Ulrich Sibiller <uli42@gmx.de>
+  2008-2017, Oleksandr Shneyder <o.shneyder@phoca-gmbh.de>
+  2011-2022, Mike Gabriel <mike.gabriel@das-netzwerkteam.de>*/
+  2014-2019, Mihai Moldovan <ionic@ionic.de>
+  2014-2022, Ulrich Sibiller <uli42@gmx.de>
   2015-2016, Qindel Group (http://www.qindel.com)
 License: MIT~X11
 Comment:
@@ -2772,10 +2772,10 @@ License: MIT~X11
 Files: nx-X11/programs/Xserver/hw/nxagent/NXglxext.c
 Copyright: 1991-1999 Silicon Graphics, Inc.
   2001, 2011, NoMachine (http://www.nomachine.com)
-  2008-2014, Oleksandr Shneyder <o.shneyder@phoca-gmbh.de>
-  2011-2016, Mike Gabriel <mike.gabriel@das-netzwerkteam.de>*/
-  2014-2016, Mihai Moldovan <ionic@ionic.de>
-  2014-2016, Ulrich Sibiller <uli42@gmx.de>
+  2008-2017, Oleksandr Shneyder <o.shneyder@phoca-gmbh.de>
+  2011-2022, Mike Gabriel <mike.gabriel@das-netzwerkteam.de>*/
+  2014-2019, Mihai Moldovan <ionic@ionic.de>
+  2014-2022, Ulrich Sibiller <uli42@gmx.de>
   2015-2016, Qindel Group (http://www.qindel.com)
 License: GLX-1.0
 Comment:
@@ -2965,10 +2965,10 @@ Files: .travis.yml
  run-static-analysis.sh
  static-analysis-suppressions
 Copyright: 2001, 2011, NoMachine (http://www.nomachine.com)
-  2008-2014, Oleksandr Shneyder <o.shneyder@phoca-gmbh.de>
-  2011-2016, Mike Gabriel <mike.gabriel@das-netzwerkteam.de>*/
-  2014-2016, Mihai Moldovan <ionic@ionic.de>
-  2014-2016, Ulrich Sibiller <uli42@gmx.de>
+  2008-2017, Oleksandr Shneyder <o.shneyder@phoca-gmbh.de>
+  2011-2022, Mike Gabriel <mike.gabriel@das-netzwerkteam.de>*/
+  2014-2019, Mihai Moldovan <ionic@ionic.de>
+  2014-2022, Ulrich Sibiller <uli42@gmx.de>
   2015-2016, Qindel Group (http://www.qindel.com)
 License: GPL-2
 Comment:
@@ -2979,10 +2979,10 @@ Files: nx-X11/include/Xpoll.h.in
 Copyright: 1994, 1998, The Open Group
   2005, Daniel Stone
   2001, 2011, NoMachine (http://www.nomachine.com)
-  2008-2014, Oleksandr Shneyder <o.shneyder@phoca-gmbh.de>
-  2011-2016, Mike Gabriel <mike.gabriel@das-netzwerkteam.de>*/
-  2014-2016, Mihai Moldovan <ionic@ionic.de>
-  2014-2016, Ulrich Sibiller <uli42@gmx.de>
+  2008-2017, Oleksandr Shneyder <o.shneyder@phoca-gmbh.de>
+  2011-2022, Mike Gabriel <mike.gabriel@das-netzwerkteam.de>*/
+  2014-2019, Mihai Moldovan <ionic@ionic.de>
+  2014-2022, Ulrich Sibiller <uli42@gmx.de>
   2015-2016, Qindel Group (http://www.qindel.com)
 License: MIT~OpenGroup
 Comment:
@@ -3090,7 +3090,7 @@ Copyright: 2008, Google Inc.
 License: GPL-2+
 
 Files: debian/*
-Copyright: 2011-2016, Mike Gabriel <mike.gabriel@das-netzwerkteam.de>
+Copyright: 2011-2022, Mike Gabriel <mike.gabriel@das-netzwerkteam.de>
   2011-2013, Reinhard Tartler <siretart@tauware.de>
   2015-2016, Mihai Moldovan <ionic@ionic.de>
 License: GPL-2 or GPL-2+ or GPL-3+ or Expat or Expat~NoAdvert or MIT~OpenGroup or MIT~X11 or MIT~Tektronix or MIT~Tektronix~3-clause or MIT~OldStyle or MIT~Adobe or MIT~VeryOldStyle~UniOfCalifornia or MIT~VeryOldStyle~NCD or MIT~ISC or SGI-1.1 or GLX-1.0 or Zlib or XFree86 or BSD-1-clause or permissive
