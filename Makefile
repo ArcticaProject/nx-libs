@@ -2,6 +2,11 @@
 
 NULL =
 
+# suppress most make output unless "make VERBOSE=1" has been called
+ifndef VERBOSE
+.SILENT:
+endif
+
 # helpers for "install" target
 INSTALL_DIR=install -d -m 755
 INSTALL_FILE=install -m 644
@@ -69,14 +74,19 @@ NX_XTRANS_HEADERS =		\
 all: build
 
 clean: version imakeconfig
+	@echo
+	@echo "===> $@"
 	test -f nxcomp/Makefile     && ${MAKE} -C nxcomp clean         || true
 	test -f nxproxy/Makefile    && ${MAKE} -C nxproxy clean        || true
 	test -f nx-X11/lib/Makefile && ${MAKE} -C nx-X11/lib clean     || true
 	test -f nxcompshad/Makefile && ${MAKE} -C nxcompshad clean     || true
 	test -d nx-X11              && ${MAKE} clean-env               || true
 	test -f nxdialog/Makefile   && ${MAKE} -C nxdialog clean       || true
+	@echo "<=== $@"
 
 distclean: clean version imakeconfig
+	@echo
+	@echo "===> $@"
 	test -f nxcomp/Makefile     && ${MAKE} -C nxcomp distclean     || true
 	test -f nxproxy/Makefile    && ${MAKE} -C nxproxy distclean    || true
 	test -f nx-X11/lib/Makefile && ${MAKE} -C nx-X11/lib distclean || true
@@ -87,9 +97,10 @@ distclean: clean version imakeconfig
 	$(RM_DIR_REC) nx-X11/extras/Mesa/.pc/
 	$(RM_FILE) nx-X11/config/cf/nxversion.def
 	$(RM_FILE) nx-X11/config/cf/nxconfig.def
+	@echo "<=== $@"
 
 test:
-	echo "No testing for NX (redistributed)"
+	@echo "No testing for NX (redistributed)"
 
 version:
 	# prepare nx-X11/config/cf/nxversion.def
@@ -105,6 +116,8 @@ ifneq "$(strip $(NX_VERSION_CUSTOM))" ""
 endif
 
 imakeconfig:
+	@echo;
+	@echo "===> $@"
 	# auto-config some setting
 
 	# check if system supports Xfont2
@@ -126,8 +139,11 @@ imakeconfig:
 
 	# let's create the nx-X11 Makefiles now, once everything has been defined
 	$(MAKE) -j1 -C nx-X11 Makefiles IMAKE_DEFINES="$(IMAKE_DEFINES)"
+	@echo "<=== $@"
 
 build-env: version imakeconfig
+	@echo
+	@echo "===> $@"
 	# prepare Makefiles and the nx-X11 symlinking magic
 	${MAKE} -j1 -C nx-X11 BuildIncludes IMAKE_DEFINES="$(IMAKE_DEFINES)"
 
@@ -142,8 +158,11 @@ build-env: version imakeconfig
 	for header in $(NX_XTRANS_HEADERS); do \
 	    ${SYMLINK_FILE} ../../../../lib/include/xtrans/$${header} nx-X11/exports/include/nx-X11/Xtrans/$${header}; \
 	done
+	@echo "<=== $@"
 
 clean-env: version
+	@echo
+	@echo "===> $@"
 	for header in $(NX_X11_HEADERS); do \
 	    ${RM_FILE} nx-X11/exports/include/nx-X11/$${header}; \
 	done
@@ -155,13 +174,20 @@ clean-env: version
 	[ -d exports/include/nx-X11/ ]       && $(RM_DIR) exports/include/nx-X11/        || :
 
 	${MAKE} -j1 -C nx-X11 clean IMAKE_DEFINES="$(IMAKE_DEFINES)"
+	@echo "<=== $@"
 
 build-lite:
+	@echo
+	@echo "===> $@"
 	cd nxcomp  && autoreconf -vfsi && (${CONFIGURE}) && ${MAKE}
 	cd nxproxy && autoreconf -vfsi && (${CONFIGURE}) && ${MAKE}
+	@echo "<=== $@"
 
 build-full: build-env
 # in the full case, we rely on "magic" in the nx-X11 imake-based makefiles...
+
+	@echo
+	@echo "===> $@"
 
 	# build nxcomp first
 	cd nxcomp && autoreconf -vfsi && (${CONFIGURE} $(CUSTOM_VERSION_DEFINE)) && ${MAKE}
@@ -186,13 +212,17 @@ build-full: build-env
 
 	# "build" nxdialog last
 	cd nxdialog && autoreconf -vfsi && (${CONFIGURE}) && ${MAKE}
+	@echo "<=== $@"
 
 build:
+	@echo
+	@echo "===> $@"
 	if ! test -d nx-X11; then \
 	    ${MAKE} build-lite; \
 	else \
 	    ${MAKE} build-full; \
 	fi
+	@echo "<=== $@"
 
 install:
 	$(MAKE) install-lite
