@@ -485,10 +485,10 @@ rm %{buildroot}%{_libdir}/*.la
 %if 0%{?suse_version}
 %if 0%{?suse_version} >= 1500
 sed -i -e '1c\
-%{_bindir}/python3' '%{buildroot}%{_bindir}/nxdialog'
+#!%{_bindir}/python3' '%{buildroot}%{_bindir}/nxdialog'
 %else
 sed -i -e '1c\
-%{_bindir}/python2' '%{buildroot}%{_bindir}/nxdialog'
+#!%{_bindir}/python2' '%{buildroot}%{_bindir}/nxdialog'
 %endif
 %else
 # Unfortunately, pathfix.py is not available everywhere, so where it is not,
@@ -498,14 +498,14 @@ sed -i -e '1c\
 pathfix.py -pni "%{__python3} %{py3_shbang_opts}" '%{buildroot}%{_bindir}/nxdialog'
 %else
 sed -i -e '1c\
-%{__python3}' '%{buildroot}%{_bindir}/nxdialog'
+#!%{__python3}' '%{buildroot}%{_bindir}/nxdialog'
 %endif
 %else
 %if 0%{?rhel} > 6
 pathfix.py -pni "%{__python2} %{py2_shbang_opts}" '%{buildroot}%{_bindir}/nxdialog'
 %else
 sed -i -e '1c\
-/usr/bin/python2' '%{buildroot}%{_bindir}/nxdialog'
+#!/usr/bin/python2' '%{buildroot}%{_bindir}/nxdialog'
 %endif
 %endif
 %endif
