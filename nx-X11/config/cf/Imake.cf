@@ -883,6 +883,18 @@ XCOMM Keep cpp from replacing path elements containing i486/i586/i686
 #   define Riscv64Architecture
 #  endif
 # endif
+# if defined(__loongarch__)
+#   undef __loongarch__
+#   if __loongarch_grlen == 64
+#     undef __loongarch_grlen
+#     undef __loongarch_lp64
+#     define LoongArch64Architecture
+#   endif
+#   if __loongarch_grlen == 32
+#     undef __loongarch_grlen
+#     define LoongArch32Architecture
+#   endif
+# endif
 # ifdef sparc
 #  define SparcArchitecture
 #  undef sparc
