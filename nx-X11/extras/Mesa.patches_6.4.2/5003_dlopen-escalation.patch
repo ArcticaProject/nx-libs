@@ -1,0 +1,13 @@
+Index: Mesa_6.4.2/src/glx/x11/dri_glx.c
+===================================================================
+--- Mesa_6.4.2.orig/src/glx/x11/dri_glx.c
++++ Mesa_6.4.2/src/glx/x11/dri_glx.c
+@@ -196,7 +196,7 @@ static __DRIdriver *OpenDriver(const cha
+       }
+    }
+ 
+-   if (geteuid() == getuid()) {
++   if (geteuid() == getuid() && getgid() == getegid()) {
+       /* don't allow setuid apps to use LIBGL_DRIVERS_PATH */
+       libPaths = getenv("LIBGL_DRIVERS_PATH");
+       if (!libPaths)
