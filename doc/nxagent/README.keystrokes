@@ -133,6 +133,18 @@ dump_clipboard
   print the current internal clipboard state (for debugging) to the
   log.
 
+clipboard_both
+  allow copy/paste from/to real X server
+
+clipboard_client
+  allow copy/paste from real X server
+
+clipboard_server
+  allow copy/paste to real X server
+
+clipboard_none
+  forbid copy/paste from/to real X server
+
 force_synchronization
   Forces immediate drawing of elements to be synchronized which can
   fix some visual bugs.
