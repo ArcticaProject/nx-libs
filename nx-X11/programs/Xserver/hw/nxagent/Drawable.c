@@ -282,6 +282,13 @@ int nxagentSynchronizeDrawableData(DrawablePtr pDrawable, unsigned int breakMask
           static int totalLength;
           static int totalReconnectedPixmaps;
 
+          int width  = pDrawable -> width;
+          int height = pDrawable -> height;
+          int depth  = pDrawable -> depth;
+
+          unsigned int format = (depth == 1) ? XYPixmap : ZPixmap;
+          int length = nxagentImageLength(width, height, format, 0, depth);
+
           totalLength += length;
           totalReconnectedPixmaps++;
 
@@ -1531,11 +1538,11 @@ void nxagentMarkCorruptedRegion(DrawablePtr pDrawable, RegionPtr pRegion)
   {
     #ifdef TEST
 
-    x = pRegion -> extents.x1;
-    y = pRegion -> extents.y1;
+    int x = pRegion -> extents.x1;
+    int y = pRegion -> extents.y1;
 
-    width = pRegion -> extents.x2 - pRegion -> extents.x1;
-    height = pRegion -> extents.y2 - pRegion -> extents.y1;
+    int width = pRegion -> extents.x2 - pRegion -> extents.x1;
+    int height = pRegion -> extents.y2 - pRegion -> extents.y1;
 
     fprintf(stderr, "nxagentMarkCorruptedRegion: Partly invalidating %s [%p] with "
                 "coordinates [%d,%d][%d,%d].\n", nxagentDrawableType(pDrawable),
