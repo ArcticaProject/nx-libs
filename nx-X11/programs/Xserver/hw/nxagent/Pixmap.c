@@ -244,7 +244,7 @@ PixmapPtr nxagentCreatePixmap(ScreenPtr pScreen, int width, int height,
   }
 
   #ifdef TEST
-  fprintf(stderr, "nxagentCreatePixmap: Allocated memory for the Virtual %sPixmap %p of real Pixmap %p (%dx%d),"
+  fprintf(stderr, "nxagentCreatePixmap: Allocated memory for the Virtual %sPixmap [%p] of real Pixmap [%p] (%dx%d),"
               "allocation hint [%d].\n",
               nxagentShmPixmapTrap ? "Shm " : "", (void *) pVirtual, (void *) pPixmap, width, height, usage_hint);
   #endif
