@@ -135,6 +135,7 @@ of the copyright holder.
 
 #include <nx-X11/Xlib.h>
 
+/* define this to inform dix about having a own implementation of GetXYStartWindow() */
 #define XYWINDOWCALLBACK
 #include "../../dix/events.c"
 
