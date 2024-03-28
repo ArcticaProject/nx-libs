@@ -303,7 +303,8 @@ Bool nxagentIsParentOf(Display *d, XlibWindow possible_parent, XlibWindow candid
     SAFE_XFree(children);
 
     #ifdef TEST
-    fprintf(stderr, "%s: parent of full screen window [%p] root [%p] possible_parent [%p] candidate [%p]\n", __func__, parent, root, possible_parent, candidate);
+    fprintf(stderr, "%s: parent of full screen window [%p] root [%p] possible_parent [%p] candidate [%p]\n",
+	    __func__, (void *)parent, (void *)root, (void *)possible_parent, (void *)candidate);
     #endif
     return (parent == possible_parent);
   }
@@ -3825,7 +3826,7 @@ void nxagentDropOutput(RROutputPtr o)
       if (c->outputs[i] == o)
       {
         #ifdef DEBUG
-        fprintf(stderr, "%s: output [%s] is in use by crtc [%p], removing it from there\n", __func__, o->name, c);
+        fprintf(stderr, "%s: output [%s] is in use by crtc [%p], removing it from there\n", __func__, o->name, (void *)c);
         #endif
         RRCrtcSet(c, NULL, 0, 0, RR_Rotate_0, 0, NULL);
       }
