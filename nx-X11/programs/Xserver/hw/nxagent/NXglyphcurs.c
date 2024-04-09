@@ -81,6 +81,13 @@ SOFTWARE.
 #endif
 
 /*
+ * Set here the required log level.
+ */
+
+#undef  TEST
+#undef  DEBUG
+
+/*
     get the bits out of the font in a portable way.  to avoid
 dealing with padding and such-like, we draw the glyph into
 a bitmap, then read the bits out with GetImage, which
