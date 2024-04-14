@@ -3164,8 +3164,8 @@ static void nxagentReconfigureWindowCursor(void * param0, XID param1, void * dat
   }
 
   #ifdef DEBUG
-  fprintf(stderr, "nxagentReconfigureWindowCursor: %p - ID %lx geometry (%d,%d,%d,%d) "
-                  "cursor %p - ID %lx\n",
+  fprintf(stderr, "nxagentReconfigureWindowCursor: [%p] - ID [%lx] geometry [%d,%d,%d,%d] "
+                  "cursor [%p] - ID [%lx]\n",
                   pWin, nxagentWindow(pWin),
                   pWin -> drawable.x,
                   pWin -> drawable.y,
@@ -3177,7 +3177,7 @@ static void nxagentReconfigureWindowCursor(void * param0, XID param1, void * dat
   if (nxagentCursor(pCursor, pScreen) == None)
   {
     #ifdef NXAGENT_RECONNECT_WINDOW_DEBUG
-    fprintf(stderr, "nxagentReconfigureWindowCursor: reconnecting valid cursor %lx\n",
+    fprintf(stderr, "nxagentReconfigureWindowCursor: reconnecting valid cursor [%p]\n",
                 (void*)pCursor);
     #endif
 
@@ -3207,7 +3207,7 @@ static void nxagentReconfigureWindow(void * param0, XID param1, void * data_buff
   unsigned long mask = 0;
 
   #ifdef DEBUG
-  fprintf(stderr, "nxagentReconfigureWindow: pWin %p - ID %lx\n", pWin, nxagentWindow(pWin));
+  fprintf(stderr, "nxagentReconfigureWindow: pWin [%p] - ID [%lx]\n", pWin, nxagentWindow(pWin));
   #endif
 
   if (pWin -> drawable.class == InputOnly)
@@ -3304,7 +3304,7 @@ Bool nxagentCheckWindowIntegrity(WindowPtr pWin)
      char *data = calloc(1, length);
      if (data == NULL)
      {
-       FatalError("nxagentCheckWindowIntegrity: Failed to allocate a buffer of size %d.\n", length);
+       FatalError("nxagentCheckWindowIntegrity: Failed to allocate a buffer of size [%d].\n", length);
      }
 
      unsigned long plane_mask = AllPlanes;
@@ -3339,9 +3339,9 @@ Bool nxagentCheckWindowIntegrity(WindowPtr pWin)
        #endif
 
        #ifdef WARNING
-       fprintf(stderr, "nxagentCheckWindowIntegrity: Window %p width %d, height %d, has been realized "
+       fprintf(stderr, "nxagentCheckWindowIntegrity: Window [%p] geometry [%d,%d], has been realized "
                  "but the data buffer still differs.\n", (void*) pWin, width, height);
-       fprintf(stderr, "nxagentCheckWindowIntegrity: bytes_per_line = %d byte pad %d format %d.\n",
+       fprintf(stderr, "nxagentCheckWindowIntegrity: bytes_per_line = [%d] byte pad [%d] format [%d].\n",
                  image -> bytes_per_line, nxagentImagePad(width, height, 0, depth), image->format);
 
        fprintf(stderr, "nxagentCheckWindowIntegrity: image is corrupted!!\n");
@@ -3350,7 +3350,7 @@ Bool nxagentCheckWindowIntegrity(WindowPtr pWin)
      else
      {
        #ifdef WARNING
-       fprintf(stderr, "nxagentCheckWindowIntegrity: Window %p has been realized "
+       fprintf(stderr, "nxagentCheckWindowIntegrity: Window [%p] has been realized "
                    "now remote and framebuffer data are synchronized.\n", (void*) pWin);
        #endif
      }
@@ -3365,7 +3365,7 @@ Bool nxagentCheckWindowIntegrity(WindowPtr pWin)
   else
   {
     #ifdef WARNING
-    fprintf(stderr, "nxagentCheckWindowIntegrity: ignored window %p with geometry (%d,%d).\n",
+    fprintf(stderr, "nxagentCheckWindowIntegrity: ignored window [%p] with geometry [%d,%d].\n",
                 (void*) pWin, width, height);
     #endif
   }
