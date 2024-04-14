@@ -75,10 +75,6 @@ in this Software without prior written authorization from The Open Group.
 extern void fbGetImage(DrawablePtr pDrw, int x, int y, int w, int h,
                            unsigned int format, unsigned long planeMask, char *d);
 
-extern void fbPutImage (DrawablePtr pDrawable, GCPtr pGC, int depth,
-                            int x, int y, int w, int h, int leftPad, int format,
-                                char *pImage);
-
 extern int nxagentImageLength(int, int, int, int, int);
 
 void
