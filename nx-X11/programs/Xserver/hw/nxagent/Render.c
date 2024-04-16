@@ -1252,6 +1252,11 @@ void nxagentGlyphs(CARD8 op, PicturePtr pSrc, PicturePtr pDst,
 
   XGlyphElt8 *elements;
 
+  #ifdef DEBUG
+  fprintf(stderr, "%s: pSrc [%p] pSrc->pDrawable [%p] pDst [%p] pDst->pDrawable [%p]\n",
+	      __func__, pSrc, pSrc ? pSrc->pDrawable : NULL, pDst, pDst ? pDst->pDrawable : NULL);
+  #endif
+
   if (pSrc == NULL || pDst == NULL)
   {
     return;
@@ -2042,6 +2047,10 @@ void nxagentAddGlyphs(GlyphSetPtr glyphSet, Glyph *gids, xGlyphInfo *gi,
 
   CARD8 *normalizedImages = NULL;
 
+  #ifdef DEBUG
+  fprintf(stderr, "%s: sizeImages [%d]\n", __func__, sizeImages);
+  #endif
+
   if (sizeImages > 0)
   {
     normalizedImages = malloc(sizeImages);
@@ -2192,13 +2201,16 @@ Bool nxagentPictureInit(ScreenPtr pScreen, PictFormatPtr formats, int nformats)
 {
   #ifdef RENDER
   #ifdef DEBUG
-  fprintf(stderr, "nxagentPictureInit: Screen [%p].\n", (void *) pScreen);
+  fprintf(stderr, "%s: Screen [%p].\n", __func__, (void *) pScreen);
   #endif
 
   nxagentQueryFormats();
 
-  if (fbPictureInit(pScreen, formats, nformats) == 0)
+  if (fbPictureInit(pScreen, formats, nformats) == FALSE)
   {
+    #ifdef DEBUG
+    fprintf(stderr, "%s: failed: fbPictureInit returned [FALSE]\n", __func__);
+    #endif
     return FALSE;
   }
 
@@ -2215,11 +2227,11 @@ static void nxagentPrintFormat(XRenderPictFormat *pFormat)
 #ifdef DEBUG
   if (pFormat == NULL)
   {
-    fprintf(stderr, "nxagentPrintFormat: WARNING! null pointer passed to function.\n");
+    fprintf(stderr, "%s: WARNING! null pointer passed to function.\n", __func__);
     return;
   }
 
-  fprintf(stderr, "nxagentPrintFormat: Dumping information for format at [%p]:\n\
+  fprintf(stderr, "%s: Dumping information for format at [%p]:\n\
                    type=%d\n\
                    depth=%d\n\
                    red=%d\n\
@@ -2230,6 +2242,7 @@ static void nxagentPrintFormat(XRenderPictFormat *pFormat)
                    blueMask=%d\n\
                    alpha=%d\n\
                    alphaMask=%d\n",
+                   __func__,	  
                    (void *) pFormat,
                    pFormat -> type,
                    pFormat -> depth,
@@ -2247,8 +2260,8 @@ static void nxagentPrintFormat(XRenderPictFormat *pFormat)
 Bool nxagentFillGlyphSet(GlyphSetPtr pGly)
 {
   #ifdef DEBUG
-  fprintf(stderr, "nxagentFillGlyphSet: GlyphSet at [%p] Refcount [%ld] Glyphs [%ld] "
-              "Format [%p] FDepth [%d] RemoteID [%ld].\n", (void *) pGly, pGly -> refcnt,
+  fprintf(stderr, "%s: GlyphSet at [%p] Refcount [%ld] Glyphs [%ld] "
+              "Format [%p] FDepth [%d] RemoteID [%ld].\n", __func__, (void *) pGly, pGly -> refcnt,
                   pGly -> hash.hashSet -> size, (void *) pGly -> format, pGly -> fdepth, pGly -> remoteID);
   #endif
 
@@ -2282,7 +2295,7 @@ void nxagentReconnectGlyphSet(void* p0, XID x1, void *p2)
     XRenderPictFormat *pForm = NULL;
 
     #ifdef DEBUG
-    fprintf(stderr, "nxagentReconnectGlyphSet: GlyphSet at [%p].\n", (void *) pGly);
+    fprintf(stderr, "%s: GlyphSet at [%p].\n", __func__, (void *) pGly);
     #endif
 
     if (pGly -> format)
@@ -2325,7 +2338,7 @@ Bool nxagentReconnectAllGlyphSet(void *p)
   nxagentQueryFormats();
 
   #ifdef DEBUG
-  fprintf(stderr, "nxagentReconnectAllGlyphSet\n");
+  fprintf(stderr, "%s\n", __func__);
   #endif
 
   for (int i = 0; (i < MAXCLIENTS) && (success); i++)
@@ -2348,10 +2361,10 @@ void nxagentReconnectPicture(void * p0, XID x1, void *p2)
   XRenderPictureAttributes attributes;
 
   #ifdef TEST
-  fprintf(stderr, "nxagentReconnectPicture: Called with bool [%d] and picture at [%p].\n",
+  fprintf(stderr, "%s: Called with bool [%d] and picture at [%p].\n", __func__,
               *pBool, (void *) pPicture);
 
-  fprintf(stderr, "nxagentReconnectPicture: Virtual picture is [%ld].\n",
+  fprintf(stderr, "%s: Virtual picture is [%ld].\n", __func__,
               nxagentPicture(pPicture));
   #endif
 
@@ -2433,10 +2446,10 @@ void nxagentReconnectPicture(void * p0, XID x1, void *p2)
   }
 
   #ifdef TEST
-  fprintf(stderr, "nxagentReconnectPicture: Creating picture at [%p] with drawable [%ld] at [%p].\n",
+  fprintf(stderr, "%s: Creating picture at [%p] with drawable [%ld] at [%p].\n", __func__,
               (void *) pPicture, nxagentDrawable(pPicture -> pDrawable), (void *) pPicture -> pDrawable);
 
-  fprintf(stderr, "nxagentReconnectPicture: Format is at [%p] mask is [%ld] attributes are at [%p].\n",
+  fprintf(stderr, "%s: Format is at [%p] mask is [%ld] attributes are at [%p].\n", __func__,
               (void *) pForm, mask, (void *) &attributes);
   #endif
 
@@ -2451,7 +2464,7 @@ void nxagentReconnectPicture(void * p0, XID x1, void *p2)
   #endif
 
   #ifdef TEST
-  fprintf(stderr, "nxagentReconnectPicture: Reconnected picture at [%p] with value [%ld].\n",
+  fprintf(stderr, "%s: Reconnected picture at [%p] with value [%ld].\n", __func__,
               (void *) pPicture, nxagentPicture(pPicture));
   #endif
 
@@ -2474,7 +2487,7 @@ Bool nxagentReconnectAllPicture(void *p)
   Bool r = True;
 
   #ifdef TEST
-  fprintf(stderr, "nxagentReconnectAllPicture: Going to recreate all pictures.\n");
+  fprintf(stderr, "%s: Going to recreate all pictures.\n", __func__);
   #endif
 
   for (int i = 0; i < MAXCLIENTS; i++)
@@ -2486,8 +2499,8 @@ Bool nxagentReconnectAllPicture(void *p)
       #ifdef WARNING
       if (!r)
       {
-        fprintf(stderr, "nxagentReconnectAllPicture: WARNING! Failed to recreate "
-                    "picture for client [%d].\n", i);
+        fprintf(stderr, "%s: WARNING! Failed to recreate "
+                    "picture for client [%d].\n", __func__, i);
       }
       #endif
     }
@@ -2527,7 +2540,7 @@ Bool nxagentDisconnectAllPicture(void)
   Bool r = True;
 
   #ifdef DEBUG
-  fprintf(stderr, "nxagentDisconnectAllPicture.\n");
+  fprintf(stderr, "%s.\n", __func__);
   #endif
 
   for (int i = 0; i < MAXCLIENTS; i++)
@@ -2539,8 +2552,8 @@ Bool nxagentDisconnectAllPicture(void)
       #ifdef WARNING
       if (!r)
       {
-        fprintf(stderr, "nxagentDisconnectAllPicture: WARNING! Failed to disconnect "
-                    "picture for client [%d].\n", i);
+        fprintf(stderr, "%s: WARNING! Failed to disconnect "
+                    "picture for client [%d].\n", __func__, i);
       }
       #endif
     }
@@ -2557,16 +2570,16 @@ void nxagentRenderCreateSolidFill(PicturePtr pPicture, xRenderColor *color)
   }
 
   #ifdef DEBUG
-  fprintf(stderr, "nxagentRenderCreateSolidFill: Got called.\n");
+  fprintf(stderr, "%s: Got called.\n", __func__);
 
   if (pPicture == NULL)
   {
-    fprintf(stderr, "nxagentRenderCreateSolidFill: WARNING! pPicture pointer is NULL.\n");
+    fprintf(stderr, "%s: WARNING! pPicture pointer is NULL.\n", __func__);
   }
 
   if (color == NULL)
   {
-    fprintf(stderr, "nxagentRenderCreateSolidFill: WARNING! color pointer is NULL.\n");
+    fprintf(stderr, "%s: WARNING! color pointer is NULL.\n", __func__);
   }
   #endif /* #ifdef DEBUG */
 
@@ -2580,7 +2593,7 @@ void nxagentRenderCreateSolidFill(PicturePtr pPicture, xRenderColor *color)
   #endif
 
   #ifdef TEST
-  fprintf(stderr, "nxagentRenderCreateSolidFill: Created solid fill xid [%lu].\n", id);
+  fprintf(stderr, "%s: Created solid fill xid [%lu].\n", __func__, id);
   #endif
 
   nxagentPicturePriv(pPicture) -> picture = id;
@@ -2597,31 +2610,31 @@ void nxagentRenderCreateLinearGradient(PicturePtr pPicture, xPointFixed *p1,
   }
 
   #ifdef DEBUG
-  fprintf(stderr, "nxagentRenderCreateLinearGradient: Got called.\n");
+  fprintf(stderr, "%s: Got called.\n", __func__);
 
   if (pPicture == NULL)
   {
-    fprintf(stderr, "nxagentRenderCreateLinearGradient: WARNING! pPicture pointer is NULL.\n");
+    fprintf(stderr, "%s: WARNING! pPicture pointer is NULL.\n", __func__);
   }
 
   if (p1 == NULL)
   {
-    fprintf(stderr, "nxagentRenderCreateLinearGradient: WARNING! p1 pointer is NULL.\n");
+    fprintf(stderr, "%s: WARNING! p1 pointer is NULL.\n", __func__);
   }
 
   if (p2 == NULL)
   {
-    fprintf(stderr, "nxagentRenderCreateLinearGradient: WARNING! p2 pointer is NULL.\n");
+    fprintf(stderr, "%s: WARNING! p2 pointer is NULL.\n", __func__);
   }
 
   if (stops == NULL)
   {
-    fprintf(stderr, "nxagentRenderCreateLinearGradient: WARNING! stops pointer is NULL.\n");
+    fprintf(stderr, "%s: WARNING! stops pointer is NULL.\n", __func__);
   }
 
   if (colors == NULL)
   {
-    fprintf(stderr, "nxagentRenderCreateLinearGradient: WARNING! colors pointer is NULL.\n");
+    fprintf(stderr, "%s: WARNING! colors pointer is NULL.\n", __func__);
   }
   #endif /* #ifdef DEBUG */
 
@@ -2644,7 +2657,7 @@ void nxagentRenderCreateLinearGradient(PicturePtr pPicture, xPointFixed *p1,
   #endif
 
   #ifdef TEST
-  fprintf(stderr, "nxagentRenderCreateLinearGradient: Created linear gradient xid [%lu].\n", id);
+  fprintf(stderr, "%s: Created linear gradient xid [%lu].\n", __func__, id);
   #endif
 
   nxagentPicturePriv(pPicture) -> picture = id;
@@ -2664,31 +2677,31 @@ void nxagentRenderCreateRadialGradient(PicturePtr pPicture, xPointFixed *inner,
   }
 
   #ifdef DEBUG
-  fprintf(stderr, "nxagentRenderCreateRadialGradient: Got called.\n");
+  fprintf(stderr, "%s: Got called.\n", __func__);
 
   if (pPicture == NULL)
   {
-    fprintf(stderr, "nxagentRenderCreateRadialGradient: WARNING! pPicture pointer is NULL.\n");
+    fprintf(stderr, "%s: WARNING! pPicture pointer is NULL.\n", __func__);
   }
 
   if (inner == NULL)
   {
-    fprintf(stderr, "nxagentRenderCreateRadialGradient: WARNING! inner pointer is NULL.\n");
+    fprintf(stderr, "%s: WARNING! inner pointer is NULL.\n", __func__);
   }
 
   if (outer == NULL)
   {
-    fprintf(stderr, "nxagentRenderCreateRadialGradient: WARNING! outer pointer is NULL.\n");
+    fprintf(stderr, "%s: WARNING! outer pointer is NULL.\n", __func__);
   }
 
   if (stops == NULL)
   {
-    fprintf(stderr, "nxagentRenderCreateRadialGradient: WARNING! stops pointer is NULL.\n");
+    fprintf(stderr, "%s: WARNING! stops pointer is NULL.\n", __func__);
   }
 
   if (colors == NULL)
   {
-    fprintf(stderr, "nxagentRenderCreateRadialGradient: WARNING! colors pointer is NULL.\n");
+    fprintf(stderr, "%s: WARNING! colors pointer is NULL.\n", __func__);
   }
   #endif /* #ifdef DEBUG */
 
@@ -2713,7 +2726,7 @@ void nxagentRenderCreateRadialGradient(PicturePtr pPicture, xPointFixed *inner,
   #endif
 
   #ifdef TEST
-  fprintf(stderr, "nxagentRenderCreateRadialGradient: Created radial gradient xid [%lu].\n", id);
+  fprintf(stderr, "%s: Created radial gradient xid [%lu].\n", __func__, id);
   #endif
 
   nxagentPicturePriv(pPicture) -> picture = id;
@@ -2731,26 +2744,26 @@ void nxagentRenderCreateConicalGradient(PicturePtr pPicture,
   }
 
   #ifdef DEBUG
-  fprintf(stderr, "nxagentRenderCreateConicalGradient: Got called.\n");
+  fprintf(stderr, "%s: Got called.\n", __func__);
 
   if (pPicture == NULL)
   {
-    fprintf(stderr, "nxagentRenderCreateConicalGradient: WARNING! pPicture pointer is NULL.\n");
+    fprintf(stderr, "%s: WARNING! pPicture pointer is NULL.\n", __func__);
   }
 
   if (center == NULL)
   {
-    fprintf(stderr, "nxagentRenderCreateConicalGradient: WARNING! center pointer is NULL.\n");
+    fprintf(stderr, "%s: WARNING! center pointer is NULL.\n", __func__);
   }
 
   if (stops == NULL)
   {
-    fprintf(stderr, "nxagentRenderCreateConicalGradient: WARNING! stops pointer is NULL.\n");
+    fprintf(stderr, "%s: WARNING! stops pointer is NULL.\n", __func__);
   }
 
   if (colors == NULL)
   {
-    fprintf(stderr, "nxagentRenderCreateConicalGradient: WARNING! colors pointer is NULL.\n");
+    fprintf(stderr, "%s: WARNING! colors pointer is NULL.\n", __func__);
   }
   #endif /* #ifdef DEBUG */
 
@@ -2772,7 +2785,7 @@ void nxagentRenderCreateConicalGradient(PicturePtr pPicture,
   #endif
 
   #ifdef TEST
-  fprintf(stderr, "nxagentRenderCreateConicalGradient: Created conical gradient xid [%lu].\n", id);
+  fprintf(stderr, "%s: Created conical gradient xid [%lu].\n", __func__, id);
   #endif
 
   nxagentPicturePriv(pPicture) -> picture = id;
