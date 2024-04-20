@@ -2027,9 +2027,10 @@ void nxagentAddGlyphs(GlyphSetPtr glyphSet, Glyph *gids, xGlyphInfo *gi,
    * as synchronized.
    */
 
+  Glyph *tempGids = gids;
+
   for (int i = 0; i < nglyphs; i++)
   {
-    Glyph *tempGids = gids;
     GlyphRefPtr gr = FindGlyphRef(&glyphSet -> hash, *tempGids, 0, 0);
 
     if (gr && gr -> glyph != DeletedGlyph)
