@@ -132,7 +132,7 @@
 extern Bool nxagentOnce;
 
 #ifdef NX_DEBUG_INPUT
-int nxagentDebugInput = 0;
+Bool nxagentDebugInput = False;
 #endif
 
 #ifdef DEBUG
@@ -282,7 +282,7 @@ void nxagentRemoveDuplicatedKeys(XEvent *X);
 void ProcessInputEvents(void)
 {
   #ifdef NX_DEBUG_INPUT
-  if (nxagentDebugInput == 1)
+  if (nxagentDebugInput)
   {
     fprintf(stderr, "%s: Processing input.\n", __func__);
   }
@@ -1205,7 +1205,7 @@ FIXME: Don't enqueue the KeyRelease event if the key was not already
       case ButtonPress:
       {
         #ifdef NX_DEBUG_INPUT
-        if (nxagentDebugInput == 1)
+        if (nxagentDebugInput)
         {
           fprintf(stderr, "%s: Going to handle new ButtonPress event.\n", __func__);
         }
@@ -1270,7 +1270,7 @@ FIXME: Don't enqueue the KeyRelease event if the key was not already
           }
 
           #ifdef NX_DEBUG_INPUT
-          if (nxagentDebugInput == 1)
+          if (nxagentDebugInput)
           {
             fprintf(stderr, "%s: Adding ButtonPress event.\n", __func__);
           }
@@ -1304,7 +1304,7 @@ FIXME: Don't enqueue the KeyRelease event if the key was not already
       case ButtonRelease:
       {
         #ifdef NX_DEBUG_INPUT
-        if (nxagentDebugInput == 1)
+        if (nxagentDebugInput)
         {
           fprintf(stderr, "%s: Going to handle new ButtonRelease event.\n", __func__);
         }
@@ -1344,7 +1344,7 @@ FIXME: Don't enqueue the KeyRelease event if the key was not already
           }
 
           #ifdef NX_DEBUG_INPUT
-          if (nxagentDebugInput == 1)
+          if (nxagentDebugInput)
           {
             fprintf(stderr, "%s: Adding ButtonRelease event.\n", __func__);
           }
@@ -1384,7 +1384,7 @@ FIXME: Don't enqueue the KeyRelease event if the key was not already
         #endif
 
         #ifdef NX_DEBUG_INPUT
-        if (nxagentDebugInput == 1)
+        if (nxagentDebugInput)
         {
           fprintf(stderr, "%s: Handling motion notify window [%ld] root [%ld] child [%ld].\n",
                       __func__, X.xmotion.window, X.xmotion.root, X.xmotion.subwindow);
@@ -1439,7 +1439,7 @@ FIXME: Don't enqueue the KeyRelease event if the key was not already
                         && X.xmotion.subwindow == None))
         {
           #ifdef NX_DEBUG_INPUT
-          if (nxagentDebugInput == 1)
+          if (nxagentDebugInput)
           {
             fprintf(stderr, "%s: Adding motion event [%d, %d] to the queue.\n", __func__,
                         x.u.keyButtonPointer.rootX, x.u.keyButtonPointer.rootY);
@@ -4571,11 +4571,11 @@ void nxagentGuessDumpInputInfo(ClientPtr client, Atom property, char *data)
   {
     if (*data != 0)
     {
-      nxagentDebugInput = 1;
+      nxagentDebugInput = True;
     }
     else
     {
-      nxagentDebugInput = 0;
+      nxagentDebugInput = False;
     }
   }
 }
