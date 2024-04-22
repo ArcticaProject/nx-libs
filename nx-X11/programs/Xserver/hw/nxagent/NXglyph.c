@@ -221,23 +221,15 @@ ResizeGlyphHash (GlyphHashPtr hash, CARD32 change, Bool global)
 	    if (glyph && glyph != DeletedGlyph)
 	    {
 		s = hash->table[i].signature;
-
-                #ifdef NXAGENT_SERVER
-
+#ifdef NXAGENT_SERVER
                 CARD32 c = hash->table[i].corruptedGlyph;
-
-                #endif
-
+#endif
 		gr = FindGlyphRef (&newHash, s, global, glyph);
 		gr->signature = s;
 		gr->glyph = glyph;
-
-                #ifdef NXAGENT_SERVER
-
+#ifdef NXAGENT_SERVER
                 gr -> corruptedGlyph = c;
-
-                #endif
-
+#endif
 		++newHash.tableEntries;
 	    }
 	}
