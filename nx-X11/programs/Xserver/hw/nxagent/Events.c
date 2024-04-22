@@ -1184,7 +1184,7 @@ FIXME: Don't enqueue the KeyRelease event if the key was not already
 
           mieqEnqueue(&x);
 
-          CriticalOutputPending = 1;
+          SetCriticalOutputPending();
 
           if (!nxagentOption(ViewOnly) && nxagentOption(Shadow))
           {
@@ -1278,7 +1278,7 @@ FIXME: Don't enqueue the KeyRelease event if the key was not already
 
           mieqEnqueue(&x);
 
-          CriticalOutputPending = 1;
+          SetCriticalOutputPending();
         }
 
         if (!nxagentOption(ViewOnly) && nxagentOption(Shadow))
@@ -1352,7 +1352,7 @@ FIXME: Don't enqueue the KeyRelease event if the key was not already
 
           mieqEnqueue(&x);
 
-          CriticalOutputPending = 1;
+          SetCriticalOutputPending();
         }
 
         if (!nxagentOption(ViewOnly) && nxagentOption(Shadow))
@@ -2224,10 +2224,7 @@ FIXME: Don't enqueue the KeyRelease event if the key was not already
    * Write the events to our clients. We may flush only in the case of
    * critical output but this doesn't seem beneficial.
    *
-   * if (CriticalOutputPending == 1)
-   * {
-   *   FlushAllOutput();
-   * }
+   * FlushIfCriticalOutputPending();
    */
 
   if (NewOutputPending == 1)
@@ -2306,7 +2303,7 @@ int nxagentHandleKeyPress(XEvent *X, enum HandleEventResult *result)
 
   mieqEnqueue(&x);
 
-  CriticalOutputPending = 1;
+  SetCriticalOutputPending();
 
   return 1;
 }
