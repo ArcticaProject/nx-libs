@@ -611,18 +611,18 @@ ProcRenderComposite (ClientPtr client)
                       (void *) pSrc, (void *) pMask, (void *) pDst);
       #endif
 
-    CompositePicture (stuff->op,
-		      pSrc,
-		      pMask,
-		      pDst,
-		      stuff->xSrc,
-		      stuff->ySrc,
-		      stuff->xMask,
-		      stuff->yMask,
-		      stuff->xDst,
-		      stuff->yDst,
-		      stuff->width,
-		      stuff->height);
+      CompositePicture (stuff->op,
+                        pSrc,
+                        pMask,
+                        pDst,
+                        stuff->xSrc,
+                        stuff->ySrc,
+                        stuff->xMask,
+                        stuff->yMask,
+                        stuff->xDst,
+                        stuff->yDst,
+                        stuff->width,
+                        stuff->height);
     }
 
     #else
