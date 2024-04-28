@@ -1251,7 +1251,7 @@ static Bool nxagentCompareRegions(RegionPtr r1, RegionPtr r2)
 }
 
 /*
- * This function have to be called in the place of GetScratchGC if the
+ * This function has to be called in place of GetScratchGC if the
  * GC will be used to perform operations also on the remote X Server.
  * This is why we call the XChangeGC at the end of the function.
  */
