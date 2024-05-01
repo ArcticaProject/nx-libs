@@ -29,7 +29,7 @@
  * opcode to the name of the X request.
  */
 
-static char *nxagentRequestLiteral[] =
+_X_UNUSED static char *nxagentRequestLiteral[] =
 {
   "None",
   "CreateWindow",
@@ -161,7 +161,7 @@ static char *nxagentRequestLiteral[] =
   "NoOperation"
 };
 
-static char *nxagentRenderRequestLiteral[] =
+_X_UNUSED static char *nxagentRenderRequestLiteral[] =
 {
   "RenderQueryVersion",
   "RenderQueryPictFormats",
@@ -202,7 +202,7 @@ static char *nxagentRenderRequestLiteral[] =
   "RenderCreateConicalGradient"
 };
 
-static char *nxagentShmRequestLiteral[] =
+_X_UNUSED static char *nxagentShmRequestLiteral[] =
 {
   "ShmQueryVersion",
   "ShmAttach",
