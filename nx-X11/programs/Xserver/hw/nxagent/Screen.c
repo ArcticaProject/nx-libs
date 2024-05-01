@@ -1816,13 +1816,6 @@ N/A
         #endif
       }
 
-#ifdef X2GO
-      /*
-       * Setting WM_CLASS to "X2GoAgent" when running in X2Go Agent mode
-       * we need it to properly display all window parameters by some WMs
-       * (for example on Maemo)
-       */
-#endif
       {
         #ifdef TEST
         fprintf(stderr, "%s: Setting WM_CLASS and WM_NAME for window with id [%ld].\n", __func__,
@@ -1834,6 +1827,11 @@ N/A
 #ifdef X2GO
         if (nxagentX2go)
         {
+          /*
+           * Setting WM_CLASS to "X2GoAgent" when running in X2Go Agent mode
+           * we need it to properly display all window parameters by some WMs
+           * (for example on Maemo)
+           */
           hint.res_name = strdup("X2GoAgent");
           hint.res_class = strdup("X2GoAgent");
         }
