@@ -1534,8 +1534,8 @@ N/A
     pScreen->SaveScreen = nxagentSaveScreen;
     pScreen->GetImage = nxagentGetImage;
     pScreen->GetSpans = nxagentGetSpans;
-    pScreen->PointerNonInterestBox = (void (*)()) 0;
-    pScreen->SourceValidate = (void (*)()) 0;
+    pScreen->PointerNonInterestBox = NULL;
+    pScreen->SourceValidate = NULL;
 
     pScreen->CreateScreenResources = nxagentCreateScreenResources;
 
@@ -1611,12 +1611,12 @@ N/A
      * Backing store procedures.
      */
 
-    pScreen->SaveDoomedAreas = (void (*)()) 0;
-    pScreen->RestoreAreas = (RegionPtr (*)()) 0;
-    pScreen->ExposeCopy = (void (*)()) 0;
-    pScreen->TranslateBackingStore = (RegionPtr (*)()) 0;
-    pScreen->ClearBackingStore = (RegionPtr (*)()) 0;
-    pScreen->DrawGuarantee = (void (*)()) 0;
+    pScreen->SaveDoomedAreas = NULL;
+    pScreen->RestoreAreas = NULL;
+    pScreen->ExposeCopy = NULL;
+    pScreen->TranslateBackingStore = NULL;
+    pScreen->ClearBackingStore = NULL;
+    pScreen->DrawGuarantee = NULL;
 
     if (enableBackingStore)
     {
