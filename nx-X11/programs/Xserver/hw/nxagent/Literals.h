@@ -211,4 +211,13 @@ _X_UNUSED static char *nxagentShmRequestLiteral[] =
   "ShmGetImage",
   "ShmCreatePixmap"
 };
+
+/* see include/pixmap.h */
+_X_UNUSED static char *nxagentDrawableTypeLiteral[] =
+{
+  "DRAWABLE_WINDOW",
+  "DRAWABLE_PIXMAP",
+  "UNDRAWABLE_WINDOW",
+  "DRAWABLE_BUFFER"
+};
 #endif /* TEST || DEBUG */
