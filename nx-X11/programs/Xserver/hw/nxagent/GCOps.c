@@ -70,6 +70,9 @@ is" without express or implied warranty.
 #undef  DEBUG
 #undef  DUMP
 
+/* must come after TEST/DEBUG defines */
+#include "Literals.h"
+
 /*
  * Temporarily set/reset the trap.
  */
@@ -576,9 +579,9 @@ RegionPtr nxagentCopyArea(DrawablePtr pSrcDrawable, DrawablePtr pDstDrawable,
 
   #ifdef TEST
   fprintf(stderr, "nxagentCopyArea: Image src [%s:%p], dst [%s:%p] (%d,%d) -> (%d,%d) size (%d,%d)\n",
-              (pSrcDrawable -> type == DRAWABLE_PIXMAP) ? "PIXMAP" : "WINDOW", (void *) pSrcDrawable,
-                      (pDstDrawable -> type == DRAWABLE_PIXMAP) ? "PIXMAP" : "WINDOW",
-                          (void *) pDstDrawable, srcx, srcy, dstx, dsty, width, height);
+              nxagentDrawableTypeLiteral[pSrcDrawable -> type], (void *) pSrcDrawable,
+                  nxagentDrawableTypeLiteral[pDstDrawable -> type],
+                      (void *) pDstDrawable, srcx, srcy, dstx, dsty, width, height);
   #endif
 
  /*
@@ -766,8 +769,8 @@ RegionPtr nxagentCopyArea(DrawablePtr pSrcDrawable, DrawablePtr pDstDrawable,
 
   #ifdef TEST
   fprintf(stderr, "nxagentCopyArea: Image src [%s:%p], dst [%s:%p] sx %d sy %d dx %d dy %d size w %d h %d\n",
-              ((pSrcDrawable)->type == DRAWABLE_PIXMAP) ? "PIXMAP" : "WINDOW", (void *) pSrcDrawable,
-                   ((pDstDrawable)->type == DRAWABLE_PIXMAP) ? "PIXMAP" : "WINDOW",
+              nxagentDrawableTypeLiteral[pSrcDrawable->type], (void *) pSrcDrawable,
+                   nxagentDrawableTypeLiteral[pDstDrawable->type],
                        (void *) pDstDrawable, srcx, srcy, dstx, dsty, width, height);
   #endif
 
@@ -885,9 +888,9 @@ RegionPtr nxagentCopyPlane(DrawablePtr pSrcDrawable, DrawablePtr pDstDrawable,
 
   #ifdef TEST
   fprintf(stderr, "nxagentCopyPlane: Image src [%s:%p], dst [%s:%p] (%d,%d) -> (%d,%d) size (%d,%d)\n",
-              ((pSrcDrawable)->type == DRAWABLE_PIXMAP) ? "PIXMAP" : "WINDOW", (void *) pSrcDrawable,
-                      ((pDstDrawable)->type == DRAWABLE_PIXMAP) ? "PIXMAP" : "WINDOW",
-                          (void *) pDstDrawable, srcx, srcy, dstx, dsty, width, height);
+              nxagentDrawableTypeLiteral[(pSrcDrawable)->type], (void *) pSrcDrawable,
+                  nxagentDrawableTypeLiteral[(pDstDrawable)->type],
+                      (void *) pDstDrawable, srcx, srcy, dstx, dsty, width, height);
   #endif
 
   if (nxagentGCTrap || nxagentShmTrap)
@@ -1069,8 +1072,8 @@ void nxagentPolyPoint(DrawablePtr pDrawable, GCPtr pGC, int mode,
                           int nPoints, xPoint *pPoints)
 {
   #ifdef TEST
-  fprintf(stderr, "nxagentPolyPoint: Drawable at [%p] GC at [%p] Points [%d].\n",
-              (void *) pDrawable, (void *) pGC, nPoints);
+  fprintf(stderr, "nxagentPolyPoint: Drawable [%s:%p] GC [%p] Points [%d].\n",
+              nxagentDrawableTypeLiteral[pDrawable->type], (void *) pDrawable, (void *) pGC, nPoints);
   #endif
 
   if (nxagentGCTrap)
@@ -1130,6 +1133,10 @@ void nxagentPolyPoint(DrawablePtr pDrawable, GCPtr pGC, int mode,
 void nxagentPolyLines(DrawablePtr pDrawable, GCPtr pGC, int mode,
                           int nPoints, xPoint *pPoints)
 {
+  #ifdef DEBUG
+  fprintf(stderr, "%s: drawable: [%s:%p]\n", __func__, nxagentDrawableTypeLiteral[pDrawable->type], (void *)pDrawable);
+  #endif
+
   if (nxagentGCTrap)
   {
     if ((pDrawable)->type == DRAWABLE_PIXMAP)
@@ -1188,19 +1195,17 @@ void nxagentPolySegment(DrawablePtr pDrawable, GCPtr pGC,
                             int nSegments, xSegment *pSegments)
 {
   #ifdef TEST
-
   if (nSegments == 1)
   {
-    fprintf(stderr, "nxagentPolySegment: Drawable at [%p] GC at [%p] Segment [%d,%d,%d,%d].\n",
-                (void *) pDrawable, (void *) pGC,
+    fprintf(stderr, "nxagentPolySegment: Drawable at [%s:%p] GC at [%p] Segment [%d,%d,%d,%d].\n",
+                nxagentDrawableTypeLiteral[pDrawable->type], (void *) pDrawable, (void *) pGC,
                     pSegments -> x1, pSegments -> y1, pSegments -> x2, pSegments -> y2);
   }
   else
   {
-    fprintf(stderr, "nxagentPolySegment: Drawable at [%p] GC at [%p] Segments [%d].\n",
-                (void *) pDrawable, (void *) pGC, nSegments);
+    fprintf(stderr, "nxagentPolySegment: Drawable at [%s:%p] GC at [%p] Segments [%d].\n",
+                nxagentDrawableTypeLiteral[pDrawable->type], (void *) pDrawable, (void *) pGC, nSegments);
   }
-
   #endif
 
   if (nxagentGCTrap)
@@ -1265,7 +1270,6 @@ void nxagentPolyRectangle(DrawablePtr pDrawable, GCPtr pGC,
                               int nRectangles, xRectangle *pRectangles)
 {
   #ifdef TEST
-
   if (nRectangles == 1)
   {
     fprintf(stderr, "nxagentPolyRectangle: Drawable at [%p] GC at [%p] Rectangle [%d,%d][%d,%d].\n",
@@ -1277,7 +1281,6 @@ void nxagentPolyRectangle(DrawablePtr pDrawable, GCPtr pGC,
     fprintf(stderr, "nxagentPolyRectangle: Drawable at [%p] GC at [%p] Rectangles [%d].\n",
                 (void *) pDrawable, (void *) pGC, nRectangles);
   }
-
   #endif
 
   if (nxagentGCTrap)
@@ -1345,6 +1348,10 @@ void nxagentPolyRectangle(DrawablePtr pDrawable, GCPtr pGC,
 void nxagentPolyArc(DrawablePtr pDrawable, GCPtr pGC,
                         int nArcs, xArc *pArcs)
 {
+  #ifdef DEBUG
+  fprintf(stderr, "%s: drawable: [%s:%p]\n", __func__, nxagentDrawableTypeLiteral[pDrawable->type], (void *)pDrawable);
+  #endif
+
   if (nxagentGCTrap)
   {
     if ((pDrawable)->type == DRAWABLE_PIXMAP)
@@ -1402,6 +1409,10 @@ void nxagentPolyArc(DrawablePtr pDrawable, GCPtr pGC,
 void nxagentFillPolygon(DrawablePtr pDrawable, GCPtr pGC, int shape,
                             int mode, int nPoints, xPoint *pPoints)
 {
+  #ifdef DEBUG
+  fprintf(stderr, "%s: drawable: [%s:%p]\n", __func__, nxagentDrawableTypeLiteral[pDrawable->type], (void *)pDrawable);
+  #endif
+
   xPoint *newPoints = NULL;
 
   if (nxagentGCTrap)
@@ -1503,19 +1514,17 @@ void nxagentPolyFillRect(DrawablePtr pDrawable, GCPtr pGC,
                              int nRectangles, xRectangle *pRectangles)
 {
   #ifdef TEST
-
   if (nRectangles == 1)
   {
-    fprintf(stderr, "nxagentPolyFillRect: Drawable at [%p] GC at [%p] FillStyle [%d] Rectangle [%d,%d][%d,%d].\n",
-                (void *) pDrawable, (void *) pGC, pGC -> fillStyle,
+    fprintf(stderr, "nxagentPolyFillRect: Drawable at [%s:%p] GC at [%p] FillStyle [%d] Rectangle [%d,%d][%d,%d].\n",
+                nxagentDrawableTypeLiteral[pDrawable->type], (void *) pDrawable, (void *) pGC, pGC -> fillStyle,
                     pRectangles -> x, pRectangles -> y, pRectangles -> width, pRectangles -> height);
   }
   else
   {
-    fprintf(stderr, "nxagentPolyFillRect: Drawable at [%p] GC at [%p] FillStyle [%d] Rectangles [%d].\n",
-                (void *) pDrawable, (void *) pGC, pGC -> fillStyle, nRectangles);
+    fprintf(stderr, "nxagentPolyFillRect: Drawable at [%s:%p] GC at [%p] FillStyle [%d] Rectangles [%d].\n",
+                nxagentDrawableTypeLiteral[pDrawable->type], (void *) pDrawable, (void *) pGC, pGC -> fillStyle, nRectangles);
   }
-
   #endif
 
   if (nxagentGCTrap)
@@ -1551,14 +1560,44 @@ void nxagentPolyFillRect(DrawablePtr pDrawable, GCPtr pGC,
     {
       #ifdef TEST
       fprintf(stderr, "nxagentPolyFillRect: GC at [%p] uses corrupted tile pixmap at [%p]. Going to "
-                  "corrupt the destination [%s][%p].\n", (void *) pGC, (void *) pGC -> tile.pixmap,
-                      (pDrawable -> type == DRAWABLE_PIXMAP ? "pixmap" : "window"), (void *) pDrawable);
-
+                  "corrupt the destination [%s:%p].\n", (void *) pGC, (void *) pGC -> tile.pixmap,
+                      nxagentDrawableTypeLiteral[pDrawable -> type], (void *) pDrawable);
       #endif
 
       inheritCorruptedRegion = True;
     }
   }
+
+  #ifdef DEBUG
+  if ((pDrawable)->type == DRAWABLE_PIXMAP)
+  {
+    fprintf(stderr, "%s:   nxagentPixmapPriv(%p): [%p]\n", __func__, (void *)pDrawable,
+            (void *)(nxagentPixmapPriv((PixmapPtr)pDrawable)));
+    if (nxagentRealPixmap((PixmapPtr)pDrawable))
+    {
+      fprintf(stderr, "%s:   nxagentRealPixmap(%p): [%p]\n", __func__, (void *)pDrawable,
+              (void *)(nxagentRealPixmap((PixmapPtr)pDrawable)));
+      fprintf(stderr, "%s:   nxagentCorruptedRegion(%p): [%p]\n", __func__, (void *)pDrawable,
+              (void *)(nxagentCorruptedRegion(pDrawable)));
+      fprintf(stderr, "%s:   nxagentPixmapCorruptedRegion(%p): [%p]\n", __func__, (void *)pDrawable,
+              (void *)(nxagentPixmapCorruptedRegion((PixmapPtr)pDrawable)));
+    }
+    else
+    {
+      fprintf(stderr, "%s:   nxagentRealPixmap(%p): is unset!!!\n", __func__, (void *)pDrawable);
+    }
+
+    if (nxagentVirtualPixmap((PixmapPtr)pDrawable))
+    {
+      fprintf(stderr, "%s:   nxagentVirtualPixmap(%p): [%p]\n", __func__, (void *)pDrawable,
+              (void *)(nxagentVirtualPixmap((PixmapPtr)pDrawable)));
+    }
+    else
+    {
+      fprintf(stderr, "%s:   nxagentVirtualPixmap(%p): is unset!!!\n", __func__, (void *)pDrawable);
+    }
+  }
+  #endif
 
   if (inheritCorruptedRegion || nxagentDrawableStatus(pDrawable) == NotSynchronized)
   {
@@ -1663,6 +1702,10 @@ void nxagentPolyFillRect(DrawablePtr pDrawable, GCPtr pGC,
 void nxagentPolyFillArc(DrawablePtr pDrawable, GCPtr pGC,
                             int nArcs, xArc *pArcs)
 {
+  #ifdef DEBUG
+  fprintf(stderr, "%s: drawable: [%s:%p]\n", __func__, nxagentDrawableTypeLiteral[pDrawable->type], (void *)pDrawable);
+  #endif
+
   if (nxagentGCTrap)
   {
     if ((pDrawable)->type == DRAWABLE_PIXMAP)
@@ -1728,6 +1771,10 @@ void nxagentPolyFillArc(DrawablePtr pDrawable, GCPtr pGC,
 int nxagentPolyText8(DrawablePtr pDrawable, GCPtr pGC, int x,
                          int y, int count, char *string)
 {
+  #ifdef DEBUG
+  fprintf(stderr, "%s: drawable: [%s:%p]\n", __func__, nxagentDrawableTypeLiteral[pDrawable->type], (void *)pDrawable);
+  #endif
+
   /*
    * While the session is suspended the font structure is NULL.
    */
@@ -1798,6 +1845,10 @@ int nxagentPolyText8(DrawablePtr pDrawable, GCPtr pGC, int x,
 int nxagentPolyText16(DrawablePtr pDrawable, GCPtr pGC, int x,
                           int y, int count, unsigned short *string)
 {
+  #ifdef DEBUG
+  fprintf(stderr, "%s: drawable: [%s:%p]\n", __func__, nxagentDrawableTypeLiteral[pDrawable->type], (void *)pDrawable);
+  #endif
+
   /*
    * While the session is suspended the font structure is NULL.
    */
@@ -1868,6 +1919,10 @@ int nxagentPolyText16(DrawablePtr pDrawable, GCPtr pGC, int x,
 void nxagentImageText8(DrawablePtr pDrawable, GCPtr pGC, int x,
                            int y, int count, char *string)
 {
+  #ifdef DEBUG
+  fprintf(stderr, "%s: drawable: [%s:%p]\n", __func__, nxagentDrawableTypeLiteral[pDrawable->type], (void *)pDrawable);
+  #endif
+
   if (nxagentGCTrap)
   {
     if ((pDrawable)->type == DRAWABLE_PIXMAP)
@@ -1925,6 +1980,10 @@ void nxagentImageText8(DrawablePtr pDrawable, GCPtr pGC, int x,
 void nxagentImageText16(DrawablePtr pDrawable, GCPtr pGC, int x,
                             int y, int count, unsigned short *string)
 {
+  #ifdef DEBUG
+  fprintf(stderr, "%s: drawable: [%s:%p]\n", __func__, nxagentDrawableTypeLiteral[pDrawable->type], (void *)pDrawable);
+  #endif
+
   if (nxagentGCTrap)
   {
     if ((pDrawable)->type == DRAWABLE_PIXMAP)
@@ -1983,12 +2042,16 @@ void nxagentImageGlyphBlt(DrawablePtr pDrawable, GCPtr pGC, int x, int y,
                               unsigned int nGlyphs, CharInfoPtr *pCharInfo,
                                   void * pGlyphBase)
 {
+  #ifdef DEBUG
+  fprintf(stderr, "%s: drawable: [%s:%p]\n", __func__, nxagentDrawableTypeLiteral[pDrawable->type], (void *)pDrawable);
+  #endif
+
   if ((pDrawable)->type == DRAWABLE_PIXMAP)
   {
     #ifdef TEST
     fprintf(stderr, "GCOps: GC [%p] going to imageGlyphBlt on FB pixmap [%p].\n",
                 (void *) pGC, (void *) nxagentVirtualDrawable(pDrawable));
-     #endif
+    #endif
 
     fbImageGlyphBlt(nxagentVirtualDrawable(pDrawable), pGC, x, y, nGlyphs, pCharInfo, pGlyphBase);
   }
@@ -2002,6 +2065,10 @@ void nxagentPolyGlyphBlt(DrawablePtr pDrawable, GCPtr pGC, int x, int y,
                              unsigned int nGlyphs, CharInfoPtr *pCharInfo,
                                  void * pGlyphBase)
 {
+  #ifdef DEBUG
+  fprintf(stderr, "%s: drawable: [%s:%p]\n", __func__, nxagentDrawableTypeLiteral[pDrawable->type], (void *)pDrawable);
+  #endif
+
   if ((pDrawable)->type == DRAWABLE_PIXMAP)
   {
     #ifdef TEST
@@ -2020,6 +2087,10 @@ void nxagentPolyGlyphBlt(DrawablePtr pDrawable, GCPtr pGC, int x, int y,
 void nxagentPushPixels(GCPtr pGC, PixmapPtr pBitmap, DrawablePtr pDrawable,
                            int width, int height, int x, int y)
 {
+  #ifdef DEBUG
+  fprintf(stderr, "%s: drawable: [%s:%p]\n", __func__, nxagentDrawableTypeLiteral[pDrawable->type], (void *)pDrawable);
+  #endif
+
   if ((pDrawable)->type == DRAWABLE_PIXMAP)
   {
     #ifdef TEST
