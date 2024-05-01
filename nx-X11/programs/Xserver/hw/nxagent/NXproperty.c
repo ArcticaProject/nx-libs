@@ -270,7 +270,7 @@ ProcGetProperty(ClientPtr client)
     reply.type = X_Reply;
     reply.sequenceNumber = client->sequence;
 
-    #ifdef NXAGENT_SERVER
+#ifdef NXAGENT_SERVER
 
     /*
      * Creating a reply for WM_STATE property if it doesn't exist.
@@ -324,7 +324,7 @@ ProcGetProperty(ClientPtr client)
 
       return(client->noClientException);
     }
-    #endif
+#endif /* NXAGENT_SERVER */
 
     if (!pProp) 
 	return NullPropertyReply(client, None, 0, &reply);
