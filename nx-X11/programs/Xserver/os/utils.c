@@ -276,9 +276,6 @@ OsSignal(sig, handler)
     int sig;
     OsSigHandlerPtr handler;
 {
-#ifdef X_NOT_POSIX
-    return signal(sig, handler);
-#else
     struct sigaction act, oact;
 
     sigemptyset(&act.sa_mask);
@@ -289,7 +286,6 @@ OsSignal(sig, handler)
     if (sigaction(sig, &act, &oact))
 	perror("sigaction");
     return oact.sa_handler;
-#endif
 }
 	
 #ifdef SERVER_LOCK
@@ -474,13 +470,6 @@ AutoResetServer (int sig)
 
     dispatchException |= DE_RESET;
     isItTimeToYield = TRUE;
-#ifdef GPROF
-    chdir ("/tmp");
-    exit (0);
-#endif
-#if defined(SYSV) && defined(X_NOT_POSIX)
-    OsSignal (SIGHUP, AutoResetServer);
-#endif
     errno = olderrno;
 }
 
@@ -497,10 +486,6 @@ GiveUp(int sig)
 
     dispatchException |= DE_TERMINATE;
     isItTimeToYield = TRUE;
-#if defined(SYSV) && defined(X_NOT_POSIX)
-    if (sig)
-	OsSignal(sig, SIG_IGN);
-#endif
     errno = olderrno;
 }
 

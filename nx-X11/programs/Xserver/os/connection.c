@@ -111,11 +111,7 @@ SOFTWARE.
 #include <nx-X11/extensions/security.h>
 #endif
 
-#ifdef X_NOT_POSIX
-#define Pid_t int
-#else
 #define Pid_t pid_t
-#endif
 
 int lastfdesc;			/* maximum file descriptor */
 
