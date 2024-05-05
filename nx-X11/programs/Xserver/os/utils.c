@@ -1214,10 +1214,8 @@ ExpandCommandLine(int *pargc, char ***pargv)
 {
     int i;
 
-#if  !defined(__CYGWIN__)
     if (getuid() != geteuid())
 	return;
-#endif
 
     for (i = 1; i < *pargc; i++)
     {

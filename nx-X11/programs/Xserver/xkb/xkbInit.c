@@ -834,12 +834,10 @@ XkbProcessArguments(int argc,char *argv[],int i)
     }
     else if (strncmp(argv[i], "-xkbdir", 7) == 0) {
 	if(++i < argc) {
-#if !defined(WIN32) && !defined(__CYGWIN__)
 	    if (getuid() != geteuid()) {
 		LogMessage(X_WARNING, "-xkbdir is not available for setuid X servers\n");
 		return -1;
 	    } else
-#endif
 	    {
 		if (strlen(argv[i]) < PATH_MAX) {
 		    XkbBaseDirectory= argv[i];
