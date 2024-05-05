@@ -405,8 +405,7 @@ DefineSelf (int fd)
 	     * on the other end of the wire.
 	     */
 	    if (len == 4 &&
-		addr[0] == 127 && addr[1] == 0 &&
-		addr[2] == 0 && addr[3] == 1)
+		addr[0] == 127)
 		continue;
 
 	    /*
@@ -541,8 +540,8 @@ DefineSelf (int fd)
 		 */
 		if (family == FamilyInternet &&
 		    !(len == 4 &&
-		      ((addr[0] == 127 && addr[1] == 0 &&
-			addr[2] == 0 && addr[3] == 1) ||
+		      /* backport 75b9383d8a4c113ab3c6cfc1d5efcb5d9982a1bf */
+		      ((addr[0] == 127 ||
 		       (addr[0] == 0 && addr[1] == 0 &&
 			addr[2] == 0 && addr[3] == 0)))
 		      )
@@ -755,8 +754,7 @@ DefineSelf (int fd)
 	     * on the other end of the wire
 	     */
 	    if (family == FamilyInternet &&
-		addr[0] == 127 && addr[1] == 0 &&
-		addr[2] == 0 && addr[3] == 1)
+		addr[0] == 127)
 		continue;
 #if defined(IPv6) && defined(AF_INET6)
 	    else if (family == FamilyInternet6 && 
@@ -903,8 +901,7 @@ DefineSelf (int fd)
 		    continue;
 
 	    if (family == FamilyInternet && 
-		addr[0] == 127 && addr[1] == 0 &&
-		addr[2] == 0 && addr[3] == 1) 
+		addr[0] == 127)
 		continue;
 
 	    /*
