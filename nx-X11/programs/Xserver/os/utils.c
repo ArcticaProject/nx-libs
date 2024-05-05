@@ -381,11 +381,7 @@ LockServer(void)
   if (write(lfd, pid_str, 11) != 11)
     FatalError("Could not write pid to lock file in %s\n", tmp);
 
-#ifndef USE_CHMOD
-  (void) fchmod(lfd, 0444);
-#else
   (void) chmod(tmp, 0444);
-#endif
   (void) close(lfd);
 
   /*
