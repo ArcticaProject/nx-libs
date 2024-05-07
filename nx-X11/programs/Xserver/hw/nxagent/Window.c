@@ -167,7 +167,7 @@ nxagentWMStateRec;
  */
 
 #ifdef TEST
-static Bool nxagentCheckWindowIntegrity(WindowPtr pWin);
+static _X_UNUSED Bool nxagentCheckWindowIntegrity(WindowPtr pWin);
 #endif
 
 WindowPtr nxagentGetWindowFromID(Window id)
@@ -3317,7 +3317,7 @@ Bool nxagentCheckIllegalRootMonitoring(WindowPtr pWin, Mask mask)
 }
 
 #ifdef TEST
-Bool nxagentCheckWindowIntegrity(WindowPtr pWin)
+static _X_UNUSED Bool nxagentCheckWindowIntegrity(WindowPtr pWin)
 {
   Bool integrity = True;
 
