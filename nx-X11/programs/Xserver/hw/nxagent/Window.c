@@ -1401,9 +1401,9 @@ void nxagentConfigureWindow(WindowPtr pWin, unsigned int mask)
 
     #ifdef TEST
     {
-      Window root_return;
-      Window parent_return;
-      Window *children_return = NULL;
+      XlibWindow root_return;
+      XlibWindow parent_return;
+      XlibWindow *children_return = NULL;
       unsigned int nchildren_return;
 
       Status result = XQueryTree(nxagentDisplay, DefaultRootWindow(nxagentDisplay),
