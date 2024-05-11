@@ -1107,7 +1107,7 @@ CplusplusProgramTargetHelper(program,SRCS10,OBJS10,DEPLIBS10,locallib,syslib)
 
 #ifndef RMoveToBakFile
 #define RMoveToBakFile(file) -@if [ -f file ]; then test -n "${VERBOSE}" && set -x; \		@@\
-	RemoveFile(file.bak); @$(MV) file file.bak; \			@@\
+	RemoveFile(file.bak); $(MV) file file.bak; \			@@\
 	else exit 0; fi
 #endif /* RMoveToBakFile */
 
