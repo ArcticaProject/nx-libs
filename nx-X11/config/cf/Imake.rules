@@ -1976,7 +1976,7 @@ DependDependencyStatement()						@@\
 NoCmpScript(ProgramTargetName($(DEPEND)))				@@\
 									@@\
 ProgramTargetName($(DEPEND)):						@@\
-	echo "using system-wide depend, continuing in $(CURRENT_DIR)"
+	@echo "using system-wide depend, continuing in $(CURRENT_DIR)"
 
 #endif /* UseInstalled */
 #endif /* DependDependency */
@@ -2069,7 +2069,7 @@ target:: ProgramTargetName($(IMAKE))					@@\
 NoCmpScript(ProgramTargetName($(IMAKE)) $(IMAKE).Osuf)			@@\
 									@@\
 ProgramTargetName($(IMAKE)) $(IMAKE).Osuf:				@@\
-	echo "using system-wide imake, continuing in $(CURRENT_DIR)"
+	@echo "using system-wide imake, continuing in $(CURRENT_DIR)"
 #endif /* UseInstalled */
 #endif /* ImakeDependency */
 
