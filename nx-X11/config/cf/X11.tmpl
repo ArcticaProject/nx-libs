@@ -1500,7 +1500,7 @@ install:: deps								@@\
 	  $(INSTALL) $(INSTALLFLAGS) $(INSTDATFLAGS) name.html \	@@\
 		$(DESTDIR)$(DOCHTMLDIR)); \				@@\
 	  for i in name*.png; do \					@@\
-	    if [ -f $$i ]; then (test -n "${VERBOSE}" && test -n "${VERBOSE}" && set -x; \				@@\
+	    if [ -f $$i ]; then (test -n "${VERBOSE}" && set -x; \	@@\
 	      $(INSTALL) $(INSTALLFLAGS) $(INSTDATFLAGS) $$i \		@@\
 		$(DESTDIR)$(DOCHTMLDIR)); \				@@\
 	    fi; \							@@\
