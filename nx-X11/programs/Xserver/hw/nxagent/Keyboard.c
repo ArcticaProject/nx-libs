@@ -757,7 +757,7 @@ XkbError:
           {
             nxagentNumLockKeycode = 0;
             #ifdef TEST
-            fprintf(stderr, "%s: Numock key is mapped to some other modifier - disabling special treatment\n", __func__);
+            fprintf(stderr, "%s: NumLock key is mapped to some other modifier - disabling special treatment\n", __func__);
             #endif
           }
         }
