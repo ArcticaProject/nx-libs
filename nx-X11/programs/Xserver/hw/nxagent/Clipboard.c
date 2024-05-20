@@ -329,9 +329,11 @@ static void resetSelectionOwnerOnXServer(void);
 #endif
 static void initSelectionOwnerData(int index);
 static void clearSelectionOwnerData(int index);
-static void storeSelectionOwnerData(int index, Selection *sel);
 static Bool matchSelectionOwner(int index, ClientPtr pClient, WindowPtr pWindow);
+#ifdef NXAGENT_CLIPBOARD
 static void setSelectionOwnerOnXServer(Selection *pSelection);
+static void storeSelectionOwnerData(int index, Selection *sel);
+#endif
 static int sendEventToClient(ClientPtr client, xEvent *pEvents);
 static void sendSelectionNotifyEventToClient(ClientPtr client,
                                              Time time,
@@ -709,6 +711,7 @@ static void clearSelectionOwnerData(int index)
   lastSelectionOwner[index].lastTimeChanged = ClientTimeToServerTime(CurrentTime);
 }
 
+#ifdef NXAGENT_CLIPBOARD
 static void storeSelectionOwnerData(int index, Selection *sel)
 {
   lastSelectionOwner[index].client = sel->client;
@@ -716,6 +719,7 @@ static void storeSelectionOwnerData(int index, Selection *sel)
   lastSelectionOwner[index].windowPtr = sel->pWin;
   lastSelectionOwner[index].lastTimeChanged = ClientTimeToServerTime(CurrentTime);
 }
+#endif
 
 static Bool matchSelectionOwner(int index, ClientPtr pClient, WindowPtr pWindow)
 {
@@ -2369,7 +2373,6 @@ void nxagentSetSelectionCallback(CallbackListPtr *callbacks, void *data,
     }
   }
 }
-#endif
 
 /*
  * This is called from the nxagentSetSelectionCallback, so it is using
@@ -2468,6 +2471,7 @@ FIXME2: instead of XGetSelectionOwner we could check if the Xfixes
   }
 */
 }
+#endif
 
 /*
  * This is called from dix (ProcConvertSelection) if an nxagent client
