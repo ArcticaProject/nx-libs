@@ -581,12 +581,13 @@ XkbError:
             The original nxagent only supports model/layout values
             here. It uses these values together with the default rules
             and empty variant and options. We use a more or less
-            compatible hack here: The special keyword rlmvo for model
+            compatible hack here: The special keyword rmlvo for model
             means that the layout part of the string will contain a
             full RMLVO config, separated by #, e.g.
-            rlmvo/base#pc105#de,us#nodeadkeys#lv3:rwin_switch
+            rmlvo/base#pc105#de,us#nodeadkeys#lv3:rwin_switch
           */
-          if (strncmp(nxagentKeyboard, "rlmvo/", 6) == 0)
+          /* support "rlmvo" (spelled wrong) which was being used for some time */
+          if ((strncmp(nxagentKeyboard, "rmlvo/", 6) == 0) || (strncmp(nxagentKeyboard, "rlmvo/", 6) == 0))
           {
             const char * sep = "#";
             char * rmlvo = strdup(&nxagentKeyboard[i+1]);
