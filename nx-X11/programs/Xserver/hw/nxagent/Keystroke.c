@@ -544,7 +544,7 @@ char *nxagentFindMatchingKeystrokes(char *name)
 void nxagentDumpKeystrokes(void)
 {
   char *s = nxagentFindMatchingKeystrokes("");
-  fprintf(stderr, "Currently known keystrokes:\n%s", s);
+  fprintf(stderr, "Currently known keystrokes:%s\n", s);
   SAFE_free(s);
 }
 
