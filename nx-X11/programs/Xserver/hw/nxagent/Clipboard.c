@@ -1973,14 +1973,14 @@ void nxagentHandleSelectionNotifyFromXServer(XEvent *X)
         #endif
 
         /*
-         * The state machine is able to work in two phases. In the first
-         * phase we get the size of property data, in the second we get
-         * the actual data. We save a round-trip by requesting a prede-
-         * termined amount of data in a single GetProperty and by discar-
-         * ding the remaining part. This is not the optimal solution (we
-         * could get the remaining part if it doesn't fit in a single
-         * reply) but, at least with text, it should work in most situa-
-         * tions.
+         * The state machine is able to work in two phases. In the
+         * first phase we get the size of property data, in the second
+         * we get the actual data. We save a round-trip by requesting
+         * a predetermined amount of data in a single GetProperty and
+         * by discar- ding the remaining part. This is not the optimal
+         * solution (we could get the remaining part if it doesn't fit
+         * in a single reply) but, at least with text, it should work
+         * in most situations.
          */
 
         setClientSelectionStage(index, SelectionStageQueryData);

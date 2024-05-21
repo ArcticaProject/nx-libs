@@ -335,7 +335,7 @@ Bool nxagentDestroyPixmap(PixmapPtr pPixmap)
   {
     /*
      * For some pixmaps we receive the destroy only for the
-     * virtual. Infact to draw in the framebuffer we can use the
+     * virtual. In fact to draw in the framebuffer we can use the
      * virtual pixmap instead of the pointer to the real one. As the
      * virtual pixmap can collect references, we must transfer those
      * references to the real pixmap so we can continue as the destroy

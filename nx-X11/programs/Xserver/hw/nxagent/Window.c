@@ -2121,7 +2121,7 @@ void nxagentWindowExposures(WindowPtr pWin, RegionPtr pRgn, RegionPtr other_expo
   #endif
 
   /*
-   * The problem: we want to synthetize the expose events internally, so
+   * The problem: we want to synthesize the expose events internally, so
    * that we reduce the time between a window operation and the corresp-
    * onding graphical output, but at the same time we need to take care
    * of the remote exposures, as we need to handle those cases where our

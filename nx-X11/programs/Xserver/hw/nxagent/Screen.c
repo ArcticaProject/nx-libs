@@ -558,7 +558,7 @@ void nxagentSetScreenSaverTime(void)
  * Returning False the SaveScreens() function (which calls this one)
  * tries to build a screen-saver creating a new window. In some cases
  * we do not want this so we return True. If we want the dix to take
- * care fo blanking we return False.
+ * care of blanking we return False.
  */
 static Bool nxagentSaveScreen(ScreenPtr pScreen, int what)
 {

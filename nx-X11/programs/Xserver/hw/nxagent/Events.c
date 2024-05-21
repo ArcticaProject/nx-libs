@@ -117,7 +117,7 @@
 /* debug individual subsystems */
 #undef DEBUG_AUTOGRAB
 
-/* aktivate subsystems if generic DEBUG is activated */
+/* activate subsystems if generic DEBUG is activated */
 #ifdef DEBUG
 #ifndef DEBUG_AUTOGRAB
 #define DEBUG_AUTOGRAB

@@ -2259,7 +2259,7 @@ NXPackedImage *NXPackImage(Display *dpy, XImage *src_image, unsigned int method)
    * Note that we save a new memory allocation
    * by using the same image as source and des-
    * tination. This means that PackImage() must
-   * be able to handle ovelapping areas.
+   * be able to handle overlapping areas.
    */
 
   #ifdef TEST_IMAGE
@@ -2428,7 +2428,7 @@ XImage *NXInPlacePackImage(Display *dpy, XImage *src_image, unsigned int method)
    * Note that we save a new memory allocation
    * by using the same image as source and des-
    * tination. This means that PackImage() must
-   * be able to handle ovelapping areas.
+   * be able to handle overlapping areas.
    */
 
   #ifdef TEST_IMAGE
