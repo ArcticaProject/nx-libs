@@ -589,9 +589,24 @@ for all keystrokes \fBnxagent\fR knows. At startup the active keystrokes are pri
 show version information and exit
 .TP 8
 .B \-options \fIfilepath|string\fP
-path to an options file containing nx/nx options (see below). Instead of a path the options can be specified diretly on the commandline by prefixing the options strings with
+path to an options file containing nx/nx options (see below). Instead of a path the options can be specified directly on the commandline by prefixing the options strings with one of
 .IR nx/nx,
-which is mostly useful for testing/debugging.
+.IR nx/nx:
+.IR nx,
+or
+.IR nx:
+(that's
+.IR nx/nx
+or
+.IR nx
+followed by comma or colon). Example:
+.PPP
+
+.nf
+    $ nxagent -options nx/nx,keyboard=pc105/de :55
+.fi
+
+This is mostly useful for testing/debugging.
 .PP
 In addition to the command line options, \fBnxagent\fR can be configured at
 session startup and at runtime (i.e. when resuming a suspended session)
