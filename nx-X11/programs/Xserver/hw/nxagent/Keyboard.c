@@ -708,7 +708,7 @@ XkbError:
         /* we don't need the remote keyboard information anymore */
         nxagentXkbClearRemoteNames();
 
-        xkb = XkbGetKeyboard(nxagentDisplay, XkbGBN_AllComponentsMask, XkbUseCoreKbd);
+        xkb = XkbGetKeyboard(nxagentDisplay, XkbAllComponentsMask, XkbUseCoreKbd);
 
         if (xkb && xkb->geom)
         {
