@@ -763,14 +763,29 @@ XkbError:
           }
         }
 
+        /* FIXME: we should use the defaults here for any string that's empty. Unfortunately they are only set
+           in the Makefile in xkb directory, so we cannot simply refer to them here. Let's hardcode them for now. */
+        #define XKB_DFLT_RULES_FILE "base"
+        #define XKB_DFLT_MODEL "pc102"
+        #define XKB_DFLT_LAYOUT "us"
+        #define XKB_DFLT_VARIANT ""
+        #define XKB_DFLT_OPTIONS ""
+
         #ifdef DEBUG
         fprintf(stderr, "%s: Going to set rules and init device: "
-                        "[rules='%s',model='%s',layout='%s',variant='%s',options='%s'].\n", __func__,
-                        rules?rules:"(default)", model?model:"(default)", layout?layout:"(default)",
-                        variant?variant:"(default)", options?options:"(default)");
+                        "[rules='%s', model='%s', layout='%s', variant='%s', options='%s'].\n", __func__,
+                             rules   ? rules   : "<"XKB_DFLT_RULES_FILE ">",
+                             model   ? model   : "<"XKB_DFLT_MODEL      ">",
+                             layout  ? layout  : "<"XKB_DFLT_LAYOUT     ">",
+                             variant ? variant : "<"XKB_DFLT_VARIANT    ">",
+                             options ? options : "<"XKB_DFLT_OPTIONS    ">");
         #endif
 
-        XkbSetRulesDflts(rules, model, layout, variant, options);
+        XkbSetRulesDflts(rules   ? rules   : XKB_DFLT_RULES_FILE,
+                         model   ? model   : XKB_DFLT_MODEL,
+                         layout  ? layout  : XKB_DFLT_LAYOUT,
+                         variant ? variant : XKB_DFLT_VARIANT,
+                         options ? options : XKB_DFLT_OPTIONS);
         XkbInitKeyboardDeviceStruct((void *)pDev, &names, &keySyms, modmap,
                                     nxagentBell, nxagentChangeKeyboardControl);
 
