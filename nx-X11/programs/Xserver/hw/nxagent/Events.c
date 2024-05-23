@@ -1083,7 +1083,7 @@ void nxagentDispatchEvents(PredicateFuncPtr predicate)
          * and generate a single pair. This is intended to reduce the
          * impact of the latency on the key auto-repeat, handled by
          * the remote X server. We may optionally do that only if the
-         * timestamps in the events show an exces- sive delay.
+         * timestamps in the events show an excessive delay.
          */
 
         KeySym keysym = XKeycodeToKeysym(nxagentDisplay, X.xkey.keycode, 0);
@@ -4270,7 +4270,7 @@ int nxagentClipAndSendExpose(WindowPtr pWin, void * ptr)
 
       /*
        * The miWindowExposures() clears out the region parameters, so
-       * the subtract ope- ration must be done before calling it.
+       * the subtract operation must be done before calling it.
        */
 
       RegionSubtract(remoteExposeRgn, remoteExposeRgn, exposeRgn);
