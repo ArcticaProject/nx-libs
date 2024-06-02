@@ -662,8 +662,8 @@ void nxagentInitViewportFrame(ScreenPtr pScreen, WindowPtr pRootWin)
   }
 
   /*
-   * It is not necessary create the windows on the real X server. But this
-   * windows are not visible. Create them it is not a great effort, and avoids
+   * It is not necessary create the windows on the real X server. But these
+   * windows are not visible. Create them, it is not a great effort, and avoids
    * many errors.
    *
    *  nxagentScreenTrap = True;
