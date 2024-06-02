@@ -164,7 +164,7 @@ Bool nxagentFindClientResource(int client, RESTYPE type, void * value)
   return False;
 }
 
-Bool nxagentSwitchResourceType(int client, RESTYPE type, void * value)
+static Bool nxagentSwitchResourceType(int client, RESTYPE type, void * value)
 {
   RESTYPE internalType = 0;
 
