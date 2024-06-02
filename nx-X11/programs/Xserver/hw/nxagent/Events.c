@@ -2108,7 +2108,7 @@ FIXME: Don't enqueue the KeyRelease event if the key was not already
          * Let's check if this is a XKB state modification event.
          */
 
-        if (nxagentHandleXkbKeyboardStateEvent(&X) == 0 && nxagentHandleXFixesSelectionNotify(&X) == 0)
+        if (!nxagentHandleXkbKeyboardStateEvent(&X) && !nxagentHandleXFixesSelectionNotify(&X))
         {
           #ifdef TEST
           fprintf(stderr, "%s: WARNING! Unhandled event code [%d].\n", __func__, X.type);
@@ -2258,7 +2258,7 @@ FIXME: Don't enqueue the KeyRelease event if the key was not already
  * Functions providing the ad-hoc handling of the remote X events.
  */
 
-int nxagentHandleKeyPress(XEvent *X, enum HandleEventResult *result)
+Bool nxagentHandleKeyPress(XEvent *X, enum HandleEventResult *result)
 {
   if (!nxagentXkbState.Initialized)
   {
@@ -2282,7 +2282,8 @@ int nxagentHandleKeyPress(XEvent *X, enum HandleEventResult *result)
     #ifdef TEST
     fprintf(stderr, "%s: NOT passing KeyPress event to clients\n", __func__);
     #endif
-    return 1;
+    /* FIXME: shouldn't this be False? */
+    return True;
   }
 
   if (X -> xkey.keycode == nxagentCapsLockKeycode)
@@ -2311,10 +2312,10 @@ int nxagentHandleKeyPress(XEvent *X, enum HandleEventResult *result)
 
   SetCriticalOutputPending();
 
-  return 1;
+  return True;
 }
 
-int nxagentHandlePropertyNotify(XEvent *X)
+Bool nxagentHandlePropertyNotify(XEvent *X)
 {
   if (nxagentOption(Rootless) && !nxagentNotifyMatchChangeProperty((XPropertyEvent *) X))
   {
@@ -2333,7 +2334,7 @@ int nxagentHandlePropertyNotify(XEvent *X)
         fprintf(stderr, "%s: WARNING! Asynchronous get property queue is full.\n", __func__);
         #endif
 
-        return 0;
+        return False;
       }
 
       NXCollectProperty(nxagentDisplay, resource,
@@ -2351,10 +2352,10 @@ int nxagentHandlePropertyNotify(XEvent *X)
     #endif
   }
 
-  return 1;
+  return True;
 }
 
-int nxagentHandleExposeEvent(XEvent *X)
+Bool nxagentHandleExposeEvent(XEvent *X)
 {
   StaticResizedWindowStruct *resizedWinPtr = NULL;
 
@@ -2468,10 +2469,10 @@ FIXME: This can be maybe optimized by consuming the
     RegionUninit(&sum);
   }
 
-  return 1;
+  return True;
 }
 
-int nxagentHandleGraphicsExposeEvent(XEvent *X)
+Bool nxagentHandleGraphicsExposeEvent(XEvent *X)
 {
   /*
    * Send an expose event to client, instead of graphics expose. If
@@ -2504,7 +2505,8 @@ int nxagentHandleGraphicsExposeEvent(XEvent *X)
       fprintf(stderr, "%s: WARNING! Storing pixmap not found.\n", __func__);
       #endif
 
-      return 1;
+      /* FIXME: shouldn't this be False? */
+      return True;
     }
 
     pBSwindow = (miBSWindowPtr) pStoringPixmapRec -> pSavedWindow -> backStorage;
@@ -2515,7 +2517,8 @@ int nxagentHandleGraphicsExposeEvent(XEvent *X)
       fprintf(stderr, "%s: WARNING! Back storage not found.\n", __func__);
       #endif
 
-      return 1;
+      /* FIXME: shouldn't this be False? */
+      return True;
     }
 
     pWin = pStoringPixmapRec -> pSavedWindow;
@@ -2570,10 +2573,10 @@ int nxagentHandleGraphicsExposeEvent(XEvent *X)
 
   RegionDestroy(exposeRegion);
 
-  return 1;
+  return True;
 }
 
-int nxagentHandleClientMessageEvent(XEvent *X, enum HandleEventResult *result)
+Bool nxagentHandleClientMessageEvent(XEvent *X, enum HandleEventResult *result)
 {
   *result = doNothing;
 
@@ -2591,7 +2594,7 @@ int nxagentHandleClientMessageEvent(XEvent *X, enum HandleEventResult *result)
     #endif
     nxagentHandleProxyEvent(X);
 
-    return 1;
+    return True;
   }
 
   #ifdef TEST
@@ -2615,7 +2618,7 @@ int nxagentHandleClientMessageEvent(XEvent *X, enum HandleEventResult *result)
       fprintf(stderr, "%s: WARNING Invalid type in client message.\n", __func__);
       #endif
 
-      return 0;
+      return False;
     }
 
     WindowPtr pWin = nxagentWindowPtr(X -> xclient.window);
@@ -2635,7 +2638,7 @@ int nxagentHandleClientMessageEvent(XEvent *X, enum HandleEventResult *result)
       }
       #endif
 
-      return 0;
+      return False;
     }
 
     if (message_type == MakeAtom("WM_PROTOCOLS", strlen("WM_PROTOCOLS"), False))
@@ -2654,7 +2657,7 @@ int nxagentHandleClientMessageEvent(XEvent *X, enum HandleEventResult *result)
         fprintf(stderr, "%s: WARNING Invalid value in client message of type WM_PROTOCOLS.\n", __func__);
         #endif
 
-        return 0;
+        return False;
       }
       #ifdef TEST
       else
@@ -2673,10 +2676,10 @@ int nxagentHandleClientMessageEvent(XEvent *X, enum HandleEventResult *result)
                   (long int) message_type, validateString(NameForAtom(message_type)));
       #endif
 
-      return 0;
+      return False;
     }
 
-    return 1;
+    return True;
   }
 
   if (X -> xclient.message_type == nxagentAtoms[1]) /* WM_PROTOCOLS */
@@ -2715,10 +2718,10 @@ int nxagentHandleClientMessageEvent(XEvent *X, enum HandleEventResult *result)
     }
   }
 
-  return 1;
+  return True;
 }
 
-int nxagentHandleXkbKeyboardStateEvent(XEvent *X)
+Bool nxagentHandleXkbKeyboardStateEvent(XEvent *X)
 {
   XkbEvent *xkbev = (XkbEvent *) X;
 
@@ -2818,13 +2821,13 @@ int nxagentHandleXkbKeyboardStateEvent(XEvent *X)
       nxagentSendFakeKey(77);
     }
 
-    return 1;
+    return True;
   }
 
-  return 0;
+  return False;
 }
 
-int nxagentHandleXFixesSelectionNotify(XEvent *X)
+Bool nxagentHandleXFixesSelectionNotify(XEvent *X)
 {
   XFixesSelectionEvent *xfixesEvent = (XFixesSelectionEvent *) X;
 
@@ -2833,7 +2836,7 @@ int nxagentHandleXFixesSelectionNotify(XEvent *X)
       #ifdef DEBUG
       fprintf(stderr, "%s: XFixes not initialized - doing nothing.\n", __func__);
       #endif
-      return 0;
+      return False;
   }
 
   if (xfixesEvent -> type != (nxagentXFixesInfo.EventBase + XFixesSelectionNotify))
@@ -2841,7 +2844,7 @@ int nxagentHandleXFixesSelectionNotify(XEvent *X)
       #ifdef DEBUG
       fprintf(stderr, "%s: event type is [%d] - doing nothing.\n", __func__, xfixesEvent->type);
       #endif
-      return 0;
+      return False;
   }
 
   #ifdef DEBUG
@@ -2881,7 +2884,7 @@ int nxagentHandleXFixesSelectionNotify(XEvent *X)
     #ifdef DEBUG
     fprintf(stderr, "%s: (new) owner is nxagent (window is [0x%lx]) - ignoring it.\n", __func__, xfixesEvent->xfixesselection.window);
     #endif
-    return 0;
+    return False;
   }
 
   /*
@@ -2907,10 +2910,10 @@ int nxagentHandleXFixesSelectionNotify(XEvent *X)
     #endif
   }
 
-  return 1;
+  return True;
 }
 
-int nxagentHandleProxyEvent(XEvent *X)
+Bool nxagentHandleProxyEvent(XEvent *X)
 {
   switch (X -> xclient.data.l[0])
   {
@@ -2937,7 +2940,7 @@ int nxagentHandleProxyEvent(XEvent *X)
 
       #endif
 
-      return 1;
+      return True;
     }
     case NXCommitSplitNotify:
     {
@@ -2960,7 +2963,7 @@ int nxagentHandleProxyEvent(XEvent *X)
 
       nxagentHandleCommitSplitEvent(client, request, position);
 
-      return 1;
+      return True;
     }
     case NXEndSplitNotify:
     {
@@ -2977,7 +2980,7 @@ int nxagentHandleProxyEvent(XEvent *X)
 
       nxagentHandleEndSplitEvent(client);
 
-      return 1;
+      return True;
     }
     case NXEmptySplitNotify:
     {
@@ -2991,7 +2994,7 @@ int nxagentHandleProxyEvent(XEvent *X)
 
       nxagentHandleEmptySplitEvent();
 
-      return 1;
+      return True;
     }
     case NXCollectPropertyNotify:
     {
@@ -3003,7 +3006,7 @@ int nxagentHandleProxyEvent(XEvent *X)
 
       nxagentHandleCollectPropertyEvent(X);
 
-      return 1;
+      return True;
     }
     case NXCollectGrabPointerNotify:
     {
@@ -3015,7 +3018,7 @@ int nxagentHandleProxyEvent(XEvent *X)
 
       nxagentHandleCollectGrabPointerEvent(resource);
 
-      return 1;
+      return True;
     }
     case NXCollectInputFocusNotify:
     {
@@ -3031,7 +3034,7 @@ int nxagentHandleProxyEvent(XEvent *X)
 
       nxagentHandleCollectInputFocusEvent(resource);
 
-      return 1;
+      return True;
     }
     default:
     {
@@ -3044,7 +3047,7 @@ int nxagentHandleProxyEvent(XEvent *X)
                   (int) X -> xclient.data.l[0]);
       #endif
 
-      return 0;
+      return False;
     }
   }
 }
@@ -3132,7 +3135,7 @@ int nxagentCheckWindowConfiguration(XConfigureEvent* X)
   return 1;
 }
 
-int nxagentHandleConfigureNotify(XEvent* X)
+Bool nxagentHandleConfigureNotify(XEvent* X)
 {
   #ifdef DEBUG
   fprintf(stderr, "%s: Event info:\n", __func__);
@@ -3180,7 +3183,7 @@ int nxagentHandleConfigureNotify(XEvent* X)
 
       nxagentCheckWindowConfiguration((XConfigureEvent*)X);
 
-      return 1;
+      return True;
     }
 
     if (nxagentWindowTopLevel(pWinWindow) && !X -> xconfigure.override_redirect)
@@ -3266,7 +3269,7 @@ int nxagentHandleConfigureNotify(XEvent* X)
         TryClientEvents(wClient(pWinWindow), &x, 1, 1, 1, 0);
       }
 
-      return 1;
+      return True;
     }
   }
   else /* (nxagentOption(Rootless)) */
@@ -3448,7 +3451,7 @@ int nxagentHandleConfigureNotify(XEvent* X)
         }
       }
 
-      return 1;
+      return True;
     }
     else
     {
@@ -3467,7 +3470,7 @@ int nxagentHandleConfigureNotify(XEvent* X)
         nxagentChangeScreenConfig(0, nxagentOption(Width),
                                      nxagentOption(Height), True);
 
-        return 1;
+        return True;
       }
     }
   }
@@ -3476,10 +3479,10 @@ int nxagentHandleConfigureNotify(XEvent* X)
   fprintf(stderr, "%s: received for unexpected window [%ld]\n", __func__, X -> xconfigure.window);
   #endif
 
-  return 0;
+  return False;
 }
 
-int nxagentHandleReparentNotify(XEvent* X)
+Bool nxagentHandleReparentNotify(XEvent* X)
 {
   #ifdef TEST
   fprintf(stderr, "%s: Going to handle a new reparent event (serial [%ld].\n", __func__, X->xreparent.serial);
@@ -3504,7 +3507,6 @@ int nxagentHandleReparentNotify(XEvent* X)
     WindowPtr pWin = nxagentWindowPtr(X -> xreparent.window);
 
     #ifdef TEST
-
     {
       WindowPtr pParent = nxagentWindowPtr(X -> xreparent.parent);
       WindowPtr pEvent = nxagentWindowPtr(X -> xreparent.event);
@@ -3513,7 +3515,6 @@ int nxagentHandleReparentNotify(XEvent* X)
                   (void*)pEvent, X -> xreparent.event, (void*)pWin, X -> xreparent.window,
                           (void*)pParent, X -> xreparent.parent, X -> xreparent.x, X -> xreparent.y);
     }
-
     #endif
 
     if (nxagentWindowTopLevel(pWin))
@@ -3587,7 +3588,7 @@ int nxagentHandleReparentNotify(XEvent* X)
       }
     }
 
-    return 1;
+    return True;
   }
   else if (nxagentWMIsRunning && !nxagentOption(Fullscreen) &&
                nxagentOption(WMBorderWidth) == -1)
@@ -3604,7 +3605,7 @@ int nxagentHandleReparentNotify(XEvent* X)
       fprintf(stderr, "%s: WARNING! XGetWindowAttributes for parent window failed.\n", __func__);
       #endif
 
-      return 1;
+      return True;
     }
 
     XlibWindow junk;
@@ -3661,7 +3662,7 @@ int nxagentHandleReparentNotify(XEvent* X)
         fprintf(stderr, "%s: WARNING! XGetWindowAttributes failed for parent window.\n", __func__);
         #endif
 
-        return 1;
+        return True;
       }
 
       /*
@@ -3686,7 +3687,7 @@ int nxagentHandleReparentNotify(XEvent* X)
     }
   }
 
-  return 1;
+  return True;
 }
 
 /*
