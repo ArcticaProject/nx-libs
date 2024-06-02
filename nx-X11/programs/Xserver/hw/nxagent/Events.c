@@ -263,7 +263,7 @@ Time nxagentLastWindowDestroyedTime = 0;
  * Set this flag when an user input event is received.
  */
 
-int nxagentInputEvent = 0;
+Bool nxagentInputEvent = False;
 
 int nxagentKeyDown = 0;
 
@@ -936,7 +936,7 @@ void nxagentDispatchEvents(PredicateFuncPtr predicate)
         fprintf(stderr, "%s: Going to handle new KeyPress event.\n", __func__);
         #endif
 
-        nxagentInputEvent = 1;
+        nxagentInputEvent = True;
 
         nxagentKeyDown++;
 
@@ -1130,7 +1130,7 @@ FIXME: Don't enqueue the KeyRelease event if the key was not already
         fprintf(stderr, "%s: Going to handle new KeyRelease event.\n", __func__);
         #endif
 
-        nxagentInputEvent = 1;
+        nxagentInputEvent = True;
 
         nxagentKeyDown--;
 
@@ -1213,7 +1213,7 @@ FIXME: Don't enqueue the KeyRelease event if the key was not already
         }
         #endif
 
-        nxagentInputEvent = 1;
+        nxagentInputEvent = True;
 
         if (nxagentOption(Fullscreen))
         {
@@ -1314,7 +1314,7 @@ FIXME: Don't enqueue the KeyRelease event if the key was not already
         }
         #endif
 
-        nxagentInputEvent = 1;
+        nxagentInputEvent = True;
 
         if (viewportCursor)
         {
@@ -1496,7 +1496,7 @@ FIXME: Don't enqueue the KeyRelease event if the key was not already
 
         if (!nxagentOption(Shadow))
         {
-          nxagentInputEvent = 1;
+          nxagentInputEvent = True;
         }
 
         break;
@@ -1764,7 +1764,7 @@ FIXME: Don't enqueue the KeyRelease event if the key was not already
           }
         }
 
-        nxagentInputEvent = 1;
+        nxagentInputEvent = True;
 
         break;
       }
@@ -1800,7 +1800,7 @@ FIXME: Don't enqueue the KeyRelease event if the key was not already
           }
         }
 
-        nxagentInputEvent = 1;
+        nxagentInputEvent = True;
 
         break;
       }
@@ -4322,9 +4322,9 @@ int nxagentUserInput(void *p)
     nxagentDispatchEvents(NULL);
   }
 
-  if (nxagentInputEvent == 1)
+  if (nxagentInputEvent)
   {
-    nxagentInputEvent = 0;
+    nxagentInputEvent = False;
 
     result = 1;
   }
