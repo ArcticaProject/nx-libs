@@ -2233,7 +2233,7 @@ FIXME: Don't enqueue the KeyRelease event if the key was not already
    * FlushIfCriticalOutputPending();
    */
 
-  if (NewOutputPending == 1)
+  if (NewOutputPending)
   {
     #ifdef TEST
     fprintf(stderr, "%s: Flushed the processed events to clients.\n", __func__);
