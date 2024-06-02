@@ -164,7 +164,7 @@ Bool nxagentFindClientResource(int client, RESTYPE type, void * value)
   return False;
 }
 
-int nxagentSwitchResourceType(int client, RESTYPE type, void * value)
+Bool nxagentSwitchResourceType(int client, RESTYPE type, void * value)
 {
   RESTYPE internalType = 0;
 
@@ -182,7 +182,7 @@ int nxagentSwitchResourceType(int client, RESTYPE type, void * value)
   }
   else
   {
-    return 0;
+    return False;
   }
 
   if (client == serverClient -> index)
@@ -192,7 +192,7 @@ int nxagentSwitchResourceType(int client, RESTYPE type, void * value)
                 client);
     #endif
 
-    return 0;
+    return False;
   }
 
   for (int i = 0; i < clientTable[serverClient -> index].buckets; i++)
@@ -212,12 +212,12 @@ int nxagentSwitchResourceType(int client, RESTYPE type, void * value)
 
         FreeResource(pResource -> id, RT_NONE);
 
-        return 1;
+        return True;
       }
     }
   }
 
-  return 0;
+  return False;
 }
 #endif /* NXAGENT_SERVER */
 
