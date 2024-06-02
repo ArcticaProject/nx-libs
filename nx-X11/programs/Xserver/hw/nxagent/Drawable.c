@@ -117,7 +117,7 @@ void nxagentExposeBackgroundPredicate(void *p0, XID x1, void *p2);
  * Imported from NXresource.c
  */
 
-extern int nxagentFindClientResource(int, RESTYPE, void *);
+extern Bool nxagentFindClientResource(int, RESTYPE, void *);
 
 unsigned long nxagentGetColor(DrawablePtr pDrawable, int xPixel, int yPixel);
 unsigned long nxagentGetDrawableColor(DrawablePtr pDrawable);
@@ -1358,12 +1358,12 @@ FIXME: All drawables should be set as synchronized and never marked as
    */
 
   if (nxagentSynchronization.pDrawable != NULL &&
-          nxagentFindClientResource(serverClient -> index, RT_NX_CORR_WINDOW,
-              nxagentSynchronization.pDrawable) == 0 &&
-                  nxagentFindClientResource(serverClient -> index, RT_NX_CORR_BACKGROUND,
-                      nxagentSynchronization.pDrawable) == 0 &&
-                          nxagentFindClientResource(serverClient -> index, RT_NX_CORR_PIXMAP,
-                              nxagentSynchronization.pDrawable) == 0)
+          !nxagentFindClientResource(serverClient -> index, RT_NX_CORR_WINDOW,
+              nxagentSynchronization.pDrawable) &&
+                  !nxagentFindClientResource(serverClient -> index, RT_NX_CORR_BACKGROUND,
+                      nxagentSynchronization.pDrawable) &&
+                          !nxagentFindClientResource(serverClient -> index, RT_NX_CORR_PIXMAP,
+                              nxagentSynchronization.pDrawable))
   {
     #ifdef TEST
     fprintf(stderr, "nxagentSynchronizationLoop: Synchronization drawable [%p] removed from resources.\n",

@@ -185,7 +185,7 @@ extern WindowPtr nxagentViewportFrameBelow;
 
 extern int nxagentMaxAllowedResets;
 
-extern int nxagentFindClientResource(int, RESTYPE, void *);
+extern Bool nxagentFindClientResource(int, RESTYPE, void *);
 
 #ifdef NXAGENT_CLIPBOARD
 extern int nxagentPrimarySelection;
@@ -855,7 +855,7 @@ ProcCloseFont(register ClientPtr client)
 
         if (pFont -> refcnt > 0)
         {
-          if (nxagentFindClientResource(serverClient -> index, RT_NX_FONT, pFont) == 0)
+          if (!nxagentFindClientResource(serverClient -> index, RT_NX_FONT, pFont))
           {
             #ifdef TEST
             fprintf(stderr, "%s: Switching resource for font at [%p].\n", __func__,
@@ -955,7 +955,7 @@ ProcFreePixmap(register ClientPtr client)
 
         if (pMap -> refcnt > 0)
         {
-          if (nxagentFindClientResource(serverClient -> index, RT_NX_PIXMAP, pMap) == 0)
+          if (!nxagentFindClientResource(serverClient -> index, RT_NX_PIXMAP, pMap))
           {
             #ifdef TEST
             fprintf(stderr, "ProcFreePixmap: Switching resource for pixmap at [%p].\n",

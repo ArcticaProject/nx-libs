@@ -140,7 +140,7 @@ static int nxagentResChangedFlag = 0;
 #endif
 
 #ifdef NXAGENT_SERVER
-int nxagentFindClientResource(int client, RESTYPE type, void * value)
+Bool nxagentFindClientResource(int client, RESTYPE type, void * value)
 {
   for (int i = 0; i < clientTable[client].buckets; i++)
   {
@@ -156,12 +156,12 @@ int nxagentFindClientResource(int client, RESTYPE type, void * value)
                         pResource -> type, client);
         #endif
 
-        return 1;
+        return True;
       }
     }
   }
 
-  return 0;
+  return False;
 }
 
 int nxagentSwitchResourceType(int client, RESTYPE type, void * value)
