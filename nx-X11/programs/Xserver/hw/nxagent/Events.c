@@ -4365,7 +4365,8 @@ int nxagentUserInput(void *p)
   return result;
 }
 
-int nxagentHandleRRScreenChangeNotify(XEvent *X)
+#if 0
+Bool nxagentHandleRRScreenChangeNotify(XEvent *X)
 {
   XRRScreenChangeNotifyEvent *Xr = (XRRScreenChangeNotifyEvent *) X;
 
@@ -4383,8 +4384,9 @@ int nxagentHandleRRScreenChangeNotify(XEvent *X)
 
   nxagentShadowSetWindowsSize();
 
-  return 1;
+  return True;
 }
+#endif
 
 /*
  * Returns true if there is any event waiting to be dispatched. This
