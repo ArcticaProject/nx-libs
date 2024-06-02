@@ -1105,7 +1105,7 @@ void nxagentDispatchEvents(PredicateFuncPtr predicate)
       case KeyRelease:
       {
         enum HandleEventResult result;
-        int sendKey = 0;
+        Bool sendKey = False;
 
 /*
 FIXME: If we don't flush the queue here, it could happen that the
@@ -1123,7 +1123,7 @@ FIXME: Don't enqueue the KeyRelease event if the key was not already
         if (BitIsOn(inputInfo.keyboard -> key -> down,
                        nxagentConvertKeycode(X.xkey.keycode)))
         {
-          sendKey = 1;
+          sendKey = True;
         }
 
         #ifdef TEST
@@ -1176,7 +1176,7 @@ FIXME: Don't enqueue the KeyRelease event if the key was not already
 
         /* do not send a KeyRelease for a special keystroke since we
            also did not send a KeyPress event in that case */
-        if (!(nxagentCheckSpecialKeystroke(&X.xkey, &result)) && (sendKey == 1))
+        if (!(nxagentCheckSpecialKeystroke(&X.xkey, &result)) && (sendKey))
         {
           #ifdef TEST
           fprintf(stderr, "%s: passing KeyRelease event to clients\n", __func__);
