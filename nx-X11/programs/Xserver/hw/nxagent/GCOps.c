@@ -92,12 +92,6 @@ static int nxagentSaveGCTrap;
 }
 
 /*
- * This is currently unused.
- */
-
-RegionPtr nxagentBitBlitHelper(GC *pGC);
-
-/*
  * The NX agent implementation of the X server's graphics functions.
  */
 
@@ -185,24 +179,6 @@ void nxagentQueryBestSize(int class, unsigned short *pwidth,
       /* We don't care what height they use */
       break;
   }
-}
-
-RegionPtr nxagentBitBlitHelper(GC *pGC)
-{
-  #ifdef TEST
-  fprintf(stderr, "nxagentBitBlitHelper: Called for GC at [%p].\n", (void *) pGC);
-  #endif
-
-  /*
-   * Force NullRegion. We consider enough the graphics expose events
-   * generated internally by the nxagent server.
-   */
-
-  #ifdef TEST
-  fprintf(stderr, "nxagentBitBlitHelper: WARNING! Skipping check on exposures events.\n");
-  #endif
-
-  return NullRegion;
 }
 
 /*
