@@ -394,7 +394,7 @@ Bool nxagentCreateWindow(WindowPtr pWin)
   {
     fprintf(stderr, "NXAGENT_WINDOW_ID: %s_WINDOW,WID:[0x%x],INT:[0x%x]\n",
                 (pWin->drawable.id == pWin->drawable.pScreen->root->drawable.id) ? "ROOT" : "PRIVATE",
-                    nxagentWindowPriv(pWin)->window, pWin->drawable.id);
+                    nxagentWindow(pWin), pWin->drawable.id);
   }
 
   #ifdef DEBUG
@@ -405,7 +405,7 @@ Bool nxagentCreateWindow(WindowPtr pWin)
                            (pWin->drawable.id == pWin->drawable.pScreen->root->drawable.id) ? "Root" : "Private",
                                pWin->drawable.id))
     {
-      Xutf8SetWMProperties(nxagentDisplay, nxagentWindowPriv(pWin)->window,
+      Xutf8SetWMProperties(nxagentDisplay, nxagentWindow(pWin),
                                winname, winname, NULL , 0 , NULL, NULL, NULL);
       SAFE_free(winname);
     }
@@ -413,8 +413,7 @@ Bool nxagentCreateWindow(WindowPtr pWin)
   #endif
 
   #ifdef TEST
-  fprintf(stderr, "%s: Created new window with id [0x%x].\n", __func__,
-              nxagentWindowPriv(pWin)->window);
+  fprintf(stderr, "%s: Created new remote window with id [0x%x].\n", __func__, nxagentWindow(pWin));
   #endif
 
   /*
@@ -427,7 +426,7 @@ Bool nxagentCreateWindow(WindowPtr pWin)
     XlibAtom prop = nxagentMakeAtom("WM_PROTOCOLS", strlen("WM_PROTOCOLS"), True);
     XlibAtom atom = nxagentMakeAtom("WM_DELETE_WINDOW", strlen("WM_DELETE_WINDOW"), True);
 
-    XSetWMProtocols(nxagentDisplay, nxagentWindowPriv(pWin)->window, &atom, 1);
+    XSetWMProtocols(nxagentDisplay, nxagentWindow(pWin), &atom, 1);
 
     nxagentAddPropertyToList(prop, pWin);
 
@@ -453,7 +452,7 @@ Bool nxagentCreateWindow(WindowPtr pWin)
     #ifdef DEBUG
     else
     {
-      fprintf(stderr, "%s: Added NX_REAL_WINDOW for Window ID [0x%x].\n", __func__, nxagentWindowPriv(pWin)->window);
+      fprintf(stderr, "%s: Added NX_REAL_WINDOW for Window ID [0x%x].\n", __func__, nxagentWindow(pWin));
     }
     #endif
   }
@@ -2733,7 +2732,7 @@ void nxagentDisconnectWindow(void * p0, XID x1, void * p2)
     #ifdef DEBUG
     else
     {
-      fprintf(stderr, "%s: Deleting NX_REAL_WINDOW from Window ID [%x].\n", __func__, nxagentWindowPriv(pWin)->window);
+      fprintf(stderr, "%s: Deleting NX_REAL_WINDOW from Window ID [%x].\n", __func__, nxagentWindow(pWin));
     }
     #endif
   }
@@ -3054,7 +3053,7 @@ static void nxagentReconnectWindow(void * param0, XID param1, void * data_buffer
   {
     fprintf(stderr, "NXAGENT_WINDOW_ID: %s_WINDOW,WID:[0x%x],INT:[0x%x]\n",
                 (pWin->drawable.id == pWin->drawable.pScreen->root->drawable.id) ? "ROOT" : "PRIVATE",
-                    nxagentWindowPriv(pWin)->window, pWin->drawable.id);
+                    nxagentWindow(pWin), pWin->drawable.id);
   }
 
   #ifdef DEBUG
@@ -3065,7 +3064,7 @@ static void nxagentReconnectWindow(void * param0, XID param1, void * data_buffer
                            (pWin->drawable.id == pWin->drawable.pScreen->root->drawable.id) ? "Root" : "Private",
                                pWin->drawable.id))
     {
-      Xutf8SetWMProperties(nxagentDisplay, nxagentWindowPriv(pWin)->window,
+      Xutf8SetWMProperties(nxagentDisplay, nxagentWindow(pWin),
                                winname, winname, NULL , 0 , NULL, NULL, NULL);
       SAFE_free(winname);
     }
@@ -3197,7 +3196,7 @@ static void nxagentReconnectWindow(void * param0, XID param1, void * data_buffer
     #ifdef DEBUG
     else
     {
-      fprintf(stderr, "%s: Updated NX_REAL_WINDOW for Window ID [%x].\n", __func__, nxagentWindowPriv(pWin)->window);
+      fprintf(stderr, "%s: Updated NX_REAL_WINDOW for Window ID [%x].\n", __func__, nxagentWindow(pWin));
     }
     #endif
   }
