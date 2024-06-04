@@ -1872,7 +1872,7 @@ void nxagentSetWMState(WindowPtr pWin, CARD32 desired)
  * exposure events for underlying windows; this is taken care of by
  * DIX. DIX does, however, call PaintWindowBackground() and
  * PaintWindowBorder() to perform some of these.
--+ */
+ */
 Bool nxagentRealizeWindow(WindowPtr pWin)
 {
   #ifdef DEBUG
@@ -3016,7 +3016,7 @@ static void nxagentReconnectWindow(void * param0, XID param1, void * data_buffer
    *        server for windows.  The NXWin minimize the windows moving
    *        them out of the screen area, this behaviour can cause
    *        problem when a rootless session is disconnected and an
-   *        apps is minimized.  It will be solved with new Xorg
+   *        app is minimized.  It will be solved with new Xorg
    *        version of the NXWin server.
    */
 
