@@ -63,6 +63,7 @@
 #include "Composite.h"
 #include "Events.h"
 #include "Utils.h"
+#include "Image.h"
 
 #include <nx/NX.h>
 #include "compext/Compext.h"
@@ -400,7 +401,7 @@ Bool nxagentCreateWindow(WindowPtr pWin)
   {
     char *winname = NULL;
 
-    if (-1 != asprintf(&winname, "%s %s[0x%lx]", nxagentWindowName,
+    if (-1 != asprintf(&winname, "%s %s[0x%x]", nxagentWindowName,
                            (pWin->drawable.id == pWin->drawable.pScreen->root->drawable.id) ? "Root" : "Private",
                                pWin->drawable.id))
     {
@@ -503,7 +504,7 @@ void nxagentSetVersionProperty(WindowPtr pWin)
   #ifdef DEBUG
   else
   {
-    fprintf(stderr, "%s: Added property [%s], value [%s] for root window [%x].\n", __func__, name, NX_VERSION_CURRENT_STRING, pWin);
+    fprintf(stderr, "%s: Added property [%s], value [%s] for root window [%p].\n", __func__, name, NX_VERSION_CURRENT_STRING, (void *)pWin);
   }
   #endif
 }
@@ -1881,6 +1882,9 @@ Bool nxagentRealizeWindow(WindowPtr pWin)
 
   if (nxagentScreenTrap)
   {
+    #ifdef DEBUG
+    fprintf(stderr, "%s: doing nothing because of nxagentScreenTrap\n", __func__);
+    #endif
     return True;
   }
 
@@ -1920,6 +1924,9 @@ Bool nxagentRealizeWindow(WindowPtr pWin)
 
   nxagentLastWindowDestroyed = False;
 
+  #ifdef DEBUG
+  fprintf(stderr, "%s: leaving...\n", __func__);
+  #endif
   return True;
 }
 
@@ -2389,7 +2396,7 @@ void nxagentShapeWindow(WindowPtr pWin)
     if (wBoundingShape(pWin))
     {
       #ifdef DEBUG
-      fprintf(stderr, "%s: wBounding shape has [%ld] rects.\n", __func__
+      fprintf(stderr, "%s: wBounding shape has [%d] rects.\n", __func__,
                   RegionNumRects(wBoundingShape(pWin)));
       #endif
 
@@ -2442,7 +2449,7 @@ void nxagentShapeWindow(WindowPtr pWin)
     if (wClipShape(pWin))
     {
       #ifdef DEBUG
-      fprintf(stderr, "%s: wClip shape has [%ld] rects.\n", __func__,
+      fprintf(stderr, "%s: wClip shape has [%d] rects.\n", __func__,
                   RegionNumRects(wClipShape(pWin)));
       #endif
 
@@ -3054,7 +3061,7 @@ static void nxagentReconnectWindow(void * param0, XID param1, void * data_buffer
   {
     char *winname = NULL;
 
-    if (-1 != asprintf(&winname, "%s %s[0x%lx]", nxagentWindowName,
+    if (-1 != asprintf(&winname, "%s %s[0x%x]", nxagentWindowName,
                            (pWin->drawable.id == pWin->drawable.pScreen->root->drawable.id) ? "Root" : "Private",
                                pWin->drawable.id))
     {
@@ -3220,14 +3227,13 @@ static void nxagentReconfigureWindowCursor(void * param0, XID param1, void * dat
   }
 
   #ifdef DEBUG
-  fprintf(stderr, "%s: [%p] - ID [%lx] geometry [%d,%d,%d,%d] "
-                  "cursor [%p] - ID [%lx]\n", __func__,
-                  pWin, nxagentWindow(pWin),
+  fprintf(stderr, "%s: [%p][0x%x] geometry [%d,%d,%d,%d] cursor [%p][0x%x]\n", __func__,
+                  (void *)pWin, nxagentWindow(pWin),
                   pWin -> drawable.x,
                   pWin -> drawable.y,
                   pWin -> drawable.width,
                   pWin -> drawable.height,
-                  pCursor, nxagentCursor(pCursor, pScreen));
+                  (void *)pCursor, nxagentCursor(pCursor, pScreen));
   #endif
 
   if (nxagentCursor(pCursor, pScreen) == None)
