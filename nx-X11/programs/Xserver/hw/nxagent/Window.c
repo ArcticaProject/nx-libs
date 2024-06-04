@@ -351,17 +351,16 @@ Bool nxagentCreateWindow(WindowPtr pWin)
 
   nxagentWindowPriv(pWin)->window = XCreateWindow(nxagentDisplay,
                                                   nxagentWindowParent(pWin),
-                                                  pWin->origin.x -
-                                                  wBorderWidth(pWin),
-                                                  pWin->origin.y -
-                                                  wBorderWidth(pWin),
+                                                  pWin->origin.x - wBorderWidth(pWin),
+                                                  pWin->origin.y - wBorderWidth(pWin),
                                                   pWin->drawable.width,
                                                   pWin->drawable.height,
                                                   pWin->borderWidth,
                                                   pWin->drawable.depth,
                                                   pWin->drawable.class,
                                                   visual,
-                                                  mask, &attributes);
+                                                  mask,
+                                                  &attributes);
 
   nxagentWindowPriv(pWin) -> isMapped = 0;
   nxagentWindowPriv(pWin) -> isRedirected = 0;
@@ -2933,6 +2932,8 @@ static void nxagentReconnectWindow(void * param0, XID param1, void * data_buffer
               (void *) pWin, pWin->drawable.id, nxagentWindow(pWin));
   #endif
 
+  /* FIXME: this is largely identical to nxagentCreateWindow */
+
   if (pWin->drawable.class == InputOnly)
   {
     mask = CWEventMask;
@@ -2942,14 +2943,19 @@ static void nxagentReconnectWindow(void * param0, XID param1, void * data_buffer
   {
     mask = CWEventMask | CWBackingStore;
 
-    attributes.backing_store = NotUseful;
-
     if (pWin->optional)
     {
       mask |= CWBackingPlanes | CWBackingPixel;
       attributes.backing_planes = pWin->optional->backingBitPlanes;
       attributes.backing_pixel = pWin->optional->backingPixel;
     }
+
+    attributes.backing_store = NotUseful;
+
+    #ifdef TEST
+    fprintf(stderr, "%s: Backing store on window at [%p] is [%d].\n", __func__,
+                (void*)pWin, attributes.backing_store);
+    #endif
 
     /*
       FIXME: Do we need to set save unders attribute here?
@@ -2976,7 +2982,7 @@ static void nxagentReconnectWindow(void * param0, XID param1, void * data_buffer
           attributes.colormap = nxagentDefaultVisualColormap(visual);
         }
       }
-      else
+      else /* FIXME? nxagentCreateWindow has >if (pWin->optional)< here */
       {
         visual = CopyFromParent;
       }
@@ -3034,20 +3040,18 @@ static void nxagentReconnectWindow(void * param0, XID param1, void * data_buffer
     }
   }
 
-  nxagentWindow(pWin) = XCreateWindow(nxagentDisplay,
-                                      nxagentWindowParent(pWin),
-                                      pWin->origin.x -
-                                      wBorderWidth(pWin),
-                                      pWin->origin.y -
-                                      wBorderWidth(pWin),
-                                      pWin->drawable.width,
-                                      pWin->drawable.height,
-                                      pWin->borderWidth,
-                                      pWin->drawable.depth,
-                                      pWin->drawable.class,
-                                      visual,
-                                      mask,
-                                      &attributes);
+  nxagentWindowPriv(pWin)->window = XCreateWindow(nxagentDisplay,
+                                                  nxagentWindowParent(pWin),
+                                                  pWin->origin.x - wBorderWidth(pWin),
+                                                  pWin->origin.y - wBorderWidth(pWin),
+                                                  pWin->drawable.width,
+                                                  pWin->drawable.height,
+                                                  pWin->borderWidth,
+                                                  pWin->drawable.depth,
+                                                  pWin->drawable.class,
+                                                  visual,
+                                                  mask,
+                                                  &attributes);
 
   if (nxagentReportPrivateWindowIds)
   {
