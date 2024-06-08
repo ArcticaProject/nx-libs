@@ -2260,19 +2260,11 @@ void nxagentReconnectPicture(void * p0, XID x1, void *p2)
   }
 
   attributes.subwindow_mode = pPicture -> subWindowMode;
-  mask |= CPSubwindowMode;
-
   attributes.poly_edge = pPicture -> polyEdge;
-  mask |= CPPolyEdge;
-
   attributes.poly_mode = pPicture -> polyMode;
-  mask |= CPPolyMode;
-
   attributes.dither = pPicture -> dither;
-  mask |= CPDither;
-
   attributes.component_alpha = pPicture -> componentAlpha;
-  mask |= CPComponentAlpha;
+  mask |= (CPSubwindowMode | CPPolyEdge | CPPolyMode | CPDither | CPComponentAlpha);
 
   XRenderPictFormat *pForm = NULL;
 
