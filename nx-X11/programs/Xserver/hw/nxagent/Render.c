@@ -556,7 +556,7 @@ int nxagentCreatePicture(PicturePtr pPicture, Mask mask)
   unsigned long            valuemask=0;
 
   #ifdef DEBUG
-  fprintf(stderr, "%s: Function called with picture at [%p] and mask [%ld].\n", __func__,
+  fprintf(stderr, "%s: Function called with picture at [%p] and mask [%d].\n", __func__,
               (void *) pPicture, mask);
   #endif
 
@@ -608,7 +608,7 @@ int nxagentCreatePicture(PicturePtr pPicture, Mask mask)
   XRenderPictFormat *pForm = NULL;
 
   #ifdef DEBUG
-  fprintf(stderr, "%s: picture format [0x%lx]\n", __func__, pPicture->pFormat);
+  fprintf(stderr, "%s: picture format [%p]\n", __func__, (void *)pPicture->pFormat);
   #endif
 
   if (pPicture -> pFormat != NULL)
@@ -863,7 +863,7 @@ void nxagentChangePicture(PicturePtr pPicture, Mask mask)
   unsigned long             valuemask = 0;
 
   #ifdef DEBUG
-  fprintf(stderr, "%s: Going to change picture at [%p] with mask [%ld].\n", __func__,
+  fprintf(stderr, "%s: Going to change picture at [%p] with mask [%d].\n", __func__,
               (void *) pPicture, mask);
   #endif
 
@@ -1098,8 +1098,8 @@ void nxagentGlyphs(CARD8 op, PicturePtr pSrc, PicturePtr pDst,
   XGlyphElt8 *elements;
 
   #ifdef DEBUG
-  fprintf(stderr, "%s: pSrc [%p] pSrc->pDrawable [%p] pDst [%p] pDst->pDrawable [%p]\n",
-	      __func__, pSrc, pSrc ? pSrc->pDrawable : NULL, pDst, pDst ? pDst->pDrawable : NULL);
+  fprintf(stderr, "%s: pSrc [%p] pSrc->pDrawable [%p] pDst [%p] pDst->pDrawable [%p]\n", __func__,
+              (void *)pSrc, pSrc ? (void *)pSrc->pDrawable : NULL, (void *)pDst, pDst ? (void *)pDst->pDrawable : NULL);
   #endif
 
   if (pSrc == NULL || pDst == NULL)
@@ -1767,7 +1767,7 @@ void nxagentQueryFormats(void)
       nxagentArrayFormats[i] = *pformat;
 
       #ifdef DEBUG
-      fprintf(stderr, "%s: Added format id [%d] type [%d] depth [%d] rgb [%d,%d,%d] "
+      fprintf(stderr, "%s: Added format id [%ld] type [%d] depth [%d] rgb [%d,%d,%d] "
                   "mask rgb [%d,%d,%d] alpha [%d] alpha mask [%d].\n", __func__, nxagentArrayFormats[i].id,
                       nxagentArrayFormats[i].type, nxagentArrayFormats[i].depth, nxagentArrayFormats[i].direct.red,
                           nxagentArrayFormats[i].direct.green, nxagentArrayFormats[i].direct.blue,
@@ -2109,8 +2109,8 @@ static void nxagentPrintFormat(XRenderPictFormat *pFormat)
 Bool nxagentFillGlyphSet(GlyphSetPtr pGly)
 {
   #ifdef DEBUG
-  fprintf(stderr, "%s: GlyphSet at [%p] Refcount [%ld] Glyphs [%ld] "
-              "Format [%p] FDepth [%d] RemoteID [%ld].\n", __func__, (void *) pGly, pGly -> refcnt,
+  fprintf(stderr, "%s: GlyphSet at [%p] Refcount [%d] Glyphs [%d] "
+              "Format [%p] FDepth [%d] RemoteID [%d].\n", __func__, (void *) pGly, pGly -> refcnt,
                   pGly -> hash.hashSet -> size, (void *) pGly -> format, pGly -> fdepth, pGly -> remoteID);
   #endif
 
@@ -2296,7 +2296,7 @@ void nxagentReconnectPicture(void * p0, XID x1, void *p2)
   }
 
   #ifdef TEST
-  fprintf(stderr, "%s: Creating picture at [%p] with drawable [%ld] at [%p].\n", __func__,
+  fprintf(stderr, "%s: Creating picture at [%p] with drawable [%d] at [%p].\n", __func__,
               (void *) pPicture, nxagentDrawable(pPicture -> pDrawable), (void *) pPicture -> pDrawable);
 
   fprintf(stderr, "%s: Format is at [%p] mask is [%ld] attributes are at [%p].\n", __func__,
