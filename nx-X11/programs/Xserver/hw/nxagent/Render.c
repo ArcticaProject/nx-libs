@@ -540,6 +540,16 @@ void nxagentRenderRealizeCursor(ScreenPtr pScreen, CursorPtr pCursor)
   nxagentCursor(pCursor, pScreen) = XRenderCreateCursor(nxagentDisplay, nxagentPicture(pPicture), x, y);
 }
 
+/* little helper for better readable code below */
+#define COPYPICTVAL(_mask, _member, _src) {                                \
+    if (mask & _mask)                                                      \
+    {                                                                      \
+      attributes._member = (_src);                                         \
+      valuemask |= (_mask);                                                \
+      nxagentSetPictureRemoteValue(pPicture, _member, attributes._member); \
+    }                                                                      \
+  }
+
 int nxagentCreatePicture(PicturePtr pPicture, Mask mask)
 {
   XRenderPictureAttributes attributes;
@@ -581,96 +591,19 @@ int nxagentCreatePicture(PicturePtr pPicture, Mask mask)
 
   memset(&(nxagentPicturePriv(pPicture) -> lastServerValues), 0, sizeof(XRenderPictureAttributes));
 
-  if (mask & CPRepeat)
-  {
-    attributes.repeat = (Bool)pPicture -> repeat;
-    valuemask |= CPRepeat;
-    nxagentSetPictureRemoteValue(pPicture, repeat, attributes.repeat);
-  }
-
-  if (mask & CPAlphaMap)
-  {
-    attributes.alpha_map = nxagentPicturePriv(pPicture -> alphaMap) -> picture;
-    valuemask |= CPAlphaMap;
-    nxagentSetPictureRemoteValue(pPicture, alpha_map, attributes.alpha_map);
-  }
-
-  if (mask & CPAlphaXOrigin)
-  {
-    attributes.alpha_x_origin = pPicture -> alphaOrigin.x;
-    valuemask |= CPAlphaXOrigin;
-    nxagentSetPictureRemoteValue(pPicture, alpha_x_origin, attributes.alpha_x_origin);
-  }
-
-  if (mask & CPAlphaYOrigin)
-  {
-    attributes.alpha_y_origin = pPicture -> alphaOrigin.y;
-    valuemask |= CPAlphaYOrigin;
-    nxagentSetPictureRemoteValue(pPicture, alpha_y_origin, attributes.alpha_y_origin);
-  }
-
-  if (mask & CPClipXOrigin)
-  {
-    attributes.clip_x_origin = pPicture -> clipOrigin.x;
-    valuemask |= CPClipXOrigin;
-    nxagentSetPictureRemoteValue(pPicture, clip_x_origin, attributes.clip_x_origin);
-  }
-
-  if (mask & CPClipYOrigin)
-  {
-    attributes.clip_y_origin = pPicture -> clipOrigin.y;
-    valuemask |= CPClipYOrigin;
-    nxagentSetPictureRemoteValue(pPicture, clip_y_origin, attributes.clip_y_origin);
-  }
-
-  if (mask & CPGraphicsExposure)
-  {
-    attributes.graphics_exposures = (Bool)pPicture -> graphicsExposures;
-    valuemask |= CPGraphicsExposure;
-    nxagentSetPictureRemoteValue(pPicture, graphics_exposures, attributes.graphics_exposures);
-  }
-
-  if (mask & CPSubwindowMode)
-  {
-    attributes.subwindow_mode = pPicture -> subWindowMode;
-    valuemask |= CPSubwindowMode;
-    nxagentSetPictureRemoteValue(pPicture, subwindow_mode, attributes.subwindow_mode);
-  }
-
-  if (mask & CPClipMask)
-  {
-    attributes.clip_mask = None;
-    valuemask |= CPClipMask;
-    nxagentSetPictureRemoteValue(pPicture, clip_mask, attributes.clip_mask);
-  }
-
-  if (mask & CPPolyEdge)
-  {
-    attributes.poly_edge = pPicture -> polyEdge;
-    valuemask |= CPPolyEdge;
-    nxagentSetPictureRemoteValue(pPicture, poly_edge, attributes.poly_edge);
-  }
-
-  if (mask & CPPolyMode)
-  {
-    attributes.poly_mode = pPicture -> polyMode;
-    valuemask |= CPPolyMode;
-    nxagentSetPictureRemoteValue(pPicture, poly_mode, attributes.poly_mode);
-  }
-
-  if (mask & CPDither)
-  {
-    attributes.dither = pPicture -> dither;
-    valuemask |= CPDither;
-    nxagentSetPictureRemoteValue(pPicture, dither, attributes.dither);
-  }
-
-  if (mask & CPComponentAlpha)
-  {
-    attributes.component_alpha = pPicture -> componentAlpha;
-    valuemask |= CPComponentAlpha;
-    nxagentSetPictureRemoteValue(pPicture, component_alpha, attributes.component_alpha);
-  }
+  COPYPICTVAL(CPRepeat,           repeat,             (Bool)pPicture->repeat);
+  COPYPICTVAL(CPAlphaMap,         alpha_map,          nxagentPicturePriv(pPicture->alphaMap)->picture);
+  COPYPICTVAL(CPAlphaXOrigin,     alpha_x_origin,     pPicture->alphaOrigin.x);
+  COPYPICTVAL(CPAlphaYOrigin,     alpha_y_origin,     pPicture->alphaOrigin.y);
+  COPYPICTVAL(CPClipXOrigin,      clip_x_origin,      pPicture->clipOrigin.x);
+  COPYPICTVAL(CPClipYOrigin,      clip_y_origin,      pPicture->clipOrigin.y);
+  COPYPICTVAL(CPGraphicsExposure, graphics_exposures, (Bool)pPicture->graphicsExposures);
+  COPYPICTVAL(CPSubwindowMode,    subwindow_mode,     pPicture->subWindowMode);
+  COPYPICTVAL(CPClipMask,         clip_mask,          None);
+  COPYPICTVAL(CPPolyEdge,         poly_edge,          pPicture->polyEdge);
+  COPYPICTVAL(CPPolyMode,         poly_mode,          pPicture->polyMode);
+  COPYPICTVAL(CPDither,           dither,             pPicture->dither);
+  COPYPICTVAL(CPComponentAlpha,   component_alpha,    pPicture->componentAlpha);
 
   XRenderPictFormat *pForm = NULL;
 
@@ -911,6 +844,19 @@ FIXME: Is this useful or just a waste of bandwidth?
   return 1;
 }
 
+/* little helper for better readable code below */
+#define CHGPICTVAL(_mask, _member, _src) {                                        \
+    if (mask & _mask)                                                             \
+    {                                                                             \
+      attributes._member = (_src);                                                \
+      if (!nxagentCheckPictureRemoteValue(pPicture, _member, attributes._member)) \
+      {                                                                           \
+        valuemask |= _mask;                                                       \
+        nxagentSetPictureRemoteValue(pPicture, _member, attributes._member);      \
+      }                                                                           \
+    }                                                                             \
+  }
+
 void nxagentChangePicture(PicturePtr pPicture, Mask mask)
 {
   XRenderPictureAttributes  attributes;
@@ -926,86 +872,14 @@ void nxagentChangePicture(PicturePtr pPicture, Mask mask)
     return;
   }
 
-  if (mask & CPRepeat)
-  {
-    attributes.repeat = (Bool)pPicture -> repeat;
-    if (!nxagentCheckPictureRemoteValue(pPicture, repeat, attributes.repeat))
-    {
-      valuemask |= CPRepeat;
-      nxagentSetPictureRemoteValue(pPicture, repeat, attributes.repeat);
-    }
-  }
-
-  if (mask & CPAlphaMap)
-  {
-    attributes.alpha_map = nxagentPicturePriv(pPicture -> alphaMap) -> picture;
-    if (!nxagentCheckPictureRemoteValue(pPicture, alpha_map, attributes.alpha_map))
-    {
-      valuemask |= CPAlphaMap;
-      nxagentSetPictureRemoteValue(pPicture, alpha_map, attributes.alpha_map);
-    }
-  }
-
-  if (mask & CPAlphaXOrigin)
-  {
-    attributes.alpha_x_origin = pPicture -> alphaOrigin.x;
-    if (!nxagentCheckPictureRemoteValue(pPicture, alpha_x_origin, attributes.alpha_x_origin))
-    {
-      valuemask |= CPAlphaXOrigin;
-      nxagentSetPictureRemoteValue(pPicture, alpha_x_origin, attributes.alpha_x_origin);
-    }
-  }
-
-  if (mask & CPAlphaYOrigin)
-  {
-    attributes.alpha_y_origin = pPicture -> alphaOrigin.y;
-    if (!nxagentCheckPictureRemoteValue(pPicture, alpha_y_origin, attributes.alpha_y_origin))
-    {
-      valuemask |= CPAlphaYOrigin;
-      nxagentSetPictureRemoteValue(pPicture, alpha_y_origin, attributes.alpha_y_origin);
-    }
-  }
-
-  if (mask & CPClipXOrigin)
-  {
-    attributes.clip_x_origin = pPicture -> clipOrigin.x;
-    if (!nxagentCheckPictureRemoteValue(pPicture, clip_x_origin, attributes.clip_x_origin))
-    {
-      valuemask |= CPClipXOrigin;
-      nxagentSetPictureRemoteValue(pPicture, clip_x_origin, attributes.clip_x_origin);
-    }
-  }
-
-  if (mask & CPClipYOrigin)
-  {
-    attributes.clip_y_origin = pPicture -> clipOrigin.y;
-    if (!nxagentCheckPictureRemoteValue(pPicture, clip_y_origin, attributes.clip_y_origin))
-    {
-      valuemask |= CPClipYOrigin;
-      nxagentSetPictureRemoteValue(pPicture, clip_y_origin, attributes.clip_y_origin);
-    }
-  }
-
-  if (mask & CPGraphicsExposure)
-  {
-    attributes.graphics_exposures = (Bool)pPicture -> graphicsExposures;
-    if (!nxagentCheckPictureRemoteValue(pPicture, graphics_exposures, attributes.graphics_exposures))
-    {
-      valuemask |= CPGraphicsExposure;
-      nxagentSetPictureRemoteValue(pPicture, graphics_exposures, attributes.graphics_exposures);
-    }
-  }
-
-  if (mask & CPSubwindowMode)
-  {
-    attributes.subwindow_mode = pPicture -> subWindowMode;
-    if (!nxagentCheckPictureRemoteValue(pPicture, subwindow_mode, attributes.subwindow_mode))
-    {
-      valuemask |= CPSubwindowMode;
-      nxagentSetPictureRemoteValue(pPicture, subwindow_mode, attributes.subwindow_mode);
-    }
-  }
-
+  CHGPICTVAL(CPRepeat,           repeat,             (Bool)pPicture->repeat);
+  CHGPICTVAL(CPAlphaMap,         alpha_map,          nxagentPicturePriv(pPicture->alphaMap)->picture);
+  CHGPICTVAL(CPAlphaXOrigin,     alpha_x_origin,     pPicture->alphaOrigin.x);
+  CHGPICTVAL(CPAlphaYOrigin,     alpha_y_origin,     pPicture->alphaOrigin.y);
+  CHGPICTVAL(CPClipXOrigin,      clip_x_origin,      pPicture->clipOrigin.x);
+  CHGPICTVAL(CPClipYOrigin,      clip_y_origin,      pPicture->clipOrigin.y);
+  CHGPICTVAL(CPGraphicsExposure, graphics_exposures, (Bool)pPicture->graphicsExposures);
+  CHGPICTVAL(CPSubwindowMode,    subwindow_mode,     pPicture->subWindowMode);
   if (mask & CPClipMask)
   {
     /*
@@ -1021,46 +895,10 @@ void nxagentChangePicture(PicturePtr pPicture, Mask mask)
       nxagentSetPictureRemoteValue(pPicture, clip_mask, 0);
     }
   }
-
-  if (mask & CPPolyEdge)
-  {
-    attributes.poly_edge = pPicture -> polyEdge;
-    if (!nxagentCheckPictureRemoteValue(pPicture, poly_edge, attributes.poly_edge))
-    {
-      valuemask |= CPPolyEdge;
-      nxagentSetPictureRemoteValue(pPicture, poly_edge, attributes.poly_edge);
-    }
-  }
-
-  if (mask & CPPolyMode)
-  {
-    attributes.poly_mode = pPicture -> polyMode;
-    if (!nxagentCheckPictureRemoteValue(pPicture, poly_mode, attributes.poly_mode))
-    {
-      valuemask |= CPPolyMode;
-      nxagentSetPictureRemoteValue(pPicture, poly_mode, attributes.poly_mode);
-    }
-  }
-
-  if (mask & CPDither)
-  {
-    attributes.dither = pPicture -> dither;
-    if (!nxagentCheckPictureRemoteValue(pPicture, dither, attributes.dither))
-    {
-      valuemask |= CPDither;
-      nxagentSetPictureRemoteValue(pPicture, dither, attributes.dither);
-    }
-  }
-
-  if (mask & CPComponentAlpha)
-  {
-    attributes.component_alpha = pPicture -> componentAlpha;
-    if (!nxagentCheckPictureRemoteValue(pPicture, component_alpha, attributes.component_alpha))
-    {
-      valuemask |= CPComponentAlpha;
-      nxagentSetPictureRemoteValue(pPicture, component_alpha, attributes.component_alpha);
-    }
-  }
+  CHGPICTVAL(CPPolyEdge,         poly_edge,          pPicture->polyEdge);
+  CHGPICTVAL(CPPolyMode,         poly_mode,          pPicture->polyMode);
+  CHGPICTVAL(CPDither,           dither,             pPicture->dither);
+  CHGPICTVAL(CPComponentAlpha,   component_alpha,    pPicture->componentAlpha);
 
   #ifdef TEST
   if (pPicture && pPicture->pDrawable && pPicture -> pDrawable -> type == DRAWABLE_PIXMAP)
