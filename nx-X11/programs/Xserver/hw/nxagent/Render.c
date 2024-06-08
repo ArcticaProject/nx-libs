@@ -553,14 +553,14 @@ void nxagentRenderRealizeCursor(ScreenPtr pScreen, CursorPtr pCursor)
 int nxagentCreatePicture(PicturePtr pPicture, Mask mask)
 {
   XRenderPictureAttributes attributes;
-  unsigned long            valuemask=0;
+  unsigned long            valuemask = 0;
 
   #ifdef DEBUG
   fprintf(stderr, "%s: Function called with picture at [%p] and mask [%d].\n", __func__,
               (void *) pPicture, mask);
   #endif
 
-  if (pPicture == NULL)
+  if (!pPicture)
   {
     return 0;
   }
@@ -611,15 +611,15 @@ int nxagentCreatePicture(PicturePtr pPicture, Mask mask)
   fprintf(stderr, "%s: picture format [%p]\n", __func__, (void *)pPicture->pFormat);
   #endif
 
-  if (pPicture -> pFormat != NULL)
+  if (pPicture -> pFormat)
   {
     pForm = nxagentMatchingFormats(pPicture -> pFormat);
     nxagentPrintFormat(pForm);
   }
 
-  if (pForm == NULL)
+  if (!pForm)
   {
-    fprintf(stderr, "%s: WARNING! The requested format was not found.\n", __func__);
+    fprintf(stderr, "%s: WARNING! The requested format was not found - not creating picture.\n", __func__);
     return 0;
   }
 
