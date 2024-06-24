@@ -216,7 +216,7 @@ nxagentCleanGlyphs(xGlyphInfo  *gi,
 
       bytesToClean = bytesPerLine * height;
 
-      #ifdef DUBUG
+      #ifdef DEBUG
       fprintf(stderr, "%s: Found glyph with depth 24, bytes to clean is %d"
                   "width in bits is %d bytes per line [%d] height [%d].\n", __func__,
 	              bytesToClean, widthInBits, bytesPerLine, height);
