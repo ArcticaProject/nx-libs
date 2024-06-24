@@ -202,8 +202,8 @@ nxagentCleanGlyphs(xGlyphInfo  *gi,
   int height = gi -> height;
 
   #ifdef DEBUG
-  fprintf(stderr, "%s: Found a Glyph with Depth %d, width %d, pad %d.\n", __func__,
-          depth, gi -> width, BitmapPad(dpy));
+  fprintf(stderr, "%s: Found a Glyph with Depth [%d], width [%d], pad [%d], nglyphs [%d].\n", __func__,
+          depth, gi -> width, BitmapPad(dpy), nglyphs);
   #endif
 
   while (nglyphs > 0)
@@ -217,8 +217,8 @@ nxagentCleanGlyphs(xGlyphInfo  *gi,
       bytesToClean = bytesPerLine * height;
 
       #ifdef DEBUG
-      fprintf(stderr, "%s: Found glyph with depth 24, bytes to clean is %d"
-                  "width in bits is %d bytes per line [%d] height [%d].\n", __func__,
+      fprintf(stderr, "%s: Found glyph with depth 24, bytes to clean is [%d]"
+                  "width in bits is [%d] bytes per line [%d] height [%d].\n", __func__,
 	              bytesToClean, widthInBits, bytesPerLine, height);
       #endif
 
@@ -238,7 +238,7 @@ nxagentCleanGlyphs(xGlyphInfo  *gi,
       }
 
       #ifdef DUMP
-      fprintf(stderr, "%s: depth %d, bytesToClean %d, scanline: ", __func__, depth, bytesToClean);
+      fprintf(stderr, "%s: depth [%d], bytesToClean [%d], scanline: ", __func__, depth, bytesToClean);
       for (int i = 0; i < bytesPerLine; i++)
       {
         fprintf(stderr, "[%d]", images[i]);
@@ -270,8 +270,8 @@ nxagentCleanGlyphs(xGlyphInfo  *gi,
       bitsToClean &= 7;
 
       #ifdef DEBUG
-      fprintf(stderr, "%s: bitsToClean &=7 is %d, bytesToCLean is %d."
-              " byte_order is %d, bitmap_bit_order is %d.\n", __func__, bitsToClean, bytesToClean,
+      fprintf(stderr, "%s: bitsToClean &=7 is [%d], bytesToCLean is [%d]."
+              " byte_order is [%d], bitmap_bit_order is [%d].\n", __func__, bitsToClean, bytesToClean,
               ImageByteOrder(dpy), BitmapBitOrder(dpy));
       #endif
 
@@ -285,7 +285,7 @@ nxagentCleanGlyphs(xGlyphInfo  *gi,
             images[i * bytesPerLine - j] = 0x00;
 
             #ifdef DEBUG
-            fprintf(stderr, "%s: byte_order == bitmap_bit_order, cleaning %d, i=%d, j=%d.\n", __func__,
+            fprintf(stderr, "%s: byte_order == bitmap_bit_order, cleaning [%d], i=[%d], j=[%d].\n", __func__,
                     (i * bytesPerLine - j), i, j);
             #endif
 
@@ -298,7 +298,7 @@ nxagentCleanGlyphs(xGlyphInfo  *gi,
             images[i * bytesPerLine - j] = 0x00;
 
             #ifdef DEBUG
-            fprintf(stderr, "%s: byte_order %d, bitmap_bit_order %d, cleaning %d, i=%d, j=%d.\n", __func__,
+            fprintf(stderr, "%s: byte_order [%d], bitmap_bit_order [%d], cleaning [%d], i=[%d], j=[%d].\n", __func__,
                     ImageByteOrder(dpy), BitmapBitOrder(dpy), (i * bytesPerLine - j), i, j);
             #endif
 
@@ -310,7 +310,7 @@ nxagentCleanGlyphs(xGlyphInfo  *gi,
           images[i * bytesPerLine - j] &= 0xff << bitsToClean;
 
           #ifdef DEBUG
-          fprintf(stderr, "%s: byte_order MSBFirst, cleaning %d, i=%d, j=%d.\n", __func__,
+          fprintf(stderr, "%s: byte_order MSBFirst, cleaning [%d], i=[%d], j=[%d].\n", __func__,
                   (i * bytesPerLine - j), i, j);
           #endif
         }
@@ -319,14 +319,14 @@ nxagentCleanGlyphs(xGlyphInfo  *gi,
           images[i * bytesPerLine - j] &= 0xff >> bitsToClean;
 
           #ifdef DEBUG
-          fprintf(stderr, "%s: byte_order LSBFirst, cleaning %d, i=%d, j=%d.\n", __func__,
+          fprintf(stderr, "%s: byte_order LSBFirst, cleaning [%d], i=[%d], j=[%d].\n", __func__,
                   (i * bytesPerLine - j), i, j);
           #endif
         }
       }
 
       #ifdef DUMP
-      fprintf(stderr, "%s: depth %d, bytesToClean %d, scanline: ", __func__, depth, bytesToClean);
+      fprintf(stderr, "%s: depth [%d], bytesToClean [%d], scanline: ", __func__, depth, bytesToClean);
       for (int i = 0; i < bytesPerLine; i++)
       {
         fprintf(stderr, "[%d]", images[i]);
@@ -351,12 +351,12 @@ nxagentCleanGlyphs(xGlyphInfo  *gi,
       bytesToClean = bytesPerLine - widthInBytes;
 
       #ifdef DEBUG
-      fprintf(stderr, "%s: nglyphs is %d, width of glyph in bits is %d, in bytes is %d.\n", __func__,
+      fprintf(stderr, "%s: nglyphs is [%d], width of glyph in bits is [%d], in bytes is [%d].\n", __func__,
               nglyphs, widthInBits, widthInBytes);
 
-      fprintf(stderr, "%s: bytesPerLine is %d bytes, there are %d scanlines.\n", __func__, bytesPerLine, height);
+      fprintf(stderr, "%s: bytesPerLine is [%d] bytes, there are [%d] scanlines.\n", __func__, bytesPerLine, height);
 
-      fprintf(stderr, "%s: Bytes to clean for each scanline are %d.\n", __func__, bytesToClean);
+      fprintf(stderr, "%s: Bytes to clean for each scanline are [%d].\n", __func__, bytesToClean);
       #endif
 
       if (bytesToClean > 0)
@@ -373,7 +373,7 @@ nxagentCleanGlyphs(xGlyphInfo  *gi,
           }
 
           #ifdef DUMP
-          fprintf(stderr, "%s: depth %d, bytesToClean %d, scanline: ", __func__, depth, bytesToClean);
+          fprintf(stderr, "%s: depth [%d], bytesToClean [%d], scanline: ", __func__, depth, bytesToClean);
           for (int i = 0; i < bytesPerLine; i++)
           {
             fprintf(stderr, "[%d]", images[i]);
@@ -406,7 +406,7 @@ nxagentCleanGlyphs(xGlyphInfo  *gi,
     else
     {
       #ifdef WARNING
-      fprintf(stderr, "%s: Unrecognized glyph, depth is not 8/16/24/32, it appears to be %d.\n", __func__,
+      fprintf(stderr, "%s: Unrecognized glyph, depth is not 8/16/24/32, it appears to be [%d].\n", __func__,
               depth);
       #endif
 
@@ -454,8 +454,8 @@ void nxagentRenderExtensionInit(void)
                       minor_version < SERVER_RENDER_MINOR_VERSION))
     {
       #ifdef TEST
-      fprintf(stderr, "Info: Local render version %d.%d is higher "
-                  "than remote version %d.%d.\n", SERVER_RENDER_MAJOR_VERSION, SERVER_RENDER_MINOR_VERSION,
+      fprintf(stderr, "Info: Local render version [%d.%d] is higher "
+                  "than remote version [%d.%d].\n", SERVER_RENDER_MAJOR_VERSION, SERVER_RENDER_MINOR_VERSION,
                       major_version, minor_version);
 
       fprintf(stderr, "Info: Lowering the render version reported to clients.\n");
@@ -467,8 +467,8 @@ void nxagentRenderExtensionInit(void)
     else
     {
       #ifdef TEST
-      fprintf(stderr, "%s: Local render version %d.%d "
-                  "matches remote version %d.%d.\n", __func__, SERVER_RENDER_MAJOR_VERSION, SERVER_RENDER_MINOR_VERSION,
+      fprintf(stderr, "%s: Local render version [%d.%d] "
+                  "matches remote version [%d.%d].\n", __func__, SERVER_RENDER_MAJOR_VERSION, SERVER_RENDER_MINOR_VERSION,
                       major_version, minor_version);
       #endif
 
@@ -2357,10 +2357,10 @@ void nxagentDisconnectPicture(void * p0, XID x1, void* p2)
   Bool *pBool = (Bool *) p2;
 
   #ifdef TEST
-  fprintf(stderr, "nxagentDisconnectPicture: Called with bool [%d] and picture at [%p].\n",
+  fprintf(stderr, "%s: Called with bool [%d] and picture at [%p].\n", __func__,
               *pBool, (void *) pPicture);
 
-  fprintf(stderr, "nxagentDisconnectPicture: Virtual picture is [%ld].\n",
+  fprintf(stderr, "%s: Virtual picture is [%ld].\n", __func__,
               nxagentPicture(pPicture));
   #endif
 
