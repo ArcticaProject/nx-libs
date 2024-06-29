@@ -100,7 +100,7 @@ jobs:
             apt-get install -q -y \
               libpixman-1-dev libjpeg-dev libxcomposite-dev libxdamage-dev \
               libxml2-dev libxfont-dev libxinerama-dev libxpm-dev libxrandr-dev \
-              libxtst-dev x11proto-fonts-dev
+              libxtst-dev x11proto-fonts-dev libtirpc-dev
             # soft requirements
             apt-get install -q -y \
               quilt x11-xkb-utils
