@@ -27,8 +27,6 @@ jobs:
           - { container: 'debian:sid', cc-version: clang }
           - { container: 'quay.io/centos/centos:7', cc-version: gcc }
           - { container: 'quay.io/centos/centos:7', cc-version: clang }
-          - { container: 'quay.io/centos/centos:stream8', cc-version: gcc }
-          - { container: 'quay.io/centos/centos:stream8', cc-version: clang }
           - { container: 'quay.io/centos/centos:stream9', cc-version: gcc }
           - { container: 'quay.io/centos/centos:stream9', cc-version: clang }
           - { container: 'fedora:latest', cc-version: gcc }
