@@ -14731,7 +14731,19 @@ static void handleAlertInLoop()
     {
       char caption[DEFAULT_STRING_LENGTH];
 
-      strcpy(caption, ALERT_CAPTION_PREFIX);
+      const char* caption_prefix = getenv("NX_DIALOG_CAPTIONPREFIX");
+
+      if (!caption_prefix) {
+          // Use the hard-coded 'NX -' as default.
+          strncpy(caption, ALERT_CAPTION_PREFIX, DEFAULT_STRING_LENGTH);
+          caption[DEFAULT_STRING_LENGTH-1] = '\0';
+      }
+      else
+      {
+          // Use what gets provided via NX_DIALOG_CAPTIONPREFIX (used in X2Go)
+          strncpy(caption, caption_prefix, DEFAULT_STRING_LENGTH-1);
+          caption[DEFAULT_STRING_LENGTH-1] = '\0';
+      }
 
       int length = strlen(sessionId);
 
