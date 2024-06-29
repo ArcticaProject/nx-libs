@@ -261,7 +261,7 @@ install-full:
 	cp -aL nx-X11/exports/include/* nx-X11/.build-exports/include
 
 	# copy libs (for libnx-x11), we want the targets of the links
-	. replace.sh; set -x; find nx-X11/exports/lib/ -name "libNX*.so" | while read libpath; do \
+	. ./replace.sh; set -x; find nx-X11/exports/lib/ -name "libNX*.so" | while read libpath; do \
 	    libfile=$$(basename $$libpath); \
 	    libdir=$$(dirname $$libpath); \
 	    link=$$(readlink $$libpath); \
@@ -275,7 +275,7 @@ install-full:
 	$(INSTALL_SYMLINK) ../../libNX_X11.so.6 $(DESTDIR)$(USRLIBDIR)/libX11.so.6
 	$(INSTALL_SYMLINK) ../../libNX_X11.so.6.3.0 $(DESTDIR)$(USRLIBDIR)/libX11.so.6.3.0
 
-	. replace.sh; set -x; find nx-X11/.build-exports/include/{nx*,GL} -type d | \
+	. ./replace.sh; set -x; find nx-X11/.build-exports/include/{nx*,GL} -type d | \
 	    while read dirname; do \
 	        $(INSTALL_DIR) "$$(string_rep "$$dirname" nx-X11/.build-exports/include "$(DESTDIR)$(INCLUDEDIR)/")"; \
 	        $(INSTALL_FILE) $${dirname}/*.h \
