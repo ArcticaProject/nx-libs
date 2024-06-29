@@ -4505,7 +4505,7 @@ int nxagentWaitEvents(Display *dpy, useconds_t msec)
   return 1;
 }
 
-void ForwardClientMessage(ClientPtr client, xSendEventReq *stuff)
+Bool ForwardClientMessage(ClientPtr client, xSendEventReq *stuff)
 {
     Atom netwmstate = MakeAtom("_NET_WM_STATE", strlen("_NET_WM_STATE"), False);
     Atom wmchangestate = MakeAtom("WM_CHANGE_STATE", strlen("WM_CHANGE_STATE"), False);
@@ -4548,7 +4548,7 @@ void ForwardClientMessage(ClientPtr client, xSendEventReq *stuff)
                 #endif
             }
             else
-                return; // ERROR!
+                return False; // ERROR!
 
             #ifdef DEBUG
             fprintf(stderr, "%s: window [0x%lx]\n", __func__, X.xclient.window);
@@ -4568,8 +4568,10 @@ void ForwardClientMessage(ClientPtr client, xSendEventReq *stuff)
             fprintf(stderr, "%s: send to window [0x%lx]\n", __func__, dest);
             fprintf(stderr, "%s: return Status [%d]\n", __func__, stat);
             #endif
+            return True;
         }
     }
+    return False;
 }
 
 #ifdef NX_DEBUG_INPUT
