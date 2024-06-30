@@ -58,8 +58,6 @@ INSTPGMFLAGS =
 
 #define FBLibs PreFbLibs FbPostFbLibs
 
-#define MiExtLibs $(SHADOW)
-
 #define AllFBLibs PreFbLibs $(FB) PostFbLibs
 
 #if BuildGlxExt
@@ -76,9 +74,6 @@ INSTPGMFLAGS =
 #if BuildXKB
          XKBEXT = xkb/LibraryTargetName(xkb) dependLib($(OS))
          XKBDIR = xkb
-#if defined(XorgVersion)
-    XF86XKBOBJS = xkb/xf86KillSrv.o xkb/xf86VT.o xkb/xf86Private.o
-#endif
 #endif
 #if BuildDBE
          DBEEXT = dbe/LibraryTargetName(dbe)
@@ -135,8 +130,6 @@ INSTPGMFLAGS =
         BSDEMUL = $(DEPXBSDLIB)
              FB = fb/LibraryTargetName(fb)
          DAMAGE = miext/damage/LibraryTargetName(damage)
-         SHADOW = miext/shadow/LibraryTargetName(shadow)
-          LAYER = miext/layer/LibraryTargetName(layer)
 #if !HasFfs && (defined(mingwArchitecture) || defined(cygwinArchitecture))
              /* Order of libraries is important when linking in mingw or
               * cygwin. libmi.a requires ffs from libdix.a. So it is added
@@ -147,21 +140,11 @@ INSTPGMFLAGS =
 #endif
    MIINITEXTOBJ = mi/miinitext.o
             DIX = dix/LibraryTargetName(dix)
-#if UsbMouseSupport
-#if !HasLibUsb
-            USB = $(XF86OSSRC)/bsd/libusb/LibraryTargetName(usb)
-#else
-            USB = UsbHidLib
-#endif
-#endif
 #ifdef ServerExtraSysLibs
    EXTRASYSLIBS = ServerExtraSysLibs
 #endif
-#if HasPam && HasPamMisc
-        PAMLIBS = PamLibraries PamMiscLibraries
-#endif
         SYSLIBS = $(ZLIB) MathLibrary $(USB) \
-		  $(PAMLIBS)  $(EXTRASYSLIBS)
+		  $(EXTRASYSLIBS)
 #if !HasCbrt
            CBRT = mi/LibraryTargetName(cbrt)
 #endif
@@ -195,11 +178,7 @@ XCOMM
 FBSUBDIR = fb
 MIDAMAGEDIR = miext/damage
 FBDIR  = fb
-#ifndef Win32Architecture
 NXAGENTDDXDIR = hw/nxagent
-#else
-NXAGENTDDXDIR = hw
-#endif
 
 NXAGENTDIRS = $(STDDIRS) $(FBDIR) $(MIDAMAGEDIR) $(NXAGENTDDXDIR) $(DEPDIRS)
 
@@ -407,7 +386,7 @@ nxagent_static_nolibs:  nxagent
 #endif /* NXAgentServer */
 
 
-MIEXTDIRS = $(SHADOWDIR) $(LAYERDIR) $(ROOTLESSDIR) $(MIDAMAGEDIR)
+MIEXTDIRS = $(MIDAMAGEDIR)
 IPLANDIRS = $(IPLAN2P2DIR) $(IPLAN2P4DIR) $(IPLAN2P8DIR)
 DDXDIRS = $(DECWSDDXDIR) $(SUNDDXDIR) \
 	  $(HPDDXDIR) $(XFREE86DDXDIR) \

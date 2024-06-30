@@ -199,15 +199,6 @@ NX_VERSION_CURRENT_STRING  = nxVersionString
 #endif
 
 /*
- * When this is set, modules are always built separately from the libraries
- * that statically link into an Xserver.  This is for platforms where the
- * module and native object formats are different (e.g., OS/2).
- */
-#ifndef BuildModuleInSubdir
-#define BuildModuleInSubdir	NO
-#endif
-
-/*
  * Default settings for which X Servers to build.
  */
 

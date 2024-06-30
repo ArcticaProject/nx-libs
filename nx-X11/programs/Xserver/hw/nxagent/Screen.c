@@ -121,7 +121,7 @@ is" without express or implied warranty.
 void nxagentShowPixmap(PixmapPtr pPixmap, int x, int y, int width, int height);
 
 void nxagentFbRestoreArea(PixmapPtr pPixmap, WindowPtr pWin, int xSrc, int ySrc, int width,
-                              int height, int xDst, int yDst)
+                              int height, int xDst, int yDst);
 #endif
 
 #ifdef WATCH
@@ -303,7 +303,8 @@ Bool nxagentIsParentOf(Display *d, XlibWindow possible_parent, XlibWindow candid
     SAFE_XFree(children);
 
     #ifdef TEST
-    fprintf(stderr, "%s: parent of full screen window [%p] root [%p] possible_parent [%p] candidate [%p]\n", __func__, parent, root, possible_parent, candidate);
+    fprintf(stderr, "%s: parent of full screen window [%p] root [%p] possible_parent [%p] candidate [%p]\n",
+	    __func__, (void *)parent, (void *)root, (void *)possible_parent, (void *)candidate);
     #endif
     return (parent == possible_parent);
   }
@@ -557,7 +558,7 @@ void nxagentSetScreenSaverTime(void)
  * Returning False the SaveScreens() function (which calls this one)
  * tries to build a screen-saver creating a new window. In some cases
  * we do not want this so we return True. If we want the dix to take
- * care fo blanking we return False.
+ * care of blanking we return False.
  */
 static Bool nxagentSaveScreen(ScreenPtr pScreen, int what)
 {
@@ -661,8 +662,8 @@ void nxagentInitViewportFrame(ScreenPtr pScreen, WindowPtr pRootWin)
   }
 
   /*
-   * It is not necessary create the windows on the real X server. But this
-   * windows are not visible. Create them it is not a great effort, and avoids
+   * It is not necessary create the windows on the real X server. But these
+   * windows are not visible. Create them, it is not a great effort, and avoids
    * many errors.
    *
    *  nxagentScreenTrap = True;
@@ -1533,8 +1534,8 @@ N/A
     pScreen->SaveScreen = nxagentSaveScreen;
     pScreen->GetImage = nxagentGetImage;
     pScreen->GetSpans = nxagentGetSpans;
-    pScreen->PointerNonInterestBox = (void (*)()) 0;
-    pScreen->SourceValidate = (void (*)()) 0;
+    pScreen->PointerNonInterestBox = NULL;
+    pScreen->SourceValidate = NULL;
 
     pScreen->CreateScreenResources = nxagentCreateScreenResources;
 
@@ -1610,12 +1611,12 @@ N/A
      * Backing store procedures.
      */
 
-    pScreen->SaveDoomedAreas = (void (*)()) 0;
-    pScreen->RestoreAreas = (RegionPtr (*)()) 0;
-    pScreen->ExposeCopy = (void (*)()) 0;
-    pScreen->TranslateBackingStore = (RegionPtr (*)()) 0;
-    pScreen->ClearBackingStore = (RegionPtr (*)()) 0;
-    pScreen->DrawGuarantee = (void (*)()) 0;
+    pScreen->SaveDoomedAreas = NULL;
+    pScreen->RestoreAreas = NULL;
+    pScreen->ExposeCopy = NULL;
+    pScreen->TranslateBackingStore = NULL;
+    pScreen->ClearBackingStore = NULL;
+    pScreen->DrawGuarantee = NULL;
 
     if (enableBackingStore)
     {
@@ -1815,13 +1816,6 @@ N/A
         #endif
       }
 
-#ifdef X2GO
-      /*
-       * Setting WM_CLASS to "X2GoAgent" when running in X2Go Agent mode
-       * we need it to properly display all window parameters by some WMs
-       * (for example on Maemo)
-       */
-#endif
       {
         #ifdef TEST
         fprintf(stderr, "%s: Setting WM_CLASS and WM_NAME for window with id [%ld].\n", __func__,
@@ -1833,6 +1827,11 @@ N/A
 #ifdef X2GO
         if (nxagentX2go)
         {
+          /*
+           * Setting WM_CLASS to "X2GoAgent" when running in X2Go Agent mode
+           * we need it to properly display all window parameters by some WMs
+           * (for example on Maemo)
+           */
           hint.res_name = strdup("X2GoAgent");
           hint.res_class = strdup("X2GoAgent");
         }
@@ -3825,7 +3824,7 @@ void nxagentDropOutput(RROutputPtr o)
       if (c->outputs[i] == o)
       {
         #ifdef DEBUG
-        fprintf(stderr, "%s: output [%s] is in use by crtc [%p], removing it from there\n", __func__, o->name, c);
+        fprintf(stderr, "%s: output [%s] is in use by crtc [%p], removing it from there\n", __func__, o->name, (void *)c);
         #endif
         RRCrtcSet(c, NULL, 0, 0, RR_Rotate_0, 0, NULL);
       }

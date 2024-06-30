@@ -440,8 +440,8 @@ fbBltOne (FbStip    *src,
 
 #define Mask24(x,r) (Mask24Pos(x,r) < FB_UNIT ? \
 		     (Mask24Pos(x,r) < 0 ? \
-		      0xffffff >> Mask24Neg (x,r) : \
-		      0xffffff << Mask24Check(x,r)) : 0)
+		      0xffffffU >> Mask24Neg (x,r) : \
+		      0xffffffU << Mask24Check(x,r)) : 0)
 
 #define SelMask24(b,n,r)	((((b) >> n) & 1) * Mask24(n,r))
 
@@ -804,12 +804,12 @@ fbBltPlane (FbBits	    *src,
 #ifdef FB_24BIT
     if (srcBpp == 24)
     {
-	int w = 24;
+	int tmpw = 24;
 
 	rot0 = FbFirst24Rot (srcX);
-	if (srcX + w > FB_UNIT)
-	    w = FB_UNIT - srcX;
-	srcMaskFirst = FbRot24(pm,rot0) & FbBitsMask(srcX,w);
+	if (srcX + tmpw > FB_UNIT)
+	    tmpw = FB_UNIT - srcX;
+	srcMaskFirst = FbRot24(pm,rot0) & FbBitsMask(srcX,tmpw);
     }
     else
 #endif

@@ -140,7 +140,7 @@ static int nxagentResChangedFlag = 0;
 #endif
 
 #ifdef NXAGENT_SERVER
-int nxagentFindClientResource(int client, RESTYPE type, void * value)
+Bool nxagentFindClientResource(int client, RESTYPE type, void * value)
 {
   for (int i = 0; i < clientTable[client].buckets; i++)
   {
@@ -156,15 +156,15 @@ int nxagentFindClientResource(int client, RESTYPE type, void * value)
                         pResource -> type, client);
         #endif
 
-        return 1;
+        return True;
       }
     }
   }
 
-  return 0;
+  return False;
 }
 
-int nxagentSwitchResourceType(int client, RESTYPE type, void * value)
+static Bool nxagentSwitchResourceType(int client, RESTYPE type, void * value)
 {
   RESTYPE internalType = 0;
 
@@ -182,7 +182,7 @@ int nxagentSwitchResourceType(int client, RESTYPE type, void * value)
   }
   else
   {
-    return 0;
+    return False;
   }
 
   if (client == serverClient -> index)
@@ -192,7 +192,7 @@ int nxagentSwitchResourceType(int client, RESTYPE type, void * value)
                 client);
     #endif
 
-    return 0;
+    return False;
   }
 
   for (int i = 0; i < clientTable[serverClient -> index].buckets; i++)
@@ -212,12 +212,12 @@ int nxagentSwitchResourceType(int client, RESTYPE type, void * value)
 
         FreeResource(pResource -> id, RT_NONE);
 
-        return 1;
+        return True;
       }
     }
   }
 
-  return 0;
+  return False;
 }
 #endif /* NXAGENT_SERVER */
 

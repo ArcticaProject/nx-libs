@@ -581,12 +581,13 @@ XkbError:
             The original nxagent only supports model/layout values
             here. It uses these values together with the default rules
             and empty variant and options. We use a more or less
-            compatible hack here: The special keyword rlmvo for model
+            compatible hack here: The special keyword rmlvo for model
             means that the layout part of the string will contain a
             full RMLVO config, separated by #, e.g.
-            rlmvo/base#pc105#de,us#nodeadkeys#lv3:rwin_switch
+            rmlvo/base#pc105#de,us#nodeadkeys#lv3:rwin_switch
           */
-          if (strncmp(nxagentKeyboard, "rlmvo/", 6) == 0)
+          /* support "rlmvo" (spelled wrong) which was being used for some time */
+          if ((strncmp(nxagentKeyboard, "rmlvo/", 6) == 0) || (strncmp(nxagentKeyboard, "rlmvo/", 6) == 0))
           {
             const char * sep = "#";
             char * rmlvo = strdup(&nxagentKeyboard[i+1]);
@@ -707,7 +708,7 @@ XkbError:
         /* we don't need the remote keyboard information anymore */
         nxagentXkbClearRemoteNames();
 
-        xkb = XkbGetKeyboard(nxagentDisplay, XkbGBN_AllComponentsMask, XkbUseCoreKbd);
+        xkb = XkbGetKeyboard(nxagentDisplay, XkbAllComponentsMask, XkbUseCoreKbd);
 
         if (xkb && xkb->geom)
         {
@@ -757,19 +758,34 @@ XkbError:
           {
             nxagentNumLockKeycode = 0;
             #ifdef TEST
-            fprintf(stderr, "%s: Numock key is mapped to some other modifier - disabling special treatment\n", __func__);
+            fprintf(stderr, "%s: NumLock key is mapped to some other modifier - disabling special treatment\n", __func__);
             #endif
           }
         }
 
+        /* FIXME: we should use the defaults here for any string that's empty. Unfortunately they are only set
+           in the Makefile in xkb directory, so we cannot simply refer to them here. Let's hardcode them for now. */
+        #define XKB_DFLT_RULES_FILE "base"
+        #define XKB_DFLT_MODEL "pc102"
+        #define XKB_DFLT_LAYOUT "us"
+        #define XKB_DFLT_VARIANT ""
+        #define XKB_DFLT_OPTIONS ""
+
         #ifdef DEBUG
         fprintf(stderr, "%s: Going to set rules and init device: "
-                        "[rules='%s',model='%s',layout='%s',variant='%s',options='%s'].\n", __func__,
-                        rules?rules:"(default)", model?model:"(default)", layout?layout:"(default)",
-                        variant?variant:"(default)", options?options:"(default)");
+                        "[rules='%s', model='%s', layout='%s', variant='%s', options='%s'].\n", __func__,
+                             rules   ? rules   : "<"XKB_DFLT_RULES_FILE ">",
+                             model   ? model   : "<"XKB_DFLT_MODEL      ">",
+                             layout  ? layout  : "<"XKB_DFLT_LAYOUT     ">",
+                             variant ? variant : "<"XKB_DFLT_VARIANT    ">",
+                             options ? options : "<"XKB_DFLT_OPTIONS    ">");
         #endif
 
-        XkbSetRulesDflts(rules, model, layout, variant, options);
+        XkbSetRulesDflts(rules   ? rules   : XKB_DFLT_RULES_FILE,
+                         model   ? model   : XKB_DFLT_MODEL,
+                         layout  ? layout  : XKB_DFLT_LAYOUT,
+                         variant ? variant : XKB_DFLT_VARIANT,
+                         options ? options : XKB_DFLT_OPTIONS);
         XkbInitKeyboardDeviceStruct((void *)pDev, &names, &keySyms, modmap,
                                     nxagentBell, nxagentChangeKeyboardControl);
 

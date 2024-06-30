@@ -23,13 +23,13 @@
 /*                                                                        */
 /**************************************************************************/
 
-#ifdef TEST
+#if defined(TEST) || defined(DEBUG)
 /*
  * Simple table used to translate a request
  * opcode to the name of the X request.
  */
 
-static char *nxagentRequestLiteral[] =
+_X_UNUSED static char *nxagentRequestLiteral[] =
 {
   "None",
   "CreateWindow",
@@ -161,7 +161,7 @@ static char *nxagentRequestLiteral[] =
   "NoOperation"
 };
 
-static char *nxagentRenderRequestLiteral[] =
+_X_UNUSED static char *nxagentRenderRequestLiteral[] =
 {
   "RenderQueryVersion",
   "RenderQueryPictFormats",
@@ -202,7 +202,7 @@ static char *nxagentRenderRequestLiteral[] =
   "RenderCreateConicalGradient"
 };
 
-static char *nxagentShmRequestLiteral[] =
+_X_UNUSED static char *nxagentShmRequestLiteral[] =
 {
   "ShmQueryVersion",
   "ShmAttach",
@@ -211,4 +211,13 @@ static char *nxagentShmRequestLiteral[] =
   "ShmGetImage",
   "ShmCreatePixmap"
 };
-#endif /* TEST */
+
+/* see include/pixmap.h */
+_X_UNUSED static char *nxagentDrawableTypeLiteral[] =
+{
+  "DRAWABLE_WINDOW",
+  "DRAWABLE_PIXMAP",
+  "UNDRAWABLE_WINDOW",
+  "DRAWABLE_BUFFER"
+};
+#endif /* TEST || DEBUG */

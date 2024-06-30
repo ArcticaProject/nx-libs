@@ -57,6 +57,11 @@
 */
 static int __glXDispatch(ClientPtr client)
 {
+#ifdef TEST
+    REQUEST(xGLXSingleReq);
+    CARD8 opcode = stuff->glxCode;
+#endif
+
     int retval;
 
     /*
@@ -70,7 +75,7 @@ static int __glXDispatch(ClientPtr client)
     fprintf(stderr, "__glXDispatch: Going to dispatch GLX operation [%d] for client [%d].\n", 
                 opcode, client -> index);
     #endif
-    
+
     retval = xorg__glXDispatch(client);
 
     nxagentGlxTrap = False;

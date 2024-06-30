@@ -73,11 +73,6 @@ in this Software without prior written authorization from The Open Group.
 # define DEFAULTPOLICYFILE NULL
 #endif
 
-#if defined(WIN32) || defined(__CYGWIN__)
-#include <nx-X11/Xos.h>
-#undef index
-#endif
-
 static int SecurityErrorBase;  /* first Security error number */
 static int SecurityEventBase;  /* first Security event number */
 

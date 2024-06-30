@@ -256,7 +256,7 @@ static void freeClientPrivates(ClientPtr client)
 void nxagentGuessClientHint(ClientPtr client, Atom property, char *data)
 {
   #ifdef TEST
-  fprintf(stderr, "++++++nxagentGuessClientHint: Client [%d] setting property [%s] as [%s].\n",
+  fprintf(stderr, "nxagentGuessClientHint: Client [%d] setting property [%s] as [%s].\n",
               client -> index, validateString(NameForAtom(property)), validateString(data));
   #endif
 
@@ -267,7 +267,7 @@ void nxagentGuessClientHint(ClientPtr client, Atom property, char *data)
       if (strcmp(data, "nxclient") == 0)
       {
         #ifdef TEST
-        fprintf(stderr, "++++++nxagentGuessClientHint: Detected nxclient as [%d].\n", client -> index);
+        fprintf(stderr, "nxagentGuessClientHint: Detected nxclient as [%d].\n", client -> index);
         #endif
 
         nxagentClientHint(client) = NXCLIENT_WINDOW;
@@ -275,7 +275,7 @@ void nxagentGuessClientHint(ClientPtr client, Atom property, char *data)
       else if (strstr(data, "java"))
       {
         #ifdef TEST
-        fprintf(stderr, "++++++nxagentGuessClientHint: Detected java as [%d].\n", client -> index);
+        fprintf(stderr, "nxagentGuessClientHint: Detected java as [%d].\n", client -> index);
         #endif
 
         nxagentClientHint(client) = JAVA_WINDOW;
@@ -289,7 +289,7 @@ void nxagentGuessClientHint(ClientPtr client, Atom property, char *data)
             strncmp(data, "msgBox", 6) == 0)
     {
       #ifdef TEST
-      fprintf(stderr, "++++++nxagentGuessClientHint: Detected nxclient dialog as [%d].\n", client -> index);
+      fprintf(stderr, "nxagentGuessClientHint: Detected nxclient dialog as [%d].\n", client -> index);
       #endif
 
       nxagentClientHint(client) = NXCLIENT_DIALOG;

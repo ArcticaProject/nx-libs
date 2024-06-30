@@ -202,8 +202,8 @@ nxagentCleanGlyphs(xGlyphInfo  *gi,
   int height = gi -> height;
 
   #ifdef DEBUG
-  fprintf(stderr, "nxagentCleanGlyphs: Found a Glyph with Depth %d, width %d, pad %d.\n",
-          depth, gi -> width, BitmapPad(dpy));
+  fprintf(stderr, "%s: Found a Glyph with Depth [%d], width [%d], pad [%d], nglyphs [%d].\n", __func__,
+          depth, gi -> width, BitmapPad(dpy), nglyphs);
   #endif
 
   while (nglyphs > 0)
@@ -216,10 +216,10 @@ nxagentCleanGlyphs(xGlyphInfo  *gi,
 
       bytesToClean = bytesPerLine * height;
 
-      #ifdef DUBUG
-      fprintf(stderr, "nxagentCleanGlyphs: Found glyph with depth 24, bytes to clean is %d"
-              "width in bits is %d bytes per line [%d] height [%d].\n", bytesToClean,
-                      widthInBits, bytesPerLine, height);
+      #ifdef DEBUG
+      fprintf(stderr, "%s: Found glyph with depth 24, bytes to clean is [%d]"
+                  "width in bits is [%d] bytes per line [%d] height [%d].\n", __func__,
+	              bytesToClean, widthInBits, bytesPerLine, height);
       #endif
 
       if (ImageByteOrder(dpy) == LSBFirst)
@@ -238,7 +238,7 @@ nxagentCleanGlyphs(xGlyphInfo  *gi,
       }
 
       #ifdef DUMP
-      fprintf(stderr, "nxagentCleanGlyphs: depth %d, bytesToClean %d, scanline: ", depth, bytesToClean);
+      fprintf(stderr, "%s: depth [%d], bytesToClean [%d], scanline: ", __func__, depth, bytesToClean);
       for (int i = 0; i < bytesPerLine; i++)
       {
         fprintf(stderr, "[%d]", images[i]);
@@ -261,8 +261,8 @@ nxagentCleanGlyphs(xGlyphInfo  *gi,
       bitsToClean = (bytesPerLine << 3) - (gi -> width);
 
       #ifdef DEBUG
-      fprintf(stderr, "nxagentCleanGlyphs: Found glyph with depth 1, width [%d], height [%d], bitsToClean [%d],"
-              " bytesPerLine [%d].\n", gi -> width, height, bitsToClean, bytesPerLine);
+      fprintf(stderr, "%s: Found glyph with depth 1, width [%d], height [%d], bitsToClean [%d],"
+              " bytesPerLine [%d].\n", __func__, gi -> width, height, bitsToClean, bytesPerLine);
       #endif
 
       bytesToClean = bitsToClean >> 3;
@@ -270,8 +270,8 @@ nxagentCleanGlyphs(xGlyphInfo  *gi,
       bitsToClean &= 7;
 
       #ifdef DEBUG
-      fprintf(stderr, "nxagentCleanGlyphs: bitsToClean &=7 is %d, bytesToCLean is %d."
-              " byte_order is %d, bitmap_bit_order is %d.\n", bitsToClean, bytesToClean,
+      fprintf(stderr, "%s: bitsToClean &=7 is [%d], bytesToCLean is [%d]."
+              " byte_order is [%d], bitmap_bit_order is [%d].\n", __func__, bitsToClean, bytesToClean,
               ImageByteOrder(dpy), BitmapBitOrder(dpy));
       #endif
 
@@ -285,8 +285,8 @@ nxagentCleanGlyphs(xGlyphInfo  *gi,
             images[i * bytesPerLine - j] = 0x00;
 
             #ifdef DEBUG
-            fprintf(stderr, "nxagentCleanGlyphs: byte_order == bitmap_bit_order, cleaning %d, i=%d, j=%d.\n"
-                    , (i * bytesPerLine - j), i, j);
+            fprintf(stderr, "%s: byte_order == bitmap_bit_order, cleaning [%d], i=[%d], j=[%d].\n", __func__,
+                    (i * bytesPerLine - j), i, j);
             #endif
 
           }
@@ -298,8 +298,8 @@ nxagentCleanGlyphs(xGlyphInfo  *gi,
             images[i * bytesPerLine - j] = 0x00;
 
             #ifdef DEBUG
-            fprintf(stderr, "nxagentCleanGlyphs: byte_order %d, bitmap_bit_order %d, cleaning %d, i=%d, j=%d.\n"
-                    , ImageByteOrder(dpy), BitmapBitOrder(dpy), (i * bytesPerLine - j), i, j);
+            fprintf(stderr, "%s: byte_order [%d], bitmap_bit_order [%d], cleaning [%d], i=[%d], j=[%d].\n", __func__,
+                    ImageByteOrder(dpy), BitmapBitOrder(dpy), (i * bytesPerLine - j), i, j);
             #endif
 
           }
@@ -310,8 +310,8 @@ nxagentCleanGlyphs(xGlyphInfo  *gi,
           images[i * bytesPerLine - j] &= 0xff << bitsToClean;
 
           #ifdef DEBUG
-          fprintf(stderr, "nxagentCleanGlyphs: byte_order MSBFirst, cleaning %d, i=%d, j=%d.\n"
-                  , (i * bytesPerLine - j), i, j);
+          fprintf(stderr, "%s: byte_order MSBFirst, cleaning [%d], i=[%d], j=[%d].\n", __func__,
+                  (i * bytesPerLine - j), i, j);
           #endif
         }
         else
@@ -319,14 +319,14 @@ nxagentCleanGlyphs(xGlyphInfo  *gi,
           images[i * bytesPerLine - j] &= 0xff >> bitsToClean;
 
           #ifdef DEBUG
-          fprintf(stderr, "nxagentCleanGlyphs: byte_order LSBFirst, cleaning %d, i=%d, j=%d.\n"
-                  , (i * bytesPerLine - j), i, j);
+          fprintf(stderr, "%s: byte_order LSBFirst, cleaning [%d], i=[%d], j=[%d].\n", __func__,
+                  (i * bytesPerLine - j), i, j);
           #endif
         }
       }
 
       #ifdef DUMP
-      fprintf(stderr, "nxagentCleanGlyphs: depth %d, bytesToClean %d, scanline: ", depth, bytesToClean);
+      fprintf(stderr, "%s: depth [%d], bytesToClean [%d], scanline: ", __func__, depth, bytesToClean);
       for (int i = 0; i < bytesPerLine; i++)
       {
         fprintf(stderr, "[%d]", images[i]);
@@ -351,12 +351,12 @@ nxagentCleanGlyphs(xGlyphInfo  *gi,
       bytesToClean = bytesPerLine - widthInBytes;
 
       #ifdef DEBUG
-      fprintf(stderr, "nxagentCleanGlyphs: nglyphs is %d, width of glyph in bits is %d, in bytes is %d.\n",
+      fprintf(stderr, "%s: nglyphs is [%d], width of glyph in bits is [%d], in bytes is [%d].\n", __func__,
               nglyphs, widthInBits, widthInBytes);
 
-      fprintf(stderr, "nxagentCleanGlyphs: bytesPerLine is %d bytes, there are %d scanlines.\n", bytesPerLine, height);
+      fprintf(stderr, "%s: bytesPerLine is [%d] bytes, there are [%d] scanlines.\n", __func__, bytesPerLine, height);
 
-      fprintf(stderr, "nxagentCleanGlyphs: Bytes to clean for each scanline are %d.\n", bytesToClean);
+      fprintf(stderr, "%s: Bytes to clean for each scanline are [%d].\n", __func__, bytesToClean);
       #endif
 
       if (bytesToClean > 0)
@@ -368,12 +368,12 @@ nxagentCleanGlyphs(xGlyphInfo  *gi,
             *(images + (bytesPerLine - i)) = 0;
 
             #ifdef DEBUG
-            fprintf(stderr, "nxagentCleanGlyphs: cleaned a byte.\n");
+            fprintf(stderr, "%s: cleaned a byte.\n", __func__);
             #endif
           }
 
           #ifdef DUMP
-          fprintf(stderr, "nxagentCleanGlyphs: depth %d, bytesToClean %d, scanline: ", depth, bytesToClean);
+          fprintf(stderr, "%s: depth [%d], bytesToClean [%d], scanline: ", __func__, depth, bytesToClean);
           for (int i = 0; i < bytesPerLine; i++)
           {
             fprintf(stderr, "[%d]", images[i]);
@@ -390,13 +390,13 @@ nxagentCleanGlyphs(xGlyphInfo  *gi,
       nglyphs--;
 
       #ifdef DEBUG
-      fprintf(stderr, "nxagentCleanGlyphs: Breaking Out.\n");
+      fprintf(stderr, "%s: Breaking Out.\n", __func__);
       #endif
     }
     else if (depth == 32)
     {
       #ifdef DEBUG
-      fprintf(stderr, "nxagentCleanGlyphs: Found glyph with depth 32.\n");
+      fprintf(stderr, "%s: Found glyph with depth 32.\n", __func__);
       #endif
 
       gi++;
@@ -406,7 +406,7 @@ nxagentCleanGlyphs(xGlyphInfo  *gi,
     else
     {
       #ifdef WARNING
-      fprintf(stderr, "nxagentCleanGlyphs: Unrecognized glyph, depth is not 8/16/24/32, it appears to be %d.\n",
+      fprintf(stderr, "%s: Unrecognized glyph, depth is not 8/16/24/32, it appears to be [%d].\n", __func__,
               depth);
       #endif
 
@@ -441,8 +441,8 @@ void nxagentRenderExtensionInit(void)
                  minor_version > SERVER_RENDER_MINOR_VERSION))
     {
       #ifdef TEST
-      fprintf(stderr, "nxagentRenderExtensionInit: Using render version [%d.%d] with "
-                  "remote version [%d.%d].\n", SERVER_RENDER_MAJOR_VERSION, SERVER_RENDER_MINOR_VERSION,
+      fprintf(stderr, "%s: Using render version [%d.%d] with "
+                  "remote version [%d.%d].\n", __func__, SERVER_RENDER_MAJOR_VERSION, SERVER_RENDER_MINOR_VERSION,
                       major_version, minor_version);
       #endif
 
@@ -454,8 +454,8 @@ void nxagentRenderExtensionInit(void)
                       minor_version < SERVER_RENDER_MINOR_VERSION))
     {
       #ifdef TEST
-      fprintf(stderr, "Info: Local render version %d.%d is higher "
-                  "than remote version %d.%d.\n", SERVER_RENDER_MAJOR_VERSION, SERVER_RENDER_MINOR_VERSION,
+      fprintf(stderr, "Info: Local render version [%d.%d] is higher "
+                  "than remote version [%d.%d].\n", SERVER_RENDER_MAJOR_VERSION, SERVER_RENDER_MINOR_VERSION,
                       major_version, minor_version);
 
       fprintf(stderr, "Info: Lowering the render version reported to clients.\n");
@@ -467,8 +467,8 @@ void nxagentRenderExtensionInit(void)
     else
     {
       #ifdef TEST
-      fprintf(stderr, "nxagentRenderExtensionInit: Local render version %d.%d "
-                  "matches remote version %d.%d.\n", SERVER_RENDER_MAJOR_VERSION, SERVER_RENDER_MINOR_VERSION,
+      fprintf(stderr, "%s: Local render version [%d.%d] "
+                  "matches remote version [%d.%d].\n", __func__, SERVER_RENDER_MAJOR_VERSION, SERVER_RENDER_MINOR_VERSION,
                       major_version, minor_version);
       #endif
 
@@ -540,17 +540,27 @@ void nxagentRenderRealizeCursor(ScreenPtr pScreen, CursorPtr pCursor)
   nxagentCursor(pCursor, pScreen) = XRenderCreateCursor(nxagentDisplay, nxagentPicture(pPicture), x, y);
 }
 
+/* little helper for better readable code below */
+#define COPYPICTVAL(_mask, _member, _src) {                                \
+    if (mask & _mask)                                                      \
+    {                                                                      \
+      attributes._member = (_src);                                         \
+      valuemask |= (_mask);                                                \
+      nxagentSetPictureRemoteValue(pPicture, _member, attributes._member); \
+    }                                                                      \
+  }
+
 int nxagentCreatePicture(PicturePtr pPicture, Mask mask)
 {
   XRenderPictureAttributes attributes;
-  unsigned long            valuemask=0;
+  unsigned long            valuemask = 0;
 
   #ifdef DEBUG
-  fprintf(stderr, "nxagentCreatePicture: Function called with picture at [%p] and mask [%ld].\n",
+  fprintf(stderr, "%s: Function called with picture at [%p] and mask [%d].\n", __func__,
               (void *) pPicture, mask);
   #endif
 
-  if (pPicture == NULL)
+  if (!pPicture)
   {
     return 0;
   }
@@ -561,16 +571,16 @@ int nxagentCreatePicture(PicturePtr pPicture, Mask mask)
   {
      if (nxagentIsShmPixmap((PixmapPtr)pPicture -> pDrawable))
      {
-       fprintf (stderr, "nxagentCreatePicture: Picture uses a shared pixmap.\n");
+       fprintf (stderr, "%s: Picture uses a shared pixmap.\n", __func__);
      }
      else
      {
-       fprintf (stderr, "nxagentCreatePicture: Picture uses a plain pixmap.\n");
+       fprintf (stderr, "%s: Picture uses a plain pixmap.\n", __func__);
      }
   }
   else
   {
-     fprintf (stderr, "nxagentCreatePicture: Picture uses a window.\n");
+    fprintf (stderr, "%s: Picture uses a window.\n", __func__);
   }
 
   #endif
@@ -581,108 +591,35 @@ int nxagentCreatePicture(PicturePtr pPicture, Mask mask)
 
   memset(&(nxagentPicturePriv(pPicture) -> lastServerValues), 0, sizeof(XRenderPictureAttributes));
 
-  if (mask & CPRepeat)
-  {
-    attributes.repeat = (Bool)pPicture -> repeat;
-    valuemask |= CPRepeat;
-    nxagentSetPictureRemoteValue(pPicture, repeat, attributes.repeat);
-  }
-
-  if (mask & CPAlphaMap)
-  {
-    attributes.alpha_map = nxagentPicturePriv(pPicture -> alphaMap) -> picture;
-    valuemask |= CPAlphaMap;
-    nxagentSetPictureRemoteValue(pPicture, alpha_map, attributes.alpha_map);
-  }
-
-  if (mask & CPAlphaXOrigin)
-  {
-    attributes.alpha_x_origin = pPicture -> alphaOrigin.x;
-    valuemask |= CPAlphaXOrigin;
-    nxagentSetPictureRemoteValue(pPicture, alpha_x_origin, attributes.alpha_x_origin);
-  }
-
-  if (mask & CPAlphaYOrigin)
-  {
-    attributes.alpha_y_origin = pPicture -> alphaOrigin.y;
-    valuemask |= CPAlphaYOrigin;
-    nxagentSetPictureRemoteValue(pPicture, alpha_y_origin, attributes.alpha_y_origin);
-  }
-
-  if (mask & CPClipXOrigin)
-  {
-    attributes.clip_x_origin = pPicture -> clipOrigin.x;
-    valuemask |= CPClipXOrigin;
-    nxagentSetPictureRemoteValue(pPicture, clip_x_origin, attributes.clip_x_origin);
-  }
-
-  if (mask & CPClipYOrigin)
-  {
-    attributes.clip_y_origin = pPicture -> clipOrigin.y;
-    valuemask |= CPClipYOrigin;
-    nxagentSetPictureRemoteValue(pPicture, clip_y_origin, attributes.clip_y_origin);
-  }
-
-  if (mask & CPGraphicsExposure)
-  {
-    attributes.graphics_exposures = (Bool)pPicture -> graphicsExposures;
-    valuemask |= CPGraphicsExposure;
-    nxagentSetPictureRemoteValue(pPicture, graphics_exposures, attributes.graphics_exposures);
-  }
-
-  if (mask & CPSubwindowMode)
-  {
-    attributes.subwindow_mode = pPicture -> subWindowMode;
-    valuemask |= CPSubwindowMode;
-    nxagentSetPictureRemoteValue(pPicture, subwindow_mode, attributes.subwindow_mode);
-  }
-
-  if (mask & CPClipMask)
-  {
-    attributes.clip_mask = None;
-    valuemask |= CPClipMask;
-    nxagentSetPictureRemoteValue(pPicture, clip_mask, attributes.clip_mask);
-  }
-
-  if (mask & CPPolyEdge)
-  {
-    attributes.poly_edge = pPicture -> polyEdge;
-    valuemask |= CPPolyEdge;
-    nxagentSetPictureRemoteValue(pPicture, poly_edge, attributes.poly_edge);
-  }
-
-  if (mask & CPPolyMode)
-  {
-    attributes.poly_mode = pPicture -> polyMode;
-    valuemask |= CPPolyMode;
-    nxagentSetPictureRemoteValue(pPicture, poly_mode, attributes.poly_mode);
-  }
-
-  if (mask & CPDither)
-  {
-    attributes.dither = pPicture -> dither;
-    valuemask |= CPDither;
-    nxagentSetPictureRemoteValue(pPicture, dither, attributes.dither);
-  }
-
-  if (mask & CPComponentAlpha)
-  {
-    attributes.component_alpha = pPicture -> componentAlpha;
-    valuemask |= CPComponentAlpha;
-    nxagentSetPictureRemoteValue(pPicture, component_alpha, attributes.component_alpha);
-  }
+  COPYPICTVAL(CPRepeat,           repeat,             (Bool)pPicture->repeat);
+  COPYPICTVAL(CPAlphaMap,         alpha_map,          nxagentPicturePriv(pPicture->alphaMap)->picture);
+  COPYPICTVAL(CPAlphaXOrigin,     alpha_x_origin,     pPicture->alphaOrigin.x);
+  COPYPICTVAL(CPAlphaYOrigin,     alpha_y_origin,     pPicture->alphaOrigin.y);
+  COPYPICTVAL(CPClipXOrigin,      clip_x_origin,      pPicture->clipOrigin.x);
+  COPYPICTVAL(CPClipYOrigin,      clip_y_origin,      pPicture->clipOrigin.y);
+  COPYPICTVAL(CPGraphicsExposure, graphics_exposures, (Bool)pPicture->graphicsExposures);
+  COPYPICTVAL(CPSubwindowMode,    subwindow_mode,     pPicture->subWindowMode);
+  COPYPICTVAL(CPClipMask,         clip_mask,          None);
+  COPYPICTVAL(CPPolyEdge,         poly_edge,          pPicture->polyEdge);
+  COPYPICTVAL(CPPolyMode,         poly_mode,          pPicture->polyMode);
+  COPYPICTVAL(CPDither,           dither,             pPicture->dither);
+  COPYPICTVAL(CPComponentAlpha,   component_alpha,    pPicture->componentAlpha);
 
   XRenderPictFormat *pForm = NULL;
 
-  if (pPicture -> pFormat != NULL)
+  #ifdef DEBUG
+  fprintf(stderr, "%s: picture format [%p]\n", __func__, (void *)pPicture->pFormat);
+  #endif
+
+  if (pPicture -> pFormat)
   {
     pForm = nxagentMatchingFormats(pPicture -> pFormat);
     nxagentPrintFormat(pForm);
   }
 
-  if (pForm == NULL)
+  if (!pForm)
   {
-    fprintf(stderr, "nxagentCreatePicture: WARNING! The requested format was not found.\n");
+    fprintf(stderr, "%s: WARNING! The requested format was not found - not creating picture.\n", __func__);
     return 0;
   }
 
@@ -693,7 +630,7 @@ int nxagentCreatePicture(PicturePtr pPicture, Mask mask)
                                     &attributes);
 
   #ifdef TEST
-  fprintf(stderr, "nxagentCreatePicture: Created picture at [%p] with drawable at [%p].\n",
+  fprintf(stderr, "%s: Created picture at [%p] with drawable at [%p].\n", __func__,
               (void *) pPicture, (void *) pPicture -> pDrawable);
   #endif
 
@@ -739,7 +676,7 @@ XRenderPictFormat *nxagentMatchingFormats(PictFormatPtr pFormat)
   }
 
   #ifdef DEBUG
-  fprintf(stderr, "nxagentMatchingFormats: The requested format was not found.\n");
+  fprintf(stderr, "%s: The requested format was not found.\n", __func__);
   #endif
 
   return NULL;
@@ -753,7 +690,7 @@ void nxagentDestroyPicture(PicturePtr pPicture)
   }
 
   #ifdef TEST
-  fprintf(stderr, "nxagentDestroyPicture: Going to destroy picture at [%p].\n",
+  fprintf(stderr, "%s: Going to destroy picture at [%p].\n", __func__,
               (void *) pPicture);
   #endif
 
@@ -769,13 +706,13 @@ int nxagentChangePictureClip(PicturePtr pPicture, int clipType, int nRects,
                                  xRectangle *rects, int xOrigin, int yOrigin)
 {
   #ifdef TEST
-  fprintf(stderr, "nxagentChangePictureClip: Going to change clip of picture at [%p].\n",
+  fprintf(stderr, "%s: Going to change clip of picture at [%p].\n", __func__,
               (void *) pPicture);
   #endif
 
   #ifdef DEBUG
-  fprintf(stderr, "nxagentChangePictureClip: clipType [%d] nRects [%d] xRectangle [%p] "
-              "xOrigin [%d] yOrigin [%d].\n", clipType, nRects, (void *) rects, xOrigin, yOrigin);
+  fprintf(stderr, "%s: clipType [%d] nRects [%d] xRectangle [%p] "
+              "xOrigin [%d] yOrigin [%d].\n", __func__, clipType, nRects, (void *) rects, xOrigin, yOrigin);
   #endif
 
   if (pPicture == NULL)
@@ -788,7 +725,7 @@ int nxagentChangePictureClip(PicturePtr pPicture, int clipType, int nRects,
     case CT_PIXMAP:
     {
       #ifdef DEBUG
-      fprintf(stderr, "nxagentChangePictureClip: Clip type is [CT_PIXMAP].\n");
+      fprintf(stderr, "%s: Clip type is [CT_PIXMAP].\n", __func__);
       #endif
 
       /*
@@ -824,7 +761,7 @@ FIXME: Is this useful or just a waste of bandwidth?
     case CT_NONE:
     {
       #ifdef DEBUG
-      fprintf(stderr, "nxagentChangePictureClip: Clip type is [CT_NONE].\n");
+      fprintf(stderr, "%s: Clip type is [CT_NONE].\n", __func__);
       #endif
 /*
 FIXME: Is this useful or just a waste of bandwidth?
@@ -857,7 +794,7 @@ FIXME: Is this useful or just a waste of bandwidth?
       int        index;
 
       #ifdef DEBUG
-      fprintf(stderr, "nxagentChangePictureClip: Clip type is [CT_REGION].\n");
+      fprintf(stderr, "%s: Clip type is [CT_REGION].\n", __func__);
       #endif
 
       reg = XCreateRegion();
@@ -897,7 +834,7 @@ FIXME: Is this useful or just a waste of bandwidth?
     default:
     {
       #ifdef DEBUG
-      fprintf(stderr, "nxagentChangePictureClip: clipType not found\n");
+      fprintf(stderr, "%s: clipType not found\n", __func__);
       #endif
 
       break;
@@ -907,13 +844,26 @@ FIXME: Is this useful or just a waste of bandwidth?
   return 1;
 }
 
+/* little helper for better readable code below */
+#define CHGPICTVAL(_mask, _member, _src) {                                        \
+    if (mask & _mask)                                                             \
+    {                                                                             \
+      attributes._member = (_src);                                                \
+      if (!nxagentCheckPictureRemoteValue(pPicture, _member, attributes._member)) \
+      {                                                                           \
+        valuemask |= _mask;                                                       \
+        nxagentSetPictureRemoteValue(pPicture, _member, attributes._member);      \
+      }                                                                           \
+    }                                                                             \
+  }
+
 void nxagentChangePicture(PicturePtr pPicture, Mask mask)
 {
   XRenderPictureAttributes  attributes;
   unsigned long             valuemask = 0;
 
   #ifdef DEBUG
-  fprintf(stderr, "nxagentChangePicture: Going to change picture at [%p] with mask [%ld].\n",
+  fprintf(stderr, "%s: Going to change picture at [%p] with mask [%d].\n", __func__,
               (void *) pPicture, mask);
   #endif
 
@@ -922,86 +872,14 @@ void nxagentChangePicture(PicturePtr pPicture, Mask mask)
     return;
   }
 
-  if (mask & CPRepeat)
-  {
-    attributes.repeat = (Bool)pPicture -> repeat;
-    if (!nxagentCheckPictureRemoteValue(pPicture, repeat, attributes.repeat))
-    {
-      valuemask |= CPRepeat;
-      nxagentSetPictureRemoteValue(pPicture, repeat, attributes.repeat);
-    }
-  }
-
-  if (mask & CPAlphaMap)
-  {
-    attributes.alpha_map = nxagentPicturePriv(pPicture -> alphaMap) -> picture;
-    if (!nxagentCheckPictureRemoteValue(pPicture, alpha_map, attributes.alpha_map))
-    {
-      valuemask |= CPAlphaMap;
-      nxagentSetPictureRemoteValue(pPicture, alpha_map, attributes.alpha_map);
-    }
-  }
-
-  if (mask & CPAlphaXOrigin)
-  {
-    attributes.alpha_x_origin = pPicture -> alphaOrigin.x;
-    if (!nxagentCheckPictureRemoteValue(pPicture, alpha_x_origin, attributes.alpha_x_origin))
-    {
-      valuemask |= CPAlphaXOrigin;
-      nxagentSetPictureRemoteValue(pPicture, alpha_x_origin, attributes.alpha_x_origin);
-    }
-  }
-
-  if (mask & CPAlphaYOrigin)
-  {
-    attributes.alpha_y_origin = pPicture -> alphaOrigin.y;
-    if (!nxagentCheckPictureRemoteValue(pPicture, alpha_y_origin, attributes.alpha_y_origin))
-    {
-      valuemask |= CPAlphaYOrigin;
-      nxagentSetPictureRemoteValue(pPicture, alpha_y_origin, attributes.alpha_y_origin);
-    }
-  }
-
-  if (mask & CPClipXOrigin)
-  {
-    attributes.clip_x_origin = pPicture -> clipOrigin.x;
-    if (!nxagentCheckPictureRemoteValue(pPicture, clip_x_origin, attributes.clip_x_origin))
-    {
-      valuemask |= CPClipXOrigin;
-      nxagentSetPictureRemoteValue(pPicture, clip_x_origin, attributes.clip_x_origin);
-    }
-  }
-
-  if (mask & CPClipYOrigin)
-  {
-    attributes.clip_y_origin = pPicture -> clipOrigin.y;
-    if (!nxagentCheckPictureRemoteValue(pPicture, clip_y_origin, attributes.clip_y_origin))
-    {
-      valuemask |= CPClipYOrigin;
-      nxagentSetPictureRemoteValue(pPicture, clip_y_origin, attributes.clip_y_origin);
-    }
-  }
-
-  if (mask & CPGraphicsExposure)
-  {
-    attributes.graphics_exposures = (Bool)pPicture -> graphicsExposures;
-    if (!nxagentCheckPictureRemoteValue(pPicture, graphics_exposures, attributes.graphics_exposures))
-    {
-      valuemask |= CPGraphicsExposure;
-      nxagentSetPictureRemoteValue(pPicture, graphics_exposures, attributes.graphics_exposures);
-    }
-  }
-
-  if (mask & CPSubwindowMode)
-  {
-    attributes.subwindow_mode = pPicture -> subWindowMode;
-    if (!nxagentCheckPictureRemoteValue(pPicture, subwindow_mode, attributes.subwindow_mode))
-    {
-      valuemask |= CPSubwindowMode;
-      nxagentSetPictureRemoteValue(pPicture, subwindow_mode, attributes.subwindow_mode);
-    }
-  }
-
+  CHGPICTVAL(CPRepeat,           repeat,             (Bool)pPicture->repeat);
+  CHGPICTVAL(CPAlphaMap,         alpha_map,          nxagentPicturePriv(pPicture->alphaMap)->picture);
+  CHGPICTVAL(CPAlphaXOrigin,     alpha_x_origin,     pPicture->alphaOrigin.x);
+  CHGPICTVAL(CPAlphaYOrigin,     alpha_y_origin,     pPicture->alphaOrigin.y);
+  CHGPICTVAL(CPClipXOrigin,      clip_x_origin,      pPicture->clipOrigin.x);
+  CHGPICTVAL(CPClipYOrigin,      clip_y_origin,      pPicture->clipOrigin.y);
+  CHGPICTVAL(CPGraphicsExposure, graphics_exposures, (Bool)pPicture->graphicsExposures);
+  CHGPICTVAL(CPSubwindowMode,    subwindow_mode,     pPicture->subWindowMode);
   if (mask & CPClipMask)
   {
     /*
@@ -1017,51 +895,15 @@ void nxagentChangePicture(PicturePtr pPicture, Mask mask)
       nxagentSetPictureRemoteValue(pPicture, clip_mask, 0);
     }
   }
-
-  if (mask & CPPolyEdge)
-  {
-    attributes.poly_edge = pPicture -> polyEdge;
-    if (!nxagentCheckPictureRemoteValue(pPicture, poly_edge, attributes.poly_edge))
-    {
-      valuemask |= CPPolyEdge;
-      nxagentSetPictureRemoteValue(pPicture, poly_edge, attributes.poly_edge);
-    }
-  }
-
-  if (mask & CPPolyMode)
-  {
-    attributes.poly_mode = pPicture -> polyMode;
-    if (!nxagentCheckPictureRemoteValue(pPicture, poly_mode, attributes.poly_mode))
-    {
-      valuemask |= CPPolyMode;
-      nxagentSetPictureRemoteValue(pPicture, poly_mode, attributes.poly_mode);
-    }
-  }
-
-  if (mask & CPDither)
-  {
-    attributes.dither = pPicture -> dither;
-    if (!nxagentCheckPictureRemoteValue(pPicture, dither, attributes.dither))
-    {
-      valuemask |= CPDither;
-      nxagentSetPictureRemoteValue(pPicture, dither, attributes.dither);
-    }
-  }
-
-  if (mask & CPComponentAlpha)
-  {
-    attributes.component_alpha = pPicture -> componentAlpha;
-    if (!nxagentCheckPictureRemoteValue(pPicture, component_alpha, attributes.component_alpha))
-    {
-      valuemask |= CPComponentAlpha;
-      nxagentSetPictureRemoteValue(pPicture, component_alpha, attributes.component_alpha);
-    }
-  }
+  CHGPICTVAL(CPPolyEdge,         poly_edge,          pPicture->polyEdge);
+  CHGPICTVAL(CPPolyMode,         poly_mode,          pPicture->polyMode);
+  CHGPICTVAL(CPDither,           dither,             pPicture->dither);
+  CHGPICTVAL(CPComponentAlpha,   component_alpha,    pPicture->componentAlpha);
 
   #ifdef TEST
   if (pPicture && pPicture->pDrawable && pPicture -> pDrawable -> type == DRAWABLE_PIXMAP)
   {
-    fprintf(stderr, "nxagentChangePicture: %sPixmap [%p] Picture [%p][%p].\n",
+    fprintf(stderr, "%s: %sPixmap [%p] Picture [%p][%p].\n", __func__,
                 nxagentIsShmPixmap((PixmapPtr)pPicture -> pDrawable) ? "Shared " : "",
                     (void *) pPicture -> pDrawable, (void *) nxagentPicturePriv(pPicture) -> picture,
                         (void *) pPicture);
@@ -1085,7 +927,7 @@ FIXME: Is this useful or just a waste of bandwidth?
   #ifdef TEST
   else
   {
-    fprintf(stderr, "nxagentChangePicture: Skipping change of picture [%p] on remote X server.\n",
+    fprintf(stderr, "%s: Skipping change of picture [%p] on remote X server.\n", __func__,
                 (void *) pPicture);
   }
   #endif
@@ -1100,6 +942,9 @@ void nxagentComposite(CARD8 op, PicturePtr pSrc, PicturePtr pMask, PicturePtr pD
                           INT16 xSrc, INT16 ySrc, INT16 xMask, INT16 yMask, INT16 xDst,
                               INT16 yDst, CARD16 width, CARD16 height)
 {
+  #ifdef DEBUG
+  fprintf(stderr, "%s: entering...\n", __func__);
+  #endif
   if (pSrc == NULL || pDst == NULL)
   {
     return;
@@ -1108,7 +953,7 @@ void nxagentComposite(CARD8 op, PicturePtr pSrc, PicturePtr pMask, PicturePtr pD
   #ifdef DEBUG
   if (pSrc && pSrc -> pDrawable != NULL)
   {
-    fprintf(stderr, "nxagentComposite: Source Picture [%lu][%p] with drawable [%s%s][%p].\n",
+    fprintf(stderr, "%s: Source Picture [%lu][%p] with drawable [%s%s][%p].\n", __func__,
                 nxagentPicturePriv(pSrc) -> picture, (void *) pSrc,
                 (pSrc -> pDrawable -> type == DRAWABLE_PIXMAP &&
                      nxagentIsShmPixmap((PixmapPtr) pSrc -> pDrawable)) ? "Shared " : "",
@@ -1117,7 +962,7 @@ void nxagentComposite(CARD8 op, PicturePtr pSrc, PicturePtr pMask, PicturePtr pD
   }
 
   if (pDst && pDst->pDrawable) {
-    fprintf(stderr, "nxagentComposite: Destination Picture [%lu][%p] with drawable [%s%s][%p].\n",
+    fprintf(stderr, "%s: Destination Picture [%lu][%p] with drawable [%s%s][%p].\n", __func__,
                 nxagentPicturePriv(pDst) -> picture, (void *) pDst,
                 (pDst -> pDrawable -> type == DRAWABLE_PIXMAP &&
                     nxagentIsShmPixmap((PixmapPtr) pDst -> pDrawable)) ? "Shared " : "",
@@ -1127,7 +972,7 @@ void nxagentComposite(CARD8 op, PicturePtr pSrc, PicturePtr pMask, PicturePtr pD
 
   if (pMask && pMask->pDrawable)
   {
-    fprintf(stderr, "nxagentComposite: Mask Picture [%lu][%p] with drawable [%s%s][%p].\n",
+    fprintf(stderr, "%s: Mask Picture [%lu][%p] with drawable [%s%s][%p].\n", __func__,
                 nxagentPicturePriv(pMask) -> picture, (void *) pMask,
                 (pMask -> pDrawable -> type == DRAWABLE_PIXMAP &&
                     nxagentIsShmPixmap((PixmapPtr) pMask -> pDrawable)) ? "Shared " : "",
@@ -1142,8 +987,8 @@ void nxagentComposite(CARD8 op, PicturePtr pSrc, PicturePtr pMask, PicturePtr pD
 
     #ifdef TEST
     if ((pDstRegion) && (pDst && pDst->pDrawable)) {
-      fprintf(stderr, "nxagentComposite: WARNING! Prevented operation on region [%d,%d,%d,%d] "
-                  "for drawable at [%p] with type [%s].\n", pDstRegion -> extents.x1,
+      fprintf(stderr, "%s: WARNING! Prevented operation on region [%d,%d,%d,%d] "
+                  "for drawable at [%p] with type [%s].\n", __func__, pDstRegion -> extents.x1,
                       pDstRegion -> extents.y1, pDstRegion -> extents.x2, pDstRegion -> extents.y2,
                           (void *) pDst -> pDrawable,
                               pDst -> pDrawable -> type == DRAWABLE_PIXMAP ? "pixmap" : "window");
@@ -1160,7 +1005,7 @@ void nxagentComposite(CARD8 op, PicturePtr pSrc, PicturePtr pMask, PicturePtr pD
   /*
    * Synchronize the content of the shared memory pixmap but pay
    * attention at not doing this more than once.  We need to wait
-   * until the image data has been recom- posed at the X server side
+   * until the image data has been recomposed at the X server side
    * or the operation will use the wrong data.
    */
 
@@ -1171,7 +1016,7 @@ void nxagentComposite(CARD8 op, PicturePtr pSrc, PicturePtr pMask, PicturePtr pD
     if (nxagentDrawableStatus(pSrc -> pDrawable) == NotSynchronized)
     {
       #ifdef TEST
-      fprintf(stderr, "nxagentComposite: Synchronizing the source drawable [%p].\n",
+      fprintf(stderr, "%s: Synchronizing the source drawable [%p].\n", __func__,
                   (void *) pSrc -> pDrawable);
       #endif
 
@@ -1186,7 +1031,7 @@ void nxagentComposite(CARD8 op, PicturePtr pSrc, PicturePtr pMask, PicturePtr pD
     if (nxagentDrawableStatus(pDst -> pDrawable) == NotSynchronized)
     {
       #ifdef TEST
-      fprintf(stderr, "nxagentComposite: Synchronizing the destination drawable [%p].\n",
+      fprintf(stderr, "%s: Synchronizing the destination drawable [%p].\n", __func__,
                   (void *) pDst -> pDrawable);
       #endif
 
@@ -1203,7 +1048,7 @@ void nxagentComposite(CARD8 op, PicturePtr pSrc, PicturePtr pMask, PicturePtr pD
     if (nxagentDrawableStatus(pMask -> pDrawable) == NotSynchronized)
     {
       #ifdef TEST
-      fprintf(stderr, "nxagentComposite: Synchronizing the mask drawable [%p].\n",
+      fprintf(stderr, "%s: Synchronizing the mask drawable [%p].\n", __func__,
                   (void *) pMask -> pDrawable);
       #endif
 
@@ -1214,10 +1059,10 @@ void nxagentComposite(CARD8 op, PicturePtr pSrc, PicturePtr pMask, PicturePtr pD
   /*
    * The glyphs flag have to be propagated between drawables, in order
    * to avoid to encode the text with lossy algorithms (like
-   * JPEG). Unlu- ckily we have verified that if the render com-
-   * posite propagates the flag, the deferring of render trapezoids
-   * doesn't work well. Moreover, by commenting out this code we have
-   * not noticed any visual problems.
+   * JPEG). Unluckily we have verified that if the render composite
+   * propagates the flag, the deferring of render trapezoids doesn't
+   * work well. Moreover, by commenting out this code we have not
+   * noticed any visual problems.
    *
    *  if (nxagentDrawableContainGlyphs(pSrc -> pDrawable) == 1)
    *  {
@@ -1252,6 +1097,11 @@ void nxagentGlyphs(CARD8 op, PicturePtr pSrc, PicturePtr pDst,
 
   XGlyphElt8 *elements;
 
+  #ifdef DEBUG
+  fprintf(stderr, "%s: pSrc [%p] pSrc->pDrawable [%p] pDst [%p] pDst->pDrawable [%p]\n", __func__,
+              (void *)pSrc, pSrc ? (void *)pSrc->pDrawable : NULL, (void *)pDst, pDst ? (void *)pDst->pDrawable : NULL);
+  #endif
+
   if (pSrc == NULL || pDst == NULL)
   {
     return;
@@ -1259,7 +1109,7 @@ void nxagentGlyphs(CARD8 op, PicturePtr pSrc, PicturePtr pDst,
 
   #ifdef TEST
   if ((pSrc && pSrc->pDrawable) && (pDst && pDst->pDrawable)) {
-      fprintf(stderr, "nxagentGlyphs: Called with source [%s][%p] destination [%s][%p] and size id [%d].\n",
+      fprintf(stderr, "%s: Called with source [%s][%p] destination [%s][%p] and size id [%d].\n", __func__,
                   (pSrc -> pDrawable -> type == DRAWABLE_PIXMAP ? "pixmap" : "window"), (void *) pSrc,
                       (pDst -> pDrawable -> type == DRAWABLE_PIXMAP ? "pixmap" : "window"), (void *) pDst,
                           sizeID);
@@ -1312,12 +1162,12 @@ void nxagentGlyphs(CARD8 op, PicturePtr pSrc, PicturePtr pDst,
   if (pDst -> pDrawable -> type == DRAWABLE_WINDOW)
   {
     RegionPtr pRegion = nxagentCreateRegion(pDst -> pDrawable, NULL, glyphBox.x1, glyphBox.y1,
-					        glyphBox.x2 - glyphBox.x1, glyphBox.y2 - glyphBox.y1);
+                                                glyphBox.x2 - glyphBox.x1, glyphBox.y2 - glyphBox.y1);
 
     if (RegionNil(pRegion))
     {
       #ifdef TEST
-      fprintf(stderr, "nxagentGlyphs: WARNING! Glyphs prevented on hidden window at [%p].\n",
+      fprintf(stderr, "%s: WARNING! Glyphs prevented on hidden window at [%p].\n", __func__,
                   (void *) pDst -> pDrawable);
       #endif
 
@@ -1339,7 +1189,7 @@ void nxagentGlyphs(CARD8 op, PicturePtr pSrc, PicturePtr pDst,
   {
     #ifdef TEST
     if (pSrc && pSrc->pDrawable) {
-      fprintf(stderr, "nxagentGlyphs: Synchronizing source [%s] at [%p].\n",
+      fprintf(stderr, "%s Synchronizing source [%s] at [%p].\n", __func__,
                   pSrc -> pDrawable -> type == DRAWABLE_PIXMAP ? "pixmap" : "window",
                       (void *) pSrc -> pDrawable);
     }
@@ -1355,8 +1205,8 @@ void nxagentGlyphs(CARD8 op, PicturePtr pSrc, PicturePtr pDst,
     {
       #ifdef DEBUG
       if (pSrc && pSrc->pDrawable) {
-        fprintf(stderr, "nxagentGlyphs: Synchronizing source [%s] at [%p] "
-                    "with geometry [%d,%d,%d,%d].\n",
+        fprintf(stderr, "%s Synchronizing source [%s] at [%p] "
+                    "with geometry [%d,%d,%d,%d].\n", __func__,
                         (pSrc -> pDrawable -> type == DRAWABLE_PIXMAP ? "pixmap" : "window"),
                             (void *) pSrc -> pDrawable, pSrc -> pDrawable -> x, pSrc -> pDrawable -> y,
                                 pSrc -> pDrawable -> x + pSrc -> pDrawable -> width,
@@ -1370,8 +1220,8 @@ void nxagentGlyphs(CARD8 op, PicturePtr pSrc, PicturePtr pDst,
     {
       #ifdef DEBUG
       if (pSrc && pSrc->pDrawable) {
-        fprintf(stderr, "nxagentGlyphs: Synchronizing region [%d,%d,%d,%d] of source [%s] at [%p] "
-                    "with geometry [%d,%d,%d,%d].\n", glyphBox.x1, glyphBox.y1, glyphBox.x2, glyphBox.y2,
+        fprintf(stderr, "%s Synchronizing region [%d,%d,%d,%d] of source [%s] at [%p] "
+                    "with geometry [%d,%d,%d,%d].\n", __func__, glyphBox.x1, glyphBox.y1, glyphBox.x2, glyphBox.y2,
                             (pSrc -> pDrawable -> type == DRAWABLE_PIXMAP ? "pixmap" : "window"),
                                 (void *) pSrc -> pDrawable, pSrc -> pDrawable -> x, pSrc -> pDrawable -> y,
                                     pSrc -> pDrawable -> x + pSrc -> pDrawable -> width,
@@ -1393,7 +1243,7 @@ void nxagentGlyphs(CARD8 op, PicturePtr pSrc, PicturePtr pDst,
   {
     #ifdef TEST
     if (pDst && pDst->pDrawable) {
-      fprintf(stderr, "nxagentGlyphs: Synchronizing destination [%s] at [%p].\n",
+      fprintf(stderr, "%s Synchronizing destination [%s] at [%p].\n", __func__,
                   pDst -> pDrawable -> type == DRAWABLE_PIXMAP ? "pixmap" : "window",
                       (void *) pDst -> pDrawable);
     }
@@ -1403,8 +1253,8 @@ void nxagentGlyphs(CARD8 op, PicturePtr pSrc, PicturePtr pDst,
     {
       #ifdef DEBUG
       if (pDst && pDst->pDrawable) {
-        fprintf(stderr, "nxagentGlyphs: Synchronizing destination [%s] at [%p] "
-                    "with geometry [%d,%d,%d,%d].\n",
+        fprintf(stderr, "%s Synchronizing destination [%s] at [%p] "
+                    "with geometry [%d,%d,%d,%d].\n", __func__,
                         (pDst -> pDrawable -> type == DRAWABLE_PIXMAP ? "pixmap" : "window"),
                             (void *) pDst -> pDrawable, pDst -> pDrawable -> x, pDst -> pDrawable -> y,
                                 pDst -> pDrawable -> x + pDst -> pDrawable -> width,
@@ -1418,8 +1268,8 @@ void nxagentGlyphs(CARD8 op, PicturePtr pSrc, PicturePtr pDst,
     {
       #ifdef DEBUG
       if (pDst && pDst->pDrawable) {
-        fprintf(stderr, "nxagentGlyphs: Synchronizing region [%d,%d,%d,%d] of destination [%s] at [%p] "
-                    "with geometry [%d,%d,%d,%d].\n", glyphBox.x1, glyphBox.y1, glyphBox.x2, glyphBox.y2,
+        fprintf(stderr, "%s Synchronizing region [%d,%d,%d,%d] of destination [%s] at [%p] "
+                    "with geometry [%d,%d,%d,%d].\n", __func__, glyphBox.x1, glyphBox.y1, glyphBox.x2, glyphBox.y2,
                             (pDst -> pDrawable -> type == DRAWABLE_PIXMAP ? "pixmap" : "window"),
                                 (void *) pDst -> pDrawable, pDst -> pDrawable -> x, pDst -> pDrawable -> y,
                                     pDst -> pDrawable -> x + pDst -> pDrawable -> width,
@@ -1440,7 +1290,7 @@ void nxagentGlyphs(CARD8 op, PicturePtr pSrc, PicturePtr pDst,
 
   #ifdef TEST
   if (pDst && pDst->pDrawable) {
-    fprintf(stderr, "nxagentGlyphs: Glyph flag set on drawable [%s][%p].\n",
+    fprintf(stderr, "%s Glyph flag set on drawable [%s][%p].\n", __func__,
                 pDst -> pDrawable -> type == DRAWABLE_PIXMAP ? "pixmap" : "window",
                     (void *) pDst -> pDrawable);
   }
@@ -1451,8 +1301,8 @@ void nxagentGlyphs(CARD8 op, PicturePtr pSrc, PicturePtr pDst,
 
   /*
    * We split glyphs lists here and recalculate the offsets of each
-   * list to make them ab- solute and not relatives to the prior list.
-   * This way each time we call XRenderComposi- teText it has to deal
+   * list to make them absolute and not relatives to the prior list.
+   * This way each time we call XRenderCompositeText it has to deal
    * only with a list of glyphs. This is done to further improve
    * caching.
    */
@@ -1470,7 +1320,7 @@ void nxagentGlyphs(CARD8 op, PicturePtr pSrc, PicturePtr pDst,
       y = elements -> yOff;
 
       #ifdef TEST
-      fprintf(stderr, "nxagentGlyphs: Element [%d] of [%d] has offset [%d,%d].\n",
+      fprintf(stderr, "%s Element [%d] of [%d] has offset [%d,%d].\n", __func__,
                   j, nlists, elements -> xOff, elements -> yOff);
       #endif
 
@@ -1482,8 +1332,8 @@ void nxagentGlyphs(CARD8 op, PicturePtr pSrc, PicturePtr pDst,
         y += glyph -> info.yOff;
 
         #ifdef TEST
-        fprintf(stderr, "nxagentGlyphs: Glyph at index [%d] has offset [%d,%d] and "
-                    "position [%d,%d].\n", i, elements -> nchars, glyph -> info.xOff,
+        fprintf(stderr, "%s Glyph at index [%d] has offset [%d,%d] and "
+                    "position [%d,%d].\n", __func__, i, elements -> nchars, glyph -> info.xOff,
                         glyph -> info.yOff, x, y);
         #endif
       }
@@ -1494,7 +1344,7 @@ void nxagentGlyphs(CARD8 op, PicturePtr pSrc, PicturePtr pDst,
       elements -> yOff += y;
 
       #ifdef TEST
-      fprintf(stderr, "nxagentGlyphs: New offset for list at [%p] is [%d,%d].\n",
+      fprintf(stderr, "%s New offset for list at [%p] is [%d,%d].\n", __func__,
                   elements, elements -> xOff, elements -> yOff);
       #endif
     }
@@ -1508,6 +1358,10 @@ void nxagentGlyphs(CARD8 op, PicturePtr pSrc, PicturePtr pDst,
     {
       for (int j = 0; j < nlists; j++)
       {
+        #ifdef DEBUG
+        fprintf(stderr, "%s: sizeID is [%d] - [%s]\n", __func__, sizeID, "XRenderCompositeText8");
+        #endif
+
         XRenderCompositeText8(nxagentDisplay,
                               op,
                               nxagentPicturePriv(pSrc)->picture,
@@ -1528,6 +1382,10 @@ void nxagentGlyphs(CARD8 op, PicturePtr pSrc, PicturePtr pDst,
     {
       for (int j = 0; j < nlists; j++)
       {
+        #ifdef DEBUG
+        fprintf(stderr, "%s: sizeID is [%d] - [%s]\n", __func__, sizeID, "XRenderCompositeText16");
+        #endif
+
         XRenderCompositeText16(nxagentDisplay,
                                op,
                                nxagentPicturePriv(pSrc) -> picture,
@@ -1548,6 +1406,10 @@ void nxagentGlyphs(CARD8 op, PicturePtr pSrc, PicturePtr pDst,
     {
       for (int j = 0; j < nlists; j++)
       {
+        #ifdef DEBUG
+        fprintf(stderr, "%s: sizeID is [%d] - [%s]\n", __func__, sizeID, "XRenderCompositeText32");
+        #endif
+
         XRenderCompositeText32(nxagentDisplay,
                                op,
                                nxagentPicturePriv(pSrc) -> picture,
@@ -1567,7 +1429,7 @@ void nxagentGlyphs(CARD8 op, PicturePtr pSrc, PicturePtr pDst,
     default:
     {
       #ifdef WARNING
-      fprintf(stderr, "nxagentGlyphs: WARNING! Invalid size id [%d].\n",
+      fprintf(stderr, "%s WARNING! Invalid size id [%d].\n",
                   sizeID);
       #endif
       break;
@@ -1582,6 +1444,10 @@ void nxagentGlyphs(CARD8 op, PicturePtr pSrc, PicturePtr pDst,
   {
     case 1:
     {
+      #ifdef DEBUG
+      fprintf(stderr, "%s: sizeID is [%d] - [%s]\n", __func__, sizeID, "XRenderCompositeText8");
+      #endif
+
       XRenderCompositeText8(nxagentDisplay,
                             op,
                             nxagentPicturePriv(pSrc)->picture,
@@ -1597,6 +1463,10 @@ void nxagentGlyphs(CARD8 op, PicturePtr pSrc, PicturePtr pDst,
     }
     case 2:
     {
+      #ifdef DEBUG
+      fprintf(stderr, "%s: sizeID is [%d] - [%s]\n", __func__, sizeID, "XRenderCompositeText16");
+      #endif
+
       XRenderCompositeText16(nxagentDisplay,
                              op,
                              nxagentPicturePriv(pSrc) -> picture,
@@ -1612,6 +1482,10 @@ void nxagentGlyphs(CARD8 op, PicturePtr pSrc, PicturePtr pDst,
     }
     case 4:
     {
+      #ifdef DEBUG
+      fprintf(stderr, "%s: sizeID is [%d] - [%s]\n", __func__, sizeID, "XRenderCompositeText32");
+      #endif
+
       XRenderCompositeText32(nxagentDisplay,
                              op,
                              nxagentPicturePriv(pSrc) -> picture,
@@ -1628,7 +1502,7 @@ void nxagentGlyphs(CARD8 op, PicturePtr pSrc, PicturePtr pDst,
     default:
     {
       #ifdef WARNING
-      fprintf(stderr, "nxagentGlyphs: WARNING! Invalid size id [%d].\n",
+      fprintf(stderr, "%s WARNING! Invalid size id [%d].\n", __func__,
                   sizeID);
       #endif
       break;
@@ -1640,6 +1514,10 @@ void nxagentGlyphs(CARD8 op, PicturePtr pSrc, PicturePtr pDst,
 void nxagentCompositeRects(CARD8 op, PicturePtr pDst, xRenderColor *color,
                                int nRect, xRectangle *rects)
 {
+  #ifdef DEBUG
+  fprintf(stderr, "%s: entering...\n", __func__);
+  #endif
+
   if (pDst == NULL)
   {
     return;
@@ -1647,7 +1525,7 @@ void nxagentCompositeRects(CARD8 op, PicturePtr pDst, xRenderColor *color,
 
   #ifdef TEST
   if (pDst && pDst->pDrawable) {
-    fprintf(stderr, "nxagentCompositeRects: Called for picture at [%p] with [%s] at [%p].\n",
+    fprintf(stderr, "%s: Called for picture at [%p] with [%s] at [%p].\n", __func__,
                 (void *) pDst, (pDst -> pDrawable -> type == DRAWABLE_PIXMAP ? "pixmap" : "window"),
                     (void *) pDst -> pDrawable);
   }
@@ -1685,7 +1563,7 @@ void nxagentCompositeRects(CARD8 op, PicturePtr pDst, xRenderColor *color,
     }
 
     #ifdef TEST
-    fprintf(stderr, "nxagentCompositeRects: Going to clean the drawable with extents [%d,%d,%d,%d].\n",
+    fprintf(stderr, "%s: Going to clean the drawable with extents [%d,%d,%d,%d].\n", __func__,
                 rectRegion -> extents.x1, rectRegion -> extents.y1, rectRegion -> extents.x2, rectRegion -> extents.y2);
     #endif
 
@@ -1715,8 +1593,8 @@ void nxagentTrapezoids(CARD8 op, PicturePtr pSrc, PicturePtr pDst,
   int remaining = ntrap;
 
   #ifdef TEST
-  fprintf(stderr, "nxagentTrapezoids: Source [%p] destination [%p] coordinates "
-              "[%d,%d] elements [%d].\n", (void *) pSrc, (void *) pDst,
+  fprintf(stderr, "%s: Source [%p] destination [%p] coordinates "
+              "[%d,%d] elements [%d].\n", __func__, (void *) pSrc, (void *) pDst,
                   xSrc, ySrc, ntrap);
   #endif
 
@@ -1746,13 +1624,13 @@ FIXME: Is this useful or just a waste of bandwidth?
 
   #ifdef TEST
   if (pSrc->pDrawable) {
-    fprintf(stderr, "nxagentTrapezoids: Source is a [%s] of geometry [%d,%d].\n",
+    fprintf(stderr, "%s: Source is a [%s] of geometry [%d,%d].\n", __func__,
                 (pSrc -> pDrawable -> type == DRAWABLE_PIXMAP ? "pixmap" : "window"),
                     pSrc -> pDrawable -> width, pSrc -> pDrawable -> height);
   }
   if (pSrc ->pDrawable != pDst -> pDrawable)
   {
-    fprintf(stderr, "nxagentTrapezoids: Destination is a [%s] of geometry [%d,%d].\n",
+    fprintf(stderr, "%s: Destination is a [%s] of geometry [%d,%d].\n", __func__,
                 (pDst -> pDrawable -> type == DRAWABLE_PIXMAP ? "pixmap" : "window"),
                     pDst -> pDrawable -> width, pDst -> pDrawable -> height);
   }
@@ -1770,8 +1648,8 @@ FIXME: Is this useful or just a waste of bandwidth?
   {
     #ifdef TEST
     if (pDst && pDst->pDrawable) {
-      fprintf(stderr, "nxagentTrapezoids: WARNING! Prevented operation on region [%d,%d,%d,%d] already dirty "
-                  "for drawable [%s][%p].\n", nxagentTrapezoidExtents -> x1, nxagentTrapezoidExtents -> y1,
+      fprintf(stderr, "%s: WARNING! Prevented operation on region [%d,%d,%d,%d] already dirty "
+                  "for drawable [%s][%p].\n", __func__, nxagentTrapezoidExtents -> x1, nxagentTrapezoidExtents -> y1,
                       nxagentTrapezoidExtents -> x2, nxagentTrapezoidExtents -> y2,
                           pDst -> pDrawable -> type == DRAWABLE_PIXMAP ? "pixmap" : "window",
                               (void *) pDst -> pDrawable);
@@ -1802,8 +1680,8 @@ FIXME: Is this useful or just a waste of bandwidth?
 
     #ifdef TEST
     if (pDst && pDst->pDrawable) {
-      fprintf(stderr, "nxagentTrapezoids: WARNING! Prevented operation on region [%d,%d,%d,%d] "
-                  "for drawable [%s][%p].\n", pDstRegion -> extents.x1, pDstRegion -> extents.y1,
+      fprintf(stderr, "%s: WARNING! Prevented operation on region [%d,%d,%d,%d] "
+                  "for drawable [%s][%p].\n", __func__, pDstRegion -> extents.x1, pDstRegion -> extents.y1,
                       pDstRegion -> extents.x2, pDstRegion -> extents.y2,
                           pDst -> pDrawable -> type == DRAWABLE_PIXMAP ? "pixmap" : "window",
                               (void *) pDst -> pDrawable);
@@ -1826,7 +1704,7 @@ FIXME: Is this useful or just a waste of bandwidth?
           nxagentDrawableStatus(pSrc -> pDrawable) == NotSynchronized)
   {
     #ifdef TEST
-    fprintf(stderr, "nxagentTrapezoids: Going to synchronize the source drawable at [%p].\n",
+    fprintf(stderr, "%s: Going to synchronize the source drawable at [%p].\n", __func__,
                 (void *) pSrc -> pDrawable);
     #endif
 
@@ -1836,7 +1714,7 @@ FIXME: Is this useful or just a waste of bandwidth?
   if (nxagentDrawableStatus(pDst -> pDrawable) == NotSynchronized)
   {
     #ifdef TEST
-    fprintf(stderr, "nxagentTrapezoids: Going to synchronize the destination drawable at [%p].\n",
+    fprintf(stderr, "%s: Going to synchronize the destination drawable at [%p].\n", __func__,
                 (void *) pDst -> pDrawable);
     #endif
 
@@ -1863,7 +1741,7 @@ FIXME: Is this useful or just a waste of bandwidth?
 void nxagentQueryFormats(void)
 {
   #ifdef DEBUG
-  fprintf(stderr, "nxagentQueryFormats.\n");
+  fprintf(stderr, "%s.\n", __func__);
   #endif
 
   if (XRenderQueryFormats(nxagentDisplay))
@@ -1889,8 +1767,8 @@ void nxagentQueryFormats(void)
       nxagentArrayFormats[i] = *pformat;
 
       #ifdef DEBUG
-      fprintf(stderr, "nxagentQueryFormats: Added format type [%d] depth [%d] rgb [%d,%d,%d] "
-                  "mask rgb [%d,%d,%d] alpha [%d] alpha mask [%d].\n",
+      fprintf(stderr, "%s: Added format id [%ld] type [%d] depth [%d] rgb [%d,%d,%d] "
+                  "mask rgb [%d,%d,%d] alpha [%d] alpha mask [%d].\n", __func__, nxagentArrayFormats[i].id,
                       nxagentArrayFormats[i].type, nxagentArrayFormats[i].depth, nxagentArrayFormats[i].direct.red,
                           nxagentArrayFormats[i].direct.green, nxagentArrayFormats[i].direct.blue,
                               nxagentArrayFormats[i].direct.redMask, nxagentArrayFormats[i].direct.greenMask,
@@ -1904,12 +1782,11 @@ void nxagentQueryFormats(void)
     #ifdef DEBUG
     if (nxagentNumFormats == 0)
     {
-      fprintf(stderr, "nxagentQueryFormats: Number of formats is [%d].\n",
-                  i);
+      fprintf(stderr, "%s: Number of formats is [%d].\n", __func__, i);
     }
     else
     {
-      fprintf(stderr, "nxagentQueryFormats: Old number of formats is [%d]. New number of formats is [%d].\n",
+      fprintf(stderr, "%s: Old number of formats is [%d]. New number of formats is [%d].\n", __func__,
                   nxagentNumFormats, i);
     }
     #endif
@@ -1921,7 +1798,7 @@ void nxagentQueryFormats(void)
 void nxagentCreateGlyphSet(GlyphSetPtr pGly)
 {
   #ifdef DEBUG
-  fprintf(stderr, "nxagentCreateGlyphSet: Glyphset at [%p].\n", (void *) pGly);
+  fprintf(stderr, "%s: Glyphset at [%p].\n", __func__, (void *) pGly);
   #endif
 
   XRenderPictFormat *pForm = NULL;
@@ -1949,7 +1826,7 @@ void nxagentReferenceGlyphSet(GlyphSetPtr glyphSet)
   if (glyphSet -> remoteID == 0)
   {
     #ifdef TEST
-    fprintf(stderr, "nxagentReferenceGlyphSet: Operation deferred because glyphset at [%p] is corrupted.\n",
+    fprintf(stderr, "%s: Operation deferred because glyphset at [%p] is corrupted.\n", __func__,
                 (void *) glyphSet);
     #endif
 
@@ -1964,7 +1841,7 @@ void nxagentFreeGlyphSet(GlyphSetPtr glyphSet)
   if (glyphSet -> remoteID == 0)
   {
     #ifdef TEST
-    fprintf(stderr, "nxagentFreeGlyphs: Operation ignored because glyphset at [%p] is corrupted.\n",
+    fprintf(stderr, "%s: Operation ignored because glyphset at [%p] is corrupted.\n", __func__,
                 (void *) glyphSet);
     #endif
 
@@ -1978,14 +1855,14 @@ void nxagentAddGlyphs(GlyphSetPtr glyphSet, Glyph *gids, xGlyphInfo *gi,
                           int nglyphs, CARD8 *images, int sizeImages)
 {
   #ifdef DEBUG
-  fprintf(stderr, "nxagentAddGlyphs: Glyphset at [%p]. Number of glyphs [%d].\n",
+  fprintf(stderr, "%s: Glyphset at [%p]. Number of glyphs [%d].\n", __func__,
               (void *) glyphSet, nglyphs);
   #endif
 
   if (glyphSet -> remoteID == 0)
   {
     #ifdef TEST
-    fprintf(stderr, "nxagentAddGlyphs: Going to reconnect the glyhpset at [%p] before adding glyphs.\n",
+    fprintf(stderr, "%s: Going to reconnect the glyhpset at [%p] before adding glyphs.\n", __func__,
                 (void *) glyphSet);
     #endif
 
@@ -1998,15 +1875,16 @@ void nxagentAddGlyphs(GlyphSetPtr glyphSet, Glyph *gids, xGlyphInfo *gi,
    * as synchronized.
    */
 
+  Glyph *tempGids = gids;
+
   for (int i = 0; i < nglyphs; i++)
   {
-    Glyph *tempGids = gids;
     GlyphRefPtr gr = FindGlyphRef(&glyphSet -> hash, *tempGids, 0, 0);
 
     if (gr && gr -> glyph != DeletedGlyph)
     {
       #ifdef DEBUG
-      fprintf(stderr, "nxagentAddGlyphs: Added Glyph [%p][%ld] to glyphset [%p].\n",
+      fprintf(stderr, "%s: Added Glyph [%p][%ld] to glyphset [%p].\n", __func__,
                   (void *) gr -> glyph, *tempGids, (void *) glyphSet);
       #endif
 
@@ -2017,6 +1895,10 @@ void nxagentAddGlyphs(GlyphSetPtr glyphSet, Glyph *gids, xGlyphInfo *gi,
   }
 
   CARD8 *normalizedImages = NULL;
+
+  #ifdef DEBUG
+  fprintf(stderr, "%s: sizeImages [%d]\n", __func__, sizeImages);
+  #endif
 
   if (sizeImages > 0)
   {
@@ -2035,7 +1917,7 @@ void nxagentAddGlyphs(GlyphSetPtr glyphSet, Glyph *gids, xGlyphInfo *gi,
     else
     {
       #ifdef PANIC
-      fprintf(stderr, "nxagentAddGlyphs: PANIC! Allocation of normalized glyph images failed.\n");
+      fprintf(stderr, "%s: PANIC! Allocation of normalized glyph images failed.\n", __func__);
       #endif
     }
   }
@@ -2075,7 +1957,7 @@ void nxagentFreeGlyphs(GlyphSetPtr glyphSet, CARD32 *gids, int nglyph)
   if (glyphSet -> remoteID == 0)
   {
     #ifdef TEST
-    fprintf(stderr, "nxagentFreeGlyphs: Operation ignored because glyphset at [%p] is corrupted.\n",
+    fprintf(stderr, "%s: Operation ignored because glyphset at [%p] is corrupted.\n", __func__,
                 (void *) glyphSet);
     #endif
 
@@ -2109,7 +1991,7 @@ void nxagentFreeGlyphs(GlyphSetPtr glyphSet, CARD32 *gids, int nglyph)
 void nxagentSetPictureTransform(PicturePtr pPicture, void * transform)
 {
   #ifdef TEST
-  fprintf(stderr, "nxagentSetPictureTransform: Going to set transform [%p] to picture at [%p].\n",
+  fprintf(stderr, "%s: Going to set transform [%p] to picture at [%p].\n", __func__,
               (void *) transform, (void *) pPicture);
   #endif
 
@@ -2133,7 +2015,7 @@ void nxagentSetPictureFilter(PicturePtr pPicture, char *filter, int name_size,
   if (szFilter == NULL)
   {
     #ifdef WARNING
-    fprintf(stderr, "nxagentSetPictureFilter: error allocating memory for filter name.\n");
+    fprintf(stderr, "%s: error allocating memory for filter name.\n", __func__);
     #endif
 
     return;
@@ -2144,7 +2026,7 @@ void nxagentSetPictureFilter(PicturePtr pPicture, char *filter, int name_size,
   szFilter[name_size] = 0;
 
   #ifdef TEST
-  fprintf(stderr, "nxagentSetPictureFilter: Going to set filter [%s] to picture at [%p].\n",
+  fprintf(stderr, "%s: Going to set filter [%s] to picture at [%p].\n", __func__,
               szFilter, (void *) pPicture);
   #endif
 /*
@@ -2168,13 +2050,16 @@ Bool nxagentPictureInit(ScreenPtr pScreen, PictFormatPtr formats, int nformats)
 {
   #ifdef RENDER
   #ifdef DEBUG
-  fprintf(stderr, "nxagentPictureInit: Screen [%p].\n", (void *) pScreen);
+  fprintf(stderr, "%s: Screen [%p].\n", __func__, (void *) pScreen);
   #endif
 
   nxagentQueryFormats();
 
-  if (fbPictureInit(pScreen, formats, nformats) == 0)
+  if (fbPictureInit(pScreen, formats, nformats) == FALSE)
   {
+    #ifdef DEBUG
+    fprintf(stderr, "%s: failed: fbPictureInit returned [FALSE]\n", __func__);
+    #endif
     return FALSE;
   }
 
@@ -2191,11 +2076,11 @@ static void nxagentPrintFormat(XRenderPictFormat *pFormat)
 #ifdef DEBUG
   if (pFormat == NULL)
   {
-    fprintf(stderr, "nxagentPrintFormat: WARNING! null pointer passed to function.\n");
+    fprintf(stderr, "%s: WARNING! null pointer passed to function.\n", __func__);
     return;
   }
 
-  fprintf(stderr, "nxagentPrintFormat: Dumping information for format at [%p]:\n\
+  fprintf(stderr, "%s: Dumping information for format at [%p]:\n\
                    type=%d\n\
                    depth=%d\n\
                    red=%d\n\
@@ -2206,6 +2091,7 @@ static void nxagentPrintFormat(XRenderPictFormat *pFormat)
                    blueMask=%d\n\
                    alpha=%d\n\
                    alphaMask=%d\n",
+                   __func__,
                    (void *) pFormat,
                    pFormat -> type,
                    pFormat -> depth,
@@ -2223,8 +2109,8 @@ static void nxagentPrintFormat(XRenderPictFormat *pFormat)
 Bool nxagentFillGlyphSet(GlyphSetPtr pGly)
 {
   #ifdef DEBUG
-  fprintf(stderr, "nxagentFillGlyphSet: GlyphSet at [%p] Refcount [%ld] Glyphs [%ld] "
-              "Format [%p] FDepth [%d] RemoteID [%ld].\n", (void *) pGly, pGly -> refcnt,
+  fprintf(stderr, "%s: GlyphSet at [%p] Refcount [%d] Glyphs [%d] "
+              "Format [%p] FDepth [%d] RemoteID [%d].\n", __func__, (void *) pGly, pGly -> refcnt,
                   pGly -> hash.hashSet -> size, (void *) pGly -> format, pGly -> fdepth, pGly -> remoteID);
   #endif
 
@@ -2258,12 +2144,13 @@ void nxagentReconnectGlyphSet(void* p0, XID x1, void *p2)
     XRenderPictFormat *pForm = NULL;
 
     #ifdef DEBUG
-    fprintf(stderr, "nxagentReconnectGlyphSet: GlyphSet at [%p].\n", (void *) pGly);
+    fprintf(stderr, "%s: GlyphSet at [%p].\n", __func__, (void *) pGly);
     #endif
 
     if (pGly -> format)
     {
       pForm = nxagentMatchingFormats(pGly -> format);
+      nxagentPrintFormat(pForm);
     }
 
     pGly -> remoteID = XRenderCreateGlyphSet(nxagentDisplay, pForm);
@@ -2301,7 +2188,7 @@ Bool nxagentReconnectAllGlyphSet(void *p)
   nxagentQueryFormats();
 
   #ifdef DEBUG
-  fprintf(stderr, "nxagentReconnectAllGlyphSet\n");
+  fprintf(stderr, "%s\n", __func__);
   #endif
 
   for (int i = 0; (i < MAXCLIENTS) && (success); i++)
@@ -2324,10 +2211,10 @@ void nxagentReconnectPicture(void * p0, XID x1, void *p2)
   XRenderPictureAttributes attributes;
 
   #ifdef TEST
-  fprintf(stderr, "nxagentReconnectPicture: Called with bool [%d] and picture at [%p].\n",
+  fprintf(stderr, "%s: Called with bool [%d] and picture at [%p].\n", __func__,
               *pBool, (void *) pPicture);
 
-  fprintf(stderr, "nxagentReconnectPicture: Virtual picture is [%ld].\n",
+  fprintf(stderr, "%s: Virtual picture is [%ld].\n", __func__,
               nxagentPicture(pPicture));
   #endif
 
@@ -2373,19 +2260,11 @@ void nxagentReconnectPicture(void * p0, XID x1, void *p2)
   }
 
   attributes.subwindow_mode = pPicture -> subWindowMode;
-  mask |= CPSubwindowMode;
-
   attributes.poly_edge = pPicture -> polyEdge;
-  mask |= CPPolyEdge;
-
   attributes.poly_mode = pPicture -> polyMode;
-  mask |= CPPolyMode;
-
   attributes.dither = pPicture -> dither;
-  mask |= CPDither;
-
   attributes.component_alpha = pPicture -> componentAlpha;
-  mask |= CPComponentAlpha;
+  mask |= (CPSubwindowMode | CPPolyEdge | CPPolyMode | CPDither | CPComponentAlpha);
 
   XRenderPictFormat *pForm = NULL;
 
@@ -2409,10 +2288,10 @@ void nxagentReconnectPicture(void * p0, XID x1, void *p2)
   }
 
   #ifdef TEST
-  fprintf(stderr, "nxagentReconnectPicture: Creating picture at [%p] with drawable [%ld] at [%p].\n",
+  fprintf(stderr, "%s: Creating picture at [%p] with drawable [%d] at [%p].\n", __func__,
               (void *) pPicture, nxagentDrawable(pPicture -> pDrawable), (void *) pPicture -> pDrawable);
 
-  fprintf(stderr, "nxagentReconnectPicture: Format is at [%p] mask is [%ld] attributes are at [%p].\n",
+  fprintf(stderr, "%s: Format is at [%p] mask is [%ld] attributes are at [%p].\n", __func__,
               (void *) pForm, mask, (void *) &attributes);
   #endif
 
@@ -2427,7 +2306,7 @@ void nxagentReconnectPicture(void * p0, XID x1, void *p2)
   #endif
 
   #ifdef TEST
-  fprintf(stderr, "nxagentReconnectPicture: Reconnected picture at [%p] with value [%ld].\n",
+  fprintf(stderr, "%s: Reconnected picture at [%p] with value [%ld].\n", __func__,
               (void *) pPicture, nxagentPicture(pPicture));
   #endif
 
@@ -2450,7 +2329,7 @@ Bool nxagentReconnectAllPicture(void *p)
   Bool r = True;
 
   #ifdef TEST
-  fprintf(stderr, "nxagentReconnectAllPicture: Going to recreate all pictures.\n");
+  fprintf(stderr, "%s: Going to recreate all pictures.\n", __func__);
   #endif
 
   for (int i = 0; i < MAXCLIENTS; i++)
@@ -2462,8 +2341,8 @@ Bool nxagentReconnectAllPicture(void *p)
       #ifdef WARNING
       if (!r)
       {
-        fprintf(stderr, "nxagentReconnectAllPicture: WARNING! Failed to recreate "
-                    "picture for client [%d].\n", i);
+        fprintf(stderr, "%s: WARNING! Failed to recreate "
+                    "picture for client [%d].\n", __func__, i);
       }
       #endif
     }
@@ -2478,10 +2357,10 @@ void nxagentDisconnectPicture(void * p0, XID x1, void* p2)
   Bool *pBool = (Bool *) p2;
 
   #ifdef TEST
-  fprintf(stderr, "nxagentDisconnectPicture: Called with bool [%d] and picture at [%p].\n",
+  fprintf(stderr, "%s: Called with bool [%d] and picture at [%p].\n", __func__,
               *pBool, (void *) pPicture);
 
-  fprintf(stderr, "nxagentDisconnectPicture: Virtual picture is [%ld].\n",
+  fprintf(stderr, "%s: Virtual picture is [%ld].\n", __func__,
               nxagentPicture(pPicture));
   #endif
 
@@ -2503,7 +2382,7 @@ Bool nxagentDisconnectAllPicture(void)
   Bool r = True;
 
   #ifdef DEBUG
-  fprintf(stderr, "nxagentDisconnectAllPicture.\n");
+  fprintf(stderr, "%s.\n", __func__);
   #endif
 
   for (int i = 0; i < MAXCLIENTS; i++)
@@ -2515,8 +2394,8 @@ Bool nxagentDisconnectAllPicture(void)
       #ifdef WARNING
       if (!r)
       {
-        fprintf(stderr, "nxagentDisconnectAllPicture: WARNING! Failed to disconnect "
-                    "picture for client [%d].\n", i);
+        fprintf(stderr, "%s: WARNING! Failed to disconnect "
+                    "picture for client [%d].\n", __func__, i);
       }
       #endif
     }
@@ -2533,16 +2412,16 @@ void nxagentRenderCreateSolidFill(PicturePtr pPicture, xRenderColor *color)
   }
 
   #ifdef DEBUG
-  fprintf(stderr, "nxagentRenderCreateSolidFill: Got called.\n");
+  fprintf(stderr, "%s: Got called.\n", __func__);
 
   if (pPicture == NULL)
   {
-    fprintf(stderr, "nxagentRenderCreateSolidFill: WARNING! pPicture pointer is NULL.\n");
+    fprintf(stderr, "%s: WARNING! pPicture pointer is NULL.\n", __func__);
   }
 
   if (color == NULL)
   {
-    fprintf(stderr, "nxagentRenderCreateSolidFill: WARNING! color pointer is NULL.\n");
+    fprintf(stderr, "%s: WARNING! color pointer is NULL.\n", __func__);
   }
   #endif /* #ifdef DEBUG */
 
@@ -2556,7 +2435,7 @@ void nxagentRenderCreateSolidFill(PicturePtr pPicture, xRenderColor *color)
   #endif
 
   #ifdef TEST
-  fprintf(stderr, "nxagentRenderCreateSolidFill: Created solid fill xid [%lu].\n", id);
+  fprintf(stderr, "%s: Created solid fill xid [%lu].\n", __func__, id);
   #endif
 
   nxagentPicturePriv(pPicture) -> picture = id;
@@ -2573,31 +2452,31 @@ void nxagentRenderCreateLinearGradient(PicturePtr pPicture, xPointFixed *p1,
   }
 
   #ifdef DEBUG
-  fprintf(stderr, "nxagentRenderCreateLinearGradient: Got called.\n");
+  fprintf(stderr, "%s: Got called.\n", __func__);
 
   if (pPicture == NULL)
   {
-    fprintf(stderr, "nxagentRenderCreateLinearGradient: WARNING! pPicture pointer is NULL.\n");
+    fprintf(stderr, "%s: WARNING! pPicture pointer is NULL.\n", __func__);
   }
 
   if (p1 == NULL)
   {
-    fprintf(stderr, "nxagentRenderCreateLinearGradient: WARNING! p1 pointer is NULL.\n");
+    fprintf(stderr, "%s: WARNING! p1 pointer is NULL.\n", __func__);
   }
 
   if (p2 == NULL)
   {
-    fprintf(stderr, "nxagentRenderCreateLinearGradient: WARNING! p2 pointer is NULL.\n");
+    fprintf(stderr, "%s: WARNING! p2 pointer is NULL.\n", __func__);
   }
 
   if (stops == NULL)
   {
-    fprintf(stderr, "nxagentRenderCreateLinearGradient: WARNING! stops pointer is NULL.\n");
+    fprintf(stderr, "%s: WARNING! stops pointer is NULL.\n", __func__);
   }
 
   if (colors == NULL)
   {
-    fprintf(stderr, "nxagentRenderCreateLinearGradient: WARNING! colors pointer is NULL.\n");
+    fprintf(stderr, "%s: WARNING! colors pointer is NULL.\n", __func__);
   }
   #endif /* #ifdef DEBUG */
 
@@ -2620,7 +2499,7 @@ void nxagentRenderCreateLinearGradient(PicturePtr pPicture, xPointFixed *p1,
   #endif
 
   #ifdef TEST
-  fprintf(stderr, "nxagentRenderCreateLinearGradient: Created linear gradient xid [%lu].\n", id);
+  fprintf(stderr, "%s: Created linear gradient xid [%lu].\n", __func__, id);
   #endif
 
   nxagentPicturePriv(pPicture) -> picture = id;
@@ -2640,31 +2519,31 @@ void nxagentRenderCreateRadialGradient(PicturePtr pPicture, xPointFixed *inner,
   }
 
   #ifdef DEBUG
-  fprintf(stderr, "nxagentRenderCreateRadialGradient: Got called.\n");
+  fprintf(stderr, "%s: Got called.\n", __func__);
 
   if (pPicture == NULL)
   {
-    fprintf(stderr, "nxagentRenderCreateRadialGradient: WARNING! pPicture pointer is NULL.\n");
+    fprintf(stderr, "%s: WARNING! pPicture pointer is NULL.\n", __func__);
   }
 
   if (inner == NULL)
   {
-    fprintf(stderr, "nxagentRenderCreateRadialGradient: WARNING! inner pointer is NULL.\n");
+    fprintf(stderr, "%s: WARNING! inner pointer is NULL.\n", __func__);
   }
 
   if (outer == NULL)
   {
-    fprintf(stderr, "nxagentRenderCreateRadialGradient: WARNING! outer pointer is NULL.\n");
+    fprintf(stderr, "%s: WARNING! outer pointer is NULL.\n", __func__);
   }
 
   if (stops == NULL)
   {
-    fprintf(stderr, "nxagentRenderCreateRadialGradient: WARNING! stops pointer is NULL.\n");
+    fprintf(stderr, "%s: WARNING! stops pointer is NULL.\n", __func__);
   }
 
   if (colors == NULL)
   {
-    fprintf(stderr, "nxagentRenderCreateRadialGradient: WARNING! colors pointer is NULL.\n");
+    fprintf(stderr, "%s: WARNING! colors pointer is NULL.\n", __func__);
   }
   #endif /* #ifdef DEBUG */
 
@@ -2689,7 +2568,7 @@ void nxagentRenderCreateRadialGradient(PicturePtr pPicture, xPointFixed *inner,
   #endif
 
   #ifdef TEST
-  fprintf(stderr, "nxagentRenderCreateRadialGradient: Created radial gradient xid [%lu].\n", id);
+  fprintf(stderr, "%s: Created radial gradient xid [%lu].\n", __func__, id);
   #endif
 
   nxagentPicturePriv(pPicture) -> picture = id;
@@ -2707,26 +2586,26 @@ void nxagentRenderCreateConicalGradient(PicturePtr pPicture,
   }
 
   #ifdef DEBUG
-  fprintf(stderr, "nxagentRenderCreateConicalGradient: Got called.\n");
+  fprintf(stderr, "%s: Got called.\n", __func__);
 
   if (pPicture == NULL)
   {
-    fprintf(stderr, "nxagentRenderCreateConicalGradient: WARNING! pPicture pointer is NULL.\n");
+    fprintf(stderr, "%s: WARNING! pPicture pointer is NULL.\n", __func__);
   }
 
   if (center == NULL)
   {
-    fprintf(stderr, "nxagentRenderCreateConicalGradient: WARNING! center pointer is NULL.\n");
+    fprintf(stderr, "%s: WARNING! center pointer is NULL.\n", __func__);
   }
 
   if (stops == NULL)
   {
-    fprintf(stderr, "nxagentRenderCreateConicalGradient: WARNING! stops pointer is NULL.\n");
+    fprintf(stderr, "%s: WARNING! stops pointer is NULL.\n", __func__);
   }
 
   if (colors == NULL)
   {
-    fprintf(stderr, "nxagentRenderCreateConicalGradient: WARNING! colors pointer is NULL.\n");
+    fprintf(stderr, "%s: WARNING! colors pointer is NULL.\n", __func__);
   }
   #endif /* #ifdef DEBUG */
 
@@ -2748,7 +2627,7 @@ void nxagentRenderCreateConicalGradient(PicturePtr pPicture,
   #endif
 
   #ifdef TEST
-  fprintf(stderr, "nxagentRenderCreateConicalGradient: Created conical gradient xid [%lu].\n", id);
+  fprintf(stderr, "%s: Created conical gradient xid [%lu].\n", __func__, id);
   #endif
 
   nxagentPicturePriv(pPicture) -> picture = id;

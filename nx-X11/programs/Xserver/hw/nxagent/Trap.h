@@ -43,8 +43,8 @@
 extern Bool nxagentGCTrap;
 
 /*
- * Set if we are enqueing an internal operation, CreateWindow and
- * Reparent- Window. Used to remove any screen operation.
+ * Set if we are enqueuing an internal operation, CreateWindow and
+ * ReparentWindow. Used to remove any screen operation.
  */
 extern Bool nxagentScreenTrap;
 

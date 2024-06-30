@@ -69,13 +69,12 @@ rasterizeEdges (FbBits		*buf,
 		FbBits  *a = line;
 		FbBits  startmask, endmask;
 		int	    nmiddle;
-		int	    width = rxi - lxi;
 		int	    x = lxi;
 
 		a += x >> FB_SHIFT;
 		x &= FB_MASK;
 
-		FbMaskBits (x, width, startmask, nmiddle, endmask);
+		FbMaskBits (x, rxi - lxi, startmask, nmiddle, endmask);
 		if (startmask)
 		    *a++ |= startmask;
 		while (nmiddle--)

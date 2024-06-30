@@ -35,9 +35,7 @@ THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #include <nx-X11/keysym.h>
 #include "inputstr.h"
 #include <xkbsrv.h>
-#if !defined(WIN32)
 #include <sys/time.h>
-#endif
 
 int	XkbDfltRepeatDelay=	660;
 int	XkbDfltRepeatInterval=	40;

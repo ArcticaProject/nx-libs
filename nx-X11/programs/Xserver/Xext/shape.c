@@ -55,7 +55,6 @@ in this Software without prior written authorization from The Open Group.
 #endif
 #include "protocol-versions.h"
 #include "regionstr.h"
-#include "gcstruct.h"
 
 typedef	RegionPtr (*CreateDftPtr)(
 	WindowPtr /* pWin */

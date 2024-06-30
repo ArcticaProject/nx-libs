@@ -86,13 +86,6 @@ typedef struct _NewClientRec *NewClientPtr;
 #endif
 #include <string.h>
 
-/* have to put $(SIGNAL_DEFINES) in DEFINES in Imakefile to get this right */
-#ifdef SIGNALRETURNSINT
-#define SIGVAL int
-#else
-#define SIGVAL void
-#endif
-
 extern void (*OsVendorVErrorFProc)(const char *, va_list args);
 
 extern int WaitForSomething(
@@ -207,9 +200,9 @@ extern void SetDPMSTimers(void);
 extern void FreeDPMSTimers(void);
 #endif
 
-extern SIGVAL AutoResetServer(int /*sig*/);
+extern void AutoResetServer(int /*sig*/);
 
-extern SIGVAL GiveUp(int /*sig*/);
+extern void GiveUp(int /*sig*/);
 
 extern void UseMsg(void);
 
@@ -240,7 +233,7 @@ extern _X_EXPORT char *Xvprintf(const char *fmt, va_list va)_X_ATTRIBUTE_PRINTF(
 extern _X_EXPORT char *XNFprintf(const char *fmt, ...) _X_ATTRIBUTE_PRINTF(1,2) _X_DEPRECATED;
 extern _X_EXPORT char *XNFvprintf(const char *fmt, va_list va)_X_ATTRIBUTE_PRINTF(1,0) _X_DEPRECATED;
 
-typedef SIGVAL (*OsSigHandlerPtr)(int /* sig */);
+typedef void (*OsSigHandlerPtr)(int /* sig */);
 
 extern OsSigHandlerPtr OsSignal(int /* sig */, OsSigHandlerPtr /* handler */);
 

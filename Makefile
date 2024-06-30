@@ -116,7 +116,7 @@ ifneq "$(strip $(NX_VERSION_CUSTOM))" ""
 endif
 
 imakeconfig:
-	@echo;
+	@echo
 	@echo "===> $@"
 	# auto-config some setting
 

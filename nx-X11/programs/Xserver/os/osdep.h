@@ -60,7 +60,6 @@ SOFTWARE.
 
 #include <X11/Xdmcp.h>
 
-#ifndef X_NOT_POSIX
 #ifdef _POSIX_SOURCE
 #include <limits.h>
 #else
@@ -68,8 +67,6 @@ SOFTWARE.
 #include <limits.h>
 #undef _POSIX_SOURCE
 #endif
-#else /* X_NOT_POSIX */
-#endif /* X_NOT_POSIX */
 
 #ifndef OPEN_MAX
 #ifdef SVR4

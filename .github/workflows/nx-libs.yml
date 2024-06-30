@@ -27,8 +27,6 @@ jobs:
           - { container: 'debian:sid', cc-version: clang }
           - { container: 'quay.io/centos/centos:7', cc-version: gcc }
           - { container: 'quay.io/centos/centos:7', cc-version: clang }
-          - { container: 'quay.io/centos/centos:stream8', cc-version: gcc }
-          - { container: 'quay.io/centos/centos:stream8', cc-version: clang }
           - { container: 'quay.io/centos/centos:stream9', cc-version: gcc }
           - { container: 'quay.io/centos/centos:stream9', cc-version: clang }
           - { container: 'fedora:latest', cc-version: gcc }
@@ -100,7 +98,7 @@ jobs:
             apt-get install -q -y \
               libpixman-1-dev libjpeg-dev libxcomposite-dev libxdamage-dev \
               libxml2-dev libxfont-dev libxinerama-dev libxpm-dev libxrandr-dev \
-              libxtst-dev x11proto-fonts-dev
+              libxtst-dev x11proto-fonts-dev libtirpc-dev
             # soft requirements
             apt-get install -q -y \
               quilt x11-xkb-utils

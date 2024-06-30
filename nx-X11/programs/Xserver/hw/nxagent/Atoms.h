@@ -71,7 +71,7 @@ void nxagentWMDetect(void);
 XlibAtom nxagentMakeAtom(char *, unsigned, Bool);
 
 /*
- * Converts local atoms to remote atoms and viceversa.
+ * Converts local atoms to remote atoms and vice-versa.
  */
 
 Atom nxagentRemoteToLocalAtom(XlibAtom);

@@ -276,9 +276,6 @@ OsSignal(sig, handler)
     int sig;
     OsSigHandlerPtr handler;
 {
-#ifdef X_NOT_POSIX
-    return signal(sig, handler);
-#else
     struct sigaction act, oact;
 
     sigemptyset(&act.sa_mask);
@@ -289,7 +286,6 @@ OsSignal(sig, handler)
     if (sigaction(sig, &act, &oact))
 	perror("sigaction");
     return oact.sa_handler;
-#endif
 }
 	
 #ifdef SERVER_LOCK
@@ -381,11 +377,7 @@ LockServer(void)
   if (write(lfd, pid_str, 11) != 11)
     FatalError("Could not write pid to lock file in %s\n", tmp);
 
-#ifndef USE_CHMOD
-  (void) fchmod(lfd, 0444);
-#else
   (void) chmod(tmp, 0444);
-#endif
   (void) close(lfd);
 
   /*
@@ -471,28 +463,19 @@ UnlockServer(void)
 
 /* Force connections to close on SIGHUP from init */
 
-/*ARGSUSED*/
-SIGVAL
+void
 AutoResetServer (int sig)
 {
     int olderrno = errno;
 
     dispatchException |= DE_RESET;
     isItTimeToYield = TRUE;
-#ifdef GPROF
-    chdir ("/tmp");
-    exit (0);
-#endif
-#if defined(SYSV) && defined(X_NOT_POSIX)
-    OsSignal (SIGHUP, AutoResetServer);
-#endif
     errno = olderrno;
 }
 
 /* Force connections to close and then exit on SIGTERM, SIGINT */
 
-/*ARGSUSED*/
-SIGVAL
+void
 GiveUp(int sig)
 {
     int olderrno = errno;
@@ -503,10 +486,6 @@ GiveUp(int sig)
 
     dispatchException |= DE_TERMINATE;
     isItTimeToYield = TRUE;
-#if defined(SYSV) && defined(X_NOT_POSIX)
-    if (sig)
-	OsSignal(sig, SIG_IGN);
-#endif
     errno = olderrno;
 }
 
@@ -1214,10 +1193,8 @@ ExpandCommandLine(int *pargc, char ***pargv)
 {
     int i;
 
-#if  !defined(__CYGWIN__)
     if (getuid() != geteuid())
 	return;
-#endif
 
     for (i = 1; i < *pargc; i++)
     {

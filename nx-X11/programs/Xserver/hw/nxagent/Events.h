@@ -105,28 +105,28 @@ extern int nxagentInitXkbKeyboardState(void);
  * received from the remote X server.
  */
 
-extern int nxagentHandleXkbKeyboardStateEvent(XEvent *X);
+extern Bool nxagentHandleXkbKeyboardStateEvent(XEvent *X);
 
 /*
  * Handle sync and karma messages and other notification event coming
  * from proxy.
  */
 
-extern int nxagentHandleProxyEvent(XEvent *X);
+extern Bool nxagentHandleProxyEvent(XEvent *X);
 
 /*
  * Other functions providing the ad-hoc handling of the remote X
  * events.
  */
 
-extern int nxagentHandleExposeEvent(XEvent *X);
-extern int nxagentHandleGraphicsExposeEvent(XEvent *X);
-extern int nxagentHandleClientMessageEvent(XEvent *X, enum HandleEventResult*);
-extern int nxagentHandlePropertyNotify(XEvent *X);
-extern int nxagentHandleKeyPress(XEvent *X, enum HandleEventResult*);
-extern int nxagentHandleReparentNotify(XEvent *X);
-extern int nxagentHandleConfigureNotify(XEvent *X);
-extern int nxagentHandleXFixesSelectionNotify(XEvent *X);
+extern Bool nxagentHandleExposeEvent(XEvent *X);
+extern Bool nxagentHandleGraphicsExposeEvent(XEvent *X);
+extern Bool nxagentHandleClientMessageEvent(XEvent *X, enum HandleEventResult*);
+extern Bool nxagentHandlePropertyNotify(XEvent *X);
+extern Bool nxagentHandleKeyPress(XEvent *X, enum HandleEventResult*);
+extern Bool nxagentHandleReparentNotify(XEvent *X);
+extern Bool nxagentHandleConfigureNotify(XEvent *X);
+extern Bool nxagentHandleXFixesSelectionNotify(XEvent *X);
 
 /*
  * Send a fake keystroke to the remote X server.

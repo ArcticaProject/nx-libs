@@ -2758,10 +2758,10 @@ static void fbFetchSourcePict(PicturePtr pict, int x, int y, int width, CARD32 *
                 if (v.vector[2] == 0) {
                     t = 0;
                 } else {
-                    xFixed_48_16 x, y;
-                    x = ((xFixed_48_16)v.vector[0] << 16) / v.vector[2];
-                    y = ((xFixed_48_16)v.vector[1] << 16) / v.vector[2];
-                    t = ((a*x + b*y) >> 16) + off;
+                    xFixed_48_16 xx, yy;
+                    xx = ((xFixed_48_16)v.vector[0] << 16) / v.vector[2];
+                    yy = ((xFixed_48_16)v.vector[1] << 16) / v.vector[2];
+                    t = ((a*xx + b*yy) >> 16) + off;
                 }
                 *buffer++ = gradientPixel(pGradient, t, pict->repeatType);
                 v.vector[0] += unit.vector[0];
@@ -2815,18 +2815,18 @@ static void fbFetchSourcePict(PicturePtr pict, int x, int y, int width, CARD32 *
                 }
             } else {
                 while (buffer < end) {
-                    double x, y;
+                    double xx, yy;
                     double b, c, det, s;
                     if (rz != 0) {
-                        x = rx/rz;
-                        y = ry/rz;
+                        xx = rx/rz;
+                        yy = ry/rz;
                     } else {
-                        x = y = 0.;
+                        xx = yy = 0.;
                     }
-                    x -= pGradient->radial.fx;
-                    y -= pGradient->radial.fy;
-                    b = 2*(x*pGradient->radial.dx + y*pGradient->radial.dy);
-                    c = -(x*x + y*y);
+                    xx -= pGradient->radial.fx;
+                    yy -= pGradient->radial.fy;
+                    b = 2*(xx*pGradient->radial.dx + yy*pGradient->radial.dy);
+                    c = -(xx*xx + yy*yy);
                     det = (b * b) - (4 * pGradient->radial.a * c);
                     s = (-b + sqrt(det))/(2. * pGradient->radial.a);
                     *buffer = gradientPixel(pGradient,
@@ -2855,16 +2855,16 @@ static void fbFetchSourcePict(PicturePtr pict, int x, int y, int width, CARD32 *
             } else {
 
                 while (buffer < end) {
-                    double x, y, angle;
+                    double xx, yy, angle;
                     if (rz != 0) {
-                        x = rx/rz;
-                        y = ry/rz;
+                        xx = rx/rz;
+                        yy = ry/rz;
                     } else {
-                        x = y = 0.;
+                        xx = yy = 0.;
                     }
-                    x -= pGradient->conical.center.x/65536.;
-                    y -= pGradient->conical.center.y/65536.;
-                    angle = atan2(y, x) + a;
+                    xx -= pGradient->conical.center.x/65536.;
+                    yy -= pGradient->conical.center.y/65536.;
+                    angle = atan2(yy, xx) + a;
                     *buffer = gradientPixel(pGradient, (xFixed_48_16) (angle * (65536. / (2*M_PI))),
                                             pict->repeatType);
                     ++buffer;
@@ -3268,37 +3268,37 @@ static void fbFetchTransformed(PicturePtr pict, int x, int y, int width, CARD32 
         xFixed *params = pict->filter_params;
         INT32 cwidth = xFixedToInt(params[0]);
         INT32 cheight = xFixedToInt(params[1]);
-        int xoff = params[0] >> 1;
-        int yoff = params[1] >> 1;
+        int xxoff = params[0] >> 1;
+        int yyoff = params[1] >> 1;
         params += 2;
         for (i = 0; i < width; ++i) {
             if (!v.vector[2]) {
                 buffer[i] = 0;
             } else {
-                int x1, x2, y1, y2, x, y;
+                int x1, x2, y1, y2, xx, yy;
                 INT32 srtot, sgtot, sbtot, satot;
                 xFixed *p = params;
 
                 if (!affine) {
                     xFixed_48_16 tmp;
-                    tmp = ((xFixed_48_16)v.vector[0] << 16)/v.vector[2] - xoff;
+                    tmp = ((xFixed_48_16)v.vector[0] << 16)/v.vector[2] - xxoff;
                     x1 = xFixedToInt(tmp);
-                    tmp = ((xFixed_48_16)v.vector[1] << 16)/v.vector[2] - yoff;
+                    tmp = ((xFixed_48_16)v.vector[1] << 16)/v.vector[2] - yyoff;
                     y1 = xFixedToInt(tmp);
                 } else {
-                    x1 = xFixedToInt(v.vector[0] - xoff);
-                    y1 = xFixedToInt(v.vector[1] - yoff);
+                    x1 = xFixedToInt(v.vector[0] - xxoff);
+                    y1 = xFixedToInt(v.vector[1] - yyoff);
                 }
                 x2 = x1 + cwidth;
                 y2 = y1 + cheight;
 
                 srtot = sgtot = sbtot = satot = 0;
 
-                for (y = y1; y < y2; y++) {
-                    int ty = (pict->repeatType == RepeatNormal) ? MOD (y, pict->pDrawable->height) : y;
-                    for (x = x1; x < x2; x++) {
+                for (yy = y1; yy < y2; yy++) {
+                    int ty = (pict->repeatType == RepeatNormal) ? MOD (yy, pict->pDrawable->height) : yy;
+                    for (xx = x1; xx < x2; xx++) {
                         if (*p) {
-                            int tx = (pict->repeatType == RepeatNormal) ? MOD (x, pict->pDrawable->width) : x;
+                            int tx = (pict->repeatType == RepeatNormal) ? MOD (xx, pict->pDrawable->width) : xx;
                             if (RegionContainsPoint(pict->pCompositeClip, tx + dx, ty + dy, &box)) {
                                 FbBits *b = bits + (ty + dy)*stride;
                                 CARD32 c = fetch(b, tx + dx, indexed);

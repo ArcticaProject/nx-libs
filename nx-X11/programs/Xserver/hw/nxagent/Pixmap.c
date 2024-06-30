@@ -244,8 +244,8 @@ PixmapPtr nxagentCreatePixmap(ScreenPtr pScreen, int width, int height,
   }
 
   #ifdef TEST
-  fprintf(stderr, "nxagentCreatePixmap: Allocated memory for the Virtual %sPixmap %p of real Pixmap %p (%dx%d),",
-              "allocation hint [%d].\n",
+  fprintf(stderr, "nxagentCreatePixmap: Allocated memory for the Virtual %sPixmap [%p] of real Pixmap [%p] (%dx%d),"
+              " allocation hint [%d].\n",
               nxagentShmPixmapTrap ? "Shm " : "", (void *) pVirtual, (void *) pPixmap, width, height, usage_hint);
   #endif
 
@@ -335,7 +335,7 @@ Bool nxagentDestroyPixmap(PixmapPtr pPixmap)
   {
     /*
      * For some pixmaps we receive the destroy only for the
-     * virtual. Infact to draw in the framebuffer we can use the
+     * virtual. In fact to draw in the framebuffer we can use the
      * virtual pixmap instead of the pointer to the real one. As the
      * virtual pixmap can collect references, we must transfer those
      * references to the real pixmap so we can continue as the destroy
@@ -611,7 +611,7 @@ int nxagentDestroyNewPixmapResourceType(void * p, XID id)
    */
 
   #ifdef TEST
-  fprintf(stderr, "nxagentDestroyNewPixmapResourceType: Destroying mirror id [%ld] for pixmap at [%p].\n",
+  fprintf(stderr, "nxagentDestroyNewPixmapResourceType: Destroying mirror id [%u] for pixmap at [%p].\n",
               nxagentPixmapPriv((PixmapPtr) p) -> mid, (void *) p);
   #endif
 
@@ -630,7 +630,7 @@ void nxagentDisconnectPixmap(void *p0, XID x1, void *p2)
   fprintf(stderr, "nxagentDisconnectPixmap: Called with bool [%d] and pixmap at [%p].\n",
               *pBool, (void *) pPixmap);
 
-  fprintf(stderr, "nxagentDisconnectPixmap: Virtual pixmap is [%ld].\n",
+  fprintf(stderr, "nxagentDisconnectPixmap: Virtual pixmap is [%u].\n",
               nxagentPixmap(pPixmap));
   #endif
 
@@ -757,7 +757,7 @@ void nxagentReconnectPixmap(void *p0, XID x1, void *p2)
     nxagentPixmap(pPixmapPriv -> pVirtualPixmap) = pPixmapPriv -> id;
 
     #ifdef TEST
-    fprintf(stderr, "nxagentReconnectPixmap: Created virtual pixmap with id [%ld] for pixmap at [%p].\n",
+    fprintf(stderr, "nxagentReconnectPixmap: Created virtual pixmap with id [%u] for pixmap at [%p].\n",
                 nxagentPixmap(pPixmap), (void *) pPixmap);
     #endif
 

@@ -117,7 +117,7 @@ void nxagentExposeBackgroundPredicate(void *p0, XID x1, void *p2);
  * Imported from NXresource.c
  */
 
-extern int nxagentFindClientResource(int, RESTYPE, void *);
+extern Bool nxagentFindClientResource(int, RESTYPE, void *);
 
 unsigned long nxagentGetColor(DrawablePtr pDrawable, int xPixel, int yPixel);
 unsigned long nxagentGetDrawableColor(DrawablePtr pDrawable);
@@ -281,6 +281,13 @@ int nxagentSynchronizeDrawableData(DrawablePtr pDrawable, unsigned int breakMask
         {
           static int totalLength;
           static int totalReconnectedPixmaps;
+
+          int width  = pDrawable -> width;
+          int height = pDrawable -> height;
+          int depth  = pDrawable -> depth;
+
+          unsigned int format = (depth == 1) ? XYPixmap : ZPixmap;
+          int length = nxagentImageLength(width, height, format, 0, depth);
 
           totalLength += length;
           totalReconnectedPixmaps++;
@@ -1351,12 +1358,12 @@ FIXME: All drawables should be set as synchronized and never marked as
    */
 
   if (nxagentSynchronization.pDrawable != NULL &&
-          nxagentFindClientResource(serverClient -> index, RT_NX_CORR_WINDOW,
-              nxagentSynchronization.pDrawable) == 0 &&
-                  nxagentFindClientResource(serverClient -> index, RT_NX_CORR_BACKGROUND,
-                      nxagentSynchronization.pDrawable) == 0 &&
-                          nxagentFindClientResource(serverClient -> index, RT_NX_CORR_PIXMAP,
-                              nxagentSynchronization.pDrawable) == 0)
+          !nxagentFindClientResource(serverClient -> index, RT_NX_CORR_WINDOW,
+              nxagentSynchronization.pDrawable) &&
+                  !nxagentFindClientResource(serverClient -> index, RT_NX_CORR_BACKGROUND,
+                      nxagentSynchronization.pDrawable) &&
+                          !nxagentFindClientResource(serverClient -> index, RT_NX_CORR_PIXMAP,
+                              nxagentSynchronization.pDrawable))
   {
     #ifdef TEST
     fprintf(stderr, "nxagentSynchronizationLoop: Synchronization drawable [%p] removed from resources.\n",
@@ -1531,11 +1538,11 @@ void nxagentMarkCorruptedRegion(DrawablePtr pDrawable, RegionPtr pRegion)
   {
     #ifdef TEST
 
-    x = pRegion -> extents.x1;
-    y = pRegion -> extents.y1;
+    int x = pRegion -> extents.x1;
+    int y = pRegion -> extents.y1;
 
-    width = pRegion -> extents.x2 - pRegion -> extents.x1;
-    height = pRegion -> extents.y2 - pRegion -> extents.y1;
+    int width = pRegion -> extents.x2 - pRegion -> extents.x1;
+    int height = pRegion -> extents.y2 - pRegion -> extents.y1;
 
     fprintf(stderr, "nxagentMarkCorruptedRegion: Partly invalidating %s [%p] with "
                 "coordinates [%d,%d][%d,%d].\n", nxagentDrawableType(pDrawable),

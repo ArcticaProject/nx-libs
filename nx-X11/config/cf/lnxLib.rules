@@ -136,7 +136,8 @@ install:: Concat(lib,libname.so.rev) 					@@\
 install:: Concat(lib,libname.so) 					@@\
 	MakeDir($(DESTDIR)dest)						@@\
 	@set +e; SetRevisions(rev); \					@@\
-		test -n "${VERBOSE}" && set -xe; \						@@\
+		set -e; \                                               @@\
+		test -n "${VERBOSE}" && set -x; \			@@\
 		$(INSTALL) $(INSTALLFLAGS) $(INSTBINFLAGS) Concat(lib,libname.so.$$MAJ.$$MIN) $(DESTDIR)dest; \ @@\
 		$(RM) Concat($(DESTDIR)dest/lib,libname.so.$$MAJ); \	@@\
 		$(LN) Concat(lib,libname.so.$$MAJ.$$MIN) Concat($(DESTDIR)dest/lib,libname.so.$$MAJ); \ @@\
@@ -207,7 +208,8 @@ Concat(lib,libname.so):  solist $(EXTRALIBRARYDEPS)			@@\
 									@@\
 clean::									@@\
 	@set +e; SetRevisions(rev); \					@@\
-		test -n "${VERBOSE}" && set -xe; \						@@\
+		set -e; \						@@\
+		test -n "${VERBOSE}" && set -xe; \			@@\
 		$(RM) Concat(lib,libname.so.$$MAJ); \			@@\
 		$(RM) Concat(lib,libname.so.$$MAJ.$$MIN)		@@\
 	$(RM) Concat(lib,libname.so)

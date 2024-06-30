@@ -169,19 +169,20 @@ ProcChangeProperty(ClientPtr client)
 
 #ifdef NXAGENT_ARTSD
     {
-    /* Do not process MCOPGLOBALS property changes,
-      they are already set reflecting the server side settings.
-      Just return success.
-    */
-      if (stuff->property == mcop_local_atom)
-        return client->noClientException;
+	/*
+	 * Do not process MCOPGLOBALS property changes,
+	 * they are already set reflecting the server side settings.
+	 * Just return success.
+	 */
+	if (stuff->property == mcop_local_atom)
+	    return client->noClientException;
     }
 #endif
 
 #ifdef NXAGENT_SERVER
     /* prevent clients from changing the NX_AGENT_VERSION property */
     if (stuff->property == MakeAtom("NX_AGENT_VERSION", strlen("NX_AGENT_VERSION"), True))
-      return client->noClientException;
+	return client->noClientException;
 #endif
 
     err = ChangeWindowProperty(pWin, stuff->property, stuff->type, (int)format,
@@ -189,23 +190,27 @@ ProcChangeProperty(ClientPtr client)
     if (err != Success)
 	return err;
     else
+#ifdef NXAGENT_SERVER
     {
-      if (nxagentOption(Rootless))
-      {
-        nxagentExportProperty(pWin, stuff->property, stuff->type, (int) format,
-                                  (int) mode, len, (void *) &stuff[1]);
-      }
+	if (nxagentOption(Rootless))
+	{
+	    nxagentExportProperty(pWin, stuff->property, stuff->type, (int) format,
+				      (int) mode, len, (void *) &stuff[1]);
+	}
 
-      nxagentGuessClientHint(client, stuff->property, (char *) &stuff[1]);
+	nxagentGuessClientHint(client, stuff->property, (char *) &stuff[1]);
 
-      nxagentGuessShadowHint(client, stuff->property);
+	nxagentGuessShadowHint(client, stuff->property);
 
-      #ifdef NX_DEBUG_INPUT
-      nxagentGuessDumpInputInfo(client, stuff->property, (char *) &stuff[1]);
-      #endif
+	#ifdef NX_DEBUG_INPUT
+	nxagentGuessDumpInputInfo(client, stuff->property, (char *) &stuff[1]);
+	#endif
 
-      return client->noClientException;
+	return client->noClientException;
     }
+#else
+	return client->noClientException;
+#endif
 }
 
 /*****************
@@ -265,7 +270,7 @@ ProcGetProperty(ClientPtr client)
     reply.type = X_Reply;
     reply.sequenceNumber = client->sequence;
 
-    #ifdef NXAGENT_SERVER
+#ifdef NXAGENT_SERVER
 
     /*
      * Creating a reply for WM_STATE property if it doesn't exist.
@@ -319,7 +324,7 @@ ProcGetProperty(ClientPtr client)
 
       return(client->noClientException);
     }
-    #endif
+#endif /* NXAGENT_SERVER */
 
     if (!pProp) 
 	return NullPropertyReply(client, None, 0, &reply);
@@ -358,14 +363,14 @@ ProcGetProperty(ClientPtr client)
 	return(Success);
     }
 
-/*
- *  Return type, format, value to client
- */
+    /*
+     *  Return type, format, value to client
+     */
     n = (pProp->format/8) * pProp->size; /* size (bytes) of prop */
     ind = stuff->longOffset << 2;        
 
-   /* If longOffset is invalid such that it causes "len" to
-	    be negative, it's a value error. */
+    /* If longOffset is invalid such that it causes "len" to
+    be negative, it's a value error. */
 
     if (n < ind)
     {

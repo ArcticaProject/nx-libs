@@ -310,151 +310,6 @@ ifioctl (int fd, int cmd, char *arg)
  * for this fd and add them to the selfhosts list.
  */
 
-#ifdef WINTCP /* NCR Wollongong based TCP */
-
-#include <sys/un.h>
-#include <stropts.h>
-#include <tiuser.h>
-
-#include <sys/stream.h>
-#include <net/if.h>
-#include <netinet/ip.h>
-#include <netinet/ip_var.h>
-#include <netinet/in.h>
-#include <netinet/in_var.h>
-
-void
-DefineSelf (int fd)
-{
-    /*
-     * The Wolongong drivers used by NCR SVR4/MP-RAS don't understand the
-     * socket IO calls that most other drivers seem to like. Because of
-     * this, this routine must be special cased for NCR. Eventually,
-     * this will be cleared up.
-     */
-
-    struct ipb ifnet;
-    struct in_ifaddr ifaddr;
-    struct strioctl str;
-    unsigned char *addr;
-    register HOST *host;
-    int	family, len;
-
-    if ((fd = open ("/dev/ip", O_RDWR, 0 )) < 0)
-        Error ("Getting interface configuration (1)");
-
-    /* Indicate that we want to start at the begining */
-    ifnet.ib_next = (struct ipb *) 1;
-
-    while (ifnet.ib_next)
-    {
-	str.ic_cmd = IPIOC_GETIPB;
-	str.ic_timout = 0;
-	str.ic_len = sizeof (struct ipb);
-	str.ic_dp = (char *) &ifnet;
-
-	if (ioctl (fd, (int) I_STR, (char *) &str) < 0)
-	{
-	    close (fd);
-	    Error ("Getting interface configuration (2)");
-	}
-
-	ifaddr.ia_next = (struct in_ifaddr *) ifnet.if_addrlist;
-	str.ic_cmd = IPIOC_GETINADDR;
-	str.ic_timout = 0;
-	str.ic_len = sizeof (struct in_ifaddr);
-	str.ic_dp = (char *) &ifaddr;
-
-	if (ioctl (fd, (int) I_STR, (char *) &str) < 0)
-	{
-	    close (fd);
-	    Error ("Getting interface configuration (3)");
-	}
-
-	len = sizeof(struct sockaddr_in);
-	family = ConvertAddr (IA_SIN(&ifaddr), &len, (void **)&addr);
-        if (family == -1 || family == FamilyLocal)
-	    continue;
-        for (host = selfhosts;
- 	     host && !addrEqual (family, addr, len, host);
-	     host = host->next)
-	    ;
-        if (host)
-	    continue;
-	MakeHost(host,len)
-	if (host)
-	{
-	    host->family = family;
-	    host->len = len;
-	    acopy(addr, host->addr, len);
-	    host->next = selfhosts;
-	    selfhosts = host;
-	}
-#ifdef XDMCP
-        {
-	    struct sockaddr broad_addr;
-
-	    /*
-	     * If this isn't an Internet Address, don't register it.
-	     */
-	    if (family != FamilyInternet)
-		continue;
-
-	    /*
- 	     * Ignore 'localhost' entries as they're not useful
-	     * on the other end of the wire.
-	     */
-	    if (len == 4 &&
-		addr[0] == 127 && addr[1] == 0 &&
-		addr[2] == 0 && addr[3] == 1)
-		continue;
-
-	    /*
-	     * Ignore '0.0.0.0' entries as they are
-	     * returned by some OSes for unconfigured NICs but they are
-	     * not useful on the other end of the wire.
-	     */
-	    if (len == 4 &&
-		addr[0] == 0 && addr[1] == 0 &&
-		addr[2] == 0 && addr[3] == 0)
-		continue;
-
-	    XdmcpRegisterConnection (family, (char *)addr, len);
-
-
-#define IA_BROADADDR(ia) ((struct sockaddr_in *)(&((struct in_ifaddr *)ia)->ia_broadaddr))
-
-	    XdmcpRegisterBroadcastAddress (
-		(struct sockaddr_in *) IA_BROADADDR(&ifaddr));
-
-#undef IA_BROADADDR
-	}
-#endif /* XDMCP */
-    }
-
-    close(fd);
-
-    /*
-     * add something of FamilyLocalHost
-     */
-    for (host = selfhosts;
-	 host && !addrEqual(FamilyLocalHost, "", 0, host);
-	 host = host->next);
-    if (!host)
-    {
-	MakeHost(host, 0);
-	if (host)
-	{
-	    host->family = FamilyLocalHost;
-	    host->len = 0;
-	    acopy("", host->addr, 0);
-	    host->next = selfhosts;
-	    selfhosts = host;
-	}
-    }
-}
-
-#else /* WINTCP */
 
 #if !defined(SIOCGIFCONF)
 void
@@ -541,8 +396,8 @@ DefineSelf (int fd)
 		 */
 		if (family == FamilyInternet &&
 		    !(len == 4 &&
-		      ((addr[0] == 127 && addr[1] == 0 &&
-			addr[2] == 0 && addr[3] == 1) ||
+		      /* backport 75b9383d8a4c113ab3c6cfc1d5efcb5d9982a1bf */
+		      ((addr[0] == 127 ||
 		       (addr[0] == 0 && addr[1] == 0 &&
 			addr[2] == 0 && addr[3] == 0)))
 		      )
@@ -755,8 +610,7 @@ DefineSelf (int fd)
 	     * on the other end of the wire
 	     */
 	    if (family == FamilyInternet &&
-		addr[0] == 127 && addr[1] == 0 &&
-		addr[2] == 0 && addr[3] == 1)
+		addr[0] == 127)
 		continue;
 #if defined(IPv6) && defined(AF_INET6)
 	    else if (family == FamilyInternet6 && 
@@ -903,8 +757,7 @@ DefineSelf (int fd)
 		    continue;
 
 	    if (family == FamilyInternet && 
-		addr[0] == 127 && addr[1] == 0 &&
-		addr[2] == 0 && addr[3] == 1) 
+		addr[0] == 127)
 		continue;
 
 	    /*
@@ -966,7 +819,6 @@ DefineSelf (int fd)
     }
 }
 #endif /* !SIOCGIFCONF */
-#endif /* WINTCP */
 
 #ifdef XDMCP
 void

@@ -41,21 +41,9 @@ THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #include <xkbsrv.h>
 #include <nx-X11/extensions/XI.h>
 
-#ifdef WIN32
-/* from ddxLoad.c */
-extern const char* Win32TempDir();
-extern int Win32System(const char *cmdline);
-#undef System
-#define System Win32System
-
-#define W32_tmparg " '%s'"
-#define W32_tmpfile ,tmpname
-#define W32_tmplen strlen(tmpname)+3
-#else
 #define W32_tmparg
 #define W32_tmpfile 
 #define W32_tmplen 0
-#endif 
 
 /***====================================================================***/
 
@@ -127,9 +115,6 @@ FILE 	*in;
 Status	status;
 int	rval;
 Bool	haveDir;
-#ifdef WIN32
-char	tmpname[PATH_MAX];
-#endif
 
     if ((list->pattern[what]==NULL)||(list->pattern[what][0]=='\0'))
 	return Success;
@@ -146,11 +131,6 @@ char	tmpname[PATH_MAX];
 
     in= NULL;
     haveDir= True;
-#ifdef WIN32
-    strcpy(tmpname, Win32TempDir());
-    strcat(tmpname, "\\xkb_XXXXXX");
-    (void) mktemp(tmpname);
-#endif
     if (XkbBaseDirectory!=NULL) {
 	if ((list->pattern[what][0]=='*')&&(list->pattern[what][1]=='\0')) {
 	   if (asprintf(&buf, "%s/%s.dir", XkbBaseDirectory,
@@ -198,23 +178,11 @@ char	tmpname[PATH_MAX];
     status= Success;
     if (!haveDir)
     {  
-#ifndef WIN32
 	in= Popen(buf,"r");
-#else
-        if (xkbDebugFlags)
-	    DebugF("xkb executes: %s\n",buf);
-	if (System(buf) < 0)
-	    ErrorF("Could not invoke keymap compiler\n");
-	else
-	    in= fopen(tmpname, "r");
-#endif
     }
     if (!in)
     {
 	free (buf);
-#ifdef WIN32
-	unlink(tmpname);
-#endif
 	return BadImplementation;
     }
     list->nFound[what]= 0;
@@ -266,17 +234,12 @@ char	tmpname[PATH_MAX];
 	}
 	status= _AddListComponent(list,what,flags,tmp,client);
     }
-#ifndef WIN32
     if (haveDir)
 	fclose(in);
     else if ((rval=Pclose(in))!=0) {
 	if (xkbDebugFlags)
 	    ErrorF("xkbcomp returned exit code %d\n",rval);
     }
-#else
-    fclose(in);
-    unlink(tmpname);
-#endif
     free (buf);
     return status;
 }
