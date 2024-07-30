@@ -204,3 +204,7 @@ called rxclient also aims to be compatible to FreeNX and nomachine and
 is based on opennx. You can find repos for their software here:
 * https://github.com/Etersoft/rxclient
 * https://github.com/Etersoft/rx-etersoft
+
+## SAST Tools
+
+[PVS-Studio](https://pvs-studio.com/en/pvs-studio/?utm_source=website&utm_medium=github&utm_campaign=open_source) - static analyzer for C, C++, C#, and Java code.
