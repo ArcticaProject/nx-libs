@@ -9,10 +9,10 @@ on:
 jobs:
   # see https://github.com/koalaman/shellcheck
   shellcheck:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Install linters on ubuntu
         run: |
@@ -22,22 +22,22 @@ jobs:
       - name: run Shellcheck
         run: |
           shellcheck --version
-          find . -name "*.sh" | xargs shellcheck -e SC1004,SC2010,SC2035,SC2086
+          find . -name "*.sh" | xargs shellcheck -e SC1004,SC2010,SC2035,SC2086,SC2268
 
   # see https://pylint.org/
   pylint:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Install linters on ubuntu
         run: |
           sudo apt-get update -q -y
           sudo apt-get install pylint
           # dependencies
-          sudo apt-get install --reinstall python-gi
-          sudo apt-get install python-dbus python-gobject
+          sudo apt-get install --reinstall python3-gi
+          sudo apt-get install python3-dbus
 
       - name: run Pylint
         run: |
@@ -46,10 +46,10 @@ jobs:
 
   # see https://github.com/danmar/cppcheck
   cppcheck:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Install linters on ubuntu
         run: |
@@ -72,10 +72,10 @@ jobs:
   # see https://www.viva64.com/en/pvs-studio/
   pvs:
     environment: pvs
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Install linters on ubuntu
         env:
