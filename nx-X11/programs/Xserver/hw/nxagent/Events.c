@@ -4512,7 +4512,7 @@ Bool ForwardClientMessage(ClientPtr client, xSendEventReq *stuff)
     WindowPtr pWin = (WindowPtr)SecurityLookupWindow(stuff->destination, client,
                                                      DixReadAccess);
 
-    if (stuff->event.u.clientMessage.u.l.type == netwmstate || stuff->event.u.clientMessage.u.l.type == wmchangestate)
+    if (pWin && (stuff->event.u.clientMessage.u.l.type == netwmstate || stuff->event.u.clientMessage.u.l.type == wmchangestate))
     {
         if (pWin->drawable.id == pWin->drawable.pScreen->root->drawable.id)
         {
