@@ -429,8 +429,8 @@ ProcSendEvent(ClientPtr client)
 
     if (nxagentOption(Rootless) && stuff->event.u.u.type == ClientMessage)
     {
-        ForwardClientMessage(client, stuff);
-        return Success;
+        if (ForwardClientMessage(client, stuff))
+            return Success;
     }
 
     if (stuff -> event.u.u.type == SelectionNotify)
