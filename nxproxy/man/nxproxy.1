@@ -377,6 +377,14 @@ other programs, to make easier for the user to execute the program from
 the shell.
 
 .TP 8
+.B  NX_DIALOG_CAPTIONPREFIX
+This variable can be used to override the default caption prefix for
+agent calls to nxdialog. By default (if NX_DIALOG_CAPTIONPREFIX is
+unset), the caption prefix gets set to 'NX - '. This variable is only
+used if the proxy is running in server mode or if nxcomp code is run
+as part of nxagent.
+
+.TP 8
 .B  NX_SLAVE_CMD
 The full path to the slave channel handler. When the slave channel is
 enabled, the agent will listen on a port and forward the connection to
