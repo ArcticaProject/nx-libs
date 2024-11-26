@@ -2970,7 +2970,11 @@ OtherClientGone(void * value, XID id)
 }
 
 int
+#ifdef NXAGENT_SERVER
+Xorg_EventSelectForWindow(register WindowPtr pWin, register ClientPtr client, Mask mask)
+#else
 EventSelectForWindow(register WindowPtr pWin, register ClientPtr client, Mask mask)
+#endif
 {
     Mask check;
     OtherClients * others;
