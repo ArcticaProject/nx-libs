@@ -103,6 +103,10 @@ char * nxagentSpecialKeystrokeNames[] = {
        "autograb",
 
        "dump_clipboard",
+       "clipboard_both",
+       "clipboard_client",
+       "clipboard_server",
+       "clipboard_none",
 
        NULL,
 };
@@ -145,6 +149,10 @@ struct nxagentSpecialKeystrokeMap default_map[] = {
   {KEYSTROKE_REREAD_KEYSTROKES, ControlMask, True, XK_k},
   {KEYSTROKE_AUTOGRAB, ControlMask, True, XK_g},
   {KEYSTROKE_DUMP_CLIPBOARD, ControlMask | ShiftMask, True, XK_c},
+  {KEYSTROKE_SET_CLIPBOARD_BOTH, ControlMask | ShiftMask, True, XK_1},
+  {KEYSTROKE_SET_CLIPBOARD_CLIENT, ControlMask | ShiftMask, True, XK_2},
+  {KEYSTROKE_SET_CLIPBOARD_SERVER, ControlMask | ShiftMask, True, XK_3},
+  {KEYSTROKE_SET_CLIPBOARD_NONE, ControlMask | ShiftMask, True, XK_4},
   {KEYSTROKE_END_MARKER, 0, False, NoSymbol},
 };
 struct nxagentSpecialKeystrokeMap *map = default_map;
@@ -724,6 +732,12 @@ Bool nxagentCheckSpecialKeystroke(XKeyEvent *X, enum HandleEventResult *result)
       break;
     case KEYSTROKE_DUMP_CLIPBOARD:
       *result = doDumpClipboard;
+      break;
+    case KEYSTROKE_SET_CLIPBOARD_BOTH:
+    case KEYSTROKE_SET_CLIPBOARD_CLIENT:
+    case KEYSTROKE_SET_CLIPBOARD_SERVER:
+    case KEYSTROKE_SET_CLIPBOARD_NONE:
+      *result = doClipboardBoth + stroke - KEYSTROKE_SET_CLIPBOARD_BOTH;
       break;
     case KEYSTROKE_NOTHING: /* do nothing. difference to KEYSTROKE_IGNORE is the return value */
     case KEYSTROKE_END_MARKER: /* just to make gcc STFU */

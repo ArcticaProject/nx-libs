@@ -82,5 +82,6 @@ extern WindowPtr nxagentGetClipboardWindow(Atom property);
 extern int nxagentSendNotificationToSelfViaXServer(xEvent *event);
 
 extern void nxagentDumpClipboardStat(void);
+extern void nxagentSwitchClipboardMode(int new_mode);
 
 #endif /* __Clipboard_H__ */
