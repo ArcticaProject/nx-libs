@@ -2565,13 +2565,13 @@ ProcXkbSetCompatMap(ClientPtr client)
     if (stuff->nSI>0) {
 	xkbSymInterpretWireDesc *wire = (xkbSymInterpretWireDesc *)data;
 	XkbSymInterpretPtr	sym;
-	if ((unsigned)(stuff->firstSI+stuff->nSI)>compat->num_si) {
-	    compat->num_si= stuff->firstSI+stuff->nSI;
+	if ((unsigned) (stuff->firstSI + stuff->nSI) > compat->size_si) {
+	    compat->num_si= compat->size_si = stuff->firstSI + stuff->nSI;
 	    compat->sym_interpret= _XkbTypedRealloc(compat->sym_interpret,
-						   compat->num_si,
+						   compat->size_si,
 						   XkbSymInterpretRec);
 	    if (!compat->sym_interpret) {
-		compat->num_si= 0;
+		compat->num_si = compat->size_si = 0;
 		return BadAlloc;
 	    }
 	}
